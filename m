@@ -2,120 +2,105 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC50EC0015E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Aug 2023 15:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BD5C04E69
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Aug 2023 17:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236588AbjHKPVy (ORCPT
+        id S233683AbjHKREW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Aug 2023 11:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54666 "EHLO
+        Fri, 11 Aug 2023 13:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236587AbjHKPVf (ORCPT
+        with ESMTP id S229544AbjHKREV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Aug 2023 11:21:35 -0400
+        Fri, 11 Aug 2023 13:04:21 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5AE4486;
-        Fri, 11 Aug 2023 08:21:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCBDE54;
+        Fri, 11 Aug 2023 10:04:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BB19674F1;
-        Fri, 11 Aug 2023 15:21:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF790C433C7;
-        Fri, 11 Aug 2023 15:21:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D77F677A4;
+        Fri, 11 Aug 2023 17:04:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA2EC433C7;
+        Fri, 11 Aug 2023 17:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691767272;
-        bh=5yH/QY0qbIeK4kDqXoIZQCS0/v2CF5kLwjwQr2aVdjY=;
+        s=k20201202; t=1691773459;
+        bh=LZGP/air+2wvae6xLeGOfYYOENdL4ySCVIGxTfx1yy4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EXaNGE0ZDh36EgpW73kbhp8ZlQ8lfBJQKH2mYDG1xWouw9mNnArbV9fPQQR3QW/EC
-         1j4uKlH9R/LfVx94e8U1ama48jB02z/LGyGrbEz48iv0ipnVNA5CjJthdDrl4dQYCb
-         ym31+dc+S0vnSqayAs0KlngcXtKQHzYes2ZHAp4Xw+QTRptBe885Sbf5ov9Fj2hE7P
-         5gJNkbhVvAXDLZ+LMdxbx5lG+TA6x1Q6P8ceNah88GqEmvMGqES6NquxdsIqJEfqb3
-         tjKcGKlbneKOwjH2m/0vDsvb1Lc5O9y8tQfstXc+7pBa6P7k+8zp7GL1ApXT275qob
-         9Ti1fYZ66BuAw==
-Date:   Fri, 11 Aug 2023 16:21:07 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Md Danish Anwar <a0501179@ti.com>
-Cc:     MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, vigneshr@ti.com, srk@ti.com,
-        nm@ti.com
-Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
-Message-ID: <20230811-ladylike-snore-abba84731921@spud>
-References: <20230807110836.2612730-1-danishanwar@ti.com>
- <20230807-euphemism-trailing-ef4130dc7437@spud>
- <910a4a98-712a-5517-5a5b-ffb962f83463@ti.com>
- <20230808-unwomanly-generic-67d20f0e51cd@spud>
- <cd74e31f-8bc6-445b-9c33-51e53a439cd2@ti.com>
- <20230808-bazooka-uncoated-a3401d94b063@spud>
- <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
+        b=dr/ZSU50g1LCjI6n2lyl8KXz0mUjPN6XnyorDImTEWlmWDuwEEBggyyouPT8GNF/8
+         1c3ahRjhkbq2gYdjbiOGY+F6omPh4oVHOEwcgtoCx8c18GCKsajv5Mj8pKS+PMYYcE
+         JplN7eBwHy/k7jN4SMhAQB2Fnzs8iSP1oyQhgA9eXo5MpJ55s10JQKjqJOHD1/KdvV
+         SKo/NS4vYn/e6Xzqr3PhSq+nwwdimr/HnfxodbXmn2Bh3GNByPFg5dXjZ2XD+FlvVK
+         y26ZhggKZc1/sPkc0+RIH9vr2LQcAdq1x+Ife+5zxtHV2qZj7GQUg1wZ15ViDiEieL
+         on627zLQkfy4g==
+Received: (nullmailer pid 3614707 invoked by uid 1000);
+        Fri, 11 Aug 2023 17:04:15 -0000
+Date:   Fri, 11 Aug 2023 11:04:15 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rohit Agarwal <quic_rohiagar@quicinc.com>
+Cc:     dri-devel@lists.freedesktop.org, ulf.hansson@linaro.org,
+        stanimir.k.varbanov@gmail.com, airlied@gmail.com,
+        dmitry.baryshkov@linaro.org, robdclark@gmail.com, sean@poorly.run,
+        quic_tdas@quicinc.com, linux-remoteproc@vger.kernel.org,
+        agross@kernel.org, linux-clk@vger.kernel.org, rfoss@kernel.org,
+        daniel@ffwll.ch, andersson@kernel.org, bhupesh.sharma@linaro.org,
+        mani@kernel.org, mturquette@baylibre.com,
+        quic_abhinavk@quicinc.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mchehab@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, quic_vgarodia@quicinc.com,
+        conor+dt@kernel.org, linux-media@vger.kernel.org,
+        vladimir.zapolskiy@linaro.org, neil.armstrong@linaro.org,
+        konrad.dybcio@linaro.org, mathieu.poirier@linaro.org,
+        jonathan@marek.ca, marijn.suijten@somainline.org,
+        freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2] dt-bindings: qcom: Update RPMHPD entries for some SoCs
+Message-ID: <169177345491.3614642.17326420788227805482.robh@kernel.org>
+References: <1690461813-22564-1-git-send-email-quic_rohiagar@quicinc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UvC4hbAhKTdVUBxb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
+In-Reply-To: <1690461813-22564-1-git-send-email-quic_rohiagar@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---UvC4hbAhKTdVUBxb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 27 Jul 2023 18:13:33 +0530, Rohit Agarwal wrote:
+> Update the RPMHPD references with new bindings defined in rpmhpd.h
+> for Qualcomm SoCs SM8[2345]50.
+> 
+> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+> ---
+> 
+> Changes in v2:
+>  - Removed the unnecessary inclusion of header rpmpd.h.
+> 
+> This patch is dependent on the series that includes the new rpmhpd.h header
+> https://lore.kernel.org/all/1689744162-9421-1-git-send-email-quic_rohiagar@quicinc.com/
+> 
+>  Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml   | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml  | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml    | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-dispcc.yaml   | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml  | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml   | 4 ++--
+>  Documentation/devicetree/bindings/clock/qcom,videocc.yaml         | 4 ++--
+>  .../devicetree/bindings/display/msm/qcom,sm8250-dpu.yaml          | 4 ++--
+>  .../devicetree/bindings/display/msm/qcom,sm8250-mdss.yaml         | 8 ++++----
+>  .../devicetree/bindings/display/msm/qcom,sm8350-dpu.yaml          | 4 ++--
+>  .../devicetree/bindings/display/msm/qcom,sm8350-mdss.yaml         | 6 +++---
+>  .../devicetree/bindings/display/msm/qcom,sm8450-dpu.yaml          | 4 ++--
+>  .../devicetree/bindings/display/msm/qcom,sm8450-mdss.yaml         | 8 ++++----
+>  .../devicetree/bindings/display/msm/qcom,sm8550-dpu.yaml          | 4 ++--
+>  .../devicetree/bindings/display/msm/qcom,sm8550-mdss.yaml         | 8 ++++----
+>  Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml    | 4 ++--
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml              | 4 ++--
+>  Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml | 6 +++---
+>  18 files changed, 44 insertions(+), 44 deletions(-)
+> 
 
-On Fri, Aug 11, 2023 at 04:48:28PM +0530, Md Danish Anwar wrote:
+Acked-by: Rob Herring <robh@kernel.org>
 
-> >> There are no standard defines for these interrupt types. However I can=
- create a
-> >> new .h file defining all the three interrupt cells and their values fo=
-r both
-> >> PRU and RTU cores if you think that is required. Otherwise we can go w=
-ith
-> >> hardcoded values.
-> >>
-> >> Please let me know what you think should be done here.
-> >=20
-> > It'd be good to reference to the documentation for the cells, I don't
-> > think adding a header is necessary here.
-> >=20
->=20
-> How should I reference to the documentation for the cells?
->=20
-> Should I just add the details of cells in description of interrupt proper=
-ty here.
->=20
->   interrupts:
->     maxItems: 1
->     description:
->       Interrupt specifiers enable the virtio/rpmsg communication between =
-MPU
->       and the PRU/RTU cores. The value of the interrupts should be the PRU
->       System event number [cell 1], PRU channel [cell 2] and PRU host_eve=
-nt
->       (target) [cell 3].
->=20
-> Please let me know if this looks OK to you.
-
-I was thinking there'd be an binding for the interrupt controller that
-you could mentioned.
-
---UvC4hbAhKTdVUBxb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNZR4wAKCRB4tDGHoIJi
-0qvEAP99WX3NcLAixv8zdFz//y+7gtEByx3Dyc+XHWDHa7YrJAD9EBJnZ3J7vwcW
-vT8XG04W7Q7owcS/c87Q6QIPDBR2RAc=
-=Yd3F
------END PGP SIGNATURE-----
-
---UvC4hbAhKTdVUBxb--
