@@ -2,130 +2,156 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDCCC04A94
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 12 Aug 2023 11:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21577C001DB
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 12 Aug 2023 12:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236890AbjHLLqh (ORCPT
+        id S231426AbjHLM5l (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 12 Aug 2023 07:46:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53790 "EHLO
+        Sat, 12 Aug 2023 08:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236989AbjHLLqf (ORCPT
+        with ESMTP id S230298AbjHLM5k (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 12 Aug 2023 07:46:35 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26E9EA
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 04:46:37 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fe7e67cc77so4552675e87.2
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 04:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691840796; x=1692445596;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a+JGjneC4SRUqtftpqJOx/UsXT5c6LOS8fWfDoVSEc8=;
-        b=fbdLpezOr8MA2r5ZjKo7SVwa6Djije9nmePF60bF5kcHJuRMa6gifRjWhT0sVDQVGx
-         Kxjzv439JapkUrPqZzqdjrLpxo7PyQ1Kyb56T1hB3sawqECtXGFK4w8AjQ6BoZB/t4RW
-         9aPkjviXGWwrPmYX9dT7WO3mx8FttYtnQ4miNY6JyKQQLrQZh9hvo7fcLscIqyb30OQe
-         i4K5jq5awb9JuTUgF39Rq4QYtmbi43Nv9Y2/qkYxuLAnsq8GK2bIqJZ84T1OtyNhfi+F
-         kHQ/bfUF+O5dpamgfv7vszUXmpurCYGzKEPn93hd1HRp2FUPO62WgN/J1khza9UF5IRR
-         0mMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691840796; x=1692445596;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a+JGjneC4SRUqtftpqJOx/UsXT5c6LOS8fWfDoVSEc8=;
-        b=garN3hMKPxyhvLBBWk4hZdrj0k/fjRHAOuTzKYSSRDDz9RU+ORrTV9LSt2N9145Ve6
-         uupS+anMUxprK2e1ofvClmIVVr/PGT1SkgWM8JUv4vM7CB442byWJuwh3ZCraQ3054jG
-         T9usqzjj+3NnH9xs4Q/gf5wfZH2oletjemtdCqAtoolRvQR2wJDpbYg2AZJjtRKD1moT
-         00d76xqsKc8a5zf7qB9gdeOnGRlsHQnqTWdDcTOlj5cVNal3uXS7OFJ4OXQOBdvlbxZc
-         BfO3Y4r5xnsNPf8TpCHLxhrnlWVP4mwdjnYyPRVik4bH+c/V5Mr9RJoZgWxnT4fHnJx/
-         ZD2A==
-X-Gm-Message-State: AOJu0Yw6UCg/A5OkbYf8ZK+jhYJswGKy5Arh2Aw6eyv6ITjqUx6lMiPf
-        3HSxOVGIfmG3p8mh7MCzUIONcQ==
-X-Google-Smtp-Source: AGHT+IGkoFOmVvMzr146QLzZz2N6QVOZN15DXr4roVYFSqmXFFsfZNXotCiP7Vgsx5gle7sTPSljvg==
-X-Received: by 2002:ac2:5399:0:b0:4f8:bfb4:e4c4 with SMTP id g25-20020ac25399000000b004f8bfb4e4c4mr3039008lfh.19.1691840795877;
-        Sat, 12 Aug 2023 04:46:35 -0700 (PDT)
-Received: from [192.168.1.101] (abyj188.neoplus.adsl.tpnet.pl. [83.9.29.188])
-        by smtp.gmail.com with ESMTPSA id p24-20020a19f018000000b004fdc5557a70sm1098079lfc.141.2023.08.12.04.46.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Aug 2023 04:46:35 -0700 (PDT)
-Message-ID: <b93bd745-fd93-4317-a16b-1aa05a34d60d@linaro.org>
-Date:   Sat, 12 Aug 2023 13:46:33 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] arm64: dts: qcom: msm8998: Remove AGGRE2 clock from
- SLPI
+        Sat, 12 Aug 2023 08:57:40 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A877010F;
+        Sat, 12 Aug 2023 05:57:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DIYnSJ6hazW+jKd+UMDjI9liM5KcvXXhCEOpL1aFVHklp4WD0QiHpJw4Ss8CFOfDhKGVn6dbiiod1Gywcu5pimzgK1NCffuGWz8gYz3LjiNy55Oy/QnlKyr2SgFsQuAR9+BnxNjSteSXatTRHM+/0obipmgd5/Kjf38An/McNj2DUitRi2Lhkl4umtERXgC2p8AnRVmKocayPW6jWLX7epKKZRHGQnqRuJfnZZjC78Kl1iufKe9X0ZOKYTIhz3daAy+0N5qUE1dhWnQzKNvOnIuFio6kuM9Kmb2/OX5n22F8HfK8c6C+9/zN4pWIOZAerYucIQSyq0EzAjYRhMHi6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l/hqtoHTV472AePJ10Ol/vUwnLp3kvMhWceNj4BIO70=;
+ b=kP379G/bBFfnMbtvtIg3Rb03zaEqsaJUIPg1qUUpXmDeQ4coSG8hQUMJ7qkMF3L6dFvLJNZwqzJg4qki47Y6uha6eCCK+3/DYQDr+NyCQd+WnlsxfXchaU/BCA/6zfeurxeHLFfOOqVwFs/Fjxl89ZAJfiIlcNaYZ+IGtWw/YLNvav1njORggZcJWTvJLmQL3NSZ3VEACmJxzyyY8nfojEvF3FDqa82/1G6BLVKzc4cuIqcoOSbunqn3ZfyBoBAyOyF5jaysNLL3iIWsmvfqb19vj49Lvh4vmNDVWm2yvxSn9p+y1kiAJkUGG7ZBUwuUz8xXwx5CZp+iVHzlrt5lIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l/hqtoHTV472AePJ10Ol/vUwnLp3kvMhWceNj4BIO70=;
+ b=SsXyVvIDzGWdecxY36XJOQJSNyxrjYLjNPiyzbQ0kBFky7QxM8i1pWtKq0zvhg2pJEErFrnKHTRV/eS/+AFDpwIzkhUlRLTa5UU8reqHZGhL8rRZmtihy9QvkllOUhZHEpHenp1GD9tiFoP+C9JV0yHoEMb6C2zNrw0F1nIc3qI=
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
+ by BL3PR12MB6378.namprd12.prod.outlook.com (2603:10b6:208:3b1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.20; Sat, 12 Aug
+ 2023 12:57:40 +0000
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::5cff:cc6e:6241:168c]) by MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::5cff:cc6e:6241:168c%7]) with mapi id 15.20.6652.029; Sat, 12 Aug 2023
+ 12:57:40 +0000
+From:   "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "andersson@kernel.org" <andersson@kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "Simek, Michal" <michal.simek@amd.com>,
+        "Levinsky, Ben" <ben.levinsky@amd.com>,
+        "Shah, Tanmay" <tanmay.shah@amd.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "git (AMD-Xilinx)" <git@amd.com>
+Subject: RE: [PATCH v3] dt-bindings: remoteproc: add Tightly Coupled Memory
+ (TCM) bindings
+Thread-Topic: [PATCH v3] dt-bindings: remoteproc: add Tightly Coupled Memory
+ (TCM) bindings
+Thread-Index: AQHZvAMchwgx+zTwNUuGuVr0d0h8Mq/JHGQAgB2jLMA=
+Date:   Sat, 12 Aug 2023 12:57:39 +0000
+Message-ID: <MN0PR12MB5953E72D7950581A8FB5AD82B711A@MN0PR12MB5953.namprd12.prod.outlook.com>
+References: <1689964908-22371-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <20230724161632.GA3686365-robh@kernel.org>
+In-Reply-To: <20230724161632.GA3686365-robh@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230721-topic-rpm_clk_cleanup-v1-0-cf6cd5c621d5@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v1-9-cf6cd5c621d5@linaro.org>
- <43afe706-5765-a8e7-2bbe-d9b21ec7a06e@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <43afe706-5765-a8e7-2bbe-d9b21ec7a06e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|BL3PR12MB6378:EE_
+x-ms-office365-filtering-correlation-id: 5a244b00-5ee5-4776-8f1c-08db9b33b5d9
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: vDT+p4GKI70r2xKm58DG5tXJCQCtF84RibBKpqLlOEe82QN6VYeUymlki4wHsys4NWzjsFjmO7ZyQhwSZqrHI2vmHvbN3gLj5QfcNTufJm0Z/xJXocZnhoYXUOibQ1tgQ0oWXbyJ8UuSh5XyBraORMkyVNh51K3u+meQ2Ak5xBHMWeUe19WTrr6HUuLYuBnUbeHYePZ7/xFLQiALCPFKDQQ8etxGsgNx3TLXHKtmgGja5nIeM8CeHlr+Q2kOoFmnUeSab4ejMF9l1kAPUjprij5RTKW1HliuCjAyJH8VNKcqdSMJnq0zh7/ABBmdknTa+HI6E2C9GtCCUJsA0hSyRwgkcHgMU2x8hGEtLsiwwmQhKKHum6jCxnrCFnHo9EBV9JtmPB8/HPyMu7YFM+76k02LPiwkhY15QxKKIUURbaIXOM7N5iDe3P6FIkLXw8YPtOnmVsvsaj3UWdvSwfPdZRpCZRThnE0gDj+isjXjEa+nHDPHhZ/38ctwmmebaQZ2hF/S/lTciUFyXXZOLUvdN3cIFsBMPiJudJ1wvHHilxIzVbAIMSHAyNBZWDgDgTitDSNL9SgbpkVnS95dw56i/nANxgH5ddyku+ktTclZ5GRy8NTsodqPv8Q+Nu/0iu5q
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(136003)(396003)(346002)(366004)(39860400002)(1800799006)(186006)(451199021)(8936002)(66476007)(8676002)(76116006)(71200400001)(7696005)(41300700001)(33656002)(6916009)(316002)(66446008)(64756008)(4326008)(478600001)(52536014)(5660300002)(38070700005)(122000001)(66556008)(66946007)(9686003)(54906003)(38100700002)(2906002)(86362001)(55016003)(83380400001)(53546011)(6506007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?eCYzHFU31W9RddpX2KPxYJ3IqlyyGRpf8pqSTtt6lX7krX358jU1+NROihww?=
+ =?us-ascii?Q?JhdjEKmZKHTH7eZ2xFyGq24ry3tsfMjSPTDSFcese1MivtDlDwJtc1JTsDwt?=
+ =?us-ascii?Q?Us1JyL+UdU6+Y8IXHbhlrD6AVyibQerhPU3vqi0Pw80UPhpkRuKC4rg4/fWQ?=
+ =?us-ascii?Q?RA5sZQV5jDkabp3YLGsecND4YB+l/z0eMCqIjvPvXiRThAGUqqJJGhW+75VD?=
+ =?us-ascii?Q?BdLgbNaC7YZY0HmY6xHz4zAriiiOstYcFEwRTwkYaMFfEqNhcb5MIl9Xce3U?=
+ =?us-ascii?Q?4CAU65FMR6pWoNkkChnaQ6MoRQW+f/SBWdySPxjgtOGlXB5Crf4H8bx/dKfW?=
+ =?us-ascii?Q?7wl8T52l7ulc38XDQgojrV04PKldxl6lqqNbZyrr7MPewOqWqo2kZzpNgWmJ?=
+ =?us-ascii?Q?3UavA+k84wks2QCF1FiaXusXmGy1z0JrYoQbvWABAP+v9MAGHKp2QVKsMBkx?=
+ =?us-ascii?Q?jYaVWsMGs/9cuprvipnT/boZ6oJYaxObJAubKdudJ8B406UyA9hmGbxUooXC?=
+ =?us-ascii?Q?8RlLGvjh34QIUpgx6sgs8oNHIOnak41vhJ3039S2V/n3dIO0C0SClmFOBNr3?=
+ =?us-ascii?Q?DW9mx0vSjECqhNoEqfbmrECVD/MBus1JPiJWVtM5FbIcDL4LK23bN9oRvWMX?=
+ =?us-ascii?Q?gwcgJzTx3FBI64f1NX0JonFqAC6/8sainpVYoO818n69Qa3bFf6JpUUcN2pl?=
+ =?us-ascii?Q?AhQh/lpy6HGAwx21pQ+NKdRqR1DRP0441jrXcYjdrK9aD89Uh8YvnvlUAaVe?=
+ =?us-ascii?Q?95ZmpotA4DqGIVzg79GIiOJ4CAh9zYOHF19oH5ThYaH3Y2MX/SRbCNlqCp11?=
+ =?us-ascii?Q?Z1imJ8ZaTm3aBuml02Tyw6hdcnHh3kRS52JTMl0FqVqpqoNHmgVjZbf/J3ni?=
+ =?us-ascii?Q?UpzYP5kIFEsuRsQdGo1SnmbgFmS7prGT0kH7YUN5SgsjcIx81bxPFff/hpIO?=
+ =?us-ascii?Q?m7Jr64IIvALh3mpMBTCf01CrZ6fV0COrf+d+cC7EwAvfOdVHGsB7LUQuLibX?=
+ =?us-ascii?Q?c94U+LTzbEAaGRrxBNCxgdmg811Sd7kh9OJtADP3Bb4ivAOVw3nvKXk66fjZ?=
+ =?us-ascii?Q?S0+wuln7ENNIw3luAOVKQUIl0TtqiRtuYyGKJ/fJ8Wm1oMRdACIldCtqsmje?=
+ =?us-ascii?Q?Bnmao/nTNR+AEOQxIhYFlMz0f+259NUq/N+tp3xVHeZMahagqopV9XchATCt?=
+ =?us-ascii?Q?nG0b3T+S3pHsjV3/dnfg8UBFLiZPcoGK9fkqwl19RpEivc5/Xkds2RbQcZuO?=
+ =?us-ascii?Q?EzmDwIQQSghu6uAWKNJpmx9Nvpk4wCzObGG5SWGO9B2T0uVhShe0Y4Cj0aCp?=
+ =?us-ascii?Q?Ci8PUl16LoqFdXZXFZFIlRwvzI692AEev6BhcFCYW1M/u3Xa1bVt+QBakCEK?=
+ =?us-ascii?Q?RrxpPIRepxQh/GW0ahroXGt9lNifDS2kYX8fKa2+Lr308lVodYD/43bFxiov?=
+ =?us-ascii?Q?BldfYmXoQbMhjhr70Pum5SDtItO/II1ACMXCVbjrS/GXCsVm96gKYWJJ/S3G?=
+ =?us-ascii?Q?DmYZGZXTNjp3SMrHEi/UbLFEKFVnXvOEGOoFijS436MgWG3U1GCWzDLXDuqg?=
+ =?us-ascii?Q?IOsFwjm707UX0VhR0TE1p/B5hBMY3AaQ1BPnszJ14ZONL63OHHnvihIPE0yH?=
+ =?us-ascii?Q?YxbC7rwm/pceQbpVRQhaxls=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a244b00-5ee5-4776-8f1c-08db9b33b5d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2023 12:57:39.9522
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZrCSzh/C+hs5M46cmls1/H2nQQxZER8mTheCWh/uv/dARmWfpv3vjDDsKLxNb70a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6378
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 21.07.2023 17:50, Jeffrey Hugo wrote:
-> On 7/21/2023 9:36 AM, Konrad Dybcio wrote:
->> The AGGRE2 clock is a clock for the entire AGGRE2 bus, managed from
->> within the interconnect driver. Attaching it to SLPI was a total hack.
->> Get rid of it.
-> 
-> Nit - why do we care what driver manages the clock?  DT describes hardware...
-> 
-> The entire SLPI block hangs off the AGGRE2 bus, so that bus needs to be on for the SLPI.  I agree that AGGRE2 is really an interconnect device and SLPI should be a consumer of that, but we don't have 8998 interconnects defined yet.  Seems like this hack is still needed.
-As we concluded in private, this has no effect as the clk-smd-rpm driver
-leaves that clock dangling at FMAX anyway
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Monday, July 24, 2023 9:47 PM
+> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
+> Cc: andersson@kernel.org; mathieu.poirier@linaro.org;
+> krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org; Simek, Michal
+> <michal.simek@amd.com>; Levinsky, Ben <ben.levinsky@amd.com>; Shah,
+> Tanmay <tanmay.shah@amd.com>; linux-remoteproc@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>
+> Subject: Re: [PATCH v3] dt-bindings: remoteproc: add Tightly Coupled
+> Memory (TCM) bindings
+>=20
+> On Sat, Jul 22, 2023 at 12:11:48AM +0530, Radhey Shyam Pandey wrote:
+> > Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+> > UltraScale+ platform. It will help in defining TCM in device-tree
+> > and make it's access platform agnostic and data-driven.
+>=20
+> From the subject, it sounds like this is a binding for all of remoteproc =
+for
+> TCMs.
+>=20
+> Otherwise,
+>=20
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Konrad
+Thanks for the review. Just checking if this patch will be taken through
+devicetree or remoteproc tree?
