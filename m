@@ -2,74 +2,77 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505ACC04A94
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 12 Aug 2023 10:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDCCC04A94
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 12 Aug 2023 11:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjHLKxo (ORCPT
+        id S236890AbjHLLqh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 12 Aug 2023 06:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        Sat, 12 Aug 2023 07:46:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234314AbjHLKxn (ORCPT
+        with ESMTP id S236989AbjHLLqf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 12 Aug 2023 06:53:43 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D461BD9
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 03:53:15 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fe8c3b5ca0so4438190e87.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 03:53:15 -0700 (PDT)
+        Sat, 12 Aug 2023 07:46:35 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26E9EA
+        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 04:46:37 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fe7e67cc77so4552675e87.2
+        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Aug 2023 04:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691837589; x=1692442389;
+        d=linaro.org; s=google; t=1691840796; x=1692445596;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ynCHtirdWZFV2YnMO46lqjPWpR3icApZ23ZDZH0k+dM=;
-        b=vvObwF8hDdx4+qgTZ9PAHZ7f9g9FgJzrVgn70l/iyPbebF98u6F0T2CqCdxBZdM9q+
-         1oOfr8KXTNvLYrd9d2O37dc/CKBY8EiHjL05BCu2xagydSE934Wj//B9F2OZlXP6VSuI
-         dWdPIuoChhakcjqXNB7E/FvNAWMvxRbjQqUsfjw4d6/PqNzvbHPivRaOxNs8GkszKcmp
-         cIq6s2pBe9ToK7K+MGJF/5JOqLHzPOTKOdEGH9QDtr9N3mdwpXGackfWq+p9s5dRIbhl
-         lDsI+vmxqXTda1h6BcFOHqpBSRx3aWFrt8HYJieqpgQC4pXF3m66MO2r5r1OfDd+nML3
-         RDkA==
+        bh=a+JGjneC4SRUqtftpqJOx/UsXT5c6LOS8fWfDoVSEc8=;
+        b=fbdLpezOr8MA2r5ZjKo7SVwa6Djije9nmePF60bF5kcHJuRMa6gifRjWhT0sVDQVGx
+         Kxjzv439JapkUrPqZzqdjrLpxo7PyQ1Kyb56T1hB3sawqECtXGFK4w8AjQ6BoZB/t4RW
+         9aPkjviXGWwrPmYX9dT7WO3mx8FttYtnQ4miNY6JyKQQLrQZh9hvo7fcLscIqyb30OQe
+         i4K5jq5awb9JuTUgF39Rq4QYtmbi43Nv9Y2/qkYxuLAnsq8GK2bIqJZ84T1OtyNhfi+F
+         kHQ/bfUF+O5dpamgfv7vszUXmpurCYGzKEPn93hd1HRp2FUPO62WgN/J1khza9UF5IRR
+         0mMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691837589; x=1692442389;
+        d=1e100.net; s=20221208; t=1691840796; x=1692445596;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ynCHtirdWZFV2YnMO46lqjPWpR3icApZ23ZDZH0k+dM=;
-        b=LCrrjTntBB+Mv1g6z/sFsD19ETTMFaiHUhsAWTL+nrSC6tD/ylk1boWYgForpicQ9e
-         kDmSZUFP7tRfMNnpoj6N5qtpjbe0P6kqwrVbGNJxGMuSJW4Ymimaxxb6FvG8DnL2ugZB
-         lFTFVz3LT4F2hpnzlXnPv75izxnXHuPqsmuVm3az/PNndudOIa71VZqoFmgH+SZy3ToX
-         O4Mx9lY3qhHnob/XV9cv1rwzMfRranTp7+zxm5Z/x8/vPXnHWKxux/gU7R4EI4yp/hqB
-         5ZI+EbITFpOSHmkyfp4qkb8njxNmGhpNR0JcAM1dqCfzla4+FQ7HLpT6EmcyiO1+wAC+
-         Lz4Q==
-X-Gm-Message-State: AOJu0YxRxaBqAKkZLoYf+Crs1XNiX5q4X9FBSlVD+Fk8irK7Oyb2nT5v
-        3Ol/fjYRsVwLVEKkZL6xvs3mLA==
-X-Google-Smtp-Source: AGHT+IElm6BgHNQE+UBVDHKoX0lnx+9468Dp9MGCh8ikdXs4JIP3v4m7/kNHxzmw0Bzb2XixCtFpiA==
-X-Received: by 2002:a05:6512:3487:b0:4fe:5051:f253 with SMTP id v7-20020a056512348700b004fe5051f253mr2732409lfr.9.1691837589549;
-        Sat, 12 Aug 2023 03:53:09 -0700 (PDT)
+        bh=a+JGjneC4SRUqtftpqJOx/UsXT5c6LOS8fWfDoVSEc8=;
+        b=garN3hMKPxyhvLBBWk4hZdrj0k/fjRHAOuTzKYSSRDDz9RU+ORrTV9LSt2N9145Ve6
+         uupS+anMUxprK2e1ofvClmIVVr/PGT1SkgWM8JUv4vM7CB442byWJuwh3ZCraQ3054jG
+         T9usqzjj+3NnH9xs4Q/gf5wfZH2oletjemtdCqAtoolRvQR2wJDpbYg2AZJjtRKD1moT
+         00d76xqsKc8a5zf7qB9gdeOnGRlsHQnqTWdDcTOlj5cVNal3uXS7OFJ4OXQOBdvlbxZc
+         BfO3Y4r5xnsNPf8TpCHLxhrnlWVP4mwdjnYyPRVik4bH+c/V5Mr9RJoZgWxnT4fHnJx/
+         ZD2A==
+X-Gm-Message-State: AOJu0Yw6UCg/A5OkbYf8ZK+jhYJswGKy5Arh2Aw6eyv6ITjqUx6lMiPf
+        3HSxOVGIfmG3p8mh7MCzUIONcQ==
+X-Google-Smtp-Source: AGHT+IGkoFOmVvMzr146QLzZz2N6QVOZN15DXr4roVYFSqmXFFsfZNXotCiP7Vgsx5gle7sTPSljvg==
+X-Received: by 2002:ac2:5399:0:b0:4f8:bfb4:e4c4 with SMTP id g25-20020ac25399000000b004f8bfb4e4c4mr3039008lfh.19.1691840795877;
+        Sat, 12 Aug 2023 04:46:35 -0700 (PDT)
 Received: from [192.168.1.101] (abyj188.neoplus.adsl.tpnet.pl. [83.9.29.188])
-        by smtp.gmail.com with ESMTPSA id b24-20020ac247f8000000b004fe333128c0sm1088359lfp.242.2023.08.12.03.53.08
+        by smtp.gmail.com with ESMTPSA id p24-20020a19f018000000b004fdc5557a70sm1098079lfc.141.2023.08.12.04.46.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Aug 2023 03:53:09 -0700 (PDT)
-Message-ID: <074d2bf6-1f89-4ec9-80de-52deeb1c319f@linaro.org>
-Date:   Sat, 12 Aug 2023 12:53:07 +0200
+        Sat, 12 Aug 2023 04:46:35 -0700 (PDT)
+Message-ID: <b93bd745-fd93-4317-a16b-1aa05a34d60d@linaro.org>
+Date:   Sat, 12 Aug 2023 13:46:33 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] soc: qcom: aoss: Move length requirements from
- caller
+Subject: Re: [PATCH 09/11] arm64: dts: qcom: msm8998: Remove AGGRE2 clock from
+ SLPI
 Content-Language: en-US
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Chris Lew <quic_clew@quicinc.com>
-Cc:     Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20230811205839.727373-1-quic_bjorande@quicinc.com>
- <20230811205839.727373-2-quic_bjorande@quicinc.com>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230721-topic-rpm_clk_cleanup-v1-0-cf6cd5c621d5@linaro.org>
+ <20230721-topic-rpm_clk_cleanup-v1-9-cf6cd5c621d5@linaro.org>
+ <43afe706-5765-a8e7-2bbe-d9b21ec7a06e@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -106,26 +109,23 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230811205839.727373-2-quic_bjorande@quicinc.com>
+In-Reply-To: <43afe706-5765-a8e7-2bbe-d9b21ec7a06e@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11.08.2023 22:58, Bjorn Andersson wrote:
-> The existing implementation of qmp_send() requires the caller to provide
-> a buffer which is of word-aligned. The underlying reason for this is
-> that message ram only supports word accesses, but pushing this
-> requirement onto the clients results in the same boiler plate code
-> sprinkled in every call site.
+On 21.07.2023 17:50, Jeffrey Hugo wrote:
+> On 7/21/2023 9:36 AM, Konrad Dybcio wrote:
+>> The AGGRE2 clock is a clock for the entire AGGRE2 bus, managed from
+>> within the interconnect driver. Attaching it to SLPI was a total hack.
+>> Get rid of it.
 > 
-> By using a temporary buffer in qmp_send() we can hide the underlying
-> hardware limitations from the clients and allow them to pass their
-> NUL-terminates C string directly.
+> Nit - why do we care what driver manages the clock?  DT describes hardware...
 > 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> The entire SLPI block hangs off the AGGRE2 bus, so that bus needs to be on for the SLPI.  I agree that AGGRE2 is really an interconnect device and SLPI should be a consumer of that, but we don't have 8998 interconnects defined yet.  Seems like this hack is still needed.
+As we concluded in private, this has no effect as the clk-smd-rpm driver
+leaves that clock dangling at FMAX anyway
 
 Konrad
