@@ -2,146 +2,87 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A811BC41513
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Aug 2023 09:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2295AC001DB
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Aug 2023 15:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232958AbjHNJwd (ORCPT
+        id S229967AbjHNPrs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 05:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54794 "EHLO
+        Mon, 14 Aug 2023 11:47:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233977AbjHNJwA (ORCPT
+        with ESMTP id S229938AbjHNPrU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Aug 2023 05:52:00 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F45CD1;
-        Mon, 14 Aug 2023 02:51:58 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37E9pmv6027597;
-        Mon, 14 Aug 2023 04:51:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1692006708;
-        bh=YHisbs6R0xXrNTsJCEqlxBiPrz26Ghe5FBVp20PuDnA=;
-        h=From:To:CC:Subject:Date;
-        b=Vo+v61TCf8/PNvxOjgM+iw74ijEXX8zx+2mq8YSZG3LPDimCRLPLnvFaTxXurntz9
-         GJl52+c9qal7+mKgvTL1mHTWj1SyMlcsQXt08+DP9BIUs/xCMrl1nMR/Wa3vdLSV4X
-         TEHbbMxuNvraDc55I/Ij4w59FOXJdoXFHGWeyY6c=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37E9pmiP014340
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Aug 2023 04:51:48 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
- Aug 2023 04:51:48 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 14 Aug 2023 04:51:48 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37E9pmwG023606;
-        Mon, 14 Aug 2023 04:51:48 -0500
-Received: from localhost (uda0501179.dhcp.ti.com [172.24.227.217])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 37E9plpd016978;
-        Mon, 14 Aug 2023 04:51:48 -0500
-From:   MD Danish Anwar <danishanwar@ti.com>
-To:     Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Mon, 14 Aug 2023 11:47:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6CF10CE;
+        Mon, 14 Aug 2023 08:47:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 62AF663DE9;
+        Mon, 14 Aug 2023 15:47:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EF6C433C7;
+        Mon, 14 Aug 2023 15:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692028038;
+        bh=6GSu3pjMz8Et0gMkn69TwZo/5r8JBRUlijAeo9TCKPQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E7Uf5C86CtHU5Ihf+elugH9Uxu+wt/novAeYIKjE2rBf8m4HRQIQRZssm4qloO/BC
+         ot07osQfYkSDampv4CSumUWSQfgO0J+O5OPm8un5qIg9tF5SlcUJWh59vZn/RFiV96
+         nMTFNBsbTSmGRn+J4e59P/ZZ+z4loH4HDD+VTmsJkvn/JvDi6wLmksVWnL8vUOrFcK
+         30nj5BtTQVY37WuTtV0I4IDcwlxCsx2aKGBw8rV6Xhweka1eLOZU0A44ffD5/bW3db
+         IjiSsqKXnNoItFl9uqcOZQ0RYKHA1b/7ULWlWZdT9uOEYLkTl5hSYeJZk/80vRAWEs
+         2I8ra6SrjXweA==
+Date:   Mon, 14 Aug 2023 16:47:13 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
-        <srk@ti.com>, <nm@ti.com>
-Subject: [PATCH v2] dt-bindings: remoteproc: pru: Add Interrupt property
-Date:   Mon, 14 Aug 2023 15:21:41 +0530
-Message-ID: <20230814095141.3526684-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, vigneshr@ti.com, srk@ti.com,
+        nm@ti.com
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: pru: Add Interrupt property
+Message-ID: <20230814-ellipse-backfield-1fd05a2d765e@spud>
+References: <20230814095141.3526684-1-danishanwar@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kH60MhqjYS1JGdzg"
+Content-Disposition: inline
+In-Reply-To: <20230814095141.3526684-1-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add interrupts and interrupt-names protperties for PRU and RTU cores.
 
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-Changes from v1 to v2:
-*) Added reference of ti,pruss-intc.yaml schema in the description of
-   interrupts property as suggested by Conor.
-*) Rebased on latest next-20230809 linux-next.
+--kH60MhqjYS1JGdzg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v1: https://lore.kernel.org/all/20230807110836.2612730-1-danishanwar@ti.com/
+On Mon, Aug 14, 2023 at 03:21:41PM +0530, MD Danish Anwar wrote:
+> Add interrupts and interrupt-names protperties for PRU and RTU cores.
+>=20
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
- .../bindings/remoteproc/ti,pru-rproc.yaml     | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-index cd55d80137f7..fc81ba2ad2da 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-@@ -66,6 +66,17 @@ properties:
-       Should contain the name of the default firmware image
-       file located on the firmware search path.
- 
-+  interrupts:
-+    maxItems: 1
-+    description:
-+      Interrupt specifiers enable the virtio/rpmsg communication between MPU
-+      and the PRU/RTU cores. For the values of the interrupt cells please refer
-+      to interrupt-controller/ti,pruss-intc.yaml schema.
-+
-+  interrupt-names:
-+    items:
-+      - const: vring
-+
- if:
-   properties:
-     compatible:
-@@ -171,6 +182,9 @@ examples:
-               <0x22400 0x100>;
-         reg-names = "iram", "control", "debug";
-         firmware-name = "am65x-pru0_0-fw";
-+        interrupt-parent = <&icssg0_intc>;
-+        interrupts = <16 2 2>;
-+        interrupt-names = "vring";
-       };
- 
-       rtu0_0: rtu@4000 {
-@@ -180,6 +194,9 @@ examples:
-               <0x23400 0x100>;
-         reg-names = "iram", "control", "debug";
-         firmware-name = "am65x-rtu0_0-fw";
-+        interrupt-parent = <&icssg0_intc>;
-+        interrupts = <20 4 4>;
-+        interrupt-names = "vring";
-       };
- 
-       tx_pru0_0: txpru@a000 {
-@@ -198,6 +215,9 @@ examples:
-               <0x24400 0x100>;
-         reg-names = "iram", "control", "debug";
-         firmware-name = "am65x-pru0_1-fw";
-+        interrupt-parent = <&icssg0_intc>;
-+        interrupts = <18 3 3>;
-+        interrupt-names = "vring";
-       };
- 
-       rtu0_1: rtu@6000 {
-@@ -207,6 +227,9 @@ examples:
-               <0x23c00 0x100>;
-         reg-names = "iram", "control", "debug";
-         firmware-name = "am65x-rtu0_1-fw";
-+        interrupt-parent = <&icssg0_intc>;
-+        interrupts = <22 5 5>;
-+        interrupt-names = "vring";
-       };
- 
-       tx_pru0_1: txpru@c000 {
--- 
-2.34.1
+Thanks,
+Conor.
 
+--kH60MhqjYS1JGdzg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNpMgQAKCRB4tDGHoIJi
+0u22AP9QEsPEUyj1AWb0YGo781kJJHa6/Yow29+AedrY1bTlowD/dcj9ziQoP1z+
+gyUWVK3hHq1DKUDGRfORHuX4O1yljAE=
+=V0Y0
+-----END PGP SIGNATURE-----
+
+--kH60MhqjYS1JGdzg--
