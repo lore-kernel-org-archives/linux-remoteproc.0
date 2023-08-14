@@ -2,157 +2,146 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4E3C04A94
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Aug 2023 07:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A811BC41513
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Aug 2023 09:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbjHNHAm (ORCPT
+        id S232958AbjHNJwd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Aug 2023 03:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36654 "EHLO
+        Mon, 14 Aug 2023 05:52:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234152AbjHNHAh (ORCPT
+        with ESMTP id S233977AbjHNJwA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Aug 2023 03:00:37 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06574E63;
-        Mon, 14 Aug 2023 00:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1691996436; x=1723532436;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HyMtUxxgw2gVLDNuMwD4mMzvJ49O4kx94ybiRXJDRfw=;
-  b=tDJP5sHrCe+RGRVMyWvpkWiFG65k87LOfQ/miYxMfUwjUjtiVEJkZEYK
-   ydhkmn89pTz0CMoI7/QwQpSJOWLfawtpCMiA/2PSBPNkbrSDDLUIyfKbr
-   V59WlkUWpR+HgGjsUaTOevupmzwXMERccR+oVQ6x5tU4fhJEn6xFEwZEL
-   1k8LneHnGDc5dgxOi71sll+T1o5rR7u8tZsIooRrFbWcZquV9g7yofOMl
-   qJhHbr6lYACUbhR7uVMp1+yR7Jy9R33l5BDj1dkGaen0L92ofMGTZdt0x
-   JZy3kE0SnICIYNJsRAayVRiTWm/70hEnYuuVAKUN79DYNeyxnANdpSisx
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
-   d="asc'?scan'208";a="166290856"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Aug 2023 00:00:35 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 14 Aug 2023 00:00:33 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Mon, 14 Aug 2023 00:00:30 -0700
-Date:   Mon, 14 Aug 2023 07:59:51 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Md Danish Anwar <a0501179@ti.com>
-CC:     Conor Dooley <conor@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Mon, 14 Aug 2023 05:52:00 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F45CD1;
+        Mon, 14 Aug 2023 02:51:58 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37E9pmv6027597;
+        Mon, 14 Aug 2023 04:51:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1692006708;
+        bh=YHisbs6R0xXrNTsJCEqlxBiPrz26Ghe5FBVp20PuDnA=;
+        h=From:To:CC:Subject:Date;
+        b=Vo+v61TCf8/PNvxOjgM+iw74ijEXX8zx+2mq8YSZG3LPDimCRLPLnvFaTxXurntz9
+         GJl52+c9qal7+mKgvTL1mHTWj1SyMlcsQXt08+DP9BIUs/xCMrl1nMR/Wa3vdLSV4X
+         TEHbbMxuNvraDc55I/Ij4w59FOXJdoXFHGWeyY6c=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37E9pmiP014340
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Aug 2023 04:51:48 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
+ Aug 2023 04:51:48 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 14 Aug 2023 04:51:48 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37E9pmwG023606;
+        Mon, 14 Aug 2023 04:51:48 -0500
+Received: from localhost (uda0501179.dhcp.ti.com [172.24.227.217])
+        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 37E9plpd016978;
+        Mon, 14 Aug 2023 04:51:48 -0500
+From:   MD Danish Anwar <danishanwar@ti.com>
+To:     Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
         <srk@ti.com>, <nm@ti.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
-Message-ID: <20230814-circus-preachy-b5b9f6ad07d0@wendy>
-References: <20230807110836.2612730-1-danishanwar@ti.com>
- <20230807-euphemism-trailing-ef4130dc7437@spud>
- <910a4a98-712a-5517-5a5b-ffb962f83463@ti.com>
- <20230808-unwomanly-generic-67d20f0e51cd@spud>
- <cd74e31f-8bc6-445b-9c33-51e53a439cd2@ti.com>
- <20230808-bazooka-uncoated-a3401d94b063@spud>
- <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
- <20230811-ladylike-snore-abba84731921@spud>
- <ce22155c-31b9-3dd1-8336-275fa92c234d@ti.com>
+Subject: [PATCH v2] dt-bindings: remoteproc: pru: Add Interrupt property
+Date:   Mon, 14 Aug 2023 15:21:41 +0530
+Message-ID: <20230814095141.3526684-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QVaRVnEiOl5Q3z9C"
-Content-Disposition: inline
-In-Reply-To: <ce22155c-31b9-3dd1-8336-275fa92c234d@ti.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
---QVaRVnEiOl5Q3z9C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add interrupts and interrupt-names protperties for PRU and RTU cores.
 
-On Mon, Aug 14, 2023 at 10:43:58AM +0530, Md Danish Anwar wrote:
-> On 11/08/23 8:51 pm, Conor Dooley wrote:
-> > On Fri, Aug 11, 2023 at 04:48:28PM +0530, Md Danish Anwar wrote:
-> >=20
-> >>>> There are no standard defines for these interrupt types. However I c=
-an create a
-> >>>> new .h file defining all the three interrupt cells and their values =
-for both
-> >>>> PRU and RTU cores if you think that is required. Otherwise we can go=
- with
-> >>>> hardcoded values.
-> >>>>
-> >>>> Please let me know what you think should be done here.
-> >>>
-> >>> It'd be good to reference to the documentation for the cells, I don't
-> >>> think adding a header is necessary here.
-> >>>
-> >>
-> >> How should I reference to the documentation for the cells?
-> >>
-> >> Should I just add the details of cells in description of interrupt pro=
-perty here.
-> >>
-> >>   interrupts:
-> >>     maxItems: 1
-> >>     description:
-> >>       Interrupt specifiers enable the virtio/rpmsg communication betwe=
-en MPU
-> >>       and the PRU/RTU cores. The value of the interrupts should be the=
- PRU
-> >>       System event number [cell 1], PRU channel [cell 2] and PRU host_=
-event
-> >>       (target) [cell 3].
-> >>
-> >> Please let me know if this looks OK to you.
-> >=20
-> > I was thinking there'd be an binding for the interrupt controller that
-> > you could mentioned.
->=20
-> There is a binding for interrupt-controller [1] that I can mention. I tri=
-ed using
->=20
-> - $ref: /schemas/interrupt-controller/ti,pruss-intc.yaml#
->=20
-> But it was throwing dt binding errors so I didn't add the ref.
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+Changes from v1 to v2:
+*) Added reference of ti,pruss-intc.yaml schema in the description of
+   interrupts property as suggested by Conor.
+*) Rebased on latest next-20230809 linux-next.
 
-Yeah, you're not a pruss-itc so that makes sense.
+v1: https://lore.kernel.org/all/20230807110836.2612730-1-danishanwar@ti.com/
 
->=20
-> I will mention this file name in the description of the property like bel=
-ow,
->=20
->      description:
->        Interrupt specifiers enable the virtio/rpmsg communication between=
- MPU
->        and the PRU/RTU cores. For the values of the interrupt cells please
->        refer to interrupt-controller/ti,pruss-intc.yaml schema.
->=20
-> Please let me know if this looks OK to you.
+ .../bindings/remoteproc/ti,pru-rproc.yaml     | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-This is what I would've expected, yea
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+index cd55d80137f7..fc81ba2ad2da 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+@@ -66,6 +66,17 @@ properties:
+       Should contain the name of the default firmware image
+       file located on the firmware search path.
+ 
++  interrupts:
++    maxItems: 1
++    description:
++      Interrupt specifiers enable the virtio/rpmsg communication between MPU
++      and the PRU/RTU cores. For the values of the interrupt cells please refer
++      to interrupt-controller/ti,pruss-intc.yaml schema.
++
++  interrupt-names:
++    items:
++      - const: vring
++
+ if:
+   properties:
+     compatible:
+@@ -171,6 +182,9 @@ examples:
+               <0x22400 0x100>;
+         reg-names = "iram", "control", "debug";
+         firmware-name = "am65x-pru0_0-fw";
++        interrupt-parent = <&icssg0_intc>;
++        interrupts = <16 2 2>;
++        interrupt-names = "vring";
+       };
+ 
+       rtu0_0: rtu@4000 {
+@@ -180,6 +194,9 @@ examples:
+               <0x23400 0x100>;
+         reg-names = "iram", "control", "debug";
+         firmware-name = "am65x-rtu0_0-fw";
++        interrupt-parent = <&icssg0_intc>;
++        interrupts = <20 4 4>;
++        interrupt-names = "vring";
+       };
+ 
+       tx_pru0_0: txpru@a000 {
+@@ -198,6 +215,9 @@ examples:
+               <0x24400 0x100>;
+         reg-names = "iram", "control", "debug";
+         firmware-name = "am65x-pru0_1-fw";
++        interrupt-parent = <&icssg0_intc>;
++        interrupts = <18 3 3>;
++        interrupt-names = "vring";
+       };
+ 
+       rtu0_1: rtu@6000 {
+@@ -207,6 +227,9 @@ examples:
+               <0x23c00 0x100>;
+         reg-names = "iram", "control", "debug";
+         firmware-name = "am65x-rtu0_1-fw";
++        interrupt-parent = <&icssg0_intc>;
++        interrupts = <22 5 5>;
++        interrupt-names = "vring";
+       };
+ 
+       tx_pru0_1: txpru@c000 {
+-- 
+2.34.1
 
---QVaRVnEiOl5Q3z9C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNnQ5wAKCRB4tDGHoIJi
-0sOoAP493J6fgOaLp+xT4qZeoRYxhj410prJLo6DeSre5PkDgQD7BBF3IDKbwsZs
-ZER6gpf5G77oetGXKenPhwnAhW6RwwU=
-=a2k2
------END PGP SIGNATURE-----
-
---QVaRVnEiOl5Q3z9C--
