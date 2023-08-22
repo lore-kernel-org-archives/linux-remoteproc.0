@@ -2,133 +2,80 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAFBEE49B1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Aug 2023 21:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AB3EE49B0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Aug 2023 01:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbjHVVux (ORCPT
+        id S232048AbjHWBlc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Aug 2023 17:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56350 "EHLO
+        Tue, 22 Aug 2023 21:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbjHVVux (ORCPT
+        with ESMTP id S230403AbjHWBlb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Aug 2023 17:50:53 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB59CD1;
-        Tue, 22 Aug 2023 14:50:51 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37MLohE4105792;
-        Tue, 22 Aug 2023 16:50:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1692741043;
-        bh=CMfL4wwoDhsfeUYN9y/IzifVg95H+zdZDy8rPvWU0As=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=WCqWqqNZIGylQTAAnALXBdNY+6L2xyQ/W+y7rM7U4RPOz96pxjbY51Jcf7ev9KP4R
-         ceMi/bc/dxtcvaVh2z82bVb5f7smvtSdSz1kPV5YIt+Ni8KUql7TglPx7WOUeiT6Md
-         3mf5BW7SFL2AnAXo9L3LMsMTtTIfbF1UGHOMAfW4=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37MLohxX093742
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Aug 2023 16:50:43 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 22
- Aug 2023 16:50:42 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 22 Aug 2023 16:50:42 -0500
-Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37MLog8r004285;
-        Tue, 22 Aug 2023 16:50:42 -0500
-Date:   Tue, 22 Aug 2023 16:50:42 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Andrew Davis <afd@ti.com>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Kevin Cahalan <kevinacahalan@gmail.com>
-Subject: Re: [PATCH] remoteproc: core: Honor device tree /alias entries when
- assigning IDs
-Message-ID: <20230822215042.yjaqtwhuhls57pbu@glamour>
-References: <20230807140247.956255-1-nm@ti.com>
- <ZOULmFR51C+9kEhZ@p14s>
- <20230822201205.4csoj4kym2yhuyrf@decrease>
- <949a8814-2084-2636-7a1b-a9d1188a16f8@ti.com>
+        Tue, 22 Aug 2023 21:41:31 -0400
+X-Greylist: delayed 917 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:41:29 PDT
+Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399A5E4C
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Aug 2023 18:41:28 -0700 (PDT)
+X-AuditID: cb7c291e-06dff70000002aeb-53-64e54b4af566
+Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 89.6B.10987.B4B45E46; Wed, 23 Aug 2023 04:56:59 +0500 (PKT)
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
+        d=iesco.com.pk; s=default;
+        h=received:content-type:mime-version:content-transfer-encoding
+          :content-description:subject:to:from:date:reply-to;
+        b=oBDJWSjioOxYbojj4Ohq0SmjJiLxf+4GyE+Lkmfu7620oMKHk6DKrZuR4lQZbgqJO
+          +JOQx8mH6vk9vBQVhRyVYqgynVcRxK9zCFiKHpawRU9+CgbpkfXWXDsnjgQi/14mj
+          +Rwv7UMaLu6VVmuMEIoZflfR+KisNWk5x/uq+AJb4=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iesco.com.pk; s=default;
+        h=reply-to:date:from:to:subject:content-description
+          :content-transfer-encoding:mime-version:content-type;
+        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
+        b=Bs9KdCyIPTy0ESguEb53Rr2XRBbHLUtOC945i095PVIk6Zd4sEJZiyb0sjqllCYzT
+          9ndgBc1DqNn9DW9q6WRHokRxVJzVlPEj+8OWkQj/C5FmgJwuna+4yHJC1RIUmRxOr
+          fBLtlUHwP50ZLIVVieGgvTv/ML3ry/LGgUGtKKVC0=
+Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
+   Wed, 23 Aug 2023 04:31:06 +0500
+Message-ID: <89.6B.10987.B4B45E46@symantec4.comsats.net.pk>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <949a8814-2084-2636-7a1b-a9d1188a16f8@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Re; Interest,
+To:     linux-remoteproc@vger.kernel.org
+From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
+Date:   Tue, 22 Aug 2023 16:31:20 -0700
+Reply-To: chnyne@gmail.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVyyUKGW9fb+2mKwYV5whbN55UcGD0+b5IL
+        YIzisklJzcksSy3St0vgyliy7gJLwW7mirb+RSwNjI+Zuhg5OSQETCTWzj3N2MXIxSEksIdJ
+        4vypN8wgDovAamaJ7UeeskM4D5klTk28wwxR1swo8afjJhtIP6+AtcS2VytYQWxmAT2JG1On
+        QMUFJU7OfMICEdeWWLbwNVAzB5CtJvG1qwQkLCwgJvFp2jJ2EFtEQEXi+7otjCA2m4C+xIqv
+        zWA2i4CqxPLfi8BGCglISWy8sp5tAiP/LCTbZiHZNgvJtlkI2xYwsqxilCiuzE0EhlqyiV5y
+        fm5xYkmxXl5qiV5B9iZGYBiertGU28G49FLiIUYBDkYlHt6f656kCLEmlgF1HWKU4GBWEuGV
+        /v4wRYg3JbGyKrUoP76oNCe1+BCjNAeLkjivrdCzZCGB9MSS1OzU1ILUIpgsEwenVAOjt7dS
+        RrnBzE3L/Ftn3CgWOCmV+IZJI/2D3f539TK8Cw50sEvPURbnZ967/eEO3yqLuk+zCz6s2rzw
+        d4/jTiWXr9bmfX1pv2fODd2rd2Te85eCFd6hbUE3tJMm8FbeK9HU05pneO6o5+xb6799uLaf
+        yeG1S4MHz7VN8V+0t51P2qbqlZTy8VeJEktxRqKhFnNRcSIAsdb7mz8CAAA=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 16:45-20230822, Andrew Davis wrote:
-> On 8/22/23 3:12 PM, Nishanth Menon wrote:
-> > On 13:25-20230822, Mathieu Poirier wrote:
-> > > Hi Nishanth,
-> > > 
-> > > On Mon, Aug 07, 2023 at 09:02:47AM -0500, Nishanth Menon wrote:
-> > > > On many platforms, such as Beaglebone-AI64 with many remote
-> > > > processors, firmware configurations provided by the distributions can
-> > > > vary substantially depending on the distribution build's functionality
-> > > > and the specific remote cores enabled in that variant. Ensuring
-> > > > consistent udev rules mapping remoteproc nodes to constant remote
-> > > > proc device indices across distributions (yocto, ubuntu, debian and
-> > > > it's variants, ...) on a board basis can be challenging due to the
-> > > > various functions of these distributions. Varied device node paths
-> > > > create challenges for applications that operate on remote processors,
-> > > > especially in minimal embedded systems(initrd like) that may not
-> > > > have udev-like capabilities and rely on a more straightforward bare
-> > > > filesystem. This challenge is similar to that faced by I2C, RTC or the
-> > > > GPIO subsystems.
-> > > > 
-> > > 
-> > > I'm puzzled by this patch.  I can see how using an alias can help in boards with
-> > > various HW configuration.  That said, and as written above, FW files for remote
-> > > processors can vary based on the build's functionality.  As such "remoteproc3"
-> > > will reference the same HW device on all distributions but the functionality
-> > > enacted by the FW may be different.  As such I don't see how an alias can help
-> > > here.  Can you provide a concrete example that highlights the benefits?
-> > 
-> > Correct - *if* remoteproc3 is the constant node reference.
-> > 
-> > To take a trivial example: We ran into this issue with:
-> > https://github.com/kaofishy/bbai64_cortex-r5_example/blob/main/Makefile#L28
-> > 
-> > remoteproc18 apparently changed numbering in a different build.
-> > 
-> > If remoteproc18 remained the same between different distro builds that
-> > would have probably kept the userspace constant. but it does'nt. it
-> > dependent purely on probe order, which does'nt let userspace remain
-> > consistent.
-> > 
-> > Same reason and motivation to do the following:
-> > https://git.beagleboard.org/beagleboard/repos-arm64/-/blob/main/bb-customizations/suite/bookworm/debian/86-remoteproc-noroot.rules
-> > in one technique to do it - but that only works if all the distros
-> > follow the same udev rules - and there is no reasonable way to enforce
-> > that across distributions.
-> > 
-> 
-> Enforcing distros to behave the same isn't the job of Device Tree, udev
-> rules seems like a reasonable place. Anyone dealing with Linux should know
-> they should not rely on kernel provided device names/numbers
-> (like with disks, network interfaces, etc.).
-> 
-> If you want to have a path that will always work you could use:
-> 
-> /sys/devices/platform/bus@f4000/bus@f4000\:r5fss@78400000/78400000.r5f/remoteproc/
-> 
-> for the same. I don't like that it makes an ABI out of node names,
-> but better than putting any more Linux configuration in DT IMHO.
+Re; Interest,
 
-aliases are there for real reasons. So lets not confuse the two. End of
-the day being able to help userspace is what it does.
+I am interested in discussing the Investment proposal as I explained
+in my previous mail. May you let me know your interest and the
+possibility of a cooperation aimed for mutual interest.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Looking forward to your mail for further discussion.
+
+Regards
+
+------
+Chen Yun - Chairman of CREC
+China Railway Engineering Corporation - CRECG
+China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
+China
+
