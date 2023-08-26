@@ -2,217 +2,136 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9EAC27C40
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Aug 2023 15:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63951C83F16
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 26 Aug 2023 11:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242270AbjHXPlk (ORCPT
+        id S232689AbjHZLzb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Aug 2023 11:41:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
+        Sat, 26 Aug 2023 07:55:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242279AbjHXPlN (ORCPT
+        with ESMTP id S232714AbjHZLzJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Aug 2023 11:41:13 -0400
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2047.outbound.protection.outlook.com [40.107.104.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44151198B
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Aug 2023 08:41:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kXaelzXAq14ozNnVy/ud7QBHGBdberRs3UstA46YKxdv+MwS7YsQf2+6lqa1+V4wsOSps8AIB5Ag8EvVJYlqn6/RUYrK04eG+B9GJ3SYgIi8y1sIQMJeQq4eyH6V6EhgO9xeEc+sLu5/FeYaQD7SqdtXtXrIrrQeyJHevRG/r7u/5NJi1OgQ6di6kC19FxdWG5TflNB3GDRnzqIVoB9kgoqxmjXcL6WpxGMXOeBVQlacRWpmnJhvRp+XRL8KQX21dPy6O48kIfXpIzORzy+YrfitnrAORSXY1mJkjvVROTISIvdiIEQaXhKoBR1hSA1GCYr5VrtcYWQGw1xNPa21IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JVuv+r7N8ZDncKNZhSP9LvGMj9ji2mbJrdsrruoFrKc=;
- b=RgGQUatZLfsisedv+a/aXGjKBiZ4AiQW2Ns2ImnmUX3Oy3OF+NyfP6uLKOvFXyuBYP1wxNUEMsGBY5n+g/GcqxWj3PxKYg80RrPokqLfMbp82aAiliT361yzn69YcnUE2H9quYj95yRdziVDF5zmaM/mb6f2uICLqAO2asvHc5LyPy0tVrQRftHYWnlZfJoIP+T8V8LcoHHQMnfkwSZ1Jidskn3OhuAMY5qxdbt0TTivrlu+Fq8C34NgpSseyA83d0yX+/8R9RWGJAhaK7vcDEOAXCxYHB1DZLh9XN+U7+7OD9zMfYyzycXtBOYYhlPQvrCu/DjHXmKRiAXT7wS0eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVuv+r7N8ZDncKNZhSP9LvGMj9ji2mbJrdsrruoFrKc=;
- b=n3yZXDYb0EWfBFCECFDgDbR3JCGKb1D02a2LoczxyatlXzpmZIkZrhHATIyZrcUe+ZuLdwGBL8MG0Xa0pM2Vl6jJU14EfsbAZSiwW6KJsD0rRuUpn+ANDnNLTIGVvaXIkAgja6mxuWNxzAU4LREsUO7jBhcPFrBjF9ucLsluizg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by DB9PR04MB9819.eurprd04.prod.outlook.com (2603:10a6:10:4c0::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Thu, 24 Aug
- 2023 15:41:08 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7%6]) with mapi id 15.20.6699.027; Thu, 24 Aug 2023
- 15:41:08 +0000
-Message-ID: <694492eb-2506-db1c-85e1-7126144cb5a1@nxp.com>
-Date:   Thu, 24 Aug 2023 18:41:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: Discussion about imx_dsp_rproc FW_READY policy
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        linux-remoteproc@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>,
-        Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
-        Carlo Caione <ccaione@baylibre.com>,
-        Daniel Baluta <daniel.baluta@gmail.com>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>
-References: <CAEnQRZAHzbCBuYvyTxzLJWmEUw4ytY+F8i_Qk0O9Z3ZW0L1bOg@mail.gmail.com>
- <CAEnQRZCqS4+zaUDrFVcHo+eu-8ko4WC2TQtuG=-b5qeA4YU=ew@mail.gmail.com>
- <ZOYwfs0f++QXUJ2j@p14s>
-Content-Language: en-US
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <ZOYwfs0f++QXUJ2j@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0181.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9f::17) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+        Sat, 26 Aug 2023 07:55:09 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E922121
+        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Aug 2023 04:55:06 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-500a8b2b73eso2281151e87.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Aug 2023 04:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693050905; x=1693655705;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XUnM+dBlUdJJh8WhYBTQc60Ln0olkQXWPgBUoORE5b4=;
+        b=FvL6mwF0wR0DWjOnLY0Ob8BitE2cPrl3ScagWIOLePvJpN5yrsrzVnTQLiY/euA03c
+         GXqlHFxMqmBuA72NBfw8D1jiYdMb1nb9xR4I77uuvaJtr6Ppd1q+SU6h7oOclA6ZNitO
+         IlJ2JwxB0xoJkoyzSv5rEl4SBhvu0SD/GDaV3ug/21y+T8EP8KwpjTK7hZINn4bBC5sw
+         2VEs92q1YJ/jm5bJn9ub2Rimohh288/KM94xLyUGGrRdxh3/VNWlHjI90MR70RgbYjpo
+         9x67pvipfu9G7gmq996wpfnzBfYTayhEcaxvlVMssS43J9g2u3lR/pwzsFENTnCHEZnU
+         AdXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693050905; x=1693655705;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUnM+dBlUdJJh8WhYBTQc60Ln0olkQXWPgBUoORE5b4=;
+        b=I04aFyUM61Eyav9bLD06KiX6rrsRHjTuWf+BM4ehkIqoRhgKMgA9nTy8IywTEchyjZ
+         IUIIQNUkdwDUhnJLmayT2YQCJfiiNGuVRBhpRzgyNMyymjdj4QMEboxNA+jk8VGDHBmF
+         j6FUTlhzgB/bAdXHel+E0M7ulFvqQkqvbK/0Ab1s39m4IJ5ri1bK71gGCJtwjbkpMDfG
+         Spi1AorVdeFa7y8UIq5piae5mxM2la1htVrsveoF69BXPyLeWG/OHFqdAyEFxR2m3F5g
+         WFPZyQC0DHCcCn9aTnXX36sfgp1XKoy3PWKpHKi0gUV5HW+zSbaZOZXY6+wvmq8zYusB
+         CcCg==
+X-Gm-Message-State: AOJu0Yzdsi82n70d7i5Daj1j8WQtpFavjk8HM3O2fUgIo7TqIjGknVr5
+        GrV1Vji3jwt1498AqKJnwyVvIw==
+X-Google-Smtp-Source: AGHT+IGd2kiEEDfG6P6HetBgbxGUvsXEK4negKERILqVL6GV5N4v6BAU0/FYlO/wVq0H9yEoOXbIpw==
+X-Received: by 2002:a05:6512:718:b0:500:9524:f734 with SMTP id b24-20020a056512071800b005009524f734mr7883421lfs.42.1693050904870;
+        Sat, 26 Aug 2023 04:55:04 -0700 (PDT)
+Received: from [192.168.1.101] (abyl74.neoplus.adsl.tpnet.pl. [83.9.31.74])
+        by smtp.gmail.com with ESMTPSA id q27-20020ac2515b000000b005008c11ca6dsm678165lfd.184.2023.08.26.04.55.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Aug 2023 04:55:04 -0700 (PDT)
+Message-ID: <3f8914af-d6f7-4ae0-abb9-287d34cbfbdd@linaro.org>
+Date:   Sat, 26 Aug 2023 13:55:03 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|DB9PR04MB9819:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90d2b36f-91c5-4fea-2d78-08dba4b88902
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ir0Isxm2d5Sh7hQVxfnJHjlb0PgjHfFamUxy8ixjyNxwZgImXzHseuwYcXX45ygayL9b/rkwrNc/7a7rCtdMuP+OC5oEf7AkELlfNdEPZyC4p/oyIWQawhc/2EPPFm15m/aX5fHswg8P1EKC7JIExlwFvjaXuUbn30ZOeKNNYI3VD1mn5XBSvXIACROgMtZLEpTLpZ2//wAFiSbQU2XXgdUNeaD18dHUnpxwfIUFIL1t/KKkT4I8neMjKw33v9RCjCXn23xj/y9c8Kcinxq4ptn3UQ2yuG650yCHkDpJgiPLGh+0gAvoldoEykuLkrMtpRxqcen0whhggKrRG7PdQk+0TAkTD3tP9kS7X3ZyUOFwJwfTZF9O24+/zPWGWDI4ixPHJjg1ponfkvheGn/0nahgICNw7rqdQYzcpt0LPG9OCSC0uX459jJOeyGHHBBoKltwseEAy8N+rVp3dWoYZY3pi9m/8kuAwiO27ARw6spYTQmGiIR//u9VbJfg7KqKQ9HQki87u0ws620letQOp5EnNtv3RJPCg9UQUQDkTT7qWn7XgvhJa3x0o/g9kTJTKPCZoA944k3c0imh35ewiCcv0KpElq5CP15dNlnR5Zvj+EdeTJFK6TYOBPq+amW2jpnIFUP7/IBTdSUpmvHh4A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(376002)(346002)(366004)(136003)(186009)(1800799009)(451199024)(2616005)(66899024)(5660300002)(8936002)(4326008)(8676002)(36756003)(83380400001)(44832011)(26005)(38100700002)(6666004)(66556008)(66946007)(66476007)(54906003)(6916009)(316002)(478600001)(966005)(45080400002)(31686004)(53546011)(41300700001)(2906002)(6506007)(6512007)(86362001)(31696002)(6486002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OW93Ly9IMC9yMzNqMGozZFhQMXVhRkNaYkVBMC8ydU81RXdpUzZWUlVuWm82?=
- =?utf-8?B?aU1DenVBVHppSDRaQVlWai9GVVNsMmhlNXZwTWhBWWxFWXJVVVdxWDM4WFIr?=
- =?utf-8?B?bWxZanNWdHJ2YXcrSXpwSGc2ZG5qckhsRU9LMGgxRHRVVG5NL2xlQ1JxM3hL?=
- =?utf-8?B?VjB6MG5iRHJqTVQyQWFPTmxQdGRhSXc1ZGpBSXFkWnNhMENFSjN6UmdhSmNx?=
- =?utf-8?B?a2hDUmR3Z2R6eHVHbGFYMjlBSkl0WEs3YnBQbWtyaDc1RWw2S1E5Qk9GVVl0?=
- =?utf-8?B?U3lwTFBSRlJYckZNcGdsdTg3eTNEQ2pTdi9yRnZhRGlRR1ZGcGZQWUZWR1l4?=
- =?utf-8?B?TmxPZjR1NVlrY0N2L3FqbzRqN21WUjdYUUpaYUZDb0pGaDdXUUVHbHFkSUY1?=
- =?utf-8?B?Q1F6S3B4WjR1cWdQRS91eitWWmZleXFBME9OdW5TRXQzcmhRYWlvSjAxSTVH?=
- =?utf-8?B?dlRXYzNwVFZ3blgwc2R6YzVpZUZNTkF6R0poTks3d3JaTjVBeFNqMEJTVkI0?=
- =?utf-8?B?Y1IyUyswcmRjSVAxV2toWTU4eXVjMVpuMTRGTGpxU1NrUUZheVVxb0lZbEpY?=
- =?utf-8?B?aktaYSt4SGJKdHQ5U3NoWUlqd2plbFZWeFJDVHRjODhaREZKeFBLclhUcDFj?=
- =?utf-8?B?a0xjY1pKWGJLRjJJaDNmY1JRNzR2dXhsRjJZWkdVV056dXpPNDg2QUlqbnp5?=
- =?utf-8?B?NW8yMEl0L2JTYW1WSVhIako0anJiS2w2OFllRGxHZ2VMbytyUFFvdGoxallC?=
- =?utf-8?B?QVY3OEZpZHhUMlBSSFFWQ2ZzODFEbGtOeHdOS2tJNmJ1N0gwb2RITTlORWdQ?=
- =?utf-8?B?YWNlTXkzWnp6cmJPNjlvNjc2MExQOEplVWpPd1B6MzVBN3hDa2QxdFFpQVlt?=
- =?utf-8?B?b2JXRDlZRFlzUGlwQzBQTGRGcnU1QmQwaU9nWUVBeWRtdS8vUGxId2RrTWp3?=
- =?utf-8?B?MHdURU40b2dwbDFialNoeHBoMDdmOUpuUzZFOVdrNnBkbTJma29XdkVwSEV1?=
- =?utf-8?B?UjgvQlprV3pNRzNKWk1BVTh1VzBZSTFLck84anhCd1hod1RkRWNBc08zRHVS?=
- =?utf-8?B?YWlIWmVjWWJJY3ZtUjNvV3AxYUJpZnBJTE9pN01GNEpjVUJlbmxud0UxV3VQ?=
- =?utf-8?B?ekRqMitFeWZ5QTNvaGt0ZGsvNmRUTkQyWlBMeDk4aXZMNkxZU2o2c1d6YmFk?=
- =?utf-8?B?b0ZrdGk4Z3FOY0VyNUtPVmRKcDArMW14U1FMQUZWYVJCaHF0R2VQSEo4MEll?=
- =?utf-8?B?eHdDbm5vS3lieDVUb3NvN21OSDl3YlFXc3lhRXBNMzJabEU0S0ZSM0V5RjBV?=
- =?utf-8?B?QkRrYTlCT0ZCeFhnWlRCYU1tQUVwZHV4VHFCbE15emNEWWFPRytSc0tmQlZP?=
- =?utf-8?B?cC9COUUxZ09hL2RpYlByOURPZGlpRDVCWGRCWjRjb2lTOEdUSG1rbmhBc2FD?=
- =?utf-8?B?ZERZZjJ6Z3dHVW43SnNkeW13eHlobkV1bzhJQ3A4ZnVzc0QvcFFxcE85RCs5?=
- =?utf-8?B?YzVydjgrQ0JoVFJ3bGFxcjZHblVnakkrZkh5TGw4SzFEazRHUWRKNC9YeUx2?=
- =?utf-8?B?akI2UGpxQitSZ0hWdTVLYldjQi92cnVTUzExdVhZL0I0ZElXalIwaEsxQVZ3?=
- =?utf-8?B?M1A0ZmtFRm9YOG1EUkVyc29PdEh0K25HSUM4QUJhcy80aDRNaTVFSzN4MUVi?=
- =?utf-8?B?Y2owYzdpU2Nnak1seXpDTm85WjV5UEY3dWk2T3VEckJ5bG1pc1NxSFBhNkVV?=
- =?utf-8?B?QmxocW5WSmkvUHRnbHU3L3ZFdVhQNlFZRjZ0ODlmVXJSR21CZi9qSEpoS1Rw?=
- =?utf-8?B?SmpLUFNkU3EzMDhwLzZibWFvQmhKTlY1N1VacFNFMzVNOFZ2cllRU3hKQ1Y3?=
- =?utf-8?B?djl5Vnd2MUcwK1VycktFZ2JRVVNiWjVTMHdCVmpQYUlXZFhqekpQTDJnbnlF?=
- =?utf-8?B?bVpZYWxVa3ZlMnYzRk5sMFUxUkFkMG9zZGl4d1NpaGNXS1NuY2dzMHZ0cUF6?=
- =?utf-8?B?VTZ4TXdLd21SNWlPWE1WOHhJdy9WdWFBWG5BcUN4Y1NrcDdVemVxRmI3czgv?=
- =?utf-8?B?aVFtSFdyamV0bzdxTmVTdkpzUVFVL1U1VENvcEMyNXhmWXFwNE5JRDd4dk9u?=
- =?utf-8?Q?QaIZHZZdZ6GXrbeuwZz4cHvKG?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90d2b36f-91c5-4fea-2d78-08dba4b88902
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2023 15:41:08.4366
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j4dWimr5XU2AYLNvVbVVGLLP4AUn17pwORuXU/S3wrQyXHwBFBQjI5XNZRL26enXrPtPyG7jlLLLFuaIjRSkiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9819
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] arm64: dts: qcom: sdm630: Drop RPM bus clocks
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230721-topic-rpm_clk_cleanup-v1-0-cf6cd5c621d5@linaro.org>
+ <20230721-topic-rpm_clk_cleanup-v1-4-cf6cd5c621d5@linaro.org>
+ <24ea1af2-2304-f4f9-e83e-7ae7101e7edd@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <24ea1af2-2304-f4f9-e83e-7ae7101e7edd@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 23.07.2023 16:08, Krzysztof Kozlowski wrote:
+> On 21/07/2023 17:36, Konrad Dybcio wrote:
+>> These clocks are now handled from within the icc framework and are
+>> no longer registered from within the CCF. Remove them.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sdm630.dtsi | 29 ++++-------------------------
+>>  1 file changed, 4 insertions(+), 25 deletions(-)
+>>
+> 
+> Are you sure you removed all of the instances? I think usb still has RPM
+> bus clocks.
+Yes, but Alexey submitted a patch [1] to remove that before I sent this
 
-On 8/23/2023 7:14 PM, Mathieu Poirier wrote:
-> On Tue, Aug 22, 2023 at 05:12:55PM +0300, Daniel Baluta wrote:
->> Hi Mathieu, S.J,
->>
->> Any comments about this?
->>
-> All the questions raised below have been answered in my exchange with Iuliana,
-> but I will complement herein.
->
->> I feel that the Linux kernel driver shouldn't enforce the policy of
->> waiting for a reply or confirmation that the firmware booted.
->>
-> The protocol enacted between a remote processor and the host is very platform
-> dependent.  The need to wait for a reply in the IMX DSP driver predates my time
-> as maintainer of this subsystem and as such can't comment on the reasons it
-> was introduced.  That said I am very disappointed by the complete silence from
-> S.J and the rest of the people on the linux-imx mailing list regarding this
-> issue.
->
->> The Linux kernel driver should offer a mechanism for checking this and
->> the policy should be set either in userspace or via dts.
->>
-> This has already been discussed.  Adapting the Linux kernel driver for all the
-> protocols that can be enacted by remote processors doesn't scale.  This is
-> something that needs to happen in the FW and Iuliana's approach in [1] is
-> appropriate.
+Guess I should have mentioned it..
 
-Thank you, Mathieu!
-I'll try to fix it in fw, continuing with [1] PR.
+Konrad
 
-Iulia
-
->
-> I think the pushback is caused by a lack of understanding of the problem by the
-> maintainers.
->
-> [1]. https://github.com/zephyrproject-rtos/zephyr/pull/61709
->
->> First option would be to have an ioctl but we need to also mirror this
->> in the sysfs interface. Second option would be to have a property in
->> the dts.
->>
->> What do you think?
->>
->> We are trying to fix this in the firmware side:
->>
->> https://github.com/zephyrproject-rtos/zephyr/pull/61709
->>
->> but we are getting some setbacks there too.
->>
->>
->> Daniel.
->>
->> On Wed, Jul 26, 2023 at 11:26 AM Daniel Baluta <daniel.baluta@gmail.com> wrote:
->>> Hello all,
->>>
->>> I want to start this thread in order to clarify what assumptions a
->>> remoteproc driver is able to make
->>> about a firmware loaded on a remote processor.
->>>
->>> Discussion is generated by this thread:
->>>
->>> [1] https://www.spinics.net/lists/kernel/msg4857733.html
->>>
->>> imx_dsp_rproc driver assumes that the remote firmware will send a
->>> notification once it has booted up and this is the default behavior.
->>>
->>> This doesn't work well with Zephyr samples which do not send such notification!
->>>
->>> I want to get an agreement for the following questions:
->>>
->>> 1) What should be the default behavior of a remote proc driver?
->>>
->>> In my opinion it should not make any assumption about the remote part.
->>> Thus by default the driver should not wait for any message!
->>>
->>> 2) How can we support various "protocols" of starting up. Eg (wait for
->>> firmware / no wait for firmware).
->>>
->>> In patch [1] Iulia proposed to add a flag that will select the correct
->>> behavior. As per Mathieu's comments this doesn't
->>> scale up, for next flags.
->>>
->>> How can we solve this? In my opinion using a kernel module parameter
->>> OR a device tree property should be enough.
->>>
->>> What do you think?
->>>
->>> thanks,
->>> Daniel.
+[1] https://lore.kernel.org/linux-arm-msm/20230719073520.2644966-1-alexeymin@postmarketos.org/
