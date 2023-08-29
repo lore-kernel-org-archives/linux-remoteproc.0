@@ -2,290 +2,161 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97224C83F17
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Aug 2023 18:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6A3C83F14
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Aug 2023 18:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjH1SAK (ORCPT
+        id S235926AbjH2STi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Aug 2023 14:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50026 "EHLO
+        Tue, 29 Aug 2023 14:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233002AbjH1R7u (ORCPT
+        with ESMTP id S237981AbjH2STd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 28 Aug 2023 13:59:50 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C45106
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Aug 2023 10:59:45 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1bee82fad0fso19935315ad.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Aug 2023 10:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693245584; x=1693850384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZlJbdWaIR63MB6+cKGfIWNhhvdxDwDKbDPjEhuXlc8=;
-        b=re2vWxTZsJngYqKRFCy6UaCblUfr8fKqPYK+fIVrV60MQdCGt7sP5+DUb8DKQP5DYD
-         oLbwVQ3qoS6hb2+KLIYFlDvt8th9hPvi8oo6wPIA4jTY79tQjLzHQrfbXqKZdxl8aDKU
-         bq8QoxGbQ4VMUb3+xnBM9SHB6UuUyNevVjww783ppAMD7vrvQqbFKzKvq+ZvsUxA9Gwc
-         uIjmhgU2pWeE7++1c6e6XDIDHzDckTTsjg1DKy/1i9TdstvFUKaet6jQw64VTRu+EvGf
-         JoXdp6xFNFTuM/kQJFl8wfzNtRLiopfOeys5dZCP4sFVp/eHP1mDh+wN7eHf35Rl71nl
-         oXDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693245584; x=1693850384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cZlJbdWaIR63MB6+cKGfIWNhhvdxDwDKbDPjEhuXlc8=;
-        b=Tg6d7aPzyp91ORo69AjwnTb2Jt5kv0OerhwtvvXa4ck1b+y3md0U3vV7FNrWakOH2T
-         /8xYuTee8hqkYrz8zVoPRBZFUljmdyUiY/B6xeG0fZuINkb+mrL3xP3hf+chVG3xAlRa
-         KR80P2L/vXKGIeUlJ9cAYiE2uhScbSCRuP7XbTnqcVYBoXIMwGNm2U6YPI4YAAN2dBH2
-         6pz8DXWQwtjlNb4/M7A9pILtolAeeA7gtmBsecUQ1rzGJf7RpjK6s7OHXoPEBe8uWl1w
-         JnV3dv6pU6QV9z//9S8l+OcuY1duC7vsxvrYIxsYGn3STrXa4LToYcrR6jxU1+zoJqAN
-         zcmw==
-X-Gm-Message-State: AOJu0YxgGYu6JiewKK1cSHclOBS120CcKXXsLkq9xE60riuDTHAb2waN
-        XrVhqNczJGAKmLCR2wTuDMp+aYK6LMAc6GM9ZL4=
-X-Google-Smtp-Source: AGHT+IHve46vr57tT4L0A+DoFQ2zYJAJtNF3aR+RJ/z+x45b5NMheAll5oulWOektSu43lHp5g9Nsg==
-X-Received: by 2002:a17:902:ef96:b0:1c0:bcbc:d5d with SMTP id iz22-20020a170902ef9600b001c0bcbc0d5dmr9540910plb.61.1693245584478;
-        Mon, 28 Aug 2023 10:59:44 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3b:df05:c142:c2ef])
-        by smtp.gmail.com with ESMTPSA id jh12-20020a170903328c00b001bf5c12e9fesm7714881plb.125.2023.08.28.10.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 10:59:43 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 11:59:41 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Tue, 29 Aug 2023 14:19:33 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1910D132;
+        Tue, 29 Aug 2023 11:19:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GTe0W358QiXD1smZuwT55Eb05kA+foROCX5WVt0CTz2D7s0tzSXGwIsAZd3kznu0RV+AAXkYUc1i9mL+YbunPEecjjKIYsMwU/UvaOpnVAv5eE+24K/+KhdhzXTs6G3YHElan72bf63aQb0frJEq7R71+bWbBQ3SLp3+w1BmQKliQrOGNMtw8sAAl32Na/yXE13KkFWeoZrWasVGhQFnoKsfNj83JBgl2K7NVHkWgmF2zRbLTtR9w3fnk4HpJPrEKE2K7kk2zdGXDAv0FJkpsQBW4cFG4gFnVJ48xlbTbp94Kqm3VifG4fuS4HpHopVYNCwFnGmerYMQ1rB0saVsFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B1xsTo3yr97HxbCNltfufUIwFQGbj86ukci8T1jWy1A=;
+ b=cTVHfthsYMVf7sHYNNgFEQrGu8v7ZxvN49VLeXpZkrPUywUIbSYj96WR4prElSb/cE6BJH6pOzWCRJycQaP8e5YMuGhl4+KUB60EPRrjIHWSn3AVNf4nflpb1MGUi6F+jo1VcSgLMY7Yz2Ho41ryx+LqohbIt1gmL9YuhvXDKSDzGxrdvRZuXQuGmdMiUxROUEPvGU6lXd86l6bBzE3C3BASc16jqsHJERTEnMykflm2TUiKDchi6Y0W/Qn8V5ClJRne5xOYjez1y7zg8V/Yut/MdQTs06GELaS+5czGL9tpc9phpKvGpKRsabyjv0Fl/URuQIWLto1oJgCutM+hZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B1xsTo3yr97HxbCNltfufUIwFQGbj86ukci8T1jWy1A=;
+ b=U5C5tOqIdWdJs096Wv+G/Azk4aRwPN2Rd5rgIaSPKatRKvme4O4R0HaIZ+mp+MudRXaNM1iSsMfOFJxQ9PzV6BBdu7CmXX5rbZSLuwYxG10iza8pbfukCasvCIC2OqwEJueSj01TCt0SditoZj1NjdpAXE2K7Riz0MTnywPN1nM=
+Received: from BY5PR13CA0031.namprd13.prod.outlook.com (2603:10b6:a03:180::44)
+ by CH0PR12MB5139.namprd12.prod.outlook.com (2603:10b6:610:be::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.34; Tue, 29 Aug
+ 2023 18:19:26 +0000
+Received: from CO1PEPF000044F2.namprd05.prod.outlook.com
+ (2603:10b6:a03:180:cafe::cd) by BY5PR13CA0031.outlook.office365.com
+ (2603:10b6:a03:180::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.17 via Frontend
+ Transport; Tue, 29 Aug 2023 18:19:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F2.mail.protection.outlook.com (10.167.241.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6745.17 via Frontend Transport; Tue, 29 Aug 2023 18:19:26 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 29 Aug
+ 2023 13:19:09 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
+ Transport; Tue, 29 Aug 2023 13:19:08 -0500
+From:   Tanmay Shah <tanmay.shah@amd.com>
+To:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v16 08/14] remoteproc: mediatek: Probe SCP cluster on
- multi-core SCP
-Message-ID: <ZOzgja8mfNefRqP7@p14s>
-References: <20230728023959.12293-1-tinghan.shen@mediatek.com>
- <20230728023959.12293-9-tinghan.shen@mediatek.com>
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Michal Simek <michal.simek@amd.com>
+CC:     Conor Dooley <conor+dt@kernel.org>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+        Ben Levinsky <ben.levinsky@amd.com>,
+        "Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH v4 0/3] add zynqmp TCM bindings
+Date:   Tue, 29 Aug 2023 11:18:57 -0700
+Message-ID: <20230829181900.2561194-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230728023959.12293-9-tinghan.shen@mediatek.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F2:EE_|CH0PR12MB5139:EE_
+X-MS-Office365-Filtering-Correlation-Id: b912a2ea-1ddc-49c1-0ff4-08dba8bc7a5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ay0eY2NPfpEHfqO13UwpkAxZkVu2ZLzD5TZJMx0f368TaQ1xWLfs5OzfqwwUr8+m411ZsUUuO9t4X14dDequC87ozktSi2Bhcfaev11A2bceuvLvIGCFycrDSa+oTG25ebZ6Aq5sySY7vYbeDdqQbPi6XgK9giudLxlqawpDNukfk+1rOPt+gL3/S1bP0bOU2uKpRsaDlMoUI3wgi0soJPzhy4ewuB6ZPQoHwETPaD1BhbAcgNTEbL/V/LC95fBKr7WF2VGFytuv+6+uwJ1Mfxph9oUQKp1WTB4ZETPWUrEq+HYTF9TqKlEOrl2bZbt2p1WP+Al6/rWuiQ+dikFKWyt8Zi5x54K8ETfWzWee3mkSwarrIUir4p9/lv/5jsKmlmSxgZufTkx3hWuM4VtLy+St24xrjQjbRW8Q7/wk4hGrePW0bVQMspDYyeQJ1ru5MOdBNFpZPpskeiJSunHx3iMur5d+wZ0IFPDuTNmgliSO/zeHls00HxUwPYeMwRtGrEdCLxzzkQArj7FQ4T7jOhQ+nJzUmtDB9rPUFXX5BA64lw6Ab7V7Qb/2IRmxq8e2p/n63jkkiA0f3u3y1MVCxPfKTLCkScHIZXH11MkTeiS8cBDBbMY+b6StG5ZM1CcQ3F/FScA+WPBTpr+ZVeRSbWaXyeVYou5SbIIG1AnQdhcyFD3tM/Aqh5SxZ9hOcVvjQV2ZJKq6NgNugqYyvou7I+wcy7i4aOssEJEp0o09/YGPKwXMJ6/44GQtCcVTUTWmXbM/IftVCwqln4VIakMBpQH8cgLt1q7ZHeiH1UMjU0Jd1ri9bTDssRxKoVNN/XO1
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(376002)(136003)(346002)(82310400011)(186009)(1800799009)(451199024)(36840700001)(40470700004)(46966006)(6666004)(83380400001)(966005)(478600001)(1076003)(26005)(426003)(336012)(2906002)(6636002)(316002)(70206006)(41300700001)(70586007)(8936002)(110136005)(54906003)(5660300002)(8676002)(44832011)(4326008)(2616005)(36756003)(40460700003)(86362001)(40480700001)(36860700001)(47076005)(81166007)(356005)(82740400003)(2101003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2023 18:19:26.1353
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b912a2ea-1ddc-49c1-0ff4-08dba8bc7a5c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044F2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5139
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tinghan,
+Tightly-Coupled Memories(TCMs) are low-latency memory that provides
+predictable instruction execution and predictable data load/store
+timing. Each Cortex-R5F processor contains exclusive two 64 KB memory
+banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+In lockstep mode, both 128KB memory is accessible to the cluster.
 
-On Fri, Jul 28, 2023 at 10:39:53AM +0800, Tinghan Shen wrote:
-> The difference of single-core SCP and multi-core SCP device tree is
-> the presence of child device nodes described SCP cores. The SCP
-> driver populates the platform device and checks the child nodes
-> to identify whether it's a single-core SCP or a multi-core SCP.
-> 
-> Add the remoteproc instances of multi-core SCP to the SCP cluster list.
-> When the SCP driver is removed, it cleanup resources by walking
-> through the cluster list.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 118 +++++++++++++++++++++++++++++++++--
->  1 file changed, 113 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index d67dcabdab9e..d9242c3eb0d7 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -855,7 +855,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
->  }
->  
->  static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
-> -				      struct mtk_scp_of_cluster *scp_cluster)
-> +				      struct mtk_scp_of_cluster *scp_cluster,
-> +				      const struct mtk_scp_of_data *of_data)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> @@ -878,7 +879,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  	scp = rproc->priv;
->  	scp->rproc = rproc;
->  	scp->dev = dev;
-> -	scp->data = of_device_get_match_data(dev);
-> +	scp->data = of_data;
->  	scp->cluster = scp_cluster;
->  	platform_set_drvdata(pdev, scp);
->  
-> @@ -951,15 +952,15 @@ static void scp_free(struct mtk_scp *scp)
->  	mutex_destroy(&scp->send_lock);
->  }
->  
-> -static int scp_cluster_init(struct platform_device *pdev,
-> -			    struct mtk_scp_of_cluster *scp_cluster)
-> +static int scp_add_single_core(struct platform_device *pdev,
-> +			       struct mtk_scp_of_cluster *scp_cluster)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
->  	struct mtk_scp *scp;
->  	int ret;
->  
-> -	scp = scp_rproc_init(pdev, scp_cluster);
-> +	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
->  	if (IS_ERR(scp))
->  		return PTR_ERR(scp);
->  
-> @@ -975,6 +976,102 @@ static int scp_cluster_init(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +static int scp_add_multi_core(struct platform_device *pdev,
-> +			      struct mtk_scp_of_cluster *scp_cluster)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct platform_device *cpdev;
-> +	struct device_node *child;
-> +	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
-> +	const struct mtk_scp_of_data **cluster_of_data;
-> +	struct mtk_scp *scp, *temp;
-> +	int core_id = 0;
-> +	int ret;
-> +
-> +	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
-> +
-> +	for_each_available_child_of_node(np, child) {
-> +		if (!cluster_of_data[core_id]) {
-> +			ret = -EINVAL;
-> +			dev_err(dev, "Not support core %d\n", core_id);
-> +			of_node_put(child);
-> +			goto init_fail;
-> +		}
-> +
-> +		cpdev = of_find_device_by_node(child);
-> +		if (!cpdev) {
-> +			ret = -ENODEV;
-> +			dev_err(dev, "Not found platform device for core %d\n", core_id);
-> +			of_node_put(child);
-> +			goto init_fail;
-> +		}
-> +
-> +		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
-> +		put_device(&cpdev->dev);
-> +		if (IS_ERR(scp)) {
-> +			ret = PTR_ERR(scp);
-> +			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
-> +			of_node_put(child);
-> +			goto init_fail;
-> +		}
-> +
-> +		ret = rproc_add(scp->rproc);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
-> +			of_node_put(child);
-> +			scp_free(scp);
-> +			goto init_fail;
-> +		}
-> +
-> +		list_add_tail(&scp->elem, scp_list);
-> +		core_id++;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, scp);
-> +
+As per ZynqMP Ultrascale+ Technical Reference Manual UG1085, following
+is address space of TCM memory. The bindings in this patch series
+introduces properties to accommodate following address space with
+address translation between Linux and Cortex-R5 views.
 
-Here we are setting the platform device for @pdev to the last @scp that was
-created, which is needed because (1) scp_rproc_init() is calling
-platform_set_drvdata() on the child platform devices and (2) we need a handle to
-the cluster list in scp_remove().
+|     |     |     |
+| --- | --- | --- |
+|      *Mode*        |   *R5 View* | *Linux view* |  Notes               |
+| *Split Mode*       | *start addr*| *start addr* |                      |
+| R5_0 ATCM (64 KB)  | 0x0000_0000 | 0xFFE0_0000  |                      |
+| R5_0 BTCM (64 KB)  | 0x0000_2000 | 0xFFE2_0000  |                      |
+| R5_1 ATCM (64 KB)  | 0x0000_0000 | 0xFFE9_0000  | alias of 0xFFE1_0000 |
+| R5_1 BTCM (64 KB)  | 0x0000_2000 | 0xFFEB_0000  | alias of 0xFFE3_0000 |
+|  ___               |     ___     |    ___       |                      |
+| *Lockstep Mode*    |             |              |                      |
+| R5_0 ATCM (128 KB) | 0x0000_0000 | 0xFFE0_0000  |                      |
+| R5_0 ATCM (128 KB) | 0x0002_0000 | 0xFFE2_0000  |                      |
 
-Please add a comment with the above just before calling platform_set_drvdata().
-Otherwise it will be very difficult for people not familiar with the driver to
-understand what is going on.
+References:
+UG1085 TCM address space: https://docs.xilinx.com/r/en-US/ug1085-zynq-ultrascale-trm/Tightly-Coupled-Memory-Address-Map
 
-Otherwise I think we are done.
+This patch series continues previous effort to upstream ZynqMP
+TCM bindings:
+Previous v3 version link:
+https://lore.kernel.org/all/1689964908-22371-1-git-send-email-radhey.shyam.pandey@amd.com/
 
-Thanks,
-Mathieu
+Changes in v4:
+  - Use address-cells and size-cells value 2
+  - Modify ranges property as per new value of address-cells
+    and size-cells
+  - Modify child node "reg" property accordingly 
+  - Remove previous ack for further review
+  - Introduce device-tree change with split mode representation of
+    r5 cluster and each corresponding TCM
+  - Introduce corresponding driver change to use TCM
 
-> +	return 0;
-> +
-> +init_fail:
-> +	list_for_each_entry_safe_reverse(scp, temp, scp_list, elem) {
-> +		list_del(&scp->elem);
-> +		rproc_del(scp->rproc);
-> +		scp_free(scp);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int scp_is_single_core(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct device_node *child;
-> +
-> +	child = of_get_next_available_child(np, NULL);
-> +	if (!child)
-> +		return dev_err_probe(dev, -ENODEV, "No child node\n");
-> +
-> +	of_node_put(child);
-> +	return of_node_name_eq(child, "cros-ec-rpmsg");
-> +}
-> +
-> +static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
-> +{
-> +	int ret;
-> +
-> +	ret = scp_is_single_core(pdev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (ret)
-> +		ret = scp_add_single_core(pdev, scp_cluster);
-> +	else
-> +		ret = scp_add_multi_core(pdev, scp_cluster);
-> +
-> +	return ret;
-> +}
-> +
->  static int scp_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1007,6 +1104,10 @@ static int scp_probe(struct platform_device *pdev)
->  
->  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
->  
-> +	ret = devm_of_platform_populate(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
-> +
->  	ret = scp_cluster_init(pdev, scp_cluster);
->  	if (ret)
->  		return ret;
-> @@ -1101,12 +1202,19 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
->  	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
->  };
->  
-> +static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
-> +	&mt8195_of_data,
-> +	&mt8195_of_data_c1,
-> +	NULL
-> +};
-> +
->  static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
->  	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
->  	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
->  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
->  	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
-> +	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
-> -- 
-> 2.18.0
-> 
+Radhey Shyam Pandey (1):
+  dt-bindings: remoteproc: add Tightly Coupled Memory (TCM) bindings
+
+Tanmay Shah (2):
+  dts: zynqmp: add properties for TCM in remoteproc
+  remoteproc: zynqmp: get TCM from device-tree
+
+ .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 131 ++++++--
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |  28 +-
+ drivers/remoteproc/xlnx_r5_remoteproc.c       | 279 ++++++++++++++----
+ 3 files changed, 356 insertions(+), 82 deletions(-)
+
+
+base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
+-- 
+2.25.1
+
