@@ -2,47 +2,47 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAD3CA0FF3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Sep 2023 08:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A8FCA0FFE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Sep 2023 08:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348660AbjIAIKU (ORCPT
+        id S1348628AbjIAIKW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 Sep 2023 04:10:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
+        Fri, 1 Sep 2023 04:10:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348615AbjIAIKO (ORCPT
+        with ESMTP id S1348624AbjIAIKP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 Sep 2023 04:10:14 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3C0E1708;
-        Fri,  1 Sep 2023 01:10:03 -0700 (PDT)
-X-UUID: eeb03428489e11eea33bb35ae8d461a2-20230901
+        Fri, 1 Sep 2023 04:10:15 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F74510E6;
+        Fri,  1 Sep 2023 01:10:04 -0700 (PDT)
+X-UUID: ef33699c489e11ee8051498923ad61e6-20230901
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=JinC7Bb2PVa8HrO1FW4navqRVoz1EFqkU53gUdtyeis=;
-        b=ngCLUNKBUjH2Pi6QFdb/duF/seALtDhkIiCM/545NcsuauDhuf2Lypsg69ACkg51tWq+WkZGmdbpkj4TS6nHNE4p/MekFIYNbJncqJJ7H50g0IeUloxD+c7Uo2giuRzoUSTbvmfH+POtkujy3PDUYjvhLdn8kz54Lj731XZbKFg=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=EgTVB8/wFgscxLDYs3qg9WMPyo6Fp8L2xH8FV1ZxS8Y=;
+        b=BFa6IlKmqPaBcUvbnbfeCdEHyZ0wmr0hedY/ZQhBdH555Lyj79Ao5LDdBu3oQykErRhy+Iag+LuzJOTB/fdlvyWlhUvBVFOH6cEPf160Num7uF5kcyizPAOoATwrko+A5JrezY+1rEg1zyIX8RsnxIvTm3CeJaFbSCuWBnezarA=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.31,REQID:6372e511-8c47-45de-9c85-251b6b4a062f,IP:0,U
+X-CID-O-INFO: VERSION:1.1.31,REQID:40e979a9-2786-4c55-8d18-e48d1452e02a,IP:0,U
         RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
         release,TS:0
-X-CID-META: VersionHash:0ad78a4,CLOUDID:842d7113-4929-4845-9571-38c601e9c3c9,B
+X-CID-META: VersionHash:0ad78a4,CLOUDID:d69787c2-1e57-4345-9d31-31ad9818b39f,B
         ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
         DKR:0,DKP:0,BRR:0,BRE:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: eeb03428489e11eea33bb35ae8d461a2-20230901
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+X-UUID: ef33699c489e11ee8051498923ad61e6-20230901
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1475225310; Fri, 01 Sep 2023 16:09:54 +0800
+        with ESMTP id 1777927356; Fri, 01 Sep 2023 16:09:55 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Fri, 1 Sep 2023 16:09:53 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 1 Sep 2023 16:09:52 +0800
+ 15.2.1118.26 via Frontend Transport; Fri, 1 Sep 2023 16:09:53 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,9 +58,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v17 09/14] remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power control on dual-core SCP
-Date:   Fri, 1 Sep 2023 16:09:30 +0800
-Message-ID: <20230901080935.14571-10-tinghan.shen@mediatek.com>
+Subject: [PATCH v17 14/14] arm64: dts: mediatek: mt8195: Add SCP 2nd core
+Date:   Fri, 1 Sep 2023 16:09:35 +0800
+Message-ID: <20230901080935.14571-15-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20230901080935.14571-1-tinghan.shen@mediatek.com>
 References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
@@ -71,160 +71,96 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Previously, SCP core 0 controlled the power of L2TCM and dictated that
-SCP core 1 could only boot after SCP core 0. To address this constraint,
-extracted the power control flow of L2TCM and made it shared
-between both cores, enabling support for arbitrary boot order.
+Rewrite the MT8195 SCP device node as a cluster and
+add the SCP 2nd core in it.
 
-The flow for controlling L2TCM power has been incorporated into the
-mt8195_scp_before_load() and mt8195_scp_stop() APIs, which are
-respectively invoked during the rproc->ops->start() and
-rproc->ops->stop() operations. These APIs effectively serve the same
-purpose as the rproc prepare()/unprepare() APIs."
+Since the SCP device node is changed to multi-core structure,
+enable SCP cluster to enable probing SCP core 0.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/remoteproc/mtk_common.h |  3 ++
- drivers/remoteproc/mtk_scp.c    | 71 ++++++++++++++++++++++++++-------
- 2 files changed, 59 insertions(+), 15 deletions(-)
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |  6 +++-
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      | 34 ++++++++++++++-----
+ 2 files changed, 30 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 1438159ae736..fea05bbba9aa 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -106,6 +106,9 @@ struct mtk_scp_of_cluster {
- 	size_t l1tcm_size;
- 	phys_addr_t l1tcm_phys;
- 	struct list_head mtk_scp_list;
-+	/* Prevent concurrent operations of this structure and L2TCM power control. */
-+	struct mutex cluster_lock;
-+	u32 l2tcm_refcnt;
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+index 37a3e9de90ff..4584077d3a4c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+@@ -991,7 +991,11 @@
+ 	interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
  };
  
- struct mtk_scp {
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 685e2c2bb6ee..59d9182a8d1e 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -454,19 +454,37 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
- 	return 0;
- }
+-&scp {
++&scp_cluster {
++	status = "okay";
++};
++
++&scp_c0 {
+ 	status = "okay";
  
--static int mt8195_scp_before_load(struct mtk_scp *scp)
-+static int mt8195_scp_l2tcm_on(struct mtk_scp *scp)
- {
--	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
--	writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-+
-+	mutex_lock(&scp_cluster->cluster_lock);
-+
-+	if (scp_cluster->l2tcm_refcnt == 0) {
-+		/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-+		writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+
-+		/* Power on L2TCM */
-+		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+		scp_sram_power_on(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-+				  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	}
-+
-+	scp_cluster->l2tcm_refcnt += 1;
+ 	firmware-name = "mediatek/mt8195/scp.img";
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index 48b72b3645e1..7809118f74fb 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -922,14 +922,30 @@
+ 			clocks = <&infracfg_ao CLK_INFRA_AO_GCE2>;
+ 		};
  
-+	mutex_unlock(&scp_cluster->cluster_lock);
+-		scp: scp@10500000 {
+-			compatible = "mediatek,mt8195-scp";
+-			reg = <0 0x10500000 0 0x100000>,
+-			      <0 0x10720000 0 0xe0000>,
+-			      <0 0x10700000 0 0x8000>;
+-			reg-names = "sram", "cfg", "l1tcm";
+-			interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
++		scp_cluster: scp@10500000 {
++			compatible = "mediatek,mt8195-scp-dual";
++			reg = <0 0x10720000 0 0xe0000>, <0 0x10700000 0 0x8000>;
++			reg-names = "cfg", "l1tcm";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0x10500000 0x100000>;
+ 			status = "disabled";
 +
-+	return 0;
-+}
++			scp_c0: scp@0 {
++				compatible = "mediatek,scp-core";
++				reg = <0x0 0xa0000>;
++				reg-names = "sram";
++				interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
++				status = "disabled";
++			};
 +
-+static int mt8195_scp_before_load(struct mtk_scp *scp)
-+{
- 	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
++			scp_c1: scp@a0000 {
++				compatible = "mediatek,scp-core";
++				reg = <0xa0000 0x20000>;
++				reg-names = "sram";
++				interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH 0>;
++				status = "disabled";
++			};
+ 		};
  
--	/* enable SRAM clock */
--	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
--	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
--	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
--	scp_sram_power_on(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
--			  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	mt8195_scp_l2tcm_on(scp);
-+
- 	scp_sram_power_on(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
+ 		scp_adsp: clock-controller@10720000 {
+@@ -2374,7 +2390,7 @@
  
- 	/* enable MPU for all memory regions */
-@@ -479,6 +497,8 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- {
- 	scp->data->scp_reset_assert(scp);
- 
-+	mt8195_scp_l2tcm_on(scp);
-+
- 	scp_sram_power_on(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
- 
- 	/* enable MPU for all memory regions */
-@@ -645,14 +665,31 @@ static void mt8192_scp_stop(struct mtk_scp *scp)
- 	writel(0, scp->cluster->reg_base + MT8192_CORE0_WDT_CFG);
- }
- 
-+static void mt8195_scp_l2tcm_off(struct mtk_scp *scp)
-+{
-+	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-+
-+	mutex_lock(&scp_cluster->cluster_lock);
-+
-+	if (scp_cluster->l2tcm_refcnt > 0)
-+		scp_cluster->l2tcm_refcnt -= 1;
-+
-+	if (scp_cluster->l2tcm_refcnt == 0) {
-+		/* Power off L2TCM */
-+		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+		scp_sram_power_off(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-+				   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	}
-+
-+	mutex_unlock(&scp_cluster->cluster_lock);
-+}
-+
- static void mt8195_scp_stop(struct mtk_scp *scp)
- {
--	/* Disable SRAM clock */
--	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
--	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
--	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
--	scp_sram_power_off(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
--			   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	mt8195_scp_l2tcm_off(scp);
-+
- 	scp_sram_power_off(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
- 
- 	/* Disable SCP watchdog */
-@@ -661,6 +698,8 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
- 
- static void mt8195_scp_c1_stop(struct mtk_scp *scp)
- {
-+	mt8195_scp_l2tcm_off(scp);
-+
- 	/* Power off CPU SRAM */
- 	scp_sram_power_off(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
- 
-@@ -1108,6 +1147,7 @@ static int scp_probe(struct platform_device *pdev)
- 	}
- 
- 	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
-+	mutex_init(&scp_cluster->cluster_lock);
- 
- 	ret = devm_of_platform_populate(dev);
- 	if (ret)
-@@ -1131,6 +1171,7 @@ static void scp_remove(struct platform_device *pdev)
- 		rproc_del(scp->rproc);
- 		scp_free(scp);
- 	}
-+	mutex_destroy(&scp_cluster->cluster_lock);
- }
- 
- static const struct mtk_scp_of_data mt8183_of_data = {
+ 		video-codec@18000000 {
+ 			compatible = "mediatek,mt8195-vcodec-dec";
+-			mediatek,scp = <&scp>;
++			mediatek,scp = <&scp_c0>;
+ 			iommus = <&iommu_vdo M4U_PORT_L21_VDEC_MC_EXT>;
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
+@@ -2540,7 +2556,7 @@
+ 				 <&iommu_vdo M4U_PORT_L19_VENC_REF_LUMA>,
+ 				 <&iommu_vdo M4U_PORT_L19_VENC_REF_CHROMA>;
+ 			interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH 0>;
+-			mediatek,scp = <&scp>;
++			mediatek,scp = <&scp_c0>;
+ 			clocks = <&vencsys CLK_VENC_VENC>;
+ 			clock-names = "venc_sel";
+ 			assigned-clocks = <&topckgen CLK_TOP_VENC>;
 -- 
 2.18.0
 
