@@ -2,102 +2,105 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A0FC83F1A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Aug 2023 18:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8DCCA0FE9
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Sep 2023 08:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245588AbjH3Sxf (ORCPT
+        id S1348589AbjIAIKL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
+        Fri, 1 Sep 2023 04:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344182AbjH3SQ1 (ORCPT
+        with ESMTP id S231522AbjIAIKJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 30 Aug 2023 14:16:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A01132;
-        Wed, 30 Aug 2023 11:16:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F6B961CFD;
-        Wed, 30 Aug 2023 18:16:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3576C433C7;
-        Wed, 30 Aug 2023 18:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693419383;
-        bh=TSAy/SHd+SvDS4iwv3tI4XLODuqMPzD59N5gfWt58t0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a+LTBiviG7Rn6pavN4JHbQs9/Wq/L66v8FN2xMUNqWSC73yFnpZE10w8TD4ovU5q4
-         WUKOLAr0M3FDYs6DybUW72XCZXjHYCpLE/cBYKFREJFnbqdWsbqhNEAkYSLBGlBI2j
-         ggfzDhh2aeUOrAzXrvfqkeRZet+PWYgzAWvtFJIc5bfFfOrQj9YXcAiSvQr5DfTVNm
-         ZXVDLaFmmygQjp5TAZb6Sxyx44j8oUUlmimpj7ImU719wjbHvrLyBeTFKnipiKDX2i
-         E+YnJHrOV6xJj2fqbQad1QvCoi5/UM8g9An/NZK27Zlcw6IKYjIHnxF9hHuTgXE74Z
-         BVZNx4i52xVbg==
-Received: (nullmailer pid 463580 invoked by uid 1000);
-        Wed, 30 Aug 2023 18:16:21 -0000
-Date:   Wed, 30 Aug 2023 13:16:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Tanmay Shah <tanmay.shah@amd.com>
-Cc:     Ben Levinsky <ben.levinsky@amd.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        Fri, 1 Sep 2023 04:10:09 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30EFE10E5;
+        Fri,  1 Sep 2023 01:09:59 -0700 (PDT)
+X-UUID: ee611776489e11eea33bb35ae8d461a2-20230901
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=PyPai8NIgkWNOmARB7iXnlYxYbG0CqFHrErGakUUcmY=;
+        b=OEQ/g/QqN9FZK8sTTF0y476Y2ZbbPXnWrO/czqps75ubtb1y9Om+CuBUNXXdR1s7eJzgT/Dr9235Z+A2AwpoxXo9kOu5UeLtsrzzWTW3VQ5k99/6HNQBKkro2CQH7ci3nChbmzI2JV/4bdTfzpyib3B5dcCNVv7x2VHD2vD8AyI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.31,REQID:1d7c4c9c-7a9d-454c-97b5-caac8f2e759a,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:0ad78a4,CLOUDID:01f90020-33fd-4aaa-bb43-d3fd68d9d5ae,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
+        DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ee611776489e11eea33bb35ae8d461a2-20230901
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1497995999; Fri, 01 Sep 2023 16:09:53 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 1 Sep 2023 16:09:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 1 Sep 2023 16:09:53 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@amd.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v4 1/3] dt-bindings: remoteproc: add Tightly Coupled
- Memory (TCM) bindings
-Message-ID: <169341938045.463502.9445399366399743283.robh@kernel.org>
-References: <20230829181900.2561194-1-tanmay.shah@amd.com>
- <20230829181900.2561194-2-tanmay.shah@amd.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v17 12/14] remoteproc: mediatek: Report watchdog crash to all cores
+Date:   Fri, 1 Sep 2023 16:09:33 +0800
+Message-ID: <20230901080935.14571-13-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230901080935.14571-1-tinghan.shen@mediatek.com>
+References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230829181900.2561194-2-tanmay.shah@amd.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+To ensure consistent behavior, the watchdog timeout handling of the
+multi-core SCP should reset the whole SCP sub-system when watchdog
+timeout. Triggering the rproc recovery flow on all instances will
+ensure proper recovery of the SCP sub-system.
 
-On Tue, 29 Aug 2023 11:18:58 -0700, Tanmay Shah wrote:
-> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> 
-> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-> UltraScale+ platform. It will help in defining TCM in device-tree
-> and make it's access platform agnostic and data-driven.
-> 
-> Tightly-coupled memories(TCMs) are low-latency memory that provides
-> predictable instruction execution and predictable data load/store
-> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
-> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
-> 
-> The TCM resources(reg, reg-names and power-domain) are documented for
-> each TCM in the R5 node. The reg and reg-names are made as required
-> properties as we don't want to hardcode TCM addresses for future
-> platforms and for zu+ legacy implementation will ensure that the
-> old dts w/o reg/reg-names works and stable ABI is maintained.
-> 
-> It also extends the examples for TCM split and lockstep modes.
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Changes in v4:
->   - Use address-cells and size-cells value 2
->   - Modify ranges property as per new value of address-cells
->     and size-cells
->   - Modify child node "reg" property accordingly
->   - Remove previous ack for further review
-> 
-> 
->  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 131 +++++++++++++++---
->  1 file changed, 113 insertions(+), 18 deletions(-)
-> 
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+---
+ drivers/remoteproc/mtk_scp.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 49b2ca2b30b3..37ee5e6286ee 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -68,8 +68,14 @@ EXPORT_SYMBOL_GPL(scp_put);
+ 
+ static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
+ {
++	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
++	struct mtk_scp *scp_node;
++
+ 	dev_err(scp->dev, "SCP watchdog timeout! 0x%x", scp_to_host);
+-	rproc_report_crash(scp->rproc, RPROC_WATCHDOG);
++
++	/* report watchdog timeout to all cores */
++	list_for_each_entry(scp_node, &scp_cluster->mtk_scp_list, elem)
++		rproc_report_crash(scp_node->rproc, RPROC_WATCHDOG);
+ }
+ 
+ static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
+-- 
+2.18.0
 
