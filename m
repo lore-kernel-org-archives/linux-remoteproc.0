@@ -2,52 +2,53 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A824C71153
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Sep 2023 10:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4286C71153
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  2 Sep 2023 10:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351993AbjIBKpU (ORCPT
+        id S1344518AbjIBKtl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 2 Sep 2023 06:45:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
+        Sat, 2 Sep 2023 06:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234809AbjIBKpU (ORCPT
+        with ESMTP id S234809AbjIBKtk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 2 Sep 2023 06:45:20 -0400
+        Sat, 2 Sep 2023 06:49:40 -0400
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC48CC;
-        Sat,  2 Sep 2023 03:45:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F151DF3;
+        Sat,  2 Sep 2023 03:49:37 -0700 (PDT)
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 382Aiq0Q052850;
-        Sat, 2 Sep 2023 05:44:52 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 382AnTE6053508;
+        Sat, 2 Sep 2023 05:49:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1693651492;
-        bh=MTknmprLmnJQFCQzNZrSewxgOvvJ97mCk4oPPBtNwDw=;
+        s=ti-com-17Q1; t=1693651769;
+        bh=eSltXZan7LriIla3Y/IlaziApsmbM659wA9eteSvgpE=;
         h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=dZniak8IzFjCeDlVFVk1v5VGKK7EfUikHGUm46hCdYjObmfF2789xJ08NHl/EtgIf
-         WkYapRH751NYiNgQv6idpB5SUsfSmEfrVxhjvYxfFYJOneqdfl7sy8+s4yhDlzWAGT
-         gQ0imQgr31/gr9PDv+8ZEdyNgmgXrxwUBmhJGNZE=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 382AiqMr004272
+        b=JGxNtEuL9dVwlT8GcMA3L//75O6YPUslI9ojSaes306PUq8wQgHqN6raeV07PonzC
+         gkzghRgxcPfMog7xmMYTQ6IMgsIlITgWZMA2ITVbFmJOiEp9iMjdBYK/IOMV8XJK4d
+         UT5jVOWf/9uFMLEmE6AhTiMCOQZnjzhH5fyI0VwM=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 382AnTn5007790
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 2 Sep 2023 05:44:52 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Sat, 2 Sep 2023 05:49:29 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 2
- Sep 2023 05:44:51 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2023 05:49:28 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 2 Sep 2023 05:44:51 -0500
-Received: from [10.249.48.175] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 382Aipkg000497;
-        Sat, 2 Sep 2023 05:44:51 -0500
-Message-ID: <10acb196-b7e4-1b19-6015-c44e72bea1cc@ti.com>
-Date:   Sat, 2 Sep 2023 05:44:51 -0500
+ Frontend Transport; Sat, 2 Sep 2023 05:49:29 -0500
+Received: from [10.249.48.175] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 382AnSYv001654;
+        Sat, 2 Sep 2023 05:49:28 -0500
+Message-ID: <d2abf77e-5a9b-0394-8105-e31832c813ef@ti.com>
+Date:   Sat, 2 Sep 2023 05:49:28 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v5 4/5] remoteproc: k3: Split out functions common with M4
- driver
+Subject: Re: [PATCH v5 5/5] remoteproc: k3-m4: Add a remoteproc driver for M4F
+ subsystem
+Content-Language: en-US
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
 CC:     <andersson@kernel.org>, <p.zabel@pengutronix.de>,
         <martyn.welch@collabora.com>, <nm@ti.com>, <vigneshr@ti.com>,
@@ -57,10 +58,9 @@ CC:     <andersson@kernel.org>, <p.zabel@pengutronix.de>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>
 References: <20230808044529.25925-1-hnagalla@ti.com>
- <20230808044529.25925-5-hnagalla@ti.com> <ZO5LVy9bx7Q3iILi@p14s>
-Content-Language: en-US
+ <20230808044529.25925-6-hnagalla@ti.com> <ZO5OnjJAQJC0UCq+@p14s>
 From:   Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <ZO5LVy9bx7Q3iILi@p14s>
+In-Reply-To: <ZO5OnjJAQJC0UCq+@p14s>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -68,33 +68,22 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
-
-On 8/29/23 14:47, Mathieu Poirier wrote:
->> Signed-off-by: Martyn Welch<martyn.welch@collabora.com>
->> Signed-off-by: Hari Nagalla<hnagalla@ti.com>
->> ---
->> Changes since v2:
->>   - New patch (reordered refactored from v2)
->>
->> Changes since v3:
->>   - Removed "ipc_only" element from k3_rproc structure
->>   - Refactored to bring 3 more common functions
+On 8/29/23 15:01, Mathieu Poirier wrote:
+>> + *
+>> + * ti_k3_m4_remoteproc.c:
+>> + * Copyright (C) 2021 Texas Instruments Incorporated -https://www.ti.com/
+>> + *	Hari Nagalla<hnagalla@ti.com>
+>>    */
 >>   
->> Changes since v4:
->>   - None
->>
->>   drivers/remoteproc/Makefile               |   2 +-
->>   drivers/remoteproc/ti_k3_common.c         | 513 +++++++++++++++++++
->>   drivers/remoteproc/ti_k3_common.h         | 103 ++++
->>   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 598 ++--------------------
->>   4 files changed, 646 insertions(+), 570 deletions(-)
->>   create mode 100644 drivers/remoteproc/ti_k3_common.c
->>   create mode 100644 drivers/remoteproc/ti_k3_common.h
-> This patch is hard to follow because of all the things it does.  Please do the
-> structures in one patch and the functions in another.
+>>   #ifndef REMOTEPROC_TI_K3_COMMON_H
+>> @@ -82,6 +86,7 @@ struct k3_rproc {
+>>   	u32 ti_sci_id;
+>>   	struct mbox_chan *mbox;
+>>   	struct mbox_client client;
+>> +	bool ipc_only;
+>  From the comments above this should have been removed.
 > 
-I will re-structure the patches as you suggested for driver and also 
-separate the device tree node patches to avoid clutter.
+I got it removed from the driver replacing the ipc_only flag with 
+runtime logic, but failed to remove from header file. Will fix it and 
+send the patch series. Thanks
 
-Thanks
