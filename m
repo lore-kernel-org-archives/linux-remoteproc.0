@@ -2,191 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A5EC83F33
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 16:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C5AC83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 16:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235863AbjIDQOL (ORCPT
+        id S244795AbjIDQyD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 12:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
+        Mon, 4 Sep 2023 12:54:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233751AbjIDQOL (ORCPT
+        with ESMTP id S244109AbjIDQyC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 12:14:11 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157709D;
-        Mon,  4 Sep 2023 09:14:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9E422B80DB3;
-        Mon,  4 Sep 2023 16:14:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3009C433CD;
-        Mon,  4 Sep 2023 16:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693844044;
-        bh=XZLlMsqp967+lb+1ZSRH4MYxUufjgFUQchIzouq7qEk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=a+8l/MfCyM2HRm4w/+2Sf0ABYtIrmE4BBImCeD7qOdNkqUiiCGJjIISzjdDRwVpES
-         La7DGWaqyrt2cuHLs16qMJV2zCUrZzW2gUwNMtxR1LQo+Fr5dlpPca5wDY7HGqwuyJ
-         Z2SjUpbvETvTBlN1ZOSOBs5snb5D1RtQUF8EjJkfVGOXyJ8f2ybq6TIqzw6BOq9PTN
-         xJQyyQL8muqfA6xMYX2MwcG8tf7aWmjWPYR7OJhJ8DQIL3jgHfnbW21hUhBia4PiDv
-         Q6Cjd0c/BBQPClZ1mrSrCREZs8tHk0gTLkrhjT4TxXsrzbTEABPYe/GhYCr8LU6B1J
-         DxNHFkzz/miow==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dylan Van Assche <me@dylanvanassche.be>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Ye Xingchen <ye.xingchen@zte.com.cn>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
-        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] remoteproc updates for v6.6
-Date:   Mon,  4 Sep 2023 09:16:19 -0700
-Message-ID: <20230904161621.2954993-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.42.0
+        Mon, 4 Sep 2023 12:54:02 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DF3CCB;
+        Mon,  4 Sep 2023 09:53:59 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 384GBrgi015072;
+        Mon, 4 Sep 2023 16:53:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=1YJWvGjhm2mwos0uHvBOuQE1B8xp4AZf1klUImsFbGM=;
+ b=JtervzEaAhz/MWERxEMV9XzQnj1YkvCXswRR9Ucwb/anUw1+9aCiDibNb+LeqO6Z2zOm
+ nPfAKU847KGq7wN2H3plR3e+SNg2D/st42+hpdbZg0PBI4msAtPS5P1+/8y8hgU4WI5L
+ 6+rbIRxq3EeKar4VnIx80pBNDdYjviynZT4C1iiQNx43KagdrPCCHaPaO79SRNVgzKCt
+ By81B0ssiy3cMec/XahN17jKVeVsUtRu+VLSaJe/wASuToGJmNP8C3CMPt46o548GphB
+ 9gA/AgJuj9pyii/4SxHWFnLX6R0R1jP1c6o+LyeCuxurACnXk6UE2SG2vaX63ShVBjhG ag== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3suwedbv5w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 Sep 2023 16:53:55 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 384Grsr0026222
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 4 Sep 2023 16:53:54 GMT
+Received: from [10.50.40.93] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 4 Sep
+ 2023 09:53:50 -0700
+Message-ID: <509406eb-8093-4bcf-820f-8e5210e1539d@quicinc.com>
+Date:   Mon, 4 Sep 2023 22:23:47 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: qcom: Add NOTIFY_FATAL event type to SSR
+ subdevice
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_sjaganat@quicinc.com>
+References: <20230503062146.3891-1-quic_viswanat@quicinc.com>
+ <egnmb647g7x7e74j4g2jddwho23ulmbap2q4eimcyj7y4qvdlz@zmaydxodu2a6>
+From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
+In-Reply-To: <egnmb647g7x7e74j4g2jddwho23ulmbap2q4eimcyj7y4qvdlz@zmaydxodu2a6>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QTSc5zeDAyQGIZ-M6X2prj8osOc6LzJq
+X-Proofpoint-GUID: QTSc5zeDAyQGIZ-M6X2prj8osOc6LzJq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-04_09,2023-08-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=809 impostorscore=0 clxscore=1011 phishscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309040151
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+On 7/16/2023 1:50 AM, Bjorn Andersson wrote:
+> On Wed, May 03, 2023 at 11:51:46AM +0530, Vignesh Viswanathan wrote:
+>> Currently the SSR subdevice notifies the client driver on crash of the
+>> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
+>> However the client driver might be interested to know that the device
+>> has crashed immediately to pause any further transactions with the
+>> rproc. This calls for an event to be sent to the driver in the IRQ
+>> context as soon as the rproc crashes.
+>>
+> 
+> Please make your argumentation more concrete, I can only guess what
+> client driver you're referring to.
+> 
+> You can do this either by spelling out which actual problem you're
+> solving, or better yet, include some patches in the series that actually
+> uses this interface.
+> 
 
-are available in the Git repository at:
+Hi Bjorn,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.6
+Apologies for the delay in response.
 
-for you to fetch changes up to 18cf4fcd7bdc1864e75127f4fd15abc0bc76ec7f:
+The client driver in my scenario is a Wi-Fi driver which is continuously
+queuing data to the remoteproc and needs to know if remoteproc crashes
+as soon as possible to stop queuing further data and also dump some 
+debug statistics on the driver side that could potentially help in debug
+of why the remoteproc crashed.
 
-  remoteproc: pru: add support for configuring GPMUX based on client setup (2023-08-21 15:19:28 -0600)
+Also in the case with upcoming Wi-Fi 7 targets with multi-link 
+operation, the driver might need to know that the remoteproc has crashed
+instantly to handle some multi-link specific handling.
 
-----------------------------------------------------------------
-remoteproc updates for v6.6
+The ath11k/ath12k WLAN drivers today partially have support for handling
+such FATAL notification but it has not been upstreamed yet.
 
-Support for booting the iMX remoteprocs using MMIO, instead of SMCCC is
-added. The iMX driver is also extended to support delivering interrupts
-from an arbitrary number of vdev.
+Reference patch: 
+https://git.codelinaro.org/clo/qsdk/oss/system/feeds/wlan-open/-/blob/win.wlan_host_opensource.1.0/mac80211/patches/031-ath11k-print-stats-on-crash.patch 
+-- event SUBSYS_PREPARE_FOR_FATAL_SHUTDOWN.
 
-Support is added to the TI PRU driver, to allow GPMUX to be controlled
-from DeviceTree.
+Also, Mukesh mentioned earlier that in some MSM targets with PCIe where 
+latency cannot be tolerated, a similar downstream patch adds support for 
+"early notifier". If this patch is accepted, the early notifier can also 
+be replaced to use the same NOTIFY_FATAL event from SSR Subdevice
 
-The Qualcomm coredump collector is extended to fall back to generating a
-full coredump, in the case that the loaded firmware doesn't support
-generating minidump. The overly terse MD abbreviation of "MINIDUMP" is
-expanded, to make the code easier on the eye.
+https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/7583d24de337aa1bf7c375a7da706af9b995b9a1#a840754ebb0e24e88adbf48177e1abd0830b72d2
+https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/257de41c63a5a51a081cc7887cdaa4a46e4d1744
 
-The list of Qualcomm Sensor Low Power Island (SLPI) instances supported
-is cleaned up, and SDM845 is added. SDM630/636/660 support for the modem
-subsystem (mss) is added.
+Thanks,
+Vignesh
 
-All the Qualcomm drivers are transitioned to of_reserved_mem_lookup()
-instead of open coding the resolution of reserved-memory regions, to
-gain handling of error cases. A couple of drivers are transitioned to
-use devm_platform_ioremap_resource_byname().
-
-The stm32 remoteproc driver's PM operations are updated to modern
-macros, to avoid the "unused variable"-warning in some configurations.
-
-Drivers are transitioned away from directly including of_device.h.
-
-----------------------------------------------------------------
-Alexey Minnekhanov (2):
-      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Add SDM660 compatible
-      remoteproc: qcom: q6v5-mss: Add support for SDM630/636/660
-
-Arnd Bergmann (1):
-      remoteproc: stm32: fix incorrect optional pointers
-
-Dylan Van Assche (3):
-      dt-bindings: remoteproc: qcom: adsp: add qcom,sdm845-slpi-pas compatible
-      remoteproc: qcom: pas: refactor SLPI remoteproc init
-      remoteproc: qcom: pas: add SDM845 SLPI compatible
-
-Konrad Dybcio (2):
-      dt-bindings: remoteproc: qcom: sm6115-pas: Add QCM2290
-      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Fix 8996 clocks
-
-Krzysztof Kozlowski (4):
-      dt-bindings: remoteproc: qcom,pas: correct memory-region constraints
-      dt-bindings: remoteproc: qcom,sm6115-pas: correct memory-region constraints
-      dt-bindings: remoteproc: qcom,sm8550-pas: require memory-region
-      dt-bindings: remoteproc: qcom,adsp: bring back firmware-name
-
-Marek Vasut (2):
-      dt-bindings: remoteproc: imx_rproc: Support i.MX8MN/P MMIO
-      remoteproc: imx_rproc: Switch iMX8MN/MP from SMCCC to MMIO
-
-Mukesh Ojha (1):
-      remoteproc: qcom: Expand MD_* as MINIDUMP_*
-
-Peng Fan (1):
-      remoteproc: imx_rproc: iterate all notifiyids in rx callback
-
-Rob Herring (1):
-      remoteproc: Explicitly include correct DT includes
-
-Siddharth Gupta (2):
-      remoteproc: core: Export the rproc coredump APIs
-      remoteproc: qcom: Add full coredump fallback mechanism
-
-Stephan Gerhold (1):
-      remoteproc: qcom: Use of_reserved_mem_lookup()
-
-Tero Kristo (1):
-      remoteproc: pru: add support for configuring GPMUX based on client setup
-
-Ye Xingchen (2):
-      remoteproc: qcom: q6v5: use devm_platform_ioremap_resource_byname()
-      remoteproc: qcom: wcnss: use devm_platform_ioremap_resource_byname()
-
- .../bindings/remoteproc/fsl,imx-rproc.yaml         |  20 ++++
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  24 +++++
- .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  12 ++-
- .../bindings/remoteproc/qcom,pas-common.yaml       |   1 -
- .../bindings/remoteproc/qcom,qcs404-pas.yaml       |   3 +-
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |   3 +-
- .../bindings/remoteproc/qcom,sc8180x-pas.yaml      |   3 +-
- .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   3 +-
- .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   3 +-
- .../bindings/remoteproc/qcom,sm6115-pas.yaml       |  39 +++++---
- .../bindings/remoteproc/qcom,sm6350-pas.yaml       |   3 +-
- .../bindings/remoteproc/qcom,sm8150-pas.yaml       |   3 +-
- .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   3 +-
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       |   1 +
- drivers/remoteproc/imx_dsp_rproc.c                 |   3 +-
- drivers/remoteproc/imx_rproc.c                     |  73 ++++++++++++++-
- drivers/remoteproc/imx_rproc.h                     |   2 +
- drivers/remoteproc/omap_remoteproc.c               |   3 +-
- drivers/remoteproc/pru_rproc.c                     |  25 ++++-
- drivers/remoteproc/qcom_common.c                   |  21 +++--
- drivers/remoteproc/qcom_q6v5_adsp.c                |  26 +++---
- drivers/remoteproc/qcom_q6v5_mss.c                 |  87 ++++++++++++++----
- drivers/remoteproc/qcom_q6v5_pas.c                 | 102 ++++++++-------------
- drivers/remoteproc/qcom_q6v5_wcss.c                |   3 +-
- drivers/remoteproc/qcom_sysmon.c                   |   1 -
- drivers/remoteproc/qcom_wcnss.c                    |  30 +++---
- drivers/remoteproc/qcom_wcnss_iris.c               |   1 +
- drivers/remoteproc/rcar_rproc.c                    |   3 +-
- drivers/remoteproc/remoteproc_coredump.c           |   2 +
- drivers/remoteproc/remoteproc_internal.h           |   4 -
- drivers/remoteproc/st_slim_rproc.c                 |   1 -
- drivers/remoteproc/stm32_rproc.c                   |  16 ++--
- drivers/remoteproc/ti_k3_dsp_remoteproc.c          |   2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c           |   3 +-
- drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
- include/linux/remoteproc.h                         |   4 +
- 36 files changed, 362 insertions(+), 173 deletions(-)
+> Regards,
+> Bjorn
