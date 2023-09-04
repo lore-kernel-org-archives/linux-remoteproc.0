@@ -2,123 +2,191 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BE3C83F33
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 16:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A5EC83F33
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 16:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353287AbjIDQKV (ORCPT
+        id S235863AbjIDQOL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 12:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38044 "EHLO
+        Mon, 4 Sep 2023 12:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233751AbjIDQKU (ORCPT
+        with ESMTP id S233751AbjIDQOL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 12:10:20 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32879E;
-        Mon,  4 Sep 2023 09:10:16 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 384FxWiw024583;
-        Mon, 4 Sep 2023 16:10:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=b/7KLJc4yclV+oIeJUVHyWAmd0IXOxpWyqJ6VrhHEeM=;
- b=cW2nD6fIgoROubv4NzOhX/TlcbbDzod27evgXuXHla8YZUBk9HbjXt5oTw8gJ9r+fIXh
- SCu2nNORXCFzcXlpiTjiG75AhlqEKlkiTh9iky/Ok/R88Fhza/nTXszwcvx3Wx5xGSph
- 1FCkgscORzv0KuNshJCB0EeyNU1H1dqPNrZvo9Zw24SQdjEbWKTt4QGDyYLom9Q8oPzT
- PnKovwls5hJB25CUk1v+HMGMqDpNUD2fo1nKzQpuJ/LKIwk+5XxUj3tMiOJhSLkG33fE
- W4xY9EwOxnD3NwadV8LAALdCUJTB1Wwrt2yi4pgxZpbfMxNGh+IYMhVUviS3igRjfbsI nw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3suwedbt5n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Sep 2023 16:10:08 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 384GA79n022805
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 4 Sep 2023 16:10:07 GMT
-Received: from [10.50.40.93] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 4 Sep
- 2023 09:10:02 -0700
-Message-ID: <90795790-a5e4-419f-9e40-989731c1c685@quicinc.com>
-Date:   Mon, 4 Sep 2023 21:39:58 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwspinlock: qcom: Drop unused qcom,ipq6018-tcsr-mutex
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mon, 4 Sep 2023 12:14:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157709D;
+        Mon,  4 Sep 2023 09:14:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9E422B80DB3;
+        Mon,  4 Sep 2023 16:14:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3009C433CD;
+        Mon,  4 Sep 2023 16:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693844044;
+        bh=XZLlMsqp967+lb+1ZSRH4MYxUufjgFUQchIzouq7qEk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=a+8l/MfCyM2HRm4w/+2Sf0ABYtIrmE4BBImCeD7qOdNkqUiiCGJjIISzjdDRwVpES
+         La7DGWaqyrt2cuHLs16qMJV2zCUrZzW2gUwNMtxR1LQo+Fr5dlpPca5wDY7HGqwuyJ
+         Z2SjUpbvETvTBlN1ZOSOBs5snb5D1RtQUF8EjJkfVGOXyJ8f2ybq6TIqzw6BOq9PTN
+         xJQyyQL8muqfA6xMYX2MwcG8tf7aWmjWPYR7OJhJ8DQIL3jgHfnbW21hUhBia4PiDv
+         Q6Cjd0c/BBQPClZ1mrSrCREZs8tHk0gTLkrhjT4TxXsrzbTEABPYe/GhYCr8LU6B1J
+         DxNHFkzz/miow==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ohad@wizery.com>,
-        <baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>
-References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
- <20230904055010.4118982-3-quic_viswanat@quicinc.com>
- <17c8ba39-2bcf-5799-13ff-bb96249dbf61@linaro.org>
- <880706cd-0987-47c7-8785-f8e4cb1c1907@linaro.org>
-From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
-In-Reply-To: <880706cd-0987-47c7-8785-f8e4cb1c1907@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TvzdW7euSUVGQJaJaoeNn8pjoQivjS_7
-X-Proofpoint-GUID: TvzdW7euSUVGQJaJaoeNn8pjoQivjS_7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-04_09,2023-08-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 mlxscore=0 adultscore=0
- mlxlogscore=796 impostorscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309040144
+        Dylan Van Assche <me@dylanvanassche.be>,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Marek Vasut <marex@denx.de>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        Ye Xingchen <ye.xingchen@zte.com.cn>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mukesh Ojha <quic_mojha@quicinc.com>,
+        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] remoteproc updates for v6.6
+Date:   Mon,  4 Sep 2023 09:16:19 -0700
+Message-ID: <20230904161621.2954993-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.42.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-On 9/4/2023 9:31 PM, Konrad Dybcio wrote:
-> On 4.09.2023 08:42, Krzysztof Kozlowski wrote:
->> On 04/09/2023 07:50, Vignesh Viswanathan wrote:
->>> qcom,ipq6018-tcsr-mutex maps to incorrect config of IPQ6018 and is
->>> dropped from the devictree.
->>
->> No, it is not dropped.
->>
->>
->>> IPQ6018 will use qcom,tcsr-mutex compatible
->>> string.
->>
->> No, it will not.
->>
->>>
->>> Drop qcom,ipq6018-tcsr-mutex compatible string from
->>> qcom_hwspinlock_of_match table.
->>
->> Why? Do not write what you are doing here, but why you are doing it.
-> More importantly, looks like the ipq6018 compatible was added after
-> support for this SoC was introduced (see f5e303aefc06 and 5bf635621245a),
-> so if it's going to use of_tcsr_mutex data with the fallback compat, the
-> SoC-specific compatible can be removed from the driver.
-> 
-Hi Konrad, Krzysztof,
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-I was planning to update the SOC-specific compatible for IPQ6018
-qcom,ipq6018-tcsr-mutex to point to of_tcsr_mutex data in the of_match
-table in the hwspinlock driver in V2.
+are available in the Git repository at:
 
-Do you think this would be okay? or should I go ahead with removal of
-IPQ6018 specific compatible so that it falls back to of_tcsr_mutex?
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.6
 
-Thanks,
-Vignesh
+for you to fetch changes up to 18cf4fcd7bdc1864e75127f4fd15abc0bc76ec7f:
 
-> Konrad
+  remoteproc: pru: add support for configuring GPMUX based on client setup (2023-08-21 15:19:28 -0600)
+
+----------------------------------------------------------------
+remoteproc updates for v6.6
+
+Support for booting the iMX remoteprocs using MMIO, instead of SMCCC is
+added. The iMX driver is also extended to support delivering interrupts
+from an arbitrary number of vdev.
+
+Support is added to the TI PRU driver, to allow GPMUX to be controlled
+from DeviceTree.
+
+The Qualcomm coredump collector is extended to fall back to generating a
+full coredump, in the case that the loaded firmware doesn't support
+generating minidump. The overly terse MD abbreviation of "MINIDUMP" is
+expanded, to make the code easier on the eye.
+
+The list of Qualcomm Sensor Low Power Island (SLPI) instances supported
+is cleaned up, and SDM845 is added. SDM630/636/660 support for the modem
+subsystem (mss) is added.
+
+All the Qualcomm drivers are transitioned to of_reserved_mem_lookup()
+instead of open coding the resolution of reserved-memory regions, to
+gain handling of error cases. A couple of drivers are transitioned to
+use devm_platform_ioremap_resource_byname().
+
+The stm32 remoteproc driver's PM operations are updated to modern
+macros, to avoid the "unused variable"-warning in some configurations.
+
+Drivers are transitioned away from directly including of_device.h.
+
+----------------------------------------------------------------
+Alexey Minnekhanov (2):
+      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Add SDM660 compatible
+      remoteproc: qcom: q6v5-mss: Add support for SDM630/636/660
+
+Arnd Bergmann (1):
+      remoteproc: stm32: fix incorrect optional pointers
+
+Dylan Van Assche (3):
+      dt-bindings: remoteproc: qcom: adsp: add qcom,sdm845-slpi-pas compatible
+      remoteproc: qcom: pas: refactor SLPI remoteproc init
+      remoteproc: qcom: pas: add SDM845 SLPI compatible
+
+Konrad Dybcio (2):
+      dt-bindings: remoteproc: qcom: sm6115-pas: Add QCM2290
+      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Fix 8996 clocks
+
+Krzysztof Kozlowski (4):
+      dt-bindings: remoteproc: qcom,pas: correct memory-region constraints
+      dt-bindings: remoteproc: qcom,sm6115-pas: correct memory-region constraints
+      dt-bindings: remoteproc: qcom,sm8550-pas: require memory-region
+      dt-bindings: remoteproc: qcom,adsp: bring back firmware-name
+
+Marek Vasut (2):
+      dt-bindings: remoteproc: imx_rproc: Support i.MX8MN/P MMIO
+      remoteproc: imx_rproc: Switch iMX8MN/MP from SMCCC to MMIO
+
+Mukesh Ojha (1):
+      remoteproc: qcom: Expand MD_* as MINIDUMP_*
+
+Peng Fan (1):
+      remoteproc: imx_rproc: iterate all notifiyids in rx callback
+
+Rob Herring (1):
+      remoteproc: Explicitly include correct DT includes
+
+Siddharth Gupta (2):
+      remoteproc: core: Export the rproc coredump APIs
+      remoteproc: qcom: Add full coredump fallback mechanism
+
+Stephan Gerhold (1):
+      remoteproc: qcom: Use of_reserved_mem_lookup()
+
+Tero Kristo (1):
+      remoteproc: pru: add support for configuring GPMUX based on client setup
+
+Ye Xingchen (2):
+      remoteproc: qcom: q6v5: use devm_platform_ioremap_resource_byname()
+      remoteproc: qcom: wcnss: use devm_platform_ioremap_resource_byname()
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |  20 ++++
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  24 +++++
+ .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  12 ++-
+ .../bindings/remoteproc/qcom,pas-common.yaml       |   1 -
+ .../bindings/remoteproc/qcom,qcs404-pas.yaml       |   3 +-
+ .../bindings/remoteproc/qcom,sc7180-pas.yaml       |   3 +-
+ .../bindings/remoteproc/qcom,sc8180x-pas.yaml      |   3 +-
+ .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   3 +-
+ .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   3 +-
+ .../bindings/remoteproc/qcom,sm6115-pas.yaml       |  39 +++++---
+ .../bindings/remoteproc/qcom,sm6350-pas.yaml       |   3 +-
+ .../bindings/remoteproc/qcom,sm8150-pas.yaml       |   3 +-
+ .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   3 +-
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |   1 +
+ drivers/remoteproc/imx_dsp_rproc.c                 |   3 +-
+ drivers/remoteproc/imx_rproc.c                     |  73 ++++++++++++++-
+ drivers/remoteproc/imx_rproc.h                     |   2 +
+ drivers/remoteproc/omap_remoteproc.c               |   3 +-
+ drivers/remoteproc/pru_rproc.c                     |  25 ++++-
+ drivers/remoteproc/qcom_common.c                   |  21 +++--
+ drivers/remoteproc/qcom_q6v5_adsp.c                |  26 +++---
+ drivers/remoteproc/qcom_q6v5_mss.c                 |  87 ++++++++++++++----
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 102 ++++++++-------------
+ drivers/remoteproc/qcom_q6v5_wcss.c                |   3 +-
+ drivers/remoteproc/qcom_sysmon.c                   |   1 -
+ drivers/remoteproc/qcom_wcnss.c                    |  30 +++---
+ drivers/remoteproc/qcom_wcnss_iris.c               |   1 +
+ drivers/remoteproc/rcar_rproc.c                    |   3 +-
+ drivers/remoteproc/remoteproc_coredump.c           |   2 +
+ drivers/remoteproc/remoteproc_internal.h           |   4 -
+ drivers/remoteproc/st_slim_rproc.c                 |   1 -
+ drivers/remoteproc/stm32_rproc.c                   |  16 ++--
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c          |   2 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c           |   3 +-
+ drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
+ include/linux/remoteproc.h                         |   4 +
+ 36 files changed, 362 insertions(+), 173 deletions(-)
