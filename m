@@ -2,123 +2,155 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7947CA0FE9
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 18:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8623FC83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 20:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235533AbjIDSQM (ORCPT
+        id S231134AbjIDUnI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 14:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42992 "EHLO
+        Mon, 4 Sep 2023 16:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235310AbjIDSQM (ORCPT
+        with ESMTP id S230145AbjIDUnI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 14:16:12 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5162E19B
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 11:16:07 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-500a8b2b73eso2692097e87.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 11:16:07 -0700 (PDT)
+        Mon, 4 Sep 2023 16:43:08 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0823E12A
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 13:43:05 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so1211538a12.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 13:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693851365; x=1694456165; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wR4BXGPTZ7jEwQgwR6LtNXRwZm81M4EzJdY3O3FTYcE=;
-        b=qIiyKogZAcWQDObmdrrhVDa+c5nfjD0qJVeWyvssGgdAWVbkWyDsM3pMBFNbhcjmr/
-         NXBs4cQpDmA6MPghxyJ5mE+EWZnP+M0I1dQELfwdjVJTsa1OcBdJ8C/OvmmRXxgRtNHr
-         aNz0TLUbfbLiKZ0XgPF49Ls+H8yvFTXsDTVKU1+s/CEBB/zjvwX/h2+w46A/9sxqaUyX
-         1mo5Q2s5M8qpI51oaBHAWrar++cdAD0lfPJOgsoxfZN+5eUxXO/haFyqeYwO+XbbjYZI
-         dSX24agy4mrdofbPut1jymhBvhkRQvLq+4VIzLlEEg1903V1NOl4tSoUSHUHXaBqHVco
-         8+fA==
+        d=linaro.org; s=google; t=1693860184; x=1694464984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bd+uBaZXUqOZ3cQQ+bhudqpQEOZ7PZ5vTiPcZoP4wt8=;
+        b=n2eFdcl/FssKXB7Ge7aCAsS+xzLuo0JOc6OvYdPvOzLzezmcbeJ9ERW8ZGfM5OVOXS
+         ZzwBAf2x1zQjXcM984nGn2uQOph5dwBLwhHy74M6+R7sjKe8F3+Gr+cQfJYwgUFsBfza
+         Wf3OMoW2ClxIPmfkASLJ2tbnSTjWBmjH0VV/bF6yAjnI/fYPV4rG5FQZ1yPt6mureUjs
+         y5FX4zycYM1OO51tLU4YaRh+T/atXr9y9A3IOGJOCtsGU03k5u4tuJdOKwqgDNSRSYjd
+         9n7pWVD6Y4SlV1x4opHOJaNxgib7iECUa0makr5RtuSD6aC/SlDL5Y6noVzTr3476NpB
+         a+Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693851365; x=1694456165;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wR4BXGPTZ7jEwQgwR6LtNXRwZm81M4EzJdY3O3FTYcE=;
-        b=GTidP6uMl6S1BG/1JhuUx0Hvhg6yH82DFlB1X7BGB88bjZso0i9FYmkeDQfXyIBI2i
-         mIM/CE2vQ5y1aTvOo/54Fil8ubvhForjHZtJimX10EvICIrvlX09XPJNTR5QgJOKcGoJ
-         YfNZYw94oRS1l3IvjY42ojY/Kw36bJypq933+F2ZMQa7mJAhpIXC42MhDiEbCudJvSGK
-         MMuRABdZi65lIKZ6KkUdS6UGTFgxsxXVAkEq0j7gBCBm1W0x9abiBP2kyCSC967oKoPt
-         ZrOOyaj+oriSG4ZikrpxVTGQwpXq/+dZIAdII0PDOGGmewzXqEat/MynS+jmqW3xwOWq
-         Ug5A==
-X-Gm-Message-State: AOJu0YzfSS0yjlGkprfQ3cLpywwPhRXxTnjcMwePrgPfGnYqVVqzIUPX
-        oIys3g7emE+woweB/atr/6Jz8Q==
-X-Google-Smtp-Source: AGHT+IGOzVvReOCQRwsTm34zqkP1CrT7EuD+QTmlY3J+mbZpQaV3Dv35X98KyzB9hnzgcZ0+juBbGA==
-X-Received: by 2002:a05:6512:108d:b0:4ff:7f57:facd with SMTP id j13-20020a056512108d00b004ff7f57facdmr8447633lfg.54.1693851365059;
-        Mon, 04 Sep 2023 11:16:05 -0700 (PDT)
-Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
-        by smtp.gmail.com with ESMTPSA id kt8-20020a170906aac800b0099cb1a2cab0sm6512298ejb.28.2023.09.04.11.16.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Sep 2023 11:16:04 -0700 (PDT)
-Message-ID: <246760a3-3230-e14d-0541-72d8f0da5fd2@linaro.org>
-Date:   Mon, 4 Sep 2023 20:16:02 +0200
+        d=1e100.net; s=20221208; t=1693860184; x=1694464984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bd+uBaZXUqOZ3cQQ+bhudqpQEOZ7PZ5vTiPcZoP4wt8=;
+        b=VCIGo58q4fZ2vXubPTTrw6Sp8pjeWVXO26yf3o2dxnRS5ydOpcAbsPPPjvT7vIXtEw
+         XnvheK34Q9Qd6+kyCwD8qu6Vz0kRm4pEA5cBRJJVbSSS+qttBD1ORVn9Ejd6c1K13czQ
+         75wdRRWtIYCBBGplRwwt6nkNywA4OwOdW4JhKNLq0BZSX/LyJ4IGTrNexgq0KwNFAQVJ
+         JksPDZD4ay74qZgRUeY1tzB1BtZvOsKdgZXN/BaGTEFZf9wIJocYLZzcRa9aG1xPdxSO
+         dh9hnx1qx5EU98gesUfP8oeoY4fENS6i0tbE4Q7nXsW1qCmtgKbWfeazOgJKlpAHb/SM
+         FWOw==
+X-Gm-Message-State: AOJu0Yw47K/H03B0mj5Z2LoMMW7K+LyM3J20RZKANIuqSOAsgWmq3TNR
+        qytZn3qhyMzxYLpCwjcINgZSaA==
+X-Google-Smtp-Source: AGHT+IE0h8ydHL32ctuXhUGMeaCKA+rbJlIBglH5iU9BhStQ9af+1+ITfRtEoubDSxetIA6dTsDKrQ==
+X-Received: by 2002:a17:90a:c283:b0:26d:1d0:4f8c with SMTP id f3-20020a17090ac28300b0026d01d04f8cmr10675698pjt.9.1693860184419;
+        Mon, 04 Sep 2023 13:43:04 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4d17:cefe:4740:3fd1])
+        by smtp.gmail.com with ESMTPSA id 5-20020a17090a1a4500b0026b4ca7f62csm8406688pjl.39.2023.09.04.13.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Sep 2023 13:43:04 -0700 (PDT)
+Date:   Mon, 4 Sep 2023 14:43:01 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Tim Blechmann <tim.blechmann@gmail.com>,
+        linux-remoteproc@vger.kernel.org, Tim Blechmann <tim@klingt.org>
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
+Message-ID: <ZPZBVS3R/oZuUmk5@p14s>
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 2/3] hwspinlock: qcom: Drop unused qcom,ipq6018-tcsr-mutex
-To:     Vignesh Viswanathan <quic_viswanat@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, agross@kernel.org,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ohad@wizery.com,
-        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org
-Cc:     quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com
-References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
- <20230904055010.4118982-3-quic_viswanat@quicinc.com>
- <17c8ba39-2bcf-5799-13ff-bb96249dbf61@linaro.org>
- <880706cd-0987-47c7-8785-f8e4cb1c1907@linaro.org>
- <90795790-a5e4-419f-9e40-989731c1c685@quicinc.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <90795790-a5e4-419f-9e40-989731c1c685@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 04/09/2023 18:09, Vignesh Viswanathan wrote:
+On Mon, Sep 04, 2023 at 03:52:56PM +0200, Arnaud POULIQUEN wrote:
+> Hello Tim,
+> 
+> On 9/4/23 10:36, Tim Blechmann wrote:
+> > when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
+> > enables tx-complete interrupt.
+> > however if the interrupt is executed after `get_a_tx_buf` and before
+> > `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
+> > for the full 15 seconds.
 > 
 > 
-> On 9/4/2023 9:31 PM, Konrad Dybcio wrote:
->> On 4.09.2023 08:42, Krzysztof Kozlowski wrote:
->>> On 04/09/2023 07:50, Vignesh Viswanathan wrote:
->>>> qcom,ipq6018-tcsr-mutex maps to incorrect config of IPQ6018 and is
->>>> dropped from the devictree.
->>>
->>> No, it is not dropped.
->>>
->>>
->>>> IPQ6018 will use qcom,tcsr-mutex compatible
->>>> string.
->>>
->>> No, it will not.
->>>
->>>>
->>>> Drop qcom,ipq6018-tcsr-mutex compatible string from
->>>> qcom_hwspinlock_of_match table.
->>>
->>> Why? Do not write what you are doing here, but why you are doing it.
->> More importantly, looks like the ipq6018 compatible was added after
->> support for this SoC was introduced (see f5e303aefc06 and 5bf635621245a),
->> so if it's going to use of_tcsr_mutex data with the fallback compat, the
->> SoC-specific compatible can be removed from the driver.
->>
-> Hi Konrad, Krzysztof,
-> 
-> I was planning to update the SOC-specific compatible for IPQ6018
-> qcom,ipq6018-tcsr-mutex to point to of_tcsr_mutex data in the of_match
-> table in the hwspinlock driver in V2.
-> 
-> Do you think this would be okay? or should I go ahead with removal of
-> IPQ6018 specific compatible so that it falls back to of_tcsr_mutex?
+> Is there any reason why your co-processor is unable to release the TX RPMSG
+> buffers for 15 seconds? If not, you should first determine the reason why it is
+> stalled.
 
-Remove, it's not needed in the driver.
+Arnaud's concern is valid.  If the remote processor can't consume a buffer
+within 15 seconds, something is probably wrong.
 
-Best regards,
-Krzysztof
+That said, I believe your assesment of the situation is correct.  *If* the TX
+callback is disabled and there is no buffer available, there is a window of
+opportunity between calls to get_a_tx_buf() and rpmsg_upref_sleepers() for an
+interrupt to arrive in function rpmsg_send_offchannel_raw().  
 
+From here three things need to happen:
+
+1) You send another version of this patch with a changelong that uses proper
+english, i.e capital letters when they are needed and no spelling mistake.
+
+2) Arnaud confirms our suspicions.
+
+3) This patch gets applied when rc1 comes out so that it has 6 or 7 weeks to
+soak.  No error are locks are reported due to this patch during that time. 
+
+> 
+> Regards,
+> Arnaud
+> 
+> > 
+> > in this case, so we re-try once before we really start to sleep
+> > 
+> > Signed-off-by: Tim Blechmann <tim@klingt.org>
+> > ---
+> >  drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
+> >  1 file changed, 15 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > index 905ac7910c98..2a9d42225e60 100644
+> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+> >  
+> >  	/* no free buffer ? wait for one (but bail after 15 seconds) */
+> >  	while (!msg) {
+> >  		/* enable "tx-complete" interrupts, if not already enabled */
+> >  		rpmsg_upref_sleepers(vrp);
+> >  
+> > -		/*
+> > -		 * sleep until a free buffer is available or 15 secs elapse.
+> > -		 * the timeout period is not configurable because there's
+> > -		 * little point in asking drivers to specify that.
+> > -		 * if later this happens to be required, it'd be easy to add.
+> > -		 */
+> > -		err = wait_event_interruptible_timeout(vrp->sendq,
+> > -					(msg = get_a_tx_buf(vrp)),
+> > -					msecs_to_jiffies(15000));
+> > +		/* make sure to retry to grab tx buffer before we start waiting */
+> > +		msg = get_a_tx_buf(vrp);
+> > +		if (msg) {
+> > +			err = 0;
+> > +		} else {
+> > +			/*
+> > +			 * sleep until a free buffer is available or 15 secs elapse.
+> > +			 * the timeout period is not configurable because there's
+> > +			 * little point in asking drivers to specify that.
+> > +			 * if later this happens to be required, it'd be easy to add.
+> > +			 */
+> > +			err = wait_event_interruptible_timeout(vrp->sendq,
+> > +						(msg = get_a_tx_buf(vrp)),
+> > +						msecs_to_jiffies(15000));
+> > +		}
+> >  
+> >  		/* disable "tx-complete" interrupts if we're the last sleeper */
+> >  		rpmsg_downref_sleepers(vrp);
+> >  
+> >  		/* timeout ? */
+> >  		if (!err) {
