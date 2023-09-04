@@ -2,121 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86286C71153
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 07:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8DFC83F33
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 08:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345177AbjIDHup (ORCPT
+        id S234305AbjIDIgU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 03:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
+        Mon, 4 Sep 2023 04:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236869AbjIDHup (ORCPT
+        with ESMTP id S231397AbjIDIgT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 03:50:45 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3316BD
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 00:50:41 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-99c93638322so241788266b.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 00:50:41 -0700 (PDT)
+        Mon, 4 Sep 2023 04:36:19 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CD094
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 01:36:16 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-26b41112708so868056a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 01:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693813840; x=1694418640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7rwo1JQ07wN9AZgkdq/ZN73aYRmpPxX5x4XvDTXJBqg=;
-        b=lYUepP5XD7GGYxipiVNlbz7XRpnQFNjTWMbqIz5HEYI5O0b+qZKBJEn871ZDFXSY/F
-         g78u6DwCDDfYAhlPNo/2DabdOCCKsBMICunUIEzm1Gd0d5XoYZoCNgC2eGgikzoaJzDk
-         eUJiwSNYNhSMr8StDMr6DphKFk9/UhWIh+zwT2uYKNALcGbvuzoz/iI0yFvBwKhOW4/k
-         8ohMwsEzoA+55+43ZurD+5Tlm1R71IHbgbdfDREKszBWXjJO9BwJu9+XdVDBRaY4ZB1V
-         lzs6SDYr85oumHsnMhBrXgH1rHwmVIgoB9ZOvjtrh6FM//eU4oHz/qZZ5Nc0ntbp68O1
-         EmxQ==
+        d=gmail.com; s=20221208; t=1693816575; x=1694421375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3966bf9rQiKoqPyh1NC8jqcm0Ko8oR0KMChC4Hs7HI=;
+        b=eImOvceLwZBfG5x0ki2O35DWgNFZaKBYNrzTbLzqHHhn1mJZ1tWhKPTOfc0aDzjmqv
+         AjWn75r9G+4t/UMu0G3lTpy7BbDDxlftcHwKYJu1GoCYUl1FqQ/LoqY63EMdk2PKXd41
+         AZe70KXOxLTCB5K8YgpBgMCr/OF21tGeGw7s84Ji9Zr/7HiwTk6nqBhacO9QCmeZrvyg
+         hgmVNHJZjH1/pSW+gQUem1O5IwS4smlNTuHBcPSp1TCVKfSDZJAg3TvtzGkrkKoDxQiz
+         pWuVTLbM/C5kNU/PumR7fLvx/8LHVFNrbwQuhogx0DSn6/FKE5HUJSvKaqNqJ190qBfP
+         CB2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693813840; x=1694418640;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rwo1JQ07wN9AZgkdq/ZN73aYRmpPxX5x4XvDTXJBqg=;
-        b=VSAFgIWAOVmWeN1X95TeboUmr4kTcqrXm3zBjn5s+REZhg3L9udsfrb4/qnL+r6sqO
-         TeegrDygMBHBQ1M3eh+YwiYVfhVLWomyc+QsX+nsqtVnqeOKJdHUNrG7J8mBa1z4C4uJ
-         CbZD37bfiK7lIODGgB9pkvNCCufF3SottRcjRIJ2t+5VcW2PCf9dzVRam1z4UIUtWp2+
-         Er/t6CJle1bJ1HTGNqZgT0VgPqyVhzCzCoHwD88tSJMg4TEzSpIic1K+fDLIC9sIvmti
-         VglVKg003PRK3I4s+Mh6H6MXvheFdsciOd5mEoNfjCLFhUecKEN0Wh8/A5TbGupRthQT
-         cMfw==
-X-Gm-Message-State: AOJu0YyS/nWWG8flWVYkvqmA42q8ZP4DJRHrb9z/5uyzHrmUlxuzbdi3
-        CLQADGuqFhVUAiADzzjmqZDyyg==
-X-Google-Smtp-Source: AGHT+IEMqpCQ0XocZ/dxGoFxB/NYSHOnxzelUaffF8qI5OwbjunnTJ/liyc30D7juKnqGjdDfxzxpQ==
-X-Received: by 2002:a17:907:7b9e:b0:9a1:d29c:fb6b with SMTP id ne30-20020a1709077b9e00b009a1d29cfb6bmr13395072ejc.25.1693813840320;
-        Mon, 04 Sep 2023 00:50:40 -0700 (PDT)
-Received: from [192.168.69.115] ([176.187.209.227])
-        by smtp.gmail.com with ESMTPSA id v20-20020a1709061dd400b00982a352f078sm5750337ejh.124.2023.09.04.00.50.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Sep 2023 00:50:39 -0700 (PDT)
-Message-ID: <f6943509-25c5-b4fe-2218-638cc06a4e04@linaro.org>
-Date:   Mon, 4 Sep 2023 09:50:37 +0200
+        d=1e100.net; s=20221208; t=1693816575; x=1694421375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+3966bf9rQiKoqPyh1NC8jqcm0Ko8oR0KMChC4Hs7HI=;
+        b=JBGiWWwhDhykyWytVGRH60lb5Hm6MP5M373gLNFvNckzkqZwyfqThQuzwJsFLgkqf7
+         6MH1S+qTRo2hhWqFY1qqB6jQXg01FhMaAcdabPfTKCLq+/ekvZ+5tvKF4qs5qUdjY6LF
+         G22ZkWe2Nv2zIjkqFxnhXil0elwDk0errWCnFze92UKAZPU7qyiIK9jKQk7zbPrDm69G
+         Epv0x0UE0a7Igow2uq2FoHV8aeWhoJMhPu9dYAWpNuXFb2FhFtDHb32nkCPWuENxJgO5
+         eVzyr6wiUaV5508OR4b7Mcqfr+uqUcet5EDyK0JNqnOg8lk/V95dwrCkATZ9n4IFGYyK
+         s0vA==
+X-Gm-Message-State: AOJu0YyAQO5rifSqxv2LbR/9g/iOrGg4LWSkuGmslI9lTfRlMwsKen1V
+        zQSGpFAHzaKduI3lYVXJW9YKr6IhiF4=
+X-Google-Smtp-Source: AGHT+IFHkT6CNHV3Iz1DrRuaHRXYxuUWie+pqIZrY98iXWE70Erh0ysCyNp1VBIYlN/siIbfcCCFlg==
+X-Received: by 2002:a17:90a:840a:b0:26d:17d6:399d with SMTP id j10-20020a17090a840a00b0026d17d6399dmr9032243pjn.38.1693816575007;
+        Mon, 04 Sep 2023 01:36:15 -0700 (PDT)
+Received: from P330.. ([2001:f40:904:5cee:864f:138a:5ee:e73b])
+        by smtp.googlemail.com with ESMTPSA id f20-20020a17090aa79400b00262e604724dsm8487871pjq.50.2023.09.04.01.36.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Sep 2023 01:36:14 -0700 (PDT)
+From:   Tim Blechmann <tim.blechmann@gmail.com>
+X-Google-Original-From: Tim Blechmann <tim@klingt.org>
+To:     linux-remoteproc@vger.kernel.org
+Cc:     Tim Blechmann <tim@klingt.org>
+Subject: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race condition
+Date:   Mon,  4 Sep 2023 16:36:02 +0800
+Message-Id: <20230904083602.106703-1-tim@klingt.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH v4 3/3] remoteproc: zynqmp: get TCM from device-tree
-Content-Language: en-US
-To:     Tanmay Shah <tanmay.shah@amd.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michal Simek <michal.simek@amd.com>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Ben Levinsky <ben.levinsky@amd.com>
-References: <20230829181900.2561194-1-tanmay.shah@amd.com>
- <20230829181900.2561194-4-tanmay.shah@amd.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
-In-Reply-To: <20230829181900.2561194-4-tanmay.shah@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
+enables tx-complete interrupt.
+however if the interrupt is executed after `get_a_tx_buf` and before
+`rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
+for the full 15 seconds.
 
-On 29/8/23 20:19, Tanmay Shah wrote:
-> Use new dt bindings to get TCM address and size
-> information. Also make sure that driver stays
-> compatible with previous device-tree bindings.
-> So, if TCM information isn't available in device-tree
-> for zynqmp platform, hard-coded address of TCM will
-> be used.
-> 
-> New platforms that are compatible with this
-> driver must add TCM support in device-tree as per new
-> bindings.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->   drivers/remoteproc/xlnx_r5_remoteproc.c | 279 +++++++++++++++++++-----
->   1 file changed, 221 insertions(+), 58 deletions(-)
+in this case, so we re-try once before we really start to sleep
 
+Signed-off-by: Tim Blechmann <tim@klingt.org>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
->   /**
-> @@ -75,11 +79,17 @@ struct mbox_info {
->    * Hardcoded TCM bank values. This will be removed once TCM bindings are
->    * accepted for system-dt specifications and upstreamed in linux kernel
-
-Just curious, for how long this fall back code has to be maintained?
-(When/how will we know we can remove it?)
-
->    */
-> -static const struct mem_bank_data zynqmp_tcm_banks[] = {
-> -	{0xffe00000UL, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
-> -	{0xffe20000UL, 0x10000UL, PD_R5_0_BTCM, "btcm0"},
-> -	{0xffe90000UL, 0x10000UL, PD_R5_1_ATCM, "atcm1"},
-> -	{0xffeb0000UL, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
-> +static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
-> +	{0xffe00000, 0x0, 0x10000, PD_R5_0_ATCM, 0, "atcm0"}, /* TCM 64KB each */
-> +	{0xffe20000, 0x20000, 0x10000, PD_R5_0_BTCM, 0, "btcm0"},
-> +	{0xffe90000, 0x0, 0x10000, PD_R5_1_ATCM, 0, "atcm1"},
-> +	{0xffeb0000, 0x20000, 0x10000, PD_R5_1_BTCM, 0, "btcm1"},
-> +};
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 905ac7910c98..2a9d42225e60 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 
+ 	/* no free buffer ? wait for one (but bail after 15 seconds) */
+ 	while (!msg) {
+ 		/* enable "tx-complete" interrupts, if not already enabled */
+ 		rpmsg_upref_sleepers(vrp);
+ 
+-		/*
+-		 * sleep until a free buffer is available or 15 secs elapse.
+-		 * the timeout period is not configurable because there's
+-		 * little point in asking drivers to specify that.
+-		 * if later this happens to be required, it'd be easy to add.
+-		 */
+-		err = wait_event_interruptible_timeout(vrp->sendq,
+-					(msg = get_a_tx_buf(vrp)),
+-					msecs_to_jiffies(15000));
++		/* make sure to retry to grab tx buffer before we start waiting */
++		msg = get_a_tx_buf(vrp);
++		if (msg) {
++			err = 0;
++		} else {
++			/*
++			 * sleep until a free buffer is available or 15 secs elapse.
++			 * the timeout period is not configurable because there's
++			 * little point in asking drivers to specify that.
++			 * if later this happens to be required, it'd be easy to add.
++			 */
++			err = wait_event_interruptible_timeout(vrp->sendq,
++						(msg = get_a_tx_buf(vrp)),
++						msecs_to_jiffies(15000));
++		}
+ 
+ 		/* disable "tx-complete" interrupts if we're the last sleeper */
+ 		rpmsg_downref_sleepers(vrp);
+ 
+ 		/* timeout ? */
+ 		if (!err) {
+-- 
+2.34.1
 
