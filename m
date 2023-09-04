@@ -2,137 +2,92 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98886C71153
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 13:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1C8C71153
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 15:52:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236363AbjIDNxN (ORCPT
+        id S239185AbjIDPw5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 09:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57904 "EHLO
+        Mon, 4 Sep 2023 11:52:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbjIDNxN (ORCPT
+        with ESMTP id S231611AbjIDPw5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 09:53:13 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF44DE3
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 06:53:09 -0700 (PDT)
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3848dBqV025072;
-        Mon, 4 Sep 2023 15:53:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-        message-id:date:mime-version:subject:to:cc:references:from
-        :in-reply-to:content-type:content-transfer-encoding; s=
-        selector1; bh=MnDCG2XIK7vxP2jAB6/q+SWGxfYH2m264bPDZkOnujU=; b=aa
-        T5larRuMVBJXMMU5VQ0oJpBhx1el45A2S71+jMzreMSJrhmGsorpMiZh8XemdM2g
-        CDEddqVMgUTRZGjCTMVzYY/zp8tWOvN5W/MOkVxTWlkrqoVfekHiG+YWtu4gyUo4
-        muzFtdkYcZXYasyOT2lmRMBsb5sG1GYJQyiJJLkIP+zcL5AlARQQfyDO0RVHFzUB
-        usJ7mo7ajBTI2UZumB+P8H+HWuPfkJaSghYpUCcVdhXZxyp0AbCi5LeDgKscAWfP
-        Mb5E6J76inawzLT/wyqe4S7DJ6WO3kQQVLlTJX8QJ/yrMZwgPerjJa67s+QstAhx
-        tXWmkDttPP5IWcqQ2duQ==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3svem0d64w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Sep 2023 15:53:06 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6177E100063;
-        Mon,  4 Sep 2023 15:53:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5B093217B79;
-        Mon,  4 Sep 2023 15:53:05 +0200 (CEST)
-Received: from [10.252.2.43] (10.252.2.43) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Mon, 4 Sep
- 2023 15:53:03 +0200
-Message-ID: <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com>
-Date:   Mon, 4 Sep 2023 15:52:56 +0200
+        Mon, 4 Sep 2023 11:52:57 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7521AD;
+        Mon,  4 Sep 2023 08:52:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id BD8F9CE0E0E;
+        Mon,  4 Sep 2023 15:52:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C131C433C9;
+        Mon,  4 Sep 2023 15:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693842771;
+        bh=JVRNwKbFCeOWyBqO1LRF0ojfF/loYJpcFFsme3qrtr8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OQlU4y/mBaCwrqrD2n/6o1UC0KeD6Q94Ldv3G54RVUHi+jOav4jolRbXNX7hoTxII
+         MUgcw9NC6Qdftcn7/J7oDUhANMLqyp2929NqAlZcQTlUq4CIKHjIfGO4xuGzNfI7fX
+         RmQ6foOh4jAU9WjAOWX/X45tWmfVT4I2BxJbStRg1DFM8oiG9fCEqNwiJf7dE/efYg
+         8zn4PmVBlaEYXxakiEyHHxUUBK3PDHn2fGqhFAkOFA6kf39vsrODe+N/MPYUqG7rMl
+         lF/1xDNKa/PzOHkdj2SWsIAxZfF8gCFTf8h1YaFSyircV+KxTOhhFxaIqnKuGkkMCm
+         Dfz7EdMHu3M8g==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Kang Chen <void0red@gmail.com>
+Subject: [GIT PULL] hwspinlock updates for v6.6
+Date:   Mon,  4 Sep 2023 08:55:06 -0700
+Message-ID: <20230904155508.2950832-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
- condition
-Content-Language: en-US
-To:     Tim Blechmann <tim.blechmann@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Tim Blechmann <tim@klingt.org>
-References: <20230904083602.106703-1-tim@klingt.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20230904083602.106703-1-tim@klingt.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.252.2.43]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-04_07,2023-08-31_01,2023-05-22_02
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Tim,
 
-On 9/4/23 10:36, Tim Blechmann wrote:
-> when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
-> enables tx-complete interrupt.
-> however if the interrupt is executed after `get_a_tx_buf` and before
-> `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
-> for the full 15 seconds.
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-Is there any reason why your co-processor is unable to release the TX RPMSG
-buffers for 15 seconds? If not, you should first determine the reason why it is
-stalled.
+are available in the Git repository at:
 
-Regards,
-Arnaud
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v6.6
 
-> 
-> in this case, so we re-try once before we really start to sleep
-> 
-> Signed-off-by: Tim Blechmann <tim@klingt.org>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
->  1 file changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 905ac7910c98..2a9d42225e60 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->  
->  	/* no free buffer ? wait for one (but bail after 15 seconds) */
->  	while (!msg) {
->  		/* enable "tx-complete" interrupts, if not already enabled */
->  		rpmsg_upref_sleepers(vrp);
->  
-> -		/*
-> -		 * sleep until a free buffer is available or 15 secs elapse.
-> -		 * the timeout period is not configurable because there's
-> -		 * little point in asking drivers to specify that.
-> -		 * if later this happens to be required, it'd be easy to add.
-> -		 */
-> -		err = wait_event_interruptible_timeout(vrp->sendq,
-> -					(msg = get_a_tx_buf(vrp)),
-> -					msecs_to_jiffies(15000));
-> +		/* make sure to retry to grab tx buffer before we start waiting */
-> +		msg = get_a_tx_buf(vrp);
-> +		if (msg) {
-> +			err = 0;
-> +		} else {
-> +			/*
-> +			 * sleep until a free buffer is available or 15 secs elapse.
-> +			 * the timeout period is not configurable because there's
-> +			 * little point in asking drivers to specify that.
-> +			 * if later this happens to be required, it'd be easy to add.
-> +			 */
-> +			err = wait_event_interruptible_timeout(vrp->sendq,
-> +						(msg = get_a_tx_buf(vrp)),
-> +						msecs_to_jiffies(15000));
-> +		}
->  
->  		/* disable "tx-complete" interrupts if we're the last sleeper */
->  		rpmsg_downref_sleepers(vrp);
->  
->  		/* timeout ? */
->  		if (!err) {
+for you to fetch changes up to 23316be8a9d450f33a21f1efe7d89570becbec58:
+
+  hwspinlock: qcom: add missing regmap config for SFPB MMIO implementation (2023-07-17 11:49:18 -0700)
+
+----------------------------------------------------------------
+hwspinlock updates for v6.6
+
+Convert u8500 and omap drivers to void-returning remove.
+
+Complete the support for representing the Qualcomm TCSR mutex as a mmio
+device, and check the return value of devm_regmap_field_alloc() in the
+same.
+
+----------------------------------------------------------------
+Christian Marangi (1):
+      hwspinlock: qcom: add missing regmap config for SFPB MMIO implementation
+
+Kang Chen (1):
+      hwspinlock: add a check of devm_regmap_field_alloc in qcom_hwspinlock_probe
+
+Uwe Kleine-König (3):
+      hwspinlock: omap: Emit only one error message for errors in .remove()
+      hwspinlock: omap: Convert to platform remove callback returning void
+      hwspinlock: u8500: Convert to platform remove callback returning void
+
+ drivers/hwspinlock/omap_hwspinlock.c |  8 +++-----
+ drivers/hwspinlock/qcom_hwspinlock.c | 11 +++++++++++
+ drivers/hwspinlock/u8500_hsem.c      |  6 ++----
+ 3 files changed, 16 insertions(+), 9 deletions(-)
