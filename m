@@ -2,92 +2,128 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1C8C71153
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 15:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84FCC83F33
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 15:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239185AbjIDPw5 (ORCPT
+        id S236453AbjIDP6k (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 11:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
+        Mon, 4 Sep 2023 11:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbjIDPw5 (ORCPT
+        with ESMTP id S236556AbjIDP6j (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 11:52:57 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7521AD;
-        Mon,  4 Sep 2023 08:52:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id BD8F9CE0E0E;
-        Mon,  4 Sep 2023 15:52:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C131C433C9;
-        Mon,  4 Sep 2023 15:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693842771;
-        bh=JVRNwKbFCeOWyBqO1LRF0ojfF/loYJpcFFsme3qrtr8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OQlU4y/mBaCwrqrD2n/6o1UC0KeD6Q94Ldv3G54RVUHi+jOav4jolRbXNX7hoTxII
-         MUgcw9NC6Qdftcn7/J7oDUhANMLqyp2929NqAlZcQTlUq4CIKHjIfGO4xuGzNfI7fX
-         RmQ6foOh4jAU9WjAOWX/X45tWmfVT4I2BxJbStRg1DFM8oiG9fCEqNwiJf7dE/efYg
-         8zn4PmVBlaEYXxakiEyHHxUUBK3PDHn2fGqhFAkOFA6kf39vsrODe+N/MPYUqG7rMl
-         lF/1xDNKa/PzOHkdj2SWsIAxZfF8gCFTf8h1YaFSyircV+KxTOhhFxaIqnKuGkkMCm
-         Dfz7EdMHu3M8g==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Kang Chen <void0red@gmail.com>
-Subject: [GIT PULL] hwspinlock updates for v6.6
-Date:   Mon,  4 Sep 2023 08:55:06 -0700
-Message-ID: <20230904155508.2950832-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.42.0
+        Mon, 4 Sep 2023 11:58:39 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09740198B
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 08:58:10 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b9c907bc68so24267681fa.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 08:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693843087; x=1694447887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUHwKLnbFXm7KLRQcxSJtkjW8XETj6X7RNn1FYYUf0Q=;
+        b=JtV3S2MbAePyqIXhTSWzsBL5GG+Y/kv7+sWkj7+R25NggqXL09VIa7/ABeNx+AT8IN
+         W2v5UXEMhiHDcMKpajOk1l90n9Ssvd4bNzec2BKL7dgi95zh78ZxYNRTmYo89xg2sl4K
+         r/znH3IeDcmXGBHhuC/wQX9wCcli1+9ccpFhPd3Ss+DXekqQx9LBUZyAFZi8/Tb9HjT5
+         AWzRoEZH4rn/s3VnXi/OLIN+mxF6weiQQaM+/H73X3QSYqwpdBpKhtPD+ZsVM3vpiXCz
+         a03WzbOutje4o8Aqyz22fghjJkCp4wYvUbba3fHdpXeEcnr/JRemRjVBtQXiEyy9EUau
+         eGxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693843087; x=1694447887;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUHwKLnbFXm7KLRQcxSJtkjW8XETj6X7RNn1FYYUf0Q=;
+        b=K0xGcw1X2s9AGs4w9JElONsWaM4O1HNMlE28yRoDGyLlhqndqKn1LNjskU71LmlvT6
+         yoi7ERYQ5zitbD72JD8wWLZu1WyTJQ4lAaPK07Kq/mpYojlzXB8KR2iL694r26oIUr8g
+         Sc3CdxyVjlN1BiPDdGsAKrwVEwEYIGiSFtVkJGHHvNGOhC8XhVPg2RtRZ54bWslzPUOX
+         gb0nLBItmrw7qzHV5MgulWa9QzAygZAE6Ot2bbzEkuWHoWcbitu+vlb/30qob1RefknN
+         3E0XBTWSJblT+eIJb603j0J9KkBr6eDVDcHHoTWLf4T3BSVjfBQKkHiwYLlJcZGva5xJ
+         qciQ==
+X-Gm-Message-State: AOJu0YxJLQHMQTj9U1Yel5AIPX5Q3kmGHufkaZ+nYhSmYwh8CzHtR+ab
+        /BGjOJ/rqgprCBWPm4xYXkKzBw==
+X-Google-Smtp-Source: AGHT+IG1PG1HQBGY/9Uip6GHEELtcEOKs21LhuZthksMhsuW/ax+AaFG+MVw04dTmJ1G98sQFym4kg==
+X-Received: by 2002:a2e:918b:0:b0:2b7:33b9:8809 with SMTP id f11-20020a2e918b000000b002b733b98809mr7120141ljg.16.1693843087517;
+        Mon, 04 Sep 2023 08:58:07 -0700 (PDT)
+Received: from [192.168.1.101] (abxj43.neoplus.adsl.tpnet.pl. [83.9.3.43])
+        by smtp.gmail.com with ESMTPSA id w23-20020a2e8217000000b002b6e099c481sm2213693ljg.51.2023.09.04.08.58.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Sep 2023 08:58:07 -0700 (PDT)
+Message-ID: <9492bc16-2d8f-44a1-b2d6-d5f8353f30fa@linaro.org>
+Date:   Mon, 4 Sep 2023 17:58:06 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Fix tcsr_mutex register for IPQ6018
+Content-Language: en-US
+To:     Vignesh Viswanathan <quic_viswanat@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ohad@wizery.com,
+        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org
+Cc:     quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
+        quic_varada@quicinc.com
+References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 4.09.2023 07:50, Vignesh Viswanathan wrote:
+> IPQ6018 has 32 tcsr_mutext hwlock registers of 0x1000 size each.
+> The compatible string qcom,ipq6018-tcsr-mutex is mapped to
+> of_msm8226_tcsr_mutex which has 32 locks configured with stride of 0x80
+> and doesn't match the HW present in IPQ6018.
+> 
+> This series fixes the following:
+> 1. Fix the tcsr_mutex hwlock register size to 0x20000 in ipq6018.dtsi.
+> 2. Remove qcom,ipq6018-tcsr-mutex compatible string for tcsr_mutex in
+> ipq6018.dtsi.
+> 3. Drop unused qcom,ipq6018-tcsr-mutex compatible string from
+> qcom_hwspinlock driver and dt-bindings.
+> 
+Sounds like 20230904063344.4144086-1-quic_viswanat@quicinc.com can't
+go in without this then?
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
-
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v6.6
-
-for you to fetch changes up to 23316be8a9d450f33a21f1efe7d89570becbec58:
-
-  hwspinlock: qcom: add missing regmap config for SFPB MMIO implementation (2023-07-17 11:49:18 -0700)
-
-----------------------------------------------------------------
-hwspinlock updates for v6.6
-
-Convert u8500 and omap drivers to void-returning remove.
-
-Complete the support for representing the Qualcomm TCSR mutex as a mmio
-device, and check the return value of devm_regmap_field_alloc() in the
-same.
-
-----------------------------------------------------------------
-Christian Marangi (1):
-      hwspinlock: qcom: add missing regmap config for SFPB MMIO implementation
-
-Kang Chen (1):
-      hwspinlock: add a check of devm_regmap_field_alloc in qcom_hwspinlock_probe
-
-Uwe Kleine-König (3):
-      hwspinlock: omap: Emit only one error message for errors in .remove()
-      hwspinlock: omap: Convert to platform remove callback returning void
-      hwspinlock: u8500: Convert to platform remove callback returning void
-
- drivers/hwspinlock/omap_hwspinlock.c |  8 +++-----
- drivers/hwspinlock/qcom_hwspinlock.c | 11 +++++++++++
- drivers/hwspinlock/u8500_hsem.c      |  6 ++----
- 3 files changed, 16 insertions(+), 9 deletions(-)
+Konrad
