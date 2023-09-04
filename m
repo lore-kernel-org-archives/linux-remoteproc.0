@@ -2,111 +2,170 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611D9C71153
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 17:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE92C83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 17:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236487AbjIDR1v (ORCPT
+        id S1345897AbjIDRse (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 13:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54616 "EHLO
+        Mon, 4 Sep 2023 13:48:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbjIDR1u (ORCPT
+        with ESMTP id S233765AbjIDRse (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 13:27:50 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B9BCF6;
-        Mon,  4 Sep 2023 10:27:47 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 384HReHE020038;
-        Mon, 4 Sep 2023 17:27:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=UoZi2/Mb8NtipTFO2Sz5ZO5fWPKNmFQc/ZL4I3EGII4=;
- b=le+wGYGapJ2v6KekyQF0+9GSs/dzon3QcAlbiwe2RJZelDOfUlIPmQJ8URQIXrboALuz
- dMnXzEi+9rm0Lw6F/D+qcePYiAK7mwc/lXmMPiGughAAJVUB9qAdFBTnkURYuuy57cLS
- RIrDWbVd/sQw4EZX4kWocPm2qDsYzu9SA9Q4XOdMXBxhFIgwP4i4uR14ac73TYoV/5uT
- /K/ejQG4HSLxHc3cB0oBCU8QeKk7SkmytQtjYq4TUdfWh7YdT1cTFw+7cNfpbdEpWwKW
- QIqt+MJXaZo4PaDwmt4YDx7bcJMW2bxBtdwfpXmJITYRNR/16CvAZ+DtBGwjSgGIjmN1 Pg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3suwedbwq4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Sep 2023 17:27:40 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 384HRdCt025331
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 4 Sep 2023 17:27:39 GMT
-Received: from [10.50.40.93] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 4 Sep
- 2023 10:27:34 -0700
-Message-ID: <6ba49071-c97a-4657-af67-0abf93cfa0d7@quicinc.com>
-Date:   Mon, 4 Sep 2023 22:57:31 +0530
+        Mon, 4 Sep 2023 13:48:34 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A653CAF
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 10:48:30 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31c3df710bdso1298485f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 10:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693849709; x=1694454509; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aos/hZG2kxxhYMB7Cd7Cd6lWeMYzVwziNvlCKk5Ckbo=;
+        b=XsrYlRRd52rQNQ5rzBtEDKv5ZkEEkcnLpM7Em68LGMYQSlB72PdrANRBH0M6mJMb8U
+         4sgogmbIbhorX4AoKeoEh4tFDYVF5SPC+BeluAhdWRnKHMHtQEmBl1YWbMivWna4DNdW
+         oVhwChBn4DMpcKQWGM+V4aDnaXCrHwzBz2HWf0rVg420fsFhbBH9VdUERl9uBvejB+vt
+         FsNNvl3d85tc1tE2lwwxqmTvfgMePJt2LLi/Ey+YErMmTa/e8o/gVTVNruOW2TctDQAe
+         50uGlsfkqBXH0+SugTRrufSAPf+eK8SpwhT03J1deFDKQGnhP8RE0V7TDxQGT3bQAnoB
+         jdfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693849709; x=1694454509;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aos/hZG2kxxhYMB7Cd7Cd6lWeMYzVwziNvlCKk5Ckbo=;
+        b=YkbgbiSxI1EbLW6X8dQ4xLYe0Srvf5aJ+8RR1+O5H/fOhBo52ygRI5b4Nltch2Yqlf
+         fvJLIXCF+G3yyn6dlyykVwvyLQP/2mKu6TgUv5SvjJPcf+69Q8gqCVggHFmJkU/UghOk
+         vfanHR2kuaow23DWcn/NZIDY5tKthErUF339f7Wdh20maXyGdJA8RHsVYfQu0z4VXxKS
+         M4VJYHorju1wDc8DQmYe26ZEtDNWPOMCt6f3nSaEEW7LI8nsjL+SukZ59mjigibzi8dR
+         azx/rdXF2mQjsDGY0AC389XLoZzAX9xtFGe4L/VeKz0Vs+X9AAKNgq2C9/yUa4qG2zJm
+         jvQA==
+X-Gm-Message-State: AOJu0Yyx4iSres66myP/x9+S59B+VkHF/PwwXleHgxtGmsu7g1SOGB5Z
+        Mfe3aZ8aNwMpB+asmcsh0d8rNB0UClxhGoPqNIuDaw==
+X-Google-Smtp-Source: AGHT+IEamhDEaqdCoqAZliBTHkbNtM/UPtdEvq3fI3mlDWHw8b6KVLBWzPs4O5EcVL5Mv8O73aLmGArMs289GH4AkPk=
+X-Received: by 2002:adf:f7c1:0:b0:314:1ce9:3c86 with SMTP id
+ a1-20020adff7c1000000b003141ce93c86mr8302488wrq.0.1693849709037; Mon, 04 Sep
+ 2023 10:48:29 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Fix tcsr_mutex register for IPQ6018
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ohad@wizery.com>,
-        <baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>
-References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
- <9492bc16-2d8f-44a1-b2d6-d5f8353f30fa@linaro.org>
-From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
-In-Reply-To: <9492bc16-2d8f-44a1-b2d6-d5f8353f30fa@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bRmhfoI2Ouf4wOGM6Bd-7yGOG__91IzA
-X-Proofpoint-GUID: bRmhfoI2Ouf4wOGM6Bd-7yGOG__91IzA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-04_10,2023-08-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 mlxscore=0 adultscore=0
- mlxlogscore=912 impostorscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309040156
+References: <20230901080935.14571-1-tinghan.shen@mediatek.com> <20230901080935.14571-15-tinghan.shen@mediatek.com>
+In-Reply-To: <20230901080935.14571-15-tinghan.shen@mediatek.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 4 Sep 2023 11:48:18 -0600
+Message-ID: <CANLsYkxhmY=TZqiyt=gr7JrQa2ZMgqjESeH0sx3orxK7CLN94w@mail.gmail.com>
+Subject: Re: [PATCH v17 14/14] arm64: dts: mediatek: mt8195: Add SCP 2nd core
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hey Matthias - will you pick up this one or should I get it through
+the remoteproc tree?
 
-
-On 9/4/2023 9:28 PM, Konrad Dybcio wrote:
-> On 4.09.2023 07:50, Vignesh Viswanathan wrote:
->> IPQ6018 has 32 tcsr_mutext hwlock registers of 0x1000 size each.
->> The compatible string qcom,ipq6018-tcsr-mutex is mapped to
->> of_msm8226_tcsr_mutex which has 32 locks configured with stride of 0x80
->> and doesn't match the HW present in IPQ6018.
->>
->> This series fixes the following:
->> 1. Fix the tcsr_mutex hwlock register size to 0x20000 in ipq6018.dtsi.
->> 2. Remove qcom,ipq6018-tcsr-mutex compatible string for tcsr_mutex in
->> ipq6018.dtsi.
->> 3. Drop unused qcom,ipq6018-tcsr-mutex compatible string from
->> qcom_hwspinlock driver and dt-bindings.
->>
-> Sounds like 20230904063344.4144086-1-quic_viswanat@quicinc.com can't
-> go in without this then?
-> 
-
-They can independently go in as the current max size and stride set for
-IPQ6018 still has 32 locks and moving the index 3 shouldn't cause any 
-issues.
-
-However, functionally IPQ6018's HW lock is broken and will be fixed once 
-this series goes in.
-
-Thanks,
-Vignesh
-> Konrad
+On Fri, 1 Sept 2023 at 02:10, Tinghan Shen <tinghan.shen@mediatek.com> wrote:
+>
+> Rewrite the MT8195 SCP device node as a cluster and
+> add the SCP 2nd core in it.
+>
+> Since the SCP device node is changed to multi-core structure,
+> enable SCP cluster to enable probing SCP core 0.
+>
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../boot/dts/mediatek/mt8195-cherry.dtsi      |  6 +++-
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi      | 34 ++++++++++++++-----
+>  2 files changed, 30 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> index 37a3e9de90ff..4584077d3a4c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> @@ -991,7 +991,11 @@
+>         interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
+>  };
+>
+> -&scp {
+> +&scp_cluster {
+> +       status = "okay";
+> +};
+> +
+> +&scp_c0 {
+>         status = "okay";
+>
+>         firmware-name = "mediatek/mt8195/scp.img";
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> index 48b72b3645e1..7809118f74fb 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> @@ -922,14 +922,30 @@
+>                         clocks = <&infracfg_ao CLK_INFRA_AO_GCE2>;
+>                 };
+>
+> -               scp: scp@10500000 {
+> -                       compatible = "mediatek,mt8195-scp";
+> -                       reg = <0 0x10500000 0 0x100000>,
+> -                             <0 0x10720000 0 0xe0000>,
+> -                             <0 0x10700000 0 0x8000>;
+> -                       reg-names = "sram", "cfg", "l1tcm";
+> -                       interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
+> +               scp_cluster: scp@10500000 {
+> +                       compatible = "mediatek,mt8195-scp-dual";
+> +                       reg = <0 0x10720000 0 0xe0000>, <0 0x10700000 0 0x8000>;
+> +                       reg-names = "cfg", "l1tcm";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges = <0 0 0x10500000 0x100000>;
+>                         status = "disabled";
+> +
+> +                       scp_c0: scp@0 {
+> +                               compatible = "mediatek,scp-core";
+> +                               reg = <0x0 0xa0000>;
+> +                               reg-names = "sram";
+> +                               interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       scp_c1: scp@a0000 {
+> +                               compatible = "mediatek,scp-core";
+> +                               reg = <0xa0000 0x20000>;
+> +                               reg-names = "sram";
+> +                               interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH 0>;
+> +                               status = "disabled";
+> +                       };
+>                 };
+>
+>                 scp_adsp: clock-controller@10720000 {
+> @@ -2374,7 +2390,7 @@
+>
+>                 video-codec@18000000 {
+>                         compatible = "mediatek,mt8195-vcodec-dec";
+> -                       mediatek,scp = <&scp>;
+> +                       mediatek,scp = <&scp_c0>;
+>                         iommus = <&iommu_vdo M4U_PORT_L21_VDEC_MC_EXT>;
+>                         #address-cells = <2>;
+>                         #size-cells = <2>;
+> @@ -2540,7 +2556,7 @@
+>                                  <&iommu_vdo M4U_PORT_L19_VENC_REF_LUMA>,
+>                                  <&iommu_vdo M4U_PORT_L19_VENC_REF_CHROMA>;
+>                         interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH 0>;
+> -                       mediatek,scp = <&scp>;
+> +                       mediatek,scp = <&scp_c0>;
+>                         clocks = <&vencsys CLK_VENC_VENC>;
+>                         clock-names = "venc_sel";
+>                         assigned-clocks = <&topckgen CLK_TOP_VENC>;
+> --
+> 2.18.0
+>
