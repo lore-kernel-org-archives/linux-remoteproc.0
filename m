@@ -2,155 +2,159 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8623FC83F2C
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 20:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3ADC83F33
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 21:16:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjIDUnI (ORCPT
+        id S238818AbjIDVQg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 16:43:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        Mon, 4 Sep 2023 17:16:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjIDUnI (ORCPT
+        with ESMTP id S234476AbjIDVQg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 16:43:08 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0823E12A
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 13:43:05 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so1211538a12.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 13:43:05 -0700 (PDT)
+        Mon, 4 Sep 2023 17:16:36 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD7212E
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 14:16:32 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-68c3ec0578bso1046078b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Sep 2023 14:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693860184; x=1694464984; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1693862192; x=1694466992; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bd+uBaZXUqOZ3cQQ+bhudqpQEOZ7PZ5vTiPcZoP4wt8=;
-        b=n2eFdcl/FssKXB7Ge7aCAsS+xzLuo0JOc6OvYdPvOzLzezmcbeJ9ERW8ZGfM5OVOXS
-         ZzwBAf2x1zQjXcM984nGn2uQOph5dwBLwhHy74M6+R7sjKe8F3+Gr+cQfJYwgUFsBfza
-         Wf3OMoW2ClxIPmfkASLJ2tbnSTjWBmjH0VV/bF6yAjnI/fYPV4rG5FQZ1yPt6mureUjs
-         y5FX4zycYM1OO51tLU4YaRh+T/atXr9y9A3IOGJOCtsGU03k5u4tuJdOKwqgDNSRSYjd
-         9n7pWVD6Y4SlV1x4opHOJaNxgib7iECUa0makr5RtuSD6aC/SlDL5Y6noVzTr3476NpB
-         a+Iw==
+        bh=e8wgNVpTNDzCrao34l0u3J7l14QWnA5VC866xjk8bCs=;
+        b=H76zgmQPrOaVCtuK3S6oQQc78+NVglHyXMblwT+Dyftj2yQYx2wO+pzq6ZoNT+JNhi
+         qicKfRUomUHLCzEltre2YvfxsLYapFJV23h6gaPVg71NJ1MFDhxX801grWEqATLv8Ptt
+         ZbcxZ+NPglmt99iqVDaB2Bhk7ECDFq0973W129rC9MsLNLjZLLLWkYSA1jzeVKHNGQWC
+         pzEfnBapPX9HWtv+ilt7JuPM4BP1TyWlqQS5Zunr6p+J/I0UrmEF1CAq3uynj7NJcxH8
+         OdFEZ2pob1tIJDXVDUtuiW+66H96ynyGfbkXk94FqiiI70oxks3kIZRkr06xNrUagmE7
+         IuWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693860184; x=1694464984;
+        d=1e100.net; s=20221208; t=1693862192; x=1694466992;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bd+uBaZXUqOZ3cQQ+bhudqpQEOZ7PZ5vTiPcZoP4wt8=;
-        b=VCIGo58q4fZ2vXubPTTrw6Sp8pjeWVXO26yf3o2dxnRS5ydOpcAbsPPPjvT7vIXtEw
-         XnvheK34Q9Qd6+kyCwD8qu6Vz0kRm4pEA5cBRJJVbSSS+qttBD1ORVn9Ejd6c1K13czQ
-         75wdRRWtIYCBBGplRwwt6nkNywA4OwOdW4JhKNLq0BZSX/LyJ4IGTrNexgq0KwNFAQVJ
-         JksPDZD4ay74qZgRUeY1tzB1BtZvOsKdgZXN/BaGTEFZf9wIJocYLZzcRa9aG1xPdxSO
-         dh9hnx1qx5EU98gesUfP8oeoY4fENS6i0tbE4Q7nXsW1qCmtgKbWfeazOgJKlpAHb/SM
-         FWOw==
-X-Gm-Message-State: AOJu0Yw47K/H03B0mj5Z2LoMMW7K+LyM3J20RZKANIuqSOAsgWmq3TNR
-        qytZn3qhyMzxYLpCwjcINgZSaA==
-X-Google-Smtp-Source: AGHT+IE0h8ydHL32ctuXhUGMeaCKA+rbJlIBglH5iU9BhStQ9af+1+ITfRtEoubDSxetIA6dTsDKrQ==
-X-Received: by 2002:a17:90a:c283:b0:26d:1d0:4f8c with SMTP id f3-20020a17090ac28300b0026d01d04f8cmr10675698pjt.9.1693860184419;
-        Mon, 04 Sep 2023 13:43:04 -0700 (PDT)
+        bh=e8wgNVpTNDzCrao34l0u3J7l14QWnA5VC866xjk8bCs=;
+        b=ORtEnVW4C9K0H+v0MJpCn9USnry/4azjw7nYuwCI4QMS/siim3Ya76dxOf4hmFE8Xz
+         GM8GbtVwu1DTGbSBnrRnYqXcx7FR6Ht+iffytVbiMUjkK0uuAz0aM3snoI+z8mf0N+pP
+         Q9BeAHyWLojMe6joBSDOdBVspUSHpq0cWmD8SYxFRpJKFnsHeIb1uGxs/RMPxBqF+q8O
+         7mmR8i4nSF0q3TW1cUu4HAcRcnyIrjHps9CPwmrDsU7BUHWewbONspj643P3446dxL3J
+         3bLWZQJ+Up/awjAvk0doWwx2Fv7Qk/xjiiXkHNfUJT1XPIJfSZL+NKh2vb5T/rx6vY5m
+         Tleg==
+X-Gm-Message-State: AOJu0YxbJ79s7UFHipJTPml0VNr1mPyT5bnkFK7nOPKbSTVUekEqKzYJ
+        wWUoSCOHjspdpqBSlXyZuME7Dw==
+X-Google-Smtp-Source: AGHT+IH7TUfPW532y/4a5gyD3Op0vnux/RtbP+cf8JnuHrM7jURUa8Odo5hrXciGhAVG/SaWM6u0qQ==
+X-Received: by 2002:a05:6a00:2d94:b0:68a:457f:d3ee with SMTP id fb20-20020a056a002d9400b0068a457fd3eemr10323147pfb.28.1693862191905;
+        Mon, 04 Sep 2023 14:16:31 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:4d17:cefe:4740:3fd1])
-        by smtp.gmail.com with ESMTPSA id 5-20020a17090a1a4500b0026b4ca7f62csm8406688pjl.39.2023.09.04.13.43.03
+        by smtp.gmail.com with ESMTPSA id r9-20020a62e409000000b00682b299b6besm7719240pfh.70.2023.09.04.14.16.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Sep 2023 13:43:04 -0700 (PDT)
-Date:   Mon, 4 Sep 2023 14:43:01 -0600
+        Mon, 04 Sep 2023 14:16:31 -0700 (PDT)
+Date:   Mon, 4 Sep 2023 15:16:28 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Tim Blechmann <tim.blechmann@gmail.com>,
-        linux-remoteproc@vger.kernel.org, Tim Blechmann <tim@klingt.org>
-Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
- condition
-Message-ID: <ZPZBVS3R/oZuUmk5@p14s>
-References: <20230904083602.106703-1-tim@klingt.org>
- <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>, linux-imx <linux-imx@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: add mandatory
+ find_loaded_rsc_table op
+Message-ID: <ZPZJLJpL+f9nB1cn@p14s>
+References: <20230712224220.26430-1-iuliana.prodan@oss.nxp.com>
+ <ZLV9gAmiDldlvIUR@p14s>
+ <474c0241-a58e-b435-8ac1-82a5a458d79a@nxp.com>
+ <ZLauY85b9SRC3z0x@p14s>
+ <03d7c703-81cb-20f9-aaf8-2ab8ca3e7138@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com>
+In-Reply-To: <03d7c703-81cb-20f9-aaf8-2ab8ca3e7138@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 04, 2023 at 03:52:56PM +0200, Arnaud POULIQUEN wrote:
-> Hello Tim,
+On Tue, Jul 18, 2023 at 06:40:53PM +0300, Iuliana Prodan wrote:
 > 
-> On 9/4/23 10:36, Tim Blechmann wrote:
-> > when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
-> > enables tx-complete interrupt.
-> > however if the interrupt is executed after `get_a_tx_buf` and before
-> > `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
-> > for the full 15 seconds.
+> On 7/18/2023 6:23 PM, Mathieu Poirier wrote:
+> > On Tue, Jul 18, 2023 at 11:25:03AM +0300, Iuliana Prodan wrote:
+> > > On 7/17/2023 8:42 PM, Mathieu Poirier wrote:
+> > > > On Thu, Jul 13, 2023 at 01:42:20AM +0300, Iuliana Prodan (OSS) wrote:
+> > > > > From: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > > > 
+> > > > > Add the .find_loaded_rsc_table operation for i.MX DSP.
+> > > > > We need it for inter-process communication between DSP
+> > > > > and main core.
+> > > > > 
+> > > > > This callback is used to find the resource table (defined
+> > > > > in remote processor linker script) where the address of the
+> > > > > vrings along with the other allocated resources (carveouts etc)
+> > > > > are stored.
+> > > > > If this is not found, the vrings are not allocated and
+> > > > > the IPC between cores will not work.
+> > > > Is there a constraint on the system memory the M4 can address?  If so there
+> > > > will be a need to declare address ranges for vrings and buffers in reserved
+> > > > memory in the DT.
+> > > > 
+> > > > Thanks,
+> > > > Mathieu
+> > > Hi Mathieu,
+> > > 
+> > > No, there is no constraint on memory.
+> > > 
+> > > We want the Cortex A core to communicate with the HiFi4 DSP.
+> > > The Cortex A is in charge of starting the DSP and loading the firmware in
+> > > HiFi4's memory.
+> > > When using rpmsg for IPC, the Cortex A needs to find the resource table
+> > > (defined in the DSP linker script) and this is done using
+> > > .find_loaded_rsc_table callback.
+> > > 
+> > > For the DT, we are using a (not upstream) device tree where we have the
+> > > reserved-memory for dsp_vdev0vring0, dsp_vdev0vring1 and dsp_vdev0buffer.
+> > That is the part I'm interested in.  Don't we need the reserved-memory entries?
+> > Otherwise the M4 may not be able to access the memory chosen by the application
+> > processor, most likely leading to a crash.
 > 
+> This kernel module (imx_dsp_rproc) is used only for DSP.
+> For M4 core we use imx_rproc.
+>
+
+The point here is that if I merge this patch and someone tries to load a
+firmware image that has a resource table, the system will likely crash because
+reserved memories haven't been specified in the DT.
+
+Unless there is a very good reason not to, I would like to see the companion DT
+changes submitted with this patch so that the feature is complete.
+
+> Iulia
 > 
-> Is there any reason why your co-processor is unable to release the TX RPMSG
-> buffers for 15 seconds? If not, you should first determine the reason why it is
-> stalled.
-
-Arnaud's concern is valid.  If the remote processor can't consume a buffer
-within 15 seconds, something is probably wrong.
-
-That said, I believe your assesment of the situation is correct.  *If* the TX
-callback is disabled and there is no buffer available, there is a window of
-opportunity between calls to get_a_tx_buf() and rpmsg_upref_sleepers() for an
-interrupt to arrive in function rpmsg_send_offchannel_raw().  
-
-From here three things need to happen:
-
-1) You send another version of this patch with a changelong that uses proper
-english, i.e capital letters when they are needed and no spelling mistake.
-
-2) Arnaud confirms our suspicions.
-
-3) This patch gets applied when rc1 comes out so that it has 6 or 7 weeks to
-soak.  No error are locks are reported due to this patch during that time. 
-
-> 
-> Regards,
-> Arnaud
-> 
-> > 
-> > in this case, so we re-try once before we really start to sleep
-> > 
-> > Signed-off-by: Tim Blechmann <tim@klingt.org>
-> > ---
-> >  drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
-> >  1 file changed, 15 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > index 905ac7910c98..2a9d42225e60 100644
-> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
-> >  
-> >  	/* no free buffer ? wait for one (but bail after 15 seconds) */
-> >  	while (!msg) {
-> >  		/* enable "tx-complete" interrupts, if not already enabled */
-> >  		rpmsg_upref_sleepers(vrp);
-> >  
-> > -		/*
-> > -		 * sleep until a free buffer is available or 15 secs elapse.
-> > -		 * the timeout period is not configurable because there's
-> > -		 * little point in asking drivers to specify that.
-> > -		 * if later this happens to be required, it'd be easy to add.
-> > -		 */
-> > -		err = wait_event_interruptible_timeout(vrp->sendq,
-> > -					(msg = get_a_tx_buf(vrp)),
-> > -					msecs_to_jiffies(15000));
-> > +		/* make sure to retry to grab tx buffer before we start waiting */
-> > +		msg = get_a_tx_buf(vrp);
-> > +		if (msg) {
-> > +			err = 0;
-> > +		} else {
-> > +			/*
-> > +			 * sleep until a free buffer is available or 15 secs elapse.
-> > +			 * the timeout period is not configurable because there's
-> > +			 * little point in asking drivers to specify that.
-> > +			 * if later this happens to be required, it'd be easy to add.
-> > +			 */
-> > +			err = wait_event_interruptible_timeout(vrp->sendq,
-> > +						(msg = get_a_tx_buf(vrp)),
-> > +						msecs_to_jiffies(15000));
-> > +		}
-> >  
-> >  		/* disable "tx-complete" interrupts if we're the last sleeper */
-> >  		rpmsg_downref_sleepers(vrp);
-> >  
-> >  		/* timeout ? */
-> >  		if (!err) {
+> > > Iulia
+> > > 
+> > > 
+> > > > > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > > > ---
+> > > > >    drivers/remoteproc/imx_dsp_rproc.c | 1 +
+> > > > >    1 file changed, 1 insertion(+)
+> > > > > 
+> > > > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > index d95fa5586189..b5634507d953 100644
+> > > > > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > @@ -941,6 +941,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+> > > > >    	.kick		= imx_dsp_rproc_kick,
+> > > > >    	.load		= imx_dsp_rproc_elf_load_segments,
+> > > > >    	.parse_fw	= imx_dsp_rproc_parse_fw,
+> > > > > +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> > > > >    	.sanity_check	= rproc_elf_sanity_check,
+> > > > >    	.get_boot_addr	= rproc_elf_get_boot_addr,
+> > > > >    };
+> > > > > -- 
+> > > > > 2.17.1
+> > > > > 
