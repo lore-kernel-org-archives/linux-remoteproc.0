@@ -2,75 +2,116 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDBBC83F2C
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E7FCA0FF3
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237826AbjIEQGU (ORCPT
+        id S238541AbjIEQGW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47002 "EHLO
+        Tue, 5 Sep 2023 12:06:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353738AbjIEHqp (ORCPT
+        with ESMTP id S1352425AbjIEFsT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 03:46:45 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3EFCC;
-        Tue,  5 Sep 2023 00:46:41 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Tue, 5 Sep 2023 01:48:19 -0400
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC781AD;
+        Mon,  4 Sep 2023 22:48:12 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ED57A6607186;
-        Tue,  5 Sep 2023 08:46:39 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1693900000;
-        bh=LFndA3pFJkQjsY6+cZ6q8HLFNc/UGIg5dTqHJTKN0iQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Pew4fawfy9voOOmE19XJUCsMQ72+myxp521f+lJ63NOtBo2sDHhpw1WiD5ScDG/zs
-         RAlBhLcc5u/n0z1qWxtO0VoIcOqn7qbGF8U9xyoitgRHwyVjjzHkWOiONElzrcYsKH
-         r1ozDXtuQat1zTsISxfeQdHPMOtbQgB54w2iE3PJWSXrioA4TlAonrN3jWoVPw2Npd
-         786Bt+/rd6ixLLF0SI1VMyTKVDzLFaCUKwu0QcysplvyIfPZ0Ru/Gl8H1mt3dm8w+b
-         DuJGIS1wxbXv11+2/iI74HguOcmAWoM6lTlu/NTzulIIKuB3/vzlfKaoflVPz93Qnx
-         Mru9XrTYYePrQ==
-Message-ID: <cb1fc499-3649-0f3b-f9c0-f5305b2310d7@collabora.com>
-Date:   Tue, 5 Sep 2023 09:46:37 +0200
+        by box.trvn.ru (Postfix) with ESMTPSA id A8BD040901;
+        Tue,  5 Sep 2023 10:48:04 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1693892885; bh=xzBsIM1fOfN3WiR0egrK5klaE/EyIqqTyt08MjK+7GU=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=QZDDt0CfQ8beU87Vew+Rncs34gUPN/6Vl/D9/krJ+4SdPlkum8aBB0DAwBtoHFh20
+         l6Ek+TMJtfZTxGMUNyYLsgpfByimB7PQsVI+c99IQtsua6K3bPHe+tBAeH1B0B7sq9
+         SSCkmxsv4AGVGKxxVQwRiY8V0AyJ1BWtFYkV8K8nRsNx83txS+5aSz2pR655b4sCDH
+         UoV9CmhP17e5J0uG7gwlWGLAOYl2pUwYSKl6Z7Io/Hgond9v/iZTDc1dCxjJqsQXdT
+         pCXLZJmpT+zn65WW8CNG4GGWcRIo+lmfnSoJshjqJ2bnGjYb4g8q/1R6/2Cx0+idYL
+         5wbUAebtPfM5w==
+From:   Nikita Travkin <nikita@trvn.ru>
+Date:   Tue, 05 Sep 2023 10:47:20 +0500
+Subject: [PATCH 1/4] dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP
+ compatible
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v17 12/14] remoteproc: mediatek: Report watchdog crash to
- all cores
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230905-sc7180-adsp-rproc-v1-1-dfea7699da7b@trvn.ru>
+References: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
- <20230901080935.14571-13-tinghan.shen@mediatek.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230901080935.14571-13-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1140; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=xzBsIM1fOfN3WiR0egrK5klaE/EyIqqTyt08MjK+7GU=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9sESW73sc+qIsY8R2iF/ppissAEcRLqnSvQbo
+ /FOREoR8ZuJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPbBEgAKCRBDHOzuKBm/
+ df75D/wOi1Z/IX0nTp+322VAZRFpSqt2JXG3TaVFbDzIYddUNb2Dz3Mq0rNHRTmsNz+bgBY4tlg
+ 1xv3/27xv50ZLJ38fvU6Nq7mP/ARiPyCmNHX0U2LbF6fjhSkDdT3emNfGkHHgRAptPLzaTslNiS
+ IYG72fZNzjB4f8jcdE4nsxODcpxnYZ4J/FT1PrLJPazNHOkuL0/u99DxybQPkQ2LIBYp/dWzmHT
+ 1eDBfKkbPwxqxIeFuTSqyj/HoEPBzcyjUwvHj0z0EXOJHN+pDJi2eEhrVOlImtMQqUFp2xU2v2C
+ 2X85PnQVlzQtuAzvrh350IDGgtlp+Q01K3ahh/UH0m+PitjTIAUCk4flqOJOC35iSxwZM9nNHGX
+ 5xaPKg3leybAGoIlnQd8hfs1/6b4jSzPgwJrUBS84eAXVNVVHKnhtxIDk/aK6P9KRZoEIZfFqzA
+ P12wZFox7iT8mvEoAB7WmF4Sv2RgfDWbDsMVfTvBXjFa6UEvIBKGBpKx+w4gzqiUbgnnW6TgSs3
+ B6zAmSbm8f/FFknyhcvQpq3RnoH6cbCb1rEjo+uDf4XH79OaRmSUWUNyDEJBZyPCpOiiWh3B6QL
+ mFUYGQ2jP5bWaFpYOiO4zR58dEN/pBKvsreBfHgd2ekl1vQN/3Q8wXNJhSo4dnyW7kzD7r3XAuP
+ PHtp5yBwT25NcsA==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 01/09/23 10:09, Tinghan Shen ha scritto:
-> To ensure consistent behavior, the watchdog timeout handling of the
-> multi-core SCP should reset the whole SCP sub-system when watchdog
-> timeout. Triggering the rproc recovery flow on all instances will
-> ensure proper recovery of the SCP sub-system.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+SC7180 has an ADSP remoteproc. Add it's compatible to the bindings.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+ .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml      | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
+index 689d5d535331..37eeb51b849e 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
+@@ -16,6 +16,7 @@ description:
+ properties:
+   compatible:
+     enum:
++      - qcom,sc7180-adsp-pas
+       - qcom,sc7180-mpss-pas
+       - qcom,sc7280-mpss-pas
+ 
+@@ -88,6 +89,17 @@ allOf:
+           maxItems: 2
+         power-domain-names:
+           maxItems: 2
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sc7180-adsp-pas
++    then:
++      properties:
++        interrupts:
++          minItems: 5
++        interrupt-names:
++          minItems: 5
+ 
+ unevaluatedProperties: false
+ 
+
+-- 
+2.41.0
 
