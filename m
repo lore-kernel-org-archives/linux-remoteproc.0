@@ -2,64 +2,46 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D211CA0FFE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3CFCA0FFD
 	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234631AbjIEQGE (ORCPT
+        id S238427AbjIEQGI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51752 "EHLO
+        Tue, 5 Sep 2023 12:06:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354914AbjIEPyH (ORCPT
+        with ESMTP id S1352448AbjIEFsV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 11:54:07 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECBBE6
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Sep 2023 08:54:02 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bed101b70so405850466b.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Sep 2023 08:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693929240; x=1694534040; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pVpIOfthLWFFGPvccuIJVh5mPH0Rncfx7vuDB280HqM=;
-        b=tVCCGzM9Lo7sQ4Zq616P09neAPC63utATraDDBPUuOFrgBzP+jrWI3cEQSqwWGWuG7
-         OzpmC7ACbp4Z31+08N3maAK+AYocCpkL6Vyq0Zqop0vlwnKIPAAA+py8lsRY0fUC9p2o
-         7w2doNXUTKYKxe4oEvJafaRDIaLo1kUb+2oFYiPdzvSenHZDz4AnBK6MwaJdAkxlxAEH
-         al2jtBHB0xH7zf0e1lPBz8bTAM49uXQyQs5O8XDvwFAL+DHlz94oggibjuUWYzbM42vH
-         MuRmIL3WAsrj3d7PzoHz/naeQTJi4M4X5Z3LUAobhCiZXvl5YtHyKTx2lYw8kCtdavl9
-         b41Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693929240; x=1694534040;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVpIOfthLWFFGPvccuIJVh5mPH0Rncfx7vuDB280HqM=;
-        b=YZSpUOfzBZP36rNRhtFyc7PSimnqO9GVXBik2szCLSYkH4QViW4IlpBgLQh3Kt380p
-         7iOTGFKBJejB6ZLjMQJb9VTABkEM69XPLhO0a4DiMy3kmMxwkxmIvL4DFxVKKNptUj47
-         6ONDTPGrAryQ7nZqmeTFd13X1ykqb6mSYVYFgWGzz/v6iwYFuhxIRkvcNXgf5QMnItjQ
-         +iLag9qVb4sADU1IVVirPwdKeCREepIQhDobLJv6exrqfyjWzidm9+uvIpwVGhP3F6Vi
-         PSZNrU1XGMHc65qbpeOScZk+8AMPBd8aXyP8k/msYZLSOX1Vl/ojNi4Iu3eR6MJDqbW7
-         4p6w==
-X-Gm-Message-State: AOJu0YzL8dYmiL6vpH2xKxVI8zHMqyoYGLWEoODbiSFAVKb7OEgujJ24
-        eqixJBjNQiyiuNPKMGYrCU3Eg8uwuHH82Xw5RCM=
-X-Google-Smtp-Source: AGHT+IGvqSCRUiGNuCpTmv+0pI7XTpvHQL8WD+82ZwYSrD8wS8xN+/n8Nc5wLbXyRVOtN9JDnbM8bA==
-X-Received: by 2002:a17:906:214:b0:9a2:86b:bb18 with SMTP id 20-20020a170906021400b009a2086bbb18mr202776ejd.26.1693929240687;
-        Tue, 05 Sep 2023 08:54:00 -0700 (PDT)
-Received: from [192.168.37.233] (178235177232.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.232])
-        by smtp.gmail.com with ESMTPSA id l13-20020a170906a40d00b0099bc0daf3d7sm7838028ejz.182.2023.09.05.08.53.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Sep 2023 08:54:00 -0700 (PDT)
-Message-ID: <4b87a766-9e8d-4676-b77e-d54e6d9c36ef@linaro.org>
-Date:   Tue, 5 Sep 2023 17:53:57 +0200
+        Tue, 5 Sep 2023 01:48:21 -0400
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5D312E;
+        Mon,  4 Sep 2023 22:48:18 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by box.trvn.ru (Postfix) with ESMTPSA id 6338B4243A;
+        Tue,  5 Sep 2023 10:48:08 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1693892889; bh=94WYtO7i7RiviKXkVzwc9KKusQ2/IejlQ7IgqMIIY1A=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=Xxobzq4e56Z/axil1YXKVBtmxkgQnPwkEmrYnwH4JP96sEru1rhQ+GT+qo096OK+k
+         5uc2zPZkW9193QUh/xbQgo2Y3Fzane4PrIt2RulTpWIQ33f6TZgAR/ehXuwdlgli+U
+         l9l9k5caZSoHl6aBJjM0sM4LlFUo8rJw1guiKhzhdq6IyZPbUGyCw5q6BqxwiDM0PI
+         G6JYliotfKeMJ+TC4pDnR+y3ypfH7GZNMIxCk8PFnAmTjVEE3tFeX/211DnR4FYbFk
+         rSUj9o429TiPMOZVxt3Ekh00AyRrcTK1Ozdo97NzbErXQBWLZN0WuemkafUFPW92Jm
+         el3wcGpbMKckw==
+From:   Nikita Travkin <nikita@trvn.ru>
+Date:   Tue, 05 Sep 2023 10:47:22 +0500
+Subject: [PATCH 3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s
- pinctrl
-Content-Language: en-US
-To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230905-sc7180-adsp-rproc-v1-3-dfea7699da7b@trvn.ru>
+References: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -69,61 +51,54 @@ To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
 Cc:     David Wronek <davidwronek@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
- <20230905-sc7180-adsp-rproc-v2-3-8ab7f299600a@trvn.ru>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230905-sc7180-adsp-rproc-v2-3-8ab7f299600a@trvn.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=900; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=94WYtO7i7RiviKXkVzwc9KKusQ2/IejlQ7IgqMIIY1A=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9sESU0L+EdBYL1kTsdO/1Nw58Zav86S5JiNIZ
+ sYf2KS7ViuJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPbBEgAKCRBDHOzuKBm/
+ dRKWD/4tG5iumQ0FRqT3xRYJEgsOGxa+st3+/TACrblG7ryPFTIWqnOED4TWIpvi0TJJrMjTCRB
+ G8LvRpgheE8jzdoHQ8Ma1b1WWx4NDBQh/Ugw64KbuMZSjju7ZX4sRdKc2kmntTibyy2/RADNdRy
+ +vxPlCbk65DqbmWkmihIM0NGvjidajE55CJDUv2Oq2aquuAQ29n3kW2t3H22rhqb3GSJa0xzmlS
+ UYVWr8i9zuCr0H/KnmxAybAes41nUJTRFvL37ZI49w7hlbeoqwQvD5UuKfmpSRPus2sfMEPCs9C
+ TDHR6y9wH5TfDfE7qIbBIhAYMz+KX2LTCmhSrh5BhIxyN5FVezovQXG5xp0QMNwYpnhFA4A0Hh4
+ Qtu2AaMrWt15laoELeLr1G25qGEP0i5bw05PLzGmZHcsR7mk5Ro7YvcgbIlQUxF4ZBG134yrxYh
+ eB7PxCP7qyFR8zslOntNYqNnwYch+JZ+VkYjHjrk0eMC1GdM72Dj9ZOCtjU/LCYRnZpEBFDlnb9
+ iQXej1cyWLIr4H4fdqvMK82NgSkF0yGS2llkxkRskZW5sjfjm8xeBSg8AqEN/bwL0gFPfHh33YO
+ DRgOqHoPZ7b8EU7UL6soVCc0JOkAVLzNAdAC8yRo7WUOngqnaIVCJk32sjHcqXYHrpdxdsyT9p8
+ za68eIcLj6TMmHQ==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5.09.2023 12:41, Nikita Travkin wrote:
-> Some devices use tertiary mi2s to connect external audio codec.
-> Add it near the other two i2s pinctrl definitions so the devices don't
-> have to duplicate it.
-> 
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> ---
-This sorting makes no sense, neither alphabetically nor gpio-idx-wise
+Some devices use tertiary mi2s to connect external audio codec.
+Add it near the other two i2s pinctrl definitions so the devices don't
+have to duplicate it.
 
-I'd suggest chucking it in after pri_mi2s_mclk_active.
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Konrad
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index a79c0f2e1879..9f68b5ff0030 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -2033,6 +2033,11 @@ sec_mi2s_active: sec-mi2s-active-state {
+ 				function = "mi2s_1";
+ 			};
+ 
++			ter_mi2s_active: ter-mi2s-active-state {
++				pins = "gpio63", "gpio64", "gpio65", "gpio66";
++				function = "mi2s_2";
++			};
++
+ 			pri_mi2s_active: pri-mi2s-active-state {
+ 				pins = "gpio53", "gpio54", "gpio55", "gpio56";
+ 				function = "mi2s_0";
+
+-- 
+2.41.0
+
