@@ -2,45 +2,64 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B203DCA0FFE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80C6C83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238688AbjIEQGq (ORCPT
+        id S231889AbjIEQGr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
+        Tue, 5 Sep 2023 12:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352431AbjIEFsT (ORCPT
+        with ESMTP id S1353653AbjIEHEb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 01:48:19 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA2712E;
-        Mon,  4 Sep 2023 22:48:12 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id DFB88408E8;
-        Tue,  5 Sep 2023 10:48:03 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1693892884; bh=6NzDrYOGUI/eztRBxodJ7A7nQVvfQ/vxNF6cyl99jnI=;
-        h=From:Subject:Date:To:Cc:From;
-        b=qrj6JUL8oHQl+rsibyMi6LJ/sbBKgakLOZYIzUbMXlKUUWLRfBAuWQqCQi8ZDQ0+v
-         UogFkyuBRhNfGRyxykgw3HIeiZoX7AZwHZPVWja19hqwnhyNl6iXOE9tElvypk8Dcp
-         vH94w3fYxI60cjhF0KXcoSPlJE3qMgrUkC5byKpQEE9GBgKbhHbTzz0tqZzEDHn2Fx
-         pO7vDJo64+PRs0P7yzQgjGfzkO2h7yji/qWzWM/PvX4QF1DEWGuSPqanYmbnSplqHS
-         1K11XEdLzdLgaOw9tOatqHXlxPBZyuj8YjJfkhypXH7GIgeWyiWSGP4ANEwEEcmNuj
-         z2fuRDXJTRx/w==
-From:   Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH 0/4] sc7180: Add ADSP
-Date:   Tue, 05 Sep 2023 10:47:19 +0500
-Message-Id: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+        Tue, 5 Sep 2023 03:04:31 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F239CCB
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Sep 2023 00:04:27 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-52713d2c606so2877718a12.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Sep 2023 00:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693897466; x=1694502266; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8lkXuqfO1xkz/2/Im1hSKYTizJrPGxRl/maVMva9P+4=;
+        b=vpJUMDB0tHp3eBmQQVL/yqUFiwIdWYTa2wk0icdGhpdcbwNdjgGl4DgITVcicH7uxD
+         qO1nx45zRKNLGIZUGinPYxYMxf0VpH/KgDCCDJzUFWDqROqp6efmbQnFhSE7678VrLXZ
+         JZ0O7poyKBiKWs8mKoYAMrXDUHBxmliUz9BOwgE7uQLK3kC0OYRv/A0kaytIRsWPhcGa
+         yLd6mZ6TX1qNfATu3ZJWfWjWUL+5PDqbNIk7qWtnrvuYH72+IWF+jjFW28kMl7MF3+Em
+         kSRsTpa62lfkWwQOImCBO5aclxhdXiv2uq7if/+ORoJBPpmBDnzM/MtjWstPCycIn5xZ
+         r7cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693897466; x=1694502266;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8lkXuqfO1xkz/2/Im1hSKYTizJrPGxRl/maVMva9P+4=;
+        b=Pnw6J/W6O4pFjseOsTJfRg1YaWHonNtLmc/UQR5x0D7fagSo48KzLMoxpRaswpD/fL
+         6f3+P3vN+ZqqcGyEBtPI1s5DlHsr6cUx04mWoqKpS03UY7SeAHWgt4aSC+GUdratBrAc
+         FyWnCEVNksq4okOdN+Jsu3cPSrIzKraCQX5yzUl+/nADKncSCS7XLhZeKTkIfaXyE4DL
+         5mTqwI2aL52/Ajvs3ZPy+Lwyc5RdpR6cgi+IvBRrNGb9glQIWjMSaZpltMwKi8EnvVMY
+         eeFHUXqwo3J1f/Nbf0O+2WOBiPnypPL93fiT2EnoQihXMLDvSdROr4LE2nekj3ZiwCzh
+         Jw/Q==
+X-Gm-Message-State: AOJu0YyV7gav0IqH6PRnbjX4Gs4j2vsTjbvrlFlwUuOAKB9G1b3MGQl1
+        mHk/keO+5voZ4jOzBgYh5zZZsA==
+X-Google-Smtp-Source: AGHT+IHk/WAZvhsnC0iX7pXrYpIVTAKMo1ffK6DfcP3VeZRIFCnGb2x5cW1amJ6qFheBhVDkY49z+A==
+X-Received: by 2002:aa7:cd11:0:b0:52a:1c3c:2ecf with SMTP id b17-20020aa7cd11000000b0052a1c3c2ecfmr9201251edw.28.1693897465732;
+        Tue, 05 Sep 2023 00:04:25 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id l21-20020aa7d955000000b0052338f5b2a4sm6690521eds.86.2023.09.05.00.04.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Sep 2023 00:04:25 -0700 (PDT)
+Message-ID: <692a1a69-b022-6bd9-c9d9-5f8ae4939461@linaro.org>
+Date:   Tue, 5 Sep 2023 09:04:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOfA9mQC/x3MMQqAMAxA0atIZgO1Kq1eRRxqTTWLlgREEO9uc
- XzD/w8oCZPCWD0gdLHyeRQ0dQVxD8dGyGsxWGNbM5geNbrGGwyrZpQsZ8Tgun7xPiQ7eChdFkp
- 8/89pft8PnwYx9mMAAAA=
-To:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP
+ compatible
+Content-Language: en-US
+To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -52,58 +71,55 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     David Wronek <davidwronek@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1256; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=6NzDrYOGUI/eztRBxodJ7A7nQVvfQ/vxNF6cyl99jnI=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9sES+wqZKbIUGbtvj7cTi3dr7MkmPaV9w4glL
- OacWiZsZ8SJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPbBEgAKCRBDHOzuKBm/
- dVjQD/9DU0y3Sfg7b4TRIuj5naCvCyNpYfcItUCL7fspA12rURwFVxe0+1V19czWuV/wdf8IKdK
- NXcQB6fmO9U4A8CS/MSj7Y2dnQbabIGHpORZP/MlTIZBy/FdpJgvARTDTZVadxMGj06MTbkNcBU
- Cm2HPPDAN68cyUPJYdv9KYCmyO/jz+zjTNJu8XcaWsvBrxS/4Yb/OgXZDLBND6bYh9LuPHOKJtS
- ckCUk4wfJbR1dh/9AK/k1YHnKwORHwhF+sFwM41p0tZJmGOIe+q9nqaJguyr8MoPmxl9BmWmYQH
- Ki/I8YVmFP1mWvQvnnP8y0ACZT4udu6+/ZRHTwAIw7yBzIbC5HwLJaEMk+UCqxIEPOXJLghV/6S
- ogUB8pJ7bBWykzAiLWO+nf/z938tpbwtzSmTGB/6jrGGOE9T7nHho7k+tFt9qYBX+1PDU4nnjpJ
- U7eRufLYDSl7qLG/biZRwxM8d/ObEbtl1EHa7IfRQqvQF0/emqzCZ9wxo0JqQC1xwYkcjXyNUB+
- sYtXyf7owIyPPjK4ivdRP4lABJRMrlv0WFIDqQeMjQhl6GoRRbXSHjTsqSmtGdLmTkSD+X0p3ba
- du4sGCQFhsZHQCpc4iPkk3n23ZfGUsZ8Qcvfy0jGh/ldZkVxbBUE85pQps0KIqjqd/NzU+WKeLG
- wLoY8r7LahQoaRA==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+ <20230905-sc7180-adsp-rproc-v1-1-dfea7699da7b@trvn.ru>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v1-1-dfea7699da7b@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-sc7180 has an ADSP remoteproc that can be used to control the sound
-hardware. This remoteproc has to be used on those devices that use
-Qualcomm firmware and thus are locked out of driving the lpass directly.
+On 05/09/2023 07:47, Nikita Travkin wrote:
+> SC7180 has an ADSP remoteproc. Add it's compatible to the bindings.
+> 
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml      | 12 ++++++++++++
+>  1 file changed, 12
 
-Introducing the ADSP would allow multiple WoA laptops such as Aspire 1
-to provide sound. It's also useful for the sm7125 devices that are to be
-included to the kernel [1]
+>  
+> @@ -88,6 +89,17 @@ allOf:
+>            maxItems: 2
+>          power-domain-names:
+>            maxItems: 2
 
-This series adds the ADSP and the sound services needed to make use of
-it later.
+Blank line
 
-[1] https://lore.kernel.org/all/20230824091737.75813-1-davidwronek@gmail.com/
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sc7180-adsp-pas
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          minItems: 5
 
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
-Nikita Travkin (4):
-      dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP compatible
-      remoteproc: qcom: pas: Add sc7180 adsp
-      arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
-      arm64: dts: qcom: sc7180: Add ADSP
+This is supposed to be maxItems
 
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |  12 ++
- arch/arm64/boot/dts/qcom/sc7180.dtsi               | 127 +++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c                 |   1 +
- 3 files changed, 140 insertions(+)
----
-base-commit: c50216cfa084d5eb67dc10e646a3283da1595bb6
-change-id: 20230905-sc7180-adsp-rproc-a745b88af298
+> +        interrupt-names:
+> +          minItems: 5
+
+Ditto
+
+>  
+>  unevaluatedProperties: false
+>  
+> 
 
 Best regards,
--- 
-Nikita Travkin <nikita@trvn.ru>
+Krzysztof
 
