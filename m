@@ -2,83 +2,99 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8EBC83F33
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Sep 2023 22:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ED5CA0FFC
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242427AbjIDWus (ORCPT
+        id S238355AbjIEQFz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Sep 2023 18:50:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48828 "EHLO
+        Tue, 5 Sep 2023 12:05:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240487AbjIDWur (ORCPT
+        with ESMTP id S1354318AbjIEKle (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Sep 2023 18:50:47 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD27E5B;
-        Mon,  4 Sep 2023 15:50:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Tue, 5 Sep 2023 06:41:34 -0400
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45AA1AE;
+        Tue,  5 Sep 2023 03:41:29 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id AA40CCE0F12;
-        Mon,  4 Sep 2023 22:50:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 00A8FC433CB;
-        Mon,  4 Sep 2023 22:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693867827;
-        bh=iaEOPWihMAOVses/F4GOxQvV7G14u6w/w/k4+yTjKXw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=nGiVILP9BHMxgu8czR8umgjdOaF8rmx47yyuKbPyl7gxWjRC5NzhvW4LTnZlnS7rF
-         O8fkVXGKATUbIkiv+L5NUmoKAv3XXPsiFWROSbnyZIoufhUIq8Eu5HMuv49B0E/lCt
-         BlxXrCW4RUG/RtUlD6dCsKVNOuA4WpizEnNZokL+SlDFjqCGUzxN04OltUgKiJWp0I
-         vIz8wuCYmJZ00vr47DjLSbH50Mmo6CFe0cva6mzBpRsmL3I0Mkif6WFe6ANGhGwpc3
-         Q0lRRWBw1iBFHWnRXB7ctca41vH0LGW+XIrbtLL9FufakE50M7nxHKgHEAe/YT9x33
-         bs5pYj8/pJdtQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D8814C0C3FD;
-        Mon,  4 Sep 2023 22:50:26 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc updates for v6.6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230904161621.2954993-1-andersson@kernel.org>
-References: <20230904161621.2954993-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230904161621.2954993-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.6
-X-PR-Tracked-Commit-Id: 18cf4fcd7bdc1864e75127f4fd15abc0bc76ec7f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2a3a850ed008dba2cb9707c65c5726efcfc72449
-Message-Id: <169386782688.10061.17092840147185976662.pr-tracker-bot@kernel.org>
-Date:   Mon, 04 Sep 2023 22:50:26 +0000
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dylan Van Assche <me@dylanvanassche.be>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        by box.trvn.ru (Postfix) with ESMTPSA id 782EA42425;
+        Tue,  5 Sep 2023 15:41:25 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1693910486; bh=FNIibyarmPCAlhz6Ut7njgzIVJSbI2KFycVZdOK+Y8k=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=jVRHYAPuFwcBzBq3OM4gqA2V1jKYKbe7tl4k8iQL0B3hP7g6v0yPMIrVUSCsCWM14
+         6Ulya6cHdZmB/5c8XrrEWhTOYOlkfUwobCRKE2GZBYr/zBx3PxJohtEOY41fEy4r5H
+         aUNAA7bfNdWuM+L9b8uVeaZWzRCrfq1gat5uV+8dl0yRWgQ+PlCbmVHHO92HbSkEx+
+         6gD3F91RfavcoLHigg1lcl0wNlGNaTw9yZUilgi05djKh9Dkt91849zkOEsCgWaxBy
+         8y8wRgu/t/V7Upd01hjg05sGERkpi8C+TLr4kQ+TYthMW38qTy5hEoffbD7o/ZneX8
+         96NXjdfPGES2g==
+From:   Nikita Travkin <nikita@trvn.ru>
+Date:   Tue, 05 Sep 2023 15:41:05 +0500
+Subject: [PATCH v2 2/4] remoteproc: qcom: pas: Add sc7180 adsp
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230905-sc7180-adsp-rproc-v2-2-8ab7f299600a@trvn.ru>
+References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Marek Vasut <marex@denx.de>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Ye Xingchen <ye.xingchen@zte.com.cn>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
-        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Tero Kristo <t-kristo@ti.com>
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1130; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=FNIibyarmPCAlhz6Ut7njgzIVJSbI2KFycVZdOK+Y8k=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXSdXpuqquc9zOeOuVZKyipoF7wARAYEaovj
+ 6NrvwsAXoCJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0gAKCRBDHOzuKBm/
+ dV7hEACgIYyv1e5XGRTTLqaKQs7YYbjQVpET7tHenKQF9hm6XJWZ3XJ2JOhasO/s4YC5QMpTc7p
+ WTxHmGiTkfu373RgkULXYk+ndTECVFpArH6TmednqlOHuLOhFAtVxwPwvicxaPbz4Un0g6XGdcc
+ MZAhtsL8CeakenfOWfBiLPec1aP9uOIwuCRGjkXfcFKwdOcuTwfmM+3Eoe0TJUl8WO1tngQ3w92
+ Bnhstjzpk8VAK0HFsKXpQgBwnhdOYXl8+lRtF+s2qMXpaKIpQOKpWxOSC6INInbX44lx3puSvjW
+ GuD0Gy2GwAkNsuTtZYibPMfI1BS90u6HFuxDdMNQb4P67bvLQuTh4BpkFtD4SKRpW6peA6QU2ix
+ sT4oI7v6R+Xcu29MpuZ4yK5WdEj0SreOyvsNVCytaxBD5McsvgN9xUgQGJI0YrISn1hl0sXPzn/
+ RF/JJ32TGuiH2ZmyxNt9iiFDgEHskzGvYSrFAuGy6xt77wXkoDO12lEVghvO9zMfwFqsgll61rb
+ UCeoW2c859qJs/XUogBjvp5A76C/pqoqu8oKQ2ixQjo3Jzu1EwGjNYxABCfCMpg7Y1SRLK5gn6j
+ 3ySoseJe+ysKImwq64zC6gfDKv4rMaXdGR90yqUEKWLsgTU8Qm8mFvA8AJDzZENXDTG2znxc8m8
+ 4ekcc1wWfEsDEBQ==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pull request you sent on Mon,  4 Sep 2023 09:16:19 -0700:
+sc7180 has a dedicated ADSP similar to the one found in sm8250.
+Add it's compatible to the driver reusing the existing config so
+the devices that use the adsp can probe it.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.6
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2a3a850ed008dba2cb9707c65c5726efcfc72449
-
-Thank you!
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index b5447dd2dd35..55fafc68200e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1161,6 +1161,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
+ 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
+ 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
++	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
+ 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
+ 	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
+ 	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.41.0
+
