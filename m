@@ -2,192 +2,228 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8714DCA0FF3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A42CA0FFA
 	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238772AbjIEQGx (ORCPT
+        id S238741AbjIEQGu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
+        Tue, 5 Sep 2023 12:06:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353739AbjIEHqu (ORCPT
+        with ESMTP id S1352453AbjIEFsX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 03:46:50 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7673FCC;
-        Tue,  5 Sep 2023 00:46:44 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Tue, 5 Sep 2023 01:48:23 -0400
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D29812E;
+        Mon,  4 Sep 2023 22:48:19 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 97E5966071F8;
-        Tue,  5 Sep 2023 08:46:42 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1693900003;
-        bh=iVSSjE9/cDR/vb6gfa9QEPy8bbBHcPSNTM8rId6Vj1A=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mBozDZO9FUZ+xEUFBzpXScqadGnVdhN1h7klNZLiMacQspgC+ouurNBbY+sZusuaw
-         OOgD3AwpZbxkYhfPtFgoYLfDCFsWKUTFf1kl4dLW5rVE+cARrpubWNcY2JbkOnOYOe
-         qXdrJVJgbxIscLugRKZmOE2ZwVe5NTEpYZiydnqShmCrbMyi2VWFbuPIeduT8rbRUt
-         4kRDdHnIEVePdSjhWbQA2MScJdR2SvN7ePla9EaJKcjiN/DU+Vs5iuoXTYJt/xBUp1
-         c+NE8hKf6J46GO/TPpOVMWsyozPnPti94RKUosYHQ/mzi9gn21JJ9fxX3mYLNQVTmC
-         elM+nMdLTHhng==
-Message-ID: <cf5f7df1-64eb-05d8-e6d4-87ef0a846f79@collabora.com>
-Date:   Tue, 5 Sep 2023 09:46:40 +0200
+        by box.trvn.ru (Postfix) with ESMTPSA id ECA5742444;
+        Tue,  5 Sep 2023 10:48:11 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1693892892; bh=wAuaJLhjPcRFdx6t9Gz0AhRtHiLNO8hfsMHaHITa5So=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=YVElSKZjLW727lxP8uVtwgKmze3bpUkpnM1SCcAYY+5HZMeDnta7TgXVaha6rKdsJ
+         DrCO4ZqV7rPu3qFpGIH8GJzwd37S7gcoFUOFMTsY9vxs5G+rgEEN2qRpnVfBpksBPe
+         Axtxu1IGY7Tqn9yX/Np7JJADklr6dTwa7/r9nELknwfJ39yzAXddYvtz5IxO0veKpN
+         XlqYRb/1IvEp+5WDJJ3cqH49CLHTOlxdTUNYa+dVboQtj3ZuuzDRUEyMjjZwpRUoEq
+         f1ouxpkYjdJXEYMd8nLGruEReZkX4GmOYnuUW7jt/UmAhZK/Phy1sk/BPvhZoLLNSM
+         iECXRjwIP6lKw==
+From:   Nikita Travkin <nikita@trvn.ru>
+Date:   Tue, 05 Sep 2023 10:47:23 +0500
+Subject: [PATCH 4/4] arm64: dts: qcom: sc7180: Add ADSP
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v17 00/14] Add support for MT8195 SCP 2nd core
-Content-Language: en-US
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230905-sc7180-adsp-rproc-v1-4-dfea7699da7b@trvn.ru>
+References: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230901080935.14571-1-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4272; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=wAuaJLhjPcRFdx6t9Gz0AhRtHiLNO8hfsMHaHITa5So=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9sETu7ptQNZMsIhrHe2sebPNY5ZWc8nampQd1
+ MqDNP0vwOqJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPbBEwAKCRBDHOzuKBm/
+ dXgKD/sF0PRhjkDK5pa/Bq73qltDf6YNa4veyquiRzUDlIQbD8+mpocQUC1V8mrMk8b7WM99Jea
+ SEB56pTz47IxmZRP2KTb0aPHws8ZWvtU2LiBam1HjUQJ/ZVcpd6qUdgUEURFtxErZsxOXNAyxZU
+ pxYgBTLIPum0mQCCRX+jWYQYlUbj94E0uT5VKSPOpkBNOly5vFQnDbYnHgB8HevtQJcAg9tb48Z
+ zxacix3nXaBtrZxOTy0bTfM0UoGgp31J0E9ObfO1FLTIydUWWEYq6M1qKgaRQ46gnkmnkDqPNwy
+ N7i4XsR5zYmMz6bkiaXbqyefUEn4eGL0Tkr/OLSAwjfUMQMSxNwgQt389ztG/EOLnQC8SmKiaL5
+ WtgvA269NyM9eSvzpdnA3icXZJlXDZZhoK44uB/tSm94Slr/JiA1MsHQheKYA/0zI06UVIEHNp/
+ KI82iZEn9EOmIDht3gHpOVQO9E2WK4RQd+lmsdvt4GXEHqAeP03H7MNQJkspoiyavABi4vr5OHD
+ la2Wq3rFmDnm9ZqcYs4U3xSFBh2JriUeXlyzE96Vd2ZVzttFT23n12FOSOUN1jb9cQdcJ/AqgXV
+ lyVKn/OUyvBSwyfKNHAywpIfMc4WsJSlideTBPEugtNR56VUXPLpUWFse0AEyU/IzJZ11xL0Uvv
+ AFwnMQSet4dFbXg==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 01/09/23 10:09, Tinghan Shen ha scritto:
-> The mediatek remoteproc driver currently only allows bringing up a
-> single core SCP, e.g. MT8183. It also only bringing up the 1st
-> core in SoCs with a dual-core SCP, e.g. MT8195. This series support
-> to bring-up the 2nd core of the dual-core SCP.
-> 
+sc7180 has an ADSP remoteproc that exclusively controls the audio
+hardware on devices that use Qualcomm firmware.
 
-Whole series is
-Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Add it along with the relevant audio services.
 
-On MT8195 Tomato Chromebook.
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 122 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
 
-> v16 -> v17:
-> 1. add a comment in scp_add_multi_core() at patchset 8
-> 
-> v15 -> v16:
-> 1. fix the checkpatch warning at patchset 1
-> 2. move changes on scp_probe() to the new added patchset 6
-> 3. revise platform_set_drvdata() at patchset 8
-> 4. fix commit message at patchset 9
-> 
-> v15 -> v14:
-> 1. use the common SCP registers in struct mtk_scp_of_cluster instead of
->     copy it to struct mtk_scp at patchset 5
-> 2. use platform_set_drvdata instead of platform_device_add_data at patchset 5
-> 3. rename l2tcm_lock to cluster_lock at patchset 8
-> 4. check l2tcm_refcnt value before decreasing at patchset 8
-> 5. revise the commit message at patchset 11
-> 
-> v13 -> v14:
-> 1. add review tag to patchset 1,6
-> 2. exchange the order of sram power on and reset assert in
-> mt8195_scp_c1_before_load at patchset 2
-> 3. use ERR_CAST in patchset 5
-> 4. re-write patchset 7 to remove dependency between core 0 and core 1
-> 5. add patch set 10 to report watchdot timeout to all cores
-> 
-> v12 -> v13:
-> 1. replace subdevice with new mediatek scp operations in patchset 7
-> 2. add review tag to patchset 3
-> 3. modify mediatek,scp phandle name of video-codec@18000000 at patchset 11
-> 
-> v11 -> v12:
-> 1. add scp_add_single/multi_core() to patchset 6
-> 2. remove unused comment in patchset 6
-> 3. rename list name from mtk_scp_cluster to mtk_scp_list
-> 4. rewrite the multi-core probe flow
-> 5. disable rproc->autoboot and boot rproc by request_firmware_nowait at patchset 7
-> 6. remove patchset 7 review tag
-> 
-> v10 -> v11:
-> 1. rewrite patchset 5 to probe single-core SCP with the cluster list
-> 2. Also in patchset 5, move the pointer of mtk_scp object from the
->     platform data property to the driver data property
-> 3. move the appearance of mtk_scp cluster property to patcheset 7
-> 
-> v9 -> v10:
-> 1. move the global mtk_scp list into the platform device driver data structure
-> 2. remove an unnecessary if() condition
-> 
-> v8 -> v9:
-> 1. initialize l1tcm_size/l1tcm_phys at patchset 05/11
-> 2. rewrite patchset 06/11 to unify the flow and remove hacks
-> 
-> v7 -> v8:
-> 1. update the node name of mt8192 asurada SCP rpmsg subnode
-> 2. squash register definitions into driver patches
-> 3. initialize local variables on the declaration at patch v8 06/11
-> 
-> v6 -> v7:
-> 1. merge the mtk_scp_cluster struct into the mtk_scp structure
->     at the "Probe multi-core SCP" patch
-> 
-> v5 -> v6:
-> 1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
-> 2. rename the SCP core 0 label from 'scp' to 'scp_c0'
-> 
-> v4 -> v5:
-> 1. move resource release actions to the platform driver remove operation
-> 2. fix dual-core watchdog handling
-> 
-> v3 -> v4:
-> 1. change the representation of dual-core SCP in dts file and update SCP yaml
-> 2. rewrite SCP driver to reflect the change of dts node
-> 3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
-> 
-> v2 -> v3:
-> 1. change the representation of dual-core SCP in dts file and update SCP yaml
-> 2. rewrite SCP driver to reflect the change of dts node
-> 3. add SCP core 1 node to mt8195.dtsi
-> 4. remove redundant call of rproc_boot for SCP
-> 5. refine IPI error message
-> 
-> v1 -> v2:
-> 1. update dt-binding property description
-> 2. remove kconfig for scp dual driver
-> 3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
-> 
-> 
-> Tinghan Shen (14):
->    dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
->      definition
->    arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
->    dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
->    remoteproc: mediatek: Add MT8195 SCP core 1 operations
->    remoteproc: mediatek: Extract SCP common registers
->    remoteproc: mediatek: Revise SCP rproc initialization flow for
->      multi-core SCP
->    remoteproc: mediatek: Probe SCP cluster on single-core SCP
->    remoteproc: mediatek: Probe SCP cluster on multi-core SCP
->    remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power
->      control on dual-core SCP
->    remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
->    remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
->    remoteproc: mediatek: Report watchdog crash to all cores
->    remoteproc: mediatek: Refine ipi handler error message
->    arm64: dts: mediatek: mt8195: Add SCP 2nd core
-> 
->   .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++-
->   .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
->   .../boot/dts/mediatek/mt8192-asurada.dtsi     |   2 +-
->   .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
->   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  34 +-
->   drivers/remoteproc/mtk_common.h               |  39 +-
->   drivers/remoteproc/mtk_scp.c                  | 539 ++++++++++++++----
->   drivers/remoteproc/mtk_scp_ipi.c              |   4 +-
->   8 files changed, 656 insertions(+), 146 deletions(-)
-> 
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 9f68b5ff0030..30c58186900a 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -20,6 +20,8 @@
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+ #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
++#include <dt-bindings/soc/qcom,apr.h>
++#include <dt-bindings/sound/qcom,q6afe.h>
+ #include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+@@ -3781,6 +3783,126 @@ wifi: wifi@18800000 {
+ 			status = "disabled";
+ 		};
+ 
++		remoteproc_adsp: remoteproc@62400000 {
++			compatible = "qcom,sc7180-adsp-pas";
++			reg = <0 0x62400000 0 0x100>;
++
++			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
++					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd SC7180_LCX>,
++					<&rpmhpd SC7180_LMX>;
++			power-domain-names = "lcx", "lmx";
++
++			qcom,qmp = <&aoss_qmp>;
++			qcom,smem-states = <&adsp_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
++				label = "lpass";
++				qcom,remote-pid = <2>;
++				mboxes = <&apss_shared 8>;
++
++				apr {
++					compatible = "qcom,apr-v2";
++					qcom,glink-channels = "apr_audio_svc";
++					qcom,apr-domain = <APR_DOMAIN_ADSP>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					apr-service@3 {
++						reg = <APR_SVC_ADSP_CORE>;
++						compatible = "qcom,q6core";
++						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++					};
++
++					q6afe: apr-service@4 {
++						compatible = "qcom,q6afe";
++						reg = <APR_SVC_AFE>;
++						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++
++						q6afedai: dais {
++							compatible = "qcom,q6afe-dais";
++							#address-cells = <1>;
++							#size-cells = <0>;
++							#sound-dai-cells = <1>;
++						};
++
++						q6afecc: cc {
++							compatible = "qcom,q6afe-clocks";
++							#clock-cells = <2>;
++						};
++					};
++
++					q6asm: apr-service@7 {
++						compatible = "qcom,q6asm";
++						reg = <APR_SVC_ASM>;
++						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++
++						q6asmdai: dais {
++							compatible = "qcom,q6asm-dais";
++							#address-cells = <1>;
++							#size-cells = <0>;
++							#sound-dai-cells = <1>;
++							iommus = <&apps_smmu 0x1001 0x0>;
++						};
++					};
++
++					q6adm: apr-service@8 {
++						compatible = "qcom,q6adm";
++						reg = <APR_SVC_ADM>;
++						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++
++						q6routing: routing {
++							compatible = "qcom,q6adm-routing";
++							#sound-dai-cells = <0>;
++						};
++					};
++				};
++
++				fastrpc {
++					compatible = "qcom,fastrpc";
++					qcom,glink-channels = "fastrpcglink-apps-dsp";
++					label = "adsp";
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					compute-cb@3 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <3>;
++						iommus = <&apps_smmu 0x1003 0x0>;
++					};
++
++					compute-cb@4 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <4>;
++						iommus = <&apps_smmu 0x1004 0x0>;
++					};
++
++					compute-cb@5 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <5>;
++						iommus = <&apps_smmu 0x1005 0x0>;
++						qcom,nsessions = <5>;
++					};
++				};
++			};
++		};
++
+ 		lpasscc: clock-controller@62d00000 {
+ 			compatible = "qcom,sc7180-lpasscorecc";
+ 			reg = <0 0x62d00000 0 0x50000>,
 
+-- 
+2.41.0
 
