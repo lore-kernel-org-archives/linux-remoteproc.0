@@ -2,132 +2,128 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D97CA0FF8
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D211CA0FFE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238390AbjIEQF6 (ORCPT
+        id S234631AbjIEQGE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53094 "EHLO
+        Tue, 5 Sep 2023 12:06:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354142AbjIEJ4b (ORCPT
+        with ESMTP id S1354914AbjIEPyH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 05:56:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D2718C;
-        Tue,  5 Sep 2023 02:56:28 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3859Ex9I002295;
-        Tue, 5 Sep 2023 09:56:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=BJU/aztU2Sgiooahz+oauJme3H4sup1zMkbjfNJYZDs=;
- b=WCiiCTEgpz0sU0aZYPR7WFYhrV9plDX/Ya3RgcyDyZI6u769TAPTju0bomC/pMJimiOO
- E1pibZmC+K8b/Ag1+L3MmDs/abL1TbdFg+BePKkTogjk6Kiho0JT7fvMfVX+P4nf9P8A
- 5LzSRXIUdx+oHNlG7VSpGycGtf+QG+msfyvuf8V5ZRnbEznM/dvi64hqGNFwr6EpY14g
- z66DQBp/EKttlbsrVETkkmmFj6Cterpp0/ROe0nmA08H4i1GRMXQK+M1DFDu21C+/pgt
- /cajiSQiNe7ABi79Tb95h+pJJ/ip87mWilzwgeMiv8fy5NQ/g0Qgg3Qgc3uicKLsTKIt hA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3swtevgs9c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Sep 2023 09:56:19 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3859uI3M027116
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 5 Sep 2023 09:56:18 GMT
-Received: from [10.201.162.56] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 5 Sep
- 2023 02:56:12 -0700
-Message-ID: <bd754243-a04f-466a-9c19-2163ee7008c4@quicinc.com>
-Date:   Tue, 5 Sep 2023 15:26:09 +0530
+        Tue, 5 Sep 2023 11:54:07 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECBBE6
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Sep 2023 08:54:02 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bed101b70so405850466b.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Sep 2023 08:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693929240; x=1694534040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pVpIOfthLWFFGPvccuIJVh5mPH0Rncfx7vuDB280HqM=;
+        b=tVCCGzM9Lo7sQ4Zq616P09neAPC63utATraDDBPUuOFrgBzP+jrWI3cEQSqwWGWuG7
+         OzpmC7ACbp4Z31+08N3maAK+AYocCpkL6Vyq0Zqop0vlwnKIPAAA+py8lsRY0fUC9p2o
+         7w2doNXUTKYKxe4oEvJafaRDIaLo1kUb+2oFYiPdzvSenHZDz4AnBK6MwaJdAkxlxAEH
+         al2jtBHB0xH7zf0e1lPBz8bTAM49uXQyQs5O8XDvwFAL+DHlz94oggibjuUWYzbM42vH
+         MuRmIL3WAsrj3d7PzoHz/naeQTJi4M4X5Z3LUAobhCiZXvl5YtHyKTx2lYw8kCtdavl9
+         b41Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693929240; x=1694534040;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVpIOfthLWFFGPvccuIJVh5mPH0Rncfx7vuDB280HqM=;
+        b=YZSpUOfzBZP36rNRhtFyc7PSimnqO9GVXBik2szCLSYkH4QViW4IlpBgLQh3Kt380p
+         7iOTGFKBJejB6ZLjMQJb9VTABkEM69XPLhO0a4DiMy3kmMxwkxmIvL4DFxVKKNptUj47
+         6ONDTPGrAryQ7nZqmeTFd13X1ykqb6mSYVYFgWGzz/v6iwYFuhxIRkvcNXgf5QMnItjQ
+         +iLag9qVb4sADU1IVVirPwdKeCREepIQhDobLJv6exrqfyjWzidm9+uvIpwVGhP3F6Vi
+         PSZNrU1XGMHc65qbpeOScZk+8AMPBd8aXyP8k/msYZLSOX1Vl/ojNi4Iu3eR6MJDqbW7
+         4p6w==
+X-Gm-Message-State: AOJu0YzL8dYmiL6vpH2xKxVI8zHMqyoYGLWEoODbiSFAVKb7OEgujJ24
+        eqixJBjNQiyiuNPKMGYrCU3Eg8uwuHH82Xw5RCM=
+X-Google-Smtp-Source: AGHT+IGvqSCRUiGNuCpTmv+0pI7XTpvHQL8WD+82ZwYSrD8wS8xN+/n8Nc5wLbXyRVOtN9JDnbM8bA==
+X-Received: by 2002:a17:906:214:b0:9a2:86b:bb18 with SMTP id 20-20020a170906021400b009a2086bbb18mr202776ejd.26.1693929240687;
+        Tue, 05 Sep 2023 08:54:00 -0700 (PDT)
+Received: from [192.168.37.233] (178235177232.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.232])
+        by smtp.gmail.com with ESMTPSA id l13-20020a170906a40d00b0099bc0daf3d7sm7838028ejz.182.2023.09.05.08.53.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Sep 2023 08:54:00 -0700 (PDT)
+Message-ID: <4b87a766-9e8d-4676-b77e-d54e6d9c36ef@linaro.org>
+Date:   Tue, 5 Sep 2023 17:53:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] hwspinlock: qcom: Drop unused qcom,ipq6018-tcsr-mutex
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ohad@wizery.com>,
-        <baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>
-References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
- <20230904055010.4118982-3-quic_viswanat@quicinc.com>
- <17c8ba39-2bcf-5799-13ff-bb96249dbf61@linaro.org>
- <880706cd-0987-47c7-8785-f8e4cb1c1907@linaro.org>
- <90795790-a5e4-419f-9e40-989731c1c685@quicinc.com>
- <246760a3-3230-e14d-0541-72d8f0da5fd2@linaro.org>
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s
+ pinctrl
 Content-Language: en-US
-From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
-In-Reply-To: <246760a3-3230-e14d-0541-72d8f0da5fd2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
+ <20230905-sc7180-adsp-rproc-v2-3-8ab7f299600a@trvn.ru>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230905-sc7180-adsp-rproc-v2-3-8ab7f299600a@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: r8O-vwmHhyBMaPAd1K5R6KkZtkDXIwau
-X-Proofpoint-ORIG-GUID: r8O-vwmHhyBMaPAd1K5R6KkZtkDXIwau
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-05_07,2023-08-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
- lowpriorityscore=0 spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=690
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309050088
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 9/4/2023 11:46 PM, Krzysztof Kozlowski wrote:
-> On 04/09/2023 18:09, Vignesh Viswanathan wrote:
->>
->>
->> On 9/4/2023 9:31 PM, Konrad Dybcio wrote:
->>> On 4.09.2023 08:42, Krzysztof Kozlowski wrote:
->>>> On 04/09/2023 07:50, Vignesh Viswanathan wrote:
->>>>> qcom,ipq6018-tcsr-mutex maps to incorrect config of IPQ6018 and is
->>>>> dropped from the devictree.
->>>>
->>>> No, it is not dropped.
->>>>
->>>>
->>>>> IPQ6018 will use qcom,tcsr-mutex compatible
->>>>> string.
->>>>
->>>> No, it will not.
->>>>
->>>>>
->>>>> Drop qcom,ipq6018-tcsr-mutex compatible string from
->>>>> qcom_hwspinlock_of_match table.
->>>>
->>>> Why? Do not write what you are doing here, but why you are doing it.
->>> More importantly, looks like the ipq6018 compatible was added after
->>> support for this SoC was introduced (see f5e303aefc06 and 5bf635621245a),
->>> so if it's going to use of_tcsr_mutex data with the fallback compat, the
->>> SoC-specific compatible can be removed from the driver.
->>>
->> Hi Konrad, Krzysztof,
->>
->> I was planning to update the SOC-specific compatible for IPQ6018
->> qcom,ipq6018-tcsr-mutex to point to of_tcsr_mutex data in the of_match
->> table in the hwspinlock driver in V2.
->>
->> Do you think this would be okay? or should I go ahead with removal of
->> IPQ6018 specific compatible so that it falls back to of_tcsr_mutex?
+On 5.09.2023 12:41, Nikita Travkin wrote:
+> Some devices use tertiary mi2s to connect external audio codec.
+> Add it near the other two i2s pinctrl definitions so the devices don't
+> have to duplicate it.
 > 
-> Remove, it's not needed in the driver.
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+This sorting makes no sense, neither alphabetically nor gpio-idx-wise
 
-Ack, will remove in V2.
-> 
-> Best regards,
-> Krzysztof
-> 
+I'd suggest chucking it in after pri_mi2s_mclk_active.
+
+Konrad
