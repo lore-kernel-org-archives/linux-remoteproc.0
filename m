@@ -2,114 +2,192 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD35CA0FFB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8714DCA0FF3
 	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238792AbjIEQG4 (ORCPT
+        id S238772AbjIEQGx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48828 "EHLO
+        Tue, 5 Sep 2023 12:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354316AbjIEKle (ORCPT
+        with ESMTP id S1353739AbjIEHqu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 06:41:34 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BA71AB;
-        Tue,  5 Sep 2023 03:41:29 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        Tue, 5 Sep 2023 03:46:50 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7673FCC;
+        Tue,  5 Sep 2023 00:46:44 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 9EF8E408E8;
-        Tue,  5 Sep 2023 15:41:23 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1693910484; bh=r0Errm5grHoZ7a+GZjlkoliB85rDwXGFHNRI1loDIh0=;
-        h=From:Subject:Date:To:Cc:From;
-        b=WLUAntEBkVQ7yWgix/eaNKSDrfg6B88vTJ0jtYbf6kI5UdQAk18tdKU8W/OYZuDB1
-         izd9iNoZjU8Jssqy4aNUvtDwiWPt3PISUT2QpqGAx2JMyKgJeQGfNcm9Grk5/KEKxT
-         Gvt0SPcxjg51AgQVWauq8MxtLdqUtqmnV8ri057jgWQRfboGSvx8xqBwYaiOmO040R
-         bxnx8QV3/uNzSBq9QFgN5sQWJbVhUUt2nGjJR8KzSXePOCMc90AbR729fJggV+dsc+
-         GXCmkDj575rH/0QrdVZUF/F35jyvCsdwMhexM6TzPtQfRzqWp/kLSN5PwufbL6CBx/
-         3iek9mggodciQ==
-From:   Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH v2 0/4] sc7180: Add ADSP
-Date:   Tue, 05 Sep 2023 15:41:03 +0500
-Message-Id: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 97E5966071F8;
+        Tue,  5 Sep 2023 08:46:42 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1693900003;
+        bh=iVSSjE9/cDR/vb6gfa9QEPy8bbBHcPSNTM8rId6Vj1A=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=mBozDZO9FUZ+xEUFBzpXScqadGnVdhN1h7klNZLiMacQspgC+ouurNBbY+sZusuaw
+         OOgD3AwpZbxkYhfPtFgoYLfDCFsWKUTFf1kl4dLW5rVE+cARrpubWNcY2JbkOnOYOe
+         qXdrJVJgbxIscLugRKZmOE2ZwVe5NTEpYZiydnqShmCrbMyi2VWFbuPIeduT8rbRUt
+         4kRDdHnIEVePdSjhWbQA2MScJdR2SvN7ePla9EaJKcjiN/DU+Vs5iuoXTYJt/xBUp1
+         c+NE8hKf6J46GO/TPpOVMWsyozPnPti94RKUosYHQ/mzi9gn21JJ9fxX3mYLNQVTmC
+         elM+nMdLTHhng==
+Message-ID: <cf5f7df1-64eb-05d8-e6d4-87ef0a846f79@collabora.com>
+Date:   Tue, 5 Sep 2023 09:46:40 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL8F92QC/32NSw7CIBRFt9K8sc8AWoGO3IfpgPKxTFryqETTs
- HexC3B4TnLP3SF7ij7D0O1AvsQc16WBOHVgZ7M8PUbXGAQTF6ZZj9lKrhgalxNSotWikdd+Uso
- EoRW0XSIf4vtoPsbGc8zbSp/jovCf/VcrHBm64I28ae2MnO4bleVMLxhrrV8Jv9GysAAAAA==
-To:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v17 00/14] Add support for MT8195 SCP 2nd core
+Content-Language: en-US
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc:     David Wronek <davidwronek@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1501; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=r0Errm5grHoZ7a+GZjlkoliB85rDwXGFHNRI1loDIh0=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXSy8pwFM3PZa26yt8IFcFBmjmMdjaDTnkbn
- guQmmL1KmGJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0gAKCRBDHOzuKBm/
- dXIPD/4qRbXGgh4mvBpZgyILTd7Rmjy46zpdR2Tf1BBLQMMoT+4+64cTqakg0INFnQbfc/ufQRa
- xFH0dySZIJFqeK8GBg1P0VC/10GzbczISHhDhKMi6MDmSgyltyu9ov4eCO58Mex4/SWp9/OLh8r
- PE3PLXBCFbmalEBOb0LJyyiAALBxShBMJ+mDlA+4AIfW0CrKMBPOFxfXWuO4TH9KN7pzBneSwZk
- XNncoBlNjZ3x6M2Ei5mqMJWoW2i4tgN3XGR8eBWcac1ZCAFsvYVSDGm39uOxM6flfC8XZ/FA0ry
- GJUVSKvpDhOg7o4giJ0HHNDO9gU1jJsGTtJpvWyd7F2BOP0IsCa7wf/TjoFAEaDK/XdqNiOg31/
- HKokJ5FDuScVq7STarfKFV3Gm3vkNZ30mgUvoM+eNwNQvVnMvInNZCfocO6lBj8QkBZwr7WthV5
- hvIBpu3t0T/UiqLPK3f3sbe3OpbxtN1Hj5fh6RN25wSdpKkUrv0nAsi4HFoJhhbe9mWOSGao9BN
- KQjn57srZMywrgPv2tfHCPyfTRwe9LX0EzQYuNeU8lYFpSaueTrFu2HXLZ0jiTekrQbLPT0CjYh
- isn27URMq2l+FSCVqNCd6kpO/kdY2IOzn08lCNv8hvm6sCS188SefSA3qYQIW2+HAXdUxXka8Uu
- 5YRFNew5U1bm0nw==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230901080935.14571-1-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-sc7180 has an ADSP remoteproc that can be used to control the sound
-hardware. This remoteproc has to be used on those devices that use
-Qualcomm firmware and thus are locked out of driving the lpass directly.
+Il 01/09/23 10:09, Tinghan Shen ha scritto:
+> The mediatek remoteproc driver currently only allows bringing up a
+> single core SCP, e.g. MT8183. It also only bringing up the 1st
+> core in SoCs with a dual-core SCP, e.g. MT8195. This series support
+> to bring-up the 2nd core of the dual-core SCP.
+> 
 
-Introducing the ADSP would allow multiple WoA laptops such as Aspire 1
-to provide sound. It's also useful for the sm7125 devices that are to be
-included to the kernel [1]
+Whole series is
+Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-This series adds the ADSP and the sound services needed to make use of
-it later.
+On MT8195 Tomato Chromebook.
 
-[1] https://lore.kernel.org/all/20230824091737.75813-1-davidwronek@gmail.com/
+> v16 -> v17:
+> 1. add a comment in scp_add_multi_core() at patchset 8
+> 
+> v15 -> v16:
+> 1. fix the checkpatch warning at patchset 1
+> 2. move changes on scp_probe() to the new added patchset 6
+> 3. revise platform_set_drvdata() at patchset 8
+> 4. fix commit message at patchset 9
+> 
+> v15 -> v14:
+> 1. use the common SCP registers in struct mtk_scp_of_cluster instead of
+>     copy it to struct mtk_scp at patchset 5
+> 2. use platform_set_drvdata instead of platform_device_add_data at patchset 5
+> 3. rename l2tcm_lock to cluster_lock at patchset 8
+> 4. check l2tcm_refcnt value before decreasing at patchset 8
+> 5. revise the commit message at patchset 11
+> 
+> v13 -> v14:
+> 1. add review tag to patchset 1,6
+> 2. exchange the order of sram power on and reset assert in
+> mt8195_scp_c1_before_load at patchset 2
+> 3. use ERR_CAST in patchset 5
+> 4. re-write patchset 7 to remove dependency between core 0 and core 1
+> 5. add patch set 10 to report watchdot timeout to all cores
+> 
+> v12 -> v13:
+> 1. replace subdevice with new mediatek scp operations in patchset 7
+> 2. add review tag to patchset 3
+> 3. modify mediatek,scp phandle name of video-codec@18000000 at patchset 11
+> 
+> v11 -> v12:
+> 1. add scp_add_single/multi_core() to patchset 6
+> 2. remove unused comment in patchset 6
+> 3. rename list name from mtk_scp_cluster to mtk_scp_list
+> 4. rewrite the multi-core probe flow
+> 5. disable rproc->autoboot and boot rproc by request_firmware_nowait at patchset 7
+> 6. remove patchset 7 review tag
+> 
+> v10 -> v11:
+> 1. rewrite patchset 5 to probe single-core SCP with the cluster list
+> 2. Also in patchset 5, move the pointer of mtk_scp object from the
+>     platform data property to the driver data property
+> 3. move the appearance of mtk_scp cluster property to patcheset 7
+> 
+> v9 -> v10:
+> 1. move the global mtk_scp list into the platform device driver data structure
+> 2. remove an unnecessary if() condition
+> 
+> v8 -> v9:
+> 1. initialize l1tcm_size/l1tcm_phys at patchset 05/11
+> 2. rewrite patchset 06/11 to unify the flow and remove hacks
+> 
+> v7 -> v8:
+> 1. update the node name of mt8192 asurada SCP rpmsg subnode
+> 2. squash register definitions into driver patches
+> 3. initialize local variables on the declaration at patch v8 06/11
+> 
+> v6 -> v7:
+> 1. merge the mtk_scp_cluster struct into the mtk_scp structure
+>     at the "Probe multi-core SCP" patch
+> 
+> v5 -> v6:
+> 1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
+> 2. rename the SCP core 0 label from 'scp' to 'scp_c0'
+> 
+> v4 -> v5:
+> 1. move resource release actions to the platform driver remove operation
+> 2. fix dual-core watchdog handling
+> 
+> v3 -> v4:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
+> 
+> v2 -> v3:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. add SCP core 1 node to mt8195.dtsi
+> 4. remove redundant call of rproc_boot for SCP
+> 5. refine IPI error message
+> 
+> v1 -> v2:
+> 1. update dt-binding property description
+> 2. remove kconfig for scp dual driver
+> 3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
+> 
+> 
+> Tinghan Shen (14):
+>    dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
+>      definition
+>    arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
+>    dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+>    remoteproc: mediatek: Add MT8195 SCP core 1 operations
+>    remoteproc: mediatek: Extract SCP common registers
+>    remoteproc: mediatek: Revise SCP rproc initialization flow for
+>      multi-core SCP
+>    remoteproc: mediatek: Probe SCP cluster on single-core SCP
+>    remoteproc: mediatek: Probe SCP cluster on multi-core SCP
+>    remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power
+>      control on dual-core SCP
+>    remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
+>    remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+>    remoteproc: mediatek: Report watchdog crash to all cores
+>    remoteproc: mediatek: Refine ipi handler error message
+>    arm64: dts: mediatek: mt8195: Add SCP 2nd core
+> 
+>   .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++-
+>   .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+>   .../boot/dts/mediatek/mt8192-asurada.dtsi     |   2 +-
+>   .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
+>   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  34 +-
+>   drivers/remoteproc/mtk_common.h               |  39 +-
+>   drivers/remoteproc/mtk_scp.c                  | 539 ++++++++++++++----
+>   drivers/remoteproc/mtk_scp_ipi.c              |   4 +-
+>   8 files changed, 656 insertions(+), 146 deletions(-)
+> 
 
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
-Changes in v2:
-- Refactor the pas binding to fit adsp better
-- Fixup remoteproc subnode names and property order
-- Link to v1: https://lore.kernel.org/r/20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru
-
----
-Nikita Travkin (4):
-      dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP compatible
-      remoteproc: qcom: pas: Add sc7180 adsp
-      arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
-      arm64: dts: qcom: sc7180: Add ADSP
-
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |  81 +++++++++----
- arch/arm64/boot/dts/qcom/sc7180.dtsi               | 127 +++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c                 |   1 +
- 3 files changed, 184 insertions(+), 25 deletions(-)
----
-base-commit: c50216cfa084d5eb67dc10e646a3283da1595bb6
-change-id: 20230905-sc7180-adsp-rproc-a745b88af298
-
-Best regards,
--- 
-Nikita Travkin <nikita@trvn.ru>
 
