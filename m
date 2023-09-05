@@ -2,44 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6771CA0FFA
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D650C83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbjIEQGY (ORCPT
+        id S238578AbjIEQG1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48850 "EHLO
+        Tue, 5 Sep 2023 12:06:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354319AbjIEKle (ORCPT
+        with ESMTP id S1353677AbjIEHMm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 06:41:34 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7F2199;
-        Tue,  5 Sep 2023 03:41:30 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 2F2FD4242B;
-        Tue,  5 Sep 2023 15:41:26 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1693910486; bh=94WYtO7i7RiviKXkVzwc9KKusQ2/IejlQ7IgqMIIY1A=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=L80XpvZU7H7SvQt2ecdc898YK/WBUHJHnwHKmNwTZ2/WEgxV1+RWk1VNsFQGhI0pc
-         0iT3j7DBHu3CSfFQIB+HCOZIqnvv3NxzSAa3p1EuVMOAINBNMO1OCnzLCQ+dm9KcIj
-         fIkX7r+Kv81tyYExW5i2tp1tn/vE/JPTVHjK5cSJUTATONI1ARdJMmqFZ8zhmZhWoF
-         kW47GxDuuUO6ZbRPJG7ek79CWskn1/Ff51xbWwgAanUMHZrhXjQsGtNVQHv0OP2X4I
-         LN/zhOBGCTh647odYTSWztbo2Fr4By7Ic5D5o/4/BRwRIk3UO9/fb655EDX+PPf7jk
-         Z8IBZuDi/WP7Q==
-From:   Nikita Travkin <nikita@trvn.ru>
-Date:   Tue, 05 Sep 2023 15:41:06 +0500
-Subject: [PATCH v2 3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
+        Tue, 5 Sep 2023 03:12:42 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8C0CD2
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Sep 2023 00:12:37 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-529fb04a234so2819193a12.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Sep 2023 00:12:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693897956; x=1694502756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sF+//heit9kiu9DZdcMd4FMMmLNhwcRdwSW09zQAWOg=;
+        b=isa7PacI5seuzKqipK6cQKBBfbBM5EIM2Xgaj7pb8F4PXL68hO6GffAhM/E16DO3LV
+         jjGvzEnvSCjfiMjIU0jdwPn8EUSWy7+27VVHC/gHXsz7UeAmjeULRTQtFRaUzrScEQzL
+         2lMZuCZ7eMyoRZ6UKpl6E3Aq1KSxosW1bZYTjZHZ7SKvTTioaJ5jqbCbGEQWtME9vGVg
+         HuZ7lH53G48Wh1lznK45/qoAjaJpTdDWTVgq1JOHcVskQ4rOXNDN0KqR2Semm+2+b2qo
+         4lAdE6lpK3iyfNoSFbQp9c9iyZagi3udSgud5riuHpWYNKPLFGK/nqGYoQBCVrMPL+TS
+         q61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693897956; x=1694502756;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sF+//heit9kiu9DZdcMd4FMMmLNhwcRdwSW09zQAWOg=;
+        b=Y2d4Y9dKTKo/uVXSOaGGblsDM+47IsRNmoTIaovUi1UNgwegOkUsZXWDuo0Bnjs+c/
+         wZ1Lm7Ethd0H8sey4NUiHhdMaIbho3vxwDz64f4ph/0hWVBkzQbmaQh1m6rFqUL+ux1V
+         zs5T8M7e5RWJHbpvjaGfoOhsoJV20hf832FmmSjj2tMh1g4kgZRB1npguQGFzUq1crUk
+         njyAqDDyeqHn6vqHb482SsvoGyPIKRm6TZsd+IMIMGiXu69yVxPtQ3uiNxjh+0SVFxFb
+         IAYdqGlwOfS/eq1K3sf08at2AjK+dPRbjnmUh0+pLpYLSxAq4pn8rSsIQTWKYI/msx6b
+         u+Dg==
+X-Gm-Message-State: AOJu0Yzhnfm/y6Qe89xt8/qE8ISNHNBlTr1456KZqWMza7MqrDn5MwrR
+        wk79eLj979KStfoQZsrNU0U4ow==
+X-Google-Smtp-Source: AGHT+IGhDjhTiNFdEFIcr+XHptJkx79UC35MF9x3IJyzuQCD+VOKolPpsbSAb+Gvg9FRn2zUMnFRfQ==
+X-Received: by 2002:a17:906:1dd:b0:9a4:ea7a:d0bb with SMTP id 29-20020a17090601dd00b009a4ea7ad0bbmr9129627ejj.76.1693897956325;
+        Tue, 05 Sep 2023 00:12:36 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id z7-20020a1709060ac700b0098d2d219649sm7291746ejf.174.2023.09.05.00.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Sep 2023 00:12:35 -0700 (PDT)
+Message-ID: <7d0200c6-0a87-54fd-5909-e4076dfc0a0e@linaro.org>
+Date:   Tue, 5 Sep 2023 09:12:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230905-sc7180-adsp-rproc-v2-3-8ab7f299600a@trvn.ru>
-References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-In-Reply-To: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-To:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sc7180: Add ADSP
+Content-Language: en-US
+To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -51,54 +70,88 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     David Wronek <davidwronek@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=900; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=94WYtO7i7RiviKXkVzwc9KKusQ2/IejlQ7IgqMIIY1A=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXTsVlB9eNjv/aj1o7kXK7yZ7p9bFsUk6VH6
- 6c9KvgEiZiJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0wAKCRBDHOzuKBm/
- dZVSD/4pbLCXZoltv+ovAsy2xX5qonlpOXEjzAzwzfDgsV5xwBND0zuHByzRO2B8hZXRQ0fFIE6
- kWcVMHxV/MgE4w4x3LEJyt13MqWGb4s+Ltas2yESsWZ5xDfpkVq/sfB64ZNCHcldIrmrJlKDAIs
- viH7wlO+MBgnnr3ZnY4q30tyekLkaQ+p83ZrBSErxOAY/MDaGWFz+VFb96jEigdhYw/2iG74Lqo
- u0WruZdEvZuXL3QxWz09xqIpAWP/A0XrNuJmrUXJvbxUnXYJx9VGgYTJ7yyBFYHTmE7Qu6LRTyt
- MDVl3XBGxtMJ5pli6AA5MwG/zav0YfF8AblFNswUBf9prRkL9I/SnuqKHEjVbvR9tPpB3hl+18d
- 3jThIgKr4zoay5daajLHGse6b/8VYNYUNXd836bvQRfnl7w4egl2lRyIOB0FS20My/zEpVl2Gf2
- CoOpXa+hFANluxZMTmCCzu1ueqJhVKO/T2nEca9i1Z+GXeBXUaN7rpP4Y/qalUCltNn7fkPgkSa
- zUBuh3HMYh+IcGOOBZLE3LF2ev4+mXCy2IDSUgcOKGa915TliDdnL3gbHLTXHOihUAvEMGE08H5
- KFiDTZ39TZTKVAtqyj7JxwPinjy9rEL7X23td3qL6wdxCfUF1NkVcfRHoK0cJxn8w14pc9WcA4B
- UxMx9/6ej979Nyw==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru>
+ <20230905-sc7180-adsp-rproc-v1-4-dfea7699da7b@trvn.ru>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230905-sc7180-adsp-rproc-v1-4-dfea7699da7b@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Some devices use tertiary mi2s to connect external audio codec.
-Add it near the other two i2s pinctrl definitions so the devices don't
-have to duplicate it.
+On 05/09/2023 07:47, Nikita Travkin wrote:
+> +				apr {
+> +					compatible = "qcom,apr-v2";
+> +					qcom,glink-channels = "apr_audio_svc";
+> +					qcom,apr-domain = <APR_DOMAIN_ADSP>;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					apr-service@3 {
 
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Except missing tests, few more things to fix
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index a79c0f2e1879..9f68b5ff0030 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -2033,6 +2033,11 @@ sec_mi2s_active: sec-mi2s-active-state {
- 				function = "mi2s_1";
- 			};
- 
-+			ter_mi2s_active: ter-mi2s-active-state {
-+				pins = "gpio63", "gpio64", "gpio65", "gpio66";
-+				function = "mi2s_2";
-+			};
-+
- 			pri_mi2s_active: pri-mi2s-active-state {
- 				pins = "gpio53", "gpio54", "gpio55", "gpio56";
- 				function = "mi2s_0";
+> +						reg = <APR_SVC_ADSP_CORE>;
+> +						compatible = "qcom,q6core";
 
--- 
-2.41.0
+compatible is always the first property.
+
+> +						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +					};
+> +
+> +					q6afe: apr-service@4 {
+> +						compatible = "qcom,q6afe";
+> +						reg = <APR_SVC_AFE>;
+> +						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +
+> +						q6afedai: dais {
+> +							compatible = "qcom,q6afe-dais";
+> +							#address-cells = <1>;
+> +							#size-cells = <0>;
+
+You do not have any children, so drop these two. I will fix the binding.
+
+> +							#sound-dai-cells = <1>;
+> +						};
+> +
+> +						q6afecc: cc {
+> +							compatible = "qcom,q6afe-clocks";
+> +							#clock-cells = <2>;
+> +						};
+> +					};
+> +
+> +					q6asm: apr-service@7 {
+> +						compatible = "qcom,q6asm";
+> +						reg = <APR_SVC_ASM>;
+> +						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +
+> +						q6asmdai: dais {
+> +							compatible = "qcom,q6asm-dais";
+> +							#address-cells = <1>;
+> +							#size-cells = <0>;
+
+Ditto
+
+> +							#sound-dai-cells = <1>;
+> +							iommus = <&apps_smmu 0x1001 0x0>;
+> +						};
+> +					};
+> +
+> +					q6adm: apr-service@8 {
+> +						compatible = "qcom,q6adm";
+> +						reg = <APR_SVC_ADM>;
+> +						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +
+> +						q6routing: routing {
+> +							compatible = "qcom,q6adm-routing";
+> +							#sound-dai-cells = <0>;
+> +						};
+> +					};
+> +				};
+
+
+Best regards,
+Krzysztof
 
