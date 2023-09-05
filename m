@@ -2,115 +2,114 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A7FCA0FE2
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD35CA0FFB
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238733AbjIEQGs (ORCPT
+        id S238792AbjIEQG4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48626 "EHLO
+        Tue, 5 Sep 2023 12:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354147AbjIEJ4x (ORCPT
+        with ESMTP id S1354316AbjIEKle (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 05:56:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FC518C;
-        Tue,  5 Sep 2023 02:56:49 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3859PmAU004368;
-        Tue, 5 Sep 2023 09:56:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=w+hMWE0inat5/A4JRfciMK6nSLqo0OmJo2FFkWmjUgk=;
- b=LpUy5pfnPP5bKIP8lIFxWA0XI2dlfuz187SWi2ocSBLck6+wHL6nL3NNYjBAtR+Oi29m
- pToixJrqZwOMwrF5ytx/HhHYKbFEUbc5tDArnwNpyzYOJMlZ/gBx+6N48JyX0BajvlZS
- nqDWiCOjOitp/QuZGrqdVFd0lzKnBLid93aZdf2reRuK8hpZSP4Es0s+lyGc9ckGeUI9
- um9XHA3CkOP/ZAAfAntUvuAVx0SolfDOrF60rd/dIp7cGZCSlvHku888exSziAQEXcfb
- l8YASB/IBOvfolRbQarZj29Pnxjxsvfxlx1j3BYW0dlQvlqEeiy4rWbNFvqOW2+CddOS cg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3swpreh3na-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Sep 2023 09:56:42 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3859ufEE013365
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 5 Sep 2023 09:56:41 GMT
-Received: from hu-viswanat-blr.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Tue, 5 Sep 2023 02:56:35 -0700
-From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ohad@wizery.com>,
-        <baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>
-CC:     <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>,
-        Vignesh Viswanathan <quic_viswanat@quicinc.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v2 2/2] hwspinlock: qcom: Remove IPQ6018 SOC specific compatible
-Date:   Tue, 5 Sep 2023 15:25:35 +0530
-Message-ID: <20230905095535.1263113-3-quic_viswanat@quicinc.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230905095535.1263113-1-quic_viswanat@quicinc.com>
-References: <20230905095535.1263113-1-quic_viswanat@quicinc.com>
+        Tue, 5 Sep 2023 06:41:34 -0400
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BA71AB;
+        Tue,  5 Sep 2023 03:41:29 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by box.trvn.ru (Postfix) with ESMTPSA id 9EF8E408E8;
+        Tue,  5 Sep 2023 15:41:23 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1693910484; bh=r0Errm5grHoZ7a+GZjlkoliB85rDwXGFHNRI1loDIh0=;
+        h=From:Subject:Date:To:Cc:From;
+        b=WLUAntEBkVQ7yWgix/eaNKSDrfg6B88vTJ0jtYbf6kI5UdQAk18tdKU8W/OYZuDB1
+         izd9iNoZjU8Jssqy4aNUvtDwiWPt3PISUT2QpqGAx2JMyKgJeQGfNcm9Grk5/KEKxT
+         Gvt0SPcxjg51AgQVWauq8MxtLdqUtqmnV8ri057jgWQRfboGSvx8xqBwYaiOmO040R
+         bxnx8QV3/uNzSBq9QFgN5sQWJbVhUUt2nGjJR8KzSXePOCMc90AbR729fJggV+dsc+
+         GXCmkDj575rH/0QrdVZUF/F35jyvCsdwMhexM6TzPtQfRzqWp/kLSN5PwufbL6CBx/
+         3iek9mggodciQ==
+From:   Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH v2 0/4] sc7180: Add ADSP
+Date:   Tue, 05 Sep 2023 15:41:03 +0500
+Message-Id: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hkx8xRX6TLbakPIdwH7rQgeA0xlOnQ4p
-X-Proofpoint-GUID: hkx8xRX6TLbakPIdwH7rQgeA0xlOnQ4p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-05_07,2023-08-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=955
- spamscore=0 suspectscore=0 impostorscore=0 malwarescore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 priorityscore=1501 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309050088
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL8F92QC/32NSw7CIBRFt9K8sc8AWoGO3IfpgPKxTFryqETTs
+ HexC3B4TnLP3SF7ij7D0O1AvsQc16WBOHVgZ7M8PUbXGAQTF6ZZj9lKrhgalxNSotWikdd+Uso
+ EoRW0XSIf4vtoPsbGc8zbSp/jovCf/VcrHBm64I28ae2MnO4bleVMLxhrrV8Jv9GysAAAAA==
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1501; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=r0Errm5grHoZ7a+GZjlkoliB85rDwXGFHNRI1loDIh0=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXSy8pwFM3PZa26yt8IFcFBmjmMdjaDTnkbn
+ guQmmL1KmGJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0gAKCRBDHOzuKBm/
+ dXIPD/4qRbXGgh4mvBpZgyILTd7Rmjy46zpdR2Tf1BBLQMMoT+4+64cTqakg0INFnQbfc/ufQRa
+ xFH0dySZIJFqeK8GBg1P0VC/10GzbczISHhDhKMi6MDmSgyltyu9ov4eCO58Mex4/SWp9/OLh8r
+ PE3PLXBCFbmalEBOb0LJyyiAALBxShBMJ+mDlA+4AIfW0CrKMBPOFxfXWuO4TH9KN7pzBneSwZk
+ XNncoBlNjZ3x6M2Ei5mqMJWoW2i4tgN3XGR8eBWcac1ZCAFsvYVSDGm39uOxM6flfC8XZ/FA0ry
+ GJUVSKvpDhOg7o4giJ0HHNDO9gU1jJsGTtJpvWyd7F2BOP0IsCa7wf/TjoFAEaDK/XdqNiOg31/
+ HKokJ5FDuScVq7STarfKFV3Gm3vkNZ30mgUvoM+eNwNQvVnMvInNZCfocO6lBj8QkBZwr7WthV5
+ hvIBpu3t0T/UiqLPK3f3sbe3OpbxtN1Hj5fh6RN25wSdpKkUrv0nAsi4HFoJhhbe9mWOSGao9BN
+ KQjn57srZMywrgPv2tfHCPyfTRwe9LX0EzQYuNeU8lYFpSaueTrFu2HXLZ0jiTekrQbLPT0CjYh
+ isn27URMq2l+FSCVqNCd6kpO/kdY2IOzn08lCNv8hvm6sCS188SefSA3qYQIW2+HAXdUxXka8Uu
+ 5YRFNew5U1bm0nw==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-IPQ6018 has 32 tcsr_mutex hwlock registers with stride 0x1000.
-The compatible string qcom,ipq6018-tcsr-mutex is mapped to
-of_msm8226_tcsr_mutex which has 32 locks configured with stride of 0x80
-and doesn't match the HW present in IPQ6018.
+sc7180 has an ADSP remoteproc that can be used to control the sound
+hardware. This remoteproc has to be used on those devices that use
+Qualcomm firmware and thus are locked out of driving the lpass directly.
 
-Remove IPQ6018 specific compatible string so that it fallsback to
-of_tcsr_mutex data which maps to the correct configuration for IPQ6018.
+Introducing the ADSP would allow multiple WoA laptops such as Aspire 1
+to provide sound. It's also useful for the sm7125 devices that are to be
+included to the kernel [1]
 
-Changes in v2:
- - Updated commit message
- - Added Fixes and stable tags
+This series adds the ADSP and the sound services needed to make use of
+it later.
 
-Cc: stable@vger.kernel.org
-Fixes: 5d4753f741d8 ("hwspinlock: qcom: add support for MMIO on older SoCs")
-Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+[1] https://lore.kernel.org/all/20230824091737.75813-1-davidwronek@gmail.com/
+
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
- drivers/hwspinlock/qcom_hwspinlock.c | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v2:
+- Refactor the pas binding to fit adsp better
+- Fixup remoteproc subnode names and property order
+- Link to v1: https://lore.kernel.org/r/20230905-sc7180-adsp-rproc-v1-0-dfea7699da7b@trvn.ru
 
-diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-index a0fd67fd2934..814dfe8697bf 100644
---- a/drivers/hwspinlock/qcom_hwspinlock.c
-+++ b/drivers/hwspinlock/qcom_hwspinlock.c
-@@ -115,7 +115,6 @@ static const struct of_device_id qcom_hwspinlock_of_match[] = {
- 	{ .compatible = "qcom,sfpb-mutex", .data = &of_sfpb_mutex },
- 	{ .compatible = "qcom,tcsr-mutex", .data = &of_tcsr_mutex },
- 	{ .compatible = "qcom,apq8084-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
--	{ .compatible = "qcom,ipq6018-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
- 	{ .compatible = "qcom,msm8226-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
- 	{ .compatible = "qcom,msm8974-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
- 	{ .compatible = "qcom,msm8994-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
+---
+Nikita Travkin (4):
+      dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP compatible
+      remoteproc: qcom: pas: Add sc7180 adsp
+      arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
+      arm64: dts: qcom: sc7180: Add ADSP
+
+ .../bindings/remoteproc/qcom,sc7180-pas.yaml       |  81 +++++++++----
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               | 127 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |   1 +
+ 3 files changed, 184 insertions(+), 25 deletions(-)
+---
+base-commit: c50216cfa084d5eb67dc10e646a3283da1595bb6
+change-id: 20230905-sc7180-adsp-rproc-a745b88af298
+
+Best regards,
 -- 
-2.41.0
+Nikita Travkin <nikita@trvn.ru>
 
