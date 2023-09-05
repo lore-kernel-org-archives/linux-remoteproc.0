@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F320CA0FFB
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFBEC83F2C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238609AbjIEQGc (ORCPT
+        id S238642AbjIEQGd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
+        Tue, 5 Sep 2023 12:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353741AbjIEHsT (ORCPT
+        with ESMTP id S1353736AbjIEHqo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 03:48:19 -0400
+        Tue, 5 Sep 2023 03:46:44 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE22ACC;
-        Tue,  5 Sep 2023 00:48:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEEA7CC;
+        Tue,  5 Sep 2023 00:46:40 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0D90D6607033;
-        Tue,  5 Sep 2023 08:48:14 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 983E16607033;
+        Tue,  5 Sep 2023 08:46:38 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1693900094;
-        bh=2aURxQk0M/bSZXU5lE37P2mi6JsUawbzSUa7gkm80LM=;
+        s=mail; t=1693899999;
+        bh=N17nKRenuWrXQvbPYayfAXzToq+gFoZOFDOSSc7L+fM=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=X+PNlFJYAEteHrrNiB/RRragp6wajJ17escCe0g4W/BR/GMsHPeJjEduzT17lnKTf
-         D1ldwHrCv4Fur/6kHXLezyZpeKOMw2KjM/pk62YIhRODaZNeQkqFmHxFZCD2EkzZuo
-         tGlSrFn/emry0UK30xL5fe/HKAUdz+OYPJlTj0ZUIqDdfGbpqJ0YHl/k3djLW+0Foi
-         V3ylpWUtwcd+vcjDt2WYakutUj+yrX8l4utoQE2Qe+nT4N0Yoi3CXwEIhnuen9Hwx1
-         9qlP/8l/T8QP12HXhNPS4RttDEc0s5ryGViVtR2NT6KLBBygw2Sb75n+oDk9bLIO1v
-         hjT+V7FgeMa5Q==
-Message-ID: <6c089869-a933-f340-60af-de03781aad1b@collabora.com>
-Date:   Tue, 5 Sep 2023 09:48:11 +0200
+        b=Sb1KR0+Fo6COyGKeYr/5gd1FqmGuMYbX7f8E8C6XeU0YD74tUBePlMUpy2Bl1IY8Y
+         49JUTMhcePcdIoLYWSDFduSN4CB0PjoIfI4TT0ynjsyKtutaajlyEm4pCRIlFq0fJA
+         2edAoybmDatc71WsEzltFHixwenLSAoeepEcSzrqvsGxQde+ds8wwFJIvKzfBpF87z
+         G61nHbWrxb/ixSYusLu604r8Og3Wq647miKIoW6aVjz2zzuYzpFRA8q8kYcNwvBFOW
+         J6Q2SushZ8RJyTmNRtcFlYzFQNqVpvd92RGeiMv9MYA71Yp0z+hJnFwRipKXxHagH8
+         5TCJ2KVFrxK8w==
+Message-ID: <43b990d9-7bf8-ed06-ccfd-69b2a6cb85e5@collabora.com>
+Date:   Tue, 5 Sep 2023 09:46:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH v17 07/14] remoteproc: mediatek: Probe SCP cluster on
- single-core SCP
+Subject: Re: [PATCH v17 06/14] remoteproc: mediatek: Revise SCP rproc
+ initialization flow for multi-core SCP
 Content-Language: en-US
 To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -53,10 +53,10 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
- <20230901080935.14571-8-tinghan.shen@mediatek.com>
+ <20230901080935.14571-7-tinghan.shen@mediatek.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230901080935.14571-8-tinghan.shen@mediatek.com>
+In-Reply-To: <20230901080935.14571-7-tinghan.shen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -64,13 +64,13 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Il 01/09/23 10:09, Tinghan Shen ha scritto:
-> This is the 3rd preliminary step for probing multi-core SCP.
-> Rewrite the probing flow of single-core SCP to adapt with the 'cluster'
-> concept needed by the multi-core SCP. The SCP core object(s)
-> is maintained at the cluster list.
+> This is the 2nd preliminary step for probing multi-core SCP.
+> Initialization of configuration and L1TCM registers is extracted
+> to only performed once on multi-core SCP. The rest of remoteproc
+> initialization procedure is similar for both single and multi-core
+> SCP and is applied to each core.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
 
