@@ -2,230 +2,148 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD79ECA0FE2
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFEFCA0FF3
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbjIEQGf (ORCPT
+        id S232712AbjIEQGj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48860 "EHLO
+        Tue, 5 Sep 2023 12:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354317AbjIEKle (ORCPT
+        with ESMTP id S245012AbjIEBn0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 06:41:34 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B376B1B6;
-        Tue,  5 Sep 2023 03:41:30 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id A9D2E42435;
-        Tue,  5 Sep 2023 15:41:27 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1693910488; bh=5Mic3gNnqOTFzu14E8NR8/OpHSVXkykG/cgWNUdKaw8=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=s7wB6NCL3RZjwbiCisJyZ/QIjry3x0tKsHpyF+tJnd7si1zT4HSaXkiKjpVMTk05m
-         de8knKUnzuUs1WxP2O36oJk0WqVCjHP/KC53gm4XWNS7BSGTT8Xwdr5YSV9NrDchDd
-         23laBjHNSAthKIPRhNanaZ4m6NaRN9/JHMsrcw92fJuGG26wC7nPXJ7Rjqgw4kyknU
-         LrdejzaW2byxqGwig/cmxBfD0KJMDn12xyWXCnIJZjKrL469RNrIhPmymj9hgJ0Yno
-         DdzBfeVpzbZf9ajNTTqvKmZ+mClSCGGnQl14DJUpWtpHmKrMKCBm4gznHmdq/iCZSh
-         6dvD9DY6J1xzA==
-From:   Nikita Travkin <nikita@trvn.ru>
-Date:   Tue, 05 Sep 2023 15:41:07 +0500
-Subject: [PATCH v2 4/4] arm64: dts: qcom: sc7180: Add ADSP
+        Mon, 4 Sep 2023 21:43:26 -0400
+X-Greylist: delayed 573 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Sep 2023 18:43:21 PDT
+Received: from klingt.org (mail.klingt.org [86.59.21.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8943CC5
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Sep 2023 18:43:21 -0700 (PDT)
+Received: from [192.168.0.107] ([202.184.201.145])
+        (authenticated bits=0)
+        by klingt.org (8.17.2/8.17.2/Debian-1) with ESMTPSA id 3851Xc4n485665
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Tue, 5 Sep 2023 03:33:40 +0200
+Message-ID: <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
+Date:   Tue, 5 Sep 2023 09:33:37 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Tim Blechmann <tim.blechmann@gmail.com>,
+        linux-remoteproc@vger.kernel.org
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
+From:   Tim Blechmann <tim@klingt.org>
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
+In-Reply-To: <ZPZBVS3R/oZuUmk5@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230905-sc7180-adsp-rproc-v2-4-8ab7f299600a@trvn.ru>
-References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-In-Reply-To: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc:     David Wronek <davidwronek@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4331; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=5Mic3gNnqOTFzu14E8NR8/OpHSVXkykG/cgWNUdKaw8=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXTXjtBs1SiekyJhoXzzqVXZlv2oJwck52U/
- Ja49pfBrr2JAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0wAKCRBDHOzuKBm/
- dU+/D/9HkUq1DPOWHsIeVXgw9BJdDz2Rne+0+p9YFrCxY67TAYimr2fU1QTcm7He93ZHdDdwbxu
- /72zLwdrogKVxSLI0DMuLXP/s4UisOrO7692baVtkNEFzACaAgWDIhlfF4lnTTNg5WZOoPFqU3k
- FdWDRhF7X9pAomgRg2Ghx+hmNaRXwFgk9TlGlg9X1kD671BCZs1EvIcM0q38bBU3r2KJdwiNcoY
- QW41iz27MYw698MGOOR4gtet4VYyr1uqBAlrLPkFGZmPuVNMhATLCPSImOvZUpxzy2oekpW1F+5
- mmnfRdtqUB88fXndYLDJHinAPy/Ggjmtl5wGTq6xuX36zTbaFM3zQboe2IWfJ3v5Rlqz0qRNEND
- RdOp7CDV9i2G/xLVmA/cMlIbzJqSnJkLTrZpBejOUlXgo5xfPrD+qkJftI+AtmwkUPLAVbH6WJR
- iFvQ/NcvAdSgAW9vqgaxp1ycmUDSiG/cewMH4aBz8jDtldQLPc9CepmSBFPLYufH6bWPre2M2uI
- 12H0VO/qU4hGOqyEig3p+5GcLRbhIvod6bnIGNyIapGqyq26L4XbXzt7eEltSspVJu439D2DVJ8
- LUBuyS7KMHH0wd7WQEZAh7+EP+os5aJwEKeWD1vn6mMwaoOKQEN0nqdTQryPNfm5V+YfFyoFyoi
- 3PG9uGgZReB2rpw==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+X-Greylist: inspected by milter-greylist-4.6.4 (klingt.org [86.59.21.178]); Tue, 05 Sep 2023 03:33:41 +0200 (CEST) for IP:'202.184.201.145' DOMAIN:'[202.184.201.145]' HELO:'[192.168.0.107]' FROM:'tim@klingt.org' RCPT:''
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (klingt.org [86.59.21.178]); Tue, 05 Sep 2023 03:33:41 +0200 (CEST)
+X-Virus-Scanned: clamav-milter 1.0.2 at es.klingt.org
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-sc7180 has an ADSP remoteproc that exclusively controls the audio
-hardware on devices that use Qualcomm firmware.
+>>> when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
+>>> enables tx-complete interrupt.
+>>> however if the interrupt is executed after `get_a_tx_buf` and before
+>>> `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
+>>> for the full 15 seconds.
+>>
+>>
+>> Is there any reason why your co-processor is unable to release the TX RPMSG
+>> buffers for 15 seconds? If not, you should first determine the reason why it is
+>> stalled.
+> 
+> Arnaud's concern is valid.  If the remote processor can't consume a buffer
+> within 15 seconds, something is probably wrong.
+> 
+> That said, I believe your assesment of the situation is correct.  *If* the TX
+> callback is disabled and there is no buffer available, there is a window of
+> opportunity between calls to get_a_tx_buf() and rpmsg_upref_sleepers() for an
+> interrupt to arrive in function rpmsg_send_offchannel_raw().
 
-Add it along with the relevant audio services.
+the remote processor certainly releases the tx buffer and according to 
+my tracing the `vring_interrupt` fires immediately before `rpmsg_send` 
+enters the `rpmsg_upref_sleepers`.
 
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
-v2: rename service nodes according to the schema, reorder properties
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 122 +++++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+after applying this patch we haven't been able to reproduce the 15s 
+timeout anymore, whereas before we could easily reproduce it with 
+certain workloads.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 9f68b5ff0030..174e7e18bb4d 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -20,6 +20,8 @@
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- #include <dt-bindings/reset/qcom,sdm845-pdc.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-+#include <dt-bindings/soc/qcom,apr.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
- #include <dt-bindings/thermal/thermal.h>
- 
- / {
-@@ -3781,6 +3783,126 @@ wifi: wifi@18800000 {
- 			status = "disabled";
- 		};
- 
-+		remoteproc_adsp: remoteproc@62400000 {
-+			compatible = "qcom,sc7180-adsp-pas";
-+			reg = <0 0x62400000 0 0x100>;
-+
-+			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd SC7180_LCX>,
-+					<&rpmhpd SC7180_LMX>;
-+			power-domain-names = "lcx", "lmx";
-+
-+			qcom,qmp = <&aoss_qmp>;
-+			qcom,smem-states = <&adsp_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+				mboxes = <&apss_shared 8>;
-+
-+				apr {
-+					compatible = "qcom,apr-v2";
-+					qcom,glink-channels = "apr_audio_svc";
-+					qcom,apr-domain = <APR_DOMAIN_ADSP>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					service@3 {
-+						compatible = "qcom,q6core";
-+						reg = <APR_SVC_ADSP_CORE>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+					};
-+
-+					q6afe: service@4 {
-+						compatible = "qcom,q6afe";
-+						reg = <APR_SVC_AFE>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6afedai: dais {
-+							compatible = "qcom,q6afe-dais";
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+							#sound-dai-cells = <1>;
-+						};
-+
-+						q6afecc: cc {
-+							compatible = "qcom,q6afe-clocks";
-+							#clock-cells = <2>;
-+						};
-+					};
-+
-+					q6asm: service@7 {
-+						compatible = "qcom,q6asm";
-+						reg = <APR_SVC_ASM>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6asmdai: dais {
-+							compatible = "qcom,q6asm-dais";
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+							#sound-dai-cells = <1>;
-+							iommus = <&apps_smmu 0x1001 0x0>;
-+						};
-+					};
-+
-+					q6adm: service@8 {
-+						compatible = "qcom,q6adm";
-+						reg = <APR_SVC_ADM>;
-+						qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+
-+						q6routing: routing {
-+							compatible = "qcom,q6adm-routing";
-+							#sound-dai-cells = <0>;
-+						};
-+					};
-+				};
-+
-+				fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "adsp";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					compute-cb@3 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <3>;
-+						iommus = <&apps_smmu 0x1003 0x0>;
-+					};
-+
-+					compute-cb@4 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <4>;
-+						iommus = <&apps_smmu 0x1004 0x0>;
-+					};
-+
-+					compute-cb@5 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <5>;
-+						iommus = <&apps_smmu 0x1005 0x0>;
-+						qcom,nsessions = <5>;
-+					};
-+				};
-+			};
-+		};
-+
- 		lpasscc: clock-controller@62d00000 {
- 			compatible = "qcom,sc7180-lpasscorecc";
- 			reg = <0 0x62d00000 0 0x50000>,
+> 3) This patch gets applied when rc1 comes out so that it has 6 or 7 weeks to
+> soak.  No error are locks are reported due to this patch during that time.
 
--- 
-2.41.0
+mentioning locks: i was a bit uncertain about a good way to implement 
+the retry, since both `rpmsg_upref_sleepers` and `get_a_tx_buf` both 
+acquire the same mutex. i briefly considered to add `get_a_tx_buf` into 
+`rpmsg_upref_sleepers` to avoid locking the same mutex multiple times, 
+though it adds a bit of complexity to the implementation and harms 
+readability a bit.
+are there any recommendations on this topic or are (likely 
+non-contended) locks not expensive enough to justify the added complexity?
+
+thanks,
+tim
+
+
+> 
+>>
+>> Regards,
+>> Arnaud
+>>
+>>>
+>>> in this case, so we re-try once before we really start to sleep
+>>>
+>>> Signed-off-by: Tim Blechmann <tim@klingt.org>
+>>> ---
+>>>   drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
+>>>   1 file changed, 15 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> index 905ac7910c98..2a9d42225e60 100644
+>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>>>   
+>>>   	/* no free buffer ? wait for one (but bail after 15 seconds) */
+>>>   	while (!msg) {
+>>>   		/* enable "tx-complete" interrupts, if not already enabled */
+>>>   		rpmsg_upref_sleepers(vrp);
+>>>   
+>>> -		/*
+>>> -		 * sleep until a free buffer is available or 15 secs elapse.
+>>> -		 * the timeout period is not configurable because there's
+>>> -		 * little point in asking drivers to specify that.
+>>> -		 * if later this happens to be required, it'd be easy to add.
+>>> -		 */
+>>> -		err = wait_event_interruptible_timeout(vrp->sendq,
+>>> -					(msg = get_a_tx_buf(vrp)),
+>>> -					msecs_to_jiffies(15000));
+>>> +		/* make sure to retry to grab tx buffer before we start waiting */
+>>> +		msg = get_a_tx_buf(vrp);
+>>> +		if (msg) {
+>>> +			err = 0;
+>>> +		} else {
+>>> +			/*
+>>> +			 * sleep until a free buffer is available or 15 secs elapse.
+>>> +			 * the timeout period is not configurable because there's
+>>> +			 * little point in asking drivers to specify that.
+>>> +			 * if later this happens to be required, it'd be easy to add.
+>>> +			 */
+>>> +			err = wait_event_interruptible_timeout(vrp->sendq,
+>>> +						(msg = get_a_tx_buf(vrp)),
+>>> +						msecs_to_jiffies(15000));
+>>> +		}
+>>>   
+>>>   		/* disable "tx-complete" interrupts if we're the last sleeper */
+>>>   		rpmsg_downref_sleepers(vrp);
+>>>   
+>>>   		/* timeout ? */
+>>>   		if (!err) {
+> 
 
