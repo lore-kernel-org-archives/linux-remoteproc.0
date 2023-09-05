@@ -2,99 +2,132 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ED5CA0FFC
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D97CA0FF8
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Sep 2023 16:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238355AbjIEQFz (ORCPT
+        id S238390AbjIEQF6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
+        Tue, 5 Sep 2023 12:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354318AbjIEKle (ORCPT
+        with ESMTP id S1354142AbjIEJ4b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Sep 2023 06:41:34 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45AA1AE;
-        Tue,  5 Sep 2023 03:41:29 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 782EA42425;
-        Tue,  5 Sep 2023 15:41:25 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1693910486; bh=FNIibyarmPCAlhz6Ut7njgzIVJSbI2KFycVZdOK+Y8k=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=jVRHYAPuFwcBzBq3OM4gqA2V1jKYKbe7tl4k8iQL0B3hP7g6v0yPMIrVUSCsCWM14
-         6Ulya6cHdZmB/5c8XrrEWhTOYOlkfUwobCRKE2GZBYr/zBx3PxJohtEOY41fEy4r5H
-         aUNAA7bfNdWuM+L9b8uVeaZWzRCrfq1gat5uV+8dl0yRWgQ+PlCbmVHHO92HbSkEx+
-         6gD3F91RfavcoLHigg1lcl0wNlGNaTw9yZUilgi05djKh9Dkt91849zkOEsCgWaxBy
-         8y8wRgu/t/V7Upd01hjg05sGERkpi8C+TLr4kQ+TYthMW38qTy5hEoffbD7o/ZneX8
-         96NXjdfPGES2g==
-From:   Nikita Travkin <nikita@trvn.ru>
-Date:   Tue, 05 Sep 2023 15:41:05 +0500
-Subject: [PATCH v2 2/4] remoteproc: qcom: pas: Add sc7180 adsp
+        Tue, 5 Sep 2023 05:56:31 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D2718C;
+        Tue,  5 Sep 2023 02:56:28 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3859Ex9I002295;
+        Tue, 5 Sep 2023 09:56:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=BJU/aztU2Sgiooahz+oauJme3H4sup1zMkbjfNJYZDs=;
+ b=WCiiCTEgpz0sU0aZYPR7WFYhrV9plDX/Ya3RgcyDyZI6u769TAPTju0bomC/pMJimiOO
+ E1pibZmC+K8b/Ag1+L3MmDs/abL1TbdFg+BePKkTogjk6Kiho0JT7fvMfVX+P4nf9P8A
+ 5LzSRXIUdx+oHNlG7VSpGycGtf+QG+msfyvuf8V5ZRnbEznM/dvi64hqGNFwr6EpY14g
+ z66DQBp/EKttlbsrVETkkmmFj6Cterpp0/ROe0nmA08H4i1GRMXQK+M1DFDu21C+/pgt
+ /cajiSQiNe7ABi79Tb95h+pJJ/ip87mWilzwgeMiv8fy5NQ/g0Qgg3Qgc3uicKLsTKIt hA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3swtevgs9c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Sep 2023 09:56:19 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3859uI3M027116
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 5 Sep 2023 09:56:18 GMT
+Received: from [10.201.162.56] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 5 Sep
+ 2023 02:56:12 -0700
+Message-ID: <bd754243-a04f-466a-9c19-2163ee7008c4@quicinc.com>
+Date:   Tue, 5 Sep 2023 15:26:09 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] hwspinlock: qcom: Drop unused qcom,ipq6018-tcsr-mutex
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ohad@wizery.com>,
+        <baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>
+CC:     <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20230904055010.4118982-1-quic_viswanat@quicinc.com>
+ <20230904055010.4118982-3-quic_viswanat@quicinc.com>
+ <17c8ba39-2bcf-5799-13ff-bb96249dbf61@linaro.org>
+ <880706cd-0987-47c7-8785-f8e4cb1c1907@linaro.org>
+ <90795790-a5e4-419f-9e40-989731c1c685@quicinc.com>
+ <246760a3-3230-e14d-0541-72d8f0da5fd2@linaro.org>
+Content-Language: en-US
+From:   Vignesh Viswanathan <quic_viswanat@quicinc.com>
+In-Reply-To: <246760a3-3230-e14d-0541-72d8f0da5fd2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230905-sc7180-adsp-rproc-v2-2-8ab7f299600a@trvn.ru>
-References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-In-Reply-To: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc:     David Wronek <davidwronek@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1130; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=FNIibyarmPCAlhz6Ut7njgzIVJSbI2KFycVZdOK+Y8k=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBk9wXSdXpuqquc9zOeOuVZKyipoF7wARAYEaovj
- 6NrvwsAXoCJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZPcF0gAKCRBDHOzuKBm/
- dV7hEACgIYyv1e5XGRTTLqaKQs7YYbjQVpET7tHenKQF9hm6XJWZ3XJ2JOhasO/s4YC5QMpTc7p
- WTxHmGiTkfu373RgkULXYk+ndTECVFpArH6TmednqlOHuLOhFAtVxwPwvicxaPbz4Un0g6XGdcc
- MZAhtsL8CeakenfOWfBiLPec1aP9uOIwuCRGjkXfcFKwdOcuTwfmM+3Eoe0TJUl8WO1tngQ3w92
- Bnhstjzpk8VAK0HFsKXpQgBwnhdOYXl8+lRtF+s2qMXpaKIpQOKpWxOSC6INInbX44lx3puSvjW
- GuD0Gy2GwAkNsuTtZYibPMfI1BS90u6HFuxDdMNQb4P67bvLQuTh4BpkFtD4SKRpW6peA6QU2ix
- sT4oI7v6R+Xcu29MpuZ4yK5WdEj0SreOyvsNVCytaxBD5McsvgN9xUgQGJI0YrISn1hl0sXPzn/
- RF/JJ32TGuiH2ZmyxNt9iiFDgEHskzGvYSrFAuGy6xt77wXkoDO12lEVghvO9zMfwFqsgll61rb
- UCeoW2c859qJs/XUogBjvp5A76C/pqoqu8oKQ2ixQjo3Jzu1EwGjNYxABCfCMpg7Y1SRLK5gn6j
- 3ySoseJe+ysKImwq64zC6gfDKv4rMaXdGR90yqUEKWLsgTU8Qm8mFvA8AJDzZENXDTG2znxc8m8
- 4ekcc1wWfEsDEBQ==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: r8O-vwmHhyBMaPAd1K5R6KkZtkDXIwau
+X-Proofpoint-ORIG-GUID: r8O-vwmHhyBMaPAd1K5R6KkZtkDXIwau
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-05_07,2023-08-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=690
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309050088
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-sc7180 has a dedicated ADSP similar to the one found in sm8250.
-Add it's compatible to the driver reusing the existing config so
-the devices that use the adsp can probe it.
 
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b5447dd2dd35..55fafc68200e 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1161,6 +1161,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
- 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
+On 9/4/2023 11:46 PM, Krzysztof Kozlowski wrote:
+> On 04/09/2023 18:09, Vignesh Viswanathan wrote:
+>>
+>>
+>> On 9/4/2023 9:31 PM, Konrad Dybcio wrote:
+>>> On 4.09.2023 08:42, Krzysztof Kozlowski wrote:
+>>>> On 04/09/2023 07:50, Vignesh Viswanathan wrote:
+>>>>> qcom,ipq6018-tcsr-mutex maps to incorrect config of IPQ6018 and is
+>>>>> dropped from the devictree.
+>>>>
+>>>> No, it is not dropped.
+>>>>
+>>>>
+>>>>> IPQ6018 will use qcom,tcsr-mutex compatible
+>>>>> string.
+>>>>
+>>>> No, it will not.
+>>>>
+>>>>>
+>>>>> Drop qcom,ipq6018-tcsr-mutex compatible string from
+>>>>> qcom_hwspinlock_of_match table.
+>>>>
+>>>> Why? Do not write what you are doing here, but why you are doing it.
+>>> More importantly, looks like the ipq6018 compatible was added after
+>>> support for this SoC was introduced (see f5e303aefc06 and 5bf635621245a),
+>>> so if it's going to use of_tcsr_mutex data with the fallback compat, the
+>>> SoC-specific compatible can be removed from the driver.
+>>>
+>> Hi Konrad, Krzysztof,
+>>
+>> I was planning to update the SOC-specific compatible for IPQ6018
+>> qcom,ipq6018-tcsr-mutex to point to of_tcsr_mutex data in the of_match
+>> table in the hwspinlock driver in V2.
+>>
+>> Do you think this would be okay? or should I go ahead with removal of
+>> IPQ6018 specific compatible so that it falls back to of_tcsr_mutex?
+> 
+> Remove, it's not needed in the driver.
 
--- 
-2.41.0
-
+Ack, will remove in V2.
+> 
+> Best regards,
+> Krzysztof
+> 
