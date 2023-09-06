@@ -2,122 +2,136 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB55EB8FAD
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Sep 2023 06:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51195EB8FB6
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Sep 2023 11:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239326AbjIFGUa (ORCPT
+        id S240365AbjIFL7T (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Sep 2023 02:20:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49638 "EHLO
+        Wed, 6 Sep 2023 07:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231669AbjIFGU3 (ORCPT
+        with ESMTP id S233389AbjIFL7K (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Sep 2023 02:20:29 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF7B185
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Sep 2023 23:20:25 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-99c1c66876aso480244866b.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Sep 2023 23:20:25 -0700 (PDT)
+        Wed, 6 Sep 2023 07:59:10 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84262CFD
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Sep 2023 04:59:06 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-522dd6b6438so4808492a12.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Sep 2023 04:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693981223; x=1694586023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1694001545; x=1694606345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=adh+U84otDp6D2XjrT9VmlnQv1geqMIUW73SkaICVTU=;
-        b=RHiU0c/T8651V3YbqBCkdFm4/VeEvValgC1+E/2wCWMocevxzZsyQGUUcOaaGwSDZK
-         ev8ExlKb7GNBqCQF8S9JgGoDVLWCLSMfyCGJhAbpcxUhhc6iW4YuLhzCQ45xmI7/wFzn
-         IFEurR96XuXJsW3agD+O+rQga7qSP3UDLBSMlNFbMTOfv/J/fZdB4xdvVNh1LKdqTe2I
-         DxyUlFrlYiotTxQt+6iv1VkaryeM+HHdioYHimeHZH9NChqifjngcGNS0h7sYJfK9a+W
-         bjCWJyS/BHW7bqqCg06D5By+wzw5ztbimVrFhGZeWtS6esL8fMH9cWNgtgwCWlzxr+0Y
-         6BRQ==
+        bh=0eY60L1vqLhFNroIzfX3ZIdyRPyMgbcLJxNulph+C5w=;
+        b=fKGWI9W7wR8TmAcC645SaibNfSyqdUgmlqU4euQ81IsKDcrWCDl2qjx1XsRxDHRZl0
+         ZAUiUb6jxFuZCjBKCqM//9iBMqfEWifFG4X+hCHouAYpJaMuiNQ9Q8lNl4Os9xZc5wov
+         axw5qbpfV/cBJaTASEqeZS0o1cUMqa2Nsmu3FuVmXX7rKV872JqkmbLGf75XfOi5Jk0Q
+         2dI9G04cha8bcREqaD8HX8k8l8u9rK+0lTfSbr+YlzdZroc3Zgt460aD+KAk67krOpXV
+         XdbQqQWfxBve+quffrB8AOqjS1Q0jHgyqh84oTomHeWXdTrj7sZ/64OVl2yBoTR66HgE
+         jmOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693981223; x=1694586023;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1694001545; x=1694606345;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=adh+U84otDp6D2XjrT9VmlnQv1geqMIUW73SkaICVTU=;
-        b=B8UUdxijK948e1FYghvbySqciGyWNZCf56Fkb4sIss39st71ajGRA33m7C2oJW8h88
-         GdtlK/j6eIdb1itW/+QhYfD/nx7hcs/5t1/ecpbmhStzn4zIfniOxqVPBoWwBzV4g7k7
-         6l6ICQN7J4B7J0+tIf6X4CvRvB2jCDrqiJv1rTrHJ7KmFSgpW20SrqYRbunSX8KE5wkd
-         gzIPgc5Ow9yBM60ZHkgr95PUWb6e7pABHjoOCsVY/WhFdlq1RF/uZ8eTNedv86DmiQqc
-         Xv6Eu+0vcUm338sYcdXhf4opUw0e6v6c2LoaFNuZ9z/RXYwdHYcZlF/HebNVmMkij8j9
-         0LAw==
-X-Gm-Message-State: AOJu0YwJElI4rvdFwOaZhZA/nwqKcfvjfDUv6bVmppNqykELQ87tB9a9
-        1fK7lprBYwbQ7XkmLJSPiJuYEQ==
-X-Google-Smtp-Source: AGHT+IG4ETI87Rghtciw0SPzGjlGgvKSQBl+bWvP8rr+LeMJJnzkKCMyApg0Q/K4wLu/0o/HhY43kg==
-X-Received: by 2002:a17:906:8a4c:b0:9a5:d657:47ec with SMTP id gx12-20020a1709068a4c00b009a5d65747ecmr1332932ejc.64.1693981222918;
-        Tue, 05 Sep 2023 23:20:22 -0700 (PDT)
-Received: from [192.168.69.115] (cou50-h01-176-172-51-223.dsl.sta.abo.bbox.fr. [176.172.51.223])
-        by smtp.gmail.com with ESMTPSA id i7-20020a170906850700b00993664a9987sm8503328ejx.103.2023.09.05.23.20.21
+        bh=0eY60L1vqLhFNroIzfX3ZIdyRPyMgbcLJxNulph+C5w=;
+        b=AZ0X/ECADtnz+06TmCIHy6h/HiUAMVskzdRydD/i55FbrbcaZr2I/HFQQyYEwP2jb4
+         S3hv9/phb0HYwJ518UQDzxNol8MMrv+CQHqrw6OKt3xV+yZxIqGaWG0KPIJvm7pIQQJe
+         Pmd0MFJvJ0axmfmhbtpP3Dh8Wd147uwkn+7lLFAYWquzoJdYlr2oHHr8RZMjdjky+EWp
+         KXmO0UMGJHjVfCScpCEaKz+xGKesQWuydDouRuOlkLXpDbcebA9jq+miuf8Vprq2vxXs
+         lCXZ1Lg5Ce/iFF1d77FhY5oGobGKKtMiacqLMU8UydSDaNGkEuZ/JVlMGUAiLiAo4dbW
+         fd7w==
+X-Gm-Message-State: AOJu0Yz0SUzuqTUNYNinev7LOY749HWYctT/Sa1rb7PtQsweqwPD1Lev
+        yDw15sFBsU27dY04mhjjlV8ALg==
+X-Google-Smtp-Source: AGHT+IF9sAT+cjxkgPNsf+QIwIxOAoiZdeDBevNhm3tks4xh9tnp+4JXd0PrPwEP3hqmdZltjlbETg==
+X-Received: by 2002:aa7:dace:0:b0:523:40d0:34d1 with SMTP id x14-20020aa7dace000000b0052340d034d1mr2179204eds.4.1694001545044;
+        Wed, 06 Sep 2023 04:59:05 -0700 (PDT)
+Received: from [192.168.37.154] (178235177204.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.204])
+        by smtp.gmail.com with ESMTPSA id a9-20020aa7d749000000b005257da6be23sm8448955eds.75.2023.09.06.04.59.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Sep 2023 23:20:22 -0700 (PDT)
-Message-ID: <dc5d4145-770f-3318-b026-5ce29483d384@linaro.org>
-Date:   Wed, 6 Sep 2023 08:20:19 +0200
+        Wed, 06 Sep 2023 04:59:04 -0700 (PDT)
+Message-ID: <168d4136-7382-481a-9c4d-f43b1f95f987@linaro.org>
+Date:   Wed, 6 Sep 2023 13:59:02 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH v4 3/3] remoteproc: zynqmp: get TCM from device-tree
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sc7180: Add ADSP
 Content-Language: en-US
-To:     Tanmay Shah <tanmay.shah@amd.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michal Simek <michal.simek@amd.com>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Ben Levinsky <ben.levinsky@amd.com>
-References: <20230829181900.2561194-1-tanmay.shah@amd.com>
- <20230829181900.2561194-4-tanmay.shah@amd.com>
- <f6943509-25c5-b4fe-2218-638cc06a4e04@linaro.org>
- <a88a0240-30a2-4c99-baeb-091b44e4c2b7@amd.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
-In-Reply-To: <a88a0240-30a2-4c99-baeb-091b44e4c2b7@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230905-sc7180-adsp-rproc-v2-0-8ab7f299600a@trvn.ru>
+ <20230905-sc7180-adsp-rproc-v2-4-8ab7f299600a@trvn.ru>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <20230905-sc7180-adsp-rproc-v2-4-8ab7f299600a@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/9/23 23:48, Tanmay Shah wrote:
+On 5.09.2023 12:41, Nikita Travkin wrote:
+> sc7180 has an ADSP remoteproc that exclusively controls the audio
+> hardware on devices that use Qualcomm firmware.
 > 
-> On 9/4/23 2:50 AM, Philippe Mathieu-Daudé wrote:
->> Hi,
->>
->> On 29/8/23 20:19, Tanmay Shah wrote:
->>> Use new dt bindings to get TCM address and size
->>> information. Also make sure that driver stays
->>> compatible with previous device-tree bindings.
->>> So, if TCM information isn't available in device-tree
->>> for zynqmp platform, hard-coded address of TCM will
->>> be used.
->>>
->>> New platforms that are compatible with this
->>> driver must add TCM support in device-tree as per new
->>> bindings.
->>>
->>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>> ---
->>>    drivers/remoteproc/xlnx_r5_remoteproc.c | 279 +++++++++++++++++++-----
->>>    1 file changed, 221 insertions(+), 58 deletions(-)
->>
->>
->>>    /**
->>> @@ -75,11 +79,17 @@ struct mbox_info {
->>>     * Hardcoded TCM bank values. This will be removed once TCM bindings are
->>>     * accepted for system-dt specifications and upstreamed in linux kernel
->>
->> Just curious, for how long this fall back code has to be maintained?
->> (When/how will we know we can remove it?)
+> Add it along with the relevant audio services.
 > 
-> 
-> I believe we should never remove it. It's important that driver works with old bindings as well.
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+> v2: rename service nodes according to the schema, reorder properties
+> ---
+remoteproc@62400000: glink-edge:apr: 'qcom,domain' is a required property
+remoteproc@62400000: glink-edge: Unevaluated properties are not allowed
+('apr' was unexpected)
+remoteproc@62400000: Unevaluated properties are not allowed ('glink-edge',
+'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
+apr: 'qcom,domain' is a required property
+service@4: Unevaluated properties are not allowed ('cc' was unexpected)
 
-Do you mind posting a followup patch updating the comment,
-to clarify?
+you need to enable the node to get all the warnings
 
-Thanks,
-
-Phil.
+Konrad
