@@ -2,59 +2,59 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2EBEC875A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Sep 2023 20:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB11FEC8758
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Sep 2023 20:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbjIGUNb (ORCPT
+        id S240803AbjIGUO7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 16:13:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
+        Thu, 7 Sep 2023 16:14:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbjIGUNa (ORCPT
+        with ESMTP id S240680AbjIGUOz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Sep 2023 16:13:30 -0400
+        Thu, 7 Sep 2023 16:14:55 -0400
 Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA571BCE
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Sep 2023 13:13:26 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-501cba1ec0aso2263693e87.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Sep 2023 13:13:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40ABE1BE7
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Sep 2023 13:14:37 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-500a398cda5so2322851e87.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Sep 2023 13:14:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1694117604; x=1694722404; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1694117676; x=1694722476; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AofgTSeTaSoX+KT+4pbt9cKca7D17Cr26/O66nz9q7c=;
-        b=hDjc51ia5wFv/7FthnO6trGz1BbXY+BxQh+MvP2ag95BiNPEb9pcZMKIZr9XgAFBG8
-         WYAGUSJFIcImEI53PmWm/thE4+UPcCGA3mJVm927JPRFetpFoEbZIS9xQx6zoFXHmjv+
-         HVUCRrCkzrXgy59XYum1LiJx3dFBdhbkC+nl0=
+        bh=C5TA5uE3Uk5A+of280Cw4ik4ScxEAKm82TieyZqTk6I=;
+        b=g5M63ZrNHHUdpkbESOvznsRXmApMcNWLGdKYPxcr6KZhdIomeJLULYLWbU0DMFeZ9P
+         XkU/kGd8BGBQweMnRG3aBZpBXmKBWgXNa+006/Us4yvdw15AJNY9QkHFmVDmOAZQxs1M
+         8u5YF/5zX/2U1j5b+RvtI1NUw0lG5Ozkvr31I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694117604; x=1694722404;
+        d=1e100.net; s=20230601; t=1694117676; x=1694722476;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AofgTSeTaSoX+KT+4pbt9cKca7D17Cr26/O66nz9q7c=;
-        b=PkQ20RhcyqAvgbGEFJXYPJj8bSYp8wutCRD+8rSJ6nlBOZwH2e6l5S+9BrEC0+H9mP
-         Li+EriVW7ICvN32gP4l0BG6obYM8XsB/HEBospi2GlArv9TCtkTGE54ZDBaeeEdVXqdP
-         G6moSNL7fEx33MLWrwYWA88OvuogtHE00Y3lxdrDI9uawFp87jYVpMnfIr8aMzIdPlJF
-         jheMngIXLDunU97ys/KEwol3fm+W7LKhQIylN/jr8bUICo1wtRLkx0psa2Nbn9GsHq3f
-         gTJsbIWlvs3G/WAgw5kR8cVS+mXjyfX0v2LBAU0mA+bqrvco/ZvPbscPZt4Rp3jiIjFu
-         tBMA==
-X-Gm-Message-State: AOJu0Yw9eDl3MB75yJx8bc7fIzq0ay1mDOPAjfy8zOonSbBM8dN40Gj5
-        woqDseiL0AjmzZVexiU4srt2Fj+OEZF2iuDWEv3vVw==
-X-Google-Smtp-Source: AGHT+IE0nBqvLlzYBmzwnOanK7KrWaQfrYJYXlchR9O/niIGQWvx9APP+f5nRQPun2bUpLU5Sbbe6CORNiT8eH9AyJE=
-X-Received: by 2002:a05:6512:3f12:b0:500:ae85:726a with SMTP id
- y18-20020a0565123f1200b00500ae85726amr368142lfa.50.1694117604597; Thu, 07 Sep
- 2023 13:13:24 -0700 (PDT)
+        bh=C5TA5uE3Uk5A+of280Cw4ik4ScxEAKm82TieyZqTk6I=;
+        b=ApmxUN24HI2SvgWrkqSfwBb1tvUvZCHRTOfmj0CwpAVkaMz740CbA7rXqHFqRcBJdx
+         TNhJWl3wY9Pc43tif+rt6xXBFWfRQ2Kur3WsknpoYorQU8jxvSVwUvyDRRMmz03QNwnT
+         vC0ta1KLZcrZC6dz2aTUGqsVDY4jQ8MrN6VnTGTaYuViZHY1ypz4t+v5OwTkB8/DeSzH
+         TogpUyV6c4xhVQxMIIk2CbGCjjaQZKaMjIMu9ckCGNhXQp2QrAVlCi0nbceihI8zDufy
+         Ff74ESsn4u4XUKzHcf83Q6B0SV0ghgZ9RdYGU2JcXxHSttKBQuGPzD6jgsYfXWke+C+B
+         UJRw==
+X-Gm-Message-State: AOJu0YzenEpoJaywPRpgs4SI5GXEHBkFZKWwCcJVCshl8/uYVsRbYdJ0
+        8LoZxIyq/EhzPYlTAgGYdHW6VXxNotXBE/eaPgxHeQ==
+X-Google-Smtp-Source: AGHT+IFDlLqLCI8T7zpy/pdPZ6eZpiApuUfi47QxbxEsrcYUVafEqNFM6iApLs5D0S7TkMsAG6R5z7eIJl8qz36MNl4=
+X-Received: by 2002:ac2:5b4d:0:b0:4fd:fd97:a77b with SMTP id
+ i13-20020ac25b4d000000b004fdfd97a77bmr308004lfp.50.1694117676286; Thu, 07 Sep
+ 2023 13:14:36 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 7 Sep 2023 13:13:24 -0700
+ HTTPREST; Thu, 7 Sep 2023 13:14:35 -0700
 MIME-Version: 1.0
-In-Reply-To: <20230907-sc7180-adsp-rproc-v3-3-6515c3fbe0a3@trvn.ru>
-References: <20230907-sc7180-adsp-rproc-v3-0-6515c3fbe0a3@trvn.ru> <20230907-sc7180-adsp-rproc-v3-3-6515c3fbe0a3@trvn.ru>
+In-Reply-To: <20230907-sc7180-adsp-rproc-v3-4-6515c3fbe0a3@trvn.ru>
+References: <20230907-sc7180-adsp-rproc-v3-0-6515c3fbe0a3@trvn.ru> <20230907-sc7180-adsp-rproc-v3-4-6515c3fbe0a3@trvn.ru>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Thu, 7 Sep 2023 13:13:24 -0700
-Message-ID: <CAE-0n51x=PyyJQQV7TXxtEOSFLVC0NxyY9_YE9Tqjiqur9ODhg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
+Date:   Thu, 7 Sep 2023 13:14:35 -0700
+Message-ID: <CAE-0n53=aT9Ri6GwDYaTKKbapc3sk6dZEnTngKuziBD1FH0ypg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: sc7180: Add ADSP
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -74,10 +74,11 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting 'Nikita Travkin' via cros-qcom-dts-watchers (2023-09-07 03:02:36)
-> Some devices use tertiary mi2s to connect external audio codec.
-> Add it near the other two i2s pinctrl definitions so the devices don't
-> have to duplicate it.
+Quoting 'Nikita Travkin' via cros-qcom-dts-watchers (2023-09-07 03:02:37)
+> sc7180 has an ADSP remoteproc that exclusively controls the audio
+> hardware on devices that use Qualcomm firmware.
+>
+> Add it along with the relevant audio services.
 >
 > Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 > ---
