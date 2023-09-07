@@ -2,122 +2,75 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610DDEE14D6
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Sep 2023 04:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD8FEC8738
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Sep 2023 16:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232412AbjIGEwe (ORCPT
+        id S240321AbjIGQQt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Sep 2023 00:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        Thu, 7 Sep 2023 12:16:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbjIGEwd (ORCPT
+        with ESMTP id S238457AbjIGQQW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Sep 2023 00:52:33 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 735AF19B5
-        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Sep 2023 21:52:30 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1bc8a2f71eeso4774555ad.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Sep 2023 21:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694062349; x=1694667149; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1EYEWcjaY4nx2xSlU4W17DpuXjxYNQYHKMQBHrUQ9oc=;
-        b=Dyehd4LFv2EbRu+h41fdXaSgSQddWTH4fhNow69KjM5umE8gkN+C4dQ4teeedhl1YJ
-         J0yoO9t0CDkceyMXB3Ko+fWcrjYo1xhPPXg82AkL7SkGVMV2pWUGSDKVxjRUwxs0krlu
-         pVfJg4L1Tv+GIpvZfUH8RMEDBzQftmSTVKan+M4MwQuMqSDxh372jpwi68mxISeJfZYU
-         /dJ3uYAC+0XSYYlChcbyDsgnHlPu7GkP7uYg6z0fsRNqj5gPDSEn3yllKz1m/uJZI/Hw
-         ZKVBTsVbEp0Lm8wi0Nmswb8IhCw/3DDpMw/ySeFHYJXMlHSBbwF+GdR8c/gBJIHaVaiG
-         VR2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694062349; x=1694667149;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1EYEWcjaY4nx2xSlU4W17DpuXjxYNQYHKMQBHrUQ9oc=;
-        b=GvUisIZTHY2/ReeaGbRrjHfKIKVRQFss1EVLNaH6qcG23cmu6QS12pF5W0y6ByUEKd
-         0e0MD+D4DrMFw7OCLfJNqfKDsjwI0iUdUonoL7I2e/3G7yL1HgRFg7TgSYeMTo4bghyp
-         oZCNOIyMm465x34jLU4OnCrkIzzt63EpG0oP3Fn2VNHHvvXnu/BSZIieCrdETkWEeQ2v
-         zaHGm4sznWoltk5CPqKcxPmaebbHgzlJj2CmBYlu2Isltt3BfiUXTAc9fbFDpoluKXXt
-         ZQuxpp4SDDk+eRk9qqFGlEek32HjKwvK3WRpJCCnA/71HrYr6htPP5MU8lidNuqaZian
-         ZtnQ==
-X-Gm-Message-State: AOJu0YwJxnvkhEpWuqxVpadoOR15nQEzwrj1609wyc56oc5YVYBABRWd
-        Ft2Et0z1s9iPIRoqXcFYfZv7w0vV7RA=
-X-Google-Smtp-Source: AGHT+IFP84KAdNLQvHdRhpfQkPdv8/ywN6SrGW4I57n5RGemCsLwsl+qKDDMLJV3UmqEThB4nkBKwg==
-X-Received: by 2002:a17:903:32cf:b0:1bc:3944:9391 with SMTP id i15-20020a17090332cf00b001bc39449391mr17566941plr.25.1694062349334;
-        Wed, 06 Sep 2023 21:52:29 -0700 (PDT)
-Received: from P330.. ([2001:f40:904:5cee:ad2b:9ccb:5263:6a01])
-        by smtp.googlemail.com with ESMTPSA id x18-20020a17090300d200b001b2069072ccsm11933704plc.18.2023.09.06.21.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Sep 2023 21:52:28 -0700 (PDT)
-From:   Tim Blechmann <tim.blechmann@gmail.com>
-X-Google-Original-From: Tim Blechmann <tim@klingt.org>
-To:     linux-remoteproc@vger.kernel.org
-Cc:     Tim Blechmann <tim@klingt.org>
-Subject: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race condition
-Date:   Thu,  7 Sep 2023 12:51:52 +0800
-Message-Id: <20230907045152.22935-1-tim@klingt.org>
-X-Mailer: git-send-email 2.34.1
-Reply-To: <ZPZBVS3R/oZuUmk5@p14s>
+        Thu, 7 Sep 2023 12:16:22 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F76AD3A;
+        Thu,  7 Sep 2023 09:15:20 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C3BE066072FC;
+        Thu,  7 Sep 2023 11:49:13 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1694083754;
+        bh=OFLJjkH0n3nuvjKy5n4yw1ihmDQMqgkN8jJdfrUz49c=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=PZUAyQIL3eLgRZ1dsWDYci/fuecgDE+LjOI4plnfUOCi9rOXqGJz/zsk/vlrgKsuf
+         XvQ4AnOIR7T+VtEsgTIgTj0q2WWtUQ0nL3QGkg0EMZGLhviDz3OFgn6vVDjY5N5yg5
+         sGvFnai2PknMLqVPU94uQKS5NGU71U4qw0YyKYs0sEOIF+7taVf5jo+ALoybRJYElc
+         CKkvzDnbLWu8ZTOgbrvgzRBql0KM9+TpQ2V+2ubdK2+X4wD8o1MkX8aQFMDUSi67te
+         l1LLbHMwz6o63UciiQZ9qMwEVgqEI8kloAqSc2xjxKeA7A5d6qAqWukik1R0zNCRQx
+         asT6oy6p10otw==
+Message-ID: <ebf80e22-77c4-8f8d-6e98-e8b33949e6e1@collabora.com>
+Date:   Thu, 7 Sep 2023 12:49:11 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v17 05/14] remoteproc: mediatek: Extract SCP common
+ registers
+Content-Language: en-US
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
+ <20230901080935.14571-6-tinghan.shen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230901080935.14571-6-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
-enables tx-complete interrupt.
-However if the interrupt is executed after `get_a_tx_buf` and before
-`rpmsg_upref_sleepers` we may miss the tx-complete interrupt and sleep
-for the full 15 seconds. To avoid this race condition, we re-try once
-before we really start to sleep.
+Il 01/09/23 10:09, Tinghan Shen ha scritto:
+> This is the 1st preliminary steps for probing multi-core SCP.
+> The registers of config and l1tcm are common on single-core SCP
+> and multi-core SCP. Extract these registers out to reduce duplicated
+> fields in mtk_scp when multiple SCP instances are created.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 
-Signed-off-by: Tim Blechmann <tim@klingt.org>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 905ac7910c98..2a9d42225e60 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 
- 	/* no free buffer ? wait for one (but bail after 15 seconds) */
- 	while (!msg) {
- 		/* enable "tx-complete" interrupts, if not already enabled */
- 		rpmsg_upref_sleepers(vrp);
- 
--		/*
--		 * sleep until a free buffer is available or 15 secs elapse.
--		 * the timeout period is not configurable because there's
--		 * little point in asking drivers to specify that.
--		 * if later this happens to be required, it'd be easy to add.
--		 */
--		err = wait_event_interruptible_timeout(vrp->sendq,
--					(msg = get_a_tx_buf(vrp)),
--					msecs_to_jiffies(15000));
-+		/* make sure to retry to grab tx buffer before we start waiting */
-+		msg = get_a_tx_buf(vrp);
-+		if (msg) {
-+			err = 0;
-+		} else {
-+			/*
-+			 * sleep until a free buffer is available or 15 secs elapse.
-+			 * the timeout period is not configurable because there's
-+			 * little point in asking drivers to specify that.
-+			 * if later this happens to be required, it'd be easy to add.
-+			 */
-+			err = wait_event_interruptible_timeout(vrp->sendq,
-+						(msg = get_a_tx_buf(vrp)),
-+						msecs_to_jiffies(15000));
-+		}
- 
- 		/* disable "tx-complete" interrupts if we're the last sleeper */
- 		rpmsg_downref_sleepers(vrp);
- 
- 		/* timeout ? */
- 		if (!err) {
--- 
-2.34.1
 
