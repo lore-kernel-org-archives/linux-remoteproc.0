@@ -2,126 +2,136 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6937EEB58C
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Sep 2023 11:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F55EE801F
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  9 Sep 2023 20:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345480AbjIIL5p (ORCPT
+        id S244731AbjIIUSQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 9 Sep 2023 07:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46258 "EHLO
+        Sat, 9 Sep 2023 16:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345422AbjIIL5n (ORCPT
+        with ESMTP id S239931AbjIIUSO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 9 Sep 2023 07:57:43 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B079AE47
-        for <linux-remoteproc@vger.kernel.org>; Sat,  9 Sep 2023 04:57:34 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2bcb50e194dso49657531fa.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 09 Sep 2023 04:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694260653; x=1694865453; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SXY2Ogd65uaG6vGfB9Owv5lVCHBu7FWUVN9yBVot574=;
-        b=iMAF7/svKuSMPNXW80xY0CEs27qRewB5VH/L2aOh6osUZI2XCzRWgfyv/A59oZ43gg
-         ISJAvZgQyKaTQYIIV7WggjyFhlPvgk/S2m46O9/H/B/HRpy4Hc5Jr+4WnX/SbBnVznQQ
-         7rxSXO5kiJy/WID6g3bVexLgR1gAbgNxMC7i933U61qfZx/tZ0HI2UxUORGUCbLX/b0X
-         V4fseqAX92JTs0xIKgPZI5b4Y2IeDy0CIvqpNGa10Z8FjLySp0O2FyHheaZiQKjZgMYd
-         YfN+luhzSnDgAIpi7Iy1bZKZlx+J6ak2a/YfylYEfrA6LEah9k0ndnbg1TPLNSOMYftY
-         s8kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694260653; x=1694865453;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXY2Ogd65uaG6vGfB9Owv5lVCHBu7FWUVN9yBVot574=;
-        b=E3IUOl0CpViphT+Wst/tGRnjhA1d3Ifaei7UNznCXcyN5Oqn6Uk0t5D9c62Kkiv1Ch
-         gkkXwighhwUayJZeowcJn5CjwUew5HmlztpyeHhFbBJwSEdnv6VsO01O7NCC7LAVxNQi
-         HE8Y1d4Yd/RUbcE8dgOrWXHnHEhmnJfwAXJLA0LWwUCrodsR/FHo5sOW2mPIJndbLt+i
-         dsH1E3Q2+N3ZMqy2Q3EvtOiN20IF5vILLo+XfCSD+Sw0RKv2Zxu+HUf2ScH2ukJgx2G8
-         +a8Ok+Da4fal5Cm+oB8E73rqU0DvlyXDd4Mq+XD3IrBlqyKRWxl6KieHl6OGmvBiCY2r
-         VJSg==
-X-Gm-Message-State: AOJu0YyLAXa4iP7YZHwmCjHnUB8jzlmhKi7KkVXPeMzW0ohXl0vRjtY8
-        nhpJF/tiyvhEgef5LZThZgm1rQ==
-X-Google-Smtp-Source: AGHT+IF5JjRKJTgbi0Q38L2ynI42sIu0IhjOe7usM8tslPPsBzdf1V1uose/TPDQgULwNWsg5C8G+w==
-X-Received: by 2002:a2e:914e:0:b0:2bc:f40b:574c with SMTP id q14-20020a2e914e000000b002bcf40b574cmr4288719ljg.42.1694260652968;
-        Sat, 09 Sep 2023 04:57:32 -0700 (PDT)
-Received: from [192.168.37.232] (178235177205.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.205])
-        by smtp.gmail.com with ESMTPSA id j9-20020a170906050900b00997e99a662bsm2213950eja.20.2023.09.09.04.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Sep 2023 04:57:32 -0700 (PDT)
-Message-ID: <3f7a5396-c7eb-4a74-b44c-d5e7dbc954ae@linaro.org>
-Date:   Sat, 9 Sep 2023 13:57:30 +0200
+        Sat, 9 Sep 2023 16:18:14 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DBB1703;
+        Sat,  9 Sep 2023 13:17:48 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 389KHEMY017573;
+        Sat, 9 Sep 2023 20:17:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=YhC6K0gMeRrD1/JeZ045dfEa3H4vunv2V0WhUcWwUKc=;
+ b=QgKInVLLeM+8Yk03WRPzJsTbVevQDSySXMclZNVMC2pnRSNjZPm33pItIGzM1vG4eDnp
+ sJw1hY18ckLDrpIH50AjKVEvamVLMn+blV1tp/lnuvCsRw6M9wrsKyYjEPyQo/65Ju7j
+ H75balRhNmuGXdURl3MjTunnoRdxncGoLLCRBSWsoW4VMQIj1SBh4zT1dBpguqrHtJes
+ +nmR+/rMTmSr+JBSmuLBAOAm9+I+ekQ3Dndpwa1RxHvHBkMPAbAsJnZKiikz5V1xSIa3
+ qKj8zqhhcCDG05lVg0u5rmwC3pcwHxEViOk4B4xTwudgm3wd3LNkStfTTdb0RijVuSCM zg== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0g1rgyyf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 09 Sep 2023 20:17:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 389KHCLM014267
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 9 Sep 2023 20:17:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Sat, 9 Sep 2023 13:17:01 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [PATCH v5 03/17] remoteproc: qcom_q6v5_pas: Use qcom_rproc_minidump()
+Date:   Sun, 10 Sep 2023 01:46:04 +0530
+Message-ID: <1694290578-17733-4-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: sc7180: Add ADSP
-Content-Language: en-US
-To:     Nikita Travkin <nikita@trvn.ru>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc:     David Wronek <davidwronek@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230907-sc7180-adsp-rproc-v3-0-6515c3fbe0a3@trvn.ru>
- <20230907-sc7180-adsp-rproc-v3-4-6515c3fbe0a3@trvn.ru>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <20230907-sc7180-adsp-rproc-v3-4-6515c3fbe0a3@trvn.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4SMnR0pxCUSDU0trLO4rKWMHlL7ufbEb
+X-Proofpoint-ORIG-GUID: 4SMnR0pxCUSDU0trLO4rKWMHlL7ufbEb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-09_19,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
+ phishscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309090187
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7.09.2023 12:02, Nikita Travkin wrote:
-> sc7180 has an ADSP remoteproc that exclusively controls the audio
-> hardware on devices that use Qualcomm firmware.
-> 
-> Add it along with the relevant audio services.
-> 
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Now, as all the minidump specific data structure is moved to
+minidump specific files and implementation wise qcom_rproc_minidump()
+and qcom_minidump() exactly same and the name qcom_rproc_minidump
+make more sense as it happen to collect the minidump for the
+remoteproc processors. So, let's use qcom_rproc_minidump() and
+we will be removing qcom_minidump() and minidump related stuff
+from driver/remoteproc/qcom_common.c .
 
-Konrad
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/remoteproc/Kconfig         | 1 +
+ drivers/remoteproc/qcom_q6v5_pas.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 48845dc8fa85..cea960749e2c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -166,6 +166,7 @@ config QCOM_PIL_INFO
+ 
+ config QCOM_RPROC_COMMON
+ 	tristate
++	select QCOM_RPROC_MINIDUMP
+ 
+ config QCOM_Q6V5_COMMON
+ 	tristate
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 3153d82037e7..f235daae84ff 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -24,6 +24,7 @@
+ #include <linux/soc/qcom/mdt_loader.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
++#include <soc/qcom/qcom_minidump.h>
+ 
+ #include "qcom_common.h"
+ #include "qcom_pil_info.h"
+@@ -130,7 +131,7 @@ static void adsp_minidump(struct rproc *rproc)
+ 	if (rproc->dump_conf == RPROC_COREDUMP_DISABLED)
+ 		return;
+ 
+-	qcom_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
++	qcom_rproc_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
+ }
+ 
+ static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
+-- 
+2.7.4
+
