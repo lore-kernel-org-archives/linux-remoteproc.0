@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C95CA0ED7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014FACA0EC2
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348417AbjIKV2t (ORCPT
+        id S1348594AbjIKV2z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
+        Mon, 11 Sep 2023 17:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236543AbjIKK4w (ORCPT
+        with ESMTP id S236557AbjIKK5H (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:56:52 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D915BF3;
-        Mon, 11 Sep 2023 03:56:46 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAJOiZ026737;
-        Mon, 11 Sep 2023 10:56:14 GMT
+        Mon, 11 Sep 2023 06:57:07 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C91F3;
+        Mon, 11 Sep 2023 03:57:02 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAoP0T025337;
+        Mon, 11 Sep 2023 10:56:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=msfzexrhLMT2BxtHXMw5Jpj9V9JE6/kAkVTtbr3R0Kk=;
- b=bNtLJVYLqAEM4FOG16e8LEjRWWtisuTF2KO6JOqZHfef5Twjl4E2c7qcPHGfZFM9oWeG
- nIB6dJmA6tT024PxoYneGXqFl2r+2YcQzSraXUcv+JU2FaNDJshZlK6Bs6xgVdwnI0mv
- 8l+wzqomr9SrsQ0jhvCILMZFBFDMSFiSZlojwTkXG8+aAbcEsIunP6/iTuP6gjfkico2
- R8P8jIhkGgq+bykv5Ir/cAkgBEd9+k287sKANTKMD6bhSOZ1dOFztfNWEAV7jYwlpMQL
- aTcbohMYzzblLBY5HDOtlIrXG0nKJsF0gbl3ACfB5cM57aHrW3bKorwZn1Uf+Q+jATCi lg== 
+ bh=uaoggU+O059yy0NtlBEpDD3gw5NIJW0KcsRpeOQKyIM=;
+ b=Yc12rM0pRN8woQeor+feNqt2nL8u34Eh332DR5OlFjq+6OBndHlVyt20qWOcTWUIBm44
+ eYutRWDpKX4pQqHFx7RQEJx63ZiUNOMiDHw42UbV1NIogIIGNijbfAXLhAQ7D2bnVgbA
+ 3U//Dw9wpN3XLpmzI2OTEGQfp5ZEB4Cp5Br4eJYxtxOIbbVa/TJjfiL2i96xe50h6BN0
+ RaXLo7WIUfhVnB48aKCJ/AN6U6CVlefXoQiR4TJHU9zsl3GSzuXeF4aAhHMieEWAYIds
+ 0WuoA4Fa6BzI0OHI63d6iJ8LsVLb22UUmCG3RKoi93aMZdCFIGvuqRV7wjAQYWriXI3G Lg== 
 Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0gx9uj8d-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1xjmrefd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 +0000
+        Mon, 11 Sep 2023 10:56:40 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVu006051
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAudcw006749
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 GMT
+        Mon, 11 Sep 2023 10:56:39 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:55:45 -0700
+ 15.2.1118.36; Mon, 11 Sep 2023 03:56:29 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
         <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 11/17] qcom_minidump: Register ramoops region with minidump
-Date:   Mon, 11 Sep 2023 16:23:53 +0530
-Message-ID: <1694429639-21484-12-git-send-email-quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 16/17] firmware: qcom_scm: Refactor code to support multiple download mode
+Date:   Mon, 11 Sep 2023 16:23:58 +0530
+Message-ID: <1694429639-21484-17-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
@@ -71,206 +71,168 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sy675XrFSPHqgkW1yxA5mIuOqMWp9rE4
-X-Proofpoint-GUID: sy675XrFSPHqgkW1yxA5mIuOqMWp9rE4
+X-Proofpoint-ORIG-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
+X-Proofpoint-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
  definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ phishscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Register all the pstore frontend with minidump, so that they can
-be dumped as default Linux minidump region to be collected on
-SoC where minidump is enabled.
+Currently on Qualcomm SoC, download_mode is enabled if
+CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is selected.
 
-Helper functions is written in separate file and built along with
-the minidump driver, since it is client of minidump and also call
-it at appropriate place from minidump probe so that they always
-get registered.
-
-While at it also rename the out minidump module object name during
-build as qcom_apss_minidump which basically depicts as Qualcomm
-Application processor subsystem minidump.
+Refactor the code such that it supports multiple download
+modes and drop CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT config
+instead, give interface to set the download mode from
+module parameter.
 
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- drivers/soc/qcom/Kconfig                 |  1 +
- drivers/soc/qcom/Makefile                |  3 +-
- drivers/soc/qcom/qcom_minidump.c         |  4 ++
- drivers/soc/qcom/qcom_ramoops_minidump.c | 88 ++++++++++++++++++++++++++++++++
- drivers/soc/qcom/qcom_ramoops_minidump.h | 10 ++++
- 5 files changed, 105 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.c
- create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.h
+ drivers/firmware/Kconfig    | 11 ---------
+ drivers/firmware/qcom_scm.c | 56 +++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 49 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 0ac7afc2c67d..9f1a1e128fef 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -306,6 +306,7 @@ config QCOM_MINIDUMP
- 	tristate "QCOM APSS Minidump driver"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on QCOM_SMEM
-+	depends on PSTORE
- 	help
- 	  This config enables linux core infrastructure for Application
- 	  processor subsystem (APSS) minidump collection i.e, it enables
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 4b5f72f78d3c..69df41aba7a9 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -33,4 +33,5 @@ obj-$(CONFIG_QCOM_ICC_BWMON)	+= icc-bwmon.o
- qcom_ice-objs			+= ice.o
- obj-$(CONFIG_QCOM_INLINE_CRYPTO_ENGINE)	+= qcom_ice.o
- obj-$(CONFIG_QCOM_RPROC_MINIDUMP)	+= qcom_rproc_minidump.o
--obj-$(CONFIG_QCOM_MINIDUMP)		+= qcom_minidump.o
-+obj-$(CONFIG_QCOM_MINIDUMP)		+= qcom_apss_minidump.o
-+qcom_apss_minidump-objs			+= qcom_minidump.o qcom_ramoops_minidump.o
-diff --git a/drivers/soc/qcom/qcom_minidump.c b/drivers/soc/qcom/qcom_minidump.c
-index 4ce36f154e89..7930a80b9100 100644
---- a/drivers/soc/qcom/qcom_minidump.c
-+++ b/drivers/soc/qcom/qcom_minidump.c
-@@ -23,6 +23,7 @@
- #include <soc/qcom/qcom_minidump.h>
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index b59e3041fd62..ff7e9f330559 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -215,17 +215,6 @@ config MTK_ADSP_IPC
+ config QCOM_SCM
+ 	tristate
  
- #include "qcom_minidump_internal.h"
-+#include "qcom_ramoops_minidump.h"
+-config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
+-	bool "Qualcomm download mode enabled by default"
+-	depends on QCOM_SCM
+-	help
+-	  A device with "download mode" enabled will upon an unexpected
+-	  warm-restart enter a special debug mode that allows the user to
+-	  "download" memory content over USB for offline postmortem analysis.
+-	  The feature can be enabled/disabled on the kernel command line.
+-
+-	  Say Y here to enable "download mode" by default.
+-
+ config SYSFB
+ 	bool
+ 	select BOOT_VESA_SUPPORT
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 5cacae63ee2a..4ecdb0d025a4 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -20,13 +20,13 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
++#include <linux/kstrtox.h>
+ #include <linux/reset-controller.h>
+ #include <linux/arm-smccc.h>
  
- /**
-  * struct minidump_ss_data - Minidump subsystem private data
-@@ -688,6 +689,8 @@ static int qcom_apss_minidump_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+ #include "qcom_scm.h"
  
-+	qcom_ramoops_minidump_register(md->dev);
-+
- 	mutex_lock(&md_plist.plock);
- 	platform_set_drvdata(pdev, md);
- 	qcom_apss_register_pending_regions(md);
-@@ -701,6 +704,7 @@ static int qcom_apss_minidump_remove(struct platform_device *pdev)
- 	struct minidump *md = platform_get_drvdata(pdev);
- 	struct minidump_ss_data *mdss_data;
+-static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+-module_param(download_mode, bool, 0);
++static u32 download_mode;
  
-+	qcom_ramoops_minidump_unregister();
- 	mdss_data = md->apss_data;
- 	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(struct minidump_subsystem));
- 	md = NULL;
-diff --git a/drivers/soc/qcom/qcom_ramoops_minidump.c b/drivers/soc/qcom/qcom_ramoops_minidump.c
-new file mode 100644
-index 000000000000..eb97310e3858
---- /dev/null
-+++ b/drivers/soc/qcom/qcom_ramoops_minidump.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/pstore.h>
-+#include <linux/slab.h>
-+#include <soc/qcom/qcom_minidump.h>
-+
-+#include "qcom_ramoops_minidump.h"
-+
-+static LIST_HEAD(ramoops_region_list);
-+
-+struct md_region_list {
-+	struct qcom_minidump_region md_region;
-+	struct list_head list;
+ #define SCM_HAS_CORE_CLK	BIT(0)
+ #define SCM_HAS_IFACE_CLK	BIT(1)
+@@ -83,6 +83,11 @@ static const char * const qcom_scm_convention_names[] = {
+ 	[SMC_CONVENTION_LEGACY] = "smc legacy",
+ };
+ 
++static const char * const download_mode_name[] = {
++	[QCOM_DLOAD_NODUMP]	= "off",
++	[QCOM_DLOAD_FULLDUMP]	= "full",
 +};
 +
-+static int qcom_ramoops_region_register(struct device *dev, int type)
+ static struct qcom_scm *__scm;
+ static DEFINE_SPINLOCK(lock);
+ 
+@@ -448,9 +453,10 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ 	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+ }
+ 
+-static void qcom_scm_set_download_mode(bool enable)
++static void qcom_scm_set_download_mode(u32 download_mode)
+ {
+-	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
++	bool enable = !!download_mode;
++	u32 val = download_mode;
+ 	bool avail;
+ 	int ret = 0;
+ 
+@@ -1430,6 +1436,42 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int get_download_mode(char *buffer, const struct kernel_param *kp)
 +{
-+	struct qcom_minidump_region *md_region;
-+	struct md_region_list *mdr_list;
-+	struct pstore_record record;
-+	unsigned int max_dump_cnt;
-+	phys_addr_t phys;
-+	const char *name;
-+	void *virt;
-+	size_t size;
++	if (download_mode >= ARRAY_SIZE(download_mode_name))
++		return sysfs_emit(buffer, "unknown mode\n");
++
++	return sysfs_emit(buffer, "%s\n", download_mode_name[download_mode]);
++}
++
++static int set_download_mode(const char *val, const struct kernel_param *kp)
++{
++	u32 old = download_mode;
 +	int ret;
 +
-+	record.type = type;
-+	record.id = 0;
-+	max_dump_cnt = 0;
-+	name = pstore_type_to_name(record.type);
-+	do {
-+		ret = pstore_region_defined(&record, &virt, &phys, &size, &max_dump_cnt);
-+		if (ret < 0)
-+			break;
-+
-+		mdr_list = devm_kzalloc(dev, sizeof(struct md_region_list), GFP_KERNEL);
-+		if (!mdr_list)
-+			return -ENOMEM;
-+
-+		md_region = &mdr_list->md_region;
-+		scnprintf(md_region->name, sizeof(md_region->name) - 1, "K%s%llu", name, record.id);
-+		md_region->virt_addr = virt;
-+		md_region->phys_addr = phys;
-+		md_region->size = size;
-+		ret = qcom_minidump_region_register(md_region);
-+		if (ret) {
-+			pr_err("failed to register minidump region\n");
-+			break;
-+		}
-+
-+		list_add(&mdr_list->list, &ramoops_region_list);
-+	} while (record.id < max_dump_cnt && ++record.id);
-+
-+	return ret;
-+}
-+
-+void qcom_ramoops_minidump_register(struct device *dev)
-+{
-+	int type_arr[4] = { PSTORE_TYPE_DMESG, PSTORE_TYPE_CONSOLE,
-+			    PSTORE_TYPE_FTRACE, PSTORE_TYPE_PMSG,
-+			  };
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(type_arr); i++)
-+		qcom_ramoops_region_register(dev, type_arr[i]);
-+}
-+
-+void qcom_ramoops_minidump_unregister(void)
-+{
-+	struct md_region_list *mdr_list, *tmp;
-+
-+	list_for_each_entry_safe(mdr_list, tmp, &ramoops_region_list, list) {
-+		struct qcom_minidump_region *region;
-+
-+		region = &mdr_list->md_region;
-+		qcom_minidump_region_unregister(region);
-+		list_del(&mdr_list->list);
++	ret = sysfs_match_string(download_mode_name, val);
++	if (ret < 0) {
++		download_mode = old;
++		pr_err("qcom_scm: unknown download mode: %s\n", val);
++		return -EINVAL;
 +	}
++
++	download_mode = ret;
++	if (__scm)
++		qcom_scm_set_download_mode(download_mode);
++
++	return 0;
 +}
-diff --git a/drivers/soc/qcom/qcom_ramoops_minidump.h b/drivers/soc/qcom/qcom_ramoops_minidump.h
-new file mode 100644
-index 000000000000..6086342cd398
---- /dev/null
-+++ b/drivers/soc/qcom/qcom_ramoops_minidump.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __QCOM_RAMOOPS_MINIDUMP_H__
-+#define __QCOM_RAMOOPS_MINIDUMP_H__
 +
-+#include <linux/types.h>
++static const struct kernel_param_ops download_mode_param_ops = {
++	.get = get_download_mode,
++	.set = set_download_mode,
++};
 +
-+void qcom_ramoops_minidump_register(struct device *dev);
-+void qcom_ramoops_minidump_unregister(void);
++module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
++MODULE_PARM_DESC(download_mode,
++		"download mode: off/full are acceptable values");
 +
-+#endif
+ static int qcom_scm_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_scm *scm;
+@@ -1493,12 +1535,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	__get_convention();
+ 
+ 	/*
+-	 * If requested enable "download mode", from this point on warmboot
++	 * If "download mode" is requested, from this point on warmboot
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+ 	if (download_mode)
+-		qcom_scm_set_download_mode(true);
++		qcom_scm_set_download_mode(download_mode);
+ 
+ 	return 0;
+ }
+@@ -1506,7 +1548,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ static void qcom_scm_shutdown(struct platform_device *pdev)
+ {
+ 	/* Clean shutdown, disable download mode to allow normal restart */
+-	qcom_scm_set_download_mode(false);
++	qcom_scm_set_download_mode(QCOM_DLOAD_NODUMP);
+ }
+ 
+ static const struct of_device_id qcom_scm_dt_match[] = {
 -- 
 2.7.4
 
