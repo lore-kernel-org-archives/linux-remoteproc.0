@@ -2,225 +2,297 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A71CA0EC7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0DECA0EC3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241771AbjIKV3j (ORCPT
+        id S236576AbjIKV3c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52916 "EHLO
+        Mon, 11 Sep 2023 17:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243587AbjIKRVM (ORCPT
+        with ESMTP id S236616AbjIKLFq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Sep 2023 13:21:12 -0400
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EFF1A5
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 10:21:05 -0700 (PDT)
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 38BEuDNj005136;
-        Mon, 11 Sep 2023 19:20:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-        message-id:date:mime-version:subject:to:cc:references:from
-        :in-reply-to:content-type:content-transfer-encoding; s=
-        selector1; bh=cb7d9hEgVTuzOOiDozRe1zbvQk6Uxe/0EKa7JkDW0Js=; b=m8
-        4gPTx/OSGrYtA1YhO83U5hviOPs8pnh37VzT7YtQVKR4PI8/s1tFxSJkOvdx9nnH
-        PkYRkcv+IJso0n4EnPpkCX29qFwFO5MFdLwfw9yImVi+HN8+et/sipGpvbiXEHGC
-        hO/f1FaP3ScedtzspskcM3f/r8vJRpDU4tyFF5QY1ICCOja/JQgjj1JJdF4cFwTW
-        6B+/+LMMnv4mhQbubpvHU+l4XfWW102x4PJ82NMPVJFEIWdimd76IyGk+JC6AL5x
-        ESp68QJ+H0ewxXUgchb20kSg5eI4jz8c+xKdNkWFABxIGkq901SKfsARcntmGIVV
-        2nyxuzaQuoj8nqzKh3wg==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3t13nhete3-1
+        Mon, 11 Sep 2023 07:05:46 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA366CC3;
+        Mon, 11 Sep 2023 04:05:40 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAofAP019141;
+        Mon, 11 Sep 2023 11:05:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=+nHqyply2F5sM8B/NLGsfKGYQg6T/bZXC9WpAdnEGGg=;
+ b=QZS7snsm2ZVmLfJf4cuPzZoQP7STKeIEoIAIId0aZ4RpXAu/ynokBqRApgS11p2NnnVA
+ zN0XWK6srgnjwk4Xl87crYqDWtZqofUzMPoUr6h+3IcBA7sVV9LKoOHjPrBGs5Lm1nd1
+ YINDzr6Ynte7SXOBqJKf/htT0FRE7O4gg+z4d1bvxNQCxl75YZd+GTruNLrtfPFbIz2B
+ waKw3txlQ1dvqcA0m0cmNetEQZGlh4nb06R+gmxKDb7P9Fh576A3Z/YMm9ZrnEYt3l5/
+ ZvJ6DN4r+i+Q7SetlCBY6HymQpW7QB1UawLOGWxo59G+qh2iyflXZuvKUnEmkjJGXdUX 4Q== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1u3yrstw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 19:20:58 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 30EDC10005A;
-        Mon, 11 Sep 2023 19:20:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2550B209751;
-        Mon, 11 Sep 2023 19:20:56 +0200 (CEST)
-Received: from [10.252.3.122] (10.252.3.122) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 11 Sep
- 2023 19:20:53 +0200
-Message-ID: <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
-Date:   Mon, 11 Sep 2023 19:20:53 +0200
+        Mon, 11 Sep 2023 11:05:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BB5CgZ017571
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 11:05:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:54:10 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 00/17] Add Qualcomm Minidump kernel driver related support
+Date:   Mon, 11 Sep 2023 16:23:42 +0530
+Message-ID: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
- condition
-Content-Language: en-US
-To:     Tim Blechmann <tim@klingt.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Tim Blechmann <tim.blechmann@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>
-References: <20230904083602.106703-1-tim@klingt.org>
- <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
- <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
- <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
- <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.252.3.122]
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: P1BufpCD1S6_C-k7B9q7yNm6NBduepPb
+X-Proofpoint-ORIG-GUID: P1BufpCD1S6_C-k7B9q7yNm6NBduepPb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_13,2023-09-05_01,2023-05-22_02
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110100
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi All,
+
+I apologise that the last v5 was on sent on older tag and it was reported
+that it does not apply to linux-next tag cleanly, thanks to Kathiravan and
+Bagas.S for giving me early notice.
+
+I would like continue the conversation happened at v4
+
+https://lore.kernel.org/lkml/632c5b97-4a91-c3e8-1e6c-33d6c4f6454f@quicinc.com/
+
+https://lore.kernel.org/lkml/695133e6-105f-de2a-5559-555cea0a0462@quicinc.com/
+
+We have put abstract on LPC on this topic as well as initiated a mail thread
+with other SoC vendors but did not get much traction on it.
+
+https://lore.kernel.org/lkml/0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc.com/
+
+We explored most of possiblity present in kernel to address this issue[1] but
+solution like kdump/fadump does not seems safe/secure/performant from our
+perspective.
+
+Hence, with this series we tried to make the minidump kernel driver, simple
+and tied with pstore frontends, so that it collects the present available
+frontends data like dmesg, ftrace, pmsg, ftrace., Also, we will be working
+towards enhancing generic pstore to capture more debug data which will be
+helpful for first hand of debugging that can benefit both other pstore users
+as well as us as minidump users.
+
+One of the proposal made here,
+https://lore.kernel.org/lkml/1683561060-2197-1-git-send-email-quic_mojha@quicinc.com/
+
+Looking forward for your comments.
+
+Thanks,
+Mukesh
+
+[1]
+Minidump is a best effort mechanism to collect useful and predefined data
+for first level of debugging on end user devices running on Qualcomm SoCs.
+It is built on the premise that System on Chip (SoC) or subsystem part of
+SoC crashes, due to a range of hardware and software bugs. Hence, the
+ability to collect accurate data is only a best-effort. The data collected
+could be invalid or corrupted, data collection itself could fail, and so on.
+
+Qualcomm devices in engineering mode provides a mechanism for generating
+full system ramdumps for post mortem debugging. But in some cases it's
+however not feasible to capture the entire content of RAM. The minidump
+mechanism provides the means for selecting which snippets should be
+included in the ramdump.
+
+The core of SMEM based minidump feature is part of Qualcomm's boot
+firmware code. It initializes shared memory (SMEM), which is a part of
+DDR and allocates a small section of SMEM to minidump table i.e also
+called global table of content (G-ToC). Each subsystem (APSS, ADSP, ...)
+has their own table of segments to be included in the minidump and all
+get their reference from G-ToC. Each segment/region has some details
+like name, physical address and it's size etc. and it could be anywhere
+scattered in the DDR.
+
+Existing upstream Qualcomm remoteproc driver[1] already supports SMEM
+based minidump feature for remoteproc instances like ADSP, MODEM, ...
+where predefined selective segments of subsystem region can be dumped
+as part of coredump collection which generates smaller size artifacts
+compared to complete coredump of subsystem on crash.
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/remoteproc/qcom_common.c#n142
+
+In addition to managing and querying the APSS minidump description,
+the Linux driver maintains a ELF header in a segment. This segment
+gets updated with section/program header whenever a new entry gets
+registered.
+
+Change in rebase v5:
+ - Rebased it on latest tag available on linux-next
+ - Added missed Poovendhan sign-off on 15/17 and tested-by tag from
+   Kathiravan. Thanks to him for testing and reminding me of missing sign-off.
+
+Changes in v5: https://lore.kernel.org/lkml/1694290578-17733-1-git-send-email-quic_mojha@quicinc.com/
+ - On suggestion from Pavan.k, to have single function call for minidump collection
+   from remoteproc driver, separated the logic to have separate minidump file called
+   qcom_rproc_minidump.c and also renamed the function from qcom_minidump() to 
+   qcom_rproc_minidump(); however, dropped his suggestion about rework on lazy deletion
+   during region unregister in this series, will pursue it in next series.
+
+ - To simplify the minidump driver, removed the complication for frontend and different
+   backend from Greg suggestion, will pursue this once main driver gets mainlined.
+
+ - Move the dynamic ramoops region allocation from Device tree approach to command line
+   approch with the introduction command line parsing and memblock reservation during
+   early boot up; Not added documentation about it yet, will add if it gets positive
+   response.
+
+ - Exporting linux banner from kernel to make minidump build also as module, however,
+   minidump is a debug module and should be kernel built to get most debug information
+   from kernel.
+
+ - Tried to address comments given on dload patch series. 
+
+Changes in v4: https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
+ - Redesigned the driver and divided the driver into front end and backend (smem) so
+   that any new backend can be attached easily to avoid code duplication.
+ - Patch reordering as per the driver and subsystem to easier review of the code.
+ - Removed minidump specific code from remoteproc to minidump smem based driver.
+ - Enabled the all the driver as modules.
+ - Address comments made on documentation and yaml and Device tree file [Krzysztof/Konrad]
+ - Address comments made qcom_pstore_minidump driver and given its Device tree
+   same set of properties as ramoops. [Luca/Kees]
+ - Added patch for MAINTAINER file.
+ - Include defconfig change as one patch as per [Krzysztof] suggestion.
+ - Tried to remove the redundant file scope variables from the module as per [Krzysztof] suggestion.
+ - Addressed comments made on dload mode patch v6 version
+   https://lore.kernel.org/lkml/1680076012-10785-1-git-send-email-quic_mojha@quicinc.com/
+
+Changes in v3: https://lore.kernel.org/lkml/1683133352-10046-1-git-send-email-quic_mojha@quicinc.com/
+ - Addressed most of the comments by Srini on v2 and refactored the minidump driver.
+    - Added platform device support
+    - Unregister region support.
+ - Added update region for clients.
+ - Added pending region support.
+ - Modified the documentation guide accordingly.
+ - Added qcom_pstore_ramdump client driver which happen to add ramoops platform
+   device and also registers ramoops region with minidump.
+ - Added download mode patch series with this minidump series.
+    https://lore.kernel.org/lkml/1680076012-10785-1-git-send-email-quic_mojha@quicinc.com/
+
+Changes in v2: https://lore.kernel.org/lkml/1679491817-2498-1-git-send-email-quic_mojha@quicinc.com/
+ - Addressed review comment made by [quic_tsoni/bmasney] to add documentation.
+ - Addressed comments made by [srinivas.kandagatla]
+ - Dropped pstore 6/6 from the last series, till i get conclusion to get pstore
+   region in minidump.
+ - Fixed issue reported by kernel test robot.
+
+Changes in v1: https://lore.kernel.org/lkml/1676978713-7394-1-git-send-email-quic_mojha@quicinc.com/
+
+Testing of the patches has been done on sm8450 target after enabling config like
+CONFIG_PSTORE_RAM and CONFIG_PSTORE_CONSOLE and once the device boots up.
+
+ echo mini > /sys/module/qcom_scm/parameters/download_mode
+
+Try crashing it via devmem2 0xf11c000(this is known to create xpu violation and
+and put the device in download mode) on command prompt.
+
+Default storage type is set to via USB, so minidump would be downloaded with the
+help of x86_64 machine (running PCAT tool) attached to Qualcomm device which has
+backed minidump boot firmware support.
+
+This will make the device go to download mode and collect the minidump on to the
+attached x86 machine running the Qualcomm PCAT tool(This comes as part Qualcomm
+package manager kit).
+
+After that we will see a bunch of predefined registered region as binary blobs files
+starts with md_* downloaded on the x86 machine on given location in PCAT tool from
+the target device, more about this can be found in qualcomm minidump guide patch.
 
 
-On 9/9/23 08:28, Tim Blechmann wrote:
->>>>>> when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
->>>>>> enables tx-complete interrupt.
->>>>>> however if the interrupt is executed after `get_a_tx_buf` and before
->>>>>> `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
->>>>>> for the full 15 seconds.
->>>>>
->>>>>
->>>>> Is there any reason why your co-processor is unable to release the TX RPMSG
->>>>> buffers for 15 seconds? If not, you should first determine the reason why
->>>>> it is
->>>>> stalled.
->>>>
->>>> Arnaud's concern is valid.  If the remote processor can't consume a buffer
->>>> within 15 seconds, something is probably wrong.
->>>>
->>>> That said, I believe your assesment of the situation is correct.  *If* the TX
->>>> callback is disabled and there is no buffer available, there is a window of
->>>> opportunity between calls to get_a_tx_buf() and rpmsg_upref_sleepers() for an
->>>> interrupt to arrive in function rpmsg_send_offchannel_raw().
->>>
->>> the remote processor certainly releases the tx buffer and according to my
->>> tracing the `vring_interrupt` fires immediately before `rpmsg_send` enters the
->>> `rpmsg_upref_sleepers`.
->>
->>
->> If I well understood your point, the issue occur in following race condition
->>
->> - all the Tx buffers are used
->> - in rpmsg_send_offchannel_raw() function, we try to get a buffer using
->> get_a_tx_buf(vrp) that returns NULL
->> - rpmsg_xmit_done is called as a Tx buffer is released by the remote processor
->>    and now free
->> - in rpmsg_send_offchannel_raw() rpmsg_upref_sleepers is called
->>
->> At this point you are nothing happen until 15 second because rpmsg_xmit_done is
->> never called  again that would wake up the waitqueue to call get_a_tx_buf()
-> 
-> yes, this is the behaviour that i've been seeing:
-> 
-> virtio emits a few times:
-> [  404.XXXXXX] No more buffers in queue
-> and then
-> [  404.588722] remoteproc remoteproc0: vq index 1 is interrupted
-> [  404.597249] virtqueue interrupt with no work for 6d53f13a
+Mukesh Ojha (17):
+  docs: qcom: Add qualcomm minidump guide
+  soc: qcom: Add qcom_rproc_minidump module
+  remoteproc: qcom_q6v5_pas: Use qcom_rproc_minidump()
+  remoteproc: qcom: Remove minidump related data from qcom_common.c
+  init: export linux_banner data variable
+  soc: qcom: Add Qualcomm APSS minidump kernel driver
+  soc: qcom: minidump: Add pending region registration
+  arm64: mm: Add dynamic ramoops region support through command line
+  pstore/ram: Use dynamic ramoops reserve resource
+  pstore: Add pstore_region_defined() helper and export it
+  qcom_minidump: Register ramoops region with minidump
+  MAINTAINERS: Add entry for minidump related files
+  firmware: qcom_scm: provide a read-modify-write function
+  pinctrl: qcom: Use qcom_scm_io_update_field()
+  firmware: scm: Modify only the download bits in TCSR register
+  firmware: qcom_scm: Refactor code to support multiple download mode
+  firmware: qcom_scm: Add multiple download mode support
 
-Difficult to understand the scheduling with your trace. Could you enable ftrace to
-observe it (mailbox interrupts,rpmsg and virtio functions)
-> 
->> If yes what is not clear to me is that wait_event_interruptible_timeout() seems
->> to test the condition (so call get_a_tx_buf()) before entering in sleep[1]. A
->> free TX buffer should be found at this step.
->>
->> [1]https://elixir.bootlin.com/linux/latest/source/include/linux/wait.h#L534
-> 
-> hmm, interesting. but that would imply a timing issue where calling get_a_tx_buf
-> twice somehow makes a difference as opposed to calling it only once.
-> 
-> would the "interrupt with no work" point to a different cause for the issue that
-> we are seeing?
+ Documentation/admin-guide/index.rst         |   1 +
+ Documentation/admin-guide/qcom_minidump.rst | 272 +++++++++++
+ MAINTAINERS                                 |  10 +
+ arch/arm64/mm/init.c                        |  94 ++++
+ drivers/firmware/Kconfig                    |  11 -
+ drivers/firmware/qcom_scm.c                 |  94 +++-
+ drivers/pinctrl/qcom/pinctrl-msm.c          |  10 +-
+ drivers/remoteproc/Kconfig                  |   1 +
+ drivers/remoteproc/qcom_common.c            | 160 ------
+ drivers/remoteproc/qcom_q6v5_pas.c          |   3 +-
+ drivers/soc/qcom/Kconfig                    |  24 +
+ drivers/soc/qcom/Makefile                   |   3 +
+ drivers/soc/qcom/qcom_minidump.c            | 727 ++++++++++++++++++++++++++++
+ drivers/soc/qcom/qcom_minidump_internal.h   |  74 +++
+ drivers/soc/qcom/qcom_ramoops_minidump.c    |  88 ++++
+ drivers/soc/qcom/qcom_ramoops_minidump.h    |  10 +
+ drivers/soc/qcom/qcom_rproc_minidump.c      | 111 +++++
+ drivers/soc/qcom/smem.c                     |  18 +
+ fs/pstore/platform.c                        |  15 +
+ fs/pstore/ram.c                             |  52 +-
+ include/linux/firmware/qcom/qcom_scm.h      |   2 +
+ include/linux/init.h                        |   3 +
+ include/linux/pstore.h                      |   6 +
+ include/linux/pstore_ram.h                  |   2 +
+ include/linux/soc/qcom/smem.h               |   2 +
+ include/soc/qcom/qcom_minidump.h            |  56 +++
+ init/version-timestamp.c                    |   3 +
+ 27 files changed, 1663 insertions(+), 189 deletions(-)
+ create mode 100644 Documentation/admin-guide/qcom_minidump.rst
+ create mode 100644 drivers/soc/qcom/qcom_minidump.c
+ create mode 100644 drivers/soc/qcom/qcom_minidump_internal.h
+ create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.c
+ create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.h
+ create mode 100644 drivers/soc/qcom/qcom_rproc_minidump.c
+ create mode 100644 include/soc/qcom/qcom_minidump.h
 
-Look like you have not released the buffer on remote side so no buffer in vring
-used list.
+-- 
+2.7.4
 
-Do you use the zero copy (rpmsg_hold_rx_buffer) on remote processor?
-If yes, please check that you have following fix:
-https://github.com/OpenAMP/open-amp/commit/2b6a38a9c6890869960ed41d6a1dc9930c079e0d
-
-> 
->>
->> Regards,
->> Arnaud
->>
->>>
->>> after applying this patch we haven't been able to reproduce the 15s timeout
->>> anymore, whereas before we could easily reproduce it with certain workloads.
->>>
->>>> 3) This patch gets applied when rc1 comes out so that it has 6 or 7 weeks to
->>>> soak.  No error are locks are reported due to this patch during that time.
->>>
->>> mentioning locks: i was a bit uncertain about a good way to implement the retry,
->>> since both `rpmsg_upref_sleepers` and `get_a_tx_buf` both acquire the same
->>> mutex. i briefly considered to add `get_a_tx_buf` into `rpmsg_upref_sleepers` to
->>> avoid locking the same mutex multiple times, though it adds a bit of complexity
->>> to the implementation and harms readability a bit.
->>> are there any recommendations on this topic or are (likely non-contended) locks
->>> not expensive enough to justify the added complexity?
->>>
->>> thanks,
->>> tim
->>>
->>>
->>>>
->>>>>
->>>>> Regards,
->>>>> Arnaud
->>>>>
->>>>>>
->>>>>> in this case, so we re-try once before we really start to sleep
->>>>>>
->>>>>> Signed-off-by: Tim Blechmann <tim@klingt.org>
->>>>>> ---
->>>>>>    drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
->>>>>>    1 file changed, 15 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
->>>>>> b/drivers/rpmsg/virtio_rpmsg_bus.c
->>>>>> index 905ac7910c98..2a9d42225e60 100644
->>>>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>>>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>>>>> @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct
->>>>>> rpmsg_device *rpdev,
->>>>>>          /* no free buffer ? wait for one (but bail after 15 seconds) */
->>>>>>        while (!msg) {
->>>>>>            /* enable "tx-complete" interrupts, if not already enabled */
->>>>>>            rpmsg_upref_sleepers(vrp);
->>>>>>    -        /*
->>>>>> -         * sleep until a free buffer is available or 15 secs elapse.
->>>>>> -         * the timeout period is not configurable because there's
->>>>>> -         * little point in asking drivers to specify that.
->>>>>> -         * if later this happens to be required, it'd be easy to add.
->>>>>> -         */
->>>>>> -        err = wait_event_interruptible_timeout(vrp->sendq,
->>>>>> -                    (msg = get_a_tx_buf(vrp)),
->>>>>> -                    msecs_to_jiffies(15000));
->>>>>> +        /* make sure to retry to grab tx buffer before we start waiting */
->>>>>> +        msg = get_a_tx_buf(vrp);
->>>>>> +        if (msg) {
->>>>>> +            err = 0;
->>>>>> +        } else {
->>>>>> +            /*
->>>>>> +             * sleep until a free buffer is available or 15 secs elapse.
->>>>>> +             * the timeout period is not configurable because there's
->>>>>> +             * little point in asking drivers to specify that.
->>>>>> +             * if later this happens to be required, it'd be easy to add.
->>>>>> +             */
->>>>>> +            err = wait_event_interruptible_timeout(vrp->sendq,
->>>>>> +                        (msg = get_a_tx_buf(vrp)),
->>>>>> +                        msecs_to_jiffies(15000));
->>>>>> +        }
->>>>>>              /* disable "tx-complete" interrupts if we're the last sleeper */
->>>>>>            rpmsg_downref_sleepers(vrp);
->>>>>>              /* timeout ? */
->>>>>>            if (!err) {
->>>>
->>>
->>
