@@ -2,70 +2,69 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D22CA0EC5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD9FCA0EC0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348607AbjIKV26 (ORCPT
+        id S1348635AbjIKV3J (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
+        Mon, 11 Sep 2023 17:29:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244196AbjIKTdz (ORCPT
+        with ESMTP id S236586AbjIKLBz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Sep 2023 15:33:55 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71A1B1BE
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 12:33:49 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-31ad779e6b3so4864900f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 12:33:49 -0700 (PDT)
+        Mon, 11 Sep 2023 07:01:55 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 530DBE40
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 04:01:49 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-500a398cda5so7109080e87.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 04:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694460828; x=1695065628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1694430107; x=1695034907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=inHsDNknLIsreaH/7mQ9fcoY03dG1phB2IV/CbQwYHw=;
-        b=mFEOtuiSTTU+v/GlQI4WyjnX39mrkym+osx8DihRHVm9cshQBluEk5F60ZGeJLOe1Y
-         v8h+2VTRaghV8CJFrGyPxL+UMGq9iThi3Oe5b/2p+iS6vu2aBb1sKHO5tj6zxEAFEY2m
-         JZJr9Ji3kazXz6Y6ZRFu8U3Mf1+tUzLP2j+1ZlsxyvG2lnPbmJRkK5YGyI+f/bS45Vi6
-         i/0s30bWI5hEeImXhPDlSX+bgJ/mIcnVTO5I/JIDu0RDB3grV+sYDUR9KLWf4J5dcZbv
-         qT/e3AUPWUaS82DsUwBmzhIWEpLMxQmdVSEVtDOTlmzvL7Ade1/8hN0A04Zq/joiVsL4
-         CY4A==
+        bh=6D6uZQx0A7zu9HZThgkhNF6gppfDzg14ZGsi8FUaY4Q=;
+        b=GOSoTT4UaccjQcJnHUj1GeXqRlrNKXB4d25DwVPYJKxntS9nhJJNn1WSq6r1ePDHNM
+         sWFeeWxUuGPmO3IAqiFCte0rME8/AAv4w444Tg/1OI7KzGUphVg9kJ8x9wKwqs+tjE3s
+         4A8nI4rEZa96jRO/0mqlPbRnkef19ToR6L1RzHtIKsvTpaXv3XBDZY3CmrCTTGRhPtEZ
+         FRsnsLVKFFPTPn3vkpC2Ypvi4CYQnw7/rprROjDOmdd9dgcY6HGsPjFuCjOs/wqIzDQ7
+         6TUhAU2zJ8r1kh1pIesiHL/xfm82X/q0h/nHMLjyR82LlFTdSUp4OGmtjLM+zGC68z4+
+         gnfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694460828; x=1695065628;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1694430107; x=1695034907;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=inHsDNknLIsreaH/7mQ9fcoY03dG1phB2IV/CbQwYHw=;
-        b=b7jb90DLbC5noWyYgcHoTLWh6wVTogY8/4nfqlDfWeFZzA3JPiBzB2DXyfacgmV5fZ
-         M4FkuIZATLIa/4uobx8La/Uqrw88YN0FxJG+dbh5pykXq/riMVXL/KMQ9vZ54ILiL7pS
-         hAzvhV1s+ouUkzr/GvFPKp55fFQSzyDkCx6swI/w9VM4TVphAxgbuBgoSpHWOwlyhQhY
-         m2R/hUjv91lIdV9Xx1IHCeC85O4DbvmszrM8LPgoy3x4cHUAjn4/99nQeA5txL6332+6
-         lAxonPGXTvoOzOWfAvxw8pPJFntI9tSaMaxff2m06Le7SSgzjNFjXe0OWuFRITSCEcln
-         CE3Q==
-X-Gm-Message-State: AOJu0YymBsJ5YTXQ2iNve8osZarZL2W4SDe0KrHOuqe6QaO/wB7/EBxt
-        IOnU/tGRDFewKSbc9/fhAZlgWA==
-X-Google-Smtp-Source: AGHT+IHPh4+mNCvhlbAWncPBV2Sm+011b3XyySb0xj15kRO2fiVHvavlbXLcuAA8FfPzM2ZflHLaHA==
-X-Received: by 2002:a5d:560d:0:b0:31d:cd33:b30e with SMTP id l13-20020a5d560d000000b0031dcd33b30emr8891759wrv.4.1694460827797;
-        Mon, 11 Sep 2023 12:33:47 -0700 (PDT)
-Received: from [192.168.37.137] (178235177248.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.248])
-        by smtp.gmail.com with ESMTPSA id e24-20020a056402089800b0052565298bedsm5043464edy.34.2023.09.11.12.33.44
+        bh=6D6uZQx0A7zu9HZThgkhNF6gppfDzg14ZGsi8FUaY4Q=;
+        b=qOz6YHEebqvLpgtk+QvatoO5JuVMqwzySWtlHi83D/htW+NlK321bMm9R5QYc164ts
+         b0wJX4VtVPYkbMnKCaJCLJwlTALhZcWx++eCYqCidK1rhgJ4bq7c+WywbgbrLezejq+9
+         j/8wUEUsaXe6pjDYZ+HB75V02b8vj3lyJGHf5BlHuaVXShOVddW1FAhMFKVc2yQfWzy+
+         nOroWKeKhdPqJUTnZ/p3sLYAMF8/8ENe0jm8sMviywGP6qe7eGCwBxtnlXhL2U2bxqln
+         S93dFifRUW/dR581PFCLIKUvPJE3bDb+a7APYyxzCiHLLwLi5rVE+OHT9Zze0C4UcuzG
+         Rurg==
+X-Gm-Message-State: AOJu0Yzn+EwQX32JBNbUz59UUTq/1Oy2joKWzTdU7bAKgIcvNkhGSSTF
+        ufNDTSuAkk3SupVE/XXMfxgKLg==
+X-Google-Smtp-Source: AGHT+IGuUFRIM5BpeluBoo5NEliARLhu4KUj73ZJ5zv60HnO5TW4G54nipJsf0t1IIjq2gfhWbu1wg==
+X-Received: by 2002:a05:6512:3d1c:b0:4ff:8c9e:eb0d with SMTP id d28-20020a0565123d1c00b004ff8c9eeb0dmr9569849lfv.0.1694430107080;
+        Mon, 11 Sep 2023 04:01:47 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id r16-20020a170906351000b0099bd86f9248sm5175514eja.63.2023.09.11.04.01.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 12:33:47 -0700 (PDT)
-Message-ID: <ee8cc664-e698-4b0c-886d-ac33eb23b51e@linaro.org>
-Date:   Mon, 11 Sep 2023 21:33:43 +0200
+        Mon, 11 Sep 2023 04:01:43 -0700 (PDT)
+Message-ID: <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
+Date:   Mon, 11 Sep 2023 13:01:39 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
 Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
  driver
 Content-Language: en-US
-To:     Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
-        agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, linus.walleij@linaro.org,
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
+        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
         andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
         matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
         bmasney@redhat.com, quic_tsoni@quicinc.com
@@ -77,95 +76,152 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
 References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
  <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
- <e35a8b4f-ba1a-514e-9c59-a74442f0cb1f@linaro.org>
- <36d9bd32-7ea4-4d84-b1e9-3cfcc3bec85c@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <36d9bd32-7ea4-4d84-b1e9-3cfcc3bec85c@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11.09.2023 21:09, Jeff Johnson wrote:
-> On 9/11/2023 4:07 AM, Krzysztof Kozlowski wrote:
->> On 09/09/2023 22:16, Mukesh Ojha wrote:
->>> +/**
->>> + * qcom_minidump_region_register() - Register region in APSS Minidump table.
->>> + * @region: minidump region.
->>> + *
->>> + * Return: On success, it returns 0 and negative error value on failure.
->>> + */
->>> +int qcom_minidump_region_register(const struct qcom_minidump_region *region)
->>> +{
->>> +    struct minidump *md;
->>> +    int ret;
->>> +
->>> +    md = qcom_smem_minidump_ready();
->>> +    if (!md)
->>> +        return -EPROBE_DEFER;
->>> +
->>> +    if (!qcom_minidump_valid_region(region))
->>> +        return -EINVAL;
->>> +
->>> +    mutex_lock(&md->md_lock);
->>> +    ret = qcom_md_region_register(md, region);
->>> +    if (ret)
->>> +        goto unlock;
->>> +
->>> +    qcom_md_update_elfheader(md, region);
->>> +unlock:
->>> +    mutex_unlock(&md->md_lock);
->>> +    return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(qcom_minidump_region_register);
->>
->> NAK, there is no user for this.
->>
->> Drop all exports from minidump drivers. Your upstream driver *must not*
->> expose stuff to your vendor drivers.
-> 
-> Do we not expect that upstream drivers would want to register?
-> Mind you, in the downstream code the following was a bad limitation:
-> #define MAX_NUM_OF_SS           10
-No, Krzysztof meant that you are not allowed to export symbols
-without immediately providing a user for them - meaning if the
-functions are not going to be used upstream, this change will
-not be accepted.
+On 09/09/2023 22:16, Mukesh Ojha wrote:
+> Minidump is a best effort mechanism to collect useful and predefined
+> data for first level of debugging on end user devices running on
+> Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
+> or subsystem part of SoC crashes, due to a range of hardware and
+> software bugs. Hence, the ability to collect accurate data is only
+> a best-effort. The data collected could be invalid or corrupted,
+> data collection itself could fail, and so on.
 
-Konrad
+...
+
+> +static int qcom_apss_md_table_init(struct minidump *md,
+> +				   struct minidump_subsystem *mdss_toc)
+> +{
+> +	struct minidump_ss_data *mdss_data;
+> +
+> +	mdss_data = devm_kzalloc(md->dev, sizeof(*mdss_data), GFP_KERNEL);
+> +	if (!mdss_data)
+> +		return -ENOMEM;
+> +
+> +	mdss_data->md_ss_toc = mdss_toc;
+> +	mdss_data->md_regions = devm_kcalloc(md->dev, MAX_NUM_ENTRIES,
+> +					     sizeof(struct minidump_region),
+> +					     GFP_KERNEL);
+> +	if (!mdss_data->md_regions)
+> +		return -ENOMEM;
+> +
+> +	mdss_toc = mdss_data->md_ss_toc;
+> +	mdss_toc->regions_baseptr = cpu_to_le64(virt_to_phys(mdss_data->md_regions));
+> +	mdss_toc->enabled = cpu_to_le32(MINIDUMP_SS_ENABLED);
+> +	mdss_toc->status = cpu_to_le32(1);
+> +	mdss_toc->region_count = cpu_to_le32(0);
+> +
+> +	/* Tell bootloader not to encrypt the regions of this subsystem */
+> +	mdss_toc->encryption_status = cpu_to_le32(MINIDUMP_SS_ENCR_DONE);
+> +	mdss_toc->encryption_required = cpu_to_le32(MINIDUMP_SS_ENCR_NOTREQ);
+> +
+> +	md->apss_data = mdss_data;
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_apss_minidump_probe(struct platform_device *pdev)
+> +{
+> +	struct minidump_global_toc *mdgtoc;
+> +	struct minidump *md;
+> +	size_t size;
+> +	int ret;
+> +
+> +	md = devm_kzalloc(&pdev->dev, sizeof(struct minidump), GFP_KERNEL);
+
+sizeof(*)
+
+Didn't you get such comments already?
+
+
+> +	if (!md)
+> +		return -ENOMEM;
+> +
+> +	md->dev = &pdev->dev;
+> +	mdgtoc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, &size);
+> +	if (IS_ERR(mdgtoc)) {
+> +		ret = PTR_ERR(mdgtoc);
+> +		dev_err(md->dev, "Couldn't find minidump smem item: %d\n", ret);
+> +		return ret;
+
+The syntax is:
+return dev_err_probe
+
+> +	}
+> +
+> +	if (size < sizeof(*mdgtoc) || !mdgtoc->status) {
+> +		dev_err(md->dev, "minidump table is not initialized: %d\n", ret);
+
+ret is uninitialized here. Please use automated tools for checking your
+code:
+coccinelle, smatch and sparse
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	mutex_init(&md->md_lock);
+> +	ret = qcom_apss_md_table_init(md, &mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
+> +	if (ret) {
+> +		dev_err(md->dev, "apss minidump initialization failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* First entry would be ELF header */
+> +	ret = qcom_md_add_elfheader(md);
+> +	if (ret) {
+> +		dev_err(md->dev, "Failed to add elf header: %d\n", ret);
+> +		memset(md->apss_data->md_ss_toc, 0, sizeof(struct minidump_subsystem));
+
+Why do you need it?
+
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, md);
+> +
+> +	return ret;
+> +}
+> +
+> +static int qcom_apss_minidump_remove(struct platform_device *pdev)
+> +{
+> +	struct minidump *md = platform_get_drvdata(pdev);
+> +	struct minidump_ss_data *mdss_data;
+> +
+> +	mdss_data = md->apss_data;
+> +	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(struct minidump_subsystem));
+
+Why do you need it?
+
+> +	md = NULL;
+
+That's useless assignment.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver qcom_minidump_driver = {
+> +	.probe = qcom_apss_minidump_probe,
+> +	.remove = qcom_apss_minidump_remove,
+> +	.driver  = {
+> +		.name = "qcom-minidump-smem",
+> +	},
+> +};
+> +
+> +module_platform_driver(qcom_minidump_driver);
+> +
+> +MODULE_DESCRIPTION("Qualcomm APSS minidump driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:qcom-minidump-smem");
+
+Add a proper ID table instead of re-inventing it with module aliases.
+
+Best regards,
+Krzysztof
+
