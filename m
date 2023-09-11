@@ -2,128 +2,193 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD747CA0EC1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A0CCA0EC4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 11 Sep 2023 21:37:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348024AbjIKV2i (ORCPT
+        id S238427AbjIKV2p (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:28:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
+        Mon, 11 Sep 2023 17:28:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236554AbjIKK44 (ORCPT
+        with ESMTP id S243046AbjIKQpl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:56:56 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF1DF3;
-        Mon, 11 Sep 2023 03:56:52 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B907cT027866;
-        Mon, 11 Sep 2023 10:56:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=Pu21/RzSQCP1BqGc9YFU81Va/bJ5Vvnil8MlVsGEBiU=;
- b=poBFv1Y7I3gD5Ex3l9wSr+TFOwRyTMSy+Ffb5GVYjh01M3+jBk/beV7dvoPu45d+6pMC
- KK+xKVxNqfOxNt+csJk9fyLYZ8FbLqzjYCu9LzDxtP6VUIoj44tXdsY655Tb9nVjpemt
- jLra3YEBlo3mBozsJdHzB8DqeAVjU7WnedkPcPaV4awzpaNf016nIus0a+g8Wb8Xibjg
- TXhkfG9SOONi0j4G6xs05dGnn42cv0D0TXqtWL7OcGHEAzbWkK1U3+2GBmttDJmojb3N
- wbnziCXjnu2e7UQ7lMDoRsUhOMUdl7lZFF834q3zr80tHYUYVQ2aj0KhIKK3m4e7rGg6 pw== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0edmkqa5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:22 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuLHV002049
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:21 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:56:11 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 14/17] pinctrl: qcom: Use qcom_scm_io_update_field()
-Date:   Mon, 11 Sep 2023 16:23:56 +0530
-Message-ID: <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        Mon, 11 Sep 2023 12:45:41 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D09E4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 09:45:36 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-68fbd31d9deso1076583b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Sep 2023 09:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694450736; x=1695055536; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oqKvGMHqYqut6M1/awSuIk3zziLg+uksxVFlWIgcNLk=;
+        b=K2VUXHeUUB9BDeeaYt/OuNxcDryMWfV8FITVMjuFlE6uYdZ3YN2tTECNeG3Lk1ugS0
+         xZlL4SEl+V6fmgGKiQVygFSyhB1yk0ZA9jUSdaTT3a8yNxfqA6QM5Ogg1NCtovKTd0Z+
+         4gXDWKXABP66OZPHIyRNXq7JAoZoTSZJbT/i74P4IgrQ9VYtf0tGweHCM8vQf92T+gGQ
+         24PJbiDtpXmOb5KwrS/si5ZcU8KkwCrrjzn1e+H+zeYncqT6iZs5YaLqJPLaiFevTmvz
+         zDTxzpe7/Ynv7abJOsVBYahnLMuM9O3gerv5NrqHFmT7vwZmoI92e0gjXzlJVr/EicZy
+         7a/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694450736; x=1695055536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oqKvGMHqYqut6M1/awSuIk3zziLg+uksxVFlWIgcNLk=;
+        b=CIAhvOwGpR4BKSph6u1kuXBoaXwGi3MLhSt3lW7FLjSbMOGxKZ0vbO1KVaM78KovJN
+         5QFRlgRJ528sBH2QGaYIHex5cH9YEYjo14OyzjfDQPvS1iGbJm0MadREEW+0XMj2h5uy
+         9tADS1H7BhgdFwt5FAXlWIf95Y1VIRhZwLNyHgOMkUIqIqXK8wrw94Fekoixio0lp4lr
+         0apwvLsD3y+ffsK42QO681E1szjg7ZlBozz4yBJoFOwJ2RAYzImbJ4L7gaC2tVm/VGXy
+         WUalJ3YK+MO7bIRiv/awQAE4BFJKXIWcuryRncXhpRjxgYKK9yIsmZ+BLe6jO86D81Yh
+         G0PQ==
+X-Gm-Message-State: AOJu0YyyhgzI29rqCeW+E8EbpB4ha+V1vN0SlDSVnfM8J8zrfLvLjp+H
+        N+V2TnaUmjuZFhNX5R2pN34mSQ==
+X-Google-Smtp-Source: AGHT+IGVKv99gjdhTfQwWUcVSjYyCdzVgcuDt5u9yDRwFVKUSkhQxBLAXf3VgNUeXzKBENN2j5I6SA==
+X-Received: by 2002:a05:6a20:3d93:b0:152:6b63:f1e7 with SMTP id s19-20020a056a203d9300b001526b63f1e7mr10224833pzi.1.1694450736278;
+        Mon, 11 Sep 2023 09:45:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:cb1c:f39e:e329:2c3d])
+        by smtp.gmail.com with ESMTPSA id t4-20020a62ea04000000b0068bc44dc40dsm5794566pfh.34.2023.09.11.09.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 09:45:35 -0700 (PDT)
+Date:   Mon, 11 Sep 2023 10:45:33 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Apurva Nandan <a-nandan@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>, Bjorn Andersson <andersson@kernel.org>,
+        Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+        Hari Nagalla <hnagalla@ti.com>, Udit Kumar <u-kumar1@ti.com>
+Subject: Re: [PATCH] remoteproc: k3-r5: Wait for core0 power-up before
+ powering up core1
+Message-ID: <ZP9ELdOQ9WMj2Rxd@p14s>
+References: <20230906124756.3480579-1-a-nandan@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3NZGKXZMY2vHw9vvJPeAu2MnRNcUqet_
-X-Proofpoint-GUID: 3NZGKXZMY2vHw9vvJPeAu2MnRNcUqet_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=878 malwarescore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230906124756.3480579-1-a-nandan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use qcom_scm_io_update_field() exported function in
-pinctrl-msm driver.
+Hi Apurva,
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On Wed, Sep 06, 2023 at 06:17:56PM +0530, Apurva Nandan wrote:
+> PSC controller has a limitation that it can only power-up the second core
+> when the first core is in ON state. Power-state for core0 should be equal
+> to or higher than core1, else the kernel is seen hanging during rproc
+> loading.
+> 
+> Make the powering up of cores sequential, by waiting for the current core
+> to power-up before proceeding to the next core, with a timeout of 2sec.
+> Add a wait queue event in k3_r5_cluster_rproc_init call, that will wait
+> for the current core to be released from reset before proceeding with the
+> next core.
+> 
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> 
+> Signed-off-by: Apurva Nandan <a-nandan@ti.com>
+> ---
+> 
+>  kpv report: https://gist.githubusercontent.com/apurvanandan1997/feb3b304121c265b7827be43752b7ae8/raw
+> 
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index ad3415a3851b..ba5e503f7c9c 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -103,12 +103,14 @@ struct k3_r5_soc_data {
+>   * @dev: cached device pointer
+>   * @mode: Mode to configure the Cluster - Split or LockStep
+>   * @cores: list of R5 cores within the cluster
+> + * @core_transition: wait queue to sync core state changes
+>   * @soc_data: SoC-specific feature data for a R5FSS
+>   */
+>  struct k3_r5_cluster {
+>  	struct device *dev;
+>  	enum cluster_mode mode;
+>  	struct list_head cores;
+> +	wait_queue_head_t core_transition;
+>  	const struct k3_r5_soc_data *soc_data;
+>  };
+>  
+> @@ -128,6 +130,7 @@ struct k3_r5_cluster {
+>   * @atcm_enable: flag to control ATCM enablement
+>   * @btcm_enable: flag to control BTCM enablement
+>   * @loczrama: flag to dictate which TCM is at device address 0x0
+> + * @released_from_reset: flag to signal when core is out of reset
+>   */
+>  struct k3_r5_core {
+>  	struct list_head elem;
+> @@ -144,6 +147,7 @@ struct k3_r5_core {
+>  	u32 atcm_enable;
+>  	u32 btcm_enable;
+>  	u32 loczrama;
+> +	bool released_from_reset;
+>  };
+>  
+>  /**
+> @@ -460,6 +464,8 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>  			ret);
+>  		return ret;
+>  	}
+> +	core->released_from_reset = true;
+> +	wake_up_interruptible(&cluster->core_transition);
+>  
+>  	/*
+>  	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+> @@ -1140,6 +1146,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  		return ret;
+>  	}
+>  
+> +	core->released_from_reset = c_state;
+>  	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
+>  				     &stat);
+>  	if (ret < 0) {
+> @@ -1280,6 +1287,21 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>  		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>  		    cluster->mode == CLUSTER_MODE_SINGLECORE)
+>  			break;
+> +
+> +		/* R5 cores require to be powered on sequentially, core0
+> +		 * should be in higher power state than core1 in a cluster
+> +		 * So, wait for current core to power up before proceeding
+> +		 * to next core and put timeout of 2sec for each core.
+> +		 */
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 115b83e2d8e6..2b9182375702 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1078,22 +1078,20 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	if (g->intr_target_width)
- 		intr_target_mask = GENMASK(g->intr_target_width - 1, 0);
- 
-+	intr_target_mask <<= g->intr_target_bit;
- 	if (pctrl->intr_target_use_scm) {
- 		u32 addr = pctrl->phys_base[0] + g->intr_target_reg;
- 		int ret;
- 
--		qcom_scm_io_readl(addr, &val);
--		val &= ~(intr_target_mask << g->intr_target_bit);
--		val |= g->intr_target_kpss_val << g->intr_target_bit;
--
--		ret = qcom_scm_io_writel(addr, val);
-+		val = g->intr_target_kpss_val << g->intr_target_bit;
-+		ret = qcom_scm_io_update_field(addr, intr_target_mask, val);
- 		if (ret)
- 			dev_err(pctrl->dev,
- 				"Failed routing %lu interrupt to Apps proc",
- 				d->hwirq);
- 	} else {
- 		val = msm_readl_intr_target(pctrl, g);
--		val &= ~(intr_target_mask << g->intr_target_bit);
-+		val &= ~intr_target_mask;
- 		val |= g->intr_target_kpss_val << g->intr_target_bit;
- 		msm_writel_intr_target(val, pctrl, g);
- 	}
--- 
-2.7.4
+Wrong multi-line comment format.
 
+> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
+> +						       core->released_from_reset,
+> +						       msecs_to_jiffies(2000));
+> +		if (ret <= 0) {
+> +			dev_err(dev,
+> +				"Timed out waiting for %s core to power up!\n",
+> +				rproc->name);
+> +			return ret;
+> +		}
+
+From my perspective, this is needed because rproc_auto_boot_callback() for core1
+can be called before core0 due to thread execution order.  Am I correct?  
+
+If so please add this explanation to the comment you have above.  Also, let's
+say a user decides to switch both cores off after reboot.  At that time, what
+prevents a user from switching on core1 before core0 via sysfs?
+
+Thanks,
+Mathieu
+
+>  	}
+>  
+>  	return 0;
+> @@ -1709,6 +1731,7 @@ static int k3_r5_probe(struct platform_device *pdev)
+>  	cluster->dev = dev;
+>  	cluster->soc_data = data;
+>  	INIT_LIST_HEAD(&cluster->cores);
+> +	init_waitqueue_head(&cluster->core_transition);
+>  
+>  	ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
+>  	if (ret < 0 && ret != -EINVAL) {
+> -- 
+> 2.34.1
+> 
