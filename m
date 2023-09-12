@@ -2,63 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7252CA0EC3
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 13:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AE1CA0ED3
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 13:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235747AbjILNdU (ORCPT
+        id S235959AbjILNdX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Sep 2023 09:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35222 "EHLO
+        Tue, 12 Sep 2023 09:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235724AbjILNcr (ORCPT
+        with ESMTP id S235827AbjILNc7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Sep 2023 09:32:47 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A08B213F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 06:32:18 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52683da3f5cso7258353a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 06:32:18 -0700 (PDT)
+        Tue, 12 Sep 2023 09:32:59 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EC22698
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 06:32:20 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-52683b68c2fso7375088a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 06:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694525536; x=1695130336; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694525539; x=1695130339; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MKOk76xGHFUbMYlGoo5EB0SwWts0yrobcw5xDMLmD9M=;
-        b=XVj6QXH92SrvFrwDvpwzI54xw4bGEUXwxs0jz699Fwhmzc8oESrgenGPbpdmnx6xLY
-         dKP04NtASgWt58Qeuhrw18SZA19iU05OjnTbgH9chv6Uk3kIW9z3SYhZVEAgJyt9/67U
-         BaFTaTe0oByyQMIFB9pqbmBUo5SmZGCC+/bp6lsbQUDPaIuubl0awak/BnnchDMtlZ6E
-         BGknaWYRPtp0YbjNG/c3JN4VhXN25ZbeKA+tEpkm0u6ouGsN5fGOCOPO3v8mJPzKn6zF
-         WSPBjlhhsjiGYgO2v/8gkLDCiInq+1/9MgMeAMxeLU4wQyETFPhD3BYsUsrf8e9faJwM
-         qDqw==
+        bh=QbXnoaG8UM/xnuGoKiBDSZrOmSb2jf1llCbQVLffVMo=;
+        b=hCQcTHvAJViXwhhNQyHwZ6I4nV/hzy0Cm0pLsGSixn4we5e/BJB8sP5pSd1dO+Pl9B
+         9VZ2vxGEE9YwutNZPp/ktkOR8800LC0R8V6FtBDSRziHxAjGV5bpgdNXN3ZLDm4i9CDw
+         JqIfowanFIvid3UHF8BBxeVIZs1vpPWtmEitEYVrFhe9t8qUSMOLxG7JsISB0+5qF7m9
+         WVndscGNLi1q0FS8Gm0EdMJsOR20HDpcxihBAuZpXXmfzepytqZiRnm9V8o41Aj2D9eL
+         moHjuGuTCsS8KOhhEQ/EYMNx22qk5yNk3BWg5JkpuMUKnvRMlfiB5bV0tEvifX/cHssh
+         DCOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694525536; x=1695130336;
+        d=1e100.net; s=20230601; t=1694525539; x=1695130339;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MKOk76xGHFUbMYlGoo5EB0SwWts0yrobcw5xDMLmD9M=;
-        b=ImLbvn2TdqiG0hUMbPG8GrYTJKeBZM7Zg/77rSe50BUoO8il8oJPLJS2asCer9qcjh
-         M/XK473EMJKLAQkFmWWS323yb8o64HMJvIIeqFcYrtMAhfykmqDgMMSvc2clP/toBNem
-         wymHmwqIFDcx7hPF77EM3vZwwfwSe0EOXyBm/IkQJkL7NznqZfe7bQQsdsh7dqLjiOxK
-         HZWqLgBEXhik6H23wF36d9QgOq5/wSf4H2+m1NxxVvXuqqG0leNMBJMxeNiPx0Yb1+9n
-         wt8sB/EYbH+ukbp9lHuTgqxeUi4HPBUdA7IlkpCyC7PTs9rBiUO8ooC1+q33Yw9jKZim
-         /wzQ==
-X-Gm-Message-State: AOJu0Yw2h8oiY8rHH2Mo8z7xRR1EBMPVng5bg9VR+u5DeiEep0TlLXlw
-        B8sXAs3oj9lqwUeIQD0p+f622/fYGmCVywkZ5WyB+A==
-X-Google-Smtp-Source: AGHT+IEXVUF3G/Xcm+nMiybcrFyyq4s8W7w7OhkeqVd3qfU2FWiQP5LwPnw4hZHXbTm8d+d1t5mTYg==
-X-Received: by 2002:a05:6402:1d99:b0:52f:a162:f4c2 with SMTP id dk25-20020a0564021d9900b0052fa162f4c2mr1789820edb.22.1694525535894;
-        Tue, 12 Sep 2023 06:32:15 -0700 (PDT)
+        bh=QbXnoaG8UM/xnuGoKiBDSZrOmSb2jf1llCbQVLffVMo=;
+        b=h9R0ncFQXEpTGZ/nTAIlNhmRTNCYNC37B0Aa8HO54eezfCxDc578dDZ1st3GQJ0Upj
+         fU1LI3eth6O/zVDKeVMPNIOfhVdQ3KLMGeVxYFCWhmVQ8ODU3Fj/LwpEuORVSyEcTg7M
+         5kqQiGQRTdchaGiebuWx+W2RMplIcuTbDKyg2RQ3u/Xj047NXqPlMvJ6ygBrpiSB4/ZY
+         ZmPh5qjVACUA1NigenKM3NhN8EodZzi8U/JH9uKW3+LB/NqaVZ1s91S7ws95NU5n13rg
+         m8ez4wkaNp34l2ADYCZi0Ui3GLFAJlfRdktWhrIBiPPmjkCL5/evvZK9iLAKhod4DBQ2
+         O6Sw==
+X-Gm-Message-State: AOJu0YyGf5Vk0KsX4+c6NHnnIXrM7iuKQemxu4bPLCzGMuItAjKdXOto
+        rnnSOq3prNo0QHxyIgAzH2n1WWMnFjsneqpNgyqV6Q==
+X-Google-Smtp-Source: AGHT+IHjyWCzW0ayXb0LJwcsgfnod96ca3muMqyfMqr31yt9brYBDxzKS84KHnsnwu97DkDO8oho6A==
+X-Received: by 2002:a05:6402:c07:b0:52f:bb0b:57bd with SMTP id co7-20020a0564020c0700b0052fbb0b57bdmr281117edb.17.1694525538846;
+        Tue, 12 Sep 2023 06:32:18 -0700 (PDT)
 Received: from [10.167.154.1] (178235177248.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.248])
-        by smtp.gmail.com with ESMTPSA id j2-20020aa7ca42000000b0052a401d8ef6sm5983830edt.71.2023.09.12.06.32.13
+        by smtp.gmail.com with ESMTPSA id j2-20020aa7ca42000000b0052a401d8ef6sm5983830edt.71.2023.09.12.06.32.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 06:32:15 -0700 (PDT)
+        Tue, 12 Sep 2023 06:32:18 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 12 Sep 2023 15:31:51 +0200
-Subject: [PATCH v2 13/14] arm64: dts: qcom: msm8996: Remove PNoC clock from
- MSS
+Date:   Tue, 12 Sep 2023 15:31:52 +0200
+Subject: [PATCH v2 14/14] arm64: dts: qcom: sdm630: Fix USB2 clock-names
+ order
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230721-topic-rpm_clk_cleanup-v2-13-1e506593b1bd@linaro.org>
+Message-Id: <20230721-topic-rpm_clk_cleanup-v2-14-1e506593b1bd@linaro.org>
 References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
 In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -81,50 +81,50 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         linux-usb@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1694525501; l=1234;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1694525501; l=1150;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=+4AEIxoF5np+WSzLavg0MzIg1Zm1W4ES6peXAOsQrzE=;
- b=a/q3ZM5c50UH+82ZWPiBaAUiYrtUYjAebMJvulsLiD6VOw94VYmKJaM0WeTyoWQN1YRB5vfBw
- ZsM5Pv0GBp7DTKfRmFqB3PphmdxTuw8TSaDyJgglP3kYtV8O3lbpD9p
+ bh=xV/ZqPgMqaXSG0vXi80ddqfx5e4u+5Uywuqjc5SC6yQ=;
+ b=JcTmOePKvRMjpiooocOU71gidr0+FDs8aF2A2fYneNgn3SUS4LV/RsG3oSoeLzyRJR5ZUAxgN
+ oS5s69VDs47Dt+cXpXsmvMD6uFQgNYxxFQObqf8CfQ8l2zMKddqof+k
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The PNoC clock is a clock for the entire PNoC bus, managed from
-within the interconnect driver. Attaching it to MSS was a total hack.
-Get rid of it and take the liberty to make the clock-names entries
-more readable.
+The last 2 clock-names entries for the USB2 controller were swapped,
+resulting in schema warnings:
+
+['cfg_noc', 'core', 'mock_utmi', 'sleep'] is too short
+        'iface' was expected
+        'sleep' was expected
+        'mock_utmi' was expected
+
+Fix it and take the liberty to make the clock-names entries more
+readable.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm630.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 7061a8e12c81..51db5ddcef88 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -2479,10 +2479,15 @@ mss_pil: remoteproc@2080000 {
- 				 <&gcc GCC_MSS_GPLL0_DIV_CLK>,
- 				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
- 				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
--				 <&rpmcc RPM_SMD_PCNOC_CLK>,
- 				 <&rpmcc RPM_SMD_QDSS_CLK>;
--			clock-names = "iface", "bus", "mem", "xo", "gpll0_mss",
--				      "snoc_axi", "mnoc_axi", "pnoc", "qdss";
-+			clock-names = "iface",
-+				      "bus",
-+				      "mem",
-+				      "xo",
-+				      "gpll0_mss",
-+				      "snoc_axi",
-+				      "mnoc_axi",
-+				      "qdss";
+diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+index f11d2a07508c..316c8fd224e0 100644
+--- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+@@ -1394,8 +1394,10 @@ usb2: usb@c2f8800 {
+ 				 <&gcc GCC_USB20_MASTER_CLK>,
+ 				 <&gcc GCC_USB20_MOCK_UTMI_CLK>,
+ 				 <&gcc GCC_USB20_SLEEP_CLK>;
+-			clock-names = "cfg_noc", "core",
+-				      "mock_utmi", "sleep";
++			clock-names = "cfg_noc",
++				      "core",
++				      "sleep",
++				      "mock_utmi";
  
- 			resets = <&gcc GCC_MSS_RESTART>;
- 			reset-names = "mss_restart";
+ 			assigned-clocks = <&gcc GCC_USB20_MOCK_UTMI_CLK>,
+ 					  <&gcc GCC_USB20_MASTER_CLK>;
 
 -- 
 2.42.0
