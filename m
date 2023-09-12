@@ -2,261 +2,109 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFC3CA0ECF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 09:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F002ECA0ECA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 09:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233499AbjILJ1j (ORCPT
+        id S232593AbjILJgq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
+        Tue, 12 Sep 2023 05:36:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjILJ1h (ORCPT
+        with ESMTP id S232473AbjILJgm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Sep 2023 05:27:37 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40EE4AA;
-        Tue, 12 Sep 2023 02:27:33 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38C8mJTK021572;
-        Tue, 12 Sep 2023 09:27:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=yq1i6kxCpYGQXgE2QPg1Ntx2QucXtY9xeX9NGkvmJw4=;
- b=E6l6y7NVDVFV+AyNEFfQhJpkGzPN4EyPGuecW0B8Z+y0q9s7v3Lyhvn5CiknCP/6YygR
- uj5WlB47haS2DXfoRLSp1Aq2b/+pvfvkcSboB5YJHsHca0SIThYnwDgyjieDXVg3WB/B
- cr1IatOWuQRMo03LcSP2dUj7i9hnEWBfXITlUEj3Nl3FXMCxdGFzdE5ZIU8asbdxf++i
- KNN8X+3vXCMCeDJuxja/UF4lHQht6xNOzMOk+PW1jzz/kgomv5zVvUFU82Wj51G/KQRw
- 6TQWBah3o0Sm0ziRiPzv2raKL3zK3n+zQKAEG4fogTcaQ3TDbUoDcaDZSXX+tMfWpwbQ MQ== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1xjmu0pk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 09:26:59 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38C9QwF4013043
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Sep 2023 09:26:58 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Tue, 12 Sep
- 2023 02:26:46 -0700
-Message-ID: <0eeef9c4-14c0-8283-803b-4684854d4be6@quicinc.com>
-Date:   Tue, 12 Sep 2023 14:56:44 +0530
+        Tue, 12 Sep 2023 05:36:42 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6361BB
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 02:36:38 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-401187f8071so34283675e9.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 02:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694511397; x=1695116197; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I2E1gO44gErvLCsLkrEiV4IXvDnQB78+GoWRxTmFEOc=;
+        b=CCwAPZ9j+KS8qsxwr3/KiFhre/dOcV9GbRErTdYdrP5HxazJnO2+WXaSbi6gqfQNfZ
+         XAJS/BndpMZIJYXTyAjOAqdzXL9NMeDVQ9z13o4GpS/h64vpL4+S6hWwINCVcWOHZEQA
+         u17lmS6ADplFa6S8/SEaecZ5LRgnDrXuHpe6xbjQyJh94kC5q2KMuSz8jWGgDGCQlLuC
+         EQyVyNcdmqjZDuvz2oRnx5xY08gFSQFf/2/plnpZ5Eevn5v0v9YM8lk2jjBbjQzNl/dc
+         nrusjDM3fwiS5ZkM1X+CYfUtv2i4eGgQLP83a2XLO8CuFr3xkrNtDAPvA1/tK2t2yc4l
+         yxYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694511397; x=1695116197;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I2E1gO44gErvLCsLkrEiV4IXvDnQB78+GoWRxTmFEOc=;
+        b=FAiHs49uwHn6ezbtKoWXyFSpwqo+0mqumvR4SaiycS5OO0sBiOK7RmU8qvZjXlooVj
+         PoilW3dsAD/Re8stZP6UUC+SqVAQsuBmZr7z02NLETUlGiYHk20HmpsF+5GBOvSAdEuE
+         KW+RF3DCNKC6QiHW1lGYGO8kRB780p0ZL8HeUEfXzh03mBFv68XpaCy1cQ9Lg96rL516
+         VZ4RwkC6Nf54Gk74psLpm2/v9wS585c3KCVQI8dsMDCGsSrFMpOwS/dC/spu/a70icQW
+         mKb6I3S89wpSu5BHltnqkTrcoOYz6OhPjn3EN5GRiRxRppB1/RkN8Vh213AgrgVqgXLH
+         RdFA==
+X-Gm-Message-State: AOJu0YxHnvHeGULxqJ7SXXggJU7/3cNkaM/77GEmuj5QvPAp2KIiD6UC
+        3Oq85MuJeBo9+DQHhPCiaG2eaQ==
+X-Google-Smtp-Source: AGHT+IGjBJQH7mzQfXAu5lgRUFXAuZoXiTMnNJmrtnG9tLxPqOp7DMt1gBEzDZ1OIOn09IbXJS1ing==
+X-Received: by 2002:a05:600c:4e50:b0:401:b393:da18 with SMTP id e16-20020a05600c4e5000b00401b393da18mr1425536wmq.6.1694511397094;
+        Tue, 12 Sep 2023 02:36:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id o8-20020a1c7508000000b003fed7fa6c00sm15780383wmc.7.2023.09.12.02.36.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Sep 2023 02:36:36 -0700 (PDT)
+Message-ID: <af1959ce-d817-2a9e-9c28-fed8c608a3df@linaro.org>
+Date:   Tue, 12 Sep 2023 11:36:33 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
- driver
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 2/2] arm64: dts: imx8mp: add reserve-memory nodes for DSP
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
- <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>
+Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+References: <20230911224452.15739-1-iuliana.prodan@oss.nxp.com>
+ <20230911224452.15739-3-iuliana.prodan@oss.nxp.com>
+ <67de5706-d966-dd71-85c3-c95bc1b72733@linaro.org>
+ <c0b32f41-46b4-81ad-9718-5f0856e42cb1@nxp.com>
+ <32287c0a-e3c1-e474-3c90-913fe2c79879@linaro.org>
+ <fe47a94e-6788-a5ee-e8ee-ca58e4fa62d6@nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <fe47a94e-6788-a5ee-e8ee-ca58e4fa62d6@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hH9AZtJuheitgf9wV6vo0p7NH8AT0oje
-X-Proofpoint-GUID: hH9AZtJuheitgf9wV6vo0p7NH8AT0oje
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
- malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309120079
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Thanks for your time in reviewing this.
+On 12/09/2023 10:49, Iuliana Prodan wrote:
+>>> Should I test this on other tree(s)?
+>> You test the patch on the tree you send it. What is the point to test it
+>> on some old code, cherry-pick with bugs and then send?
+>>
+>> If you have cross-tree dependencies between subsystem, isn't linux-next
+>> for this?
+> 
+> TBH, I don't know, that's why I asked.
+> 
+> For sure one patch is for remoteproc.
+> For the other, I don't know who will pick it, but I'll tested on 
+> linux-next, as you suggested.
 
-On 9/11/2023 4:31 PM, Krzysztof Kozlowski wrote:
-> On 09/09/2023 22:16, Mukesh Ojha wrote:
->> Minidump is a best effort mechanism to collect useful and predefined
->> data for first level of debugging on end user devices running on
->> Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
->> or subsystem part of SoC crashes, due to a range of hardware and
->> software bugs. Hence, the ability to collect accurate data is only
->> a best-effort. The data collected could be invalid or corrupted,
->> data collection itself could fail, and so on.
-> 
-> ...
-> 
->> +static int qcom_apss_md_table_init(struct minidump *md,
->> +				   struct minidump_subsystem *mdss_toc)
->> +{
->> +	struct minidump_ss_data *mdss_data;
->> +
->> +	mdss_data = devm_kzalloc(md->dev, sizeof(*mdss_data), GFP_KERNEL);
->> +	if (!mdss_data)
->> +		return -ENOMEM;
->> +
->> +	mdss_data->md_ss_toc = mdss_toc;
->> +	mdss_data->md_regions = devm_kcalloc(md->dev, MAX_NUM_ENTRIES,
->> +					     sizeof(struct minidump_region),
->> +					     GFP_KERNEL);
->> +	if (!mdss_data->md_regions)
->> +		return -ENOMEM;
->> +
->> +	mdss_toc = mdss_data->md_ss_toc;
->> +	mdss_toc->regions_baseptr = cpu_to_le64(virt_to_phys(mdss_data->md_regions));
->> +	mdss_toc->enabled = cpu_to_le32(MINIDUMP_SS_ENABLED);
->> +	mdss_toc->status = cpu_to_le32(1);
->> +	mdss_toc->region_count = cpu_to_le32(0);
->> +
->> +	/* Tell bootloader not to encrypt the regions of this subsystem */
->> +	mdss_toc->encryption_status = cpu_to_le32(MINIDUMP_SS_ENCR_DONE);
->> +	mdss_toc->encryption_required = cpu_to_le32(MINIDUMP_SS_ENCR_NOTREQ);
->> +
->> +	md->apss_data = mdss_data;
->> +
->> +	return 0;
->> +}
->> +
->> +static int qcom_apss_minidump_probe(struct platform_device *pdev)
->> +{
->> +	struct minidump_global_toc *mdgtoc;
->> +	struct minidump *md;
->> +	size_t size;
->> +	int ret;
->> +
->> +	md = devm_kzalloc(&pdev->dev, sizeof(struct minidump), GFP_KERNEL);
-> 
-> sizeof(*)
-> 
-> Didn't you get such comments already?
+MAINTAINERS file (and get_maintainers.pl) will tell you. Specifically,
+this does not look really related to remoteproc patch, so it should not
+be together in one patchset.
 
-Ok, will fix this, no i have not got such comments as of yet.
-Any reason of using this way?
+Best regards,
+Krzysztof
 
-> 
-> 
->> +	if (!md)
->> +		return -ENOMEM;
->> +
->> +	md->dev = &pdev->dev;
->> +	mdgtoc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, &size);
->> +	if (IS_ERR(mdgtoc)) {
->> +		ret = PTR_ERR(mdgtoc);
->> +		dev_err(md->dev, "Couldn't find minidump smem item: %d\n", ret);
->> +		return ret;
-> 
-> The syntax is:
-> return dev_err_probe
-
-ACK.
-
-> 
->> +	}
->> +
->> +	if (size < sizeof(*mdgtoc) || !mdgtoc->status) {
->> +		dev_err(md->dev, "minidump table is not initialized: %d\n", ret);
-> 
-> ret is uninitialized here. Please use automated tools for checking your
-> code:
-> coccinelle, smatch and sparse
-
-Thanks.
-
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	mutex_init(&md->md_lock);
->> +	ret = qcom_apss_md_table_init(md, &mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
->> +	if (ret) {
->> +		dev_err(md->dev, "apss minidump initialization failed: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	/* First entry would be ELF header */
->> +	ret = qcom_md_add_elfheader(md);
->> +	if (ret) {
->> +		dev_err(md->dev, "Failed to add elf header: %d\n", ret);
->> +		memset(md->apss_data->md_ss_toc, 0, sizeof(struct minidump_subsystem));
-> 
-> Why do you need it?
-
-Earlier, i got comment about clearing the SS TOC(subsystem table of 
-content) which is shared with other SS and it will have stale values.
-
-> 
->> +		return ret;
->> +	}
->> +
->> +	platform_set_drvdata(pdev, md);
->> +
->> +	return ret;
->> +}
->> +
->> +static int qcom_apss_minidump_remove(struct platform_device *pdev)
->> +{
->> +	struct minidump *md = platform_get_drvdata(pdev);
->> +	struct minidump_ss_data *mdss_data;
->> +
->> +	mdss_data = md->apss_data;
->> +	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(struct minidump_subsystem));
-> 
-> Why do you need it?
-
-Same as above.
-
-> 
->> +	md = NULL;
-> 
-> That's useless assignment.
-
-Ok.
-
-> 
->> +
->> +	return 0;
->> +}
->> +
->> +static struct platform_driver qcom_minidump_driver = {
->> +	.probe = qcom_apss_minidump_probe,
->> +	.remove = qcom_apss_minidump_remove,
->> +	.driver  = {
->> +		.name = "qcom-minidump-smem",
->> +	},
->> +};
->> +
->> +module_platform_driver(qcom_minidump_driver);
->> +
->> +MODULE_DESCRIPTION("Qualcomm APSS minidump driver");
->> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("platform:qcom-minidump-smem");
-> 
-> Add a proper ID table instead of re-inventing it with module aliases.
-
-Ok.
-
--Mukesh
-
-> 
-> Best regards,
-> Krzysztof
-> 
