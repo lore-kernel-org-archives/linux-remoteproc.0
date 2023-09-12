@@ -2,90 +2,144 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F86CA0ECE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 08:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99378CA0ECE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 08:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbjILIYM (ORCPT
+        id S232621AbjILI0h (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Sep 2023 04:24:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53286 "EHLO
+        Tue, 12 Sep 2023 04:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232635AbjILIYJ (ORCPT
+        with ESMTP id S232574AbjILI0g (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Sep 2023 04:24:09 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD1E10E7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-59b8f5b6c0aso16516087b3.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
+        Tue, 12 Sep 2023 04:26:36 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DAA10C7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 01:26:32 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9ad8bf9bfabso35380866b.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 01:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694507044; x=1695111844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
-        b=FBhB4z6HcF6EizL+/lwxRnvBPsnUBCZNCJdmUZqMhF2t8tNtnTGFF+JCUzlHUG9Exo
-         EggToZqBJppvlFyjEBigx34yWBARuEWqMz4yka52D9EM9UM1QrISxBRPtWDZ29WUYe9q
-         d2krkdkVjxK27mY+IVp4h5OuRfx8EOC24+q01oOZ9zVKap5Gn+pmjs1tgIAXdxIMWl2s
-         hlUypNi+ZXFlGreD6ZHACbQH+jnwcETJOh0eM2WKZkO86QxIoS8ndf9uFvCult8qmb5z
-         WmJNShM2s+Z914AefMurd58mLEBMQpCYyRNyQgzLfOJXMC6Jyztx8eDTmu+++2h4nbhP
-         glxQ==
+        d=linaro.org; s=google; t=1694507191; x=1695111991; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5o3LzkBLyHb7ofP84O3T9xGsTdDKL8/j5FWm25zteFw=;
+        b=PR+YgU3N4yCxY9j0rbS2pJXeLCgdATc58OEc1Em1eSPIAxvS1v670JtG1v9qP1j7lQ
+         YzAOBGlRwFQTlC2L7jiE95vvNjhVHD1DvEnIx8OMFu4HB60rQ0Mx0tdeaRVpFaYX4TYg
+         pcUAyoNSJlOeo8rxX8yNiNFQeV1SnZoCMdRCFRGS4CGHY918abdEsl9+UtLtlCJixTAD
+         ylMeroebflx0TjXp1NZVNxG0TKMxIc93UPNiMcScrhLWRYkAMP/9GDqRCIH9QRyf7Fwp
+         WiV1L8VzpyAFObOT9ARzr6uq+zsz09cKezrC8L/ZLpNhi2NAYgH+YRB3HS+IX5rUpeg/
+         BApw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694507044; x=1695111844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
-        b=eNpAUJFhxsIGub/iKnkjJJlEBGf85472iGmDF7JnrqEQhvZF284BFT/6oEJZmUthpm
-         9yE85bXFN5V9X4+56ixX95hfLC0kex4bkwBRFeFc+6UsNZFQXnIckK4cjCtgEiOr9Sbg
-         Hzzz+PsFmekfEmhNYB0mIZoK02EUp/2ELHTRexFAxshmp8ZjzcjQ0BMm6m2kGmzDkEDT
-         lTvdI2hEIYXcJknOS/prqeW5C7x9OrN9IQOG+GOX0/NApqoIUKtk6dRl8DcK+xDFx2Sp
-         4fmnyasJFw3OJ7qzSrQszoUNWJdcfJeJF6ZiA4o+6IzD63S9Am9jAy+TD8pW3wpPRHDN
-         aO6Q==
-X-Gm-Message-State: AOJu0YzqS2yMhqHhmwn2pWUiY3tPggBF0+itGPH7dRiUlPcxiQNuaSIX
-        6YtNJFYE0Wav/Q6EfFGHaJ/VAdrkmpPldWVhB2tKHg==
-X-Google-Smtp-Source: AGHT+IFd+7FzVpzIXwF6eF0XM98eCqwGR8vQyKfh9Y2GKm2qYYnTSN7eR9A+5PvS2Qu/0xw3IHJQEnNJumvhS4CTpxY=
-X-Received: by 2002:a25:d4c6:0:b0:d7b:95ff:14f with SMTP id
- m189-20020a25d4c6000000b00d7b95ff014fmr13092370ybf.61.1694507044304; Tue, 12
- Sep 2023 01:24:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694507191; x=1695111991;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5o3LzkBLyHb7ofP84O3T9xGsTdDKL8/j5FWm25zteFw=;
+        b=OVjXGFsrTRF4qxVmNxQo34d24OZeaavnysdU6JwxxQyOB5BAiIg5o5+rfrFKrkdHnZ
+         lKLDi1aAi2WGX1Wf8ynbb/yyBHQ/IOqZXBjfgrVgD2tUrd6QRl0an7GLKziBbWU00xdk
+         NNG91fv5QW20MJd/VLoqefowZp868051AqSnlv5+S2osU/ij+qoMAMe9Ga463T2vfvF8
+         O4xWVq2Kg5LmaGbN7/JRRKvJNboh6HLOOdym0wIiMEVJ1bhsrdHDL7wZn/fjNQtAMM9O
+         9oi6e4BJoWij2ZzzcZSYVuz5WIuGcfTQ6ukS6g/ZKW4WYo+oV2ylsKqG2n/qwZ1et62Y
+         sFkA==
+X-Gm-Message-State: AOJu0YzoY29TyDR0aaGMRIARTHZ04YpYNN4IOVwDZLzVwJ3re/18rmY8
+        aNZc1QCP/G1ixgEsEWe7xO/IqQ==
+X-Google-Smtp-Source: AGHT+IHqm7STNNiZ6wKB/kmgoKnEIxaz707SIPonvtSj0mzlXB6e/6srpKoKgHR5Q0AbiyKegYvMuA==
+X-Received: by 2002:a17:906:300f:b0:9a1:b43b:73a0 with SMTP id 15-20020a170906300f00b009a1b43b73a0mr9631960ejz.20.1694507191390;
+        Tue, 12 Sep 2023 01:26:31 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id m5-20020a1709066d0500b0099bd8c1f67esm6485920ejr.109.2023.09.12.01.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Sep 2023 01:26:30 -0700 (PDT)
+Message-ID: <32287c0a-e3c1-e474-3c90-913fe2c79879@linaro.org>
+Date:   Tue, 12 Sep 2023 10:26:28 +0200
 MIME-Version: 1.0
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com> <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
-In-Reply-To: <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 10:23:53 +0200
-Message-ID: <CACRpkdYBH09emydQPaRUgEJuHdV0tk3=xeMXxD9UVP0GH2XZEw@mail.gmail.com>
-Subject: Re: [REBASE PATCH v5 14/17] pinctrl: qcom: Use qcom_scm_io_update_field()
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, andy.shevchenko@gmail.com, vigneshr@ti.com,
-        nm@ti.com, matthias.bgg@gmail.com, kgene@kernel.org,
-        alim.akhtar@samsung.com, bmasney@redhat.com,
-        quic_tsoni@quicinc.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 2/2] arm64: dts: imx8mp: add reserve-memory nodes for DSP
+Content-Language: en-US
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>
+Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+References: <20230911224452.15739-1-iuliana.prodan@oss.nxp.com>
+ <20230911224452.15739-3-iuliana.prodan@oss.nxp.com>
+ <67de5706-d966-dd71-85c3-c95bc1b72733@linaro.org>
+ <c0b32f41-46b4-81ad-9718-5f0856e42cb1@nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <c0b32f41-46b4-81ad-9718-5f0856e42cb1@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 12:56=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.co=
-m> wrote:
+On 12/09/2023 10:13, Iuliana Prodan wrote:
+> On 9/12/2023 10:07 AM, Krzysztof Kozlowski wrote:
+>> On 12/09/2023 00:44, Iuliana Prodan (OSS) wrote:
+>>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>>
+>>> Add the reserve-memory nodes used by DSP when the rpmsg
+>>> feature is enabled.
+>>> These can be later used in a dsp node, like:
+>>> dsp: dsp@3b6e8000 {
+>>> 	compatible = "fsl,imx8mp-dsp";
+>>> 	reg = <0x3b6e8000 0x88000>;
+>>> 	mbox-names = "tx0", "rx0", "rxdb0";
+>>> 	mboxes = <&mu2 2 0>, <&mu2 2 1>,
+>>> 		<&mu2 3 0>, <&mu2 3 1>;
+>>> 	memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+>>> 		<&dsp_vdev0vring1>, <&dsp_reserved>;
+>>> 	status = "okay";
+>> Drop this example from commit msg, useless and not really correct.
+> Ok, will drop it. But this is a correct example, is just incomplete.
 
-> Use qcom_scm_io_update_field() exported function in
-> pinctrl-msm driver.
->
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+No, status=okay is redundant, thus it is not a correct example.
 
-As long as the qcom maintainers agree on the rest of the patches:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>> };
+>>>
+>>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>> ---
+>>>   arch/arm64/boot/dts/freescale/imx8mp.dtsi | 12 ++++++++++++
+>>>   1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> index cc406bb338fe..eedc1921af62 100644
+>>> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>>> @@ -210,6 +210,18 @@
+>>>   		dsp_reserved: dsp@92400000 {
+>>>   			reg = <0 0x92400000 0 0x2000000>;
+>>>   			no-map;
+>> Please test the patches before sending. This does not build.
+> 
+> I've tested on remoteproc tree, but it seems I missed a bracket when 
+> sending upstream. Sorry abut this, will fix it in v2.
 
-Yours,
-Linus Walleij
+No, this is not how testing works. You must test this patch. This means
+you tested something, then ported patch to entirely different tree,
+resolved conflicts in buggy way and send it without testing. Nope.
+
+> Should I test this on other tree(s)?
+
+You test the patch on the tree you send it. What is the point to test it
+on some old code, cherry-pick with bugs and then send?
+
+If you have cross-tree dependencies between subsystem, isn't linux-next
+for this?
+
+
+Best regards,
+Krzysztof
+
