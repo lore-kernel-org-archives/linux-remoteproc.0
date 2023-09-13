@@ -2,61 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBE0EDEC43
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 11:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53618EDEC47
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 11:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240228AbjIMLcV (ORCPT
+        id S240381AbjIMLe7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 07:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33234 "EHLO
+        Wed, 13 Sep 2023 07:34:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238238AbjIMLcU (ORCPT
+        with ESMTP id S240358AbjIMLet (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 07:32:20 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9E719AD
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:32:16 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9a9d82d73f9so837465866b.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:32:16 -0700 (PDT)
+        Wed, 13 Sep 2023 07:34:49 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4081C3C0E
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:34:05 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-52a1ce529fdso8881214a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694604735; x=1695209535; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694604843; x=1695209643; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5j+vOlqz3f4oxafJPXTsw7TQpxVIHCk4693pzx0c94w=;
-        b=j5zsfOwwFvT0XBAEEnzwdg3+Juy6FufuPTuUSRSZUxFkHpsyIVxRow7RFRXmJMhvwy
-         mXNffXJ3s+xyyTChSgiVQQNL7WK/FZfkFY9fEb7Gwo+NfFadVmTgqzqk6ZGWSk/y4iSd
-         JKmYrnSg8w0ntigiOoHzf2fVugEBs8I1TTYH0QLc76pv0K6ELcRxIMdZ98Ic90dNaHVS
-         StqAWt8DhIW42BabvecYxiTkRYfXOK5hHEUi/wPyhb6K9cOdBDW+Cor0EArGuH1wXRB9
-         XdhXAgtzqOs5c5ndl0tCgVZqp30HlmBw5exnZdW6OjfhbSu0cVydFQW2+xf5AB47nS+P
-         lCWg==
+        bh=wM5SIUdq9q8lGvXrXs9VMWSQTu6Zcs1sHBlGbNl1KLk=;
+        b=x/Am8EON2gkt1A/n8jVWiPwZOJjSM3hm/+eTcUR2VrrMDUfLCXlPdh1/LccfVnOCp2
+         VsH2Q8+fWHzvxyaua4hVFciVCl9pr5qhdq5tI5Zs91rYI5pQbVLhABlrEKhnQv1sdhV+
+         1GEiQLx3b1KodHiQEmP68xzq15KFDkCfvkA6EzHyJLk6bPE4/7MWSfSE3rDFgCp53jLc
+         yzcF2cp+UbdNfHjLC+oRK3DTc33J4PaISBSuAwwdK7ZVJViKbjB0wvceh0ehsArG9Bmx
+         e9cffcO8QwllBlQXOz6wcWBX+mQvIp9ZdFrNHsWBFWFJKS2P9CDfK9NG8Ixa+OsvkzGf
+         OaZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694604735; x=1695209535;
+        d=1e100.net; s=20230601; t=1694604843; x=1695209643;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5j+vOlqz3f4oxafJPXTsw7TQpxVIHCk4693pzx0c94w=;
-        b=DKEB1xJJs0wSFqSy0ya+/lXL2Aa+pQm+5wyX9U/ooYDQj3xofiZiSa6ODnNoA1hPxP
-         UJdZZfUhTEeFysh88qddVrAdUXo9st5sK1XyBsn6ZUZ7MC6mVCWlZBqrRNadDHLMt6Jd
-         s5SiB1v8wdRMFR211I4u82zw+AQGK0T4B060eEdKxYLUc+8a/htoVjajNVHtXMLoXsZf
-         uwEMwdpHxPL3ERd9MqC9H3wKP145suoDeXqkn8W/nhZSpX07xPcAElVYMcyZ5QmXchJI
-         ed+g9UG8tuQ0RIpWDrka7PzahnAgb40+VPMGC5/P5kNMGO3WJUjPJE1alOEVxJVD8Rs3
-         EhDQ==
-X-Gm-Message-State: AOJu0Yzn3pz/GNHfmflpPLSUw5a8SBD2Z4kH31c+7d8QD5PTJORS6SEk
-        8Q6CRvo9+NGag8dkZx3zuvHVNNv4Bak85KSaQUE=
-X-Google-Smtp-Source: AGHT+IFXgY8RifaZBzIgEcrovRfTJIFYuVf95XlpZfa3lhurVCngM06VSVipO+09NlPwOMdF7/xX9A==
-X-Received: by 2002:a17:906:2cf:b0:9a1:aa7b:482e with SMTP id 15-20020a17090602cf00b009a1aa7b482emr1622499ejk.26.1694604735038;
-        Wed, 13 Sep 2023 04:32:15 -0700 (PDT)
+        bh=wM5SIUdq9q8lGvXrXs9VMWSQTu6Zcs1sHBlGbNl1KLk=;
+        b=T/JilV2YKGZETKkpoc3sKU9YV3zibFeo2m4604SlR1esZKc3J31JknxcX2LEAUAby4
+         IHIi5pXDXkHrBeUjopu2TAWhaJ/PmnWviVUnVYtYkHHLJq5eobVY0BuIz4MzmY0eNDtO
+         I5zFKwBKdF8YXtIiPGoio0L758T8WqPR35/+n/h9cnp81fHj1R77qyzIGJDNQmHmpniz
+         ultJkYPvI4qZmJXA/sp7uDyGnigAOxoRBAu2Z3hdiUfahFOkeXDRMg9u5+Dhi3894HaD
+         KwWr5o46hcF3vp2pUG5YnDcWIULaPDYjUihhVhufm809mGw2GwE7wgC0Hejw5Kr0orig
+         dwIg==
+X-Gm-Message-State: AOJu0Yy4Q8ya/zZOtXgasivnpwAP1WcVDyrm6qB4b3DNnPUW1o/Rrw2v
+        BU5+6WfEDSrEyrp1t9zBedAQ8Q==
+X-Google-Smtp-Source: AGHT+IFpLPaGgHkHb7TWz2h534XTfQQkS800fp8I2bYQFpK202UNLN0lz7T7mWJfEwkv5Wc31F2IBA==
+X-Received: by 2002:a17:906:32c3:b0:9a1:f5b1:c85d with SMTP id k3-20020a17090632c300b009a1f5b1c85dmr1827996ejk.12.1694604843481;
+        Wed, 13 Sep 2023 04:34:03 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id c22-20020a17090603d600b0099ce025f8ccsm8289621eja.186.2023.09.13.04.32.12
+        by smtp.gmail.com with ESMTPSA id a22-20020a1709064a5600b00992ca779f42sm8288599ejv.97.2023.09.13.04.34.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 04:32:13 -0700 (PDT)
-Message-ID: <052be57d-4081-43ca-6c9f-9afedb030a58@linaro.org>
-Date:   Wed, 13 Sep 2023 13:32:12 +0200
+        Wed, 13 Sep 2023 04:34:02 -0700 (PDT)
+Message-ID: <32e308fa-1118-e17a-8038-c28cb2484c92@linaro.org>
+Date:   Wed, 13 Sep 2023 13:34:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+Subject: Re: [PATCH v6 2/4] remoteproc: k3: Split out data structures common
+ with M4 driver
 Content-Language: en-US
 To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
         mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
@@ -65,9 +66,9 @@ To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 References: <20230913111644.29889-1-hnagalla@ti.com>
- <20230913111644.29889-2-hnagalla@ti.com>
+ <20230913111644.29889-3-hnagalla@ti.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230913111644.29889-2-hnagalla@ti.com>
+In-Reply-To: <20230913111644.29889-3-hnagalla@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -75,136 +76,61 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 13/09/2023 13:16, Hari Nagalla wrote:
-> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-> The remote processor's life cycle management and IPC mechanisms are
-> similar across the R5F and M4F cores from remote processor driver
-> point of view. However, there are subtle differences in image loading
-> and starting the M4F subsystems.
+> From: Martyn Welch <martyn.welch@collabora.com>
 > 
-> The YAML binding document provides the various node properties to be
-> configured by the consumers of the M4F subsystem.
+> We will be adding the M4F driver which shares a lot of commonality
+> with the DSP driver. Common data structures are introduced here.
 > 
 > Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
 > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 > ---
-> Changes since v1:
->  - Spelling corrections
->  - Corrected to pass DT checks
+> Changes in v6:
+>  - Created a separate patch for data structures to ease review
 > 
-> Changes since v2:
->  - Missed spelling correction to commit message
+>  drivers/remoteproc/ti_k3_common.h | 103 ++++++++++++++++++++++++++++++
+>  1 file changed, 103 insertions(+)
+>  create mode 100644 drivers/remoteproc/ti_k3_common.h
 > 
-> Changes since v3:
->  - Removed unnecessary descriptions and used generic memory region names
->  - Made mboxes and memory-region optional
->  - Removed unrelated items from examples
-> 
-> Changes since v4:
->  - Rebased to the latest kernel-next tree
->  - Added optional sram memory region for m4f device node
-> 
-> Changes since v5:
->  - None
-
-Hm, why none? There were errors in the binding to which you did not
-respond. Did you just ignore them?
-
-> 
->  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
 > new file mode 100644
-> index 000000000000..21b7f14d9dc4
+> index 000000000000..5e1f27741183
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> @@ -0,0 +1,136 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/remoteproc/ti_k3_common.h
+> @@ -0,0 +1,103 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * TI K3 Remote Processor(s) driver common code
+> + *
+> + * Refactored from ti_k3_dsp_remoteproc.c.
+> + *
+> + * ti_k3_dsp_remoteproc.c:
+> + * Copyright (C) 2018-2022 Texas Instruments Incorporated - https://www.ti.com/
+> + *	Suman Anna <s-anna@ti.com>
+> + */
 > +
-> +title: TI K3 M4F processor subsystems
+> +#ifndef REMOTEPROC_TI_K3_COMMON_H
+> +#define REMOTEPROC_TI_K3_COMMON_H
 > +
-> +maintainers:
-> +  - Hari Nagalla <hnagalla@ti.com>
-> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+> +#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
+> +
+> +/**
+> + * struct k3_rproc_mem - internal memory structure
+> + * @cpu_addr: MPU virtual address of the memory region
+> + * @bus_addr: Bus address used to access the memory region
+> + * @dev_addr: Device address of the memory region from DSP view
+> + * @size: Size of the memory region
+> + */
+> +struct k3_rproc_mem {
+> +	void __iomem *cpu_addr;
+> +	phys_addr_t bus_addr;
+> +	u32 dev_addr;
+> +	size_t size;
 
-Are you sure Mathieu has this device and is a maintainer of this device?
+Where is the split? I see only addition here.
 
-> +
-> +description: |
-> +  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
-> +  family with a M4F core. Typically safety oriented applications may use
-> +  the M4F core in isolation without an IPC. Where as some industrial and
-> +  home automation applications, may use the M4F core as a remote processor
-> +  with IPC communications.
-> +
-> +$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
-> +
-> +properties:
-> +
-
-Drop blank line.
-
-> +  compatible:
-> +    enum:
-> +      - ti,am64-m4fss
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 2
-> +
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  reg:
-> +    items:
-> +      - description: IRAM internal memory region
-> +      - description: DRAM internal memory region
-> +
-> +  reg-names:
-> +    items:
-> +      - const: iram
-> +      - const: dram
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-Wrong type. This is an array. You need maxItems instead.
-
-> +    description: Name of firmware to load for the M4F core
-> +
-> +  mboxes:
-> +    description: |
-> +      Mailbox specifier denoting the sub-mailbox, to be used for communication
-> +      with the remote processor. This property should match with the
-> +      sub-mailbox node used in the firmware image.
-> +    maxItems: 2
-
-You need to describe the items instead.
-
-> +
-> +  memory-region:
-> +    description: |
-> +      phandle to the reserved memory nodes to be associated with the
-> +      remoteproc device. The reserved memory nodes should be carveout nodes,
-> +      and should be defined with a "no-map" property as per the bindings in
-> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-> +      Optional memory regions available for firmware specific purposes.
-> +    maxItems: 8
-> +    items:
-> +      - description: regions used for DMA allocations like vrings, vring buffers
-> +                     and memory dedicated to firmware's specific purposes.
-> +    additionalItems: true
-
+Where is the usage of this header? This is basically dead code. Don't
+add dead code, but instead actually move the structures here! Move is
+cut and paste, not just paste.
 
 Best regards,
 Krzysztof
