@@ -2,151 +2,164 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0C2CA551E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 09:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F423ECA5534
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 10:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239347AbjIMJZU (ORCPT
+        id S234107AbjIMKC3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 05:25:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
+        Wed, 13 Sep 2023 06:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239264AbjIMJZT (ORCPT
+        with ESMTP id S231757AbjIMKC3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 05:25:19 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063A21999;
-        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-68fb70fca9fso2843405b3a.2;
-        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694597115; x=1695201915; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
-        b=nSnCf0cK4xpn5q4uEWbi4jgNyj0YzEsrtBBZ271rYq2sgh5We1k0YxkCtQ4fazBZos
-         ePABUdjDWp3xK7NGi+9pyFeYQ+QTnstMkVdat7uZJ5NbLR9n8dbjmW8xRKh/+ntPtm/t
-         oUGiR4lOAqjyCbO8F7DNfmFHHourggWUIRInKRKcg5U2dqbbjcVD+ZqM93L6n0T8nLsO
-         XMX8CsWd79cvTgVmZ7TgOcknUcS0XNVwiJ7feFCfM3xcVou08AeFHBLCddNMP+i935Bc
-         yKIfxiEyRC8B60TNfKYiBx4wnKx+/K3gLTEHH2+Q7etVfYAqgw/G544/zGAdvKpsDqwO
-         JXHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694597115; x=1695201915;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
-        b=AIAkg9YnxQsQyiVbRqg5n1xUNLOyholxgx3Vu+bHGBI9x+wTDYBDKenAOFvotQJ90E
-         q34z4mzNhzLFtBFErH5UcizFWYzfXw+xv6MUoLPqzEruIez3z24qfkhmW8uBPfVuUsrI
-         Ic/yC2lctMPuDp9R6Wk0bwq61Qt8WTN/9oGEzmzja0XYalSglKYQ/sOcB+Az2gj7sVpi
-         fos8mUV+SRAe0qQU0nH7bktWS1CSAo44sPTvLXKvSunJkU6xAG4OQT3/Bg8Vq1xLxldA
-         wEbbVS5qx8lADAwmvchVdn9TQwnc7dpENfJIgR2yAz1NeB/n/vm1SMbnaw2zy6Gx6WRG
-         vVVg==
-X-Gm-Message-State: AOJu0Yxf/9b3naYXtLDUcMuj/0suPI5XXpl4TQQ0+GUKlt1Q+W2d3eQ0
-        SYGJeyE5PeKBdTZM1oZ3SXI=
-X-Google-Smtp-Source: AGHT+IG/3WIzQMbIKyGZtuuCHIWrLbl2lrCKitCBZEZyOjDkgyQfkCiMeKwYbJrLvyEtH8At6O8gvQ==
-X-Received: by 2002:a05:6a20:8f1f:b0:13f:c40c:379 with SMTP id b31-20020a056a208f1f00b0013fc40c0379mr2117577pzk.13.1694597115404;
-        Wed, 13 Sep 2023 02:25:15 -0700 (PDT)
-Received: from debian.me ([103.124.138.83])
-        by smtp.gmail.com with ESMTPSA id i4-20020a170902eb4400b001b8b26fa6c1sm9914334pli.115.2023.09.13.02.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 02:25:14 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id 9D86780666AA; Wed, 13 Sep 2023 16:25:11 +0700 (WIB)
-Date:   Wed, 13 Sep 2023 16:25:11 +0700
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
-Message-ID: <ZQF_9-nX47QUCycO@debian.me>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
+        Wed, 13 Sep 2023 06:02:29 -0400
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67F919A9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 03:02:24 -0700 (PDT)
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 38D78tAS018489;
+        Wed, 13 Sep 2023 12:02:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+        message-id:date:mime-version:subject:to:cc:references:from
+        :in-reply-to:content-type:content-transfer-encoding; s=
+        selector1; bh=Bzm3/ivLpH+LG73vgsjml8E0mcgjPE25yUG9T2oSf4I=; b=ic
+        drHr52LJ8NsiGetG2KiRTtNBYjY30Y6VgE20HIEEfjFzuAi688xAJCeEH/645fk8
+        q9o1oOY6VxImvpKow6379HiyAfkQQPcgkyr9zxzIWzIZzQIwyEsJujgaKhYquD6u
+        m7QXKXg29BXiQVX/AMud5prX53hgqNk/crmpJlqXpln95cvgYmwiO1MMqFCD82xJ
+        Q30K7x3j4LkfOiTBRbiOb3gHSHaKBmkYmucomQcqo/G5Jy/Jw+5qqtPSr1/HQr2V
+        8dBe3HK7Nn2eYIb4Ms+Afj5oiLjk1x5X9r6B35L0No9wp3D69UmJfR4HIs1QKCrQ
+        wZ89GbJK5oHp7ypCiWIA==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3t2y7maq4u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Sep 2023 12:02:19 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4DAB0100057;
+        Wed, 13 Sep 2023 12:02:17 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 380A8233003;
+        Wed, 13 Sep 2023 12:02:17 +0200 (CEST)
+Received: from [10.252.24.233] (10.252.24.233) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 13 Sep
+ 2023 12:02:16 +0200
+Message-ID: <aec60fe8-ec1d-25d1-f07d-eb0b664d8dba@foss.st.com>
+Date:   Wed, 13 Sep 2023 12:02:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
+Content-Language: en-US
+To:     Tim Blechmann <tim@klingt.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Tim Blechmann <tim.blechmann@gmail.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <agostino.carballeira@native-instruments.de>
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
+ <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
+ <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
+ <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
+ <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
+ <b3374cec-946b-db27-d849-0a4ec0068b1b@klingt.org>
+ <d2a303ad-4dcf-de52-38db-53695169fe33@klingt.org>
+ <d37a0431-9b4d-1215-2c2c-14c8963f93a7@foss.st.com>
+ <117fbe3c-3db4-4f82-1d96-11501259e209@klingt.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <117fbe3c-3db4-4f82-1d96-11501259e209@klingt.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.252.24.233]
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-13_04,2023-09-05_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 04:23:43PM +0530, Mukesh Ojha wrote:
-> +Qualcomm APSS Minidump kernel driver concept
-> +--------------------------------------------
-> +::
-> +
-> <snipped>...
-> +Dump collection
-> +---------------
-> +
-> +	+-----------+
-> +	|           |
-> +	|           |         +------+
-> +	|           |         |      |
-> +	|           |         +--+---+ Product(Qualcomm SoC)
-> +	+-----------+             |
-> +	|+++++++++++|<------------+
-> +	|+++++++++++|    usb cable
-> +	+-----------+
-> +            x86_64 PC
-> +
 
-Sphinx reports htmldocs warnings:
 
-/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:100: WARNING: Literal block expected; none found.
-/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Unexpected indentation.
-/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:234: WARNING: Malformed table.
+On 9/13/23 10:47, Tim Blechmann wrote:
+> many thanks for your analysis, very interesting.
+> 
+>> please find below an extract of your trace with my analysis:
+>>
+>>
+>>   stm32mp1_bulk_p-390     [001] .....   907.241226: rpmsg_send
+>> <-rpmsg_intercore_send_buffer.constprop.0
+>>   stm32mp1_bulk_p-390     [001] .....   907.241228: virtio_rpmsg_send
+>> <-rpmsg_send
+>>   stm32mp1_bulk_p-390     [001] .....   907.241237: virtqueue_enable_cb
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [001] .....   907.241239: virtqueue_enable_cb_prepare
+>>
+>> At this point seems that no more TX-buffer
+>>
+>> <-rpmsg_recv_single
+>>       kworker/0:4-67      [000] .....   907.242533: vring_interrupt
+>> <-rproc_vq_interrupt
+>>       kworker/0:4-67      [000] .....   907.242536: rpmsg_xmit_done
+>>
+>> Here you receive  an interrupt indicating that TX buffer has been released by
+>> the remote. that's the expected behavior.
+>>
+>>
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [000] .....   984.054941: rpmsg_send
+>> <-rpmsg_intercore_send_buffer.constprop.0
+>>   stm32mp1_bulk_p-390     [000] .....   984.054943: virtio_rpmsg_send
+>> <-rpmsg_send
+>>   stm32mp1_bulk_p-390     [000] .....   984.054956: virtqueue_enable_cb
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [000] .....   984.054958: virtqueue_enable_cb_prepare
+>> <-virtqueue_enable_cb
+>>   stm32mp1_bulk_p-390     [000] .....   999.398667: virtqueue_disable_cb
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [000] .....   999.414840: rpmsg_send
+>> <-rpmsg_intercore_send_buffer.constprop.0
+>>   stm32mp1_bulk_p-390     [000] .....   999.414843: virtio_rpmsg_send
+>> <-rpmsg_send
+>>   stm32mp1_bulk_p-390     [000] .....   999.414855: virtqueue_enable_cb
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [000] .....   999.414857: virtqueue_enable_cb_prepare
+>>
+>> Here you have again no more TX buffer. From this point there is no more activity
+>> neither in TX nor in RX until the timeout of 15 seconds.
+>> If you have a look to rproc_vq_interrupt the last one occurs at 907.242533
+>>
+>>
+>> As you have no more virtqueue interrupts call for both directions, the issue is
+>> probably either in the Cortex-M firmware, which seems to be stalled, or due to a
+>> disable of the IRQs in Linux.
+> 
+> afaict we can rule out a complete stall of the cortex-m firmware: if we change
+> the rpmsg_send to a rpmsg_trysend/msleep loop, the trysend will succeed to get a
+> buffer after a few iterations.
+> 
+>> or due to a disable of the IRQs in Linux.
+> 
+> do you have some recommendations how we could trace this?
 
-+-----------+
-|           |
-|           |         +------+
-|           |         |      |
-|           |         +--+---+ Product(Qualcomm SoC)
-+-----------+             |
-|+++++++++++|<------------+
-|+++++++++++|    usb cable
-+-----------+
-/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Blank line required after table.
+First, check if the Cortex-M sends the IPCC mailbox notification during the
+15-second period. Then, you can verify the IPCC registers to check if some flags
+are pending. On the Linux side, there is probably literature available to
+explain how to trace it.
 
-I have to apply the fixup:
-
----- >8 ----
-diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
-index 20202da8ca40b9..5709a3853ae7ea 100644
---- a/Documentation/admin-guide/qcom_minidump.rst
-+++ b/Documentation/admin-guide/qcom_minidump.rst
-@@ -95,7 +95,6 @@ could be anywhere scattered in the DDR.
- 
- Qualcomm APSS Minidump kernel driver concept
- --------------------------------------------
--::
- 
- Qualcomm APSS minidump kernel driver adds the capability to add Linux
- region to be dumped as part of RAM dump collection. At the moment,
-@@ -231,6 +230,8 @@ respective dump as per set download mode.
- Dump collection
- ---------------
- 
-+::
-+
- 	+-----------+
- 	|           |
- 	|           |         +------+
-
-Thanks.
-
--- 
-An old man doll... just what I always wanted! - Clara
+> 
+> many thanks,
+> tim
+> 
+>> <-virtqueue_enable_cb
+>>   stm32mp1_bulk_p-390     [000] .....  1014.758678: virtqueue_disable_cb
+>> <-rpmsg_send_offchannel_raw
+>>   stm32mp1_bulk_p-390     [000] .....  1014.774802: rpmsg_send
+>> <-rpmsg_intercore_send_buffer.constprop.0
+>>   stm32mp1_bulk_p-390     [000] .....  1014.774804: virtio_rpmsg_send
+>> <-rpmsg_send
+>>   stm32mp1_bulk_p-390     [000] .....  1014.774815: virtqueue_enable_cb
+> 
+> 
