@@ -2,163 +2,178 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CABF4EDEC76
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 15:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D1CEDEC78
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 15:43:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233512AbjIMPV6 (ORCPT
+        id S229984AbjIMPny (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50724 "EHLO
+        Wed, 13 Sep 2023 11:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbjIMPV5 (ORCPT
+        with ESMTP id S230237AbjIMPnk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 11:21:57 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671A0C1;
-        Wed, 13 Sep 2023 08:21:53 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38DEv7D2000527;
-        Wed, 13 Sep 2023 15:21:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Hhvs/8xK+JuOLpQApokzSBRuLPc6gpd16QdQyq90tXo=;
- b=inpRhqRQ9iyqoDLb+SCeLj3L80j0aaxA65DOSL7deucsFrMyWVH6lBgERO3aaUWgcYQT
- 2112QHLgeuGawvyqX+Js7tdyjT7BWofiU0vCQdw/Vnk/pmwQx0p7scH6qqpdv1m60g7Q
- K1ddfsd7ApfcSXfvWhMLMEgZMEywsAXFDpVQ1E7ldVmrMdQz+F5OqYF+agVOUT+yjYrR
- XTytpQcjhOwrUEfYAf0PaFgk/CDf2twRg7CfIG/lmmHXs1vIIlRvf9Njbdw9e5l/7FvR
- fp4z0UxPfifYXOCrFhroXwvlKnBQVUhqltoHKkqlw4+lruXoRAXvlIZvhfjRwi5o1ikL Rg== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t2y7qa59j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 15:21:03 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38DFL2bc031246
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 15:21:02 GMT
-Received: from [10.216.62.56] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 13 Sep
- 2023 08:20:49 -0700
-Message-ID: <56c0328c-9744-4c69-b0a3-c36cc497fe31@quicinc.com>
-Date:   Wed, 13 Sep 2023 20:50:45 +0530
+        Wed, 13 Sep 2023 11:43:40 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DD91BCD
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 08:43:21 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2bf8b9c5ca0so60877181fa.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 08:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694619800; x=1695224600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/UVGR1vSOq8d04uiGlXr6zXZdncQJrHAcL7z9Oa7q5s=;
+        b=wd4hv87ZYS8V4gXu/8SebigBk1s0bUr+j6ZxDypqWJTXM/xIOV9KcmPOEM1wXhLrEx
+         eLPuLS/3CRprr38ykyId5kpXNkNl2hg0Fz7jhxIrT8BW6CDPn2umirz8NuCez0FRxdHe
+         yAd08i2SIuPvtN4b8H1w+QSRqyd27BzIBL9jFFgbhhVGbhkNsC9DOiWn5A7qR6vLrl87
+         wRiu3DgbdFcN+K79yFi5dUhKjLwCvQgMNt0tkDKhG6qIdefZtHQ1HNmjuVbbhQsu9D3Q
+         9GaB9OnnkMy5YwVEByKqEh4y83PdOADHmjk9Vw8Dpx3tysEZ78QJwDie39Ke8FhXP1yc
+         3KHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694619800; x=1695224600;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/UVGR1vSOq8d04uiGlXr6zXZdncQJrHAcL7z9Oa7q5s=;
+        b=LWmHIthn0bhMxaxno7BAj+D6zF/K5O207OARjC1hfU556zo0McNBDwpRAGRIcxlDaW
+         30lioSeZuJXhr94QWIGH158xd2n9e9azAFtBryOzeb87o73NHXtvTng1lKXIvcP5A4hx
+         Qmt2TeZ67IpLUkdVqTb5r/4TLzP8fWC4Hgunvq0cPP7gUkPipUI4k/PgK2+BeyahJfOt
+         iYi7ijEKTu2u581b+8+gtoOK1DuhUosu7UNPERcXeZ4riKjN6agdVPpw/PTZydGQWNIQ
+         ijMI54axlBmUQEV2S3Zyvb9rxi5VwIrRv5XfU7LAqffaz8fXEiFVduVsdNxCnAFvCvus
+         XYFQ==
+X-Gm-Message-State: AOJu0YzBXR+lndG5PBGOppYiOUnOGit50z8NkQQsCBui3tfrNnWYJHR8
+        bE9JljtOVGESQIUIAXZYT442vQ==
+X-Google-Smtp-Source: AGHT+IH0lbaO0JZ9flMoXDcb0nqt3WSvBbstzIb5rAju6JrWIQIlR0RUZOreeSKTPpCvh8WeZU5TWw==
+X-Received: by 2002:a05:651c:1206:b0:2bc:c466:60e9 with SMTP id i6-20020a05651c120600b002bcc46660e9mr2556951lja.49.1694619800012;
+        Wed, 13 Sep 2023 08:43:20 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id d24-20020a17090648d800b00992e14af9c3sm8686981ejt.143.2023.09.13.08.43.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Sep 2023 08:43:19 -0700 (PDT)
+Message-ID: <0f92b568-399e-4bd8-84f7-088abe9dbe84@linaro.org>
+Date:   Wed, 13 Sep 2023 17:43:18 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
 Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
- <ZQF_9-nX47QUCycO@debian.me>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <ZQF_9-nX47QUCycO@debian.me>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+        martyn.welch@collabora.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20230913111644.29889-1-hnagalla@ti.com>
+ <20230913111644.29889-2-hnagalla@ti.com>
+ <052be57d-4081-43ca-6c9f-9afedb030a58@linaro.org>
+ <b8305681-9fa5-e506-b8c7-03338b5ed4d8@ti.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <b8305681-9fa5-e506-b8c7-03338b5ed4d8@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2gAwxDuhuJ3-P7vtmlbV-ftKdk4OelF4
-X-Proofpoint-ORIG-GUID: 2gAwxDuhuJ3-P7vtmlbV-ftKdk4OelF4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-13_09,2023-09-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 clxscore=1015 spamscore=0 priorityscore=1501
- mlxlogscore=977 phishscore=0 bulkscore=0 suspectscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309130126
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 13/09/2023 15:59, Hari Nagalla wrote:
+> On 9/13/23 06:32, Krzysztof Kozlowski wrote:
+>>>   - Removed unrelated items from examples
+>>>
+>>> Changes since v4:
+>>>   - Rebased to the latest kernel-next tree
+>>>   - Added optional sram memory region for m4f device node
+>>>
+>>> Changes since v5:
+>>>   - None
+>> Hm, why none? There were errors in the binding to which you did not
+>> respond. Did you just ignore them?
+>>
+> I do not see any errors in my builds. Am i missing something? Please 
+> excuse my lack of knowledge here. Thought the bot errors were outside of 
+> the patch submitted 
+> (Documentation/devicetree/bindings/dma/stericsson,dma40.yaml). 
+> Appreciate your kind inputs..
 
+I would expect then some confirmation that errors can be ignored.
+Instead report was left just unanswered.
 
-On 9/13/2023 2:55 PM, Bagas Sanjaya wrote:
-> On Mon, Sep 11, 2023 at 04:23:43PM +0530, Mukesh Ojha wrote:
->> +Qualcomm APSS Minidump kernel driver concept
->> +--------------------------------------------
->> +::
->> +
->> <snipped>...
->> +Dump collection
->> +---------------
->> +
->> +	+-----------+
->> +	|           |
->> +	|           |         +------+
->> +	|           |         |      |
->> +	|           |         +--+---+ Product(Qualcomm SoC)
->> +	+-----------+             |
->> +	|+++++++++++|<------------+
->> +	|+++++++++++|    usb cable
->> +	+-----------+
->> +            x86_64 PC
->> +
 > 
-> Sphinx reports htmldocs warnings:
+> $ make -j`nproc` ARCH=arm64 V=1 CROSS_COMPILE=aarch64-none-linux-gnu- 
+> DT_CHEKCER_FLAGS=-m dt_binding_check 
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> make --no-print-directory -C /home/a0868345/temp/linux-next \
+> -f /home/a0868345/temp/linux-next/Makefile dt_binding_check
+> make -f ./scripts/Makefile.build obj=scripts/basic
+> make -f ./scripts/Makefile.build obj=scripts/dtc
+> make -f ./scripts/Makefile.build obj=Documentation/devicetree/bindings
+> # LINT    Documentation/devicetree/bindings
+>    (find ./Documentation/devicetree/bindings \( -name '*.yaml' ! -name 
+> 'processed-schema*' \) | grep -F -e 
+> "Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml" | 
+> xargs -n200 -P$(nproc) /home/a0868345/.local/bin/yamllint -f parsable -c 
+> ./Documentation/devicetree/bindings/.yamllint >&2) || true
+> # DTEX 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts
+>    dt-extract-example 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml > 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts
+> # CHKDT   Documentation/devicetree/bindings/processed-schema.json
+>    (find ./Documentation/devicetree/bindings \( -name '*.yaml' ! -name 
+> 'processed-schema*' \) | grep -F -e 
+> "Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml" | 
+> xargs -n200 -P$(nproc) dt-doc-validate -u 
+> ./Documentation/devicetree/bindings) || true
+> # SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>    f=$(mktemp) ; find ./Documentation/devicetree/bindings \( -name 
+> '*.yaml' ! -name 'processed-schema*' \) > $f ; dt-mk-schema -j  @$f > 
+> Documentation/devicetree/bindings/processed-schema.json ; rm -f $f
+> # DTC_CHK 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb
+>    gcc -E 
+> -Wp,-MMD,Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.pre.tmp 
+> -nostdinc -I./scripts/dtc/include-prefixes -undef -D__DTS__ -x 
+> assembler-with-cpp -o 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.dts.tmp 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts 
+> ; ./scripts/dtc/dtc -o 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb 
+> -b 0 -iDocumentation/devicetree/bindings/remoteproc/ 
+> -i./scripts/dtc/include-prefixes -Wno-avoid_unnecessary_addr_size 
+> -Wno-graph_child_address -Wno-interrupt_provider 
+> -Wno-unique_unit_address -Wunique_unit_address_if_enabled -d 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.dtc.tmp 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.dts.tmp 
+> ; cat 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.pre.tmp 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.dtc.tmp 
+>  > 
+> Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d 
+> ; dt-validate  -u ./Documentation/devicetree/bindings -p 
+> ./Documentation/devicetree/bindings/processed-schema.json 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb 
+> || true
 > 
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:100: WARNING: Literal block expected; none found.
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Unexpected indentation.
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:234: WARNING: Malformed table.
 > 
-> +-----------+
-> |           |
-> |           |         +------+
-> |           |         |      |
-> |           |         +--+---+ Product(Qualcomm SoC)
-> +-----------+             |
-> |+++++++++++|<------------+
-> |+++++++++++|    usb cable
-> +-----------+
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Blank line required after table.
-> 
-> I have to apply the fixup:
-> 
-> ---- >8 ----
-> diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
-> index 20202da8ca40b9..5709a3853ae7ea 100644
-> --- a/Documentation/admin-guide/qcom_minidump.rst
-> +++ b/Documentation/admin-guide/qcom_minidump.rst
-> @@ -95,7 +95,6 @@ could be anywhere scattered in the DDR.
->   
->   Qualcomm APSS Minidump kernel driver concept
->   --------------------------------------------
-> -::
->   
->   Qualcomm APSS minidump kernel driver adds the capability to add Linux
->   region to be dumped as part of RAM dump collection. At the moment,
-> @@ -231,6 +230,8 @@ respective dump as per set download mode.
->   Dump collection
->   ---------------
->   
-> +::
-> +
->   	+-----------+
->   	|           |
->   	|           |         +------+
+>  >> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>  >> +%YAML 1.2
+>  >> +---
+>  >> +$id:http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
+>  >> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+>  >> +
+>  >> +title: TI K3 M4F processor subsystems
+>  >> +
+>  >> +maintainers:
+>  >> +  - Hari Nagalla<hnagalla@ti.com>
+>  >> +  - Mathieu Poirier<mathieu.poirier@linaro.org>
+>  > Are you sure Mathieu has this device and is a maintainer of this device?
+>  >
+> Earlier, Mathieu suggested he can be the maintainer. Beagle play is 
+> based on AM625 device.
 > 
 
-Thanks, will take care.
+Sure, no problem, good for me.
 
+Best regards,
+Krzysztof
 
-> Thanks.
-> 
