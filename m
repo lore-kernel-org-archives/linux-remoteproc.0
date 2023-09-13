@@ -2,110 +2,208 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976F5CA553B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 16:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF91BEE01FD
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 17:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbjIMQYh (ORCPT
+        id S231425AbjIMRuw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 12:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40272 "EHLO
+        Wed, 13 Sep 2023 13:50:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjIMQYh (ORCPT
+        with ESMTP id S229468AbjIMRuv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 12:24:37 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461F090
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 09:24:33 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-269304c135aso6163a91.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 09:24:33 -0700 (PDT)
+        Wed, 13 Sep 2023 13:50:51 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B999219AF
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 10:50:47 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c0c6d4d650so467365ad.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 10:50:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694622273; x=1695227073; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694627447; x=1695232247; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8zYJ0RCDSzCvH0QmeVklyy3iTRroJs+iiHGO8/+f8I=;
-        b=nMnMzULmo0/OpRuQqqhm1kcA7B8vpJnwBXIiVuStocjehig90bYjKuXDxO0XdkXSG+
-         1idiR4yp1bOiCjqjdqjsDfmPK7nUeO+tQcDxxLEwj8DSlZZM3hRDBESHL2JvW7I68tVR
-         mCuSOtRMtjzD6AfY3e5zditE030JazSaOQTJOz9+hPnjzLD2frNUo5K/jphUn4xj4+fw
-         0t4XcWFYyR4YHym+h3ZZRB/+t+/wPlFfcVgf59dxDucKNGWzrL2u75XvgL++MRKgbj3f
-         c1cH52c3S61rloPElYWGCukEkA1JIN9hmh2KCTerGNSvqYSYvdrKJ/Hpp3uToAzeypGj
-         sZxw==
+        bh=bxGCcX5dO7Y4NrveLmTT3O1kgnmgg4vt0sVCX4yijHg=;
+        b=vN9Lp9zXQzKAuWYrWm7fGtKNFjkhoqQOsh5vSxsNUmq9ZLaax1hDi1ayjTuSQu9QjL
+         FTGmLfN2JfyNZUJ9/3Wajix5EseFilNhe1xwqarE2OpgXPJcv3z4n9eDk6TYvk9J83b5
+         TWmxMcQnEmsQ9XMzcLaruGMWXOruqU+9DJikLRX9WPXYfpuSY6D6Bl0zwWbNe+ZN+s8x
+         IRdd25IRNeVhto+XauYcTxs+no3YDgBGLfqI4AhaW0puvZqSyCNHDz8vsoEEAs0yAESD
+         U5VfEEgVrGTaPJsfXKz9NhEjFHePglmLT4wBVrsRU4iIj4oiqV7xy7BJywaRwv001Y47
+         51Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694622273; x=1695227073;
+        d=1e100.net; s=20230601; t=1694627447; x=1695232247;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T8zYJ0RCDSzCvH0QmeVklyy3iTRroJs+iiHGO8/+f8I=;
-        b=FBI6w/9ACeMBwmOYUK0olUk3ElLe039v8fjnw1sl6FS5orEi4fUO7803fK5+ff2mqR
-         gmAp1xl+b27Nm1X2N7OTAuViCNgjdsMceeDojJitWm5vsw3+CfeBmn0fUtwRvTKK1wA8
-         wCbTFLeZHbbtskJeus/UVWCzHOgdF00O+Jc0cmGeFfCggQDtbNxdRRMgecX1Yvh/6mhO
-         yG+K/FdTHsuS27OZqdKyjCWkISquYfmolqQKJRcCXwFc+ZKubgvZyZstN1g+aWiL9H/5
-         IRRvAenqzg0SVUYdpch+S/uGBDBbTug27bRoWrLn+RTQuIATc+ATFplXJRPLRagC3jN2
-         PdGw==
-X-Gm-Message-State: AOJu0Yz/7qff8DerQpWmN6aklVjt9ysaeUTH/Ef3NmE77Davp/9wlh6q
-        pMqP252zTsldjrWAUEuaRklVLw==
-X-Google-Smtp-Source: AGHT+IHWgvdtB+C/HoVawZpYur0vnXtpwb+tKQOBHfzGcJms7pMWVUlPNPLiwp+O2MlPn4j6G7TlYg==
-X-Received: by 2002:a17:90b:4c4f:b0:268:1068:4464 with SMTP id np15-20020a17090b4c4f00b0026810684464mr2548211pjb.30.1694622272676;
-        Wed, 13 Sep 2023 09:24:32 -0700 (PDT)
+        bh=bxGCcX5dO7Y4NrveLmTT3O1kgnmgg4vt0sVCX4yijHg=;
+        b=JPdxb7XLQXVDFmWaE6TOTo+rZQNOd1hkjZ760CWl183eAP4i8EzNpOGasGSmQpfHB7
+         azgrTJSwXFc4L5+XNXGAdzi1PgoOK7q/ESmtztYyx94w+uy9E0gSzIUJrdVuRFdoPPw1
+         NUTb8cvfiKQc9b4MPEVFJmop4lMiCpKW4TMwhRG5iXvOWNrfFYHwB2AyJYD5WfytBmxC
+         euVP7CXtTQy+UMYfovodMhINMIWVasSX5TlCXqDVSi15ThPW/9wViRH+DXJOpSovCKEc
+         BUCnkOZcdpIGiPfyo4hhSTPCZvUuxkDngCV9LkiF8+t3wKs+pjbrbSx7z8g/xxP0AApK
+         J7hg==
+X-Gm-Message-State: AOJu0YwW1fn4Rkqn3We99NERxozn7sOaDx5316qkoST2Z1tcnduYedX2
+        KUODxHOr6TyUF+2/kiCIhDDw+w==
+X-Google-Smtp-Source: AGHT+IHQKLRS4pYFQ7w1F9tvvBOYbFGDDG3SzTX1ZLt74KPx5aEZdvG7A4CnAaBeINcr4SxERDkgDg==
+X-Received: by 2002:a17:902:8345:b0:1bf:4a1f:2b57 with SMTP id z5-20020a170902834500b001bf4a1f2b57mr3522163pln.13.1694627447228;
+        Wed, 13 Sep 2023 10:50:47 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d880:f5d9:a2c5:d083])
-        by smtp.gmail.com with ESMTPSA id gj19-20020a17090b109300b002680ef05c40sm1668280pjb.55.2023.09.13.09.24.31
+        by smtp.gmail.com with ESMTPSA id p15-20020a170902e74f00b001bb8be10a84sm6837728plf.304.2023.09.13.10.50.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 09:24:32 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 10:24:29 -0600
+        Wed, 13 Sep 2023 10:50:46 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 11:50:44 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Chen Jiahao <chenjiahao16@huawei.com>
-Cc:     andersson@kernel.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, arnaud.pouliquen@foss.st.com
-Subject: Re: [PATCH -next v2] remoteproc: stm32: Clean up redundant
- dev_err_probe()
-Message-ID: <ZQHiPUYYLNwJ/rz1@p14s>
-References: <20230817083336.404635-1-chenjiahao16@huawei.com>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v17 00/14] Add support for MT8195 SCP 2nd core
+Message-ID: <ZQH2dG+l/dONUsyi@p14s>
+References: <20230901080935.14571-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230817083336.404635-1-chenjiahao16@huawei.com>
+In-Reply-To: <20230901080935.14571-1-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 04:33:36PM +0800, Chen Jiahao wrote:
-> Referring to platform_get_irq()'s definition, the return value has
-> already been checked if ret < 0, and printed via dev_err_probe().
-> Calling dev_err_probe() one more time outside platform_get_irq()
-> is obviously redundant. Removing outside dev_err_probe() to
-> clean it up.
+On Fri, Sep 01, 2023 at 04:09:21PM +0800, Tinghan Shen wrote:
+> The mediatek remoteproc driver currently only allows bringing up a 
+> single core SCP, e.g. MT8183. It also only bringing up the 1st 
+> core in SoCs with a dual-core SCP, e.g. MT8195. This series support 
+> to bring-up the 2nd core of the dual-core SCP.
 > 
-> Besides, switch to use platform_get_irq_optional() since the irq
-> is optional here.
-> 
-> Signed-off-by: Chen Jiahao <chenjiahao16@huawei.com>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
+> v16 -> v17:
+> 1. add a comment in scp_add_multi_core() at patchset 8
 
-Applied.
+Other than patch 2 and 14, I have applied this set.  The remaining patches will
+have to be resent to Matthias.
 
 Thanks,
 Mathieu
 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 98234b44f038..1f53c672c66b 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -712,9 +712,9 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  	unsigned int tzen;
->  	int err, irq;
->  
-> -	irq = platform_get_irq(pdev, 0);
-> +	irq = platform_get_irq_optional(pdev, 0);
->  	if (irq == -EPROBE_DEFER)
-> -		return dev_err_probe(dev, irq, "failed to get interrupt\n");
-> +		return irq;
->  
->  	if (irq > 0) {
->  		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
+> 
+> v15 -> v16:
+> 1. fix the checkpatch warning at patchset 1 
+> 2. move changes on scp_probe() to the new added patchset 6
+> 3. revise platform_set_drvdata() at patchset 8
+> 4. fix commit message at patchset 9
+> 
+> v15 -> v14:
+> 1. use the common SCP registers in struct mtk_scp_of_cluster instead of
+>    copy it to struct mtk_scp at patchset 5 
+> 2. use platform_set_drvdata instead of platform_device_add_data at patchset 5 
+> 3. rename l2tcm_lock to cluster_lock at patchset 8
+> 4. check l2tcm_refcnt value before decreasing at patchset 8
+> 5. revise the commit message at patchset 11
+> 
+> v13 -> v14:
+> 1. add review tag to patchset 1,6
+> 2. exchange the order of sram power on and reset assert in
+> mt8195_scp_c1_before_load at patchset 2
+> 3. use ERR_CAST in patchset 5
+> 4. re-write patchset 7 to remove dependency between core 0 and core 1 
+> 5. add patch set 10 to report watchdot timeout to all cores
+> 
+> v12 -> v13:
+> 1. replace subdevice with new mediatek scp operations in patchset 7 
+> 2. add review tag to patchset 3
+> 3. modify mediatek,scp phandle name of video-codec@18000000 at patchset 11
+> 
+> v11 -> v12:
+> 1. add scp_add_single/multi_core() to patchset 6
+> 2. remove unused comment in patchset 6
+> 3. rename list name from mtk_scp_cluster to mtk_scp_list
+> 4. rewrite the multi-core probe flow 
+> 5. disable rproc->autoboot and boot rproc by request_firmware_nowait at patchset 7 
+> 6. remove patchset 7 review tag  
+> 
+> v10 -> v11:
+> 1. rewrite patchset 5 to probe single-core SCP with the cluster list
+> 2. Also in patchset 5, move the pointer of mtk_scp object from the
+>    platform data property to the driver data property 
+> 3. move the appearance of mtk_scp cluster property to patcheset 7
+> 
+> v9 -> v10:
+> 1. move the global mtk_scp list into the platform device driver data structure
+> 2. remove an unnecessary if() condition
+> 
+> v8 -> v9:
+> 1. initialize l1tcm_size/l1tcm_phys at patchset 05/11 
+> 2. rewrite patchset 06/11 to unify the flow and remove hacks
+> 
+> v7 -> v8:
+> 1. update the node name of mt8192 asurada SCP rpmsg subnode
+> 2. squash register definitions into driver patches
+> 3. initialize local variables on the declaration at patch v8 06/11 
+> 
+> v6 -> v7:
+> 1. merge the mtk_scp_cluster struct into the mtk_scp structure
+>    at the "Probe multi-core SCP" patch
+> 
+> v5 -> v6:
+> 1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
+> 2. rename the SCP core 0 label from 'scp' to 'scp_c0'
+> 
+> v4 -> v5:
+> 1. move resource release actions to the platform driver remove operation 
+> 2. fix dual-core watchdog handling
+> 
+> v3 -> v4:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
+> 
+> v2 -> v3:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. add SCP core 1 node to mt8195.dtsi
+> 4. remove redundant call of rproc_boot for SCP
+> 5. refine IPI error message
+> 
+> v1 -> v2:
+> 1. update dt-binding property description
+> 2. remove kconfig for scp dual driver
+> 3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
+> 
+> 
+> Tinghan Shen (14):
+>   dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
+>     definition
+>   arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
+>   dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+>   remoteproc: mediatek: Add MT8195 SCP core 1 operations
+>   remoteproc: mediatek: Extract SCP common registers
+>   remoteproc: mediatek: Revise SCP rproc initialization flow for
+>     multi-core SCP
+>   remoteproc: mediatek: Probe SCP cluster on single-core SCP
+>   remoteproc: mediatek: Probe SCP cluster on multi-core SCP
+>   remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power
+>     control on dual-core SCP
+>   remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
+>   remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+>   remoteproc: mediatek: Report watchdog crash to all cores
+>   remoteproc: mediatek: Refine ipi handler error message
+>   arm64: dts: mediatek: mt8195: Add SCP 2nd core
+> 
+>  .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++-
+>  .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+>  .../boot/dts/mediatek/mt8192-asurada.dtsi     |   2 +-
+>  .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  34 +-
+>  drivers/remoteproc/mtk_common.h               |  39 +-
+>  drivers/remoteproc/mtk_scp.c                  | 539 ++++++++++++++----
+>  drivers/remoteproc/mtk_scp_ipi.c              |   4 +-
+>  8 files changed, 656 insertions(+), 146 deletions(-)
+> 
 > -- 
-> 2.34.1
+> 2.18.0
 > 
