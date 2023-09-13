@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F08CA5503
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EBBCA5501
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238541AbjIMHQl (ORCPT
+        id S238562AbjIMHSG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:16:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50714 "EHLO
+        Wed, 13 Sep 2023 03:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238509AbjIMHQk (ORCPT
+        with ESMTP id S238557AbjIMHSF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:16:40 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452D01986
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:16:36 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-52a23227567so8330682a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:16:36 -0700 (PDT)
+        Wed, 13 Sep 2023 03:18:05 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740F7198C
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:18:01 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52a1ce529fdso8540425a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694589395; x=1695194195; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694589480; x=1695194280; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yn21ujmkr4Sp+EA0gnf8dygODVc/XuXdjn0LI3sjZCE=;
-        b=CpYHGOyHsVw3HAVKXZXFkjMqXx7MIGEFKEb57tnO79+DU2I0WpCz8e3ZlcxWM6w2kg
-         YXFz74qnmSBnKL05oD2EST9HW3ax8yTOSKsvZh+eNMYRnSX/vfdHonqYbq59LKysVKrg
-         OONjz9Y6SP+QbFo92+ytJsobL0nR7NZADxXzv6XcIB5cAV1ECzaxusJ9lmGhIyutwdwT
-         j4xC/CWuGTh6hh9hGubUqEUgsm44KCNuzyey37Vnlz2UkUAkaoRiUH+qE+GtNaVEoNAE
-         J5dLL8X/4Y+xifrUVIQ8unFEQr/Lc1ljdbxjcpKLVtM3vCAllHzkoi/9G7QS/P8FmvMT
-         ksJw==
+        bh=5E2GWmaKgMk9eaNY11kumMiKx9QbIcNvdM4XUjWrJ44=;
+        b=dtbcUaxcxcGEyOr/O1cRE+JinMzko/z31d/4lugS7cNJoHXNu1JnA4Z4WhoE56DV1v
+         U4KD4KBc6boQbqzcEIKP9ZVlj5MKIH1emk7m16Wk5ZiN96CPeurfCmutbPwCYVb/K22M
+         weK44nqVo+9pyRdsrD38VMW886f8Uw8HzkFqA6ZdXwtZXrY0ZM1hNrTbEd11cPnzmj8O
+         8Et0yRjIbG1AuJauWWsBrNOdb7L/tJuKE9/e2QEMwubT5VUXLPzdnmXNECwWFbyfNhpI
+         /3jw5U87GVHlt1X0jjSgl0dk1T9GWC8Sq6lpxYeP7xWt3220jU8yD1MMxNfsUgarK6XO
+         FzlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694589395; x=1695194195;
+        d=1e100.net; s=20230601; t=1694589480; x=1695194280;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yn21ujmkr4Sp+EA0gnf8dygODVc/XuXdjn0LI3sjZCE=;
-        b=Oyc5CYO7DQBlVJ+WycpvhRFMv9IHeXLH0VwsP29yb2s6jclBum5CnYQhvydOfQcoER
-         Mhg+rYGpggKMhEY6h0EFMdUMGI1/o/590lJRbFzCujZoDLotJAGL0Cv6e+dItO7hnfGR
-         H4VB4LZH9GBBpeLKYBCqgK1GvFk/3yc7pTFPJnDfkxScTU5G75G9FiA7cS28+YGya+YZ
-         i5FadJnYeY1ndg6UgIFRW5x6EvXwrcXGnnfVSjkzvYb4kegGrUdzvkhZwzzFcsdWc9w8
-         rJ0g9UXGUZ9vkeHSgV20gel6Id7J7t62yAmnHwFt5hQGhf5/+EuNpDifeFB0eElC01Fz
-         z+Ww==
-X-Gm-Message-State: AOJu0YwMyJz1wB4DE/BxuEwgCyccon8vAQFNG2mPSvZsxbGpJx6hjwtQ
-        c7Q1nbmqXk253wRSPWZm+w0F8A==
-X-Google-Smtp-Source: AGHT+IFyf9Fx/pf35KrNLfez0lmkNaBYKL0JSrB9CFz9ETZ9MnkjYUX40l83RXA8JXM9raiowLn7Ng==
-X-Received: by 2002:a50:ec8a:0:b0:523:2274:91cb with SMTP id e10-20020a50ec8a000000b00523227491cbmr1504709edr.12.1694589394834;
-        Wed, 13 Sep 2023 00:16:34 -0700 (PDT)
+        bh=5E2GWmaKgMk9eaNY11kumMiKx9QbIcNvdM4XUjWrJ44=;
+        b=N7Aimhc2ef686EcjMWTkIruM5hytsjf2dREqDtZ+/9ap2WK8n7WjfohwGA2Caxts/S
+         bd7HjCxpsjMCDTvpEdxDVTIBfKYFiiqxHW5CSIeHowkEMxKiBgw7mVVgMSZ3NtsfsilC
+         nmr5ieNFpiPDtNOpKdB0NnIpo9+nCpjfBBIy5EShknneqoTdEPi7wOU8MV0N6g+Ip0wg
+         +Ku70Wzq0ATrn0YXZTfAO1IznMp3w6gvMklcwVr4eTQ+TmUVoRjvETH9xv0Lu6oiDtB9
+         y3ZanX2kHCAUuJYmorBITa3ru/XDUMzruWZ3/AQD61uiy2qG5cGdyWhn0QUneYBfpPLx
+         BfJw==
+X-Gm-Message-State: AOJu0YwIips/wM/qbAYZRusCNKibCf3Ud/lhRtp2Zcd831VdgQJRT3gc
+        K6Xc74Hzc9aBt02gUKhXoFR5Rg==
+X-Google-Smtp-Source: AGHT+IEIxkxJMHTHddH6e9vxURb7vyya0U8l8ijNR3g0bzw+qT3mlAGtTd1Mz3CsBWlsWVc9jIz9CQ==
+X-Received: by 2002:aa7:d1d6:0:b0:525:528d:836f with SMTP id g22-20020aa7d1d6000000b00525528d836fmr1588780edp.18.1694589479936;
+        Wed, 13 Sep 2023 00:17:59 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id eg27-20020a056402289b00b0052f3e8c84fesm4786096edb.29.2023.09.13.00.16.33
+        by smtp.gmail.com with ESMTPSA id bc3-20020a056402204300b0052348d74865sm6702364edb.61.2023.09.13.00.17.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 00:16:34 -0700 (PDT)
-Message-ID: <af5b83c7-94af-1779-68da-78976fc68fc7@linaro.org>
-Date:   Wed, 13 Sep 2023 09:16:32 +0200
+        Wed, 13 Sep 2023 00:17:59 -0700 (PDT)
+Message-ID: <c4420c00-5c45-c46b-ae73-15c6d8af0694@linaro.org>
+Date:   Wed, 13 Sep 2023 09:17:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v2 08/14] dt-bindings: remoteproc: qcom,adsp: Remove
- AGGRE2 clock
+Subject: Re: [PATCH v2 14/14] arm64: dts: qcom: sdm630: Fix USB2 clock-names
+ order
 Content-Language: en-US
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -80,9 +80,9 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         linux-usb@vger.kernel.org
 References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-8-1e506593b1bd@linaro.org>
+ <20230721-topic-rpm_clk_cleanup-v2-14-1e506593b1bd@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-8-1e506593b1bd@linaro.org>
+In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-14-1e506593b1bd@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -90,15 +90,20 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 12/09/2023 15:31, Konrad Dybcio wrote:
-> The AGGRE2 clock is a clock for the entire AGGRE2 bus, managed from
-> within the interconnect driver. Attaching it to SLPI was a total hack.
-> Get rid of it.
+> The last 2 clock-names entries for the USB2 controller were swapped,
+> resulting in schema warnings:
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+> ['cfg_noc', 'core', 'mock_utmi', 'sleep'] is too short
+>         'iface' was expected
+>         'sleep' was expected
+>         'mock_utmi' was expected
+> 
+> Fix it and take the liberty to make the clock-names entries more
+> readable.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This was already fixed:
 
+https://lore.kernel.org/all/20230723141849.93078-2-krzysztof.kozlowski@linaro.org/
 
 Best regards,
 Krzysztof
