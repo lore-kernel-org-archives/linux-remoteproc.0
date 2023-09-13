@@ -2,112 +2,151 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9F2CA5511
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 08:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0C2CA551E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 09:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239096AbjIMIyF (ORCPT
+        id S239347AbjIMJZU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 04:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34878 "EHLO
+        Wed, 13 Sep 2023 05:25:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbjIMIyD (ORCPT
+        with ESMTP id S239264AbjIMJZT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 04:54:03 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19D61997
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 01:53:59 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-401d10e3e54so71031395e9.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 01:53:59 -0700 (PDT)
+        Wed, 13 Sep 2023 05:25:19 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063A21999;
+        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-68fb70fca9fso2843405b3a.2;
+        Wed, 13 Sep 2023 02:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694595238; x=1695200038; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GhHrKGkwknmn53kTVek0J706okQHEDAGQ9NnXjohhwc=;
-        b=GWk6iuSEuCFhD9ZoTd4XeA4MjqL1LK7EgPPji+7OEk/t9odzZH2F/Em8IVwJQqbaUT
-         +ahBRgAigrkRmH2FVAbGdW2mpbrF5O0C2a5B4AomxE3RMZeSFGbHGf5Q4ZGUsXrdizWq
-         wkuVOKPke9doXDRoX2CbQZtEjai5MWKz0uhgm2Ul4QXqqIQWMrRy9fZrg/5Q0iuOfcPK
-         97Fz8O+OzeJejuIitDR6PBMZW0a1+AwwVeChGGqbqnC6FjiJ6ZrJaBbDnKMQ7xcYDhCD
-         gsEEZeEbx21wMCl/e+ZzadVH43TiEgm3WSexaLwqlVG2LfOoATiFdTtw2f+EpZqmtorJ
-         Qjcg==
+        d=gmail.com; s=20221208; t=1694597115; x=1695201915; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
+        b=nSnCf0cK4xpn5q4uEWbi4jgNyj0YzEsrtBBZ271rYq2sgh5We1k0YxkCtQ4fazBZos
+         ePABUdjDWp3xK7NGi+9pyFeYQ+QTnstMkVdat7uZJ5NbLR9n8dbjmW8xRKh/+ntPtm/t
+         oUGiR4lOAqjyCbO8F7DNfmFHHourggWUIRInKRKcg5U2dqbbjcVD+ZqM93L6n0T8nLsO
+         XMX8CsWd79cvTgVmZ7TgOcknUcS0XNVwiJ7feFCfM3xcVou08AeFHBLCddNMP+i935Bc
+         yKIfxiEyRC8B60TNfKYiBx4wnKx+/K3gLTEHH2+Q7etVfYAqgw/G544/zGAdvKpsDqwO
+         JXHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694595238; x=1695200038;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhHrKGkwknmn53kTVek0J706okQHEDAGQ9NnXjohhwc=;
-        b=PpxB5zpffDKc3sLQKwRBNjDyl+1cpy5SOdI8FRv3wp7jAVd0grltevjqT9BAnRdwRv
-         SkB+KM+yC0ZRRuhg0VSuC3/T7fyJ7vEePqBCAnUTLQNTgtNZTPqnGPDX1vFCIjZsFURP
-         4Ljvw0I65rXzmXEbxa/pk4xDJLpTeV1cbXZ29zB06bJA82NF4SD2XRNpSUZPYvLsaofh
-         tIfbJI3RLyxtl3GHH/VZ+f0f6QbpzQUuL9l5QqnL9VpvnhV2eiY+az4ogMWftCuEsnyx
-         LnUeQI+VH6VxqnYGriE8DIJIwFkY8M7QxmcVjF+y4GLN9s9iZhurK8LsJ4ucJS8ElkU8
-         ngBg==
-X-Gm-Message-State: AOJu0YxVCPjJ7Ae9Z5x0a8K1TohGzuBHZ7UmSsmxxa/Kf5Q0H7IKgt77
-        fHMlvenxLl8cCHGL1JBi1j+ToA==
-X-Google-Smtp-Source: AGHT+IHlx1wBmhFt+Xhr2HaUbSAyTT3NDErkIFWBlr4Be2MBvo6kfY/pyhgj249iwl6Zy5PgBzaFXg==
-X-Received: by 2002:a7b:cbc8:0:b0:3fe:111a:d1d9 with SMTP id n8-20020a7bcbc8000000b003fe111ad1d9mr1571454wmi.25.1694595238135;
-        Wed, 13 Sep 2023 01:53:58 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id k23-20020a05600c0b5700b00402fa98abe3sm1369905wmr.46.2023.09.13.01.53.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 01:53:57 -0700 (PDT)
-Message-ID: <7b500bba-3091-f425-a60d-e58a3d9e4c1a@linaro.org>
-Date:   Wed, 13 Sep 2023 10:53:54 +0200
+        d=1e100.net; s=20230601; t=1694597115; x=1695201915;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpFYAXnOqxjLWxlwZ45c7Msf6OlbS0bhBMJrCMsl3zg=;
+        b=AIAkg9YnxQsQyiVbRqg5n1xUNLOyholxgx3Vu+bHGBI9x+wTDYBDKenAOFvotQJ90E
+         q34z4mzNhzLFtBFErH5UcizFWYzfXw+xv6MUoLPqzEruIez3z24qfkhmW8uBPfVuUsrI
+         Ic/yC2lctMPuDp9R6Wk0bwq61Qt8WTN/9oGEzmzja0XYalSglKYQ/sOcB+Az2gj7sVpi
+         fos8mUV+SRAe0qQU0nH7bktWS1CSAo44sPTvLXKvSunJkU6xAG4OQT3/Bg8Vq1xLxldA
+         wEbbVS5qx8lADAwmvchVdn9TQwnc7dpENfJIgR2yAz1NeB/n/vm1SMbnaw2zy6Gx6WRG
+         vVVg==
+X-Gm-Message-State: AOJu0Yxf/9b3naYXtLDUcMuj/0suPI5XXpl4TQQ0+GUKlt1Q+W2d3eQ0
+        SYGJeyE5PeKBdTZM1oZ3SXI=
+X-Google-Smtp-Source: AGHT+IG/3WIzQMbIKyGZtuuCHIWrLbl2lrCKitCBZEZyOjDkgyQfkCiMeKwYbJrLvyEtH8At6O8gvQ==
+X-Received: by 2002:a05:6a20:8f1f:b0:13f:c40c:379 with SMTP id b31-20020a056a208f1f00b0013fc40c0379mr2117577pzk.13.1694597115404;
+        Wed, 13 Sep 2023 02:25:15 -0700 (PDT)
+Received: from debian.me ([103.124.138.83])
+        by smtp.gmail.com with ESMTPSA id i4-20020a170902eb4400b001b8b26fa6c1sm9914334pli.115.2023.09.13.02.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 02:25:14 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 9D86780666AA; Wed, 13 Sep 2023 16:25:11 +0700 (WIB)
+Date:   Wed, 13 Sep 2023 16:25:11 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
+Message-ID: <ZQF_9-nX47QUCycO@debian.me>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v2 01/14] arm64: dts: qcom: msm8916: Drop RPM bus clocks
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        linux-usb@vger.kernel.org
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-1-1e506593b1bd@linaro.org>
- <bd11d1b1-efe5-4f96-43e7-163fca5d3278@linaro.org>
- <ac501bcc-80a1-4b65-ba24-272152d1c95c@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ac501bcc-80a1-4b65-ba24-272152d1c95c@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13/09/2023 10:47, Konrad Dybcio wrote:
-> On 13.09.2023 09:07, Krzysztof Kozlowski wrote:
->> On 12/09/2023 15:31, Konrad Dybcio wrote:
->>> These clocks are now handled from within the icc framework and are
->>
->> That's a driver behavior, not hardware.
-> I believe we've been over this already..
-> 
-> The rationale behind this change is: that hardware, which falls
-> under the "interconnect" class, was previously misrepresented as
-> a bunch of clocks. There are clocks underneath, but accessing them
-> directly would be equivalent to e.g. circumventing the PHY subsystem
-> and initializing your UFS PHY from within the UFS device.
+On Mon, Sep 11, 2023 at 04:23:43PM +0530, Mukesh Ojha wrote:
+> +Qualcomm APSS Minidump kernel driver concept
+> +--------------------------------------------
+> +::
+> +
+> <snipped>...
+> +Dump collection
+> +---------------
+> +
+> +	+-----------+
+> +	|           |
+> +	|           |         +------+
+> +	|           |         |      |
+> +	|           |         +--+---+ Product(Qualcomm SoC)
+> +	+-----------+             |
+> +	|+++++++++++|<------------+
+> +	|+++++++++++|    usb cable
+> +	+-----------+
+> +            x86_64 PC
+> +
 
-And every time one write such commit msg, how should we remember there
-is some exception and actually it is about clock representation not CCF
-or ICC framework.
+Sphinx reports htmldocs warnings:
 
-Best regards,
-Krzysztof
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:100: WARNING: Literal block expected; none found.
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Unexpected indentation.
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:234: WARNING: Malformed table.
 
++-----------+
+|           |
+|           |         +------+
+|           |         |      |
+|           |         +--+---+ Product(Qualcomm SoC)
++-----------+             |
+|+++++++++++|<------------+
+|+++++++++++|    usb cable
++-----------+
+/home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Blank line required after table.
+
+I have to apply the fixup:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
+index 20202da8ca40b9..5709a3853ae7ea 100644
+--- a/Documentation/admin-guide/qcom_minidump.rst
++++ b/Documentation/admin-guide/qcom_minidump.rst
+@@ -95,7 +95,6 @@ could be anywhere scattered in the DDR.
+ 
+ Qualcomm APSS Minidump kernel driver concept
+ --------------------------------------------
+-::
+ 
+ Qualcomm APSS minidump kernel driver adds the capability to add Linux
+ region to be dumped as part of RAM dump collection. At the moment,
+@@ -231,6 +230,8 @@ respective dump as per set download mode.
+ Dump collection
+ ---------------
+ 
++::
++
+ 	+-----------+
+ 	|           |
+ 	|           |         +------+
+
+Thanks.
+
+-- 
+An old man doll... just what I always wanted! - Clara
