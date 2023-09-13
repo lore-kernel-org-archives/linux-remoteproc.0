@@ -2,98 +2,98 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBC0CA5537
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 10:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A611CA5539
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 10:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239690AbjIMK0B (ORCPT
+        id S230407AbjIMK3P (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 06:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48842 "EHLO
+        Wed, 13 Sep 2023 06:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236362AbjIMKZ7 (ORCPT
+        with ESMTP id S232420AbjIMK3O (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 06:25:59 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF223D3;
-        Wed, 13 Sep 2023 03:25:55 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040C1C433C8;
-        Wed, 13 Sep 2023 10:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694600755;
-        bh=4k2IeW5H9cEqbLtJFKkr6gJFeGtpZv+ntg6InyehTu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MsMiX7Bq3wu/ubrt9go4Zl2qtpZZZdKThoIZMlsHjdv+fHu2fusSjJfXcdrTL0+1h
-         7c1jVIQcD03WR5z9RerPkcDNylNLW5Wq3XcKZ5bQYWy1wXrd9cTvRWfIPl3MwXFskV
-         XPH3kH0v1uj9MuRwolV+w+vLF0LjVfOEoRv4JRCNrGQpP+Jxjf6cG7TlggmqUuLepJ
-         Vat7PzDJUQrphDZ733Kkrcn9wU4VLMBBeNki+N7/G53aZI9TMUHiPzXSVDuhsMMjz9
-         Dmy5ALThLPMKpNRjZyQfJhkygiiY63lqSxswU6AkAvbbdNCesDQtNF2bRM3DaEuEmo
-         sHH75LxTD4r6w==
-Date:   Wed, 13 Sep 2023 11:25:46 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        vigneshr@ti.com, nm@ti.com, matthias.bgg@gmail.com,
-        kgene@kernel.org, alim.akhtar@samsung.com, bmasney@redhat.com,
-        quic_tsoni@quicinc.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
- support through command line
-Message-ID: <20230913102545.GA12021@willie-the-truck>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
- <20230912101820.GA10884@willie-the-truck>
- <14bf3fca-f031-d000-6fd6-d82f4de9b255@quicinc.com>
+        Wed, 13 Sep 2023 06:29:14 -0400
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62158D3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 03:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1694600946; x=1694860146;
+        bh=Tb4Bg3x5OGpUdHwJymJdAFTJs8535yToLqaPcZ6nlrM=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=iI3BVFsvok36MtypPZwLNZHlRoLEl3x+HNeh1GSCvGWVjSsb7sZOLiU8au/c6JcUi
+         0PUR+vBVFsc5iDQ+Tws2gEvLOhhSQ37Qs7EGU+K76BatVAiWzxHoEh2MViuPLdb6g+
+         vJ7bnT/CtRMcCL1qqAyaT/Utt7X0jLs2QDDVQdt8kNquBvc32LcY//Ok+35l51cLZl
+         S30RiuCmdXDLw36Uo3LBYyTLXjzJvKP4AsciAOC+Wydu6MspQaK+sCvLx3OckSM9i+
+         HQq2/IND57hmOez/OyulGoedxt3f0KVueFCs1i+yZ43s1JnLvdeFOGueX50ZvA5dXK
+         IPzr6xjI9f6CQ==
+Date:   Wed, 13 Sep 2023 10:29:00 +0000
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+From:   Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 13/14] arm64: dts: qcom: msm8996: Remove PNoC clock from MSS
+Message-ID: <3dce9fea-0544-4219-a9fd-520cb0ef0eb2@protonmail.com>
+Feedback-ID: 6882736:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14bf3fca-f031-d000-6fd6-d82f4de9b255@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 12:32:54PM +0530, Mukesh Ojha wrote:
-> Thanks for the response.
-> 
-> On 9/12/2023 3:48 PM, Will Deacon wrote:
-> > On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
-> > > The reserved memory region for ramoops is assumed to be at a fixed
-> > > and known location when read from the devicetree. This may not be
-> > > required for something like Qualcomm's minidump which is interested
-> > > in knowing addresses of ramoops region but it does not put hard
-> > > requirement of address being fixed as most of it's SoC does not
-> > > support warm reset and does not use pstorefs at all instead it has
-> > > firmware way of collecting ramoops region if it gets to know the
-> > > address and register it with apss minidump table which is sitting
-> > > in shared memory region in DDR and firmware will have access to
-> > > these table during reset and collects it on crash of SoC.
-> > > 
-> > > So, add the support of reserving ramoops region to be dynamically
-> > > allocated early during boot if it is request through command line
-> > > via 'dyn_ramoops_size=' and fill up reserved resource structure and
-> > > export the structure, so that it can be read by ramoops driver.
-> > > 
-> > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > ---
-> > >   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
-> > 
-> > Why does this need to be in the arch code? There's absolutely nothing
-> > arm64-specific here.
-> 
-> Current clients of this cmdline would be only arm64, and that is the
-> reason of putting this here.
+On 12/09/2023 4:31 pm, Konrad Dybcio wrote:
+> The PNoC clock is a clock for the entire PNoC bus, managed from
+> within the interconnect driver. Attaching it to MSS was a total hack.
+> Get rid of it and take the liberty to make the clock-names entries
+> more readable.
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/msm8996.dtsi | 11 ++++++++---
+>   1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/=
+qcom/msm8996.dtsi
+> index 7061a8e12c81..51db5ddcef88 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -2479,10 +2479,15 @@ mss_pil: remoteproc@2080000 {
+>   =09=09=09=09 <&gcc GCC_MSS_GPLL0_DIV_CLK>,
+>   =09=09=09=09 <&gcc GCC_MSS_SNOC_AXI_CLK>,
+>   =09=09=09=09 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
+> -=09=09=09=09 <&rpmcc RPM_SMD_PCNOC_CLK>,
+>   =09=09=09=09 <&rpmcc RPM_SMD_QDSS_CLK>;
+> -=09=09=09clock-names =3D "iface", "bus", "mem", "xo", "gpll0_mss",
+> -=09=09=09=09      "snoc_axi", "mnoc_axi", "pnoc", "qdss";
+> +=09=09=09clock-names =3D "iface",
+> +=09=09=09=09      "bus",
+> +=09=09=09=09      "mem",
+> +=09=09=09=09      "xo",
+> +=09=09=09=09      "gpll0_mss",
+> +=09=09=09=09      "snoc_axi",
+> +=09=09=09=09      "mnoc_axi",
+> +=09=09=09=09      "qdss";
+>  =20
+>   =09=09=09resets =3D <&gcc GCC_MSS_RESTART>;
+>   =09=09=09reset-names =3D "mss_restart";
 
-I don't think that's a strong enough justification, tbh. We should at
-least be able to compile this for other architectures using TEST_COMPILE
-and so somewhere under drivers/ makes more sense to me.
+Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Will
