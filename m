@@ -2,117 +2,163 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBECEDEC4D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 12:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC22EDEC52
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 13:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240643AbjIMMg6 (ORCPT
+        id S234305AbjIMN7y (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 08:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50634 "EHLO
+        Wed, 13 Sep 2023 09:59:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240641AbjIMMg5 (ORCPT
+        with ESMTP id S230063AbjIMN7y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 08:36:57 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E7719B4;
-        Wed, 13 Sep 2023 05:36:53 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25713C433C8;
-        Wed, 13 Sep 2023 12:36:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694608613;
-        bh=9elooBvdUre19hw6hhl5TUjtNpfBJuWPJGdA3PSQOPk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=agk5wuvYe4eXdvQP2/ZI92WDyKAW1ArMiActdlzr0IZA/ohh3j3AVRiiJ5E2+FgWs
-         cCm27CBwuBysFObzN8Dw98uvJTI/JswJziqobQaI5dd4N46lmaNNGw/4S3M2iYs43l
-         txeo0KTT18iqwnMQdRcO8jv0F7IOuk+yuhulmz+1k2fEpgX6frZtWzbc4G3Ap6fn47
-         8CCNniKF3Zgr80FbAyzrnrqAxWnbEXhFwVvQzYD10m63vQANkRJVz5YaygaLQlsoO2
-         qxosIo3SOJ1iN0BXgWu7UFo7Bjp2NyDWKTu0oFEHZqGrM6yet4akd/sThGxz9YMcas
-         ObjMBTd/XLAYw==
-Received: (nullmailer pid 2790031 invoked by uid 1000);
-        Wed, 13 Sep 2023 12:36:51 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Sep 2023 09:59:54 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 130DE19BF;
+        Wed, 13 Sep 2023 06:59:49 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 38DDxRTY073550;
+        Wed, 13 Sep 2023 08:59:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1694613567;
+        bh=+cicwCaXuC7mIR3p0+RFuO35Kt1qPJV+S2mwgjtFGCY=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=inPIakf6vYw/ioSQ/ELGXLBN/pbefNNh0EHMNTOYyUOGK6luCezQcI7kebZfIJNjy
+         kMdaQSQnzbMp7D+Ts+NbAAPqNJ3j8KGhrNQXWs4LIalL5dfxqPiDX15qxPTTwacSPq
+         RzeKnBEn/gGkXF7VQ2pKsgWMgs9jrl/U4p1hGwkM=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 38DDxRNn041432
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Sep 2023 08:59:27 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 13
+ Sep 2023 08:59:26 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 13 Sep 2023 08:59:26 -0500
+Received: from [10.249.48.175] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 38DDxQgs077390;
+        Wed, 13 Sep 2023 08:59:26 -0500
+Message-ID: <b8305681-9fa5-e506-b8c7-03338b5ed4d8@ti.com>
+Date:   Wed, 13 Sep 2023 08:59:26 -0500
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Hari Nagalla <hnagalla@ti.com>
-Cc:     linux-kernel@vger.kernel.org, martyn.welch@collabora.com,
-        devicetree@vger.kernel.org, andersson@kernel.org,
-        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org
-In-Reply-To: <20230913111644.29889-2-hnagalla@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+        <p.zabel@pengutronix.de>, <martyn.welch@collabora.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
 References: <20230913111644.29889-1-hnagalla@ti.com>
  <20230913111644.29889-2-hnagalla@ti.com>
-Message-Id: <169460861100.2790015.8526656812110915165.robh@kernel.org>
-Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x
- SoCs
-Date:   Wed, 13 Sep 2023 07:36:51 -0500
+ <052be57d-4081-43ca-6c9f-9afedb030a58@linaro.org>
+Content-Language: en-US
+From:   Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <052be57d-4081-43ca-6c9f-9afedb030a58@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On Wed, 13 Sep 2023 06:16:41 -0500, Hari Nagalla wrote:
-> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-> The remote processor's life cycle management and IPC mechanisms are
-> similar across the R5F and M4F cores from remote processor driver
-> point of view. However, there are subtle differences in image loading
-> and starting the M4F subsystems.
+On 9/13/23 06:32, Krzysztof Kozlowski wrote:
+>>   - Removed unrelated items from examples
+>>
+>> Changes since v4:
+>>   - Rebased to the latest kernel-next tree
+>>   - Added optional sram memory region for m4f device node
+>>
+>> Changes since v5:
+>>   - None
+> Hm, why none? There were errors in the binding to which you did not
+> respond. Did you just ignore them?
 > 
-> The YAML binding document provides the various node properties to be
-> configured by the consumers of the M4F subsystem.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
-> Changes since v1:
->  - Spelling corrections
->  - Corrected to pass DT checks
-> 
-> Changes since v2:
->  - Missed spelling correction to commit message
-> 
-> Changes since v3:
->  - Removed unnecessary descriptions and used generic memory region names
->  - Made mboxes and memory-region optional
->  - Removed unrelated items from examples
-> 
-> Changes since v4:
->  - Rebased to the latest kernel-next tree
->  - Added optional sram memory region for m4f device node
-> 
-> Changes since v5:
->  - None
-> 
->  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> 
+I do not see any errors in my builds. Am i missing something? Please 
+excuse my lack of knowledge here. Thought the bot errors were outside of 
+the patch submitted 
+(Documentation/devicetree/bindings/dma/stericsson,dma40.yaml). 
+Appreciate your kind inputs..
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+$ make -j`nproc` ARCH=arm64 V=1 CROSS_COMPILE=aarch64-none-linux-gnu- 
+DT_CHEKCER_FLAGS=-m dt_binding_check 
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+make --no-print-directory -C /home/a0868345/temp/linux-next \
+-f /home/a0868345/temp/linux-next/Makefile dt_binding_check
+make -f ./scripts/Makefile.build obj=scripts/basic
+make -f ./scripts/Makefile.build obj=scripts/dtc
+make -f ./scripts/Makefile.build obj=Documentation/devicetree/bindings
+# LINT    Documentation/devicetree/bindings
+   (find ./Documentation/devicetree/bindings \( -name '*.yaml' ! -name 
+'processed-schema*' \) | grep -F -e 
+"Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml" | 
+xargs -n200 -P$(nproc) /home/a0868345/.local/bin/yamllint -f parsable -c 
+./Documentation/devicetree/bindings/.yamllint >&2) || true
+# DTEX 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts
+   dt-extract-example 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml > 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts
+# CHKDT   Documentation/devicetree/bindings/processed-schema.json
+   (find ./Documentation/devicetree/bindings \( -name '*.yaml' ! -name 
+'processed-schema*' \) | grep -F -e 
+"Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml" | 
+xargs -n200 -P$(nproc) dt-doc-validate -u 
+./Documentation/devicetree/bindings) || true
+# SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+   f=$(mktemp) ; find ./Documentation/devicetree/bindings \( -name 
+'*.yaml' ! -name 'processed-schema*' \) > $f ; dt-mk-schema -j  @$f > 
+Documentation/devicetree/bindings/processed-schema.json ; rm -f $f
+# DTC_CHK 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb
+   gcc -E 
+-Wp,-MMD,Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.pre.tmp 
+-nostdinc -I./scripts/dtc/include-prefixes -undef -D__DTS__ -x 
+assembler-with-cpp -o 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.dts.tmp 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dts 
+; ./scripts/dtc/dtc -o 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb 
+-b 0 -iDocumentation/devicetree/bindings/remoteproc/ 
+-i./scripts/dtc/include-prefixes -Wno-avoid_unnecessary_addr_size 
+-Wno-graph_child_address -Wno-interrupt_provider 
+-Wno-unique_unit_address -Wunique_unit_address_if_enabled -d 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.dtc.tmp 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.dts.tmp 
+; cat 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.pre.tmp 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d.dtc.tmp 
+ > 
+Documentation/devicetree/bindings/remoteproc/.ti_k3-m4f-rproc.example.dtb.d 
+; dt-validate  -u ./Documentation/devicetree/bindings -p 
+./Documentation/devicetree/bindings/processed-schema.json 
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.example.dtb 
+|| true
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/stericsson,dma40.example.dtb: dma-controller@801c0000: sram:0: [4294967295, 4294967295] is too long
-	from schema $id: http://devicetree.org/schemas/dma/stericsson,dma40.yaml#
+ >> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+ >> +%YAML 1.2
+ >> +---
+ >> +$id:http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
+ >> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+ >> +
+ >> +title: TI K3 M4F processor subsystems
+ >> +
+ >> +maintainers:
+ >> +  - Hari Nagalla<hnagalla@ti.com>
+ >> +  - Mathieu Poirier<mathieu.poirier@linaro.org>
+ > Are you sure Mathieu has this device and is a maintainer of this device?
+ >
+Earlier, Mathieu suggested he can be the maintainer. Beagle play is 
+based on AM625 device.
 
-doc reference errors (make refcheckdocs):
+I will look into the other comments for the 'ti,k3-m4f-rproc.yaml' 
+binding doc.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230913111644.29889-2-hnagalla@ti.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks
