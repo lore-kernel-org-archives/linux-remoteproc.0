@@ -2,109 +2,159 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ADDEDEC46
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 11:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BD3EDEC49
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 12:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240292AbjIMLhS (ORCPT
+        id S240256AbjIMMJE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 07:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40868 "EHLO
+        Wed, 13 Sep 2023 08:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238480AbjIMLhR (ORCPT
+        with ESMTP id S240242AbjIMMJC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 07:37:17 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D7D1726
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:37:13 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-403012f276dso45795705e9.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:37:13 -0700 (PDT)
+        Wed, 13 Sep 2023 08:09:02 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B32919AD
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 05:08:58 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5280ef23593so8124575a12.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 05:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694605032; x=1695209832; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1694606937; x=1695211737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nme/JcCZy+21A8LZUmcpQ/snwqu0c1CGtPKLSeADIRc=;
-        b=j7gXvpyobUDiLzNyNTZ9Hw0Gug6li/qnT+W/tTKq296h9ORbbw2Dm43yl7dX3onYmx
-         XKd1B5DAwdvQsAzyG2fSX0m44n6E4SJxmKaGr2lwcq+fwKoJOcHkPmKk/i73ICDOKxWz
-         5dD0hJQQRjYE+lXxQfngpNv/f00gVgir6LKKNHPtFkR8RV3O3tqv97Tw7IncWux/tPgW
-         MWhJKQcM8RTR7tg5SOw+mWQXz6q/ZzwD+P9vLS3ImKxhnOgFYwkCHfBzcgR7wk7gt5gx
-         6FzpEka6NIQF5EUBQKditkH5w2OHLSS65lbrV5REXeApuUo/tf7ksHsyM2yd1O7BosPv
-         h2zw==
+        bh=Dsc3mJorN3B/h1Vd1XyRMUNMxmDX6BmM8Ul2Dt3JUqg=;
+        b=p6zPVxHY9UsEHQvmZ7RjoFRellJ+R2Jww0DGrDEd0zIbcpOP6ZM1rV4lAy6kq482fP
+         EP5ogy9Nf8zYxoZP7MWXE+tamko2bBrN4m1F5r/i/5WnbOx5i+lRtpJYKq696K2A6pdV
+         8n5laNn0KgSuG7U4INoFU/4Vk34Z9QhSmH1uf6Gmr/brpOGfsgKHM7GKIcBPHs9P8lse
+         NdlREm9PieRqCARvL7wOiyiA3KoX3ox31pZ+jIf6kGAXrN4aSwuFkEDfx3yLfc9AKKSO
+         kMxWD/l8No2nUAP86z+x7Dn85SvfUruPjIqABSd6/8OZ7W3KAET8qBFxX1eG3f5Hgbbc
+         MUVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694605032; x=1695209832;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1694606937; x=1695211737;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nme/JcCZy+21A8LZUmcpQ/snwqu0c1CGtPKLSeADIRc=;
-        b=ZlR92qEf/jTtrJqsK0GIsy9SyBbTWqiEjRsOsjUMguRKwLp6aA456TP05JgFBh+sub
-         iARw5oXj3LGH8FGJ9N5aC8iGP/t7PpnHc0NylpuAwqtVUnrYDPw7rGrU4hQcT447ExsC
-         PCaVyH6nfADV9NmK50tVyAf9rtFSA8V3eKiFG7Cd2knUpitUR+xPilZHsFgriQOhbvp8
-         qG75aR2DVe5fDWQ06Z1KGNA2sAsnmHT5suSLn1lNQAOtETlV47x12PUdfmwV+DjzhIIp
-         wVtNkxLIqDaPbRWHosBh3L6VFa711/Tj+Sl5XFzed0UxIySZdts71MVwGSzLNqXF+Ovw
-         HQEQ==
-X-Gm-Message-State: AOJu0YxNsMr+64Ax/r1Zw7o1fbmKPxCyXJB6Zm+RzXT1ZzwM2O86Lh+e
-        bfsRvnFL8GweGv+Gwz/bRfrhVQ==
-X-Google-Smtp-Source: AGHT+IH2nVE8W7SFZFZN8wVN3nLWifI8J4zzhexkxNYGhAChtyZIJ5HHNdGp2o6YOXlYp4DS/nsyCw==
-X-Received: by 2002:a05:600c:2346:b0:402:a464:1a20 with SMTP id 6-20020a05600c234600b00402a4641a20mr1713557wmq.33.1694605032176;
-        Wed, 13 Sep 2023 04:37:12 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id l12-20020a1ced0c000000b003fed4fa0c19sm1803441wmh.5.2023.09.13.04.37.11
+        bh=Dsc3mJorN3B/h1Vd1XyRMUNMxmDX6BmM8Ul2Dt3JUqg=;
+        b=MmYdCYv/MUai2RakBDD2DVxQLBXpKGnPws8xmeg7zpqoU7OrJZt4y1OpBem6d/kcTx
+         X/RMOtntxpjoxYbQPEHrv+PM0bqpetmYlTOVktoNwHxUa3hFaK8MyoJ8FtPKiAaJroj+
+         NrAgp6nzrpT6PaKVS77rU/4Lbpv2DWRT5B5cr7LZFvzozva+otAEi7jjCAo/vT8vm8/v
+         CvnRDwtBSNJE27+O0mVaDz7jgr+/NKcweROBOh911svob9cMFDVsWiTcz8vSNIelsBzt
+         K1tzJ79YGDy421n0AX57KAhFctMMIZjocsUTrxFIvC9MR0nCa391zsprfWyCGuL+tUi5
+         bn2A==
+X-Gm-Message-State: AOJu0YxzJpThRln/L0Dq7MEBdS8tUskyTSR0Zo1kFy1IZLazK8tVAGh6
+        jHqVxfTtO+gGOIAS7u6gkPu38w==
+X-Google-Smtp-Source: AGHT+IFeIWTz7zH3NNiZGG8GawoWgTPZnX8SM7DBQPmw79zI1P9+hmA7uTN3L/vILKVy/rLiMXcj8Q==
+X-Received: by 2002:a17:906:cc16:b0:9a2:23cd:f052 with SMTP id ml22-20020a170906cc1600b009a223cdf052mr1668521ejb.7.1694606936783;
+        Wed, 13 Sep 2023 05:08:56 -0700 (PDT)
+Received: from [192.168.37.232] (178235177106.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.106])
+        by smtp.gmail.com with ESMTPSA id p21-20020a170906229500b00992b8d56f3asm8319579eja.105.2023.09.13.05.08.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 04:37:11 -0700 (PDT)
-Message-ID: <75fbb3fa-8696-c2fe-0a41-a3e588241b79@linaro.org>
-Date:   Wed, 13 Sep 2023 13:37:10 +0200
+        Wed, 13 Sep 2023 05:08:56 -0700 (PDT)
+Message-ID: <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
+Date:   Wed, 13 Sep 2023 14:08:53 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v6 3/4] remoteproc: k3: Split out functions common with M4
- driver
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: sdm630: Drop RPM bus clocks
 Content-Language: en-US
-To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
-        martyn.welch@collabora.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20230913111644.29889-1-hnagalla@ti.com>
- <20230913111644.29889-4-hnagalla@ti.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230913111644.29889-4-hnagalla@ti.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-usb@vger.kernel.org
+References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
+ <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
+ <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13/09/2023 13:16, Hari Nagalla wrote:
-> From: Martyn Welch <martyn.welch@collabora.com>
-> 
-> In the next commit we will be adding the M4F driver which shares a lot of
-> commonality with the DSP driver. Split this shared functionality out so
-> that it can be used by both drivers.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
-> Changes since v2:
->  - New patch (reordered refactored from v2)
-> 
-> Changes since v3:
->  - Removed "ipc_only" element from k3_rproc structure
->  - Refactored to bring 3 more common functions
-> 
-> Changes since v4:
->  - None
-> 
-> Changes since v5:
->  - Rearranged the functions order to match with the functions in
->    ti_k3_dsp_remoteproc.c to ease review.
-> 
->  drivers/remoteproc/Makefile               |   2 +-
->  drivers/remoteproc/ti_k3_common.c         | 513 +++++++++++++++++++
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 598 ++--------------------
+On 13.09.2023 09:13, Krzysztof Kozlowski wrote:
+> On 12/09/2023 15:31, Konrad Dybcio wrote:
+>> These clocks are now handled from within the icc framework and are
+>> no longer registered from within the CCF. Remove them.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+[...]
 
-Generate your patch correctly with -M/-B/-C so the move will be detected.
+>>  		anoc2_smmu: iommu@16c0000 {
+>>  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
+>>  			reg = <0x016c0000 0x40000>;
+>> -
+>> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>> -			assigned-clock-rates = <1000>;
+>> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>> -			clock-names = "bus";
+> 
+> This is also against bindings. After your patch #4, such bus clock (or
+> other combinations) is still required.
+So, we have 4 SMMU instances on this platform:
 
-Best regards,
-Krzysztof
+MMSS (described, iface, mem, mem_iface)
+GPU (described, iface-mm, iface-smmu, bus-smmu)
 
+ANOC2 (this one, no clocks after removing rpmcc bus)
+LPASS (no clocks)
+
+Should I then create a new entry in the bindings, replicating
+what's there for msm8998[1] and dropping the entry with just "bus"
+from anyOf?
+
+Konrad
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/iommu/arm,smmu.yaml?h=next-20230913#n272
