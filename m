@@ -2,57 +2,57 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EBBCA5501
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C585CA5502
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238562AbjIMHSG (ORCPT
+        id S235421AbjIMHTY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47768 "EHLO
+        Wed, 13 Sep 2023 03:19:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238557AbjIMHSF (ORCPT
+        with ESMTP id S238554AbjIMHTX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:18:05 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740F7198C
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:18:01 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52a1ce529fdso8540425a12.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:18:01 -0700 (PDT)
+        Wed, 13 Sep 2023 03:19:23 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA941729
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:19:19 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52a40cf952dso8547663a12.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:19:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694589480; x=1695194280; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694589558; x=1695194358; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5E2GWmaKgMk9eaNY11kumMiKx9QbIcNvdM4XUjWrJ44=;
-        b=dtbcUaxcxcGEyOr/O1cRE+JinMzko/z31d/4lugS7cNJoHXNu1JnA4Z4WhoE56DV1v
-         U4KD4KBc6boQbqzcEIKP9ZVlj5MKIH1emk7m16Wk5ZiN96CPeurfCmutbPwCYVb/K22M
-         weK44nqVo+9pyRdsrD38VMW886f8Uw8HzkFqA6ZdXwtZXrY0ZM1hNrTbEd11cPnzmj8O
-         8Et0yRjIbG1AuJauWWsBrNOdb7L/tJuKE9/e2QEMwubT5VUXLPzdnmXNECwWFbyfNhpI
-         /3jw5U87GVHlt1X0jjSgl0dk1T9GWC8Sq6lpxYeP7xWt3220jU8yD1MMxNfsUgarK6XO
-         FzlA==
+        bh=A3hr2Dkoscy8OKR4lP2RVrqnAFjnoPD9KTW+WVQxYRY=;
+        b=HedRivCyAvpHBOt/GY55mQe0+gM33dbCrhqcCnrF3SFFqKaMqfnk9D9E2E4RlPWSgH
+         KJN76WNvfWGoS+3z3EA6OXncqmvkFOPqXDPxAlNyOOyl29csuz4tQ0L2g8rWvlM4V2rd
+         3Pz0HDknYfOKAJFoaZErcJKjMhdbvMUQy6uRAcYxKvjgbUnNpw/frO4GlKN8OMTOhhhe
+         1QGMfPFJvl3QWLJDRmQ3rRFzQL+KFDAE40WdKnRkTtWTlcKZZqhYHsm94q4YsL8lY7bP
+         CA3dnulhM8fksmMvb/Qp4shpY2dWqJvbmmB8nIr1w/Ll5Mz0qDdaj3CtXBsVjprkAYCF
+         p/mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694589480; x=1695194280;
+        d=1e100.net; s=20230601; t=1694589558; x=1695194358;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5E2GWmaKgMk9eaNY11kumMiKx9QbIcNvdM4XUjWrJ44=;
-        b=N7Aimhc2ef686EcjMWTkIruM5hytsjf2dREqDtZ+/9ap2WK8n7WjfohwGA2Caxts/S
-         bd7HjCxpsjMCDTvpEdxDVTIBfKYFiiqxHW5CSIeHowkEMxKiBgw7mVVgMSZ3NtsfsilC
-         nmr5ieNFpiPDtNOpKdB0NnIpo9+nCpjfBBIy5EShknneqoTdEPi7wOU8MV0N6g+Ip0wg
-         +Ku70Wzq0ATrn0YXZTfAO1IznMp3w6gvMklcwVr4eTQ+TmUVoRjvETH9xv0Lu6oiDtB9
-         y3ZanX2kHCAUuJYmorBITa3ru/XDUMzruWZ3/AQD61uiy2qG5cGdyWhn0QUneYBfpPLx
-         BfJw==
-X-Gm-Message-State: AOJu0YwIips/wM/qbAYZRusCNKibCf3Ud/lhRtp2Zcd831VdgQJRT3gc
-        K6Xc74Hzc9aBt02gUKhXoFR5Rg==
-X-Google-Smtp-Source: AGHT+IEIxkxJMHTHddH6e9vxURb7vyya0U8l8ijNR3g0bzw+qT3mlAGtTd1Mz3CsBWlsWVc9jIz9CQ==
-X-Received: by 2002:aa7:d1d6:0:b0:525:528d:836f with SMTP id g22-20020aa7d1d6000000b00525528d836fmr1588780edp.18.1694589479936;
-        Wed, 13 Sep 2023 00:17:59 -0700 (PDT)
+        bh=A3hr2Dkoscy8OKR4lP2RVrqnAFjnoPD9KTW+WVQxYRY=;
+        b=G25SJFIwcW29wD5spMhs9CJAArGn8gs+1mbXF2XaQlzH08qlvld224YOgCg+InBGDr
+         YTaq2pddhCBEdvypumsy46TwKEID0f+84dtPsPG2HxID0HKBu6hWwKO6FPh4B8pvVFwA
+         PJgNR8yBTi0UMF9qd923mQU7JHz8oNcF225McUCHu433W9Prjs9s8B0fLoyzAVgtSU41
+         Kxwm/1kPHynFqY04/xObEOaHR5n5i1mIXN6hm/K/OiVq/Qf1ar9qKB2VsTCL/gLanjjm
+         x07Adxt8m7Qhlb/vrJF4HBwppviZnoGul/KP2st7YFyWx5LNt7peHv9hMr55gc8kuJG9
+         bLDA==
+X-Gm-Message-State: AOJu0YxfWGkev46Mc42QssXVz/W1Ie7SRjIaTrIIPOMSAUc2v1yLBMqc
+        knBSJhxYyvWdnFuKBALDqAX8TQ==
+X-Google-Smtp-Source: AGHT+IE6YcmXnG2kZ7MVJ5DQQSPqKNTw5IPlBCUXbJfyxM9ZFvK7mh0xGHZANganLb81Af/8FOzTiQ==
+X-Received: by 2002:a05:6402:48f:b0:528:90d7:a19 with SMTP id k15-20020a056402048f00b0052890d70a19mr1734134edv.11.1694589558276;
+        Wed, 13 Sep 2023 00:19:18 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id bc3-20020a056402204300b0052348d74865sm6702364edb.61.2023.09.13.00.17.57
+        by smtp.gmail.com with ESMTPSA id b7-20020aa7c6c7000000b0052328d4268asm6841519eds.81.2023.09.13.00.19.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 00:17:59 -0700 (PDT)
-Message-ID: <c4420c00-5c45-c46b-ae73-15c6d8af0694@linaro.org>
-Date:   Wed, 13 Sep 2023 09:17:56 +0200
+        Wed, 13 Sep 2023 00:19:17 -0700 (PDT)
+Message-ID: <43cd38f5-20ce-a97d-0906-55faf228b377@linaro.org>
+Date:   Wed, 13 Sep 2023 09:19:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
@@ -100,10 +100,28 @@ On 12/09/2023 15:31, Konrad Dybcio wrote:
 > 
 > Fix it and take the liberty to make the clock-names entries more
 > readable.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm630.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+> index f11d2a07508c..316c8fd224e0 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+> @@ -1394,8 +1394,10 @@ usb2: usb@c2f8800 {
+>  				 <&gcc GCC_USB20_MASTER_CLK>,
+>  				 <&gcc GCC_USB20_MOCK_UTMI_CLK>,
+>  				 <&gcc GCC_USB20_SLEEP_CLK>;
+> -			clock-names = "cfg_noc", "core",
+> -				      "mock_utmi", "sleep";
+> +			clock-names = "cfg_noc",
+> +				      "core",
+> +				      "sleep",
+> +				      "mock_utmi";
 
-This was already fixed:
-
-https://lore.kernel.org/all/20230723141849.93078-2-krzysztof.kozlowski@linaro.org/
+Plus this is just incorrect... :(
 
 Best regards,
 Krzysztof
