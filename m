@@ -2,160 +2,161 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC34CA0EEB
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Sep 2023 15:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460E4EE3F39
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 01:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236368AbjILPbY (ORCPT
+        id S229553AbjIMBHZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Sep 2023 11:31:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54998 "EHLO
+        Tue, 12 Sep 2023 21:07:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236414AbjILPbN (ORCPT
+        with ESMTP id S236598AbjIMBHY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Sep 2023 11:31:13 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2051.outbound.protection.outlook.com [40.107.7.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB0A10F1;
-        Tue, 12 Sep 2023 08:31:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TRbMeTImFNFlVYyh4Y1A6Ys2hy8PrCKUpLT1H844xrXHdIgy4ENr1RzGzNJtCIhCaK/ulmPNm9pdWDaT5x1sQfpZb9DXG1C4Y4rgI1gvuAfBEisersi6WeSpWD2g7RFUJXmP1cZFxGgsYic4iAuuwl4hiijNsNHCgPBvnfAIhJ1R5Z6VZz94G+TyLqzDt1Vk2nIwmY4RrHrbNLalr4AjLlGW6h/Uho0UwbnPoDGQadOWJXejVoJtOJE8blPv2dQdJT5WqT1ZaxmYsRV4UOe6q5kNc2zX9lOmepQA/cVTXVam0dLJRFEXZFSvQo8Wma4730pMYCu0iwJyn4bQZNDjKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=spsaVNUNh/3VFuawqy3mCL/YNz+pKrVAaVclE+J7sZ4=;
- b=ezW8zAGtqqhFa5AWU1buZjPbGPTD8opOzcfysmXg4nweqriym4API3Ar1h9oCJ2bSg9Pd/ES55+orOY8EFh/v9h7JCuHCxz6Kbo4PJZT1PD6MYzY83xak3bipnGdJSmfchrHAqAw7TFzxvcY7sfLvtGh7IdavqoyO/OlHaWWwTIzzmVGpT1fzmckNODvJlwuO+j6xWvY7DGzI3fl8oT/eOWvWNiyMMjR4X6n5B5V5HoT3XCOr9rxOL5pKEuhYQ+rR98TiOj2ngiS8ED2nk6oBIesbSy20XEr/TpAKF5VIXwtl4F0h85oFcJquqxmPdQJ5xd0YgiAFDa8mcR4TmXLzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=spsaVNUNh/3VFuawqy3mCL/YNz+pKrVAaVclE+J7sZ4=;
- b=UH7TuRPS1MQtJtg1AHiCVgFObUPODl6RxAWrNgnY9NrGCNNOnVhy/hA8OyWNsRa7ny+d0iy9FUw93B0eqjWWS1b3FkeL3jFCImdI1avzZ+zpP5L6dh8yUtCpzbwq/0awQx93J6HCZb2cYMJWJ25JIvrfjFU2SfTgv+HbjOAx2vg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by PA4PR04MB9415.eurprd04.prod.outlook.com (2603:10a6:102:2aa::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Tue, 12 Sep
- 2023 15:31:05 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7%7]) with mapi id 15.20.6768.036; Tue, 12 Sep 2023
- 15:31:05 +0000
-From:   "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-Subject: [PATCH v2 2/2] arm64: dts: imx8mp: add reserve-memory nodes for DSP
-Date:   Tue, 12 Sep 2023 18:30:21 +0300
-Message-Id: <20230912153021.21786-3-iuliana.prodan@oss.nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230912153021.21786-1-iuliana.prodan@oss.nxp.com>
-References: <20230912153021.21786-1-iuliana.prodan@oss.nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P195CA0006.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e2::11) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+        Tue, 12 Sep 2023 21:07:24 -0400
+Received: from klingt.org (mail.klingt.org [86.59.21.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848B310C9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Sep 2023 18:07:19 -0700 (PDT)
+Received: from [192.168.0.108] ([202.184.201.145])
+        (authenticated bits=0)
+        by klingt.org (8.17.2/8.17.2/Debian-1) with ESMTPSA id 38D177BQ3610666
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Wed, 13 Sep 2023 03:07:09 +0200
+Message-ID: <b3374cec-946b-db27-d849-0a4ec0068b1b@klingt.org>
+Date:   Wed, 13 Sep 2023 09:07:06 +0800
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|PA4PR04MB9415:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5ba2dae-99ad-4e61-1353-08dbb3a5478c
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: K5Li0wr/gonn9cQPIaEA2rYQfJc9hJLha8IkkAQ0yyUzuGytlqWzfsseA98ri0RFtVl9IBqiK5oUFo7SE7kQbCj/kqWuFdgbZmpc0O6qsHyDucP7YTCHUsEfjmq9cs0VCK3EZIBatQ3y4GwSNa68qWwCQlH85SjtmfalgyML95gYYg3J0R77dZJ6un5/jOY/HqKHGBT0B3XT3mVFt+XSfVxFnX2NObTsbxtg1FFmKO2QIx92GHS+hByfL0OVDU/Im+QaSr81yiRfaDjZXio8EetpyiW8PjwZUg1nimtObUWLy2AshwAQyPXmFvuCWwAvfWBYe0HAEqM6o01izdGnNP/GETkn3NWRlyAvrpn2LTur61hFIQD6nBPd+peR3iYAleQepXOIPRL6cz1yUCkbAlVl8R7MdBazy7xhqP+xmufiCYOFwUcdChwYK40vX1s56gXuCU5RzR3TqJ6pThVbfmEFhdkzVcFpeqWnspwCnK5Kl1IO2MDeBt/fU0bisnF+klAAxVgpMqPFZ7cGiOflZ8t1T3XfHjTbHW9UdnrWVvEy8paFOYsPpOD4xTTOk/J4BweAQ5RMNJ3GpjdrlXjXpQ6iI3Rn/9weL/qr9Jc1ruKeMwNSvm9GKqwMLKaaOGOfNyqJ/E8pXKpoKcmcLEWpiJQI6hMMQO2rrh6e0WIrjcY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(136003)(366004)(376002)(39860400002)(451199024)(1800799009)(186009)(6512007)(38100700002)(921005)(38350700002)(86362001)(6666004)(7416002)(66556008)(6506007)(5660300002)(66946007)(316002)(4744005)(110136005)(8676002)(2906002)(54906003)(478600001)(66476007)(8936002)(52116002)(41300700001)(6486002)(4326008)(2616005)(26005)(1076003)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?w9+z9dgHk3VsdWcTnAFX3dX7Ji/73u9RrNuEVN8hN7672RKNYy7IHNss2I5R?=
- =?us-ascii?Q?Fk4k2tgH5RfDZW/I76A8K9FWt6pD+TkYpE3nySk+abPx2v5qq6L6QVEJBtJX?=
- =?us-ascii?Q?vn0wa3HyqtXKn5UOByUZdnu4yYh7roWnTCcLgmopnFbLk6reRB+87dBxl8h2?=
- =?us-ascii?Q?6Z6W+F86Lak2LYqbi7KOw2SqnOA/JjAUwy8r+DDkBAlIo+/tCp+Xz1CKx67Y?=
- =?us-ascii?Q?MB2s2H4BIrNlKvjFwI3jb1uY3xY/ZuT+GhD2baZ5PXTN8l0toxA1l2G1rWBV?=
- =?us-ascii?Q?fkxRcbXgssl6dhB6iG+RRyyf5x5B19gP8rp1Nmt9NRgEUcRJsSuNgU5A6/Lz?=
- =?us-ascii?Q?CoKwX0K4Hjz9JXLMz/uQ6ofJXZOQup0vSJmmbM8crhIKXZ3x5j2lMeMwxfhQ?=
- =?us-ascii?Q?DD+mduLg+0mxI+akV5QPUcKXka8ihIXiiwVx9C1SJjaMz9nUQ9aE01m1XkiC?=
- =?us-ascii?Q?O8A1Xhwnq6eA0UqQ99rVpt0WyK/OBwxHwXV479Nr0dYwbzoKkzPAVLRpqfJK?=
- =?us-ascii?Q?sAGQuVXClG2BZB2IUcaew091JTk7sbqXSjjedVLATFGP0noa/m3cu/UsiBBW?=
- =?us-ascii?Q?PsOV+rartCmIJf90/0zBbS3TlnmT4wSyndtSTPKqNAeM7yKZUd0ansLhjF//?=
- =?us-ascii?Q?Od7okS7nTyB8MaH6G2k8oGLtP4K/KE+er7yRsVUTi6QHOC0tQ/uwjDTbfiVs?=
- =?us-ascii?Q?4fkBzisdxtQsyCmvuN/fe8t9IwFoCfju1uH0uFXoipcyOWh30dbY/BH6vLSX?=
- =?us-ascii?Q?MLIzq+dZBxRahskl+WG1olc32f4zRqVYi/mosZbdzVkoo8ekIhXmQKCYcpoY?=
- =?us-ascii?Q?f8lWJuem4f06rlTuwXfUcmq1WK2RX52gkEms18SSPvH535X0yoiVkT9v/RXj?=
- =?us-ascii?Q?eZQf+O3HFObjNVHD/v07EoY6H25NpHBonRM6kxlX1M9QDY/4MjFxforc0Ka9?=
- =?us-ascii?Q?eWeFzk/HROOxIdJ2yTl4dUsPbgOnCd5Ze/0I++gUn8rqyZcRwwE7VbbmJjDJ?=
- =?us-ascii?Q?QAIxlhbOYh/JCkW6r6J/5wG0TSRnEYOx8lD4mr1Ce4N/f72RzmnsPRMa5ngk?=
- =?us-ascii?Q?fo6qWnjg81i1XzEp0LxTHODH9V1qv0f0LJHwj00AoUYibi3YIm6c8hwK08n1?=
- =?us-ascii?Q?4FELC6KUmMs8xk60Id6uFg91vWg4s+wMPkBuzpGUj6rM8UyriJvzFLFWbrSc?=
- =?us-ascii?Q?Cf7HEP9WzUINGZa/Rcd/1eKo52yeQpt7yq5F/kWup7wAl4nzfCP9xJGQ7h9X?=
- =?us-ascii?Q?Ck2KRNPE/5XyZeG5ZJVp1KVTlrwRqBlqtLA8nUkAotZIrlD6eNUBEnLDdqOs?=
- =?us-ascii?Q?tj3hrXTSeznYk2AcAcYEWmBVIRP1lP9sGvF3st7UgE7YIjP52V+6HbzEoyN3?=
- =?us-ascii?Q?EG4QUkTtSP0TbWlyuAkRi94OKtr46ehq76FFbHXn/Ntan4xy+50zH2RaoXTs?=
- =?us-ascii?Q?t3xFz3S841P4WfisAxJH2MzY9c+vS/eyDxNqBQI7hgF+ZoaleGKWsiwSAzsA?=
- =?us-ascii?Q?VfiACc6AIrbHgB+Z+TPQuHGvXkQwuEE7poqM82zdGPSg9dhjOWqAjB2GOXUn?=
- =?us-ascii?Q?9COE+tRh+H7il1RrNJwRU58VFMgyl5tJ4RHnDtgssh7oy+JiUFS122otVgal?=
- =?us-ascii?Q?gg=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5ba2dae-99ad-4e61-1353-08dbb3a5478c
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2023 15:31:05.6748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L0E9S1esC1AKdrqSEfljkOLleV/VlLIHq5+Vd7H+H+m4Y2U6ACieGC966cpwq7IHOuv8DiANyvcXLyullElwhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9415
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
+Content-Language: en-US
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Tim Blechmann <tim.blechmann@gmail.com>,
+        linux-remoteproc@vger.kernel.org,
+        agostino.carballeira@native-instruments.de
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
+ <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
+ <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
+ <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
+ <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
+From:   Tim Blechmann <tim@klingt.org>
+In-Reply-To: <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------Yo8ecTa4HMDlMgl7jWtRtZXB"
+X-Greylist: inspected by milter-greylist-4.6.4 (klingt.org [86.59.21.178]); Wed, 13 Sep 2023 03:07:10 +0200 (CEST) for IP:'202.184.201.145' DOMAIN:'[202.184.201.145]' HELO:'[192.168.0.108]' FROM:'tim@klingt.org' RCPT:''
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (klingt.org [86.59.21.178]); Wed, 13 Sep 2023 03:07:10 +0200 (CEST)
+X-Virus-Scanned: clamav-milter 1.0.3 at es.klingt.org
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------Yo8ecTa4HMDlMgl7jWtRtZXB
+Content-Type: multipart/mixed; boundary="------------b84AGJOHtZtl09aotLowmD0U";
+ protected-headers="v1"
+From: Tim Blechmann <tim@klingt.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Tim Blechmann <tim.blechmann@gmail.com>,
+ linux-remoteproc@vger.kernel.org, agostino.carballeira@native-instruments.de
+Message-ID: <b3374cec-946b-db27-d849-0a4ec0068b1b@klingt.org>
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
+ <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
+ <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
+ <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
+ <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
+In-Reply-To: <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
 
-Add the reserve-memory nodes used by DSP when the rpmsg
-feature is enabled.
+--------------b84AGJOHtZtl09aotLowmD0U
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Pj4gdmlydGlvIGVtaXRzIGEgZmV3IHRpbWVzOg0KPj4gW8KgIDQwNC5YWFhYWFhdIE5vIG1v
+cmUgYnVmZmVycyBpbiBxdWV1ZQ0KPj4gYW5kIHRoZW4NCj4+IFvCoCA0MDQuNTg4NzIyXSBy
+ZW1vdGVwcm9jIHJlbW90ZXByb2MwOiB2cSBpbmRleCAxIGlzIGludGVycnVwdGVkDQo+PiBb
+wqAgNDA0LjU5NzI0OV0gdmlydHF1ZXVlIGludGVycnVwdCB3aXRoIG5vIHdvcmsgZm9yIDZk
+NTNmMTNhDQo+IA0KPiBEaWZmaWN1bHQgdG8gdW5kZXJzdGFuZCB0aGUgc2NoZWR1bGluZyB3
+aXRoIHlvdXIgdHJhY2UuIENvdWxkIHlvdSBlbmFibGUgZnRyYWNlIHRvDQo+IG9ic2VydmUg
+aXQgKG1haWxib3ggaW50ZXJydXB0cyxycG1zZyBhbmQgdmlydGlvIGZ1bmN0aW9ucykNCg0K
+ZG9lcyB0aGlzIGhlbHAgKGl0J3MgYSB0cmFjZSB0aGF0IGEgY293b3JrZXIgZGlkIGEgZmV3
+IGRheXMgYWdvKT8NCg0KYGBgDQpyb290Oi4uLi9rZXJuZWwvdHJhY2luZyMgY2F0IHRyYWNl
+IHwgaGVhZCAtNTANCiMgdHJhY2VyOiBmdW5jdGlvbl9ncmFwaA0KIw0KIyBDUFUgIERVUkFU
+SU9OICAgICAgICAgICAgICAgICAgRlVOQ1RJT04gQ0FMTFMNCiMgfCAgICAgfCAgIHwgICAg
+ICAgICAgICAgICAgICAgICB8ICAgfCAgIHwgICB8DQogIDApICsgMTAuMjUwIHVzICAgfCAg
+ICAgICAgcnBtc2dfc2dfaW5pdCgpOw0KICAwKSArIDQyLjM3NSB1cyAgIHwgICAgICB9IC8q
+IHJwbXNnX3NlbmRfb2ZmY2hhbm5lbF9yYXcgKi8NCiAgMCkgKyA1MS4xMjUgdXMgICB8ICAg
+IH0gLyogdmlydGlvX3JwbXNnX3NlbmQgKi8NCiAgMCkgKyA1OS42MjUgdXMgICB8ICB9IC8q
+IHJwbXNnX3NlbmQgKi8NCiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tDQogIDApICBzdG0zMm1wLTQxNCAgID0+ICBrd29ya2VyLTM2NQ0KICAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KICAwKSAgICAgICAgICAg
+ICAgIHwgIHJwbXNnX3JlY3ZfZG9uZSgpIHsNCiAgMCkgICAgICAgICAgICAgICB8ICAgIHJw
+bXNnX3JlY3Zfc2luZ2xlKCkgew0KICAwKSAgIDUuNTQyIHVzICAgIHwgICAgICBycG1zZ19z
+Z19pbml0KCk7DQogIDApICsgMzYuNTQyIHVzICAgfCAgICB9DQogIDApICsgNDguMjUwIHVz
+ICAgfCAgfQ0KICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+CiAgMCkgIGt3b3JrZXItMzY1ICAgPT4gIHN0bTMybXAtNDE0DQogIC0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQogIDApICAgNy4wMDAgdXMgICAgfCAg
+cnBtc2dfZ2V0X2J1ZmZlcl9zaXplKCk7DQogIDApICAgICAgICAgICAgICAgfCAgcnBtc2df
+c2VuZCgpIHsNCiAgMCkgICAgICAgICAgICAgICB8ICAgIHZpcnRpb19ycG1zZ19zZW5kKCkg
+ew0KICAwKSAgICAgICAgICAgICAgIHwgICAgICBycG1zZ19zZW5kX29mZmNoYW5uZWxfcmF3
+KCkgew0KICAwKSAgIDUuNjI1IHVzICAgIHwgICAgICAgIHJwbXNnX3NnX2luaXQoKTsNCiAg
+MCkgKyAzNy4zMzMgdXMgICB8ICAgICAgfQ0KICAwKSArIDQ1LjkxNiB1cyAgIHwgICAgfQ0K
+ICAwKSArIDU0LjI1MCB1cyAgIHwgIH0NCiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tDQogIDApICBzdG0zMm1wLTQxNCAgID0+ICBrd29ya2VyLTM2NQ0K
+ICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KICAwKSAg
+ICAgICAgICAgICAgIHwgIHJwbXNnX3JlY3ZfZG9uZSgpIHsNCiAgMCkgICAgICAgICAgICAg
+ICB8ICAgIHJwbXNnX3JlY3Zfc2luZ2xlKCkgew0KICAwKSAgIDYuMDQxIHVzICAgIHwgICAg
+ICBycG1zZ19zZ19pbml0KCk7DQogIDApICsgMzcuMjkyIHVzICAgfCAgICB9DQogIDApICsg
+NDkuNTQyIHVzICAgfCAgfQ0KICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0NCiAgMCkgIGt3b3JrZXItMzY1ICAgPT4gIHN0bTMybXAtNDE0DQogIC0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQogIDApICAgNi41MDAg
+dXMgICAgfCAgcnBtc2dfZ2V0X2J1ZmZlcl9zaXplKCk7DQogIDApICAgICAgICAgICAgICAg
+fCAgcnBtc2dfc2VuZCgpIHsNCiAgMCkgICAgICAgICAgICAgICB8ICAgIHZpcnRpb19ycG1z
+Z19zZW5kKCkgew0KICAwKSAgICAgICAgICAgICAgIHwgICAgICBycG1zZ19zZW5kX29mZmNo
+YW5uZWxfcmF3KCkgew0KICAwKSAgIDUuNDE3IHVzICAgIHwgICAgICAgIHJwbXNnX3NnX2lu
+aXQoKTsNCiAgMCkgKyAzNi41ODMgdXMgICB8ICAgICAgfQ0KICAwKSArIDQ1LjE2NyB1cyAg
+IHwgICAgfQ0KICAwKSArIDUzLjU4MyB1cyAgIHwgIH0NCmBgYA0KDQphcHBhcmVudGx5IHRo
+aXMgaXMgd2hlcmUgaXQgZ2V0cyBzdHVjayAobm90IHN1cmUgaWYgaXQncyBlbm91Z2ggY29u
+dGV4dCwgDQp0aG91Z2gpLg0KDQo+Pg0KPj4+IElmIHllcyB3aGF0IGlzIG5vdCBjbGVhciB0
+byBtZSBpcyB0aGF0IHdhaXRfZXZlbnRfaW50ZXJydXB0aWJsZV90aW1lb3V0KCkgc2VlbXMN
+Cj4+PiB0byB0ZXN0IHRoZSBjb25kaXRpb24gKHNvIGNhbGwgZ2V0X2FfdHhfYnVmKCkpIGJl
+Zm9yZSBlbnRlcmluZyBpbiBzbGVlcFsxXS4gQQ0KPj4+IGZyZWUgVFggYnVmZmVyIHNob3Vs
+ZCBiZSBmb3VuZCBhdCB0aGlzIHN0ZXAuDQo+Pj4NCj4+PiBbMV1odHRwczovL2VsaXhpci5i
+b290bGluLmNvbS9saW51eC9sYXRlc3Qvc291cmNlL2luY2x1ZGUvbGludXgvd2FpdC5oI0w1
+MzQNCj4+DQo+PiBobW0sIGludGVyZXN0aW5nLiBidXQgdGhhdCB3b3VsZCBpbXBseSBhIHRp
+bWluZyBpc3N1ZSB3aGVyZSBjYWxsaW5nIGdldF9hX3R4X2J1Zg0KPj4gdHdpY2Ugc29tZWhv
+dyBtYWtlcyBhIGRpZmZlcmVuY2UgYXMgb3Bwb3NlZCB0byBjYWxsaW5nIGl0IG9ubHkgb25j
+ZS4NCj4+DQo+PiB3b3VsZCB0aGUgImludGVycnVwdCB3aXRoIG5vIHdvcmsiIHBvaW50IHRv
+IGEgZGlmZmVyZW50IGNhdXNlIGZvciB0aGUgaXNzdWUgdGhhdA0KPj4gd2UgYXJlIHNlZWlu
+Zz8NCj4gDQo+IExvb2sgbGlrZSB5b3UgaGF2ZSBub3QgcmVsZWFzZWQgdGhlIGJ1ZmZlciBv
+biByZW1vdGUgc2lkZSBzbyBubyBidWZmZXIgaW4gdnJpbmcNCj4gdXNlZCBsaXN0Lg0KPiAN
+Cj4gRG8geW91IHVzZSB0aGUgemVybyBjb3B5IChycG1zZ19ob2xkX3J4X2J1ZmZlcikgb24g
+cmVtb3RlIHByb2Nlc3Nvcj8NCj4gSWYgeWVzLCBwbGVhc2UgY2hlY2sgdGhhdCB5b3UgaGF2
+ZSBmb2xsb3dpbmcgZml4Og0KPiBodHRwczovL2dpdGh1Yi5jb20vT3BlbkFNUC9vcGVuLWFt
+cC9jb21taXQvMmI2YTM4YTljNjg5MDg2OTk2MGVkNDFkNmExZGM5OTMwYzA3OWUwZA0KDQp5
+ZXMsIHdlIHVzZSBycG1zZ19ob2xkX3J4X2J1ZmZlciwgaG93ZXZlciB0aGUgZml4IGZyb20g
+DQoyYjZhMzhhOWM2ODkwODY5OTYwZWQ0MWQ2YTFkYzk5MzBjMDc5ZTBkIGFwcGFyZW50bHkg
+ZGlkIG5vdCBjaGFuZ2UgdGhlIA0KYmVoYXZpb3VyLg0KDQptYW55IHRoYW5rcywNCnRpbQ0K
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index cc406bb338fe..59e672382b07 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -211,6 +211,19 @@
- 			reg = <0 0x92400000 0 0x2000000>;
- 			no-map;
- 		};
-+		dsp_vdev0vring0: vdev0vring0@942f0000 {
-+			reg = <0 0x942f0000 0 0x8000>;
-+			no-map;
-+		};
-+		dsp_vdev0vring1: vdev0vring1@942f8000 {
-+			reg = <0 0x942f8000 0 0x8000>;
-+			no-map;
-+		};
-+		dsp_vdev0buffer: vdev0buffer@94300000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x94300000 0 0x100000>;
-+			no-map;
-+		};
- 	};
- 
- 	pmu {
--- 
-2.17.1
 
+--------------b84AGJOHtZtl09aotLowmD0U--
+
+--------------Yo8ecTa4HMDlMgl7jWtRtZXB
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSu7kh//RBsHB5C9CwJrmcRco32gAUCZQELOgUDAAAAAAAKCRAJrmcRco32gPoY
+AQCcVfYIxXEfkAQ9kb9z8ON0uNd+IfpqOkMGK7HbxubfKAD+InFXbCPVr/4NnuCteZgx5Tuo/84B
+0Rf5i1OG6uB0zQ8=
+=LnzD
+-----END PGP SIGNATURE-----
+
+--------------Yo8ecTa4HMDlMgl7jWtRtZXB--
