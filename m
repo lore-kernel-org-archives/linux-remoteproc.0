@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B59EDEC43
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 11:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ADDEDEC46
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 11:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240268AbjIMLgq (ORCPT
+        id S240292AbjIMLhS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 07:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
+        Wed, 13 Sep 2023 07:37:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238480AbjIMLgp (ORCPT
+        with ESMTP id S238480AbjIMLhR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 07:36:45 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112BE1726
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:36:41 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31f7400cb74so5783282f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:36:40 -0700 (PDT)
+        Wed, 13 Sep 2023 07:37:17 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D7D1726
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:37:13 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-403012f276dso45795705e9.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 04:37:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694604999; x=1695209799; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694605032; x=1695209832; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k7yF/0QjDLbvhSG9tY7YzfHnYU4U2fXlGE3GLuAl8Lk=;
-        b=kwzCFwuRHnC/EEpFivzmbKd0+Y2Zb3nvGdyLA91QH8ZLuoP0fPQmpo60X4UzUptK/4
-         grFZU41GG7CBn0TIKImzrV5N/SzLKeDV3uejyRtQOInYB03y3MMl1BCNkZ1MBmrFbVfM
-         3wW5QaOENwdzoAgbqG91/eD77myx0qCNOFWFdBR+yGoC06z0VtDZQAtQEpGEPYNYY+js
-         nYhoQBYJOm0P3oJYSdGOR/C943vSDBzE/JGpdH13VwczKo1f71YxYTWcmRRTmEFUR7Q1
-         sGWjXAR5GIuc9KgMyKJYrsv1Xn7uhOiPrQ+rd16jXuOIPjjTUDyMi9SiT/XM/Jd2sDbd
-         arWA==
+        bh=Nme/JcCZy+21A8LZUmcpQ/snwqu0c1CGtPKLSeADIRc=;
+        b=j7gXvpyobUDiLzNyNTZ9Hw0Gug6li/qnT+W/tTKq296h9ORbbw2Dm43yl7dX3onYmx
+         XKd1B5DAwdvQsAzyG2fSX0m44n6E4SJxmKaGr2lwcq+fwKoJOcHkPmKk/i73ICDOKxWz
+         5dD0hJQQRjYE+lXxQfngpNv/f00gVgir6LKKNHPtFkR8RV3O3tqv97Tw7IncWux/tPgW
+         MWhJKQcM8RTR7tg5SOw+mWQXz6q/ZzwD+P9vLS3ImKxhnOgFYwkCHfBzcgR7wk7gt5gx
+         6FzpEka6NIQF5EUBQKditkH5w2OHLSS65lbrV5REXeApuUo/tf7ksHsyM2yd1O7BosPv
+         h2zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694604999; x=1695209799;
+        d=1e100.net; s=20230601; t=1694605032; x=1695209832;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7yF/0QjDLbvhSG9tY7YzfHnYU4U2fXlGE3GLuAl8Lk=;
-        b=ubKySkOl8IzvB1Z8Or7UkcA8HVIxjL1mbzfQAVFCb3tCL5hTeCmJHKpnwQTHnRD0pZ
-         spxjZh18h6N0ZlmNhcxoz4weS+SSPFjgAkzpnvgd+p+k9Gw5+azlkHPhhhSy7mBBwn3y
-         q092TpIPV2tsfgM5xPlRfhz9933uUUOEH9If2+m1J65AbdPsMaMrn5dMQK497m8mG2Wi
-         m8AuGXSP5IXntWjU108A12bwi0n+KFseG7+BSyMDLnBhWiwxZQBGvMMxejozbi2H5m/H
-         M6Fm9FlDPvacLgbZejR8mRMcO1BaMOTKTLwIcrAMmJxQV5VF2TwhBS/SRe4XYLsmayjw
-         oHsw==
-X-Gm-Message-State: AOJu0YyrxeRjKcNWVi9BlsL2wWBeiAA7xnF5DaE5B60SfB5F7y/AKKaM
-        VuI7RKfHqU1BVXnccWz/mq7WYg==
-X-Google-Smtp-Source: AGHT+IHinq1u6ZWZxDJndTwA0su6ZxNjrWV5Z0ekma4hngYGIrOJOQjkUM9eTx0RpHhT3Rgf/4JSkA==
-X-Received: by 2002:adf:f809:0:b0:317:7448:6613 with SMTP id s9-20020adff809000000b0031774486613mr1693950wrp.55.1694604999465;
-        Wed, 13 Sep 2023 04:36:39 -0700 (PDT)
+        bh=Nme/JcCZy+21A8LZUmcpQ/snwqu0c1CGtPKLSeADIRc=;
+        b=ZlR92qEf/jTtrJqsK0GIsy9SyBbTWqiEjRsOsjUMguRKwLp6aA456TP05JgFBh+sub
+         iARw5oXj3LGH8FGJ9N5aC8iGP/t7PpnHc0NylpuAwqtVUnrYDPw7rGrU4hQcT447ExsC
+         PCaVyH6nfADV9NmK50tVyAf9rtFSA8V3eKiFG7Cd2knUpitUR+xPilZHsFgriQOhbvp8
+         qG75aR2DVe5fDWQ06Z1KGNA2sAsnmHT5suSLn1lNQAOtETlV47x12PUdfmwV+DjzhIIp
+         wVtNkxLIqDaPbRWHosBh3L6VFa711/Tj+Sl5XFzed0UxIySZdts71MVwGSzLNqXF+Ovw
+         HQEQ==
+X-Gm-Message-State: AOJu0YxNsMr+64Ax/r1Zw7o1fbmKPxCyXJB6Zm+RzXT1ZzwM2O86Lh+e
+        bfsRvnFL8GweGv+Gwz/bRfrhVQ==
+X-Google-Smtp-Source: AGHT+IH2nVE8W7SFZFZN8wVN3nLWifI8J4zzhexkxNYGhAChtyZIJ5HHNdGp2o6YOXlYp4DS/nsyCw==
+X-Received: by 2002:a05:600c:2346:b0:402:a464:1a20 with SMTP id 6-20020a05600c234600b00402a4641a20mr1713557wmq.33.1694605032176;
+        Wed, 13 Sep 2023 04:37:12 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id e14-20020adfa44e000000b0031c5d74ecd8sm8610826wra.84.2023.09.13.04.36.37
+        by smtp.gmail.com with ESMTPSA id l12-20020a1ced0c000000b003fed4fa0c19sm1803441wmh.5.2023.09.13.04.37.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 04:36:38 -0700 (PDT)
-Message-ID: <8b4ee62e-ec6a-6a7d-aac7-0746c8cd17a3@linaro.org>
-Date:   Wed, 13 Sep 2023 13:36:37 +0200
+        Wed, 13 Sep 2023 04:37:11 -0700 (PDT)
+Message-ID: <75fbb3fa-8696-c2fe-0a41-a3e588241b79@linaro.org>
+Date:   Wed, 13 Sep 2023 13:37:10 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v6 4/4] remoteproc: k3-m4: Add a remoteproc driver for M4F
- subsystem
+Subject: Re: [PATCH v6 3/4] remoteproc: k3: Split out functions common with M4
+ driver
 Content-Language: en-US
 To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
         mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
@@ -66,9 +66,9 @@ To:     Hari Nagalla <hnagalla@ti.com>, andersson@kernel.org,
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 References: <20230913111644.29889-1-hnagalla@ti.com>
- <20230913111644.29889-5-hnagalla@ti.com>
+ <20230913111644.29889-4-hnagalla@ti.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230913111644.29889-5-hnagalla@ti.com>
+In-Reply-To: <20230913111644.29889-4-hnagalla@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,109 +78,32 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 On 13/09/2023 13:16, Hari Nagalla wrote:
 > From: Martyn Welch <martyn.welch@collabora.com>
 > 
-> The AM62x and AM64x SoCs of the TI K3 family has a Cortex M4F core in
-> the MCU domain. This core is typically used for safety applications in a
-> stand alone mode. However, some application (non safety related) may
-> want to use the M4F core as a generic remote processor with IPC to the
-> host processor. The M4F core has internal IRAM and DRAM memories and are
-> exposed to the system bus for code and data loading.
+> In the next commit we will be adding the M4F driver which shares a lot of
+> commonality with the DSP driver. Split this shared functionality out so
+> that it can be used by both drivers.
 > 
-
-
->  drivers/remoteproc/Kconfig               |  13 +
->  drivers/remoteproc/Makefile              |   1 +
->  drivers/remoteproc/ti_k3_m4_remoteproc.c | 331 +++++++++++++++++++++++
->  3 files changed, 345 insertions(+)
->  create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+> Changes since v2:
+>  - New patch (reordered refactored from v2)
 > 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 48845dc8fa85..85c1a3a2b987 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -339,6 +339,19 @@ config TI_K3_DSP_REMOTEPROC
->  	  It's safe to say N here if you're not interested in utilizing
->  	  the DSP slave processors.
->  
-> +config TI_K3_M4_REMOTEPROC
-> +	tristate "TI K3 M4 remoteproc support"
-> +	depends on ARCH_K3
+> Changes since v3:
+>  - Removed "ipc_only" element from k3_rproc structure
+>  - Refactored to bring 3 more common functions
+> 
+> Changes since v4:
+>  - None
+> 
+> Changes since v5:
+>  - Rearranged the functions order to match with the functions in
+>    ti_k3_dsp_remoteproc.c to ease review.
+> 
+>  drivers/remoteproc/Makefile               |   2 +-
+>  drivers/remoteproc/ti_k3_common.c         | 513 +++++++++++++++++++
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 598 ++--------------------
 
-
-Missing compile testing.
-
-...
-
-> +
-> +static int k3_m4_rproc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	const struct k3_rproc_dev_data *data;
-> +	struct k3_rproc *kproc;
-> +	struct rproc *rproc;
-> +	const char *fw_name;
-> +	bool r_state = false;
-> +	bool p_state = false;
-> +	int ret = 0;
-> +	int ret1;
-> +
-> +	data = of_device_get_match_data(dev);
-> +	if (!data)
-> +		return -ENODEV;
-> +
-> +	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-> +	if (ret) {
-> +		dev_err(dev, "failed to parse firmware-name property, ret = %d\n",
-> +			ret);
-> +		return ret;
-
-Nope, the syntax is dev_err_probe().
-
-> +	}
-> +
-> +	rproc = rproc_alloc(dev, dev_name(dev), &k3_m4_rproc_ops, fw_name,
-> +			    sizeof(*kproc));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	rproc->has_iommu = false;
-> +	rproc->recovery_disabled = true;
-> +	if (data->uses_lreset) {
-> +		rproc->ops->prepare = k3_rproc_prepare;
-> +		rproc->ops->unprepare = k3_rproc_unprepare;
-> +	}
-> +	kproc = rproc->priv;
-> +	kproc->rproc = rproc;
-> +	kproc->dev = dev;
-> +	kproc->data = data;
-> +
-> +	kproc->ti_sci = ti_sci_get_by_phandle(np, "ti,sci");
-> +	if (IS_ERR(kproc->ti_sci)) {
-> +		ret = PTR_ERR(kproc->ti_sci);
-> +		if (ret != -EPROBE_DEFER) {
-
-No, really, do not open-code existing code.
-
-> +			dev_err(dev, "failed to get ti-sci handle, ret = %d\n",
-> +				ret);
-> +		}
-> +		kproc->ti_sci = NULL;
-> +		goto free_rproc;
-> +	}
-> +
-> +	ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
-> +	if (ret) {
-> +		dev_err(dev, "missing 'ti,sci-dev-id' property\n");
-> +		goto put_sci;
-> +	}
-> +
-> +	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(kproc->reset)) {
-> +		ret = PTR_ERR(kproc->reset);
-> +		dev_err(dev, "failed to get reset, status = %d\n", ret);
-
-Syntax is return dev_err_probe. And everywhere else as well...
-
+Generate your patch correctly with -M/-B/-C so the move will be detected.
 
 Best regards,
 Krzysztof
