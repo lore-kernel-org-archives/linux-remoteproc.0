@@ -2,75 +2,65 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F423ECA5534
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 10:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DEFCA5531
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 10:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234107AbjIMKC3 (ORCPT
+        id S239536AbjIMKKu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 06:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41952 "EHLO
+        Wed, 13 Sep 2023 06:10:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231757AbjIMKC3 (ORCPT
+        with ESMTP id S239570AbjIMKKt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 06:02:29 -0400
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67F919A9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 03:02:24 -0700 (PDT)
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 38D78tAS018489;
-        Wed, 13 Sep 2023 12:02:19 +0200
+        Wed, 13 Sep 2023 06:10:49 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D52C1996
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 03:10:45 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38D7Dk50002545;
+        Wed, 13 Sep 2023 12:10:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
         message-id:date:mime-version:subject:to:cc:references:from
         :in-reply-to:content-type:content-transfer-encoding; s=
-        selector1; bh=Bzm3/ivLpH+LG73vgsjml8E0mcgjPE25yUG9T2oSf4I=; b=ic
-        drHr52LJ8NsiGetG2KiRTtNBYjY30Y6VgE20HIEEfjFzuAi688xAJCeEH/645fk8
-        q9o1oOY6VxImvpKow6379HiyAfkQQPcgkyr9zxzIWzIZzQIwyEsJujgaKhYquD6u
-        m7QXKXg29BXiQVX/AMud5prX53hgqNk/crmpJlqXpln95cvgYmwiO1MMqFCD82xJ
-        Q30K7x3j4LkfOiTBRbiOb3gHSHaKBmkYmucomQcqo/G5Jy/Jw+5qqtPSr1/HQr2V
-        8dBe3HK7Nn2eYIb4Ms+Afj5oiLjk1x5X9r6B35L0No9wp3D69UmJfR4HIs1QKCrQ
-        wZ89GbJK5oHp7ypCiWIA==
+        selector1; bh=HAZZ5g/Rt1EvW+N9Z3Ihax1wOHqF1xQtuWx8vvypjXQ=; b=LM
+        kx5upY9AaB7JJCXQ1bzhsX9yIzuvwJwvc9panEHF3WhGPYFNBBsZ2Z47WqXnCH/A
+        UntMRyNJDAqL1m6xFqBCtUPw6KdhvypJXZMqEkbnr6az+12f8PIvwEFHwirCZtct
+        5FFp45XmzHqJsMbcEr5rsHi9xJBH4XZTn6cjKwtYOv3Ib3xlMPnOGeLOA9F0vFAX
+        A8kiZ/klnRnEyKziIg+LRq1JYKO8gQsCsY16sB83DS+ML0hrM2wpbJJaIDE8iVaO
+        XP0G4NrR19mGZtcXVjj1aj4bO+6uBm9iiGpjgJRximJi3PLl00mGEmfRQj4GTNmU
+        8thY06jwKhAldAEZ5Hvw==
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3t2y7maq4u-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3t2y7ntrd4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 12:02:19 +0200 (MEST)
+        Wed, 13 Sep 2023 12:10:40 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4DAB0100057;
-        Wed, 13 Sep 2023 12:02:17 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2EACA100057;
+        Wed, 13 Sep 2023 12:10:40 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 380A8233003;
-        Wed, 13 Sep 2023 12:02:17 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 208E5233C83;
+        Wed, 13 Sep 2023 12:10:40 +0200 (CEST)
 Received: from [10.252.24.233] (10.252.24.233) by SHFDAG1NODE2.st.com
  (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 13 Sep
- 2023 12:02:16 +0200
-Message-ID: <aec60fe8-ec1d-25d1-f07d-eb0b664d8dba@foss.st.com>
-Date:   Wed, 13 Sep 2023 12:02:16 +0200
+ 2023 12:10:39 +0200
+Message-ID: <9f6f19ad-1985-7e37-d89e-16ba239ad6a4@foss.st.com>
+Date:   Wed, 13 Sep 2023 12:10:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
 Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
  condition
 Content-Language: en-US
-To:     Tim Blechmann <tim@klingt.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
 CC:     Tim Blechmann <tim.blechmann@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <agostino.carballeira@native-instruments.de>
+        <linux-remoteproc@vger.kernel.org>, Tim Blechmann <tim@klingt.org>
 References: <20230904083602.106703-1-tim@klingt.org>
  <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
- <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
- <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
- <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
- <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
- <b3374cec-946b-db27-d849-0a4ec0068b1b@klingt.org>
- <d2a303ad-4dcf-de52-38db-53695169fe33@klingt.org>
- <d37a0431-9b4d-1215-2c2c-14c8963f93a7@foss.st.com>
- <117fbe3c-3db4-4f82-1d96-11501259e209@klingt.org>
 From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 Organization: STMicroelectronics
-In-Reply-To: <117fbe3c-3db4-4f82-1d96-11501259e209@klingt.org>
+In-Reply-To: <ZPZBVS3R/oZuUmk5@p14s>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.252.24.233]
 X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
  (10.75.129.70)
@@ -83,83 +73,102 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 9/13/23 10:47, Tim Blechmann wrote:
-> many thanks for your analysis, very interesting.
+On 9/4/23 22:43, Mathieu Poirier wrote:
+> On Mon, Sep 04, 2023 at 03:52:56PM +0200, Arnaud POULIQUEN wrote:
+>> Hello Tim,
+>>
+>> On 9/4/23 10:36, Tim Blechmann wrote:
+>>> when we cannot get a tx buffer (`get_a_tx_buf`) `rpmsg_upref_sleepers`
+>>> enables tx-complete interrupt.
+>>> however if the interrupt is executed after `get_a_tx_buf` and before
+>>> `rpmsg_upref_sleepers` we may mis the tx-complete interrupt and sleep
+>>> for the full 15 seconds.
+>>
+>>
+>> Is there any reason why your co-processor is unable to release the TX RPMSG
+>> buffers for 15 seconds? If not, you should first determine the reason why it is
+>> stalled.
 > 
->> please find below an extract of your trace with my analysis:
->>
->>
->>   stm32mp1_bulk_p-390     [001] .....   907.241226: rpmsg_send
->> <-rpmsg_intercore_send_buffer.constprop.0
->>   stm32mp1_bulk_p-390     [001] .....   907.241228: virtio_rpmsg_send
->> <-rpmsg_send
->>   stm32mp1_bulk_p-390     [001] .....   907.241237: virtqueue_enable_cb
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [001] .....   907.241239: virtqueue_enable_cb_prepare
->>
->> At this point seems that no more TX-buffer
->>
->> <-rpmsg_recv_single
->>       kworker/0:4-67      [000] .....   907.242533: vring_interrupt
->> <-rproc_vq_interrupt
->>       kworker/0:4-67      [000] .....   907.242536: rpmsg_xmit_done
->>
->> Here you receive  an interrupt indicating that TX buffer has been released by
->> the remote. that's the expected behavior.
->>
->>
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [000] .....   984.054941: rpmsg_send
->> <-rpmsg_intercore_send_buffer.constprop.0
->>   stm32mp1_bulk_p-390     [000] .....   984.054943: virtio_rpmsg_send
->> <-rpmsg_send
->>   stm32mp1_bulk_p-390     [000] .....   984.054956: virtqueue_enable_cb
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [000] .....   984.054958: virtqueue_enable_cb_prepare
->> <-virtqueue_enable_cb
->>   stm32mp1_bulk_p-390     [000] .....   999.398667: virtqueue_disable_cb
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [000] .....   999.414840: rpmsg_send
->> <-rpmsg_intercore_send_buffer.constprop.0
->>   stm32mp1_bulk_p-390     [000] .....   999.414843: virtio_rpmsg_send
->> <-rpmsg_send
->>   stm32mp1_bulk_p-390     [000] .....   999.414855: virtqueue_enable_cb
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [000] .....   999.414857: virtqueue_enable_cb_prepare
->>
->> Here you have again no more TX buffer. From this point there is no more activity
->> neither in TX nor in RX until the timeout of 15 seconds.
->> If you have a look to rproc_vq_interrupt the last one occurs at 907.242533
->>
->>
->> As you have no more virtqueue interrupts call for both directions, the issue is
->> probably either in the Cortex-M firmware, which seems to be stalled, or due to a
->> disable of the IRQs in Linux.
+> Arnaud's concern is valid.  If the remote processor can't consume a buffer
+> within 15 seconds, something is probably wrong.
 > 
-> afaict we can rule out a complete stall of the cortex-m firmware: if we change
-> the rpmsg_send to a rpmsg_trysend/msleep loop, the trysend will succeed to get a
-> buffer after a few iterations.
+> That said, I believe your assesment of the situation is correct.  *If* the TX
+> callback is disabled and there is no buffer available, there is a window of
+> opportunity between calls to get_a_tx_buf() and rpmsg_upref_sleepers() for an
+> interrupt to arrive in function rpmsg_send_offchannel_raw().  
 > 
->> or due to a disable of the IRQs in Linux.
+> From here three things need to happen:
 > 
-> do you have some recommendations how we could trace this?
+> 1) You send another version of this patch with a changelong that uses proper
+> english, i.e capital letters when they are needed and no spelling mistake.
+> 
+> 2) Arnaud confirms our suspicions.
 
-First, check if the Cortex-M sends the IPCC mailbox notification during the
-15-second period. Then, you can verify the IPCC registers to check if some flags
-are pending. On the Linux side, there is probably literature available to
-explain how to trace it.
+Seems to me that this patch is useless
+- wait_event_interruptible_timeout() function already seems
+to test the condition (so call get_a_tx_buf()) before entering in sleep[1].
+- ftraces show that vq interrupt is not called during the 15-second period.
+  So it is a normal behavior that the vrp->sendq is never waked-up.
+
+Tim needs to analyze the reason why no mailbox interrupt occurs.
+
+[1]https://elixir.bootlin.com/linux/latest/source/include/linux/wait.h#L534
+
 
 > 
-> many thanks,
-> tim
+> 3) This patch gets applied when rc1 comes out so that it has 6 or 7 weeks to
+> soak.  No error are locks are reported due to this patch during that time. 
 > 
->> <-virtqueue_enable_cb
->>   stm32mp1_bulk_p-390     [000] .....  1014.758678: virtqueue_disable_cb
->> <-rpmsg_send_offchannel_raw
->>   stm32mp1_bulk_p-390     [000] .....  1014.774802: rpmsg_send
->> <-rpmsg_intercore_send_buffer.constprop.0
->>   stm32mp1_bulk_p-390     [000] .....  1014.774804: virtio_rpmsg_send
->> <-rpmsg_send
->>   stm32mp1_bulk_p-390     [000] .....  1014.774815: virtqueue_enable_cb
-> 
-> 
+>>
+>> Regards,
+>> Arnaud
+>>
+>>>
+>>> in this case, so we re-try once before we really start to sleep
+>>>
+>>> Signed-off-by: Tim Blechmann <tim@klingt.org>
+>>> ---
+>>>  drivers/rpmsg/virtio_rpmsg_bus.c | 24 +++++++++++++++---------
+>>>  1 file changed, 15 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> index 905ac7910c98..2a9d42225e60 100644
+>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> @@ -587,21 +587,27 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>>>  
+>>>  	/* no free buffer ? wait for one (but bail after 15 seconds) */
+>>>  	while (!msg) {
+>>>  		/* enable "tx-complete" interrupts, if not already enabled */
+>>>  		rpmsg_upref_sleepers(vrp);
+>>>  
+>>> -		/*
+>>> -		 * sleep until a free buffer is available or 15 secs elapse.
+>>> -		 * the timeout period is not configurable because there's
+>>> -		 * little point in asking drivers to specify that.
+>>> -		 * if later this happens to be required, it'd be easy to add.
+>>> -		 */
+>>> -		err = wait_event_interruptible_timeout(vrp->sendq,
+>>> -					(msg = get_a_tx_buf(vrp)),
+>>> -					msecs_to_jiffies(15000));
+>>> +		/* make sure to retry to grab tx buffer before we start waiting */
+>>> +		msg = get_a_tx_buf(vrp);
+>>> +		if (msg) {
+>>> +			err = 0;
+>>> +		} else {
+>>> +			/*
+>>> +			 * sleep until a free buffer is available or 15 secs elapse.
+>>> +			 * the timeout period is not configurable because there's
+>>> +			 * little point in asking drivers to specify that.
+>>> +			 * if later this happens to be required, it'd be easy to add.
+>>> +			 */
+>>> +			err = wait_event_interruptible_timeout(vrp->sendq,
+>>> +						(msg = get_a_tx_buf(vrp)),
+>>> +						msecs_to_jiffies(15000));
+>>> +		}
+>>>  
+>>>  		/* disable "tx-complete" interrupts if we're the last sleeper */
+>>>  		rpmsg_downref_sleepers(vrp);
+>>>  
+>>>  		/* timeout ? */
+>>>  		if (!err) {
