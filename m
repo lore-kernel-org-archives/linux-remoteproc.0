@@ -2,132 +2,110 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F1CEDEC7B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 15:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976F5CA553B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 16:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjIMPyq (ORCPT
+        id S229471AbjIMQYh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
+        Wed, 13 Sep 2023 12:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbjIMPyp (ORCPT
+        with ESMTP id S229437AbjIMQYh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 11:54:45 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C23CE
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 08:54:41 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2bfb0a2682fso24606351fa.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 08:54:41 -0700 (PDT)
+        Wed, 13 Sep 2023 12:24:37 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461F090
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 09:24:33 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-269304c135aso6163a91.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 09:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694620480; x=1695225280; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PV6H7MY3pYafdYjha+YwxubfEbezxXEhfC2aB0o7/80=;
-        b=x+wVeK8BS+ldm/+KS+qKJto6DGwzL2e53/54rVSwwo9gDmZZRvTncASFcyNgM8eGVG
-         Gt0wPz32OGJFUNYOrx2N/NZM1gBYuqhNJ53+XPe1t6tngy2jm36mist/mRLAEkkHF2bL
-         viLi1I/TtSOwBjhqA3HRawaTaDR4QuJhVe+bLOvOH3bKXRGnDhmIVdmVEPoqu0+2LYjH
-         GJb+NetrN69y6ha7bXj5sWEEArDf7Ls8csvM1HPj9tcxrVW+JVpPPUdw9EM85rWjJP5u
-         8jKRhI6c8DAboT+o8vHsj796ewHkqOwz4u0LMRwAcJGbg91GFC7cst4SOnUOhlKH2Ssp
-         8xKQ==
+        d=linaro.org; s=google; t=1694622273; x=1695227073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T8zYJ0RCDSzCvH0QmeVklyy3iTRroJs+iiHGO8/+f8I=;
+        b=nMnMzULmo0/OpRuQqqhm1kcA7B8vpJnwBXIiVuStocjehig90bYjKuXDxO0XdkXSG+
+         1idiR4yp1bOiCjqjdqjsDfmPK7nUeO+tQcDxxLEwj8DSlZZM3hRDBESHL2JvW7I68tVR
+         mCuSOtRMtjzD6AfY3e5zditE030JazSaOQTJOz9+hPnjzLD2frNUo5K/jphUn4xj4+fw
+         0t4XcWFYyR4YHym+h3ZZRB/+t+/wPlFfcVgf59dxDucKNGWzrL2u75XvgL++MRKgbj3f
+         c1cH52c3S61rloPElYWGCukEkA1JIN9hmh2KCTerGNSvqYSYvdrKJ/Hpp3uToAzeypGj
+         sZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694620480; x=1695225280;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PV6H7MY3pYafdYjha+YwxubfEbezxXEhfC2aB0o7/80=;
-        b=uY9KVa/6EJDsATnfnISvLRFZnFfNFUGG/Awdw3tZbBR14BnpWWfcenNJH7WWayne75
-         i+Iyop4BM0tVbuUG1ebPifknhUClyvknt0QVhymQIcsmpFxibBlPkhr4yV2lbsgB4BCI
-         48AvNedHAQfPjIlgLLTpyPoMaR7UmRzjaxe8ZaXZ+sSRHiNFbtYo42j6uj62meydTm3m
-         JMKVVNnYou+aTj3TSM9hBl4Q/xa4TDqbXFYqUSwDA4iX6U4TP676vsLPItCQW/EYEXjs
-         Su7KOLNbEpIaSP0BQH3jXk3OEsGOmCzTEQfqOowt3SSqYXdfzoLO38Vgx5PzGtTyhTBn
-         WdiA==
-X-Gm-Message-State: AOJu0Yxr/6trCNoSnt9vnRBDQikT1sDa/LuZSjco1WORQ/rBT3eBBbYN
-        j8vUdvd0W3U0FvYGse3Sc/RNwQ==
-X-Google-Smtp-Source: AGHT+IFl0lyG4rkyAxRanpYoJepUFaViYKTHOyxflLutR7Tdl2sNNCM60S1AVZ3ZIYtlzyC2KV29Uw==
-X-Received: by 2002:a2e:a282:0:b0:2bd:16e6:e34e with SMTP id k2-20020a2ea282000000b002bd16e6e34emr2403844lja.1.1694620479822;
-        Wed, 13 Sep 2023 08:54:39 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id lh26-20020a170906f8da00b0099cd1c0cb21sm8594101ejb.129.2023.09.13.08.54.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 08:54:39 -0700 (PDT)
-Message-ID: <48ff2a69-6eaf-78dc-0382-f0b6a6d8cddd@linaro.org>
-Date:   Wed, 13 Sep 2023 17:54:37 +0200
+        d=1e100.net; s=20230601; t=1694622273; x=1695227073;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T8zYJ0RCDSzCvH0QmeVklyy3iTRroJs+iiHGO8/+f8I=;
+        b=FBI6w/9ACeMBwmOYUK0olUk3ElLe039v8fjnw1sl6FS5orEi4fUO7803fK5+ff2mqR
+         gmAp1xl+b27Nm1X2N7OTAuViCNgjdsMceeDojJitWm5vsw3+CfeBmn0fUtwRvTKK1wA8
+         wCbTFLeZHbbtskJeus/UVWCzHOgdF00O+Jc0cmGeFfCggQDtbNxdRRMgecX1Yvh/6mhO
+         yG+K/FdTHsuS27OZqdKyjCWkISquYfmolqQKJRcCXwFc+ZKubgvZyZstN1g+aWiL9H/5
+         IRRvAenqzg0SVUYdpch+S/uGBDBbTug27bRoWrLn+RTQuIATc+ATFplXJRPLRagC3jN2
+         PdGw==
+X-Gm-Message-State: AOJu0Yz/7qff8DerQpWmN6aklVjt9ysaeUTH/Ef3NmE77Davp/9wlh6q
+        pMqP252zTsldjrWAUEuaRklVLw==
+X-Google-Smtp-Source: AGHT+IHWgvdtB+C/HoVawZpYur0vnXtpwb+tKQOBHfzGcJms7pMWVUlPNPLiwp+O2MlPn4j6G7TlYg==
+X-Received: by 2002:a17:90b:4c4f:b0:268:1068:4464 with SMTP id np15-20020a17090b4c4f00b0026810684464mr2548211pjb.30.1694622272676;
+        Wed, 13 Sep 2023 09:24:32 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d880:f5d9:a2c5:d083])
+        by smtp.gmail.com with ESMTPSA id gj19-20020a17090b109300b002680ef05c40sm1668280pjb.55.2023.09.13.09.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Sep 2023 09:24:32 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 10:24:29 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Chen Jiahao <chenjiahao16@huawei.com>
+Cc:     andersson@kernel.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, arnaud.pouliquen@foss.st.com
+Subject: Re: [PATCH -next v2] remoteproc: stm32: Clean up redundant
+ dev_err_probe()
+Message-ID: <ZQHiPUYYLNwJ/rz1@p14s>
+References: <20230817083336.404635-1-chenjiahao16@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>, Hari Nagalla <hnagalla@ti.com>
-Cc:     linux-kernel@vger.kernel.org, martyn.welch@collabora.com,
-        devicetree@vger.kernel.org, andersson@kernel.org,
-        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org
-References: <20230913111644.29889-1-hnagalla@ti.com>
- <20230913111644.29889-2-hnagalla@ti.com>
- <169460861100.2790015.8526656812110915165.robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <169460861100.2790015.8526656812110915165.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230817083336.404635-1-chenjiahao16@huawei.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13/09/2023 14:36, Rob Herring wrote:
+On Thu, Aug 17, 2023 at 04:33:36PM +0800, Chen Jiahao wrote:
+> Referring to platform_get_irq()'s definition, the return value has
+> already been checked if ret < 0, and printed via dev_err_probe().
+> Calling dev_err_probe() one more time outside platform_get_irq()
+> is obviously redundant. Removing outside dev_err_probe() to
+> clean it up.
 > 
-> On Wed, 13 Sep 2023 06:16:41 -0500, Hari Nagalla wrote:
->> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
->> The remote processor's life cycle management and IPC mechanisms are
->> similar across the R5F and M4F cores from remote processor driver
->> point of view. However, there are subtle differences in image loading
->> and starting the M4F subsystems.
->>
->> The YAML binding document provides the various node properties to be
->> configured by the consumers of the M4F subsystem.
->>
->> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
->> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->> ---
->> Changes since v1:
->>  - Spelling corrections
->>  - Corrected to pass DT checks
->>
->> Changes since v2:
->>  - Missed spelling correction to commit message
->>
->> Changes since v3:
->>  - Removed unnecessary descriptions and used generic memory region names
->>  - Made mboxes and memory-region optional
->>  - Removed unrelated items from examples
->>
->> Changes since v4:
->>  - Rebased to the latest kernel-next tree
->>  - Added optional sram memory region for m4f device node
->>
->> Changes since v5:
->>  - None
->>
->>  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
->>  1 file changed, 136 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
->>
+> Besides, switch to use platform_get_irq_optional() since the irq
+> is optional here.
 > 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/stericsson,dma40.example.dtb: dma-controller@801c0000: sram:0: [4294967295, 4294967295] is too long
-> 	from schema $id: http://devicetree.org/schemas/dma/stericsson,dma40.yaml#
+> Signed-off-by: Chen Jiahao <chenjiahao16@huawei.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
 
-This looks unrelated but it is caused by this patch. Probably by
-conflicting type for 'sram'. It seems we need to make exception for
-'sram' in dtschema.
+Applied.
 
-Best regards,
-Krzysztof
+Thanks,
+Mathieu
 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 98234b44f038..1f53c672c66b 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -712,9 +712,9 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+>  	unsigned int tzen;
+>  	int err, irq;
+>  
+> -	irq = platform_get_irq(pdev, 0);
+> +	irq = platform_get_irq_optional(pdev, 0);
+>  	if (irq == -EPROBE_DEFER)
+> -		return dev_err_probe(dev, irq, "failed to get interrupt\n");
+> +		return irq;
+>  
+>  	if (irq > 0) {
+>  		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
+> -- 
+> 2.34.1
+> 
