@@ -2,127 +2,160 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C585CA5502
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F24CCA5502
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 07:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235421AbjIMHTY (ORCPT
+        id S232290AbjIMHoU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
+        Wed, 13 Sep 2023 03:44:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238554AbjIMHTX (ORCPT
+        with ESMTP id S234837AbjIMHoU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 03:19:23 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA941729
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:19:19 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52a40cf952dso8547663a12.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694589558; x=1695194358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A3hr2Dkoscy8OKR4lP2RVrqnAFjnoPD9KTW+WVQxYRY=;
-        b=HedRivCyAvpHBOt/GY55mQe0+gM33dbCrhqcCnrF3SFFqKaMqfnk9D9E2E4RlPWSgH
-         KJN76WNvfWGoS+3z3EA6OXncqmvkFOPqXDPxAlNyOOyl29csuz4tQ0L2g8rWvlM4V2rd
-         3Pz0HDknYfOKAJFoaZErcJKjMhdbvMUQy6uRAcYxKvjgbUnNpw/frO4GlKN8OMTOhhhe
-         1QGMfPFJvl3QWLJDRmQ3rRFzQL+KFDAE40WdKnRkTtWTlcKZZqhYHsm94q4YsL8lY7bP
-         CA3dnulhM8fksmMvb/Qp4shpY2dWqJvbmmB8nIr1w/Ll5Mz0qDdaj3CtXBsVjprkAYCF
-         p/mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694589558; x=1695194358;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3hr2Dkoscy8OKR4lP2RVrqnAFjnoPD9KTW+WVQxYRY=;
-        b=G25SJFIwcW29wD5spMhs9CJAArGn8gs+1mbXF2XaQlzH08qlvld224YOgCg+InBGDr
-         YTaq2pddhCBEdvypumsy46TwKEID0f+84dtPsPG2HxID0HKBu6hWwKO6FPh4B8pvVFwA
-         PJgNR8yBTi0UMF9qd923mQU7JHz8oNcF225McUCHu433W9Prjs9s8B0fLoyzAVgtSU41
-         Kxwm/1kPHynFqY04/xObEOaHR5n5i1mIXN6hm/K/OiVq/Qf1ar9qKB2VsTCL/gLanjjm
-         x07Adxt8m7Qhlb/vrJF4HBwppviZnoGul/KP2st7YFyWx5LNt7peHv9hMr55gc8kuJG9
-         bLDA==
-X-Gm-Message-State: AOJu0YxfWGkev46Mc42QssXVz/W1Ie7SRjIaTrIIPOMSAUc2v1yLBMqc
-        knBSJhxYyvWdnFuKBALDqAX8TQ==
-X-Google-Smtp-Source: AGHT+IE6YcmXnG2kZ7MVJ5DQQSPqKNTw5IPlBCUXbJfyxM9ZFvK7mh0xGHZANganLb81Af/8FOzTiQ==
-X-Received: by 2002:a05:6402:48f:b0:528:90d7:a19 with SMTP id k15-20020a056402048f00b0052890d70a19mr1734134edv.11.1694589558276;
-        Wed, 13 Sep 2023 00:19:18 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id b7-20020aa7c6c7000000b0052328d4268asm6841519eds.81.2023.09.13.00.19.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 00:19:17 -0700 (PDT)
-Message-ID: <43cd38f5-20ce-a97d-0906-55faf228b377@linaro.org>
-Date:   Wed, 13 Sep 2023 09:19:15 +0200
+        Wed, 13 Sep 2023 03:44:20 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F291729
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 00:44:16 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38D7Tl1l003484;
+        Wed, 13 Sep 2023 09:44:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+        message-id:date:mime-version:subject:to:cc:references:from
+        :in-reply-to:content-type:content-transfer-encoding; s=
+        selector1; bh=13jZrFkxWON1UYWNQhVnt/sejHOhHU7HrC08S7LqYFo=; b=Fk
+        BL6MYInPRHX7ovcNdU0mhlaU/qV0Zi0Wmk0eqmtLwtBbk+qkLD43644pRG1atE+8
+        tWM8g5U6w11RwIMP0G8EGqs3wzUunm+UdjO7pwwCt7tlcFepSjr05KMG/TvU6mg+
+        AHY0Q0qPL543A+50vGRvxF86dGVupbYxNf6B6bc9FGy5or0P8Ea9oi+udvijo1KP
+        8sqMVmhyUdENk3PIBTe/6f2r0ICGWe3i5kL1w9WLcd45KsASPwWWXGBOj++dyVLs
+        ZFDSBCwvurC7USstbGbrQMYsFRKWH+bixjz2Rr7xHP31DTSqmVvjlgL6wEG3o+Rm
+        TV4kgTprJy0Ob/2myeEw==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3t2y7nsxb0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Sep 2023 09:44:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 129F6100057;
+        Wed, 13 Sep 2023 09:44:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0A542226FA7;
+        Wed, 13 Sep 2023 09:44:10 +0200 (CEST)
+Received: from [10.252.24.233] (10.252.24.233) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 13 Sep
+ 2023 09:44:09 +0200
+Message-ID: <d37a0431-9b4d-1215-2c2c-14c8963f93a7@foss.st.com>
+Date:   Wed, 13 Sep 2023 09:44:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v2 14/14] arm64: dts: qcom: sdm630: Fix USB2 clock-names
- order
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus - prevent possible race
+ condition
 Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        linux-usb@vger.kernel.org
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-14-1e506593b1bd@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-14-1e506593b1bd@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Tim Blechmann <tim@klingt.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Tim Blechmann <tim.blechmann@gmail.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <agostino.carballeira@native-instruments.de>
+References: <20230904083602.106703-1-tim@klingt.org>
+ <64ecb19a-b3d1-0fa1-b015-b34607aee460@foss.st.com> <ZPZBVS3R/oZuUmk5@p14s>
+ <00d5edfd-808f-51ac-0233-ce8489c6722c@klingt.org>
+ <a47f8cea-5dc4-cdb2-9c2d-daf84c6853e3@foss.st.com>
+ <a90701cb-2c4f-9e25-deff-1b4dbd13c922@klingt.org>
+ <0ec7f251-36de-f8b6-cfbe-96632519c851@foss.st.com>
+ <b3374cec-946b-db27-d849-0a4ec0068b1b@klingt.org>
+ <d2a303ad-4dcf-de52-38db-53695169fe33@klingt.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <d2a303ad-4dcf-de52-38db-53695169fe33@klingt.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.252.24.233]
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-12_24,2023-09-05_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/09/2023 15:31, Konrad Dybcio wrote:
-> The last 2 clock-names entries for the USB2 controller were swapped,
-> resulting in schema warnings:
-> 
-> ['cfg_noc', 'core', 'mock_utmi', 'sleep'] is too short
->         'iface' was expected
->         'sleep' was expected
->         'mock_utmi' was expected
-> 
-> Fix it and take the liberty to make the clock-names entries more
-> readable.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm630.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> index f11d2a07508c..316c8fd224e0 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> @@ -1394,8 +1394,10 @@ usb2: usb@c2f8800 {
->  				 <&gcc GCC_USB20_MASTER_CLK>,
->  				 <&gcc GCC_USB20_MOCK_UTMI_CLK>,
->  				 <&gcc GCC_USB20_SLEEP_CLK>;
-> -			clock-names = "cfg_noc", "core",
-> -				      "mock_utmi", "sleep";
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "sleep",
-> +				      "mock_utmi";
+hello Tim
 
-Plus this is just incorrect... :(
+On 9/13/23 03:11, Tim Blechmann wrote:
+> On 9/13/23 09:07, Tim Blechmann wrote:
+>>>> virtio emits a few times:
+>>>> [  404.XXXXXX] No more buffers in queue
+>>>> and then
+>>>> [  404.588722] remoteproc remoteproc0: vq index 1 is interrupted
+>>>> [  404.597249] virtqueue interrupt with no work for 6d53f13a
+>>>
+>>> Difficult to understand the scheduling with your trace. Could you enable
+>>> ftrace to
+>>> observe it (mailbox interrupts,rpmsg and virtio functions)
+> 
+> full trace, that my worker did (quite large, so i zipped it):
+> https://fileservice.klingt.org/downloads/15526951694567393180-tracefull.zip
 
-Best regards,
-Krzysztof
+please find below an extract of your trace with my analysis:
 
+
+ stm32mp1_bulk_p-390     [001] .....   907.241226: rpmsg_send
+<-rpmsg_intercore_send_buffer.constprop.0
+ stm32mp1_bulk_p-390     [001] .....   907.241228: virtio_rpmsg_send <-rpmsg_send
+ stm32mp1_bulk_p-390     [001] .....   907.241237: virtqueue_enable_cb
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [001] .....   907.241239: virtqueue_enable_cb_prepare
+
+At this point seems that no more TX-buffer
+
+<-rpmsg_recv_single
+     kworker/0:4-67      [000] .....   907.242533: vring_interrupt
+<-rproc_vq_interrupt
+     kworker/0:4-67      [000] .....   907.242536: rpmsg_xmit_done
+
+Here you receive  an interrupt indicating that TX buffer has been released by
+the remote. that's the expected behavior.
+
+
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [000] .....   984.054941: rpmsg_send
+<-rpmsg_intercore_send_buffer.constprop.0
+ stm32mp1_bulk_p-390     [000] .....   984.054943: virtio_rpmsg_send <-rpmsg_send
+ stm32mp1_bulk_p-390     [000] .....   984.054956: virtqueue_enable_cb
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [000] .....   984.054958: virtqueue_enable_cb_prepare
+<-virtqueue_enable_cb
+ stm32mp1_bulk_p-390     [000] .....   999.398667: virtqueue_disable_cb
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [000] .....   999.414840: rpmsg_send
+<-rpmsg_intercore_send_buffer.constprop.0
+ stm32mp1_bulk_p-390     [000] .....   999.414843: virtio_rpmsg_send <-rpmsg_send
+ stm32mp1_bulk_p-390     [000] .....   999.414855: virtqueue_enable_cb
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [000] .....   999.414857: virtqueue_enable_cb_prepare
+
+Here you have again no more TX buffer. From this point there is no more activity
+neither in TX nor in RX until the timeout of 15 seconds.
+If you have a look to rproc_vq_interrupt the last one occurs at 907.242533
+
+
+As you have no more virtqueue interrupts call for both directions, the issue is
+probably either in the Cortex-M firmware, which seems to be stalled, or due to a
+disable of the IRQs in Linux.
+
+<-virtqueue_enable_cb
+ stm32mp1_bulk_p-390     [000] .....  1014.758678: virtqueue_disable_cb
+<-rpmsg_send_offchannel_raw
+ stm32mp1_bulk_p-390     [000] .....  1014.774802: rpmsg_send
+<-rpmsg_intercore_send_buffer.constprop.0
+ stm32mp1_bulk_p-390     [000] .....  1014.774804: virtio_rpmsg_send <-rpmsg_send
+ stm32mp1_bulk_p-390     [000] .....  1014.774815: virtqueue_enable_cb
+
+Regards,
+Arnaud
+
+> 
+> the interesting part starts at 907.2244250
+> 
+> many thanks,
+> tim
