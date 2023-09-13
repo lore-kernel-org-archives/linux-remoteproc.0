@@ -2,159 +2,117 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BD3EDEC49
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 12:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBECEDEC4D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 12:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240256AbjIMMJE (ORCPT
+        id S240643AbjIMMg6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 08:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34840 "EHLO
+        Wed, 13 Sep 2023 08:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240242AbjIMMJC (ORCPT
+        with ESMTP id S240641AbjIMMg5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 08:09:02 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B32919AD
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 05:08:58 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5280ef23593so8124575a12.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 05:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694606937; x=1695211737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dsc3mJorN3B/h1Vd1XyRMUNMxmDX6BmM8Ul2Dt3JUqg=;
-        b=p6zPVxHY9UsEHQvmZ7RjoFRellJ+R2Jww0DGrDEd0zIbcpOP6ZM1rV4lAy6kq482fP
-         EP5ogy9Nf8zYxoZP7MWXE+tamko2bBrN4m1F5r/i/5WnbOx5i+lRtpJYKq696K2A6pdV
-         8n5laNn0KgSuG7U4INoFU/4Vk34Z9QhSmH1uf6Gmr/brpOGfsgKHM7GKIcBPHs9P8lse
-         NdlREm9PieRqCARvL7wOiyiA3KoX3ox31pZ+jIf6kGAXrN4aSwuFkEDfx3yLfc9AKKSO
-         kMxWD/l8No2nUAP86z+x7Dn85SvfUruPjIqABSd6/8OZ7W3KAET8qBFxX1eG3f5Hgbbc
-         MUVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694606937; x=1695211737;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dsc3mJorN3B/h1Vd1XyRMUNMxmDX6BmM8Ul2Dt3JUqg=;
-        b=MmYdCYv/MUai2RakBDD2DVxQLBXpKGnPws8xmeg7zpqoU7OrJZt4y1OpBem6d/kcTx
-         X/RMOtntxpjoxYbQPEHrv+PM0bqpetmYlTOVktoNwHxUa3hFaK8MyoJ8FtPKiAaJroj+
-         NrAgp6nzrpT6PaKVS77rU/4Lbpv2DWRT5B5cr7LZFvzozva+otAEi7jjCAo/vT8vm8/v
-         CvnRDwtBSNJE27+O0mVaDz7jgr+/NKcweROBOh911svob9cMFDVsWiTcz8vSNIelsBzt
-         K1tzJ79YGDy421n0AX57KAhFctMMIZjocsUTrxFIvC9MR0nCa391zsprfWyCGuL+tUi5
-         bn2A==
-X-Gm-Message-State: AOJu0YxzJpThRln/L0Dq7MEBdS8tUskyTSR0Zo1kFy1IZLazK8tVAGh6
-        jHqVxfTtO+gGOIAS7u6gkPu38w==
-X-Google-Smtp-Source: AGHT+IFeIWTz7zH3NNiZGG8GawoWgTPZnX8SM7DBQPmw79zI1P9+hmA7uTN3L/vILKVy/rLiMXcj8Q==
-X-Received: by 2002:a17:906:cc16:b0:9a2:23cd:f052 with SMTP id ml22-20020a170906cc1600b009a223cdf052mr1668521ejb.7.1694606936783;
-        Wed, 13 Sep 2023 05:08:56 -0700 (PDT)
-Received: from [192.168.37.232] (178235177106.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.106])
-        by smtp.gmail.com with ESMTPSA id p21-20020a170906229500b00992b8d56f3asm8319579eja.105.2023.09.13.05.08.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 05:08:56 -0700 (PDT)
-Message-ID: <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
-Date:   Wed, 13 Sep 2023 14:08:53 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: sdm630: Drop RPM bus clocks
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        linux-usb@vger.kernel.org
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
- <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 13 Sep 2023 08:36:57 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E7719B4;
+        Wed, 13 Sep 2023 05:36:53 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25713C433C8;
+        Wed, 13 Sep 2023 12:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694608613;
+        bh=9elooBvdUre19hw6hhl5TUjtNpfBJuWPJGdA3PSQOPk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=agk5wuvYe4eXdvQP2/ZI92WDyKAW1ArMiActdlzr0IZA/ohh3j3AVRiiJ5E2+FgWs
+         cCm27CBwuBysFObzN8Dw98uvJTI/JswJziqobQaI5dd4N46lmaNNGw/4S3M2iYs43l
+         txeo0KTT18iqwnMQdRcO8jv0F7IOuk+yuhulmz+1k2fEpgX6frZtWzbc4G3Ap6fn47
+         8CCNniKF3Zgr80FbAyzrnrqAxWnbEXhFwVvQzYD10m63vQANkRJVz5YaygaLQlsoO2
+         qxosIo3SOJ1iN0BXgWu7UFo7Bjp2NyDWKTu0oFEHZqGrM6yet4akd/sThGxz9YMcas
+         ObjMBTd/XLAYw==
+Received: (nullmailer pid 2790031 invoked by uid 1000);
+        Wed, 13 Sep 2023 12:36:51 -0000
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Hari Nagalla <hnagalla@ti.com>
+Cc:     linux-kernel@vger.kernel.org, martyn.welch@collabora.com,
+        devicetree@vger.kernel.org, andersson@kernel.org,
+        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org
+In-Reply-To: <20230913111644.29889-2-hnagalla@ti.com>
+References: <20230913111644.29889-1-hnagalla@ti.com>
+ <20230913111644.29889-2-hnagalla@ti.com>
+Message-Id: <169460861100.2790015.8526656812110915165.robh@kernel.org>
+Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x
+ SoCs
+Date:   Wed, 13 Sep 2023 07:36:51 -0500
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13.09.2023 09:13, Krzysztof Kozlowski wrote:
-> On 12/09/2023 15:31, Konrad Dybcio wrote:
->> These clocks are now handled from within the icc framework and are
->> no longer registered from within the CCF. Remove them.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
-[...]
 
->>  		anoc2_smmu: iommu@16c0000 {
->>  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
->>  			reg = <0x016c0000 0x40000>;
->> -
->> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
->> -			assigned-clock-rates = <1000>;
->> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
->> -			clock-names = "bus";
+On Wed, 13 Sep 2023 06:16:41 -0500, Hari Nagalla wrote:
+> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+> The remote processor's life cycle management and IPC mechanisms are
+> similar across the R5F and M4F cores from remote processor driver
+> point of view. However, there are subtle differences in image loading
+> and starting the M4F subsystems.
 > 
-> This is also against bindings. After your patch #4, such bus clock (or
-> other combinations) is still required.
-So, we have 4 SMMU instances on this platform:
+> The YAML binding document provides the various node properties to be
+> configured by the consumers of the M4F subsystem.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+> Changes since v1:
+>  - Spelling corrections
+>  - Corrected to pass DT checks
+> 
+> Changes since v2:
+>  - Missed spelling correction to commit message
+> 
+> Changes since v3:
+>  - Removed unnecessary descriptions and used generic memory region names
+>  - Made mboxes and memory-region optional
+>  - Removed unrelated items from examples
+> 
+> Changes since v4:
+>  - Rebased to the latest kernel-next tree
+>  - Added optional sram memory region for m4f device node
+> 
+> Changes since v5:
+>  - None
+> 
+>  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
+>  1 file changed, 136 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> 
 
-MMSS (described, iface, mem, mem_iface)
-GPU (described, iface-mm, iface-smmu, bus-smmu)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-ANOC2 (this one, no clocks after removing rpmcc bus)
-LPASS (no clocks)
+yamllint warnings/errors:
 
-Should I then create a new entry in the bindings, replicating
-what's there for msm8998[1] and dropping the entry with just "bus"
-from anyOf?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/stericsson,dma40.example.dtb: dma-controller@801c0000: sram:0: [4294967295, 4294967295] is too long
+	from schema $id: http://devicetree.org/schemas/dma/stericsson,dma40.yaml#
 
-Konrad
+doc reference errors (make refcheckdocs):
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/iommu/arm,smmu.yaml?h=next-20230913#n272
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230913111644.29889-2-hnagalla@ti.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
