@@ -2,248 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501C1EE0212
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Sep 2023 23:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086F0EDE983
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Sep 2023 06:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233276AbjIMXmO (ORCPT
+        id S233106AbjING0w (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Sep 2023 19:42:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60828 "EHLO
+        Thu, 14 Sep 2023 02:26:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233228AbjIMXmN (ORCPT
+        with ESMTP id S230045AbjING0v (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Sep 2023 19:42:13 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6429CE9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 16:42:09 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-68fbbb953cfso265421b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 16:42:09 -0700 (PDT)
+        Thu, 14 Sep 2023 02:26:51 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72291F7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 23:26:47 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2bf924f39f1so8720971fa.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 23:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1694648529; x=1695253329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhJToYTNQgE0Hp2zNwcVoJ6UineNQbf397W3Yx/XnQM=;
-        b=XIvDZc7Bh8u1mm86VX/zcCV1n59N+zXmBuqf7vjj7a78yLHYUYSX4TeWRaA0MjHIRG
-         VDiGpBU6iNP9zw5ffRYsww/Vld1qCoDx4lymkPqhJvpzhKfDf0vBkRgSBFjCu3Sn8uL1
-         WrsK/hnCW7NLTlD1ZquHIZY8xtVxg4bRE6WHs=
+        d=linaro.org; s=google; t=1694672805; x=1695277605; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8vNd6Mhf35GMe9RWa+Xf0nZSRO80+x90q1mI0LjqNNU=;
+        b=Oc5FOE5NRLURDO9gHKvjQiw11UkgkUHNO7QO0NipBLm5wweU1u8hYodmpLlTTF6mSy
+         LyEvduS4dNk96AFboKHEW3J/3y7V7Fqf2maeXO/CW7pONwY5S26zcmHbDagxm8sNsp25
+         scsuwUx7N0HR/bgKoNtmdOApdS4G42JECmGIAca2GYkX8Bxt8v1D7kCLviGEt0pxsd5J
+         4peZCXCosIHDzDXizPqWKZty3hqheCwhSn4mU3KMTQItm4m6ljXANv037csLgDo04mqR
+         fXhgNKsO1CuE4QQUi+jjvr7I1dZjHn76LjtU5Q3OFTQmAqaTPv6o9M7ZEQnJDcvymOLT
+         G3yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694648529; x=1695253329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qhJToYTNQgE0Hp2zNwcVoJ6UineNQbf397W3Yx/XnQM=;
-        b=xNRQpeSguiPhr0OF6FWg4FemyhsjFWs02pfXCQLb2IsPlJ27pnFn+eww9dXPQccP0Q
-         JV1Yp/ulo1fc19b+rpW6ViCzvb2GrJysRMyImS1uvI+cvgg2oAupoylunoxYloZwyjEu
-         g8dYTM75j29jT1oLJ1bY3kpdrG6J3LqSu9KnZ/AcCfTvMknFofgGrcA+MYD4vwcjcJ0z
-         aK4KgR/JhggA6/eiZ2U7SwQUv8xxZF+U++LIjDCudQSQ3Vkxt7XV2QeuNQIOYBoJSnlB
-         Mf5t2DhapfPZT9tDY95wQvvbNxO63+u+SlrDm+JQMryoLfmb7wbuxTy8hZn5c7vhcbjA
-         IXDQ==
-X-Gm-Message-State: AOJu0YxCNXFXueaUoGKCSKiAw69y2YLnOMosk1m8kgV5C40ivOaGWube
-        3tRSTl3PzmqE070Myqi/PBu6RQ==
-X-Google-Smtp-Source: AGHT+IEb+U0u0xKyw5shUYDu9+LXf06vqwRCVkTois8kAxcLarz4lxMuR+oS1Pa4m67fU85hFGCeBQ==
-X-Received: by 2002:a05:6a20:4403:b0:14c:512c:60d9 with SMTP id ce3-20020a056a20440300b0014c512c60d9mr4576906pzb.27.1694648529242;
-        Wed, 13 Sep 2023 16:42:09 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id j12-20020a170902c3cc00b001b9e9edbf43sm169157plj.171.2023.09.13.16.42.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Sep 2023 16:42:08 -0700 (PDT)
-Date:   Wed, 13 Sep 2023 16:42:07 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
-        matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
-        bmasney@redhat.com, quic_tsoni@quicinc.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-Subject: Re: [REBASE PATCH v5 11/17] qcom_minidump: Register ramoops region
- with minidump
-Message-ID: <202309131632.736914C0A3@keescook>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-12-git-send-email-quic_mojha@quicinc.com>
- <202309131624.0371D7E@keescook>
+        d=1e100.net; s=20230601; t=1694672806; x=1695277606;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vNd6Mhf35GMe9RWa+Xf0nZSRO80+x90q1mI0LjqNNU=;
+        b=dObAPaccS8xzOMm8AsXYh6EO9/Lx4hV3cODEo2cGYmPq2MdYWp5ZVKk23Jrkz3/u0G
+         zPR42vmRvcg+a6+EAdukSnwbB/8eQJwLBcYs1pHpqEkDohfr5pxryC7ioXtzcqe6VMea
+         iPZ30wL6JljDknWRb2IpiUoPGBA21UxRWOT33iumqh1mKpY+BV8JppRH9Xski+Ta/5YN
+         58O1utzhZTxHdGP9XVnoEqWEDE2zQHRNlP8Qz/Sw0mE9C+pP+Ft9SDL9PMqLy8+L8S+r
+         MfQIp0Y8HzG4E7ExfQScxXdxHAtZxd0lxngbAY5c2jfPoQfcjg9ttfNe8HdXm8QFtpWw
+         yuVw==
+X-Gm-Message-State: AOJu0Yxppz2CbTY2IW8g/KC/kjyV2tYPl1aST9jnO/9mT/XmMKqcvGaP
+        5Iek5mbiOWcKsLPYX5cdKO/W7UHKmDlTlWEwv0Y=
+X-Google-Smtp-Source: AGHT+IEXyD/63hRonxcmIDGjRGZcaw+/cu+rROOPezAiFh0Nr/O9LBQRR/P1DTlJe4FEXa2CWCykZQ==
+X-Received: by 2002:a2e:9c0b:0:b0:2bc:fa8f:83bf with SMTP id s11-20020a2e9c0b000000b002bcfa8f83bfmr3161470lji.36.1694672805675;
+        Wed, 13 Sep 2023 23:26:45 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id ce11-20020a170906b24b00b0099cc1ffd8f5sm520889ejb.53.2023.09.13.23.26.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Sep 2023 23:26:45 -0700 (PDT)
+Message-ID: <7796431f-ae52-58b6-499e-566a17292725@linaro.org>
+Date:   Thu, 14 Sep 2023 08:26:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202309131624.0371D7E@keescook>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: sdm630: Drop RPM bus clocks
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-usb@vger.kernel.org
+References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
+ <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
+ <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
+ <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 13, 2023 at 04:30:04PM -0700, Kees Cook wrote:
-> On Mon, Sep 11, 2023 at 04:23:53PM +0530, Mukesh Ojha wrote:
-> > Register all the pstore frontend with minidump, so that they can
-> > be dumped as default Linux minidump region to be collected on
-> > SoC where minidump is enabled.
-> > 
-> > Helper functions is written in separate file and built along with
-> > the minidump driver, since it is client of minidump and also call
-> > it at appropriate place from minidump probe so that they always
-> > get registered.
-> > 
-> > While at it also rename the out minidump module object name during
-> > build as qcom_apss_minidump which basically depicts as Qualcomm
-> > Application processor subsystem minidump.
-> > 
-> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > ---
-> >  drivers/soc/qcom/Kconfig                 |  1 +
-> >  drivers/soc/qcom/Makefile                |  3 +-
-> >  drivers/soc/qcom/qcom_minidump.c         |  4 ++
-> >  drivers/soc/qcom/qcom_ramoops_minidump.c | 88 ++++++++++++++++++++++++++++++++
-> >  drivers/soc/qcom/qcom_ramoops_minidump.h | 10 ++++
-> >  5 files changed, 105 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.c
-> >  create mode 100644 drivers/soc/qcom/qcom_ramoops_minidump.h
-> > 
-> > diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> > index 0ac7afc2c67d..9f1a1e128fef 100644
-> > --- a/drivers/soc/qcom/Kconfig
-> > +++ b/drivers/soc/qcom/Kconfig
-> > @@ -306,6 +306,7 @@ config QCOM_MINIDUMP
-> >  	tristate "QCOM APSS Minidump driver"
-> >  	depends on ARCH_QCOM || COMPILE_TEST
-> >  	depends on QCOM_SMEM
-> > +	depends on PSTORE
-> >  	help
-> >  	  This config enables linux core infrastructure for Application
-> >  	  processor subsystem (APSS) minidump collection i.e, it enables
-> > diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> > index 4b5f72f78d3c..69df41aba7a9 100644
-> > --- a/drivers/soc/qcom/Makefile
-> > +++ b/drivers/soc/qcom/Makefile
-> > @@ -33,4 +33,5 @@ obj-$(CONFIG_QCOM_ICC_BWMON)	+= icc-bwmon.o
-> >  qcom_ice-objs			+= ice.o
-> >  obj-$(CONFIG_QCOM_INLINE_CRYPTO_ENGINE)	+= qcom_ice.o
-> >  obj-$(CONFIG_QCOM_RPROC_MINIDUMP)	+= qcom_rproc_minidump.o
-> > -obj-$(CONFIG_QCOM_MINIDUMP)		+= qcom_minidump.o
-> > +obj-$(CONFIG_QCOM_MINIDUMP)		+= qcom_apss_minidump.o
-> > +qcom_apss_minidump-objs			+= qcom_minidump.o qcom_ramoops_minidump.o
-> > diff --git a/drivers/soc/qcom/qcom_minidump.c b/drivers/soc/qcom/qcom_minidump.c
-> > index 4ce36f154e89..7930a80b9100 100644
-> > --- a/drivers/soc/qcom/qcom_minidump.c
-> > +++ b/drivers/soc/qcom/qcom_minidump.c
-> > @@ -23,6 +23,7 @@
-> >  #include <soc/qcom/qcom_minidump.h>
-> >  
-> >  #include "qcom_minidump_internal.h"
-> > +#include "qcom_ramoops_minidump.h"
-> >  
-> >  /**
-> >   * struct minidump_ss_data - Minidump subsystem private data
-> > @@ -688,6 +689,8 @@ static int qcom_apss_minidump_probe(struct platform_device *pdev)
-> >  		return ret;
-> >  	}
-> >  
-> > +	qcom_ramoops_minidump_register(md->dev);
-> > +
-> >  	mutex_lock(&md_plist.plock);
-> >  	platform_set_drvdata(pdev, md);
-> >  	qcom_apss_register_pending_regions(md);
-> > @@ -701,6 +704,7 @@ static int qcom_apss_minidump_remove(struct platform_device *pdev)
-> >  	struct minidump *md = platform_get_drvdata(pdev);
-> >  	struct minidump_ss_data *mdss_data;
-> >  
-> > +	qcom_ramoops_minidump_unregister();
-> >  	mdss_data = md->apss_data;
-> >  	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(struct minidump_subsystem));
-> >  	md = NULL;
-> > diff --git a/drivers/soc/qcom/qcom_ramoops_minidump.c b/drivers/soc/qcom/qcom_ramoops_minidump.c
-> > new file mode 100644
-> > index 000000000000..eb97310e3858
-> > --- /dev/null
-> > +++ b/drivers/soc/qcom/qcom_ramoops_minidump.c
-> > @@ -0,0 +1,88 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +
-> > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pstore.h>
-> > +#include <linux/slab.h>
-> > +#include <soc/qcom/qcom_minidump.h>
-> > +
-> > +#include "qcom_ramoops_minidump.h"
-> > +
-> > +static LIST_HEAD(ramoops_region_list);
-> > +
-> > +struct md_region_list {
-> > +	struct qcom_minidump_region md_region;
-> > +	struct list_head list;
-> > +};
-> > +
-> > +static int qcom_ramoops_region_register(struct device *dev, int type)
-> > +{
-> > +	struct qcom_minidump_region *md_region;
-> > +	struct md_region_list *mdr_list;
-> > +	struct pstore_record record;
-> > +	unsigned int max_dump_cnt;
-> > +	phys_addr_t phys;
-> > +	const char *name;
-> > +	void *virt;
-> > +	size_t size;
-> > +	int ret;
-> > +
-> > +	record.type = type;
-> > +	record.id = 0;
-> > +	max_dump_cnt = 0;
-> > +	name = pstore_type_to_name(record.type);
-> > +	do {
-> > +		ret = pstore_region_defined(&record, &virt, &phys, &size, &max_dump_cnt);
+On 13/09/2023 14:08, Konrad Dybcio wrote:
+> On 13.09.2023 09:13, Krzysztof Kozlowski wrote:
+>> On 12/09/2023 15:31, Konrad Dybcio wrote:
+>>> These clocks are now handled from within the icc framework and are
+>>> no longer registered from within the CCF. Remove them.
+>>>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> ---
+> [...]
 > 
-> I really don't want this happening: you're building your own pstore_record
-> (which has a common initializer that isn't used here) and manually
-> scraping the ramoops regions.
+>>>  		anoc2_smmu: iommu@16c0000 {
+>>>  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
+>>>  			reg = <0x016c0000 0x40000>;
+>>> -
+>>> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>>> -			assigned-clock-rates = <1000>;
+>>> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>>> -			clock-names = "bus";
+>>
+>> This is also against bindings. After your patch #4, such bus clock (or
+>> other combinations) is still required.
+> So, we have 4 SMMU instances on this platform:
 > 
-> It looks to me like you just want a way to talk all the records in
-> pstore and then export their location to minidump. The record walker
-> needs to be in the pstore core, and likely should be shared with
-> fs/pstore/inode.c which does the same thing.
+> MMSS (described, iface, mem, mem_iface)
+> GPU (described, iface-mm, iface-smmu, bus-smmu)
 > 
-> Then, in this code, you can just do something like:
+> ANOC2 (this one, no clocks after removing rpmcc bus)
+> LPASS (no clocks)
+
+Ah, I did not notice it.
+
 > 
-> 	for (record = pstore_get_record(NULL); record; record = pstore_get_record(record)) {
+> Should I then create a new entry in the bindings, replicating
+> what's there for msm8998[1] and dropping the entry with just "bus"
+> from anyOf?
 
-I just took another look at how records are stored, and I think the best
-API here is going to be something like registering a callback so that
-pstore can call into minidump for each record. (i.e. it can do this when
-reading the records into the pstore filesystem);
+So this passes the bindings, right? anyOf: in the binding should allow
+also no match, so this should be fine. However indeed we need to drop
+the "bus" entry, because it is not valid anymore.
 
-	pstore_register_record_watcher(minidump_pstore_record)
+Best regards,
+Krzysztof
 
-Then pstore can make the calls if one is registered, in the middle of
-pstore_mkfile(), with all the correct locks held, etc:
-
-	if (psi->record_watcher)
-		psi->record_watcher(record);
-
-And then minidump_pstore_record() can do this part:
-
-
-> 		if (ramoops_get_record_details(record, &virt, &phys) < 0)
-> 			continue
-> 		...
-> 		md_region->virt_addr = virt;
-> 		md_region->phys_addr = phys;
-> 		md_region->size = record->size;
-> 
-> 		ret = qcom_minidump_region_register(md_region);
-
--Kees
-
--- 
-Kees Cook
