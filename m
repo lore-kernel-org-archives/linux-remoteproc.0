@@ -2,109 +2,199 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33487EDE99C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Sep 2023 09:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164DEEEAA4E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Sep 2023 15:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237028AbjINJGs (ORCPT
+        id S241074AbjINPfu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Sep 2023 05:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34906 "EHLO
+        Thu, 14 Sep 2023 11:35:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236929AbjINJGr (ORCPT
+        with ESMTP id S241084AbjINPft (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Sep 2023 05:06:47 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82C051FC6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Sep 2023 02:06:40 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-31c93d2a24fso604056f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Sep 2023 02:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1694682399; x=1695287199; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YEtGuZs7sLu+quZuz0q3jeU9pqgU3Amd+Csaix5jJRY=;
-        b=FuqBdlvSfHfXDpWcAF2QnEUg/sFK1p74HyslWqMFgwyRoLFg383F5p92kHiCF2DOCP
-         5HoK4GxVJu7HPB3WpKeb+VBoJ6LMOujf/Slt74AdEG33DWXGnmxDKK4oJN7Vf/9VI8HD
-         FfbSr3qAVjKiA8J4Fd0Osn+MkTjf4T3Vh0CfHppmiQm1s+lmCEOPF4jiNEpmZeNEYmKv
-         9WLx6wukINhJqCDmAD6KUlON6NVK576Z1KR6oj27WFZ0nzJxarQvBOqyXXub/gJJrLE0
-         eTC9AeOHto5REVG5uITHik1nmeVxU/JjyV+cjUSo3GCM5bng1dirM2JQQvLJnMCwX5E/
-         QyGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694682399; x=1695287199;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YEtGuZs7sLu+quZuz0q3jeU9pqgU3Amd+Csaix5jJRY=;
-        b=aR94DW9BGsaTFgBmm1ZHnBvKeNI3OvBgRmMblihrxiRZILzoCUj4kaCyLz1f4U0nHv
-         ikE+JSn3odIrulqygZLFWwRzD/r9is7OkV6v16jsCAIIVGSqW9oc1oItU/oR1wZ8nxu3
-         Nl2pPXq64YqzImL7aP8MOsivJ/3pj8g+5z92ue6bRuv/s1qXO7j91zsHkEYvjujDttFr
-         XArXVwSwiGMftnqMozxEfO4uu84cHXJ/m8Q9i+1SO+EteRIjwgWsMXCZUULIYdw3UzM9
-         AwSUL8rPPHgkKk4pvRdUsYrlA4ctV0KIOiTNOiYi4KiflBhT33oLVZNKOZEVTz75AnYf
-         CoVg==
-X-Gm-Message-State: AOJu0Yzg4kOK4ieoFu+da5USWttLD3ZghtSzmKEr5B5KoSAq6vLnMytt
-        aslqD3NQH+tAaH5VZtPpIhjX/g==
-X-Google-Smtp-Source: AGHT+IEMj6jdiyeNwKMRE7TvRnW3Gb0/8lGUW1Gc2oPytQaFhNJftcgB+WikpVfaM92UiNuMJNC4+Q==
-X-Received: by 2002:adf:f7c9:0:b0:31f:91b2:692a with SMTP id a9-20020adff7c9000000b0031f91b2692amr4114442wrq.22.1694682398745;
-        Thu, 14 Sep 2023 02:06:38 -0700 (PDT)
-Received: from ?IPV6:2a04:cec2:21:518d:60be:d1a1:47e5:d622? ([2a04:cec2:21:518d:60be:d1a1:47e5:d622])
-        by smtp.gmail.com with ESMTPSA id z6-20020a05600c220600b00402dbe0bbdcsm4214732wml.28.2023.09.14.02.06.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Sep 2023 02:06:38 -0700 (PDT)
-Message-ID: <32df1f0e-282a-1efd-482c-01e61229f2c3@baylibre.com>
-Date:   Thu, 14 Sep 2023 11:06:35 +0200
+        Thu, 14 Sep 2023 11:35:49 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28507DD;
+        Thu, 14 Sep 2023 08:35:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C441CC433CB;
+        Thu, 14 Sep 2023 15:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694705744;
+        bh=Ju8fenjXTyd/K+wHzVsjLNClOY80IHgJMtcyvBlfjmk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dUCL3TIUh4znuHOvv58BnZG9NZoo+y3KSjsU77qVUNwBJDcPwy47AFaZwdxb0SjUv
+         EOcZksxwPymqdWyc5+kwa2OyUDb+hM7/fLNaFZ97nAJ+k7iY95b45bdssg1GyOspdp
+         0OFvSjt8xXSsqo5OYPxSu0v0k7XFmkGmClUzEG8h+xj/ezjutC6Z3ixUO+EQM+E2VQ
+         yU1pn8ifJmqL22OVygU48SumXZZC9oWymv9lP0wjHO9mS5nhmU0HxfP35eL/yaTJqE
+         njf2iZcXj5BHd4ND4cPlQsEd2Ycywdpd/Omci7F2RHgC2SZkTiPmGdx/0wj/R4htxx
+         vYD7BDRhERZ7w==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-501bef6e0d3so1854932e87.1;
+        Thu, 14 Sep 2023 08:35:44 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzCAf1mw7JeAuU7PR7z2zI7Dw8/2vGoLu6OtgRYChgMGToWhepu
+        +oFXLxheGLxn1BW9IKmFobqdh2qvOfJBIMKsVA==
+X-Google-Smtp-Source: AGHT+IE1RnjvWFNIuSNj4l8UNKkVgGMwvfV29PG1PE7VwgNjeKcvCEsaBa8E2YgJHEyydgRIT0BG3NyT6oXTcXkv/FU=
+X-Received: by 2002:a05:6512:110c:b0:502:9fce:b6cc with SMTP id
+ l12-20020a056512110c00b005029fceb6ccmr5749162lfg.11.1694705742911; Thu, 14
+ Sep 2023 08:35:42 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Content-Language: en-US
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        joro@8bytes.org, will@kernel.org, hch@lst.de,
-        m.szyprowski@samsung.com, yong.wu@mediatek.com
-Cc:     linux-remoteproc@vger.kernel.org, iommu@lists.linux-foundation.org
-From:   Alexandre Bailon <abailon@baylibre.com>
-Subject: Help needed to unblock upstreaming of mt8365 / mt8183 APU remoteproc
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230913111644.29889-1-hnagalla@ti.com> <20230913111644.29889-2-hnagalla@ti.com>
+In-Reply-To: <20230913111644.29889-2-hnagalla@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 14 Sep 2023 10:35:30 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+4tkCjSiyLMKakdr+z44gAGP1a=P3BFfqLMvs7a-TA2g@mail.gmail.com>
+Message-ID: <CAL_Jsq+4tkCjSiyLMKakdr+z44gAGP1a=P3BFfqLMvs7a-TA2g@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+To:     Hari Nagalla <hnagalla@ti.com>
+Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        p.zabel@pengutronix.de, martyn.welch@collabora.com,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+On Wed, Sep 13, 2023 at 6:17=E2=80=AFAM Hari Nagalla <hnagalla@ti.com> wrot=
+e:
+>
+> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+> The remote processor's life cycle management and IPC mechanisms are
+> similar across the R5F and M4F cores from remote processor driver
+> point of view. However, there are subtle differences in image loading
+> and starting the M4F subsystems.
+>
+> The YAML binding document provides the various node properties to be
+> configured by the consumers of the M4F subsystem.
+>
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+> Changes since v1:
+>  - Spelling corrections
+>  - Corrected to pass DT checks
+>
+> Changes since v2:
+>  - Missed spelling correction to commit message
+>
+> Changes since v3:
+>  - Removed unnecessary descriptions and used generic memory region names
+>  - Made mboxes and memory-region optional
+>  - Removed unrelated items from examples
+>
+> Changes since v4:
+>  - Rebased to the latest kernel-next tree
+>  - Added optional sram memory region for m4f device node
+>
+> Changes since v5:
+>  - None
+>
+>  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
+>  1 file changed, 136 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4=
+f-rproc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc=
+.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> new file mode 100644
+> index 000000000000..21b7f14d9dc4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> @@ -0,0 +1,136 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI K3 M4F processor subsystems
+> +
+> +maintainers:
+> +  - Hari Nagalla <hnagalla@ti.com>
+> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+> +
+> +description: |
+> +  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
+> +  family with a M4F core. Typically safety oriented applications may use
+> +  the M4F core in isolation without an IPC. Where as some industrial and
+> +  home automation applications, may use the M4F core as a remote process=
+or
+> +  with IPC communications.
+> +
+> +$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
+> +
+> +properties:
+> +
+> +  compatible:
+> +    enum:
+> +      - ti,am64-m4fss
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  reg:
+> +    items:
+> +      - description: IRAM internal memory region
+> +      - description: DRAM internal memory region
+> +
+> +  reg-names:
+> +    items:
+> +      - const: iram
+> +      - const: dram
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: Name of firmware to load for the M4F core
+> +
+> +  mboxes:
+> +    description: |
+> +      Mailbox specifier denoting the sub-mailbox, to be used for communi=
+cation
+> +      with the remote processor. This property should match with the
+> +      sub-mailbox node used in the firmware image.
+> +    maxItems: 2
+> +
+> +  memory-region:
+> +    description: |
+> +      phandle to the reserved memory nodes to be associated with the
+> +      remoteproc device. The reserved memory nodes should be carveout no=
+des,
+> +      and should be defined with a "no-map" property as per the bindings=
+ in
+> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.=
+yaml
+> +      Optional memory regions available for firmware specific purposes.
+> +    maxItems: 8
+> +    items:
+> +      - description: regions used for DMA allocations like vrings, vring=
+ buffers
+> +                     and memory dedicated to firmware's specific purpose=
+s.
+> +    additionalItems: true
+> +
+> +  sram:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 1
+> +    maxItems: 4
+> +    items:
+> +      maxItems: 4
 
-For a long time now, I am trying to upstream support of remoteproc 
-driver for the APU (AI accelerator) found in MT8183 and MT8365.
+You are saying there are 1-4 entries and each entry is 4 cells. What's
+in the 4 cells?
 
-There is a blocker that I am not able to address and I need some help to 
-find a solution. The blocker always related to IOMMU and device address 
-management.
+From the description and example, looks like you only have 1 cell (a
+phandle) so maxItems should be 1.
 
-Let's me give some context.
-The APU is an xtensa processor with some instructions set that could be 
-used for edge AI/ML.
-We want use remoteproc to load a firmware and start the processor.
-The main issue is that the firmware is not relocatable so we have to 
-load it at specific address and the APU is behind an IOMMU.
-This use case is already managed by remoteproc core.
-But, the remoteproc require an unmanaged IOMMU domain to use the IOMMU 
-which is not supported by the MT8183 / MT8365.
+Your example should fail, but I'm not sure why it doesn't.
 
-To workaround it, I tried a couple of things:
-- From the platform driver I passed to the core the device IOMMU domain
-- I updated the platform to use the IOMMU API but this duplicates 
-remoteproc core
-- I tried adding support of unmanaged domain IOMMU
-None of these proposals were acceptable for good reasons but now I don't 
-have much thing to try.
-The only thing I have not tried yet is adding a new function to DMA API 
-that would allow allocating a buffer that would be mapped at a specific 
-DMA address.
-
-Currently, everything is closed source (the sources, the toolchains, 
-...) so there is not many thing I could do to make it relocatable.
-Someday, I hope that we could use an open source toolchain and firmware 
-but this will take a lot of time before coming.
-
-I hope the issue I am facing is clear and we will find a solution together.
-
-Thanks,
-Alexandre
+Rob
