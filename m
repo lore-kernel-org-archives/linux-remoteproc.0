@@ -2,63 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086F0EDE983
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Sep 2023 06:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539B0EDE98C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Sep 2023 07:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233106AbjING0w (ORCPT
+        id S235576AbjINHlN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Sep 2023 02:26:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
+        Thu, 14 Sep 2023 03:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjING0v (ORCPT
+        with ESMTP id S232903AbjINHlM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Sep 2023 02:26:51 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72291F7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 23:26:47 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2bf924f39f1so8720971fa.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Sep 2023 23:26:47 -0700 (PDT)
+        Thu, 14 Sep 2023 03:41:12 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BC91BCD
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Sep 2023 00:41:07 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99357737980so85308166b.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Sep 2023 00:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694672805; x=1695277605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8vNd6Mhf35GMe9RWa+Xf0nZSRO80+x90q1mI0LjqNNU=;
-        b=Oc5FOE5NRLURDO9gHKvjQiw11UkgkUHNO7QO0NipBLm5wweU1u8hYodmpLlTTF6mSy
-         LyEvduS4dNk96AFboKHEW3J/3y7V7Fqf2maeXO/CW7pONwY5S26zcmHbDagxm8sNsp25
-         scsuwUx7N0HR/bgKoNtmdOApdS4G42JECmGIAca2GYkX8Bxt8v1D7kCLviGEt0pxsd5J
-         4peZCXCosIHDzDXizPqWKZty3hqheCwhSn4mU3KMTQItm4m6ljXANv037csLgDo04mqR
-         fXhgNKsO1CuE4QQUi+jjvr7I1dZjHn76LjtU5Q3OFTQmAqaTPv6o9M7ZEQnJDcvymOLT
-         G3yw==
+        d=linaro.org; s=google; t=1694677266; x=1695282066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTTFLmHVcCEeGdB9PLCErU99zAFCDRERFukfsKEjoJU=;
+        b=TPGWPxo/HwC55K7gFK1Hzne034s+GePAsi6y6+4aj+k93EkuTSCqUWVG6J8mfBqLw3
+         NFyl6Wg/dedffREf2zs9E8wRwVnvTaLS+m6xdEw5+DeiT8pi7GJRcZwYbSRNE2WvkaCs
+         4M7ZLLnu2LsuDNrt7Ys5k4VkRasSkwFkMCepRZxTvYyxl76saTzL8UMsyd7iN1ZuJC7M
+         vQjAacrxQZPWwfD24Gfo1MNnbHsfrhhjoggjYFvEfkgmsa+Qc0WUHDpXvZ/So9ERs1lh
+         jJoq96JvayCZTH7val69lj3H3v58lXjbZOEmDRqQvnry1Dm0kEo/KNZ4ejRZzdy4KYiq
+         UMQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694672806; x=1695277606;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8vNd6Mhf35GMe9RWa+Xf0nZSRO80+x90q1mI0LjqNNU=;
-        b=dObAPaccS8xzOMm8AsXYh6EO9/Lx4hV3cODEo2cGYmPq2MdYWp5ZVKk23Jrkz3/u0G
-         zPR42vmRvcg+a6+EAdukSnwbB/8eQJwLBcYs1pHpqEkDohfr5pxryC7ioXtzcqe6VMea
-         iPZ30wL6JljDknWRb2IpiUoPGBA21UxRWOT33iumqh1mKpY+BV8JppRH9Xski+Ta/5YN
-         58O1utzhZTxHdGP9XVnoEqWEDE2zQHRNlP8Qz/Sw0mE9C+pP+Ft9SDL9PMqLy8+L8S+r
-         MfQIp0Y8HzG4E7ExfQScxXdxHAtZxd0lxngbAY5c2jfPoQfcjg9ttfNe8HdXm8QFtpWw
-         yuVw==
-X-Gm-Message-State: AOJu0Yxppz2CbTY2IW8g/KC/kjyV2tYPl1aST9jnO/9mT/XmMKqcvGaP
-        5Iek5mbiOWcKsLPYX5cdKO/W7UHKmDlTlWEwv0Y=
-X-Google-Smtp-Source: AGHT+IEXyD/63hRonxcmIDGjRGZcaw+/cu+rROOPezAiFh0Nr/O9LBQRR/P1DTlJe4FEXa2CWCykZQ==
-X-Received: by 2002:a2e:9c0b:0:b0:2bc:fa8f:83bf with SMTP id s11-20020a2e9c0b000000b002bcfa8f83bfmr3161470lji.36.1694672805675;
-        Wed, 13 Sep 2023 23:26:45 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id ce11-20020a170906b24b00b0099cc1ffd8f5sm520889ejb.53.2023.09.13.23.26.43
+        d=1e100.net; s=20230601; t=1694677266; x=1695282066;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BTTFLmHVcCEeGdB9PLCErU99zAFCDRERFukfsKEjoJU=;
+        b=aLBOTviTDR6Fic4k6X8rOTDWfKQsXepDhVsMbDOJ79Ldctl7iPkFcVZyz6qCX+6qfR
+         RrD+Akiapj1Q7kxNb+Uln6gzc9CtrIDeA3wKQjtMOCOSgXGnlVK4JTuLgNnPlRAfJjP4
+         0aCuiB1FE556aZnelsqIzz+nyRiNyZUE488m4roOqJZ73QCXCsGawkW8zM83hPuIUPoo
+         vzBFzN33p4SddbyLoSTXZTaIJru6Pqwe2fWfS3SbYgmUnxT+ENqmxMSLgr0ReGRDQgnG
+         Ygpc/IS1LuqFjziW+hwFiJWrrsKDGn7glWu+TJDrt8rlp9wm+OJmOwwNd00WH19h2DLJ
+         UnuA==
+X-Gm-Message-State: AOJu0YwQcjp24aAlj/gc21EpdKFmx2GZvIkFGZ//CPe7J/RNw2nOvAe1
+        NbM0XIL5ZiasCesmmvmM+VpnHg==
+X-Google-Smtp-Source: AGHT+IHlbblsKiu2gEtKrdgm90QMFr8E3CuYF/8VHvCB/T7LrlXyHxwj/f1cU1M0mOLP9SJFk3qWLQ==
+X-Received: by 2002:a17:906:3051:b0:99e:6a0:5f64 with SMTP id d17-20020a170906305100b0099e06a05f64mr3654818ejd.36.1694677265829;
+        Thu, 14 Sep 2023 00:41:05 -0700 (PDT)
+Received: from [192.168.37.232] (178235177172.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.172])
+        by smtp.gmail.com with ESMTPSA id v7-20020a1709064e8700b00977cad140a8sm589467eju.218.2023.09.14.00.41.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 23:26:45 -0700 (PDT)
-Message-ID: <7796431f-ae52-58b6-499e-566a17292725@linaro.org>
-Date:   Thu, 14 Sep 2023 08:26:42 +0200
+        Thu, 14 Sep 2023 00:41:05 -0700 (PDT)
+Message-ID: <098f0a07-a67a-4209-8dbb-ff8d5b699dfe@linaro.org>
+Date:   Thu, 14 Sep 2023 09:41:01 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: sdm630: Drop RPM bus clocks
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -82,54 +81,100 @@ References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
  <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
  <70b2a9d7-1a3e-25da-3d78-7bfa5d3a1e05@linaro.org>
  <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <c3dd5f68-af75-4880-83c2-ca7723561ae9@linaro.org>
+ <7796431f-ae52-58b6-499e-566a17292725@linaro.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <7796431f-ae52-58b6-499e-566a17292725@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13/09/2023 14:08, Konrad Dybcio wrote:
-> On 13.09.2023 09:13, Krzysztof Kozlowski wrote:
->> On 12/09/2023 15:31, Konrad Dybcio wrote:
->>> These clocks are now handled from within the icc framework and are
->>> no longer registered from within the CCF. Remove them.
->>>
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>> ---
-> [...]
-> 
->>>  		anoc2_smmu: iommu@16c0000 {
->>>  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
->>>  			reg = <0x016c0000 0x40000>;
->>> -
->>> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
->>> -			assigned-clock-rates = <1000>;
->>> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
->>> -			clock-names = "bus";
+On 14.09.2023 08:26, Krzysztof Kozlowski wrote:
+> On 13/09/2023 14:08, Konrad Dybcio wrote:
+>> On 13.09.2023 09:13, Krzysztof Kozlowski wrote:
+>>> On 12/09/2023 15:31, Konrad Dybcio wrote:
+>>>> These clocks are now handled from within the icc framework and are
+>>>> no longer registered from within the CCF. Remove them.
+>>>>
+>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>> ---
+>> [...]
 >>
->> This is also against bindings. After your patch #4, such bus clock (or
->> other combinations) is still required.
-> So, we have 4 SMMU instances on this platform:
+>>>>  		anoc2_smmu: iommu@16c0000 {
+>>>>  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
+>>>>  			reg = <0x016c0000 0x40000>;
+>>>> -
+>>>> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>>>> -			assigned-clock-rates = <1000>;
+>>>> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+>>>> -			clock-names = "bus";
+>>>
+>>> This is also against bindings. After your patch #4, such bus clock (or
+>>> other combinations) is still required.
+>> So, we have 4 SMMU instances on this platform:
+>>
+>> MMSS (described, iface, mem, mem_iface)
+>> GPU (described, iface-mm, iface-smmu, bus-smmu)
+>>
+>> ANOC2 (this one, no clocks after removing rpmcc bus)
+>> LPASS (no clocks)
 > 
-> MMSS (described, iface, mem, mem_iface)
-> GPU (described, iface-mm, iface-smmu, bus-smmu)
+> Ah, I did not notice it.
 > 
-> ANOC2 (this one, no clocks after removing rpmcc bus)
-> LPASS (no clocks)
-
-Ah, I did not notice it.
-
+>>
+>> Should I then create a new entry in the bindings, replicating
+>> what's there for msm8998[1] and dropping the entry with just "bus"
+>> from anyOf?
 > 
-> Should I then create a new entry in the bindings, replicating
-> what's there for msm8998[1] and dropping the entry with just "bus"
-> from anyOf?
+> So this passes the bindings, right?
+Yes
 
-So this passes the bindings, right? anyOf: in the binding should allow
-also no match, so this should be fine. However indeed we need to drop
-the "bus" entry, because it is not valid anymore.
+anyOf: in the binding should allow
+> also no match, so this should be fine. However indeed we need to drop
+> the "bus" entry, because it is not valid anymore.
+Actually, looks like the LPASS smmu may require a single
+clock. We can reuse that single-"bus"-clock entry for
+HLOS1_VOTE_LPASS_ADSP_SMMU_CLK.
 
-Best regards,
-Krzysztof
+The device didn't crash when trying to access LPASS SMMU
+with that clock absent, but I guess it may have just
+been luck, things may change once more hardware is parked..
 
+Konrad
