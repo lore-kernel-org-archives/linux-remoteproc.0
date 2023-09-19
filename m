@@ -2,111 +2,96 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFB1CD54AB
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Sep 2023 09:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43D2CD54AF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Sep 2023 09:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjISJXw (ORCPT
+        id S231290AbjISJ0d (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Sep 2023 05:23:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58452 "EHLO
+        Tue, 19 Sep 2023 05:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjISJXv (ORCPT
+        with ESMTP id S229522AbjISJ0U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Sep 2023 05:23:51 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50AF3DA;
-        Tue, 19 Sep 2023 02:23:45 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+        Tue, 19 Sep 2023 05:26:20 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 136EC18D;
+        Tue, 19 Sep 2023 02:26:13 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 81B0F6607033;
-        Tue, 19 Sep 2023 10:23:43 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D88376607079;
+        Tue, 19 Sep 2023 10:26:11 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1695115424;
-        bh=zr0JHbMPGnoB7W9Ga+/W4aCptT35gdUdHKTnbXaS1ao=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gNu8uZ5h9bSSKMbkyuwIc++hFOXW8AthBtEaGp3olqat7QhHQQV1yuUtznTL1opyi
-         6q0B7NFlvHsusyAPXPORN3XaXbLKZmXO1j/E7uzxgJ2V0GE8Nz1yvy9gnMnbc3NvFG
-         Vtb2kKQLtGwLlFiBELpiW94r74dHWzR3WxMfZy6Qc99xsrT8lshAUErJPPF56y+stf
-         qTMarH6dNKpDv/yrvG0m9i/VvI0N7+bDPI3c0FtZFOr0wACFERn/tqjFW+ftkSoO4R
-         ZSAMMZ/Si1RGBHYK9sSf+/u0r5MxmIW2kfsqDOuXESccspqQ3uyAUdkMI7KaYbODCz
-         0fEralOeKOMnQ==
+        s=mail; t=1695115572;
+        bh=Tf/Prg/AWcVMPn6dgYGWrU1QgYEEKFn1/Ywarvh6ym4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HDUhaWZt8TuD3XKxH/iiRo4TzTt4G/JlQsAcpK4cSv/F9wbyi/Y/8/4hS+fH8t9B/
+         mfO4hvMtfhKGUPKxDQzFZAdKt3v00q9EuHvZcTs9fDOcYeCRpMJOf77AaraQgtjQ0z
+         eQlV/c28MwSvr5zk9nbt7mAZZIgg6pyC6bdbZBisigrClo+ZMDtUrOnEUlwkoGjBfk
+         GXsOgg4VUSEO5SE1NE2G/mACTqYwzqG9Cl0W8A75yHHBWNtJoR9ZUxnH8yVUNUBQmy
+         30gV8II1kz2JAnzuw7uDINiucKXaKW4A6PMEBGSla0VM9YsDNrMpy4V/IhHthw3PQn
+         lKB82uA+cxEFw==
+Message-ID: <13843095-0906-804e-ffbe-36625ebe05cf@collabora.com>
+Date:   Tue, 19 Sep 2023 11:26:09 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH] remoteproc: mediatek: Detect single/multi core SCP with
+ rpmsg-name property
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Laura Nao <laura.nao@collabora.com>
+References: <20230919050305.3817347-1-wenst@chromium.org>
+Content-Language: en-US
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-To:     mathieu.poirier@linaro.org
-Cc:     andersson@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, tinghan.shen@mediatek.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wenst@chromium.org,
-        kernel@collabora.com
-Subject: [PATCH] remoteproc: mediatek: Refactor single core check and fix retrocompatibility
-Date:   Tue, 19 Sep 2023 11:23:36 +0200
-Message-ID: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.42.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230919050305.3817347-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In older devicetrees we had the ChromeOS EC in a node called "cros-ec"
-instead of the newer "cros-ec-rpmsg", but this driver is now checking
-only for the latter, breaking compatibility with those.
+Il 19/09/23 07:03, Chen-Yu Tsai ha scritto:
+> In the just landed multi-core SCP work, detection of single/multi core
+> SCP is done by checking the immediate child node of the SCP complex
+> device node. In the original work this was done by matching the child
+> node's name. However the name wasn't previously standardized. This
+> resulted in breakage on MT8183 and MT8192 Chromebooks while the driver
+> side changes were picked up and the device tree changes were not picked
+> up.
+> 
+> Instead, match against the "mediatek,rpmsg-name" property, which is
+> required to be present in the rpmsg sub-node. This makes the
+> aforementioned devices running old device trees working again.
+> 
+> Reported-by: Laura Nao <laura.nao@collabora.com>
+> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> The patch is based on next-20230918 with a whole bunch of local patches
+> stacked on top. None of my local patches are related to remoteproc, so
+> it should be fine.
+> 
+> I tested on both MT8183 Juniper and MT8192 Hayato and on both systems
+> the SCP successfully probed again.
 
-Besides, we can check if the SCP is single or dual core by simply
-walking through the children of the main SCP node and checking if
-if there's more than one "mediatek,scp-core" compatible node.
+Instead of checking "mediatek,rpmsg-name", I think that a better way of checking if
+this is single or multi core is to count the number of cores...
 
-Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/remoteproc/mtk_scp.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+I've sent my own version of this, please check [1].
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ea227b566c54..a35409eda0cf 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1144,29 +1144,25 @@ static int scp_add_multi_core(struct platform_device *pdev,
- 	return ret;
- }
- 
--static int scp_is_single_core(struct platform_device *pdev)
-+static bool scp_is_single_core(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev_of_node(dev);
- 	struct device_node *child;
-+	int num_cores = 0;
- 
--	child = of_get_next_available_child(np, NULL);
--	if (!child)
--		return dev_err_probe(dev, -ENODEV, "No child node\n");
-+	for_each_child_of_node(np, child)
-+		if (of_device_is_compatible(child, "mediatek,scp-core"))
-+			num_cores++;
- 
--	of_node_put(child);
--	return of_node_name_eq(child, "cros-ec-rpmsg");
-+	return num_cores < 2;
- }
- 
- static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
- {
- 	int ret;
- 
--	ret = scp_is_single_core(pdev);
--	if (ret < 0)
--		return ret;
--
--	if (ret)
-+	if (scp_is_single_core(pdev))
- 		ret = scp_add_single_core(pdev, scp_cluster);
- 	else
- 		ret = scp_add_multi_core(pdev, scp_cluster);
--- 
-2.42.0
+[1]: 
+https://lore.kernel.org/linux-remoteproc/20230919092336.51007-1-angelogioacchino.delregno@collabora.com/
+
+Cheers,
+Angelo
 
