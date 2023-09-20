@@ -2,53 +2,59 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6217DC04AB4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Sep 2023 17:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1231C04FD1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Sep 2023 18:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235174AbjITRKk (ORCPT
+        id S229473AbjITS0N (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 20 Sep 2023 13:10:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52694 "EHLO
+        Wed, 20 Sep 2023 14:26:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235310AbjITRK0 (ORCPT
+        with ESMTP id S229680AbjITS0N (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 20 Sep 2023 13:10:26 -0400
+        Wed, 20 Sep 2023 14:26:13 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534E8F4;
-        Wed, 20 Sep 2023 10:10:20 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA92C43397;
-        Wed, 20 Sep 2023 17:10:18 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4510CA;
+        Wed, 20 Sep 2023 11:26:06 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2158C433C8;
+        Wed, 20 Sep 2023 18:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695229819;
-        bh=GtxNzXrdVQp3KK1fl0MVslj0u/GM1KmyJHWHlPDOTzM=;
+        s=k20201202; t=1695234366;
+        bh=PE75NYjmQVobATPo4V3+LF6HiqjEzfsGddCxmXSEr60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JwawKQd6VbJi24u5AJRoeawiTVZe5p3O8/qYKTCP097RnfuNDgMDZ7+LbKP6hcaGq
-         mD2wLGu4bi+qK6AOsUF/pMEVS2A9SSr2yp1LnUu0Viz5HLqiKKaKkvjKho0q3iXauu
-         3TkVN0yCDFqia6rjM9XGPYYWbPimqUFp+1RN+cA9zAxm6h5UQMQ8YIiQgNLIwD8Osz
-         k8M75bHFcsbSfidu0Ty7VgY0SJbLA5XcxWGQgt82Q2KVhU4imgZyPz3LJxSj+t1edw
-         5se1HaijC/iD3/pUeeD3GVFpEfeBb5zqU9Xy/2a19pfEE16smTgf3tKwJRCt4cRim8
-         r5g5S6upzVgyQ==
+        b=L6Yfo7agYCmjL+bWnB39wMEUypQbfAQ+kp2viYl3yEKNfeBr9baIHqzEsMpLGFy7h
+         moJaQl8Yje2nySFn0EPczEP1fyAWAUjrEjG5+XzAUpYavn6vN1aQcQZmF/eqzHs4MI
+         Zq4/0SEnqxe3TNX3DesxNQw40lsUthpzJFhBKL0FWHBQlTXUFRawo1FjTInU6//KRF
+         w5YDgPaQlDNgPDfQopiQ8EKeJHRGm4iTnA3Xjkh5VcaGr6cQHOEuGfWfOqacs7nAkf
+         QxAxqaom6O8iXr2P9oyhVJuLchXqlSqie6/Pk7qeb/szK/LQXIkdtWXpaVX0faWbqE
+         LwgebLp7L1qDw==
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Nikita Travkin <nikita@trvn.ru>
-Cc:     David Wronek <davidwronek@gmail.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-usb@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v3 0/4] sc7180: Add ADSP
-Date:   Wed, 20 Sep 2023 10:14:06 -0700
-Message-ID: <169523004968.2665018.1443667905220127425.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH v2 00/14] Clean up RPM bus clocks remnants
+Date:   Wed, 20 Sep 2023 11:30:12 -0700
+Message-ID: <169523460861.3191956.15228997966255141519.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230907-sc7180-adsp-rproc-v3-0-6515c3fbe0a3@trvn.ru>
-References: <20230907-sc7180-adsp-rproc-v3-0-6515c3fbe0a3@trvn.ru>
+In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
+References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -57,23 +63,24 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On Thu, 07 Sep 2023 15:02:33 +0500, Nikita Travkin wrote:
-> sc7180 has an ADSP remoteproc that can be used to control the sound
-> hardware. This remoteproc has to be used on those devices that use
-> Qualcomm firmware and thus are locked out of driving the lpass directly.
+On Tue, 12 Sep 2023 15:31:38 +0200, Konrad Dybcio wrote:
+> After the recent cleanups ([1], [2]) some in-tree abusers that directly
+> accessed the RPM bus clocks, effectively circumventing and working
+> against the efforts of the interconnect framework, were found.
 > 
-> Introducing the ADSP would allow multiple WoA laptops such as Aspire 1
-> to provide sound. It's also useful for the sm7125 devices that are to be
-> included to the kernel [1]
+> Patches 1-5 drop deprecated references and the rest attempt to stop
+> direct bus clock abuses.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/4] arm64: dts: qcom: sc7180: Add tertiary mi2s pinctrl
-      commit: 828298a9efb237b76fa667bb74a6450d1df3eeed
-[4/4] arm64: dts: qcom: sc7180: Add ADSP
-      commit: a3d5fb3b084c0c67f9918a866b92cbe09b9e1d77
+[08/14] dt-bindings: remoteproc: qcom,adsp: Remove AGGRE2 clock
+        commit: c4c5b47958529bc1de10260df0c583710853b516
+[09/14] dt-bindings: remoteproc: qcom,msm8996-mss-pil: Remove PNoC clock
+        commit: e7781901449cbcff129d80a5d9021e9e96084ec4
+[10/14] remoteproc: qcom: q6v5-mss: Remove PNoC clock from 8996 MSS
+        commit: e1592981c51bac38ea2041b642777b3ba30606a8
 
 Best regards,
 -- 
