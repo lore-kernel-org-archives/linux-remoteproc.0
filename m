@@ -2,74 +2,151 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3526CE79AD
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Sep 2023 03:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E020CCE79AC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Sep 2023 08:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232648AbjITDzh (ORCPT
+        id S232327AbjITIrN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Sep 2023 23:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55144 "EHLO
+        Wed, 20 Sep 2023 04:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232682AbjITDzN (ORCPT
+        with ESMTP id S231269AbjITIrM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Sep 2023 23:55:13 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12ED6F5;
-        Tue, 19 Sep 2023 20:55:06 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54165C43391;
-        Wed, 20 Sep 2023 03:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695182106;
-        bh=lS5QsmDIxhnq9nnMl0m5YDi8EJfraAZLdVal/TChSgk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u1N+lYm2wHIv1+kaGxqIxTjWvBrSQCbc7lvBtAU8v19pGhlQKARoXyPKwwgtKNd9c
-         CtXrVQmDqCEcmnHxA2H7qqHjYC57KzO8nUI7/XeonRZDs+1qF+WzTRH/4rLqKTrzG4
-         vP3VskkLscHSpqg1T1KHT57OOSjS5II8SL7woyd1ii4B8l6JsbjL7XGTMKMYv/lEl3
-         M67R/Bt3f7Zsic7xWBxyaBMZ/fKVyqWWR2UJ8Zc0MnhGqhoa2tj7GkHKjgP5CMwKNi
-         cbEnPcAJ8Z0V87AdIaPJbO+QNoXpu3egquiLkr+zRpasLLnL+SfT/o32Ols1ICJMau
-         qLkPtFNH67lCg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ohad@wizery.com,
-        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org,
-        Vignesh Viswanathan <quic_viswanat@quicinc.com>
-Cc:     quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com
-Subject: Re: (subset) [PATCH v2 0/2] Fix tcsr_mutex register for IPQ6018
-Date:   Tue, 19 Sep 2023 20:58:57 -0700
-Message-ID: <169518233725.1055386.8371009743953920681.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230905095535.1263113-1-quic_viswanat@quicinc.com>
-References: <20230905095535.1263113-1-quic_viswanat@quicinc.com>
+        Wed, 20 Sep 2023 04:47:12 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D91D99;
+        Wed, 20 Sep 2023 01:47:01 -0700 (PDT)
+X-UUID: 40466ac6579211ee8051498923ad61e6-20230920
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=A9ALiqMP0XKS7MqHyaj8E5hr3z/qH7isSEOBbejDVbQ=;
+        b=Xc8CTE9BkId4pU7fpOoHGdhWKQ040R5osSHdCM++YEqMqNea7TG+SS9+LYsdLEyEPxQ8/wWT5lE2J6u56dXjZhj9D4U9uSBs+0sHG0z1PfSOkbo9MXJv2mx4LrsYzc/kySFZvYbM4eFfv2xvXI8jAaIjNVdjpZ3bx0orSR+kT3Y=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.32,REQID:72fc3fc5-6544-4abc-ab05-fb539f4562e9,IP:0,U
+        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:-5
+X-CID-META: VersionHash:5f78ec9,CLOUDID:a9572814-4929-4845-9571-38c601e9c3c9,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
+        DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 40466ac6579211ee8051498923ad61e6-20230920
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1132737366; Wed, 20 Sep 2023 16:46:55 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 20 Sep 2023 16:46:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 20 Sep 2023 16:46:53 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "Chen-Yu Tsai" <wenst@chromium.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH] remoteproc: mediatek: Fix compatibility of probing SCP cores
+Date:   Wed, 20 Sep 2023 16:46:11 +0800
+Message-ID: <20230920084611.30890-1-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--7.155100-8.000000
+X-TMASE-MatchedRID: lpk7+cih7u/Cpdw+7xrhskhEDfw/93Bugqd6JzaZubNnL2dIbsYl/0Ue
+        RhGY4VMdpfeDl6R2Qb6+fZHd7VPSkPIejw19Z0aT9iItFUn3XkOFr3qfbdwhiNnH6NX3JoGqljC
+        EZrozxnJOFu8ssjxG82O1fqYTlb8QroQgRZf2+t4tMfCdg6KRDZYcYQ11P5U/myiLZetSf8mfop
+        0ytGwvXiq2rl3dzGQ1HI2pSDhttZ8gEz00G7LODcdCg5JW0OFvBKw91MZ9UveyLpLdioc4DQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--7.155100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 664E116E23EE59936449445FD53CC766206D23BF2896EF10212A00298EFDE24C2000:8
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The SCP dt-binding introduces a new SCP node format to describe
+the multi-core SCP HW. However, the old format for single-core
+SCP is co-existed with the new format. It suggests that
+there are two different approaches, using either the old style or
+the new format, to describe the single-core SCP HW in devicetree.
 
-On Tue, 05 Sep 2023 15:25:33 +0530, Vignesh Viswanathan wrote:
-> IPQ6018 has 32 tcsr_mutex hwlock registers of 0x1000 size each.
-> The compatible string qcom,ipq6018-tcsr-mutex is mapped to
-> of_msm8226_tcsr_mutex which has 32 locks configured with stride of 0x80
-> and doesn't match the HW present in IPQ6018.
-> 
-> This series fixes the following:
->  1. Fix the tcsr_mutex register size to 0x20000 in IPQ6018 DTSI.
->  2. Remove IPQ6018 specific compatible in hwspinlock driver so that it
->     falls back to pick of_tcsr_mutex data.
-> 
-> [...]
+the driver checks the immediate child node name in the SCP node to
+determin the format that is being utilized. The node name is expected
+ "scp" for new format and "cros-ec-rpmsg" for the old format. However,
+the expected node name for old format didn't defined in earlier
+SCP dt-binding and the old node name is "cros_ec" in old devicetree.
+So, this checking breaks the compatibility with old SCP devicetree.
 
-Applied, thanks!
+In order to distinguish between the various forms of SCP devicetree and
+maintain compatibility with the previous SCP devicetree, this fix
+verifies the existence of the compatible name "mediatek,scp-core"
+introduced in the new format.
 
-[1/2] arm64: dts: qcom: ipq6018: Fix tcsr_mutex register size
-      commit: 72fc3d58b87b0d622039c6299b89024fbb7b420f
+Reported-by: Laura Nao <laura.nao@collabora.com>
+Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+---
+ drivers/remoteproc/mtk_scp.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Best regards,
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index ea227b566c54..76472e50c8f5 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1144,29 +1144,29 @@ static int scp_add_multi_core(struct platform_device *pdev,
+ 	return ret;
+ }
+ 
+-static int scp_is_single_core(struct platform_device *pdev)
++static bool scp_find_core_node(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev_of_node(dev);
+ 	struct device_node *child;
++	int found = 0;
+ 
+-	child = of_get_next_available_child(np, NULL);
+-	if (!child)
+-		return dev_err_probe(dev, -ENODEV, "No child node\n");
++	for_each_child_of_node(np, child) {
++		if (of_device_is_compatible(child, "mediatek,scp-core")) {
++			found = 1;
++			of_node_put(child);
++			break;
++		}
++	}
+ 
+-	of_node_put(child);
+-	return of_node_name_eq(child, "cros-ec-rpmsg");
++	return found;
+ }
+ 
+ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
+ {
+ 	int ret;
+ 
+-	ret = scp_is_single_core(pdev);
+-	if (ret < 0)
+-		return ret;
+-
+-	if (ret)
++	if (!scp_find_core_node(pdev))
+ 		ret = scp_add_single_core(pdev, scp_cluster);
+ 	else
+ 		ret = scp_add_multi_core(pdev, scp_cluster);
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.18.0
+
