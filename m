@@ -2,86 +2,96 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1231C04FD1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Sep 2023 18:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF41E7D0A4
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Sep 2023 19:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjITS0N (ORCPT
+        id S230471AbjIUTFS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 20 Sep 2023 14:26:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
+        Thu, 21 Sep 2023 15:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbjITS0N (ORCPT
+        with ESMTP id S231508AbjIUTE6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 20 Sep 2023 14:26:13 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4510CA;
-        Wed, 20 Sep 2023 11:26:06 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2158C433C8;
-        Wed, 20 Sep 2023 18:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695234366;
-        bh=PE75NYjmQVobATPo4V3+LF6HiqjEzfsGddCxmXSEr60=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L6Yfo7agYCmjL+bWnB39wMEUypQbfAQ+kp2viYl3yEKNfeBr9baIHqzEsMpLGFy7h
-         moJaQl8Yje2nySFn0EPczEP1fyAWAUjrEjG5+XzAUpYavn6vN1aQcQZmF/eqzHs4MI
-         Zq4/0SEnqxe3TNX3DesxNQw40lsUthpzJFhBKL0FWHBQlTXUFRawo1FjTInU6//KRF
-         w5YDgPaQlDNgPDfQopiQ8EKeJHRGm4iTnA3Xjkh5VcaGr6cQHOEuGfWfOqacs7nAkf
-         QxAxqaom6O8iXr2P9oyhVJuLchXqlSqie6/Pk7qeb/szK/LQXIkdtWXpaVX0faWbqE
-         LwgebLp7L1qDw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        linux-usb@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v2 00/14] Clean up RPM bus clocks remnants
-Date:   Wed, 20 Sep 2023 11:30:12 -0700
-Message-ID: <169523460861.3191956.15228997966255141519.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
+        Thu, 21 Sep 2023 15:04:58 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDC6E08D
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 10:50:00 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-404fbfac998so14508165e9.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 10:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695318599; x=1695923399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2aBYYxm4V3k4FyEjLrLJ9/n/H90Md6QsttKISLF22a4=;
+        b=TvitetX1+8y+R6XxPTdBEUGoj6BIf2gpF/Bwke9VYSb4YLtSo4/+W/q7rK3pJkFMpN
+         8qWwqFN5XtYbX0hbFcxX/OM0jfJSztr8H7ytGnte4LWbDKWmaggv4Fn5Tiz2RGyU2x+c
+         Azgs60OMdNVftFZi+gx+blMLkNVDuE/j0frR4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695318599; x=1695923399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2aBYYxm4V3k4FyEjLrLJ9/n/H90Md6QsttKISLF22a4=;
+        b=uYXBDZJpf7F0preTJ7csjGge0P2tqhDGMbjEMTSbTQCD+0zQVs2epWBOPgTR8YsoG1
+         9Ygb5MwBGpWNBvEXI8WiW+YG/TfoUovh9yIk0Zlpr0YfO8LBMCb8SdZEhtuMgnzfxAif
+         TTSjyYqzsgcKrTlAqWycXb2n2fFYvUjPS6014VGR78bqXIadVSUzQHN+p/gmjcRtePt+
+         przZg0+ljGn9+cXIGmYfcW2lpYKY8VTqY1OkZLknCbZ1nLrOV86l+xm+RYnDO9sqH9oo
+         1+0IfA00mWBcdVJQAAetcbiw2WXZ1GCAxTcKRLtsbGMaA5ahXID6rMOSIxnNGM4oacn3
+         9xvQ==
+X-Gm-Message-State: AOJu0Yxj/qJZ5+ZL5YBhWSOAXzoGj1n9bwEnb5gqj0f2VIo56WK2GIsk
+        sI/ueJceuw3dgs0pTWpkORUR3d4ag9eF8HxEtlje6VaS6dQ9C464msE=
+X-Google-Smtp-Source: AGHT+IGdIV8J7fxjUNbRUv5HJhGzBY+D1JG/lYO+jffLDerOCNDgsVdIhjbf+HuUVjEXXFJfi0crYYSdZkt0BFEhkOg=
+X-Received: by 2002:a19:e051:0:b0:4ff:8863:be01 with SMTP id
+ g17-20020a19e051000000b004ff8863be01mr3396045lfj.8.1695269389034; Wed, 20 Sep
+ 2023 21:09:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com> <20230920150332.318851-1-laura.nao@collabora.com>
+In-Reply-To: <20230920150332.318851-1-laura.nao@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 21 Sep 2023 12:09:37 +0800
+Message-ID: <CAGXv+5Hr1woRL5z6b4k6e+FQKaVyoUmP4vAt=RrEgjEwq8bUhw@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: mediatek: Refactor single core check and fix retrocompatibility
+To:     Laura Nao <laura.nao@collabora.com>
+Cc:     angelogioacchino.delregno@collabora.com, andersson@kernel.org,
+        kernel@collabora.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
+        matthias.bgg@gmail.com, tinghan.shen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Wed, Sep 20, 2023 at 11:03=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
+> wrote:
+>
+> On 9/19/23 11:23, AngeloGioacchino Del Regno wrote:
+> > In older devicetrees we had the ChromeOS EC in a node called "cros-ec"
+> > instead of the newer "cros-ec-rpmsg", but this driver is now checking
+> > only for the latter, breaking compatibility with those.
+> >
+> > Besides, we can check if the SCP is single or dual core by simply
+> > walking through the children of the main SCP node and checking if
+> > if there's more than one "mediatek,scp-core" compatible node.
+> >
+> > Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-=
+core SCP")
+> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
+> > ---
+> >   drivers/remoteproc/mtk_scp.c | 18 +++++++-----------
+> >   1 file changed, 7 insertions(+), 11 deletions(-)
+> >
+>
+> Tested on asurada (spherion) and jacuzzi (juniper). The issue was detecte=
+d by KernelCI, so:
+>
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Tested-by: Laura Nao <laura.nao@collabora.com>
 
-On Tue, 12 Sep 2023 15:31:38 +0200, Konrad Dybcio wrote:
-> After the recent cleanups ([1], [2]) some in-tree abusers that directly
-> accessed the RPM bus clocks, effectively circumventing and working
-> against the efforts of the interconnect framework, were found.
-> 
-> Patches 1-5 drop deprecated references and the rest attempt to stop
-> direct bus clock abuses.
-> 
-> [...]
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Applied, thanks!
-
-[08/14] dt-bindings: remoteproc: qcom,adsp: Remove AGGRE2 clock
-        commit: c4c5b47958529bc1de10260df0c583710853b516
-[09/14] dt-bindings: remoteproc: qcom,msm8996-mss-pil: Remove PNoC clock
-        commit: e7781901449cbcff129d80a5d9021e9e96084ec4
-[10/14] remoteproc: qcom: q6v5-mss: Remove PNoC clock from 8996 MSS
-        commit: e1592981c51bac38ea2041b642777b3ba30606a8
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+on Hayato (MT8192) and Juniper (MT8183).
