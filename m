@@ -2,88 +2,137 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A11E7D0A2
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Sep 2023 20:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08A9E7D0AB
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Sep 2023 21:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbjIUUVk (ORCPT
+        id S232509AbjIUVDB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:21:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
+        Thu, 21 Sep 2023 17:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbjIUUVS (ORCPT
+        with ESMTP id S230237AbjIUVCo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Sep 2023 16:21:18 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33DD902E;
-        Thu, 21 Sep 2023 10:23:14 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 67FCB6607285;
-        Thu, 21 Sep 2023 08:18:00 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1695280681;
-        bh=u+SDF/PNL5Ju2+whiov9Et6DghwzY6lUPs+GJOtpLPk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=RL8DToJNQahbJaZooqiEqG8PJe63aN8SdCp6AfAplEVykYDHO7c3GVAVMpGB74dO1
-         a5ljz6v7vbGTqnOhJTDOy+iZi8ldmc5h69baoWulk54LbBJ2OtyWvia73/YgSrfm0K
-         UXtHYcmXE3SqUiD4Ba/G7UShpSWFNS7VPSOAlEs30TiabER69pZBp//qX6uDlfMUZz
-         QHc73AxBFMZrr+ZKUj0fc5FgjLSR/mCImmoC+umJnrzk5NBKZGapn8MryzY8H0Llpz
-         t2MFNh8zL5BcMRX26UpBymze5ym+bTB2AeWN2l7BbGDmJSM0hcJ6lx2S0wrEHr181F
-         pDDJWBQ8q0ugA==
-Message-ID: <c9780f70-62b5-e151-0ac6-11d97a694439@collabora.com>
-Date:   Thu, 21 Sep 2023 09:17:57 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
+        Thu, 21 Sep 2023 17:02:44 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A184EC8281
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 11:18:29 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50300cb4776so2313438e87.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 11:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695320307; x=1695925107; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7aGXpKSZd0nkaqg7goI4xd52TS77NJzRSHYqFQggM8=;
+        b=XdDDv9qxsbmOAmxt3P6zaQWYiNfMPX1XKM3aLLUxUMMRCF3TeWJUIbXwa3+6d/TMJV
+         0XN+2SspHVUExIJNFybyyaR8JacnF6ZOWd74OsCm64ZTuT+dksPmB9e5WV7KqzvhM5l5
+         Fx4FWBbHCj6xfn8vDmJIs2q588CVMEh1QbVoTlF2gsz9DOYKTILvoOnSS5BlNNM1FRty
+         EpuS8tXwwEXcg91HtJJLnUuIc14wndDX+pLhgebqTbJiAqWp+QIWJs9e4Fg6GUers+6A
+         Th9fhM+u7g/t44GlUkVXIAuK+TEMbZTUYOjjrThrKLEl1gKM6bj0bsGKRiGk7kRr33a6
+         aNhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695320307; x=1695925107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b7aGXpKSZd0nkaqg7goI4xd52TS77NJzRSHYqFQggM8=;
+        b=MTRcmv+/4W05kMBxs4YaAs4LiMd1cURrWFHdbObpicOCrJRiwJnRN2qAfwDOEQwSoE
+         LDFElKz9tYR13K5eKidTi58Dw2/Ut62T362B1DNlPYxhHJX8rdfhHpE52DtFcFHIcdoL
+         0A2uJydIsb/moFkabhhjGHSwiUQjWTEv2baQ1vrX9w349sFvBmxhT46ykXmVXCvUhYjN
+         aD49EuagBg1sVgmr/Fpry16U5GOLTl6Opw/gEMSsJwg8wfEz8kFp4i3+Sz9OgYl1GsL/
+         BBbqDmT61HVh2oxqr6K73JQEDiEsbexqdXeBpvBoImFxtUR3y/QcgQ0GW72lWC+mIRbh
+         J+1A==
+X-Gm-Message-State: AOJu0YyXBQlG3iph+qSo0HHBWGOs8QA5CRwYjHGdDloWu9Fx+Wq84c9w
+        dXeCqmwQUO/HSWgGj6NLUCjTsikKLYZt2RsFik9Vlw==
+X-Google-Smtp-Source: AGHT+IEUZqEOYV4M6SlzSpxNp5dBDgvjEldvmzJ6hEHHcdY4tYiha+4k/ZKwAc0oUEQlmz9ki3DsiQ==
+X-Received: by 2002:a17:906:29a:b0:9ae:522e:8f71 with SMTP id 26-20020a170906029a00b009ae522e8f71mr3578502ejf.7.1695300691322;
+        Thu, 21 Sep 2023 05:51:31 -0700 (PDT)
+Received: from p14s (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
+        by smtp.gmail.com with ESMTPSA id lz1-20020a170906fb0100b0099b5a71b0bfsm1002039ejb.94.2023.09.21.05.51.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Sep 2023 05:51:30 -0700 (PDT)
+Date:   Thu, 21 Sep 2023 06:51:29 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     andersson@kernel.org, matthias.bgg@gmail.com,
+        tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wenst@chromium.org,
+        kernel@collabora.com
 Subject: Re: [PATCH] remoteproc: mediatek: Refactor single core check and fix
  retrocompatibility
-To:     Laura Nao <laura.nao@collabora.com>
-Cc:     andersson@kernel.org, kernel@collabora.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
-        matthias.bgg@gmail.com, tinghan.shen@mediatek.com,
-        wenst@chromium.org
+Message-ID: <ZQw8UdZ9vhsrggky@p14s>
 References: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com>
- <20230920150332.318851-1-laura.nao@collabora.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230920150332.318851-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 20/09/23 17:03, Laura Nao ha scritto:
-> On 9/19/23 11:23, AngeloGioacchino Del Regno wrote:
->> In older devicetrees we had the ChromeOS EC in a node called "cros-ec"
->> instead of the newer "cros-ec-rpmsg", but this driver is now checking
->> only for the latter, breaking compatibility with those.
->>
->> Besides, we can check if the SCP is single or dual core by simply
->> walking through the children of the main SCP node and checking if
->> if there's more than one "mediatek,scp-core" compatible node.
->>
->> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>    drivers/remoteproc/mtk_scp.c | 18 +++++++-----------
->>    1 file changed, 7 insertions(+), 11 deletions(-)
->>
+On Tue, Sep 19, 2023 at 11:23:36AM +0200, AngeloGioacchino Del Regno wrote:
+> In older devicetrees we had the ChromeOS EC in a node called "cros-ec"
+> instead of the newer "cros-ec-rpmsg", but this driver is now checking
+> only for the latter, breaking compatibility with those.
 > 
-> Tested on asurada (spherion) and jacuzzi (juniper). The issue was detected by KernelCI, so:
+> Besides, we can check if the SCP is single or dual core by simply
+> walking through the children of the main SCP node and checking if
+> if there's more than one "mediatek,scp-core" compatible node.
 > 
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Tested-by: Laura Nao <laura.nao@collabora.com>
+> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>
+
+Applied.
+
+Thanks,
+Mathieu
+
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index ea227b566c54..a35409eda0cf 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1144,29 +1144,25 @@ static int scp_add_multi_core(struct platform_device *pdev,
+>  	return ret;
+>  }
+>  
+> -static int scp_is_single_core(struct platform_device *pdev)
+> +static bool scp_is_single_core(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev_of_node(dev);
+>  	struct device_node *child;
+> +	int num_cores = 0;
+>  
+> -	child = of_get_next_available_child(np, NULL);
+> -	if (!child)
+> -		return dev_err_probe(dev, -ENODEV, "No child node\n");
+> +	for_each_child_of_node(np, child)
+> +		if (of_device_is_compatible(child, "mediatek,scp-core"))
+> +			num_cores++;
+>  
+> -	of_node_put(child);
+> -	return of_node_name_eq(child, "cros-ec-rpmsg");
+> +	return num_cores < 2;
+>  }
+>  
+>  static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
+>  {
+>  	int ret;
+>  
+> -	ret = scp_is_single_core(pdev);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	if (ret)
+> +	if (scp_is_single_core(pdev))
+>  		ret = scp_add_single_core(pdev, scp_cluster);
+>  	else
+>  		ret = scp_add_multi_core(pdev, scp_cluster);
+> -- 
+> 2.42.0
 > 
-
-Thanks for pointing out the correct Reported-by tag! :-)
-
-Cheers,
-Angelo
-
