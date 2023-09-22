@@ -2,137 +2,183 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08A9E7D0AB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Sep 2023 21:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E994EE7D0BB
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Sep 2023 01:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232509AbjIUVDB (ORCPT
+        id S229550AbjIVBvQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:03:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50428 "EHLO
+        Thu, 21 Sep 2023 21:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbjIUVCo (ORCPT
+        with ESMTP id S229458AbjIVBvQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:02:44 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A184EC8281
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 11:18:29 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50300cb4776so2313438e87.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Sep 2023 11:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695320307; x=1695925107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b7aGXpKSZd0nkaqg7goI4xd52TS77NJzRSHYqFQggM8=;
-        b=XdDDv9qxsbmOAmxt3P6zaQWYiNfMPX1XKM3aLLUxUMMRCF3TeWJUIbXwa3+6d/TMJV
-         0XN+2SspHVUExIJNFybyyaR8JacnF6ZOWd74OsCm64ZTuT+dksPmB9e5WV7KqzvhM5l5
-         Fx4FWBbHCj6xfn8vDmJIs2q588CVMEh1QbVoTlF2gsz9DOYKTILvoOnSS5BlNNM1FRty
-         EpuS8tXwwEXcg91HtJJLnUuIc14wndDX+pLhgebqTbJiAqWp+QIWJs9e4Fg6GUers+6A
-         Th9fhM+u7g/t44GlUkVXIAuK+TEMbZTUYOjjrThrKLEl1gKM6bj0bsGKRiGk7kRr33a6
-         aNhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695320307; x=1695925107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b7aGXpKSZd0nkaqg7goI4xd52TS77NJzRSHYqFQggM8=;
-        b=MTRcmv+/4W05kMBxs4YaAs4LiMd1cURrWFHdbObpicOCrJRiwJnRN2qAfwDOEQwSoE
-         LDFElKz9tYR13K5eKidTi58Dw2/Ut62T362B1DNlPYxhHJX8rdfhHpE52DtFcFHIcdoL
-         0A2uJydIsb/moFkabhhjGHSwiUQjWTEv2baQ1vrX9w349sFvBmxhT46ykXmVXCvUhYjN
-         aD49EuagBg1sVgmr/Fpry16U5GOLTl6Opw/gEMSsJwg8wfEz8kFp4i3+Sz9OgYl1GsL/
-         BBbqDmT61HVh2oxqr6K73JQEDiEsbexqdXeBpvBoImFxtUR3y/QcgQ0GW72lWC+mIRbh
-         J+1A==
-X-Gm-Message-State: AOJu0YyXBQlG3iph+qSo0HHBWGOs8QA5CRwYjHGdDloWu9Fx+Wq84c9w
-        dXeCqmwQUO/HSWgGj6NLUCjTsikKLYZt2RsFik9Vlw==
-X-Google-Smtp-Source: AGHT+IEUZqEOYV4M6SlzSpxNp5dBDgvjEldvmzJ6hEHHcdY4tYiha+4k/ZKwAc0oUEQlmz9ki3DsiQ==
-X-Received: by 2002:a17:906:29a:b0:9ae:522e:8f71 with SMTP id 26-20020a170906029a00b009ae522e8f71mr3578502ejf.7.1695300691322;
-        Thu, 21 Sep 2023 05:51:31 -0700 (PDT)
-Received: from p14s (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
-        by smtp.gmail.com with ESMTPSA id lz1-20020a170906fb0100b0099b5a71b0bfsm1002039ejb.94.2023.09.21.05.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 05:51:30 -0700 (PDT)
-Date:   Thu, 21 Sep 2023 06:51:29 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     andersson@kernel.org, matthias.bgg@gmail.com,
-        tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wenst@chromium.org,
-        kernel@collabora.com
-Subject: Re: [PATCH] remoteproc: mediatek: Refactor single core check and fix
- retrocompatibility
-Message-ID: <ZQw8UdZ9vhsrggky@p14s>
-References: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230919092336.51007-1-angelogioacchino.delregno@collabora.com>
+        Thu, 21 Sep 2023 21:51:16 -0400
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D50F1;
+        Thu, 21 Sep 2023 18:51:06 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0Vsa-hC4_1695347462;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0Vsa-hC4_1695347462)
+          by smtp.aliyun-inc.com;
+          Fri, 22 Sep 2023 09:51:04 +0800
+Message-ID: <1695347358.2770545-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v14 30/42] virtio_pci: introduce helper to get/set queue reset
+Date:   Fri, 22 Sep 2023 09:49:18 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com
+References: <20220801063902.129329-1-xuanzhuo@linux.alibaba.com>
+ <20220801063902.129329-31-xuanzhuo@linux.alibaba.com>
+ <20230921100112-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20230921100112-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 11:23:36AM +0200, AngeloGioacchino Del Regno wrote:
-> In older devicetrees we had the ChromeOS EC in a node called "cros-ec"
-> instead of the newer "cros-ec-rpmsg", but this driver is now checking
-> only for the latter, breaking compatibility with those.
-> 
-> Besides, we can check if the SCP is single or dual core by simply
-> walking through the children of the main SCP node and checking if
-> if there's more than one "mediatek,scp-core" compatible node.
-> 
-> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+On Thu, 21 Sep 2023 10:02:53 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> On Mon, Aug 01, 2022 at 02:38:50PM +0800, Xuan Zhuo wrote:
+> > Introduce new helpers to implement queue reset and get queue reset
+> > status.
+> >
+> >  https://github.com/oasis-tcs/virtio-spec/issues/124
+> >  https://github.com/oasis-tcs/virtio-spec/issues/139
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+> > ---
+> >  drivers/virtio/virtio_pci_modern_dev.c | 39 ++++++++++++++++++++++++++
+> >  include/linux/virtio_pci_modern.h      |  2 ++
+> >  2 files changed, 41 insertions(+)
+> >
+> > diff --git a/drivers/virtio/virtio_pci_modern_dev.c b/drivers/virtio/virtio_pci_modern_dev.c
+> > index fa2a9445bb18..869cb46bef96 100644
+> > --- a/drivers/virtio/virtio_pci_modern_dev.c
+> > +++ b/drivers/virtio/virtio_pci_modern_dev.c
+> > @@ -3,6 +3,7 @@
+> >  #include <linux/virtio_pci_modern.h>
+> >  #include <linux/module.h>
+> >  #include <linux/pci.h>
+> > +#include <linux/delay.h>
+> >
+> >  /*
+> >   * vp_modern_map_capability - map a part of virtio pci capability
+> > @@ -474,6 +475,44 @@ void vp_modern_set_status(struct virtio_pci_modern_device *mdev,
+> >  }
+> >  EXPORT_SYMBOL_GPL(vp_modern_set_status);
+> >
+> > +/*
+> > + * vp_modern_get_queue_reset - get the queue reset status
+> > + * @mdev: the modern virtio-pci device
+> > + * @index: queue index
+> > + */
+> > +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> > +{
+> > +	struct virtio_pci_modern_common_cfg __iomem *cfg;
+> > +
+> > +	cfg = (struct virtio_pci_modern_common_cfg __iomem *)mdev->common;
+> > +
+> > +	vp_iowrite16(index, &cfg->cfg.queue_select);
+> > +	return vp_ioread16(&cfg->queue_reset);
+> > +}
+> > +EXPORT_SYMBOL_GPL(vp_modern_get_queue_reset);
+> > +
 >
+> Actually, this does not validate that the config structure is big
+> enough. So it can access some unrelated memory. Don't know whether
+> that's exploitable e.g. for CoCo but not nice, anyway.
+> Need to validate the size and disable reset if it's too small.
 
-Applied.
 
-Thanks,
-Mathieu
+static int vp_modern_disable_vq_and_reset(struct virtqueue *vq)
+{
+	struct virtio_pci_device *vp_dev = to_vp_device(vq->vdev);
+	struct virtio_pci_modern_device *mdev = &vp_dev->mdev;
+	struct virtio_pci_vq_info *info;
+	unsigned long flags;
 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index ea227b566c54..a35409eda0cf 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1144,29 +1144,25 @@ static int scp_add_multi_core(struct platform_device *pdev,
->  	return ret;
->  }
->  
-> -static int scp_is_single_core(struct platform_device *pdev)
-> +static bool scp_is_single_core(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev_of_node(dev);
->  	struct device_node *child;
-> +	int num_cores = 0;
->  
-> -	child = of_get_next_available_child(np, NULL);
-> -	if (!child)
-> -		return dev_err_probe(dev, -ENODEV, "No child node\n");
-> +	for_each_child_of_node(np, child)
-> +		if (of_device_is_compatible(child, "mediatek,scp-core"))
-> +			num_cores++;
->  
-> -	of_node_put(child);
-> -	return of_node_name_eq(child, "cros-ec-rpmsg");
-> +	return num_cores < 2;
->  }
->  
->  static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
->  {
->  	int ret;
->  
-> -	ret = scp_is_single_core(pdev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	if (ret)
-> +	if (scp_is_single_core(pdev))
->  		ret = scp_add_single_core(pdev, scp_cluster);
->  	else
->  		ret = scp_add_multi_core(pdev, scp_cluster);
-> -- 
-> 2.42.0
-> 
+->	if (!virtio_has_feature(vq->vdev, VIRTIO_F_RING_RESET))
+		return -ENOENT;
+
+	vp_modern_set_queue_reset(mdev, vq->index);
+
+
+I checked VIRTIO_F_RING_RESET before call this.
+
+Do you mean, we should put the check to this function.
+
+
+Thanks.
+
+
+
+>
+>
+> > +/*
+> > + * vp_modern_set_queue_reset - reset the queue
+> > + * @mdev: the modern virtio-pci device
+> > + * @index: queue index
+> > + */
+> > +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> > +{
+> > +	struct virtio_pci_modern_common_cfg __iomem *cfg;
+> > +
+> > +	cfg = (struct virtio_pci_modern_common_cfg __iomem *)mdev->common;
+> > +
+> > +	vp_iowrite16(index, &cfg->cfg.queue_select);
+> > +	vp_iowrite16(1, &cfg->queue_reset);
+> > +
+> > +	while (vp_ioread16(&cfg->queue_reset))
+> > +		msleep(1);
+> > +
+> > +	while (vp_ioread16(&cfg->cfg.queue_enable))
+> > +		msleep(1);
+> > +}
+> > +EXPORT_SYMBOL_GPL(vp_modern_set_queue_reset);
+> > +
+> >  /*
+> >   * vp_modern_queue_vector - set the MSIX vector for a specific virtqueue
+> >   * @mdev: the modern virtio-pci device
+> > diff --git a/include/linux/virtio_pci_modern.h b/include/linux/virtio_pci_modern.h
+> > index 05123b9a606f..c4eeb79b0139 100644
+> > --- a/include/linux/virtio_pci_modern.h
+> > +++ b/include/linux/virtio_pci_modern.h
+> > @@ -113,4 +113,6 @@ void __iomem * vp_modern_map_vq_notify(struct virtio_pci_modern_device *mdev,
+> >  				       u16 index, resource_size_t *pa);
+> >  int vp_modern_probe(struct virtio_pci_modern_device *mdev);
+> >  void vp_modern_remove(struct virtio_pci_modern_device *mdev);
+> > +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+> > +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+> >  #endif
+> > --
+> > 2.31.0
+>
