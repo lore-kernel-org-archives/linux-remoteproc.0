@@ -2,106 +2,51 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7380E82CA5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Sep 2023 15:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AA5E732E5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Sep 2023 15:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232332AbjI0PMS (ORCPT
+        id S231979AbjI1Pjg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 Sep 2023 11:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41194 "EHLO
+        Thu, 28 Sep 2023 11:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232292AbjI0PMS (ORCPT
+        with ESMTP id S231845AbjI1Pjf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 Sep 2023 11:12:18 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D516F5;
-        Wed, 27 Sep 2023 08:12:17 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE04C433C8;
-        Wed, 27 Sep 2023 15:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695827536;
-        bh=DcRNA9OfKi/fCALpJwPBIv4plNYmp5Y1i6dc+yueQDc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B9ipkHGSg12B+M1Pu1tL0DxKXFdj/hS163OLvYF0TeHA+hrfV5aNzMgf1ramAj1Gm
-         QkLWJbUW8Koyn8+e2ao0Ud81PEHCEDqn8MNMGN9RHkkPTAKB98PhnRPyYdArrCfmUG
-         OAT6MTt9lwkYKklqvUgS0yigwmDFpn1/64s3t/U1sQBFfyG8PUFCvASDxAPhYwsWK7
-         v1RjL+hylXrz819UJdxgrQfGNHM7elgxyJiyn3T8P3Dl8LuCIzh4QyA9+dq7DqQqyt
-         sA0CcSNGeq0M0tu9MMCSzGcr8jZ8UBX1R530aqhDv5Ahou9fHJ6CpYQK9OsYyTTBPG
-         vJSibG6FsKFqQ==
-Date:   Wed, 27 Sep 2023 16:12:11 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: mtk,scp: Add missing
- additionalProperties on child node schemas
-Message-ID: <20230927-unmovable-spender-63bbbceae9ae@spud>
-References: <20230926164513.101958-1-robh@kernel.org>
+        Thu, 28 Sep 2023 11:39:35 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C67C2C0;
+        Thu, 28 Sep 2023 08:39:32 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD2DF1FB;
+        Thu, 28 Sep 2023 08:40:10 -0700 (PDT)
+Received: from e127619.cambridge.arm.com (e127619.arm.com [10.1.36.140])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 637FE3F59C;
+        Thu, 28 Sep 2023 08:39:31 -0700 (PDT)
+From:   Divin Raj <divin.raj@arm.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH 0/1] rpmsg: virtio: Make buffer size and number configurable
+Date:   Thu, 28 Sep 2023 16:38:24 +0100
+Message-Id: <20230928153825.151948-1-divin.raj@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k5h0Si8SbS8mkeKk"
-Content-Disposition: inline
-In-Reply-To: <20230926164513.101958-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+This change is necessary to support the allocation of memory for an out-of-tree
+rpmsg ethernet device driver over virtio, enabling support for packet sizes
+based on the MTU (Maximum Transmission Unit) size (1500).
 
---k5h0Si8SbS8mkeKk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Peter Hoyes (1):
+  rpmsg: virtio: Make buffer size and number configurable
 
-On Tue, Sep 26, 2023 at 11:45:08AM -0500, Rob Herring wrote:
-> Just as unevaluatedProperties or additionalProperties are required at
-> the top level of schemas, they should (and will) also be required for
-> child node schemas. That ensures only documented properties are
-> present for any node.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+ drivers/rpmsg/Kconfig            | 23 +++++++++++++++++++++++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 27 +++------------------------
+ 2 files changed, 26 insertions(+), 24 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+-- 
+2.25.1
 
-
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/=
-Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index 895415772d1d..24422fd56e83 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -91,6 +91,7 @@ allOf:
-> =20
->  additionalProperties:
->    type: object
-> +  additionalProperties: false
->    description:
->      Subnodes of the SCP represent rpmsg devices. The names of the devices
->      are not important. The properties of these nodes are defined by the
-> --=20
-> 2.40.1
->=20
-
---k5h0Si8SbS8mkeKk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZRRGSwAKCRB4tDGHoIJi
-0vdoAPwITfmBTlb9ktA+ucCanQ8H71ISLdcJKhmBNc6dLvKgMgD+LdOpppLFXS08
-K2Gh6f8c9V/4BAnDSlZYhZCbo3rNQQA=
-=x2FK
------END PGP SIGNATURE-----
-
---k5h0Si8SbS8mkeKk--
