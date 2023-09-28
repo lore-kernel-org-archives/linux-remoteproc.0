@@ -2,238 +2,113 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6190DE732E5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Sep 2023 16:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82C3CE7B1E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Sep 2023 19:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbjI1QKM (ORCPT
+        id S230390AbjI1TbX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Sep 2023 12:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45050 "EHLO
+        Thu, 28 Sep 2023 15:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjI1QKJ (ORCPT
+        with ESMTP id S229478AbjI1TbW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Sep 2023 12:10:09 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F242D6;
-        Thu, 28 Sep 2023 09:10:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CglpReCmXDhk/FI5cAkVU+u0frrPpH0N/H2D6YBb6btDFi7Qt4ddQKXqp9kzNO+jU9XuJk6ax9N+ACIlXsyOkV2Bv06y25ixyABxxM7WW+zlEq3JRNcqfAthkghoxR5/BJMvCUPUjcN+pTbWL2aK+CIj4483aHsuphX3AowhwBDFLyUHomulyWfUdJSsOmL8oBYTSHn4EJTDaLx4QbIjr5giLzanymhxddPPKPtOuz/NEOP282ev75pnOXdDsoh1HocmRN2qze0EF/dmMmneigQ+JK8R947QSG9qigPEuUlRKeQNyXbwdj5BY8jCCXl8KOaoRBuDo1sycloCdoCXnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mPfLkQr5e8DhPVJgYgigehL/oNd6W6ueL5IQFC3hnG0=;
- b=GHl3rZEOBliAfXajM24BGuSPshG7u+Lb/ZAiGu7Meb0Jwj5O9gatDHw6MU2pVlJnth1z+kb67QRAPnAW8v2RDdQ+QyoN7AGMJAwDu3ogwT96Xy/xqqF4UpS2YmkHsMNyhE1ULFXnomTUTGbw+4iOKspXBA1pTeQc1BkeITKcG0kjZ2XzcsqKYXaaGS6FXJbUuJbRPswu6jWt68Qftse2UHT/ATdlCWLBksqIYc/39/AkiCi38LycyyJDE6gLHQK19PFTaOWNzWmxHgq2730HTcW+nfzN8w8l6mJ3IftBR3qtTDvOEJLX2UnOmHcTVPYUT5CQG7+Hh60jpD21/xKUew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mPfLkQr5e8DhPVJgYgigehL/oNd6W6ueL5IQFC3hnG0=;
- b=WQPd9SokDK54fckyYWMmrSw9zMRIseqVOEpTgNKmw+lb77pSW1H/A5xZDyuObnQWcuEjHJiaWxQ6vQNROV26Vx03Rv7SMY1mBkiby4OWHFy5xF0SQVaR1kiTTVuBpZJgVDkZ4KjLHO3Xa/+pjGABQQVpM2LdOpQBKv69wl+dpXQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
- by CYXPR12MB9441.namprd12.prod.outlook.com (2603:10b6:930:dc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.21; Thu, 28 Sep
- 2023 16:10:05 +0000
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::8304:46bd:5017:3dcb]) by BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::8304:46bd:5017:3dcb%7]) with mapi id 15.20.6813.035; Thu, 28 Sep 2023
- 16:10:05 +0000
-Message-ID: <8ed6d9f6-918f-46aa-a2b7-a30c99dcce7f@amd.com>
-Date:   Thu, 28 Sep 2023 11:10:02 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] rpmsg: virtio: Make buffer size and number
- configurable
-Content-Language: en-US
-To:     Divin Raj <divin.raj@arm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Peter Hoyes <Peter.Hoyes@arm.com>
-References: <20230928153825.151948-1-divin.raj@arm.com>
- <20230928153825.151948-2-divin.raj@arm.com>
-From:   Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <20230928153825.151948-2-divin.raj@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR03CA0004.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::14) To BY5PR12MB3683.namprd12.prod.outlook.com
- (2603:10b6:a03:1a5::16)
+        Thu, 28 Sep 2023 15:31:22 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E741A1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Sep 2023 12:31:20 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1c453379020so100161745ad.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Sep 2023 12:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695929480; x=1696534280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yiM835Qdr8r3YY1MsttP3YD4WAnIIepGWpUnlhXauk8=;
+        b=qrRtX/iHC6Fhouk/Fk5b/cGsYjqc7q9ekjy1zaQAg8icBWDg+Ylf6qq/1fIt1iSMdB
+         LHprXqVC1daW8xqjH/FXTPU0pgfSe3h6m0mHUVdDKZ/oVwQoXca4INuLHoCPhhErflxj
+         u6Dz8c+yHn+2A3OuyrmyxdjPC+FbgvRAH0bNphzOVgfilEU0nqu6MgrUHbErGE9epNTe
+         F/bZ6WBwmGkGD+wr8JSnLz7bQrlL++3PFBKGPNzZhwW/BV0UWEGOBzwr+y3WG1+VuMBp
+         G4jkxYu1v7pIx7Ml1XWPCJpAEn/3bqTTXp8p2NsutIdptnkmbjS+gFyEwvJr/k8ugJlY
+         iPzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695929480; x=1696534280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiM835Qdr8r3YY1MsttP3YD4WAnIIepGWpUnlhXauk8=;
+        b=HwQXW7jd1TMYlrl6X5mXIYeFS4pjre1SVKS7wgBmlaRm3+9mLzCD2+HwxzeN+zDXem
+         xe5p+fVsay2DYUud46GbvvJwWopMTIeV5nRwymBLVx+vI/uBe4Ibf2fZyZGaaJaEUx1a
+         44Hi2hOacRPMtn+YWY/KWyB0jIV8NJXG56XdQKhnSu0HkPcAmTky5HI95ZWBNDIBpxhF
+         EHSW9wSkEYo2vy1F/VQfTFvgvMY0hzozA5TdkajG6lcX/94CCNlbOFLxPNOrRqCKp2e8
+         z7NDfeHSBs6opkpiGEkPy9uNeFd3IXtTGtm/zoKG1VNTo480J0qIff4RBZ3I5Or6X106
+         3dxQ==
+X-Gm-Message-State: AOJu0Yw8+48/ij3ycVPFyQ6XRp+lvp7nxya8OmfVTLyBgtNt7Hl5L/ih
+        sBioFPDEy/gTCVzT30Sn6R2iBA==
+X-Google-Smtp-Source: AGHT+IE95MGmqksj4rnPsJlhQcIbTza6nvpDZ3jVQORmb3wxwujuxwIunVo313zxNSIjjCOnvIToSQ==
+X-Received: by 2002:a17:902:8649:b0:1c3:1f0c:fb82 with SMTP id y9-20020a170902864900b001c31f0cfb82mr1816980plt.41.1695929480038;
+        Thu, 28 Sep 2023 12:31:20 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:46f7:63a8:c7b8:44bb])
+        by smtp.gmail.com with ESMTPSA id c4-20020a170902c1c400b001bf8779e051sm7236931plc.289.2023.09.28.12.31.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 12:31:19 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 13:31:17 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: mtk,scp: Add missing
+ additionalProperties on child node schemas
+Message-ID: <ZRXUhSqHPt9R5Zd8@p14s>
+References: <20230926164513.101958-1-robh@kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|CYXPR12MB9441:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39fab851-173f-4dca-79d4-08dbc03d6088
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fTCcCRobEb4AYjecB9pyDAK+EaRgWh0ict9Hifwu0c5mwO3bEbLQ6lXHxNgSMClXfdHbp8b+u9Bz670IjIBWBKxHwro2qf68ZPggWcv6G9es3/qwevhmmw+xfbZxxzN1ohvArhPWwMliqEPeulMPGKra6FbFACfqI6/57p6yCOFFsL7+ejufwNfIHbHp72o7QmAemgexGuhah+D30I41QkKLSbzdJpckQW7SJDVL3GsA7ZOWJjaQCsBor4YvzO+0O/cs8bpxGJwn0uU37zljPmSdQJ+W4XT/+f4vmHHDfqxUGUTxGJsKsW3pb6HeNfURrUVdlCB+IOKSfNAPDuNbYVBqKhMcA1HwYBAPGvBwaTrwrBmOBuT5KryUyfZPZc2o4Rv/d3rBHZXGxntPYpZaMMiShogIVRom1s5Lb9PYmF9x+ael79o+LPMOH2TmvyK7rUPTY4pKOgx+jcrnClyI9ZBbk0ogWm3JxyUnzMb2mM6RHQKosMbziuBVLVupLk7fdKODj5MfO0cubQqshV9u12Fx0CYXXzPIntHUhxUCKoUqH3Ue8V820fTF9sQpRTbXZbAqdcN6w2kzv1NTBAIgYTJvFMJcVfWegNZiaNKYqmtg7zZxzMtxBPKgx0ShLXN5QE/i6h/kqfR+aCPEoDHfFw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(39860400002)(376002)(346002)(136003)(230922051799003)(64100799003)(451199024)(186009)(1800799009)(31686004)(6486002)(53546011)(6506007)(6666004)(478600001)(38100700002)(31696002)(2616005)(41300700001)(44832011)(83380400001)(2906002)(6512007)(26005)(110136005)(86362001)(36756003)(66556008)(316002)(66476007)(8936002)(5660300002)(66946007)(4326008)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?emYzcHRMQUxjZ1E1c3QwNDBIT1lucEZIMnpRa1pPYzVIdmpCV1l6RmE2UWFI?=
- =?utf-8?B?eTRQWkJBSzVqS2RnZzRvQ0NmVm5DRVl0bnBvdjViZldtclhFQnJlTmVvNE4y?=
- =?utf-8?B?QjA3RDBIZVFzdWJhQVF6eSthcGx4bWxITi9WSzdXRkZpSnhuc2o1dVU0N0U3?=
- =?utf-8?B?Y3VCcTdTRHVQa2JmUzUzVkF2WWJtd1NoM0V4U3VWcnN4dWhRRjlCRzhpWXh1?=
- =?utf-8?B?aU5IQnF4MmFtOTBraFlwUHlTUjFaQ0M4Z2twc1FTLy9TVTVhWDFSelI2Zjhi?=
- =?utf-8?B?akp0TWhjaWJmS3d2VWlGSlBtaHZqNlYyQ2FKV0oydTVqNnlQVnRLMXYyaUJH?=
- =?utf-8?B?RzRRUEpjNUtMdW5JSzVDNllzTnNvNzZwRlNXRTNWQkRtZjB4bmdzdm1DWFBZ?=
- =?utf-8?B?WmhxSVYrQTdCKzJSQmFIZHEraUxYSFkrZnhKVEdvN2ptRXNJRnFDYzBHdGdz?=
- =?utf-8?B?dlM2bmdhT0dmNE83ck1hdzFLVVlseTRMNEx5N0padGpYSjBjcGJSUDJkZWNm?=
- =?utf-8?B?Y21QTTdOVUFTcjNNaU9FMmxEWWxzSnhKVzRBRWc3TDVIZ1JBaTlRckdoWG80?=
- =?utf-8?B?VW45cE56alR2a2JTcVBXcXJkRDF4dTlxdndMUzByVm1JK0J5L3cwWW9ZUnJq?=
- =?utf-8?B?Rmc1Rk1oY01DZmdlSm0rVlRtaklxbHVMWkp0NnBXdFlyU1FQbmNvVVpTME1I?=
- =?utf-8?B?ZiszZGRDTlFzMmFQU1NhbExQT0RnTG5iOTdNWFhyYnpLSkJpcXZVek1wTjZW?=
- =?utf-8?B?RTR5bisyL2NYRlNvRHlBTW1NM1R3bTVLM0NmVHErV1V4OFdyT0s3QTFBWDVD?=
- =?utf-8?B?UnNNTDdpZGFRZUgxM3pqSVk1ZUV4cHVsVXlRclpHWStRNS9CbVV3MEs4S1c2?=
- =?utf-8?B?QjkyNkZ5MDdNQ0VHUWxKTm1NcytqajdIZk1nMHdLaXdod1h6bEpLL0wzV0lX?=
- =?utf-8?B?RUE4UVQxY0R4Y1BIYUFGdlhrYUw1YWRVazlwZlMzRzdIeFc4WE1Sd0pPNUov?=
- =?utf-8?B?dEk3cHRaczc3UHZjODRzaCtrQkdJVGNnQ0NHTnJQWE5qTmdnVmZBRnNIR3ZX?=
- =?utf-8?B?N2JDbDJqM0pMTUlvUjNFL0N3VnYxYlFMK2ZDbkdkT24zaTRKUTJYcWVmTHRx?=
- =?utf-8?B?WXhWTkd3ZWlINnFnd3pORXhZdTN0YmkySXBYeDFoWmk3QzZwWG1kRDlMTU02?=
- =?utf-8?B?dVpkcDN0M0x3UVZwNG1nVTVueXRqUCtaNmhxMkRrVEFTQkV0Q2dGZXJhSEN4?=
- =?utf-8?B?RFZYM3FsV2pXUlppcnBEMThXeWRwUHBaVUltNVptY1FXdUV3bDRtc25vMFF3?=
- =?utf-8?B?ZjF3eUltZnBGYSttTlplc1phSW4yUUE4aWlaQWRXUHNuSDlDM1FXaDN1cHBi?=
- =?utf-8?B?K3pIYk5GZ1dzU1hwMGVaZERrYXNhMVo2NE4yeTZBOHViQ241WGdxamYxdUpM?=
- =?utf-8?B?a1p4ZDlsVEZ6c053ajlRNE9NN2RHRFh6c01PVktSYmVwMTFmK0haWFczbXlT?=
- =?utf-8?B?bVk1cEp1Z3VlUFBBY3FXQU5zSXgyOFVNVWtHZWFwdnVqRVU2T2dFNkxyejdV?=
- =?utf-8?B?ZGh0aml6R1JSNkpnVzhkMTN0NHVidENDa1J1b0E3SS9wTkFGejRSTzlWOXBt?=
- =?utf-8?B?OU1PUmpwOTJsQWZKcjBTWXR6dFVCcWxpZjFRNG94WTVlWTZ3RW5NRGF5RjBO?=
- =?utf-8?B?WEp0UnI5dTdxVW1UelpwcUpORVp4SGEwVEpndHd0SkJRWVF1bEttM3JJYzY3?=
- =?utf-8?B?VXdNd0xpZmdZNkoveDh0WXhwTmYyRldmWmJ2azVsK1RaVHQ5SytRaUIwc0Vt?=
- =?utf-8?B?RjJTeXU1QW1UYlBmRzg3MWhHQXFyejA1UEtJaXZJeVI5NG1pQ0NzaGYwS0pw?=
- =?utf-8?B?NXVIcTU0eS9wdFVtZjc1dkorUEdJNVFSWjdSaEZ5eVlzNmM2NmFReGlGdzds?=
- =?utf-8?B?aXlySUpUUVJFSlpGbVBtQ2hkY0xJMlVxU1FWOEFNNVJ5U3IvdnpFKzk3M0xY?=
- =?utf-8?B?WDBXbXVWZzN6OGJQazMxSmRuMGhBVnRFUzc1T0VmaEpEbm1oSDl6dXVPTHhL?=
- =?utf-8?B?YzBpbGQ5OXhXMXM0M3JiN25oTEl2SGVKZzhhVUlsTkxaZDFrTHlqOFBUZWhl?=
- =?utf-8?Q?ZkR+LSJeo1mA7eioiyZF2a/k+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39fab851-173f-4dca-79d4-08dbc03d6088
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2023 16:10:04.9726
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 72tdwvAXIMuUXCKBUpiWWtaHHZJ55T60vDwuUrx34SLGDLWpnziZ55XX1I2YINhq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9441
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230926164513.101958-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello,
+Hi Rob,
 
-Thanks for your patch.
-
-Instead of having this in Kconfig, It's better to have buffer size decided dynamically. Probably by resource-table.
-
-We still need implementation that achieves that goal. Meanwhile  I think it's best to keep buffer size fixed.
-
-Thanks.
-
-On 9/28/23 10:38 AM, Divin Raj wrote:
-
-> CAUTION: This message has originated from an External Source. Please use proper judgment and caution when opening attachments, clicking links, or responding to this email.
->
->
-> From: Peter Hoyes <Peter.Hoyes@arm.com>
->
-> Replace the MAX_RPMSG_BUF_SIZE and MAX_RPMSG_NUM_BUFS #define in
-> virtio_rpmsg_bus.c with the Kconfig parameters CONFIG_RPMSG_VIRTIO_BUF_SIZE
-> and CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS, allowing user-provided customization.
->
-> Making both the number of buffers and size configurable facilitates aligning
-> memory requirements between vdev-buffer and vdev-vrings for client drivers
-> that require larger buffer sizes, for example.
->
-> Signed-off-by: Peter Hoyes <Peter.Hoyes@arm.com>
-> Signed-off-by: Divin Raj <divin.raj@arm.com>
+On Tue, Sep 26, 2023 at 11:45:08AM -0500, Rob Herring wrote:
+> Just as unevaluatedProperties or additionalProperties are required at
+> the top level of schemas, they should (and will) also be required for
+> child node schemas. That ensures only documented properties are
+> present for any node.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/rpmsg/Kconfig            | 23 +++++++++++++++++++++++
->  drivers/rpmsg/virtio_rpmsg_bus.c | 27 +++------------------------
->  2 files changed, 26 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-> index d3795860f5c0..677f4a1ac8bb 100644
-> --- a/drivers/rpmsg/Kconfig
-> +++ b/drivers/rpmsg/Kconfig
-> @@ -81,4 +81,27 @@ config RPMSG_VIRTIO
->         select RPMSG_NS
->         select VIRTIO
->
-> +config RPMSG_VIRTIO_MAX_BUF_SIZE
-> +       int "Virtio RPMSG max buffer size (in bytes)"
-> +       default 512
-> +       depends on RPMSG_VIRTIO
-> +       help
-> +         This option allows you to configure the maximum buffer size (in bytes)
-> +         for Virtio RPMSG communications. The number of buffers will be computed
-> +         based on the number of buffers (CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS)
-> +         supported by the vring. By default, it supports up to a maximum of 512
-> +         buffers (256 in each direction). Each buffer consists of 16 bytes for the
-> +         message header and the remaining bytes for the payload.The default values
-> +         will utilize a maximum total space of 256KB for the buffers.
-> +
-> +config RPMSG_VIRTIO_MAX_NUM_BUFS
-> +       int "Virtio RPMSG max buffer count (even number for TX and Rx)"
-> +       default 512
-> +       depends on RPMSG_VIRTIO
-> +       help
-> +         This option allows you to configure the maximum number of buffers used
-> +         for Virtio RPMSG communication. By default, it supports up to a maximum
-> +         of 512 buffers (256 in each direction). Please note that this value
-> +         should be an even number, as it accounts for both transmit (TX) and
-> +         receive (Rx) buffers.
->  endmenu
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 905ac7910c98..87a9a4fa30e0 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -109,27 +109,6 @@ struct virtio_rpmsg_channel {
->  #define to_virtio_rpmsg_channel(_rpdev) \
->         container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
->
-> -/*
-> - * We're allocating buffers of 512 bytes each for communications. The
-> - * number of buffers will be computed from the number of buffers supported
-> - * by the vring, upto a maximum of 512 buffers (256 in each direction).
-> - *
-> - * Each buffer will have 16 bytes for the msg header and 496 bytes for
-> - * the payload.
-> - *
-> - * This will utilize a maximum total space of 256KB for the buffers.
-> - *
-> - * We might also want to add support for user-provided buffers in time.
-> - * This will allow bigger buffer size flexibility, and can also be used
-> - * to achieve zero-copy messaging.
-> - *
-> - * Note that these numbers are purely a decision of this driver - we
-> - * can change this without changing anything in the firmware of the remote
-> - * processor.
-> - */
-> -#define MAX_RPMSG_NUM_BUFS     (512)
-> -#define MAX_RPMSG_BUF_SIZE     (512)
-> -
->  /*
->   * Local addresses are dynamically allocated on-demand.
->   * We do not dynamically assign addresses from the low 1024 range,
-> @@ -902,12 +881,12 @@ static int rpmsg_probe(struct virtio_device *vdev)
->                 virtqueue_get_vring_size(vrp->svq));
->
->         /* we need less buffers if vrings are small */
-> -       if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS / 2)
-> +       if (virtqueue_get_vring_size(vrp->rvq) < CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS / 2)
->                 vrp->num_bufs = virtqueue_get_vring_size(vrp->rvq) * 2;
->         else
-> -               vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
-> +               vrp->num_bufs = CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS;
->
-> -       vrp->buf_size = MAX_RPMSG_BUF_SIZE;
-> +       vrp->buf_size = CONFIG_RPMSG_VIRTIO_MAX_BUF_SIZE;
->
->         total_buf_space = vrp->num_bufs * vrp->buf_size;
->
-> --
-> 2.25.1
->
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index 895415772d1d..24422fd56e83 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -91,6 +91,7 @@ allOf:
+>  
+>  additionalProperties:
+>    type: object
+> +  additionalProperties: false
+
+Things have changed in the remoteproc tree [1] and this patch doesn't apply.
+Please see if it is still needed.
+
+Thanks,
+Mathieu
+
+[1]. https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml?h=rproc-next#n80
+
+>    description:
+>      Subnodes of the SCP represent rpmsg devices. The names of the devices
+>      are not important. The properties of these nodes are defined by the
+> -- 
+> 2.40.1
+> 
