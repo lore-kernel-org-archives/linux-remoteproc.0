@@ -2,62 +2,117 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73887E728CA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 17:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82525E728CF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 18:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233233AbjI2R0p (ORCPT
+        id S233787AbjI2S1n (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 13:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
+        Fri, 29 Sep 2023 14:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233614AbjI2R0W (ORCPT
+        with ESMTP id S233464AbjI2S1m (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Sep 2023 13:26:22 -0400
-X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 29 Sep 2023 10:26:07 PDT
-Received: from server.cesssrl.com (server.cesssrl.com [185.174.102.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B631710
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 10:26:07 -0700 (PDT)
-Received: from vps2693868.trouble-free.net (unknown [216.219.84.124])
-        by server.cesssrl.com (Postfix) with ESMTPSA id 18895C267F
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 17:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesssrl.com;
-        s=default; t=1696008048;
-        bh=K01Lz8DXPo/l1HML69hjnMc4O4WDEt9bFzxfZcHknC8=; h=From:To:Subject;
-        b=ASW0KSAByV7AD0Qk6f5evprRjtP9Thg+yC9s3PjSIupIeCAANuyPbwG1vhFiHti3L
-         ravpzCAAfp7+VOrkbPyqRcRlYG56k6jU5aO9M9YvcvJ57eBHSjMvIe2+0QENUzq31C
-         /0LOAtAaMeDoleyU8zPTPWnOm9bicBuAaAIR+J//kzneACw2DYFfYqtBR6bJFcNynX
-         fIu0GcJ1UglxblX+vAEFzW/oe7e7dLyeKTHXCA/QSpY7WH60qCcPhT7TalHS/BfXFN
-         HlfeZEi7IYJtH3PaZsvhJiSQa5TyTKNW9Ap7bqNkLueUJm+h0QcX8ejkgqSZ7FuXkE
-         agzdTPhBp8CpA==
-Authentication-Results: server.cesssrl.com;
-        spf=pass (sender IP is 216.219.84.124) smtp.mailfrom=inquiry@cesssrl.com smtp.helo=vps2693868.trouble-free.net
-Received-SPF: pass (server.cesssrl.com: connection is authenticated)
-Reply-To: "Eng. Don Walker" <don.walker@gfzenergyengineeringcorp.link>
-From:   "Eng. Don Walker" <inquiry@cesssrl.com>
-To:     linux-remoteproc@vger.kernel.org
-Subject: Inquiry M01hwkhpx:Ref
-Date:   29 Sep 2023 10:20:47 -0700
-Message-ID: <20230929102045.27F801E13CD12BEE@cesssrl.com>
+        Fri, 29 Sep 2023 14:27:42 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0A7419F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 11:27:40 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40537481094so148621215e9.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 11:27:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696012059; x=1696616859; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LOO9MB9UoF+kx+MfoIki3YD3nQhPAJHsiuL8TjZeK6A=;
+        b=Za7DPoKtBQmrmaotnpRQ7hBdlEhOwnTeVWDupbbHqex3hybhWzK6medB5h+76aRz2C
+         RM/UPv1FxfxNo4mbXjm7IVtp2Cigqn1jB5RyxV7oHbiDmcfipwZZ6PCLoNdyXp6sUS7O
+         CTFK9SGcCity/4nKBgEAiVBuNtk5l3K3Obe6F9f/VHIP45YcRsICH2oV45bt7e6YR0Qt
+         9pvQc6ymuwdlvYb/OHBXm68SXDnCTHkITx91iQkaQ1yI8ig/R89CE+e47UK+S/DI1KVm
+         xsEDhafPplsgnlPOo0SgjiokapNnXJu2Fer3oZaFlufZN4yMm/ddFXcBkHYMOL47ZLcF
+         0dlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696012059; x=1696616859;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOO9MB9UoF+kx+MfoIki3YD3nQhPAJHsiuL8TjZeK6A=;
+        b=ZHh+30HTBk+2N21e70Mq3MFd0QaBDomZLt/Il/kqqZHdeCt1juUfJvqXPpJdLVamRy
+         kBWeipXl3oleuSJNo2Qk6el9FZZANdtmdIf6nvTeX8V80Hzclhek6MomkUb6alCu8oxZ
+         J5LGRlworBjmCvfEFw4EkeSBESiw+mngp5IXkycGJOeFIYZKydG6o6ATDKCXg0GJDKu5
+         Ec8CN5AcjDdu/DiIvzQtH2qlr+zQ2mqZwV7l62ZqKnVzdVXpdkvHmnzosnbpfVICDAc6
+         UVjCC8/E/vBAYSoeXBd64b2EkywzVMKps4UXboSNz6DsTAyuFGVf7hjm+FJWrunKfpSX
+         PJFg==
+X-Gm-Message-State: AOJu0YwQ30IGDmLcWCOgWVWKrSe4YIekU6zRdnc69NFe/7rv04kDpMQQ
+        DWwmGM6xL1FYnufDdOi1Ymwc9iktX5f3oRjedH1g+g==
+X-Google-Smtp-Source: AGHT+IGIJoT26bLL18e8p7x6DSmd83hCa5cV7XsJzwHzUXDaA2o5A3Im5Csko/R1CGa0vxUpAfvzZQ==
+X-Received: by 2002:a05:600c:3d1a:b0:406:548e:bd51 with SMTP id bh26-20020a05600c3d1a00b00406548ebd51mr3704928wmb.26.1696012059260;
+        Fri, 29 Sep 2023 11:27:39 -0700 (PDT)
+Received: from [192.168.1.8] (host-2-99-112-229.as13285.net. [2.99.112.229])
+        by smtp.gmail.com with ESMTPSA id e21-20020a05600c219500b004055858e7d8sm1958549wme.7.2023.09.29.11.27.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Sep 2023 11:27:38 -0700 (PDT)
+Message-ID: <378f600a-4fbb-42a0-a6d8-ea2dac0b220d@linaro.org>
+Date:   Fri, 29 Sep 2023 19:27:37 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: <169600804851.584989.7647130646213895799@server.cesssrl.com>
-X-PPP-Vhost: cesssrl.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
+ support
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bhupesh Sharma <bhupesh.linux@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+ <30066188-3787-4277-914e-e06c95fe2e1c@linaro.org>
+From:   Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <30066188-3787-4277-914e-e06c95fe2e1c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good day,
-I will be in your Country from the 15th to the 30th November 2023=20
-with 7 other people and we need your services during our stay. 
-
-Kindly confirm availability and prices. 
-=20
-What credit card types do you accept for deposit?
-=20
-Don.
 
 
-Message Ref: 01-yaljpso
-Message Time Stamp: 9/29/2023 10:20:45 a.m.
+On 29/09/2023 18:17, Konrad Dybcio wrote:
+> On 29.09.2023 18:16, Caleb Connolly wrote:
+>> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
+>> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
+>> It exposes various mitigations including passive thermal controls and
+>> rail voltage restrictions.
+>>
+>> This series introduces support for exposing TMDs as cooling devices
+>> in the kernel through the thermal framework, using the QMI interface.
+>>
+>> Each TMD client is described as a child of the remoteproc node in
+>> devicetree. With subnodes for each control.
+>>
+>> This series is based on previous work by Bhupesh Sharma which can be
+>> found at [1]. I'm sending this as a fresh series as it has been a
+>> year since the original version and I have rewritten most of the driver.
+>>
+> Since you're adding support for funky hw, it would be appreciated
+> if you also linked to a tree that has the dt bits hooked up, the
+> schema example may not tell the whole story
+
+For sure, you can find a patch with a reference DTS part here
+
+https://git.codelinaro.org/caleb_connolly/kernel/-/commit/9067f80db58bbce81d5f0703aa2fd261e88bc812
+> 
+> Konrad
+
+-- 
+// Caleb (they/them)
