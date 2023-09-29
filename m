@@ -2,316 +2,230 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C78BE728CD
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9DCE728CA
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233396AbjI2Q4l (ORCPT
+        id S233215AbjI2Q6T (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
+        Fri, 29 Sep 2023 12:58:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233391AbjI2Q4k (ORCPT
+        with ESMTP id S232883AbjI2Q6T (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Sep 2023 12:56:40 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8831B6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:56:36 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-4066241289bso3729765e9.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:56:36 -0700 (PDT)
+        Fri, 29 Sep 2023 12:58:19 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C625199
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:58:16 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-27751ac0653so7783489a91.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:58:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696006595; x=1696611395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xND+MW/+UJCbTpDVHmrFxQeOX19ZNbbE88mX3i18+R4=;
-        b=BELjiJtjShLwwF+3anLAYLL0pDH4nu7aFLQb8fYm78xaRVKg+rx0BFGJX2Pf0PBXSG
-         m29DIbJDLmQUQLO0UG8ZjTKUYBGOynGsA5PLewNvG4Lvd/inlzCMsPzzjIIz3P0CDhv1
-         aWdqhmp5LGNI2Im/Y1F5LbxaVDl1RIuOvHEJ2wE8pgyZdxTmEAqBr9pZvMbuiG8f9HXN
-         vWIdhhRMOJ/VvZLexpjhY813arvZW+Kg7dHtlpvVcjgYzuvtfdGBynFs1NVUTF+Mv+Tx
-         obq1XL+clC1/MZSQBewJHKVQiHTDoRFbu8snE28a8fg5ERw7koaXqDzWCLOEnLDGma0b
-         pyOQ==
+        d=linaro.org; s=google; t=1696006696; x=1696611496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NMqJFtytKcP8lUd+Bm9Yn0vug485IKuzeteN3fJyMJ8=;
+        b=YHNOBKfegl5vIN3StJTAxXd37e9It+sewIyEqwcUK34NcIIFmPX6CysM60rk37Xftx
+         PM46FlQjIE8zBJh4y9xu0jbcRzZnSoZ4CJ9zec76O6O/7TxGDRGjLHk2zXGmve3Fg+7e
+         cviByyUnak6tZNXNmAwZO0agXc2bGi+H8m50o+1+ffo+nhj2vz+1e3hLVCCNQEZWrevF
+         ndFAwEVPoYEvdwfBxrydJ8DLgQUstUoRNcP3yLYqAk06MbvI0etmRKDvfoMiyQ/FVCGi
+         ntO3Y25ShPEJDJ5DHMh3wjN63kHOw8FYtYYFYVTVBnyXoEKRvazMRTozOk2AQAwV0vN/
+         d70g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696006595; x=1696611395;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xND+MW/+UJCbTpDVHmrFxQeOX19ZNbbE88mX3i18+R4=;
-        b=vkCSYKMVdoJD6Y/Y20n1sUkDyMVqNtmrarsiNtLIzdxDC4VsHWHQZnxsEc/oEYTwZx
-         v4T7dK/mtaF3MEAl+YWDIiAdpOH+vy3Hlm5JcWtbqo3Ivr1Nox+04Y3+LSSlvZr8rVmQ
-         VFvEOaesuUCPJ4Gj5H57RthTKb2QmezR3jhRM4SwFFhpPvv2G9CSKPdAtDFbUIrAzOtB
-         sn9AxXcXj3KGhyDyJB4WIS7CJ+Frmw48gq03qDik2W0KTqsCZCbxpzWYtgKIYtX3gvJO
-         8Gf1I4DNMqlXURab7ZGU97EVTIWsImIkp3RAYby0cEqRVpVDr5XZ6y+uMtIeQz+1HBQ+
-         Yp0g==
-X-Gm-Message-State: AOJu0YzHWH+y4pf+bLLnc8wYpLQLJenFRLZ7gwjxi1jAFfXp2NELZRcL
-        +a/7h6IzVcckRIwsf3J39xxq7w==
-X-Google-Smtp-Source: AGHT+IHL6Thh2nSYg3/7lYJjbnPF19w1qpgTK8doTP2ZGsc7IIv5ssUcTLXHAP1i0i+sB6dIU9sgQg==
-X-Received: by 2002:a1c:7c11:0:b0:405:4a78:a890 with SMTP id x17-20020a1c7c11000000b004054a78a890mr4246266wmc.8.1696006594912;
-        Fri, 29 Sep 2023 09:56:34 -0700 (PDT)
-Received: from [192.168.1.8] (host-2-99-112-229.as13285.net. [2.99.112.229])
-        by smtp.gmail.com with ESMTPSA id y21-20020a7bcd95000000b00405c7591b09sm1787900wmj.35.2023.09.29.09.56.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 09:56:34 -0700 (PDT)
-Message-ID: <1765d8c7-2f7e-4cb9-9063-f78c5d29e1a4@linaro.org>
-Date:   Fri, 29 Sep 2023 17:56:32 +0100
+        d=1e100.net; s=20230601; t=1696006696; x=1696611496;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMqJFtytKcP8lUd+Bm9Yn0vug485IKuzeteN3fJyMJ8=;
+        b=jaq7slIyVYOK8WPD9fYtPyWTkFA+B+HvQYsiqwnF/1KjrFUXOk9vLBW4Tpl7P//Beq
+         z7fRQOLJOOURNpZo20ZiL7uJ4FJu9yBXwU5hffZGFozNc57fxoVKXoihQOpmRkVkBpnp
+         gTFYdsmD/OSFcK7b6B1kZ7Inxm9T6arb3TSGJPAlJjo2mUUX4euOC1f0K13JiuDk5w86
+         dXldCdaaCm0Z2UGRPzcohxN/dR0UCGlqIhWmlQLq0EA3ApbbKvIqOPV2+cSfnVsSKNvB
+         Ce+ZVnH6iSEBcFkIc/7sjNX9VWOIMbQQh0c23mshlGn64aI/3LOMmPd4MtncU2VolHrn
+         gNtg==
+X-Gm-Message-State: AOJu0YxhVAzInGUDbNkagLohzg8YGbrvKXwwsX91HhQEx1D9f+V2tSjC
+        v4OD6wfX50aAyO6ZEvGGIQdGihFJSmz96lkO2Nw=
+X-Google-Smtp-Source: AGHT+IFYDdh+LIB4m9kIWN0rVKInvkNQerIgkvMPdRsEywsL347q8XFzZ5L+QEjwFYfmBYdr+a/Ndg==
+X-Received: by 2002:a17:90b:3b8a:b0:268:d456:123 with SMTP id pc10-20020a17090b3b8a00b00268d4560123mr4403232pjb.41.1696006695992;
+        Fri, 29 Sep 2023 09:58:15 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6039:c963:11ba:ad1b])
+        by smtp.gmail.com with ESMTPSA id v1-20020a17090abb8100b002777b8fc74bsm1685259pjr.21.2023.09.29.09.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 09:58:15 -0700 (PDT)
+Date:   Fri, 29 Sep 2023 10:58:13 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: zynqmp: change tcm address translation method
+Message-ID: <ZRcCJbbyW+g4yjgs@p14s>
+References: <20230925172648.2339048-1-tanmay.shah@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] thermal: qcom: add qmi-cooling driver
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
- <20230905-caleb-qmi_cooling-v1-3-5aa39d4164a7@linaro.org>
- <30aa40c9-b63a-093c-954d-86e4bb232431@linaro.org>
-From:   Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <30aa40c9-b63a-093c-954d-86e4bb232431@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230925172648.2339048-1-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Mon, Sep 25, 2023 at 10:26:48AM -0700, Tanmay Shah wrote:
+> Introduce device address in hardcode TCM table.
+> Device address is used for address translation.
+> Also, previous method(hack) to mask few bits from address
+> to achieve address translation is removed
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 58 +++++++++----------------
+>  1 file changed, 20 insertions(+), 38 deletions(-)
+>
 
+Applied.
 
-On 29/09/2023 17:28, Konrad Dybcio wrote:
-> 
-> 
-> On 9/29/23 18:16, Caleb Connolly wrote:
->> The Thermal Mitigation Device (TMD) service exposes various platform
->> specific thermal mitigations available on remote subsystems (ie the
->> modem, adsp, cdsp, and sdsp). The service is exposed via the QMI
->> messaging
->> interface, usually over the QRTR transport.
->>
->> These controls affect things like the power limits of the modem power
->> amplifier and cpu core, skin temperature mitigations, as well as rail
->> voltage restrictions under cold conditions.
->>
->> Each remote subsystem has its own TMD instance, where each child node
->> represents a single thermal control.
->>
->> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
->> ---
-> [...]
-> 
->> +/* Notify the remote subsystem of the requested cooling state */
->> +static int qmi_tmd_send_state_request(struct qmi_tmd *tmd)
->> +{
->> +    struct tmd_set_mitigation_level_resp_msg_v01 tmd_resp;
->> +    struct tmd_set_mitigation_level_req_msg_v01 req;
->> +    struct qmi_tmd_client *client;
->> +    struct qmi_txn txn;
->> +    int ret = 0;
->> +
->> +    client = tmd->client;
-> You can assign it at declaration time
+Thanks,
+Mathieu
 
-Is this just personal preference or is it subsystem rules? I generally
-prefer to avoid non-const assignments at declaration time, it's just
-easier to read this way.
->> +
->> +    if (!client->connection_active)
->> +        return 0;
-> Is that an expected scenario?
-
-Yes, this function is called by the cooling device set_cur_state op. The
-cooling device itself is always registered, even if the remoteproc is
-offline (in which case the cached state will be sent to it when it
-starts up).
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index efd758c2f4ed..4395edea9a64 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -39,12 +39,14 @@ enum zynqmp_r5_cluster_mode {
+>   * struct mem_bank_data - Memory Bank description
+>   *
+>   * @addr: Start address of memory bank
+> + * @da: device address
+>   * @size: Size of Memory bank
+>   * @pm_domain_id: Power-domains id of memory bank for firmware to turn on/off
+>   * @bank_name: name of the bank for remoteproc framework
+>   */
+>  struct mem_bank_data {
+>  	phys_addr_t addr;
+> +	u32 da;
+>  	size_t size;
+>  	u32 pm_domain_id;
+>  	char *bank_name;
+> @@ -76,18 +78,18 @@ struct mbox_info {
+>   * accepted for system-dt specifications and upstreamed in linux kernel
+>   */
+>  static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
+> -	{0xffe00000UL, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
+> -	{0xffe20000UL, 0x10000UL, PD_R5_0_BTCM, "btcm0"},
+> -	{0xffe90000UL, 0x10000UL, PD_R5_1_ATCM, "atcm1"},
+> -	{0xffeb0000UL, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+> +	{0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
+> +	{0xffe20000UL, 0x20000, 0x10000UL, PD_R5_0_BTCM, "btcm0"},
+> +	{0xffe90000UL, 0x0, 0x10000UL, PD_R5_1_ATCM, "atcm1"},
+> +	{0xffeb0000UL, 0x20000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+>  };
+>  
+>  /* In lockstep mode cluster combines each 64KB TCM and makes 128KB TCM */
+>  static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+> -	{0xffe00000UL, 0x20000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 128KB each */
+> -	{0xffe20000UL, 0x20000UL, PD_R5_0_BTCM, "btcm0"},
+> -	{0, 0, PD_R5_1_ATCM, ""},
+> -	{0, 0, PD_R5_1_BTCM, ""},
+> +	{0xffe00000UL, 0x0, 0x20000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 128KB each */
+> +	{0xffe20000UL, 0x20000, 0x20000UL, PD_R5_0_BTCM, "btcm0"},
+> +	{0, 0, 0, PD_R5_1_ATCM, ""},
+> +	{0, 0, 0, PD_R5_1_BTCM, ""},
+>  };
+>  
+>  /**
+> @@ -534,30 +536,6 @@ static int tcm_mem_map(struct rproc *rproc,
+>  	/* clear TCMs */
+>  	memset_io(va, 0, mem->len);
+>  
+> -	/*
+> -	 * The R5s expect their TCM banks to be at address 0x0 and 0x2000,
+> -	 * while on the Linux side they are at 0xffexxxxx.
+> -	 *
+> -	 * Zero out the high 12 bits of the address. This will give
+> -	 * expected values for TCM Banks 0A and 0B (0x0 and 0x20000).
+> -	 */
+> -	mem->da &= 0x000fffff;
+> -
+> -	/*
+> -	 * TCM Banks 1A and 1B still have to be translated.
+> -	 *
+> -	 * Below handle these two banks' absolute addresses (0xffe90000 and
+> -	 * 0xffeb0000) and convert to the expected relative addresses
+> -	 * (0x0 and 0x20000).
+> -	 */
+> -	if (mem->da == 0x90000 || mem->da == 0xB0000)
+> -		mem->da -= 0x90000;
+> -
+> -	/* if translated TCM bank address is not valid report error */
+> -	if (mem->da != 0x0 && mem->da != 0x20000) {
+> -		dev_err(&rproc->dev, "invalid TCM address: %x\n", mem->da);
+> -		return -EINVAL;
+> -	}
+>  	return 0;
+>  }
+>  
+> @@ -579,6 +557,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+>  	u32 pm_domain_id;
+>  	size_t bank_size;
+>  	char *bank_name;
+> +	u32 da;
+>  
+>  	r5_core = rproc->priv;
+>  	dev = r5_core->dev;
+> @@ -591,6 +570,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+>  	 */
+>  	for (i = 0; i < num_banks; i++) {
+>  		bank_addr = r5_core->tcm_banks[i]->addr;
+> +		da = r5_core->tcm_banks[i]->da;
+>  		bank_name = r5_core->tcm_banks[i]->bank_name;
+>  		bank_size = r5_core->tcm_banks[i]->size;
+>  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+> @@ -603,11 +583,11 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+>  			goto release_tcm_split;
+>  		}
+>  
+> -		dev_dbg(dev, "TCM carveout split mode %s addr=%llx, size=0x%lx",
+> -			bank_name, bank_addr, bank_size);
+> +		dev_dbg(dev, "TCM carveout split mode %s addr=%llx, da=0x%x, size=0x%lx",
+> +			bank_name, bank_addr, da, bank_size);
+>  
+>  		rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
+> -						 bank_size, bank_addr,
+> +						 bank_size, da,
+>  						 tcm_mem_map, tcm_mem_unmap,
+>  						 bank_name);
+>  		if (!rproc_mem) {
+> @@ -648,6 +628,7 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  	struct device *dev;
+>  	u32 pm_domain_id;
+>  	char *bank_name;
+> +	u32 da;
+>  
+>  	r5_core = rproc->priv;
+>  	dev = r5_core->dev;
+> @@ -679,11 +660,12 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  			continue;
+>  
+>  		bank_addr = r5_core->tcm_banks[i]->addr;
+> +		da = r5_core->tcm_banks[i]->da;
+>  		bank_name = r5_core->tcm_banks[i]->bank_name;
+>  
+>  		/* Register TCM address range, TCM map and unmap functions */
+>  		rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
+> -						 bank_size, bank_addr,
+> +						 bank_size, da,
+>  						 tcm_mem_map, tcm_mem_unmap,
+>  						 bank_name);
+>  		if (!rproc_mem) {
+> @@ -695,8 +677,8 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  		/* If registration is success, add carveouts */
+>  		rproc_add_carveout(rproc, rproc_mem);
+>  
+> -		dev_dbg(dev, "TCM add carveout lockstep mode %s addr=0x%llx, size=0x%lx",
+> -			bank_name, bank_addr, bank_size);
+> +		dev_dbg(dev, "TCM carveout lockstep mode %s addr=0x%llx, da=0x%x, size=0x%lx",
+> +			bank_name, bank_addr, da, bank_size);
+>  	}
+>  
+>  	return 0;
 > 
->> +
->> +    memset(&req, 0, sizeof(req));
->> +    memset(&tmd_resp, 0, sizeof(tmd_resp));
-> Since you're declaring them above, you can do = { 0 }; instead, which
-> will be faster
-
-Thanks, will do (though fwiw the compiler almost definitely optimises
-this out).
+> base-commit: 1a93ced18d7b81be39beba26b1c168ef21c8d0ad
+> -- 
+> 2.25.1
 > 
->> +
->> +    strscpy(req.mitigation_dev_id.mitigation_dev_id, tmd->qmi_name,
->> +        QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1);
->> +    req.mitigation_level = tmd->cur_state;
->> +
->> +    mutex_lock(&client->mutex);
-> Look into fancy scoped mutexes https://lwn.net/Articles/934679/
-
-ooh nice, that actually improves things a lot :D
-> 
-> [...]
-> 
->> +static int qmi_set_cur_state(struct thermal_cooling_device *cdev,
->> unsigned long state)
->> +{
->> +    struct qmi_tmd *tmd = cdev->devdata;
->> +
->> +    if (!tmd)
->> +        return -EINVAL;
->> +
->> +    if (state > tmd->max_state)
->> +        return -EINVAL;Would it be useful if this threw an error in
->> dmesg?
-
-I may be mistaken but I think the only place this will be hit is when
-userspace attempts to write to it via sysfs, in that case the invalid
-argument is likely enough.
-> 
-> 
->> + * When the QMI service starts up on a remote subsystem this function
->> will fetch
->> + * the list of TMDs on the subsystem, match it to the TMDs specified
->> in devicetree
->> + * and call qmi_tmd_init_control() for each
->> + */
->> +static void qmi_tmd_svc_arrive(struct work_struct *work)
->> +{
->> +    struct qmi_tmd_client *client =
->> +        container_of(work, struct qmi_tmd_client, svc_arrive_work);
->> +
->> +    struct tmd_get_mitigation_device_list_req_msg_v01 req;
->> +    struct tmd_get_mitigation_device_list_resp_msg_v01 *resp;
->> +    int ret = 0, i;
->> +    struct qmi_txn txn;
->> +
->> +    memset(&req, 0, sizeof(req));
-> = { 0 }
-> 
-> [...]
-> 
->> +
->> +    pr_info("QMI TMD service reset %s\n", client->name);
-> Is it useful to the user? pr_debug?
-
-Oops, forgot to remove these!
-> 
->> +
->> +    list_for_each_entry(tmd, &client->cdev_list, node) {
->> +        qmi_tmd_send_state_request(tmd);
->> +    }
->> +}
->> +
->> +static void thermal_qmi_del_server(struct qmi_handle *qmi, struct
->> qmi_service *service)
->> +{
->> +    struct qmi_tmd_client *client = container_of(qmi, struct
->> qmi_tmd_client, handle);
->> +
->> +    pr_info("QMI TMD service stop %s\n", client->name);
-> Ditto
-> 
->> +
->> +    client->connection_active = false;
->> +}
->> +
->> +static int thermal_qmi_new_server(struct qmi_handle *qmi, struct
->> qmi_service *service)
->> +{
->> +    struct qmi_tmd_client *client = container_of(qmi, struct
->> qmi_tmd_client, handle);
->> +    struct sockaddr_qrtr sq = { AF_QIPCRTR, service->node,
->> service->port };
->> +
->> +    pr_info("QMI TMD service start %s\n", client->name);
-> Ditto
-> 
->> +        tmd->type = devm_kasprintf(client->dev, GFP_KERNEL, "%s:%s",
->> +                        client->name, subnode->name);
->> +        if (!tmd->type)
->> +            return dev_err_probe(dev, -ENOMEM, "Cooling device name\n");
-> Cooling device name-what? :D
-
-"error -12: Cooling device name"
-
-Maybe this shouldn't print an error at all? I usually just like to have
-something to grep for so I don't have to binary search through error
-paths when debugging.
-> 
->> +
->> +        if (of_property_read_string(subnode, "label", &name)) {
->> +            return dev_err_probe(client->dev, -EINVAL,
->> +                         "Fail to parse dev name for %s\n",
-> Failed
-
-ack
-> 
-> [...]
-> 
->> +static int qmi_tmd_client_probe(struct platform_device *pdev)
->> +{
->> +    struct device *dev;
->> +    struct qmi_tmd_client *client;
->> +    const struct qmi_instance_id *match;
->> +    int ret;
->> +
->> +    dev = &pdev->dev;
-> Initialize at declaration
-> 
->> +
->> +    client = devm_kzalloc(dev, sizeof(*client), GFP_KERNEL);
->> +    if (!client)
->> +        return -ENOMEM;
->> +
->> +    client->dev = dev;
->> +
->> +    match = of_device_get_match_data(dev);
->> +    if (!match)
->> +        return dev_err_probe(dev, -EINVAL, "No match data\n");
->> +
->> +    client->id = match->id;
->> +    client->name = match->name;
->> +
->> +    mutex_init(&client->mutex);
->> +    INIT_LIST_HEAD(&client->cdev_list);
->> +    INIT_WORK(&client->svc_arrive_work, qmi_tmd_svc_arrive);
->> +
->> +    ret = qmi_tmd_alloc_cdevs(client);
->> +    if (ret)
->> +        return ret;
->> +
->> +    platform_set_drvdata(pdev, client);
->> +
->> +    ret = qmi_handle_init(&client->handle,
->> +                 
->> TMD_GET_MITIGATION_DEVICE_LIST_RESP_MSG_V01_MAX_MSG_LEN,
->> +                  &thermal_qmi_event_ops, NULL);
->> +    if (ret < 0)
->> +        return dev_err_probe(client->dev, ret, "QMI handle init
->> failed for client %#x\n",
->> +                  client->id);
->> +
->> +    ret = qmi_add_lookup(&client->handle, TMD_SERVICE_ID_V01,
->> TMD_SERVICE_VERS_V01,
->> +                 client->id);
->> +    if (ret < 0) {
->> +        qmi_handle_release(&client->handle);
->> +        return dev_err_probe(client->dev, ret, "QMI register failed
->> for client 0x%x\n",
->> +                  client->id);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int qmi_tmd_client_remove(struct platform_device *pdev)
-> void + .remove_new
-
-Ack
-> 
-> Konrad
-
--- 
-// Caleb (they/them)
