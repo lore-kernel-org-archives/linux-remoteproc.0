@@ -2,141 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E4CE728CA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 17:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73887E728CA
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 17:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbjI2RRJ (ORCPT
+        id S233233AbjI2R0p (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 13:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35214 "EHLO
+        Fri, 29 Sep 2023 13:26:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233239AbjI2RRJ (ORCPT
+        with ESMTP id S233614AbjI2R0W (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Sep 2023 13:17:09 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F0FB4
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 10:17:06 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9a9d82d73f9so1878303866b.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 10:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696007825; x=1696612625; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MCBBShUT4W02J7jpHyBvljZ5v8OF4qTE4nEXAa9+HQo=;
-        b=DaAeUPWNbLAXcSnbKtKx9k8tzmju5BvjLVP25dVmy8l+DFvm76lTKxfAl4T4xtTx3E
-         qsuVXfZC+7cK+JFpbY22SXCCTxMt548VZiL9+4LLDwWNR/oyR9v4Q+yKh0KTlU6s5LpS
-         oHQJSpKiVxdJ7F8OqxY7EKiKlEn5SZjmYWdUG4RIE6w/FE6gyyucPHvQMmfd84a7A8ER
-         qWS5wsIDNrWUjTqU75K0BUbWxKRvaWRuu2VFiNNzO9gN8//VvCLABv7TP6mHnCIkLWiC
-         sqcYpdWFqMG63AofWuj0H2LpUuJhmA9OMgKqAV2MXJ160ZRTw+TmiOTVbCF08fcmy96P
-         aHEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696007825; x=1696612625;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCBBShUT4W02J7jpHyBvljZ5v8OF4qTE4nEXAa9+HQo=;
-        b=WK60X+aUepTYn6AynJkWz7er2b7QOaqeSxk5Gi/1DwLmmqIPV9gjHI+XSsK4Y7cbIf
-         eVXcmDtAPrlpRN0J5Qjx3weOX5WC7HVZFG3CL76vNnqMBiz9tYgm8wla9K7GXNZtOaP6
-         FqRFQrQHZ46t2kqq08NX6j+zPL6/45Y2LN4PuEPjSY07YmvTg1MvNAj3UEMc+sbJVV6M
-         YFhokImCz0BgiI5q51c7ZoDv5NITvsox/nriHDva6sWaBLl4tZ5+/9crbgs7T3FOchC/
-         1iIU1KuUNqM+ehPT2b1r6471ODL41HoENRJ0gHEUbgUu8ui11iG7hh5a8KmCfojxGCs0
-         QRRA==
-X-Gm-Message-State: AOJu0YyaVN0H+NzgOLVebzNWMx6/2CwBf1VHb9jc5bIPhCdz4Ezdl91i
-        tJDpiDmV6TXaWzdaK+RHw/eR+g==
-X-Google-Smtp-Source: AGHT+IEVlmhe5KkcPsN5ToZ63pYahJO2Raan9LFaPXvJE+ynl/eQtYlDRZyRCc8/A1/gF4lPC1pYmg==
-X-Received: by 2002:a17:907:2cd4:b0:9a1:abae:8d30 with SMTP id hg20-20020a1709072cd400b009a1abae8d30mr3849432ejc.47.1696007825199;
-        Fri, 29 Sep 2023 10:17:05 -0700 (PDT)
-Received: from [192.168.33.189] (178235177217.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.217])
-        by smtp.gmail.com with ESMTPSA id v5-20020a1709064e8500b00993470682e5sm12602370eju.32.2023.09.29.10.17.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 10:17:04 -0700 (PDT)
-Message-ID: <30066188-3787-4277-914e-e06c95fe2e1c@linaro.org>
-Date:   Fri, 29 Sep 2023 19:17:01 +0200
+        Fri, 29 Sep 2023 13:26:22 -0400
+X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 29 Sep 2023 10:26:07 PDT
+Received: from server.cesssrl.com (server.cesssrl.com [185.174.102.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B631710
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 10:26:07 -0700 (PDT)
+Received: from vps2693868.trouble-free.net (unknown [216.219.84.124])
+        by server.cesssrl.com (Postfix) with ESMTPSA id 18895C267F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 17:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesssrl.com;
+        s=default; t=1696008048;
+        bh=K01Lz8DXPo/l1HML69hjnMc4O4WDEt9bFzxfZcHknC8=; h=From:To:Subject;
+        b=ASW0KSAByV7AD0Qk6f5evprRjtP9Thg+yC9s3PjSIupIeCAANuyPbwG1vhFiHti3L
+         ravpzCAAfp7+VOrkbPyqRcRlYG56k6jU5aO9M9YvcvJ57eBHSjMvIe2+0QENUzq31C
+         /0LOAtAaMeDoleyU8zPTPWnOm9bicBuAaAIR+J//kzneACw2DYFfYqtBR6bJFcNynX
+         fIu0GcJ1UglxblX+vAEFzW/oe7e7dLyeKTHXCA/QSpY7WH60qCcPhT7TalHS/BfXFN
+         HlfeZEi7IYJtH3PaZsvhJiSQa5TyTKNW9Ap7bqNkLueUJm+h0QcX8ejkgqSZ7FuXkE
+         agzdTPhBp8CpA==
+Authentication-Results: server.cesssrl.com;
+        spf=pass (sender IP is 216.219.84.124) smtp.mailfrom=inquiry@cesssrl.com smtp.helo=vps2693868.trouble-free.net
+Received-SPF: pass (server.cesssrl.com: connection is authenticated)
+Reply-To: "Eng. Don Walker" <don.walker@gfzenergyengineeringcorp.link>
+From:   "Eng. Don Walker" <inquiry@cesssrl.com>
+To:     linux-remoteproc@vger.kernel.org
+Subject: Inquiry M01hwkhpx:Ref
+Date:   29 Sep 2023 10:20:47 -0700
+Message-ID: <20230929102045.27F801E13CD12BEE@cesssrl.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
- support
-Content-Language: en-US
-To:     Caleb Connolly <caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: <169600804851.584989.7647130646213895799@server.cesssrl.com>
+X-PPP-Vhost: cesssrl.com
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 29.09.2023 18:16, Caleb Connolly wrote:
-> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
-> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
-> It exposes various mitigations including passive thermal controls and
-> rail voltage restrictions.
-> 
-> This series introduces support for exposing TMDs as cooling devices
-> in the kernel through the thermal framework, using the QMI interface.
-> 
-> Each TMD client is described as a child of the remoteproc node in
-> devicetree. With subnodes for each control.
-> 
-> This series is based on previous work by Bhupesh Sharma which can be
-> found at [1]. I'm sending this as a fresh series as it has been a
-> year since the original version and I have rewritten most of the driver.
-> 
-Since you're adding support for funky hw, it would be appreciated
-if you also linked to a tree that has the dt bits hooked up, the
-schema example may not tell the whole story
+Good day,
+I will be in your Country from the 15th to the 30th November 2023=20
+with 7 other people and we need your services during our stay. 
 
-Konrad
+Kindly confirm availability and prices. 
+=20
+What credit card types do you accept for deposit?
+=20
+Don.
+
+
+Message Ref: 01-yaljpso
+Message Time Stamp: 9/29/2023 10:20:45 a.m.
