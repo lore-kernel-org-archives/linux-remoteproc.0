@@ -2,65 +2,64 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF799E728C8
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3AAE728C9
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbjI2QQw (ORCPT
+        id S233589AbjI2QQx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:16:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37864 "EHLO
+        Fri, 29 Sep 2023 12:16:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233442AbjI2QQv (ORCPT
+        with ESMTP id S232878AbjI2QQw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Sep 2023 12:16:51 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E661B0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:16:49 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-323ef9a8b59so4684455f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:16:49 -0700 (PDT)
+        Fri, 29 Sep 2023 12:16:52 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8841B7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:16:50 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4053c6f0db8so138079285e9.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:16:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696004207; x=1696609007; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6B/E0C5Y9HDPBbLwfMxu8cDXR2QSrQXT/5EMKQgQGJ4=;
-        b=yYLYY15TvCfxbDTHxFLQaq01iSQ1lJiSBMoq8yXGMNx4VsFpj3Qfw+fQZs8Bu6QU3c
-         B37pmYP5tY01XuS1wXjCk2SsdQo/JhpBqO+b10Tba2+k8ykCoWrupCstufaSZAmk7x6o
-         j1rUpI9psQYXd2xK1lnbaXFRUggHnZc1RvwdtFIlDd75nOQNoMRRypY8cW563SGztviH
-         7p9v47VtTlOvJh2yWilAymBgdCsxp2JXQpN4XQB4zwwcChLGh4vBl6jXr6p3HSZPkhxS
-         JkYFZptVvRI8Yr3nCu5zWs1GdC1/uI9uO4hzNF9X6ahl6qU6YC8Vv6UVwVZLDohrPqJ5
-         Uhzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696004207; x=1696609007;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1696004208; x=1696609008; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6B/E0C5Y9HDPBbLwfMxu8cDXR2QSrQXT/5EMKQgQGJ4=;
-        b=gjq0Ag0RgivnM8zO8rf97b9g/u7soFEjX0tyyzy0H/vskfkDgFiP+/FXFjR21TnkSf
-         IPJyE5+IjuA1AW3edyi7nsmoK0Jw98ShDd9lzCRrp/GloqTUwiIrog9Hbkc//5UkpeIl
-         aUwlc9P8xtYsWWANrTt5o3s3NUuLdCsBaTFpF4Yuri0sBP5hpyjQsv35SH1Eb1vaMjLK
-         9yA+BW05AxbFwrHhu451hmxxf0+HTEnRIObhijurCpdojoc/4lK0lwRltMSso91d+NNV
-         MgrNYWUAx5c2bSBb+YQ9SvzSiBjQU0OyGZLyVNJBelLP0l0VUAQrpYYIJg3jiR3tywkI
-         Smfw==
-X-Gm-Message-State: AOJu0YyI9Ehn8rpFpTX9YOKZj47/77kR/jWYNBf5q1L340c4CSkpKcHo
-        TzmGEj0qX+EKlVpvjGPkvDjexOOspW8GBhz1mTNT+w==
-X-Google-Smtp-Source: AGHT+IEURs7bInoQ81f7TxnaWBu2zV/xWMNibaPJeamfCDb/iMreoEFs2yEUilVfvFeJeX7kmmcn5g==
-X-Received: by 2002:a5d:6687:0:b0:317:5b32:b2c3 with SMTP id l7-20020a5d6687000000b003175b32b2c3mr4321868wru.6.1696004207465;
-        Fri, 29 Sep 2023 09:16:47 -0700 (PDT)
+        bh=Ej83W4mJ4xFKDLp6O9qpUy9eRITOjM3WUInuGsR6c3w=;
+        b=ak0wf9kNpN0iI1agnQVQOwZhF2pk+66cAkcCNLgi7okzs+QCyW+93s+ytJsNjtAxcA
+         39tT44EAE8EnltjH25b2bWA6/mXmm4xTOv8XODFCmRJYdHmBBQ+skQWblC3D9ls5yP42
+         LizmiveqO2cnyAiiDH6IqSsgNoQUkvbIEJCsk/Bof11QJyePHw92iqeMTuhlR0w7WpLZ
+         +OWDtR/m+uzDZKrr3Eu6HFEdcDnLMG0MUsGw2OcclnJ9bQlJpqosMYGR0WlMokVXQH0U
+         TKwLbZuxuVW7X8CMhtGXO/WwnFtxAOL1ZUpl7oKZiPbXuT8EsbTL/HG2xgQyHrZJ5ujJ
+         0QUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696004208; x=1696609008;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ej83W4mJ4xFKDLp6O9qpUy9eRITOjM3WUInuGsR6c3w=;
+        b=qi/ooF7GKD6bDlltx88+XeLB0ZgUHd5N2j65nCyLPjCw5Kwj1RxXbehHazO3zGuGFa
+         S0/h68r+4/QsbaVBOHSG4pKEvhhi5Eqt9E87ayjvbHH7rqyPV1uOcaKs3yg/bg0dmTrg
+         /r9/RXgKuWQppHSPYFH4z8RO8llMMWibC0aATHgVRxF/bIrLb0qAccBeQ5DBIJp0lCF3
+         DpKvpi3mtbV7GMDxL/xaVlSsJFevsK+G6d0MBqNkqBfaUPqEs9OtXClxBwYipOWa5fiS
+         TbC08NWQYdlF1bTdPGHmmN1DkX/nD0oEbZyjlIV1amlfEJNtumwWDuT0oDs820/D13E8
+         xMOg==
+X-Gm-Message-State: AOJu0YwM+bqBGhybiqYlDf6tLFaG6tq4cbURp2VWU6nhH7N8E3yRoXro
+        IKgB3DPXv7XQ2SfVmaqTNkJ+YA==
+X-Google-Smtp-Source: AGHT+IG6giV2nFlnjxwrVxFGPsqceBnh72gCoBi3Ao0oUlvoYM0LIAOKz3IqprIp0Toig4d4DAxZBg==
+X-Received: by 2002:a5d:674d:0:b0:321:68fa:70aa with SMTP id l13-20020a5d674d000000b0032168fa70aamr4445292wrw.9.1696004208426;
+        Fri, 29 Sep 2023 09:16:48 -0700 (PDT)
 Received: from lion.localdomain (host-2-99-112-229.as13285.net. [2.99.112.229])
-        by smtp.gmail.com with ESMTPSA id x15-20020adfcc0f000000b0032330e43590sm10226848wrh.22.2023.09.29.09.16.46
+        by smtp.gmail.com with ESMTPSA id x15-20020adfcc0f000000b0032330e43590sm10226848wrh.22.2023.09.29.09.16.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Sep 2023 09:16:47 -0700 (PDT)
+        Fri, 29 Sep 2023 09:16:48 -0700 (PDT)
 From:   Caleb Connolly <caleb.connolly@linaro.org>
-Subject: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
- support
-Date:   Fri, 29 Sep 2023 17:16:16 +0100
-Message-Id: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+Date:   Fri, 29 Sep 2023 17:16:17 +0100
+Subject: [PATCH 1/4] remoteproc: qcom: probe all child devices
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFD4FmUC/x2N0QqDMAwAf0XyvLK2Q8X9yhgjzTINaOvSKQPx3
- 1f3eBzHbZBZhTNcqw2UV8mSYgF3qoAGjD0beRYGb/3FdrY2hCMH857kQSmNEntTN65pkbo2OA+
- lC5jZBMVIw1Eu83nC/GE93Kz8ku//d7vv+w9mbY5tfwAAAA==
+Message-Id: <20230905-caleb-qmi_cooling-v1-1-5aa39d4164a7@linaro.org>
+References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+In-Reply-To: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bhupesh Sharma <bhupesh.linux@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -80,56 +79,100 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Caleb Connolly <caleb.connolly@linaro.org>
 X-Mailer: b4 0.13-dev-46309
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1836;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2910;
  i=caleb.connolly@linaro.org; h=from:subject:message-id;
- bh=VEPqvD4CC9Ro8CIyvLwYQ44Yqd1l9r+l5d1hnsJWdDY=;
- b=owGbwMvMwCFYaeA6f6eBkTjjabUkhlSxH3klzcXeAlrxp/SMEmubHvy+v/Pz6aIZZnN/z4yqb
- XgWwRTTUcrCIMjBICumyCJ+Ypll09rL9hrbF1yAmcPKBDKEgYtTACYy9yvD/4JJz5Q/nWj62xgR
- 9/veg2NzQgtiTpUePXFx0n2llyb7r29g+J8llnla/JdiqdPm+b+vziv6oz+D5/ieSTuev+lQn/B
- Rfl49AA==
+ bh=BQAHBsD8YjKFqwQLawNkTixAQML5hsjMljtR9Bt9PIQ=;
+ b=owGbwMvMwCFYaeA6f6eBkTjjabUkhlSxH3mvrc6/vXxmg4XEgePXBIw6shYH5qlN6g3dmLUu0
+ ucb/5KKjlIWBkEOBlkxRRbxE8ssm9ZettfYvuACzBxWJpAhDFycAjCR1HsM/+wXLzasPTLlouGD
+ KvZTvsd9ln0LCrtw3yXzgGUxw1O5mesY/unmdS7Nl9y+KW99VkH9dt7jyXZMQRF+l/g4+E1u6qw
+ 69QkA
 X-Developer-Key: i=caleb.connolly@linaro.org; a=openpgp;
  fpr=83B24DA7FE145076BC38BB250CD904EB673A7C47
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Thermal Mitigation Device (TMD) Service is a QMI service that runs
-on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
-It exposes various mitigations including passive thermal controls and
-rail voltage restrictions.
+Generalise the qcom,bam-dmux child node support by probing all
+remoteproc children with of_platform_populate(). This will be used to
+enable support for devices which are best represented as subnodes of the
+remoteproc, such as those representing QMI clients.
 
-This series introduces support for exposing TMDs as cooling devices
-in the kernel through the thermal framework, using the QMI interface.
-
-Each TMD client is described as a child of the remoteproc node in
-devicetree. With subnodes for each control.
-
-This series is based on previous work by Bhupesh Sharma which can be
-found at [1]. I'm sending this as a fresh series as it has been a
-year since the original version and I have rewritten most of the driver.
-
-[1]: https://lore.kernel.org/linux-arm-msm/20220912085049.3517140-1-bhupesh.sharma@linaro.org/
-
+Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
 ---
-Caleb Connolly (4):
-      remoteproc: qcom: probe all child devices
-      dt-bindings: thermal: Add qcom,qmi-cooling yaml bindings
-      thermal: qcom: add qmi-cooling driver
-      MAINTAINERS: Add entry for Qualcomm Cooling Driver
+ drivers/remoteproc/qcom_q6v5.c     | 4 ++++
+ drivers/remoteproc/qcom_q6v5_mss.c | 8 --------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
- .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  13 +
- .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +
- .../bindings/thermal/qcom,qmi-cooling.yaml         | 168 +++++++
- MAINTAINERS                                        |   8 +
- drivers/remoteproc/qcom_q6v5.c                     |   4 +
- drivers/remoteproc/qcom_q6v5_mss.c                 |   8 -
- drivers/thermal/qcom/Kconfig                       |  13 +
- drivers/thermal/qcom/Makefile                      |   1 +
- drivers/thermal/qcom/qmi-cooling.c                 | 520 +++++++++++++++++++++
- drivers/thermal/qcom/qmi-cooling.h                 | 428 +++++++++++++++++
- 10 files changed, 1161 insertions(+), 8 deletions(-)
----
-base-commit: 9067f80db58bbce81d5f0703aa2fd261e88bc812
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 4ee5e67a9f03..8aa5c7b05429 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -6,6 +6,7 @@
+  * Copyright (C) 2014 Sony Mobile Communications AB
+  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+  */
++#include <linux/of_platform.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/interconnect.h>
+@@ -349,6 +350,8 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
+ 				     "failed to acquire interconnect path\n");
+ 
++	of_platform_populate(q6v5->dev->of_node, NULL, NULL, q6v5->dev);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+@@ -359,6 +362,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+  */
+ void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5)
+ {
++	of_platform_depopulate(q6v5->dev);
+ 	qmp_put(q6v5->qmp);
+ }
+ EXPORT_SYMBOL_GPL(qcom_q6v5_deinit);
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 22fe7b5f5236..ab7e426777c7 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -230,7 +230,6 @@ struct q6v5 {
+ 	struct qcom_rproc_subdev smd_subdev;
+ 	struct qcom_rproc_ssr ssr_subdev;
+ 	struct qcom_sysmon *sysmon;
+-	struct platform_device *bam_dmux;
+ 	bool need_mem_protection;
+ 	bool has_alt_reset;
+ 	bool has_mba_logs;
+@@ -1969,7 +1968,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ static int q6v5_probe(struct platform_device *pdev)
+ {
+ 	const struct rproc_hexagon_res *desc;
+-	struct device_node *node;
+ 	struct q6v5 *qproc;
+ 	struct rproc *rproc;
+ 	const char *mba_image;
+@@ -2113,10 +2111,6 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto remove_sysmon_subdev;
+ 
+-	node = of_get_compatible_child(pdev->dev.of_node, "qcom,bam-dmux");
+-	qproc->bam_dmux = of_platform_device_create(node, NULL, &pdev->dev);
+-	of_node_put(node);
+-
+ 	return 0;
+ 
+ remove_sysmon_subdev:
+@@ -2138,8 +2132,6 @@ static void q6v5_remove(struct platform_device *pdev)
+ 	struct q6v5 *qproc = platform_get_drvdata(pdev);
+ 	struct rproc *rproc = qproc->rproc;
+ 
+-	if (qproc->bam_dmux)
+-		of_platform_device_destroy(&qproc->bam_dmux->dev, NULL);
+ 	rproc_del(rproc);
+ 
+ 	qcom_q6v5_deinit(&qproc->q6v5);
 
-// Caleb (they/them)
+-- 
+2.42.0
 
