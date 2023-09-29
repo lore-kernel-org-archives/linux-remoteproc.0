@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3F3E728C9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C78BE728CD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Sep 2023 16:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233147AbjI2Q25 (ORCPT
+        id S233396AbjI2Q4l (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Sep 2023 12:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
+        Fri, 29 Sep 2023 12:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233446AbjI2Q24 (ORCPT
+        with ESMTP id S233391AbjI2Q4k (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Sep 2023 12:28:56 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C211B5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:28:53 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-523100882f2so17925001a12.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:28:53 -0700 (PDT)
+        Fri, 29 Sep 2023 12:56:40 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8831B6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:56:36 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-4066241289bso3729765e9.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Sep 2023 09:56:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696004932; x=1696609732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1696006595; x=1696611395; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X8mQZtTVeZ33y1fcK4D+RrR6+JupRwQI35yzIof0Q8A=;
-        b=yoo8Sswt1id8qNkT6u4hAjpNQVuUQZXh4WhGsrlZNUdsiVIiHoJ2IAbSUvPrfaqUA+
-         bIlPNzupammYeZwe/P/nJKCYK/5T9Vs8Vw55BgbIjNBEqjIDvC9hghgTFwUYLqrn6+wc
-         9uOxHSepwxFwyDExvUrxRLciDcvMTxiBu+/mH1yd9FZs+qFtvh5C/eESv6I1pSa6i5T9
-         QL9YL8g0bwDOi+QOWSaT5z0WGHK2cTmR/6A87cUQO3bZI0ifhGhtlBaWTYyvz3RZWBEM
-         wqXl0W26kkHvEvgBIKbCmMnLSjBseo4hHFqWGu3g0kHWqzJHte+tmyM9Jio6hsyaakoB
-         9kGw==
+        bh=xND+MW/+UJCbTpDVHmrFxQeOX19ZNbbE88mX3i18+R4=;
+        b=BELjiJtjShLwwF+3anLAYLL0pDH4nu7aFLQb8fYm78xaRVKg+rx0BFGJX2Pf0PBXSG
+         m29DIbJDLmQUQLO0UG8ZjTKUYBGOynGsA5PLewNvG4Lvd/inlzCMsPzzjIIz3P0CDhv1
+         aWdqhmp5LGNI2Im/Y1F5LbxaVDl1RIuOvHEJ2wE8pgyZdxTmEAqBr9pZvMbuiG8f9HXN
+         vWIdhhRMOJ/VvZLexpjhY813arvZW+Kg7dHtlpvVcjgYzuvtfdGBynFs1NVUTF+Mv+Tx
+         obq1XL+clC1/MZSQBewJHKVQiHTDoRFbu8snE28a8fg5ERw7koaXqDzWCLOEnLDGma0b
+         pyOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696004932; x=1696609732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1696006595; x=1696611395;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8mQZtTVeZ33y1fcK4D+RrR6+JupRwQI35yzIof0Q8A=;
-        b=OKTSCxgkk5yt2viuvRQzkxs9Ndw+AsyROIj2wew4Oed1Sf85L2fpH3mGvMpRyzV2+w
-         7tL9R+4ETSmHwMD7Nu+foWfgNj97/j1KDdCBH5tsmlAvlQ+CXeBUIDiaBk5LDdg5IxI4
-         2GJOOlK2cMwPFOhken485N3hWyK2Hapc8lKC5M1kNmnIAOS7Dk6YWJ4E5xlKDtPvpD25
-         yW1myA+dVYsJJEdiJaO2rdTWkLdrsUrJmrnk4GrujmQIqY3Q+sGKAiKdYRn8ZB8KCyqO
-         I3WgXufOOV/vesgpg1VbLSMu+1iunK/5l8Axat76cj/LYH8A4rSXzeESGvgELMl+7Llb
-         HndA==
-X-Gm-Message-State: AOJu0YyJHD3O7dTsa/VGs4wrOnWPzz3NVBMj5CeOgiGeVmeOUD2R/zpq
-        effHyLOjtrV10P9u+tebC+s9Vg==
-X-Google-Smtp-Source: AGHT+IGzYhpFXCR0EPzBGhIzwNmt9lRnwwgeUPiOpbQaT6s0SYUQITM2AREylz2cWxOB58g0zLCQMg==
-X-Received: by 2002:a17:906:319a:b0:9a9:f17e:412f with SMTP id 26-20020a170906319a00b009a9f17e412fmr4717755ejy.50.1696004931898;
-        Fri, 29 Sep 2023 09:28:51 -0700 (PDT)
-Received: from [192.168.0.219] (178235177217.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.217])
-        by smtp.gmail.com with ESMTPSA id hs35-20020a1709073ea300b009b28ad521f4sm7253315ejc.4.2023.09.29.09.28.50
+        bh=xND+MW/+UJCbTpDVHmrFxQeOX19ZNbbE88mX3i18+R4=;
+        b=vkCSYKMVdoJD6Y/Y20n1sUkDyMVqNtmrarsiNtLIzdxDC4VsHWHQZnxsEc/oEYTwZx
+         v4T7dK/mtaF3MEAl+YWDIiAdpOH+vy3Hlm5JcWtbqo3Ivr1Nox+04Y3+LSSlvZr8rVmQ
+         VFvEOaesuUCPJ4Gj5H57RthTKb2QmezR3jhRM4SwFFhpPvv2G9CSKPdAtDFbUIrAzOtB
+         sn9AxXcXj3KGhyDyJB4WIS7CJ+Frmw48gq03qDik2W0KTqsCZCbxpzWYtgKIYtX3gvJO
+         8Gf1I4DNMqlXURab7ZGU97EVTIWsImIkp3RAYby0cEqRVpVDr5XZ6y+uMtIeQz+1HBQ+
+         Yp0g==
+X-Gm-Message-State: AOJu0YzHWH+y4pf+bLLnc8wYpLQLJenFRLZ7gwjxi1jAFfXp2NELZRcL
+        +a/7h6IzVcckRIwsf3J39xxq7w==
+X-Google-Smtp-Source: AGHT+IHL6Thh2nSYg3/7lYJjbnPF19w1qpgTK8doTP2ZGsc7IIv5ssUcTLXHAP1i0i+sB6dIU9sgQg==
+X-Received: by 2002:a1c:7c11:0:b0:405:4a78:a890 with SMTP id x17-20020a1c7c11000000b004054a78a890mr4246266wmc.8.1696006594912;
+        Fri, 29 Sep 2023 09:56:34 -0700 (PDT)
+Received: from [192.168.1.8] (host-2-99-112-229.as13285.net. [2.99.112.229])
+        by smtp.gmail.com with ESMTPSA id y21-20020a7bcd95000000b00405c7591b09sm1787900wmj.35.2023.09.29.09.56.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Sep 2023 09:28:51 -0700 (PDT)
-Message-ID: <30aa40c9-b63a-093c-954d-86e4bb232431@linaro.org>
-Date:   Fri, 29 Sep 2023 18:28:49 +0200
+        Fri, 29 Sep 2023 09:56:34 -0700 (PDT)
+Message-ID: <1765d8c7-2f7e-4cb9-9063-f78c5d29e1a4@linaro.org>
+Date:   Fri, 29 Sep 2023 17:56:32 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/4] thermal: qcom: add qmi-cooling driver
-To:     Caleb Connolly <caleb.connolly@linaro.org>,
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bhupesh Sharma <bhupesh.linux@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -76,192 +76,242 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org
 References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
  <20230905-caleb-qmi_cooling-v1-3-5aa39d4164a7@linaro.org>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230905-caleb-qmi_cooling-v1-3-5aa39d4164a7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <30aa40c9-b63a-093c-954d-86e4bb232431@linaro.org>
+From:   Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <30aa40c9-b63a-093c-954d-86e4bb232431@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 9/29/23 18:16, Caleb Connolly wrote:
-> The Thermal Mitigation Device (TMD) service exposes various platform
-> specific thermal mitigations available on remote subsystems (ie the
-> modem, adsp, cdsp, and sdsp). The service is exposed via the QMI messaging
-> interface, usually over the QRTR transport.
+On 29/09/2023 17:28, Konrad Dybcio wrote:
 > 
-> These controls affect things like the power limits of the modem power
-> amplifier and cpu core, skin temperature mitigations, as well as rail
-> voltage restrictions under cold conditions.
 > 
-> Each remote subsystem has its own TMD instance, where each child node
-> represents a single thermal control.
+> On 9/29/23 18:16, Caleb Connolly wrote:
+>> The Thermal Mitigation Device (TMD) service exposes various platform
+>> specific thermal mitigations available on remote subsystems (ie the
+>> modem, adsp, cdsp, and sdsp). The service is exposed via the QMI
+>> messaging
+>> interface, usually over the QRTR transport.
+>>
+>> These controls affect things like the power limits of the modem power
+>> amplifier and cpu core, skin temperature mitigations, as well as rail
+>> voltage restrictions under cold conditions.
+>>
+>> Each remote subsystem has its own TMD instance, where each child node
+>> represents a single thermal control.
+>>
+>> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+>> ---
+> [...]
 > 
-> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
-> ---
-[...]
+>> +/* Notify the remote subsystem of the requested cooling state */
+>> +static int qmi_tmd_send_state_request(struct qmi_tmd *tmd)
+>> +{
+>> +    struct tmd_set_mitigation_level_resp_msg_v01 tmd_resp;
+>> +    struct tmd_set_mitigation_level_req_msg_v01 req;
+>> +    struct qmi_tmd_client *client;
+>> +    struct qmi_txn txn;
+>> +    int ret = 0;
+>> +
+>> +    client = tmd->client;
+> You can assign it at declaration time
 
-> +/* Notify the remote subsystem of the requested cooling state */
-> +static int qmi_tmd_send_state_request(struct qmi_tmd *tmd)
-> +{
-> +	struct tmd_set_mitigation_level_resp_msg_v01 tmd_resp;
-> +	struct tmd_set_mitigation_level_req_msg_v01 req;
-> +	struct qmi_tmd_client *client;
-> +	struct qmi_txn txn;
-> +	int ret = 0;
-> +
-> +	client = tmd->client;
-You can assign it at declaration time
-> +
-> +	if (!client->connection_active)
-> +		return 0;
-Is that an expected scenario?
+Is this just personal preference or is it subsystem rules? I generally
+prefer to avoid non-const assignments at declaration time, it's just
+easier to read this way.
+>> +
+>> +    if (!client->connection_active)
+>> +        return 0;
+> Is that an expected scenario?
 
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	memset(&tmd_resp, 0, sizeof(tmd_resp));
-Since you're declaring them above, you can do = { 0 }; instead, which
-will be faster
+Yes, this function is called by the cooling device set_cur_state op. The
+cooling device itself is always registered, even if the remoteproc is
+offline (in which case the cached state will be sent to it when it
+starts up).
+> 
+>> +
+>> +    memset(&req, 0, sizeof(req));
+>> +    memset(&tmd_resp, 0, sizeof(tmd_resp));
+> Since you're declaring them above, you can do = { 0 }; instead, which
+> will be faster
 
-> +
-> +	strscpy(req.mitigation_dev_id.mitigation_dev_id, tmd->qmi_name,
-> +		QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1);
-> +	req.mitigation_level = tmd->cur_state;
-> +
-> +	mutex_lock(&client->mutex);
-Look into fancy scoped mutexes https://lwn.net/Articles/934679/
+Thanks, will do (though fwiw the compiler almost definitely optimises
+this out).
+> 
+>> +
+>> +    strscpy(req.mitigation_dev_id.mitigation_dev_id, tmd->qmi_name,
+>> +        QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1);
+>> +    req.mitigation_level = tmd->cur_state;
+>> +
+>> +    mutex_lock(&client->mutex);
+> Look into fancy scoped mutexes https://lwn.net/Articles/934679/
 
-[...]
+ooh nice, that actually improves things a lot :D
+> 
+> [...]
+> 
+>> +static int qmi_set_cur_state(struct thermal_cooling_device *cdev,
+>> unsigned long state)
+>> +{
+>> +    struct qmi_tmd *tmd = cdev->devdata;
+>> +
+>> +    if (!tmd)
+>> +        return -EINVAL;
+>> +
+>> +    if (state > tmd->max_state)
+>> +        return -EINVAL;Would it be useful if this threw an error in
+>> dmesg?
 
-> +static int qmi_set_cur_state(struct thermal_cooling_device *cdev, unsigned long state)
-> +{
-> +	struct qmi_tmd *tmd = cdev->devdata;
-> +
-> +	if (!tmd)
-> +		return -EINVAL;
-> +
-> +	if (state > tmd->max_state)
-> +		return -EINVAL;Would it be useful if this threw an error in dmesg?
+I may be mistaken but I think the only place this will be hit is when
+userspace attempts to write to it via sysfs, in that case the invalid
+argument is likely enough.
+> 
+> 
+>> + * When the QMI service starts up on a remote subsystem this function
+>> will fetch
+>> + * the list of TMDs on the subsystem, match it to the TMDs specified
+>> in devicetree
+>> + * and call qmi_tmd_init_control() for each
+>> + */
+>> +static void qmi_tmd_svc_arrive(struct work_struct *work)
+>> +{
+>> +    struct qmi_tmd_client *client =
+>> +        container_of(work, struct qmi_tmd_client, svc_arrive_work);
+>> +
+>> +    struct tmd_get_mitigation_device_list_req_msg_v01 req;
+>> +    struct tmd_get_mitigation_device_list_resp_msg_v01 *resp;
+>> +    int ret = 0, i;
+>> +    struct qmi_txn txn;
+>> +
+>> +    memset(&req, 0, sizeof(req));
+> = { 0 }
+> 
+> [...]
+> 
+>> +
+>> +    pr_info("QMI TMD service reset %s\n", client->name);
+> Is it useful to the user? pr_debug?
 
+Oops, forgot to remove these!
+> 
+>> +
+>> +    list_for_each_entry(tmd, &client->cdev_list, node) {
+>> +        qmi_tmd_send_state_request(tmd);
+>> +    }
+>> +}
+>> +
+>> +static void thermal_qmi_del_server(struct qmi_handle *qmi, struct
+>> qmi_service *service)
+>> +{
+>> +    struct qmi_tmd_client *client = container_of(qmi, struct
+>> qmi_tmd_client, handle);
+>> +
+>> +    pr_info("QMI TMD service stop %s\n", client->name);
+> Ditto
+> 
+>> +
+>> +    client->connection_active = false;
+>> +}
+>> +
+>> +static int thermal_qmi_new_server(struct qmi_handle *qmi, struct
+>> qmi_service *service)
+>> +{
+>> +    struct qmi_tmd_client *client = container_of(qmi, struct
+>> qmi_tmd_client, handle);
+>> +    struct sockaddr_qrtr sq = { AF_QIPCRTR, service->node,
+>> service->port };
+>> +
+>> +    pr_info("QMI TMD service start %s\n", client->name);
+> Ditto
+> 
+>> +        tmd->type = devm_kasprintf(client->dev, GFP_KERNEL, "%s:%s",
+>> +                        client->name, subnode->name);
+>> +        if (!tmd->type)
+>> +            return dev_err_probe(dev, -ENOMEM, "Cooling device name\n");
+> Cooling device name-what? :D
 
-> + * When the QMI service starts up on a remote subsystem this function will fetch
-> + * the list of TMDs on the subsystem, match it to the TMDs specified in devicetree
-> + * and call qmi_tmd_init_control() for each
-> + */
-> +static void qmi_tmd_svc_arrive(struct work_struct *work)
-> +{
-> +	struct qmi_tmd_client *client =
-> +		container_of(work, struct qmi_tmd_client, svc_arrive_work);
-> +
-> +	struct tmd_get_mitigation_device_list_req_msg_v01 req;
-> +	struct tmd_get_mitigation_device_list_resp_msg_v01 *resp;
-> +	int ret = 0, i;
-> +	struct qmi_txn txn;
-> +
-> +	memset(&req, 0, sizeof(req));
-= { 0 }
+"error -12: Cooling device name"
 
-[...]
+Maybe this shouldn't print an error at all? I usually just like to have
+something to grep for so I don't have to binary search through error
+paths when debugging.
+> 
+>> +
+>> +        if (of_property_read_string(subnode, "label", &name)) {
+>> +            return dev_err_probe(client->dev, -EINVAL,
+>> +                         "Fail to parse dev name for %s\n",
+> Failed
 
-> +
-> +	pr_info("QMI TMD service reset %s\n", client->name);
-Is it useful to the user? pr_debug?
+ack
+> 
+> [...]
+> 
+>> +static int qmi_tmd_client_probe(struct platform_device *pdev)
+>> +{
+>> +    struct device *dev;
+>> +    struct qmi_tmd_client *client;
+>> +    const struct qmi_instance_id *match;
+>> +    int ret;
+>> +
+>> +    dev = &pdev->dev;
+> Initialize at declaration
+> 
+>> +
+>> +    client = devm_kzalloc(dev, sizeof(*client), GFP_KERNEL);
+>> +    if (!client)
+>> +        return -ENOMEM;
+>> +
+>> +    client->dev = dev;
+>> +
+>> +    match = of_device_get_match_data(dev);
+>> +    if (!match)
+>> +        return dev_err_probe(dev, -EINVAL, "No match data\n");
+>> +
+>> +    client->id = match->id;
+>> +    client->name = match->name;
+>> +
+>> +    mutex_init(&client->mutex);
+>> +    INIT_LIST_HEAD(&client->cdev_list);
+>> +    INIT_WORK(&client->svc_arrive_work, qmi_tmd_svc_arrive);
+>> +
+>> +    ret = qmi_tmd_alloc_cdevs(client);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    platform_set_drvdata(pdev, client);
+>> +
+>> +    ret = qmi_handle_init(&client->handle,
+>> +                 
+>> TMD_GET_MITIGATION_DEVICE_LIST_RESP_MSG_V01_MAX_MSG_LEN,
+>> +                  &thermal_qmi_event_ops, NULL);
+>> +    if (ret < 0)
+>> +        return dev_err_probe(client->dev, ret, "QMI handle init
+>> failed for client %#x\n",
+>> +                  client->id);
+>> +
+>> +    ret = qmi_add_lookup(&client->handle, TMD_SERVICE_ID_V01,
+>> TMD_SERVICE_VERS_V01,
+>> +                 client->id);
+>> +    if (ret < 0) {
+>> +        qmi_handle_release(&client->handle);
+>> +        return dev_err_probe(client->dev, ret, "QMI register failed
+>> for client 0x%x\n",
+>> +                  client->id);
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int qmi_tmd_client_remove(struct platform_device *pdev)
+> void + .remove_new
 
-> +
-> +	list_for_each_entry(tmd, &client->cdev_list, node) {
-> +		qmi_tmd_send_state_request(tmd);
-> +	}
-> +}
-> +
-> +static void thermal_qmi_del_server(struct qmi_handle *qmi, struct qmi_service *service)
-> +{
-> +	struct qmi_tmd_client *client = container_of(qmi, struct qmi_tmd_client, handle);
-> +
-> +	pr_info("QMI TMD service stop %s\n", client->name);
-Ditto
+Ack
+> 
+> Konrad
 
-> +
-> +	client->connection_active = false;
-> +}
-> +
-> +static int thermal_qmi_new_server(struct qmi_handle *qmi, struct qmi_service *service)
-> +{
-> +	struct qmi_tmd_client *client = container_of(qmi, struct qmi_tmd_client, handle);
-> +	struct sockaddr_qrtr sq = { AF_QIPCRTR, service->node, service->port };
-> +
-> +	pr_info("QMI TMD service start %s\n", client->name);
-Ditto
-
-> +		tmd->type = devm_kasprintf(client->dev, GFP_KERNEL, "%s:%s",
-> +						client->name, subnode->name);
-> +		if (!tmd->type)
-> +			return dev_err_probe(dev, -ENOMEM, "Cooling device name\n");
-Cooling device name-what? :D
-
-> +
-> +		if (of_property_read_string(subnode, "label", &name)) {
-> +			return dev_err_probe(client->dev, -EINVAL,
-> +					     "Fail to parse dev name for %s\n",
-Failed
-
-[...]
-
-> +static int qmi_tmd_client_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev;
-> +	struct qmi_tmd_client *client;
-> +	const struct qmi_instance_id *match;
-> +	int ret;
-> +
-> +	dev = &pdev->dev;
-Initialize at declaration
-
-> +
-> +	client = devm_kzalloc(dev, sizeof(*client), GFP_KERNEL);
-> +	if (!client)
-> +		return -ENOMEM;
-> +
-> +	client->dev = dev;
-> +
-> +	match = of_device_get_match_data(dev);
-> +	if (!match)
-> +		return dev_err_probe(dev, -EINVAL, "No match data\n");
-> +
-> +	client->id = match->id;
-> +	client->name = match->name;
-> +
-> +	mutex_init(&client->mutex);
-> +	INIT_LIST_HEAD(&client->cdev_list);
-> +	INIT_WORK(&client->svc_arrive_work, qmi_tmd_svc_arrive);
-> +
-> +	ret = qmi_tmd_alloc_cdevs(client);
-> +	if (ret)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, client);
-> +
-> +	ret = qmi_handle_init(&client->handle,
-> +			      TMD_GET_MITIGATION_DEVICE_LIST_RESP_MSG_V01_MAX_MSG_LEN,
-> +			      &thermal_qmi_event_ops, NULL);
-> +	if (ret < 0)
-> +		return dev_err_probe(client->dev, ret, "QMI handle init failed for client %#x\n",
-> +			      client->id);
-> +
-> +	ret = qmi_add_lookup(&client->handle, TMD_SERVICE_ID_V01, TMD_SERVICE_VERS_V01,
-> +			     client->id);
-> +	if (ret < 0) {
-> +		qmi_handle_release(&client->handle);
-> +		return dev_err_probe(client->dev, ret, "QMI register failed for client 0x%x\n",
-> +			      client->id);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qmi_tmd_client_remove(struct platform_device *pdev)
-void + .remove_new
-
-Konrad
+-- 
+// Caleb (they/them)
