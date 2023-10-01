@@ -2,35 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CD7E748EE
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  1 Oct 2023 15:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303D4E748F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  1 Oct 2023 17:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235178AbjJAP5X (ORCPT
+        id S235243AbjJAR0X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 1 Oct 2023 11:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45008 "EHLO
+        Sun, 1 Oct 2023 13:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235152AbjJAP5X (ORCPT
+        with ESMTP id S235237AbjJAR0W (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 1 Oct 2023 11:57:23 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAF3D3;
-        Sun,  1 Oct 2023 08:57:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE8AC433C7;
-        Sun,  1 Oct 2023 15:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696175838;
-        bh=sCovQZwExo44oQAqhqDPGoISPRpG+C8reMc7OEyCOXY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BtKEt3E76UzpTLf5SYgOHMPnuM9hGikPj+SBjDplOal6PvPDG61/dZuoKnIWIfcV/
-         c7Gn7oRXGV0CTPji+zy/KVq5ZTTbUurFzpfWNJeNiANrTSci1FC8LOSNztr67HQG8f
-         zxkXb2FUW0G3w+2lzDgISRAWAcsOPU9c0/mirdUcUpbByuPiYJU7K+QbSALwqHXJfH
-         CM+IDcbEpvke6eVjQ5ojcVqaCwFRsNhP15XcPQCIejj5b2xutWZu5fgsMsSZP739GJ
-         Z64PuthHnxiacO7qE5fJPjC/GfK734diyZa8NP13R6BjodgAmtTyGfe/kiE+Rwc5Y2
-         7RfFb9TXs9RAQ==
-Date:   Sun, 1 Oct 2023 21:27:01 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Caleb Connolly <caleb.connolly@linaro.org>
+        Sun, 1 Oct 2023 13:26:22 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FED4C9
+        for <linux-remoteproc@vger.kernel.org>; Sun,  1 Oct 2023 10:26:19 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40572aeb673so129110025e9.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 01 Oct 2023 10:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696181177; x=1696785977; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nT7pagqUgpEeHd/BYI3RWZkltric+Zk6n3iICPRwFfU=;
+        b=RoR2bGPVzdnCnLviXBwKLH0RYVLeBzo3Ny1WQnEUEDetUkV0aCkOPAvY/lp1XMy2jn
+         O4/qzenLcabTHRb2Gmt+dEsI1oaVUWgpfn0AO9wKeYyiLIK+UOWiX3xrDfSjJD62U/Yf
+         LFBKa9zDuNy/D1nt5s8PcQeBYI7hg2TcE7l4I9s0AMFgbijKZ+Wb+xTOGQy8HxRVUiOw
+         WgPbZJxLnlz6RyVwpSKZY5sdYFUuUC76Rv5zNo996YoyslWduXxKb9HN2+m9SZaaCS8q
+         DKDBTcY2BVnG1D/kVLLd6pxjBr2ZWkhLzwf+ey6K6HcP+ZcmTnAjUrvteCI2NgK9RZfN
+         dfsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696181177; x=1696785977;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nT7pagqUgpEeHd/BYI3RWZkltric+Zk6n3iICPRwFfU=;
+        b=XNxmALRuJPQp3rs1DbFekwYbXhriYOkXWTvWXxSrQRwX65bfmTIMH3pxGQfVC6jnaI
+         63Vuum5fSI6bzeO0U35v+6bmm/Gx8Af/7XsEB1hEQHVmAZU3NU7VpOyJ8zpxhVRAempP
+         PB01ZHHeeWeAaeAPwOEFbLK5c2B4sVE/w+0ya0It7fEunsCeuHgpLocahnBzRbtoI+NH
+         qYDkRW8L7F7onyyIkOBHZWhWl2oqRSRxpqw5ndBrrEEheOIpds0DUqHVmpXYz+B3p5RT
+         OiztabOhKetr9tnDQxbxTkG8uCqeVv0lExPzmQJRvyyjFfC9h2+J1z18FGUiHfwy896I
+         0GLA==
+X-Gm-Message-State: AOJu0Yx5jFM2okWMbYl3p0xIgu4whjHCLtA8DTA/8yt7LyWb6FpXuIFf
+        sfQv+7iioMJU8j/5Axhp24xIOg==
+X-Google-Smtp-Source: AGHT+IEGshf6p+xcOYqgQe106M5j/2Y9oSZ+muu0yMArZnkd7QanlgZUiL7HO9rxkphXyNvCHdRCXQ==
+X-Received: by 2002:a05:600c:b4e:b0:402:95a0:b2ae with SMTP id k14-20020a05600c0b4e00b0040295a0b2aemr8211234wmr.32.1696181177528;
+        Sun, 01 Oct 2023 10:26:17 -0700 (PDT)
+Received: from [192.168.1.23] (host-2-99-112-229.as13285.net. [2.99.112.229])
+        by smtp.gmail.com with ESMTPSA id z20-20020a7bc7d4000000b0040640073d25sm5586923wmk.16.2023.10.01.10.26.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Oct 2023 10:26:17 -0700 (PDT)
+Message-ID: <cefe711b-d274-4d83-9dda-01f33b342387@linaro.org>
+Date:   Sun, 1 Oct 2023 18:26:14 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
+ support
+Content-Language: en-US
+To:     Manivannan Sadhasivam <mani@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bhupesh Sharma <bhupesh.linux@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -44,74 +72,89 @@ Cc:     Andy Gross <agross@kernel.org>,
         Amit Kucheria <amitk@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Sibi Sankar <quic_sibis@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
         Thara Gopinath <thara.gopinath@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation
- Device support
-Message-ID: <20231001155701.GA53767@thinkpad>
 References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+ <20231001155701.GA53767@thinkpad>
+From:   Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20231001155701.GA53767@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
-> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
-> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
-> It exposes various mitigations including passive thermal controls and
-> rail voltage restrictions.
-> 
-> This series introduces support for exposing TMDs as cooling devices
-> in the kernel through the thermal framework, using the QMI interface.
-> 
-> Each TMD client is described as a child of the remoteproc node in
-> devicetree. With subnodes for each control.
-> 
 
-Daniel expressed concerns in the past aganist representing TMD driver as a
-cooling device since it is not tied to thermal zones and the governors cannot
-use it. Instead he suggested to represent it as a powercap device with thermal
-constraints.
 
-So please look into that approach.
+On 01/10/2023 16:57, Manivannan Sadhasivam wrote:
+> On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
+>> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
+>> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
+>> It exposes various mitigations including passive thermal controls and
+>> rail voltage restrictions.
+>>
+>> This series introduces support for exposing TMDs as cooling devices
+>> in the kernel through the thermal framework, using the QMI interface.
+>>
+>> Each TMD client is described as a child of the remoteproc node in
+>> devicetree. With subnodes for each control.
+>>
+> 
+> Daniel expressed concerns in the past aganist representing TMD driver as a
+> cooling device since it is not tied to thermal zones and the governors cannot
+> use it. Instead he suggested to represent it as a powercap device with thermal
+> constraints.
 
-- Mani
+Hi Mani,
 
-> This series is based on previous work by Bhupesh Sharma which can be
-> found at [1]. I'm sending this as a fresh series as it has been a
-> year since the original version and I have rewritten most of the driver.
+Forgive me as I'm not yet super familiar with the thermal subsystem.
+
+As I understand it, the DT layout here enables each control to be 
+referenced under the thermal zones, at least this is the approach taken 
+in CAF 4.9.
+
+Maybe I don't quite understand what you mean, are you saying that using 
+thermal zones is the wrong approach?
 > 
-> [1]: https://lore.kernel.org/linux-arm-msm/20220912085049.3517140-1-bhupesh.sharma@linaro.org/
+> So please look into that approach.
+
+Any recommended reading? Or drivers I can use as a reference?
+
+Thanks
 > 
-> ---
-> Caleb Connolly (4):
->       remoteproc: qcom: probe all child devices
->       dt-bindings: thermal: Add qcom,qmi-cooling yaml bindings
->       thermal: qcom: add qmi-cooling driver
->       MAINTAINERS: Add entry for Qualcomm Cooling Driver
+> - Mani
 > 
->  .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  13 +
->  .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +
->  .../bindings/thermal/qcom,qmi-cooling.yaml         | 168 +++++++
->  MAINTAINERS                                        |   8 +
->  drivers/remoteproc/qcom_q6v5.c                     |   4 +
->  drivers/remoteproc/qcom_q6v5_mss.c                 |   8 -
->  drivers/thermal/qcom/Kconfig                       |  13 +
->  drivers/thermal/qcom/Makefile                      |   1 +
->  drivers/thermal/qcom/qmi-cooling.c                 | 520 +++++++++++++++++++++
->  drivers/thermal/qcom/qmi-cooling.h                 | 428 +++++++++++++++++
->  10 files changed, 1161 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 9067f80db58bbce81d5f0703aa2fd261e88bc812
-> 
-> // Caleb (they/them)
+>> This series is based on previous work by Bhupesh Sharma which can be
+>> found at [1]. I'm sending this as a fresh series as it has been a
+>> year since the original version and I have rewritten most of the driver.
+>>
+>> [1]: https://lore.kernel.org/linux-arm-msm/20220912085049.3517140-1-bhupesh.sharma@linaro.org/
+>>
+>> ---
+>> Caleb Connolly (4):
+>>        remoteproc: qcom: probe all child devices
+>>        dt-bindings: thermal: Add qcom,qmi-cooling yaml bindings
+>>        thermal: qcom: add qmi-cooling driver
+>>        MAINTAINERS: Add entry for Qualcomm Cooling Driver
+>>
+>>   .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  13 +
+>>   .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +
+>>   .../bindings/thermal/qcom,qmi-cooling.yaml         | 168 +++++++
+>>   MAINTAINERS                                        |   8 +
+>>   drivers/remoteproc/qcom_q6v5.c                     |   4 +
+>>   drivers/remoteproc/qcom_q6v5_mss.c                 |   8 -
+>>   drivers/thermal/qcom/Kconfig                       |  13 +
+>>   drivers/thermal/qcom/Makefile                      |   1 +
+>>   drivers/thermal/qcom/qmi-cooling.c                 | 520 +++++++++++++++++++++
+>>   drivers/thermal/qcom/qmi-cooling.h                 | 428 +++++++++++++++++
+>>   10 files changed, 1161 insertions(+), 8 deletions(-)
+>> ---
+>> base-commit: 9067f80db58bbce81d5f0703aa2fd261e88bc812
+>>
+>> // Caleb (they/them)
+>>
 > 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+// Caleb (they/them)
