@@ -2,209 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F867E784BC
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Oct 2023 15:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E6BE743C3
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Oct 2023 15:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237909AbjJBPOr (ORCPT
+        id S238229AbjJBPzY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 2 Oct 2023 11:14:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
+        Mon, 2 Oct 2023 11:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237774AbjJBPOp (ORCPT
+        with ESMTP id S237798AbjJBPzX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 2 Oct 2023 11:14:45 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46DBB3
-        for <linux-remoteproc@vger.kernel.org>; Mon,  2 Oct 2023 08:14:40 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-406609df1a6so27771265e9.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Oct 2023 08:14:40 -0700 (PDT)
+        Mon, 2 Oct 2023 11:55:23 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126EEAC
+        for <linux-remoteproc@vger.kernel.org>; Mon,  2 Oct 2023 08:55:20 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-279150bad13so3405951a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Oct 2023 08:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696259679; x=1696864479; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ld9KM5DFyTv+ue6x8CTZGB2m+OY/rycHawCXAqGvLjk=;
-        b=WRQaOSnwu9v+lURfvHg14EO3EiKcbeQibMX5xVDP6/BxfuC37zR5yeOqNr/12cprqr
-         g06llDa+qQaAN4+wbTU02EjNx4/QkBPVusX0d713zt9ErhiQC+3fD+4kdMajv46TWCOV
-         m40soVDa+8KqW2R2uYYMBY8P/EluSl6/Ald3oW0CL7l1UfSUzeyPDwKMAY88LkiP9Vp2
-         lDF29YnozsuaL/qKpp5AfnnSW0T/hKRnXSJJ1nlxAtXCSk7Se1RMs6ee9JollFu38nHG
-         dFZdgmS5ywLgYCubrTmbvcU0I+Vecnzps7gU8CQcE3nB3bKGZjWyaUjR+0Q+H11wUFXO
-         Vjpw==
+        d=linaro.org; s=google; t=1696262119; x=1696866919; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TliF0IcnDDut/Hmb+cIXBD25FLUVIAU119XJHwJn24=;
+        b=aSk+truUmK9dCaJzjsvYyPA2p1ASVSTCsDEfVAJHr8cdyzmO56NRyGBVPcjJ8lMcx7
+         Tb4x9zhQaz90Zw9OKBXT/WG8PxEKBcglB2xas/b0ICNvb8pcTWx1YI1HI6ctV306ORzi
+         LzxAy8XMwSc5M+YCo+zsvW8X9yK0MOaEQVGhquH64LGSwV+bPiLWjYui8s6QqQcb/W6m
+         9eFxuUWuoYoMGklDigaIJGI6paQaOrMKRGqcVVzNM0HMsxuqQTHFCJN9van7jwLaJOM3
+         zNJEYiluxg4v5/MMQ6F8Ia5lyBnImCutEPgCyjZ9hgk0etCc9SsyWGCoG75ppIx2ZsDv
+         skRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696259679; x=1696864479;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ld9KM5DFyTv+ue6x8CTZGB2m+OY/rycHawCXAqGvLjk=;
-        b=wc/V6Zk7Lfix4j3lXcHfNjoDYCJNFoJXZv/5dFycc4nnrZ0iR0G8KeIeVYyBylkxeG
-         6/ht4c4ZrBTOhrTjt3Ybs7cx5GMQ9NGnr3mnrK/auOPhE36Ycpl08EvQKYdHMzBZ019E
-         MNV8C7g7W0aUgN7uRy4yEsw3cFHQwVR0gfI/zBTjCs99SWaV7Ga+O+Bn+S3mbR69xxEz
-         lND2qcAR8SGGFdZqiVJEHx0UfGFHimh7aNwJH3zJB5EXZr7EdycTCbMm8XqBTetkRuV7
-         YIL8zKv+HcaMkDWR0gD92VImxpYu5GVJm8dXXFHYZey4tiEqt8OH6U6NwGyVjGqWWaaT
-         Hjwg==
-X-Gm-Message-State: AOJu0YxExql9Qd2m0dEmgeNN1QZaECR7MdvYodSas5gIZt3HPfIjR9ar
-        DB/rq6H7L8LKsIf019KtnR1Wqw==
-X-Google-Smtp-Source: AGHT+IGbuOpzfVIChIMgvdGIc4SwNvthLh0HCEHGr3cjdAoa9ovxtmPcnEnUm29nwVeNswcX21Zusw==
-X-Received: by 2002:a05:600c:364f:b0:406:3977:eccd with SMTP id y15-20020a05600c364f00b004063977eccdmr10439727wmq.33.1696259679173;
-        Mon, 02 Oct 2023 08:14:39 -0700 (PDT)
-Received: from [192.168.1.8] (host-2-99-112-229.as13285.net. [2.99.112.229])
-        by smtp.gmail.com with ESMTPSA id k16-20020a05600c0b5000b003fe61c33df5sm7471025wmr.3.2023.10.02.08.14.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 08:14:38 -0700 (PDT)
-Message-ID: <317a532a-6687-4a7a-b865-dde8fa9fa7f6@linaro.org>
-Date:   Mon, 2 Oct 2023 16:14:37 +0100
+        d=1e100.net; s=20230601; t=1696262119; x=1696866919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/TliF0IcnDDut/Hmb+cIXBD25FLUVIAU119XJHwJn24=;
+        b=VoY1wmEv9iwjmQM/ngR9+WAG1CvAornmXi4CNGq0vSUnkvk3FwAcTrhnqkUc0qI2Lt
+         7MUwgcHfL6eyS6XwC3lLn0AmxJAPhpcLGt/gB0Qb4V5WESysuQATJlFe65drUxPS1o02
+         rvs4ErodlrPv+lGDOBJbVhBeBwqgq9n2j1CEC5Y8mPyADMRuTWIWZr2ZWFCJFaUBgC7J
+         rpPAd8Ud+mkiDFPWngIHAA6+2Dr0tqcZgu+RsjAfYQR1p/GS9XYeUCfgpqYXo6fX+NM2
+         djBhmG30px92KbIbVICMM+quLyucYhM3UkmIgNOYbmSTMFGQd0k4OIGJQ/bzL3rk6NTS
+         7NOA==
+X-Gm-Message-State: AOJu0Yw7Vtngd1+W/8qQAC3uTl8MbOdVB3YCWYr3iqQLLj9YDaKSpLcE
+        ELrzPMkA/FzNWnvjHoNP1wnm6Q==
+X-Google-Smtp-Source: AGHT+IGokh6jvr3Bmxk6tUGV+zrXHR9d1b+yagVVS76bh5D/AqXdhn98ZRv039FQnPEyA/a7vnzfdg==
+X-Received: by 2002:a17:90a:e409:b0:268:ca76:64a with SMTP id hv9-20020a17090ae40900b00268ca76064amr5335954pjb.49.1696262119332;
+        Mon, 02 Oct 2023 08:55:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:fa62:edba:ab23:c762])
+        by smtp.gmail.com with ESMTPSA id ch23-20020a17090af41700b002790423f66fsm6465259pjb.26.2023.10.02.08.55.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 08:55:18 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 09:55:16 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, michal.simek@amd.com,
+        radhey.shyam.pandey@amd.com, ben.levinsky@amd.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] dts: zynqmp: add properties for TCM in remoteproc
+Message-ID: <ZRrn5Gj1qvKMBNmx@p14s>
+References: <20230928155900.3987103-1-tanmay.shah@amd.com>
+ <20230928155900.3987103-3-tanmay.shah@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
- support
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
- <20231001155701.GA53767@thinkpad>
- <cefe711b-d274-4d83-9dda-01f33b342387@linaro.org>
- <20231002145239.GA12041@thinkpad>
- <CAA8EJppn-f6R3ObGvagqkg1_KtXGgtNAgRn-LQiN3ORSHQY3-Q@mail.gmail.com>
-From:   Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <CAA8EJppn-f6R3ObGvagqkg1_KtXGgtNAgRn-LQiN3ORSHQY3-Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230928155900.3987103-3-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Thu, Sep 28, 2023 at 08:58:58AM -0700, Tanmay Shah wrote:
+> Add properties as per new bindings in zynqmp remoteproc node
+> to represent TCM address and size. This patch configures
+> RPU in split mode and adds TCM information accordingly.
+>
 
+Why is this changed from lockstep to split mode?  What about all the people out
+there that are expecting a lockstep mode?
 
-On 02/10/2023 16:00, Dmitry Baryshkov wrote:
-> On Mon, 2 Oct 2023 at 17:52, Manivannan Sadhasivam <mani@kernel.org> wrote:
->>
->> On Sun, Oct 01, 2023 at 06:26:14PM +0100, Caleb Connolly wrote:
->>>
->>>
->>> On 01/10/2023 16:57, Manivannan Sadhasivam wrote:
->>>> On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
->>>>> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
->>>>> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
->>>>> It exposes various mitigations including passive thermal controls and
->>>>> rail voltage restrictions.
->>>>>
->>>>> This series introduces support for exposing TMDs as cooling devices
->>>>> in the kernel through the thermal framework, using the QMI interface.
->>>>>
->>>>> Each TMD client is described as a child of the remoteproc node in
->>>>> devicetree. With subnodes for each control.
->>>>>
->>>>
->>>> Daniel expressed concerns in the past aganist representing TMD driver as a
->>>> cooling device since it is not tied to thermal zones and the governors cannot
->>>> use it. Instead he suggested to represent it as a powercap device with thermal
->>>> constraints.
-
-I think so, see for example in CAF 4.9 [1]
-
-As far as I can tell, the QMI TMD service was written specifically *for*
-the cooling_device API, so it's a bit of a chicken and egg problem
-trying to coerce it to some other form...
-
-That all being said, I can definitely see the potential value in using
-the powercap framework. Especially if it would let us tie the TMD
-controls more directly with the remoteproc device and more easily
-integrate it with DTPM.
-
-For example, would it also make sense to adjust these values to preserve
-battery life? Which API makes the most sense for that?
-
-[1]:
-https://github.com/android-linux-stable/msm-4.9/blob/384eee701481c3dd08822819cf4d5f1da5729db1/arch/arm64/boot/dts/qcom/sdm670-thermal.dtsi#L661
->>>
->>> Hi Mani,
->>>
->>> Forgive me as I'm not yet super familiar with the thermal subsystem.
->>>
->>> As I understand it, the DT layout here enables each control to be referenced
->>> under the thermal zones, at least this is the approach taken in CAF 4.9.
->>>
->>> Maybe I don't quite understand what you mean, are you saying that using
->>> thermal zones is the wrong approach?
->>
->> Thermal framework expects each thermal zone represented in DT to have atleast
->> one corresponding thermal sensor defined using "thermal-sensors" property. But
->> with TMD, there is no thermal sensor AFAIK.
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 28 ++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
 > 
-> As far as I understand, no. It is perfectly fine to have 'cooling'
-> devices, which react to external thermal monitoring events. I might be
-> mistaken, but I think that is the case here, isn't it?
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> index b61fc99cd911..01e12894c88e 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+> @@ -247,19 +247,35 @@ fpga_full: fpga-full {
+>  		ranges;
+>  	};
+>  
+> -	remoteproc {
+> +	remoteproc@ffe00000 {
+>  		compatible = "xlnx,zynqmp-r5fss";
+> -		xlnx,cluster-mode = <1>;
+> +		xlnx,cluster-mode = <0>;
+>  
+> -		r5f-0 {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +
+> +		ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
+> +			 <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
+> +			 <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
+> +			 <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
+> +
+> +		r5f@0 {
+>  			compatible = "xlnx,zynqmp-r5f";
+> -			power-domains = <&zynqmp_firmware PD_RPU_0>;
+> +			reg = <0x0 0x0 0x0 0x10000>, <0x0 0x20000 0x0 0x10000>;
+> +			reg-names = "atcm", "btcm";
+> +			power-domains = <&zynqmp_firmware PD_RPU_0>,
+> +					<&zynqmp_firmware PD_R5_0_ATCM>,
+> +					<&zynqmp_firmware PD_R5_0_BTCM>;
+>  			memory-region = <&rproc_0_fw_image>;
+>  		};
+>  
+> -		r5f-1 {
+> +		r5f@1 {
+>  			compatible = "xlnx,zynqmp-r5f";
+> -			power-domains = <&zynqmp_firmware PD_RPU_1>;
+> +			reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
+> +			reg-names = "atcm", "btcm";
+> +			power-domains = <&zynqmp_firmware PD_RPU_1>,
+> +					<&zynqmp_firmware PD_R5_1_ATCM>,
+> +					<&zynqmp_firmware PD_R5_1_BTCM>;
+>  			memory-region = <&rproc_1_fw_image>;
+>  		};
+>  	};
+> -- 
+> 2.25.1
 > 
->>
->>>>
->>>> So please look into that approach.
->>>
->>> Any recommended reading? Or drivers I can use as a reference?
->>>
->>
->> drivers/powercap/arm_scmi_powercap.c seems to be a good reference.
->>
->> - Mani
->>
->>> Thanks
->>>>
->>>> - Mani
->>>>
->>>>> This series is based on previous work by Bhupesh Sharma which can be
->>>>> found at [1]. I'm sending this as a fresh series as it has been a
->>>>> year since the original version and I have rewritten most of the driver.
->>>>>
->>>>> [1]: https://lore.kernel.org/linux-arm-msm/20220912085049.3517140-1-bhupesh.sharma@linaro.org/
->>>>>
->>>>> ---
->>>>> Caleb Connolly (4):
->>>>>        remoteproc: qcom: probe all child devices
->>>>>        dt-bindings: thermal: Add qcom,qmi-cooling yaml bindings
->>>>>        thermal: qcom: add qmi-cooling driver
->>>>>        MAINTAINERS: Add entry for Qualcomm Cooling Driver
->>>>>
->>>>>   .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  13 +
->>>>>   .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +
->>>>>   .../bindings/thermal/qcom,qmi-cooling.yaml         | 168 +++++++
->>>>>   MAINTAINERS                                        |   8 +
->>>>>   drivers/remoteproc/qcom_q6v5.c                     |   4 +
->>>>>   drivers/remoteproc/qcom_q6v5_mss.c                 |   8 -
->>>>>   drivers/thermal/qcom/Kconfig                       |  13 +
->>>>>   drivers/thermal/qcom/Makefile                      |   1 +
->>>>>   drivers/thermal/qcom/qmi-cooling.c                 | 520 +++++++++++++++++++++
->>>>>   drivers/thermal/qcom/qmi-cooling.h                 | 428 +++++++++++++++++
->>>>>   10 files changed, 1161 insertions(+), 8 deletions(-)
->>>>> ---
->>>>> base-commit: 9067f80db58bbce81d5f0703aa2fd261e88bc812
->>>>>
->>>>> // Caleb (they/them)
->>>>>
->>>>
->>>
->>> --
->>> // Caleb (they/them)
->>
->> --
->> மணிவண்ணன் சதாசிவம்
-> 
-> 
-> 
-
--- 
-// Caleb (they/them)
