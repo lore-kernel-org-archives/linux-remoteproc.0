@@ -2,263 +2,411 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6141DE748F7
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Oct 2023 16:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC86E784B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 Oct 2023 17:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238419AbjJBQ27 (ORCPT
+        id S238682AbjJBRLk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 2 Oct 2023 12:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59188 "EHLO
+        Mon, 2 Oct 2023 13:11:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238460AbjJBQ26 (ORCPT
+        with ESMTP id S238669AbjJBRLj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 2 Oct 2023 12:28:58 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89901B3
-        for <linux-remoteproc@vger.kernel.org>; Mon,  2 Oct 2023 09:28:53 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40572aeb673so138747035e9.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Oct 2023 09:28:53 -0700 (PDT)
+        Mon, 2 Oct 2023 13:11:39 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059C3D8
+        for <linux-remoteproc@vger.kernel.org>; Mon,  2 Oct 2023 10:11:36 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-694ed847889so824153b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Oct 2023 10:11:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696264132; x=1696868932; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QaSfphef0KwZ1Qx5UmeI5tAf0p6t+dtkVd/0GulncbM=;
-        b=qeIsNXPdFvvFnsBuEkU1p4darVUr9H4oa5/yA0nEN4HPM+cXBRAhgEbz+6rOPus/eq
-         V1MMroc66K41UjcbfA+pDN6N8zyzyMDzsRgNcCaBlz5pjoVmK4KZt/CmbIUBqj6EOlXX
-         kWy/rHyJNDksOWmhFVipzIxwjXACRGBOYuPzHfGgK1KAj9KxCV5Rm3DMza9a9yp63npm
-         aijkInB+kWvnET8N/fuEm/IOoLvoEbPOBilzOjlTMJbwC75Iuvjs2J+72Xy8T/MwfJ9Z
-         9/fGUUIXffR3QUNMWxiCzjUgGSHZINEYhT6+nulF+2SZ9a71kpPnluc4AufvPVdnPcm0
-         63lA==
+        d=linaro.org; s=google; t=1696266695; x=1696871495; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RO8LmnAQAaGitSXUySpyKWLVPTjigR/N/h30MsqWtSs=;
+        b=eZdx0mf3mbrk34OKA6Ou3OYpzol/noco+tpro3vOnwT7R4xKrKaT6NdMPxfxluKaIY
+         I3B2zQWj3vIInVf6+cghWRLzh99+jXpOsUFj7grEey5OCRC2aRGNSFxmK6N6l1K17Ibe
+         GNVd/nk8X7cCw2bK7wOGgmy2sm4XaxF0goPJAtnd2zmG40Sqp8O0VTEDWTgJJFZXMA64
+         Zqy6ZtVtqqFu6//EnlGmTwSREixPjakmAGP2INEGt4PthRoThcffuLoS5DTZ5yaIaA8A
+         49nw8IuRwMMUosxM6/qYu9FqnRexaNujYq2HPZUTU6JAubDe6dnIv2H4ssufO+yeVLRS
+         APwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696264132; x=1696868932;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QaSfphef0KwZ1Qx5UmeI5tAf0p6t+dtkVd/0GulncbM=;
-        b=gpG/KNwGMs7xayFfz8Whdn86dbrQ/YfHHzMB0lv7anhf1DBxpDWsuHtqWGO9i0kivZ
-         H0cp/NHCv0qPQOc1ihCFB6zvEVo5k0Xu883HraEhCSx0o0Mw4elSgAVQNHZ+Q2WsYHFp
-         YvaafTZ2xhomqNhfSzjKOgkbmLercEvEVKa0DuJQnsnvIRCr6VN/WpeUD8dXMfnFxzWC
-         FsM0H8Xntpdq33D2356bVks0dPssz/FLkDrKecBRXOii0Dr0nsEUOQu0WL1vP3mmBeTc
-         fmTehwEk0fY/KFC+dP2RM+SRxpykEsIlcFMV1OMcEP2M0UoEDw7vzS4gy1yk9mS3E+3l
-         12Mw==
-X-Gm-Message-State: AOJu0YypCck6QyuxBtOQTQOFFJd8wKeJlL19o0RG3DmZRmlkygcVZsyR
-        nROqo9/kEEgRttYNJAWvS7rsNA==
-X-Google-Smtp-Source: AGHT+IH8O+8ivy0ZtrKVbyTSw8mmrl2ZLIuK89I8kjo8ZPnnlXWUnAO0Sc4uz4RPEyL7jrEIP4EJeQ==
-X-Received: by 2002:a7b:cb8d:0:b0:406:177e:5df7 with SMTP id m13-20020a7bcb8d000000b00406177e5df7mr10883374wmi.29.1696264131854;
-        Mon, 02 Oct 2023 09:28:51 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8861:9b54:432d:d4f5? ([2a01:e0a:982:cbb0:8861:9b54:432d:d4f5])
-        by smtp.gmail.com with ESMTPSA id n20-20020a1c7214000000b003fee567235bsm7608750wmc.1.2023.10.02.09.28.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Oct 2023 09:28:51 -0700 (PDT)
-Message-ID: <3135a5a7-4e7a-4f8c-a288-682d6385b587@linaro.org>
-Date:   Mon, 2 Oct 2023 18:28:49 +0200
+        d=1e100.net; s=20230601; t=1696266695; x=1696871495;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RO8LmnAQAaGitSXUySpyKWLVPTjigR/N/h30MsqWtSs=;
+        b=v7TKrHcSgnp1BghRKkwVGckbak2tyn6ICFutMCk27cogousONtsrXdu5d8XAUcoexd
+         dZc/etCSW+cRK5UEWzdf9ExalYdOATR+CY5fpiMiR+NDSZqMVQ18+9u8x7FjeijNVC7G
+         gYaLTpBjKfFhNBYh837MnM2jvv7usN9Czay6IpUZQmKHVjEs1AuEPCocdyrO8XfYeUl9
+         YVrTuDXMNaH1uMA9phlfLPRF3M1bjrbbf5c5pHycLKK7U9pYBxGr40sj3qjdFwJbFVOQ
+         oNwdYnJTaOBRNkPgKO448qb4fZW//FtsC60s5/IG3WwnozLBArpKiVPsxg8y4IK/Bx2h
+         +STg==
+X-Gm-Message-State: AOJu0YyU4S/iNO7lMo7QK3BTFlInb2aXGTiyco8k396eHaiV2E4yOvcE
+        /fDHF0bE8n4I4dcqQACyQ1ai+w==
+X-Google-Smtp-Source: AGHT+IF1FZLmlAaibekVfNPfOP8jIXo5x7QhPxzko11+4JiGyUuhCz3pCTLhKVh8fga2WKh0RYfltw==
+X-Received: by 2002:a05:6a20:8410:b0:154:6480:83b4 with SMTP id c16-20020a056a20841000b00154648083b4mr12437393pzd.14.1696266695325;
+        Mon, 02 Oct 2023 10:11:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:fa62:edba:ab23:c762])
+        by smtp.gmail.com with ESMTPSA id f24-20020aa782d8000000b0069309cbc220sm11386769pfn.121.2023.10.02.10.11.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 10:11:34 -0700 (PDT)
+Date:   Mon, 2 Oct 2023 11:11:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, michal.simek@amd.com,
+        radhey.shyam.pandey@amd.com, ben.levinsky@amd.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 3/4] remoteproc: zynqmp: add pm domains support
+Message-ID: <ZRr5xI1w4Pd3/8+S@p14s>
+References: <20230928155900.3987103-1-tanmay.shah@amd.com>
+ <20230928155900.3987103-4-tanmay.shah@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation Device
- support
-Content-Language: en-US, fr
-To:     Manivannan Sadhasivam <mani@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Caleb Connolly <caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
- <20231001155701.GA53767@thinkpad>
- <cefe711b-d274-4d83-9dda-01f33b342387@linaro.org>
- <20231002145239.GA12041@thinkpad>
- <CAA8EJppn-f6R3ObGvagqkg1_KtXGgtNAgRn-LQiN3ORSHQY3-Q@mail.gmail.com>
- <20231002155814.GB12041@thinkpad>
- <CAA8EJpowGjnecOjr9h4r3=UXSrE4VdptoLADpQq3gDv_W9D3OQ@mail.gmail.com>
- <20231002161308.GC12041@thinkpad>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <20231002161308.GC12041@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230928155900.3987103-4-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/10/2023 18:13, Manivannan Sadhasivam wrote:
-> On Mon, Oct 02, 2023 at 07:00:27PM +0300, Dmitry Baryshkov wrote:
->> On Mon, 2 Oct 2023 at 18:58, Manivannan Sadhasivam <mani@kernel.org> wrote:
->>>
->>> On Mon, Oct 02, 2023 at 06:00:37PM +0300, Dmitry Baryshkov wrote:
->>>> On Mon, 2 Oct 2023 at 17:52, Manivannan Sadhasivam <mani@kernel.org> wrote:
->>>>>
->>>>> On Sun, Oct 01, 2023 at 06:26:14PM +0100, Caleb Connolly wrote:
->>>>>>
->>>>>>
->>>>>> On 01/10/2023 16:57, Manivannan Sadhasivam wrote:
->>>>>>> On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
->>>>>>>> The Thermal Mitigation Device (TMD) Service is a QMI service that runs
->>>>>>>> on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
->>>>>>>> It exposes various mitigations including passive thermal controls and
->>>>>>>> rail voltage restrictions.
->>>>>>>>
->>>>>>>> This series introduces support for exposing TMDs as cooling devices
->>>>>>>> in the kernel through the thermal framework, using the QMI interface.
->>>>>>>>
->>>>>>>> Each TMD client is described as a child of the remoteproc node in
->>>>>>>> devicetree. With subnodes for each control.
->>>>>>>>
->>>>>>>
->>>>>>> Daniel expressed concerns in the past aganist representing TMD driver as a
->>>>>>> cooling device since it is not tied to thermal zones and the governors cannot
->>>>>>> use it. Instead he suggested to represent it as a powercap device with thermal
->>>>>>> constraints.
->>>>>>
->>>>>> Hi Mani,
->>>>>>
->>>>>> Forgive me as I'm not yet super familiar with the thermal subsystem.
->>>>>>
->>>>>> As I understand it, the DT layout here enables each control to be referenced
->>>>>> under the thermal zones, at least this is the approach taken in CAF 4.9.
->>>>>>
->>>>>> Maybe I don't quite understand what you mean, are you saying that using
->>>>>> thermal zones is the wrong approach?
->>>>>
->>>>> Thermal framework expects each thermal zone represented in DT to have atleast
->>>>> one corresponding thermal sensor defined using "thermal-sensors" property. But
->>>>> with TMD, there is no thermal sensor AFAIK.
->>>>
->>>> As far as I understand, no. It is perfectly fine to have 'cooling'
->>>> devices, which react to external thermal monitoring events. I might be
->>>> mistaken, but I think that is the case here, isn't it?
->>>>
->>>
->>> Yes it is represented as cooling device(s). But I do not see any cognizant way
->>> to plug it with thermal zones i.e., unless TMD itself reports temperature of the
->>> modem, using it as a cooling device for external temperature events doesn't
->>> sound good to me.
->>
->> Why? We have compute, q6, wlan tsens sensors. So it seems natural to
->> tell CDSP to slow down if compute sensor reports overheating.
->>
+On Thu, Sep 28, 2023 at 08:58:59AM -0700, Tanmay Shah wrote:
+> Use TCM pm domains extracted from device-tree
+> to power on/off TCM using general pm domain framework
 > 
-> TMD is for external devices such as PCIe modems as well. Is there a temperature
-> sensor for that?
-
-Is could, for example NVMe does.
-
-But here Caleb only exposes the internal DSP over the TMD as cooling devices, so
-it matches the tsens input we have.
-
-Neil
-
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 224 ++++++++++++++++++++++--
+>  1 file changed, 205 insertions(+), 19 deletions(-)
 > 
-> - Mani
-> 
->>>
->>> - Mani
->>>
->>>>>
->>>>>>>
->>>>>>> So please look into that approach.
->>>>>>
->>>>>> Any recommended reading? Or drivers I can use as a reference?
->>>>>>
->>>>>
->>>>> drivers/powercap/arm_scmi_powercap.c seems to be a good reference.
->>>>>
->>>>> - Mani
->>>>>
->>>>>> Thanks
->>>>>>>
->>>>>>> - Mani
->>>>>>>
->>>>>>>> This series is based on previous work by Bhupesh Sharma which can be
->>>>>>>> found at [1]. I'm sending this as a fresh series as it has been a
->>>>>>>> year since the original version and I have rewritten most of the driver.
->>>>>>>>
->>>>>>>> [1]: https://lore.kernel.org/linux-arm-msm/20220912085049.3517140-1-bhupesh.sharma@linaro.org/
->>>>>>>>
->>>>>>>> ---
->>>>>>>> Caleb Connolly (4):
->>>>>>>>         remoteproc: qcom: probe all child devices
->>>>>>>>         dt-bindings: thermal: Add qcom,qmi-cooling yaml bindings
->>>>>>>>         thermal: qcom: add qmi-cooling driver
->>>>>>>>         MAINTAINERS: Add entry for Qualcomm Cooling Driver
->>>>>>>>
->>>>>>>>    .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  13 +
->>>>>>>>    .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +
->>>>>>>>    .../bindings/thermal/qcom,qmi-cooling.yaml         | 168 +++++++
->>>>>>>>    MAINTAINERS                                        |   8 +
->>>>>>>>    drivers/remoteproc/qcom_q6v5.c                     |   4 +
->>>>>>>>    drivers/remoteproc/qcom_q6v5_mss.c                 |   8 -
->>>>>>>>    drivers/thermal/qcom/Kconfig                       |  13 +
->>>>>>>>    drivers/thermal/qcom/Makefile                      |   1 +
->>>>>>>>    drivers/thermal/qcom/qmi-cooling.c                 | 520 +++++++++++++++++++++
->>>>>>>>    drivers/thermal/qcom/qmi-cooling.h                 | 428 +++++++++++++++++
->>>>>>>>    10 files changed, 1161 insertions(+), 8 deletions(-)
->>>>>>>> ---
->>>>>>>> base-commit: 9067f80db58bbce81d5f0703aa2fd261e88bc812
->>>>>>>>
->>>>>>>> // Caleb (they/them)
->>>>>>>>
->>>>>>>
->>>>>>
->>>>>> --
->>>>>> // Caleb (they/them)
->>>>>
->>>>> --
->>>>> மணிவண்ணன் சதாசிவம்
->>>>
->>>>
->>>>
->>>> --
->>>> With best wishes
->>>> Dmitry
->>>
->>> --
->>> மணிவண்ணன் சதாசிவம்
->>
->>
->>
->> -- 
->> With best wishes
->> Dmitry
-> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 4395edea9a64..27ed2c070ebb 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/pm_domain.h>
+>  
+>  #include "remoteproc_internal.h"
+>  
+> @@ -102,6 +103,12 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>   * @rproc: rproc handle
+>   * @pm_domain_id: RPU CPU power domain id
+>   * @ipi: pointer to mailbox information
+> + * @num_pm_dev: number of tcm pm domain devices for this core
+> + * @pm_dev1: pm domain virtual devices for power domain framework
+> + * @pm_dev_link1: pm domain device links after registration
+> + * @pm_dev2: used only in lockstep mode. second core's pm domain virtual devices
+> + * @pm_dev_link2: used only in lockstep mode. second core's pm device links after
+> + * registration
+>   */
+>  struct zynqmp_r5_core {
+>  	struct device *dev;
+> @@ -111,6 +118,11 @@ struct zynqmp_r5_core {
+>  	struct rproc *rproc;
+>  	u32 pm_domain_id;
+>  	struct mbox_info *ipi;
+> +	int num_pm_dev;
+> +	struct device **pm_dev1;
+> +	struct device_link **pm_dev_link1;
+> +	struct device **pm_dev2;
+> +	struct device_link **pm_dev_link2;
+>  };
+>  
+>  /**
+> @@ -575,12 +587,21 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+>  		bank_size = r5_core->tcm_banks[i]->size;
+>  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+>  
+> -		ret = zynqmp_pm_request_node(pm_domain_id,
+> -					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> -					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> -		if (ret < 0) {
+> -			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
+> -			goto release_tcm_split;
+> +		/*
+> +		 * If TCM information is available in device-tree then
+> +		 * in that case, pm domain framework will power on/off TCM.
+> +		 * In that case pm_domain_id is set to 0. If hardcode
+> +		 * bindings from driver is used, then only this driver will
+> +		 * use pm_domain_id.
+> +		 */
+> +		if (pm_domain_id) {
+> +			ret = zynqmp_pm_request_node(pm_domain_id,
+> +						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +			if (ret < 0) {
+> +				dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
+> +				goto release_tcm_split;
+> +			}
+>  		}
+>  
+>  		dev_dbg(dev, "TCM carveout split mode %s addr=%llx, da=0x%x, size=0x%lx",
+> @@ -646,13 +667,16 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  	for (i = 0; i < num_banks; i++) {
+>  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+>  
+> -		/* Turn on each TCM bank individually */
+> -		ret = zynqmp_pm_request_node(pm_domain_id,
+> -					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> -					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> -		if (ret < 0) {
+> -			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
+> -			goto release_tcm_lockstep;
+> +		if (pm_domain_id) {
+> +			/* Turn on each TCM bank individually */
+> +			ret = zynqmp_pm_request_node(pm_domain_id,
+> +						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +			if (ret < 0) {
+> +				dev_err(dev, "failed to turn on TCM 0x%x",
+> +					pm_domain_id);
+> +				goto release_tcm_lockstep;
+> +			}
+>  		}
+>  
+>  		bank_size = r5_core->tcm_banks[i]->size;
+> @@ -687,8 +711,10 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  	/* If failed, Turn off all TCM banks turned on before */
+>  	for (i--; i >= 0; i--) {
+>  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+> -		zynqmp_pm_release_node(pm_domain_id);
+> +		if (pm_domain_id)
+> +			zynqmp_pm_release_node(pm_domain_id);
+>  	}
+> +
 
+Spurious change
+
+>  	return ret;
+>  }
+>  
+> @@ -758,6 +784,153 @@ static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  	return ret;
+>  }
+>  
+> +static void zynqmp_r5_remove_pm_domains(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +	struct device *dev = r5_core->dev;
+> +	struct zynqmp_r5_cluster *cluster;
+> +	int i;
+> +
+> +	cluster = platform_get_drvdata(to_platform_device(dev->parent));
+> +
+> +	for (i = 0; i < r5_core->num_pm_dev; i++) {
+> +		if (r5_core->pm_dev_link1 && r5_core->pm_dev_link1[i])
+> +			device_link_del(r5_core->pm_dev_link1[i]);
+> +		if (r5_core->pm_dev1 && !IS_ERR_OR_NULL(r5_core->pm_dev1[i]))
+> +			dev_pm_domain_detach(r5_core->pm_dev1[i], false);
+> +	}
+> +
+
+A global function such as this one should not have to deal with error
+conditions.  Those should be dealt with in the allocation function where cleanup
+is done on error conditions.  See my comment below in
+zynqmp_r5_add_pm_domains().
+
+> +	kfree(r5_core->pm_dev1);
+> +	r5_core->pm_dev1 = NULL;
+> +	kfree(r5_core->pm_dev_link1);
+> +	r5_core->pm_dev_link1 = NULL;
+> +
+> +	if (cluster->mode == SPLIT_MODE) {
+> +		r5_core->num_pm_dev = 0;
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < r5_core->num_pm_dev; i++) {
+> +		if (r5_core->pm_dev_link2 && r5_core->pm_dev_link2[i])
+> +			device_link_del(r5_core->pm_dev_link2[i]);
+> +		if (r5_core->pm_dev2 && !IS_ERR_OR_NULL(r5_core->pm_dev2[i]))
+> +			dev_pm_domain_detach(r5_core->pm_dev2[i], false);
+> +	}
+> +
+> +	kfree(r5_core->pm_dev2);
+> +	r5_core->pm_dev2 = NULL;
+> +	kfree(r5_core->pm_dev_link2);
+> +	r5_core->pm_dev_link2 = NULL;
+> +	r5_core->num_pm_dev = 0;
+> +}
+> +
+> +static int zynqmp_r5_add_pm_domains(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +	struct device *dev = r5_core->dev, *dev2;
+> +	struct zynqmp_r5_cluster *cluster;
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +	int i, num_pm_dev, ret;
+
+I'm not sure 'ret' is needed - see below.
+
+> +
+> +	cluster = platform_get_drvdata(to_platform_device(dev->parent));
+
+Why not use dev_get_drvdata() as it is done elsewhere in this driver?
+
+> +
+> +	/* get number of power-domains */
+> +	num_pm_dev = of_count_phandle_with_args(r5_core->np, "power-domains",
+> +						"#power-domain-cells");
+> +
+> +	if (num_pm_dev <= 0)
+> +		return -EINVAL;
+> +
+> +	r5_core->pm_dev1 = kcalloc(num_pm_dev,
+> +				   sizeof(struct device *),
+> +				   GFP_KERNEL);
+> +	if (!r5_core->pm_dev1)
+> +		ret = -ENOMEM;
+
+What's the goal of the assignment?  Did you mean to return an error instead?
+
+> +
+> +	r5_core->pm_dev_link1 = kcalloc(num_pm_dev,
+> +					sizeof(struct device_link *),
+> +					GFP_KERNEL);
+> +	if (!r5_core->pm_dev_link1)
+> +		return -ENOMEM;
+
+In case of error, always cleanup the work done in the current function.  That
+way cleanup functions such as zynqmp_r5_remove_pm_domains() are simple and easy
+to read.
+
+> +
+> +	r5_core->num_pm_dev = num_pm_dev;
+> +
+> +	/* for zynqmp we only add TCM power domains and not core's power domain */
+> +	for (i = 1; i < r5_core->num_pm_dev; i++) {
+> +		r5_core->pm_dev1[i] = dev_pm_domain_attach_by_id(dev, i);
+> +		if (IS_ERR(r5_core->pm_dev1[i])) {
+> +			dev_dbg(dev, "failed to attach pm domain %d\n", i);
+> +			return PTR_ERR(r5_core->pm_dev1[i]);
+> +		}
+> +		if (!r5_core->pm_dev1[i]) {
+> +			dev_dbg(dev, "can't attach to pm domain %d\n", i);
+> +			return -EINVAL;
+> +		}
+> +
+> +		r5_core->pm_dev_link1[i] = device_link_add(dev, r5_core->pm_dev1[i],
+> +							   DL_FLAG_STATELESS |
+> +							   DL_FLAG_RPM_ACTIVE |
+> +							   DL_FLAG_PM_RUNTIME);
+> +		if (!r5_core->pm_dev_link1[i]) {
+> +			dev_pm_domain_detach(r5_core->pm_dev1[i], true);
+> +			r5_core->pm_dev1[i] = NULL;
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (cluster->mode == SPLIT_MODE)
+> +		return 0;
+> +
+> +	r5_core->pm_dev2 = kcalloc(num_pm_dev,
+> +				   sizeof(struct device *),
+> +				   GFP_KERNEL);
+> +	if (!r5_core->pm_dev2)
+> +		return -ENOMEM;
+> +
+> +	r5_core->pm_dev_link2 = kcalloc(num_pm_dev,
+> +					sizeof(struct device_link *),
+> +					GFP_KERNEL);
+> +	if (!r5_core->pm_dev_link2)
+> +		return -ENOMEM;
+> +
+> +	/* get second core's device to detach its power-domains */
+> +	np = of_get_next_child(cluster->dev->of_node, of_node_get(dev->of_node));
+> +
+> +	pdev = of_find_device_by_node(np);
+> +	if (!pdev) {
+> +		dev_err(cluster->dev, "core1 platform device not available\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev2 = &pdev->dev;
+> +
+> +	/* for zynqmp we only add TCM power domains and not core's power domain */
+> +	for (i = 1; i < r5_core->num_pm_dev; i++) {
+> +		r5_core->pm_dev2[i] = dev_pm_domain_attach_by_id(dev2, i);
+> +		if (IS_ERR(r5_core->pm_dev2[i])) {
+> +			dev_dbg(dev, "can't attach to pm domain %d\n", i);
+> +			return PTR_ERR(r5_core->pm_dev2[i]);
+> +		}
+> +		if (!r5_core->pm_dev2[i]) {
+> +			dev_dbg(dev, "can't attach to pm domain %d\n", i);
+> +			return -EINVAL;
+> +		}
+> +
+> +		r5_core->pm_dev_link2[i] = device_link_add(dev, r5_core->pm_dev2[i],
+> +							   DL_FLAG_STATELESS |
+> +							   DL_FLAG_RPM_ACTIVE |
+> +							   DL_FLAG_PM_RUNTIME);
+> +		if (!r5_core->pm_dev_link2[i]) {
+> +			dev_pm_domain_detach(r5_core->pm_dev2[i], true);
+> +			r5_core->pm_dev2[i] = NULL;
+> +			return -ENODEV;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * zynqmp_r5_rproc_prepare()
+>   * adds carveouts for TCM bank and reserved memory regions
+> @@ -770,19 +943,30 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
+>  {
+>  	int ret;
+>  
+> +	ret = zynqmp_r5_add_pm_domains(rproc);
+> +	if (ret) {
+> +		dev_err(&rproc->dev, "failed to add pm domains\n");
+> +		goto fail_prepare;
+> +	}
+> +
+>  	ret = add_tcm_banks(rproc);
+>  	if (ret) {
+>  		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+> -		return ret;
+> +		goto fail_prepare;
+>  	}
+>  
+>  	ret = add_mem_regions_carveout(rproc);
+>  	if (ret) {
+>  		dev_err(&rproc->dev, "failed to get reserve mem regions %d\n", ret);
+> -		return ret;
+> +		goto fail_prepare;
+>  	}
+>  
+>  	return 0;
+> +
+> +fail_prepare:
+> +	zynqmp_r5_remove_pm_domains(rproc);
+> +
+> +	return ret;
+>  }
+>  
+>  /**
+> @@ -801,11 +985,13 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+>  
+>  	r5_core = rproc->priv;
+>  
+> +	zynqmp_r5_remove_pm_domains(rproc);
+> +
+>  	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+>  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+> -		if (zynqmp_pm_release_node(pm_domain_id))
+> -			dev_warn(r5_core->dev,
+> -				 "can't turn off TCM bank 0x%x", pm_domain_id);
+> +		if (pm_domain_id && zynqmp_pm_release_node(pm_domain_id))
+> +			dev_dbg(r5_core->dev,
+> +				"can't turn off TCM bank 0x%x", pm_domain_id);
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.25.1
+> 
