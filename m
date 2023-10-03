@@ -2,318 +2,275 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2DAE7AD7E
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Oct 2023 16:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC98E7AD59
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Oct 2023 18:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240578AbjJCQco (ORCPT
+        id S240736AbjJCSBd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 Oct 2023 12:32:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
+        Tue, 3 Oct 2023 14:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240575AbjJCQcm (ORCPT
+        with ESMTP id S240706AbjJCSB3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 Oct 2023 12:32:42 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2088.outbound.protection.outlook.com [40.107.243.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2BCB0;
-        Tue,  3 Oct 2023 09:32:39 -0700 (PDT)
+        Tue, 3 Oct 2023 14:01:29 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2071.outbound.protection.outlook.com [40.107.237.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAB88E;
+        Tue,  3 Oct 2023 11:01:26 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xl5E2XIdWqwRWq5vs288VHXpRYSlk4coSIQJtdhgGf0z3uA7SANZ3TQe/CrtNY7Xr7NB12S5UjUXHoBUS7rp5lerUAzpLWk/4BZxh/eVAY+MlGtJ7Tff4p2kdlOcJ5opFqcrtRKsToF17tsNcFy6V1mc55BtIa+/4iAYl/tMNnljoqow0YB3N8GUiJjXCR2BVCuD8flbT+5pBPjpNgBVCOtZMrYBuAnBPesLgjH43lLfdUf+Zv3Piv1A7jWzznla0Tzn9veuOmYUa75HvA3ZOoQNHTt/+HUFnSVVI+F3irkD3UNEHObSHEKqcy1wCDrni+7gMy4J02Vi7Ojq/K0hGg==
+ b=mg54kfLFP4ARELyr5Jm9EALIzbXr97N5oKYWWxq3PjtOKAoDe0RW7DBrDpNEyhUTrTMDJi8gL4jqdik/f/SyvrITQP0lFLFZnLX7/1dkmmBfSBOgIMgkVPvIEh0lPrxdXF4viovRbcwssqNYRXqUHpGfCL8g/IdqQ8lQldatVW4Co4r+wvlipXNtaCY/jt8nl7txBq4/ecqNdPkVdsdwJsti5dY7UmEjjcociatR58x4IyFw/dS9QMnJZIJvYkKNPFpI8sdOyn2zq+5T77HpiM8qbnjaBJI4W4+dV+jX+uApSjfBUDG9ItTLtM0dI8MmsPMv8W7EXmupWrOTvyiWLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KkBk/H40Hl8BpN2mUXF6eMuujT6zO6u+QqIjKCD7WHo=;
- b=nXU80/Ia7Kdyq1g04ubK8jem/FK2QxhaIl61xrwszHprBebIN1CGtjBSMqQFiwUjTp+qTvpBRBey37xEuP0dAU5jr+sEeYN17v9AzmnTcAGbbxx4wWusB2SGscuxADaMjj2ckFAIssYuoKc+qUotbO7E95xneiFdTCPEfT9atqDxhngS9fx1+jXrpFJv0fOiBz1BfLZFkW7NSTlkDrPT9HgEzFOPIQoKs4kcoJoNFElDsEZuQrjX+jRIl1q7DJm7zBCYXSkSBoqHG2S2UWN9I82umde4b7yjsUlzdlAW+CCoyQwc+1Nsuw4JQMMa48teNIPLWuhO/kgu3KXxSD/mSA==
+ bh=d3P8MilSpAh72/noE2wcNK9afu51CWDfE52TdGH39Tw=;
+ b=HcGgKXXFe7BcEhbbJV7giR9SwduZS3Ta/6uunNIsTEVWhUgPyz+gRidshfNlTAD8tIdXGViwzhWUBkyrWIUw8W0ilDILbu7RaLGGO33/rPVERcHDKTyOrYnV236t1DNDR9n1/S4oiTZW2FPWDgoh3h4EAYPNtvGQKSgdUuaaMGLcNx7IXmnVa503yZgK9SJ1KQ9IB+FAGWR0ORv33gmegQlxIgz03XW23T5o6x8mC6xhkFQ+sn7C1mITjJFykaOw0pjSaTyFhqZyNwdeufJxxXIHrh1aIdZPm3WXTX8XKegLkiNyrYdjBwYOByUGFXnXAtDdI/koYi76WUhnX0nQMg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KkBk/H40Hl8BpN2mUXF6eMuujT6zO6u+QqIjKCD7WHo=;
- b=YR7ncYSGmp3VU/KVq1EXBTNj5nNFI4TNPKhg6kc8UcXQy+BufWm0/6Raj+ftZJQZxMLUPJc5kizvxeawRDvZ/jDQqqrhd8AXYRCO2lGm6lljF0+YxWhEWu+OejnQY5UWK8Y6v62rFGqQryzq8+5oIqWPHqgLhU4y9HPQnHugQrY=
+ bh=d3P8MilSpAh72/noE2wcNK9afu51CWDfE52TdGH39Tw=;
+ b=xkFI0TmMSIRKHEsV7sJP6J2A2ZF8kOjom1VXOuCQsmKqU8EEAKN6wJBcKVrOImE0T56ZacT4P4jvHQlgnqRrLZuY5y//YrfUxv/AEPthQH9wswAKk0I14NGBHCSc7mtvP5aBQrkzU7fE8UfgMfNMKobWJfMyc7zTBieoRkrXW+g=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
- by DM6PR12MB4139.namprd12.prod.outlook.com (2603:10b6:5:214::18) with
+ by PH7PR12MB6884.namprd12.prod.outlook.com (2603:10b6:510:1ba::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.27; Tue, 3 Oct
- 2023 16:32:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.30; Tue, 3 Oct
+ 2023 18:01:21 +0000
 Received: from BY5PR12MB3683.namprd12.prod.outlook.com
  ([fe80::8304:46bd:5017:3dcb]) by BY5PR12MB3683.namprd12.prod.outlook.com
  ([fe80::8304:46bd:5017:3dcb%7]) with mapi id 15.20.6838.033; Tue, 3 Oct 2023
- 16:32:34 +0000
-Message-ID: <fdab2b65-a2a7-4d1d-858c-4fed177839ad@amd.com>
-Date:   Tue, 3 Oct 2023 11:32:31 -0500
+ 18:01:21 +0000
+Message-ID: <ab00071b-982e-42e1-98c1-a045ec853863@amd.com>
+Date:   Tue, 3 Oct 2023 13:01:16 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] dts: zynqmp: add properties for TCM in remoteproc
+Subject: Re: [PATCH 1/1] rpmsg: virtio: Make buffer size and number
+ configurable
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, michal.simek@amd.com,
-        radhey.shyam.pandey@amd.com, ben.levinsky@amd.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230928155900.3987103-1-tanmay.shah@amd.com>
- <20230928155900.3987103-3-tanmay.shah@amd.com> <ZRrn5Gj1qvKMBNmx@p14s>
- <dd0e02bc-38ba-441d-8b22-5be7094fcf91@amd.com>
- <eb42f224-5406-47ea-9de3-84593de0e470@amd.com>
- <CANLsYkwc71m4qm0yoqAWsAZwJbX80pOYMnB2s_fD=t_TsSZnvQ@mail.gmail.com>
- <ad25d019-b2c9-4de9-ac5f-428c5e44f212@amd.com> <ZRwz6cEqnnwoVhTD@p14s>
+To:     Divin Raj <divin.raj@arm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Peter Hoyes <Peter.Hoyes@arm.com>
+References: <20230928153825.151948-1-divin.raj@arm.com>
+ <20230928153825.151948-2-divin.raj@arm.com>
+ <8ed6d9f6-918f-46aa-a2b7-a30c99dcce7f@amd.com>
+ <45db1e0a-4f60-4fcc-bf30-06630a712ccc@arm.com>
 From:   Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <ZRwz6cEqnnwoVhTD@p14s>
+In-Reply-To: <45db1e0a-4f60-4fcc-bf30-06630a712ccc@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0284.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::19) To BY5PR12MB3683.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0041.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::18) To BY5PR12MB3683.namprd12.prod.outlook.com
  (2603:10b6:a03:1a5::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|DM6PR12MB4139:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0332a3f5-9819-4c9f-2ece-08dbc42e591c
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|PH7PR12MB6884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d9b91b9-237f-448e-d706-08dbc43ac007
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tnxoHVvz65YpUYISC2tkLzICK1ktE7J9DvfsabvXRxzXSR+iN17DFfQgb7NyULjswM4G04ujrh9Uixw1abn1+13MAAuvHE0OtS6NuW2z+mAoG1PYUtVZ3FpPWMy//bh+mPepGNJDu5Xl7j3DW0dbMyWcBikGgeBzR5peLudJaCahtbjwLWG3xvNWJBi3m2nyFqtd4wK0/7ua0sJPALqAJ9jDVrrjUUgyJSZFWbcmAMPRHGDmtdoKsErwG63u3e4MPlp07+ZGZt7GosQ/E8qMMFDs5Yfyi76/EyJSdtpMcIljnpH9jVRw1pFoVsdO38AFLseYRMz/jdNxZ8iL/O3dfZI/HI8ct+xIAjOUs5NGtKdync03UyT0KOjbDS4iy/J35OhZlnchE56TGhJtde9dwQQkbCMX4bj3E5ZK42Qp+qP9ngsR3Q+98hryRHwbS2hBXi3jYLakD7Zh1uCFgaIwYHErZc7RsGnbROc+toPqJTiyD7/7qMk8Vrfjifj4Yi0HfU3gd4H9K+FKb6jMIjqCBl581+4heujwyuURBrYMnBodlxj2+WEE7RQEkIZcJ9lHhXsZFt+U30FwB72EoTZzxZfHDtcDJnMKJpMIHzIObbytHopBK03awmY1ANoca5nv7qW8Xu/53igzxUBUiXJ5NQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(346002)(376002)(396003)(136003)(366004)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(66946007)(31686004)(41300700001)(8676002)(66476007)(316002)(6512007)(6916009)(4326008)(8936002)(478600001)(66556008)(5660300002)(44832011)(6666004)(38100700002)(31696002)(6486002)(6506007)(53546011)(86362001)(2906002)(2616005)(83380400001)(36756003)(26005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 5LNVZpdt+HmK3SdfKgXWZZE2i6dJzjghaKD7wO2+hDRyyBkJTLzIy30dT0QuOtgVwPSNlg7n/h6dqs6BmhSNx1IYYIBhx63NRMZPEYrn0k5vuwnR51jr6Cho4IvYet5sIp0tPrHR95/PwZH/lncjESFUbc4qSiCXJ1gaZRA3ZPfEan77uAxaHNGBRjxa7Rb4vKxT5t7Ms5acXw5FikW6pUGF3Qn1Vm8MO+QjApe2B20omQwnPWzcwv9gZJmtUvmRrWQJRwZgwE7w5XXTYne3stfK2BIlz2j2X5mqP1p6gMRHdHalpJ54OgRxGBewdf5Arp80+3Ld2qzwZN0wcsmuVETafBFEMDR2ULusLN/vo/DMKuFmWLb/89iP7TGEwvxkCZo2jY5ldJNemyezHegjdH283WO0ICSwbI6ppOotsF30awq2JY4SzX1s/FhEobp9unpH6gM5FqCaJOV9MtFZdCo/sPXmppP09ZcWm04klRSKVMKXw/fnBBVTvygrTg7QkV4aWS+mPKvBe14OfY75pJwUf3GKosoyDOeaoXsaLY9sB5zLvcq0JshQn/xyfmKoknF4BGFfkmKOy2GirQ6RirdP0phsleHiYqWwFEjq1qWVtklutZYSjxvc5shxmx6YuJUYSxKDsDZ0fjIcdw1/9A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(136003)(39860400002)(396003)(346002)(230922051799003)(1800799009)(186009)(64100799003)(451199024)(6512007)(26005)(31696002)(86362001)(36756003)(38100700002)(83380400001)(66476007)(6506007)(478600001)(66556008)(316002)(31686004)(2616005)(66946007)(5660300002)(44832011)(966005)(6486002)(8936002)(4326008)(110136005)(8676002)(41300700001)(53546011)(6666004)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RVFYRjZLZjljOTc4UHF5cC8vVXNvZEN3a3h3N3FnRVRuNVExcW1UZkpGR0Nh?=
- =?utf-8?B?SHRTODR0TEJIUHlUcDZCbjM0ZzJFdldDRmxvdWhoSGFqS1hDTHBtVUYzS3Vt?=
- =?utf-8?B?K01ZR3EyR29BLzB3M0RBdTVPelZkUzhzZzU3UlQyOC9rUi9DZ2UrcGZ5SHJm?=
- =?utf-8?B?Y3JZUytoZGxPZWpEU053NlQwNXNVNlRhK1B4ZEVZRVoxYTJjcmRvM25EVUNx?=
- =?utf-8?B?QndXVFNBbzA4QXpnQW1lMk92NEhmVDZzSm5YZWRPeXRmMXNCVjFNME1XeVdD?=
- =?utf-8?B?OFU2d1RQQllpdzd1eTdibXhHU1JVelEwVnZLM0daSVRjcWgzUVVWYmJ5TCtE?=
- =?utf-8?B?ZVhjb0M1dmVTL1NEcVJseVFLcUpmVEFQNkZnRjJacnlzaHF5RWIvUTYwNmFh?=
- =?utf-8?B?bXlQTmF5Ymg2ZWpWMUhGcHlqNkdhV2VLWFI5RytqNkl3UUxMdnhKMjJieDBJ?=
- =?utf-8?B?VGNTWExRR1VJTEZHSFpxWUZZY1JOandoeUJMK2Ewb3dnVVZ3WFI4ZytDNUNL?=
- =?utf-8?B?ZVpuZk53M1FNMXhZVG9lbXNrY0wwT0JZMDc2TkN3MUIvRkhqRHhzL3dMMStQ?=
- =?utf-8?B?NDJaMVBmYTJVN2ZyVkE3ajk3bWFUajRLVk1uMmEyVWxaYlR3cVJyM2ZIRzha?=
- =?utf-8?B?NUloOXhvc2kzWUZ0MVQwMncxZ290SGpyZW55OHJsSGlNcTJzRzVzMTI2SXFF?=
- =?utf-8?B?S2RQdTZuR0VtVlBFcE94ZXR1SjAyV203WTlSVng0ZTdQaHEyYzFQdDdZOWF4?=
- =?utf-8?B?bWJFUzFFdkJkaHlTUnpTMjhMV3hINEJJRU1ySzBwajdqODVIYmsxMUUvWkY0?=
- =?utf-8?B?K2NsdEh2V0psSzlEdnVrWGNmZ1VLd3hNYlJybnkxaHlaVWR3T3R5RDgyYzM4?=
- =?utf-8?B?V01DRG9tOWlETkdmSHhuWjd2V0xXU3U0NmZoWXh3M0dGbldWRjd1OUkyUVZJ?=
- =?utf-8?B?VE1kTkdMREl2RTBmUGFrN1FZNk9FWHBRZDJOamYvb0M4MUJXOXBYVjBXbDVR?=
- =?utf-8?B?eUEvblhVZDJWR1N0VHVxU2p6NmE3S09VOTA2L1AvNTVXWk9IeHFoRjh1cHk3?=
- =?utf-8?B?TG92VzJRQmFLWVY5ekt5TTEvN0VHZklwNG9sc2dvUXV3d05yenMwR3cvd01M?=
- =?utf-8?B?Q0JuQlFqYVhzRlo5V0hvMU9WbGFjVVhMSjZRTjhEOVQ4ZjdLaEp6OTRSUFho?=
- =?utf-8?B?aW1kMExML2pkbjBZK3B6Y3ZVa3Eva1M1REprcWhnRWxrWnJ5NSszYzFBa1BW?=
- =?utf-8?B?cnU2SnpWb25ReE9SRm1wTTVKZEtKMEF1UXUrNmFCMmczTGM4ekIxK2pnK2NJ?=
- =?utf-8?B?bzNWeDc5VFdkQXpPbVpKN1FkTzYzMXZhUm9DeWJqeWRSUWFBY3ZoWnl6eFJN?=
- =?utf-8?B?cWRQaytIM0M3cW5vUnZqcXhXblAxU0hGSHZISU9pSXhHZDV4Qmo5Q2RuZ2xo?=
- =?utf-8?B?cGwxVEtESzJUdnBpeEFFYWoyS0JybVk3c3pBSmkrUWRNN3lqeFhNcGcxSWo4?=
- =?utf-8?B?WHk4U2VtUUVmcTBZY1kxbjRwVzRVTExLdlp1Q2N0Tnh0SUlHeHFEWk1SdURZ?=
- =?utf-8?B?NUlmN3Z0SFdTMGM0QXp4WTVHbHJKcENKNVpiRExPQWdqUVF3NTdQaUR6a3dZ?=
- =?utf-8?B?M3Jac2ZYdGtjbnBDeFJQR2JPOGZHdUNoMWJtQXFiWEFzUkJvaVVMZ2pyeVlT?=
- =?utf-8?B?K29aTDVPTGJlY2dUM1BwVUpFUWhrUVpIKzBPSit4aG9QZW1xQjN0RHUrZllZ?=
- =?utf-8?B?SHFZRWI0WlZnMGhTQ2Y3MmJWVVhuVkhVc3I2ZlRxZTlMVFEwak0rVWNScHU0?=
- =?utf-8?B?Z2xITlZYQUFkMmZWbE9meGNibDdlcjhLSnJ3dWRJd3M4VDlNWndjNTV3aWxL?=
- =?utf-8?B?UGtwek13WlNIL2NnenlsUHRycUVBWHBxNjkxbnpYUWxoUTAyNWRYLzcxM2o1?=
- =?utf-8?B?UUdWeUU1NFRWZmN0a0ZGRUNSMGdyNGhIY0RjVUVGZENRc3UwQklreUdwclll?=
- =?utf-8?B?U0h6R011cVVvR21wTC83YWJjWkJPbXprY250NnExL0xsTEIvb2lIeDlEdmYr?=
- =?utf-8?B?YXJXaGUrRXRyL25DZnFZZkZ3dkMwV3QxOFhvQkZOT3J2K05NQ3VVcFFrR0Jh?=
- =?utf-8?Q?gHT2GU1PzBsfcQLUJe2benYAd?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MFRldW5yZUhLYWZzRUk1ZktGSE1KNnNoTG1Hb1FteWlDSE5PQ1d3ZHVWMkJs?=
+ =?utf-8?B?WmRaNk9rUitYRldkTVQrTkdjeTlDanFKK2tjNTZpMUhIMTNRZFN4eEg5OTNh?=
+ =?utf-8?B?QzRqUVpEM0tSWG1mb29Xd3FKVnhQRTd2SGdFMUwwT2hBNmNIK2p6dW8zeTZs?=
+ =?utf-8?B?cStPSzh2S3VES2NOdGJjQUloaWowSGx2NE1PT045c1NPSTc5NU1JMU53bGRH?=
+ =?utf-8?B?SlNIV29VNzNSMjMrTWJSVEpJclI5V2ZtMEdmeVh0S09HWThCR1hQNlhLMk1Q?=
+ =?utf-8?B?d2lCMDByRjNPT1dlMTl3ODRncENQQ2haNVdnY3dUdjVMT2RBQUpQUXVUaUh4?=
+ =?utf-8?B?QndUdm51bGhKMzJja0tmY3VzbUtFdnZWL0FORnl3dVc3MDg3aUJTQW9oSWJu?=
+ =?utf-8?B?cGFwbGFpZmFBWFpSRGVmbnBuWER3cHllbllkZlZHZFR3Wi9uWG1ZUEpUL1hn?=
+ =?utf-8?B?dkJPQ2V4emIwYllOV0JvSzBiU2xNb2xYa0loMHo3K3dWT0oxQ1Y3VHJVVGtK?=
+ =?utf-8?B?M0twL0xqenpsWkJYYkM2VDRlU3gyMHROQTZaZW9PeUpMQmpzR2Q1aXJWT0I2?=
+ =?utf-8?B?U0V2VXNvNG8wLzRjLzloSFdvNko4TTU4SytLc2h3NE8wVzBJaDNZNFlDNXVJ?=
+ =?utf-8?B?UGpHK3BFdnBkU245TDBQL3dscUIveEJQNloxNXBndjg4amI1b1pXUHMyemNX?=
+ =?utf-8?B?SC95NDFZVFpscStWYmVVT2Fyd25ySGVyMW5DNWcrNmRUQUh4bkpXRFFQbno4?=
+ =?utf-8?B?dFE0ZHRNbnpOanhHTzhUZXdmblUvUVR1YlJMSjVNSVlNcmkxQVdrb2dndXha?=
+ =?utf-8?B?UG1vdnY1MkFXQmlqTXRJNnlHbTNYcjFCS2ttTzMvdVNOVHhhQnNQcWtGK0RH?=
+ =?utf-8?B?WEl3b3ZSSlNrVlhWTG9mWkhRTzBpaE9LZ3ZyUWR0Q1dpUUxMVVIxeVN3UzZq?=
+ =?utf-8?B?cmFzL3gzbjc5MFB5M1VWck9kS3FrZHM1aDZBK0JncXl5QkVRaE9FMXYxMTkw?=
+ =?utf-8?B?WndKVVRNMFNnejE4NXh2Y1FJWFMweTVIV2dsRTdKc1VPN3g3MFlhbG9PZSsv?=
+ =?utf-8?B?OG5BVWtrQlFmNzB0RVdhbloyQlV3RnRhUXBrUUZkRjAxSjNtamE5MUdjYitG?=
+ =?utf-8?B?NVRxL3lKTzhCcmUxM1ZSVGhXSGlScVFKM2Q2WElWV241ZHU3dTBLcGs5bjJ1?=
+ =?utf-8?B?cDNFc3l6MGdwbmJOK2dhWExuYUtqcWU0SmVHaFY0bGRrclB5MnYwRytLREYv?=
+ =?utf-8?B?YnN1UVl6SXpmUzV4TlNncVJqT3IxbWlreDE2R1ljWGRDeEJuZWpHbElpUHNW?=
+ =?utf-8?B?d2VvRmN0amh6RlJDQzhrL1V1WkRZQU8raUlmUzNGT09zdzdZKzVXamkyakNv?=
+ =?utf-8?B?K0FmdzJOblhyNFgybFhBdmQwU0JJb1p6WjdzbmRDVU1lRHk3T3orU3pDWmp6?=
+ =?utf-8?B?dUZqTXhTK3AxZGNHU0Erb1RITjdmZW5EY25vdUNvQ2ZOTEc2M1ZzRHF3ME8w?=
+ =?utf-8?B?L1FFMTBPenNJeExodWZ5Z2RiWDdxNnl6VTUwRElUZ2ltSlJvMDY4RUx2K0gx?=
+ =?utf-8?B?MjMycHNiYzhjNHdnakxFbEtQWGtWb3VHTFhQdEU1a0xmb2dWWTNQcWtkY3BS?=
+ =?utf-8?B?cVNES1EyMzNUcnJFRWN5MzNhWFNROG1CUUd3M3duOUZ6N0N4NWNKOHZiNEta?=
+ =?utf-8?B?dm0zNnJtZjEzNFJlMTdpM3JlY1Q1SU5RK3VQZlgzdFI0Qkluci82amU5cHJZ?=
+ =?utf-8?B?cUVaNzU4cU5ReDNlT3BqMGlIK3U4RHNJVTV6QmEvZWxYVFFwMFo4ZC81WDRk?=
+ =?utf-8?B?bThKU2RkODRLdUY1R0YwUGdwVkNQdzlNQjZ5N090Y29JTFBaTEo0RW9oc1Vt?=
+ =?utf-8?B?NlYxc1NROFh3bHR1R210UmJkTjJVOTF2ZUdsMW1OWXF6Sis1alV5aWxmSUpP?=
+ =?utf-8?B?SUZWeFpkb1UvMC9DYmgvaG1xSDNWZDArdjFUT1pUNGFTbGRuY0Y3enJPZDUz?=
+ =?utf-8?B?N1loL251NTJpMHRkYTd1Nlh5RXFnOFpoYkt2d1QycjRaY3BWdWpEWEhSY3pE?=
+ =?utf-8?B?VVZVclV4UTNVdTdCc2JVNmlXNXBWNTBET3l2U0lMK1ovSnNHMnZ5UUtDc0Y0?=
+ =?utf-8?Q?dNk4U0yN2fGkbJ8/Zf1IGG0Mr?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0332a3f5-9819-4c9f-2ece-08dbc42e591c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d9b91b9-237f-448e-d706-08dbc43ac007
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2023 16:32:34.7901
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2023 18:01:21.3848
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BXdrbKVS7M9YCzDe6RBEdVSHgZ3dpP8z5YxAyLLCal4pXSeiTZXb7S/TYBF+nOCO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4139
+X-MS-Exchange-CrossTenant-UserPrincipalName: PMov4Lcs9zCLHT3UttBKkD2Ues80wiNoIiqq9vNL0nTS+gyDu3AiFZjotqLYMDUo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6884
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On 10/3/23 10:31 AM, Mathieu Poirier wrote:
-> On Mon, Oct 02, 2023 at 03:54:30PM -0500, Tanmay Shah wrote:
-> > 
-> > On 10/2/23 3:17 PM, Mathieu Poirier wrote:
-> > > On Mon, 2 Oct 2023 at 11:12, Tanmay Shah <tanmay.shah@amd.com> wrote:
-> > > >
-> > > >
-> > > > On 10/2/23 11:25 AM, Tanmay Shah wrote:
-> > > > > Hi Mathieu,
-> > > > >
-> > > > > Thanks for the reviews. Please find my comments below.
-> > > > >
-> > > > > On 10/2/23 10:55 AM, Mathieu Poirier wrote:
-> > > > > > On Thu, Sep 28, 2023 at 08:58:58AM -0700, Tanmay Shah wrote:
-> > > > > > > Add properties as per new bindings in zynqmp remoteproc node
-> > > > > > > to represent TCM address and size. This patch configures
-> > > > > > > RPU in split mode and adds TCM information accordingly.
-> > > > > > >
-> > > > > >
-> > > > > > Why is this changed from lockstep to split mode?  What about all the people out
-> > > > > > there that are expecting a lockstep mode?
-> > > > >
-> > > > > I agree, this should have been in split mode in the first place as we would like to demonstrate use of both
-> > > > >
-> > > > > RPUs with two separate demo firmwares which is the best use of the
-> > > > >
-> > > > > hardware and the most preferred use of zynqmp platform by people. That motivates to change
-> > > > >
-> > > > > this to split mode.
-> > > > >
-> > > > >
-> > > > > Now changing this may not be problem for lot of people with following reasons.
-> > > > >
-> > > > > The firmwares that are only using first 64KB of TCM memory, they can easily run in split mode as well.
-> > > > >
-> > > > > Also rpmsg vring information isn't available in device-tree yet, so I am hoping that firmware that
-> > > > >
-> > > > > are using upstream device-tree are not that big yet.
-> > > > >
-> > > > > If we change this to split mode before introducing rpmsg related nodes, I bet it will affect very less number of people.
-> > > > >
-> > > > >
-> > > > > For lockstep mode the example is available in dt-bindings document.
-> > > > >
-> > >
-> > > I could use the same argument for the split mode, i.e default is
-> > > lockstep and there is an example in the dt-bindings document for split
-> > > mode.
-> > >
-> > > > > So, if people need lockstep mode for any reason, all they need to change is xlnx,cluster-mode property from 0 to 1 and TCM nodes
-> > > > >
-> > > > > from bindings document.
-> > > > >
-> > > > >
-> > > > > If you think it's crucial to mention all above, I can send new patch with all above info in commit message.
-> > > >
-> > > > Something to add to this. So, let's say if we don't change it now, what would be good time to change it?
-> > > >
-> > >
-> > > The best way to go about this is to introduce another DT that is
-> > > tailored for split mode.  That way people can choose to boot their
-> > > device in a specific mode using the DT.  If you decide to go this way,
-> > > look at how ST has split their DT for different boards - search for
-> > > "m4_rproc" under " arch/arm/boot/dts/st".
-> > 
-> > Thanks for the suggestion. I looked at the example and I think it will work.
-> > 
-> > I have following idea.
-> > 
-> > So, if I understand this correctly, we introduce two separate nodes in device-tree.
-> > 
-> > SOC dtsi file: zynqmp.dtsi
-> > 
-> > remoteproc_lockstep: remoteproc@... {
-> > 
-> > . . .
-> > 
-> > status = "disabled";
+On 10/3/23 10:28 AM, Divin Raj wrote:
+> Hello,
 >
-> I don't think you need the "status"
+> Thanks for all review comments.
+> It makes sense to incorporate a variable-length buffer size. However, we still require an implementation that can successfully achieve this objective.
 >
-> > 
-> > };
-> > 
-> > 
-> > remoteproc_split: remoteproc@... {
-> > 
-> >  . . .
-> > 
-> > status = "disabled";
-> > 
-> > };
-> > 
-> > 
-> > And then in board dts enable whatever mode is needed for that board:
-> > 
-> > *zcu102*.dts
-> > 
-> > &remoteproc_split {
-> > 
-> > status = "okay";
-> > 
-> > };
->
-> Exactly.  Again, I don't think the "status" is needed.
+> We will be investigating this matter and will return with a feasible solution.
 
-Thanks for the suggestion. Yes I think if we don't include status then both nodes are enabled by default, and people can
+Thanks.
 
-disable in board dts what they don't want.
+Here is the previous effort:
 
-Instead I keep status disabled, for one of the node, (for split probably as lockstep is already enabled) and people
+Series: "Enhance virtio rpmsg bus driver buffer allocation"
 
-can choose what they wnt.
+https://lore.kernel.org/all/1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com/
+
+There was discussion to revive the patch and the activity is still pending. This can be good start if we want to achieve it.
 
 Thanks,
 
 Tanmay
 
+
 >
-> > 
-> > This sounds like good idea, I hope this is what you mean.
-> > 
-> > Please let me know if I am missing something.
-> > 
-> > 
-> > >
-> > > > As I am hopping to use RPU1 as well with upstream device-tree. Please let me know some suggestion to work this.
-> > > >
-> > > > Thanks and again as always appreciate complete reviews,
-> > > >
-> > > > Tanmay
-> > > >
-> > > >
-> > > > >
-> > > > >
-> > > > > >
-> > > > > > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > > > > > ---
-> > > > > > >  arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 28 ++++++++++++++++++++------
-> > > > > > >  1 file changed, 22 insertions(+), 6 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> > > > > > > index b61fc99cd911..01e12894c88e 100644
-> > > > > > > --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> > > > > > > +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> > > > > > > @@ -247,19 +247,35 @@ fpga_full: fpga-full {
-> > > > > > >           ranges;
-> > > > > > >   };
-> > > > > > >
-> > > > > > > - remoteproc {
-> > > > > > > + remoteproc@ffe00000 {
-> > > > > > >           compatible = "xlnx,zynqmp-r5fss";
-> > > > > > > -         xlnx,cluster-mode = <1>;
-> > > > > > > +         xlnx,cluster-mode = <0>;
-> > > > > > >
-> > > > > > > -         r5f-0 {
-> > > > > > > +         #address-cells = <2>;
-> > > > > > > +         #size-cells = <2>;
-> > > > > > > +
-> > > > > > > +         ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
-> > > > > > > +                  <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
-> > > > > > > +                  <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
-> > > > > > > +                  <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
-> > > > > > > +
-> > > > > > > +         r5f@0 {
-> > > > > > >                   compatible = "xlnx,zynqmp-r5f";
-> > > > > > > -                 power-domains = <&zynqmp_firmware PD_RPU_0>;
-> > > > > > > +                 reg = <0x0 0x0 0x0 0x10000>, <0x0 0x20000 0x0 0x10000>;
-> > > > > > > +                 reg-names = "atcm", "btcm";
-> > > > > > > +                 power-domains = <&zynqmp_firmware PD_RPU_0>,
-> > > > > > > +                                 <&zynqmp_firmware PD_R5_0_ATCM>,
-> > > > > > > +                                 <&zynqmp_firmware PD_R5_0_BTCM>;
-> > > > > > >                   memory-region = <&rproc_0_fw_image>;
-> > > > > > >           };
-> > > > > > >
-> > > > > > > -         r5f-1 {
-> > > > > > > +         r5f@1 {
-> > > > > > >                   compatible = "xlnx,zynqmp-r5f";
-> > > > > > > -                 power-domains = <&zynqmp_firmware PD_RPU_1>;
-> > > > > > > +                 reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
-> > > > > > > +                 reg-names = "atcm", "btcm";
-> > > > > > > +                 power-domains = <&zynqmp_firmware PD_RPU_1>,
-> > > > > > > +                                 <&zynqmp_firmware PD_R5_1_ATCM>,
-> > > > > > > +                                 <&zynqmp_firmware PD_R5_1_BTCM>;
-> > > > > > >                   memory-region = <&rproc_1_fw_image>;
-> > > > > > >           };
-> > > > > > >   };
-> > > > > > > --
-> > > > > > > 2.25.1
-> > > > > > >
+> Thanks,
+>
+> On 9/28/23 5:10 PM, Tanmay Shah wrote:
+>
+> Hello,
+>
+> Thanks for your patch.
+>
+> Instead of having this in Kconfig, It's better to have buffer size decided dynamically. Probably by resource-table.
+>
+> We still need implementation that achieves that goal. Meanwhile  I think it's best to keep buffer size fixed.
+>
+> Thanks.
+>
+> On 9/28/23 10:38 AM, Divin Raj wrote:
+>
+>
+>
+> CAUTION: This message has originated from an External Source. Please use proper judgment and caution when opening attachments, clicking links, or responding to this email.
+>
+>
+> From: Peter Hoyes <Peter.Hoyes@arm.com><mailto:Peter.Hoyes@arm.com>
+>
+> Replace the MAX_RPMSG_BUF_SIZE and MAX_RPMSG_NUM_BUFS #define in
+> virtio_rpmsg_bus.c with the Kconfig parameters CONFIG_RPMSG_VIRTIO_BUF_SIZE
+> and CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS, allowing user-provided customization.
+>
+> Making both the number of buffers and size configurable facilitates aligning
+> memory requirements between vdev-buffer and vdev-vrings for client drivers
+> that require larger buffer sizes, for example.
+>
+> Signed-off-by: Peter Hoyes <Peter.Hoyes@arm.com><mailto:Peter.Hoyes@arm.com>
+> Signed-off-by: Divin Raj <divin.raj@arm.com><mailto:divin.raj@arm.com>
+> ---
+>  drivers/rpmsg/Kconfig            | 23 +++++++++++++++++++++++
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 27 +++------------------------
+>  2 files changed, 26 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index d3795860f5c0..677f4a1ac8bb 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -81,4 +81,27 @@ config RPMSG_VIRTIO
+>         select RPMSG_NS
+>         select VIRTIO
+>
+> +config RPMSG_VIRTIO_MAX_BUF_SIZE
+> +       int "Virtio RPMSG max buffer size (in bytes)"
+> +       default 512
+> +       depends on RPMSG_VIRTIO
+> +       help
+> +         This option allows you to configure the maximum buffer size (in bytes)
+> +         for Virtio RPMSG communications. The number of buffers will be computed
+> +         based on the number of buffers (CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS)
+> +         supported by the vring. By default, it supports up to a maximum of 512
+> +         buffers (256 in each direction). Each buffer consists of 16 bytes for the
+> +         message header and the remaining bytes for the payload.The default values
+> +         will utilize a maximum total space of 256KB for the buffers.
+> +
+> +config RPMSG_VIRTIO_MAX_NUM_BUFS
+> +       int "Virtio RPMSG max buffer count (even number for TX and Rx)"
+> +       default 512
+> +       depends on RPMSG_VIRTIO
+> +       help
+> +         This option allows you to configure the maximum number of buffers used
+> +         for Virtio RPMSG communication. By default, it supports up to a maximum
+> +         of 512 buffers (256 in each direction). Please note that this value
+> +         should be an even number, as it accounts for both transmit (TX) and
+> +         receive (Rx) buffers.
+>  endmenu
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 905ac7910c98..87a9a4fa30e0 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -109,27 +109,6 @@ struct virtio_rpmsg_channel {
+>  #define to_virtio_rpmsg_channel(_rpdev) \
+>         container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
+>
+> -/*
+> - * We're allocating buffers of 512 bytes each for communications. The
+> - * number of buffers will be computed from the number of buffers supported
+> - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> - *
+> - * Each buffer will have 16 bytes for the msg header and 496 bytes for
+> - * the payload.
+> - *
+> - * This will utilize a maximum total space of 256KB for the buffers.
+> - *
+> - * We might also want to add support for user-provided buffers in time.
+> - * This will allow bigger buffer size flexibility, and can also be used
+> - * to achieve zero-copy messaging.
+> - *
+> - * Note that these numbers are purely a decision of this driver - we
+> - * can change this without changing anything in the firmware of the remote
+> - * processor.
+> - */
+> -#define MAX_RPMSG_NUM_BUFS     (512)
+> -#define MAX_RPMSG_BUF_SIZE     (512)
+> -
+>  /*
+>   * Local addresses are dynamically allocated on-demand.
+>   * We do not dynamically assign addresses from the low 1024 range,
+> @@ -902,12 +881,12 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>                 virtqueue_get_vring_size(vrp->svq));
+>
+>         /* we need less buffers if vrings are small */
+> -       if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS / 2)
+> +       if (virtqueue_get_vring_size(vrp->rvq) < CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS / 2)
+>                 vrp->num_bufs = virtqueue_get_vring_size(vrp->rvq) * 2;
+>         else
+> -               vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+> +               vrp->num_bufs = CONFIG_RPMSG_VIRTIO_MAX_NUM_BUFS;
+>
+> -       vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> +       vrp->buf_size = CONFIG_RPMSG_VIRTIO_MAX_BUF_SIZE;
+>
+>         total_buf_space = vrp->num_bufs * vrp->buf_size;
+>
+> --
+> 2.25.1
+>
+>
+>
+> IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+>
