@@ -2,162 +2,153 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8F0E936ED
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Oct 2023 02:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B6FE92700
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Oct 2023 13:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232923AbjJEChQ (ORCPT
+        id S231597AbjJEN5C (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Oct 2023 22:37:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38790 "EHLO
+        Thu, 5 Oct 2023 09:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbjJEChP (ORCPT
+        with ESMTP id S243693AbjJENy7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Oct 2023 22:37:15 -0400
+        Thu, 5 Oct 2023 09:54:59 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64ACCBF;
-        Wed,  4 Oct 2023 19:37:12 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3950bjP5023885;
-        Thu, 5 Oct 2023 02:37:00 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD8B28117;
+        Thu,  5 Oct 2023 06:45:01 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395AbQC7004548;
+        Thu, 5 Oct 2023 11:44:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
  cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=V27n8ft8nsVqh5GI5hHlJjtYIbWHRuSN/i9MdrBOTEk=;
- b=KZVPJpXROpIVTZFIYie6P++TPDsvFRcASegfDP8Cmsfdvgv9zYu6ZkPeE9Uk2mterNKA
- nl4RGc+bOCfAQ3RE0TgUfJmjJshS7yx3oJ1oQTHEsRRmv2jm+9jjTYHfK+vMfW2Feel1
- Zsh7GeQvBULVKKW3NwA4IypesfTkNHInKBR2b2otYKOio0KeVqXaMU6ASGNOKKtspbqs
- STVQJSoWwhu5sqDNMJ6+Q/ykRkxwYK3Z+8UWXoHMfBmWU31DXyk3jKUtmibuO09JY6ph
- sjn6QAcZixwxguSisHe+U2CfYpUUddCT+aPeSfT2sBJlWKXCXGS/adYqLAlnLt2M860T Vg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8ck1sv4-1
+ in-reply-to; s=qcppdkim1; bh=Jgbx4tka3I/uXlQify+yAv1leWqWyj6lyTl8wspgTLU=;
+ b=O5B/LJistzFm3uCwIM9aow5ui4IG9XCXaw3WPNOLg1KNy10XGUpdKx49k8CSxHQgNG86
+ 0rlHkFaY4pR0xEWTXBeVzpg9oZo386qSdIwu0FM+AAJJMg/tkK8hBu+azAT1iujtTDgg
+ VFJYrskw24r9JWvhkQ7YllBGu8Y7lgQ6dZ7oBT88yf4gxkHdqpwd2DThEs9QvLaypU2f
+ iVsbXnztklfXMwjbvx0rgPLhEtESkYcBTMTDhcS9TNEkyOj9VDgmgaQDmhooljd81o52
+ 4C18xxRYwaHVoe6td3P0yhIRjQ2gtYsrteS04guMJzktGKfEp7w5Z5VT7QiUwqUTwxGN fQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3thq18rnkc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Oct 2023 02:37:00 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3952axRH012106
+        Thu, 05 Oct 2023 11:44:56 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395BiVpt022075
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Oct 2023 02:36:59 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+        Thu, 5 Oct 2023 11:44:31 GMT
+Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Wed, 4 Oct 2023 19:36:59 -0700
-Date:   Wed, 4 Oct 2023 19:36:58 -0700
-From:   Bjorn Andersson <quic_bjorande@quicinc.com>
-To:     Manivannan Sadhasivam <mani@kernel.org>
-CC:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Caleb Connolly <caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        "Zhang Rui" <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        "Thara Gopinath" <thara.gopinath@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation
- Device support
-Message-ID: <20231005023658.GE3553829@hu-bjorande-lv.qualcomm.com>
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
- <20231001155701.GA53767@thinkpad>
- <cefe711b-d274-4d83-9dda-01f33b342387@linaro.org>
- <20231002145239.GA12041@thinkpad>
- <CAA8EJppn-f6R3ObGvagqkg1_KtXGgtNAgRn-LQiN3ORSHQY3-Q@mail.gmail.com>
- <20231002155814.GB12041@thinkpad>
- <CAA8EJpowGjnecOjr9h4r3=UXSrE4VdptoLADpQq3gDv_W9D3OQ@mail.gmail.com>
- <20231002161308.GC12041@thinkpad>
+ 15.2.1118.36; Thu, 5 Oct 2023 04:44:18 -0700
+Date:   Thu, 5 Oct 2023 17:14:15 +0530
+From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+CC:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>,
+        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
+ support through command line
+Message-ID: <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+ <20230912101820.GA10884@willie-the-truck>
+ <202309131613.C0E12D0D14@keescook>
+ <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20231002161308.GC12041@thinkpad>
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+In-Reply-To: <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eWDIjXeBkRwL2ihq6FCFL_HxlZVgtxAq
-X-Proofpoint-ORIG-GUID: eWDIjXeBkRwL2ihq6FCFL_HxlZVgtxAq
+X-Proofpoint-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
+X-Proofpoint-ORIG-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-04_13,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 mlxscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2309180000 definitions=main-2310050020
+ definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
+ definitions=main-2310050092
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Oct 02, 2023 at 09:43:08PM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Oct 02, 2023 at 07:00:27PM +0300, Dmitry Baryshkov wrote:
-> > On Mon, 2 Oct 2023 at 18:58, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > >
-> > > On Mon, Oct 02, 2023 at 06:00:37PM +0300, Dmitry Baryshkov wrote:
-> > > > On Mon, 2 Oct 2023 at 17:52, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > > > >
-> > > > > On Sun, Oct 01, 2023 at 06:26:14PM +0100, Caleb Connolly wrote:
-> > > > > >
-> > > > > >
-> > > > > > On 01/10/2023 16:57, Manivannan Sadhasivam wrote:
-> > > > > > > On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
-> > > > > > > > The Thermal Mitigation Device (TMD) Service is a QMI service that runs
-> > > > > > > > on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
-> > > > > > > > It exposes various mitigations including passive thermal controls and
-> > > > > > > > rail voltage restrictions.
-> > > > > > > >
-> > > > > > > > This series introduces support for exposing TMDs as cooling devices
-> > > > > > > > in the kernel through the thermal framework, using the QMI interface.
-> > > > > > > >
-> > > > > > > > Each TMD client is described as a child of the remoteproc node in
-> > > > > > > > devicetree. With subnodes for each control.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Daniel expressed concerns in the past aganist representing TMD driver as a
-> > > > > > > cooling device since it is not tied to thermal zones and the governors cannot
-> > > > > > > use it. Instead he suggested to represent it as a powercap device with thermal
-> > > > > > > constraints.
-> > > > > >
-> > > > > > Hi Mani,
-> > > > > >
-> > > > > > Forgive me as I'm not yet super familiar with the thermal subsystem.
-> > > > > >
-> > > > > > As I understand it, the DT layout here enables each control to be referenced
-> > > > > > under the thermal zones, at least this is the approach taken in CAF 4.9.
-> > > > > >
-> > > > > > Maybe I don't quite understand what you mean, are you saying that using
-> > > > > > thermal zones is the wrong approach?
-> > > > >
-> > > > > Thermal framework expects each thermal zone represented in DT to have atleast
-> > > > > one corresponding thermal sensor defined using "thermal-sensors" property. But
-> > > > > with TMD, there is no thermal sensor AFAIK.
-> > > >
-> > > > As far as I understand, no. It is perfectly fine to have 'cooling'
-> > > > devices, which react to external thermal monitoring events. I might be
-> > > > mistaken, but I think that is the case here, isn't it?
-> > > >
-> > >
-> > > Yes it is represented as cooling device(s). But I do not see any cognizant way
-> > > to plug it with thermal zones i.e., unless TMD itself reports temperature of the
-> > > modem, using it as a cooling device for external temperature events doesn't
-> > > sound good to me.
-> > 
-> > Why? We have compute, q6, wlan tsens sensors. So it seems natural to
-> > tell CDSP to slow down if compute sensor reports overheating.
-> > 
+On Thu, Oct 05, 2023 at 04:52:20PM +0530, Mukesh Ojha wrote:
+> Sorry for the late reply, was on a long vacation.
 > 
-> TMD is for external devices such as PCIe modems as well. Is there a temperature
-> sensor for that?
+> On 9/14/2023 4:47 AM, Kees Cook wrote:
+> > On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
+> > > On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
+> > > > The reserved memory region for ramoops is assumed to be at a fixed
+> > > > and known location when read from the devicetree. This may not be
+> > > > required for something like Qualcomm's minidump which is interested
+> > > > in knowing addresses of ramoops region but it does not put hard
+> > > > requirement of address being fixed as most of it's SoC does not
+> > > > support warm reset and does not use pstorefs at all instead it has
+> > > > firmware way of collecting ramoops region if it gets to know the
+> > > > address and register it with apss minidump table which is sitting
+> > > > in shared memory region in DDR and firmware will have access to
+> > > > these table during reset and collects it on crash of SoC.
+> > > > 
+> > > > So, add the support of reserving ramoops region to be dynamically
+> > > > allocated early during boot if it is request through command line
+> > > > via 'dyn_ramoops_size=' and fill up reserved resource structure and
+> > > > export the structure, so that it can be read by ramoops driver.
+> > > > 
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > >   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > 
+> > > Why does this need to be in the arch code? There's absolutely nothing
+> > > arm64-specific here.
+> > 
+> > I would agree: this needs to be in ramoops itself, IMO. It should be a
+> > ramoops module argument, too.
+> > 
+> > It being unhelpful for systems that don't have an external consumer is
+> > certainly true, but I think it would still make more sense for this
+> > change to live entirely within ramoops. Specifically: you're
+> > implementing a pstore backend behavioral change. In the same way that
+> > patch 10 is putting the "output" side of this into pstore/, I'd expect
+> > the "input" side also in pstore/
 > 
+> How do we reserve memory? are you suggesting to use dma api's for
+> dynamic ramoops ?
+> 
+Sharing my thoughts:
 
-According to the schematics for the SC8280XP CRD sys_therm5 would be the
-sensor you're looking for.
+Your patch is inspired from how kexec allocate memory for crash kernel
+right? There is a series [1] which moved arch code (ARM64/x86) to
+generic kexec core. Something we should also do as the feedback
+received here.
 
-Regards,
-Bjorn
+Coming to how part, we still have to use memblock API to increase the chance
+of allocating contiguous memory. Since PSTORE_RAM can also be
+compiled as a module, we probably need another pstore layer that needs to
+be built statically in kernel to allocate memory using memblock API.
+once slab is available, all memblock API will re-direct to slab
+allocations. This layer can be enabled via ARCH_WANTS_PSTORE_xxx or 
+another config that only supports 'y'. PSTORE_RAM can still be a module but 
+when this layer is available, it supports dynamic ramoops. Another option 
+would be just including this layer in PSTORE RAM module but take away module 
+option  when this layer is enabled.
+
+
+[1]
+https://lore.kernel.org/all/20211020020317.1220-6-thunder.leizhen@huawei.com/
