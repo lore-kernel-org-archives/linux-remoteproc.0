@@ -2,173 +2,202 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2639FE95A8E
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Oct 2023 12:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA51CD612F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Oct 2023 20:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346309AbjJIMAt (ORCPT
+        id S1377876AbjJIUsb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Oct 2023 08:00:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
+        Mon, 9 Oct 2023 16:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232860AbjJIMAs (ORCPT
+        with ESMTP id S1377082AbjJIUsa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Oct 2023 08:00:48 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9173C94;
-        Mon,  9 Oct 2023 05:00:46 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 399Bk93c029864;
-        Mon, 9 Oct 2023 12:00:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=o9r1b72AGzQX2cPr3WsZ4YtvkbsTzQxrKOO5gARLsSg=;
- b=EqS9Eb8QuzhS2rsmdbzg/FEhk6CjLoBgeb2ZxodZgr80/jtVRB/v1t/oYe9xYXbHgg++
- m9vY5hE9lS44rxu4+RjHXogYHDr+P4tdv0vifgUMsiSzLEDYgF2W0xsuP5GLxqPD3ND0
- zatW1t7s2F3ZpspyyLlNa0Te6QBEYoDTKFmCxEJ+Z6uZf0Fe73IhI4ch+MA971Od89WM
- EbKXPSF2GdZ1eoMrMfGPYAKxTOJ4OnZEOB4fvOrZBY1vu187+2duPrD9iFORbXcibe3x
- NXP4hYGibfPgAfMj2huKwl1O09eBmYVzJa4ZXBRvLbIRswsY1c2axJda5LcxQA5hjmVR Jg== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tkh592b8c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 09 Oct 2023 12:00:04 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 399C02Xr000308
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 9 Oct 2023 12:00:02 GMT
-Received: from [10.214.225.95] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 9 Oct
- 2023 04:59:49 -0700
-Message-ID: <a869ec2e-966b-f8ea-7f68-a77c214a45af@quicinc.com>
-Date:   Mon, 9 Oct 2023 17:29:40 +0530
+        Mon, 9 Oct 2023 16:48:30 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9565292
+        for <linux-remoteproc@vger.kernel.org>; Mon,  9 Oct 2023 13:48:29 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpxAx-0002zo-1x; Mon, 09 Oct 2023 22:48:27 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpxAw-000V0c-Bz; Mon, 09 Oct 2023 22:48:26 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qpxAw-00CaKd-2c; Mon, 09 Oct 2023 22:48:26 +0200
+Date:   Mon, 9 Oct 2023 22:48:25 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, kernel@pengutronix.de
+Subject: remove callback of ti_k3_dsp remoteproc driver
+Message-ID: <20231009204825.6n2t366oad7gke2l@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [REBASE PATCH v5 10/17] pstore: Add pstore_region_defined()
- helper and export it
-To:     Kees Cook <keescook@chromium.org>
-CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <vigneshr@ti.com>, <nm@ti.com>,
-        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
-        <alim.akhtar@samsung.com>, <bmasney@redhat.com>,
-        <quic_tsoni@quicinc.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-11-git-send-email-quic_mojha@quicinc.com>
- <202309131620.34EB0F6972@keescook>
-Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <202309131620.34EB0F6972@keescook>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DDbFoX8caW9i9Gk7bqvbx_eyrZSMb8tu
-X-Proofpoint-GUID: DDbFoX8caW9i9Gk7bqvbx_eyrZSMb8tu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-09_11,2023-10-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- clxscore=1015 suspectscore=0 priorityscore=1501 mlxlogscore=999
- bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2309180000 definitions=main-2310090098
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kzqzvhcic3cibqod"
+Content-Disposition: inline
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Thanks for the review.
 
-On 9/14/2023 4:54 AM, Kees Cook wrote:
-> On Mon, Sep 11, 2023 at 04:23:52PM +0530, Mukesh Ojha wrote:
->> There are users like Qualcomm minidump which is interested in
->> knowing the pstore frontend addresses and sizes from the backend
->> (ram) to be able to register it with firmware to finally collect
->> them during crash for debugging.
->>
->> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->> ---
->>   fs/pstore/platform.c   | 15 +++++++++++++++
->>   fs/pstore/ram.c        | 42 ++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/pstore.h |  6 ++++++
->>   3 files changed, 63 insertions(+)
->>
->> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
->> index e5bca9a004cc..fdac951059c1 100644
->> --- a/fs/pstore/platform.c
->> +++ b/fs/pstore/platform.c
->> @@ -139,6 +139,21 @@ enum pstore_type_id pstore_name_to_type(const char *name)
->>   }
->>   EXPORT_SYMBOL_GPL(pstore_name_to_type);
->>   
->> +int pstore_region_defined(struct pstore_record *record,
->> +			  void **virt, phys_addr_t *phys,
->> +			  size_t *size, unsigned int *max_dump_cnt)
->> +{
->> +	if (!psinfo)
->> +		return -EINVAL;
->> +
->> +	record->psi = psinfo;
-> 
-> Uh, this makes no sense to me. If this is a real pstore_record, you
-> cannot just assign psi here.
+--kzqzvhcic3cibqod
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok.
+Hello,
 
-> 
->> +
->> +	return psinfo->region_info ?
->> +	       psinfo->region_info(record, virt, phys, size, max_dump_cnt) :
->> +	       -EINVAL;
-> 
-> Common code style for this kind of thing is usually like this:
-> 
-> 	if (!psinfo->region_info)
-> 		return -EINVAL;
-> 
-> 	return psinfo->region_info(...)
+k3_dsp_rproc_remove() in drivers/remoteproc/ti_k3_dsp_remoteproc.c looks
+as follows:
 
-Thanks.
+static int k3_dsp_rproc_remove(struct platform_device *pdev)
+{
+        struct k3_dsp_rproc *kproc =3D platform_get_drvdata(pdev);
+        struct rproc *rproc =3D kproc->rproc;
+        struct device *dev =3D &pdev->dev;
+        int ret;
 
--Mukesh
-> 
->> +}
->> +EXPORT_SYMBOL_GPL(pstore_region_defined);
->> +
->>   static void pstore_timer_kick(void)
->>   {
->>   	if (pstore_update_ms < 0)
->> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
->> index ab551caa1d2a..62202f3ddf63 100644
->> --- a/fs/pstore/ram.c
->> +++ b/fs/pstore/ram.c
->> @@ -437,6 +437,47 @@ static int ramoops_pstore_erase(struct pstore_record *record)
->>   	return 0;
->>   }
->>   
->> +static int ramoops_region_info(struct pstore_record *record,
->> +			       void **virt, phys_addr_t *phys,
->> +			       size_t *size, unsigned int *max_dump_cnt)
-> 
-> But there's a larger problem here -- "virt", "phys" and likely
-> "max_dump_cnt" are aspects _specific to the ram backend_. This can't be
-> a generic pstore interface.
-> 
-> I'm not opposed to it being exposed only from ramoops, though.
-> 
-> But I think you'll want a pstore generic way to iterate over the
-> records..
+        if (rproc->state =3D=3D RPROC_ATTACHED) {
+                ret =3D rproc_detach(rproc);
+                if (ret) {
+                        dev_err(dev, "failed to detach proc, ret =3D %d\n",=
+ ret);
+                        return ret;
+                }
+        }
+
+        rproc_del(kproc->rproc);
+
+        ret =3D ti_sci_proc_release(kproc->tsp);
+        if (ret)
+                dev_err(dev, "failed to release proc, ret =3D %d\n", ret);
+
+        kfree(kproc->tsp);
+
+        ret =3D ti_sci_put_handle(kproc->ti_sci);
+        if (ret)
+                dev_err(dev, "failed to put ti_sci handle, ret =3D %d\n", r=
+et);
+
+        k3_dsp_reserved_mem_exit(kproc);
+        rproc_free(kproc->rproc);
+
+        return 0;
+}
+
+The error return in the first if block is dangerous: If rproc_detach()
+fails, rproc_del() is skipped and so the rproc structure is kept in
+rproc_list, with the pointers in rproc->ops leading into nirvana if the
+ti_k3_dsp_remoteproc module is unloaded.
+
+I don't know enough about rproc to directly see the right fix for that
+issue. Maybe it's just to drop "return ret;", but I guess that's not
+safe either?! As I don't have a suggestion to fix this, there is no
+patch included here in this bug report :-\
+
+Another minor issue here is: return 0 instead of return ret in the error
+path would be an improvement. Returning a non-zero value in a remove
+callback is useless. The only effect is that the core will emit
+
+	dev_warn(_dev, "remove callback returned a non-zero value. This will be ig=
+nored.\n");
+
+(see platform_remove()) and then it will continue to remove the device.
+
+I want to change the prototype of remove callbacks to
+
+	void (*)(struct platform_device *)
+
+to prevent this type of bug. To progress here I'd like to propose:
+
+--->8---
+Convert to platform remove callback returning void
+
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code.  However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
+
+The non-zero return value of the first exit point of
+k3_dsp_rproc_remove() is ignored by the core, so the only semantical
+change here is that an additional warning by the core is suppressed if
+rproc_detach() fails. This is even an improvement because
+k3_dsp_rproc_remove() already emitted a more useful message.
+
+Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc=
+/ti_k3_dsp_remoteproc.c
+index ef8415a7cd54..8207439e4927 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -825,7 +825,7 @@ static int k3_dsp_rproc_probe(struct platform_device *p=
+dev)
+ 	return ret;
+ }
+=20
+-static int k3_dsp_rproc_remove(struct platform_device *pdev)
++static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct k3_dsp_rproc *kproc =3D platform_get_drvdata(pdev);
+ 	struct rproc *rproc =3D kproc->rproc;
+@@ -836,7 +836,7 @@ static int k3_dsp_rproc_remove(struct platform_device *=
+pdev)
+ 		ret =3D rproc_detach(rproc);
+ 		if (ret) {
+ 			dev_err(dev, "failed to detach proc, ret =3D %d\n", ret);
+-			return ret;
++			return;
+ 		}
+ 	}
+=20
+@@ -854,8 +854,6 @@ static int k3_dsp_rproc_remove(struct platform_device *=
+pdev)
+=20
+ 	k3_dsp_reserved_mem_exit(kproc);
+ 	rproc_free(kproc->rproc);
+-
+-	return 0;
+ }
+=20
+ static const struct k3_dsp_mem_data c66_mems[] =3D {
+--->8---
+
+But if you want to address the graver bug first, I can wait to prevent
+patch conflicts.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--kzqzvhcic3cibqod
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUkZxkACgkQj4D7WH0S
+/k7F7ggAuOjAM86t4m//lgQtXK5BXN7rfZLkKIvxZaSuUF6yWh1SHpTlzxJC5iOt
+MHqb3GUjWW5JVlIEjwfVwhDBB3iC47kbM7Vgk/KSSTCH49nXyD05CwgQ4Uf+bQES
+uGZtAJI+LCf6I1vbo4L47PS4ommJWoJQAZPlxjKxcUmlea9NNurJUK+RgD9RofeF
+VONbQKsUR5Y+xlVAg90nMxuMJzO86EGIEdFrpYLHTIBNzXfJQe3hp2Rba6TSOxj1
+pF74UicuWNcMc0oWSV71U9DHER+gxvyiFEYmhlwQkRf5I5hYTrVX896Ze0I+rRQm
+hEpJDICLTP1nrUrjMqcDGykClYzesQ==
+=Zc38
+-----END PGP SIGNATURE-----
+
+--kzqzvhcic3cibqod--
