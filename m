@@ -2,163 +2,147 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC93CD68E5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Oct 2023 09:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06D6CD80BD
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Oct 2023 12:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbjJJJKH (ORCPT
+        id S231609AbjJJMZI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 Oct 2023 05:10:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
+        Tue, 10 Oct 2023 08:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbjJJJKF (ORCPT
+        with ESMTP id S231371AbjJJMZH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 Oct 2023 05:10:05 -0400
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2049.outbound.protection.outlook.com [40.107.105.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324DEAF;
-        Tue, 10 Oct 2023 02:10:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VRdV+Cw653FxZ5HbjNfACkpyXv5229Mq0WycW5Whz3oV+7g56wrZMSbLRGFx+qUm1p1bQS+pNcbLlkPklNVzCnTCSbfgc/8KkkQhINLqtwNcLGRrrP9RZqm62sI/PsZZ+3aRf2dWhraKwKrUpE+3URdTCoGjDA1U0IMWKRUpVm0+mjoyfKeRtf6Ek17nm3gkJl7pUFD3CvFBQHXLV7A7N+uUoX+3K76QaF1kmukfN8nzSXHpi3MQKycz0C2km3nL2hS2Xb3XYHgA1uUzPgW1EOQs7yoZ/lCKb/sTCuYvy0bs0gRxGELaQm1rmLbjqYmvP1tIibc4s/GNASyB5lHRBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lZnE45PRDwBSn6WJdsVneYnerLDAT9Dwn56wCg5jqs4=;
- b=iqiVMEYFegZHGZzR3d4T2RCR/KaUzla85zx9p9Bczi4odc1XsqbA8IYlU/1RlQIhUJN8TMUTweubKq7eJhjv1aAAc5i5JwFUt+X+/WpWFCEY3nRiWt79WOC2x+43nmck1paTzJekzT4PyPGTsrV4kihmh4rMPKZedvFy2iW246GUs2p57jeUkl/9IcFvLKJgV4re3lurXVAV0wnJeic0SfacgVZ2nXbugeND0Oj6kRNVeW1dN/XG/6vVXiMNpTvBbsQuHUVo8/Pa7IinaUPwF44VPfqMOoTGCHvCfgZsgXUfUWBBaSbLjAQ7yyAlURbFoy+TCB813XeyrCAkH8YqXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lZnE45PRDwBSn6WJdsVneYnerLDAT9Dwn56wCg5jqs4=;
- b=hB+XaabICeWW3cBW2PRPsCjnVMSHZC3NDqpdFD7NZdQm/WkRUrLuI0+873VhcOUYpAIKu4VKPQAYYmZHC4eyME/Sbs114Z4DadzJiQ0jC1YrjVywZ+0+AQkPpCqdVfv7UgdoMHfEP8OJ4mo20Jqaa/5UGOMvEOa162I8f7KSf2g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by PAXPR04MB9059.eurprd04.prod.outlook.com (2603:10a6:102:220::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.36; Tue, 10 Oct
- 2023 09:10:01 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::ad2:49f8:14b:25c7%7]) with mapi id 15.20.6863.032; Tue, 10 Oct 2023
- 09:10:01 +0000
-From:   "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
+        Tue, 10 Oct 2023 08:25:07 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3D99D;
+        Tue, 10 Oct 2023 05:25:05 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A470C433C7;
+        Tue, 10 Oct 2023 12:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1696940705;
+        bh=omFIqKia3wy7Xbwqgl3lEDlQS0jMr0mlUIHVa8ZY/jQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RB9t1Xi6C6UY8MEAUWcmpc14/Xjsaa4NraUXJX6ziZ6S77LJRYcw5jPz1uuO9fARo
+         r+70AQEjYZjsYmbjTpHHdqjp8Q80rxgQpZNdtZkrZKZcaUuCSZhzMFM0MMNJLrc6OO
+         35nHg0XtxoELdzajsUHQF2HW6wg85SteBC9WdymQikpsZTy+65jjOvwVI54Sdk2amZ
+         Lkqar4AL7Hfzm2z7jAXAIytZOxyGCV9QxKa26KqGzt8mWu84II+BDaG6/plyWnLrtv
+         7QZeOUeSd0dC8DTMW1o2gSOzVWOCJq+FICgRYyiBeTUz9OvqK6CGJZ9BvKe7kn7HHm
+         aWmLRQoVsbMDg==
+Date:   Tue, 10 Oct 2023 17:54:47 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bhupesh Sharma <bhupesh.linux@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-Subject: [PATCH v3 2/2] arm64: dts: imx8mp: add reserve-memory nodes for DSP
-Date:   Tue, 10 Oct 2023 12:09:29 +0300
-Message-Id: <20231010090929.4371-3-iuliana.prodan@oss.nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231010090929.4371-1-iuliana.prodan@oss.nxp.com>
-References: <20231010090929.4371-1-iuliana.prodan@oss.nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P195CA0054.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:65a::14) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 0/4] thermal: Introduce Qualcomm Thermal Mitigation
+ Device support
+Message-ID: <20231010122447.GJ4884@thinkpad>
+References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+ <20231001155701.GA53767@thinkpad>
+ <cefe711b-d274-4d83-9dda-01f33b342387@linaro.org>
+ <20231002145239.GA12041@thinkpad>
+ <CAA8EJppn-f6R3ObGvagqkg1_KtXGgtNAgRn-LQiN3ORSHQY3-Q@mail.gmail.com>
+ <20231002155814.GB12041@thinkpad>
+ <CAA8EJpowGjnecOjr9h4r3=UXSrE4VdptoLADpQq3gDv_W9D3OQ@mail.gmail.com>
+ <20231002161308.GC12041@thinkpad>
+ <20231005023658.GE3553829@hu-bjorande-lv.qualcomm.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|PAXPR04MB9059:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64f223e8-63c9-4a67-79a4-08dbc970af1a
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: W4xBLlZgincrbxggVIxp6JUNuoDOWVj0ikMjAIC/PuBMm+SZOb23yWYJnYUdWlTTq0V/V5YKiT1MIDFP5/gj4Qgd+0/g0UnX3+byvOqazFwQ/h8Q1yHNBNXAKsHX7k2fk3h0KhrQ8oSYT9YhDLurDnfmmgGTQypCnlHxs8Lwukqjt4tMzBXK5Bd4G8y1sa+FXpuoNGWdcMCLQbseQQ/xOtiZfyaOq0CnEGzfgbOMBUt9wRgNfQ6pwx7W+DLq77VqXfLRWt0YIzwkTWFfv7nPdRcGftkNTalE83aoKqnbiA1sNfL8EF4AYS9hSeOUjYzuMFvyqCcxx+Fu2AYiQrZ3fYSQ+G/y0nGxua5fAHnqUv9+5/A2nfJwiXnpP44WVy/uaWIpwzw9fEwTRdjutTolSzp07gVXDYpwyI1ZTnguoQ3x50Mi/Atq6IpGS5i2mVZ9QMvgP6mwIwTil0yqYyNqnQfJBme5DAm03BfLNE2ksITK95EZoOGdkqKRJjCFTIouqjocNJOIJES93vIRQbJXL7g8o+Mut6c6hYSgf0B9Zd5IB+FnnkfDDvtbl1q9iE+XikuyI7byU8ofx4PtTEr3ifUf/MPrtscEdboN0pLR9IrJ4Pl8k+iaawHIY9nl4H6Xz4IaUTLSUg3ZItJWccuHXKWlzGOiRqWAp94zKx3Q9bY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(136003)(396003)(39860400002)(376002)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(921005)(86362001)(38100700002)(38350700002)(2906002)(52116002)(478600001)(6486002)(41300700001)(6512007)(4744005)(4326008)(6506007)(5660300002)(8936002)(316002)(2616005)(1076003)(66476007)(66556008)(66946007)(7416002)(8676002)(6666004)(110136005)(54906003)(26005)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3ElrJiU8sEUHNL4bpsm26LTgEEMfTFMSd4z0vZW27ptK4LwEW9D7np3mVmhP?=
- =?us-ascii?Q?PI1vRcskUslHId7+0fr1TtlWDW9q7ff1qX4A4nMe6jvDasmprhuX8injT1sS?=
- =?us-ascii?Q?VaLxdNOqeY2m4vdoHMihKVhcKtCjvNs7BvCQwqfTsQvyAnQ0r7AAC5ltBze0?=
- =?us-ascii?Q?Mpwy5REEs+URWYVm4pOg9R8mm8VYSm/UrGUzvVpjAMbfWhKOFx87eh2rAcqj?=
- =?us-ascii?Q?eQtoVPP0yRkF6/RsE8FuYUztBJ+o/8/JJDtWJngxvttyS8kzqagNVOxiRvHr?=
- =?us-ascii?Q?LyVPLEnfloc2ThBdv2dIkuwsypqLMZ/Wwe/1dbWFSZBeditdMJqdWMsMJNdw?=
- =?us-ascii?Q?7xkjypWnjX/AyuQaioRDECX3b7Bc9x9wZPn5irOf3jCFUX2a+kGr96fh+Aw+?=
- =?us-ascii?Q?PdMcUnbxlyO0y7KcrH4Y6sAy4nSNixaZDD380Pe7Ntd5lyvHF/weyRcyLZiJ?=
- =?us-ascii?Q?BjpuOuBDxjbPj/GjwKkvDl1G24w1I8O9PdyOFc5XqNNFsD4i+AYSEsQH9hlO?=
- =?us-ascii?Q?HPf6tU+UGKKjSurVSr8CTCii3bt+IbHToI/0AQwSzr8w00+PAB/vQGkDwK3I?=
- =?us-ascii?Q?XaJbSg6qtHiGh2ifqwdaFs1PYA2xSLfdOUop4av+LQ5cRtZEm0a9RszaZO83?=
- =?us-ascii?Q?jPOwQ3o6nTwxJSb0kUBi1HfXiyMOMajemB5cdTMK9PXIxOkRmQm+8JNFlWdQ?=
- =?us-ascii?Q?v9mjEt4lsxy1hYk5Qef+mFncaOvGElpLS2FaCgFddlCgo2cAeHHM3146aRP5?=
- =?us-ascii?Q?YWJ1hCdAq0ihgbdzEXkWyf+9EJ0iz1BmMX9n1KQvhMuhyd3hHTOJofPKie+o?=
- =?us-ascii?Q?spi4ZPy6EH0VgmP7rNVUBv5IC7VNqW8WvGpMG/6IxjVchCBMVKABehniJ7U1?=
- =?us-ascii?Q?qtvtqW+wThgEUiqFELsJXR8gAtATqVVtqdc9sOf9zow9AOCbmP1MiBgVzUyl?=
- =?us-ascii?Q?ssyelIxrYBC9Zo7KFvfyvkQ1CUep4HwTIOyqgYdX8nzbchSKU/yaxVe7mVCP?=
- =?us-ascii?Q?EQ/BLHIaAOLEFN5pOr57iZ2AaOHU468p2vqNaSJ7hnuziN+jzMiyMw/vEVqs?=
- =?us-ascii?Q?VP5w+d6eFy16soEzTlPWPubCSweQPJvzny+ni0KPcnWuAEGb/og0dO2mYrrj?=
- =?us-ascii?Q?fN71f2gDyFjnEiB+o12UWeujykTfE1f9+zlwFfhRu97SUVwSDkKP3C5VtrhP?=
- =?us-ascii?Q?QzvumE/edwoRKh95ttcbmAOHGQbR4/NqqA/b4O3/rUW6TPUSoD+c+pMtMr0G?=
- =?us-ascii?Q?yIhx3eI3CBODWZO5HEksNtBNmJuZkuCHEDOpJnI2HB1W0oYfx8tTPq0zZf9u?=
- =?us-ascii?Q?giM2bdBrMG1ifjYjpXTJ3gYd7ck2ROEB5IwarULZHtQONI+BofUh3ONdn/j3?=
- =?us-ascii?Q?ViGENv7CM43tT9C1bynJ9EB/XbiJ29GCh//Km3YlkuP936cfi/Jleg6+K3/+?=
- =?us-ascii?Q?ehN4e2SkUI67J2lUvVuGNZimJcvhna5emEcxIYxjFg+Muh4tg6Ex18/JHAlk?=
- =?us-ascii?Q?e2an05JF30tkz422uWCtblGqxp0BvshHNwiJ3ta2IjiYid5Rc3mBcnVrGSPc?=
- =?us-ascii?Q?mblBq1bbK8GC4inVeB80VziCibtQlyYD9CtJqFBArhDUpe6m4kwso5k7bxPL?=
- =?us-ascii?Q?Uw=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64f223e8-63c9-4a67-79a4-08dbc970af1a
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2023 09:10:01.6119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uc7gdiWdT3hnqZ9L7saUvPdiRCsCNF3O3f/6qhL9BC2gS214YCs54fYWCE8eUGLipcoxTKgJidgNzZOnhHJBDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9059
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231005023658.GE3553829@hu-bjorande-lv.qualcomm.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
+On Wed, Oct 04, 2023 at 07:36:58PM -0700, Bjorn Andersson wrote:
+> On Mon, Oct 02, 2023 at 09:43:08PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Oct 02, 2023 at 07:00:27PM +0300, Dmitry Baryshkov wrote:
+> > > On Mon, 2 Oct 2023 at 18:58, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > >
+> > > > On Mon, Oct 02, 2023 at 06:00:37PM +0300, Dmitry Baryshkov wrote:
+> > > > > On Mon, 2 Oct 2023 at 17:52, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > > > >
+> > > > > > On Sun, Oct 01, 2023 at 06:26:14PM +0100, Caleb Connolly wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > > On 01/10/2023 16:57, Manivannan Sadhasivam wrote:
+> > > > > > > > On Fri, Sep 29, 2023 at 05:16:16PM +0100, Caleb Connolly wrote:
+> > > > > > > > > The Thermal Mitigation Device (TMD) Service is a QMI service that runs
+> > > > > > > > > on remote subsystems (the modem and DSPs) on Qualcomm SoCs.
+> > > > > > > > > It exposes various mitigations including passive thermal controls and
+> > > > > > > > > rail voltage restrictions.
+> > > > > > > > >
+> > > > > > > > > This series introduces support for exposing TMDs as cooling devices
+> > > > > > > > > in the kernel through the thermal framework, using the QMI interface.
+> > > > > > > > >
+> > > > > > > > > Each TMD client is described as a child of the remoteproc node in
+> > > > > > > > > devicetree. With subnodes for each control.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Daniel expressed concerns in the past aganist representing TMD driver as a
+> > > > > > > > cooling device since it is not tied to thermal zones and the governors cannot
+> > > > > > > > use it. Instead he suggested to represent it as a powercap device with thermal
+> > > > > > > > constraints.
+> > > > > > >
+> > > > > > > Hi Mani,
+> > > > > > >
+> > > > > > > Forgive me as I'm not yet super familiar with the thermal subsystem.
+> > > > > > >
+> > > > > > > As I understand it, the DT layout here enables each control to be referenced
+> > > > > > > under the thermal zones, at least this is the approach taken in CAF 4.9.
+> > > > > > >
+> > > > > > > Maybe I don't quite understand what you mean, are you saying that using
+> > > > > > > thermal zones is the wrong approach?
+> > > > > >
+> > > > > > Thermal framework expects each thermal zone represented in DT to have atleast
+> > > > > > one corresponding thermal sensor defined using "thermal-sensors" property. But
+> > > > > > with TMD, there is no thermal sensor AFAIK.
+> > > > >
+> > > > > As far as I understand, no. It is perfectly fine to have 'cooling'
+> > > > > devices, which react to external thermal monitoring events. I might be
+> > > > > mistaken, but I think that is the case here, isn't it?
+> > > > >
+> > > >
+> > > > Yes it is represented as cooling device(s). But I do not see any cognizant way
+> > > > to plug it with thermal zones i.e., unless TMD itself reports temperature of the
+> > > > modem, using it as a cooling device for external temperature events doesn't
+> > > > sound good to me.
+> > > 
+> > > Why? We have compute, q6, wlan tsens sensors. So it seems natural to
+> > > tell CDSP to slow down if compute sensor reports overheating.
+> > > 
+> > 
+> > TMD is for external devices such as PCIe modems as well. Is there a temperature
+> > sensor for that?
+> > 
+> 
+> According to the schematics for the SC8280XP CRD sys_therm5 would be the
+> sensor you're looking for.
+> 
 
-Add the reserve-memory nodes used by DSP when the rpmsg
-feature is enabled.
+Hmm, then it seems fine from my end as long we have the correct sensor data to
+hook up these cooling devices.
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+- Mani
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index cc406bb338fe..22815b3ea890 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -211,6 +211,22 @@
- 			reg = <0 0x92400000 0 0x2000000>;
- 			no-map;
- 		};
-+
-+		dsp_vdev0vring0: vdev0vring0@942f0000 {
-+			reg = <0 0x942f0000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		dsp_vdev0vring1: vdev0vring1@942f8000 {
-+			reg = <0 0x942f8000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		dsp_vdev0buffer: vdev0buffer@94300000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x94300000 0 0x100000>;
-+			no-map;
-+		};
- 	};
- 
- 	pmu {
+> Regards,
+> Bjorn
+
 -- 
-2.17.1
-
+மணிவண்ணன் சதாசிவம்
