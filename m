@@ -2,136 +2,143 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59661CD68ED
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Oct 2023 06:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC86CD68E8
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Oct 2023 09:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442248AbjJJG3R (ORCPT
+        id S229529AbjJJJJy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 Oct 2023 02:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43240 "EHLO
+        Tue, 10 Oct 2023 05:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442233AbjJJG3Q (ORCPT
+        with ESMTP id S229516AbjJJJJx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 Oct 2023 02:29:16 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E95A791;
-        Mon,  9 Oct 2023 23:29:14 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 39A06bmO016239;
-        Tue, 10 Oct 2023 08:28:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-        message-id:date:mime-version:subject:to:cc:references:from
-        :in-reply-to:content-type:content-transfer-encoding; s=
-        selector1; bh=ygQRlf3Hn9wsw07l8Czu/bcaaMX5S5BP/kxw/s8CccE=; b=QN
-        F6Y69xofXZpvB6tOhxcu/nE9KGtYsGNEfkm7/XmIWRbb3yXQ/72bbYx9RIcG95gp
-        ecifLHDfsSd43j44zUkAscjk3HiOzCh48Mlr1CFNL/eEsTFcdPNtoJ4iWfDLW91K
-        BLUNNl0GoHHoAhzvjgX1A03T8PyysGWnhGw19my9OEFL/8YvMNZl6AhohsJH/2G3
-        QnRlmKPYeiA4dJYI2WO24KA+t+31VW+hSgML4Q9MnvXd0CZf3V/XwThsf1HiwvzR
-        bw3rxGofdg2ezMVBDaglRGD9Jj5O5X3iI4UsaCgPyNLmyqStxxmwqkWg8rrJfYk8
-        c0V6CyggZgRaSwJWXPjA==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3tkhf7gbq0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Oct 2023 08:28:56 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 85CB310005E;
-        Tue, 10 Oct 2023 08:28:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3AA2E212319;
-        Tue, 10 Oct 2023 08:28:55 +0200 (CEST)
-Received: from [10.201.20.38] (10.201.20.38) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 10 Oct
- 2023 08:28:54 +0200
-Message-ID: <b6f79025-2257-f739-7e12-4e18cb4c2048@foss.st.com>
-Date:   Tue, 10 Oct 2023 08:28:54 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] remoteproc: st: Use device_get_match_data()
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
+        Tue, 10 Oct 2023 05:09:53 -0400
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2077.outbound.protection.outlook.com [40.107.105.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264FB9E;
+        Tue, 10 Oct 2023 02:09:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SUTOWzGfF0c/caZujYQt0Psdx9A3dTMKJVf+ugopRJCKvT9A2jtLRQHEfXLdI2j6sRfcWHz2McY38Uzveycjw9PSHQJmURe9gNVQyKz47AkZVuBV2Zf/KizGUdC4NB7nvNQEBPJIL99KOfArcwrVy+UAgBIvP3Rk6TfU5s+RMCTpFrlTASUUOAFrQGtlJ8c2btZ90Ny1gnik3bo4jZlS6erUod7W/Wve6jF05m0+ZLIl9iDkXco/jU/8iCZQK6McOJ6pi1JUNpPbTbZLQrGm5RAH5sb45oxpA4WrcWWItSojsqDG4SaKzehzjYfYT4T4bl0PLNG/IshVphlZqwdYfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pJUpUIVD79MuCYgfvf/E3+Yigi4UFkQOTEFPfojDDF8=;
+ b=LThaOcdfFOSD9ZrICCf2arXtLlLn3v/7hPROCkcS+gb6xht21LA/VAQJV3M/0mXDwqelLmH/yJMoe0KBicdFPXuICBPH+0E8NtAYQs+SzSu47PVATI4702AidlQshLoshc2pvO4dDfwZMvVciSwmKXyTVMxapGizje7FE5wQaCcYvI0En1vUnKHJ+ySO1L5vSEGeSKHdXpADRHLwL6vaKNhOcwiHGCfsP9Oa3V/L7zf3TcJaZf5rz7AvsywpfiuKw5bJZTHOVm2zQj0dUqLmsksFF8+F5JiSS45NVk+Cc9bPGXwURlsgbHm+znDSl7Q9NehL/2BlUhz2uHYPgW9uEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pJUpUIVD79MuCYgfvf/E3+Yigi4UFkQOTEFPfojDDF8=;
+ b=GkFl3IJNlOw/ofXAhMTha71ABChjKbawwZV9WOTK9bmqRdNvVtsAovbwqnDFlwGC8/S4P6SLOMU22AWlQB5imFCGhGx7ZGs3y//kcAoPK0FEJ/oL2AXuDKIpupv87tcHLNPWM7oMCq5dgEIhy9D772sIc3KokQF5JwIJBTFYvN0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
+ by PAXPR04MB9059.eurprd04.prod.outlook.com (2603:10a6:102:220::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.36; Tue, 10 Oct
+ 2023 09:09:48 +0000
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::ad2:49f8:14b:25c7]) by DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::ad2:49f8:14b:25c7%7]) with mapi id 15.20.6863.032; Tue, 10 Oct 2023
+ 09:09:47 +0000
+From:   "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20231009211356.3242037-10-robh@kernel.org>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20231009211356.3242037-10-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.20.38]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-10_04,2023-10-09_01,2023-05-22_02
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+Subject: [PATCH v3 0/2] Rpmsg support for i.MX DSP with resource table
+Date:   Tue, 10 Oct 2023 12:09:27 +0300
+Message-Id: <20231010090929.4371-1-iuliana.prodan@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P195CA0054.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:65a::14) To DU2PR04MB8774.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::21)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|PAXPR04MB9059:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2697c9fc-cafb-4b0a-2c15-08dbc970a6eb
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BOiYTjWKUCbYAyBtDpMyrxvAmBO82qywdakbLs/QHZBpPqXwdl1VG1gB2R2fxrimKhvL7u/3vYBm4I6t8HR4lrgyqZfgKExEudwFKQvoCXsUbScjhizM6zMxCnosUCMBFbE4p5P6cItEhyYLNBjYyO/Su1080eP9S1QS4brD2nvdZGkfLUJvW6lHntq+EdUUtZ0aP1JhqIfkIA3z7pjd5F+mXgBTSMH1oUiutXT5EWBkeRRdq6TgyfJyvQhsXgwpnWOs4zIUtKOXlz7qec009HTzDug7s1e5tu922xUzOgywGHCu+vA3AJKZSqnEPNF88MaFCS83qpwrnfxaw5wwljv1cbEV7tYHBXH0UdqOKdNP3aG/1nM7fbJr9M0OkVFAC8Ay7dGOr5rOssylirrmjWKBsgH4DaXKzDQc3KFSNdeLrqTbEFQvNqy32SqTL8xN+adNM/fDxCB9036SQu0AlgCfqwxU+YF7MGF6UrvwBC6MlyWa8Wlr4WnfNP4oB3gAWWYM5jDlIl/DKR5Lwb8I8/5R0R7v9Xec6v2XQKuGSLZfpIKzxjTyNk7XdrHDB8qdbbwymZE39cNE5/jPnhdqtK5t8NISgHOHtyGNKjjuJ53rNjVLyHmDwK53xgvBnQ5+4BZV4giyquf5x+lAcGYp2w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(136003)(396003)(39860400002)(376002)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(921005)(86362001)(38100700002)(38350700002)(2906002)(52116002)(478600001)(6486002)(41300700001)(6512007)(4744005)(4326008)(6506007)(5660300002)(8936002)(316002)(2616005)(83380400001)(1076003)(66476007)(66556008)(66946007)(7416002)(8676002)(6666004)(110136005)(54906003)(26005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ninyk1h4UCoZ27CDkdztpqZkO7E+pIrmhpT2IEFAHFYeaOTTInelaBS6rkr9?=
+ =?us-ascii?Q?n2+SeZgf9D0315r14Wz52Xzfqhawg4t/LJRjlbrvGSZ/0qKE8rq87l2lCcV0?=
+ =?us-ascii?Q?6VCpk+cRxQqwDDPb2n0uallURaktl1mOUEQ5o3xvbNLt+PxOgcbSDL+JGr7n?=
+ =?us-ascii?Q?O2qc4GsTknTEn/VgQVWkGf0LgMJkJ+FlCjfIDoW0OFJajT5DvRJxk2yU41G3?=
+ =?us-ascii?Q?tSAZY9Pl/byUWvQK787xuAUbl6vZPXRILufbYBY8eAtuVWJq1kGK3G/+Kvn/?=
+ =?us-ascii?Q?E4tf4cv5btwim+QdHVHC9gCnwP3QGngaDKfiFUzagDvj6k0LWFyeVQp+TYKq?=
+ =?us-ascii?Q?7vJDblDPdsrz2QotvORrUJ2CMdmR5GyNKnr+ifDp3q/yH+OnCdFP7GUAinS4?=
+ =?us-ascii?Q?wieyiPT+2mVR35u918+K1yG7odv8USf4+6JSkwKFB+/cn2yhU1DPcLYruoRE?=
+ =?us-ascii?Q?KeEc/KgqZsR4K5qI8R5IzIht/Ddmhqjg8euB/Rc+GYiHeEAIe1FylPO9LN/K?=
+ =?us-ascii?Q?AjWop8wGtMbiz8z+FDAJiG7OwLUtCJSEHWjV6vLsDJtTIokTF2rQPP/ZXTtQ?=
+ =?us-ascii?Q?lS3Wt9PEdJJek702niE610aZfcnLGwyrOICMe65JTFMJWi4J0Klv9TkjTS64?=
+ =?us-ascii?Q?VEjIPIHc8Scfr/ahBf8EP59ceKOl92wJPvLizZYF7m0zWElc4v4O4hEuZn6P?=
+ =?us-ascii?Q?7SfTgZlfzWpIxyGWDWbdhRD2KajQ26VNiQlxT6oVqi7WNpvew9k5i3+QpWsu?=
+ =?us-ascii?Q?6ExXNTGjDyU5fGyfNAg7veDVJzUwDUYcQsPYQv5FdBiMiw7ZFklGsSuo2TVl?=
+ =?us-ascii?Q?EuO6O7DWQkrMloAVw9hNdtO1CVu9uVp0JULpxRbzJXxxyIPhHN/9n+9AwOoR?=
+ =?us-ascii?Q?etzYKvsWrMV5FEYLXlHqyUtf8cJ12EeHo2vJsXcvpBAwzuAinGoQDXblzcLX?=
+ =?us-ascii?Q?Y+ymV/Emnj6abri+X0OOYPd7FlCVIdIqW/+7Yu9umRqCJujWfQ4wqVQ+faul?=
+ =?us-ascii?Q?HneZh1jRrT+Ck1LA3jCh/XxD0YDfpEwkj5r3soSNA9y2zUPhp6WZWSj6h9w3?=
+ =?us-ascii?Q?y4wc87YSZmElsIK3WeOZJ5XMt6xQjQEaq3NP7CULd/4CV5J87iUzjP1/SB64?=
+ =?us-ascii?Q?lDQaun4dE5q1DJD5rM6rjLQ6RMoFA/IzCZlrdC39OAbGVrMPsTVWI5P0huBz?=
+ =?us-ascii?Q?A+V2FPV85B57QSCa+6R8eWU4lyFA7AhqjFos7aDaLsA1QTmqIUIKYCAxMoNc?=
+ =?us-ascii?Q?0NxWd11FATNU0reTbKppLKppWUfssEwqwNjqtiT0JSl7hpNFmmoPtIKeC7uP?=
+ =?us-ascii?Q?CzKUEs5VwCHKmA8sMQ/qr5ksAfLKXAB7SYZ34rmk2Ebupe7GTLAKuB3PhJxJ?=
+ =?us-ascii?Q?DgXF7ewuV7GLed0gnTt0QcKs/xMm68LBRZKZ95jLygKWFxH3z6ebr+QymtL6?=
+ =?us-ascii?Q?Rg5VQdzxr1DTa8LA1d+0s237+pS3gDls/5qVOAlv/DI9C+RqxYVqmYo2PK4K?=
+ =?us-ascii?Q?zouJejIN/B71NUdQrlsMtQNKR/QpxfkDIWGOEOrcZhwN3DQv2+X3slui4Mod?=
+ =?us-ascii?Q?FVL5IcXbT+pfM7mHtvCCO4SjQPgDOw3rWhwzPbphryWCYcIM3aFY0kn7HoWG?=
+ =?us-ascii?Q?VQ=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2697c9fc-cafb-4b0a-2c15-08dbc970a6eb
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2023 09:09:47.8922
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qWeTTzGius3zZ++fwLMCqmawqZFIGvCyq8V2n+IYWzuj6snkr1IU/lxl2wilIWWGeQY0gGNCUQFdqs5dN7DGZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9059
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Iuliana Prodan <iuliana.prodan@nxp.com>
 
+These patches are needed in order to support rpmsg on DSP when a
+resource table is available.
 
-On 10/9/23 23:13, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/remoteproc/st_remoteproc.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index e3ce01d98b4c..b0638f984842 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -16,10 +16,9 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
->  #include <linux/reset.h>
-> @@ -341,7 +340,6 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
->  static int st_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	const struct of_device_id *match;
->  	struct st_rproc *ddata;
->  	struct device_node *np = dev->of_node;
->  	struct rproc *rproc;
-> @@ -349,19 +347,15 @@ static int st_rproc_probe(struct platform_device *pdev)
->  	int enabled;
->  	int ret, i;
->  
-> -	match = of_match_device(st_rproc_match, dev);
-> -	if (!match || !match->data) {
-> -		dev_err(dev, "No device match found\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
->  	if (!rproc)
->  		return -ENOMEM;
->  
->  	rproc->has_iommu = false;
->  	ddata = rproc->priv;
-> -	ddata->config = (struct st_rproc_config *)match->data;
-> +	ddata->config = (struct st_rproc_config *)device_get_match_data(dev);
-> +	if (!ddata->config)
-> +		goto free_rproc;
->  
->  	platform_set_drvdata(pdev, rproc);
->  
+Changes since v2:
+ - add newline between nodes in dtsi (patch 2/2)
 
+Changes since v1:
+ - add missing bracket in dtsi (patch 2/2)
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+Iuliana Prodan (2):
+  remoteproc: imx_dsp_rproc: add mandatory find_loaded_rsc_table op
+  arm64: dts: imx8mp: add reserve-memory nodes for DSP
 
-Thanks
-Patrice
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
+ drivers/remoteproc/imx_dsp_rproc.c        |  1 +
+ 2 files changed, 17 insertions(+)
+
+-- 
+2.17.1
+
