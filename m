@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F426C46CA1
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 04:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9C4CDB482
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 04:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjJMEXp (ORCPT
+        id S229607AbjJMEXs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 00:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51288 "EHLO
+        Fri, 13 Oct 2023 00:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjJMEXm (ORCPT
+        with ESMTP id S229634AbjJMEXq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Oct 2023 00:23:42 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2085.outbound.protection.outlook.com [40.107.212.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E99FE4;
-        Thu, 12 Oct 2023 21:23:40 -0700 (PDT)
+        Fri, 13 Oct 2023 00:23:46 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2072.outbound.protection.outlook.com [40.107.102.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC979C9;
+        Thu, 12 Oct 2023 21:23:43 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NbO4unxnW466ctp9qcbCdhrh82PKxqmvNq3m/xXH3ToAX5qVnotqg9La6hwJk1nCoovFQsXq7avO0e0kOijdAfgLeWXZdzY7Bo60U5j8IAJL1T6IP7C/TGeS1oNSF6dMNXzgxg5Sb843gIzGfsU769HYZs75toGvFyHaQjN+Ql8JFJ4auUrzFVpBf8EBV76/8q1AlvWWf/TpwHDXekV3NR4slAf5RB/8CH85YbpjU09SgWlqnBJTM8uL4GcIHIAaNDcxfWxoz8U6AwDCiwNRVffCnAf+68S93n598CZYQUykfZfIZhR0dbVP8hX/yWTI9sOB9QVg7IQsE4HEJZYhqQ==
+ b=duXgJtGLuxLlNY7YPC9+OJTFy+UD8AnFy3cjxq//0hKvE85zumbKQR+hyC0+5e3rbj/ALOpwstF0CEHeAHI9VrgMlvs6LLry4RVToWpbihb0r3ansbXCuO2CsolWG9HZOj7LAV4MytK3aVbfncaeN3tSFU1loy8Tfxie0ADGVS3PqntyluyBSLY3tmmAato5DzZoA1a9zuwGoSfAZHm+GzR+ywFSIj1Vgytuwnz38vGAfPtMmSP5gGKZgDAOHKA1GhdUWOl5XCz5TlgytL3W2Iqu4Ihc/bZ1rrucWWHSTVLm2AK9ZL1ZBAbhQmliq5vkIHPSxqs5ZKp/PiK96MaS7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iq269o5QOQbJhUiqAzKMEPjpeVXDjObs0TmQ+z0/BiA=;
- b=OicvfznFSVcKu2pOFD+CWPgBlkgP73Fjup+Ga8S+RUcqNHzqLAuxu/QdgbuuSpC+4BwBbl4YcLfSof2OHZjt/IZLftew4sWq8IcejPSAh4cLW9N72B4z2iEgAbCvBLUahi5R73wsMaizTWtxie2SRLIB50LSdb2d5PQJAE3j539CfUF2s4XPguimBq44crNxeSOmkzSl8fUD2N2OgVkEg86l9G3unsaPoW194dpM2lY9/89ZLq12JcDkl6J2980hw/e6ee6RBIMZOrFvwM2sxpKVUlpxFJGpIiHxqSJuzWtv/zl+fvVAnCGykMw3sh9SI7JStUGo5Qfw/5cluxYqEA==
+ bh=5dBzDIOayrQB/L6Op8Ns7ByE7/nkLBipyWaEDCr81qY=;
+ b=mrUVBupicVZL7HDnBR98pX4o/bn906lfM8/aDPvIc+FdthNqxiuPiCWgxOAFSC/sCClg/7gQXYMc6MK4yZ754/09/d6ATmfIKOFp46vEL80GdeEVxawVNRngFHwkh+9sNDx350B/RojgqXp+kY6/zSsMqEY1FyX3gFgUvnkqLlvkLZ4oXhdv/M5gEJLosHzHLHsdeRtuOzGXwbHPKdy719NDBkKWQeE2LFLeSUtS4EuGAxJ/If2+l1008aqitIPTLFT1136gWM0jxOqd8uwJ+LvILQ58KPJeYhRbiMaUQ11aHS0JHik3c7s7OIWnHvdhYrBcvMkgSlg175DLO+rYxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iq269o5QOQbJhUiqAzKMEPjpeVXDjObs0TmQ+z0/BiA=;
- b=b4YkaWEcjgPO05AZNuBquNqtJs6MrW6yIb1VMZ8CAYSWdURlVn0EusLXG+vF0u2Zxdd5MELK7dIxHhCLVlHVIlB3ueIx0u64qVGqQ43GQv8omr129V3x9dtw7RYRfNDqQ9brPz2nag/wtynkD5o0I3g8Y2e3rB2csfCNNsd87O0=
-Received: from CY5PR15CA0126.namprd15.prod.outlook.com (2603:10b6:930:68::16)
- by SJ2PR12MB8183.namprd12.prod.outlook.com (2603:10b6:a03:4f4::7) with
+ bh=5dBzDIOayrQB/L6Op8Ns7ByE7/nkLBipyWaEDCr81qY=;
+ b=PxmLbYILFK0l/p1IE51l/WTGTxvzV89HSBC4eLq0MoLOeKMSbgdAM0EZdkd/NWBMJpRH76AccBpYit3mxBW8fXdaZEvq9w4XailLT4MbKF/UxORLZ5J5Q1rXzDu0rL1JIZcAnKUUyqtIv0mCaS4mIRH5uVz5vbjOxXQ5xjbgPqk=
+Received: from CY5PR15CA0131.namprd15.prod.outlook.com (2603:10b6:930:68::22)
+ by DM4PR12MB6255.namprd12.prod.outlook.com (2603:10b6:8:a4::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.45; Fri, 13 Oct
- 2023 04:23:37 +0000
+ 2023 04:23:40 +0000
 Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:930:68:cafe::4d) by CY5PR15CA0126.outlook.office365.com
- (2603:10b6:930:68::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.27 via Frontend
- Transport; Fri, 13 Oct 2023 04:23:37 +0000
+ (2603:10b6:930:68:cafe::81) by CY5PR15CA0131.outlook.office365.com
+ (2603:10b6:930:68::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.29 via Frontend
+ Transport; Fri, 13 Oct 2023 04:23:40 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -50,18 +50,18 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
  CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6838.22 via Frontend Transport; Fri, 13 Oct 2023 04:23:37 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
+ 15.20.6838.22 via Frontend Transport; Fri, 13 Oct 2023 04:23:40 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 12 Oct
- 2023 23:23:36 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 23:23:39 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 12 Oct
- 2023 21:23:36 -0700
+ 2023 23:23:39 -0500
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
- Transport; Thu, 12 Oct 2023 23:23:35 -0500
+ Transport; Thu, 12 Oct 2023 23:23:38 -0500
 From:   Tanmay Shah <tanmay.shah@amd.com>
 To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
         <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
@@ -69,12 +69,10 @@ To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
         <ben.levinsky@amd.com>, <tanmay.shah@amd.com>
 CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 1/4] dt-bindings: remoteproc: add Tightly Coupled Memory (TCM) bindings
-Date:   Thu, 12 Oct 2023 21:22:26 -0700
-Message-ID: <20231013042229.3954527-2-tanmay.shah@amd.com>
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 4/4] remoteproc: zynqmp: parse TCM from device tree
+Date:   Thu, 12 Oct 2023 21:22:29 -0700
+Message-ID: <20231013042229.3954527-5-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231013042229.3954527-1-tanmay.shah@amd.com>
 References: <20231013042229.3954527-1-tanmay.shah@amd.com>
@@ -83,229 +81,196 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|SJ2PR12MB8183:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bf07303-700f-4a91-536a-08dbcba42bd0
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|DM4PR12MB6255:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa903dc4-07ea-4047-8ae2-08dbcba42dce
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qBuNNT2NRBeeYjp6kYVbNWVK7Sq4cjD3fPF+pnj9qBbSLl87UAcyWma94WaSPgZWmUYmJFeUCclKxPszH4blDCmMgcCVWQjPei5nT8PYxMoZKOR+22DnQfoGIPBid6t2jgDKsZ8o8agfd4Zu/i1DUUEQyX56GXDTCdiRaoBQg9HXPnInKhO9fkGfXateFf4ykdJKGyMR4T8xvZzPr3znlY7bPa9veBTCaW7XcJAqCFltoqEL0CBKgw1yVfXKy5V0ikrzCHwgFARzYHMxKBznqI4wQ+UhaqBOQQAH5WZQifEWNSJVUmJ1JdYHkDz64h3BF1e5U+Vs6tIr0Bm6Z2y2JF6JDVLsGWI1ISwjouVoqxSqN5gK7EWjLvWtkvgT9IdFTIalxJNCBApS9ou0pke64MGoDU4s42IL0cyvIv5ZFtdTJFhhESkLjPzqbS7TEPW2dGeunQso3Mx+i5HGr4ZrJy3lNyID9fnvelx76fXCUEYb78sPxEDu/se0jFPaab7oSm+rKL3GJHUXUpPcx/saoN3GLuaEPfK2e4VXJY8p4iXolVAnSSd+6vMq1v6BkCNiob+vSB6VeHbCsTfybLVTriL/rmeIcwvXuEKsjCFtlwV87y7Kb97TaO+3lqPEg6FrJCdYfQjEGyORNnZdBdAqwFCFZgKyLtBbCAxLkzqYxmDLiri57qu+SxHIeQ2h64dCU3/pfQWYDoUFooeH3ewFEtO2upKk+eELtOaXlYtdbisaSjcdDNXxBJd5gV2EQsOF84dxmj5oDXBkiWOPZPs2nA==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(39860400002)(136003)(396003)(230922051799003)(186009)(82310400011)(451199024)(1800799009)(64100799003)(46966006)(40470700004)(36840700001)(2906002)(7416002)(40460700003)(36756003)(36860700001)(47076005)(40480700001)(86362001)(356005)(81166007)(82740400003)(1076003)(316002)(41300700001)(70586007)(2616005)(110136005)(70206006)(54906003)(26005)(6666004)(478600001)(7049001)(44832011)(5660300002)(83380400001)(336012)(426003)(4326008)(8676002)(8936002)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: xdfPLn93pr0LFJAs7GCwNmNM8u9sc5FuAbvwGl8vuF0/+HG4wbQGBc++ZgnAiXbB+OWAkRQtWpQcG4e8Ob4b7s+4nMt9kOfHYd0Yi++UreKK1HA4LmPN9Kc/1GCN9jMGrz3xwFWQauGIYpUrDEtbj76jqqgRQHnAzR6h2R36xgzPAPi4mu1iw0ONnUvWs7XBWOZp35zpMTVv4lwT8yMZbJj2VA3ctbXj7/Aivy7MF1pwdQ6I5xzMHAog3js65juYB73z/nyNXCha83ml+0NvBr/DxwLSgAa8jxmWR60teSgcQOp923UnaH50UjAZF2vsQMODfQWhNo5qhfl0WfRAe+aBal9iT5tOl2mbcl4atkRVKtu6cCsB+7kdZrnUffL/7p3AAYN4IuLmKJtNnEn80v7A+h1oJAIDTKDnM0N4rDavW0xJUN8f/90Bc+5OvwaI5rBuVsn/cXA2NXT4GqYnhHLNI4FXTyac1P2D6juuo6VCz+JE3UuT6eVVg69gMLJaAu9DWEyVSvglh8sfb6OpJ2BaqF1HYQbT2qjdnGQ2FYzjZcOx/fS+WTivUyxrvq603aZJH9OkUhBBEU6BTii7nKw8729qhajjllg6JeGPEEbAqHV2DLJ+C2mqQJ/pZFGGq+Cv7bpAFhwA8VpAXvnd41PF0UXDDtg3fCOJX0AohGJfvWN4USkYl0bvjK14LK5izOHtcwNEBr55t0RQI353pehwVO0+y90Rctwvwqlf/ji5xAoSaUP6mE5YNydXl83trncKiVQSXt660uzi1Jo33Q==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(346002)(39860400002)(136003)(376002)(396003)(230922051799003)(1800799009)(186009)(82310400011)(451199024)(64100799003)(40470700004)(36840700001)(46966006)(6666004)(2906002)(40460700003)(478600001)(41300700001)(4326008)(8936002)(8676002)(5660300002)(66899024)(40480700001)(44832011)(70586007)(54906003)(70206006)(110136005)(316002)(36756003)(83380400001)(47076005)(26005)(82740400003)(336012)(426003)(36860700001)(2616005)(81166007)(7049001)(356005)(1076003)(86362001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2023 04:23:37.2111
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2023 04:23:40.5549
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bf07303-700f-4a91-536a-08dbcba42bd0
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa903dc4-07ea-4047-8ae2-08dbcba42dce
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000FCBE.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8183
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6255
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+ZynqMP TCM information is fixed in driver. Now ZynqMP TCM information
+is available in device-tree. Parse TCM information in driver
+as per new bindings.
 
-Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-UltraScale+ platform. It will help in defining TCM in device-tree
-and make it's access platform agnostic and data-driven.
-
-Tightly-coupled memories(TCMs) are low-latency memory that provides
-predictable instruction execution and predictable data load/store
-timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
-banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
-
-The TCM resources(reg, reg-names and power-domain) are documented for
-each TCM in the R5 node. The reg and reg-names are made as required
-properties as we don't want to hardcode TCM addresses for future
-platforms and for zu+ legacy implementation will ensure that the
-old dts w/o reg/reg-names works and stable ABI is maintained.
-
-It also extends the examples for TCM split and lockstep modes.
-
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 131 +++++++++++++++---
- 1 file changed, 113 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-index 78aac69f1060..9ecd63ea1b38 100644
---- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-@@ -20,6 +20,17 @@ properties:
-   compatible:
-     const: xlnx,zynqmp-r5fss
+Changes in v6:
+  - Missing . at the end of the commit message
+  - remove redundant initialization of variables
+  - remove fail_tcm label and relevant code to free memory
+    acquired using devm_* API. As this will be freed when device free it
+  - add extra check to see if "reg" property is supported or not
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 106 ++++++++++++++++++++++--
+ 1 file changed, 98 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 04e95d880184..8c3575970c1d 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -75,8 +75,8 @@ struct mbox_info {
+ };
  
-+  "#address-cells":
-+    const: 2
-+
-+  "#size-cells":
-+    const: 2
-+
-+  ranges:
-+    description: |
-+      Standard ranges definition providing address translations for
-+      local R5F TCM address spaces to bus addresses.
-+
-   xlnx,cluster-mode:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [0, 1, 2]
-@@ -37,7 +48,7 @@ properties:
-       2: single cpu mode
+ /*
+- * Hardcoded TCM bank values. This will be removed once TCM bindings are
+- * accepted for system-dt specifications and upstreamed in linux kernel
++ * Hardcoded TCM bank values. This will stay in driver to maintain backward
++ * compatibility with device-tree that does not have TCM information.
+  */
+ static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
+ 	{0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
+@@ -613,7 +613,8 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 						 bank_name);
+ 		if (!rproc_mem) {
+ 			ret = -ENOMEM;
+-			zynqmp_pm_release_node(pm_domain_id);
++			if (pm_domain_id)
++				zynqmp_pm_release_node(pm_domain_id);
+ 			goto release_tcm_split;
+ 		}
  
- patternProperties:
--  "^r5f-[a-f0-9]+$":
-+  "^r5f@[0-9a-f]+$":
-     type: object
-     description: |
-       The RPU is located in the Low Power Domain of the Processor Subsystem.
-@@ -54,8 +65,19 @@ patternProperties:
-       compatible:
-         const: xlnx,zynqmp-r5f
+@@ -626,7 +627,8 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 	/* If failed, Turn off all TCM banks turned on before */
+ 	for (i--; i >= 0; i--) {
+ 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+-		zynqmp_pm_release_node(pm_domain_id);
++		if (pm_domain_id)
++			zynqmp_pm_release_node(pm_domain_id);
+ 	}
+ 	return ret;
+ }
+@@ -940,6 +942,8 @@ static int zynqmp_r5_add_pm_domains(struct rproc *rproc)
+ 		}
+ 	}
  
-+      reg:
-+        items:
-+          - description: ATCM internal memory region
-+          - description: BTCM internal memory region
++	return 0;
 +
-+      reg-names:
-+        items:
-+          - const: atcm
-+          - const: btcm
-+
-       power-domains:
--        maxItems: 1
-+        minItems: 1
-+        maxItems: 3
+ fail_add_pm_domains_lockstep:
+ 	while (j >= 1) {
+ 		if (r5_core->pm_dev_link2 && !IS_ERR_OR_NULL(r5_core->pm_dev_link2[j]))
+@@ -1102,6 +1106,83 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+ 	return ERR_PTR(ret);
+ }
  
-       mboxes:
-         minItems: 1
-@@ -102,34 +124,107 @@ patternProperties:
-     required:
-       - compatible
-       - power-domains
-+      - reg
-+      - reg-names
++static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
++{
++	struct zynqmp_r5_core *r5_core;
++	int i, j, tcm_bank_count, ret;
++	struct platform_device *cpdev;
++	struct mem_bank_data *tcm;
++	struct device_node *np;
++	struct resource *res;
++	u64 abs_addr, size;
++	struct device *dev;
++
++	for (i = 0; i < cluster->core_count; i++) {
++		r5_core = cluster->r5_cores[i];
++		dev = r5_core->dev;
++		np = dev_of_node(dev);
++
++		/* we have address cell 2 and size cell as 2 */
++		ret = of_property_count_elems_of_size(np, "reg",
++						      4 * sizeof(u32));
++		if (ret <= 0) {
++			dev_err(dev, "can't get reg property err %d\n", ret);
++			return -EINVAL;
++		}
++
++		tcm_bank_count = ret;
++
++		r5_core->tcm_banks = devm_kcalloc(dev, tcm_bank_count,
++						  sizeof(struct mem_bank_data *),
++						  GFP_KERNEL);
++		if (!r5_core->tcm_banks)
++			ret = -ENOMEM;
++
++		r5_core->tcm_bank_count = tcm_bank_count;
++		for (j = 0; j < tcm_bank_count; j++) {
++			tcm = devm_kzalloc(dev, sizeof(struct mem_bank_data *),
++					   GFP_KERNEL);
++			if (!tcm)
++				return -ENOMEM;
++
++			r5_core->tcm_banks[j] = tcm;
++
++			/* get tcm address without translation */
++			ret = of_property_read_reg(np, j, &abs_addr, &size);
++			if (ret) {
++				dev_err(dev, "failed to get reg property\n");
++				return ret;
++			}
++
++			/*
++			 * remote processor can address only 32 bits
++			 * so convert 64-bits into 32-bits. This will discard
++			 * any unwanted upper 32-bits.
++			 */
++			tcm->da = (u32)abs_addr;
++			tcm->size = (u32)size;
++
++			cpdev = to_platform_device(dev);
++			res = platform_get_resource(cpdev, IORESOURCE_MEM, j);
++			if (!res) {
++				dev_err(dev, "failed to get tcm resource\n");
++				return -EINVAL;
++			}
++
++			tcm->addr = (u32)res->start;
++			tcm->bank_name = (char *)res->name;
++			res = devm_request_mem_region(dev, tcm->addr, tcm->size,
++						      tcm->bank_name);
++			if (!res) {
++				dev_err(dev, "failed to request tcm resource\n");
++				return -EINVAL;
++			}
++		}
++	}
++
++	return 0;
++}
++
+ /**
+  * zynqmp_r5_get_tcm_node()
+  * Ideally this function should parse tcm node and store information
+@@ -1180,10 +1261,19 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+ 	struct zynqmp_r5_core *r5_core;
+ 	int ret, i;
  
-     unevaluatedProperties: false
+-	ret = zynqmp_r5_get_tcm_node(cluster);
+-	if (ret < 0) {
+-		dev_err(dev, "can't get tcm node, err %d\n", ret);
+-		return ret;
++	r5_core = cluster->r5_cores[0];
++	if (of_find_property(r5_core->np, "reg", NULL)) {
++		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
++		if (ret) {
++			dev_err(dev, "can't get tcm node from dt, err %d\n", ret);
++			return ret;
++		}
++	} else {
++		ret = zynqmp_r5_get_tcm_node(cluster);
++		if (ret < 0) {
++			dev_err(dev, "can't get tcm node, err %d\n", ret);
++			return ret;
++		}
+ 	}
  
- required:
-   - compatible
-+  - "#address-cells"
-+  - "#size-cells"
-+  - ranges
- 
- additionalProperties: false
- 
- examples:
-   - |
--    remoteproc {
--        compatible = "xlnx,zynqmp-r5fss";
--        xlnx,cluster-mode = <1>;
--
--        r5f-0 {
--            compatible = "xlnx,zynqmp-r5f";
--            power-domains = <&zynqmp_firmware 0x7>;
--            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
--            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
--            mbox-names = "tx", "rx";
-+    #include <dt-bindings/power/xlnx-zynqmp-power.h>
-+
-+    //Split mode configuration
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        remoteproc@ffe00000 {
-+            compatible = "xlnx,zynqmp-r5fss";
-+            xlnx,cluster-mode = <0>;
-+
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
-+                     <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
-+                     <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
-+                     <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
-+
-+            r5f@0 {
-+                compatible = "xlnx,zynqmp-r5f";
-+                reg = <0x0 0x0 0x0 0x10000>, <0x0 0x20000 0x0 0x10000>;
-+                reg-names = "atcm", "btcm";
-+                power-domains = <&zynqmp_firmware PD_RPU_0>,
-+                                <&zynqmp_firmware PD_R5_0_ATCM>,
-+                                <&zynqmp_firmware PD_R5_0_BTCM>;
-+                memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>,
-+                                <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-+                mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-+                mbox-names = "tx", "rx";
-+            };
-+
-+            r5f@1 {
-+                compatible = "xlnx,zynqmp-r5f";
-+                reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
-+                reg-names = "atcm", "btcm";
-+                power-domains = <&zynqmp_firmware PD_RPU_1>,
-+                                <&zynqmp_firmware PD_R5_1_ATCM>,
-+                                <&zynqmp_firmware PD_R5_1_BTCM>;
-+                memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>,
-+                                <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-+                mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-+                mbox-names = "tx", "rx";
-+            };
-         };
-+    };
- 
--        r5f-1 {
--            compatible = "xlnx,zynqmp-r5f";
--            power-domains = <&zynqmp_firmware 0x8>;
--            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
--            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
--            mbox-names = "tx", "rx";
-+  - |
-+    //Lockstep configuration
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        remoteproc@ffe00000 {
-+            compatible = "xlnx,zynqmp-r5fss";
-+            xlnx,cluster-mode = <1>;
-+
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x20000>,
-+                     <0x0 0x20000 0x0 0xffe20000 0x0 0x20000>;
-+
-+            r5f@0 {
-+                compatible = "xlnx,zynqmp-r5f";
-+                reg = <0x0 0x0 0x0 0x20000>, <0x0 0x20000 0x0 0x20000>;
-+                reg-names = "atcm", "btcm";
-+                power-domains = <&zynqmp_firmware PD_RPU_0>,
-+                                <&zynqmp_firmware PD_R5_0_ATCM>,
-+                                <&zynqmp_firmware PD_R5_0_BTCM>;
-+                memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>,
-+                                <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-+                mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-+                mbox-names = "tx", "rx";
-+            };
-+
-+            r5f@1 {
-+                compatible = "xlnx,zynqmp-r5f";
-+                reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
-+                reg-names = "atcm", "btcm";
-+                power-domains = <&zynqmp_firmware PD_RPU_1>,
-+                                <&zynqmp_firmware PD_R5_1_ATCM>,
-+                                <&zynqmp_firmware PD_R5_1_BTCM>;
-+                memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>,
-+                                <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-+                mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-+                mbox-names = "tx", "rx";
-+            };
-         };
-     };
- ...
+ 	for (i = 0; i < cluster->core_count; i++) {
 -- 
 2.25.1
 
