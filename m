@@ -2,462 +2,192 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34FDCDB484
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 04:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB479CDB47E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 08:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbjJMEXt (ORCPT
+        id S229900AbjJMIf3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 00:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51336 "EHLO
+        Fri, 13 Oct 2023 04:35:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjJMEXr (ORCPT
+        with ESMTP id S230073AbjJMIf1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Oct 2023 00:23:47 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2044.outbound.protection.outlook.com [40.107.212.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DA5D8;
-        Thu, 12 Oct 2023 21:23:45 -0700 (PDT)
+        Fri, 13 Oct 2023 04:35:27 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2080.outbound.protection.outlook.com [40.107.8.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D99EBF;
+        Fri, 13 Oct 2023 01:35:25 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z/YI4a8gS9e14P0w6BiJDIA0llR5ioUXLIJG8wzostDmIvlNvx4NDcMaSNPcyFihHb8a2H4f2Jn0gXKkKeTCf4mXb5SPTCo/2VnLSpzyw/TLcuxEdXiJnOl+U76e59nPbf7K9u/aeQwB8ABwP3uxuBOT6aLGt5Q7VF8nVj4bA6FMSulmsNTBdVpKLcrkVkmGJsw2k9c1NN2b/kRQIQq2DbRLjYCDVj0354r8wz7smmA98HjCkJSZddEUjyEnmnZ8Qxl1NSsGcQ2FUMxT3ZXOIpRC4zs5ohJ9MpUF7FI1qtALKtMTQfbZKlaoq1ZbwAPs1BwEwwBt5YIuDV/q/wROug==
+ b=YB5WyyHXk8ozcWdZcq1es442EI5yiw/hn1BMErWlKebfzVpAP+2k9xw7r8GW/OIfrSwzCL61eeQNpZEW4bu/KYzAhJpmZHJV2cgD0Lp9H7fSvfgzD7CNewsJCNzTarkV2UTAA7LelPfh/hbtoyF7B63SWUiYLHwDBDLfUrFiW5Dzfc+uslh5I0c0rgfKrGuV8uKrcbOKf5Q6baVBb3EhPARKh5cHv8BwCbXIFIsxqkYgBkYn6YGYy5Yuw9SqwL0y9P/iS8/ZdIoQxjoeDkmNKe8Ix54Fl7+GLsT2n026y32Nx3O2ialO1XnBQgwb34OiNc60MQJ8ASH8/QC+7j3xng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nb2Ep6AX1JlfJV4/Ifz+Vp5pJQUOPG68HXv7nHQeMAw=;
- b=BtPmuUAvtVF4dHzMRoTR4AqNk6REqcZBRW3ILNTBWFU+DUjXFQ/KwD1YC5LBTQGvPZFuykThUBj2KN71sAH5RodI451bFEM6TVu7AGfe6gOhCBrJG0q/PojCOoOaduDvmbakUr3rxo5EIBYtPUYseHvar/ohE65OOPkfqzDPjWZDAHl7T4JX8B7mn4oIDcOGmpijTi9VX6qBm9mv+1JshB0kd+kcLQVhYPHtSLZg58nbb3D2a5c0a6gEGzEdyIzezdiEMmmQ5Ckchm+R1z+av8b9cu5dqNdfQeEDAojyzO7JWHg65WkndBLqHGOV7rTj6YGEeGTY8RcXiYqfnxZGQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=AuUP94naGobgFn9SQF063tw7la/NGO5cR7AdtE9flYs=;
+ b=OebQl5dKm5Y+88W0IbHlBaJ8gux7O9tFdX8Ip8w0XEaavZPR+2sjaPi0HH03x5iZzDm7L2bSUXlVdk2HhIGW9jIoNDSoiGNtAG+0vnjFi75fvWTa+90I/HXaJQtKAQagbyYibiRoLWnR2+2AwKcwOF4jnbsEaeFlyPwhdpko99vEDVAU103x/WW5IoMECWeRWKy8UBrtLLx1JWFPwqhbJQy7UVcWnFX6YagPL7lzm4c8eOdiHBEQV3kG9lpN7+8LJeVFC1ueT/pMuL0Z0kP3B9GpFMkV35G/dlsZ78SGIN1Rz890dmqK5cyF3z+LHSAN5mYmPNu+rImqz7VVAGKdhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nb2Ep6AX1JlfJV4/Ifz+Vp5pJQUOPG68HXv7nHQeMAw=;
- b=LPx1PRPnT4n3c+JoKkNnyOW2R9jOUH/squ3CTVD9rcfVVPD8dcdmFe3XaT57myBDqdyzIW58oDBkISBKhvRBSo7mHZFJ3dwRACCj5zGuiNNAgFfm0J7WUL+uUz3rFXoIP6ziWSwlQRNA/Ypc/DhXkNDk29EcCOJrMW7Bc5mrFBo=
-Received: from BL0PR1501CA0009.namprd15.prod.outlook.com
- (2603:10b6:207:17::22) by BY5PR12MB4965.namprd12.prod.outlook.com
- (2603:10b6:a03:1c4::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.45; Fri, 13 Oct
- 2023 04:23:39 +0000
-Received: from BL02EPF0001A107.namprd05.prod.outlook.com
- (2603:10b6:207:17:cafe::cd) by BL0PR1501CA0009.outlook.office365.com
- (2603:10b6:207:17::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.30 via Frontend
- Transport; Fri, 13 Oct 2023 04:23:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A107.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6838.14 via Frontend Transport; Fri, 13 Oct 2023 04:23:39 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 12 Oct
- 2023 23:23:38 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 12 Oct
- 2023 23:23:38 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
- Transport; Thu, 12 Oct 2023 23:23:37 -0500
-From:   Tanmay Shah <tanmay.shah@amd.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <michal.simek@amd.com>,
-        <ben.levinsky@amd.com>, <tanmay.shah@amd.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 3/4] remoteproc: zynqmp: add pm domains support
-Date:   Thu, 12 Oct 2023 21:22:28 -0700
-Message-ID: <20231013042229.3954527-4-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231013042229.3954527-1-tanmay.shah@amd.com>
-References: <20231013042229.3954527-1-tanmay.shah@amd.com>
+ bh=AuUP94naGobgFn9SQF063tw7la/NGO5cR7AdtE9flYs=;
+ b=Cflkhsf7IaWA8KjMRZ2FE7bJyFhAlRhd3Wv1bnXKyGpVkC4+YTWtNO6KAga6GLHWw5/iE2Aa3UKIWmwnjj/9FxKTR6ThVk5IhVrWVOHLfu6hSiX/v89b5XvY2AuqOy4OotcIJnXe8/UF1Y/NlQSuyxAN+4Pfyx+VZ1FuaZEo4h8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
+ by DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.46; Fri, 13 Oct
+ 2023 08:35:21 +0000
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::ad2:49f8:14b:25c7]) by DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::ad2:49f8:14b:25c7%7]) with mapi id 15.20.6863.046; Fri, 13 Oct 2023
+ 08:35:21 +0000
+Message-ID: <80a6a56b-4a12-99bb-acb3-94a5753b2de4@nxp.com>
+Date:   Fri, 13 Oct 2023 11:35:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 2/2] arm64: dts: imx8mp: add reserve-memory nodes for
+ DSP
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>,
+        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+References: <20231010090929.4371-1-iuliana.prodan@oss.nxp.com>
+ <20231010090929.4371-3-iuliana.prodan@oss.nxp.com>
+ <2301291.ElGaqSPkdT@steina-w>
+Content-Language: en-US
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <2301291.ElGaqSPkdT@steina-w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR02CA0202.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28f::9) To DU2PR04MB8774.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::21)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A107:EE_|BY5PR12MB4965:EE_
-X-MS-Office365-Filtering-Correlation-Id: 155f68b3-f6bb-494b-b884-08dbcba42cf3
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|DU0PR04MB9496:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc7fc941-82c6-498c-ea75-08dbcbc7566e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MkWXj1kTm7WmapAKZHlgRcFYFlcmFnibZCyA9DOFnEx72D53s78TKKkkwxnvp8WPsI3RAcQGeP3pN3jmhoBlG1BjX+4CnnNj7otVyr1cPOf2s+0JhV++qqCAE6lnKfKgkbCKleZouyZ4HZE2D8rQhPggxXhR8PzD2ztgCnmqSP5y9qOOAcrPs///7j9ghUd2OVBPdDfpDmcWoLj2K4GEwT8jcqCSKTe6XuSYISlFXZwdlK2voHrBvpcUEMmzdiuaBnKyBm49sU69SVsy3eWkEhmTEHy3E59eMQdUjCgNdAfOp0PMgDkGE8Zhf3aNjeh+P/HP21V4j9TkRLbHfNEoE2BHhWYf+FmGF5zA8rcUWr2Ypn57LHrdQkMmNkCBEjWqBD2qKuS2fCvCcdJgWobPeceTj3bdgOZwMAQsGPxD4i8Qz/tMr+ny4ANVaeCDuHIlXeVctNzwnfjjZwr2sUvRBBVd1WKhAdbw/0Z670ys83C9Gg0qGT3w0mwEI3AUEu2Joyx4CZ5n/GsqYJkMTG5XEVDV7vUKTg6OOWk8fARNGo/4tMb0B6S2ce+k+WeKFwyN6JKCREWbVayCIrQHkdy8vZ7A6F2eGJ/FOq4mwgvYaOE1NNRbr9JrYGQAug2EKehHTXyIOcxaZgAv93dYBebsATvkaZeNddgmEzdKr2Q7VcTOzs3IPS14ZYEOdgNUlM1gOAMjq4hWWy+LZgGfAXwH6FyzquPYVszIDIvx6dDfKaeY+Zoqg5cQno5K7iMFxG07f+gkn3TIEAXNByQX9t1Z5A==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(396003)(346002)(376002)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(82310400011)(36840700001)(40470700004)(46966006)(47076005)(83380400001)(316002)(40460700003)(36756003)(110136005)(8676002)(8936002)(70586007)(82740400003)(356005)(81166007)(86362001)(36860700001)(40480700001)(54906003)(70206006)(4326008)(44832011)(2906002)(41300700001)(30864003)(6666004)(2616005)(426003)(336012)(7049001)(5660300002)(1076003)(26005)(478600001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2023 04:23:39.1833
+X-Microsoft-Antispam-Message-Info: AmCt9/Rr/tossMS5Xo1yPjcW2y5Cs4H8CAw1NE0PBN83Zrf8LgJGdFdqRmZdjYbH9cT6KF6xjaOkdTeM77sL+Ys0XlBqf1XSclbRwLCyuoVKR0keSxnl2CFCT21pxSqWanXnCJK6BYIrQxz8D0Fz4RFq4xFEJUpOpPB2rUpbJmo+tR5fGONBejKEh+j4D0s45x+QYIzCa9tbg2rlnx60S+5kdmth+1tIO8XTZJ/GCYLjUAU3y23QisCvWS34581eJv3ybM2Cked7aFjFA6fVTrjH5ckiIXHSBmdjvVxiZRnJpJEv58KSnwV50Si4CS9PfDEF169Xjt2T2Ym6Ee492/MUsvKa+AA9Y1QpreSz5UQoXgNaUrwJ0w3IX0G5a1MS1XlHjan6/JAgFMprVq91Eo7V1jAv7ZzdV0Ph3O4QVN6LCXiHk2gcucLBh0S7YfH7+H+o5QpiHvl5ihL9B+JuS0yKhVnPjtJ46a7jsdyFkftdQz6utVNnFgrkGl58HkT3UFLyV03sapxta0WUrQmY43ES1Y0ZgJaWYK34SXI8/J2/rjdc/HS/yehmkiTU+shlWQK0RCyfCSOS31CtYyYZ4G6SF/rWymUJ0VKdunEtlq1YImE42xNdyYV5ZjWNngAGnDw0nCz/a6tgqye2CoPcMVdQJ9lqEHXgMd6LrNWgyT4jGIxhVOokcGy4OSiR2L6l
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(366004)(39860400002)(136003)(396003)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(7416002)(6506007)(2906002)(31696002)(6666004)(478600001)(6486002)(8676002)(4326008)(8936002)(41300700001)(44832011)(110136005)(5660300002)(66946007)(54906003)(66556008)(316002)(66476007)(38100700002)(36756003)(26005)(31686004)(86362001)(6512007)(2616005)(53546011)(921005)(32563001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OTk4aXBIeWdFVnluU0JFSGdPQW5wNWk3aHVDOWZ2SVF4eEhNbmhtbnlRQko4?=
+ =?utf-8?B?ZTVBZTNrMkllbjNMV3BKYzAyNGtWY1JxaEczMUw0QjJMNjcwaHdVUzdHcG0r?=
+ =?utf-8?B?ekFDbG90R2h1eGZSbnIyekNRb01MSnhScFNmN2ljRnNOQ0ZRZlQvRTlVWHBj?=
+ =?utf-8?B?QldPeXhNcTlBbnltL2k4OU0rcUlzckUwY2V2YmpER080M1FFQzFjZU1kUnFB?=
+ =?utf-8?B?VndWZDhiTWlNb3J2SFVBRVRPVVo5RlFXNWhqTUFFbG9FOVhvQ3FtWncvMFl5?=
+ =?utf-8?B?OUpDMnFvREtwaU5zdXRXNDQvM0xINk8wSEtCQmUvc3Z2bWVjMjRoRFBwUEND?=
+ =?utf-8?B?UGpIVU1WYk9Cdmo0Wjd6ZXdGNkpsR0hvUW9DTlJyaHIxNGg5WDR5K05XazdX?=
+ =?utf-8?B?M3JhZXcrSlBlM1JTUFoxN2ZUaVRJbVBadjlPczZFMkRFVU14RStwWWJJTitH?=
+ =?utf-8?B?eXEzUm0yQmNJb2MyVmxwbis2VzhDNTVSMEx4U1RqaURiSWFzbEFkdWd4QmJJ?=
+ =?utf-8?B?aEs4bnJaaWN4V0lBaHFQdFhTa0ExejVYLzVFalNWMEF4Y3VleUUvWkRBWlhv?=
+ =?utf-8?B?NDJYOVVYMWZIeGtOUTVWK0tpU2MxMitmbG81VTN4VEJSclNGQmE2SVBXektQ?=
+ =?utf-8?B?U0NqblhmUVBvc0FrT0NWSWhhRzQvdU1mT3FHK1ZjUnROcU5mdncrU2oxTXlz?=
+ =?utf-8?B?NWxKZGJpRmx3d1k3ZWIzQi9BTWh1NytwVXRZNnRCRXk0ZXUwb21PUkVVWkZ3?=
+ =?utf-8?B?bHMyOXJxdnV1b2M3Q2pDY0VtRjhzeXJTbmg3TkNRZ1VkSk5OODhzSXdNT3dl?=
+ =?utf-8?B?dElZTXcySW9la0t5azZrMFlkZFJuWEtnRk5hS1ZVMjZCZ1V0N0tiUUk1bmhW?=
+ =?utf-8?B?ZHgzRTFaRlpPUUVaQ280MjVvUWQ5UlcyREZQVE4rSHFNVVI3YUF5NXF2bWZV?=
+ =?utf-8?B?bXpRK2FYMTJiS2JBZmNWTEtCeGNFOEg2RFk3TVBlOXJ3L1BsMTZycVQwWThC?=
+ =?utf-8?B?UnFFT0RoK0ZRSE0zdCsxRDIyK09ySGpxN0RPb0xLeGVJTGdOMHhmdzFlUGdu?=
+ =?utf-8?B?RGkwTUN2UnlyemI4SDJ1d21wYTJSNzNNVGl3MXlhc3lKUkpocFdxTUIxZjkv?=
+ =?utf-8?B?TXc0QVIyeDdXdUF0RGhUUThnUTE3Uk9UZEdjUHVWTnVFdm9qTWZ3dHpkYXUy?=
+ =?utf-8?B?Q3NwZDZMcS9KeEt1ZVJrT05BSDVVaXRYMFB1OG9MMmtJcTVtNzdxL2xQNVlk?=
+ =?utf-8?B?bFFlMU8rWDJBN3ZFM3JoR01mK1JaWkhTNDU4OGVoSk56eGQrUFJNUGJxVnFm?=
+ =?utf-8?B?M3FKaDJXMWlqN2RHcnpUWDV6TmFzcmVTTEw1SW80emtrQVJvclo3VHgycUFn?=
+ =?utf-8?B?aEl4UFlHMzRsS2JhcVgwMlI2VDBldEtpNDZaazdRQTlvM0xlVHgrZW5ySjZh?=
+ =?utf-8?B?clcvUWdpWWJueWV1cUxoMWdyWnM0Mk16ZGQ0Qm94dmNsN2ovb2xzVkRuRWlw?=
+ =?utf-8?B?Vm5Ea3lWM0lIYjN1THFOSnRoWFBKeFFyYXc5OERsSVlRd2VUOWRqWHRSams5?=
+ =?utf-8?B?eFI4dGxOSlNDZHowa0wwQTR0WWMyc2lvLy9sZmRRcmhuSnhhZWVBdkVrVDJv?=
+ =?utf-8?B?NHQzWWtKUDZCbVIxRXFkdDg0Tms5c2hhcmZ5MDVZc0ZNS3dSOW9LdVRXZ2RL?=
+ =?utf-8?B?ekE2ZEd3OTcxclFhLzF5YkZaNktHc25BN3FCUU9YcVd5b1k4Wmw0ZWQ3N2xw?=
+ =?utf-8?B?a3ZkQ3hIQ05qakJaMnhQdFdVdFdKbWswZlZ6QW0rWDBFcXRMOXlZMStSZ29v?=
+ =?utf-8?B?c2xOK0NXOFhoVzc3alA0RXdZb015RnFabi9kanV5L3VTb3pJZ0RyRjRBTllr?=
+ =?utf-8?B?TW9SdzBPUkpUNFRJS3p5S3lCbjZmSWg2YUJxdEdDN25RemgrY1k4VmJTcCtM?=
+ =?utf-8?B?cGd0a2tjMk92UTlLNkRVR05GUDBTcGJtY2NQY2U2dzExY21FTW1vZWpDZTIv?=
+ =?utf-8?B?MXZxM3ZmMGhBSFc5VUEwNTUrYU5yQ2tYTFdaZFRKbmZLazJNZWRrSTFnUC9o?=
+ =?utf-8?B?Zm9ITXVLdDZRYnovYWdTd1NMTEUrRi93WUQyQVBsaGJZTFQzT01HTWd3OUhJ?=
+ =?utf-8?Q?p/F2njr6FGVcgp8ZcRxVDivoi?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc7fc941-82c6-498c-ea75-08dbcbc7566e
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2023 08:35:21.4729
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 155f68b3-f6bb-494b-b884-08dbcba42cf3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0001A107.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4965
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uNzCT8cgQiARErIrwnVbaMqtPRW9ptGJyb/TJdmKswpEyAl2MNzq6foWR9nLHNfW31IHGhMMJ+UpzALVkm2Xzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9496
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use TCM pm domains extracted from device-tree
-to power on/off TCM using general pm domain framework.
+Hi Alexander,
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
+On 10/11/2023 8:37 AM, Alexander Stein wrote:
+> Hi Iuliana,
+>
+> Am Dienstag, 10. Oktober 2023, 11:09:29 CEST schrieb Iuliana Prodan (OSS):
+>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>
+>> Add the reserve-memory nodes used by DSP when the rpmsg
+>> feature is enabled.
+>>
+>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+>> ---
+>>   arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> b/arch/arm64/boot/dts/freescale/imx8mp.dtsi index
+>> cc406bb338fe..22815b3ea890 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+>> @@ -211,6 +211,22 @@
+>>   			reg = <0 0x92400000 0 0x2000000>;
+>>   			no-map;
+>>   		};
+>> +
+>> +		dsp_vdev0vring0: vdev0vring0@942f0000 {
+>> +			reg = <0 0x942f0000 0 0x8000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		dsp_vdev0vring1: vdev0vring1@942f8000 {
+>> +			reg = <0 0x942f8000 0 0x8000>;
+>> +			no-map;
+>> +		};
+>> +
+>> +		dsp_vdev0buffer: vdev0buffer@94300000 {
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0 0x94300000 0 0x100000>;
+>> +			no-map;
+>> +		};
+> Please configure these reserved memories on board level. Not every i.MX8MP
+> based board uses this DSP or has these memory addresses available.
 
-Changes in v6:
-  - Remove spurious change
-  - Handle errors in add_pm_domains function
-  - Remove redundant code to handle errors from remove_pm_domains
+Will it be ok in imx8mp-evk.dts?
 
- drivers/remoteproc/xlnx_r5_remoteproc.c | 262 ++++++++++++++++++++++--
- 1 file changed, 243 insertions(+), 19 deletions(-)
+Thanks,
+Iulia
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 4395edea9a64..04e95d880184 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -16,6 +16,7 @@
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
-+#include <linux/pm_domain.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -102,6 +103,12 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  * @rproc: rproc handle
-  * @pm_domain_id: RPU CPU power domain id
-  * @ipi: pointer to mailbox information
-+ * @num_pm_dev: number of tcm pm domain devices for this core
-+ * @pm_dev1: pm domain virtual devices for power domain framework
-+ * @pm_dev_link1: pm domain device links after registration
-+ * @pm_dev2: used only in lockstep mode. second core's pm domain virtual devices
-+ * @pm_dev_link2: used only in lockstep mode. second core's pm device links after
-+ * registration
-  */
- struct zynqmp_r5_core {
- 	struct device *dev;
-@@ -111,6 +118,11 @@ struct zynqmp_r5_core {
- 	struct rproc *rproc;
- 	u32 pm_domain_id;
- 	struct mbox_info *ipi;
-+	int num_pm_dev;
-+	struct device **pm_dev1;
-+	struct device_link **pm_dev_link1;
-+	struct device **pm_dev2;
-+	struct device_link **pm_dev_link2;
- };
- 
- /**
-@@ -575,12 +587,21 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
- 		bank_size = r5_core->tcm_banks[i]->size;
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
- 
--		ret = zynqmp_pm_request_node(pm_domain_id,
--					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
--					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
--		if (ret < 0) {
--			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
--			goto release_tcm_split;
-+		/*
-+		 * If TCM information is available in device-tree then
-+		 * in that case, pm domain framework will power on/off TCM.
-+		 * In that case pm_domain_id is set to 0. If hardcode
-+		 * bindings from driver is used, then only this driver will
-+		 * use pm_domain_id.
-+		 */
-+		if (pm_domain_id) {
-+			ret = zynqmp_pm_request_node(pm_domain_id,
-+						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-+						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+			if (ret < 0) {
-+				dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
-+				goto release_tcm_split;
-+			}
- 		}
- 
- 		dev_dbg(dev, "TCM carveout split mode %s addr=%llx, da=0x%x, size=0x%lx",
-@@ -646,13 +667,16 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
- 	for (i = 0; i < num_banks; i++) {
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
- 
--		/* Turn on each TCM bank individually */
--		ret = zynqmp_pm_request_node(pm_domain_id,
--					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
--					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
--		if (ret < 0) {
--			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
--			goto release_tcm_lockstep;
-+		if (pm_domain_id) {
-+			/* Turn on each TCM bank individually */
-+			ret = zynqmp_pm_request_node(pm_domain_id,
-+						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-+						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+			if (ret < 0) {
-+				dev_err(dev, "failed to turn on TCM 0x%x",
-+					pm_domain_id);
-+				goto release_tcm_lockstep;
-+			}
- 		}
- 
- 		bank_size = r5_core->tcm_banks[i]->size;
-@@ -687,7 +711,8 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
- 	/* If failed, Turn off all TCM banks turned on before */
- 	for (i--; i >= 0; i--) {
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
--		zynqmp_pm_release_node(pm_domain_id);
-+		if (pm_domain_id)
-+			zynqmp_pm_release_node(pm_domain_id);
- 	}
- 	return ret;
- }
-@@ -758,6 +783,192 @@ static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	return ret;
- }
- 
-+static void zynqmp_r5_remove_pm_domains(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct device *dev = r5_core->dev;
-+	struct zynqmp_r5_cluster *cluster;
-+	int i;
-+
-+	cluster = platform_get_drvdata(to_platform_device(dev->parent));
-+
-+	for (i = 1; i < r5_core->num_pm_dev; i++) {
-+		device_link_del(r5_core->pm_dev_link1[i]);
-+		dev_pm_domain_detach(r5_core->pm_dev1[i], false);
-+	}
-+
-+	kfree(r5_core->pm_dev1);
-+	r5_core->pm_dev1 = NULL;
-+	kfree(r5_core->pm_dev_link1);
-+	r5_core->pm_dev_link1 = NULL;
-+
-+	if (cluster->mode == SPLIT_MODE) {
-+		r5_core->num_pm_dev = 0;
-+		return;
-+	}
-+
-+	for (i = 1; i < r5_core->num_pm_dev; i++) {
-+		device_link_del(r5_core->pm_dev_link2[i]);
-+		dev_pm_domain_detach(r5_core->pm_dev2[i], false);
-+	}
-+
-+	kfree(r5_core->pm_dev2);
-+	r5_core->pm_dev2 = NULL;
-+	kfree(r5_core->pm_dev_link2);
-+	r5_core->pm_dev_link2 = NULL;
-+	r5_core->num_pm_dev = 0;
-+}
-+
-+static int zynqmp_r5_add_pm_domains(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct device *dev = r5_core->dev, *dev2;
-+	struct zynqmp_r5_cluster *cluster;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	int i, j, num_pm_dev, ret;
-+
-+	cluster = dev_get_drvdata(dev->parent);
-+
-+	/* get number of power-domains */
-+	num_pm_dev = of_count_phandle_with_args(r5_core->np, "power-domains",
-+						"#power-domain-cells");
-+
-+	if (num_pm_dev <= 0)
-+		return -EINVAL;
-+
-+	r5_core->pm_dev1 = kcalloc(num_pm_dev,
-+				   sizeof(struct device *),
-+				   GFP_KERNEL);
-+	if (!r5_core->pm_dev1)
-+		ret = -ENOMEM;
-+
-+	r5_core->pm_dev_link1 = kcalloc(num_pm_dev,
-+					sizeof(struct device_link *),
-+					GFP_KERNEL);
-+	if (!r5_core->pm_dev_link1) {
-+		kfree(r5_core->pm_dev1);
-+		r5_core->pm_dev1 = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	r5_core->num_pm_dev = num_pm_dev;
-+
-+	/*
-+	 * start from 2nd entry in power-domains property list as
-+	 * for zynqmp we only add TCM power domains and not core's power domain.
-+	 */
-+	for (i = 1; i < r5_core->num_pm_dev; i++) {
-+		r5_core->pm_dev1[i] = dev_pm_domain_attach_by_id(dev, i);
-+		if (IS_ERR_OR_NULL(r5_core->pm_dev1[i])) {
-+			dev_dbg(dev, "failed to attach pm domain %d, ret=%ld\n", i,
-+				PTR_ERR(r5_core->pm_dev1[i]));
-+			ret = -EINVAL;
-+			goto fail_add_pm_domains;
-+		}
-+		r5_core->pm_dev_link1[i] = device_link_add(dev, r5_core->pm_dev1[i],
-+							   DL_FLAG_STATELESS |
-+							   DL_FLAG_RPM_ACTIVE |
-+							   DL_FLAG_PM_RUNTIME);
-+		if (!r5_core->pm_dev_link1[i]) {
-+			dev_pm_domain_detach(r5_core->pm_dev1[i], true);
-+			r5_core->pm_dev1[i] = NULL;
-+			ret = -EINVAL;
-+			goto fail_add_pm_domains;
-+		}
-+	}
-+
-+	if (cluster->mode == SPLIT_MODE)
-+		return 0;
-+
-+	r5_core->pm_dev2 = kcalloc(num_pm_dev,
-+				   sizeof(struct device *),
-+				   GFP_KERNEL);
-+	if (!r5_core->pm_dev2) {
-+		ret = -ENOMEM;
-+		goto fail_add_pm_domains;
-+	}
-+
-+	r5_core->pm_dev_link2 = kcalloc(num_pm_dev,
-+					sizeof(struct device_link *),
-+					GFP_KERNEL);
-+	if (!r5_core->pm_dev_link2) {
-+		kfree(r5_core->pm_dev2);
-+		r5_core->pm_dev2 = NULL;
-+		ret = -ENOMEM;
-+		goto fail_add_pm_domains;
-+	}
-+
-+	/* get second core's device to detach its power-domains */
-+	np = of_get_next_child(cluster->dev->of_node, of_node_get(dev->of_node));
-+
-+	pdev = of_find_device_by_node(np);
-+	if (!pdev) {
-+		dev_err(cluster->dev, "core1 platform device not available\n");
-+		kfree(r5_core->pm_dev2);
-+		kfree(r5_core->pm_dev_link2);
-+		r5_core->pm_dev2 = NULL;
-+		r5_core->pm_dev_link2 = NULL;
-+		ret = -EINVAL;
-+		goto fail_add_pm_domains;
-+	}
-+
-+	dev2 = &pdev->dev;
-+
-+	/* for zynqmp we only add TCM power domains and not core's power domain */
-+	for (j = 1; j < r5_core->num_pm_dev; j++) {
-+		r5_core->pm_dev2[j] = dev_pm_domain_attach_by_id(dev2, j);
-+		if (!r5_core->pm_dev2[j]) {
-+			dev_dbg(dev, "can't attach to pm domain %d\n", j);
-+			ret = -EINVAL;
-+			goto fail_add_pm_domains_lockstep;
-+		} else if (IS_ERR(r5_core->pm_dev2[j])) {
-+			dev_dbg(dev, "can't attach to pm domain %d\n", j);
-+			ret = PTR_ERR(r5_core->pm_dev2[j]);
-+			goto fail_add_pm_domains_lockstep;
-+		}
-+
-+		r5_core->pm_dev_link2[j] = device_link_add(dev, r5_core->pm_dev2[j],
-+							   DL_FLAG_STATELESS |
-+							   DL_FLAG_RPM_ACTIVE |
-+							   DL_FLAG_PM_RUNTIME);
-+		if (!r5_core->pm_dev_link2[j]) {
-+			dev_pm_domain_detach(r5_core->pm_dev2[j], true);
-+			r5_core->pm_dev2[j] = NULL;
-+			ret = -ENODEV;
-+			goto fail_add_pm_domains_lockstep;
-+		}
-+	}
-+
-+fail_add_pm_domains_lockstep:
-+	while (j >= 1) {
-+		if (r5_core->pm_dev_link2 && !IS_ERR_OR_NULL(r5_core->pm_dev_link2[j]))
-+			device_link_del(r5_core->pm_dev_link2[j]);
-+		if (r5_core->pm_dev2 && !IS_ERR_OR_NULL(r5_core->pm_dev2[j]))
-+			dev_pm_domain_detach(r5_core->pm_dev2[j], true);
-+		j--;
-+	}
-+	kfree(r5_core->pm_dev2);
-+	r5_core->pm_dev2 = NULL;
-+	kfree(r5_core->pm_dev_link2);
-+	r5_core->pm_dev_link2 = NULL;
-+
-+fail_add_pm_domains:
-+	while (i >= 1) {
-+		if (r5_core->pm_dev_link1 && !IS_ERR_OR_NULL(r5_core->pm_dev_link1[i]))
-+			device_link_del(r5_core->pm_dev_link1[i]);
-+		if (r5_core->pm_dev1 && !IS_ERR_OR_NULL(r5_core->pm_dev1[i]))
-+			dev_pm_domain_detach(r5_core->pm_dev1[i], true);
-+		i--;
-+	}
-+	kfree(r5_core->pm_dev1);
-+	r5_core->pm_dev1 = NULL;
-+	kfree(r5_core->pm_dev_link1);
-+	r5_core->pm_dev_link1 = NULL;
-+
-+	return ret;
-+}
-+
- /**
-  * zynqmp_r5_rproc_prepare()
-  * adds carveouts for TCM bank and reserved memory regions
-@@ -770,19 +981,30 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- {
- 	int ret;
- 
-+	ret = zynqmp_r5_add_pm_domains(rproc);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to add pm domains\n");
-+		return ret;
-+	}
-+
- 	ret = add_tcm_banks(rproc);
- 	if (ret) {
- 		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
--		return ret;
-+		goto fail_prepare;
- 	}
- 
- 	ret = add_mem_regions_carveout(rproc);
- 	if (ret) {
- 		dev_err(&rproc->dev, "failed to get reserve mem regions %d\n", ret);
--		return ret;
-+		goto fail_prepare;
- 	}
- 
- 	return 0;
-+
-+fail_prepare:
-+	zynqmp_r5_remove_pm_domains(rproc);
-+
-+	return ret;
- }
- 
- /**
-@@ -801,11 +1023,13 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 
- 	r5_core = rproc->priv;
- 
-+	zynqmp_r5_remove_pm_domains(rproc);
-+
- 	for (i = 0; i < r5_core->tcm_bank_count; i++) {
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
--		if (zynqmp_pm_release_node(pm_domain_id))
--			dev_warn(r5_core->dev,
--				 "can't turn off TCM bank 0x%x", pm_domain_id);
-+		if (pm_domain_id && zynqmp_pm_release_node(pm_domain_id))
-+			dev_dbg(r5_core->dev,
-+				"can't turn off TCM bank 0x%x", pm_domain_id);
- 	}
- 
- 	return 0;
--- 
-2.25.1
-
+> Best regards,
+> Alexander
+>
+>>   	};
+>>
+>>   	pmu {
+>
