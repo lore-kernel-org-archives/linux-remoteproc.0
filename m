@@ -2,142 +2,539 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF6CCDB47E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 20:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12087CDB483
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Oct 2023 20:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjJMUhP (ORCPT
+        id S229958AbjJMUpE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Oct 2023 16:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38244 "EHLO
+        Fri, 13 Oct 2023 16:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjJMUhP (ORCPT
+        with ESMTP id S229679AbjJMUpD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Oct 2023 16:37:15 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC7183
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 Oct 2023 13:37:13 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32d569e73acso2279206f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 Oct 2023 13:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1697229431; x=1697834231; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eGqNMQJoTKDExVF5LTm0ABt03qpcjjaRQIb4oBXXpL8=;
-        b=HwHiVS18UclmDwQ/0Pmhoqo3RlKq/DNKjDmzkq/WDb01LMW9sCPduIiQqNwgABUAyw
-         ev7pGWFCJ6FxICDKZBiG9gioai80lRyATWbZdCtbAsZDpSdOFLxdRYqKBcIT254UPDRI
-         zlR2fLV+ziSLkL2kWJK4WnhAafO6HsbUc2o6Qp6MMV4LLRVmDNv7VJ8JG4RoncRPq9X+
-         Y7Z2XJdX+ured4BfzT7jVdd06fpbvrqETPyK8QFr1jKeqN5nSTTIZ2aY7S7p/KwGDcZa
-         E9ZIjvu65CVwHebuHFfJydo+tuOcI152wXUca8L+ICMYKc85VexBSskcZ4qPx34pxd5E
-         R/cA==
+        Fri, 13 Oct 2023 16:45:03 -0400
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C13C083;
+        Fri, 13 Oct 2023 13:45:00 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-57bbb38d5d4so1275022eaf.2;
+        Fri, 13 Oct 2023 13:45:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697229431; x=1697834231;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eGqNMQJoTKDExVF5LTm0ABt03qpcjjaRQIb4oBXXpL8=;
-        b=Zueik8S+8MDVZpIJCpC0Bq1ASv1PMd+q+ztoXHgepXK2xSMsaL1MASDbrGX7jAsugM
-         9q4N+bEh1kycEoUwLhsZBbSaXHvNhpW5aLaG4ZS0wGRR0hfO9T9gVgdHmcPsDiObutwl
-         R0XmJetBpT6wDlEtnprrR5borFi40uCiUPx8U2jwLqCr+/wDwIx5fSANzhdTOy6oxb8g
-         yGde+3UBMakHjuspSqmGnplfqearb2/FczVuBWVCBksfZETr2V8ZKhTAbc8teC/tDOCa
-         aZuGTWLn14ion11M0yEMZv+tyyiOSoluX9idvcf996dMLlPREoACq5wG4CRGa8gfrt0r
-         rPhw==
-X-Gm-Message-State: AOJu0YwZWhabqcRCl2wgr/Y2CBdaP5ZkUrnqUy2qOpRIc3W10d4YR2An
-        2pXA8FvujcQS2lTajsnpdshJ2oSbGUv9V937ZTSCjA==
-X-Google-Smtp-Source: AGHT+IF+7IiJEEKizdMeYQJowMnFRLsMOiRhCWVvtDSSbLN5+4n2cIdYTg5MU1RI1Xr336Wc5nGpjJB2bTesb2OZQ6w=
-X-Received: by 2002:a05:6000:1e11:b0:32d:8357:42dd with SMTP id
- bj17-20020a0560001e1100b0032d835742ddmr10781479wrb.68.1697229431471; Fri, 13
- Oct 2023 13:37:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697229900; x=1697834700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jWvifqWkzzIi7KppOHWAQtPVkgMwHo2U39bHS0Oz/kQ=;
+        b=r/iNoUxcMXvF02uOJO6RbVjADu9BHd58Vpz6M2W8z4jI6jyS3UJa14P5TWngrj0JNo
+         RY6H2J6fpfMgULM3nRx3c+hvWqzsA2kb1UgUE40zEdloLTFfuYK5E1n78nhZ3wT5pxT0
+         7dWMx2orCPxYCXz6H/qQu7uPTsMrmzopoE1fQEbJY/aA2qnRyKOlHY9X2nVgf/eOAu50
+         Pehl7HTSSLCjlaS3g1aCfirxfp9oEmoaAtNgy3Ko56FUGHnN1feU7S73k0fy0i/O5ZJR
+         HH+rnmDX7GXjlo5DFtzmVQvroM93tY4nR+Ys1uDL5MJ5FrBz/hfCelDr0MjAFULZWl6U
+         6i1g==
+X-Gm-Message-State: AOJu0YzgXEzF5h51EnFZIC/pYYa4mcqCqSohlMhMHsyWBoeAOjCZ7IVk
+        yA7V5eFyNiA9r5mGfCZIjw==
+X-Google-Smtp-Source: AGHT+IHoN94MR4gpIe2dWY+Xyk+VFhdOpMYWuz2jSr4iGaty8EGdGRDIcjcKdPUw2Q7yW6h7qg8ffg==
+X-Received: by 2002:a4a:3016:0:b0:57d:e76d:c206 with SMTP id q22-20020a4a3016000000b0057de76dc206mr28837731oof.1.1697229899850;
+        Fri, 13 Oct 2023 13:44:59 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m22-20020a4ae3d6000000b0057bcabf2eeasm23181oov.4.2023.10.13.13.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 13:44:59 -0700 (PDT)
+Received: (nullmailer pid 385027 invoked by uid 1000);
+        Fri, 13 Oct 2023 20:44:57 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Julien Massot <julien.massot@iot.bzh>,
+        Trevor Wu <trevor.wu@mediatek.com>
+Cc:     Simon Glass <sjg@chromium.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: Drop kernel copy of common reserved-memory bindings
+Date:   Fri, 13 Oct 2023 15:08:49 -0500
+Message-ID: <20231013200851.347042-1-robh@kernel.org>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
-References: <20231012-st_remoteproc-fix-sometimes-uninit-v1-1-f64d0f2d5b37@kernel.org>
-In-Reply-To: <20231012-st_remoteproc-fix-sometimes-uninit-v1-1-f64d0f2d5b37@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 13 Oct 2023 13:36:59 -0700
-Message-ID: <CAKwvOdnGDXvbCgPFq+DZxaMo-ptdq7omXJyLVgwgFeKh5RwdTg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: st: Fix sometimes uninitialized ret in st_rproc_probe()
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     patrice.chotard@foss.st.com, andersson@kernel.org,
-        mathieu.poirier@linaro.org, robh@kernel.org, trix@redhat.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, llvm@lists.linux.dev,
-        patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Oct 12, 2023 at 10:04=E2=80=AFAM Nathan Chancellor <nathan@kernel.o=
-rg> wrote:
->
-> Clang warns (or errors with CONFIG_WERROR=3Dy):
->
->   drivers/remoteproc/st_remoteproc.c:357:6: error: variable 'ret' is used=
- uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uniniti=
-alized]
->     357 |         if (!ddata->config)
->         |             ^~~~~~~~~~~~~~
->   drivers/remoteproc/st_remoteproc.c:442:9: note: uninitialized use occur=
-s here
->     442 |         return ret;
->         |                ^~~
->   drivers/remoteproc/st_remoteproc.c:357:2: note: remove the 'if' if its =
-condition is always false
->     357 |         if (!ddata->config)
->         |         ^~~~~~~~~~~~~~~~~~~
->     358 |                 goto free_rproc;
->         |                 ~~~~~~~~~~~~~~~
->   drivers/remoteproc/st_remoteproc.c:348:9: note: initialize the variable=
- 'ret' to silence this warning
->     348 |         int ret, i;
->         |                ^
->         |                 =3D 0
->   1 error generated.
->
-> Set ret to -ENODEV, which seems to be a standard return code when
-> device_get_match_data() returns NULL.
->
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/1944
-> Fixes: 5c77ebcd05ac ("remoteproc: st: Use device_get_match_data()")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+The common reserved-memory bindings have recently been copied from the
+kernel tree into dtschema. The preference is to host common, stable
+bindings in dtschema. As reserved-memory is documented in the DT Spec,
+it meets the criteria.
 
-Thanks for the patch!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+The v2023.09 version of dtschema is what contains the reserved-memory
+schemas we depend on, so bump the minimum version to that. Otherwise,
+references to these schemas will generate errors.
 
-> ---
->  drivers/remoteproc/st_remoteproc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_r=
-emoteproc.c
-> index b0638f984842..cb163766c56d 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -354,8 +354,10 @@ static int st_rproc_probe(struct platform_device *pd=
-ev)
->         rproc->has_iommu =3D false;
->         ddata =3D rproc->priv;
->         ddata->config =3D (struct st_rproc_config *)device_get_match_data=
-(dev);
-> -       if (!ddata->config)
-> +       if (!ddata->config) {
-> +               ret =3D -ENODEV;
->                 goto free_rproc;
-> +       }
->
->         platform_set_drvdata(pdev, rproc);
->
->
-> ---
-> base-commit: 5c77ebcd05acf3789949c8a387df72381d949ca2
-> change-id: 20231012-st_remoteproc-fix-sometimes-uninit-7aff1bdb7349
->
-> Best regards,
-> --
-> Nathan Chancellor <nathan@kernel.org>
->
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/Makefile    |   2 +-
+ .../remoteproc/renesas,rcar-rproc.yaml        |   2 +-
+ .../bindings/reserved-memory/framebuffer.yaml |  52 -----
+ .../reserved-memory/memory-region.yaml        |  40 ----
+ .../reserved-memory/reserved-memory.txt       |   2 +-
+ .../reserved-memory/reserved-memory.yaml      | 181 ------------------
+ .../reserved-memory/shared-dma-pool.yaml      |  97 ----------
+ .../bindings/sound/mediatek,mt8188-afe.yaml   |   2 +-
+ 8 files changed, 4 insertions(+), 374 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
 
+diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
+index 8b395893bd85..3e886194b043 100644
+--- a/Documentation/devicetree/bindings/Makefile
++++ b/Documentation/devicetree/bindings/Makefile
+@@ -6,7 +6,7 @@ DT_MK_SCHEMA ?= dt-mk-schema
+ DT_SCHEMA_LINT = $(shell which yamllint || \
+   echo "warning: python package 'yamllint' not installed, skipping" >&2)
+ 
+-DT_SCHEMA_MIN_VERSION = 2022.3
++DT_SCHEMA_MIN_VERSION = 2023.9
+ 
+ PHONY += check_dtschema_version
+ check_dtschema_version:
+diff --git a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+index 4bea679a0f61..5c280117dc93 100644
+--- a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+@@ -31,7 +31,7 @@ properties:
+       remoteproc device. This is variable and describes the memories shared with
+       the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
+       vrings, ...).
+-      (see ../reserved-memory/reserved-memory.yaml)
++      (see reserved-memory/reserved-memory.yaml in dtschema project)
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+deleted file mode 100644
+index 851ec24d6142..000000000000
+--- a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
++++ /dev/null
+@@ -1,52 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/reserved-memory/framebuffer.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: /reserved-memory framebuffer node
+-
+-maintainers:
+-  - devicetree-spec@vger.kernel.org
+-
+-allOf:
+-  - $ref: reserved-memory.yaml
+-
+-properties:
+-  compatible:
+-    const: framebuffer
+-    description: >
+-      This indicates a region of memory meant to be used as a framebuffer for
+-      a set of display devices. It can be used by an operating system to keep
+-      the framebuffer from being overwritten and use it as the backing memory
+-      for a display device (such as simple-framebuffer).
+-
+-unevaluatedProperties: false
+-
+-examples:
+-  - |
+-    / {
+-        compatible = "foo";
+-        model = "foo";
+-        #address-cells = <1>;
+-        #size-cells = <1>;
+-
+-        chosen {
+-            framebuffer {
+-                compatible = "simple-framebuffer";
+-                memory-region = <&fb>;
+-            };
+-        };
+-
+-        reserved-memory {
+-            #address-cells = <1>;
+-            #size-cells = <1>;
+-            ranges;
+-
+-            fb: framebuffer@80000000 {
+-                compatible = "framebuffer";
+-                reg = <0x80000000 0x007e9000>;
+-            };
+-        };
+-    };
+-...
+diff --git a/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml b/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
+deleted file mode 100644
+index 592f180e6b0d..000000000000
+--- a/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
++++ /dev/null
+@@ -1,40 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/reserved-memory/memory-region.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Reserved Memory Region
+-
+-maintainers:
+-  - devicetree-spec@vger.kernel.org
+-
+-description: |
+-  Regions in the /reserved-memory node may be referenced by other device
+-  nodes by adding a memory-region property to the device node.
+-
+-select: true
+-
+-properties:
+-  memory-region:
+-    $ref: /schemas/types.yaml#/definitions/phandle-array
+-    description: >
+-      Phandle to a /reserved-memory child node assigned to the device.
+-
+-  memory-region-names:
+-    $ref: /schemas/types.yaml#/definitions/string-array
+-    description: >
+-      A list of names, one for each corresponding entry in the
+-      memory-region property
+-
+-additionalProperties: true
+-
+-examples:
+-  - |
+-    fb0: video@12300000 {
+-        /* ... */
+-        reg = <0x12300000 0x1000>;
+-        memory-region = <&display_reserved>;
+-    };
+-
+-...
+diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+index 1810701a8509..8ce72996d500 100644
+--- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+@@ -1 +1 @@
+-This file has been moved to reserved-memory.yaml.
++This file has been moved to reserved-memory.yaml in the dtschema repository.
+diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+deleted file mode 100644
+index c680e397cfd2..000000000000
+--- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
++++ /dev/null
+@@ -1,181 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/reserved-memory/reserved-memory.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: /reserved-memory Child Node Common
+-
+-maintainers:
+-  - devicetree-spec@vger.kernel.org
+-
+-description: >
+-  Reserved memory is specified as a node under the /reserved-memory node. The
+-  operating system shall exclude reserved memory from normal usage one can
+-  create child nodes describing particular reserved (excluded from normal use)
+-  memory regions. Such memory regions are usually designed for the special
+-  usage by various device drivers.
+-
+-  Each child of the reserved-memory node specifies one or more regions
+-  of reserved memory. Each child node may either use a 'reg' property to
+-  specify a specific range of reserved memory, or a 'size' property with
+-  optional constraints to request a dynamically allocated block of
+-  memory.
+-
+-  Following the generic-names recommended practice, node names should
+-  reflect the purpose of the node (ie. "framebuffer" or "dma-pool").
+-  Unit address (@<address>) should be appended to the name if the node
+-  is a static allocation.
+-
+-properties:
+-  reg: true
+-
+-  size:
+-    oneOf:
+-      - $ref: /schemas/types.yaml#/definitions/uint32
+-      - $ref: /schemas/types.yaml#/definitions/uint64
+-    description: >
+-      Length based on parent's \#size-cells. Size in bytes of memory to
+-      reserve.
+-
+-  alignment:
+-    oneOf:
+-      - $ref: /schemas/types.yaml#/definitions/uint32
+-      - $ref: /schemas/types.yaml#/definitions/uint64
+-    description: >
+-      Length based on parent's \#size-cells. Address boundary for
+-      alignment of allocation.
+-
+-  alloc-ranges:
+-    $ref: /schemas/types.yaml#/definitions/uint32-array
+-    description: >
+-      Address and Length pairs. Specifies regions of memory that are
+-      acceptable to allocate from.
+-
+-  iommu-addresses:
+-    $ref: /schemas/types.yaml#/definitions/phandle-array
+-    description: >
+-      A list of phandle and specifier pairs that describe static IO virtual
+-      address space mappings and carveouts associated with a given reserved
+-      memory region. The phandle in the first cell refers to the device for
+-      which the mapping or carveout is to be created.
+-
+-      The specifier consists of an address/size pair and denotes the IO
+-      virtual address range of the region for the given device. The exact
+-      format depends on the values of the "#address-cells" and "#size-cells"
+-      properties of the device referenced via the phandle.
+-
+-      When used in combination with a "reg" property, an IOVA mapping is to
+-      be established for this memory region. One example where this can be
+-      useful is to create an identity mapping for physical memory that the
+-      firmware has configured some hardware to access (such as a bootsplash
+-      framebuffer).
+-
+-      If no "reg" property is specified, the "iommu-addresses" property
+-      defines carveout regions in the IOVA space for the given device. This
+-      can be useful if a certain memory region should not be mapped through
+-      the IOMMU.
+-
+-  no-map:
+-    type: boolean
+-    description: >
+-      Indicates the operating system must not create a virtual mapping
+-      of the region as part of its standard mapping of system memory,
+-      nor permit speculative access to it under any circumstances other
+-      than under the control of the device driver using the region.
+-
+-  reusable:
+-    type: boolean
+-    description: >
+-      The operating system can use the memory in this region with the
+-      limitation that the device driver(s) owning the region need to be
+-      able to reclaim it back. Typically that means that the operating
+-      system can use that region to store volatile or cached data that
+-      can be otherwise regenerated or migrated elsewhere.
+-
+-allOf:
+-  - if:
+-      required:
+-        - no-map
+-
+-    then:
+-      not:
+-        required:
+-          - reusable
+-
+-  - if:
+-      required:
+-        - reusable
+-
+-    then:
+-      not:
+-        required:
+-          - no-map
+-
+-oneOf:
+-  - oneOf:
+-      - required:
+-          - reg
+-
+-      - required:
+-          - size
+-
+-  - oneOf:
+-      # IOMMU reservations
+-      - required:
+-          - iommu-addresses
+-
+-      # IOMMU mappings
+-      - required:
+-          - reg
+-          - iommu-addresses
+-
+-additionalProperties: true
+-
+-examples:
+-  - |
+-    / {
+-      compatible = "foo";
+-      model = "foo";
+-
+-      #address-cells = <2>;
+-      #size-cells = <2>;
+-
+-      reserved-memory {
+-        #address-cells = <2>;
+-        #size-cells = <2>;
+-        ranges;
+-
+-        adsp_resv: reservation-adsp {
+-          /*
+-           * Restrict IOVA mappings for ADSP buffers to the 512 MiB region
+-           * from 0x40000000 - 0x5fffffff. Anything outside is reserved by
+-           * the ADSP for I/O memory and private memory allocations.
+-           */
+-          iommu-addresses = <&adsp 0x0 0x00000000 0x00 0x40000000>,
+-                            <&adsp 0x0 0x60000000 0xff 0xa0000000>;
+-        };
+-
+-        fb: framebuffer@90000000 {
+-          reg = <0x0 0x90000000 0x0 0x00800000>;
+-          iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00800000>;
+-        };
+-      };
+-
+-      bus@0 {
+-        #address-cells = <1>;
+-        #size-cells = <1>;
+-        ranges = <0x0 0x0 0x0 0x40000000>;
+-
+-        adsp: adsp@2990000 {
+-          reg = <0x2990000 0x2000>;
+-          memory-region = <&adsp_resv>;
+-        };
+-
+-        dc0: display@15200000 {
+-          reg = <0x15200000 0x10000>;
+-          memory-region = <&fb>;
+-        };
+-      };
+-    };
+-...
+diff --git a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
+deleted file mode 100644
+index 457de0920cd1..000000000000
+--- a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
++++ /dev/null
+@@ -1,97 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/reserved-memory/shared-dma-pool.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: /reserved-memory DMA pool
+-
+-maintainers:
+-  - devicetree-spec@vger.kernel.org
+-
+-allOf:
+-  - $ref: reserved-memory.yaml
+-
+-properties:
+-  compatible:
+-    oneOf:
+-      - const: shared-dma-pool
+-        description: >
+-          This indicates a region of memory meant to be used as a shared
+-          pool of DMA buffers for a set of devices. It can be used by an
+-          operating system to instantiate the necessary pool management
+-          subsystem if necessary.
+-
+-      - const: restricted-dma-pool
+-        description: >
+-          This indicates a region of memory meant to be used as a pool
+-          of restricted DMA buffers for a set of devices. The memory
+-          region would be the only region accessible to those devices.
+-          When using this, the no-map and reusable properties must not
+-          be set, so the operating system can create a virtual mapping
+-          that will be used for synchronization. The main purpose for
+-          restricted DMA is to mitigate the lack of DMA access control
+-          on systems without an IOMMU, which could result in the DMA
+-          accessing the system memory at unexpected times and/or
+-          unexpected addresses, possibly leading to data leakage or
+-          corruption. The feature on its own provides a basic level of
+-          protection against the DMA overwriting buffer contents at
+-          unexpected times. However, to protect against general data
+-          leakage and system memory corruption, the system needs to
+-          provide way to lock down the memory access, e.g., MPU. Note
+-          that since coherent allocation needs remapping, one must set
+-          up another device coherent pool by shared-dma-pool and use
+-          dma_alloc_from_dev_coherent instead for atomic coherent
+-          allocation.
+-
+-  linux,cma-default:
+-    type: boolean
+-    description: >
+-      If this property is present, then Linux will use the region for
+-      the default pool of the contiguous memory allocator.
+-
+-  linux,dma-default:
+-    type: boolean
+-    description: >
+-      If this property is present, then Linux will use the region for
+-      the default pool of the consistent DMA allocator.
+-
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        const: restricted-dma-pool
+-then:
+-  properties:
+-    no-map: false
+-    reusable: false
+-
+-unevaluatedProperties: false
+-
+-examples:
+-  - |
+-      reserved-memory {
+-          #address-cells = <1>;
+-          #size-cells = <1>;
+-          ranges;
+-
+-          /* global autoconfigured region for contiguous allocations */
+-          linux,cma {
+-              compatible = "shared-dma-pool";
+-              reusable;
+-              size = <0x4000000>;
+-              alignment = <0x2000>;
+-              linux,cma-default;
+-          };
+-
+-          display_reserved: framebuffer@78000000 {
+-              reg = <0x78000000 0x800000>;
+-          };
+-
+-          restricted_dma_reserved: restricted-dma-pool@50000000 {
+-              compatible = "restricted-dma-pool";
+-              reg = <0x50000000 0x4000000>;
+-          };
+-      };
+-
+-...
+diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
+index 90520f89208b..77af276ed2a2 100644
+--- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
++++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
+@@ -29,7 +29,7 @@ properties:
+     maxItems: 1
+     description: |
+       Shared memory region for AFE memif.  A "shared-dma-pool".
+-      See ../reserved-memory/reserved-memory.yaml for details.
++      See dtschema reserved-memory/shared-dma-pool.yaml for details.
+ 
+   mediatek,topckgen:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-- 
+2.42.0
 
---=20
-Thanks,
-~Nick Desaulniers
