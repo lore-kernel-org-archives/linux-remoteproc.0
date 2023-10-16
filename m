@@ -2,555 +2,1215 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A31CCDB465
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Oct 2023 17:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099F3CDB465
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Oct 2023 21:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbjJPRcH (ORCPT
+        id S229666AbjJPVKZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 Oct 2023 13:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
+        Mon, 16 Oct 2023 17:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231891AbjJPRcG (ORCPT
+        with ESMTP id S232582AbjJPVKY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 Oct 2023 13:32:06 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937B5E6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Oct 2023 10:32:03 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6934202b8bdso4130481b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Oct 2023 10:32:03 -0700 (PDT)
+        Mon, 16 Oct 2023 17:10:24 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD59D9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Oct 2023 14:10:19 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-32dbbf3c782so640649f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Oct 2023 14:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697477523; x=1698082323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vk1d7b5CEyLP0IPU6mHLkR7If10Kf7hMWt9uBIdr69E=;
-        b=f2Ak7iXONefIyFWIHpT4JmCTogPc7o7qLtCLKWvV9U+mHUks/PizIbxtySNELTr+Ep
-         t13skfK2T1V+g9jpwg1GKq8JUO4uWBo4drkitDvwdtbcGN41Auv+X/fS1J2lZL1Q6Ut0
-         je5dme1m6/oWve26xW7OiQUL0CLuTiVKDrMW3qnaYMSySh6typh0HHcaCFkgUUPrcN5x
-         /dt0eognSIy3Hdj4+QDdQ2/B9xo1/jop3rJu48ma1lCBiAe7Ks/Xki6mljq0urIjz88L
-         5JpMZBgaWNxWDR68DeAbkb+nZLD0aEiaucVXVyW+5pzOtZ8EpEJW3I89gP4JTqavjwuZ
-         iU/w==
+        d=linaro.org; s=google; t=1697490618; x=1698095418; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3NTOzADiDVdKOcs9IM9LikyA996SESJ24YGxjfzCGs=;
+        b=gpHYkk6Jq8YoUDM+URQRt6LUSw1KWJ7cOE73oTS1LuOHbXM8wgMuV1WPV9t4hTJdqO
+         IOrmWF8FGpB/W9yZmRaxaWpaDnKyjsu8S6FOJRcKtvmh6yCXccRbh7olYOVU/g3ivf7I
+         VqBNccZBO0w6TkrHPsjxeYzMFhl+Owr9g83QxUejZ1gn5x0Ha/fuE1CzLWElW1XA2WFc
+         iBeKUhpBN3k0adYVcgD2BCDh7XQmAl3AdU8azMjaRPTRuknN9FZmoMAlzsNKbOnmdBoS
+         /WNVCQwt+7KsRyLz2NBb+7/DYvUYeNfQoJBbDUxxHleuQz4D357F7W6Vz2oLd0ZFarjg
+         7Gtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697477523; x=1698082323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vk1d7b5CEyLP0IPU6mHLkR7If10Kf7hMWt9uBIdr69E=;
-        b=OUlsBNbAuMlfD+hAIKwH4DpNEM83in7/fbdhWUYYuz4Cdeg8DhCn5rzsbjxv7WmTVL
-         evoFrscNbabqRCVricZCU+MPTS9iD7GoCOx4Nq2Bn2HG/gpiBHgAq16q663Gcx5bsB2T
-         Ie/rp1VWjxS7xLodXDm8WP3xasRbBhakJmrFA9HLR7J7ItAqz5OypuR22QxBGmq81xej
-         r/xqI+I19KA0EE3vqvUa+0wAr4F2wTGirre0HxEL857yGPHfTNp1/N4L9zQqukR3M2wh
-         7dTEpInXPtbDfLRM0jXpKIXY9x0uKv9AqHLLJixI0QccpAM4qhXCb64ZXIxfa9KVvJxP
-         Jz7w==
-X-Gm-Message-State: AOJu0YxRFMpAM14XYAzprgrClfD4ZUQCgDTKXVTbLSRD7cDTrVMPgzKq
-        TXeFyAfI1DAodLSXDNrJ+lePIg==
-X-Google-Smtp-Source: AGHT+IG3Zc8YucFlDIjDPOK8ia6NP6GE2jbgrQaL2IURvBqGUulyKHlppicyrh2EgU1NTXj4BL8uUw==
-X-Received: by 2002:a05:6a20:3d85:b0:133:f0b9:856d with SMTP id s5-20020a056a203d8500b00133f0b9856dmr43166722pzi.17.1697477522909;
-        Mon, 16 Oct 2023 10:32:02 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:9add:9fdd:7517:f866])
-        by smtp.gmail.com with ESMTPSA id b21-20020a170902d31500b001c72f4334afsm8772925plc.20.2023.10.16.10.32.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 10:32:02 -0700 (PDT)
-Date:   Mon, 16 Oct 2023 11:31:59 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Julien Massot <julien.massot@iot.bzh>,
-        Trevor Wu <trevor.wu@mediatek.com>,
-        Simon Glass <sjg@chromium.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Drop kernel copy of common reserved-memory
- bindings
-Message-ID: <ZS1zjxCVMnyl5dPN@p14s>
-References: <20231013200851.347042-1-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1697490618; x=1698095418;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3NTOzADiDVdKOcs9IM9LikyA996SESJ24YGxjfzCGs=;
+        b=rEJdpyT6REphIR9ViRWd+j4upu6R9mSopPXSMu1MWsqg7Bb4pACa5fYw10zfk7f8S0
+         RqyTzGooBDaRHyMj5t0s9kfr8ijDF6r76vhdr49/Wgf5wY3fatUqUnawUBvQwCCNV7xU
+         60jxxkB1sMJpwwBvPZuflMgaSYB9yPlBDkhpSyL5KmxY4QGnA5R2wQDUKOcebcsnC3ah
+         DZ9JtaYZ3MtIwJ5+R+ajCGZ7y6dmgXZ3iptjSZ+M8gImHGz89XiirmXi1HueiQKpURMo
+         G6tQhzWqPbZBG2yvXJASa7L+H92Qo9wObX8KORNAU1W/Jjp2yiZrJdhx0qn7XuTTuSii
+         vQdw==
+X-Gm-Message-State: AOJu0YzMpC5oCSz3Oli4NMakjmYcGrTqGoI7zEtngGsOQMtQz267nr04
+        It56ynyaGTeJWwo192XytJT+yw==
+X-Google-Smtp-Source: AGHT+IHLDCnf171f/uBdd4en04OM7yreK9an7sbHI5qHB4oPAHBB4Ay0xCvD0Ocepnr7gXphd3Q4LQ==
+X-Received: by 2002:adf:ca8a:0:b0:323:31a6:c1db with SMTP id r10-20020adfca8a000000b0032331a6c1dbmr6436403wrh.21.1697490617483;
+        Mon, 16 Oct 2023 14:10:17 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id d27-20020adf9b9b000000b0031c52e81490sm141932wrc.72.2023.10.16.14.10.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Oct 2023 14:10:16 -0700 (PDT)
+Message-ID: <13fcd5eb-c9cd-4959-a225-93911afb858a@linaro.org>
+Date:   Mon, 16 Oct 2023 23:10:15 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231013200851.347042-1-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] thermal: qcom: add qmi-cooling driver
+Content-Language: en-US
+To:     Caleb Connolly <caleb.connolly@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bhupesh Sharma <bhupesh.linux@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+ <20230905-caleb-qmi_cooling-v1-3-5aa39d4164a7@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230905-caleb-qmi_cooling-v1-3-5aa39d4164a7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 03:08:49PM -0500, Rob Herring wrote:
-> The common reserved-memory bindings have recently been copied from the
-> kernel tree into dtschema. The preference is to host common, stable
-> bindings in dtschema. As reserved-memory is documented in the DT Spec,
-> it meets the criteria.
+
+Hi Caleb,
+
+On 29/09/2023 18:16, Caleb Connolly wrote:
+> The Thermal Mitigation Device (TMD) service exposes various platform
+> specific thermal mitigations available on remote subsystems (ie the
+> modem, adsp, cdsp, and sdsp). The service is exposed via the QMI messaging
+> interface, usually over the QRTR transport.
 > 
-> The v2023.09 version of dtschema is what contains the reserved-memory
-> schemas we depend on, so bump the minimum version to that. Otherwise,
-> references to these schemas will generate errors.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> These controls affect things like the power limits of the modem power
+> amplifier and cpu core, skin temperature mitigations, as well as rail
+> voltage restrictions under cold conditions.
+As it is a new driver, is it possible to elaborate a bit more the 
+description of this driver. For instance, why there are notifications 
+from the server, what is 'new server', how can happen 'del server' ? 
+etc... That will help in the future to maintain the driver.
+
+
+> Each remote subsystem has its own TMD instance, where each child node
+> represents a single thermal control.
+
+The QMI TMD driver is not a cooling device from a formal thermal 
+framework semantic point of view. Like the cpufreq drivers are not.
+
+However they fall under the semantic of thermal mitigation devices which 
+is relatively new (eg. they can warm up).
+
+ From a design point view, it sounds more adequate to have the same 
+approach as the other passive cooling device, especially that this 
+device may be used in the future by other subsystems (AFAIU).
+
+I suggest to remove everything related to the cooling device and keep 
+the driver specific bits. For instance this driver name should what it 
+is, qmi-tmd and not qmi-cooling. And give simple interfaces to act on 
+it. Moreover, this interface would have to sort out 'cooling' and 
+'warming' effects vs the specified state.
+
+As asked in a previous email about a performance / power QoS. IMO it 
+would be more consistent to have a 'performance_cooling_device' based on 
+a performance QoS as we have a cpufreq_cooling_device based on freq_qos 
+and a devfreq_cooling_device based on a dev_freq_qos.
+
+More comments below (but cooling related code skipped). Overall the 
+variable names for the message are too long, even it is the sake of self 
+explanatory names, that does not help actually. It would be more easy to 
+read shorted variable but with a comment describing their purposes.
+
+> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
 > ---
->  Documentation/devicetree/bindings/Makefile    |   2 +-
->  .../remoteproc/renesas,rcar-rproc.yaml        |   2 +-
->  .../bindings/reserved-memory/framebuffer.yaml |  52 -----
->  .../reserved-memory/memory-region.yaml        |  40 ----
->  .../reserved-memory/reserved-memory.txt       |   2 +-
->  .../reserved-memory/reserved-memory.yaml      | 181 ------------------
->  .../reserved-memory/shared-dma-pool.yaml      |  97 ----------
->  .../bindings/sound/mediatek,mt8188-afe.yaml   |   2 +-
->  8 files changed, 4 insertions(+), 374 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
->  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
->  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
->  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
+>   drivers/thermal/qcom/Kconfig       |  13 +
+>   drivers/thermal/qcom/Makefile      |   1 +
+>   drivers/thermal/qcom/qmi-cooling.c | 520 +++++++++++++++++++++++++++++++++++++
+>   drivers/thermal/qcom/qmi-cooling.h | 428 ++++++++++++++++++++++++++++++
+>   4 files changed, 962 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
-> index 8b395893bd85..3e886194b043 100644
-> --- a/Documentation/devicetree/bindings/Makefile
-> +++ b/Documentation/devicetree/bindings/Makefile
-> @@ -6,7 +6,7 @@ DT_MK_SCHEMA ?= dt-mk-schema
->  DT_SCHEMA_LINT = $(shell which yamllint || \
->    echo "warning: python package 'yamllint' not installed, skipping" >&2)
->  
-> -DT_SCHEMA_MIN_VERSION = 2022.3
-> +DT_SCHEMA_MIN_VERSION = 2023.9
->  
->  PHONY += check_dtschema_version
->  check_dtschema_version:
-> diff --git a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
-> index 4bea679a0f61..5c280117dc93 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
-> @@ -31,7 +31,7 @@ properties:
->        remoteproc device. This is variable and describes the memories shared with
->        the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
->        vrings, ...).
-> -      (see ../reserved-memory/reserved-memory.yaml)
-> +      (see reserved-memory/reserved-memory.yaml in dtschema project)
+> diff --git a/drivers/thermal/qcom/Kconfig b/drivers/thermal/qcom/Kconfig
+> index 2c7f3f9a26eb..a24c840b78b3 100644
+> --- a/drivers/thermal/qcom/Kconfig
+> +++ b/drivers/thermal/qcom/Kconfig
+> @@ -41,3 +41,16 @@ config QCOM_LMH
+>   	  input from temperature and current sensors.  On many newer Qualcomm SoCs
+>   	  LMh is configured in the firmware and this feature need not be enabled.
+>   	  However, on certain SoCs like sdm845 LMh has to be configured from kernel.
+> +
+> +config QCOM_QMI_COOLING
+> +	tristate "Qualcomm QMI cooling drivers"
+> +	depends on QCOM_RPROC_COMMON
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	select QCOM_QMI_HELPERS
+> +	help
+> +	   This enables the remote subsystem cooling devices. These cooling
+> +	   devices will be used by Qualcomm chipset to place various remote
+> +	   subsystem mitigations like remote processor passive mitigation,
+> +	   remote subsystem voltage restriction at low temperatures etc.
+> +	   The QMI cooling device will interface with remote subsystem
+> +	   using Qualcomm remoteproc interface.
+> diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
+> index 0fa2512042e7..94dd98e89af9 100644
+> --- a/drivers/thermal/qcom/Makefile
+> +++ b/drivers/thermal/qcom/Makefile
+> @@ -6,3 +6,4 @@ qcom_tsens-y			+= tsens.o tsens-v2.o tsens-v1.o tsens-v0_1.o \
+>   obj-$(CONFIG_QCOM_SPMI_ADC_TM5)	+= qcom-spmi-adc-tm5.o
+>   obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
+>   obj-$(CONFIG_QCOM_LMH)		+= lmh.o
+> +obj-$(CONFIG_QCOM_QMI_COOLING) += qmi-cooling.o
+> diff --git a/drivers/thermal/qcom/qmi-cooling.c b/drivers/thermal/qcom/qmi-cooling.c
+> new file mode 100644
+> index 000000000000..c34fecd7eefa
+> --- /dev/null
+> +++ b/drivers/thermal/qcom/qmi-cooling.c
+> @@ -0,0 +1,520 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2017, The Linux Foundation
+> + * Copyright (c) 2023, Linaro Limited
+> + *
+> + * QMI Thermal Mitigation Device (TMD) client driver.
+> + * This driver provides an in-kernel client to handle hot and cold thermal
+> + * mitigations for remote subsystems (modem and DSPs) running the TMD service.
+> + * It doesn't implement any handling of reports from remote subsystems.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/net.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc/qcom_rproc.h>
+> +#include <linux/slab.h>
+> +#include <linux/soc/qcom/qmi.h>
+> +#include <linux/thermal.h>
+> +
+> +#include "qmi-cooling.h"
+> +
+> +#define MODEM0_INSTANCE_ID	0x0
+> +#define ADSP_INSTANCE_ID	0x1
+> +#define CDSP_INSTANCE_ID	0x43
+> +#define SLPI_INSTANCE_ID	0x53
+> +
+> +#define QMI_TMD_RESP_TIMEOUT msecs_to_jiffies(100)
+> +
+> +/**
+> + * struct qmi_instance_id - QMI instance ID and name
+> + * @id:		The QMI instance ID
+> + * @name:	Friendly name for this instance
+> + */
+> +struct qmi_instance_id {
+> +	u32 id;
+> +	const char *name;
+> +};
+> +
+> +/**
+> + * struct qmi_tmd_client - TMD client state
+> + * @dev:	Device associated with this client
+> + * @name:	Friendly name for the remote TMD service
+> + * @handle:	QMI connection handle
+> + * @mutex:	Lock to synchronise QMI communication
+> + * @id:		The QMI TMD service instance ID
+> + * @cdev_list:	The list of cooling devices (controls) enabled for this instance
+> + * @svc_arrive_work: Work item for initialising the client when the TMD service
+> + *		     starts.
+> + * @connection_active: Whether or not we're connected to the QMI TMD service
+> + */
+> +struct qmi_tmd_client {
+> +	struct device *dev;
+> +	const char *name;
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+dev, name and id are basically used to write information in the logs. 
+Those logs are too numerous in this driver and most of them can go away.
 
->  
->  required:
->    - compatible
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> deleted file mode 100644
-> index 851ec24d6142..000000000000
-> --- a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
-> +++ /dev/null
-> @@ -1,52 +0,0 @@
-> -# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> -%YAML 1.2
-> ----
-> -$id: http://devicetree.org/schemas/reserved-memory/framebuffer.yaml#
-> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> -
-> -title: /reserved-memory framebuffer node
-> -
-> -maintainers:
-> -  - devicetree-spec@vger.kernel.org
-> -
-> -allOf:
-> -  - $ref: reserved-memory.yaml
-> -
-> -properties:
-> -  compatible:
-> -    const: framebuffer
-> -    description: >
-> -      This indicates a region of memory meant to be used as a framebuffer for
-> -      a set of display devices. It can be used by an operating system to keep
-> -      the framebuffer from being overwritten and use it as the backing memory
-> -      for a display device (such as simple-framebuffer).
-> -
-> -unevaluatedProperties: false
-> -
-> -examples:
-> -  - |
-> -    / {
-> -        compatible = "foo";
-> -        model = "foo";
-> -        #address-cells = <1>;
-> -        #size-cells = <1>;
-> -
-> -        chosen {
-> -            framebuffer {
-> -                compatible = "simple-framebuffer";
-> -                memory-region = <&fb>;
-> -            };
-> -        };
-> -
-> -        reserved-memory {
-> -            #address-cells = <1>;
-> -            #size-cells = <1>;
-> -            ranges;
-> -
-> -            fb: framebuffer@80000000 {
-> -                compatible = "framebuffer";
-> -                reg = <0x80000000 0x007e9000>;
-> -            };
-> -        };
-> -    };
-> -...
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml b/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
-> deleted file mode 100644
-> index 592f180e6b0d..000000000000
-> --- a/Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
-> +++ /dev/null
-> @@ -1,40 +0,0 @@
-> -# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> -%YAML 1.2
-> ----
-> -$id: http://devicetree.org/schemas/reserved-memory/memory-region.yaml#
-> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> -
-> -title: Reserved Memory Region
-> -
-> -maintainers:
-> -  - devicetree-spec@vger.kernel.org
-> -
-> -description: |
-> -  Regions in the /reserved-memory node may be referenced by other device
-> -  nodes by adding a memory-region property to the device node.
-> -
-> -select: true
-> -
-> -properties:
-> -  memory-region:
-> -    $ref: /schemas/types.yaml#/definitions/phandle-array
-> -    description: >
-> -      Phandle to a /reserved-memory child node assigned to the device.
-> -
-> -  memory-region-names:
-> -    $ref: /schemas/types.yaml#/definitions/string-array
-> -    description: >
-> -      A list of names, one for each corresponding entry in the
-> -      memory-region property
-> -
-> -additionalProperties: true
-> -
-> -examples:
-> -  - |
-> -    fb0: video@12300000 {
-> -        /* ... */
-> -        reg = <0x12300000 0x1000>;
-> -        memory-region = <&display_reserved>;
-> -    };
-> -
-> -...
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> index 1810701a8509..8ce72996d500 100644
-> --- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> +++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> @@ -1 +1 @@
-> -This file has been moved to reserved-memory.yaml.
-> +This file has been moved to reserved-memory.yaml in the dtschema repository.
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-> deleted file mode 100644
-> index c680e397cfd2..000000000000
-> --- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-> +++ /dev/null
-> @@ -1,181 +0,0 @@
-> -# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> -%YAML 1.2
-> ----
-> -$id: http://devicetree.org/schemas/reserved-memory/reserved-memory.yaml#
-> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> -
-> -title: /reserved-memory Child Node Common
-> -
-> -maintainers:
-> -  - devicetree-spec@vger.kernel.org
-> -
-> -description: >
-> -  Reserved memory is specified as a node under the /reserved-memory node. The
-> -  operating system shall exclude reserved memory from normal usage one can
-> -  create child nodes describing particular reserved (excluded from normal use)
-> -  memory regions. Such memory regions are usually designed for the special
-> -  usage by various device drivers.
-> -
-> -  Each child of the reserved-memory node specifies one or more regions
-> -  of reserved memory. Each child node may either use a 'reg' property to
-> -  specify a specific range of reserved memory, or a 'size' property with
-> -  optional constraints to request a dynamically allocated block of
-> -  memory.
-> -
-> -  Following the generic-names recommended practice, node names should
-> -  reflect the purpose of the node (ie. "framebuffer" or "dma-pool").
-> -  Unit address (@<address>) should be appended to the name if the node
-> -  is a static allocation.
-> -
-> -properties:
-> -  reg: true
-> -
-> -  size:
-> -    oneOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> -      - $ref: /schemas/types.yaml#/definitions/uint64
-> -    description: >
-> -      Length based on parent's \#size-cells. Size in bytes of memory to
-> -      reserve.
-> -
-> -  alignment:
-> -    oneOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> -      - $ref: /schemas/types.yaml#/definitions/uint64
-> -    description: >
-> -      Length based on parent's \#size-cells. Address boundary for
-> -      alignment of allocation.
-> -
-> -  alloc-ranges:
-> -    $ref: /schemas/types.yaml#/definitions/uint32-array
-> -    description: >
-> -      Address and Length pairs. Specifies regions of memory that are
-> -      acceptable to allocate from.
-> -
-> -  iommu-addresses:
-> -    $ref: /schemas/types.yaml#/definitions/phandle-array
-> -    description: >
-> -      A list of phandle and specifier pairs that describe static IO virtual
-> -      address space mappings and carveouts associated with a given reserved
-> -      memory region. The phandle in the first cell refers to the device for
-> -      which the mapping or carveout is to be created.
-> -
-> -      The specifier consists of an address/size pair and denotes the IO
-> -      virtual address range of the region for the given device. The exact
-> -      format depends on the values of the "#address-cells" and "#size-cells"
-> -      properties of the device referenced via the phandle.
-> -
-> -      When used in combination with a "reg" property, an IOVA mapping is to
-> -      be established for this memory region. One example where this can be
-> -      useful is to create an identity mapping for physical memory that the
-> -      firmware has configured some hardware to access (such as a bootsplash
-> -      framebuffer).
-> -
-> -      If no "reg" property is specified, the "iommu-addresses" property
-> -      defines carveout regions in the IOVA space for the given device. This
-> -      can be useful if a certain memory region should not be mapped through
-> -      the IOMMU.
-> -
-> -  no-map:
-> -    type: boolean
-> -    description: >
-> -      Indicates the operating system must not create a virtual mapping
-> -      of the region as part of its standard mapping of system memory,
-> -      nor permit speculative access to it under any circumstances other
-> -      than under the control of the device driver using the region.
-> -
-> -  reusable:
-> -    type: boolean
-> -    description: >
-> -      The operating system can use the memory in this region with the
-> -      limitation that the device driver(s) owning the region need to be
-> -      able to reclaim it back. Typically that means that the operating
-> -      system can use that region to store volatile or cached data that
-> -      can be otherwise regenerated or migrated elsewhere.
-> -
-> -allOf:
-> -  - if:
-> -      required:
-> -        - no-map
-> -
-> -    then:
-> -      not:
-> -        required:
-> -          - reusable
-> -
-> -  - if:
-> -      required:
-> -        - reusable
-> -
-> -    then:
-> -      not:
-> -        required:
-> -          - no-map
-> -
-> -oneOf:
-> -  - oneOf:
-> -      - required:
-> -          - reg
-> -
-> -      - required:
-> -          - size
-> -
-> -  - oneOf:
-> -      # IOMMU reservations
-> -      - required:
-> -          - iommu-addresses
-> -
-> -      # IOMMU mappings
-> -      - required:
-> -          - reg
-> -          - iommu-addresses
-> -
-> -additionalProperties: true
-> -
-> -examples:
-> -  - |
-> -    / {
-> -      compatible = "foo";
-> -      model = "foo";
-> -
-> -      #address-cells = <2>;
-> -      #size-cells = <2>;
-> -
-> -      reserved-memory {
-> -        #address-cells = <2>;
-> -        #size-cells = <2>;
-> -        ranges;
-> -
-> -        adsp_resv: reservation-adsp {
-> -          /*
-> -           * Restrict IOVA mappings for ADSP buffers to the 512 MiB region
-> -           * from 0x40000000 - 0x5fffffff. Anything outside is reserved by
-> -           * the ADSP for I/O memory and private memory allocations.
-> -           */
-> -          iommu-addresses = <&adsp 0x0 0x00000000 0x00 0x40000000>,
-> -                            <&adsp 0x0 0x60000000 0xff 0xa0000000>;
-> -        };
-> -
-> -        fb: framebuffer@90000000 {
-> -          reg = <0x0 0x90000000 0x0 0x00800000>;
-> -          iommu-addresses = <&dc0 0x0 0x90000000 0x0 0x00800000>;
-> -        };
-> -      };
-> -
-> -      bus@0 {
-> -        #address-cells = <1>;
-> -        #size-cells = <1>;
-> -        ranges = <0x0 0x0 0x0 0x40000000>;
-> -
-> -        adsp: adsp@2990000 {
-> -          reg = <0x2990000 0x2000>;
-> -          memory-region = <&adsp_resv>;
-> -        };
-> -
-> -        dc0: display@15200000 {
-> -          reg = <0x15200000 0x10000>;
-> -          memory-region = <&fb>;
-> -        };
-> -      };
-> -    };
-> -...
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
-> deleted file mode 100644
-> index 457de0920cd1..000000000000
-> --- a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
-> +++ /dev/null
-> @@ -1,97 +0,0 @@
-> -# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> -%YAML 1.2
-> ----
-> -$id: http://devicetree.org/schemas/reserved-memory/shared-dma-pool.yaml#
-> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> -
-> -title: /reserved-memory DMA pool
-> -
-> -maintainers:
-> -  - devicetree-spec@vger.kernel.org
-> -
-> -allOf:
-> -  - $ref: reserved-memory.yaml
-> -
-> -properties:
-> -  compatible:
-> -    oneOf:
-> -      - const: shared-dma-pool
-> -        description: >
-> -          This indicates a region of memory meant to be used as a shared
-> -          pool of DMA buffers for a set of devices. It can be used by an
-> -          operating system to instantiate the necessary pool management
-> -          subsystem if necessary.
-> -
-> -      - const: restricted-dma-pool
-> -        description: >
-> -          This indicates a region of memory meant to be used as a pool
-> -          of restricted DMA buffers for a set of devices. The memory
-> -          region would be the only region accessible to those devices.
-> -          When using this, the no-map and reusable properties must not
-> -          be set, so the operating system can create a virtual mapping
-> -          that will be used for synchronization. The main purpose for
-> -          restricted DMA is to mitigate the lack of DMA access control
-> -          on systems without an IOMMU, which could result in the DMA
-> -          accessing the system memory at unexpected times and/or
-> -          unexpected addresses, possibly leading to data leakage or
-> -          corruption. The feature on its own provides a basic level of
-> -          protection against the DMA overwriting buffer contents at
-> -          unexpected times. However, to protect against general data
-> -          leakage and system memory corruption, the system needs to
-> -          provide way to lock down the memory access, e.g., MPU. Note
-> -          that since coherent allocation needs remapping, one must set
-> -          up another device coherent pool by shared-dma-pool and use
-> -          dma_alloc_from_dev_coherent instead for atomic coherent
-> -          allocation.
-> -
-> -  linux,cma-default:
-> -    type: boolean
-> -    description: >
-> -      If this property is present, then Linux will use the region for
-> -      the default pool of the contiguous memory allocator.
-> -
-> -  linux,dma-default:
-> -    type: boolean
-> -    description: >
-> -      If this property is present, then Linux will use the region for
-> -      the default pool of the consistent DMA allocator.
-> -
-> -if:
-> -  properties:
-> -    compatible:
-> -      contains:
-> -        const: restricted-dma-pool
-> -then:
-> -  properties:
-> -    no-map: false
-> -    reusable: false
-> -
-> -unevaluatedProperties: false
-> -
-> -examples:
-> -  - |
-> -      reserved-memory {
-> -          #address-cells = <1>;
-> -          #size-cells = <1>;
-> -          ranges;
-> -
-> -          /* global autoconfigured region for contiguous allocations */
-> -          linux,cma {
-> -              compatible = "shared-dma-pool";
-> -              reusable;
-> -              size = <0x4000000>;
-> -              alignment = <0x2000>;
-> -              linux,cma-default;
-> -          };
-> -
-> -          display_reserved: framebuffer@78000000 {
-> -              reg = <0x78000000 0x800000>;
-> -          };
-> -
-> -          restricted_dma_reserved: restricted-dma-pool@50000000 {
-> -              compatible = "restricted-dma-pool";
-> -              reg = <0x50000000 0x4000000>;
-> -          };
-> -      };
-> -
-> -...
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
-> index 90520f89208b..77af276ed2a2 100644
-> --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-afe.yaml
-> @@ -29,7 +29,7 @@ properties:
->      maxItems: 1
->      description: |
->        Shared memory region for AFE memif.  A "shared-dma-pool".
-> -      See ../reserved-memory/reserved-memory.yaml for details.
-> +      See dtschema reserved-memory/shared-dma-pool.yaml for details.
->  
->    mediatek,topckgen:
->      $ref: /schemas/types.yaml#/definitions/phandle
-> -- 
-> 2.42.0
+The remaining places where these fields are needed can be replaced by 
+local variables.
+
+> +	struct qmi_handle handle;
+> +	struct mutex mutex;
+> +	u32 id;
+> +	struct list_head cdev_list;
+> +	struct work_struct svc_arrive_work;
+> +	bool connection_active;
+> +};
+> +
+> +/**
+> + * struct qmi_tmd - A TMD cooling device
+> + * @np:		OF node associated with this control
+> + * @type:	The control type (exposed via sysfs)
+> + * @qmi_name:	The common name of this control shared by the remote subsystem
+> + * @cdev:	Thermal framework cooling device handle
+> + * @cur_state:	The current cooling/warming/mitigation state
+> + * @max_state:	The maximum state
+> + * @client:	The TMD client instance this control is associated with
+> + */
+> +struct qmi_tmd {
+> +	struct device_node *np;
+
+This reference should not be needed.
+
+> +	const char *type;
+
+Also, that is duplicate information, it should not be needed.
+
+> +	char qmi_name[QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1];
+
+kstrdup on char *name;
+
+(and this field is already in the qmi_tmd namespace so putting 
+*qmi*_name is duplicate information)
+
+> +	struct list_head node;
+> +	struct thermal_cooling_device *cdev;
+> +	unsigned int cur_state;
+> +	unsigned int max_state;
+> +	struct qmi_tmd_client *client;
+> +};
+> +
+> +/* Notify the remote subsystem of the requested cooling state */
+> +static int qmi_tmd_send_state_request(struct qmi_tmd *tmd)
+> +{
+> +	struct tmd_set_mitigation_level_resp_msg_v01 tmd_resp;
+> +	struct tmd_set_mitigation_level_req_msg_v01 req;
+
+The structure names are a bit long, we may want to shortened them somehow.
+
+> +	struct qmi_tmd_client *client;
+> +	struct qmi_txn txn;
+> +	int ret = 0;
+> +
+> +	client = tmd->client;
+> +
+> +	if (!client->connection_active)
+> +		return 0;
+
+	return -ENOTCONN; ?
+
+> +
+> +	memset(&req, 0, sizeof(req));
+> +	memset(&tmd_resp, 0, sizeof(tmd_resp));
+
+As previously said:
+
+	tmd_resp = { 0 };
+	reg = { 0 };
+
+at declaration time
+
+> +	strscpy(req.mitigation_dev_id.mitigation_dev_id, tmd->qmi_name,
+> +		QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1);
+
+Variables name too, nested names too long. It is difficult to read.
+
+> +	req.mitigation_level = tmd->cur_state;
+
+What would it be for 'warming' device ?
+
+> +	mutex_lock(&client->mutex);
+> +
+> +	ret = qmi_txn_init(&client->handle, &txn,
+> +			   tmd_set_mitigation_level_resp_msg_v01_ei, &tmd_resp);
+
+Too loong :)
+
+Having a nice description in the comment when declaring a shortened 
+tmd_set_mitigation_level_resp_msg_v01_ei variable name should be more 
+adequate.
+
+> +	if (ret < 0) {
+> +		dev_err(client->dev, "qmi set state %d txn init failed for %s ret %d\n",
+> +			tmd->cur_state, tmd->type, ret);
+
+No need to write an error message. Return is enough.
+
+> +		goto qmi_send_exit;
+> +	}
+> +
+> +	ret = qmi_send_request(&client->handle, NULL, &txn,
+> +			       QMI_TMD_SET_MITIGATION_LEVEL_REQ_V01,
+> +			       TMD_SET_MITIGATION_LEVEL_REQ_MSG_V01_MAX_MSG_LEN,
+> +			       tmd_set_mitigation_level_req_msg_v01_ei, &req);
+> +	if (ret < 0) {
+> +		dev_err(client->dev, "qmi set state %d txn send failed for %s ret %d\n",
+> +			tmd->cur_state, tmd->type, ret);
+
+No need to write an error message
+
+> +		qmi_txn_cancel(&txn);
+> +		goto qmi_send_exit;
+> +	}
+> +
+> +	ret = qmi_txn_wait(&txn, QMI_TMD_RESP_TIMEOUT);
+> +	if (ret < 0) {
+> +		dev_err(client->dev, "qmi set state %d txn wait failed for %s ret %d\n",
+> +			tmd->cur_state, tmd->type, ret);
+
+No need to write an error message
+
+> +		goto qmi_send_exit;
+> +	}
+> +	ret = 0;
+
+Usually, ret = 0 is just before the exit label
+
+> +
+> +	if (tmd_resp.resp.result != QMI_RESULT_SUCCESS_V01) {
+> +		ret = tmd_resp.resp.result;
+
+Is the result an errno ?
+
+> +		dev_err(client->dev, "qmi set state %d NOT success for %s ret %d\n",
+> +			tmd->cur_state, tmd->type, ret);
+
+No need to write an error message
+
+> +		goto qmi_send_exit;
+> +	}
+> +
+> +	dev_dbg(client->dev, "Requested state %d/%d for %s\n", tmd->cur_state,
+> +		tmd->max_state, tmd->type);
+
+No need to write this debug message
+
+> +
+> +qmi_send_exit:
+> +	mutex_unlock(&client->mutex);
+> +	return ret;
+> +}
+> +
+
+[ ... ]
+
+> +/*
+> + * Init a single TMD control by registering a cooling device for it, or
+> + * synchronising state with the remote subsystem if recovering from a service
+> + * restart. This is called when the TMD service starts up.
+> + */
+> +static int qmi_tmd_init_control(struct qmi_tmd_client *client, const char *label,
+> +				u8 max_state)
+> +{
+> +	struct qmi_tmd *tmd = NULL;
+
+Initialization not useful
+
+> +	list_for_each_entry(tmd, &client->cdev_list, node)
+> +		if (!strncasecmp(tmd->qmi_name, label,
+> +				 QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1))
+> +			goto found;
+
+Invert the logic:
+
+		if (strncasecmp(...))
+			continue;
+
+		if (tmd->cdev)
+			return qmi_tmd_send_state_request(tmd);
+
+		/* return 0 */
+	}
+> +
+> +	dev_dbg(client->dev,
+> +		"TMD '%s' available in firmware but not specified in DT\n",
+> +		label);
+
+No need to write this debug message
+
+> +	return 0;
+> +
+> +found:
+> +	tmd->max_state = max_state;
+> +	/*
+> +	 * If the cooling device already exists then the QMI service went away and
+> +	 * came back. So just make sure the current cooling device state is
+> +	 * reflected on the remote side and then return.
+> +	 */
+> +	if (tmd->cdev)
+> +		return qmi_tmd_send_state_request(tmd);
+> +
+> +	return qmi_register_cooling_device(tmd);
+> +}
+> +
+> +/*
+> + * When the QMI service starts up on a remote subsystem this function will fetch
+> + * the list of TMDs on the subsystem, match it to the TMDs specified in devicetree
+> + * and call qmi_tmd_init_control() for each
+> + */
+> +static void qmi_tmd_svc_arrive(struct work_struct *work)
+> +{
+> +	struct qmi_tmd_client *client =
+> +		container_of(work, struct qmi_tmd_client, svc_arrive_work);
+> +
+> +	struct tmd_get_mitigation_device_list_req_msg_v01 req;
+> +	struct tmd_get_mitigation_device_list_resp_msg_v01 *resp;
+> +	int ret = 0, i;
+> +	struct qmi_txn txn;
+> +
+> +	memset(&req, 0, sizeof(req));
+> +	/* resp struct is 1.1kB, allocate it on the heap. */
+> +	resp = kzalloc(sizeof(*resp), GFP_KERNEL);
+> +	if (!resp)
+> +		return;
+> +
+> +	/* Get a list of TMDs supported by the remoteproc */
+> +	mutex_lock(&client->mutex);
+> +	ret = qmi_txn_init(&client->handle, &txn,
+> +			   tmd_get_mitigation_device_list_resp_msg_v01_ei, resp);
+> +	if (ret < 0) {
+> +		dev_err(client->dev,
+> +			"Transaction init error for instance_id: %#x ret %d\n",
+> +			client->id, ret);
+
+No need to write an error message, qmi_txn_init() writes one
+
+> +		goto reg_exit;
+> +	}
+> +
+> +	ret = qmi_send_request(&client->handle, NULL, &txn,
+> +			       QMI_TMD_GET_MITIGATION_DEVICE_LIST_REQ_V01,
+> +			       TMD_GET_MITIGATION_DEVICE_LIST_REQ_MSG_V01_MAX_MSG_LEN,
+> +			       tmd_get_mitigation_device_list_req_msg_v01_ei, &req);
+> +	if (ret < 0) {
+> +		qmi_txn_cancel(&txn);
+> +		goto reg_exit;
+> +	}
+> +
+> +	ret = qmi_txn_wait(&txn, QMI_TMD_RESP_TIMEOUT);
+> +	if (ret < 0) {
+> +		dev_err(client->dev, "Transaction wait error for client %#x ret:%d\n",
+> +			client->id, ret);
+
+No need to write an error message
+
+> +		goto reg_exit;
+> +	}
+> +	if (resp->resp.result != QMI_RESULT_SUCCESS_V01) {
+> +		ret = resp->resp.result;
+> +		dev_err(client->dev, "Failed to get device list for client %#x ret:%d\n",
+> +			client->id, ret);
+
+No need to write an error message
+
+> +		goto reg_exit;
+> +	}
+> +	mutex_unlock(&client->mutex);
+> +
+> +	client->connection_active = true;
+> +
+> +	for (i = 0; i < resp->mitigation_device_list_len; i++) {
+> +		struct tmd_mitigation_dev_list_type_v01 *device =
+> +			&resp->mitigation_device_list[i];
+> +
+> +		ret = qmi_tmd_init_control(client,
+> +					   device->mitigation_dev_id.mitigation_dev_id,
+> +					   device->max_mitigation_level);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	kfree(resp);
+> +	return;
+> +
+> +reg_exit:
+> +	mutex_unlock(&client->mutex);
+> +	kfree(resp);
+> +}
+> +
+> +static void thermal_qmi_net_reset(struct qmi_handle *qmi)
+> +{
+> +	struct qmi_tmd_client *client = container_of(qmi, struct qmi_tmd_client, handle);
+> +	struct qmi_tmd *tmd = NULL;
+> +
+> +	pr_info("QMI TMD service reset %s\n", client->name);
+
+This message is not needed
+
+> +
+> +	list_for_each_entry(tmd, &client->cdev_list, node) {
+> +		qmi_tmd_send_state_request(tmd);
+> +	}
+> +}
+> +
+> +static void thermal_qmi_del_server(struct qmi_handle *qmi, struct qmi_service *service)
+> +{
+> +	struct qmi_tmd_client *client = container_of(qmi, struct qmi_tmd_client, handle);
+> +
+> +	pr_info("QMI TMD service stop %s\n", client->name);
+
+This message is not needed
+
+> +
+> +	client->connection_active = false;
+> +}
+> +
+> +static int thermal_qmi_new_server(struct qmi_handle *qmi, struct qmi_service *service)
+> +{
+> +	struct qmi_tmd_client *client = container_of(qmi, struct qmi_tmd_client, handle);
+> +	struct sockaddr_qrtr sq = { AF_QIPCRTR, service->node, service->port };
+> +
+> +	pr_info("QMI TMD service start %s\n", client->name);
+
+This message is not needed
+
+> +	mutex_lock(&client->mutex);
+> +	kernel_connect(qmi->sock, (struct sockaddr *)&sq, sizeof(sq), 0);
+
+error code ?
+
+> +	mutex_unlock(&client->mutex);
+> +	queue_work(system_highpri_wq, &client->svc_arrive_work);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct qmi_ops thermal_qmi_event_ops = {
+> +	.new_server = thermal_qmi_new_server,
+> +	.del_server = thermal_qmi_del_server,
+> +	.net_reset = thermal_qmi_net_reset,
+> +};
+> +
+> +static void qmi_tmd_cleanup(struct qmi_tmd_client *client)
+> +{
+> +	struct qmi_tmd *tmd, *c_next;
+> +
+> +	client->connection_active = false;
+> +
+> +	mutex_lock(&client->mutex);
+> +	qmi_handle_release(&client->handle);
+> +	cancel_work(&client->svc_arrive_work);
+> +	list_for_each_entry_safe(tmd, c_next, &client->cdev_list, node) {
+> +		if (tmd->cdev)
+> +			thermal_cooling_device_unregister(tmd->cdev);
+> +
+> +		list_del(&tmd->node);
+> +	}
+> +	mutex_unlock(&client->mutex);
+> +}
+> +
+> +/* Parse the controls and allocate a qmi_tmd for each of them */
+> +static int qmi_tmd_alloc_cdevs(struct qmi_tmd_client *client)
+> +{
+> +	struct device *dev = client->dev;
+> +	struct qmi_tmd *tmd;
+> +	struct device_node *subnode, *node = dev->of_node;
+> +	int ret;
+> +
+> +	for_each_available_child_of_node(node, subnode) {
+> +		const char *name;
+> +
+> +		tmd = devm_kzalloc(dev, sizeof(*tmd), GFP_KERNEL);
+> +		if (!tmd)
+> +			return dev_err_probe(client->dev, -ENOMEM,
+> +					     "Couldn't allocate tmd\n");
+
+No error display with memory allocation
+
+> +
+> +		tmd->type = devm_kasprintf(client->dev, GFP_KERNEL, "%s:%s",
+> +						client->name, subnode->name);
+> +		if (!tmd->type)
+> +			return dev_err_probe(dev, -ENOMEM, "Cooling device name\n");
+> +
+> +		if (of_property_read_string(subnode, "label", &name)) {
+> +			return dev_err_probe(client->dev, -EINVAL,
+> +					     "Fail to parse dev name for %s\n",
+> +					     subnode->name);
+> +		}
+> +
+> +		ret = strscpy(tmd->qmi_name, name,
+> +			      QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1);
+> +		if (ret == -E2BIG) {
+> +			return dev_err_probe(dev, -EINVAL, "TMD label %s is too long\n",
+> +					     name);
+> +		}
+> +
+> +		tmd->client = client;
+> +		tmd->np = subnode;
+> +		tmd->cur_state = 0;
+> +		list_add(&tmd->node, &client->cdev_list);
+> +	}
+> +
+> +	if (list_empty(&client->cdev_list))
+> +		return dev_err_probe(client->dev, -EINVAL,
+> +				     "No cooling devices specified for client %s (%#x)\n",
+> +				     client->name, client->id);
+
+Stricto sensu, they are not cooling devices. They are mitigation devices.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int qmi_tmd_client_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev;
+> +	struct qmi_tmd_client *client;
+> +	const struct qmi_instance_id *match;
+> +	int ret;
+> +
+> +	dev = &pdev->dev;
+> +
+> +	client = devm_kzalloc(dev, sizeof(*client), GFP_KERNEL);
+> +	if (!client)
+> +		return -ENOMEM;
+> +
+> +	client->dev = dev;
+> +	match = of_device_get_match_data(dev);
+> +	if (!match)
+> +		return dev_err_probe(dev, -EINVAL, "No match data\n");
+> +
+> +	client->id = match->id;
+> +	client->name = match->name;
+
+See the comment at the beginning of the code about the client structure 
+definition.
+  +
+> +	mutex_init(&client->mutex);
+> +	INIT_LIST_HEAD(&client->cdev_list);
+> +	INIT_WORK(&client->svc_arrive_work, qmi_tmd_svc_arrive);
+> +
+> +	ret = qmi_tmd_alloc_cdevs(client);
+> +	if (ret)
+> +		return ret;
+
+It is cumbersome to assign client->dev and then reuse it as a devm 
+resource in the qmi_tmd_alloc_cdevs. I suggest to pass 'dev' to the 
+function and rename it to dev_qmi_tmd_alloc(dev, ...), so it is clear 
+for the reader the function is supposed to rely on the devm_ cleanup 
+mechanism for the client.
+
+> +
+> +	platform_set_drvdata(pdev, client);
+> +
+> +	ret = qmi_handle_init(&client->handle,
+> +			      TMD_GET_MITIGATION_DEVICE_LIST_RESP_MSG_V01_MAX_MSG_LEN,
+> +			      &thermal_qmi_event_ops, NULL);
+> +	if (ret < 0)
+> +		return dev_err_probe(client->dev, ret, "QMI handle init failed for client %#x\n",
+> +			      client->id);
+
+What are those notifications?
+
+> +	ret = qmi_add_lookup(&client->handle, TMD_SERVICE_ID_V01, TMD_SERVICE_VERS_V01,
+> +			     client->id);
+> +	if (ret < 0) {
+> +		qmi_handle_release(&client->handle);
+> +		return dev_err_probe(client->dev, ret, "QMI register failed for client 0x%x\n",
+> +			      client->id);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qmi_tmd_client_remove(struct platform_device *pdev)
+> +{
+> +	struct qmi_tmd_client *client = platform_get_drvdata(pdev);
+> +
+> +	qmi_tmd_cleanup(client);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id qmi_tmd_device_table[] = {
+> +	{
+> +		.compatible = "qcom,qmi-cooling-modem",
+> +		.data = &((struct qmi_instance_id) { MODEM0_INSTANCE_ID, "modem" }),
+> +	}, {
+> +		.compatible = "qcom,qmi-cooling-adsp",
+> +		.data = &((struct qmi_instance_id) { ADSP_INSTANCE_ID, "adsp" }),
+> +	}, {
+> +		.compatible = "qcom,qmi-cooling-cdsp",
+> +		.data = &((struct qmi_instance_id) { CDSP_INSTANCE_ID, "cdsp" }),
+> +	}, {
+> +		.compatible = "qcom,qmi-cooling-slpi",
+> +		.data = &((struct qmi_instance_id) { SLPI_INSTANCE_ID, "slpi" }),
+> +	},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, qmi_tmd_device_table);
+> +
+> +static struct platform_driver qmi_tmd_device_driver = {
+> +	.probe          = qmi_tmd_client_probe,
+> +	.remove         = qmi_tmd_client_remove,
+> +	.driver         = {
+> +		.name   = "qcom-qmi-cooling",
+> +		.of_match_table = qmi_tmd_device_table,
+> +	},
+> +};
+> +
+> +module_platform_driver(qmi_tmd_device_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Qualcomm QMI Thermal Mitigation Device driver");
+> diff --git a/drivers/thermal/qcom/qmi-cooling.h b/drivers/thermal/qcom/qmi-cooling.h
+> new file mode 100644
+> index 000000000000..f46b827b4ce6
+> --- /dev/null
+> +++ b/drivers/thermal/qcom/qmi-cooling.h
+> @@ -0,0 +1,428 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2017, The Linux Foundation
+> + * Copyright (c) 2023, Linaro Limited
+> + */
+> +
+> +#ifndef __QCOM_COOLING_H__
+> +#define __QCOM_COOLING_H__
+> +
+> +#include <linux/soc/qcom/qmi.h>
+> +
+> +#define TMD_SERVICE_ID_V01 0x18
+> +#define TMD_SERVICE_VERS_V01 0x01
+> +
+> +#define QMI_TMD_GET_MITIGATION_DEVICE_LIST_RESP_V01 0x0020
+> +#define QMI_TMD_GET_MITIGATION_LEVEL_REQ_V01 0x0022
+> +#define QMI_TMD_GET_SUPPORTED_MSGS_REQ_V01 0x001E
+> +#define QMI_TMD_SET_MITIGATION_LEVEL_REQ_V01 0x0021
+> +#define QMI_TMD_REGISTER_NOTIFICATION_MITIGATION_LEVEL_RESP_V01 0x0023
+> +#define QMI_TMD_GET_SUPPORTED_MSGS_RESP_V01 0x001E
+> +#define QMI_TMD_SET_MITIGATION_LEVEL_RESP_V01 0x0021
+> +#define QMI_TMD_DEREGISTER_NOTIFICATION_MITIGATION_LEVEL_RESP_V01 0x0024
+> +#define QMI_TMD_MITIGATION_LEVEL_REPORT_IND_V01 0x0025
+> +#define QMI_TMD_GET_MITIGATION_LEVEL_RESP_V01 0x0022
+> +#define QMI_TMD_GET_SUPPORTED_FIELDS_REQ_V01 0x001F
+> +#define QMI_TMD_GET_MITIGATION_DEVICE_LIST_REQ_V01 0x0020
+> +#define QMI_TMD_REGISTER_NOTIFICATION_MITIGATION_LEVEL_REQ_V01 0x0023
+> +#define QMI_TMD_DEREGISTER_NOTIFICATION_MITIGATION_LEVEL_REQ_V01 0x0024
+> +#define QMI_TMD_GET_SUPPORTED_FIELDS_RESP_V01 0x001F
+
+What is the purpose of this header ?
+
+The content is not shared and apparently lot is unused in the .c code.
+
+> +#define QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 32
+> +#define QMI_TMD_MITIGATION_DEV_LIST_MAX_V01 32
+> +
+> +struct tmd_mitigation_dev_id_type_v01 {
+> +	char mitigation_dev_id[QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1];
+> +};
+> +
+> +static const struct qmi_elem_info tmd_mitigation_dev_id_type_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRING,
+> +		.elem_len = QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01 + 1,
+> +		.elem_size = sizeof(char),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0,
+> +		.offset = offsetof(struct tmd_mitigation_dev_id_type_v01,
+> +				   mitigation_dev_id),
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_mitigation_dev_list_type_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_dev_id;
+> +	uint8_t max_mitigation_level;
+> +};
+> +
+> +static const struct qmi_elem_info tmd_mitigation_dev_list_type_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0,
+> +		.offset = offsetof(struct tmd_mitigation_dev_list_type_v01,
+> +				   mitigation_dev_id),
+> +		.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_UNSIGNED_1_BYTE,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0,
+> +		.offset = offsetof(struct tmd_mitigation_dev_list_type_v01,
+> +				   max_mitigation_level),
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_get_mitigation_device_list_req_msg_v01 {
+> +	char placeholder;
+> +};
+> +
+> +#define TMD_GET_MITIGATION_DEVICE_LIST_REQ_MSG_V01_MAX_MSG_LEN 0
+> +const struct qmi_elem_info tmd_get_mitigation_device_list_req_msg_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_get_mitigation_device_list_resp_msg_v01 {
+> +	struct qmi_response_type_v01 resp;
+> +	uint8_t mitigation_device_list_valid;
+> +	uint32_t mitigation_device_list_len;
+> +	struct tmd_mitigation_dev_list_type_v01
+> +		mitigation_device_list[QMI_TMD_MITIGATION_DEV_LIST_MAX_V01];
+> +};
+> +
+> +#define TMD_GET_MITIGATION_DEVICE_LIST_RESP_MSG_V01_MAX_MSG_LEN 1099
+> +static const struct qmi_elem_info tmd_get_mitigation_device_list_resp_msg_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct qmi_response_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x02,
+> +		.offset = offsetof(struct tmd_get_mitigation_device_list_resp_msg_v01,
+> +				   resp),
+> +		.ei_array = qmi_response_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_OPT_FLAG,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x10,
+> +		.offset = offsetof(struct tmd_get_mitigation_device_list_resp_msg_v01,
+> +				   mitigation_device_list_valid),
+> +	},
+> +	{
+> +		.data_type = QMI_DATA_LEN,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x10,
+> +		.offset = offsetof(struct tmd_get_mitigation_device_list_resp_msg_v01,
+> +				   mitigation_device_list_len),
+> +	},
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = QMI_TMD_MITIGATION_DEV_LIST_MAX_V01,
+> +		.elem_size = sizeof(struct tmd_mitigation_dev_list_type_v01),
+> +		.array_type = VAR_LEN_ARRAY,
+> +		.tlv_type = 0x10,
+> +		.offset = offsetof(struct tmd_get_mitigation_device_list_resp_msg_v01,
+> +				   mitigation_device_list),
+> +		.ei_array = tmd_mitigation_dev_list_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_set_mitigation_level_req_msg_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_dev_id;
+> +	uint8_t mitigation_level;
+> +};
+> +
+> +#define TMD_SET_MITIGATION_LEVEL_REQ_MSG_V01_MAX_MSG_LEN 40
+> +static const struct qmi_elem_info tmd_set_mitigation_level_req_msg_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x01,
+> +		.offset = offsetof(struct tmd_set_mitigation_level_req_msg_v01,
+> +				   mitigation_dev_id),
+> +		.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_UNSIGNED_1_BYTE,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x02,
+> +		.offset = offsetof(struct tmd_set_mitigation_level_req_msg_v01,
+> +				   mitigation_level),
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_set_mitigation_level_resp_msg_v01 {
+> +	struct qmi_response_type_v01 resp;
+> +};
+> +
+> +#define TMD_SET_MITIGATION_LEVEL_RESP_MSG_V01_MAX_MSG_LEN 7
+> +static const struct qmi_elem_info tmd_set_mitigation_level_resp_msg_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct qmi_response_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x02,
+> +		.offset = offsetof(struct tmd_set_mitigation_level_resp_msg_v01, resp),
+> +		.ei_array = qmi_response_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_get_mitigation_level_req_msg_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_device;
+> +};
+> +#define TMD_GET_MITIGATION_LEVEL_REQ_MSG_V01_MAX_MSG_LEN 36
+> +
+> +static const struct qmi_elem_info tmd_get_mitigation_level_req_msg_v01_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x01,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_req_msg_v01,
+> +				   mitigation_device),
+> +		.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_get_mitigation_level_resp_msg_v01 {
+> +	struct qmi_response_type_v01 resp;
+> +	uint8_t current_mitigation_level_valid;
+> +	uint8_t current_mitigation_level;
+> +	uint8_t requested_mitigation_level_valid;
+> +	uint8_t requested_mitigation_level;
+> +};
+> +
+> +#define TMD_GET_MITIGATION_LEVEL_RESP_MSG_V01_MAX_MSG_LEN 15
+> +static const struct qmi_elem_info tmd_get_mitigation_level_resp_msg_ei[] = {
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct qmi_response_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x02,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_resp_msg_v01, resp),
+> +		.ei_array = qmi_response_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_OPT_FLAG,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x10,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_resp_msg_v01,
+> +				   current_mitigation_level_valid),
+> +	},
+> +	{
+> +		.data_type = QMI_UNSIGNED_1_BYTE,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x10,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_resp_msg_v01,
+> +				   current_mitigation_level),
+> +	},
+> +	{
+> +		.data_type = QMI_OPT_FLAG,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x11,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_resp_msg_v01,
+> +				   requested_mitigation_level_valid),
+> +	},
+> +	{
+> +		.data_type = QMI_UNSIGNED_1_BYTE,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x11,
+> +		.offset = offsetof(struct tmd_get_mitigation_level_resp_msg_v01,
+> +				   requested_mitigation_level),
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +struct tmd_register_notification_mitigation_level_req_msg_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_device;
+> +};
+> +
+> +#define TMD_REGISTER_NOTIFICATION_MITIGATION_LEVEL_REQ_MSG_V01_MAX_MSG_LEN 36
+> +static const struct qmi_elem_info
+> +	tmd_register_notification_mitigation_level_req_msg_v01_ei[] = {
+> +		{
+> +			.data_type = QMI_STRUCT,
+> +			.elem_len = 1,
+> +			.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = 0x01,
+> +			.offset = offsetof(
+> +				struct tmd_register_notification_mitigation_level_req_msg_v01,
+> +				mitigation_device),
+> +			.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +		},
+> +		{
+> +			.data_type = QMI_EOTI,
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = QMI_COMMON_TLV_TYPE,
+> +		},
+> +	};
+> +
+> +struct tmd_register_notification_mitigation_level_resp_msg_v01 {
+> +	struct qmi_response_type_v01 resp;
+> +};
+> +
+> +#define TMD_REGISTER_NOTIFICATION_MITIGATION_LEVEL_RESP_MSG_V01_MAX_MSG_LEN 7
+> +static const struct qmi_elem_info
+> +	tmd_register_notification_mitigation_level_resp_msg_v01_ei[] = {
+> +		{
+> +			.data_type = QMI_STRUCT,
+> +			.elem_len = 1,
+> +			.elem_size = sizeof(struct qmi_response_type_v01),
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = 0x02,
+> +			.offset = offsetof(
+> +				struct tmd_register_notification_mitigation_level_resp_msg_v01,
+> +				resp),
+> +			.ei_array = qmi_response_type_v01_ei,
+> +		},
+> +		{
+> +			.data_type = QMI_EOTI,
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = QMI_COMMON_TLV_TYPE,
+> +		},
+> +	};
+> +
+> +struct tmd_deregister_notification_mitigation_level_req_msg_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_device;
+> +};
+> +
+> +#define TMD_DEREGISTER_NOTIFICATION_MITIGATION_LEVEL_REQ_MSG_V01_MAX_MSG_LEN 36
+> +static const struct qmi_elem_info
+> +	tmd_deregister_notification_mitigation_level_req_msg_v01_ei[] = {
+
+Not used
+
+> +		{
+> +			.data_type = QMI_STRUCT,
+> +			.elem_len = 1,
+> +			.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = 0x01,
+> +			.offset = offsetof(
+> +				struct tmd_deregister_notification_mitigation_level_req_msg_v01,
+> +				mitigation_device),
+> +			.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +		},
+> +		{
+> +			.data_type = QMI_EOTI,
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = QMI_COMMON_TLV_TYPE,
+> +		},
+> +	};
+> +
+> +struct tmd_deregister_notification_mitigation_level_resp_msg_v01 {
+> +	struct qmi_response_type_v01 resp;
+> +};
+> +
+> +#define TMD_DEREGISTER_NOTIFICATION_MITIGATION_LEVEL_RESP_MSG_V01_MAX_MSG_LEN 7
+> +static const struct qmi_elem_info
+> +	tmd_deregister_notification_mitigation_level_resp_msg_v01_ei[] = {
+
+Not used
+
+> +		{
+> +			.data_type = QMI_STRUCT,
+> +			.elem_len = 1,
+> +			.elem_size = sizeof(struct qmi_response_type_v01),
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = 0x02,
+> +			.offset = offsetof(
+> +				struct tmd_deregister_notification_mitigation_level_resp_msg_v01,
+> +				resp),
+> +			.ei_array = qmi_response_type_v01_ei,
+> +		},
+> +		{
+> +			.data_type = QMI_EOTI,
+> +			.array_type = NO_ARRAY,
+> +			.tlv_type = QMI_COMMON_TLV_TYPE,
+> +		},
+> +	};
+> +
+> +struct tmd_mitigation_level_report_ind_msg_v01 {
+> +	struct tmd_mitigation_dev_id_type_v01 mitigation_device;
+> +	uint8_t current_mitigation_level;
+> +};
+
+Not used the structure below is not used too.
+
+> +
+> +#define TMD_MITIGATION_LEVEL_REPORT_IND_MSG_V01_MAX_MSG_LEN 40
+
+Where is it used?
+
+> +static const struct qmi_elem_info tmd_mitigation_level_report_ind_msg_v01_ei[] = {
+
+I don't see this variable used.
+
+> +	{
+> +		.data_type = QMI_STRUCT,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(struct tmd_mitigation_dev_id_type_v01),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x01,
+> +		.offset = offsetof(struct tmd_mitigation_level_report_ind_msg_v01,
+> +				   mitigation_device),
+> +		.ei_array = tmd_mitigation_dev_id_type_v01_ei,
+> +	},
+> +	{
+> +		.data_type = QMI_UNSIGNED_1_BYTE,
+> +		.elem_len = 1,
+> +		.elem_size = sizeof(uint8_t),
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = 0x02,
+> +		.offset = offsetof(struct tmd_mitigation_level_report_ind_msg_v01,
+> +				   current_mitigation_level),
+> +	},
+> +	{
+> +		.data_type = QMI_EOTI,
+> +		.array_type = NO_ARRAY,
+> +		.tlv_type = QMI_COMMON_TLV_TYPE,
+> +	},
+> +};
+> +
+> +#endif /* __QMI_COOLING_INTERNAL_H__ */
 > 
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
