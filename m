@@ -2,146 +2,110 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF832CDB483
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Oct 2023 05:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD717CDB465
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Oct 2023 08:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232620AbjJSFfc (ORCPT
+        id S1344920AbjJSIDK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Oct 2023 01:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46824 "EHLO
+        Thu, 19 Oct 2023 04:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232681AbjJSFfb (ORCPT
+        with ESMTP id S232958AbjJSIDI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Oct 2023 01:35:31 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63E7126
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Oct 2023 22:35:28 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c87a85332bso65801975ad.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Oct 2023 22:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1697693728; x=1698298528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NfobpSr7vKEGPH54g86JM2Np+bjWhjxTMm3BnchjKQ0=;
-        b=fQuPntFtrXBrqOA5X1FYTkpOT/zHpG9OLlVqSGDGS8Zudy7WmI5zDxOrqmQjO8kMBJ
-         /niDxix/PjtbdpJMHtFgTG8VGqY7VTQZJUUWoPqiw7hUMZbWki2yh6HwXTlZYLLlGOPU
-         Ou8sgYBgOZyRUdEP/5IlqkprlDahC6At1/5E4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697693728; x=1698298528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NfobpSr7vKEGPH54g86JM2Np+bjWhjxTMm3BnchjKQ0=;
-        b=U2F3bL42QqWcxYiw7kT4W37FR85/Tr5EPwJYktjct7NF84klKNEBFxVpMwunzuyE3W
-         ly7cbhqLAdU0R+bzRhTCzD3UNmh5f0FuZUwP8M7TRUBcfRLPy681DDzuDNZT8QwAfydt
-         zuHWeyStKd4mF1EcQlmzdxgB7du/l6tCh1cXwDXOupWo3YfeVy1CRvL/bSX6qnWqiw3v
-         s7IQFG5DSmlgKucq73pGrhulPNnL3dx0fpYA+veJ3lrJb39823ISPRaHO0x+MX/EVD9C
-         tzh8B0UX/O9ZcVNgY+7if90qMIB7MRcgE4ZQfG4y8xUG/8EyUOkgOI/zABeoQJ9695/N
-         ms/g==
-X-Gm-Message-State: AOJu0Yxk+T/1XOFEY5Zi41oEtaub0dWIStQdyH9JXQ+D5/4Y9LKFV/Ml
-        jHqQw0AcXrWajFF4noxz8MPPRw==
-X-Google-Smtp-Source: AGHT+IHWgfmf8zIXxwIjD4ZleHld0EiD88e4q1WNeVI5olT0uObTayiLltt3PVMa2zo4Kom7Jk92AA==
-X-Received: by 2002:a17:903:1cb:b0:1c6:a0b:7b9a with SMTP id e11-20020a17090301cb00b001c60a0b7b9amr1450654plh.3.1697693728114;
-        Wed, 18 Oct 2023 22:35:28 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id u2-20020a17090341c200b001c74df14e6esm903825ple.51.2023.10.18.22.35.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 22:35:27 -0700 (PDT)
-Date:   Wed, 18 Oct 2023 22:35:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Justin Stitt <justinstitt@google.com>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] net: wwan: replace deprecated strncpy with strscpy_pad
-Message-ID: <202310182232.A569D262@keescook>
-References: <20231018-strncpy-drivers-net-wwan-rpmsg_wwan_ctrl-c-v1-1-4e343270373a@google.com>
+        Thu, 19 Oct 2023 04:03:08 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B82212F;
+        Thu, 19 Oct 2023 01:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697702586; x=1729238586;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=el3R2q8bJhLS09Xe5Rkf62rAafB0MmVgXTxS+XNrHKM=;
+  b=bhS9k0pWr95zLvPH2C1EfROxDbZefiJm2HS7TJvdeTbVd6d6CDFWEKyh
+   jumPHEiWsCNJclkgf2TlpatJ1+5c/uap7+z6o2htCputpOnpXWIppQ/EV
+   Ld+29SWe5M5t7nu6+A4Q7Id/BA6vR/z46NYH9GDl0Nq0suwX6Ug5dq10U
+   1jHofbXL2X+Ib/ybqFPsgTwMXzFEeZPMcQ4M5/05DrMImouYcp+oBvmON
+   oJIVmvSUxNpHgvvZFR383roUv6q2FV8A2Bon9/rRzbW/go5FerSchA5KE
+   hd3sEg3dIwvmUJ6KLbKSYGb++OeUi0EPOxlqtttcY/thSzYDoQSkmGb8L
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="452665935"
+X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
+   d="scan'208";a="452665935"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 01:03:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="750427438"
+X-IronPort-AV: E=Sophos;i="6.03,236,1694761200"; 
+   d="scan'208";a="750427438"
+Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2023 01:03:00 -0700
+Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qtNzd-0001qW-1u;
+        Thu, 19 Oct 2023 08:02:57 +0000
+Date:   Thu, 19 Oct 2023 16:01:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Julien Massot <julien.massot@iot.bzh>,
+        Trevor Wu <trevor.wu@mediatek.com>
+Cc:     oe-kbuild-all@lists.linux.dev, Simon Glass <sjg@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Drop kernel copy of common reserved-memory
+ bindings
+Message-ID: <202310191537.20z1Aolb-lkp@intel.com>
+References: <20231013200851.347042-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231018-strncpy-drivers-net-wwan-rpmsg_wwan_ctrl-c-v1-1-4e343270373a@google.com>
+In-Reply-To: <20231013200851.347042-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Oct 18, 2023 at 10:14:55PM +0000, Justin Stitt wrote:
-> strncpy() is deprecated for use on NUL-terminated destination strings
-> [1] and as such we should prefer more robust and less ambiguous string
-> interfaces.
-> 
-> We expect chinfo.name to be NUL-terminated based on its use with format
-> strings and sprintf:
-> rpmsg/rpmsg_char.c
-> 165:            dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
-> 368:    return sprintf(buf, "%s\n", eptdev->chinfo.name);
-> 
-> ... and with strcmp():
-> |  static struct rpmsg_endpoint *qcom_glink_create_ept(struct rpmsg_device *rpdev,
-> |  						    rpmsg_rx_cb_t cb,
-> |  						    void *priv,
-> |  						    struct rpmsg_channel_info
-> |  									chinfo)
-> |  ...
-> |  const char *name = chinfo.name;
-> |  ...
-> |  		if (!strcmp(channel->name, name))
-> 
-> Moreover, as chinfo is not kzalloc'd, let's opt to NUL-pad the
-> destination buffer
-> 
-> Similar change to:
-> Commit 766279a8f85d ("rpmsg: qcom: glink: replace strncpy() with strscpy_pad()")
-> and
-> Commit 08de420a8014 ("rpmsg: glink: Replace strncpy() with strscpy_pad()")
-> 
-> Considering the above, a suitable replacement is `strscpy_pad` due to
-> the fact that it guarantees both NUL-termination and NUL-padding on the
-> destination buffer.
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-> ---
-> Note: build-tested only.
-> 
-> Found with: $ rg "strncpy\("
-> ---
->  drivers/net/wwan/rpmsg_wwan_ctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> index 86b60aadfa11..39f5e780c478 100644
-> --- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> +++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-> @@ -37,7 +37,7 @@ static int rpmsg_wwan_ctrl_start(struct wwan_port *port)
->  		.dst = RPMSG_ADDR_ANY,
->  	};
+Hi Rob,
 
-"chinfo" is initialized immediately above here, which means that it is
-actually already zero filled for all the members that aren't explicitly
-initialized, so the _pad variant isn't needed. I suspect Dead Store
-Elimination will optimize it all away anyway, so this is probably fine.
+kernel test robot noticed the following build errors:
 
->  
-> -	strncpy(chinfo.name, rpwwan->rpdev->id.name, RPMSG_NAME_SIZE);
-> +	strscpy_pad(chinfo.name, rpwwan->rpdev->id.name, sizeof(chinfo.name));
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on krzk-dt/for-next remoteproc/rproc-next broonie-sound/for-next linus/master v6.6-rc6 next-20231018]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yup, sizeof() replacement looks correct:
+url:    https://github.com/intel-lab-lkp/linux/commits/Rob-Herring/dt-bindings-Drop-kernel-copy-of-common-reserved-memory-bindings/20231017-125913
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20231013200851.347042-1-robh%40kernel.org
+patch subject: [PATCH] dt-bindings: Drop kernel copy of common reserved-memory bindings
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20231019/202310191537.20z1Aolb-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20231019/202310191537.20z1Aolb-lkp@intel.com/reproduce)
 
-struct rpmsg_channel_info {
-        char name[RPMSG_NAME_SIZE];
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202310191537.20z1Aolb-lkp@intel.com/
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+All errors (new ones prefixed by >>):
 
--Kees
+   sort: -:2: disorder: 2023.8.dev2+gd5e5147
+>> ERROR: dtschema minimum version is v2023.9
 
 -- 
-Kees Cook
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
