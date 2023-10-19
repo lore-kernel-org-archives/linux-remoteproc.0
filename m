@@ -2,222 +2,170 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E14CDB465
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Oct 2023 11:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C1ACDB465
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Oct 2023 13:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345222AbjJSLEX (ORCPT
+        id S235399AbjJSNm1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Oct 2023 07:04:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47904 "EHLO
+        Thu, 19 Oct 2023 09:42:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345224AbjJSLEX (ORCPT
+        with ESMTP id S233216AbjJSNm0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Oct 2023 07:04:23 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE0D119;
-        Thu, 19 Oct 2023 04:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697713460; x=1729249460;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zD1Nbo0e2j9JFXzrsBuYue3Ao3OZSe9Wd/XfAWure3M=;
-  b=dty7tVuWl1I/Wmy7bYTbIkqUCrxcq3ids4M/HdvS4IUlYIkvlmNeLr7X
-   ea9vKqtPT8Oz8EevCxXd7JRUMcbSuIJ0PV282VFg2LWWdxJopO7hkBghB
-   JRyTY2vFeyl/Cgqw2CjoNcU0DvN9gydVDnBYtrfWll9/sjESy0VjribK6
-   2+GNRpv/cwEcx+1pnOBfd/RgBNHqKqwRXNwkCf0+2dj1bD6ATDhG3abDY
-   AvmdJa/B08w+H1AWvQQs1jtMHEcDbU5e0/wOvjpHMUJP0XRAa70QDre0a
-   2rntuDnazqzyekE93ck0t8dBVIpbV7/SUobz7dAJeEXwahcnR46BpAkGn
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10867"; a="450443926"
-X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
-   d="scan'208";a="450443926"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2023 04:04:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.03,237,1694761200"; 
-   d="scan'208";a="4922323"
-Received: from lkp-server01.sh.intel.com (HELO 8917679a5d3e) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 19 Oct 2023 04:04:10 -0700
-Received: from kbuild by 8917679a5d3e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qtQov-00022e-1g;
-        Thu, 19 Oct 2023 11:04:05 +0000
-Date:   Thu, 19 Oct 2023 19:03:47 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        michal.simek@amd.com, ben.levinsky@amd.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/4] remoteproc: zynqmp: parse TCM from device tree
-Message-ID: <202310191806.NjLsejwM-lkp@intel.com>
-References: <20231013042229.3954527-5-tanmay.shah@amd.com>
+        Thu, 19 Oct 2023 09:42:26 -0400
+X-Greylist: delayed 184 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Oct 2023 06:42:23 PDT
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60188124;
+        Thu, 19 Oct 2023 06:42:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1697722756; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=EFD3QYbBNAwdIpiJCeXqcDPAWe8hCm0JWYvEzP88ly6Xj65qtskAfhsbd6dcrjPGQy
+    MD7awJq1dw6or2Uv+SaN+L+sra8ss5jqNJxp63+tz/lcNHE1n+JLk2g4MLVWg2gLUOrQ
+    JxC2L8btf3fJbiSB3AYrkuJjpdGdiACScE08DSroIUGfYXFkyBX/EjP84XUgxipMz7GQ
+    aCOGDbmAzKo6WZYvGgvKORuGNm45yGPOxPpu3EKb1uJf2+WjlGmGlZDSdt5KAYniaVK1
+    INhePkKyWz7YNTegGUkByLL3LTZoyknd8a5M2wgqqipzLnzlt/xWemvaviU++ZSytiAw
+    c65g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1697722756;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IiAUACoAmD1dZiYlatQomGi3MwVID43ZHiBQH5Q1d+0=;
+    b=ljIvctqtJvBDkdGnIRJ89iB7acCc9h66+A11crb8qzilgureOvyhJmqOEaozHstcy4
+    sJvR3TpqSPwzJf/14S0vCHfJP9HiYLZjuipQF//++FlYHuOY2wVIYpj/Ansb6Uv3e5be
+    QevS51b6PuYjtrSqj2oDJ67Ans3cl1I0yz+RoruXCc/+CSCl5BCQGoUlj7JRn0ZA5RAd
+    LXNd2PdqNqLJPbxAkcsh/gNS0IBpbMU6hzZiLjbNYPBQG0aaezuA36KLtk8kcDLOkc0r
+    xpn8nYQJMGTYDRaXstoWXszfIbfGJdxuc63ht2MSS07IckNWnpfZVVQuPR5y4Q4EqZz1
+    Lepg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1697722756;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IiAUACoAmD1dZiYlatQomGi3MwVID43ZHiBQH5Q1d+0=;
+    b=CXRdo6q2oEJBSO1pHcZjrJTrxUYyk04S2kUpFRHmpcxV8LaWVhb+Jtt3ec8qszNyGd
+    ZkOjqu3sOS0A+XVDJZL7tWoW1fQFepK4BR7TkOLIOyQH9CWbZpNGL2MRNkQNWXC1S4gc
+    8ZmZBFGFEhSGp4efXVDyHLs9+FIrRqyhTchT/Yd7L40fSy4cDjFWTDFnRFg6hseKto+/
+    DA+EYkHsEg1NdS+v98hBFIm1GyivoRUCMokKnqiM3ncmn1VrBdQGmUbW4lnwCAK7pX1n
+    Bfqd2HA5eIigfii4pDdz/W7u1sdijTNdf8SlCA1OqOpHz7cPk99jPu5PJy3pyho7bYiZ
+    S47w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1697722756;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IiAUACoAmD1dZiYlatQomGi3MwVID43ZHiBQH5Q1d+0=;
+    b=JM9fLk3TtDDldKevllM9q3uJh8Tp3iozbo0xtn50KB3M9rODzOytQBlRSWBClThq4r
+    YdYZC6BDhDtiYyB5zLBQ==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA95vh"
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.9.0 DYNA|AUTH)
+    with ESMTPSA id j34a49z9JDdFDo9
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Thu, 19 Oct 2023 15:39:15 +0200 (CEST)
+Date:   Thu, 19 Oct 2023 15:39:10 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Kees Cook <keescook@chromium.org>,
+        Justin Stitt <justinstitt@google.com>
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net: wwan: replace deprecated strncpy with strscpy_pad
+Message-ID: <ZTExfv2aHPD2B1ze@gerhold.net>
+References: <20231018-strncpy-drivers-net-wwan-rpmsg_wwan_ctrl-c-v1-1-4e343270373a@google.com>
+ <202310182232.A569D262@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231013042229.3954527-5-tanmay.shah@amd.com>
+In-Reply-To: <202310182232.A569D262@keescook>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tanmay,
+On Wed, Oct 18, 2023 at 10:35:26PM -0700, Kees Cook wrote:
+> On Wed, Oct 18, 2023 at 10:14:55PM +0000, Justin Stitt wrote:
+> > strncpy() is deprecated for use on NUL-terminated destination strings
+> > [1] and as such we should prefer more robust and less ambiguous string
+> > interfaces.
+> > 
+> > We expect chinfo.name to be NUL-terminated based on its use with format
+> > strings and sprintf:
+> > rpmsg/rpmsg_char.c
+> > 165:            dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+> > 368:    return sprintf(buf, "%s\n", eptdev->chinfo.name);
+> > 
+> > ... and with strcmp():
+> > |  static struct rpmsg_endpoint *qcom_glink_create_ept(struct rpmsg_device *rpdev,
+> > |  						    rpmsg_rx_cb_t cb,
+> > |  						    void *priv,
+> > |  						    struct rpmsg_channel_info
+> > |  									chinfo)
+> > |  ...
+> > |  const char *name = chinfo.name;
+> > |  ...
+> > |  		if (!strcmp(channel->name, name))
+> > 
+> > Moreover, as chinfo is not kzalloc'd, let's opt to NUL-pad the
+> > destination buffer
+> > 
+> > Similar change to:
+> > Commit 766279a8f85d ("rpmsg: qcom: glink: replace strncpy() with strscpy_pad()")
+> > and
+> > Commit 08de420a8014 ("rpmsg: glink: Replace strncpy() with strscpy_pad()")
+> > 
+> > Considering the above, a suitable replacement is `strscpy_pad` due to
+> > the fact that it guarantees both NUL-termination and NUL-padding on the
+> > destination buffer.
+> > 
+> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+> > Link: https://github.com/KSPP/linux/issues/90
+> > Cc: linux-hardening@vger.kernel.org
+> > Signed-off-by: Justin Stitt <justinstitt@google.com>
+> > ---
+> > Note: build-tested only.
+> > 
+> > Found with: $ rg "strncpy\("
+> > ---
+> >  drivers/net/wwan/rpmsg_wwan_ctrl.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> > index 86b60aadfa11..39f5e780c478 100644
+> > --- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> > +++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> > @@ -37,7 +37,7 @@ static int rpmsg_wwan_ctrl_start(struct wwan_port *port)
+> >  		.dst = RPMSG_ADDR_ANY,
+> >  	};
+> 
+> "chinfo" is initialized immediately above here, which means that it is
+> actually already zero filled for all the members that aren't explicitly
+> initialized, so the _pad variant isn't needed. I suspect Dead Store
+> Elimination will optimize it all away anyway, so this is probably fine.
+> 
 
-kernel test robot noticed the following build warnings:
+Hm, strscpy_pad() is neither a typical compiler builtin nor an inline
+function, so my naive assumption would be that this could only be
+optimized away with LTO?
 
-[auto build test WARNING on a7d272979d3a89b117ca2c547dc8a465c4f28635]
+But I don't think this is particularly performance critical code, so
+maybe it's even better to be explicit in case someone ever changes the
+way chinfo is allocated.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/dt-bindings-remoteproc-add-Tightly-Coupled-Memory-TCM-bindings/20231017-120805
-base:   a7d272979d3a89b117ca2c547dc8a465c4f28635
-patch link:    https://lore.kernel.org/r/20231013042229.3954527-5-tanmay.shah%40amd.com
-patch subject: [PATCH v6 4/4] remoteproc: zynqmp: parse TCM from device tree
-config: arm64-randconfig-002-20231019 (https://download.01.org/0day-ci/archive/20231019/202310191806.NjLsejwM-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231019/202310191806.NjLsejwM-lkp@intel.com/reproduce)
+@Justin: Nevertheless I would appreciate if you could briefly reword the
+commit message and add a note about this. Someone reading it later might
+get confused or mislead by the "Moreover, as chinfo is not kzalloc'd,"
+part. As Kees wrote, even without kzalloc the struct initializer of
+chinfo does actually ensure proper zero initialization of the missing
+members.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310191806.NjLsejwM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/remoteproc/xlnx_r5_remoteproc.c: In function 'zynqmp_r5_get_tcm_node_from_dt':
->> drivers/remoteproc/xlnx_r5_remoteproc.c:1162:28: warning: array subscript 'struct mem_bank_data[0]' is partly outside array bounds of 'unsigned char[8]' [-Warray-bounds=]
-    1162 |                         tcm->da = (u32)abs_addr;
-         |                            ^~
-   In file included from include/linux/dma-mapping.h:8,
-                    from drivers/remoteproc/xlnx_r5_remoteproc.c:8:
-   In function 'devm_kzalloc',
-       inlined from 'zynqmp_r5_get_tcm_node_from_dt' at drivers/remoteproc/xlnx_r5_remoteproc.c:1143:10:
-   include/linux/device.h:314:16: note: object of size 8 allocated by 'devm_kmalloc'
-     314 |         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/remoteproc/xlnx_r5_remoteproc.c: In function 'zynqmp_r5_get_tcm_node_from_dt':
-   drivers/remoteproc/xlnx_r5_remoteproc.c:1163:28: warning: array subscript 'struct mem_bank_data[0]' is partly outside array bounds of 'unsigned char[8]' [-Warray-bounds=]
-    1163 |                         tcm->size = (u32)size;
-         |                            ^~
-   In function 'devm_kzalloc',
-       inlined from 'zynqmp_r5_get_tcm_node_from_dt' at drivers/remoteproc/xlnx_r5_remoteproc.c:1143:10:
-   include/linux/device.h:314:16: note: object of size 8 allocated by 'devm_kmalloc'
-     314 |         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/remoteproc/xlnx_r5_remoteproc.c: In function 'zynqmp_r5_get_tcm_node_from_dt':
-   drivers/remoteproc/xlnx_r5_remoteproc.c:1172:28: warning: array subscript 'struct mem_bank_data[0]' is partly outside array bounds of 'unsigned char[8]' [-Warray-bounds=]
-    1172 |                         tcm->addr = (u32)res->start;
-         |                            ^~
-   In function 'devm_kzalloc',
-       inlined from 'zynqmp_r5_get_tcm_node_from_dt' at drivers/remoteproc/xlnx_r5_remoteproc.c:1143:10:
-   include/linux/device.h:314:16: note: object of size 8 allocated by 'devm_kmalloc'
-     314 |         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/remoteproc/xlnx_r5_remoteproc.c: In function 'zynqmp_r5_get_tcm_node_from_dt':
-   drivers/remoteproc/xlnx_r5_remoteproc.c:1173:28: warning: array subscript 'struct mem_bank_data[0]' is partly outside array bounds of 'unsigned char[8]' [-Warray-bounds=]
-    1173 |                         tcm->bank_name = (char *)res->name;
-         |                            ^~
-   In function 'devm_kzalloc',
-       inlined from 'zynqmp_r5_get_tcm_node_from_dt' at drivers/remoteproc/xlnx_r5_remoteproc.c:1143:10:
-   include/linux/device.h:314:16: note: object of size 8 allocated by 'devm_kmalloc'
-     314 |         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/device.h:17:
-   drivers/remoteproc/xlnx_r5_remoteproc.c: In function 'zynqmp_r5_get_tcm_node_from_dt':
-   drivers/remoteproc/xlnx_r5_remoteproc.c:1174:74: warning: array subscript 'struct mem_bank_data[0]' is partly outside array bounds of 'unsigned char[8]' [-Warray-bounds=]
-    1174 |                         res = devm_request_mem_region(dev, tcm->addr, tcm->size,
-         |                                                                          ^~
-   include/linux/ioport.h:306:63: note: in definition of macro 'devm_request_mem_region'
-     306 |         __devm_request_region(dev, &iomem_resource, (start), (n), (name))
-         |                                                               ^
-   In function 'devm_kzalloc',
-       inlined from 'zynqmp_r5_get_tcm_node_from_dt' at drivers/remoteproc/xlnx_r5_remoteproc.c:1143:10:
-   include/linux/device.h:314:16: note: object of size 8 allocated by 'devm_kmalloc'
-     314 |         return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +1162 drivers/remoteproc/xlnx_r5_remoteproc.c
-
-  1108	
-  1109	static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
-  1110	{
-  1111		struct zynqmp_r5_core *r5_core;
-  1112		int i, j, tcm_bank_count, ret;
-  1113		struct platform_device *cpdev;
-  1114		struct mem_bank_data *tcm;
-  1115		struct device_node *np;
-  1116		struct resource *res;
-  1117		u64 abs_addr, size;
-  1118		struct device *dev;
-  1119	
-  1120		for (i = 0; i < cluster->core_count; i++) {
-  1121			r5_core = cluster->r5_cores[i];
-  1122			dev = r5_core->dev;
-  1123			np = dev_of_node(dev);
-  1124	
-  1125			/* we have address cell 2 and size cell as 2 */
-  1126			ret = of_property_count_elems_of_size(np, "reg",
-  1127							      4 * sizeof(u32));
-  1128			if (ret <= 0) {
-  1129				dev_err(dev, "can't get reg property err %d\n", ret);
-  1130				return -EINVAL;
-  1131			}
-  1132	
-  1133			tcm_bank_count = ret;
-  1134	
-  1135			r5_core->tcm_banks = devm_kcalloc(dev, tcm_bank_count,
-  1136							  sizeof(struct mem_bank_data *),
-  1137							  GFP_KERNEL);
-  1138			if (!r5_core->tcm_banks)
-  1139				ret = -ENOMEM;
-  1140	
-  1141			r5_core->tcm_bank_count = tcm_bank_count;
-  1142			for (j = 0; j < tcm_bank_count; j++) {
-  1143				tcm = devm_kzalloc(dev, sizeof(struct mem_bank_data *),
-  1144						   GFP_KERNEL);
-  1145				if (!tcm)
-  1146					return -ENOMEM;
-  1147	
-  1148				r5_core->tcm_banks[j] = tcm;
-  1149	
-  1150				/* get tcm address without translation */
-  1151				ret = of_property_read_reg(np, j, &abs_addr, &size);
-  1152				if (ret) {
-  1153					dev_err(dev, "failed to get reg property\n");
-  1154					return ret;
-  1155				}
-  1156	
-  1157				/*
-  1158				 * remote processor can address only 32 bits
-  1159				 * so convert 64-bits into 32-bits. This will discard
-  1160				 * any unwanted upper 32-bits.
-  1161				 */
-> 1162				tcm->da = (u32)abs_addr;
-  1163				tcm->size = (u32)size;
-  1164	
-  1165				cpdev = to_platform_device(dev);
-  1166				res = platform_get_resource(cpdev, IORESOURCE_MEM, j);
-  1167				if (!res) {
-  1168					dev_err(dev, "failed to get tcm resource\n");
-  1169					return -EINVAL;
-  1170				}
-  1171	
-  1172				tcm->addr = (u32)res->start;
-  1173				tcm->bank_name = (char *)res->name;
-  1174				res = devm_request_mem_region(dev, tcm->addr, tcm->size,
-  1175							      tcm->bank_name);
-  1176				if (!res) {
-  1177					dev_err(dev, "failed to request tcm resource\n");
-  1178					return -EINVAL;
-  1179				}
-  1180			}
-  1181		}
-  1182	
-  1183		return 0;
-  1184	}
-  1185	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks!
+Stephan
