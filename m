@@ -2,146 +2,105 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FEAC00A8F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Oct 2023 05:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796F8C25B6B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 Oct 2023 16:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232234AbjJXFhw (ORCPT
+        id S234887AbjJXQl5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 Oct 2023 01:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
+        Tue, 24 Oct 2023 12:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbjJXFhv (ORCPT
+        with ESMTP id S232602AbjJXQl4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 Oct 2023 01:37:51 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9668F125;
-        Mon, 23 Oct 2023 22:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1698125867; x=1729661867;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GKCui9cJyGKr7oruPX4GBfO58GfHK6CS9FhEdXSU9BA=;
-  b=JNECnJUaCOWv/ygdgCyp8g5KUCLXm1aAFZJPq53rZ1NL0gYtlr/ruafv
-   nnhxlVDLqCQoIKN+1IVKC00Cige/bObcoNpamHZZbyo6D/Mp04qY6Y1pc
-   Z8PHwAXB2NY/NYg5XEIxi4j5Z/0zMI1yYOQP+3ROhIJ4A+1XQ/GOnt6Hy
-   yaLI9b9kdPdSll+vR8YU8jA8vxPHH6DPYS2NCtI1p5G+z2mrXTj9vm8gl
-   /RBEx7vp+g0O3s3Z8EGogmHBzsdXJpX1XKEE/MdOphr8kXU+LlqDU11ab
-   sx6jAm9E8PPtMMfyUXmzTgmTz4QtDOG7lwJeYVJ48bhlVL+0BBEEixJOM
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.03,246,1694728800"; 
-   d="scan'208";a="33612995"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 24 Oct 2023 07:37:44 +0200
-Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 7A71728007F;
-        Tue, 24 Oct 2023 07:37:44 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-Subject: Re: [PATCH v4 2/2] arm64: dts: imx8mp: add reserve-memory nodes for DSP
-Date:   Tue, 24 Oct 2023 07:37:47 +0200
-Message-ID: <5883038.MhkbZ0Pkbq@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <ZTasTEvw4//SEMlW@p14s>
-References: <20231013152731.23471-1-iuliana.prodan@oss.nxp.com> <20231013152731.23471-3-iuliana.prodan@oss.nxp.com> <ZTasTEvw4//SEMlW@p14s>
+        Tue, 24 Oct 2023 12:41:56 -0400
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B81AC;
+        Tue, 24 Oct 2023 09:41:54 -0700 (PDT)
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-57d086365f7so2783873eaf.0;
+        Tue, 24 Oct 2023 09:41:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698165713; x=1698770513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m4xcdNfgUB8A/3KrK/pkTkDn6tlFzVt2oKgvssbhENc=;
+        b=eY5E0So5vkWcHYAS246RbwYeqNQ0S5OMia4ymLq4Hk+jtlS9ddnwYomBAgC4Kdm7pH
+         8Mq04KogbYJvbZn3U+UXaAohRqAio/CdlhQ4u7TGFdlnuiqg+4Q5jpA3TA96lTDBTBeq
+         rJ9Fm4Sp/34ILfLLVTWRF3Qx/3E9kqxBAiMkUZj6LILwb7ZUBCOUqC7WfXLYi27e5HMt
+         RtYr60PX17IRVljEEf0q6iTpHxsi6X4+ptvur/PzeGumQrW63SdZw4Pr1aP9R4xsNef/
+         us4R2BIbsrU4XjrQV0d4V580WTzf0n3bRbfaHxfJ3dSUnIeQs4LUsV8W20X3IcQhLecB
+         PeyQ==
+X-Gm-Message-State: AOJu0Yzd7LmOLpBx+wbbkWF2qgPt70h++OGhk1NuERUMsUk6/Dd2F91b
+        Y52fNjt6RNRUIp4tLHem+w==
+X-Google-Smtp-Source: AGHT+IHYKyO3ogdUGL4R4E9sBhKDQ/3y/62tY8hPLoGpOKOm3RsZpCwkW+zvRJrXop02dDrQyVwNzw==
+X-Received: by 2002:a4a:a581:0:b0:57b:469d:8af6 with SMTP id d1-20020a4aa581000000b0057b469d8af6mr13049788oom.4.1698165713249;
+        Tue, 24 Oct 2023 09:41:53 -0700 (PDT)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z10-20020a4ad1aa000000b00581daa5c5fdsm1993792oor.29.2023.10.24.09.41.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Oct 2023 09:41:52 -0700 (PDT)
+Received: (nullmailer pid 4065610 invoked by uid 1000);
+        Tue, 24 Oct 2023 16:41:51 -0000
+Date:   Tue, 24 Oct 2023 11:41:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Simon Glass <sjg@chromium.org>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Trevor Wu <trevor.wu@mediatek.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        alsa-devel@alsa-project.org, Julien Massot <julien.massot@iot.bzh>,
+        Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Drop kernel copy of common reserved-memory
+ bindings
+Message-ID: <169816568976.4065099.2725442642169549559.robh@kernel.org>
+References: <20231013200851.347042-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231013200851.347042-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
 
-Am Montag, 23. Oktober 2023, 19:24:28 CEST schrieb Mathieu Poirier:
-> Hey guys,
->=20
-> On Fri, Oct 13, 2023 at 06:27:31PM +0300, Iuliana Prodan (OSS) wrote:
-> > From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> >=20
-> > Add the reserve-memory nodes used by DSP when the rpmsg
-> > feature is enabled.
-> >=20
-> > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > ---
-> >=20
-> >  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 22 ++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> > b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts index
-> > fa37ce89f8d3..b677ad8ef042 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> > @@ -125,6 +125,28 @@
-> >=20
-> >  		};
-> >  =09
-> >  	};
-> >=20
-> > +
-> > +	reserved-memory {
-> > +		#address-cells =3D <2>;
-> > +		#size-cells =3D <2>;
-> > +		ranges;
-> > +
-> > +		dsp_vdev0vring0: vdev0vring0@942f0000 {
-> > +			reg =3D <0 0x942f0000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		dsp_vdev0vring1: vdev0vring1@942f8000 {
-> > +			reg =3D <0 0x942f8000 0 0x8000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		dsp_vdev0buffer: vdev0buffer@94300000 {
-> > +			compatible =3D "shared-dma-pool";
-> > +			reg =3D <0 0x94300000 0 0x100000>;
-> > +			no-map;
-> > +		};
-> > +	};
->=20
-> Alexander: Are you good with the refactoring?
+On Fri, 13 Oct 2023 15:08:49 -0500, Rob Herring wrote:
+> The common reserved-memory bindings have recently been copied from the
+> kernel tree into dtschema. The preference is to host common, stable
+> bindings in dtschema. As reserved-memory is documented in the DT Spec,
+> it meets the criteria.
+> 
+> The v2023.09 version of dtschema is what contains the reserved-memory
+> schemas we depend on, so bump the minimum version to that. Otherwise,
+> references to these schemas will generate errors.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/Makefile    |   2 +-
+>  .../remoteproc/renesas,rcar-rproc.yaml        |   2 +-
+>  .../bindings/reserved-memory/framebuffer.yaml |  52 -----
+>  .../reserved-memory/memory-region.yaml        |  40 ----
+>  .../reserved-memory/reserved-memory.txt       |   2 +-
+>  .../reserved-memory/reserved-memory.yaml      | 181 ------------------
+>  .../reserved-memory/shared-dma-pool.yaml      |  97 ----------
+>  .../bindings/sound/mediatek,mt8188-afe.yaml   |   2 +-
+>  8 files changed, 4 insertions(+), 374 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/memory-region.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
+> 
 
-Yes, adding this to EVK is good for me.
-Acked-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-> Rob and Krzysztof: I'm not sure if you want to ack this patch but giving =
-you
-> the benefit of the doubt.
->=20
-> Shawn and Sascha: Did you plan on picking up this patch or shoud I?
->=20
-> Thanks,
-> Mathieu
->=20
-> >  };
-> > =20
-> >  &flexspi {
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+Applied, thanks!
 
