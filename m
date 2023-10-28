@@ -2,60 +2,60 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F617C0032E
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Oct 2023 08:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C844C27C4A
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Oct 2023 08:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233209AbjJ1IFt (ORCPT
+        id S233099AbjJ1IG0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 28 Oct 2023 04:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35648 "EHLO
+        Sat, 28 Oct 2023 04:06:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233190AbjJ1IFs (ORCPT
+        with ESMTP id S233214AbjJ1IGY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 28 Oct 2023 04:05:48 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2DF121
-        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:05:45 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-507adc3381cso4081910e87.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:05:45 -0700 (PDT)
+        Sat, 28 Oct 2023 04:06:24 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FE211F
+        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:06:21 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-507f1c29f25so3872535e87.1
+        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698480344; x=1699085144; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698480380; x=1699085180; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=c2jcA7XeWGjOmDwPlneU5mQYx7T1ehSACc+Qzvnosqk=;
-        b=ttJq5A3DZO9IJj8p21mpQowoRFmKbS+fT4f0yRwWkOWkBaayN771gOYiEcFEzG72M3
-         IaS2jlgqCr5xNFT+qx/xGE1q0oUBY70FdFe/XEDZa8+Hi74Q9oovRWSerPz41ekBSBpE
-         UVnCYWU2YdUNQbSHLz+V1idU1GPeWDvn1w4Jf5WrmJemMPwcp99M+t4LklZ9lRlNEpoZ
-         AdTWiuJCmF5wPizchXI9+WJ2x9FBKZrRQolgvSaKBGBobDb7bcdHiEv2WdcWTF8VA3oM
-         uPpCEPhuEj6E7QbI/vwbT6E5pPHu5YC/yvzkglMTw7UcpDMGvUX6Y4mW2J4RTVpfMqrj
-         YYUg==
+        bh=wefxII02gAtHMYcJTuAHCcFkJplYb6i79G6DCLTeYuQ=;
+        b=ZQPWagkSyY4oLPkojhDJaDcAEFyoFl/lRIhbTFXZWp619wA2KZgpnIh3Y2QGOWb7oH
+         RUk3hhnJEZWR6HKEQcFD//P3cdk9k5zHPBdVSmvK/mtEl4EMIur6TQyINxjGSCr3ltP4
+         VpOZqvGvjfyY/QkBmKOu9ZOT6jnfhpm3tWRCnLodqmpW48DgMbpHcqXeJU+1abhVdouL
+         G0xRt2nAArLFn7MGfrfNnj44TZN73ECskkHlh8j666qYVqeCuONFbH8DOMMx4DPyDj1P
+         bYesjaGcukxKyxx8VRGwaI/F+ASg2wVPYWA2foFPc5hY98bM0B/uu9gxOnvg2Y38pURp
+         dEeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698480344; x=1699085144;
+        d=1e100.net; s=20230601; t=1698480380; x=1699085180;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c2jcA7XeWGjOmDwPlneU5mQYx7T1ehSACc+Qzvnosqk=;
-        b=Rf5pVJxXWSTCret1V+8czg3VStSvCRJZS/KURJuVE5Y8nqHr11AeK836iGMXhXeZVo
-         h9YcLTxaT9060AxAfb4vSZYX/qZQLxr0RlozUvhACvCj9gHx7e+QYc9jRVQC6yKX4i0C
-         4inlo2Nyv636YF84xV/TdagwkaylQpOGjoNXK5Abp44gdx5VUseIieg5iC9CB3HAukNa
-         8v4BGGHH0a+zU69/nCougOE0DFJ+Ru0EetLZ3/PnoEUzYoXi8/HkN+w2alvzDus4Qf9B
-         aHFEe17+R60ZLhanKqxsZdhgLK0PiTMGKmRqzpiMW34GFdYZ+tQeNzu0HwtLkTtuv8FI
-         Gxzg==
-X-Gm-Message-State: AOJu0Yxamk4NkebeKnchaeHQh18QL6li8zw3lP4A41uZdxN1hCDjgHGp
-        GlFUyIEqcubRVfiFVjK0FV1E/A==
-X-Google-Smtp-Source: AGHT+IGoZEjamNgZrQpZ7+6IPGN9nrYu/yPsZMUB55bybjB4TIe2/D9sv1YY+cXobKdEP/t6Zm+gHw==
-X-Received: by 2002:a19:ca45:0:b0:502:9fce:b6da with SMTP id h5-20020a19ca45000000b005029fceb6damr2948051lfj.21.1698480344047;
-        Sat, 28 Oct 2023 01:05:44 -0700 (PDT)
+        bh=wefxII02gAtHMYcJTuAHCcFkJplYb6i79G6DCLTeYuQ=;
+        b=NIuLi+0tIEXRSIY6+MGplRekz/CuS0QVWOzOlTzh+ahFKICi4iT65iAoqQjbGBYKwR
+         1UD7xQmsRW5Vx9fO4oZwQbfeR1PJFVPJlMUkdvSt4kMZkZrHZCFwB5uYHM0+isH/F7vH
+         0TZAlUr5l69dIzaABdPh55jkFVzggnuzGC6Q7ktYylkdjYNeelg6f8fgJn6pXBz8dxED
+         Svv2JUCwxFAUwjlTIv3hFfm4ICEH13tL49GNI34qef7HbD4eCz8Bgye+zr+Dv/Lxkh7Q
+         9oFvZJA7XlSSj+jU0gc0Tn/pWNl9aHmHI0rUAjcUIFKVucoZgUHpdashpJYXf8C/wT9V
+         ql4Q==
+X-Gm-Message-State: AOJu0YzO+Uo5OpgOvUmUkHRupCeCuJr25/DhQRNo+n94ecFf7cXjC+HZ
+        CV1KHLExIayjc3yBedCSxKHCdA==
+X-Google-Smtp-Source: AGHT+IGGycbusJVRpq6CtgGmCnAVfe/aVlJSDuGnxMp7KASqDGw+Y635kgHjaj/axFR+EArobvm2bw==
+X-Received: by 2002:a05:6512:21c2:b0:507:a9e1:5a3b with SMTP id d2-20020a05651221c200b00507a9e15a3bmr3133176lft.0.1698480379816;
+        Sat, 28 Oct 2023 01:06:19 -0700 (PDT)
 Received: from [192.168.0.22] ([78.10.206.168])
-        by smtp.gmail.com with ESMTPSA id c9-20020a056512238900b004fbc82dd1a5sm570985lfv.13.2023.10.28.01.05.42
+        by smtp.gmail.com with ESMTPSA id c9-20020a056512238900b004fbc82dd1a5sm570985lfv.13.2023.10.28.01.06.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Oct 2023 01:05:43 -0700 (PDT)
-Message-ID: <71cba692-6a84-4d4e-a32e-6c472447c623@linaro.org>
-Date:   Sat, 28 Oct 2023 10:05:42 +0200
+        Sat, 28 Oct 2023 01:06:19 -0700 (PDT)
+Message-ID: <fac4e966-5322-4da8-94b9-e2e1a895a88a@linaro.org>
+Date:   Sat, 28 Oct 2023 10:06:18 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] arm64: dts: qcom: sc7280: Add ADSP node
+Subject: Re: [PATCH 7/9] arm64: dts: qcom: sc7280: Add CDSP node
 Content-Language: en-US
 To:     Luca Weiss <luca.weiss@fairphone.com>,
         Andy Gross <agross@kernel.org>,
@@ -73,7 +73,7 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
- <20231027-sc7280-remoteprocs-v1-6-05ce95d9315a@fairphone.com>
+ <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -119,7 +119,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231027-sc7280-remoteprocs-v1-6-05ce95d9315a@fairphone.com>
+In-Reply-To: <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -130,8 +130,15 @@ On 27/10/2023 16:20, Luca Weiss wrote:
 > Add the node for the ADSP found on the SC7280 SoC, using standard
 > Qualcomm firmware.
 > 
+> The memory region for sc7280-chrome-common.dtsi is taken from msm-5.4
+> yupik.dtsi since the other areas also seem to match that file there,
+> though I cannot be sure there.
+> 
 > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
+>  arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   5 +
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 138 +++++++++++++++++++++
+>  2 files changed, 143 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
