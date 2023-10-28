@@ -2,63 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BA9C25B67
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 27 Oct 2023 07:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD55DC27C47
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Oct 2023 08:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345443AbjJ0Hga (ORCPT
+        id S233105AbjJ1IBk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 27 Oct 2023 03:36:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
+        Sat, 28 Oct 2023 04:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345453AbjJ0Hg2 (ORCPT
+        with ESMTP id S229838AbjJ1IBj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 27 Oct 2023 03:36:28 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB621AC
-        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Oct 2023 00:36:25 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-507973f3b65so2708017e87.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Oct 2023 00:36:25 -0700 (PDT)
+        Sat, 28 Oct 2023 04:01:39 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEBA111B
+        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:01:35 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-507cee17b00so4075674e87.2
+        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Oct 2023 01:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698392184; x=1698996984; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698480094; x=1699084894; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FKgxwW12cXvJbbJyaE54dQi3HeFLiwxHnNrbqUscsyw=;
-        b=goG8P1A6H2ypq5vqm5Ei3c75UdWfo8F0g8RvmWTSZGrH6HBIRNrfuI3rFfWO5v5sMM
-         bCyDiMj/jqdjy+9qXyac0N+XfIUrTkWC5CegtooR5gieOyOfbZnW1AjdhTYoh/bJajEs
-         x8Xwep1tGwF3ZKqF0wz7M1UYZmaOtIsjBcdr/ZRRIbnr0YBQTf7oh/k5Z4RpDQg4Mn8Y
-         F0YeiDJnOAhyleXN9FkUNuKcMt5agCPRRifig2QyapJtCRZT+BlayGLAKwawPBdH1LBT
-         jOBM4FOvj03DcnTjO8LYr9CgLcES13SSSSs8gFqdpjYekIBVO+r+OJeQhw8rr3T7heXE
-         mxjg==
+        bh=fKMQucF/uLZCGIr/BFMo7BXVL6Ys3Ai9lA63eq4X32E=;
+        b=QfIeN1AZUwtZvPEJnoQmAIGLRB9/cc2oIlMgGg71mCWMOT9rwaaxv2Of0gpn4r9o1L
+         RAK/WJNUiNDwyF2VkfpcMXlJEcgkPa6Tqq4AgiVNC2J2g1z5vX/alkRpmbRYZ1XrLWlO
+         tCTI2OzK1xk47UAr7YFO/dnGjuoo5EvuTbsDz1nBS4HqUI1ocs2efAbKY+Qv+awvLUec
+         zTJPnrGfAtXtpnXR1sHdBWXoMjlBgmbsrYnAtD/wK7P05MmdajWtx+bPiQa5SHkTQDa8
+         0UoBno9YdA5l2A8AkFRjjKJDTGp1d3pnJuHso1lC5Z1Sx3cdp3ZgZUrrj4vK7s/9YqQU
+         u/aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698392184; x=1698996984;
+        d=1e100.net; s=20230601; t=1698480094; x=1699084894;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKgxwW12cXvJbbJyaE54dQi3HeFLiwxHnNrbqUscsyw=;
-        b=ERGRDpfHxpoAjfSXVh+OxOqfvE2YTy7iTcpI8serkfHk8jVih3pPGV9kE8kpvW3mHI
-         LUfaD0LtS9gADFikEw5X/maeEA3stVpfskoCDK4cUES8njXc6R1Zfs+n+FO1E9eY2wlt
-         gsHIc42Cz5FAeqxVpbmahAw11Z/kbgMnoOvbYPatFfRhoAupRoHcIBqEUy3AuHUDBG7d
-         gImfAiSTPcBcUliKTHDX+FFscJf/TfuRDHtH5Gcc5L5AMHqTpSFR78mPaMBTIu0F04cY
-         QLFHYmgeNmdUxsaTvfvG0dWkc2CWcPaQI4bXBx0L05trVF4ChE6+VKV8VWuB3IyaN9DA
-         3fEg==
-X-Gm-Message-State: AOJu0Yw5QD4CG1/2rtPFzcthX4WHVpvGn4WPRXc4/IM+03S//Kfelxs5
-        nx6slIWCY+9OABWb1YXuuZmnrg==
-X-Google-Smtp-Source: AGHT+IFqagUd0m8zM5GEs/QvCP49dXETv0iPLFRVr7vsc8eyNYMZsLQ/8t/1txgYTkEGuOrjv46TKA==
-X-Received: by 2002:a05:6512:3b89:b0:503:36cb:5438 with SMTP id g9-20020a0565123b8900b0050336cb5438mr1484365lfv.21.1698392183994;
-        Fri, 27 Oct 2023 00:36:23 -0700 (PDT)
+        bh=fKMQucF/uLZCGIr/BFMo7BXVL6Ys3Ai9lA63eq4X32E=;
+        b=GxMhsthDyEDAL6YBF6EW9EXnLTmkGXUhdRfp9b2FS6Ehe0KrriYk4j9oarWj98jEXL
+         ymiTbmYADuBBsgqEIulc1h57EnXSWGBTtyMM48u8Re1O/CR9dUtPwUjWaW+q5XjtDf8Y
+         JBRTOc4z1SaZtEubIqA1AaxnLsF3ivcJ9aNj1f0rzXaqWc6e4R+dt4hW/tAkcf5s5hhK
+         eEp4V85axSmMIBP95+Rjm8DIQCvhHRXjkYrDgY2qCN86yqYSEGfg3tvAxA0a4CQ7YZZc
+         vnWNOWtaxfHqnGjfwvFJznnEmmOnTwyPOfbErUroDFrY7ghcqmG7FQ1PfoJGyDYCFtVn
+         gj8g==
+X-Gm-Message-State: AOJu0YysnQUBtJusmr1ijrSHCTFr1u2AlZUWITIv4Yla22jNX8rt57Gx
+        ABQ5x2N/DGIoDP8VZYtyEzlTiA==
+X-Google-Smtp-Source: AGHT+IEgVcEcjNrcWyZn1TIa7/8oqWiy8EQyZr4FifWxeAVPZLegawcvYu73ChfKtaUICj+kGYnzNQ==
+X-Received: by 2002:a19:4f42:0:b0:507:a40e:d8bf with SMTP id a2-20020a194f42000000b00507a40ed8bfmr3365332lfk.7.1698480093991;
+        Sat, 28 Oct 2023 01:01:33 -0700 (PDT)
 Received: from [192.168.0.22] ([78.10.206.168])
-        by smtp.gmail.com with ESMTPSA id a14-20020a194f4e000000b00505a20d070asm170385lfk.78.2023.10.27.00.36.22
+        by smtp.gmail.com with ESMTPSA id l3-20020ac24a83000000b0050804a97f01sm570067lfp.160.2023.10.28.01.01.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Oct 2023 00:36:23 -0700 (PDT)
-Message-ID: <a1895327-b520-4f3a-a427-0947ac46495c@linaro.org>
-Date:   Fri, 27 Oct 2023 09:36:22 +0200
+        Sat, 28 Oct 2023 01:01:33 -0700 (PDT)
+Message-ID: <b00177e6-9b2b-4bdf-9774-bdaefab50d02@linaro.org>
+Date:   Sat, 28 Oct 2023 10:01:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the SM8650 PAS
+Subject: Re: [PATCH 1/9] dt-bindings: remoteproc: qcom: sc7180-pas: Fix SC7280
+ MPSS PD-names
 Content-Language: en-US
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
+To:     Luca Weiss <luca.weiss@fairphone.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -66,11 +66,15 @@ To:     Neil Armstrong <neil.armstrong@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231025-topic-sm8650-upstream-remoteproc-v1-0-a8d20e4ce18c@linaro.org>
- <20231025-topic-sm8650-upstream-remoteproc-v1-1-a8d20e4ce18c@linaro.org>
+References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
+ <20231027-sc7280-remoteprocs-v1-1-05ce95d9315a@fairphone.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -116,104 +120,26 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231025-topic-sm8650-upstream-remoteproc-v1-1-a8d20e4ce18c@linaro.org>
+In-Reply-To: <20231027-sc7280-remoteprocs-v1-1-05ce95d9315a@fairphone.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 25/10/2023 09:35, Neil Armstrong wrote:
-> Document the DSP Peripheral Authentication Service on the SM8650 Platform.
+On 27/10/2023 16:20, Luca Weiss wrote:
+> The power domains for MPSS on SC7280 are actually named CX and MSS, and
+> not CX and MX. Adjust the name which also aligns the bindings with the
+> dts and fixes validation.
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Fixes: 8bb92d6fd0b3 ("dt-bindings: remoteproc: qcom,sc7180-pas: split into separate file")
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 41 +++++++++++++++++++++-
->  1 file changed, 40 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> index 58120829fb06..316371c8ee6e 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> @@ -19,6 +19,9 @@ properties:
->        - qcom,sm8550-adsp-pas
->        - qcom,sm8550-cdsp-pas
->        - qcom,sm8550-mpss-pas
-> +      - qcom,sm8650-adsp-pas
-> +      - qcom,sm8650-cdsp-pas
-> +      - qcom,sm8650-mpss-pas
->  
->    reg:
->      maxItems: 1
-> @@ -49,6 +52,7 @@ properties:
->        - description: Memory region for main Firmware authentication
->        - description: Memory region for Devicetree Firmware authentication
->        - description: DSM Memory region
-> +      - description: DSM Memory region 2
->  
->  required:
->    - compatible
-> @@ -63,6 +67,7 @@ allOf:
->            enum:
->              - qcom,sm8550-adsp-pas
->              - qcom,sm8550-cdsp-pas
-> +            - qcom,sm8650-adsp-pas
->      then:
->        properties:
->          interrupts:
-> @@ -71,7 +76,25 @@ allOf:
->            maxItems: 5
->          memory-region:
->            maxItems: 2
-> -    else:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8650-cdsp-pas
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 5
 
-maxItems
-
-
-> +        interrupt-names:
-> +          minItems: 5
-
-maxItems
-
-> +        memory-region:
-> +          minItems: 3
-
-maxItems: 3
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8550-mpss-pas
-> +    then:
->        properties:
->          interrupts:
->            minItems: 6
-> @@ -79,12 +102,26 @@ allOf:
->            minItems: 6
->          memory-region:
->            minItems: 3
-
-You need to add here maxItems.
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8650-mpss-pas
-> +    then:
-
-I am not sure if keeping it in the same binding as sm8550 avoids that
-much duplication.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
