@@ -2,61 +2,60 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A86AC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Oct 2023 19:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667D7C00142
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Oct 2023 19:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjJ3T01 (ORCPT
+        id S231194AbjJ3T1F (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Oct 2023 15:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54944 "EHLO
+        Mon, 30 Oct 2023 15:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjJ3T00 (ORCPT
+        with ESMTP id S231282AbjJ3T1E (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Oct 2023 15:26:26 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C820C9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:24 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-50931355d48so71966e87.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:23 -0700 (PDT)
+        Mon, 30 Oct 2023 15:27:04 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109CADF
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:59 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2c5028e5b88so67905901fa.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698693982; x=1699298782; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698694017; x=1699298817; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9psATwBWmW+HWlHMJ1Br1I84UHK88mVqrK11rMxknlU=;
-        b=vaowyk1jUUILDnh5wqC8Lrxh9dhcCcXv8c8H4Ipg1V6fkx2BgV8tKP/HcVRutxUJBP
-         zlK62ospRuBxM5n5QbZWAmfOsE+PMR4lUEWJpL67tYkmf01NulxsKDj2xOC5ZYsA2hw9
-         OvUiKA6PLMkkweATURC938wCMBbzcCsW28+tvrk45AulTEqQec04vB/iCdkYRRKBoB3y
-         D/Oc7o4DOMGKSHwuroNFjhPvawrg2xws0UBfn3l/pi1dN8Z25HRzanxewnbCvZGcszlW
-         frCCE9GB1iMbdvLIucUBozurxytUDRl3ZxIG6zMMnSZIKzVdzz6/GILC+nS/vHqeEnOn
-         EcSA==
+        bh=vhu9zeLbvU2DseeR7qeZ4fP8Dx7nMwSPHUsFVgOkD5c=;
+        b=rBB3jKNFusHM5mL4/+yen84c9O2TPFLwDjktoxSlRwrxjToQgVRSk4lDSeDFGxPh3S
+         z1ek1RrvXZEhNFjsqPQm5nZ6CmLoElxvJihcclbvTMOaeL2sp5nc0ReXJGp4EIt6XjM/
+         FrVexc1GqTrVfT8Ea+Aw1FLIfBiaMcAvXidwcJkK3vQTcNyatgh6g2yY4dt+i9MfpjkT
+         Kvuxg4GzG2CVwMOapB46xsn2szQrR9DcpuutWvKHhpKkMKAGBXGYe33jhFQ21nshPFbE
+         NQQUvHwB8MedXMFZkrspMn4J45mtq7gQQR9pHLPYK7H/BJ9ypGdT3DwUaBcfDodhuN0u
+         v/NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698693982; x=1699298782;
+        d=1e100.net; s=20230601; t=1698694017; x=1699298817;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9psATwBWmW+HWlHMJ1Br1I84UHK88mVqrK11rMxknlU=;
-        b=lC8DKhx9OV3Hsvf2cSvAfrlgL/jJKjOUA5W12LlMqi5QidM1B6zubhB1BAgOBWrU8g
-         +UwxkGwa7KPK+Vbx3n3NbnzQ+Xf0aLARq4PE6J8RbZAinDRfboKC+cxP4PbCTuQUkWux
-         mR2GHz+Z1yIblLy1X7Nvs5XfmewZhhV39UwkcNpUk15lbvJZOb+1iz45lb9rqPgc2mwU
-         gmmwTRKlRZyQdd+EMZGmtcgXgFuJojmkG7UTzRTIgp+YRhYMW9GpoxlANOj1L+bgV/2n
-         bOER26f3s2C9hjqm7w7lo6Ycl2Jc2JLwPNqTy9ybi0r3U0hUBi66SwXZqqqFj6Tl0ya2
-         lJAg==
-X-Gm-Message-State: AOJu0YxmNDVpQwGvGiO7q1S1Gvj9YbH119sC3GJIDhNkuv/vWaLdxNiz
-        /nkjDxvTnsB1xcMOEqJ12kgS7g==
-X-Google-Smtp-Source: AGHT+IEbYncTmSYYVIfiXMAcINNFJCE5io5Ni7UoIn2eLrzuUPU3AX3KChBsGX1GweruuxkJGn7Xkw==
-X-Received: by 2002:a19:ca42:0:b0:4fb:caed:95c3 with SMTP id h2-20020a19ca42000000b004fbcaed95c3mr6559306lfj.53.1698693982191;
-        Mon, 30 Oct 2023 12:26:22 -0700 (PDT)
+        bh=vhu9zeLbvU2DseeR7qeZ4fP8Dx7nMwSPHUsFVgOkD5c=;
+        b=IKKwnbMCTji34229bdejbSBQGN6ZbWEm9RZz2evZrqfJ74fkG5/EXoJbdhsTske/4m
+         etri7eULW1CazdtrReWJ+ojbaj7XQ+q8ExuDEUgmwRWA8wWCjsDOHQywRwOpZFfexe29
+         eoSFnLs13W6SGIqLNFq14VQ2zSDf6Boa8aF+6sgI6wDKJAHXvBtURDpCh4J8gWPHdytt
+         RSBsh094IjAq2NkOpUThiAFmtzTj9TF5c6Vucrq/Yu8ezuMvdzYRZh7gmR6/52jbcLY+
+         DATk4MlbtFLo+NqW4omTk8GAuaVITKxUUdM6cBP99U7n3TalJNPs8xjGLGUzd0bKuqUJ
+         jgPg==
+X-Gm-Message-State: AOJu0YzcWZ6MTzkj/YJVtEgscHFY7/3TdXAOBEu78dR5cyUUfsVctbzc
+        U6iOwEUTsNBbHi0dnQU9wyrNoQ==
+X-Google-Smtp-Source: AGHT+IE+6piiOQh0wVaer65NGxl0+llczzkNaCZdzOvQHiQ4BSUGQXrP6vZCqJ9lraWI/+07uNKRCQ==
+X-Received: by 2002:a05:6512:128b:b0:508:126a:751e with SMTP id u11-20020a056512128b00b00508126a751emr10988897lfs.36.1698694017155;
+        Mon, 30 Oct 2023 12:26:57 -0700 (PDT)
 Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
-        by smtp.gmail.com with ESMTPSA id a20-20020a056512201400b00507a0098421sm1538610lfb.181.2023.10.30.12.26.20
+        by smtp.gmail.com with ESMTPSA id a20-20020a056512201400b00507a0098421sm1538610lfb.181.2023.10.30.12.26.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 12:26:21 -0700 (PDT)
-Message-ID: <4dfe793e-4d70-427e-bce5-8191c6a42cf9@linaro.org>
-Date:   Mon, 30 Oct 2023 20:26:20 +0100
+        Mon, 30 Oct 2023 12:26:56 -0700 (PDT)
+Message-ID: <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org>
+Date:   Mon, 30 Oct 2023 20:26:54 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable
- various remoteprocs
+Subject: Re: [PATCH 9/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
 Content-Language: en-US
 To:     Luca Weiss <luca.weiss@fairphone.com>,
         Andy Gross <agross@kernel.org>,
@@ -74,7 +73,7 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
- <20231027-sc7280-remoteprocs-v1-8-05ce95d9315a@fairphone.com>
+ <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -111,7 +110,7 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231027-sc7280-remoteprocs-v1-8-05ce95d9315a@fairphone.com>
+In-Reply-To: <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -119,38 +118,24 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 27.10.2023 16:20, Luca Weiss wrote:
-> Enable the ADSP, CDSP, MPSS and WPSS that are found on the SoC.
+> Now that the WPSS remoteproc is enabled, enable wifi so we can use it.
 > 
 > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> index cc092735ce17..d65eef30091b 100644
+> index d65eef30091b..e7e20f73cbe6 100644
 > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
 > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -490,6 +490,26 @@ &qupv3_id_1 {
+> @@ -713,3 +713,7 @@ &venus {
+>  	firmware-name = "qcom/qcm6490/fairphone5/venus.mbn";
 >  	status = "okay";
 >  };
->  
-> +&remoteproc_adsp {
-> +	firmware-name = "qcom/qcm6490/fairphone5/adsp.mdt";
-> +	status = "okay";
-> +};
 > +
-> +&remoteproc_cdsp {
-> +	firmware-name = "qcom/qcm6490/fairphone5/cdsp.mdt";
+> +&wifi {
 > +	status = "okay";
-> +};
-> +
-> +&remoteproc_mpss {
-> +	firmware-name = "qcom/qcm6490/fairphone5/modem.mdt";
-> +	status = "okay";
-> +};
-> +
-> +&remoteproc_wpss {
-> +	firmware-name = "qcom/qcm6490/fairphone5/wpss.mdt";
-mbn?
+qcom,ath11k-calibration-variant?
 
 Konrad
