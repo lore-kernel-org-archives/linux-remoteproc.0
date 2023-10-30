@@ -2,67 +2,52 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E483BC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Oct 2023 08:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC0FC4167B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Oct 2023 09:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbjJ3IaG (ORCPT
+        id S232320AbjJ3JF0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Oct 2023 04:30:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58844 "EHLO
+        Mon, 30 Oct 2023 05:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232084AbjJ3IaA (ORCPT
+        with ESMTP id S232283AbjJ3JFZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Oct 2023 04:30:00 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1716BB4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 01:29:57 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-507f1c29f25so5771767e87.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 01:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698654595; x=1699259395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rnpIzjbYLIpmyoln4TxTiMzbHo5KIuPiksSLMxx86Kw=;
-        b=SypD02QpGbCY8EuPcxe25cw59pDZFne7kZN9d/b8oXtPYo+Ry72i1cb2kCa1yp1p3v
-         7EmRCkkc4l9YrvCOaJyjRr8LDVxF95PieIBrYE5OyfHFQE6Mp7QYSeYOgzCfSXykvTHY
-         aONuaxzQF5foAT+4a7xTjTuKu3kBBWCtmd+AOlVaUOpGg70QaFhx5BPvo8iKt82hyvjY
-         Bry7tL7aiqYOrgmlczzOZA99eMN+PtgERkkOJHZrw+RQD8o1g3roReaJdct98EaL/I4I
-         Adj6kRG2QMKuQ8n+9TrQqPjw1iLHnX/zsEqxZImkcbtSVmhy7vCkdbkX38+Zsl6aKeh5
-         I/Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698654595; x=1699259395;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:content-language:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rnpIzjbYLIpmyoln4TxTiMzbHo5KIuPiksSLMxx86Kw=;
-        b=vizwF8SXXlhzv0zlaq+zZ7k80tQWnFwKSbMhXRT20r4iZQeasUlDlNGV1FMmUuqEGG
-         MVAbWvKAP7liYQeAzN+Y5CWn6lFsdwLQ1Bplu31aYO/NL85ve6aelDW9hxYj4z3KJRam
-         qpeF6S9ZRPAgagl6rXNYiU6NvSTs132CO3Li2vrePyM5/9R1u4f/RJuct3TXXGhO6XE2
-         z+4knQB6Xie1CcvRRZ1siuXvicBGh/FcdOJIYAcpzEaw+GfiCrEs1bGsX6/0pTJwyM5V
-         +kJIYtpk0IdKXYHXPdbD0bCRMCKZZzqxfXLk7rtW7eU0qWZlvoXn2oVEGP0Q7IRAHfo2
-         0dhQ==
-X-Gm-Message-State: AOJu0YyipUqzBOzkAVen57gjMPyXCTjKWPGRGVLZnngFUPM0AwTDooMQ
-        DBEKMfz/3CNaekl5sh5INrKb0Q==
-X-Google-Smtp-Source: AGHT+IEcRMWXLNodTV6mQug71yQCCf+gJGD/OjbqlrKiQem+EyurncoOmzl+I70Jm3gUJApsoX3nng==
-X-Received: by 2002:a19:5516:0:b0:503:2dce:4544 with SMTP id n22-20020a195516000000b005032dce4544mr6869632lfe.59.1698654595117;
-        Mon, 30 Oct 2023 01:29:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:a05f:dffd:3e08:6b03? ([2a01:e0a:982:cbb0:a05f:dffd:3e08:6b03])
-        by smtp.gmail.com with ESMTPSA id z8-20020adfe548000000b0031c52e81490sm7729674wrm.72.2023.10.30.01.29.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 01:29:54 -0700 (PDT)
-Message-ID: <469f2249-5f7b-4136-9f65-b58c9baf537c@linaro.org>
-Date:   Mon, 30 Oct 2023 09:29:53 +0100
+        Mon, 30 Oct 2023 05:05:25 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707EE94;
+        Mon, 30 Oct 2023 02:05:22 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39U7HYOd020046;
+        Mon, 30 Oct 2023 09:05:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=+BHBBy2hbEIEKkYqrqkXVOp/Y/qfuNbbQXEDeHpGtwA=;
+ b=VK3uIspdfgrwF7vM3quQrb1kJ1QMazT9hmnNm48CivF0j3oEPyf0RjoUc8OoT6s3+F07
+ v6p5ErwYib63aP7KC7A3W2WzUL0NtUAeXBWqgqDY9gyVkQXkpLMFBwhAFjMgJ5UZTbEd
+ u3W5Hne8WeXLJN2u0Eo4rVVsgOK45EteY326HDX3Qgd8uGfCmoB8087kZ0xYWe+QyTvx
+ 0Kc7OhLgY19cBaYDq9s1RzWmYAeBqDZSn3ZX7Y2SECtwvr+dgiaaAKXGIDfu2sO2QmM8
+ Frd5JF8oXBeLaWj7HLG0wRTB6heiFvdcDb6t+glJelzPSU0SdrrPm6aW4HZ8BQFvJsaa bw== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u0smrkek8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Oct 2023 09:05:16 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39U95EnS000976
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Oct 2023 09:05:14 GMT
+Received: from [10.214.225.95] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Mon, 30 Oct
+ 2023 02:05:07 -0700
+Message-ID: <7934a36a-9438-719a-2ed0-4a78757b044b@quicinc.com>
+Date:   Mon, 30 Oct 2023 14:34:54 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the SM8650 PAS
-Content-Language: en-US, fr
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 7/9] arm64: dts: qcom: sc7280: Add CDSP node
+Content-Language: en-US
+To:     Luca Weiss <luca.weiss@fairphone.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -70,147 +55,225 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231025-topic-sm8650-upstream-remoteproc-v1-0-a8d20e4ce18c@linaro.org>
- <20231025-topic-sm8650-upstream-remoteproc-v1-1-a8d20e4ce18c@linaro.org>
- <a1895327-b520-4f3a-a427-0947ac46495c@linaro.org>
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro Developer Services
-In-Reply-To: <a1895327-b520-4f3a-a427-0947ac46495c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Manivannan Sadhasivam <mani@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>
+CC:     <~postmarketos/upstreaming@lists.sr.ht>,
+        <phone-devel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Matti_Lehtim=c3=a4ki?= <matti.lehtimaki@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
+ <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GwXz9xNa5tS4sBJylnvstFr-_uM972uO
+X-Proofpoint-GUID: GwXz9xNa5tS4sBJylnvstFr-_uM972uO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-30_06,2023-10-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 clxscore=1011 adultscore=0 impostorscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310240000
+ definitions=main-2310300067
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 27/10/2023 09:36, Krzysztof Kozlowski wrote:
-> On 25/10/2023 09:35, Neil Armstrong wrote:
->> Document the DSP Peripheral Authentication Service on the SM8650 Platform.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 41 +++++++++++++++++++++-
->>   1 file changed, 40 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> index 58120829fb06..316371c8ee6e 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->> @@ -19,6 +19,9 @@ properties:
->>         - qcom,sm8550-adsp-pas
->>         - qcom,sm8550-cdsp-pas
->>         - qcom,sm8550-mpss-pas
->> +      - qcom,sm8650-adsp-pas
->> +      - qcom,sm8650-cdsp-pas
->> +      - qcom,sm8650-mpss-pas
->>   
->>     reg:
->>       maxItems: 1
->> @@ -49,6 +52,7 @@ properties:
->>         - description: Memory region for main Firmware authentication
->>         - description: Memory region for Devicetree Firmware authentication
->>         - description: DSM Memory region
->> +      - description: DSM Memory region 2
->>   
->>   required:
->>     - compatible
->> @@ -63,6 +67,7 @@ allOf:
->>             enum:
->>               - qcom,sm8550-adsp-pas
->>               - qcom,sm8550-cdsp-pas
->> +            - qcom,sm8650-adsp-pas
->>       then:
->>         properties:
->>           interrupts:
->> @@ -71,7 +76,25 @@ allOf:
->>             maxItems: 5
->>           memory-region:
->>             maxItems: 2
->> -    else:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - qcom,sm8650-cdsp-pas
->> +    then:
->> +      properties:
->> +        interrupts:
->> +          minItems: 5
-> 
-> maxItems
-> 
-> 
->> +        interrupt-names:
->> +          minItems: 5
-> 
-> maxItems
-> 
->> +        memory-region:
->> +          minItems: 3
-> 
-> maxItems: 3
-> 
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - qcom,sm8550-mpss-pas
->> +    then:
->>         properties:
->>           interrupts:
->>             minItems: 6
->> @@ -79,12 +102,26 @@ allOf:
->>             minItems: 6
->>           memory-region:
->>             minItems: 3
-> 
-> You need to add here maxItems.
 
-Ok, I fixed all that
 
+On 10/27/2023 7:50 PM, Luca Weiss wrote:
+> Add the node for the ADSP found on the SC7280 SoC, using standard
+> Qualcomm firmware.
 > 
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - qcom,sm8650-mpss-pas
->> +    then:
+> The memory region for sc7280-chrome-common.dtsi is taken from msm-5.4
+> yupik.dtsi since the other areas also seem to match that file there,
+> though I cannot be sure there.
 > 
-> I am not sure if keeping it in the same binding as sm8550 avoids that
-> much duplication.
-
-Yes it does, 70% is the bindings would be the same, still if it's still preferable I can duplicate.
-
-Thanks,
-Neil
-
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   5 +
+>   arch/arm64/boot/dts/qcom/sc7280.dtsi               | 138 +++++++++++++++++++++
+>   2 files changed, 143 insertions(+)
 > 
-> Best regards,
-> Krzysztof
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> index eb55616e0892..6e5a9d4c1fda 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> @@ -29,6 +29,11 @@ adsp_mem: memory@86700000 {
+>   			no-map;
+>   		};
+>   
+> +		cdsp_mem: memory@88f00000 {
+> +			reg = <0x0 0x88f00000 0x0 0x1e00000>;
+> +			no-map;
+> +		};
+> +
 
+Just a question, why to do it here, if chrome does not use this ?
+
+-Mukesh
+
+>   		camera_mem: memory@8ad00000 {
+>   			reg = <0x0 0x8ad00000 0x0 0x500000>;
+>   			no-map;
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index cc153f4e6979..e15646289bf7 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -3815,6 +3815,144 @@ nsp_noc: interconnect@a0c0000 {
+>   			qcom,bcm-voters = <&apps_bcm_voter>;
+>   		};
+>   
+> +		remoteproc_cdsp: remoteproc@a300000 {
+> +			compatible = "qcom,sc7280-cdsp-pas";
+> +			reg = <0 0x0a300000 0 0x10000>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_LEVEL_HIGH>,
+> +					      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready", "handover",
+> +					  "stop-ack", "shutdown-ack";
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +			clock-names = "xo";
+> +
+> +			power-domains = <&rpmhpd SC7280_CX>,
+> +					<&rpmhpd SC7280_MX>;
+> +			power-domain-names = "cx", "mx";
+> +
+> +			interconnects = <&nsp_noc MASTER_CDSP_PROC 0 &mc_virt SLAVE_EBI1 0>;
+> +
+> +			memory-region = <&cdsp_mem>;
+> +
+> +			qcom,qmp = <&aoss_qmp>;
+> +
+> +			qcom,smem-states = <&cdsp_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
+> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
+> +							     IRQ_TYPE_EDGE_RISING>;
+> +				mboxes = <&ipcc IPCC_CLIENT_CDSP
+> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> +
+> +				label = "cdsp";
+> +				qcom,remote-pid = <5>;
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "cdsp";
+> +					qcom,non-secure-domain;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@1 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <1>;
+> +						iommus = <&apps_smmu 0x11a1 0x0420>,
+> +							 <&apps_smmu 0x1181 0x0420>;
+> +					};
+> +
+> +					compute-cb@2 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <2>;
+> +						iommus = <&apps_smmu 0x11a2 0x0420>,
+> +							 <&apps_smmu 0x1182 0x0420>;
+> +					};
+> +
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x11a3 0x0420>,
+> +							 <&apps_smmu 0x1183 0x0420>;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <4>;
+> +						iommus = <&apps_smmu 0x11a4 0x0420>,
+> +							 <&apps_smmu 0x1184 0x0420>;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <5>;
+> +						iommus = <&apps_smmu 0x11a5 0x0420>,
+> +							 <&apps_smmu 0x1185 0x0420>;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <6>;
+> +						iommus = <&apps_smmu 0x11a6 0x0420>,
+> +							 <&apps_smmu 0x1186 0x0420>;
+> +					};
+> +
+> +					compute-cb@7 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <7>;
+> +						iommus = <&apps_smmu 0x11a7 0x0420>,
+> +							 <&apps_smmu 0x1187 0x0420>;
+> +					};
+> +
+> +					compute-cb@8 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <8>;
+> +						iommus = <&apps_smmu 0x11a8 0x0420>,
+> +							 <&apps_smmu 0x1188 0x0420>;
+> +					};
+> +
+> +					/* note: secure cb9 in downstream */
+> +
+> +					compute-cb@11 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <11>;
+> +						iommus = <&apps_smmu 0x11ab 0x0420>,
+> +							 <&apps_smmu 0x118b 0x0420>;
+> +					};
+> +
+> +					compute-cb@12 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <12>;
+> +						iommus = <&apps_smmu 0x11ac 0x0420>,
+> +							 <&apps_smmu 0x118c 0x0420>;
+> +					};
+> +
+> +					compute-cb@13 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <13>;
+> +						iommus = <&apps_smmu 0x11ad 0x0420>,
+> +							 <&apps_smmu 0x118d 0x0420>;
+> +					};
+> +
+> +					compute-cb@14 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <14>;
+> +						iommus = <&apps_smmu 0x11ae 0x0420>,
+> +							 <&apps_smmu 0x118e 0x0420>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+>   		usb_1: usb@a6f8800 {
+>   			compatible = "qcom,sc7280-dwc3", "qcom,dwc3";
+>   			reg = <0 0x0a6f8800 0 0x400>;
+> 
