@@ -2,140 +2,198 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667D7C00142
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Oct 2023 19:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04FAC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 31 Oct 2023 06:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231194AbjJ3T1F (ORCPT
+        id S236460AbjJaGo2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Oct 2023 15:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50230 "EHLO
+        Tue, 31 Oct 2023 02:44:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231282AbjJ3T1E (ORCPT
+        with ESMTP id S236218AbjJaGo1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Oct 2023 15:27:04 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109CADF
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:59 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2c5028e5b88so67905901fa.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 12:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698694017; x=1699298817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vhu9zeLbvU2DseeR7qeZ4fP8Dx7nMwSPHUsFVgOkD5c=;
-        b=rBB3jKNFusHM5mL4/+yen84c9O2TPFLwDjktoxSlRwrxjToQgVRSk4lDSeDFGxPh3S
-         z1ek1RrvXZEhNFjsqPQm5nZ6CmLoElxvJihcclbvTMOaeL2sp5nc0ReXJGp4EIt6XjM/
-         FrVexc1GqTrVfT8Ea+Aw1FLIfBiaMcAvXidwcJkK3vQTcNyatgh6g2yY4dt+i9MfpjkT
-         Kvuxg4GzG2CVwMOapB46xsn2szQrR9DcpuutWvKHhpKkMKAGBXGYe33jhFQ21nshPFbE
-         NQQUvHwB8MedXMFZkrspMn4J45mtq7gQQR9pHLPYK7H/BJ9ypGdT3DwUaBcfDodhuN0u
-         v/NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698694017; x=1699298817;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhu9zeLbvU2DseeR7qeZ4fP8Dx7nMwSPHUsFVgOkD5c=;
-        b=IKKwnbMCTji34229bdejbSBQGN6ZbWEm9RZz2evZrqfJ74fkG5/EXoJbdhsTske/4m
-         etri7eULW1CazdtrReWJ+ojbaj7XQ+q8ExuDEUgmwRWA8wWCjsDOHQywRwOpZFfexe29
-         eoSFnLs13W6SGIqLNFq14VQ2zSDf6Boa8aF+6sgI6wDKJAHXvBtURDpCh4J8gWPHdytt
-         RSBsh094IjAq2NkOpUThiAFmtzTj9TF5c6Vucrq/Yu8ezuMvdzYRZh7gmR6/52jbcLY+
-         DATk4MlbtFLo+NqW4omTk8GAuaVITKxUUdM6cBP99U7n3TalJNPs8xjGLGUzd0bKuqUJ
-         jgPg==
-X-Gm-Message-State: AOJu0YzcWZ6MTzkj/YJVtEgscHFY7/3TdXAOBEu78dR5cyUUfsVctbzc
-        U6iOwEUTsNBbHi0dnQU9wyrNoQ==
-X-Google-Smtp-Source: AGHT+IE+6piiOQh0wVaer65NGxl0+llczzkNaCZdzOvQHiQ4BSUGQXrP6vZCqJ9lraWI/+07uNKRCQ==
-X-Received: by 2002:a05:6512:128b:b0:508:126a:751e with SMTP id u11-20020a056512128b00b00508126a751emr10988897lfs.36.1698694017155;
-        Mon, 30 Oct 2023 12:26:57 -0700 (PDT)
-Received: from [192.168.133.160] (178235177091.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.91])
-        by smtp.gmail.com with ESMTPSA id a20-20020a056512201400b00507a0098421sm1538610lfb.181.2023.10.30.12.26.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 12:26:56 -0700 (PDT)
-Message-ID: <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org>
-Date:   Mon, 30 Oct 2023 20:26:54 +0100
+        Tue, 31 Oct 2023 02:44:27 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B355BC0;
+        Mon, 30 Oct 2023 23:44:24 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39V4kPix026272;
+        Tue, 31 Oct 2023 06:44:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=7jFveTWj7jSeTd53Jdrv/kWC+xzTymP6HQnAeMDpXjQ=;
+ b=EoVLFynkKlceX/B9V+tZ3Vhx9TKjmoVsnVWzIzNuR7AKs9tMQf95sQTVkr7OeMnjtROo
+ 4xz8WhUNwg6bm2pCHS7EnNV0rGqjW5eKJvn2U8qqpHSktZQHWXYu6Hlf/CGBOF2dGFJP
+ t6owKadQbUabA3pwvJz/uy+OCmNafTWp4gAWiwkKfOJoOoGi6Pop4eCyLxtr+ysnA2cS
+ 5n1aSnjZVNqriYymd5wvOGA12YOV4/shCahU8tCNGSuLaHjAoXVK82M3kBTWs+szdfKp
+ qeXr7NiRU4Gk52FU476c1rf91RH0coVf3zKewxF/Ccq7/4V3zwjPjf2EBvW9P0e7Aqga iA== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u2b2qtbq7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Oct 2023 06:44:17 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39V6iGCB028264
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Oct 2023 06:44:16 GMT
+Received: from [10.214.225.95] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Mon, 30 Oct
+ 2023 23:44:10 -0700
+Message-ID: <d5d53346-ca3b-986a-e104-d87c37115b62@quicinc.com>
+Date:   Tue, 31 Oct 2023 12:14:07 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 7/9] arm64: dts: qcom: sc7280: Add CDSP node
 Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        Andy Gross <agross@kernel.org>,
+To:     Doug Anderson <dianders@chromium.org>,
+        Luca Weiss <luca.weiss@fairphone.com>
+CC:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        <cros-qcom-dts-watchers@chromium.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        <phone-devel@vger.kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        =?UTF-8?Q?Matti_Lehtim=c3=a4ki?= <matti.lehtimaki@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
- <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
+ <7934a36a-9438-719a-2ed0-4a78757b044b@quicinc.com>
+ <CWLNP6QNUXN1.SNVACF2IEGI8@fairphone.com>
+ <CAD=FV=U6mi0h0MBFMC+ba4oq-te6_+WR6fj1XjAq7tmUu64bUA@mail.gmail.com>
+ <CWLUQWPZNAS5.3F4Y5W13OD08M@fairphone.com>
+ <CAD=FV=XbwbjFgMjq-y_L-9EO+xfxwGo6RYV8Wh6P5oBR=oDf_g@mail.gmail.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <CAD=FV=XbwbjFgMjq-y_L-9EO+xfxwGo6RYV8Wh6P5oBR=oDf_g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Rhgh_dG_VXDdBDu2mFsR1Lk5K0QmyRH3
+X-Proofpoint-ORIG-GUID: Rhgh_dG_VXDdBDu2mFsR1Lk5K0QmyRH3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-30_13,2023-10-31_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501 mlxlogscore=999
+ suspectscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310240000
+ definitions=main-2310310051
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 27.10.2023 16:20, Luca Weiss wrote:
-> Now that the WPSS remoteproc is enabled, enable wifi so we can use it.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> index d65eef30091b..e7e20f73cbe6 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -713,3 +713,7 @@ &venus {
->  	firmware-name = "qcom/qcm6490/fairphone5/venus.mbn";
->  	status = "okay";
->  };
-> +
-> +&wifi {
-> +	status = "okay";
-qcom,ath11k-calibration-variant?
 
-Konrad
+
+On 10/30/2023 8:33 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Mon, Oct 30, 2023 at 7:43 AM Luca Weiss <luca.weiss@fairphone.com> wrote:
+>>
+>> On Mon Oct 30, 2023 at 3:11 PM CET, Doug Anderson wrote:
+>>> Hi,
+>>>
+>>> On Mon, Oct 30, 2023 at 2:12 AM Luca Weiss <luca.weiss@fairphone.com> wrote:
+>>>>
+>>>> On Mon Oct 30, 2023 at 10:04 AM CET, Mukesh Ojha wrote:
+>>>>>
+>>>>>
+>>>>> On 10/27/2023 7:50 PM, Luca Weiss wrote:
+>>>>>> Add the node for the ADSP found on the SC7280 SoC, using standard
+>>>>>> Qualcomm firmware.
+>>>>>>
+>>>>>> The memory region for sc7280-chrome-common.dtsi is taken from msm-5.4
+>>>>>> yupik.dtsi since the other areas also seem to match that file there,
+>>>>>> though I cannot be sure there.
+>>>>>>
+>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>>> ---
+>>>>>>    arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   5 +
+>>>>>>    arch/arm64/boot/dts/qcom/sc7280.dtsi               | 138 +++++++++++++++++++++
+>>>>>>    2 files changed, 143 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+>>>>>> index eb55616e0892..6e5a9d4c1fda 100644
+>>>>>> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+>>>>>> @@ -29,6 +29,11 @@ adsp_mem: memory@86700000 {
+>>>>>>                      no-map;
+>>>>>>              };
+>>>>>>
+>>>>>> +           cdsp_mem: memory@88f00000 {
+>>>>>> +                   reg = <0x0 0x88f00000 0x0 0x1e00000>;
+>>>>>> +                   no-map;
+>>>>>> +           };
+>>>>>> +
+>>>>>
+>>>>> Just a question, why to do it here, if chrome does not use this ?
+>>>>
+>>>> Other memory regions in sc7280.dtsi also get referenced but not actually
+>>>> defined in that file, like mpss_mem and wpss_mem. Alternatively we can
+>>>> also try and solve this differently, but then we should probably also
+>>>> adjust mpss and wpss to be consistent.
+>>>>
+>>>> Apart from either declaring cdsp_mem in sc7280.dtsi or
+>>>> "/delete-property/ memory-region;" for CDSP I don't really have better
+>>>> ideas though.
+>>>>
+>>>> I also imagine these ChromeOS devices will want to enable cdsp at some
+>>>> point but I don't know any plans there.
+>>>
+>>> Given that "remoteproc_cdsp" has status "disabled" in the dtsi, it
+>>> feels like the dtsi shouldn't be reserving memory. I guess maybe
+>>> memory regions can't be status "disabled"?
+>>
+>> Hi Doug,
+>>
+>> That's how it works in really any qcom dtsi though. I think in most/all
+>> cases normally the reserved-memory is already declared in the SoC dtsi
+>> file and also used with the memory-region property.
+>>
+>> I wouldn't be against adjusting sc7280.dtsi to match the way it's done
+>> in the other dtsi files though, so to have all the required labels
+>> already defined in the dtsi so it doesn't rely on these labels being
+>> defined in the device dts.
+>>
+>> In other words, currently if you include sc7280.dtsi and try to build,
+>> you first have to define the labels mpss_mem and wpss_mem (after this
+>> patch series also cdsp_mem and adsp_mem) for it to build.
+>>
+>> I'm quite neutral either way, let me know :)
+> 
+> I haven't done a ton of thinking about this, so if I'm spouting
+> gibberish then feel free to ignore me. :-P It just feels weird that
+> when all the "dtsi" files are combined and you look at what you end up
+> on a sc7280 Chrome board that you'll be reserving 32MB of memory for a
+> device that's set (in the same device tree) to be "disabled", right?
+> ...the 32MB is completely wasted, I think. If we wanted to enable the
+> CDSP we'd have to modify the device tree anyway, so it seems like that
+> same modification would set the CDSP to "okay" and also reserve the
+> memory...
+> 
+> In that vein, it seems like maybe you could move the "cdsp_mem" to the
+> SoC .dsti file with a status of "disabled". . I guess we don't do that
+> elsewhere, but maybe we should be? As far as I can tell without
+> testing it (just looking at fdt_scan_reserved_mem()) this should
+> work...
+
+What do you think about moving present reserve memory block from
+sc7280-chrome-common to sc7280.dtsi and delete the stuff which
+chrome does not need it sc7280-chrome-common ?
+
+-Mukesh
+> 
+> -Doug
