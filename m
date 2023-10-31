@@ -2,70 +2,73 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79B5C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 31 Oct 2023 06:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12686C4167B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 31 Oct 2023 10:31:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236458AbjJaGvW (ORCPT
+        id S236227AbjJaKbc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 31 Oct 2023 02:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53806 "EHLO
+        Tue, 31 Oct 2023 06:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbjJaGvV (ORCPT
+        with ESMTP id S234970AbjJaKbb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 31 Oct 2023 02:51:21 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 523CBBD
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 23:51:13 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32f78dcf036so1700249f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Oct 2023 23:51:13 -0700 (PDT)
+        Tue, 31 Oct 2023 06:31:31 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3633A1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 31 Oct 2023 03:31:27 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9bf86b77a2aso774980966b.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 31 Oct 2023 03:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1698735072; x=1699339872; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=fairphone.com; s=fair; t=1698748286; x=1699353086; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z03tBAD7kulHLciz+wyaNXrh/TRCLRTdw+sLgMToEro=;
-        b=auV/mghXFpoG33l9D7LeTCjJCsVLEGGVBDAHMEwpP87UyENpwPIpYHqSUGK3zfcsh/
-         6CoXjVlVIWPu1MOtbgKsAt62Cg0g8p99eX8xjqCQe9AN9OURF6dhslJU6jDOiqDxco2f
-         6U3RZyJJW+oKrDaOs0Vl/+SYC2963DCDsrQefFnDj/5kLZU7xO6LPujJqpqCg7nY4Pfb
-         jxX2rf/n/ZB82hYTTEilYGVEtew9S2xo636zcJ1+9XpHl0BezoquAv0x/xSs7rfNThKx
-         N+JbbWMwNKixvwdvv0D6X/APKWBUvBgz0fMhWLD1hE3K0gH7QaNNwmPOQO+iU/DND221
-         EeOA==
+        bh=LwcpAw93f8EcOvzGZFcG9/r02PfDebZGVqeB4dh3eQo=;
+        b=sDppNOCPXHUEBhOfx8IlTeuaB0d620dH/TqHK564vPCVsYrtAeM6xU8MKWHNtHbp3g
+         VTQsp2XlAL5KTvYomxN7Z/dVSPOp5GWq5ajqd8mM0YPsfFo9bZlxrB013VWpKolgm0mk
+         fA+0P5o/3NYP33s6hcbI1NB7kMG3odT6UYUobaD1sgJ1pby8Hxma5Yc+Z5vHbGwS3MWG
+         BdE0tjBXMhONnvkM0SuVdv7rRosERjDfGkerYF9f/+zhPgs9IPobv1AbE3UmuhULZzL0
+         mBiGoerQ1G3qWGaeFa5HyHpumGEzqF9/wXejZhYOKUvFPltJ+YjyqfuYZRN5xfUlQrBz
+         uKww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698735072; x=1699339872;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=1e100.net; s=20230601; t=1698748286; x=1699353086;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
          :content-transfer-encoding:mime-version:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=z03tBAD7kulHLciz+wyaNXrh/TRCLRTdw+sLgMToEro=;
-        b=NBWpmyZvNQBfeBAI4f/+Dvz6mMg8XXa1+xwjC3y+jPHlKpoB63CBBupXA4pnwALskV
-         TXtda+gq/1QCiaYBKjs0AfscHnHr8+dKmVGYdC1hYkAPwnIROM2GwkL/yFTOnY6L7MW/
-         VJP+xc0htNCenV3CcshIOz2dCr6k5cKX3a5gOjw6t2ninASGbo1Y4tR5tK652RmP21Ku
-         pxArr/YPY12q+j092Yw2HTcRhmY80y9lQmwUvYIpfvHkIBQGtHXPPpvvoEXmHal6Lang
-         caGNBxqCcsXJvqACjIEdp/meCtGO0vhJEW7JmV78q4ZaTMAWgvTphvL1mqNKc5m85BHs
-         RwNg==
-X-Gm-Message-State: AOJu0Yyah9b2MWpbKAdXWRNPd+I158PpqChkwOrbLTqA6kcIFT+VIX1y
-        PuelbM39bLBEGUOgG9233JoQLw==
-X-Google-Smtp-Source: AGHT+IEzHyPRQE2zZhzDDa2oTzBfGeHjRLaOTVFZzI5RlRHxHNoXR6ODtgZmff9pqdm1ZlEPaclxXg==
-X-Received: by 2002:a05:6000:2a2:b0:32f:803e:3a06 with SMTP id l2-20020a05600002a200b0032f803e3a06mr1821538wry.7.1698735071261;
-        Mon, 30 Oct 2023 23:51:11 -0700 (PDT)
-Received: from localhost (mobiledyn-62-240-134-103.mrsn.at. [62.240.134.103])
-        by smtp.gmail.com with ESMTPSA id e13-20020a5d594d000000b00327bf4f2f14sm725497wri.88.2023.10.30.23.51.08
+        bh=LwcpAw93f8EcOvzGZFcG9/r02PfDebZGVqeB4dh3eQo=;
+        b=t/BNfALbwPDrhZ65JjUSvuQsGn2SJXsVJGr8iyoAxvsNbvkUbWCuWDqGm3JiZ4xrNj
+         wrXg8byL7kF4mM+jZQCUriDr+nh96heNvGEdIcF0CdQeOrtYRfOMCMuMyDeSifCVnS8V
+         s5sZ3Ar0gXYBhRuD7RXMs4SL4vJoLBoRWFuswwCZCaftCJY9ONPIDAlO2kpS79xgzhJd
+         NOkqgkBeK4yFoYQgJtHj67itCSN81orhzH8iUFnd6OKIYWtMIklhBNzGbslwhAgFxLqz
+         5GV4gE04bxJNgu/cn3sZ679v+i3RmRlp9u5ZyHYDm1oofY+LnGD0JxNGtzk9yntq8SBs
+         xD3g==
+X-Gm-Message-State: AOJu0YyQf/NzcoRdqwcYznC6Fr7Mg2DjLgMcxXOjopXd7/2eNsZYOKRr
+        uod688bMMKDRl4aDI3mXaukzbw==
+X-Google-Smtp-Source: AGHT+IEK2nbNqEftFgCQaEKTK6oP+JGRn2+Pt4iMlF4vWkb9BS+YeoAi2iIM0BIkp3QaBbb1bZ+L0Q==
+X-Received: by 2002:a17:907:e88:b0:9c5:64f2:eaba with SMTP id ho8-20020a1709070e8800b009c564f2eabamr11912495ejc.53.1698748285858;
+        Tue, 31 Oct 2023 03:31:25 -0700 (PDT)
+Received: from localhost (mobiledyn-62-240-134-77.mrsn.at. [62.240.134.77])
+        by smtp.gmail.com with ESMTPSA id l11-20020a170906414b00b009b2ca104988sm739894ejk.98.2023.10.31.03.31.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Oct 2023 23:51:10 -0700 (PDT)
+        Tue, 31 Oct 2023 03:31:25 -0700 (PDT)
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 31 Oct 2023 07:51:08 +0100
-Message-Id: <CWMFBOXZ8IIL.3PDP1L7ZMG3MO@fairphone.com>
-Cc:     "Andy Gross" <agross@kernel.org>,
+Date:   Tue, 31 Oct 2023 11:31:20 +0100
+Message-Id: <CWMK0AQRL87L.1F9MIDVQ4J439@fairphone.com>
+Subject: Re: [PATCH 9/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable
+ WiFi
+From:   "Luca Weiss" <luca.weiss@fairphone.com>
+To:     "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Andy Gross" <agross@kernel.org>,
         "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
         "Mathieu Poirier" <mathieu.poirier@linaro.org>,
         "Rob Herring" <robh+dt@kernel.org>,
         "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
         "Conor Dooley" <conor+dt@kernel.org>,
         "Manivannan Sadhasivam" <mani@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
+        <cros-qcom-dts-watchers@chromium.org>
+Cc:     <~postmarketos/upstreaming@lists.sr.ht>,
         <phone-devel@vger.kernel.org>,
         "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
         "Rob Herring" <robh@kernel.org>,
@@ -73,144 +76,47 @@ Cc:     "Andy Gross" <agross@kernel.org>,
         <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/9] arm64: dts: qcom: sc7280: Add CDSP node
-From:   "Luca Weiss" <luca.weiss@fairphone.com>
-To:     "Mukesh Ojha" <quic_mojha@quicinc.com>,
-        "Doug Anderson" <dianders@chromium.org>
 X-Mailer: aerc 0.15.2
 References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
- <20231027-sc7280-remoteprocs-v1-7-05ce95d9315a@fairphone.com>
- <7934a36a-9438-719a-2ed0-4a78757b044b@quicinc.com>
- <CWLNP6QNUXN1.SNVACF2IEGI8@fairphone.com>
- <CAD=FV=U6mi0h0MBFMC+ba4oq-te6_+WR6fj1XjAq7tmUu64bUA@mail.gmail.com>
- <CWLUQWPZNAS5.3F4Y5W13OD08M@fairphone.com>
- <CAD=FV=XbwbjFgMjq-y_L-9EO+xfxwGo6RYV8Wh6P5oBR=oDf_g@mail.gmail.com>
- <d5d53346-ca3b-986a-e104-d87c37115b62@quicinc.com>
-In-Reply-To: <d5d53346-ca3b-986a-e104-d87c37115b62@quicinc.com>
+ <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
+ <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org>
+In-Reply-To: <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue Oct 31, 2023 at 7:44 AM CET, Mukesh Ojha wrote:
->
->
-> On 10/30/2023 8:33 PM, Doug Anderson wrote:
-> > Hi,
+On Mon Oct 30, 2023 at 8:26 PM CET, Konrad Dybcio wrote:
+> On 27.10.2023 16:20, Luca Weiss wrote:
+> > Now that the WPSS remoteproc is enabled, enable wifi so we can use it.
 > >=20
-> > On Mon, Oct 30, 2023 at 7:43=E2=80=AFAM Luca Weiss <luca.weiss@fairphon=
-e.com> wrote:
-> >>
-> >> On Mon Oct 30, 2023 at 3:11 PM CET, Doug Anderson wrote:
-> >>> Hi,
-> >>>
-> >>> On Mon, Oct 30, 2023 at 2:12=E2=80=AFAM Luca Weiss <luca.weiss@fairph=
-one.com> wrote:
-> >>>>
-> >>>> On Mon Oct 30, 2023 at 10:04 AM CET, Mukesh Ojha wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 10/27/2023 7:50 PM, Luca Weiss wrote:
-> >>>>>> Add the node for the ADSP found on the SC7280 SoC, using standard
-> >>>>>> Qualcomm firmware.
-> >>>>>>
-> >>>>>> The memory region for sc7280-chrome-common.dtsi is taken from msm-=
-5.4
-> >>>>>> yupik.dtsi since the other areas also seem to match that file ther=
-e,
-> >>>>>> though I cannot be sure there.
-> >>>>>>
-> >>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> >>>>>> ---
-> >>>>>>    arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   5 +
-> >>>>>>    arch/arm64/boot/dts/qcom/sc7280.dtsi               | 138 ++++++=
-+++++++++++++++
-> >>>>>>    2 files changed, 143 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/=
-arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> >>>>>> index eb55616e0892..6e5a9d4c1fda 100644
-> >>>>>> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> >>>>>> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> >>>>>> @@ -29,6 +29,11 @@ adsp_mem: memory@86700000 {
-> >>>>>>                      no-map;
-> >>>>>>              };
-> >>>>>>
-> >>>>>> +           cdsp_mem: memory@88f00000 {
-> >>>>>> +                   reg =3D <0x0 0x88f00000 0x0 0x1e00000>;
-> >>>>>> +                   no-map;
-> >>>>>> +           };
-> >>>>>> +
-> >>>>>
-> >>>>> Just a question, why to do it here, if chrome does not use this ?
-> >>>>
-> >>>> Other memory regions in sc7280.dtsi also get referenced but not actu=
-ally
-> >>>> defined in that file, like mpss_mem and wpss_mem. Alternatively we c=
-an
-> >>>> also try and solve this differently, but then we should probably als=
-o
-> >>>> adjust mpss and wpss to be consistent.
-> >>>>
-> >>>> Apart from either declaring cdsp_mem in sc7280.dtsi or
-> >>>> "/delete-property/ memory-region;" for CDSP I don't really have bett=
-er
-> >>>> ideas though.
-> >>>>
-> >>>> I also imagine these ChromeOS devices will want to enable cdsp at so=
-me
-> >>>> point but I don't know any plans there.
-> >>>
-> >>> Given that "remoteproc_cdsp" has status "disabled" in the dtsi, it
-> >>> feels like the dtsi shouldn't be reserving memory. I guess maybe
-> >>> memory regions can't be status "disabled"?
-> >>
-> >> Hi Doug,
-> >>
-> >> That's how it works in really any qcom dtsi though. I think in most/al=
-l
-> >> cases normally the reserved-memory is already declared in the SoC dtsi
-> >> file and also used with the memory-region property.
-> >>
-> >> I wouldn't be against adjusting sc7280.dtsi to match the way it's done
-> >> in the other dtsi files though, so to have all the required labels
-> >> already defined in the dtsi so it doesn't rely on these labels being
-> >> defined in the device dts.
-> >>
-> >> In other words, currently if you include sc7280.dtsi and try to build,
-> >> you first have to define the labels mpss_mem and wpss_mem (after this
-> >> patch series also cdsp_mem and adsp_mem) for it to build.
-> >>
-> >> I'm quite neutral either way, let me know :)
+> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 4 ++++
+> >  1 file changed, 4 insertions(+)
 > >=20
-> > I haven't done a ton of thinking about this, so if I'm spouting
-> > gibberish then feel free to ignore me. :-P It just feels weird that
-> > when all the "dtsi" files are combined and you look at what you end up
-> > on a sc7280 Chrome board that you'll be reserving 32MB of memory for a
-> > device that's set (in the same device tree) to be "disabled", right?
-> > ...the 32MB is completely wasted, I think. If we wanted to enable the
-> > CDSP we'd have to modify the device tree anyway, so it seems like that
-> > same modification would set the CDSP to "okay" and also reserve the
-> > memory...
-> >=20
-> > In that vein, it seems like maybe you could move the "cdsp_mem" to the
-> > SoC .dsti file with a status of "disabled". . I guess we don't do that
-> > elsewhere, but maybe we should be? As far as I can tell without
-> > testing it (just looking at fdt_scan_reserved_mem()) this should
-> > work...
->
-> What do you think about moving present reserve memory block from
-> sc7280-chrome-common to sc7280.dtsi and delete the stuff which
-> chrome does not need it sc7280-chrome-common ?
+> > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/=
+arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > index d65eef30091b..e7e20f73cbe6 100644
+> > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> > @@ -713,3 +713,7 @@ &venus {
+> >  	firmware-name =3D "qcom/qcm6490/fairphone5/venus.mbn";
+> >  	status =3D "okay";
+> >  };
+> > +
+> > +&wifi {
+> > +	status =3D "okay";
+> qcom,ath11k-calibration-variant?
 
-Hi Mukesh,
+What value would I put there for my device? Based on existing usages
+(mostly for ath10k) I'd say "Fairphone_5"?
 
-I'll do that in v2, thanks!
+And you mean I should add this property in dts before even looking into
+the firmware/calibration side of it?
 
 Regards
 Luca
 
 >
-> -Mukesh
-> >=20
-> > -Doug
+> Konrad
 
