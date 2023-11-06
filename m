@@ -2,125 +2,148 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D85C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  4 Nov 2023 13:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004DEC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Nov 2023 08:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232164AbjKDNX5 (ORCPT
+        id S231309AbjKFI3F (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 4 Nov 2023 09:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55058 "EHLO
+        Mon, 6 Nov 2023 03:29:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjKDNX4 (ORCPT
+        with ESMTP id S231266AbjKFI3E (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 4 Nov 2023 09:23:56 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 319FBE3
-        for <linux-remoteproc@vger.kernel.org>; Sat,  4 Nov 2023 06:23:51 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d9abc069c8bso2740114276.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 04 Nov 2023 06:23:51 -0700 (PDT)
+        Mon, 6 Nov 2023 03:29:04 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 788B4100
+        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Nov 2023 00:28:59 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-32fadd4ad09so2678988f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Nov 2023 00:28:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699104230; x=1699709030; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihpTO3F03JzgacnLk5uBUsxe1t+WyOgXLtjj9fTyAZY=;
-        b=c/cnOsccQ/fIrrcu/GNkooemVtQ1f2i7DGtv8dQQV+NN9/XTL0G5H7Z/byj7AtAGTg
-         Nh5tNYpfeGxJl85qM9Ys5nybvZr7KA12IazlA2UDDOCvIVw/HMSskEQMDZXoQgy5JIUk
-         A/R+AMFDzknrYWqSJF10Pk5FomwgdopsorBLidqxKi/puBx5zAD7wmGqJniXHBgq3Tvg
-         XdoXng5jXbgwjWjd/0Uv7gHyXaRbTdhABSt6p/eyC2trhkHROlKBR4DydXN+YBdbBl+g
-         tvei06BmxZslptmqnhc3kBqvNuQ9qnJsOdbBo+009iefbA2KhfmYXOhAI38niKyqnOnP
-         MXWQ==
+        d=linaro.org; s=google; t=1699259338; x=1699864138; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xVg64v95yLO2xex1BL7gRMAJXMhEd7O/tj6FlUFZN0M=;
+        b=lVc29szezIrH76YjM49RJCPV1pOMEiTyQhQG5m+DPG6AnkzrZta/qlcaHFyqXQ1uj7
+         CgYQ/Zh0xQcPItwcxPtyLEm53P7ObXt7rkN8ESMvKesglxgXNK3IKLiGtFK2qrjusUJn
+         wOiT7TBOfz0JcIIqoIGAEOsjpD274juG3ByUsWtF0MUfOT+evDLUsUQqdVaZWoe40UYB
+         0+2UyFkzhLzS1i/Aa1XaxtvhK5S4Mf6CxMq7EfmuqjY3fy1NX2kxSOE5H6dn3ZZ8IKsj
+         7Y+68LehX52mBcUU8+p2D/4xCAG63PGA8xr+RpSwZFDyXBTMBVDD+5YR87g8UMT9t3vI
+         w+YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699104230; x=1699709030;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1699259338; x=1699864138;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ihpTO3F03JzgacnLk5uBUsxe1t+WyOgXLtjj9fTyAZY=;
-        b=YCY+jXBxHxZYt3KXDI8B7hnHQ8U+1N4hyvByclx33E79Rmj7kdQalvSbdtwOmJJtAz
-         567eR0j4fijtx/b2zpacJtABQ8JOvgNYxpeuP6Fl4eJmhtfi0+Lac+kMz1lrzyKCHbCY
-         C4wjR6KpCnY6E1EIEwpcg3Iqv0wW4rVbi76E9SIwvBUHtGhTIZ8EVuNlHXqFK+VS83n1
-         7SJxtDHN3Ei6oiTn9pN06yPS7rHKfJV5wUc7CFMCALAZfhfP5kFL+1kAD+OxYffBIpFK
-         5Amy+WSLViyR8wC0+xrulTpPfrHuC/TgzimRXaQfaKJ3l+ADHynAVhoiahsJlGWuHLrL
-         Atkg==
-X-Gm-Message-State: AOJu0YyQk+OjnCr1V191JS1l8UglfCtYa8rVMxbzIDtLTPIJ7NsSeVLS
-        Nk+8NKGsiaAtQCaF6groOMCZ7ikT60P5lPyGdtzz5Q==
-X-Google-Smtp-Source: AGHT+IGVlWdeV8B/RVB/c5DH0WUIogCLxoudcchmyfPsPK9fAim8y9X901ML2K7hubgLTE5ct4OanZhXxd+HhodgcZg=
-X-Received: by 2002:a25:dfc7:0:b0:d0f:846c:ef7b with SMTP id
- w190-20020a25dfc7000000b00d0f846cef7bmr21101785ybg.17.1699104230336; Sat, 04
- Nov 2023 06:23:50 -0700 (PDT)
+        bh=xVg64v95yLO2xex1BL7gRMAJXMhEd7O/tj6FlUFZN0M=;
+        b=lIFphI5LpH0XAv0TcKBsiPifDHHswRlQG0flm71Qei2yA9oCNK53tgIxtag1Sfn87R
+         1mTeowZ2d6CFNP03T9G1G6v2nWuz7B3kc7HXYtF7VvTgfNUoVo8YlMR63emP2hzsh5pI
+         VVOsUaOgDGsxTwWtqbDgemRitnmHL/0EKRAQUO6qZyvx1yZcH7KHCFHmSXTM/YjdSU9M
+         U8Y/z/G6UGquZTq7jU0Ic40jT4BcR8+vjmozDduHK7b52/2VOXglZDpzNacq4XH3y4KJ
+         PNzKky5Eoh5qy9ED4IBxtu/LnST9V6JLie3H+CGVP4lnZGeOkP32T1uG/2UGBHFXZZ3j
+         VqpQ==
+X-Gm-Message-State: AOJu0YwglZoqciZqszPUS45ScElSOWZza1v5AgraRs6+dRkTXYMeK+8X
+        2GieobttAzeATagercHD1O0TAlnlgf7chkPoMXQqzA==
+X-Google-Smtp-Source: AGHT+IGY2cnezhqD5a4Qn8SdP/PaZgVRABtO639WGkDzPC167MVcjgtV+XmebbSkphTrwU19Hwpatg==
+X-Received: by 2002:adf:f212:0:b0:32d:6891:f819 with SMTP id p18-20020adff212000000b0032d6891f819mr20273331wro.41.1699259337837;
+        Mon, 06 Nov 2023 00:28:57 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id p12-20020adfce0c000000b0032dc1fc84f2sm8796126wrn.46.2023.11.06.00.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 00:28:57 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v3 0/3] remoteproc: qcom: Introduce DSP support for SM8650
+Date:   Mon, 06 Nov 2023 09:28:51 +0100
+Message-Id: <20231106-topic-sm8650-upstream-remoteproc-v3-0-dbd4cabaeb47@linaro.org>
 MIME-Version: 1.0
-References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
- <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
- <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org> <CWMK0AQRL87L.1F9MIDVQ4J439@fairphone.com>
-In-Reply-To: <CWMK0AQRL87L.1F9MIDVQ4J439@fairphone.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 4 Nov 2023 15:23:38 +0200
-Message-ID: <CAA8EJpqCeW8NVcrpwo6JVn0kE2W-QMELB1YH7i7pgOH6qiPbCQ@mail.gmail.com>
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        Kalle Valo <kvalo@kernel.org>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMOjSGUC/43NsQ6CMBSF4Vcxna1pixR08j2MQy0HaCK0uUWiI
+ by7hTjopON/hu9MLIIcIjtuJkYYXXS+T5FtN8y2pm/AXZWaKaEyKaTmgw/O8tiVOhf8HuJAMB0
+ ndH5AIG+51qYsgKuuAZaYQKjdY704X1K3Lg6enuvjKJf1jav8Nz5KLrgpKyWwt5ClPd1cb8jvP
+ DVs0Uf1IWbiD1ElUYsDkBcKwqgvcZ7nFzPUOYAjAQAA
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2137;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=B9X5JABasgtm+WcKFvPVEvO8N6PQClAuoGJpo8AsdPc=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlSKPHD0YsdSh7bY7ujlTyUQ0TyrgYOE/BHb3ZL5Ed
+ hbLqxB+JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZUijxwAKCRB33NvayMhJ0bNrEA
+ C3HPFS9RGc/8QaBBAHA1RQLRecbUsa+gJpLyMm0G/d+BsyP5wBN1Hf5j//tJczS+t13PRXOkUdrXM0
+ 7rBmkfo+0aORAr5MAeQUKlqKp6j7uz0vLn6XH74f0zaRtXH5niDYiIGjIEs7y0AgtaY8s3qvvksCFn
+ D9xXgpF6/pRs8QafX9PTezYGksatZtm5vDRnJBsmS1iDtJxTw3vWVjSKqfZd/ErnsD8K3bwgzjUKIE
+ l6r0RRGyg52HLUFi1/MovpThuRVK2CRVK0bAPQtcIZ4xBd20RexxAAB+LLbaZMDctGtzt7DQCnMIBq
+ ChFf2m4Ac5V3mpfan0WUCYZ72Sa6tbBG7G9JDtAOBezEWaE570ZIc9+h1EcyGY4HfqrepQre1XGQBI
+ /bsYwk7B8BIyQ9wZGVmv+wbZ/n6uHQWeTHboaZtaPPNxXEAjWs+if8Be4rkiG7ns4T+6N+FDWBuNVw
+ qWP6lobtoxe3GfiuJYgUzHw+JkiyhwKOHw6KBTJa8uDrqQ5jbbQoUcoT5Slr5xfK53ShwiJ91ChFmD
+ 4PfGsZpIzr4BP8dU5miYdeEtvS3t3y/lbGKWpBI8iumOQuY5IoF/eQoo0ef0jmoHvxrjMpB+zq7ts+
+ W8IUY3kSbwTorCbGVkZPmQd2o40cR5nNIIhkGPHHvsaikcPLyAc998cJb57A==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-[Added Kalle to the CC list]
+Add the bindings and driver changes for DSP support on the
+SM8650 platform in order to enable the aDSP, cDSP and MPSS
+subsystems to boot.
 
-On Tue, 31 Oct 2023 at 12:31, Luca Weiss <luca.weiss@fairphone.com> wrote:
->
-> On Mon Oct 30, 2023 at 8:26 PM CET, Konrad Dybcio wrote:
-> > On 27.10.2023 16:20, Luca Weiss wrote:
-> > > Now that the WPSS remoteproc is enabled, enable wifi so we can use it.
-> > >
-> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > index d65eef30091b..e7e20f73cbe6 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > @@ -713,3 +713,7 @@ &venus {
-> > >     firmware-name = "qcom/qcm6490/fairphone5/venus.mbn";
-> > >     status = "okay";
-> > >  };
-> > > +
-> > > +&wifi {
-> > > +   status = "okay";
-> > qcom,ath11k-calibration-variant?
->
-> What value would I put there for my device? Based on existing usages
-> (mostly for ath10k) I'd say "Fairphone_5"?
+Compared to SM8550, where SM8650 uses the same dual firmware files,
+(dtb file and main firmware) the memory zones requirement has changed:
+- cDSP: now requires 2 memory zones to be configured as shared
+  between the cDSP and the HLOS subsystem
+- MPSS: In addition to the memory zone required for the SM8550
+  MPSS, another one is required to be configured for MPSS
+  usage only.
 
-I think this is fine.
+In order to handle this and avoid code duplication, the region_assign_*
+code patch has been made more generic and is able handle multiple
+DSP-only memory zones (for MPSS) or DSP-HLOS shared memory zones (cDSP)
+in the same region_assign functions.
 
-> And you mean I should add this property in dts before even looking into
-> the firmware/calibration side of it?
+Dependencies: None
 
-From my experience some (most?) of the device manufacturers do the
-wrong thing here. They do not program a sensible board_id, leaving it
-as 0xff or some other semi-random value. The calibration variant is
-the only way for the kernel to distinguish between such poor devices.
+For convenience, a regularly refreshed linux-next based git tree containing
+all the SM8650 related work is available at:
+https://git.codelinaro.org/neil.armstrong/linux/-/tree/topic/sm8650/upstream/integ
 
-The kernel will do a smart thing though. If the device-specific
-calibration data is not present, it will try to fall back to the
-generic data.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v3:
+- Collected bindings review tags
+- Small fixes suggested by Mukesh Ojha
+- Link to v2: https://lore.kernel.org/r/20231030-topic-sm8650-upstream-remoteproc-v2-0-609ee572e0a2@linaro.org
 
+Changes in v2:
+- Fixed sm8650 entries in allOf:if:then to match Krzysztof's comments
+- Collected reviewed-by on patch 3
+- Link to v1: https://lore.kernel.org/r/20231025-topic-sm8650-upstream-remoteproc-v1-0-a8d20e4ce18c@linaro.org
+
+---
+Neil Armstrong (3):
+      dt-bindings: remoteproc: qcom,sm8550-pas: document the SM8650 PAS
+      remoteproc: qcom: pas: make region assign more generic
+      remoteproc: qcom: pas: Add SM8650 remoteproc support
+
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  44 +++++-
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 151 ++++++++++++++++-----
+ 2 files changed, 159 insertions(+), 36 deletions(-)
+---
+base-commit: fe1998aa935b44ef873193c0772c43bce74f17dc
+change-id: 20231016-topic-sm8650-upstream-remoteproc-66a87eeb6fee
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Neil Armstrong <neil.armstrong@linaro.org>
+
