@@ -2,148 +2,102 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07086C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Nov 2023 03:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A80C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Nov 2023 03:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbjKGDeY (ORCPT
+        id S233009AbjKGDvK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Nov 2023 22:34:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35354 "EHLO
+        Mon, 6 Nov 2023 22:51:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbjKGDeX (ORCPT
+        with ESMTP id S233368AbjKGDvK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Nov 2023 22:34:23 -0500
+        Mon, 6 Nov 2023 22:51:10 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5EF101;
-        Mon,  6 Nov 2023 19:34:20 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76EDFC433CA;
-        Tue,  7 Nov 2023 03:34:19 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752F3D47;
+        Mon,  6 Nov 2023 19:51:07 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC68CC433C8;
+        Tue,  7 Nov 2023 03:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699328060;
-        bh=OfweZHB38AdNXn/P8vLctkJkhs9Vuna2g2+KNYU6ofk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nvqEa2lI211kU+e02t/9TDVvEpVkU5DPhNOE0cr2Kn26tQcCKQ/OY7ySRLPDahfgy
-         4XOKMkAGAaa/gGdIWJgvQmSQlNzQREUSiLFZf8k6UeO20mj0spqObaWkgrCH537hCv
-         n9lJ8wS0YkmJWQvhCFZDq+3iFGjiCI8MDDhxkST+x4qbdWAI1bTtbDFhr61tEDjyY+
-         Sa9g4KuNMDh5PmkUrnltjF4bHIYT8f04oengNRaDvSFC3wzz/luCr9vXsHT2i04XF4
-         hQvxUwYxBBbkSL9T16vLbcK8thkOLvkcgQEBRcNoaGATesXxjDRoR2HEbP6CvzGliN
-         dq4v43H7YkbQw==
+        s=k20201202; t=1699329067;
+        bh=+X/hKJ32hWOaYLZj2LTvR6+JnyM9c+DOTeGM5OWPGd0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mISH3v7+T+GCIROhQKnt36obHCbBRgrPkPS4NNc53prAZ9MQ94P06ipdtp3U/ZZRW
+         nQ/KQcYeWhmoQGV7eZi6DLG1ezyNHN13mqUsx5e0NTdDP/Z4CIkdpAwXZs+edy9fzH
+         Nl7pzb+nMQPGEDX8bxlCZ+XyQ8ArVG0z5Nh8bsQh7emOfD5x8GqfX9k59moV4MduaQ
+         ptc/Xplz8EwviVZdaHPZosg34pyHWeiopFrj99l9pgsMZSEVSeiwMPoVxwvLWnSjSy
+         XQaXpaYdHgoqEt3lILVcdM4WZdgvazTVmxDw+hWblh3jqsfgiQAooh1RSo6+zi7AFB
+         jE8zVpiTm+RUw==
+Date:   Mon, 6 Nov 2023 19:55:07 -0800
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
+To:     Caleb Connolly <caleb.connolly@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bhupesh Sharma <bhupesh.linux@gmail.com>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Nikita Travkin <nikita@trvn.ru>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen Jiahao <chenjiahao16@huawei.com>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [GIT PULL] remoteproc updates for v6.7
-Date:   Mon,  6 Nov 2023 19:38:20 -0800
-Message-ID: <20231107033821.2563960-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.42.0
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: thermal: Add qcom,qmi-cooling yaml
+ bindings
+Message-ID: <6mgpjpdfsswww7mqqtub45afjz6mjyqfkigji3zsy73qwnq57u@rlstudlwkddn>
+References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
+ <20230905-caleb-qmi_cooling-v1-2-5aa39d4164a7@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230905-caleb-qmi_cooling-v1-2-5aa39d4164a7@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Fri, Sep 29, 2023 at 05:16:18PM +0100, Caleb Connolly wrote:
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom,qmi-cooling.yaml b/Documentation/devicetree/bindings/thermal/qcom,qmi-cooling.yaml
+> +definitions:
+> +  tmd:
+> +    type: object
+> +    description: |
 
-The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+No need to preserve formatting (which is what '|' denotes).
 
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+> +      A single Thermal Mitigation Device exposed by a remote subsystem.
+> +    properties:
+> +      label:
+> +        maxItems: 1
+> +      "#cooling-cells":
+> +        $ref: /schemas/thermal/thermal-cooling-devices.yaml#/properties/#cooling-cells
+> +
+> +    required:
+> +      - label
+> +      - "#cooling-cells"
+> +
+> +    additionalProperties: false
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,qmi-cooling-modem
+> +      - qcom,qmi-cooling-adsp
+> +      - qcom,qmi-cooling-cdsp
+> +      - qcom,qmi-cooling-slpi
+> +
+> +  vdd:
+> +    $ref: "#/definitions/tmd"
+> +    description:
+> +      Restrict primary rail minimum voltage to "nominal" setting.
 
-are available in the Git repository at:
+Isn't this one of the "heating" thermal mitigations? (I.e. something
+being tripped when the temperature goes below some level) Which afaik
+the framework doesn't support still?
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.7
-
-for you to fetch changes up to 3d8a18697ad834436d088d65cc66165947cfe600:
-
-  remoteproc: st: Fix sometimes uninitialized ret in st_rproc_probe() (2023-10-16 11:24:34 -0600)
-
-----------------------------------------------------------------
-remoteproc updates for v6.7
-
-Support for controlling the second core in Mediatek's SCP dual-core
-setup is introduced.
-
-Support for audio, compute and modem DSPs on Qualcomm SM6375, and the
-audio DSP in SC7180 are introduced. The peripheral NoC clock is
-dropped from MSM8996 modem DSP, as this is handled through the
-interconnect provider.
-
-In the zynqmp driver the setup for TCM memory, and device address
-translation thereof, when operating in lockstep mode is corrected.
-
-A few bug fixes and cleanups are introduces across the ST and STM32
-remoteproc drivers.
-
-----------------------------------------------------------------
-AngeloGioacchino Del Regno (1):
-      remoteproc: mediatek: Refactor single core check and fix retrocompatibility
-
-Chen Jiahao (1):
-      remoteproc: stm32: Clean up redundant dev_err_probe()
-
-Konrad Dybcio (6):
-      dt-bindings: remoteproc: qcom,sm6375-pas: Document remoteprocs
-      remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
-      remoteproc: qcom: pas: Add SM6375 MPSS
-      dt-bindings: remoteproc: qcom,adsp: Remove AGGRE2 clock
-      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Remove PNoC clock
-      remoteproc: qcom: q6v5-mss: Remove PNoC clock from 8996 MSS
-
-MD Danish Anwar (1):
-      dt-bindings: remoteproc: pru: Add Interrupt property
-
-Nathan Chancellor (1):
-      remoteproc: st: Fix sometimes uninitialized ret in st_rproc_probe()
-
-Nikita Travkin (2):
-      dt-bindings: remoteproc: qcom: sc7180-pas: Add ADSP compatible
-      remoteproc: qcom: pas: Add sc7180 adsp
-
-Rob Herring (1):
-      remoteproc: st: Use device_get_match_data()
-
-Tanmay Shah (2):
-      remoteproc: zynqmp: fix TCM carveouts in lockstep mode
-      remoteproc: zynqmp: Change tcm address translation method
-
-Tinghan Shen (13):
-      dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode definition
-      dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
-      remoteproc: mediatek: Add MT8195 SCP core 1 operations
-      remoteproc: mediatek: Extract SCP common registers
-      remoteproc: mediatek: Revise SCP rproc initialization flow for multi-core SCP
-      remoteproc: mediatek: Probe SCP cluster on single-core SCP
-      remoteproc: mediatek: Probe SCP cluster on multi-core SCP
-      remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power control on dual-core SCP
-      remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
-      remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
-      remoteproc: mediatek: Report watchdog crash to all cores
-      remoteproc: mediatek: Refine ipi handler error message
-      arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
-
- .../devicetree/bindings/remoteproc/mtk,scp.yaml    | 176 ++++++-
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  20 +-
- .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |   2 -
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |  81 +++-
- .../bindings/remoteproc/qcom,sm6375-pas.yaml       | 145 ++++++
- .../bindings/remoteproc/ti,pru-rproc.yaml          |  23 +
- arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi     |   2 +-
- arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi   |   2 +-
- drivers/remoteproc/mtk_common.h                    |  39 +-
- drivers/remoteproc/mtk_scp.c                       | 536 ++++++++++++++++-----
- drivers/remoteproc/mtk_scp_ipi.c                   |   4 +-
- drivers/remoteproc/qcom_q6v5_mss.c                 |   1 -
- drivers/remoteproc/qcom_q6v5_pas.c                 |  19 +
- drivers/remoteproc/st_remoteproc.c                 |  16 +-
- drivers/remoteproc/stm32_rproc.c                   |   4 +-
- drivers/remoteproc/xlnx_r5_remoteproc.c            | 110 ++---
- 16 files changed, 932 insertions(+), 248 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+Regards,
+Bjorn
