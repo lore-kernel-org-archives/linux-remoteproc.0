@@ -2,102 +2,66 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A80C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Nov 2023 03:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E37C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Nov 2023 01:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233009AbjKGDvK (ORCPT
+        id S1343760AbjKHBG3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Nov 2023 22:51:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
+        Tue, 7 Nov 2023 20:06:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233368AbjKGDvK (ORCPT
+        with ESMTP id S235423AbjKHBG1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Nov 2023 22:51:10 -0500
+        Tue, 7 Nov 2023 20:06:27 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752F3D47;
-        Mon,  6 Nov 2023 19:51:07 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC68CC433C8;
-        Tue,  7 Nov 2023 03:51:05 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD87E7;
+        Tue,  7 Nov 2023 17:06:25 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 23AC5C433C7;
+        Wed,  8 Nov 2023 01:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699329067;
-        bh=+X/hKJ32hWOaYLZj2LTvR6+JnyM9c+DOTeGM5OWPGd0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mISH3v7+T+GCIROhQKnt36obHCbBRgrPkPS4NNc53prAZ9MQ94P06ipdtp3U/ZZRW
-         nQ/KQcYeWhmoQGV7eZi6DLG1ezyNHN13mqUsx5e0NTdDP/Z4CIkdpAwXZs+edy9fzH
-         Nl7pzb+nMQPGEDX8bxlCZ+XyQ8ArVG0z5Nh8bsQh7emOfD5x8GqfX9k59moV4MduaQ
-         ptc/Xplz8EwviVZdaHPZosg34pyHWeiopFrj99l9pgsMZSEVSeiwMPoVxwvLWnSjSy
-         XQaXpaYdHgoqEt3lILVcdM4WZdgvazTVmxDw+hWblh3jqsfgiQAooh1RSo6+zi7AFB
-         jE8zVpiTm+RUw==
-Date:   Mon, 6 Nov 2023 19:55:07 -0800
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Caleb Connolly <caleb.connolly@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bhupesh Sharma <bhupesh.linux@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: thermal: Add qcom,qmi-cooling yaml
- bindings
-Message-ID: <6mgpjpdfsswww7mqqtub45afjz6mjyqfkigji3zsy73qwnq57u@rlstudlwkddn>
-References: <20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org>
- <20230905-caleb-qmi_cooling-v1-2-5aa39d4164a7@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230905-caleb-qmi_cooling-v1-2-5aa39d4164a7@linaro.org>
+        s=k20201202; t=1699405585;
+        bh=Jo/ADV1o5u758rj4x+HCsjSun3AayVuHMfYxn/9/MDY=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=CH7EmB9gQZB7ySR/fU6CdLfBR0KPEZhtz84ovnN2E7NC5M3AbKTUOwWrSb9Lg9Xew
+         ywIB5iu1LHJGk8Ci2QxmIDpRVk3UdHD/9W8HDrdFjlUYjOZLVir+mNxAT4YWOd4T4a
+         MSa5+tS9UylPnlAp/hEDmgPImvtdbKAEU4GynomuL5ts5oShnAEZXnctyClACmJk/O
+         1L7d7EXkecnpuPA+q+f5bgqiM6iq1l4SGSsGgGT42uUnY5HP/+SMQa3Z9sQqpw7IMl
+         iwQ5jUzHl2eazw9+i8iMMwCSqNS5bE9hclp1Mtzqd1IP6/zopuQNwSW/qetP8g03aN
+         LFjRUCy6b8ajw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 129D2E00083;
+        Wed,  8 Nov 2023 01:06:25 +0000 (UTC)
+Subject: Re: [GIT PULL] rpmsg updates for v6.7
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20231107031112.2563663-1-andersson@kernel.org>
+References: <20231107031112.2563663-1-andersson@kernel.org>
+X-PR-Tracked-List-Id: <linux-remoteproc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20231107031112.2563663-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.7
+X-PR-Tracked-Commit-Id: 2a6e483ad047654a220c798080d0fc861ead2e07
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c87271ee86e836d3beae7b8b0222e81e225fa6c5
+Message-Id: <169940558506.17903.7973805923089372952.pr-tracker-bot@kernel.org>
+Date:   Wed, 08 Nov 2023 01:06:25 +0000
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Justin Stitt <justinstitt@google.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 05:16:18PM +0100, Caleb Connolly wrote:
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom,qmi-cooling.yaml b/Documentation/devicetree/bindings/thermal/qcom,qmi-cooling.yaml
-> +definitions:
-> +  tmd:
-> +    type: object
-> +    description: |
+The pull request you sent on Mon,  6 Nov 2023 19:11:09 -0800:
 
-No need to preserve formatting (which is what '|' denotes).
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.7
 
-> +      A single Thermal Mitigation Device exposed by a remote subsystem.
-> +    properties:
-> +      label:
-> +        maxItems: 1
-> +      "#cooling-cells":
-> +        $ref: /schemas/thermal/thermal-cooling-devices.yaml#/properties/#cooling-cells
-> +
-> +    required:
-> +      - label
-> +      - "#cooling-cells"
-> +
-> +    additionalProperties: false
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,qmi-cooling-modem
-> +      - qcom,qmi-cooling-adsp
-> +      - qcom,qmi-cooling-cdsp
-> +      - qcom,qmi-cooling-slpi
-> +
-> +  vdd:
-> +    $ref: "#/definitions/tmd"
-> +    description:
-> +      Restrict primary rail minimum voltage to "nominal" setting.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c87271ee86e836d3beae7b8b0222e81e225fa6c5
 
-Isn't this one of the "heating" thermal mitigations? (I.e. something
-being tripped when the temperature goes below some level) Which afaik
-the framework doesn't support still?
+Thank you!
 
-Regards,
-Bjorn
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
