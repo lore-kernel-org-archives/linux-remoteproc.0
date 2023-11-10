@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DB6C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Nov 2023 20:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC8EC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Nov 2023 20:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346028AbjKJUbe (ORCPT
+        id S235917AbjKJU5t (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Nov 2023 15:31:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58178 "EHLO
+        Fri, 10 Nov 2023 15:57:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234640AbjKJUba (ORCPT
+        with ESMTP id S235827AbjKJU50 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Nov 2023 15:31:30 -0500
+        Fri, 10 Nov 2023 15:57:26 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506272BE0B;
-        Fri, 10 Nov 2023 01:20:16 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AA7gTCc018016;
-        Fri, 10 Nov 2023 09:20:12 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3662BE29;
+        Fri, 10 Nov 2023 01:21:19 -0800 (PST)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AA7gUqE017433;
+        Fri, 10 Nov 2023 09:21:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=WTE+qVUfTHI5VNl6dbyRtN/JhVRxKZcIKC4hsuTCdOs=;
- b=Bg2yebPe9zR9JTZqxI+AfKYtjIqJcRXaGyWRy4cfaR1GYqSvaK8I93YgQFHmym4ft8ja
- fyKkaWFP2gnV6z7u1MH6Z/yXgCGtPwZ/47U/OPTtf6bV98PvPBGa7Ga6B6Rd4R7sytob
- w632+9qwjYrMzy0CumxbOmChYdZaAc+bFT/z1MhMfBPRhgOCrCFsdVL8bv3IuHgkS8pX
- kya8BxHV7v68W1pHRj0RlcxyDYvbmB5oONQ8ZMT1Ftoat/lBf9vbuZxxFMirQLCHR9gr
- imOS6oAbfm22IIT3tKrtcTkbo4+GwSyutcuz/YfB1YF4Au7cFHrTP9NseF/Z8wEoaf5Z xQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u8u2bu7yq-1
+ bh=K06JLlYFB5d2RI8RXXTL+7uEZmJjwn/vk0SuNADXOQw=;
+ b=CdwzLum9gud8d+agR8RIcGro6OTkVdlTN7eNGi4E6Dnej06BS4ycNNGd+OtsboGvmT2P
+ gTLdgJEIUJpfZrYnhnDAOfasCC0lMpo1ycKXFAAAMzkjNQ17NnptpaU+alAJp6FNQTk4
+ 2n3sd4f2TdR+gyCDBTtkRpfQZ5ksbbA+1D9XTzyIy1nky1v3vKcalXIvug9JRmT1h3EC
+ r/hWu6m5MtaU23bknwjKkBP+0eFq6hpbmeskK5J5/svvkFgrYs+il46cDQqBVi61dPuv
+ 8AXZLENkG0753nU2O0Tr/nzCT/Z5M7VQVdECZ3oeqMoFsvweOMUwgNjUDWj9GAUE0Hgw sA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3u93rbsr7f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Nov 2023 09:20:12 +0000
+        Fri, 10 Nov 2023 09:21:15 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AA9KAV3022817
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AA9LEnP011922
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Nov 2023 09:20:11 GMT
+        Fri, 10 Nov 2023 09:21:14 GMT
 Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Fri, 10 Nov 2023 01:20:03 -0800
+ 15.2.1118.39; Fri, 10 Nov 2023 01:21:07 -0800
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -53,9 +53,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
 CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_varada@quicinc.com>
-Subject: [PATCH v6 01/11] dt-bindings: remoteproc: qcom: Add support for multipd model
-Date:   Fri, 10 Nov 2023 14:49:29 +0530
-Message-ID: <20231110091939.3025413-2-quic_mmanikan@quicinc.com>
+Subject: [PATCH v6 10/11] arm64: dts: qcom: ipq5332: Add nodes to bringup multipd
+Date:   Fri, 10 Nov 2023 14:49:38 +0530
+Message-ID: <20231110091939.3025413-11-quic_mmanikan@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231110091939.3025413-1-quic_mmanikan@quicinc.com>
 References: <20231110091939.3025413-1-quic_mmanikan@quicinc.com>
@@ -67,242 +67,222 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: c1qGLAmOzJTKgU5KCjeo6GGTe7P58cvG
-X-Proofpoint-ORIG-GUID: c1qGLAmOzJTKgU5KCjeo6GGTe7P58cvG
+X-Proofpoint-GUID: DQ2ZcQRE4UVee5v4skpg9XCWc3qgpKVb
+X-Proofpoint-ORIG-GUID: DQ2ZcQRE4UVee5v4skpg9XCWc3qgpKVb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-10_05,2023-11-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 adultscore=0 mlxscore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=569 impostorscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2311060000 definitions=main-2311100075
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add new binding document for multipd model remoteproc.
-IPQ5332, IPQ9574 follows multipd model.
+Enable nodes required for multipd remoteproc bring up.
 
 Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
 Changes in v6:
-	- No changes.
+	- Added user pd remoteproc nodes in RDP442 dts
 
 Changes in v5:
-	- No changes.
+	- Rebased on linux-next
 
 Changes in v4:
-	- No changes.
+	- Rebased on linux-next
 
-Changes in v3:
-	- Pick up R-b tag
+ arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts | 21 ++++++++
+ arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts | 59 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi       | 59 +++++++++++++++++++++
+ 3 files changed, 139 insertions(+)
 
-Changes in v2:
-	- Fixed all comments and rebased on linux-next.
-	- Changed to BSD-3-Clause
-	- Added firmware-name.
-
- .../bindings/remoteproc/qcom,multipd-pil.yaml | 189 ++++++++++++++++++
- 1 file changed, 189 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
-new file mode 100644
-index 000000000000..c52ac1640d7a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
-@@ -0,0 +1,189 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+index e89e2e948603..e0e2f9238b47 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
++++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+@@ -21,6 +21,27 @@ &blsp1_i2c1 {
+ 	status = "okay";
+ };
+ 
++&q6v5_wcss {
++	pd-1 {
++		firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw1.mdt";
++		interrupts-extended = <&wcss_smp2p_in 8 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 9 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 12 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 11 IRQ_TYPE_NONE>;
++		interrupt-names = "fatal",
++				  "ready",
++				  "spawn-ack",
++				  "stop-ack";
 +
-+title: Qualcomm Multipd Secure Peripheral Image Loader
++		qcom,smem-states = <&wcss_smp2p_out 8>,
++				   <&wcss_smp2p_out 9>,
++				   <&wcss_smp2p_out 10>;
++		qcom,smem-state-names = "shutdown",
++					"stop",
++					"spawn";
++	};
++};
 +
-+maintainers:
-+  - Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+ &sdhc {
+ 	bus-width = <4>;
+ 	max-frequency = <192000000>;
+diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
+index efd480a7afdf..9b145c62e18d 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
++++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
+@@ -35,6 +35,65 @@ flash@0 {
+ 	};
+ };
+ 
++&q6v5_wcss {
++	pd-1 {
++		firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw1.mdt";
++		interrupts-extended = <&wcss_smp2p_in 8 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 9 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 12 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 11 IRQ_TYPE_NONE>;
++		interrupt-names = "fatal",
++				  "ready",
++				  "spawn-ack",
++				  "stop-ack";
 +
-+description:
-+  Multipd Peripheral Image Loader loads firmware and boots Q6 protection domain,
-+  WCSS protection domain remoteproc's on the Qualcomm IPQ9574, IPQ5332 SoC.
-+  Protection domain is similar to process in Linux. Here QDSP6 processor runs
-+  each wifi radio functionality on a separate process. One process can't access
-+  other process resources, so this is termed as PD i.e protection domain.
++		qcom,smem-states = <&wcss_smp2p_out 8>,
++				   <&wcss_smp2p_out 9>,
++				   <&wcss_smp2p_out 10>;
++		qcom,smem-state-names = "shutdown",
++					"stop",
++					"spawn";
++	};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,ipq5332-q6-mpd
-+      - qcom,ipq9574-q6-mpd
++	pd-2 {
++		firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw2.mdt";
++		interrupts-extended = <&wcss_smp2p_in 16 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 17 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 20 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 19 IRQ_TYPE_NONE>;
++		interrupt-names = "fatal",
++				  "ready",
++				  "spawn-ack",
++				  "stop-ack";
 +
-+  reg:
-+    maxItems: 1
++		qcom,smem-states = <&wcss_smp2p_out 16>,
++				   <&wcss_smp2p_out 17>,
++				   <&wcss_smp2p_out 18>;
++		qcom,smem-state-names = "shutdown",
++					"stop",
++					"spawn";
++	};
 +
-+  firmware-name:
-+    maxItems: 2
++	pd-3 {
++		firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw3.mdt";
++		interrupts-extended = <&wcss_smp2p_in 24 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 25 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 28 IRQ_TYPE_NONE>,
++				      <&wcss_smp2p_in 27 IRQ_TYPE_NONE>;
++		interrupt-names = "fatal",
++				  "ready",
++				  "spawn-ack",
++				  "stop-ack";
 +
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
++		qcom,smem-states = <&wcss_smp2p_out 24>,
++				   <&wcss_smp2p_out 25>,
++				   <&wcss_smp2p_out 26>;
++		qcom,smem-state-names = "shutdown",
++					"stop",
++					"spawn";
++	};
++};
 +
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
+ &sdhc {
+ 	bus-width = <4>;
+ 	max-frequency = <192000000>;
+diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+index 42e2e48b2bc3..0fdaece3dc8f 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+@@ -145,6 +145,11 @@ smem@4a800000 {
+ 
+ 			hwlocks = <&tcsr_mutex 3>;
+ 		};
 +
-+  qcom,smem-states:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: States used by the AP to signal the remote processor
-+    items:
-+      - description: Shutdown Q6
-+      - description: Stop Q6
++		q6_region: wcnss@4a900000 {
++			reg = <0x0 0x4a900000 0x0 0x2b00000>;
++			no-map;
++		};
+ 	};
+ 
+ 	soc@0 {
+@@ -473,6 +478,36 @@ frame@b128000 {
+ 				status = "disabled";
+ 			};
+ 		};
 +
-+  qcom,smem-state-names:
-+    description:
-+      Names of the states used by the AP to signal the remote processor
-+    items:
-+      - const: shutdown
-+      - const: stop
++		q6v5_wcss: remoteproc@d100000 {
++			compatible = "qcom,ipq5332-q6-mpd";
++			reg = <0xd100000 0x4040>;
++			firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw0.mdt",
++					"ath11k/IPQ5332/hw1.0/iu_fw.mdt";
++			interrupts-extended = <&intc GIC_SPI 421 IRQ_TYPE_EDGE_RISING>,
++					      <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack";
++			qcom,smem-states = <&wcss_smp2p_out 0>,
++					   <&wcss_smp2p_out 1>;
++			qcom,smem-state-names = "shutdown",
++						"stop";
 +
-+  memory-region:
-+    items:
-+      - description: Q6 reserved region
++			memory-region = <&q6_region>;
 +
-+  glink-edge:
-+    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
-+    description:
-+      Qualcomm G-Link subnode which represents communication edge, channels
-+      and devices related to the Modem.
-+    unevaluatedProperties: false
++			glink-edge {
++				interrupts = <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>;
++				label = "rtr";
++				qcom,remote-pid = <1>;
++				mboxes = <&apcs_glb 8>;
++			};
++		};
+ 	};
+ 
+ 	timer {
+@@ -482,4 +517,28 @@ timer {
+ 			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+ 			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
 +
-+patternProperties:
-+  "^pd-1|pd-2|pd-3":
-+    type: object
-+    description:
-+      WCSS means 'wireless connectivity sub system', in simple words it's a
-+      wifi radio block. In multipd model, Q6 root protection domain will
-+      provide services to WCSS user protection domain. In other words WCSS
-+      protection domains depends on Q6 protection domain i.e  Q6 should be up
-+      before WCSS, similarly Q6 should shut down after all WCSS domains are
-+      down. It can be achieved by building parent-child topology between Q6
-+      and WCSS domain's i.e keeping wcss node as sub node of Q6 device node.
++	wcss: wcss-smp2p {
++		compatible = "qcom,smp2p";
++		qcom,smem = <435>, <428>;
 +
-+    properties:
-+      firmware-name:
-+        maxItems: 1
++		interrupt-parent = <&intc>;
++		interrupts = <GIC_SPI 418 IRQ_TYPE_EDGE_RISING>;
 +
-+      interrupts:
-+        items:
-+          - description: Fatal interrupt
-+          - description: Ready interrupt
-+          - description: Spawn acknowledge interrupt
-+          - description: Stop acknowledge interrupt
++		mboxes = <&apcs_glb 9>;
 +
-+      interrupt-names:
-+        items:
-+          - const: fatal
-+          - const: ready
-+          - const: spawn-ack
-+          - const: stop-ack
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <1>;
 +
-+      qcom,smem-states:
-+        $ref: /schemas/types.yaml#/definitions/phandle-array
-+        description: States used by the AP to signal the remote processor
-+        items:
-+          - description: Shutdown WCSS pd
-+          - description: Stop WCSS pd
-+          - description: Spawn WCSS pd
++		wcss_smp2p_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
 +
-+      qcom,smem-state-names:
-+        description:
-+          Names of the states used by the AP to signal the remote processor
-+        items:
-+          - const: shutdown
-+          - const: stop
-+          - const: spawn
-+
-+    required:
-+      - firmware-name
-+      - interrupts
-+      - interrupt-names
-+      - qcom,smem-states
-+      - qcom,smem-state-names
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - firmware-name
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - qcom,smem-states
-+  - qcom,smem-state-names
-+  - memory-region
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    q6v5_wcss: remoteproc@d100000 {
-+      compatible = "qcom,ipq5332-q6-mpd";
-+      reg = <0xd100000 0x4040>;
-+      firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw0.mdt",
-+                      "ath11k/IPQ5332/hw1.0/iu_fw.mdt";
-+      interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
-+                            <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
-+                            <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-+                            <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
-+                            <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
-+      interrupt-names = "wdog",
-+                        "fatal",
-+                        "ready",
-+                        "handover",
-+                        "stop-ack";
-+
-+      qcom,smem-states = <&wcss_smp2p_out 0>,
-+                         <&wcss_smp2p_out 1>;
-+      qcom,smem-state-names = "shutdown",
-+                              "stop";
-+
-+      memory-region = <&q6_region>;
-+
-+      glink-edge {
-+        interrupts = <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>;
-+        label = "rtr";
-+        qcom,remote-pid = <1>;
-+        mboxes = <&apcs_glb 8>;
-+      };
-+
-+      pd-1 {
-+        firmware-name = "ath11k/IPQ5332/hw1.0/q6_fw1.mdt";
-+        interrupts-extended = <&wcss_smp2p_in 8 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 9 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 12 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 11 IRQ_TYPE_NONE>;
-+        interrupt-names = "fatal",
-+                          "ready",
-+                          "spawn-ack",
-+                          "stop-ack";
-+        qcom,smem-states = <&wcss_smp2p_out 8>,
-+                           <&wcss_smp2p_out 9>,
-+                           <&wcss_smp2p_out 10>;
-+        qcom,smem-state-names = "shutdown",
-+                                "stop",
-+                                "spawn";
-+      };
-+    };
++		wcss_smp2p_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
+ };
 -- 
 2.34.1
 
