@@ -2,65 +2,65 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B896C074FD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB7AC072DD
 	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Nov 2023 08:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233279AbjKMI4c (ORCPT
+        id S233265AbjKMI42 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Nov 2023 03:56:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36692 "EHLO
+        Mon, 13 Nov 2023 03:56:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233272AbjKMI43 (ORCPT
+        with ESMTP id S233231AbjKMI41 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Nov 2023 03:56:29 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62AB710FD
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Nov 2023 00:56:26 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9e623356d5dso376414366b.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Nov 2023 00:56:26 -0800 (PST)
+        Mon, 13 Nov 2023 03:56:27 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD7CD79
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Nov 2023 00:56:22 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9d10972e63eso612507366b.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Nov 2023 00:56:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1699865785; x=1700470585; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mASKoKAO36kXxxMIcfJoCKkWeIfM9SAibAagzp3xhpQ=;
-        b=xzR8CkdFZFvjC5RM4klrN0DKCXoipWjgczpVUZDYiP74iCSmWvARruR7QKQd81Q8pe
-         5JebVBXSwjgrgt+F68SUaySd+L/UnKxrUuSN69H+iBikOi8Q3DlBGWaddWMGLneO6C/f
-         XUKnTz5N3XPGbcrg8gVXDHGSeWDPV1303y0IQRJzJVmtmS9aTxCHow/Tno5cfkQsWJMa
-         RR4diMZNQgwzO1hoKnSZTYoG3+NlPbRKj1Q9onB9FPJhc6ARo1WQIrSVnx+kenk4ziXQ
-         ZMT0G7qc/Jg1LDiRq5SgX70P8KsAdYC3hbDZOdR7jspAzk0YBOwVpZPyG1BBQ+diWQOT
-         eg6Q==
+        d=fairphone.com; s=fair; t=1699865781; x=1700470581; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BsrM2PDilSjaMLE5U2fdt5pzgmWoxeOH6PNobCuBiz0=;
+        b=FSpMhuH/3Zfeac8j1BJ2eRmh5UChmU3h0O/1f0MZpcATECPV6lY0p1pHAceVNycu+7
+         8wVZKydkdXK4wgmlTTPwL5RaIJSBj2+XmGWsBf4U21LKX1v2Y3k5IrDsWtu5FDY9mHi5
+         H+1F7/vgoBhlszOfihRvjH7XVIwr624IJWMPUgz1VAuTDuCHk5cd41VKipdd1mey2WL9
+         J8JuZRXQW6zI3d7s+3fzS0IGOZQLWMVajmE98Oqe2vLZjYVS3nb07ZpF8ub5SORII57Q
+         /5wFGaqytQ6f5rhYwxy0BhQSOVql8/0/faWNlWzdP+VLBX536IouUkgXb5E7S+vYDTpF
+         8SmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699865785; x=1700470585;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mASKoKAO36kXxxMIcfJoCKkWeIfM9SAibAagzp3xhpQ=;
-        b=DNRrxiCXXd7p3CRxNbWUxKrLIL/+SH4lrm4IvfoaR/avQdpZBAITioVCw+VD5R3zv4
-         N5whCevDFReNeLXDo9LUxOy3+Yu01rITw7DXxGhDJgbWfXTS06E53Ryf+Zw6VmaFDYFF
-         oKOTLJkBJfD2wPSbGZjYwO0ShfLpjTM9PDWHPkCURYMsd8X6gpchofGhuvCKoZ/jD+QL
-         tdoN9DIt3INoM4GCOyptSDTxMElYd+iMCgxp+80ZTttXYse8JUB9ZPw70K4HWnKvS9GY
-         tGND3cy8q67I38tNluxgo1e0v4qEqix7Xws9Aa3+Hq1JdVrxKRwFGjbZc+2qfe9xphxl
-         Gpww==
-X-Gm-Message-State: AOJu0YyguexsATCsxCBqRR5Q+MBHs5RMIa6nlHcpRSpu9v96ddu8W4FW
-        J1XbZJZ86i5Re4fLr5ukgWEAQw==
-X-Google-Smtp-Source: AGHT+IE7Xh4bAVV7Uk5gawxmAUg/+51LSmrF3fXwuOSPA/6+9It+cRS8vElyhWnE9YuoVEbsjK+vcQ==
-X-Received: by 2002:a17:906:2a91:b0:9be:85c9:43ef with SMTP id l17-20020a1709062a9100b009be85c943efmr4563373eje.62.1699865784972;
-        Mon, 13 Nov 2023 00:56:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699865781; x=1700470581;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BsrM2PDilSjaMLE5U2fdt5pzgmWoxeOH6PNobCuBiz0=;
+        b=rTDxd4WxEYeH7yXqzxKFHqYyTU/k2ylwo/NA5WXElvYRJLrxarkKtbZu/X7AU9m4f5
+         4VoL4Rg/HSXj8hXQfehaZDw1VJ82ETyTNxY53Oi+hY/KE+rICvOYNHTgdViAvJfSCwHX
+         s/EHl2N47NfvCXqKmDovf/DcoEPHGKDjEW9ZezxmyW7vSCpT9xir3RzY2iYrlb4G+m2E
+         J5kdnSb7vREiClFfPBEhXKWh47fwq6WDI7xsN9EJPCBCdsno7VxqRtCAynaoFzLMG2x3
+         bot8Tk/TqUD/oKDzndSYXZZbOSIO1C2k2As8ODCGVydjz87WocGFsVAxt7BiFnx6r5iF
+         wrAg==
+X-Gm-Message-State: AOJu0Yx9uiTD3ReGr5r4w99nA5Kba4pCbsKshL445eIwzPXwuuNnZlSj
+        GYuhj5zLk8CWf0qz0tHLFVZ0PQ==
+X-Google-Smtp-Source: AGHT+IHlTp66zVzK76fU9FdGoO9JFmDj4DyrwLiTq46FFbsxHQAjsaN6E5t9RqrwzKCvGBZ5oYhhAw==
+X-Received: by 2002:a17:906:3458:b0:9dd:dc2a:eb8b with SMTP id d24-20020a170906345800b009dddc2aeb8bmr3641569ejb.41.1699865780941;
+        Mon, 13 Nov 2023 00:56:20 -0800 (PST)
 Received: from otso.luca.vpn.lucaweiss.eu (k10064.upc-k.chello.nl. [62.108.10.64])
-        by smtp.gmail.com with ESMTPSA id kk22-20020a170907767600b009c758b6cdefsm3673538ejc.128.2023.11.13.00.56.23
+        by smtp.gmail.com with ESMTPSA id kk22-20020a170907767600b009c758b6cdefsm3673538ejc.128.2023.11.13.00.56.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Nov 2023 00:56:24 -0800 (PST)
+        Mon, 13 Nov 2023 00:56:20 -0800 (PST)
 From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Mon, 13 Nov 2023 09:56:14 +0100
-Subject: [PATCH v2 03/11] arm64: dts: qcom: sc7280: Rename reserved-memory
- nodes
+Subject: [PATCH v2 00/11] Remoteprocs (ADSP, CDSP, WPSS) for SC7280
+Date:   Mon, 13 Nov 2023 09:56:11 +0100
+Message-Id: <20231113-sc7280-remoteprocs-v2-0-e5c5fd5268a7@fairphone.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231113-sc7280-remoteprocs-v2-3-e5c5fd5268a7@fairphone.com>
-References: <20231113-sc7280-remoteprocs-v2-0-e5c5fd5268a7@fairphone.com>
-In-Reply-To: <20231113-sc7280-remoteprocs-v2-0-e5c5fd5268a7@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAKvkUWUC/32NQQ6CMBBFr0Jmbc202ACuvIdh0QyDzAJKpoRoS
+ O9u5QAu30v++wckVuEE9+oA5V2SxKWAu1RAU1hebGQoDA5dbdE1JlHjWjTKc9x41UjJ4K112BJ
+ ZtjWU4ao8yvuMPvvCk6Qt6uf82O3P/s3t1qBBT9z5oautD48xiK5TXPhKcYY+5/wFIsfscLgAA
+ AA=
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -82,102 +82,73 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-It was clarified a while ago that reserved-memory nodes shouldn't be
-called memory@ but should have a descriptive name. Update sc7280.dtsi to
-follow that.
+This series adds support for the ADSP, CDSP and WPSS remoteprocs found
+on SC7280. And finally enable them and WiFi on the QCM6490-based
+Fairphone 5 smartphone.
+
+The first two patches are fixes for the MPSS to fix some dt validation
+issues. They're included in this series to avoid conflicts with the
+later patches and keep it simpler.
+
+Then there's two patches reorganizing the reserved-memory setup for
+sc7280 in preparations for the new remoteprocs.
+
+Please note, that the ChromeOS-based devices using SC7280 need different
+driver and dts support, similar to how there's already
+qcom,sc7280-mpss-pas for "standard" firmware and there's
+qcom,sc7280-mss-pil for ChromeOS firmware.
+
+I'm aware of the series also adding SC7280 ADSP support with the last
+revision sent in June this year.
+
+https://lore.kernel.org/linux-arm-msm/20230616103534.4031331-1-quic_mohs@quicinc.com/
+
+However there's some differences since that series added the "pil"
+variant for ChromeOS, not "pas" for standard firmware. Also it seems on
+ChromeOS devices gpr+q6apm+q6prm is used. On my device it appears to be
+instead apr+q6afe+q6asm+q6adm but I don't add either in this series to
+keep it a bit simpler, and I couldn't test much of that yet.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Changes in v2:
+- Add patch renaming memory@ reserved-memory nodes (preparation for
+  next)
+- Add patch moving mpss_mem and wpss_mem to sc7280.dtsi
+- Follow *_mem node being in sc7280.dtsi also for ADSP & CDSP patches
+- Use (squashed) .mbn instead of (split) .mdt for FP5
+- Set qcom,ath11k-calibration-variant for FP5
+- Pick up tags (except for Krzysztof's R-b for ADSP & CDSP since there
+  were changes)
+- Link to v1: https://lore.kernel.org/r/20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 0d9cc44066ce..7bfe93713eb6 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -91,68 +91,68 @@ reserved-memory {
- 		#size-cells = <2>;
- 		ranges;
- 
--		wlan_ce_mem: memory@4cd000 {
-+		wlan_ce_mem: wlan-ce@4cd000 {
- 			no-map;
- 			reg = <0x0 0x004cd000 0x0 0x1000>;
- 		};
- 
--		hyp_mem: memory@80000000 {
-+		hyp_mem: hyp@80000000 {
- 			reg = <0x0 0x80000000 0x0 0x600000>;
- 			no-map;
- 		};
- 
--		xbl_mem: memory@80600000 {
-+		xbl_mem: xbl@80600000 {
- 			reg = <0x0 0x80600000 0x0 0x200000>;
- 			no-map;
- 		};
- 
--		aop_mem: memory@80800000 {
-+		aop_mem: aop@80800000 {
- 			reg = <0x0 0x80800000 0x0 0x60000>;
- 			no-map;
- 		};
- 
--		aop_cmd_db_mem: memory@80860000 {
-+		aop_cmd_db_mem: aop-cmd-db@80860000 {
- 			reg = <0x0 0x80860000 0x0 0x20000>;
- 			compatible = "qcom,cmd-db";
- 			no-map;
- 		};
- 
--		reserved_xbl_uefi_log: memory@80880000 {
-+		reserved_xbl_uefi_log: xbl-uefi-res@80880000 {
- 			reg = <0x0 0x80884000 0x0 0x10000>;
- 			no-map;
- 		};
- 
--		sec_apps_mem: memory@808ff000 {
-+		sec_apps_mem: sec-apps@808ff000 {
- 			reg = <0x0 0x808ff000 0x0 0x1000>;
- 			no-map;
- 		};
- 
--		smem_mem: memory@80900000 {
-+		smem_mem: smem@80900000 {
- 			reg = <0x0 0x80900000 0x0 0x200000>;
- 			no-map;
- 		};
- 
--		cpucp_mem: memory@80b00000 {
-+		cpucp_mem: cpucp@80b00000 {
- 			no-map;
- 			reg = <0x0 0x80b00000 0x0 0x100000>;
- 		};
- 
--		wlan_fw_mem: memory@80c00000 {
-+		wlan_fw_mem: wlan-fw@80c00000 {
- 			reg = <0x0 0x80c00000 0x0 0xc00000>;
- 			no-map;
- 		};
- 
--		video_mem: memory@8b200000 {
-+		video_mem: video@8b200000 {
- 			reg = <0x0 0x8b200000 0x0 0x500000>;
- 			no-map;
- 		};
- 
--		ipa_fw_mem: memory@8b700000 {
-+		ipa_fw_mem: ipa-fw@8b700000 {
- 			reg = <0 0x8b700000 0 0x10000>;
- 			no-map;
- 		};
- 
--		rmtfs_mem: memory@9c900000 {
-+		rmtfs_mem: rmtfs@9c900000 {
- 			compatible = "qcom,rmtfs-mem";
- 			reg = <0x0 0x9c900000 0x0 0x280000>;
- 			no-map;
+---
+Luca Weiss (11):
+      dt-bindings: remoteproc: qcom: sc7180-pas: Fix SC7280 MPSS PD-names
+      arm64: dts: qcom: sc7280: Remove unused second MPSS reg
+      arm64: dts: qcom: sc7280: Rename reserved-memory nodes
+      arm64: dts: qcom: sc7280*: move MPSS and WPSS memory to dtsi
+      dt-bindings: remoteproc: qcom: sc7180-pas: Add SC7280 compatibles
+      remoteproc: qcom_q6v5_pas: Add SC7280 ADSP, CDSP & WPSS
+      arm64: dts: qcom: sc7280: Use WPSS PAS instead of PIL
+      arm64: dts: qcom: sc7280: Add ADSP node
+      arm64: dts: qcom: sc7280: Add CDSP node
+      arm64: dts: qcom: qcm6490-fairphone-fp5: Enable various remoteprocs
+      arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
 
+ .../bindings/remoteproc/qcom,sc7180-pas.yaml       |  21 ++
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts |  45 ++--
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |  35 ++-
+ .../boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi    |   7 +-
+ .../boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi   |   1 +
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               | 271 +++++++++++++++++++--
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  19 ++
+ 7 files changed, 336 insertions(+), 63 deletions(-)
+---
+base-commit: 9046efc22ed7a73cb888a8c5660a21f99c89af03
+change-id: 20231027-sc7280-remoteprocs-048208cc1e13
+
+Best regards,
 -- 
-2.42.1
+Luca Weiss <luca.weiss@fairphone.com>
 
