@@ -2,101 +2,158 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D113C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Nov 2023 14:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F64C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Nov 2023 15:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbjKMOLC (ORCPT
+        id S233594AbjKNPWI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Nov 2023 09:11:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48926 "EHLO
+        Tue, 14 Nov 2023 10:22:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjKMOLA (ORCPT
+        with ESMTP id S233591AbjKNPWH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Nov 2023 09:11:00 -0500
+        Tue, 14 Nov 2023 10:22:07 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C96BD4C;
-        Mon, 13 Nov 2023 06:10:58 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B90C433C8;
-        Mon, 13 Nov 2023 14:10:53 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7688612C;
+        Tue, 14 Nov 2023 07:22:03 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59CF1C433CA;
+        Tue, 14 Nov 2023 15:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699884657;
-        bh=2vpy58rQTHTP9krRVNgcAQrv/Q/+avRu6pax/Biruds=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=J3ay90WHC4ALuWZzRA6IAYlybdjApZS9p2RVDXtuXHnkWS7x0DOZEkfn/uXDp1IaA
-         WKiPqVM1DJvqdJejm4ZO6tnPrJqw8ph6QyrtjW28Eq1bIzm31leY/dGKFXYYWHqYBg
-         y4VAgNZtktIzHV0GYWAuc05wxFSClKCWiwIG1puKsf6fT95+mEDV1F8PJLUgOpzpCb
-         B8BJO0bcBD1XK821yKbKpCc1kInm6+ae4p8lWG++1F9rXd4OwuakoWh+YekOWxi9/m
-         a2CnN0GSmBUE+1nNZ1B68QZDp9mnQKs+PnOVIYmYyHH8fjQraIzZIjG4zR0lMfkvN0
-         GjZqHE6whIX9g==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     "Luca Weiss" <luca.weiss@fairphone.com>
-Cc:     "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Mathieu Poirier" <mathieu.poirier@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Manivannan Sadhasivam" <mani@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        <phone-devel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Matti =?utf-8?Q?Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ath11k@lists.infradead.org>
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
-References: <20231027-sc7280-remoteprocs-v1-0-05ce95d9315a@fairphone.com>
-        <20231027-sc7280-remoteprocs-v1-9-05ce95d9315a@fairphone.com>
-        <12ea48bd-5022-4820-815a-89ef23ec9385@linaro.org>
-        <CWMK0AQRL87L.1F9MIDVQ4J439@fairphone.com>
-        <CAA8EJpqCeW8NVcrpwo6JVn0kE2W-QMELB1YH7i7pgOH6qiPbCQ@mail.gmail.com>
-        <87zfzhu9kx.fsf@kernel.org> <CWXP3TCW3A1G.2ME0JJT3S540G@fairphone.com>
-Date:   Mon, 13 Nov 2023 16:10:51 +0200
-In-Reply-To: <CWXP3TCW3A1G.2ME0JJT3S540G@fairphone.com> (Luca Weiss's message
-        of "Mon, 13 Nov 2023 13:50:21 +0100")
-Message-ID: <87r0ktu4k4.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        s=k20201202; t=1699975323;
+        bh=VY5OZPEAJstMBZ4T645HLqNFNRu7Inw7FgVCtPje9XU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fh7kS5mimr+a9bQhEFADHCOqNJ3aC/zMaz9fwHMzbeom1tCdo2hpnwtxotd9OoE7C
+         WRsBRKAt73AT/gJ/zGlMcN2hU5l+nVoDIMGystmQRwxlDkAlwi43BB61FZ/+U/8ZeF
+         h5yw5vBBS7+b3Eu+wFpgV7frhlSYrsulFMskegedLWrA+IYRPveC5V1U6dmX1AjS37
+         Awou27MDbuYZ9JW85Iip7pnbliiEjdshcEHl+nmJ3qBPyydPV1pqN+sHJHF+t7f/s0
+         MW74Wi8t7wXIqqH3JhKDp1DxWT0ZsX2paxWlew4B3VWAaH/iyN6Wta1e52JaHBLY/+
+         vpkyyoLRvBxmQ==
+Date:   Tue, 14 Nov 2023 09:22:00 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ben Levinsky <ben.levinsky@xilinx.com>,
+        Ben Levinsky <ben.levinsky@amd.com>
+Subject: Re: [RESEND PATCH v3 1/2] remoteproc: Make rproc_get_by_phandle()
+ work for clusters
+Message-ID: <dznmvir337tb455usswkrvovf34urgyejkrt7rduscbepd2wg3@7atos56utizw>
+References: <20231014231548.637303-1-tanmay.shah@amd.com>
+ <20231014231548.637303-2-tanmay.shah@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231014231548.637303-2-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-"Luca Weiss" <luca.weiss@fairphone.com> writes:
+On Sat, Oct 14, 2023 at 04:15:47PM -0700, Tanmay Shah wrote:
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> Multi-cluster remoteproc designs typically have the following DT
+> declaration:
+> 
+> 	remoteproc_cluster {
+> 		compatible = "soc,remoteproc-cluster";
+> 
+>                 core0: core0 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 };
+> 
+>                 core1: core1 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 }
+>         };
+> 
+> A driver exists for the cluster rather than the individual cores
+> themselves so that operation mode and HW specific configurations
+> applicable to the cluster can be made.
+> 
+> Because the driver exists at the cluster level and not the individual
+> core level, function rproc_get_by_phandle() fails to return the
+> remoteproc associated with the phandled it is called for.
+> 
+> This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> driver when the driver for the immediate remoteproc's parent is not
+> found.
+> 
+> Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Tested-by: Ben Levinsky <ben.levinsky@amd.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 695cce218e8c..3a8191803885 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+>  #include <linux/crc32.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_ring.h>
+> @@ -2111,7 +2112,9 @@ EXPORT_SYMBOL(rproc_detach);
+>  #ifdef CONFIG_OF
+>  struct rproc *rproc_get_by_phandle(phandle phandle)
+>  {
+> +	struct platform_device *cluster_pdev;
+>  	struct rproc *rproc = NULL, *r;
+> +	struct device_driver *driver;
+>  	struct device_node *np;
+>  
+>  	np = of_find_node_by_phandle(phandle);
+> @@ -2122,7 +2125,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>  	list_for_each_entry_rcu(r, &rproc_list, node) {
+>  		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+>  			/* prevent underlying implementation from being removed */
+> -			if (!try_module_get(r->dev.parent->driver->owner)) {
+> +
+> +			/*
+> +			 * If the remoteproc's parent has a driver, the
+> +			 * remoteproc is not part of a cluster and we can use
+> +			 * that driver.
+> +			 */
+> +			driver = r->dev.parent->driver;
+> +
+> +			/*
+> +			 * If the remoteproc's parent does not have a driver,
+> +			 * look for the driver associated with the cluster.
+> +			 */
+> +			if (!driver) {
+> +				cluster_pdev = of_find_device_by_node(np->parent);
 
->> >> > > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
->> >> > > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
->> >> > > @@ -713,3 +713,7 @@ &venus {
->> >> > >     firmware-name = "qcom/qcm6490/fairphone5/venus.mbn";
->> >> > >     status = "okay";
->> >> > >  };
->> >> > > +
->> >> > > +&wifi {
->> >> > > +   status = "okay";
->> >> > qcom,ath11k-calibration-variant?
->> >>
->> >> What value would I put there for my device? Based on existing usages
->> >> (mostly for ath10k) I'd say "Fairphone_5"?
->> >
->> > I think this is fine.
->>
->> From style point of view I would prefer lower case and dashes, for
->> example "fairphone-5" but I'm just nitpicking, uppercase and underscores
->> work fine as well.
->
-> I really don't mind, but I used "Fairphone_5" in v2 now, but I can
-> change it for v3 if that happens if you wish.
+Both the Ti and Xilinx drivers are using of_platform_populate(), so
+their r->dev.parent should have a parent reference to the cluster
+device.
 
-Nah, no need to resend. That's fine.
+Unless I'm reading the code wrong, I think we should follow that
+pointer, rather than taking the detour in the DeviceTree data.
 
-But in the future please try to CC the ath11k list for patches like
-this, easier to follow what's happening.
+Regards,
+Bjorn
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> +				if (!cluster_pdev) {
+> +					dev_err(&r->dev, "can't get parent\n");
+> +					break;
+> +				}
+> +
+> +				driver = cluster_pdev->dev.driver;
+> +				put_device(&cluster_pdev->dev);
+> +			}
+> +
+> +			if (!try_module_get(driver->owner)) {
+>  				dev_err(&r->dev, "can't get owner\n");
+>  				break;
+>  			}
+> -- 
+> 2.25.1
+> 
