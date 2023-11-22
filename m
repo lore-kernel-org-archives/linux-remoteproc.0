@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dd3zwPY1"
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF201D65
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Nov 2023 14:59:14 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-6c32a20d5dbso5503458b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Nov 2023 14:59:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dT641Stq"
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA8010E9
+	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Nov 2023 09:12:05 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1ce95f96edcso35290545ad.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Nov 2023 09:12:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700607554; x=1701212354; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1700673125; x=1701277925; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bEHk2cOMKx9+evztUOD1qvJ0fw8cgg/nhY4zSI6PvLU=;
-        b=Dd3zwPY1Fpm5vID0VQkyKTeR+1ssJU6fP3kOQU3WUMhDwdA+gaBJotkz/DDroF9h+s
-         z+JEbCP6gk8TOtE2gGIRY+It3cxPrnnikstVwnA4C6UAB7tNT6O9KfXCSN4lgoimmBWy
-         Ew7RY0cm+wdgZ6b4ElEi2Y+hzXCWWf6XNz/UE7RnytpxkWDDFHdE8VrkyjH/uqj85+Ah
-         fF0w3gCg5mZdnI4WyZuZ7yvzDJWTg83Tkw9Mqqnz1Li6qdW2QmsEYdO1J9pK9QMkQeSc
-         JuFqr83KtC9Fz05ZeSIcEotEP/tUuwezDhatYEpeJPqnnHA57ksEhfwQCGHVpUIROzPT
-         cJPQ==
+        bh=mrgrTR/D1yR9U8NlHxFGvyQFnLKsGuyKLEgnmYeRe9U=;
+        b=dT641Stqu0dpN955BK49q3bNXfzTltMMOAk6yWs6QOZiBZi8hpdzxlUpf0vJ48ONjL
+         d4L1JKtz+lmeEiT1o6eVZcbCwhItTJKeM4161n76igK8yVCpM3+pDxVw956wb0OCTkIb
+         sZH50JJu7+cw9hyfqO/VPfFcNIMuFPg+MyNqbqyfIcG0hlCr1KUqj3w5vg99XtupIgSr
+         v+y70Qo1fQMsLcXp+H7V6Gng14hD+hhLEX3jxclfwwExcGpihh3QMw9yQBbj9ih1uIdJ
+         CDNFBrCtyQOfFrhyvRgZ+iK+z2Bu0T0+nxp+DQfK1zH+Vlhnk9Yz/eu+9RDsBZvauQiG
+         6Vrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700607554; x=1701212354;
+        d=1e100.net; s=20230601; t=1700673125; x=1701277925;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bEHk2cOMKx9+evztUOD1qvJ0fw8cgg/nhY4zSI6PvLU=;
-        b=ETHJftietflnJamdc/Twe0np13ArBjN0Rzvrf3Hni23iJ1Rtfh6eUc4T/4OcoeyoyV
-         ByGrn3IfouY9KXlZLbJSrrdOu/Pq2cpIh2rf1p3DWhMLaKiRB0nCpiryUg1xnlLyEJgg
-         xEvYT6HsYadtIK3Dim9twhTNTXD4F8PDrMJQuqjbfKe+7xwm3KZL5NqfHyFdkqO1TI9W
-         okBB1it1ytyw/jQbblsjngQuM0Yxdo1WM5atyl8rzS8kJw+xjfOigvtZPBfmhzoJtj0u
-         +l2Bw5ITO050/TfP1Qm93WCLqYJYRfePKhBFFSOJRSwzfTnD7s1zPkUmOtdhyncLLYH+
-         TSug==
-X-Gm-Message-State: AOJu0Yx+D26Pvc8mPSFgmrTIV9pdCPKp62567aMiTp7rLupGjaV0l0g6
-	CmjVQ3pt6mL0rPk3AoXnTeKWqQ==
-X-Google-Smtp-Source: AGHT+IGPBxYJBQXjFKfjEBs6oz5erv1g/GgywcQAuMM69rkzjZmlgx7NhmIqgbAtI4EWBbcKTkGcxw==
-X-Received: by 2002:a05:6a21:328a:b0:187:f7d3:fdd with SMTP id yt10-20020a056a21328a00b00187f7d30fddmr497990pzb.56.1700607554084;
-        Tue, 21 Nov 2023 14:59:14 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:e181:8f:af54:8e11])
-        by smtp.gmail.com with ESMTPSA id d8-20020a170902cec800b001bbd1562e75sm8458471plg.55.2023.11.21.14.59.13
+        bh=mrgrTR/D1yR9U8NlHxFGvyQFnLKsGuyKLEgnmYeRe9U=;
+        b=Le09Dk/m/gPc+twALr2T2IMb2ybqPjDhbXJhHhE23wf3wzxbjRO+OD3rsi3Yna3++b
+         olDSBT8prpp8Gm8orR+q3N+VR71DS26UpFBviKVy21ilqCVUOoM4FLldMmZNJS5utqv4
+         dnwmyzXUc3fHo+vnQ/2uF5D82t5pMi/O5+HOxUq4CG8W8h76Or7C4Dytj4J4+CPGVub3
+         GzlnFUBYvoSHuZr/ykQv212eFtj7AIapRZwxQ6EC81RyosLUQC/aqxfG+Ne1tyK237Lp
+         Sc23AcQlX22LtbpG9yjlzvMYXviH68OyN678lXidO2kKqz4wDo3Cpf00zcBXSddCEXN7
+         RCcw==
+X-Gm-Message-State: AOJu0YzkrANmdhD6C1jrWAOJP2e4QFJMr/Yo4LaDU0wVbFHkSaBzu4Ro
+	4CjbPQK5x3gYvpMMQ1rqvKOzlA==
+X-Google-Smtp-Source: AGHT+IH3E+whBf4ZizF1DR/hyS9d1i66JGlcrK0NOP37ZT4wvPcal18AfvlNOHTH7p5AVhBCZi0aQw==
+X-Received: by 2002:a17:903:1212:b0:1cf:57b3:2665 with SMTP id l18-20020a170903121200b001cf57b32665mr2983708plh.11.1700673124728;
+        Wed, 22 Nov 2023 09:12:04 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:178e:e668:ba84:1eed])
+        by smtp.gmail.com with ESMTPSA id 12-20020a170902c10c00b001cf68c80ee6sm4612900pli.141.2023.11.22.09.12.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Nov 2023 14:59:13 -0800 (PST)
-Date: Tue, 21 Nov 2023 15:59:11 -0700
+        Wed, 22 Nov 2023 09:12:04 -0800 (PST)
+Date: Wed, 22 Nov 2023 10:12:01 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Tanmay Shah <tanmay.shah@amd.com>
 Cc: andersson@kernel.org, robh+dt@kernel.org,
@@ -46,7 +46,7 @@ Cc: andersson@kernel.org, robh+dt@kernel.org,
 	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v7 3/4] remoteproc: zynqmp: add pm domains support
-Message-ID: <ZV02P3bHEhPLQHBo@p14s>
+Message-ID: <ZV42YaCU+nGjiY2R@p14s>
 References: <20231117174238.1876655-1-tanmay.shah@amd.com>
  <20231117174238.1876655-4-tanmay.shah@amd.com>
 Precedence: bulk
@@ -58,8 +58,6 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20231117174238.1876655-4-tanmay.shah@amd.com>
-
-Hi,
 
 On Fri, Nov 17, 2023 at 09:42:37AM -0800, Tanmay Shah wrote:
 > Use TCM pm domains extracted from device-tree
@@ -124,9 +122,6 @@ On Fri, Nov 17, 2023 at 09:42:37AM -0800, Tanmay Shah wrote:
 > -			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
 > +			dev_err(dev, "failed to turn on TCM 0x%x",
 > +				pm_domain_id);
-
-Spurious change, you should have caught that.
-
 >  			goto release_tcm_lockstep;
 >  		}
 >  
@@ -209,18 +204,10 @@ Spurious change, you should have caught that.
 > +	 * start from 2nd entry in power-domains property list as
 > +	 * for zynqmp we only add TCM power domains and not core's power domain.
 > +	 * 1st entry is used to configure r5 operation mode.
-
-You are still not saying _where_ ->pm_dev_core0[0] gets added.
-
 > +	 */
 > +	for (i = 1; i < r5_core->num_pm_dev; i++) {
 > +		r5_core->pm_dev_core0[i] = dev_pm_domain_attach_by_id(dev, i);
 > +		if (IS_ERR_OR_NULL(r5_core->pm_dev_core0[i])) {
-
-Here IS_ERR_OR_NULL() is used while two if conditions for NULL and an error
-code are used in the loop for the lockstep mode.  Please pick one heuristic and
-stick with it.  I have no preference on which one.
-
 > +			dev_dbg(dev, "failed to attach pm domain %d, ret=%ld\n", i,
 > +				PTR_ERR(r5_core->pm_dev_core0[i]));
 > +			ret = -EINVAL;
@@ -261,6 +248,9 @@ stick with it.  I have no preference on which one.
 > +	}
 > +
 > +	/* get second core's device to detach its power-domains */
+
+Attach or detach?
+
 > +	np = of_get_next_child(cluster->dev->of_node, of_node_get(dev->of_node));
 > +
 > +	pdev = of_find_device_by_node(np);
@@ -322,13 +312,6 @@ stick with it.  I have no preference on which one.
 > +	kfree(r5_core->pm_dev_core0_link);
 > +	r5_core->pm_dev_core0_link = NULL;
 > +
-
-The error path is much cleaner and readable now.
-
-I will continue tomorrow.
-
-Mathieu
-
 > +	return ret;
 > +}
 > +
