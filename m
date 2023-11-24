@@ -1,133 +1,235 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cZH991uV"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kwwrGA9D"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27B41BD8;
-	Fri, 24 Nov 2023 10:54:50 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AOI0C2w030233;
-	Fri, 24 Nov 2023 18:54:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=8Hmxc1rL7mlS4z6kmcKDPZ9q13Eml27Jp1Hi+F3WMPM=;
- b=cZH991uVfNIVg97ZxHdO6djzCM0T3KVwMPnOzRClvqKoYat+rJcPEqPgsYeH7b+POfnu
- 5K5N9a7RIY5mhOxlLPQV2VGIzt24HPgmVuujHrpcgv6dKTjNrhhlquHrXX2DxhkBVGQo
- Pr0JhJSa2bR14pMroj7sa/3l3Y9NDTfzMjxsuA2EE+GQTNUq9AL/z66DJWpHx3mtVSUn
- 5G+s8s7Uz5GsUoqhDSAIA7lULUvMKqC6emSU6dCW6W8IjzJstICX+fYkcoJG8R0rIDMG
- zxZ77HvsCbOaRcRU8k6Xp0xbRziV6Pnei0/xInqFtOSfMMvgZR/z0kroJt0YqFcVYe8t GA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ujwg50hn9-1
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84E810F4;
+	Fri, 24 Nov 2023 14:21:18 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AOM3lUr002248;
+	Fri, 24 Nov 2023 22:20:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=HPKadZG1DvLbRRtA37U95Imcvsned4UOnigF1RUkjoQ=;
+ b=kwwrGA9DewX5E+5veMkV7aCnZkbzRQ5H2Of6UHa3BMG5Ic+GMYLP6UQFulO/Bz5rfWpL
+ mYJaJD/mh+BLoJKafAHQKxBnZdo9kfwZp7Wq9ZAlUSC/CAZBofDApI+4Uf6ZZ6gTvDBD
+ kUSAxp9r1kSIbL9PE+55so+S1nQIPyrQ4ONhfTbhbONTrdQVOGmLZumSSTAOIV5MxVVf
+ qDz0Et/laGgJ2DuwtxATWDFKjqD5O9WmFPFUh6Zu2KmUDDCEJy7wciIm/SKNHgmKH1aK
+ 2CljKAoT8UVFA/5vfSb+n/QHpC53OZ5wSD/R793BpDQqep8+oTI7FjzDJeB7QYdaGKla 6Q== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ujyatghf7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Nov 2023 18:54:46 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AOIsjUu022497
+	Fri, 24 Nov 2023 22:20:52 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AOMKYAa017556
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Nov 2023 18:54:46 GMT
-Received: from [10.50.15.50] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 24 Nov
- 2023 10:54:42 -0800
-Message-ID: <d3c3320b-8cc1-4d13-ae87-f2f8f46826e6@quicinc.com>
-Date: Sat, 25 Nov 2023 00:24:38 +0530
+	Fri, 24 Nov 2023 22:20:34 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 24 Nov 2023 14:20:24 -0800
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <vigneshr@ti.com>, <nm@ti.com>,
+        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
+        <alim.akhtar@samsung.com>, <bmasney@redhat.com>
+CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [Patch v6 01/12] firmware: qcom_scm: Refactor code to support multiple dload mode
+Date: Sat, 25 Nov 2023 03:49:44 +0530
+Message-ID: <1700864395-1479-2-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
+References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: qcom: Add NOTIFY_FATAL event type to SSR
- subdevice
-From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <agross@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_sjaganat@quicinc.com>
-References: <20230503062146.3891-1-quic_viswanat@quicinc.com>
- <egnmb647g7x7e74j4g2jddwho23ulmbap2q4eimcyj7y4qvdlz@zmaydxodu2a6>
- <509406eb-8093-4bcf-820f-8e5210e1539d@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <509406eb-8093-4bcf-820f-8e5210e1539d@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3hs_k0zlg__os5QNzRnazmvUrtEQ6_tJ
-X-Proofpoint-ORIG-GUID: 3hs_k0zlg__os5QNzRnazmvUrtEQ6_tJ
+X-Proofpoint-GUID: wc0Gr8K0RC2Bw-bbwhMle23Qbuv5BA8B
+X-Proofpoint-ORIG-GUID: wc0Gr8K0RC2Bw-bbwhMle23Qbuv5BA8B
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-24_04,2023-11-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=794 bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311240145
+ definitions=2023-11-24_09,2023-11-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ phishscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
+ mlxscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311240174
 
+Currently on Qualcomm SoC, download_mode is enabled if
+CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is selected.
 
+Refactor the code such that it supports multiple download
+modes and drop CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT config
+instead, give interface to set the download mode from
+module parameter.
 
-On 9/4/2023 10:23 PM, Vignesh Viswanathan wrote:
-> 
-> 
-> On 7/16/2023 1:50 AM, Bjorn Andersson wrote:
->> On Wed, May 03, 2023 at 11:51:46AM +0530, Vignesh Viswanathan wrote:
->>> Currently the SSR subdevice notifies the client driver on crash of the
->>> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
->>> However the client driver might be interested to know that the device
->>> has crashed immediately to pause any further transactions with the
->>> rproc. This calls for an event to be sent to the driver in the IRQ
->>> context as soon as the rproc crashes.
->>>
->>
->> Please make your argumentation more concrete, I can only guess what
->> client driver you're referring to.
->>
->> You can do this either by spelling out which actual problem you're
->> solving, or better yet, include some patches in the series that actually
->> uses this interface.
->>
-> 
-> Hi Bjorn,
-> 
-> Apologies for the delay in response.
-> 
-> The client driver in my scenario is a Wi-Fi driver which is continuously
-> queuing data to the remoteproc and needs to know if remoteproc crashes
-> as soon as possible to stop queuing further data and also dump some 
-> debug statistics on the driver side that could potentially help in debug
-> of why the remoteproc crashed.
-> 
-> Also in the case with upcoming Wi-Fi 7 targets with multi-link 
-> operation, the driver might need to know that the remoteproc has crashed
-> instantly to handle some multi-link specific handling.
-> 
-> The ath11k/ath12k WLAN drivers today partially have support for handling
-> such FATAL notification but it has not been upstreamed yet.
-> 
-> Reference patch: 
-> https://git.codelinaro.org/clo/qsdk/oss/system/feeds/wlan-open/-/blob/win.wlan_host_opensource.1.0/mac80211/patches/031-ath11k-print-stats-on-crash.patch -- event SUBSYS_PREPARE_FOR_FATAL_SHUTDOWN.
-> 
-> Also, Mukesh mentioned earlier that in some MSM targets with PCIe where 
-> latency cannot be tolerated, a similar downstream patch adds support for 
-> "early notifier". If this patch is accepted, the early notifier can also 
-> be replaced to use the same NOTIFY_FATAL event from SSR Subdevice
-> 
-> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/7583d24de337aa1bf7c375a7da706af9b995b9a1#a840754ebb0e24e88adbf48177e1abd0830b72d2
-> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/257de41c63a5a51a081cc7887cdaa4a46e4d1744
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/firmware/qcom/Kconfig    | 11 --------
+ drivers/firmware/qcom/qcom_scm.c | 58 +++++++++++++++++++++++++++++++++-------
+ 2 files changed, 49 insertions(+), 20 deletions(-)
 
-Hi Bjorn,
+diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+index 3f05d9854ddf..3bbbaef145ad 100644
+--- a/drivers/firmware/qcom/Kconfig
++++ b/drivers/firmware/qcom/Kconfig
+@@ -9,17 +9,6 @@ menu "Qualcomm firmware drivers"
+ config QCOM_SCM
+ 	tristate
+ 
+-config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
+-	bool "Qualcomm download mode enabled by default"
+-	depends on QCOM_SCM
+-	help
+-	  A device with "download mode" enabled will upon an unexpected
+-	  warm-restart enter a special debug mode that allows the user to
+-	  "download" memory content over USB for offline postmortem analysis.
+-	  The feature can be enabled/disabled on the kernel command line.
+-
+-	  Say Y here to enable "download mode" by default.
+-
+ config QCOM_QSEECOM
+ 	bool "Qualcomm QSEECOM interface driver"
+ 	depends on QCOM_SCM=y
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 87bcd5c02f2b..c5878c38f378 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/interconnect.h>
+ #include <linux/interrupt.h>
++#include <linux/kstrtox.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -27,8 +28,7 @@
+ 
+ #include "qcom_scm.h"
+ 
+-static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+-module_param(download_mode, bool, 0);
++static u32 download_mode;
+ 
+ struct qcom_scm {
+ 	struct device *dev;
+@@ -132,6 +132,11 @@ static const char * const qcom_scm_convention_names[] = {
+ 	[SMC_CONVENTION_LEGACY] = "smc legacy",
+ };
+ 
++static const char * const download_mode_name[] = {
++	[QCOM_DLOAD_NODUMP]	= "off",
++	[QCOM_DLOAD_FULLDUMP]	= "full",
++};
++
+ static struct qcom_scm *__scm;
+ 
+ static int qcom_scm_clk_enable(void)
+@@ -529,19 +534,18 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ 	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+ }
+ 
+-static void qcom_scm_set_download_mode(bool enable)
++static void qcom_scm_set_download_mode(u32 download_mode)
+ {
+-	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
+ 	int ret = 0;
+ 
+ 	if (__scm->dload_mode_addr) {
+ 		ret = qcom_scm_io_rmw(__scm->dload_mode_addr,
+ 				      QCOM_DLOAD_MASK,
+-				      FIELD_PREP(QCOM_DLOAD_MASK, val));
++				      FIELD_PREP(QCOM_DLOAD_MASK, download_mode));
+ 	} else if (__qcom_scm_is_call_available(__scm->dev,
+ 						QCOM_SCM_SVC_BOOT,
+ 						QCOM_SCM_BOOT_SET_DLOAD_MODE)) {
+-		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
++		ret = __qcom_scm_set_dload_mode(__scm->dev, !!download_mode);
+ 	} else {
+ 		dev_err(__scm->dev,
+ 			"No available mechanism for setting download mode\n");
+@@ -1843,6 +1847,42 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int get_download_mode(char *buffer, const struct kernel_param *kp)
++{
++	if (download_mode >= ARRAY_SIZE(download_mode_name))
++		return sysfs_emit(buffer, "unknown mode\n");
++
++	return sysfs_emit(buffer, "%s\n", download_mode_name[download_mode]);
++}
++
++static int set_download_mode(const char *val, const struct kernel_param *kp)
++{
++	u32 old = download_mode;
++	int ret;
++
++	ret = sysfs_match_string(download_mode_name, val);
++	if (ret < 0) {
++		download_mode = old;
++		pr_err("qcom_scm: unknown download mode: %s\n", val);
++		return -EINVAL;
++	}
++
++	download_mode = ret;
++	if (__scm)
++		qcom_scm_set_download_mode(download_mode);
++
++	return 0;
++}
++
++static const struct kernel_param_ops download_mode_param_ops = {
++	.get = get_download_mode,
++	.set = set_download_mode,
++};
++
++module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
++MODULE_PARM_DESC(download_mode,
++		"download mode: off/full are acceptable values");
++
+ static int qcom_scm_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_scm *scm;
+@@ -1907,12 +1947,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	__get_convention();
+ 
+ 	/*
+-	 * If requested enable "download mode", from this point on warmboot
++	 * If "download mode" is requested, from this point on warmboot
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+ 	if (download_mode)
+-		qcom_scm_set_download_mode(true);
++		qcom_scm_set_download_mode(download_mode);
+ 
+ 
+ 	/*
+@@ -1940,7 +1980,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ static void qcom_scm_shutdown(struct platform_device *pdev)
+ {
+ 	/* Clean shutdown, disable download mode to allow normal restart */
+-	qcom_scm_set_download_mode(false);
++	qcom_scm_set_download_mode(QCOM_DLOAD_NODUMP);
+ }
+ 
+ static const struct of_device_id qcom_scm_dt_match[] = {
+-- 
+2.7.4
 
-Gentle reminder for this patch.
-
-Thanks,
-Vignesh
-> 
-> Thanks,
-> Vignesh
-> 
->> Regards,
->> Bjorn
