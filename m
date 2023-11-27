@@ -1,250 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pzOCb5Wh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5951133;
-	Mon, 27 Nov 2023 03:35:40 -0800 (PST)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ARAv6rW024162;
-	Mon, 27 Nov 2023 11:35:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=thltlNEte7wqIEWzvgJuzPrT0P4hiM4udr7oHuK7vgY=;
- b=pzOCb5WhOzIYaaP5AGgRNCQeuYwj3DkeOfkB4UUWEPqiEy/gFifVHP03+miYQ3a40kaP
- Ln8MbJx2X5/Sug37juSuUKVfu+JX3o8Qu+bKrK/ZLOfbmUrkiOAFzH10wuX6/1Hg69hp
- lrQuU7+1QxG7Q0NMwwRIvoU5Up5XIXdx1py4gQePscDLh8vj+ti8r+u04ui28v/WoxAX
- afl80q0dVRrcF6tCEJchm1tpwqdd1Ip83IykXBbBLV5j3bg7uFO34KoZ5PB2Fe1LVFtv
- rizOqtfSVyOTJ5M2pbSc0R9yg87LBsGigPCjjS8tddwnXebYro9jjO/7+2xRo4/2QZK0 SA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uk95cc1nx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Nov 2023 11:35:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3ARBZCvS005980
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Nov 2023 11:35:12 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 27 Nov 2023 03:35:02 -0800
-Date: Mon, 27 Nov 2023 17:04:59 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-CC: <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <vigneshr@ti.com>, <nm@ti.com>,
-        <matthias.bgg@gmail.com>, <kgene@kernel.org>,
-        <alim.akhtar@samsung.com>, <bmasney@redhat.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-Subject: Re: [Patch v6 10/12] pstore/ram: Add dynamic ramoops region support
- through commandline
-Message-ID: <ad38fb23-e2a2-448e-bdea-fa0985f82b50@quicinc.com>
-References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
- <1700864395-1479-11-git-send-email-quic_mojha@quicinc.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F46198;
+	Mon, 27 Nov 2023 06:22:03 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5cca68f6e01so42530557b3.2;
+        Mon, 27 Nov 2023 06:22:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701094922; x=1701699722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=834pVqsGyG/ThloFCq4Fg8uGigDw1US55aPZgUr69AE=;
+        b=hZgxPAobZDD2wyA6PCv3abu3HYrdfeTdF3Y+Kjwkzx1BfAUIq0SXTU3FPSQoS5+G+s
+         lPF8r9g3h07Rk9sret3Zs3/qhcPzZH8q0Swm2Ruves73yq0jxjWHiGBHmtzCXU4ySWS6
+         hbBWIJAAKAqCAj66cq5Fs329tAxx9F1DCcdqg/qiHayf2LGenx5Yd2KG/H5oa2OXoJvK
+         fWu9OdhBut4NGzU7RLwWQCNTFTzZHw1nY60O+xNn4NltRFP1rYZDjczI7+hlrL0sXv17
+         9ao6uBHyxeeOFrFbRCl0oUudlihSIhgjlXcxuW5+CLC3Mmo9v4+R1YMLgsdjrrQ+i35w
+         iNRQ==
+X-Gm-Message-State: AOJu0YwT8soz50xGXB4jQ3HTJ0zUI8D9VpIWFvPZOHao3bFXqDbX3raY
+	V5wdiTIyX+l5QfmeCwOjgy9DSnIk5Y8Fag==
+X-Google-Smtp-Source: AGHT+IHIry33GnwZYxjABz1zje1OAyuJ5yzdqY1RHUsCssQtdGrmsmjetxCAOQFmRXv717eoprhxog==
+X-Received: by 2002:a81:a507:0:b0:5cb:d645:8cdf with SMTP id u7-20020a81a507000000b005cbd6458cdfmr11688215ywg.48.1701094922153;
+        Mon, 27 Nov 2023 06:22:02 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id y66-20020a81a145000000b005b4501cb71csm3231244ywg.29.2023.11.27.06.22.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Nov 2023 06:22:01 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-daf26d84100so3819090276.3;
+        Mon, 27 Nov 2023 06:22:01 -0800 (PST)
+X-Received: by 2002:a25:6cc5:0:b0:d9a:6b1e:ef51 with SMTP id
+ h188-20020a256cc5000000b00d9a6b1eef51mr10902367ybc.2.1701094921451; Mon, 27
+ Nov 2023 06:22:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1700864395-1479-11-git-send-email-quic_mojha@quicinc.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gSQpbWT7UNoVWbbqsLNJRqn82Dqqebju
-X-Proofpoint-ORIG-GUID: gSQpbWT7UNoVWbbqsLNJRqn82Dqqebju
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-27_09,2023-11-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- adultscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311270079
+References: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Nov 2023 15:21:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU7cs_DCwkbD4FGy=OgxsfLe4poU0916dM1xUB62ahqqg@mail.gmail.com>
+Message-ID: <CAMuHMdU7cs_DCwkbD4FGy=OgxsfLe4poU0916dM1xUB62ahqqg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: correct white-spaces in examples
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 25, 2023 at 03:49:53AM +0530, Mukesh Ojha wrote:
-> The reserved memory region for ramoops is assumed to be at a fixed
-> and known location when read from the devicetree. This may not be
-> required for something like Qualcomm's minidump which is interested
-> in knowing addresses of ramoops region but it does not put hard
-> requirement of address being fixed as most of it's SoC does not
-> support warm reset and does not use pstorefs at all instead it has
-> firmware way of collecting ramoops region if it gets to know the
-> address and register it with apss minidump table which is sitting
-> in shared memory region in DDR and firmware will have access to
-> these table during reset and collects it on crash of SoC.
-> 
-> So, add the support of reserving ramoops region to be dynamically
-> allocated early during boot if it is request through command line
-> via 'dyn_ramoops_size=<size>' and fill up reserved resource structure
-> and export the structure, so that it can be read by ramoops driver.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->  Documentation/admin-guide/ramoops.rst |  7 ++++
->  fs/pstore/Kconfig                     | 15 +++++++++
->  fs/pstore/ram.c                       | 62 ++++++++++++++++++++++++++++++++---
->  include/linux/pstore_ram.h            |  5 +++
->  init/main.c                           |  2 ++
->  5 files changed, 87 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
-> index e9f85142182d..af737adbf079 100644
-> --- a/Documentation/admin-guide/ramoops.rst
-> +++ b/Documentation/admin-guide/ramoops.rst
-> @@ -33,6 +33,13 @@ memory are implementation defined, and won't work on many ARMs such as omaps.
->  Setting ``mem_type=2`` attempts to treat the memory region as normal memory,
->  which enables full cache on it. This can improve the performance.
->  
-> +Ramoops memory region can also be allocated dynamically for a special case where
-> +there is no requirement to access the logs from pstorefs on next boot instead there
-> +is separate backend mechanism like minidump present which has awareness about the
-> +dynamic ramoops region and can recover the logs. This is enabled via command line
-> +parameter ``dyn_ramoops_size=<size>`` and should not be used in absence of
-> +separate backend which knows how to recover this dynamic region.
-> +
->  The memory area is divided into ``record_size`` chunks (also rounded down to
->  power of two) and each kmesg dump writes a ``record_size`` chunk of
->  information.
-> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-> index 3acc38600cd1..e13e53d7a225 100644
-> --- a/fs/pstore/Kconfig
-> +++ b/fs/pstore/Kconfig
-> @@ -81,6 +81,21 @@ config PSTORE_RAM
->  
->  	  For more information, see Documentation/admin-guide/ramoops.rst.
->  
-> +config PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
-> +	bool "Reserve ramoops region dynamically"
-> +	select PSTORE_RAM
-> +	help
-> +	  This enables the dynamic reservation of ramoops region for a special case
-> +	  where there is no requirement to access the logs from pstorefs on next boot
-> +	  instead there is separate backend mechanism like minidump present which has
-> +	  awareness about the dynamic ramoops region and can recover the logs. This is
-> +	  enabled via command line parameter dyn_ramoops_size=<size> and should not be
-> +	  used in absence of separate backend which knows how to recover this dynamic
-> +	  region.
-> +
-> +	  Note whenever this config is selected ramoops driver will be build statically
-> +	  into kernel.
-> +
+On Fri, Nov 24, 2023 at 10:21=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Use only one and exactly one space around '=3D' in DTS example.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Is there any advantage if we decouple this memory reservation from
-pstore ram so that pstore ram can still be compiled as module? Asking
-because you explicitly mentioned this limitation.
+>  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml           | 6 +++---
 
->  config PSTORE_ZONE
->  	tristate
->  	depends on PSTORE
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 88b34fdbf759..a6c0da8cfdd4 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -20,6 +20,7 @@
->  #include <linux/compiler.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/memblock.h>
->  #include <linux/mm.h>
->  
->  #include "internal.h"
-> @@ -103,6 +104,55 @@ struct ramoops_context {
->  };
->  
->  static struct platform_device *dummy;
-> +static int dyn_ramoops_size;
-> +/* Location of the reserved area for the dynamic ramoops */
-> +static struct resource dyn_ramoops_res = {
-> +	.name  = "ramoops",
-> +	.start = 0,
-> +	.end   = 0,
-> +	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
-> +	.desc  = IORES_DESC_NONE,
-> +};
-> +
-> +static int __init parse_dyn_ramoops_size(char *p)
-> +{
-> +	char *tmp;
-> +
-> +	dyn_ramoops_size = memparse(p, &tmp);
-> +	if (p == tmp) {
-> +		pr_err("ramoops: memory size expected\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +early_param("dyn_ramoops_size", parse_dyn_ramoops_size);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-should not this code be under
-CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION?
+Gr{oetje,eeting}s,
 
-> +
-> +#ifdef CONFIG_PSTORE_DYNAMIC_RAMOOPS_REGION_RESERVATION
-> +/*
-> + * setup_dynamic_ramoops() - reserves memory for dynamic ramoops
-> + *
-> + * This enable dynamic reserve memory support for ramoops through
-> + * command line.
-> + */
-> +void __init setup_dynamic_ramoops(void)
-> +{
-> +	unsigned long long ramoops_base;
-> +	unsigned long long ramoops_size;
-> +
-> +	ramoops_base = memblock_phys_alloc_range(dyn_ramoops_size, SMP_CACHE_BYTES,
-> +						 0, MEMBLOCK_ALLOC_NOLEAKTRACE);
-> +	if (!ramoops_base) {
-> +		pr_err("cannot allocate ramoops dynamic memory (size:0x%llx).\n",
-> +			ramoops_size);
-> +		return;
-> +	}
+                        Geert
 
-This error needs to be propagated to ramoops_register_dummy() since it
-rely on !dyn_ramoops_size . one way is to set dyn_ramoops_size to 0.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +
-> +	dyn_ramoops_res.start = ramoops_base;
-> +	dyn_ramoops_res.end = ramoops_base + dyn_ramoops_size - 1;
-> +	insert_resource(&iomem_resource, &dyn_ramoops_res);
-> +}
-> +#endif
->  
->  static int ramoops_pstore_open(struct pstore_info *psi)
->  {
-> @@ -915,14 +965,18 @@ static void __init ramoops_register_dummy(void)
->  
->  	/*
->  	 * Prepare a dummy platform data structure to carry the module
-> -	 * parameters. If mem_size isn't set, then there are no module
-> -	 * parameters, and we can skip this.
-> +	 * parameters. If mem_size isn't set, check for dynamic ramoops
-> +	 * size and use if it is set.
->  	 */
-> -	if (!mem_size)
-> +	if (!mem_size && !dyn_ramoops_size)
->  		return;
->  
-
-If mem_size and dyn_ramoops_size are set, you are taking
-dyn_ramoops_size precedence here. The comment is a bit confusing, pls
-review it once.
-
-> -	pr_info("using module parameters\n");
-> +	if (dyn_ramoops_size) {
-> +		mem_size = dyn_ramoops_size;
-> +		mem_address = dyn_ramoops_res.start;
-> +	}
->  
-
-Overall it Looks good to me. Thanks.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
