@@ -1,290 +1,398 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E18107A9;
-	Sat, 25 Nov 2023 14:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrtffZhB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5605DC433C8;
-	Sat, 25 Nov 2023 14:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700921303;
-	bh=WmejF+0/IYn6UB83giEkRIDlR14ddDTibp4f7OSCgLg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IrtffZhBBjElUAZjoj3bOA3fLZQEewxnDhQ29st/4h6BXTFn/YhP7f5r0ayinvtKs
-	 B/Q+WxgJ9LaBq+QKRECQVEqE2Vw5tTJVsw8jtLnn7s7KAd9bFQeJ+1DyM9ix761XB5
-	 HErIkqvJ+5ye1JPns2kjmIMOa1P1/j71kPiybV5IWrhlKu/F0sK3Twa9gKAk9J/7ih
-	 nCFCIkYOKx/ne+RRsT4DN4hoxVQp02jqBRvvRoTuloBEMwKtG3C1cDVe9mlyqpmD7a
-	 C0ZfKTKRu654lav7H95wvnHZ0wUm9SkOy0ChKENMMfzJWagjMDQF/mWC0FBC0MVSmw
-	 sYvFbqdbLJO3w==
-Date: Sat, 25 Nov 2023 14:08:12 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: correct white-spaces in examples
-Message-ID: <20231125140812.607929dc@jic23-huawei>
-In-Reply-To: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
-References: <20231124092121.16866-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4C64JAH"
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4420519B0;
+	Sun, 26 Nov 2023 21:39:05 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6be0277c05bso3205414b3a.0;
+        Sun, 26 Nov 2023 21:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701063545; x=1701668345; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NX4xnb+Y6UTiviuMBl/tewe6sCua/bVxOuCKRZ4I0bo=;
+        b=Y4C64JAHip6YkDnrt3omo/0CbjbqYGqHVLPnnzA+LeFVy+JXX9CzKWqrx025orThR6
+         fNaHRbuEHSnOrzSYJSD7XHeNE3pTStL0BN+rvVkJ6e6nwG4zIDuoALEWFUNxo0MNrFMy
+         h7VS8uGowfEaihLkirf46DLpc6xOazbqA/UES2m0RSljb2lcC+OmVZtoBfwJ+xCBm8GJ
+         RcaOU8EjKPPBE4S7zQEoSHTpRhUMO4ljOnAzOqtD6XkoDxplKnE+vIENMbUUhAOvXjb2
+         CxJK/bHh6MgoJevEJJiNIMIFMSybPC3yqWWQ9rpgtSv36yKKLybhvRHdldgjsO32djkv
+         QCcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701063545; x=1701668345;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NX4xnb+Y6UTiviuMBl/tewe6sCua/bVxOuCKRZ4I0bo=;
+        b=E26Il8Vo61V61xYt13C02F/f39m4EFfu0VVUhSl8AKPgAZCjSW0i2Yrj9HOKDQBzDj
+         DcverOQkDfQDviRJHNYP3IiVpE3nr4HYFIo+hniVsRqinsOJxIH5rTqw3kf3qyJ6Gx3a
+         Fp05boWWpCzSBHZ8VT9V/9MJMoOP557q6+v2YPrG1tWFQjByGBwKDBz3DUqWmNobl7ow
+         0t6gyjI6U+/dhCbicoeTUlANqNpFyQzeooOKiWT9PXiUqpSWZJ7ZNvbBGxAQhQlNvWAC
+         ristGapMuf9DjbITDnFjs3D/5nCrCZC1phNyRujPIJgI+Nszu+tB7By5Xk02YjKz9PHr
+         BVDQ==
+X-Gm-Message-State: AOJu0Yxff6S3TOlQN27UFnNCBFm7CBgxye5l7OD8j8U2ULbx/QYIIAmq
+	zHX4ZL98e8zg8V3C8wtWHKQ=
+X-Google-Smtp-Source: AGHT+IEXfuisJUFusS+Gaj5RNsLQEjGTROBbYT0tKXPV6334Nlqt2LUywy6CWVwD0CXcxJLfxejR3Q==
+X-Received: by 2002:a05:6a00:2d07:b0:6be:2991:d878 with SMTP id fa7-20020a056a002d0700b006be2991d878mr11641552pfb.15.1701063544569;
+        Sun, 26 Nov 2023 21:39:04 -0800 (PST)
+Received: from archie.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id gu23-20020a056a004e5700b006cb6fa32590sm6532374pfb.148.2023.11.26.21.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Nov 2023 21:39:03 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 70C781033A242; Mon, 27 Nov 2023 12:38:59 +0700 (WIB)
+Date: Mon, 27 Nov 2023 12:38:59 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net, agross@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+	mathieu.poirier@linaro.org, vigneshr@ti.com, nm@ti.com,
+	matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
+	bmasney@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
+Message-ID: <ZWQrc7w2AD2WvwkK@archie.me>
+References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
+ <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BuCQw3fkz+a4hLx6"
+Content-Disposition: inline
+In-Reply-To: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
 
-On Fri, 24 Nov 2023 10:21:21 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-> Use only one and exactly one space around '=' in DTS example.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for-iio
-> ---
-> 
-> Merging idea: Rob's DT.
-> Should apply cleanly on Rob's for-next.
-> ---
->  .../devicetree/bindings/auxdisplay/hit,hd44780.yaml       | 2 +-
->  .../devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml     | 2 +-
->  Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml | 6 +++---
->  .../devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml       | 2 +-
->  .../devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml      | 2 +-
->  .../interrupt-controller/st,stih407-irq-syscfg.yaml       | 4 ++--
->  Documentation/devicetree/bindings/mmc/arm,pl18x.yaml      | 2 +-
->  Documentation/devicetree/bindings/net/sff,sfp.yaml        | 2 +-
->  .../devicetree/bindings/pci/toshiba,visconti-pcie.yaml    | 2 +-
->  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml           | 6 +++---
->  .../devicetree/bindings/power/supply/richtek,rt9455.yaml  | 8 ++++----
->  .../devicetree/bindings/regulator/mps,mp5416.yaml         | 4 ++--
->  .../devicetree/bindings/regulator/mps,mpq7920.yaml        | 4 ++--
->  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml     | 8 ++++----
->  14 files changed, 27 insertions(+), 27 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml b/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
-> index fde07e4b119d..406a922a714e 100644
-> --- a/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
-> +++ b/Documentation/devicetree/bindings/auxdisplay/hit,hd44780.yaml
-> @@ -113,7 +113,7 @@ examples:
->      hd44780 {
->              compatible = "hit,hd44780";
->              display-height-chars = <2>;
-> -            display-width-chars  = <16>;
-> +            display-width-chars = <16>;
->              data-gpios = <&pcf8574 4 0>,
->                           <&pcf8574 5 0>,
->                           <&pcf8574 6 0>,
-> diff --git a/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml b/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
-> index 624984d51c10..7f8d98226437 100644
-> --- a/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
-> +++ b/Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
-> @@ -125,7 +125,7 @@ examples:
->      clk25m: clock-oscillator-25m {
->        compatible = "fixed-clock";
->        #clock-cells = <0>;
-> -      clock-frequency  = <25000000>;
-> +      clock-frequency = <25000000>;
->        clock-output-names = "clk25m";
->      };
->  ...
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> index 5fcc8dd012f1..be2616ff9af6 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> @@ -80,9 +80,9 @@ examples:
->              compatible = "adi,ad7780";
->              reg = <0>;
->  
-> -            avdd-supply      = <&vdd_supply>;
-> -            powerdown-gpios  = <&gpio0 12 GPIO_ACTIVE_HIGH>;
-> -            adi,gain-gpios   = <&gpio1  5 GPIO_ACTIVE_LOW>;
-> +            avdd-supply = <&vdd_supply>;
-> +            powerdown-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
-> +            adi,gain-gpios = <&gpio1  5 GPIO_ACTIVE_LOW>;
->              adi,filter-gpios = <&gpio2 15 GPIO_ACTIVE_LOW>;
->          };
->      };
-> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
-> index 73def67fbe01..b6a233cd5f6b 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-iadc.yaml
-> @@ -58,7 +58,7 @@ examples:
->              reg = <0x3600>;
->              interrupts = <0x0 0x36 0x0 IRQ_TYPE_EDGE_RISING>;
->              qcom,external-resistor-micro-ohms = <10000>;
-> -            #io-channel-cells  = <1>;
-> +            #io-channel-cells = <1>;
->          };
->      };
->  ...
-> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
-> index b3a626389870..64abe9a4cd9e 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-rradc.yaml
-> @@ -46,6 +46,6 @@ examples:
->          pmic_rradc: adc@4500 {
->              compatible = "qcom,pmi8998-rradc";
->              reg = <0x4500>;
-> -            #io-channel-cells  = <1>;
-> +            #io-channel-cells = <1>;
->          };
->      };
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml b/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
-> index 2b153d7c5421..e44e4e5708a7 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stih407-irq-syscfg.yaml
-> @@ -55,8 +55,8 @@ examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq-st.h>
->      irq-syscfg {
-> -        compatible    = "st,stih407-irq-syscfg";
-> -        st,syscfg     = <&syscfg_cpu>;
-> +        compatible = "st,stih407-irq-syscfg";
-> +        st,syscfg = <&syscfg_cpu>;
->          st,irq-device = <ST_IRQ_SYSCFG_PMU_0>,
->                          <ST_IRQ_SYSCFG_PMU_1>;
->          st,fiq-device = <ST_IRQ_SYSCFG_DISABLED>,
-> diff --git a/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml b/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
-> index 2459a55ed540..940b12688167 100644
-> --- a/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/arm,pl18x.yaml
-> @@ -203,7 +203,7 @@ examples:
->        bus-width = <4>;
->        cap-sd-highspeed;
->        cap-mmc-highspeed;
-> -      cd-gpios  = <&gpio2 31 0x4>;
-> +      cd-gpios = <&gpio2 31 0x4>;
->        st,sig-dir-dat0;
->        st,sig-dir-dat2;
->        st,sig-dir-cmd;
-> diff --git a/Documentation/devicetree/bindings/net/sff,sfp.yaml b/Documentation/devicetree/bindings/net/sff,sfp.yaml
-> index 973e478a399d..bf6cbc7c2ba3 100644
-> --- a/Documentation/devicetree/bindings/net/sff,sfp.yaml
-> +++ b/Documentation/devicetree/bindings/net/sff,sfp.yaml
-> @@ -120,7 +120,7 @@ examples:
->        pinctrl-names = "default";
->        pinctrl-0 = <&cps_sfpp0_pins>;
->        tx-disable-gpios = <&cps_gpio1 29 GPIO_ACTIVE_HIGH>;
-> -      tx-fault-gpios  = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
-> +      tx-fault-gpios = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
->      };
->  
->      mdio {
-> diff --git a/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml b/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
-> index 53da2edd7c9a..120e3bb1e545 100644
-> --- a/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/toshiba,visconti-pcie.yaml
-> @@ -83,7 +83,7 @@ examples:
->                    <0x0 0x28050000 0x0 0x00010000>,
->                    <0x0 0x24200000 0x0 0x00002000>,
->                    <0x0 0x24162000 0x0 0x00001000>;
-> -            reg-names  = "dbi", "config", "ulreg", "smu", "mpu";
-> +            reg-names = "dbi", "config", "ulreg", "smu", "mpu";
->              device_type = "pci";
->              bus-range = <0x00 0xff>;
->              num-lanes = <2>;
-> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> index b5ca40d0e251..d476de82e5c3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
-> @@ -185,17 +185,17 @@ examples:
->                      sd1_mux {
->                              pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>, /* CD */
->                                       <RZG2L_PORT_PINMUX(19, 1, 1)>; /* WP */
-> -                            power-source  = <3300>;
-> +                            power-source = <3300>;
->                      };
->  
->                      sd1_data {
->                              pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
-> -                            power-source  = <3300>;
-> +                            power-source = <3300>;
->                      };
->  
->                      sd1_ctrl {
->                              pins = "SD1_CLK", "SD1_CMD";
-> -                            power-source  = <3300>;
-> +                            power-source = <3300>;
->                      };
->              };
->      };
-> diff --git a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> index 07e38be39f1b..89f9603499b4 100644
-> --- a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> @@ -79,10 +79,10 @@ examples:
->          interrupt-parent = <&gpio1>;
->          interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->  
-> -        richtek,output-charge-current	    = <500000>;
-> -        richtek,end-of-charge-percentage    = <10>;
-> -        richtek,battery-regulation-voltage  = <4200000>;
-> -        richtek,boost-output-voltage	    = <5050000>;
-> +        richtek,output-charge-current = <500000>;
-> +        richtek,end-of-charge-percentage = <10>;
-> +        richtek,battery-regulation-voltage = <4200000>;
-> +        richtek,boost-output-voltage = <5050000>;
->  
->          richtek,min-input-voltage-regulation = <4500000>;
->          richtek,avg-input-current-regulation = <500000>;
-> diff --git a/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
-> index 0221397eb51e..f825ee9efd81 100644
-> --- a/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
-> @@ -62,8 +62,8 @@ examples:
->               regulator-name = "buck1";
->               regulator-min-microvolt = <600000>;
->               regulator-max-microvolt = <2187500>;
-> -             regulator-min-microamp  = <3800000>;
-> -             regulator-max-microamp  = <6800000>;
-> +             regulator-min-microamp = <3800000>;
-> +             regulator-max-microamp = <6800000>;
->               regulator-boot-on;
->              };
->  
-> diff --git a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
-> index 6de5b027f990..0d34af98403f 100644
-> --- a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
-> @@ -98,8 +98,8 @@ examples:
->               regulator-name = "buck1";
->               regulator-min-microvolt = <400000>;
->               regulator-max-microvolt = <3587500>;
-> -             regulator-min-microamp  = <460000>;
-> -             regulator-max-microamp  = <7600000>;
-> +             regulator-min-microamp = <460000>;
-> +             regulator-max-microamp = <7600000>;
->               regulator-boot-on;
->               mps,buck-ovp-disable;
->               mps,buck-phase-delay = /bits/ 8 <2>;
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index 30632efdad8b..df36e29d974c 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -113,10 +113,10 @@ examples:
->      };
->  
->      imx7d-cm4 {
-> -      compatible	= "fsl,imx7d-cm4";
-> -      memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
-> -      syscon		= <&src>;
-> -      clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
-> +      compatible = "fsl,imx7d-cm4";
-> +      memory-region = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
-> +      syscon = <&src>;
-> +      clocks = <&clks IMX7D_ARM_M4_ROOT_CLK>;
->      };
->  
->    - |
+--BuCQw3fkz+a4hLx6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Nov 25, 2023 at 03:49:46AM +0530, Mukesh Ojha wrote:
+> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-gu=
+ide/index.rst
+> index 43ea35613dfc..251d070486c2 100644
+> --- a/Documentation/admin-guide/index.rst
+> +++ b/Documentation/admin-guide/index.rst
+> @@ -120,6 +120,7 @@ configure specific aspects of kernel behavior to your=
+ liking.
+>     perf-security
+>     pm/index
+>     pnp
+> +   qcom_minidump
+>     rapidio
+>     ras
+>     rtc
+> diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/=
+admin-guide/qcom_minidump.rst
+> new file mode 100644
+> index 000000000000..b492f2b79639
+> --- /dev/null
+> +++ b/Documentation/admin-guide/qcom_minidump.rst
+> @@ -0,0 +1,272 @@
+> +Qualcomm minidump feature
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> +
+> +Introduction
+> +------------
+> +
+> +Minidump is a best effort mechanism to collect useful and predefined
+> +data for first level of debugging on end user devices running on
+> +Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
+> +or subsystem part of SoC crashes, due to a range of hardware and
+> +software bugs. Hence, the ability to collect accurate data is only
+> +a best-effort. The data collected could be invalid or corrupted, data
+> +collection itself could fail, and so on.
+> +
+> +Qualcomm devices in engineering mode provides a mechanism for generating
+> +full system RAM dumps for post-mortem debugging. But in some cases it's
+> +however not feasible to capture the entire content of RAM. The minidump
+> +mechanism provides the means for selected region should be included in
+> +the ramdump.
+> +
+> +
+> +::
+> +
+> +   +-----------------------------------------------+
+> +   |   DDR                       +-------------+   |
+> +   |                             |      SS0-ToC|   |
+> +   | +----------------+     +----------------+ |   |
+> +   | |Shared memory   |     |         SS1-ToC| |   |
+> +   | |(SMEM)          |     |                | |   |
+> +   | |                | +-->|--------+       | |   |
+> +   | |G-ToC           | |   | SS-ToC  \      | |   |
+> +   | |+-------------+ | |   | +-----------+  | |   |
+> +   | ||-------------| | |   | |-----------|  | |   |
+> +   | || SS0-ToC     | | | +-|<|SS1 region1|  | |   |
+> +   | ||-------------| | | | | |-----------|  | |   |
+> +   | || SS1-ToC     |-|>+ | | |SS1 region2|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SS2-ToC     | |   | | |  ...      |  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | ||  ...        | |   |-|<|SS1 regionN|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SSn-ToC     | |   | | +-----------+  | |   |
+> +   | |+-------------+ |   | |                | |   |
+> +   | |                |   | |----------------| |   |
+> +   | |                |   +>|  regionN       | |   |
+> +   | |                |   | |----------------| |   |
+> +   | +----------------+   | |                | |   |
+> +   |                      | |----------------| |   |
+> +   |                      +>|  region1       | |   |
+> +   |                        |----------------| |   |
+> +   |                        |                | |   |
+> +   |                        |----------------|-+   |
+> +   |                        |  region5       |     |
+> +   |                        |----------------|     |
+> +   |                        |                |     |
+> +   |  Region information    +----------------+     |
+> +   | +---------------+                             |
+> +   | |region name    |                             |
+> +   | |---------------|                             |
+> +   | |region address |                             |
+> +   | |---------------|                             |
+> +   | |region size    |                             |
+> +   | +---------------+                             |
+> +   +-----------------------------------------------+
+> +       G-ToC: Global table of contents
+> +       SS-ToC: Subsystem table of contents
+> +       SS0-SSn: Subsystem numbered from 0 to n
+> +
+> +It depends on SoC where the underlying firmware is keeping the
+> +minidump global table taking care of subsystem ToC part for
+> +minidump like for above diagram, it is for shared memory sitting
+> +in DDR and it is shared among various master however it is possible
+> +that this could be implemented via memory mapped regions but the
+> +general idea should remain same. Here, various subsystem could be
+> +DSP's like ADSP/CDSP/MODEM etc, along with Application processor
+> +(APSS) where Linux runs. DSP minidump gets collected when DSP's goes
+> +for recovery followed by a crash. The minidump part of code for
+> +that resides in ``qcom_rproc_minidump.c``.
+> +
+> +
+> +SMEM as backend
+> +----------------
+> +
+> +In this document, SMEM will be used as the backend implementation
+> +of minidump.
+> +
+> +The core of minidump feature is part of Qualcomm's boot firmware code.
+> +It initializes shared memory (SMEM), which is a part of DDR and
+> +allocates a small section of it to minidump table, i.e. also called
+> +global table of contents (G-ToC). Each subsystem (APSS, ADSP, ...) has
+> +its own table of segments to be included in the minidump, all
+> +references from a descriptor in SMEM (G-ToC). Each segment/region has
+> +some details like name, physical address and its size etc. and it
+> +could be anywhere scattered in the DDR.
+> +
+> +Qualcomm APSS Minidump kernel driver concept
+> +--------------------------------------------
+> +
+> +Qualcomm APSS minidump kernel driver adds the capability to add Linux
+> +region to be dumped as part of RAM dump collection. At the moment,
+> +shared memory driver creates platform device for minidump driver and
+> +give a means to APSS minidump to initialize itself on probe.
+> +
+> +This driver provides ``qcom_minidump_region_register`` and
+> +``qcom_minidump_region_unregister`` API's to register and unregister
+> +APSS minidump region. It also supports registration for the clients
+> +who came before minidump driver was initialized. It maintains pending
+> +list of clients who came before minidump and once minidump is initialized
+> +it registers them in one go.
+> +
+> +To simplify post-mortem debugging, driver creates and maintain an ELF
+> +header as first region that gets updated each time a new region gets
+> +registered.
+> +
+> +The solution supports extracting the RAM dump/minidump produced either
+> +over USB or stored to an attached storage device.
+> +
+> +Dependency of minidump kernel driver
+> +------------------------------------
+> +
+> +It is to note that whole of minidump depends on Qualcomm boot firmware
+> +whether it supports minidump or not. So, if the minidump SMEM ID is
+> +present in shared memory, it indicates that minidump is supported from
+> +boot firmware and it is possible to dump Linux (APSS) region as part
+> +of minidump collection.
+> +
+> +How a kernel client driver can register region with minidump
+> +------------------------------------------------------------
+> +
+> +Client driver can use ``qcom_minidump_region_register`` API's to register
+> +and ``qcom_minidump_region_unregister`` to unregister their region from
+> +minidump driver.
+> +
+> +Client needs to fill their region by filling ``qcom_minidump_region``
+> +structure object which consists of the region name, region's virtual
+> +and physical address and its size.
+> +
+> +Below, is one sample client driver snippet which tries to allocate a
+> +region from kernel heap of certain size and it writes a certain known
+> +pattern (that can help in verification after collection that we got
+> +the exact pattern, what we wrote) and registers it with minidump.
+> +
+> + .. code-block:: c
+> +
+> +  #include <soc/qcom/qcom_minidump.h>
+> +  [...]
+> +
+> +
+> +  [... inside a function ...]
+> +  struct qcom_minidump_region region;
+> +
+> +  [...]
+> +
+> +  client_mem_region =3D kzalloc(region_size, GFP_KERNEL);
+> +  if (!client_mem_region)
+> +	return -ENOMEM;
+> +
+> +  [... Just write a pattern ...]
+> +  memset(client_mem_region, 0xAB, region_size);
+> +
+> +  [... Fill up the region object ...]
+> +  strlcpy(region.name, "REGION_A", sizeof(region.name));
+> +  region.virt_addr =3D client_mem_region;
+> +  region.phys_addr =3D virt_to_phys(client_mem_region);
+> +  region.size =3D region_size;
+> +
+> +  ret =3D qcom_minidump_region_register(&region);
+> +  if (ret < 0) {
+> +	pr_err("failed to add region in minidump: err: %d\n", ret);
+> +	return ret;
+> +  }
+> +
+> +  [...]
+> +
+> +
+> +Test
+> +----
+> +
+> +Existing Qualcomm devices already supports entire RAM dump (also called
+> +full dump) by writing appropriate value to Qualcomm's top control and
+> +status register (tcsr) in ``driver/firmware/qcom_scm.c`` .
+> +
+> +SCM device Tree bindings required to support download mode
+> +For example (sm8450) ::
+> +
+> +	/ {
+> +
+> +	[...]
+> +
+> +		firmware {
+> +			scm: scm {
+> +				compatible =3D "qcom,scm-sm8450", "qcom,scm";
+> +				[... tcsr register ... ]
+> +				qcom,dload-mode =3D <&tcsr 0x13000>;
+> +
+> +				[...]
+> +			};
+> +		};
+> +
+> +	[...]
+> +
+> +		soc: soc@0 {
+> +
+> +			[...]
+> +
+> +			tcsr: syscon@1fc0000 {
+> +				compatible =3D "qcom,sm8450-tcsr", "syscon";
+> +				reg =3D <0x0 0x1fc0000 0x0 0x30000>;
+> +			};
+> +
+> +			[...]
+> +		};
+> +	[...]
+> +
+> +	};
+> +
+> +User of minidump can pass ``qcom_scm.download_mode=3D"mini"`` to kernel
+> +commandline to set the current download mode to minidump.
+> +Similarly, ``"full"`` is passed to set the download mode to full dump
+> +where entire RAM dump will be collected while setting it ``"full,mini"``
+> +will collect minidump along with fulldump.
+> +
+> +Writing to sysfs node can also be used to set the mode to minidump::
+> +
+> +	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
+> +
+> +Once the download mode is set, any kind of crash will make the device co=
+llect
+> +respective dump as per set download mode.
+> +
+> +Dump collection
+> +---------------
+> +::
+> +
+> +	+-----------+
+> +	|           |
+> +	|           |         +------+
+> +	|           |         |      |
+> +	|           |         +--+---+ Product(Qualcomm SoC)
+> +	+-----------+             |
+> +	|+++++++++++|<------------+
+> +	|+++++++++++|    usb cable
+> +	+-----------+
+> +            x86_64 PC
+> +
+> +The solution supports a product running with Qualcomm SoC (where minidum=
+p)
+> +is supported from the firmware) connected to x86_64 host PC running PCAT
+> +tool. It supports downloading the minidump produced from product to the
+> +host PC over USB or to save the minidump to the product attached storage
+> +device(UFS/eMMC/SD Card) into minidump dedicated partition.
+> +
+> +By default, dumps are downloaded via USB to the attached x86_64 PC runni=
+ng
+> +PCAT (Qualcomm tool) software. Upon download, we will see a set of binary
+> +blobs starting with name ``md_*`` in PCAT configured directory in x86_64
+> +machine, so for above example from the client it will be ``md_REGION_A.B=
+IN``.
+> +This binary blob depends on region content to determine whether it needs
+> +external parser support to get the content of the region, so for simple
+> +plain ASCII text we don't need any parsing and the content can be seen
+> +just opening the binary file.
+> +
+> +To collect the dump to attached storage type, one needs to write appropr=
+iate
+> +value to IMEM register, in that case dumps are collected in rawdump
+> +partition on the product device itself.
+> +
+> +One needs to read the entire rawdump partition and pull out content to
+> +save it onto the attached x86_64 machine over USB. Later, this rawdump
+> +can be passed to another tool (``dexter.exe`` [Qualcomm tool]) which
+> +converts this into the similar binary blobs which we have got it when
+> +download type was set to USB, i.e. a set of registered regions as blobs
+> +and their name starts with ``md_*``.
+> +
+> +Replacing the ``dexter.exe`` with some open source tool can be added as =
+future
+> +scope of this document.
+
+LGTM, thanks!
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--BuCQw3fkz+a4hLx6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZWQrbQAKCRD2uYlJVVFO
+o16CAQC7qBNMo3GAelqbYCC7X0VFYpjeiiqcRiy6GrizoTGcCgD8D5mzVjQfqBvY
+bh6PeiYqzBUUfBhACG4CtQpxBGryGwk=
+=BPu8
+-----END PGP SIGNATURE-----
+
+--BuCQw3fkz+a4hLx6--
