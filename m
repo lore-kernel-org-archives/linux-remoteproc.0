@@ -1,394 +1,662 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="AdH+gzK8";
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="AdH+gzK8"
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2059.outbound.protection.outlook.com [40.107.8.59])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CE9D6
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Nov 2023 03:19:25 -0800 (PST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=pass;
- b=RKaZTUKIY2HCfmVO6+HC/1byWMrmj4B0nNO0y8neqq/TyjHV6uvoFXLAJFZSixqmOdSH2lJmOiNWCVy6qMBTOcq8ymWpoGtxakjD097EgcvbwdisS9lr6B3gQpFX9uLOuGMIBpSQw5T7PSymNvDpFRtDNp6ogfShcs0m/fogiPFwZp0gYwN+XEronrGtUx9s/p2zhB6RKHMQDKq/pkypwcaJ0lEvuYgGZdvo4DrPp1njG2zyo+o7fboYzAg8fgOitu7LFyIg63bVkJbXDuGfxH7KYdeKM7t8+/6DQqs8S5OdjhkvHYXRi7iTBu7xvvaH7fyn2zuJ997BQ6u4Kc4Cgw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EQv5vAELnVBpzXMIlWK3PxbAyOaAD3v4nSuI+5P/Ly8=;
- b=eQx6zzLQO3z+T21DpefazG7LcsiXbInuvmXQWph/N3kcbcovADd8ZIbdzG0a28fUJVvcw8ju+25pgkwNG2qoCDUW6K7nLCIoRIRuX6O/QF9Jk20LR8UbVlgn7KWSKuLoY/6sKrGKmPd4o1AijHFH1A4AHPS8rYCtSVBS7HafV6RfkBtOIBBD9PF/fGgMt7kLlnw18CPrMzFNzJOkXcM++3t3bvurzam/2YVD01OWrbPOlhSHaWk0Dhb+YYqjjlBL+msN95l29Qxv7kyTN9+j0b08gcrtikRgfkX9GVQcIjt6Gc1lFB6jKBwzsgIfQQ0KBSl1B5e3jyosSMwstaWNRQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=armh.onmicrosoft.com; arc=pass (0
- oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EQv5vAELnVBpzXMIlWK3PxbAyOaAD3v4nSuI+5P/Ly8=;
- b=AdH+gzK8xxUUL7u71vLrOmhQCyFvVWF/Rn/Xa/e7DlQcWGkM/7FX8dwfl76ONlCGboeHX+Z/WKwwHsbHZ7Mxw2fKAvU7uATYcX8CCHgUwf7yNBHszYbNuGNpa1haJigNSQSmc83ANAx7teYPOxtyw+F/QSHCUlTLVlUfYH2dJi8=
-Received: from DB3PR08CA0009.eurprd08.prod.outlook.com (2603:10a6:8::22) by
- PAWPR08MB10120.eurprd08.prod.outlook.com (2603:10a6:102:365::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.27; Tue, 28 Nov
- 2023 11:19:22 +0000
-Received: from DU6PEPF0000B622.eurprd02.prod.outlook.com
- (2603:10a6:8:0:cafe::cf) by DB3PR08CA0009.outlook.office365.com
- (2603:10a6:8::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.28 via Frontend
- Transport; Tue, 28 Nov 2023 11:19:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DU6PEPF0000B622.mail.protection.outlook.com (10.167.8.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7046.17 via Frontend Transport; Tue, 28 Nov 2023 11:19:21 +0000
-Received: ("Tessian outbound 7671e7ddc218:v228"); Tue, 28 Nov 2023 11:19:21 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: b00006363b9ecee4
-X-CR-MTA-TID: 64aa7808
-Received: from 87cf78f2027f.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 0B41D370-494E-4A5D-A49D-2936D01A3F19.1;
-	Tue, 28 Nov 2023 11:19:14 +0000
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 87cf78f2027f.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 28 Nov 2023 11:19:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vyy7vyM97Qdt0+qqxI/XwVoz+hFA73G/PYp4Qu/abVNMQHUHzdgASiRvA3+vZH+i2tEvoiTGor6quL683wy1YwS+Q3Ryn7XoM6e50Se4YOmSgI5zgs5U3xG4vR+o7HAiIOq0aypkvXha68RCN1QS3DjhHYZX2zKtTkEI1LV7cDbtK0RZ7gFJdo4UdHGmfhd80mQBHsQLiT0rBu6/TwPK62KOSEi4tO7D+9PdzFO6OezVyvWoUBA7NFpdndI3S95tNSEvzzXv1Qr3+t00HiMMg6ERqjrr/qBOEbWVvQnIaXicHDAp4xBURpXTLdJvfblEX3F02TL5gOaxpvoQ9GU+ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EQv5vAELnVBpzXMIlWK3PxbAyOaAD3v4nSuI+5P/Ly8=;
- b=kr8kw84ydOThfvp9gzb1dj0ne7kun9m8mgZcMR/EdJ8YROUCIw8osS9KxZ2zIV0FSa+ZJpOMNLerYWe0sdUPQ0swY+9dNqTMmcoBEtdKxEGiWqZvayTU73Ki3K2JpFOz3mIc8Y1jq9u4Gy6JOytGq+c1PGIdx2EGQAAGUsiKXtWmq2+8azDEaUyFs3omXKbBUUlNIqzYio03AVuydjjhEyMbMD9GA/TM4LUIqYQ3ZRQRVc5+53kOELdhJ8SHCdKsDQ2LeaQCeUbUHBU8apJCW/Vzj9/UEZaOeKUZrpjUML4b7tMR37HpSCPv56UKfhMmEOQ06SFv1bkAIIr5zCNHIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EQv5vAELnVBpzXMIlWK3PxbAyOaAD3v4nSuI+5P/Ly8=;
- b=AdH+gzK8xxUUL7u71vLrOmhQCyFvVWF/Rn/Xa/e7DlQcWGkM/7FX8dwfl76ONlCGboeHX+Z/WKwwHsbHZ7Mxw2fKAvU7uATYcX8CCHgUwf7yNBHszYbNuGNpa1haJigNSQSmc83ANAx7teYPOxtyw+F/QSHCUlTLVlUfYH2dJi8=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from PAXPR08MB6750.eurprd08.prod.outlook.com (2603:10a6:102:13f::16)
- by GVXPR08MB10500.eurprd08.prod.outlook.com (2603:10a6:150:155::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.27; Tue, 28 Nov
- 2023 11:19:12 +0000
-Received: from PAXPR08MB6750.eurprd08.prod.outlook.com
- ([fe80::542e:1889:d107:2e96]) by PAXPR08MB6750.eurprd08.prod.outlook.com
- ([fe80::542e:1889:d107:2e96%4]) with mapi id 15.20.7025.022; Tue, 28 Nov 2023
- 11:19:12 +0000
-Message-ID: <80b61579-4dc5-4e43-924e-edd6ebd514e9@arm.com>
-Date: Tue, 28 Nov 2023 11:19:10 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Discussion]: Enhance virtio rpmsg bus driver buffer allocation
-Content-Language: en-US
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
- linux-remoteproc@vger.kernel.org
-Cc: "Rahul.Singh@arm.com" <Rahul.Singh@arm.com>
-References: <1af16ff8-5706-45e5-9737-05da39957c95@arm.com>
- <7eb830b3-e915-4151-ae10-46ce7cd68fa1@arm.com>
- <b98f58a2-6627-4e8a-9466-4f6276cfd0b3@foss.st.com>
- <66dc0fbc-0898-4597-92a4-489050cb1b1c@arm.com>
- <3f0b831b-eda0-44c4-ad1b-1d4958d90ecd@foss.st.com>
-From: Divin Raj <divin.raj@arm.com>
-In-Reply-To: <3f0b831b-eda0-44c4-ad1b-1d4958d90ecd@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: LO4P265CA0196.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:318::6) To PAXPR08MB6750.eurprd08.prod.outlook.com
- (2603:10a6:102:13f::16)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pPZXvz6c"
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A68AD51
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Nov 2023 05:15:47 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id ffacd0b85a97d-332c46d5988so3436018f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Nov 2023 05:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701177346; x=1701782146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=doVpP2O/1xocMcJTzHru/uuvZ/2y27/PHQwnXguSD2k=;
+        b=pPZXvz6c1TQOxS/DvjME3P8IULSsJpMV/p2Li73ld8rw+8ZjHGi6ZvZ1nFg4BefJES
+         Bdwg9ze+8tcvGnkPQfZnw04HQKUeI23c2DpLHOv2xKWozPXCld0zsyWYmxvjuNCy7eZu
+         pt7h1aiUwB8+o72dE2E4/RIIcAZ92cof17POXZv6gjb/4Akkh69EVSsrN+3l0cFuGjFk
+         E7aAC0n6JMB4ptNzClCtLV5Oz8ExlwJh6vw5GTQ0rpG4sMVyncA33AC62RUf3jNOXE+x
+         +sdSF1EiWHc04WpJuofE+lj3Zh64tFUrZxCc2DAZiHDvbFAp1xqa82V5au1nkvRvbvv2
+         WeBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701177346; x=1701782146;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=doVpP2O/1xocMcJTzHru/uuvZ/2y27/PHQwnXguSD2k=;
+        b=sY+MDG62z/I7jhDKJxOGc7eJU1HeF7GABfeYgg7CqktzRGMnpeHnILhTSrrNxliaz8
+         RbwFUsh+80QH/Qtgd7py+NwcMv4GsgCVSgSWqEtnR0lF4R86PrVzWDsaPr8ncusYOFjw
+         LFav2zPfEnsLRTqMij99qJm4n0PqTHuYuB11TNuIu9NhASEChUqdgWpZbdAJJFB9GdeH
+         9KdsyEbYoE7T7xaf5m0+x6bpV4L+PFumMSZUBxuwNTGC3cpWAj+Fb4eUUoYuAiezXrP1
+         LoFqQY6htuv3VxjU3rZra6vHL4fs5HHxxpw+WreiZIkmgU909ywp2yr986/YodzvZnRH
+         EVXQ==
+X-Gm-Message-State: AOJu0YxVNqGHbmgdr+mss9S+3DpIR/424FR0RweCc5/CTUq1o+TLvzXJ
+	I90rewVTXibWi8NSQ7c+5NIVJA==
+X-Google-Smtp-Source: AGHT+IF5Cafplop9m5creSapYYaNFhZ+IQY3Uo1h1xUyT62KVMgXgiy6c2emry2WYHv4fix4hOk5Xg==
+X-Received: by 2002:a5d:448f:0:b0:332:c593:16c with SMTP id j15-20020a5d448f000000b00332c593016cmr10407808wrq.45.1701177345716;
+        Tue, 28 Nov 2023 05:15:45 -0800 (PST)
+Received: from [192.168.100.102] ([37.228.218.3])
+        by smtp.gmail.com with ESMTPSA id j12-20020adff00c000000b00332eadd7ea4sm11957790wro.78.2023.11.28.05.15.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Nov 2023 05:15:44 -0800 (PST)
+Message-ID: <b50fd14e-7798-4b1e-aff3-9409e67300b3@linaro.org>
+Date: Tue, 28 Nov 2023 13:15:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	PAXPR08MB6750:EE_|GVXPR08MB10500:EE_|DU6PEPF0000B622:EE_|PAWPR08MB10120:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8057f666-0f4b-4775-c5c8-08dbf003dede
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original:
- M6sKBS5OqbzE6UQ0PbcbntY2tAUd2JdSdar+y+0u2pueddjH8X34If7UmCKf3yeLLoag3pJTrPlk1ACqf5ZzFLeb2bFlYzVFkhG++BgFj/QuYh005vkgnNBjjnZrf8ymmKuVyMYXgBScAH+C23iESSAJJd6bOY1EeuHlD/KMPh3KmApAq0MkXwEdN/LAynTXGpQuHmHeBMuzorI/kQGm3a9QszgD2Vy31WjWF0yhz4wuK6oltp+caRJuiiZmCF6J9sn9KEa3uzUb8yKk8WP1MhvLzKAxIn8lLQe3mgjKdIzZMjexSidJSQj7ep0xpmHDeQlpKb890/d4cAZCSjoTi1rdB2YIRiMWdOocilvmX8JHpnJLIYmR1oLrE4BjhtuGn6wU/3soCnDjJ8hq1YwtmK4oa8Dkb2choLeu2A20p2xETQQHDfI7BXTVQNVD28Slc8X+TEE6X0AKmzOEOua+WLInAAgr26zT4jvkM7k2A3b1veyA2gX4WN/b0FsjP5EsLY+wgSumhRviGTQQCFzrYjVC0155mTmFEaJD4cAdaTpOc2PqD42boskMpCya4CD4lphUkP1RdduPSlVs9V4wkZt5wMLf0vGBCd+e45CWz/ETX32Gpfnyb2HA+R/p+H0c+8T7jW4NPqGw6YVd9EkaQ/sLTihBlPN9T0Wa28WWCeuBTdtjfowowSt1P5EetkZK
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR08MB6750.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(136003)(366004)(346002)(39860400002)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(31686004)(26005)(66899024)(53546011)(2616005)(478600001)(6486002)(6506007)(6512007)(966005)(38100700002)(86362001)(5660300002)(31696002)(36756003)(41300700001)(2906002)(44832011)(66946007)(83380400001)(66476007)(66556008)(316002)(8676002)(8936002)(4326008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR08MB10500
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF0000B622.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	4f04b6d7-f70b-4207-cb85-08dbf003d939
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	2QJSLGx/vRTAx4X4pZL/7EnDktUv+UWqY2YIFwSM83xc4j7BcUNBYKA4YdoUjWwFyWgvyks+J8r1VA/PevSC2ZwVd+ijVBB/jZcVvJY+Vlx/J8WK7eaC+q8fXrlv0b9F2LPMSqT8Ye8pBxOFj+Nfn+ZiqVPzzSIKzlF0ddsTinWsZtFziD4FiUhbOcYZBrytO1EEIIhdl2m37oGn/+LRindgACYs0TOuUEozCWfOsCzbqMP0IY5KziaXirgOYSQ1cLF2aVSqnssGxbvOSIwnk52O+Thnsln0THFCxGgm1Fbh1OvPYe8K1akbTCHDanmL3P6v7kIdAiqgaJ4fqh0784T13sRi8/V7ZVsL9eCqDT7nBZ13ypco2kVVXsg7lDV4kcigv3S6lI/BU8amyMguIYFEZc9kT/muxZSrDx+Ua61qBqQzbOWXiSMKgkA7D0+ruWT2YNy0byZDqwQQ4iDRBR5H2B9iONQBz0ycKNrl1gbiouMZc00cYA80xCuSfyJfwt4MFaD0o7WubkVqoIQJt48FYlsKtb8tMw+umOfsyUrFsUZl6dhIeulUwvDIerjQd4nEv/Ek/xGFNYIvqqkS7QgEmXE/LE+8eAdnWrbrjkDWRKv0o09HwLNBU/nhhwDGqEZePWhur/CF9RMSt4DgdLMoqqsZTe3nIJ+x9jeJ3tuQjB7QpmgBYuszdgqgt4XbXLZw9p4opDRuPmBULxiripU4qvvf07V5GbwKXBD5JIbuiszUsBsmbOEnrdMqZB8PNB6uYnD9TDndBUpIAdRXBJMpn2xDEPeUISWfbF8XQ4E=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(346002)(376002)(136003)(230922051799003)(186009)(64100799003)(82310400011)(451199024)(1800799012)(46966006)(40470700004)(36840700001)(336012)(53546011)(2616005)(478600001)(26005)(6506007)(6512007)(47076005)(36860700001)(5660300002)(83380400001)(2906002)(4326008)(41300700001)(70206006)(70586007)(316002)(966005)(6486002)(44832011)(8676002)(8936002)(40460700003)(356005)(81166007)(86362001)(31696002)(82740400003)(36756003)(31686004)(40480700001)(66899024)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2023 11:19:21.7610
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8057f666-0f4b-4775-c5c8-08dbf003dede
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B622.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB10120
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
+Content-Language: en-US
+To: Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net, agross@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+ mathieu.poirier@linaro.org, vigneshr@ti.com, nm@ti.com,
+ matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
+ bmasney@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ kernel@quicinc.com
+References: <1700864395-1479-1-git-send-email-quic_mojha@quicinc.com>
+ <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/28/23 8:34 AM, Arnaud POULIQUEN wrote:
->
->
-> On 11/24/23 17:45, Divin Raj wrote:
->> Hi Arnaud,
->> Please find my comments inline.
->>
->> On 11/20/23 10:14 AM, Arnaud POULIQUEN wrote:
->>> Hi Divin,
->>>
->>> On 11/17/23 23:24, Divin Raj wrote:
->>>> On 10/23/23 11:44 AM, Divin Raj wrote:
->>>>> Hello all,
->>>>>
->>>>> I am reaching out with reference to the patch discussed here: Enhance=
-d
->>>>> virtio rpmsg bus driver buffer allocation.
->>>>> <https://lore.kernel.org/all/CAH2Cfb-sv3SAL8bcczC-Dc3_r58MYZCS7s7zGtn=
-1Qfo3mmBqVg@mail.gmail.com/>
->>>>>
->>>>> I've been keenly following the developments around enhancing buffer
->>>>> allocation strategies, especially those focused on dynamic buffer siz=
-ing
->>>>> and the considerations for systems under varying memory constraints.T=
-his
->>>>> work is highly relevant to several projects I am involved in, and I a=
-m
->>>>> quite interested in its progression. May I kindly request an update o=
-n
->>>>> the current phase of these initiatives? Additionally, I am eager to k=
-now
->>>>> if there would be an opportunity for me to contribute to enhancing th=
-e
->>>>> patch, possibly by working on improvements or assisting in verificati=
-on
->>>>> processes.
->>>>>
->>>>> Furthermore, if there are any condensed resources, summaries, or
->>>>> specific threads that encapsulate recent advancements or discussions =
-on
->>>>> this topic, I would be grateful to receive directions to them.
->>>>>
->>>>> I appreciate everyone's dedicated efforts and invaluable contribution=
-s
->>>>> to this area of development. Looking forward to the updates.
->>>>>
->>>>> Regards Divin
->>>>>
->>>> Hello Linux Community,
->>>>
->>>> In one of our internal projects, we encountered a challenge with RPMSG
->>>> buffer allocation. Our goal is to optimize memory allocation for an
->>>> out-of-tree RPMSG Ethernet device driver using virtio. This is to ensu=
-re
->>>> support for packet sizes matching the standard MTU (Maximum Transmissi=
-on
->>>> Unit) size of 1500 bytes.
->>>>
->>>> To mitigate this issue, There are few possible solutions:
->>>>
->>>> 1. Configure buffer size and number through Kconfig.
->>>> 2. Permit the firmware creator to determine the most suitable value fr=
-om
->>>>     the resource table.
->>>> 3. Enable independent configurations on both ends. This approach would
->>>> support both dynamic and fixed buffer configurations using a generic
->>>> allocator.
->>>>
->>>> Reference:
->>>>
->>>> [1]:
->>>> https://lore.kernel.org/all/1548949280-31794-4-git-send-email-xiaoxian=
-g@xiaomi.com/
->>>> [2]: https://lore.kernel.org/all/20190701061353.GE1263@builder/
->>>>
->>>>
->>>> Draft Design Overview:
->>>>
->>>> Based on the reference patch and the discussions, we have outlined the
->>>> following key points for the belw design:
->>>>
->>>> 1. Assure compatibility, enabling both Linux and the remote system to
->>>> interchangeably transmit and receive messages, irrespective of size.
->>>> 2. For systems with constrained shared memory:
->>>> Systems with small, shared memory, we need to deal with a
->>>> limited/optimized memory chunk. To avoid memory fragmentation, the
->>>> allocator should have a pre-reserved buffer pool
->>>> 3. The implementation should ensure that the remote side does not
->>>> receive messages based on its allocation parameters.
->>>>
->>>> do you think it could make sense?
->>>>
->>>> High level view:
->>>> +------------------+                               +------------------=
-+
->>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |
->>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Linux       |=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Remote      |
->>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |
->>>> |=C2=A0=C2=A0 +----------+   |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
----------------+     |=C2=A0=C2=A0 +----------+   |
->>>> |=C2=A0=C2=A0 |=C2=A0=C2=A0 RPMSG  |=C2=A0=C2=A0 | <---> | Buffer Allo=
-cator|<--->|=C2=A0=C2=A0 | RPMSG    |=C2=A0=C2=A0 |
->>>> |=C2=A0=C2=A0 +----------+   |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | (=
-Dynamic/Static)|=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 +----------+   |
->>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +--=
----------------+     |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
->>>> +------------------+                               +------------------=
-+
->>>>
->>>>
->>>> Detailed view:
->>>>
->>>>                     +-------------------------+
->>>>                     |=C2=A0 Message Creation       |
->>>>                     |=C2=A0 (Both Linux/Remote)    |
->>>>                     +------------+------------+
->>>>                                  |
->>>>                                  v
->>>>                     +-------------------------+
->>>>                     | Determine the allocation|
->>>>                     | strategy                |
->>>>                     +------------+------------+
->>>>                                  |
->>>>                   +--------------+--------------+
->>>>                   |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
->>>> +-------------------------------+  +-------------------------------+
->>>> | Dynamic allocation            |=C2=A0 | Static allocation           =
-  |
->>>> | (Buffer allocator allocates   |=C2=A0 | (Pre-reserved memory        =
-  |
->>>> | memory space as needed,       |=C2=A0 | space)                      =
-  |
->>>> | based on the current          |=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |
->>>> | message requirement )         |=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |
->>>> +-------------------------------+  +-------------------------------+
->>>
->>> Do you have a proposal for dynamic allocation?
->>>
->>> RPMSG is based on the virtio protocol. The virtio driver in the Linux k=
-ernel
->>> is responsible for allocating buffers for the virtio device on the remo=
-te
->>> processor.
->>>
->>> In the current implementation (static allocation) the Linux
->>> kernel allocates predefined buffers for the remote processor.
->>>
->>> How would you manage the fact that the sender allocates its own buffers=
- and
->>> references
->>> them in the vring descriptor? This would require each core to have
->>> a dual role, right?
->>> - a virtio driver role on its TX vring
->>> - a virtio device role on its RX vring."
->>>
->> I'm unsure if a dual role is feasible under the Virtio specification.
->
-> At least, it does not seem to align with the philosophy of VirtIO.
->
->
->> However, would it make sense to set the size of the outbuf based on the
->> Maximum Transmission Unit (MTU) size that is supported? Additionally,
->> the size of the inbuf could be set by the firmware, suggesting that it
->> should be derived from the resource table. With this approach, I believe
->> the sender can decide the maximum size.
->
-> It is not clear to me what your proposal is.
-> Are you speaking about a pre-allocated buffers as proposed in [1],
-> or are you speaking about dynamic allocation of the RPMsg in a pool?
+On 24/11/2023 22:19, Mukesh Ojha wrote:
+> Add the qualcomm minidump guide for the users which tries to cover
+> the dependency, API use and the way to test and collect minidump
+> on Qualcomm supported SoCs.
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>   Documentation/admin-guide/index.rst         |   1 +
+>   Documentation/admin-guide/qcom_minidump.rst | 272 ++++++++++++++++++++++++++++
+>   2 files changed, 273 insertions(+)
+>   create mode 100644 Documentation/admin-guide/qcom_minidump.rst
 
-we are at the initial phase of this investigation. As we previously
-discussed, option 3 is not feasible in accordance with the virtio
-specification.The above proposed solution aligns with [1], suggesting
-preallocated in_buf and out_buf, with sizes determined from the resource
-table and MTU. By allowing Linux to decide the out_buf size and the
-remote to decide the in_buf size, I believe we can avoid conflicts. If
-everyone agrees on a common idea, then it would be a good starting point
+General nit-pick on sequencing of your patches. Its good practice (tm) 
+to put your documentation first in your series.
 
-Regards
-Divin
+> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+> index 43ea35613dfc..251d070486c2 100644
+> --- a/Documentation/admin-guide/index.rst
+> +++ b/Documentation/admin-guide/index.rst
+> @@ -120,6 +120,7 @@ configure specific aspects of kernel behavior to your liking.
+>      perf-security
+>      pm/index
+>      pnp
+> +   qcom_minidump
+>      rapidio
+>      ras
+>      rtc
+> diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
+> new file mode 100644
+> index 000000000000..b492f2b79639
+> --- /dev/null
+> +++ b/Documentation/admin-guide/qcom_minidump.rst
+> @@ -0,0 +1,272 @@
+> +Qualcomm minidump feature
+> +=========================
+> +
+> +Introduction
+> +------------
+> +
+> +Minidump is a best effort mechanism to collect useful and predefined
+> +data for first level of debugging on end user devices running on
+> +Qualcomm SoCs. 
 
-> Regards,
-> Arnaud
->
->>
->> Regards
->> Divin
->>
->>>
->>> Regards,
->>> Arnaud
->>>
->>
->>>
->>>>
->>>> We would greatly appreciate any feedback, suggestions, or improvements
->>>> you could provide.
->>>>
->>>> Thank you for your time and consideration.
->>>>
->>>> Regards
->>>> Divin
->>>> IMPORTANT NOTICE: The contents of this email and any attachments are
->>>> confidential and may also be privileged. If you are not the intended r=
-ecipient,
->>>> please notify the sender immediately and do not disclose the contents =
-to any
->>>> other person, use it for any purpose, or store or copy the information=
- in any
->>>> medium. Thank you.
->>
->> IMPORTANT NOTICE: The contents of this email and any attachments are
->> confidential and may also be privileged. If you are not the intended rec=
-ipient,
->> please notify the sender immediately and do not disclose the contents to=
- any
->> other person, use it for any purpose, or store or copy the information i=
-n any
->> medium. Thank you.
+What does "first-level debugging" mean here ? You use the term 
+"post-mortem" later, stick with one term for consistency throughout your 
+document.
 
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
+Suggest:
+
+"Minidump is a best-effort mechanism to collect useful predefined data 
+for post-mortem debugging on a Qualcomm System on Chips (SoCs)."
+
+Generally better to stick with "Qualcomm SoC" and "Minidump" once you 
+establish the terms upfront and early in your text - instead of 
+reverting to "device" and "it".
+
+It is built on the premise that System on Chip (SoC)
+> +or subsystem part of SoC crashes, due to a range of hardware and
+> +software bugs.
+Instead of saying "It" say "Minidump"
+
+Hence, the ability to collect accurate data is only
+> +a best-effort. The data collected could be invalid or corrupted, data
+> +collection itself could fail, and so on.
+
+"and so on" is a redundancy, drop.
+
+
+Suggest:
+Minidump is built on the premise that a hardware or software component 
+on the SoC has encountered an unexpected fault. This means that the data 
+collected by minidump cannot be assumed to be correct or even present.
+
+> +
+> +Qualcomm devices in engineering mode provides a mechanism for generating
+> +full system RAM dumps for post-mortem debugging. 
+
+Stick with the established naming convention
+
+"Qualcomm SoCs in engineering mode provide a mechanism for generating 
+full system RAM dumps for this post-mortem debugging"
+
+But in some cases it's
+> +however not feasible to capture the entire content of RAM. The minidump
+> +mechanism provides the means for selected region should be included in
+> +the ramdump.
+
+Dont' start a sentence with "But"
+
+You're also not being clear what you mean by "the entire content of RAM" 
+since you obviously can't capture a full snap-shot of DRAM and store in 
+DRAM.
+
+Better to say IMO
+
+"Minidump captures specific pre-defined regions of RAM and stores those 
+regions in a reserved Minidump specific buffer."
+
+"The region of RAM used to store Minidump data shall be referred to as 
+SMEM throughout this document." [1]
+
+> +::
+> +
+> +   +-----------------------------------------------+
+> +   |   DDR                       +-------------+   |
+
+Instead of saying "DDR" just mark this as RAM or Memory.
+Its a terrible nit-pick from me but DDR = "Double Data Rate Synchronous 
+Dynamic Random-Access Memory" but that's irrelevant to this 
+specification. We could be living in a gigantic SRAM for argument sake.
+
+> +   |                             |      SS0-ToC|   |
+> +   | +----------------+     +----------------+ |   |
+> +   | |Shared memory   |     |         SS1-ToC| |   |
+> +   | |(SMEM)          |     |                | |   |
+> +   | |                | +-->|--------+       | |   |
+> +   | |G-ToC           | |   | SS-ToC  \      | |   |
+> +   | |+-------------+ | |   | +-----------+  | |   |
+> +   | ||-------------| | |   | |-----------|  | |   |
+> +   | || SS0-ToC     | | | +-|<|SS1 region1|  | |   |
+> +   | ||-------------| | | | | |-----------|  | |   |
+> +   | || SS1-ToC     |-|>+ | | |SS1 region2|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SS2-ToC     | |   | | |  ...      |  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | ||  ...        | |   |-|<|SS1 regionN|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SSn-ToC     | |   | | +-----------+  | |   |
+> +   | |+-------------+ |   | |                | |   |
+> +   | |                |   | |----------------| |   |
+> +   | |                |   +>|  regionN       | |   |
+> +   | |                |   | |----------------| |   |
+> +   | +----------------+   | |                | |   |
+> +   |                      | |----------------| |   |
+> +   |                      +>|  region1       | |   |
+> +   |                        |----------------| |   |
+> +   |                        |                | |   |
+> +   |                        |----------------|-+   |
+> +   |                        |  region5       |     |
+> +   |                        |----------------|     |
+> +   |                        |                |     |
+> +   |  Region information    +----------------+     |
+> +   | +---------------+                             |
+> +   | |region name    |                             |
+> +   | |---------------|                             |
+> +   | |region address |                             |
+> +   | |---------------|                             |
+> +   | |region size    |                             |
+> +   | +---------------+                             |
+> +   +-----------------------------------------------+
+> +       G-ToC: Global table of contents
+> +       SS-ToC: Subsystem table of contents
+> +       SS0-SSn: Subsystem numbered from 0 to n
+
+You need to be more consistent here
+
+SSX-ToC -> SSX-SSn
+
+Where X is an integer from 0 upwards and similarly n is a integer from 0 
+upwards.
+
+This name SSX-SSn is not especially descriptive, I'm not sure if this is 
+a name you are choosing here ? If so then let me suggest a new name like 
+"Subsystem Memory Segment" SSX-MSn
+
+->
+
+        G-ToC: Global table of contents
+        SSX-ToC: Subsystem X table of contents.
+                 X is an integer in the range of 0 to ?
+                 Is there an upper limit ?
+                 Presumably this is an 8, 16, 32 or 64 bit integer
+                 Please define either the size of the integer or the
+                 valid range of values 0..128, 0..256
+        SSX-MSn: Subsystem numbered from 0 to n
+                 Same comment for the 'n' here.
+
+> +
+> +It depends on SoC where the underlying firmware is keeping the
+> +minidump global table taking care of subsystem ToC part for
+> +minidump like for above diagram, it is for shared memory sitting
+> +in DDR and it is shared among various master however it is possible
+
+> +that this could be implemented via memory mapped regions but the
+> +general idea should remain same. Here, various subsystem could be
+> +DSP's like ADSP/CDSP/MODEM etc, along with Application processor
+> +(APSS) where Linux runs. 
+
+
+DSP minidump gets collected when DSP's goes
+> +for recovery followed by a crash. The minidump part of code for
+> +that resides in ``qcom_rproc_minidump.c``.
+
+This paragraph is difficult to parse.
+
+What you are describing here is a linked list, I think you should have a 
+paragraph describing how the memory structure works
+
+->
+
+"Minidump determines which areas of DRAM to capture via a Minidump 
+defined linked-list structure.
+
+At the top level a Global Table of Contents (GTOC) enumerates a variable 
+number of SubSystem Table Of Contents (SSTOC) structures.
+
+Each SSTOC contains a list of SubSystem Memory Segements which are named 
+according to the containing SSTOC hence (SSX-MSn) where "X" denotes the 
+SystemSystem index of the containing SSX-ToC and "n" denotes an 
+individual Memory Segment within the SystemSystem. Hence SS0-MS0 belongs 
+to SS0-ToC whereas SS1-MS0 belongs to SS1-ToC."
+
+Then I think you can describe how the crash dump colleciton works and 
+which agents of the system - DSP ? is responsible for collecting the 
+crashdump
+
+->
+
+"The Application Processor SubSystem (APSS) runs the Linux kernel and is 
+therefore not responsible for assembling Minidump data. One of the other 
+system agents in the SoC will be responsible for capturing the Minidump 
+data during system reset.
+
+Typically one of the SoC Digital Signal Processors (DSP) will be used 
+for this purpose.
+
+During reset the DSP will walk the GTOC, SSX-ToCs and SSX-MSns 
+populating the Minidump RAM area with the indicated memory"
+
+> +
+> +
+> +SMEM as backend
+
+
+> +----------------
+> +
+> +In this document, SMEM will be used as the backend implementation
+> +of minidump.
+
+[1] As per the above link, you need to introduce the term SMEM earlier.
+
+It's fine to expand on its meaning later but, do please define it once 
+upfront before you use it in your awesome ASCII art.
+
+> +The core of minidump feature is part of Qualcomm's boot firmware code.
+> +It initializes shared memory (SMEM), which is a part of DDR and
+> +allocates a small section of it to minidump table, i.e. also called
+> +global table of contents (G-ToC). Each subsystem (APSS, ADSP, ...) has
+> +its own table of segments to be included in the minidump, all
+> +references from a descriptor in SMEM (G-ToC). Each segment/region has
+> +some details like name, physical address and its size etc. and it
+> +could be anywhere scattered in the DDR.
+
+->
+
+"The SoC's bootloader must reserve an area of RAM as SMEM prior to 
+handing over control to the run-time operating system. The bootloader is 
+responsible to place the GTOC at the starting address of SMEM."
+
+If you want to give more technical details of size, physical address - 
+then explicitly define those in the section above which talks about the 
+linked-list structure.
+
+Please try to avoid use of "etc" or "and so on" since it assumes the 
+reader already knows how the system works and can fill in the blanks 
+but, what you are doing here is educating a Minidump novice in how 
+things work.
+
+> +
+> +Qualcomm APSS Minidump kernel driver concept
+> +--------------------------------------------
+> +
+> +Qualcomm APSS minidump kernel driver adds the capability to add Linux
+
+So why "Minidump" and then "minidump" choose one.
+
+> +region to be dumped as part of RAM dump collection.
+
+
+OK so this really is the "meat" of the system. The bootloader/firmware 
+populates the GTOC.
+
+The Q this document should probably answer is how the kernel driver 
+knows how/where to place its data.
+
+Assumed to be parsing the DTB.
+
+  At the moment,
+> +shared memory driver creates platform device for minidump driver and
+> +give a means to APSS minidump to initialize itself on probe.
+
+"At the moment" is another drop.
+
+Just make a clear statement
+
+"The minidump platform driver populates the APSS porition of the GTOC"
+
+more interesting to me is - are there defined numbers, identifiers for 
+the APSS ? or do we just add new entries to the GTOC ?
+
+ie. is there a reserved index or "type" in the GTOC that identifies 
+where the APSS needs to insert itself ?
+
+> +This driver provides ``qcom_minidump_region_register`` and
+> +``qcom_minidump_region_unregister`` API's to register and unregister
+> +APSS minidump region. 
+
+Why does it do that ? Is it not the case that the driver knows where the 
+APSS data goes ?
+
+It also supports registration for the clients
+> +who came before minidump driver was initialized. It maintains pending
+> +list of clients who came before minidump and once minidump is initialized
+> +it registers them in one go.
+
+Don't start sentences with "It" -> "The driver" or "Minidump"
+
+As I read this though, the Minidump driver in Linux isn't just 
+registering / managing the APSS side of things but also "doing stuff" 
+for other clients ?
+
+How does the Linux driver know what to register ?
+
+> +
+> +To simplify post-mortem debugging, driver creates and maintain an ELF
+
+the driver creates and maintains
+
+> +header as first region that gets updated each time a new region gets
+> +registered.
+
+as the first region
+
+So - who is registering these regions ? Linux kernel drivers ? aDSP / cDSP ?
+
+If I write a new driver for Venus or GPU can I define my own region(s) 
+to be captured ?
+
+Presumably. Please give more detail on this.
+
+> +
+> +The solution supports extracting the RAM dump/minidump produced either
+> +over USB or stored to an attached storage device.
+
+What provides that functionality ? The bootloader ?
+
+How do you trigger / capture that dump from the bootloader ?
+
+No need to go into super-detail but give some idea.
+
+> +
+> +Dependency of minidump kernel driver
+> +------------------------------------
+> +
+> +It is to note that whole of minidump depends on Qualcomm boot firmware
+> +whether it supports minidump or not. 
+
+You can drop this - you've already stated the bootloader/firmware must 
+setup the initial table so, you're not providing additional information 
+with this statement.
+
+> So, if the minidump SMEM ID is
+
+Try not to start sentences with "So"
+
+SMEM ID ? This is your first time using this term - please relate it 
+back to your ASCII diagram and the description you give with that text.
+
+> +present in shared memory, it indicates that minidump is supported from
+> +boot firmware and it is possible to dump Linux (APSS) region as part
+> +of minidump collection.
+
+If _which_ SMEM ID ?
+
+It seems to me as if we are missing some important information here - 
+what are the list of SMEM IDs ?
+
+Are these IDs serial and incrementing across SoC versions or SoC specific ?
+
+You need to define that data.
+
+> +How a kernel client driver can register region with minidump
+> +------------------------------------------------------------
+
+Answering yes to my earlier question. A driver I write can make use of 
+the API you are providing here.
+
+Great. Please give some indication of that earlier, even if its a 
+reference to this description you give here "See X.Y later in this document"
+
+> +
+> +Client driver can use ``qcom_minidump_region_register`` API's to register
+> +and ``qcom_minidump_region_unregister`` to unregister their region from
+> +minidump driver.
+> +
+> +Client needs to fill their region by filling ``qcom_minidump_region``
+> +structure object which consists of the region name, region's virtual
+> +and physical address and its size.
+
+Nit pick. You need a definite article here "A client driver" etc.
+
+> +
+> +Below, is one sample client driver snippet which tries to allocate a
+> +region from kernel heap of certain size and it writes a certain known
+> +pattern.
+
+Good
+
+  (that can help in verification after collection that we got
+> +the exact pattern, what we wrote) and registers it with minidump.
+
+Not necessary to define this. We are all smart here and by now the 
+intent of the mechanism is defined..
+
+> +
+> + .. code-block:: c
+> +
+> +  #include <soc/qcom/qcom_minidump.h>
+> +  [...]
+> +
+> +
+> +  [... inside a function ...]
+> +  struct qcom_minidump_region region;
+> +
+> +  [...]
+> +
+> +  client_mem_region = kzalloc(region_size, GFP_KERNEL);
+> +  if (!client_mem_region)
+> +	return -ENOMEM;
+> +
+> +  [... Just write a pattern ...]
+> +  memset(client_mem_region, 0xAB, region_size);
+> +
+> +  [... Fill up the region object ...]
+> +  strlcpy(region.name, "REGION_A", sizeof(region.name));
+> +  region.virt_addr = client_mem_region;
+> +  region.phys_addr = virt_to_phys(client_mem_region);
+> +  region.size = region_size;
+> +
+> +  ret = qcom_minidump_region_register(&region);
+> +  if (ret < 0) {
+> +	pr_err("failed to add region in minidump: err: %d\n", ret);
+> +	return ret;
+> +  }
+> +
+> +  [...]
+> +
+> +
+> +Test
+> +----
+
+Testing
+
+> +
+> +Existing Qualcomm devices already supports entire RAM dump (also called
+> +full dump) by writing appropriate value to Qualcomm's top control and
+> +status register (tcsr) in ``driver/firmware/qcom_scm.c`` .
+
+"Existing Qualcomm SoCs already support dumping the entire RAM to the 
+SMEM area/segment/whatever"
+
+This is 100% counter-intuitive since SMEM lives in RAM, correct ?
+
+Full dump means what, a full dump of the APSS RAM ? What happens if SMEM 
+cannot accommodate the full APSS RAM dump ?
+
+> +
+> +SCM device Tree bindings required to support download mode
+> +For example (sm8450) ::
+> +
+> +	/ {
+> +
+> +	[...]
+> +
+> +		firmware {
+> +			scm: scm {
+> +				compatible = "qcom,scm-sm8450", "qcom,scm";
+> +				[... tcsr register ... ]
+> +				qcom,dload-mode = <&tcsr 0x13000>;
+> +
+> +				[...]
+> +			};
+> +		};
+> +
+> +	[...]
+> +
+> +		soc: soc@0 {
+> +
+> +			[...]
+> +
+> +			tcsr: syscon@1fc0000 {
+> +				compatible = "qcom,sm8450-tcsr", "syscon";
+> +				reg = <0x0 0x1fc0000 0x0 0x30000>;
+> +			};
+> +
+> +			[...]
+> +		};
+> +	[...]
+> +
+> +	};
+> +
+> +User of minidump can pass ``qcom_scm.download_mode="mini"`` to kernel
+> +commandline to set the current download mode to minidump.
+
+"A kernel command line parameter is provided 
+``qcom_scm.download_mode="mini"`` to facilitate ... but you aren't 
+telling us what "minidump" captures "the current download" ? do you mean 
+the current state ?
+
+Does the system continue to boot up if you pass 
+qcom_scm.download_mode="mini ? will additional registrations to 
+SMEM/Minidump work ?
+
+What happens to the minidump data if there is a _subsequent_ real 
+crashdump ?
+
+Overwritten ?
+
+Also what happens if SMEM runs out of space ? Say I boot with 
+``qcom_scm.download_mode="mini"`` and then the system crashes - SMEM has 
+a limit right ?
+
+So the minidump gets overwritten ?
+
+> +Similarly, ``"full"`` is passed to set the download mode to full dump
+> +where entire RAM dump will be collected while setting it ``"full,mini"``
+> +will collect minidump along with fulldump.
+
+Still not super-clear what the difference between mini and full is here.
+
+> +
+> +Writing to sysfs node can also be used to set the mode to minidump::
+> +
+> +	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
+> +
+> +Once the download mode is set, any kind of crash will make the device collect
+> +respective dump as per set download mode.
+
+Nice.
+
+> +
+> +Dump collection
+> +---------------
+> +::
+> +
+> +	+-----------+
+> +	|           |
+> +	|           |         +------+
+> +	|           |         |      |
+> +	|           |         +--+---+ Product(Qualcomm SoC)
+> +	+-----------+             |
+> +	|+++++++++++|<------------+
+> +	|+++++++++++|    usb cable
+> +	+-----------+
+> +            x86_64 PC
+> +
+> +The solution supports a product running with Qualcomm SoC (where minidump)
+> +is supported from the firmware) connected to x86_64 host PC running PCAT
+> +tool.
+
+It supports downloading the minidump produced from product to the
+> +host PC over USB or to save the minidump to the product attached storage
+> +device(UFS/eMMC/SD Card) into minidump dedicated partition.
+
+It would be a good idea to reference this section earlier.
+
+> +
+> +By default, dumps are downloaded via USB to the attached x86_64 PC running
+> +PCAT (Qualcomm tool) software. Upon download, we will see a set of binary
+> +blobs starting with name ``md_*`` in PCAT configured directory in x86_64
+> +machine, so for above example from the client it will be ``md_REGION_A.BIN``.
+> +This binary blob depends on region content to determine whether it needs
+> +external parser support to get the content of the region, so for simple
+> +plain ASCII text we don't need any parsing and the content can be seen
+> +just opening the binary file.
+> +
+> +To collect the dump to attached storage type, one needs to write appropriate
+> +value to IMEM register, in that case dumps are collected in rawdump
+> +partition on the product device itself.
+> +
+> +One needs to read the entire rawdump partition and pull out content to
+> +save it onto the attached x86_64 machine over USB. Later, this rawdump
+> +can be passed to another tool (``dexter.exe`` [Qualcomm tool]) which
+> +converts this into the similar binary blobs which we have got it when
+> +download type was set to USB, i.e. a set of registered regions as blobs
+> +and their name starts with ``md_*``.
+> +
+> +Replacing the ``dexter.exe`` with some open source tool can be added as future
+> +scope of this document.
+
+---
+bod
