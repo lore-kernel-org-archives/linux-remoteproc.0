@@ -1,103 +1,233 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="CamcQrz2"
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC87BD;
-	Mon, 27 Nov 2023 13:56:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-	t=1701122146; bh=aZFnOe6ebFNkRtbhg0CAmUQplZKhqM8Szl6+FvW/pp0=;
-	h=From:Date:Subject:To:Cc;
-	b=CamcQrz2yOEXroTzvmlYjgHtN6DjszA87lK8wLaMTZo1ba22Wk2xO6A9xe1UDTQpJ
-	 n3a/IfMMxP3WJdAamwhMiH70S1Ek3vdlb00nYnSDzJ90Gc7HoGlNpdeaLCWhh5XzS7
-	 D9hY3EO9knqI+cgjC1RNUdIXLCM8g9eNjPkotrco=
-From: Luca Weiss <luca@z3ntu.xyz>
-Date: Mon, 27 Nov 2023 22:55:38 +0100
-Subject: [PATCH v2] arm64: dts: qcom: sdm632-fairphone-fp3: Enable
- WiFi/Bluetooth
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7nMyXXVl"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7E31BE8
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Nov 2023 00:34:50 -0800 (PST)
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3AS20MiU012960;
+	Tue, 28 Nov 2023 09:34:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=TUhcxp90iNmOGnR+a8F/maEtB7SP7LwmiuXwmKCjM0M=; b=7n
+	MyXXVlQLsBTa6mvXl1UwETMDn6P7oozTJcMDNhkXT87vNwgXJorQO0AIo+FcN8hw
+	RXxTuXlcZpJgMKTm2cD1DEfAFgtel0KHc3ZsXevuE2Meznvu0fqqGgTY8M7vQo9+
+	TK/fVWdtya4W7mHjheQknUlKgcoaI5UbKmjh1ygJDCv023cvPLh9Bq/fhoUa2QfY
+	dpXtdu2n1DoxW+/lnIRgr4vark5kqNcCSAlstTM9nfZKO14/RYYFtrFCGet0q1yj
+	/i723a5D74DwRGrOs1O2gkwyTqoxRhqXqeZjboFWohO4GRZZLICMbiSMito3GZ2D
+	JSo711Y81HE2SgGx80LQ==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ums0rmd26-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Nov 2023 09:34:47 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 40CDF10002A;
+	Tue, 28 Nov 2023 09:34:47 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3476F217B79;
+	Tue, 28 Nov 2023 09:34:47 +0100 (CET)
+Received: from [10.201.20.163] (10.201.20.163) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 28 Nov
+ 2023 09:34:46 +0100
+Message-ID: <3f0b831b-eda0-44c4-ad1b-1d4958d90ecd@foss.st.com>
+Date: Tue, 28 Nov 2023 09:34:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231127-fp3-wcnss-v2-1-a5154fae4768@z3ntu.xyz>
-X-B4-Tracking: v=1; b=H4sIAFkQZWUC/23Muw7CMAyF4VepPGNUx4pUmHgP1IEWh3pJq6SEX
- pR3J3Rm/I+Ovh2iBJUI12qHIEmjjr6EOVXQDw//EtRnaTC1YarJopsYP72PEQ1Lw11j2DoL5T8
- Fcboc1r0tPWicx7AedKLf+k9JhDVSx0TMVi5Mt439/D4v6wZtzvkLnieeUqIAAAA=
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Loic Poulain <loic.poulain@linaro.org>, 
- Kalle Valo <kvalo@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, 
- Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=aZFnOe6ebFNkRtbhg0CAmUQplZKhqM8Szl6+FvW/pp0=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBlZRBahsQcRnXMktfZ7tsnduxK14pwkjCxeT1OR
- 3jwjSJb+B+JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZWUQWgAKCRBy2EO4nU3X
- VnB5D/9es1bYCSMq40ZW5SBjfWuZN1YqbQfld+RE/83WpM8TD/n+bWrFhFQJUZq3mwYmeWrzY3u
- V6M8VZv5neVCyJcMlpPdMPY+PpP+WEA0LK99VOQWKOjT4BJ+WKORWKsktW+opePuqspGP5Gicfe
- stGsn3CnElUk4o6K4dYfyvYcODsVjCa6A0IxksuwyFYkfz3C0zqXeCrTCJSa8M2qtG2DWPpARlP
- HoqTUw5IucV3t+WhsxNUHd/nojeKKkmQUnZe4MED3qIAt/lowsBDC8WE8vFWAUpVI+HDEtWNt/B
- 1h/DY+no1PqBB99QdxIlKNQgzCRvAoY1XQTe2UTOTmb+opnXDpIFtlBsDBulT0CPVA8XPbq8OSB
- 2vikKmsRrlFLLQdwemqDNUNs9A947zKDVdV6fcJgq8ao2//WgVLtIWqgntjH0yaFmIjB7EZi6M4
- 3Mq1gvi6Rt68v+1lGjQMxSQAye7KyeNIzoZQpnUl2qXwvqyAsiv3Bf3FOmtMpNlGVO4pffiaN/E
- UuTorY6GHFedMKD8bJpTup5BMN/rjKOJcLs5JWrw+9NrI9vq6rQGFehk+KiMrHny9Sr/1m2l/Ms
- k74Udtdhmmh6imE8nBMOFfIabNcwkSBqrWhE/2gkOq8+jnXjb6mjy0XLkGF6sbm3QUBP9nD7ZPv
- hFLuTFaRK0XXzcQ==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Discussion]: Enhance virtio rpmsg bus driver buffer allocation
+Content-Language: en-US
+To: Divin Raj <divin.raj@arm.com>, <linux-remoteproc@vger.kernel.org>
+CC: "Rahul.Singh@arm.com" <Rahul.Singh@arm.com>
+References: <1af16ff8-5706-45e5-9737-05da39957c95@arm.com>
+ <7eb830b3-e915-4151-ae10-46ce7cd68fa1@arm.com>
+ <b98f58a2-6627-4e8a-9466-4f6276cfd0b3@foss.st.com>
+ <66dc0fbc-0898-4597-92a4-489050cb1b1c@arm.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <66dc0fbc-0898-4597-92a4-489050cb1b1c@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-28_07,2023-11-27_01,2023-05-22_02
 
-Configure and enable the WCNSS which provides WiFi and Bluetooth on this
-device using the WCN3680B chip.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-Changes in v2:
-- Drop patches for "wcn3680b" compatible, just use "wcn3680"
-- Link to v1: https://lore.kernel.org/r/20231015-fp3-wcnss-v1-0-1b311335e931@z3ntu.xyz
----
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-index 301eca9a4f31..476d0d40aaf9 100644
---- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-@@ -239,3 +239,18 @@ &usb3 {
- &usb3_dwc3 {
- 	dr_mode = "peripheral";
- };
-+
-+&wcnss {
-+	status = "okay";
-+
-+	vddpx-supply = <&pm8953_l5>;
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3680";
-+
-+	vddxo-supply = <&pm8953_l7>;
-+	vddrfa-supply = <&pm8953_l19>;
-+	vddpa-supply = <&pm8953_l9>;
-+	vdddig-supply = <&pm8953_l5>;
-+};
+On 11/24/23 17:45, Divin Raj wrote:
+> Hi Arnaud,
+> Please find my comments inline.
+> 
+> On 11/20/23 10:14 AM, Arnaud POULIQUEN wrote:
+>> Hi Divin,
+>>
+>> On 11/17/23 23:24, Divin Raj wrote:
+>>> On 10/23/23 11:44 AM, Divin Raj wrote:
+>>>> Hello all,
+>>>>
+>>>> I am reaching out with reference to the patch discussed here: Enhanced
+>>>> virtio rpmsg bus driver buffer allocation.
+>>>> <https://lore.kernel.org/all/CAH2Cfb-sv3SAL8bcczC-Dc3_r58MYZCS7s7zGtn1Qfo3mmBqVg@mail.gmail.com/>
+>>>>
+>>>> I've been keenly following the developments around enhancing buffer
+>>>> allocation strategies, especially those focused on dynamic buffer sizing
+>>>> and the considerations for systems under varying memory constraints.This
+>>>> work is highly relevant to several projects I am involved in, and I am
+>>>> quite interested in its progression. May I kindly request an update on
+>>>> the current phase of these initiatives? Additionally, I am eager to know
+>>>> if there would be an opportunity for me to contribute to enhancing the
+>>>> patch, possibly by working on improvements or assisting in verification
+>>>> processes.
+>>>>
+>>>> Furthermore, if there are any condensed resources, summaries, or
+>>>> specific threads that encapsulate recent advancements or discussions on
+>>>> this topic, I would be grateful to receive directions to them.
+>>>>
+>>>> I appreciate everyone's dedicated efforts and invaluable contributions
+>>>> to this area of development. Looking forward to the updates.
+>>>>
+>>>> Regards Divin
+>>>>
+>>> Hello Linux Community,
+>>>
+>>> In one of our internal projects, we encountered a challenge with RPMSG
+>>> buffer allocation. Our goal is to optimize memory allocation for an
+>>> out-of-tree RPMSG Ethernet device driver using virtio. This is to ensure
+>>> support for packet sizes matching the standard MTU (Maximum Transmission
+>>> Unit) size of 1500 bytes.
+>>>
+>>> To mitigate this issue, There are few possible solutions:
+>>>
+>>> 1. Configure buffer size and number through Kconfig.
+>>> 2. Permit the firmware creator to determine the most suitable value from
+>>>    the resource table.
+>>> 3. Enable independent configurations on both ends. This approach would
+>>> support both dynamic and fixed buffer configurations using a generic
+>>> allocator.
+>>>
+>>> Reference:
+>>>
+>>> [1]:
+>>> https://lore.kernel.org/all/1548949280-31794-4-git-send-email-xiaoxiang@xiaomi.com/
+>>> [2]: https://lore.kernel.org/all/20190701061353.GE1263@builder/
+>>>
+>>>
+>>> Draft Design Overview:
+>>>
+>>> Based on the reference patch and the discussions, we have outlined the
+>>> following key points for the belw design:
+>>>
+>>> 1. Assure compatibility, enabling both Linux and the remote system to
+>>> interchangeably transmit and receive messages, irrespective of size.
+>>> 2. For systems with constrained shared memory:
+>>> Systems with small, shared memory, we need to deal with a
+>>> limited/optimized memory chunk. To avoid memory fragmentation, the
+>>> allocator should have a pre-reserved buffer pool
+>>> 3. The implementation should ensure that the remote side does not
+>>> receive messages based on its allocation parameters.
+>>>
+>>> do you think it could make sense?
+>>>
+>>> High level view:
+>>> +------------------+                               +------------------+
+>>> |                  |                               |                  |
+>>> |      Linux       |                               |      Remote      |
+>>> |                  |                               |                  |
+>>> |   +----------+   |       +-----------------+     |   +----------+   |
+>>> |   |   RPMSG  |   | <---> | Buffer Allocator|<--->|   | RPMSG    |   |
+>>> |   +----------+   |       | (Dynamic/Static)|     |   +----------+   |
+>>> |                  |       +-----------------+     |                  |
+>>> +------------------+                               +------------------+
+>>>
+>>>
+>>> Detailed view:
+>>>
+>>>                    +-------------------------+
+>>>                    |  Message Creation       |
+>>>                    |  (Both Linux/Remote)    |
+>>>                    +------------+------------+
+>>>                                 |
+>>>                                 v
+>>>                    +-------------------------+
+>>>                    | Determine the allocation|
+>>>                    | strategy                |
+>>>                    +------------+------------+
+>>>                                 |
+>>>                  +--------------+--------------+
+>>>                  |                             |
+>>> +-------------------------------+  +-------------------------------+
+>>> | Dynamic allocation            |  | Static allocation             |
+>>> | (Buffer allocator allocates   |  | (Pre-reserved memory          |
+>>> | memory space as needed,       |  | space)                        |
+>>> | based on the current          |  |                               |
+>>> | message requirement )         |  |                               |
+>>> +-------------------------------+  +-------------------------------+
+>>
+>> Do you have a proposal for dynamic allocation?
+>>
+>> RPMSG is based on the virtio protocol. The virtio driver in the Linux kernel
+>> is responsible for allocating buffers for the virtio device on the remote
+>> processor.
+>>
+>> In the current implementation (static allocation) the Linux
+>> kernel allocates predefined buffers for the remote processor.
+>>
+>> How would you manage the fact that the sender allocates its own buffers and
+>> references
+>> them in the vring descriptor? This would require each core to have
+>> a dual role, right?
+>> - a virtio driver role on its TX vring
+>> - a virtio device role on its RX vring."
+>>
+> I'm unsure if a dual role is feasible under the Virtio specification.
 
----
-base-commit: 5dca35cc02999418b12ad3a86f1798d0999ce6bf
-change-id: 20231015-fp3-wcnss-23e83b8235f5
+At least, it does not seem to align with the philosophy of VirtIO.
 
-Best regards,
--- 
-Luca Weiss <luca@z3ntu.xyz>
 
+> However, would it make sense to set the size of the outbuf based on the
+> Maximum Transmission Unit (MTU) size that is supported? Additionally,
+> the size of the inbuf could be set by the firmware, suggesting that it
+> should be derived from the resource table. With this approach, I believe
+> the sender can decide the maximum size.
+
+It is not clear to me what your proposal is.
+Are you speaking about a pre-allocated buffers as proposed in [1],
+or are you speaking about dynamic allocation of the RPMsg in a pool?
+Regards,
+Arnaud
+
+> 
+> Regards
+> Divin
+> 
+>>
+>> Regards,
+>> Arnaud
+>>
+> 
+>>
+>>>
+>>> We would greatly appreciate any feedback, suggestions, or improvements
+>>> you could provide.
+>>>
+>>> Thank you for your time and consideration.
+>>>
+>>> Regards
+>>> Divin
+>>> IMPORTANT NOTICE: The contents of this email and any attachments are
+>>> confidential and may also be privileged. If you are not the intended recipient,
+>>> please notify the sender immediately and do not disclose the contents to any
+>>> other person, use it for any purpose, or store or copy the information in any
+>>> medium. Thank you.
+> 
+> IMPORTANT NOTICE: The contents of this email and any attachments are
+> confidential and may also be privileged. If you are not the intended recipient,
+> please notify the sender immediately and do not disclose the contents to any
+> other person, use it for any purpose, or store or copy the information in any
+> medium. Thank you.
