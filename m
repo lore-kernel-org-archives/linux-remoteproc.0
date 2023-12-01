@@ -1,124 +1,156 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E932910D7
-	for <linux-remoteproc@vger.kernel.org>; Fri,  1 Dec 2023 00:39:25 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r8z3N-0001Qw-Fm; Fri, 01 Dec 2023 09:39:17 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r8z3M-00CoWO-QK; Fri, 01 Dec 2023 09:39:16 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r8z3M-00C4ci-Gu; Fri, 01 Dec 2023 09:39:16 +0100
-Date: Fri, 1 Dec 2023 09:39:16 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Hari Nagalla <hnagalla@ti.com>, Nishanth Menon <nm@ti.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH 1/3] remoteproc: k3-dsp: Suppress duplicate error message
- in .remove()
-Message-ID: <20231201083916.5r7e3mv3dymgqcbo@pengutronix.de>
-References: <20231123211657.518181-5-u.kleine-koenig@pengutronix.de>
- <20231123211657.518181-6-u.kleine-koenig@pengutronix.de>
- <CANLsYky5tL6UZADgVBPEnPkN4GMKOhvn95oci7PywSZ2nyNXqg@mail.gmail.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tu5RxNuj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06EC10D8;
+	Fri,  1 Dec 2023 03:06:58 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B18uKgQ022357;
+	Fri, 1 Dec 2023 11:06:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=ddKWip09Ii5EtoLGy+6Dq9XJZUZNVv7bpq19jVF3sCY=;
+ b=Tu5RxNujEtPzzGWyxKBjwTpTh6Nf8ljoPOXDVWu3mn527fcgAIddOaOVB4YjKIWyHjf7
+ juQK/0PpRoTuU0N4tmEGtmN8Kzq99eUmapSgo9IxJIn/VWLjGsuOrP06LJ+HgjoYZC0j
+ 2RRfFeA8pgDeMSXe7sOkgmZKOVP+SqfVKIsQVwA6wEER7uvZrZJUF88aKU7AO0qqyfpa
+ /GX3eKPv1wf6i6aghWoLnG8emTfr3fjL4Qm6KQKjmDiKuRMf+Ta2Pa3HuRtUG8Ewc0bt
+ WemhLrAcI6zC0fZqCOGImzgR1UuvWoCyslsvDH41mSoD5yeI5Zd+CkxfhxU+fkk7ShSy Fg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3upvm1tn6t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Dec 2023 11:06:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3B1B6rEd017269
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Dec 2023 11:06:53 GMT
+Received: from hu-deesin-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 1 Dec 2023 03:06:49 -0800
+From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+To: <quic_bjorande@quicinc.com>, <bjorn.andersson@kernel.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <quic_sarannya@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        "Deepak
+ Kumar Singh" <quic_deesin@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+Subject: [PATCH V1] rpmsg: glink: smem: validate index before fifo read write
+Date: Fri, 1 Dec 2023 16:36:31 +0530
+Message-ID: <20231201110631.669085-1-quic_deesin@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b3w4g3dnrvo4eo3b"
-Content-Disposition: inline
-In-Reply-To: <CANLsYky5tL6UZADgVBPEnPkN4GMKOhvn95oci7PywSZ2nyNXqg@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 49DiMz7uDClOHEvaBUotB1hqK0N7ZCFp
+X-Proofpoint-GUID: 49DiMz7uDClOHEvaBUotB1hqK0N7ZCFp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-01_09,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 adultscore=0 clxscore=1011 mlxscore=0 mlxlogscore=876
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312010072
 
+Fifo head and tail index can be modified with wrong values from
+untrusted remote procs. Glink smem is not validating these index
+before using to read or write fifo. This can result in out of
+bound memory access if head and tail have incorrect values.
 
---b3w4g3dnrvo4eo3b
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add check for validation of head and tail index. This check will
+put index within fifo boundaries, so that no invalid memory access
+is made. Further this may result in certain packet drops unless
+glink finds a valid packet header in fifo again and recovers.
 
-Hello,
+Crash signature and calltrace with wrong head and tail values:
 
-On Thu, Nov 30, 2023 at 10:19:42AM -0700, Mathieu Poirier wrote:
-> Hari and Nishanth,
->=20
-> On Thu, 23 Nov 2023 at 14:17, Uwe Kleine-K=F6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > When the remove callback returns non-zero, the driver core emits an
-> > error message about the error value being ignored. As the driver already
-> > emits an error message already, return zero. This has no effect apart
-> > from suppressing the core's message. The platform device gets unbound
-> > irrespective of the return value.
-> >
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
-> >  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remote=
-proc/ti_k3_dsp_remoteproc.c
-> > index ef8415a7cd54..40a5fd8763fa 100644
-> > --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> > @@ -835,8 +835,9 @@ static int k3_dsp_rproc_remove(struct platform_devi=
-ce *pdev)
-> >         if (rproc->state =3D=3D RPROC_ATTACHED) {
-> >                 ret =3D rproc_detach(rproc);
-> >                 if (ret) {
-> > +                       /* Note this error path leaks resources */
-> >                         dev_err(dev, "failed to detach proc, ret =3D %d=
-\n", ret);
-> > -                       return ret;
-> > +                       return 0;
->=20
-> Please have a look at this error path.  As with the scenario where the
-> remote processor is controlled by the remoteproc core, nothing can be
-> done in .remove() to prevent the driver from going away.  As such and
-> even if rproc_detach() fails, other resources associated with this
-> remote processor should be cleaned-up.
+Internal error: Oops: 96000007 [#1] PREEMPT SMP
+pc : __memcpy_fromio+0x34/0xb4
+lr : glink_smem_rx_peak+0x68/0x94
 
-Without having done a deep dive into the driver and the remoteproc core
-I think the remoteproc core should provide a function that deregisters
-the software representation of a rproc device and returns void.
+__memcpy_fromio+0x34/0xb4
+glink_smem_rx_peak+0x68/0x94
+qcom_glink_native_intr+0x90/0x888
 
-If you look at rproc_detach, that can even fail if it doesn't get the
-mutex.
+Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+---
+ drivers/rpmsg/qcom_glink_smem.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-So I'm convinced there is something to do on the framework level before
-removing the ti_k3_dsp_remoteproc driver can be done without leaking
-stuff.
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+index 7a982c60a8dd..9eba0aaae916 100644
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -86,9 +86,14 @@ static size_t glink_smem_rx_avail(struct qcom_glink_pipe *np)
+ 	tail = le32_to_cpu(*pipe->tail);
+ 
+ 	if (head < tail)
+-		return pipe->native.length - tail + head;
++		len = pipe->native.length - tail + head;
+ 	else
+-		return head - tail;
++		len = head - tail;
++
++	if (WARN_ON_ONCE(len > pipe->native.length))
++		len = 0;
++
++	return len;
+ }
+ 
+ static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
+@@ -99,6 +104,10 @@ static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
+ 	u32 tail;
+ 
+ 	tail = le32_to_cpu(*pipe->tail);
++
++	if (WARN_ON_ONCE(tail > pipe->native.length))
++		return;
++
+ 	tail += offset;
+ 	if (tail >= pipe->native.length)
+ 		tail -= pipe->native.length;
+@@ -121,7 +130,7 @@ static void glink_smem_rx_advance(struct qcom_glink_pipe *np,
+ 
+ 	tail += count;
+ 	if (tail >= pipe->native.length)
+-		tail -= pipe->native.length;
++		tail %= pipe->native.length;
+ 
+ 	*pipe->tail = cpu_to_le32(tail);
+ }
+@@ -146,6 +155,9 @@ static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
+ 	else
+ 		avail -= FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE;
+ 
++	if (WARN_ON_ONCE(avail > pipe->native.length))
++		avail = 0;
++
+ 	return avail;
+ }
+ 
+@@ -155,6 +167,9 @@ static unsigned int glink_smem_tx_write_one(struct glink_smem_pipe *pipe,
+ {
+ 	size_t len;
+ 
++	if (WARN_ON_ONCE(head > pipe->native.length))
++		return head;
++
+ 	len = min_t(size_t, count, pipe->native.length - head);
+ 	if (len)
+ 		memcpy(pipe->fifo + head, data, len);
+-- 
+2.34.1
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---b3w4g3dnrvo4eo3b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVpm7MACgkQj4D7WH0S
-/k5D2Af+MGBwZYsuWlVcJDwxNYYPnoKbMxfKb2bhO+EAsWV+jGcOj/+zfVOQ4T9M
-wsIRzlOM4EyQcVV45xMFWFiL9vsziUOveuwwct7RaqUefGl33slIgOKsHljKh4LD
-oWc3kNr2GemH20qjB0uTclXcMXx2UT7ETYJqGs/erGegCLgFC4W9qbkMblx6laIK
-jcEBadpTBjDsYeXZ2RuuHfBiMClkQ8xVd296q+WnkOvU6+JATdN2iYXiw+4ICC1c
-IibagYOWgIYwTmf4mAKTJU6n6KTJkOszdCVXmeVczrFYl7YsDWlPozTEJCPDcXD8
-W9DTtzNRm3PuvMt6HyjPWqrDVOTqwg==
-=n3ai
------END PGP SIGNATURE-----
-
---b3w4g3dnrvo4eo3b--
