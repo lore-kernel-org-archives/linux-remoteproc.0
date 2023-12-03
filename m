@@ -1,69 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D4B4420;
-	Sun,  3 Dec 2023 04:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2rBOZ7u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40DC5C433CC;
-	Sun,  3 Dec 2023 04:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701579114;
-	bh=nEojWos07lNJnamlqJbrt8DW5wThbZFynqJl6pMGPRA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d2rBOZ7ubLvJwYmh6YQlCz07l2CmRBnbMx00r4RB4GI35C6pYNZGCj0mcRha6/L1l
-	 iKXpVO8lWX5cYO9Ri2rfvrcMF8Q/wY9F4gekfgO+2vNHGhi7TAS2j/6VJC4atVGXMV
-	 pqYt30tRS96Fz3FS2XBMH2xO07V9sqlv8eAcBAyIoYHgnm/ZoberzDc1egIlFnPw1r
-	 gHB+CWE6iA2/3fIGKb6BV4+UkvmpWGnItSeueUiiLYP58R3AdT3MuVCQ4zfRDJF7xb
-	 9adKVGdGD7M8JAD+HUopTWaigKR7OUQ0MZbY0wdr9Qb5TXjy3RRKfLv5F8H5xDmsY5
-	 4oDtHMvfAFvGQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-	Luca Weiss <luca@z3ntu.xyz>
-Cc: linux-arm-msm@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFK0G+Iz"
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0BFF3;
+	Sun,  3 Dec 2023 20:06:14 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1d05199f34dso13412425ad.3;
+        Sun, 03 Dec 2023 20:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701662774; x=1702267574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbkCHx96etqSfTuELzIWMZk408/Yxj+/7Dk7WZ5k3MY=;
+        b=DFK0G+Iz2ZSBFS+IA3UStPS36CkBwmzEvgWn98Or7aGFot08MBdQiFfayTm8SJwdb+
+         91aCmLAOYUYVuypEL49SApdGSY9vsb2ieKuitb9no+biiwKlzy1/g0RKSSHciSgcVGGp
+         Ti7PPOHEFZQ2dMTPthPP64+WjDCSMw+FiSHUCI4qAo2joA0R3LOmYXXeUG0ObGxfj+3S
+         nr6hWlQvJCajRg/qNGZBOxLQSkY1lHLaXojlQOSaSIqyDu5GS5kj5QB0JG6sWA4JwuSR
+         Ea9fA2uWx4uKmrOf/YiNxCJa+g08gMT9Yq6+d+3Tv5f2lOryhNmlHPYCCTzyAfb8Ya6q
+         AuTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701662774; x=1702267574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CbkCHx96etqSfTuELzIWMZk408/Yxj+/7Dk7WZ5k3MY=;
+        b=Yp/25NkZ7rEBESoXS8ZEPXZ+TPLIvXeu9Df2gGUdNwSoT4acStzw/vonYM+oAPvVLn
+         03DzioaaHwo3ZCLOCHk1wJD5+TCJ4ekU9yABs2sGMGj95eDYbxNKH7MNmTwM4klAi7hm
+         58ucUm39HwfRha8KlWkL6fCNWYvwKFAKG2+GiHVanr0fwqMFMGwP6qK2gSYax9geifRZ
+         W204NpX/cKdVGmIRncZx31CcfclQZ4cjkHeOMkEM6/XPiOphQo42araPoiSE0kUUqfiP
+         p4P7Z7aciX6dVaQKGgzp7RrGmLv1SotuDQCKyioNsbnv4fpLF1rGEU/mOgPBAGPIfz8T
+         NuJw==
+X-Gm-Message-State: AOJu0YxdMZKQIGLkeJRppq4Wsk/7clF7emvRRC/IMBq5Z5Oy6zV/uUpr
+	50uDtnUJ2Cmqcfb2jYoO5qM=
+X-Google-Smtp-Source: AGHT+IFTfw+eZUHc/hM8+luAPSQ+lJwTxRZCwzjVXg5g7icgbGKpd+2Bl6qrw6MJmDLQvVzNAeZ2UQ==
+X-Received: by 2002:a17:902:ced2:b0:1d0:6ffd:6e68 with SMTP id d18-20020a170902ced200b001d06ffd6e68mr1451983plg.96.1701662773729;
+        Sun, 03 Dec 2023 20:06:13 -0800 (PST)
+Received: from localhost.localdomain (c-73-254-2-55.hsd1.wa.comcast.net. [73.254.2.55])
+        by smtp.gmail.com with ESMTPSA id f13-20020a170902ce8d00b001d08f173f00sm1736084plg.194.2023.12.03.20.06.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Dec 2023 20:06:13 -0800 (PST)
+From: Adrien Leravat <adrien.leravat@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	corbet@lwn.net
+Cc: Adrien Leravat <adrien.leravat@gmail.com>,
 	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wcn36xx@lists.infradead.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: sdm632-fairphone-fp3: Enable WiFi/Bluetooth
-Date: Sat,  2 Dec 2023 20:54:42 -0800
-Message-ID: <170157925817.1717511.6338511271605322593.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231127-fp3-wcnss-v2-1-a5154fae4768@z3ntu.xyz>
-References: <20231127-fp3-wcnss-v2-1-a5154fae4768@z3ntu.xyz>
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] doc: rmpsg: update with rpmsg_endpoint
+Date: Sun,  3 Dec 2023 12:06:04 -0800
+Message-ID: <20231203200606.255302-1-adrien.leravat@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+It seems the documentation was not updated when `rpmsg_sendto`
+and related switched from `rpmsg_channel` to `rpmsg_endpoint`.
+This change updates the proper calls, text, and the sample.
 
-On Mon, 27 Nov 2023 22:55:38 +0100, Luca Weiss wrote:
-> Configure and enable the WCNSS which provides WiFi and Bluetooth on this
-> device using the WCN3680B chip.
-> 
-> 
+Signed-off-by: Adrien Leravat <adrien.leravat@gmail.com>
+---
+ Documentation/staging/rpmsg.rst | 50 ++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 23 deletions(-)
 
-Applied, thanks!
-
-[1/1] arm64: dts: qcom: sdm632-fairphone-fp3: Enable WiFi/Bluetooth
-      commit: 5b006a82a2bbc0ce18bc6b084fc8d8d9cc110001
-
-Best regards,
+diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
+index 1ce353cb232a..dba3e5f65612 100644
+--- a/Documentation/staging/rpmsg.rst
++++ b/Documentation/staging/rpmsg.rst
+@@ -68,13 +68,14 @@ User API
+ 
+ ::
+ 
+-  int rpmsg_send(struct rpmsg_channel *rpdev, void *data, int len);
++  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+ 
+-sends a message across to the remote processor on a given channel.
+-The caller should specify the channel, the data it wants to send,
++sends a message across to the remote processor from the given endpoint.
++The caller should specify the endpoint, the data it wants to send,
+ and its length (in bytes). The message will be sent on the specified
+-channel, i.e. its source and destination address fields will be
+-set to the channel's src and dst addresses.
++endpoint's channel, i.e. its source and destination address fields will be
++respectively set to the endpoint's src address and its parent channel
++dst addresses.
+ 
+ In case there are no TX buffers available, the function will block until
+ one becomes available (i.e. until the remote processor consumes
+@@ -87,17 +88,18 @@ Returns 0 on success and an appropriate error value on failure.
+ 
+ ::
+ 
+-  int rpmsg_sendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst);
++  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+ 
+-sends a message across to the remote processor on a given channel,
++sends a message across to the remote processor from a given endpoint,
+ to a destination address provided by the caller.
+ 
+-The caller should specify the channel, the data it wants to send,
++The caller should specify the endpoint, the data it wants to send,
+ its length (in bytes), and an explicit destination address.
+ 
+ The message will then be sent to the remote processor to which the
+-channel belongs, using the channel's src address, and the user-provided
+-dst address (thus the channel's dst address will be ignored).
++endpoints's channel belongs, using the endpoints's src address,
++and the user-provided dst address (thus the channel's dst address
++will be ignored).
+ 
+ In case there are no TX buffers available, the function will block until
+ one becomes available (i.e. until the remote processor consumes
+@@ -110,18 +112,19 @@ Returns 0 on success and an appropriate error value on failure.
+ 
+ ::
+ 
+-  int rpmsg_send_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
++  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 							void *data, int len);
+ 
+ 
+ sends a message across to the remote processor, using the src and dst
+ addresses provided by the user.
+ 
+-The caller should specify the channel, the data it wants to send,
++The caller should specify the endpoint, the data it wants to send,
+ its length (in bytes), and explicit source and destination addresses.
+ The message will then be sent to the remote processor to which the
+-channel belongs, but the channel's src and dst addresses will be
+-ignored (and the user-provided addresses will be used instead).
++endpoint's channel belongs, but the endpoint's src and channel dst
++addresses will be ignored (and the user-provided addresses will
++be used instead).
+ 
+ In case there are no TX buffers available, the function will block until
+ one becomes available (i.e. until the remote processor consumes
+@@ -134,13 +137,14 @@ Returns 0 on success and an appropriate error value on failure.
+ 
+ ::
+ 
+-  int rpmsg_trysend(struct rpmsg_channel *rpdev, void *data, int len);
++  int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+ 
+-sends a message across to the remote processor on a given channel.
+-The caller should specify the channel, the data it wants to send,
++sends a message across to the remote processor from a given endpoint.
++The caller should specify the endpoint, the data it wants to send,
+ and its length (in bytes). The message will be sent on the specified
+-channel, i.e. its source and destination address fields will be
+-set to the channel's src and dst addresses.
++endpoint's channel, i.e. its source and destination address fields will be
++respectively set to the endpoint's src address and its parent channel
++dst addresses.
+ 
+ In case there are no TX buffers available, the function will immediately
+ return -ENOMEM without waiting until one becomes available.
+@@ -150,10 +154,10 @@ Returns 0 on success and an appropriate error value on failure.
+ 
+ ::
+ 
+-  int rpmsg_trysendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
++  int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ 
+ 
+-sends a message across to the remote processor on a given channel,
++sends a message across to the remote processor from a given endoint,
+ to a destination address provided by the user.
+ 
+ The user should specify the channel, the data it wants to send,
+@@ -171,7 +175,7 @@ Returns 0 on success and an appropriate error value on failure.
+ 
+ ::
+ 
+-  int rpmsg_trysend_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
++  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 							void *data, int len);
+ 
+ 
+@@ -284,7 +288,7 @@ content to the console.
+ 	dev_info(&rpdev->dev, "chnl: 0x%x -> 0x%x\n", rpdev->src, rpdev->dst);
+ 
+ 	/* send a message on our channel */
+-	err = rpmsg_send(rpdev, "hello!", 6);
++	err = rpmsg_send(rpdev->ept, "hello!", 6);
+ 	if (err) {
+ 		pr_err("rpmsg_send failed: %d\n", err);
+ 		return err;
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.43.0
+
