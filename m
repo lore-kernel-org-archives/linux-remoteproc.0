@@ -1,589 +1,405 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k8w6YC0J"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2066.outbound.protection.outlook.com [40.107.96.66])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379CFD42;
-	Wed,  6 Dec 2023 10:06:51 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="YZjY2Rm6";
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="YZjY2Rm6"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2078.outbound.protection.outlook.com [40.107.22.78])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FD810C9
+	for <linux-remoteproc@vger.kernel.org>; Thu,  7 Dec 2023 04:47:22 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=pass;
+ b=YL3f8bUmryCcm22kx6Ix8Kgfmv7RC0UFPGu7itK2yJKuO1Pl24kdM4ap/Vxwoer2dwV2tPD2ouHKcqSbNrJH5j4nA9bPz3Uy5m28BkQCArNntyKxC+ycvpm35zyz8FM7Qg+lsFkiTg8PAjqXP5iCpP4svz4ch4WhhgChZs2E9skVW+TsEvUStcBKjuwZJovPSMr2Sp5jE9W1tsdPLs5p/g0V036k276a73das084+0zj18uRq4219FvrNDrfWB0cO6p+jPULhL1lt48vDoGgpr/NYxv3Sykoprs87AI/E3JXS1ojbWXTOgUkjuAN8AFd7PsKa4H9dwmSy4wiTkcmnw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Eo5OWmFamkCIpMUvjh5gM9CWTRX4P8+1IIKaCLawoxQ=;
+ b=h4s8ijH4DaLM3PSmx9P8S4Ws8rPfvNaw7mRTyvt7VDbE3bf/XdVtkXOol/MV007WwTgdIDeTOsSfjCzSp7Pr2brRjdP+Cpm+xVu84Uz/HgjRhtR5RaKt+h6cC05fmJAgERPCsjcZEiPnPIpkUXsqASDBd12+Yafcpa7rNUk9Ur4W2Mv8HoX+dtCOXxxvxEA92geKpiVh4R5XHAty/r6ykqF2lnBIFEams8SRdYbu+w2WNwcwOFZ4hSV/IMHyWgttY6yrU1xsz95yMDdCDe5xK4aH5eeKlxm/ObaeicFxgesctgq9yVxuidK7dnZOsdnP9uHVAc9+rQXK+7/mLSN70g==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=armh.onmicrosoft.com; arc=pass (0
+ oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Eo5OWmFamkCIpMUvjh5gM9CWTRX4P8+1IIKaCLawoxQ=;
+ b=YZjY2Rm6wld2+uQ7AcqAPwKwocqvL1fpf+bBZ0+gaFQKG49G0133/tH1daq/KslTlrGSiIS7xUV4TCCPhYfyioD2+Unu3se5yHoO53+jGgfzdkRG/AUItukBHdbTTavZybwv7y10BfLQeeV2v1czPk76zy9DNb52hc+NTObPBEo=
+Received: from AM6PR0202CA0049.eurprd02.prod.outlook.com
+ (2603:10a6:20b:3a::26) by DU2PR08MB10130.eurprd08.prod.outlook.com
+ (2603:10a6:10:493::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.26; Thu, 7 Dec
+ 2023 12:47:19 +0000
+Received: from AM2PEPF0001C714.eurprd05.prod.outlook.com
+ (2603:10a6:20b:3a:cafe::7c) by AM6PR0202CA0049.outlook.office365.com
+ (2603:10a6:20b:3a::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34 via Frontend
+ Transport; Thu, 7 Dec 2023 12:47:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM2PEPF0001C714.mail.protection.outlook.com (10.167.16.184) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7068.20 via Frontend Transport; Thu, 7 Dec 2023 12:47:18 +0000
+Received: ("Tessian outbound 5d213238733f:v228"); Thu, 07 Dec 2023 12:47:18 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 222234e46e2fd58f
+X-CR-MTA-TID: 64aa7808
+Received: from 1d1dc13fd916.1
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id E40D22C3-0447-47AD-AAFD-55540541BA36.1;
+	Thu, 07 Dec 2023 12:47:07 +0000
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 1d1dc13fd916.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Thu, 07 Dec 2023 12:47:07 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B0O2gNRZ6mRlpMEBNfgg9HaUJ9FKFifTrf+aUZQKE2nXn4UvQ1wCl4rO4XVZXkrNsm7SUbDwipWhGGMpRri/pUKZlWAPPsAL8Hxlk23k97hyp74HFK79O3pRMdThy45V3mxeJG6dkPEd5DqIqEvVFVtZyVLr8f/RFXdJ+vBArVQDvaITpSbxje3LxacYOWAEeEq598xCFyMf1f7kFg/yg6PNiQRIgzluu31Mkikr9BBAztZlhgliucAPaE9Kgpc/B3He/SS/v59lHfv9uMk4OO5cY4HY4/zGvrTMbMYagl/MZv8XobNYk9ZSxSPn843DN86EL7YjAkX4pjhNDcGDGw==
+ b=ai6fnarOcevHLtnkeKyWAxfzuPR0BJCTBXJOmEPfLCFzXW7/8HaAAlRiU7NUDKbQdA+uPFGEPs5PClE/MWqxBRBSkg2ZYMgIy4vcqNZDoDnROIwjAzSPjdGUnasGC2CeNoxJKkU21HGFE1zLCIvfxw/VLmKZ2ZpVJmgHi8eCgCXxS6F945keQTiL5dKo2GQCFemus+e9RZjaFkT8so/TfXrvvzJsLuS0webNOdNYd33KU3lgGvkAwPy7XP3V9IZwx45nnineKyqRf78AGIiBc79UyrYC7nxu2ZsWDd0BULp1UmCVEwf2FxiNXjNxJ/4ngnlgMRgqZEqHRXLV8VhxNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G2NhjbzdDQSYRmh+l0jW3eNL3NUpqq+GSrHvZZJaP+U=;
- b=BgO/lMzlpKtOLZEBz3oUw7mvW6ZpxwmAJ7v3pP7o/ELizTVWHH3BV3N75swDKpTEy7SIU7h0GfgdQNkanSTkbzvgdi0P3u8oTARWY6C48VkG9sj4bsrAR7J0/9dz2kpDAZWDPz6j9Jr+UVcsu2LJY7SLCfaYEgVDd1cjj5+phlKYMQnLce1bWoxYSqLg9GWGgSvtRv6xTKgXThpBEl2gbu6oYFkrmXt/4TzxadG3pbHJj1PVOtvpZ1+HeFKqdebVvDZhn71UgCb4yYwlNWwJXGoyRElKG66uWGkgsOL6gRcvffHYjSh/q0Xp0DdMs4TMGPtdvn+jIWQJanTPYdll1Q==
+ bh=Eo5OWmFamkCIpMUvjh5gM9CWTRX4P8+1IIKaCLawoxQ=;
+ b=RZrwlecgsQy61FYq70rIG4w18AmBAFqVRoBO1MTDON9oSceXYpTgBugmid6PXxhDYZggl10m6sUse8GIidgbByZXW6/IDgF16MPD85B1B/wLwg+j8G8XAkIbJrPOqn9pBI6yTrtvhBdTMbZrIrMqMx6qgaoVTmx/HJdq44EetMsoChavm6wgnOu7lCs/dzW0QMV2WS2NqAUhCVL6IT+nHM1LWHgndCjUhky/ih/wIskGYIwA2gMO4w1Zf43kfl6c+x64TlLd0G/HbilqacvntBGbI8LQC1J9fPkLPOYsTF9NFKUwWkZcaszZadP/DQt+gsRSajhcua3edybWeQCMUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G2NhjbzdDQSYRmh+l0jW3eNL3NUpqq+GSrHvZZJaP+U=;
- b=k8w6YC0JrF4r0C8MkUoG7TB/ZpndRneDG1Oaf6CblE0wKtXpXN/5aBdAUJDcWq9463eXoNQoXsdmpLWFVxbYpJ3BQMogYt59IdcSRzAO3LG6IjM1VY9MXKUx+CXFy1xWtyZxFHrRShVJMLeegW0gqMTmHw/Itv6xMWfFMcjhAzc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
- by SJ2PR12MB8943.namprd12.prod.outlook.com (2603:10b6:a03:547::17) with
+ bh=Eo5OWmFamkCIpMUvjh5gM9CWTRX4P8+1IIKaCLawoxQ=;
+ b=YZjY2Rm6wld2+uQ7AcqAPwKwocqvL1fpf+bBZ0+gaFQKG49G0133/tH1daq/KslTlrGSiIS7xUV4TCCPhYfyioD2+Unu3se5yHoO53+jGgfzdkRG/AUItukBHdbTTavZybwv7y10BfLQeeV2v1czPk76zy9DNb52hc+NTObPBEo=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from PAXPR08MB6750.eurprd08.prod.outlook.com (2603:10a6:102:13f::16)
+ by DU0PR08MB9935.eurprd08.prod.outlook.com (2603:10a6:10:401::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Wed, 6 Dec
- 2023 18:06:48 +0000
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::dacc:66a0:6923:a5e]) by BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::dacc:66a0:6923:a5e%4]) with mapi id 15.20.7068.025; Wed, 6 Dec 2023
- 18:06:48 +0000
-Message-ID: <2e24d9be-be10-4f80-b3af-c3e0ed003e7b@amd.com>
-Date: Wed, 6 Dec 2023 12:06:45 -0600
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v7 3/4] remoteproc: zynqmp: add pm domains support
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- michal.simek@amd.com, ben.levinsky@amd.com,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20231117174238.1876655-1-tanmay.shah@amd.com>
- <20231117174238.1876655-4-tanmay.shah@amd.com> <ZV02P3bHEhPLQHBo@p14s>
- <93487d3c-c324-4b9b-8b25-0b4ea52237b4@amd.com> <ZV+V6V2sEWgsqngk@p14s>
- <a75b22c1-66e3-4fce-ae64-de79e73f3cfa@amd.com> <ZWdwl/8LC2Nn+vCq@p14s>
- <ea2edc6e-6655-47f8-8b6d-242f5a0ef804@amd.com>
- <CANLsYkzJgZRSz5=nzW+ATmBKemoSd3ybhKuz1CJy33hftAGiqw@mail.gmail.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.27; Thu, 7 Dec
+ 2023 12:47:03 +0000
+Received: from PAXPR08MB6750.eurprd08.prod.outlook.com
+ ([fe80::542e:1889:d107:2e96]) by PAXPR08MB6750.eurprd08.prod.outlook.com
+ ([fe80::542e:1889:d107:2e96%4]) with mapi id 15.20.7068.027; Thu, 7 Dec 2023
+ 12:47:03 +0000
+Message-ID: <f55f4823-c4e6-4034-8d2c-d933efe1177c@arm.com>
+Date: Thu, 7 Dec 2023 12:47:02 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Discussion]: Enhance virtio rpmsg bus driver buffer allocation
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+ linux-remoteproc@vger.kernel.org,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: "Rahul.Singh@arm.com" <Rahul.Singh@arm.com>
+References: <1af16ff8-5706-45e5-9737-05da39957c95@arm.com>
+ <7eb830b3-e915-4151-ae10-46ce7cd68fa1@arm.com>
+ <b98f58a2-6627-4e8a-9466-4f6276cfd0b3@foss.st.com>
+ <66dc0fbc-0898-4597-92a4-489050cb1b1c@arm.com>
+ <3f0b831b-eda0-44c4-ad1b-1d4958d90ecd@foss.st.com>
+ <80b61579-4dc5-4e43-924e-edd6ebd514e9@arm.com>
+ <38ea2aee-a7b6-4461-a2e8-c809dfa725a4@foss.st.com>
 Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <CANLsYkzJgZRSz5=nzW+ATmBKemoSd3ybhKuz1CJy33hftAGiqw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR13CA0081.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::26) To BY5PR12MB3683.namprd12.prod.outlook.com
- (2603:10b6:a03:1a5::16)
+From: Divin Raj <divin.raj@arm.com>
+In-Reply-To: <38ea2aee-a7b6-4461-a2e8-c809dfa725a4@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: LO4P123CA0505.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:272::15) To PAXPR08MB6750.eurprd08.prod.outlook.com
+ (2603:10a6:102:13f::16)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|SJ2PR12MB8943:EE_
-X-MS-Office365-Filtering-Correlation-Id: 027e895c-639f-4517-32d9-08dbf6861d38
+X-MS-TrafficTypeDiagnostic:
+	PAXPR08MB6750:EE_|DU0PR08MB9935:EE_|AM2PEPF0001C714:EE_|DU2PR08MB10130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8eeb1734-65fa-4de3-b0f7-08dbf722a5dd
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original:
+ Ep86qU+MZoIYyEKTcZQBUvTCR94daAVWnSHG+FsyGNgfc9vhH7Bn8ozPBh5vH4SSP18a/921LIya3B+mT7D8en1DcNAzdRL9h7hUlVDX8PbupCNAt39sp+befcBw6Q/F8j9YaQI6wLexKk1nhk2ZAjuM8gRgalSDyQTeBZq9jQMya9jvFMd41N7o5wOwa0hVpJJ52QjkQm6dFDj9Nx33FLWtbFB1tm9gCkmRrwFkkDnx1SW7ReZl2Y5MAR7L1w8bC6cqI12G+w+KR0q4B+NkLgAnm3B4Pgww4qsfntvti7L+wiR2VT8sJKpS2FNp+pgIIceZy9dov5kDWWKztC7m6a9cb3lnH4ZTd7O1qaYZnIaFjVvW0JcVN7PT5hWw8NE81z3DMSZSLcBocqzIg+Xxs/OTy3lGY5GTGz7jwyV+4XWM1p4PkEpmrBHG0E57uUEtJnLMFxQq7Yrya4fxGQ8pSu083Q4letQCE11t3CBEQav28FVJdN1UFb93q+LdSWNs48/2yPnZQHjkgiFCc+Gn2U4kvPxWUXR0DR2LQrgXuaRrgDqqcMKnYnzncadQ9WTLp8CmfKZMkGD/JfDhx7wk+flyrK2YownFW4FeOx0mw06WXVnLHXMisGXSFOuElRnlFNOXRm+rnAkjByb7epZ8BIcdzN+23PH1cHfqNIV2qJ9kn8ho3JGBS1DhV+GWwJ7g
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR08MB6750.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(39860400002)(396003)(346002)(376002)(230922051799003)(451199024)(64100799003)(186009)(1800799012)(66899024)(6512007)(6506007)(66556008)(2616005)(53546011)(83380400001)(110136005)(26005)(66476007)(316002)(66946007)(86362001)(44832011)(4326008)(8676002)(8936002)(478600001)(966005)(6486002)(38100700002)(31696002)(31686004)(36756003)(41300700001)(2906002)(5660300002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9935
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM2PEPF0001C714.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	b2773f87-15ea-4a31-5503-08dbf7229cd5
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	GRBvy9hcLEnLqFX/gvS6OmuPQkxHb5Xk3PwxaP7ET+v4wsZJPpfZXt96jz6XvhrkvnbVjMynT03YzyAIughn4wMdw2Qtpv2c9UXfF5+rz0fLlwkfGxqkMCDA4ffZqmwkAs8EhyKCVUb6IWPvuLEqydfiZD2Hy3TWPzR8sHBVDuyncLjdeXpb+SfSNjEohdU78uaLqaFvQSceaeL2/E2GOCnv5YWTvsILSCqRw0IpFRlcnKqGMFSGy9xMK2AW174cF7NTaJ0G80jtRSIoV5CoI6c+z+BRY/dYlIHznMXZe/aQPJr0IDU3pYlY+XWXF/36PPzkXnSqHP893l4Hp5eiOson1W4uHvcQ2rR2e+iuvmAeNnkE+8WTbQYjMQLWSSJ3bx8C3DDMGR7BrEQ/7ROA+yxp3qvaFbUPKoRJ2wOolGDLCqXy2QFs6XZgBTlNOlpsu1/8FDhNTcZK1O3LZC3t9FLS0sHdKJc5BVuM6eQS5qh10ZwahxsF6DUD+FLfkCaX7VlGCyz6MNzbw88jzayCu20Qn89M17M1uSOMMtzJZZuU7a70McKDX06zAFbKWBVM8g77hvV5N2zXRPZs5V8JeZ9iM8bPcupG4MgXmdhDjpmAqHGo+LsuV++tefFeUpk3e9i5848j+7tATWjYM3RMAw==
+	oybdq2IEp9kV7UM6JyJIRnFIv3VMuLZZasoSR9ucmSsvVT4EqEAl9o/E250LtuQ7J8tXvBZQ7cySBMi4s9FrYewSduzI0WADebfUIU+Rd4LlggxLMe2UC/rbpp4htmd1gVWDwVuxBK13HAevjqAXYBk92wxRvndmllJz7QbR1opygjxEPDX+XrBg3MBBC3q8JQ6yM48ahFgKsWc1zeY4/D24wCpXBrTJlcJFod8ladVKnpeNOxpDuTHsUiKA7R1jkX0DE04dMfy3OlDAn3K+y+qIKIsdydLJry0qSq3hSGPQvarYbwrWi5q4MQQeD96QuGora4UZM5mzerG05hPofrRfW+1bPIQDTZK05GKiP0WPvTdpSvnq5zYMYgXVZP5vZpDU36ychA2Z1+85qnNApJBcXzfs6sd56yV/BIGQmbtuPzX3qKgiPfBbVdsTL+3FZISfMgn0zYBM2s0LLMYar6ZdlBpjdR2f0UOge0EdGVX+kt6UMfGM84VyG/ZTkuEBoxIeDe5ayVDc96USDVipTkqyhGfPK/pPCz+T1N/jfuBPqdtdiRIqlJ4/FLx3XuzD1DJG8FpPaVhkxhgNc3ISV2FAPuus6C084bbHnmW77Rurlooi/95pAG3eokx0exbJknOnDppEt8BOSPBDsaaeYQpTX9zntET1+pS5mDqmRBR1V/f5Z625S9zfn8IAWqYj9mZUN+UYFAw4Gd5lnIMrpmqltKwujT8VtcHmPs86BacdLsRIk09WNfYVU8k4xFq5P5fHFLhWicg1by5UTsvdIA==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(366004)(396003)(346002)(376002)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(38100700002)(2616005)(44832011)(4326008)(8676002)(8936002)(6512007)(6506007)(31686004)(83380400001)(53546011)(26005)(6666004)(6486002)(478600001)(6916009)(66476007)(316002)(66556008)(66946007)(66899024)(2906002)(30864003)(31696002)(36756003)(41300700001)(86362001)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZmhRZkNkTERGbUtIODdPTWZqdTUyMFRoYlF0OGZNeWoxb1NsZG5rNW5IRitm?=
- =?utf-8?B?Zk5FZVhIbU9FQ3laSnp2N3lCWjJ1T0VRcDVvVWhMZEJqRlpOMlljaGgyOHNM?=
- =?utf-8?B?NmxDdkEveWJBWk5JTENtaDZQOGpYT2xpSDJmdWRCWjNETTFTQ20rQXltMURu?=
- =?utf-8?B?THh2MFBWWVR3OGdVNzhKb2FzYUIwZzM4Uy9TTGFXUlFkc09xU3FNemxKWjJQ?=
- =?utf-8?B?cG1iZ2NCYkJaYWtlaytLWU1sVlROMXFqRFFIL3ArZ1cwemNYV0hkbXRRODJE?=
- =?utf-8?B?dzhxSTRIL2dIcjMzWGJaR2hwblVGRmhXMENsMHc3Vi8wQ3lQVHRhK21xS3lC?=
- =?utf-8?B?UlhwcjRiNzhqTWRPQ3hDdnd3cktqaVcxb0RqT2tMczYwYkY5UUtQbFhBdE9H?=
- =?utf-8?B?ZWRCTFV5anFVSmJ4WDk1cHo4aytFVG9XcjNWYUdWTUFZOTRtc3MzOWJKaW9V?=
- =?utf-8?B?ajF5bkh3OS8vZXhSMThVaVZZak1EZWJvYWNnQWRJb1RTQXNRUXhTZGNKb0g3?=
- =?utf-8?B?MjJpbzVBSENtQVJTYkRKWitna2FHWWUwdmx1UkNycHc1VU9lQXFlRkwvRnE1?=
- =?utf-8?B?SUlLL3NLbWE0ZUxUQ1QwRGdyRTdPZEVTbXh0Um5DalZlY1JtNTVuaUI1T0dv?=
- =?utf-8?B?MHNjTSt0UThRd3FHYUM1bEdpczlsN2VHQmlkckdsTUl5Q2h1V2xIVlJRTzBK?=
- =?utf-8?B?d1MydStOVkpOSnU4YjBmNWJ1YTh3dm9oZnA0ZnFuR1lSUFZNWDNRZ0pia20w?=
- =?utf-8?B?TkozcVVqV3lna2NpVllXVmhXbkhlMkcxbTl4VWFJSU9xc1dTVjJ5SHN1amNx?=
- =?utf-8?B?OTRuMmpsWG43TUFYR0ZCMmZwc3dhOW9CbDArVzZwT215QWh6OHNhVFZCSFhK?=
- =?utf-8?B?ODZaNEphbVp5TGdXL0dPNGxJRnkwZnRIRmphM1owNWRWdDZjY252ZUVuRjZo?=
- =?utf-8?B?QVFlZ1VwSEZxdHd0OXN4bzhwRVJrM3hpcC9rL2M1bEkwMUVhNFc1dzV3TExK?=
- =?utf-8?B?T2hMd0FtOWJiWnlHcUNLV3RlK3BzcXNyWGhVV1NpRmJiTmd5Q05UOWgydElB?=
- =?utf-8?B?NVBtMEJzcUN3d1NuSGNuNDBRMDZvZTY3M1pwQTdHaG5IekJEdUtIa3JoOFZV?=
- =?utf-8?B?cmplZS8vako4UmRuNzROalNhOUdXbmI5bTEyOS95WHVwbzZSRUozcGxIU1la?=
- =?utf-8?B?VGFLaFRHOC90VFlaMjZBaGUzZXA2WERRRHhIS2NOVGNKY1NzRUVqNEdkWURn?=
- =?utf-8?B?YVNucHJnUXFJZE52bDl6ejZ6UGJmczFpcVR4K0tDazZiMGsyWmV3OWhMdmlT?=
- =?utf-8?B?Y2F5Z0RUNXhWZmNhUGMvcDUrdzFUeFd5UHNnbjVJS1pOcFd6Z3M0WnhpbFlt?=
- =?utf-8?B?QUFmM2w4a1YxUmVmY0JmWk92NTNnRDFod0J6dDFERDdRanVGSlJuU3dmQW5R?=
- =?utf-8?B?dkFoSGlVUk9McjRYQ3FkaWUydE1yMHJKSENNeU9kVndvRENMZ2FwME1kK1hK?=
- =?utf-8?B?ajRHVmNtV3pkTXlVSTZjQitmcXdodTNYZXQxN2xlMG5XNHd0Sy9WVzhkMlZQ?=
- =?utf-8?B?UEJ5S285WGZCS0x2NGMyVG8vY1VXakNkMXhIOVVGc3RnY2hRNnR6STNUTWd6?=
- =?utf-8?B?WEFkVVZrdENkNHFhcm1vZ0RUc3MwcXdJeng2VGJVbWpsL0NBaHArTUM0SHpE?=
- =?utf-8?B?bmlweklYcm1YNWx0SERVK3hzNzl4UGFkVFg2R0FiYzBCYTZWNXMvT1pMVUhF?=
- =?utf-8?B?ZFRTSUVrS0VIWTJYWTB5UTdEeUROYkxMYnZacndybGlMdUttYkZ0QTloczMx?=
- =?utf-8?B?WUJrKzBqQUZ5bEVacFRnRHl6ZStmcUdKWXlpQjF3UFd5M05tejRLaStldnRH?=
- =?utf-8?B?ZWxjdzduUjl5QVZOdktDakZFdm4vZTFMY1ZYTVZleUtBcDhaNVFTbDZQYkJR?=
- =?utf-8?B?ZVIyWUNhRStxbFJPMllHTnBzaTlvd0xPekhLZmd5eHF2eDZWc0lvSzRrK0FE?=
- =?utf-8?B?a2dVTXhIaW1CamdEMzFYd2dpVnBlSEYrMTlwYTBnVXR0STdVUUdJOWZYYnVL?=
- =?utf-8?B?UElDc0ZDS2pKYzcyWnhKQ0lEa1JqbDB1dmhOSXVMRmdCRE9RSDBvWXZRNmw0?=
- =?utf-8?Q?jUZz30uRITBwX1byT28Aj1nUp?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 027e895c-639f-4517-32d9-08dbf6861d38
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 18:06:48.1137
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230031)(4636009)(39850400004)(396003)(376002)(346002)(136003)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(82310400011)(36840700001)(46966006)(70206006)(70586007)(36860700001)(110136005)(40480700001)(4326008)(8676002)(6486002)(966005)(478600001)(31686004)(356005)(53546011)(6512007)(82740400003)(8936002)(26005)(336012)(2616005)(44832011)(316002)(6506007)(81166007)(86362001)(5660300002)(31696002)(2906002)(83380400001)(47076005)(36756003)(41300700001)(66899024)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2023 12:47:18.6150
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z5XbVMYc1LTJhnMn9VvkWPefr7NVPSG9KKdj+7cE8UVfzgqbYCC8U4UiXLD/w6uE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8943
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eeb1734-65fa-4de3-b0f7-08dbf722a5dd
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C714.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR08MB10130
 
-
-On 12/6/23 9:43 AM, Mathieu Poirier wrote:
-> On Fri, 1 Dec 2023 at 11:10, Tanmay Shah <tanmay.shah@amd.com> wrote:
-> >
-> >
-> > On 11/29/23 11:10 AM, Mathieu Poirier wrote:
-> > > On Mon, Nov 27, 2023 at 10:33:05AM -0600, Tanmay Shah wrote:
-> > > >
-> > > > On 11/23/23 12:11 PM, Mathieu Poirier wrote:
-> > > > > On Wed, Nov 22, 2023 at 03:00:36PM -0600, Tanmay Shah wrote:
-> > > > > > Hi Mathieu,
-> > > > > >
-> > > > > > Please find my comments below.
-> > > > > >
-> > > > > > On 11/21/23 4:59 PM, Mathieu Poirier wrote:
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > On Fri, Nov 17, 2023 at 09:42:37AM -0800, Tanmay Shah wrote:
-> > > > > > > > Use TCM pm domains extracted from device-tree
-> > > > > > > > to power on/off TCM using general pm domain framework.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > > > > > > ---
-> > > > > > > >
-> > > > > > > > Changes in v7:
-> > > > > > > >   - %s/pm_dev1/pm_dev_core0/r
-> > > > > > > >   - %s/pm_dev_link1/pm_dev_core0_link/r
-> > > > > > > >   - %s/pm_dev2/pm_dev_core1/r
-> > > > > > > >   - %s/pm_dev_link2/pm_dev_core1_link/r
-> > > > > > > >   - remove pm_domain_id check to move next patch
-> > > > > > > >   - add comment about how 1st entry in pm domain list is used
-> > > > > > > >   - fix loop when jump to fail_add_pm_domains loop
-> > > > > > > >
-> > > > > > > >  drivers/remoteproc/xlnx_r5_remoteproc.c | 215 +++++++++++++++++++++++-
-> > > > > > > >  1 file changed, 212 insertions(+), 3 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > > > > > > index 4395edea9a64..22bccc5075a0 100644
-> > > > > > > > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > > > > > > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > > > > > > @@ -16,6 +16,7 @@
-> > > > > > > >  #include <linux/of_reserved_mem.h>
-> > > > > > > >  #include <linux/platform_device.h>
-> > > > > > > >  #include <linux/remoteproc.h>
-> > > > > > > > +#include <linux/pm_domain.h>
-> > > > > > > >
-> > > > > > > >  #include "remoteproc_internal.h"
-> > > > > > > >
-> > > > > > > > @@ -102,6 +103,12 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> > > > > > > >   * @rproc: rproc handle
-> > > > > > > >   * @pm_domain_id: RPU CPU power domain id
-> > > > > > > >   * @ipi: pointer to mailbox information
-> > > > > > > > + * @num_pm_dev: number of tcm pm domain devices for this core
-> > > > > > > > + * @pm_dev_core0: pm domain virtual devices for power domain framework
-> > > > > > > > + * @pm_dev_core0_link: pm domain device links after registration
-> > > > > > > > + * @pm_dev_core1: used only in lockstep mode. second core's pm domain virtual devices
-> > > > > > > > + * @pm_dev_core1_link: used only in lockstep mode. second core's pm device links after
-> > > > > > > > + * registration
-> > > > > > > >   */
-> > > > > > > >  struct zynqmp_r5_core {
-> > > > > > > >     struct device *dev;
-> > > > > > > > @@ -111,6 +118,11 @@ struct zynqmp_r5_core {
-> > > > > > > >     struct rproc *rproc;
-> > > > > > > >     u32 pm_domain_id;
-> > > > > > > >     struct mbox_info *ipi;
-> > > > > > > > +   int num_pm_dev;
-> > > > > > > > +   struct device **pm_dev_core0;
-> > > > > > > > +   struct device_link **pm_dev_core0_link;
-> > > > > > > > +   struct device **pm_dev_core1;
-> > > > > > > > +   struct device_link **pm_dev_core1_link;
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > >  /**
-> > > > > > > > @@ -651,7 +663,8 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
-> > > > > > > >                                          ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> > > > > > > >                                          ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > > > > > > >             if (ret < 0) {
-> > > > > > > > -                   dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
-> > > > > > > > +                   dev_err(dev, "failed to turn on TCM 0x%x",
-> > > > > > > > +                           pm_domain_id);
-> > > > > > >
-> > > > > > > Spurious change, you should have caught that.
-> > > > > >
-> > > > > > Ack, need to observe changes more closely before sending them.
-> > > > > >
-> > > > > > >
-> > > > > > > >                     goto release_tcm_lockstep;
-> > > > > > > >             }
-> > > > > > > >
-> > > > > > > > @@ -758,6 +771,189 @@ static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > > > > > > >     return ret;
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > +static void zynqmp_r5_remove_pm_domains(struct rproc *rproc)
-> > > > > > > > +{
-> > > > > > > > +   struct zynqmp_r5_core *r5_core = rproc->priv;
-> > > > > > > > +   struct device *dev = r5_core->dev;
-> > > > > > > > +   struct zynqmp_r5_cluster *cluster;
-> > > > > > > > +   int i;
-> > > > > > > > +
-> > > > > > > > +   cluster = platform_get_drvdata(to_platform_device(dev->parent));
-> > > > > > > > +
-> > > > > > > > +   for (i = 1; i < r5_core->num_pm_dev; i++) {
-> > > > > > > > +           device_link_del(r5_core->pm_dev_core0_link[i]);
-> > > > > > > > +           dev_pm_domain_detach(r5_core->pm_dev_core0[i], false);
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   kfree(r5_core->pm_dev_core0);
-> > > > > > > > +   r5_core->pm_dev_core0 = NULL;
-> > > > > > > > +   kfree(r5_core->pm_dev_core0_link);
-> > > > > > > > +   r5_core->pm_dev_core0_link = NULL;
-> > > > > > > > +
-> > > > > > > > +   if (cluster->mode == SPLIT_MODE) {
-> > > > > > > > +           r5_core->num_pm_dev = 0;
-> > > > > > > > +           return;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   for (i = 1; i < r5_core->num_pm_dev; i++) {
-> > > > > > > > +           device_link_del(r5_core->pm_dev_core1_link[i]);
-> > > > > > > > +           dev_pm_domain_detach(r5_core->pm_dev_core1[i], false);
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   kfree(r5_core->pm_dev_core1);
-> > > > > > > > +   r5_core->pm_dev_core1 = NULL;
-> > > > > > > > +   kfree(r5_core->pm_dev_core1_link);
-> > > > > > > > +   r5_core->pm_dev_core1_link = NULL;
-> > > > > > > > +   r5_core->num_pm_dev = 0;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > > +static int zynqmp_r5_add_pm_domains(struct rproc *rproc)
-> > > > > > > > +{
-> > > > > > > > +   struct zynqmp_r5_core *r5_core = rproc->priv;
-> > > > > > > > +   struct device *dev = r5_core->dev, *dev2;
-> > > > > > > > +   struct zynqmp_r5_cluster *cluster;
-> > > > > > > > +   struct platform_device *pdev;
-> > > > > > > > +   struct device_node *np;
-> > > > > > > > +   int i, j, num_pm_dev, ret;
-> > > > > > > > +
-> > > > > > > > +   cluster = dev_get_drvdata(dev->parent);
-> > > > > > > > +
-> > > > > > > > +   /* get number of power-domains */
-> > > > > > > > +   num_pm_dev = of_count_phandle_with_args(r5_core->np, "power-domains",
-> > > > > > > > +                                           "#power-domain-cells");
-> > > > > > > > +
-> > > > > > > > +   if (num_pm_dev <= 0)
-> > > > > > > > +           return -EINVAL;
-> > > > > > > > +
-> > > > > > > > +   r5_core->pm_dev_core0 = kcalloc(num_pm_dev,
-> > > > > > > > +                                   sizeof(struct device *),
-> > > > > > > > +                                   GFP_KERNEL);
-> > > > > > > > +   if (!r5_core->pm_dev_core0)
-> > > > > > > > +           ret = -ENOMEM;
-> > > > > > > > +
-> > > > > > > > +   r5_core->pm_dev_core0_link = kcalloc(num_pm_dev,
-> > > > > > > > +                                        sizeof(struct device_link *),
-> > > > > > > > +                                        GFP_KERNEL);
-> > > > > > > > +   if (!r5_core->pm_dev_core0_link) {
-> > > > > > > > +           kfree(r5_core->pm_dev_core0);
-> > > > > > > > +           r5_core->pm_dev_core0 = NULL;
-> > > > > > > > +           return -ENOMEM;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   r5_core->num_pm_dev = num_pm_dev;
-> > > > > > > > +
-> > > > > > > > +   /*
-> > > > > > > > +    * start from 2nd entry in power-domains property list as
-> > > > > > > > +    * for zynqmp we only add TCM power domains and not core's power domain.
-> > > > > > > > +    * 1st entry is used to configure r5 operation mode.
-> > > > > > >
-> > > > > > > You are still not saying _where_ ->pm_dev_core0[0] gets added.
-> > > > > >
-> > > > > > So, pm_dev_core0[0] isn't really need to be added for zynqmp platform, as firmware starts it with call,
-> > > > > >
-> > > > > > zynqmp_pm_request_wake during rproc_start callback. I will document this in next
-> > > > > >
-> > > > >
-> > > > > That is exactly what I am looking for.  That way people don't have to go through
-> > > > > the entire driver trying to figure out what is happening with pm_dev_core[0].
-> > > > >
-> > > > > I'm also not sure about the power-up order.  Logically the TCMs should be
-> > > > > powered up before the R5 in order to put code in them.  The R5s are powered in
-> > > > > zynqmp_r5_rproc_start() but I am unclear as to where in the boot sequence the
-> > > > > TCMs are powered - can you expand on that?
-> > > >
-> > > >
-> > > > Sure. Following is call sequece
-> > > >
-> > > > zynqmp_r5_rproc_prepare
-> > > >
-> > > > zynqmp_r5_add_pm_domains -> Here TCM is powered on when device_link_add is called via zynqmp-pm-domains.c driver.
-> > > >
-> > > > . . .
-> > > >
-> > > > zynqmp_r5_rproc_start -> load firmware and Starts RPU
-> > > >
-> > > > So what you mentioned is correct, TCM is being powerd-on before we load firmware and start RPU.
-> > > >
-> > > >
-> > > > >
-> > > > > > revision. For new platforms pm_dev_core0[0] will be added in future.
-> > > > >
-> > > > > Now I'm really confused - what do you mean by "pm_dev_core0[0] will be added in
-> > > > > future"?
-> > > >
-> > > >
-> > > > ZynqMP platform has platform management firmware running on microblaze.
-> > > >
-> > > > This firmware design does not expect R5 pm domains to be requested explicitly.
-> > > >
-> > > > This means, during zynqmp_r5_rproc_start when "zynqmp_pm_request_wake" is called,
-> > > >
-> > > > firmware powers on R5. So, pm_dev_core[0] is not really used for ZynqMP.
-> > > >
-> > > > However, this design was changed for new platforms i.e. "versal" and onwards.
-> > > >
-> > > > Firmware of new platform expects pm domains to be requested explicitly for R5 cores before
-> > > >
-> > > > waking them up.
-> > > >
-> > > > That means, pm_dev_core[0] for R5 cores on new platform (Versal) needs to be used same as TCM.
-> > > >
-> > > > Then, we should wake it up on r5_core.
-> > > >
-> > > > To summarize:
-> > > >
-> > > > For zynqmp only following call needed to start R5:
-> > > >
-> > > > zynqmp_pm_request_wake
-> > > >
-> > > > For "versal" and onwards we need two calls to start R5:
-> > > >
-> > > > "device_link_add" and zynqmp_pm_request_wake
-> > > >
-> > > > So, in future pm_core_dev[0] will be used.
-> > > >
-> > >
-> > > Thanks for the clarification on both front.  The problem here is that we are
-> > > keeping R5 power domain information in two different places, i.e
-> > > zynqmp_r5_core::pm_domain_id and zynqmp_r5_core::pm_dev_core0[0].
-> > >
-> > > Please see if you can retreive the power domain ID from
-> > > zynqmp_r5_core::pm_dev_core0[0].  That way you can get the power domain ID when
-> > > calling zynqmp_pm_request_wake() and zynqmp_pm_force_pwrdwn() and get rid of
-> > > zynqmp_r5_core::pm_domain_id.
-> >
-> > Hi Mathieu,
-> >
-> > I looked into this. Probably I can't retrieve pm_domain_id from pm_dev_core0[0],
-> >
-> > However, I can retrieve it from device-tree when calling zynqmp_pm_request_wake
-> >
-> > and zynqmp_pm_force_pwrdwn.
-> >
-> > zynqmp_r5_core::pm_domain_id is caching that value during probe, and use it during
-> > rest of the driver lifecycle.
-> >
-> > I am okay either way, (keeping it as it is, or get it from device-tree). Let me know your
-> >
-> > preference.
-> >
+On 11/28/23 1:45 PM, Arnaud POULIQUEN wrote:
 >
-> Humm...  Then I suggest to simply get rid of the device linking to
-> deal with the TCMs' power management.  From where I stand it provides
-> more confusion than benefits, and that is without considering the
-> extra complexity.
+>
+> On 11/28/23 12:19, Divin Raj wrote:
+>> On 11/28/23 8:34 AM, Arnaud POULIQUEN wrote:
+>>>
+>>>
+>>> On 11/24/23 17:45, Divin Raj wrote:
+>>>> Hi Arnaud,
+>>>> Please find my comments inline.
+>>>>
+>>>> On 11/20/23 10:14 AM, Arnaud POULIQUEN wrote:
+>>>>> Hi Divin,
+>>>>>
+>>>>> On 11/17/23 23:24, Divin Raj wrote:
+>>>>>> On 10/23/23 11:44 AM, Divin Raj wrote:
+>>>>>>> Hello all,
+>>>>>>>
+>>>>>>> I am reaching out with reference to the patch discussed here: Enhan=
+ced
+>>>>>>> virtio rpmsg bus driver buffer allocation.
+>>>>>>> <https://lore.kernel.org/all/CAH2Cfb-sv3SAL8bcczC-Dc3_r58MYZCS7s7zG=
+tn1Qfo3mmBqVg@mail.gmail.com/>
+>>>>>>>
+>>>>>>> I've been keenly following the developments around enhancing buffer
+>>>>>>> allocation strategies, especially those focused on dynamic buffer s=
+izing
+>>>>>>> and the considerations for systems under varying memory constraints=
+.This
+>>>>>>> work is highly relevant to several projects I am involved in, and I=
+ am
+>>>>>>> quite interested in its progression. May I kindly request an update=
+ on
+>>>>>>> the current phase of these initiatives? Additionally, I am eager to=
+ know
+>>>>>>> if there would be an opportunity for me to contribute to enhancing =
+the
+>>>>>>> patch, possibly by working on improvements or assisting in verifica=
+tion
+>>>>>>> processes.
+>>>>>>>
+>>>>>>> Furthermore, if there are any condensed resources, summaries, or
+>>>>>>> specific threads that encapsulate recent advancements or discussion=
+s on
+>>>>>>> this topic, I would be grateful to receive directions to them.
+>>>>>>>
+>>>>>>> I appreciate everyone's dedicated efforts and invaluable contributi=
+ons
+>>>>>>> to this area of development. Looking forward to the updates.
+>>>>>>>
+>>>>>>> Regards Divin
+>>>>>>>
+>>>>>> Hello Linux Community,
+>>>>>>
+>>>>>> In one of our internal projects, we encountered a challenge with RPM=
+SG
+>>>>>> buffer allocation. Our goal is to optimize memory allocation for an
+>>>>>> out-of-tree RPMSG Ethernet device driver using virtio. This is to en=
+sure
+>>>>>> support for packet sizes matching the standard MTU (Maximum Transmis=
+sion
+>>>>>> Unit) size of 1500 bytes.
+>>>>>>
+>>>>>> To mitigate this issue, There are few possible solutions:
+>>>>>>
+>>>>>> 1. Configure buffer size and number through Kconfig.
+>>>>>> 2. Permit the firmware creator to determine the most suitable value =
+from
+>>>>>>      the resource table.
+>>>>>> 3. Enable independent configurations on both ends. This approach wou=
+ld
+>>>>>> support both dynamic and fixed buffer configurations using a generic
+>>>>>> allocator.
+>>>>>>
+>>>>>> Reference:
+>>>>>>
+>>>>>> [1]:
+>>>>>> https://lore.kernel.org/all/1548949280-31794-4-git-send-email-xiaoxi=
+ang@xiaomi.com/
+>>>>>> [2]: https://lore.kernel.org/all/20190701061353.GE1263@builder/
+>>>>>>
+>>>>>>
+>>>>>> Draft Design Overview:
+>>>>>>
+>>>>>> Based on the reference patch and the discussions, we have outlined t=
+he
+>>>>>> following key points for the belw design:
+>>>>>>
+>>>>>> 1. Assure compatibility, enabling both Linux and the remote system t=
+o
+>>>>>> interchangeably transmit and receive messages, irrespective of size.
+>>>>>> 2. For systems with constrained shared memory:
+>>>>>> Systems with small, shared memory, we need to deal with a
+>>>>>> limited/optimized memory chunk. To avoid memory fragmentation, the
+>>>>>> allocator should have a pre-reserved buffer pool
+>>>>>> 3. The implementation should ensure that the remote side does not
+>>>>>> receive messages based on its allocation parameters.
+>>>>>>
+>>>>>> do you think it could make sense?
+>>>>>>
+>>>>>> High level view:
+>>>>>> +------------------+                               +----------------=
+--+
+>>>>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |
+>>>>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Linux       |=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Remote      |
+>>>>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |
+>>>>>> |=C2=A0=C2=A0 +----------+   |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +=
+-----------------+     |=C2=A0=C2=A0 +----------+   |
+>>>>>> |=C2=A0=C2=A0 |=C2=A0=C2=A0 RPMSG  |=C2=A0=C2=A0 | <---> | Buffer Al=
+locator|<--->|=C2=A0=C2=A0 | RPMSG    |=C2=A0=C2=A0 |
+>>>>>> |=C2=A0=C2=A0 +----------+   |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+ (Dynamic/Static)|=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 +----------+   |
+>>>>>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
++-----------------+     |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+>>>>>> +------------------+                               +----------------=
+--+
+>>>>>>
+>>>>>>
+>>>>>> Detailed view:
+>>>>>>
+>>>>>>                      +-------------------------+
+>>>>>>                      |=C2=A0 Message Creation       |
+>>>>>>                      |=C2=A0 (Both Linux/Remote)    |
+>>>>>>                      +------------+------------+
+>>>>>>                                   |
+>>>>>>                                   v
+>>>>>>                      +-------------------------+
+>>>>>>                      | Determine the allocation|
+>>>>>>                      | strategy                |
+>>>>>>                      +------------+------------+
+>>>>>>                                   |
+>>>>>>                    +--------------+--------------+
+>>>>>>                    |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+>>>>>> +-------------------------------+  +-------------------------------+
+>>>>>> | Dynamic allocation            |=C2=A0 | Static allocation         =
+    |
+>>>>>> | (Buffer allocator allocates   |=C2=A0 | (Pre-reserved memory      =
+    |
+>>>>>> | memory space as needed,       |=C2=A0 | space)                    =
+    |
+>>>>>> | based on the current          |=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |
+>>>>>> | message requirement )         |=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |
+>>>>>> +-------------------------------+  +-------------------------------+
+>>>>>
+>>>>> Do you have a proposal for dynamic allocation?
+>>>>>
+>>>>> RPMSG is based on the virtio protocol. The virtio driver in the Linux=
+ kernel
+>>>>> is responsible for allocating buffers for the virtio device on the re=
+mote
+>>>>> processor.
+>>>>>
+>>>>> In the current implementation (static allocation) the Linux
+>>>>> kernel allocates predefined buffers for the remote processor.
+>>>>>
+>>>>> How would you manage the fact that the sender allocates its own buffe=
+rs and
+>>>>> references
+>>>>> them in the vring descriptor? This would require each core to have
+>>>>> a dual role, right?
+>>>>> - a virtio driver role on its TX vring
+>>>>> - a virtio device role on its RX vring."
+>>>>>
+>>>> I'm unsure if a dual role is feasible under the Virtio specification.
+>>>
+>>> At least, it does not seem to align with the philosophy of VirtIO.
+>>>
+>>>
+>>>> However, would it make sense to set the size of the outbuf based on th=
+e
+>>>> Maximum Transmission Unit (MTU) size that is supported? Additionally,
+>>>> the size of the inbuf could be set by the firmware, suggesting that it
+>>>> should be derived from the resource table. With this approach, I belie=
+ve
+>>>> the sender can decide the maximum size.
+>>>
+>>> It is not clear to me what your proposal is.
+>>> Are you speaking about a pre-allocated buffers as proposed in [1],
+>>> or are you speaking about dynamic allocation of the RPMsg in a pool?
+>>
+>> we are at the initial phase of this investigation. As we previously
+>> discussed, option 3 is not feasible in accordance with the virtio
+>> specification.The above proposed solution aligns with [1], suggesting
+>> preallocated in_buf and out_buf, with sizes determined from the resource
+>> table and MTU. By allowing Linux to decide the out_buf size and the
+>> remote to decide the in_buf size, I believe we can avoid conflicts. If
+>> everyone agrees on a common idea, then it would be a good starting point
+>
+> Thanks for the clarification. It seems reasonable to me to start with a
+> pre-allocated buffer with a fixed size specified by the remote firmware.
+>
+> Bjorn, Mathieu,
+> Please, could you share you point of view on the topic?
+>
++ Bjorn
++ Mathieu
 
+> Thanks,
+> Arnaud
+>
+>>
+>> Regards
+>> Divin
+>>
+>>> Regards,
+>>> Arnaud
+>>>
+>>>>
+>>>> Regards
+>>>> Divin
+>>>>
+>>>>>
+>>>>> Regards,
+>>>>> Arnaud
+>>>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>> We would greatly appreciate any feedback, suggestions, or improvemen=
+ts
+>>>>>> you could provide.
+>>>>>>
+>>>>>> Thank you for your time and consideration.
+>>>>>>
+>>>>>> Regards
+>>>>>> Divin
 
-Do you mean to get rid of pm_dev_core0[1], and pm_dev_core0[2] as well ?
-
-If yes, its preferred to use pm_domain framework to power-on/off TCM.
-
-If we want to get rid of zynqmp_r5_core::pm_domain_id, I will do what's done in
-
-__genpd_dev_pm_attach API where, pm_domain_id is retrieved using of_node of pm_dev_core0[*] device.
-
-    ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
-                            "#power-domain-cells", index, &pd_args);
-
-However, Its preferred to use pm_domain framework when power-domains are available in device-tree.
-
-Let  me know.
-
-Thanks,
-
-Tanmay
-
-
-> > Thanks,
-> >
-> > Tanmay
-> >
-> > > >
-> > > > > >
-> > > > > > I hope this meets expectations.
-> > > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > > +    */
-> > > > > > > > +   for (i = 1; i < r5_core->num_pm_dev; i++) {
-> > > > > > > > +           r5_core->pm_dev_core0[i] = dev_pm_domain_attach_by_id(dev, i);
-> > > > > > > > +           if (IS_ERR_OR_NULL(r5_core->pm_dev_core0[i])) {
-> > > > > > >
-> > > > > > > Here IS_ERR_OR_NULL() is used while two if conditions for NULL and an error
-> > > > > > > code are used in the loop for the lockstep mode.  Please pick one heuristic and
-> > > > > > > stick with it.  I have no preference on which one.
-> > > > > >
-> > > > > > Ok, I think IS_ERR_OR_NULL is more cleaner, I will address it in next revision.
-> > > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > > +                   dev_dbg(dev, "failed to attach pm domain %d, ret=%ld\n", i,
-> > > > > > > > +                           PTR_ERR(r5_core->pm_dev_core0[i]));
-> > > > > > > > +                   ret = -EINVAL;
-> > > > > > > > +                   goto fail_add_pm_domains;
-> > > > > > > > +           }
-> > > > > > > > +           r5_core->pm_dev_core0_link[i] = device_link_add(dev,
-> > > > > > > > +                                                           r5_core->pm_dev_core0[i],
-> > > > > > > > +                                                           DL_FLAG_STATELESS |
-> > > > > > > > +                                                           DL_FLAG_RPM_ACTIVE |
-> > > > > > > > +                                                           DL_FLAG_PM_RUNTIME);
-> > > > > > > > +           if (!r5_core->pm_dev_core0_link[i]) {
-> > > > > > > > +                   dev_pm_domain_detach(r5_core->pm_dev_core0[i], true);
-> > > > > > > > +                   r5_core->pm_dev_core0[i] = NULL;
-> > > > > > > > +                   ret = -EINVAL;
-> > > > > > > > +                   goto fail_add_pm_domains;
-> > > > > > > > +           }
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   if (cluster->mode == SPLIT_MODE)
-> > > > > > > > +           return 0;
-> > > > > > > > +
-> > > > > > > > +   r5_core->pm_dev_core1 = kcalloc(num_pm_dev,
-> > > > > > > > +                                   sizeof(struct device *),
-> > > > > > > > +                                   GFP_KERNEL);
-> > > > > > > > +   if (!r5_core->pm_dev_core1) {
-> > > > > > > > +           ret = -ENOMEM;
-> > > > > > > > +           goto fail_add_pm_domains;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   r5_core->pm_dev_core1_link = kcalloc(num_pm_dev,
-> > > > > > > > +                                        sizeof(struct device_link *),
-> > > > > > > > +                                        GFP_KERNEL);
-> > > > > > > > +   if (!r5_core->pm_dev_core1_link) {
-> > > > > > > > +           kfree(r5_core->pm_dev_core1);
-> > > > > > > > +           r5_core->pm_dev_core1 = NULL;
-> > > > > > > > +           ret = -ENOMEM;
-> > > > > > > > +           goto fail_add_pm_domains;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   /* get second core's device to detach its power-domains */
-> > > > > > > > +   np = of_get_next_child(cluster->dev->of_node, of_node_get(dev->of_node));
-> > > > > > > > +
-> > > > > > > > +   pdev = of_find_device_by_node(np);
-> > > > > > > > +   if (!pdev) {
-> > > > > > > > +           dev_err(cluster->dev, "core1 platform device not available\n");
-> > > > > > > > +           kfree(r5_core->pm_dev_core1);
-> > > > > > > > +           kfree(r5_core->pm_dev_core1_link);
-> > > > > > > > +           r5_core->pm_dev_core1 = NULL;
-> > > > > > > > +           r5_core->pm_dev_core1_link = NULL;
-> > > > > > > > +           ret = -EINVAL;
-> > > > > > > > +           goto fail_add_pm_domains;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +   dev2 = &pdev->dev;
-> > > > > > > > +
-> > > > > > > > +   /* for zynqmp we only add TCM power domains and not core's power domain */
-> > > > > > > > +   for (j = 1; j < r5_core->num_pm_dev; j++) {
-> > > > > > > > +           r5_core->pm_dev_core1[j] = dev_pm_domain_attach_by_id(dev2, j);
-> > > > > > > > +           if (!r5_core->pm_dev_core1[j]) {
-> > > > > > > > +                   dev_dbg(dev, "can't attach to pm domain %d\n", j);
-> > > > > > > > +                   ret = -EINVAL;
-> > > > > > > > +                   goto fail_add_pm_domains_lockstep;
-> > > > > > > > +           } else if (IS_ERR(r5_core->pm_dev_core1[j])) {
-> > > > > > > > +                   dev_dbg(dev, "can't attach to pm domain %d\n", j);
-> > > > > > > > +                   ret = PTR_ERR(r5_core->pm_dev_core1[j]);
-> > > > > > > > +                   goto fail_add_pm_domains_lockstep;
-> > > > > > > > +           }
-> > > > > > > > +
-> > > > > > > > +           r5_core->pm_dev_core1_link[j] = device_link_add(dev,
-> > > > > > > > +                                                           r5_core->pm_dev_core1[j],
-> > > > > > > > +                                                           DL_FLAG_STATELESS |
-> > > > > > > > +                                                           DL_FLAG_RPM_ACTIVE |
-> > > > > > > > +                                                           DL_FLAG_PM_RUNTIME);
-> > > > > > > > +           if (!r5_core->pm_dev_core1_link[j]) {
-> > > > > > > > +                   dev_pm_domain_detach(r5_core->pm_dev_core1[j], true);
-> > > > > > > > +                   r5_core->pm_dev_core1[j] = NULL;
-> > > > > > > > +                   ret = -ENODEV;
-> > > > > > > > +                   goto fail_add_pm_domains_lockstep;
-> > > > > > > > +           }
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > > +fail_add_pm_domains_lockstep:
-> > > > > > > > +   while (--j >= 0) {
-> > > > > > > > +           device_link_del(r5_core->pm_dev_core1_link[j]);
-> > > > > > > > +           dev_pm_domain_detach(r5_core->pm_dev_core1[j], true);
-> > > > > > > > +   }
-> > > > > > > > +   kfree(r5_core->pm_dev_core1);
-> > > > > > > > +   r5_core->pm_dev_core1 = NULL;
-> > > > > > > > +   kfree(r5_core->pm_dev_core1_link);
-> > > > > > > > +   r5_core->pm_dev_core1_link = NULL;
-> > > > > > > > +
-> > > > > > > > +fail_add_pm_domains:
-> > > > > > > > +   while (--i >= 0) {
-> > > > > > > > +           device_link_del(r5_core->pm_dev_core0_link[i]);
-> > > > > > > > +           dev_pm_domain_detach(r5_core->pm_dev_core0[i], true);
-> > > > > > > > +   }
-> > > > > > > > +   kfree(r5_core->pm_dev_core0);
-> > > > > > > > +   r5_core->pm_dev_core0 = NULL;
-> > > > > > > > +   kfree(r5_core->pm_dev_core0_link);
-> > > > > > > > +   r5_core->pm_dev_core0_link = NULL;
-> > > > > > > > +
-> > > > > > >
-> > > > > > > The error path is much cleaner and readable now.
-> > > > > > >
-> > > > > > > I will continue tomorrow.
-> > > > > > >
-> > > > > > > Mathieu
-> > > > > > >
-> > > > > > > > +   return ret;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  /**
-> > > > > > > >   * zynqmp_r5_rproc_prepare()
-> > > > > > > >   * adds carveouts for TCM bank and reserved memory regions
-> > > > > > > > @@ -770,19 +966,30 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
-> > > > > > > >  {
-> > > > > > > >     int ret;
-> > > > > > > >
-> > > > > > > > +   ret = zynqmp_r5_add_pm_domains(rproc);
-> > > > > > > > +   if (ret) {
-> > > > > > > > +           dev_err(&rproc->dev, "failed to add pm domains\n");
-> > > > > > > > +           return ret;
-> > > > > > > > +   }
-> > > > > > > > +
-> > > > > > > >     ret = add_tcm_banks(rproc);
-> > > > > > > >     if (ret) {
-> > > > > > > >             dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-> > > > > > > > -           return ret;
-> > > > > > > > +           goto fail_prepare;
-> > > > > > > >     }
-> > > > > > > >
-> > > > > > > >     ret = add_mem_regions_carveout(rproc);
-> > > > > > > >     if (ret) {
-> > > > > > > >             dev_err(&rproc->dev, "failed to get reserve mem regions %d\n", ret);
-> > > > > > > > -           return ret;
-> > > > > > > > +           goto fail_prepare;
-> > > > > > > >     }
-> > > > > > > >
-> > > > > > > >     return 0;
-> > > > > > > > +
-> > > > > > > > +fail_prepare:
-> > > > > > > > +   zynqmp_r5_remove_pm_domains(rproc);
-> > > > > > > > +
-> > > > > > > > +   return ret;
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > >  /**
-> > > > > > > > @@ -801,6 +1008,8 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
-> > > > > > > >
-> > > > > > > >     r5_core = rproc->priv;
-> > > > > > > >
-> > > > > > > > +   zynqmp_r5_remove_pm_domains(rproc);
-> > > > > > > > +
-> > > > > > > >     for (i = 0; i < r5_core->tcm_bank_count; i++) {
-> > > > > > > >             pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> > > > > > > >             if (zynqmp_pm_release_node(pm_domain_id))
-> > > > > > > > --
-> > > > > > > > 2.25.1
-> > > > > > > >
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
