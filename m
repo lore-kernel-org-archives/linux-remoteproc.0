@@ -1,152 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B668342ABB;
-	Thu,  7 Dec 2023 23:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVsGFRUV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F705C433C7;
-	Thu,  7 Dec 2023 23:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701992467;
-	bh=F3yFkrBoPvYgnjqkAbhACfF2pHqxuP+Z8Rav20Zxl9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fVsGFRUVrs4k5SOD5D4kjazODSA2OlpFebdxjWr9QRTQE34EGts47fCXyNNrWcQSu
-	 0we2lGdWGyCpY5jzbRxaB4KUQqrchdbtak2IZLwjdLovJHc3/GG3eT8gF0l+Q6R1wh
-	 8IuMxwKflIvH0bvQJiN1d7xTqY3fXPMM/pitmNzkk+RGGhzwJTAydRSXrNTzJ26iWP
-	 IxRs1McwWB/6Dk8gYMrYE1Qf7oxw3aOX3+BzM6i8xjm2+gdBGr8kS7ZFzKTt3QBw1f
-	 BOzJRCOAx/r2vMeuFOU+adlKp+RpubHa7AjsTb0KVYC1NaPExMotCjZApyPHR7dpx4
-	 GMeQdBaS7+H0w==
-Date: Thu, 7 Dec 2023 15:44:25 -0800
-From: Bjorn Andersson <andersson@kernel.org>
-To: Deepak Kumar Singh <quic_deesin@quicinc.com>
-Cc: quic_bjorande@quicinc.com, andersson@kernel.org, quic_clew@quicinc.com, 
-	mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org, quic_sarannya@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Andy Gross <agross@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V1] rpmsg: glink: smem: validate index before fifo read
- write
-Message-ID: <yqa3hodfpdisdncluoojkqk533lqko5ymbzms3mstjfcxvbkvm@dwwzg24zxpxm>
-References: <20231201110631.669085-1-quic_deesin@quicinc.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JBo6OQEa"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AD110CF;
+	Fri,  8 Dec 2023 03:21:52 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3B8BLh2e002284;
+	Fri, 8 Dec 2023 05:21:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1702034503;
+	bh=oLg0AisyamUAtVSfksyGAW5Md+GYqQaIkcHjjDZN0+M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JBo6OQEaEjo4IiHFUd8QMeejBINXQLmQfVF8diQajDCYn8bBY/vkw5b6xry6uqAmB
+	 /4xKovFzdv8OPaPiW6Aukip5ZvsgHoTaj5Bnosqe0Kefv6VRoKTLJM4+lFQq+RC9A/
+	 e74XqpXBO4g5ECzxGFxNdEkHuQeF177X2DAh+Zec=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3B8BLgs7015127
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 8 Dec 2023 05:21:43 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
+ Dec 2023 05:21:42 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 8 Dec 2023 05:21:42 -0600
+Received: from [10.249.48.175] ([10.249.48.175])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3B8BLgjq055436;
+	Fri, 8 Dec 2023 05:21:42 -0600
+Message-ID: <d582b9fa-a2bf-c522-278d-58ddf9353be8@ti.com>
+Date: Fri, 8 Dec 2023 05:21:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231201110631.669085-1-quic_deesin@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 3/5] remoteproc: k3-r5: Add support for IPC-only mode
+ for all R5Fs
+Content-Language: en-US
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Praneeth Bajjuri <praneeth@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        "Su, Bao Cheng (RC-CN DF FA R&D)"
+	<baocheng.su@siemens.com>
+References: <20220213201246.25952-1-s-anna@ti.com>
+ <20220213201246.25952-4-s-anna@ti.com>
+ <e0bc7eb5-f1b9-4e99-a39f-ca6f31daa9d8@siemens.com> <ZUPDrlVLkDDgJpWm@p14s>
+ <106f3a36-16d8-4272-ad7a-287e6a3acfb5@siemens.com>
+From: Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <106f3a36-16d8-4272-ad7a-287e6a3acfb5@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Dec 01, 2023 at 04:36:31PM +0530, Deepak Kumar Singh wrote:
-> Fifo head and tail index can be modified with wrong values from
-> untrusted remote procs. Glink smem is not validating these index
-> before using to read or write fifo. This can result in out of
-> bound memory access if head and tail have incorrect values.
+On 11/2/23 11:43, Jan Kiszka wrote:
+>>> RTI1 watchdog also powers up R5F core 1. And this could happen either in
+>> When writing "... also powers up...", other than R5F core 1, what else is being
+>> powered?
+> Would be a question for the SoC vendor - I assumed that only mcu_rti1
+> [1] goes on when enabling it. But also mcu_r5fss0_core1 is enabled after
+> that, at least according to the respective TI-SCI query that the is_on
+> handler is performing. I've tested that under Linux and in U-Boot.
 > 
-> Add check for validation of head and tail index. This check will
-> put index within fifo boundaries, so that no invalid memory access
-> is made. Further this may result in certain packet drops unless
-> glink finds a valid packet header in fifo again and recovers.
-> 
-> Crash signature and calltrace with wrong head and tail values:
-> 
-> Internal error: Oops: 96000007 [#1] PREEMPT SMP
-> pc : __memcpy_fromio+0x34/0xb4
-> lr : glink_smem_rx_peak+0x68/0x94
-> 
-> __memcpy_fromio+0x34/0xb4
-> glink_smem_rx_peak+0x68/0x94
-> qcom_glink_native_intr+0x90/0x888
-> 
-> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-> ---
->  drivers/rpmsg/qcom_glink_smem.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-> index 7a982c60a8dd..9eba0aaae916 100644
-> --- a/drivers/rpmsg/qcom_glink_smem.c
-> +++ b/drivers/rpmsg/qcom_glink_smem.c
-> @@ -86,9 +86,14 @@ static size_t glink_smem_rx_avail(struct qcom_glink_pipe *np)
->  	tail = le32_to_cpu(*pipe->tail);
->  
->  	if (head < tail)
-> -		return pipe->native.length - tail + head;
-> +		len = pipe->native.length - tail + head;
->  	else
-> -		return head - tail;
-> +		len = head - tail;
-> +
-> +	if (WARN_ON_ONCE(len > pipe->native.length))
-> +		len = 0;
-> +
-> +	return len;
->  }
->  
->  static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
-> @@ -99,6 +104,10 @@ static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
->  	u32 tail;
->  
->  	tail = le32_to_cpu(*pipe->tail);
-> +
-> +	if (WARN_ON_ONCE(tail > pipe->native.length))
-> +		return;
+As described in section 12.5.2.1 of AM64x TRM 
+(https://www.ti.com/lit/pdf/SPRUIM2) -There is a RTI for each CPU core. 
+And it is not intended to be use RTI provisioned for a particular CPU 
+core with a different core.
+And also as shown in section (5.2.2.2.1.3.1) the CPU core and 
+corresponding RTI share the same power sub module (LPSC), so enabling 
+one powers on the other.
 
-Just returning here will leave the caller with garbage in @data, which
-they will act upon. It does avoid the out of bounds read, but I'm not
-confident in what happens next.
+As Suman suggested, it seems more appropriate to enable the RTI watchdog 
+timers in the remoteproc driver. Legacy omap remoteproc drivers have 
+this support and needs to be extended to k3 remoteproc drivers.
+Another option could be to DEFER RTI probe until corresponding 
+remoteproc driver is probed.
 
-> +
->  	tail += offset;
->  	if (tail >= pipe->native.length)
->  		tail -= pipe->native.length;
-> @@ -121,7 +130,7 @@ static void glink_smem_rx_advance(struct qcom_glink_pipe *np,
->  
->  	tail += count;
->  	if (tail >= pipe->native.length)
-> -		tail -= pipe->native.length;
-> +		tail %= pipe->native.length;
-
-If @tail had a bogus value before we incremented then we now have a
-completely random value. The next time the FIFO is read these values
-will be OK and we will return some random values to the caller.
-
->  
->  	*pipe->tail = cpu_to_le32(tail);
->  }
-> @@ -146,6 +155,9 @@ static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
->  	else
->  		avail -= FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE;
->  
-> +	if (WARN_ON_ONCE(avail > pipe->native.length))
-> +		avail = 0;
-> +
->  	return avail;
->  }
->  
-> @@ -155,6 +167,9 @@ static unsigned int glink_smem_tx_write_one(struct glink_smem_pipe *pipe,
->  {
->  	size_t len;
->  
-> +	if (WARN_ON_ONCE(head > pipe->native.length))
-> +		return head;
-
-As above, but with less probability, this might end up adjusting
-pipe->head (in glink_smem_tx_write()) to a random position within the
-FIFO - which then upon next access will corrupt the data.
-
-This shouldn't cause any direct issues on the Linux side though, we will
-just corrupt the outgoing FIFO (which probably don't matter given that
-things are already broken).
-
-Regards,
-Bjorn
-
-> +
->  	len = min_t(size_t, count, pipe->native.length - head);
->  	if (len)
->  		memcpy(pipe->fifo + head, data, len);
-> -- 
-> 2.34.1
-> 
+Any other solutions to maintain this order of enabling remote core and 
+the corresponding RTI/WDT?
