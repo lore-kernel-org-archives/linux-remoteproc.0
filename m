@@ -1,198 +1,191 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="biz4J9KI"
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49C710E0
-	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Dec 2023 12:33:31 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-6ce95e387e5so1948127b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 08 Dec 2023 12:33:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NizuPfqW"
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FBEE1
+	for <linux-remoteproc@vger.kernel.org>; Sat,  9 Dec 2023 10:06:17 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-548f853fc9eso4386784a12.1
+        for <linux-remoteproc@vger.kernel.org>; Sat, 09 Dec 2023 10:06:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702067611; x=1702672411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QDm0samvC5P/9akoWEQePvjxWAFPqGq3UDU4GCf/u2w=;
-        b=biz4J9KIXHNfFMbLKLd6Vip5DgTs3WNWMW8OpSG60hKVvBvSBf85ugT4Fp9ClQtRxP
-         4lqiRypX3LgE/bv921jNX81eUMvjfb/wFOs4Z0bnokqysi04jMakpvOKogTNba9rVrZV
-         rs8te3+sMR9g24qEoevHKZpoYK/jEGzCPWJBys6zDxaMP2eo2pfsx86s3TwGJJ1UZSeE
-         z3WDvlGvYpsRbHE0/Usjc1yVDgcG40ZTjJ3BNCgemb+UtgQh1Xfd0tu4uGKkLVJZTDYC
-         zj2NcRvF3PLbTaQ+Q3KgvkWjw/NmuoIt52qkWDtU9YqokTlTdFKD+xZqKm4+NavD0huv
-         ZY6g==
+        d=linaro.org; s=google; t=1702145175; x=1702749975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S92a7fqULbrEMilkRlrKeNQnqm+Il9bmhuzzD2asOkg=;
+        b=NizuPfqWMgVWF4VcEgAx40XFLOAEllWZse4VnaUNpUibeysy2Tnl54KESJiWyHZciP
+         jEyc0QQTls+cBoKfrpLngh2ddcWCv96Yo4SYGcSbhCpVFQzh3d1bDeYakrELp+LWE31o
+         GVn9EQP/1cXom56mSZ0mYcOPOak7K6Ms3+8ZDrLDCoG/44WVL9N2EkhTV/84bgQlAcUe
+         GtyA/lAReRFyvAa1eVqMbML66q8+jHkr+Z0oFwvsXCtdA6j//gfm4IC5kmxIA7seI089
+         8/daFBhQp5Nhq62rC7ip3H02ca3/eto/BsmG6pDdbplGH/4ZBxdfUCxayxwkVCEIREKd
+         Cwyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702067611; x=1702672411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QDm0samvC5P/9akoWEQePvjxWAFPqGq3UDU4GCf/u2w=;
-        b=Ndx0XuC3BV9vE6zf2dvi386sefkESfjCiu48FBnUtZda6pKG9t262BmUcG/h2Gcadv
-         06aZDfTJcXJF6lMIKpCbPan9HWDu0qjenC0OPukbE0N0RzcXiTU/IuyO8phWSs1HP8dD
-         Wn0kHDMZ9tSkdhYXmhvzdUj//GWh1/gxKmi/liNaE49UoQjijUuQvd/w06b0y74g+2pk
-         AbD7fOe+uvqpJPoHgYNspGzTjuXyxzNVbxO/nl5PehZOw7TkGRXE2aDAvSsAsrywarda
-         aP0/RlgA5GeIrsalRfL723lUWczAJJqKZ77OFevVpAWp84X/NpJ3hWW/Mt/sVP7jkiHI
-         FOsw==
-X-Gm-Message-State: AOJu0YxQxpy77/GhPvqWeEz3tT2aggsJ46eBCESHdrJRSiCPVux1AUxq
-	FWZ5y+C3c7nxnbmrcWMVQH71CQ==
-X-Google-Smtp-Source: AGHT+IFnMNHGLXwMuu/G8AJ6XSzadocAlVjm2CAHJzFuxIZSIqeBa5t6fI09aIMFEJdey2lv+sByOQ==
-X-Received: by 2002:a17:902:ea0c:b0:1d1:c917:2e5c with SMTP id s12-20020a170902ea0c00b001d1c9172e5cmr833506plg.95.1702067611033;
-        Fri, 08 Dec 2023 12:33:31 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:bc99:83ae:a2d5:c5ca])
-        by smtp.gmail.com with ESMTPSA id n5-20020a170902e54500b001cfcc10491fsm2120947plf.161.2023.12.08.12.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 12:33:30 -0800 (PST)
-Date: Fri, 8 Dec 2023 13:33:28 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Adrien Leravat <adrien.leravat@gmail.com>
-Cc: andersson@kernel.org, corbet@lwn.net, linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc: rmpsg: update with rpmsg_endpoint
-Message-ID: <ZXN9mAXUeHopmdiQ@p14s>
-References: <20231203200606.255302-1-adrien.leravat@gmail.com>
+        d=1e100.net; s=20230601; t=1702145175; x=1702749975;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S92a7fqULbrEMilkRlrKeNQnqm+Il9bmhuzzD2asOkg=;
+        b=gUtpaFpMPosWIjVRv9QuJFJcs0v4/rX5J+o+Nj/c4MKWG9Jjdn9tnRLtw/hqZWhLWZ
+         w77SZtctw1zukHAZwsypPYSshWUkhJ59AaymlSCz3RNVMZF060h9XXfTX1vu5g31bizj
+         n/9ms1HbXM4PS0ppSuBGMMksIuA0rBcdtU03dQ6Cvv9PehFwPSJN/LN26B/pZK4cH+Fd
+         ryD9IjQLfrpvEpeKOzful9sBMD5CABHTPm75w08246ozSNoPpEe4TmYe3rXsx5q8I6um
+         vqPlF5/196f3wcGdAc1fyIO4BYE/GQkMTomqRwuDdBdPaQDQKzUvQ1kMRKvea5oQWEea
+         pYYw==
+X-Gm-Message-State: AOJu0YxUUe+UAE/3dNfZqhDD8/hY8X6vHCgfyQ5+caJt50gOUsi41EbZ
+	gyRUKnkpQdNSyJMjbpN3ORAtTg==
+X-Google-Smtp-Source: AGHT+IGL+RUzfiNlVYUbxi/RKdaYhCItlqf4dDEDP5kV2JQ/KdKdV2e0gKg2iTuBh4O/UcwbdVurpw==
+X-Received: by 2002:a50:85c6:0:b0:54c:8890:6ff2 with SMTP id q6-20020a5085c6000000b0054c88906ff2mr670070edh.13.1702145175453;
+        Sat, 09 Dec 2023 10:06:15 -0800 (PST)
+Received: from [192.168.36.128] (178235179179.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.179])
+        by smtp.gmail.com with ESMTPSA id h28-20020a50cddc000000b0054c72a6a07csm1948184edj.84.2023.12.09.10.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Dec 2023 10:06:15 -0800 (PST)
+Message-ID: <76f18323-a59e-4724-96ec-6306e5dcd2dc@linaro.org>
+Date: Sat, 9 Dec 2023 19:06:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231203200606.255302-1-adrien.leravat@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] remoteproc: qcom: pas: make region assign more
+ generic
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>, Andy Gross
+ <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mukesh Ojha <quic_mojha@quicinc.com>
+References: <20231208-topic-sm8650-upstream-remoteproc-v4-0-a96c3e5f0913@linaro.org>
+ <20231208-topic-sm8650-upstream-remoteproc-v4-2-a96c3e5f0913@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231208-topic-sm8650-upstream-remoteproc-v4-2-a96c3e5f0913@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 03, 2023 at 12:06:04PM -0800, Adrien Leravat wrote:
-> It seems the documentation was not updated when `rpmsg_sendto`
-> and related switched from `rpmsg_channel` to `rpmsg_endpoint`.
-> This change updates the proper calls, text, and the sample.
+On 8.12.2023 16:04, Neil Armstrong wrote:
+> The current memory region assign only supports a single
+> memory region.
 > 
-> Signed-off-by: Adrien Leravat <adrien.leravat@gmail.com>
+> But new platforms introduces more regions to make the
+> memory requirements more flexible for various use cases.
+> Those new platforms also shares the memory region between the
+> DSP and HLOS.
+> 
+> To handle this, make the region assign more generic in order
+> to support more than a single memory region and also permit
+> setting the regions permissions as shared.
+> 
+> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  Documentation/staging/rpmsg.rst | 50 ++++++++++++++++++---------------
->  1 file changed, 27 insertions(+), 23 deletions(-)
->
+[...]
 
-Thanks for the refactoring.  I have applied this patch.
+> +	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
+> +		struct reserved_mem *rmem = NULL;
+> +
+> +		node = of_parse_phandle(adsp->dev->of_node, "memory-region",
+> +					adsp->region_assign_idx + offset);
+> +		if (node)
+> +			rmem = of_reserved_mem_lookup(node);
+> +		of_node_put(node);
+Shouldn't this only be called when parse_phandle succeeds? (separate
+patch with a fix + cc stable if so?)
 
-Mathieu
+> +		if (!rmem) {
+> +			dev_err(adsp->dev, "unable to resolve shareable memory-region index %d\n",
+> +				offset);
+> +			return -EINVAL;
+> +		}
+>  
+> -	perm.vmid = QCOM_SCM_VMID_MSS_MSA;
+> -	perm.perm = QCOM_SCM_PERM_RW;
+> +		if (adsp->region_assign_shared)  {
+> +			perm[0].vmid = QCOM_SCM_VMID_HLOS;
+> +			perm[0].perm = QCOM_SCM_PERM_RW;
+> +			perm[1].vmid = adsp->region_assign_vmid;
+> +			perm[1].perm = QCOM_SCM_PERM_RW;
+> +			perm_size = 2;
+> +		} else {
+> +			perm[0].vmid = adsp->region_assign_vmid;
+> +			perm[0].perm = QCOM_SCM_PERM_RW;
+> +			perm_size = 1;
+> +		}
+>  
+> -	adsp->region_assign_phys = rmem->base;
+> -	adsp->region_assign_size = rmem->size;
+> -	adsp->region_assign_perms = BIT(QCOM_SCM_VMID_HLOS);
+> +		adsp->region_assign_phys[offset] = rmem->base;
+> +		adsp->region_assign_size[offset] = rmem->size;
+> +		adsp->region_assign_perms[offset] = BIT(QCOM_SCM_VMID_HLOS);
+>  
+> -	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
+> -				  adsp->region_assign_size,
+> -				  &adsp->region_assign_perms,
+I think this should be renamed to region_assign_owner(s)
 
-> diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-> index 1ce353cb232a..dba3e5f65612 100644
-> --- a/Documentation/staging/rpmsg.rst
-> +++ b/Documentation/staging/rpmsg.rst
-> @@ -68,13 +68,14 @@ User API
+> -				  &perm, 1);
+> -	if (ret < 0) {
+> -		dev_err(adsp->dev, "assign memory failed\n");
+> -		return ret;
+> +		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
+> +					  adsp->region_assign_size[offset],
+> +					  &adsp->region_assign_perms[offset],
+> +					  perm, perm_size);
+> +		if (ret < 0) {
+> +			dev_err(adsp->dev, "assign memory %d failed\n", offset);
+> +			return ret;
+> +		}
+>  	}
 >  
->  ::
+>  	return 0;
+> @@ -629,20 +653,23 @@ static int adsp_assign_memory_region(struct qcom_adsp *adsp)
+>  static void adsp_unassign_memory_region(struct qcom_adsp *adsp)
+>  {
+>  	struct qcom_scm_vmperm perm;
+> +	int offset;
+>  	int ret;
 >  
-> -  int rpmsg_send(struct rpmsg_channel *rpdev, void *data, int len);
-> +  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
->  
-> -sends a message across to the remote processor on a given channel.
-> -The caller should specify the channel, the data it wants to send,
-> +sends a message across to the remote processor from the given endpoint.
-> +The caller should specify the endpoint, the data it wants to send,
->  and its length (in bytes). The message will be sent on the specified
-> -channel, i.e. its source and destination address fields will be
-> -set to the channel's src and dst addresses.
-> +endpoint's channel, i.e. its source and destination address fields will be
-> +respectively set to the endpoint's src address and its parent channel
-> +dst addresses.
->  
->  In case there are no TX buffers available, the function will block until
->  one becomes available (i.e. until the remote processor consumes
-> @@ -87,17 +88,18 @@ Returns 0 on success and an appropriate error value on failure.
->  
->  ::
->  
-> -  int rpmsg_sendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst);
-> +  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
->  
-> -sends a message across to the remote processor on a given channel,
-> +sends a message across to the remote processor from a given endpoint,
->  to a destination address provided by the caller.
->  
-> -The caller should specify the channel, the data it wants to send,
-> +The caller should specify the endpoint, the data it wants to send,
->  its length (in bytes), and an explicit destination address.
->  
->  The message will then be sent to the remote processor to which the
-> -channel belongs, using the channel's src address, and the user-provided
-> -dst address (thus the channel's dst address will be ignored).
-> +endpoints's channel belongs, using the endpoints's src address,
-> +and the user-provided dst address (thus the channel's dst address
-> +will be ignored).
->  
->  In case there are no TX buffers available, the function will block until
->  one becomes available (i.e. until the remote processor consumes
-> @@ -110,18 +112,19 @@ Returns 0 on success and an appropriate error value on failure.
->  
->  ::
->  
-> -  int rpmsg_send_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
-> +  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->  							void *data, int len);
->  
->  
->  sends a message across to the remote processor, using the src and dst
->  addresses provided by the user.
->  
-> -The caller should specify the channel, the data it wants to send,
-> +The caller should specify the endpoint, the data it wants to send,
->  its length (in bytes), and explicit source and destination addresses.
->  The message will then be sent to the remote processor to which the
-> -channel belongs, but the channel's src and dst addresses will be
-> -ignored (and the user-provided addresses will be used instead).
-> +endpoint's channel belongs, but the endpoint's src and channel dst
-> +addresses will be ignored (and the user-provided addresses will
-> +be used instead).
->  
->  In case there are no TX buffers available, the function will block until
->  one becomes available (i.e. until the remote processor consumes
-> @@ -134,13 +137,14 @@ Returns 0 on success and an appropriate error value on failure.
->  
->  ::
->  
-> -  int rpmsg_trysend(struct rpmsg_channel *rpdev, void *data, int len);
-> +  int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
->  
-> -sends a message across to the remote processor on a given channel.
-> -The caller should specify the channel, the data it wants to send,
-> +sends a message across to the remote processor from a given endpoint.
-> +The caller should specify the endpoint, the data it wants to send,
->  and its length (in bytes). The message will be sent on the specified
-> -channel, i.e. its source and destination address fields will be
-> -set to the channel's src and dst addresses.
-> +endpoint's channel, i.e. its source and destination address fields will be
-> +respectively set to the endpoint's src address and its parent channel
-> +dst addresses.
->  
->  In case there are no TX buffers available, the function will immediately
->  return -ENOMEM without waiting until one becomes available.
-> @@ -150,10 +154,10 @@ Returns 0 on success and an appropriate error value on failure.
->  
->  ::
->  
-> -  int rpmsg_trysendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
-> +  int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
->  
->  
-> -sends a message across to the remote processor on a given channel,
-> +sends a message across to the remote processor from a given endoint,
->  to a destination address provided by the user.
->  
->  The user should specify the channel, the data it wants to send,
-> @@ -171,7 +175,7 @@ Returns 0 on success and an appropriate error value on failure.
->  
->  ::
->  
-> -  int rpmsg_trysend_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
-> +  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->  							void *data, int len);
->  
->  
-> @@ -284,7 +288,7 @@ content to the console.
->  	dev_info(&rpdev->dev, "chnl: 0x%x -> 0x%x\n", rpdev->src, rpdev->dst);
->  
->  	/* send a message on our channel */
-> -	err = rpmsg_send(rpdev, "hello!", 6);
-> +	err = rpmsg_send(rpdev->ept, "hello!", 6);
->  	if (err) {
->  		pr_err("rpmsg_send failed: %d\n", err);
->  		return err;
-> -- 
-> 2.43.0
-> 
+> -	if (!adsp->region_assign_idx)
+> +	if (!adsp->region_assign_idx || adsp->region_assign_shared)
+So when it's *shared*, we don't want to un-assign it?
+
+Konrad
