@@ -1,191 +1,81 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035EF1CA9B;
+	Sun, 10 Dec 2023 23:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NizuPfqW"
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FBEE1
-	for <linux-remoteproc@vger.kernel.org>; Sat,  9 Dec 2023 10:06:17 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-548f853fc9eso4386784a12.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 09 Dec 2023 10:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702145175; x=1702749975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S92a7fqULbrEMilkRlrKeNQnqm+Il9bmhuzzD2asOkg=;
-        b=NizuPfqWMgVWF4VcEgAx40XFLOAEllWZse4VnaUNpUibeysy2Tnl54KESJiWyHZciP
-         jEyc0QQTls+cBoKfrpLngh2ddcWCv96Yo4SYGcSbhCpVFQzh3d1bDeYakrELp+LWE31o
-         GVn9EQP/1cXom56mSZ0mYcOPOak7K6Ms3+8ZDrLDCoG/44WVL9N2EkhTV/84bgQlAcUe
-         GtyA/lAReRFyvAa1eVqMbML66q8+jHkr+Z0oFwvsXCtdA6j//gfm4IC5kmxIA7seI089
-         8/daFBhQp5Nhq62rC7ip3H02ca3/eto/BsmG6pDdbplGH/4ZBxdfUCxayxwkVCEIREKd
-         Cwyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702145175; x=1702749975;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S92a7fqULbrEMilkRlrKeNQnqm+Il9bmhuzzD2asOkg=;
-        b=gUtpaFpMPosWIjVRv9QuJFJcs0v4/rX5J+o+Nj/c4MKWG9Jjdn9tnRLtw/hqZWhLWZ
-         w77SZtctw1zukHAZwsypPYSshWUkhJ59AaymlSCz3RNVMZF060h9XXfTX1vu5g31bizj
-         n/9ms1HbXM4PS0ppSuBGMMksIuA0rBcdtU03dQ6Cvv9PehFwPSJN/LN26B/pZK4cH+Fd
-         ryD9IjQLfrpvEpeKOzful9sBMD5CABHTPm75w08246ozSNoPpEe4TmYe3rXsx5q8I6um
-         vqPlF5/196f3wcGdAc1fyIO4BYE/GQkMTomqRwuDdBdPaQDQKzUvQ1kMRKvea5oQWEea
-         pYYw==
-X-Gm-Message-State: AOJu0YxUUe+UAE/3dNfZqhDD8/hY8X6vHCgfyQ5+caJt50gOUsi41EbZ
-	gyRUKnkpQdNSyJMjbpN3ORAtTg==
-X-Google-Smtp-Source: AGHT+IGL+RUzfiNlVYUbxi/RKdaYhCItlqf4dDEDP5kV2JQ/KdKdV2e0gKg2iTuBh4O/UcwbdVurpw==
-X-Received: by 2002:a50:85c6:0:b0:54c:8890:6ff2 with SMTP id q6-20020a5085c6000000b0054c88906ff2mr670070edh.13.1702145175453;
-        Sat, 09 Dec 2023 10:06:15 -0800 (PST)
-Received: from [192.168.36.128] (178235179179.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.179])
-        by smtp.gmail.com with ESMTPSA id h28-20020a50cddc000000b0054c72a6a07csm1948184edj.84.2023.12.09.10.06.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Dec 2023 10:06:15 -0800 (PST)
-Message-ID: <76f18323-a59e-4724-96ec-6306e5dcd2dc@linaro.org>
-Date: Sat, 9 Dec 2023 19:06:12 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAj11NC3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57815C433CB;
+	Sun, 10 Dec 2023 23:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702250474;
+	bh=gvwR2j/z1ZaZOnuiohyEd3caC9SRMzeObIfDq/TJzFY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EAj11NC33OEYTlSuJwOejAh9fXKT1j2awCHg+VfDk8sUh/8qfBNXPBtif2iJw1fVy
+	 r4whRckFx+EMEneWvcV/P0zZcYKTucM/Ws4TM/RM/a9Lr8nu1/LvulZ/C8Nl2ygKjT
+	 3tJxt5SdDF24uFFAJWBRi/I6PluN0mHPzGJWO6aBhQQrSxSWkLW0Yb41aBn3EZ3rkA
+	 gUhRboSV6ncRSYp+2m2dbC85hXh0EDRXEcI3Ck6r2fc64V8GKpmpnczAOK+R6yec9A
+	 0hiuw54LhNN/Ix+0x2CsehgC/YS2XS9oZxxk9PgOept4OwPNjhn95Rh5RM0reBO3Xd
+	 wLMFZsZmo5F0w==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 00/11] Remoteprocs (ADSP, CDSP, WPSS) for SC7280
+Date: Sun, 10 Dec 2023 15:25:37 -0800
+Message-ID: <170225073883.1947106.12108217961435416842.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231208-sc7280-remoteprocs-v3-0-6aa394d33edf@fairphone.com>
+References: <20231208-sc7280-remoteprocs-v3-0-6aa394d33edf@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] remoteproc: qcom: pas: make region assign more
- generic
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>, Andy Gross
- <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mukesh Ojha <quic_mojha@quicinc.com>
-References: <20231208-topic-sm8650-upstream-remoteproc-v4-0-a96c3e5f0913@linaro.org>
- <20231208-topic-sm8650-upstream-remoteproc-v4-2-a96c3e5f0913@linaro.org>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231208-topic-sm8650-upstream-remoteproc-v4-2-a96c3e5f0913@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 8.12.2023 16:04, Neil Armstrong wrote:
-> The current memory region assign only supports a single
-> memory region.
+
+On Fri, 08 Dec 2023 16:07:56 +0100, Luca Weiss wrote:
+> This series adds support for the ADSP, CDSP and WPSS remoteprocs found
+> on SC7280. And finally enable them and WiFi on the QCM6490-based
+> Fairphone 5 smartphone.
 > 
-> But new platforms introduces more regions to make the
-> memory requirements more flexible for various use cases.
-> Those new platforms also shares the memory region between the
-> DSP and HLOS.
+> The first two patches are fixes for the MPSS to fix some dt validation
+> issues. They're included in this series to avoid conflicts with the
+> later patches and keep it simpler.
 > 
-> To handle this, make the region assign more generic in order
-> to support more than a single memory region and also permit
-> setting the regions permissions as shared.
-> 
-> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
-[...]
+> [...]
 
-> +	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
-> +		struct reserved_mem *rmem = NULL;
-> +
-> +		node = of_parse_phandle(adsp->dev->of_node, "memory-region",
-> +					adsp->region_assign_idx + offset);
-> +		if (node)
-> +			rmem = of_reserved_mem_lookup(node);
-> +		of_node_put(node);
-Shouldn't this only be called when parse_phandle succeeds? (separate
-patch with a fix + cc stable if so?)
+Applied, thanks!
 
-> +		if (!rmem) {
-> +			dev_err(adsp->dev, "unable to resolve shareable memory-region index %d\n",
-> +				offset);
-> +			return -EINVAL;
-> +		}
->  
-> -	perm.vmid = QCOM_SCM_VMID_MSS_MSA;
-> -	perm.perm = QCOM_SCM_PERM_RW;
-> +		if (adsp->region_assign_shared)  {
-> +			perm[0].vmid = QCOM_SCM_VMID_HLOS;
-> +			perm[0].perm = QCOM_SCM_PERM_RW;
-> +			perm[1].vmid = adsp->region_assign_vmid;
-> +			perm[1].perm = QCOM_SCM_PERM_RW;
-> +			perm_size = 2;
-> +		} else {
-> +			perm[0].vmid = adsp->region_assign_vmid;
-> +			perm[0].perm = QCOM_SCM_PERM_RW;
-> +			perm_size = 1;
-> +		}
->  
-> -	adsp->region_assign_phys = rmem->base;
-> -	adsp->region_assign_size = rmem->size;
-> -	adsp->region_assign_perms = BIT(QCOM_SCM_VMID_HLOS);
-> +		adsp->region_assign_phys[offset] = rmem->base;
-> +		adsp->region_assign_size[offset] = rmem->size;
-> +		adsp->region_assign_perms[offset] = BIT(QCOM_SCM_VMID_HLOS);
->  
-> -	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
-> -				  adsp->region_assign_size,
-> -				  &adsp->region_assign_perms,
-I think this should be renamed to region_assign_owner(s)
+[07/11] arm64: dts: qcom: sc7280: Use WPSS PAS instead of PIL
+        commit: 0bcbf092560cc1c163156af67176cbb4b8a327f9
+[08/11] arm64: dts: qcom: sc7280: Add ADSP node
+        commit: 3658e411efcbb4df882763b09ae49efaa86585b4
+[09/11] arm64: dts: qcom: sc7280: Add CDSP node
+        commit: df62402e5ff9df1960622b4d7bc5dd43dc8e7b75
+[10/11] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable various remoteprocs
+        commit: 5ffc529fa5dfe428ab9a7866b58b964a376dd953
+[11/11] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable WiFi
+        commit: 16e84c137919dd91c1cb1102a3d536fce2d6ee94
 
-> -				  &perm, 1);
-> -	if (ret < 0) {
-> -		dev_err(adsp->dev, "assign memory failed\n");
-> -		return ret;
-> +		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
-> +					  adsp->region_assign_size[offset],
-> +					  &adsp->region_assign_perms[offset],
-> +					  perm, perm_size);
-> +		if (ret < 0) {
-> +			dev_err(adsp->dev, "assign memory %d failed\n", offset);
-> +			return ret;
-> +		}
->  	}
->  
->  	return 0;
-> @@ -629,20 +653,23 @@ static int adsp_assign_memory_region(struct qcom_adsp *adsp)
->  static void adsp_unassign_memory_region(struct qcom_adsp *adsp)
->  {
->  	struct qcom_scm_vmperm perm;
-> +	int offset;
->  	int ret;
->  
-> -	if (!adsp->region_assign_idx)
-> +	if (!adsp->region_assign_idx || adsp->region_assign_shared)
-So when it's *shared*, we don't want to un-assign it?
-
-Konrad
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
