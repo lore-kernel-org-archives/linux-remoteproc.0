@@ -1,278 +1,175 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGCmabf6"
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBEEE9
-	for <linux-remoteproc@vger.kernel.org>; Tue, 12 Dec 2023 00:45:27 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54da61eb366so7136258a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Dec 2023 00:45:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702370726; x=1702975526; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XlTbNEq1GuzPeQ1CDsWPGaoluuIMPNHfkxOroPtVeiQ=;
-        b=iGCmabf6sPD+JVeFSJXxe5PGOYZb8WLcWs03h3K71CXrDpo4qV01/8gpg63M0XJGZz
-         uRtGGMMMI161mQdlybilE98OAHu/ssWWhM3KlNS15DytYAH5mVViLjgo3XuR9JpNeSnG
-         G+ojWu7amxEKr7FhopaifeSPfdr5myShj3EOWfIpIqi2RqSCwifvzuf5GcI995lDzviK
-         EcRwzs1t+BqJpS09LKuLzH6oL+1SudsEM8BF7Zu/W1d4mRxZJ7jjyLKMZSlfe7HjgHZF
-         hx09dDtJl3EdW2OiDerPBZej3U5Wnk2NhSP7HeNZZet9U898bMieJStd+XWN0CYCm3fc
-         ik+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702370726; x=1702975526;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XlTbNEq1GuzPeQ1CDsWPGaoluuIMPNHfkxOroPtVeiQ=;
-        b=gb2VSEyShm4+T8WK0dqicjts0gdvrLuY69LMehCHplPN7gprY+XVCznLjbAp6IniMM
-         AT2y2WUeYLpWh2z9IDv5v50RWvn7m8Kaiy9EX8JQ+eeOkP7oPX+LJVlsjy0pCiplA15S
-         hw57kMeFXPWION+XR7sv+sz655wXLaIKIzcikYHOl/RJJ5L8AXAMwhls8bc8H1Y89NW8
-         rrHujw82YQWNKnKSysBHjvuD+EuVYluAB/DLM0yWD1VhFrIK4dyLVt7tOlTwyzeekbnz
-         NYX+4BEbK1txhXVL0cpzgz5xamkluTssf+0HyKl8ngA+txBdZmVBRc4OKq8xwrDIPWE4
-         Izdw==
-X-Gm-Message-State: AOJu0YxtbMVQjpy+RXbT0XdqremzMHe5JXNDx5lvZYoMrmDMWVZosc9a
-	Rmeig1/jQ1ZUo//KJ6qCs5kb6A==
-X-Google-Smtp-Source: AGHT+IGzjNM/C+UsrJLMJiGh2RqOwaIjKWfKWggYAC5KYaFeDX5TwhYVOIZzP7JQ+Aq48TIDj94Z9Q==
-X-Received: by 2002:a50:85ca:0:b0:551:14c0:7325 with SMTP id q10-20020a5085ca000000b0055114c07325mr1974900edh.40.1702370725978;
-        Tue, 12 Dec 2023 00:45:25 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id c27-20020a50d65b000000b0054c9bbd07e7sm4650471edj.54.2023.12.12.00.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 00:45:25 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 12 Dec 2023 09:45:18 +0100
-Subject: [PATCH v5 2/3] remoteproc: qcom: pas: make region assign more
- generic
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2077.outbound.protection.outlook.com [40.107.215.77])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5468F;
+	Tue, 12 Dec 2023 06:11:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IXLgEq0CZnDoKQRuXKOa+bvl8BW1CaxqUjnVswyJg90zSAdoBwQ86HAkTZl9uLY4LwhkLwZfxfi7lZkL7wPC/L0T7c2+0kv4fyuTGXnl1zUKrjPTeuLCMn2w3d34dctaU8xQj5z1Oj0zvXNa3FJS9cmeh6rE1bwLckMOT/bPua2m49cRy1cqoiUzrOAPW3Ad8GNpe02Uv+SL9hpdYpj/7tr8lOIaN2iikSVkhZSy2KmsNhU5U0nEhyASoxb6aRbmvy/5uE/f3eQl8aGLR9hs0jv9PY/wSNUq3V/rwjKmGUazKYJp5b+zVS9OFOoQqljLj2i1VAfXPMzhCNdSrJ9GkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yE4Ip/iN6p33GAqDaD06zjn6JpwnovDaZ3bf5MmAIv0=;
+ b=EuRyvoz5/RINhCdxD44ObNyjvTkb6jVAdqE4m3YETNPmL3m27F+AEzIXhSz6fdr36K4KB2kEdkcu8JuvX3hnrsybUlaS45wMzXoiGP3pIrHcpmDjZlEdedWrzNxmjbm6ilf4bvd/spQCTA9NcMjuXCP//WF7nU8FMT9tFigaXNdfGpxCGAuArWmf5eSU1e58HZkn/XvAnvVruVX7rbKcGm+0MuOtzMm69NUy6GMBOiq1VwfGARlqP9htwgyIWsKpnW/wb4VQQrdz+7kMIUxA0D5QH3kTmTtHD20D3ReJGagnwifb/F7n9tZ2NeUwsFRXopYd+Qhc6PFSpPYGi4IztQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
+ dkim=pass header.d=cixtech.com; arc=none
+Received: from SEYPR06MB6278.apcprd06.prod.outlook.com (2603:1096:101:143::5)
+ by SEYPR06MB6662.apcprd06.prod.outlook.com (2603:1096:101:176::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Tue, 12 Dec
+ 2023 14:11:06 +0000
+Received: from SEYPR06MB6278.apcprd06.prod.outlook.com
+ ([fe80::c664:8a1e:66d6:4e62]) by SEYPR06MB6278.apcprd06.prod.outlook.com
+ ([fe80::c664:8a1e:66d6:4e62%7]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
+ 14:11:05 +0000
+From: "Joakim  Zhang" <joakim.zhang@cixtech.com>
+To: "andersson@kernel.org" <andersson@kernel.org>,
+	"mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+	"arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>
+CC: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
+Subject:
+ =?gb2312?B?u9i4tDogW1BBVENIIFYxXSByZW1vdGVwcm9jOiB2aXJ0aW86IEZpeCB3ZGcg?=
+ =?gb2312?Q?cannot_recovery_remote_processor?=
+Thread-Topic: [PATCH V1] remoteproc: virtio: Fix wdg cannot recovery remote
+ processor
+Thread-Index: AQHaLLtrb+AjoFlBq0aMuorlloVq1bClrctQ
+Date: Tue, 12 Dec 2023 14:11:05 +0000
+Message-ID:
+ <SEYPR06MB6278AE38D53CA55FB06574F6828EA@SEYPR06MB6278.apcprd06.prod.outlook.com>
+References: <20231212052357.2052629-1-joakim.zhang@cixtech.com>
+In-Reply-To: <20231212052357.2052629-1-joakim.zhang@cixtech.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cixtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB6278:EE_|SEYPR06MB6662:EE_
+x-ms-office365-filtering-correlation-id: ea42d4f2-c79a-4eaf-e894-08dbfb1c2e50
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ pZC3bys7cdvUWbZ2SBptMMeVQu5zFNQyDQCdaa1P1AXlZIYEgroYu9AP+sq/4TIBEgvsNDE9k0KnqppUUmVY2p9SX46nmovJjBVNnv10bblj4n4/wSAL7GZUr88ZIjb7lHd0phURZstl9QJOXBYoT6BcZqLMYgR44FgUGazodk4U8HPsmq+53+E/9D6F1j0Edt0ftM9afXbYM/9efYOIHkcPzpNLxbD+Jfz0B+pulkTYS7SG0abN9KmTWIdhRfDgPRC/94s9jncMyaEvIzgqGj8VVkP5LHnBObCrWV0rll7NKqhzsgNvLX66oVJ0lJWsNCmfNMDGuhDQm+ou3eufbdTCN9vXQVTliq+gurJjhfthNRuY82Sewj/O8LMQToDN2kMWR71tVLhhgZRyg/oTCYUPicur4kVg0niVQchJo/XX93Zbjqz4MriEG7kHjSyznSRZRhxneqijqNoQ5+ZjGyF5YNPVzwei+xGoJejwr210HkemIeq9OWYezQNCB8X2dIFoimtH91uLxIxiNC/dHW2S/O4s3iGq3ru61N17oTWsepBzlkWURJFN4jegHzezXAvCtOkTtLOQHscZNfZDl4vJRzpcEiBc0TQNvxCJq/Q=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6278.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(376002)(346002)(39840400004)(396003)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(38100700002)(76116006)(64756008)(316002)(110136005)(66556008)(54906003)(66476007)(66446008)(66946007)(478600001)(966005)(107886003)(26005)(9686003)(33656002)(83380400001)(38070700009)(7696005)(6506007)(224303003)(41300700001)(71200400001)(122000001)(86362001)(2906002)(52536014)(5660300002)(55016003)(8936002)(4326008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?ZjFXV1R5SmdKYjREQzJzZllkbHExQnZZRmJPSUVsbmlDRy9OYmN1bU1Ha2wr?=
+ =?gb2312?B?OThISnUyU003eE0zVitPRjdQOEhRRVo4b3V4eFJ1WGxhK2lJbkdQM09kUXph?=
+ =?gb2312?B?aTRZWDNmZXZwKzZ2TkFqZDVYL3FEOVQ5V0M4N05RSWQwdHlsVXByVk5GRWhx?=
+ =?gb2312?B?Rlhac092YzFsNWdLd1dqaWw2SDV0U3JGSEMwUmJ3NXNUcm5QNmtpdHlvOThW?=
+ =?gb2312?B?TjFubWxuTzhFWlNaS2RmTURVZmtNQTM5T0R6c0NDUWVwSjlvMFd3Q0dhcFUr?=
+ =?gb2312?B?Z1JLUnNDUWIyV0dYTHU0SE5qVGloRG1OaXRuMnpLU3JIQkhMMWI5c0dtc09w?=
+ =?gb2312?B?b2FRVm1sSnpPSGgrS0I0bEFxbjNSTjUzUHdEcjh4Y1ZIQjA5YmlVbzdZNCs1?=
+ =?gb2312?B?bWJZcHhGdWRNanZoelM4dXRNKzNSby9PeFJTcFVtQzY1UTUvRjE0a1NmMElu?=
+ =?gb2312?B?ZzBIbUdXcWtoYjRqc0tPQnNEYkE1WUpSOThKbGYwcGZWZ2prVUtmalRqd0Zv?=
+ =?gb2312?B?UEdLWkVqelgrcTlpN3hLSlp6Q3I3T0p2NzV2dlZPQnNjd1o2YndQb1dKWFN6?=
+ =?gb2312?B?YTRNRUlSLy9McE4xMlluL3pFYzU0Z1RyRzdYcFF4K2xYWGRTQU9NOGhQTXR3?=
+ =?gb2312?B?bnM3VTRPVUZLbmoxZmpzU1o4NGFpVloxekxUWjVYMU5ZQmtsbUxkbEtHalFP?=
+ =?gb2312?B?SlZMZnFTWTJsTGoxODZSMXhIY1FiQjkwWXpLMW1qMHFWRHlXSVhLVmoyM3ph?=
+ =?gb2312?B?TllvK1NDaXpibmNqbTRnN0JEZFV3Smo2UHFUTTdocjhtd2hCUVV3aVlQM3RV?=
+ =?gb2312?B?aWk3bmJNUHpGRkFBOWdVdlBPUVR6YWx4bW5QaEFmbFFsc2RjR29zMDZZT0RC?=
+ =?gb2312?B?dXRZWWtSKzZYbTZpY3Y1Z1JpZ0V5V2hwcVdkbVhCaUE4RXdKcXBoVUk5VFFt?=
+ =?gb2312?B?NWlqLzBGZ2pYUjZzMzNuSG9LYXZRSGo5cGtjZGJ5dmVIWnYrbGxmUFdEdGdR?=
+ =?gb2312?B?UjRuQjA5NFBOWTFSKyt5VWVwSlNJMjd4cXpydWlMdklRd3J6WVY0RjBjN0x0?=
+ =?gb2312?B?SFJLZzgwTHAzVFJpUmNScjRjLzhWZFg3N3RacHBSNFlqcGV0UnlYWjdycHR6?=
+ =?gb2312?B?bHhnMnB5MnV1ZFp2N0VxTEtoMUVqc3BDT3RtRnQ3bEgzb002QjBxTHBsd2Uw?=
+ =?gb2312?B?Uk1VZnZmaVFvR2REb1dLWnk1cCtoNkFudUREcjlBNEtzVG16aGJwZ1REZUU5?=
+ =?gb2312?B?SldjeGRwSmFPS2ttcExLeDFQa2ZRa200NExDeGRJWFNrZmlkZGhUc2RzMDU3?=
+ =?gb2312?B?ZHhLazJuSHVkdWhaVWlMQzduRVNkSTYwUkpBT3V4S2ZWMzQzOUhCbUJWZy9P?=
+ =?gb2312?B?MkkreG9ZWWFqN3loTVBLdEgxZW5kWHMvOHdpQUxyVk93YjdtWmVaNmtmdVFw?=
+ =?gb2312?B?UnpXSTBkTzZmTWxNRTJiS3dOcDVpRVdDQlVFY0VHVlNXQ2d2MnJlS0hnd2hU?=
+ =?gb2312?B?QXZ4SVc0TXB2VlJuT0ladFJTYk5QRUpJajY3aVYvS3gwWmpIeUNjbjNuaHBw?=
+ =?gb2312?B?Y0VHY1FTUk9EUDNqZS9KeVlURU45dDVKS2ZhY3I1RC9PdlIwNjNkMHFnVGUz?=
+ =?gb2312?B?cEw4QmlvdDFwZml0NEpncVdoY25lQk43cE44WFFCSnJCbWdsQ09MZXZUREVn?=
+ =?gb2312?B?T2s2WFE2bG1RbEJoeDF5Q3JHVXpyK2NXSTJYaFhNY1FvSXlwTzB0ak5RRlJ3?=
+ =?gb2312?B?dU5yZlZnREN1SmFodzd2dU1yeFVORFVyaWpnck04dEFCUVF5Z2N2aEVOVzVa?=
+ =?gb2312?B?aGdmVUNrR08zaTV0Rys1TlBiM1BTNDFHb0xQYm9PZ2diL1ZQcjgvTGo3TE9B?=
+ =?gb2312?B?QmY0cVZRdGdQOUJyTVBqbVBtWUpUdUNFSXk2OTg3WWx6Y0RSYlZNQUI5QlJq?=
+ =?gb2312?B?dVdqbWFrejE2MHJhOVJ1T250SkdIam82VVhEQTJleU1UbnF1WVNLQTRYM3pI?=
+ =?gb2312?B?YStneEJjc3NMaGdwdXkraEppd1JFd2NKYk9kdW1GaTFkWkZhaXBuanNuVnla?=
+ =?gb2312?B?RjdURW5IV29Oa0pland3clJuZGoxQ3BReEtsa3Jua3VnOHdLYk41NFlXeG9F?=
+ =?gb2312?Q?PIPJ54vMFuGpi7m8NyhFdifK5?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231212-topic-sm8650-upstream-remoteproc-v5-2-e749a1a48268@linaro.org>
-References: <20231212-topic-sm8650-upstream-remoteproc-v5-0-e749a1a48268@linaro.org>
-In-Reply-To: <20231212-topic-sm8650-upstream-remoteproc-v5-0-e749a1a48268@linaro.org>
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Mukesh Ojha <quic_mojha@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6219;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=IRT2+r/tLyPXYlJ5SEMXnGkvZdLvUu++HCFHN4GbUO8=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBleB2hpsl1aHttk1gcyG0YRITgU2Rs3SWRYYTRVzn+
- GLzUMoiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZXgdoQAKCRB33NvayMhJ0eczEA
- CFT51CIAwawgXmAQ90G27raz4DwykXXdEYgj3IDdho3tWtsH3zLorSaullzFtvy2xqTNL3ELu0hMIS
- H8zj/K+41PAbqtf1QXII+ywooy4ZdrpVoeagwuOrhfG9WP2L7397t5I96bI5ydEoMvWlpDpKoGp6a0
- qtPiHDo8mAmmewepWv0RPxmbh5Mx88NxIEjlT1GKcIydNhF3RY9nzAahRU8oahudmxd0SGRJ6KcI6x
- 0T8U16xuHnNM/J1WWRQywcpMdoHZBCULz0s/YPEaruUo3A8KUWQf0aF5M8ql5tCiD5Wdebux8ahIwe
- j7Iogdz/5oztinykN75RUuE9rCoFhMissLoWsnLLHoSIfuKJ+0/XmFVnWlADI9s/fGXPJ4NWA7qXk8
- SDtrdi+i8TlH3e1t1/BZ81xypqlfl4c0KWrjU2lzVn/ZlkevlGfisk6/tSOK3lQO2uk3qobazHsFAc
- 4z4cijcyi0y2DVFrDVB4+bGsds96Dm5QOWitvYEuMxvoIRx2Aj+tzVR9n3bhChSmD31TfiTPu5R7nr
- xpQ5fsWV1oFEWaKwQIFqI4uJMp1KOaGgwc1COaFI+jWX8mdq0xiD7v8JURiaD4Het3e3TzXZWl8FCA
- Z4nq5e9ibjWkrQ87e8Lwq41quzbGnOrZ9Pl9xLxn2oAFfeMMvQc50/o/fPJw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6278.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea42d4f2-c79a-4eaf-e894-08dbfb1c2e50
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2023 14:11:05.7708
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dBx6ZP4Hgc6EeVuTKOM2bjBUba+fNwG1lI8fq7Evkk86suyqwIxF+b+b5LEaRx6kChR4h1t2Ar1HRs3RZQf0pwb6bX+/fjo1GRcyG9iTd4w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6662
 
-The current memory region assign only supports a single
-memory region.
-
-But new platforms introduces more regions to make the
-memory requirements more flexible for various use cases.
-Those new platforms also shares the memory region between the
-DSP and HLOS.
-
-To handle this, make the region assign more generic in order
-to support more than a single memory region and also permit
-setting the regions permissions as shared.
-
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 100 ++++++++++++++++++++++++-------------
- 1 file changed, 66 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 913a5d2068e8..46d744fbe8ad 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -33,6 +33,8 @@
- 
- #define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
- 
-+#define MAX_ASSIGN_COUNT 2
-+
- struct adsp_data {
- 	int crash_reason_smem;
- 	const char *firmware_name;
-@@ -51,6 +53,9 @@ struct adsp_data {
- 	int ssctl_id;
- 
- 	int region_assign_idx;
-+	int region_assign_count;
-+	bool region_assign_shared;
-+	int region_assign_vmid;
- };
- 
- struct qcom_adsp {
-@@ -87,15 +92,18 @@ struct qcom_adsp {
- 	phys_addr_t dtb_mem_phys;
- 	phys_addr_t mem_reloc;
- 	phys_addr_t dtb_mem_reloc;
--	phys_addr_t region_assign_phys;
-+	phys_addr_t region_assign_phys[MAX_ASSIGN_COUNT];
- 	void *mem_region;
- 	void *dtb_mem_region;
- 	size_t mem_size;
- 	size_t dtb_mem_size;
--	size_t region_assign_size;
-+	size_t region_assign_size[MAX_ASSIGN_COUNT];
- 
- 	int region_assign_idx;
--	u64 region_assign_perms;
-+	int region_assign_count;
-+	bool region_assign_shared;
-+	int region_assign_vmid;
-+	u64 region_assign_owners[MAX_ASSIGN_COUNT];
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-@@ -590,37 +598,53 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
- 
- static int adsp_assign_memory_region(struct qcom_adsp *adsp)
- {
--	struct reserved_mem *rmem = NULL;
--	struct qcom_scm_vmperm perm;
-+	struct qcom_scm_vmperm perm[MAX_ASSIGN_COUNT];
- 	struct device_node *node;
-+	unsigned int perm_size;
-+	int offset;
- 	int ret;
- 
- 	if (!adsp->region_assign_idx)
- 		return 0;
- 
--	node = of_parse_phandle(adsp->dev->of_node, "memory-region", adsp->region_assign_idx);
--	if (node)
--		rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
--		dev_err(adsp->dev, "unable to resolve shareable memory-region\n");
--		return -EINVAL;
--	}
-+	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
-+		struct reserved_mem *rmem = NULL;
-+
-+		node = of_parse_phandle(adsp->dev->of_node, "memory-region",
-+					adsp->region_assign_idx + offset);
-+		if (node)
-+			rmem = of_reserved_mem_lookup(node);
-+		of_node_put(node);
-+		if (!rmem) {
-+			dev_err(adsp->dev, "unable to resolve shareable memory-region index %d\n",
-+				offset);
-+			return -EINVAL;
-+		}
- 
--	perm.vmid = QCOM_SCM_VMID_MSS_MSA;
--	perm.perm = QCOM_SCM_PERM_RW;
-+		if (adsp->region_assign_shared)  {
-+			perm[0].vmid = QCOM_SCM_VMID_HLOS;
-+			perm[0].perm = QCOM_SCM_PERM_RW;
-+			perm[1].vmid = adsp->region_assign_vmid;
-+			perm[1].perm = QCOM_SCM_PERM_RW;
-+			perm_size = 2;
-+		} else {
-+			perm[0].vmid = adsp->region_assign_vmid;
-+			perm[0].perm = QCOM_SCM_PERM_RW;
-+			perm_size = 1;
-+		}
- 
--	adsp->region_assign_phys = rmem->base;
--	adsp->region_assign_size = rmem->size;
--	adsp->region_assign_perms = BIT(QCOM_SCM_VMID_HLOS);
-+		adsp->region_assign_phys[offset] = rmem->base;
-+		adsp->region_assign_size[offset] = rmem->size;
-+		adsp->region_assign_owners[offset] = BIT(QCOM_SCM_VMID_HLOS);
- 
--	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
--				  adsp->region_assign_size,
--				  &adsp->region_assign_perms,
--				  &perm, 1);
--	if (ret < 0) {
--		dev_err(adsp->dev, "assign memory failed\n");
--		return ret;
-+		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
-+					  adsp->region_assign_size[offset],
-+					  &adsp->region_assign_owners[offset],
-+					  perm, perm_size);
-+		if (ret < 0) {
-+			dev_err(adsp->dev, "assign memory %d failed\n", offset);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -629,20 +653,23 @@ static int adsp_assign_memory_region(struct qcom_adsp *adsp)
- static void adsp_unassign_memory_region(struct qcom_adsp *adsp)
- {
- 	struct qcom_scm_vmperm perm;
-+	int offset;
- 	int ret;
- 
--	if (!adsp->region_assign_idx)
-+	if (!adsp->region_assign_idx || adsp->region_assign_shared)
- 		return;
- 
--	perm.vmid = QCOM_SCM_VMID_HLOS;
--	perm.perm = QCOM_SCM_PERM_RW;
-+	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
-+		perm.vmid = QCOM_SCM_VMID_HLOS;
-+		perm.perm = QCOM_SCM_PERM_RW;
- 
--	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
--				  adsp->region_assign_size,
--				  &adsp->region_assign_perms,
--				  &perm, 1);
--	if (ret < 0)
--		dev_err(adsp->dev, "unassign memory failed\n");
-+		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
-+					  adsp->region_assign_size[offset],
-+					  &adsp->region_assign_owners[offset],
-+					  &perm, 1);
-+		if (ret < 0)
-+			dev_err(adsp->dev, "unassign memory %d failed\n", offset);
-+	}
- }
- 
- static int adsp_probe(struct platform_device *pdev)
-@@ -696,6 +723,9 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->info_name = desc->sysmon_name;
- 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	adsp->region_assign_idx = desc->region_assign_idx;
-+	adsp->region_assign_count = min_t(int, MAX_ASSIGN_COUNT, desc->region_assign_count);
-+	adsp->region_assign_vmid = desc->region_assign_vmid;
-+	adsp->region_assign_shared = desc->region_assign_shared;
- 	if (dtb_fw_name) {
- 		adsp->dtb_firmware_name = dtb_fw_name;
- 		adsp->dtb_pas_id = desc->dtb_pas_id;
-@@ -1163,6 +1193,8 @@ static const struct adsp_data sm8550_mpss_resource = {
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
- 	.region_assign_idx = 2,
-+	.region_assign_count = 1,
-+	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
- };
- 
- static const struct of_device_id adsp_of_match[] = {
-
--- 
-2.34.1
-
+DQpIZWxsbyBtYWludGFpbmVycywNCg0KVGhpcyBwYXRjaCBtYXkgbm90IGZpeCBpdCBpbiBhIGNv
+cnJlY3Qgd2F5LCBhZnRlciBhcHBseWluZyB0aGlzIHBhdGNoLCBpbiBycHJvY19hZGRfdmlydGlv
+X2RldigpOg0KDQoxKSBJZiB0aGUgYWxsb2NhdGUgcGF0aCBpcyBkbWFfZGVjbGFyZV9jb2hlcmVu
+dF9tZW1vcnkoKSwgaXQgd2lsbCBiZSBmcmVlZCBmcm9tIGRtYV9yZWxlYXNlX2NvaGVyZW50X21l
+bW9yeSgpLCB3aGljaCBpcyBleHBlY3RlZA0KDQoyKSBJZiB0aGUgYWxsb2NhdGUgcGF0aCBpcyBv
+Zl9yZXNlcnZlZF9tZW1fZGV2aWNlX2luaXRfYnlfaWR4KCksIGl0IHdpbGwgc3RpbGwgYmUgZnJl
+ZWQgZnJvbSBkbWFfcmVsZWFzZV9jb2hlcmVudF9tZW1vcnkoKSwgd2hpY2ggaXMgbm90IGV4cGVj
+dGVkDQoNClRyeSB0byBmaXggdGhpcyBpc3N1ZSwgSSBhbHNvIGludHJvZHVjZSBhbm90aGVyIHBh
+dGNoOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjMxMjEyMDUyMTMwLjIwNTEzMzMt
+MS1qb2FraW0uemhhbmdAY2l4dGVjaC5jb20vVC8NCg0KQXJlIHRoZXJlIGFueSBzdWdnZXN0aW9u
+cz8gVGhhbmtzLg0KDQpKb2FraW0NCg0KPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4gt6K8/sjLOiBK
+b2FraW0gWmhhbmcgPGpvYWtpbS56aGFuZ0BjaXh0ZWNoLmNvbT4NCj4gt6LLzcqxvOQ6IDIwMjPE
+6jEy1MIxMsjVIDEzOjI0DQo+IMrVvP7IyzogYW5kZXJzc29uQGtlcm5lbC5vcmc7IG1hdGhpZXUu
+cG9pcmllckBsaW5hcm8ub3JnOw0KPiBhcm5hdWQucG91bGlxdWVuQGZvc3Muc3QuY29tDQo+ILOt
+y806IGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnOw0KPiBjaXgta2VybmVsLXVwc3RyZWFtIDxjaXgta2VybmVsLXVwc3RyZWFtQGNp
+eHRlY2guY29tPjsgSm9ha2ltIFpoYW5nDQo+IDxqb2FraW0uemhhbmdAY2l4dGVjaC5jb20+DQo+
+INb3zOI6IFtQQVRDSCBWMV0gcmVtb3RlcHJvYzogdmlydGlvOiBGaXggd2RnIGNhbm5vdCByZWNv
+dmVyeSByZW1vdGUNCj4gcHJvY2Vzc29yDQo+IA0KPiBGcm9tOiBKb2FraW0gWmhhbmcgPGpvYWtp
+bS56aGFuZ0BjaXh0ZWNoLmNvbT4NCj4gDQo+IFJlY292ZXJ5IHJlbW90ZSBwcm9jZXNzb3IgZmFp
+bGVkIHdoZW4gd2RnIGlycSByZWNlaXZlZDoNCj4gWyAgICAwLjg0MjU3NF0gcmVtb3RlcHJvYyBy
+ZW1vdGVwcm9jMDogY3Jhc2ggZGV0ZWN0ZWQgaW4gY2l4LWRzcC1ycHJvYzoNCj4gdHlwZSB3YXRj
+aGRvZw0KPiBbICAgIDAuODQyNzUwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiBoYW5kbGluZyBj
+cmFzaCAjMSBpbiBjaXgtZHNwLXJwcm9jDQo+IFsgICAgMC44NDI4MjRdIHJlbW90ZXByb2MgcmVt
+b3RlcHJvYzA6IHJlY292ZXJpbmcgY2l4LWRzcC1ycHJvYw0KPiBbICAgIDAuODQzMzQyXSByZW1v
+dGVwcm9jIHJlbW90ZXByb2MwOiBzdG9wcGVkIHJlbW90ZSBwcm9jZXNzb3INCj4gY2l4LWRzcC1y
+cHJvYw0KPiBbICAgIDAuODQ3OTAxXSBycHJvYy12aXJ0aW8gcnByb2MtdmlydGlvLjAuYXV0bzog
+RmFpbGVkIHRvIGFzc29jaWF0ZSBidWZmZXINCj4gWyAgICAwLjg0Nzk3OV0gcmVtb3RlcHJvYyBy
+ZW1vdGVwcm9jMDogZmFpbGVkIHRvIHByb2JlIHN1YmRldmljZXMgZm9yDQo+IGNpeC1kc3AtcnBy
+b2M6IC0xNg0KPiANCj4gVGhlIHJlYXNvbiBpcyB0aGF0IGRtYSBjb2hlcmVudCBtZW0gd291bGQg
+bm90IGJlIHJlbGVhc2VkIHdoZW4gcmVjb3ZlcmluZw0KPiB0aGUgcmVtb3RlIHByb2Nlc3Nvciwg
+ZHVlIHRvIHJwcm9jX3ZpcnRpb19yZW1vdmUoKSB3b3VsZCBub3QgYmUgY2FsbGVkLCB3aGVyZQ0K
+PiB0aGUgbWVtIHJlbGVhc2VkLiBJdCB3aWxsIGZhaWwgd2hlbiBpdCB0cnkgdG8gYWxsb2NhdGUg
+YW5kIGFzc29jaWF0ZSBidWZmZXIgYWdhaW4uDQo+IA0KPiBXZSBjYW4gc2VlIHRoYXQgZG1hIGNv
+aGVyZW50IG1lbSBhbGxvY2F0ZWQgZnJvbSBycHJvY19hZGRfdmlydGlvX2RldigpLCBzbw0KPiBz
+aG91bGQgcmVsZWFzZSBpdCBmcm9tIHJwcm9jX3JlbW92ZV92aXJ0aW9fZGV2KCkuIFRoZXNlIGZ1
+bmN0aW9ucyBzaG91bGQNCj4gYXBwZWFyIHN5bW1ldHJpY2FsbHk6DQo+IC1ycHJvY192ZGV2X2Rv
+X3N0YXJ0KCktPnJwcm9jX2FkZF92aXJ0aW9fZGV2KCktPmRtYV9kZWNsYXJlX2NvaGVyZW50X21l
+bQ0KPiBvcnkoKQ0KPiAtcnByb2NfdmRldl9kb19zdG9wKCktPnJwcm9jX3JlbW92ZV92aXJ0aW9f
+ZGV2KCktPmRtYV9yZWxlYXNlX2NvaGVyZW50X20NCj4gZW1vcnkoKQ0KPiANCj4gRml4ZXM6IDFk
+N2I2MWMwNmRjMyAoInJlbW90ZXByb2M6IHZpcnRpbzogQ3JlYXRlIHBsYXRmb3JtIGRldmljZSBm
+b3IgdGhlDQo+IHJlbW90ZXByb2NfdmlydGlvIikNCj4gU2lnbmVkLW9mZi1ieTogSm9ha2ltIFpo
+YW5nIDxqb2FraW0uemhhbmdAY2l4dGVjaC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9yZW1vdGVw
+cm9jL3JlbW90ZXByb2NfdmlydGlvLmMgfCA1ICsrKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9y
+ZW1vdGVwcm9jL3JlbW90ZXByb2NfdmlydGlvLmMNCj4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVt
+b3RlcHJvY192aXJ0aW8uYw0KPiBpbmRleCA4M2Q3NjkxNWE2YWQuLjcyNWI5NTdlZTIyNiAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfdmlydGlvLmMNCj4gKysr
+IGIvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfdmlydGlvLmMNCj4gQEAgLTQ2NSw4ICs0
+NjUsMTIgQEAgc3RhdGljIGludCBycHJvY19hZGRfdmlydGlvX2RldihzdHJ1Y3QgcnByb2NfdmRl
+dg0KPiAqcnZkZXYsIGludCBpZCkgIHN0YXRpYyBpbnQgcnByb2NfcmVtb3ZlX3ZpcnRpb19kZXYo
+c3RydWN0IGRldmljZSAqZGV2LCB2b2lkDQo+ICpkYXRhKSAgew0KPiAgCXN0cnVjdCB2aXJ0aW9f
+ZGV2aWNlICp2ZGV2ID0gZGV2X3RvX3ZpcnRpbyhkZXYpOw0KPiArCXN0cnVjdCBycHJvY192ZGV2
+ICpydmRldiA9IHZkZXZfdG9fcnZkZXYodmRldik7DQo+IA0KPiAgCXVucmVnaXN0ZXJfdmlydGlv
+X2RldmljZSh2ZGV2KTsNCj4gKw0KPiArCWRtYV9yZWxlYXNlX2NvaGVyZW50X21lbW9yeSgmcnZk
+ZXYtPnBkZXYtPmRldik7DQo+ICsNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gDQo+IEBAIC01ODUs
+NyArNTg5LDYgQEAgc3RhdGljIHZvaWQgcnByb2NfdmlydGlvX3JlbW92ZShzdHJ1Y3QgcGxhdGZv
+cm1fZGV2aWNlDQo+ICpwZGV2KQ0KPiAgCXJwcm9jX3JlbW92ZV9ydmRldihydmRldik7DQo+IA0K
+PiAgCW9mX3Jlc2VydmVkX21lbV9kZXZpY2VfcmVsZWFzZSgmcGRldi0+ZGV2KTsNCj4gLQlkbWFf
+cmVsZWFzZV9jb2hlcmVudF9tZW1vcnkoJnBkZXYtPmRldik7DQo+IA0KPiAgCXB1dF9kZXZpY2Uo
+JnJwcm9jLT5kZXYpOw0KPiAgfQ0KPiAtLQ0KPiAyLjI1LjENCg0K
