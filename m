@@ -1,116 +1,197 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HR52wP/F"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48386CD;
-	Tue, 12 Dec 2023 21:32:28 -0800 (PST)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BD4ap62006983;
-	Wed, 13 Dec 2023 05:32:17 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UScuhTB2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3C5F2;
+	Wed, 13 Dec 2023 10:13:37 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BDEdBZJ001943;
+	Wed, 13 Dec 2023 18:13:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=DJVXKDPsNY4QyQG2ZYDGT8e0H7uObC2Qb9v3P42JEdc=; b=HR
-	52wP/FkRhJwpciH6r/JuvAGiAjWgiUkwPNRuQkJceh5HXUQ8fN6kWibYY7k+7jBj
-	XLUvRoGmk6qup2u6ToqN4EFPG9pN7DqhJXyoK06JP2pj+gnpiQNhEp8lKbyYi7/Q
-	wAGsfxS81KFxsb35PmWfhUi8HNOoglDCj6WbeHaEminzVGtYVlu8oXgHD3B9f/y8
-	gGn++x01cA9OO2K0luHReqLclGvvklOVKMdxc3v4v63SuaoD+7ccA0B3PciEVUp0
-	DHNgoNyvC65JKVvp64jg0Af/Ys3G/HeoJhYEZvuLM8OhULf3lNJHxfamGnpO7IH9
-	c1d4/GqKp3PvIF2t44aA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uy3rprc1j-1
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=iXUSdzl
+	Whi9I84iGPxMHNa5qw5UEecWxK8/qXwJLZSc=; b=UScuhTB2JCMTA2RwUI2hBYM
+	k9vjjcXjQjK8ccwmhv5LfoyRSiIYTVHLjsCBIbKxivc/d49AKvZBNvQ6fR+XZXVJ
+	2k5OCM66uvJS+Ce4V0XSmRc5X3HmLbvKVo2raB3hazYdiSyLEzHW7YcTNjStpa8H
+	tvaitdnaN7ppB2FtPGRnMUBj+Uor0iJjLmMKelXGyYWzbnvBNgl3RWSEtWg4BDy6
+	vu9aTCcf04LdvMYGs01s2+812W6ZVlBSvfHMtmX9Zl0e8X5YSGZIUlE16HBPuivk
+	6OX8zwIqWW8Sa/elImi3XUuleR/BbodNQh19bU4L2kpXZHWsgGahKnHT2FDIabQ=
+	=
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3uy7j7skm9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Dec 2023 05:32:16 +0000 (GMT)
+	Wed, 13 Dec 2023 18:13:33 +0000 (GMT)
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BD5WGhi008301
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BDIDWL1025998
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Dec 2023 05:32:16 GMT
-Received: from [10.201.3.200] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 12 Dec
- 2023 21:32:12 -0800
-Message-ID: <51133a78-43ca-46fb-8f5e-b3bfdaef9a79@quicinc.com>
-Date: Wed, 13 Dec 2023 11:02:09 +0530
+	Wed, 13 Dec 2023 18:13:32 GMT
+Received: from hu-viswanat-blr.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 13 Dec 2023 10:13:28 -0800
+From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+To: <agross@kernel.org>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        "Vignesh
+ Viswanathan" <quic_viswanat@quicinc.com>
+Subject: [PATCH] remoteproc: qcom: q6v5_mpd: Add custom coredump segments
+Date: Wed, 13 Dec 2023 23:43:14 +0530
+Message-ID: <20231213181314.271484-1-quic_viswanat@quicinc.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] hwspinlock: qcom: fix tcsr data for ipq6018
-To: Chukun Pan <amadeus@jmu.edu.cn>, Bjorn Andersson <andersson@kernel.org>
-CC: Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20231212142509.655094-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
-In-Reply-To: <20231212142509.655094-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AYCYbXP-AcD_xck8dwEYI4BkDdIcGUe6
-X-Proofpoint-GUID: AYCYbXP-AcD_xck8dwEYI4BkDdIcGUe6
+X-Proofpoint-GUID: kHQ0fPJlbkhyp9k2wsUktSa-KRB2btFJ
+X-Proofpoint-ORIG-GUID: kHQ0fPJlbkhyp9k2wsUktSa-KRB2btFJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- mlxscore=0 suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0
- mlxlogscore=952 bulkscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312130037
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 mlxlogscore=799 phishscore=0 malwarescore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2311290000 definitions=main-2312130129
 
+IPQ9574 and IPQ5332 can have multiple reserved memory regions that needs
+to be collected as part of the coredump.
 
+Loop through all the regions defined under reserved-memory node in the
+devicetree for the remoteproc and add each as a custom segment for
+coredump.
 
-On 12/12/2023 7:55 PM, Chukun Pan wrote:
-> The tcsr_mutex hwlock register of the ipq6018 SoC is 0x20000[1], which
-> should not use the max_register configuration of older SoCs. This will
-> cause smem to be unable to probe, further causing devices that use
-> smem-part to parse partitions to fail to boot.
-> 
-> [    2.118227] qcom-smem: probe of 4aa00000.memory failed with error -110
-> [   22.273120] platform 79b0000.nand-controller: deferred probe pending
-> 
-> Remove 'qcom,ipq6018-tcsr-mutex' setting from of_match to fix this.
+Also, update the ELF info for coredump collection for multipd
+remoteprocs.
 
-Hi Chukun,
+This patch depends on [1] which adds support for IPQ9574 and IPQ5332
+remoteproc q5v5_mpd driver.
 
-This patch was already posted [2] and Bjorn applied the same [3].
+[1]: https://lore.kernel.org/all/20231110091939.3025413-1-quic_mmanikan@quicinc.com/
 
-Hi Bjorn,
+Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+---
+ drivers/remoteproc/qcom_q6v5_mpd.c | 71 +++++++++++++++++++++++++++++-
+ 1 file changed, 70 insertions(+), 1 deletion(-)
 
-This patch is missing in linux-next. Could you please help check ?
+diff --git a/drivers/remoteproc/qcom_q6v5_mpd.c b/drivers/remoteproc/qcom_q6v5_mpd.c
+index 839f6a15b88d..901b0b0da8f2 100644
+--- a/drivers/remoteproc/qcom_q6v5_mpd.c
++++ b/drivers/remoteproc/qcom_q6v5_mpd.c
+@@ -443,11 +443,77 @@ static unsigned long q6_wcss_panic(struct rproc *rproc)
+ 	return qcom_q6v5_panic(&wcss->q6);
+ }
+ 
++static void q6_wcss_copy_segment(struct rproc *rproc,
++				 struct rproc_dump_segment *segment,
++				 void *dest, size_t offset, size_t size)
++{
++	struct q6_wcss *wcss = rproc->priv;
++	struct device *dev = wcss->dev;
++	int base;
++	void *ptr;
++
++	base = segment->da + offset - wcss->mem_reloc;
++
++	if (base < 0 || base + size > wcss->mem_size) {
++		ptr = devm_ioremap_wc(dev, segment->da, segment->size);
++		memcpy(dest, ptr + offset, size);
++		devm_iounmap(dev, ptr);
++	} else {
++		memcpy(dest, wcss->mem_region + offset, size);
++	}
++}
++
++static int q6_wcss_dump_segments(struct rproc *rproc,
++				 const struct firmware *fw)
++{
++	struct device *dev = rproc->dev.parent;
++	struct reserved_mem *rmem = NULL;
++	struct device_node *node;
++	int num_segs, index = 0;
++	int ret;
++
++	/* Parse through additional reserved memory regions for the rproc
++	 * and add them to the coredump segments
++	 */
++	num_segs = of_count_phandle_with_args(dev->of_node,
++					      "memory-region", NULL);
++	while (index < num_segs) {
++		node = of_parse_phandle(dev->of_node,
++					"memory-region", index);
++		if (!node)
++			return -EINVAL;
++
++		rmem = of_reserved_mem_lookup(node);
++		if (!rmem) {
++			dev_err(dev, "unable to acquire memory-region index %d num_segs %d\n",
++				index, num_segs);
++			return -EINVAL;
++		}
++
++		of_node_put(node);
++
++		dev_dbg(dev, "Adding segment 0x%pa size 0x%pa",
++			&rmem->base, &rmem->size);
++		ret = rproc_coredump_add_custom_segment(rproc,
++							rmem->base,
++							rmem->size,
++							q6_wcss_copy_segment,
++							NULL);
++		if (ret)
++			return ret;
++
++		index++;
++	}
++
++	return 0;
++}
++
+ static const struct rproc_ops wcss_ops = {
+ 	.start = wcss_pd_start,
+ 	.stop = wcss_pd_stop,
+ 	.load = wcss_pd_load,
+ 	.get_boot_addr = rproc_elf_get_boot_addr,
++	.parse_fw = q6_wcss_dump_segments,
+ };
+ 
+ static const struct rproc_ops q6_wcss_ops = {
+@@ -457,6 +523,7 @@ static const struct rproc_ops q6_wcss_ops = {
+ 	.load = q6_wcss_load,
+ 	.get_boot_addr = rproc_elf_get_boot_addr,
+ 	.panic = q6_wcss_panic,
++	.parse_fw = q6_wcss_dump_segments,
+ };
+ 
+ static int q6_alloc_memory_region(struct q6_wcss *wcss)
+@@ -672,6 +739,7 @@ static int q6_register_userpd(struct platform_device *pdev,
+ 		goto free_rproc;
+ 
+ 	rproc->auto_boot = false;
++	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto free_rproc;
+@@ -731,9 +799,10 @@ static int q6_wcss_probe(struct platform_device *pdev)
+ 		goto free_rproc;
+ 
+ 	qcom_add_glink_subdev(rproc, &wcss->glink_subdev, "q6wcss");
+-	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, "q6wcss");
++	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, pdev->name);
+ 
+ 	rproc->auto_boot = false;
++	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto free_rproc;
+-- 
+2.41.0
 
-Thanks,
-Vignesh
-
-[2] https://lore.kernel.org/all/20230905095535.1263113-3-quic_viswanat@quicinc.com/
-[3] https://lore.kernel.org/all/169522934567.2501390.1112201061322984444.b4-ty@kernel.org/
-> 
-> [1] commit 72fc3d58b87b ("arm64: dts: qcom: ipq6018: Fix tcsr_mutex register size")
-> Fixes: 5d4753f741d8 ("hwspinlock: qcom: add support for MMIO on older SoCs")
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->  drivers/hwspinlock/qcom_hwspinlock.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-> index a0fd67fd2934..814dfe8697bf 100644
-> --- a/drivers/hwspinlock/qcom_hwspinlock.c
-> +++ b/drivers/hwspinlock/qcom_hwspinlock.c
-> @@ -115,7 +115,6 @@ static const struct of_device_id qcom_hwspinlock_of_match[] = {
->  	{ .compatible = "qcom,sfpb-mutex", .data = &of_sfpb_mutex },
->  	{ .compatible = "qcom,tcsr-mutex", .data = &of_tcsr_mutex },
->  	{ .compatible = "qcom,apq8084-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
-> -	{ .compatible = "qcom,ipq6018-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
->  	{ .compatible = "qcom,msm8226-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
->  	{ .compatible = "qcom,msm8974-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
->  	{ .compatible = "qcom,msm8994-tcsr-mutex", .data = &of_msm8226_tcsr_mutex },
