@@ -1,168 +1,164 @@
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2040.outbound.protection.outlook.com [40.107.255.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB87E4;
-	Fri, 15 Dec 2023 02:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="hz/kgc13"
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BENUP7n032766;
-	Thu, 14 Dec 2023 18:01:17 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=from:to:cc:subject:date:message-id:content-transfer-encoding
-	:content-type:mime-version; s=PPS06212021; bh=LKVaQNecMEFPPNLZD8
-	1T4XJR+Pk3CDYOEklo1RCfqsU=; b=hz/kgc13K3Lw1sIDCFkvzdX43GZ7x23m6V
-	lgGA8E4Q3exB6aZrUkL4sYQJ0PuPX7lythzLkUcAGroY0YAxNrDy9OrAshUyp++/
-	u62/Fd67ES+5+S6P5FsyPsuuEJjNhHGTUhx86cdZ1FCFBkCJsVA2sYGxdNcReaow
-	cyCowAT34vdXyfvV3ZeMFbJfap+UyhOW38fYUe7TzlgCCK5BEo84aKBMOFnnS7Ko
-	7dw3m+s1BAOUwrFFUGGWGoVCVVW6TwkGW/OQm3Sb+faEpQkNF99wH0UEbNPW4NNC
-	YLAkCjWClaFIMWIa5Br05QYdhFtf1BnvjGiI5hGPaXUc9Hjyl2SQ==
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3uyr9k14fs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Dec 2023 18:01:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2631734;
+	Fri, 15 Dec 2023 14:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g20zeYnnLObdvexrg5QbfBUqTWMfGTiBQiZWPDYeCGQQTz7T85Z2HGI91RHrhSyJ7+pBhM/qFmpP8XzwpG0wpikWQUoroUy+StSxs9YYfbIP1NbTB0SRBb2c1feRdhhwJSdESPso48S4sTZiiQZhC5sfT/d9+PRScUKRfAzRTeA8ZUTMMXlP0lGQ0zHhX+R9LqOIokYfrTUOh8dZ5DoLAxMBzbDxgWun6ERvEj7xPPvB90MaiY40koMpt4jwoZjtH095FCzl4B1+bEH7eImkPcFw4morK7lzGGXuLdT+XWDlGlBExXWqWsLXcBo7uGzOwv2f5bI3v8CpqMhyTEOI5g==
+ b=MMOuGSGsZE8eDr1fqtEyW8o0s6s/fB6tpjOfK3o0W8ka8FDzLbKBhQ0f/iKqbRBNzEDz2GfpoM1LF5R+Tq/WS6QFtldaTjZAzzYu6MNXB1CJrcqEOUoQHGmWZwbSy5OGjBF+OcBKHdZosjkzPX7MB7/o6kIUzSezGOFMvpXdKVfgLcKHdSjsp69OXzcCpVexypGY/1XYoPDJrIIrDXr84LA+RkY2h+gV/LSkkr7MWzw6QiiVVH5CNcsY7I6kuFSJQdrPEHd3ELvdxOipdSXPfHD20JYImhLvPoCG0DGVtjaYC6ELuXk+PN4Fd00Bd3tgZoWGiABtBk5ed5ci95IkTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LKVaQNecMEFPPNLZD81T4XJR+Pk3CDYOEklo1RCfqsU=;
- b=JvYV2FXUzwE5QWhTODMqMlVvY6+l1LVrZPp9ZvVSnf2Jiyup+dcqnmPQQNDcVx3qpnjivKAGmIFK/0Q3mhhwHLBVA4qfeD2wjqxXTfRBi0HncrgEu5rOFnFDBc1xXsZxBDt+dfOPP5lYeTYIe0KRDqvzJ9apK8iYIcPcONuOetSFlyZ9oI5cbtLimpMzD7+QwlHVv86gELFFXKnGT6kZr+1tXB58WpX8O9xfkIArVzD0jfsZqUyLA3MXxTfh/sk1J0MvJ64wA3k8PjNbUR2nmRsd93060+nRgMQ4HEr+3+Jl/QCtvEokhfUtP4K7LPYChZys9DYmVRhhKR12+d9Wmw==
+ bh=IaVBmTTVogGJwFJmb9CEKtR4Qze1bpn2IjKHBcf08K0=;
+ b=jofh9/Fc3pjjUrLJO1Ysg7UDf9ujcbb9TMbdi2GOCT/LCqt2rTL4d+DvABtW/NhNf3P9XiiAIX7iKVIAt/MlyhpahcJsiSb/DBOfU/jOmXtu9RFUBkIvsFjM7Ra3BDKnoH13DTXzmFGsbkKHKkpkLnIGHEo26/6n3gAyblOoM7SFjvgqPOYnfaw/XBSNrUVpjsntFXT2jrZ/HbsOYyUcArDXX/8Jx35e3u/Fr/J0P3NpTn2A2RL7/bx5rTVMyDQR6II+TmcRZCeTON1Ov8N/zAnaaan9boiMnEtPZI9LT12vdFL/ZeAoK5Z6Ux3vvi74BM3xqXTVAPwGiwJumllgxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
- by SJ0PR11MB4832.namprd11.prod.outlook.com (2603:10b6:a03:2dd::12) with
+ smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
+ dkim=pass header.d=cixtech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cixtech.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SEZPR06MB5967.apcprd06.prod.outlook.com (2603:1096:101:e7::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.28; Fri, 15 Dec
- 2023 02:01:13 +0000
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::7d7c:4379:e96:3537]) by MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::7d7c:4379:e96:3537%7]) with mapi id 15.20.7068.038; Fri, 15 Dec 2023
- 02:01:13 +0000
-From: Xiaolei Wang <xiaolei.wang@windriver.com>
-To: andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rpmsg: virtio: free driver_override when rpmsg_remove()
-Date: Fri, 15 Dec 2023 10:00:49 +0800
-Message-Id: <20231215020049.78750-1-xiaolei.wang@windriver.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.31; Fri, 15 Dec
+ 2023 14:51:00 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::2625:d246:abd7:4a7a]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::2625:d246:abd7:4a7a%4]) with mapi id 15.20.7091.028; Fri, 15 Dec 2023
+ 14:50:59 +0000
+From: joakim.zhang@cixtech.com
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	arnaud.pouliquen@foss.st.com
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	Joakim Zhang <joakim.zhang@cixtech.com>
+Subject: [PATCH V2] remoteproc: virtio: Fix wdg cannot recovery remote processor
+Date: Fri, 15 Dec 2023 22:50:23 +0800
+Message-Id: <20231215145023.2248366-1-joakim.zhang@cixtech.com>
 X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TY2PR02CA0045.apcprd02.prod.outlook.com
- (2603:1096:404:a6::33) To MW5PR11MB5764.namprd11.prod.outlook.com
- (2603:10b6:303:197::8)
+X-ClientProxiedBy: SG2PR06CA0201.apcprd06.prod.outlook.com (2603:1096:4:1::33)
+ To KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|SJ0PR11MB4832:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76427809-6e57-4270-8533-08dbfd11b711
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEZPR06MB5967:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21367383-a1d6-489a-0491-08dbfd7d3ffd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	RriIH1Bb364iSCAUjzu5Qv02+FTbvM5HjQ0HNM8YXrncb51uC72PO+SJbG+bpp4PqEfgveYEsVrw3X1nsZOoHmWB7aBeFszGk77EohZ4LA0gySKbNDRun2+PFt5JAZkejOtcDKTrYa2sts/ji41fB0+0Gi9SAovjsxcPqL9Q/MXTR5bdLYnzCh9oge07KImyIUY9bSAqVq7FpFOXX6zYqdyG5nUFsZ6ZaWwPCwO5jfGBg6DCZ9nsInupXmVL0I8/0Mp5dfA9kR4QRtZXVxyGo/WhDJt3z0bd6ZRlP41E1W9xxhSso84JtZr8YQELns1hiTl2DN3MI6ZCbaDCtEoFWf65l22q1LArwdaniyTEPO4VVKw8L2AhTlloYg1XOSYG++bsxANu7F30RwNrHF5SS6XpkaRCIru9dDuoSWpHnW8rNXW5UFrfQ+7p41wJ9LMzoi5HLpoHP5mftHSgZrMt0l+gp4ZnBgHALWcF7hPYvrIn1ZDTohT94trs79XgoP1d7aK40dXg5oQdQUDvPP9MTN0B38Lo1NTI/gSt3EUujx+tDMUsoX1k6M40+Ui9pi8B2oulUHt/kUPbsDXW42aqbZyrE3/m9bgjE4taM0GyBpltSflpbFoNiAhqigmjZpcVvoicEx3y5VynDxZcVmj3xQ==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(39850400004)(396003)(136003)(376002)(366004)(230922051799003)(451199024)(186009)(1800799012)(64100799003)(6666004)(8936002)(6506007)(6512007)(8676002)(52116002)(4326008)(38100700002)(86362001)(5660300002)(1076003)(2616005)(26005)(316002)(478600001)(66946007)(66556008)(66476007)(41300700001)(36756003)(38350700005)(6486002)(44832011)(2906002)(505234007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info:
+	Gr1YdwvXbIcakaLvhWHj7pN0LOvRrUoNY3Fhl1u6i0M3xehLKV9qcSqvFIImW/hIBjCIMQ9a/dlMwhyvcrzzsy5PvYQZ8rrFDW6/I0zMcsXxP+AA+ew6oJELcRUPxRu1gOQFKW/hRaFfQ0+zmzJm2feIV4zVt36+IVbCgYM/uYgwu6bhTrKFiWd9c1e1gDZpYKLJUT/eLZSGRezlWROrFnQ/xQ+wsF/o6HhKMc7r65e2WmU4khkkFiubHbDeKqSysjZywqBY5Sjn6NE45qGhZAF2wBglqWC/iXSWlG020NOpgHqY4Dt8WQbVKxTZLa5b+932/6+M6+7i+/ty9tDARFH34P3P/Ynq5sDMeApg+eSd6ZIczHmeZbnRzmianmAmQXIHwf85htzweWkqWfSh2168I3iUQb1HEPQLxN9ykvt7gEOUAo2Xh+oZ0t/wlagZiCcfpH3mG9ZEYHNH3VHOBbm+qezNvLjVNdlEk9k78egZ5yrg3+e3mcqQ9Co0zS6QAIiaZLNKlgpTvDOihqe49lz8BIiz9MNV5iEuj+jq8Emh5ucOf3Wp1dqw381aEjpFJbYKUWqvL5Es0BZZH51+GiWA3k71DX46N39ek1BF9jFuFZAVgIjw4LNMopDqvLbc
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(366004)(39840400004)(376002)(346002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(83380400001)(6486002)(478600001)(38100700002)(66476007)(66556008)(316002)(6666004)(52116002)(6506007)(26005)(2616005)(9686003)(6512007)(1076003)(107886003)(66946007)(86362001)(8676002)(4326008)(8936002)(5660300002)(2906002)(41300700001)(36756003)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?hMcWoEJMHLb4ofuFxPUhikSRAulrztBzAKyIQEnfxGk+h+nB8fGilKKHEw3V?=
- =?us-ascii?Q?Bj7+Wk0pRMlKbrErkR6CUl8Xp3IviHbln4hT6pXtrVFC5Lh+4PJG4f227zm1?=
- =?us-ascii?Q?TB9vt7XtUSCmM3GYGUBJrsnF3KiZb0qrThB25WT4pbY/WOekuPPbv/3VElbI?=
- =?us-ascii?Q?12WQkAWEBfhmap87V6Y71zUq1gKNL0jjHCVB9MzcTQ5jDSjdne6zTCR4sVbs?=
- =?us-ascii?Q?H0ZlvT2TrgEGKU3UP1voTy3gpwilURtXbN86uyKMMNKTMGy55FUSX2aY/l4a?=
- =?us-ascii?Q?jfeOSYQzWOpaS+/mBu4DfU39aYJBpQM0ONOUARtjOjsbMRLijuziKzctsumR?=
- =?us-ascii?Q?HjGENvfdiDVz6Ctj8H9TU3mcJJGfkRoBgciHD2rdMRWXun/Q1AMhmsxFJx13?=
- =?us-ascii?Q?2WOn06sK5+HEO60oTiVUKW3xdC9dz1VL+S01ErlbTzr9BKtcurAQ9Uco6i1u?=
- =?us-ascii?Q?rh7Yy8IlZl7dp+7G9DRtpWwgalnSes00vtgQf/rA/qBh/vvMnBZet1ds2CXh?=
- =?us-ascii?Q?z3MHx96+mIdWTNBbA+Im46jCtTTDtfV3NrkRFGzYC2d157azaAsQbgEceQGV?=
- =?us-ascii?Q?onfiXkfrauV/X2hYGB7jtlglhwEA0oiz+AXL8USTtvxspG0BLkI2tq0ZAQXG?=
- =?us-ascii?Q?twgrhmZNW2KtlfQQjViDWjKsWfBYQGHYe1Gr9SzmS0wa04oEMFidp1MPer4v?=
- =?us-ascii?Q?QBHsaW4eF971XRyBwI8N9Y0EqFbjn9Ytf8yokcbavhiI3rtS/vqY8YJNKg9Q?=
- =?us-ascii?Q?/RVhnAdlAS01A6KzRjDsU4UlS1ImlWT9H6BhAeD1xc5GGTedohxEcYQIcJ/0?=
- =?us-ascii?Q?7BhepvDFbuAiLMZ/PTV0HzQTvxsYGRNaYx302pwhOZ+9Bq6xCLpbo8ciCwcm?=
- =?us-ascii?Q?ZIOgP8palKfNubTKfaKa5jk2zbXtLxdpRdrhm24BnFRI4Z7cW2ezFoNHqHA/?=
- =?us-ascii?Q?TYXebn7rFgYsH3uMTFI4Eva8b54QsceFJNleQI8bZC1B7VtE9M0TKQTK3Tpj?=
- =?us-ascii?Q?F6IT2QYDDQGioUi3eblLU4rFv+fFMTLz2hA1TO+eAA6XsppenFPLbayJwiSi?=
- =?us-ascii?Q?MXUskE4hlB0h83h8auLjnFMGgjXwM2ycApV86yyysQYSkVEhXJLGNUbsobR0?=
- =?us-ascii?Q?+1pnfvO/0BvwRsmadlTidA9bdpPZ32JCA9ov5YdL8gjIQ/5Xs1AYR3TC0kRs?=
- =?us-ascii?Q?FDgGmJHdkFN8g3qBGXm91GwVZjLAZMzLQt2nBWHUVDCQhJOKqB/55Vl6PDZO?=
- =?us-ascii?Q?7KRy7jVhzwgmVjruNYL2CmYeR/S6BlfXDxmUze2TbXNfgaYBJ265Nf5yrDZF?=
- =?us-ascii?Q?mDjfNygtq4MvdwlbqDSq+wWG/eVNmLsJaKnFXkYyM9PG2d65i4Jrpiw+aDC8?=
- =?us-ascii?Q?TArF1lPcD5OXAI4L3rVZazhtj+Afdl4kz+Aw/ixRxGOYoIhc+VnAreU7rTbQ?=
- =?us-ascii?Q?YfILDblvR0D9k5MUlxXeIto+5OqFEefLlWOe7kflVd7VJGUCZGLD5g5DFHXK?=
- =?us-ascii?Q?TyHYSNT5QTTkxzypMHPEbXWIcPLXI8Y09iUCWZcLl4eNYzr5NacFdEuJbicG?=
- =?us-ascii?Q?juo1MX9ohSWRzjzvxezMDAUqtAVpZKctSZ0p5faXUu+nAcJWWzbAPsToFsG/?=
- =?us-ascii?Q?eA=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76427809-6e57-4270-8533-08dbfd11b711
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CI+stEW1FrEGLBKhMBqj+ml0bynUbKDktvadGzIw4fTe8lN7dUigwuzFlibA?=
+ =?us-ascii?Q?4IYkBsc3PONKD/76Zz0pyt3dJTrbgI/NPIyAt8hWATwi3A2evUEVVHh8LX7h?=
+ =?us-ascii?Q?aEwsorgEPZ4/4puhSRwCNb7srDFkcmSMe6rk1kPrZweA5aQE+jrT8BmX8hhF?=
+ =?us-ascii?Q?R107Kfa/Th0Rbdymtvs/0cEq8WUHHKJITUNLIiGhP/FH78UC+e36r3GdlkI0?=
+ =?us-ascii?Q?HK14ekPk+Miy50ykFcTBTs020KitJ6hV1PTopLDDHCVZ0uOfADXtDlCeU0Jy?=
+ =?us-ascii?Q?SEgG9JDnhQBLmU3lEJ72TijBYJF9MEMpMIpvrrt1i0Dh2PP+33sK4FRLLmkT?=
+ =?us-ascii?Q?Hs+WE8bmW8DhRVt++Gz3QGW73x+2CbEL2JHBCYQisMfQ1fCFxkDf4TG0EXzR?=
+ =?us-ascii?Q?j0zRUkMqvoWTvvMPctE/kRGvo8VBZS7n9g7V2CX56nj/rDIHXDm1F2/GWrX/?=
+ =?us-ascii?Q?xYZCYyMXKrxNZ2SXUDPcL/3peHc/26kT2HBNp+BYqFRQfcHXnzXQXuKE3lJ1?=
+ =?us-ascii?Q?8s+jZLkj7ctKDQk/qD3JXsxf7ncVKy9/dK/6JicC2KZ0rEhumpGDC9DauQbQ?=
+ =?us-ascii?Q?zrXhrXqHtlOWgdBlTO5sai9U2PdgMHiebdh2RZdX1iL5D3IMze275PcMFMcY?=
+ =?us-ascii?Q?PEBLFN5qmYL28devzRf/MsuKxRKuRQmCK6oO6Z0IDZlAN0iKsrhHv7Vgw7zS?=
+ =?us-ascii?Q?e4LK/osOdkuRZmCwyiBkBpakFDHJQ0IuRuGFZfdaHjpkm51lecFHGZDf67lI?=
+ =?us-ascii?Q?NnOkqC+gzqPI6eMhngOG4rnuZ8qyomQsBONrQGDu4tmPL6F0B7BHf7jRsXWo?=
+ =?us-ascii?Q?4zB0rQbE8hLb9bZEmg7JKX8K+29kMMy7hOxGqiS2wilmL5AizRYBdU19pbSt?=
+ =?us-ascii?Q?uf/FiYamdOVKIKZiiJT8C64eyp6JUS6C8OKVsaM/IXPUXoFfnEXPyCCHoJ2g?=
+ =?us-ascii?Q?vMYePSBMjanCaE1rIcYr26DwAlW6MYI4DHcEiqoUsfXtXmur71lwIwbgEwFf?=
+ =?us-ascii?Q?mrXJh9xPODuaLY6o38nh3CivI/Pi7Zh7KXfWMOEBi1X/oAdePdld3mXz9qBc?=
+ =?us-ascii?Q?esVRMYqUp5DzVfQU3DDirq5ppQQ0CQICvzlOdO8JL7QqHOK3E1zclmrwFoAH?=
+ =?us-ascii?Q?JRHBlslyeFPA/VqqMEL01XMW3LUhoQlBofHy4vyMplXkdC936A5YvBe6QKas?=
+ =?us-ascii?Q?vo8sXBShjyvI3HPM1uak1QbO1Mvjzn0WFWm23cK2r7KJPZiATl+gd8oPoHzN?=
+ =?us-ascii?Q?h+cTnb7C38zV46TUP6wOL9VRWFAMdSxDPNO+jg3nKCbNf8kLk4GuYh9zO/cs?=
+ =?us-ascii?Q?Dpcp145wm3sIvRh4q11e9TNQnN911QEydWfgeU8K7PAlqMqZIv8ojnODIRNK?=
+ =?us-ascii?Q?LArQndx39XuoU3Jkr9heLr8wAo28wKkystv/spKBp5ZntTNlkAHgBPO4j6yG?=
+ =?us-ascii?Q?Txgb9HyYgkzloKn14s+Jl8GGuLDJto9BBozjCjDRPYYSmlIcBcDg+hFspJir?=
+ =?us-ascii?Q?VZsxhxKEn/J/DlhRF0S5XmphMv6PJoLx9gNxptbe41NzCgqQ9MtsVP7FkQN4?=
+ =?us-ascii?Q?/1eDbmjM3JgD5l6CkcNeTiiF+uAi0bEKBtlt8xl58Ee4HnLEw4J77zd489eJ?=
+ =?us-ascii?Q?dg=3D=3D?=
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21367383-a1d6-489a-0491-08dbfd7d3ffd
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2023 02:01:13.2836
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2023 14:50:59.7608
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8dQzN7DGEm1GRLWeGAdW8jxIy7lPvuBpmvyMO/tTS6m9lDXi7fLyomrZJrnVqP7qzxXrI5za7G4ObB160EeRM2xp6QsYbFmat6gJD43Meag=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4832
-X-Proofpoint-ORIG-GUID: GTDKXRdVvYmG75wXWvNc1_m3q5mT_IeE
-X-Proofpoint-GUID: GTDKXRdVvYmG75wXWvNc1_m3q5mT_IeE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-16_25,2023-11-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- priorityscore=1501 spamscore=0 lowpriorityscore=0 clxscore=1011
- mlxlogscore=999 mlxscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312150014
+X-MS-Exchange-CrossTenant-UserPrincipalName: t3vq52V5O/bee17d/G41p4q20hDca6uxhhapiw0LnbLIChAyOXghLTuPxucvDC2qfzcKHgJ48GAK1VAKWLZlxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5967
 
-free driver_override when rpmsg_remove(), otherwise
-the following memory leak will occur:
+From: Joakim Zhang <joakim.zhang@cixtech.com>
 
-unreferenced object 0xffff0000d55d7080 (size 128):
-  comm "kworker/u8:2", pid 56, jiffies 4294893188 (age 214.272s)
-  hex dump (first 32 bytes):
-    72 70 6d 73 67 5f 6e 73 00 00 00 00 00 00 00 00  rpmsg_ns........
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000009c94c9c1>] __kmem_cache_alloc_node+0x1f8/0x320
-    [<000000002300d89b>] __kmalloc_node_track_caller+0x44/0x70
-    [<00000000228a60c3>] kstrndup+0x4c/0x90
-    [<0000000077158695>] driver_set_override+0xd0/0x164
-    [<000000003e9c4ea5>] rpmsg_register_device_override+0x98/0x170
-    [<000000001c0c89a8>] rpmsg_ns_register_device+0x24/0x30
-    [<000000008bbf8fa2>] rpmsg_probe+0x2e0/0x3ec
-    [<00000000e65a68df>] virtio_dev_probe+0x1c0/0x280
-    [<00000000443331cc>] really_probe+0xbc/0x2dc
-    [<00000000391064b1>] __driver_probe_device+0x78/0xe0
-    [<00000000a41c9a5b>] driver_probe_device+0xd8/0x160
-    [<000000009c3bd5df>] __device_attach_driver+0xb8/0x140
-    [<0000000043cd7614>] bus_for_each_drv+0x7c/0xd4
-    [<000000003b929a36>] __device_attach+0x9c/0x19c
-    [<00000000a94e0ba8>] device_initial_probe+0x14/0x20
-    [<000000003c999637>] bus_probe_device+0xa0/0xac
+Recovery remote processor failed when wdg irq received:
+[    0.842574] remoteproc remoteproc0: crash detected in cix-dsp-rproc: type watchdog
+[    0.842750] remoteproc remoteproc0: handling crash #1 in cix-dsp-rproc
+[    0.842824] remoteproc remoteproc0: recovering cix-dsp-rproc
+[    0.843342] remoteproc remoteproc0: stopped remote processor cix-dsp-rproc
+[    0.847901] rproc-virtio rproc-virtio.0.auto: Failed to associate buffer
+[    0.847979] remoteproc remoteproc0: failed to probe subdevices for cix-dsp-rproc: -16
 
-Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+The reason is that dma coherent mem would not be released when
+recovering the remote processor, due to rproc_virtio_remove()
+would not be called, where the mem released. It will fail when
+it try to allocate and associate buffer again.
+
+We can see that dma coherent mem allocated from rproc_add_virtio_dev(),
+so should release it from rproc_remove_virtio_dev(). These functions should
+appear symmetrically:
+-rproc_vdev_do_start()->rproc_add_virtio_dev()->dma_declare_coherent_memory()
+-rproc_vdev_do_stop()->rproc_remove_virtio_dev()->dma_release_coherent_memory()
+
+The same for of_reserved_mem_device_init_by_idx() and of_reserved_mem_device_release().
+
+Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
- 1 file changed, 1 insertion(+)
+ChangeLogs:
+V1->V2:
+	* the same for of_reserved_mem_device_release()
+---
+ drivers/remoteproc/remoteproc_virtio.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index dc87965f8164..1062939c3264 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -378,6 +378,7 @@ static void virtio_rpmsg_release_device(struct device *dev)
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index 83d76915a6ad..e877ee78740d 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -465,8 +465,12 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ static int rproc_remove_virtio_dev(struct device *dev, void *data)
+ {
+ 	struct virtio_device *vdev = dev_to_virtio(dev);
++	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
  
-+	kfree(rpdev->driver_override);
- 	kfree(vch);
+ 	unregister_virtio_device(vdev);
++	of_reserved_mem_device_release(&rvdev->pdev->dev);
++	dma_release_coherent_memory(&rvdev->pdev->dev);
++
+ 	return 0;
+ }
+ 
+@@ -584,9 +588,6 @@ static void rproc_virtio_remove(struct platform_device *pdev)
+ 	rproc_remove_subdev(rproc, &rvdev->subdev);
+ 	rproc_remove_rvdev(rvdev);
+ 
+-	of_reserved_mem_device_release(&pdev->dev);
+-	dma_release_coherent_memory(&pdev->dev);
+-
+ 	put_device(&rproc->dev);
  }
  
 -- 
