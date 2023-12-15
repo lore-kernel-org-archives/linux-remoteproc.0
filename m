@@ -1,141 +1,217 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D3D3EA60;
-	Fri, 15 Dec 2023 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769443013E;
+	Fri, 15 Dec 2023 23:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0lflel1L"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3BFEt2jl028439;
-	Fri, 15 Dec 2023 17:55:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=0ApVVVLWHcX93yEw+eAHG/mefIxFRv8pbx/vnnZVjpc=; b=0l
-	flel1LG0UbDG1dGh7ShRs/VYdtdDugsWNQ31ZegPyJem0SnhJcmGLoRr8JPplOmL
-	uG6ZEeEu8uUXUIP+mc6qqBea48SBwGAOTkkHjKT1y6R9OBDInO21qenpjrkcXTZy
-	xIYeu7cn6wOciBSW2Ef4l9Cw/6FbsVuhVi9CdYRtnyurBgwnNxrbS2k5kYCp8yXT
-	QwFQvessWfzYZRykXSrHIfvXGEJX86vNT3FQLrVU1v4b69omjBlPqEn/SzrWbloB
-	wkWJ5Y8A3tUU+JIkF0QX45OO4ML72vEOChV+hmJ9YoxH3YmB8mrAbRo1/x3+mdLI
-	XsKvgrOmDB5w2PnJsz8w==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3uvehmu736-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Dec 2023 17:55:43 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0D522100052;
-	Fri, 15 Dec 2023 17:55:41 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C85A6237D69;
-	Fri, 15 Dec 2023 17:55:41 +0100 (CET)
-Received: from [10.252.23.239] (10.252.23.239) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 15 Dec
- 2023 17:55:38 +0100
-Message-ID: <70376b4f-0fbe-4087-8c7c-eb7167191a37@foss.st.com>
-Date: Fri, 15 Dec 2023 17:55:38 +0100
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fBp+Bkmt"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PgbuAT+jE5t9nAQR6O4YePz6P3Q/uI88QGekBbEz74DstrJsFEXjnArbRnS63Cw3N4XJlh0YIfvZx3dpbEerukftxdpG2Br3SaSSLs2++AZ7WZoRw4uKtaOkm/Pu98iWxF+m8CcqtoTLDVv2ZSjTv0MS29xMfLuxePtJh8Smj42bQ/JVk/iAlkD7NnNMr5EaoGNmuxfZBD3uR5PpQgMASkm8AsBwPU1Q+DhJaDhDCg02b8dIqmz7B57VaZp3wXYTHUObFFhVJMLyYoS/cZDbHJ2AoceAegkfd2zA2gkGuxD4E32CS62zVyjplkYo4XT5n8Ck2QopJxQQQ7lPs17mxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1tUn2KAFVldogu7paKZcLTHtNcOirwZYfRJlTriHXSM=;
+ b=TNG1WHXwol46LG1H45g/LmPQeV/u4D+Z41Q0SIvgy/WAAs/A00rqSuFmMVJHUzJ5lnlW9LpVSRS8BFx6G0BS0laXnXSjo2w8s9k8HcBQm9QOMY72blq+3B8Bf6elIFEn0jQ943D0sm4Bl0+H+XnjM83AGKD9UeaI8kGZFdhGSIjSjEWRvJeBhL9+FGI1bJ8XaUZg9RdpttTiE7gFK8apm3TCwtLNru6Gm1dlkEQXGkLqyHDEUxr844JaHy97Wscsx3DYb5EIII/zSvxgpFr0lqsLBZPzPW3tdqLCXkXcwqs9AFP7b5eqK2IMZuUILBzC+B+NIwkNJEdcwIN/lIdw5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1tUn2KAFVldogu7paKZcLTHtNcOirwZYfRJlTriHXSM=;
+ b=fBp+BkmtVoeHOSAKkAybgsZWSXEnIdGJqpsNJbEL9e2NDzQlWHzY39e2OxJmxxfel8zURRttV7rF6pZMWoY37ElUgMSlRPSni8HMjcJPaRqhR6yEcG/tvxpleKCGmAmeTLHPOF3dyU24t8jyYZ3ldDd3Ed7Iq1G5yJpphhbMHcI=
+Received: from MW4PR03CA0047.namprd03.prod.outlook.com (2603:10b6:303:8e::22)
+ by DS0PR12MB8019.namprd12.prod.outlook.com (2603:10b6:8:14e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.31; Fri, 15 Dec
+ 2023 23:58:24 +0000
+Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
+ (2603:10b6:303:8e:cafe::bc) by MW4PR03CA0047.outlook.office365.com
+ (2603:10b6:303:8e::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.28 via Frontend
+ Transport; Fri, 15 Dec 2023 23:58:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7113.8 via Frontend Transport; Fri, 15 Dec 2023 23:58:24 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Fri, 15 Dec
+ 2023 17:58:22 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Fri, 15 Dec
+ 2023 17:58:22 -0600
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
+ Transport; Fri, 15 Dec 2023 17:58:21 -0600
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<conor+dt@kernel.org>, <michal.simek@amd.com>, <ben.levinsky@amd.com>,
+	<tanmay.shah@amd.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 2/3] dts: zynqmp: add properties for TCM in remoteproc
+Date: Fri, 15 Dec 2023 15:57:24 -0800
+Message-ID: <20231215235725.1247350-3-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20231215235725.1247350-1-tanmay.shah@amd.com>
+References: <20231215235725.1247350-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] remoteproc: virtio: Fix wdg cannot recovery remote
- processor
-Content-Language: en-US
-To: <joakim.zhang@cixtech.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <cix-kernel-upstream@cixtech.com>
-References: <20231215145023.2248366-1-joakim.zhang@cixtech.com>
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20231215145023.2248366-1-joakim.zhang@cixtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-15_10,2023-12-14_01,2023-05-22_02
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|DS0PR12MB8019:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a33132a-0f44-4299-dc55-08dbfdc9b96b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	c6pnVJgaZ31lqT5tI5s5+30SWy+/7UW9sjHRr6ff5VX7yQoMX4WUNzAPlAihNpWV/RZ5m6NS+hhLAHAtX2tJcvkvJWG4de5zdXpFsJ5iF4a9A5OKZ4ZomWCucIAmR56Xya0qlKExtbZMaLTZi4fLDQIQGtkSLx6TvZ9hoMT/Nf+WwRn2E9suHsFbIcCEh5BtzS+RBQOPpvo7vvzRHchDc23vxhA6rHSmjT9uZRuxWtCwPx1+QnDUELLDy5KK8ANYKvQ6ZYSmnq4EpxIX3g3PjroDRhS56v1N6VFs/4nNyQy8lZnK80e1c1/xh7R0HZNRBmsl/T/zbKWRcKwTvULNc/8ypO/fsWq4kQkR9Mq7hc++q3yQPZba3MXlmsqJFLK63PVJ8+npFL6U5WR2jeYFcuPmALaKbO98qHAviYXX9eoL5+MGIVKS4M7nvWM74bVUE3BgTsGzffDv3Z0KQSqRhtl4SlOiKjuwGR5s0S1bkRbNBUXdcu7dMPnlkC20EoJPU0uKvV642UTKqRRo8ibjaTqJJJ3g1e3tvVFT82Q3H1zoEnBsk+12K/N0SoVKzOwqmRd5VDVAUcGpmv6CSd41HGBLeaAMr2NhOdqpi7TsJvxDiiR+0eAjejoDTkq0Na0kIXmC9TbabWHOyiWLTk8jwd1Fu3cELVkLvpFgjNdyunnpZ/n0plR8Z0B6SJyUDrhYb9ObI4EmCgDKrQYpGi+QT6XzYnBrusVk0swJVa1v+FiM0S+jwvCj3MnrGYOAO/Cp9fM2ieLqVfP/deKwbe1qKQ==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(136003)(39860400002)(396003)(346002)(376002)(230922051799003)(186009)(451199024)(82310400011)(1800799012)(64100799003)(40470700004)(36840700001)(46966006)(83380400001)(478600001)(82740400003)(1076003)(40480700001)(2616005)(426003)(336012)(26005)(110136005)(7049001)(54906003)(316002)(70206006)(70586007)(356005)(81166007)(36860700001)(47076005)(86362001)(8676002)(4326008)(44832011)(40460700003)(8936002)(5660300002)(2906002)(36756003)(41300700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2023 23:58:24.2602
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a33132a-0f44-4299-dc55-08dbfdc9b96b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8019
 
-Hello  Joakim,
+Add properties as per new bindings in zynqmp remoteproc node
+to represent TCM address and size.
 
-On 12/15/23 15:50, joakim.zhang@cixtech.com wrote:
-> From: Joakim Zhang <joakim.zhang@cixtech.com>
-> 
-> Recovery remote processor failed when wdg irq received:
-> [    0.842574] remoteproc remoteproc0: crash detected in cix-dsp-rproc: type watchdog
-> [    0.842750] remoteproc remoteproc0: handling crash #1 in cix-dsp-rproc
-> [    0.842824] remoteproc remoteproc0: recovering cix-dsp-rproc
-> [    0.843342] remoteproc remoteproc0: stopped remote processor cix-dsp-rproc
-> [    0.847901] rproc-virtio rproc-virtio.0.auto: Failed to associate buffer
-> [    0.847979] remoteproc remoteproc0: failed to probe subdevices for cix-dsp-rproc: -16
-> 
-> The reason is that dma coherent mem would not be released when
-> recovering the remote processor, due to rproc_virtio_remove()
-> would not be called, where the mem released. It will fail when
-> it try to allocate and associate buffer again.
-> 
-> We can see that dma coherent mem allocated from rproc_add_virtio_dev(),
-> so should release it from rproc_remove_virtio_dev(). These functions should
-> appear symmetrically:
-> -rproc_vdev_do_start()->rproc_add_virtio_dev()->dma_declare_coherent_memory()
-> -rproc_vdev_do_stop()->rproc_remove_virtio_dev()->dma_release_coherent_memory()
-> 
-> The same for of_reserved_mem_device_init_by_idx() and of_reserved_mem_device_release().
-> 
-> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
-> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
-> ---
-> ChangeLogs:
-> V1->V2:
->         * the same for of_reserved_mem_device_release()
-> ---
->  drivers/remoteproc/remoteproc_virtio.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 83d76915a6ad..e877ee78740d 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -465,8 +465,12 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  static int rproc_remove_virtio_dev(struct device *dev, void *data)
->  {
->         struct virtio_device *vdev = dev_to_virtio(dev);
-> +       struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
-> 
->         unregister_virtio_device(vdev);
-> +       of_reserved_mem_device_release(&rvdev->pdev->dev);
-> +       dma_release_coherent_memory(&rvdev->pdev->dev);
-> +
+This patch also adds alternative remoteproc node to represent
+remoteproc cluster in split mode. By default lockstep mode is
+enabled and users should disable it before using split mode
+dts. Both device-tree nodes can't be used simultaneously one
+of them must be disabled. For zcu102-1.0 and zcu102-1.1 board
+remoteproc split mode dts node is enabled and lockstep mode
+dts is disabled.
 
-At this step, the virtio device may not be released and may still be using the
-memory.
-Do you try to move this in rproc_virtio_dev_release?
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
+ .../boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts  |  8 +++
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi        | 60 +++++++++++++++++--
+ 2 files changed, 63 insertions(+), 5 deletions(-)
 
-Regards,
-Arnaud
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
+index c8f71a1aec89..495ca94b45db 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
+@@ -14,6 +14,14 @@ / {
+ 	compatible = "xlnx,zynqmp-zcu102-rev1.0", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
+ };
+ 
++&rproc_split {
++	status = "okay";
++};
++
++&rproc_lockstep {
++	status = "disabled";
++};
++
+ &eeprom {
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+index b61fc99cd911..602e6aba7ac5 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
++++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+@@ -247,19 +247,69 @@ fpga_full: fpga-full {
+ 		ranges;
+ 	};
+ 
+-	remoteproc {
++	rproc_lockstep: remoteproc@ffe00000 {
+ 		compatible = "xlnx,zynqmp-r5fss";
+ 		xlnx,cluster-mode = <1>;
+ 
+-		r5f-0 {
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x20000>,
++			 <0x0 0x20000 0x0 0xffe20000 0x0 0x20000>,
++			 <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
++			 <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
++
++		r5f@0 {
++			compatible = "xlnx,zynqmp-r5f";
++			reg = <0x0 0x0 0x0 0x20000>, <0x0 0x20000 0x0 0x20000>;
++			reg-names = "atcm", "btcm";
++			power-domains = <&zynqmp_firmware PD_RPU_0>,
++					<&zynqmp_firmware PD_R5_0_ATCM>,
++					<&zynqmp_firmware PD_R5_0_BTCM>;
++			memory-region = <&rproc_0_fw_image>;
++		};
++
++		r5f@1 {
++			compatible = "xlnx,zynqmp-r5f";
++			reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
++			reg-names = "atcm", "btcm";
++			power-domains = <&zynqmp_firmware PD_RPU_1>,
++					<&zynqmp_firmware PD_R5_1_ATCM>,
++					<&zynqmp_firmware PD_R5_1_BTCM>;
++			memory-region = <&rproc_1_fw_image>;
++		};
++	};
++
++	rproc_split: remoteproc-split@ffe00000 {
++		status = "disabled";
++		compatible = "xlnx,zynqmp-r5fss";
++		xlnx,cluster-mode = <0>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++
++		ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
++			 <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
++			 <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
++			 <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
++
++		r5f@0 {
+ 			compatible = "xlnx,zynqmp-r5f";
+-			power-domains = <&zynqmp_firmware PD_RPU_0>;
++			reg = <0x0 0x0 0x0 0x10000>, <0x0 0x20000 0x0 0x10000>;
++			reg-names = "atcm", "btcm";
++			power-domains = <&zynqmp_firmware PD_RPU_0>,
++					<&zynqmp_firmware PD_R5_0_ATCM>,
++					<&zynqmp_firmware PD_R5_0_BTCM>;
+ 			memory-region = <&rproc_0_fw_image>;
+ 		};
+ 
+-		r5f-1 {
++		r5f@1 {
+ 			compatible = "xlnx,zynqmp-r5f";
+-			power-domains = <&zynqmp_firmware PD_RPU_1>;
++			reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
++			reg-names = "atcm", "btcm";
++			power-domains = <&zynqmp_firmware PD_RPU_1>,
++					<&zynqmp_firmware PD_R5_1_ATCM>,
++					<&zynqmp_firmware PD_R5_1_BTCM>;
+ 			memory-region = <&rproc_1_fw_image>;
+ 		};
+ 	};
+-- 
+2.25.1
 
->         return 0;
->  }
-> 
-> @@ -584,9 +588,6 @@ static void rproc_virtio_remove(struct platform_device *pdev)
->         rproc_remove_subdev(rproc, &rvdev->subdev);
->         rproc_remove_rvdev(rvdev);
-> 
-> -       of_reserved_mem_device_release(&pdev->dev);
-> -       dma_release_coherent_memory(&pdev->dev);
-> -
->         put_device(&rproc->dev);
->  }
-> 
-> --
-> 2.25.1
-> 
-> 
-> 
-> This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
