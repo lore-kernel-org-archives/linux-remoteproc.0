@@ -1,305 +1,114 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FF33A1D0;
-	Mon, 18 Dec 2023 15:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4C41C62
+	for <linux-remoteproc@vger.kernel.org>; Mon, 18 Dec 2023 18:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Iw861meb"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BIAtuFd019600;
-	Mon, 18 Dec 2023 15:56:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=//DALPr7fPtqkjqG1QAHuHyncKD84EEeVGdpRGjL2Wo=; b=Iw
-	861mebQNrgloll0bGmS9g4RFqgbs5jlKppukPeEPHsNNTeY4gNq97jtnJH0rblK7
-	T0cyIiNISugnwhka9q+Eutw5xlFwDdYWK7gp+lcNiY7k3sw4HVJPL7jUJmlSkmsP
-	9MlDHFzem9XDsdfTMHeIEksFbW8w1wM5r2JfSeZkEMngiBTr2q1vv5jDAqc7NnHv
-	j42zbW5UdbXfPYx0SsUEGOz6j9fe0oNGW4v684e3eyGsE4EKnfAJzYyJCf1HebUZ
-	NEH7H/tYtK63jKInS6pt3abKDjNaN8Ug0T69uanGk4K6ou8JJDs5I2TMmYcOMhbT
-	Tm8IG8qViWGt2JJTs8bA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v2j2dh32v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Dec 2023 15:56:37 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BIFuaPj000846
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Dec 2023 15:56:36 GMT
-Received: from [10.216.4.68] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 18 Dec
- 2023 07:56:30 -0800
-Message-ID: <3a3bdbaf-2022-88d7-a0ff-6b98c7e5ab7e@quicinc.com>
-Date: Mon, 18 Dec 2023 21:26:21 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQd+Mk20"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-591c3dc7265so1542777eaf.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Dec 2023 10:26:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702923985; x=1703528785; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVV1SiqPQPkhXh/JH+8K5ZzPNY8J0yDKTDuA4TlZD5A=;
+        b=bQd+Mk20OGeilcPr81rMA0iIBSs2ztV5HfjXdhCJ2A5oTlZz1HOqGSMeG4pd1cpZ4T
+         efI2H8JDmCNeOzKFltRhlDzQ1aNVs49OHwrTzAyNfCIybWz4/C8zDjsMPbJYaTsZfBtw
+         4w2wHpDhA9VW4c7Q0e8Bi7F9bNoC2WJqz7AEzC3RsJu/Cpx2jyVlBmyvyzTJwv8+SQL3
+         xW0mvm9nCqk3vom2TvG/OHt62ynzBqltHfvRudwAX0uY+3TJmWOWMO7/MoanzVK/G3Zz
+         oreFAiO4hsgeaMgSs3iMU7+Y+OoHuFcYzz+A1pkJt7io55IGQRxTBfYBPnbZ55Q/w/Ru
+         rzIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702923985; x=1703528785;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MVV1SiqPQPkhXh/JH+8K5ZzPNY8J0yDKTDuA4TlZD5A=;
+        b=sZm/2vtkk3/w4BOHR4sgA2YiK7iIRcZWf18S4C5wMIkr6cYqWChWH8dS2e8RT4k/qe
+         s8rh67JVHsCt0SbNWEXKXxNrN8ZYFeJ+218moHuL+lG/B4wN7CheNj3/RouFo52Niw+S
+         qXERjr/Ce+b/aAQpuWWgK0KLXgtKZma0q3SQozYcWZMB+LY/kXlqTh7Xrf9H+kFDSBU+
+         beBRGM8okAfQncaRKGjJnhhRFY6piBTSB6OkGod+P5IfzV73xxGvSEBHZwGtrODiH4C9
+         126VE87tDWgg4JiwLAOWgSOAwWztQMZMCqkM0pshBmuSJfHmy6RDnf+DrUTGGA/sMeAm
+         j97A==
+X-Gm-Message-State: AOJu0YzwMjw/iYOV+oG/Pt53TE0Vi4InlpxQ5ncYwetk+V7D00ixEoa4
+	uobcjFiQixU3aCLdK+wFhtvFrw==
+X-Google-Smtp-Source: AGHT+IFgJn+WvvISODLJNEydM0OoT5CKlICg/Q4seb/gLVLuwE3CFzKBzyBE6kOaL67IWVDg4Q0Uvg==
+X-Received: by 2002:a05:6358:60cd:b0:172:eeb3:5d47 with SMTP id i13-20020a05635860cd00b00172eeb35d47mr247169rwi.28.1702923985156;
+        Mon, 18 Dec 2023 10:26:25 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:2305:cb4d:bdde:b1ce])
+        by smtp.gmail.com with ESMTPSA id k11-20020a63ff0b000000b005b7dd356f75sm2401645pgi.32.2023.12.18.10.26.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 10:26:24 -0800 (PST)
+Date: Mon, 18 Dec 2023 11:26:22 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: virtio: free driver_override when rpmsg_remove()
+Message-ID: <ZYCOzlJILOWOtfsS@p14s>
+References: <20231215020049.78750-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH V3] remoteproc: qcom: q6v5: Get crash reason from specific
- SMEM partition
-To: Vignesh Viswanathan <quic_viswanat@quicinc.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <lee@kernel.org>,
-        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_anusha@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20231218061042.3015013-1-quic_viswanat@quicinc.com>
-Content-Language: en-US
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20231218061042.3015013-1-quic_viswanat@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ztaW0gfOKF2tCLLYe1xDn8OjLrxeKqm3
-X-Proofpoint-GUID: ztaW0gfOKF2tCLLYe1xDn8OjLrxeKqm3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=937
- mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2311290000
- definitions=main-2312180116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231215020049.78750-1-xiaolei.wang@windriver.com>
 
-
-
-On 12/18/2023 11:40 AM, Vignesh Viswanathan wrote:
-> q6v5 fatal and watchdog IRQ handlers always retrieves the crash reason
-> information from SMEM global partition (QCOM_SMEM_HOST_ANY).
+On Fri, Dec 15, 2023 at 10:00:49AM +0800, Xiaolei Wang wrote:
+> free driver_override when rpmsg_remove(), otherwise
+> the following memory leak will occur:
 > 
-> For some targets like IPQ9574 and IPQ5332, crash reason information is
-> present in target specific partition due to which the crash reason is
-> not printed in the current implementation.
+> unreferenced object 0xffff0000d55d7080 (size 128):
+>   comm "kworker/u8:2", pid 56, jiffies 4294893188 (age 214.272s)
+>   hex dump (first 32 bytes):
+>     72 70 6d 73 67 5f 6e 73 00 00 00 00 00 00 00 00  rpmsg_ns........
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c94c9c1>] __kmem_cache_alloc_node+0x1f8/0x320
+>     [<000000002300d89b>] __kmalloc_node_track_caller+0x44/0x70
+>     [<00000000228a60c3>] kstrndup+0x4c/0x90
+>     [<0000000077158695>] driver_set_override+0xd0/0x164
+>     [<000000003e9c4ea5>] rpmsg_register_device_override+0x98/0x170
+>     [<000000001c0c89a8>] rpmsg_ns_register_device+0x24/0x30
+>     [<000000008bbf8fa2>] rpmsg_probe+0x2e0/0x3ec
+>     [<00000000e65a68df>] virtio_dev_probe+0x1c0/0x280
+>     [<00000000443331cc>] really_probe+0xbc/0x2dc
+>     [<00000000391064b1>] __driver_probe_device+0x78/0xe0
+>     [<00000000a41c9a5b>] driver_probe_device+0xd8/0x160
+>     [<000000009c3bd5df>] __device_attach_driver+0xb8/0x140
+>     [<0000000043cd7614>] bus_for_each_drv+0x7c/0xd4
+>     [<000000003b929a36>] __device_attach+0x9c/0x19c
+>     [<00000000a94e0ba8>] device_initial_probe+0x14/0x20
+>     [<000000003c999637>] bus_probe_device+0xa0/0xac
 > 
-> Add support to pass crash_reason_partition along with crash_reason_item
-> number in qcom_q6v5_init call and use the same to get the crash
-> information from SMEM in fatal and watchdog IRQ handlers.
-> 
-> Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 > ---
-> Changes in V3: Updated commit message.
-> Changes in V2: Addressed comments in V1.
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> This patch depends on [1] which adds support for IPQ9574 and IPQ5332
-> remoteproc q5v5_mpd driver.
-> 
-> [1]: https://lore.kernel.org/all/20231110091939.3025413-1-quic_mmanikan@quicinc.com/
-> 
->   drivers/remoteproc/qcom_q6v5.c      | 10 ++++++----
->   drivers/remoteproc/qcom_q6v5.h      |  6 ++++--
->   drivers/remoteproc/qcom_q6v5_adsp.c |  5 +++--
->   drivers/remoteproc/qcom_q6v5_mpd.c  | 14 ++++++++------
->   drivers/remoteproc/qcom_q6v5_mss.c  |  5 +++--
->   drivers/remoteproc/qcom_q6v5_pas.c  |  3 ++-
->   drivers/remoteproc/qcom_q6v5_wcss.c |  4 +++-
->   7 files changed, 29 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-> index 0e32f13c196d..e4a28bf25130 100644
-> --- a/drivers/remoteproc/qcom_q6v5.c
-> +++ b/drivers/remoteproc/qcom_q6v5.c
-> @@ -100,7 +100,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
->   		return IRQ_HANDLED;
->   	}
->   
-> -	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-> +	msg = qcom_smem_get(q6v5->crash_reason_partition, q6v5->crash_reason_item, &len);
->   	if (!IS_ERR(msg) && len > 0 && msg[0])
->   		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
->   	else
-> @@ -121,7 +121,7 @@ irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
->   	if (!q6v5->running)
->   		return IRQ_HANDLED;
->   
-> -	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-> +	msg = qcom_smem_get(q6v5->crash_reason_partition, q6v5->crash_reason_item, &len);
->   	if (!IS_ERR(msg) && len > 0 && msg[0])
->   		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
->   	else
-> @@ -279,14 +279,16 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
->    * Return: 0 on success, negative errno on failure
->    */
->   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-> -		   struct rproc *rproc, int crash_reason, const char *load_state,
-> +		   struct rproc *rproc, int crash_reason_partition,
-> +		   int crash_reason_item, const char *load_state,
->   		   void (*handover)(struct qcom_q6v5 *q6v5))
->   {
->   	int ret;
->   
->   	q6v5->rproc = rproc;
->   	q6v5->dev = &pdev->dev;
-> -	q6v5->crash_reason = crash_reason;
-> +	q6v5->crash_reason_partition = crash_reason_partition;
-> +	q6v5->crash_reason_item = crash_reason_item;
->   	q6v5->handover = handover;
->   
->   	init_completion(&q6v5->start_done);
-> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-> index 4e1bb1a68284..cd02372e9856 100644
-> --- a/drivers/remoteproc/qcom_q6v5.h
-> +++ b/drivers/remoteproc/qcom_q6v5.h
-> @@ -40,7 +40,8 @@ struct qcom_q6v5 {
->   	struct completion stop_done;
->   	struct completion spawn_done;
->   
-> -	int crash_reason;
-> +	int crash_reason_partition;
-> +	int crash_reason_item;
->   
->   	bool running;
->   
-> @@ -49,7 +50,8 @@ struct qcom_q6v5 {
->   };
->   
->   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-> -		   struct rproc *rproc, int crash_reason, const char *load_state,
-> +		   struct rproc *rproc, int crash_reason_partition,
-> +		   int crash_reason_item, const char *load_state,
->   		   void (*handover)(struct qcom_q6v5 *q6v5));
->   void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
->   
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 6c67514cc493..8feb2eb45737 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -731,8 +731,9 @@ static int adsp_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto disable_pm;
->   
-> -	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
-> -			     desc->load_state, qcom_adsp_pil_handover);
-> +	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-> +			     desc->crash_reason_smem, desc->load_state,
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index dc87965f8164..1062939c3264 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -378,6 +378,7 @@ static void virtio_rpmsg_release_device(struct device *dev)
+>  	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+>  	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>  
+> +	kfree(rpdev->driver_override);
+>  	kfree(vch);
+>  }
 
-Can we also rename this ->crash_reason_smem to ->crash_reason_item to
-proper reflect its meaning ?
+I have applied this patch.
 
--Mukesh
+Thanks,
+Mathieu
 
-> +			     qcom_adsp_pil_handover);
->   	if (ret)
->   		goto disable_pm;
->   
-> diff --git a/drivers/remoteproc/qcom_q6v5_mpd.c b/drivers/remoteproc/qcom_q6v5_mpd.c
-> index b133285888c7..c893deac30e1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mpd.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mpd.c
-> @@ -14,6 +14,7 @@
->   #include <linux/module.h>
->   #include <linux/of_address.h>
->   #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->   #include <linux/of_reserved_mem.h>
->   #include <linux/platform_device.h>
->   #include <linux/reset.h>
-> @@ -555,9 +556,9 @@ static int q6_get_outbound_irq(struct qcom_q6v5 *q6,
->   	return 0;
->   }
->   
-> -static int init_irq(struct qcom_q6v5 *q6,
-> -		    struct platform_device *pdev, struct rproc *rproc,
-> -		    int crash_reason, const char *load_state,
-> +static int init_irq(struct qcom_q6v5 *q6, struct platform_device *pdev,
-> +		    struct rproc *rproc, int crash_reason_partition,
-> +		    int crash_reason_item, const char *load_state,
->   		    void (*handover)(struct qcom_q6v5 *q6))
->   {
->   	int ret;
-> @@ -565,7 +566,8 @@ static int init_irq(struct qcom_q6v5 *q6,
->   
->   	q6->rproc = rproc;
->   	q6->dev = &pdev->dev;
-> -	q6->crash_reason = crash_reason;
-> +	q6->crash_reason_partition = crash_reason_partition;
-> +	q6->crash_reason_item = crash_reason_item;
->   	q6->handover = handover;
->   
->   	init_completion(&q6->start_done);
-> @@ -666,7 +668,7 @@ static int q6_register_userpd(struct platform_device *pdev,
->   	if (ret)
->   		goto free_rproc;
->   
-> -	ret = init_irq(&wcss->q6, userpd_pdev, rproc,
-> +	ret = init_irq(&wcss->q6, userpd_pdev, rproc, WCSS_SMEM_HOST,
->   		       WCSS_CRASH_REASON, NULL, NULL);
->   	if (ret)
->   		goto free_rproc;
-> @@ -725,7 +727,7 @@ static int q6_wcss_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto free_rproc;
->   
-> -	ret = qcom_q6v5_init(&wcss->q6, pdev, rproc,
-> +	ret = qcom_q6v5_init(&wcss->q6, pdev, rproc, WCSS_SMEM_HOST,
->   			     WCSS_CRASH_REASON, NULL, NULL);
->   	if (ret)
->   		goto free_rproc;
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 394b2c1cb5e2..48f115f9337b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -26,6 +26,7 @@
->   #include <linux/remoteproc.h>
->   #include <linux/reset.h>
->   #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/smem.h>
->   #include <linux/iopoll.h>
->   #include <linux/slab.h>
->   
-> @@ -2093,8 +2094,8 @@ static int q6v5_probe(struct platform_device *pdev)
->   	qproc->need_mem_protection = desc->need_mem_protection;
->   	qproc->has_mba_logs = desc->has_mba_logs;
->   
-> -	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
-> -			     qcom_msa_handover);
-> +	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-> +			     MPSS_CRASH_REASON_SMEM, "modem", qcom_msa_handover);
->   	if (ret)
->   		goto detach_proxy_pds;
->   
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 913a5d2068e8..bfadc7bd4b51 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -728,7 +728,8 @@ static int adsp_probe(struct platform_device *pdev)
->   		goto free_rproc;
->   	adsp->proxy_pd_count = ret;
->   
-> -	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
-> +	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-> +			     desc->crash_reason_smem, desc->load_state,
->   			     qcom_pas_handover);
->   	if (ret)
->   		goto detach_proxy_pds;
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index cff1fa07d1de..29510bbefa2e 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -18,6 +18,7 @@
->   #include <linux/regulator/consumer.h>
->   #include <linux/reset.h>
->   #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/smem.h>
->   #include "qcom_common.h"
->   #include "qcom_pil_info.h"
->   #include "qcom_q6v5.h"
-> @@ -1047,7 +1048,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto free_rproc;
->   
-> -	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem, NULL, NULL);
-> +	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
-> +			     desc->crash_reason_smem, NULL, NULL);
->   	if (ret)
->   		goto free_rproc;
->   
+>  
+> -- 
+> 2.25.1
+> 
