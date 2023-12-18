@@ -1,282 +1,144 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662C618042
-	for <linux-remoteproc@vger.kernel.org>; Mon, 18 Dec 2023 10:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90981D127;
+	Mon, 18 Dec 2023 13:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BPs0yRvi"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40d12ade25dso13608545e9.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Dec 2023 02:28:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlGNlsCc"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-28b7a0d1665so371327a91.1;
+        Mon, 18 Dec 2023 05:29:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702895295; x=1703500095; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=brusERLuF9g6InfhOI5cvRdOOm8bY1Bt/He5xK1JCeI=;
-        b=BPs0yRvikcoZulo+U1dBH9rMg43owCp6w3eCw9jgvpmp/Fra8Fjc2xBO1xOSMlkVkh
-         d0gTA99FzUIwz8jJvxmk8t9FLu/hKz8vAWdC0t/iJoABdwL243qNllIwq6IYUVIzDkfk
-         YpiwB7YonrFCF0pT8UcpiqfFnn2BOLu5dhnIn6/YL4bQ4p8dllqqqoI5iRbUTonlsXfc
-         nxx3INctiNg7xU5IYzx+No4FKLpp5Y/jXv0ylpFKu+xTE4QZTG2ySiR96qmFI6Owiuqe
-         XcbAcZ93r6sZ/6kI1WEd5C/nDZ2A4UZkYeDPAb4qosXQTeE6I6vuhiKNpmkXuoRBM5iA
-         dVQA==
+        d=gmail.com; s=20230601; t=1702906140; x=1703510940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTa54+lQlw7SR8DT+g/1Fr3hHx6APCXhIN2lYddiDtk=;
+        b=YlGNlsCcwKLPjrlRSJkQPJqKJV63zhOeoyt3eAct9Fbbzjz8plGLYBNBjWQBJzlOMV
+         4BGM1ZQXF8FT8bMcD9JLUHSlzRj3kYvI2jg00P4Y34Z9W6tUFHKff3sn6uMMJprQSviV
+         BrEFZw9abZM2OF8hiUAIZBxu6cDi6jmdBgQD2SIqIpj0kIxSOiokMhhIPO10tLBgAsWp
+         dfAWE7yPvlpApSHNeAmECQRp3JsEXmZ3ZlFB+jXKjUxCnir2ta56JfLAehy2y08ETyVr
+         5xTMVv3URi2kQZQZ82lW4x9t1zP8swUyOo7gqT0l8HmKycorSD2hYfIV5DyFcSM6oo5L
+         J7NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702895295; x=1703500095;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=brusERLuF9g6InfhOI5cvRdOOm8bY1Bt/He5xK1JCeI=;
-        b=qHX9sQu/w2I995/FPT6GNqScECLcc/6HDDQ5OzWhv891wSWmXn2omS3wH0E4mqyx/o
-         Rw9kMAC/uPeb1GwPkEr7WJoRp1tA1/4R1X23Butmw0MZg/poCBjM1cav+COFICmnQVJ+
-         rgjh3MDjiRRO83j41zTDyThblGOU3lX67x0gLO1cLvh4TT3Dky3xnqqNBE+BMu3AXi02
-         i+pfz7T+QFT0V4/3dVVyYzcE7dGLNDHuKIL5MwVImeRvmUukpQJ4iSliKGv56KArFL7f
-         91nAdnaKymzfIxayTctzuJc4dwnTCa1NkObK8rMFfDQSSAwF21YkQpnXP5bWMSS/rqg+
-         6blA==
-X-Gm-Message-State: AOJu0YxcHnEdf9OjPTa0HU/yP2AgR0j9eQQejl4DG9j1FiGcnznaaCmN
-	J+Fn8kYu9EMyeGLBqGdoyAlXaA==
-X-Google-Smtp-Source: AGHT+IGcvTDwhd5gtAZxk3beaIc4nJhhiUcrpnVVNHEww7z/HT6hqj48Es5MK6YHfxePjX/GZg6DbQ==
-X-Received: by 2002:a05:600c:54e6:b0:40b:5e21:ec34 with SMTP id jb6-20020a05600c54e600b0040b5e21ec34mr7776468wmb.102.1702895295476;
-        Mon, 18 Dec 2023 02:28:15 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ay35-20020a05600c1e2300b0040b2b38a1fasm41857967wmb.4.2023.12.18.02.28.14
+        d=1e100.net; s=20230601; t=1702906140; x=1703510940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MTa54+lQlw7SR8DT+g/1Fr3hHx6APCXhIN2lYddiDtk=;
+        b=Geddf41ey4ZC6pMBabPqZOGg9Qvns+gbpYjvoirk4wPlNYKaD0v2851o+gZeBAm6Jp
+         ZZwsbi5LIFAFjckdrOgpDTa9uJA+na4e5S7B8gAUvF3JURe0EP/SrukYxv+ss5gd/zGx
+         7djRyvhib0axjid4oSTqfrAKxQP5XYLwiqeYBOkYFNOsKj7FMAuE+Lc+LgqxHJkz44CD
+         UeopkqvZxiQiQ3frjUyInYzrnGihANRQwY1CCy4/0WOLyEYXjWrr7P/r+bKYO4CeBUnW
+         b1Q26J0patDfeJt3wLQ3FSy/Xrb9CXEqMkq99ukJ8TAPdt2TgeKYrOEKoV/q4VRG6WI+
+         Lcng==
+X-Gm-Message-State: AOJu0YxmHJ60q4jUgMWq+zyh9Ld+jYHoOkTV3a7orpq+dHHy9JvO5rXA
+	5G0NzjWYRyeurv3S6tTcXL8=
+X-Google-Smtp-Source: AGHT+IEZB2TgUmy45ncpAne6KqvvnvtmZ+gMBs+oCv3PsYgnCD1AOUambh3fKhCzFxZCE8jZycHozw==
+X-Received: by 2002:a17:90a:f406:b0:28b:4f4b:e53e with SMTP id ch6-20020a17090af40600b0028b4f4be53emr650117pjb.29.1702906139998;
+        Mon, 18 Dec 2023 05:28:59 -0800 (PST)
+Received: from archie.me ([103.131.18.64])
+        by smtp.gmail.com with ESMTPSA id lt8-20020a17090b354800b0028b493c8c2esm4582747pjb.22.2023.12.18.05.28.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 02:28:15 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 18 Dec 2023 11:28:10 +0100
-Subject: [PATCH v6 2/3] remoteproc: qcom: pas: make region assign more
- generic
+        Mon, 18 Dec 2023 05:28:59 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id B66DC10212A1A; Mon, 18 Dec 2023 20:28:50 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux RPC <linux-remoteproc@vger.kernel.org>,
+	Linux OMAP <linux-omap@vger.kernel.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: Remove Ohad Ben-Cohen from hwspinlock subsystem
+Date: Mon, 18 Dec 2023 20:28:31 +0700
+Message-ID: <20231218132830.5104-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231218-topic-sm8650-upstream-remoteproc-v6-2-3d16b37f154b@linaro.org>
-References: <20231218-topic-sm8650-upstream-remoteproc-v6-0-3d16b37f154b@linaro.org>
-In-Reply-To: <20231218-topic-sm8650-upstream-remoteproc-v6-0-3d16b37f154b@linaro.org>
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Mukesh Ojha <quic_mojha@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6221;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=mMV4sYhyuHxZXOCyI694/SnyEcdmuikG1JEY+XT6GWQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlgB67SBNIAHpvz/xAlFvclYguS84GF72MbxQbtGK1
- lgiz9hWJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZYAeuwAKCRB33NvayMhJ0VTTD/
- 4jYxPXOclmW7AecpuxKV9iJwB0FtH/m2MmetGmTWGoJmjXcf9Ye7UqHEPEKG6k49NAMKBEWpikcW2I
- vj0p6AnX8UG9ylJkA6PyXvmBOI6h5h2Q2mQUlpyKhn6Li32bsA8QdOPRFPQzfFdkUIN5sMCd+HSuCd
- af5d2F8Pm4WG8F6AvAOGuHc1ITt0zEZwWrloyoRXnUp/kB5hvd+csl7sxyGYZIFz821kaWQSk+VF28
- XgOS0Ke59+a8IBRZjlBhmu2SVGjnUI5ewEDalguHCWGqGyZlShGg6Ryr+jP9uKFRQObd7qQJp0cmcs
- 78IYbRFppiELZYY+WT06IlrnpRQbB0rtmvcopa0i65Z2+5k1S9CrtqrUHdoi5vzEfCBfnjber2YMZk
- 2bgEGGfdo/Iyv5zTwWlAj99q5WZFcPwB6sjBX1kMGqR5cM/tEq1ohvWirWnJ2ukJ2qOITRCRRTcNDO
- t4WtJknNbs80OF+FByCB/PFZhyGUg/ieIg5id1jGjxEsZc1zwJofiH3aeTQxhiijnTe8zhC/O1/xOR
- 3shcLLND0dqLb0XvoVldcpXz3nDopZcgd9tJlA52ilKEhdyBJ1eQhQorIz8gsqv9/lgDUpcmhiyrZ2
- BzG9vxdU5ckgWbcMKCiO00L5kHPikp+d36lZepwaJQs+hgXfH6iGTL7Qp1lg==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2551; i=bagasdotme@gmail.com; h=from:subject; bh=7GhFXdwAV5PhQz23rGs3xKB6DfUzp3AwgsRqoRUYw+M=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDKkNHtVr5gse7Ooz7rY8brF6P9vj+UsE5ghL5bByRUncy DEKNrnWUcrCIMbFICumyDIpka/p9C4jkQvtax1h5rAygQxh4OIUgIkY7WP4X8mx0ClcuFo9drnA sYge208ezEvvRd/cUujsU5JZ5hZ9meF/osz9Eu259/YyCa357KxeEGt81ePW1G0PP1z4GRUbEHS FFQA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-The current memory region assign only supports a single
-memory region.
+Commit 62c46d55688894 ("MAINTAINERS: Removing Ohad from remoteproc/rpmsg
+maintenance") removes his MAINTAINERS entry in regards to remoteproc
+subsystem due to his inactivity (the last commit with his Signed-off-by
+is 99c429cb4e628e ("remoteproc/wkup_m3: Use MODULE_DEVICE_TABLE to
+export alias") which is authored in 2015 and his last LKML message prior
+to 62c46d55688894 was [1]).
 
-But new platforms introduces more regions to make the
-memory requirements more flexible for various use cases.
-Those new platforms also shares the memory region between the
-DSP and HLOS.
+Remove also his MAINTAINERS entry for hwspinlock subsystem as there is
+no point of Cc'ing maintainers who never respond in a long time.
 
-To handle this, make the region assign more generic in order
-to support more than a single memory region and also permit
-setting the regions permissions as shared.
+[1]: https://lore.kernel.org/r/CAK=Wgbbcyi36ef1-PV8VS=M6nFoQnFGUDWy6V7OCnkt0dDrtfg@mail.gmail.com/
 
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 100 ++++++++++++++++++++++++-------------
- 1 file changed, 66 insertions(+), 34 deletions(-)
+Changes since v1 [2]:
+  * Add also OMAP hwspinlock & driver entries in CREDITS (Ohad)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index a9dd58608052..e90783fd1129 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -33,6 +33,8 @@
- 
- #define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
- 
-+#define MAX_ASSIGN_COUNT 2
-+
- struct adsp_data {
- 	int crash_reason_smem;
- 	const char *firmware_name;
-@@ -51,6 +53,9 @@ struct adsp_data {
- 	int ssctl_id;
- 
- 	int region_assign_idx;
-+	int region_assign_count;
-+	bool region_assign_shared;
-+	int region_assign_vmid;
- };
- 
- struct qcom_adsp {
-@@ -87,15 +92,18 @@ struct qcom_adsp {
- 	phys_addr_t dtb_mem_phys;
- 	phys_addr_t mem_reloc;
- 	phys_addr_t dtb_mem_reloc;
--	phys_addr_t region_assign_phys;
-+	phys_addr_t region_assign_phys[MAX_ASSIGN_COUNT];
- 	void *mem_region;
- 	void *dtb_mem_region;
- 	size_t mem_size;
- 	size_t dtb_mem_size;
--	size_t region_assign_size;
-+	size_t region_assign_size[MAX_ASSIGN_COUNT];
- 
- 	int region_assign_idx;
--	u64 region_assign_perms;
-+	int region_assign_count;
-+	bool region_assign_shared;
-+	int region_assign_vmid;
-+	u64 region_assign_owners[MAX_ASSIGN_COUNT];
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-@@ -590,37 +598,53 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
- 
- static int adsp_assign_memory_region(struct qcom_adsp *adsp)
- {
--	struct reserved_mem *rmem = NULL;
--	struct qcom_scm_vmperm perm;
-+	struct qcom_scm_vmperm perm[MAX_ASSIGN_COUNT];
- 	struct device_node *node;
-+	unsigned int perm_size;
-+	int offset;
- 	int ret;
- 
- 	if (!adsp->region_assign_idx)
- 		return 0;
- 
--	node = of_parse_phandle(adsp->dev->of_node, "memory-region", adsp->region_assign_idx);
--	if (node)
--		rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
--		dev_err(adsp->dev, "unable to resolve shareable memory-region\n");
--		return -EINVAL;
--	}
-+	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
-+		struct reserved_mem *rmem = NULL;
-+
-+		node = of_parse_phandle(adsp->dev->of_node, "memory-region",
-+					adsp->region_assign_idx + offset);
-+		if (node)
-+			rmem = of_reserved_mem_lookup(node);
-+		of_node_put(node);
-+		if (!rmem) {
-+			dev_err(adsp->dev, "unable to resolve shareable memory-region index %d\n",
-+				offset);
-+			return -EINVAL;
-+		}
- 
--	perm.vmid = QCOM_SCM_VMID_MSS_MSA;
--	perm.perm = QCOM_SCM_PERM_RW;
-+		if (adsp->region_assign_shared)  {
-+			perm[0].vmid = QCOM_SCM_VMID_HLOS;
-+			perm[0].perm = QCOM_SCM_PERM_RW;
-+			perm[1].vmid = adsp->region_assign_vmid;
-+			perm[1].perm = QCOM_SCM_PERM_RW;
-+			perm_size = 2;
-+		} else {
-+			perm[0].vmid = adsp->region_assign_vmid;
-+			perm[0].perm = QCOM_SCM_PERM_RW;
-+			perm_size = 1;
-+		}
- 
--	adsp->region_assign_phys = rmem->base;
--	adsp->region_assign_size = rmem->size;
--	adsp->region_assign_perms = BIT(QCOM_SCM_VMID_HLOS);
-+		adsp->region_assign_phys[offset] = rmem->base;
-+		adsp->region_assign_size[offset] = rmem->size;
-+		adsp->region_assign_owners[offset] = BIT(QCOM_SCM_VMID_HLOS);
- 
--	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
--				  adsp->region_assign_size,
--				  &adsp->region_assign_perms,
--				  &perm, 1);
--	if (ret < 0) {
--		dev_err(adsp->dev, "assign memory failed\n");
--		return ret;
-+		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
-+					  adsp->region_assign_size[offset],
-+					  &adsp->region_assign_owners[offset],
-+					  perm, perm_size);
-+		if (ret < 0) {
-+			dev_err(adsp->dev, "assign memory %d failed\n", offset);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -629,20 +653,23 @@ static int adsp_assign_memory_region(struct qcom_adsp *adsp)
- static void adsp_unassign_memory_region(struct qcom_adsp *adsp)
- {
- 	struct qcom_scm_vmperm perm;
-+	int offset;
- 	int ret;
- 
--	if (!adsp->region_assign_idx)
-+	if (!adsp->region_assign_idx || adsp->region_assign_shared)
- 		return;
- 
--	perm.vmid = QCOM_SCM_VMID_HLOS;
--	perm.perm = QCOM_SCM_PERM_RW;
-+	for (offset = 0; offset < adsp->region_assign_count; ++offset) {
-+		perm.vmid = QCOM_SCM_VMID_HLOS;
-+		perm.perm = QCOM_SCM_PERM_RW;
- 
--	ret = qcom_scm_assign_mem(adsp->region_assign_phys,
--				  adsp->region_assign_size,
--				  &adsp->region_assign_perms,
--				  &perm, 1);
--	if (ret < 0)
--		dev_err(adsp->dev, "unassign memory failed\n");
-+		ret = qcom_scm_assign_mem(adsp->region_assign_phys[offset],
-+					  adsp->region_assign_size[offset],
-+					  &adsp->region_assign_owners[offset],
-+					  &perm, 1);
-+		if (ret < 0)
-+			dev_err(adsp->dev, "unassign memory %d failed\n", offset);
-+	}
- }
- 
- static int adsp_probe(struct platform_device *pdev)
-@@ -696,6 +723,9 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->info_name = desc->sysmon_name;
- 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	adsp->region_assign_idx = desc->region_assign_idx;
-+	adsp->region_assign_count = min_t(int, MAX_ASSIGN_COUNT, desc->region_assign_count);
-+	adsp->region_assign_vmid = desc->region_assign_vmid;
-+	adsp->region_assign_shared = desc->region_assign_shared;
- 	if (dtb_fw_name) {
- 		adsp->dtb_firmware_name = dtb_fw_name;
- 		adsp->dtb_pas_id = desc->dtb_pas_id;
-@@ -1163,6 +1193,8 @@ static const struct adsp_data sm8550_mpss_resource = {
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
- 	.region_assign_idx = 2,
-+	.region_assign_count = 1,
-+	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
- };
- 
- static const struct adsp_data sc7280_wpss_resource = {
+I was prompted to do the removal when I was reviewing kernel-doc fix
+[3]. When I was digging MAINTAINERS history (`git log --no-merges --
+MAINTAINERS`), I noticed that Ohad is inactive.
 
+This patch is based on mm-nonmm-unstable as I intend to route it
+through mm tree.
+
+[2]: https://lore.kernel.org/r/ZX04Ymz_vDFEeUDX@archie.me/
+
+[3]: https://lore.kernel.org/linux-mm/20231216111017.17624-2-bagasdotme@gmail.com/
+
+ CREDITS     | 3 +++
+ MAINTAINERS | 4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index 81845c39e3cf37..3c7c953c7cf69b 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -323,6 +323,9 @@ N: Ohad Ben Cohen
+ E: ohad@wizery.com
+ D: Remote Processor (remoteproc) subsystem
+ D: Remote Processor Messaging (rpmsg) subsystem
++D: Hardware spinlock (hwspinlock) subsystem
++D: OMAP hwspinlock driver
++D: OMAP remoteproc driver
+ 
+ N: Krzysztof Benedyczak
+ E: golbi@mat.uni.torun.pl
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5c9d3d8546714a..4acc4a3d4fcd96 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9257,7 +9257,6 @@ F:	drivers/char/hw_random/
+ F:	include/linux/hw_random.h
+ 
+ HARDWARE SPINLOCK CORE
+-M:	Ohad Ben-Cohen <ohad@wizery.com>
+ M:	Bjorn Andersson <andersson@kernel.org>
+ R:	Baolin Wang <baolin.wang7@gmail.com>
+ L:	linux-remoteproc@vger.kernel.org
+@@ -15692,9 +15691,8 @@ F:	Documentation/devicetree/bindings/gpio/ti,omap-gpio.yaml
+ F:	drivers/gpio/gpio-omap.c
+ 
+ OMAP HARDWARE SPINLOCK SUPPORT
+-M:	Ohad Ben-Cohen <ohad@wizery.com>
+ L:	linux-omap@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ F:	drivers/hwspinlock/omap_hwspinlock.c
+ 
+ OMAP HS MMC SUPPORT
+
+base-commit: cbeb59a84b8f29151b882d03a4d23d19d92f4337
 -- 
-2.34.1
+An old man doll... just what I always wanted! - Clara
 
