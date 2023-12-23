@@ -1,55 +1,35 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61A250254;
-	Thu, 21 Dec 2023 10:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E073D11CA3;
+	Sat, 23 Dec 2023 13:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="grskYiz6"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BL63YSW029032;
-	Thu, 21 Dec 2023 10:07:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type; s=qcppdkim1; bh=ENy9zIRzfqmgFGIyKdRN
-	Aiv5Sae6mMm9M3jFcJx5ZFY=; b=grskYiz6yeeOq+ZecajThBjUfg1O86H5mVuu
-	gWlFg/9LZNudd44R8lbJo+lBgKFil4Ksg+7nSCeekL0cBjNMFdGKUGLEvPsluFOn
-	PWrc1+hd4oxNksWnt3eQSp481hkbrgBlgjgXcEG5x+J1X3hLh7dPlSUgsxm5Zyn9
-	b90ZUGhXIqB6TaU426jS1HcRtmZ2bI9VfEmVgWkNds2jqmaJiH1qbMunQI6JZFCc
-	P8aXRqdQ5ew9Uhnbu0+aZmh7UZdeI+Qisqj/pE5e7YoqZhPOvXBTOUW4GCMfS1vq
-	+kDgdOG7RVLSKvKMtS6Ui6Gfhpz7IKwItH13PTs4tztQyOObvg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v3v33c87c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Dec 2023 10:07:40 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BLA7EDq008062
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Dec 2023 10:07:14 GMT
-Received: from sarannya-linux.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 21 Dec 2023 02:07:09 -0800
-From: Sarannya S <quic_sarannya@quicinc.com>
-To: <quic_bjorande@quicinc.com>, <bjorn.andersson@kernel.org>,
-        <andersson@kernel.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <quic_sarannya@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open list:NETWORKING
- [GENERAL]" <netdev@vger.kernel.org>
-Subject: [PATCH V1] net: qrtr: ns: Return 0 if server port is not present
-Date: Thu, 21 Dec 2023 15:36:51 +0530
-Message-ID: <1703153211-3717-2-git-send-email-quic_sarannya@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1703153211-3717-1-git-send-email-quic_sarannya@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0USso2l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED9BC433C8;
+	Sat, 23 Dec 2023 13:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703339774;
+	bh=402FMcsFLXTqiwyZScGBRIUGS4WdpQxLxaKJLbakZgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F0USso2le2eZ6W5yiS3ameFhrGVcs/wFTu6sS4H3Wgws6f3HZ5DzD48BDmEX8+rN9
+	 syg2nhieCnSpkaqNVqk0JAQ25LR3fAjjemoSbS1pArgN+r+aZrooNJEQG7e3sq9Kro
+	 obtuHJ3VclUqZyHYEbkfWoKo2lby9oGtn6zDZSvZM7zC2cOtSI8YlmbdqhHlR8w/TJ
+	 reJ0Hn9MeXv5xHTyHflitfMw8Imdiu4hDmINru33Mf8StPuW4LvcJII6YhoSV7E2EE
+	 yIiQXCOcqatX9WQA/OGzUMgBlV/SyTx389uNpOZmF0GtV+JUv+rLzgpG2hWqXTgIaA
+	 D6w062dsJGdBA==
+Date: Sat, 23 Dec 2023 13:56:08 +0000
+From: Simon Horman <horms@kernel.org>
+To: Sarannya S <quic_sarannya@quicinc.com>
+Cc: quic_bjorande@quicinc.com, andersson@kernel.org, quic_clew@quicinc.com,
+	mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH V1] net: qrtr: ns: Ignore ENODEV failures in ns
+Message-ID: <20231223135333.GA201037@kernel.org>
 References: <1703153211-3717-1-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -57,52 +37,55 @@ List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qVrbWCGQWVpjBwfPIQWPCzb_PiyBJj0e
-X-Proofpoint-GUID: qVrbWCGQWVpjBwfPIQWPCzb_PiyBJj0e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=734 clxscore=1015 priorityscore=1501
- adultscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2311290000
- definitions=main-2312210075
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1703153211-3717-1-git-send-email-quic_sarannya@quicinc.com>
 
-When a 'DEL_CLIENT' message is received from the remote, the corresponding
-server port gets deleted. A DEL_SERVER message is then announced for this
-server. As part of handling the subsequent DEL_SERVER message, the name-
-server attempts to delete the server port which results in a '-ENOENT' error.
-The return value from server_del() is then propagated back to qrtr_ns_worker,
-causing excessive error prints.
-To address this, return 0 from control_cmd_del_server() without checking the
-return value of server_del(), since the above scenario is not an error case
-and hence server_del() doesn't have any other error return value.
+[Dropped bjorn.andersson@kernel.org, as the correct address seems
+ to be andersson@kernel.org, which is already in the CC list.
+ kernel.org rejected sending this email without that update.]
 
-Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
----
- net/qrtr/ns.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Thu, Dec 21, 2023 at 03:36:50PM +0530, Sarannya S wrote:
+> From: Chris Lew <quic_clew@quicinc.com>
+> 
+> Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
+> indicate that either the local port has been closed or the remote has
+> gone down. Neither of these scenarios are fatal and will eventually be
+> handled through packets that are later queued on the control port.
+> 
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
+> ---
+>  net/qrtr/ns.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+> index abb0c70..8234339 100644
+> --- a/net/qrtr/ns.c
+> +++ b/net/qrtr/ns.c
+> @@ -157,7 +157,7 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
+>  	msg.msg_namelen = sizeof(*dest);
+>  
+>  	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
+> -	if (ret < 0)
+> +	if (ret < 0 && ret != -ENODEV)
+>  		pr_err("failed to announce del service\n");
+>  
+>  	return ret;
 
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index b1db0b5..abb0c70 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -512,7 +512,9 @@ static int ctrl_cmd_del_server(struct sockaddr_qrtr *from,
- 	if (!node)
- 		return -ENOENT;
- 
--	return server_del(node, port, true);
-+	server_del(node, port, true);
-+
-+	return 0;
- }
- 
- static int ctrl_cmd_new_lookup(struct sockaddr_qrtr *from,
--- 
-2.7.4
+Hi,
 
+The caller of service_announce_del() ignores it's return value.
+So the only action on error is the pr_err() call above, and so
+with this patch -ENODEV is indeed ignored.
+
+However, I wonder if it would make things clearer to the reader (me?)
+if the return type of service_announce_del was updated void. Because
+as things stand -ENODEV may be returned, which implies something might
+handle that, even though it doe not.
+
+The above notwithstanding, this change looks good to me.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
