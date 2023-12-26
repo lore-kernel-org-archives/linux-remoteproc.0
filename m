@@ -1,113 +1,106 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B302524AC;
-	Mon, 25 Dec 2023 13:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F3DA32
+	for <linux-remoteproc@vger.kernel.org>; Tue, 26 Dec 2023 00:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RevVVwKj"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6d099d316a8so3604420b3a.0;
-        Mon, 25 Dec 2023 05:55:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSvIRUU+"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ccc7d7e399so5471991fa.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Dec 2023 16:34:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703512550; x=1704117350; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DQDRirBfKKu4jOrue0tUkAqdRYM+XKPGLgDKcTkbvWA=;
-        b=RevVVwKj6DBQlntZIWTjcNYvlfwlqNwlPLT0GAz5ETfe8gJrWmZLVZiAIOoUhnneai
-         VUt5gIDuvEhTxXLwLfZtIDwmvuJWxLlCT4AmMuZM/ZHnkxxdIbvOrklh/tayBxN25SGA
-         I4yvRJYmDxi7SAVumUFG4Il4fXKlDpekeolCy7JaacP5SR3f/VEvS94A1df7cmTbcN7d
-         NV7qPgA11gkJ2n3aGsLl4p7gckgbyXHjPKZhgxAL+sNSEzI/JTdvAPXSQ0BGGHRi2Vif
-         HYLR1XoiGtIMXToLPcaSAWK60SHlF9Nm4QNQb8NBYfAX8MgzgzqSmFDYWohTUfBbaQRf
-         aWNA==
+        d=linaro.org; s=google; t=1703550888; x=1704155688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JSqq/oRAK8tG/6OBNWJ7j1pib3lTQhlU58NT4JC7FjY=;
+        b=BSvIRUU+TWxuPDAzpRZsiNAa4NSLxShC1XboJVtxI2+JxNvRMk+F1i3N20FZ7xh9VM
+         R2LInkWUANMkFNdZT3aQQ1TQnraXSwUtoqZAtdukVF2NrkkOlCx8Y3+cew0AVAS6uVtD
+         tZhlth/ErUfkVEZwh8Zqvnhj33NAeuOGZB482MNBenHlrfsLudTqRtz7y7Z745v4Hh2/
+         /Dt4zUhAcn0JukAxqlrX+nVBMLAJA7BwbGFdHuSFCdZadvHGBjr5wwB8og8AgX52qu9w
+         4g/VrGp1gfLsATcvTQQBoUpRnXOOPGkuDzWzr5+kOUYuygGbcj1qpU5LNZfnnX8XxT8W
+         kckA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703512550; x=1704117350;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DQDRirBfKKu4jOrue0tUkAqdRYM+XKPGLgDKcTkbvWA=;
-        b=NJfBPOlLDa0PDw71MeyERFeXNal87cpZ7fC7egd4ZwvRR2Bu5uw2JdX0fi8tUAuRMz
-         D2X1lbtFVFQRY0qypiuL3YDHmAq6Zu/gV3ybj4siQ5TlzPex0R1+itcOl5cP7rIbOUQz
-         OenoCCEhMs7E0JFdVBTfK+hpKCTS7yaTRQIadZT+43jpwhaRGXCh2Hs0R5mVGDjmIKjQ
-         2gCqg2CbrIRxB9VH32+JHxa/PZDsYQPJ+dnPm49YXOzIeo4VCrtN3cMYfDTq1m0gBH/Z
-         NHtWouS5TQ6Bwoevc9LWcWTelF2Csf6OPoxLktBb2uvrTBaHJMX8WFh22QtQ/I3oxml6
-         6SPA==
-X-Gm-Message-State: AOJu0Yy+Pz8btCqXChioBW4Dvg3gayyyVA6IC0OmL7MUf2u423IGIALI
-	FKmsW9EK6ab1mijBYaLd7J4=
-X-Google-Smtp-Source: AGHT+IG59G1LSj7Se2+3+49YaCUFtV38BC2bYVSUV4Q/ViyW4rnvflyTan011DTVyVimmqJSzr+AJA==
-X-Received: by 2002:a05:6a00:2383:b0:6d9:c201:676b with SMTP id f3-20020a056a00238300b006d9c201676bmr820525pfc.24.1703512550263;
-        Mon, 25 Dec 2023 05:55:50 -0800 (PST)
-Received: from ruipeng-ThinkCentre-M730e-N010.company.local (014136220210.static.ctinets.com. [14.136.220.210])
-        by smtp.gmail.com with ESMTPSA id e8-20020aa78c48000000b006d9b66f3d07sm2300822pfd.95.2023.12.25.05.55.44
+        d=1e100.net; s=20230601; t=1703550888; x=1704155688;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JSqq/oRAK8tG/6OBNWJ7j1pib3lTQhlU58NT4JC7FjY=;
+        b=m5ywtin+oow9FPKnRxvW157Sk077ZejLlGO/om1RnRqlHMDgYVvyZgA31e3qkD+D3R
+         5wQDJ48y70SdxG0ZplTpTXnW3Xo2hpm0SMBMlv/IpRazT6VsPpz0uibvWdpyK1e8Rnz0
+         i7xd9PjcgGA83Fa/pt/Aq/M25zOUy1dSVeQT+1CsaHTLQP4R7W3qBN17aHn2OxwHeOwS
+         5368fNodhKHZAN5wWh5BYh48a3HseVG0fAhPfkxBiVtMzyuaj8xnJjgwzj8Jke4m4ufr
+         zsKKLIPVXVHR1H0Nba+S+Qc0FH+afunu4zxVEmdu3FhqjkXJUGmYxBlPNGuoFkXVwEyH
+         ijpw==
+X-Gm-Message-State: AOJu0YyolkBJ0u2OsljB7ktcCxSsAVnxy0eactLFLiSE8kmkuiPV6wf5
+	Ub3EH2pL7rSX/hf2evd/G+e3Xu06JosA9Q==
+X-Google-Smtp-Source: AGHT+IGR9Z2RMSQd+nXkE/c0vlRSUUG71sv+Oa2PTNfwTNLaPDde+99dFVskzIZpJV/OxZqu2gHH8A==
+X-Received: by 2002:a2e:9895:0:b0:2cc:94dd:483e with SMTP id b21-20020a2e9895000000b002cc94dd483emr2243027ljj.2.1703550888302;
+        Mon, 25 Dec 2023 16:34:48 -0800 (PST)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id d1-20020a05651c088100b002ccb1301d53sm1368810ljq.48.2023.12.25.16.34.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Dec 2023 05:55:49 -0800 (PST)
-From: Ruipeng Qi <ruipengqi7@gmail.com>
-To: quic_mojha@quicinc.com
-Cc: agross@kernel.org,
-	alim.akhtar@samsung.com,
-	andersson@kernel.org,
-	bmasney@redhat.com,
-	conor+dt@kernel.org,
-	corbet@lwn.net,
-	gpiccoli@igalia.com,
-	keescook@chromium.org,
-	kernel@quicinc.com,
-	kgene@kernel.org,
-	konrad.dybcio@linaro.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	mathieu.poirier@linaro.org,
-	matthias.bgg@gmail.com,
-	nm@ti.com,
-	robh+dt@kernel.org,
-	tony.luck@intel.com,
-	vigneshr@ti.com,
-	qiruipeng@lixiang.com
-Subject: RESEND: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
-Date: Mon, 25 Dec 2023 21:55:42 +0800
-Message-Id: <20231225135542.1789-1-ruipengqi7@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
-References: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
+        Mon, 25 Dec 2023 16:34:47 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: [RFC PATCH 0/5] soc: qcom: add in-kernel pd-mapper implementation
+Date: Tue, 26 Dec 2023 02:34:42 +0200
+Message-Id: <20231226003447.3044365-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-<+How a kernel client driver can register region with minidump
-<+------------------------------------------------------------
-<+
-<+Client driver can use ``qcom_minidump_region_register`` API's to register
-<+and ``qcom_minidump_region_unregister`` to unregister their region from
-<+minidump driver.
-<+
-<+Client needs to fill their region by filling ``qcom_minidump_region``
-<+structure object which consists of the region name, region's virtual
-<+and physical address and its size.
+Protection domain mapper is a QMI service providing mapping between
+'protection domains' and services supported / allowed in these domains.
+For example such mapping is required for loading of the WiFi firmware or
+for properly starting up the UCSI / altmode / battery manager support.
 
-Hi, Mukesh, wish you a good holiday :)
+The existing userspace implementation has several issue. It doesn't play
+well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
+firmware location is changed (or if the firmware was not available at
+the time pd-mapper was started but the corresponding directory is
+mounted later), etc.
 
-I have the following idea, please help me to assess whether this can be
-implemented or not. As we all know, most of the kernel objects are
-allocated by the slab sub-system.I wonder if we can dump all memory
-keeped by the slab sub-system? If so,  we got most of the kernel objects
-which will be helpful to fix problems when we run with system issues.
+However this configuration is largely static and common between
+different platforms. Provide in-kernel service implementing static
+per-platform data.
 
-How can we do this? From the description above, I think we should
-register one region for each slab,  for each slab will have some pages,
-and the memory between each slab is non-continuous. As we all
-know, there are millions of slabs in the system, so if we dump slabs
-in this way, it will introduce a heavy overhead.
+NOTE: this is an RFC / RFC, the domain mapping data might be inaccurate
+(especially for SM6xxx and SC7xxx platforms), which is reflected by
+several TODO and FIXME comments in the code.
 
-I am not very familiar with qualcomm minidump, maybe my thought
-is wrong. Looking forward to your reply!
+Dmitry Baryshkov (5):
+  soc: qcom: add pd-mapper implementation
+  remoteproc: qcom: pas: correct data indentation
+  remoteproc: qcom: adsp: add configuration for in-kernel pdm
+  remoteproc: qcom: mss: add configuration for in-kernel pdm
+  remoteproc: qcom: pas: add configuration for in-kernel pdm
 
-Best Regards
-Ruipeng
+ drivers/remoteproc/Kconfig          |   3 +
+ drivers/remoteproc/qcom_q6v5_adsp.c |  67 +++++
+ drivers/remoteproc/qcom_q6v5_mss.c  |  84 ++++++
+ drivers/remoteproc/qcom_q6v5_pas.c  | 418 +++++++++++++++++++++++-----
+ drivers/soc/qcom/Kconfig            |  10 +
+ drivers/soc/qcom/Makefile           |   2 +
+ drivers/soc/qcom/qcom_pdm.c         | 302 ++++++++++++++++++++
+ drivers/soc/qcom/qcom_pdm_msg.c     | 189 +++++++++++++
+ drivers/soc/qcom/qcom_pdm_msg.h     |  66 +++++
+ include/linux/soc/qcom/pd_mapper.h  |  35 +++
+ 10 files changed, 1108 insertions(+), 68 deletions(-)
+ create mode 100644 drivers/soc/qcom/qcom_pdm.c
+ create mode 100644 drivers/soc/qcom/qcom_pdm_msg.c
+ create mode 100644 drivers/soc/qcom/qcom_pdm_msg.h
+ create mode 100644 include/linux/soc/qcom/pd_mapper.h
+
+-- 
+2.39.2
+
