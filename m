@@ -1,224 +1,198 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0C4403
-	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 01:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F611CA0
+	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 09:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8Z2I4aT"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50e741123acso2244164e87.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Dec 2023 17:43:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qIHuRuOG"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5e7c1012a42so40447227b3.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 01:09:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703641396; x=1704246196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aVbiyMv2oFYAbbw/EcuzGTtqEIvLrA4YELHXiLQOTVs=;
-        b=I8Z2I4aTFjEgeXHic+U4venIXgFzrfdTCmzCRpqNdHiFhcNKLjgyQTw/nBHHTWwXDc
-         BrU4A3sVGWgFXujIYQA8X6os7CrKaPc3VTOG4h9MG3Mfl+4yiplT3XssQpxYqWW71hDs
-         PHhKNYBqqD0r8AyvMMstFIOzIpkqM7i+TNBRYd3OiR5uQl43F1hYYIEvr6IFEIqQoi3g
-         qkmsxLVb+qCWJN4XqwgBmm1v3ZRxSWqLpp3jMlwWyZLcm9JBViDcT/jUmtoMo5XwBO4D
-         7Laq8TuYN4VcPqe58N9g+4V4W8ecRT9TS0DXySOs7xx/Z7W8Q0Mk9uuSZ+c+Hsh27oqU
-         xlFg==
+        d=linaro.org; s=google; t=1703668191; x=1704272991; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fwEu5R28XphpFnA42t09e1RbHp63w9bz44iIVwBNAUc=;
+        b=qIHuRuOGYZY6sdOafW8wMj94D4MBaRJVLDCNYd/jYTV0d5DvQ7D+eyaBn5RkNzQYDK
+         aI+ppaYoLid0/Q6WI+FX5H837Wm2aqzBmGmudSVrnGWrjs8Pug74zlkmP2rAMH8FeuTM
+         SGkd7cIxMi5yKGYcyKBNdWQetdIm9JprMMf9x0qgqRtKNXaxirHCg/p91JsGZ8LWMwTy
+         uLVqrJGLNWith2ws0ze+wtLgq0ilm3EV73+iT5EM17frKh6DrDqAV5QbeoVhB5UvEVIL
+         hVzXT+zy9m1WUt7Jj1HmDl3ilhCqCqAgKyPcNjVZgRJxarYKa54prdqMGaUkH/W66r7h
+         qedQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703641396; x=1704246196;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aVbiyMv2oFYAbbw/EcuzGTtqEIvLrA4YELHXiLQOTVs=;
-        b=DUDoz3BIcndHeD7kzgOYpN2PX3YbK3AFjU4blgkcOhiLYc1KogiJGVhf/Gs2nvj11D
-         xnLBZOcreRa9YNWoZsqtqZTjOkpG8Cmd0xotSJ+vurbiOTIqyS0E53/FFC66JlPPmq4l
-         DNJ1+ErB4MhakWiT795mueb8/nZJ/kJW8JhmixOBfZILKd8udHb/XlOQia+oBo+dBV8J
-         oRg5S+kC9lKHjmWoEReP+0WFnkipXV8AkHIFEml/e7PXAPtm/9euAoRLYZp5TZpzJiDY
-         QYvQrzvvsPOeJvMYQ9RhuuScmsB84+7xbQYaVZRRNW7egT0sH3oW3vxSoyq2cv3lXArR
-         8CtA==
-X-Gm-Message-State: AOJu0Yxyse3U5y/uGM7KL13ryLsRFC2fJ9o9415DmtVdtK0TIP1iWYFO
-	8VRpAYsA5ptEHsFWcI4S3LwNq8IW8RbYvQ==
-X-Google-Smtp-Source: AGHT+IE3M9rMpS1XtnmEqVW9uMH/7gA6t9ycmhPBwcJgCqKASk222aB431k/SOLcagnhW8U88Q4fCQ==
-X-Received: by 2002:a05:6512:21aa:b0:50e:3907:46b7 with SMTP id c10-20020a05651221aa00b0050e390746b7mr2205712lft.107.1703641395939;
-        Tue, 26 Dec 2023 17:43:15 -0800 (PST)
-Received: from [192.168.199.125] (178235179028.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.28])
-        by smtp.gmail.com with ESMTPSA id da22-20020a056402177600b00554c92fc1b7sm3488953edb.24.2023.12.26.17.43.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 17:43:15 -0800 (PST)
-Message-ID: <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
-Date: Wed, 27 Dec 2023 02:43:14 +0100
+        d=1e100.net; s=20230601; t=1703668191; x=1704272991;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fwEu5R28XphpFnA42t09e1RbHp63w9bz44iIVwBNAUc=;
+        b=fqvf5LA7nGcwi/7FHX5hmQLvZuHAZ9LoSqn5VYyGoQkCge3e02g/45k6V/jnBggqQh
+         S4w8uoc+YvhR12qSVv2+s0MbLp4f7VO6Oa/qa/Vq74YwNWlNhQI17HbUiJTJeX0GD04n
+         Mo1d/3luRE1UAySEmKzM4RhHZ+mTk6UMjr64u0V4RGue7H+ki1FertM4MqnT4ZYe8Sqe
+         sAOuZFjHbDIxEQivnfSTtKTT+AvIOeITEhp7y31ScftFCdpFabwsM/g97llVcccbegMN
+         xZGEFvfZmpm9uJF+DrHHB+VapxdH6r0LB06aYWbLWh1bdgXbVHSx+jkVG4t/MaX4pjex
+         zeGQ==
+X-Gm-Message-State: AOJu0YzNpZWf91X8wS0IHkBN7T9DUax4aBTCRwRzhQ1WSumhjytPP13v
+	15hgLz8COtT9qibtCqZw4MrfraWnS8+wYZO/AkHgHINDOxsc2q56Jslp6SVCzbS2YVrD
+X-Google-Smtp-Source: AGHT+IGzAOf7UJ6bNjZfB8fXmc9A10p4UfDDlXfSVykTuCPbV230Jq5FCUITCLhKd8YqNo8CWH778G0MyDmSAaA6gl4=
+X-Received: by 2002:a0d:dd96:0:b0:5c9:cb4c:35df with SMTP id
+ g144-20020a0ddd96000000b005c9cb4c35dfmr4595433ywe.37.1703668191750; Wed, 27
+ Dec 2023 01:09:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20231226003447.3044365-1-dmitry.baryshkov@linaro.org>
+ <20231226003447.3044365-5-dmitry.baryshkov@linaro.org> <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
+In-Reply-To: <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 27 Dec 2023 11:09:40 +0200
+Message-ID: <CAA8EJprJEUtzSz-pDyJ+UeyTaPjmJ8i9mX_A8JuLzUDNxFOGtA@mail.gmail.com>
 Subject: Re: [RFC PATCH 4/5] remoteproc: qcom: mss: add configuration for
  in-kernel pdm
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20231226003447.3044365-1-dmitry.baryshkov@linaro.org>
- <20231226003447.3044365-5-dmitry.baryshkov@linaro.org>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <20231226003447.3044365-5-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 26.12.2023 01:34, Dmitry Baryshkov wrote:
-> Add domain / service configuration for the in-kernel protection domain
-> mapper service.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/remoteproc/Kconfig         |  1 +
->  drivers/remoteproc/qcom_q6v5_mss.c | 84 ++++++++++++++++++++++++++++++
->  2 files changed, 85 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index f1698d4c302e..8152e845f7a3 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -202,6 +202,7 @@ config QCOM_Q6V5_MSS
->  	depends on QCOM_SYSMON || QCOM_SYSMON=n
->  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
->  	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
-> +	depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
->  	select MFD_SYSCON
->  	select QCOM_MDT_LOADER
->  	select QCOM_PIL_INFO
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 394b2c1cb5e2..0bc611165657 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -26,6 +26,7 @@
->  #include <linux/remoteproc.h>
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/pd_mapper.h>
->  #include <linux/iopoll.h>
->  #include <linux/slab.h>
->  
-> @@ -163,6 +164,9 @@ struct rproc_hexagon_res {
->  	bool has_qaccept_regs;
->  	bool has_ext_cntl_regs;
->  	bool has_vq6;
-> +
-> +	size_t num_domains;
-> +	const struct qcom_pdm_domain_data * const *domains;
->  };
->  
->  struct q6v5 {
-> @@ -242,6 +246,9 @@ struct q6v5 {
->  	u64 mba_perm;
->  	const char *hexagon_mdt_image;
->  	int version;
-> +
-> +	size_t num_domains;
-> +	const struct qcom_pdm_domain_data * const *domains;
-My ocd says num_x should go below x, but that may be a DT leftover..
+On Wed, 27 Dec 2023 at 03:43, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 26.12.2023 01:34, Dmitry Baryshkov wrote:
+> > Add domain / service configuration for the in-kernel protection domain
+> > mapper service.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/remoteproc/Kconfig         |  1 +
+> >  drivers/remoteproc/qcom_q6v5_mss.c | 84 ++++++++++++++++++++++++++++++
+> >  2 files changed, 85 insertions(+)
+> >
+> > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > index f1698d4c302e..8152e845f7a3 100644
+> > --- a/drivers/remoteproc/Kconfig
+> > +++ b/drivers/remoteproc/Kconfig
+> > @@ -202,6 +202,7 @@ config QCOM_Q6V5_MSS
+> >       depends on QCOM_SYSMON || QCOM_SYSMON=n
+> >       depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+> >       depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+> > +     depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
+> >       select MFD_SYSCON
+> >       select QCOM_MDT_LOADER
+> >       select QCOM_PIL_INFO
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> > index 394b2c1cb5e2..0bc611165657 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -26,6 +26,7 @@
+> >  #include <linux/remoteproc.h>
+> >  #include <linux/reset.h>
+> >  #include <linux/soc/qcom/mdt_loader.h>
+> > +#include <linux/soc/qcom/pd_mapper.h>
+> >  #include <linux/iopoll.h>
+> >  #include <linux/slab.h>
+> >
+> > @@ -163,6 +164,9 @@ struct rproc_hexagon_res {
+> >       bool has_qaccept_regs;
+> >       bool has_ext_cntl_regs;
+> >       bool has_vq6;
+> > +
+> > +     size_t num_domains;
+> > +     const struct qcom_pdm_domain_data * const *domains;
+> >  };
+> >
+> >  struct q6v5 {
+> > @@ -242,6 +246,9 @@ struct q6v5 {
+> >       u64 mba_perm;
+> >       const char *hexagon_mdt_image;
+> >       int version;
+> > +
+> > +     size_t num_domains;
+> > +     const struct qcom_pdm_domain_data * const *domains;
+> My ocd says num_x should go below x, but that may be a DT leftover..
+>
+> [...]
+>
+> >
+> > +static const struct qcom_pdm_domain_data mpss_root_pd = {
+> > +     .domain = "msm/modem/root_pd",
+> > +     .instance_id = 180,
+> > +     .services = { NULL },
+> > +};
+> > +
+> > +static const struct qcom_pdm_domain_data msm8996_mpss_root_pd = {
+> > +     .domain = "msm/modem/root_pd",
+> > +     .instance_id = 100,
+> > +     .services = { NULL },
+> > +};
+> > +
+> > +static const struct qcom_pdm_domain_data sm8150_mpss_root_pd = {
+> > +     .domain = "msm/modem/root_pd",
+> > +     .instance_id = 180,
+> > +     .services = {
+> > +             "gps/gps_service",
+> > +             NULL,
+> > +     },
+> > +};
+> > +
+> > +static const struct qcom_pdm_domain_data mpss_wlan_pd = {
+> > +     .domain = "msm/modem/wlan_pd",
+> > +     .instance_id = 180,
+> > +     .services = {
+> > +             "kernel/elf_loader",
+> > +             "wlan/fw",
+> > +             NULL,
+> > +     },
+> > +};
+> > +
+> > +static const struct qcom_pdm_domain_data *msm8996_mpss_domains[] = {
+> > +     &msm8996_mpss_root_pd,
+> > +};
+> couldn't find anything on 96
 
-[...]
+The file /lib/firmware/qcom/apq8096/modemr.jsn comes from db820c firmware.
 
->  
-> +static const struct qcom_pdm_domain_data mpss_root_pd = {
-> +	.domain = "msm/modem/root_pd",
-> +	.instance_id = 180,
-> +	.services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data msm8996_mpss_root_pd = {
-> +	.domain = "msm/modem/root_pd",
-> +	.instance_id = 100,
-> +	.services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data sm8150_mpss_root_pd = {
-> +	.domain = "msm/modem/root_pd",
-> +	.instance_id = 180,
-> +	.services = {
-> +		"gps/gps_service",
-> +		NULL,
-> +	},
-> +};
-> +
-> +static const struct qcom_pdm_domain_data mpss_wlan_pd = {
-> +	.domain = "msm/modem/wlan_pd",
-> +	.instance_id = 180,
-> +	.services = {
-> +		"kernel/elf_loader",
-> +		"wlan/fw",
-> +		NULL,
-> +	},
-> +};
-> +
-> +static const struct qcom_pdm_domain_data *msm8996_mpss_domains[] = {
-> +	&msm8996_mpss_root_pd,
-> +};
-couldn't find anything on 96
 
-> +
-> +static const struct qcom_pdm_domain_data *sdm660_mpss_domains[] = {
-> +	&mpss_wlan_pd,
-> +};
-matches my findings
+>
+> > +
+> > +static const struct qcom_pdm_domain_data *sdm660_mpss_domains[] = {
+> > +     &mpss_wlan_pd,
+> > +};
+> matches my findings
+>
+> > +
+> > +static const struct qcom_pdm_domain_data *sdm845_mpss_domains[] = {
+> > +     &mpss_root_pd,
+> > +     &mpss_wlan_pd,
+> > +};
+> can't see this wlan one, maybe just on my device
 
-> +
-> +static const struct qcom_pdm_domain_data *sdm845_mpss_domains[] = {
-> +	&mpss_root_pd,
-> +	&mpss_wlan_pd,
-> +};
-can't see this wlan one, maybe just on my device
+And this is really interesting. I think modemuw.jsn is required to
+make modem.mbn load the wcn3990 firmware (wlanmdsp.mbn) through
+tqftpserv. What is the WiFi chip on the device you've checked against?
 
-> +
-> +static const struct qcom_pdm_domain_data *sm8350_mpss_domains[] = {
-> +	&sm8150_mpss_root_pd,
-> +};
-matches my findings
+>
+> > +
+> > +static const struct qcom_pdm_domain_data *sm8350_mpss_domains[] = {
+> > +     &sm8150_mpss_root_pd,
+> > +};
+> matches my findings
+>
+> >  static const struct rproc_hexagon_res msm8998_mss = {
+> > @@ -2309,6 +2389,8 @@ static const struct rproc_hexagon_res msm8998_mss = {
+> >       .has_ext_cntl_regs = false,
+> >       .has_vq6 = false,
+> >       .version = MSS_MSM8998,
+> > +     .num_domains = ARRAY_SIZE(sdm845_mpss_domains),
+> > +     .domains = sdm845_mpss_domains,
+> >  };
+> matches my findings
+>
+> Konrad
 
->  static const struct rproc_hexagon_res msm8998_mss = {
-> @@ -2309,6 +2389,8 @@ static const struct rproc_hexagon_res msm8998_mss = {
->  	.has_ext_cntl_regs = false,
->  	.has_vq6 = false,
->  	.version = MSS_MSM8998,
-> +	.num_domains = ARRAY_SIZE(sdm845_mpss_domains),
-> +	.domains = sdm845_mpss_domains,
->  };
-matches my findings
 
-Konrad
+
+-- 
+With best wishes
+Dmitry
