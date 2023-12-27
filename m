@@ -1,198 +1,124 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2161.outbound.protection.outlook.com [40.92.63.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F611CA0
-	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 09:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4012718ECF
+	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 09:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qIHuRuOG"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5e7c1012a42so40447227b3.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 01:09:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703668191; x=1704272991; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fwEu5R28XphpFnA42t09e1RbHp63w9bz44iIVwBNAUc=;
-        b=qIHuRuOGYZY6sdOafW8wMj94D4MBaRJVLDCNYd/jYTV0d5DvQ7D+eyaBn5RkNzQYDK
-         aI+ppaYoLid0/Q6WI+FX5H837Wm2aqzBmGmudSVrnGWrjs8Pug74zlkmP2rAMH8FeuTM
-         SGkd7cIxMi5yKGYcyKBNdWQetdIm9JprMMf9x0qgqRtKNXaxirHCg/p91JsGZ8LWMwTy
-         uLVqrJGLNWith2ws0ze+wtLgq0ilm3EV73+iT5EM17frKh6DrDqAV5QbeoVhB5UvEVIL
-         hVzXT+zy9m1WUt7Jj1HmDl3ilhCqCqAgKyPcNjVZgRJxarYKa54prdqMGaUkH/W66r7h
-         qedQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703668191; x=1704272991;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fwEu5R28XphpFnA42t09e1RbHp63w9bz44iIVwBNAUc=;
-        b=fqvf5LA7nGcwi/7FHX5hmQLvZuHAZ9LoSqn5VYyGoQkCge3e02g/45k6V/jnBggqQh
-         S4w8uoc+YvhR12qSVv2+s0MbLp4f7VO6Oa/qa/Vq74YwNWlNhQI17HbUiJTJeX0GD04n
-         Mo1d/3luRE1UAySEmKzM4RhHZ+mTk6UMjr64u0V4RGue7H+ki1FertM4MqnT4ZYe8Sqe
-         sAOuZFjHbDIxEQivnfSTtKTT+AvIOeITEhp7y31ScftFCdpFabwsM/g97llVcccbegMN
-         xZGEFvfZmpm9uJF+DrHHB+VapxdH6r0LB06aYWbLWh1bdgXbVHSx+jkVG4t/MaX4pjex
-         zeGQ==
-X-Gm-Message-State: AOJu0YzNpZWf91X8wS0IHkBN7T9DUax4aBTCRwRzhQ1WSumhjytPP13v
-	15hgLz8COtT9qibtCqZw4MrfraWnS8+wYZO/AkHgHINDOxsc2q56Jslp6SVCzbS2YVrD
-X-Google-Smtp-Source: AGHT+IGzAOf7UJ6bNjZfB8fXmc9A10p4UfDDlXfSVykTuCPbV230Jq5FCUITCLhKd8YqNo8CWH778G0MyDmSAaA6gl4=
-X-Received: by 2002:a0d:dd96:0:b0:5c9:cb4c:35df with SMTP id
- g144-20020a0ddd96000000b005c9cb4c35dfmr4595433ywe.37.1703668191750; Wed, 27
- Dec 2023 01:09:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="YmHl1Dk8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I179UuRTMND0Egm27l0bM5bouxutIba4JeeZw3+uf29yOMAnSmg9jWyq+TNTVPTLCwt9E/bealPpr45UhRURDd404bJHQ5Oed4Xr49t1MDgUmIyyz0Vi3Yw0KkOHNCXjQcrFVkv+MBDYJV1S9uJx0rxx0p1FpTY15Vr6dqQEejYyxEC36Thq1fSeGrGeHZKh0seGrriofchnRzQUgzxw3bHC6tAkTvLHReLksAOHMA/7uTVNy+nwzcJ5Xaqc3caGk7AYiKT67pp42ZrhYVAwx145xMvnXt+URmS6ha2bk9xJBoSXhje0joITdnTL+dd6tYcsfYu2F0m6FK8Fy43UXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SWDrFDZ1yL0h4z3QkUHDfxu+TcpZBhyp2nUDFd/KRys=;
+ b=nNAI3xZdq7oyR4/M4ghk11Oq5kHcUsB9zCX8bluTQK84IsV50g5MCSLxY79sjE4D4GE5b5oHXoWqlfqucHB2IRoz5NgjMTnQP0e3WAZk/n1jwldbzETi6V9v2t+ZJzub/LBxPP6wTkvQxwiCRkarX9uGWfYUUYw2cEIh25/WkhKh8ox+uCeb5einPFmAK4lRSE+Z7FA++gTlZKr3JK4r6MmMmhZNQq6GCtmDUjXoZGSkM1CSNnart9TwjPJkVbNIpsCj5uNeb4VuIHJVXp2kOfxTqEJs8i4HvvU6oW54Ayo47Iki4sjiydqGTjv/xinLMZhxEpP1BTsAxtRhUOUrbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SWDrFDZ1yL0h4z3QkUHDfxu+TcpZBhyp2nUDFd/KRys=;
+ b=YmHl1Dk8XstyWmdh6epW3sCPSo7LO/P+MsaTBruL/LpP5O0Da4NeMFNbGQ6rfhglbmLz2+lbKgVE1Zbx5Sxu61hvOrThWewXYmdBO+ZSpdpKEXFqZHCjlPmUBoktMJ3Gy0cXQORTIUEE1zsxKBrtR3uH6YghZwut5eEQ89noV7fasAlSFBHfcWWfUgZzI1WSKC3+DlxoviTjcUUc/xm02nMe5scK10IzT9J5bP3O43iqWyiUtH5NrAU5ayBvAA7j2WYavX2ohmrhZz+WaJiWPNzRsGsYnRujjRoXfT207LiOKO+u5UvU19xm+f19XD6+kMcauJB0Mv6d0nIypSTjfg==
+Received: from ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:a0::15)
+ by SY4P282MB1612.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:c6::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.27; Wed, 27 Dec
+ 2023 09:55:23 +0000
+Received: from ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::8d02:a783:82a0:28c1]) by ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::8d02:a783:82a0:28c1%3]) with mapi id 15.20.7113.027; Wed, 27 Dec 2023
+ 09:55:22 +0000
+From: Ian Ding <4dark@outlook.com>
+To: bjorn.andersson@linaro.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	Ian Ding <4dark@outlook.com>
+Subject: [PATCH] rpmsg: Fix /dev/rpmsg_ctrlx not created
+Date: Wed, 27 Dec 2023 17:54:51 +0800
+Message-ID:
+ <ME3P282MB1779912414C37D59C4323DEE979FA@ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.41.0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [QgujCLHy5T9li8vel8qOhsJIGsLA7ewD]
+X-ClientProxiedBy: SG2PR04CA0153.apcprd04.prod.outlook.com (2603:1096:4::15)
+ To ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:a0::15)
+X-Microsoft-Original-Message-ID: <20231227095451.1521-1-4dark@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226003447.3044365-1-dmitry.baryshkov@linaro.org>
- <20231226003447.3044365-5-dmitry.baryshkov@linaro.org> <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
-In-Reply-To: <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 27 Dec 2023 11:09:40 +0200
-Message-ID: <CAA8EJprJEUtzSz-pDyJ+UeyTaPjmJ8i9mX_A8JuLzUDNxFOGtA@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] remoteproc: qcom: mss: add configuration for
- in-kernel pdm
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ME3P282MB1779:EE_|SY4P282MB1612:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4eb5286e-5c82-47fc-ee0d-08dc06c1f12b
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	0msf+h7+75t0998fJYoair1AXwL1aZkZU4uSKrtdHlHR9FeokVDG5KvaPvwNuaRyq/v4Leu9xjftFj0vuWdOzEoeafR9RMdGYU2ttyFhA0x+r+aadUpU37L1MGhBYTlAVDobheDq4anA4+2RMy0OGcMiVxU+XIVT7REW0J3bDrffnbRy1QkLNQMXzk6e/ymHS2mlki1SUaYAVdhB+x5JVeVicJWfogWLOq4nmaWNUd7gQKVfK5s9sxnuo8iQZy8Lafuzw/RswEr06eTRKFOCL66K8P7IOg+LyRko50lDt84ucPDYLx1baZT3bXMgL7Z3j7t0DHex8WVrBXPz1OpC9iBFaLJF5TwGTCq/v3SOxbySxawGER0VW+TxdAc5KoZLUwwjuptVZHa/Ohz7m945tKpVOIkpETmMFxv3kE0s/VSIc6n67R6ipY0P6Z/ETO1KmHmGa3R8KALTM9XPrtL9cbXRwP3nKCNu2MHPuye1zas1PyXOhapIZntpaAiyrfHaga/GGq6Lw2P/c80/ghBWcs9Eo6Q5WFFDqZpHPdP8uH+3NvppwWrQKceQoZ+i8r3y6KN0+29Jj2BJ9SNSUn5bZpL93feDi10zBplHuruTqdsbT3wK5YOn1V2g3VCJu8kM
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2/plnksQ7fgjfFDgglxmsD2j6f15aQAnbNo0lBX0rcsVsA/ulSFw8IloUndq?=
+ =?us-ascii?Q?HxqLpyXkZJ7eKp+Dv+LI3nTfH0EVTvI3zeVY+OToR0Ez81gUZlskLm4c9Gtv?=
+ =?us-ascii?Q?qU80UP9npDdqbRgQyldTHblFS2cArnnymbQZ1ACmLWofdtLKrEqb6/yOr2dG?=
+ =?us-ascii?Q?WR0yczKXJqEylcPVyT0jm6UIrJPEVZlkaEUnCMLFiKWAkmvaYZCE/LXZSjYm?=
+ =?us-ascii?Q?JR8cJ/25EhYsJz122oWFUzriIHiS4Tqa7cx4EfSuAUDCaB6C+aVjvQj92JW8?=
+ =?us-ascii?Q?iQDeyVIdQRLgMLLDK8Psyt7AuHJMPICs4Rd7ty6TdOBij8B3NuBa6WRFb0iP?=
+ =?us-ascii?Q?N+mVymgXnpyDcd5nw8r08awDbOIuvw3o5Lm4wb/Hib9n4qGHCtWl2mNFW0h5?=
+ =?us-ascii?Q?Q25pRXwHCjtJgpKrHmBtTjqyBisn9AMp0hn5lUAtO0L00RqO1iMtUp09ydvu?=
+ =?us-ascii?Q?TTJwbN1VprJuhinhRbPHGGkdpvS7uCIhXHUa8LTVAMywDXSZ8N/dND+TJfzb?=
+ =?us-ascii?Q?ooEhZVT0MeUZcowpoKtb5LdQvdC0QrzPjxyq3FM+Yf4AH7rusZWEmCzzsPwf?=
+ =?us-ascii?Q?/LwrDACzRxFPCYm0t8aTtUJ7KbfSm2Mhgerbs/RxVizvKzuLGiUCdmxyIec6?=
+ =?us-ascii?Q?8KjCwZOgkn6rVWjjJNvwuyil50O46KYagyYxN5fzwOpFv1O4zn/NcIOqr3+R?=
+ =?us-ascii?Q?zgwvluhDbhomm2OAJ/9agL0dXQRbfXDRuVELL0DWTbUDG5Nr5Be0Fmqr0FCg?=
+ =?us-ascii?Q?wIGxYOTWurWmNdnUgiTo+y92jqQB2JuAL6DW08zsBNvD5j8UbyDiwzreGp9Z?=
+ =?us-ascii?Q?5cKujY0PT1yDZeZeJcRGNE45OhHMiB8/hYm107+pFue4WYPigSO7nPpD5EcM?=
+ =?us-ascii?Q?iDqveJpmsFqsopIriGqbnJZEW7ljki7kerbQVTXB5LjbfUMkuqItFaN9gD11?=
+ =?us-ascii?Q?F0L51+5RKjcroMBf+QJpJXluuMVX07niixwwDw9a6Cjvv+K7KKcv3ZDXHCxp?=
+ =?us-ascii?Q?17tPuDLakbzrnpjnxDDZFKRP3M/NnqLtbIzPYfpvqZe59HnMtEXCbh0VYjLm?=
+ =?us-ascii?Q?fEck9HMffWM8LoIgANwCpsexUfHKM6mBSnAA7Jku6pOwqVw75p1LADaa+K3+?=
+ =?us-ascii?Q?rshjLUwsKcMPN2iU94fRrYMOgx2Xi9bSzrASOUq9MOYJVhe+22bj6tEy1Klo?=
+ =?us-ascii?Q?gbpUQ560OCWW0PTa6mytAUq3lXSmvvXXxXRfUg=3D=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb5286e-5c82-47fc-ee0d-08dc06c1f12b
+X-MS-Exchange-CrossTenant-AuthSource: ME3P282MB1779.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Dec 2023 09:55:22.8286
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY4P282MB1612
 
-On Wed, 27 Dec 2023 at 03:43, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 26.12.2023 01:34, Dmitry Baryshkov wrote:
-> > Add domain / service configuration for the in-kernel protection domain
-> > mapper service.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/remoteproc/Kconfig         |  1 +
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 84 ++++++++++++++++++++++++++++++
-> >  2 files changed, 85 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> > index f1698d4c302e..8152e845f7a3 100644
-> > --- a/drivers/remoteproc/Kconfig
-> > +++ b/drivers/remoteproc/Kconfig
-> > @@ -202,6 +202,7 @@ config QCOM_Q6V5_MSS
-> >       depends on QCOM_SYSMON || QCOM_SYSMON=n
-> >       depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-> >       depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
-> > +     depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
-> >       select MFD_SYSCON
-> >       select QCOM_MDT_LOADER
-> >       select QCOM_PIL_INFO
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index 394b2c1cb5e2..0bc611165657 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/remoteproc.h>
-> >  #include <linux/reset.h>
-> >  #include <linux/soc/qcom/mdt_loader.h>
-> > +#include <linux/soc/qcom/pd_mapper.h>
-> >  #include <linux/iopoll.h>
-> >  #include <linux/slab.h>
-> >
-> > @@ -163,6 +164,9 @@ struct rproc_hexagon_res {
-> >       bool has_qaccept_regs;
-> >       bool has_ext_cntl_regs;
-> >       bool has_vq6;
-> > +
-> > +     size_t num_domains;
-> > +     const struct qcom_pdm_domain_data * const *domains;
-> >  };
-> >
-> >  struct q6v5 {
-> > @@ -242,6 +246,9 @@ struct q6v5 {
-> >       u64 mba_perm;
-> >       const char *hexagon_mdt_image;
-> >       int version;
-> > +
-> > +     size_t num_domains;
-> > +     const struct qcom_pdm_domain_data * const *domains;
-> My ocd says num_x should go below x, but that may be a DT leftover..
->
-> [...]
->
-> >
-> > +static const struct qcom_pdm_domain_data mpss_root_pd = {
-> > +     .domain = "msm/modem/root_pd",
-> > +     .instance_id = 180,
-> > +     .services = { NULL },
-> > +};
-> > +
-> > +static const struct qcom_pdm_domain_data msm8996_mpss_root_pd = {
-> > +     .domain = "msm/modem/root_pd",
-> > +     .instance_id = 100,
-> > +     .services = { NULL },
-> > +};
-> > +
-> > +static const struct qcom_pdm_domain_data sm8150_mpss_root_pd = {
-> > +     .domain = "msm/modem/root_pd",
-> > +     .instance_id = 180,
-> > +     .services = {
-> > +             "gps/gps_service",
-> > +             NULL,
-> > +     },
-> > +};
-> > +
-> > +static const struct qcom_pdm_domain_data mpss_wlan_pd = {
-> > +     .domain = "msm/modem/wlan_pd",
-> > +     .instance_id = 180,
-> > +     .services = {
-> > +             "kernel/elf_loader",
-> > +             "wlan/fw",
-> > +             NULL,
-> > +     },
-> > +};
-> > +
-> > +static const struct qcom_pdm_domain_data *msm8996_mpss_domains[] = {
-> > +     &msm8996_mpss_root_pd,
-> > +};
-> couldn't find anything on 96
+The driver name of rpmsg_char.c is "rpmsg_chrdev", rpmsg_dev_match() will not
+match the device with driver_override == "rpmsg_ctrl".
 
-The file /lib/firmware/qcom/apq8096/modemr.jsn comes from db820c firmware.
+Register rpmsg devices with driver_override == "rpmsg_chrdev".
 
+Fixes: bfd4a664ddfb ("rpmsg: Fix calling device_lock() on non-initialized device")
 
->
-> > +
-> > +static const struct qcom_pdm_domain_data *sdm660_mpss_domains[] = {
-> > +     &mpss_wlan_pd,
-> > +};
-> matches my findings
->
-> > +
-> > +static const struct qcom_pdm_domain_data *sdm845_mpss_domains[] = {
-> > +     &mpss_root_pd,
-> > +     &mpss_wlan_pd,
-> > +};
-> can't see this wlan one, maybe just on my device
+Signed-off-by: Ian Ding <4dark@outlook.com>
+---
+ drivers/rpmsg/rpmsg_internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And this is really interesting. I think modemuw.jsn is required to
-make modem.mbn load the wcn3990 firmware (wlanmdsp.mbn) through
-tqftpserv. What is the WiFi chip on the device you've checked against?
-
->
-> > +
-> > +static const struct qcom_pdm_domain_data *sm8350_mpss_domains[] = {
-> > +     &sm8150_mpss_root_pd,
-> > +};
-> matches my findings
->
-> >  static const struct rproc_hexagon_res msm8998_mss = {
-> > @@ -2309,6 +2389,8 @@ static const struct rproc_hexagon_res msm8998_mss = {
-> >       .has_ext_cntl_regs = false,
-> >       .has_vq6 = false,
-> >       .version = MSS_MSM8998,
-> > +     .num_domains = ARRAY_SIZE(sdm845_mpss_domains),
-> > +     .domains = sdm845_mpss_domains,
-> >  };
-> matches my findings
->
-> Konrad
-
-
-
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 7985af92aa48..42ab50f385b5 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -90,7 +90,7 @@ int rpmsg_release_channel(struct rpmsg_device *rpdev,
+  */
+ static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
+ {
+-	return rpmsg_register_device_override(rpdev, "rpmsg_ctrl");
++	return rpmsg_register_device_override(rpdev, "rpmsg_chrdev");
+ }
+ 
+ #endif
 -- 
-With best wishes
-Dmitry
+2.25.1
+
