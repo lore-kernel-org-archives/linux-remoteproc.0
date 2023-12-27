@@ -1,136 +1,224 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD915622;
-	Wed, 27 Dec 2023 00:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0C4403
+	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Dec 2023 01:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N341jRBp"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BQNuTAw017245;
-	Wed, 27 Dec 2023 00:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=C0F31algdVe500mgfgdoCt4pGhDTR1ZynXl8Vor97Co=; b=N3
-	41jRBpZw1Gukq/QZ0mh2PL5OOwrHNWSZjDU9nqRMiGSdQvqW8Rcc8V9u+SFSNqbu
-	jTZVpSCpilzkfkI48HDyTfopX0dWYYPdgnX6AmvSNpklzY/rnjowOk61e25+bdCZ
-	iXGLf7cMiW9zHOWmH0O2q1TWHydWnW12OokIrMLjP0uJvt9dqCGDZ8rwhUrwIT4H
-	FaWDB8PzYBbWUUJswFmNi9fVYSkScGuE+cxpoTla2PYxST4gz6zJrI8lF4eANfYG
-	wE+TRPEZOzDMF2C9CFc3h/ohAuKCcK2YHSgihnEDxVsZZs2ZvIfykwPRmyctq8dr
-	VYaVehy8SvKCUvzIrfQg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v7c9jk1rc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Dec 2023 00:20:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BR0K5WI032355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Dec 2023 00:20:05 GMT
-Received: from [10.110.65.236] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 26 Dec
- 2023 16:20:04 -0800
-Message-ID: <3e017f77-87dd-78e1-321d-90c3e57a68d9@quicinc.com>
-Date: Tue, 26 Dec 2023 16:20:03 -0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8Z2I4aT"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50e741123acso2244164e87.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Dec 2023 17:43:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703641396; x=1704246196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aVbiyMv2oFYAbbw/EcuzGTtqEIvLrA4YELHXiLQOTVs=;
+        b=I8Z2I4aTFjEgeXHic+U4venIXgFzrfdTCmzCRpqNdHiFhcNKLjgyQTw/nBHHTWwXDc
+         BrU4A3sVGWgFXujIYQA8X6os7CrKaPc3VTOG4h9MG3Mfl+4yiplT3XssQpxYqWW71hDs
+         PHhKNYBqqD0r8AyvMMstFIOzIpkqM7i+TNBRYd3OiR5uQl43F1hYYIEvr6IFEIqQoi3g
+         qkmsxLVb+qCWJN4XqwgBmm1v3ZRxSWqLpp3jMlwWyZLcm9JBViDcT/jUmtoMo5XwBO4D
+         7Laq8TuYN4VcPqe58N9g+4V4W8ecRT9TS0DXySOs7xx/Z7W8Q0Mk9uuSZ+c+Hsh27oqU
+         xlFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703641396; x=1704246196;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aVbiyMv2oFYAbbw/EcuzGTtqEIvLrA4YELHXiLQOTVs=;
+        b=DUDoz3BIcndHeD7kzgOYpN2PX3YbK3AFjU4blgkcOhiLYc1KogiJGVhf/Gs2nvj11D
+         xnLBZOcreRa9YNWoZsqtqZTjOkpG8Cmd0xotSJ+vurbiOTIqyS0E53/FFC66JlPPmq4l
+         DNJ1+ErB4MhakWiT795mueb8/nZJ/kJW8JhmixOBfZILKd8udHb/XlOQia+oBo+dBV8J
+         oRg5S+kC9lKHjmWoEReP+0WFnkipXV8AkHIFEml/e7PXAPtm/9euAoRLYZp5TZpzJiDY
+         QYvQrzvvsPOeJvMYQ9RhuuScmsB84+7xbQYaVZRRNW7egT0sH3oW3vxSoyq2cv3lXArR
+         8CtA==
+X-Gm-Message-State: AOJu0Yxyse3U5y/uGM7KL13ryLsRFC2fJ9o9415DmtVdtK0TIP1iWYFO
+	8VRpAYsA5ptEHsFWcI4S3LwNq8IW8RbYvQ==
+X-Google-Smtp-Source: AGHT+IE3M9rMpS1XtnmEqVW9uMH/7gA6t9ycmhPBwcJgCqKASk222aB431k/SOLcagnhW8U88Q4fCQ==
+X-Received: by 2002:a05:6512:21aa:b0:50e:3907:46b7 with SMTP id c10-20020a05651221aa00b0050e390746b7mr2205712lft.107.1703641395939;
+        Tue, 26 Dec 2023 17:43:15 -0800 (PST)
+Received: from [192.168.199.125] (178235179028.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.28])
+        by smtp.gmail.com with ESMTPSA id da22-20020a056402177600b00554c92fc1b7sm3488953edb.24.2023.12.26.17.43.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Dec 2023 17:43:15 -0800 (PST)
+Message-ID: <3561f0ea-f6a7-42e5-a51a-3efa75de8661@linaro.org>
+Date: Wed, 27 Dec 2023 02:43:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH V1] net: qrtr: ns: Ignore ENODEV failures in ns
-To: Simon Horman <horms@kernel.org>, Sarannya S <quic_sarannya@quicinc.com>
-CC: <quic_bjorande@quicinc.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open list:NETWORKING
- [GENERAL]" <netdev@vger.kernel.org>
-References: <1703153211-3717-1-git-send-email-quic_sarannya@quicinc.com>
- <20231223135333.GA201037@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/5] remoteproc: qcom: mss: add configuration for
+ in-kernel pdm
 Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20231223135333.GA201037@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20231226003447.3044365-1-dmitry.baryshkov@linaro.org>
+ <20231226003447.3044365-5-dmitry.baryshkov@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231226003447.3044365-5-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hzpCbIT1obMCBG01wK-6u7g99AjD_AAU
-X-Proofpoint-ORIG-GUID: hzpCbIT1obMCBG01wK-6u7g99AjD_AAU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 bulkscore=0 spamscore=0 adultscore=0 phishscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=960 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312270000
 
+On 26.12.2023 01:34, Dmitry Baryshkov wrote:
+> Add domain / service configuration for the in-kernel protection domain
+> mapper service.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/remoteproc/Kconfig         |  1 +
+>  drivers/remoteproc/qcom_q6v5_mss.c | 84 ++++++++++++++++++++++++++++++
+>  2 files changed, 85 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index f1698d4c302e..8152e845f7a3 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -202,6 +202,7 @@ config QCOM_Q6V5_MSS
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+>  	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+> +	depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
+>  	select MFD_SYSCON
+>  	select QCOM_MDT_LOADER
+>  	select QCOM_PIL_INFO
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 394b2c1cb5e2..0bc611165657 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/remoteproc.h>
+>  #include <linux/reset.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+> +#include <linux/soc/qcom/pd_mapper.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/slab.h>
+>  
+> @@ -163,6 +164,9 @@ struct rproc_hexagon_res {
+>  	bool has_qaccept_regs;
+>  	bool has_ext_cntl_regs;
+>  	bool has_vq6;
+> +
+> +	size_t num_domains;
+> +	const struct qcom_pdm_domain_data * const *domains;
+>  };
+>  
+>  struct q6v5 {
+> @@ -242,6 +246,9 @@ struct q6v5 {
+>  	u64 mba_perm;
+>  	const char *hexagon_mdt_image;
+>  	int version;
+> +
+> +	size_t num_domains;
+> +	const struct qcom_pdm_domain_data * const *domains;
+My ocd says num_x should go below x, but that may be a DT leftover..
 
+[...]
 
-On 12/23/2023 5:56 AM, Simon Horman wrote:
-> [Dropped bjorn.andersson@kernel.org, as the correct address seems
->   to be andersson@kernel.org, which is already in the CC list.
->   kernel.org rejected sending this email without that update.]
-> 
-> On Thu, Dec 21, 2023 at 03:36:50PM +0530, Sarannya S wrote:
->> From: Chris Lew <quic_clew@quicinc.com>
->>
->> Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
->> indicate that either the local port has been closed or the remote has
->> gone down. Neither of these scenarios are fatal and will eventually be
->> handled through packets that are later queued on the control port.
->>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
->> ---
->>   net/qrtr/ns.c | 11 +++++++----
->>   1 file changed, 7 insertions(+), 4 deletions(-)
->>
->> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
->> index abb0c70..8234339 100644
->> --- a/net/qrtr/ns.c
->> +++ b/net/qrtr/ns.c
->> @@ -157,7 +157,7 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
->>   	msg.msg_namelen = sizeof(*dest);
->>   
->>   	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
->> -	if (ret < 0)
->> +	if (ret < 0 && ret != -ENODEV)
->>   		pr_err("failed to announce del service\n");
->>   
->>   	return ret;
-> 
-> Hi,
-> 
-> The caller of service_announce_del() ignores it's return value.
-> So the only action on error is the pr_err() call above, and so
-> with this patch -ENODEV is indeed ignored.
-> 
-> However, I wonder if it would make things clearer to the reader (me?)
-> if the return type of service_announce_del was updated void. Because
-> as things stand -ENODEV may be returned, which implies something might
-> handle that, even though it doe not.
-> 
-> The above notwithstanding, this change looks good to me.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> 
-> ...
+>  
+> +static const struct qcom_pdm_domain_data mpss_root_pd = {
+> +	.domain = "msm/modem/root_pd",
+> +	.instance_id = 180,
+> +	.services = { NULL },
+> +};
+> +
+> +static const struct qcom_pdm_domain_data msm8996_mpss_root_pd = {
+> +	.domain = "msm/modem/root_pd",
+> +	.instance_id = 100,
+> +	.services = { NULL },
+> +};
+> +
+> +static const struct qcom_pdm_domain_data sm8150_mpss_root_pd = {
+> +	.domain = "msm/modem/root_pd",
+> +	.instance_id = 180,
+> +	.services = {
+> +		"gps/gps_service",
+> +		NULL,
+> +	},
+> +};
+> +
+> +static const struct qcom_pdm_domain_data mpss_wlan_pd = {
+> +	.domain = "msm/modem/wlan_pd",
+> +	.instance_id = 180,
+> +	.services = {
+> +		"kernel/elf_loader",
+> +		"wlan/fw",
+> +		NULL,
+> +	},
+> +};
+> +
+> +static const struct qcom_pdm_domain_data *msm8996_mpss_domains[] = {
+> +	&msm8996_mpss_root_pd,
+> +};
+couldn't find anything on 96
 
-Hi Simon, thanks for the review and suggestion. We weren't sure whether 
-we should change the function prototype on these patches on the chance 
-that there will be something that listens and handles this in the 
-future. I think it's a good idea to change it to void and we can change 
-it back if there is such a usecase in the future.
+> +
+> +static const struct qcom_pdm_domain_data *sdm660_mpss_domains[] = {
+> +	&mpss_wlan_pd,
+> +};
+matches my findings
+
+> +
+> +static const struct qcom_pdm_domain_data *sdm845_mpss_domains[] = {
+> +	&mpss_root_pd,
+> +	&mpss_wlan_pd,
+> +};
+can't see this wlan one, maybe just on my device
+
+> +
+> +static const struct qcom_pdm_domain_data *sm8350_mpss_domains[] = {
+> +	&sm8150_mpss_root_pd,
+> +};
+matches my findings
+
+>  static const struct rproc_hexagon_res msm8998_mss = {
+> @@ -2309,6 +2389,8 @@ static const struct rproc_hexagon_res msm8998_mss = {
+>  	.has_ext_cntl_regs = false,
+>  	.has_vq6 = false,
+>  	.version = MSS_MSM8998,
+> +	.num_domains = ARRAY_SIZE(sdm845_mpss_domains),
+> +	.domains = sdm845_mpss_domains,
+>  };
+matches my findings
+
+Konrad
