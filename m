@@ -1,69 +1,60 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6815ACF
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jan 2024 18:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5611715AD1
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jan 2024 18:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EauHZchQ"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5c66b093b86so6808644a12.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Jan 2024 10:41:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZC5r718"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5ceb02e2a56so232597a12.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Jan 2024 10:43:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704220902; x=1704825702; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704221009; x=1704825809; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eiARnTFtPVzqukdZN0RA3ZaMhVEbsu3YcZKj4/r2OWM=;
-        b=EauHZchQ0zMMRkkZdcBgYGFCEznbC69X2G2LdTUDks7TsYM9yAr+tqcvqGwvVFVbhl
-         BzkhUnV01k4po1ypcQk+9nrx2sSr3hpj0ytO2YwQKqlFn3jrheG7e4NvfYlcbMdEXFfi
-         4VsdXlshpk1df8NsXRMvV6pkMQxDVrZhyp/BLX1+RFUamM7cOld35wJ5fBzFKf/wu9gU
-         WcuALcZF5K9EjTcvXKuI/YOlmFxVRld8x4yuZa1LAMmT4RBhgPj51MRA058M2Q6dZf49
-         rkJfyVYRNCJ8HyB7cWHZzN4EOHtYOViBn7VC4GOQbffZLxUPWxHfrVZRTIQZwCM6a1Qd
-         5z0A==
+        bh=TaONoZrD0ZXDI3Lt3Dsqe7USkZEV330FXykpfUE9/Tc=;
+        b=jZC5r7183hT5R//7RoN7lIv6Yr/F2fM1ijLnRbjlQ8qslmTnvvwx1kXGbcFsTopHvg
+         DeX1WVGfb60CvONygifD5Jcigsk30/0KJheqkzs2LOTkUeVK/9fof7yb9DIJ/6Lxr3PB
+         Gd45FfdUa9P9S0Srm8Q2hqMcXxVuVotJZFalQNgN+/ICiObC6QDldrFcNX8+gl/DMLel
+         nBXP09xp25MwED4aHEmdc9eqUj1B+rK2K0zXxyW2lb+BI29VG48+umFWPZddj4eCo+9M
+         nVz8R+Eff/q6x6Vq+U4ByKTpn5PrUHFVeguQ+m36ClDFGTLZVNpndbXzB/6C3IaexmE4
+         D31Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704220902; x=1704825702;
+        d=1e100.net; s=20230601; t=1704221009; x=1704825809;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eiARnTFtPVzqukdZN0RA3ZaMhVEbsu3YcZKj4/r2OWM=;
-        b=jv/pP4ahon2fClmbeDzc6E90+l09PIulykBiKFInXMZbVnYhpj+tRi5TqhvmCXKsES
-         RLRaS11TwxFIl+lF+X3qgG/u2eqd4VpddDKr683DWjRSLIo0AxtBAny3FtJbWqDVTWKJ
-         6JdArnvOccQ51nygCWektz3FaMTPU18EaqEBznfFqllw/Bd/S4IofDUloSYsEbnfRGKH
-         UO3aN2xSDLchZTJ308lZUSzYfQ+3Ta0N+wLq7ESBthAbSq167J0E0+d/GzNr+r3aoE5w
-         XJ+eQINliW/0j6+eyaJlYECQXr6WVDv0ap1cs1vGe2k5va83LuyyEa0tpseZyJLuYBjc
-         KapA==
-X-Gm-Message-State: AOJu0Yxg613DIKAVxVMZeoYpeN1FomFQ8UnZpy4JllvtJ7w9ue9pIONp
-	pcThJLwfutWyxYRZ89E0IUH4y7EE6cja1w==
-X-Google-Smtp-Source: AGHT+IHEm6VtNk0s0JFbJROhAiFMpiK1QaSuMZvJp6MECY5QfyLekDrejEAVN4oBbY22Qy7TBjoGxw==
-X-Received: by 2002:a05:6a20:7d83:b0:196:c73c:2eaf with SMTP id v3-20020a056a207d8300b00196c73c2eafmr4392439pzj.44.1704220902150;
-        Tue, 02 Jan 2024 10:41:42 -0800 (PST)
+        bh=TaONoZrD0ZXDI3Lt3Dsqe7USkZEV330FXykpfUE9/Tc=;
+        b=HoYbDAk5xisg9LYg+FI9f8dkl+pLwIas8QWTfxVRYyJtOOpSllCpLAfi988YfQm9Ep
+         9B+tfkEISxMtZ8vftX4lMlG+jfPsr8t68vBvSEpN5whouaeZbEGj+p1GXcVjsyLm1zU6
+         qfXNTkaNp7B11ZJXvOhin/2do8K+4LlcfAFSnA/f8Ort77GAQVq2B7kMxfYHyP3GupmD
+         9xMna+8q6gqPDrid5P7ZhIqGvt8Nb94VpRclOhLYOnip7LZ+QGBeJzTJutrY6iic/mWZ
+         y64LVe+1rRPMEE//IQREjhVC9/W+OBQemaHtiURpNwA4G1cRFw+JwQ2fUhqNkXJrjMjL
+         EbNQ==
+X-Gm-Message-State: AOJu0YwBNADMZA/eCNc+VODH8ROX5tdd1YTp6dsMwDIUdGdnX3eXySeL
+	xP6TjXVyZoEKd5WB9FtH10Dik2eIFl7lww==
+X-Google-Smtp-Source: AGHT+IGUmDLn4EONUunNPGVyYG1zJzUtuOfZAY6a+sBXNVDTo1Xft0+IBiIrvaOI3awoalBXquOHtg==
+X-Received: by 2002:a05:6a20:244a:b0:196:82d2:4e6a with SMTP id t10-20020a056a20244a00b0019682d24e6amr2764622pzc.74.1704221009668;
+        Tue, 02 Jan 2024 10:43:29 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:2dba:4fab:fb9:7d99])
-        by smtp.gmail.com with ESMTPSA id z188-20020a6265c5000000b006d095553f2asm22388197pfb.81.2024.01.02.10.41.40
+        by smtp.gmail.com with ESMTPSA id x2-20020aa784c2000000b006d99cbe22f5sm17477199pfn.217.2024.01.02.10.43.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 10:41:41 -0800 (PST)
-Date: Tue, 2 Jan 2024 11:41:38 -0700
+        Tue, 02 Jan 2024 10:43:29 -0800 (PST)
+Date: Tue, 2 Jan 2024 11:43:27 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-media@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 3/5] remoteproc: imx_rproc: Convert to
- dev_pm_domain_attach|detach_list()
-Message-ID: <ZZRY4rMjjkIsG3Ef@p14s>
-References: <20231228114157.104822-1-ulf.hansson@linaro.org>
- <20231228114157.104822-4-ulf.hansson@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ben Levinsky <ben.levinsky@amd.com>
+Subject: Re: [RESEND PATCH v3 1/2] remoteproc: Make rproc_get_by_phandle()
+ work for clusters
+Message-ID: <ZZRZT8Dtg10oZcJQ@p14s>
+References: <20231014231548.637303-1-tanmay.shah@amd.com>
+ <20231014231548.637303-2-tanmay.shah@amd.com>
+ <dznmvir337tb455usswkrvovf34urgyejkrt7rduscbepd2wg3@7atos56utizw>
+ <CANLsYky+6=tvAHE408pGg_=YTUM4eH6ovwn--h2iuaNMGwRF+Q@mail.gmail.com>
+ <d491221f-1911-432f-9afb-45c4ac5287b4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -72,152 +63,142 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231228114157.104822-4-ulf.hansson@linaro.org>
+In-Reply-To: <d491221f-1911-432f-9afb-45c4ac5287b4@amd.com>
 
-Hi Ulf,
-
-I'm in agreement with the modifications done to imx_rproc.c and imx_dsp_rproc.c.
-There is one thing I am ambivalent on, please see below.
-
-On Thu, Dec 28, 2023 at 12:41:55PM +0100, Ulf Hansson wrote:
-> Let's avoid the boilerplate code to manage the multiple PM domain case, by
-> converting into using dev_pm_domain_attach|detach_list().
+On Wed, Dec 20, 2023 at 08:47:19AM -0600, Tanmay Shah wrote:
 > 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: <linux-remoteproc@vger.kernel.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/remoteproc/imx_rproc.c | 73 +++++-----------------------------
->  1 file changed, 9 insertions(+), 64 deletions(-)
+> On 11/14/23 10:23 AM, Mathieu Poirier wrote:
+> > On Tue, 14 Nov 2023 at 08:22, Bjorn Andersson <andersson@kernel.org> wrote:
+> > >
+> > > On Sat, Oct 14, 2023 at 04:15:47PM -0700, Tanmay Shah wrote:
+> > > > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > >
+> > > > Multi-cluster remoteproc designs typically have the following DT
+> > > > declaration:
+> > > >
+> > > >       remoteproc_cluster {
+> > > >               compatible = "soc,remoteproc-cluster";
+> > > >
+> > > >                 core0: core0 {
+> > > >                       compatible = "soc,remoteproc-core"
+> > > >                         memory-region;
+> > > >                         sram;
+> > > >                 };
+> > > >
+> > > >                 core1: core1 {
+> > > >                       compatible = "soc,remoteproc-core"
+> > > >                         memory-region;
+> > > >                         sram;
+> > > >                 }
+> > > >         };
+> > > >
+> > > > A driver exists for the cluster rather than the individual cores
+> > > > themselves so that operation mode and HW specific configurations
+> > > > applicable to the cluster can be made.
+> > > >
+> > > > Because the driver exists at the cluster level and not the individual
+> > > > core level, function rproc_get_by_phandle() fails to return the
+> > > > remoteproc associated with the phandled it is called for.
+> > > >
+> > > > This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> > > > driver when the driver for the immediate remoteproc's parent is not
+> > > > found.
+> > > >
+> > > > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > Tested-by: Ben Levinsky <ben.levinsky@amd.com>
+> > > > ---
+> > > >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+> > > >  1 file changed, 27 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > index 695cce218e8c..3a8191803885 100644
+> > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > @@ -33,6 +33,7 @@
+> > > >  #include <linux/idr.h>
+> > > >  #include <linux/elf.h>
+> > > >  #include <linux/crc32.h>
+> > > > +#include <linux/of_platform.h>
+> > > >  #include <linux/of_reserved_mem.h>
+> > > >  #include <linux/virtio_ids.h>
+> > > >  #include <linux/virtio_ring.h>
+> > > > @@ -2111,7 +2112,9 @@ EXPORT_SYMBOL(rproc_detach);
+> > > >  #ifdef CONFIG_OF
+> > > >  struct rproc *rproc_get_by_phandle(phandle phandle)
+> > > >  {
+> > > > +     struct platform_device *cluster_pdev;
+> > > >       struct rproc *rproc = NULL, *r;
+> > > > +     struct device_driver *driver;
+> > > >       struct device_node *np;
+> > > >
+> > > >       np = of_find_node_by_phandle(phandle);
+> > > > @@ -2122,7 +2125,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+> > > >       list_for_each_entry_rcu(r, &rproc_list, node) {
+> > > >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+> > > >                       /* prevent underlying implementation from being removed */
+> > > > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
+> > > > +
+> > > > +                     /*
+> > > > +                      * If the remoteproc's parent has a driver, the
+> > > > +                      * remoteproc is not part of a cluster and we can use
+> > > > +                      * that driver.
+> > > > +                      */
+> > > > +                     driver = r->dev.parent->driver;
+> > > > +
+> > > > +                     /*
+> > > > +                      * If the remoteproc's parent does not have a driver,
+> > > > +                      * look for the driver associated with the cluster.
+> > > > +                      */
+> > > > +                     if (!driver) {
+> > > > +                             cluster_pdev = of_find_device_by_node(np->parent);
+> > >
+> > > Both the Ti and Xilinx drivers are using of_platform_populate(), so
+> > > their r->dev.parent should have a parent reference to the cluster
+> > > device.
+> > >
+> >
+> > So you are proposing to get the cluster's driver using something like
+> > r->dev.parent->parent->driver?
+> >
+> > I will have to verify the parent/child relationship is set up properly
+> > through the of_platform_populate().  If it is, following the pointer
+> > trail is an equally valid approach and I will respin this set.
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 8bb293b9f327..3161f14442bc 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -92,7 +92,6 @@ struct imx_rproc_mem {
->  
->  static int imx_rproc_xtr_mbox_init(struct rproc *rproc);
->  static void imx_rproc_free_mbox(struct rproc *rproc);
-> -static int imx_rproc_detach_pd(struct rproc *rproc);
->  
->  struct imx_rproc {
->  	struct device			*dev;
-> @@ -113,10 +112,8 @@ struct imx_rproc {
->  	u32				rproc_pt;	/* partition id */
->  	u32				rsrc_id;	/* resource id */
->  	u32				entry;		/* cpu start address */
-> -	int                             num_pd;
->  	u32				core_index;
-> -	struct device                   **pd_dev;
-> -	struct device_link              **pd_dev_link;
-> +	struct dev_pm_domain_list	*pd_list;
->  };
->  
->  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-> @@ -853,7 +850,7 @@ static void imx_rproc_put_scu(struct rproc *rproc)
->  		return;
->  
->  	if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
-> -		imx_rproc_detach_pd(rproc);
-> +		dev_pm_domain_detach_list(priv->pd_list);
->  		return;
->  	}
->  
-> @@ -880,72 +877,20 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
->  static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  {
->  	struct device *dev = priv->dev;
-> -	int ret, i;
-> -
-> -	/*
-> -	 * If there is only one power-domain entry, the platform driver framework
-> -	 * will handle it, no need handle it in this driver.
-> -	 */
-> -	priv->num_pd = of_count_phandle_with_args(dev->of_node, "power-domains",
-> -						  "#power-domain-cells");
-> -	if (priv->num_pd <= 1)
-> -		return 0;
-
-In function dev_pm_domain_attach_list(), this condition is "<= 0" rather than
-"<= 1".  As such the association between the device and power domain will be
-done twice when there is a single power domain, i.e once by the core and once in
-dev_pm_domain_attach_list().
-
-I am assuming the runtime PM subsystem is smart enough to deal with this kind of
-situation but would like a confirmation.
-
-Thanks,
-Mathieu
-
-> -
-> -	priv->pd_dev = devm_kmalloc_array(dev, priv->num_pd, sizeof(*priv->pd_dev), GFP_KERNEL);
-> -	if (!priv->pd_dev)
-> -		return -ENOMEM;
-> -
-> -	priv->pd_dev_link = devm_kmalloc_array(dev, priv->num_pd, sizeof(*priv->pd_dev_link),
-> -					       GFP_KERNEL);
-> -
-> -	if (!priv->pd_dev_link)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < priv->num_pd; i++) {
-> -		priv->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
-> -		if (IS_ERR(priv->pd_dev[i])) {
-> -			ret = PTR_ERR(priv->pd_dev[i]);
-> -			goto detach_pd;
-> -		}
-> -
-> -		priv->pd_dev_link[i] = device_link_add(dev, priv->pd_dev[i], DL_FLAG_STATELESS |
-> -						       DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
-> -		if (!priv->pd_dev_link[i]) {
-> -			dev_pm_domain_detach(priv->pd_dev[i], false);
-> -			ret = -EINVAL;
-> -			goto detach_pd;
-> -		}
-> -	}
-> -
-> -	return 0;
-> -
-> -detach_pd:
-> -	while (--i >= 0) {
-> -		device_link_del(priv->pd_dev_link[i]);
-> -		dev_pm_domain_detach(priv->pd_dev[i], false);
-> -	}
-> -
-> -	return ret;
-> -}
-> -
-> -static int imx_rproc_detach_pd(struct rproc *rproc)
-> -{
-> -	struct imx_rproc *priv = rproc->priv;
-> -	int i;
-> +	int ret;
-> +	struct dev_pm_domain_attach_data pd_data = {
-> +		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> +	};
->  
->  	/*
->  	 * If there is only one power-domain entry, the platform driver framework
->  	 * will handle it, no need handle it in this driver.
->  	 */
-> -	if (priv->num_pd <= 1)
-> +	if (dev->pm_domain)
->  		return 0;
->  
-> -	for (i = 0; i < priv->num_pd; i++) {
-> -		device_link_del(priv->pd_dev_link[i]);
-> -		dev_pm_domain_detach(priv->pd_dev[i], false);
-> -	}
-> -
-> -	return 0;
-> +	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> +	return ret < 0 ? ret : 0;
->  }
->  
->  static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> -- 
-> 2.34.1
 > 
+> Hi Mathieu,
+> 
+> I addressed Bjorn's comments and verified on ZynqMP hardware that it's working.
+> 
+> Let me know if you would like to see v4 with suggested changes.
+>
+
+Yes, please send a V4 with the proposed changes.
+
+> 
+> Thanks,
+> 
+> Tanmay
+> 
+> > > Unless I'm reading the code wrong, I think we should follow that
+> > > pointer, rather than taking the detour in the DeviceTree data.
+> > >
+> > > Regards,
+> > > Bjorn
+> > >
+> > > > +                             if (!cluster_pdev) {
+> > > > +                                     dev_err(&r->dev, "can't get parent\n");
+> > > > +                                     break;
+> > > > +                             }
+> > > > +
+> > > > +                             driver = cluster_pdev->dev.driver;
+> > > > +                             put_device(&cluster_pdev->dev);
+> > > > +                     }
+> > > > +
+> > > > +                     if (!try_module_get(driver->owner)) {
+> > > >                               dev_err(&r->dev, "can't get owner\n");
+> > > >                               break;
+> > > >                       }
+> > > > --
+> > > > 2.25.1
+> > > >
