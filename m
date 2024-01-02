@@ -1,144 +1,223 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B182CA64;
-	Tue,  2 Jan 2024 10:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6815ACF
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jan 2024 18:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZBm9+e6E"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4028wxAp031023;
-	Tue, 2 Jan 2024 10:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=U/qIkXpqNy15nekMfvk/AQomDo1b68nmO+3poX3Uda0=; b=ZB
-	m9+e6E1iaENa7KrTz2VptTU7k8/J5qh6JLnl2AaNjd3r5AlULLR/T0nEES7cEPVU
-	a73He4TPM1LBIwwGw4yUeHx6t86YDtgS4pO+rFOlN7cFdflMen6A/GrItgesLD3G
-	CZH9kM6o8Xc1GQuyTJre3JiMBqLI8oKfVHZL9QMaxL6fdXfsmgxQz6NnhtE0gGGg
-	VbqlEkmEOC90t/WMHDp4bd9dpJRKR/9qz4fnZVWINO0VUZyYbASrZa/XdTa7p3sd
-	E3FlEBr1Oy8v7J1BqR7E6lA0K1Dr74fNaeUTr980+VOeSnfzpHM7v1JAo6EZDCJx
-	HByu9MyZkBTf7PeKDdtQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vccc1gdgq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jan 2024 10:02:10 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 402A29iZ016088
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jan 2024 10:02:09 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 2 Jan
- 2024 02:02:03 -0800
-Message-ID: <dce0f577-b08e-4eed-8457-9ea5fefbd8c9@quicinc.com>
-Date: Tue, 2 Jan 2024 18:01:59 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EauHZchQ"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5c66b093b86so6808644a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Jan 2024 10:41:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704220902; x=1704825702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eiARnTFtPVzqukdZN0RA3ZaMhVEbsu3YcZKj4/r2OWM=;
+        b=EauHZchQ0zMMRkkZdcBgYGFCEznbC69X2G2LdTUDks7TsYM9yAr+tqcvqGwvVFVbhl
+         BzkhUnV01k4po1ypcQk+9nrx2sSr3hpj0ytO2YwQKqlFn3jrheG7e4NvfYlcbMdEXFfi
+         4VsdXlshpk1df8NsXRMvV6pkMQxDVrZhyp/BLX1+RFUamM7cOld35wJ5fBzFKf/wu9gU
+         WcuALcZF5K9EjTcvXKuI/YOlmFxVRld8x4yuZa1LAMmT4RBhgPj51MRA058M2Q6dZf49
+         rkJfyVYRNCJ8HyB7cWHZzN4EOHtYOViBn7VC4GOQbffZLxUPWxHfrVZRTIQZwCM6a1Qd
+         5z0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704220902; x=1704825702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eiARnTFtPVzqukdZN0RA3ZaMhVEbsu3YcZKj4/r2OWM=;
+        b=jv/pP4ahon2fClmbeDzc6E90+l09PIulykBiKFInXMZbVnYhpj+tRi5TqhvmCXKsES
+         RLRaS11TwxFIl+lF+X3qgG/u2eqd4VpddDKr683DWjRSLIo0AxtBAny3FtJbWqDVTWKJ
+         6JdArnvOccQ51nygCWektz3FaMTPU18EaqEBznfFqllw/Bd/S4IofDUloSYsEbnfRGKH
+         UO3aN2xSDLchZTJ308lZUSzYfQ+3Ta0N+wLq7ESBthAbSq167J0E0+d/GzNr+r3aoE5w
+         XJ+eQINliW/0j6+eyaJlYECQXr6WVDv0ap1cs1vGe2k5va83LuyyEa0tpseZyJLuYBjc
+         KapA==
+X-Gm-Message-State: AOJu0Yxg613DIKAVxVMZeoYpeN1FomFQ8UnZpy4JllvtJ7w9ue9pIONp
+	pcThJLwfutWyxYRZ89E0IUH4y7EE6cja1w==
+X-Google-Smtp-Source: AGHT+IHEm6VtNk0s0JFbJROhAiFMpiK1QaSuMZvJp6MECY5QfyLekDrejEAVN4oBbY22Qy7TBjoGxw==
+X-Received: by 2002:a05:6a20:7d83:b0:196:c73c:2eaf with SMTP id v3-20020a056a207d8300b00196c73c2eafmr4392439pzj.44.1704220902150;
+        Tue, 02 Jan 2024 10:41:42 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:2dba:4fab:fb9:7d99])
+        by smtp.gmail.com with ESMTPSA id z188-20020a6265c5000000b006d095553f2asm22388197pfb.81.2024.01.02.10.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jan 2024 10:41:41 -0800 (PST)
+Date: Tue, 2 Jan 2024 11:41:38 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-media@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 3/5] remoteproc: imx_rproc: Convert to
+ dev_pm_domain_attach|detach_list()
+Message-ID: <ZZRY4rMjjkIsG3Ef@p14s>
+References: <20231228114157.104822-1-ulf.hansson@linaro.org>
+ <20231228114157.104822-4-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/14] arm64: dts: qcom: msm8916: Drop RPM bus clocks
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy
-	<robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>
-CC: Marijn Suijten <marijn.suijten@somainline.org>,
-        Alexey Minnekhanov
-	<alexeymin@postmarketos.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-usb@vger.kernel.org>
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-1-1e506593b1bd@linaro.org>
- <bd11d1b1-efe5-4f96-43e7-163fca5d3278@linaro.org>
- <ac501bcc-80a1-4b65-ba24-272152d1c95c@linaro.org>
- <7b500bba-3091-f425-a60d-e58a3d9e4c1a@linaro.org>
- <9a0ab5a9-d4d8-41b8-94b0-9c62bd686254@linaro.org>
- <30bb6068-6bb8-9a2c-af19-b989960d0be9@linaro.org>
- <70b19df7-c70c-41ea-ac4c-8af6956f4fc6@linaro.org>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-In-Reply-To: <70b19df7-c70c-41ea-ac4c-8af6956f4fc6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wcsyJrzxICN3wHO1NZ9_HEVWn06ctdHI
-X-Proofpoint-ORIG-GUID: wcsyJrzxICN3wHO1NZ9_HEVWn06ctdHI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=921
- lowpriorityscore=0 malwarescore=0 spamscore=0 clxscore=1011
- impostorscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2311290000 definitions=main-2401020076
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231228114157.104822-4-ulf.hansson@linaro.org>
 
+Hi Ulf,
 
+I'm in agreement with the modifications done to imx_rproc.c and imx_dsp_rproc.c.
+There is one thing I am ambivalent on, please see below.
 
-On 9/13/2023 7:14 PM, Konrad Dybcio wrote:
-> On 13.09.2023 13:14, Krzysztof Kozlowski wrote:
->> On 13/09/2023 12:48, Konrad Dybcio wrote:
->>> On 13.09.2023 10:53, Krzysztof Kozlowski wrote:
->>>> On 13/09/2023 10:47, Konrad Dybcio wrote:
->>>>> On 13.09.2023 09:07, Krzysztof Kozlowski wrote:
->>>>>> On 12/09/2023 15:31, Konrad Dybcio wrote:
->>>>>>> These clocks are now handled from within the icc framework and are
->>>>>>
->>>>>> That's a driver behavior, not hardware.
->>>>> I believe we've been over this already..
->>>>>
->>>>> The rationale behind this change is: that hardware, which falls
->>>>> under the "interconnect" class, was previously misrepresented as
->>>>> a bunch of clocks. There are clocks underneath, but accessing them
->>>>> directly would be equivalent to e.g. circumventing the PHY subsystem
->>>>> and initializing your UFS PHY from within the UFS device.
->>>>
->>>> And every time one write such commit msg, how should we remember there
->>>> is some exception and actually it is about clock representation not CCF
->>>> or ICC framework.
->>> So is your reply essentially "fine, but please make it clear in
->>> each commit message"?
->>
->> I am fine with this change. If commit msg had such statement, I would
->> not have doubts :/
-> Ok, I'll resend, thanks for confirming!
-Is there any one continue working on this?
-
-The bindings already merged while the dtb is not consistent with current 
-binding files. So dt bindings checks are failed actually.
+On Thu, Dec 28, 2023 at 12:41:55PM +0100, Ulf Hansson wrote:
+> Let's avoid the boilerplate code to manage the multiple PM domain case, by
+> converting into using dev_pm_domain_attach|detach_list().
 > 
-> Konrad
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: <linux-remoteproc@vger.kernel.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 73 +++++-----------------------------
+>  1 file changed, 9 insertions(+), 64 deletions(-)
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 8bb293b9f327..3161f14442bc 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -92,7 +92,6 @@ struct imx_rproc_mem {
+>  
+>  static int imx_rproc_xtr_mbox_init(struct rproc *rproc);
+>  static void imx_rproc_free_mbox(struct rproc *rproc);
+> -static int imx_rproc_detach_pd(struct rproc *rproc);
+>  
+>  struct imx_rproc {
+>  	struct device			*dev;
+> @@ -113,10 +112,8 @@ struct imx_rproc {
+>  	u32				rproc_pt;	/* partition id */
+>  	u32				rsrc_id;	/* resource id */
+>  	u32				entry;		/* cpu start address */
+> -	int                             num_pd;
+>  	u32				core_index;
+> -	struct device                   **pd_dev;
+> -	struct device_link              **pd_dev_link;
+> +	struct dev_pm_domain_list	*pd_list;
+>  };
+>  
+>  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
+> @@ -853,7 +850,7 @@ static void imx_rproc_put_scu(struct rproc *rproc)
+>  		return;
+>  
+>  	if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
+> -		imx_rproc_detach_pd(rproc);
+> +		dev_pm_domain_detach_list(priv->pd_list);
+>  		return;
+>  	}
+>  
+> @@ -880,72 +877,20 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+>  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>  {
+>  	struct device *dev = priv->dev;
+> -	int ret, i;
+> -
+> -	/*
+> -	 * If there is only one power-domain entry, the platform driver framework
+> -	 * will handle it, no need handle it in this driver.
+> -	 */
+> -	priv->num_pd = of_count_phandle_with_args(dev->of_node, "power-domains",
+> -						  "#power-domain-cells");
+> -	if (priv->num_pd <= 1)
+> -		return 0;
 
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+In function dev_pm_domain_attach_list(), this condition is "<= 0" rather than
+"<= 1".  As such the association between the device and power domain will be
+done twice when there is a single power domain, i.e once by the core and once in
+dev_pm_domain_attach_list().
+
+I am assuming the runtime PM subsystem is smart enough to deal with this kind of
+situation but would like a confirmation.
+
+Thanks,
+Mathieu
+
+> -
+> -	priv->pd_dev = devm_kmalloc_array(dev, priv->num_pd, sizeof(*priv->pd_dev), GFP_KERNEL);
+> -	if (!priv->pd_dev)
+> -		return -ENOMEM;
+> -
+> -	priv->pd_dev_link = devm_kmalloc_array(dev, priv->num_pd, sizeof(*priv->pd_dev_link),
+> -					       GFP_KERNEL);
+> -
+> -	if (!priv->pd_dev_link)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < priv->num_pd; i++) {
+> -		priv->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
+> -		if (IS_ERR(priv->pd_dev[i])) {
+> -			ret = PTR_ERR(priv->pd_dev[i]);
+> -			goto detach_pd;
+> -		}
+> -
+> -		priv->pd_dev_link[i] = device_link_add(dev, priv->pd_dev[i], DL_FLAG_STATELESS |
+> -						       DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
+> -		if (!priv->pd_dev_link[i]) {
+> -			dev_pm_domain_detach(priv->pd_dev[i], false);
+> -			ret = -EINVAL;
+> -			goto detach_pd;
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -detach_pd:
+> -	while (--i >= 0) {
+> -		device_link_del(priv->pd_dev_link[i]);
+> -		dev_pm_domain_detach(priv->pd_dev[i], false);
+> -	}
+> -
+> -	return ret;
+> -}
+> -
+> -static int imx_rproc_detach_pd(struct rproc *rproc)
+> -{
+> -	struct imx_rproc *priv = rproc->priv;
+> -	int i;
+> +	int ret;
+> +	struct dev_pm_domain_attach_data pd_data = {
+> +		.pd_flags = PD_FLAG_DEV_LINK_ON,
+> +	};
+>  
+>  	/*
+>  	 * If there is only one power-domain entry, the platform driver framework
+>  	 * will handle it, no need handle it in this driver.
+>  	 */
+> -	if (priv->num_pd <= 1)
+> +	if (dev->pm_domain)
+>  		return 0;
+>  
+> -	for (i = 0; i < priv->num_pd; i++) {
+> -		device_link_del(priv->pd_dev_link[i]);
+> -		dev_pm_domain_detach(priv->pd_dev[i], false);
+> -	}
+> -
+> -	return 0;
+> +	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> +	return ret < 0 ? ret : 0;
+>  }
+>  
+>  static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> -- 
+> 2.34.1
+> 
