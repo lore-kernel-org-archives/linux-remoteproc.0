@@ -1,73 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99516D518;
-	Mon,  1 Jan 2024 18:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B8515C5
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jan 2024 06:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RP80M3Gc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0CA95C433C9;
-	Mon,  1 Jan 2024 18:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704135025;
-	bh=tNAOyRlPyWYfL2woErnEVinNMnSj3M5MzgVb841uGuc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RP80M3GcYoEwL3Ug/6yYK22c8/hROKFTlIXFvVnNGfYBwwdM/DiA4yvB2keuyZQXv
-	 2ZG8hZ2dCwut+O4CU7+NXAk6fE9DBU4Xi9i0FZsa2G1sTJFDk+kMHvyTdCS5sMosYJ
-	 CP18XcyjnOj8jJL38zdEYa86ALF6lDfTmfqGMO4JZpXIwzMTHyQ7zfOcCbDMAWPTP7
-	 vD/vnoiVK4pSWFI325rayywIORkjgAeXH09uEAZ6zshlr+7oPi3Jy3F0cNjHnEpZdh
-	 vKSXdnKQ8b8/II7X5FA7CkvFq+itgOzBal4ox1t93b6Ie8lykChTScDiNbLMUha3Od
-	 8Uh8s8p/HTTiA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DD1E1DCB6CE;
-	Mon,  1 Jan 2024 18:50:24 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFrbBfB5"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d4c3393f99so3555805ad.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jan 2024 22:25:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704176749; x=1704781549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ezudi6jLM5VLjqPu4bAcNVcTI26aFcnMsqxplzeyERA=;
+        b=CFrbBfB5juUneDuMDK3SFQLkOgv09nlYK4RqNcvcWxKCsopRt5Y6pNrcjfkLJhJ/fq
+         1pHOYvsBYOqC+0VBbMp/zL8jsIKCGlMnU7mEn8e4gQ+JdqOzwN8kmB1WBO76UL9QiI+Q
+         7wkoCxA7pZ5cJzFThOeGkLMl3jZTPrOUwEyxOzqy0n7DkmyNPZ3hiDiftPRvTYDgHdv2
+         j8R8kUcEJb7iwFRpgzQqDCuuNJ170XaLQpQR+uHA/CEnHO3K+hvk9wKM6+NC4Vj4bWy4
+         KdCg1PyYK1vFO1ucQLJ7KHAq9peiwZhvhNzebsT1T/1GGdqB8Y6WNsHnIv4W3tgx9Zka
+         h40w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704176749; x=1704781549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ezudi6jLM5VLjqPu4bAcNVcTI26aFcnMsqxplzeyERA=;
+        b=NvvdGYxBWmHV+mbse8T0jg6qUdr0BVYrFU2qBddN9OI0RjQt6NraGmuBGGe48PNkXJ
+         CEqKNSdLthjQlF0epBcLruJ+mhg1JU86bSdC6WkylTeffnsKu7DImHytNZST1MTMQoGH
+         u5oAG+SkQBGPZo6473ga0gQ2rAHf6EoNfr5s/9jmBs51+lxQscvoavtEeJFfNVAl52Km
+         MwOrUZpdDJz448TZPzbDnXcz3n73M70uTSDOe3EBsJX9aJNB68UC9zC/xZrG6+JUAVf1
+         nnt71yEl3idfEJCXqML/JGMzJi2rjMd83NQPnDBh6SwKYcsWmumxVtZZWtzzlEt5QrtB
+         kZHw==
+X-Gm-Message-State: AOJu0YyWyMaQIJ7wYwsKPDH+pWLi2ioiohmQdZEf5uxWTLoM/LRGlYp4
+	qRHX6MEpSHL0Thg1x81CbU2BTgxWjPEbzg==
+X-Google-Smtp-Source: AGHT+IG8RoUn2lOLhQxfuWS6czwFFzvzj+yq/w7xBIIrrresiaj7KS/ia9C2eRfGtjuKKFWio60WGQ==
+X-Received: by 2002:a17:902:c652:b0:1d3:d27f:77c9 with SMTP id s18-20020a170902c65200b001d3d27f77c9mr14807221pls.14.1704176749072;
+        Mon, 01 Jan 2024 22:25:49 -0800 (PST)
+Received: from localhost ([122.172.86.168])
+        by smtp.gmail.com with ESMTPSA id ay5-20020a1709028b8500b001d4ac8ac969sm4371115plb.275.2024.01.01.22.25.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jan 2024 22:25:48 -0800 (PST)
+Date: Tue, 2 Jan 2024 11:55:46 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 0/5] PM: domains: Add helpers for multi PM domains to
+ avoid open-coding
+Message-ID: <20240102062546.qhd6rfp4l53ubfrv@vireshk-i7>
+References: <20231228114157.104822-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V1] net: qrtr: ns: Return 0 if server port is not present
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170413502489.3024.3003051103450855800.git-patchwork-notify@kernel.org>
-Date: Mon, 01 Jan 2024 18:50:24 +0000
-References: <1703153211-3717-2-git-send-email-quic_sarannya@quicinc.com>
-In-Reply-To: <1703153211-3717-2-git-send-email-quic_sarannya@quicinc.com>
-To: Sarannya S <quic_sarannya@quicinc.com>
-Cc: quic_bjorande@quicinc.com, bjorn.andersson@kernel.org,
- andersson@kernel.org, quic_clew@quicinc.com, mathieu.poirier@linaro.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, mani@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231228114157.104822-1-ulf.hansson@linaro.org>
 
-Hello:
+On 28-12-23, 12:41, Ulf Hansson wrote:
+> For OPP integration, as a follow up I am striving to make the
+> dev_pm_opp_attach_genpd() redundant. Instead I think we should move towards
+> using dev_pm_opp_set_config()->_opp_set_required_devs(), which would allow us to
+> use the helpers that $subject series is adding.
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Big thanks for that :)
 
-On Thu, 21 Dec 2023 15:36:51 +0530 you wrote:
-> When a 'DEL_CLIENT' message is received from the remote, the corresponding
-> server port gets deleted. A DEL_SERVER message is then announced for this
-> server. As part of handling the subsequent DEL_SERVER message, the name-
-> server attempts to delete the server port which results in a '-ENOENT' error.
-> The return value from server_del() is then propagated back to qrtr_ns_worker,
-> causing excessive error prints.
-> To address this, return 0 from control_cmd_del_server() without checking the
-> return value of server_del(), since the above scenario is not an error case
-> and hence server_del() doesn't have any other error return value.
-> 
-> [...]
-
-Here is the summary with links:
-  - [V1] net: qrtr: ns: Return 0 if server port is not present
-    https://git.kernel.org/netdev/net/c/9bf2e9165f90
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+viresh
