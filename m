@@ -1,43 +1,43 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548471864E
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Jan 2024 10:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C288F19447
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Jan 2024 12:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lvPu8raB"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dbdbe917d39so8381598276.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Jan 2024 02:11:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZVj0QktV"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5f15a1052b3so26428337b3.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Jan 2024 04:50:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704276717; x=1704881517; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704286230; x=1704891030; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtpNPR2Ppv9oShH1PIo9qMmaypsTJ3RN+rG3DHT7G5I=;
-        b=lvPu8raB9OXaH9Rq2HLA+rH++8rvLT6marCexYl1nQfm3mgVlb9GxPHOC4u59vajdf
-         jwdCPCiu5XJlAoKE7vUcOw1MfjTlEAE0B3TYq8DP7aePJovek9QucTpmas1o49IjTLie
-         1G0R51E9yfGwuQvO74eg3o8usKAhPE4VuP9zj2Iqsy1cF+hWuBsSgc5sn4KdKwaAdCTm
-         +rurQjaoNhnN2t0NlfvE/7wjIclFRsHRVZI+HPlag+VA/NCHUjz194j4W6kH1ZSdnWUt
-         MkhbgzvLzo4R2ZHaUVByd/Ee4VhJFyFYetW7r3m3ks04y6Tbig8Y7THrssophOd9QdoG
-         nyIA==
+        bh=uMQJge1OFocSBVvJxeeoeFzhMb6jVyBHP21ntl+sV/E=;
+        b=ZVj0QktVZfoenLqVk7AA3TlGU3MUq4uZYDZ12GObE9QSpQ0vYncX+HXpYWgYzgDiQj
+         eb7iUM2VEWVrjvsWAFONkTNjdqmePh9wCIS+q6949O0muCxyKlRhKIVQp04Z6Fv/qkQX
+         DU6w4GKyPMkHFkBPwUe5AeEpK+sHMd8OQTirUnJ/1h7Fgwp/9hvP6LQzKbpxABZVydom
+         rf2TivldeVBM9HFmOcDOvp72DR6ZxnPXg6z6UjrbtTMpdTygnPAb1VThqe59lzXdlwZu
+         w7r7NZEyUZ/zndSYwMUVMkrKMe3N6dwMsbZ9v2nkhiD8uAp63fQ1ZgoY24dcO7I5JYFB
+         9moA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704276717; x=1704881517;
+        d=1e100.net; s=20230601; t=1704286230; x=1704891030;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PtpNPR2Ppv9oShH1PIo9qMmaypsTJ3RN+rG3DHT7G5I=;
-        b=NHwqIAoh9C+m4FxeBQp0cDN4Yiye8IlsCNw0DVFrRgqh/seeUXQBgIKN30cWYdOQ08
-         nosUfQ1tTcHqRvH5I4jUyf6HeHH0Kxx+1PTl17ZN2FgBX+sxBEaUL47ZjTfECta4E+Ly
-         Sps1tDehT5lS/i38c8El53u37xF+1Y77Ic3CACjljKQgQZvpA/fwBWYWMZNEGU8CagBx
-         S6PDQzyzhHN1O1cSVtqiGuJ/2pvyiCoW9D30Aw88Y/ked+yq7sM3mdVAACzzqJLNzYOz
-         OaA/OkO7H7AEeI9ZUiSkC/A56V0G3LeEArnK1bvhvnbEu+EHKY2/svZJcKuclYfnyHCr
-         TMEQ==
-X-Gm-Message-State: AOJu0YwT/5m4QwvCwqbwbPVMkhrGMRkes0CjffwGUIZo67BlXLEdRAuO
-	RkcFopo8wJ7PuZjMHjHvpJU96v62hobgoGs9KNEiPsq7BWCj4A==
-X-Google-Smtp-Source: AGHT+IF2XO36CiELCMwjscZCQ6v87hxA4fvw2qOPmqzgOjU5sNMJ0Lpcxm/J0S19SL0ftsJUFsetKsKZoTzl5VNNJmw=
-X-Received: by 2002:a25:ab44:0:b0:dbc:ad34:43a1 with SMTP id
- u62-20020a25ab44000000b00dbcad3443a1mr8805456ybi.112.1704276717219; Wed, 03
- Jan 2024 02:11:57 -0800 (PST)
+        bh=uMQJge1OFocSBVvJxeeoeFzhMb6jVyBHP21ntl+sV/E=;
+        b=AI2y9anpjmJkidCVccS9vsE6uYb34N7ACJc+4bez6l0r/Nl+NjU2eS0LpiKPYWDJTO
+         abpLliM5QKxOyfbkawGHBDL91zir9A3St4+bKJv7ilzp8oA5oWHinz05ihwuPCuriO83
+         S+oUrAQG4nHFexBGqnn9fVS5rSLvfHfC+s9KxSLEBHqnh5yzhLGQ2cXKHXmz/ZEL5duP
+         pu5TPjosBH6RKfBcthJdNJYOFg00YHIbECn5Bmvs4wrDt3FweqYRaljEY2Ej66ybzNs1
+         7Y/HUpiIZsUo+jkC6AAKC8SNY74I+h+Uo4fKJkhFyK+upS3e9Y1NGFFbOXccon+Ya1Kg
+         AaNw==
+X-Gm-Message-State: AOJu0YyX5rVYkoFS9KI38eGqG04YrhmQkg73RXfY2wUzq4662Z4vDTnp
+	6CxLJoOrCNdQndXejlYw5lN385cvNbWmZsVhXhpIheo0KjW5jsFYjLwm4ShN
+X-Google-Smtp-Source: AGHT+IEli+i1LhMaNCig5qS+FtDFjWedP/VNkzC6jzMcC0RM0qSY5aMRs5tMe1+MaZQwo/pUvmcXTIs/GQCNBQrScXc=
+X-Received: by 2002:a25:840c:0:b0:db7:dacf:3fb2 with SMTP id
+ u12-20020a25840c000000b00db7dacf3fb2mr8131789ybk.95.1704286229718; Wed, 03
+ Jan 2024 04:50:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -45,13 +45,14 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231228114157.104822-1-ulf.hansson@linaro.org>
- <20231228114157.104822-4-ulf.hansson@linaro.org> <ZZRY4rMjjkIsG3Ef@p14s>
-In-Reply-To: <ZZRY4rMjjkIsG3Ef@p14s>
+ <20231228114157.104822-2-ulf.hansson@linaro.org> <22330d85-1d5c-48de-b006-9176f275328e@quicinc.com>
+In-Reply-To: <22330d85-1d5c-48de-b006-9176f275328e@quicinc.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 3 Jan 2024 11:11:19 +0100
-Message-ID: <CAPDyKFqgw_my76dicP9wuQAmF=kF=v5wGwxEF05wTQHdSvfuCA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] remoteproc: imx_rproc: Convert to dev_pm_domain_attach|detach_list()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 3 Jan 2024 13:49:53 +0100
+Message-ID: <CAPDyKFqcB_ANOBsJBitjdgdUs2G8B3qWWvD54Bmw56ZoUKNWAg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] PM: domains: Add helper functions to attach/detach
+ multiple PM domains
+To: Nikunj Kela <quic_nkela@quicinc.com>
 Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
 	Sudeep Holla <sudeep.holla@arm.com>, Kevin Hilman <khilman@kernel.org>, 
@@ -59,96 +60,108 @@ Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfo
 	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
 	Stephan Gerhold <stephan@gerhold.net>, Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-media@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>
+	linux-media@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2 Jan 2024 at 19:41, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+On Fri, 29 Dec 2023 at 21:21, Nikunj Kela <quic_nkela@quicinc.com> wrote:
 >
-> Hi Ulf,
 >
-> I'm in agreement with the modifications done to imx_rproc.c and imx_dsp_rproc.c.
-> There is one thing I am ambivalent on, please see below.
->
-> On Thu, Dec 28, 2023 at 12:41:55PM +0100, Ulf Hansson wrote:
-> > Let's avoid the boilerplate code to manage the multiple PM domain case, by
-> > converting into using dev_pm_domain_attach|detach_list().
+> On 12/28/2023 3:41 AM, Ulf Hansson wrote:
+> > Attaching/detaching of a device to multiple PM domains has started to
+> > become a common operation for many drivers, typically during ->probe() and
+> > ->remove(). In most cases, this has lead to lots of boilerplate code in the
+> > drivers.
 > >
-> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Cc: Bjorn Andersson <andersson@kernel.org>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> > Cc: <linux-remoteproc@vger.kernel.org>
+> > To fixup up the situation, let's introduce a pair of helper functions,
+> > dev_pm_domain_attach|detach_list(), that driver can use instead of the
+> > open-coding. Note that, it seems reasonable to limit the support for these
+> > helpers to DT based platforms, at it's the only valid use case for now.
+> >
 > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > > ---
-> >  drivers/remoteproc/imx_rproc.c | 73 +++++-----------------------------
-> >  1 file changed, 9 insertions(+), 64 deletions(-)
+> >   drivers/base/power/common.c | 133 ++++++++++++++++++++++++++++++++++++
+> >   include/linux/pm_domain.h   |  38 +++++++++++
+> >   2 files changed, 171 insertions(+)
 > >
-> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > index 8bb293b9f327..3161f14442bc 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -92,7 +92,6 @@ struct imx_rproc_mem {
+> > diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+> > index 44ec20918a4d..1ef51889fc6f 100644
+> > --- a/drivers/base/power/common.c
+> > +++ b/drivers/base/power/common.c
+> > @@ -167,6 +167,114 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+> >   }
+> >   EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_name);
 > >
-> >  static int imx_rproc_xtr_mbox_init(struct rproc *rproc);
-> >  static void imx_rproc_free_mbox(struct rproc *rproc);
-> > -static int imx_rproc_detach_pd(struct rproc *rproc);
-> >
-> >  struct imx_rproc {
-> >       struct device                   *dev;
-> > @@ -113,10 +112,8 @@ struct imx_rproc {
-> >       u32                             rproc_pt;       /* partition id */
-> >       u32                             rsrc_id;        /* resource id */
-> >       u32                             entry;          /* cpu start address */
-> > -     int                             num_pd;
-> >       u32                             core_index;
-> > -     struct device                   **pd_dev;
-> > -     struct device_link              **pd_dev_link;
-> > +     struct dev_pm_domain_list       *pd_list;
-> >  };
-> >
-> >  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-> > @@ -853,7 +850,7 @@ static void imx_rproc_put_scu(struct rproc *rproc)
-> >               return;
-> >
-> >       if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
-> > -             imx_rproc_detach_pd(rproc);
-> > +             dev_pm_domain_detach_list(priv->pd_list);
-> >               return;
-> >       }
-> >
-> > @@ -880,72 +877,20 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
-> >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> >  {
-> >       struct device *dev = priv->dev;
-> > -     int ret, i;
-> > -
-> > -     /*
-> > -      * If there is only one power-domain entry, the platform driver framework
-> > -      * will handle it, no need handle it in this driver.
-> > -      */
-> > -     priv->num_pd = of_count_phandle_with_args(dev->of_node, "power-domains",
-> > -                                               "#power-domain-cells");
-> > -     if (priv->num_pd <= 1)
-> > -             return 0;
+> > +/**
+> > + * dev_pm_domain_attach_list - Associate a device with its PM domains.
+> > + * @dev: The device used to lookup the PM domains for.
+> > + * @data: The data used for attaching to the PM domains.
+> > + * @list: An out-parameter with an allocated list of attached PM domains.
+> > + *
+> > + * This function helps to attach a device to its multiple PM domains. The
+> > + * caller, which is typically a driver's probe function, may provide a list of
+> > + * names for the PM domains that we should try to attach the device to, but it
+> > + * may also provide an empty list, in case the attach should be done for all of
+> > + * the available PM domains.
+> > + *
+> > + * Callers must ensure proper synchronization of this function with power
+> > + * management callbacks.
+> > + *
+> > + * Returns the number of attached PM domains or a negative error code in case of
+> > + * a failure. Note that, to detach the list of PM domains, the driver shall call
+> > + * dev_pm_domain_detach_list(), typically during the remove phase.
+> > + */
+> > +int dev_pm_domain_attach_list(struct device *dev,
+> > +                           const struct dev_pm_domain_attach_data *data,
+> > +                           struct dev_pm_domain_list **list)
+> > +{
+> > +     struct device_node *np = dev->of_node;
+> > +     struct dev_pm_domain_list *pds;
+> > +     struct device *pd_dev = NULL;
+> > +     int ret, i, num_pds = 0;
+> > +     bool by_id = true;
+> > +     u32 link_flags = data && data->pd_flags & PD_FLAG_NO_DEV_LINK ? 0 :
+> > +                     DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
+> > +
+> > +     if (dev->pm_domain)
+> > +             return -EEXIST;
+> > +
+> > +     /* For now this is limited to OF based platforms. */
+> > +     if (!np)
+> > +             return 0;
+> > +
+> > +     if (data && data->pd_names) {
+> > +             num_pds = data->num_pd_names;
+> > +             by_id = false;
+> > +     } else {
+> > +             num_pds = of_count_phandle_with_args(np, "power-domains",
+> > +                                                  "#power-domain-cells");
+> > +     }
+> > +
+> > +     if (num_pds <= 0)
+> > +             return 0;
+> > +
+> > +     pds = devm_kzalloc(dev, sizeof(*pds), GFP_KERNEL);
+> > +     if (!pds)
+> > +             return -ENOMEM;
+> > +
+> > +     pds->pd_devs = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_devs),
+> > +                                 GFP_KERNEL);
+> > +     if (!pds->pd_devs)
+> > +             return -ENOMEM;
+> > +
+> > +     pds->pd_links = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_links),
+> > +                                  GFP_KERNEL);
+> > +     if (!pds->pd_links)
+> > +             return -ENOMEM;
+> > +
+> > +     if (link_flags && data->pd_flags & PD_FLAG_DEV_LINK_ON)
 >
-> In function dev_pm_domain_attach_list(), this condition is "<= 0" rather than
-> "<= 1".  As such the association between the device and power domain will be
-> done twice when there is a single power domain, i.e once by the core and once in
-> dev_pm_domain_attach_list().
->
-> I am assuming the runtime PM subsystem is smart enough to deal with this kind of
-> situation but would like a confirmation.
+> Since data is optional, this check results in crash if data is NULL. Thanks
 
-Thanks for reviewing!
+Thanks for spotting this! I certainly tested that option too, but must
+have been on some earlier internal version. :-)
 
-To cover the the single PM domain case, imx_rproc_attach_pd() is
-returning 0 when dev->pm_domain has been assigned. Moreover,
-dev_pm_domain_attach_list() doesn't allow attaching in the single PM
-domain case, as it returns -EEXIST if "dev->pm_domain" is already
-assigned.
-
-Did that make sense to you?
+I will iterate the series tomorrow to fix this up.
 
 [...]
 
