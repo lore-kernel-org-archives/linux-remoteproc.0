@@ -1,186 +1,156 @@
-Received: from m-r1.th.seeweb.it (m-r1.th.seeweb.it [5.144.164.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1C2168AD
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Jan 2024 21:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id B6E5820145;
-	Tue,  2 Jan 2024 22:17:46 +0100 (CET)
-Date: Tue, 2 Jan 2024 22:17:45 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Alexey Minnekhanov <alexeymin@postmarketos.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
-	linux-usb@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: sdm630: Drop RPM bus clocks
-Message-ID: <6b3eetuyhg6y6wgqgxn2ruovjfrg24dbwsictlryealtwtnq6t@xk6nm3mxwbeh>
-References: <20230721-topic-rpm_clk_cleanup-v2-0-1e506593b1bd@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548471864E
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Jan 2024 10:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lvPu8raB"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dbdbe917d39so8381598276.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Jan 2024 02:11:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704276717; x=1704881517; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtpNPR2Ppv9oShH1PIo9qMmaypsTJ3RN+rG3DHT7G5I=;
+        b=lvPu8raB9OXaH9Rq2HLA+rH++8rvLT6marCexYl1nQfm3mgVlb9GxPHOC4u59vajdf
+         jwdCPCiu5XJlAoKE7vUcOw1MfjTlEAE0B3TYq8DP7aePJovek9QucTpmas1o49IjTLie
+         1G0R51E9yfGwuQvO74eg3o8usKAhPE4VuP9zj2Iqsy1cF+hWuBsSgc5sn4KdKwaAdCTm
+         +rurQjaoNhnN2t0NlfvE/7wjIclFRsHRVZI+HPlag+VA/NCHUjz194j4W6kH1ZSdnWUt
+         MkhbgzvLzo4R2ZHaUVByd/Ee4VhJFyFYetW7r3m3ks04y6Tbig8Y7THrssophOd9QdoG
+         nyIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704276717; x=1704881517;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PtpNPR2Ppv9oShH1PIo9qMmaypsTJ3RN+rG3DHT7G5I=;
+        b=NHwqIAoh9C+m4FxeBQp0cDN4Yiye8IlsCNw0DVFrRgqh/seeUXQBgIKN30cWYdOQ08
+         nosUfQ1tTcHqRvH5I4jUyf6HeHH0Kxx+1PTl17ZN2FgBX+sxBEaUL47ZjTfECta4E+Ly
+         Sps1tDehT5lS/i38c8El53u37xF+1Y77Ic3CACjljKQgQZvpA/fwBWYWMZNEGU8CagBx
+         S6PDQzyzhHN1O1cSVtqiGuJ/2pvyiCoW9D30Aw88Y/ked+yq7sM3mdVAACzzqJLNzYOz
+         OaA/OkO7H7AEeI9ZUiSkC/A56V0G3LeEArnK1bvhvnbEu+EHKY2/svZJcKuclYfnyHCr
+         TMEQ==
+X-Gm-Message-State: AOJu0YwT/5m4QwvCwqbwbPVMkhrGMRkes0CjffwGUIZo67BlXLEdRAuO
+	RkcFopo8wJ7PuZjMHjHvpJU96v62hobgoGs9KNEiPsq7BWCj4A==
+X-Google-Smtp-Source: AGHT+IF2XO36CiELCMwjscZCQ6v87hxA4fvw2qOPmqzgOjU5sNMJ0Lpcxm/J0S19SL0ftsJUFsetKsKZoTzl5VNNJmw=
+X-Received: by 2002:a25:ab44:0:b0:dbc:ad34:43a1 with SMTP id
+ u62-20020a25ab44000000b00dbcad3443a1mr8805456ybi.112.1704276717219; Wed, 03
+ Jan 2024 02:11:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230721-topic-rpm_clk_cleanup-v2-6-1e506593b1bd@linaro.org>
+References: <20231228114157.104822-1-ulf.hansson@linaro.org>
+ <20231228114157.104822-4-ulf.hansson@linaro.org> <ZZRY4rMjjkIsG3Ef@p14s>
+In-Reply-To: <ZZRY4rMjjkIsG3Ef@p14s>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 3 Jan 2024 11:11:19 +0100
+Message-ID: <CAPDyKFqgw_my76dicP9wuQAmF=kF=v5wGwxEF05wTQHdSvfuCA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] remoteproc: imx_rproc: Convert to dev_pm_domain_attach|detach_list()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	Sudeep Holla <sudeep.holla@arm.com>, Kevin Hilman <khilman@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Stephan Gerhold <stephan@gerhold.net>, Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
+	linux-media@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2023-09-12 15:31:44, Konrad Dybcio wrote:
-> These clocks are now handled from within the icc framework and are
-> no longer registered from within the CCF. Remove them.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Tue, 2 Jan 2024 at 19:41, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> Hi Ulf,
+>
+> I'm in agreement with the modifications done to imx_rproc.c and imx_dsp_rproc.c.
+> There is one thing I am ambivalent on, please see below.
+>
+> On Thu, Dec 28, 2023 at 12:41:55PM +0100, Ulf Hansson wrote:
+> > Let's avoid the boilerplate code to manage the multiple PM domain case, by
+> > converting into using dev_pm_domain_attach|detach_list().
+> >
+> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Cc: Bjorn Andersson <andersson@kernel.org>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> > Cc: <linux-remoteproc@vger.kernel.org>
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 73 +++++-----------------------------
+> >  1 file changed, 9 insertions(+), 64 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > index 8bb293b9f327..3161f14442bc 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -92,7 +92,6 @@ struct imx_rproc_mem {
+> >
+> >  static int imx_rproc_xtr_mbox_init(struct rproc *rproc);
+> >  static void imx_rproc_free_mbox(struct rproc *rproc);
+> > -static int imx_rproc_detach_pd(struct rproc *rproc);
+> >
+> >  struct imx_rproc {
+> >       struct device                   *dev;
+> > @@ -113,10 +112,8 @@ struct imx_rproc {
+> >       u32                             rproc_pt;       /* partition id */
+> >       u32                             rsrc_id;        /* resource id */
+> >       u32                             entry;          /* cpu start address */
+> > -     int                             num_pd;
+> >       u32                             core_index;
+> > -     struct device                   **pd_dev;
+> > -     struct device_link              **pd_dev_link;
+> > +     struct dev_pm_domain_list       *pd_list;
+> >  };
+> >
+> >  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
+> > @@ -853,7 +850,7 @@ static void imx_rproc_put_scu(struct rproc *rproc)
+> >               return;
+> >
+> >       if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id)) {
+> > -             imx_rproc_detach_pd(rproc);
+> > +             dev_pm_domain_detach_list(priv->pd_list);
+> >               return;
+> >       }
+> >
+> > @@ -880,72 +877,20 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+> >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> >  {
+> >       struct device *dev = priv->dev;
+> > -     int ret, i;
+> > -
+> > -     /*
+> > -      * If there is only one power-domain entry, the platform driver framework
+> > -      * will handle it, no need handle it in this driver.
+> > -      */
+> > -     priv->num_pd = of_count_phandle_with_args(dev->of_node, "power-domains",
+> > -                                               "#power-domain-cells");
+> > -     if (priv->num_pd <= 1)
+> > -             return 0;
+>
+> In function dev_pm_domain_attach_list(), this condition is "<= 0" rather than
+> "<= 1".  As such the association between the device and power domain will be
+> done twice when there is a single power domain, i.e once by the core and once in
+> dev_pm_domain_attach_list().
+>
+> I am assuming the runtime PM subsystem is smart enough to deal with this kind of
+> situation but would like a confirmation.
 
-This makes the USB and IOMMUs probe again on SDM630 devices like the Sony Xperia
-XA2 Ultra.  Thanks!
+Thanks for reviewing!
 
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+To cover the the single PM domain case, imx_rproc_attach_pd() is
+returning 0 when dev->pm_domain has been assigned. Moreover,
+dev_pm_domain_attach_list() doesn't allow attaching in the single PM
+domain case, as it returns -EEXIST if "dev->pm_domain" is already
+assigned.
 
-+cc Dmitry who was talking to me about this SoC.
+Did that make sense to you?
 
-> ---
->  arch/arm64/boot/dts/qcom/sdm630.dtsi | 49 +++++++-----------------------------
->  1 file changed, 9 insertions(+), 40 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> index ec6003212c4d..f11d2a07508c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> @@ -605,9 +605,6 @@ bimc: interconnect@1008000 {
->  			compatible = "qcom,sdm660-bimc";
->  			reg = <0x01008000 0x78000>;
->  			#interconnect-cells = <1>;
-> -			clock-names = "bus", "bus_a";
-> -			clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
-> -				 <&rpmcc RPM_SMD_BIMC_A_CLK>;
->  		};
->  
->  		restart@10ac000 {
-> @@ -619,28 +616,17 @@ cnoc: interconnect@1500000 {
->  			compatible = "qcom,sdm660-cnoc";
->  			reg = <0x01500000 0x10000>;
->  			#interconnect-cells = <1>;
-> -			clock-names = "bus", "bus_a";
-> -			clocks = <&rpmcc RPM_SMD_CNOC_CLK>,
-> -				 <&rpmcc RPM_SMD_CNOC_A_CLK>;
->  		};
->  
->  		snoc: interconnect@1626000 {
->  			compatible = "qcom,sdm660-snoc";
->  			reg = <0x01626000 0x7090>;
->  			#interconnect-cells = <1>;
-> -			clock-names = "bus", "bus_a";
-> -			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
-> -				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
->  		};
->  
->  		anoc2_smmu: iommu@16c0000 {
->  			compatible = "qcom,sdm630-smmu-v2", "qcom,smmu-v2";
->  			reg = <0x016c0000 0x40000>;
-> -
-> -			assigned-clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> -			assigned-clock-rates = <1000>;
-> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> -			clock-names = "bus";
->  			#global-interrupts = <2>;
->  			#iommu-cells = <1>;
->  
-> @@ -685,16 +671,12 @@ a2noc: interconnect@1704000 {
->  			compatible = "qcom,sdm660-a2noc";
->  			reg = <0x01704000 0xc100>;
->  			#interconnect-cells = <1>;
-> -			clock-names = "bus",
-> -				      "bus_a",
-> -				      "ipa",
-> +			clock-names = "ipa",
->  				      "ufs_axi",
->  				      "aggre2_ufs_axi",
->  				      "aggre2_usb3_axi",
->  				      "cfg_noc_usb2_axi";
-> -			clocks = <&rpmcc RPM_SMD_AGGR2_NOC_CLK>,
-> -				 <&rpmcc RPM_SMD_AGGR2_NOC_A_CLK>,
-> -				 <&rpmcc RPM_SMD_IPA_CLK>,
-> +			clocks = <&rpmcc RPM_SMD_IPA_CLK>,
->  				 <&gcc GCC_UFS_AXI_CLK>,
->  				 <&gcc GCC_AGGRE2_UFS_AXI_CLK>,
->  				 <&gcc GCC_AGGRE2_USB3_AXI_CLK>,
-> @@ -705,10 +687,8 @@ mnoc: interconnect@1745000 {
->  			compatible = "qcom,sdm660-mnoc";
->  			reg = <0x01745000 0xa010>;
->  			#interconnect-cells = <1>;
-> -			clock-names = "bus", "bus_a", "iface";
-> -			clocks = <&rpmcc RPM_SMD_MMSSNOC_AXI_CLK>,
-> -				 <&rpmcc RPM_SMD_MMSSNOC_AXI_CLK_A>,
-> -				 <&mmcc AHB_CLK_SRC>;
-> +			clock-names = "iface";
-> +			clocks = <&mmcc AHB_CLK_SRC>;
->  		};
->  
->  		tsens: thermal-sensor@10ae000 {
-> @@ -1228,20 +1208,16 @@ usb3: usb@a8f8800 {
->  				 <&gcc GCC_USB30_MASTER_CLK>,
->  				 <&gcc GCC_AGGRE2_USB3_AXI_CLK>,
->  				 <&gcc GCC_USB30_SLEEP_CLK>,
-> -				 <&gcc GCC_USB30_MOCK_UTMI_CLK>,
-> -				 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> +				 <&gcc GCC_USB30_MOCK_UTMI_CLK>;
->  			clock-names = "cfg_noc",
->  				      "core",
->  				      "iface",
->  				      "sleep",
-> -				      "mock_utmi",
-> -				      "bus";
-> +				      "mock_utmi";
->  
->  			assigned-clocks = <&gcc GCC_USB30_MOCK_UTMI_CLK>,
-> -					  <&gcc GCC_USB30_MASTER_CLK>,
-> -					  <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> -			assigned-clock-rates = <19200000>, <120000000>,
-> -					       <19200000>;
-> +					  <&gcc GCC_USB30_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <120000000>;
->  
->  			interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -2144,10 +2120,9 @@ mmss_smmu: iommu@cd00000 {
->  
->  			clocks = <&mmcc MNOC_AHB_CLK>,
->  				 <&mmcc BIMC_SMMU_AHB_CLK>,
-> -				 <&rpmcc RPM_SMD_MMSSNOC_AXI_CLK>,
->  				 <&mmcc BIMC_SMMU_AXI_CLK>;
->  			clock-names = "iface-mm", "iface-smmu",
-> -				      "bus-mm", "bus-smmu";
-> +				      "bus-smmu";
->  			#global-interrupts = <2>;
->  			#iommu-cells = <1>;
->  
-> @@ -2264,12 +2239,6 @@ gnoc: interconnect@17900000 {
->  			compatible = "qcom,sdm660-gnoc";
->  			reg = <0x17900000 0xe000>;
->  			#interconnect-cells = <1>;
-> -			/*
-> -			 * This one apparently features no clocks,
-> -			 * so let's not mess with the driver needlessly
-> -			 */
-> -			clock-names = "bus", "bus_a";
-> -			clocks = <&xo_board>, <&xo_board>;
->  		};
->  
->  		apcs_glb: mailbox@17911000 {
-> 
-> -- 
-> 2.42.0
-> 
+[...]
+
+Kind regards
+Uffe
