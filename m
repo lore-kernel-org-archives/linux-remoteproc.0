@@ -1,121 +1,106 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C971DDE2;
-	Wed,  3 Jan 2024 22:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9540208A3;
+	Thu,  4 Jan 2024 09:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YczjQzQh"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=csxk1TsGY1S/zerReXS1goHXwSAvaQwP3tr8KlVlpH8Q5r6s9YkoSzv0S5bJ3G+ZozCft6xYG2ARTU1roWMIE8MHuaMZ/u2NtzSUXRQAWHIBJtXtznxBehnEY0OJZOt81HEfxoAMr0KVhggYAnZYDsmRjLEYudYzilYJ4mRKPMlx8oxFqDgGkzf45/k+3Kb+v3xldqfK5UJKH/dxzRXYxs1CkdGRarAgn+8kx2v7rIAsMpWZLQnSG+y6lQUtb+gofHJyoM1toM8ljm2HvWSHw36zl2jR84G0qn/MmVFDczFHRik5ktWHizhO0Ov9CS/BQuP1hHIfZXFLqbJt4Hj7RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0wKfNZqTs6xaT4BpSnhYNxtHxjHm8kPb8MoW/KDKyuA=;
- b=BvMJ7cWW65tUmM0u/h6YsCnaBATa4KgWNKaOqwx/4pbin957YbV6xBeFr1IQq2lZ72xXv096+UgGKFQbEHABarLNL61YW/+PV0PGXvzChRut5UYDP2s7vooBudjaNGIxpsyFnXmL/msuRggKSEU3F0kXOXfspwumKOy6/3qGSZESs6or3OWE159ie5WT36TtBRcBkV6rxcIMU/x2B469oNv7dvlhr5yqFVA52hJAMYjKkGjitxwIfxkW9evVQ2d3vEwOhLvzv3OlxuZg/qeibhPemWFsa4kYb7dTsv2DSWlZzfWUuHp1/4q3hEXW+pbtar93+GQGXRHbe1sHZt4QtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0wKfNZqTs6xaT4BpSnhYNxtHxjHm8kPb8MoW/KDKyuA=;
- b=YczjQzQh7GJNTgQwb+Llbc/jxBwQzgpbSP+ikRwBPS1RLq2f6grAlAL2OdG8poMUAdr6p1kKINE9ArDZsk3HVeOwk3Nv9Cium64rh/wrmElVClyC3SnQQbbrJsm0iidsHXBMhhrU8ZBj052plN51USL2miMX/Xau4SaR1JvfoSo=
-Received: from BY5PR03CA0006.namprd03.prod.outlook.com (2603:10b6:a03:1e0::16)
- by BL3PR12MB6545.namprd12.prod.outlook.com (2603:10b6:208:38c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.13; Wed, 3 Jan
- 2024 22:12:07 +0000
-Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com
- (2603:10b6:a03:1e0:cafe::19) by BY5PR03CA0006.outlook.office365.com
- (2603:10b6:a03:1e0::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.22 via Frontend
- Transport; Wed, 3 Jan 2024 22:12:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7159.9 via Frontend Transport; Wed, 3 Jan 2024 22:12:06 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 3 Jan
- 2024 16:12:01 -0600
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
- Transport; Wed, 3 Jan 2024 16:12:01 -0600
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>, Tarak Reddy <tarak.reddy@amd.com>
-Subject: [PATCH v4 2/2] remoteproc: enhance rproc_put() for clusters
-Date: Wed, 3 Jan 2024 14:11:25 -0800
-Message-ID: <20240103221124.3063683-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240103221124.3063683-1-tanmay.shah@amd.com>
-References: <20240103221124.3063683-1-tanmay.shah@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPu7cp9c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADABC433C8;
+	Thu,  4 Jan 2024 09:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704360230;
+	bh=2fYZ6vaziMzDK3ZftjJ0AmNeenr6pb42FNCCdQQvYiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPu7cp9cxtIIG1PRxcIJdOhLA6FUGpW7QzSfbPkf0PueMHM+lJzeF3FwQK9trx81U
+	 LRkdE9B4uqDF+PPyXUfVdL85no+50qV16hVtknSb6FBRAUH8TDkvFdZ0HwlU8S9/aM
+	 tmfK7ar37/9KzWV4+cFvWt7adzUSWRVNl3YNOe7DpdV+7LLEpT1JG3sCML5/GyhLzm
+	 H+QrG7G+Rf8tXF27aP5LjSTUA5DW8RpRJvjtUL7dmmZ4XEwGdSCy7afQcI0ksORauL
+	 oqz6YFwnK2dd3X8gEKZgrx2WSJRm8BbaicGYSDNhcUf18L86mWeiEekGaDvkwriE8e
+	 ZHSp50zPl2kNg==
+Date: Thu, 4 Jan 2024 09:23:44 +0000
+From: Simon Horman <horms@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+	andersson@kernel.org, mathieu.poirier@linaro.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH V1] net: qrtr: ns: Ignore ENODEV failures in ns
+Message-ID: <20240104092344.GE31813@kernel.org>
+References: <1703153211-3717-1-git-send-email-quic_sarannya@quicinc.com>
+ <20231223135333.GA201037@kernel.org>
+ <3e017f77-87dd-78e1-321d-90c3e57a68d9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|BL3PR12MB6545:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8436b88-ccbb-4837-914d-08dc0ca905f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	S9dBPXlGcq/TNvii/Zpq3gNQq5HHsB2dAxtBa8GJ1iT41ZQqoay5JTKfKyw5JwWz/1zILt8TwCw0OT/agb2GglxkBnGTtby1DKwN9P69ImZizBfUhOcQ2nxe9TlXxgEEkTImDWAMDHoorKgSWJBGv9+Y92CNKMNkcdK8C8vEmPTKrN3U2FwkYGdQITa0S84I2Ravz+I6SSpNB1aaqavCt2f8GqXvVP0J4gye3SLUhKcr49hcMCg4jpMnTTNMlCVvakXiBdkcmbFWVCLexOt8EnGL0SVHcJwWlJXv2ZpfFAj1mF9aq1JdQZxobIUwn4M9ObRmreBx853/dh/b72NDtINvt2/rRA7ZOOkcGXIMU5/32OHGhwsHgjVEy0b+6dBkeZ4Gnr328bZGrwvokfM/f/r2ztluoziGaTcUZotO7an+tNnc7LIWL/1i47QhZ0emvKXP1fivdoMUNc1+fzVQxOJJ61kS7cNXAE3BqmCulDPFNIsfjqFCTCiUYmbZazzIszkf5ADi7RM9uRfFcXMSbpMCmB65EuGKCWhezsdobHxvs3QpwS0rD0lY4uTAQ95jWNlkhhbsV1ZxnAdxELP3lLRmWo94VgN8RRvHqJfxYhBFn9OA4X29ckhIhtSsrdtdGPYcT/CKhALMU3myWeB606Kr6tyP8NGAybyJkwVsl1+gLVkAqFWgodoTj63f1kurV4kGSSlNDdqAM9e8HQEVPN/hN3qlhsl4KYfesbPyY+awAiroggZKt74XGJxv3bHeARDpBm5wiiVEL93jyK7mWw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(376002)(346002)(136003)(396003)(230922051799003)(64100799003)(451199024)(1800799012)(82310400011)(186009)(36840700001)(40470700004)(46966006)(86362001)(36756003)(356005)(81166007)(478600001)(6666004)(70206006)(70586007)(110136005)(54906003)(336012)(26005)(1076003)(2616005)(426003)(44832011)(4744005)(2906002)(5660300002)(8676002)(8936002)(316002)(4326008)(36860700001)(82740400003)(40480700001)(83380400001)(40460700003)(47076005)(41300700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2024 22:12:06.6762
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8436b88-ccbb-4837-914d-08dc0ca905f8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6545
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e017f77-87dd-78e1-321d-90c3e57a68d9@quicinc.com>
 
-This patch enhances rproc_put() to support remoteproc clusters
-with multiple child nodes as in rproc_get_by_phandle().
+On Tue, Dec 26, 2023 at 04:20:03PM -0800, Chris Lew wrote:
+> 
+> 
+> On 12/23/2023 5:56 AM, Simon Horman wrote:
+> > [Dropped bjorn.andersson@kernel.org, as the correct address seems
+> >   to be andersson@kernel.org, which is already in the CC list.
+> >   kernel.org rejected sending this email without that update.]
+> > 
+> > On Thu, Dec 21, 2023 at 03:36:50PM +0530, Sarannya S wrote:
+> > > From: Chris Lew <quic_clew@quicinc.com>
+> > > 
+> > > Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
+> > > indicate that either the local port has been closed or the remote has
+> > > gone down. Neither of these scenarios are fatal and will eventually be
+> > > handled through packets that are later queued on the control port.
+> > > 
+> > > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> > > Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
+> > > ---
+> > >   net/qrtr/ns.c | 11 +++++++----
+> > >   1 file changed, 7 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+> > > index abb0c70..8234339 100644
+> > > --- a/net/qrtr/ns.c
+> > > +++ b/net/qrtr/ns.c
+> > > @@ -157,7 +157,7 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
+> > >   	msg.msg_namelen = sizeof(*dest);
+> > >   	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
+> > > -	if (ret < 0)
+> > > +	if (ret < 0 && ret != -ENODEV)
+> > >   		pr_err("failed to announce del service\n");
+> > >   	return ret;
+> > 
+> > Hi,
+> > 
+> > The caller of service_announce_del() ignores it's return value.
+> > So the only action on error is the pr_err() call above, and so
+> > with this patch -ENODEV is indeed ignored.
+> > 
+> > However, I wonder if it would make things clearer to the reader (me?)
+> > if the return type of service_announce_del was updated void. Because
+> > as things stand -ENODEV may be returned, which implies something might
+> > handle that, even though it doe not.
+> > 
+> > The above notwithstanding, this change looks good to me.
+> > 
+> > Reviewed-by: Simon Horman <horms@kernel.org>
+> > 
+> > ...
+> 
+> Hi Simon, thanks for the review and suggestion. We weren't sure whether we
+> should change the function prototype on these patches on the chance that
+> there will be something that listens and handles this in the future. I think
+> it's a good idea to change it to void and we can change it back if there is
+> such a usecase in the future.
 
-Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
- drivers/remoteproc/remoteproc_core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Hi Chris,
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0b3b34085e2f..f276956f2c5c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2554,7 +2554,11 @@ EXPORT_SYMBOL(rproc_free);
-  */
- void rproc_put(struct rproc *rproc)
- {
--	module_put(rproc->dev.parent->driver->owner);
-+	if (rproc->dev.parent->driver)
-+		module_put(rproc->dev.parent->driver->owner);
-+	else
-+		module_put(rproc->dev.parent->parent->driver->owner);
-+
- 	put_device(&rproc->dev);
- }
- EXPORT_SYMBOL(rproc_put);
--- 
-2.25.1
-
+yes, I think that would be a good approach.
