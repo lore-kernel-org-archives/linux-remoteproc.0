@@ -1,46 +1,47 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A32D321BF
-	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Jan 2024 16:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E91E328B5
+	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Jan 2024 16:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fJlfLXum"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-50e5a9bcec9so2191175e87.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Jan 2024 08:01:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WrNEsD2k"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50e7c6e3c63so1901671e87.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Jan 2024 08:01:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704470469; x=1705075269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=38V7OcbMS6BvfR/Kfa+Il7csYOikckmVIMPsPO2mrzc=;
-        b=fJlfLXumnbjgA414C++MQNqKxdkH44NbYoSiS9Z5CAyw+quyTvGAetTALDY9ma58At
-         1fLn6ZTPqKpmW3NC8CqORI1Lm2kw86STv6u2xFQNLw/lRzLn3a6v1TB3DFGv3rcKN+cL
-         4psuVWg4ouN3acZzD0E5Z77Dkx0AHZpmXa27ek4+P2zxCH2MnTH1QeGUbvCH0PnMeZb+
-         DSgbGO+57vpTY6KdAkYHLVt9mvLJq6rnXPzH2LLGh3xlyeygmGCZeXOODFdkVV8iH8w9
-         ptwjvbqfU5Qux2qbobg/KQoBZ9/ZsFJAAT7mdesYEfUIxEeL9CkQdyqYr7JPv5uoIt5G
-         PLIA==
+        d=linaro.org; s=google; t=1704470471; x=1705075271; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wNI1Oz48vQp4Hm9jFsOT4f7J+mpAOH6qfd1BBsjKsaA=;
+        b=WrNEsD2k5FW4xLsue5ifzfhDU/Mz0SVJB070NPGwigme7y9tnzyTM2omqRxF9Q+o5c
+         dgNYNMI/I19XKvH2J2gtisTqsk6LcL+xxuXkoiqKSBYnBOH2YLm/ti/7Y9oEpaXbbjqe
+         C1L0sUJqbdsSTS02xgc+QPKHH8WYNC8FaihwAqLIxmZDY/1l3Zjl7DmDBQ97d3E5J7TF
+         T5yPPzU8SRJaPXvQztXyNDHUHD/2T6thd9fb/uZQJT+Iu9fprEgoNjIQ0v7VXU7aH3E6
+         gZm/pr03AtuxywmKa5nKFD4GLJJ82HsssgXq6CP+8QMIeBwmXCWx68hPMT7KaNpktf3a
+         SXmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704470469; x=1705075269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38V7OcbMS6BvfR/Kfa+Il7csYOikckmVIMPsPO2mrzc=;
-        b=k+iNufFpNzQ9ZyvjZdIE1AcgAdvHSBBxfuNH63mJeEgdABSGBA8WaRe5qq7vMPUjh6
-         KgS9JL15mXEDlJI45bO1VXJR2R2iP3/1QU/0ERMRlEACq1be0ek0NfbHwzaWETyFUJ/b
-         YgAovfzkb/AcmXSX9fTfYOmv2L7hZODYPDBsuDrGG3F1ChYmbPF1N/l/bJk36wvJ863K
-         bJ123dnAlTML0XmFN1Vzeol6Wa1xyw8NaftH3yzTXnVSF9WmliUpxOdVzSBJW/Jp1NzY
-         IsXDKlh8/h4ywwjkBZjf6A6mJFCsb1BJnjiuzZ/NIvh08IQK8cfQW2rdks91BTbaa0zw
-         SiJg==
-X-Gm-Message-State: AOJu0YyBgUlJbxhpQAD4VGp89tP+hIkjfD/j8K+AjKMouVT2sxidoavv
-	hQboZxVc9NB9ezOO5VxGwH6Qw1pDGBPMqg==
-X-Google-Smtp-Source: AGHT+IFh9YVPZuE9tKS0AFwt3Ec/+vDaZEOHyXj2dDkN6g3GOJ4V2yIMVU7V8xUNC8GjeZWedVH3Zw==
-X-Received: by 2002:a05:6512:2315:b0:50e:6ec3:6a42 with SMTP id o21-20020a056512231500b0050e6ec36a42mr1573154lfu.126.1704470469081;
-        Fri, 05 Jan 2024 08:01:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704470471; x=1705075271;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wNI1Oz48vQp4Hm9jFsOT4f7J+mpAOH6qfd1BBsjKsaA=;
+        b=lWHhtpnwXtIpRsBcUtFsg/aM/XKsIZR1aubBNaCBtHa64FXArvuW0IxudZ6B1IQ3dU
+         sB4i4E8tyg7v/ixv8+B3WJrEFrKaqFHUq7o91x4Pc27VkpzMGnRuAz2/N7ot2Lq8F9y7
+         5Pmvf+9WfyDQe85w5li0/a9WThAgB46sZbZlSb+mHog4S8Rx5ego7gJx8hBjge3/kMI6
+         zGUZJISKCHk5xevcwY9c43hZFGzqTETNcS+9ClnT2VwE3fMt9mYlpzdVEQn7v47BMnM8
+         JUrWaGrNuC1gcSLtzFTby/eEQAiEIffRakMUYstW8azqimUAodvadxNiJBh4Li1DG7D9
+         t6hw==
+X-Gm-Message-State: AOJu0YwdFB9kNOmDWSr4XhfqJo7qY3/5oXb2m/REoXXYXMMwCg/hNvOX
+	KI50615rEEeL+1Oey1nCwUc0aADn6vJehA==
+X-Google-Smtp-Source: AGHT+IFyphGz0Q6uyDmpcy3w7sNGqS+rbaFWXqKPDqcO5gErHcQWSgNAzPhrs714QaypH8/gnwBgJg==
+X-Received: by 2002:a05:6512:75:b0:50e:7bbc:b678 with SMTP id i21-20020a056512007500b0050e7bbcb678mr619227lfo.17.1704470471425;
+        Fri, 05 Jan 2024 08:01:11 -0800 (PST)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id n5-20020a056512310500b0050e76978861sm262094lfb.277.2024.01.05.08.01.07
+        by smtp.gmail.com with ESMTPSA id n5-20020a056512310500b0050e76978861sm262094lfb.277.2024.01.05.08.01.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jan 2024 08:01:08 -0800 (PST)
+        Fri, 05 Jan 2024 08:01:10 -0800 (PST)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rafael@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -59,10 +60,12 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-remoteproc@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [PATCH v2 0/5] PM: domains: Add helpers for multi PM domains to avoid open-coding
-Date: Fri,  5 Jan 2024 17:00:58 +0100
-Message-Id: <20240105160103.183092-1-ulf.hansson@linaro.org>
+Subject: [PATCH v2 1/5] PM: domains: Add helper functions to attach/detach multiple PM domains
+Date: Fri,  5 Jan 2024 17:00:59 +0100
+Message-Id: <20240105160103.183092-2-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240105160103.183092-1-ulf.hansson@linaro.org>
+References: <20240105160103.183092-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,60 +74,244 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Updates in v2:
-	- Ccing Daniel Baluta and Iuliana Prodan the NXP remoteproc patches to
-	requests help with testing.
-	- Fixed NULL pointer bug in patch1, pointed out by Nikunj.
-	- Added some tested/reviewed-by tags.
+Attaching/detaching of a device to multiple PM domains has started to
+become a common operation for many drivers, typically during ->probe() and
+->remove(). In most cases, this has lead to lots of boilerplate code in the
+drivers.
 
+To fixup up the situation, let's introduce a pair of helper functions,
+dev_pm_domain_attach|detach_list(), that driver can use instead of the
+open-coding. Note that, it seems reasonable to limit the support for these
+helpers to DT based platforms, at it's the only valid use case for now.
 
-Attaching/detaching of a device to multiple PM domains has started to become a
-common operation for many drivers, typically during ->probe() and ->remove().
-In most cases, this has lead to lots of boilerplate code in the drivers.
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-This series adds a pair of helper functions to manage the attach/detach of a
-device to its multiple PM domains. Moreover, a couple of drivers have been
-converted to use the new helpers as a proof of concept.
+Changes in v2:
+	- Fix NULL pointer bug pointed out by Nikunj.
 
-Note 1)
-The changes in the drivers have only been compile tested, while the helpers
-have been tested along with a couple of local dummy drivers that I have hacked
-up to model both genpd providers and genpd consumers.
+---
+ drivers/base/power/common.c | 134 ++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  38 ++++++++++
+ 2 files changed, 172 insertions(+)
 
-Note 2)
-I was struggling to make up mind if we should have a separate helper to attach
-all available power-domains described in DT, rather than providing "NULL" to the
-dev_pm_domain_attach_list(). I decided not to, but please let me know if you
-prefer the other option.
-
-Note 3)
-For OPP integration, as a follow up I am striving to make the
-dev_pm_opp_attach_genpd() redundant. Instead I think we should move towards
-using dev_pm_opp_set_config()->_opp_set_required_devs(), which would allow us to
-use the helpers that $subject series is adding.
-
-Kind regards
-Ulf Hansson
-
-
-Ulf Hansson (5):
-  PM: domains: Add helper functions to attach/detach multiple PM domains
-  remoteproc: imx_dsp_rproc: Convert to
-    dev_pm_domain_attach|detach_list()
-  remoteproc: imx_rproc: Convert to dev_pm_domain_attach|detach_list()
-  remoteproc: qcom_q6v5_adsp: Convert to
-    dev_pm_domain_attach|detach_list()
-  media: venus: Convert to dev_pm_domain_attach|detach_list() for vcodec
-
- drivers/base/power/common.c                   | 134 +++++++++++++++
- drivers/media/platform/qcom/venus/core.c      |  12 +-
- drivers/media/platform/qcom/venus/core.h      |   7 +-
- .../media/platform/qcom/venus/pm_helpers.c    |  48 ++----
- drivers/remoteproc/imx_dsp_rproc.c            |  82 +--------
- drivers/remoteproc/imx_rproc.c                |  73 +-------
- drivers/remoteproc/qcom_q6v5_adsp.c           | 160 ++++++++----------
- include/linux/pm_domain.h                     |  38 +++++
- 8 files changed, 289 insertions(+), 265 deletions(-)
-
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index 44ec20918a4d..327d168dd37a 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -167,6 +167,115 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_name);
+ 
++/**
++ * dev_pm_domain_attach_list - Associate a device with its PM domains.
++ * @dev: The device used to lookup the PM domains for.
++ * @data: The data used for attaching to the PM domains.
++ * @list: An out-parameter with an allocated list of attached PM domains.
++ *
++ * This function helps to attach a device to its multiple PM domains. The
++ * caller, which is typically a driver's probe function, may provide a list of
++ * names for the PM domains that we should try to attach the device to, but it
++ * may also provide an empty list, in case the attach should be done for all of
++ * the available PM domains.
++ *
++ * Callers must ensure proper synchronization of this function with power
++ * management callbacks.
++ *
++ * Returns the number of attached PM domains or a negative error code in case of
++ * a failure. Note that, to detach the list of PM domains, the driver shall call
++ * dev_pm_domain_detach_list(), typically during the remove phase.
++ */
++int dev_pm_domain_attach_list(struct device *dev,
++			      const struct dev_pm_domain_attach_data *data,
++			      struct dev_pm_domain_list **list)
++{
++	struct device_node *np = dev->of_node;
++	struct dev_pm_domain_list *pds;
++	struct device *pd_dev = NULL;
++	int ret, i, num_pds = 0;
++	bool by_id = true;
++	u32 pd_flags = data ? data->pd_flags : 0;
++	u32 link_flags = pd_flags & PD_FLAG_NO_DEV_LINK ? 0 :
++			DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
++
++	if (dev->pm_domain)
++		return -EEXIST;
++
++	/* For now this is limited to OF based platforms. */
++	if (!np)
++		return 0;
++
++	if (data && data->pd_names) {
++		num_pds = data->num_pd_names;
++		by_id = false;
++	} else {
++		num_pds = of_count_phandle_with_args(np, "power-domains",
++						     "#power-domain-cells");
++	}
++
++	if (num_pds <= 0)
++		return 0;
++
++	pds = devm_kzalloc(dev, sizeof(*pds), GFP_KERNEL);
++	if (!pds)
++		return -ENOMEM;
++
++	pds->pd_devs = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_devs),
++				    GFP_KERNEL);
++	if (!pds->pd_devs)
++		return -ENOMEM;
++
++	pds->pd_links = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_links),
++				     GFP_KERNEL);
++	if (!pds->pd_links)
++		return -ENOMEM;
++
++	if (link_flags && pd_flags & PD_FLAG_DEV_LINK_ON)
++		link_flags |= DL_FLAG_RPM_ACTIVE;
++
++	for (i = 0; i < num_pds; i++) {
++		if (by_id)
++			pd_dev = dev_pm_domain_attach_by_id(dev, i);
++		else
++			pd_dev = dev_pm_domain_attach_by_name(dev,
++							data->pd_names[i]);
++		if (IS_ERR_OR_NULL(pd_dev)) {
++			ret = pd_dev ? PTR_ERR(pd_dev) : -ENODEV;
++			goto err_attach;
++		}
++
++		if (link_flags) {
++			struct device_link *link;
++
++			link = device_link_add(dev, pd_dev, link_flags);
++			if (!link) {
++				ret = -ENODEV;
++				goto err_link;
++			}
++
++			pds->pd_links[i] = link;
++		}
++
++		pds->pd_devs[i] = pd_dev;
++	}
++
++	pds->num_pds = num_pds;
++	*list = pds;
++	return num_pds;
++
++err_link:
++	dev_pm_domain_detach(pd_dev, true);
++err_attach:
++	while (--i >= 0) {
++		if (pds->pd_links[i])
++			device_link_del(pds->pd_links[i]);
++		dev_pm_domain_detach(pds->pd_devs[i], true);
++	}
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
++
+ /**
+  * dev_pm_domain_detach - Detach a device from its PM domain.
+  * @dev: Device to detach.
+@@ -187,6 +296,31 @@ void dev_pm_domain_detach(struct device *dev, bool power_off)
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_detach);
+ 
++/**
++ * dev_pm_domain_detach_list - Detach a list of PM domains.
++ * @list: The list of PM domains to detach.
++ *
++ * This function reverse the actions from dev_pm_domain_attach_list().
++ * Typically it should be invoked during the remove phase from drivers.
++ *
++ * Callers must ensure proper synchronization of this function with power
++ * management callbacks.
++ */
++void dev_pm_domain_detach_list(struct dev_pm_domain_list *list)
++{
++	int i;
++
++	if (!list)
++		return;
++
++	for (i = 0; i < list->num_pds; i++) {
++		if (list->pd_links[i])
++			device_link_del(list->pd_links[i]);
++		dev_pm_domain_detach(list->pd_devs[i], true);
++	}
++}
++EXPORT_SYMBOL_GPL(dev_pm_domain_detach_list);
++
+ /**
+  * dev_pm_domain_start - Start the device through its PM domain.
+  * @dev: Device to start.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 34663d0d5c55..6b71fb69c349 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -19,6 +19,33 @@
+ #include <linux/cpumask.h>
+ #include <linux/time64.h>
+ 
++/*
++ * Flags to control the behaviour when attaching a device to its PM domains.
++ *
++ * PD_FLAG_NO_DEV_LINK:		As the default behaviour creates a device-link
++ *				for every PM domain that gets attached, this
++ *				flag can be used to skip that.
++ *
++ * PD_FLAG_DEV_LINK_ON:		Add the DL_FLAG_RPM_ACTIVE to power-on the
++ *				supplier and its PM domain when creating the
++ *				device-links.
++ *
++ */
++#define PD_FLAG_NO_DEV_LINK		BIT(0)
++#define PD_FLAG_DEV_LINK_ON		BIT(1)
++
++struct dev_pm_domain_attach_data {
++	const char * const *pd_names;
++	const u32 num_pd_names;
++	const u32 pd_flags;
++};
++
++struct dev_pm_domain_list {
++	struct device **pd_devs;
++	struct device_link **pd_links;
++	u32 num_pds;
++};
++
+ /*
+  * Flags to control the behaviour of a genpd.
+  *
+@@ -432,7 +459,11 @@ struct device *dev_pm_domain_attach_by_id(struct device *dev,
+ 					  unsigned int index);
+ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ 					    const char *name);
++int dev_pm_domain_attach_list(struct device *dev,
++			      const struct dev_pm_domain_attach_data *data,
++			      struct dev_pm_domain_list **list);
+ void dev_pm_domain_detach(struct device *dev, bool power_off);
++void dev_pm_domain_detach_list(struct dev_pm_domain_list *list);
+ int dev_pm_domain_start(struct device *dev);
+ void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+ int dev_pm_domain_set_performance_state(struct device *dev, unsigned int state);
+@@ -451,7 +482,14 @@ static inline struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ {
+ 	return NULL;
+ }
++static inline int dev_pm_domain_attach_list(struct device *dev,
++				const struct dev_pm_domain_attach_data *data,
++				struct dev_pm_domain_list **list)
++{
++	return 0;
++}
+ static inline void dev_pm_domain_detach(struct device *dev, bool power_off) {}
++static inline void dev_pm_domain_detach_list(struct dev_pm_domain_list *list) {}
+ static inline int dev_pm_domain_start(struct device *dev)
+ {
+ 	return 0;
 -- 
 2.34.1
+
