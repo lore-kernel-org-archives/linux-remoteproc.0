@@ -1,315 +1,87 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954522E858
-	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Jan 2024 16:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5522511707;
+	Mon,  8 Jan 2024 08:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XAE5DJyC"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-50eac018059so2211330e87.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Jan 2024 08:01:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjMjyi/h"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-55719cdc0e1so1653692a12.1;
+        Mon, 08 Jan 2024 00:44:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704470491; x=1705075291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1704703449; x=1705308249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hfaPY3yQfoH2pfubd1hE0qyxl2OsnhSkHMvbF5d+3SA=;
-        b=XAE5DJyC9E+rrEowooFFOx7nmKW2PremJaCQKWX0YZTMThEkbcEmUFklJMJrSs23Kz
-         pAlme/dL4ExxbkIE3Tu2ccjY6YbF6kIPT2M08D+H0v+AMu8m5NO1I09KqcppYWcKLJSr
-         +litKAuEFX3ZOfHFZjJSVB2XiEKUR2YbJhI616L8XXRClWeeltKb5h1c9+6ptn/VWT5a
-         eYeEgavlR7J6GmeAGe/C+KSkqMnMZEKSCfupHXbOrtUhmBBOu+HeQuT8x6gL066bnzmI
-         jKnGhP0qRer7gTi0hW+bxbnWjfQelXcLh9BghvMLg48vEynzeqekUjIe43/QfCddgjHF
-         3y9Q==
+        bh=C+9Jg5BQ8JEMURJ/pr1DweiURe6hKi7epJYXXDt7ils=;
+        b=OjMjyi/hAOgXQa3ydKANgynspXjqte/Wt+jTWHSuq3OuaIrICzQaA4nPy4f45eNXI4
+         aghXa7vLs/YCJZEAHO8q4iHWefbSysC9imCS6ReKVrtLaq7Z5ZbR5gQYee/dxh+Gslqw
+         OYG3uUDYsjyg3HtRA8cswdtvrj1tGI88fk/AsleL/fDlYKKUMFQK07rcJrStK+lfZdmZ
+         a14W/UF8fklEXRgcMiR/lPu2SkbGojRvUKHq7vZ6G0kgB1p7mkJMMbwRywoTGkpnzKHR
+         K1qJVptrnJKqcZtjle9Tkgs9g81iQP80UBbWlKHJ30l1j+kgshl7MSPAAun4aLfmdSTI
+         ASvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704470491; x=1705075291;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1704703449; x=1705308249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hfaPY3yQfoH2pfubd1hE0qyxl2OsnhSkHMvbF5d+3SA=;
-        b=Eu07qBsPzZGuwUsHKktwS3GgNwvGZugCBKZEj88DM7QSIWXgH7CrIy/sgCgJhP9/GT
-         y98zkLZBTjlEGANKcNGBQCT3LogdvaJPXagbM0AO+mop1bEAnvUvrcKM6Pd6mETRNpsb
-         p/ZgI6RPYwAbyr/sw2kgbWAkLP/OuYIjz+J1+TfEH3+7U6JFCzCyXAONoCJbfV7n9dyU
-         WogTl1/isjTOiH+gYvnDPk6/KwzARLBPUVuEXXDl4j9Jj1Te8kHgFK++9MMaaUKUgYZa
-         seY04VR3NAsdwcoMqVoVakNO0TEHR21i2r90d6tX/SqDj+yDs7pOOEAqSJWKERt5qslR
-         JNbQ==
-X-Gm-Message-State: AOJu0YzFtf2J6RuDdECX1d0NITh+zzKzn6mJQmnEyhQOUme8LqMjfbyn
-	OQplkdxowk3EOhnPeC5iduHJXr0CI+7fYw==
-X-Google-Smtp-Source: AGHT+IERdn5J2WMksCV2xwOZSB4UlNaSC9hjgX2okCC+u7HZvOM32yjjwGik6ASHsLufYsrr/E57Ww==
-X-Received: by 2002:ac2:46e1:0:b0:50e:80d3:4fd4 with SMTP id q1-20020ac246e1000000b0050e80d34fd4mr1191950lfo.51.1704470490597;
-        Fri, 05 Jan 2024 08:01:30 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id n5-20020a056512310500b0050e76978861sm262094lfb.277.2024.01.05.08.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jan 2024 08:01:23 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ben Horgan <Ben.Horgan@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Subject: [PATCH v2 5/5] media: venus: Convert to dev_pm_domain_attach|detach_list() for vcodec
-Date: Fri,  5 Jan 2024 17:01:03 +0100
-Message-Id: <20240105160103.183092-6-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240105160103.183092-1-ulf.hansson@linaro.org>
-References: <20240105160103.183092-1-ulf.hansson@linaro.org>
+        bh=C+9Jg5BQ8JEMURJ/pr1DweiURe6hKi7epJYXXDt7ils=;
+        b=XDx4OMnDHhuNZBTI3747cmS07XDFOXIKCq6Idi3YuOFmdZt4SMeQN3iG2FzvSKLz8I
+         vLwfVKOLslMQnYGWHjOvnFDRz9J524EvNVT5XRYhHM9ihWkIJ4RhezSKSUGrxeCIJsSl
+         R3F6Jy3fXXXPEDRp1qSolXJzpdDezB5+TZ7Bwx3usU0q9qWcv36AnPKVHDYhvbbTrvHr
+         aUcH41nIGHeD9QayK3hWNRWGY0gM5y+CYP/5ppX2IQTmuK7kr1wWv88ZBeY0/hTY+8Va
+         oOD2ueiJhhLMYmvvmiZ+yjB7l05EVp+GrdCT+h/9EDw9fpkK7wcZcX7wgTfYllWwgdzj
+         aRvg==
+X-Gm-Message-State: AOJu0YxEVDmFEpogKf3zkZszQlY4DIbboCdD2XRSp1n57nAdPP8WrHZH
+	S92ILxv41mN8n26rnWMr56VTsroDRgiwhfjhfUBDdJxW9kvLhA==
+X-Google-Smtp-Source: AGHT+IEE+qvQ/6JJsWRaEgpjGbyMFDbpPtmWY5aS32yvLL+ChLsU5FOTB0/ndsmpPxRh6DeBFuXUm//X2iyjx8c7LMI=
+X-Received: by 2002:a17:906:97c7:b0:a2a:767f:29cd with SMTP id
+ ef7-20020a17090697c700b00a2a767f29cdmr624303ejb.75.1704703448926; Mon, 08 Jan
+ 2024 00:44:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240105160103.183092-1-ulf.hansson@linaro.org>
+In-Reply-To: <20240105160103.183092-1-ulf.hansson@linaro.org>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 8 Jan 2024 10:43:57 +0200
+Message-ID: <CAEnQRZB16QDJAqkQaLZ6he8eTQLcWzAFXivYt9Gj3CJns-G-NA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] PM: domains: Add helpers for multi PM domains to
+ avoid open-coding
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	Sudeep Holla <sudeep.holla@arm.com>, Kevin Hilman <khilman@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Stephan Gerhold <stephan@gerhold.net>, Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
+	linux-media@vger.kernel.org, Iuliana Prodan <iuliana.prodan@nxp.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let's avoid some of the boilerplate code to manage the vcodec PM domains,
-by converting into using dev_pm_domain_attach|detach_list().
+On Fri, Jan 5, 2024 at 6:02=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
+ wrote:
+>
+> Updates in v2:
+>         - Ccing Daniel Baluta and Iuliana Prodan the NXP remoteproc patch=
+es to
+>         requests help with testing.
+>         - Fixed NULL pointer bug in patch1, pointed out by Nikunj.
+>         - Added some tested/reviewed-by tags.
 
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: <linux-media@vger.kernel.org>
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+Thanks for doing this Ulf. I remember that I've tried introducing the
+helpers some time ago
+but got side tracked by other tasks.
 
-Changes in v2:
-	- Added tags Bryan's tags.
+https://lore.kernel.org/linux-pm/20200624103247.7115-1-daniel.baluta@oss.nx=
+p.com/t/
 
----
- drivers/media/platform/qcom/venus/core.c      | 12 +++--
- drivers/media/platform/qcom/venus/core.h      |  7 ++-
- .../media/platform/qcom/venus/pm_helpers.c    | 48 +++++++------------
- 3 files changed, 26 insertions(+), 41 deletions(-)
+Will review the series and test the remoteproc part this week.
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index 9cffe975581b..bd9b474280e4 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-+#include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
- #include <media/videobuf2-v4l2.h>
- #include <media/v4l2-mem2mem.h>
-@@ -114,7 +115,8 @@ static void venus_sys_error_handler(struct work_struct *work)
- 	pm_runtime_put_sync(core->dev);
- 
- 	for (i = 0; i < max_attempts; i++) {
--		if (!core->pmdomains[0] || !pm_runtime_active(core->pmdomains[0]))
-+		if (!core->pmdomains ||
-+		    !pm_runtime_active(core->pmdomains->pd_devs[0]))
- 			break;
- 		usleep_range(1000, 1500);
- 	}
-@@ -705,7 +707,7 @@ static const struct venus_resources sdm845_res_v2 = {
- 	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
- 	.vcodec1_clks = { "vcodec1_core", "vcodec1_bus" },
- 	.vcodec_clks_num = 2,
--	.vcodec_pmdomains = { "venus", "vcodec0", "vcodec1" },
-+	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0", "vcodec1" },
- 	.vcodec_pmdomains_num = 3,
- 	.opp_pmdomain = (const char *[]) { "cx", NULL },
- 	.vcodec_num = 2,
-@@ -754,7 +756,7 @@ static const struct venus_resources sc7180_res = {
- 	.clks_num = 3,
- 	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
- 	.vcodec_clks_num = 2,
--	.vcodec_pmdomains = { "venus", "vcodec0" },
-+	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
- 	.vcodec_pmdomains_num = 2,
- 	.opp_pmdomain = (const char *[]) { "cx", NULL },
- 	.vcodec_num = 1,
-@@ -811,7 +813,7 @@ static const struct venus_resources sm8250_res = {
- 	.resets_num = 2,
- 	.vcodec0_clks = { "vcodec0_core" },
- 	.vcodec_clks_num = 1,
--	.vcodec_pmdomains = { "venus", "vcodec0" },
-+	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
- 	.vcodec_pmdomains_num = 2,
- 	.opp_pmdomain = (const char *[]) { "mx", NULL },
- 	.vcodec_num = 1,
-@@ -870,7 +872,7 @@ static const struct venus_resources sc7280_res = {
- 	.clks_num = 3,
- 	.vcodec0_clks = {"vcodec_core", "vcodec_bus"},
- 	.vcodec_clks_num = 2,
--	.vcodec_pmdomains = { "venus", "vcodec0" },
-+	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
- 	.vcodec_pmdomains_num = 2,
- 	.opp_pmdomain = (const char *[]) { "cx", NULL },
- 	.vcodec_num = 1,
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 4a633261ece4..7ef341bf21cc 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -25,7 +25,6 @@
- 
- #define VIDC_CLKS_NUM_MAX		4
- #define VIDC_VCODEC_CLKS_NUM_MAX	2
--#define VIDC_PMDOMAINS_NUM_MAX		3
- #define VIDC_RESETS_NUM_MAX		2
- 
- extern int venus_fw_debug;
-@@ -72,7 +71,7 @@ struct venus_resources {
- 	const char * const vcodec0_clks[VIDC_VCODEC_CLKS_NUM_MAX];
- 	const char * const vcodec1_clks[VIDC_VCODEC_CLKS_NUM_MAX];
- 	unsigned int vcodec_clks_num;
--	const char * const vcodec_pmdomains[VIDC_PMDOMAINS_NUM_MAX];
-+	const char **vcodec_pmdomains;
- 	unsigned int vcodec_pmdomains_num;
- 	const char **opp_pmdomain;
- 	unsigned int vcodec_num;
-@@ -134,7 +133,7 @@ struct venus_format {
-  * @video_path: an interconnect handle to video to/from memory path
-  * @cpucfg_path: an interconnect handle to cpu configuration path
-  * @has_opp_table: does OPP table exist
-- * @pmdomains:	an array of pmdomains struct device pointers
-+ * @pmdomains:	a pointer to a list of pmdomains
-  * @opp_dl_venus: an device-link for device OPP
-  * @opp_pmdomain: an OPP power-domain
-  * @resets: an array of reset signals
-@@ -187,7 +186,7 @@ struct venus_core {
- 	struct icc_path *video_path;
- 	struct icc_path *cpucfg_path;
- 	bool has_opp_table;
--	struct device *pmdomains[VIDC_PMDOMAINS_NUM_MAX];
-+	struct dev_pm_domain_list *pmdomains;
- 	struct device_link *opp_dl_venus;
- 	struct device *opp_pmdomain;
- 	struct reset_control *resets[VIDC_RESETS_NUM_MAX];
-diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-index a1b127caa90a..502822059498 100644
---- a/drivers/media/platform/qcom/venus/pm_helpers.c
-+++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-@@ -455,7 +455,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 		if (ret)
- 			return ret;
- 
--		ret = pm_runtime_put_sync(core->pmdomains[1]);
-+		ret = pm_runtime_put_sync(core->pmdomains->pd_devs[1]);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -471,7 +471,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 		if (ret)
- 			return ret;
- 
--		ret = pm_runtime_put_sync(core->pmdomains[2]);
-+		ret = pm_runtime_put_sync(core->pmdomains->pd_devs[2]);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -484,7 +484,7 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
- 	int ret;
- 
- 	if (coreid_mask & VIDC_CORE_ID_1) {
--		ret = pm_runtime_get_sync(core->pmdomains[1]);
-+		ret = pm_runtime_get_sync(core->pmdomains->pd_devs[1]);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -502,7 +502,7 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
- 	}
- 
- 	if (coreid_mask & VIDC_CORE_ID_2) {
--		ret = pm_runtime_get_sync(core->pmdomains[2]);
-+		ret = pm_runtime_get_sync(core->pmdomains->pd_devs[2]);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -860,19 +860,18 @@ static int vcodec_domains_get(struct venus_core *core)
- 	struct device **opp_virt_dev;
- 	struct device *dev = core->dev;
- 	const struct venus_resources *res = core->res;
--	struct device *pd;
--	unsigned int i;
-+	struct dev_pm_domain_attach_data vcodec_data = {
-+		.pd_names = res->vcodec_pmdomains,
-+		.num_pd_names = res->vcodec_pmdomains_num,
-+		.pd_flags = PD_FLAG_NO_DEV_LINK,
-+	};
- 
- 	if (!res->vcodec_pmdomains_num)
- 		goto skip_pmdomains;
- 
--	for (i = 0; i < res->vcodec_pmdomains_num; i++) {
--		pd = dev_pm_domain_attach_by_name(dev,
--						  res->vcodec_pmdomains[i]);
--		if (IS_ERR_OR_NULL(pd))
--			return pd ? PTR_ERR(pd) : -ENODATA;
--		core->pmdomains[i] = pd;
--	}
-+	ret = dev_pm_domain_attach_list(dev, &vcodec_data, &core->pmdomains);
-+	if (ret < 0)
-+		return ret;
- 
- skip_pmdomains:
- 	if (!core->res->opp_pmdomain)
-@@ -896,30 +895,14 @@ static int vcodec_domains_get(struct venus_core *core)
- 	return 0;
- 
- opp_attach_err:
--	for (i = 0; i < res->vcodec_pmdomains_num; i++) {
--		if (IS_ERR_OR_NULL(core->pmdomains[i]))
--			continue;
--		dev_pm_domain_detach(core->pmdomains[i], true);
--	}
--
-+	dev_pm_domain_detach_list(core->pmdomains);
- 	return ret;
- }
- 
- static void vcodec_domains_put(struct venus_core *core)
- {
--	const struct venus_resources *res = core->res;
--	unsigned int i;
-+	dev_pm_domain_detach_list(core->pmdomains);
- 
--	if (!res->vcodec_pmdomains_num)
--		goto skip_pmdomains;
--
--	for (i = 0; i < res->vcodec_pmdomains_num; i++) {
--		if (IS_ERR_OR_NULL(core->pmdomains[i]))
--			continue;
--		dev_pm_domain_detach(core->pmdomains[i], true);
--	}
--
--skip_pmdomains:
- 	if (!core->has_opp_table)
- 		return;
- 
-@@ -1035,7 +1018,8 @@ static void core_put_v4(struct venus_core *core)
- static int core_power_v4(struct venus_core *core, int on)
- {
- 	struct device *dev = core->dev;
--	struct device *pmctrl = core->pmdomains[0];
-+	struct device *pmctrl = core->pmdomains ?
-+			core->pmdomains->pd_devs[0] : NULL;
- 	int ret = 0;
- 
- 	if (on == POWER_ON) {
--- 
-2.34.1
-
+Daniel.
