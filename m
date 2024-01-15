@@ -1,248 +1,169 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A7B182DA
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 18:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890A718C03
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 18:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RtFGMwdL"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a2dbc61fe89so143770266b.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 10:20:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ChLSa9V4"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d44200b976so47862145ad.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 10:34:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705342834; x=1705947634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pk9BYAlXOny5vx7IIMl1r8Ckvn8t89LgHQENG37+b/I=;
-        b=RtFGMwdLlpA2K61X0/3BwNSIPMZCsvQ6g8czvocxlf6ZcBG2+7dVmU54zuaI5Wj0h+
-         2nf64vQBEUIj2brXPxXq+gz5eB5JjfHQTojckyYyvQiZwIrmg4rKYFmGC1HpUNw++bjA
-         Z0I/+OARYDGYC8yytMmLOFiR6LiYiLavtV99iOl3y9sVENMPp5gkvmBpjV98MmI7EBbE
-         BTgWuyusqzRuYIyKorazBjF7iC9zJDXw3Up3ugVQx7zqvG9g7n7CB3WBsH93iifhCj8C
-         ahwePWI3pl20ZP3fnfeyWi96KNQvc5fnjM336mmFwPZumAVr+9QPISVB4cIDV/kOdsSv
-         CecQ==
+        d=linaro.org; s=google; t=1705343684; x=1705948484; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZFlmy7BEwywSiV8spelsk1ZtaQWPPF5+4+sReYmSWw=;
+        b=ChLSa9V4bm2V4qsVVPy2jAnElpifyDfKa1aunT3UaNJgj3YMNIK1VUesBr9tPmcaOq
+         zRCjOQdymmNdVuV53hZ312xtiT8VmD1+eb7Z4A25uqvMi9GCVtNPLO+scp/CtX6tR7pC
+         VtZmVCzWKqC7sdbmbcKMZDZog+O8bXmgAAPvnakeiF9ZiKBFyYBoZbz65xOfgbeS3KNY
+         VGowNqxjNDNEWJ628xpU+txcqWTSyktVzwUouXgrpo6BsuH5u/YwhzWWPdwdS2zD5wms
+         6J2PojOJcvscqHvEhUgm7eWDDSOF1IwoostITewz4x4mqAK0Dxmhe8weIP0/GZltEN8x
+         AaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705342834; x=1705947634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pk9BYAlXOny5vx7IIMl1r8Ckvn8t89LgHQENG37+b/I=;
-        b=NnZnUZf7EOF6ZtgzVFnB1XNOHRLvKgN1xU1LVKRMcIVTiEJENyWoFGBoOWyKmUls34
-         rZqq4x0SIQ8ntdx5L00Eqp1GognO0Syw+PXFeix39J11RdBWdkrjxOoTaNF50+tQIKgG
-         Q3RB4HhW0Ao0nz/ML+x7fE6lK+pE2qyIuRWLfbPSndQL9f0knzu0mkbMwWFDDmz3o+z+
-         p2b/n1/ZCYfE9ctBdxAoGHqv/rjuDFJVBUYVJkhWjXD/cfOjDE0k0x7El+s75hcNCAbW
-         GIhHfR9G4SoL7dHRI0O/pC9m/cHIBV2QGCv+nOeIcM6o3Y9S0/WdM1AsB9g0RdLTm9Rn
-         rtAw==
-X-Gm-Message-State: AOJu0Yyq062BOogZe2ew16ZgVf96gYDTBd4z687sn/AKsmk3v7lfmRSU
-	89KxDRfwvvOAAz5fMkGdps7Vxkf+b7mmmA==
-X-Google-Smtp-Source: AGHT+IE8Rv7TALy6QHOmV7wneFYPZJqN4DYMVXyzwYotmqd3ln8eAYgtdWF5rpaj14WiTEjiCunTIQ==
-X-Received: by 2002:a17:907:c24d:b0:a2e:49a4:fabe with SMTP id tj13-20020a170907c24d00b00a2e49a4fabemr138108ejc.16.1705342834090;
-        Mon, 15 Jan 2024 10:20:34 -0800 (PST)
-Received: from krzk-bin.. ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id n11-20020a170906118b00b00a2bd02d5f7asm5591970eja.148.2024.01.15.10.20.32
+        d=1e100.net; s=20230601; t=1705343684; x=1705948484;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JZFlmy7BEwywSiV8spelsk1ZtaQWPPF5+4+sReYmSWw=;
+        b=vDn6BgWgmMDq7ZtPkcCbxa5Txy6kpKt/tfA9bv8qXg2I9ZKW9enme4oWrv6yj9pVoe
+         ajbZ7W2USsxSoEpK7BJcLg+Wnx1ERzFe1nfSWc+MJ2N2TUiNkPPFaVqB/vlAuBfbY5SF
+         U9B+U+XjIG1Bank3ZIfUwAMe6NVSukIzjpxnpLYflzKCyw6zKnsSkjNymqtKy+XgB0bU
+         Z+L0L54TTgl7R+al8O8/SSCtpJQLgsaUbniCD/l8RjjYsHpoDzLt+g+t8c3eDiZSC+Oi
+         9Ds7rLx7Wo8d7MJ684lvqTJyctvUQ3ow4SkqgUnqwpSkDvYCkpVLZXtxmj591Lzbu0BG
+         lefQ==
+X-Gm-Message-State: AOJu0YyS3eHPx1MXILpajoRJ7rpXZCeNWExKzJYIWeYEY6kZPlf/T2t1
+	e5KxC0M8A4hKVu1p9MRwiFOTuFx3M7tesw==
+X-Google-Smtp-Source: AGHT+IFVo39doGrlpm6PCXcFggJ9N+UcWB3vS/3WT5T9cSsVWvXYfyWpabs7SSfBYUzkE94TLt49zg==
+X-Received: by 2002:a17:902:834c:b0:1d4:75e5:8feb with SMTP id z12-20020a170902834c00b001d475e58febmr3004149pln.35.1705343683810;
+        Mon, 15 Jan 2024 10:34:43 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800::5ced])
+        by smtp.gmail.com with ESMTPSA id ku6-20020a170903288600b001d555735b6bsm7910033plb.239.2024.01.15.10.34.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jan 2024 10:20:33 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Tinghan Shen <tinghan.shen@mediatek.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: remoteproc: do not override firmware-name $ref
-Date: Mon, 15 Jan 2024 19:20:31 +0100
-Message-Id: <20240115182031.1610088-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 15 Jan 2024 10:34:43 -0800 (PST)
+Date: Mon, 15 Jan 2024 11:34:41 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: Remove usage of the deprecated ida_simple_xx() API
+Message-ID: <ZaV6wd8GghPy+Ti7@p14s>
+References: <c09ee5b66d451bf97d14c167048549aa0824ee06.1705225049.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c09ee5b66d451bf97d14c167048549aa0824ee06.1705225049.git.christophe.jaillet@wanadoo.fr>
 
-dtschema package defines firmware-name as string-array, so individual
-bindings should not make it a string but instead just narrow the number
-of expected firmware file names.
+Hi Christophe,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 4 ++--
- .../devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml      | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml       | 2 +-
- .../devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml        | 2 +-
- 11 files changed, 12 insertions(+), 12 deletions(-)
+On Sun, Jan 14, 2024 at 10:37:43AM +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 12 ++++++------
+>  drivers/rpmsg/rpmsg_ctrl.c | 12 ++++++------
+>  2 files changed, 12 insertions(+), 12 deletions(-)
+> 
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index 09102dda4942..507f98f73d23 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -47,7 +47,7 @@ properties:
-     maxItems: 1
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description:
-       If present, name (or relative path) of the file within the
-       firmware search path containing the firmware image used when
-@@ -115,7 +115,7 @@ patternProperties:
-         maxItems: 1
- 
-       firmware-name:
--        $ref: /schemas/types.yaml#/definitions/string
-+        maxItems: 1
-         description:
-           If present, name (or relative path) of the file within the
-           firmware search path containing the firmware image used when
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-index eb868a7ff4cd..ad45fd00ae34 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-@@ -46,7 +46,7 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-index c054b84fdcd5..66b455d0a8e3 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-@@ -45,7 +45,7 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-index b6bd33438584..9381c7022ff4 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-@@ -80,7 +80,7 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description:
-       The name of the firmware which should be loaded for this remote
-       processor.
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-index 4744a37b2b5d..45ee9fbe0966 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-@@ -42,7 +42,7 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-index 028287235912..758adb06c8dd 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-@@ -47,7 +47,7 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-index f7e40fb166da..c1a3cc308bdb 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-@@ -42,7 +42,7 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-index 3e4a03eb4532..7286b2baa19f 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-@@ -36,7 +36,7 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
-   smd-edge: false
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index 238c6e5e67c5..d67386c50fa4 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -46,7 +46,7 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-index 53cea8e53a31..4b9fb74fb9e9 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-@@ -47,7 +47,7 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-index 45eb42bd3c2c..8e033b22d28c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-@@ -51,7 +51,7 @@ properties:
-       - const: stop-ack
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-+    maxItems: 1
-     description:
-       Relative firmware image path for the WCNSS core. Defaults to
-       "wcnss.mdt".
--- 
-2.34.1
+I will apply this patch when the next rc1 comes out.
 
+Thanks,
+Mathieu
+
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 09833ad05da7..1cb8d7474428 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -399,8 +399,8 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>  {
+>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>  
+> -	ida_simple_remove(&rpmsg_ept_ida, dev->id);
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+> +	ida_free(&rpmsg_ept_ida, dev->id);
+> +	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+>  	kfree(eptdev);
+>  }
+>  
+> @@ -441,12 +441,12 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+>  
+>  	eptdev->chinfo = chinfo;
+>  
+> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+> +	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+>  	if (ret < 0)
+>  		goto free_eptdev;
+>  	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+>  
+> -	ret = ida_simple_get(&rpmsg_ept_ida, 0, 0, GFP_KERNEL);
+> +	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+>  	if (ret < 0)
+>  		goto free_minor_ida;
+>  	dev->id = ret;
+> @@ -462,9 +462,9 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+>  	return ret;
+>  
+>  free_ept_ida:
+> -	ida_simple_remove(&rpmsg_ept_ida, dev->id);
+> +	ida_free(&rpmsg_ept_ida, dev->id);
+>  free_minor_ida:
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>  free_eptdev:
+>  	put_device(dev);
+>  	kfree(eptdev);
+> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+> index 433253835690..c312794ba4b3 100644
+> --- a/drivers/rpmsg/rpmsg_ctrl.c
+> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+> @@ -130,8 +130,8 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
+>  {
+>  	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
+>  
+> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> +	ida_free(&rpmsg_ctrl_ida, dev->id);
+> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>  	kfree(ctrldev);
+>  }
+>  
+> @@ -156,12 +156,12 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+>  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
+>  	ctrldev->cdev.owner = THIS_MODULE;
+>  
+> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
+> +	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+>  	if (ret < 0)
+>  		goto free_ctrldev;
+>  	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+>  
+> -	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
+> +	ret = ida_alloc(&rpmsg_ctrl_ida, GFP_KERNEL);
+>  	if (ret < 0)
+>  		goto free_minor_ida;
+>  	dev->id = ret;
+> @@ -179,9 +179,9 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
+>  	return ret;
+>  
+>  free_ctrl_ida:
+> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
+> +	ida_free(&rpmsg_ctrl_ida, dev->id);
+>  free_minor_ida:
+> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
+> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>  free_ctrldev:
+>  	put_device(dev);
+>  	kfree(ctrldev);
+> -- 
+> 2.43.0
+> 
