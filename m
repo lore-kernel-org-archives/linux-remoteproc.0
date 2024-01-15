@@ -1,192 +1,171 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DCC1754F;
-	Mon, 15 Jan 2024 13:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F7818048
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 18:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="D9FrRzYm"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40FD9OnB009290;
-	Mon, 15 Jan 2024 14:54:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=JgTqkog598RbC204zCHUiytINQsebXi6rfWzdONWWfk=; b=D9
-	FrRzYm0JDUdFDfvftiNJO8KroHy7qrDoBca/+lhkZQYV/aCzOkZUk6iDM5KiTPrY
-	KHBUgNTw7zE02ms0shdVytXy8mHfz37hpqI5OMsXkvBn0WXGuJdqPfYfgjP+fEuZ
-	7apOftYeq7pCRBhkoMU1d+V8Bdlp/1eX9gCk3IRGFbk0e5o5RMOGkX5ut0x1sPPh
-	i7+BbPUwwsyT3vKWer5FPXoOPGXi9vDul0xrnY+gVIPxzsKmOeqSgknsTE0scpjW
-	8OvBEJFN4AJmGnJ3WC+AQ8KfTWrxjFKknpnZTgVqVH2feTU5hGZHmnkbyC0C+f8M
-	RymqkLaH2HbSoI0qxqFA==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vkmfy8xer-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jan 2024 14:54:02 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E7680100057;
-	Mon, 15 Jan 2024 14:54:01 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DC90228EF7F;
-	Mon, 15 Jan 2024 14:54:01 +0100 (CET)
-Received: from localhost (10.201.20.75) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 15 Jan
- 2024 14:53:58 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Rob
- Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 3/4] remoteproc: stm32: create sub-functions to request shutdown and release
-Date: Mon, 15 Jan 2024 14:52:48 +0100
-Message-ID: <20240115135249.296822-4-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240115135249.296822-1-arnaud.pouliquen@foss.st.com>
-References: <20240115135249.296822-1-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3xN0lJg"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6db786df38dso1170905b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 10:14:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705342463; x=1705947263; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBn2qZQx8P3zg2r39V5+2Dh28lfRonfO6AcXOPJi0eo=;
+        b=Z3xN0lJgoMpkO7ZmWQWssNERIlWY/LH1cbKdVjbqumPdwcFgGfR6CrSozF90Ub0YrZ
+         noGdHjoPd4sUouvD9veEsjJWKeXlLJWIdTP2R8DuZWWGDKHBnTOP/67SmPCZN4xeSa+E
+         h1gQTnzJh6o6XrHW493lsywTl3FHNd+youIwd5px/QZMH0o4ohGtD2YBUvG7wzcflSFM
+         9jzvGcnmpL8eplLFjgTsP8VlIGhycspNS/vH+F1RUi4MuE6/MDJqlyjbjHiZJ+DCQ9jr
+         JdDQb81joMFiIdqhNpzAETy1lTwCamZd/G1sX8eiWLm6GpYaP40gZOGOZnH7HSRl1M8W
+         CyHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705342463; x=1705947263;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YBn2qZQx8P3zg2r39V5+2Dh28lfRonfO6AcXOPJi0eo=;
+        b=YbVi+xxFwiK4Se1TTB4Ur7PLOSGzPYWI0YGFz4f4uMUDvGfzlmnQzUUOH0rMNqi5+f
+         2un23Ah4AW3nJtr3Uwj47nOt1jczZAr0vNkUEbXLGbRk/LzKMK7O3ivhAN8/NGLKytp5
+         mL29Sn+NA9nJHboFc0iimH62BsdwVuvEyMgYCxjRM2Aq4+QJM2LN5Frpa4cwyb9EiUFz
+         R84OlBFg9v602NBYz8Er9XnUlkVvnpTbK1YuyAVgJxoZJXD0GCvc+Frsu3gsh8g8/p+V
+         LInNS91Rx6fsQjuQCArQS3DUIVy5EAwBclJ3YqrN6kc5lqdKfSHIIDwW5N7GXtbSkCJy
+         8IrQ==
+X-Gm-Message-State: AOJu0Yz6Ba7SeHfLzzEnAUr8wwnd8fPjigwZ4NWlDDIjbUm9PJIMv1sA
+	+o6u5K54a4/ZFRkB1wNZciRiv33kzR4fgw==
+X-Google-Smtp-Source: AGHT+IE+Bl8C8gShAKZw9kvDRcOSbLDBFpmGYYhTQ367w8nhdPd/vWjoDLLYXnHf7zdXAZEBXtu+7w==
+X-Received: by 2002:a05:6a20:9c89:b0:19b:2303:88a4 with SMTP id mj9-20020a056a209c8900b0019b230388a4mr731854pzb.105.1705342463524;
+        Mon, 15 Jan 2024 10:14:23 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800::5ced])
+        by smtp.gmail.com with ESMTPSA id lc18-20020a056a004f5200b006d9cf4b56edsm8116673pfb.175.2024.01.15.10.14.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jan 2024 10:14:23 -0800 (PST)
+Date: Mon, 15 Jan 2024 11:14:20 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: Re: [PATCH v4 1/2] remoteproc: Make rproc_get_by_phandle() work for
+ clusters
+Message-ID: <ZaV1/GEiV2VS6c2p@p14s>
+References: <20240103221124.3063683-1-tanmay.shah@amd.com>
+ <20240103221124.3063683-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-05_08,2024-01-05_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240103221124.3063683-2-tanmay.shah@amd.com>
 
-To prepare for the support of TEE remoteproc, create sub-functions
-that can be used in both cases, with and without TEE support.
+Hi Tanmay,
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/stm32_rproc.c | 84 +++++++++++++++++++-------------
- 1 file changed, 51 insertions(+), 33 deletions(-)
+Thanks for the refactoring, this is in line with what Bjorn and I have talked
+about at Plumbers.  Please see my comments below.
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 4f469f0bcf8b..fcc0001e2657 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -209,6 +209,54 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
- 	return -EINVAL;
- }
- 
-+static void stm32_rproc_request_shutdown(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err, dummy_data, idx;
-+
-+	/* Request shutdown of the remote processor */
-+	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-+		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-+		if (idx >= 0 && ddata->mb[idx].chan) {
-+			/* A dummy data is sent to allow to block on transmit. */
-+			err = mbox_send_message(ddata->mb[idx].chan,
-+						&dummy_data);
-+			if (err < 0)
-+				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-+		}
-+	}
-+}
-+
-+static int stm32_rproc_release(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	unsigned int err = 0;
-+
-+	/* To allow platform Standby power mode, set remote proc Deep Sleep. */
-+	if (ddata->pdds.map) {
-+		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-+					 ddata->pdds.mask, 1);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set pdds\n");
-+			return err;
-+		}
-+	}
-+
-+	/* Update coprocessor state to OFF if available. */
-+	if (ddata->m4_state.map) {
-+		err = regmap_update_bits(ddata->m4_state.map,
-+					 ddata->m4_state.reg,
-+					 ddata->m4_state.mask,
-+					 M4_STATE_OFF);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set copro state\n");
-+			return err;
-+		}
-+	}
-+
-+	return err;
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -519,17 +567,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, idx;
-+	int err;
- 
--	/* request shutdown of the remote processor */
--	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
--		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
--		if (idx >= 0 && ddata->mb[idx].chan) {
--			err = mbox_send_message(ddata->mb[idx].chan, "detach");
--			if (err < 0)
--				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
--		}
--	}
-+	stm32_rproc_request_shutdown(rproc);
- 
- 	err = stm32_rproc_set_hold_boot(rproc, true);
- 	if (err)
-@@ -541,29 +581,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
- 		return err;
- 	}
- 
--	/* to allow platform Standby power mode, set remote proc Deep Sleep */
--	if (ddata->pdds.map) {
--		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
--					 ddata->pdds.mask, 1);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set pdds\n");
--			return err;
--		}
--	}
--
--	/* update coprocessor state to OFF if available */
--	if (ddata->m4_state.map) {
--		err = regmap_update_bits(ddata->m4_state.map,
--					 ddata->m4_state.reg,
--					 ddata->m4_state.mask,
--					 M4_STATE_OFF);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set copro state\n");
--			return err;
--		}
--	}
--
--	return 0;
-+	return stm32_rproc_release(rproc);
- }
- 
- static void stm32_rproc_kick(struct rproc *rproc, int vqid)
--- 
-2.25.1
+On Wed, Jan 03, 2024 at 02:11:24PM -0800, Tanmay Shah wrote:
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> Multi-cluster remoteproc designs typically have the following DT
+> declaration:
+> 
+> 	remoteproc_cluster {
+> 		compatible = "soc,remoteproc-cluster";
+> 
+>                 core0: core0 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 };
+> 
+>                 core1: core1 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 }
+>         };
+> 
+> A driver exists for the cluster rather than the individual cores
+> themselves so that operation mode and HW specific configurations
+> applicable to the cluster can be made.
+> 
+> Because the driver exists at the cluster level and not the individual
+> core level, function rproc_get_by_phandle() fails to return the
+> remoteproc associated with the phandled it is called for.
+> 
+> This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> driver when the driver for the immediate remoteproc's parent is not
+> found.
+> 
+> Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
+Humm... You wrote the code in this patch so you also deserve some credit.  If I
+end up applying this set I will add myself as a co-developer, i.e
+Co-developed-by:, and add your SoB.  If you end up re-spinning this set then
+simply do so for the next revision.
+
+As far as I am concerned this patchset is ready.  I will wait to see if other
+people would like to see something adjusted.
+
+Mathieu
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 695cce218e8c..0b3b34085e2f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+>  #include <linux/crc32.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_ring.h>
+> @@ -2112,6 +2113,7 @@ EXPORT_SYMBOL(rproc_detach);
+>  struct rproc *rproc_get_by_phandle(phandle phandle)
+>  {
+>  	struct rproc *rproc = NULL, *r;
+> +	struct device_driver *driver;
+>  	struct device_node *np;
+>  
+>  	np = of_find_node_by_phandle(phandle);
+> @@ -2122,7 +2124,26 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>  	list_for_each_entry_rcu(r, &rproc_list, node) {
+>  		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+>  			/* prevent underlying implementation from being removed */
+> -			if (!try_module_get(r->dev.parent->driver->owner)) {
+> +
+> +			/*
+> +			 * If the remoteproc's parent has a driver, the
+> +			 * remoteproc is not part of a cluster and we can use
+> +			 * that driver.
+> +			 */
+> +			driver = r->dev.parent->driver;
+> +
+> +			/*
+> +			 * If the remoteproc's parent does not have a driver,
+> +			 * look for the driver associated with the cluster.
+> +			 */
+> +			if (!driver) {
+> +				if (r->dev.parent->parent)
+> +					driver = r->dev.parent->parent->driver;
+> +				if (!driver)
+> +					break;
+> +			}
+> +
+> +			if (!try_module_get(driver->owner)) {
+>  				dev_err(&r->dev, "can't get owner\n");
+>  				break;
+>  			}
+> -- 
+> 2.25.1
+> 
