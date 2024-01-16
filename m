@@ -1,210 +1,242 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE5412B9A;
-	Tue, 16 Jan 2024 08:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECBB1B950;
+	Tue, 16 Jan 2024 12:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJUIMEM3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705394814; x=1736930814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Pe1QjLikG6M/4WQLHvUWPP91kl86mMKrUxyNnm7Uedk=;
-  b=hJUIMEM35MtwnvcTVRIb+CNe7ecxYBsWVxpiqzFdSWOyiBoGOw7QZ4Cm
-   O0ljaukJx2bUeprgtcIEnYr+4Ql4Wnm7Kf+aO+M6Z7/dKOkwFSX+odknL
-   3Qw9/svb2jvVR4R5/lkHjLT+TZoIj5RuUcJi3dk5QEBCw9Ao17vGbEl7q
-   PCrVbUXcKvISDj3P32NxM9pfwP5db5CJg/ieUpcAJsY9qwXSGqeKfQJzf
-   5cROKVaLjW4r3G+cz9+mCpdowleSzNUG/CNEKr+KWpQGCCG+dBz91qtdE
-   R3mBpQGk+yUPABIUzgK0hoeOY/hCorCsXjRPEXe24lZEVyEAVx7v8KUUh
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10954"; a="398656206"
-X-IronPort-AV: E=Sophos;i="6.04,198,1695711600"; 
-   d="scan'208";a="398656206"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2024 00:46:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10954"; a="927386299"
-X-IronPort-AV: E=Sophos;i="6.04,198,1695711600"; 
-   d="scan'208";a="927386299"
-Received: from lkp-server01.sh.intel.com (HELO 961aaaa5b03c) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Jan 2024 00:46:49 -0800
-Received: from kbuild by 961aaaa5b03c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rPf5r-0000Gi-0y;
-	Tue, 16 Jan 2024 08:46:47 +0000
-Date: Tue, 16 Jan 2024 16:46:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <202401161603.5dloSqiJ-lkp@intel.com>
-References: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DLMEjBIB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1705406780;
+	bh=Fxu/czZW/jT7hNLv/XBIT3iwaM6qWGV9i9J3Ejpkuuw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=DLMEjBIB1ZKfVU8ldqQhumVvxKZEhJKMevjUnSiDru3olRWzI1CQqvIQPO3AErBqn
+	 3i/FuH/zPq1opBuGhi7j+yoP6I9gW18FTNgnZxEygkzsMCd7F3xMD/nx7cgd5ZkZVr
+	 OvSR3XnjeEbzvvNYs8klVfaOkg+nR1j2T41pJez8bRm4D9Qex5oC9VLSg1/drGPsBW
+	 mtbtEwMuqEjNIseUQRp1Cu7pZOCEg9h4hXJNmJRZtoQa7y0YWyyLWg88eqcZy1gIwI
+	 fZT7UA0+vhAUia6DDkT2LXWIZCi2hzmGn6hB5zorqzkic4ykCHf+Ct81PM1pyl4lUj
+	 j4CuUKEQySUXA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C5B3137802F2;
+	Tue, 16 Jan 2024 12:06:19 +0000 (UTC)
+Message-ID: <e0143649-f268-4c10-8bc2-89cdb6244a01@collabora.com>
+Date: Tue, 16 Jan 2024 13:06:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: remoteproc: do not override firmware-name
+ $ref
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Tinghan Shen <tinghan.shen@mediatek.com>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20240115182031.1610088-1-krzysztof.kozlowski@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240115182031.1610088-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Arnaud,
+Il 15/01/24 19:20, Krzysztof Kozlowski ha scritto:
+> dtschema package defines firmware-name as string-array, so individual
+> bindings should not make it a string but instead just narrow the number
+> of expected firmware file names.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-kernel test robot noticed the following build warnings:
+... a better commit description:
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on robh/for-next linus/master v6.7 next-20240112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The devicetree schema core defines firmware-name as a string-array:
+remove the override and narrow the number of expected file names to 1.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-Add-TEE-support/20240115-215613
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240115135249.296822-5-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20240116/202401161603.5dloSqiJ-lkp@intel.com/config)
-compiler: clang version 18.0.0git (https://github.com/llvm/llvm-project 9bde5becb44ea071f5e1fa1f5d4071dc8788b18c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240116/202401161603.5dloSqiJ-lkp@intel.com/reproduce)
+Besides,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401161603.5dloSqiJ-lkp@intel.com/
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-All warnings (new ones prefixed by >>):
+> ---
+>   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 4 ++--
+>   .../devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml      | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml       | 2 +-
+>   .../devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml        | 2 +-
+>   11 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index 09102dda4942..507f98f73d23 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -47,7 +47,7 @@ properties:
+>       maxItems: 1
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description:
+>         If present, name (or relative path) of the file within the
+>         firmware search path containing the firmware image used when
+> @@ -115,7 +115,7 @@ patternProperties:
+>           maxItems: 1
+>   
+>         firmware-name:
+> -        $ref: /schemas/types.yaml#/definitions/string
+> +        maxItems: 1
+>           description:
+>             If present, name (or relative path) of the file within the
+>             firmware search path containing the firmware image used when
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
+> index eb868a7ff4cd..ad45fd00ae34 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
+> @@ -46,7 +46,7 @@ properties:
+>       description: Reference to the reserved-memory for the Hexagon core
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
+> index c054b84fdcd5..66b455d0a8e3 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
+> @@ -45,7 +45,7 @@ properties:
+>     smd-edge: false
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+> index b6bd33438584..9381c7022ff4 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+> @@ -80,7 +80,7 @@ properties:
+>       description: Reference to the reserved-memory for the Hexagon core
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description:
+>         The name of the firmware which should be loaded for this remote
+>         processor.
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
+> index 4744a37b2b5d..45ee9fbe0966 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
+> @@ -42,7 +42,7 @@ properties:
+>       description: Reference to the reserved-memory for the Hexagon core
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+> index 028287235912..758adb06c8dd 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+> @@ -47,7 +47,7 @@ properties:
+>     smd-edge: false
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
+> index f7e40fb166da..c1a3cc308bdb 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
+> @@ -42,7 +42,7 @@ properties:
+>     smd-edge: false
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+> index 3e4a03eb4532..7286b2baa19f 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+> @@ -36,7 +36,7 @@ properties:
+>       description: Reference to the reserved-memory for the Hexagon core
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>     smd-edge: false
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
+> index 238c6e5e67c5..d67386c50fa4 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
+> @@ -46,7 +46,7 @@ properties:
+>     smd-edge: false
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+> index 53cea8e53a31..4b9fb74fb9e9 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+> @@ -47,7 +47,7 @@ properties:
+>       description: Reference to the reserved-memory for the Hexagon core
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description: Firmware name for the Hexagon core
+>   
+>   required:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+> index 45eb42bd3c2c..8e033b22d28c 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+> @@ -51,7 +51,7 @@ properties:
+>         - const: stop-ack
+>   
+>     firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>       description:
+>         Relative firmware image path for the WCNSS core. Defaults to
+>         "wcnss.mdt".
 
->> drivers/remoteproc/stm32_rproc.c:977:6: warning: variable 'trproc' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     977 |         if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/remoteproc/stm32_rproc.c:991:8: note: uninitialized use occurs here
-     991 |                             trproc ? &st_rproc_tee_ops : &st_rproc_ops,
-         |                             ^~~~~~
-   drivers/remoteproc/stm32_rproc.c:977:2: note: remove the 'if' if its condition is always true
-     977 |         if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/remoteproc/stm32_rproc.c:968:26: note: initialize the variable 'trproc' to silence this warning
-     968 |         struct tee_rproc *trproc;
-         |                                 ^
-         |                                  = NULL
-   1 warning generated.
 
 
-vim +977 drivers/remoteproc/stm32_rproc.c
-
-   962	
-   963	static int stm32_rproc_probe(struct platform_device *pdev)
-   964	{
-   965		struct device *dev = &pdev->dev;
-   966		struct stm32_rproc *ddata;
-   967		struct device_node *np = dev->of_node;
-   968		struct tee_rproc *trproc;
-   969		struct rproc *rproc;
-   970		unsigned int state;
-   971		int ret;
-   972	
-   973		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-   974		if (ret)
-   975			return ret;
-   976	
- > 977		if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-   978			trproc = tee_rproc_register(dev, STM32_MP1_M4_PROC_ID);
-   979			if (IS_ERR(trproc)) {
-   980				dev_err_probe(dev, PTR_ERR(trproc),
-   981					      "signed firmware not supported by TEE\n");
-   982				return PTR_ERR(trproc);
-   983			}
-   984			/*
-   985			 * Delegate the firmware management to the secure context.
-   986			 * The firmware loaded has to be signed.
-   987			 */
-   988			dev_info(dev, "Support of signed firmware only\n");
-   989		}
-   990		rproc = rproc_alloc(dev, np->name,
-   991				    trproc ? &st_rproc_tee_ops : &st_rproc_ops,
-   992				    NULL, sizeof(*ddata));
-   993		if (!rproc) {
-   994			ret = -ENOMEM;
-   995			goto free_tee;
-   996		}
-   997	
-   998		ddata = rproc->priv;
-   999		ddata->trproc = trproc;
-  1000		if (trproc)
-  1001			trproc->rproc = rproc;
-  1002	
-  1003		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-  1004	
-  1005		ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
-  1006		if (ret)
-  1007			goto free_rproc;
-  1008	
-  1009		ret = stm32_rproc_of_memory_translations(pdev, ddata);
-  1010		if (ret)
-  1011			goto free_rproc;
-  1012	
-  1013		ret = stm32_rproc_get_m4_status(ddata, &state);
-  1014		if (ret)
-  1015			goto free_rproc;
-  1016	
-  1017		if (state == M4_STATE_CRUN)
-  1018			rproc->state = RPROC_DETACHED;
-  1019	
-  1020		rproc->has_iommu = false;
-  1021		ddata->workqueue = create_workqueue(dev_name(dev));
-  1022		if (!ddata->workqueue) {
-  1023			dev_err(dev, "cannot create workqueue\n");
-  1024			ret = -ENOMEM;
-  1025			goto free_resources;
-  1026		}
-  1027	
-  1028		platform_set_drvdata(pdev, rproc);
-  1029	
-  1030		ret = stm32_rproc_request_mbox(rproc);
-  1031		if (ret)
-  1032			goto free_wkq;
-  1033	
-  1034		ret = rproc_add(rproc);
-  1035		if (ret)
-  1036			goto free_mb;
-  1037	
-  1038		return 0;
-  1039	
-  1040	free_mb:
-  1041		stm32_rproc_free_mbox(rproc);
-  1042	free_wkq:
-  1043		destroy_workqueue(ddata->workqueue);
-  1044	free_resources:
-  1045		rproc_resource_cleanup(rproc);
-  1046	free_rproc:
-  1047		if (device_may_wakeup(dev)) {
-  1048			dev_pm_clear_wake_irq(dev);
-  1049			device_init_wakeup(dev, false);
-  1050		}
-  1051		rproc_free(rproc);
-  1052	free_tee:
-  1053		if (trproc)
-  1054			tee_rproc_unregister(trproc);
-  1055	
-  1056		return ret;
-  1057	}
-  1058	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
