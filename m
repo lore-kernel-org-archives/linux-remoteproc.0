@@ -1,54 +1,61 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890A718C03
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 18:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752C579F6;
+	Tue, 16 Jan 2024 06:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ChLSa9V4"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d44200b976so47862145ad.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Jan 2024 10:34:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705343684; x=1705948484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZFlmy7BEwywSiV8spelsk1ZtaQWPPF5+4+sReYmSWw=;
-        b=ChLSa9V4bm2V4qsVVPy2jAnElpifyDfKa1aunT3UaNJgj3YMNIK1VUesBr9tPmcaOq
-         zRCjOQdymmNdVuV53hZ312xtiT8VmD1+eb7Z4A25uqvMi9GCVtNPLO+scp/CtX6tR7pC
-         VtZmVCzWKqC7sdbmbcKMZDZog+O8bXmgAAPvnakeiF9ZiKBFyYBoZbz65xOfgbeS3KNY
-         VGowNqxjNDNEWJ628xpU+txcqWTSyktVzwUouXgrpo6BsuH5u/YwhzWWPdwdS2zD5wms
-         6J2PojOJcvscqHvEhUgm7eWDDSOF1IwoostITewz4x4mqAK0Dxmhe8weIP0/GZltEN8x
-         AaXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705343684; x=1705948484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JZFlmy7BEwywSiV8spelsk1ZtaQWPPF5+4+sReYmSWw=;
-        b=vDn6BgWgmMDq7ZtPkcCbxa5Txy6kpKt/tfA9bv8qXg2I9ZKW9enme4oWrv6yj9pVoe
-         ajbZ7W2USsxSoEpK7BJcLg+Wnx1ERzFe1nfSWc+MJ2N2TUiNkPPFaVqB/vlAuBfbY5SF
-         U9B+U+XjIG1Bank3ZIfUwAMe6NVSukIzjpxnpLYflzKCyw6zKnsSkjNymqtKy+XgB0bU
-         Z+L0L54TTgl7R+al8O8/SSCtpJQLgsaUbniCD/l8RjjYsHpoDzLt+g+t8c3eDiZSC+Oi
-         9Ds7rLx7Wo8d7MJ684lvqTJyctvUQ3ow4SkqgUnqwpSkDvYCkpVLZXtxmj591Lzbu0BG
-         lefQ==
-X-Gm-Message-State: AOJu0YyS3eHPx1MXILpajoRJ7rpXZCeNWExKzJYIWeYEY6kZPlf/T2t1
-	e5KxC0M8A4hKVu1p9MRwiFOTuFx3M7tesw==
-X-Google-Smtp-Source: AGHT+IFVo39doGrlpm6PCXcFggJ9N+UcWB3vS/3WT5T9cSsVWvXYfyWpabs7SSfBYUzkE94TLt49zg==
-X-Received: by 2002:a17:902:834c:b0:1d4:75e5:8feb with SMTP id z12-20020a170902834c00b001d475e58febmr3004149pln.35.1705343683810;
-        Mon, 15 Jan 2024 10:34:43 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800::5ced])
-        by smtp.gmail.com with ESMTPSA id ku6-20020a170903288600b001d555735b6bsm7910033plb.239.2024.01.15.10.34.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jan 2024 10:34:43 -0800 (PST)
-Date: Mon, 15 Jan 2024 11:34:41 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: Remove usage of the deprecated ida_simple_xx() API
-Message-ID: <ZaV6wd8GghPy+Ti7@p14s>
-References: <c09ee5b66d451bf97d14c167048549aa0824ee06.1705225049.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aol/xPA1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705386165; x=1736922165;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T2HUSRrSF0gl6JOqX4YdcfSMQQjj74IfOdQ2rVoRLys=;
+  b=Aol/xPA1AHpo4qJqsOS5jYQ4Qw7dtDx3Kosc/m3l+q8HIHSj+6Va41bM
+   f9RVpF2xtJ93O4yPIt2QkU/SvWP3KJEMMd4JSpY6H0dADWSqkte4eBnk+
+   /YG93H6780qPLejXugVsqzPntbjQCyyMsLxyeMWPZMSsrYr6oM4GHC6RR
+   NnfEuJL0/LNOJAEX+n7OuJldm0m/6VAxxLACyCHuRgndSH1WXQdtfZTij
+   03XgqS9mL6R7LxMh2qf1ChOpFzGILTY5iJHgC2HrJzEV4GFwoxstUwQIn
+   l7Jvw7IshguVM3k6kEG0PsJ+d4gQFSTHNwdgMBiIZ5h9Ae2ZOHqVAricy
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10954"; a="390217876"
+X-IronPort-AV: E=Sophos;i="6.04,198,1695711600"; 
+   d="scan'208";a="390217876"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2024 22:22:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10954"; a="733504139"
+X-IronPort-AV: E=Sophos;i="6.04,198,1695711600"; 
+   d="scan'208";a="733504139"
+Received: from lkp-server01.sh.intel.com (HELO 961aaaa5b03c) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 15 Jan 2024 22:22:40 -0800
+Received: from kbuild by 961aaaa5b03c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rPcqM-00006u-2E;
+	Tue, 16 Jan 2024 06:22:38 +0000
+Date: Tue, 16 Jan 2024 14:22:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
+Message-ID: <202401161447.0AQqNEiO-lkp@intel.com>
+References: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -57,113 +64,38 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c09ee5b66d451bf97d14c167048549aa0824ee06.1705225049.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
 
-Hi Christophe,
+Hi Arnaud,
 
-On Sun, Jan 14, 2024 at 10:37:43AM +0100, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> ida_alloc_max() is inclusive. So a -1 has been added when needed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 12 ++++++------
->  drivers/rpmsg/rpmsg_ctrl.c | 12 ++++++------
->  2 files changed, 12 insertions(+), 12 deletions(-)
-> 
+kernel test robot noticed the following build warnings:
 
-I will apply this patch when the next rc1 comes out.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on robh/for-next linus/master v6.7 next-20240112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Mathieu
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-Add-TEE-support/20240115-215613
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20240115135249.296822-5-arnaud.pouliquen%40foss.st.com
+patch subject: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+config: alpha-kismet-CONFIG_TEE_REMOTEPROC-CONFIG_STM32_RPROC-0-0 (https://download.01.org/0day-ci/archive/20240116/202401161447.0AQqNEiO-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20240116/202401161447.0AQqNEiO-lkp@intel.com/reproduce)
 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 09833ad05da7..1cb8d7474428 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -399,8 +399,8 @@ static void rpmsg_eptdev_release_device(struct device *dev)
->  {
->  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
->  
-> -	ida_simple_remove(&rpmsg_ept_ida, dev->id);
-> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-> +	ida_free(&rpmsg_ept_ida, dev->id);
-> +	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
->  	kfree(eptdev);
->  }
->  
-> @@ -441,12 +441,12 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  
->  	eptdev->chinfo = chinfo;
->  
-> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
-> +	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_eptdev;
->  	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
->  
-> -	ret = ida_simple_get(&rpmsg_ept_ida, 0, 0, GFP_KERNEL);
-> +	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_minor_ida;
->  	dev->id = ret;
-> @@ -462,9 +462,9 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  	return ret;
->  
->  free_ept_ida:
-> -	ida_simple_remove(&rpmsg_ept_ida, dev->id);
-> +	ida_free(&rpmsg_ept_ida, dev->id);
->  free_minor_ida:
-> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
-> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->  free_eptdev:
->  	put_device(dev);
->  	kfree(eptdev);
-> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index 433253835690..c312794ba4b3 100644
-> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -130,8 +130,8 @@ static void rpmsg_ctrldev_release_device(struct device *dev)
->  {
->  	struct rpmsg_ctrldev *ctrldev = dev_to_ctrldev(dev);
->  
-> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
-> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
-> +	ida_free(&rpmsg_ctrl_ida, dev->id);
-> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->  	kfree(ctrldev);
->  }
->  
-> @@ -156,12 +156,12 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
->  	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
->  	ctrldev->cdev.owner = THIS_MODULE;
->  
-> -	ret = ida_simple_get(&rpmsg_minor_ida, 0, RPMSG_DEV_MAX, GFP_KERNEL);
-> +	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_ctrldev;
->  	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
->  
-> -	ret = ida_simple_get(&rpmsg_ctrl_ida, 0, 0, GFP_KERNEL);
-> +	ret = ida_alloc(&rpmsg_ctrl_ida, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_minor_ida;
->  	dev->id = ret;
-> @@ -179,9 +179,9 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
->  	return ret;
->  
->  free_ctrl_ida:
-> -	ida_simple_remove(&rpmsg_ctrl_ida, dev->id);
-> +	ida_free(&rpmsg_ctrl_ida, dev->id);
->  free_minor_ida:
-> -	ida_simple_remove(&rpmsg_minor_ida, MINOR(dev->devt));
-> +	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->  free_ctrldev:
->  	put_device(dev);
->  	kfree(ctrldev);
-> -- 
-> 2.43.0
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401161447.0AQqNEiO-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for TEE_REMOTEPROC when selected by STM32_RPROC
+   
+   WARNING: unmet direct dependencies detected for TEE_REMOTEPROC
+     Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
+     Selected by [y]:
+     - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
