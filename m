@@ -1,98 +1,87 @@
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDC210799;
-	Wed, 17 Jan 2024 13:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0D41E86E;
+	Wed, 17 Jan 2024 13:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705497893; cv=none; b=E7IDz3xEreRRJFITEstqZ1TFLL6xbBLJdlry4EuPecSEUi7ZEESqltv2MMfkPnEcNYUbNNCYfA4OpGAxWKEtp+2rADsTQawPWhfJc7N6QhNeapqY2cvfBy7C8SY/oFRUMmG1C+uMNXRGzIe+j5ktwGItEvmAESIX4dA/DqYQDXw=
+	t=1705499611; cv=none; b=Iq/F7CCyGf2ts5U/BlT8Lk+jKr7kWaTM0M6L11Hw/qUrUVmeG+OH1zpMz1U8VI2Yr3b1/8XKrEG40PzzvzC+EAEXCWw1l+dzaFSZPJd4ExQOVV813PmRs61pFA0bl/uhO81g2VFX9kZiX7rlN1AeMI+XQasiLRauPSVnsbK8sP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705497893; c=relaxed/simple;
-	bh=uk0oEvzGdLc3yF4zp2bMI+rdHVz8vGNoe+a81asr5Uo=;
-	h=Received:DKIM-Signature:Received:Received:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:
-	 To:CC:References:From:Organization:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
-	 X-Proofpoint-Virus-Version; b=rvOogv/rl6rbSnm4lTjPfnQl2dHl2b82rTgg5wp/03klgDJpWOaz/BnluiPe5FCBbBl2AdZYXUxW+bes+mr0J5L5FmvR6gXbhGm6g9TDyJem7sNViH3pehVnT4XARAbgKblCex9Ng3wXCKPb8U1VT5XmIjjHjqXEn3skLH13VL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=RU13b9Td; arc=none smtp.client-ip=185.132.182.106
+	s=arc-20240116; t=1705499611; c=relaxed/simple;
+	bh=cwpAB4v8MAeBSFfk751SQoNIeFgQACr+c8jRPotmZ/Q=;
+	h=Received:DKIM-Signature:Received:Received:Received:Received:From:
+	 To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy:X-Proofpoint-Virus-Version; b=FMFeJQ5c52MdHd/eL3BjgDHQ/m83tk4dSfxpXAMIYT2t64lEqFU2oavNfMSxVtSsC7e5owpSqwRcFSG+IKgCoC6Y2mIigJIHCe060S5YF14JBbyCotQJW9aMyfsa7cmShjo8ZMwF7lGF/XNfRHwOgjF+Kny5MJYFuWtHFzfWrzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=f80FNgBL; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="RU13b9Td"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40H8PCcZ007691;
-	Wed, 17 Jan 2024 14:24:44 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="f80FNgBL"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40HBLSrG008575;
+	Wed, 17 Jan 2024 14:53:22 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=Te5k9GkTLi4Sq5SrTeZvD0LQS6mMi38YJ0s674SsFqc=; b=RU
-	13b9TdAMAL+P2hVT9WMM/28C2mJy9TDKtLPF7dQtrd4P3e4Pt1RUQJSMDr41RlK9
-	RV5sErUS8kxEXrquN9KVH/+ZHgvwsNTrTIiqObUBoaQOiCP2NdQIMcvMPbnZuwgR
-	VfgJ/2IH715yQAd/QZg0I+DBCfjZtq/sIazsX2uym40aMTB9kuEHeJ3XIR4JPxu5
-	zVcT7MHVytT4J7RonRH6GyWnWayxtGzMNFkA8k1cwk5ZM7Z7aCS6v+vDI3I+smCV
-	24vCYB2S/aYQsZj6SzEqRni5cXv/pTx/mFtU+c5CBoMqb6xrsko6nGUzMuWNjLS0
-	c2ZrrN9OJLH9uJtDQIng==
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=1qNhrPs
+	JgbVSkEdgh8//+X6VT70i4GD3Lsqz0cPBVKE=; b=f80FNgBLPiuFX9L00KgWoBH
+	AvjnRhfZA4IGYB8rWrAAK0EQlOWjhaiSZ9r0VFOUmuNbLZhrnPnuUdqTnd8eouvF
+	yqfjmJRAvzb16mirihHNSjhCK3Vhb80Hmh614Oe4unMrP/ZGXzPlW+RsI+3YgyRx
+	razv3uSTABWJJ+ZHZWmhrIa65fz+sXTLuU7vOzJo5D4wkjuFs81qqJ8TUKZDVGh8
+	9vHJ7LSEa0nX9FhZFSka4eo8F2qvC2wVYnEV6mtQr7jT8tUtjgPA6ZsmoT/EqANk
+	cXNP3JaRNbH7AwSN62SAUZ9gk5JV2ohB6p/+JZmBoprXl5JFr4qOVyqJqr6dHOw=
+	=
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vkmfym3e4-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vm4y51rn6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jan 2024 14:24:44 +0100 (CET)
+	Wed, 17 Jan 2024 14:53:22 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7D7A8100079;
-	Wed, 17 Jan 2024 14:24:43 +0100 (CET)
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A79E100079;
+	Wed, 17 Jan 2024 14:53:22 +0100 (CET)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6EF5E208D45;
-	Wed, 17 Jan 2024 14:24:43 +0100 (CET)
-Received: from [10.252.22.63] (10.252.22.63) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F417C209BD9;
+	Wed, 17 Jan 2024 14:53:21 +0100 (CET)
+Received: from localhost (10.252.22.63) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 17 Jan
- 2024 14:24:41 +0100
-Message-ID: <96941fae-8341-4834-9283-4f6def47b1f0@foss.st.com>
-Date: Wed, 17 Jan 2024 14:24:40 +0100
+ 2024 14:53:21 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 0/2] remoteproc: stm32: Fix sparse warnings
+Date: Wed, 17 Jan 2024 14:53:10 +0100
+Message-ID: <20240117135312.3381936-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] remoteproc: stm32: Fix sparse warnings
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240117131817.3338146-1-arnaud.pouliquen@foss.st.com>
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20240117131817.3338146-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-17_08,2024-01-17_01,2023-05-22_02
 
-Hi,
+Fix warnings reported by sparse using make option "C=1"
 
-On 1/17/24 14:18, Arnaud Pouliquen wrote:
-> Fix warnings reported by sparse using make option "C=1"
-> 
-> Arnaud Pouliquen (2):
->   remoteproc: stm32: Fix incorrect type in assignment for va
->   remoteproc: stm32: Fix incorrect type assignment returned by
->     stm32_rproc_get_loaded_rsc_tablef
-> 
->  drivers/remoteproc/stm32_rproc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> 
-> base-commit: 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+Arnaud Pouliquen (2):
+  remoteproc: stm32: Fix incorrect type in assignment for va
+  remoteproc: stm32: Fix incorrect type assignment returned by
+    stm32_rproc_get_loaded_rsc_tablef
 
-I faced an issue with the ST server message that blocked a part
-of the mails associated with this series. Please ignore this series,
-as I will resend it.
+ drivers/remoteproc/stm32_rproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Regards
-Arnaud
+
+base-commit: 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+-- 
+2.25.1
+
