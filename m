@@ -1,142 +1,155 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3021170E;
-	Thu, 18 Jan 2024 07:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20A02030E;
+	Thu, 18 Jan 2024 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705563517; cv=none; b=F9r15m2GBbkG60CveWYomlK2FV6/CzWJtHZhKy8BuIO6UgWSyKXC9eZtuTI8YCSyIh31POiZ/lVUIt0I7rYPJ2TPBuXmLuYvDbCSm28EThYdtEHjyoXQj7X78pi+w8xs9JkjaefFaSTWBANsSICRP8PgDcr+6sddHddYiDFnC5I=
+	t=1705572323; cv=none; b=nH4QpuB1oLxP3IOKxi7lCwwT4ZYvnI7u/N4Y/ZbqPcVgmiV09ne9+nOlywjOZNx5p2qYddI0PgHJLLKul0/t0mm8SHO8FuUTdV8th5ezetaTyeeVB2bPB+rymAvdm6oIyA99j2S2exucmOjVDryPFncV8Fwov4olJsf6y0HSs4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705563517; c=relaxed/simple;
-	bh=oEgWvrslnSM4xcNArZv/SqPbZt3JAcjMLGKjSG+iUmE=;
-	h=DKIM-Signature:X-IronPort-AV:X-IronPort-AV:Received:X-ExtLoop1:
-	 X-IronPort-AV:Received:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To; b=EZYMPHClcAG3wkAmArd9SVYzw4lAcqR7QxNaJ1QRkOVfJpcktiH25ZQYcwPI0StA66pJoMATf5WzeURSr/OsD5Gcr7f+iCCNfMUYP6NiSpPQWAK3fEraCfxtxDaiVHBMDA1JB+BYha2euqcrd+9Jw8tPoZE2nS+dwb9QbMYTKlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IxXESg8B; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1705572323; c=relaxed/simple;
+	bh=HhhsN2WfAyRDBWzaRYUFbUEE/c8KvI4/F0M8cPQbuYY=;
+	h=Received:DKIM-Signature:Received:Received:Received:Received:From:
+	 To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy:X-Proofpoint-Virus-Version; b=KcxJ2IeSLKWhRCi4giptxim0iXEbX7FLcQy/OAdrynh64eZ6Oz5EMkk8XB1bSuwdVvZrqhqlrfsnHXt+uXeejLWrj6kdGVOw9eunD58HxgTDohiC02uNc2DBbDFjQJwGZatjDTT81J8uFkNsiYNIjYjuwt1wWJJ7g8pPkwbknLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Hk4CdXV1; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IxXESg8B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705563514; x=1737099514;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oEgWvrslnSM4xcNArZv/SqPbZt3JAcjMLGKjSG+iUmE=;
-  b=IxXESg8BmHMpx/WhHtu6W4851LTiCNa01HjFqtr7xI9oIsPioPUk5pRU
-   FncgXN1HZxliTYp+Amh9rX6iRHvw+hV+TRU4jD0zNFxtFhGtL16POWqBg
-   MWZiM3KROZRshD9yI3YeT39NSRUd4OAD3WRMj4PdOwiNXHlV7zauEz0VK
-   9qJCv1m68pvcl4fr6gfo6YVvhJkCMh1mk819TOcbRPpes5WN1dQHxKIei
-   9caiM6EfsPLxQ9GxtD1qD2zcCLYGgWxhoduMHH69b5tPwQVW+LhhBka8+
-   aEc29JN+6kuD6zNkvGc8H+gUUovMyGXJiCwBFrF1Q6zZsyBz54LB/xyWr
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10956"; a="7744986"
-X-IronPort-AV: E=Sophos;i="6.05,201,1701158400"; 
-   d="scan'208";a="7744986"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2024 23:38:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,201,1701158400"; 
-   d="scan'208";a="329433"
-Received: from lkp-server01.sh.intel.com (HELO 961aaaa5b03c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 17 Jan 2024 23:38:30 -0800
-Received: from kbuild by 961aaaa5b03c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rQMyp-0002lY-0Q;
-	Thu, 18 Jan 2024 07:38:27 +0000
-Date: Thu, 18 Jan 2024 15:37:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <202401181522.bvg4EMU4-lkp@intel.com>
-References: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Hk4CdXV1"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40I9gTqq025691;
+	Thu, 18 Jan 2024 11:04:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=GKqS8jq
+	xEEpUNyAQ+GwIQ0fVhoXxiu3PF3g7F74mv1g=; b=Hk4CdXV1ksC+LVQ5sYrNcdj
+	YVW3QTCU1pQ2iylO6ets36E5VeU7HqtdnrL0ILbQypQqR+jPshjDtkW4D5rfyV5q
+	pLq68VhMhJAA2uw+LtZKMHJe3qTRD/uChFIAuk1nb9OUiunnd67lHq5GO9eS6wIc
+	xj+P4c3g4h7s7VHYKqn7K/rgJRlIyhl/382Y8hU0TUZ2H4mrA+vlsQNH2uw4lrp6
+	yT3eFVUqOYSXiaoBMQD13BKgy2GM8gQUdBBk0GoYS7PE3pzAdsL7bg3QfI+sEKqI
+	t20zgGKIx1ag/kdUT3sMTpO37/0J50Zk1DW0yjKKnE8Jkj7okdiMcHdP1bLGvOA=
+	=
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vkmbhg0sp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Jan 2024 11:04:44 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3C8B110007D;
+	Thu, 18 Jan 2024 11:04:44 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2FB2121A223;
+	Thu, 18 Jan 2024 11:04:44 +0100 (CET)
+Received: from localhost (10.201.20.75) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 18 Jan
+ 2024 11:04:43 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2 0/4] Introduction of a remoteproc tee to load signed firmware
+Date: Thu, 18 Jan 2024 11:04:29 +0100
+Message-ID: <20240118100433.3984196-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240115135249.296822-5-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-18_05,2024-01-17_01,2023-05-22_02
 
-Hi Arnaud,
+Updates from the previous version [1]
+- fix issues reported by kernel test robot,
+- address Rob Herring comment on bindings.
 
-kernel test robot noticed the following build errors:
+[1] https://lore.kernel.org/linux-arm-kernel/20240115135249.296822-1-arnaud.pouliquen@foss.st.com/T/
 
-[auto build test ERROR on remoteproc/rproc-next]
-[also build test ERROR on linus/master v6.7 next-20240117]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-Add-TEE-support/20240115-215613
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240115135249.296822-5-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH 4/4] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-config: arm64-randconfig-r081-20240118 (https://download.01.org/0day-ci/archive/20240118/202401181522.bvg4EMU4-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240118/202401181522.bvg4EMU4-lkp@intel.com/reproduce)
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating and
+loading the remoteproc firmware image in an Arm secure context.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401181522.bvg4EMU4-lkp@intel.com/
+1) Principle:
 
-All errors (new ones prefixed by >>):
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
 
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_load_fw':
->> tee_remoteproc.c:(.text+0x138): undefined reference to `tee_shm_register_kernel_buf'
->> tee_remoteproc.c:(.text+0x138): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_shm_register_kernel_buf'
->> aarch64-linux-ld: tee_remoteproc.c:(.text+0x18c): undefined reference to `tee_client_invoke_func'
->> tee_remoteproc.c:(.text+0x18c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_invoke_func'
->> aarch64-linux-ld: tee_remoteproc.c:(.text+0x1ac): undefined reference to `tee_shm_free'
->> tee_remoteproc.c:(.text+0x1ac): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_shm_free'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_start':
->> tee_remoteproc.c:(.text+0x240): undefined reference to `tee_client_invoke_func'
-   tee_remoteproc.c:(.text+0x240): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_invoke_func'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `rproc_tee_get_rsc_table':
-   tee_remoteproc.c:(.text+0x2dc): undefined reference to `tee_client_invoke_func'
-   tee_remoteproc.c:(.text+0x2dc): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_invoke_func'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_stop':
-   tee_remoteproc.c:(.text+0x408): undefined reference to `tee_client_invoke_func'
-   tee_remoteproc.c:(.text+0x408): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_invoke_func'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_register':
->> tee_remoteproc.c:(.text+0x51c): undefined reference to `tee_client_open_session'
->> tee_remoteproc.c:(.text+0x51c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_open_session'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_unregister':
->> tee_remoteproc.c:(.text+0x624): undefined reference to `tee_client_close_session'
->> tee_remoteproc.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_close_session'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_probe':
->> tee_remoteproc.c:(.text+0x6b0): undefined reference to `tee_client_open_context'
->> tee_remoteproc.c:(.text+0x6b0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_open_context'
->> aarch64-linux-ld: tee_remoteproc.c:(.text+0x6e0): undefined reference to `tee_client_close_context'
->> tee_remoteproc.c:(.text+0x6e0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `tee_client_close_context'
-   aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o: in function `tee_rproc_remove':
-   tee_remoteproc.c:(.text+0x78c): undefined reference to `tee_client_close_session'
-   tee_remoteproc.c:(.text+0x78c): additional relocation overflows omitted from the output
-   aarch64-linux-ld: tee_remoteproc.c:(.text+0x7dc): undefined reference to `tee_client_close_context'
->> aarch64-linux-ld: drivers/remoteproc/tee_remoteproc.o:(.data+0x10): undefined reference to `tee_bus_type'
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for TEE_REMOTEPROC
-   Depends on [m]: REMOTEPROC [=y] && OPTEE [=m]
-   Selected by [y]:
-   - STM32_RPROC [=y] && (ARCH_STM32 [=y] || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+2) Format of the signed image:
 
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact.the user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (4):
+  remoteproc: Add TEE support
+  dt-bindings: remoteproc: add compatibility for TEE support
+  remoteproc: stm32: create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  52 ++-
+ drivers/remoteproc/Kconfig                    |   9 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/stm32_rproc.c              | 233 +++++++++--
+ drivers/remoteproc/tee_remoteproc.c           | 393 ++++++++++++++++++
+ include/linux/tee_remoteproc.h                |  99 +++++
+ 6 files changed, 740 insertions(+), 47 deletions(-)
+ create mode 100644 drivers/remoteproc/tee_remoteproc.c
+ create mode 100644 include/linux/tee_remoteproc.h
+
+
+base-commit: 0dd3ee31125508cd67f7e7172247f05b7fd1753a
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
