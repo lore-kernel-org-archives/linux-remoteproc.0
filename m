@@ -1,46 +1,46 @@
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7185C49;
-	Tue, 23 Jan 2024 18:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A8682D94;
+	Tue, 23 Jan 2024 18:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706035617; cv=none; b=CNOvrIeu8p9fv4DFSTN7kAoNrK53k5F0HLZac/9Taw4hMXNtIikPIch28TCfnxbrNu3NAuibKvb6Q9i+J/s1DUGYj66vv8VlDsE5jLAzZtvtPuZ1YgJto65t3dQq/PcTxvA5JX5UjGuvsLb412DIblrtd4HYnjZyBsVdqFb+Xvg=
+	t=1706035617; cv=none; b=KFqAWinCtC8UAvYykEYGXEbIkfom0ryaDsABkdYguIoGpj4JrHr6xXLetcsXPSfrHpVQS6lHArZu55Kf+JJjdUqeoDj39+t3tFVewwP5QO7xMhMJ/dn0BXUm4IMywIfXc5CXtzSqPFyNUEdZo4bkXKGnJMtCfsNbR8LCFcFNv7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706035617; c=relaxed/simple;
-	bh=9Er/9ZzriBnUYFV8MYQi+FyCt/oxHJRm34fkJBeBlTo=;
+	bh=m/yWZtNxfkZivwoe0ZZTr4FL+nbuPIxIAAeRJ+811kE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JbDXRiH9G5VKV4G1CAvoxQAYWHpXea7IGyHzU5lxp/3ZIaQvDNp/L/kz9pgK1oFFEtKKmFqA0XFO0z4xfW0Lgpvz2FF3xhZfQLIkIfpN6KnY1DiYLNacNTnOk8fdJVBm18UvvtSHNfm4wiF03dpUoBuU8vZ7/qtxMCaz0KvAEDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=revUkMym; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=PfJEYdVOVTcuV+3amFkCEkE6DdLG071hrbOGmCtakqh9t4t3hJsfEHExheuCQupkHuswGqDyV2sIIwKfLQCAx9tdzXSL3EXY7bwPyZZVWezL39XJFo2KT4mkijzQot8awQGktxaUk2VPPATA0gOrLDGbZ1iijUafMSutHMUcT+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sH6yT3O8; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="revUkMym"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkaqo111731;
-	Tue, 23 Jan 2024 12:46:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1706035596;
-	bh=jD1FKqDzVix2VafCVSn9UVihhquiSbNa047p/EY4x68=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=revUkMymYkfh9Qb9IG0NdGm+Qeq1kGH/R+wx7Icb7UEBHMQPpylFLGSETQ24zQHvZ
-	 78RfagJhyRAsxYkxHoUDKJ9yVD8HvZmx0iMz4PLl2D1hAOqmzhGnR17J9EJ4ibF0uf
-	 5MEKGW1BsWVi0gu/WMFC6ZkzXm2nw3enYOYWwcvo=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NIkaOa125892
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 23 Jan 2024 12:46:36 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 23
- Jan 2024 12:46:36 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 23 Jan 2024 12:46:36 -0600
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkX1t063265;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sH6yT3O8"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkZFm111630;
 	Tue, 23 Jan 2024 12:46:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1706035595;
+	bh=XULANMiamCh2z47DetgW0gGkmV23v5Hxx2b4xb/xhAE=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=sH6yT3O8jIYfaltHigwZlf2pGTWjqa0M/TADp31nZojUJ8AHg0RYvRuV4h484pH0F
+	 8IHgAMwAqAsjHNauHb25/HAIGBIMsIAHDtaD3Y93n/8xTHTdDBwg2kS0XfHAB9cg7B
+	 L2FX2b53D45Yze2B1bzkU3gXuBicFgVxuJgOJuZw=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NIkZnL011008
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 23 Jan 2024 12:46:35 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 23
+ Jan 2024 12:46:35 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 23 Jan 2024 12:46:35 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkX1r063265;
+	Tue, 23 Jan 2024 12:46:34 -0600
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -58,9 +58,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         Andrew Davis <afd@ti.com>
-Subject: [PATCH 4/9] remoteproc: qcom_q6v5_mss: Use devm_rproc_alloc() helper
-Date: Tue, 23 Jan 2024 12:46:27 -0600
-Message-ID: <20240123184632.725054-4-afd@ti.com>
+Subject: [PATCH 2/9] remoteproc: imx_rproc: Use devm_rproc_alloc() helper
+Date: Tue, 23 Jan 2024 12:46:25 -0600
+Message-ID: <20240123184632.725054-2-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240123184632.725054-1-afd@ti.com>
 References: <20240123184632.725054-1-afd@ti.com>
@@ -80,123 +80,61 @@ free on error paths.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/remoteproc/imx_rproc.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 394b2c1cb5e21..1779fc890e102 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1990,8 +1990,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 8bb293b9f327c..55ecce3ab5f75 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -1104,16 +1104,14 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	int ret;
  
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
--			    mba_image, sizeof(*qproc));
-+	rproc = devm_rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
-+				 mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 	/* set some other name then imx */
+-	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
+-			    NULL, sizeof(*priv));
++	rproc = devm_rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
++				 NULL, sizeof(*priv));
+ 	if (!rproc)
  		return -ENOMEM;
-@@ -2008,7 +2008,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 					    1, &qproc->hexagon_mdt_image);
- 	if (ret < 0 && ret != -EINVAL) {
- 		dev_err(&pdev->dev, "unable to read mpss firmware-name\n");
--		goto free_rproc;
-+		return ret;
+ 
+ 	dcfg = of_device_get_match_data(dev);
+-	if (!dcfg) {
+-		ret = -EINVAL;
+-		goto err_put_rproc;
+-	}
++	if (!dcfg)
++		return -EINVAL;
+ 
+ 	priv = rproc->priv;
+ 	priv->rproc = rproc;
+@@ -1124,8 +1122,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	priv->workqueue = create_workqueue(dev_name(dev));
+ 	if (!priv->workqueue) {
+ 		dev_err(dev, "cannot create workqueue\n");
+-		ret = -ENOMEM;
+-		goto err_put_rproc;
++		return -ENOMEM;
  	}
  
- 	platform_set_drvdata(pdev, qproc);
-@@ -2019,17 +2019,17 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->has_spare_reg = desc->has_spare_reg;
- 	ret = q6v5_init_mem(qproc, pdev);
- 	if (ret)
--		goto free_rproc;
-+		return ret;
- 
- 	ret = q6v5_alloc_memory_region(qproc);
- 	if (ret)
--		goto free_rproc;
-+		return ret;
- 
- 	ret = q6v5_init_clocks(&pdev->dev, qproc->proxy_clks,
- 			       desc->proxy_clk_names);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to get proxy clocks.\n");
--		goto free_rproc;
-+		return ret;
- 	}
- 	qproc->proxy_clk_count = ret;
- 
-@@ -2037,7 +2037,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 			       desc->reset_clk_names);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to get reset clocks.\n");
--		goto free_rproc;
-+		return ret;
- 	}
- 	qproc->reset_clk_count = ret;
- 
-@@ -2045,7 +2045,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 			       desc->active_clk_names);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to get active clocks.\n");
--		goto free_rproc;
-+		return ret;
- 	}
- 	qproc->active_clk_count = ret;
- 
-@@ -2053,7 +2053,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 				  desc->proxy_supply);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to get proxy regulators.\n");
--		goto free_rproc;
-+		return ret;
- 	}
- 	qproc->proxy_reg_count = ret;
- 
-@@ -2061,7 +2061,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 				  desc->active_supply);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to get active regulators.\n");
--		goto free_rproc;
-+		return ret;
- 	}
- 	qproc->active_reg_count = ret;
- 
-@@ -2074,12 +2074,12 @@ static int q6v5_probe(struct platform_device *pdev)
- 					  desc->fallback_proxy_supply);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "Failed to get fallback proxy regulators.\n");
--			goto free_rproc;
-+			return ret;
- 		}
- 		qproc->fallback_proxy_reg_count = ret;
- 	} else if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to init power domains\n");
--		goto free_rproc;
-+		return ret;
- 	} else {
- 		qproc->proxy_pd_count = ret;
- 	}
-@@ -2127,8 +2127,6 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
- detach_proxy_pds:
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
--free_rproc:
+ 	ret = imx_rproc_xtr_mbox_init(rproc);
+@@ -1167,8 +1164,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	imx_rproc_free_mbox(rproc);
+ err_put_wkq:
+ 	destroy_workqueue(priv->workqueue);
+-err_put_rproc:
 -	rproc_free(rproc);
  
  	return ret;
  }
-@@ -2149,8 +2147,6 @@ static void q6v5_remove(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
- 
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
--
+@@ -1183,7 +1178,6 @@ static void imx_rproc_remove(struct platform_device *pdev)
+ 	imx_rproc_put_scu(rproc);
+ 	imx_rproc_free_mbox(rproc);
+ 	destroy_workqueue(priv->workqueue);
 -	rproc_free(rproc);
  }
  
- static const struct rproc_hexagon_res sc7180_mss = {
+ static const struct of_device_id imx_rproc_of_match[] = {
 -- 
 2.39.2
 
