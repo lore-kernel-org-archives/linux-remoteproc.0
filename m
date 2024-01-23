@@ -1,46 +1,46 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED60986AF2;
-	Tue, 23 Jan 2024 18:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2D86AF7;
+	Tue, 23 Jan 2024 18:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706035761; cv=none; b=ttzGM0Py2FCTE7y8Xe8kkC/s6qahlYQcrThE9w0HWKIBOs9ao302sUHWOj0a2vdI2bClTz9kXZFfJSqn3/VvYeXxHtatnOlfxIVYuCCZYwjgplXQd38YNU4WYuNvNjkAkHgGj+xUnlTsSJUGH09COvhSHrdATgYVU4/B0m8KFTM=
+	t=1706035762; cv=none; b=mKireH403qGyh6OaOtunu2Vf/yKnob3k62Su+ghng/EPpqvJu1vt54eqhftSQFrbT1cG6XySqHqySdFMu3pEoUW/2oixCHrKFJ/tv8oibZaXfPRDk0BrbtbSDax16Nuc4uf8avzSzI2EmrEmpwH3UeTEJYt9Ki2VTJ8u8yzYdxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706035761; c=relaxed/simple;
-	bh=6JxaZr3gQ3FflabST3iihxVacAmdxNOYNyWFOv3PSgY=;
+	s=arc-20240116; t=1706035762; c=relaxed/simple;
+	bh=njlR0rO+G4g3TL1gkbOtBkBHGf3Jn2TMwjfojhYgCJE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kVRZc2LeQoxvndmrYCeXpd3gRx8iQo+jysuZJ0tGLl/uah6E4iQ8tqLv5fCbgqJUPMhdYxzYIgvTf68T8O3xReFbX4JBvDgaZHGQRexlc11b++NC6eADy2jfbMfRm5Fx069tvGeEvNFcOpV8xlKPHjfmg7BjEY9E1IgqqeYeLHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V0iXng9O; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=dHl9l5bwtZ1IwZwj7670Hg2pBvlBoUoNvo0iFU/jeDodXzNqaDQkUy30zlb4aYlaAvZdsdtUSOPUWf3J9ftXrEko2G8Ply5dNo7EIfN3X9lWS04chIS6lg3/VqKJ9Y5zwf9nlXqrO3upolf4jQdepyoNJLSPMNQa/wJHZn3jgfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oRwKu67p; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V0iXng9O"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NInFBJ090413;
-	Tue, 23 Jan 2024 12:49:15 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oRwKu67p"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NInGBE011104;
+	Tue, 23 Jan 2024 12:49:16 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1706035755;
-	bh=x7Zkj4f+0noCETbDGtxWDNsjlb2cVIVyBzbEDUpzWLs=;
+	s=ti-com-17Q1; t=1706035756;
+	bh=PChh5xsLsnerdCoIJ9CmTZI/Hl/y3vuBaVRnyyN6aKc=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=V0iXng9O4X/D1455oZ+5xM4jMK22FpPJRndFQwQ5Fkpb23BUerNmstadJ7xWqZw8F
-	 yFR9zW9I/p4dCz7EwAP8/Nbm/2pX6V540APDT/vuM1A6d7WIaukG8yiDPWslFrU6CQ
-	 ob9TjnYS4jqJP5KxWCx/jY9BiBMmnu2L+fGyrs5o=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NInFvC041340
+	b=oRwKu67pjHP25PwO0mu7TWKCUtFksG/90y/wok4m327E0yDswb/dsnR0Xmc1SIvtb
+	 gjNhYnzypjTOxauvbz8w1C+OnKP81SChRkM9oLBRpZTeOv16e/SSzg9x1y/tfZ81dE
+	 oIANT3huImzOesAGsKo/kqAso99492bXffV/1Qkg=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NInGEX128550
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 23 Jan 2024 12:49:15 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 23 Jan 2024 12:49:16 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 23
- Jan 2024 12:49:15 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2024 12:49:16 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 23 Jan 2024 12:49:15 -0600
+ Frontend Transport; Tue, 23 Jan 2024 12:49:16 -0600
 Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NInEnL066395;
-	Tue, 23 Jan 2024 12:49:15 -0600
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NInEnO066395;
+	Tue, 23 Jan 2024 12:49:16 -0600
 From: Andrew Davis <afd@ti.com>
 To: Jai Luthra <j-luthra@ti.com>, Hari Nagalla <hnagalla@ti.com>,
         Bjorn
@@ -50,9 +50,9 @@ To: Jai Luthra <j-luthra@ti.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 4/8] remoteproc: k3-dsp: Use devm_ti_sci_get_by_phandle() helper
-Date: Tue, 23 Jan 2024 12:49:09 -0600
-Message-ID: <20240123184913.725435-4-afd@ti.com>
+Subject: [PATCH 7/8] remoteproc: k3-dsp: Use devm_ioremap_wc() helper
+Date: Tue, 23 Jan 2024 12:49:12 -0600
+Message-ID: <20240123184913.725435-7-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240123184913.725435-1-afd@ti.com>
 References: <20240123184913.725435-1-afd@ti.com>
@@ -66,89 +66,127 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Use the device lifecycle managed TI-SCI get() function. This helps prevent
-mistakes like not put()'ing in the wrong order in cleanup functions and
-forgetting to put() on error paths.
+Use a device lifecycle managed ioremap helper function. This helps prevent
+mistakes like unmapping out of order in cleanup functions and forgetting
+to unmap on all error paths.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 33 +++++++----------------
- 1 file changed, 9 insertions(+), 24 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 48 +++++------------------
+ 1 file changed, 10 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index a13552c71f440..0240340a83e90 100644
+index 800c8c6767086..f799f74734b4a 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -682,7 +682,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	const char *fw_name;
- 	bool p_state = false;
- 	int ret = 0;
--	int ret1;
+@@ -598,16 +598,13 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
+ 	/* use remaining reserved memory regions for static carveouts */
+ 	for (i = 0; i < num_rmems; i++) {
+ 		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
+-		if (!rmem_np) {
+-			ret = -EINVAL;
+-			goto unmap_rmem;
+-		}
++		if (!rmem_np)
++			return -EINVAL;
  
- 	data = of_device_get_match_data(dev);
- 	if (!data)
-@@ -708,30 +707,24 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	kproc->dev = dev;
- 	kproc->data = data;
+ 		rmem = of_reserved_mem_lookup(rmem_np);
+ 		if (!rmem) {
+ 			of_node_put(rmem_np);
+-			ret = -EINVAL;
+-			goto unmap_rmem;
++			return -EINVAL;
+ 		}
+ 		of_node_put(rmem_np);
  
--	kproc->ti_sci = ti_sci_get_by_phandle(np, "ti,sci");
-+	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
- 	if (IS_ERR(kproc->ti_sci))
- 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
- 				     "failed to get ti-sci handle\n");
+@@ -615,12 +612,11 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
+ 		/* 64-bit address regions currently not supported */
+ 		kproc->rmem[i].dev_addr = (u32)rmem->base;
+ 		kproc->rmem[i].size = rmem->size;
+-		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
++		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
+ 		if (!kproc->rmem[i].cpu_addr) {
+ 			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
+ 				i + 1, &rmem->base, &rmem->size);
+-			ret = -ENOMEM;
+-			goto unmap_rmem;
++			return -ENOMEM;
+ 		}
  
- 	ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
+ 		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+@@ -631,19 +627,6 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
+ 	kproc->num_rmems = num_rmems;
+ 
+ 	return 0;
+-
+-unmap_rmem:
+-	for (i--; i >= 0; i--)
+-		iounmap(kproc->rmem[i].cpu_addr);
+-	return ret;
+-}
+-
+-static void k3_dsp_reserved_mem_exit(struct k3_dsp_rproc *kproc)
+-{
+-	int i;
+-
+-	for (i = 0; i < kproc->num_rmems; i++)
+-		iounmap(kproc->rmem[i].cpu_addr);
+ }
+ 
+ static void k3_dsp_release_tsp(void *data)
+@@ -752,10 +735,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 
+ 	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
+ 					       NULL, &p_state);
 -	if (ret) {
--		dev_err_probe(dev, ret, "missing 'ti,sci-dev-id' property\n");
--		goto put_sci;
+-		dev_err_probe(dev, ret, "failed to get initial state, mode cannot be determined\n");
+-		goto release_mem;
 -	}
 +	if (ret)
-+		return dev_err_probe(dev, ret, "missing 'ti,sci-dev-id' property\n");
++		return dev_err_probe(dev, ret, "failed to get initial state, mode cannot be determined\n");
  
- 	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
--	if (IS_ERR(kproc->reset)) {
--		ret = dev_err_probe(dev, PTR_ERR(kproc->reset),
--				    "failed to get reset\n");
--		goto put_sci;
+ 	/* configure J721E devices for either remoteproc or IPC-only mode */
+ 	if (p_state) {
+@@ -779,8 +760,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		if (data->uses_lreset) {
+ 			ret = reset_control_status(kproc->reset);
+ 			if (ret < 0) {
+-				dev_err_probe(dev, ret, "failed to get reset status\n");
+-				goto release_mem;
++				return dev_err_probe(dev, ret, "failed to get reset status\n");
+ 			} else if (ret == 0) {
+ 				dev_warn(dev, "local reset is deasserted for device\n");
+ 				k3_dsp_rproc_reset(kproc);
+@@ -789,18 +769,12 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = rproc_add(rproc);
+-	if (ret) {
+-		dev_err_probe(dev, ret, "failed to add register device with remoteproc core\n");
+-		goto release_mem;
 -	}
-+	if (IS_ERR(kproc->reset))
-+		return dev_err_probe(dev, PTR_ERR(kproc->reset),
-+				     "failed to get reset\n");
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add register device with remoteproc core\n");
  
- 	kproc->tsp = k3_dsp_rproc_of_get_tsp(dev, kproc->ti_sci);
--	if (IS_ERR(kproc->tsp)) {
--		ret = dev_err_probe(dev, PTR_ERR(kproc->tsp),
--				    "failed to construct ti-sci proc control\n");
--		goto put_sci;
--	}
-+	if (IS_ERR(kproc->tsp))
-+		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
-+				     "failed to construct ti-sci proc control\n");
+ 	platform_set_drvdata(pdev, kproc);
  
- 	ret = ti_sci_proc_request(kproc->tsp);
- 	if (ret < 0) {
-@@ -805,10 +798,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 		dev_err(dev, "failed to release proc (%pe)\n", ERR_PTR(ret1));
- free_tsp:
- 	kfree(kproc->tsp);
--put_sci:
--	ret1 = ti_sci_put_handle(kproc->ti_sci);
--	if (ret1)
--		dev_err(dev, "failed to put ti_sci handle (%pe)\n", ERR_PTR(ret1));
- 	return ret;
- }
- 
-@@ -836,10 +825,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
- 
- 	kfree(kproc->tsp);
- 
--	ret = ti_sci_put_handle(kproc->ti_sci);
--	if (ret)
--		dev_err(dev, "failed to put ti_sci handle (%pe)\n", ERR_PTR(ret));
+ 	return 0;
 -
- 	k3_dsp_reserved_mem_exit(kproc);
+-release_mem:
+-	k3_dsp_reserved_mem_exit(kproc);
+-	return ret;
  }
  
+ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+@@ -820,8 +794,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ 	}
+ 
+ 	rproc_del(kproc->rproc);
+-
+-	k3_dsp_reserved_mem_exit(kproc);
+ }
+ 
+ static const struct k3_dsp_mem_data c66_mems[] = {
 -- 
 2.39.2
 
