@@ -1,46 +1,46 @@
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A8682D94;
-	Tue, 23 Jan 2024 18:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1789C85C7E;
+	Tue, 23 Jan 2024 18:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706035617; cv=none; b=KFqAWinCtC8UAvYykEYGXEbIkfom0ryaDsABkdYguIoGpj4JrHr6xXLetcsXPSfrHpVQS6lHArZu55Kf+JJjdUqeoDj39+t3tFVewwP5QO7xMhMJ/dn0BXUm4IMywIfXc5CXtzSqPFyNUEdZo4bkXKGnJMtCfsNbR8LCFcFNv7o=
+	t=1706035617; cv=none; b=tFKef/urrisay+gGHJxZ4WzJ2PvFda0AU3Hssew9MvPAluTQqNy5lEIeYD4YPQ89olTfiAHhsNbwxAnfscvTYm7FFTApcxSy666QmtZnFH40hkoIrsyOpRFlqljj1QRl4YVkKPdCBPvgCilEyNoax7W08FqZkutosu9rB/5y5d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706035617; c=relaxed/simple;
-	bh=m/yWZtNxfkZivwoe0ZZTr4FL+nbuPIxIAAeRJ+811kE=;
+	bh=lmRit2wwP0VKPeCChGmI/nU/kHnVMLUnIEtXfr5zJzY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PfJEYdVOVTcuV+3amFkCEkE6DdLG071hrbOGmCtakqh9t4t3hJsfEHExheuCQupkHuswGqDyV2sIIwKfLQCAx9tdzXSL3EXY7bwPyZZVWezL39XJFo2KT4mkijzQot8awQGktxaUk2VPPATA0gOrLDGbZ1iijUafMSutHMUcT+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sH6yT3O8; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=rL03OeoMQAr2+c83lEl/YdRmi2v4zd/CcXcQ91SJSBfZT09tx1rftZfioQvbxY6wCEpotSObs538uunauHvOob3kRZgVqPLQAkIBhLsu9E7bIW2tiozpToD2eHOn0C+Y5piNBvJgihXpEaie+W0SbbC4wAVmRaEuRk4M+Ir7M1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RFfW3jho; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sH6yT3O8"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkZFm111630;
-	Tue, 23 Jan 2024 12:46:35 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RFfW3jho"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkdl1111746;
+	Tue, 23 Jan 2024 12:46:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1706035595;
-	bh=XULANMiamCh2z47DetgW0gGkmV23v5Hxx2b4xb/xhAE=;
+	s=ti-com-17Q1; t=1706035599;
+	bh=+LsaequArBDt9r+xd6rw4/1iVgdQx4r0fsBkKYAhTUA=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=sH6yT3O8jIYfaltHigwZlf2pGTWjqa0M/TADp31nZojUJ8AHg0RYvRuV4h484pH0F
-	 8IHgAMwAqAsjHNauHb25/HAIGBIMsIAHDtaD3Y93n/8xTHTdDBwg2kS0XfHAB9cg7B
-	 L2FX2b53D45Yze2B1bzkU3gXuBicFgVxuJgOJuZw=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NIkZnL011008
+	b=RFfW3jhoyar67nIU0PAaCWGcBz2wypQDH4G54Aesmr9IAf4IXQ6eNgJLVHSkTtXyp
+	 LAEco3r4B8jijvqbwE9VgMBAdli2aLBS83axjmoYSQYoFdhOe3v769AK8pfli9atuX
+	 chkih1L0Tmggt2IxsWnN3t6Io6uMJ/aY81D9XGlo=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40NIkd6F009881
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 23 Jan 2024 12:46:35 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 23 Jan 2024 12:46:39 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 23
- Jan 2024 12:46:35 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2024 12:46:39 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 23 Jan 2024 12:46:35 -0600
+ Frontend Transport; Tue, 23 Jan 2024 12:46:39 -0600
 Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkX1r063265;
-	Tue, 23 Jan 2024 12:46:34 -0600
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40NIkX20063265;
+	Tue, 23 Jan 2024 12:46:38 -0600
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -58,9 +58,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         Andrew Davis <afd@ti.com>
-Subject: [PATCH 2/9] remoteproc: imx_rproc: Use devm_rproc_alloc() helper
-Date: Tue, 23 Jan 2024 12:46:25 -0600
-Message-ID: <20240123184632.725054-2-afd@ti.com>
+Subject: [PATCH 9/9] remoteproc: stm32: Use devm_rproc_alloc() helper
+Date: Tue, 23 Jan 2024 12:46:32 -0600
+Message-ID: <20240123184632.725054-9-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240123184632.725054-1-afd@ti.com>
 References: <20240123184632.725054-1-afd@ti.com>
@@ -80,61 +80,38 @@ free on error paths.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/imx_rproc.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/remoteproc/stm32_rproc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 8bb293b9f327c..55ecce3ab5f75 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -1104,16 +1104,14 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 4f469f0bcf8b2..fed0866de1819 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -843,7 +843,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
- 	/* set some other name then imx */
--	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
--			    NULL, sizeof(*priv));
-+	rproc = devm_rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
-+				 NULL, sizeof(*priv));
+-	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
++	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
  	if (!rproc)
  		return -ENOMEM;
  
- 	dcfg = of_device_get_match_data(dev);
--	if (!dcfg) {
--		ret = -EINVAL;
--		goto err_put_rproc;
--	}
-+	if (!dcfg)
-+		return -EINVAL;
- 
- 	priv = rproc->priv;
- 	priv->rproc = rproc;
-@@ -1124,8 +1122,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	priv->workqueue = create_workqueue(dev_name(dev));
- 	if (!priv->workqueue) {
- 		dev_err(dev, "cannot create workqueue\n");
--		ret = -ENOMEM;
--		goto err_put_rproc;
-+		return -ENOMEM;
+@@ -897,7 +897,6 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 		dev_pm_clear_wake_irq(dev);
+ 		device_init_wakeup(dev, false);
  	}
- 
- 	ret = imx_rproc_xtr_mbox_init(rproc);
-@@ -1167,8 +1164,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	imx_rproc_free_mbox(rproc);
- err_put_wkq:
- 	destroy_workqueue(priv->workqueue);
--err_put_rproc:
 -	rproc_free(rproc);
- 
  	return ret;
  }
-@@ -1183,7 +1178,6 @@ static void imx_rproc_remove(struct platform_device *pdev)
- 	imx_rproc_put_scu(rproc);
- 	imx_rproc_free_mbox(rproc);
- 	destroy_workqueue(priv->workqueue);
+ 
+@@ -918,7 +917,6 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+ 		dev_pm_clear_wake_irq(dev);
+ 		device_init_wakeup(dev, false);
+ 	}
 -	rproc_free(rproc);
  }
  
- static const struct of_device_id imx_rproc_of_match[] = {
+ static int stm32_rproc_suspend(struct device *dev)
 -- 
 2.39.2
 
