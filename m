@@ -1,133 +1,116 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F4F56B70;
-	Mon, 29 Jan 2024 10:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173DA64CFD
+	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 13:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706525334; cv=none; b=tu+WAJmeXZwUs6xSqK9Ztd+67eDFCG6I8TShkqOOwzfdD5LBH+Nei+XPX73IAL541lB5/D7daJb5FRJ8VQyh4U/6PwLXEANW6JGq7ctUu7L/qlwM94G1bZx5y0IRE7SMZtvEY2cLOw23g7vHZKZhlmaS4gC5Tjwi88avFhC2iZA=
+	t=1706535294; cv=none; b=H+ZbgBETltsLiFAypf9ZblSd2z650QP9UOnq7LPlwYSJX9JcfVjds9lhjbya2AvL7E1xuTfE1lCoL0lgpgN6LAJbJCV9XmhsgNFCPmAy7dpmffLsdIZaJTmMB2f4cnKD6q97SX6Xxw6g71710EV8anowA+/fJQcdqvuW9eBmAqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706525334; c=relaxed/simple;
-	bh=Cwwb1IrnhAqflNwwr5xSZUeDUm1bhUtrWeRJtuIBwI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=syJt3Tqae2O5H5za9zsv/4DqdLBtEwa/qi7cwTREtHn/BgBPncsfkYL+7Ej8bGD0aPavEfofm8ZCw9blT7CmuaiJ2mYsvndQVfiiQjLCLUPiI5Da1+1q75TxeRADhfgISlRMAEW/mdx3Kf5fXtbMUCglaLojPzxz5Q7i4seLWeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D45sQB0K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1706535294; c=relaxed/simple;
+	bh=d0G++yM1L4bZ2X4j1KyYeIn3hj0pYRz8vVfTzils9Cg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HyZypTKyxNh0a0S/b+DelJkIX5Mu/Jah4PQIVe/kzh6DMpid6pjHLPdslG8pGHPNbcV5mpmvt+ZYwE4+LUW++Jg2yki/Lxg1EmUnXMVlXanB0v7qK5jxHVdGRGV3MQ9wxxtmkequP3AD1l/1G0kt8ojG28Fxu0CF9QHBcFuGqHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mfkK5AmW; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D45sQB0K"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40T7jqMX032528;
-	Mon, 29 Jan 2024 10:48:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=ZugSSSRjJH8eOzWRrav1dwHxGdpfMlgQG3DI1tTj0AA=; b=D4
-	5sQB0Kw7xD3lwRWOS6sew+n5Kzq8u07fxKWSdBBZK8F+LBGR2rOBctnssd6JAXQb
-	pHfwTrFn/NPwUHwqkZR4kMESANNhkVxRvAts0f0ZnFDpJkkFeyudiflRvcXWA8SE
-	HKrg3m7jYhJOUazEqPRligwenMRwG36zoB0kTbviwWiwWbYTjb+5aX3aIkA8pMXp
-	C9FVkF9QlMXvGkojXRQHqwQfbEjWJ7ait1NhG4D+QdbGig+wEDHy7h9SvtXiSSKh
-	anMXPDm1leRtwCEAs6A9zuptGiX1BIWGLOjAkl1bHxdY7XRnHYf9CiHk2M56QnUb
-	a5mutE+13vhQLPD+0mpQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vx23k8wsa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jan 2024 10:48:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40TAmgcl008905
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jan 2024 10:48:42 GMT
-Received: from [10.218.35.133] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 29 Jan
- 2024 02:48:39 -0800
-Message-ID: <151f5738-791e-42cb-b8fe-e0cfbf9f7dca@quicinc.com>
-Date: Mon, 29 Jan 2024 16:18:36 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mfkK5AmW"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a2f79e79f0cso315440666b.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 05:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706535291; x=1707140091; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A5lN2RFti/0uAPsAIuzSgpGpyVFWHHP46PwFBbIkKk0=;
+        b=mfkK5AmWIe1QzkUlFXrbc5D91Qly5CVcKXwjAlRShthrzrAX1YSvBUwt0mlM1gDOme
+         +BZ0ADYFhuNk1+a4wwE6pCP6wUgayBybW+bUkuUUd8qsotKEsorQ4kUYGFSk90ycEc9U
+         l/YFZbihCG14Lbiw7N+TKBxpOcFQFYLPg+H/jauSZcbbjjpVT/BWAScpuMDRsm6OzWz2
+         G2NX+zZLLkXV0Xsg6gxScFVn9BW2vJLy+o/97TtpZ7s56CygkM34xlB75sFWGAjg2oJ0
+         JYSYig98CN7zm6Z5tAXFqGjEyeE/wXjg2+mR+RnOmH38jdQffc9bpQT+6HkpdaXNuISX
+         baWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706535291; x=1707140091;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A5lN2RFti/0uAPsAIuzSgpGpyVFWHHP46PwFBbIkKk0=;
+        b=ngv++03cpzxYkf+v404VdWsUDm7pIJXBkiKV4MtsGpXLxtEH01VfiPz14/ArMTGGLu
+         3qGQmIv9btfeDNIOOSBt+WTYQDtwds4QgOiEBwkmeU3ZCMJB8s355MmeqfkBkAt70iet
+         46s05IVnMg4EuaksC1yWVSSp1qTJSpF/TsPxsGKvviZAASVs7KjV78hkV9XdDxhyf7kK
+         FnHuIBHBsWgUpJi1nz6NP/uIkwYzw/aLjLDt9psoOWlGZsskeSuxeZFuHGQ+XhwnNW12
+         QPik3NjnMMFUPA8za3JQkKwETzxDXfskU7loH5WGaOLmkMjJ5oQIzjK/DIt+Tz7eK/Gx
+         3txQ==
+X-Gm-Message-State: AOJu0Ywc9L2mK+mckRd94Z1PRE5QQdcdKm4rkKY1k+ee1FwsydB8hnZo
+	eGHAplHjtcPvZXhSGubEEaI7Q4wbbv7AlEnpmDqXUXAw/KQsJ6I94Y82QLr1vbwTGPLXLBc3f3q
+	7
+X-Google-Smtp-Source: AGHT+IFwMDlt57rsNy63i0SWKIDyT09z0+4gVI1uZZq0kql5zyFmD+8g431XufZc0uslUUgNZZ6Uzw==
+X-Received: by 2002:a17:906:ae46:b0:a35:7d90:1528 with SMTP id lf6-20020a170906ae4600b00a357d901528mr3030047ejb.32.1706535291297;
+        Mon, 29 Jan 2024 05:34:51 -0800 (PST)
+Received: from [127.0.1.1] ([79.115.23.25])
+        by smtp.gmail.com with ESMTPSA id vi1-20020a170907d40100b00a2f48a43c3esm3911483ejc.7.2024.01.29.05.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 05:34:50 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/3] remoteproc: qcom_q6v5_pas: Add aDSP and cDSP for
+ X1E80100
+Date: Mon, 29 Jan 2024 15:34:36 +0200
+Message-Id: <20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] rpmsg: glink: Add bounds check on tx path
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>, <afaerber@suse.com>,
-        <ivan.ivanov@suse.com>
-References: <20240113002505.15503-1-mkoutny@suse.com>
-Content-Language: en-US
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <20240113002505.15503-1-mkoutny@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UiTqmIwQw3BpaeOMGQ7Ee7xTrNm9Ik5I
-X-Proofpoint-GUID: UiTqmIwQw3BpaeOMGQ7Ee7xTrNm9Ik5I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-29_06,2024-01-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=793
- mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401190000 definitions=main-2401290077
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGypt2UC/x2N0QrCMAwAf2Xk2UDSIRZ/RXxos+gKsx2pymDs3
+ w0+3sFxO3S1oh2uww6m39JLqw58GkDmVJ+KZXKGQGHkQIwbayQmQtNXe+tqTTCHy5TOcdQoAl7
+ m1BWzpSqzt/WzLC5X00fZ/qvb/Th+eulfjHoAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=656; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=d0G++yM1L4bZ2X4j1KyYeIn3hj0pYRz8vVfTzils9Cg=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlt6lxrNZJp4BqGaH1Fc1i5wEM95JTCQvPAOnvs
+ Un8LOil5XuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZbepcQAKCRAbX0TJAJUV
+ VuJ5EACd1WoJNIUtO45BJgROaRjnc5NsXFOQm7CzWcSsrOBVd7IJiWlJSp4HgAg47j+h8jP0QdV
+ CCdnh7swWQtaTuDPqWUYsjmvXwQ74UC0c8LwKY3uDzb8EcKNCiO8PfPtQYReLdx1M/+rff+uteG
+ cTIBD+BsU47NdA3RhV56KFxYML4rHAsKKv4k1953FgOGUjSK1NgOs6zllsK3tjbAcPojrN7eTGu
+ /pzu9tvQ9DrQFM0ecwhUsJJUDBRPynpD3IAowT9wv2Ojc6TEUp+r+eMkWVxKD+wbxt7v9gBzH7u
+ gBtxHl/gOPTKmb57rKoHoxzNp7G+T1zzruYqd952poJX0IkUlVFZZry6+qAoA8oIrz2JUTu1btu
+ gz157zjtW/BYm+t/NLRb1PtdHiWxZ+r+p5N+YORCqLVU9vbxV+bwKww2i0V2VC0Lmd7doykXGiL
+ pzeRqqD7oGLVDkcZ5jcnexBtGKR1ktY37HUJMy2dmm520Jy2T3W34uzir8w0vqT4JK7zsgwCH9e
+ qlkiWJ7VpyPxIxmlER+hLQz5ApYVxetGJSUTFfK/IwDEsNx4FBnOmgieNghmsSaSzCn6gkn9jMD
+ MOcl2BvIXbxuRHlgV5ouUDtf2Unh4LTPffaitK6keAPvUWWGwqhQkRTN1MNgLTPozO8cjDgN3KP
+ Mcq+4Gr9yyQvatg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Abel Vesa (1):
+      dt-bindings: remoteproc: qcom,sm8550-pas: document the X1E80100 aDSP & cDSP
 
+Sibi Sankar (2):
+      remoteproc: qcom_q6v5_pas: Add support for X1E80100 ADSP/CDSP
+      remoteproc: qcom_q6v5_pas: Unload lite firmware on ADSP
 
-On 1/13/2024 5:55 AM, Michal Koutný wrote:
-> Add bounds check on values read from shared memory in the tx path. In
-> cases where the VM is misbehaving, the transport should exit and print a
-> warning when bogus values may cause out of bounds to be read.
-> 
-> Link: https://git.codelinaro.org/clo/la/kernel/msm-5.10/-/commit/32d9c3a2f2b6a4d1fc48d6871194f3faf3184e8b
-> Suggested-by: Chris Lew <quic_clew@quicinc.com>
-> Suggested-by: Sarannya S <quic_sarannya@quicinc.com>
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> ---
->   drivers/rpmsg/qcom_glink_smem.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> Why RFC? The patch is adopted from the link above. It would be good to
-> asses whether such conditions can also happen with rpmsg glink.
-> (And if so, whether the zeroed values are the best correction.)
-> 
-Hi Michal,
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  6 +++
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 49 ++++++++++++++++++++++
+ 2 files changed, 55 insertions(+)
+---
+base-commit: 01af33cc9894b4489fb68fa35c40e9fe85df63dc
+change-id: 20231201-x1e80100-remoteproc-b27da583e8cc
 
-There is already a patch posted for similar problem -
-https://lore.kernel.org/all/20231201110631.669085-1-quic_deesin@quicinc.com/
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-> index 7a982c60a8dd..3e786e590c03 100644
-> --- a/drivers/rpmsg/qcom_glink_smem.c
-> +++ b/drivers/rpmsg/qcom_glink_smem.c
-> @@ -146,6 +146,11 @@ static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
->   	else
->   		avail -= FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE;
->   
-> +	if (avail > pipe->native.length) {
-> +		pr_warn_once("%s: avail clamped\n", __func__);
-> +		avail = 0;
-> +	}
-> +
->   	return avail;
->   }
->   
-> @@ -177,6 +182,10 @@ static void glink_smem_tx_write(struct qcom_glink_pipe *glink_pipe,
->   	unsigned int head;
->   
->   	head = le32_to_cpu(*pipe->head);
-> +	if (head > pipe->native.length) {
-> +		pr_warn_once("%s: head overflow\n", __func__);
-> +		return;
-> +	}
->   
->   	head = glink_smem_tx_write_one(pipe, head, hdr, hlen);
->   	head = glink_smem_tx_write_one(pipe, head, data, dlen);
