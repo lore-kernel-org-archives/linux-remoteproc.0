@@ -1,90 +1,113 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EE9153BD6
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 15:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B374615698B;
+	Mon, 29 Jan 2024 16:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706541619; cv=none; b=E0gRXJ8Gef5jxpvlvlf/GgQ7NGKg/zRb4J5827wO/U13iXzloNWFkTpW8dcVirbd9i2uprreCdrKaVDFquNilYcrjR/GGMkv3mTJd6NKbveOa8xqVnU7x/PtL/6wEf95shMcvX0yGs/i2F1taq14XM0eMNV9dKa+n+i36UIi1ow=
+	t=1706546008; cv=none; b=W43faLWebjEGQxy1ip6Mur5AcYifXpqoUmqEqqPgVARpRhORpav2Jc4DxJH0GFGaH3D+LWBCitje346TKidP2lZJjHJDv1dcz53kwWB4rSngknnz8XM+mHkODtCLR2Ccm2YvhH19shTAm/UUU5Kz5BZFV1MX071iaQXzPIdlX/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706541619; c=relaxed/simple;
-	bh=mU6e8uETmKPJ2827KqRKhqi6FjqcNSn7r6FAsSfjeWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fGVfRf4iMvdMgvDcF4eiZ7U1Gfq7ZN1pT/R4sTFAPl7O05d7sYdrhpbRsAPhGcPf8s0uCj2gXAzPHuJ3ixcJYqEDj+fH1yt6X91HCZuXarZUCNsXJphjO8IjShea+QEAIHmo8JmzI1csc3OuyVo29PSvJFWhIqvsLDOF6yQBXEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pGfEJkf5; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706546008; c=relaxed/simple;
+	bh=3v40ec3fp4rIySLwMRSC+DSQBuRjYm7PCdjEg/BN2qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzvO/0KebU7bI6EnQLsEjhjCoMcyRpRW0DTBVUxot8525uALSJ+BguZjJu6WVAP+NmUWGQoHZ349uwcW13TBXmcyNTef37OInzwZJvU5SwrC3bR3LczQGMbnStHkBEJ+bIQTmHaJAlCTCkaLV4Z9NtHATnqg1/7Ou8EyLId7gNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QS7P6y5N; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=q0I4l+8T; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pGfEJkf5"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dc608c3718dso2336731276.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 07:20:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706541615; x=1707146415; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HM4oKJKjaECYklXiQu+oSrVSN78CLNrHNPBMMaAeH+4=;
-        b=pGfEJkf5c2ftFG2ZZ0u28kbFvmZnzbn/tBpWlCHDogxAOpzOeZK/hXpCkUffOsfjvI
-         FY+SGWkQHGGNFO/TVnm4oNXxgMP1wZmEQ0MRfhj+EbFeU7TpdRc7z+Kx4es2TSPrxzxF
-         hhcXoVuI4Kvv1ZFDRsowXtaccnC4stHGIaU+GbeMXArjQhrOMr2NxtupBSBjEb/4wiJj
-         +lSfGncVWu+tyX//o9TrR5lMzPGzXkcCOaT0za9KGyZ/NDCR6S/2R0PegWMUX5U/JUhm
-         uGTHcWK8yKDWVrO9dVaImKkBqtnCCxM5q4c0YR0FptTjLuaUbfxoq/ctI4GfhxHnKCzX
-         mjQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706541615; x=1707146415;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HM4oKJKjaECYklXiQu+oSrVSN78CLNrHNPBMMaAeH+4=;
-        b=oiGx9ebXSv9/GqCqiqwRiNoUiucpZ5/7BUj2v3/HotEeuC4MK7Rxxj0IWeMfaLCLNP
-         pwNDFm1i6WJlKzymsmA/JAuKNn/AHKnN3nc2+yYOJ0JX3ETDp2rX9KdDJ+MEFn4dWASW
-         0V19Dw1biFcfdd5S/aYZVIdHSKPmbRlbL4OT3t+DXGbWK7/hEGTiOwO7Zr0D3v8Bh3mN
-         RfxNq4P5buZQyRc2722s3WodpXC5ksjIbPLhFWSWrpxuO1wvQx63nDIfqqzzHQVaFfJC
-         xwZ5A3LxszJBoKAdM8COAd/b4xGswf0ZB05U2HQSHjmTqwO19HdP6OInuLyq5n5vqzP0
-         lDFA==
-X-Gm-Message-State: AOJu0Yx257ZKSS6sUU/9lL8pNDGaH0HZ1kd8OSvI6Bd9SebpDURtyxTP
-	m1NR0DMTX5JOLHkRAGmdVYRMdTqrjmP2wnO4mQmkZwcgNHhclKEr0+wp/D+4vNf39rvq3MQEqyt
-	u0fDxSJywv4j++kQ81lR+snqLEaOevtYpz4WLug==
-X-Google-Smtp-Source: AGHT+IH/kSP17UuZbT0esTyo8sAM9ro7kxiy0XA20jRmTGGdm4q9oJTvHL7EujRbD/wQpB+sQQrHiodPITjmHdSrDkg=
-X-Received: by 2002:a05:6902:2681:b0:dc2:2654:513e with SMTP id
- dx1-20020a056902268100b00dc22654513emr4555425ybb.53.1706541615698; Mon, 29
- Jan 2024 07:20:15 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QS7P6y5N";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="q0I4l+8T"
+Received: from blackpad (unknown [10.100.12.75])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D827C21280;
+	Mon, 29 Jan 2024 16:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1706546002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3v40ec3fp4rIySLwMRSC+DSQBuRjYm7PCdjEg/BN2qM=;
+	b=QS7P6y5NylUMxfuK6r6g4fywoDhhJIXpG9fyGzogfuMl36ZKDunidmXOJ6XVGwV3I69Ge4
+	fcCjtuEYDKsUP9mx8ISkyr5opP1RkHUue2j/hzeADM63HHJA9T9cU18r0QdDKVQx1GXA4D
+	OGaBzuuhU6U680MPu82F2UTHFbbLrTY=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1706546000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3v40ec3fp4rIySLwMRSC+DSQBuRjYm7PCdjEg/BN2qM=;
+	b=q0I4l+8T7E1lhioda0ghqHOS8BmWrpp9LLLkQ1FVSr4xlnPaJGHrRte1C97ica/5adav1Z
+	hvyp5W7+OIio0fSLbzR2AtrDZ6uTPEbJqkVwsVNe7Z8pRbJFoYWMijP7tD8c6wikqm5qTh
+	8hQaYG8pivL4RwYt332QUgQ5RKAIZaU=
+Date: Mon, 29 Jan 2024 17:33:19 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Deepak Kumar Singh <quic_deesin@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, afaerber@suse.com, 
+	ivan.ivanov@suse.com
+Subject: Re: Re: [RFC PATCH] rpmsg: glink: Add bounds check on tx path
+Message-ID: <egp4g4i54le4iizpdfpxi24k563hniwub7iy2dwrk7ul47uhf4@z5scfrisbd46>
+References: <20240113002505.15503-1-mkoutny@suse.com>
+ <151f5738-791e-42cb-b8fe-e0cfbf9f7dca@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org> <20240129-x1e80100-remoteproc-v1-2-15d21ef58a4b@linaro.org>
-In-Reply-To: <20240129-x1e80100-remoteproc-v1-2-15d21ef58a4b@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jan 2024 17:20:04 +0200
-Message-ID: <CAA8EJpo0Bmu-=KHhEiFAJXC7CwxoWpT2FB+Y0aSiskkfz_1EUg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] remoteproc: qcom_q6v5_pas: Add support for X1E80100 ADSP/CDSP
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-
-On Mon, 29 Jan 2024 at 15:35, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> From: Sibi Sankar <quic_sibis@quicinc.com>
->
-> Add support for PIL loading on ADSP and CDSP on X1E80100 SoCs.
->
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 41 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fdlqzqmm5seh4aly"
+Content-Disposition: inline
+In-Reply-To: <151f5738-791e-42cb-b8fe-e0cfbf9f7dca@quicinc.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -0.51
+X-Spamd-Result: default: False [-0.51 / 50.00];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	 NEURAL_SPAM_SHORT(2.21)[0.737];
+	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 SIGNED_PGP(-2.00)[];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_COUNT_ZERO(0.00)[0];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+,1:+,2:~];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 BAYES_HAM(-0.02)[53.78%]
+X-Spam-Flag: NO
 
 
--- 
-With best wishes
-Dmitry
+--fdlqzqmm5seh4aly
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jan 29, 2024 at 04:18:36PM +0530, Deepak Kumar Singh <quic_deesin@quicinc.com> wrote:
+> There is already a patch posted for similar problem -
+> https://lore.kernel.org/all/20231201110631.669085-1-quic_deesin@quicinc.com/
+
+I was not aware, thanks for the pointer.
+
+Do you plan to update your patch to "just" bail-out/zero instead of
+using slightly random values (as pointed out by Bjorn)?
+
+Michal
+
+--fdlqzqmm5seh4aly
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZbfTTQAKCRAGvrMr/1gc
+jjXFAP9Um5p58DEI4KDPRXFI2e/uPlQEy/pIzWZc4O3XF1pRUwEA+6k1aF11nti8
+VOaJgaLHsoDXocKFBct9GyKDZz7F7g8=
+=uPQp
+-----END PGP SIGNATURE-----
+
+--fdlqzqmm5seh4aly--
