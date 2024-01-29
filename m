@@ -1,97 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC1F1CAA1;
-	Fri, 26 Jan 2024 19:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F4F56B70;
+	Mon, 29 Jan 2024 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706296078; cv=none; b=TVUNCIAOYVYm1WGHuzr2BA/2GHPTIC2SV/i+3DSU/8xm+8De8WoDRYf+Zm3jqrausxI6uoZ61/J0jNHaJcD7G0s6BT/x6BLZzUR2JTg/O9dI7GxJxJmNMkFIz1bPeULbYu0nhyawMBXFKL441ijXSSWRUpTWC4VHSv0qPqC85H8=
+	t=1706525334; cv=none; b=tu+WAJmeXZwUs6xSqK9Ztd+67eDFCG6I8TShkqOOwzfdD5LBH+Nei+XPX73IAL541lB5/D7daJb5FRJ8VQyh4U/6PwLXEANW6JGq7ctUu7L/qlwM94G1bZx5y0IRE7SMZtvEY2cLOw23g7vHZKZhlmaS4gC5Tjwi88avFhC2iZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706296078; c=relaxed/simple;
-	bh=w76WQZwHmCAgG8Z0pclPra2iK4UcbBg/K6jGmHZCnEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUW4DyalskK+o6GpYMUWO5Veau7JdiEhkml0F6OZ1AsLb9TokP1EDzn/xqLFUdR+HiB6AFd55wMKgWPE4Ys9XWy+5HunR1p726enq28BPm5bXMGE6DhpL51DgZZrxhF0zyAXreuVwVHFfIs7Nr7brCI3m7U/u4qtDHfM3/KrwMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IwzLJvBc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706525334; c=relaxed/simple;
+	bh=Cwwb1IrnhAqflNwwr5xSZUeDUm1bhUtrWeRJtuIBwI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=syJt3Tqae2O5H5za9zsv/4DqdLBtEwa/qi7cwTREtHn/BgBPncsfkYL+7Ej8bGD0aPavEfofm8ZCw9blT7CmuaiJ2mYsvndQVfiiQjLCLUPiI5Da1+1q75TxeRADhfgISlRMAEW/mdx3Kf5fXtbMUCglaLojPzxz5Q7i4seLWeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D45sQB0K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IwzLJvBc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF60C433F1;
-	Fri, 26 Jan 2024 19:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1706296078;
-	bh=w76WQZwHmCAgG8Z0pclPra2iK4UcbBg/K6jGmHZCnEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IwzLJvBczl3h23mDdcH/l2aRInlWzX22xOABe5YWbrm+TbCAV+t2dRCqhjNBo5pEO
-	 mPmcBmFJwcZV6IjpyiIREajMgdq2+x2UETlGXIB2+ADvhNvIaURJLo+uNdrWhOFlaH
-	 X/wE6UHGGZW0vCohl3uSnipjL/ikRQrzmYExy9hY=
-Date: Fri, 26 Jan 2024 11:07:57 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] PM: domains: Add helpers for multi PM domains to
- avoid open-coding
-Message-ID: <2024012649-unblended-earthen-6e17@gregkh>
-References: <20240105160103.183092-1-ulf.hansson@linaro.org>
- <CAPDyKFoGozKrNrAc0vpnNVuKvnorAuN_fg37DU4j0rq=egJ6Hg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D45sQB0K"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40T7jqMX032528;
+	Mon, 29 Jan 2024 10:48:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=ZugSSSRjJH8eOzWRrav1dwHxGdpfMlgQG3DI1tTj0AA=; b=D4
+	5sQB0Kw7xD3lwRWOS6sew+n5Kzq8u07fxKWSdBBZK8F+LBGR2rOBctnssd6JAXQb
+	pHfwTrFn/NPwUHwqkZR4kMESANNhkVxRvAts0f0ZnFDpJkkFeyudiflRvcXWA8SE
+	HKrg3m7jYhJOUazEqPRligwenMRwG36zoB0kTbviwWiwWbYTjb+5aX3aIkA8pMXp
+	C9FVkF9QlMXvGkojXRQHqwQfbEjWJ7ait1NhG4D+QdbGig+wEDHy7h9SvtXiSSKh
+	anMXPDm1leRtwCEAs6A9zuptGiX1BIWGLOjAkl1bHxdY7XRnHYf9CiHk2M56QnUb
+	a5mutE+13vhQLPD+0mpQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vx23k8wsa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jan 2024 10:48:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40TAmgcl008905
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jan 2024 10:48:42 GMT
+Received: from [10.218.35.133] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 29 Jan
+ 2024 02:48:39 -0800
+Message-ID: <151f5738-791e-42cb-b8fe-e0cfbf9f7dca@quicinc.com>
+Date: Mon, 29 Jan 2024 16:18:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoGozKrNrAc0vpnNVuKvnorAuN_fg37DU4j0rq=egJ6Hg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] rpmsg: glink: Add bounds check on tx path
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>, <afaerber@suse.com>,
+        <ivan.ivanov@suse.com>
+References: <20240113002505.15503-1-mkoutny@suse.com>
+Content-Language: en-US
+From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+In-Reply-To: <20240113002505.15503-1-mkoutny@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UiTqmIwQw3BpaeOMGQ7Ee7xTrNm9Ik5I
+X-Proofpoint-GUID: UiTqmIwQw3BpaeOMGQ7Ee7xTrNm9Ik5I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-29_06,2024-01-29_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=793
+ mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401190000 definitions=main-2401290077
 
-On Fri, Jan 26, 2024 at 05:12:12PM +0100, Ulf Hansson wrote:
-> On Fri, 5 Jan 2024 at 17:01, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > Updates in v2:
-> >         - Ccing Daniel Baluta and Iuliana Prodan the NXP remoteproc patches to
-> >         requests help with testing.
-> >         - Fixed NULL pointer bug in patch1, pointed out by Nikunj.
-> >         - Added some tested/reviewed-by tags.
-> >
-> >
-> > Attaching/detaching of a device to multiple PM domains has started to become a
-> > common operation for many drivers, typically during ->probe() and ->remove().
-> > In most cases, this has lead to lots of boilerplate code in the drivers.
-> >
-> > This series adds a pair of helper functions to manage the attach/detach of a
-> > device to its multiple PM domains. Moreover, a couple of drivers have been
-> > converted to use the new helpers as a proof of concept.
-> >
-> > Note 1)
-> > The changes in the drivers have only been compile tested, while the helpers
-> > have been tested along with a couple of local dummy drivers that I have hacked
-> > up to model both genpd providers and genpd consumers.
-> >
-> > Note 2)
-> > I was struggling to make up mind if we should have a separate helper to attach
-> > all available power-domains described in DT, rather than providing "NULL" to the
-> > dev_pm_domain_attach_list(). I decided not to, but please let me know if you
-> > prefer the other option.
-> >
-> > Note 3)
-> > For OPP integration, as a follow up I am striving to make the
-> > dev_pm_opp_attach_genpd() redundant. Instead I think we should move towards
-> > using dev_pm_opp_set_config()->_opp_set_required_devs(), which would allow us to
-> > use the helpers that $subject series is adding.
-> >
-> > Kind regards
-> > Ulf Hansson
+
+
+On 1/13/2024 5:55 AM, Michal Koutný wrote:
+> Add bounds check on values read from shared memory in the tx path. In
+> cases where the VM is misbehaving, the transport should exit and print a
+> warning when bogus values may cause out of bounds to be read.
 > 
-> Rafael, Greg, do have any objections to this series or would you be
-> okay that I queue this up via my pmdomain tree?
+> Link: https://git.codelinaro.org/clo/la/kernel/msm-5.10/-/commit/32d9c3a2f2b6a4d1fc48d6871194f3faf3184e8b
+> Suggested-by: Chris Lew <quic_clew@quicinc.com>
+> Suggested-by: Sarannya S <quic_sarannya@quicinc.com>
+> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> ---
+>   drivers/rpmsg/qcom_glink_smem.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> Why RFC? The patch is adopted from the link above. It would be good to
+> asses whether such conditions can also happen with rpmsg glink.
+> (And if so, whether the zeroed values are the best correction.)
+> 
+Hi Michal,
 
-I'll defer to Rafael here.
+There is already a patch posted for similar problem -
+https://lore.kernel.org/all/20231201110631.669085-1-quic_deesin@quicinc.com/
+
+> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+> index 7a982c60a8dd..3e786e590c03 100644
+> --- a/drivers/rpmsg/qcom_glink_smem.c
+> +++ b/drivers/rpmsg/qcom_glink_smem.c
+> @@ -146,6 +146,11 @@ static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
+>   	else
+>   		avail -= FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE;
+>   
+> +	if (avail > pipe->native.length) {
+> +		pr_warn_once("%s: avail clamped\n", __func__);
+> +		avail = 0;
+> +	}
+> +
+>   	return avail;
+>   }
+>   
+> @@ -177,6 +182,10 @@ static void glink_smem_tx_write(struct qcom_glink_pipe *glink_pipe,
+>   	unsigned int head;
+>   
+>   	head = le32_to_cpu(*pipe->head);
+> +	if (head > pipe->native.length) {
+> +		pr_warn_once("%s: head overflow\n", __func__);
+> +		return;
+> +	}
+>   
+>   	head = glink_smem_tx_write_one(pipe, head, hdr, hlen);
+>   	head = glink_smem_tx_write_one(pipe, head, data, dlen);
