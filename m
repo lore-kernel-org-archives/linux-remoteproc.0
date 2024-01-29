@@ -1,60 +1,60 @@
 Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA830657A2
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 13:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2BD657BA
+	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 13:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706535297; cv=none; b=jTyV6eDEHehmlN0xOjZfMGuvKFVnQBjq2AjAe0ob2wCELwWPIvuguTbW9D4zqc+KQ6P5GI8J52qr51K1r2J7HPYgYApKGY34MiUTMlroCmy2meaMCtXPdWJhlAgA4d+eemLBLO6zyH/g6bL6ru1FtGQJbb0zdVFFEh+oa1rfv24=
+	t=1706535298; cv=none; b=odLbMaG6VWoargihQLW9Y6NQoz1+Haz0SSg6nOiBqUuCqNytH83mOdr6u5/rBFuL31da6pF34kucYIRlZYTT3Acv4d4kjIwpgakZXTWbAYPeQ46/Aq8hIpg6JNOyQgI0Bevm+NavaYiKveCnqdQUTuS+G91VhYb0p0RSHwb5VWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706535297; c=relaxed/simple;
-	bh=wdn/wZ9b8W1bnANHx+6S/tiPBkRJBhyN5YhjHpYlMIA=;
+	s=arc-20240116; t=1706535298; c=relaxed/simple;
+	bh=7XEGX8tCobeF3TWbs26SkgzjQRQagB5DicUZQZndEAY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bIGf4F8YoEius+vcPlb2+pHS1mWtYt8X4bu1jER8lagW9EIFypJnbV1SPWIgM0K5mnCPzdNVHjc6Xene2Ddx8vccB6Ts7B1D8cItYf1ZQ4OesanmIPG80Q39zo7ygyalWrh00my4BZ+v5TZl4MfGanJm6vclQg12NP8htTRUouI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OfNsJ+Bt; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:To:Cc; b=q4YYzuQVI6pd//mh7uv6xFp4tpFTNbjbQTgk6KMLuLyTUah9Sf9bb/pB0MpHDVnbAs1pGt/4opP4v5dYzQup8bW7oxJuT0Tk4RjsSySj6l07ocC3n+N2zO9rz7o1CM+G0zjO+bbBVThGLiBIM99YLW2I6oo+yFkKMa61KJcHf8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBZK8l5W; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OfNsJ+Bt"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a353f5407f1so218178366b.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 05:34:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBZK8l5W"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a2a17f3217aso380591766b.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jan 2024 05:34:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706535294; x=1707140094; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706535295; x=1707140095; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kdcXCLzd9KOe5SpDxhfl/e/wMVJJon4JM9yQ3cbHbSo=;
-        b=OfNsJ+BtQM7tDbRNuhqyDiU8dZKuLmaGVe6L8G+FKYDjEAQg8BO7S3A3YYw8agckoA
-         qs48OHIWAIXrTTcJbIUMdH/OvAixjaEoQ4RHPRWpaK169FnYYs+g17fjCAuKxcEkiUbW
-         SnjCOkfktmUyT1IN81kwOnWkWXOmQCQHDbDeY1Wp8mJnOiHBCH4PJCiGqurpQ2av31oM
-         pR4XhwZ/tGL05qu1xCgkkFaicDuv4DY/3Pk0iUWTYsMrAhUXXfQ9mpKtjJ5ijXQGRX08
-         +rznb4pOlt3rCuuJrstHN13w8yXY256EjU4OIA8PYi/cCVr4H7vYPCwNUuC0kfIR675J
-         t40w==
+        bh=xXZFqpcx+yqKfOAXpJEod2Uxg4c+ixzxqWhb+cY1h8Y=;
+        b=mBZK8l5WHdwNGGDRKq6wvzQnB/T9vVNeTYM4DsT8nBOsobyRA5/Tn82Tb3Lgj/9r1/
+         qb7qDmv2l2aI0wzMLRxhWpgoc585O+zayMINaLh8un/PNg5FlRBxIRcsz8Oal5kMsIk/
+         s+dcjptQqQUG1G3lSyA2ce5P/DkCb1ffXl9pyqb/o1uf9c+VjX3f/sUl5i6AxDgtXbQt
+         gM6MoUl2pEbuBtyjdAOatFBbynpP/VOBI+/NUMS8PX16GuTT0POA5tx/kGXAdKrWVpen
+         LOSWZCpGXw8s8RLVQEzGShwy9H5ePlArYDjuxMG77HHCCDQyASfQX66xojIjuXHMbb6M
+         uZSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706535294; x=1707140094;
+        d=1e100.net; s=20230601; t=1706535295; x=1707140095;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kdcXCLzd9KOe5SpDxhfl/e/wMVJJon4JM9yQ3cbHbSo=;
-        b=EMTTunLjYki4JK2nDXZJrzaAPBNedKlLedauJ0uAF7XDDu36ZK4G2fO47b++mZdfgL
-         a0tDdA5o6eh+hsC5Mg1DsTMQZ/v+YKmXEzIYHWblkyrBi+L62EIcKHM5+GfYZb87+HJk
-         bNlPgQcDIZFt5Kb3W1rLBR6FmjKcU+cNlQ8yvLHuZXc/Y3Ldq1yMl8Fg8wKO35sNVrs4
-         vAtcl7TmwSXJ6AQ/NPRuorUvrzP7Q3spFzI4X5jX9+FCd/5miBTiL1yxNRO04sg/D+9a
-         cMSs5R66LGFJdxc3Xc87cAI36e21/cY8q2ifB5c31IkM+24Q3hu0z+KACuqXflVe/qX8
-         Hp6Q==
-X-Gm-Message-State: AOJu0YwR0fx6QiD/3u1tZ3PQaf3NXqaUHVbkxomRfZcBijWDZx7J/PTg
-	4UfvU3TRYwiEL98gMIJWGoiHCQs7xfncf8rkwd9l+Hd6cVEanF1jrRPqXOdT9VI=
-X-Google-Smtp-Source: AGHT+IH7saOUr5yw9rn3nQFRoV0+5ssv25l14Q+BJByJ2Y5p3G1BeymX/xM8ALx7bWDIKPF139miQQ==
-X-Received: by 2002:a17:906:13d9:b0:a35:fdf9:e7e4 with SMTP id g25-20020a17090613d900b00a35fdf9e7e4mr106370ejc.20.1706535293850;
-        Mon, 29 Jan 2024 05:34:53 -0800 (PST)
+        bh=xXZFqpcx+yqKfOAXpJEod2Uxg4c+ixzxqWhb+cY1h8Y=;
+        b=PcTvzqdJ4HNAclW16eoUjCLfOIJf7WGXBfINAaORnYAQP5B6/GbUObxHoxDBpCRAIM
+         TBpNTvwSvLw4BEH7yXTSZx98EAKiv1ciNeoTG7vzYLjkWBCsOQ6WQ4qwRiHLEqKbb/Xz
+         Gdkq0IGAsiTG703uLy5taUWBp8saqSpaWSJxJZHpC3jk5spynJQV1h9OFu7OPG6+zw4F
+         QNkJlRhKJfeUEoOBHJImkwAZu+z0/79oqJZp2IwCWXYpgvzWbVkSy+GMfap0tf8YJbGm
+         ZK1GU5CuzKXoIEh/LHJVeXetS/T7LQLljUlwwqqbAwlagl7p+h5dqioAd4Ase8Ooi6Z4
+         kDlA==
+X-Gm-Message-State: AOJu0Yz33SrVKiho/b+rsbcZYTXsTannSDpAreJW/b+nHdePfWEAp4NW
+	282ULlgvkV6W5VKdRLxkV94sh1zKXF9ljIiJiQ0bVE3syeLcy9ZqvTA4Gdy25e0=
+X-Google-Smtp-Source: AGHT+IHCFlT0NaicOgyWXFvdhxw1y4Dq6pYq28XJTkenjH+aNzp1/O+NJ3vGuzbpV29JtOx0Uln79g==
+X-Received: by 2002:a17:906:248d:b0:a2d:a6a7:b3bc with SMTP id e13-20020a170906248d00b00a2da6a7b3bcmr4409221ejb.4.1706535295144;
+        Mon, 29 Jan 2024 05:34:55 -0800 (PST)
 Received: from [127.0.1.1] ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id vi1-20020a170907d40100b00a2f48a43c3esm3911483ejc.7.2024.01.29.05.34.52
+        by smtp.gmail.com with ESMTPSA id vi1-20020a170907d40100b00a2f48a43c3esm3911483ejc.7.2024.01.29.05.34.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 05:34:53 -0800 (PST)
+        Mon, 29 Jan 2024 05:34:54 -0800 (PST)
 From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 29 Jan 2024 15:34:38 +0200
-Subject: [PATCH 2/3] remoteproc: qcom_q6v5_pas: Add support for X1E80100
- ADSP/CDSP
+Date: Mon, 29 Jan 2024 15:34:39 +0200
+Subject: [PATCH 3/3] remoteproc: qcom_q6v5_pas: Unload lite firmware on
+ ADSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240129-x1e80100-remoteproc-v1-2-15d21ef58a4b@linaro.org>
+Message-Id: <20240129-x1e80100-remoteproc-v1-3-15d21ef58a4b@linaro.org>
 References: <20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org>
 In-Reply-To: <20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -77,92 +77,83 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2097; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=/QJcyc/EP4tWWsxEgO8p8lnXcW7ZNTZEWA9LmIq7uW8=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlt6l3UxfLaKsr8EpmNZGbkK8EyLVlV9KbulUZO
- gLOUZfUOqeJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZbepdwAKCRAbX0TJAJUV
- Vku7D/0fk1XRNqJSxuFkAMSfSThIUyb15qheSIaoRDXT/NlJVlCaIHs3JhIcbDbaXcIKp5hY3uN
- vj6BsHuGD/HERNJtdVtV9tY+AE6CP60aZ03Vg2BUEPjtvw0yOcE5RI7dYLlHpDu/YYeBTdcA8ew
- Ej4HprEwuNNoHhySKRVD29jTGcdNFVATLvOAML/0cXrOiNb9D+XBFFk+jUOwYh1sqhWHBfWTLyp
- s6Xyeh+czuB8/Vx1GJoQxlhFApitK0xpD27l+Pe64uQcX+KW1H368wcE0cJJEqFwVD075+MolCN
- cpnJP/h6V4tGGQIzskGdfJCt3cVaLCeU+m94r3ym3i/sHmH1RTAkoHiPjhAtyMHG+nozo7qx9e5
- PNpVh7+vNPud0nKhLzg8H8k8Z2EFj1yJ2Rsp/9lEwmlOpUSE8nz2HiFd5ejdC5Aac2o4jLR0lzf
- GhrO2MNf1JGXu8qzsGVpKQYFKR9HYEOBsEzd19F9H6PmreXkoLHB4e7Ryox1iImDBYI4aUFIsPE
- 2S3niPvs78Qf7OjGERUdulzLkYvxP2v7vriW2hnrW29xLfzYLH6YYFW/guhrbaRcFBXUavYXsy/
- cpWR4ptT51t3qxOkt5E/W2kJff+i6l9fQWhNZAXGref1/IAfBwSUlVBpb9S+/LvDJV8ERb1xWZx
- eeF7sA0BdfqL4Rg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2175; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=DYmaa/61P4GaXID7Xccu2X68XxOqzoecSVlwWNbm4oQ=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlt6l5CPj0vbamh6iXLeZP8wUB2GwT1lbw005/L
+ ExfUy5EK/GJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZbepeQAKCRAbX0TJAJUV
+ Vk4dD/4pyJzUu6T1+dFDIrMr5yX8AxeC5PxCSxSS82hGVyIGL0+orImNWHgf8Mso62DjkvCxf04
+ AKRN9an+loItW0pAklTRZmz6VynBGbQkvh0r9sbDggpkfFh77Oqnze5qnSBpibmew/wxA+ff0Z+
+ QEk224GPexwy8asTTfibFzYRbikTjHvkf/vr0Jrb460tKv3PHw05Po0kFHh85vcI5bNpHK7UFxb
+ VlQ1uwTocE7bTjd1nG85YJH9DcSl5gjN3XYZsyxB4o53PSgpshHb5QbkIVX0ufjdhgv+ipUQJZA
+ CfL4uXyeBq/DDYbuWF41/a8yMRdj2CUbks1hSHeAOQeniVUv2l6g8bsZRkMO/omt2yJTxHx0H8H
+ 8jDx/rTgqBIdaIdpX9KhTJ1+tqlMZq2R4M0G6Bfa5Dytr42K/H4ZhcP/m6TTLhFcvNJt0O/kvOH
+ uDlc9muh7K4XPHDN+UrPNIvozaCW8mAMKa1VM3QQndA7u/jtaOpYPZHk6e1SFAo7DzcWYACike3
+ yw3DG0puF5gooNXTqtaAcziqQ6rsSXWPsvfqiGCGoRic4LWtMlJUL49C3+PfM6TgbdDxWrEFxZE
+ gjtOedzLuSCP1kwMfUvRoQ2xaLTXF41gtCORvoxgh8MAUrgY3oK4Qv/4rQLCiYksHbFUbxILOzo
+ G1afL4wVwYrGHhg==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
 From: Sibi Sankar <quic_sibis@quicinc.com>
 
-Add support for PIL loading on ADSP and CDSP on X1E80100 SoCs.
+The UEFI loads a lite variant of the ADSP firmware to support charging
+use cases. The kernel needs to unload and reload it with the firmware
+that has full feature support for audio. This patch arbitarily shutsdown
+the lite firmware before loading the full firmware.
 
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 41 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index a9dd58608052..083d71f80e5c 100644
+index 083d71f80e5c..4f6940368eb4 100644
 --- a/drivers/remoteproc/qcom_q6v5_pas.c
 +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -984,6 +984,45 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
- 	.ssctl_id = 0x20,
- };
+@@ -39,6 +39,7 @@ struct adsp_data {
+ 	const char *dtb_firmware_name;
+ 	int pas_id;
+ 	int dtb_pas_id;
++	int lite_pas_id;
+ 	unsigned int minidump_id;
+ 	bool auto_boot;
+ 	bool decrypt_shutdown;
+@@ -72,6 +73,7 @@ struct qcom_adsp {
+ 	const char *dtb_firmware_name;
+ 	int pas_id;
+ 	int dtb_pas_id;
++	int lite_pas_id;
+ 	unsigned int minidump_id;
+ 	int crash_reason_smem;
+ 	bool decrypt_shutdown;
+@@ -210,6 +212,10 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ 	/* Store firmware handle to be used in adsp_start() */
+ 	adsp->firmware = fw;
  
-+static const struct adsp_data x1e80100_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.dtb_firmware_name = "adsp_dtb.mdt",
-+	.pas_id = 1,
-+	.dtb_pas_id = 0x24,
-+	.minidump_id = 5,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
++	/* WIP: Shutdown the ADSP if it's running a lite version of the firmware*/
++	if (adsp->lite_pas_id)
++		ret = qcom_scm_pas_shutdown(adsp->lite_pas_id);
 +
-+static const struct adsp_data x1e80100_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.dtb_firmware_name = "cdsp_dtb.mdt",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
-+
- static const struct adsp_data sm8350_cdsp_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
-@@ -1236,6 +1275,8 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource},
- 	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource},
- 	{ .compatible = "qcom,sm8550-mpss-pas", .data = &sm8550_mpss_resource},
-+	{ .compatible = "qcom,x1e80100-adsp-pas", .data = &x1e80100_adsp_resource},
-+	{ .compatible = "qcom,x1e80100-cdsp-pas", .data = &x1e80100_cdsp_resource},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
+ 	if (adsp->dtb_pas_id) {
+ 		ret = request_firmware(&adsp->dtb_firmware, adsp->dtb_firmware_name, adsp->dev);
+ 		if (ret) {
+@@ -693,6 +699,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->rproc = rproc;
+ 	adsp->minidump_id = desc->minidump_id;
+ 	adsp->pas_id = desc->pas_id;
++	adsp->lite_pas_id = desc->lite_pas_id;
+ 	adsp->info_name = desc->sysmon_name;
+ 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+ 	adsp->region_assign_idx = desc->region_assign_idx;
+@@ -990,6 +997,7 @@ static const struct adsp_data x1e80100_adsp_resource = {
+ 	.dtb_firmware_name = "adsp_dtb.mdt",
+ 	.pas_id = 1,
+ 	.dtb_pas_id = 0x24,
++	.lite_pas_id = 0x1f,
+ 	.minidump_id = 5,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
 
 -- 
 2.34.1
