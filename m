@@ -1,58 +1,50 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAC2605DE
-	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 08:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1112659151;
+	Tue, 30 Jan 2024 09:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706602727; cv=none; b=TY4SYQ9OjiHFAAgI6nbYpaNb0Lt3qUXTNMH5PKmrA+UTyJ75b5UM3j0T9L/3lVy5jr/eWOUlUO4HqqMDq498p0dmLa8ZdqiGmy1PMeB5PMTb7rpeHBN7S6Q8HvNnrlazAas4GcvLiAmsRLNm3QeC+YuptIcOorw2DP2JtBbPlcA=
+	t=1706606050; cv=none; b=Z9SIQCjjgKhs9a/PPck1m7eAAh+Kav4I7CNPLysOdknn5MDT1MoL6nD5iv5kIqEQgbu9PtW3dCM5VbLukiSGuhI5nVGu7+Pbi+4c06rTNnLeQiC0M5YnBcTP7to6rbEr0ouJ72/K/c8XbInyYAm1KneOkkr5B3wCqcPhJE2ARLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706602727; c=relaxed/simple;
-	bh=xhCYng5XsPUqcAheLymgWpz/3pjpkj1ZrM1lMocSU8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzzdkDYqwbhCyeeDppq8dCcPQo68TTlIoidauzLxhhDMrzSqt5UOC/wF+UyD0DES0ZuvDbZiyyhgwguXaFQjGj75P0+OEPSUto0e15l95WeO1fNneidc26n0xESTEGSEzjq/nWrmC5qqUhMBfvCgSXAl8ZDgUGjyWsC5h3FTPJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rs+uJmzz; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706606050; c=relaxed/simple;
+	bh=OQAVT7USdV8k3d4ULX+DKpgKb5XJUSnQwA1JCi3lL1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qogxOuv63IJEiiD0RsF/hXqcgPEDyGkGlZZFS2p+r5xC4CbZaRdpbtRnsRtNcnuv9BYjy8aSocg7CkMzuwnREyMQIQyla2XEURMxeDmIwkm7KNXLsKpcsa8IHctNnTx6sVJY5iCUJTzhvOyHQYv3B+O7nO7TBbM5Bajj5Vell5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KyI2NNjO; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rs+uJmzz"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a357cba4a32so281603766b.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 00:18:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706602724; x=1707207524; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JuCZteP1NPfdNhvScPfTHC+nL3PzDXggpPOdfLB/wYc=;
-        b=Rs+uJmzzmaVXKWY0k9dro6fs8MLpcKImBCba6iVbVXODKQwCviK+sK0o7NFAm1Cg21
-         OLYYvzKXTFQdk7HT4qvU8zBNDHqH8TEkkIYI2sE4wgavlhIJwKNBNfE3xQTuh2Igvigd
-         YjdBlx1hfe4TBHZgeZQja1x0hJBJubs/wajU0w+GHjORJg1+GhGdVxBiRVgTUo3ren5m
-         tUY6fFF0IaTLXM9es/SbopugrKiuakahOlaBJDbxSPcR7amI7njvoKNvpI00GmMqM8wV
-         xGWfzPyASNBeRBwsDVogsbTbcyQP8RT7QtrtdQwZlipTiUxeQcjaogpJp529tS4rsFGH
-         faKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706602724; x=1707207524;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JuCZteP1NPfdNhvScPfTHC+nL3PzDXggpPOdfLB/wYc=;
-        b=hI+hKrFbzgbb5pJR6rj5i9S+aSW2PIWkF11KnnZm+0ygzBayJ9eNXuo3LCYPN0J8MZ
-         FEiZy+z5JeKo2sIO4TXzWr0asN47zDCkdcgy0GU9TSBWJ9FoFIwJn6bbFuUnv2mm7GRu
-         RQwdRIsSb/arXuAJRK/bMLsqx4BVAk5RHqXDKrImmE6t7SW1bw7oz6f0OjUoHaaJbhv6
-         A5wcbAOl/XhB6ZQ5zCOcl5HThqRJUBB17tcf+EZ3YFjnK+NZG3pA4P3/jgy2sjRMgtLA
-         WvqcbrJBjsGHhEvUVxnhSVWInVHaM1xT6h6eEStK5ZfkpeujLo8fJdeSboJVgn+qxFij
-         9hiw==
-X-Gm-Message-State: AOJu0Yzf2szi7hZbxYc7MH2l9AucAfvZYU34OOy9u2UmbC/2peJ3X6t9
-	AsLVhRvAjUD/xFQaNdZ+bZ/0srwL/VslS1cMVg8zTGbJWzGpSt0A25OOVZZx+FM=
-X-Google-Smtp-Source: AGHT+IGLz2PnPIUzScHoMe1SAiFcLXL/On3mCPKgK3SKUXs+tYUcbsOVnbLPaSPfYDpiVj6fIxUn1Q==
-X-Received: by 2002:a17:906:6bd5:b0:a35:a1dc:8920 with SMTP id t21-20020a1709066bd500b00a35a1dc8920mr4030330ejs.45.1706602724321;
-        Tue, 30 Jan 2024 00:18:44 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id qo3-20020a170907874300b00a35fd93b3fasm949896ejc.64.2024.01.30.00.18.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 00:18:43 -0800 (PST)
-Message-ID: <e91d57f6-4dbb-4f06-b966-8f61fc54d93a@linaro.org>
-Date: Tue, 30 Jan 2024 09:18:42 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KyI2NNjO"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40U74qLU017764;
+	Tue, 30 Jan 2024 10:13:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=dt87CNLkMt3980cHLAqyKgavtbKzWkDPS1dcS5e8/3Y=; b=Ky
+	I2NNjOnDo3+K8j+jKsOw3RWwgItQniWKLKLigFeSxpW81U+AKzcVMjJkxJXrN40J
+	jeJnJYIy73AoKxeCVFXdc/hs67+YxNrFVUldgEK053eDkiBQT0Rv6l3wJ9YNjrIT
+	zVx2O97WKIa8R1eUv4t5AVY4+7/qR+bOOmZc3CdbU4SYKGiJOmELNYADg4sviJe+
+	c0zbrSE6S3sKNbZ479JWAFzJVpJP0ktCQD7hFX60gaJL3UhrK/LM4HbOvy5l6xF9
+	344cTbxIZqJDv9NMa/5b9n1/INVIcuMNZRnyaJfE9qBpEZve2Vo9jmNx3iQS9JNp
+	DUSHTlHsAdQrX1LoWJ7w==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vvqu8tjf6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jan 2024 10:13:53 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CCA60100067;
+	Tue, 30 Jan 2024 10:13:50 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C007020B9E5;
+	Tue, 30 Jan 2024 10:13:50 +0100 (CET)
+Received: from [10.201.20.75] (10.201.20.75) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 30 Jan
+ 2024 10:13:49 +0100
+Message-ID: <7ec6c9e8-9267-4e7c-81a4-abcdb2ab4239@foss.st.com>
+Date: Tue, 30 Jan 2024 10:13:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -60,81 +52,325 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the X1E80100 aDSP & cDSP
+Subject: Re: [PATCH v2 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
 Content-Language: en-US
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org>
- <20240129-x1e80100-remoteproc-v1-1-15d21ef58a4b@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240129-x1e80100-remoteproc-v1-1-15d21ef58a4b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240118100433.3984196-1-arnaud.pouliquen@foss.st.com>
+ <20240118100433.3984196-5-arnaud.pouliquen@foss.st.com>
+ <ZbPnsJm67G10+HQ3@p14s>
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ZbPnsJm67G10+HQ3@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-30_03,2024-01-29_01,2023-05-22_02
 
-On 29/01/2024 14:34, Abel Vesa wrote:
-> Document the aDSP and cDSP Peripheral Authentication Service on the
-> X1E80100 Platform.
+
+
+On 1/26/24 18:11, Mathieu Poirier wrote:
+> On Thu, Jan 18, 2024 at 11:04:33AM +0100, Arnaud Pouliquen wrote:
+>> The new TEE remoteproc device is used to manage remote firmware in a
+>> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+>> introduced to delegate the loading of the firmware to the trusted
+>> execution context. In such cases, the firmware should be signed and
+>> adhere to the image format defined by the TEE.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> V1 to V2 update:
+>> - remove the select "TEE_REMOTEPROC" in STM32_RPROC config as detected by
+>>   the kernel test robot:
+>>      WARNING: unmet direct dependencies detected for TEE_REMOTEPROC
+>>      Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
+>>      Selected by [y]:
+>>      - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+>> - Fix initialized trproc variable in  stm32_rproc_probe
+>> ---
+>>  drivers/remoteproc/stm32_rproc.c | 149 +++++++++++++++++++++++++++++--
+>>  1 file changed, 144 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+>> index fcc0001e2657..cf6a21bac945 100644
+>> --- a/drivers/remoteproc/stm32_rproc.c
+>> +++ b/drivers/remoteproc/stm32_rproc.c
+>> @@ -20,6 +20,7 @@
+>>  #include <linux/remoteproc.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/tee_remoteproc.h>
+>>  #include <linux/workqueue.h>
+>>  
+>>  #include "remoteproc_internal.h"
+>> @@ -49,6 +50,9 @@
+>>  #define M4_STATE_STANDBY	4
+>>  #define M4_STATE_CRASH		5
+>>  
+>> +/* Remote processor unique identifier aligned with the Trusted Execution Environment definitions */
+>> +#define STM32_MP1_M4_PROC_ID    0
+>> +
+>>  struct stm32_syscon {
+>>  	struct regmap *map;
+>>  	u32 reg;
+>> @@ -90,6 +94,8 @@ struct stm32_rproc {
+>>  	struct stm32_mbox mb[MBOX_NB_MBX];
+>>  	struct workqueue_struct *workqueue;
+>>  	bool hold_boot_smc;
+>> +	bool fw_loaded;
+>> +	struct tee_rproc *trproc;
+>>  	void __iomem *rsc_va;
+>>  };
+>>  
+>> @@ -257,6 +263,91 @@ static int stm32_rproc_release(struct rproc *rproc)
+>>  	return err;
+>>  }
+>>  
+>> +static int stm32_rproc_tee_elf_sanity_check(struct rproc *rproc,
+>> +					    const struct firmware *fw)
+>> +{
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +	unsigned int ret = 0;
+>> +
+>> +	if (rproc->state == RPROC_DETACHED)
+>> +		return 0;
+>> +
+>> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
+>> +	if (!ret)
+>> +		ddata->fw_loaded = true;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int stm32_rproc_tee_elf_load(struct rproc *rproc,
+>> +				    const struct firmware *fw)
+>> +{
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +	unsigned int ret;
+>> +
+>> +	/*
+>> +	 * This function can be called by remote proc for recovery
+>> +	 * without the sanity check. In this case we need to load the firmware
+>> +	 * else nothing done here as the firmware has been preloaded for the
+>> +	 * sanity check to be able to parse it for the resource table.
+>> +	 */
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> This comment is very confusing - please consider refactoring.  
+> 
+>> +	if (ddata->fw_loaded)
+>> +		return 0;
+>> +
+> 
+> I'm not sure about keeping a flag to indicate the status of the loaded firmware.
+> It is not done for the non-secure method, I don't see why it would be needed for
+> the secure one.
 > 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The difference is on the sanity check.
+- in rproc_elf_sanity_check we  parse the elf file to verify that it is
+valid.
+- in stm32_rproc_tee_elf_sanity_check we have to do the same, that means to
+authenticate it. the authentication is done during the load.
 
-Best regards,
-Krzysztof
+So this flag is used to avoid to reload it twice time.
+refactoring the comment should help to understand this flag
 
+
+An alternative would be to bypass the sanity check. But this lead to same
+limitation.
+Before loading the firmware in remoteproc_core, we call rproc_parse_fw() that is
+used to get the resource table address. To get it from tee we need to
+authenticate the firmware so load it...
+
+
+>> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
+>> +	if (ret)
+>> +		return ret;
+>> +	ddata->fw_loaded = true;
+>> +
+>> +	/* Update the resource table parameters. */
+>> +	if (rproc_tee_get_rsc_table(ddata->trproc)) {
+>> +		/* No resource table: reset the related fields. */
+>> +		rproc->cached_table = NULL;
+>> +		rproc->table_ptr = NULL;
+>> +		rproc->table_sz = 0;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct resource_table *
+>> +stm32_rproc_tee_elf_find_loaded_rsc_table(struct rproc *rproc,
+>> +					  const struct firmware *fw)
+>> +{
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +
+>> +	return tee_rproc_get_loaded_rsc_table(ddata->trproc);
+>> +}
+>> +
+>> +static int stm32_rproc_tee_start(struct rproc *rproc)
+>> +{
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +
+>> +	return tee_rproc_start(ddata->trproc);
+>> +}
+>> +
+>> +static int stm32_rproc_tee_attach(struct rproc *rproc)
+>> +{
+>> +	/* Nothing to do, remote proc already started by the secured context. */
+>> +	return 0;
+>> +}
+>> +
+>> +static int stm32_rproc_tee_stop(struct rproc *rproc)
+>> +{
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +	int err;
+>> +
+>> +	stm32_rproc_request_shutdown(rproc);
+>> +
+>> +	err = tee_rproc_stop(ddata->trproc);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	ddata->fw_loaded = false;
+>> +
+>> +	return stm32_rproc_release(rproc);
+>> +}
+>> +
+>>  static int stm32_rproc_prepare(struct rproc *rproc)
+>>  {
+>>  	struct device *dev = rproc->dev.parent;
+>> @@ -319,7 +410,14 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+>>  
+>>  static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>>  {
+>> -	if (rproc_elf_load_rsc_table(rproc, fw))
+>> +	struct stm32_rproc *ddata = rproc->priv;
+>> +	int ret;
+>> +
+>> +	if (ddata->trproc)
+>> +		ret = rproc_tee_get_rsc_table(ddata->trproc);
+>> +	else
+>> +		ret = rproc_elf_load_rsc_table(rproc, fw);
+>> +	if (ret)
+>>  		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
+>>  
+>>  	return 0;
+>> @@ -693,8 +791,22 @@ static const struct rproc_ops st_rproc_ops = {
+>>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>>  };
+>>  
+>> +static const struct rproc_ops st_rproc_tee_ops = {
+>> +	.prepare	= stm32_rproc_prepare,
+>> +	.start		= stm32_rproc_tee_start,
+>> +	.stop		= stm32_rproc_tee_stop,
+>> +	.attach		= stm32_rproc_tee_attach,
+>> +	.kick		= stm32_rproc_kick,
+>> +	.parse_fw	= stm32_rproc_parse_fw,
+>> +	.find_loaded_rsc_table = stm32_rproc_tee_elf_find_loaded_rsc_table,
+>> +	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
+>> +	.sanity_check	= stm32_rproc_tee_elf_sanity_check,
+>> +	.load		= stm32_rproc_tee_elf_load,
+>> +};
+>> +
+>>  static const struct of_device_id stm32_rproc_match[] = {
+>> -	{ .compatible = "st,stm32mp1-m4" },
+>> +	{.compatible = "st,stm32mp1-m4",},
+>> +	{.compatible = "st,stm32mp1-m4-tee",},
+>>  	{},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+>> @@ -853,6 +965,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  	struct device *dev = &pdev->dev;
+>>  	struct stm32_rproc *ddata;
+>>  	struct device_node *np = dev->of_node;
+>> +	struct tee_rproc *trproc = NULL;
+>>  	struct rproc *rproc;
+>>  	unsigned int state;
+>>  	int ret;
+>> @@ -861,11 +974,31 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+>> -	if (!rproc)
+>> -		return -ENOMEM;
+>> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+>> +		trproc = tee_rproc_register(dev, STM32_MP1_M4_PROC_ID);
+>> +		if (IS_ERR(trproc)) {
+>> +			dev_err_probe(dev, PTR_ERR(trproc),
+>> +				      "signed firmware not supported by TEE\n");
+>> +			return PTR_ERR(trproc);
+>> +		}
+>> +		/*
+>> +		 * Delegate the firmware management to the secure context.
+>> +		 * The firmware loaded has to be signed.
+>> +		 */
+>> +		dev_info(dev, "Support of signed firmware only\n");
+> 
+> Not sure what this adds.  Please remove.
+
+This is used to inform the user that only a signed firmware can be loaded, not
+an ELF file.
+I have a patch in my pipe to provide the supported format in the debugfs. In a
+first step, I can suppress this message and we can revisit the issue when I push
+the debugfs proposal.
+
+Thanks,
+Arnaud
+
+> 
+>> +	}
+>> +	rproc = rproc_alloc(dev, np->name,
+>> +			    trproc ? &st_rproc_tee_ops : &st_rproc_ops,
+>> +			    NULL, sizeof(*ddata));
+>> +	if (!rproc) {
+>> +		ret = -ENOMEM;
+>> +		goto free_tee;
+>> +	}
+>>  
+>>  	ddata = rproc->priv;
+>> +	ddata->trproc = trproc;
+>> +	if (trproc)
+>> +		trproc->rproc = rproc;
+>>  
+>>  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>>  
+>> @@ -916,6 +1049,10 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>>  	rproc_free(rproc);
+>> +free_tee:
+>> +	if (trproc)
+>> +		tee_rproc_unregister(trproc);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> @@ -937,6 +1074,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>>  	rproc_free(rproc);
+>> +	if (ddata->trproc)
+>> +		tee_rproc_unregister(ddata->trproc);
+>>  }
+>>  
+>>  static int stm32_rproc_suspend(struct device *dev)
+>> -- 
+>> 2.25.1
+>>
