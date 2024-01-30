@@ -1,87 +1,335 @@
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A146773C;
-	Tue, 30 Jan 2024 11:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50816A02A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 12:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706615159; cv=none; b=CygpY2PUMGJqyMIjjxU51kiWdqi/Kx+QHXrLvObw5JWEfq4/iO9xwAQptux8PeVcPTZaWctIUvl35KLaA4nxBzjL38tBvEYIPAqLnZNQ662piBDJu4RX3mPj/HmQQ0Tl/22mHjYKINGniKuyR52FjXctTi+7l151JtvHqq7VfCg=
+	t=1706618402; cv=none; b=a+BdLUpB/fw1LHpxkeBfCbYLEnZBESYNll2bnQkVFHYnT/Mi8pkZASGtQ7RINulChuYkEP2asuSWhbyOOAAJyn3UFQjg772+zFBVxTKsX0+hkuvgGeJX6gpSujOvttOOo5DKDWpD1pNKgNbw1p2o+421ybKXesRedW9i5FjufPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706615159; c=relaxed/simple;
-	bh=v6u8urb/t5RppsI2712r4PdAFGHfelN/27Q36RQ/1/M=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=GAL4fOso1WE6un3Oue8fYpTot89zQazt6YjKM8icv3SNuCyOn1we/H8RgjOU3TkgkwKkfPitH13blG5RSBHA4UhtRTk76qPSQEXCS6zVzSQ4R3g/EzP/XtYbnsMMXQRlLhtJfV+Q6rp0iBjwQoUDsprMw7VIXBD/kVE5quuPi04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=i/Xdb4g1; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1706618402; c=relaxed/simple;
+	bh=d+n2LmHreLhTI/MtFCVdNAwCL4kj4TSCEGwtjdJIF24=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rstK5keX6nswhQXwpzpDhDJ20RBMFHoCvD5wTPJatmefuQ0HOu+f+sO4LWnu3Xv+08twQ9mlAIy79RdwNc7HYc1z9SOyMjk82XePKJUrWHHutgvBataWZnyw0E2o2KZT0PNSH0oJTHhpgmXlEsSUHz4tRj9Gxjr/u+fbCO71ePI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jg3JH6WD; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="i/Xdb4g1"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1706615155; h=Message-ID:Subject:Date:From:To;
-	bh=68WGLYeT5XGxdBIWX7j3qvfnpmvTuS0nYBOOJmACvE8=;
-	b=i/Xdb4g1cubmxx+x9Crfw1Fw3ENsH+wvPtI9vo9hRERrfZyU4lsiWIgzIE5OQAOahC+AO86BNZTmsCeJcBCiedjWPGriadC1cVJxCumrd0sxyNlGPDxJYetl5vJ5exPd913Vor17xtsvkiTlTB0a+ZClDYzGPKekC9xpO4WY0gI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R771e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0W.g5hEv_1706615152;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W.g5hEv_1706615152)
-          by smtp.aliyun-inc.com;
-          Tue, 30 Jan 2024 19:45:53 +0800
-Message-ID: <1706615031.7414055-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost 00/14] virtio remove dma info for premapped mode
-Date: Tue, 30 Jan 2024 19:43:51 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Vadim Pasternak <vadimp@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Cornelia Huck <cohuck@redhat.com>,
- Halil Pasic <pasic@linux.ibm.com>,
- Eric Farman <farman@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Benjamin Berg <benjamin.berg@intel.com>,
- Yang Li <yang.lee@linux.alibaba.com>,
- linux-um@lists.infradead.org,
- netdev@vger.kernel.org,
- platform-driver-x86@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- linux-s390@vger.kernel.org,
- kvm@vger.kernel.org,
- bpf@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240130030604.108463-1-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <20240130030604.108463-1-xuanzhuo@linux.alibaba.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jg3JH6WD"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5102a877d50so4135252e87.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 04:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706618399; x=1707223199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EXY+AEwFEHttcVholFRXocbu0KYZqhD9gVPVEuKJUGA=;
+        b=Jg3JH6WD7QRKm/9rJiS/tqmSEV8nEKlDFfr1trhIi23wQvapoNWg3kmUrqYKyOaIV9
+         bs77sI4c0XSDV7aLgH2grggUZoO/cbgVQbN6ER886hKhluEqjv5KBQDmMKPvYFny681b
+         eMd5khRfSP5Jv+SjjnN4RYdf5q6YdHBExuDMmKbhtpRuNMsqXFZ0+aleNMnzLKEflJZf
+         PlbVO5fA5zoz9I0oN+ZIWnJ9t3xo2/J5texcO55QuhY/enT+IO1lALS65XZOriaahm3w
+         7J4MS4I1IjbY1k/umyFldCBZioyrZ0L9LcX0JDnq57Rr8ovVP3G6C/8fGIgl2FwhrGOt
+         OV8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706618399; x=1707223199;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EXY+AEwFEHttcVholFRXocbu0KYZqhD9gVPVEuKJUGA=;
+        b=FrD3UsrgPTjOm32f92ZM9kbX3LjOVOpMNTfkFXotKgNML4jRiBemD4h2UR65jUlvSy
+         SE6v/KzG0MlJcHaPlah2gSmoiT/jej1h8UsWWTuq/eqScKMawIGJGAz+3M981Y6Dsl+N
+         Ry7mHv4WpraSr2uFVtDPcArplDtbakJfNHR0fFn3J5wkztsRCcCZBs4Xt7/Z3M5R0OqM
+         hkOMeGE4ilixPuJ4rC+50vcqB2LR0FKvkoH+2Fslv2Y0WoD5xbuWpBQiTC2XnGmGA0qh
+         6O7fx6Cyam3EOI7hvS3sQ8E4CeDKBNn7wyxE+7UGd6O80cigVHBKRh18tJ5CqFIcxeSz
+         YGEA==
+X-Gm-Message-State: AOJu0YzYQYRtazEW+DWqaGDqzn2/dRF3RK95oInCXmBZgDvM2QBNnWBs
+	qz9wc6nxaZO1RD3du0Wro33IqWNLAub0VdreIqEShD0hBYgOMgtOjTp8/QKdC98=
+X-Google-Smtp-Source: AGHT+IGFvXuuehieb79UjpzAcPb/FYeFeTQCUGXTs9cTEd1CTHjA8sjaYeEvFdGy4v3y6ACQInS94Q==
+X-Received: by 2002:a05:6512:3b21:b0:510:544:78f with SMTP id f33-20020a0565123b2100b005100544078fmr6170159lfv.14.1706618398734;
+        Tue, 30 Jan 2024 04:39:58 -0800 (PST)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id p10-20020a19f00a000000b005111b28f7c2sm200661lfc.36.2024.01.30.04.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jan 2024 04:39:58 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ben Horgan <Ben.Horgan@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>
+Subject: [PATCH v3 1/5] PM: domains: Add helper functions to attach/detach multiple PM domains
+Date: Tue, 30 Jan 2024 13:39:47 +0100
+Message-Id: <20240130123951.236243-2-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240130123951.236243-1-ulf.hansson@linaro.org>
+References: <20240130123951.236243-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Attaching/detaching of a device to multiple PM domains has started to
+become a common operation for many drivers, typically during ->probe() and
+->remove(). In most cases, this has lead to lots of boilerplate code in the
+drivers.
 
-Please ignore this.
+To fixup up the situation, let's introduce a pair of helper functions,
+dev_pm_domain_attach|detach_list(), that driver can use instead of the
+open-coding. Note that, it seems reasonable to limit the support for these
+helpers to DT based platforms, at it's the only valid use case for now.
 
-The new thread is sent.
+Suggested-by: Daniel Baluta <daniel.baluta@nxp.com>
+Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Tested-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-	[PATCH vhost 00/17] virtio: drivers maintain dma info for premapped vq
+Changes in v3:
+	- Added suggested-by and tested-by tags.
 
-	http://lore.kernel.org/all/20240130114224.86536-1-xuanzhuo@linux.alibaba.com
+Changes in v2:
+	- Fix NULL pointer bug pointed out by Nikunj.
 
-That includes the refactor of find_vqs().
+---
+ drivers/base/power/common.c | 134 ++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  38 ++++++++++
+ 2 files changed, 172 insertions(+)
 
-Thanks.
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index 44ec20918a4d..327d168dd37a 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -167,6 +167,115 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_name);
+ 
++/**
++ * dev_pm_domain_attach_list - Associate a device with its PM domains.
++ * @dev: The device used to lookup the PM domains for.
++ * @data: The data used for attaching to the PM domains.
++ * @list: An out-parameter with an allocated list of attached PM domains.
++ *
++ * This function helps to attach a device to its multiple PM domains. The
++ * caller, which is typically a driver's probe function, may provide a list of
++ * names for the PM domains that we should try to attach the device to, but it
++ * may also provide an empty list, in case the attach should be done for all of
++ * the available PM domains.
++ *
++ * Callers must ensure proper synchronization of this function with power
++ * management callbacks.
++ *
++ * Returns the number of attached PM domains or a negative error code in case of
++ * a failure. Note that, to detach the list of PM domains, the driver shall call
++ * dev_pm_domain_detach_list(), typically during the remove phase.
++ */
++int dev_pm_domain_attach_list(struct device *dev,
++			      const struct dev_pm_domain_attach_data *data,
++			      struct dev_pm_domain_list **list)
++{
++	struct device_node *np = dev->of_node;
++	struct dev_pm_domain_list *pds;
++	struct device *pd_dev = NULL;
++	int ret, i, num_pds = 0;
++	bool by_id = true;
++	u32 pd_flags = data ? data->pd_flags : 0;
++	u32 link_flags = pd_flags & PD_FLAG_NO_DEV_LINK ? 0 :
++			DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
++
++	if (dev->pm_domain)
++		return -EEXIST;
++
++	/* For now this is limited to OF based platforms. */
++	if (!np)
++		return 0;
++
++	if (data && data->pd_names) {
++		num_pds = data->num_pd_names;
++		by_id = false;
++	} else {
++		num_pds = of_count_phandle_with_args(np, "power-domains",
++						     "#power-domain-cells");
++	}
++
++	if (num_pds <= 0)
++		return 0;
++
++	pds = devm_kzalloc(dev, sizeof(*pds), GFP_KERNEL);
++	if (!pds)
++		return -ENOMEM;
++
++	pds->pd_devs = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_devs),
++				    GFP_KERNEL);
++	if (!pds->pd_devs)
++		return -ENOMEM;
++
++	pds->pd_links = devm_kcalloc(dev, num_pds, sizeof(*pds->pd_links),
++				     GFP_KERNEL);
++	if (!pds->pd_links)
++		return -ENOMEM;
++
++	if (link_flags && pd_flags & PD_FLAG_DEV_LINK_ON)
++		link_flags |= DL_FLAG_RPM_ACTIVE;
++
++	for (i = 0; i < num_pds; i++) {
++		if (by_id)
++			pd_dev = dev_pm_domain_attach_by_id(dev, i);
++		else
++			pd_dev = dev_pm_domain_attach_by_name(dev,
++							data->pd_names[i]);
++		if (IS_ERR_OR_NULL(pd_dev)) {
++			ret = pd_dev ? PTR_ERR(pd_dev) : -ENODEV;
++			goto err_attach;
++		}
++
++		if (link_flags) {
++			struct device_link *link;
++
++			link = device_link_add(dev, pd_dev, link_flags);
++			if (!link) {
++				ret = -ENODEV;
++				goto err_link;
++			}
++
++			pds->pd_links[i] = link;
++		}
++
++		pds->pd_devs[i] = pd_dev;
++	}
++
++	pds->num_pds = num_pds;
++	*list = pds;
++	return num_pds;
++
++err_link:
++	dev_pm_domain_detach(pd_dev, true);
++err_attach:
++	while (--i >= 0) {
++		if (pds->pd_links[i])
++			device_link_del(pds->pd_links[i]);
++		dev_pm_domain_detach(pds->pd_devs[i], true);
++	}
++	return ret;
++}
++EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
++
+ /**
+  * dev_pm_domain_detach - Detach a device from its PM domain.
+  * @dev: Device to detach.
+@@ -187,6 +296,31 @@ void dev_pm_domain_detach(struct device *dev, bool power_off)
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_detach);
+ 
++/**
++ * dev_pm_domain_detach_list - Detach a list of PM domains.
++ * @list: The list of PM domains to detach.
++ *
++ * This function reverse the actions from dev_pm_domain_attach_list().
++ * Typically it should be invoked during the remove phase from drivers.
++ *
++ * Callers must ensure proper synchronization of this function with power
++ * management callbacks.
++ */
++void dev_pm_domain_detach_list(struct dev_pm_domain_list *list)
++{
++	int i;
++
++	if (!list)
++		return;
++
++	for (i = 0; i < list->num_pds; i++) {
++		if (list->pd_links[i])
++			device_link_del(list->pd_links[i]);
++		dev_pm_domain_detach(list->pd_devs[i], true);
++	}
++}
++EXPORT_SYMBOL_GPL(dev_pm_domain_detach_list);
++
+ /**
+  * dev_pm_domain_start - Start the device through its PM domain.
+  * @dev: Device to start.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index b97c5e9820f9..fb91770ba4ba 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -19,6 +19,33 @@
+ #include <linux/cpumask.h>
+ #include <linux/time64.h>
+ 
++/*
++ * Flags to control the behaviour when attaching a device to its PM domains.
++ *
++ * PD_FLAG_NO_DEV_LINK:		As the default behaviour creates a device-link
++ *				for every PM domain that gets attached, this
++ *				flag can be used to skip that.
++ *
++ * PD_FLAG_DEV_LINK_ON:		Add the DL_FLAG_RPM_ACTIVE to power-on the
++ *				supplier and its PM domain when creating the
++ *				device-links.
++ *
++ */
++#define PD_FLAG_NO_DEV_LINK		BIT(0)
++#define PD_FLAG_DEV_LINK_ON		BIT(1)
++
++struct dev_pm_domain_attach_data {
++	const char * const *pd_names;
++	const u32 num_pd_names;
++	const u32 pd_flags;
++};
++
++struct dev_pm_domain_list {
++	struct device **pd_devs;
++	struct device_link **pd_links;
++	u32 num_pds;
++};
++
+ /*
+  * Flags to control the behaviour of a genpd.
+  *
+@@ -420,7 +447,11 @@ struct device *dev_pm_domain_attach_by_id(struct device *dev,
+ 					  unsigned int index);
+ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ 					    const char *name);
++int dev_pm_domain_attach_list(struct device *dev,
++			      const struct dev_pm_domain_attach_data *data,
++			      struct dev_pm_domain_list **list);
+ void dev_pm_domain_detach(struct device *dev, bool power_off);
++void dev_pm_domain_detach_list(struct dev_pm_domain_list *list);
+ int dev_pm_domain_start(struct device *dev);
+ void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+ int dev_pm_domain_set_performance_state(struct device *dev, unsigned int state);
+@@ -439,7 +470,14 @@ static inline struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ {
+ 	return NULL;
+ }
++static inline int dev_pm_domain_attach_list(struct device *dev,
++				const struct dev_pm_domain_attach_data *data,
++				struct dev_pm_domain_list **list)
++{
++	return 0;
++}
+ static inline void dev_pm_domain_detach(struct device *dev, bool power_off) {}
++static inline void dev_pm_domain_detach_list(struct dev_pm_domain_list *list) {}
+ static inline int dev_pm_domain_start(struct device *dev)
+ {
+ 	return 0;
+-- 
+2.34.1
+
