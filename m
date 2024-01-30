@@ -1,81 +1,70 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2376BB22
-	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 12:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706618407; cv=none; b=iIpdXcIBJOK6aQ0JN8sc/GLO0+4faRCn7NHF01ledk97dVTG6DamMc35ZgjXyZp7JlWvvJ2IwhH1vR6P5f6uro2jMib3YM5jEBOtOFHiHy3TqFy5hClx7LxO5EC1qG/QzNPSHImk+W+KrcmI8qK3JFsWfuhguYlolJcmkCMIWh0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706618407; c=relaxed/simple;
-	bh=Q/Ledumh8sSiB25tzXejDfGb21zxF+yXH8L2vrYUAiE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DfPbI52fuozvrXDWbQ6fLH96jumMXV7mmKC5KQr1REnKYOA7Zh02o63GF2ApfI0OoPat1h02DupdtudyCxkQCNxYoSTpTz4Piu5c8eoVZdl0MAPdzm6XQcBG2ymBVYAnBM254AVUIOCQJnzgmnBtS0tvryVqno1XZvydxWqeAYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=brqVDjGU; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5694D86AE8;
+	Tue, 30 Jan 2024 15:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706629768; cv=fail; b=sx1nhLTGht5WfAWbiDuVD6JMG5d25rH2jDqZK8/R3MTMF0AJ75r3itfcBQGV8yeNCO+fZU5wZocnKzIsIvC/OwS9XTAOmJkUOO5OkBVXZ00crz/tiMBDXTMEuLccgspsAFn8nlOwDFkwTqWyuCG1xWCkHNky+VKkSonyvsh4/DQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706629768; c=relaxed/simple;
+	bh=2/L3CMIpD2Q6WTee3CeIHz3X6PEST7CYI3j9OqQiozU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k7Z9CAbERyFYB9i6CopTZqjWN1ujgBewmcmVKIuDyb9FgvBoZavzGyihdWXoIbRuv6kCoXdZLnPgMmcU4P1WrshNBhX8ATbJHGLwliprye6AYKe5jzvIX7VxmE6xJDIe0DyL4nYoLB1tFMXoNGV1W87BHvJuDZ1i0nY81kzkx2A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C0qDyFNe; arc=fail smtp.client-ip=40.107.236.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="brqVDjGU"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-510322d5275so4213855e87.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jan 2024 04:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706618402; x=1707223202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6sB7M33Aev4PO2V7J5+eikfOicrMZ3OaY7keTZjNQuw=;
-        b=brqVDjGUPNCQJbgQLKnK79FAxw/MoNPvCA19UEoz0d89punl7T5VhAnfRIm0NwvC9+
-         3u21w21UacyLYVxZXGfq41K5V1AMDVpJxd/SLBruhGfhyRQTTgQa484g0G/Aamqby3on
-         ZTgcO2mKUO3FrwBjU5Iqwl6zXCetp8vrDaDsmZ1QWbWke4471bXUZzGZzp0x330F3uRV
-         qUF9Su5oBc4UYMkjFhVmsvfH8qjYUBGkR4qdAQfwR8aRRznhQNU+Di/psDXupjQFZ64J
-         q2AjHtqTTq71E6MPh3X98I0q9M61mIfAnRbq27p1KofoF6zHIKFVtX65VMxh4cGUWrNG
-         h79g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706618402; x=1707223202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6sB7M33Aev4PO2V7J5+eikfOicrMZ3OaY7keTZjNQuw=;
-        b=xL/dyHn7iLrLWGs1NPoXR5hAR9Ah5n92tCESUIi8ROO0YrcG5sHC8znkxXs9B/GC+/
-         xEhbQzzxlGXrDlCPJq0AnS7ZueGfcH+/bkEZ9TE9IdeCryQHF4juwGn/OOrm8P2uNPGg
-         0XlOvWZ7i1RI6g0qWMlczkfb6Mr84PgTiq3rw/U/RFMcNT4MiIXJgJ4XnqWvnx1m30/P
-         0qaxHk0kj5AHny7L1ZowHOxgOoT7VtR7JZ+WBDYnz0bejPNo7T8wxvMJJKlYQVNaytfL
-         quDqjUoCK/S/M6yg4WJVoPYTpf2VuaRvRdHXYumLg704ikKqRF2sOADG6D1oS9bGBqy5
-         sKrg==
-X-Gm-Message-State: AOJu0Yw7YUuk9Q/kYmv0rLdWimcEZ4POLSScD34tUvSJjZYqd5JRwtbZ
-	Fn/It0G1hPtewJUoj+Ibob3a6hck1L0OU6A7ANUufOlfpkFoZZa2PS5P+953sAE=
-X-Google-Smtp-Source: AGHT+IE/ZR80yvcmbkhg9NHljlJ433H1MVoW2Mu81CCAc7Thbu9up9kp85gS2CRY3YWjLo12boXqCA==
-X-Received: by 2002:a05:6512:39ca:b0:50e:b5fc:bdcc with SMTP id k10-20020a05651239ca00b0050eb5fcbdccmr8316098lfu.63.1706618402344;
-        Tue, 30 Jan 2024 04:40:02 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id p10-20020a19f00a000000b005111b28f7c2sm200661lfc.36.2024.01.30.04.40.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 04:40:01 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ben Horgan <Ben.Horgan@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v3 4/5] remoteproc: qcom_q6v5_adsp: Convert to dev_pm_domain_attach|detach_list()
-Date: Tue, 30 Jan 2024 13:39:50 +0100
-Message-Id: <20240130123951.236243-5-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240130123951.236243-1-ulf.hansson@linaro.org>
-References: <20240130123951.236243-1-ulf.hansson@linaro.org>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C0qDyFNe"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oc/gzXyAc/D2cJ0LnZVt1Xfy+kLKIfcimLSZ8+NU6VNV8fCsd7IMG+Npi6BAHkbh86HvaDSHzY2JqfcSuvb8b9bcO/dWiBGXEouEHQ9K5OnuFK6lTI3qJj3HqFSMWWuHJQ0QrkLuUHPiSGlIw06xxyi/E8Tg6UwiUEawscERKSOGE9FttJsTaDtZrorSy6nQzo033PpPA5Szu4tkampkKkp83Umi/lXCfNCksAyYIUrK326DfWS5LecsyP0K/RteoEAAvnoDVIFLN25EySIaw5qfeS0us4JaXABvAXBj30JorVBFGH/hbJm99b2XYCAmZUw7puPYFTmkpQuAJJQEtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5BsRx+5Ng7RgJdjezWuHPR+PBFBF/orE+c2CGbsv9hA=;
+ b=Y0+TvSpAH3aZwZVk5xwCRsrrqvaWNIc1avbQeZJ1B8t/zBQcTvLtjaLYY06mUn0UjbFMz5XLTXWbfArYHz6JIUzbEOf5OT7lCzZJZuRoEW2DTlK0pEXqhAK22NdhCrEc2qpg2dnSDmXUGszWUyF681HgqAi+1Tmeh0QkZl4ZzEh8hMXhQAE/mNjJd1+qwgFngdCmBczmYOQtdvpvVTF3JiHgYx4mSkv6lAt/WQ8azcV1buWj6xRFxTByLbldQ4XpRzI+RrAVazhaexNyvC/onpbGuhwf9nFzMqyu5Jrv7+uiccox3+oiiYH0zi1eTn1VmJYncy5c7hj/md67W7Q63g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5BsRx+5Ng7RgJdjezWuHPR+PBFBF/orE+c2CGbsv9hA=;
+ b=C0qDyFNe8TPABDNcq32empr29Y3EmGlWIqwtAFIHRI6FkA3G+fiC6F7TS29rLSE2Nq1YdUtaVHoN+VoN+Ezyj/afHJI3EF5jd08A3Sqb/t55rAPiI79NXQbj3bRpfl6dZd3U5/W4/lqCswsq8oTkJz+b14pw/by9EpQk2YZ0WSU=
+Received: from BN8PR07CA0002.namprd07.prod.outlook.com (2603:10b6:408:ac::15)
+ by DM8PR12MB5397.namprd12.prod.outlook.com (2603:10b6:8:38::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7249.22; Tue, 30 Jan 2024 15:49:23 +0000
+Received: from BN3PEPF0000B069.namprd21.prod.outlook.com
+ (2603:10b6:408:ac:cafe::e4) by BN8PR07CA0002.outlook.office365.com
+ (2603:10b6:408:ac::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.22 via Frontend
+ Transport; Tue, 30 Jan 2024 15:49:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN3PEPF0000B069.mail.protection.outlook.com (10.167.243.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7270.0 via Frontend Transport; Tue, 30 Jan 2024 15:49:23 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Tue, 30 Jan
+ 2024 09:49:23 -0600
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
+ Transport; Tue, 30 Jan 2024 09:49:22 -0600
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ben
+ Levinsky" <ben.levinsky@xilinx.com>, Tarak Reddy <tarak.reddy@amd.com>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH v5] remoteproc: Make rproc_get_by_phandle() work for clusters
+Date: Tue, 30 Jan 2024 07:48:49 -0800
+Message-ID: <20240130154849.1018666-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -83,318 +72,136 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B069:EE_|DM8PR12MB5397:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c4eadac-ab17-4353-4501-08dc21ab07fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	z7P33WArlmURc0lD5x0jq+BPbMEwBKBPb+gmDaUKestaQ1R4CgS+IuDdJDFfpW1kudHER+K8KlGQG6u3rfi+5fNh8IZmfU9JrN1Japws2yCVLyXKfYODwt4Oe78JNHQ3vFlL8CN+rCK8VFSrhjDcRqRB6+gqzOWZDBqxotVaoNKhwZgSDRsNCwaK3o2b1XmHBjrXjlo+uRIzwxnueam6/4wWhlq+KQXH5dwYQpCeIeZF5GIpq7v93oMq7Vq2XCnf5xrf3zLTT2eaFZYSfT0ahfUli/q9D8BCvUuKfJdL3bcPrANOdRuoVEJ2z0QCptqoGCPTnK88yQTNs1R5yZzHs2W4eFq6O7UgaF0hIK7rqOSEcECdRGSPqy1AXuVLoUEo5jxaHDH9YjR4XEi3zAYrfE/+i/pL3zgQzxm0x2DzMwtsOrKE1oaaAEylJGvwuQxglvyjDumsqdxZPDKr/rC+eV/CgfCklLGOoL2b15pw9Lg4HDBSKd2yYy+ghlUodn5G3f4vJYBgFQGwa57CTLsPcyxzgl0yOzuqVO0ylXZ7k3uLHiJ6IxPn/cUlDuqiadESBb3rQBvaCkBqQ5uS9Br1EzQIHMNfw10yFCDrA78uZ0/gyzxbS0qgj9Qmzd5vuzF9lOtfdFEKVbRtk1zF3icpVxmKsBNDW+xyp0QUj/OhM+zkgu+uXfwo3UPaUDdgYkdtasuHN2B+sKQhJ75AZiztigimTfUESqzQHyzhnyF34RZ5VO3OpNS2pDa2F8VmBZMQ0sMvs/Je9zPXnc9JXe6e7g==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(136003)(346002)(396003)(39860400002)(376002)(230922051799003)(1800799012)(186009)(82310400011)(451199024)(64100799003)(46966006)(40470700004)(36840700001)(426003)(336012)(2616005)(1076003)(41300700001)(40460700003)(40480700001)(36756003)(47076005)(36860700001)(110136005)(26005)(6666004)(478600001)(83380400001)(81166007)(82740400003)(356005)(54906003)(86362001)(2906002)(5660300002)(4326008)(70206006)(316002)(44832011)(70586007)(8676002)(8936002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2024 15:49:23.6396
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c4eadac-ab17-4353-4501-08dc21ab07fc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B069.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5397
 
-Let's avoid some of the boilerplate code to manage the various PM domain
-cases, by converting into using dev_pm_domain_attach|detach_list().
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-As a part of the conversion, we are moving over to use device_links, which
-simplifies the runtime PM support too. Moreover, while attaching let's
-trust that an already attached single PM domain is the correct one.
+Multi-cluster remoteproc designs typically have the following DT
+declaration:
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: <linux-remoteproc@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+        remoteproc-cluster {
+                compatible = "soc,remoteproc-cluster";
+
+                core0: core0 {
+                        compatible = "soc,remoteproc-core"
+                        memory-region;
+                        sram;
+                };
+
+                core1: core1 {
+                        compatible = "soc,remoteproc-core"
+                        memory-region;
+                        sram;
+                }
+        };
+
+A driver exists for the cluster rather than the individual cores
+themselves so that operation mode and HW specific configurations
+applicable to the cluster can be made.
+
+Because the driver exists at the cluster level and not the individual
+core level, function rproc_get_by_phandle() fails to return the
+remoteproc associated with the phandled it is called for.
+
+This patch enhances rproc_get_by_phandle() by looking for the cluster's
+driver when the driver for the immediate remoteproc's parent is not
+found.
+
+Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Co-developed-by: Tarak Reddy <tarak.reddy@amd.com>
+Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
+Co-developed-by: Tanmay Shah <tanmay.shah@amd.com>
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
+ drivers/remoteproc/remoteproc_core.c | 29 ++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-Changes in v3:
-	- None.
-
-Changes in v2:
-	- None.
-
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 160 +++++++++++++---------------
- 1 file changed, 73 insertions(+), 87 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 6c67514cc493..93f9a1537ec6 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -55,8 +55,6 @@
- #define QDSP6SS_CORE_CBCR	0x20
- #define QDSP6SS_SLEEP_CBCR	0x3c
- 
--#define QCOM_Q6V5_RPROC_PROXY_PD_MAX	3
--
- #define LPASS_BOOT_CORE_START	BIT(0)
- #define LPASS_BOOT_CMD_START	BIT(0)
- #define LPASS_EFUSE_Q6SS_EVB_SEL 0x0
-@@ -74,7 +72,8 @@ struct adsp_pil_data {
- 
- 	const char **clk_ids;
- 	int num_clks;
--	const char **proxy_pd_names;
-+	const char **pd_names;
-+	unsigned int num_pds;
- 	const char *load_state;
- };
- 
-@@ -110,8 +109,7 @@ struct qcom_adsp {
- 	size_t mem_size;
- 	bool has_iommu;
- 
--	struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
--	size_t proxy_pd_count;
-+	struct dev_pm_domain_list *pd_list;
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
-@@ -120,98 +118,92 @@ struct qcom_adsp {
- 	int (*shutdown)(struct qcom_adsp *adsp);
- };
- 
--static int qcom_rproc_pds_attach(struct device *dev, struct qcom_adsp *adsp,
--				 const char **pd_names)
-+static int qcom_rproc_pds_attach(struct qcom_adsp *adsp, const char **pd_names,
-+				 unsigned int num_pds)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 695cce218e8c..f276956f2c5c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -33,6 +33,7 @@
+ #include <linux/idr.h>
+ #include <linux/elf.h>
+ #include <linux/crc32.h>
++#include <linux/of_platform.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_ring.h>
+@@ -2112,6 +2113,7 @@ EXPORT_SYMBOL(rproc_detach);
+ struct rproc *rproc_get_by_phandle(phandle phandle)
  {
--	struct device **devs = adsp->proxy_pds;
--	size_t num_pds = 0;
-+	struct device *dev = adsp->dev;
-+	struct dev_pm_domain_attach_data pd_data = {
-+		.pd_names = pd_names,
-+		.num_pd_names = num_pds,
-+	};
- 	int ret;
--	int i;
--
--	if (!pd_names)
--		return 0;
+ 	struct rproc *rproc = NULL, *r;
++	struct device_driver *driver;
+ 	struct device_node *np;
  
- 	/* Handle single power domain */
--	if (dev->pm_domain) {
--		devs[0] = dev;
--		pm_runtime_enable(dev);
--		return 1;
--	}
-+	if (dev->pm_domain)
-+		goto out;
- 
--	while (pd_names[num_pds])
--		num_pds++;
-+	if (!pd_names)
-+		return 0;
- 
--	if (num_pds > ARRAY_SIZE(adsp->proxy_pds))
--		return -E2BIG;
-+	ret = dev_pm_domain_attach_list(dev, &pd_data, &adsp->pd_list);
-+	if (ret < 0)
-+		return ret;
- 
--	for (i = 0; i < num_pds; i++) {
--		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
--		if (IS_ERR_OR_NULL(devs[i])) {
--			ret = PTR_ERR(devs[i]) ? : -ENODATA;
--			goto unroll_attach;
--		}
--	}
-+out:
-+	pm_runtime_enable(dev);
-+	return 0;
-+}
- 
--	return num_pds;
-+static void qcom_rproc_pds_detach(struct qcom_adsp *adsp)
-+{
-+	struct device *dev = adsp->dev;
-+	struct dev_pm_domain_list *pds = adsp->pd_list;
- 
--unroll_attach:
--	for (i--; i >= 0; i--)
--		dev_pm_domain_detach(devs[i], false);
-+	dev_pm_domain_detach_list(pds);
- 
--	return ret;
-+	if (dev->pm_domain || pds)
-+		pm_runtime_disable(adsp->dev);
- }
- 
--static void qcom_rproc_pds_detach(struct qcom_adsp *adsp, struct device **pds,
--				  size_t pd_count)
-+static int qcom_rproc_pds_enable(struct qcom_adsp *adsp)
+ 	np = of_find_node_by_phandle(phandle);
+@@ -2122,7 +2124,26 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+ 	list_for_each_entry_rcu(r, &rproc_list, node) {
+ 		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+ 			/* prevent underlying implementation from being removed */
+-			if (!try_module_get(r->dev.parent->driver->owner)) {
++
++			/*
++			 * If the remoteproc's parent has a driver, the
++			 * remoteproc is not part of a cluster and we can use
++			 * that driver.
++			 */
++			driver = r->dev.parent->driver;
++
++			/*
++			 * If the remoteproc's parent does not have a driver,
++			 * look for the driver associated with the cluster.
++			 */
++			if (!driver) {
++				if (r->dev.parent->parent)
++					driver = r->dev.parent->parent->driver;
++				if (!driver)
++					break;
++			}
++
++			if (!try_module_get(driver->owner)) {
+ 				dev_err(&r->dev, "can't get owner\n");
+ 				break;
+ 			}
+@@ -2533,7 +2554,11 @@ EXPORT_SYMBOL(rproc_free);
+  */
+ void rproc_put(struct rproc *rproc)
  {
- 	struct device *dev = adsp->dev;
--	int i;
-+	struct dev_pm_domain_list *pds = adsp->pd_list;
-+	int ret, i = 0;
- 
--	/* Handle single power domain */
--	if (dev->pm_domain && pd_count) {
--		pm_runtime_disable(dev);
--		return;
--	}
-+	if (!dev->pm_domain && !pds)
-+		return 0;
- 
--	for (i = 0; i < pd_count; i++)
--		dev_pm_domain_detach(pds[i], false);
--}
-+	if (dev->pm_domain)
-+		dev_pm_genpd_set_performance_state(dev, INT_MAX);
- 
--static int qcom_rproc_pds_enable(struct qcom_adsp *adsp, struct device **pds,
--				 size_t pd_count)
--{
--	int ret;
--	int i;
--
--	for (i = 0; i < pd_count; i++) {
--		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
--		ret = pm_runtime_resume_and_get(pds[i]);
--		if (ret < 0) {
--			dev_pm_genpd_set_performance_state(pds[i], 0);
--			goto unroll_pd_votes;
--		}
-+	while (pds && i < pds->num_pds) {
-+		dev_pm_genpd_set_performance_state(pds->pd_devs[i], INT_MAX);
-+		i++;
- 	}
- 
--	return 0;
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0) {
-+		while (pds && i > 0) {
-+			i--;
-+			dev_pm_genpd_set_performance_state(pds->pd_devs[i], 0);
-+		}
- 
--unroll_pd_votes:
--	for (i--; i >= 0; i--) {
--		dev_pm_genpd_set_performance_state(pds[i], 0);
--		pm_runtime_put(pds[i]);
-+		if (dev->pm_domain)
-+			dev_pm_genpd_set_performance_state(dev, 0);
- 	}
- 
- 	return ret;
- }
- 
--static void qcom_rproc_pds_disable(struct qcom_adsp *adsp, struct device **pds,
--				   size_t pd_count)
-+static void qcom_rproc_pds_disable(struct qcom_adsp *adsp)
- {
--	int i;
-+	struct device *dev = adsp->dev;
-+	struct dev_pm_domain_list *pds = adsp->pd_list;
-+	int i = 0;
+-	module_put(rproc->dev.parent->driver->owner);
++	if (rproc->dev.parent->driver)
++		module_put(rproc->dev.parent->driver->owner);
++	else
++		module_put(rproc->dev.parent->parent->driver->owner);
 +
-+	if (!dev->pm_domain && !pds)
-+		return;
-+
-+	if (dev->pm_domain)
-+		dev_pm_genpd_set_performance_state(dev, 0);
- 
--	for (i = 0; i < pd_count; i++) {
--		dev_pm_genpd_set_performance_state(pds[i], 0);
--		pm_runtime_put(pds[i]);
-+	while (pds && i < pds->num_pds) {
-+		dev_pm_genpd_set_performance_state(pds->pd_devs[i], 0);
-+		i++;
- 	}
-+
-+	pm_runtime_put(dev);
+ 	put_device(&rproc->dev);
  }
- 
- static int qcom_wpss_shutdown(struct qcom_adsp *adsp)
-@@ -397,8 +389,7 @@ static int adsp_start(struct rproc *rproc)
- 	if (ret)
- 		goto adsp_smmu_unmap;
- 
--	ret = qcom_rproc_pds_enable(adsp, adsp->proxy_pds,
--				    adsp->proxy_pd_count);
-+	ret = qcom_rproc_pds_enable(adsp);
- 	if (ret < 0)
- 		goto disable_xo_clk;
- 
-@@ -448,7 +439,7 @@ static int adsp_start(struct rproc *rproc)
- disable_adsp_clks:
- 	clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
- disable_power_domain:
--	qcom_rproc_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+	qcom_rproc_pds_disable(adsp);
- disable_xo_clk:
- 	clk_disable_unprepare(adsp->xo);
- adsp_smmu_unmap:
-@@ -464,7 +455,7 @@ static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
- 	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
- 
- 	clk_disable_unprepare(adsp->xo);
--	qcom_rproc_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+	qcom_rproc_pds_disable(adsp);
- }
- 
- static int adsp_stop(struct rproc *rproc)
-@@ -715,13 +706,11 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = qcom_rproc_pds_attach(adsp->dev, adsp,
--				    desc->proxy_pd_names);
-+	ret = qcom_rproc_pds_attach(adsp, desc->pd_names, desc->num_pds);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to attach proxy power domains\n");
- 		goto free_rproc;
- 	}
--	adsp->proxy_pd_count = ret;
- 
- 	ret = adsp_init_reset(adsp);
- 	if (ret)
-@@ -753,7 +742,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	return 0;
- 
- disable_pm:
--	qcom_rproc_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+	qcom_rproc_pds_detach(adsp);
- 
- free_rproc:
- 	rproc_free(rproc);
-@@ -771,7 +760,7 @@ static void adsp_remove(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
--	qcom_rproc_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+	qcom_rproc_pds_detach(adsp);
- 	rproc_free(adsp->rproc);
- }
- 
-@@ -788,9 +777,8 @@ static const struct adsp_pil_data adsp_resource_init = {
- 		"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core", NULL
- 	},
- 	.num_clks = 7,
--	.proxy_pd_names = (const char*[]) {
--		"cx", NULL
--	},
-+	.pd_names = (const char*[]) { "cx" },
-+	.num_pds = 1,
- };
- 
- static const struct adsp_pil_data adsp_sc7280_resource_init = {
-@@ -821,9 +809,8 @@ static const struct adsp_pil_data cdsp_resource_init = {
- 		"q6_axim", NULL
- 	},
- 	.num_clks = 7,
--	.proxy_pd_names = (const char*[]) {
--		"cx", NULL
--	},
-+	.pd_names = (const char*[]) { "cx" },
-+	.num_pds = 1,
- };
- 
- static const struct adsp_pil_data wpss_resource_init = {
-@@ -839,9 +826,8 @@ static const struct adsp_pil_data wpss_resource_init = {
- 		"ahb_bdg", "ahb", "rscp", NULL
- 	},
- 	.num_clks = 3,
--	.proxy_pd_names = (const char*[]) {
--		"cx", "mx", NULL
--	},
-+	.pd_names = (const char*[]) { "cx", "mx" },
-+	.num_pds = 2,
- };
- 
- static const struct of_device_id adsp_of_match[] = {
+ EXPORT_SYMBOL(rproc_put);
+
+base-commit: 99f59b148871dadb9104366e3d25b120a97f897b
 -- 
-2.34.1
+2.25.1
 
