@@ -1,72 +1,73 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5749067E65
-	for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 09:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E616994E
+	for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 09:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706692345; cv=none; b=omaxR8/yqMMnvvFxLQEXkMgx+Vn3/mBUCWkeIWBs0LdCu0CkeXG9PSq0g6YKSTRye57YORZK2Gc2qTqgCKLk8hkiyEUAoWbmbfBcDC3ROBsltwKSE2p/U1VEnuZSul233qgDA8X1PgFCuz9IAQE7z9Z1wkMludR53X8hGzlSoNA=
+	t=1706692348; cv=none; b=LdvdgbDVnOneSEWrLp+g+mF/FmXlx2uK/aYLt6caWy21r84lWnVjXtc8LGX78RJLaZatyGFMSnRopUZZw4fW+ratO9oB41HkU1JhE+FhTnG8eVOMOkMpjKHoRliha/SB+6wxYneyc+ZIYIk7lrkruhXXPUEDa4iyfwA2VOaoLkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706692345; c=relaxed/simple;
-	bh=F+LXEdvariXw6k3eT3r4qbtwZoi+V/LnKUO9+lO8CbU=;
+	s=arc-20240116; t=1706692348; c=relaxed/simple;
+	bh=ztRcSVvz1hYEI4OmR3FUypjEuHv/JZyFnd1W0vkBqVc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z43rVwlsDM4Aw9Gv57lOKTqw+N2Iyz0L30BxRKEyFyw35McK7gLBNKYPuIyQNFQRQsMM82muRwwmAA/czvrC1W5ublGBLmwJqbQ8HIb9WSXBnvp6yd5lqkd/B7IundubpdiK1mDIBVzZu+Fnrj23vCzJDUBbyfNOPRtbD/lXgmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g79jk8iF; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=hYkkmydmA1AdspM8e1+JGTzv1WXZmppnGhsnNWYbnotjp+RwIjaukSQhK1SbvFw446jtcME6eSTg5ywxAlYuX2dpQRHBgUrnSibwyhxfjzp4Zoca4OYfGh8G1Ife1J2vRQVtqSUMnU/YDMJbK7BI+lE1dJ64D1XKx3OkIWXQyZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gaXMa8z7; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g79jk8iF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gaXMa8z7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706692343;
+	s=mimecast20190719; t=1706692345;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TJ+jKTMQJGFtJxaVD3p8fA3naqwcYxXT6QmKNrH4jT4=;
-	b=g79jk8iFZdmOvfhh/W0Mo1FkDWFoc3q3M9kKmTSLP6u9PHP9ea52/dScj/QLOH2xC7jyNJ
-	d9Pf5TllETOcjXbtalkOvwkQxkN3IrNGL+MJLrsRWJlsXw/rd10u5VgPMambSGG9KpN/YH
-	jT1PToGtFntBITDNdwzwdavnh/lpTxw=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zJLwocwtNUB8ZTp4FCceWuPM46tHyYM0Zkz28XCMF9w=;
+	b=gaXMa8z7Mc6V+cIGavav+/Fnw1ze8xc8L3EWNNKz4XNxOTbCmK51R6lMPh8C4hupYbrb1f
+	xIU7xN8Cizh2B01ERir9s+o2rm8DKjuN+S61bzrUH4txhwUfj8Hy0VsvmMvuy+7CJpgr4V
+	zQNYTYJU9eR2Lp+RPYt7v4YMc/QEIp8=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-322-N7v-YmLpPNWnzzb9QZyG7w-1; Wed, 31 Jan 2024 04:12:20 -0500
-X-MC-Unique: N7v-YmLpPNWnzzb9QZyG7w-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6dfc22e98ccso545725b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 01:12:20 -0800 (PST)
+ us-mta-617-6u3iZ5iaOlOgb2AjhvQmag-1; Wed, 31 Jan 2024 04:12:24 -0500
+X-MC-Unique: 6u3iZ5iaOlOgb2AjhvQmag-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-295c3c55d0cso754729a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 01:12:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706692339; x=1707297139;
+        d=1e100.net; s=20230601; t=1706692343; x=1707297143;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TJ+jKTMQJGFtJxaVD3p8fA3naqwcYxXT6QmKNrH4jT4=;
-        b=lGMhhtQydt1wL8ljuq81tKaGbzd6qDha2xOSh9LTNheTohwUpQq3m9CQPdBALiOVA3
-         hDvk4NV7PbeFvruC0e2POYCkOj1OQ54UpDPeXgKIEUiq99LXcSPAovPd+zquYuV7KOaV
-         2XCqIVf2rdx3i00y8Vp3D4ngyyenV78OYJ7BMuCLDbJ+93cwMtxSGeQ4GEKmM3dE6SQA
-         UC4gvGz5RJ0CJEh4fCJismMvghFNuRbR7X6bJKbPCBQFRt4e7m8nb2ClKMTLOOdAhITk
-         3OFv2epRQoCU37ttC3ElfBd+EUe3ycUvB8mz2wF5KLpJ78diWRgWcIcKK+7xFlbRCicO
-         AQ2Q==
-X-Gm-Message-State: AOJu0YxjnluxNAFp74s9wnxZGZJCrh0+mIemjTTcx5DkaCMsDNUQQsg3
-	KA8hsZbDGXEKDznYOetc+6TNuzGd1meRTpkaExz2WEJZYpHA+zqT6Oz7NIPfLPcNEGSbUk/9msy
-	0uFtNYfl4r2kVGnczU5QamOhWr8eTukFsch64CW5yMCuQ0v+il8I2CLA9vbvHwM0fqou0H0kSnE
-	McoZs/YXpnTNzZFIWhc8mP77jonpN5Z6ObBwZV5r2d8Q==
-X-Received: by 2002:a05:6a20:9c97:b0:19c:93ee:b0ad with SMTP id mj23-20020a056a209c9700b0019c93eeb0admr1177505pzb.31.1706692339193;
-        Wed, 31 Jan 2024 01:12:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEmM479Cl5hy9Rh2S2MeFkPZK97XeCIQ/W+WuJDw6bc/3YGrYz5ABB3TPxpsK6OFnyn5gpDGlLKohRyPGIa5F4=
-X-Received: by 2002:a05:6a20:9c97:b0:19c:93ee:b0ad with SMTP id
- mj23-20020a056a209c9700b0019c93eeb0admr1177464pzb.31.1706692338808; Wed, 31
- Jan 2024 01:12:18 -0800 (PST)
+        bh=zJLwocwtNUB8ZTp4FCceWuPM46tHyYM0Zkz28XCMF9w=;
+        b=BALVUmvSCkz+n5VbKhCm74reIPi0nUxLaMTdjfLD/4IiQz3y7gG3dxXjjGNpiF2LGj
+         q5AEmu0VVBv9bc06FP6hyWuUKRS9M7QORx+xlyM6D1cAXXXLdO35JwTrY4rhEPoTLTPx
+         zZWGnORvXBgwpJbOElv8bTndqrpqPQomyH/dFPPfnxyPKgZnXT6W22tryDGD/CgD3hgQ
+         H4BOerg69EGT6lpWFVmXz1noRLzJy3BNOoSy0yVyLRjRX2U2RkLfZKiuravA6yPje9qz
+         Lnj4noDFFhzUFqzmeph1Ejb2kRhbSLAHikPE3Hy0lvKOCS7tAh3wVUCSpaWWLvZIruIi
+         9jvw==
+X-Gm-Message-State: AOJu0Yz7sBY7skCgM4wqyoaujtbNGVVx8fqTf/+ZFDsAeKIIqWfc9nGj
+	HrwqWlgy5gZZ5A0hxO84qOa0+zy+oOdRGQvccMz/ATFfwEswYkEf0LIm3/YpgMLc+aS3CV9xNKY
+	v4rFPBrMFU/8yPu6OeRuyuQMc2OGmSi8Eklw134FcecQlkl+rqNxiA6Tvlj69s9v+e2Yh0A4nJq
+	Gh8JHBk7Anh4/setcU8ooEIOzpb9S8JiaoqZCxYuoX4A==
+X-Received: by 2002:a17:90a:4812:b0:28e:850e:7e87 with SMTP id a18-20020a17090a481200b0028e850e7e87mr4055951pjh.41.1706692342969;
+        Wed, 31 Jan 2024 01:12:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHA19Z59zeHpR3nNimF0ZQi1mnwkJcouyhWsEmqEUBepD+NIxCTxSZH5EaaTBhFTcpXCqGmenq5iSv576m9gbY=
+X-Received: by 2002:a17:90a:4812:b0:28e:850e:7e87 with SMTP id
+ a18-20020a17090a481200b0028e850e7e87mr4055914pjh.41.1706692342651; Wed, 31
+ Jan 2024 01:12:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130114224.86536-1-xuanzhuo@linux.alibaba.com> <20240130114224.86536-2-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <20240130114224.86536-2-xuanzhuo@linux.alibaba.com>
+References: <20240130114224.86536-1-xuanzhuo@linux.alibaba.com> <20240130114224.86536-4-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <20240130114224.86536-4-xuanzhuo@linux.alibaba.com>
 From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 31 Jan 2024 17:12:07 +0800
-Message-ID: <CACGkMEsi4B7Rz7Uu-3sTEH=9XRBRDmNSacZkVt6zxaC-FbYqhg@mail.gmail.com>
-Subject: Re: [PATCH vhost 01/17] virtio_ring: introduce vring_need_unmap_buffer
+Date: Wed, 31 Jan 2024 17:12:10 +0800
+Message-ID: <CACGkMEvz55WO+TN2KCv+KLvdT-ZxLike81maahBeVanrCk_Lrg@mail.gmail.com>
+Subject: Re: [PATCH vhost 03/17] virtio_ring: packed: structure the indirect
+ desc table
 To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
 	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
@@ -91,17 +92,167 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Jan 30, 2024 at 7:42=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
 om> wrote:
 >
-> To make the code readable, introduce vring_need_unmap_buffer() to
-> replace do_unmap.
+> This commit structure the indirect desc table.
+> Then we can get the desc num directly when doing unmap.
 >
->    use_dma_api premapped -> vring_need_unmap_buffer()
-> 1. false       false        false
-> 2. true        false        true
-> 3. true        true         false
+> And save the dma info to the struct, then the indirect
+> will not use the dma fields of the desc_extra. The subsequent
+> commits will make the dma fields are optional. But for
+> the indirect case, we must record the dma info.
 >
 > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 63 ++++++++++++++++++++----------------
+>  1 file changed, 35 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 7280a1706cca..dd03bc5a81fe 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -72,9 +72,16 @@ struct vring_desc_state_split {
+>         struct vring_desc *indir_desc;  /* Indirect descriptor, if any. *=
+/
+>  };
+>
+> +struct vring_packed_desc_indir {
+> +       dma_addr_t addr;                /* Descriptor Array DMA addr. */
+> +       u32 len;                        /* Descriptor Array length. */
+> +       u32 num;
+> +       struct vring_packed_desc desc[];
+> +};
+> +
+>  struct vring_desc_state_packed {
+>         void *data;                     /* Data for callback. */
+> -       struct vring_packed_desc *indir_desc; /* Indirect descriptor, if =
+any. */
+> +       struct vring_packed_desc_indir *indir_desc; /* Indirect descripto=
+r, if any. */
+>         u16 num;                        /* Descriptor list length. */
+>         u16 last;                       /* The last desc state in a list.=
+ */
+>  };
+> @@ -1249,10 +1256,13 @@ static void vring_unmap_desc_packed(const struct =
+vring_virtqueue *vq,
+>                        DMA_FROM_DEVICE : DMA_TO_DEVICE);
+>  }
+>
+> -static struct vring_packed_desc *alloc_indirect_packed(unsigned int tota=
+l_sg,
+> +static struct vring_packed_desc_indir *alloc_indirect_packed(unsigned in=
+t total_sg,
+>                                                        gfp_t gfp)
+>  {
+> -       struct vring_packed_desc *desc;
+> +       struct vring_packed_desc_indir *in_desc;
+> +       u32 size;
+> +
+> +       size =3D struct_size(in_desc, desc, total_sg);
+>
+>         /*
+>          * We require lowmem mappings for the descriptors because
+> @@ -1261,9 +1271,10 @@ static struct vring_packed_desc *alloc_indirect_pa=
+cked(unsigned int total_sg,
+>          */
+>         gfp &=3D ~__GFP_HIGHMEM;
+>
+> -       desc =3D kmalloc_array(total_sg, sizeof(struct vring_packed_desc)=
+, gfp);
+>
+> -       return desc;
+> +       in_desc =3D kmalloc(size, gfp);
+> +
+> +       return in_desc;
+>  }
+>
+>  static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+> @@ -1274,6 +1285,7 @@ static int virtqueue_add_indirect_packed(struct vri=
+ng_virtqueue *vq,
+>                                          void *data,
+>                                          gfp_t gfp)
+>  {
+> +       struct vring_packed_desc_indir *in_desc;
+>         struct vring_packed_desc *desc;
+>         struct scatterlist *sg;
+>         unsigned int i, n, err_idx;
+> @@ -1281,10 +1293,12 @@ static int virtqueue_add_indirect_packed(struct v=
+ring_virtqueue *vq,
+>         dma_addr_t addr;
+>
+>         head =3D vq->packed.next_avail_idx;
+> -       desc =3D alloc_indirect_packed(total_sg, gfp);
+> -       if (!desc)
+> +       in_desc =3D alloc_indirect_packed(total_sg, gfp);
+> +       if (!in_desc)
+>                 return -ENOMEM;
+>
+> +       desc =3D in_desc->desc;
+> +
+>         if (unlikely(vq->vq.num_free < 1)) {
+>                 pr_debug("Can't add buf len 1 - avail =3D 0\n");
+>                 kfree(desc);
+> @@ -1321,17 +1335,15 @@ static int virtqueue_add_indirect_packed(struct v=
+ring_virtqueue *vq,
+>                 goto unmap_release;
+>         }
+>
+> +       in_desc->num =3D i;
+> +       in_desc->addr =3D addr;
+> +       in_desc->len =3D total_sg * sizeof(struct vring_packed_desc);
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+It looks to me if we don't use dma_api we don't even need these steps?
+
+> +
+>         vq->packed.vring.desc[head].addr =3D cpu_to_le64(addr);
+>         vq->packed.vring.desc[head].len =3D cpu_to_le32(total_sg *
+>                                 sizeof(struct vring_packed_desc));
+>         vq->packed.vring.desc[head].id =3D cpu_to_le16(id);
+>
+> -       if (vring_need_unmap_buffer(vq)) {
+> -               vq->packed.desc_extra[id].addr =3D addr;
+> -               vq->packed.desc_extra[id].len =3D total_sg *
+> -                               sizeof(struct vring_packed_desc);
+> -       }
+> -
+>         vq->packed.desc_extra[id].flags =3D VRING_DESC_F_INDIRECT |
+>                 vq->packed.avail_used_flags;
+>
+> @@ -1362,7 +1374,7 @@ static int virtqueue_add_indirect_packed(struct vri=
+ng_virtqueue *vq,
+>         /* Store token and indirect buffer state. */
+>         vq->packed.desc_state[id].num =3D 1;
+>         vq->packed.desc_state[id].data =3D data;
+> -       vq->packed.desc_state[id].indir_desc =3D desc;
+> +       vq->packed.desc_state[id].indir_desc =3D in_desc;
+>         vq->packed.desc_state[id].last =3D id;
+>
+>         vq->num_added +=3D 1;
+> @@ -1381,7 +1393,7 @@ static int virtqueue_add_indirect_packed(struct vri=
+ng_virtqueue *vq,
+>                 vring_unmap_desc_packed(vq, &desc[i]);
+>
+>  free_desc:
+> -       kfree(desc);
+> +       kfree(in_desc);
+>
+>         END_USE(vq);
+>         return -ENOMEM;
+> @@ -1595,7 +1607,6 @@ static void detach_buf_packed(struct vring_virtqueu=
+e *vq,
+>                               unsigned int id, void **ctx)
+>  {
+>         struct vring_desc_state_packed *state =3D NULL;
+> -       struct vring_packed_desc *desc;
+>         unsigned int i, curr;
+>         u16 flags;
+>
+> @@ -1621,28 +1632,24 @@ static void detach_buf_packed(struct vring_virtqu=
+eue *vq,
+>
+>                 if (ctx)
+>                         *ctx =3D state->indir_desc;
+> +
+
+Unnecessary changes.
 
 Thanks
 
