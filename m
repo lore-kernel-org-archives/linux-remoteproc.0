@@ -1,74 +1,74 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B97412CD97
-	for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 17:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3778C364A0
+	for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 18:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706721273; cv=none; b=kZFyPpWGynmuLHnJ5J71JjEdt6hhgi9k8qPlZHsykj4749PtPLi+hyZpTWN/o7I9BWq8mt1d2F9c23/3Ua5Aw2txjmbjKnKER9GyAu5rCqOaPtjO/ZczWOQAAFVOPCzZxVjYjwoYjLdpTqNHD/x2gp9jC9WuyXYsge14eSRAy84=
+	t=1706727147; cv=none; b=ciBIr4gN++kK3tvwWwcFgoX6sPnqmngZX7MlUFNqrnj0ZOsweughpy3D+BcSD5qc+PfxGxxU62KB0id71ijag1u5v9HdrVBU0zF0HwCdF+GeaOx/PAYDgJDT3zA5Jc1LAVq+jLXY1PrkU5Dm/y9cncTXKC/Y4gk4BjH3hjiyS3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706721273; c=relaxed/simple;
-	bh=bwubZvYdPtkVL7W+Tee7HF6BTwatsu9HRYNePcqti7Y=;
+	s=arc-20240116; t=1706727147; c=relaxed/simple;
+	bh=lcS4vmnme2UaHVAVN/gC82S1196l0v1ChJzJLg47R8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtHWjS61exQzj/+FboWXFgAubjxIvNfZn6w2D1wzJGdZ6lo7np3z/6QKfseR2y1KJla7eak3tLq1w2N6b9mcURFeEbnHwBEKeQVenJ9j98uuZPJg+uIbjKv5dccdy9YPdvsARNprtrdtFTiGyFgi8U78kyRXPqKdPxjNmsqDfLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eLUFz6cH; arc=none smtp.client-ip=209.85.214.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfHac8b21KIpzKVHMS1A8nrQLv8p+is1pHWOObyDC81FM9wSg0Cp8GU507qJMuwem5mCAufbSz8ktCjqgEZqjhG9lYoKHHJDbsi/3Ur9lnACgKxKdAREo9YZfX+cyOqrv+Ow0vwCdXELwt1hGory/8o/ZnQgG29uw16isfAvOR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3UjfOrz; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eLUFz6cH"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1d8e7df6abcso24197805ad.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 09:14:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3UjfOrz"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6ddcfbc5a5fso32586b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 10:52:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706721270; x=1707326070; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706727144; x=1707331944; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLGQmaPNnGaEoMndQ/+BCcRfvGgwN9zIAY8nt17Qiew=;
-        b=eLUFz6cHRzV62CzvN2nP3+xpr5G48LzhVkUHCq+CW5P4lGTPliqng72n2bDfXeJbx3
-         jUutD+Lpv/of9S9hyomYlR18fM0lvYe2cs+R7hlOt9eB5Q3luyh+LXkwSVEpoDz8Qaw/
-         41XyDUP4OJOLtcewuaTVOAeCHTzISJzclqXX4bVeVqYVUVoQ9/RCMDIVDxyIPRbFJn6t
-         xNbmLe/93+bQXxCloE8T0ak+1pv2KSuYlMcmyRcF5DB9rsD7c3OJW/eYB6QZAYUF/Y/X
-         q9UivZ4UJQ9YqKQmXCZ5VsCaEvPygCnYp1JsrevVl8X8jVh0zITgubBeVSEsYSFJYSbd
-         PlTg==
+        bh=25r5gOm14IJEMHyveKwAf4p2gsLmehhu/N00VeJ591Y=;
+        b=r3UjfOrzgoEIPqusACFINohei7g4Jx/hxS4k2o0eDAdTa79QPvm6nbArxXja8LSXe8
+         fp/kyGaZJtFLGkXgHVhsurhuAAf9K6OcAMCq7DI/+jtvVRleksSLeLuxR2Sw+trKvNWp
+         HSiO/nl9T49fAV4HMSbRX2gs6APTalku+sknXqPx3KA6TQzrLRv9owEjFZVeo++w0xOL
+         hnsBb8C6DC0djfPukVC8gKviF9oSSYxZC2g+gHBuxuf9SeECiNzXfR24A0beDcRCU2cq
+         9fQ+YR+Yxfx91amdfykmmHpI8DPi5gG0cXsQ4+bNpz3lwY3Nfwvlv22E6hPqk0aU1jyF
+         VFWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706721270; x=1707326070;
+        d=1e100.net; s=20230601; t=1706727144; x=1707331944;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mLGQmaPNnGaEoMndQ/+BCcRfvGgwN9zIAY8nt17Qiew=;
-        b=fIokU+D0ilQCynm2OPUPWgzFJE51PkhpnXDiWHafwDyEnWf6s3UffvLNAh0TUJ3nwc
-         FCriIx3ar74Tgy3/Ox+m7vExFh673+a5j6XP1pM6NCqoni2C5lWzTn9YJLQ1UbCkjOMw
-         vC5WgjQS460FpIbPEtM7LQX86vCeI3pyxXBXFwVosvpSIIPmeq7Ke/4EHCi9ub0bWRy0
-         qmPUbnruwPU70FFr3TZj/KiyGSKl69ozg/C0FV7oIliokBH8Xw4KTGvN9nXMfWjURNfc
-         VBihISm/bECyhZnIcoEGGnTtpBXUrCL/7m+ymQPdMfXQysHl5KSsa9N9TQiNwKwfjDN3
-         3JyQ==
-X-Gm-Message-State: AOJu0YxfHe7Xc2Lr6UWl2faeXttjCA7CxQNeNv+Pyq0RPXffUqgAhmFb
-	PhF+WXDvdAM4hqOBHKbOWX6IirWww0yzRW4RZmdkTVHV7ET/QR136206wNRC2uA=
-X-Google-Smtp-Source: AGHT+IHad0+n+vWQsLSKi37U13ncBz0ljHmrhfLlsxOV+EK9ZFtEFehparGBXx5tVCTuP5hC67K1jw==
-X-Received: by 2002:a17:903:40cb:b0:1d8:d224:974 with SMTP id t11-20020a17090340cb00b001d8d2240974mr2616814pld.45.1706721269731;
-        Wed, 31 Jan 2024 09:14:29 -0800 (PST)
+        bh=25r5gOm14IJEMHyveKwAf4p2gsLmehhu/N00VeJ591Y=;
+        b=OddNosy2mL/Xlq7VpzodsQBRCwUgAaIAvlnpJxgvVLotHxLbn8/AXqggr7sVmtMJ+1
+         NvQ6iYCbof0uydxfYVAbW7WyuP17a7IDhCcvlf+IkOSCZ9s8zDwd/0bcD/rThUAJpKcl
+         d44ch+st102A/m1rKeXEM3Pw6XwNvG1N0GlY/2kcuH2HJUHppXQBeNvUwpJlsK2dikV/
+         ngTzkDiYKlBB3ifr0VPfdlOBEEO+p6dXFthh2aRiaMER2WxJLmtKOr9bztJxZkYWlR33
+         7FdG9vjnMTURPxWGF+qjmtK1QJzEzYfA76G3nh7IYH8WOet+XFMRAtxIh1gd/qLg2L3S
+         4MgA==
+X-Gm-Message-State: AOJu0YzaryzkxnHC8yPP6Hd9ldM7qm3+19tBXrjLPffAaNrVQgYVIIBX
+	TBJnGarBgmLqXna5NfzeTP24BTioovoLn3GoSz17DkxkIIHyd43Otg+dNlROY2A=
+X-Google-Smtp-Source: AGHT+IFt7HhwIpxyhcBUyO5WrVAx3ZZVqZxLhljiEsHbdkGMIfzL6iqPgPDoivsMk5MeYNfBz4nY2A==
+X-Received: by 2002:a05:6a00:1acf:b0:6df:dfd5:1b1e with SMTP id f15-20020a056a001acf00b006dfdfd51b1emr1625498pfv.7.1706727144422;
+        Wed, 31 Jan 2024 10:52:24 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:130d:9bb4:89ef:ab9e])
-        by smtp.gmail.com with ESMTPSA id ml16-20020a17090334d000b001d8e91cff10sm5521036plb.5.2024.01.31.09.14.28
+        by smtp.gmail.com with ESMTPSA id b185-20020a6334c2000000b0059d6f5196fasm10722471pga.78.2024.01.31.10.52.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 09:14:29 -0800 (PST)
-Date: Wed, 31 Jan 2024 10:14:26 -0700
+        Wed, 31 Jan 2024 10:52:24 -0800 (PST)
+Date: Wed, 31 Jan 2024 11:52:21 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: "andersson@kernel.org" <andersson@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"Levinsky, Ben" <ben.levinsky@amd.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 3/3] remoteproc: zynqmp: parse TCM from device tree
-Message-ID: <Zbp/8jpvkdgB+1OK@p14s>
-References: <20240110213504.3626468-1-tanmay.shah@amd.com>
- <20240110213504.3626468-4-tanmay.shah@amd.com>
- <ZagjbaGtz/zqoJ6Z@p14s>
- <ae93ee54-21ee-478d-8a24-f8c8347126fa@amd.com>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
+Message-ID: <ZbqW5YfDmEWG4G1X@p14s>
+References: <20240118100433.3984196-1-arnaud.pouliquen@foss.st.com>
+ <20240118100433.3984196-5-arnaud.pouliquen@foss.st.com>
+ <ZbPnsJm67G10+HQ3@p14s>
+ <7ec6c9e8-9267-4e7c-81a4-abcdb2ab4239@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -77,450 +77,319 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae93ee54-21ee-478d-8a24-f8c8347126fa@amd.com>
+In-Reply-To: <7ec6c9e8-9267-4e7c-81a4-abcdb2ab4239@foss.st.com>
 
-On Tue, Jan 30, 2024 at 02:47:07PM -0600, Tanmay Shah wrote:
-> 
-> On 1/17/24 12:58 PM, Mathieu Poirier wrote:
-> > Alright, I spent several hours looking at this patchset and the driver as a
-> > whole.  I certainly salute your efforts to heed my advice and make the code less
-> > brittle but I'm afraid we are not there.
-> 
-> Hi Mathieu,
-> 
-> I am back from vacation. Started looking into this. Thanks for spending time on this and helping
-> 
-> to make clean design of the driver. Please find my comments below.
-> 
-> > See below for a different way to proceed.
-> >
-> > On Wed, Jan 10, 2024 at 01:35:05PM -0800, Tanmay Shah wrote:
-> > > ZynqMP TCM information was fixed in driver. Now ZynqMP TCM information
-> > > is available in device-tree. Parse TCM information in driver
-> > > as per new bindings.
-> > > 
-> > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > ---
-> > > 
-> > > Changes in v9:
-> > >   - Introduce new API to request and release core1 TCM power-domains in
-> > >     lockstep mode. This will be used during prepare -> add_tcm_banks
-> > >     callback to enable TCM in lockstep mode.
-> > >   - Parse TCM from device-tree in lockstep mode and split mode in
-> > >     uniform way.
-> > >   - Fix TCM representation in device-tree in lockstep mode.
-> > > 
-> > > Changes in v8:
-> > >   - Remove pm_domains framework
-> > >   - Remove checking of pm_domain_id validation to power on/off tcm
-> > >   - Remove spurious change
-> > >   - parse power-domains property from device-tree and use EEMI calls
-> > >     to power on/off TCM instead of using pm domains framework
-> > > 
-> > > Changes in v7:
-> > >   - move checking of pm_domain_id from previous patch
-> > >   - fix mem_bank_data memory allocation
-> > > 
-> > >  drivers/remoteproc/xlnx_r5_remoteproc.c | 245 +++++++++++++++++++++++-
-> > >  1 file changed, 239 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > index 4395edea9a64..0f87b984850b 100644
-> > > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > @@ -74,8 +74,8 @@ struct mbox_info {
-> > >  };
-> > >  
-> > >  /*
-> > > - * Hardcoded TCM bank values. This will be removed once TCM bindings are
-> > > - * accepted for system-dt specifications and upstreamed in linux kernel
-> > > + * Hardcoded TCM bank values. This will stay in driver to maintain backward
-> > > + * compatibility with device-tree that does not have TCM information.
-> > >   */
-> > >  static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
-> > >  	{0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
-> > > @@ -102,6 +102,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> > >   * @rproc: rproc handle
-> > >   * @pm_domain_id: RPU CPU power domain id
-> > >   * @ipi: pointer to mailbox information
-> > > + * @lockstep_core1_np: second core's device_node to use in lockstep mode
-> > >   */
-> > >  struct zynqmp_r5_core {
-> > >  	struct device *dev;
-> > > @@ -111,6 +112,7 @@ struct zynqmp_r5_core {
-> > >  	struct rproc *rproc;
-> > >  	u32 pm_domain_id;
-> > >  	struct mbox_info *ipi;
-> > > +	struct device_node *lockstep_core1_np;
-> > >  };
-> > >  
-> > >  /**
-> > > @@ -539,6 +541,110 @@ static int tcm_mem_map(struct rproc *rproc,
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +int request_core1_tcm_lockstep(struct rproc *rproc)
-> > > +{
-> > > +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> > > +	struct of_phandle_args out_args = {0};
-> > > +	int ret, i, num_pd, pd_id, ret_err;
-> > > +	struct device_node *np;
-> > > +
-> > > +	np = r5_core->lockstep_core1_np;
-> > > +
-> > > +	/* Get number of power-domains */
-> > > +	num_pd = of_count_phandle_with_args(np, "power-domains",
-> > > +					    "#power-domain-cells");
-> > > +	if (num_pd <= 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* Get individual power-domain id and enable TCM */
-> > > +	for (i = 1; i < num_pd; i++) {
-> > > +		ret = of_parse_phandle_with_args(np, "power-domains",
-> > > +						 "#power-domain-cells",
-> > > +						 i, &out_args);
-> > > +		if (ret) {
-> > > +			dev_warn(r5_core->dev,
-> > > +				 "failed to get tcm %d in power-domains list, ret %d\n",
-> > > +				 i, ret);
-> > > +			goto fail_request_core1_tcm;
-> > > +		}
-> > > +
-> > > +		pd_id = out_args.args[0];
-> > > +		of_node_put(out_args.np);
-> > > +
-> > > +		ret = zynqmp_pm_request_node(pd_id, ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> > > +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > > +		if (ret) {
-> > > +			dev_err(r5_core->dev, "failed to request TCM node 0x%x\n",
-> > > +				pd_id);
-> > > +			goto fail_request_core1_tcm;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +
-> > > +fail_request_core1_tcm:
-> > > +
-> > > +	/* Cache actual error to return later */
-> > > +	ret_err = ret;
-> > > +
-> > > +	/* Release previously requested TCM in case of failure */
-> > > +	while (--i > 0) {
-> > > +		ret = of_parse_phandle_with_args(np, "power-domains",
-> > > +						 "#power-domain-cells",
-> > > +						 i, &out_args);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +		pd_id = out_args.args[0];
-> > > +		of_node_put(out_args.np);
-> > > +		zynqmp_pm_release_node(pd_id);
-> > > +	}
-> > > +
-> > > +	return ret_err;
-> > > +}
-> > > +
-> > > +void release_core1_tcm_lockstep(struct rproc *rproc)
-> > > +{
-> > > +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> > > +	struct of_phandle_args out_args = {0};
-> > > +	struct zynqmp_r5_cluster *cluster;
-> > > +	int ret, i, num_pd, pd_id;
-> > > +	struct device_node *np;
-> > > +
-> > > +	/* Get R5 core1 node */
-> > > +	cluster = dev_get_drvdata(r5_core->dev->parent);
-> > > +
-> > > +	if (cluster->mode != LOCKSTEP_MODE)
-> > > +		return;
-> > > +
-> > > +	np = r5_core->lockstep_core1_np;
-> > > +
-> > > +	/* Get number of power-domains */
-> > > +	num_pd = of_count_phandle_with_args(np, "power-domains",
-> > > +					    "#power-domain-cells");
-> > > +	if (num_pd <= 0)
-> > > +		return;
-> > > +
-> > > +	/* Get individual power-domain id and turn off each TCM */
-> > > +	for (i = 1; i < num_pd; i++) {
-> > > +		ret = of_parse_phandle_with_args(np, "power-domains",
-> > > +						 "#power-domain-cells",
-> > > +						 i, &out_args);
-> > > +		if (ret) {
-> > > +			dev_warn(r5_core->dev,
-> > > +				 "failed to get pd of core1 tcm %d in list, ret %d\n",
-> > > +				 i, ret);
-> > > +			continue;
-> > > +		}
-> > > +
-> > > +		pd_id = out_args.args[0];
-> > > +		of_node_put(out_args.np);
-> > > +
-> > > +		if (zynqmp_pm_release_node(pd_id))
-> > > +			dev_warn(r5_core->dev,
-> > > +				 "failed to release core1 tcm pd 0x%x\n", pd_id);
-> > > +	}
-> > > +}
-> > > +
-> > >  /*
-> > >   * add_tcm_carveout_split_mode()
-> > >   * @rproc: single R5 core's corresponding rproc instance
-> > > @@ -633,6 +739,21 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
-> > >  	r5_core = rproc->priv;
-> > >  	dev = r5_core->dev;
-> > >  
-> > > +	/*
-> > > +	 * In lockstep mode, R5 core0 uses TCM of R5 core1 via aliased addresses.
-> > > +	 * Aliased addresses are contiguous with core0 TCM and embedded in "reg"
-> > > +	 * property. However, R5 core1 TCM power-domains needs to be requested
-> > > +	 * from firmware to use R5 core1 TCM. Request core1 TCM power-domains
-> > > +	 * if TCM is parsed from device-tree.
-> > > +	 */
-> > > +	if (of_find_property(r5_core->np, "reg", NULL)) {
-> > > +		ret = request_core1_tcm_lockstep(rproc);
-> > > +		if (ret) {
-> > > +			dev_err(r5_core->dev, "failed to request core1 TCM power-domains\n");
-> > > +			return ret;
-> > > +		}
-> > > +	}
-> > > +
-> > >  	/* Go through zynqmp banks for r5 node */
-> > >  	num_banks = r5_core->tcm_bank_count;
-> > >  
-> > > @@ -689,6 +810,9 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
-> > >  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> > >  		zynqmp_pm_release_node(pm_domain_id);
-> > >  	}
-> > > +
-> > > +	release_core1_tcm_lockstep(rproc);
-> > > +
-> > >  	return ret;
-> > >  }
-> > >  
-> > > @@ -808,6 +932,8 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
-> > >  				 "can't turn off TCM bank 0x%x", pm_domain_id);
-> > >  	}
-> > >  
-> > > +	release_core1_tcm_lockstep(rproc);
-> > > +
-> > >  	return 0;
-> > >  }
-> > >  
-> > > @@ -878,6 +1004,95 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
-> > >  	return ERR_PTR(ret);
-> > >  }
-> > >  
-> > > +static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
-> > > +{
-> > > +	int i, j, tcm_bank_count, ret, tcm_pd_idx;
-> > > +	struct of_phandle_args out_args = {0};
-> > > +	struct zynqmp_r5_core *r5_core;
-> > > +	struct platform_device *cpdev;
-> > > +	struct mem_bank_data *tcm;
-> > > +	struct device_node *np;
-> > > +	struct resource *res;
-> > > +	u64 abs_addr, size;
-> > > +	struct device *dev;
-> > > +
-> > > +	for (i = 0; i < cluster->core_count; i++) {
-> > > +		r5_core = cluster->r5_cores[i];
-> > > +		dev = r5_core->dev;
-> > > +		np = r5_core->np;
-> > > +
-> >
-> > Using r5_core->np doesn't work because it deals with the specifics of a single
-> > subnode when we need to deal with the subnodes of the entire cluster.
-> 
-> Correct. I think below mentioned design should resolve this problem.
+On Tue, Jan 30, 2024 at 10:13:48AM +0100, Arnaud POULIQUEN wrote:
 > 
 > 
-> >
-> > > +		/* we have address cell 2 and size cell as 2 */
-> > > +		tcm_bank_count = of_property_count_elems_of_size(np, "reg",
-> > > +								 4 * sizeof(u32));
-> > > +		if (tcm_bank_count <= 0) {
-> > > +			dev_err(dev, "can't get reg property err %d\n", tcm_bank_count);
-> > > +			return -EINVAL;
-> > > +		}
-> > > +
-> > > +		r5_core->tcm_banks = devm_kcalloc(dev, tcm_bank_count,
-> > > +						  sizeof(struct mem_bank_data *),
-> > > +						  GFP_KERNEL);
-> >
-> > Another problem is that when getting information from the DT, ->tcm_banks is
-> > always 2 whereas it varies (2 or 4) when using the static mem_bank_data arrays.
-> >
-> > We know the current driver works well when using static banks and everything is
-> > already in place to address the mode of operation (lockstep vs split). As
-> > such I suggest to reuse all that code by making function
-> > zynqmp_r5_get_tcm_node_from_dt() return a mem_bank_data array of 4 elements.
-> > That array would be instantiated using the information found in the DT,
-> > regardless of the mode of operation.  Once we have that array it could simply be
-> > inserted in function zynqmp_r5_get_tcm_node() and everything else in the driver
-> > works the same way.
-> >
-> > Note that for that work you will have to set the "reg" values of the second
-> > core to 0 when in lockstep mode, which is fine because they are not used anyway.
+> On 1/26/24 18:11, Mathieu Poirier wrote:
+> > On Thu, Jan 18, 2024 at 11:04:33AM +0100, Arnaud Pouliquen wrote:
+> >> The new TEE remoteproc device is used to manage remote firmware in a
+> >> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+> >> introduced to delegate the loading of the firmware to the trusted
+> >> execution context. In such cases, the firmware should be signed and
+> >> adhere to the image format defined by the TEE.
+> >>
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >> V1 to V2 update:
+> >> - remove the select "TEE_REMOTEPROC" in STM32_RPROC config as detected by
+> >>   the kernel test robot:
+> >>      WARNING: unmet direct dependencies detected for TEE_REMOTEPROC
+> >>      Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
+> >>      Selected by [y]:
+> >>      - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+> >> - Fix initialized trproc variable in  stm32_rproc_probe
+> >> ---
+> >>  drivers/remoteproc/stm32_rproc.c | 149 +++++++++++++++++++++++++++++--
+> >>  1 file changed, 144 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> >> index fcc0001e2657..cf6a21bac945 100644
+> >> --- a/drivers/remoteproc/stm32_rproc.c
+> >> +++ b/drivers/remoteproc/stm32_rproc.c
+> >> @@ -20,6 +20,7 @@
+> >>  #include <linux/remoteproc.h>
+> >>  #include <linux/reset.h>
+> >>  #include <linux/slab.h>
+> >> +#include <linux/tee_remoteproc.h>
+> >>  #include <linux/workqueue.h>
+> >>  
+> >>  #include "remoteproc_internal.h"
+> >> @@ -49,6 +50,9 @@
+> >>  #define M4_STATE_STANDBY	4
+> >>  #define M4_STATE_CRASH		5
+> >>  
+> >> +/* Remote processor unique identifier aligned with the Trusted Execution Environment definitions */
+> >> +#define STM32_MP1_M4_PROC_ID    0
+> >> +
+> >>  struct stm32_syscon {
+> >>  	struct regmap *map;
+> >>  	u32 reg;
+> >> @@ -90,6 +94,8 @@ struct stm32_rproc {
+> >>  	struct stm32_mbox mb[MBOX_NB_MBX];
+> >>  	struct workqueue_struct *workqueue;
+> >>  	bool hold_boot_smc;
+> >> +	bool fw_loaded;
+> >> +	struct tee_rproc *trproc;
+> >>  	void __iomem *rsc_va;
+> >>  };
+> >>  
+> >> @@ -257,6 +263,91 @@ static int stm32_rproc_release(struct rproc *rproc)
+> >>  	return err;
+> >>  }
+> >>  
+> >> +static int stm32_rproc_tee_elf_sanity_check(struct rproc *rproc,
+> >> +					    const struct firmware *fw)
+> >> +{
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +	unsigned int ret = 0;
+> >> +
+> >> +	if (rproc->state == RPROC_DETACHED)
+> >> +		return 0;
+> >> +
+> >> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
+> >> +	if (!ret)
+> >> +		ddata->fw_loaded = true;
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static int stm32_rproc_tee_elf_load(struct rproc *rproc,
+> >> +				    const struct firmware *fw)
+> >> +{
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +	unsigned int ret;
+> >> +
+> >> +	/*
+> >> +	 * This function can be called by remote proc for recovery
+> >> +	 * without the sanity check. In this case we need to load the firmware
+> >> +	 * else nothing done here as the firmware has been preloaded for the
+> >> +	 * sanity check to be able to parse it for the resource table.
+> >> +	 */
+> > 
+> > This comment is very confusing - please consider refactoring.  
+> > 
+> >> +	if (ddata->fw_loaded)
+> >> +		return 0;
+> >> +
+> > 
+> > I'm not sure about keeping a flag to indicate the status of the loaded firmware.
+> > It is not done for the non-secure method, I don't see why it would be needed for
+> > the secure one.
+> > 
 > 
-> I agree to most part. I will have to modify bindings as well to accommodate above design.
+> The difference is on the sanity check.
+> - in rproc_elf_sanity_check we  parse the elf file to verify that it is
+> valid.
+> - in stm32_rproc_tee_elf_sanity_check we have to do the same, that means to
+> authenticate it. the authentication is done during the load.
 > 
-> I think the problem is in lockstep mode, where two memory regions are combined and presented as single
+> So this flag is used to avoid to reload it twice time.
+> refactoring the comment should help to understand this flag
 > 
-> memory-region in table: *zynqmp_tcm_banks_lockstep*. First I will have to fix that.
 > 
-> If that is fixed, then no need to have two functions for lockstep and split tcm carveouts. They both can be
-> 
-> handled uniformly. Once that is fixed, bindings needs to be fixed i.e.
-> 
-> For lockstep mode, "reg" will have 4 entries and split mode "reg" will have only two entries.
-> 
-> We don't have to make "reg" of core1 as 0 in lockstep mode, as it's not being used anyway.
-> 
-> Once I change bindings as above, then it's very easy to implement changes as suggested.
+> An alternative would be to bypass the sanity check. But this lead to same
+> limitation.
+> Before loading the firmware in remoteproc_core, we call rproc_parse_fw() that is
+> used to get the resource table address. To get it from tee we need to
+> authenticate the firmware so load it...
+>
 
-I also came to the conclusion the bindings needed to change.  I'm not sure to
-understand everything you write above and as such will wait for your next
-patchset.
+I spent a long time thinking about this patchset.  Looking at the code as it
+is now, request_firmware() in rproc_boot() is called even when the TEE is
+responsible for loading the firmware.  There should be some conditional code
+that calls either request_firmware() or tee_rproc_load_fw().  The latter should
+also be renamed to tee_rproc_request_firmware() to avoid confusion.
+
+I touched on that before but please rename rproc_tee_get_rsc_table() to
+rproc_tee_elf_load_rsc_table().  I also suggest to introduce a new function,
+rproc_tee_get_loaded_rsc_table() that would be called from
+rproc_tee_elf_load_rsc_table().  That way we don't need trproc->rsc_va.  
+
+I also think tee_rproc should be renamed to "rproc_tee_interface" and folded
+under struct rproc.  
+
+With the above most of the problems with the current implementation should
+naturally go away.
+
+Thanks,
+Mathieu
 
 > 
-> We parse TCM information from dt if "reg" is available, and fill up the table in r5_core->tcm_banks and rest of the
+> >> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +	ddata->fw_loaded = true;
+> >> +
+> >> +	/* Update the resource table parameters. */
+> >> +	if (rproc_tee_get_rsc_table(ddata->trproc)) {
+> >> +		/* No resource table: reset the related fields. */
+> >> +		rproc->cached_table = NULL;
+> >> +		rproc->table_ptr = NULL;
+> >> +		rproc->table_sz = 0;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static struct resource_table *
+> >> +stm32_rproc_tee_elf_find_loaded_rsc_table(struct rproc *rproc,
+> >> +					  const struct firmware *fw)
+> >> +{
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +
+> >> +	return tee_rproc_get_loaded_rsc_table(ddata->trproc);
+> >> +}
+> >> +
+> >> +static int stm32_rproc_tee_start(struct rproc *rproc)
+> >> +{
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +
+> >> +	return tee_rproc_start(ddata->trproc);
+> >> +}
+> >> +
+> >> +static int stm32_rproc_tee_attach(struct rproc *rproc)
+> >> +{
+> >> +	/* Nothing to do, remote proc already started by the secured context. */
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int stm32_rproc_tee_stop(struct rproc *rproc)
+> >> +{
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +	int err;
+> >> +
+> >> +	stm32_rproc_request_shutdown(rproc);
+> >> +
+> >> +	err = tee_rproc_stop(ddata->trproc);
+> >> +	if (err)
+> >> +		return err;
+> >> +
+> >> +	ddata->fw_loaded = false;
+> >> +
+> >> +	return stm32_rproc_release(rproc);
+> >> +}
+> >> +
+> >>  static int stm32_rproc_prepare(struct rproc *rproc)
+> >>  {
+> >>  	struct device *dev = rproc->dev.parent;
+> >> @@ -319,7 +410,14 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+> >>  
+> >>  static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> >>  {
+> >> -	if (rproc_elf_load_rsc_table(rproc, fw))
+> >> +	struct stm32_rproc *ddata = rproc->priv;
+> >> +	int ret;
+> >> +
+> >> +	if (ddata->trproc)
+> >> +		ret = rproc_tee_get_rsc_table(ddata->trproc);
+> >> +	else
+> >> +		ret = rproc_elf_load_rsc_table(rproc, fw);
+> >> +	if (ret)
+> >>  		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
+> >>  
+> >>  	return 0;
+> >> @@ -693,8 +791,22 @@ static const struct rproc_ops st_rproc_ops = {
+> >>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+> >>  };
+> >>  
+> >> +static const struct rproc_ops st_rproc_tee_ops = {
+> >> +	.prepare	= stm32_rproc_prepare,
+> >> +	.start		= stm32_rproc_tee_start,
+> >> +	.stop		= stm32_rproc_tee_stop,
+> >> +	.attach		= stm32_rproc_tee_attach,
+> >> +	.kick		= stm32_rproc_kick,
+> >> +	.parse_fw	= stm32_rproc_parse_fw,
+> >> +	.find_loaded_rsc_table = stm32_rproc_tee_elf_find_loaded_rsc_table,
+> >> +	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
+> >> +	.sanity_check	= stm32_rproc_tee_elf_sanity_check,
+> >> +	.load		= stm32_rproc_tee_elf_load,
+> >> +};
+> >> +
+> >>  static const struct of_device_id stm32_rproc_match[] = {
+> >> -	{ .compatible = "st,stm32mp1-m4" },
+> >> +	{.compatible = "st,stm32mp1-m4",},
+> >> +	{.compatible = "st,stm32mp1-m4-tee",},
+> >>  	{},
+> >>  };
+> >>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+> >> @@ -853,6 +965,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >>  	struct device *dev = &pdev->dev;
+> >>  	struct stm32_rproc *ddata;
+> >>  	struct device_node *np = dev->of_node;
+> >> +	struct tee_rproc *trproc = NULL;
+> >>  	struct rproc *rproc;
+> >>  	unsigned int state;
+> >>  	int ret;
+> >> @@ -861,11 +974,31 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >>  	if (ret)
+> >>  		return ret;
+> >>  
+> >> -	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+> >> -	if (!rproc)
+> >> -		return -ENOMEM;
+> >> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+> >> +		trproc = tee_rproc_register(dev, STM32_MP1_M4_PROC_ID);
+> >> +		if (IS_ERR(trproc)) {
+> >> +			dev_err_probe(dev, PTR_ERR(trproc),
+> >> +				      "signed firmware not supported by TEE\n");
+> >> +			return PTR_ERR(trproc);
+> >> +		}
+> >> +		/*
+> >> +		 * Delegate the firmware management to the secure context.
+> >> +		 * The firmware loaded has to be signed.
+> >> +		 */
+> >> +		dev_info(dev, "Support of signed firmware only\n");
+> > 
+> > Not sure what this adds.  Please remove.
 > 
-> driver remain same.
-> 
-> I will implement and test v10 accordingly. I think this should make design clean.
-> 
-> Only downside is, we are spliting contiguous region in lockstep mode, so after this change, firmware's linker script
-> 
-> needs to be updated accordingly for lockstep mode (If contiguous regions are considered which is not the case for Xilinx's firmwares).
-> 
-> I would consider current implementation as bug, and will send Fixes tag accordingly where needed.
-
-Here too I won't claim to understand exactly what you mean but that is likely
-because my head is currently in another patchset.  That said, make sure to keep
-things backward compatible when moving forward with your changes.
-
-> 
+> This is used to inform the user that only a signed firmware can be loaded, not
+> an ELF file.
+> I have a patch in my pipe to provide the supported format in the debugfs. In a
+> first step, I can suppress this message and we can revisit the issue when I push
+> the debugfs proposal.
 > 
 > Thanks,
+> Arnaud
 > 
-> Tanmay
-> 
-> 
-> > Thanks,
-> > Mathieu
-> >
-> > > +		if (!r5_core->tcm_banks)
-> > > +			ret = -ENOMEM;
-> > > +
-> > > +		r5_core->tcm_bank_count = tcm_bank_count;
-> > > +		for (j = 0, tcm_pd_idx = 1; j < tcm_bank_count; j++, tcm_pd_idx++) {
-> > > +			tcm = devm_kzalloc(dev, sizeof(struct mem_bank_data),
-> > > +					   GFP_KERNEL);
-> > > +			if (!tcm)
-> > > +				return -ENOMEM;
-> > > +
-> > > +			r5_core->tcm_banks[j] = tcm;
-> > > +
-> > > +			/* Get power-domains id of TCM. */
-> > > +			ret = of_parse_phandle_with_args(np, "power-domains",
-> > > +							 "#power-domain-cells",
-> > > +							 tcm_pd_idx, &out_args);
-> > > +			if (ret) {
-> > > +				dev_err(r5_core->dev,
-> > > +					"failed to get tcm %d pm domain, ret %d\n",
-> > > +					tcm_pd_idx, ret);
-> > > +				return ret;
-> > > +			}
-> > > +			tcm->pm_domain_id = out_args.args[0];
-> > > +			of_node_put(out_args.np);
-> > > +
-> > > +			/* Get TCM address without translation. */
-> > > +			ret = of_property_read_reg(np, j, &abs_addr, &size);
-> > > +			if (ret) {
-> > > +				dev_err(dev, "failed to get reg property\n");
-> > > +				return ret;
-> > > +			}
-> > > +
-> > > +			/*
-> > > +			 * Remote processor can address only 32 bits
-> > > +			 * so convert 64-bits into 32-bits. This will discard
-> > > +			 * any unwanted upper 32-bits.
-> > > +			 */
-> > > +			tcm->da = (u32)abs_addr;
-> > > +			tcm->size = (u32)size;
-> > > +
-> > > +			cpdev = to_platform_device(dev);
-> > > +			res = platform_get_resource(cpdev, IORESOURCE_MEM, j);
-> > > +			if (!res) {
-> > > +				dev_err(dev, "failed to get tcm resource\n");
-> > > +				return -EINVAL;
-> > > +			}
-> > > +
-> > > +			tcm->addr = (u32)res->start;
-> > > +			tcm->bank_name = (char *)res->name;
-> > > +			res = devm_request_mem_region(dev, tcm->addr, tcm->size,
-> > > +						      tcm->bank_name);
-> > > +			if (!res) {
-> > > +				dev_err(dev, "failed to request tcm resource\n");
-> > > +				return -EINVAL;
-> > > +			}
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  /**
-> > >   * zynqmp_r5_get_tcm_node()
-> > >   * Ideally this function should parse tcm node and store information
-> > > @@ -956,9 +1171,14 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
-> > >  	struct zynqmp_r5_core *r5_core;
-> > >  	int ret, i;
-> > >  
-> > > -	ret = zynqmp_r5_get_tcm_node(cluster);
-> > > -	if (ret < 0) {
-> > > -		dev_err(dev, "can't get tcm node, err %d\n", ret);
-> > > +	r5_core = cluster->r5_cores[0];
-> > > +	if (of_find_property(r5_core->np, "reg", NULL))
-> > > +		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
-> > > +	else
-> > > +		ret = zynqmp_r5_get_tcm_node(cluster);
-> > > +
-> > > +	if (ret) {
-> > > +		dev_err(dev, "can't get tcm, err %d\n", ret);
-> > >  		return ret;
-> > >  	}
-> > >  
-> > > @@ -1099,7 +1319,19 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
-> > >  		 * then ignore second child node.
-> > >  		 */
-> > >  		if (cluster_mode == LOCKSTEP_MODE) {
-> > > -			of_node_put(child);
-> > > +			/*
-> > > +			 * Get second core's device node only to use its power-domains.
-> > > +			 * Also, no need to use of_node_put on first core's device_node
-> > > +			 * as it is taken care by of_get_next_available_child.
-> > > +			 */
-> > > +			r5_cores[i]->lockstep_core1_np =
-> > > +				of_get_next_available_child(dev_node, child);
-> > > +
-> > > +			if (!r5_cores[i]->lockstep_core1_np) {
-> > > +				ret = -EINVAL;
-> > > +				goto release_r5_cores;
-> > > +			}
-> > > +
-> > >  			break;
-> > >  		}
-> > >  
-> > > @@ -1158,6 +1390,7 @@ static void zynqmp_r5_cluster_exit(void *data)
-> > >  		r5_core = cluster->r5_cores[i];
-> > >  		zynqmp_r5_free_mbox(r5_core->ipi);
-> > >  		of_reserved_mem_device_release(r5_core->dev);
-> > > +		of_node_put(r5_core->lockstep_core1_np);
-> > >  		put_device(r5_core->dev);
-> > >  		rproc_del(r5_core->rproc);
-> > >  		rproc_free(r5_core->rproc);
-> > > -- 
-> > > 2.25.1
-> > > 
+> > 
+> >> +	}
+> >> +	rproc = rproc_alloc(dev, np->name,
+> >> +			    trproc ? &st_rproc_tee_ops : &st_rproc_ops,
+> >> +			    NULL, sizeof(*ddata));
+> >> +	if (!rproc) {
+> >> +		ret = -ENOMEM;
+> >> +		goto free_tee;
+> >> +	}
+> >>  
+> >>  	ddata = rproc->priv;
+> >> +	ddata->trproc = trproc;
+> >> +	if (trproc)
+> >> +		trproc->rproc = rproc;
+> >>  
+> >>  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> >>  
+> >> @@ -916,6 +1049,10 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+> >>  		device_init_wakeup(dev, false);
+> >>  	}
+> >>  	rproc_free(rproc);
+> >> +free_tee:
+> >> +	if (trproc)
+> >> +		tee_rproc_unregister(trproc);
+> >> +
+> >>  	return ret;
+> >>  }
+> >>  
+> >> @@ -937,6 +1074,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+> >>  		device_init_wakeup(dev, false);
+> >>  	}
+> >>  	rproc_free(rproc);
+> >> +	if (ddata->trproc)
+> >> +		tee_rproc_unregister(ddata->trproc);
+> >>  }
+> >>  
+> >>  static int stm32_rproc_suspend(struct device *dev)
+> >> -- 
+> >> 2.25.1
+> >>
