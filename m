@@ -1,395 +1,289 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3778C364A0
-	for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 18:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D623FF4
+	for <linux-remoteproc@vger.kernel.org>; Thu,  1 Feb 2024 00:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706727147; cv=none; b=ciBIr4gN++kK3tvwWwcFgoX6sPnqmngZX7MlUFNqrnj0ZOsweughpy3D+BcSD5qc+PfxGxxU62KB0id71ijag1u5v9HdrVBU0zF0HwCdF+GeaOx/PAYDgJDT3zA5Jc1LAVq+jLXY1PrkU5Dm/y9cncTXKC/Y4gk4BjH3hjiyS3g=
+	t=1706748092; cv=none; b=oJItkn66EPhHw289SQL6RcEKBQAkH9WNKDEGH2Sz5PgjUqKoBi7JalwL1UOAutUW6JVHCUfYyK3ih66hRA8XhIZFnBFjziQJ8FoW3bB/kenHGpKExWJs1NDdtMQUI67aN1xHxY9U9OQQvgPbbrQ9NQH2RULdnSiDLb33HhnwXUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706727147; c=relaxed/simple;
-	bh=lcS4vmnme2UaHVAVN/gC82S1196l0v1ChJzJLg47R8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfHac8b21KIpzKVHMS1A8nrQLv8p+is1pHWOObyDC81FM9wSg0Cp8GU507qJMuwem5mCAufbSz8ktCjqgEZqjhG9lYoKHHJDbsi/3Ur9lnACgKxKdAREo9YZfX+cyOqrv+Ow0vwCdXELwt1hGory/8o/ZnQgG29uw16isfAvOR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3UjfOrz; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706748092; c=relaxed/simple;
+	bh=HkDSvfSRqnAhIsDwn6auSkMHhy5YeYDTpIl0aj7IF+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e0dIT23RRPcYPRT0+4yRqAe6lNEcV42wyi30d16RMvdu8jJVJ+yKpjQAIHxRo+bowvF68TmgmIxhJEqyNjq1ndU32kJ7VzHxZlBSu9xSHY2x6iKGBikHdpIwwMstCecIi+DJMuc5DiJFUdbdggsSwFUka0cXcXefD6l+9IbCB0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaq5PVaF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3UjfOrz"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6ddcfbc5a5fso32586b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 10:52:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706727144; x=1707331944; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=25r5gOm14IJEMHyveKwAf4p2gsLmehhu/N00VeJ591Y=;
-        b=r3UjfOrzgoEIPqusACFINohei7g4Jx/hxS4k2o0eDAdTa79QPvm6nbArxXja8LSXe8
-         fp/kyGaZJtFLGkXgHVhsurhuAAf9K6OcAMCq7DI/+jtvVRleksSLeLuxR2Sw+trKvNWp
-         HSiO/nl9T49fAV4HMSbRX2gs6APTalku+sknXqPx3KA6TQzrLRv9owEjFZVeo++w0xOL
-         hnsBb8C6DC0djfPukVC8gKviF9oSSYxZC2g+gHBuxuf9SeECiNzXfR24A0beDcRCU2cq
-         9fQ+YR+Yxfx91amdfykmmHpI8DPi5gG0cXsQ4+bNpz3lwY3Nfwvlv22E6hPqk0aU1jyF
-         VFWg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaq5PVaF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706748089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xm74o6SZFHiAyG46ECEn20qNcBF1TdhhBIb8LTtMkm0=;
+	b=eaq5PVaFtb1+2N9IyyGZpisAqmqVXfqjkJ4TxsBLeFUzjE7Axl9h0uUf9JgwTQnqurCgug
+	cGNw2FWJADZ6wsQMkj4iOSf6dFB1DXqT+E2l6tc9CLjASLz6PiebxjMYKEzjjx7oOptmbp
+	+06AnNudoZbb9icwUkIl78+ffYWyR7w=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-10-ZucxIIz4OnOBPzBxVSC_Ug-1; Wed, 31 Jan 2024 19:41:28 -0500
+X-MC-Unique: ZucxIIz4OnOBPzBxVSC_Ug-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6ddded741bfso250973b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 16:41:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706727144; x=1707331944;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25r5gOm14IJEMHyveKwAf4p2gsLmehhu/N00VeJ591Y=;
-        b=OddNosy2mL/Xlq7VpzodsQBRCwUgAaIAvlnpJxgvVLotHxLbn8/AXqggr7sVmtMJ+1
-         NvQ6iYCbof0uydxfYVAbW7WyuP17a7IDhCcvlf+IkOSCZ9s8zDwd/0bcD/rThUAJpKcl
-         d44ch+st102A/m1rKeXEM3Pw6XwNvG1N0GlY/2kcuH2HJUHppXQBeNvUwpJlsK2dikV/
-         ngTzkDiYKlBB3ifr0VPfdlOBEEO+p6dXFthh2aRiaMER2WxJLmtKOr9bztJxZkYWlR33
-         7FdG9vjnMTURPxWGF+qjmtK1QJzEzYfA76G3nh7IYH8WOet+XFMRAtxIh1gd/qLg2L3S
-         4MgA==
-X-Gm-Message-State: AOJu0YzaryzkxnHC8yPP6Hd9ldM7qm3+19tBXrjLPffAaNrVQgYVIIBX
-	TBJnGarBgmLqXna5NfzeTP24BTioovoLn3GoSz17DkxkIIHyd43Otg+dNlROY2A=
-X-Google-Smtp-Source: AGHT+IFt7HhwIpxyhcBUyO5WrVAx3ZZVqZxLhljiEsHbdkGMIfzL6iqPgPDoivsMk5MeYNfBz4nY2A==
-X-Received: by 2002:a05:6a00:1acf:b0:6df:dfd5:1b1e with SMTP id f15-20020a056a001acf00b006dfdfd51b1emr1625498pfv.7.1706727144422;
-        Wed, 31 Jan 2024 10:52:24 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:130d:9bb4:89ef:ab9e])
-        by smtp.gmail.com with ESMTPSA id b185-20020a6334c2000000b0059d6f5196fasm10722471pga.78.2024.01.31.10.52.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 10:52:24 -0800 (PST)
-Date: Wed, 31 Jan 2024 11:52:21 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <ZbqW5YfDmEWG4G1X@p14s>
-References: <20240118100433.3984196-1-arnaud.pouliquen@foss.st.com>
- <20240118100433.3984196-5-arnaud.pouliquen@foss.st.com>
- <ZbPnsJm67G10+HQ3@p14s>
- <7ec6c9e8-9267-4e7c-81a4-abcdb2ab4239@foss.st.com>
+        d=1e100.net; s=20230601; t=1706748087; x=1707352887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xm74o6SZFHiAyG46ECEn20qNcBF1TdhhBIb8LTtMkm0=;
+        b=CowVVglhI0gbjDiYk+1T7/Fo8yhMzPrbMkO7JcLfAUDLyPX+TXcN1IAaUsGIZfYFi7
+         BsoJ80wwITtZacHgkmjcY7guBQkZqSfqC5TJufEDextNfPRCThDEebvRMjrGA6yWX1AO
+         366u+xEm+3BR+QhAvREZnsWpeo2HiwGR+WDVh0IwGAG4zMG3ssz5oNfaDvj1p/70WAOz
+         yuPlztX9exUqKG01a0PjTrk+mfB7n24VDjkGdhjmJYu2M1AH6kzGHZ1HOpA/L5ClM9aP
+         dC1BZmNQ6zEly6hM57Ai4sYyyt3X1HvbiWI2XPA/GCk61VTapAERu3axPF3gYTKu/VTW
+         KcfA==
+X-Gm-Message-State: AOJu0YyqwpRHZqv5k713DHsJ2ycQoZvk0wlFiLLAQa6DeeW31TQfFMcS
+	/PqgLJmaBdpH9X84Lpx2jbx1jl8yBeZ6A65qnzYNemt8K+Zesrdxt0EWc9zBaY5VMYQxN/2C61O
+	9XRWE/2RoussSjKJgl3Smz+aCFOFjaWhb9/nsbqb/R+oM2KS7gKj/xVvtZTDcQbIGNPACIfTHQe
+	YbSmXmeayBwD0+35HUMT8DiKnduJkEZxT7dhgAU0RaGw==
+X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id eb19-20020a056a004c9300b006dfe0355549mr2951432pfb.15.1706748086973;
+        Wed, 31 Jan 2024 16:41:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFH/TitMqAcPOEtWHFne1kSiI8iL6WqnOYeJwP2xl0eZN5iQI7uLb9EncoBScobllWL5obozZXTXfo6m5Jujsg=
+X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id
+ eb19-20020a056a004c9300b006dfe0355549mr2951417pfb.15.1706748086661; Wed, 31
+ Jan 2024 16:41:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ec6c9e8-9267-4e7c-81a4-abcdb2ab4239@foss.st.com>
+References: <20240130114224.86536-1-xuanzhuo@linux.alibaba.com>
+ <20240130114224.86536-4-xuanzhuo@linux.alibaba.com> <CACGkMEvz55WO+TN2KCv+KLvdT-ZxLike81maahBeVanrCk_Lrg@mail.gmail.com>
+ <1706695212.333408-3-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1706695212.333408-3-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 1 Feb 2024 08:41:14 +0800
+Message-ID: <CACGkMEsSw2ZC1jxhnK2FiATcUW7mgomhp+AZ2m0SxavLN1WsGw@mail.gmail.com>
+Subject: Re: [PATCH vhost 03/17] virtio_ring: packed: structure the indirect
+ desc table
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Benjamin Berg <benjamin.berg@intel.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-um@lists.infradead.org, 
+	netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	kvm@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 30, 2024 at 10:13:48AM +0100, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 1/26/24 18:11, Mathieu Poirier wrote:
-> > On Thu, Jan 18, 2024 at 11:04:33AM +0100, Arnaud Pouliquen wrote:
-> >> The new TEE remoteproc device is used to manage remote firmware in a
-> >> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
-> >> introduced to delegate the loading of the firmware to the trusted
-> >> execution context. In such cases, the firmware should be signed and
-> >> adhere to the image format defined by the TEE.
-> >>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >> V1 to V2 update:
-> >> - remove the select "TEE_REMOTEPROC" in STM32_RPROC config as detected by
-> >>   the kernel test robot:
-> >>      WARNING: unmet direct dependencies detected for TEE_REMOTEPROC
-> >>      Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
-> >>      Selected by [y]:
-> >>      - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
-> >> - Fix initialized trproc variable in  stm32_rproc_probe
-> >> ---
-> >>  drivers/remoteproc/stm32_rproc.c | 149 +++++++++++++++++++++++++++++--
-> >>  1 file changed, 144 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> >> index fcc0001e2657..cf6a21bac945 100644
-> >> --- a/drivers/remoteproc/stm32_rproc.c
-> >> +++ b/drivers/remoteproc/stm32_rproc.c
-> >> @@ -20,6 +20,7 @@
-> >>  #include <linux/remoteproc.h>
-> >>  #include <linux/reset.h>
-> >>  #include <linux/slab.h>
-> >> +#include <linux/tee_remoteproc.h>
-> >>  #include <linux/workqueue.h>
-> >>  
-> >>  #include "remoteproc_internal.h"
-> >> @@ -49,6 +50,9 @@
-> >>  #define M4_STATE_STANDBY	4
-> >>  #define M4_STATE_CRASH		5
-> >>  
-> >> +/* Remote processor unique identifier aligned with the Trusted Execution Environment definitions */
-> >> +#define STM32_MP1_M4_PROC_ID    0
-> >> +
-> >>  struct stm32_syscon {
-> >>  	struct regmap *map;
-> >>  	u32 reg;
-> >> @@ -90,6 +94,8 @@ struct stm32_rproc {
-> >>  	struct stm32_mbox mb[MBOX_NB_MBX];
-> >>  	struct workqueue_struct *workqueue;
-> >>  	bool hold_boot_smc;
-> >> +	bool fw_loaded;
-> >> +	struct tee_rproc *trproc;
-> >>  	void __iomem *rsc_va;
-> >>  };
-> >>  
-> >> @@ -257,6 +263,91 @@ static int stm32_rproc_release(struct rproc *rproc)
-> >>  	return err;
-> >>  }
-> >>  
-> >> +static int stm32_rproc_tee_elf_sanity_check(struct rproc *rproc,
-> >> +					    const struct firmware *fw)
-> >> +{
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +	unsigned int ret = 0;
-> >> +
-> >> +	if (rproc->state == RPROC_DETACHED)
-> >> +		return 0;
-> >> +
-> >> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
-> >> +	if (!ret)
-> >> +		ddata->fw_loaded = true;
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static int stm32_rproc_tee_elf_load(struct rproc *rproc,
-> >> +				    const struct firmware *fw)
-> >> +{
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +	unsigned int ret;
-> >> +
-> >> +	/*
-> >> +	 * This function can be called by remote proc for recovery
-> >> +	 * without the sanity check. In this case we need to load the firmware
-> >> +	 * else nothing done here as the firmware has been preloaded for the
-> >> +	 * sanity check to be able to parse it for the resource table.
-> >> +	 */
-> > 
-> > This comment is very confusing - please consider refactoring.  
-> > 
-> >> +	if (ddata->fw_loaded)
-> >> +		return 0;
-> >> +
-> > 
-> > I'm not sure about keeping a flag to indicate the status of the loaded firmware.
-> > It is not done for the non-secure method, I don't see why it would be needed for
-> > the secure one.
-> > 
-> 
-> The difference is on the sanity check.
-> - in rproc_elf_sanity_check we  parse the elf file to verify that it is
-> valid.
-> - in stm32_rproc_tee_elf_sanity_check we have to do the same, that means to
-> authenticate it. the authentication is done during the load.
-> 
-> So this flag is used to avoid to reload it twice time.
-> refactoring the comment should help to understand this flag
-> 
-> 
-> An alternative would be to bypass the sanity check. But this lead to same
-> limitation.
-> Before loading the firmware in remoteproc_core, we call rproc_parse_fw() that is
-> used to get the resource table address. To get it from tee we need to
-> authenticate the firmware so load it...
+On Wed, Jan 31, 2024 at 6:01=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
+om> wrote:
+>
+> On Wed, 31 Jan 2024 17:12:10 +0800, Jason Wang <jasowang@redhat.com> wrot=
+e:
+> > On Tue, Jan 30, 2024 at 7:42=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.aliba=
+ba.com> wrote:
+> > >
+> > > This commit structure the indirect desc table.
+> > > Then we can get the desc num directly when doing unmap.
+> > >
+> > > And save the dma info to the struct, then the indirect
+> > > will not use the dma fields of the desc_extra. The subsequent
+> > > commits will make the dma fields are optional. But for
+> > > the indirect case, we must record the dma info.
+> > >
+> > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > ---
+> > >  drivers/virtio/virtio_ring.c | 63 ++++++++++++++++++++--------------=
+--
+> > >  1 file changed, 35 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_rin=
+g.c
+> > > index 7280a1706cca..dd03bc5a81fe 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -72,9 +72,16 @@ struct vring_desc_state_split {
+> > >         struct vring_desc *indir_desc;  /* Indirect descriptor, if an=
+y. */
+> > >  };
+> > >
+> > > +struct vring_packed_desc_indir {
+> > > +       dma_addr_t addr;                /* Descriptor Array DMA addr.=
+ */
+> > > +       u32 len;                        /* Descriptor Array length. *=
+/
+> > > +       u32 num;
+> > > +       struct vring_packed_desc desc[];
+> > > +};
+> > > +
+> > >  struct vring_desc_state_packed {
+> > >         void *data;                     /* Data for callback. */
+> > > -       struct vring_packed_desc *indir_desc; /* Indirect descriptor,=
+ if any. */
+> > > +       struct vring_packed_desc_indir *indir_desc; /* Indirect descr=
+iptor, if any. */
+> > >         u16 num;                        /* Descriptor list length. */
+> > >         u16 last;                       /* The last desc state in a l=
+ist. */
+> > >  };
+> > > @@ -1249,10 +1256,13 @@ static void vring_unmap_desc_packed(const str=
+uct vring_virtqueue *vq,
+> > >                        DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> > >  }
+> > >
+> > > -static struct vring_packed_desc *alloc_indirect_packed(unsigned int =
+total_sg,
+> > > +static struct vring_packed_desc_indir *alloc_indirect_packed(unsigne=
+d int total_sg,
+> > >                                                        gfp_t gfp)
+> > >  {
+> > > -       struct vring_packed_desc *desc;
+> > > +       struct vring_packed_desc_indir *in_desc;
+> > > +       u32 size;
+> > > +
+> > > +       size =3D struct_size(in_desc, desc, total_sg);
+> > >
+> > >         /*
+> > >          * We require lowmem mappings for the descriptors because
+> > > @@ -1261,9 +1271,10 @@ static struct vring_packed_desc *alloc_indirec=
+t_packed(unsigned int total_sg,
+> > >          */
+> > >         gfp &=3D ~__GFP_HIGHMEM;
+> > >
+> > > -       desc =3D kmalloc_array(total_sg, sizeof(struct vring_packed_d=
+esc), gfp);
+> > >
+> > > -       return desc;
+> > > +       in_desc =3D kmalloc(size, gfp);
+> > > +
+> > > +       return in_desc;
+> > >  }
+> > >
+> > >  static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+> > > @@ -1274,6 +1285,7 @@ static int virtqueue_add_indirect_packed(struct=
+ vring_virtqueue *vq,
+> > >                                          void *data,
+> > >                                          gfp_t gfp)
+> > >  {
+> > > +       struct vring_packed_desc_indir *in_desc;
+> > >         struct vring_packed_desc *desc;
+> > >         struct scatterlist *sg;
+> > >         unsigned int i, n, err_idx;
+> > > @@ -1281,10 +1293,12 @@ static int virtqueue_add_indirect_packed(stru=
+ct vring_virtqueue *vq,
+> > >         dma_addr_t addr;
+> > >
+> > >         head =3D vq->packed.next_avail_idx;
+> > > -       desc =3D alloc_indirect_packed(total_sg, gfp);
+> > > -       if (!desc)
+> > > +       in_desc =3D alloc_indirect_packed(total_sg, gfp);
+> > > +       if (!in_desc)
+> > >                 return -ENOMEM;
+> > >
+> > > +       desc =3D in_desc->desc;
+> > > +
+> > >         if (unlikely(vq->vq.num_free < 1)) {
+> > >                 pr_debug("Can't add buf len 1 - avail =3D 0\n");
+> > >                 kfree(desc);
+> > > @@ -1321,17 +1335,15 @@ static int virtqueue_add_indirect_packed(stru=
+ct vring_virtqueue *vq,
+> > >                 goto unmap_release;
+> > >         }
+> > >
+> > > +       in_desc->num =3D i;
+> > > +       in_desc->addr =3D addr;
+> > > +       in_desc->len =3D total_sg * sizeof(struct vring_packed_desc);
+> >
+> > It looks to me if we don't use dma_api we don't even need these steps?
+>
+> YES
+>
+>
+> >
+> > > +
+> > >         vq->packed.vring.desc[head].addr =3D cpu_to_le64(addr);
+> > >         vq->packed.vring.desc[head].len =3D cpu_to_le32(total_sg *
+> > >                                 sizeof(struct vring_packed_desc));
+> > >         vq->packed.vring.desc[head].id =3D cpu_to_le16(id);
+> > >
+> > > -       if (vring_need_unmap_buffer(vq)) {
+> > > -               vq->packed.desc_extra[id].addr =3D addr;
+> > > -               vq->packed.desc_extra[id].len =3D total_sg *
+> > > -                               sizeof(struct vring_packed_desc);
+> > > -       }
+> > > -
+> > >         vq->packed.desc_extra[id].flags =3D VRING_DESC_F_INDIRECT |
+> > >                 vq->packed.avail_used_flags;
+> > >
+> > > @@ -1362,7 +1374,7 @@ static int virtqueue_add_indirect_packed(struct=
+ vring_virtqueue *vq,
+> > >         /* Store token and indirect buffer state. */
+> > >         vq->packed.desc_state[id].num =3D 1;
+> > >         vq->packed.desc_state[id].data =3D data;
+> > > -       vq->packed.desc_state[id].indir_desc =3D desc;
+> > > +       vq->packed.desc_state[id].indir_desc =3D in_desc;
+> > >         vq->packed.desc_state[id].last =3D id;
+> > >
+> > >         vq->num_added +=3D 1;
+> > > @@ -1381,7 +1393,7 @@ static int virtqueue_add_indirect_packed(struct=
+ vring_virtqueue *vq,
+> > >                 vring_unmap_desc_packed(vq, &desc[i]);
+> > >
+> > >  free_desc:
+> > > -       kfree(desc);
+> > > +       kfree(in_desc);
+> > >
+> > >         END_USE(vq);
+> > >         return -ENOMEM;
+> > > @@ -1595,7 +1607,6 @@ static void detach_buf_packed(struct vring_virt=
+queue *vq,
+> > >                               unsigned int id, void **ctx)
+> > >  {
+> > >         struct vring_desc_state_packed *state =3D NULL;
+> > > -       struct vring_packed_desc *desc;
+> > >         unsigned int i, curr;
+> > >         u16 flags;
+> > >
+> > > @@ -1621,28 +1632,24 @@ static void detach_buf_packed(struct vring_vi=
+rtqueue *vq,
+> > >
+> > >                 if (ctx)
+> > >                         *ctx =3D state->indir_desc;
+> > > +
+> >
+> > Unnecessary changes.
+>
+>
+> Could you say more?
+> You do not like this patch?
+
+Nope, I say the above adding newline is an unnecessary change.
+
+Thanks
+
+>
+> Thanks.
+>
+>
+>
+> >
+> > Thanks
+> >
 >
 
-I spent a long time thinking about this patchset.  Looking at the code as it
-is now, request_firmware() in rproc_boot() is called even when the TEE is
-responsible for loading the firmware.  There should be some conditional code
-that calls either request_firmware() or tee_rproc_load_fw().  The latter should
-also be renamed to tee_rproc_request_firmware() to avoid confusion.
-
-I touched on that before but please rename rproc_tee_get_rsc_table() to
-rproc_tee_elf_load_rsc_table().  I also suggest to introduce a new function,
-rproc_tee_get_loaded_rsc_table() that would be called from
-rproc_tee_elf_load_rsc_table().  That way we don't need trproc->rsc_va.  
-
-I also think tee_rproc should be renamed to "rproc_tee_interface" and folded
-under struct rproc.  
-
-With the above most of the problems with the current implementation should
-naturally go away.
-
-Thanks,
-Mathieu
-
-> 
-> >> +	ret = tee_rproc_load_fw(ddata->trproc, fw);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +	ddata->fw_loaded = true;
-> >> +
-> >> +	/* Update the resource table parameters. */
-> >> +	if (rproc_tee_get_rsc_table(ddata->trproc)) {
-> >> +		/* No resource table: reset the related fields. */
-> >> +		rproc->cached_table = NULL;
-> >> +		rproc->table_ptr = NULL;
-> >> +		rproc->table_sz = 0;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static struct resource_table *
-> >> +stm32_rproc_tee_elf_find_loaded_rsc_table(struct rproc *rproc,
-> >> +					  const struct firmware *fw)
-> >> +{
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +
-> >> +	return tee_rproc_get_loaded_rsc_table(ddata->trproc);
-> >> +}
-> >> +
-> >> +static int stm32_rproc_tee_start(struct rproc *rproc)
-> >> +{
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +
-> >> +	return tee_rproc_start(ddata->trproc);
-> >> +}
-> >> +
-> >> +static int stm32_rproc_tee_attach(struct rproc *rproc)
-> >> +{
-> >> +	/* Nothing to do, remote proc already started by the secured context. */
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int stm32_rproc_tee_stop(struct rproc *rproc)
-> >> +{
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +	int err;
-> >> +
-> >> +	stm32_rproc_request_shutdown(rproc);
-> >> +
-> >> +	err = tee_rproc_stop(ddata->trproc);
-> >> +	if (err)
-> >> +		return err;
-> >> +
-> >> +	ddata->fw_loaded = false;
-> >> +
-> >> +	return stm32_rproc_release(rproc);
-> >> +}
-> >> +
-> >>  static int stm32_rproc_prepare(struct rproc *rproc)
-> >>  {
-> >>  	struct device *dev = rproc->dev.parent;
-> >> @@ -319,7 +410,14 @@ static int stm32_rproc_prepare(struct rproc *rproc)
-> >>  
-> >>  static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> >>  {
-> >> -	if (rproc_elf_load_rsc_table(rproc, fw))
-> >> +	struct stm32_rproc *ddata = rproc->priv;
-> >> +	int ret;
-> >> +
-> >> +	if (ddata->trproc)
-> >> +		ret = rproc_tee_get_rsc_table(ddata->trproc);
-> >> +	else
-> >> +		ret = rproc_elf_load_rsc_table(rproc, fw);
-> >> +	if (ret)
-> >>  		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
-> >>  
-> >>  	return 0;
-> >> @@ -693,8 +791,22 @@ static const struct rproc_ops st_rproc_ops = {
-> >>  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> >>  };
-> >>  
-> >> +static const struct rproc_ops st_rproc_tee_ops = {
-> >> +	.prepare	= stm32_rproc_prepare,
-> >> +	.start		= stm32_rproc_tee_start,
-> >> +	.stop		= stm32_rproc_tee_stop,
-> >> +	.attach		= stm32_rproc_tee_attach,
-> >> +	.kick		= stm32_rproc_kick,
-> >> +	.parse_fw	= stm32_rproc_parse_fw,
-> >> +	.find_loaded_rsc_table = stm32_rproc_tee_elf_find_loaded_rsc_table,
-> >> +	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
-> >> +	.sanity_check	= stm32_rproc_tee_elf_sanity_check,
-> >> +	.load		= stm32_rproc_tee_elf_load,
-> >> +};
-> >> +
-> >>  static const struct of_device_id stm32_rproc_match[] = {
-> >> -	{ .compatible = "st,stm32mp1-m4" },
-> >> +	{.compatible = "st,stm32mp1-m4",},
-> >> +	{.compatible = "st,stm32mp1-m4-tee",},
-> >>  	{},
-> >>  };
-> >>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
-> >> @@ -853,6 +965,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  	struct device *dev = &pdev->dev;
-> >>  	struct stm32_rproc *ddata;
-> >>  	struct device_node *np = dev->of_node;
-> >> +	struct tee_rproc *trproc = NULL;
-> >>  	struct rproc *rproc;
-> >>  	unsigned int state;
-> >>  	int ret;
-> >> @@ -861,11 +974,31 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  	if (ret)
-> >>  		return ret;
-> >>  
-> >> -	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> >> -	if (!rproc)
-> >> -		return -ENOMEM;
-> >> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-> >> +		trproc = tee_rproc_register(dev, STM32_MP1_M4_PROC_ID);
-> >> +		if (IS_ERR(trproc)) {
-> >> +			dev_err_probe(dev, PTR_ERR(trproc),
-> >> +				      "signed firmware not supported by TEE\n");
-> >> +			return PTR_ERR(trproc);
-> >> +		}
-> >> +		/*
-> >> +		 * Delegate the firmware management to the secure context.
-> >> +		 * The firmware loaded has to be signed.
-> >> +		 */
-> >> +		dev_info(dev, "Support of signed firmware only\n");
-> > 
-> > Not sure what this adds.  Please remove.
-> 
-> This is used to inform the user that only a signed firmware can be loaded, not
-> an ELF file.
-> I have a patch in my pipe to provide the supported format in the debugfs. In a
-> first step, I can suppress this message and we can revisit the issue when I push
-> the debugfs proposal.
-> 
-> Thanks,
-> Arnaud
-> 
-> > 
-> >> +	}
-> >> +	rproc = rproc_alloc(dev, np->name,
-> >> +			    trproc ? &st_rproc_tee_ops : &st_rproc_ops,
-> >> +			    NULL, sizeof(*ddata));
-> >> +	if (!rproc) {
-> >> +		ret = -ENOMEM;
-> >> +		goto free_tee;
-> >> +	}
-> >>  
-> >>  	ddata = rproc->priv;
-> >> +	ddata->trproc = trproc;
-> >> +	if (trproc)
-> >> +		trproc->rproc = rproc;
-> >>  
-> >>  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-> >>  
-> >> @@ -916,6 +1049,10 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  		device_init_wakeup(dev, false);
-> >>  	}
-> >>  	rproc_free(rproc);
-> >> +free_tee:
-> >> +	if (trproc)
-> >> +		tee_rproc_unregister(trproc);
-> >> +
-> >>  	return ret;
-> >>  }
-> >>  
-> >> @@ -937,6 +1074,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
-> >>  		device_init_wakeup(dev, false);
-> >>  	}
-> >>  	rproc_free(rproc);
-> >> +	if (ddata->trproc)
-> >> +		tee_rproc_unregister(ddata->trproc);
-> >>  }
-> >>  
-> >>  static int stm32_rproc_suspend(struct device *dev)
-> >> -- 
-> >> 2.25.1
-> >>
