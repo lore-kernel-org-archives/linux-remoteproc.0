@@ -1,289 +1,333 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2086.outbound.protection.outlook.com [40.107.244.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D623FF4
-	for <linux-remoteproc@vger.kernel.org>; Thu,  1 Feb 2024 00:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706748092; cv=none; b=oJItkn66EPhHw289SQL6RcEKBQAkH9WNKDEGH2Sz5PgjUqKoBi7JalwL1UOAutUW6JVHCUfYyK3ih66hRA8XhIZFnBFjziQJ8FoW3bB/kenHGpKExWJs1NDdtMQUI67aN1xHxY9U9OQQvgPbbrQ9NQH2RULdnSiDLb33HhnwXUM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706748092; c=relaxed/simple;
-	bh=HkDSvfSRqnAhIsDwn6auSkMHhy5YeYDTpIl0aj7IF+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e0dIT23RRPcYPRT0+4yRqAe6lNEcV42wyi30d16RMvdu8jJVJ+yKpjQAIHxRo+bowvF68TmgmIxhJEqyNjq1ndU32kJ7VzHxZlBSu9xSHY2x6iKGBikHdpIwwMstCecIi+DJMuc5DiJFUdbdggsSwFUka0cXcXefD6l+9IbCB0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaq5PVaF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088B20F1;
+	Thu,  1 Feb 2024 00:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706748517; cv=fail; b=eH5lJJwVCqK08sC1uQYf2q42TLQPIl1sinXQYcBa2gUKOeqJK5y1BczvR7IWD04vtmOfCZol9IC+0X4b9HdLdu4nsK+NfGbgEKChs5idPDyud+tfe90M4new/I/ujyFd4MKuKqj/DXXbzHrHojQctsIBFvTjO5QWb+EnuWQw7+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706748517; c=relaxed/simple;
+	bh=N1tvb4KErtYz4HxDm8my6zlEZwCR98ykKUygL87kqAM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m/Y8uhC95I9SnR4P0MXPpcyGUQT3Htg2v+suh0NVYU5eBoIQGSt5SO5/wcG2PhklyAlLAFEDcIwGDqJK7VVtEN+cJ9ee88AJO1LHygiYsSM4muRFe+TTSYqGbl0mi+18bAGzq8d910H5uovkmnB6QpTmQiB7Dzowe6VemQc3CAY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=z5l/6KCY; arc=fail smtp.client-ip=40.107.244.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaq5PVaF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706748089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xm74o6SZFHiAyG46ECEn20qNcBF1TdhhBIb8LTtMkm0=;
-	b=eaq5PVaFtb1+2N9IyyGZpisAqmqVXfqjkJ4TxsBLeFUzjE7Axl9h0uUf9JgwTQnqurCgug
-	cGNw2FWJADZ6wsQMkj4iOSf6dFB1DXqT+E2l6tc9CLjASLz6PiebxjMYKEzjjx7oOptmbp
-	+06AnNudoZbb9icwUkIl78+ffYWyR7w=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-10-ZucxIIz4OnOBPzBxVSC_Ug-1; Wed, 31 Jan 2024 19:41:28 -0500
-X-MC-Unique: ZucxIIz4OnOBPzBxVSC_Ug-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6ddded741bfso250973b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Jan 2024 16:41:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706748087; x=1707352887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xm74o6SZFHiAyG46ECEn20qNcBF1TdhhBIb8LTtMkm0=;
-        b=CowVVglhI0gbjDiYk+1T7/Fo8yhMzPrbMkO7JcLfAUDLyPX+TXcN1IAaUsGIZfYFi7
-         BsoJ80wwITtZacHgkmjcY7guBQkZqSfqC5TJufEDextNfPRCThDEebvRMjrGA6yWX1AO
-         366u+xEm+3BR+QhAvREZnsWpeo2HiwGR+WDVh0IwGAG4zMG3ssz5oNfaDvj1p/70WAOz
-         yuPlztX9exUqKG01a0PjTrk+mfB7n24VDjkGdhjmJYu2M1AH6kzGHZ1HOpA/L5ClM9aP
-         dC1BZmNQ6zEly6hM57Ai4sYyyt3X1HvbiWI2XPA/GCk61VTapAERu3axPF3gYTKu/VTW
-         KcfA==
-X-Gm-Message-State: AOJu0YyqwpRHZqv5k713DHsJ2ycQoZvk0wlFiLLAQa6DeeW31TQfFMcS
-	/PqgLJmaBdpH9X84Lpx2jbx1jl8yBeZ6A65qnzYNemt8K+Zesrdxt0EWc9zBaY5VMYQxN/2C61O
-	9XRWE/2RoussSjKJgl3Smz+aCFOFjaWhb9/nsbqb/R+oM2KS7gKj/xVvtZTDcQbIGNPACIfTHQe
-	YbSmXmeayBwD0+35HUMT8DiKnduJkEZxT7dhgAU0RaGw==
-X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id eb19-20020a056a004c9300b006dfe0355549mr2951432pfb.15.1706748086973;
-        Wed, 31 Jan 2024 16:41:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFH/TitMqAcPOEtWHFne1kSiI8iL6WqnOYeJwP2xl0eZN5iQI7uLb9EncoBScobllWL5obozZXTXfo6m5Jujsg=
-X-Received: by 2002:a05:6a00:4c93:b0:6df:e035:5549 with SMTP id
- eb19-20020a056a004c9300b006dfe0355549mr2951417pfb.15.1706748086661; Wed, 31
- Jan 2024 16:41:26 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="z5l/6KCY"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lvITHOOnRXIIVlKUCYDZ3DPRqk807m/wVeFotsgMoVAcAf8Z0oOb7FFRCrcJIW55Tn7FOBuAXGFikWRKaOME07aKCsSWPwZayiPsYpj5gWaBOvsI115lYL5OOTA1X4Mh8h/7MWpA/4jArNE35p0vjrfdQ4PdGk+W2VHEXlhlGJ5leu/FPYaxkC6OKP/Pw83G44rjVBXnCWlBYOkzUfv0rktv+bFc3D4603sG/+L+Y8Lyii8tJTf4GTg+k1w7cPU25XM9QNSVgNnby1+k67Lv8XN09VPVuWdvkYOJh71CRjxeAapuNaj0LQkV1IEecv6mGHWjstSy2Dgx+eqwkMgRVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XMj6XdtbWWJzvSUNeX5KwoSyEIUdhVPCQdUTesGhcRc=;
+ b=WbGGc2Ieqq3BjSnX/wQuFKJQrP0M8sBUokS9tfXKS3iTgZgqQKTh/jU2r6/+uvnYO5Ym7KIVz9NxCVqQvax1jywsEwAr3P6laOW3nB9bhPeFr+wgDNYSOPd2yA6ITy/sTuLaIM0l5Mf9uIm9kQJ0zSKORnUd/A5Y4OdUAxYHudAblmBXzF8g7vg8Kcg60OdJDcTmDJlhttNoj1vgkosZdDlD0El+STZKQyAUOLVrLtk0WlHOTsltgCLJAzeP5n7n1QRXJqa9Lgvo8NFwKUPxeHo/wEYOfMXIJrcZBbSu73OkmSNBWuODiZ1d9/TAcwWxEt9mJgcNoPoLTrQ/YJKwVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XMj6XdtbWWJzvSUNeX5KwoSyEIUdhVPCQdUTesGhcRc=;
+ b=z5l/6KCYTnoqqMOv/DZl2yoq9RvxeYudoW7KgeA1lGLtrFenLHC1jJI5AyOS9IbsO7dQmGaw5gx8+7kRH5TvBEdBABd5w5FW3JvErwIRsaxMZ/Xdm0GhoJZRDHaYUMSmM3YMywh/JP2v2PYdWkSeedTTrhWx0uQCKfKgIEAqKYM=
+Received: from CY8PR19CA0044.namprd19.prod.outlook.com (2603:10b6:930:6::13)
+ by PH7PR12MB5687.namprd12.prod.outlook.com (2603:10b6:510:13e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.35; Thu, 1 Feb
+ 2024 00:48:32 +0000
+Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
+ (2603:10b6:930:6:cafe::e8) by CY8PR19CA0044.outlook.office365.com
+ (2603:10b6:930:6::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.24 via Frontend
+ Transport; Thu, 1 Feb 2024 00:48:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7228.16 via Frontend Transport; Thu, 1 Feb 2024 00:48:32 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 31 Jan
+ 2024 18:48:31 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 31 Jan
+ 2024 18:48:31 -0600
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
+ Transport; Wed, 31 Jan 2024 18:48:31 -0600
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<tanmay.shah@amd.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] remoteproc: zynqmp: fix lockstep mode memory region
+Date: Wed, 31 Jan 2024 16:48:12 -0800
+Message-ID: <20240201004812.1471407-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130114224.86536-1-xuanzhuo@linux.alibaba.com>
- <20240130114224.86536-4-xuanzhuo@linux.alibaba.com> <CACGkMEvz55WO+TN2KCv+KLvdT-ZxLike81maahBeVanrCk_Lrg@mail.gmail.com>
- <1706695212.333408-3-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <1706695212.333408-3-xuanzhuo@linux.alibaba.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 1 Feb 2024 08:41:14 +0800
-Message-ID: <CACGkMEsSw2ZC1jxhnK2FiATcUW7mgomhp+AZ2m0SxavLN1WsGw@mail.gmail.com>
-Subject: Re: [PATCH vhost 03/17] virtio_ring: packed: structure the indirect
- desc table
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
-	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Benjamin Berg <benjamin.berg@intel.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-um@lists.infradead.org, 
-	netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	kvm@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|PH7PR12MB5687:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89737e39-13e7-4486-2715-08dc22bf83d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	zfV67D8OlgjihpdK6OESDj2D0opHkNjtF5WQFju/F0LMOxHr9mXqwkiiwMu+QXauzbEA2eR4mIjiiayOdOpKNty9wp0kG3UUF6o431+JUZuXLeg+DfFHnJ8dJbdOxTEYnUTh2re/ZRVnU5Jdtr7ru7JrAJFXUc+evkxL+FmAOBbQwqUxJ+7g4fWbmStTsshuD7+5HL5CSR5T2yUIeNTR5PIplO975SdBRCRq7WdHzi584W6YYvapVT0eN3OyRgSbtk6KYgi6OVAWCnimSMmsSApUfVek/rLxtE9UyUJMwuruAS1cN8rIw/4SQv/TMpkCAz5BqjVmV5z2bqhs7aKwiQ7HOnRlfzNr5jhKXhEeVXNVactub1+uL1nTixjWWMHGITcInwPaFWqhgagVUDnbM6d/Vo3z3xuRMGR/AXj9rVWEyiNSTIFqIvU28wCQLsCeAzlIMbbyIMdrYgkW7c32rVYTHbQklSQi4Bg9BsQVR5yV0kPxarWQD7BOn6sYztjmP6wbmu1Z7hl0GIrOS9FnKpDSTYvouObrZ0W/RLU5OKwvsli5iftKr6ub2pAesPQ4SgmMlZT945F9jgEXuERDsdc1j0J4HBzTlqO3dVGfSbUeTlvCQb0v719l9On2Hl74gfqM8DrMCJQNuiH1aTK3FhUUUiZmaHC6kD43htOLMeXgJXd4UnVQkRVTpDPLWuoyWnx/rgykj02k2pu6crZDdGrn6ai1JQQTteXM4d2o+N7vGz+vNB7n8+9ZlPb1kZhI1DY+FndL+EsAw+/qJxk3SQ==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(396003)(136003)(39860400002)(230922051799003)(451199024)(64100799003)(82310400011)(186009)(1800799012)(36840700001)(40470700004)(46966006)(2906002)(54906003)(4326008)(8676002)(8936002)(5660300002)(44832011)(316002)(70586007)(86362001)(70206006)(36756003)(36860700001)(47076005)(478600001)(81166007)(356005)(82740400003)(6666004)(2616005)(26005)(83380400001)(110136005)(336012)(426003)(1076003)(41300700001)(7049001)(40460700003)(40480700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2024 00:48:32.4465
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89737e39-13e7-4486-2715-08dc22bf83d6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE38.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5687
 
-On Wed, Jan 31, 2024 at 6:01=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
-om> wrote:
->
-> On Wed, 31 Jan 2024 17:12:10 +0800, Jason Wang <jasowang@redhat.com> wrot=
-e:
-> > On Tue, Jan 30, 2024 at 7:42=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.aliba=
-ba.com> wrote:
-> > >
-> > > This commit structure the indirect desc table.
-> > > Then we can get the desc num directly when doing unmap.
-> > >
-> > > And save the dma info to the struct, then the indirect
-> > > will not use the dma fields of the desc_extra. The subsequent
-> > > commits will make the dma fields are optional. But for
-> > > the indirect case, we must record the dma info.
-> > >
-> > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > ---
-> > >  drivers/virtio/virtio_ring.c | 63 ++++++++++++++++++++--------------=
---
-> > >  1 file changed, 35 insertions(+), 28 deletions(-)
-> > >
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_rin=
-g.c
-> > > index 7280a1706cca..dd03bc5a81fe 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -72,9 +72,16 @@ struct vring_desc_state_split {
-> > >         struct vring_desc *indir_desc;  /* Indirect descriptor, if an=
-y. */
-> > >  };
-> > >
-> > > +struct vring_packed_desc_indir {
-> > > +       dma_addr_t addr;                /* Descriptor Array DMA addr.=
- */
-> > > +       u32 len;                        /* Descriptor Array length. *=
-/
-> > > +       u32 num;
-> > > +       struct vring_packed_desc desc[];
-> > > +};
-> > > +
-> > >  struct vring_desc_state_packed {
-> > >         void *data;                     /* Data for callback. */
-> > > -       struct vring_packed_desc *indir_desc; /* Indirect descriptor,=
- if any. */
-> > > +       struct vring_packed_desc_indir *indir_desc; /* Indirect descr=
-iptor, if any. */
-> > >         u16 num;                        /* Descriptor list length. */
-> > >         u16 last;                       /* The last desc state in a l=
-ist. */
-> > >  };
-> > > @@ -1249,10 +1256,13 @@ static void vring_unmap_desc_packed(const str=
-uct vring_virtqueue *vq,
-> > >                        DMA_FROM_DEVICE : DMA_TO_DEVICE);
-> > >  }
-> > >
-> > > -static struct vring_packed_desc *alloc_indirect_packed(unsigned int =
-total_sg,
-> > > +static struct vring_packed_desc_indir *alloc_indirect_packed(unsigne=
-d int total_sg,
-> > >                                                        gfp_t gfp)
-> > >  {
-> > > -       struct vring_packed_desc *desc;
-> > > +       struct vring_packed_desc_indir *in_desc;
-> > > +       u32 size;
-> > > +
-> > > +       size =3D struct_size(in_desc, desc, total_sg);
-> > >
-> > >         /*
-> > >          * We require lowmem mappings for the descriptors because
-> > > @@ -1261,9 +1271,10 @@ static struct vring_packed_desc *alloc_indirec=
-t_packed(unsigned int total_sg,
-> > >          */
-> > >         gfp &=3D ~__GFP_HIGHMEM;
-> > >
-> > > -       desc =3D kmalloc_array(total_sg, sizeof(struct vring_packed_d=
-esc), gfp);
-> > >
-> > > -       return desc;
-> > > +       in_desc =3D kmalloc(size, gfp);
-> > > +
-> > > +       return in_desc;
-> > >  }
-> > >
-> > >  static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
-> > > @@ -1274,6 +1285,7 @@ static int virtqueue_add_indirect_packed(struct=
- vring_virtqueue *vq,
-> > >                                          void *data,
-> > >                                          gfp_t gfp)
-> > >  {
-> > > +       struct vring_packed_desc_indir *in_desc;
-> > >         struct vring_packed_desc *desc;
-> > >         struct scatterlist *sg;
-> > >         unsigned int i, n, err_idx;
-> > > @@ -1281,10 +1293,12 @@ static int virtqueue_add_indirect_packed(stru=
-ct vring_virtqueue *vq,
-> > >         dma_addr_t addr;
-> > >
-> > >         head =3D vq->packed.next_avail_idx;
-> > > -       desc =3D alloc_indirect_packed(total_sg, gfp);
-> > > -       if (!desc)
-> > > +       in_desc =3D alloc_indirect_packed(total_sg, gfp);
-> > > +       if (!in_desc)
-> > >                 return -ENOMEM;
-> > >
-> > > +       desc =3D in_desc->desc;
-> > > +
-> > >         if (unlikely(vq->vq.num_free < 1)) {
-> > >                 pr_debug("Can't add buf len 1 - avail =3D 0\n");
-> > >                 kfree(desc);
-> > > @@ -1321,17 +1335,15 @@ static int virtqueue_add_indirect_packed(stru=
-ct vring_virtqueue *vq,
-> > >                 goto unmap_release;
-> > >         }
-> > >
-> > > +       in_desc->num =3D i;
-> > > +       in_desc->addr =3D addr;
-> > > +       in_desc->len =3D total_sg * sizeof(struct vring_packed_desc);
-> >
-> > It looks to me if we don't use dma_api we don't even need these steps?
->
-> YES
->
->
-> >
-> > > +
-> > >         vq->packed.vring.desc[head].addr =3D cpu_to_le64(addr);
-> > >         vq->packed.vring.desc[head].len =3D cpu_to_le32(total_sg *
-> > >                                 sizeof(struct vring_packed_desc));
-> > >         vq->packed.vring.desc[head].id =3D cpu_to_le16(id);
-> > >
-> > > -       if (vring_need_unmap_buffer(vq)) {
-> > > -               vq->packed.desc_extra[id].addr =3D addr;
-> > > -               vq->packed.desc_extra[id].len =3D total_sg *
-> > > -                               sizeof(struct vring_packed_desc);
-> > > -       }
-> > > -
-> > >         vq->packed.desc_extra[id].flags =3D VRING_DESC_F_INDIRECT |
-> > >                 vq->packed.avail_used_flags;
-> > >
-> > > @@ -1362,7 +1374,7 @@ static int virtqueue_add_indirect_packed(struct=
- vring_virtqueue *vq,
-> > >         /* Store token and indirect buffer state. */
-> > >         vq->packed.desc_state[id].num =3D 1;
-> > >         vq->packed.desc_state[id].data =3D data;
-> > > -       vq->packed.desc_state[id].indir_desc =3D desc;
-> > > +       vq->packed.desc_state[id].indir_desc =3D in_desc;
-> > >         vq->packed.desc_state[id].last =3D id;
-> > >
-> > >         vq->num_added +=3D 1;
-> > > @@ -1381,7 +1393,7 @@ static int virtqueue_add_indirect_packed(struct=
- vring_virtqueue *vq,
-> > >                 vring_unmap_desc_packed(vq, &desc[i]);
-> > >
-> > >  free_desc:
-> > > -       kfree(desc);
-> > > +       kfree(in_desc);
-> > >
-> > >         END_USE(vq);
-> > >         return -ENOMEM;
-> > > @@ -1595,7 +1607,6 @@ static void detach_buf_packed(struct vring_virt=
-queue *vq,
-> > >                               unsigned int id, void **ctx)
-> > >  {
-> > >         struct vring_desc_state_packed *state =3D NULL;
-> > > -       struct vring_packed_desc *desc;
-> > >         unsigned int i, curr;
-> > >         u16 flags;
-> > >
-> > > @@ -1621,28 +1632,24 @@ static void detach_buf_packed(struct vring_vi=
-rtqueue *vq,
-> > >
-> > >                 if (ctx)
-> > >                         *ctx =3D state->indir_desc;
-> > > +
-> >
-> > Unnecessary changes.
->
->
-> Could you say more?
-> You do not like this patch?
+In lockstep mode, r5 core0 uses TCM of R5 core1. Following is lockstep
+mode memory region as per hardware reference manual.
 
-Nope, I say the above adding newline is an unnecessary change.
+    |      *TCM*         |   *R5 View* | *Linux view* |
+    | R5_0 ATCM (128 KB) | 0x0000_0000 | 0xFFE0_0000  |
+    | R5_0 BTCM (128 KB) | 0x0002_0000 | 0xFFE2_0000  |
 
-Thanks
+However, driver shouldn't model it as above because R5 core0 TCM and core1
+TCM has different power-domains mapped to it.
+Hence, TCM address space in lockstep mode should be modeled as 64KB
+regions only where each region has its own power-domain as following:
 
->
-> Thanks.
->
->
->
-> >
-> > Thanks
-> >
->
+    |      *TCM*         |   *R5 View* | *Linux view* |
+    | R5_0 ATCM0 (64 KB) | 0x0000_0000 | 0xFFE0_0000  |
+    | R5_0 BTCM0 (64 KB) | 0x0002_0000 | 0xFFE2_0000  |
+    | R5_0 ATCM1 (64 KB) | 0x0001_0000 | 0xFFE1_0000  |
+    | R5_0 BTCM1 (64 KB) | 0x0003_0000 | 0xFFE3_0000  |
+
+This fix makes driver maintanance easy and makes design robust for future
+platorms as well.
+
+Fixes: 9af45bbdcbbb ("remoteproc: zynqmp: fix TCM carveouts in lockstep mode")
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 145 ++----------------------
+ 1 file changed, 12 insertions(+), 133 deletions(-)
+
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 4395edea9a64..42b0384d34f2 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -84,12 +84,12 @@ static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
+ 	{0xffeb0000UL, 0x20000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+ };
+ 
+-/* In lockstep mode cluster combines each 64KB TCM and makes 128KB TCM */
++/* In lockstep mode cluster uses each 64KB TCM from second core as well */
+ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+-	{0xffe00000UL, 0x0, 0x20000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 128KB each */
+-	{0xffe20000UL, 0x20000, 0x20000UL, PD_R5_0_BTCM, "btcm0"},
+-	{0, 0, 0, PD_R5_1_ATCM, ""},
+-	{0, 0, 0, PD_R5_1_BTCM, ""},
++	{0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
++	{0xffe20000UL, 0x20000, 0x10000UL, PD_R5_0_BTCM, "btcm0"},
++	{0xffe10000UL, 0x10000, 0x10000UL, PD_R5_1_ATCM, "atcm1"},
++	{0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+ };
+ 
+ /**
+@@ -540,14 +540,14 @@ static int tcm_mem_map(struct rproc *rproc,
+ }
+ 
+ /*
+- * add_tcm_carveout_split_mode()
++ * add_tcm_banks()
+  * @rproc: single R5 core's corresponding rproc instance
+  *
+- * allocate and add remoteproc carveout for TCM memory in split mode
++ * allocate and add remoteproc carveout for TCM memory
+  *
+  * return 0 on success, otherwise non-zero value on failure
+  */
+-static int add_tcm_carveout_split_mode(struct rproc *rproc)
++static int add_tcm_banks(struct rproc *rproc)
+ {
+ 	struct rproc_mem_entry *rproc_mem;
+ 	struct zynqmp_r5_core *r5_core;
+@@ -580,10 +580,10 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+ 		if (ret < 0) {
+ 			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
+-			goto release_tcm_split;
++			goto release_tcm;
+ 		}
+ 
+-		dev_dbg(dev, "TCM carveout split mode %s addr=%llx, da=0x%x, size=0x%lx",
++		dev_dbg(dev, "TCM carveout %s addr=%llx, da=0x%x, size=0x%lx",
+ 			bank_name, bank_addr, da, bank_size);
+ 
+ 		rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
+@@ -593,7 +593,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 		if (!rproc_mem) {
+ 			ret = -ENOMEM;
+ 			zynqmp_pm_release_node(pm_domain_id);
+-			goto release_tcm_split;
++			goto release_tcm;
+ 		}
+ 
+ 		rproc_add_carveout(rproc, rproc_mem);
+@@ -601,7 +601,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 
+ 	return 0;
+ 
+-release_tcm_split:
++release_tcm:
+ 	/* If failed, Turn off all TCM banks turned on before */
+ 	for (i--; i >= 0; i--) {
+ 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+@@ -610,127 +610,6 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 	return ret;
+ }
+ 
+-/*
+- * add_tcm_carveout_lockstep_mode()
+- * @rproc: single R5 core's corresponding rproc instance
+- *
+- * allocate and add remoteproc carveout for TCM memory in lockstep mode
+- *
+- * return 0 on success, otherwise non-zero value on failure
+- */
+-static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+-{
+-	struct rproc_mem_entry *rproc_mem;
+-	struct zynqmp_r5_core *r5_core;
+-	int i, num_banks, ret;
+-	phys_addr_t bank_addr;
+-	size_t bank_size = 0;
+-	struct device *dev;
+-	u32 pm_domain_id;
+-	char *bank_name;
+-	u32 da;
+-
+-	r5_core = rproc->priv;
+-	dev = r5_core->dev;
+-
+-	/* Go through zynqmp banks for r5 node */
+-	num_banks = r5_core->tcm_bank_count;
+-
+-	/*
+-	 * In lockstep mode, TCM is contiguous memory block
+-	 * However, each TCM block still needs to be enabled individually.
+-	 * So, Enable each TCM block individually.
+-	 * Although ATCM and BTCM is contiguous memory block, add two separate
+-	 * carveouts for both.
+-	 */
+-	for (i = 0; i < num_banks; i++) {
+-		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+-
+-		/* Turn on each TCM bank individually */
+-		ret = zynqmp_pm_request_node(pm_domain_id,
+-					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+-					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+-		if (ret < 0) {
+-			dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
+-			goto release_tcm_lockstep;
+-		}
+-
+-		bank_size = r5_core->tcm_banks[i]->size;
+-		if (bank_size == 0)
+-			continue;
+-
+-		bank_addr = r5_core->tcm_banks[i]->addr;
+-		da = r5_core->tcm_banks[i]->da;
+-		bank_name = r5_core->tcm_banks[i]->bank_name;
+-
+-		/* Register TCM address range, TCM map and unmap functions */
+-		rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
+-						 bank_size, da,
+-						 tcm_mem_map, tcm_mem_unmap,
+-						 bank_name);
+-		if (!rproc_mem) {
+-			ret = -ENOMEM;
+-			zynqmp_pm_release_node(pm_domain_id);
+-			goto release_tcm_lockstep;
+-		}
+-
+-		/* If registration is success, add carveouts */
+-		rproc_add_carveout(rproc, rproc_mem);
+-
+-		dev_dbg(dev, "TCM carveout lockstep mode %s addr=0x%llx, da=0x%x, size=0x%lx",
+-			bank_name, bank_addr, da, bank_size);
+-	}
+-
+-	return 0;
+-
+-release_tcm_lockstep:
+-	/* If failed, Turn off all TCM banks turned on before */
+-	for (i--; i >= 0; i--) {
+-		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+-		zynqmp_pm_release_node(pm_domain_id);
+-	}
+-	return ret;
+-}
+-
+-/*
+- * add_tcm_banks()
+- * @rproc: single R5 core's corresponding rproc instance
+- *
+- * allocate and add remoteproc carveouts for TCM memory based on cluster mode
+- *
+- * return 0 on success, otherwise non-zero value on failure
+- */
+-static int add_tcm_banks(struct rproc *rproc)
+-{
+-	struct zynqmp_r5_cluster *cluster;
+-	struct zynqmp_r5_core *r5_core;
+-	struct device *dev;
+-
+-	r5_core = rproc->priv;
+-	if (!r5_core)
+-		return -EINVAL;
+-
+-	dev = r5_core->dev;
+-
+-	cluster = dev_get_drvdata(dev->parent);
+-	if (!cluster) {
+-		dev_err(dev->parent, "Invalid driver data\n");
+-		return -EINVAL;
+-	}
+-
+-	/*
+-	 * In lockstep mode TCM banks are one contiguous memory region of 256Kb
+-	 * In split mode, each TCM bank is 64Kb and not contiguous.
+-	 * We add memory carveouts accordingly.
+-	 */
+-	if (cluster->mode == SPLIT_MODE)
+-		return add_tcm_carveout_split_mode(rproc);
+-	else if (cluster->mode == LOCKSTEP_MODE)
+-		return add_tcm_carveout_lockstep_mode(rproc);
+-
+-	return -EINVAL;
+-}
+-
+ /*
+  * zynqmp_r5_parse_fw()
+  * @rproc: single R5 core's corresponding rproc instance
+
+base-commit: 99f59b148871dadb9104366e3d25b120a97f897b
+-- 
+2.25.1
 
