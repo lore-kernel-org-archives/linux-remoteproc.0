@@ -1,131 +1,124 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F2F14E9AF
-	for <linux-remoteproc@vger.kernel.org>; Fri,  2 Feb 2024 18:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7940881732;
+	Fri,  2 Feb 2024 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706899285; cv=none; b=BoDM9E5FecKbNO185b1sO6g9g980rpNxlxOM9BkXovUjO2GhzlCYoIviGVQrRaCvabcbuEbaRccwjwAuwzNW1lOAd1y2XrTalAggazb6fADSIDc0sEBLNlfSjQfcixNqzMGrEDuGpGc85TLFg8ww/BDELioEYvt5nUyCDd88kQ0=
+	t=1706901331; cv=none; b=bY6Xn48x0/Vyym6CsxNdWx6Yh1HBoj20rc1txQ7h2gqn/adAwUKB9BG+7FezcNBLGtbs3sGYl5aT5lUS9ki/WII0M7iCPZBEgWxepLqDcPvdCxlnGfhVohV0WqM8Adzv24ObxJbgvLjGYQSZLpUAPQ68nAwPK3TNhJFUoy3bqow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706899285; c=relaxed/simple;
-	bh=HnwgYANLMXSW1DzPAZPPhrW8OspT0pU7wCK0oKbbwlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHCX9sD8Ku/SY9GjZpCVMAE0RLyVWOFwTjRkDFj0PfO34aSjpZTUwQLFmUbde6owjIFKPgBKHKmncas6iZazxrXqGMIuwvxw1cFu/eTUWQrN004lqQMYd65pDHg1lGH8hYC9WJncg676ze/gBJp+TuuOQD9FTatPCiK+qU2v+d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5XK9qvy; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706901331; c=relaxed/simple;
+	bh=a+pc0m5kqTWpI/aJb1aTHt+V0f2EIaLSkUCe+GD8fv8=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=kpONp5HtI853ni+z15pRtE85VP9AYnOjZ8EAKKMc8i9a6SqeKQKM/UIgb1n1V1B4jyI394p3VI3OEqNgO58QDQhVeuRNnQptlhLKMSjP1cA4BTQLO4NwA37T0ANE2yXtXB5Fn0PA2UKSLlgwyjcKRz323YOYug6sj/3DE6YXHdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uifkYLOi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5XK9qvy"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d76671e5a4so18862115ad.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Feb 2024 10:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706899284; x=1707504084; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RN5ILJgfYC5Krqk3IcaE4UZm9MGXLWaA34ihsM5Im/Q=;
-        b=s5XK9qvynqyaxDGma7tlhIQGYcqr+UifRNhsXSLW5j5tg5rG7wv9096OJaj0G16XSY
-         shsh6M/nEL5pRKBz7X5HSXNYdPyt5K0ZYtgnhM4c+FZQ8g0vtc+9YH0maWPit3xVzc9i
-         bhq6TkAT7EstkG553LeB271fwdcQfaN2ml7wH2tDwoSLR6f9NBLw5YbTNI110f5dsOwD
-         UXiLrSICgxUxe8dOAiuQ+CzBnX/RlPLDT684bVCWv9Jt+0GEs/DUvJvy3dsNKCMimc9u
-         RHYOdcrmlDwLzqjYRJA2hJp4cJxhTqdZZtWpnezklx2ABfhCUSKlgWeJOiLLsVb+vN3J
-         hFzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706899284; x=1707504084;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RN5ILJgfYC5Krqk3IcaE4UZm9MGXLWaA34ihsM5Im/Q=;
-        b=vv8uGXiB6rf9J2iwiQuxRqljh8+OWUSpxYs/Jx20bt/EAeJ1zF86LCOqIPUQzayHUM
-         pCS4wYXenUV77O5JigOF59s57Q6xbEQno70yqF+B2OOghnMq/5UalIwMCrtWJLZZ1nQv
-         Fy75DC1sfr5iNeI+QKxF6ND82cWkKk1Be0bpFi1QPQmgb0goWA1/xPZaMqd4bGQSt3gC
-         1TBZlf2gCzzhH/AbGyRtGqLjD8Kq1k5J2eingrkHKpO1n+G52JkaNqqqWGltbz/nKFwB
-         44ofJYQYZHgcc8TCh2M3nLTABKOBu6e9d9Z0mqhfomCHhv3L/rgropk0xP4fZ3rg7MyS
-         PIRg==
-X-Gm-Message-State: AOJu0Yyu9hpeoK/YukNepDuGVc8NB8WFWWpCrboBjuRQJ0KwuczZHuSd
-	uxNa0EwEdP0ELQ9ojMMA4uRs95uduzjug4C0R/borz12gGjyBnCZo4jjxIKX1Jk=
-X-Google-Smtp-Source: AGHT+IHI5+6GlfKqM/eae+kgC9KkWpCXw9/h0VW61qBwkA94b7R7Eqhzy6DQXTdDMRIc6K3dL9c31Q==
-X-Received: by 2002:a17:902:f68a:b0:1d8:fb17:a1f2 with SMTP id l10-20020a170902f68a00b001d8fb17a1f2mr12586111plg.34.1706899283798;
-        Fri, 02 Feb 2024 10:41:23 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUVnzEB2v7TbbKqpsgt/c7PICyiD/6Uwyu7EeUzAU9R5HwoFu9fPYvE5IW2uIB8M0v0SEuFwksh87A25N1krBxkWlT9zzLQD7tiLE0ZE976/bkLAUbFdl/0tprp4Pt2UF1lR+H9syCgOmtkFUNw2iF4AHjeles10LJMnFQnAkbAa8xbpQ/Q1BTzOC/Bnx35JHOiNS+liqYwF2w3FLEHpUZbDK4j1RbQJeiSIVIS/QRZUFBnOz3Wv+GP4OcI1byvNM8y5R1Ck3BpP1uBs8ElGgi6bCjlWfuXMAoDdxzgKECoGJ/jv2mFd6JmoQHRuiwEyyFeo7NjhjGzjJOH+4tkUPhBS4tNgHODfZ2s7SDlRiyMtrTCFm/mj0ROAa19sKf1DOLtW/zuiCGrwXXBqhQneTNyY7W6fd7n9qW84P9T2vngmuXvkGFTep469o0zyWuwBPrMJI7dU+cJ25JTGKBc59q/ohjeqayAzp3n+t+Xci91MT0mCIDrVDX1GFOf9/z/w7cf+zecrUq+b8IkqBhoFg==
-Received: from p14s ([2604:3d09:148c:c800:9462:f236:7267:e14e])
-        by smtp.gmail.com with ESMTPSA id jh21-20020a170903329500b001d936a7bd46sm1902639plb.271.2024.02.02.10.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 10:41:22 -0800 (PST)
-Date: Fri, 2 Feb 2024 11:41:19 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 9/9] remoteproc: stm32: Use devm_rproc_alloc() helper
-Message-ID: <Zb03T2Ti2v70NUMu@p14s>
-References: <20240123184632.725054-1-afd@ti.com>
- <20240123184632.725054-9-afd@ti.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uifkYLOi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B0A3C433F1;
+	Fri,  2 Feb 2024 19:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706901330;
+	bh=a+pc0m5kqTWpI/aJb1aTHt+V0f2EIaLSkUCe+GD8fv8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=uifkYLOif5Xph+fk8N49wkdWAMPM/Kwnt839/2bRtFuoRinBFWQX2RprJMQ1Dd0RG
+	 IKmkuMlgiHYxfOqCqoLjklhGtZGZ10njGsOOATStM7nmOJzd8dOnCsniGuYXV8d959
+	 avQ2BxuT4vGpH0h2osonWaR5jAKoITiNccmAqfZHH8J7HHiXKq+rTx1Mz1hac8ZBbX
+	 SaqbxXKf+EZZU8C2DHhrHFio472xQdg+dIuoLzKMgg14ekQfjtmt8FHfR5gmqXVnGr
+	 PUiY/53Lsl89lgU7lgjgPY1ntIRpGKlkE6uneihES1T5D0Z+kQV/17k70L53STJSWW
+	 z7wnKlAFadmng==
+Date: Fri, 02 Feb 2024 13:15:29 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240123184632.725054-9-afd@ti.com>
+From: Rob Herring <robh@kernel.org>
+To: Hari Nagalla <hnagalla@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, nm@ti.com, kristo@kernel.org, 
+ p.zabel@pengutronix.de, martyn.welch@collabora.com, 
+ linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org, 
+ vigneshr@ti.com, devicetree@vger.kernel.org, andersson@kernel.org, 
+ linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ conor+dt@kernel.org, robh+dt@kernel.org
+In-Reply-To: <20240202175538.1705-2-hnagalla@ti.com>
+References: <20240202175538.1705-1-hnagalla@ti.com>
+ <20240202175538.1705-2-hnagalla@ti.com>
+Message-Id: <170690132805.611395.5930395618284837775.robh@kernel.org>
+Subject: Re: [PATCH v7 1/5] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x
+ SoCs
 
-On Tue, Jan 23, 2024 at 12:46:32PM -0600, Andrew Davis wrote:
-> Use the device lifecycle managed allocation function. This helps prevent
-> mistakes like freeing out of order in cleanup functions and forgetting to
-> free on error paths.
+
+On Fri, 02 Feb 2024 11:55:34 -0600, Hari Nagalla wrote:
+> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+> The remote processor's life cycle management and IPC mechanisms are
+> similar across the R5F and M4F cores from remote processor driver
+> point of view. However, there are subtle differences in image loading
+> and starting the M4F subsystems.
 > 
-> Signed-off-by: Andrew Davis <afd@ti.com>
+> The YAML binding document provides the various node properties to be
+> configured by the consumers of the M4F subsystem.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 > ---
->  drivers/remoteproc/stm32_rproc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Changes since v1:
+>  - Spelling corrections
+>  - Corrected to pass DT checks
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 4f469f0bcf8b2..fed0866de1819 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -843,7 +843,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> +	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
->  	if (!rproc)
->  		return -ENOMEM;
->  
-> @@ -897,7 +897,6 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->  		dev_pm_clear_wake_irq(dev);
->  		device_init_wakeup(dev, false);
->  	}
-> -	rproc_free(rproc);
->  	return ret;
->  }
->  
-> @@ -918,7 +917,6 @@ static void stm32_rproc_remove(struct platform_device *pdev)
->  		dev_pm_clear_wake_irq(dev);
->  		device_init_wakeup(dev, false);
->  	}
-> -	rproc_free(rproc);
->  }
-
-I have applied patches 1, 2, 8 and 9 of this set.  Bjorn handles the QCOM
-peripherals and will take care of the remaining ones.
-
-Thanks,
-Mathieu
-
->  
->  static int stm32_rproc_suspend(struct device *dev)
-> -- 
-> 2.39.2
+> Changes since v2:
+>  - Missed spelling correction to commit message
 > 
+> Changes since v3:
+>  - Removed unnecessary descriptions and used generic memory region names
+>  - Made mboxes and memory-region optional
+>  - Removed unrelated items from examples
+> 
+> Changes since v4:
+>  - Rebased to the latest kernel-next tree
+>  - Added optional sram memory region for m4f device node
+> 
+> Changes since v5:
+>  - None
+> 
+> Changes since v6:
+>  - Removed blank line, fixed type for firm-ware property and binding check
+>    errors.
+> 
+> link to v6:
+>   https://lore.kernel.org/all/20230913111644.29889-2-hnagalla@ti.com/
+> 
+>  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 138 ++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+> 
+
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240202175538.1705-2-hnagalla@ti.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
