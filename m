@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359651429A;
-	Tue,  6 Feb 2024 18:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A827E14014;
+	Tue,  6 Feb 2024 18:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707245450; cv=none; b=FPr9YGMloOmCmQ6Kxme3F1m52Me3cCuziXbrDt/0Vcb0nW7Tt4omdUaCNEQQ0TLL2pN/eJ8eK/ggHSoPqxoI7db7CdMOm/sI9CTRP2gsbcN5K/HnH1GZTnZ0iC1GHeKqpxWpq9GcWD4ABl1DFCCBEk4GQBhFVqzZVe3jdZrGKSQ=
+	t=1707245862; cv=none; b=Cu1m6gq1PjTLEBTDNtP9Yf1RQGc8cVx3ADckyCcAiLzsih+4gW1asBegzPyORTs8ApNLzwT7za3p1cBETt97jIirubi9dwyJr7LkZCqm5qVrHR+ih7ei+ztP1Ioqq8wXjZQ5awh5AdoaAxvWxNej32xrUOWILRm1QB8jcQhnbJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707245450; c=relaxed/simple;
-	bh=CJTu1gcSgcqV+1ze9f2bKci6UuBLQcJSCQq4p57Llm4=;
+	s=arc-20240116; t=1707245862; c=relaxed/simple;
+	bh=fYHynLl47B1W2Z5QOqN5UVH9e+0HGupd5yGI+0dilNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDOJqKQzfYiR5rR1pQNwClafcZgk2AyDdCsY0waDQV924Ua6WIymt3JUFn8slHqXWOICtkCe3PgFeoYRMdSCSugATUgeHAvxyFNTNODBHWmqW6mR/GdPOla8fX6kkxv3xoB+tWFDm3mK/W+hSXKdJlRKA/9nx3gjbTKEKAh58I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4QsKIKj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmaCXT0JPPOqNooHV1kIoUvnNRRLDwDFd7k3JNJMaeXx9653lsqwzrS1lFCK6HiTevWAYHI49XD5OM80Mk57TiW1hSgwpYgG/s0SqeNeDH/cGVir8Uj7CdCc1jpSEm6LWYW6CDxjzGewg19CrBXBIIjt4LX5aAC7EPVdg0llTdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcXugZUr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4QsKIKj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A905C433C7;
-	Tue,  6 Feb 2024 18:50:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcXugZUr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC528C433C7;
+	Tue,  6 Feb 2024 18:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707245449;
-	bh=CJTu1gcSgcqV+1ze9f2bKci6UuBLQcJSCQq4p57Llm4=;
+	s=k20201202; t=1707245862;
+	bh=fYHynLl47B1W2Z5QOqN5UVH9e+0HGupd5yGI+0dilNE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a4QsKIKjshNuYvgVC/ZqgLol9oeVTbNZsur+CJXgKw+Zp+fo3eBiFpBelQGE5gwmn
-	 EFVlyfrWn3VOt99VG6V4o4Sco+7lvyOuRHL/LrodMeNZ0CpNLqQavWZJD3YGuODy81
-	 N2y47+xTJ2Xg0fKam1lV8e2M23Z8nLtB9wXu6FcnBFrUaB+xdXHId3EqcsfWD2SamR
-	 nNobb0joXzLhs3zXzgOotvQ5XhZ87hkARlSkxMkiKLz8ZxgtLowRX0nHQtaGeizXvV
-	 SOkla9kWVuCqdxobNkQeTF8PXnYddIbd3IkXkGZE8f4N7aJpl7OZJaJ2iQPPEE3rxh
-	 dV1aos3wHsorQ==
-Date: Tue, 6 Feb 2024 10:55:21 -0800
+	b=NcXugZUrvSzDmMY/QV/VC/4yWoI6rqQgS/zzsgpmEms3cr+r3YXi6i6RP62jJVv/y
+	 M6OHEyDMIYoxTfEQavGjx606nfuKzcNzb0cYQTQv/VRsG10SzbfU/GNugjcH1ZYSZn
+	 RSXhSwID63aVy37na1B3sBcrCmMLfwsl9H3mhPSd0bSS5KXYfPIPyWe+J8msfNf2cW
+	 okWhVFSHzpLClYwgJJGrjEP5c7JmjswTeeYsQCrYP1YqagxlZSduCaMT0OdlVKJkW5
+	 QrU/QQh6mF4DtueUT7RIxdvuPZEWV3OJ5QGqDeozQgV6XKYz5gcDLh2ITWEyo/IV/s
+	 DNm/0ZAl6xgfQ==
+Date: Tue, 6 Feb 2024 11:02:14 -0800
 From: Bjorn Andersson <andersson@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-hardening@vger.kernel.org, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 70/82] remoteproc: Refactor intentional wrap-around test
-Message-ID: <nfxldxqon7xfzqvxhhspzfoueebgczjbner67vtibeeukxd4oa@xgeaofdfgezz>
-References: <20240122235208.work.748-kees@kernel.org>
- <20240123002814.1396804-70-keescook@chromium.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] hwspinlock: omap: Use devm_hwspin_lock_register()
+ helper
+Message-ID: <sbbjsqci42iz24lommsq5ebmsjhf73r2hnsxlh3xiurhvypdze@vsh637r722n2>
+References: <20240123160405.360437-1-afd@ti.com>
+ <20240123160405.360437-3-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -45,95 +44,77 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240123002814.1396804-70-keescook@chromium.org>
+In-Reply-To: <20240123160405.360437-3-afd@ti.com>
 
-On Mon, Jan 22, 2024 at 04:27:45PM -0800, Kees Cook wrote:
-> In an effort to separate intentional arithmetic wrap-around from
-> unexpected wrap-around, we need to refactor places that depend on this
-> kind of math. One of the most common code patterns of this is:
+On Tue, Jan 23, 2024 at 10:04:04AM -0600, Andrew Davis wrote:
+> This unregister the HW spinlock on module exit, allowing us to
+> remove the remove callback. Do this here.
 > 
-> 	VAR + value < VAR
-> 
-> Notably, this is considered "undefined behavior" for signed and pointer
-> types, which the kernel works around by using the -fno-strict-overflow
-> option in the build[1] (which used to just be -fwrapv). Regardless, we
-> want to get the kernel source to the position where we can meaningfully
-> instrument arithmetic wrap-around conditions and catch them when they
-> are unexpected, regardless of whether they are signed[2], unsigned[3],
-> or pointer[4] types.
-> 
-> Refactor open-coded wrap-around addition test to use add_would_overflow().
-> This paves the way to enabling the wrap-around sanitizers in the future.
-> 
-> Link: https://git.kernel.org/linus/68df3755e383e6fecf2354a67b08f92f18536594 [1]
-> Link: https://github.com/KSPP/linux/issues/26 [2]
-> Link: https://github.com/KSPP/linux/issues/27 [3]
-> Link: https://github.com/KSPP/linux/issues/344 [4]
-> Cc: Bjorn Andersson <andersson@kernel.org>
 
-Acked-by: Bjorn Andersson <andersson@kernel.org>
+I interpret this as stating that the driver currently doesn't unregister
+the spinlocks, but as far as I can see it does, and that the patch has
+no functional change.
+
+Can you please rewrite this commit message to clearly express which
+"problem" you're solving, and unless I'm mistaken clarify that there's
+no functional change.
+
+
+Patch itself looks good.
 
 Regards,
 Bjorn
 
-
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Andrew Davis <afd@ti.com>
 > ---
->  drivers/remoteproc/pru_rproc.c             | 2 +-
->  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->  drivers/remoteproc/remoteproc_virtio.c     | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
+>  drivers/hwspinlock/omap_hwspinlock.c | 17 +----------------
+>  1 file changed, 1 insertion(+), 16 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 327f0c7ee3d6..834249ee3dd3 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -893,7 +893,7 @@ pru_rproc_find_interrupt_map(struct device *dev, const struct firmware *fw)
->  			continue;
+> diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
+> index 2f18ea6c05e3f..1b0a1bea2b24a 100644
+> --- a/drivers/hwspinlock/omap_hwspinlock.c
+> +++ b/drivers/hwspinlock/omap_hwspinlock.c
+> @@ -117,12 +117,10 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
+>  	if (!bank)
+>  		return -ENOMEM;
 >  
->  		/* make sure we have the entire irq map */
-> -		if (offset + size > fw->size || offset + size < size) {
-> +		if (offset + size > fw->size || add_would_overflow(size, offset)) {
->  			dev_err(dev, ".pru_irq_map section truncated\n");
->  			return ERR_PTR(-EINVAL);
->  		}
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 94177e416047..b9231cf46d68 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -278,7 +278,7 @@ find_table(struct device *dev, const struct firmware *fw)
->  		table = (struct resource_table *)(elf_data + offset);
+> -	platform_set_drvdata(pdev, bank);
+> -
+>  	for (i = 0, hwlock = &bank->lock[0]; i < num_locks; i++, hwlock++)
+>  		hwlock->priv = io_base + LOCK_BASE_OFFSET + sizeof(u32) * i;
 >  
->  		/* make sure we have the entire table */
-> -		if (offset + size > fw_size || offset + size < size) {
-> +		if (offset + size > fw_size || add_would_overflow(size, offset)) {
->  			dev_err(dev, "resource table truncated\n");
->  			return NULL;
->  		}
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 83d76915a6ad..58742c666e35 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -298,7 +298,7 @@ static void rproc_virtio_get(struct virtio_device *vdev, unsigned int offset,
->  	rsc = (void *)rvdev->rproc->table_ptr + rvdev->rsc_offset;
->  	cfg = &rsc->vring[rsc->num_of_vrings];
+> -	ret = hwspin_lock_register(bank, &pdev->dev, &omap_hwspinlock_ops,
+> +	ret = devm_hwspin_lock_register(&pdev->dev, bank, &omap_hwspinlock_ops,
+>  						base_id, num_locks);
+>  	if (ret)
+>  		return ret;
+> @@ -133,18 +131,6 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
 >  
-> -	if (offset + len > rsc->config_len || offset + len < len) {
-> +	if (offset + len > rsc->config_len || add_would_overflow(len, offset)) {
->  		dev_err(&vdev->dev, "rproc_virtio_get: access out of bounds\n");
->  		return;
->  	}
-> @@ -316,7 +316,7 @@ static void rproc_virtio_set(struct virtio_device *vdev, unsigned int offset,
->  	rsc = (void *)rvdev->rproc->table_ptr + rvdev->rsc_offset;
->  	cfg = &rsc->vring[rsc->num_of_vrings];
+> -static void omap_hwspinlock_remove(struct platform_device *pdev)
+> -{
+> -	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
+> -	int ret;
+> -
+> -	ret = hwspin_lock_unregister(bank);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+> -		return;
+> -	}
+> -}
+> -
+>  static const struct of_device_id omap_hwspinlock_of_match[] = {
+>  	{ .compatible = "ti,omap4-hwspinlock", },
+>  	{ .compatible = "ti,am64-hwspinlock", },
+> @@ -155,7 +141,6 @@ MODULE_DEVICE_TABLE(of, omap_hwspinlock_of_match);
 >  
-> -	if (offset + len > rsc->config_len || offset + len < len) {
-> +	if (offset + len > rsc->config_len || add_would_overflow(len, offset)) {
->  		dev_err(&vdev->dev, "rproc_virtio_set: access out of bounds\n");
->  		return;
->  	}
+>  static struct platform_driver omap_hwspinlock_driver = {
+>  	.probe		= omap_hwspinlock_probe,
+> -	.remove_new	= omap_hwspinlock_remove,
+>  	.driver		= {
+>  		.name	= "omap_hwspinlock",
+>  		.of_match_table = omap_hwspinlock_of_match,
 > -- 
-> 2.34.1
+> 2.39.2
 > 
