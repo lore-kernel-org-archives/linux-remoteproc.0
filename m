@@ -1,152 +1,159 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F67F7D9;
-	Wed,  7 Feb 2024 16:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D204F81AA2
+	for <linux-remoteproc@vger.kernel.org>; Wed,  7 Feb 2024 16:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707322895; cv=none; b=sKgc6EazGWGAFwpi4L9GThYrE9oZCVhqlevKr/oX6kAalArWwAVqj1oCliJtEatQaMHlbwUMpLk4iOTltlxRBx762Jx8jBvLVQiB+GHpmfD/wtFXUk+54uBl5B9CAlf0MOYkj7q2Uj5X8z8qsTBLj0RHaVMrsd1RRAfI4DhHP0o=
+	t=1707323368; cv=none; b=W0KjB0N4SWrQ8FvMgjjxN7QYhW+5n5Lf+kVtnoXiiwlWh0g2K0uxvNEz0L0AoExIw9BrzdnpkCukbXxGIJbttROPLcyvD6RrQp2rvMHfVDgnhapbllJzrTzNP2eXKB15iXtB27AokOcuE9E6COUdbKAcXkAS2rE3rTP/+jNjSg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707322895; c=relaxed/simple;
-	bh=B5gBP6x0enaNCeeJRYkY6ghg0l8S5AEmEd5S0eLp0Mg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Br8idnv4sgQtxkEH6clYdh9mYMm4O4tetsfgroO3Y25LDoeJA+hA5u5ECy4toj5A6PRaaAWtkdzKKI+VbLltMpnfoAGnAG3gBLwvO7t4wByFwSNdaG7vsYbFUtxqJXma7g8WdH4NzR5f3j55IySaZvJ2wiTKYbCe1ZvWOLbVb78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B6KY5AWq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707323368; c=relaxed/simple;
+	bh=lw7lJqamj6paXkbZ/Sbln7d4vFMYCEU8sluR2zkgqeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDUnxIWbORhDsMtMMPuWYgXJHTleiqfhuW6TR06TuOS+hqBZNkcaKhLXJw4/NnfDSU0JDO31CUAddSxf5Uf1Di9kr8RwfjfvKxWNY2Wi5jflOdPnw1as8WJxDCHhXemuQkTAM+/6CmlLAE8Qu4SO3lXoq7TAsOh/yiIlw3IXMwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rXcH7h8m; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B6KY5AWq"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4173kN0L031923;
-	Wed, 7 Feb 2024 16:21:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:from:to:cc:references
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=s1fFx4okONwAPqgvrtAAYHmQOYNk9SbYOu2KY6lFHhI=; b=B6
-	KY5AWqg9qpIkyZy0H3BmCMvjKjHItgXcAKuoTQlgt04kNtjyxkwRHCAxurvAMMht
-	qzUmmkI9ge8RayTwUoZlDPO+OUuA3hJPq/GRL0vgYH1LAmBzZTaLZAml0SzWHuXg
-	ko9GtE9juQA7GkA9t3RhHs3I5EksWsN26KUdxyoH40NJXD0Xuvq8KzFPIAXnYv2b
-	l0wginASVyPG7CZmeRsnYJN7E75tk3O+w/s9nRsUJNKD48eK00y4xc4TUBGIMqpK
-	CPnQg6hx6Yb8/FwTMRyJlSbRsoLbL9QZreBBWLiZX08udhFLQXYSi5Vz48vQesCZ
-	hRLVxqlHCBXwI11x5Gqg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w3v9124m8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Feb 2024 16:21:26 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 417GLPRA007792
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Feb 2024 16:21:25 GMT
-Received: from [10.50.40.120] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 7 Feb
- 2024 08:21:21 -0800
-Message-ID: <468b5a6d-53b7-4d75-8966-2fd48bb13d54@quicinc.com>
-Date: Wed, 7 Feb 2024 21:51:18 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXcH7h8m"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6e05d958b61so697333b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Feb 2024 08:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707323366; x=1707928166; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uRIcWq3lPfILCGhdxmWyNaeRVReDmSlSg1CGLnuiOcw=;
+        b=rXcH7h8mJnTcGnRgEjPNGZMg9Xdmygb3PxhyEM4hR9FYCdQlsdwAvZPer1yooiCKG9
+         C53HGgaDqWdRZPdn5+HiFiS+T35CqFyBFrn/6yX/QBex2nKY9iRzvYuIL9Jc8gwLNRVw
+         u8fpkzXH5QJ86twHGnVyRvq7uM2rpQFy5juyVB19/NEndXJdAtQUrhc7thQG4PtglJWd
+         Tqbgl8f3fsqUsSByhKB4w6wnCM100Ahk2gAKES7NVxifD0+GLuQ15OHzjajL/aOh421U
+         mfo/aZ7vD3X1wge/73au7UJz0usqhsk/L2ULeU7vbfCch4E4s1ih1KcPOWhUhOuPF/OJ
+         yEDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707323366; x=1707928166;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRIcWq3lPfILCGhdxmWyNaeRVReDmSlSg1CGLnuiOcw=;
+        b=bQgKZMrYRe4PwNdWh887VZucBZdQ0ujMEbaaYYXWxawsUzAp9uba4KOjEo1Lj6KKfm
+         Z7OgXp40zC+AMEJY2bIuuxVgV5OPdLNYPmFX8qMMExAbI/Gzal824GFMiXkCvO4/fjoN
+         QpWlBSfQSAoJ0l1nmMuArsnx4F/RCHpl4Dsq2BbNZFxRgAAAfTPFS/REcsYLdjT/nJoi
+         HhIE3o0elH4Ijw7Xybxd0ElXDiaaY3qq61VGhm+MOdKvQ8a4kk6LEBffuczIICl4g8a4
+         2zpgCR1iq06xBDsBu6cLxZO5nk3mqu+dZIl1q8eAKXY30ySUtJogHInuwvxBvKU40wn0
+         KqrQ==
+X-Gm-Message-State: AOJu0YznA1CzbiQskTGMkhcYwtkUKYtFiK/5f+DDH/tZqw0vyHv3EjY7
+	UENA0O1SJJ6P52avtpTo/q1aQKPlajnyJN5m5rniLkoPKhymCsnXi7FIzgEpSOI=
+X-Google-Smtp-Source: AGHT+IHUzbDds+YlweIIYqKt2a7rjHMU/vzO+ioKkcmRtRFYM5wy96+da2+sKeULgKnEh5CpqkIdCA==
+X-Received: by 2002:a05:6a00:939c:b0:6d9:9613:cb9e with SMTP id ka28-20020a056a00939c00b006d99613cb9emr3364980pfb.29.1707323365971;
+        Wed, 07 Feb 2024 08:29:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUhNUrl+HmGZrOh+jZG5eUhFoECLbm/8o3rg2U8rGXGi6IR9raB4meWefzMwlIeJSu4GUGPMTGDIxmXcKDreogg6nhqJ5yCPLifFUwa2oKJ9A==
+Received: from p14s ([2604:3d09:148c:c800:b7a9:9867:b1ab:2708])
+        by smtp.gmail.com with ESMTPSA id 9-20020a056a00072900b006e03c7e74fesm1777061pfm.126.2024.02.07.08.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Feb 2024 08:29:25 -0800 (PST)
+Date: Wed, 7 Feb 2024 09:29:22 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: David Hess <dhess@data-bakery.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: Kernel panic apparently when writing on RPMsg TTY while or after
+ coprocessor is stopped
+Message-ID: <ZcOv4lZVOtSiLdrY@p14s>
+References: <4BB17D7E-D9BD-42A6-8E1D-6C6CF0C218DF@data-bakery.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: qcom: Add NOTIFY_FATAL event type to SSR
- subdevice
-Content-Language: en-US
-From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <agross@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_sjaganat@quicinc.com>
-References: <20230503062146.3891-1-quic_viswanat@quicinc.com>
- <egnmb647g7x7e74j4g2jddwho23ulmbap2q4eimcyj7y4qvdlz@zmaydxodu2a6>
- <509406eb-8093-4bcf-820f-8e5210e1539d@quicinc.com>
- <d3c3320b-8cc1-4d13-ae87-f2f8f46826e6@quicinc.com>
-In-Reply-To: <d3c3320b-8cc1-4d13-ae87-f2f8f46826e6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VX-ZO5uVTwZJVmnJRfL-ARvni91ycUOZ
-X-Proofpoint-GUID: VX-ZO5uVTwZJVmnJRfL-ARvni91ycUOZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-07_07,2024-02-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxlogscore=868 clxscore=1011 impostorscore=0 mlxscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402070120
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4BB17D7E-D9BD-42A6-8E1D-6C6CF0C218DF@data-bakery.com>
 
+Hi David,
 
-
-On 11/25/2023 12:24 AM, Vignesh Viswanathan wrote:
+On Mon, Feb 05, 2024 at 09:35:41AM -0600, David Hess wrote:
+> [ resending as plaintext so it makes it to the list ]
 > 
+> Experienced this kernel panic when stopping a coprocessor while the RPMsg tty was still open and being written too:
 > 
-> On 9/4/2023 10:23 PM, Vignesh Viswanathan wrote:
->>
->>
->> On 7/16/2023 1:50 AM, Bjorn Andersson wrote:
->>> On Wed, May 03, 2023 at 11:51:46AM +0530, Vignesh Viswanathan wrote:
->>>> Currently the SSR subdevice notifies the client driver on crash of the
->>>> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
->>>> However the client driver might be interested to know that the device
->>>> has crashed immediately to pause any further transactions with the
->>>> rproc. This calls for an event to be sent to the driver in the IRQ
->>>> context as soon as the rproc crashes.
->>>>
->>>
->>> Please make your argumentation more concrete, I can only guess what
->>> client driver you're referring to.
->>>
->>> You can do this either by spelling out which actual problem you're
->>> solving, or better yet, include some patches in the series that actually
->>> uses this interface.
->>>
->>
->> Hi Bjorn,
->>
->> Apologies for the delay in response.
->>
->> The client driver in my scenario is a Wi-Fi driver which is continuously
->> queuing data to the remoteproc and needs to know if remoteproc crashes
->> as soon as possible to stop queuing further data and also dump some debugstatistics on the driver side that could potentially help in debug
->> of why the remoteproc crashed.
->>
->> Also in the case with upcoming Wi-Fi 7 targets with multi-link operation, the driver might need to know that the remoteproc has crashed
->> instantly to handle some multi-link specific handling.
->>
->> The ath11k/ath12k WLAN drivers today partially have support for handling
->> such FATAL notification but it has not been upstreamed yet.
->>
->> Reference patch: https://git.codelinaro.org/clo/qsdk/oss/system/feeds/wlan-open/-/blob/win.wlan_host_opensource.1.0/mac80211/patches/031-ath11k-print-stats-on-crash.patch -- event SUBSYS_PREPARE_FOR_FATAL_SHUTDOWN.
->>
->> Also, Mukesh mentioned earlier that in some MSM targets with PCIe where latency cannot be tolerated, a similar downstream patch adds support for "early notifier". If this patch is accepted, the early notifier can also be replaced to use the same NOTIFY_FATAL event from SSR Subdevice
->>
->> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/7583d24de337aa1bf7c375a7da706af9b995b9a1#a840754ebb0e24e88adbf48177e1abd0830b72d2
->> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/257de41c63a5a51a081cc7887cdaa4a46e4d1744
-> 
-> Hi Bjorn,
-> 
-> Gentle reminder for this patch.
-> 
-> Thanks,
-> Vignesh
+> [25016.237134] Unable to handle kernel paging request at virtual address ffff800015b3a002
+> [25016.245244] Mem abort info:
+> [25016.248053]   ESR = 0x0000000096000007
+> [25016.251824]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [25016.257140]   SET = 0, FnV = 0
+> [25016.260216]   EA = 0, S1PTW = 0
+> [25016.263363]   FSC = 0x07: level 3 translation fault
+> [25016.268242] Data abort info:
+> [25016.271147]   ISV = 0, ISS = 0x00000007
+> [25016.274991]   CM = 0, WnR = 0
+> [25016.277960] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000049c2d000
+> [25016.284680] [ffff800015b3a002] pgd=10000000bffff003, p4d=10000000bffff003, pud=10000000bfffe003, pmd=1000000075692003, pte=0000000000000000
+> [25016.297273] Internal error: Oops: 96000007 [#1] PREEMPT SMP
+> [25016.302859] Modules linked in: rpmsg_ctrl rpmsg_char imx_rpmsg_tty xt_nat xt_tcpudp xt_conntrack xt_MASQUERADE nf_conntrack_netlink nfnetlink xfrm_user iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c xt_addrtype iptable_filter ip_tables x_tables br_netfilter bridge stp llc mwifiex_sdio mwifiex bnep overlay cfg80211 mcp251xfd can_dev cm
+> [25016.356332] CPU: 1 PID: 95780 Comm: python Tainted: G           O      5.15.129-6.4.0+git.67c3153d20ff #1-TorizonCore
+> [25016.366955] Hardware name: Toradex Verdin iMX8M Mini WB on Yavia Board (DT)
+> [25016.373924] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [25016.380891] pc : virtqueue_get_buf_ctx_split+0x28/0x180
+> [25016.386132] lr : virtqueue_get_buf+0x30/0x40
+> [25016.390411] sp : ffff800015db3a80
+> [25016.393727] x29: ffff800015db3a80 x28: ffff80000a7022a0 x27: 0000000000000007
+> [25016.400870] x26: ffff0000077dec00 x25: ffff00000e76c0c0 x24: ffff00000709bf00
+> [25016.408015] x23: 0000000000000007 x22: 0000000000000100 x21: ffff0000014e1f40
+> [25016.415162] x20: ffff0000014e1f00 x19: ffff000006c3cd00 x18: 0000000000000000
+> [25016.422306] x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffa5db3fb0
+> [25016.429452] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> [25016.436596] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff800015db3eb0
+> [25016.443742] x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffff0000075c6e40
+> [25016.450888] x5 : 0000000000000001 x4 : ffff800015db3ae0 x3 : ffff0000014e1f40
+> [25016.458033] x2 : 0000000000000000 x1 : 00000000000002cf x0 : ffff800015b3a000
+> [25016.465182] Call trace:
+> [25016.467631]  virtqueue_get_buf_ctx_split+0x28/0x180
+> [25016.472515]  virtqueue_get_buf+0x30/0x40
+> [25016.476441]  rpmsg_send_offchannel_raw+0x44c/0x4f0
+> [25016.481240]  virtio_rpmsg_send+0x28/0x34
+> [25016.485167]  rpmsg_send+0x20/0x40
+> [25016.488488]  rpmsgtty_write+0x54/0xb0 [imx_rpmsg_tty]
 
-Hi Bjorn,
+I can't find either rpmsgtty_write() or imx_rpmsg_tty() in the kernel tree - is this
+code public?
 
-Could you please help review this patch and let me know if any comments.
-
-Thanks,
-Vignesh
->>
->> Thanks,
->> Vignesh
->>
->>> Regards,
->>> Bjorn
+> [25016.493551]  n_tty_write+0x2c0/0x48c
+> [25016.497134]  file_tty_write.constprop.0+0x130/0x294
+> [25016.502016]  tty_write+0x14/0x20
+> [25016.505248]  new_sync_write+0xec/0x18c
+> [25016.509004]  vfs_write+0x24c/0x2b0
+> [25016.512409]  ksys_write+0x6c/0x100
+> [25016.515817]  __arm64_sys_write+0x1c/0x30
+> [25016.519744]  invoke_syscall+0x48/0x114
+> [25016.523499]  el0_svc_common.constprop.0+0xd4/0xfc
+> [25016.528209]  do_el0_svc+0x28/0xa0
+> [25016.531526]  el0_svc+0x28/0x80
+> [25016.534589]  el0t_64_sync_handler+0xa4/0x130
+> [25016.538863]  el0t_64_sync+0x1a0/0x1a4
+> [25016.542533] Code: 35000700 f9403660 aa0103e4 79409261 (79400400) 
+> [25016.548634] ---[ end trace bc845368ab15e73f ]---
+> [25016.553257] Kernel panic - not syncing: Oops: Fatal exception
+> [25016.559009] SMP: stopping secondary CPUs
+> [25016.563249] Kernel Offset: disabled
+> [25016.566739] CPU features: 0x0,00002001,20000846
+> [25016.571276] Memory Limit: none                                                                                                                              [25016.574336] Rebooting in 5 seconds.. 
+> 
+> I think the simple and obvious answer is “don’t do that” - we should be able to safely ensure the RPMsg TTY is closed before attempting to stop the coprocessor. However, it would be nice if the driver handled this situation safely regardless.
+> 
+> This was experienced under the TorizonCore 6.4 distribution on a Toradex Verdin iMX8M Mini WB on Yavia Board with this kernel:
+> 
+> 5.15.129-6.4.0+git.67c3153d20ff #1-TorizonCore SMP PREEMPT Wed Sep 27 12:30:36 UTC 2023
+> 
+> Happy to provide more information as needed. In terms of recreating, I think it’s as simple as opening the RPMsg TTY (with receptive firmware running on the coprocessor), writing to it at a high frequency and then stopping the coprocessor until it happens. We’ve seen this panic a few times and eventually managed to capture this panic log.
+> 
+> Dave
+> 
+> --
+> David K. Hess
+> Founder, Data Bakery | Data-Bakery.com
+> dhess@data-bakery.com | LinkedIn
+> +1 214-684-5448
+> 
