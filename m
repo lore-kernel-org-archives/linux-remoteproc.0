@@ -1,145 +1,152 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898991B275
-	for <linux-remoteproc@vger.kernel.org>; Wed,  7 Feb 2024 11:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F67F7D9;
+	Wed,  7 Feb 2024 16:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707306017; cv=none; b=WEIWwzZQWpWqqq3S97/03c+n16IEUPShE27m/NRJURjpnmmn5vzVrpo6pQkAFhe+tYpiUlOcVsuS+JA24aiqgPy+N7SrGrMf3Q2LV/BnZzrf3bZeSAsby5uR4EXk7XpCQH2VlFcCxW4Onud+yiWgTC+bxdmWf5FXujIOFU5WZIU=
+	t=1707322895; cv=none; b=sKgc6EazGWGAFwpi4L9GThYrE9oZCVhqlevKr/oX6kAalArWwAVqj1oCliJtEatQaMHlbwUMpLk4iOTltlxRBx762Jx8jBvLVQiB+GHpmfD/wtFXUk+54uBl5B9CAlf0MOYkj7q2Uj5X8z8qsTBLj0RHaVMrsd1RRAfI4DhHP0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707306017; c=relaxed/simple;
-	bh=j2hucPWlt4QARh6EpWCHZVZmiT27JEZfL87REB11SSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LNUuKSdnYc8KEbGVAyftEiJB1BJR7ZWnQ6OJ8e/AR9fRw1GJkcqqTSo2emdm/osJnGBg3hA3h7fdAVpMr22kDVZrTJldfqxFaWf9O1rDVf90kRMW2+nAjX+SkNs25p49NZvbOM5IuqjU/iu07STk/ORqYS4vXhdLJRFh4184gqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C13xIH7T; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707322895; c=relaxed/simple;
+	bh=B5gBP6x0enaNCeeJRYkY6ghg0l8S5AEmEd5S0eLp0Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Br8idnv4sgQtxkEH6clYdh9mYMm4O4tetsfgroO3Y25LDoeJA+hA5u5ECy4toj5A6PRaaAWtkdzKKI+VbLltMpnfoAGnAG3gBLwvO7t4wByFwSNdaG7vsYbFUtxqJXma7g8WdH4NzR5f3j55IySaZvJ2wiTKYbCe1ZvWOLbVb78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B6KY5AWq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C13xIH7T"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-60487b4ba0eso4876277b3.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Feb 2024 03:40:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707306014; x=1707910814; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YGulZCD6+zMcYgPZs795MTY99+l/D3vsNxyEgcJw+h8=;
-        b=C13xIH7T3/Dq+QRnt/A4mqHwsZtbVadlk1ady5NDtyOg0bUlIQUuj/iuVUKH/3lBx9
-         04qGXSf5tWeNVXKzot/q6rHR4zXyxR6mdCeohT/ANOKsAWHhdMn13c0Z0Ms80CG2UU/z
-         esaVWnu4eIbvfKcZj0ITfLhZkJfhtFyW0UdMr6h5jn3PfHts5RlEsf5T9JRQ/zOEZcn5
-         ar5ufFsEaa3pxzXwO3hD982agh6gjma7LJ08B9+wqRVnEHgcOOu0aSLTw1hg/gnTQ7SG
-         OBQeQggZlxzWdf5HXrFmYznwxlbynZV8iBrLkpjzsWxMAhqaUUDNoINV8LNpFo4727lo
-         7aUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707306014; x=1707910814;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YGulZCD6+zMcYgPZs795MTY99+l/D3vsNxyEgcJw+h8=;
-        b=pQVyQ4kooZDG4+nr5ij+u3gxpbvGJ2/LAKXAhw6ZVzZiIn/J7L5zxrTNCUZyfkgJZh
-         K9b/GcIawlkhCe3hAh43GTM9s9J5t91dvTIk1zkmngQO3JVNu/IHXN9BwMir26UnoY/f
-         ASqas8Ag8bT2m2ZWCRUAu50qWvD6YQSCUtDq5m0JYm4JhPx5NwOoqEYXx55CeYcUeg/0
-         7NSoEhbpsxkuRtTH7EKQAHZmXHwXN7O1DS4ybxuZxKa5UL0nalsCjFHGFmTFOaXP5cpt
-         x9YO7T1XURyrp6dKZPn7ibC5NCW8qP0xNzg0OGlgppt3/JSRSTyzqha9VqSnlfX0cUO5
-         I7Jg==
-X-Gm-Message-State: AOJu0YxP3G2ilP+ytYRX28fo8GNl5V1i84RiMY4fd9+7Ut+tX0bakRVq
-	FCnsqAdEEES3H3T77bDIvhPrSCpAdr2YNm5tabrxmxrnyuBpGzT7LLMYhliEU9cqv1YX06swzgj
-	7TE8k5KBeCBP2Lih8xs6ln/aDhuRnkPGvT0Gq2A==
-X-Google-Smtp-Source: AGHT+IHcJYp0WTpeyXfA6/v0KQqS2+K+bFf4BMoXAxddY+rgyz/NFtVQ2CSaJeYh5kLZrQX4DemLxRgcf++7/oAjGa4=
-X-Received: by 2002:a81:9b4b:0:b0:604:926b:94a9 with SMTP id
- s72-20020a819b4b000000b00604926b94a9mr1274134ywg.26.1707306014489; Wed, 07
- Feb 2024 03:40:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B6KY5AWq"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4173kN0L031923;
+	Wed, 7 Feb 2024 16:21:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:from:to:cc:references
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=s1fFx4okONwAPqgvrtAAYHmQOYNk9SbYOu2KY6lFHhI=; b=B6
+	KY5AWqg9qpIkyZy0H3BmCMvjKjHItgXcAKuoTQlgt04kNtjyxkwRHCAxurvAMMht
+	qzUmmkI9ge8RayTwUoZlDPO+OUuA3hJPq/GRL0vgYH1LAmBzZTaLZAml0SzWHuXg
+	ko9GtE9juQA7GkA9t3RhHs3I5EksWsN26KUdxyoH40NJXD0Xuvq8KzFPIAXnYv2b
+	l0wginASVyPG7CZmeRsnYJN7E75tk3O+w/s9nRsUJNKD48eK00y4xc4TUBGIMqpK
+	CPnQg6hx6Yb8/FwTMRyJlSbRsoLbL9QZreBBWLiZX08udhFLQXYSi5Vz48vQesCZ
+	hRLVxqlHCBXwI11x5Gqg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w3v9124m8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Feb 2024 16:21:26 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 417GLPRA007792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Feb 2024 16:21:25 GMT
+Received: from [10.50.40.120] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 7 Feb
+ 2024 08:21:21 -0800
+Message-ID: <468b5a6d-53b7-4d75-8966-2fd48bb13d54@quicinc.com>
+Date: Wed, 7 Feb 2024 21:51:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130123951.236243-1-ulf.hansson@linaro.org>
-In-Reply-To: <20240130123951.236243-1-ulf.hansson@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 7 Feb 2024 12:39:38 +0100
-Message-ID: <CAPDyKFruKJhOLRLbxibF3ChDGMcJDvdOmCekRNTDYunbnKgQpw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] PM: domains: Add helpers for multi PM domains to
- avoid open-coding
-To: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Kevin Hilman <khilman@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Ben Horgan <Ben.Horgan@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-media@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: qcom: Add NOTIFY_FATAL event type to SSR
+ subdevice
+Content-Language: en-US
+From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <agross@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <quic_sjaganat@quicinc.com>
+References: <20230503062146.3891-1-quic_viswanat@quicinc.com>
+ <egnmb647g7x7e74j4g2jddwho23ulmbap2q4eimcyj7y4qvdlz@zmaydxodu2a6>
+ <509406eb-8093-4bcf-820f-8e5210e1539d@quicinc.com>
+ <d3c3320b-8cc1-4d13-ae87-f2f8f46826e6@quicinc.com>
+In-Reply-To: <d3c3320b-8cc1-4d13-ae87-f2f8f46826e6@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VX-ZO5uVTwZJVmnJRfL-ARvni91ycUOZ
+X-Proofpoint-GUID: VX-ZO5uVTwZJVmnJRfL-ARvni91ycUOZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-07_07,2024-02-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=868 clxscore=1011 impostorscore=0 mlxscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402070120
 
-On Tue, 30 Jan 2024 at 13:39, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> Rafael, my plan is queue up this series via my pmdomain tree. Please let me know
-> if you see any issues with that, especially around patch1.
->
-> Updates in v3:
->         - Added tested-by, reviewed-by and suggested-by tags. No other changes
->         have been made.
->
-> Updates in v2:
->         - Ccing Daniel Baluta and Iuliana Prodan the NXP remoteproc patches to
->         requests help with testing.
->         - Fixed NULL pointer bug in patch1, pointed out by Nikunj.
->         - Added some tested/reviewed-by tags.
->
-> Attaching/detaching of a device to multiple PM domains has started to become a
-> common operation for many drivers, typically during ->probe() and ->remove().
-> In most cases, this has lead to lots of boilerplate code in the drivers.
->
-> This series adds a pair of helper functions to manage the attach/detach of a
-> device to its multiple PM domains. Moreover, a couple of drivers have been
-> converted to use the new helpers as a proof of concept.
->
-> Note 1)
-> The changes in the drivers have only been compile tested, while the helpers
-> have been tested along with a couple of local dummy drivers that I have hacked
-> up to model both genpd providers and genpd consumers.
->
-> Note 2)
-> I was struggling to make up mind if we should have a separate helper to attach
-> all available power-domains described in DT, rather than providing "NULL" to the
-> dev_pm_domain_attach_list(). I decided not to, but please let me know if you
-> prefer the other option.
->
-> Note 3)
-> For OPP integration, as a follow up I am striving to make the
-> dev_pm_opp_attach_genpd() redundant. Instead I think we should move towards
-> using dev_pm_opp_set_config()->_opp_set_required_devs(), which would allow us to
-> use the helpers that $subject series is adding.
->
-> Kind regards
-> Ulf Hansson
->
-> Ulf Hansson (5):
->   PM: domains: Add helper functions to attach/detach multiple PM domains
->   remoteproc: imx_dsp_rproc: Convert to
->     dev_pm_domain_attach|detach_list()
->   remoteproc: imx_rproc: Convert to dev_pm_domain_attach|detach_list()
->   remoteproc: qcom_q6v5_adsp: Convert to
->     dev_pm_domain_attach|detach_list()
->   media: venus: Convert to dev_pm_domain_attach|detach_list() for vcodec
->
->  drivers/base/power/common.c                   | 134 +++++++++++++++
->  drivers/media/platform/qcom/venus/core.c      |  12 +-
->  drivers/media/platform/qcom/venus/core.h      |   7 +-
->  .../media/platform/qcom/venus/pm_helpers.c    |  48 ++----
->  drivers/remoteproc/imx_dsp_rproc.c            |  82 +--------
->  drivers/remoteproc/imx_rproc.c                |  73 +-------
->  drivers/remoteproc/qcom_q6v5_adsp.c           | 160 ++++++++----------
->  include/linux/pm_domain.h                     |  38 +++++
->  8 files changed, 289 insertions(+), 265 deletions(-)
->
->
 
-I have now applied this to my next branch to my pmdomain tree, to get
-it more tested in linux-next.
 
-Please let me know if there are objections to this or if any of you
-want to provide an ack/tested/reviewed-by tag, thanks!
+On 11/25/2023 12:24 AM, Vignesh Viswanathan wrote:
+> 
+> 
+> On 9/4/2023 10:23 PM, Vignesh Viswanathan wrote:
+>>
+>>
+>> On 7/16/2023 1:50 AM, Bjorn Andersson wrote:
+>>> On Wed, May 03, 2023 at 11:51:46AM +0530, Vignesh Viswanathan wrote:
+>>>> Currently the SSR subdevice notifies the client driver on crash of the
+>>>> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
+>>>> However the client driver might be interested to know that the device
+>>>> has crashed immediately to pause any further transactions with the
+>>>> rproc. This calls for an event to be sent to the driver in the IRQ
+>>>> context as soon as the rproc crashes.
+>>>>
+>>>
+>>> Please make your argumentation more concrete, I can only guess what
+>>> client driver you're referring to.
+>>>
+>>> You can do this either by spelling out which actual problem you're
+>>> solving, or better yet, include some patches in the series that actually
+>>> uses this interface.
+>>>
+>>
+>> Hi Bjorn,
+>>
+>> Apologies for the delay in response.
+>>
+>> The client driver in my scenario is a Wi-Fi driver which is continuously
+>> queuing data to the remoteproc and needs to know if remoteproc crashes
+>> as soon as possible to stop queuing further data and also dump some debugstatistics on the driver side that could potentially help in debug
+>> of why the remoteproc crashed.
+>>
+>> Also in the case with upcoming Wi-Fi 7 targets with multi-link operation, the driver might need to know that the remoteproc has crashed
+>> instantly to handle some multi-link specific handling.
+>>
+>> The ath11k/ath12k WLAN drivers today partially have support for handling
+>> such FATAL notification but it has not been upstreamed yet.
+>>
+>> Reference patch: https://git.codelinaro.org/clo/qsdk/oss/system/feeds/wlan-open/-/blob/win.wlan_host_opensource.1.0/mac80211/patches/031-ath11k-print-stats-on-crash.patch -- event SUBSYS_PREPARE_FOR_FATAL_SHUTDOWN.
+>>
+>> Also, Mukesh mentioned earlier that in some MSM targets with PCIe where latency cannot be tolerated, a similar downstream patch adds support for "early notifier". If this patch is accepted, the early notifier can also be replaced to use the same NOTIFY_FATAL event from SSR Subdevice
+>>
+>> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/7583d24de337aa1bf7c375a7da706af9b995b9a1#a840754ebb0e24e88adbf48177e1abd0830b72d2
+>> https://git.codelinaro.org/clo/la/kernel/msm-5.15/-/commit/257de41c63a5a51a081cc7887cdaa4a46e4d1744
+> 
+> Hi Bjorn,
+> 
+> Gentle reminder for this patch.
+> 
+> Thanks,
+> Vignesh
 
-Kind regards
-Uffe
+Hi Bjorn,
+
+Could you please help review this patch and let me know if any comments.
+
+Thanks,
+Vignesh
+>>
+>> Thanks,
+>> Vignesh
+>>
+>>> Regards,
+>>> Bjorn
