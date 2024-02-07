@@ -1,141 +1,83 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697C613FE2;
-	Tue,  6 Feb 2024 19:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3815628DBD;
+	Wed,  7 Feb 2024 04:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707246458; cv=none; b=bzYHqLvSfYnIjM8G6nnzKfjVuDK87lVynebMLkVfp4r31LehS0unirOH6+F5Bn5LDFdkvNf5eDH/rG8AyLKpQ+dOtSn2sU3bILqkXWUmFZer7MY/4DZjZYvKbOT0Ly7+c5BTJrS2Td/mYPRr7HMG704d55x3YkX9QJjjpLOR2ho=
+	t=1707281236; cv=none; b=jsYCQ6+5dxlZr4KVpmFoEBLaNTw5+RzB8j3GnyRJ+sDN+5vR40Zy8aV010ar8Z0THL+4DM9JTIbjpBYqgAGLtAj9oHwG3cRQsUCIhbL3AuS3JBp6gLPzWyg3Tr7lIau94y4MYiZoI8gYfvsMjsjoBBEKRbxC9bmcPA9AWEKg298=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707246458; c=relaxed/simple;
-	bh=fcUpuXMDio+yishakHJrhuMm+7x1jRFTokuTht7ioxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l7IxR+8Yhlaqg6vHlxpXN340i2M0LJpVcRg/GRpyHjWva/nSrouB1zGD5Vk4nzkCIAy622Sr1+BYatZ5lssmmCUHXtPTfAhB+y/TcUVNeyePXGYsqfQVLtp0vAPpsTEQDyenu4AD7y8H/X8vRuTZAZ8XbciyyaFxh3SXC/MLUFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AbBvkPpz; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707281236; c=relaxed/simple;
+	bh=UYd+KQbWrD/vp6wD1XU/N9A0AH2bAKaYL4bBOyrHZRU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LO+6Ii25CXz6aicCF6qW7ZxIruk5tVh5ZWijIf5D6MbMOEH48+u6niAb1+h4Qfnqrxy4iC3ziPQKVKeOMEgr6K2snstogooysSnDp2r0nOmg+WRugY7WDj+vq/fSNJ723yHN1YuBku1Z9VCP4aOaB5FrXT6icQDdnSCiiNPfg5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqpFpgWB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AbBvkPpz"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 416J7T6K097971;
-	Tue, 6 Feb 2024 13:07:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707246449;
-	bh=McDF83SqW1QdyD+7tudNz9OwaUHXbfqRvg49t9XHoHA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=AbBvkPpzp1KmZVlOd/gA9MzseMYs0IY8wHEybpvI5aWa6lyfHVQ/Hab2owaFYAx6+
-	 FKxK/FymB9XIhgrRZP8Vjh5AnUJU+C1FaHCvsWDVuNudm8kLIqOKoa/zUMdlMXRqIm
-	 VvD68Tk5/vcH+9ALaTw49DhF/igjQcTU7xlTm6SA=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 416J7TcP011106
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Feb 2024 13:07:29 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Feb 2024 13:07:29 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Feb 2024 13:07:29 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 416J7SVl002592;
-	Tue, 6 Feb 2024 13:07:28 -0600
-Message-ID: <a225205a-0baf-493e-9138-91aac7e0371b@ti.com>
-Date: Tue, 6 Feb 2024 13:07:28 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqpFpgWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E818C43399;
+	Wed,  7 Feb 2024 04:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707281235;
+	bh=UYd+KQbWrD/vp6wD1XU/N9A0AH2bAKaYL4bBOyrHZRU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iqpFpgWBzvYT0jOxt+PDi0gbf2eHb2bQTx6RzexSVUAk+pB1acw+GpAMoUB4dHUI3
+	 Gqqcs215BvncX2S2Kg/9ZollqhMI0qHKyFl5xy7UBvQlRPJljfBlvRBQpH+rGoyPar
+	 U6wN9fl1QtbTKKS5EpdIc76K8msIzY7m7R8uGm67zaeACVMIR1jYOYH27M3dKFJ5c9
+	 TxdKBxfEhlN6HfPI+JSHvyPM+9GXH9zTX4sCOA1mjd3cYDoKc9NK7yJ/gDoD9uzCHL
+	 TGE6Jytvh7INZmEM9xl/6ccCBEW2/1g83VsGEGwKZA7LZgK1y8x+SshdelIk8I5UFB
+	 gjATWCfjoU8hQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: (subset) [PATCH v7 0/4] remoteproc: qcom: Introduce DSP support for SM8650
+Date: Tue,  6 Feb 2024 22:46:33 -0600
+Message-ID: <170728117675.479358.12858304848396800970.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240123-topic-sm8650-upstream-remoteproc-v7-0-61283f50162f@linaro.org>
+References: <20240123-topic-sm8650-upstream-remoteproc-v7-0-61283f50162f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] hwspinlock: omap: Use devm_pm_runtime_enable() helper
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Baolin Wang <baolin.wang@linux.alibaba.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240123160405.360437-1-afd@ti.com>
- <20240123160405.360437-2-afd@ti.com>
- <73jxbyqatxc7r56df2iweewb22qvmqo33rhpsu3darczn7ldof@p2qepqpdf5ds>
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <73jxbyqatxc7r56df2iweewb22qvmqo33rhpsu3darczn7ldof@p2qepqpdf5ds>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2/6/24 1:06 PM, Bjorn Andersson wrote:
-> On Tue, Jan 23, 2024 at 10:04:03AM -0600, Andrew Davis wrote:
->> This disables runtime PM on module exit, allowing us to simplify
->> the probe exit path and remove callbacks. Do that here.
+
+On Tue, 23 Jan 2024 09:51:01 +0100, Neil Armstrong wrote:
+> Add the bindings and driver changes for DSP support on the
+> SM8650 platform in order to enable the aDSP, cDSP and MPSS
+> subsystems to boot.
 > 
-> As with the later patch, unless I'm misreading the code, you already do
-> disable runtime PM in omap_hwspinlock_remove().
+> Compared to SM8550, where SM8650 uses the same dual firmware files,
+> (dtb file and main firmware) the memory zones requirement has changed:
+> - cDSP: now requires 2 memory zones to be configured as shared
+>   between the cDSP and the HLOS subsystem
+> - MPSS: In addition to the memory zone required for the SM8550
+>   MPSS, two more are required to be configured for MPSS
+>   usage only.
 > 
+> [...]
 
-Right, what I meant to say in the commit message was
+Applied, thanks!
 
-"This disables runtime PM on module exit *automatically for us*.."
+[4/4] arm64: dts: qcom: sm8650: add missing qlink_logging reserved memory for mpss
+      commit: af53ecef19ffab5eed346032a0e79110cb82cc1d
 
-As in we don't have to manually do it anymore, and that simplifies
-the code, which is the "fix" that this patch does.
-
-Will update the commit message to make that more clear in this
-and the next patch.
-
->>
->> Signed-off-by: Andrew Davis <afd@ti.com>
->> ---
->>   drivers/hwspinlock/omap_hwspinlock.c | 26 ++++++++------------------
->>   1 file changed, 8 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-> [..]
->> @@ -129,16 +125,12 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
->>   	ret = hwspin_lock_register(bank, &pdev->dev, &omap_hwspinlock_ops,
->>   						base_id, num_locks);
->>   	if (ret)
->> -		goto runtime_err;
->> +		return ret;
->>   
->>   	dev_dbg(&pdev->dev, "Registered %d locks with HwSpinlock core\n",
->>   		num_locks);
-> 
-> I don't fancy these debug information messages, there are other ways to
-> confirm that the device probed successfully etc.
-> 
-> Now that you don't need the goto runtime_err, I'd prefer the tail of
-> this function:
-> 
-> 	return hwspin_lock_register(...);
-> 
-
-Sure, will update.
-
-Thanks,
-Andrew
-
-> Regards,
-> Bjorn
-> 
->>   
->>   	return 0;
->> -
->> -runtime_err:
->> -	pm_runtime_disable(&pdev->dev);
->> -	return ret;
->>   }
->>   
->>   static void omap_hwspinlock_remove(struct platform_device *pdev)
->> @@ -151,8 +143,6 @@ static void omap_hwspinlock_remove(struct platform_device *pdev)
->>   		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
->>   		return;
->>   	}
->> -
->> -	pm_runtime_disable(&pdev->dev);
->>   }
->>   
->>   static const struct of_device_id omap_hwspinlock_of_match[] = {
->> -- 
->> 2.39.2
->>
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
