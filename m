@@ -1,60 +1,62 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F2F3D54D
-	for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 17:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2A13D565
+	for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 17:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707757378; cv=none; b=BFZ0mqplX2KmNREIcomBCOFdZkpMW4nvRNDk8o23X5VkZA2FJMLAGkKjbeERR73sJjL4ocUzOVBt61//cDKoXics6Vh29YcFJKpUpDkARicQajQft5OqQVt8JOXqgI1I1906vNV1FXgI+dQUkL01MNqXpQJaOsrCquWz83XBt5Y=
+	t=1707757378; cv=none; b=nabkCMZY/ryPocb9uLLDHqCBr8tAivB8FU6pScUPKa5tYfuvHp6j15zU96oRrPQSuIflCn8zKgXYSpsA+30i8ViVld4AG1CyCYgyGFRwL8AQaBrKpv894pqX7kMLa+V+JGqZ46t2UCotcY2nG30fxFrZE6yVO6Wzkr3VdncrvaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707757378; c=relaxed/simple;
-	bh=nnFi0dz7hSqMF4DlCZ0/X5ltymPDZD4pOj9wQcTNkyg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XBkFPJ4ch6kToU+ebcEiyz02yg/fccREQo/PBLijccaTdEwBSluuRl58y5pXsvzJwITu6tmc1Ll7L65CypNgNqXr5+cRc1eHSgn6hkxynjogl7p43CGCgvXr3vBODhrP4EUccTu1DX8YVfXfb1/xcJ7Tkrv4SWAgg9ENR9owDAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dNtIu875; arc=none smtp.client-ip=209.85.167.47
+	bh=J7jd2gMJ3Tb9cXuCniE1aroUmfQInY2z+BgcvxEs/MY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NwEBXXnzag2oTiYh5byDPEifHBJAzJAbrWn8n9FK1NLq/bDtw5XcUP1k13uypWYuvO1+C1gprTC2zmk8n4FeeCP0SSWX/tCHe85Rm9PqXvHoS0N4SCPz2GcdhC+9bxm+a9/Gh10EUeDE2TlNtkzMvTiG1dKHaFCvesih1A3Tg5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dd3gyg2J; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dNtIu875"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5116b540163so4857813e87.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 09:02:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dd3gyg2J"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a30f7c9574eso907466b.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 09:02:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707757373; x=1708362173; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Glg4WPNjCjWUYTPSWyXIx3TsulJuAQ07BgmnN6oIbto=;
-        b=dNtIu875TWm83flmINy3wCmDh7rOUqI8pS6xlZpY6YVIR/I8t1zRfkVTj2kXGgGRbh
-         XQY7RXflETDoCCyEGuwDDVpvDon43bIHQFRAfqmEIPsJ9BXHZZTK0eTy9f9EXV3M2te+
-         3Ylp1FCWekopm9jkeF7g0V1IloposuX/GGEXV1rv8Jo1aZqvezlzmc5xHvyyynEq6lcj
-         RjBP9M89I4j7RKJ2vo+7EmhloAJdo491zS0OTnBMDWC6FlAVKag/amxpPjdu5nGPdLdu
-         oeqr5eypdMGyUY/gVtXcg3u+Q+HanUO/3BGx/qAc7qyhvWkIq/Cv2Kwsft/tMo2gznZS
-         mSHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707757373; x=1708362173;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1707757374; x=1708362174; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Glg4WPNjCjWUYTPSWyXIx3TsulJuAQ07BgmnN6oIbto=;
-        b=VYjKATBzm0Y0h7XJbnvRNFF9btXRcr77nCOIsZKCCvyNa9JharkATIpMEbUyVVFn2R
-         wO41LHAQ707AqnDyBHdC4Mtke7XRiiZCHq96AaGKZY3bj1KQY/orRV3+1VzpkbNq2MVS
-         upMXskqiPeHoQBucCLrOZv4Fk7vaO2Cr89vMjXO6b8bBcD0yLGfa9SEDPkHck9ip+6et
-         y1cmwQyNJ+TMO/A8hhtZqGg+MfCeq4LVapdIFlEhsxPEb/iHcangDi3yP7JLtQ57TZ4g
-         kdJ9Nd1Fe5pIQZ46d0McSA2gnwaQY95AoRbNB1WeigcjaRcEAd49Ts21ULqyzY5DWwqW
-         3yEA==
-X-Gm-Message-State: AOJu0YwtIRhch6S4kePayBfqavKsoL4X1werT46lgYkszJcwrzbqj8wW
-	gkdXL25vS4T+jis1xGVv8MNXnRgfnwMm2RZYORRwDK2ocSKwDso0cWkJA2qhRz4=
-X-Google-Smtp-Source: AGHT+IEObiDJ+lPv9tBw5NH4DThm25ty5XwAVlLgnIgSMvFdfXzooCjz8i931pQ1mcoDJLnSv1Im8w==
-X-Received: by 2002:a05:6512:3494:b0:511:29ee:83b8 with SMTP id v20-20020a056512349400b0051129ee83b8mr4336538lfr.62.1707757372838;
-        Mon, 12 Feb 2024 09:02:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWsrJMgEm1KKo6RrePDwPj88tQQpYSUIAH5HZUr0OUxSvTGI80E5ATulpEFTvlrgb6h9Vcvg5J6YH0CHrM/ZPYxdTVeVSuPG7sPJHBr5mKWfUPUMwqe0ZiAkM2lI4MFnl7/iLTNJQmNWKB8viHkfunEplGlJp0uDq1fqxwq39pRBGKQj/Lw1vTt8PR1zbxaowfr3U0lg+pbhttq7H4TXH4EF5yH5pvHZJNjALdt8M3qm/NRo8bJ4BgF9hOjS7m83745C3oi1WNRRX9Wudx1mHMnKf+KWfxcqVfWer4E9DgB9Fed8qtYUmuc+JvuOQGIohKmy2CDIWXTQDYGGx8x+GVScP4EXNlHwciC9TUpuopPCTaPb1LzBZz2YMrrX0VW8sMwy+7Tg1+eF7msSEzUbleoPAW00QYgSFDTLh6rCQPQmDTy+n7DtVC+QXTQmete9byqYsNRkALbRye87REzhXLk4JSlYGPbUr/abgBXrnHdz3GufP9gOKY4kc0hRrWC+1h/OlVUC7aw47mU7mWNbc1GhYvzsvR/8PA44Mn2mrB1yaPGiXyBNxTiNfM=
+        bh=N/xOBeak0OAnwe9iXVzoh3J5oS3uEnYBKWEW1cqisNA=;
+        b=dd3gyg2Jz/6SxKvjHq56YRXnvmLZrY3d9MiQ/GGQxuzjIdgn1m5k7pJwdxHqewY+iH
+         lS8za3b5bBJ6dv1V76PprAHpwuzEZHAmauut8F/ISlk/e+v5xPPpVdzySH1FTCmNa/Hj
+         tCAkHLoSFwvujt+9hdhBSBKONW0NYhsVJYQmhNGzPdDEGenDwen62bXdw56hKK1iz8qO
+         EIWlsYdB7JV1pMC5aecMSQAR+L0ILRHjpQ2xt8msjt4pA4JZpWLhLwhY+A95NIo/noyy
+         CjmYn3kSt15G6AEjy4/uCkNtTYa0XJ3owQeiy4WEC87YSvDreYKDD5wHLSgB82kiCgzm
+         h8tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707757374; x=1708362174;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N/xOBeak0OAnwe9iXVzoh3J5oS3uEnYBKWEW1cqisNA=;
+        b=JqYZfwwX2S/9CyMOV90a1+GlbHMeZ9GlTVo2nClOPuu2xkMdEtqXT4SYgMRvguH42q
+         EP6IzoKPyaqNCWQPGO3rsfSGmmy6s3glTlknI3/dBchzO6mXIKj9gKAkyMeOemIDrig7
+         RZgaDewhcM+hnyz77wfHW7kQaeVOc3MqAW/pgxiPxgXKidslt0Ejil+kt53Mgjg0kD0G
+         w3rfw3AG/8ia3W47DKnNuk7jH5Z7Dfcaknf+N/NifbTIo9RiwwckyzUVJXaxPyjJ0Woz
+         eQHWvqMjpXRYEF6zb5//Bh2OP/6IUVGZ/FcYaS5ysdvzOPBcex/elzGsvIgh8RlemTEn
+         /rAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx9ZsFJ8UpTZF9C3aHdg4MgmdqsOrfqGIX6CnEoT/w58onhyll9RR9viBxU/ofESjSeCFJVyajBaRQp7n8OAAAp10iq8AhDv6Cuey2Xte0SQ==
+X-Gm-Message-State: AOJu0Yw41AH55pYZVCwGo31YOHMOnqr85HKjuRtxdHdrJJ1Tl64JVhi3
+	/s60GF0t851RVNs8KqLXeCJLhuuA59uAZLJnc1gZdtvq5nrhwMwpAF7ZYq36avA=
+X-Google-Smtp-Source: AGHT+IHe3UBu5XjtW6IiNrTFMtxPVldP/Ul9CtM1yJKa6R+OxGphSbG9qDfVEsaeSxmW+gcPkK2fiA==
+X-Received: by 2002:a17:906:e0d1:b0:a3c:ceff:e83 with SMTP id gl17-20020a170906e0d100b00a3cceff0e83mr1237231ejb.74.1707757374314;
+        Mon, 12 Feb 2024 09:02:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXJpWFp6a7r6ytMcJ1HbyUkfLc3x2Dn3zsZi2gAjN8qFgT22gwCVzYuImF47O1HGVS5asleme9K+yRSy4IqVDlevSecHhnx1hXCM0aoe5qTrodhfxiWoX88PoNQfC4BqihFd3zPOKX1h2ui8X8igHkXrizMkQQbjHXZ36Ti31/6CGLJxrgOwLfUqkdP4wcwpp/7E4X/pXSiyr1UgrMN9d3rkOjXWSO/oqPZvbBExVCKh0bfBL+WgLX8DsWrFD+uWz2RFy3pM4mv4V6LUZB4hqwdt/vUgLIWSju22z5+wZpqdTs6a0QWuFX3+KGbCQGoGEcSZ1oPdFQ7yRpds2oKQQx5TZiJpSLiHV1+Hr9CCzoy4BSLluuWX16P1VE5BaHMIcnboG7jGtsDlCXptLwPgARpTwkY7vTPVPm3F4uWVzXgkdsnt/1QN/X4jMOqIs6tRldYqno1trtnvQJZFbSFRkcSQoAzkfxThqhqNsr7KqpqbsA23TEi
 Received: from [127.0.1.1] ([188.24.162.93])
-        by smtp.gmail.com with ESMTPSA id h23-20020a170906261700b00a3c9951edf1sm379600ejc.115.2024.02.12.09.02.51
+        by smtp.gmail.com with ESMTPSA id h23-20020a170906261700b00a3c9951edf1sm379600ejc.115.2024.02.12.09.02.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 09:02:52 -0800 (PST)
+        Mon, 12 Feb 2024 09:02:53 -0800 (PST)
 From: Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH v2 0/3] remoteproc: qcom_q6v5_pas: Add aDSP and cDSP for
- X1E80100
-Date: Mon, 12 Feb 2024 19:02:41 +0200
-Message-Id: <20240212-x1e80100-remoteproc-v2-0-604614367f38@linaro.org>
+Date: Mon, 12 Feb 2024 19:02:42 +0200
+Subject: [PATCH v2 1/3] dt-bindings: remoteproc: qcom,sm8550-pas: document
+ the X1E80100 aDSP & cDSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,10 +65,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADFPymUC/22NQQqDMBAAvyI5d0s2Kk176j+KhySuGrCJbKxYx
- L83eu5xBobZRCL2lMSj2ATT4pOPIYO6FMINJvQEvs0slFQlKomwImmJUgLTO840cXRg1a01tS5
- JOydyaU0isGyCG3IbPuOY5cTU+fVcvZrMg09z5O95XvCwx6SSqO5/JwuCBKxbhdTV2lT2OfpgO
- F4j96LZ9/0H1C1fUMwAAAA=
+Message-Id: <20240212-x1e80100-remoteproc-v2-1-604614367f38@linaro.org>
+References: <20240212-x1e80100-remoteproc-v2-0-604614367f38@linaro.org>
+In-Reply-To: <20240212-x1e80100-remoteproc-v2-0-604614367f38@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, 
@@ -78,52 +79,73 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Abel Vesa <abel.vesa@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=959; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=nnFi0dz7hSqMF4DlCZ0/X5ltymPDZD4pOj9wQcTNkyg=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlyk8zjo2LpSiWbWfUFl2ggatdDySA7XoLWRBbe
- rFm4RiAwqmJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZcpPMwAKCRAbX0TJAJUV
- VuWjD/4zkmQlH31HEOFN+lLSp7LBm+ePX3wXH2/mlJhurPQewMSZjZpAxSPDOaEuSxhROPD4pB1
- WD0d0ch+mgd2C0pksFq5qyFmT6R1XAHhWEr1fzF4zWQMW8xG/kHRvjBt+zdPLP5GCXmkrbCgaJi
- Kvmv7if3fPdp/UDFPsHtbPUU7TDKpGWLiKibQlrXV3rwFNbgcDT8rX614XXkvfL1PmbF3AXe8QE
- cYqW3LbEOn6ff32jk4nJpHMbNT8zNa3pVNS0xtnLopUd2H1PhF/xpdLUVLCXvQ3Qj5aEOy253oT
- UnQGuiU9Balvuw+QK0QgVjbUyBWLXEjHQLIYbfbWmHp0a4YTRPFrQqQrL4AoOeb4pHnKoHgT6Ql
- 0dt8a8z3A9D6H9xIDYKJTa2oPFTFjV2k/Y9GuewgCVse5FFVTDvu8A3bMfS34ALltNZkLRK90Ve
- 8zW1MOCYqfaPYDCYnDq1H3jPuDsFUA9roowIqWQR09RRWuATAJC0seuaJr+MugO2bKJH+rszOoc
- /6dSvLTUMb4TJSuVs3p6C1+tvO4HgofEPMP2CPf2pYiA0dTuZ8zX5kD3Cl6YDF3wFil/8UgoADG
- qGpTE60Rb6yBM2Af42FG9ht2ZUw20IsPPPvrHM4OYO1vVZBUp/GPVYkZefd6J1rDI4p+ZFi2cMU
- Yq9vyQw+2G7lgTQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1598; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=J7jd2gMJ3Tb9cXuCniE1aroUmfQInY2z+BgcvxEs/MY=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlyk84aFuNm4He6ERGeWKDXJGHHxrGQvV6hhEWk
+ ymMwrW6YWOJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZcpPOAAKCRAbX0TJAJUV
+ VjpVD/9fAqOCHq/Lln43dvkvTYiijac1ab7ii12CHShHaN2vm3CFY7aYXj5yMyARJH+tsn+KlR4
+ ipq+I8osZCnPP8Ye0dE11muyyOwR2w44YTQYeCxeEqGVRs0FchlWgBb1AXzpOfLY17aD5r6M4RS
+ OKwz9IUlVa30vpa0fp7+e/cxgTpq1XJvBv+yePeVB3HIxKpjPUU4Z1tlmQGS1Ic/YxS8xqiKq6P
+ CX1oKYf0YUvNzjqT3esKfqwFeLicoypYB34nK49Q0eKyZjwbWiuRExAj5i5wYxbJg7rrFTb7rrk
+ w9wE3sWtqylcNgAmlHV4zFSJ1w9WU6+iArecFb/m0wlYFGWqx0S+4P33Mf3FFDh0aaET/uRF4DS
+ GOZRn7rM0SUWFz6vR+tuuqHG/3X3+TC5+kPvt/Z85kwRcEidStSpn+NhoFTGouh4mo1znrA1ijA
+ ZwJIuA8EIJFTcW3YVc3YzbTIcQEkBamxCw3EoEXjDtzsVh6vg+iaTqD2YXHeVs4YGY1zcvu/N1r
+ WuH5O0lMa6vOE/SjtNf5d942Z0stTL1S32X6K3i7Jg3KRiBAzT6fDe5D51B9E0HdGh/n5S3M4Af
+ 0Acuvm+6SUAdHxr/5qf3ab31TyvnGIxGMcSwSvULA0n+6a6nIj4fzuWNmxKMmJJuqmC+vZLWBGX
+ fBTljd1fcbnBWnQ==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+Document the aDSP and cDSP Peripheral Authentication Service on the
+X1E80100 Platform.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
-Changes in v2:
-- Added Krzysztof's R-b tag to bindings patch
-- Added Dmitry's R-b tag to the X1E80100 related patch
-- Dropped the comment about the comment from adsp_load about lite
-  version
-- Link to v1: https://lore.kernel.org/r/20240129-x1e80100-remoteproc-v1-0-15d21ef58a4b@linaro.org
+ Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
----
-Abel Vesa (1):
-      dt-bindings: remoteproc: qcom,sm8550-pas: document the X1E80100 aDSP & cDSP
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+index 5f63b6b9a8f5..73fda7565cd1 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+@@ -22,6 +22,8 @@ properties:
+       - qcom,sm8650-adsp-pas
+       - qcom,sm8650-cdsp-pas
+       - qcom,sm8650-mpss-pas
++      - qcom,x1e80100-adsp-pas
++      - qcom,x1e80100-cdsp-pas
+ 
+   reg:
+     maxItems: 1
+@@ -69,6 +71,8 @@ allOf:
+             - qcom,sm8550-adsp-pas
+             - qcom,sm8550-cdsp-pas
+             - qcom,sm8650-adsp-pas
++            - qcom,x1e80100-adsp-pas
++            - qcom,x1e80100-cdsp-pas
+     then:
+       properties:
+         interrupts:
+@@ -126,6 +130,7 @@ allOf:
+           enum:
+             - qcom,sm8550-adsp-pas
+             - qcom,sm8650-adsp-pas
++            - qcom,x1e80100-adsp-pas
+     then:
+       properties:
+         power-domains:
+@@ -159,6 +164,7 @@ allOf:
+           enum:
+             - qcom,sm8550-cdsp-pas
+             - qcom,sm8650-cdsp-pas
++            - qcom,x1e80100-cdsp-pas
+     then:
+       properties:
+         power-domains:
 
-Sibi Sankar (2):
-      remoteproc: qcom_q6v5_pas: Add support for X1E80100 ADSP/CDSP
-      remoteproc: qcom_q6v5_pas: Unload lite firmware on ADSP
-
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  6 +++
- drivers/remoteproc/qcom_q6v5_pas.c                 | 48 ++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
----
-base-commit: 445a555e0623387fa9b94e68e61681717e70200a
-change-id: 20231201-x1e80100-remoteproc-b27da583e8cc
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.34.1
 
