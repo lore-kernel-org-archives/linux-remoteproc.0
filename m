@@ -1,162 +1,216 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE543D96C
-	for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 17:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D235D91C;
+	Tue, 13 Feb 2024 15:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707757381; cv=none; b=NRVCaHaujhSY9TlE8yHOvpC/2dQoLlqs5msxNZk3zywBVXGrzMaEv4Zyc2yDz67aLEyxkyJx1eQ+YowvtjWuhp7bEdFpcf4jJ6MJlQsx6t1woPdvEN5wgi+/sZjZVn3+SrEM57azCSjH4cXdfqGcMlwU3D0427Kjr4LtHR58kQU=
+	t=1707838764; cv=none; b=TSWKOlYEFln5oVmxKZwx6z+SddFY1n1T/pCp+2gZZ2KO10EIpy3mnmTNe6m/BWpalkSgqS7JN9JHCswyKPUc2lwYHUzk4myIzjpW50ZRYuuto6Fc5FdENExv9fJei3Lr4IoWeCEbquAJh42ByZXLJ7a2At/MG1an21SZMsBG0vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707757381; c=relaxed/simple;
-	bh=KYbfcSCObq9Y7TWbsBt1X4vUh7ieGGCaQrtS25nOIKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QbaqCAn16OLTlBm5ROT64oVfRcfutePpufAb40NBD53ywp1t8zyK7biQaFWobbutfWxElAanjseyK6akPFQlBlIhqMYi5nSAjaMPOiuVisFSYZU2tU4n6R7jOxE2qaehSQgb+nA1k6As24OmtxIIAPocySlWJYIwHyc/UyRfS00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xp/8UMxS; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707838764; c=relaxed/simple;
+	bh=br136el6UaDXusBTYKwUruEk6ZvTMR+slHPELf6HSJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CDYu2/q/m4KyjWkjOaZwgBzYhBQ4Q/1/poRhc0K6MYQmwKtYaMHZdZ8//kf6sxQsGuu10Fa8DtBtYB0WXVXmKq5CJYXQhUDd5fZYxeW7y/VTn9YjHL43jTJcZmGbwDc5qlBGwynjjnnnvJFsMnw+wslzT8ujUDVBuCwRQPERC1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jItxVyzT; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xp/8UMxS"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5610c233b95so3753217a12.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Feb 2024 09:02:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707757377; x=1708362177; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qzBgpfFit+87YhLNiV85KS1arSw6rjj+6NBv4OlIr7s=;
-        b=Xp/8UMxSi0pdIGPESVP8v7BhHfAN6pwrmrkLWAmDPbjDYol1UA029ZZA/RcuXIzlAP
-         whdaWPDMbE59vApZRX7cwGldGWFlLo8U1+uoV10X0xHjoKo14XaxxXFOUcJhj955wOpa
-         qWhbtgA3gQIdzuNa8HJ8xWxJqu5Ss/hSqBjPyxZn/3zq7aIlI81mzVg2pu52M34GXGzA
-         +KF0idprO6v9Bz+1jVg7lXDSELMPYnlbtVurknjejshW7T4jJTWOhm76pCucjbUJM+3X
-         vOH2oEJ6egN4P7Pp4ozbWKsZOvQgsB+pkt3RPKxw0Gktx/bCEfqjIsrBl045t1lzyPS6
-         rU1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707757377; x=1708362177;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qzBgpfFit+87YhLNiV85KS1arSw6rjj+6NBv4OlIr7s=;
-        b=kJilVk+kBxB+il+d8mTo3VZAMvCghtJ+Mko3Li3Tr9+5b/1mjSYjwWEw3spTIH6dQ8
-         pV8j8WZWdtVU9BzAgQNH1ZDn8uAAQ+Xby8Tx0WCOnQc0tDFoFb+ZkwzwN8/+0acYvOVd
-         Bh++ukPWuLc0zYcB/ss4iDkznfUQMwKs9wdjZAFYvPZjcsOHlTGlTipXcCQEJ0blCpnv
-         NYFntUvWKCJr1UBrMt4jVI8RYsfq/+tk/FZNiIdlXXLEyUiTeSMVQ1dcqY4BoqGnrWOS
-         jcQsLFbhQ93USpW0m32jf8zMxNzhCM5oZeEVyvcAtjmWI/DJk1oCJyeDwSike9UTaFPO
-         z9YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVy6Q0aOgwgEUqPkP0xuJ8h1cF3VQCZz5AvUlvC64Cnh4cYT7mevL+E1fu3JY8sh9v14H20EebV4Ws9FI+wJN+kfaq4uYhwY92Thkd04W/Q5g==
-X-Gm-Message-State: AOJu0YwLKnp2/QSCl51y6m88o8hHH4ZqXCP2dp3TMBtIHpLk8kQxQJKD
-	Z2en0Kz7lcV5+gTdvP/7JEBtSZ6zMMOfgnOIPtF7U+jQoddADGgwB8HsjGClOww=
-X-Google-Smtp-Source: AGHT+IHa4jR6TElh6E4GUFNdVvbg2RFBB3k+KwmuZowq3Ev03MT/YjERFfeyWxB2Mhaf3WhtNGA7ww==
-X-Received: by 2002:a17:906:5002:b0:a38:45fc:1f01 with SMTP id s2-20020a170906500200b00a3845fc1f01mr4799708ejj.45.1707757377152;
-        Mon, 12 Feb 2024 09:02:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWCe0+hF+inQus/Rc8nTATr1d5w+Tc3H+Q65e8rOpHKOW7rz55IlR/lDuhOXBi4bzlJuaVwgif6eLZWBIQA2z0Y6K6CeI9r940uDKCEsFHDZmIcgX0wNR15bBxav1VJvbAuOgxFXrWAytYkL6wajO6e1RE00+V1twS8jcMYG+Hg+sbrpjWuIdz11hXxjlGsc+wHHI92kx+SaCtPnCrvnUwHpTPWx8jtsmdBM3mzsGy38cRoZsJw+j7tytVHRwCLPzUfzmDzGfLmxPpFrAywoVESAJJrej0jYMxT0aQRR0PipvWHfHTOSMaCAHEvUTSZPtijeF1fhwVfLoTJrxHfzlu64rkNMbzC1Oj9x4jKZepU8cp8XvoZwe1MMf4iBGhe6McVnJoBSVc5ljMDobyfTqJgZOoJTwvcByckL9fGwzhnYo78fHug379ghw1ECmovX6W4PZrsxQIaVOvWLrwrxHLFgnPY39tWnANUTWhAEw==
-Received: from [127.0.1.1] ([188.24.162.93])
-        by smtp.gmail.com with ESMTPSA id h23-20020a170906261700b00a3c9951edf1sm379600ejc.115.2024.02.12.09.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 09:02:56 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 12 Feb 2024 19:02:44 +0200
-Subject: [PATCH v2 3/3] remoteproc: qcom_q6v5_pas: Unload lite firmware on
- ADSP
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jItxVyzT"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41DC2m9r028796;
+	Tue, 13 Feb 2024 16:39:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=9YKyfytPzdwnWuIKvgHDoE69dO38fSaD90N83hiwVcw=; b=jI
+	txVyzT4iT/QI9lZDzPQzOPlM7H6axH4a3UlgsEhUjNezm4hxiCVPCvtv2RgyCQpC
+	b4V2NWbMLBPnrPCCWu2sQeI6/giRzxQRgVDeNJzrA/N0pxQ9Z1JmrPWVWCfUdDm4
+	OWIrju+NbCqEIuRw7czgGuZkGlDNP30A8sCxhdMoEjORNVdsuE1kwM5E80q0Yked
+	6yDQfEaytr2eIBU2vgv8+pYzmn4MO/fIvonHTxmlfe1lXlvYSLeHY7de0VZW/ewC
+	CdvwNUmvKAErLXFp5XlKY+HpbWrPkAlMH95IVXvcBB6GeOPLfdtBsm0/SOlgw+KE
+	qUllRVyutGZnC7TxtUWQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w62jsbmdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Feb 2024 16:39:05 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8384040046;
+	Tue, 13 Feb 2024 16:39:01 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 10D4626FA0B;
+	Tue, 13 Feb 2024 16:38:13 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 13 Feb
+ 2024 16:38:12 +0100
+Received: from [10.201.20.75] (10.201.20.75) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 13 Feb
+ 2024 16:38:12 +0100
+Message-ID: <32b5b04b-c644-43d0-b190-4200f0e92979@foss.st.com>
+Date: Tue, 13 Feb 2024 16:38:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dt-bindings: remoteproc: Add compatibility for TEE
+ support
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240118100433.3984196-1-arnaud.pouliquen@foss.st.com>
+ <20240118100433.3984196-3-arnaud.pouliquen@foss.st.com>
+ <20240130175112.GA2040002-robh@kernel.org>
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20240130175112.GA2040002-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240212-x1e80100-remoteproc-v2-3-604614367f38@linaro.org>
-References: <20240212-x1e80100-remoteproc-v2-0-604614367f38@linaro.org>
-In-Reply-To: <20240212-x1e80100-remoteproc-v2-0-604614367f38@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2097; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=pK64jih4vFPFZcmgDeFClY35f13oGGe3b+xiPwzQtC0=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlyk86letr6BgkGNok75q8FkQqp+5XwcEzKCPlo
- e5Fn/1UnDCJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZcpPOgAKCRAbX0TJAJUV
- VhmLD/9D2yaRbOyfC+DrEoSDGVOiC9PAQg/srH+JDUAuuDxUgEHUC0/wQQEvB4ict4/mds0bv+w
- gwuiwSBssen0pdFkeqTWpFx36dpN1+J7h8ZUtMhCrQ8aJMxy1PK9Ph3T9RZm6Nlp0tVY6drg2oO
- rQsWfJgN3CoaLxmmCkmfw9oIVDBWPrcwGCnfi3eZTssXt0VFENEOTwnNCrhBq4XW2h+Szg5AuKf
- WQJUrronakABCgX5kXCXO8Ej9AvVcqPNizovIKnzd+IkY23WH6521veTxeZOY075TW1odA8a3zT
- GxZaDJDyQiQ5s7vlne2XAlgdnRWR5CrWHTPTtmyyTRqjcF+NNor8QeTSpt2qoW88O9eLu0b0hDq
- DhdgB+b17hMx7vWbblCPCwLwSyRzoI5GJGRAW32aadNtFnCMsMvs4MkH3IB9XIoUNPw9YXSSine
- 1FzjCFuNWIXC6AMRtQJ6pycgKiCOij5IiGHlyFo+JGrTozr45a8IA16H5SGoAVE9xRQeizufpWi
- 6wKgKV5xdikwzBxXnyL+ybhL1WP70LYrskuRc8DuM+BH0TMbz4EF3qvupe11ru7HX1EyeiR5Ck2
- naVt1Be5de9fuRSUimpOOyMvtfRhUbk7F71fz4Mx1enizlU7/p49JCjxah/hbwfIU4B3ycAZB1t
- WCJM92K3yw1d2PQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-13_08,2024-02-12_03,2023-05-22_02
 
-From: Sibi Sankar <quic_sibis@quicinc.com>
+Hello Rob,
 
-The UEFI loads a lite variant of the ADSP firmware to support charging
-use cases. The kernel needs to unload and reload it with the firmware
-that has full feature support for audio. This patch arbitarily shutsdown
-the lite firmware before loading the full firmware.
+On 1/30/24 18:51, Rob Herring wrote:
+> On Thu, Jan 18, 2024 at 11:04:31AM +0100, Arnaud Pouliquen wrote:
+>> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+>> where the Cortex-M4 firmware is loaded by the Trusted execution Environment
+>> (TEE).
+>> For instance, this compatible is used in both the Linux and OP-TEE
+>> device-tree:
+>> - In OP-TEE, a node is defined in the device tree with the
+>>   st,stm32mp1-m4-tee to support signed remoteproc firmware.
+>>   Based on DT properties, OP-TEE authenticates, loads, starts, and stops
+>>   the firmware.
+>> - On Linux, when the compatibility is set, the Cortex-M resets should not
+>>   be declared in the device tree.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> V1 to V2 updates
+>> - update "st,stm32mp1-m4" compatible description to generalize
+>> - remove the 'reset-names' requirement in one conditional branch, as the
+>>   property is already part of the condition test.
+>> ---
+>>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 52 +++++++++++++++----
+>>  1 file changed, 43 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> index 370af61d8f28..6af821b15736 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+>> @@ -16,7 +16,12 @@ maintainers:
+>>  
+>>  properties:
+>>    compatible:
+>> -    const: st,stm32mp1-m4
+>> +    enum:
+>> +      - st,stm32mp1-m4
+>> +      - st,stm32mp1-m4-tee
+>> +    description:
+>> +      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
+>> +      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
+>>  
+>>    reg:
+>>      description:
+>> @@ -142,21 +147,40 @@ properties:
+>>  required:
+>>    - compatible
+>>    - reg
+>> -  - resets
+>>  
+>>  allOf:
+>>    - if:
+>>        properties:
+>> -        reset-names:
+>> -          not:
+>> -            contains:
+>> -              const: hold_boot
+>> +        compatible:
+>> +          contains:
+>> +            const: st,stm32mp1-m4
+>> +    then:
+>> +      if:
+>> +        properties:
+>> +          reset-names:
+>> +            not:
+>> +              contains:
+>> +                const: hold_boot
+> 
+> Note that this is true when 'reset-names' is not present. If that is not 
+> desired, then you need 'required: [reset-names]'. Not really a new issue 
+> though.
+> 
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Yes that corresponds to my expectation, for compatibility with legacy DT.
+If the hold_boot reset was not used, reset-names was not mandatory
+I will add the 'required: [reset-names]' in the else
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 117fdfdfbc26..581ae5e570e8 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -41,6 +41,7 @@ struct adsp_data {
- 	const char *dtb_firmware_name;
- 	int pas_id;
- 	int dtb_pas_id;
-+	int lite_pas_id;
- 	unsigned int minidump_id;
- 	bool auto_boot;
- 	bool decrypt_shutdown;
-@@ -77,6 +78,7 @@ struct qcom_adsp {
- 	const char *dtb_firmware_name;
- 	int pas_id;
- 	int dtb_pas_id;
-+	int lite_pas_id;
- 	unsigned int minidump_id;
- 	int crash_reason_smem;
- 	bool decrypt_shutdown;
-@@ -218,6 +220,9 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- 	/* Store firmware handle to be used in adsp_start() */
- 	adsp->firmware = fw;
- 
-+	if (adsp->lite_pas_id)
-+		ret = qcom_scm_pas_shutdown(adsp->lite_pas_id);
-+
- 	if (adsp->dtb_pas_id) {
- 		ret = request_firmware(&adsp->dtb_firmware, adsp->dtb_firmware_name, adsp->dev);
- 		if (ret) {
-@@ -720,6 +725,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->rproc = rproc;
- 	adsp->minidump_id = desc->minidump_id;
- 	adsp->pas_id = desc->pas_id;
-+	adsp->lite_pas_id = desc->lite_pas_id;
- 	adsp->info_name = desc->sysmon_name;
- 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	adsp->region_assign_idx = desc->region_assign_idx;
-@@ -1020,6 +1026,7 @@ static const struct adsp_data x1e80100_adsp_resource = {
- 	.dtb_firmware_name = "adsp_dtb.mdt",
- 	.pas_id = 1,
- 	.dtb_pas_id = 0x24,
-+	.lite_pas_id = 0x1f,
- 	.minidump_id = 5,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
+Thanks,
+Arnaud
 
--- 
-2.34.1
-
+>> +      then:
+>> +        required:
+>> +          - st,syscfg-holdboot
+>> +          - resets
+>> +      else:
+>> +        properties:
+>> +          st,syscfg-holdboot: false
+>> +        required:
+>> +          - resets
+> 
+> 'resets' is always required within the outer 'then' schema, so you can 
+> move this up a level.
+> 
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: st,stm32mp1-m4-tee
+>>      then:
+>> -      required:
+>> -        - st,syscfg-holdboot
+>> -    else:
+>>        properties:
+>>          st,syscfg-holdboot: false
+>> +        reset-names: false
+>> +        resets: false
+>>  
+>>  additionalProperties: false
+>>  
+>> @@ -188,5 +212,15 @@ examples:
+>>        st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+>>        st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+>>      };
+>> +  - |
+>> +    #include <dt-bindings/reset/stm32mp1-resets.h>
+>> +    m4@10000000 {
+>> +      compatible = "st,stm32mp1-m4-tee";
+>> +      reg = <0x10000000 0x40000>,
+>> +            <0x30000000 0x40000>,
+>> +            <0x38000000 0x10000>;
+>> +      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+>> +      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+>> +    };
+>>  
+>>  ...
+>> -- 
+>> 2.25.1
+>>
