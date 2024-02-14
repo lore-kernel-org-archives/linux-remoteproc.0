@@ -1,261 +1,227 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C4A85934
-	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Feb 2024 17:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B994684047;
+	Wed, 14 Feb 2024 17:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707931269; cv=none; b=p+OneDQArMBFR6wcXhXSY9n99A6WbbyUuj1aQA2CyWNel5/BvhdXhqZdKRi1Xsp/E97t+1YV+DS4GEvHwyRs6eKsatCKuPaAaD4BtEbJoIn0DKFz2KfWnqZ2Y3LVhKDCmPxzSckHp0S1FglCPtaCkA7ie/9qJblSGkJD9TyVX8M=
+	t=1707931361; cv=none; b=sJ3M3j7y88MmTr5A71omdjBgU7bzvhJF632fR+Zez95HSdYiBRIDWWfkg70hgABpVuq1YyLY2By/HebhNruDiHOxy8f8qWkGQJ65SB3+dGSO2odY7iRbuWcx6jpnOKE4h3vfqloT9vXrPUGVfuRH+LHU7l7Ep3hGOvegVvCdSJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707931269; c=relaxed/simple;
-	bh=S7N5Ad2Nqrbj49SUQEtcPGXzZDyRUyvs+feHRNMHcIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLjSg4dnjw5PvPHyjJ9GANV/uGwV1cIhDOefpxFydBdPWg3mDDrOd2mcluvqEhp3E7ILbmo3/SU3c7e/oScbWoqZxk9sZlO2C/bsQQQRlNrBduomEgaRjl9lYDKG/bxou7NY7zzQwczQtDDh8GGIKZAOnU18u7i0iwnvpJ2xsiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZrPXNqt5; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707931361; c=relaxed/simple;
+	bh=CRyc1Zow9q2eOb3Vup4ogTxRj24JHuvpDHUTFQSCXCw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/qErHQdhz+VdPwjBzoTwLh02VvxAT/Q07QwG4fRWWZLBJ0ddz+wAJyBBhHHDjuMbQvNJhl15fu3EnBDOUgRAIDF0OWZ7puJ+63Fu3LstKPKCQJteENklvwfGL75unj4EXo28OFRdHPTX04HFt3max8m/JwloFL2gpLkovpvfX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1Pl/ii5H; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZrPXNqt5"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-296c58a11d0so10034a91.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Feb 2024 09:21:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707931267; x=1708536067; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+GLw4edkO69eFBIaZa2fDtYB7rYenDCtOXaRNz8hT8=;
-        b=ZrPXNqt5fbS8GDyoR347+DxOOl7sD2H6+IyP8DF4KSDhnfIcPSO+0O3MBiG45YdMBS
-         ZlGrk8uMU6t7K97Fi2lzZEsKHizkqUzd+GeSROZ8I37XIfliazCg1Qc+jiNSpeBW6s9f
-         4XFPgdt4bfT8VbWy2Lzdge7o/wdKhpJkuAE85TSw4ugsigD3oCQrCtZZ05Z9cXqVuXfh
-         tKvuZ4n6/CHAPKaZUBlutAAE1atGifBPg2+gjbI4a0W2E63tFvl669KjaEmULp286Cev
-         tYYOBIukcVbyQHfGs8PZLWfgnsmMDeZDJLbmu1JaYB/XBJ/VwwQoR7x1f4rdTu3TM7nx
-         /QfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707931267; x=1708536067;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+GLw4edkO69eFBIaZa2fDtYB7rYenDCtOXaRNz8hT8=;
-        b=qCUl1ZVOky+NLxjHjSNwg+SbJ0cZjToTCvgcBpHtSXV/aW7NkR+Z8KtPe/M5VKcCTM
-         wZ4yPAYTaIelwAxWYQXkEwgEh0DEPi/O0m1BNOvG2+10Pxhzh6K77Bwdy5H4VGMt0Qhh
-         VfPObk8X1n40CLLXtMia8hOEE0K4AVbsC8P4acx5NqdYdGtK5jSVXdPKiF5VP21o9lVK
-         tuYfJlGZYZhmg10gmSr9uhgecR7Xr+HnbbbYAW6yVk1SqUq7+zFqPN4LGQrQH2GEYE5W
-         2UzEvTgRGvPHfjj0N+AKWaV0fXjpb+iWRI6T9F74TQNeJfz1Be+wlIdifTct9KjVeGPx
-         kCOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJNYqeEXlK7k1AY6b5UTHa6Dn480FLbkMdQdSOt6A9QtgxJ2dKcR5XlJj6jB2Al43XW6NXjj6Ea9ku2KXGXHKSejX2F8L6R3bJr3rjmKQ4cg==
-X-Gm-Message-State: AOJu0Yy9ga3WbSHOj1l5YmhPxNVJZE7HOb2NWUKtOcDCNqSUiYTZB85A
-	zp36x+ylY2RzWU6q+dlsoD1xG7fxnBe6gjaCPPlCKDSzu3yXN/ip5iipUO3Dvm1dgMZnc0hDj+T
-	V
-X-Google-Smtp-Source: AGHT+IE9Pnjo6ou5luyV/r8s33nLYEdd+B7r13dw3T/QzHcEFLNf1/OVaVKnhjctOSPGTGrgO4qEYw==
-X-Received: by 2002:a17:90a:9b8c:b0:298:c136:2ffc with SMTP id g12-20020a17090a9b8c00b00298c1362ffcmr2584760pjp.45.1707931266846;
-        Wed, 14 Feb 2024 09:21:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVWodR54OSPqGD9VrYyvs5GM3YIST40u2Cyby+MBVNL/KbwkBOEjGMst0gElgv3G0ZqBEpDHffJ6Hpf1DN4gmNnrmLLUCCDaD4+j7w9w7X5Kje/6b85htP6dil3TbA71I9c1YSh5Gzyk+CeHHC9ze5cQ7rD6mrpF2246hpzApVpZUv3YecIa7T1M1/1nsSrkCcV/6+YgFzSjx52coZzbD95XLCwXsrU3iaE0s1OSXf4cuiMxGu3JU4GG+8oKg/n2PWl+UOPDSOQu4rOaZ2NVvayNRMAumzkFWoxFxEmg1sdxm44ZQ50/lV3jB6bMIVdGAwtn/CZCqBr2qnQYynJ/ug8j+Pe2Flg6+iAJZNT8c3UPd+Jk9d7EXe2L0JTlfPLUqPIYa4KDPJoTw==
-Received: from p14s ([2604:3d09:148c:c800:96ea:e45d:5361:78d0])
-        by smtp.gmail.com with ESMTPSA id ev6-20020a17090aeac600b00298d203d359sm1696864pjb.24.2024.02.14.09.21.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Feb 2024 09:21:06 -0800 (PST)
-Date: Wed, 14 Feb 2024 10:21:03 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	michal.simek@amd.com, ben.levinsky@amd.com,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 4/4] remoteproc: zynqmp: parse TCM from device tree
-Message-ID: <Zcz2f3eZrXrRAX6F@p14s>
-References: <20240213175450.3097308-1-tanmay.shah@amd.com>
- <20240213175450.3097308-5-tanmay.shah@amd.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1Pl/ii5H"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41EGZZKW017077;
+	Wed, 14 Feb 2024 18:22:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	selector1; bh=QJGdR7T1RAMulvzBV6KzWPdgGJO8ZLSH7zr0wo/PFu0=; b=1P
+	l/ii5HQj2gOqq+CGCFTkUZ2WXCEN/8WgQ+2XBiQtKIf+dPkpMiTzJkKF/lcUkgd0
+	ywbeRiFmkJ+euWbOmhMGFy5gh+aWk8B3wuSfHFWT2kGmVbbm4rvdbwShcyAuB9Es
+	38cogwrNL4ZjzqF6VVvbRnAlSofSgDupp3XHjdjFz5mUTozKpuZb1JtX6RTQusQM
+	fL+DluvQVfmQ2Pj3TAnGVxHVMvqzD/YX5ai8fVcaTQA0a6K7AhyF5i9UYBTmwNUL
+	VRmzXZ1bci/xJ/ZRXHXXGRlvXzmi83zEMWi0aXsIz6uWZDtKSmpv0P7Fgapj+aap
+	h1afNitzJr9tCRBJUmDA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w62shywsu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 18:22:25 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 392D840047;
+	Wed, 14 Feb 2024 18:22:19 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 91F852CA54D;
+	Wed, 14 Feb 2024 18:21:34 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 14 Feb
+ 2024 18:21:34 +0100
+Received: from localhost (10.201.20.75) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 14 Feb
+ 2024 18:21:34 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v3 4/7] remoteproc: core: Implement the support of an alternative boot
+Date: Wed, 14 Feb 2024 18:21:24 +0100
+Message-ID: <20240214172127.1022199-5-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
+References: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240213175450.3097308-5-tanmay.shah@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-14_10,2024-02-14_01,2023-05-22_02
 
-Good morning,
+Implement a new method to load a firmware and start the remote processor.
+In this method the firmware is loaded first and then the loaded resource
+table is obtained.
 
-On Tue, Feb 13, 2024 at 09:54:50AM -0800, Tanmay Shah wrote:
-> ZynqMP TCM information was fixed in driver. Now ZynqMP TCM information
-> is available in device-tree. Parse TCM information in driver
-> as per new bindings.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Changes in v10:
->   - Remove redundant changes to handle TCM in lockstep mode
-> 
-> Changes in v9:
->   - Introduce new API to request and release core1 TCM power-domains in
->     lockstep mode. This will be used during prepare -> add_tcm_banks
->     callback to enable TCM in lockstep mode.
->   - Parse TCM from device-tree in lockstep mode and split mode in
->     uniform way.
->   - Fix TCM representation in device-tree in lockstep mode.
-> 
-> Changes in v8:
->   - Remove pm_domains framework
->   - Remove checking of pm_domain_id validation to power on/off tcm
->   - Remove spurious change
->   - parse power-domains property from device-tree and use EEMI calls
->     to power on/off TCM instead of using pm domains framework
-> 
-> Changes in v7:
->   - move checking of pm_domain_id from previous patch
->   - fix mem_bank_data memory allocation
-> 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 112 ++++++++++++++++++++++--
->  1 file changed, 107 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 42b0384d34f2..49e8eaf83fce 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -74,8 +74,8 @@ struct mbox_info {
->  };
->  
->  /*
-> - * Hardcoded TCM bank values. This will be removed once TCM bindings are
-> - * accepted for system-dt specifications and upstreamed in linux kernel
-> + * Hardcoded TCM bank values. This will stay in driver to maintain backward
-> + * compatibility with device-tree that does not have TCM information.
->   */
->  static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
->  	{0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
-> @@ -757,6 +757,103 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  	return ERR_PTR(ret);
->  }
->  
-> +static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
-> +{
-> +	int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
-> +	struct of_phandle_args out_args = {0};
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 86 +++++++++++++++++++++++++++-
+ include/linux/remoteproc.h           |  2 +
+ 2 files changed, 87 insertions(+), 1 deletion(-)
 
-Is this really needed?  As far as I can tell it isn't.  
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 34b0093689da..47956e07365e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -38,6 +38,7 @@
+ #include <linux/virtio_ring.h>
+ #include <asm/byteorder.h>
+ #include <linux/platform_device.h>
++#include <linux/tee_remoteproc.h>
+ 
+ #include "remoteproc_internal.h"
+ 
+@@ -1493,6 +1494,86 @@ static int rproc_set_rsc_table(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++/*
++ * Alternative method to load a firmware and boot a remote processor with it.
++ * Similar to rproc_fw_boot but the resource table is obtained and parsed only after loading the
++ * firmware.
++ */
++static int rproc_alt_fw_boot(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = &rproc->dev;
++	const char *name = rproc->firmware;
++	int ret;
++
++	dev_info(dev, "Booting a private format image %s, size %zd\n", name, fw->size);
++
++	/*
++	 * if enabling an IOMMU isn't relevant for this rproc, this is
++	 * just a nop
++	 */
++	ret = rproc_enable_iommu(rproc);
++	if (ret) {
++		dev_err(dev, "can't enable iommu: %d\n", ret);
++		return ret;
++	}
++
++	/* Prepare rproc for firmware loading if needed */
++	ret = rproc_prepare_device(rproc);
++	if (ret) {
++		dev_err(dev, "can't prepare rproc %s: %d\n", rproc->name, ret);
++		goto disable_iommu;
++	}
++
++	/* load the image to memory */
++	ret = rproc_load_segments(rproc, fw);
++	if (ret) {
++		dev_err(dev, "Failed to load firmware: %d\n", ret);
++		return ret;
++	}
++
++	ret = rproc_set_rsc_table(rproc);
++	if (ret) {
++		dev_err(dev, "can't load resource table: %d\n", ret);
++		goto unprepare_device;
++	}
++
++	/* reset max_notifyid */
++	rproc->max_notifyid = -1;
++
++	/* reset handled vdev */
++	rproc->nb_vdev = 0;
++
++	/* handle fw resources which are required to boot rproc */
++	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
++	if (ret) {
++		dev_err(dev, "Failed to process resources: %d\n", ret);
++		goto clean_up_resources;
++	}
++
++	/* Allocate carveout resources associated to rproc */
++	ret = rproc_alloc_registered_carveouts(rproc);
++	if (ret) {
++		dev_err(dev, "Failed to allocate associated carveouts: %d\n",
++			ret);
++		goto clean_up_resources;
++	}
++
++	ret = rproc_start(rproc, fw);
++	if (ret)
++		goto clean_up_resources;
++
++	return 0;
++
++clean_up_resources:
++	rproc_resource_cleanup(rproc);
++unprepare_device:
++	/* release HW resources if needed */
++	rproc_unprepare_device(rproc);
++disable_iommu:
++	rproc_disable_iommu(rproc);
++	return ret;
++}
++
+ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
+ {
+ 	struct resource_table *table_ptr;
+@@ -1957,7 +2038,10 @@ int rproc_boot(struct rproc *rproc)
+ 			goto downref_rproc;
+ 		}
+ 
+-		ret = rproc_fw_boot(rproc, firmware_p);
++		if (rproc->alt_boot)
++			ret = rproc_alt_fw_boot(rproc, firmware_p);
++		else
++			ret = rproc_fw_boot(rproc, firmware_p);
+ 
+ 		release_firmware(firmware_p);
+ 	}
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..ba219a77e055 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -544,6 +544,7 @@ enum rproc_features {
+  * @elf_machine: firmware ELF machine
+  * @cdev: character device of the rproc
+  * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
++ * @alt_boot flag to indicate if remoteproc should use the alternate boot method.
+  * @features: indicate remoteproc features
+  */
+ struct rproc {
+@@ -585,6 +586,7 @@ struct rproc {
+ 	u16 elf_machine;
+ 	struct cdev cdev;
+ 	bool cdev_put_on_release;
++	bool alt_boot;
+ 	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+ };
+ 
+-- 
+2.25.1
 
-Otherwise and if it wasn't for the modification on the DT side, I would apply
-this patch.
-
-Thanks,
-Mathieu
-
-> +	struct zynqmp_r5_core *r5_core;
-> +	struct platform_device *cpdev;
-> +	struct mem_bank_data *tcm;
-> +	struct device_node *np;
-> +	struct resource *res;
-> +	u64 abs_addr, size;
-> +	struct device *dev;
-> +
-> +	for (i = 0; i < cluster->core_count; i++) {
-> +		r5_core = cluster->r5_cores[i];
-> +		dev = r5_core->dev;
-> +		np = r5_core->np;
-> +
-> +		pd_count = of_count_phandle_with_args(np, "power-domains",
-> +						      "#power-domain-cells");
-> +
-> +		if (pd_count <= 0) {
-> +			dev_err(dev, "invalid power-domains property, %d\n", pd_count);
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* First entry in power-domains list is for r5 core, rest for TCM. */
-> +		tcm_bank_count = pd_count - 1;
-> +
-> +		if (tcm_bank_count <= 0) {
-> +			dev_err(dev, "invalid TCM count %d\n", tcm_bank_count);
-> +			return -EINVAL;
-> +		}
-> +
-> +		r5_core->tcm_banks = devm_kcalloc(dev, tcm_bank_count,
-> +						  sizeof(struct mem_bank_data *),
-> +						  GFP_KERNEL);
-> +		if (!r5_core->tcm_banks)
-> +			ret = -ENOMEM;
-> +
-> +		r5_core->tcm_bank_count = tcm_bank_count;
-> +		for (j = 0, tcm_pd_idx = 1; j < tcm_bank_count; j++, tcm_pd_idx++) {
-> +			tcm = devm_kzalloc(dev, sizeof(struct mem_bank_data),
-> +					   GFP_KERNEL);
-> +			if (!tcm)
-> +				return -ENOMEM;
-> +
-> +			r5_core->tcm_banks[j] = tcm;
-> +
-> +			/* Get power-domains id of TCM. */
-> +			ret = of_parse_phandle_with_args(np, "power-domains",
-> +							 "#power-domain-cells",
-> +							 tcm_pd_idx, &out_args);
-> +			if (ret) {
-> +				dev_err(r5_core->dev,
-> +					"failed to get tcm %d pm domain, ret %d\n",
-> +					tcm_pd_idx, ret);
-> +				return ret;
-> +			}
-> +			tcm->pm_domain_id = out_args.args[0];
-> +			of_node_put(out_args.np);
-> +
-> +			/* Get TCM address without translation. */
-> +			ret = of_property_read_reg(np, j, &abs_addr, &size);
-> +			if (ret) {
-> +				dev_err(dev, "failed to get reg property\n");
-> +				return ret;
-> +			}
-> +
-> +			/*
-> +			 * Remote processor can address only 32 bits
-> +			 * so convert 64-bits into 32-bits. This will discard
-> +			 * any unwanted upper 32-bits.
-> +			 */
-> +			tcm->da = (u32)abs_addr;
-> +			tcm->size = (u32)size;
-> +
-> +			cpdev = to_platform_device(dev);
-> +			res = platform_get_resource(cpdev, IORESOURCE_MEM, j);
-> +			if (!res) {
-> +				dev_err(dev, "failed to get tcm resource\n");
-> +				return -EINVAL;
-> +			}
-> +
-> +			tcm->addr = (u32)res->start;
-> +			tcm->bank_name = (char *)res->name;
-> +			res = devm_request_mem_region(dev, tcm->addr, tcm->size,
-> +						      tcm->bank_name);
-> +			if (!res) {
-> +				dev_err(dev, "failed to request tcm resource\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * zynqmp_r5_get_tcm_node()
->   * Ideally this function should parse tcm node and store information
-> @@ -835,9 +932,14 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
->  	struct zynqmp_r5_core *r5_core;
->  	int ret, i;
->  
-> -	ret = zynqmp_r5_get_tcm_node(cluster);
-> -	if (ret < 0) {
-> -		dev_err(dev, "can't get tcm node, err %d\n", ret);
-> +	r5_core = cluster->r5_cores[0];
-> +	if (of_find_property(r5_core->np, "reg", NULL))
-> +		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
-> +	else
-> +		ret = zynqmp_r5_get_tcm_node(cluster);
-> +
-> +	if (ret) {
-> +		dev_err(dev, "can't get tcm, err %d\n", ret);
->  		return ret;
->  	}
->  
-> -- 
-> 2.25.1
-> 
