@@ -1,52 +1,52 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8648E8662D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE25D1272A2;
 	Wed, 14 Feb 2024 17:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707931362; cv=none; b=hhk63KVV5i+NUyYoQmeBEBc+abXEEaGMNHxbAn2qdlF/xlV6sL5VBwILLoKiYTlsvXDj+6N9pE/kbcQobfuRlMs7exP2SaIeHrSIJA9MfmtG7r8JoLQcwtSTAlYDhdJ9H46Opw67LqL0VN+TwRBXAR0dWeJ0ap75uecofvtIFs0=
+	t=1707931362; cv=none; b=BL/p3EyuDdPhTuySAPKqMJk5/7wtVN6tubs7CltFv8YXxnXg9PpVm2eBwt7V88G6E28+xQkrm/SiAxI96w7oazkbbUAt4kRMThOjmqug2cjJVisE3AoEiE7h6pRq17TCU3WmqBPMfaVyZDYfTd6eHSWeY8hVxwU5jNTipNtLCdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707931362; c=relaxed/simple;
-	bh=Aaa2jNzeBt4IVHxAmwNTBPziNw4IvtOWAfB8bps0trQ=;
+	bh=8ga+HEE2O98HlzKy35lUTwq3IfvDawkIKEoVuNBe9Bk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ozUy2105pZY6Ok+Xqxw2U3+2BBBVBvgeMxdfKZUZvwriu1yKgqNBWzziKAPuVoab0agne3rR66824ncnRHealHIorTjtfsPpTFw6+IR5gMYA/SkvbrI7Nl5DW8ri8LQyuT/fdhTqnF58JrHSd4fErT4kPbMqCbUQ/O2oYr3MqnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5tX/Oacz; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=WieGVTvCrJ+Vnnt9hxz5RqSt62oeTOgOXJsS2g+rpx7ksRTNwoKYi7OVTV7UyM64ZCjPfJ8IwQnjYIJ0mCe/MQpfu+9ZZVVXswBml9u+LtQygt47OBr7Zaf8a8jyftwK1tsp8AIgjEXnNSnmlCtmWYkRTQvTUN6+Psps/ze62cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oXXFiV+5; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5tX/Oacz"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41EEb56X003989;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oXXFiV+5"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41ED58rC027428;
 	Wed, 14 Feb 2024 18:22:22 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=9EG7+XkrPEpea5V06f07KXHol0lpljrozkJw2bM13jg=; b=5t
-	X/OaczfdhutsrptiR4+GV4okj5l21VtTuahDrfbiNrgDj75hnWEFu8keC+/IW7CA
-	jLPdVYe+nJhG/74mftyYIM9kjR5I5ZCeAJiui58yiC2z5mqwxsAGoFSKrjX4r2S1
-	hRS0GsmAOEN3PThaL83THalRXEskOMS4pzY8RwyGgoZUK7Lo5j11FFB2M9LkeN8q
-	kOUMoWBwEElCOz8NSXcho+xHR7Gk2/NgB/yAxqdjOdMqJbTD+oVI2rfmelWAW+9v
-	vz2tM9KhSFECgS07g0EfL3YlPBp5PfME8ylhb2RKU22H1yMqST7gRsVVqjKdga6r
-	qXZPLfuVSThJ+n250g3g==
+	selector1; bh=qBtgOyq14dsl5L0CUVufOoZV2xCltEiuqjmF3gmRqZM=; b=oX
+	XFiV+5xGSmCtA5NmSoHOCaSPaLwTxGxZlFK/YhIO0zQyxjglHU50wBeMRMNORau/
+	raLvy48cot9DbKrs6dr3FYyE2K2+k/FVq+x73c3BacEPMvD9EVvrzf5hXKXVgDMA
+	Men5H+fpuVa0H6W1uIQaV7EAicfYrKBkx9K0No/FEcNiK16sWfYtKUgXIke4rRUt
+	3+5eUpOzItxnBrhMkIoa+OQYQIuYQ0PgDdMny4zZtSsnWzDfZbzbtrhTIdQ4pMaN
+	Xku5IPFOYl3+9tFX9Daf7HLPOhwHgMZXvuBgQ2YkG8vTNctbwdy8kielNeBuNJ9l
+	j6JScewlezYm2Bk8uXdA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w62ktqx96-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w6mynnh06-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 18:22:21 +0100 (CET)
+	Wed, 14 Feb 2024 18:22:22 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7C80C40045;
-	Wed, 14 Feb 2024 18:22:18 +0100 (CET)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5054940048;
+	Wed, 14 Feb 2024 18:22:19 +0100 (CET)
 Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 63EBE2CA54E;
-	Wed, 14 Feb 2024 18:21:35 +0100 (CET)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED61A2CA548;
+	Wed, 14 Feb 2024 18:21:32 +0100 (CET)
 Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
  (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 14 Feb
- 2024 18:21:35 +0100
+ 2024 18:21:32 +0100
 Received: from localhost (10.201.20.75) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 14 Feb
- 2024 18:21:34 +0100
+ 2024 18:21:32 +0100
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -61,9 +61,9 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v3 5/7] dt-bindings: remoteproc: Add compatibility for TEE support
-Date: Wed, 14 Feb 2024 18:21:25 +0100
-Message-ID: <20240214172127.1022199-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v3 2/7] remoteproc: Extract the firmware load from the start
+Date: Wed, 14 Feb 2024 18:21:22 +0100
+Message-ID: <20240214172127.1022199-3-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
 References: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
@@ -81,111 +81,65 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-02-14_10,2024-02-14_01,2023-05-22_02
 
-The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
-where the Cortex-M4 firmware is loaded by the Trusted execution Environment
-(TEE).
-For instance, this compatible is used in both the Linux and OP-TEE
-device-tree:
-- In OP-TEE, a node is defined in the device tree with the
-  st,stm32mp1-m4-tee to support signed remoteproc firmware.
-  Based on DT properties, OP-TEE authenticates, loads, starts, and stops
-  the firmware.
-- On Linux, when the compatibility is set, the Cortex-M resets should not
-  be declared in the device tree.
+With the introduction of tee_remoteproc, the firmware has to be loaded
+first before parsing the resource table. This constraint is linked to
+the firmware authentication, that contains the resource table.
+In OP-TEE, this authentication is correlated with the load of the
+firmware (the loaded segments authenticated after being copied
+to the destination memory). Removing rproc_load_segments will allow
+it to be called earlier in the boot sequence.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
-V1 to V2 updates
-- update "st,stm32mp1-m4" compatible description to generalize
-- remove the 'reset-names' requirement in one conditional branch, as the
-  property is already part of the condition test.
----
- .../bindings/remoteproc/st,stm32-rproc.yaml   | 51 ++++++++++++++++---
- 1 file changed, 43 insertions(+), 8 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index 370af61d8f28..36ea54016b76 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -16,7 +16,12 @@ maintainers:
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 695cce218e8c..283ca071e35c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1269,13 +1269,6 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
  
- properties:
-   compatible:
--    const: st,stm32mp1-m4
-+    enum:
-+      - st,stm32mp1-m4
-+      - st,stm32mp1-m4-tee
-+    description:
-+      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
-+      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
+-	/* load the ELF segments to memory */
+-	ret = rproc_load_segments(rproc, fw);
+-	if (ret) {
+-		dev_err(dev, "Failed to load program segments: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	/*
+ 	 * The starting device has been given the rproc->cached_table as the
+ 	 * resource table. The address of the vring along with the other
+@@ -1430,6 +1423,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up_resources;
+ 	}
  
-   reg:
-     description:
-@@ -142,21 +147,41 @@ properties:
- required:
-   - compatible
-   - reg
--  - resets
- 
- allOf:
-   - if:
-       properties:
--        reset-names:
--          not:
--            contains:
--              const: hold_boot
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4
-     then:
-+      if:
-+        properties:
-+          reset-names:
-+            not:
-+              contains:
-+                const: hold_boot
-+      then:
-+        required:
-+          - st,syscfg-holdboot
-+      else:
-+        properties:
-+          st,syscfg-holdboot: false
-+        required:
-+          - reset-names
-       required:
--        - st,syscfg-holdboot
--    else:
-+        - resets
++	/* load the ELF segments to memory */
++	ret = rproc_load_segments(rproc, fw);
++	if (ret) {
++		dev_err(dev, "Failed to load program segments: %d\n", ret);
++		return ret;
++	}
 +
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4-tee
-+    then:
-       properties:
-         st,syscfg-holdboot: false
-+        reset-names: false
-+        resets: false
+ 	ret = rproc_start(rproc, fw);
+ 	if (ret)
+ 		goto clean_up_resources;
+@@ -1808,6 +1808,13 @@ static int rproc_boot_recovery(struct rproc *rproc)
+ 		return ret;
+ 	}
  
- additionalProperties: false
++	/* load the ELF segments to memory */
++	ret = rproc_load_segments(rproc, firmware_p);
++	if (ret) {
++		dev_err(dev, "Failed to load program segments: %d\n", ret);
++		return ret;
++	}
++
+ 	/* boot the remote processor up again */
+ 	ret = rproc_start(rproc, firmware_p);
  
-@@ -188,5 +213,15 @@ examples:
-       st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-       st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-     };
-+  - |
-+    #include <dt-bindings/reset/stm32mp1-resets.h>
-+    m4@10000000 {
-+      compatible = "st,stm32mp1-m4-tee";
-+      reg = <0x10000000 0x40000>,
-+            <0x30000000 0x40000>,
-+            <0x38000000 0x10000>;
-+      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-+      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-+    };
- 
- ...
 -- 
 2.25.1
 
