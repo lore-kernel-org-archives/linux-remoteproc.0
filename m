@@ -1,64 +1,83 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE7C1468ED
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Feb 2024 15:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9AA5491E;
+	Thu, 22 Feb 2024 18:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708614739; cv=none; b=jYkxOZw5DOMfGa8M2cYKotIGCqLvnr6nu80wK5nwUWw+Pson8JCL/lLz2gTtKuMB17fNWWjX5nkkdieM8eFNiP5XFhrAcYW86YJ+IlBdn0yNkTpVk54nRsMtqTXMHOP92t7pMIcxGW7AKojc0Ort07ZfkrLNbXe+ZtNtIoKSZ1w=
+	t=1708626276; cv=none; b=T+2iN2ZTW784Bnk9qWa7sY6/5nRIo1G/afk5I/hM6Zk9K5PnO6arFPskDOevD0l/7D9WR+yJJY7M7Yr1niVfVvNEDl7/JJHuCTPeUECSumXcM87/aLBx2Tz4CtyEwhRVJBvxN92/T3HcJwdLPvhyFgryYMhBj7eOQOlq5HJdO90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708614739; c=relaxed/simple;
-	bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=FBAc8cMu0JOXQec4Ps4USWx+vnXKAZP0tj6+YaqGDDTR6N373rGQq/NdQu3dc4GvsVBl51WTtAOYLMCYAniA70rmCnmx7ELr/9e8LXKcNLaqN4YFzztsqwt+acbRhCIYxA5u/r4yYf+uSlE1cnmZg930AG25JyExchPAnbTkS5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u24O2y5U; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708626276; c=relaxed/simple;
+	bh=x42gYfFIle5hMZRh275TRKsrYsjhPinQRyYzAvbClLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zb/ZkJZ6S7ampiTDUk5HWB7p27St4g3A3EXzET4vauMhtYKBaaZzUmU94NvH5cVWZ2bnOWSoXuGAl7tigxi6VVkh7FTEiP1RCZOMBn75nR7su7VF8JzTpdFwJlyeOgLiSOw9zTEZ7dX8f/8bncBz7lGPBZgXlpEA7RuHfGUI9B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENDhL9Lh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u24O2y5U"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-564d9b0e96dso3960877a12.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Feb 2024 07:12:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708614735; x=1709219535; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
-        b=u24O2y5Ulqlhat+seK9ZgfPeRMMVPj2QTxtNQ+ku8P5OZlM0o+ZMCJ6nQpnjSOY9NA
-         /j82GSNFZvH0Aj2fyN5oB4tgwg6/WNbkpeHYHG+fcznrn/ikqlwLVSVKvO66rxX5IXRS
-         e3XkBdmiwHp/Tis9RNn8KETPH8ox1fNz3u4/2JbNnhF3Q0pk3jAXMdrXsqvyvzA6/m8d
-         h13lEM+myKrPd970OJi9lvDRItz9kOXE8m4P9/PJaWNUtA6QMcCfI17L6lsh7Zk/pkA9
-         +TyI2pjlowA0HFTx2wJ+B1R4nOU7/K2RczbpLu1NPnzWGnF52GG92invMVxW3D8F/0A1
-         5rYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708614735; x=1709219535;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
-        b=YwYZaQ730bpg+/JfIxd28XpjaamDYylI1ZUBhrR3J0Wv2mZKZsqy/atKoOmqi3JUAu
-         dBGc5nDqNTFLftSzwJy6aWRkaE+9IZiHpQvHU1CQJigLlgAoF1I7OLrq6g54fRajK+if
-         yNjpcQAmp5rBSC2PW83ektntGH/SWSfORreu7qpXESrXLMkU6sK5FY/1VGtsL8OmZlbm
-         lOp14+SG3eQRo/Qw/lYmEVagMD7LfEmSYjzpTx5NAuq48IWmvJWz52PhnZHk9CJvgP8k
-         JGaDtKVJtFL5C4Nzt1hXk4RZ5Hle0Cys77C0/hvCigsdKMXTbh4FMEg53dZ669/dBjnX
-         xnHA==
-X-Gm-Message-State: AOJu0YyuYfFVgpHrBfB9AdtHeN2CgZqfzpT2L+2sq0sKpHucH1Q55Whj
-	u7tCtHoEke8KF5FXwqXum1j4Yqr8ZVjyfkKM3Mg4GvCYs/KCSgdaHE+TLLXsbo6/JRmg8aY5Yqk
-	3YsWLb8B7BGKCazodedaNTHReRz+MQ69txcuEiNGygLGIg8phQO8=
-X-Google-Smtp-Source: AGHT+IEOcaShoDVYb6Rr7XAfMaJwaIzHMW2FMOGEzycwI6QM9uiW4ScZjG5MZpmlz3h+lc6ZOfCE5SSFY91hpFSTEqM=
-X-Received: by 2002:a05:6402:1257:b0:564:73e9:a9cd with SMTP id
- l23-20020a056402125700b0056473e9a9cdmr9151561edw.31.1708614735480; Thu, 22
- Feb 2024 07:12:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENDhL9Lh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43084C433C7;
+	Thu, 22 Feb 2024 18:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708626274;
+	bh=x42gYfFIle5hMZRh275TRKsrYsjhPinQRyYzAvbClLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ENDhL9Lh247wVsy1yzU4AHQUn/r2Ra+9U5W5T1nwoWvQUHORHYW2dQJDMX6us/SsZ
+	 Kf+MH+cHbgHt8DLocbrYtO7O8/GszCzgx1/Cjwro0PU7rhoF3iB1Bd1ee3pIKvyBSh
+	 II4WRU5jieQ1yMD4OH3gJOxfef8bvwAPuqen1n9tw9uvrV7iNgwXXc2BTesd6/sFTe
+	 PMxgrqel9tEJmKPhUC2FFSJkK9JWCWyBrjdg1sUfWylGyiJ+/wNJ3Ne9yvihrjmKf2
+	 UDSHZ9YOyDhgdI/K/nh2yjVOWLlhTSdJ7KW2WRvaCMf9kwxhyWDGjUfBflwCi3aSWs
+	 8pY9PbfPtjvEw==
+Date: Thu, 22 Feb 2024 12:24:30 -0600
+From: Rob Herring <robh@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: op-tee@lists.trustedfirmware.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Rob Herring <robh+dt@kernel.org>, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] dt-bindings: remoteproc: Add compatibility for
+ TEE support
+Message-ID: <170862626977.3652711.10744856298270939089.robh@kernel.org>
+References: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
+ <20240214172127.1022199-6-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 22 Feb 2024 08:12:04 -0700
-Message-ID: <CANLsYkwW+6NmKf8fK=j+-wWL=0jR76iTDJsuZ1DEMJb6aL1ceQ@mail.gmail.com>
-Subject: Remoteproc/RPMSG patchset review order for February 22nd 2024
-To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240214172127.1022199-6-arnaud.pouliquen@foss.st.com>
 
-[PATCH v3 0/7] Introduction of a remoteproc tee to load signed firmware
-Audio dsp recovery using remoteproc
-[PATCH v11 0/4] add zynqmp TCM bindings
+
+On Wed, 14 Feb 2024 18:21:25 +0100, Arnaud Pouliquen wrote:
+> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+> where the Cortex-M4 firmware is loaded by the Trusted execution Environment
+> (TEE).
+> For instance, this compatible is used in both the Linux and OP-TEE
+> device-tree:
+> - In OP-TEE, a node is defined in the device tree with the
+>   st,stm32mp1-m4-tee to support signed remoteproc firmware.
+>   Based on DT properties, OP-TEE authenticates, loads, starts, and stops
+>   the firmware.
+> - On Linux, when the compatibility is set, the Cortex-M resets should not
+>   be declared in the device tree.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> V1 to V2 updates
+> - update "st,stm32mp1-m4" compatible description to generalize
+> - remove the 'reset-names' requirement in one conditional branch, as the
+>   property is already part of the condition test.
+> ---
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 51 ++++++++++++++++---
+>  1 file changed, 43 insertions(+), 8 deletions(-)
+> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
