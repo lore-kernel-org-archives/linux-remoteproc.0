@@ -1,167 +1,64 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF1182DA;
-	Thu, 22 Feb 2024 09:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE7C1468ED
+	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Feb 2024 15:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708595746; cv=none; b=qy8joQESn8nQw4kYxLJq/mUJzVgQ4E0OE3q+P5w+3VkkobtbhxUTdcUWnrGuB/bB7SGcEVySubqVc5IPs7TgTVy/JCTChS4QErmRMd1wqGXjgq4WmKOQSembjPU9i9PVYugnD3Y+45hqm0wYsJxEqs0U6uao7Cr18xIG1fOkN1g=
+	t=1708614739; cv=none; b=jYkxOZw5DOMfGa8M2cYKotIGCqLvnr6nu80wK5nwUWw+Pson8JCL/lLz2gTtKuMB17fNWWjX5nkkdieM8eFNiP5XFhrAcYW86YJ+IlBdn0yNkTpVk54nRsMtqTXMHOP92t7pMIcxGW7AKojc0Ort07ZfkrLNbXe+ZtNtIoKSZ1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708595746; c=relaxed/simple;
-	bh=2HDnhOVRJHbojLSnYAS7XkzG2gdqjQq7B1JmqC5MQZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qwurXiUwlCISue9jCsYmbRgmIPB7ErOrBQiFYgtiLmM2qNum7LTRqrTzHvZ9Zv8GIzmdxRy7GNt3oTb4IyNWkcZN/GHhhDVA9iFRtRdHPipXo21iXpFkD+1OMznvuAwIH76cEVVdZfoGobkUTjsPGcNRGxajAPN+MR/MsiGioAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O/GS/WZ5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1708614739; c=relaxed/simple;
+	bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=FBAc8cMu0JOXQec4Ps4USWx+vnXKAZP0tj6+YaqGDDTR6N373rGQq/NdQu3dc4GvsVBl51WTtAOYLMCYAniA70rmCnmx7ELr/9e8LXKcNLaqN4YFzztsqwt+acbRhCIYxA5u/r4yYf+uSlE1cnmZg930AG25JyExchPAnbTkS5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u24O2y5U; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O/GS/WZ5"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41M56fhw010101;
-	Thu, 22 Feb 2024 09:55:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=5OuU5m7TxwbK/rp6+K5E68Y6ra0FqJ05hWgHbe7cVJc=; b=O/
-	GS/WZ5rs00m9jUJroN0OHjbBEIWTS5tyBjkIS7TsWomoy8qy9BYNfgqU2k/LMdfO
-	d9RyobazqPT0HxO6AiOSt1OO0FrpaPUYBL3myR6I6BIlstC5mImQ3P1Z7KRbBW7o
-	iOvMNdtcDWnt0+ddxihfFTNv4H1Pr+S7KFvHyLpnaHnPIe+xS00gN8zpUuk2ABwi
-	46ni31THTP6jwms0K4i4SE4t5mq8xXP2er80zgUKRymNUMeHUe3qpKn/p+FJ7z0m
-	bySlxh68sowiC9xl2510tmrOfoSfD0TUrXIF4TE8Jct2nyJoeCt1PYNcLA0nTHZi
-	sjffwU9UyVsrT95BzGTA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wdw13963a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Feb 2024 09:55:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41M9tIUx025649
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Feb 2024 09:55:18 GMT
-Received: from [10.214.82.119] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 22 Feb
- 2024 01:55:14 -0800
-Message-ID: <8af59b01-53cf-4fc4-9946-6c630fb7b38e@quicinc.com>
-Date: Thu, 22 Feb 2024 15:25:11 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u24O2y5U"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-564d9b0e96dso3960877a12.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Feb 2024 07:12:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708614735; x=1709219535; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
+        b=u24O2y5Ulqlhat+seK9ZgfPeRMMVPj2QTxtNQ+ku8P5OZlM0o+ZMCJ6nQpnjSOY9NA
+         /j82GSNFZvH0Aj2fyN5oB4tgwg6/WNbkpeHYHG+fcznrn/ikqlwLVSVKvO66rxX5IXRS
+         e3XkBdmiwHp/Tis9RNn8KETPH8ox1fNz3u4/2JbNnhF3Q0pk3jAXMdrXsqvyvzA6/m8d
+         h13lEM+myKrPd970OJi9lvDRItz9kOXE8m4P9/PJaWNUtA6QMcCfI17L6lsh7Zk/pkA9
+         +TyI2pjlowA0HFTx2wJ+B1R4nOU7/K2RczbpLu1NPnzWGnF52GG92invMVxW3D8F/0A1
+         5rYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708614735; x=1709219535;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hU7ymWtL1JP8bJ0OwXFNvihGAJPlrcM1VZOfiUJkv3Q=;
+        b=YwYZaQ730bpg+/JfIxd28XpjaamDYylI1ZUBhrR3J0Wv2mZKZsqy/atKoOmqi3JUAu
+         dBGc5nDqNTFLftSzwJy6aWRkaE+9IZiHpQvHU1CQJigLlgAoF1I7OLrq6g54fRajK+if
+         yNjpcQAmp5rBSC2PW83ektntGH/SWSfORreu7qpXESrXLMkU6sK5FY/1VGtsL8OmZlbm
+         lOp14+SG3eQRo/Qw/lYmEVagMD7LfEmSYjzpTx5NAuq48IWmvJWz52PhnZHk9CJvgP8k
+         JGaDtKVJtFL5C4Nzt1hXk4RZ5Hle0Cys77C0/hvCigsdKMXTbh4FMEg53dZ669/dBjnX
+         xnHA==
+X-Gm-Message-State: AOJu0YyuYfFVgpHrBfB9AdtHeN2CgZqfzpT2L+2sq0sKpHucH1Q55Whj
+	u7tCtHoEke8KF5FXwqXum1j4Yqr8ZVjyfkKM3Mg4GvCYs/KCSgdaHE+TLLXsbo6/JRmg8aY5Yqk
+	3YsWLb8B7BGKCazodedaNTHReRz+MQ69txcuEiNGygLGIg8phQO8=
+X-Google-Smtp-Source: AGHT+IEOcaShoDVYb6Rr7XAfMaJwaIzHMW2FMOGEzycwI6QM9uiW4ScZjG5MZpmlz3h+lc6ZOfCE5SSFY91hpFSTEqM=
+X-Received: by 2002:a05:6402:1257:b0:564:73e9:a9cd with SMTP id
+ l23-20020a056402125700b0056473e9a9cdmr9151561edw.31.1708614735480; Thu, 22
+ Feb 2024 07:12:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] Introduction of a remoteproc tee to load signed
- firmware
-Content-Language: en-US
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens
- Wiklander <jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20240214172127.1022199-1-arnaud.pouliquen@foss.st.com>
- <fe4ec29f-7521-4369-a382-bae50dbf0ee5@quicinc.com>
- <adcf0c0d-f452-4285-8651-c147fcca001b@foss.st.com>
-From: Naman Jain <quic_namajain@quicinc.com>
-In-Reply-To: <adcf0c0d-f452-4285-8651-c147fcca001b@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Yac_XNlh0Nv6ycv1GnJ3h6WLqaY_ujej
-X-Proofpoint-GUID: Yac_XNlh0Nv6ycv1GnJ3h6WLqaY_ujej
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-22_06,2024-02-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0 mlxscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2402120000 definitions=main-2402220078
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 22 Feb 2024 08:12:04 -0700
+Message-ID: <CANLsYkwW+6NmKf8fK=j+-wWL=0jR76iTDJsuZ1DEMJb6aL1ceQ@mail.gmail.com>
+Subject: Remoteproc/RPMSG patchset review order for February 22nd 2024
+To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/22/2024 2:17 PM, Arnaud POULIQUEN wrote:
-> Hello Naman,
-> 
-> On 2/22/24 06:43, Naman Jain wrote:
->> On 2/14/2024 10:51 PM, Arnaud Pouliquen wrote:
->>> Updates from the previous version [1]:
->>>
->>> This version proposes another approach based on an alternate load and boot
->>> of the coprocessor. Therefore, the constraint introduced by tee_remoteproc
->>> is that the firmware has to be authenticated and loaded before the resource
->>> table can be obtained.
->>>
->>> The existing boot sequence is: >
->>>     1) Get the resource table and store it in a cache,
->>>        calling rproc->ops->parse_fw().
->>>     2) Parse the resource table and handle resources,
->>>        calling rproc_handle_resources.
->>>     3) Load the firmware, calling rproc->ops->load().
->>>     4) Start the firmware, calling rproc->ops->start().
->>>    => Steps 1 and 2 are executed in rproc_fw_boot(), while steps 3 and 4 are
->>>      executed in rproc_start().
->>> => the use of rproc->ops->load() ops is mandatory
->>>
->>> The boot sequence needed for TEE boot is:
->>>
->>>     1) Load the firmware.
->>>     2) Get the loaded resource, no cache.
->>>     3) Parse the resource table and handle resources.
->>>     4) Start the firmware.
->>
->> Hi,
->> What problem are we really addressing here by reordering load, parse of
->> FW resources?
-> 
-> The feature introduced in TEE is the signature of the firmware images. That
-> means that before getting the resource table, we need to first authenticate the
-> firmware images.
-> Authenticating a firmware image means that we have to copy the firmware into
-> protected memory that cannot be corrupted by the non-secure and then verify the
-> signature.
-> The strategy implemented in OP-TEE is to load the firmware into destination
-> memory and then authenticate it.
-> This strategy avoids having a temporary copy of the whole images in a secure memory.
-> This strategy imposes loading the firmware images before retrieving the resource
-> table.
-> 
->> Basically, what are the limitations of the current design you are referring to?
->> I understood that TEE is designed that way.
-> 
-> The limitation of the current design is that we obtain the resource table before
-> loading the firmware. Following the current design would impose constraints in
-> TEE that are not straightforward. Step 1 (getting the resource table and storing
-> it in a cache) would require having a copy of the resource table in TEE after
-> authenticating the images. However, authenticating the firmware, as explained
-> before, depends on the strategy implemented. In TEE implementation, we load the
-> firmware to authenticate it in the destination memory.
-> 
-> Regards,
-> Arnaud
-
-
-Hello Arnaud,
-I think now I got your point. In TEE, you don't want to do anything(read
-resource table) with FW images, until its loaded and authenticated.
-Since current design was not allowing you to do it, you had to 
-reorganize the code so that this can be achieved.
-
-Generally speaking, in current design, if authentication fails for some
-reason later, one can handle it, but it depends on the implementation of
-parse_fw op if the damage is already done.
-
-Please correct me if this is wrong assumption.
-Patch looks good to me.
-
-Regards,
-Naman Jain
+[PATCH v3 0/7] Introduction of a remoteproc tee to load signed firmware
+Audio dsp recovery using remoteproc
+[PATCH v11 0/4] add zynqmp TCM bindings
