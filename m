@@ -1,108 +1,365 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709DD18E3F
-	for <linux-remoteproc@vger.kernel.org>; Sat, 24 Feb 2024 09:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3AFDDAE
+	for <linux-remoteproc@vger.kernel.org>; Sun, 25 Feb 2024 08:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708765968; cv=none; b=X7P31Ib2epv/INr0f8jUsnZHPwXD7D6gdlQhMbvIZEgCQ8L2cwFmrzrnAUnRjKyLtvaNUlg0YL685BfTSdpbal+NJUFrw8iL5Hsp+98c2L/9Mov3qG3R1HE9veCYoAFEqfTbIh5cjAPwIhf2UDBT1i4dA5ZjFsmBNWukqAqk/jU=
+	t=1708850342; cv=none; b=MvL+ugO0DBhjYHMSWhipWVtg3xuleGrtLy8/AfjKizkpr0CZ3CVtXUzPG9J6fGZW+e1cDkD3h7kDUJzN2g/n68Hot39NwIg7i7e+FAT1H1b7W62hqqFxAhuoOFnT5PHSq4YUuXt0+8g+HyCxTlyFjFCFQlwa4CElDPsNsiU5qP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708765968; c=relaxed/simple;
-	bh=d0VFOfOH3/XDFGCEN39cKeYLTeNfespjyWL1U0WSFPY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aNhKtUAZwHILUvHpEqiGfOwfiS6r23gzp3isFTwpFVBYV4fxMtZlzWhddVBahCRCoZgElpCGgY72lPLT8oBGUrqSiguy/OuNuDXEx8sEMWJb/4MJDieVTt8DyaRrifWEggnz5HecTicNLqUyN2EHJHNno7oR9MM1ZZiWIpFBVI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAUcGtyA; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708850342; c=relaxed/simple;
+	bh=XwoBp/lZSU/lG0USQah8IAohQuQR3IGwBy6XblKxmT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiWSCf7ll3L5RTXtCzAAFzlMvjGOso8V3lqWCzCFpMgZsEN9gzTYftKS6XodaJimc7xn3A06kL9dAXiS64ZaVaqVkumm0IvPF9tQvHlU7sD247SHSdx+wFjNa06nz53N08NBGdk25L/YdmDOhJlF7uUeDfAokWkQZZMoQHck11A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BQEM2CEG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAUcGtyA"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-565a2c4cc1aso422267a12.2
-        for <linux-remoteproc@vger.kernel.org>; Sat, 24 Feb 2024 01:12:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708765964; x=1709370764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tbUWmxXPQmtEJUwryo3H5edvLFU7yMZad6wo2IXtDvs=;
-        b=YAUcGtyAaij2RoTYdOUTqz/OtYEeuofW6E7dLHzn0xrM2/4X9IXkaku49WvUqjKn6c
-         QxlLzgLjJSO1bbIsvwfC03WWc1HNEDJdxdvQA8n5t0gTeA8wlvLRNkUv43xvmGo1EAUJ
-         VQkI0BQCg8UHwFNmqzmEJNRFquVl+sAVei0h61YxHDTUwtq+oHBErpdVSANxskDpVrjt
-         enPiIGWpbVqUpodto8ELaavuGzNlWIW71XGEO0gA87a22bjSmh0+1W47ogfka43DhlQM
-         LQi+a59u4QOWx1htbffFDjONFn3TnclW9MNEfigP0z2CTEMx3uJyDOPq4d8AFKaNY80T
-         rG/Q==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BQEM2CEG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708850338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EOMCrVzOmp4RbossCfe+/kCrx/xWG8OsrWuMVOuxeWU=;
+	b=BQEM2CEGCzKmpLYQUjwcXYhiOLkKw8KgLXzFfsHacxXs+41tDp5D5F9np96PK3v+DeAlT5
+	4lUCVyH6mxrnltkK0vbYnOvW3RxAMrxCDyeGv+zlzmfplauycxdOCDMAsjGGpCfIpBUO46
+	PAjG4wnqKUB/zGaoMBLvQ8uaQ/pTun4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-wvI1pMOSMc6yArm2i-KYnQ-1; Sun, 25 Feb 2024 03:38:57 -0500
+X-MC-Unique: wvI1pMOSMc6yArm2i-KYnQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-33d39bc6bf4so1193117f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 25 Feb 2024 00:38:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708765964; x=1709370764;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tbUWmxXPQmtEJUwryo3H5edvLFU7yMZad6wo2IXtDvs=;
-        b=l8AbnKE7cIjrXUdC5UWIpFEZfQTpHyvW94QVvbXsIpgiRM2viniuW+MeKwalfIJRFs
-         +1LV8AkpAYIlR927EmNXy9VD2SDE4IyznRhF0e2l3YfIP0q55BE9aojWh3UyHiJXASfr
-         88PZT3kJeI6irT1nJLtOwPl86o8/424NvHbMAI6eeG8fuVdo7huDppsRzMqc48R8Wbgc
-         1ccQr0/NRNjgabk2h1nzMMSF4ipoUhmfyFGXCSisSxwaZiqelF0yxdR8yIYXE1gjjlsh
-         4jEw6j954H2CKN4Yh1CmKquoILNJ+NnM71+AEFLu96JGS2BuSnkASmjfWj7w2OfUv2ub
-         EDOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwR88rachqenWnf7vC0CKLwwh/57uBOql34zFuuhqrfcv363fDkO2iwcQEhJNMiAzlrF7tU/TIs6Erl3NvKF1o5DwP7wIt5DtC7ldSVf/V8A==
-X-Gm-Message-State: AOJu0YzCHFYJ07Or8qtle/4aOaYF55r79bx8cIikLPTndFn53x1VsCgw
-	Tq06pKmzAlEcFjzCSWl+lJaeln9T5BYXI3Q+D+Alf1j820Nubq+EvGcukm1PLMA=
-X-Google-Smtp-Source: AGHT+IHPkmdY/2JX+2DxbAffRxrLnVnrTav9C+myuLjv86tAmwyJIFeyB4pKDfYDM9Pizs0gbNasYQ==
-X-Received: by 2002:aa7:d0c9:0:b0:565:7d4a:1d4a with SMTP id u9-20020aa7d0c9000000b005657d4a1d4amr1230145edo.8.1708765964241;
-        Sat, 24 Feb 2024 01:12:44 -0800 (PST)
-Received: from krzk-bin.. ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id s8-20020a056402164800b005652f6a9533sm363120edx.74.2024.02.24.01.12.42
+        d=1e100.net; s=20230601; t=1708850336; x=1709455136;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EOMCrVzOmp4RbossCfe+/kCrx/xWG8OsrWuMVOuxeWU=;
+        b=BBen0uUVdcCTS1ruoGnTduLqZpxji9LczgvZC0HdDWUNt4TZNoK140hYtL5bNt6JZb
+         CGTjwOLNNP6LgYyHnybekEgArHivSycvnUUghm2hdnLjTItptoGj/k3TeoITNhQ1jh3a
+         RJhpFrkpSi2Wh2kXFqxy1EvHtHsL0iKqUbwIk5FL0HL43jCTZB7gw22MOA6Yf3fIYz7D
+         nlSfPJDWqU38BANn+kGwEBikTwYPRIlTWUKLFMxoJauc+Ui2U4mS+dZnyP3y/6hNzSHC
+         lP+DU6y1R0Jml4q6GosMfxgzj3w1yTGFWtuYzb1jgKH6p59hJhlTnBT2P0GpqCnjOw1p
+         OE+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVEOJyzcUoPFc+8YquUvgr7wkV+s9gf+8m/sqjHKI/+ptxQcQoFsb73Yc5QCKizgb8TnfWMfp7NN1MqHMx29wHNY06f6NrZP1wslU4ULCqdfg==
+X-Gm-Message-State: AOJu0YwOCBQQv8VJjVyWZaEM1IRTXWkNQtxHZlAvJl2lTTfNFuI2O/ZS
+	u6aROMU8ICOYaMypmTahM5alnP8l/7xQVSzK2YUJiefcf2E3/U/iSctBBrFikj3u6RKBgquDtTH
+	bma20Ow6YZ9gY64xDgWlOzMiErhcMT0+eCGPE4XSLcFRVNSXR4DwMbodKcrEcvsiWpKU=
+X-Received: by 2002:adf:e9cb:0:b0:33d:9d49:cfd1 with SMTP id l11-20020adfe9cb000000b0033d9d49cfd1mr3666335wrn.34.1708850336193;
+        Sun, 25 Feb 2024 00:38:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEhK28+oXcoeTRfiKdRQ9r84bfxBvSjdNy60lSOACL0i+/V47ase4Z2bcj3vqDRsDCm11uahQ==
+X-Received: by 2002:adf:e9cb:0:b0:33d:9d49:cfd1 with SMTP id l11-20020adfe9cb000000b0033d9d49cfd1mr3666304wrn.34.1708850335736;
+        Sun, 25 Feb 2024 00:38:55 -0800 (PST)
+Received: from redhat.com ([2.52.10.44])
+        by smtp.gmail.com with ESMTPSA id bv20-20020a0560001f1400b0033d73e1505bsm4513271wrb.18.2024.02.25.00.38.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 01:12:43 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+        Sun, 25 Feb 2024 00:38:54 -0800 (PST)
+Date: Sun, 25 Feb 2024 03:38:48 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Vadim Pasternak <vadimp@nvidia.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] dt-bindings: remoteproc: ti,davinci: remove unstable remark
-Date: Sat, 24 Feb 2024 10:12:36 +0100
-Message-Id: <20240224091236.10146-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
-References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
+	Cornelia Huck <cohuck@redhat.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-um@lists.infradead.org, netdev@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+	kvm@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH vhost v2 19/19] virtio_net: sq support premapped mode
+Message-ID: <20240225032330-mutt-send-email-mst@kernel.org>
+References: <20240223082726.52915-1-xuanzhuo@linux.alibaba.com>
+ <20240223082726.52915-20-xuanzhuo@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240223082726.52915-20-xuanzhuo@linux.alibaba.com>
 
-TI Davinci remoteproc bindings were marked as work-in-progress /
-unstable in 2017 in commit ae67b8007816 ("dt-bindings: remoteproc: Add
-bindings for Davinci DSP processors"). Almost seven years is enough, so
-drop the "unstable" remark and expect usual ABI rules.
+On Fri, Feb 23, 2024 at 04:27:26PM +0800, Xuan Zhuo wrote:
+> If the xsk is enabling, the xsk tx will share the send queue.
+> But the xsk requires that the send queue use the premapped mode.
+> So the send queue must support premapped mode.
+> 
+> cmd:
+>     sh samples/pktgen/pktgen_sample01_simple.sh -i eth0 \
+>         -s 16 -d 10.0.0.128 -m 00:16:3e:2c:c8:2e -n 0 -p 100
+> CPU:
+>     Intel(R) Xeon(R) Platinum 8369B CPU @ 2.70GHz
+> 
+> Machine:
+>     ecs.g7.2xlarge(Aliyun)
+> 
+> before:              1600010.00
+> after(no-premapped): 1599966.00
+> after(premapped):    1600014.00
+> 
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> ---
+>  drivers/net/virtio_net.c | 136 +++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 132 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 7715bb7032ec..b83ef6afc4fb 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -146,6 +146,25 @@ struct virtnet_rq_dma {
+>  	u16 need_sync;
+>  };
+>  
+> +struct virtnet_sq_dma {
+> +	union {
+> +		struct virtnet_sq_dma *next;
+> +		void *data;
+> +	};
+> +
+> +	u32 num;
+> +
+> +	dma_addr_t addr[MAX_SKB_FRAGS + 2];
+> +	u32 len[MAX_SKB_FRAGS + 2];
+> +};
+> +
+> +struct virtnet_sq_dma_head {
+> +	/* record for kfree */
+> +	void *p;
+> +
+> +	struct virtnet_sq_dma *free;
+> +};
+> +
+>  /* Internal representation of a send virtqueue */
+>  struct send_queue {
+>  	/* Virtqueue associated with this send _queue */
+> @@ -165,6 +184,8 @@ struct send_queue {
+>  
+>  	/* Record whether sq is in reset state. */
+>  	bool reset;
+> +
+> +	struct virtnet_sq_dma_head dmainfo;
+>  };
+>  
+>  /* Internal representation of a receive virtqueue */
+> @@ -368,6 +389,95 @@ static struct xdp_frame *ptr_to_xdp(void *ptr)
+>  	return (struct xdp_frame *)((unsigned long)ptr & ~VIRTIO_XDP_FLAG);
+>  }
+>  
+> +static struct virtnet_sq_dma *virtnet_sq_unmap(struct send_queue *sq, void **data)
+> +{
+> +	struct virtnet_sq_dma *d;
+> +	int i;
+> +
+> +	d = *data;
+> +	*data = d->data;
+> +
+> +	for (i = 0; i < d->num; ++i)
+> +		virtqueue_dma_unmap_page_attrs(sq->vq, d->addr[i], d->len[i],
+> +					       DMA_TO_DEVICE, 0);
+> +
+> +	d->next = sq->dmainfo.free;
+> +	sq->dmainfo.free = d;
+> +
+> +	return d;
+> +}
+> +
+> +static struct virtnet_sq_dma *virtnet_sq_map_sg(struct send_queue *sq,
+> +						int nents, void *data)
+> +{
+> +	struct virtnet_sq_dma *d;
+> +	struct scatterlist *sg;
+> +	int i;
+> +
+> +	if (!sq->dmainfo.free)
+> +		return NULL;
+> +
+> +	d = sq->dmainfo.free;
+> +	sq->dmainfo.free = d->next;
+> +
+> +	for_each_sg(sq->sg, sg, nents, i) {
+> +		if (virtqueue_dma_map_sg_attrs(sq->vq, sg, DMA_TO_DEVICE, 0))
+> +			goto err;
+> +
+> +		d->addr[i] = sg->dma_address;
+> +		d->len[i] = sg->length;
+> +	}
+> +
+> +	d->data = data;
+> +	d->num = i;
+> +	return d;
+> +
+> +err:
+> +	d->num = i;
+> +	virtnet_sq_unmap(sq, (void **)&d);
+> +	return NULL;
+> +}
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/remoteproc/ti,davinci-rproc.txt        | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
-index 25f8658e216f..48a49c516b62 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
-@@ -1,9 +1,6 @@
- TI Davinci DSP devices
- =======================
- 
--Binding status: Unstable - Subject to changes for DT representation of clocks
--			   and resets
--
- The TI Davinci family of SoCs usually contains a TI DSP Core sub-system that
- is used to offload some of the processor-intensive tasks or algorithms, for
- achieving various system level goals.
--- 
-2.34.1
+Do I see a reimplementation of linux/llist.h here?
+
+
+> +
+> +static int virtnet_add_outbuf(struct send_queue *sq, u32 num, void *data)
+> +{
+> +	int ret;
+> +
+> +	if (sq->vq->premapped) {
+> +		data = virtnet_sq_map_sg(sq, num, data);
+> +		if (!data)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	ret = virtqueue_add_outbuf(sq->vq, sq->sg, num, data, GFP_ATOMIC);
+> +	if (ret && sq->vq->premapped)
+> +		virtnet_sq_unmap(sq, &data);
+> +
+> +	return ret;
+> +}
+> +
+> +static int virtnet_sq_init_dma_mate(struct send_queue *sq)
+
+Mate? The popular south african drink?
+
+> +{
+> +	struct virtnet_sq_dma *d;
+> +	int num, i;
+> +
+> +	num = virtqueue_get_vring_size(sq->vq);
+> +
+> +	sq->dmainfo.free = kcalloc(num, sizeof(*sq->dmainfo.free), GFP_KERNEL);
+> +	if (!sq->dmainfo.free)
+> +		return -ENOMEM;
+
+
+This could be quite a bit of memory for a large queue.  And for a bunch
+of common cases where unmap is a nop (e.g. iommu pt) this does nothing
+useful at all.  And also, this does nothing useful if PLATFORM_ACCESS is off
+which is super common.
+
+A while ago I proposed:
+- extend DMA APIs so one can query whether unmap is a nop
+  and whether sync is a nop
+- virtio wrapper taking into account PLATFORM_ACCESS too
+
+then we can save all this work and memory when not needed.
+
+
+
+> +
+> +	sq->dmainfo.p = sq->dmainfo.free;
+> +
+> +	for (i = 0; i < num; ++i) {
+> +		d = &sq->dmainfo.free[i];
+> +		d->next = d + 1;
+> +	}
+> +
+> +	d->next = NULL;
+> +
+> +	return 0;
+> +}
+> +
+>  static void __free_old_xmit(struct send_queue *sq, bool in_napi,
+>  			    struct virtnet_sq_free_stats *stats)
+>  {
+> @@ -377,6 +487,9 @@ static void __free_old_xmit(struct send_queue *sq, bool in_napi,
+>  	while ((ptr = virtqueue_get_buf(sq->vq, &len)) != NULL) {
+>  		++stats->packets;
+>  
+> +		if (sq->vq->premapped)
+> +			virtnet_sq_unmap(sq, &ptr);
+> +
+>  		if (!is_xdp_frame(ptr)) {
+>  			struct sk_buff *skb = ptr;
+>  
+> @@ -890,8 +1003,7 @@ static int __virtnet_xdp_xmit_one(struct virtnet_info *vi,
+>  			    skb_frag_size(frag), skb_frag_off(frag));
+>  	}
+>  
+> -	err = virtqueue_add_outbuf(sq->vq, sq->sg, nr_frags + 1,
+> -				   xdp_to_ptr(xdpf), GFP_ATOMIC);
+> +	err = virtnet_add_outbuf(sq, nr_frags + 1, xdp_to_ptr(xdpf));
+>  	if (unlikely(err))
+>  		return -ENOSPC; /* Caller handle free/refcnt */
+>  
+> @@ -2357,7 +2469,7 @@ static int xmit_skb(struct send_queue *sq, struct sk_buff *skb)
+>  			return num_sg;
+>  		num_sg++;
+>  	}
+> -	return virtqueue_add_outbuf(sq->vq, sq->sg, num_sg, skb, GFP_ATOMIC);
+> +	return virtnet_add_outbuf(sq, num_sg, skb);
+>  }
+>  
+>  static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+> @@ -4166,6 +4278,8 @@ static void virtnet_free_queues(struct virtnet_info *vi)
+>  	for (i = 0; i < vi->max_queue_pairs; i++) {
+>  		__netif_napi_del(&vi->rq[i].napi);
+>  		__netif_napi_del(&vi->sq[i].napi);
+> +
+> +		kfree(vi->sq[i].dmainfo.p);
+>  	}
+>  
+>  	/* We called __netif_napi_del(),
+> @@ -4214,6 +4328,15 @@ static void free_receive_page_frags(struct virtnet_info *vi)
+>  
+>  static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf)
+>  {
+> +	struct virtnet_info *vi = vq->vdev->priv;
+> +	struct send_queue *sq;
+> +	int i = vq2rxq(vq);
+> +
+> +	sq = &vi->sq[i];
+> +
+> +	if (sq->vq->premapped)
+> +		virtnet_sq_unmap(sq, &buf);
+> +
+>  	if (!is_xdp_frame(buf))
+>  		dev_kfree_skb(buf);
+>  	else
+> @@ -4327,8 +4450,10 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+>  		if (ctx)
+>  			ctx[rxq2vq(i)] = true;
+>  
+> -		if (premapped)
+> +		if (premapped) {
+>  			premapped[rxq2vq(i)] = true;
+> +			premapped[txq2vq(i)] = true;
+> +		}
+>  	}
+>  
+>  	cfg.nvqs      = total_vqs;
+> @@ -4352,6 +4477,9 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+>  		vi->rq[i].vq = vqs[rxq2vq(i)];
+>  		vi->rq[i].min_buf_len = mergeable_min_buf_len(vi, vi->rq[i].vq);
+>  		vi->sq[i].vq = vqs[txq2vq(i)];
+> +
+> +		if (vi->sq[i].vq->premapped)
+> +			virtnet_sq_init_dma_mate(&vi->sq[i]);
+>  	}
+>  
+>  	/* run here: ret == 0. */
+> -- 
+> 2.32.0.3.g01195cf9f
 
