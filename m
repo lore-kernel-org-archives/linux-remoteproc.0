@@ -1,153 +1,118 @@
-Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FA81E867;
-	Tue, 27 Feb 2024 13:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993FD4E1C8
+	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Feb 2024 17:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709038824; cv=none; b=floBqBEwV/4D3sYFi7OOXuwVO5S9Mx/HODW03CckAv9nbdQYAha79iHDYy8IJaBupXUqLWpVMJqY6qxcT8qIp3y5MudwQQqnDO/9arqcIwL0DIGV0AKMtqxGKgOke4P6Jd0Ob+PYlEa0GXJNpGvq5N4+vMQAj9QrpipHcGlK8+E=
+	t=1709053713; cv=none; b=c9j4rM47CDsbG/FBvV/HcZOK08xIevkbLqoU21UX5KmIKT9WN0LHPOjrQKqrbGeGIyeoTamM/YC3Kacu1DhNoEMRHfhWVHV4rIXfGFcc8q2FC0ZUeXo5EkWiUSKpiAUcKXvouvymiUdbJFHfKp2iUwop5s7cCV7t/ydz//RnzSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709038824; c=relaxed/simple;
-	bh=48fVYdZIAfrNMXN/Ees34xjBvsXwLRNhCIA/vmywld4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=k6VPBsQM0TOjPVnS9HuyEC/yOAx3uxC6+7oYjQGV7AAGoV+TW/c2vPspEXPvkk1C3SX0V+9sNQGC+3GgvB8jAGGLSoNZbT+SHia7U7vQWwXO47nWwTboCGKbdlcAeVquSD+pPi1565LZXEX3zykWJTEjq5pjrbRcIAWgCnGu0uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=doMEcxip; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iJjpvobV; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1709053713; c=relaxed/simple;
+	bh=PGntO9HZ7nB0drpm+YsqMGgrsQ12kaan0DEUm5AB9oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QI8c8u4ZA4giaKPfAVkZZ6CX9+Cqmfet1cKNJmuyfCXnK9ln0l6ml89F6gUziP9UlM/tFS1ctttu9iwaOowHpEuL8Lbx2I72wG6TpCzS1vIFKT9gSPk83IwhEYnuR5U+YnvhB9tRZ/sLblCustJe7VhYEGIO8gTd8T1AF789I30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gZVjHAAr; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="doMEcxip";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iJjpvobV"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id E922820017E;
-	Tue, 27 Feb 2024 08:00:21 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 27 Feb 2024 08:00:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1709038821; x=1709046021; bh=qPhWauWFG9
-	Eq5yPAsXD3zB/CxlDkLHGeIaX5cUViM3k=; b=doMEcxipmJOZYakN3E69jPQTdJ
-	35sJW+eMxDEU8wKW5gL+aFVD9Lr2+/edhVCxEueBE4SjPQOOss9i9kkMWRN8dYRs
-	0cHV1uSXJYAAVbYRiGTlv5y2d1eXgfQkS91+dtyGHqyfZajToxSHp5gJGx4NU/cw
-	9Pjc1gWLfwK3f32OZwnzMAv5Y4kiAxJvPqbJvqJ5St9yq9p8Od3wmm+ZnmOXrZ2n
-	/Dfr6WSnp4B0ELzxOcQBhJnu7CO1t0Bmf/SZIojeTgenD+MPZl3P3xlv1Ajwu5qC
-	HucusYS22u1ijyfs8TDmYhuB/7drh5dT8Sf2P6Gc3IbZx259GkWereX/KiYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1709038821; x=1709046021; bh=qPhWauWFG9Eq5yPAsXD3zB/CxlDk
-	LHGeIaX5cUViM3k=; b=iJjpvobV8lNMXdJ3c9X5ZoAAm/tB04RwJ+tFspixbk+l
-	hz3A64T3SgGeYuk55UvKXWvbIKHLgmy0TG3nY3NQz+m6bxzoKx/2HPz9ihZrkCno
-	jADwgmVs0EptdeWMszSZvRVT4CySjCnvCVU2Siw4tNNrNWCGvGlOnNdI5B8VCa22
-	otMigDXjT17c5/6vcf6B+tuoh+MaMCpLqriInSba2m0fOuHXAzr5a7Qz2mPTA2V4
-	EDlo+WH2ug6p4Yx9jIAo6bHwYGKKVYDt54ZNLyUkqeyMkGP1KCzP1HK/L7NaPJES
-	QCcr4Lc1WL2dYkWeNgepRALAxeizpyhylJ/nShJOtg==
-X-ME-Sender: <xms:5NzdZZGAK9VhWesFRNNqNkG96wMflx-scjSiaMqTXVDS0j51JzogHQ>
-    <xme:5NzdZeUfqmTtfxQafXKrGTwTvt8V7k5ITBoIQIPmeawTFgAFAztj4QHDvouWN5p__
-    VB6rgcxw95y3Gke9qY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgeehgddvfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeeiteejheekhfdttefhieffjefgvdelhfelueffueffveehfeelleelffeuvedt
-    teenucffohhmrghinheplhhinhhugihtvhdrohhrghdpkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvg
-X-ME-Proxy: <xmx:5NzdZbKqk6nDm5QR8YNCcucQCZU_V6L7yapRoyhF3aavtDGeVCBaJg>
-    <xmx:5NzdZfEFN9zLKP1x3Bx_sC-jOfni3oqSjeCUGUDiapdNwL9sL4b7Hg>
-    <xmx:5NzdZfXRM-fbGooB_ZPCBUQpYnWgH9phi_pNy8oHELaSWMS_O0Fiig>
-    <xmx:5dzdZc1qsknl85aTY6dDAmAkBxVQUtq9_xxQMiHx6UwxsCloMWfgT5zYEJ8>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 84657B6008D; Tue, 27 Feb 2024 08:00:20 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-153-g7e3bb84806-fm-20240215.007-g7e3bb848
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gZVjHAAr"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-29ae4c7da02so607733a91.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Feb 2024 09:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709053711; x=1709658511; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4T8k/GzPwrI1R62VQXBd8xMeTbbVe30Wb070cxDcDU=;
+        b=gZVjHAArdA1qHhB5tPwJNuEElRgcuFXxI3u79W0AyDEzRagA1YMjeSYMV4650yCiHp
+         koKQYjLCkbBTdZoCqvOhDpCK0py6n65bzF2MZMa2vG0JBxuoMQRFtUVXfzmbwmA5+gPX
+         b8ab/l48e9VyujtsZwxODNvK1IuT70I5julGqt61lHJKRvveuBNIgnE6IoVrVTh/v1is
+         ua1ZLg8CEZgubVnaavnQQMezPyL6N69pDOZqtB0FfJ3nxiKRigBeQgJDSHw7JwJ1lIYr
+         ymywXd9oPWR/Hrf7yCrVewge/FzWsC4h12F+MhraxhChKpyf1DjInqOzVRwM03C1DI5Y
+         tzYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709053711; x=1709658511;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o4T8k/GzPwrI1R62VQXBd8xMeTbbVe30Wb070cxDcDU=;
+        b=VE94b6PRtciTdcesJXC4J6dTZSKMCTh5xQnYw9LsdRXeveAoqqHqAjYH99uNfU93AR
+         9fEYhkns+GDdhv9RYdgdB70WXsqObRooARukhLLsqHlkw9AU5JVcOZqwZ0MQ/cuN6Xlp
+         +BgPpXVR8hZwnKr7zpUO3XGbbAV2Mk/ouuvDRF/+hBZ22+Dx4j/l2dJ3pN9YEDDLM0rP
+         e996Qbf3W1hky160ISOUoWK83UfNs+JlTml/0g9Gzn631RfdlV5JrCIsvGbhgI0QxYuz
+         G5PyHHo/CVazpOtoaBIKCII7K9iuHvzlpS9EcQ6tJ80frYE0V7JB9y5c7YEtutV1D4Mf
+         lzbw==
+X-Gm-Message-State: AOJu0YxXDp2CVctX7pZZdkLDRpDQM7V4P3QsuHvI35v/wjiHWR0/egox
+	G9cCXKaZpGqA8bGy9CyHMu4OoMCDNlbO/n8RKLqx/OfD6W0j+vNnzFjBInmoh3I=
+X-Google-Smtp-Source: AGHT+IHGOOOwOx6ckcP28mlDFlcimec/bT0+8kqrte9hVw72AiMZ3sj24eHALgOXdlaTtDeDW9juig==
+X-Received: by 2002:a17:90a:b014:b0:299:5d2c:9aa1 with SMTP id x20-20020a17090ab01400b002995d2c9aa1mr7690525pjq.5.1709053710806;
+        Tue, 27 Feb 2024 09:08:30 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:77b:bbfe:c3af:16dc])
+        by smtp.gmail.com with ESMTPSA id nb12-20020a17090b35cc00b00296fd5e0de1sm8797823pjb.34.2024.02.27.09.08.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Feb 2024 09:08:30 -0800 (PST)
+Date: Tue, 27 Feb 2024 10:08:27 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: noman pouigt <variksla@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: Re: Audio dsp recovery using remoteproc
+Message-ID: <Zd4XCwOeJ+exUjN0@p14s>
+References: <CAES_P+_0tWVtn+tyUi1TvkWi4rA-ZBj8e7_pnJd1h_J3S3Cn8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <8e3e7d82-a9e7-4697-8147-d3800f0307db@app.fastmail.com>
-In-Reply-To: 
- <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
-References: <20240226-fix-clang-warnings-v2-0-fa1bc931d17e@chromium.org>
- <20240226-fix-clang-warnings-v2-3-fa1bc931d17e@chromium.org>
- <c25638af-d40d-4dbc-a179-efb6f29c38aa@xs4all.nl>
- <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
-Date: Tue, 27 Feb 2024 13:59:59 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ricardo Ribalda" <ribalda@chromium.org>,
- "Hans Verkuil" <hverkuil@xs4all.nl>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Mike Isely at pobox" <isely@pobox.com>,
- "Tiffany Lin" <tiffany.lin@mediatek.com>,
- "Andrew-CT Chen" <andrew-ct.chen@mediatek.com>,
- "Yunfei Dong" <yunfei.dong@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Mathieu Poirier" <mathieu.poirier@linaro.org>,
- "Sebastian Fricke" <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] media: mediatek: vcodedc: Fix Wcast-function-type-strict
- warnings
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAES_P+_0tWVtn+tyUi1TvkWi4rA-ZBj8e7_pnJd1h_J3S3Cn8Q@mail.gmail.com>
 
-On Tue, Feb 27, 2024, at 12:35, Ricardo Ribalda wrote:
-> On Tue, 27 Feb 2024 at 12:17, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> Ricardo,
->>
->> First of all, note the typo in theo subject line: vcodedc -> vcodec.
->>
->> There is also a similar (but not identical!) patch from Arnd:
->>
->> https://patchwork.linuxtv.org/project/linux-media/patch/20240224121059.1806691-1-arnd@kernel.org/
->>
->> That patch and yours share the change to common/mtk_vcodec_fw_vpu.c but otherwise
->> they are different, which is a bit odd.
->>
->> Can you take a look at Arnd's patch and see if you need to incorporate his changes
->> into your patch?
+Good day,
+
+On Fri, Feb 16, 2024 at 03:29:56PM -0800, noman pouigt wrote:
+> mailbox to dsp_1 is currently modeling platform pcm driver.
+> mailbox to dsp_2 is also doing the same.
+> 
+> Platform driver callbacks cause IPC to be sent to dsp's.
+> Lifecycle of two dsp's are managed by separate remoteproc
+> drivers. Single sound card is exposed.
+> 
+> Separate watchdog interrupts from the corresponding dsp's
+> are connected to remoteproc to manage crashing of the
+> individual dsp's. How can I restart both the dsp when either
+> of them crashes using the kernel device model? Remoteproc
+> driver currently only restarts the crashed dsp instead of restarting
+> both the dsp. It is needed to bring up the hardware in a consistent
+> state as both the dsp's are connected to a common hardware.
 >
-> We went separate paths :), I tried to make everything const (and
-> therefore the remoteproc changes) and he removed the const.
 
-I had the same patch 3 originally but there was still a
-warning or a cast from const to non-const pointer, so I
-went with the simpler approach that I posted. 
+Ok
 
-Without that regression, your patch would be nicer, but I
-think the version you sent has the same regression that
-I ran into.
+> I thought of making a virtual parent remoteproc device
+> and then managing individual dsp as a subdevice of that parent device
+> but remoteproc device node is associated with the individual elf file i.e.
+> it can manage only a single dsp.
 
-> His patch looks good to me. Shall I resend the series without this
-> patch or you can ignore 3/3 and take 1 and 2?
+You are on the right track but perhaps not fully aware of what is already done
+for multi core remote processors.  I suggest you have a thorough look at TI's
+K3R5 driver[1] and one of it's DTB[2].  In the DTB each remote processor loads a
+different firmware file, which seems to be what you are looking for.
 
-I also sent your patches 1 and 2 with minor differences in
-whitespace. Both of these are already in linux-next, so I think
-you don't have to resend anything here.
+Thanks,
+Mathieu
 
-I sent a whole lot of -Wcast-function-type-strict warning fixes
-to address all randconfig builds on arm64, arm and x86, all but
-three are now merged. Aside from the mediatek vcodec, the only
-missing ones are
+[1]. https://elixir.bootlin.com/linux/v6.8-rc6/source/drivers/remoteproc/ti_k3_r5_remoteproc.c
+[2]. https://elixir.bootlin.com/linux/v6.8-rc6/source/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi#L397 
 
-https://lore.kernel.org/all/20240213095631.454543-1-arnd@kernel.org/
-https://lore.kernel.org/all/20240213100238.456912-1-arnd@kernel.org/
 
-I also had one patch for s390 but none of the other architectures.
-I think once Hans applies the vcodec patch, I'll resend the
-last two patches together with a patch to enable the warning by
-default.
-
-     Arnd
+> 
+> How can I model remoteproc drivers using linux device model so that when either
+> of them crashes both the dsp's get reloaded by the remoteproc framework.
+> 
+>            MailBox ---- DSP_1 ---
+>          |                                    |
+> Linux                                      ------ common_hw -> speaker/mic
+>           |                                    |
+>             MailBox ---- DSP_2 ---
+> 
