@@ -1,335 +1,153 @@
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9879E138493
-	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Feb 2024 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FA81E867;
+	Tue, 27 Feb 2024 13:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709033748; cv=none; b=bvQRQcbU1Ga9u/IJIM1EWY5SB+A6IdXBPO7fnv4rHY9lRHlc9gHfPWk70U6dyiPPNu77vpONHoy6auPiET/DBBFMjv04J6BDOaGF+I51NjeoBhcd6f1MBNUjZvmAxU26x+3ZPJ4EiQ2fMWp1ZUTw/UpvAuoko5ABknQruH07x8M=
+	t=1709038824; cv=none; b=floBqBEwV/4D3sYFi7OOXuwVO5S9Mx/HODW03CckAv9nbdQYAha79iHDYy8IJaBupXUqLWpVMJqY6qxcT8qIp3y5MudwQQqnDO/9arqcIwL0DIGV0AKMtqxGKgOke4P6Jd0Ob+PYlEa0GXJNpGvq5N4+vMQAj9QrpipHcGlK8+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709033748; c=relaxed/simple;
-	bh=Pdf7u8DrWmH7pnA5YtZO16OxY3wzSLfVOv8xrfAHUMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b/ZpE3lb8NDgAbCTeXx40lD1oNf5qCfEzXeczKUPUSUYx0OZHmtk8+6oTcDIelRiIAII25Zf4F7VxwK/Bo1kfs3oiG1s5fKqK9NaYhvuxM3xIJ5nl713vjQ6ad3p+UaHy+JJaQsxFoCawxRSaMnDuL31gTvSAUrrBxL0i9o00s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oJpo9OOw; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1709038824; c=relaxed/simple;
+	bh=48fVYdZIAfrNMXN/Ees34xjBvsXwLRNhCIA/vmywld4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=k6VPBsQM0TOjPVnS9HuyEC/yOAx3uxC6+7oYjQGV7AAGoV+TW/c2vPspEXPvkk1C3SX0V+9sNQGC+3GgvB8jAGGLSoNZbT+SHia7U7vQWwXO47nWwTboCGKbdlcAeVquSD+pPi1565LZXEX3zykWJTEjq5pjrbRcIAWgCnGu0uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=doMEcxip; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iJjpvobV; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oJpo9OOw"
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7c7229e85b5so147102939f.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Feb 2024 03:35:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709033745; x=1709638545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JXH12Tos9R5LH3IGuLqHagwvQIUCehbeCr2Uw+9roXA=;
-        b=oJpo9OOw+UDe0DzXMTwZ06YPl/axtD0njx6xKq2PApLtHwvqhTFqZ4aY4OnoN2YpRH
-         8SpwkU2aSuow3mWNJV5ewZl8dj075k8o+QvlsRD7XjlEJHW9XvTxKoqzTOzQCqV71Fe4
-         bzFyROcg+Fb4W9K9fF8uj2giuYZJ/76z2uYrw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709033745; x=1709638545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JXH12Tos9R5LH3IGuLqHagwvQIUCehbeCr2Uw+9roXA=;
-        b=bX43LFLp2LyRekb4IiJXbIzrkDpSiJdH1IHDrgxCetz4eqxTmAvYxNVRI1fCoca0xW
-         y+ihqdTgx/Wt9jE4GNxPWGQSo5oVlSYv40k+iAI8RdZNyCD0jU3XeDJUYb1xUXP0Ozvq
-         SqD7L/J1aueAEZVqvLUh7x4pxlF1gUeezz3kYpVNxCz76GYEbdQTBLGDT4JhyeJdPasV
-         qDnbc0fxQybi8ZkdOEki8gioMrR6cQxmsEWmoY/h53ks/Ksi58nEx1C1D+Q1bZ9/PTA3
-         42gOo5qeprv/GRS6AvU6dVcpai6dYkRgKOaxMffRmEz8vtcExcqnNW1TKnUzfCmY+52X
-         btaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZTVFaYh6lYWhtUVEbEB1/pX60cDOEFuFsodNRPVpMUJuUu4pWAAuZmYvT6jCMRMpLlEXRqHOEp1KA6prClNgI2/OaYy+IDEPRhj5PLdnkxw==
-X-Gm-Message-State: AOJu0YwhopeYigVN2uY/eM0hkP70PRO0UgBVUc6xjTBJP+zPGDGQIUzM
-	yD7r2rQYWyqIapLblBwNpn/qNoYLizx3x+fAvjLzmZi2tggld1GBoTAZ2MVHNQcEFqWSOYB7FnU
-	SaQ==
-X-Google-Smtp-Source: AGHT+IEMH1owIUGP0KgTp9aTmhmKVgFsxOPoDLTPO6NaES1P2Z24WM5p8+hB47tgoCm7C5yWIKqJiQ==
-X-Received: by 2002:a5d:9b1a:0:b0:7c7:9f4f:2ffe with SMTP id y26-20020a5d9b1a000000b007c79f4f2ffemr11103664ion.6.1709033745408;
-        Tue, 27 Feb 2024 03:35:45 -0800 (PST)
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com. [209.85.166.173])
-        by smtp.gmail.com with ESMTPSA id t8-20020a02c488000000b00474337784absm1687584jam.115.2024.02.27.03.35.45
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Feb 2024 03:35:45 -0800 (PST)
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-365124888a5so12114145ab.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Feb 2024 03:35:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUSPXm/0iQsf9IvPgZzEV7r3lDdBrMm6FdY4se5Yrj7pwLjGC0E1P+AjFjzHuVCjiZyf7/p5rDbjapdE6T7ENWnaKXD6H/XWwK5iVbgD1qcXw==
-X-Received: by 2002:a05:6358:1298:b0:17b:6c3f:1c9a with SMTP id
- e24-20020a056358129800b0017b6c3f1c9amr7617829rwi.7.1709033723875; Tue, 27 Feb
- 2024 03:35:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="doMEcxip";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iJjpvobV"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.nyi.internal (Postfix) with ESMTP id E922820017E;
+	Tue, 27 Feb 2024 08:00:21 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 27 Feb 2024 08:00:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1709038821; x=1709046021; bh=qPhWauWFG9
+	Eq5yPAsXD3zB/CxlDkLHGeIaX5cUViM3k=; b=doMEcxipmJOZYakN3E69jPQTdJ
+	35sJW+eMxDEU8wKW5gL+aFVD9Lr2+/edhVCxEueBE4SjPQOOss9i9kkMWRN8dYRs
+	0cHV1uSXJYAAVbYRiGTlv5y2d1eXgfQkS91+dtyGHqyfZajToxSHp5gJGx4NU/cw
+	9Pjc1gWLfwK3f32OZwnzMAv5Y4kiAxJvPqbJvqJ5St9yq9p8Od3wmm+ZnmOXrZ2n
+	/Dfr6WSnp4B0ELzxOcQBhJnu7CO1t0Bmf/SZIojeTgenD+MPZl3P3xlv1Ajwu5qC
+	HucusYS22u1ijyfs8TDmYhuB/7drh5dT8Sf2P6Gc3IbZx259GkWereX/KiYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1709038821; x=1709046021; bh=qPhWauWFG9Eq5yPAsXD3zB/CxlDk
+	LHGeIaX5cUViM3k=; b=iJjpvobV8lNMXdJ3c9X5ZoAAm/tB04RwJ+tFspixbk+l
+	hz3A64T3SgGeYuk55UvKXWvbIKHLgmy0TG3nY3NQz+m6bxzoKx/2HPz9ihZrkCno
+	jADwgmVs0EptdeWMszSZvRVT4CySjCnvCVU2Siw4tNNrNWCGvGlOnNdI5B8VCa22
+	otMigDXjT17c5/6vcf6B+tuoh+MaMCpLqriInSba2m0fOuHXAzr5a7Qz2mPTA2V4
+	EDlo+WH2ug6p4Yx9jIAo6bHwYGKKVYDt54ZNLyUkqeyMkGP1KCzP1HK/L7NaPJES
+	QCcr4Lc1WL2dYkWeNgepRALAxeizpyhylJ/nShJOtg==
+X-ME-Sender: <xms:5NzdZZGAK9VhWesFRNNqNkG96wMflx-scjSiaMqTXVDS0j51JzogHQ>
+    <xme:5NzdZeUfqmTtfxQafXKrGTwTvt8V7k5ITBoIQIPmeawTFgAFAztj4QHDvouWN5p__
+    VB6rgcxw95y3Gke9qY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgeehgddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeeiteejheekhfdttefhieffjefgvdelhfelueffueffveehfeelleelffeuvedt
+    teenucffohhmrghinheplhhinhhugihtvhdrohhrghdpkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvg
+X-ME-Proxy: <xmx:5NzdZbKqk6nDm5QR8YNCcucQCZU_V6L7yapRoyhF3aavtDGeVCBaJg>
+    <xmx:5NzdZfEFN9zLKP1x3Bx_sC-jOfni3oqSjeCUGUDiapdNwL9sL4b7Hg>
+    <xmx:5NzdZfXRM-fbGooB_ZPCBUQpYnWgH9phi_pNy8oHELaSWMS_O0Fiig>
+    <xmx:5dzdZc1qsknl85aTY6dDAmAkBxVQUtq9_xxQMiHx6UwxsCloMWfgT5zYEJ8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 84657B6008D; Tue, 27 Feb 2024 08:00:20 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-153-g7e3bb84806-fm-20240215.007-g7e3bb848
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-Id: <8e3e7d82-a9e7-4697-8147-d3800f0307db@app.fastmail.com>
+In-Reply-To: 
+ <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
 References: <20240226-fix-clang-warnings-v2-0-fa1bc931d17e@chromium.org>
- <20240226-fix-clang-warnings-v2-3-fa1bc931d17e@chromium.org> <c25638af-d40d-4dbc-a179-efb6f29c38aa@xs4all.nl>
-In-Reply-To: <c25638af-d40d-4dbc-a179-efb6f29c38aa@xs4all.nl>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 27 Feb 2024 12:35:08 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
-Message-ID: <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
+ <20240226-fix-clang-warnings-v2-3-fa1bc931d17e@chromium.org>
+ <c25638af-d40d-4dbc-a179-efb6f29c38aa@xs4all.nl>
+ <CANiDSCsMVR7gqzwrhPCWb7dQcezWbcHxkPNLZJrW=TWaAn+kXA@mail.gmail.com>
+Date: Tue, 27 Feb 2024 13:59:59 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ricardo Ribalda" <ribalda@chromium.org>,
+ "Hans Verkuil" <hverkuil@xs4all.nl>
+Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nick Desaulniers" <ndesaulniers@google.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ "Mike Isely at pobox" <isely@pobox.com>,
+ "Tiffany Lin" <tiffany.lin@mediatek.com>,
+ "Andrew-CT Chen" <andrew-ct.chen@mediatek.com>,
+ "Yunfei Dong" <yunfei.dong@mediatek.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Mathieu Poirier" <mathieu.poirier@linaro.org>,
+ "Sebastian Fricke" <sebastian.fricke@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-remoteproc@vger.kernel.org
 Subject: Re: [PATCH v2 3/3] media: mediatek: vcodedc: Fix Wcast-function-type-strict
  warnings
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Mike Isely <isely@pobox.com>, 
-	Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
-	Yunfei Dong <yunfei.dong@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Hans
+On Tue, Feb 27, 2024, at 12:35, Ricardo Ribalda wrote:
+> On Tue, 27 Feb 2024 at 12:17, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> Ricardo,
+>>
+>> First of all, note the typo in theo subject line: vcodedc -> vcodec.
+>>
+>> There is also a similar (but not identical!) patch from Arnd:
+>>
+>> https://patchwork.linuxtv.org/project/linux-media/patch/20240224121059.1806691-1-arnd@kernel.org/
+>>
+>> That patch and yours share the change to common/mtk_vcodec_fw_vpu.c but otherwise
+>> they are different, which is a bit odd.
+>>
+>> Can you take a look at Arnd's patch and see if you need to incorporate his changes
+>> into your patch?
+>
+> We went separate paths :), I tried to make everything const (and
+> therefore the remoteproc changes) and he removed the const.
 
-On Tue, 27 Feb 2024 at 12:17, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> Ricardo,
->
-> First of all, note the typo in theo subject line: vcodedc -> vcodec.
->
-> There is also a similar (but not identical!) patch from Arnd:
->
-> https://patchwork.linuxtv.org/project/linux-media/patch/20240224121059.18=
-06691-1-arnd@kernel.org/
->
-> That patch and yours share the change to common/mtk_vcodec_fw_vpu.c but o=
-therwise
-> they are different, which is a bit odd.
->
-> Can you take a look at Arnd's patch and see if you need to incorporate hi=
-s changes
-> into your patch?
+I had the same patch 3 originally but there was still a
+warning or a cast from const to non-const pointer, so I
+went with the simpler approach that I posted. 
 
-We went separate paths :), I tried to make everything const (and
-therefore the remoteproc changes) and he removed the const.
+Without that regression, your patch would be nicer, but I
+think the version you sent has the same regression that
+I ran into.
 
-His patch looks good to me. Shall I resend the series without this
-patch or you can ignore 3/3 and take 1 and 2?
+> His patch looks good to me. Shall I resend the series without this
+> patch or you can ignore 3/3 and take 1 and 2?
 
-Thanks!
+I also sent your patches 1 and 2 with minor differences in
+whitespace. Both of these are already in linux-next, so I think
+you don't have to resend anything here.
 
->
-> Regards,
->
->         Hans
->
-> On 26/02/2024 18:32, Ricardo Ribalda wrote:
-> > Building with LLVM=3D1 throws the following warning:
-> > drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c:38:32=
-: warning: cast from 'mtk_vcodec_ipi_handler' (aka 'void (*)(void *, unsign=
-ed int, void *)') to 'ipi_handler_t' (aka 'void (*)(const void *, unsigned =
-int, void *)') converts to incompatible function type [-Wcast-function-type=
--strict]
-> >
-> > Constify the types to avoid the warning.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c          | 12 ++++=
-++------
-> >  .../media/platform/mediatek/vcodec/common/mtk_vcodec_fw.h    |  2 +-
-> >  .../platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c      | 10 +---=
-------
-> >  drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c |  2 +-
-> >  drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c |  2 +-
-> >  drivers/remoteproc/mtk_scp.c                                 |  4 ++--
-> >  include/linux/remoteproc/mtk_scp.h                           |  2 +-
-> >  include/linux/rpmsg/mtk_rpmsg.h                              |  2 +-
-> >  8 files changed, 14 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c b/driv=
-ers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> > index 49fc2e9d45dd5..c4f1c49b9d52a 100644
-> > --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> > +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> > @@ -77,10 +77,10 @@ void mdp_vpu_shared_mem_free(struct mdp_vpu_dev *vp=
-u)
-> >               dma_free_wc(dev, vpu->config_size, vpu->config, vpu->conf=
-ig_addr);
-> >  }
-> >
-> > -static void mdp_vpu_ipi_handle_init_ack(void *data, unsigned int len,
-> > +static void mdp_vpu_ipi_handle_init_ack(const void *data, unsigned int=
- len,
-> >                                       void *priv)
-> >  {
-> > -     struct mdp_ipi_init_msg *msg =3D (struct mdp_ipi_init_msg *)data;
-> > +     const struct mdp_ipi_init_msg *msg =3D data;
-> >       struct mdp_vpu_dev *vpu =3D
-> >               (struct mdp_vpu_dev *)(unsigned long)msg->drv_data;
-> >
-> > @@ -91,10 +91,10 @@ static void mdp_vpu_ipi_handle_init_ack(void *data,=
- unsigned int len,
-> >       complete(&vpu->ipi_acked);
-> >  }
-> >
-> > -static void mdp_vpu_ipi_handle_deinit_ack(void *data, unsigned int len=
-,
-> > +static void mdp_vpu_ipi_handle_deinit_ack(const void *data, unsigned i=
-nt len,
-> >                                         void *priv)
-> >  {
-> > -     struct mdp_ipi_deinit_msg *msg =3D (struct mdp_ipi_deinit_msg *)d=
-ata;
-> > +     const struct mdp_ipi_deinit_msg *msg =3D data;
-> >       struct mdp_vpu_dev *vpu =3D
-> >               (struct mdp_vpu_dev *)(unsigned long)msg->drv_data;
-> >
-> > @@ -102,10 +102,10 @@ static void mdp_vpu_ipi_handle_deinit_ack(void *d=
-ata, unsigned int len,
-> >       complete(&vpu->ipi_acked);
-> >  }
-> >
-> > -static void mdp_vpu_ipi_handle_frame_ack(void *data, unsigned int len,
-> > +static void mdp_vpu_ipi_handle_frame_ack(const void *data, unsigned in=
-t len,
-> >                                        void *priv)
-> >  {
-> > -     struct img_sw_addr *addr =3D (struct img_sw_addr *)data;
-> > +     const struct img_sw_addr *addr =3D data;
-> >       struct img_ipi_frameparam *param =3D
-> >               (struct img_ipi_frameparam *)(unsigned long)addr->va;
-> >       struct mdp_vpu_dev *vpu =3D
-> > diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_f=
-w.h b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw.h
-> > index 300363a40158c..2561b99c95871 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw.h
-> > +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw.h
-> > @@ -23,7 +23,7 @@ enum mtk_vcodec_fw_use {
-> >
-> >  struct mtk_vcodec_fw;
-> >
-> > -typedef void (*mtk_vcodec_ipi_handler) (void *data,
-> > +typedef void (*mtk_vcodec_ipi_handler) (const void *data,
-> >       unsigned int len, void *priv);
-> >
-> >  struct mtk_vcodec_fw *mtk_vcodec_fw_select(void *priv, enum mtk_vcodec=
-_fw_type type,
-> > diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_f=
-w_vpu.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> > index 9f6e4b59455da..4c34344dc7dcb 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_fw_vpu.c
-> > @@ -29,15 +29,7 @@ static int mtk_vcodec_vpu_set_ipi_register(struct mt=
-k_vcodec_fw *fw, int id,
-> >                                          mtk_vcodec_ipi_handler handler=
-,
-> >                                          const char *name, void *priv)
-> >  {
-> > -     /*
-> > -      * The handler we receive takes a void * as its first argument. W=
-e
-> > -      * cannot change this because it needs to be passed down to the r=
-proc
-> > -      * subsystem when SCP is used. VPU takes a const argument, which =
-is
-> > -      * more constrained, so the conversion below is safe.
-> > -      */
-> > -     ipi_handler_t handler_const =3D (ipi_handler_t)handler;
-> > -
-> > -     return vpu_ipi_register(fw->pdev, id, handler_const, name, priv);
-> > +     return vpu_ipi_register(fw->pdev, id, handler, name, priv);
-> >  }
-> >
-> >  static int mtk_vcodec_vpu_ipi_send(struct mtk_vcodec_fw *fw, int id, v=
-oid *buf,
-> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if=
-.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > index 82e57ae983d55..a840dd2a48d0e 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > @@ -97,7 +97,7 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcodec_d=
-ec_dev *dec_dev, struct vde
-> >   * This function runs in interrupt context and it means there's an IPI=
- MSG
-> >   * from VPU.
-> >   */
-> > -static void vpu_dec_ipi_handler(void *data, unsigned int len, void *pr=
-iv)
-> > +static void vpu_dec_ipi_handler(const void *data, unsigned int len, vo=
-id *priv)
-> >  {
-> >       struct mtk_vcodec_dec_dev *dec_dev;
-> >       const struct vdec_vpu_ipi_ack *msg =3D data;
-> > diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if=
-.c b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > index 84ad1cc6ad171..ea0c4a281d1a1 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > @@ -57,7 +57,7 @@ static bool vpu_enc_check_ap_inst(struct mtk_vcodec_e=
-nc_dev *enc_dev, struct ven
-> >       return ret;
-> >  }
-> >
-> > -static void vpu_enc_ipi_handler(void *data, unsigned int len, void *pr=
-iv)
-> > +static void vpu_enc_ipi_handler(const void *data, unsigned int len, vo=
-id *priv)
-> >  {
-> >       struct mtk_vcodec_enc_dev *enc_dev;
-> >       const struct venc_vpu_ipi_msg_common *msg =3D data;
-> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.=
-c
-> > index a35409eda0cf2..b508136b416a8 100644
-> > --- a/drivers/remoteproc/mtk_scp.c
-> > +++ b/drivers/remoteproc/mtk_scp.c
-> > @@ -78,10 +78,10 @@ static void scp_wdt_handler(struct mtk_scp *scp, u3=
-2 scp_to_host)
-> >               rproc_report_crash(scp_node->rproc, RPROC_WATCHDOG);
-> >  }
-> >
-> > -static void scp_init_ipi_handler(void *data, unsigned int len, void *p=
-riv)
-> > +static void scp_init_ipi_handler(const void *data, unsigned int len, v=
-oid *priv)
-> >  {
-> >       struct mtk_scp *scp =3D priv;
-> > -     struct scp_run *run =3D data;
-> > +     const struct scp_run *run =3D data;
-> >
-> >       scp->run.signaled =3D run->signaled;
-> >       strscpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
-> > diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remotep=
-roc/mtk_scp.h
-> > index 7c2b7cc9fe6c1..84e579940b8e5 100644
-> > --- a/include/linux/remoteproc/mtk_scp.h
-> > +++ b/include/linux/remoteproc/mtk_scp.h
-> > @@ -8,7 +8,7 @@
-> >
-> >  #include <linux/platform_device.h>
-> >
-> > -typedef void (*scp_ipi_handler_t) (void *data,
-> > +typedef void (*scp_ipi_handler_t) (const void *data,
-> >                                  unsigned int len,
-> >                                  void *priv);
-> >  struct mtk_scp;
-> > diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_=
-rpmsg.h
-> > index 363b60178040b..9d67507471fba 100644
-> > --- a/include/linux/rpmsg/mtk_rpmsg.h
-> > +++ b/include/linux/rpmsg/mtk_rpmsg.h
-> > @@ -9,7 +9,7 @@
-> >  #include <linux/platform_device.h>
-> >  #include <linux/remoteproc.h>
-> >
-> > -typedef void (*ipi_handler_t)(void *data, unsigned int len, void *priv=
-);
-> > +typedef void (*ipi_handler_t)(const void *data, unsigned int len, void=
- *priv);
-> >
-> >  /*
-> >   * struct mtk_rpmsg_info - IPI functions tied to the rpmsg device.
-> >
->
+I sent a whole lot of -Wcast-function-type-strict warning fixes
+to address all randconfig builds on arm64, arm and x86, all but
+three are now merged. Aside from the mediatek vcodec, the only
+missing ones are
 
+https://lore.kernel.org/all/20240213095631.454543-1-arnd@kernel.org/
+https://lore.kernel.org/all/20240213100238.456912-1-arnd@kernel.org/
 
---=20
-Ricardo Ribalda
+I also had one patch for s390 but none of the other architectures.
+I think once Hans applies the vcodec patch, I'll resend the
+last two patches together with a patch to enable the warning by
+default.
+
+     Arnd
