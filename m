@@ -1,328 +1,234 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8065E090
-	for <linux-remoteproc@vger.kernel.org>; Wed, 28 Feb 2024 20:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6EB7291C;
+	Wed, 28 Feb 2024 22:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709150640; cv=none; b=TW/GHw++htocHvE+HVarvzwp916Qja5Oa72PsSD99Yb/wfCLQ+woT3yEBNHzwe0ANg3tP7V9baCf/n/0tQ/2qtOZjgzPE/lxTfCUeCIKSPxNLDjGdP/CN6EHOJQFVt2ecE85Bm+R4gnASL+p8haEgHm6sNwx5egdCjTqIUjVLyU=
+	t=1709161183; cv=none; b=m+qh8pmmCMMIdhWNnxKNvX1ewmApQFn1B8sTONernuAgv/a3DiTbAbGxl/OLAHel//qSE98Yw1mo7p8u+1JLxxJbIaF/+67DFCgE6KzenYmQkobimbRVPOTC2E+aRR+WPTXL+GoSYJUZEpGf8o6+Y1Xu4LKakZ4YongKNDWjABo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709150640; c=relaxed/simple;
-	bh=mzumyoSZI+LhVCrFoBFecC1MJbho77njtjXQwC1xJGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlsCLHoERMLVbMHZYYGYHQpC26E9TTxnA/gWAQVCRAwR4UoKgIkXeTezJEoyX/TQuZc0L5HUnu9FQe+1xwWTuUEP2jh7PUHjMErpfOsTBk2U8WKfVf7cVBTWnd6r2F7eiJgpyeswjh+5J/iNK4EVjPgG5nMq26yQbIzJNFyRLbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yBwsEkNn; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709161183; c=relaxed/simple;
+	bh=qyALoYJ4e/xDXFwou2aAo1rZPwgMePJQ8UyFijx0rcE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=RdG5QxMn7Wc8IcywNk4vau683+lZsogGUavXz9JH57eoiEBCglvCZ3Hh49NwDmp1hsPSQqZs6CLLYvHIX2MAGkcYB8GgP96Bl2ek68uDhatdKcoIINMYg1Rt5eRjrFztEcyqXemj96oC4+dV9h4Froy+NQzug+WlLPjHKDncmgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOAj82Ry; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yBwsEkNn"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-565d1656c12so242586a12.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Feb 2024 12:03:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709150635; x=1709755435; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cA8CXi05oqG2RKo5TjCvAal1T8T9TcbzOEEwwnkxX20=;
-        b=yBwsEkNnrM27ah4NWjuA+5hbvkqoG5EZKckZoX0enxBlfdC9JVBevFU3JHgYzzU5l/
-         tHKynHl4NnIpx+bP/UYpv/d4C8HQTMb9oodGp25gwtwUjFmm/FcuzJiTo/h+2pG8Erre
-         8mqzvLcau1i9swJOoXOaIN/ZTF3X6RF5ZTAoaFpXehrDyal+O4+k8l+54Bqrh+hMp9p7
-         G+MdiAqbApJUSpM/2R3cp/jbEH4nfN2a941OJYfVEyMm1Z77BHMlRMpeblZnniOl0C9W
-         OnIb8/3ZxUUuBdImZoIQOf3+vz9s8h3EikvrS4vPm4/DTmF5chFp4nPVgDxY9/xrwqTy
-         7omQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709150635; x=1709755435;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cA8CXi05oqG2RKo5TjCvAal1T8T9TcbzOEEwwnkxX20=;
-        b=fDlOprSkQRYZbn9ibYKA1pTtntvlACGmrWjibFNOeBOav4ilfBWX6hEImnp8hO7AYm
-         YTr7bVPBQmMD1uI8q4XxSgT4rP2HQWiRDrIasfU8Wmqn1iA4GGABCsyLautWgxatus+7
-         +/rTKCQqNWNxwU3lfKHvusroeufOvYqOkmIrB45i9s4Rj4A6W0JBHY4R03oU5US6RtZ+
-         GdQ/DKbnNA9/Dhq1oCwkrrrCB3xPEWSTpvYSE0gNNQAJ45CCR9IT1BMR1WHD0huPIRzI
-         9HG4/yj43LyAmu19VeL9Lao84PgMo5pcLEHUBNJ9HOtFgj72kyvP9f7BA31obiI5riVF
-         2Yyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtyOFOpbRmY0XMy5Q399N0O5dNYlft7LcZMJzdC7k9xt2XU8an/XVWnLt61JuR4yQ7vg8d04VUKl4nesH/96IJdIXrmZvEBy9rrOsMV3qFJQ==
-X-Gm-Message-State: AOJu0YzvAqLT7M0Y9b9EL7uTwp4h9bl+MNusF+JuDZQa6ICe9vmYp+2f
-	+FZ8suW+OvExCULtTRLQnjlzuHLAc2eySau/puNaDNwAx8S5eER7d3wKlkNsGnz+5b4A6acKSXJ
-	SgQFCmtlNBuuy8BqD2/2DQL/QVcCOuAuzDZlFIQ==
-X-Google-Smtp-Source: AGHT+IHhbcCIjBi7iFnCxL3DiWqnSbAEzy9Sfa0X7wds0chJjXqvd603Hv2MKXxKJFOkI3s7JLGVtHOhxJKVoh2vX+c=
-X-Received: by 2002:a50:cb88:0:b0:566:59a2:7a10 with SMTP id
- k8-20020a50cb88000000b0056659a27a10mr208018edi.1.1709150634952; Wed, 28 Feb
- 2024 12:03:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOAj82Ry"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C742C433F1;
+	Wed, 28 Feb 2024 22:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709161182;
+	bh=qyALoYJ4e/xDXFwou2aAo1rZPwgMePJQ8UyFijx0rcE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=VOAj82RysJU1YtvCqndNJphH/ubZQADuXdO96RADGytgnXjlA+ueUjB3eQQM7rNvY
+	 7D8Gv/t/60sQQb1T+CYzm8cYJQNlWLCHyEg06whSTkbNUPfTBJPBNXOGNWQnoSoIc1
+	 n/2LULwb9QJLOuMROfxqNW6hnbB2yXZFOeiNrzDHavMqYue9Cq1OUF0oYcSfT3iAsl
+	 I4QckxPVdUOxC9zYtqbXDHp5/R9nmtgxry3TvdrZ9Qcz6obcYBJh3QFjRPKkxMfCjH
+	 aZ/TBvhMxj1ejolQHOMvHcRFkE+PZ19UrBOAFykL+2yeuDZP8zxeoQ/penk3oRJO08
+	 Bvn7VXDKAEjAQ==
+Message-ID: <2df72cc0d2be877c1f6eda8ebcf79508.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219174437.3722620-1-tanmay.shah@amd.com> <20240219174437.3722620-7-tanmay.shah@amd.com>
- <Zd9omCbc3UqjT7Lr@p14s> <71dcc0f8-a59a-4aee-9349-09334b8e75f7@amd.com>
-In-Reply-To: <71dcc0f8-a59a-4aee-9349-09334b8e75f7@amd.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 28 Feb 2024 13:03:43 -0700
-Message-ID: <CANLsYkzSP=A-d91Zz_H6gqd70iUnk18kDDPkn+g+B=LUovOQKw@mail.gmail.com>
-Subject: Re: [PATCH v11 1/4] remoteproc: zynqmp: fix lockstep mode memory region
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, michal.simek@amd.com, 
-	ben.levinsky@amd.com, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240224091236.10146-2-krzysztof.kozlowski@linaro.org>
+References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org> <20240224091236.10146-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 2/3] dt-bindings: clock: ti: remove unstable remark
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Date: Wed, 28 Feb 2024 14:59:40 -0800
+User-Agent: alot/0.10
 
-On Wed, 28 Feb 2024 at 12:24, Tanmay Shah <tanmay.shah@amd.com> wrote:
->
->
-> On 2/28/24 11:08 AM, Mathieu Poirier wrote:
-> > On Mon, Feb 19, 2024 at 09:44:34AM -0800, Tanmay Shah wrote:
-> > > In lockstep mode, r5 core0 uses TCM of R5 core1. Following is lockstep
-> > > mode memory region as per hardware reference manual.
-> > >
-> > >     |      *TCM*         |   *R5 View* | *Linux view* |
-> > >     | R5_0 ATCM (128 KB) | 0x0000_0000 | 0xFFE0_0000  |
-> > >     | R5_0 BTCM (128 KB) | 0x0002_0000 | 0xFFE2_0000  |
-> > >
-> > > However, driver shouldn't model it as above because R5 core0 TCM and core1
-> > > TCM has different power-domains mapped to it.
-> > > Hence, TCM address space in lockstep mode should be modeled as 64KB
-> > > regions only where each region has its own power-domain as following:
-> > >
-> > >     |      *TCM*         |   *R5 View* | *Linux view* |
-> > >     | R5_0 ATCM0 (64 KB) | 0x0000_0000 | 0xFFE0_0000  |
-> > >     | R5_0 BTCM0 (64 KB) | 0x0002_0000 | 0xFFE2_0000  |
-> > >     | R5_0 ATCM1 (64 KB) | 0x0001_0000 | 0xFFE1_0000  |
-> > >     | R5_0 BTCM1 (64 KB) | 0x0003_0000 | 0xFFE3_0000  |
-> > >
-> > > This makes driver maintanance easy and makes design robust for future
-> > > platorms as well.
-> > >
-> > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >
-> > Now that I have a clearer picture of where things are going, I am adding this
-> > patch to rproc-next.
-> >
-> > I'll wait for the DT crew for the rest of this set.
->
-> Hi Mathieu,
->
-> Is it okay if we wait for DT crew to clear new bindings as well before taking this one to rproc-next ?
->
-> Just in case any modifications needed further?
->
++Tony
 
-Sure, we can do that too.
+Quoting Krzysztof Kozlowski (2024-02-24 01:12:35)
+> Several TI SoC clock bindings were marked as work-in-progress / unstable
+> between 2013-2016, for example in commit f60b1ea5ea7a ("CLK: TI: add
+> support for gate clock").  It was enough of time to consider them stable
+> and expect usual ABI rules.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+>  Documentation/devicetree/bindings/clock/ti/adpll.txt            | 2 --
+>  Documentation/devicetree/bindings/clock/ti/apll.txt             | 2 --
+>  Documentation/devicetree/bindings/clock/ti/autoidle.txt         | 2 --
+>  Documentation/devicetree/bindings/clock/ti/clockdomain.txt      | 2 --
+>  Documentation/devicetree/bindings/clock/ti/composite.txt        | 2 --
+>  Documentation/devicetree/bindings/clock/ti/divider.txt          | 2 --
+>  Documentation/devicetree/bindings/clock/ti/dpll.txt             | 2 --
+>  Documentation/devicetree/bindings/clock/ti/fapll.txt            | 2 --
+>  .../devicetree/bindings/clock/ti/fixed-factor-clock.txt         | 2 --
+>  Documentation/devicetree/bindings/clock/ti/gate.txt             | 2 --
+>  Documentation/devicetree/bindings/clock/ti/interface.txt        | 2 --
+>  Documentation/devicetree/bindings/clock/ti/mux.txt              | 2 --
+>  12 files changed, 24 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/ti/adpll.txt b/Docum=
+entation/devicetree/bindings/clock/ti/adpll.txt
+> index 4c8a2ce2cd70..3122360adcf3 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/adpll.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/adpll.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments ADPLL clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. It assumes a
+>  register-mapped ADPLL with two to three selectable input clocks
+>  and three to four children.
+> diff --git a/Documentation/devicetree/bindings/clock/ti/apll.txt b/Docume=
+ntation/devicetree/bindings/clock/ti/apll.txt
+> index ade4dd4c30f0..bbd505c1199d 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/apll.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/apll.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments APLL clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1].  It assumes a
+>  register-mapped APLL with usually two selectable input clocks
+>  (reference clock and bypass clock), with analog phase locked
+> diff --git a/Documentation/devicetree/bindings/clock/ti/autoidle.txt b/Do=
+cumentation/devicetree/bindings/clock/ti/autoidle.txt
+> index 7c735dde9fe9..05645a10a9e3 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments autoidle clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. It assumes a register map=
+ped
+>  clock which can be put to idle automatically by hardware based on the us=
+age
+>  and a configuration bit setting. Autoidle clock is never an individual
+> diff --git a/Documentation/devicetree/bindings/clock/ti/clockdomain.txt b=
+/Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+> index 9c6199249ce5..edf0b5d42768 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments clockdomain.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1] in consumer role.
+>  Every clock on TI SoC belongs to one clockdomain, but software
+>  only needs this information for specific clocks which require
+> diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/D=
+ocumentation/devicetree/bindings/clock/ti/composite.txt
+> index 33ac7c9ad053..6f7e1331b546 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/composite.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
+> @@ -1,7 +1,5 @@
+>  Binding for TI composite clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. It assumes a
+>  register-mapped composite clock with multiple different sub-types;
+> =20
+> diff --git a/Documentation/devicetree/bindings/clock/ti/divider.txt b/Doc=
+umentation/devicetree/bindings/clock/ti/divider.txt
+> index 9b13b32974f9..4d7c76f0b356 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/divider.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/divider.txt
+> @@ -1,7 +1,5 @@
+>  Binding for TI divider clock
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1].  It assumes a
+>  register-mapped adjustable clock rate divider that does not gate and has
+>  only one input clock or parent.  By default the value programmed into
+> diff --git a/Documentation/devicetree/bindings/clock/ti/dpll.txt b/Docume=
+ntation/devicetree/bindings/clock/ti/dpll.txt
+> index 37a7cb6ad07d..14a1b72c2e71 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/dpll.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/dpll.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments DPLL clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1].  It assumes a
+>  register-mapped DPLL with usually two selectable input clocks
+>  (reference clock and bypass clock), with digital phase locked
+> diff --git a/Documentation/devicetree/bindings/clock/ti/fapll.txt b/Docum=
+entation/devicetree/bindings/clock/ti/fapll.txt
+> index c19b3f253b8c..88986ef39ddd 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/fapll.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/fapll.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments FAPLL clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. It assumes a
+>  register-mapped FAPLL with usually two selectable input clocks
+>  (reference clock and bypass clock), and one or more child
+> diff --git a/Documentation/devicetree/bindings/clock/ti/fixed-factor-cloc=
+k.txt b/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+> index 518e3c142276..dc69477b6e98 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+> @@ -1,7 +1,5 @@
+>  Binding for TI fixed factor rate clock sources.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1], and also uses the autoidle
+>  support from TI autoidle clock [2].
+> =20
+> diff --git a/Documentation/devicetree/bindings/clock/ti/gate.txt b/Docume=
+ntation/devicetree/bindings/clock/ti/gate.txt
+> index 4982615c01b9..a8e0335b006a 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/gate.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/gate.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments gate clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. This clock is
+>  quite much similar to the basic gate-clock [2], however,
+>  it supports a number of additional features. If no register
+> diff --git a/Documentation/devicetree/bindings/clock/ti/interface.txt b/D=
+ocumentation/devicetree/bindings/clock/ti/interface.txt
+> index d3eb5ca92a7f..85fb1f2d2d28 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/interface.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/interface.txt
+> @@ -1,7 +1,5 @@
+>  Binding for Texas Instruments interface clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1]. This clock is
+>  quite much similar to the basic gate-clock [2], however,
+>  it supports a number of additional features, including
+> diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documen=
+tation/devicetree/bindings/clock/ti/mux.txt
+> index b33f641f1043..cd56d3c1c09f 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/mux.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/mux.txt
+> @@ -1,7 +1,5 @@
+>  Binding for TI mux clock.
+> =20
+> -Binding status: Unstable - ABI compatibility may be broken in the future
+> -
+>  This binding uses the common clock binding[1].  It assumes a
+>  register-mapped multiplexer with multiple input clock signals or
+>  parents, one of which can be selected as output.  This clock does not
+> --=20
+> 2.34.1
 >
-> Tanmay
->
->
-> >
-> > Thanks,
-> > Mathieu
-> >
-> > > ---
-> > >  drivers/remoteproc/xlnx_r5_remoteproc.c | 145 ++----------------------
-> > >  1 file changed, 12 insertions(+), 133 deletions(-)
-> > >
-> > > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > index 4395edea9a64..42b0384d34f2 100644
-> > > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > @@ -84,12 +84,12 @@ static const struct mem_bank_data zynqmp_tcm_banks_split[] = {
-> > >     {0xffeb0000UL, 0x20000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
-> > >  };
-> > >
-> > > -/* In lockstep mode cluster combines each 64KB TCM and makes 128KB TCM */
-> > > +/* In lockstep mode cluster uses each 64KB TCM from second core as well */
-> > >  static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> > > -   {0xffe00000UL, 0x0, 0x20000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 128KB each */
-> > > -   {0xffe20000UL, 0x20000, 0x20000UL, PD_R5_0_BTCM, "btcm0"},
-> > > -   {0, 0, 0, PD_R5_1_ATCM, ""},
-> > > -   {0, 0, 0, PD_R5_1_BTCM, ""},
-> > > +   {0xffe00000UL, 0x0, 0x10000UL, PD_R5_0_ATCM, "atcm0"}, /* TCM 64KB each */
-> > > +   {0xffe20000UL, 0x20000, 0x10000UL, PD_R5_0_BTCM, "btcm0"},
-> > > +   {0xffe10000UL, 0x10000, 0x10000UL, PD_R5_1_ATCM, "atcm1"},
-> > > +   {0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
-> > >  };
-> > >
-> > >  /**
-> > > @@ -540,14 +540,14 @@ static int tcm_mem_map(struct rproc *rproc,
-> > >  }
-> > >
-> > >  /*
-> > > - * add_tcm_carveout_split_mode()
-> > > + * add_tcm_banks()
-> > >   * @rproc: single R5 core's corresponding rproc instance
-> > >   *
-> > > - * allocate and add remoteproc carveout for TCM memory in split mode
-> > > + * allocate and add remoteproc carveout for TCM memory
-> > >   *
-> > >   * return 0 on success, otherwise non-zero value on failure
-> > >   */
-> > > -static int add_tcm_carveout_split_mode(struct rproc *rproc)
-> > > +static int add_tcm_banks(struct rproc *rproc)
-> > >  {
-> > >     struct rproc_mem_entry *rproc_mem;
-> > >     struct zynqmp_r5_core *r5_core;
-> > > @@ -580,10 +580,10 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
-> > >                                          ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > >             if (ret < 0) {
-> > >                     dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
-> > > -                   goto release_tcm_split;
-> > > +                   goto release_tcm;
-> > >             }
-> > >
-> > > -           dev_dbg(dev, "TCM carveout split mode %s addr=%llx, da=0x%x, size=0x%lx",
-> > > +           dev_dbg(dev, "TCM carveout %s addr=%llx, da=0x%x, size=0x%lx",
-> > >                     bank_name, bank_addr, da, bank_size);
-> > >
-> > >             rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
-> > > @@ -593,7 +593,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
-> > >             if (!rproc_mem) {
-> > >                     ret = -ENOMEM;
-> > >                     zynqmp_pm_release_node(pm_domain_id);
-> > > -                   goto release_tcm_split;
-> > > +                   goto release_tcm;
-> > >             }
-> > >
-> > >             rproc_add_carveout(rproc, rproc_mem);
-> > > @@ -601,7 +601,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
-> > >
-> > >     return 0;
-> > >
-> > > -release_tcm_split:
-> > > +release_tcm:
-> > >     /* If failed, Turn off all TCM banks turned on before */
-> > >     for (i--; i >= 0; i--) {
-> > >             pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> > > @@ -610,127 +610,6 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
-> > >     return ret;
-> > >  }
-> > >
-> > > -/*
-> > > - * add_tcm_carveout_lockstep_mode()
-> > > - * @rproc: single R5 core's corresponding rproc instance
-> > > - *
-> > > - * allocate and add remoteproc carveout for TCM memory in lockstep mode
-> > > - *
-> > > - * return 0 on success, otherwise non-zero value on failure
-> > > - */
-> > > -static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
-> > > -{
-> > > -   struct rproc_mem_entry *rproc_mem;
-> > > -   struct zynqmp_r5_core *r5_core;
-> > > -   int i, num_banks, ret;
-> > > -   phys_addr_t bank_addr;
-> > > -   size_t bank_size = 0;
-> > > -   struct device *dev;
-> > > -   u32 pm_domain_id;
-> > > -   char *bank_name;
-> > > -   u32 da;
-> > > -
-> > > -   r5_core = rproc->priv;
-> > > -   dev = r5_core->dev;
-> > > -
-> > > -   /* Go through zynqmp banks for r5 node */
-> > > -   num_banks = r5_core->tcm_bank_count;
-> > > -
-> > > -   /*
-> > > -    * In lockstep mode, TCM is contiguous memory block
-> > > -    * However, each TCM block still needs to be enabled individually.
-> > > -    * So, Enable each TCM block individually.
-> > > -    * Although ATCM and BTCM is contiguous memory block, add two separate
-> > > -    * carveouts for both.
-> > > -    */
-> > > -   for (i = 0; i < num_banks; i++) {
-> > > -           pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> > > -
-> > > -           /* Turn on each TCM bank individually */
-> > > -           ret = zynqmp_pm_request_node(pm_domain_id,
-> > > -                                        ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> > > -                                        ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> > > -           if (ret < 0) {
-> > > -                   dev_err(dev, "failed to turn on TCM 0x%x", pm_domain_id);
-> > > -                   goto release_tcm_lockstep;
-> > > -           }
-> > > -
-> > > -           bank_size = r5_core->tcm_banks[i]->size;
-> > > -           if (bank_size == 0)
-> > > -                   continue;
-> > > -
-> > > -           bank_addr = r5_core->tcm_banks[i]->addr;
-> > > -           da = r5_core->tcm_banks[i]->da;
-> > > -           bank_name = r5_core->tcm_banks[i]->bank_name;
-> > > -
-> > > -           /* Register TCM address range, TCM map and unmap functions */
-> > > -           rproc_mem = rproc_mem_entry_init(dev, NULL, bank_addr,
-> > > -                                            bank_size, da,
-> > > -                                            tcm_mem_map, tcm_mem_unmap,
-> > > -                                            bank_name);
-> > > -           if (!rproc_mem) {
-> > > -                   ret = -ENOMEM;
-> > > -                   zynqmp_pm_release_node(pm_domain_id);
-> > > -                   goto release_tcm_lockstep;
-> > > -           }
-> > > -
-> > > -           /* If registration is success, add carveouts */
-> > > -           rproc_add_carveout(rproc, rproc_mem);
-> > > -
-> > > -           dev_dbg(dev, "TCM carveout lockstep mode %s addr=0x%llx, da=0x%x, size=0x%lx",
-> > > -                   bank_name, bank_addr, da, bank_size);
-> > > -   }
-> > > -
-> > > -   return 0;
-> > > -
-> > > -release_tcm_lockstep:
-> > > -   /* If failed, Turn off all TCM banks turned on before */
-> > > -   for (i--; i >= 0; i--) {
-> > > -           pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> > > -           zynqmp_pm_release_node(pm_domain_id);
-> > > -   }
-> > > -   return ret;
-> > > -}
-> > > -
-> > > -/*
-> > > - * add_tcm_banks()
-> > > - * @rproc: single R5 core's corresponding rproc instance
-> > > - *
-> > > - * allocate and add remoteproc carveouts for TCM memory based on cluster mode
-> > > - *
-> > > - * return 0 on success, otherwise non-zero value on failure
-> > > - */
-> > > -static int add_tcm_banks(struct rproc *rproc)
-> > > -{
-> > > -   struct zynqmp_r5_cluster *cluster;
-> > > -   struct zynqmp_r5_core *r5_core;
-> > > -   struct device *dev;
-> > > -
-> > > -   r5_core = rproc->priv;
-> > > -   if (!r5_core)
-> > > -           return -EINVAL;
-> > > -
-> > > -   dev = r5_core->dev;
-> > > -
-> > > -   cluster = dev_get_drvdata(dev->parent);
-> > > -   if (!cluster) {
-> > > -           dev_err(dev->parent, "Invalid driver data\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > -
-> > > -   /*
-> > > -    * In lockstep mode TCM banks are one contiguous memory region of 256Kb
-> > > -    * In split mode, each TCM bank is 64Kb and not contiguous.
-> > > -    * We add memory carveouts accordingly.
-> > > -    */
-> > > -   if (cluster->mode == SPLIT_MODE)
-> > > -           return add_tcm_carveout_split_mode(rproc);
-> > > -   else if (cluster->mode == LOCKSTEP_MODE)
-> > > -           return add_tcm_carveout_lockstep_mode(rproc);
-> > > -
-> > > -   return -EINVAL;
-> > > -}
-> > > -
-> > >  /*
-> > >   * zynqmp_r5_parse_fw()
-> > >   * @rproc: single R5 core's corresponding rproc instance
-> > > --
-> > > 2.25.1
-> > >
