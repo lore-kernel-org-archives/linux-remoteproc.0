@@ -1,57 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066EB7291D;
-	Wed, 28 Feb 2024 23:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C22E2CCB4;
+	Thu, 29 Feb 2024 05:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709161244; cv=none; b=VgBpzQ6aL8jTN98XQqym4tSGmQR3+jGg0LapIdArKY+zAopKVcfmANLJiz6cqVuIfl+l4SJEp+sOcfH/ZYXZpvQUTaQv+yNcJbOgotcqXPCgZ4BWx7OJa2DIN4U0668pdArnWj881FRYEEsLl8RNr2YwOf86D8m3FhZW9N45eGo=
+	t=1709185723; cv=none; b=pLhEQTAcMu5yAYIZ5F5wErJdaH0+4d8I/sCzNE79FXPtW1hrcDNYMYg2If5lfGrerEhI3Cof9fg7O5iemRJLA035+0xMs9wn9wa4eZP1T3dwLicY2UK+gFKKThQ1yUcct92IEMW+mofMyz5S4uoqPBjpUjz8k0bFZcf3hajFb5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709161244; c=relaxed/simple;
-	bh=cbr6b/G3lRERbyX93hkq9IWLhpeAc9lzDtXfqhVGFco=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KBzo+kvaklLy4jGNihTvqZhEAwy75ZriYy6DGATyciClVhPkExwf5X9eTG5TNQzqF9pm/ATeaJNoetuEW6T1QzJ63CPoSdSjlx6qKy0pnTjwl35CHXl9vlXBjld/ogDWtuCKX46LLRczAn4zlsQj9cd+oIoxpqMSbXm41KARiQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3GTIYrO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709185723; c=relaxed/simple;
+	bh=tDQKgdaHcpbkKuo/kf6JeayU7YHnwAHOd5IVTL7HkJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVifNoZvsPhcKE7mstAniAkfq27SZE1HcBPLN2lulqlRC6dseNTcNeA1z8DljxAoCDC41oBd0f7NXZDZcq0XcWwwvClbE+g5zZIy82RAgncpyA4vDILpLC+PzSbqEnqu8IvOoliL+B/sQqNGNOApxcELhq3NKUq8sQDqdiTWojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=sF65JYxY; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3GTIYrO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700C5C43390;
-	Wed, 28 Feb 2024 23:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709161243;
-	bh=cbr6b/G3lRERbyX93hkq9IWLhpeAc9lzDtXfqhVGFco=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k3GTIYrO6vj2o4GWm99HLI3oqmnSpulORl0SqrKI6PEqfzBnHbZ3ZVq6+DiMdpp6e
-	 v0DkzUczvx33Xs+3qhJUPOa8HlYD8d8XiSfNsF/2vaIo7Hbzf05DbIm/Ub4+U9qsXg
-	 hxBANzGu7+AYgrqkHLGbFRdnZEKHhd75TSXdi4vE3YJ0weoU+uxOQwKDN8fbruMgH4
-	 JrOJZ53mjP+m62AXvrYLSHvMcMMTRQp9XkbrWWd/JoOw9pzSVevFuu084aWhV17a69
-	 aDUHTm8wn5vbsvg+5eTd1uM4sJT2zU1Xbuo8KAaMGT5BGAYtz9yg562MBhZWY14xGj
-	 oE/JTTnW0aY9g==
-Message-ID: <1cffc4a5c769f0dc041871cfb9be0950.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="sF65JYxY"
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 5ED7C6045F;
+	Thu, 29 Feb 2024 05:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1709185718;
+	bh=tDQKgdaHcpbkKuo/kf6JeayU7YHnwAHOd5IVTL7HkJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sF65JYxYrDt48aFF3Agq0mdF9wwwsusp4wAkXtttjH+J2wUdGDAxBJd1nvjHF/G+a
+	 znvPAaCDDywsOK41KhnW55QfJO57e9CsVXIcVUQOwU4LG+CRcc16YUiuGRsrBvoYmo
+	 bachV/qV5xsgTi+FB9PmKXn5aP7K7bLOkscBGKNJMuPi4xz9bJPBwmK5Sk7XuvqFiM
+	 hDBjOpwLq7XCngakzPcu/potKcsYrdFo6kAubuVl8DaIjRcUNAzVWsu3Ie36/85iXz
+	 wkIkkgb/bCMBERxV8ms1/tUuF1qZ5NWQf4QtniMoBxDpzBttO3qUSMtZg/U0KlBSER
+	 fJgO9wx07V/NQ==
+Date: Thu, 29 Feb 2024 07:48:10 +0200
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: clock: ti: remove unstable remark
+Message-ID: <20240229054810.GG52537@atomide.com>
+References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
+ <20240224091236.10146-2-krzysztof.kozlowski@linaro.org>
+ <2df72cc0d2be877c1f6eda8ebcf79508.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
-References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: keystone: remove unstable remark
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date: Wed, 28 Feb 2024 15:00:41 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2df72cc0d2be877c1f6eda8ebcf79508.sboyd@kernel.org>
 
-Quoting Krzysztof Kozlowski (2024-02-24 01:12:34)
-> Keystone clock controller bindings were marked as work-in-progress /
-> unstable in 2013 in commit b9e0d40c0d83 ("clk: keystone: add Keystone
-> PLL clock driver") and commit 7affe5685c96 ("clk: keystone: Add gate
-> control clock driver") Almost eleven years is enough, so drop the
-> "unstable" remark and expect usual ABI rules.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+* Stephen Boyd <sboyd@kernel.org> [240228 22:59]:
+> +Tony
+> 
+> Quoting Krzysztof Kozlowski (2024-02-24 01:12:35)
+> > Several TI SoC clock bindings were marked as work-in-progress / unstable
+> > between 2013-2016, for example in commit f60b1ea5ea7a ("CLK: TI: add
+> > support for gate clock").  It was enough of time to consider them stable
+> > and expect usual ABI rules.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Makes sense to me:
+
+Acked-by: Tony Lindgren <tony@atomide.com>
