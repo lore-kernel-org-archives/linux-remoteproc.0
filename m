@@ -1,287 +1,253 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2079.outbound.protection.outlook.com [40.107.212.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB62D4595C
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Feb 2024 23:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709247899; cv=none; b=mPzMW511NBs8gMNawsiw5sVFXCD3rZL4XG10hWhnjTcQFJ08vfa4+LJ0HDLALDPW6tpqsyx2ITa2NsuP/sVRdkXtipzjWDfIwY72T1GjJzefPUXGncoEBkDSneIFkgzabcCJ5vSrCmBss19oJG5B6SJ2nJEDqfyQ+zUcZ2Cv+sk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709247899; c=relaxed/simple;
-	bh=qf2lT77fKGu4LWHZCRb6Z0Uv6eDUPOBbSOeOXdp1Rms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CcOdKvYDav5cbVR0AxOauBun9fw2ME3FJUKuCx9tOI5eWdq/pX9ROkRcWySSn8AhtmSA3tHPUmgBeF9YGEUR3V2gSobqaKGyLS72X8WhYXv7ST5uUs/wFc3N56cqbxVPWsTwtwyvXzAXbwSsjWuibizzL/dL838A+t2i/YGZJNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DJmcCson; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20316FF51;
+	Thu, 29 Feb 2024 23:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709250334; cv=fail; b=rIUPvLYE906xb2yo5oW7QjwsEeDgTBLbS/NUvEmTl5zBGZKDZCMkQtJsqxDdhaa4niOljA0m6VLyaahmv3q5FtmgL14hMGFclGbQH2MpiYk7LXJdX67sME+plMGDMg2XNiVTRpE5q6aA3REFBl/4X+zRWrtZ6Ci7QTnplFYmVss=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709250334; c=relaxed/simple;
+	bh=fGWkrWcwdkBvkJxX7b7h2sPOzbLXNpYkc15UHMjiN8s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JDPqvWRkr0BKiRWIw6N0xwCupOeeqwD6/GYcB9ELzGAJt6ed0ntYWlS5LdIk1QA6LNpey8D3GDN698rcqN2x1JcejQ2KaC+aWEbjQPLZYr6nA8WVs6shMC7EgandpKgjYRKbyE7hMRb2WK2HhAKP2qGRc5l7UR5ebfUsp6zYTNI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Niqeh+pH; arc=fail smtp.client-ip=40.107.212.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJmcCson"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc25e12cc63so2589864276.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Feb 2024 15:04:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709247896; x=1709852696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIJPcII4p8qLU28ntWv9B/bdbUcLOsFsvs30Qwk+hM0=;
-        b=DJmcCsonEorFPCfUzBx3VhY4RbP7p2DrzkwWp88JMdKmqPdXJGh/W+whoTx8ap9CDu
-         Xaf6WgBy9Nwy2op7g+QxxVtHWIhTEPg5UYDWU8V0eK818hWstPBtDpwrMR0WzAVWVGCm
-         V46zHkoGGbOnKT8K9+OdUmiNBd3OLwCF6iaWnWlxXEGLF0u7bt+HB0UIQ+oMaOIpuzSy
-         L7YEJ4BUkILtyq6KEde52rDDAC017oa2XZAQg1Mp9MtTYZWUANY5vxdUO+ZNvc4aoL7A
-         MK66BSvtTQMtgupiu4WmQaDBeAPR8JMVmQw7RCL6kasHVL/+lyjm2k5WmVVIrFxttvk6
-         Wfkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709247896; x=1709852696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TIJPcII4p8qLU28ntWv9B/bdbUcLOsFsvs30Qwk+hM0=;
-        b=qCA94UALKA6VJsDRrBjkjXAn1QCoYcrX1/bSbXKrWLxVoejKbGgF70tD6xbz+tn3gb
-         C9D3xxIbXrX+CfQ7pqxNnqduJwQdWfktNZAA/t3MprEGTGxPtAbPjxNTEXgYSsJhw564
-         sbd/wnLkNeUQmwdSo7nR2bcB1IKKvVldunjjhJ1gDEIT+CgTlx3p/0V1zk/wdONnWuf5
-         62HjUPZgXWNaOWaEGx8HhJEQvpfdHwk2BpC1tk6l8VISeYxHr79PPXhwkADb9oKDrnfy
-         u9BcMyOk35Fgw6YQAHCCRothP2q2UXjUsaxlPmvUxnw044rmF3+EkFYGz40X3tHhc8Mb
-         4T4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVMD5+XSO4Gyx5kHLCEN7PvPABbFgXO6jeg/GVliT440Ssu1vtgQEyDFw+r80VPUrIncxF500Mtsxi+XU3cYCvCQbaj4zNSFMyViz9Lny3eKw==
-X-Gm-Message-State: AOJu0Yx2El6P79RZ0c4mReC+FpvQ9IeitAeYBpwaE6ZoJ2XHphhfHVYU
-	XgNlzzDJY1gDW6iNgeyRN5yxp3Bv5klYz18ydDUsi+OjlrCIDlS+TeE8UMUDSW3SxyJU7C6KhIi
-	nY2Hoz4c4Nsk4Cm0R3fGu/l6MemjeJt7Wz5Jd7g==
-X-Google-Smtp-Source: AGHT+IE6Rr1X3iSsGfV7fPNpU5Z4YEkUFvT6flP8+HUcvfagu6f0FwNRvFzk6jFDXzzDQkFQ+G69AIp01zdRtM7RIb4=
-X-Received: by 2002:a25:dc8e:0:b0:dc2:a46:3d29 with SMTP id
- y136-20020a25dc8e000000b00dc20a463d29mr2961673ybe.9.1709247895737; Thu, 29
- Feb 2024 15:04:55 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Niqeh+pH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kIXI/vltSZ1YP+0EYb+daf172OvkYJfEzqxF7IRcNyQWVlq8pbGItcdOW+TA718gTPpLdu/bDBS5YB7MrEyr7GrnktZzgEPd3KHf2RWY9omXfZwunzDaSqWIniFR4SKFNL4VuSv2wPW30E6tfG2Jlu+4l3DkVj0+UPxzKohx0KHgAqyHHg/fXzYI5PQQWDdmDrDuJUbE6gA8jHZ9kPlHNHrqII3/FFAMlCpzOQxrfzFiXTYFg811D2GJu5jGNGEvR/ZHubRV1glR5cklwKK0b/kwWM2JF0WN/BRIsEoKN5P4Ex1VBmsWnEjMPuf93xBerV5fSRPb3XBXRp2t+AyxiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6rAkdWfRIgiHK0dTosl7qsamX5W3Fy5c/5nYuBR1oHw=;
+ b=PD928uviyYWSioa1BSpO4wlfv+ZJ8JivJQuGG1FmEzHkTSiWTfHw1rprldqppssa+kS6bDsgHsd8zCwWzTc6WWfd2+1soYykkQ6+GAr/QvKGeB7omLTD6eZSSKAuOpGwHh2efJR0DAr7nsNZHUjfRCy+sMA4kZY4W5r4OQY+KsUYxONOMD0tveYb3DJaCx3EQBXhmfl81CM4TnbISPRxdqar9rxnsaAopsK/dSDIpXElcQNzYgCexMqiCZi5NCmuC8SrPfrqtuTYsLeyg4q9quOtxDsAZMuGUp55vBQuEPxMHMKSkkM5R72VW2+l0wQmTCm6Lw3ImZeZ/FsF5RJJOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6rAkdWfRIgiHK0dTosl7qsamX5W3Fy5c/5nYuBR1oHw=;
+ b=Niqeh+pHhldo/cgGZAglucv3jK2ymS1KdFsefZCwNtKELSlkY6GS+FHUWE7vnQ2yWfW2qpf2NYPj6yawj+5z/YyQgbQa8JrDQ2rRFZ9gS0RZRSfAsjaoP0/CfeSdfQCWWkj2qW9YhE54u5q9jsDw6zib4b9/sa2OZhIsBlcoT+o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
+ by DM4PR12MB5842.namprd12.prod.outlook.com (2603:10b6:8:65::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.39; Thu, 29 Feb
+ 2024 23:45:29 +0000
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7339.031; Thu, 29 Feb 2024
+ 23:45:29 +0000
+Message-ID: <294dc34c-11ac-4220-9619-1578ebca6382@amd.com>
+Date: Thu, 29 Feb 2024 17:45:26 -0600
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v11 2/4] dt-bindings: remoteproc: add Tightly Coupled
+ Memory (TCM) bindings
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ michal.simek@amd.com, ben.levinsky@amd.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+References: <20240219174437.3722620-1-tanmay.shah@amd.com>
+ <20240219174437.3722620-3-tanmay.shah@amd.com>
+ <d0963aeb-1165-469b-b9c7-410a61b117f4@linaro.org>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <d0963aeb-1165-469b-b9c7-410a61b117f4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR01CA0025.prod.exchangelabs.com (2603:10b6:805:b6::38)
+ To BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301-qcom-pd-mapper-v2-0-5d12a081d9d1@linaro.org> <20240301-qcom-pd-mapper-v2-3-5d12a081d9d1@linaro.org>
-In-Reply-To: <20240301-qcom-pd-mapper-v2-3-5d12a081d9d1@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 1 Mar 2024 01:04:43 +0200
-Message-ID: <CAA8EJpr4w_x9hacWgX4W7C2FpNPTMaAjfMY8W0MZ6131Bw3bdA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 3/5] remoteproc: qcom: adsp: add configuration for
- in-kernel pdm
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|DM4PR12MB5842:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e933d15-b0e5-4bc1-9af7-08dc398082dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Oj6nG47GufR8Wz9mpWtzyKgMvx/fGU9GzRn+c0JhUX/fg/0r3h4k1UVuK55AF2sxriEEmRoU0EptKKzjd4lO3CLilwWkfAhWJWpiC6RmxjTm5pwn/HZeOPRo0UrsWWGDp1LEhw8LPWaF6QmnnNMDlSfUXs7YO0gm9H8zGU1UeGu4My3bAlesSCEhptViEYFjgD5s/5l1D8FEji/90cFOYAWfIgeviVWBfBVJ/ULpgbdNh5nLrxEgXxb5kkEYn4QmUEv4g/7VzPbgOtndOH4S9I6E+HrVQSxwwFM9vcVsGHdlauANtyh9yu/jN3nLBSryzsFC4dlNoaLDDC8drYRUXfMgZNVqLy9vxzsnV0w3oURTeQziaEF/ddymbPwo7rXoFPa3FX+/CFYJ57pAJklCUHNLj6wdDALWWDzLZnjxlCNCkfbiotzMBj+yPv0D8tr4+6wZ78wflzdoTpwVwpnxFPjyOv0OvAuKE7yOD/FP3Hzqd3+qRpEVb7OmBK0eQiUaaXqJGz9L53w3T5yq4ZG6X6nxV2B+E7lDNd4/WUISCpqhJ7TF5R6gCLRkiqPhuX5KJU63uWTFfFF6lulNtoRTjWFOW2ftpOcYXrQwWz5PfbgQqhWbcYxyIV35Q1STdrhadb/mIUqx3S/ul85B5h9YdQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RjFMbzNzUmpLekg2RDJaOFN6YjRwejk2N2FEK0g4Qnd6bG9Wb2NacXRDMVNC?=
+ =?utf-8?B?M0pad0hSUFNkNFF6R3pENHhHR3N5L0xPTXU1Y0dKZ25GUlVsbDJ3dE5Nc1dm?=
+ =?utf-8?B?cktYWlRHM2s3ZjFBd0VHeFg4UjZrMnNtbkRsVmhUNTRvKzNhc1FPQWkyeVFs?=
+ =?utf-8?B?SDQyOGQwMDdEMFJ6NkdUY0RkYWg4SHpZazJzSEd5QzBZRFRoQjdKMC8wNzRp?=
+ =?utf-8?B?OHJMWkFBMWlCVVU5Qmtmc2tOVCtnMnhSaU5NRzgxOUZYVU5yak1yalRYR2tZ?=
+ =?utf-8?B?cHF6cVVPa080b1RUUUZBbExvV1Vwc1hYcWNMVmplS0JoNzV4eHF1dE5aWjYy?=
+ =?utf-8?B?MHA3NkE0KzBWKzdpbmllVjg2dHBWbnd6REVCdEhpZnRLaFc1R21HeG9rb20r?=
+ =?utf-8?B?bm1WWGRROEFCRWcxOXN6WHRvb0ZKc2tYNnNRakRCdVpodm5KTUUrdGZ6Zmht?=
+ =?utf-8?B?QjZMOHVJYktuYWo4R3lTUEhDVkdyQm8yUWNwUkU2WTVadXFDczZmNUo3K0hz?=
+ =?utf-8?B?SXl5SUtubU5Ya0dVRXpQWEZQZ3kxSlFhdWNaZTZFUndoeG4yUzlXTFJlRGpJ?=
+ =?utf-8?B?aFRlckRla0J5SlBHK3oydUlQWkVvM3MvZkhQbkpOdnlFUHdmSjRBMXpVcGdK?=
+ =?utf-8?B?eUk2YUVaSzJ0ZmluVXQ3ZUNMcjdIVTcrRUpYNzJrSTFEdHQvV2lJdGxKTnNK?=
+ =?utf-8?B?REJubUdSY0tCMDMveVlhc3drSjhuemJUVVdWTE8wVklpbFBVY2hzSFhWOVA3?=
+ =?utf-8?B?V1EzL0NtVjBlWERnMHgva2UrTHdyUFYySS9NNGZscUxhSHdrQlBlT0dxNmlS?=
+ =?utf-8?B?RmhETDZaYXRSQnlVY3pUVTVFaG41Z3V0a2VBQXdXTVVpWGpIc1lTenRaaGJC?=
+ =?utf-8?B?T2JqRUg4RVZuSENaODBpei95Q2VETy9iK0MrQkx3WTZMTUdSR2U3Wll5TmRL?=
+ =?utf-8?B?OEpmTVZRenVoZzlUNElFZ1dvNVpoZTQvWVN0Y085VUIzQkdValE0R1VFTTZY?=
+ =?utf-8?B?MHBZSjViVnlkbEJyeXNhcU1Yelc5S1RCbTE5L0g3MmN3eHBTNlBUWURuT3JE?=
+ =?utf-8?B?OUpkN0hGUG0rWUMvbU01a0xiSnF5YUptUVJ6Ynphb2F4dzZlYmZwZzM4U09h?=
+ =?utf-8?B?VWFMM1NWbCtTd0FhV1pZL1ZNckVDMjF1VzVUN0RrblBncGdkaHF5VXY4Sml5?=
+ =?utf-8?B?YXNjQmdRbHBhcXh1alNLekNpbDBCWEpoN0NZc2J3U3NjSUxPSmg0eDBlRVZz?=
+ =?utf-8?B?VjJxYnJJaE5JS3g4eFpvcGpiWUdMb0tReHVMUXFCTm1CUTgrM2RLVzJCR0NR?=
+ =?utf-8?B?akRmZDdKWC8yWFhuVTVJZ05xaC9NdTBIcUxyNXN0Y3ZZdUVub0QyZ2g4cjZC?=
+ =?utf-8?B?K0k1Rk9oWHVrQzR5dUYzbXpwenk0UkJMMW5TdXFlZHd2czljMVlBUGNjMTFu?=
+ =?utf-8?B?VXMrSWZBalZCR0dlVVVQTzVOeW9qWGpyY2FzTTBUUWJQZDMrZzNTSmhiT3A1?=
+ =?utf-8?B?L3J0NlFFUHBxR1R5aHZDM09LZzB2ak9obUk2QXl0V3RubWxkQ2Fza1h2c09O?=
+ =?utf-8?B?YW4vRTRtV1ZYRkIvd1R1UmtxeTlrWVdHLzZxNE95dzRmbFkwZnFCdGpPRE1j?=
+ =?utf-8?B?cGhpWXc4b0w5VVN0RXIzWEhxaW9UWTk3UjB0ZXdLQmtsRE5WUVBVa09jYlJO?=
+ =?utf-8?B?NGhVVmIvMy84Rlo1OXdTNmk5YlFLM1g1bHlkandOa3I3OTNad3cwY29zRHVL?=
+ =?utf-8?B?V0NaQVRiVW5pOE9BVUFvRmY4UGZ4Qmtta2Y2eGpmSWN0NGovRk0xWit5OFlK?=
+ =?utf-8?B?VUhNYXh0UU9nRkxkMGRlVDd2RXdVUGErWTlxSldlRUo5Q0ZuU25YcCtIN3JJ?=
+ =?utf-8?B?eThLc2NQVFlZOXBRZE5STXd0cWVnWEphU3hHVndSaVlKMXhMQ3Bpa2VqaHZ6?=
+ =?utf-8?B?ZDNBdDF6TjltQkFRSEk0U21VVHA3V0UrOWg4amRMZE5qQ1l1UEVTa21BZE9h?=
+ =?utf-8?B?OU1hM1V1UnBNNWx2dkpUdVlrRkpCaFR0QnlRYiswYndHWUhLUGs2ZGgxR2ND?=
+ =?utf-8?B?TElyU3NROTJWRWRvcE1zOG0zWlpyYkZzcGlUY3FwWXIvNHZSV0g0R0xSYVJ1?=
+ =?utf-8?Q?TjcYTcye6nREMIlAhJU35j8IE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e933d15-b0e5-4bc1-9af7-08dc398082dc
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Feb 2024 23:45:29.5391
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8eCBUmD6n92W+IyzfB15SvAuis5ciM2resjrxLfF0segLVoKxPyL6Cs25Q6FDPm5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5842
 
-On Fri, 1 Mar 2024 at 01:00, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> Add domain / service configuration for the in-kernel protection domain
-> mapper service.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/remoteproc/Kconfig          |  1 +
->  drivers/remoteproc/qcom_q6v5_adsp.c | 87 +++++++++++++++++++++++++++++++++++--
->  2 files changed, 84 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 48845dc8fa85..f1698d4c302e 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -181,6 +181,7 @@ config QCOM_Q6V5_ADSP
->         depends on QCOM_SYSMON || QCOM_SYSMON=n
->         depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
->         depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
-> +       depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
->         select MFD_SYSCON
->         select QCOM_PIL_INFO
->         select QCOM_MDT_LOADER
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 93f9a1537ec6..5751bcb0c285 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -23,6 +23,7 @@
->  #include <linux/remoteproc.h>
->  #include <linux/reset.h>
->  #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/pd_mapper.h>
->  #include <linux/soc/qcom/smem.h>
->  #include <linux/soc/qcom/smem_state.h>
->
-> @@ -75,6 +76,9 @@ struct adsp_pil_data {
->         const char **pd_names;
->         unsigned int num_pds;
->         const char *load_state;
-> +
-> +       const struct qcom_pdm_domain_data * const *domains;
-> +       size_t num_domains;
->  };
->
->  struct qcom_adsp {
-> @@ -116,6 +120,9 @@ struct qcom_adsp {
->         struct qcom_sysmon *sysmon;
->
->         int (*shutdown)(struct qcom_adsp *adsp);
-> +
-> +       const struct qcom_pdm_domain_data * const *domains;
-> +       size_t num_domains;
->  };
->
->  static int qcom_rproc_pds_attach(struct qcom_adsp *adsp, const char **pd_names,
-> @@ -374,6 +381,7 @@ static int adsp_start(struct rproc *rproc)
->         struct qcom_adsp *adsp = rproc->priv;
->         int ret;
->         unsigned int val;
-> +       int i;
->
->         ret = qcom_q6v5_prepare(&adsp->q6v5);
->         if (ret)
-> @@ -434,8 +442,18 @@ static int adsp_start(struct rproc *rproc)
->                 goto disable_adsp_clks;
->         }
->
-> +       for (i = 0; i < adsp->num_domains; i++) {
-> +               ret = qcom_pdm_add_domain(adsp->domains[i]);
-> +               if (ret)
-> +                       goto err_domains;
-> +       }
-> +
->         return 0;
->
-> +err_domains:
-> +       while (--i >= 0)
-> +               qcom_pdm_del_domain(adsp->domains[i]);
-> +
->  disable_adsp_clks:
->         clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
->  disable_power_domain:
-> @@ -463,6 +481,10 @@ static int adsp_stop(struct rproc *rproc)
->         struct qcom_adsp *adsp = rproc->priv;
->         int handover;
->         int ret;
-> +       int i;
-> +
-> +       for (i = 0; i < adsp->num_domains; i++)
-> +               qcom_pdm_del_domain(adsp->domains[i]);
->
->         ret = qcom_q6v5_request_stop(&adsp->q6v5, adsp->sysmon);
->         if (ret == -ETIMEDOUT)
-> @@ -690,6 +712,8 @@ static int adsp_probe(struct platform_device *pdev)
->         adsp->rproc = rproc;
->         adsp->info_name = desc->sysmon_name;
->         adsp->has_iommu = desc->has_iommu;
-> +       adsp->domains = desc->domains;
-> +       adsp->num_domains = desc->num_domains;
->
->         platform_set_drvdata(pdev, adsp);
->
-> @@ -764,7 +788,56 @@ static void adsp_remove(struct platform_device *pdev)
->         rproc_free(adsp->rproc);
->  }
->
-> -static const struct adsp_pil_data adsp_resource_init = {
-> +static const struct qcom_pdm_domain_data adsp_audio_pd = {
-> +       .domain = "msm/adsp/audio_pd",
-> +       .instance_id = 74,
-> +       .services = {
-> +               "avs/audio",
-> +               NULL,
-> +       },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data adsp_charger_pd = {
-> +       .domain = "msm/adsp/charger_pd",
-> +       .instance_id = 74,
-> +       .services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data adsp_root_pd = {
-> +       .domain = "msm/adsp/root_pd",
-> +       .instance_id = 74,
-> +       .services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data adsp_sensor_pd = {
-> +       .domain = "msm/adsp/sensor_pd",
-> +       .instance_id = 74,
-> +       .services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data *sc7280_adsp_domains[] = {
-> +       &adsp_audio_pd,
-> +       &adsp_root_pd,
-> +       &adsp_charger_pd,
-> +       &adsp_sensor_pd
-> +};
-> +
-> +static const struct qcom_pdm_domain_data cdsp_root_pd = {
-> +       .domain = "msm/cdsp/root_pd",
-> +       .instance_id = 76,
-> +       .services = { NULL },
-> +};
-> +
-> +static const struct qcom_pdm_domain_data *qcs404_cdsp_domains[] = {
-> +       &cdsp_root_pd,
-> +};
-> +
-> +static const struct qcom_pdm_domain_data *sdm845_adsp_domains[] = {
-> +       &adsp_audio_pd,
-> +       &adsp_root_pd,
-> +};
-> +
-> +static const struct adsp_pil_data adsp_sdm845_resource_init = {
->         .crash_reason_smem = 423,
->         .firmware_name = "adsp.mdt",
->         .ssr_name = "lpass",
-> @@ -779,6 +852,8 @@ static const struct adsp_pil_data adsp_resource_init = {
->         .num_clks = 7,
->         .pd_names = (const char*[]) { "cx" },
->         .num_pds = 1,
-> +       .domains = sdm845_adsp_domains,
-> +       .num_domains = ARRAY_SIZE(sdm845_adsp_domains),
->  };
->
->  static const struct adsp_pil_data adsp_sc7280_resource_init = {
-> @@ -794,9 +869,11 @@ static const struct adsp_pil_data adsp_sc7280_resource_init = {
->                 "gcc_cfg_noc_lpass", NULL
->         },
->         .num_clks = 1,
-> +       .domains = sc7280_adsp_domains,
-> +       .num_domains = ARRAY_SIZE(sc7280_adsp_domains),
->  };
->
-> -static const struct adsp_pil_data cdsp_resource_init = {
-> +static const struct adsp_pil_data cdsp_qcs404_resource_init = {
->         .crash_reason_smem = 601,
->         .firmware_name = "cdsp.mdt",
->         .ssr_name = "cdsp",
-> @@ -831,10 +908,10 @@ static const struct adsp_pil_data wpss_resource_init = {
->  };
->
->  static const struct of_device_id adsp_of_match[] = {
-> -       { .compatible = "qcom,qcs404-cdsp-pil", .data = &cdsp_resource_init },
-> +       { .compatible = "qcom,qcs404-cdsp-pil", .data = &cdsp_qcs404_resource_init },
->         { .compatible = "qcom,sc7280-adsp-pil", .data = &adsp_sc7280_resource_init },
->         { .compatible = "qcom,sc7280-wpss-pil", .data = &wpss_resource_init },
-> -       { .compatible = "qcom,sdm845-adsp-pil", .data = &adsp_resource_init },
-> +       { .compatible = "qcom,sdm845-adsp-pil", .data = &adsp_sdm845_resource_init },
->         { },
->  };
->  MODULE_DEVICE_TABLE(of, adsp_of_match);
-> @@ -846,6 +923,8 @@ static struct platform_driver adsp_pil_driver = {
->                 .name = "qcom_q6v5_adsp",
->                 .of_match_table = adsp_of_match,
->         },
-> +       .domains = qcs404_cdsp_domains,
-> +       .num_domains = ARRAY_SIZE(qcs404_cdsp_domains),
+Thanks for reviews.
 
-This is a rogue chunk, please drop it if you were to test the series.
-I'll drop it for v3.
-
->  };
->
->  module_platform_driver(adsp_pil_driver);
->
-> --
-> 2.39.2
->
+Ack to all comments, I will address in next revision.
 
 
--- 
-With best wishes
-Dmitry
+Tanmay
+
+On 2/29/24 3:59 AM, Krzysztof Kozlowski wrote:
+> On 19/02/2024 18:44, Tanmay Shah wrote:
+> > From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> > 
+> > Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+> > UltraScale+ platform. It will help in defining TCM in device-tree
+> > and make it's access platform agnostic and data-driven.
+> > 
+> > Tightly-coupled memories(TCMs) are low-latency memory that provides
+> > predictable instruction execution and predictable data load/store
+> > timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+> > banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+> > 
+> > The TCM resources(reg, reg-names and power-domain) are documented for
+> > each TCM in the R5 node. The reg and reg-names are made as required
+> > properties as we don't want to hardcode TCM addresses for future
+> > platforms and for zu+ legacy implementation will ensure that the
+> > old dts w/o reg/reg-names works and stable ABI is maintained.
+> > 
+> > It also extends the examples for TCM split and lockstep modes.
+> > 
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> > ---
+> > 
+> > Changes in v11:
+> >   - Fix yamllint warning and reduce indentation as needed
+> > 
+> >  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 192 ++++++++++++++++--
+> >  1 file changed, 170 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> > index 78aac69f1060..77030edf41fa 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> > @@ -20,9 +20,21 @@ properties:
+> >    compatible:
+> >      const: xlnx,zynqmp-r5fss
+> >  
+> > +  "#address-cells":
+> > +    const: 2
+> > +
+> > +  "#size-cells":
+> > +    const: 2
+> > +
+> > +  ranges:
+> > +    description: |
+> > +      Standard ranges definition providing address translations for
+> > +      local R5F TCM address spaces to bus addresses.
+> > +
+> >    xlnx,cluster-mode:
+> >      $ref: /schemas/types.yaml#/definitions/uint32
+> >      enum: [0, 1, 2]
+> > +    default: 1
+> >      description: |
+> >        The RPU MPCore can operate in split mode (Dual-processor performance), Safety
+> >        lock-step mode(Both RPU cores execute the same code in lock-step,
+> > @@ -37,7 +49,7 @@ properties:
+> >        2: single cpu mode
+> >  
+> >  patternProperties:
+> > -  "^r5f-[a-f0-9]+$":
+> > +  "^r5f@[0-9a-f]+$":
+> >      type: object
+> >      description: |
+> >        The RPU is located in the Low Power Domain of the Processor Subsystem.
+> > @@ -54,9 +66,6 @@ patternProperties:
+> >        compatible:
+> >          const: xlnx,zynqmp-r5f
+> >  
+> > -      power-domains:
+> > -        maxItems: 1
+>
+> Why power-domains are being dropped? This should have widest constraints
+> if you later customize it.
+>
+> > -
+> >        mboxes:
+> >          minItems: 1
+> >          items:
+> > @@ -101,35 +110,174 @@ patternProperties:
+> >  
+> >      required:
+> >        - compatible
+> > -      - power-domains
+>
+> Don't drop power domains.
+>
+>
+> >  
+> > -    unevaluatedProperties: false
+> > +allOf:
+>
+> allOf block goes after required:
+>
+> > +  - if:
+> > +      properties:
+> > +        xlnx,cluster-mode:
+> > +          enum:
+> > +            - 1
+> > +    then:
+> > +      patternProperties:
+> > +        "^r5f@[0-9a-f]+$":
+> > +          type: object
+> > +
+> > +          properties:
+> > +            reg:
+>
+> reg is missing in your patternProperties earlier.
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
