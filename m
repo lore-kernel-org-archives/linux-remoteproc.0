@@ -1,107 +1,95 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E653C150
-	for <linux-remoteproc@vger.kernel.org>; Fri,  1 Mar 2024 00:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660DD5231;
+	Fri,  1 Mar 2024 16:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709254243; cv=none; b=Ja7aPjrUB97tGJbHUBRqqy2JwpBLnfGYwPoeretkbGTKkjBQhJKtii33ghK3+C+2Swv3opFRxveF2SJMo3fJoZ1AA73qeE/BMULlvvjDpSQJd67P2alxbgyiyvvo7W5E0ZvJSDzftOGI4UY6OKXgfHOwGtmcIqFK1bDxzI3K6Fo=
+	t=1709311381; cv=none; b=eMZgRc0UUzP1OTq6MRT3HjEK79Tcyz9KAHNOFae5xSG1yDNZ9M4gLJOtsq5M/xwX55ZqTd7yYO00KKYbML/3C0/MMa81+K4N7Dns/bMycMxcfbkfw+9MIJUTGmwjWEHzFgnhJmlvyoNzlGcuEVBx2a+oW5w6RSz272bJIjLimiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709254243; c=relaxed/simple;
-	bh=CHaFe2U1BELmHABPqs1ra6MQ6WF55y/yWPtwz7/PtG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cr/BdoA256IFxFbGQdK8eVIgjsHlbXGogQuTCSOUq29iZUlEmr6UME0KTKNyTDbuKCd+G9xuhCJt102so0Gty7I/0vOMzNAQOhD4HlVDK507BV5kSUVfnl6cRX1UfeBuq9Oap8Q2svoM35GpLZjfMk/SlMaJA0cQWqL39Xdr0Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BsZo4m6d; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BsZo4m6d"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dcc4de7d901so1581730276.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Feb 2024 16:50:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709254240; x=1709859040; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnvogRONe3XITKcvwUiXTJV9XpAUGTW6Ba9EKEvdg2c=;
-        b=BsZo4m6dkRJIiHZbG3EbHyIJ/e37yzVRwu0uw9aSqfZt1AMmwTj/AXnp/e3zYpxm9e
-         smnrejAiFguL7wmSHKm/AYJuJuZFJD+bhKOZxnGfSNJHU1HHgiqXGeRCVvsfg9UXiG7k
-         F3L6ISsDO2FFs3r/bFzCGh1vfGWuzMxPfez7SSZxwWwh0YObtzHPkmvhG5SRWe77zaPK
-         6mCoo9YVvNx8QQ+nRfgTAEb4x0WhhhHvjZf3RxO4QLVtrF7ZtVIBr28SfCEn7kjJN05q
-         +5eCJbKsfdL7MvrGB7GfnKQhyXPfGlnnG39XR4zkLlWOs33qvp/l1iEnQbbe7JOdTM5H
-         iS7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709254240; x=1709859040;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gnvogRONe3XITKcvwUiXTJV9XpAUGTW6Ba9EKEvdg2c=;
-        b=c5aVz3+j1OIioKqHiPBPi3SUzK79lQI/4eNk/02bJKjZ140ToK8jMaxLPHhOD7xSvK
-         EfaMuZJU2Ob7kTXPFNQoB6x9M10X5352jIxYSvo95pIg1CHWuanh4NFuGId7WADkyvH8
-         M9/qcdwCIq4myvrTnN0cZpzq1Fbvjv5GQHmmvvSaVRGERXsWhKMISoUniJ+4A5QO0oXn
-         vOfKYOADK1CCgdX104OIAkrxCCOtE+GpVeeR8LOM38aQTtti3XOt3LLV5njLSVlBHtrf
-         VlJOVLGjQyPrI1uNa7luKJdYyzleOf9TKBtzF7wY21MLdRRYaZAmGwosTe/cfljnyztX
-         t4Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXzT3VbbYV2HjTy5PIc4adVx2AFujOgN5p95lZXMkIoEg4fH9d3HsK7McSBZxmItPtIvEQP31450j7f6CzPapJtqcYDXgPKQEhDlnYOiK0JBg==
-X-Gm-Message-State: AOJu0YzOn7oEqgXJ1HjxlnTBZewufd80DfnsetOe2l3iWhIC+Fm366iE
-	fmARQ1gAet0cmy9HDbezs3rDXSue9o+VuJ08wnbUjsl0tkcEm2Sf5Wt5MsumMwmJ1JN5Ucxg9hm
-	zmznhnPTuKG+7VPkP+Elep6HD5uAf8LvwkmKeefqWiwI6IbM9A2E=
-X-Google-Smtp-Source: AGHT+IFM0L1Wruj7VXlBG7xBnpqBnUoxX0KR0ks/vnv8ECeWSCE9OTUifnqgru8CT5o74SzEX7I784pPBQQxYuiKEZo=
-X-Received: by 2002:a25:af4a:0:b0:dc7:4776:e31 with SMTP id
- c10-20020a25af4a000000b00dc747760e31mr31342ybj.24.1709254239907; Thu, 29 Feb
- 2024 16:50:39 -0800 (PST)
+	s=arc-20240116; t=1709311381; c=relaxed/simple;
+	bh=MSl2PxTtAMP4r+b1ezxUj0gj2cNUYpY54lAEfO3G6p4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mhUoMa41HMFnG4WvVB4B9Zbci5ilRL5yjaE5alNCf0P1LYLlg8Je1CAXGhZizWLg30hPDYBisWwBnt6UKlxdGk+rAOzm1R/5gGfviz7xShum3dnOEGql1VqI30Pid15SCM6o9IqcCMKRWzoftecfVySpKP49OsB4ETFBfrI1B30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8F8E1FB;
+	Fri,  1 Mar 2024 08:43:36 -0800 (PST)
+Received: from e130802.arm.com (unknown [10.57.69.63])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C03383F73F;
+	Fri,  1 Mar 2024 08:42:55 -0800 (PST)
+From: abdellatif.elkhlifi@arm.com
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Drew.Reed@arm.com,
+	Adam.Johnston@arm.com,
+	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH 0/3] remoteproc: introduce Arm remoteproc support
+Date: Fri,  1 Mar 2024 16:42:24 +0000
+Message-Id: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301-qcom-pd-mapper-v2-0-5d12a081d9d1@linaro.org>
-In-Reply-To: <20240301-qcom-pd-mapper-v2-0-5d12a081d9d1@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 1 Mar 2024 02:50:28 +0200
-Message-ID: <CAA8EJpo11gNRP1sYBXva4doOvuzuEsbR3pVgS1FdWqtwB0bNGA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/5] soc: qcom: add in-kernel pd-mapper implementation
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 1 Mar 2024 at 01:00, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> Protection domain mapper is a QMI service providing mapping between
-> 'protection domains' and services supported / allowed in these domains.
-> For example such mapping is required for loading of the WiFi firmware or
-> for properly starting up the UCSI / altmode / battery manager support.
->
-> The existing userspace implementation has several issue. It doesn't play
-> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
-> firmware location is changed (or if the firmware was not available at
-> the time pd-mapper was started but the corresponding directory is
-> mounted later), etc.
->
-> However this configuration is largely static and common between
-> different platforms. Provide in-kernel service implementing static
-> per-platform data.
->
-> NOTE: this is an RFC / RFC, the domain mapping data might be inaccurate
-> (especially for SM6xxx and SC7xxx platforms), which is reflected by
-> several TODO and FIXME comments in the code.
->
-> Changes since RFC v1:
-> - Swapped num_domains / domains (Konrad)
-> - Fixed an issue with battery not working on sc8280xp
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 
-After sending this RFC I have stumbled upon another issue on sc8280xp
-/ X13s. I'll send v3 after finding a way to fix it.
+Some Arm heterogeneous System-On-Chips feature remote processors that can
+be controlled with a reset control register and a reset status register to
+start or stop the processor.
 
-> - Added missing configuration for QCS404
->> Best regards,
-> --
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
+This patchset adds support for these processors by providing the
+following:
+
+1) A remoteproc driver that retrieves the reset registers addresses from
+the DT, register a new rproc device with the remoteproc subsystem and
+provides the start and stop operations for switching on or off the remote
+processor.
+
+The start and stop operations are provided as a data config selected on DT node match.
+Currently we are providing support for Corstone-1000 External System (Cortex-M3) [1]
+as a remote processor. The driver can be extended to support other remote processors
+by adding a data config and custom implementation of the start and stop operations.
+
+2) DT bindings
+
+3) Support control of multiple remote processors at the same time
+
+[1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-1000
+
+Cheers,
+Abdellatif
+
+Abdellatif El Khlifi (3):
+  remoteproc: Add Arm remoteproc driver
+  arm64: dts: Add corstone1000 external system device node
+  dt-bindings: remoteproc: Add Arm remoteproc
+
+ .../bindings/remoteproc/arm,rproc.yaml        |  69 +++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/arm/corstone1000.dtsi     |  10 +-
+ drivers/remoteproc/Kconfig                    |  18 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/arm_rproc.c                | 395 ++++++++++++++++++
+ 6 files changed, 499 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
+ create mode 100644 drivers/remoteproc/arm_rproc.c
 
 
+base-commit: 8b46dc5cfa5ffea279aed0fc05dc4b1c39a51517
 -- 
-With best wishes
-Dmitry
+2.25.1
+
