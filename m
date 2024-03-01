@@ -1,59 +1,59 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA383A292
-	for <linux-remoteproc@vger.kernel.org>; Fri,  1 Mar 2024 19:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89DC3BB3F
+	for <linux-remoteproc@vger.kernel.org>; Fri,  1 Mar 2024 19:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709321258; cv=none; b=I631no9ux49pcLcbgZ9dBDD3Wg4rJ+fz8kd2P/LA906s6QtUPAslAJ7qP7OruW7Qx0Ca9wheLpsRRIkDq66iPDs2ofltz11F9oywoop+xQCN9tcglgiAVcAhbGGPqoS7eopxlgRwPkhNoJuyuz+Pt5bJugEK5PlZvcHXQAWjKuM=
+	t=1709321449; cv=none; b=jbB7F68yYK566c4eTM+PjLcN7lbYyPOMtsoAbmnERPZZGdiEKq0FYLv1y981qHOjHZGkeE5eTJ2R+l5DoBjFOYnv+hcwd28NUF6i7t2sgA5tb42ao5nb+T/xOYCcHeAjgFFDtAuQRtvT+iXW5NHpnk+HQXUztuCqccFkexDTex8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709321258; c=relaxed/simple;
-	bh=3SPJ05RL58/5ZjVtXXCUK7X7HZLiiNivuJJCDF3p/Y0=;
+	s=arc-20240116; t=1709321449; c=relaxed/simple;
+	bh=bovezvqHWUeGRLJrL1za6GTBNIWSNaKOq8obIMP1cqQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0BLa60Weq9R92SraI/oxkXyQ1PlsW3V0T7ygHcRwn3JxVPFCzQAr0PsdkuSuHYL8tkzHz/rDvZUrKmRgyqPFufCpLpxI/EplmMSE4vSUjt9WL4Ti4olHuVJdlkE485hhRfBaojeOtY3zx9+hdv+kzsagL1x3Cz8RHtHoYGVjEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EV3fC4ED; arc=none smtp.client-ip=209.85.208.45
+	 In-Reply-To:Content-Type; b=Giw5ebcMZt3cAY8vBAvWsIa2kzDUD09osysPbaRD7hpHO0nEIdCG2SR3ZpV0lu5zs2/kDWl8NMq0JXJBiuvAVAoa5vr4Cfu5VwfbY0/objl1pk8X87bSPf9dKMemLEIRMWbqUJWTQpVEheA2Ywrtrolmh8sw6Cejypkh8snfyLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ea8WiC1u; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EV3fC4ED"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-565d1656c12so4397856a12.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Mar 2024 11:27:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ea8WiC1u"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5649c25369aso3729031a12.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Mar 2024 11:30:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709321255; x=1709926055; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1709321446; x=1709926246; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=r05fhKMu/fhnW65A8rEmq1zNewcr8Tq1Kh6RnpEpJiM=;
-        b=EV3fC4EDt5NsTGZ7HnQAjlgs7cAR0j5Q35RFALhhNPXhIKPm7VOL0mncCMmDNj1FXa
-         2EEHbn6CS8BUA11zos0QqzjXjJZo97s9O3GnUFMLGz898scdkl/KcDY1frAyPhwM0S0T
-         jft1/LoRnV4oLfW4/XhTWXonP3Ct8ADMOCtUOJ2GShJWnrohXam97pHnItoq3bG70M+J
-         yXc6dCLvl2PqsupGCgnCQpYV9WVMNX7pU6cI+zsS2pLV5gcGAXo5Mq62yv+imvjr7tNE
-         MJw5ZIc3p9htvTWxitBT1aNtCEKMAZcF4yrOk8kcfwYZYQKNsMGXl295CWqC2AFG1cWQ
-         fVPw==
+        bh=ZQMRmheFifq/WpXDe3SA79/DIiAdiSyLo/HW0/iubJ4=;
+        b=ea8WiC1uA046zkwIPIp5+yxdmx4CMYrSY9TCxmmGwkOydeNavDz+x2b0AAM4NIOEYz
+         Hfr1MO7VpPdKBe2Zs9AwEVotheIa+2I3BTdTes1HTQWKF77EBOGaAULVntJacX6H7dmC
+         UA5J6CO5cub/a66aYgKh7FK/aXywxtSEZ7bOWSMzK7lN0MFKPBRqD0thaZi5EUcOio7Z
+         1kQY5Z1bTPCnQgMm/vNh3Tln0h6x3ac6Mv+hm6M1twBRbVGi1+OBPboZp/rLoo0f4A4X
+         G933lLj/4RMTiKt2V9NoCnRhUNKqGcza6ca26FDzqN4ywJm5t0nJ73eOXajh81Lf9j3I
+         +Uxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709321255; x=1709926055;
+        d=1e100.net; s=20230601; t=1709321446; x=1709926246;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r05fhKMu/fhnW65A8rEmq1zNewcr8Tq1Kh6RnpEpJiM=;
-        b=VTNp+qDryEDNsMS1pGnBteWAOOQydFXTiD+q0QyfuUUkHpZVSkh0QiyWUDZNavoqCo
-         DvIDbS7+xafiYXie/cFU2wQCOANAILlzAneNq0Eb/yK4i3QkOrY1vly6lmehDuqbAbN8
-         I6JCVlMGmd9PoI48fE8cH4x8VnD+EjJqrTu8YtWN9SQuUKntLypfDZts4+TWMqaNdE5Y
-         miuQTengFHWUNttJ6ONi9FokPrGu9UpMCbUBRxLDlFd4vYpKX/N0a9UmqzOPn1gGInP1
-         ODNtSKBWnkvbNXiXwSDs2Ca6IjZKWOh2bZKUIH1dQYbcZMhWz3sKfdhnvnZZu7GZ2JhF
-         KUuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUdx/+CIozoGAh6uK27LPfTHVWM4+4hcFvcfZeAfUL+gey0J7bUAeE/JZlhkNjgFffKQfPIAW5kEBMvWWqaCGmYCD14jkKf0xZc0OMMgRGbQ==
-X-Gm-Message-State: AOJu0YxCD+LCudaTXFXScQ+4+f9Y+7blzxULM6Pib8J+pPFGl8wHzupm
-	JzXZ5XSEZcwtw+8oClrjYc4aIix7qKK0Y3sqpQOc+QHSY9/T5JpgDJWoPWYe0Lo=
-X-Google-Smtp-Source: AGHT+IGLaqQure+tiJnp+bdS1ep5HnvBBQJYiv7rpvBOzb0HyTG/jY0zZUOhx/T9dHgs/oyfPWXFxQ==
-X-Received: by 2002:a05:6402:230f:b0:566:13f8:bcc with SMTP id l15-20020a056402230f00b0056613f80bccmr2177761eda.0.1709321255138;
-        Fri, 01 Mar 2024 11:27:35 -0800 (PST)
+        bh=ZQMRmheFifq/WpXDe3SA79/DIiAdiSyLo/HW0/iubJ4=;
+        b=SiDibdc0FKAJvpoEH6ksQdilZ8pOcjHCd/P6Doo3JpsxwUhNFalsbe4xg6Lca7alI6
+         CeuS0NxHUM8Y2lCcpAJdeLKfhFK+8tT1wWDxTTOZb8B0q8jumlcDUZ7k7/hX3wmeESG8
+         xEIdNf0X9yRt4Jbj1bZBMWA44D0aEJvbzsAiymGvh2OfIKoeOYC7Jh1gZu2xL9vFGkfI
+         eUr5CQAsyt0XRHAyVrqN15X0jvyp/eL7kn3mExHa9wIXTbypkLTYJKgk+1M+KZ92lm1A
+         JvbeYzFjrqWFbMyskgR7ilpJu0++50M+kvixVz5Y01zFCyCVPh6rd08fmWRzTeGBcIUx
+         XWsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWid37xIgl6V9qjKRP8SgqFUhdwzWf346xhEoX07o8zgbfEHC9LGhwxHOE55Mrq3t8LKMqExoDtG9gk9DvpZn0Fe1U2NQJnXVpEvfSgjUQyA==
+X-Gm-Message-State: AOJu0YyuLoxT0NRLgcHZ7b975BMtJIboiC78vMe6t5mjEXv43g4bWV+1
+	+K1snhTbHogKkk+hNrLt1mcyatBnjX8yaPWicW2l+PtG9k0JirhegfjWCGP28h8=
+X-Google-Smtp-Source: AGHT+IE4ArrojHin/rL/6cNIV3f9HYnBd9lNkk1MtDa+7rcyZZJxYufn+4934WH67fZ9s9jslTb8Vw==
+X-Received: by 2002:a50:cc4d:0:b0:566:418d:7ba9 with SMTP id n13-20020a50cc4d000000b00566418d7ba9mr1903028edi.1.1709321446007;
+        Fri, 01 Mar 2024 11:30:46 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id bf26-20020a0564021a5a00b00566ad448c25sm1516898edb.18.2024.03.01.11.27.33
+        by smtp.gmail.com with ESMTPSA id m13-20020aa7d34d000000b0056486eaa669sm1818680edr.50.2024.03.01.11.30.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Mar 2024 11:27:34 -0800 (PST)
-Message-ID: <104e0845-9af8-49d8-9f2b-4d9960691017@linaro.org>
-Date: Fri, 1 Mar 2024 20:27:32 +0100
+        Fri, 01 Mar 2024 11:30:45 -0800 (PST)
+Message-ID: <9fcebf32-a3da-49ab-b3d9-9450fb7e1985@linaro.org>
+Date: Fri, 1 Mar 2024 20:30:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -61,8 +61,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: Add corstone1000 external system device
- node
+Subject: Re: [PATCH 3/3] dt-bindings: remoteproc: Add Arm remoteproc
 Content-Language: en-US
 To: abdellatif.elkhlifi@arm.com, Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -75,7 +74,7 @@ Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-remoteproc@vger.kernel.org
 References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-3-abdellatif.elkhlifi@arm.com>
+ <20240301164227.339208-4-abdellatif.elkhlifi@arm.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,47 +120,126 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240301164227.339208-3-abdellatif.elkhlifi@arm.com>
+In-Reply-To: <20240301164227.339208-4-abdellatif.elkhlifi@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 01/03/2024 17:42, abdellatif.elkhlifi@arm.com wrote:
 > From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 > 
-> add device tree node for the external system core in Corstone-1000
+> introduce the bindings for Arm remoteproc support.
 > 
 > Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 > ---
->  arch/arm64/boot/dts/arm/corstone1000.dtsi | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  .../bindings/remoteproc/arm,rproc.yaml        | 69 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+
+Fix order of patches - bindings are always before the user (see
+submitting bindings doc).
+
+>  2 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
 > 
-> diff --git a/arch/arm64/boot/dts/arm/corstone1000.dtsi b/arch/arm64/boot/dts/arm/corstone1000.dtsi
-> index 6ad7829f9e28..67df642363e9 100644
-> --- a/arch/arm64/boot/dts/arm/corstone1000.dtsi
-> +++ b/arch/arm64/boot/dts/arm/corstone1000.dtsi
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0 OR MIT
->  /*
-> - * Copyright (c) 2022, Arm Limited. All rights reserved.
-> + * Copyright 2022, 2024, Arm Limited and/or its affiliates <open-source-office@arm.com>
->   * Copyright (c) 2022, Linaro Limited. All rights reserved.
->   *
->   */
-> @@ -157,5 +157,13 @@ mhu_seh1: mailbox@1b830000 {
->  			secure-status = "okay";     /* secure-world-only */
->  			status = "disabled";
->  		};
+> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml b/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
+> new file mode 100644
+> index 000000000000..322197158059
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/arm,rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +		extsys0: remoteproc@1a010310 {
+> +title: Arm Remoteproc Devices
 
-Looks not really ordered.
+That's quite generic... does it applied to all ARM designs?
 
-> +			compatible = "arm,corstone1000-extsys";
-> +			reg = <0x1a010310 0x4>,
-> +				<0x1a010314 0X4>;
+> +
+> +maintainers:
+> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> +
+> +description: |
+> +  Some Arm heterogeneous System-On-Chips feature remote processors that can
+> +  be controlled with a reset control register and a reset status register to
+> +  start or stop the processor.
+> +
+> +  This document defines the bindings for these remote processors.
 
-And this needs alignment.
+Drop last sentence.
 
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - arm,corstone1000-extsys
+> +
+> +  reg:
+> +    minItems: 2
+> +    maxItems: 2
+> +    description: |
+> +      Address and size in bytes of the reset control register
+> +      and the reset status register.
+> +      Expects the registers to be in the order as above.
+> +      Should contain an entry for each value in 'reg-names'.
+
+Entirely redundant sentences... instead this all just list items with
+description.
+
+> +
+> +  reg-names:Do not need '|' unless you need to preserve formatting.
+> +    description: |
+> +      Required names for each of the reset registers defined in
+> +      the 'reg' property. Expects the names from the following
+> +      list, in the specified order, each representing the corresponding
+> +      reset register.
+
+Really, drop.
+
+> +    items:
+> +      - const: reset-control
+> +      - const: reset-status
+> +
+> +  firmware-name:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Default name of the firmware to load to the remote processor.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - firmware-name
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    extsys0: remoteproc@1a010310 {
+
+Drop label, not used.
+
+> +            compatible = "arm,corstone1000-extsys";
+
+Use 4 spaces for example indentation.
+
+> +            reg = <0x1a010310 0x4>, <0x1a010314 0x4>;
+> +            reg-names = "reset-control", "reset-status";
+> +            firmware-name = "es0_flashfw.elf";
+> +    };
+> +
+> +    extsys1: remoteproc@1a010318 {
+> +            compatible = "arm,corstone1000-extsys";
+
+These are the same examples, so keep only one.
+
+> +            reg = <0x1a010318 0x4>, <0x1a01031c 0x4>;
+> +            reg-names = "reset-control", "reset-status";
+> +            firmware-name = "es1_flashfw.elf";
+> +    };
 
 Best regards,
 Krzysztof
