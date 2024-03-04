@@ -1,829 +1,105 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36275FEE5
-	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2024 17:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6362150
+	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2024 17:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709571828; cv=none; b=heRW0e5HJImVDuUpVuoAphAwapWcWVsxY2c/FRH3OFwFWILTKHytvKoDfysHjfzbD0ZzQjtIj+/hR4FZqpcFtlgJaQITQv++PKECC/BFxHaghrOOskMQKS7Izk5mxj8Yje0Sq85k806tpjO6mdlL5+qwQxH8uwCs+IzpCr1EifQ=
+	t=1709574976; cv=none; b=AZGeVMfdYDVNGLiFcmIk2BxIdXPjHrZgZ6ZUJl2pMMWHRwez3D+YBblCLEPMPKdF2HAaPv+zH3KrUvIrM0nKTyk/L6i3u7fiYiHVIgUkkvsqmx0P8Hq+nHAcsPS/rnTBYPTZkhFRa7+9bVKQ43ngHKjkMIMrStX9gNE1GPnEp7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709571828; c=relaxed/simple;
-	bh=bcChfDI5iKl7c9p/LFApb5lpOsViyNOzKl0/Kv95WAs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lYu7lPHx3DB42a+ZCTEFo/yUk0q3zHYsCGyhapMKQrKPy8Y6FIO4mZCv+ouMYXUVYgdqLJWhcHNBRLE/5a4FARCf1vEa3ufVoJO+8nlaPLNA1enBtwGNVunnWh/2wPzPLR12sb4qKHDs5Qwbv8ksrHxuC02QN4trOXSRhmo0jcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MFOqMXIT; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1709574976; c=relaxed/simple;
+	bh=kkrPwbwq3HUb7dryDp5pAq3pLbLwY3Tp45E3kugU5S4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVGkSMvuOLf/JZ4LQL5kAeAv8NFX6kZqF81wotbdAkbVNixpYdo2wQ7asTjcaZgBx4joe9shExjZlkTVibAxzsatGVW0xxrWA7a93trum9R58oFSXnsBKXREVSNPM2UNISgf/73QBLRAM6bCAcjM2YFd0bTUgciE9qlLyzdUUSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HsSDbITv; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MFOqMXIT"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51320ca689aso5588697e87.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Mar 2024 09:03:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HsSDbITv"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d094bc2244so69308171fa.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Mar 2024 09:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709571823; x=1710176623; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QbaXqUDtDn2Ko+HDDp17SW01xeHZ1AlqPMjgnFT/Ca8=;
-        b=MFOqMXITXdB6Ikd3tz11IqFEszRqGSIpTvUQZLQNcu2zNALGxAG9swwwhavlTUy08q
-         4BIGj8IWzJoLWA6vSJhPYW7HKQ+uN0NvtdKHLAoFluPUGE2t+OIagC4LmEShZZW5tGdA
-         EjdRbT7aJsl6YinpjJ+T58Kp4tIlCRWaYhLoWCpWYx6l5GGZtFUDXpsDuRZDSefKN031
-         D+ybas2HL3PVjQZgEaL0yaZSxDoE9ItPT9R0QhChWSuC36VXvDgNHsx1BgA/nhN43EQY
-         qihXj+9CE2eeTwbK9tGaWMcrETl+UOf3m3stL1lG4GdLPNGnFiPoKPtAFOf3LE/ArXSK
-         0/Gw==
+        d=linaro.org; s=google; t=1709574973; x=1710179773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SpMuUtqDP80mrn0s2WW+RwGSbgeBVA1YFpkb3uniFDs=;
+        b=HsSDbITvd2kzOSNdUqqKHbPsGjnqSZF6ekdcbwrcct1ttzjf9Xqk3eibWmk5osW7DS
+         vj5gHuGSoRt2jnIQeLtVN2+nlGIsl/x9B6z+65e4CpXTrAVZw+mZpOgO8WNy//mdzPUB
+         YdP4mqPiz8H/CcbJaja+WzLOjVtKQmdr0in93a95tqsgVSAYP6DZabJo55AH/Rv7m6YA
+         aPAObZnDlvwNH0r1iRJrlbqHlG53HOZjkEAIhJpWuAvKG3aPwBcEpvgQA+7NzSNS6Mu3
+         rg/fA8OrcJBL5+15RFQzltmzZDaEAB05mmk+4N/hDrbZvzoXb6ITJNuCeE+BpGBR+POi
+         Gzmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709571823; x=1710176623;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QbaXqUDtDn2Ko+HDDp17SW01xeHZ1AlqPMjgnFT/Ca8=;
-        b=pR64hiGPEqCmJnFz//SfY9+YvAuBmRBVvZf87Q3I5lyH+XlMmS1x7CnGC5pmknMlh1
-         41LTIysGW2SodfMZW9mfX1zAkHqZHQp2nx222lk55bVfBz7u9OCammMFCAtYr5hPgOVN
-         yndKR+rXpP8daMK+jrr3SRhlsfk9qUgbnvtcO6IAglXO7u9tsg2ldc361oDypwDyZxzH
-         h+ELgsl/XIaBzy9FIzUPPVJR8IxuwUBpVvvLWXpBBtsNDqc/zBjPVaj8VyuR0oHwtZOa
-         XdGd8eZf5sZWNRAxx/yipPNTsG2ykrfLUTPbaPDGG4pAVf3mY4MFm0ObQA0mX9Hd1syx
-         pVjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfwpmIeb6Nl+6XEhmz4Jl9CyJ+E1LahyQUT8bglivhVUB5WIed5lyW6SGA0Axa7po/d1eR5YX4PPyl+O0tAdFU94B6AOo2/4llUPFLcCBVQw==
-X-Gm-Message-State: AOJu0Yyn6V1RoG50LyP2itJ7DzZ/CN21zlkeT01/02tgIugpazgKzen2
-	qXlp4SBzj7urpRnQpQpeJlHpZ3xyN0G8aQh3LWaHmQv2EaSs+ZVeiEiXxledhJT4t5tGcy6kjsC
-	Gv0g=
-X-Google-Smtp-Source: AGHT+IFP1S8D0P7NK+UTGsBaBUM2E8R/3cG1Sq1e8EYBcXmbXSmPgRZzq30AzPuhsna6kZ0Sm9MWJQ==
-X-Received: by 2002:a05:6512:3089:b0:512:f679:665b with SMTP id z9-20020a056512308900b00512f679665bmr7108436lfd.42.1709571822956;
-        Mon, 04 Mar 2024 09:03:42 -0800 (PST)
-Received: from umbar.lan (dzyjmhybhls-s--zn36gy-3.rev.dnainternet.fi. [2001:14ba:a00e:a300:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id dx12-20020a0565122c0c00b005132441e07fsm1809151lfb.0.2024.03.04.09.03.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 09:03:42 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 04 Mar 2024 19:03:37 +0200
-Subject: [PATCH RFC v3 7/7] remoteproc: qcom: pas: add configuration for
- in-kernel pdm
+        d=1e100.net; s=20230601; t=1709574973; x=1710179773;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SpMuUtqDP80mrn0s2WW+RwGSbgeBVA1YFpkb3uniFDs=;
+        b=iC9fFTidwucmRgPfORLHyx/zq4FWTManLQXnZmDA7sZyJloL/VBsJuIJqQId0DzWu5
+         CS3BctQZVhj3XY7ioRUQn3fp+8Jjpu/759F9T8IySckE9ANprOBuTWwBs4X37d3I50oQ
+         t7qC8KPHvD3cqyEAa8tW7aX5sAoNjrZtklldVnuPXrHzJzzXWswzwBLmQsS9yGdli94C
+         GR3C8jO74GcZaKgYPLlVM2Oxi6qYUSdmEXedFFT4LVIERg/olfJJppfzFaF/bb+AA6q7
+         5vsoOcPyLCPBe2HkgiwXx6oWshNxgXgi6jhxq9q31eEGdVskz+LYyZ078BouaGaT7YN9
+         YzPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEVXW+jQ416c7GBxJEOp6yvUn5Jc3B2tT2mqH0Pu0Wdu7Fnco9iJ5tXUEXvHXaLCYD2tWQ9NEqUyK9jWjYcKKu5+X/QzDFGu6DdkMuRHLEcw==
+X-Gm-Message-State: AOJu0YyHCrRUbXrid8UoWkOLQUCf/UN+ZL406AegQi3O9sGcgosiFiGC
+	vLiIbsCFtkq4eNvepRyJFDSoRaE9fY5H29q2HJMho2ZdEHcfY0XoKOQesK9TuIs=
+X-Google-Smtp-Source: AGHT+IF7F4P8R+O9yUi9Koz60hPU30oDeTiJ5K3hVO7gXnUQSLl7GUgoL9GWXBIPe7Q1MyDmEDFxvg==
+X-Received: by 2002:a05:651c:1a24:b0:2d3:a68a:9462 with SMTP id by36-20020a05651c1a2400b002d3a68a9462mr3761444ljb.20.1709574972936;
+        Mon, 04 Mar 2024 09:56:12 -0800 (PST)
+Received: from [172.30.204.149] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id bg12-20020a05651c0b8c00b002d3236a30bbsm1496732ljb.140.2024.03.04.09.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 09:56:12 -0800 (PST)
+Message-ID: <c5abc503-2019-46d4-bbfd-8295bc0240fb@linaro.org>
+Date: Mon, 4 Mar 2024 18:56:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240304-qcom-pd-mapper-v3-7-6858fa1ac1c8@linaro.org>
-References: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
-In-Reply-To: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 2/7] soc: qcom: qmi: add a way to remove running
+ service
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Johan Hovold <johan+linaro@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=23859;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=bcChfDI5iKl7c9p/LFApb5lpOsViyNOzKl0/Kv95WAs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBl5f7ncBX5PX36dnpzm849FaGaPbXPymG8fEyGh
- vS8OFfsX42JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZeX+5wAKCRCLPIo+Aiko
- 1XmFCACt07KX6xiPyqsV9RT5U6vlErnPRvBVSmq+FNVKq+HROXGOoU+FLP7Rr8iP/p7CNs6ktdF
- tVLpF0/hiny7ZYDpbvR09+MZrUSlwggRuh8+G8X7xj/qCwDhGROz3beAO8aCoqHYTiQgZQTksME
- BOfdC3EwcF9r5ejtUxa7jIQXRrd6v1aeWjlXt0OQrRPbrw8EtGMml1UAXDDo9N5Ctx7v1/wPuHA
- vKBKgw9VyIkRTRESv0irzfuKt9SeWUdKnlN/dKvgxryYY7iV5VUa48fnkcKWAjNtwFARqX7Yk9I
- a9RM9qw/jNYOwLvjD02RZ81U5xsl/hQeaPH+LSuuL3yqKgJl
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
+ <20240304-qcom-pd-mapper-v3-2-6858fa1ac1c8@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240304-qcom-pd-mapper-v3-2-6858fa1ac1c8@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add domain / service configuration for the in-kernel protection domain
-mapper service.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/remoteproc/Kconfig         |   1 +
- drivers/remoteproc/qcom_q6v5_pas.c | 414 +++++++++++++++++++++++++++++++++++--
- 2 files changed, 400 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 8152e845f7a3..7c6ec54c7b35 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -223,6 +223,7 @@ config QCOM_Q6V5_PAS
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
- 	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
-+	depends on QCOM_PD_MAPPER || QCOM_PD_MAPPER=n
- 	select MFD_SYSCON
- 	select QCOM_PIL_INFO
- 	select QCOM_MDT_LOADER
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 3235249d703d..31a75c257ceb 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -23,6 +23,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/pd_mapper.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
-@@ -56,6 +57,9 @@ struct adsp_data {
- 	int region_assign_count;
- 	bool region_assign_shared;
- 	int region_assign_vmid;
-+
-+	const struct qcom_pdm_domain_data * const *domains;
-+	size_t num_domains;
- };
- 
- struct qcom_adsp {
-@@ -112,6 +116,9 @@ struct qcom_adsp {
- 
- 	struct qcom_scm_pas_metadata pas_metadata;
- 	struct qcom_scm_pas_metadata dtb_pas_metadata;
-+
-+	const struct qcom_pdm_domain_data * const *domains;
-+	size_t num_domains;
- };
- 
- static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-@@ -256,10 +263,14 @@ static int adsp_start(struct rproc *rproc)
- 	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 
--	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	ret = qcom_pdm_add_domains(adsp->domains, adsp->num_domains);
- 	if (ret)
- 		return ret;
- 
-+	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	if (ret)
-+		goto del_domains;
-+
- 	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- 	if (ret < 0)
- 		goto disable_irqs;
-@@ -348,6 +359,9 @@ static int adsp_start(struct rproc *rproc)
- disable_irqs:
- 	qcom_q6v5_unprepare(&adsp->q6v5);
- 
-+del_domains:
-+	qcom_pdm_del_domains(adsp->domains, adsp->num_domains);
-+
- 	/* Remove pointer to the loaded firmware, only valid in adsp_load() & adsp_start() */
- 	adsp->firmware = NULL;
- 
-@@ -394,6 +408,8 @@ static int adsp_stop(struct rproc *rproc)
- 	if (handover)
- 		qcom_pas_handover(&adsp->q6v5);
- 
-+	qcom_pdm_del_domains(adsp->domains, adsp->num_domains);
-+
- 	return ret;
- }
- 
-@@ -730,6 +746,10 @@ static int adsp_probe(struct platform_device *pdev)
- 		adsp->dtb_firmware_name = dtb_fw_name;
- 		adsp->dtb_pas_id = desc->dtb_pas_id;
- 	}
-+
-+	adsp->domains = desc->domains;
-+	adsp->num_domains = desc->num_domains;
-+
- 	platform_set_drvdata(pdev, adsp);
- 
- 	ret = device_init_wakeup(adsp->dev, true);
-@@ -806,6 +826,172 @@ static void adsp_remove(struct platform_device *pdev)
- 	rproc_free(adsp->rproc);
- }
- 
-+static const struct qcom_pdm_domain_data adsp_audio_pd = {
-+	.domain = "msm/adsp/audio_pd",
-+	.instance_id = 74,
-+	.services = {
-+		"avs/audio",
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data adsp_charger_pd = {
-+	.domain = "msm/adsp/charger_pd",
-+	.instance_id = 74,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data adsp_root_pd = {
-+	.domain = "msm/adsp/root_pd",
-+	.instance_id = 74,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data adsp_root_pd_pdr = {
-+	.domain = "msm/adsp/root_pd",
-+	.instance_id = 74,
-+	.services = {
-+		"tms/pdr_enabled",
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data adsp_sensor_pd = {
-+	.domain = "msm/adsp/sensor_pd",
-+	.instance_id = 74,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data msm8996_adsp_audio_pd = {
-+	.domain = "msm/adsp/audio_pd",
-+	.instance_id = 4,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data msm8996_adsp_root_pd = {
-+	.domain = "msm/adsp/root_pd",
-+	.instance_id = 4,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data *msm8996_adsp_domains[] = {
-+	&msm8996_adsp_audio_pd,
-+	&msm8996_adsp_root_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *qcs404_adsp_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd,
-+	&adsp_sensor_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sc7180_adsp_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd_pdr,
-+	&adsp_sensor_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sc7280_adsp_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd_pdr,
-+	&adsp_charger_pd,
-+	&adsp_sensor_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sdm845_adsp_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sm8350_adsp_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd_pdr,
-+	&adsp_charger_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data cdsp_root_pd = {
-+	.domain = "msm/cdsp/root_pd",
-+	.instance_id = 76,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data *sdm845_cdsp_domains[] = {
-+	&cdsp_root_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data slpi_root_pd = {
-+	.domain = "msm/slpi/root_pd",
-+	.instance_id = 90,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data slpi_sensor_pd = {
-+	.domain = "msm/slpi/sensor_pd",
-+	.instance_id = 90,
-+	.services = { NULL },
-+};
-+
-+static const struct qcom_pdm_domain_data *sdm845_slpi_domains[] = {
-+	&slpi_root_pd,
-+	&slpi_sensor_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data mpss_root_pd = {
-+	.domain = "msm/modem/root_pd",
-+	.instance_id = 180,
-+	.services = {
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data mpss_root_pd_gps = {
-+	.domain = "msm/modem/root_pd",
-+	.instance_id = 180,
-+	.services = {
-+		"gps/gps_service",
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data mpss_root_pd_gps_pdr = {
-+	.domain = "msm/modem/root_pd",
-+	.instance_id = 180,
-+	.services = {
-+		"gps/gps_service",
-+		"tms/pdr_enabled",
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data mpss_wlan_pd = {
-+	.domain = "msm/modem/wlan_pd",
-+	.instance_id = 180,
-+	.services = {
-+		"kernel/elf_loader",
-+		"wlan/fw",
-+		NULL,
-+	},
-+};
-+
-+static const struct qcom_pdm_domain_data *qcs404_mpss_domains[] = {
-+	&mpss_root_pd,
-+	&mpss_wlan_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sc7180_mpss_domains[] = {
-+	&mpss_root_pd_gps_pdr,
-+	&mpss_wlan_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sm8150_mpss_domains[] = {
-+	&mpss_root_pd_gps,
-+	&mpss_wlan_pd,
-+};
-+
-+static const struct qcom_pdm_domain_data *sm8350_mpss_domains[] = {
-+	&mpss_root_pd_gps,
-+};
-+
- static const struct adsp_data adsp_resource_init = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
-@@ -814,6 +1000,55 @@ static const struct adsp_data adsp_resource_init = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	/* no domains */
-+};
-+
-+static const struct adsp_data qcs404_adsp_resource_init = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+	.domains = qcs404_adsp_domains,
-+	.num_domains = ARRAY_SIZE(qcs404_adsp_domains),
-+};
-+
-+static const struct adsp_data sc7180_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+	.domains = sc7180_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sc7180_adsp_domains),
-+};
-+
-+static const struct adsp_data sc7280_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+	.domains = sc7280_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sc7280_adsp_domains),
- };
- 
- static const struct adsp_data sdm845_adsp_resource_init = {
-@@ -825,6 +1060,20 @@ static const struct adsp_data sdm845_adsp_resource_init = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = sdm845_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_adsp_domains),
-+};
-+
-+static const struct adsp_data sm6115_adsp_resource_init = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+	.domains = sdm845_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_adsp_domains),
- };
- 
- static const struct adsp_data sm6350_adsp_resource = {
-@@ -841,6 +1090,7 @@ static const struct adsp_data sm6350_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	// TODO: domains
- };
- 
- static const struct adsp_data sm6375_mpss_resource = {
-@@ -856,6 +1106,7 @@ static const struct adsp_data sm6375_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	// TODO: domains
- };
- 
- static const struct adsp_data sm8150_adsp_resource = {
-@@ -871,6 +1122,8 @@ static const struct adsp_data sm8150_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = sdm845_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_adsp_domains),
- };
- 
- static const struct adsp_data sm8250_adsp_resource = {
-@@ -887,6 +1140,8 @@ static const struct adsp_data sm8250_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = sdm845_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_adsp_domains),
- };
- 
- static const struct adsp_data sm8350_adsp_resource = {
-@@ -903,6 +1158,8 @@ static const struct adsp_data sm8350_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = sm8350_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_adsp_domains),
- };
- 
- static const struct adsp_data msm8996_adsp_resource = {
-@@ -917,9 +1174,11 @@ static const struct adsp_data msm8996_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = msm8996_adsp_domains,
-+	.num_domains = ARRAY_SIZE(msm8996_adsp_domains),
- };
- 
--static const struct adsp_data cdsp_resource_init = {
-+static const struct adsp_data qcs404_cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
-@@ -927,6 +1186,8 @@ static const struct adsp_data cdsp_resource_init = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sdm845_cdsp_resource_init = {
-@@ -938,6 +1199,20 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
-+};
-+
-+static const struct adsp_data sm6115_cdsp_resource_init = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.pas_id = 18,
-+	.auto_boot = true,
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sm6350_cdsp_resource = {
-@@ -954,6 +1229,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	// TODO: domains
- };
- 
- static const struct adsp_data sm8150_cdsp_resource = {
-@@ -969,6 +1245,8 @@ static const struct adsp_data sm8150_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sm8250_cdsp_resource = {
-@@ -984,6 +1262,8 @@ static const struct adsp_data sm8250_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sc8280xp_nsp0_resource = {
-@@ -998,6 +1278,8 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
- 	.ssr_name = "cdsp0",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sc8280xp_nsp1_resource = {
-@@ -1012,6 +1294,7 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
- 	.ssr_name = "cdsp1",
- 	.sysmon_name = "cdsp1",
- 	.ssctl_id = 0x20,
-+	// TODO: domains
- };
- 
- static const struct adsp_data sm8350_cdsp_resource = {
-@@ -1028,6 +1311,8 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data mpss_resource_init = {
-@@ -1045,6 +1330,45 @@ static const struct adsp_data mpss_resource_init = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	/* no domains */
-+};
-+
-+static const struct adsp_data sc7180_mpss_resource = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+	.domains = sc7180_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sc7180_mpss_domains),
-+};
-+
-+static const struct adsp_data sc7280_mpss_resource_init = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+	.domains = sm8350_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_mpss_domains),
- };
- 
- static const struct adsp_data sc8180x_mpss_resource = {
-@@ -1060,6 +1384,46 @@ static const struct adsp_data sc8180x_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	.domains = sm8150_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8150_mpss_domains),
-+};
-+
-+static const struct adsp_data sm8150_mpss_resource = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+	.domains = sm8150_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8150_mpss_domains),
-+};
-+
-+static const struct adsp_data sm8350_mpss_resource_init = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+	.domains = sm8350_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_mpss_domains),
- };
- 
- static const struct adsp_data msm8996_slpi_resource_init = {
-@@ -1074,6 +1438,7 @@ static const struct adsp_data msm8996_slpi_resource_init = {
- 	.ssr_name = "dsps",
- 	.sysmon_name = "slpi",
- 	.ssctl_id = 0x16,
-+	/* no domains */
- };
- 
- static const struct adsp_data sdm845_slpi_resource_init = {
-@@ -1090,9 +1455,11 @@ static const struct adsp_data sdm845_slpi_resource_init = {
- 	.ssr_name = "dsps",
- 	.sysmon_name = "slpi",
- 	.ssctl_id = 0x16,
-+	.domains = sdm845_slpi_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_slpi_domains),
- };
- 
--static const struct adsp_data wcss_resource_init = {
-+static const struct adsp_data qcs404_wcss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "wcnss.mdt",
- 	.pas_id = 6,
-@@ -1100,6 +1467,8 @@ static const struct adsp_data wcss_resource_init = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "wcnss",
- 	.ssctl_id = 0x12,
-+	.domains = qcs404_mpss_domains,
-+	.num_domains = ARRAY_SIZE(qcs404_mpss_domains),
- };
- 
- static const struct adsp_data sdx55_mpss_resource = {
-@@ -1115,6 +1484,7 @@ static const struct adsp_data sdx55_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x22,
-+	// TODO: domains
- };
- 
- static const struct adsp_data sm8450_mpss_resource = {
-@@ -1133,6 +1503,8 @@ static const struct adsp_data sm8450_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	.domains = sm8350_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_mpss_domains),
- };
- 
- static const struct adsp_data sm8550_adsp_resource = {
-@@ -1152,6 +1524,8 @@ static const struct adsp_data sm8550_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.domains = sm8350_adsp_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_adsp_domains),
- };
- 
- static const struct adsp_data sm8550_cdsp_resource = {
-@@ -1172,6 +1546,8 @@ static const struct adsp_data sm8550_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sm8550_mpss_resource = {
-@@ -1195,6 +1571,8 @@ static const struct adsp_data sm8550_mpss_resource = {
- 	.region_assign_idx = 2,
- 	.region_assign_count = 1,
- 	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-+	.domains = sm8350_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_mpss_domains),
- };
- 
- static const struct adsp_data sc7280_wpss_resource = {
-@@ -1235,6 +1613,8 @@ static const struct adsp_data sm8650_cdsp_resource = {
- 	.region_assign_count = 1,
- 	.region_assign_shared = true,
- 	.region_assign_vmid = QCOM_SCM_VMID_CDSP,
-+	.domains = sdm845_cdsp_domains,
-+	.num_domains = ARRAY_SIZE(sdm845_cdsp_domains),
- };
- 
- static const struct adsp_data sm8650_mpss_resource = {
-@@ -1258,29 +1638,32 @@ static const struct adsp_data sm8650_mpss_resource = {
- 	.region_assign_idx = 2,
- 	.region_assign_count = 3,
- 	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-+	.domains = sm8350_mpss_domains,
-+	.num_domains = ARRAY_SIZE(sm8350_mpss_domains),
- };
- 
- static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &adsp_resource_init},
-+	// FIXME: is msm8996 adsp audio domain applicable to msm8953 ?
- 	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm8996_slpi_resource_init},
- 	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8996_slpi_resource_init},
--	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
--	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
--	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
--	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
--	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
-+	{ .compatible = "qcom,qcs404-adsp-pas", .data = &qcs404_adsp_resource_init },
-+	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &qcs404_cdsp_resource_init },
-+	{ .compatible = "qcom,qcs404-wcss-pas", .data = &qcs404_wcss_resource_init },
-+	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sc7180_adsp_resource},
-+	{ .compatible = "qcom,sc7180-mpss-pas", .data = &sc7180_mpss_resource},
-+	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sc7280_adsp_resource},
- 	{ .compatible = "qcom,sc7280-cdsp-pas", .data = &sm6350_cdsp_resource},
--	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sc7280-mpss-pas", .data = &sc7280_mpss_resource_init},
- 	{ .compatible = "qcom,sc7280-wpss-pas", .data = &sc7280_wpss_resource},
- 	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
- 	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource},
--	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource},
-+	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8350_adsp_resource},
- 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource},
- 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource},
- 	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
-@@ -1288,18 +1671,19 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
- 	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init},
- 	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
--	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
--	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
-+	{ .compatible = "qcom,sm6115-adsp-pas", .data = &sm6115_adsp_resource_init},
-+	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &sm6115_cdsp_resource_init},
- 	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource},
- 	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
- 	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
-+	// FIXME: no domains?
- 	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
- 	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sm6375-mpss-pas", .data = &sm6375_mpss_resource},
- 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
- 	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
--	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm8150-mpss-pas", .data = &sm8150_mpss_resource},
- 	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sdm845_slpi_resource_init},
- 	{ .compatible = "qcom,sm8250-adsp-pas", .data = &sm8250_adsp_resource},
- 	{ .compatible = "qcom,sm8250-cdsp-pas", .data = &sm8250_cdsp_resource},
-@@ -1307,7 +1691,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm8350-adsp-pas", .data = &sm8350_adsp_resource},
- 	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
- 	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm8350-mpss-pas", .data = &sm8350_mpss_resource_init},
- 	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
- 	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
- 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sdm845_slpi_resource_init},
+On 3/4/24 18:03, Dmitry Baryshkov wrote:
+> Add qmi_del_server(), a pair to qmi_add_server(), a way to remove
+> running server from the QMI socket. This is e.g. necessary for
+> pd-mapper, which needs to readd a server each time the DSP is started or
+> stopped.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
--- 
-2.39.2
+[...]
 
+> +
+> +	list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
+> +		if (svc->service != service ||
+> +		    svc->version != version ||
+> +		    svc->instance != instance)
+> +			continue;
+> +
+> +		qmi_send_del_server(qmi, svc);
+> +		//list_del(&vc->list_node);
+> +		//kfree(svc);
+
+foo
+
+Konrad
