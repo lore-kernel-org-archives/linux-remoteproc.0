@@ -1,60 +1,60 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2565CDDD
-	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2024 17:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119815C90B
+	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2024 17:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709571823; cv=none; b=URoj+2a3TBEL/z6z+p964PuA/MjUNYNAiB17HQobTWyL/xPOxQc2xuZts1XsQPe4KgBIgf9lV2LYY1PJVaUvs5ecPIVPzSsxaJPPCjKO02ievbRS3uZYolIFoGZQCvkxxVHw+p4fqQauuUvPaQJ70I7010yKZIZeaMo1LZExMCU=
+	t=1709571823; cv=none; b=D0eg/GSntVoXXis7B0kUSuUgHXppVKbRnR3uhdS1pkrVeb4HH56gpTDsrF277xFy5UqA58pfsNQgeksBE9R6KlGx2TV+nKdGlszWIFBbtq3eYroT72BKWbF8plfRIOuaxQh+RoS6crcJU0q+HYmooxzC3WgrTB7i/4TYSb9kDq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709571823; c=relaxed/simple;
-	bh=Xh0gZ9WF3aP9efQ6HyUzvGK+JWZ2KKrzlJ7fd7VE+0U=;
+	bh=yyW8nWc0CqXyntSJEUTYso3W/Uz8Y2nnwho22yOj1fI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pKEXVOcsyQyXLCz8SZn2knxjcj0aj5pU7c37cuTEhVw7pNF8XygZdbhX80AMcNtNx2nr7H1Ost4jNGQKCeikL00AIg0e9doKiC56ORmFmDWs/J0QPgJ7xa/UI7lW0YfCvMifU13NK1O7dq0KLVN8Q9RvJxy5Bp6mc7J54KDnxY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P/KqxpuC; arc=none smtp.client-ip=209.85.167.51
+	 In-Reply-To:To:Cc; b=D1ux0lK0cjxkJ7vNmChCKN7FZFydN5Dkz8t8xFrD5ywuVuZHdXawOXCsVD40pjVAiE/9L6PhvxxjEyReXAuP3pvgCgyaxMV7pbibQ4BS/Wp1cotYIM+eBZHsw+pan5OEmvgVHDBW/ynz8+gjdJA6FE0sijoXhYSKKDDHPrpmRwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j5yAD20Y; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P/KqxpuC"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51321e71673so5351465e87.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Mar 2024 09:03:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j5yAD20Y"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5133d26632fso2405059e87.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Mar 2024 09:03:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709571820; x=1710176620; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1709571819; x=1710176619; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wsp1Ea4EeJcsgjp/Lh6RtgNzm11Uer74kxKaSJqX+4E=;
-        b=P/KqxpuCLI6rGp+gxeORtHSNbQO7juN+FqQ7ajY/AmrG1KtsASBTS0EWoVovIK9yvC
-         qZ25g7Zex5J4I2wH0yo+xkfksqLxvCHbZ6ECj/rE494nLdjF1hIYy0w571UhKJix7aUW
-         RcEmgQYXYc2hpexlEZOK3uZ4PnuaeI3c0ubdwyl7MyHqU6LeiMZVdmth23bcY2zeH/2T
-         rm1v+Mh8sFTQkftUJwZJG9omVLEF+5kq3zxGMef8u2IXCm0UEcfxbKnto/FgMwTF6ckJ
-         VAw6a2RZKmz1Qoe5ps4yEUHj4chzmfeuIJ5KaxF4oFhpXkGZEQUuSuQeRk238Q2Son8y
-         a3GQ==
+        bh=6QZmyTFq5jIzLcbbwPheYuIv0cb8usEsmtAcFUaJNPs=;
+        b=j5yAD20YI8E/p7kc7Pef4XMQlNfwKlJ4pnVTzp72myib9PIdeuRVA9g2u9B55Si3/q
+         0Hy/1nTYOIq8pwvh1NstrvbXF3r9eivWR0SZ8yFvHEuSqbgimZt1S0gGbPI9iyURlp8y
+         TagqGSgQkVKai+yX0jLzvs49av7CZy4HqXfgPxa8cRLJItzXzorkZ1havE+WQt0AuWJz
+         6nPWWcnAbJUFy7z6KmUjM18jy/ffeEjE2OE/ahBSCg8jTuyUJzbMPOEdrel+ijUjlqxI
+         AwDnZpRIwHPy+6x7do6xMEVmsOe+oAnINynLbhFkBn0xF7zGeDRSFOymhAcrP9AXT6Ze
+         hcUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709571820; x=1710176620;
+        d=1e100.net; s=20230601; t=1709571819; x=1710176619;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wsp1Ea4EeJcsgjp/Lh6RtgNzm11Uer74kxKaSJqX+4E=;
-        b=OtVu0UXNx5xcBGN3HOXXTfF1/6bB7mIg9ahfR3JygOShk2PTcnVgAD7mnR/Omy6iYZ
-         tn/SxeiKNK+59MfQP65hhkghYs6gQEWT7gdyP7LzK6sUG+vRp2LwdD1GT7fFfeKzcS6Z
-         q9A7gSu050+kCtN0ZGyJO+MfxqW+aB1AXP7AHTTEQdAy7DMVaOzKKKYDz8yHPabTYjaH
-         pf695YW6KXMmm30Arc4inxOMfT0W18JnhYmyA7a7iq43a0b4bbTmaKsYJpOGzrtXfvBB
-         XQ9GepP/JiHzr2/yK1kFvPJkbJlw1BvBZ++0fv+CsrSBANFQNCzqTPVtF9aVs1D7Exqm
-         e2gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKObOOHQM6wO1WDopTLzwZCE8/VlFukdQh8YwdfGATqi3/NNkEC9EWLSHFIBzD9AkuqN6A33aefzv0FnUYU6wCsxDzoRJhdOhn/aPHEFjduw==
-X-Gm-Message-State: AOJu0Ywdg3iBDpjNTfhDknZtsSzJE1+LftIIqha9zxGJPIDWxuQviKzM
-	A0Io8c5Jconlf3vvQz6MyaSFtXcE9Jsywa1c/YGvxy3WqfxezAKPbEjC6skXsp8=
-X-Google-Smtp-Source: AGHT+IHLH4J4DbCy1MaXA0j9vEEZWrlob/4ABYzYo0xQMdTXRqyAm9RuKyIgLlfUU3bWQtHuYBCaoQ==
-X-Received: by 2002:ac2:55bc:0:b0:512:bb33:2eab with SMTP id y28-20020ac255bc000000b00512bb332eabmr6034693lfg.58.1709571819989;
+        bh=6QZmyTFq5jIzLcbbwPheYuIv0cb8usEsmtAcFUaJNPs=;
+        b=Su3SzB5ZzOtc93NxpeZBupwt4uKKO6+Cd1j0jZt7bMMAjkai/NAzUab0N3Qq84l/X/
+         JDQD/5NQxOp6/l2VLkdkI41cop3iK4sh1htHDcNS4wCzmwTTtd4GCWxeRX2APXGTHBtN
+         QteOGWqnxHKN+kCdnjKtldqBU48Az0dnGEIsuKBXFuRGz8M97wKvwJXA9A/oCzVYDopp
+         3so0tp3taTPidEDGaYY/zE/mzdGLMrnU/uiWBABNE4QGB8i+c2fyWkknYvRtxtea8YFs
+         62qr6R5nKtOs5hucX/dSoG6bspTO8W/DoB8+TCCubqDjQFRiBcg6Bx+gnjnUVH8Vf7s1
+         6eWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3P7s5MajXHVVBpfIiOW4I0K8RVFS7uRbCgHG1RFxPareg8WajTZDHHVb4DOszwZenL1nVwCohFR2zZ3O6nM+fgA84wkg8lyvCd8w3cWXf3A==
+X-Gm-Message-State: AOJu0YydGbPUoEX/3ScXszubPcXMmeVvnK0upQvb6aD5yT+9/Ok3pjuP
+	tg5bdoqNP0v8sqpkkdsI8EuOJPruahPLhpyr8riH8cm06JISF3xACk4lSe5j5Co=
+X-Google-Smtp-Source: AGHT+IFc9uQ9pY1YNRj5I+GQ3sQyrw4+MKuGhAMVoGWClE0NygaWS4HrGkVQuE7e5GZkY0FM8Y43aA==
+X-Received: by 2002:a05:6512:b1f:b0:513:4da9:95b9 with SMTP id w31-20020a0565120b1f00b005134da995b9mr947240lfu.57.1709571819215;
         Mon, 04 Mar 2024 09:03:39 -0800 (PST)
 Received: from umbar.lan (dzyjmhybhls-s--zn36gy-3.rev.dnainternet.fi. [2001:14ba:a00e:a300:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id dx12-20020a0565122c0c00b005132441e07fsm1809151lfb.0.2024.03.04.09.03.39
+        by smtp.gmail.com with ESMTPSA id dx12-20020a0565122c0c00b005132441e07fsm1809151lfb.0.2024.03.04.09.03.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 09:03:39 -0800 (PST)
+        Mon, 04 Mar 2024 09:03:38 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 04 Mar 2024 19:03:34 +0200
-Subject: [PATCH RFC v3 4/7] remoteproc: qcom: pas: correct data indentation
+Date: Mon, 04 Mar 2024 19:03:33 +0200
+Subject: [PATCH RFC v3 3/7] soc: qcom: add pd-mapper implementation
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240304-qcom-pd-mapper-v3-4-6858fa1ac1c8@linaro.org>
+Message-Id: <20240304-qcom-pd-mapper-v3-3-6858fa1ac1c8@linaro.org>
 References: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
 In-Reply-To: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -72,189 +72,736 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  Johan Hovold <johan+linaro@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4258;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=19359;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=Xh0gZ9WF3aP9efQ6HyUzvGK+JWZ2KKrzlJ7fd7VE+0U=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBl5f7mr5ZKNzAfac065o/ichcZLZl6L9gqAqkZO
- BHY2ULIqLaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZeX+5gAKCRCLPIo+Aiko
- 1eCUCACKvHnDnLsd+MDctgVIzm4a4e38QYtIwtj7r2m2wzLR77H/ofyR0PmxuTVE3MSkDwaTXEO
- kF3M2V7cC29IBIr7bCUr0ic/S1a3+CRRRLba5PLxq9WUnA423KbTmpXk4epvydKwJZ14C9tpexT
- 6MLNgpFv4lBj29xBPc7JJRS5yOBWG8shqcMR8Loc6xM6LY2VGZEeLu5IkMxsIsApDwI4v/XZkBy
- mW4/T08uDqtagRFdSI6OdoAhjbrTvXfQL46WSEZbRldWlINGVbvWJEmERi3/OxJeN+oIRmE61mP
- vCDe587v06M6VaJTuzsEJcLK5f4dAmCydL0ejbSTqj7UBRr1
+ bh=yyW8nWc0CqXyntSJEUTYso3W/Uz8Y2nnwho22yOj1fI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBl5f7mitHSn0GvZp1dJSZe3NsfTfPqd7Y47EWMC
+ UUdlkD0P9eJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZeX+5gAKCRCLPIo+Aiko
+ 1ST1B/0ThfOEH5wSXioZiVLmQowAm6Qi29dn/Z9lCE9TvmI+2FF4qfR2dyTHNLRG7TWIGMlZfmX
+ e5DWxvROCQ+KjQbb6hQmF2mnQq46Gf8IGlOGvZtHFe6/AWnam9wf35jErGYLwsOjn80wbI4ea8D
+ 5pPrQx+aew1E/lxTTuxFnfO+2X1iYz8ob22b/WhBZfgJBzPZNy6LO2vOJ3rPNZIpReSoUz28R+V
+ Y9GzpJtdjRfu7RsfNDaXJwyNU9MnflDCf4SJvpJxyilCtmTGOliK3iIvmEZpN1Yrsfh4C39u3u7
+ 9MluaZ6j7nWH12QbgExmb6Q/7cZIrsVlM0R0Nrq+q6rr2NhU
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Correct indentation of several struct adsp_data instances to always use
-a single TAB character instead of two.
+Existing userspace protection domain mapper implementation has several
+issue. It doesn't play well with CONFIG_EXTRA_FIRMWARE, it doesn't
+reread JSON files if firmware location is changed (or if firmware was
+not available at the time pd-mapper was started but the corresponding
+directory is mounted later), etc.
+
+Provide in-kernel service implementing protection domain mapping
+required to work with several services, which are provided by the DSP
+firmware.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 124 ++++++++++++++++++-------------------
- 1 file changed, 62 insertions(+), 62 deletions(-)
+ drivers/soc/qcom/Kconfig           |  10 ++
+ drivers/soc/qcom/Makefile          |   2 +
+ drivers/soc/qcom/qcom_pdm.c        | 346 +++++++++++++++++++++++++++++++++++++
+ drivers/soc/qcom/qcom_pdm_msg.c    | 188 ++++++++++++++++++++
+ drivers/soc/qcom/qcom_pdm_msg.h    |  66 +++++++
+ include/linux/soc/qcom/pd_mapper.h |  39 +++++
+ 6 files changed, 651 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index d0b1f0f38347..3235249d703d 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -807,24 +807,24 @@ static void adsp_remove(struct platform_device *pdev)
- }
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5af33b0e3470..f236ce376c1b 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -72,6 +72,16 @@ config QCOM_OCMEM
+ 	  requirements. This is typically used by the GPU, camera/video, and
+ 	  audio components on some Snapdragon SoCs.
  
- static const struct adsp_data adsp_resource_init = {
--		.crash_reason_smem = 423,
--		.firmware_name = "adsp.mdt",
--		.pas_id = 1,
--		.auto_boot = true,
--		.ssr_name = "lpass",
--		.sysmon_name = "adsp",
--		.ssctl_id = 0x14,
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
- };
- 
- static const struct adsp_data sdm845_adsp_resource_init = {
--		.crash_reason_smem = 423,
--		.firmware_name = "adsp.mdt",
--		.pas_id = 1,
--		.auto_boot = true,
--		.load_state = "adsp",
--		.ssr_name = "lpass",
--		.sysmon_name = "adsp",
--		.ssctl_id = 0x14,
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
- };
- 
- static const struct adsp_data sm6350_adsp_resource = {
-@@ -859,18 +859,18 @@ static const struct adsp_data sm6375_mpss_resource = {
- };
- 
- static const struct adsp_data sm8150_adsp_resource = {
--		.crash_reason_smem = 423,
--		.firmware_name = "adsp.mdt",
--		.pas_id = 1,
--		.auto_boot = true,
--		.proxy_pd_names = (char*[]){
--			"cx",
--			NULL
--		},
--		.load_state = "adsp",
--		.ssr_name = "lpass",
--		.sysmon_name = "adsp",
--		.ssctl_id = 0x14,
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		NULL
++config QCOM_PD_MAPPER
++	tristate "Qualcomm Protection Domain Mapper"
++	select QCOM_QMI_HELPERS
++	depends on NET && QRTR
++	help
++	  The Protection Domain Mapper maps registered services to the domains
++	  and instances handled by the remote DSPs. This is a kernel-space
++	  implementation of the service. It is a simpler alternative to the
++	  userspace daemon.
++
+ config QCOM_PDR_HELPERS
+ 	tristate
+ 	select QCOM_QMI_HELPERS
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index ca0bece0dfff..65e33b5a2231 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -7,6 +7,8 @@ obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+ obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
++obj-$(CONFIG_QCOM_PD_MAPPER)	+= qcom_pd_mapper.o
++qcom_pd_mapper-y += qcom_pdm.o qcom_pdm_msg.o
+ obj-$(CONFIG_QCOM_PDR_HELPERS)	+= pdr_interface.o
+ obj-$(CONFIG_QCOM_PMIC_GLINK)	+= pmic_glink.o
+ obj-$(CONFIG_QCOM_PMIC_GLINK)	+= pmic_glink_altmode.o
+diff --git a/drivers/soc/qcom/qcom_pdm.c b/drivers/soc/qcom/qcom_pdm.c
+new file mode 100644
+index 000000000000..9d14b18b8590
+--- /dev/null
++++ b/drivers/soc/qcom/qcom_pdm.c
+@@ -0,0 +1,346 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Qualcomm Protection Domain mapper
++ *
++ * Copyright (c) 2023 Linaro Ltd.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/soc/qcom/pd_mapper.h>
++#include <linux/soc/qcom/qmi.h>
++
++#include "qcom_pdm_msg.h"
++
++#define TMS_SERVREG_SERVICE "tms/servreg"
++
++struct qcom_pdm_domain {
++	struct list_head list;
++	const char *name;
++	u32 instance_id;
++};
++
++struct qcom_pdm_service {
++	struct list_head list;
++	struct list_head domains;
++	const char *name;
++};
++
++static LIST_HEAD(qcom_pdm_services);
++static DEFINE_MUTEX(qcom_pdm_mutex);
++static bool qcom_pdm_server_added;
++static struct qmi_handle qcom_pdm_handle;
++
++static struct qcom_pdm_service *qcom_pdm_find_locked(const char *name)
++{
++	struct qcom_pdm_service *service;
++
++	list_for_each_entry(service, &qcom_pdm_services, list) {
++		if (!strcmp(service->name, name))
++			return service;
++	}
++
++	return NULL;
++}
++
++static void qcom_pdm_del_service_domain_locked(const char *service_name, const char *domain_name)
++{
++	struct qcom_pdm_service *service;
++	struct qcom_pdm_domain *domain, *temp;
++
++	service = qcom_pdm_find_locked(service_name);
++	if (WARN_ON(!service))
++		return;
++
++	list_for_each_entry_safe(domain, temp, &service->domains, list) {
++		if (!strcmp(domain->name, domain_name)) {
++			list_del(&domain->list);
++			kfree(domain);
++
++			if (list_empty(&service->domains)) {
++				list_del(&service->list);
++				kfree(service->name);
++				kfree(service);
++			}
++
++			return;
++		}
++	}
++
++	WARN(1, "domain not found");
++}
++
++static int qcom_pdm_add_service_domain_locked(const char *service_name,
++					      const char *domain_name,
++					      u32 instance_id)
++{
++	struct qcom_pdm_service *service;
++	struct qcom_pdm_domain *domain;
++
++	service = qcom_pdm_find_locked(service_name);
++	if (service) {
++		list_for_each_entry(domain, &service->domains, list) {
++			if (!strcmp(domain->name, domain_name))
++				return -EBUSY;
++		}
++	} else {
++		service = kzalloc(sizeof(*service), GFP_KERNEL);
++		if (!service)
++			return -ENOMEM;
++
++		INIT_LIST_HEAD(&service->domains);
++		service->name = kstrdup(service_name, GFP_KERNEL);
++
++		list_add_tail(&service->list, &qcom_pdm_services);
++	}
++
++	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
++	if (!domain) {
++		if (list_empty(&service->domains)) {
++			list_del(&service->list);
++			kfree(service->name);
++			kfree(service);
++		}
++
++		return -ENOMEM;
++	}
++
++	/*
++	 * service name can outlive calling module and so it should be strdup'ed.
++	 * domain name can not outlive the module, so there is no need to strdup it.
++	 */
++	domain->name = domain_name;
++	domain->instance_id = instance_id;
++	list_add_tail(&domain->list, &service->domains);
++
++	return 0;
++}
++
++static int qcom_pdm_add_domain_locked(const struct qcom_pdm_domain_data *data)
++{
++	int ret;
++	int i;
++
++	ret = qcom_pdm_add_service_domain_locked(TMS_SERVREG_SERVICE,
++						 data->domain,
++						 data->instance_id);
++	if (ret)
++		return ret;
++
++	for (i = 0; data->services[i]; i++) {
++		ret = qcom_pdm_add_service_domain_locked(data->services[i],
++							 data->domain,
++							 data->instance_id);
++		if (ret)
++			goto err;
++	}
++
++	return 0;
++
++err:
++	while (--i >= 0)
++		qcom_pdm_del_service_domain_locked(data->services[i], data->domain);
++
++	qcom_pdm_del_service_domain_locked(TMS_SERVREG_SERVICE, data->domain);
++
++	return ret;
++}
++
++static void qcom_pdm_del_domain_locked(const struct qcom_pdm_domain_data *data)
++{
++	int i;
++
++	for (i = 0; data->services[i]; i++)
++		qcom_pdm_del_service_domain_locked(data->services[i], data->domain);
++
++	qcom_pdm_del_service_domain_locked(TMS_SERVREG_SERVICE, data->domain);
++}
++
++int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
++{
++	int ret;
++	int i;
++
++	mutex_lock(&qcom_pdm_mutex);
++
++	if (qcom_pdm_server_added) {
++		ret = qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
++				     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
++		if (ret)
++			goto err_out;
++	}
++
++	for (i = 0; i < num_data; i++) {
++		ret = qcom_pdm_add_domain_locked(data[i]);
++		if (ret)
++			goto err;
++	}
++
++	ret = qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
++			     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
++	if (ret) {
++		pr_err("PDM: error adding server %d\n", ret);
++		goto err;
++	}
++
++	qcom_pdm_server_added = true;
++
++	mutex_unlock(&qcom_pdm_mutex);
++
++	return 0;
++
++err:
++	while (--i >= 0)
++		qcom_pdm_del_domain_locked(data[i]);
++
++	qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
++		       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
++
++err_out:
++	mutex_unlock(&qcom_pdm_mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_pdm_add_domains);
++
++void qcom_pdm_del_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
++{
++	int i;
++
++	mutex_lock(&qcom_pdm_mutex);
++
++	if (qcom_pdm_server_added) {
++		qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
++			       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
++	}
++
++	for (i = 0; i < num_data; i++)
++		qcom_pdm_del_domain_locked(data[i]);
++
++	qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
++		       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
++	qcom_pdm_server_added = true;
++
++	mutex_unlock(&qcom_pdm_mutex);
++}
++EXPORT_SYMBOL_GPL(qcom_pdm_del_domains);
++
++static void qcom_pdm_get_domain_list(struct qmi_handle *qmi,
++				     struct sockaddr_qrtr *sq,
++				     struct qmi_txn *txn,
++				     const void *decoded)
++{
++	const struct servreg_loc_get_domain_list_req *req = decoded;
++	struct servreg_loc_get_domain_list_resp *rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
++	struct qcom_pdm_service *service;
++	u32 offset;
++	int ret;
++
++	offset = req->offset_valid ? req->offset : 0;
++
++	rsp->rsp.result = QMI_RESULT_SUCCESS_V01;
++	rsp->rsp.error = QMI_ERR_NONE_V01;
++
++	rsp->db_revision_valid = true;
++	rsp->db_revision = 1;
++
++	rsp->total_domains_valid = true;
++	rsp->total_domains = 0;
++
++	mutex_lock(&qcom_pdm_mutex);
++
++	service = qcom_pdm_find_locked(req->name);
++	if (service) {
++		struct qcom_pdm_domain *domain;
++
++		rsp->domain_list_valid = true;
++		rsp->domain_list_len = 0;
++
++		list_for_each_entry(domain, &service->domains, list) {
++			u32 i = rsp->total_domains++;
++
++			if (i >= offset && i < SERVREG_LOC_MAX_DOMAINS) {
++				u32 j = rsp->domain_list_len++;
++
++				strscpy(rsp->domain_list[j].name, domain->name,
++					sizeof(rsp->domain_list[i].name));
++				rsp->domain_list[j].instance_id = domain->instance_id;
++
++				pr_debug("PDM: found %s / %d\n", domain->name,
++					 domain->instance_id);
++			}
++		}
++
++	}
++
++	mutex_unlock(&qcom_pdm_mutex);
++
++	pr_debug("PDM: service '%s' offset %d returning %d domains (of %d)\n", req->name,
++		 req->offset_valid ? req->offset : -1, rsp->domain_list_len, rsp->total_domains);
++
++	ret = qmi_send_response(qmi, sq, txn, SERVREG_LOC_GET_DOMAIN_LIST,
++				2658,
++				servreg_loc_get_domain_list_resp_ei, rsp);
++	if (ret)
++		pr_err("Error sending servreg response: %d\n", ret);
++
++	kfree(rsp);
++}
++
++static void qcom_pdm_pfr(struct qmi_handle *qmi,
++			 struct sockaddr_qrtr *sq,
++			 struct qmi_txn *txn,
++			 const void *decoded)
++{
++	const struct servreg_loc_pfr_req *req = decoded;
++	struct servreg_loc_pfr_resp rsp = {};
++	int ret;
++
++	pr_warn_ratelimited("PDM: service '%s' crash: '%s'\n", req->service, req->reason);
++
++	rsp.rsp.result = QMI_RESULT_SUCCESS_V01;
++	rsp.rsp.error = QMI_ERR_NONE_V01;
++
++	ret = qmi_send_response(qmi, sq, txn, SERVREG_LOC_PFR,
++				SERVREG_LOC_PFR_RESP_MSG_SIZE,
++				servreg_loc_pfr_resp_ei, &rsp);
++	if (ret)
++		pr_err("Error sending servreg response: %d\n", ret);
++}
++
++static const struct qmi_msg_handler qcom_pdm_msg_handlers[] = {
++	{
++		.type = QMI_REQUEST,
++		.msg_id = SERVREG_LOC_GET_DOMAIN_LIST,
++		.ei = servreg_loc_get_domain_list_req_ei,
++		.decoded_size = sizeof(struct servreg_loc_get_domain_list_req),
++		.fn = qcom_pdm_get_domain_list,
 +	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
- };
- 
- static const struct adsp_data sm8250_adsp_resource = {
-@@ -906,17 +906,17 @@ static const struct adsp_data sm8350_adsp_resource = {
- };
- 
- static const struct adsp_data msm8996_adsp_resource = {
--		.crash_reason_smem = 423,
--		.firmware_name = "adsp.mdt",
--		.pas_id = 1,
--		.auto_boot = true,
--		.proxy_pd_names = (char*[]){
--			"cx",
--			NULL
--		},
--		.ssr_name = "lpass",
--		.sysmon_name = "adsp",
--		.ssctl_id = 0x14,
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		NULL
++	{
++		.type = QMI_REQUEST,
++		.msg_id = SERVREG_LOC_PFR,
++		.ei = servreg_loc_pfr_req_ei,
++		.decoded_size = sizeof(struct servreg_loc_pfr_req),
++		.fn = qcom_pdm_pfr,
 +	},
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
- };
- 
- static const struct adsp_data cdsp_resource_init = {
-@@ -1063,33 +1063,33 @@ static const struct adsp_data sc8180x_mpss_resource = {
- };
- 
- static const struct adsp_data msm8996_slpi_resource_init = {
--		.crash_reason_smem = 424,
--		.firmware_name = "slpi.mdt",
--		.pas_id = 12,
--		.auto_boot = true,
--		.proxy_pd_names = (char*[]){
--			"ssc_cx",
--			NULL
--		},
--		.ssr_name = "dsps",
--		.sysmon_name = "slpi",
--		.ssctl_id = 0x16,
-+	.crash_reason_smem = 424,
-+	.firmware_name = "slpi.mdt",
-+	.pas_id = 12,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"ssc_cx",
-+		NULL
++	{ },
++};
++
++static int qcom_pdm_init(void)
++{
++	return qmi_handle_init(&qcom_pdm_handle, 1024,
++			       NULL, qcom_pdm_msg_handlers);
++}
++
++static void qcom_pdm_exit(void)
++{
++	qmi_handle_release(&qcom_pdm_handle);
++
++	WARN_ON(!list_empty(&qcom_pdm_services));
++}
++
++module_init(qcom_pdm_init);
++module_exit(qcom_pdm_exit);
++
++MODULE_DESCRIPTION("Qualcomm Protection Domain Mapper");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/soc/qcom/qcom_pdm_msg.c b/drivers/soc/qcom/qcom_pdm_msg.c
+new file mode 100644
+index 000000000000..6f858df8f3dc
+--- /dev/null
++++ b/drivers/soc/qcom/qcom_pdm_msg.c
+@@ -0,0 +1,188 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2018, Linaro Ltd.
++ * Copyright (c) 2016, Bjorn Andersson
++ */
++
++#include "qcom_pdm_msg.h"
++
++struct qmi_elem_info servreg_loc_domain_list_entry_ei[] = {
++	{
++		.data_type = QMI_STRING,
++		.elem_len = 65,
++		.elem_size = sizeof(char),
++		.offset = offsetof(struct servreg_loc_domain_list_entry, name)
 +	},
-+	.ssr_name = "dsps",
-+	.sysmon_name = "slpi",
-+	.ssctl_id = 0x16,
- };
- 
- static const struct adsp_data sdm845_slpi_resource_init = {
--		.crash_reason_smem = 424,
--		.firmware_name = "slpi.mdt",
--		.pas_id = 12,
--		.auto_boot = true,
--		.proxy_pd_names = (char*[]){
--			"lcx",
--			"lmx",
--			NULL
--		},
--		.load_state = "slpi",
--		.ssr_name = "dsps",
--		.sysmon_name = "slpi",
--		.ssctl_id = 0x16,
-+	.crash_reason_smem = 424,
-+	.firmware_name = "slpi.mdt",
-+	.pas_id = 12,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
++	{
++		.data_type = QMI_UNSIGNED_4_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(u32),
++		.offset = offsetof(struct servreg_loc_domain_list_entry, instance_id),
 +	},
-+	.load_state = "slpi",
-+	.ssr_name = "dsps",
-+	.sysmon_name = "slpi",
-+	.ssctl_id = 0x16,
- };
- 
- static const struct adsp_data wcss_resource_init = {
++	{
++		.data_type = QMI_UNSIGNED_1_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(uint8_t),
++		.offset = offsetof(struct servreg_loc_domain_list_entry, service_data_valid),
++	},
++	{
++		.data_type = QMI_UNSIGNED_4_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(u32),
++		.offset = offsetof(struct servreg_loc_domain_list_entry, service_data),
++	},
++	{}
++};
++
++struct qmi_elem_info servreg_loc_get_domain_list_req_ei[] = {
++	{
++		.data_type = QMI_STRING,
++		.elem_len = 65,
++		.elem_size = sizeof(char),
++		.array_type = VAR_LEN_ARRAY,
++		.tlv_type = 1,
++		.offset = offsetof(struct servreg_loc_get_domain_list_req, name)
++	},
++	{
++		.data_type = QMI_OPT_FLAG,
++		.elem_len = 1,
++		.elem_size = sizeof(u8),
++		.tlv_type = 16,
++		.offset = offsetof(struct servreg_loc_get_domain_list_req, offset_valid),
++	},
++	{
++		.data_type = QMI_UNSIGNED_4_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(u32),
++		.tlv_type = 16,
++		.offset = offsetof(struct servreg_loc_get_domain_list_req, offset),
++	},
++	{
++		.data_type	= QMI_EOTI,
++		.elem_len	= 0,
++		.elem_size	= 0,
++		.array_type	= NO_ARRAY,
++		.tlv_type	= QMI_COMMON_TLV_TYPE,
++		.offset		= 0,
++		.ei_array	= NULL,
++	}
++};
++
++struct qmi_elem_info servreg_loc_get_domain_list_resp_ei[] = {
++	{
++		.data_type = QMI_STRUCT,
++		.elem_len = 1,
++		.elem_size = sizeof_field(struct servreg_loc_get_domain_list_resp, rsp),
++		.tlv_type = 2,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, rsp),
++		.ei_array = qmi_response_type_v01_ei,
++	},
++	{
++		.data_type = QMI_OPT_FLAG,
++		.elem_len = 1,
++		.elem_size = sizeof(u8),
++		.tlv_type = 16,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, total_domains_valid),
++	},
++	{
++		.data_type = QMI_UNSIGNED_2_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(u16),
++		.tlv_type = 16,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, total_domains),
++	},
++	{
++		.data_type = QMI_OPT_FLAG,
++		.elem_len = 1,
++		.elem_size = sizeof(u8),
++		.tlv_type = 17,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, db_revision_valid),
++	},
++	{
++		.data_type = QMI_UNSIGNED_2_BYTE,
++		.elem_len = 1,
++		.elem_size = sizeof(u16),
++		.tlv_type = 17,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, db_revision),
++	},
++	{
++		.data_type = QMI_OPT_FLAG,
++		.elem_len = 1,
++		.elem_size = sizeof(u8),
++		.tlv_type = 18,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, domain_list_valid),
++	},
++	{
++		.data_type = QMI_DATA_LEN,
++		.elem_len = 1,
++		.elem_size = sizeof(uint8_t),
++		.tlv_type = 18,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, domain_list_len),
++	},
++	{
++		.data_type = QMI_STRUCT,
++		.elem_len = 32,
++		.elem_size = sizeof(struct servreg_loc_domain_list_entry),
++		.array_type = VAR_LEN_ARRAY,
++		.tlv_type = 18,
++		.offset = offsetof(struct servreg_loc_get_domain_list_resp, domain_list),
++		.ei_array = servreg_loc_domain_list_entry_ei,
++	},
++	{
++		.data_type	= QMI_EOTI,
++		.elem_len	= 0,
++		.elem_size	= 0,
++		.array_type	= NO_ARRAY,
++		.tlv_type	= QMI_COMMON_TLV_TYPE,
++		.offset		= 0,
++		.ei_array	= NULL,
++	}
++};
++
++struct qmi_elem_info servreg_loc_pfr_req_ei[] = {
++	{
++		.data_type = QMI_STRING,
++		.elem_len = 65,
++		.elem_size = sizeof(char),
++		.array_type = VAR_LEN_ARRAY,
++		.tlv_type = 1,
++		.offset = offsetof(struct servreg_loc_pfr_req, service)
++	},
++	{
++		.data_type = QMI_STRING,
++		.elem_len = 65,
++		.elem_size = sizeof(char),
++		.array_type = VAR_LEN_ARRAY,
++		.tlv_type = 2,
++		.offset = offsetof(struct servreg_loc_pfr_req, reason)
++	},
++	{
++		.data_type	= QMI_EOTI,
++		.elem_len	= 0,
++		.elem_size	= 0,
++		.array_type	= NO_ARRAY,
++		.tlv_type	= QMI_COMMON_TLV_TYPE,
++		.offset		= 0,
++		.ei_array	= NULL,
++	}
++};
++
++struct qmi_elem_info servreg_loc_pfr_resp_ei[] = {
++	{
++		.data_type = QMI_STRUCT,
++		.elem_len = 1,
++		.elem_size = sizeof_field(struct servreg_loc_pfr_resp, rsp),
++		.tlv_type = 2,
++		.offset = offsetof(struct servreg_loc_pfr_resp, rsp),
++		.ei_array = qmi_response_type_v01_ei,
++	},
++	{
++		.data_type	= QMI_EOTI,
++		.elem_len	= 0,
++		.elem_size	= 0,
++		.array_type	= NO_ARRAY,
++		.tlv_type	= QMI_COMMON_TLV_TYPE,
++		.offset		= 0,
++		.ei_array	= NULL,
++	}
++};
+diff --git a/drivers/soc/qcom/qcom_pdm_msg.h b/drivers/soc/qcom/qcom_pdm_msg.h
+new file mode 100644
+index 000000000000..e576b87c67c0
+--- /dev/null
++++ b/drivers/soc/qcom/qcom_pdm_msg.h
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2018, Linaro Ltd.
++ * Copyright (c) 2016, Bjorn Andersson
++ */
++
++#ifndef __QMI_SERVREG_LOC_H__
++#define __QMI_SERVREG_LOC_H__
++
++#include <linux/types.h>
++#include <linux/soc/qcom/qmi.h>
++
++#define SERVREG_QMI_SERVICE 64
++#define SERVREG_QMI_VERSION 257
++#define SERVREG_QMI_INSTANCE 0
++#define QMI_RESULT_SUCCESS 0
++#define QMI_RESULT_FAILURE 1
++#define QMI_ERR_NONE 0
++#define QMI_ERR_INTERNAL 1
++#define QMI_ERR_MALFORMED_MSG 2
++#define SERVREG_LOC_GET_DOMAIN_LIST 33
++#define SERVREG_LOC_PFR 36
++
++struct servreg_loc_domain_list_entry {
++	char name[65];
++	u32 instance_id;
++	u8 service_data_valid;
++	u32 service_data;
++};
++
++struct servreg_loc_get_domain_list_req {
++	char name[65];
++	u8 offset_valid;
++	u32 offset;
++};
++
++#define SERVREG_LOC_MAX_DOMAINS 32
++
++struct servreg_loc_get_domain_list_resp {
++	struct qmi_response_type_v01 rsp;
++	u8 total_domains_valid;
++	u16 total_domains;
++	u8 db_revision_valid;
++	u16 db_revision;
++	u8 domain_list_valid;
++	u32 domain_list_len;
++	struct servreg_loc_domain_list_entry domain_list[SERVREG_LOC_MAX_DOMAINS];
++};
++
++struct servreg_loc_pfr_req {
++	char service[65];
++	char reason[257];
++};
++
++struct servreg_loc_pfr_resp {
++	struct qmi_response_type_v01 rsp;
++};
++
++#define SERVREG_LOC_PFR_RESP_MSG_SIZE 10
++
++extern struct qmi_elem_info servreg_loc_get_domain_list_req_ei[];
++extern struct qmi_elem_info servreg_loc_get_domain_list_resp_ei[];
++extern struct qmi_elem_info servreg_loc_pfr_req_ei[];
++extern struct qmi_elem_info servreg_loc_pfr_resp_ei[];
++
++#endif
+diff --git a/include/linux/soc/qcom/pd_mapper.h b/include/linux/soc/qcom/pd_mapper.h
+new file mode 100644
+index 000000000000..86438b7ca6fe
+--- /dev/null
++++ b/include/linux/soc/qcom/pd_mapper.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Qualcomm Protection Domain mapper
++ *
++ * Copyright (c) 2023 Linaro Ltd.
++ */
++#ifndef __QCOM_PD_MAPPER__
++#define __QCOM_PD_MAPPER__
++
++struct qcom_pdm_domain_data {
++	const char *domain;
++	u32 instance_id;
++	/* NULL-terminated array */
++	const char * services[];
++};
++
++#if IS_ENABLED(CONFIG_QCOM_PD_MAPPER)
++
++int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data,
++			 size_t num_data);
++void qcom_pdm_del_domains(const struct qcom_pdm_domain_data * const *data,
++			  size_t num_data);
++
++#else
++
++static inline int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data,
++				      size_t num_data)
++{
++	return 0;
++}
++
++static inline void qcom_pdm_del_domains(const struct qcom_pdm_domain_data * const *data,
++					size_t num_data)
++{
++}
++
++#endif
++
++#endif
 
 -- 
 2.39.2
