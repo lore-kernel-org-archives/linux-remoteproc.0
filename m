@@ -1,104 +1,170 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A6162141
-	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2024 18:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8DD629ED;
+	Mon,  4 Mar 2024 18:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709576066; cv=none; b=FrcGTPX73W1wL3MtdizAvTOwKtbGm8LxGyA47CNWEPMDHVqnJ7Bv+pJDA/P0mNmXPPsfonGKTe9q2JBBltj8W7ijVxckhVyrWL4Fvbg62/0Qpk9N/TRybkfBetFTUMO8LDx1FD6wP5Oywv640uksQ0x0S7eQ8BCsMayq/psA3Dk=
+	t=1709577030; cv=none; b=tEWkQyonciv1x+ge0p8hUPoYEum3dmDuK/hEKKTmD6bybYOZ7tgj4RYlBR99XDPW/Vs6YkorsJv9pbUjq8ndlBXabnLoQr85L5sCKlRRviobqpwHPDLkhExepBmS2dvnR0HOSnyidZvmieH5qicXNt6xOVjru+60QaUVLWjIP1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709576066; c=relaxed/simple;
-	bh=QNGC7Dsi9roLy5jQAymqERMpAqi1lwb3tWPINkNo5WA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DCm1yKZXkdIPagarB6lhqJ8Q3i7M+AV4tHqlMgMgNBuAFvPSVLpgtJp6bjfAXRlXQlYColxFJGBuQHpj/i2ZutKG5SzL+OgvVM7kUdIcdNKYXLU7T9tZKpbIOkN4L31G1JgljsJygk0BJBtscOkHTKhvg7nNJz71aZK8IvRTPsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tCRLWH2P; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709577030; c=relaxed/simple;
+	bh=ziA5WYvRRKeMAVzULW5DZrSwZgVRble6/Vv6u6klgFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WfU9eMQy5078M2x200AFI/RN3zYMHvJlzPzd7YHIgJSRPsAB2XR9xpnfdGU52iB3yjiNKg/2bOz2tbIvrN6YlQdIxS4ZTgj2sHCZ1nt8q5sSz8/6/tWQdDJdQ13KYHzG5uab5na9AvxdYtHlKBOclr+rE641qcWsXoiO4CSrjt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODDTDWd5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tCRLWH2P"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-607e54b6cf5so32307767b3.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Mar 2024 10:14:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709576064; x=1710180864; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTdG46h6upx6Y3pqy4jdUCMvsV8yx7G/keZC/3Dml0E=;
-        b=tCRLWH2PjyljV2L1i+TmJBlJ+OQCya1VLg0WeXZBm9hZENe7D+IhXVr/3ZOiudGahP
-         csOIEuNRMT01Rf6DNlwgisxK0YFqER3WjZWNhs45wayHljf1DM15RCnmRR/eXGzGtk5n
-         dXWlcbQQvSyKadEYXU9AXgQm1o85qLCYrz2Vzt7ktqiPloZpRz5ZfAfCshMQok9KUNyL
-         X7YouF9CqdYOL1fy8X7ScpCiP+Xuu6mPagCSf7xGIuuOM0JH/PtHUtEPAtsTJou8f3I6
-         EBVEF6kZQ4xI2DrJzGSFhPgltNqYYEuUlZZxcg8U3G2pDg7hxUs3axUjKwM7IkzNJavW
-         gXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709576064; x=1710180864;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kTdG46h6upx6Y3pqy4jdUCMvsV8yx7G/keZC/3Dml0E=;
-        b=FpuHSz4Rx6gO+83LedLgtrgBVPX9njv0M+3VVFzBDxv7iJQe3YAXSAwqyvOIN9cOAb
-         sc62r/xcXaU4NlcS2PDE9etv94mPpupw56UtsIxI+fncbtwQy9z56yyHDD3Q8QYReQFn
-         RYvG2eNHHve+6szvyTzeA+QOQyFhy5RL48cpYlPfjbLiA6hsg+3k/aR+lRInH9NoWrGE
-         GPZBuLxbaHHBP5G1wwCGgIGodVvl1CJHLTV/0Y/TbJMDbFMR7ej4hw71CIutZfUuWrru
-         O/IZHeXxNcJNwyPA8LDCvflm75plWkkUNujOdJ8An6fo6rTt0lHHxNnhOiio+6FUfPoD
-         Z0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCDLGkE7qy8v+c4pZjmL7/5uBAuYbbVbNG+dNMS8mlL/PxDBZSbaLlES+/gFB77yCaWzUc81xC62cw489tymgBTFh6k+3KmsQUmbW5jNxePA==
-X-Gm-Message-State: AOJu0YxO04AUZwPXyAISZuAKaOOE/jUZGEDA+m2Z29D8UNEZE+KT9vbV
-	InTRKgtPBkEE8+CkrQibHUXGNDXcS98Q95VUdQ5fMwpIYX1/LMnBUo1ySc0/PreZXhqnV5rTsBI
-	nqSW7aQ5508/8t26E+FyRc1V08sBpZ3pe+u9lurCYmxSw1d+EAMk=
-X-Google-Smtp-Source: AGHT+IEAvbC1cdXnq50wTR+qMj0Tr4rMd0F/X/0DexlHv3pOKf2qriYZN0FkgmEObrKd8Ddg5CEE4v0AMIXTde3PUs0=
-X-Received: by 2002:a81:c748:0:b0:609:456e:683b with SMTP id
- i8-20020a81c748000000b00609456e683bmr261324ywl.14.1709576064287; Mon, 04 Mar
- 2024 10:14:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODDTDWd5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6860C433F1;
+	Mon,  4 Mar 2024 18:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709577030;
+	bh=ziA5WYvRRKeMAVzULW5DZrSwZgVRble6/Vv6u6klgFo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ODDTDWd5dsvBmvO6XdiAVMwH149tJPAqQaCPw0Vl8CLxF38gNQateBMMrjXbkSusd
+	 vRQTWw9chXqiXtS5RHNoDboBDdQU30amnA0XAahk1ucXWPJuNtRl+eBk674JUjCzmP
+	 q992pDkt6r9K/xiQ2sqtKTUh0Q45ZlqdOXNbw/csWEXgsEpFHhcM0pDdr0r31YvMzv
+	 iFAvf5oD3BtuqkW5S/48K68MRC+ty7AmMOJ6+XbgUcvuulNgrEGXMOJrAd5YPnM5bT
+	 odXJeudAONXhEyDF7uO2xmu2eCmYxhw2HygbVi12Jwt0NYSeCRn684FzVPAgaQnWf6
+	 tgZXbBT6H7quw==
+Date: Mon, 4 Mar 2024 12:30:27 -0600
+From: Rob Herring <robh@kernel.org>
+To: abdellatif.elkhlifi@arm.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
+	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
+Message-ID: <20240304183027.GA854977-robh@kernel.org>
+References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
+ <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org>
- <20240304-qcom-pd-mapper-v3-2-6858fa1ac1c8@linaro.org> <c5abc503-2019-46d4-bbfd-8295bc0240fb@linaro.org>
-In-Reply-To: <c5abc503-2019-46d4-bbfd-8295bc0240fb@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 4 Mar 2024 20:14:13 +0200
-Message-ID: <CAA8EJpry1-RztbfCd8CTeoJp25Tw7NAijZjd3G+VVYgU_yCQgg@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 2/7] soc: qcom: qmi: add a way to remove running service
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Johan Hovold <johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
 
-On Mon, 4 Mar 2024 at 19:56, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
->
->
-> On 3/4/24 18:03, Dmitry Baryshkov wrote:
-> > Add qmi_del_server(), a pair to qmi_add_server(), a way to remove
-> > running server from the QMI socket. This is e.g. necessary for
-> > pd-mapper, which needs to readd a server each time the DSP is started or
-> > stopped.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
->
-> [...]
->
-> > +
-> > +     list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
-> > +             if (svc->service != service ||
-> > +                 svc->version != version ||
-> > +                 svc->instance != instance)
-> > +                     continue;
-> > +
-> > +             qmi_send_del_server(qmi, svc);
-> > +             //list_del(&vc->list_node);
-> > +             //kfree(svc);
->
-> foo
+On Fri, Mar 01, 2024 at 04:42:25PM +0000, abdellatif.elkhlifi@arm.com wrote:
+> From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> 
+> introduce remoteproc support for Arm remote processors
+> 
+> The supported remote processors are those that come with a reset
+> control register and a reset status register. The driver allows to
+> switch on or off the remote processor.
+> 
+> The current use case is Corstone-1000 External System (Cortex-M3).
+> 
+> The driver can be extended to support other remote processors
+> controlled with a reset control and a reset status registers.
+> 
+> The driver also supports control of multiple remote processors at the
+> same time.
+> 
+> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> ---
+>  MAINTAINERS                    |   6 +
+>  drivers/remoteproc/Kconfig     |  18 ++
+>  drivers/remoteproc/Makefile    |   1 +
+>  drivers/remoteproc/arm_rproc.c | 395 +++++++++++++++++++++++++++++++++
+>  4 files changed, 420 insertions(+)
+>  create mode 100644 drivers/remoteproc/arm_rproc.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8d1052fa6a69..54d6a40feea5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1764,6 +1764,12 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/interrupt-controller/arm,vic.yaml
+>  F:	drivers/irqchip/irq-vic.c
+>  
+> +ARM REMOTEPROC DRIVER
+> +M:	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> +L:	linux-remoteproc@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/remoteproc/arm_rproc.c
+> +
+>  ARM SMC WATCHDOG DRIVER
+>  M:	Julius Werner <jwerner@chromium.org>
+>  R:	Evan Benn <evanbenn@chromium.org>
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 48845dc8fa85..57fbac454a5d 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -365,6 +365,24 @@ config XLNX_R5_REMOTEPROC
+>  
+>  	  It's safe to say N if not interested in using RPU r5f cores.
+>  
+> +config ARM_REMOTEPROC
+> +	tristate "Arm remoteproc support"
 
-Ugh, I had that disabled at some point and forgot to re-enable.
+Too generic of a name. It should say Corstone or Corstone-1000. Here and 
+everywhere you use just 'Arm'.
 
+> +	depends on HAS_IOMEM && ARM64
 
--- 
-With best wishes
-Dmitry
+depends on ARM64 || (HAS_IOMEM && COMPILE_TEST)
+
+That gets us wider build coverage. You should check at least x86 
+allmodconfig passes.
+
+> +	default n
+
+The default is already n, so drop.
+
+> +	help
+> +	  Say y here to support Arm remote processors via the remote
+> +	  processor framework.
+> +
+> +	  The supported processors are those that come with a reset control register
+> +	  and a reset status register. The design can be extended to support different
+> +	  processors meeting these requirements.
+> +	  The driver also supports control of multiple remote cores at the same time.
+> +
+> +	  Supported remote cores:
+> +	      Corstone-1000 External System (Cortex-M3)
+> +
+> +	  It's safe to say N here.
+> +
+>  endif # REMOTEPROC
+>  
+>  endmenu
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 91314a9b43ce..73126310835b 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -39,3 +39,4 @@ obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+>  obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
+>  obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
+>  obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
+> +obj-$(CONFIG_ARM_REMOTEPROC)		+= arm_rproc.o
+> diff --git a/drivers/remoteproc/arm_rproc.c b/drivers/remoteproc/arm_rproc.c
+> new file mode 100644
+> index 000000000000..6afa78ae7ad3
+> --- /dev/null
+> +++ b/drivers/remoteproc/arm_rproc.c
+> @@ -0,0 +1,395 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2024 Arm Limited and/or its affiliates <open-source-office@arm.com>
+
+We don't normally put OSO email in here.
+
+> + *
+> + * Authors:
+> + *   Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+
+That's recorded in the commit message and by git, so no need to put it 
+in the file.
+
+> + */
+
