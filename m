@@ -1,60 +1,60 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9008D17C6E;
-	Tue,  5 Mar 2024 18:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB67B86AC3;
+	Tue,  5 Mar 2024 19:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709663316; cv=none; b=SuL4Kv9+dAlN5HnPlyUCqiefBkjxTi7NhL02xAIgveYA7f5YyONb35gzz0yodqC4fPgbn6M5QVMNDP+10/s5cZEuqy7gpHDM83WXgxwo93/EeSPP6h0+j5+HhZPSyIuru0zIWTP82/4CN5Q0yIjsx4/lmxGaPf4yfBanGevKEW8=
+	t=1709667631; cv=none; b=AKxEarD3G1FRXU1Px9rBdSGNZ9HCqJ1IwsvdN8PYcCuFswIirqg1C7UxeQYOGefEaz5c+HquHAV7NzGrR+0X0PRJ/QaIuuLWUPENwT0y5OhgPEaiMU/pTf0JmHLhaqzQOFI1oKneJhbNsYytHI6IsPShzaRxQYc0Viai6HDEx2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709663316; c=relaxed/simple;
-	bh=Wd4nB97WkmnQ07iPZrl3fmBvoORgOZueRs6Tmd0rsew=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HItcEFzlIwkEmm25HSjs0/6GawWuTptKzS2ojoBDq/Jb7Evg3QA56dZD+4mgP3Zu3Q8yEXS9c8Ev2OgxCx9ux4l7Gssxo/uo1kXDKH5LkPv7ddxJqs75U2bqX6XIrM2adphwAAJbJ9y32LmqaIMxMqfUfJceuhcKyRV9DyHlG3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=pwH1+BqZ; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1709667631; c=relaxed/simple;
+	bh=aYEnoEaK8lvdazf1apUl70SZAkWUVo6cPnMSWocdxf0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C7uykNqpxahpboKfGmy+tcg+BYcHHKWWlYDIXj7TOrBOwqdeaP3NmDqqV6k61FUPKVHL5GX3iS7YxuhSVXoJ04+uhVX1Sju0qn1m7h3364CDadz+4IyHdM4D/QUBLk+OFNBfWEQnkOB3BsMDGdQifPo90DUeMvIotwEz6wr7b0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=Q7/JDQz0; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="pwH1+BqZ"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dc75972f25so50230335ad.1;
-        Tue, 05 Mar 2024 10:28:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="Q7/JDQz0"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6e57a3bf411so3654246b3a.0;
+        Tue, 05 Mar 2024 11:40:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709663314; x=1710268114;
+        d=1e100.net; s=20230601; t=1709667629; x=1710272429;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EIZGrDIx2HNqEOfNMffH0xGrL4BRDNdW8vcMfCZGuqA=;
-        b=RHEoEMExKYqa6b2y0xf6kqWKYVLX+W9m4z1Au0Ui4NzQRxz8ZTR/R8MgWbWfcNKDCo
-         oDqYlI+4GCT/iiedv0swLP9G+clsZ9NsONa4zV4y6tY48xZXzeX1KRFutJaL1xvkUW73
-         3OA2jZK5mrOk2bNH222sDHiBPLYCQ/wUCGpyGCgeQDcMPLzTE4ZGJK6Z5PmU+Ui5GJ1b
-         D8jhOccb5+l1dD5fXDLVcO5wBk4shpU5zC83h4hEFOfm0XeQtjciO46uQCkNUjKI09Hg
-         r3Hgo56OhKRS8MloD3dWF7EmiBEuf+fuV5eJHhzOnO2B1ko6iNSHzzoB/O80i6J1vRTg
-         uUsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwdYxc2ScYcTIyQ2VtPpvMS/4Up8w0yMLvSk4ZGyGYPd5F+dvcjggr3RKLEhDn9tZApBVqvZBuEdtvbPYErQob4HrnDsdVxQLyTRYp
-X-Gm-Message-State: AOJu0YyaO4fH6OYWOGpc5625xrMPC7wG9CxMMv7xBl3+J1QdIyT7Si0K
-	lihz9hBESNste8nAN+8oL+6ragJu6TkryNeyPwZuY77xURfoHEjdT0VyqkxWFB05bQ==
-X-Google-Smtp-Source: AGHT+IGHZ4XLby3hLCKJ+4SQBWbDIl7QfHNqESZkAKfONGXTP0VxURy0xn8c+2eMS+y8x154rDPnIA==
-X-Received: by 2002:a17:902:d503:b0:1dc:696d:ec6e with SMTP id b3-20020a170902d50300b001dc696dec6emr2818551plg.21.1709663313735;
-        Tue, 05 Mar 2024 10:28:33 -0800 (PST)
+        bh=ZbOk/Gqyi9LltFIdUYglAWdVxEfqass0k2Pwo4RSlsc=;
+        b=t/hMEoDKfhkXEBnAf3TKOwwwbFG7lV31pdbS+DFdQLr5LW8kGqsbbDVUPIH0gJUyex
+         ggWaCNFjJdepg4RElwOhbvXY20EMGMcpTLHw6NuLsS/iA2RUYVDYJn4L6dQMDbH5lQhQ
+         MBu4rgXH5+g9/VWxAobN67CzxeA3RC/yTyFQkRGHTfLFNx/2t12A9htD7FbnsgH5NCaZ
+         HyIx4lCRMR7HMrl092f2+yx1p18Y27TrZSL/k1nmiDvGFMr+Y9N+hLhrX2vgpLTH4nye
+         PrbQsISs71Y4Eq3kjPiNhqidkDbESxOq0CSfBCpqsx991w53ULimb6AetK7YSxLfvMXt
+         N9dw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Qa3yZcigJ2IgIis9ARWgf6XYKVCVC7bRWliiVb0w99rjrrKXkhrQ2dsQol6Jfvqo6n4eAlRn+2nROI/+2+u3cnUxN4sQLw+TqajO
+X-Gm-Message-State: AOJu0YxNG3CLJX4+jgbmb51qXjidJ/eDhjSckGI7jTD3042rnkloUvci
+	jh8ZYcSggN81an0cVzUrGiA0E99NePLWyLuHNk2i84rFYRFKSVXOscrrs0txdV0rzA==
+X-Google-Smtp-Source: AGHT+IFQzC+hq4orwy5u/GXVGLqkKMY2sD4mqYBvpHgvZcdwlXBZEAcW/vIDS9kDeyt28vHpaG9h0A==
+X-Received: by 2002:a05:6a00:896:b0:6e6:4946:985f with SMTP id q22-20020a056a00089600b006e64946985fmr474334pfj.11.1709667628961;
+        Tue, 05 Mar 2024 11:40:28 -0800 (PST)
 Received: from mail.marliere.net ([24.199.118.162])
-        by smtp.gmail.com with ESMTPSA id o8-20020a170902d4c800b001da1fae8a73sm10868975plg.12.2024.03.05.10.28.32
+        by smtp.gmail.com with ESMTPSA id q23-20020aa79837000000b006e5e93e7854sm6012875pfl.151.2024.03.05.11.40.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 10:28:33 -0800 (PST)
+        Tue, 05 Mar 2024 11:40:28 -0800 (PST)
 From: "Ricardo B. Marliere" <ricardo@marliere.net>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
-	s=2024; t=1709663312;
+	s=2024; t=1709667627;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=EIZGrDIx2HNqEOfNMffH0xGrL4BRDNdW8vcMfCZGuqA=;
-	b=pwH1+BqZvZEE2iKZkZ43z51F7qC9yDhes8lb/GHYHolxhALKv6pB29sRZIYyTtPseuuSGB
-	86fmk0ATNcOUe0U3NNvOttx+moQhuxoDSPbCNYkk/pxsuZ5Cub8VQyxHkJ+Bq5EAAPSYxK
-	ejQX9uRypsZWFKrSP1IGsrBZ3itAi8ByrolsSJN7cHLibUq49J1gsy6a6SGw73uVSpK+qN
-	+y0dCI7F2Vh/GgaRbB6Ew0W49+uLiZNIo8FReCnwKVccIiJExk0oM8aCRxdDpu5VzjdEEe
-	wv4Ww38Oo/z4b90vK0UxArAiRG3qvnpDYmSBVXJCSGJ+TjUuQydRz78mbSp0GQ==
+	bh=ZbOk/Gqyi9LltFIdUYglAWdVxEfqass0k2Pwo4RSlsc=;
+	b=Q7/JDQz0+772PuNm4IuQFgQq5HWmlpCGPK9jCCmEnGy+qZ7vHcRZp7vqEei/b9blQuADE9
+	nY7L/v0vlHZkxCT0Le9+pBUFye2yfZRrx0OLzz7UNkMmI3X5nBC1bl8orn0/fEqeIPlFU4
+	UvLS0mFfWP/A0wlNTU5abQHLxOI6EsAjYKe8oUI9GmqYQqqoEkde+O+RR9MemAMXOHFsOW
+	rphaMwfDQlApO/961cvnYIpS8u/eBBCy9QMqbvZebMySTs6U54/Le/rYO/DWLdwFB3NfnQ
+	xENSF0dtJQ0cpygKUsLrIdFS+Lah9dg+12btp2r3IAQHcnXk7MkCK3ZngZ6tkw==
 Authentication-Results: ORIGINATING;
 	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
-Date: Tue, 05 Mar 2024 15:28:27 -0300
-Subject: [PATCH] rpmsg: core: make rpmsg_class constant
+Date: Tue, 05 Mar 2024 16:40:23 -0300
+Subject: [PATCH] remoteproc: make rproc_class constant
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,35 +63,35 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240305-class_cleanup-remoteproc-v1-1-19373374e003@marliere.net>
-X-B4-Tracking: v=1; b=H4sIAEpk52UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDYwNT3eScxOLi+OSc1MS80gLdotTc/JLUgqL8ZF2jJFPjVCOzJCMLQ3M
- loPaCotS0zAqw0dGxtbUAalgqj2oAAAA=
+Message-Id: <20240305-class_cleanup-remoteproc2-v1-1-1b139e9828c9@marliere.net>
+X-B4-Tracking: v=1; b=H4sIACZ152UC/x3MQQqDMBBA0avIrA0ko13Eq0iRECftgE3CTFsE8
+ e4Gl2/x/wFKwqQwdQcI/Vm55AbXdxDfIb/I8NoMaHG0g32YuAXVJW4U8q8aoU/5UpUS0SSHDv0
+ wJu8ttL4KJd7v9/w8zwveuXDAawAAAA==
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Ricardo B. Marliere" <ricardo@marliere.net>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3570; i=ricardo@marliere.net;
- h=from:subject:message-id; bh=Wd4nB97WkmnQ07iPZrl3fmBvoORgOZueRs6Tmd0rsew=;
- b=owEBbQKS/ZANAwAKAckLinxjhlimAcsmYgBl52RNPaIJYQfc/KxQT5kyuo9oXac67GDElBqFC
- evHdK2QrqyJAjMEAAEKAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZedkTQAKCRDJC4p8Y4ZY
- ps9MEACrt0gbXM+ZWC3lrBLVvrmhKKzqvy0LwtdszQLbJN3fQm9CbVTsqpKLyssFRZDg4d54MQd
- 1VAAn8Uj9TznLFOErvVl/E4KKZxupHbikT7FI9rHJAomdXZaxUKW6CbKSOiu99Ce5BQhc5fwQML
- OnpijHFbbUp8sZgxuy/nSACxoa7kPXlY7GfAVyABjBfaqIvYyOLAoBThzzoFYsaFRxHmDpGJYmG
- VItSbtUAWrd4J5ERFxUKWA0Mbj9F/zr1D5ZQiRBDImcjmf44Udh3I43t1IcuxYnwDygfxNzmTim
- HmmlY6SaODqP7rnZrvQdUbCl/kf3YElfref5UVEtWWLjNw/+ocjcfqD8S616sLLyi028dmZasR1
- 2SBQ/xFZiK7vvgnkrQ7HIHs+8HK/dH5gDteaKDDJI6WDJO46uCOGlQNe532YYrNH2+xb3ueufVw
- tzDPvVjvUiTUF8QkcoXC4REMtmFzr5NbtyEmPpS/O25NoRZSWbEaUYby3kuSPjBXeUNr4nJgrJm
- oUhsnFis14G0/Hm+06P2Rc9hDxXVxlIzZ9fHnCHcR02hAQTeq+olLABovufEbyLHbgSA75wuUNZ
- bEmlW8Juo3JlIoLeXo2WH+zWmk+IdrFrBJbGSMZLg0yALzy3+ESuBcXbgDdE40ji3LSCRE4Q3B8
- W8hObVKTKXB53gA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=ricardo@marliere.net;
+ h=from:subject:message-id; bh=aYEnoEaK8lvdazf1apUl70SZAkWUVo6cPnMSWocdxf0=;
+ b=owEBbQKS/ZANAwAKAckLinxjhlimAcsmYgBl53UoF5WUvPGlq4VL+7i6YHDw3CvmBCkzhUVPg
+ vKBiqxKdSKJAjMEAAEKAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZed1KAAKCRDJC4p8Y4ZY
+ pipSEACwnMbkOr2h9S8BDhLWgU2C57CHwLERMTpqJlUFRTUjanlY57NEbpYFjSuJ4BUr0p0B4B1
+ fpne2elnneCrI0fJ+A8qU05viHGeSBDdkyVXykbDKZboyP5w/GvsYe7jpEWGYPFar9WqfmW+ch7
+ dQO0UnSSEmdVub8ZlmJ4Lo/UmF2R5qPJSrgfJ/TTcXo7oFRf03ZbMwaoryZEoTE3kxbRcnhOR/7
+ kouVynUlCLalM4cLVqOvF5KDbCgy2rai9vOWFjaUCz8/Sj/L9pnobiBcNRdfGFwPijWXkC9Bngl
+ IEOON0cxGxP1PgKGbed3CGh0RXrNhHl44u0aureCUsajpejt2JDq1MRl8bfGA0nT9PmIe4Wm8tt
+ IPjHklHiYcoZxMM9KlyWvZxJwRN4+/4iwCNlD5nHBLRPuYcP5ea9FR/cjcYMUS4kPf8wFu+0r9C
+ 8J781ru5vxPHSdsanUFDi1tnkNV/kmyWa+ggjwywWai1aUqFLozhlaUMOaBwD1/k5M16NvXmFgz
+ q0DNfFq7a9O8/kCqR6lwhAJLl9+lfyt4+XkfapaJCiQcQqVMwVCbjGYviqm0OfchvrsOvqnc0M4
+ VMP3UhQg4ViCRVbXtPmCqGns4oW4ih2rtAA9urjcjXw8RD1tUEWDm6gG4n6ELVXWWoMc/vJkoHm
+ Azd+bXJkljFPV2g==
 X-Developer-Key: i=ricardo@marliere.net; a=openpgp;
  fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
 Since commit 43a7206b0963 ("driver core: class: make class_register() take
 a const *"), the driver core allows for struct class to be in read-only
-memory, so move the rpmsg_class structure to be declared at build time
+memory, so move the rproc_class structure to be declared at build time
 placing it into read-only memory, instead of having to be dynamically
 allocated at boot time.
 
@@ -99,101 +99,40 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
 ---
- drivers/rpmsg/rpmsg_char.c     |  2 +-
- drivers/rpmsg/rpmsg_core.c     | 16 +++++++++-------
- drivers/rpmsg/rpmsg_ctrl.c     |  2 +-
- drivers/rpmsg/rpmsg_internal.h |  2 +-
- 4 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/remoteproc/remoteproc_internal.h | 2 +-
+ drivers/remoteproc/remoteproc_sysfs.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 1cb8d7474428..d7a342510902 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -423,7 +423,7 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
- 	init_waitqueue_head(&eptdev->readq);
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f62a82d71dfa..0cd09e67ac14 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -72,7 +72,7 @@ void rproc_init_debugfs(void);
+ void rproc_exit_debugfs(void);
  
- 	device_initialize(dev);
--	dev->class = rpmsg_class;
-+	dev->class = &rpmsg_class;
- 	dev->parent = parent;
- 	dev->groups = rpmsg_eptdev_groups;
- 	dev_set_drvdata(dev, eptdev);
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 4295c01a2861..0fa08266404d 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -20,7 +20,9 @@
+ /* from remoteproc_sysfs.c */
+-extern struct class rproc_class;
++extern const struct class rproc_class;
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
  
- #include "rpmsg_internal.h"
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 8c7ea8922638..138e752c5e4e 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -254,7 +254,7 @@ static const struct attribute_group *rproc_devgroups[] = {
+ 	NULL
+ };
  
--struct class *rpmsg_class;
-+const struct class rpmsg_class = {
-+	.name = "rpmsg",
-+};
- EXPORT_SYMBOL(rpmsg_class);
- 
- /**
-@@ -715,16 +717,16 @@ static int __init rpmsg_init(void)
- {
- 	int ret;
- 
--	rpmsg_class = class_create("rpmsg");
--	if (IS_ERR(rpmsg_class)) {
--		pr_err("failed to create rpmsg class\n");
--		return PTR_ERR(rpmsg_class);
-+	ret = class_register(&rpmsg_class);
-+	if (ret) {
-+		pr_err("failed to register rpmsg class\n");
-+		return ret;
- 	}
- 
- 	ret = bus_register(&rpmsg_bus);
- 	if (ret) {
- 		pr_err("failed to register rpmsg bus: %d\n", ret);
--		class_destroy(rpmsg_class);
-+		class_destroy(&rpmsg_class);
- 	}
- 	return ret;
- }
-@@ -733,7 +735,7 @@ postcore_initcall(rpmsg_init);
- static void __exit rpmsg_fini(void)
- {
- 	bus_unregister(&rpmsg_bus);
--	class_destroy(rpmsg_class);
-+	class_destroy(&rpmsg_class);
- }
- module_exit(rpmsg_fini);
- 
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index c312794ba4b3..28f57945ccd9 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -150,7 +150,7 @@ static int rpmsg_ctrldev_probe(struct rpmsg_device *rpdev)
- 	dev = &ctrldev->dev;
- 	device_initialize(dev);
- 	dev->parent = &rpdev->dev;
--	dev->class = rpmsg_class;
-+	dev->class = &rpmsg_class;
- 
- 	mutex_init(&ctrldev->ctrl_lock);
- 	cdev_init(&ctrldev->cdev, &rpmsg_ctrldev_fops);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index b950d6f790a3..a3ba768138f1 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -18,7 +18,7 @@
- #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
- #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
- 
--extern struct class *rpmsg_class;
-+extern const struct class rpmsg_class;
- 
- /**
-  * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
+-struct class rproc_class = {
++const struct class rproc_class = {
+ 	.name		= "remoteproc",
+ 	.dev_groups	= rproc_devgroups,
+ };
 
 ---
-base-commit: b03aa6d4e9a74c4289929b6cf3c6bcc80270682d
-change-id: 20240305-class_cleanup-remoteproc-2b53e26b2817
+base-commit: 8b46dc5cfa5ffea279aed0fc05dc4b1c39a51517
+change-id: 20240305-class_cleanup-remoteproc2-f1212934f990
 
 Best regards,
 -- 
