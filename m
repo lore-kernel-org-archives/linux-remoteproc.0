@@ -1,322 +1,263 @@
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E9F80032;
-	Wed,  6 Mar 2024 11:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A291B947
+	for <linux-remoteproc@vger.kernel.org>; Thu,  7 Mar 2024 05:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709725593; cv=none; b=ej6P8DX5dg/Wmhekww/nlaHIgMlvqsXkrlLTKjhyBu8X0j+2IR/0Uid0EbPHYOgys2hTz6X/E04t5KdCY5fuBezhBvZ/qZLSVrXALECYN0no5OlWRyVFaK3pqTaqKXUsAa3PKPHL7L7uLermZIdoTbgvwEiZtM5i4y5nJt2yfR4=
+	t=1709789324; cv=none; b=T8phyyVT6Y9eAP3z3UuYg98FWCh8FjnldaAeY3oCAPcuo1i83WgHUPAcD38hi3pWuAaCnHP5uGxLyx0LYIdtlOwBXZIpTIh2dyEaGBBaY6beTlkEUdOUi5ESiSuAEJePdRm/uCUwYKXzAwVDBC+6Vzz56H4nEB53GqcnjyOdxAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709725593; c=relaxed/simple;
-	bh=LnAnyCNs0kL8YdCiNfUHcciNm/48j5cRld4S6QPKdVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XPss52Sqa487DsEHE8OpxbLW7sF6qN72Xju6CXIlb6HhXYwAevYmTXxYLcqFxrQQ/BR4SlvGkitIq5FZH6I4SVW/XihTwcgVNyfo+r8OIG/3W9fb6tVYg7ZHNXXbCSrwYpopmraCK6DqsYEFKo8wButUa56GBlWgLg0beTgrGvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fQXRNtXm; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1709789324; c=relaxed/simple;
+	bh=PkWKesdKCZHdpKYD3mbBzEfF2DT8ijrZ24k+m6SrSIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gCn8OMBd3tjUmuam6miJjL0meHJCA8I1e+Uk+mLlv5azeldEf+DMt53LVfLy05jvwgey3AVmYdcbNqCmCs21OTUpF4GNO+5zxXZBQyU1ISF6ZX53/jyOE8tGpx+HNQixvpx2Fm0iJZBQ+6aGpQMxsF+a5/XUrdtiwIM/PmlQe5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAxy1GMN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fQXRNtXm"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1709725582; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=20WVxU0ax3G4Q5U1M/0J3sL6D4ujW6bHGT2WAA1P+9I=;
-	b=fQXRNtXmifCcRloUlcGLAmLtx5siMszuIegEWB4V2TP4mtdHqe4Me6JzgsS3mzQL3CjKA27wQph6nXc/64fpDxtiZ5B2Mul0fYFuMru55BqESE3qNEIgMPCWcQfViCDANxk4Uo4iPB9Pvj79yGHo4TiA853lr1nNGhaYRhZQZSQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0W1xTXdF_1709725579;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W1xTXdF_1709725579)
-          by smtp.aliyun-inc.com;
-          Wed, 06 Mar 2024 19:46:20 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: virtualization@lists.linux.dev
-Cc: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	linux-um@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [PATCH vhost v1 3/4] virtio: vring_new_virtqueue(): pass struct instead of multi parameters
-Date: Wed,  6 Mar 2024 19:46:14 +0800
-Message-Id: <20240306114615.88770-4-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20240306114615.88770-1-xuanzhuo@linux.alibaba.com>
-References: <20240306114615.88770-1-xuanzhuo@linux.alibaba.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAxy1GMN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709789321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tFF3SdzrPB5k9mPw8VciaVK/KbIaE86hBRyAcg4GkOg=;
+	b=fAxy1GMNpU2fojGsCss8+l3473s3Hxv4Qqz4OkaIPsDn7WGzwoCw4V98ZsOtLeiCnyfyTV
+	OmqB1rnItwY41FnqCWVH7TFmnSVjD3dFiaGhyaiwP5Cton8EeNpcBmMhJiMKpSFvs71Brs
+	RhamWHOU/GJWoVewelawSe2NtTHSQVc=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-FtxF32hyM2-_1fsjKjB1bQ-1; Thu, 07 Mar 2024 00:28:39 -0500
+X-MC-Unique: FtxF32hyM2-_1fsjKjB1bQ-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2992c1d4e7fso323817a91.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Mar 2024 21:28:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709789318; x=1710394118;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tFF3SdzrPB5k9mPw8VciaVK/KbIaE86hBRyAcg4GkOg=;
+        b=O1J2CN26Ywk5z3KKyPaC91G7wzSxQtNrDn+dx+MuAvJD8N5hIrO0/0187ZNKaPml+U
+         7WI6OZt+kxHAiIC1/Uq1q2JEjgQgNTGpFA4sFb8b2izowg2zh8jy+PudmVDK9lD+1RfG
+         CSDcnqu+jsqjtm9m4pWtqCupRqNaZ5gpw0Jddso7o/+3c9GlZoNaKv4eUTuvNY3mElIG
+         lW/HDJee/rkuljxpGVYpneCNi98fauQk71Uj1CpK8Gahu3WggdnxOpLmoMqqEEly18ac
+         0txiXpHFRwZ5S2ysV+MsCn/ZMbicQvkFbD7jEtuWGXuOfI5tOydlG9ypWpBUZa3vLlb+
+         rFKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgM5oECq2vGHJIQbpYTmIhWWwJW5xoubFPh048qeLOpedgEmRBIInP2FsUkV+xRBXbfx5XOph24atGfbaAVd68cWDIh5qlnLVz+vexP2uUBQ==
+X-Gm-Message-State: AOJu0YySshhJIvJCUxp2vvPQsifnL3VitoWeqlHZBAhqicuma7WMXxVM
+	eoSrcJsT3jpqXi687+Mlp7jDvVNGnePTSjKD1WMEKvGmQA46LoRtrA+mCGKngeSsPXve0/bRTyA
+	D/EokU65B3E02akxeucb+311vC+Wc+/Aosxo68OC+4s5nc1RSq5pnQraAItpEFbfT1pLMVcYlkt
+	QGlbZeuuFuduxFlBc6Cbp8R+F6X9XRQ4qTKiCQYBc6PQ==
+X-Received: by 2002:a17:90a:d315:b0:299:8ff:40c0 with SMTP id p21-20020a17090ad31500b0029908ff40c0mr13843123pju.28.1709789318483;
+        Wed, 06 Mar 2024 21:28:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFjlNjcTJfkYmthsYkTIYD+6dKrjtynluBSb9Ic08P4WJbd2Iq9ksuZjvEPBh8JZf8Bm+xUFE5g9BmBqFTSRbY=
+X-Received: by 2002:a17:90a:d315:b0:299:8ff:40c0 with SMTP id
+ p21-20020a17090ad31500b0029908ff40c0mr13843101pju.28.1709789318165; Wed, 06
+ Mar 2024 21:28:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Git-Hash: b9b03370361a
-Content-Transfer-Encoding: 8bit
+References: <20240229072044.77388-1-xuanzhuo@linux.alibaba.com>
+ <20240229031755-mutt-send-email-mst@kernel.org> <1709197357.626784-1-xuanzhuo@linux.alibaba.com>
+ <20240229043238-mutt-send-email-mst@kernel.org> <1709718889.4420547-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1709718889.4420547-1-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 7 Mar 2024 13:28:27 +0800
+Message-ID: <CACGkMEu5=DKJfXsvOoXDDH7KJ-DWt83jj=vf8GoRnq-9zUeOOg@mail.gmail.com>
+Subject: Re: [PATCH vhost v3 00/19] virtio: drivers maintain dma info for
+ premapped vq
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, linux-um@lists.infradead.org, 
+	netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	kvm@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now, we pass multi parameters to vring_new_virtqueue. These parameters
-may from transport or from driver.
+On Wed, Mar 6, 2024 at 6:01=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.co=
+m> wrote:
+>
+> On Thu, 29 Feb 2024 04:34:20 -0500, "Michael S. Tsirkin" <mst@redhat.com>=
+ wrote:
+> > On Thu, Feb 29, 2024 at 05:02:37PM +0800, Xuan Zhuo wrote:
+> > > On Thu, 29 Feb 2024 03:21:14 -0500, "Michael S. Tsirkin" <mst@redhat.=
+com> wrote:
+> > > > On Thu, Feb 29, 2024 at 03:20:25PM +0800, Xuan Zhuo wrote:
+> > > > > As discussed:
+> > > > > http://lore.kernel.org/all/CACGkMEvq0No8QGC46U4mGsMtuD44fD_cfLcPa=
+VmJ3rHYqRZxYg@mail.gmail.com
+> > > > >
+> > > > > If the virtio is premapped mode, the driver should manage the dma=
+ info by self.
+> > > > > So the virtio core should not store the dma info.
+> > > > > So we can release the memory used to store the dma info.
+> > > > >
+> > > > > But if the desc_extra has not dma info, we face a new question,
+> > > > > it is hard to get the dma info of the desc with indirect flag.
+> > > > > For split mode, that is easy from desc, but for the packed mode,
+> > > > > it is hard to get the dma info from the desc. And for hardening
+> > > > > the dma unmap is saft, we should store the dma info of indirect
+> > > > > descs.
+> > > > >
+> > > > > So I introduce the "structure the indirect desc table" to
+> > > > > allocate space to store dma info with the desc table.
+> > > > >
+> > > > > On the other side, we mix the descs with indirect flag
+> > > > > with other descs together to share the unmap api. That
+> > > > > is complex. I found if we we distinguish the descs with
+> > > > > VRING_DESC_F_INDIRECT before unmap, thing will be clearer.
+> > > > >
+> > > > > Because of the dma array is allocated in the find_vqs(),
+> > > > > so I introduce a new parameter to find_vqs().
+> > > > >
+> > > > > Note:
+> > > > >     this is on the top of
+> > > > >         [PATCH vhost v1] virtio: packed: fix unmap leak for indir=
+ect desc table
+> > > > >         http://lore.kernel.org/all/20240223071833.26095-1-xuanzhu=
+o@linux.alibaba.com
+> > > > >
+> > > > > Please review.
+> > > > >
+> > > > > Thanks
+> > > > >
+> > > > > v3:
+> > > > >     1. fix the conflict with the vp_modern_create_avq().
+> > > >
+> > > > Okay but are you going to address huge memory waste all this is cau=
+sing for
+> > > > - people who never do zero copy
+> > > > - systems where dma unmap is a nop
+> > > >
+> > > > ?
+> > > >
+> > > > You should address all comments when you post a new version, not ju=
+st
+> > > > what was expedient, or alternatively tag patch as RFC and explain
+> > > > in commit log that you plan to do it later.
+> > >
+> > >
+> > > Do you miss this one?
+> > > http://lore.kernel.org/all/1708997579.5613105-1-xuanzhuo@linux.alibab=
+a.com
+> >
+> >
+> > I did. The answer is that no, you don't get to regress memory usage
+> > for lots of people then fix it up.
+> > So the patchset is big, I guess it will take a couple of cycles to
+> > merge gradually.
+>
+> Hi @Michael
+>
+> So, how about this patch set?
+>
+> I do not think they (dma maintainers) will agree the API dma_can_skip_unm=
+ap().
+>
+> If you think sq wastes too much memory using pre-mapped dma mode, how abo=
+ut
+> we only enable it when xsk is bond?
+>
+> Could you give me some advice?
 
-vring_new_virtqueue is called by many places.
-Every time, we try to add a new parameter, that is difficult.
+I think we have some discussion, one possible solution is:
 
-If parameters from the driver, that should directly be passed to vring.
-Then the vring can access the config from driver directly.
+when pre mapping is enabled, virtio core won't store dma metadatas.
 
-If parameters from the transport, we squish the parameters to a
-structure. That will be helpful to add new parameter.
+Then it makes virtio-net align with other NIC.
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
----
- drivers/platform/mellanox/mlxbf-tmfifo.c | 13 +++++---
- drivers/remoteproc/remoteproc_virtio.c   | 11 ++++---
- drivers/virtio/virtio_ring.c             | 29 +++++++++++-----
- include/linux/virtio_ring.h              | 42 +++++++++++++++++++-----
- tools/virtio/virtio_test.c               |  4 +--
- tools/virtio/vringh_test.c               | 28 ++++++++--------
- 6 files changed, 85 insertions(+), 42 deletions(-)
+Thanks
 
-diff --git a/drivers/platform/mellanox/mlxbf-tmfifo.c b/drivers/platform/mellanox/mlxbf-tmfifo.c
-index 4252388f52a2..36cfce5ba8cf 100644
---- a/drivers/platform/mellanox/mlxbf-tmfifo.c
-+++ b/drivers/platform/mellanox/mlxbf-tmfifo.c
-@@ -1059,6 +1059,7 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct virtio_device *vdev,
- 					struct virtio_vq_config *cfg)
- {
- 	struct mlxbf_tmfifo_vdev *tm_vdev = mlxbf_vdev_to_tmfifo(vdev);
-+	struct vq_transport_config tp_cfg = {};
- 	struct virtqueue **vqs = cfg->vqs;
- 	struct mlxbf_tmfifo_vring *vring;
- 	unsigned int nvqs = cfg->nvqs;
-@@ -1078,10 +1079,14 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct virtio_device *vdev,
- 		/* zero vring */
- 		size = vring_size(vring->num, vring->align);
- 		memset(vring->va, 0, size);
--		vq = vring_new_virtqueue(i, vring->num, vring->align, vdev,
--					 false, false, vring->va,
--					 mlxbf_tmfifo_virtio_notify,
--					 cfg->callbacks[i], cfg->names[i]);
-+
-+		tp_cfg.num = vring->num;
-+		tp_cfg.vring_align = vring->align;
-+		tp_cfg.weak_barriers = false;
-+		tp_cfg.notify = mlxbf_tmfifo_virtio_notify;
-+
-+		cfg->cfg_idx = i;
-+		vq = vring_new_virtqueue(vdev, i, vring->va, &tp_cfg, cfg);
- 		if (!vq) {
- 			dev_err(&vdev->dev, "vring_new_virtqueue failed\n");
- 			ret = -ENOMEM;
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 57d51c9c7b63..70c32837f9dc 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -106,6 +106,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
- {
- 	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
- 	struct rproc *rproc = vdev_to_rproc(vdev);
-+	struct vq_transport_config tp_cfg;
- 	struct device *dev = &rproc->dev;
- 	struct rproc_mem_entry *mem;
- 	struct rproc_vring *rvring;
-@@ -138,14 +139,16 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
- 	dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
- 		id, addr, num, rvring->notifyid);
- 
-+	tp_cfg.num = num;
-+	tp_cfg.vring_align = rvring->align;
-+	tp_cfg.weak_barriers = false;
-+	tp_cfg.notify = rproc_virtio_notify;
-+
- 	/*
- 	 * Create the new vq, and tell virtio we're not interested in
- 	 * the 'weak' smp barriers, since we're talking with a real device.
- 	 */
--	vq = vring_new_virtqueue(id, num, rvring->align, vdev, false,
--				 cfg->ctx ? cfg->ctx[cfg->cfg_idx] : false,
--				 addr, rproc_virtio_notify, cfg->callbacks[cfg->cfg_idx],
--				 cfg->names[cfg->cfg_idx]);
-+	vq = vring_new_virtqueue(vdev, id, addr, &tp_cfg, cfg);
- 	if (!vq) {
- 		dev_err(dev, "vring_new_virtqueue %s failed\n", cfg->names[cfg->cfg_idx]);
- 		rproc_free_vring(rvring);
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 08858e2d761e..03687800d8ff 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -2835,18 +2835,29 @@ int virtqueue_reset(struct virtqueue *_vq,
- EXPORT_SYMBOL_GPL(virtqueue_reset);
- 
- /* Only available for split ring */
--struct virtqueue *vring_new_virtqueue(unsigned int index,
--				      unsigned int num,
--				      unsigned int vring_align,
--				      struct virtio_device *vdev,
--				      bool weak_barriers,
--				      bool context,
-+struct virtqueue *vring_new_virtqueue(struct virtio_device *vdev,
-+				      unsigned int index,
- 				      void *pages,
--				      bool (*notify)(struct virtqueue *vq),
--				      void (*callback)(struct virtqueue *vq),
--				      const char *name)
-+				      struct vq_transport_config *tp_cfg,
-+				      struct virtio_vq_config *cfg)
- {
- 	struct vring_virtqueue_split vring_split = {};
-+	unsigned int num;
-+	unsigned int vring_align;
-+	bool weak_barriers;
-+	bool context;
-+	bool (*notify)(struct virtqueue *_);
-+	void (*callback)(struct virtqueue *_);
-+	const char *name;
-+
-+	num            = tp_cfg->num;
-+	vring_align    = tp_cfg->vring_align;
-+	weak_barriers  = tp_cfg->weak_barriers;
-+	notify         = tp_cfg->notify;
-+
-+	name     = cfg->names[cfg->cfg_idx];
-+	callback = cfg->callbacks[cfg->cfg_idx];
-+	context  = cfg->ctx ? cfg->ctx[cfg->cfg_idx] : false;
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
- 		return NULL;
-diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-index cd8042c79814..616937780785 100644
---- a/include/linux/virtio_ring.h
-+++ b/include/linux/virtio_ring.h
-@@ -85,16 +85,40 @@ struct virtqueue *vring_create_virtqueue(struct virtio_device *vdev,
-  * Creates a virtqueue with a standard layout but a caller-allocated
-  * ring.
-  */
--struct virtqueue *vring_new_virtqueue(unsigned int index,
--				      unsigned int num,
--				      unsigned int vring_align,
--				      struct virtio_device *vdev,
--				      bool weak_barriers,
--				      bool ctx,
-+struct virtqueue *vring_new_virtqueue(struct virtio_device *vdev,
-+				      unsigned int index,
- 				      void *pages,
--				      bool (*notify)(struct virtqueue *vq),
--				      void (*callback)(struct virtqueue *vq),
--				      const char *name);
-+				      struct vq_transport_config *tp_cfg,
-+				      struct virtio_vq_config *cfg);
-+
-+static inline struct virtqueue *vring_new_virtqueue_one(unsigned int index,
-+							unsigned int num,
-+							unsigned int vring_align,
-+							struct virtio_device *vdev,
-+							bool weak_barriers,
-+							bool context,
-+							void *pages,
-+							bool (*notify)(struct virtqueue *vq),
-+							void (*callback)(struct virtqueue *vq),
-+							const char *name)
-+{
-+	struct vq_transport_config tp_cfg = {};
-+	struct virtio_vq_config cfg = {};
-+	vq_callback_t *callbacks[] = { callback };
-+	const char *names[] = { name };
-+
-+	tp_cfg.num = num;
-+	tp_cfg.vring_align = vring_align;
-+	tp_cfg.weak_barriers = weak_barriers;
-+	tp_cfg.notify = notify;
-+
-+	cfg.nvqs = 1;
-+	cfg.callbacks = callbacks;
-+	cfg.names = names;
-+	cfg.ctx = &context;
-+
-+	return vring_new_virtqueue(vdev, index, pages, &tp_cfg, &cfg);
-+}
- 
- /*
-  * Destroys a virtqueue.  If created with vring_create_virtqueue, this
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 028f54e6854a..e41300d71d5e 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -102,8 +102,8 @@ static void vq_reset(struct vq_info *info, int num, struct virtio_device *vdev)
- 
- 	memset(info->ring, 0, vring_size(num, 4096));
- 	vring_init(&info->vring, num, info->ring, 4096);
--	info->vq = vring_new_virtqueue(info->idx, num, 4096, vdev, true, false,
--				       info->ring, vq_notify, vq_callback, "test");
-+	info->vq = vring_new_virtqueue_one(info->idx, num, 4096, vdev, true, false,
-+					   info->ring, vq_notify, vq_callback, "test");
- 	assert(info->vq);
- 	info->vq->priv = info;
- }
-diff --git a/tools/virtio/vringh_test.c b/tools/virtio/vringh_test.c
-index 98ff808d6f0c..040689111584 100644
---- a/tools/virtio/vringh_test.c
-+++ b/tools/virtio/vringh_test.c
-@@ -316,11 +316,11 @@ static int parallel_test(u64 features,
- 		if (sched_setaffinity(getpid(), sizeof(cpu_set), &cpu_set))
- 			err(1, "Could not set affinity to cpu %u", first_cpu);
- 
--		vq = vring_new_virtqueue(0, RINGSIZE, ALIGN, &gvdev.vdev, true,
--					 false, guest_map,
--					 fast_vringh ? no_notify_host
--					 : parallel_notify_host,
--					 never_callback_guest, "guest vq");
-+		vq = vring_new_virtqueue_one(0, RINGSIZE, ALIGN, &gvdev.vdev, true,
-+					     false, guest_map,
-+					     fast_vringh ? no_notify_host
-+					     : parallel_notify_host,
-+					     never_callback_guest, "guest vq");
- 
- 		/* Don't kfree indirects. */
- 		__kfree_ignore_start = indirects;
-@@ -485,10 +485,10 @@ int main(int argc, char *argv[])
- 	memset(__user_addr_min, 0, vring_size(RINGSIZE, ALIGN));
- 
- 	/* Set up guest side. */
--	vq = vring_new_virtqueue(0, RINGSIZE, ALIGN, &vdev, true, false,
--				 __user_addr_min,
--				 never_notify_host, never_callback_guest,
--				 "guest vq");
-+	vq = vring_new_virtqueue_one(0, RINGSIZE, ALIGN, &vdev, true, false,
-+				     __user_addr_min,
-+				     never_notify_host, never_callback_guest,
-+				     "guest vq");
- 
- 	/* Set up host side. */
- 	vring_init(&vrh.vring, RINGSIZE, __user_addr_min, ALIGN);
-@@ -668,11 +668,11 @@ int main(int argc, char *argv[])
- 
- 		/* Force creation of direct, which we modify. */
- 		__virtio_clear_bit(&vdev, VIRTIO_RING_F_INDIRECT_DESC);
--		vq = vring_new_virtqueue(0, RINGSIZE, ALIGN, &vdev, true,
--					 false, __user_addr_min,
--					 never_notify_host,
--					 never_callback_guest,
--					 "guest vq");
-+		vq = vring_new_virtqueue_one(0, RINGSIZE, ALIGN, &vdev, true,
-+					     false, __user_addr_min,
-+					     never_notify_host,
-+					     never_callback_guest,
-+					     "guest vq");
- 
- 		sg_init_table(guest_sg, 4);
- 		sg_set_buf(&guest_sg[0], d, sizeof(*d)*2);
--- 
-2.32.0.3.g01195cf9f
+>
+> Thanks.
+>
+>
+> >
+> > > I asked you. But I didnot recv your answer.
+> > >
+> > > Thanks.
+> > >
+> > >
+> > > >
+> > > > > v2:
+> > > > >     1. change the dma item of virtio-net, every item have MAX_SKB=
+_FRAGS + 2
+> > > > >         addr + len pairs.
+> > > > >     2. introduce virtnet_sq_free_stats for __free_old_xmit
+> > > > >
+> > > > > v1:
+> > > > >     1. rename transport_vq_config to vq_transport_config
+> > > > >     2. virtio-net set dma meta number to (ring-size + 1)(MAX_SKB_=
+FRGAS +2)
+> > > > >     3. introduce virtqueue_dma_map_sg_attrs
+> > > > >     4. separate vring_create_virtqueue to an independent commit
+> > > > >
+> > > > >
+> > > > >
+> > > > > Xuan Zhuo (19):
+> > > > >   virtio_ring: introduce vring_need_unmap_buffer
+> > > > >   virtio_ring: packed: remove double check of the unmap ops
+> > > > >   virtio_ring: packed: structure the indirect desc table
+> > > > >   virtio_ring: split: remove double check of the unmap ops
+> > > > >   virtio_ring: split: structure the indirect desc table
+> > > > >   virtio_ring: no store dma info when unmap is not needed
+> > > > >   virtio: find_vqs: pass struct instead of multi parameters
+> > > > >   virtio: vring_create_virtqueue: pass struct instead of multi
+> > > > >     parameters
+> > > > >   virtio: vring_new_virtqueue(): pass struct instead of multi par=
+ameters
+> > > > >   virtio_ring: simplify the parameters of the funcs related to
+> > > > >     vring_create/new_virtqueue()
+> > > > >   virtio: find_vqs: add new parameter premapped
+> > > > >   virtio_ring: export premapped to driver by struct virtqueue
+> > > > >   virtio_net: set premapped mode by find_vqs()
+> > > > >   virtio_ring: remove api of setting vq premapped
+> > > > >   virtio_ring: introduce dma map api for page
+> > > > >   virtio_ring: introduce virtqueue_dma_map_sg_attrs
+> > > > >   virtio_net: unify the code for recycling the xmit ptr
+> > > > >   virtio_net: rename free_old_xmit_skbs to free_old_xmit
+> > > > >   virtio_net: sq support premapped mode
+> > > > >
+> > > > >  arch/um/drivers/virtio_uml.c             |  31 +-
+> > > > >  drivers/net/virtio_net.c                 | 283 ++++++---
+> > > > >  drivers/platform/mellanox/mlxbf-tmfifo.c |  24 +-
+> > > > >  drivers/remoteproc/remoteproc_virtio.c   |  31 +-
+> > > > >  drivers/s390/virtio/virtio_ccw.c         |  33 +-
+> > > > >  drivers/virtio/virtio_mmio.c             |  30 +-
+> > > > >  drivers/virtio/virtio_pci_common.c       |  59 +-
+> > > > >  drivers/virtio/virtio_pci_common.h       |   9 +-
+> > > > >  drivers/virtio/virtio_pci_legacy.c       |  16 +-
+> > > > >  drivers/virtio/virtio_pci_modern.c       |  38 +-
+> > > > >  drivers/virtio/virtio_ring.c             | 698 ++++++++++++-----=
+------
+> > > > >  drivers/virtio/virtio_vdpa.c             |  45 +-
+> > > > >  include/linux/virtio.h                   |  13 +-
+> > > > >  include/linux/virtio_config.h            |  48 +-
+> > > > >  include/linux/virtio_ring.h              |  82 +--
+> > > > >  tools/virtio/virtio_test.c               |   4 +-
+> > > > >  tools/virtio/vringh_test.c               |  28 +-
+> > > > >  17 files changed, 847 insertions(+), 625 deletions(-)
+> > > > >
+> > > > > --
+> > > > > 2.32.0.3.g01195cf9f
+> > > >
+> >
+>
 
