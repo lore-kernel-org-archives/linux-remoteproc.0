@@ -1,115 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25BC54799;
-	Fri,  8 Mar 2024 10:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211FF56459;
+	Fri,  8 Mar 2024 12:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709893179; cv=none; b=mfEK2Akvgi4JLJs1E2ljHbCyZLL6A0bC9d3jj7tEXBlHjOZf/FK4za7unw2QOqV8A66TXrf+kdrer0JL9NSFl2AmQBiB5a7UZpI8OdESZ7Nv9CtSyIlAb2LNMIUtaAgacfEjEMzLHB1M/8qCALdUK2+XkqrNchubT6lNXnnX3L0=
+	t=1709900497; cv=none; b=B4rnKn9JonfmLKa5MegrxyK1ZL2zehNQMycEPzqcSajeTSHzhbsdLD2fSLjsDItEYaRgTe1mKB6HnfQNNpYtpJrAyWwMTKJcq+bc887DuN3EfFcl2DZxvYFO5AUEU8RGCQCFV5r3hGdeM4DO0ANOQFlB3YLA9OeqPcGEJaDxbWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709893179; c=relaxed/simple;
-	bh=Q1N/xDWWH1N2mESqkCTav+THxX2BdxiFo16ZnUREngs=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=POGS/UDqb84+5zwiTJwWAbmSnXRS2YYcEMRxCkGpHuapONjG/+fF9+GeoGYwJispQiBKudCdq3MwMd/KmNsovT0vtfsaiKapEotZpzY1o4YIQh51V7KS2B7RklI98Lo0YpNA/HYl8NEbxywFb1mpCIOjZot+ykbsnQk3QcJrDtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eq5SZJ1F; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eq5SZJ1F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709893176; x=1741429176;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Q1N/xDWWH1N2mESqkCTav+THxX2BdxiFo16ZnUREngs=;
-  b=Eq5SZJ1FtflK6578guuCz2itE8EOTVh/TvQG7hfRR24a4duSyDLwvfyd
-   MjyV9Db3mNPjqRcYmPruJnz6gZc1r22CZRDmN3XVo+s7Sd+kCjtmAisZl
-   uStNmLQ3uqOEYMy8Oa/o2qnu5nE6UK8r/MVdIUgAZOuUP60ieP/Y5LVFE
-   8Fb7FZsqr+xzFrcyY2267fzdCwjG4Gr4S+VT1moJuk5/JfR9R0ivP7/Wb
-   g5vJtCUqnyYl/Zjq0g3cgEp/fZNuNd27JXqw/squ779oLIIqs+AaJFYTH
-   OwWPLJ1xmdBIaACfiPenIDvg9LxyaO7Hy6QFALJXlAn7addtHYsFZSeWx
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11006"; a="22132934"
-X-IronPort-AV: E=Sophos;i="6.07,109,1708416000"; 
-   d="scan'208";a="22132934"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2024 02:19:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,109,1708416000"; 
-   d="scan'208";a="15004974"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.186])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2024 02:19:27 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 8 Mar 2024 12:19:21 +0200 (EET)
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
-    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-    Johannes Berg <johannes@sipsolutions.net>, 
-    Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Mathieu Poirier <mathieu.poirier@linaro.org>, 
-    Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>, 
-    Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-    Vasily Gorbik <gor@linux.ibm.com>, 
-    Alexander Gordeev <agordeev@linux.ibm.com>, 
-    Christian Borntraeger <borntraeger@linux.ibm.com>, 
-    Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-    Jason Wang <jasowang@redhat.com>, linux-um@lists.infradead.org, 
-    platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-    linux-s390@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH vhost v1 2/4] virtio: vring_create_virtqueue: pass struct
- instead of multi parameters
-In-Reply-To: <20240306114615.88770-3-xuanzhuo@linux.alibaba.com>
-Message-ID: <8f77a787-0bb7-96ad-0dac-f8ef36879ae3@linux.intel.com>
-References: <20240306114615.88770-1-xuanzhuo@linux.alibaba.com> <20240306114615.88770-3-xuanzhuo@linux.alibaba.com>
+	s=arc-20240116; t=1709900497; c=relaxed/simple;
+	bh=b9yBLPt4aHoHJIYns7zSseeiClwRXy+lWb/eKwahSKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AuMKQ74KSs87SGnVvYabYl9/gXBL3VcvcNmOifm+J4NB8V41UGhHsOAKwWO1TtUVMH0opX0NKyF2I834+xkL6YLBw/VDbuID+H81M1ZX3XUuqKP+jt7uXUk5q+8O8BvzP+aiMAX7Z4ZKK7Dn10QwfJIpAWwVyK9P9wd7m5RehIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E8CFC15;
+	Fri,  8 Mar 2024 04:22:09 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFD4B3F73F;
+	Fri,  8 Mar 2024 04:21:30 -0800 (PST)
+Date: Fri, 8 Mar 2024 12:21:28 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: abdellatif.elkhlifi@arm.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
+	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: Add corstone1000 external system device
+ node
+Message-ID: <ZesCyIpRgi1EkixF@bogus>
+References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
+ <20240301164227.339208-3-abdellatif.elkhlifi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240301164227.339208-3-abdellatif.elkhlifi@arm.com>
 
-On Wed, 6 Mar 2024, Xuan Zhuo wrote:
+On Fri, Mar 01, 2024 at 04:42:26PM +0000, abdellatif.elkhlifi@arm.com wrote:
+> From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> 
+> add device tree node for the external system core in Corstone-1000
+> 
+> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/corstone1000.dtsi | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/corstone1000.dtsi b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+> index 6ad7829f9e28..67df642363e9 100644
+> --- a/arch/arm64/boot/dts/arm/corstone1000.dtsi
+> +++ b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0 OR MIT
+>  /*
+> - * Copyright (c) 2022, Arm Limited. All rights reserved.
+> + * Copyright 2022, 2024, Arm Limited and/or its affiliates <open-source-office@arm.com>
+>   * Copyright (c) 2022, Linaro Limited. All rights reserved.
+>   *
+>   */
+> @@ -157,5 +157,13 @@ mhu_seh1: mailbox@1b830000 {
+>  			secure-status = "okay";     /* secure-world-only */
+>  			status = "disabled";
+>  		};
+> +
+> +		extsys0: remoteproc@1a010310 {
+> +			compatible = "arm,corstone1000-extsys";
+> +			reg = <0x1a010310 0x4>,
+> +				<0x1a010314 0X4>;
 
-> Now, we pass multi parameters to vring_create_virtqueue. These parameters
-> may from transport or from driver.
-> 
-> vring_create_virtqueue is called by many places.
-> Every time, we try to add a new parameter, that is difficult.
-> 
-> If parameters from the driver, that should directly be passed to vring.
-> Then the vring can access the config from driver directly.
-> 
-> If parameters from the transport, we squish the parameters to a
-> structure. That will be helpful to add new parameter.
-> 
-> Because the virtio_uml.c changes the name, so change the "names" inside
-> the virtio_vq_config from "const char *const *names" to
-> "const char **names".
-> 
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Acked-by: Johannes Berg <johannes@sipsolutions.net>
 
-> @@ -60,38 +61,25 @@ struct virtio_device;
->  struct virtqueue;
->  struct device;
->  
-> +struct vq_transport_config {
-> +	unsigned int num;
-> +	unsigned int vring_align;
-> +	bool weak_barriers;
-> +	bool may_reduce_num;
-> +	bool (*notify)(struct virtqueue *vq);
-> +	struct device *dma_dev;
-> +};
-
-kerneldoc is missing from this struct too.
-
-It would be generally helpful if you are proactive when somebody comments 
-your series by checking if there are similar cases within your series,
-instead of waiting them to be pointed out for you specificly.
+As per [1], this is just a few registers within the 64kB block.
+Not sure if it should be represented as a whole on just couple
+of registers like this for reset.
 
 -- 
- i.
+Regards,
+Sudeep
 
+[1] https://developer.arm.com/documentation/101418/0100/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
