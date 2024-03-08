@@ -1,110 +1,322 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8021C13698E;
-	Thu,  7 Mar 2024 19:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D50428E2B
+	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Mar 2024 06:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709840436; cv=none; b=MKUeI/VJUJ61Q2ElwSedj8sJrNT1z4EQpBleKDf9jNs5aGkwGhzfbjv5pVhrJpkO4kSNYVOl420461QIC+KkZ8UN4lDUZQHffHddePRo4sjO9S+8a+jTximLz+aXmVvYchL3EiVHWayMA4hS+lCIGuLt9/c1y3d5tWt8J6IylyY=
+	t=1709877838; cv=none; b=eTEwOH3CmC6XesvGPNQcGx7BKtgqFW0f/YSp5Fjht+87/3aUruUv8SiFDhVdslqJGQpkYVKk+roZyjdXCT4/9LmXebIu21p9OhJazi67Bi+uftCEBmDzsAf70Y7pxj45OPh+DGqFGJph82mtLrVLWb4o0IccgytY8p4YP6+OS5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709840436; c=relaxed/simple;
-	bh=exgzNA5Z6fXpJJJVKs7Evqn4MiTn4VUh1/o9dYksI7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THDabZIxc0UaNaII8RUAjWUMhdMtkX3uUlbi/FdeCze6yY6Z0FxrDoL9l//HVRDRDAi9+e+kINyqihuTnWgnTv88CckGJeTZwjkZo4Z7pwIIGKhGqOAiPEAbg+L3Lvt0ceNSldbcXEzfTz2xzioDC3qIS45s+37STvumFvkvm+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9751B1FB;
-	Thu,  7 Mar 2024 11:41:09 -0800 (PST)
-Received: from e130802.arm.com (unknown [10.57.70.143])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BE883F762;
-	Thu,  7 Mar 2024 11:40:29 -0800 (PST)
-Date: Thu, 7 Mar 2024 19:40:26 +0000
-From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
-	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
-Message-ID: <20240307194026.GA355455@e130802.arm.com>
-References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
- <ZeYWKVpeFm1+4mlT@p14s>
+	s=arc-20240116; t=1709877838; c=relaxed/simple;
+	bh=jgt2FmcV3Yk28s1hw88s4sNZ9AfG+QarsYVdwOdt8LQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nsrs3ABKku6faXsWAX7idV2lNxMsl0niTMXEbpQcEiXxR6+aMmBOco7S+gBS2iqFMqeSpa5L+BY1OgtLJJ2eHPMxT8ywvZkOgMfSSYa5RU6Q7pgP2fvMxfCb8VkrJ3EZcSF5izewvQeX/G65Yp7mTqa+bHTZ+Oq23yTN47iPX9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SHyDNdvc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SHyDNdvc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709877835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yaMKbz1uGEbeDlqPaWY/PoRYwRKKFpuiuv79VQFM3t8=;
+	b=SHyDNdvcBdi1IeJTzTG7WgTFlZsjiJzS5kgOrgtko5vwewLQyDep7T0pvNhP0H0xSvKwI+
+	WxPCFB3iIvNasACtNohOJJN+egWp3bCNdVQzpCK4BwV18xPWQY1tTpEZLrsZTqW6xYorl/
+	xXWAdD4cuTzayZWhLhIY7kucBgkxc5w=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-573-E62rBq6gOwupNrIvt9JPRA-1; Fri, 08 Mar 2024 01:03:53 -0500
+X-MC-Unique: E62rBq6gOwupNrIvt9JPRA-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5ce12b4c1c9so1311876a12.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Mar 2024 22:03:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709877832; x=1710482632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yaMKbz1uGEbeDlqPaWY/PoRYwRKKFpuiuv79VQFM3t8=;
+        b=e+xqRsf2H61KhRj+9UCJrzx3gVck8OBuJ1lyxhqrtOkuTCMffLcuD/oCmchBrqK89S
+         mzttQnZfpQev0l/Z4zSySqMr1a2Y2UpgSLyIGVzazqcXfyqy+t87qrbUscstnlDzrEYQ
+         vdzKgD4EF+sUidk4LwFLdAQDaz87mBUwe5/NDP41Sp88EeD2Bxe1GD/GQQH1SWk5c0I3
+         PhF/OqscAV4ZQX8jfipcuBQgAsSZUCo03k5VKHOg6WlIjJYWnnPAX/iZ/JV/iRH5LAx+
+         DtPDv00vvG2Vf2XRbPI6C8bokrLFAqT+4y4cbupCQFLcuO7pDCMZ/RvyxDXOwIezE0nO
+         E8Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvdn4UDtM/E7fFvF8n5xinJPEQ/A91NyM28jY77WdLv9TxEbOQbrVWPVJYbA5zm4NPf7ApJCUJm7AFxfxrWb/IBgBGQzrKNEiBQ1I+gU/G+A==
+X-Gm-Message-State: AOJu0YwuZatqUXCdNDbPKLtg8NJGIpPz4q16uJT5ut7LS8ZSaS+YdihY
+	mPotBunEOXgk+QEz4HsGy8CSrjbQ0hsRirI9xKvSfQkyat/Lw3cFCymFvtrgXx0usYOHay0Cjy5
+	MeaT86U4NUmD9mr8+9+SFOBcwP0ha1Au0XN8qXtZ/dIo3EQ9r1FqEcb6nRWlt0upDlQWGquuUZC
+	NAiynyRV0rqJLCahUEL8V7Ta/4CytbYJf6kovC1OWbhQ==
+X-Received: by 2002:a05:6a20:1586:b0:1a0:ebbd:9ae7 with SMTP id h6-20020a056a20158600b001a0ebbd9ae7mr11552880pzj.4.1709877832480;
+        Thu, 07 Mar 2024 22:03:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFwSy+KRC/GSn2zLsN0UNnw00pTdXTREweDEIwdkwzwwVJ8XmarEUl1eSz0tZAv2yTcVHqnwoNrrIMVt2DhM18=
+X-Received: by 2002:a05:6a20:1586:b0:1a0:ebbd:9ae7 with SMTP id
+ h6-20020a056a20158600b001a0ebbd9ae7mr11552863pzj.4.1709877832102; Thu, 07 Mar
+ 2024 22:03:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeYWKVpeFm1+4mlT@p14s>
+References: <20240229072044.77388-1-xuanzhuo@linux.alibaba.com>
+ <20240229031755-mutt-send-email-mst@kernel.org> <1709197357.626784-1-xuanzhuo@linux.alibaba.com>
+ <20240229043238-mutt-send-email-mst@kernel.org> <1709718889.4420547-1-xuanzhuo@linux.alibaba.com>
+ <CACGkMEu5=DKJfXsvOoXDDH7KJ-DWt83jj=vf8GoRnq-9zUeOOg@mail.gmail.com> <1709798771.2564156-2-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1709798771.2564156-2-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 8 Mar 2024 14:03:41 +0800
+Message-ID: <CACGkMEsHTwA=9W+3QfQGxzHcgzZZ=Bi9bb4PijUJHUQmLfEQpw@mail.gmail.com>
+Subject: Re: [PATCH vhost v3 00/19] virtio: drivers maintain dma info for
+ premapped vq
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, linux-um@lists.infradead.org, 
+	netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	kvm@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mathieu,
+On Thu, Mar 7, 2024 at 4:15=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.co=
+m> wrote:
+>
+> On Thu, 7 Mar 2024 13:28:27 +0800, Jason Wang <jasowang@redhat.com> wrote=
+:
+> > On Wed, Mar 6, 2024 at 6:01=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibab=
+a.com> wrote:
+> > >
+> > > On Thu, 29 Feb 2024 04:34:20 -0500, "Michael S. Tsirkin" <mst@redhat.=
+com> wrote:
+> > > > On Thu, Feb 29, 2024 at 05:02:37PM +0800, Xuan Zhuo wrote:
+> > > > > On Thu, 29 Feb 2024 03:21:14 -0500, "Michael S. Tsirkin" <mst@red=
+hat.com> wrote:
+> > > > > > On Thu, Feb 29, 2024 at 03:20:25PM +0800, Xuan Zhuo wrote:
+> > > > > > > As discussed:
+> > > > > > > http://lore.kernel.org/all/CACGkMEvq0No8QGC46U4mGsMtuD44fD_cf=
+LcPaVmJ3rHYqRZxYg@mail.gmail.com
+> > > > > > >
+> > > > > > > If the virtio is premapped mode, the driver should manage the=
+ dma info by self.
+> > > > > > > So the virtio core should not store the dma info.
+> > > > > > > So we can release the memory used to store the dma info.
+> > > > > > >
+> > > > > > > But if the desc_extra has not dma info, we face a new questio=
+n,
+> > > > > > > it is hard to get the dma info of the desc with indirect flag=
+.
+> > > > > > > For split mode, that is easy from desc, but for the packed mo=
+de,
+> > > > > > > it is hard to get the dma info from the desc. And for hardeni=
+ng
+> > > > > > > the dma unmap is saft, we should store the dma info of indire=
+ct
+> > > > > > > descs.
+> > > > > > >
+> > > > > > > So I introduce the "structure the indirect desc table" to
+> > > > > > > allocate space to store dma info with the desc table.
+> > > > > > >
+> > > > > > > On the other side, we mix the descs with indirect flag
+> > > > > > > with other descs together to share the unmap api. That
+> > > > > > > is complex. I found if we we distinguish the descs with
+> > > > > > > VRING_DESC_F_INDIRECT before unmap, thing will be clearer.
+> > > > > > >
+> > > > > > > Because of the dma array is allocated in the find_vqs(),
+> > > > > > > so I introduce a new parameter to find_vqs().
+> > > > > > >
+> > > > > > > Note:
+> > > > > > >     this is on the top of
+> > > > > > >         [PATCH vhost v1] virtio: packed: fix unmap leak for i=
+ndirect desc table
+> > > > > > >         http://lore.kernel.org/all/20240223071833.26095-1-xua=
+nzhuo@linux.alibaba.com
+> > > > > > >
+> > > > > > > Please review.
+> > > > > > >
+> > > > > > > Thanks
+> > > > > > >
+> > > > > > > v3:
+> > > > > > >     1. fix the conflict with the vp_modern_create_avq().
+> > > > > >
+> > > > > > Okay but are you going to address huge memory waste all this is=
+ causing for
+> > > > > > - people who never do zero copy
+> > > > > > - systems where dma unmap is a nop
+> > > > > >
+> > > > > > ?
+> > > > > >
+> > > > > > You should address all comments when you post a new version, no=
+t just
+> > > > > > what was expedient, or alternatively tag patch as RFC and expla=
+in
+> > > > > > in commit log that you plan to do it later.
+> > > > >
+> > > > >
+> > > > > Do you miss this one?
+> > > > > http://lore.kernel.org/all/1708997579.5613105-1-xuanzhuo@linux.al=
+ibaba.com
+> > > >
+> > > >
+> > > > I did. The answer is that no, you don't get to regress memory usage
+> > > > for lots of people then fix it up.
+> > > > So the patchset is big, I guess it will take a couple of cycles to
+> > > > merge gradually.
+> > >
+> > > Hi @Michael
+> > >
+> > > So, how about this patch set?
+> > >
+> > > I do not think they (dma maintainers) will agree the API dma_can_skip=
+_unmap().
+> > >
+> > > If you think sq wastes too much memory using pre-mapped dma mode, how=
+ about
+> > > we only enable it when xsk is bond?
+> > >
+> > > Could you give me some advice?
+> >
+> > I think we have some discussion, one possible solution is:
+> >
+> > when pre mapping is enabled, virtio core won't store dma metadatas.
+> >
+> > Then it makes virtio-net align with other NIC.
+>
+>
+> YES.
+>
+> This patch set works as this.
+>
+> But the virtio-net must allocate too much memory to store dma and len.
+>
+> num =3D queue size * 19
+>
+> Michael thinks that waste too much memory.
+>         http://lore.kernel.org/all/20240225032330-mutt-send-email-mst@ker=
+nel.org
+>
+> So we try this:
+>         http://lore.kernel.org/all/20240301071918.64631-1-xuanzhuo@linux.=
+alibaba.com
+>
+> But I think that is difficult to be accepted by the  DMA maintainers.
+>
+> So I have two advices:
+>
+> 1. virtio-net sq works without indirect.
+>         - that more like other NIC
+>         - the num of the memory to store the dma info is queue_size
 
-> > +	do {
-> > +		state_reg = readl(priv->reset_cfg.state_reg);
-> > +		*rst_ack = EXTSYS_RST_ST_RST_ACK(state_reg);
-> > +
-> > +		if (*rst_ack == EXTSYS_RST_ACK_RESERVED) {
-> > +			dev_err(dev, "unexpected RST_ACK value: 0x%x\n",
-> > +				*rst_ack);
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		/* expected ACK value read */
-> > +		if ((*rst_ack & exp_ack) || (*rst_ack == exp_ack))
-> 
-> I'm not sure why the second condition in this if() statement is needed.  As far
-> as I can tell the first condition will trigger and the second one won't be
-> reached.
+This requires benchmarks.
 
-The second condition takes care of the following: exp_ack and  *rst_ack are both 0.
-This case happens when RST_REQ bit is cleared (meaning: No reset requested) and
-we expect the RST_ACK to be 00 afterwards.
+>
+> 2. The default mode of virtio-net sq is no-premapped
+>         - we just switch the mode when binding xsk
 
-> > +/**
-> > + * arm_rproc_load() - Load firmware to memory function for rproc_ops
-> > + * @rproc: pointer to the remote processor object
-> > + * @fw: pointer to the firmware
-> > + *
-> > + * Does nothing currently.
-> > + *
-> > + * Return:
-> > + *
-> > + * 0 for success.
-> > + */
-> > +static int arm_rproc_load(struct rproc *rproc, const struct firmware *fw)
-> > +{
-> 
-> What is the point of doing rproc_of_parse_firmware() if the firmware image is
-> not loaded to memory?  Does the remote processor have some kind of default ROM
-> image to run if it doesn't find anything in memory?
+This could be one step.
 
-Yes, the remote processor has a default FW image already loaded by default.
+We can hear from Michael.
 
-rproc_boot() [1] and _request_firmware() [2] fail if there is no FW file in the filesystem or a filename
-provided.
+Thanks
 
-Please correct me if I'm wrong.
+>
+> Thanks.
+>
+>
+> >
+> > Thanks
+> >
+> > >
+> > > Thanks.
+> > >
+> > >
+> > > >
+> > > > > I asked you. But I didnot recv your answer.
+> > > > >
+> > > > > Thanks.
+> > > > >
+> > > > >
+> > > > > >
+> > > > > > > v2:
+> > > > > > >     1. change the dma item of virtio-net, every item have MAX=
+_SKB_FRAGS + 2
+> > > > > > >         addr + len pairs.
+> > > > > > >     2. introduce virtnet_sq_free_stats for __free_old_xmit
+> > > > > > >
+> > > > > > > v1:
+> > > > > > >     1. rename transport_vq_config to vq_transport_config
+> > > > > > >     2. virtio-net set dma meta number to (ring-size + 1)(MAX_=
+SKB_FRGAS +2)
+> > > > > > >     3. introduce virtqueue_dma_map_sg_attrs
+> > > > > > >     4. separate vring_create_virtqueue to an independent comm=
+it
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > Xuan Zhuo (19):
+> > > > > > >   virtio_ring: introduce vring_need_unmap_buffer
+> > > > > > >   virtio_ring: packed: remove double check of the unmap ops
+> > > > > > >   virtio_ring: packed: structure the indirect desc table
+> > > > > > >   virtio_ring: split: remove double check of the unmap ops
+> > > > > > >   virtio_ring: split: structure the indirect desc table
+> > > > > > >   virtio_ring: no store dma info when unmap is not needed
+> > > > > > >   virtio: find_vqs: pass struct instead of multi parameters
+> > > > > > >   virtio: vring_create_virtqueue: pass struct instead of mult=
+i
+> > > > > > >     parameters
+> > > > > > >   virtio: vring_new_virtqueue(): pass struct instead of multi=
+ parameters
+> > > > > > >   virtio_ring: simplify the parameters of the funcs related t=
+o
+> > > > > > >     vring_create/new_virtqueue()
+> > > > > > >   virtio: find_vqs: add new parameter premapped
+> > > > > > >   virtio_ring: export premapped to driver by struct virtqueue
+> > > > > > >   virtio_net: set premapped mode by find_vqs()
+> > > > > > >   virtio_ring: remove api of setting vq premapped
+> > > > > > >   virtio_ring: introduce dma map api for page
+> > > > > > >   virtio_ring: introduce virtqueue_dma_map_sg_attrs
+> > > > > > >   virtio_net: unify the code for recycling the xmit ptr
+> > > > > > >   virtio_net: rename free_old_xmit_skbs to free_old_xmit
+> > > > > > >   virtio_net: sq support premapped mode
+> > > > > > >
+> > > > > > >  arch/um/drivers/virtio_uml.c             |  31 +-
+> > > > > > >  drivers/net/virtio_net.c                 | 283 ++++++---
+> > > > > > >  drivers/platform/mellanox/mlxbf-tmfifo.c |  24 +-
+> > > > > > >  drivers/remoteproc/remoteproc_virtio.c   |  31 +-
+> > > > > > >  drivers/s390/virtio/virtio_ccw.c         |  33 +-
+> > > > > > >  drivers/virtio/virtio_mmio.c             |  30 +-
+> > > > > > >  drivers/virtio/virtio_pci_common.c       |  59 +-
+> > > > > > >  drivers/virtio/virtio_pci_common.h       |   9 +-
+> > > > > > >  drivers/virtio/virtio_pci_legacy.c       |  16 +-
+> > > > > > >  drivers/virtio/virtio_pci_modern.c       |  38 +-
+> > > > > > >  drivers/virtio/virtio_ring.c             | 698 ++++++++++++-=
+----------
+> > > > > > >  drivers/virtio/virtio_vdpa.c             |  45 +-
+> > > > > > >  include/linux/virtio.h                   |  13 +-
+> > > > > > >  include/linux/virtio_config.h            |  48 +-
+> > > > > > >  include/linux/virtio_ring.h              |  82 +--
+> > > > > > >  tools/virtio/virtio_test.c               |   4 +-
+> > > > > > >  tools/virtio/vringh_test.c               |  28 +-
+> > > > > > >  17 files changed, 847 insertions(+), 625 deletions(-)
+> > > > > > >
+> > > > > > > --
+> > > > > > > 2.32.0.3.g01195cf9f
+> > > > > >
+> > > >
+> > >
+> >
+>
 
-[1]: https://elixir.bootlin.com/linux/v6.8-rc7/source/drivers/remoteproc/remoteproc_core.c#L1947
-[2]: https://elixir.bootlin.com/linux/v6.8-rc7/source/drivers/base/firmware_loader/main.c#L863
-
-> > +module_platform_driver(arm_rproc_driver);
-> > +
-> 
-> I am echoing Krzysztof view about how generic this driver name is.  This has to
-> be related to a family of processors or be made less generic in some way.  Have
-> a look at what TI did for their K3 lineup [1] - I would like to see the same
-> thing done here.
-
-Thank you, I'll take care of that and of all the other comments made.
-
-Cheers,
-Abdellatif
