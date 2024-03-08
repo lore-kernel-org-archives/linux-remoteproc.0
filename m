@@ -1,78 +1,170 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61888BEF;
-	Fri,  8 Mar 2024 14:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17DB2114;
+	Fri,  8 Mar 2024 14:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709907954; cv=none; b=auDddQ6QlPVVupYjJmbVxGXsWRE+ffDPSFhzG4QGeI6ggGI5WzX41DbfnFO5fKFi6x/7ffRgTxlfXvnIY90c//1yety/XZzF7NU+R8EX/MxMjJTVl7TFyXG2Zxi/hWYkj/bQb03ZwVCzOiEbdzMkk2rolBLqFrsQPEBr6c1/cBE=
+	t=1709909320; cv=none; b=PiBPNXLBdjigJzy1vgAAHkDAvTANlceA4BxXlAQ0uqi9gV5xlKMMJIL2jrOzT1s6swo9Z25qcf+lwR1lmyCN3/f5y4LdZfn+8ZLpbhia3EHpFEh5ZuXp62LNRXrqUkwQuOm/TQTnG0i1RjaY9Z7hCv/td5pXgUY9W+TTaDfwTPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709907954; c=relaxed/simple;
-	bh=mAC+4ej7DrcSMbXBjoEZjocQGNkjds5CH7pc+Qy5KD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azt+aMUZdVJrC19SsSD9+A0GVA+DdcQMic/MPq++GaCT6aR5++l3AGD2Pd5Xy1omcLCjzqiPMS6Tx2OIWMk7kODyYeXlC/3y3t37mj4NbqPvh8UOikdpd88lFgsq0IsxDSk0sMervBzhY2wz5NKO87ieW9i2YI4eNtb1Bn9ph0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8EDFC15;
-	Fri,  8 Mar 2024 06:26:28 -0800 (PST)
-Received: from e130802.arm.com (unknown [10.57.14.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E68CD3F762;
-	Fri,  8 Mar 2024 06:25:48 -0800 (PST)
-Date: Fri, 8 Mar 2024 14:25:45 +0000
-From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
-	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: Add corstone1000 external system device
- node
-Message-ID: <20240308142545.GA199646@e130802.arm.com>
-References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-3-abdellatif.elkhlifi@arm.com>
- <ZesCyIpRgi1EkixF@bogus>
+	s=arc-20240116; t=1709909320; c=relaxed/simple;
+	bh=+6XAER/7E8C4DDje4PcoT8ffJWFq9hufEMuPy14CSOc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dZqUb7iH7P/dyqLMyTqGV+nJlZq50Nm+wcUnUBcoD89IJAYoBukFYFg0trX+yJzE9GCgs+JkVvJ4Am+RR8J1YF7zNJnL2AUPNXx6ukTwd0HM2+yClNKuKw8mTpBbr5vswLvU8XF8J683g0gqRE+kyQBDtIZT96ZrGNs80TyhfhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6VEXHwlf; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6VEXHwlf"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 428AXT3M029588;
+	Fri, 8 Mar 2024 15:48:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=vA/lQ0A
+	Yw3FJ3ttodnbsTOZ1WxKOYVchoRG7IlhS6i4=; b=6VEXHwlffy6+qRiodhtD9zp
+	9akve1hlsO/x1/fl8IZW0fO8mRKx2qOWyjBPle1ut0G4s9KYTOuvSEMmKGGXWATM
+	sQgRTbtv+rOtWLEjxC4YBRsvHnH9SRA81TV+N5/SGZj8+DYVNi7CTlKFiq+Lq5cy
+	8wJsuSRInXVa4sudc0r5OfGd99gbbRPyyijAWxvQllovdZ25zWhPs+I090AGVEBV
+	HGwZQVYD/MxOka1Lxm0orKdcploZHeWaxIbN+tUqNvB0F0G9gPqYHFdGMUJl62kX
+	0WLDEyCY3Z0HQotxIXY+Y3Rj6HhNBhcNzv7O9NFNo9BdDKurJvRXt9VWEIxIjng=
+	=
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3wn87tygsv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 15:48:10 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0AD3C40044;
+	Fri,  8 Mar 2024 15:48:06 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4FAD927D538;
+	Fri,  8 Mar 2024 15:47:17 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 8 Mar
+ 2024 15:47:17 +0100
+Received: from localhost (10.201.21.20) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 8 Mar
+ 2024 15:47:16 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v4 0/4] Introduction of a remoteproc tee to load signed firmware
+Date: Fri, 8 Mar 2024 15:47:04 +0100
+Message-ID: <20240308144708.62362-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZesCyIpRgi1EkixF@bogus>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-08_08,2024-03-06_01,2023-05-22_02
 
-Hi Sudeep,
+Main updates from the previous version [1]:
 
-> > +		extsys0: remoteproc@1a010310 {
-> > +			compatible = "arm,corstone1000-extsys";
-> > +			reg = <0x1a010310 0x4>,
-> > +				<0x1a010314 0X4>;
-> 
-> 
-> As per [1], this is just a few registers within the 64kB block.
-> Not sure if it should be represented as a whole on just couple
-> of registers like this for reset.
-> 
-> [1] https://developer.arm.com/documentation/101418/0100/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
+- Remove the alternate boot sequence: rproc_alt_fw_boot()
+- Introduce tee_rproc_parse_fw function
+	- create a cached table as done inrproc_elf_load_rsc_table[2],
+	- PR sent to OP-TEE to allow TA_RPROC_FW_CMD_LOAD_FW service 
+	  re-entrance[3].
+- Rework TEE_REMOTEPROC description in Kconfig
+- Introduce proc::tee_interface
 
-The Host Base System Control registers are not specific to the External System processors. They are various registers with different purposes.
+Patch commit messages list updates with more details
 
-Only 4 registers matter for the remoteproc feature:
+base-commit: 62210f7509e13a2caa7b080722a45229b8f17a0a
 
-    - The External system 0 reset control and status registers: EXT_SYS0_RST_CTRL, EXT_SYS0_RST_ST
-    - Same for the the External system 1: EXT_SYS1_RST_CTRL, EXT_SYS1_RST_ST
+[1] https://lore.kernel.org/linux-arm-kernel/Zdjl6Z2ktTwi+oWp@p14s/T/#m53f994237dc984c5dbbe3c75d2c30fcfff8548a0
+[2] https://elixir.bootlin.com/linux/latest/source/drivers/remoteproc/remoteproc_elf_loader.c#L326
+[3] https://github.com/OP-TEE/optee_os/pull/6743
 
-So, mapping the whole Host Base System Control area doesn't make sense for the remoteproc feature
-and exposes registers that are not related to the External Systems to the driver.
 
-By the way, the latest document we are referring to is [1].
+Description of the feature:
 
-[1]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating and
+loading the remoteproc firmware image in an Arm secure context.
 
-Cheers,
-Abdellatif
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact.the user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (4):
+  remoteproc: Add TEE support
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  51 +-
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/stm32_rproc.c              | 144 ++++--
+ drivers/remoteproc/tee_remoteproc.c           | 434 ++++++++++++++++++
+ include/linux/remoteproc.h                    |   4 +
+ include/linux/tee_remoteproc.h                | 112 +++++
+ 7 files changed, 711 insertions(+), 45 deletions(-)
+ create mode 100644 drivers/remoteproc/tee_remoteproc.c
+ create mode 100644 include/linux/tee_remoteproc.h
+
+
+base-commit: 62210f7509e13a2caa7b080722a45229b8f17a0a
+-- 
+2.25.1
+
