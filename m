@@ -1,163 +1,289 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829318C1A
-	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Mar 2024 16:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA50436AF9
+	for <linux-remoteproc@vger.kernel.org>; Sat,  9 Mar 2024 13:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709916281; cv=none; b=aaQ0IbyrCDowLOGQdAV4ou+6XLMONhGlFeLTQTHOEvrb5KxL8/DhLTvtXopfntAAm+SCa/JrbA44PUk0FLKOTgfQ6cKdpPoGu2VEf5upQqvD/Z5oC9qyeFTH2S+rnnj9i3fbPhu/m1i6w6MBuKibM/13ha01IjB1c84Ul8ONppE=
+	t=1709990731; cv=none; b=Ighg87RSnO9DS0zJVYg0gcr+L6nq4s1Oofdn/2xol/ZkK4n5gOPSMysgK8YBio4j/xQTfpgdwmlvgM7oYZ5ANScvXsqMp6JGmi0/ta+TEZdG3JTqZ2cbUxHGX/Nr+CFBsYL7T+iUS8Q8eYPE4InNIl1XD4Hw4Xw6KphemabNr1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709916281; c=relaxed/simple;
-	bh=UrEBxQszULiVbIBPuPmBCRY25FgHIkpOHvzckOGcYBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0MS29kT7CqEF3j6/x0mMDHpM77NvmhQVnt/YpeidSikZyj5MB/90MWoGXgRGgiN0oIU32TYS+rkq2INFbjoPcQ5Fooyb1FKfBdz+Oq5eA8HA0J/p7qRt28FyEYsZ8xVU4QYYAig/gsy7zAR36EoE0OvIKp0h7fBjd0oPsG9wAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jl7rqKZQ; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1709990731; c=relaxed/simple;
+	bh=LHB6rFgP2ZQBJqCKzNVyKTDcpYrfFT5IZ++abJMN94M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SiQVUnr/8GARqenD5odpgIzxx5/0irxzmVtL2VfjTotTlBu2C+TP8xnoe+Xce/NsFrExd+Ilgk/gof1q8AiuBzya3WKLLB9sWFnQcVORxdp9wT7QZonRezC9Yuujsk8I06F6931d1mrBo3xNXIwE4qFMiBA/L5r3KB+XwbjPJGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZGV/jlr; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jl7rqKZQ"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2d28051376eso11790191fa.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 08 Mar 2024 08:44:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZGV/jlr"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a456ab934eeso415382866b.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 09 Mar 2024 05:25:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709916278; x=1710521078; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pb+tQdggieSesTRk+wpBTn9tTjLUrGvHa4LzSreo9I=;
-        b=Jl7rqKZQUbNsEN2TjWILnxe/pkkpYbGnT0rtG+ApWGvXpMkTLvke6WoQ05k3Ey+a70
-         Dv7Txoe8sfQccoo7hvFHwlc07nqTvuWSJCPOKnWHktuC6gC2oqWwWJB8kgMWceN4W/I8
-         0ciSTnee+VUPKpxwNyuiU74Qkz3aRJjlw+wjMtSJaOq7hpJfyD105+ddBAQB74kbMlA+
-         afVFkcSOlhVxYP+zLkUPsQJR6u2L4zpWXhZ5/N6KUHDgRsEDjsmndCZmh33txekWjtQO
-         yFjEmzI9jyUhSns6YNk3PH9akKvBc5wnePEvpDlRo+bdA+rFrOa6xI09tv++WyoMVPXT
-         Sj+w==
+        d=linaro.org; s=google; t=1709990728; x=1710595528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yDiQvphz9r/4tswvU3DLnkYQoFIGQ/fVX+Hfug55pYU=;
+        b=NZGV/jlru5r433VqTgFMOiobtVy0QPavoPFuJ73L/uJpTFC3GxjjkzxWtzjLWDTumm
+         VnTLe0WwiUH16wL4/lPzPICJcg4eYVeg+xM5kPgzgigwb/MkOugnqwbrmeakUEI1CY/R
+         /tGAH2s7CVV0vxj/DD6BK1r6KT6nZ9OWaNK700XzePCc3PcZEPaht6wBV8k4IyjZaWbd
+         M9lMwKZIdvx6hQAHRCF7oZDbTkT+/SVZ6ysOGu4cqCPu9sxoyWNPI84vrWyDP/DkunHe
+         NOfW+mYdkeL4VEpc4Ji3pZiyS0/DWKcnmsRHPpdvJ7xAGX1qkytcjTvcK0kKG5xTZw42
+         uZIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709916278; x=1710521078;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3pb+tQdggieSesTRk+wpBTn9tTjLUrGvHa4LzSreo9I=;
-        b=Fk86xqIT7WJ6vikM7U2OX64yWfRLUmcbz4+hBfcwK6eoGEXXV93tJmJCFX1wanLG10
-         b1yZgNZNvTMY/VH4mIx++1SFZos1grhoYQ47w72GGguGsFRfR/uig49HRtG1cv0rr8RY
-         8a2qWAvA5BzlXq83nTWQc1M2SVxoDxPm0AAYgZJKAM+7XyX7ZmM6ySKVbob/hRvSJv2a
-         7PVOQscJYsmVaEyzdRoL93Xz8UYVgiFZg0O99vg6OhdC2RGJWWdYhYRvUBymX3Gtw3YN
-         cR5veGP611fbwbCRWsYWbw+O62xfHZh0j5jAnum5QxXXNYzBWSSsTrGQbkNgSEeburr6
-         wMIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYLo/35Qd1jAQ3FDqp4B1kKkKb5EG313wjcIhL3+P4EHSasKogqy7N8Ch2AeoXmgZSnkIhm4hv9wX67s4L4CcFjtMDDnpXUxBlaZN1Gs3ctw==
-X-Gm-Message-State: AOJu0YyvM58GqSTX7rgmLSVKMOZPLrUBv39cUy/dPbd8Ax2YRiMPBXpa
-	TNmJNyFyw96rTDZ838OU+TJZrX4AM6OMlkA3Z7tSsZBEobWMUQlBVbvZ1YNDW4/EnEdnU0u5E+c
-	++SBrcbXguTYBspV5EzQQGBQmIGubtRcMCbbauQ==
-X-Google-Smtp-Source: AGHT+IGSEiadE1M7hzpNQ204ASdBT/8qGfuylY/6QNi4hO5JxEG2URQ276EsCZjORAMhtcwTRiKYB5Z6qnoZK/RfDLE=
-X-Received: by 2002:a2e:a9a2:0:b0:2d3:93dd:c54b with SMTP id
- x34-20020a2ea9a2000000b002d393ddc54bmr4587311ljq.25.1709916277656; Fri, 08
- Mar 2024 08:44:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709990728; x=1710595528;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yDiQvphz9r/4tswvU3DLnkYQoFIGQ/fVX+Hfug55pYU=;
+        b=PTFCTfp0NkgIPT6JKIM71bbEQhX2tsrsCXKiOIFsAh3akrNVWqvdcul68cb0C2/Ntk
+         Xl8AgpSFr+qxAVTK10a216zwaG7KRDvXS6/d8noDwvBldxtCmhDlVJMCnA9cwtWAl6K7
+         5ysdMxi23LsAIWp8mHqOeQ95bqTUWkhWz5X7feDyE5MqYQ2mnuVsc3Pq0c8NiU22CRpN
+         RPoOA0w1yyPhJ6aYaFOnkCXEdfxIVeEmL8FJ8zFl4ux9ap1p/GrwRcgFyAe2vYsudas5
+         VGj6gMD4lfZwYUOBz1QRpRwDliYS6STIQKh+Vpcn6hkwI7clk4Az3CxJwluEpNSZMZgQ
+         YnwQ==
+X-Gm-Message-State: AOJu0Yx2sa2qd89SLADhDTlZkue5GX1gzCQOVRDejac0yDCxlYKFMltK
+	aIU5mUmOQgvhyyfh8BzcXw1cOf+hkp7SyGtXQeoKppYOGz7AMEYzitcio45xFTo=
+X-Google-Smtp-Source: AGHT+IEqMUeTbIwEJMFFWcxPSCURfWjwaIR3Ho9n40MtX5g6Fu+gZKAk5/hreEtCMYPdV7ZxgdwHUQ==
+X-Received: by 2002:a17:906:f8da:b0:a45:902b:3cb0 with SMTP id lh26-20020a170906f8da00b00a45902b3cb0mr1019082ejb.58.1709990728160;
+        Sat, 09 Mar 2024 05:25:28 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id lr1-20020a170906fb8100b00a442e2940fdsm887802ejb.179.2024.03.09.05.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Mar 2024 05:25:27 -0800 (PST)
+Message-ID: <fb78bdda-2ec7-4fcc-888e-233905a9386c@linaro.org>
+Date: Sat, 9 Mar 2024 14:25:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-2-abdellatif.elkhlifi@arm.com> <ZeYWKVpeFm1+4mlT@p14s> <20240307194026.GA355455@e130802.arm.com>
-In-Reply-To: <20240307194026.GA355455@e130802.arm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 8 Mar 2024 09:44:26 -0700
-Message-ID: <CANLsYkzA20rQdTM6AOvFK=3o28GvcoRbckL=ri8RegHqyHaiCw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Drew.Reed@arm.com, Adam.Johnston@arm.com, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/4] dt-bindings: remoteproc: add Tightly Coupled
+ Memory (TCM) bindings
+Content-Language: en-US
+To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ michal.simek@amd.com, ben.levinsky@amd.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+References: <20240301181638.814215-1-tanmay.shah@amd.com>
+ <20240301181638.814215-3-tanmay.shah@amd.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240301181638.814215-3-tanmay.shah@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 7 Mar 2024 at 12:40, Abdellatif El Khlifi
-<abdellatif.elkhlifi@arm.com> wrote:
->
-> Hi Mathieu,
->
-> > > +   do {
-> > > +           state_reg = readl(priv->reset_cfg.state_reg);
-> > > +           *rst_ack = EXTSYS_RST_ST_RST_ACK(state_reg);
-> > > +
-> > > +           if (*rst_ack == EXTSYS_RST_ACK_RESERVED) {
-> > > +                   dev_err(dev, "unexpected RST_ACK value: 0x%x\n",
-> > > +                           *rst_ack);
-> > > +                   return -EINVAL;
-> > > +           }
-> > > +
-> > > +           /* expected ACK value read */
-> > > +           if ((*rst_ack & exp_ack) || (*rst_ack == exp_ack))
-> >
-> > I'm not sure why the second condition in this if() statement is needed.  As far
-> > as I can tell the first condition will trigger and the second one won't be
-> > reached.
->
-> The second condition takes care of the following: exp_ack and  *rst_ack are both 0.
-> This case happens when RST_REQ bit is cleared (meaning: No reset requested) and
-> we expect the RST_ACK to be 00 afterwards.
->
+On 01/03/2024 19:16, Tanmay Shah wrote:
+> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> 
+> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+> UltraScale+ platform. It will help in defining TCM in device-tree
+> and make it's access platform agnostic and data-driven.
+> 
+> Tightly-coupled memories(TCMs) are low-latency memory that provides
+> predictable instruction execution and predictable data load/store
+> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+> 
+> The TCM resources(reg, reg-names and power-domain) are documented for
+> each TCM in the R5 node. The reg and reg-names are made as required
+> properties as we don't want to hardcode TCM addresses for future
+> platforms and for zu+ legacy implementation will ensure that the
+> old dts w/o reg/reg-names works and stable ABI is maintained.
+> 
+> It also extends the examples for TCM split and lockstep modes.
+> 
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Changes in v12:
+>   - add "reg", "reg-names" and "power-domains" in pattern properties
+>   - add "reg" and "reg-names" in required list
+>   - keep "power-domains" in required list as it was before the change
+> 
+> Changes in v11:
+>   - Fix yamllint warning and reduce indentation as needed
+> 
+>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 188 ++++++++++++++++--
+>  1 file changed, 168 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> index 78aac69f1060..dc6ce308688f 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> @@ -20,9 +20,21 @@ properties:
+>    compatible:
+>      const: xlnx,zynqmp-r5fss
+>  
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  ranges:
+> +    description: |
+> +      Standard ranges definition providing address translations for
+> +      local R5F TCM address spaces to bus addresses.
+> +
+>    xlnx,cluster-mode:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      enum: [0, 1, 2]
+> +    default: 1
+>      description: |
+>        The RPU MPCore can operate in split mode (Dual-processor performance), Safety
+>        lock-step mode(Both RPU cores execute the same code in lock-step,
+> @@ -37,7 +49,7 @@ properties:
+>        2: single cpu mode
+>  
+>  patternProperties:
+> -  "^r5f-[a-f0-9]+$":
+> +  "^r5f@[0-9a-f]+$":
+>      type: object
+>      description: |
+>        The RPU is located in the Low Power Domain of the Processor Subsystem.
+> @@ -54,8 +66,17 @@ patternProperties:
+>        compatible:
+>          const: xlnx,zynqmp-r5f
+>  
+> +      reg:
+> +        minItems: 1
+> +        maxItems: 4
+> +
+> +      reg-names:
+> +        minItems: 1
+> +        maxItems: 4
+> +
+>        power-domains:
+> -        maxItems: 1
+> +        minItems: 2
+> +        maxItems: 5
+>  
+>        mboxes:
+>          minItems: 1
+> @@ -101,35 +122,162 @@ patternProperties:
+>  
+>      required:
+>        - compatible
+> +      - reg
+> +      - reg-names
+>        - power-domains
+>  
+> -    unevaluatedProperties: false
+> -
+>  required:
+>    - compatible
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        xlnx,cluster-mode:
+> +          enum:
+> +            - 1
+> +    then:
+> +      patternProperties:
+> +        "^r5f@[0-9a-f]+$":
+> +          type: object
+> +
+> +          properties:
+> +            reg:
+> +              minItems: 1
+> +              items:
+> +                - description: ATCM internal memory
+> +                - description: BTCM internal memory
+> +                - description: extra ATCM memory in lockstep mode
+> +                - description: extra BTCM memory in lockstep mode
+> +
+> +            reg-names:
+> +              minItems: 1
+> +              items:
+> +                - const: atcm0
+> +                - const: btcm0
+> +                - const: atcm1
+> +                - const: btcm1
 
-This is the kind of conditions that definitely deserve documentation.
-Please split the conditions in two different if() statements and add a
-comment to explain what is going on.
+Why power domains are flexible?
 
-> > > +/**
-> > > + * arm_rproc_load() - Load firmware to memory function for rproc_ops
-> > > + * @rproc: pointer to the remote processor object
-> > > + * @fw: pointer to the firmware
-> > > + *
-> > > + * Does nothing currently.
-> > > + *
-> > > + * Return:
-> > > + *
-> > > + * 0 for success.
-> > > + */
-> > > +static int arm_rproc_load(struct rproc *rproc, const struct firmware *fw)
-> > > +{
-> >
-> > What is the point of doing rproc_of_parse_firmware() if the firmware image is
-> > not loaded to memory?  Does the remote processor have some kind of default ROM
-> > image to run if it doesn't find anything in memory?
->
-> Yes, the remote processor has a default FW image already loaded by default.
->
+> +
+> +    else:
+> +      patternProperties:
+> +        "^r5f@[0-9a-f]+$":
+> +          type: object
+> +
+> +          properties:
+> +            reg:
+> +              minItems: 1
+> +              items:
+> +                - description: ATCM internal memory
+> +                - description: BTCM internal memory
+> +
+> +            reg-names:
+> +              minItems: 1
+> +              items:
+> +                - const: atcm0
+> +                - const: btcm0
+> +
+> +            power-domains:
+> +              maxItems: 3
 
-That too would have mandated a comment - otherwise people looking at
-the code are left wondering, as I did.
+Please list power domains.
 
-> rproc_boot() [1] and _request_firmware() [2] fail if there is no FW file in the filesystem or a filename
-> provided.
->
-> Please correct me if I'm wrong.
+>  
+>  additionalProperties: false
 
-You are correct, the remoteproc subsystem expects a firmware image to
-be provided _and_ loaded into memory.  Providing a dummy image just to
-get the remote processor booted is a hack, but simply because the
-subsystem isn't tailored to handle this use case.  So I am left
-wondering what the plans are for this driver, i.e is this a real
-scenario that needs to be addressed or just an initial patchset to get
-a foundation for the driver.
 
-In the former case we need to start talking about refactoring the
-subsystem so that it properly handles remote processors that don't
-need a firmware image.  In the latter case I'd rather see a patchset
-where the firmware image is loaded into RAM.
+Best regards,
+Krzysztof
 
->
-> [1]: https://elixir.bootlin.com/linux/v6.8-rc7/source/drivers/remoteproc/remoteproc_core.c#L1947
-> [2]: https://elixir.bootlin.com/linux/v6.8-rc7/source/drivers/base/firmware_loader/main.c#L863
->
-> > > +module_platform_driver(arm_rproc_driver);
-> > > +
-> >
-> > I am echoing Krzysztof view about how generic this driver name is.  This has to
-> > be related to a family of processors or be made less generic in some way.  Have
-> > a look at what TI did for their K3 lineup [1] - I would like to see the same
-> > thing done here.
->
-> Thank you, I'll take care of that and of all the other comments made.
->
-> Cheers,
-> Abdellatif
