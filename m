@@ -1,289 +1,263 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA50436AF9
-	for <linux-remoteproc@vger.kernel.org>; Sat,  9 Mar 2024 13:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0555733D8;
+	Sun, 10 Mar 2024 03:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709990731; cv=none; b=Ighg87RSnO9DS0zJVYg0gcr+L6nq4s1Oofdn/2xol/ZkK4n5gOPSMysgK8YBio4j/xQTfpgdwmlvgM7oYZ5ANScvXsqMp6JGmi0/ta+TEZdG3JTqZ2cbUxHGX/Nr+CFBsYL7T+iUS8Q8eYPE4InNIl1XD4Hw4Xw6KphemabNr1s=
+	t=1710040797; cv=none; b=L6gMhWOYtmCU43anKoErrcIWuo8mRe61Nt3Apdmk0MuB3bfRK1FLNjkjFj3DSEsqWPqDZOe2CZ0hxv/gcrUnVanFsV8xV0X5abEYv86r7sz5x4B7UZPRCqMQaDFGR/69Fzi6SGNyOnDrDq9GZkyQz8KJNrTqBF0/oacHvYNvf6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709990731; c=relaxed/simple;
-	bh=LHB6rFgP2ZQBJqCKzNVyKTDcpYrfFT5IZ++abJMN94M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SiQVUnr/8GARqenD5odpgIzxx5/0irxzmVtL2VfjTotTlBu2C+TP8xnoe+Xce/NsFrExd+Ilgk/gof1q8AiuBzya3WKLLB9sWFnQcVORxdp9wT7QZonRezC9Yuujsk8I06F6931d1mrBo3xNXIwE4qFMiBA/L5r3KB+XwbjPJGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZGV/jlr; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710040797; c=relaxed/simple;
+	bh=NGWdQWEHWpFEjdw+zfAGKqF6mfpWb0dLFKBmOsG0MrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eu3Ws6Ut2LQCgYV5c9i6KYYv3UUXGCfSASIDUn8Rb8U2/D4bpa20OmcVAt32YCMcQLGcVW5RmBbxZIYTHr6q88g9681nannQgPNS+QpPcaSvWb6cPaXJY2Yy5TRXK2xFL0c7KmvlkinHIwTCVoyJBdPIE+gPFSl8EXyKMk9pptE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8Fve5Qf; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZGV/jlr"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a456ab934eeso415382866b.0
-        for <linux-remoteproc@vger.kernel.org>; Sat, 09 Mar 2024 05:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709990728; x=1710595528; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yDiQvphz9r/4tswvU3DLnkYQoFIGQ/fVX+Hfug55pYU=;
-        b=NZGV/jlru5r433VqTgFMOiobtVy0QPavoPFuJ73L/uJpTFC3GxjjkzxWtzjLWDTumm
-         VnTLe0WwiUH16wL4/lPzPICJcg4eYVeg+xM5kPgzgigwb/MkOugnqwbrmeakUEI1CY/R
-         /tGAH2s7CVV0vxj/DD6BK1r6KT6nZ9OWaNK700XzePCc3PcZEPaht6wBV8k4IyjZaWbd
-         M9lMwKZIdvx6hQAHRCF7oZDbTkT+/SVZ6ysOGu4cqCPu9sxoyWNPI84vrWyDP/DkunHe
-         NOfW+mYdkeL4VEpc4Ji3pZiyS0/DWKcnmsRHPpdvJ7xAGX1qkytcjTvcK0kKG5xTZw42
-         uZIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709990728; x=1710595528;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yDiQvphz9r/4tswvU3DLnkYQoFIGQ/fVX+Hfug55pYU=;
-        b=PTFCTfp0NkgIPT6JKIM71bbEQhX2tsrsCXKiOIFsAh3akrNVWqvdcul68cb0C2/Ntk
-         Xl8AgpSFr+qxAVTK10a216zwaG7KRDvXS6/d8noDwvBldxtCmhDlVJMCnA9cwtWAl6K7
-         5ysdMxi23LsAIWp8mHqOeQ95bqTUWkhWz5X7feDyE5MqYQ2mnuVsc3Pq0c8NiU22CRpN
-         RPoOA0w1yyPhJ6aYaFOnkCXEdfxIVeEmL8FJ8zFl4ux9ap1p/GrwRcgFyAe2vYsudas5
-         VGj6gMD4lfZwYUOBz1QRpRwDliYS6STIQKh+Vpcn6hkwI7clk4Az3CxJwluEpNSZMZgQ
-         YnwQ==
-X-Gm-Message-State: AOJu0Yx2sa2qd89SLADhDTlZkue5GX1gzCQOVRDejac0yDCxlYKFMltK
-	aIU5mUmOQgvhyyfh8BzcXw1cOf+hkp7SyGtXQeoKppYOGz7AMEYzitcio45xFTo=
-X-Google-Smtp-Source: AGHT+IEqMUeTbIwEJMFFWcxPSCURfWjwaIR3Ho9n40MtX5g6Fu+gZKAk5/hreEtCMYPdV7ZxgdwHUQ==
-X-Received: by 2002:a17:906:f8da:b0:a45:902b:3cb0 with SMTP id lh26-20020a170906f8da00b00a45902b3cb0mr1019082ejb.58.1709990728160;
-        Sat, 09 Mar 2024 05:25:28 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id lr1-20020a170906fb8100b00a442e2940fdsm887802ejb.179.2024.03.09.05.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Mar 2024 05:25:27 -0800 (PST)
-Message-ID: <fb78bdda-2ec7-4fcc-888e-233905a9386c@linaro.org>
-Date: Sat, 9 Mar 2024 14:25:25 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8Fve5Qf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1710040795; x=1741576795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NGWdQWEHWpFEjdw+zfAGKqF6mfpWb0dLFKBmOsG0MrA=;
+  b=K8Fve5QfNl9xKMmlfkkbYLOLUlHOqOJWQf+RpZL1sZj/QaXGu3BhPbnA
+   cfqO62n+WSYGb21CMXiMquPsq7P/gGfJh+5sEFSZklwEb2b1NcyoTsgkj
+   K9+cmK4iL4fEktNEwWtymsO+6nXRbxc7YbBb1K1DbhCeM6okJX6niff6f
+   TTKuSVx/XnYWqi4tsxycg5Ff53KyjH3o4YRooZ9tUYFQswXdVZb5FiIDM
+   6Zm1lPYuXLKa3iw5I4jhn635rb784uc3bOEIJYq5Uh/mRyoZE18VtM1xf
+   KFCBLb5kGglUtN16YVsZYIkQKyFuMto9QoYIsbRUYfOVIP2kiVYLhFDmo
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11008"; a="4899937"
+X-IronPort-AV: E=Sophos;i="6.07,113,1708416000"; 
+   d="scan'208";a="4899937"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2024 19:19:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,113,1708416000"; 
+   d="scan'208";a="10744501"
+Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 09 Mar 2024 19:19:51 -0800
+Received: from kbuild by b21307750695 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rj9j2-0007sJ-2V;
+	Sun, 10 Mar 2024 03:19:48 +0000
+Date: Sun, 10 Mar 2024 11:18:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH v4 1/4] remoteproc: Add TEE support
+Message-ID: <202403101139.NIzJMqwP-lkp@intel.com>
+References: <20240308144708.62362-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/4] dt-bindings: remoteproc: add Tightly Coupled
- Memory (TCM) bindings
-Content-Language: en-US
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- michal.simek@amd.com, ben.levinsky@amd.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-References: <20240301181638.814215-1-tanmay.shah@amd.com>
- <20240301181638.814215-3-tanmay.shah@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240301181638.814215-3-tanmay.shah@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240308144708.62362-2-arnaud.pouliquen@foss.st.com>
 
-On 01/03/2024 19:16, Tanmay Shah wrote:
-> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> 
-> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-> UltraScale+ platform. It will help in defining TCM in device-tree
-> and make it's access platform agnostic and data-driven.
-> 
-> Tightly-coupled memories(TCMs) are low-latency memory that provides
-> predictable instruction execution and predictable data load/store
-> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
-> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
-> 
-> The TCM resources(reg, reg-names and power-domain) are documented for
-> each TCM in the R5 node. The reg and reg-names are made as required
-> properties as we don't want to hardcode TCM addresses for future
-> platforms and for zu+ legacy implementation will ensure that the
-> old dts w/o reg/reg-names works and stable ABI is maintained.
-> 
-> It also extends the examples for TCM split and lockstep modes.
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Changes in v12:
->   - add "reg", "reg-names" and "power-domains" in pattern properties
->   - add "reg" and "reg-names" in required list
->   - keep "power-domains" in required list as it was before the change
-> 
-> Changes in v11:
->   - Fix yamllint warning and reduce indentation as needed
-> 
->  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 188 ++++++++++++++++--
->  1 file changed, 168 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> index 78aac69f1060..dc6ce308688f 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> @@ -20,9 +20,21 @@ properties:
->    compatible:
->      const: xlnx,zynqmp-r5fss
->  
-> +  "#address-cells":
-> +    const: 2
-> +
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  ranges:
-> +    description: |
-> +      Standard ranges definition providing address translations for
-> +      local R5F TCM address spaces to bus addresses.
-> +
->    xlnx,cluster-mode:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      enum: [0, 1, 2]
-> +    default: 1
->      description: |
->        The RPU MPCore can operate in split mode (Dual-processor performance), Safety
->        lock-step mode(Both RPU cores execute the same code in lock-step,
-> @@ -37,7 +49,7 @@ properties:
->        2: single cpu mode
->  
->  patternProperties:
-> -  "^r5f-[a-f0-9]+$":
-> +  "^r5f@[0-9a-f]+$":
->      type: object
->      description: |
->        The RPU is located in the Low Power Domain of the Processor Subsystem.
-> @@ -54,8 +66,17 @@ patternProperties:
->        compatible:
->          const: xlnx,zynqmp-r5f
->  
-> +      reg:
-> +        minItems: 1
-> +        maxItems: 4
-> +
-> +      reg-names:
-> +        minItems: 1
-> +        maxItems: 4
-> +
->        power-domains:
-> -        maxItems: 1
-> +        minItems: 2
-> +        maxItems: 5
->  
->        mboxes:
->          minItems: 1
-> @@ -101,35 +122,162 @@ patternProperties:
->  
->      required:
->        - compatible
-> +      - reg
-> +      - reg-names
->        - power-domains
->  
-> -    unevaluatedProperties: false
-> -
->  required:
->    - compatible
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        xlnx,cluster-mode:
-> +          enum:
-> +            - 1
-> +    then:
-> +      patternProperties:
-> +        "^r5f@[0-9a-f]+$":
-> +          type: object
-> +
-> +          properties:
-> +            reg:
-> +              minItems: 1
-> +              items:
-> +                - description: ATCM internal memory
-> +                - description: BTCM internal memory
-> +                - description: extra ATCM memory in lockstep mode
-> +                - description: extra BTCM memory in lockstep mode
-> +
-> +            reg-names:
-> +              minItems: 1
-> +              items:
-> +                - const: atcm0
-> +                - const: btcm0
-> +                - const: atcm1
-> +                - const: btcm1
+Hi Arnaud,
 
-Why power domains are flexible?
+kernel test robot noticed the following build warnings:
 
-> +
-> +    else:
-> +      patternProperties:
-> +        "^r5f@[0-9a-f]+$":
-> +          type: object
-> +
-> +          properties:
-> +            reg:
-> +              minItems: 1
-> +              items:
-> +                - description: ATCM internal memory
-> +                - description: BTCM internal memory
-> +
-> +            reg-names:
-> +              minItems: 1
-> +              items:
-> +                - const: atcm0
-> +                - const: btcm0
-> +
-> +            power-domains:
-> +              maxItems: 3
+[auto build test WARNING on 62210f7509e13a2caa7b080722a45229b8f17a0a]
 
-Please list power domains.
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-Add-TEE-support/20240308-225116
+base:   62210f7509e13a2caa7b080722a45229b8f17a0a
+patch link:    https://lore.kernel.org/r/20240308144708.62362-2-arnaud.pouliquen%40foss.st.com
+patch subject: [PATCH v4 1/4] remoteproc: Add TEE support
+config: arm-randconfig-r123-20240310 (https://download.01.org/0day-ci/archive/20240310/202403101139.NIzJMqwP-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240310/202403101139.NIzJMqwP-lkp@intel.com/reproduce)
 
->  
->  additionalProperties: false
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202403101139.NIzJMqwP-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/remoteproc/tee_remoteproc.c:163:19: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct resource_table *rsc_table @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/tee_remoteproc.c:163:19: sparse:     expected struct resource_table *rsc_table
+   drivers/remoteproc/tee_remoteproc.c:163:19: sparse:     got void [noderef] __iomem *
+>> drivers/remoteproc/tee_remoteproc.c:276:23: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *io_addr @@     got struct resource_table *rsc_table @@
+   drivers/remoteproc/tee_remoteproc.c:276:23: sparse:     expected void volatile [noderef] __iomem *io_addr
+   drivers/remoteproc/tee_remoteproc.c:276:23: sparse:     got struct resource_table *rsc_table
+   drivers/remoteproc/tee_remoteproc.c:399:38: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *io_addr @@     got struct resource_table *rsc_table @@
+   drivers/remoteproc/tee_remoteproc.c:399:38: sparse:     expected void volatile [noderef] __iomem *io_addr
+   drivers/remoteproc/tee_remoteproc.c:399:38: sparse:     got struct resource_table *rsc_table
+   drivers/remoteproc/tee_remoteproc.c: note: in included file (through arch/arm/include/asm/traps.h, arch/arm/include/asm/thread_info.h, include/linux/thread_info.h, ...):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
 
-Best regards,
-Krzysztof
+vim +163 drivers/remoteproc/tee_remoteproc.c
 
+   131	
+   132	struct resource_table *tee_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+   133	{
+   134		struct tee_ioctl_invoke_arg arg;
+   135		struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+   136		struct tee_rproc *trproc = rproc->tee_interface;
+   137		struct resource_table *rsc_table;
+   138		int ret;
+   139	
+   140		if (!trproc)
+   141			return ERR_PTR(-EINVAL);
+   142	
+   143		tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_GET_RSC_TABLE, &arg, param, 2);
+   144	
+   145		param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+   146		param[2].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+   147	
+   148		ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+   149		if (ret < 0 || arg.ret != 0) {
+   150			dev_err(tee_rproc_ctx->dev,
+   151				"TA_RPROC_FW_CMD_GET_RSC_TABLE invoke failed TEE err: %x, ret:%x\n",
+   152				arg.ret, ret);
+   153			return ERR_PTR(-EIO);
+   154		}
+   155	
+   156		*table_sz = param[2].u.value.a;
+   157	
+   158		/* If the size is null no resource table defined in the image */
+   159		if (!*table_sz)
+   160			return NULL;
+   161	
+   162		/* Store the resource table address that would be updated by the remote core. */
+ > 163		rsc_table = ioremap_wc(param[1].u.value.a, *table_sz);
+   164		if (IS_ERR_OR_NULL(rsc_table)) {
+   165			dev_err(tee_rproc_ctx->dev, "Unable to map memory region: %lld+%zx\n",
+   166				param[1].u.value.a, *table_sz);
+   167			return ERR_PTR(-ENOMEM);
+   168		}
+   169	
+   170		return rsc_table;
+   171	}
+   172	EXPORT_SYMBOL_GPL(tee_rproc_get_loaded_rsc_table);
+   173	
+   174	int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+   175	{
+   176		struct tee_rproc *trproc = rproc->tee_interface;
+   177		struct resource_table *rsc_table;
+   178		size_t table_sz;
+   179		int ret;
+   180	
+   181		ret = tee_rproc_load_fw(rproc, fw);
+   182		if (ret)
+   183			return ret;
+   184	
+   185		rsc_table = tee_rproc_get_loaded_rsc_table(rproc, &table_sz);
+   186		if (IS_ERR(rsc_table))
+   187			return PTR_ERR(rsc_table);
+   188	
+   189		/* Create a copy of the resource table to have same behaviour than the elf loader. */
+   190		rproc->cached_table = kmemdup(rsc_table, table_sz, GFP_KERNEL);
+   191		if (!rproc->cached_table)
+   192			return -ENOMEM;
+   193	
+   194		rproc->table_ptr = rproc->cached_table;
+   195		rproc->table_sz = table_sz;
+   196		trproc->rsc_table = rsc_table;
+   197	
+   198		return 0;
+   199	}
+   200	EXPORT_SYMBOL_GPL(tee_rproc_parse_fw);
+   201	
+   202	struct resource_table *tee_rproc_find_loaded_rsc_table(struct rproc *rproc,
+   203							       const struct firmware *fw)
+   204	{
+   205		struct tee_rproc *trproc = rproc->tee_interface;
+   206		struct resource_table *rsc_table;
+   207		size_t table_sz;
+   208	
+   209		if (!trproc)
+   210			return ERR_PTR(-EINVAL);
+   211	
+   212		/* Check if the resourse table has already been obtained in tee_rproc_parse_fw() */
+   213		if (trproc->rsc_table)
+   214			return trproc->rsc_table;
+   215	
+   216		rsc_table = tee_rproc_get_loaded_rsc_table(rproc, &table_sz);
+   217		if (IS_ERR(rsc_table))
+   218			return rsc_table;
+   219	
+   220		rproc->table_sz = table_sz;
+   221		trproc->rsc_table = rsc_table;
+   222	
+   223		return rsc_table;
+   224	}
+   225	EXPORT_SYMBOL_GPL(tee_rproc_find_loaded_rsc_table);
+   226	
+   227	int tee_rproc_start(struct rproc *rproc)
+   228	{
+   229		struct tee_ioctl_invoke_arg arg;
+   230		struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+   231		struct tee_rproc *trproc = rproc->tee_interface;
+   232		int ret;
+   233	
+   234		if (!trproc)
+   235			return -EINVAL;
+   236	
+   237		tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_START_FW, &arg, param, 0);
+   238	
+   239		ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+   240		if (ret < 0 || arg.ret != 0) {
+   241			dev_err(tee_rproc_ctx->dev,
+   242				"TA_RPROC_FW_CMD_START_FW invoke failed TEE err: %x, ret:%x\n",
+   243				arg.ret, ret);
+   244			if (!ret)
+   245				ret = -EIO;
+   246		}
+   247	
+   248		return ret;
+   249	}
+   250	EXPORT_SYMBOL_GPL(tee_rproc_start);
+   251	
+   252	int tee_rproc_stop(struct rproc *rproc)
+   253	{
+   254		struct tee_ioctl_invoke_arg arg;
+   255		struct tee_param param[MAX_TEE_PARAM_ARRY_MEMBER];
+   256		struct tee_rproc *trproc = rproc->tee_interface;
+   257		int ret;
+   258	
+   259		if (!trproc)
+   260			return -EINVAL;
+   261	
+   262		tee_rproc_prepare_args(trproc, TA_RPROC_FW_CMD_STOP_FW, &arg, param, 0);
+   263	
+   264		ret = tee_client_invoke_func(tee_rproc_ctx->tee_ctx, &arg, param);
+   265		if (ret < 0 || arg.ret != 0) {
+   266			dev_err(tee_rproc_ctx->dev,
+   267				"TA_RPROC_FW_CMD_STOP_FW invoke failed TEE err: %x, ret:%x\n",
+   268				arg.ret, ret);
+   269			if (!ret)
+   270				ret = -EIO;
+   271		}
+   272	
+   273		if (!rproc->table_ptr)
+   274			return ret;
+   275	
+ > 276		iounmap(trproc->rsc_table);
+   277		trproc->rsc_table = NULL;
+   278		rproc->table_ptr = NULL;
+   279	
+   280		return 0;
+   281	}
+   282	EXPORT_SYMBOL_GPL(tee_rproc_stop);
+   283	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
