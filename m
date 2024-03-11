@@ -1,60 +1,60 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E4745C07
-	for <linux-remoteproc@vger.kernel.org>; Mon, 11 Mar 2024 15:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5053546449
+	for <linux-remoteproc@vger.kernel.org>; Mon, 11 Mar 2024 15:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710171250; cv=none; b=M5wmWjpAobWHl/eAUxpFtee0Sn35pFdgLo9pRT01lqqtZQlxQX4CApRNX0lYN71kYW5Ig79X4naT5RV30CU1t2Qcy2ClCDYl2FUSk0qSlknklYTRgMqI6fHiaMZOBCnuZpWrelqhy/Ro4on/65L0E8uPQNpTH4hTaeBHdvdEE/A=
+	t=1710171252; cv=none; b=Pvs2K4YfGyCGyQBQV1Syd0b/JWHRjUA/a/+XceNj6G1RUqMlu5DwCIu18t9EsmQn1z4Z3edXtAcdW5rt+hoKUnY/SwEvGBgdXBmNIjivxIdbXrm4ZKk3zncIv76SWq879nrYEGzKdZxvYR5pfpAlG7qnYXP0t9qbmwGWJwzSmU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710171250; c=relaxed/simple;
-	bh=csXLAeosHLzaDT1emhK9UjK0flIW3eHZEn7ZeKWaD8Y=;
+	s=arc-20240116; t=1710171252; c=relaxed/simple;
+	bh=/rRox2SCMp2aPtxhw0s9fG7CibeCKgCzG+KHihK7+cQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S6jRV+fd4tfQNPH0snvZ7tloLvG/7WxSTRCAB2B63MEQAKANdwxWU9krckpOlqzxIqYGqXFXvwe/E0OVy8+mALx+irVvChG4jmph/RcAjxL3faOgzC/nVbp1ejrn2ggR62j54+riR9UUv3ETGT757mqxYueb/n17hJwOnaRsauc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gipoMze8; arc=none smtp.client-ip=209.85.208.176
+	 In-Reply-To:To:Cc; b=d475Tt/LRp5MHkgoaAuioAu/4bjFP+1045Ph5zKr06nHoyxdvGDWAS/sb9mHVc2qqkxgLV2IuoN8AFsiVlB6z1LE7+fwNjVIO9XSDDcj59QE420IkJccmXzU2AEHT7Nv6pPfN6UeWtshh4wepmoKBarF6yJIF10uXj2B2fwZ+3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSHpmVzO; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gipoMze8"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d311081954so53384981fa.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Mar 2024 08:34:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSHpmVzO"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d382a78c38so53474331fa.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Mar 2024 08:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710171247; x=1710776047; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710171248; x=1710776048; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wqmPdjghu8YQzANGIWFKy+g9UopAwMWqD3Z+KAznsUw=;
-        b=gipoMze8CtMAft2+u71gcJUXZiJBqVKrFvnIaQDyJTx+lYqQBJWtW7MkQiH+NpDSJv
-         53tyM/JN6x5TMeQYTZVWI7KApwROT8kGyMP7kKaWo64FDE5pkjSA869TDH0wf5bjckV1
-         /7YPvV8C1BnGzjzjQc9DFUCtyGsvsc99w15WlujxufBGKGz6H3hSxYdaQWjLoqukQviO
-         6k5WIxDPm4acwHPEioDM3656tp3M9IZCmxuyh0fVluwlt0AXausjjP1hOdhFQSBJWxu2
-         O4RvC9//RJKQhkjziuIbJrL2R7XHFzBcK1BbMuuZdnwlIppE4wJAHEzH45gVVcn7FUYi
-         M/6A==
+        bh=v9pNS053BRSrQf0GTpDy4CzUV8zEU4LHHAl3/IMUQ5g=;
+        b=qSHpmVzOPKnPkq9m7Fx/yDI9Y8BemxD0NFUvzPKEPg7Yw5p2aFkIO9Tvgdl3GDl7zp
+         9y1jWk8q2lKm1KjPGXRrkh1yYVWKGutjzt/5XfoK31yALhwAJSSwbf45V3O1ox3W/zIl
+         JeTMfwTCI3a/mzr7PY0A29R4nbegAWo/5UCyUB2wNTXi+jeqtn+2Sxp53j6VBCKDIeQl
+         dkv3D/ZTaFmjfVndQT2LlxuFcVNK1AoD/DYpR7VkE4l7gLX3dyNAwqup8wh2eDcQzYAA
+         CDuHl6fQ6w50xx44NAgZFoXp6hZS4tiPUX4WYdjN9rMwCA+SOR5ljb8r4vuhJVigA5rv
+         BP/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710171247; x=1710776047;
+        d=1e100.net; s=20230601; t=1710171248; x=1710776048;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wqmPdjghu8YQzANGIWFKy+g9UopAwMWqD3Z+KAznsUw=;
-        b=r9Q9BiI72xjUO01EIyOj8fW8o6dtC+mSU6t4QLmzZRqEm8FdxNiUwIUy5dJpSlKhld
-         ybwLR2xhOuGsuAcwkMgeIA4SSRsc6rYKInh8jmw2IUAeD4pYC2v0F1HSTNpqHm1zb6HK
-         RtW9NkJJAZLk7MmhaYLzNEiv3QkPTYX8Kq4QXG0tbFevx3egOoEKj3c+5O+S8Slr4/6f
-         QnEseM1ZpcO5H3lnQN/DXvsolOa3mMWqYWwvnUrkPtoDR5nSjXBWi8mytGV0X4bqNY2A
-         DJICJxbfAM6LqbiixPGRVHCsTFUEaauuOPD0wIRyQbZg8AlWmcKELvJGN1CUgI4qT7ZP
-         QDww==
-X-Forwarded-Encrypted: i=1; AJvYcCXsyTvCOoB/Ob2iA9izW3xLAwHi5DvSmhzT8mYDoJhjyBbGafCgjOZOUqgp7zwMq9rdmp3c/HXyjDXQUwncosqDkk7gMhlZmEgkUXkJ3OX4Rw==
-X-Gm-Message-State: AOJu0YyINUH4EKOPRZOgsE/Mq+Pxu6SiKfd99tf9UXTAiA1hPa2Co02z
-	jBvs71IeJkifpf+FoNye1x1YFSKJCdSYerSzBLHOYOxEkhDeua2hT9CQS2zgZmE=
-X-Google-Smtp-Source: AGHT+IHLen5haH/KIDqXSBnm6njMDNQd6Suv70/wZOBLhQ1RXfBDBeyRpILDckTG4uROvoPSav0/6A==
-X-Received: by 2002:a2e:8509:0:b0:2d2:cb43:bc86 with SMTP id j9-20020a2e8509000000b002d2cb43bc86mr3844123lji.45.1710171246715;
-        Mon, 11 Mar 2024 08:34:06 -0700 (PDT)
+        bh=v9pNS053BRSrQf0GTpDy4CzUV8zEU4LHHAl3/IMUQ5g=;
+        b=u5DErECDSqIZrWf1P5m8EFCSfitMaLN2tiuxOvB4DVFYnqd5B7S76Y/kS1EptQ4n21
+         VKPQ20dgYR8GoSRR94+GO4qd9ASnXUhEmSq6oc5lmZ9gWC5t2+JPsLQbkVLGKlnqL59K
+         n/PEiGKh4pB2PEtOFEvz9N5SR0GVQLHIX8vdNMkdsgmRQ9MdJH7gLEDkuNMbsAYYFND1
+         RK+fWlkGpgfDY7MY85V0T7agSiOHoAHYMUFBhWarJd/sJNhKk5uyrpBhaokwFOeCthGx
+         cSPNE6T7zBtA6mTHCFRLdji1sodVg2nC5yuo8Ml2dV3W2J/J77lT7N4KqJbKFsVt6+Mv
+         6xQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnLDxHDyfNqtD9Pvc65sSV29PX0A9bAfzHbmyW8Q2io/UAHoDeDqd9AC0Xnm94i/XEvh8J1Sa3jcNPYXFvUlTbG6Rfh5bnIPr6TOdJG0Gx7A==
+X-Gm-Message-State: AOJu0Yxy5X9ABmxpXKluX7gPW5NnUKIhSdtutVGGItwt0tuGFR/dkb8u
+	1v+ovwB5OSXj/6vP5lD9GzpwPB9KT3uks/HtIwgvQbvZBWe4LEsRcCGbr3HXGVs=
+X-Google-Smtp-Source: AGHT+IGHrr/40zH6l6XcVU6ripxwLJlGeA1jdobwtPgb87/UbiBVpjR2tKXNGtH9WVT+k2K0SUtqZg==
+X-Received: by 2002:a2e:7a0d:0:b0:2d2:e44e:a5cc with SMTP id v13-20020a2e7a0d000000b002d2e44ea5ccmr3952716ljc.46.1710171248533;
+        Mon, 11 Mar 2024 08:34:08 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id q19-20020a2e9153000000b002d449f736ddsm119294ljg.0.2024.03.11.08.34.05
+        by smtp.gmail.com with ESMTPSA id q19-20020a2e9153000000b002d449f736ddsm119294ljg.0.2024.03.11.08.34.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Mar 2024 08:34:06 -0700 (PDT)
+        Mon, 11 Mar 2024 08:34:08 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 11 Mar 2024 17:34:02 +0200
-Subject: [PATCH v4 2/7] soc: qcom: qmi: add a way to remove running service
+Date: Mon, 11 Mar 2024 17:34:04 +0200
+Subject: [PATCH v4 4/7] remoteproc: qcom: pas: correct data indentation
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240311-qcom-pd-mapper-v4-2-24679cca5c24@linaro.org>
+Message-Id: <20240311-qcom-pd-mapper-v4-4-24679cca5c24@linaro.org>
 References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
 In-Reply-To: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -72,121 +72,190 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  Johan Hovold <johan+linaro@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3503;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4313;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=csXLAeosHLzaDT1emhK9UjK0flIW3eHZEn7ZeKWaD8Y=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBl7yRrL2prbFbuK79vS0F2a8GlhPfZVbWN/E6Xq
- duLqVwXa2+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZe8kawAKCRCLPIo+Aiko
- 1S5aCACkUyHCPrxn6erHvTNwfIoJijqSsCqC/Prmkilc3akRz38BugzlciQCplu3XeWeJbLUaza
- tDOiStmcgGIcWJ9QHsDArodLBUH3KpeL8UNIzQ+/o0POQ1qV8U+O+XjyH9MTiuF9e/2dIvsP2ZY
- cScmZLGdodIoXBP+BDPHh6orDFXci6uiZc1gztQb3dAbaB1K8b7tj1NNtz9lx5ijJIsHhZyjiqX
- jchwmM1nsB2obc9LCrQ40p+FGPIQA516usn/oxuBkw9hMLaMayyEa/4jlTp1ypBlPFbA8NWhghd
- cPtk0/KlgsgxiXBsgHhltaWNzWx+Tksu+1rX6Q1pxGjCdYrp
+ bh=/rRox2SCMp2aPtxhw0s9fG7CibeCKgCzG+KHihK7+cQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBl7yRr9pHLjHae9zAu0qKs64ChMHNWt4YnJ11xz
+ +F9j5HYDYaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZe8kawAKCRCLPIo+Aiko
+ 1Zo+CACZp8M/mhg2oF2BTzPGLm8EAWhyAwUGCNLIhyET4QAAxo4W99wudk6F5b6PHdoVbjAfZEm
+ e5X1HQ9MaVnjLJx6Ri0rlwN32GUxcyz8z30Cf6UB0CWjMc8ABEFKIkTDeIw8i8jCYZcyWf/iftC
+ 7IW4CuOeuBxCDY56FNwicovNyTD4ZpLFkHkhF4al8eIMDL8eMBawGF38AL4+iRtqLCiV52nFZtg
+ Znxp1l52sfytQWGg9vQVrPAYKTOcSeC55wFHc2P5hPRifL/jt5TJmZ19E/XQtYlA4+ixpDDPyQY
+ TpP4ke+nGdyJ1dpjeqz0PaitItyxUawAKsJgR4JWvYLRi8Sf
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add qmi_del_server(), a pair to qmi_add_server(), a way to remove
-running server from the QMI socket. This is e.g. necessary for
-pd-mapper, which needs to readd a server each time the DSP is started or
-stopped.
+Correct indentation of several struct adsp_data instances to always use
+a single TAB character instead of two.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/soc/qcom/qmi_interface.c | 67 ++++++++++++++++++++++++++++++++++++++++
- include/linux/soc/qcom/qmi.h     |  2 ++
- 2 files changed, 69 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 124 ++++++++++++++++++-------------------
+ 1 file changed, 62 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
-index bb98b06e87f8..18ff2015c682 100644
---- a/drivers/soc/qcom/qmi_interface.c
-+++ b/drivers/soc/qcom/qmi_interface.c
-@@ -289,6 +289,73 @@ int qmi_add_server(struct qmi_handle *qmi, unsigned int service,
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index d0b1f0f38347..3235249d703d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -807,24 +807,24 @@ static void adsp_remove(struct platform_device *pdev)
  }
- EXPORT_SYMBOL_GPL(qmi_add_server);
  
-+static void qmi_send_del_server(struct qmi_handle *qmi, struct qmi_service *svc)
-+{
-+	struct qrtr_ctrl_pkt pkt;
-+	struct sockaddr_qrtr sq;
-+	struct msghdr msg = { };
-+	struct kvec iv = { &pkt, sizeof(pkt) };
-+	int ret;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+	pkt.cmd = cpu_to_le32(QRTR_TYPE_DEL_SERVER);
-+	pkt.server.service = cpu_to_le32(svc->service);
-+	pkt.server.instance = cpu_to_le32(svc->version | svc->instance << 8);
-+	pkt.server.node = cpu_to_le32(qmi->sq.sq_node);
-+	pkt.server.port = cpu_to_le32(qmi->sq.sq_port);
-+
-+	sq.sq_family = qmi->sq.sq_family;
-+	sq.sq_node = qmi->sq.sq_node;
-+	sq.sq_port = QRTR_PORT_CTRL;
-+
-+	msg.msg_name = &sq;
-+	msg.msg_namelen = sizeof(sq);
-+
-+	mutex_lock(&qmi->sock_lock);
-+	if (qmi->sock) {
-+		ret = kernel_sendmsg(qmi->sock, &msg, &iv, 1, sizeof(pkt));
-+		if (ret < 0)
-+			pr_err("send service deregistration failed: %d\n", ret);
-+	}
-+	mutex_unlock(&qmi->sock_lock);
-+}
-+
-+/**
-+ * qmi_del_server() - register a service with the name service
-+ * @qmi:	qmi handle
-+ * @service:	type of the service
-+ * @instance:	instance of the service
-+ * @version:	version of the service
-+ *
-+ * Remove registration of the service with the name service. This notifies
-+ * clients that they should no longer send messages to the client associated
-+ * with @qmi.
-+ *
-+ * Return: 0 on success, negative errno on failure.
-+ */
-+int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
-+		   unsigned int version, unsigned int instance)
-+{
-+	struct qmi_service *svc;
-+	struct qmi_service *tmp;
-+
-+	list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
-+		if (svc->service != service ||
-+		    svc->version != version ||
-+		    svc->instance != instance)
-+			continue;
-+
-+		qmi_send_del_server(qmi, svc);
-+		list_del(&svc->list_node);
-+		kfree(svc);
-+
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(qmi_del_server);
-+
- /**
-  * qmi_txn_init() - allocate transaction id within the given QMI handle
-  * @qmi:	QMI handle
-diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
-index 469e02d2aa0d..5039c30e4bdc 100644
---- a/include/linux/soc/qcom/qmi.h
-+++ b/include/linux/soc/qcom/qmi.h
-@@ -241,6 +241,8 @@ int qmi_add_lookup(struct qmi_handle *qmi, unsigned int service,
- 		   unsigned int version, unsigned int instance);
- int qmi_add_server(struct qmi_handle *qmi, unsigned int service,
- 		   unsigned int version, unsigned int instance);
-+int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
-+		   unsigned int version, unsigned int instance);
+ static const struct adsp_data adsp_resource_init = {
+-		.crash_reason_smem = 423,
+-		.firmware_name = "adsp.mdt",
+-		.pas_id = 1,
+-		.auto_boot = true,
+-		.ssr_name = "lpass",
+-		.sysmon_name = "adsp",
+-		.ssctl_id = 0x14,
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.auto_boot = true,
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
+ };
  
- int qmi_handle_init(struct qmi_handle *qmi, size_t max_msg_len,
- 		    const struct qmi_ops *ops,
+ static const struct adsp_data sdm845_adsp_resource_init = {
+-		.crash_reason_smem = 423,
+-		.firmware_name = "adsp.mdt",
+-		.pas_id = 1,
+-		.auto_boot = true,
+-		.load_state = "adsp",
+-		.ssr_name = "lpass",
+-		.sysmon_name = "adsp",
+-		.ssctl_id = 0x14,
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.auto_boot = true,
++	.load_state = "adsp",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
+ };
+ 
+ static const struct adsp_data sm6350_adsp_resource = {
+@@ -859,18 +859,18 @@ static const struct adsp_data sm6375_mpss_resource = {
+ };
+ 
+ static const struct adsp_data sm8150_adsp_resource = {
+-		.crash_reason_smem = 423,
+-		.firmware_name = "adsp.mdt",
+-		.pas_id = 1,
+-		.auto_boot = true,
+-		.proxy_pd_names = (char*[]){
+-			"cx",
+-			NULL
+-		},
+-		.load_state = "adsp",
+-		.ssr_name = "lpass",
+-		.sysmon_name = "adsp",
+-		.ssctl_id = 0x14,
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		NULL
++	},
++	.load_state = "adsp",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
+ };
+ 
+ static const struct adsp_data sm8250_adsp_resource = {
+@@ -906,17 +906,17 @@ static const struct adsp_data sm8350_adsp_resource = {
+ };
+ 
+ static const struct adsp_data msm8996_adsp_resource = {
+-		.crash_reason_smem = 423,
+-		.firmware_name = "adsp.mdt",
+-		.pas_id = 1,
+-		.auto_boot = true,
+-		.proxy_pd_names = (char*[]){
+-			"cx",
+-			NULL
+-		},
+-		.ssr_name = "lpass",
+-		.sysmon_name = "adsp",
+-		.ssctl_id = 0x14,
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		NULL
++	},
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
+ };
+ 
+ static const struct adsp_data cdsp_resource_init = {
+@@ -1063,33 +1063,33 @@ static const struct adsp_data sc8180x_mpss_resource = {
+ };
+ 
+ static const struct adsp_data msm8996_slpi_resource_init = {
+-		.crash_reason_smem = 424,
+-		.firmware_name = "slpi.mdt",
+-		.pas_id = 12,
+-		.auto_boot = true,
+-		.proxy_pd_names = (char*[]){
+-			"ssc_cx",
+-			NULL
+-		},
+-		.ssr_name = "dsps",
+-		.sysmon_name = "slpi",
+-		.ssctl_id = 0x16,
++	.crash_reason_smem = 424,
++	.firmware_name = "slpi.mdt",
++	.pas_id = 12,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"ssc_cx",
++		NULL
++	},
++	.ssr_name = "dsps",
++	.sysmon_name = "slpi",
++	.ssctl_id = 0x16,
+ };
+ 
+ static const struct adsp_data sdm845_slpi_resource_init = {
+-		.crash_reason_smem = 424,
+-		.firmware_name = "slpi.mdt",
+-		.pas_id = 12,
+-		.auto_boot = true,
+-		.proxy_pd_names = (char*[]){
+-			"lcx",
+-			"lmx",
+-			NULL
+-		},
+-		.load_state = "slpi",
+-		.ssr_name = "dsps",
+-		.sysmon_name = "slpi",
+-		.ssctl_id = 0x16,
++	.crash_reason_smem = 424,
++	.firmware_name = "slpi.mdt",
++	.pas_id = 12,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"lcx",
++		"lmx",
++		NULL
++	},
++	.load_state = "slpi",
++	.ssr_name = "dsps",
++	.sysmon_name = "slpi",
++	.ssctl_id = 0x16,
+ };
+ 
+ static const struct adsp_data wcss_resource_init = {
 
 -- 
 2.39.2
