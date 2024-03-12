@@ -1,58 +1,58 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44CC79B8C
-	for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 12:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E04079DC7
+	for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 12:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710245408; cv=none; b=K/3YISSWpaUplgLAO+TvJbiZKjHeh3dUgD+vMhPEqbwWc3pHRHCpO9DeTRlhTIqC+Rsy0/iLRhBgxvhYRbObRkwQwFUCcMitqwPiYIaYVmaaR8bH+7k3OhP51GRYPSCZJ3uGuUAowIurFSGTviEYflZOfO0lek8X9cSLS5tO7hQ=
+	t=1710245447; cv=none; b=LvZidM5CzHeivC5CaBSmlF0XKU51qpftYsNi2yLL4jCKPqbDHAlaijtfjcwLn9KbaxQGb4TxodPOSS6XahxBsvG3mfTvhM+AYP2MUXF/996Dz7tONNP+JUZyjr+GPgIYf2BwSt6BaExd+XMOAlWX/Jb9uutAa8/s92SLIXRbvgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710245408; c=relaxed/simple;
-	bh=hDxEz2OH4QmQwW1yiJ//w+TME4XEXUrwQv6kDmcN8rU=;
+	s=arc-20240116; t=1710245447; c=relaxed/simple;
+	bh=PyBGji7l7FI7brDGl4t7hJ1vrfvni7rDqwS5suVvrs4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bT8dZS8awrLC+qRbl0dERH9oRtNT2ERfRrm6VQcU+XoLVzduMY/6bTV0ZeFy6TuRjnehIIuE++4EZodZM1UkcO+qkPmzRi8FIehZpsacTOYkdSUVTwXjwJEesLd3Vegn6u5ttAeGJDOBsYNutNcUonppt3OA2FzmR2DyKBhGykU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aqmk5Zt7; arc=none smtp.client-ip=209.85.208.171
+	 In-Reply-To:Content-Type; b=NdnqD9IPGuMiQuS9r+QIm8GmwjbKIFtBLsmWjM39UUyg3uguOurcdrHtt2pcKcCjDfSo6YgkazMzNwE26BrlUqSVbsQjWHcRS88m3G8BHGqqkY2bYJ6VJymJcaDd2+MPYdXlCMH/td3zAty5XC/JWiht3V7LC2sz1HZSOpBCfTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C+hKml1X; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqmk5Zt7"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2d23114b19dso72417201fa.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 05:10:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+hKml1X"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-413383969efso3331265e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 05:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710245405; x=1710850205; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710245444; x=1710850244; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ha8faRN/yVfn98uA+FQFvowllOk5X8uUBDqlexcK+hk=;
-        b=aqmk5Zt7TZwDnxYJSGnreky7TDcYtvwL+LvxR4HdO4vbt4FpNtOV1Ca/d4Sai45ZLh
-         quJk6aWTwYFDaQ059Ody9xL0WEx+SwDdmKNTT1pBx6EebE6EtBEjA5BTAQhmxXgoTLNN
-         oxwa3F3vcahLbwERA+NT+aVr96lf8bWCkB4YvmetGcoZ0kejlaJreCfc5rUJjnp77f2I
-         i4pNv0uAsrBeRxxgi82HKFbTUcNe2x3IpfjSLWgHgxmaQqc7tvPcV2QTIy1U2pkjdYEr
-         qOZhQrTUsQaC6gCMMIbWH19/JkAfo7Bee0LRGbi67S56bUtMe0AAMrayTraNYOGou300
-         QoEQ==
+        bh=8rYihkVs9Zh9xGQ3HTA59y2k+odcsTvCnrT1AkFjmbA=;
+        b=C+hKml1Xy1rsiaMuFXmkoP5hmGLH1BaglR/2AHJB7cxOoSXtrcrwJlI1WwkP5e7HKU
+         TkV+hrqs+ofWiyrWhLTQHuxzNKtbQaHmQhcrEZ1UlLpkYVPJx7RjG3cTqpLS8Sqfv/pq
+         9h4zq8Xwe4V3i9OTK5Mt3U1TEjRqdKKWJuqQyvj6uSOo5X0LMuuwx3cyuhvGEFwIGdx9
+         extRlnyaGEI91YyLt17ot8ESO4G0BEyuZ4tMY4Ocy1OSvG7N8HqpE/dBVwE7tsJSPNW6
+         ST3fZz2A8Uo38Nd0wr963XCkzYsh6YCRGvIl0wYMuv9cqSy23CmVSH1DfBcqzaYBg71l
+         b7wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710245405; x=1710850205;
+        d=1e100.net; s=20230601; t=1710245444; x=1710850244;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ha8faRN/yVfn98uA+FQFvowllOk5X8uUBDqlexcK+hk=;
-        b=VCTfCvJoqObIRka8CABWWcD4tobJVNJiQwjlNlzdKj3fvBJcuWAoLWVIvswD0No6Kc
-         dkDhEw3DyDMWFgyKuQSpuw098TPGe5961Zun0cDquHFIEoQVPznMN/nqNg7HV97JdAxn
-         q8slr3dPt012U51WO2PF1LuL038P9pmYzlW9hYJ83fYfzNcLl7RaqIgF8/0LxHYCjqs6
-         76gvSPzU5aSTq8eYmEmweNLsQCTVmuiwlkZ41FR71fWjHsXwf8Kh5RXWgw+f1csK5kNK
-         Ya2J56DMDvhNr31hiNTQgO2Bedi9XjoWPYhxHdUrz4ktZwxltIPVY2OVq0G2Qchz+tal
-         KUGA==
-X-Gm-Message-State: AOJu0YzJOPhv1BHmBH3ZjKHph7hZoO7LyI0hMjb1uJp11WING9/vxCXK
-	vxfNjnBs4qA4A41d12Wja46AFlvCTR8ikL4NOotbwteX8ijzLiDu4kEQ1sBahlE=
-X-Google-Smtp-Source: AGHT+IGLRhqZ1cowdJemW7WbRaJP4k+LcuAmSZsTCZbbKBRPKJFEhrDt8+CgxA9tAl//7bMAyVthsw==
-X-Received: by 2002:ac2:4c42:0:b0:513:3dc5:cd5f with SMTP id o2-20020ac24c42000000b005133dc5cd5fmr3441452lfk.40.1710245404889;
-        Tue, 12 Mar 2024 05:10:04 -0700 (PDT)
+        bh=8rYihkVs9Zh9xGQ3HTA59y2k+odcsTvCnrT1AkFjmbA=;
+        b=Cy/vItT0orVUgzzOI2KlyUdB8KsgjtTLmZ6g/iYid0f2nS71iD3yN4m3mQ0wiDT1Pr
+         DopDHn1RZXQlyHPlM2XZj5pqbrJdDZt18q3jkcJk4mHGBW36wE2d6HTs7O74FAOFNw16
+         3yCX6s+LD9LQTQwkyaRg+fh2yS3nqDZA/JHVFLpI8sRQE3SRGt96c8YTLBci02s9AEA8
+         yyw93tThLhn0Cpp2OVSYOC1BdIxDdwI3weszVP9q8GJGyJL6BJ6r0WORgRNwiKm9kdgR
+         fb2C//mAQt/aiMkVFZDJjjDRLO5aMBHwrJ1BGo4csDuNyjwwrSRIM0LminTV7JLXtdYq
+         k6oA==
+X-Gm-Message-State: AOJu0YwUoLpKFpDCSKH6/E/5MeFS06T5CmUXcidgoILa/kZF1rwWXdaI
+	ZKj5cWl0HWm8wrtNKccSDUm4f/XoGL9LKyO2U68Bk3cTRHZ4kiw7wWHhc3QkuGo=
+X-Google-Smtp-Source: AGHT+IHv496nHXyZhpEXIQR50uU5RPKd7kp+yl+ngA0rkiqjzciedtEC6obZ7CvBVhtshMovRX0y/g==
+X-Received: by 2002:a05:600c:3514:b0:413:28ae:ebcb with SMTP id h20-20020a05600c351400b0041328aeebcbmr6301353wmq.3.1710245444558;
+        Tue, 12 Mar 2024 05:10:44 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05600c138f00b00412706c3ddasm18794203wmf.18.2024.03.12.05.10.03
+        by smtp.gmail.com with ESMTPSA id u15-20020a05600c138f00b00412706c3ddasm18794203wmf.18.2024.03.12.05.10.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Mar 2024 05:10:04 -0700 (PDT)
-Message-ID: <18d34385-fd0b-401c-9ca4-ccf22106bd68@linaro.org>
-Date: Tue, 12 Mar 2024 13:10:02 +0100
+        Tue, 12 Mar 2024 05:10:44 -0700 (PDT)
+Message-ID: <cc06e895-e0f5-40da-8c29-0e4bf62bcacf@linaro.org>
+Date: Tue, 12 Mar 2024 13:10:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -73,7 +73,7 @@ Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
 References: <20240301181638.814215-1-tanmay.shah@amd.com>
  <20240301181638.814215-3-tanmay.shah@amd.com>
  <fb78bdda-2ec7-4fcc-888e-233905a9386c@linaro.org>
- <2c45d7fb-06e4-468d-9415-0eaa48c5250b@amd.com>
+ <17d58a39-7d56-4513-8d5f-7c18809c6cfb@amd.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -119,12 +119,13 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2c45d7fb-06e4-468d-9415-0eaa48c5250b@amd.com>
+In-Reply-To: <17d58a39-7d56-4513-8d5f-7c18809c6cfb@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/03/2024 17:27, Tanmay Shah wrote:
->>> +    then:
+On 11/03/2024 19:39, Tanmay Shah wrote:
+>>> +
+>>> +    else:
 >>> +      patternProperties:
 >>> +        "^r5f@[0-9a-f]+$":
 >>> +          type: object
@@ -135,36 +136,24 @@ On 11/03/2024 17:27, Tanmay Shah wrote:
 >>> +              items:
 >>> +                - description: ATCM internal memory
 >>> +                - description: BTCM internal memory
->>> +                - description: extra ATCM memory in lockstep mode
->>> +                - description: extra BTCM memory in lockstep mode
 >>> +
 >>> +            reg-names:
 >>> +              minItems: 1
 >>> +              items:
 >>> +                - const: atcm0
 >>> +                - const: btcm0
->>> +                - const: atcm1
->>> +                - const: btcm1
+>>> +
+>>> +            power-domains:
+>>> +              maxItems: 3
 >>
->> Why power domains are flexible?
+>> Please list power domains.
 > 
-> User may not want to use all the TCMs. For example, if users want to turn-on only TCM-A and rest of them want to keep off, then
+> Hello,
 > 
-> they can avoid having power-domains of other TCMs in the device-tree. This helps with less power-consumption when needed.
-> 
-> Hence flexible list of power-domains list.
+> Sent v13 addressing both comments.
 > 
 
-Isn't turning on/off driver's job? Sorry, but what is "user" here? DTS
-describes bindings, not OS policy.
-
-Also, please wrap your replies to match email style.
-
-> I can certainly mention "items:" under power-domains property.
-> 
-> 
->>
-
+And gave me exactly two hours to disagree?
 
 Best regards,
 Krzysztof
