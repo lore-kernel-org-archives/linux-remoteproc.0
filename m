@@ -1,361 +1,193 @@
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9886FA8;
-	Tue, 12 Mar 2024 02:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5B3AD53;
+	Tue, 12 Mar 2024 09:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710209427; cv=none; b=hrPQ0g6XpHmP1uLj3amJcelVdVsset+CefuVql5aaltCLpOwVPrFtaYMHm44jDyB73RMMQGKKiF+tNMt+Ul134E4IM0Ejgbpvd5dgXTiFgibKnalkvqEInFVof172XFoFZKEsT5qH/MEXkzV0UkmgagfDENhPJyjSSI2ymH3B+4=
+	t=1710236211; cv=none; b=p89k4xVbE14bI9CaoMjG+BklX3Uxqa8QR6zq3gRyGEzNvXj/Tos0hNsZgl+vdoWZslE3MGJa6Ji+V4beX0k9TlqXcYqi88r0grliizo2Gz9bWi3c2VAFgidJ83HxmRVpdYIUQGSGVX1kVAEHHKHxvkjdV36pW0hydCuR5UsmWGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710209427; c=relaxed/simple;
-	bh=VH2NnI3whcbRVOJQYJEwbEmXh5FU+JG4V3KHXD24YYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=atj7kw83IE0aK72mgTwga7HNNEsyb0/F4SebebUWtZksnU1y9rKi1Fq5zGHnunDSs4+2JsGrJBKx8B9rMsJ2Y/+swc8TsJK9R9EZjXRWYGdz+eqKMlgj0QqHxlA5w14AdDhiOo/2wOeZ/WYFTn6qUERsjahClVH5MauyxjzMDCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ki55+5ff; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1710236211; c=relaxed/simple;
+	bh=YM0BcplBKkMmSr5nfS5GO00ZNnZ1NNfv8isr9+AmYIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cmnlDRVda8l9zQOfw7cgCr4aG3wAiC6+fqTuSWIAufY4L2ED6Um/4kXtisG2IUArRC3yc6pWHk/TvUD/5K45Jxq/e84ecfOfFDzBwIo/kUdRvcYyo4Zi2LORct15ZqtB2pD9nSGs3Ousb5aIbXStLKw7A0KCRGCGlJJUCdyEt+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HevcjAFE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ki55+5ff"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1710209422; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=laBHY5qVFBbYCcttAEKZ67DNxV+MUIYNzZWIb9yC5JM=;
-	b=ki55+5ffW8NVvSrcOcBQ+PHuP3k0/tck9CZf2JtbyBsJaOcIXBDqxbH4EkCURAi1f2qbGlI/zsowiDDsi/idu4MSiXar0SWGOt56lQXwmxvSdqcHfuGckW6wVJQk36PqwmCJxvpy1UxtXHWLB7F7zmG7CW3F5JWpmC25a/SmK+w=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0W2JwVTi_1710209419;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W2JwVTi_1710209419)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Mar 2024 10:10:20 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: virtualization@lists.linux.dev
-Cc: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HevcjAFE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6216C433C7;
+	Tue, 12 Mar 2024 09:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710236210;
+	bh=YM0BcplBKkMmSr5nfS5GO00ZNnZ1NNfv8isr9+AmYIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HevcjAFERAPwvhFlVaA3Fr1JYySnk0yE6YHwGG2ZIo8Upx/+miOCgOp+BTt8Z90Ez
+	 4aq78l9O88H6cJUX5N/kuI4l4syxwO4Ab1Q9RBO0gFXj46dvvUGzezmf8PvSYgTiBK
+	 4gn0RVBxc7Zh0ozYoCaZOhghB2W/UivOmSIu+r0wjXFnQV0eSNcQHx1S6ZzjIxhlXj
+	 I0a5JbJcqSVr0vVvUYnjIfxSpijhEr1thdCNgg5VlUF8bVrIL49HU6HbFfLOY+1Yaz
+	 sh6UTs2Q5BmZVEWhdsX8GAtxaMep4XEQsKsroBNOOASWRr0asNPhPguNx1iOR0n4RI
+	 Al1en0Y014QlQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rjyZ6-000000007Qv-0KEZ;
+	Tue, 12 Mar 2024 10:36:56 +0100
+Date: Tue, 12 Mar 2024 10:36:56 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	linux-um@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [PATCH vhost v3 4/4] virtio_ring: simplify the parameters of the funcs related to vring_create/new_virtqueue()
-Date: Tue, 12 Mar 2024 10:10:13 +0800
-Message-Id: <20240312021013.88656-5-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20240312021013.88656-1-xuanzhuo@linux.alibaba.com>
-References: <20240312021013.88656-1-xuanzhuo@linux.alibaba.com>
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v4 3/7] soc: qcom: add pd-mapper implementation
+Message-ID: <ZfAiOFccdV4SdytQ@hovoldconsulting.com>
+References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
+ <20240311-qcom-pd-mapper-v4-3-24679cca5c24@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Git-Hash: 8d1a4cfe2924
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240311-qcom-pd-mapper-v4-3-24679cca5c24@linaro.org>
 
-As the refactor of find_vqs()/vring_new_virtqueue()/vring_create_virtqueue
-the struct cfg/tp_cfg are passed to vring.
+On Mon, Mar 11, 2024 at 05:34:03PM +0200, Dmitry Baryshkov wrote:
+> Existing userspace protection domain mapper implementation has several
+> issue. It doesn't play well with CONFIG_EXTRA_FIRMWARE, it doesn't
+> reread JSON files if firmware location is changed (or if firmware was
+> not available at the time pd-mapper was started but the corresponding
+> directory is mounted later), etc.
+> 
+> Provide in-kernel service implementing protection domain mapping
+> required to work with several services, which are provided by the DSP
+> firmware.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This patch refactors the vring by these structures. This can simplify
-the code.
+Just a couple of drive-by comments below.
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/virtio/virtio_ring.c | 157 +++++++++++------------------------
- 1 file changed, 50 insertions(+), 107 deletions(-)
+> +int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
+> +{
+> +	int ret;
+> +	int i;
+> +
+> +	mutex_lock(&qcom_pdm_mutex);
+> +
+> +	if (qcom_pdm_server_added) {
+> +		ret = qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
+> +				     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
+> +		if (ret)
+> +			goto err_out;
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 03687800d8ff..94c442ba844f 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -223,15 +223,11 @@ struct vring_virtqueue {
- #endif
- };
- 
--static struct virtqueue *__vring_new_virtqueue(unsigned int index,
-+static struct virtqueue *__vring_new_virtqueue(struct virtio_device *vdev,
-+					       unsigned int index,
- 					       struct vring_virtqueue_split *vring_split,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev);
-+					       struct vq_transport_config *tp_cfg,
-+					       struct virtio_vq_config *cfg);
- static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
- static void vring_free(struct virtqueue *_vq);
- 
-@@ -240,6 +236,8 @@ static void vring_free(struct virtqueue *_vq);
-  */
- 
- #define to_vvq(_vq) container_of_const(_vq, struct vring_virtqueue, vq)
-+#define cfg_vq_val(cfg, key) (cfg->key[cfg->cfg_idx])
-+#define cfg_vq_get(cfg, key) (cfg->key ? cfg_vq_val(cfg, key) : false)
- 
- static bool virtqueue_use_indirect(const struct vring_virtqueue *vq,
- 				   unsigned int total_sg)
-@@ -1138,32 +1136,28 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
- 	return 0;
- }
- 
--static struct virtqueue *vring_create_virtqueue_split(
--	unsigned int index,
--	unsigned int num,
--	unsigned int vring_align,
--	struct virtio_device *vdev,
--	bool weak_barriers,
--	bool may_reduce_num,
--	bool context,
--	bool (*notify)(struct virtqueue *),
--	void (*callback)(struct virtqueue *),
--	const char *name,
--	struct device *dma_dev)
-+static struct virtqueue *vring_create_virtqueue_split(struct virtio_device *vdev,
-+						      unsigned int index,
-+						      struct vq_transport_config *tp_cfg,
-+						      struct virtio_vq_config *cfg)
- {
- 	struct vring_virtqueue_split vring_split = {};
- 	struct virtqueue *vq;
- 	int err;
- 
--	err = vring_alloc_queue_split(&vring_split, vdev, num, vring_align,
--				      may_reduce_num, dma_dev);
-+	tp_cfg->dma_dev = tp_cfg->dma_dev ? : vdev->dev.parent;
-+
-+	err = vring_alloc_queue_split(&vring_split, vdev,
-+				      tp_cfg->num,
-+				      tp_cfg->vring_align,
-+				      tp_cfg->may_reduce_num,
-+				      tp_cfg->dma_dev);
- 	if (err)
- 		return NULL;
- 
--	vq = __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
--				   context, notify, callback, name, dma_dev);
-+	vq = __vring_new_virtqueue(vdev, index, &vring_split, tp_cfg, cfg);
- 	if (!vq) {
--		vring_free_split(&vring_split, vdev, dma_dev);
-+		vring_free_split(&vring_split, vdev, tp_cfg->dma_dev);
- 		return NULL;
- 	}
- 
-@@ -2050,38 +2044,33 @@ static void virtqueue_reinit_packed(struct vring_virtqueue *vq)
- 	virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
- }
- 
--static struct virtqueue *vring_create_virtqueue_packed(
--	unsigned int index,
--	unsigned int num,
--	unsigned int vring_align,
--	struct virtio_device *vdev,
--	bool weak_barriers,
--	bool may_reduce_num,
--	bool context,
--	bool (*notify)(struct virtqueue *),
--	void (*callback)(struct virtqueue *),
--	const char *name,
--	struct device *dma_dev)
-+static struct virtqueue *vring_create_virtqueue_packed(struct virtio_device *vdev,
-+						       unsigned int index,
-+						       struct vq_transport_config *tp_cfg,
-+						       struct virtio_vq_config *cfg)
- {
- 	struct vring_virtqueue_packed vring_packed = {};
- 	struct vring_virtqueue *vq;
-+	struct device *dma_dev;
- 	int err;
- 
--	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
-+	dma_dev = tp_cfg->dma_dev ? : vdev->dev.parent;
-+
-+	if (vring_alloc_queue_packed(&vring_packed, vdev, tp_cfg->num, dma_dev))
- 		goto err_ring;
- 
- 	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
- 	if (!vq)
- 		goto err_vq;
- 
--	vq->vq.callback = callback;
-+	vq->vq.callback = cfg_vq_val(cfg, callbacks);
- 	vq->vq.vdev = vdev;
--	vq->vq.name = name;
-+	vq->vq.name = cfg_vq_val(cfg, names);
- 	vq->vq.index = index;
- 	vq->vq.reset = false;
- 	vq->we_own_ring = true;
--	vq->notify = notify;
--	vq->weak_barriers = weak_barriers;
-+	vq->notify = tp_cfg->notify;
-+	vq->weak_barriers = tp_cfg->weak_barriers;
- #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
- 	vq->broken = true;
- #else
-@@ -2094,7 +2083,7 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 	vq->do_unmap = vq->use_dma_api;
- 
- 	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
--		!context;
-+		!cfg_vq_get(cfg, ctx);
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-@@ -2104,9 +2093,9 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 	if (err)
- 		goto err_state_extra;
- 
--	virtqueue_vring_init_packed(&vring_packed, !!callback);
-+	virtqueue_vring_init_packed(&vring_packed, !!cfg_vq_val(cfg, callbacks));
- 
--	virtqueue_init(vq, num);
-+	virtqueue_init(vq, tp_cfg->num);
- 	virtqueue_vring_attach_packed(vq, &vring_packed);
- 
- 	spin_lock(&vdev->vqs_list_lock);
-@@ -2599,15 +2588,11 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
- EXPORT_SYMBOL_GPL(vring_interrupt);
- 
- /* Only available for split ring */
--static struct virtqueue *__vring_new_virtqueue(unsigned int index,
-+static struct virtqueue *__vring_new_virtqueue(struct virtio_device *vdev,
-+					       unsigned int index,
- 					       struct vring_virtqueue_split *vring_split,
--					       struct virtio_device *vdev,
--					       bool weak_barriers,
--					       bool context,
--					       bool (*notify)(struct virtqueue *),
--					       void (*callback)(struct virtqueue *),
--					       const char *name,
--					       struct device *dma_dev)
-+					       struct vq_transport_config *tp_cfg,
-+					       struct virtio_vq_config *cfg)
- {
- 	struct vring_virtqueue *vq;
- 	int err;
-@@ -2620,26 +2605,26 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
- 		return NULL;
- 
- 	vq->packed_ring = false;
--	vq->vq.callback = callback;
-+	vq->vq.callback = cfg_vq_val(cfg, callbacks);
- 	vq->vq.vdev = vdev;
--	vq->vq.name = name;
-+	vq->vq.name = cfg_vq_val(cfg, names);
- 	vq->vq.index = index;
- 	vq->vq.reset = false;
- 	vq->we_own_ring = false;
--	vq->notify = notify;
--	vq->weak_barriers = weak_barriers;
-+	vq->notify = tp_cfg->notify;
-+	vq->weak_barriers = tp_cfg->weak_barriers;
- #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
- 	vq->broken = true;
- #else
- 	vq->broken = false;
- #endif
--	vq->dma_dev = dma_dev;
-+	vq->dma_dev = tp_cfg->dma_dev;
- 	vq->use_dma_api = vring_use_dma_api(vdev);
- 	vq->premapped = false;
- 	vq->do_unmap = vq->use_dma_api;
- 
- 	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
--		!context;
-+		!cfg_vq_get(cfg, ctx);
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-@@ -2667,36 +2652,10 @@ struct virtqueue *vring_create_virtqueue(struct virtio_device *vdev,
- 					 struct vq_transport_config *tp_cfg,
- 					 struct virtio_vq_config *cfg)
- {
--	struct device *dma_dev;
--	unsigned int num;
--	unsigned int vring_align;
--	bool weak_barriers;
--	bool may_reduce_num;
--	bool context;
--	bool (*notify)(struct virtqueue *_);
--	void (*callback)(struct virtqueue *_);
--	const char *name;
--
--	dma_dev = tp_cfg->dma_dev ? : vdev->dev.parent;
--
--	num            = tp_cfg->num;
--	vring_align    = tp_cfg->vring_align;
--	weak_barriers  = tp_cfg->weak_barriers;
--	may_reduce_num = tp_cfg->may_reduce_num;
--	notify         = tp_cfg->notify;
--
--	name     = cfg->names[cfg->cfg_idx];
--	callback = cfg->callbacks[cfg->cfg_idx];
--	context  = cfg->ctx ? cfg->ctx[cfg->cfg_idx] : false;
--
- 	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
--		return vring_create_virtqueue_packed(index, num, vring_align,
--				vdev, weak_barriers, may_reduce_num,
--				context, notify, callback, name, dma_dev);
-+		return vring_create_virtqueue_packed(vdev, index, tp_cfg, cfg);
- 
--	return vring_create_virtqueue_split(index, num, vring_align,
--			vdev, weak_barriers, may_reduce_num,
--			context, notify, callback, name, dma_dev);
-+	return vring_create_virtqueue_split(vdev, index, tp_cfg, cfg);
- }
- EXPORT_SYMBOL_GPL(vring_create_virtqueue);
- 
-@@ -2842,30 +2801,14 @@ struct virtqueue *vring_new_virtqueue(struct virtio_device *vdev,
- 				      struct virtio_vq_config *cfg)
- {
- 	struct vring_virtqueue_split vring_split = {};
--	unsigned int num;
--	unsigned int vring_align;
--	bool weak_barriers;
--	bool context;
--	bool (*notify)(struct virtqueue *_);
--	void (*callback)(struct virtqueue *_);
--	const char *name;
--
--	num            = tp_cfg->num;
--	vring_align    = tp_cfg->vring_align;
--	weak_barriers  = tp_cfg->weak_barriers;
--	notify         = tp_cfg->notify;
--
--	name     = cfg->names[cfg->cfg_idx];
--	callback = cfg->callbacks[cfg->cfg_idx];
--	context  = cfg->ctx ? cfg->ctx[cfg->cfg_idx] : false;
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
- 		return NULL;
- 
--	vring_init(&vring_split.vring, num, pages, vring_align);
--	return __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
--				     context, notify, callback, name,
--				     vdev->dev.parent);
-+	tp_cfg->dma_dev = vdev->dev.parent;
-+
-+	vring_init(&vring_split.vring, tp_cfg->num, pages, tp_cfg->vring_align);
-+	return __vring_new_virtqueue(vdev, index, &vring_split, tp_cfg, cfg);
- }
- EXPORT_SYMBOL_GPL(vring_new_virtqueue);
- 
--- 
-2.32.0.3.g01195cf9f
+Name error labels after what they do, that is, 'err_unlock' in this
+case.
 
+> +	}
+> +
+> +	for (i = 0; i < num_data; i++) {
+> +		ret = qcom_pdm_add_domain_locked(data[i]);
+> +		if (ret)
+> +			goto err;
+
+And err_del_domains here.
+
+> +	}
+> +
+> +	ret = qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
+> +			     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
+> +	if (ret) {
+> +		pr_err("PDM: error adding server %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	qcom_pdm_server_added = true;
+> +
+> +	mutex_unlock(&qcom_pdm_mutex);
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (--i >= 0)
+> +		qcom_pdm_del_domain_locked(data[i]);
+> +
+> +	qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
+> +		       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
+
+Should the server really be added unconditionally here? And if so,
+shouldn't you update that flag?
+
+> +
+> +err_out:
+> +	mutex_unlock(&qcom_pdm_mutex);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pdm_add_domains);
+
+> +static void qcom_pdm_get_domain_list(struct qmi_handle *qmi,
+> +				     struct sockaddr_qrtr *sq,
+> +				     struct qmi_txn *txn,
+> +				     const void *decoded)
+> +{
+> +	const struct servreg_loc_get_domain_list_req *req = decoded;
+> +	struct servreg_loc_get_domain_list_resp *rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
+> +	struct qcom_pdm_service *service;
+> +	u32 offset;
+> +	int ret;
+> +
+> +	offset = req->offset_valid ? req->offset : 0;
+> +
+> +	rsp->rsp.result = QMI_RESULT_SUCCESS_V01;
+> +	rsp->rsp.error = QMI_ERR_NONE_V01;
+> +
+> +	rsp->db_revision_valid = true;
+> +	rsp->db_revision = 1;
+> +
+> +	rsp->total_domains_valid = true;
+> +	rsp->total_domains = 0;
+> +
+> +	mutex_lock(&qcom_pdm_mutex);
+> +
+> +	service = qcom_pdm_find_locked(req->name);
+> +	if (service) {
+> +		struct qcom_pdm_domain *domain;
+> +
+> +		rsp->domain_list_valid = true;
+> +		rsp->domain_list_len = 0;
+> +
+> +		list_for_each_entry(domain, &service->domains, list) {
+> +			u32 i = rsp->total_domains++;
+> +
+> +			if (i >= offset && i < SERVREG_LOC_MAX_DOMAINS) {
+> +				u32 j = rsp->domain_list_len++;
+> +
+> +				strscpy(rsp->domain_list[j].name, domain->name,
+> +					sizeof(rsp->domain_list[i].name));
+> +				rsp->domain_list[j].instance_id = domain->instance_id;
+> +
+> +				pr_debug("PDM: found %s / %d\n", domain->name,
+> +					 domain->instance_id);
+> +			}
+> +		}
+> +
+
+Stray newline.
+
+> +	}
+> +
+> +	mutex_unlock(&qcom_pdm_mutex);
+> +
+> +	pr_debug("PDM: service '%s' offset %d returning %d domains (of %d)\n", req->name,
+> +		 req->offset_valid ? req->offset : -1, rsp->domain_list_len, rsp->total_domains);
+> +
+> +	ret = qmi_send_response(qmi, sq, txn, SERVREG_LOC_GET_DOMAIN_LIST,
+> +				2658,
+> +				servreg_loc_get_domain_list_resp_ei, rsp);
+> +	if (ret)
+> +		pr_err("Error sending servreg response: %d\n", ret);
+> +
+> +	kfree(rsp);
+> +}
+
+Johan
