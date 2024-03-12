@@ -1,53 +1,70 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572812FB2C;
-	Tue, 12 Mar 2024 17:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710265346; cv=fail; b=SyoySTgYocvEPC2RxtAMqrFMqKJvxXap/dotLBHojO7LijMFuY9HKUROj2MAt0yO8OBUTHC7Lq0zVAv7+MvkI9vWcyQOXxZx2BhZBtsVxqMYrsP43Kr8V+PgP9qXHD0MOti6LveT66QKWwnQf5ex401Kt0UcF96NqANTQnv1pbs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710265346; c=relaxed/simple;
-	bh=UcJ8a0FiIIN8LdWreTlsDdwpPTd+wcNGN4OB5QlpliI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LY+RHxHAwO2M0A0HN6wK5tOt11muODY+/zbyTZxZzuDg1UVNYbN7afzRVqvrEEOFyp+K5piAEnuRv+YL9GnVZAYUlGE/2880xVi/3rVSvUmb1sLT2Jr/Q9JHrEAvyXXz+aoAONLVzb43YtGdnSFJ4XkrBqHGBkaDcf1V9a+b5M0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fsc9hnk7; arc=fail smtp.client-ip=40.107.236.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D197E0F9
+	for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 18:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710268478; cv=none; b=eBFBE3xl22tpg4r6jL85LYmbZkQAeHgd+c4A3tWUUXKJxYZiujRfOlzJY3ykZJOZhrs64K6n+KcLsfZzNMOgc6uBuPJqNCPqggoZnwwZpTuOq+ZuWeNe+Oo1O6r9RYo5qNo0sXVLn44CoVA+Ly/vs+GQw7CewLPVOCUxLa17oOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710268478; c=relaxed/simple;
+	bh=pGuULm/CHXM11bgwq9+j2y5waqyjjkr9xF1BTqDkZJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thzm6slu4l81YIssJDXb0DQPPbQ6dwxlDFqBa7YQCxKYg1ol/OJIs2IJ/xzbsUEBLLIdEhZP5AlvTCKJZJPgNNtL7/7SmBRkxRj0UlH8mUUkUf6lYwaGzDQHeF5rmzy0x49RKgg5UKXuucAF13YDyhNU9E6kNTgtxBDrQ0GvDvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HlhZA/4g; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fsc9hnk7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VDSxRNsTld//eqmtr3URZGYrUTgZEIlB60Y/nrU7vBh7EDQqyrdXS27kSpjNDJJaUn/ykWOqyWzkzyacrFzGNyf/sofTTamlbOR8Ln5Ywdvbi7aAL8p+WuZMhg/qk70hRgdRP3ui/BaucOXrF3srbu70imNnON6yRzDZ1dBKuqRbBMIAE/VlDpEO+F8AKPhbTpvK83/I/nxjZphjIfDuzmrFNBT149/BRRh5ZqpzJR+82KI57Q3Kd/zjZHep/0Focgg3XhwJUtrEvHqB5ctA8wDUdWX4XTscSA6d4KXnI6scNEDfPql9KeLEgaffYHspEifryekLCnqKH4XSxluqQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DCuUscKaMpMxmmM1pIZQ/Fn+qAKca7709yjtpB2VyfU=;
- b=gjSOB3KlClx2iqvGuJgtahovtAV4Et7nCJvbM4xbUpw20UOvrRoFKEaB7UkHu1fqu3XTHRvqnfUdvsjZSLnfIsLusj/WzsFgZdjbt/rqqunYunwypcwtXJQ52pjWclRTao0FNdbqcoxRVB3cTuhqL3M+Uz3KSJogsZeh8nTFWuKk+wM6yHWzVrYjpsvREznrE9FNS1G8NQ2i5Otr6ZgsPHf4Diyrh5kn66Kp22PBn88Km+dHqoFVntQlqgBeKz/Gdk7ePoWAAeEsyKsaDzWfxCMf1zaBC0RmiIyWjCRNRcXia7Otg2nZEJrNI4wyNO7Ik/vTGHFfGMrBXwZAGoAfDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DCuUscKaMpMxmmM1pIZQ/Fn+qAKca7709yjtpB2VyfU=;
- b=fsc9hnk7QDaVmvfGOyN+ERphIk0/VXj+xpYetGbL2866HP2E7YWjlSWr7bfO9P5AKdSk0KP5ukfcxo99inUtbtwryNtS2yMfW9pW70M/lLYd056bs6gHsiDPQzJlPo4hjeO8AceBHQTKyhdqLTy/7iZxqtsV8bUEnQVs75QcP6E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
- by MW6PR12MB8705.namprd12.prod.outlook.com (2603:10b6:303:24c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.35; Tue, 12 Mar
- 2024 17:42:21 +0000
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7362.035; Tue, 12 Mar 2024
- 17:42:21 +0000
-Message-ID: <fdad2198-5d3a-4bce-8249-8b2f9f75f84a@amd.com>
-Date: Tue, 12 Mar 2024 12:42:18 -0500
-User-Agent: Mozilla Thunderbird Beta
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HlhZA/4g"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4133847e47bso6943705e9.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 11:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710268475; x=1710873275; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vv4Sm7UZXVqdBGX8hplEk2uRkZer1n7N2k6G4yb6swM=;
+        b=HlhZA/4grcr0v8d4aNO0PG70QRQAP9VyRhOxnzfwTQOLi0LhBi+AVFW0E/uCRwOd+h
+         Rw4Iqqgn/LNya1MOTJ+nZMtJJyHWRhSULEc8Ivr6vJ0SgnaMH3NHRoJFq4xDXRMKoyGP
+         nEkgQRn9NVRBapMbLB47sBsyOW4UYCyVE9bLRmEcTvrptCHsJLMRdNc97lm7Mxoc/3ye
+         LMFe0LdecAHhEH+ouGZ4OEg76wBrtJY0KVapHeAZOS/y/QI5xlUmJBjWlQSyToYhwlXC
+         JDEi9fvNnfHgwh6bssxHgWBh+gC06/FC3m9GYiiZd2h+pLd86X/Z7Z01bkpTSf+kxNzN
+         +Wkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710268475; x=1710873275;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vv4Sm7UZXVqdBGX8hplEk2uRkZer1n7N2k6G4yb6swM=;
+        b=nERzZmmNN7pZy25lm7H/wb2ykQQWIVIdnEFY8ZSx10g3Zg+ESSDiVc9Yk8DQwg9Cpx
+         XI5MUAchYDTIRn0uMdZDMPgAsI73D7UUbH578MFtZ/Xv3wqaYF4GDAYL/8+mnx0RZ1iE
+         n1jxhX5xncoAX80uZtvLm9mEmRUheL5yX06EKZv+eIm53smciB5c3XUJrvj6dLiZ6Fah
+         DJLjZlYaQK54o1hIR+jZ9WvGTMneDIPBRFLK8NxNgReXEQp9Y7oSl+0ICPkuBN4f6TVN
+         0u3QaPcSO8WNjFiC4ErzuMFJ3BYb99iCwT/XQcI0VWHAwyTmwlVEYDII0JGwGxDEUZzz
+         oVUQ==
+X-Gm-Message-State: AOJu0YwrNiIASPvBy/SmBVFoUcry0SCTk50guL0QdfsePdt01R6CkhME
+	zRHyCRMiEVQrrPG9VuzBfA7pdsu3bGdTk0rfLPdyN6H1xhMTUi+ABS/MTj6uOI8=
+X-Google-Smtp-Source: AGHT+IHYNgNP421vNaL5nXSlSaT4BZLzBe/yll6vafwoUuA66iFoHfjPfZkvNbfiFEeYo/m5gaX4uA==
+X-Received: by 2002:a05:600c:5385:b0:413:2ab7:4396 with SMTP id hg5-20020a05600c538500b004132ab74396mr4743708wmb.18.1710268475495;
+        Tue, 12 Mar 2024 11:34:35 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id u18-20020a05600c19d200b0041316e91c99sm13277255wmq.1.2024.03.12.11.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Mar 2024 11:34:35 -0700 (PDT)
+Message-ID: <3d602e0b-a49c-4281-bc51-f8c015c5606f@linaro.org>
+Date: Tue, 12 Mar 2024 19:34:32 +0100
+Precedence: bulk
+X-Mailing-List: linux-remoteproc@vger.kernel.org
+List-Id: <linux-remoteproc.vger.kernel.org>
+List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v13 2/4] dt-bindings: remoteproc: add Tightly Coupled
  Memory (TCM) bindings
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
+Content-Language: en-US
+To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
  michal.simek@amd.com, ben.levinsky@amd.com
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -56,125 +73,100 @@ Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
 References: <20240311175926.1625180-1-tanmay.shah@amd.com>
  <20240311175926.1625180-3-tanmay.shah@amd.com>
  <d498d76e-b021-4cf7-adca-63f1cd3e1542@linaro.org>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <d498d76e-b021-4cf7-adca-63f1cd3e1542@linaro.org>
+ <fdad2198-5d3a-4bce-8249-8b2f9f75f84a@amd.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <fdad2198-5d3a-4bce-8249-8b2f9f75f84a@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0076.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::19) To BL1PR12MB5874.namprd12.prod.outlook.com
- (2603:10b6:208:396::17)
-Precedence: bulk
-X-Mailing-List: linux-remoteproc@vger.kernel.org
-List-Id: <linux-remoteproc.vger.kernel.org>
-List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|MW6PR12MB8705:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68cff8aa-2e32-4d78-5b21-08dc42bbc542
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	isObjzNg7KsCPDV/CTSwwFhonjxmQ+UzKlLDJUnQdnoOsajPG+41Ib8JWU3NVEjSZ2C9w3qOc8xy0yJaNXesybY3qYVY4WPAuAPQ5xJssL/494hMO6D5t9PtoeHVLCMSz3SPygCkpbieoq/KIPpWrKzcJT+BkvYjCVKU+WSWNoMacJ8oDwWffl2BAMwT1/Mw1Uolu2AEASKzkeUylwAtegc6aVTUrI3Zt0uV7ADKV9lOxFu9A3HE9Jge6KvtPQfoYGXxHWbHYW9kZ97w7RGrv3p9JI+AWGU6VbSL2XqznVIPn+WC45NJE5ooLnESIujss7iDtPSopuqq9wVESVOQ/VG7OprUi+xQOizyUvtdPB4+GhYZdSK6Asfni6QWKii42bz+HP8bKREZCrbcJfr5dzXaquukcwnkK2gvxFVsIrIlDyBOHB0sBvbUdW2dhD5rSQAgJlFQnJKv/YojKFtvgXpR48nFQO31/mIVl4Ldoqz37+hAz0fMTTvJxEDtYEEnWSbu6qOrHJS9vCuBrXA0GBmKEmhDtt8KMN1Dk4SaazGur/SVdfyLKdJNv1B1TERnb5pCj9p/i5R0531H4B99RnwB1No+flQTeh0XVvKjnQNriUeE6BSWpM/Nw45gXI0CuqpD9rWJ+vNqtgKwtww9Z+wXfQrdB+h3cndq5VxbqZU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UkQwMUxFdWJOR3VMS0x2SkVuRDNQZWNwQmFnbnpxZXhIRVZBNkNYZ3JBTUIr?=
- =?utf-8?B?R3E3a0NQN3JybEFJQktwb2VHdVh0a29lQ3pPYzZCWFQ0SjYwV1ExeHVTeVl3?=
- =?utf-8?B?Slc5WDRaS2JOYkl5Z1M4b0NJQUVXTVpVQSs3SitJNklCdkRWT21wWnZwdDRI?=
- =?utf-8?B?bnhJT2ZOdVRUVXpvVHdJc2IzdUxuZnYva0pnZ1F3UVFmSS9iVTBXYmFnWk9p?=
- =?utf-8?B?NEh3cUFUbVBwOW42dndEelVTMytlSWhVeFRDL1prSlAzQktWdER5cFFvbDVt?=
- =?utf-8?B?WWVYUGM3NmtmWWdnTy9XbVZ2YjUwaHBlckMwbEtmSFA3dE5BV3crSXRoeUpQ?=
- =?utf-8?B?Q2pYbG4rNW5UcVp2ODQwOUQ2NXdoSTk1VERMMnlybUZ2aFN1dWU2cVVtVm9X?=
- =?utf-8?B?WnJTZFVFeVd5eEhtM0QzZkZJRndyN1o2cGdXNHNZc3pTZkgrWk9HRGJvbXFM?=
- =?utf-8?B?dUt6eDlYcDRXSk5TY1JTdVZmVHoxUVdiY1lGMVdSYk53QkovQ1hRZTFRVTRE?=
- =?utf-8?B?WTZ2Y0hoVXlZWFhIdUxISllreUFMNDdwa1BmVE5hRkNsM1VYVWNzV2FwTWdu?=
- =?utf-8?B?WFBQY01PbjBxNjYrRjFKNS9wVDFhcktRWXo0cTVLWnJlT25PWFBHVlIvMDNO?=
- =?utf-8?B?aFVlU1ZDTWZmN0QvKzc3ckhJb21VdVRpTmc3bzFIaTVZbEkvdU80L1Q1Skc5?=
- =?utf-8?B?SSt1aC9hK2NVdVRHbitCdVp5c0U2STcweDUwNjZWcmF5eXRSQlU5T3pqMHhp?=
- =?utf-8?B?am1Bc0VjWUsyWlNMVWM0THJHVEpqTVY0U0NTQkhDRXhGcmVySTV6T3BseThW?=
- =?utf-8?B?QmNBNlpRa21BdURSQjNHTEZ3ZFJGci9SNVNqaDVzbml3OFRWdDR1bm9pdld4?=
- =?utf-8?B?blRmaExndS8xKzQvTy9ldTNmUzRVcmtCeDk0bWw1dnVlaGdqWUVWbkFRNXpa?=
- =?utf-8?B?dFUyVk16ckRnUHFJSklUdFdrRWlKT3J4bEgwZ0c4eFlFanFETkdtSEJ3Y3Bi?=
- =?utf-8?B?eUxmR1BLVFFaKzRGUDI1UXlOdzRvbG8wdVQ5YkZZL0sxRkhuSHlOMWxiM3VN?=
- =?utf-8?B?NTdrMjNPeDlMc3BmRUkwbmdkSXBGNmtJbTBVV3lpYUNZOHZyQVN3UDJQbHFD?=
- =?utf-8?B?SlpudFowK2JtUFRUekpyQldkZWEyU2wyUUZIVWFpRkhmbWNQancwQmoxRHEz?=
- =?utf-8?B?TWpjaHR6UXU0Smh5ZExnM1NqeGRzWERqUXVQR2pUUmV0RmFkd1VFcGluTTZt?=
- =?utf-8?B?ZTB6aUp6SW1ESUdBWnlWQnhJakl2UVZIdWJjK0d0b1VNMGhiRnRrazU1d0RU?=
- =?utf-8?B?eDRZRFVlV2ZYTmRMQlBvbU9FMHNldkIwVFdtRExWeXhVU05KcEFtZDdjTTR0?=
- =?utf-8?B?U1IxYmF1MURZUDZzRVM3c2RXeUJwdC9MWXJXTTlIMDZhSER6UnoyUHB1Vmp3?=
- =?utf-8?B?OHowb1VIaUlscHY2Vjdjd1JGUHVRUWVPWm1scHlwVENQLzVlbzRGM0t2YkVI?=
- =?utf-8?B?bGZLeGFLdlpOTVN1bW85dXNWa1Babk4rN1lRcHpTS016MlFxeVp0OFJlc1E0?=
- =?utf-8?B?cERtZE9aWEFMUXd1R2JhV2drcFR2WjRGWHg3azNXVFRzdE9nbTFIelhVVEpi?=
- =?utf-8?B?Y2Zjc2xkdS9CelZMQmI0K1BLeUJ0TUcvYWtZRysyakloK3VYUlhxZHFDdHhs?=
- =?utf-8?B?c1JNaGFNMUU4Nms2ZjlwZnhCdWN5YzBwdnYwUzdka2lZbnRuY3JRUkhhUERZ?=
- =?utf-8?B?MVg0K0VuKy85RzZhUVFtMXpDSElDL2VOcVRWUFhMKzVhekdtL0JoK3RRZktq?=
- =?utf-8?B?bTRKMlZWKzVya0VMc05kN3E5WUJmSTdQNUNFQWQwYkowYWt3S01Fcjg1a2RV?=
- =?utf-8?B?TWxvWFZuNTVQQTJTY1hCOUJtRWpFUHExaE04MitCblF2T0VYOUZtMjV1TTd5?=
- =?utf-8?B?TkZQcXZpUWR5RWxBVjBFNlJ6c2NtS0dpQkgxZWl1SUh0ODdadHFiNVY5K1lK?=
- =?utf-8?B?MEtJMVpyWTJmMFZvOTFvdkVURllTazBJSFYxeEZlcUdtVXFKaGRuQk9WQllB?=
- =?utf-8?B?VWQyaXovcVgwdUxFOEp3eWNoOW50eXlEa3NrNTJyOU9rSDRwN2lUdU9uVlM3?=
- =?utf-8?Q?pbLl9ucyTj/lLCZxxYyzBX1pj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68cff8aa-2e32-4d78-5b21-08dc42bbc542
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2024 17:42:21.6866
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l+xfv/kv2SYGAyA3AoSahMN5DnilhySyOOdaK+Kui2lbzCLDeT5IGLgqr15r4mr1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8705
 
-
-
-On 3/12/24 7:13 AM, Krzysztof Kozlowski wrote:
-> On 11/03/2024 18:59, Tanmay Shah wrote:
->> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->> 
->> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
->> UltraScale+ platform. It will help in defining TCM in device-tree
->> and make it's access platform agnostic and data-driven.
->> 
->> Tightly-coupled memories(TCMs) are low-latency memory that provides
->> predictable instruction execution and predictable data load/store
->> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
->> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
->> 
->> The TCM resources(reg, reg-names and power-domain) are documented for
->> each TCM in the R5 node. The reg and reg-names are made as required
->> properties as we don't want to hardcode TCM addresses for future
->> platforms and for zu+ legacy implementation will ensure that the
->> old dts w/o reg/reg-names works and stable ABI is maintained.
->> 
->> It also extends the examples for TCM split and lockstep modes.
->> 
->> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->> 
->> Changes in v13:
->>   - Have power-domains property for lockstep case instead of
->>     keeping it flexible.
->>   - Add "items:" list in power-domains property
+On 12/03/2024 18:42, Tanmay Shah wrote:
 > 
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Hi Krzysztof,
-
-Thanks for RB. I provided explanation of flexible power-domains in
-previous patchset. I am happy to send new revision removing
-minItems if you dis-agree.
-
-Thanks.
-
+> On 3/12/24 7:13 AM, Krzysztof Kozlowski wrote:
+>> On 11/03/2024 18:59, Tanmay Shah wrote:
+>>> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>>>
+>>> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+>>> UltraScale+ platform. It will help in defining TCM in device-tree
+>>> and make it's access platform agnostic and data-driven.
+>>>
+>>> Tightly-coupled memories(TCMs) are low-latency memory that provides
+>>> predictable instruction execution and predictable data load/store
+>>> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+>>> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+>>>
+>>> The TCM resources(reg, reg-names and power-domain) are documented for
+>>> each TCM in the R5 node. The reg and reg-names are made as required
+>>> properties as we don't want to hardcode TCM addresses for future
+>>> platforms and for zu+ legacy implementation will ensure that the
+>>> old dts w/o reg/reg-names works and stable ABI is maintained.
+>>>
+>>> It also extends the examples for TCM split and lockstep modes.
+>>>
+>>> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>> ---
+>>>
+>>> Changes in v13:
+>>>   - Have power-domains property for lockstep case instead of
+>>>     keeping it flexible.
+>>>   - Add "items:" list in power-domains property
+>>
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> Best regards,
-> Krzysztof
+> Hi Krzysztof,
 > 
+> Thanks for RB. I provided explanation of flexible power-domains in
+> previous patchset. I am happy to send new revision removing
+> minItems if you dis-agree.
+
+Thanks for the explanation, it sounds fine, thus patch LGTM.
+
+Best regards,
+Krzysztof
 
