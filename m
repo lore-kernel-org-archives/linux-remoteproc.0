@@ -1,172 +1,171 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D197E0F9
-	for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 18:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADF446BF
+	for <linux-remoteproc@vger.kernel.org>; Wed, 13 Mar 2024 16:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710268478; cv=none; b=eBFBE3xl22tpg4r6jL85LYmbZkQAeHgd+c4A3tWUUXKJxYZiujRfOlzJY3ykZJOZhrs64K6n+KcLsfZzNMOgc6uBuPJqNCPqggoZnwwZpTuOq+ZuWeNe+Oo1O6r9RYo5qNo0sXVLn44CoVA+Ly/vs+GQw7CewLPVOCUxLa17oOE=
+	t=1710347138; cv=none; b=NAbUiVyyZYsx2REGuJAJBqcYY8JrCkhtMzEMlK9zdesEBC1+fF62V4J9cEPWrIhR4/GdnT8D6MyO80jE+crZmVttVOO3Lcvw87dNmS52Z1VChXQlK/tCRhB8uYbNWYmqX0ogTctDzAL9xBf+dpBKs5jPInAe4h35ndB487gmxHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710268478; c=relaxed/simple;
-	bh=pGuULm/CHXM11bgwq9+j2y5waqyjjkr9xF1BTqDkZJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thzm6slu4l81YIssJDXb0DQPPbQ6dwxlDFqBa7YQCxKYg1ol/OJIs2IJ/xzbsUEBLLIdEhZP5AlvTCKJZJPgNNtL7/7SmBRkxRj0UlH8mUUkUf6lYwaGzDQHeF5rmzy0x49RKgg5UKXuucAF13YDyhNU9E6kNTgtxBDrQ0GvDvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HlhZA/4g; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1710347138; c=relaxed/simple;
+	bh=fndGBeOY3SA23+9FmeX+5KQzzCNTLAKeBHKcSLCTo4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRwfxjX6hPc+ciwM8VXCeh1PlM01ZX3a6xpyscNP6uBXzyAww9G0aKv2WOMv88XowG7WDKy8ec5wyVDujpTDfHCby85+xb94YWzigi1rarCTT8O9QMLkrlnjlnE6nfYt5Xr9diIg0AKI8Z+Bbu+swLk9zfeMLr3U5efTPP8Atrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oNyJy8xk; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HlhZA/4g"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4133847e47bso6943705e9.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Mar 2024 11:34:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oNyJy8xk"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e6ade6a66aso62862b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Mar 2024 09:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710268475; x=1710873275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vv4Sm7UZXVqdBGX8hplEk2uRkZer1n7N2k6G4yb6swM=;
-        b=HlhZA/4grcr0v8d4aNO0PG70QRQAP9VyRhOxnzfwTQOLi0LhBi+AVFW0E/uCRwOd+h
-         Rw4Iqqgn/LNya1MOTJ+nZMtJJyHWRhSULEc8Ivr6vJ0SgnaMH3NHRoJFq4xDXRMKoyGP
-         nEkgQRn9NVRBapMbLB47sBsyOW4UYCyVE9bLRmEcTvrptCHsJLMRdNc97lm7Mxoc/3ye
-         LMFe0LdecAHhEH+ouGZ4OEg76wBrtJY0KVapHeAZOS/y/QI5xlUmJBjWlQSyToYhwlXC
-         JDEi9fvNnfHgwh6bssxHgWBh+gC06/FC3m9GYiiZd2h+pLd86X/Z7Z01bkpTSf+kxNzN
-         +Wkg==
+        d=linaro.org; s=google; t=1710347136; x=1710951936; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYxzXCVmzr66awhRoPiulHCLdn6odFpvWPqlxUZTg40=;
+        b=oNyJy8xkxNu9iaHb8N5o9sOPBYyjboZbrGNCHC0UccH86YNw9OQkty9lL/j1ctUVes
+         VU6urZpWLvCIGQOwUXNBVrJUtb+nsfhE2LJlGbgDybWmit/DShVra/R9bUp/FHf+NDE+
+         2fkAqK/Eq+8FCLy3WpkEr3mSotyHzeF5u0aRgEADdNHfplIhaAJmxjc7Lz4oOj7Nnyv6
+         83CHH44pEpEoRLvoy8iq3PamqFumUcqEN0uFmG0Axsc01wE4CqkXZbzhs85ZtzRaL0T6
+         uTMdbgkUT6278P9Kl/5g+WrWaTlgpA3/KLaRBMHVleMByl4TnetBVinJ2V6ed48Jg8y4
+         idCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710268475; x=1710873275;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vv4Sm7UZXVqdBGX8hplEk2uRkZer1n7N2k6G4yb6swM=;
-        b=nERzZmmNN7pZy25lm7H/wb2ykQQWIVIdnEFY8ZSx10g3Zg+ESSDiVc9Yk8DQwg9Cpx
-         XI5MUAchYDTIRn0uMdZDMPgAsI73D7UUbH578MFtZ/Xv3wqaYF4GDAYL/8+mnx0RZ1iE
-         n1jxhX5xncoAX80uZtvLm9mEmRUheL5yX06EKZv+eIm53smciB5c3XUJrvj6dLiZ6Fah
-         DJLjZlYaQK54o1hIR+jZ9WvGTMneDIPBRFLK8NxNgReXEQp9Y7oSl+0ICPkuBN4f6TVN
-         0u3QaPcSO8WNjFiC4ErzuMFJ3BYb99iCwT/XQcI0VWHAwyTmwlVEYDII0JGwGxDEUZzz
-         oVUQ==
-X-Gm-Message-State: AOJu0YwrNiIASPvBy/SmBVFoUcry0SCTk50guL0QdfsePdt01R6CkhME
-	zRHyCRMiEVQrrPG9VuzBfA7pdsu3bGdTk0rfLPdyN6H1xhMTUi+ABS/MTj6uOI8=
-X-Google-Smtp-Source: AGHT+IHYNgNP421vNaL5nXSlSaT4BZLzBe/yll6vafwoUuA66iFoHfjPfZkvNbfiFEeYo/m5gaX4uA==
-X-Received: by 2002:a05:600c:5385:b0:413:2ab7:4396 with SMTP id hg5-20020a05600c538500b004132ab74396mr4743708wmb.18.1710268475495;
-        Tue, 12 Mar 2024 11:34:35 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id u18-20020a05600c19d200b0041316e91c99sm13277255wmq.1.2024.03.12.11.34.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Mar 2024 11:34:35 -0700 (PDT)
-Message-ID: <3d602e0b-a49c-4281-bc51-f8c015c5606f@linaro.org>
-Date: Tue, 12 Mar 2024 19:34:32 +0100
+        d=1e100.net; s=20230601; t=1710347136; x=1710951936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYxzXCVmzr66awhRoPiulHCLdn6odFpvWPqlxUZTg40=;
+        b=mu4qUANNar7eyU+X6aHoiE5wD8qs/vh1Ebis8dtJfCYl8xx0/Ezw1hrS/jetpVQFXN
+         wbJnfW/aJnmOA/cvsB6lpE0eyYjBWw+9NRlJTgPSTJenZMEWCUnjVKWQPeJqdPbvEWlY
+         4wNKw8irzskWDu3poL7kw7KD3CvoHOx/2lO01pMo3xFxQH9S+tswuXukJ2JM299Z1NFK
+         /z/MZdyVYene53fDMor783bXh2PUz8u48E8GlOU3FVzwHQ1rUjaR2djFnL7sdlVjbgOY
+         +RStKoQ25Vqf8f6ieZn+7aTBHiDWfKYCk8oOmL20fO3kFZ7+sKmpcS5igbwUxsNTvHi5
+         KH6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVpjPblXX3UgePzKZP3HY4P8TLXl1UCOKzKnsGEUbz+ghLjD8SDa6/Gk5N3lr0GClyyhNHi+Ko44rb+C65vZyNRGePwS2ewFXKSPp+q5eJdpw==
+X-Gm-Message-State: AOJu0YzZ6xob9gG33lh0WjiNfwtiYDAOjhTFDWf/EURFxoxhQLyRxg1u
+	MUyRaFTctejDcuy8EkQBlpAR3NC7PtNCshDR+CnPRhgGATI8uIFAl3LopfgWW/E=
+X-Google-Smtp-Source: AGHT+IGDDlbUcL/kmPgUIK2ocQ/+NVZ5EpvDYRvXae3NfxQmNd58fUdW3Xb6ch21rxY5N5eLOQx7sQ==
+X-Received: by 2002:a05:6a20:3956:b0:1a3:2fe9:ad74 with SMTP id r22-20020a056a20395600b001a32fe9ad74mr3319252pzg.44.1710347135680;
+        Wed, 13 Mar 2024 09:25:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:10b1:40f7:3529:d4f2])
+        by smtp.gmail.com with ESMTPSA id cl12-20020a056a02098c00b005e438fe702dsm6934633pgb.65.2024.03.13.09.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Mar 2024 09:25:35 -0700 (PDT)
+Date: Wed, 13 Mar 2024 10:25:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
+	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
+Message-ID: <ZfHTfNx4um8koTlY@p14s>
+References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
+ <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
+ <ZeYWKVpeFm1+4mlT@p14s>
+ <20240307194026.GA355455@e130802.arm.com>
+ <CANLsYkzA20rQdTM6AOvFK=3o28GvcoRbckL=ri8RegHqyHaiCw@mail.gmail.com>
+ <20240311114442.GA82865@e130802.arm.com>
+ <CANLsYkwReJvB1UWvR5TwtSs-w_VqU45kDSUzuQ0k+waetEn6Yw@mail.gmail.com>
+ <20240312173252.GA38992@e130802.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 2/4] dt-bindings: remoteproc: add Tightly Coupled
- Memory (TCM) bindings
-Content-Language: en-US
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- michal.simek@amd.com, ben.levinsky@amd.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-References: <20240311175926.1625180-1-tanmay.shah@amd.com>
- <20240311175926.1625180-3-tanmay.shah@amd.com>
- <d498d76e-b021-4cf7-adca-63f1cd3e1542@linaro.org>
- <fdad2198-5d3a-4bce-8249-8b2f9f75f84a@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <fdad2198-5d3a-4bce-8249-8b2f9f75f84a@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240312173252.GA38992@e130802.arm.com>
 
-On 12/03/2024 18:42, Tanmay Shah wrote:
+On Tue, Mar 12, 2024 at 05:32:52PM +0000, Abdellatif El Khlifi wrote:
+> Hi Mathieu,
 > 
+> On Tue, Mar 12, 2024 at 10:29:52AM -0600, Mathieu Poirier wrote:
+> > > This is an initial patchset for allowing to turn on and off the remote processor.
+> > > The FW is already loaded before the Corstone-1000 SoC is powered on and this
+> > > is done through the FPGA board bootloader in case of the FPGA target. Or by the Corstone-1000 FVP model
+> > > (emulator).
+> > >
+> > >From the above I take it that booting with a preloaded firmware is a
+> > scenario that needs to be supported and not just a temporary stage.
 > 
-> On 3/12/24 7:13 AM, Krzysztof Kozlowski wrote:
->> On 11/03/2024 18:59, Tanmay Shah wrote:
->>> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->>>
->>> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
->>> UltraScale+ platform. It will help in defining TCM in device-tree
->>> and make it's access platform agnostic and data-driven.
->>>
->>> Tightly-coupled memories(TCMs) are low-latency memory that provides
->>> predictable instruction execution and predictable data load/store
->>> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
->>> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
->>>
->>> The TCM resources(reg, reg-names and power-domain) are documented for
->>> each TCM in the R5 node. The reg and reg-names are made as required
->>> properties as we don't want to hardcode TCM addresses for future
->>> platforms and for zu+ legacy implementation will ensure that the
->>> old dts w/o reg/reg-names works and stable ABI is maintained.
->>>
->>> It also extends the examples for TCM split and lockstep modes.
->>>
->>> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>> ---
->>>
->>> Changes in v13:
->>>   - Have power-domains property for lockstep case instead of
->>>     keeping it flexible.
->>>   - Add "items:" list in power-domains property
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The current status of the Corstone-1000 SoC requires that there is
+> a preloaded firmware for the external core. Preloading is done externally
+> either through the FPGA bootloader or the emulator (FVP) before powering
+> on the SoC.
 > 
-> Hi Krzysztof,
-> 
-> Thanks for RB. I provided explanation of flexible power-domains in
-> previous patchset. I am happy to send new revision removing
-> minItems if you dis-agree.
 
-Thanks for the explanation, it sounds fine, thus patch LGTM.
+Ok
 
-Best regards,
-Krzysztof
+> Corstone-1000 will be upgraded in a way that the A core running Linux is able
+> to share memory with the remote core and also being able to access the remote
+> core memory so Linux can copy the firmware to. This HW changes are still
+> This is why this patchset is relying on a preloaded firmware. And it's the step 1
+> of adding remoteproc support for Corstone.
+>
 
+Ok, so there is a HW problem where A core and M core can't see each other's
+memory, preventing the A core from copying the firmware image to the proper
+location.
+
+When the HW is fixed, will there be a need to support scenarios where the
+firmware image has been preloaded into memory?
+
+> When the HW is ready, we will be able to avoid preloading the firmware
+> and the user can do the following:
+> 
+> 1) Use a default firmware filename stated in the DT (firmware-name property),
+> that's the one remoteproc subsystem will use initially, load the firmware file
+> and start the remote core.
+> 
+> 2) Then, the user can choose to use another firmware file:
+> 
+>     echo stop >/sys/class/remoteproc/remoteproc0/state
+>     echo -n new_firmware.elf > /sys/class/remoteproc/remoteproc0/firmware
+>     echo start >/sys/class/remoteproc/remoteproc0/state
+> 
+> > > The plan for the driver is as follows:
+> > >
+> > > Step 1: provide a foundation driver capable of turning the core on/off
+> > >
+> > > Step 2: provide mailbox support for comms
+> > >
+> > > Step 3: provide FW reload capability
+> > >
+> > What happens when a user wants to boot the remote processor with the
+> > firmware provided on the file system rather than the one preloaded
+> > into memory?
+> 
+> We will support this scenario when the HW is upgraded and copying the firmware
+> to the remote core memory becomes possible.
+> 
+> > Furthermore, how do we account for scenarios where the
+> > remote processor goes from running a firmware image on the file system
+> > to the firmware image loaded by an external entity?  Is this a valid
+> > scenario?
+> 
+> No, this scenario won't apply when we get the HW upgrade. No need for an
+> external entity anymore. The firmware(s) will all be files in the linux filesystem.
+> 
+> > > Steps 2 & 3 are waiting for a HW update so the Cortex-A35 (running Linux) can share memory with
+> > > the remote core.
+> > >
+> > > I'm happy to provide more explanation in the commit log to reflect this status.
+> > >
+> > > Is it OK that we go with step 1 as a foundation please ?
+> > >
+> > 
+> > First let's clarify all the scenarios that need to be supported.  From
+> > there I will advise on how to proceed and what modifications to the
+> > subsystem's core should be made, if need be.
+> 
+> Thanks, I hope the answers above provide the information needed.
+> 
+> Cheers
+> Abdellatif
