@@ -1,25 +1,48 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450694E1DB;
-	Wed, 13 Mar 2024 19:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306401A38DB;
+	Wed, 13 Mar 2024 23:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710359948; cv=none; b=H33oN2hFdKUz22OP4VQCj0lbmtLRQH7f5vWWOlLaJYEncGWHKJS2/f0JNPIpy6ZzeqHieJbBKTqCfkdzg3XJ9jevRGXlL3UIf2CiBQ7fWf1z/m68GGLYUv2J4y7wr2fi6POMcSTrOunQMbxiEd9emmJJ/IZwqrIbsytJFhN4D1Y=
+	t=1710372931; cv=none; b=cQQBD0UDE7OgcgqrxuP912mZxvi2W52xomRH+Nu0U+Q+PLLOuHoI8ve8STbUAmga4FfF25tEXiUbFxJEMQZ2MUvYBetIeSpC2MxZcQjE1WMyG4g4RBts0RnlgJIW79RAYyEe1m5tuUZ+hqXSXpkoOswpYtfQNed4sWylkN4iHFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710359948; c=relaxed/simple;
-	bh=tMxoBIHD4i2UejoCyKbx93/PX4tj2Zs7is+Y90aQgA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0GsHUh0uzxQ88HjRNGJC8Oeh++ieNtw4YmnltbVzhbot+oxWCM1KQCKloLlAENwYo3vRLDT4hmBxGpHjpqSRrfGROVpxSypdAG44B3iUvGVlcj5wIb6USX3IAokQrZr1ihQOyEfsBl2ZHbi6Rz1C+MTEirgRy4SkMJp+DBWIkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 156BB1007;
-	Wed, 13 Mar 2024 12:59:41 -0700 (PDT)
-Received: from [10.57.52.245] (unknown [10.57.52.245])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E03BB3F64C;
-	Wed, 13 Mar 2024 12:59:01 -0700 (PDT)
-Message-ID: <8c784016-9257-4d8a-b956-a0a406746c76@arm.com>
-Date: Wed, 13 Mar 2024 19:59:00 +0000
+	s=arc-20240116; t=1710372931; c=relaxed/simple;
+	bh=Z4wsRgTcB9Tuyme7jkJ30TZVZRuJCDanKTwrnQSHR48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SETVbDv6jsKBOuf/cFHS3YHlRJhaXOruJkQh7VdBCup8CaEM3CGVAxxOhoycktGNc1uUpRo6QDYF56nOdJb9OpP4XZeqb1wZSo9Pi+Xa+GPWvhOo4gNc13UK11WRQi2oEzb8JbI6oZLIvDD1PMWw/PkQptW/cI6uwdiFvCbNpwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DPb1TgVZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DPb1TgVZ"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42DKNlnb019914;
+	Wed, 13 Mar 2024 23:35:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=SRA0+FCsBgitWMlVubXqcPii+ndab4G+gfadeHVyUEE=; b=DP
+	b1TgVZVdEH9gN7/rMfyWlj91WES1dI1jOFMxLSock0idXgp0n9HvXt0rc1SkNH9C
+	s6aTeC/sgT3NDRhjKNtEZ9xOnJA1Z6fHIIljcCQLynAamGVqkaZzrFFagehLtXn1
+	nt7pO7p/eF29k9OpSXBRl0jqDdj5YCIIWecU7O7AjR6Zqnj1dlLmwEth/kX1uZSA
+	EEm6B58DvUiAUOGyVaqizhfico+IkIrg+RiQC71OtdbKhPgGKpUSWTrCXWt7r4nR
+	CPdVcmxDr4Chnlvl+taJ+9O96VOLIazKO5NGNsQk8vK2wdJyXg4AXz+5H/xVhh8u
+	BdmeisGvmhCvG9YeC0sQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wuggr0t8b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 23:35:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42DNZP0s022893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 23:35:25 GMT
+Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 13 Mar
+ 2024 16:35:25 -0700
+Message-ID: <0fd377a8-281d-634f-014b-509fd8dada98@quicinc.com>
+Date: Wed, 13 Mar 2024 16:35:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -27,149 +50,63 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: remoteproc: Add Arm remoteproc
-Content-Language: en-GB
-To: abdellatif.elkhlifi@arm.com, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rob Herring <robh+dt@kernel.org>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
- Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-4-abdellatif.elkhlifi@arm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20240301164227.339208-4-abdellatif.elkhlifi@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 1/7] soc: qcom: pdr: protect locator_addr with the main
+ mutex
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        Johan
+ Hovold <johan+linaro@kernel.org>
+References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
+ <20240311-qcom-pd-mapper-v4-1-24679cca5c24@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240311-qcom-pd-mapper-v4-1-24679cca5c24@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 730UKbsTu0jT9oKMJnw9p9xitRtdUfli
+X-Proofpoint-ORIG-GUID: 730UKbsTu0jT9oKMJnw9p9xitRtdUfli
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-13_10,2024-03-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 spamscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=691 malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403130179
 
-On 2024-03-01 4:42 pm, abdellatif.elkhlifi@arm.com wrote:
-> From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+
+
+On 3/11/2024 8:34 AM, Dmitry Baryshkov wrote:
+> @@ -133,11 +133,13 @@ static int pdr_register_listener(struct pdr_handle *pdr,
+>  	req.enable = enable;
+>  	strscpy(req.service_path, pds->service_path, sizeof(req.service_path));
+>  
+> +	mutex_lock(&pdr->lock);
+>  	ret = qmi_send_request(&pdr->notifier_hdl, &pds->addr,
+>  			       &txn, SERVREG_REGISTER_LISTENER_REQ,
+>  			       SERVREG_REGISTER_LISTENER_REQ_LEN,
+>  			       servreg_register_listener_req_ei,
+>  			       &req);
+> +	mutex_unlock(&pdr->lock);
+>  	if (ret < 0) {
+>  		qmi_txn_cancel(&txn);
+>  		return ret;
 > 
-> introduce the bindings for Arm remoteproc support.
-> 
-> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> ---
->   .../bindings/remoteproc/arm,rproc.yaml        | 69 +++++++++++++++++++
->   MAINTAINERS                                   |  1 +
->   2 files changed, 70 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml b/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
-> new file mode 100644
-> index 000000000000..322197158059
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/arm,rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Arm Remoteproc Devices
-> +
-> +maintainers:
-> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> +
-> +description: |
-> +  Some Arm heterogeneous System-On-Chips feature remote processors that can
-> +  be controlled with a reset control register and a reset status register to
-> +  start or stop the processor.
-> +
-> +  This document defines the bindings for these remote processors.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - arm,corstone1000-extsys
-> +
-> +  reg:
-> +    minItems: 2
-> +    maxItems: 2
-> +    description: |
-> +      Address and size in bytes of the reset control register
-> +      and the reset status register.
-> +      Expects the registers to be in the order as above.
-> +      Should contain an entry for each value in 'reg-names'.
-> +
-> +  reg-names:
-> +    description: |
-> +      Required names for each of the reset registers defined in
-> +      the 'reg' property. Expects the names from the following
-> +      list, in the specified order, each representing the corresponding
-> +      reset register.
-> +    items:
-> +      - const: reset-control
-> +      - const: reset-status
-> +
-> +  firmware-name:
-> +    description: |
-> +      Default name of the firmware to load to the remote processor.
 
-So... is loading the firmware image achieved by somehow bitbanging it 
-through the one reset register, maybe? I find it hard to believe this is 
-a complete and functional binding.
+Hi Dmitry,
 
-Frankly at the moment I'd be inclined to say it isn't even a remoteproc 
-binding (or driver) at all, it's a reset controller. Bindings are a 
-contract for describing the hardware, not the current state of Linux 
-driver support - if this thing still needs mailboxes, shared memory, a 
-reset vector register, or whatever else to actually be useful, those 
-should be in the binding from day 1 so that a) people can write and 
-deploy correct DTs now, such that functionality becomes available on 
-their systems as soon as driver support catches up, and b) the community 
-has any hope of being able to review whether the binding is 
-appropriately designed and specified for the purpose it intends to serve.
-
-For instance right now it seems somewhat tenuous to describe two 
-consecutive 32-bit registers as separate "reg" entries, but *maybe* it's 
-OK if that's all there ever is. However if it's actually going to end up 
-needing several more additional MMIO and/or memory regions for other 
-functionality, then describing each register and location individually 
-is liable to get unmanageable really fast, and a higher-level functional 
-grouping (e.g. these reset-related registers together as a single 8-byte 
-region) would likely be a better design.
+What is the reason for taking the pdr lock here? The addr struct passed
+into qmi_send_request is from the pdr_service. I think this is different
+from the pdr_handle we are protecting in the other parts of the patch.
 
 Thanks,
-Robin.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - firmware-name
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    extsys0: remoteproc@1a010310 {
-> +            compatible = "arm,corstone1000-extsys";
-> +            reg = <0x1a010310 0x4>, <0x1a010314 0x4>;
-> +            reg-names = "reset-control", "reset-status";
-> +            firmware-name = "es0_flashfw.elf";
-> +    };
-> +
-> +    extsys1: remoteproc@1a010318 {
-> +            compatible = "arm,corstone1000-extsys";
-> +            reg = <0x1a010318 0x4>, <0x1a01031c 0x4>;
-> +            reg-names = "reset-control", "reset-status";
-> +            firmware-name = "es1_flashfw.elf";
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 54d6a40feea5..eddaa3841a65 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1768,6 +1768,7 @@ ARM REMOTEPROC DRIVER
->   M:	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
->   L:	linux-remoteproc@vger.kernel.org
->   S:	Maintained
-> +F:	Documentation/devicetree/bindings/remoteproc/arm,rproc.yaml
->   F:	drivers/remoteproc/arm_rproc.c
->   
->   ARM SMC WATCHDOG DRIVER
+Chris
