@@ -1,130 +1,103 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBE8F55;
-	Thu, 14 Mar 2024 00:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D384B38F
+	for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 00:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710374604; cv=none; b=JS+AbMwdCG1WgDxDsdJOSN8enrIg6QoETnEwmxpBnGXjc50QUANog/JDg6RwSeDOwbZ3hoU2WcM/NPwujSbkof6QRcKY2FjgZl19+du3wc1Py02W6M3RPZ4Ki7+cC/LP3zDn3ionNxVe45u2no6qQTk28QWkNgoQDrZLR2stY5A=
+	t=1710374876; cv=none; b=D5mAt9D12RyeyTtQPC29bqBQRM2l3hD4CH2gQ6rIHQ5HhxuFIX55EMEoyni6L0/GxnpcNi+lP4u4q5BozuavtUGnh7BVz1fOKNq7m93KjHmWOkcyRZD+M8m+3C4dE7koGP7CkKp+Gsie3G5UJpSfc0p19irIxRCpqGpYbqNAK5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710374604; c=relaxed/simple;
-	bh=/G2Jhes5u7tVMOOVN3zuQSpf6UA1M3TBZbekVkGJxgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZyvtZUOJSFhKLIW9xKO1IeBuJ3LM8NlBBiOxF2uHsdcXmIG/X+8dtM4rTGI0nPbMOEFo75wSZ7rCy+BTbP8QIvEABziIsINNeaPImGmaxBrpfUr3CRsM0hbvSBO5WCGth+/VM2MsTGirOVyBGVDMGIanaGyXer+zAvX4btRZxTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X33rL/TB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1710374876; c=relaxed/simple;
+	bh=ffR1KLBN3MQHUEkttzvPMlq1F8KNOPWL1lKUyDg5C5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tNW3LedakChf/6A50efctRZQOsH0dYwkjAHljxH3g868Jp05X+cywknvScF0uBilPK/zvBCz0R9vg/+dMqdKMpLQHuNPjzDJSPuL+Wn3MOHw+MKa4WyJD6wCy+cAhA9Gc5LqjsWFxb/bRwjedlQPtWRflRLRCSKRXaxkCrktpLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SlczfVgz; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X33rL/TB"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42DNXpeZ024078;
-	Thu, 14 Mar 2024 00:03:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=JFderygkt3ks9IlL6vKhQjD/18XjzK34SiqlfyvluJI=; b=X3
-	3rL/TBAvHxTzPRCziDhWMwiy06Wop8XUeKsuDPXTZShxJGj3YwtL83iEP/giBJAB
-	DlSvywW+YIBUJX5xfS79EWNrUbiCdYwTwJRfwgWVkoZQViSzVkOXctW+4KTYoTGi
-	63i4OZrk2ZyTO/IgwYXoV5yvBFmvc5YPU2yd1HpCTf6xHgurc4F7AIK53QAmgPqO
-	yS6bGVyKdNDq663stQ+l/FzrBs0HmhXc8PWljyWhMgRd3fLtaY5uFyUY26WWk8uZ
-	gF0E4aHnRC4UVNCqR/3wNa6R2Jnpln00sD3WcAklWKv7GAdAN7EU3qsCgDYYmUmX
-	OfOeIBVgae1xJxy/V3qQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wugq18td9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Mar 2024 00:03:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42E03HsR028403
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Mar 2024 00:03:17 GMT
-Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 13 Mar
- 2024 17:03:16 -0700
-Message-ID: <9785a6e6-3700-0b89-b4b5-7981ed5bdd38@quicinc.com>
-Date: Wed, 13 Mar 2024 17:03:15 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SlczfVgz"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-60cbcd04de8so3906767b3.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Mar 2024 17:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710374874; x=1710979674; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhMl0zbJ/9Le9atsjgFlR3I0eu5p7IGZRFyK29oqUiU=;
+        b=SlczfVgzucTYqb/mgSLIrUbdPeIznQq39I/O34lAvJZ7X4bVSO35nW+XNDsmecOVMD
+         RNld8Apb3trYhO7E0OTQEyd8SWOpp7fbBfxDWEuiTX5jHwoH3KG1dMo2RbF1RktygKXC
+         3KunpduGlCZ8jAcWFy4vlAgvHBfELvNSgpU4Ar3566V3jAjOtk9C/xl6iiN516TMc1SE
+         E2xXyyECsbdkDGW1gK3uByIxGETTW5UVGA/i1sTeuX6CPtGJXKsJNV/doAsfM4fHYooC
+         YbeCc3G/AtrTjPWgcupqpLbPQBan1/A8vVWN8qfqsBlN9kKwaJ0vIFOiQiNJLHkhs+2d
+         TVRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710374874; x=1710979674;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zhMl0zbJ/9Le9atsjgFlR3I0eu5p7IGZRFyK29oqUiU=;
+        b=aFlh0JKzrDW4i3ytyVYh4+bOhVS6AXq5/NF2dVPnkuiWOL456unkCnJTIeYP+dhGEW
+         /XHbK2IvaEDgLatYhqO9ybg5VjxA8pToNrr77wD/Nu1wIOZZW96DyMjfM88mlUtyZwNK
+         OnNTd+2cbYzbLOiGzbdUQXG2iFatbZGi0uaDLqSSki1bDrU+jYZY8B+aUeGsjjIZ9wmN
+         ca0sQgh8ChSFCbm5NKmpdkqCRyCo+FxA8siIHEambjOg/hzPGPoJSHuTer1QBBj6uM4o
+         L2B4UKqh1p5dFAZJ8ccK0A1OZPc9nk5eApCupdStb4v33UHOffsvsTRf0fyu9/WpjJVH
+         ScdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+FV/CDrURsHeuW7fmQ/n2RzHh6uCk4lqXvIZJ92phahhQP4mbpdQKiXloa9Q9zh8p36LajUPi0rsnQEanIjqN0govl31NgSWeaaXFv9ow1w==
+X-Gm-Message-State: AOJu0YzMgzkgA/RpUYbbIVt+KTrywvlC4yQ6Xby0mitdUAVwo3NhSgmY
+	SS1/DtRysAL0LkemhhiPGp2pYIVZZDN2sJln0QFL9yqLRXUnJ/DNdpf7l20oBZLKqUZ/sXhqc+g
+	28TFM5DADmPCtQK1VCOhBJkV+B2CG9YkudcLwfQ==
+X-Google-Smtp-Source: AGHT+IEtRx1HrvUdIl9lVl+UIb/PcANEEg5PYeHeY0mxB2XDs0jW8iRN77/OsKgLU6mZvK4++66o/Hv+e74Lr0U4QYU=
+X-Received: by 2002:a81:a1cb:0:b0:60a:6b60:16f4 with SMTP id
+ y194-20020a81a1cb000000b0060a6b6016f4mr210359ywg.8.1710374873784; Wed, 13 Mar
+ 2024 17:07:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/7] soc: qcom: qmi: add a way to remove running
- service
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu
- Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Johan
- Hovold <johan+linaro@kernel.org>
 References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
- <20240311-qcom-pd-mapper-v4-2-24679cca5c24@linaro.org>
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240311-qcom-pd-mapper-v4-2-24679cca5c24@linaro.org>
+ <20240311-qcom-pd-mapper-v4-1-24679cca5c24@linaro.org> <0fd377a8-281d-634f-014b-509fd8dada98@quicinc.com>
+In-Reply-To: <0fd377a8-281d-634f-014b-509fd8dada98@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 14 Mar 2024 02:07:42 +0200
+Message-ID: <CAA8EJppi4q-5ez4F4BvLMkU4UdUD_Rtu58cMj+Gq2udCaf9HzQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] soc: qcom: pdr: protect locator_addr with the main mutex
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uWBDKNAjpVjE16DBm5EgxqiCLRbH2ZMO
-X-Proofpoint-GUID: uWBDKNAjpVjE16DBm5EgxqiCLRbH2ZMO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-13_11,2024-03-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=718 phishscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 adultscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2402120000 definitions=main-2403130182
+
+On Thu, 14 Mar 2024 at 01:35, Chris Lew <quic_clew@quicinc.com> wrote:
+>
+>
+>
+> On 3/11/2024 8:34 AM, Dmitry Baryshkov wrote:
+> > @@ -133,11 +133,13 @@ static int pdr_register_listener(struct pdr_handle *pdr,
+> >       req.enable = enable;
+> >       strscpy(req.service_path, pds->service_path, sizeof(req.service_path));
+> >
+> > +     mutex_lock(&pdr->lock);
+> >       ret = qmi_send_request(&pdr->notifier_hdl, &pds->addr,
+> >                              &txn, SERVREG_REGISTER_LISTENER_REQ,
+> >                              SERVREG_REGISTER_LISTENER_REQ_LEN,
+> >                              servreg_register_listener_req_ei,
+> >                              &req);
+> > +     mutex_unlock(&pdr->lock);
+> >       if (ret < 0) {
+> >               qmi_txn_cancel(&txn);
+> >               return ret;
+> >
+>
+> Hi Dmitry,
+>
+> What is the reason for taking the pdr lock here? The addr struct passed
+> into qmi_send_request is from the pdr_service. I think this is different
+> from the pdr_handle we are protecting in the other parts of the patch.
+
+Indeed, we should be taking pdr->list_lock.
 
 
-
-On 3/11/2024 8:34 AM, Dmitry Baryshkov wrote:
-> +/**
-> + * qmi_del_server() - register a service with the name service
-
-s/register/deregister/g
-
-> + * @qmi:	qmi handle
-> + * @service:	type of the service
-> + * @instance:	instance of the service
-> + * @version:	version of the service
-> + *
-> + * Remove registration of the service with the name service. This notifies
-> + * clients that they should no longer send messages to the client associated
-> + * with @qmi.
-> + *
-> + * Return: 0 on success, negative errno on failure.
-> + */
-> +int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
-> +		   unsigned int version, unsigned int instance)
-> +{
-> +	struct qmi_service *svc;
-> +	struct qmi_service *tmp;
-> +
-> +	list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
-> +		if (svc->service != service ||
-> +		    svc->version != version ||
-> +		    svc->instance != instance)
-> +			continue;
-> +
-> +		qmi_send_del_server(qmi, svc);
-> +		list_del(&svc->list_node);
-> +		kfree(svc);
-> +
-> +		return 0;
-> +	}
-> +
-
-is list_for_each_entry_safe required if we stop iterating and return
-after we find the first instance of the service?
-
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(qmi_del_server);
+-- 
+With best wishes
+Dmitry
