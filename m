@@ -1,178 +1,136 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117A6FE02
-	for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7614471721
+	for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 14:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710424619; cv=none; b=kKJSmFNxk5E0Nf+94DFrozt8gWvoM4COuudFFBDp9mQHVBcNMgh9SoZqH6CSPyGkyinZTkrcUPWv4ElpSXKMewPqP6QmyyHIbl0AbWMqDnh9vpjKv+gwdaJB9Xal0WVWtWC8mFtNA2xxTY4DIhSKsIxSS2xSrXYjE1DIbyEsGDE=
+	t=1710427985; cv=none; b=sJh7PhDEZ6bdLGPO9f4G7LbW9CDXC4eezWnf0nhOgD18HnJiMMx0/cHkb7m62H6aY6qLLKKSGXoPp2kuYvyoEMsT+/5HMr4PDuUfVHElunhRU88+UvkOg02AnGnpfyIAm4Tft9JcJhquTUBZcLqDEofo7X6QWgvLo9lAhYuRPnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710424619; c=relaxed/simple;
-	bh=97IREz6AQGN+Adg5OvgCHvuY7w7GBw1iUsPVAKP1GHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oI4R0vfVWwrmL7HgAbHWGcD87iJMgAD92vBhQiJ8IadROFKmPFmkBn8Vtjmz6gTLpR2tynbmqTT7Sw+Yk3eydqHZLWsDcp8kGTwUNS1hZd52kU0ckuayv2VzWDtUMRZH6ZnrQV2yTZvCH2mfjYVrTuy5mHENh7U/H7pkqLYdaSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QY6jPgIh; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1710427985; c=relaxed/simple;
+	bh=Z4Ix1Oz24qrsjV1vmGqdhWdEKSxI4Rx28UJCxDH4Sx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=if3cb9lZAMpkoer/O7PFkj9ooVaUk6SgXtZLpTgK5qqc9qIHXESkhTozPGTlxBcufy60PFXgS48xrFyj6beMDeCgwVbhL7GGIiI3b9P7G4bRg9Y078qKpVQPh73ND2CVXWWYpl4Ta2kCNsvaUokGHuN3UHBFCesPHG/QzEHkZ6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeawrzyK; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QY6jPgIh"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-568a5e15ae8so406765a12.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 06:56:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeawrzyK"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e6b3dc3564so1024528b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 07:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710424616; x=1711029416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wU+5zjNt2rmyof5Fvve875MtX+yDLSiVmTgw1JG0my8=;
-        b=QY6jPgIhY61D8feI2pHG+yrGZKV2PceAuZDLigNqCtg+NkdRP2vBQLCRU7oTnxz8nT
-         xADUPRlX6Y9wiRwxjZl97IwSUUe+hnoGCUCU80GHYrVA1rEQDL6F8axkxBuQH6xN+tkL
-         gc2mD8Vps5a1RtnSfuQHUGlXBddUNAQdLtJ+98uGQJXzJou/4FDmBd0G3K+msc3IiR4/
-         3A2DV/GO4yIpZUMnflQRQeRIcC6L1SN8EcxXxf+/Bd0Gcp9IehAJmsIIQ5vRvES0+Alu
-         UJHpmNw9LEfpz0cEsVb4PnSe0n6vQKeae7Ww5OjQ5I/uP+bCv4kHoE8vf1DHrkmwJF/v
-         I78Q==
+        d=linaro.org; s=google; t=1710427983; x=1711032783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gQdGRCc8CvufO8pJrzg/EbeDXgOQDIEiNqPLlOCuoyM=;
+        b=yeawrzyK12AlYySnBbLvlrY1hiqyxCZSY1Rim5dOnqUe13MaKTSR9H03Cx2n3ZAZxI
+         UR7h+ffqhVUKMSLkcycaRCSVaBu+0kLoXQzrbtouG4YI0MtPMeRrIKvceunrfAJRCGQP
+         0Rrluu34ssIuS5bgS/0+hdMZXSI4GRPxGCCGt4NH0yXnAykDFzSEvXu05OGlEfisr5K6
+         Km3sVE+a6EB27U1hJZ9d2ncYaF2E1qgdw8yLtq1MyT4Uy9RI93zMoy8s01FHNe1XOQrb
+         2+sIajZSHGn6SqKKG0s4UXoTO0GVnBIn0DdMk2C8Uyi3q8H9a/m6MiGwuIjPxK3SFdc5
+         d+/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710424616; x=1711029416;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1710427983; x=1711032783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wU+5zjNt2rmyof5Fvve875MtX+yDLSiVmTgw1JG0my8=;
-        b=iKsXWGrpv0S3GC6Zewgfgm4Ud6mqLggRwNn1MJ5h2tuiVoA/9fpUkCBWx+ZF+3Sdnd
-         lvw9223qpshRpzV6kWICxLRKno2+xoo+6NtlkwEQYuZLhnDtwEOg+Bj0CHfrp+RiM20w
-         RJU/2u5zzb6XezdvJq0pWfYHw7ZUgENGTq5UoJPPD1nyj44+G99F8hZzg9ZFuxG+k85D
-         sLf7I1Ghpu+TSASOKBA5S7XzjBOs4LEvrC2JzrJTOV/fCOigdQQAdjWzmf/oB50a6QcH
-         PNZUIOPyL5Gu5Fcg23i/PyXwc14fiwPZoZkk2g7g+EbJlz80W2dfs/qLqrS0z1SJdmLE
-         Qzfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxnFYldfKZZueIPwLDzJPo66SH6wuxpXqaEqQMOqQw2i7hy+Rg/uHVdTk2Nyb8+7iID6FkwBC5Lj0JMbnpKDfGS8eFeLnHHB3elC2gUH8Q0w==
-X-Gm-Message-State: AOJu0Yw1d2yR8KlEGHzUKXBLNQ36PUEpbdcdxB5/TN5tJ4QkomJuMwUJ
-	sAPDqrQ9MgIALx6VpBvfymwzNJKBHd6p4uRd5vnJ3Xh7qmgXxu9e1v9AhFAqD6M=
-X-Google-Smtp-Source: AGHT+IHJsw3asGO8YcwJxILcUjEQAitA3AUUKQG9r9DJuoKvr3OvYWZgJFk1jM+xs57zU/LvoQ7gdQ==
-X-Received: by 2002:a05:6402:e10:b0:568:949b:e91f with SMTP id h16-20020a0564020e1000b00568949be91fmr1283422edh.36.1710424615889;
-        Thu, 14 Mar 2024 06:56:55 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id s15-20020a056402014f00b005664afd1185sm748738edu.17.2024.03.14.06.56.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Mar 2024 06:56:55 -0700 (PDT)
-Message-ID: <d3b7fd09-76ef-42b3-aaf9-de0369a28e03@linaro.org>
-Date: Thu, 14 Mar 2024 14:56:53 +0100
+        bh=gQdGRCc8CvufO8pJrzg/EbeDXgOQDIEiNqPLlOCuoyM=;
+        b=qKimO627+4H4MAjKK0L/L/juPqHB3m1y883AOLDfyy6AGgrE+lPYZMbaziL6iFZKsO
+         OBtQeMcO3YIBGzdS0iNX1jn7Qbg/xfd4VB4d5MDHt6K4vFYLTa0xGcTEi66erGq1gY7v
+         4rUD0TlbAq385ElWPsAevFFmoDPiwmG3kcv+W8SxhQM7FFYk11qRyKEd80bamzNTTbE5
+         0xOftcQ9Vje2ovb5SUef/MSBRCH3YIQZV2l42Bu9ICtukt1uHLclPDc0vJXHRa/tYSwT
+         Xt7VSmB56SzFeT/f9ImHKX0niK8eC030b5RxS5DCzhRyWkVPChYFD1y/8JeUWKKPMdMm
+         cUKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvyaKAnQUHtwJJOkGGem15xXln++I3wUgYBaXxeYffuWRavidKfWR3z47I0ywop42XZ0Abt+dEqMZ+xruadHkA8AxKbFKdPTO8djblOn/JGw==
+X-Gm-Message-State: AOJu0YwOKAsF3U15cEzEmz2TSsyUMSxUxph7RxzZ6lJuR3KIzRnh6y9G
+	9jkOUY9qOLWAMfYPfBL+p6sr0o6MfpYApujwG83+p0xnfV5lt7zJ+JqsyPj7MSsuPkSL6doUovM
+	6
+X-Google-Smtp-Source: AGHT+IHEMN+NstoSXqaYuO+a0b+IClYsaLbJ/T+IJD4cV0xAleMVWkTv6lKGty1MmRGzfPlPcDv1+Q==
+X-Received: by 2002:a05:6a00:39a1:b0:6e6:7af6:2201 with SMTP id fi33-20020a056a0039a100b006e67af62201mr1888318pfb.8.1710427982718;
+        Thu, 14 Mar 2024 07:53:02 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7983:888b:1e31:65e6])
+        by smtp.gmail.com with ESMTPSA id fb12-20020a056a002d8c00b006e6b73eb992sm1543850pfb.118.2024.03.14.07.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Mar 2024 07:53:02 -0700 (PDT)
+Date: Thu, 14 Mar 2024 08:52:59 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
+	Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
+Message-ID: <ZfMPS+qn0lh5IrS7@p14s>
+References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
+ <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
+ <ZeYWKVpeFm1+4mlT@p14s>
+ <20240307194026.GA355455@e130802.arm.com>
+ <CANLsYkzA20rQdTM6AOvFK=3o28GvcoRbckL=ri8RegHqyHaiCw@mail.gmail.com>
+ <20240311114442.GA82865@e130802.arm.com>
+ <CANLsYkwReJvB1UWvR5TwtSs-w_VqU45kDSUzuQ0k+waetEn6Yw@mail.gmail.com>
+ <20240312173252.GA38992@e130802.arm.com>
+ <ZfHTfNx4um8koTlY@p14s>
+ <20240313171756.GA82165@e130802.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: remoteproc: Add Arm remoteproc
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
- Robin Murphy <robin.murphy@arm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Drew.Reed@arm.com,
- Adam.Johnston@arm.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20240301164227.339208-1-abdellatif.elkhlifi@arm.com>
- <20240301164227.339208-4-abdellatif.elkhlifi@arm.com>
- <8c784016-9257-4d8a-b956-a0a406746c76@arm.com>
- <20240314134928.GA27077@e130802.arm.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240314134928.GA27077@e130802.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240313171756.GA82165@e130802.arm.com>
 
-On 14/03/2024 14:49, Abdellatif El Khlifi wrote:
->> Frankly at the moment I'd be inclined to say it isn't even a remoteproc
->> binding (or driver) at all, it's a reset controller. Bindings are a contract
->> for describing the hardware, not the current state of Linux driver support -
->> if this thing still needs mailboxes, shared memory, a reset vector register,
->> or whatever else to actually be useful, those should be in the binding from
->> day 1 so that a) people can write and deploy correct DTs now, such that
->> functionality becomes available on their systems as soon as driver support
->> catches up, and b) the community has any hope of being able to review
->> whether the binding is appropriately designed and specified for the purpose
->> it intends to serve.
+On Wed, Mar 13, 2024 at 05:17:56PM +0000, Abdellatif El Khlifi wrote:
+> Hi Mathieu,
 > 
-> This is an initial patchset for allowing to turn on and off the remote processor.
-> The FW is already loaded before the Corstone-1000 SoC is powered on and this
-> is done through the FPGA board bootloader in case of the FPGA target.
-> Or by the Corstone-1000 FVP model (emulator).
+> On Wed, Mar 13, 2024 at 10:25:32AM -0600, Mathieu Poirier wrote:
+> > On Tue, Mar 12, 2024 at 05:32:52PM +0000, Abdellatif El Khlifi wrote:
+> > > Hi Mathieu,
+> > > 
+> > > On Tue, Mar 12, 2024 at 10:29:52AM -0600, Mathieu Poirier wrote:
+> > > > > This is an initial patchset for allowing to turn on and off the remote processor.
+> > > > > The FW is already loaded before the Corstone-1000 SoC is powered on and this
+> > > > > is done through the FPGA board bootloader in case of the FPGA target. Or by the Corstone-1000 FVP model
+> > > > > (emulator).
+> > > > >
+> > > > >From the above I take it that booting with a preloaded firmware is a
+> > > > scenario that needs to be supported and not just a temporary stage.
+> > > 
+> > > The current status of the Corstone-1000 SoC requires that there is
+> > > a preloaded firmware for the external core. Preloading is done externally
+> > > either through the FPGA bootloader or the emulator (FVP) before powering
+> > > on the SoC.
+> > > 
+> > 
+> > Ok
+> > 
+> > > Corstone-1000 will be upgraded in a way that the A core running Linux is able
+> > > to share memory with the remote core and also being able to access the remote
+> > > core memory so Linux can copy the firmware to. This HW changes are still
+> > > This is why this patchset is relying on a preloaded firmware. And it's the step 1
+> > > of adding remoteproc support for Corstone.
+> > >
+> > 
+> > Ok, so there is a HW problem where A core and M core can't see each other's
+> > memory, preventing the A core from copying the firmware image to the proper
+> > location.
+> > 
+> > When the HW is fixed, will there be a need to support scenarios where the
+> > firmware image has been preloaded into memory?
 > 
-> The plan for the driver is as follows:
-> 
->     Step 1: provide a foundation driver capable of turning the core on/off
->     Step 2: provide mailbox support for comms
->     Step 3: provide FW reload capability
-> 
-> Steps 2 & 3 are waiting for a HW update so the Cortex-A35 (running Linux) can
-> share memory with the remote core.
-> 
-> So, when memory sharing becomes available in the FPGA and FVP the
-> DT binding will be upgraded with:
-> 
->     - mboxes property specifying the RX/TX mailboxes (based on MHU v2)
->     - memory-region property describing the virtio vrings
-> 
-> Currently the mailbox controller does exist in the HW but is not
-> usable via virtio (no memory sharing available).
-> 
-> Do you recommend I add the mboxes property even currently we can't do the comms ?
+> No, this scenario won't apply when we get the HW upgrade. No need for an
+> external entity anymore. The firmware(s) will all be files in the linux filesystem.
+>
 
-Bindings should be complete, regardless whether Linux driver supports it
-or not. Please see writing bindings document for explanation on this and
-other rules.
+Very well.  I am willing to continue with this driver but it does so little that
+I wonder if it wouldn't simply be better to move forward with upstreaming when
+the HW is fixed.  The choice is yours. 
 
-So yes: please describe as much as possible/reasonable.
-
-
-Best regards,
-Krzysztof
-
+Thanks,
+Mathieu
