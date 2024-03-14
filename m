@@ -1,142 +1,150 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EFA73539
-	for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 16:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0CA71B48;
+	Thu, 14 Mar 2024 17:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710433806; cv=none; b=P1j2oUVQuQ+kQ3MNA+UY7KDSLd3j5W711nIBGOTqhYuhXCcR4y2ctdbrVLnh71yxgfFyywgzvx7JE5hqfN2DuU8eO+FqdWlo1NOHtL2USk+cOn04cDKFEPa3hi0dl71ICC6+utolLK6j1syD4jJcc0j3pFuWn3KGm5VpbqyfksA=
+	t=1710436536; cv=none; b=QwHv+AB/D7DmgjqslEC2FnBe/AnDWvvYCjwa8fBRxkVS8RSpWSkQYN3Bq4k+pEjCeQucbdLUCA8Cr0oGkGGleAXgQ2l/IkaCwYGLsEL3JZXw23VcxtMugxqnUyPjfmMsK30+81gNUjY/xgV/aTt7yoogrTkZSPEsxFMmqiGcuyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710433806; c=relaxed/simple;
-	bh=q7cZe7r0LCnbPyHPLloHmQxC19pPkG/8Zv4KL2YlRpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s6y8xQgKP9L8yHDoCmDzsyaU2hJnORTMjSz8+6DpMGfRpGqoiSqJ8qfR2w2yRnK0DyJ3eEdjcPOiYJUWacYZyggsQ5dEOdYbKBq49j2/SuRA+o5CvVlt7fbdLbxtKbUXSvn/cyuQmXMuvlRdHyF7Y15MblU9aSdcTUZU/3lO2OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6Uyc3Nl; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710436536; c=relaxed/simple;
+	bh=ufpv9eHmImj1ZeMfXW/42WU0CukeEiBS1SO5mBHtlKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JNHdt8gKBKSvqXFVb3elGkcK0mczSAhJuZ9Ue9S1i+4XpRt+atPPq6rnaDxFh79XVfEb/hh4kPjvgjsCuOS65ZZIXW6oezIJUNf99zdVOmR/MqjX/Zo2GAWzXdxslJTJnIO2o8fBxjskw38FFqGn/RsC5wYV7cpqUrnPhF9ZzWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQhK3vxm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6Uyc3Nl"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5689b7e8387so1515336a12.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 09:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710433803; x=1711038603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KLl3gK9cV6OxQa3WncHmwC4MY7fLl1EcNbFX0dIn7sc=;
-        b=n6Uyc3NlqwrglWx6CD+iKjM48wD/5aa987KJPe9pY3CViriv6cC1HKpXUGuVtxD9vI
-         RqeKjx+mnTkT4rZyH6jP0cJetXq7D3I+kSOGk6RoFuL3tmCxteyZGNnXDDHTiDAe8YAQ
-         8ySjnTBaIWyWm7bw6v3YaEJoXCkU2fjdvy8b/OmDKDn+msmlCkp7O8rgQ/eXpv5s3vDP
-         KesO93ApWtJ6WZGE1cB4Cz7/wd8ebqL2FE+kFyAux9Fjq2onfA9E1tBROaHytyD6jwzN
-         jlzBZumlM2K5LhDZic3j9NXHy4sTsdjcKm+z5+qzRBCdSifQIaP3hYlZbjAQtXMXckW0
-         DQdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710433803; x=1711038603;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KLl3gK9cV6OxQa3WncHmwC4MY7fLl1EcNbFX0dIn7sc=;
-        b=HRVTIBsgOyuFzmUT8cWApOUHewsXuzix4O8w4oHSsWwKdYVoReO/tvCmfsREhMP9sA
-         vj21eMuytl4sOqRTM7mTmWVfbC6N99ZihAcEBFvDd1w/SGU6ICuwsNTZfzpM60XRW1HK
-         kMziM2t1lB3eJSP+/yByCRFWsNcz6UO4wPBNFWgMzgS/AzI2oAIHTrBc3iofuZOQPsym
-         uMmT4+363Gl+tbbr/C0Pu+ptxYKZSdREtH0BJ/iT5ZwWASsyg1ikTFKsLVlR08PqOZNH
-         RAORXyXG1SL7bbbxHt40GL6B25DYP413oa3kfSYi41mkB3z8iQS7v8Gx8L67z/q9fBnZ
-         te+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7zEGkK3iK+88HF6GHV+3a2yyuBdupmItAprG0IU9Ndwv8qThDeLLLSxmKy3FaQzrILnIELydc3D8ouD2JNbXuVkXMUscb2ZhGcrPoqshFPg==
-X-Gm-Message-State: AOJu0YwbsForTaMx4eaTCC675hKLs35UguEdUke8D9qblnMPs53dPeZI
-	XubccoB/GGZqJup0JJFcGVnYt0qRID5d5dMvTWg1SzyxMaX+pmh4enq949BSYT6ZJBBsIR3Zllg
-	1/qUmv0xgtpfSmvcdhxJjoqCvnFoSZ/PjwOrWBA==
-X-Google-Smtp-Source: AGHT+IHFysDJuZx8WaSgVN8UaQyI4uT/Kws9od+ssgUFSxoLe79xE2iiRf9rncVkWebMw/kyZE9YRMP8x9J1VnQQqYY=
-X-Received: by 2002:a05:6402:5414:b0:565:7733:3c58 with SMTP id
- ev20-20020a056402541400b0056577333c58mr872607edb.4.1710433803045; Thu, 14 Mar
- 2024 09:30:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QQhK3vxm"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42EGXsKT029401;
+	Thu, 14 Mar 2024 17:15:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=0p2GF0Kdi08mgtJSStQ53nkTeryJahRKeHhIuEpikcM=; b=QQ
+	hK3vxmI746yKeOvW1zoFYPYh/or5Ku0KBQElL5TJGG3frz5YounQVCKqi9fL22/W
+	LuAuRdiD9rhRzvFB7Jzct104tAiqtCedBH7Yu40qail1D56UxNhFwSxKsGxREiz9
+	3DkeQ0bMRzPYpG+yRpXm03/8Sjm0q4g6NYlxYu/jR7V5Ddzd94hfPLuurpkGB9lg
+	KHwolrG2cEXxvCg7Rva6NUNcZck6xcvwbXL5tmS3GxH/IKWMgn6emYyNuX6yudSV
+	BXiZDGVEhTv0fllJaOeBK8S4TLLPvJ5FvOhJs780kXZN5Ozh86ua79Zd5wUvz+SH
+	gK4pH2wDER7lg3RgYcFw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wuwau96u0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Mar 2024 17:15:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42EHFSVe023121
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Mar 2024 17:15:28 GMT
+Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 14 Mar
+ 2024 10:15:27 -0700
+Message-ID: <43334f03-2ff5-a29d-cdb7-eaf3b80c4d16@quicinc.com>
+Date: Thu, 14 Mar 2024 10:15:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301164227.339208-2-abdellatif.elkhlifi@arm.com>
- <ZeYWKVpeFm1+4mlT@p14s> <20240307194026.GA355455@e130802.arm.com>
- <CANLsYkzA20rQdTM6AOvFK=3o28GvcoRbckL=ri8RegHqyHaiCw@mail.gmail.com>
- <20240311114442.GA82865@e130802.arm.com> <CANLsYkwReJvB1UWvR5TwtSs-w_VqU45kDSUzuQ0k+waetEn6Yw@mail.gmail.com>
- <20240312173252.GA38992@e130802.arm.com> <ZfHTfNx4um8koTlY@p14s>
- <20240313171756.GA82165@e130802.arm.com> <ZfMPS+qn0lh5IrS7@p14s> <ZfMQyJWTh15P7Ru3@bogus>
-In-Reply-To: <ZfMQyJWTh15P7Ru3@bogus>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 14 Mar 2024 10:29:51 -0600
-Message-ID: <CANLsYkzdfP8Np-XwPDt=GBNLYiSypd8tNdb29KUwr+tyi7gJEA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Drew.Reed@arm.com, Adam.Johnston@arm.com, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/7] soc: qcom: qmi: add a way to remove running
+ service
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        Johan
+ Hovold <johan+linaro@kernel.org>
+References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
+ <20240311-qcom-pd-mapper-v4-2-24679cca5c24@linaro.org>
+ <9785a6e6-3700-0b89-b4b5-7981ed5bdd38@quicinc.com>
+ <CAA8EJpr0vV4THO=+rNTXmK5YJtQwzfcsWCWHUgU1XaiSEudtsA@mail.gmail.com>
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <CAA8EJpr0vV4THO=+rNTXmK5YJtQwzfcsWCWHUgU1XaiSEudtsA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sJDB1zQK-yiiyWUK5xkUJvsjMSNH4wMp
+X-Proofpoint-GUID: sJDB1zQK-yiiyWUK5xkUJvsjMSNH4wMp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-14_13,2024-03-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 mlxlogscore=795 adultscore=0 lowpriorityscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2402120000
+ definitions=main-2403140131
 
-On Thu, 14 Mar 2024 at 08:59, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Thu, Mar 14, 2024 at 08:52:59AM -0600, Mathieu Poirier wrote:
-> > On Wed, Mar 13, 2024 at 05:17:56PM +0000, Abdellatif El Khlifi wrote:
-> > > Hi Mathieu,
-> > >
-> > > On Wed, Mar 13, 2024 at 10:25:32AM -0600, Mathieu Poirier wrote:
-> > > > On Tue, Mar 12, 2024 at 05:32:52PM +0000, Abdellatif El Khlifi wrote:
-> > > > > Hi Mathieu,
-> > > > >
-> > > > > On Tue, Mar 12, 2024 at 10:29:52AM -0600, Mathieu Poirier wrote:
-> > > > > > > This is an initial patchset for allowing to turn on and off the remote processor.
-> > > > > > > The FW is already loaded before the Corstone-1000 SoC is powered on and this
-> > > > > > > is done through the FPGA board bootloader in case of the FPGA target. Or by the Corstone-1000 FVP model
-> > > > > > > (emulator).
-> > > > > > >
-> > > > > > >From the above I take it that booting with a preloaded firmware is a
-> > > > > > scenario that needs to be supported and not just a temporary stage.
-> > > > >
-> > > > > The current status of the Corstone-1000 SoC requires that there is
-> > > > > a preloaded firmware for the external core. Preloading is done externally
-> > > > > either through the FPGA bootloader or the emulator (FVP) before powering
-> > > > > on the SoC.
-> > > > >
-> > > >
-> > > > Ok
-> > > >
-> > > > > Corstone-1000 will be upgraded in a way that the A core running Linux is able
-> > > > > to share memory with the remote core and also being able to access the remote
-> > > > > core memory so Linux can copy the firmware to. This HW changes are still
-> > > > > This is why this patchset is relying on a preloaded firmware. And it's the step 1
-> > > > > of adding remoteproc support for Corstone.
-> > > > >
-> > > >
-> > > > Ok, so there is a HW problem where A core and M core can't see each other's
-> > > > memory, preventing the A core from copying the firmware image to the proper
-> > > > location.
-> > > >
-> > > > When the HW is fixed, will there be a need to support scenarios where the
-> > > > firmware image has been preloaded into memory?
-> > >
-> > > No, this scenario won't apply when we get the HW upgrade. No need for an
-> > > external entity anymore. The firmware(s) will all be files in the linux filesystem.
-> > >
-> >
-> > Very well.  I am willing to continue with this driver but it does so little that
-> > I wonder if it wouldn't simply be better to move forward with upstreaming when
-> > the HW is fixed.  The choice is yours.
-> >
->
-> I think Robin has raised few points that need clarification. I think it was
-> done as part of DT binding patch. I share those concerns and I wanted to
-> reaching to the same concerns by starting the questions I asked on corstone
-> device tree changes.
->
 
-I also agree with Robin's point of view.  Proceeding with an initial
-driver with minimal functionality doesn't preclude having complete
-bindings.  But that said and as I pointed out, it might be better to
-wait for the HW to be fixed before moving forward.
 
-> --
-> Regards,
-> Sudeep
+On 3/13/2024 5:09 PM, Dmitry Baryshkov wrote:
+> On Thu, 14 Mar 2024 at 02:03, Chris Lew <quic_clew@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 3/11/2024 8:34 AM, Dmitry Baryshkov wrote:
+>>> +/**
+>>> + * qmi_del_server() - register a service with the name service
+>>
+>> s/register/deregister/g
+> 
+> ack
+> 
+>>
+>>> + * @qmi:     qmi handle
+>>> + * @service: type of the service
+>>> + * @instance:        instance of the service
+>>> + * @version: version of the service
+>>> + *
+>>> + * Remove registration of the service with the name service. This notifies
+>>> + * clients that they should no longer send messages to the client associated
+>>> + * with @qmi.
+>>> + *
+>>> + * Return: 0 on success, negative errno on failure.
+>>> + */
+>>> +int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
+>>> +                unsigned int version, unsigned int instance)
+>>> +{
+>>> +     struct qmi_service *svc;
+>>> +     struct qmi_service *tmp;
+>>> +
+>>> +     list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
+>>> +             if (svc->service != service ||
+>>> +                 svc->version != version ||
+>>> +                 svc->instance != instance)
+>>> +                     continue;
+>>> +
+>>> +             qmi_send_del_server(qmi, svc);
+>>> +             list_del(&svc->list_node);
+>>> +             kfree(svc);
+>>> +
+>>> +             return 0;
+>>> +     }
+>>> +
+>>
+>> is list_for_each_entry_safe required if we stop iterating and return
+>> after we find the first instance of the service?
+> 
+> Yes, it just adds a temp variable here.
+> 
+
+Ok, I was thinking that tmp wasn't necessary because we don't continue
+iterating through the list after we free the svc. I guess it never hurts
+to be safe though.
+
+>>
+>>> +     return -EINVAL;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(qmi_del_server);
+> 
+> 
+> 
