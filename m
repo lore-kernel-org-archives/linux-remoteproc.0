@@ -1,341 +1,175 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28DAD502;
-	Fri, 15 Mar 2024 00:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1AD52A
+	for <linux-remoteproc@vger.kernel.org>; Fri, 15 Mar 2024 03:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710464273; cv=none; b=rFmHFnLc4uzr/4fnfJ5fhZseJ1Do8vxVEMeGtt7JDs+gm2m1O5GLgwX4LoOzrqmBRuyXhX12bgOSPTr1D7meuHWkBJju/A2fG7UmrTYGndKCBUQz5ENPCbkWW96fuFBQUrhM1fhvZoN+KyP+oxljyDIFrV/8ET90fL6ikR3UZMI=
+	t=1710474727; cv=none; b=moJtLGD4bAdBQK5FnRyte/FPssuZ5yOZEBPHGgsE1NbCBh2bDZ0phQYJMlC38ANQFF7HMp+vFfb5rEjQ5tXofEX5LXOKVrI6WoQmXTlDQCnQTv4bZYf6rwKStcEBnO55JValFI+M5oi5UcnslBpr/SwZXaawlSWYLjNA7pmpxbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710464273; c=relaxed/simple;
-	bh=j13QLgYOb0kS6R4/5VVu1Oe7voHpWamm9OhFQVr8rYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BUU4SsKA6WXoZCscPJpfwKAIayHsp6dAfdfMr+KiNLhmGdeLDmlaorQdkW+tUtUjcqm/LSJx+KK4Cpm8EqOi9HundUOOtjZ3buBhdHoN2GvEAZyvSSMVYYeAXGjHqaDmEy6MqTUhUXgdq5ciRe9E3A8YF3tiQSCx6Xby6NOjFiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c4D42RWC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1710474727; c=relaxed/simple;
+	bh=+P0SN8lR5UMoHiVeJbaZ63DVZv6EUw72aKI5RNx4i7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IUGbp9XL1I+nwXAhAaC82fpSZTikyb+tCGacaPExZvLKMAHt5JMJS8VcKAPLfMUU+lJk7pmp81ayr0HXrzcvurDz1xroTWJBZrNxoiWskvOnrnFiN0a7RN/lD1ENFsOR76XTtndsJju7bvw+2oyAFUi1hnjbs5zDrko9DOf7LiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZSVUG+bw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c4D42RWC"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42F0ttIU013083;
-	Fri, 15 Mar 2024 00:57:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=5d1KXGqIP2/Z3YcymowfRnlD39KGKaYWq2ZynjnQd/c=; b=c4
-	D42RWCg+Ol7I9EPApkYXYBZrMeIVLYsEDMRNb6x+XP0lXTSl8xZtxbjgptZ+7WhJ
-	huv0JI5qYSX4J/xq75cgU0jtqbgudRs43wy8cDN2cpw0zSJlrzfd6DDhqgtd2AST
-	jD7HE6QKUeaG4Gb1V0dMsyGSBN6XfxYvMBkYDQz/KsvHFPD/jwc+0CQuhjFiNmj1
-	El1cN9VKJR0+rSdoExVG6iI1rXUHbUhMDuHC8fmBPQGh4axSfA+LnY7PWptWyFQ5
-	3fWXq6gG5yVzLc6M/ht2JfXEtAsxw3fvw2wW5S8MhVC0Em4R/pwx/YRLqywZfRo/
-	c9SkK1Agq2HHAFIAyWww==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wva0eg78f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Mar 2024 00:57:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42F0vdDK025745
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Mar 2024 00:57:39 GMT
-Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 14 Mar
- 2024 17:57:39 -0700
-Message-ID: <f4e2c00e-b669-9827-a480-5670ef9711c0@quicinc.com>
-Date: Thu, 14 Mar 2024 17:57:38 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZSVUG+bw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710474723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jRnPjyJeZad1F26bIZOTcaKiZRrwc4cB/pDexLjVGDE=;
+	b=ZSVUG+bwPBcYi8lPq2wgby5geeJ267tX5J9P8IR7u6+8Az6A0BZ1mDmlBPupFUCMy51YFm
+	yCG6OMrKsbwkHeVy8GFezgkVm5LSU+oTyu4musUB9HLWxFmTfZOL2+mG73eyaI15Vw39Ah
+	8vGvdYs+bp56q9HEkhbV07kv6cNp71Y=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-542-OdNN_DWOMf2dU4ULsTrzKQ-1; Thu, 14 Mar 2024 23:52:01 -0400
+X-MC-Unique: OdNN_DWOMf2dU4ULsTrzKQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-29de02b98caso879423a91.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Mar 2024 20:52:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710474720; x=1711079520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jRnPjyJeZad1F26bIZOTcaKiZRrwc4cB/pDexLjVGDE=;
+        b=GPjRhc5hoUy8YF/XB72v/qv2/bqtnVugltUo0B/ag+rDqi/Ffifb1B4RCQtVjM6zL+
+         /+ytKcqp6rqwaX7q3GTS6KTHq0KlDw0mwhi4Quxb/IPORqED6HOig+cxb92622yiYVvB
+         QztIB+00ShZGN7BJeZJqe7ySpDDLhCPQ3QWWMJENuQwXo0B3Qa3ipGMuVybFiCs2iwW5
+         OEhkS51uNp14M7LV2F6CCt4c04WRXYK1wy2S0s6ztIYlCx1hH4A8kQ1hJv4SHRj8Mm2K
+         ILiyDztTw31DqOYCOxtc4dWdLNpsXYZ0HbrkS3jqkHcj6U5TciedObqYCBEjGC+XEEgb
+         eqVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOPzrs1kl1sYqBeHDs8msRmsKDSKND3iluP4EPq4vztbLz8KzDCKDtPfVNj9uzofu6fseGllyiaxLN7fM3H8dfQmOg6g14jsFzRP7NE+m+GQ==
+X-Gm-Message-State: AOJu0Yx0VTnTBQklx0q5v1Gwp+uv6gFijh7/RcU4T8w7/khqtzqEbIA8
+	ZRs58QA8TCJRRnNdfZYu8pQuo2CmmWb4jOz6y2il1zPvcx9aKdiOTLMkE74ZYNVyjEBecTtjoBa
+	GE2CCMG6bywiPDwfR6ol/Y0IVUVQYb20/GGxD5tk+5dWNBjbnhrGfEYwVDtXJQCcOjXtaW7u+du
+	Iprc4PsrHbVK8uPvsHBcC6odpAgBQeGp9iXeD+GF7xXA==
+X-Received: by 2002:a17:90b:882:b0:29b:4755:23fc with SMTP id bj2-20020a17090b088200b0029b475523fcmr3558889pjb.33.1710474720020;
+        Thu, 14 Mar 2024 20:52:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXDOuKDvuP/EqiFyBnUcJaSQVamH9YfVITPXeJDT8/OaXE+8nukfAwdydXN+5KUnq8MlXvmaNj0CipGi0ChDY=
+X-Received: by 2002:a17:90b:882:b0:29b:4755:23fc with SMTP id
+ bj2-20020a17090b088200b0029b475523fcmr3558876pjb.33.1710474719748; Thu, 14
+ Mar 2024 20:51:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] soc: qcom: add pd-mapper implementation
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Johan
- Hovold <johan+linaro@kernel.org>
-References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
- <20240311-qcom-pd-mapper-v4-3-24679cca5c24@linaro.org>
- <714bb2ca-40ac-80a2-454f-021da3caa93d@quicinc.com>
- <CAA8EJpokFA=s5uhrb-OxH=BigfAP7jZ_K5z1FXJ0p1h3h3_CLQ@mail.gmail.com>
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <CAA8EJpokFA=s5uhrb-OxH=BigfAP7jZ_K5z1FXJ0p1h3h3_CLQ@mail.gmail.com>
+References: <20240312021013.88656-1-xuanzhuo@linux.alibaba.com>
+ <20240312021013.88656-2-xuanzhuo@linux.alibaba.com> <CACGkMEvVgfgAxLoKeFTgy-1GR0W07ciPYFuqs6PiWtKCnXuWTw@mail.gmail.com>
+ <1710395908.7915084-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1710395908.7915084-1-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 15 Mar 2024 11:51:48 +0800
+Message-ID: <CACGkMEsT2JqJ1r_kStUzW0+-f+qT0C05n2A+Yrjpc-mHMZD_mQ@mail.gmail.com>
+Subject: Re: [PATCH vhost v3 1/4] virtio: find_vqs: pass struct instead of
+ multi parameters
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, linux-um@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0O-ACVdpDIGBArFSKUVHPQYtnS7kncoo
-X-Proofpoint-GUID: 0O-ACVdpDIGBArFSKUVHPQYtnS7kncoo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-14_13,2024-03-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0
- spamscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403140001 definitions=main-2403150004
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 14, 2024 at 2:00=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
+om> wrote:
+>
+> On Thu, 14 Mar 2024 11:12:24 +0800, Jason Wang <jasowang@redhat.com> wrot=
+e:
+> > On Tue, Mar 12, 2024 at 10:10=E2=80=AFAM Xuan Zhuo <xuanzhuo@linux.alib=
+aba.com> wrote:
+> > >
+> > > Now, we pass multi parameters to find_vqs. These parameters
+> > > may work for transport or work for vring.
+> > >
+> > > And find_vqs has multi implements in many places:
+> > >
+> > >  arch/um/drivers/virtio_uml.c
+> > >  drivers/platform/mellanox/mlxbf-tmfifo.c
+> > >  drivers/remoteproc/remoteproc_virtio.c
+> > >  drivers/s390/virtio/virtio_ccw.c
+> > >  drivers/virtio/virtio_mmio.c
+> > >  drivers/virtio/virtio_pci_legacy.c
+> > >  drivers/virtio/virtio_pci_modern.c
+> > >  drivers/virtio/virtio_vdpa.c
+> > >
+> > > Every time, we try to add a new parameter, that is difficult.
+> > > We must change every find_vqs implement.
+> > >
+> > > One the other side, if we want to pass a parameter to vring,
+> > > we must change the call path from transport to vring.
+> > > Too many functions need to be changed.
+> > >
+> > > So it is time to refactor the find_vqs. We pass a structure
+> > > cfg to find_vqs(), that will be passed to vring by transport.
+> > >
+> > > Because the vp_modern_create_avq() use the "const char *names[]",
+> > > and the virtio_uml.c changes the name in the subsequent commit, so
+> > > change the "names" inside the virtio_vq_config from "const char *cons=
+t
+> > > *names" to "const char **names".
+> > >
+> > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> > > Reviewed-by: Ilpo J=3DE4rvinen <ilpo.jarvinen@linux.intel.com>
+> >
+> > The name seems broken here.
+>
+> Email APP bug.
+>
+> I will fix.
+>
+>
+> >
+> > [...]
+> >
+> > >
+> > >  typedef void vq_callback_t(struct virtqueue *);
+> > >
+> > > +/**
+> > > + * struct virtio_vq_config - configure for find_vqs()
+> > > + * @cfg_idx: Used by virtio core. The drivers should set this to 0.
+> > > + *     During the initialization of each vq(vring setup), we need to=
+ know which
+> > > + *     item in the array should be used at that time. But since the =
+item in
+> > > + *     names can be null, which causes some item of array to be skip=
+ped, we
+> > > + *     cannot use vq.index as the current id. So add a cfg_idx to le=
+t vring
+> > > + *     know how to get the current configuration from the array when
+> > > + *     initializing vq.
+> >
+> > So this design is not good. If it is not something that the driver
+> > needs to care about, the core needs to hide it from the API.
+>
+> The driver just ignore it. That will be beneficial to the virtio core.
+> Otherwise, we must pass one more parameter everywhere.
 
+I don't get here, it's an internal logic and we've already done that.
 
-On 3/14/2024 2:30 PM, Dmitry Baryshkov wrote:
-> On Thu, 14 Mar 2024 at 21:44, Chris Lew <quic_clew@quicinc.com> wrote:
->>
->>
->>
->> On 3/11/2024 8:34 AM, Dmitry Baryshkov wrote:
->>> +int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
->>> +{
->>> +     int ret;
->>> +     int i;
->>> +
->>> +     mutex_lock(&qcom_pdm_mutex);
->>> +
->>> +     if (qcom_pdm_server_added) {
->>> +             ret = qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
->>> +                                  SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
->>> +             if (ret)
->>> +                     goto err_out;
->>> +     }
->>> +
->>> +     for (i = 0; i < num_data; i++) {
->>> +             ret = qcom_pdm_add_domain_locked(data[i]);
->>> +             if (ret)
->>> +                     goto err;
->>> +     }
->>> +
->>> +     ret = qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
->>> +                          SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
->>> +     if (ret) {
->>> +             pr_err("PDM: error adding server %d\n", ret);
->>> +             goto err;
->>> +     }
->>> +
->>> +     qcom_pdm_server_added = true;
->>> +
->>> +     mutex_unlock(&qcom_pdm_mutex);
->>> +
->>> +     return 0;
->>> +
->>> +err:
->>> +     while (--i >= 0)
->>> +             qcom_pdm_del_domain_locked(data[i]);
->>> +
->>> +     qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
->>> +                    SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
->>> +
->>> +err_out:
->>> +     mutex_unlock(&qcom_pdm_mutex);
->>> +
->>> +     return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(qcom_pdm_add_domains);
->>> +
->>> +void qcom_pdm_del_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
->>> +{
->>> +     int i;
->>> +
->>> +     mutex_lock(&qcom_pdm_mutex);
->>> +
->>> +     if (qcom_pdm_server_added) {
->>> +             qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
->>> +                            SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
->>> +     }
->>
->> I am confused as to why we need to reset the qmi handle anytime
->> qcom_pdm_del_domains or qcom_pdm_add_domains is called. Is this to
->> trigger some kind of re-broadcast type notification to clients because
->> the service list has been updated?
-> 
-> Yes. Otherwise clients like pmic-glink will miss new domains.
-> 
->>
->> My concern would be that this causes some kind of unintended side-effect
->> on the rprocs that are not restarting.
-> 
-> Well, an alternative is to match machine compatible strings and to
-> build a full list of domains right from the beginning.
-> 
+Thanks
 
-Ok, thanks for clarifying. I spoke to some of the firmware developers
-and a quick scan seems to indicate their handling is robust enough to
-handle this. It is a change in expected behavior but I think the current
-approach is reasonable.
+>
+> Thanks.
+>
+> >
+> > Thanks
+> >
+>
 
->>
->>> +
->>> +     for (i = 0; i < num_data; i++)
->>> +             qcom_pdm_del_domain_locked(data[i]);
->>> +
->>> +     qmi_add_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
->>> +                    SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
->>> +     qcom_pdm_server_added = true;
->>> +
->>> +     mutex_unlock(&qcom_pdm_mutex);
->>> +}
->>> +EXPORT_SYMBOL_GPL(qcom_pdm_del_domains);
->>> +
->>> +static void qcom_pdm_get_domain_list(struct qmi_handle *qmi,
->>> +                                  struct sockaddr_qrtr *sq,
->>> +                                  struct qmi_txn *txn,
->>> +                                  const void *decoded)
->>> +{
->>> +     const struct servreg_loc_get_domain_list_req *req = decoded;
->>> +     struct servreg_loc_get_domain_list_resp *rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
->>> +     struct qcom_pdm_service *service;
->>> +     u32 offset;
->>> +     int ret;
->>> +
->>> +     offset = req->offset_valid ? req->offset : 0;
->>> +
->>> +     rsp->rsp.result = QMI_RESULT_SUCCESS_V01;
->>> +     rsp->rsp.error = QMI_ERR_NONE_V01;
->>> +
->>> +     rsp->db_revision_valid = true;
->>> +     rsp->db_revision = 1;
->>> +
->>> +     rsp->total_domains_valid = true;
->>> +     rsp->total_domains = 0;
->>> +
->>> +     mutex_lock(&qcom_pdm_mutex);
->>> +
->>> +     service = qcom_pdm_find_locked(req->name);
->>> +     if (service) {
->>> +             struct qcom_pdm_domain *domain;
->>> +
->>> +             rsp->domain_list_valid = true;
->>> +             rsp->domain_list_len = 0;
->>> +
->>> +             list_for_each_entry(domain, &service->domains, list) {
->>> +                     u32 i = rsp->total_domains++;
->>> +
->>> +                     if (i >= offset && i < SERVREG_LOC_MAX_DOMAINS) {
->>> +                             u32 j = rsp->domain_list_len++;
->>> +
->>> +                             strscpy(rsp->domain_list[j].name, domain->name,
->>> +                                     sizeof(rsp->domain_list[i].name));
->>> +                             rsp->domain_list[j].instance_id = domain->instance_id;
->>> +
->>> +                             pr_debug("PDM: found %s / %d\n", domain->name,
->>> +                                      domain->instance_id);
->>> +                     }
->>> +             }
->>> +
->>> +     }
->>> +
->>> +     mutex_unlock(&qcom_pdm_mutex);
->>> +
->>> +     pr_debug("PDM: service '%s' offset %d returning %d domains (of %d)\n", req->name,
->>> +              req->offset_valid ? req->offset : -1, rsp->domain_list_len, rsp->total_domains);
->>> +
->>> +     ret = qmi_send_response(qmi, sq, txn, SERVREG_LOC_GET_DOMAIN_LIST,
->>> +                             2658,
->>> +                             servreg_loc_get_domain_list_resp_ei, rsp);
->>
->> Other QMI clients like pdr_interface have macros for the message size.
->> Can we considering adding one instead of using 2658 directly?
-> 
-> 
-> Ack
-> 
->>
->>> +     if (ret)
->>> +             pr_err("Error sending servreg response: %d\n", ret);
->>> +
->>> +     kfree(rsp);
->>> +}
->>> +
->>> +static void qcom_pdm_pfr(struct qmi_handle *qmi,
->>> +                      struct sockaddr_qrtr *sq,
->>> +                      struct qmi_txn *txn,
->>> +                      const void *decoded)
->>> +{
->>> +     const struct servreg_loc_pfr_req *req = decoded;
->>> +     struct servreg_loc_pfr_resp rsp = {};
->>> +     int ret;
->>> +
->>> +     pr_warn_ratelimited("PDM: service '%s' crash: '%s'\n", req->service, req->reason);
->>> +
->>> +     rsp.rsp.result = QMI_RESULT_SUCCESS_V01;
->>> +     rsp.rsp.error = QMI_ERR_NONE_V01;
->>> +
->>> +     ret = qmi_send_response(qmi, sq, txn, SERVREG_LOC_PFR,
->>> +                             SERVREG_LOC_PFR_RESP_MSG_SIZE,
->>> +                             servreg_loc_pfr_resp_ei, &rsp);
->>> +     if (ret)
->>> +             pr_err("Error sending servreg response: %d\n", ret);
->>> +}
->>> +
->>> diff --git a/drivers/soc/qcom/qcom_pdm_msg.h b/drivers/soc/qcom/qcom_pdm_msg.h
->>> new file mode 100644
->>> index 000000000000..e576b87c67c0
->>> --- /dev/null
->>> +++ b/drivers/soc/qcom/qcom_pdm_msg.h
->>> @@ -0,0 +1,66 @@
->>> +// SPDX-License-Identifier: BSD-3-Clause
->>> +/*
->>> + * Copyright (c) 2018, Linaro Ltd.
->>> + * Copyright (c) 2016, Bjorn Andersson
->>> + */
->>> +
->>> +#ifndef __QMI_SERVREG_LOC_H__
->>> +#define __QMI_SERVREG_LOC_H__
->>> +
->>
->> Should we update the header guards to reflect the new file name?
-> 
-> Ack
-> 
->>
->>> +#include <linux/types.h>
->>> +#include <linux/soc/qcom/qmi.h>
->>> +
->>> +#define SERVREG_QMI_SERVICE 64
->>> +#define SERVREG_QMI_VERSION 257
->>> +#define SERVREG_QMI_INSTANCE 0
->>> +#define QMI_RESULT_SUCCESS 0
->>> +#define QMI_RESULT_FAILURE 1
->>> +#define QMI_ERR_NONE 0
->>> +#define QMI_ERR_INTERNAL 1
->>> +#define QMI_ERR_MALFORMED_MSG 2
->>
->> I think these common QMI macro definitions are wrong. They should match
->> what is defined in <soc/qcom/qmi.h>. This is a bug in the userspace
->> pd-mapper header as well.
-> 
-> Ack
-> 
->>
->>> +#endif
->>> diff --git a/include/linux/soc/qcom/pd_mapper.h b/include/linux/soc/qcom/pd_mapper.h
->>> new file mode 100644
->>> index 000000000000..86438b7ca6fe
->>> --- /dev/null
->>> +++ b/include/linux/soc/qcom/pd_mapper.h
->>> @@ -0,0 +1,39 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/*
->>> + * Qualcomm Protection Domain mapper
->>> + *
->>> + * Copyright (c) 2023 Linaro Ltd.
->>> + */
->>> +#ifndef __QCOM_PD_MAPPER__
->>> +#define __QCOM_PD_MAPPER__
->>> +
->>> +struct qcom_pdm_domain_data {
->>> +     const char *domain;
->>> +     u32 instance_id;
->>> +     /* NULL-terminated array */
->>> +     const char * services[];
->>
->> s/char * services[]/char *services[]/
-> 
-> 
-> 
