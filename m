@@ -1,45 +1,46 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2059.outbound.protection.outlook.com [40.107.93.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FC417BA5;
-	Fri, 15 Mar 2024 21:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03854524C3;
+	Fri, 15 Mar 2024 21:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710537379; cv=fail; b=AmeXcjc80N93WXyOftz0vwGgZ8p8C5Z5r+EN5OHrfTW3XBeK/zReCQWiruvAq2OX8tCpFWFnyOlwqTbhyVO/d/Ced+hCRlTWXMuNCVclCD/KxIyYvbojHG1OBH7K31iDUJciI6wCpu6IwsGSLRddVl6euWO1q8Efw5Lrpr85hBw=
+	t=1710537382; cv=fail; b=PrjOkOOOdfajJvsDD0J128Z1Zx605MaHBnRz7DFXcyAFOD2Jqz7ahpVpQ2gvNqC5H0fbOHhio4luCheKb4mB1CMFSkGOS9Sw8qCyDicTsLnONQoDGYHsji7zdUBHY8ORzRn5ru7F2lgjSwjYkiWV7EI2NG4kc6cUg20fTH/RGwg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710537379; c=relaxed/simple;
-	bh=1w+ltHngYaeAEbgXI1d7q1t4j8vxiJPDHlPSCT1d0jE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NBWtV7bwlsZFX1H5fdB4BCKaTZAnNfg3MQDj4D4Lfj/Lxft/4Wgfm35FqKWOAN8CAaOHpD6MzC2zffx5L7v+GMW9CZS6cNThBEUQX0ds+SPTyHTTAsLS4V77yrwx+ufcNub4FXNlXHcyFE/oqjajd4a/Cxqh0WaUwX7Hd9AJFfg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x8o4YOrN; arc=fail smtp.client-ip=40.107.244.53
+	s=arc-20240116; t=1710537382; c=relaxed/simple;
+	bh=6sF7qy8PS+a8W+NPl4Ep0P00bX+WJf5susRGkG+mGgA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OwW3Zqvr6B5yXqYeBm8NCwLYmmHsTeLILIMb2E0FyCszOwRgATC1Jt+D47hWzQPpEgd4pBpt3eKZQlmpBzl8P++Z9XpoLFKEBsnv9uMVLiYD2HESTnCxVH0yckNJ6xn5yVG4AzYolKr1pJZPYnb9Nrt/GkcdQP/mTFih69sfMDQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D33dmYC/; arc=fail smtp.client-ip=40.107.93.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x8o4YOrN"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D33dmYC/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kNr/RkOq7dcLVdX+U4Knbeet10OCQHMapO0Zb6jK35RHVIi+MWOpWfceDEYVmqqJoAhwgO1cEDT0rwgcOoL0twTvwDehmU32LrP1luwwC4LlflSFuCYI32LhNvEnATqW/kR1TVnd73thIra70zS1Xl2Upw5AGPLiL3KeuvteJFnQztXzjyVSEDBAZ9ibUA8J4FUU95C8ptCLyL3RoUtlJb1djVXx1Y2e/yMMf1TlZvfAAdDl/IuYSrRG7d9Q/zQtWJMZn7QuAAnvdHgfleS8mmDMOVAIr9I98KVWIfJT7fDA+UWx6+UabSq5lLEryie3dNjzMeGczqbr34P44tAAig==
+ b=PSDbontWSTQ29LjigBYN1zoW345+qdDA/h9SMoMGnsuiG83cuK3FBoY30LTmusgR+qOsuFMvkl5ZME2srrH7x40FaA48mipF8w1FNrwcqBa/mP8kZBqpd4B0Uy1Ax4zWpFExu090NRfJggVIQ33bviw+kvAhBlXNeCNV/Arq5YCnNC/xx7MU3o7F0n0nTMdm/fOqRfUrEMjYLVOr1X+LhaPSyzyLu3P6Gna0tkAWR5dBxvjNBuInlrK3oXf/hyu3wyQgHoXTDB2K6sshL2u4nSQ2gZNfRRG8HZzhM4frHzV9rRGeOhhFOwIy0wnQ9zxa6LJKsbk28IM7nOiajQbWrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qoRhqOupdLOowQzHhHpNwLwsERX6sdA09fAQF59/I+E=;
- b=H0ed6oc5qMAr8yyt3Texnw2r5Lm5FYRp05d9xDQPRRCzaYhPW2sCj2YB8raIpF0JYwC6Uu8ALDtzbRi/nAs3LtXA+2+lvGzgjDC2UzosNVuNvjzYXcL5h7nlt2tU3rzjr7j7qdqvl6oaZjf9n1gmmghGh5vb0O/byQNiiz73KG8e8mNA7cRq/8TxMLTLC4+kSvWtcsFH7Qj1jG7sD+ZCktLOiZ6OEnrrJpyJyTqrTFFt1FG53C3uTo7I/OhcnHwhpuaxhyqR5fJNd17H7mjCekUt8JKVUn9ZPHqZVkL7cca7nNs8/mrl0Fx6fdNQZpMKN4Ea8whYaJZIHL4BNlF7Pw==
+ bh=bqv+Knr7fIg09mX5uMLKwGowajJsnIHuU9QcUK1DxNA=;
+ b=mFWcwq2QVap8dWrRiz/I+8MGOJQ1zzJFh8D1jZyfizj7xch490dX8BafxHG1pIT/AkQnHvwUuIfEdRdWrB+oy4ZwmI+CtIwKpnA+yLM4B8zg+/a6K8dYM2oGtszKuVIzyqX6uVqBekEkXOzsXFPYBNj/0I7NQdKY1tJHhmYQODMHEzxU4tSuzfoouekMKt1BEeS/dRR6iIOHawjIYkBJvtTSYtBBGmYIcUugxysrJ4ED8KaQpmFu7GAw7KRI5dlP0hpW8C/X8JJ6hIEsSHJdYvOH/xBX0/BQ//yXgpyyF23uRshsDsr1R9Qdq5MdcNg5mnpkY9wGoBGmu8q1VdrU9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qoRhqOupdLOowQzHhHpNwLwsERX6sdA09fAQF59/I+E=;
- b=x8o4YOrNb1xHcSFUuTG41B5okYUocLqkv3n8GJfuEirtMOboHqx4f7vNcvUBu6QtvmkmXwl9kuU7kISO68uI3EvqF8ctFGTqeqzOlK7XBNtKeBWJ2K3SiT2YQjv60DXiH49AZAw2bpXlL8r4fY1+C4X38BsgebWREZmpSgcFC6I=
-Received: from BLAPR03CA0055.namprd03.prod.outlook.com (2603:10b6:208:32d::30)
- by MW6PR12MB8960.namprd12.prod.outlook.com (2603:10b6:303:23e::22) with
+ bh=bqv+Knr7fIg09mX5uMLKwGowajJsnIHuU9QcUK1DxNA=;
+ b=D33dmYC/pPNapkG+fSqARyT6pYJMuxvvZ1lZ47rlyMkTwhxtU2sHJMdueLOL269wRr876xZqws1rLRzl+j2z3mwDdstcXmtDp2dTjibbW0OnraLNiFLyUJ6kzRueRg+mO2xYcRcQL2AcO5eETUs6hzNk2V9WJ4L7Wt1DfsnJhIc=
+Received: from MN2PR07CA0030.namprd07.prod.outlook.com (2603:10b6:208:1a0::40)
+ by CH3PR12MB7762.namprd12.prod.outlook.com (2603:10b6:610:151::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.19; Fri, 15 Mar
- 2024 21:16:15 +0000
-Received: from MN1PEPF0000ECD9.namprd02.prod.outlook.com
- (2603:10b6:208:32d:cafe::eb) by BLAPR03CA0055.outlook.office365.com
- (2603:10b6:208:32d::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.20 via Frontend
- Transport; Fri, 15 Mar 2024 21:16:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.21; Fri, 15 Mar
+ 2024 21:16:16 +0000
+Received: from MN1PEPF0000ECD4.namprd02.prod.outlook.com
+ (2603:10b6:208:1a0:cafe::cb) by MN2PR07CA0030.outlook.office365.com
+ (2603:10b6:208:1a0::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.22 via Frontend
+ Transport; Fri, 15 Mar 2024 21:16:16 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -47,20 +48,20 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MN1PEPF0000ECD9.mail.protection.outlook.com (10.167.242.138) with Microsoft
+ MN1PEPF0000ECD4.mail.protection.outlook.com (10.167.242.132) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7386.12 via Frontend Transport; Fri, 15 Mar 2024 21:16:13 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ 15.20.7386.12 via Frontend Transport; Fri, 15 Mar 2024 21:16:16 +0000
+Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 15 Mar
- 2024 16:16:12 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 16:16:16 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB08.amd.com
+ (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 15 Mar
- 2024 16:16:12 -0500
+ 2024 14:16:15 -0700
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 15 Mar 2024 16:16:11 -0500
+ Transport; Fri, 15 Mar 2024 16:16:14 -0500
 From: Tanmay Shah <tanmay.shah@amd.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
 	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
@@ -68,10 +69,12 @@ To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
 	<tanmay.shah@amd.com>
 CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/3] Add Versal and Versal-NET platform support
-Date: Fri, 15 Mar 2024 14:15:30 -0700
-Message-ID: <20240315211533.1996543-1-tanmay.shah@amd.com>
+Subject: [PATCH 3/3] drivers: remoteproc: add Versal and Versal-NET support
+Date: Fri, 15 Mar 2024 14:15:33 -0700
+Message-ID: <20240315211533.1996543-4-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240315211533.1996543-1-tanmay.shah@amd.com>
+References: <20240315211533.1996543-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -80,61 +83,95 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD9:EE_|MW6PR12MB8960:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d854a22-2df0-4aec-3861-08dc453524d2
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD4:EE_|CH3PR12MB7762:EE_
+X-MS-Office365-Filtering-Correlation-Id: 345e9870-1a4e-4b1c-9d2d-08dc453526a5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	WixXjPKmthfNrY/K6xvuP3jCxDaOYZKwF3/9S9QulhDHu/vv2lNdqlJVIQdWpNKOx0DZm3WC7RwBjYOqWN37es0WOXcw2Sjv9tjji4vNz4v4+5mvzkNVaKo0FIFCewF1ouaYYnfweGIVMbul31yhbs+KBZCZjowYfLRpadTeK5Ocy1kL7yXu04pMQ9whbZ5jzW+ewGEcQ3YUt06hUrU2h3QqvPCapSbwbk/Z/HDUS5ehsqiQGX+gS74MmICN0ueJmEDJ21av5xedXnzA+A/QUWNLjgbNYj7aIJeXq6+NsSS0JU4dJy3hoBR0iaQ57PmefyW4A+90DtvnGJa6ZJ8sFs5CF6hRF+EIHJLZam1tseCLmmxNo/dMwo/uK8By3vE7T4Jq6NliaWkPPvYM27y3ZUn7/W9P9XuH9Zyet8tgsYq24Zz3pFBfllkiHe9Ec94m4Yop6drsR+WC/vFvDCijHnYN6mkbr/68pFg5ApANptnr3n2iq6sNSFxdvK1sTucmGFl0J2tcECxto6DmCm0bT7OW1dTG7C/WAMs9GTL7b8Mmj2jqhrIYv0K6hXOQCJntI7WGuRDtahxJO6jvWsH4aKfeRff44VoyafCleDMOmWnvvdgwfK/GBR+omMkTilnK+Yd69hZDnMzc4cto7hJFctqLkz0HuIx1UbgIauAnsgWj+xzijJ16zqGXpAN9gqOGv1mCtGh5/dwae5MaxYFh0A==
+	Hj90QT88PnDPP/nUgGTXdmN5QyBa+wzUe9sompPy5Lp9QqvEfzvoaKVX+mBXvkG4sD1GpDC0ac7BI0PR7mlFsZkrK8ehB1DvLu+e4E973RwRGcWaysu4Gx/qeCSGH/t52mTBautf1u2Yu7cNTYqmG1QnxftyHBvFNeelDEptyzsHceXvkO6fIGbi8RoV+wjgbtToYHYPow1ve0W7n3Ek+GbpCt0muzkE6pql86knBEacl8sP2POtPTIIEy2yYD5McsSbpI4BA3XvuEa+dQa9Zc0LUY/i/U544Wc+CvGh6vRJ5/BHOjss2WsoLbozRW411fTur/3lTODlF1nCOnuJ0aaIch58eevuJ4aqd/25EcP8IW4uo5wKyTxyun32dYmsrWRuqAJrgFjikj10rrnhoZe8oTiCwN6wLX0mX4EFgBRid765ue4AIAwTGZdFosWzv8sBMBKgPc8YZRPOURvrjjDeYc+6KCGCQPYUWLFMzqTax9SV8/NTjNtmf6oCcxtVisZq/76snUbxVU6bgR29DquOobsA+MrgX3aOGCRJJ7OX+NQbBQ1rHKuthvY+zPIIgAwvsASJWSCZZAAk34G/AAKFOdX35sOBSsDFPFGNx5l3NPdn35i88d3vSzmayihldzqZbYLhW3qFd4yL+Neq/RskB3gCINmXqdOi69g2B6Ej6R/LLEMAA3alLrxyAlQAZHjRgGuoMv2RwyR7sZGuBiQv4tzKjbjm5jMZRIPT2Ez1Xg3O0+omB1HiUaPae80D
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(36860700004)(376005)(82310400014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400014)(36860700004)(376005)(1800799015);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2024 21:16:13.2639
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2024 21:16:16.3270
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d854a22-2df0-4aec-3861-08dc453524d2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 345e9870-1a4e-4b1c-9d2d-08dc453526a5
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD9.namprd02.prod.outlook.com
+	MN1PEPF0000ECD4.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8960
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7762
 
-AMD-Xilinx Versal platform is successor of ZynqMP platform. Real-time
-Processing Unit R5 cluster IP on Versal is same as of ZynqMP Platform.
-Add bindings example for Versal remoteproc node. ZynqMP driver is
-comatible for Versal's RPU unit.
+AMD-Xilinx Versal and Versal-NET are successor of ZynqMP platform. ZynqMP
+remoteproc driver is mostly compatible with new platforms except few
+platform specific differences.
 
-AMD-Xilinx Versal-NET platform is successor of Versal platform.
-Versal-NET Real-Time Processing Unit has two clusters and each cluster
-contains dual core ARM Cortex-R52 processors. Each R52 core is
-assigned 128KB of TCM memory.
-Add bindings and example node of Versal-NET RPU. Add Versal-NET support
-in ZynqMP remoteproc driver.
+Versal has same IP of cortex-R5 cores hence maintained compatible string
+same as ZynqMP platform. However, hardcode TCM addresses are not
+supported for new platforms and must be provided in device-tree as per
+new bindings. This makes TCM representation data-driven and easy to
+maintain. This check is provided in the driver.
 
-This series depends on follwoing series:
-Link: https://lore.kernel.org/all/20240311175926.1625180-1-tanmay.shah@amd.com/
-title: add zynqmp TCM bindings
+For Versal-NET platform, TCM doesn't need to be configured in lockstep
+mode or split mode. Hence that call to PMC firmware is avoided in the
+driver for Versal-NET platform.
 
-Tanmay Shah (3):
-  dt-bindings: remoteproc: add Versal platform support
-  dt-bindings: remoteproc: add Versal-NET platform
-  drivers: remoteproc: add Versal and Versal-NET support
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
- .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 313 ++++++++++++++++--
- drivers/remoteproc/xlnx_r5_remoteproc.c       |  19 +-
- 2 files changed, 292 insertions(+), 40 deletions(-)
-
-base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
-prerequisite-patch-id: ecf2ff9fd2f2a9a39f55f961b52a5414ea2f2962
-prerequisite-patch-id: ff02d06bb3dbd13258cd5748c7486c363bd60478
-prerequisite-patch-id: 4869c001ae65dfedaa2e481a3119de03b44a31c5
-prerequisite-patch-id: 95e214bf94bce74d86972ea229186f602b5375ae
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index d4a22caebaad..193bc159d1b4 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -323,9 +323,12 @@ static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
+ 		return ret;
+ 	}
+ 
+-	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
+-	if (ret < 0)
+-		dev_err(r5_core->dev, "failed to configure TCM\n");
++	/* TCM configuration is not needed in versal-net */
++	if (device_is_compatible(r5_core->dev, "xlnx,zynqmp-r5f")) {
++		ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
++		if (ret < 0)
++			dev_err(r5_core->dev, "failed to configure TCM\n");
++	}
+ 
+ 	return ret;
+ }
+@@ -933,10 +936,17 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+ 	int ret, i;
+ 
+ 	r5_core = cluster->r5_cores[0];
++
++	/*
++	 * New platforms must use device tree for TCM parsing.
++	 * Only ZynqMP uses hardcode TCM.
++	 */
+ 	if (of_find_property(r5_core->np, "reg", NULL))
+ 		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
+-	else
++	else if (of_machine_is_compatible("xlnx,zynqmp"))
+ 		ret = zynqmp_r5_get_tcm_node(cluster);
++	else
++		ret = -EINVAL;
+ 
+ 	if (ret) {
+ 		dev_err(dev, "can't get tcm, err %d\n", ret);
+@@ -1198,6 +1208,7 @@ static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+ /* Match table for OF platform binding */
+ static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
+ 	{ .compatible = "xlnx,zynqmp-r5fss", },
++	{ .compatible = "xlnx,versal-net-r52fss", },
+ 	{ /* end of list */ },
+ };
+ MODULE_DEVICE_TABLE(of, zynqmp_r5_remoteproc_match);
 -- 
 2.25.1
 
