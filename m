@@ -1,58 +1,59 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5C11D531
-	for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 18:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A981CFBE
+	for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 18:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710701433; cv=none; b=r3tO6M82mRloP7KhLuwwEA5nE3MZm7VxAJboXiM11NLP1pLsI1/f+hJ92uf9jujZ7rUybnCcz3L5DYdBlBuNaNLR2IIbsySI6rFZMq2dYaFi1AjZ2XhUgzdtB8dWQKlyt4T4nOg2k4MGDVpWUkBZ1jx8eSdmeYswDJJg6o07rjU=
+	t=1710701621; cv=none; b=uQJqLWpNXymaNlgY7B/V6YlS3p/3imzsutuUQ76NBiIGboidkUr+aX5WA4dxEuxaXvsL6h63alsKrhv+9GL42z53EIoSIFVBWQMrOCzl9yXplEuM2ESnftsiWdlK5BVhPoHwETsfl1+lPcxmug4BO4Q2GhDBX0DMw0XEFgKpJ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710701433; c=relaxed/simple;
-	bh=cZjR3Jlbh7Xm4l62DeWijFgFghhJAUV+acanoin7euY=;
+	s=arc-20240116; t=1710701621; c=relaxed/simple;
+	bh=QbW1/yPgavwKBKIwn25YB1xvwzU5TY0oSwg7PdgGuoM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LFwFvhQ1M3U8sQOgbUajmm4hGzcShiL+PPZqPz+fi6GRYNHcQNQEsJ6smKmd0YWE0xNwHhlQlWKLPdjmoU+7hVeJR1Sp2MG1VXx79CJmfqy+B5v5vAA52YWJJlHO2OZPo3pv0bWxnTyF3IJiRX86OtTLNZzrAbF0wbdpkwhdc3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i8+EfGZN; arc=none smtp.client-ip=209.85.167.50
+	 In-Reply-To:Content-Type; b=PBDUnq7HrPZ9KMsyjPjCvsJb97IEVlHjlAtGrOMX17xaXEuqTeiGcmF1kOhNHrzPcaUQoaArjw6kT/1VVkygNn8enC7M5O4QA2H/jfpKxFoWrOJJZr/FO++VzVvKdnW9hoDyfczGt8Yef86B4pkKsRnoXdwkrsh/STWsc+uRZt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L8Rid+Cv; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8+EfGZN"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-513ccc70a6dso6234029e87.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 11:50:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L8Rid+Cv"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a4644bde1d4so479509566b.3
+        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 11:53:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710701430; x=1711306230; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710701618; x=1711306418; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FCft9TDmHss/7XLdrzlLlFyswroco3YyS+RGUdJOzKY=;
-        b=i8+EfGZNYccZPkX69QxCoSYi90sioGHy27A008yKNjAoCucFDy3dOvRIMHKc201i75
-         /vfa7tkOgSFhHb53XY1F8OGaM/vUY7RP7AvL1queKKniJkLnk03NHDbhPPYYlH4Ok70B
-         u3OO3MjqrmT31ELCyfKOrapoZW3XCqpYQPF+2amBqry5MreX1FLtISHKagIiPpbVqx0U
-         Lz207ohTYLcX9IHs1oS8ID48XXRR4f4Ehi1ZmvtNdR1dQZbo9D6V4nsESXMEhJfYUnoM
-         u2Nnk8zxzL9+y/CDmvM1oV+AGOmYDLtcshy05dZQ2mrxHgKPAhD2mA3mdTAQYKz/UqMo
-         JtKQ==
+        bh=KBdAvz6eCK2ZQJ5K3dkyN1YHXiIV5pwGENdhV0W8wZk=;
+        b=L8Rid+CvqE6nHSq3YsJ9ajFOaGhyQ66VmUxgkxBa7bfVL8uUxG7uCEzr2VNjn6Wmdn
+         Rmw5YwxbLvPhnRPcXUJ+mBUhbSwFRqqDR2rKAUg918WaLIl7UEmhAbBjzHLZgIjZohzE
+         rcC/nbROZcVui8qe4q4PlmA6cim7fd36ABrPfclkKoapR4zkLZw+14tuz5rMdM3lF3Ob
+         aiiVlmHIltqlV9m/TJLNgePcexG5rOKtvxsolp4HaR6CBkJFUujkjPncAMNwJ7+ZkH6E
+         ihk+1zQDyd7JjHg/nfwtvd2b+D4RDl1RQCkeDZfOnVtsxzeemLUbXpe/WvSsNzBV6LtB
+         9+Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710701430; x=1711306230;
+        d=1e100.net; s=20230601; t=1710701618; x=1711306418;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCft9TDmHss/7XLdrzlLlFyswroco3YyS+RGUdJOzKY=;
-        b=J7YZ3n4S7YRbzIPgLmtyXiYAV3+jIpoBjbbCdKJsEbfXKQvo3rjxGSToER4uCyosxK
-         IoOAsDhpKzujJFhBo4ZC2OPKa/l7/6QgnlaORatUkWyasQ7ZbcOkfO0CucU7PAAXIqse
-         NGD1W+g3UZSo2+iPVsdByXuQ8VDXXoljzU3xnXVTvPr/pqLifkwHG6DnRTODGRD0NUDa
-         t2p98xnyz3Pr4wza8U9bBSfA/w0b/5VXBsSiiQM0YKgqGgLaeOUseDr751HvXfclE2vv
-         nF1PFFkObwTA9AnTel8Jyvbgre+IM/F7WvLDbQhlpAzh/jPMzOZThHvla6GIQ5pqmy1+
-         VMxw==
-X-Gm-Message-State: AOJu0Yw970o6Z54D1lwEFQNq9x4xI/X12getFBs1x3baMzXi/nhNCWyI
-	zRSDdgdFfR2JdgTkrVhH9FUzOFy1DpmfvctFH5vcQVtE4gjnZFuBy/F7iH1IUdg=
-X-Google-Smtp-Source: AGHT+IF4RiRQdeWTZqIjRuL3v6Tiy52m5w/d0JHGiTAP1PIAw/qf+BX8t8EeaeytnAvXPN0XLZyRAA==
-X-Received: by 2002:a19:5e1b:0:b0:513:cc18:d4c6 with SMTP id s27-20020a195e1b000000b00513cc18d4c6mr3552287lfb.41.1710701430010;
-        Sun, 17 Mar 2024 11:50:30 -0700 (PDT)
+        bh=KBdAvz6eCK2ZQJ5K3dkyN1YHXiIV5pwGENdhV0W8wZk=;
+        b=gSrIC8K2jWFbg9Z6kX8V4ONqao+v3aZWSy4sxZvZWo+WsVGqCyxEiksRIrZPxc6U+4
+         VqRSaphC+LxvtN9Rhvnwy+f6jHIQOdPUskR6iNI4LcmGMQnRZQYZ5FUE3IrHSAlE3fuD
+         GDQYkk3gehTN//kG90XsmgteGIQ40ZFgdomTGnCXqbYUw9qnfYEj3d/B/CbniISfv/4D
+         f5g0JyxFMgysz4UG7sBosCeohi0okicw+mEUWj4c4FItch5UIvImnGZNamEp43swm6vp
+         stbYnbaCmazPdtfa0luNq+6MOCteenSXvJ13rElYC+TxnCNIaYBXXS7ZDWWk0ECCvxWr
+         4+0w==
+X-Gm-Message-State: AOJu0YxrCkqH5oDomq2P6T2lWiAzOp2oJhpptWFOVJ5AjW83jT35JVzH
+	lFhtCbnt1eQFCboZdP9FXKcRNaXorUVVKSsZFnOfH4PoOvNOHHtojMRe46aSD8apulO33e7YCua
+	e
+X-Google-Smtp-Source: AGHT+IH3cEAGS8z1AAB9YfW5ngjiqPq1pkCeukyPnzkD2SaocEGWL5AMib1cCOtc6Ke/m2Pq/T4Liw==
+X-Received: by 2002:a17:906:d9b:b0:a46:a041:d1a with SMTP id m27-20020a1709060d9b00b00a46a0410d1amr2936982eji.70.1710701618132;
+        Sun, 17 Mar 2024 11:53:38 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id h25-20020a17090634d900b00a4519304f8bsm4070370ejb.14.2024.03.17.11.50.28
+        by smtp.gmail.com with ESMTPSA id r17-20020a1709067fd100b00a466782e438sm4004900ejs.139.2024.03.17.11.53.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Mar 2024 11:50:29 -0700 (PDT)
-Message-ID: <b81d86b4-eb3c-4996-bbe6-32a8bc1de028@linaro.org>
-Date: Sun, 17 Mar 2024 19:50:28 +0100
+        Sun, 17 Mar 2024 11:53:37 -0700 (PDT)
+Message-ID: <3ca1c419-d185-4318-92ed-3c4e40dcf5bb@linaro.org>
+Date: Sun, 17 Mar 2024 19:53:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -60,7 +61,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: add Versal platform support
+Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: add Versal-NET platform
 Content-Language: en-US
 To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
  mathieu.poirier@linaro.org, robh+dt@kernel.org,
@@ -69,7 +70,7 @@ To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240315211533.1996543-1-tanmay.shah@amd.com>
- <20240315211533.1996543-2-tanmay.shah@amd.com>
+ <20240315211533.1996543-3-tanmay.shah@amd.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,20 +116,203 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240315211533.1996543-2-tanmay.shah@amd.com>
+In-Reply-To: <20240315211533.1996543-3-tanmay.shah@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/03/2024 22:15, Tanmay Shah wrote:
-> AMD-Xilinx Versal platform is successor of ZynqMP platform. Real-time
-> Processor Unit R5 cluster IP on Versal is same as of ZynqMP Platform.
-> Only difference is power-domains ID needed by power management firmware.
-> Hence, keeping the compatible property same as of zynqmp node.
+> AMD-Xilinx Versal-NET platform is successor of Versal platform. It
+> contains multiple clusters of cortex-R52 real-time processing units.
+> Each cluster contains two cores of cortex-R52 processors. Each cluster
+> can be configured in lockstep mode or split mode.
+> 
+> Each R52 core is assigned 128KB of TCM memory. ATCM memory is 64KB, BTCM
+> and CTCM memoreis are 32KB each. Each TCM memory has its own dedicated
+> power-domain that needs to be requested before using it.
 > 
 > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 220 +++++++++++++++---
+>  1 file changed, 184 insertions(+), 36 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> index 711da0272250..55654ee02eef 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> @@ -18,7 +18,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: xlnx,zynqmp-r5fss
+> +    enum:
+> +      - xlnx,zynqmp-r5fss
+> +      - xlnx,versal-net-r52fss
+>  
+>    "#address-cells":
+>      const: 2
+> @@ -64,7 +66,9 @@ patternProperties:
+>  
+>      properties:
+>        compatible:
+> -        const: xlnx,zynqmp-r5f
+> +        enum:
+> +          - xlnx,zynqmp-r5f
+> +          - xlnx,versal-net-r52f
+>  
+>        reg:
+>          minItems: 1
+> @@ -135,9 +139,11 @@ required:
+>  allOf:
+>    - if:
+>        properties:
+> -        xlnx,cluster-mode:
+> -          enum:
+> -            - 1
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - xlnx,versal-net-r52fss
 
-There is no binding change, so NAK. Platform is not being added to
-examples. You changed nothing in  Versal support...
+Why do you touch these lines?
+
+> +
+>      then:
+>        patternProperties:
+>          "^r5f@[0-9a-f]+$":
+> @@ -149,16 +155,14 @@ allOf:
+>                items:
+>                  - description: ATCM internal memory
+>                  - description: BTCM internal memory
+> -                - description: extra ATCM memory in lockstep mode
+> -                - description: extra BTCM memory in lockstep mode
+> +                - description: CTCM internal memory
+>  
+>              reg-names:
+>                minItems: 1
+>                items:
+> -                - const: atcm0
+> -                - const: btcm0
+> -                - const: atcm1
+> -                - const: btcm1
+> +                - const: atcm
+> +                - const: btcm
+> +                - const: ctcm
+>  
+>              power-domains:
+>                minItems: 2
+> @@ -166,33 +170,70 @@ allOf:
+>                  - description: RPU core power domain
+>                  - description: ATCM power domain
+>                  - description: BTCM power domain
+> -                - description: second ATCM power domain
+> -                - description: second BTCM power domain
+> +                - description: CTCM power domain
+>  
+>      else:
+> -      patternProperties:
+> -        "^r5f@[0-9a-f]+$":
+> -          type: object
+> -
+> -          properties:
+> -            reg:
+> -              minItems: 1
+> -              items:
+> -                - description: ATCM internal memory
+> -                - description: BTCM internal memory
+> -
+> -            reg-names:
+> -              minItems: 1
+> -              items:
+> -                - const: atcm0
+> -                - const: btcm0
+> -
+> -            power-domains:
+> -              minItems: 2
+> -              items:
+> -                - description: RPU core power domain
+> -                - description: ATCM power domain
+> -                - description: BTCM power domain
+> +      allOf:
+> +        - if:
+> +            properties:
+> +              xlnx,cluster-mode:
+> +                enum:
+> +                  - 1
+
+Whatever you did here, is not really readable. You have now multiple
+if:then:if:then embedded.
+
+> +          then:
+> +            patternProperties:
+> +              "^r5f@[0-9a-f]+$":
+> +                type: object
+> +
+> +                properties:
+> +                  reg:
+> +                    minItems: 1
+> +                    items:
+> +                      - description: ATCM internal memory
+> +                      - description: BTCM internal memory
+> +                      - description: extra ATCM memory in lockstep mode
+> +                      - description: extra BTCM memory in lockstep mode
+> +
+> +                  reg-names:
+> +                    minItems: 1
+> +                    items:
+> +                      - const: atcm0
+> +                      - const: btcm0
+> +                      - const: atcm1
+> +                      - const: btcm1
+> +
+> +                  power-domains:
+> +                    minItems: 2
+> +                    items:
+> +                      - description: RPU core power domain
+> +                      - description: ATCM power domain
+> +                      - description: BTCM power domain
+> +                      - description: second ATCM power domain
+> +                      - description: second BTCM power domain
+> +
+> +          else:
+> +            patternProperties:
+> +              "^r5f@[0-9a-f]+$":
+> +                type: object
+> +
+> +                properties:
+> +                  reg:
+> +                    minItems: 1
+> +                    items:
+> +                      - description: ATCM internal memory
+> +                      - description: BTCM internal memory
+> +
+> +                  reg-names:
+> +                    minItems: 1
+> +                    items:
+> +                      - const: atcm0
+> +                      - const: btcm0
+> +
+> +                  power-domains:
+> +                    minItems: 2
+> +                    items:
+> +                      - description: RPU core power domain
+> +                      - description: ATCM power domain
+> +                      - description: BTCM power domain
+>  
+>  additionalProperties: false
+>  
+> @@ -386,4 +427,111 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +  - |
+> +    // Versal-NET split configuration
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+
+Don't add examples per each platform.
 
 Best regards,
 Krzysztof
