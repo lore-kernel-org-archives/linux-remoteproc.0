@@ -1,184 +1,230 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D241D554
-	for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 18:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D10E2032D
+	for <linux-remoteproc@vger.kernel.org>; Mon, 18 Mar 2024 04:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710701708; cv=none; b=kqFfO/or1lNlCy1qv0yWCEFdrY+vjhX1ft/9eDw/RSlD6H89bYFztIlI6WruR7W8W1IB+c1R+fupA++Kddn8IAoKxTLhO7BjkUPdJ5i1SyIoUt0B/SDCyMvYMD74HWpBdhPAXBce+sF5F9+GD8EBJsjcPA2ZADxoECK5IAJoeGU=
+	t=1710735520; cv=none; b=ZQj5iYzA4BjMjZk92vseNi+ONOSwk21wlsNFwmgIL9qvXnur+XwcBeL333qFhPVth654wU04SWznemSrXh+wdr4tkxKkohf8/9DzNNvPMHukU4YoVL/AGdGNBIN/2wWxk9hf6xGjITjqlyTYxIGnISKyhye3zOYpwuB+UiH+8Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710701708; c=relaxed/simple;
-	bh=2Xy9ZyoIUnmBKgxo1xmsPG8oHaIcb8lxmxyk7KJ0h0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/+77oMmHfkRSVGCwAWTuRBu4XRUTmgNQ+WrPj1hPm9+uZhoCvEuDbJfKtrw5fW/wKcneztPn2apLDlJNUt0HavqJzRofwOdjleR9f9u2f0kSwXL2cwK0r9ShKWaQIj8XR6TSc2wh6TBqoRUEyFRKM7ry36Ba7zUnfEFFWFj2O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zoV5SjsJ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710735520; c=relaxed/simple;
+	bh=ekPFn+KMupcA3DsAmtHNfwNQA8+5dgvbgt0ROt0BcLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AnnabO3EdnXuD5kUTY8Le4h/5j3mU44hKZxVYAmNQVWry2uOiBK3mvUdJJKkek3Stq3lAzFkhfPlaGlm5UYt5ZYHv3owjb5GF5BkpjEsuDVnWWmgZmhbm4i18k2pAoqSpsfm7gjZs2tgEWNDPcv5ipv4O09cIg9rIi4z9sW/IkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C1338eso; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zoV5SjsJ"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a28a6cef709so528183466b.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 11:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710701703; x=1711306503; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GRHG64ehdYr777M90Q2L8vb6DZOoH4ILszuVOY+EHqk=;
-        b=zoV5SjsJlg9MD5Y9f62f33rFNug6SzPO0V+ms/pYMMNIZrHIMweKKro3E+aBXqWTuA
-         rRc/2sSU8sSp6ti/Zo927KsRXzwoSKGt+K8E2vnY0nXk4ALorgoY7ylY/QZg2IUIi8+t
-         U5brfABDbt9vZpnoEv4fgsjbp9iSfTx2LRQJ2NOaMKHeIlGHKk3KyAdgI/U3f5jTYdo+
-         +LD01WLDG+CUoxvLK53noY4lSpd7c7AuaZiSZeb0VSDUlS54wWSfbV/zSDt8wIvEPBCC
-         cBNTwesBK4OsTDOSW3Ag/6WHpjviYh22vs9vwv9hVtWo3Tnk8L34sKtz8uU0urPGxE/K
-         JJ4Q==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C1338eso"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710735517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YcMIvlcXZmHfP6Yrf0ho0KeclSMy8eBKOPAz1pFY4gM=;
+	b=C1338esorfYIWaTdvC199pMQy+poifxpT8hHednsRLB8cnRW1+xB1570GPZg9mxfaA6rZv
+	ie2P7VNTpyCsrE+i40Kl+EhnHlLB1hyJiUbaBJQWJcgy1CaV5OwMV30f995585Isuzdk3/
+	WNnbIAKfINY1jmfgXo3GgjZy3c0siFU=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-191-VzmJ0KXUOGiqIoyJ7JO1yw-1; Mon, 18 Mar 2024 00:18:35 -0400
+X-MC-Unique: VzmJ0KXUOGiqIoyJ7JO1yw-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1defc12f8c1so26811445ad.2
+        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Mar 2024 21:18:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710701703; x=1711306503;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRHG64ehdYr777M90Q2L8vb6DZOoH4ILszuVOY+EHqk=;
-        b=CoCLVBgjJEV/zT9EzzqIrCqlnoD73w9Zaxn0KCYt7crK6FgUJasy7GTuTZHLIZQuso
-         2kYXrVierE9RHMq9uvPtMpNG85KqY8v8rwT2QEUufojR278SrG5jZmfGbkFROrgdQHy8
-         ScDIhQpzJgPamTMSVVVMlIb9Yi+bPWl0KucyQOSaV/Au9giOfAC4MoPP2D7ah2utehS5
-         ePdFy9lTZVVd3Fh92oQS2AeO9m2FhpTblpOrJDxJM5b3tVKSgHfuzbprVZ4nxFbDD+Ef
-         KZpfRHIY7GTivhH0oC6Gd0uxzyXuVlxL9BoPGdnjA9ArGIyDyw6S1ZhaGA3mVbfCs0Kl
-         Ej7w==
-X-Gm-Message-State: AOJu0YwxDNqQmycu3rEsnIt4kVtb6DZLf938uPhNb+5JudFOClz6OJeq
-	5AOFijf8zMzvViCSp3zqlgezIUgM97Mxdprpqb44jaC2zA81Be0YabkRi5/PwDc=
-X-Google-Smtp-Source: AGHT+IHQ8pGbdZZ2bgMxMo1V5d9jZyq9ImqiOS9bbZB660Rx+BC1MRyHsofGAYzBs8xd5INg2jqUgA==
-X-Received: by 2002:a17:906:ee8e:b0:a46:bdd8:64ef with SMTP id wt14-20020a170906ee8e00b00a46bdd864efmr783037ejb.19.1710701702995;
-        Sun, 17 Mar 2024 11:55:02 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id r17-20020a1709067fd100b00a466782e438sm4004900ejs.139.2024.03.17.11.55.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Mar 2024 11:55:02 -0700 (PDT)
-Message-ID: <db6f16af-e715-4ff5-84d6-2d85d62d7c0c@linaro.org>
-Date: Sun, 17 Mar 2024 19:55:01 +0100
+        d=1e100.net; s=20230601; t=1710735514; x=1711340314;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YcMIvlcXZmHfP6Yrf0ho0KeclSMy8eBKOPAz1pFY4gM=;
+        b=D5jFLWfxQ3FbXCVPXBLEKGCn+gpEMilwyeMk6TIc7UySyViziKdJUB7liZ5rkm7Q+z
+         4YNs/BNVfrCoHDMoE6i2dFjra6fb5E4lIJNiWY1cA7BTh2w1bd6cGtCjFD4tbx+z6t+j
+         4oLWe2uumvmAFJur8biSguvRp118Vc1SD5VxDxSQPhHWyxSMdtltBsBtn7PUq6Aeu0wb
+         7+644LqlagaX4HugXZUSoFbwTGHS6B39dbEqgIXPqqSX2w+6Hbrqi0pyBOXdZkNiwdfm
+         V7aAbh4+e9OzasZ6lNWMoWDh6/u6F3Xorfq6miMU6UxSPLYgaCrN/O3pI8S5jXbF+J3a
+         P24A==
+X-Forwarded-Encrypted: i=1; AJvYcCXvtoHc1BAEDok3SxGOmJEtOMI31cWH2Y5zYs7MqIoNUe8xi6bs4nHyejNw4usIQIknorYDa+4mIs8MrUEn3VoVE9C5nQaeRvkilVaY3vVOOg==
+X-Gm-Message-State: AOJu0YwX2sz1ViPeeAgHq7CJ+pTV6gOjZoTRMFix6WD5/m5rZg/8+LD7
+	hXOhDq3kM7o5kO4K1lU+8b/UuMdhssvCGiblgYg9SqJHcobWSAUguitEuUBB4xcSszVTEuCCJNb
+	tyaQWjYnEOfXGV6I3mr4hDkzy12+59RpXLFcH52o2hbWsFGKHS+daqAq08zXY8jooTfaO6cdhYd
+	drpaAG6ua7QIM+51DX9wED6IcNUHCm5IFl4glKY9qB0Q==
+X-Received: by 2002:a17:902:d68b:b0:1de:f91:3cf3 with SMTP id v11-20020a170902d68b00b001de0f913cf3mr9020705ply.55.1710735514577;
+        Sun, 17 Mar 2024 21:18:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC9oB0f9oW121Bvau3zWELRsInCawRgYQJTSjt+TRvAgqSmbvs/LBhfOLf7eU9EldQFzvUZZSWPwuwPejjiP0=
+X-Received: by 2002:a17:902:d68b:b0:1de:f91:3cf3 with SMTP id
+ v11-20020a170902d68b00b001de0f913cf3mr9020679ply.55.1710735514309; Sun, 17
+ Mar 2024 21:18:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drivers: remoteproc: add Versal and Versal-NET
- support
-Content-Language: en-US
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- michal.simek@amd.com, ben.levinsky@amd.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240315211533.1996543-1-tanmay.shah@amd.com>
- <20240315211533.1996543-4-tanmay.shah@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240315211533.1996543-4-tanmay.shah@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240312021013.88656-1-xuanzhuo@linux.alibaba.com>
+ <20240312021013.88656-2-xuanzhuo@linux.alibaba.com> <CACGkMEvVgfgAxLoKeFTgy-1GR0W07ciPYFuqs6PiWtKCnXuWTw@mail.gmail.com>
+ <1710395908.7915084-1-xuanzhuo@linux.alibaba.com> <CACGkMEsT2JqJ1r_kStUzW0+-f+qT0C05n2A+Yrjpc-mHMZD_mQ@mail.gmail.com>
+ <1710487245.6843069-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1710487245.6843069-1-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 18 Mar 2024 12:18:23 +0800
+Message-ID: <CACGkMEspzDTZP1yxkBz17MgU9meyfCUBDxG8mjm=acXHNxAxhg@mail.gmail.com>
+Subject: Re: [PATCH vhost v3 1/4] virtio: find_vqs: pass struct instead of
+ multi parameters
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, linux-um@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/03/2024 22:15, Tanmay Shah wrote:
-> AMD-Xilinx Versal and Versal-NET are successor of ZynqMP platform. ZynqMP
-> remoteproc driver is mostly compatible with new platforms except few
-> platform specific differences.
-> 
-> Versal has same IP of cortex-R5 cores hence maintained compatible string
-> same as ZynqMP platform. However, hardcode TCM addresses are not
-> supported for new platforms and must be provided in device-tree as per
-> new bindings. This makes TCM representation data-driven and easy to
-> maintain. This check is provided in the driver.
-> 
-> For Versal-NET platform, TCM doesn't need to be configured in lockstep
-> mode or split mode. Hence that call to PMC firmware is avoided in the
-> driver for Versal-NET platform.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index d4a22caebaad..193bc159d1b4 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -323,9 +323,12 @@ static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
->  		return ret;
->  	}
->  
-> -	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
-> -	if (ret < 0)
-> -		dev_err(r5_core->dev, "failed to configure TCM\n");
-> +	/* TCM configuration is not needed in versal-net */
-> +	if (device_is_compatible(r5_core->dev, "xlnx,zynqmp-r5f")) {
-> +		ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
-> +		if (ret < 0)
-> +			dev_err(r5_core->dev, "failed to configure TCM\n");
-> +	}
->  
->  	return ret;
->  }
-> @@ -933,10 +936,17 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
->  	int ret, i;
->  
->  	r5_core = cluster->r5_cores[0];
-> +
-> +	/*
-> +	 * New platforms must use device tree for TCM parsing.
-> +	 * Only ZynqMP uses hardcode TCM.
-> +	 */
->  	if (of_find_property(r5_core->np, "reg", NULL))
->  		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
-> -	else
-> +	else if (of_machine_is_compatible("xlnx,zynqmp"))
->  		ret = zynqmp_r5_get_tcm_node(cluster);
+On Fri, Mar 15, 2024 at 3:26=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
+om> wrote:
+>
+> On Fri, 15 Mar 2024 11:51:48 +0800, Jason Wang <jasowang@redhat.com> wrot=
+e:
+> > On Thu, Mar 14, 2024 at 2:00=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.aliba=
+ba.com> wrote:
+> > >
+> > > On Thu, 14 Mar 2024 11:12:24 +0800, Jason Wang <jasowang@redhat.com> =
+wrote:
+> > > > On Tue, Mar 12, 2024 at 10:10=E2=80=AFAM Xuan Zhuo <xuanzhuo@linux.=
+alibaba.com> wrote:
+> > > > >
+> > > > > Now, we pass multi parameters to find_vqs. These parameters
+> > > > > may work for transport or work for vring.
+> > > > >
+> > > > > And find_vqs has multi implements in many places:
+> > > > >
+> > > > >  arch/um/drivers/virtio_uml.c
+> > > > >  drivers/platform/mellanox/mlxbf-tmfifo.c
+> > > > >  drivers/remoteproc/remoteproc_virtio.c
+> > > > >  drivers/s390/virtio/virtio_ccw.c
+> > > > >  drivers/virtio/virtio_mmio.c
+> > > > >  drivers/virtio/virtio_pci_legacy.c
+> > > > >  drivers/virtio/virtio_pci_modern.c
+> > > > >  drivers/virtio/virtio_vdpa.c
+> > > > >
+> > > > > Every time, we try to add a new parameter, that is difficult.
+> > > > > We must change every find_vqs implement.
+> > > > >
+> > > > > One the other side, if we want to pass a parameter to vring,
+> > > > > we must change the call path from transport to vring.
+> > > > > Too many functions need to be changed.
+> > > > >
+> > > > > So it is time to refactor the find_vqs. We pass a structure
+> > > > > cfg to find_vqs(), that will be passed to vring by transport.
+> > > > >
+> > > > > Because the vp_modern_create_avq() use the "const char *names[]",
+> > > > > and the virtio_uml.c changes the name in the subsequent commit, s=
+o
+> > > > > change the "names" inside the virtio_vq_config from "const char *=
+const
+> > > > > *names" to "const char **names".
+> > > > >
+> > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > > Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> > > > > Reviewed-by: Ilpo J=3DE4rvinen <ilpo.jarvinen@linux.intel.com>
+> > > >
+> > > > The name seems broken here.
+> > >
+> > > Email APP bug.
+> > >
+> > > I will fix.
+> > >
+> > >
+> > > >
+> > > > [...]
+> > > >
+> > > > >
+> > > > >  typedef void vq_callback_t(struct virtqueue *);
+> > > > >
+> > > > > +/**
+> > > > > + * struct virtio_vq_config - configure for find_vqs()
+> > > > > + * @cfg_idx: Used by virtio core. The drivers should set this to=
+ 0.
+> > > > > + *     During the initialization of each vq(vring setup), we nee=
+d to know which
+> > > > > + *     item in the array should be used at that time. But since =
+the item in
+> > > > > + *     names can be null, which causes some item of array to be =
+skipped, we
+> > > > > + *     cannot use vq.index as the current id. So add a cfg_idx t=
+o let vring
+> > > > > + *     know how to get the current configuration from the array =
+when
+> > > > > + *     initializing vq.
+> > > >
+> > > > So this design is not good. If it is not something that the driver
+> > > > needs to care about, the core needs to hide it from the API.
+> > >
+> > > The driver just ignore it. That will be beneficial to the virtio core=
+.
+> > > Otherwise, we must pass one more parameter everywhere.
+> >
+> > I don't get here, it's an internal logic and we've already done that.
+>
+>
+> ## Then these must add one param "cfg_idx";
+>
+>  struct virtqueue *vring_create_virtqueue(struct virtio_device *vdev,
+>                                          unsigned int index,
+>                                          struct vq_transport_config *tp_c=
+fg,
+>                                          struct virtio_vq_config *cfg,
+> -->                                      uint cfg_idx);
+>
+>  struct virtqueue *vring_new_virtqueue(struct virtio_device *vdev,
+>                                       unsigned int index,
+>                                       void *pages,
+>                                       struct vq_transport_config *tp_cfg,
+>                                       struct virtio_vq_config *cfg,
+> -->                                      uint cfg_idx);
+>
+>
+> ## The functions inside virtio_ring also need to add a new param, such as=
+:
+>
+>  static struct virtqueue *vring_create_virtqueue_split(struct virtio_devi=
+ce *vdev,
+>                                                       unsigned int index,
+>                                                       struct vq_transport=
+_config *tp_cfg,
+>                                                       struct virtio_vq_co=
+nfig,
+> -->                                                   uint cfg_idx);
+>
+>
+>
 
-That's poor code. Your drivers should not depend on platform. I don't
-understand why you need to do this and how is even related to this patch.
+I guess what I'm missing is when could the index differ from cfg_idx?
 
+Thanks
 
-Best regards,
-Krzysztof
+> Thanks.
+>
+>
+>
+>
+> >
+> > Thanks
+> >
+> > >
+> > > Thanks.
+> > >
+> > > >
+> > > > Thanks
+> > > >
+> > >
+> >
+>
 
