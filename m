@@ -1,48 +1,48 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2100.outbound.protection.outlook.com [40.107.223.100])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2099.outbound.protection.outlook.com [40.107.220.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC553D69;
-	Tue, 19 Mar 2024 00:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0AF363;
+	Tue, 19 Mar 2024 00:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.99
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710808804; cv=fail; b=EC3pngoDNwWWnhbjaUQ/xcIofsr4UYvx5vqGVpiTq7iFgFhvA2m1dzJ6KvZzBF3TsJPgm8R/fRSp5gKsYgzDbcu1JL6N5+xi/Hdl9PfzETwWmt64ZumMfOnaWCyeggtSC/FjlNrvn+FAvITp0yld+ihW1EU9IO+BwQnDytvsagw=
+	t=1710809488; cv=fail; b=XKc28f049m7gR9ECaClv83nqTErt1aEedF+/OSY9kfBkCc6Fw0UVN9EwO3OK2hrOVwcxUD/HFcKQX9ja2H4I1Uih7HxTsZp67YjCWXyiQ5eNdkHBNR5t0FU8Y/Ls05VWLZ7YyEdYB3mixJvAMfMSC9PwFuspFMoqKfVX3RODddg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710808804; c=relaxed/simple;
-	bh=SxItKw6n2HbvXmCdnEuuBPO/QOsJqWeOnL+Q3AJRl0I=;
+	s=arc-20240116; t=1710809488; c=relaxed/simple;
+	bh=anFuRwCLJE0+xmI/bmM1fYUGfS6YNGFA1+5SHWb87yw=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=U5PYSRqVEUHl3qIE/QCNDNrGcqKtvO21WQA56Ajaw7nknz2sZN5WyvEjrHqLvOaKrrQxjoo9nXXuDZW6roRPviz9HUOD1V4sT1HQ8WAgYwYUGFQF/mee6hxG46nUEjGJZFzaNGAVEBO7pw1zMWw3WxYNxuzzSnVRoztgOfbtFCM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fe4grokg; arc=fail smtp.client-ip=40.107.223.100
+	 Content-Type:MIME-Version; b=Fri7wVgVSbFckJTfzMvZ0+fFkU3ZE+GkmBrMwTLa/8/e310sMg8AHg5utrwe8KD+nH/3lH9ZE2mgYeJFuaUrOXaOEPuiD/ocp17F1c5Vo3Pxg/J6KF5Im1e3YDbh860IC94+VSIcfUsmFiC79McURGcdzm9/G60Pz0m8+yJcy08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Wf89nAff; arc=fail smtp.client-ip=40.107.220.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fe4grokg"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Wf89nAff"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cFaSRIIU+VU0BTT/CuzR75HhMUuJDP0g8CIH+Fin1bOW0qFOg3BZira58vUUQB0IVMLHuY/6oOEduRm0/x/cLIuSpSYgzKZ96h4UDiVIlRqlf8cL0E+KotBwAnM10jFFj2iYj1QLn1JJK09HvZdpjXh3E45Il58jGi9srN5lwirmfrLT9lFiZRtYMiDla6T1X7u7U+QfU164hs45fqSLyUW2LBGQVzZmjTVD2KLFtRCEZD7JK3M7gqIsST8YtyrQTYU4WHQBetxIxeSSTLuPxMx+/CiFVRn0TGGZy8iOswSjpXC4uW9T9r8o+CQeUgy4kU/UpnGqC/ufyLxbaxQVwQ==
+ b=mm81mchnlddXWwzMtM4aOy5jDdvHxTRLPXl2+JUibiYV8YO16qpnWIE0ujtk1NM4cBkNCqV5T3+she9oooW0lVsIflsmZOBU0ZT1U8pPu0sJyqLy6F4vdMP17SvW3qlyd/96wJXoyAydN0jFEyOVRgL0tYBjz7ENAoYiVCgz9x+Kj9CDzAAObgprczYe3785oA1DVGm8GegN+nUb8JwKyVXgzfR6ElNMnioo9PNTOSDpQtDwC9cElnzXn8QbpRQ3O0raEy97extL6dgjR9JRnJCxAYmU+R7xRT9zmYtwwp/NHVv0XbBYO0ZWE/9fYwwcA55Eh9WDecxbzoUdT44eTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vu5Y66atNVdZuesX/ozTf0VWFMfcao1ATyEOEQHDDNo=;
- b=SbeFhovUFXzEAWFCzl/S8E3n9NR8rJnzKM7ePHVPU9mkwuv91lmmsv2k4cS9DixV37uQsosGC9jTZu92dNpLT/s6WzAfLcYZeb10TopgcnlEZfIM2cd5lkA0bkFAKXTBPle+YuIX5gDVCo5scE6/4FEtDSkn9AI2ApzutgeWoJgVaYq2S34gB20O7heiCG9d+po7Upx6aBW7xCjd+O1/lETBPcGGfnpn2LCR6MScSLO4YBK7rkp50Ha00nAMDdlUy2EkhqKPol56LKCKJTH/IH8l+DHxei0puJFYvu+jSPnQyqM+HWq8HKDXiatLALCzaRNUIn3tbu2PLNQ4T9BAaw==
+ bh=oP0Z/+9NlkatBEYG/jVf05CQ1TsvTKAapzSXHeWfJD4=;
+ b=Zl7/4LB1hD/qz7Di0ge5B8Podhai893wVpf7IkugtJ7Mdwx+ake7vtrsP45JUHvF/lwlHmhKkQbrddSNKGqoVg3YI0l1FDI3GszotpNoZDYFrcFzfMW09G79dUDmUK2zFVqKBlIG+zIagWn1ihGW6YY1LmgfQbxsB6Ix+rUzsP7wrIhQEK85q/YwU/AQ7O7GiMFkTZ2r5XYcmceNoYgGtpM8t+cLykJ1X47+ZuY5MyWXiGfWa6pe+clrmbsMBgpiSLlFZKBURkI53FeQxlM9ti1R8IK7Tp2x3FfEQhXNi+IxEHoAy6uenIZY2xsS1oJljMPZ6VT4juNPA08a2Ll6rQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vu5Y66atNVdZuesX/ozTf0VWFMfcao1ATyEOEQHDDNo=;
- b=Fe4grokgysFJl6AeUJqQ/fHMcrMJw2Ti7FeCPRphaImTojEMJDahhTIludWNS+KwqyiLzcMIAZ8yu+ds/S5hr3QkM4u16eVtHTERqhIK4uKzLLvVT7PicUlCqRBD+HyxLz5DBq6rMmDMgBii+cNJaK8BrKPQHcRAa0xL3A8qb3s=
+ bh=oP0Z/+9NlkatBEYG/jVf05CQ1TsvTKAapzSXHeWfJD4=;
+ b=Wf89nAffujPzWyN0adgG6luyHMJdLt6/yOjV4KXedSmhtU3NlO5F6z4TcinYnWdJN1yWq1d4lk3q06IEdmATT27xJbLBVYOZ3O7iw+G1TtBDhipwxJIZedL6+LN059XjHf0P+i4hPJ3BfyEfcoFEJLaP2ZfotQrUOjm/dDVcEqM=
 Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
- by DS7PR12MB6189.namprd12.prod.outlook.com (2603:10b6:8:9a::17) with
+ by SJ0PR12MB6733.namprd12.prod.outlook.com (2603:10b6:a03:477::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Tue, 19 Mar
- 2024 00:39:59 +0000
+ 2024 00:51:22 +0000
 Received: from BL1PR12MB5874.namprd12.prod.outlook.com
  ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
  ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7386.025; Tue, 19 Mar 2024
- 00:39:59 +0000
-Message-ID: <fe7f271c-1e16-4aff-8d72-4c9e9b2bc2b2@amd.com>
-Date: Mon, 18 Mar 2024 19:39:56 -0500
+ 00:51:22 +0000
+Message-ID: <14be0aa6-49b7-4342-9ca6-750c30c8e1e9@amd.com>
+Date: Mon, 18 Mar 2024 19:51:19 -0500
 User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: add Versal platform support
+Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: add Versal-NET platform
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
@@ -50,15 +50,15 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240315211533.1996543-1-tanmay.shah@amd.com>
- <20240315211533.1996543-2-tanmay.shah@amd.com>
- <b81d86b4-eb3c-4996-bbe6-32a8bc1de028@linaro.org>
+ <20240315211533.1996543-3-tanmay.shah@amd.com>
+ <3ca1c419-d185-4318-92ed-3c4e40dcf5bb@linaro.org>
 Content-Language: en-US
 From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <b81d86b4-eb3c-4996-bbe6-32a8bc1de028@linaro.org>
+In-Reply-To: <3ca1c419-d185-4318-92ed-3c4e40dcf5bb@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0175.namprd04.prod.outlook.com
- (2603:10b6:806:125::30) To BL1PR12MB5874.namprd12.prod.outlook.com
+X-ClientProxiedBy: SN4PR0501CA0045.namprd05.prod.outlook.com
+ (2603:10b6:803:41::22) To BL1PR12MB5874.namprd12.prod.outlook.com
  (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -67,85 +67,300 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|DS7PR12MB6189:EE_
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|SJ0PR12MB6733:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	higlTmK10Yyi8BxWAXgW5QaLsIB4UN9bCOB5f0FtemfJBdvOlZTqdmrll/Sx2h/yz2TCDXADh516fStfiYgk/DlwMHeK1KqkytDofu/OWElL7A0yPjRtexY49qs/GVq4eiz5XLzPlmrPEJlNwe4n9uIrrZ7qMHEVs1afq9w/AYHBkGtqyXq1i/pO8pjMaYB0diSIGhLTJ4EBQxKBoZTnGF583CiRfAu2PjJeWgWs7Ftr1Kw4IUd0ix2jxZkumQOJGsQ7at9J3juEnCpJiF2I5lGwSftBVYlR9SU54MhTv2oj+8fjkni8YgXQf0/8JT0F5pM01ahcOFt8enGmOcOdWFNNCXkh1h9Al3HnrVGwHro+RnvcvDY3MGIsbHvhHdLkEdO6hT8uFFszmhpru777RKHjN2VycYOhFFX/k+o/RkWcJVk9heAcUin2MvuaA4sS53jBnOasf0wuP80yJ0z6kZZZ2AcYW7W+gSyWcfwSraGuHk0RcG7Ur9XU5/zNzLIt7/stuY6wqHj1nIEjhCjL9qe/sycW+YAhpCtq5X8CxzA/UxA10DRnk184w5qvWlWAQ3eYsJbuDGUhqfPuUbXmf835PyuTk35LiJfLt3yZ+kI88Wm4z2AaAYFCeDeD112fTq2CZhgYi2O+95qaiZMrAF/FQKC9pL2YMruRUHETZHg=
+	QUssROm+aCy3S36o2bQ7UwlA/Q6t25qLfKKzB9nYUW5CoANpvR/jeME3SPn+Zcinnrq7hP7XOvoQ65P69wiIloJKJIo0sbKhdwNFgZ2bJ6q3G9mdp0fm8QHf8WbGQm53KXzk2zNlZeT6XpC05y9WD6xxTb6vhLs6whNcT2t3tk97CvaXJb+P5xmxTKu6MQessmpAjKIVjs9BzARWHSn1jrYud5XzkoYNN40SrSp25u2ECVYqT/oa0zDyDEgHjrkNXZlh9Cki1BdrI7wG6goeUEn5+6S2+ezXjYej6iQobzObEoATN6F2plo+Zq8Eaka7wZmAc8uYN2Uwacz8JXJJIPtNEzBUrdRmerXF5OuNmr063VmkwKaWJ+oJmv0i2ztvFxfSeHLjycHIqOzeYpyH0tuK9fFclRZKlKuuB+jMYVkYdAIu8ugVeL+XhmeVgZiev/V/LF82ptzqdxIPzuFz4veD+cVf7S+vkubb2AENv71+R0JbmaVTHCPlnVXlCHdGySIdk9aKt4LymGoy1os1oyAyeGIgH7o8pt2ZwylasZwxVaSgA/C8Q6y+h3jr776TIDkSgMTnwGoX8mOPPgJweTxJMx3sm0QJQDjTudHC73/5DeKwpUSWdXHhwGv0liITm+e0/ZoTDIopDZ1H61fWnnQk9Z+wztPhzVtA62ue0FE=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UWFVeFBmZ0VteUt6VnphZmtxTElsbE5DOHZTVHVpa2ozeEZ0R0RFbzBSMXYr?=
- =?utf-8?B?VGhDS2lCOVpQZWYyWEx2QjBwVDVHMXZIbTJ1RjgxMEpMTWc5elB2ZitSb3JO?=
- =?utf-8?B?cUEwcHp3Z2hPSUVWUGF6UzFDanJVZHZBMXgzQyt1Z0srQkc2TFdQdHpSTDdN?=
- =?utf-8?B?VWVwdTN0QjRmcDBHZzFBUzdGSVRscHpRL0wrNmVjb3ZXc2NTNGlkYTZOWXUy?=
- =?utf-8?B?amhjNGlWVHJ6S3lOblg5amRaL0RjWWRucE0zMXMvNUlxUEY5YzBMbnNjM0JI?=
- =?utf-8?B?V1FRcVAxclU4WnUwQ01wenJ6dXRUeW5KTzg3SW9FZjljNFQ1RkJFSm8zNm1y?=
- =?utf-8?B?M2drWk5pS3p4RlVrNlFvMzM1ZG9CVnphdm02azdYQTI4djZJT3FxWHpUckJa?=
- =?utf-8?B?YWJEbmNPZ29VU0JTZ09MNHNhUVhxY013OEFZS25aZ3FOeHhQS3g2UCtCWHBS?=
- =?utf-8?B?L3hFY3MxT0VMOGJuUUdjR2YwUVV1Rjk1V2ZvTjVuZlc2ZzN0aFY2TFpjc1oz?=
- =?utf-8?B?L3JyanZIZ1lRZXJBM2VEZWhXSmxkaHMwUzZLbkpSR1dOaEtlVFdwOE5ZYzdm?=
- =?utf-8?B?R0YyMzVBSENuWS81V25DODBPVlpURXA3TTNIeGo5K1ZadmMySVBnNzVRZGdF?=
- =?utf-8?B?VTFPYnEyY0ZzTFEzeThQL09XY3h4U1YyY2lBQlY5bndjS0k4WWpBWVg0eHRu?=
- =?utf-8?B?MXVXNDBtdzJUUTRVU2hOTjR3b3FMT0VtWXZTbWsyWWp2UE9zY3piTTFqZUp2?=
- =?utf-8?B?MjRxZENJc0UwSzJTRnpER1VzS3hQQ0FvRHFBa1ZHSmtxcm9PaytqVnBTZW9T?=
- =?utf-8?B?REo1cnhQeW1ZcFc5ODZUSWFpWjFndTRuRHRVUVorcjlubEphZ01mbXoxYWlY?=
- =?utf-8?B?VUNzY0N4ZVd6K0FoeW03b0YwWE93RjkrdjFPQ3JnTnBVZ2tHdUxyM3h5YU5k?=
- =?utf-8?B?Mlk1MG1LN29OUFV3S01oOEQyNTFoSDdLS1M5enExWCtVc213K2p3NXppNEJF?=
- =?utf-8?B?L0tvQVp2aU5rNk1paXhVQmw0VHFSSWVhTFcvYTFxVmIrMGxsaXgvT3ZjTVRm?=
- =?utf-8?B?bkRHZFFyQm5VV0ZQYmNvS0MzTTR2TjJDQlVpeFQxdTVsZzZ5S3JlMFZFQ0VZ?=
- =?utf-8?B?NHRsYXBrQklLN1h6UTlJRGErV3hHOXhVVjFSU3RQemFYbmxaTEZDRmVQT0k3?=
- =?utf-8?B?bk9QMFZBVWpRZ2ZQS1FVSWg1bFlCR2hJZ1Zobzg5NDJSeVY1aWhRZ1VYRFdh?=
- =?utf-8?B?eWZiMkFiTDJiOUc5TmtlSXRNalV3cXo1S2RTRkE0SmdybzN2enBNdkhZck11?=
- =?utf-8?B?eUlKd09IWWN4Ulp2R2I0c0Q0Rm5aTlFpT3V4ZStsREUzTDJMUzhkbUlGTTE2?=
- =?utf-8?B?Q2Njbm42bUNYK3BKSGNHeUs5dmFsemZpU0J3UUQ2QzRncnR5cVN6N3owcUFl?=
- =?utf-8?B?RVlhY2NQZzVpaGNRQlU3R05SUm1McUdTTTRxT3ZwOHNyOTlTbkRHdEkraG9D?=
- =?utf-8?B?c05GTWMwVitFY0RlNVh3ZFZJTjE5YXVrcUtRUGErUVdCL2xaTGM3OG1CTGhi?=
- =?utf-8?B?RnovbG5qMmRycHEwWHZqN0Z1MGwwNW5EdHZmRDBhWWQydng0eEUwWUY0VWFN?=
- =?utf-8?B?RkpFWkdxL3VBTUNsZXBrbjdsbCtxZXNGajRGMmFKQnZJakU2KzRCY21DbCtE?=
- =?utf-8?B?cmpvZVJRMEduZWwvZ3NRUFVxalJoSjZ0U241MSt0Tm9SZ29KRk5pa1RVTkhv?=
- =?utf-8?B?ZTZSS21vQWtYRGs4L25mbHp1c1pxYWI4RTM2SXBneDBXZ0hxMnEwLzRSaVdG?=
- =?utf-8?B?cmNCY0JlV1hRVW1nVXZzS2xwaDJFcVB0YmZ6YXM4Z2o4TFFsakFxUnBFTHBC?=
- =?utf-8?B?VXZhT1IwMUsycThHWTB4YmxtOFVqWmZPSUxCRHRKSFZtNE8rQTFhVFVQcWU4?=
- =?utf-8?B?UDhEODFjdkNwUFhCOG5FUkxYSzh6eDRVdnlzMlBYV05ONVB5d2RwT094UENE?=
- =?utf-8?B?N1dFaC82SmZ1VHBHRVVuNFRyTkc2UGFxdW14MDdqKzdpVCs1K3YzcXU1cnZD?=
- =?utf-8?B?OEprdUxBWllNek0weVJibmpic3Jzc1ZqSnQ3U1FKUXl3SUx6M2RxUzQyYkI3?=
- =?utf-8?Q?4Z3V3CbxrPnEe2/ur35lKgk+9?=
+	=?utf-8?B?MmtUSzlyc1ZjOEVEL0ViMVJjeURHeUUvcWdCT3NPTVJXOXZHRFBnbThhbVYv?=
+ =?utf-8?B?S1VKTFRmNkZmcm1FeS9EcnBYMmpiSjJvbVF2U0Zrb1FmM2FoeEwwd09Eczd1?=
+ =?utf-8?B?Snl1cVYzSW53d3hMYkFIV29WdGs0TUZuRUdTd29OMEhzR2NxdG8reHRpbWtP?=
+ =?utf-8?B?OWRMWHBlWExtMzIvQ0RXeWNWOVUwSis3YjVWbnhMTUVydkdxQ3dFaDRHaWEx?=
+ =?utf-8?B?akNLbUVzQ21LMVhLVlRBNGhOZFg2TVVSZVdsYkNaODVIN0ZqMk5TbHJ1aHBU?=
+ =?utf-8?B?VUo0WDFtVEtMRzNQMnlCalRaVm5JQU04eEMvZWJCaVRBb1FUcDF3cTF1Q3pr?=
+ =?utf-8?B?Y1ErTHU2MG1ReUtLb1FydEYzTldPWXd5b2hMK0QvMWlMZHdUbXJpRWFqTG9a?=
+ =?utf-8?B?dnVrb3d6RGZ4VEF4OXdheDZ5UGV5NkI0UkgzQTk1Z29wMjVVRE9sZFpqTkVk?=
+ =?utf-8?B?Y2dUMmM5NHFwSVdEYVZYUGlYUG8rWTQ2Q0VCYjl2c0hLSlpuRlk0ODAvVlln?=
+ =?utf-8?B?MkQ1Y2RnYnRreko3ODFxaEQ1cXYxYW9mUllTclNwNlJnM2VEMHNqTmowQVVC?=
+ =?utf-8?B?RWM2bHFvTzBIOWJkWVYrUmFQZmZkWm5STUlZbUhXWmtzbDE3eDJINmtLVVJj?=
+ =?utf-8?B?MXlsTVNwdUlQWC9BTExEOHphSmFJcFZ2bDNLeWxGMy81WjFwZ1gzL0RWdENx?=
+ =?utf-8?B?M252VVhxSU1yb013eUljb290VGdLbXlXT1ZIVzh5aU5OL2NQalkyWTN4d0tu?=
+ =?utf-8?B?aTJoUVJxVHdYTnZVcVVwTmMrb3AvZk55blI3YURMVk9wSUhGdFJjS3NUVzN2?=
+ =?utf-8?B?Y24rK2Q3WTVOd0p1RUJzWGx3Y2FqMm96TDJ2dk1GcnZpdnc3VXNFVkQrWkxt?=
+ =?utf-8?B?bXZScEg2Mk9yQmQ3djFVbDRnZ09JTWJiaVMvWThsNmlYc3R4UUYyU0lmZFpl?=
+ =?utf-8?B?ZUg5Q2xGVWptNStyUVhIaUhDK1NSQ0N5V01CR3l6REJFNkpVZS9obkN0OUlW?=
+ =?utf-8?B?WUpZU2l1V1hrUlRacTZRUjE0ZW95QVVkQU1VaytzUjhYbXI1eGJuVGM4YjV1?=
+ =?utf-8?B?S2kvWW9nQmVBT2xsR2U3c0UzUGRUc2ZpN3dTVkVPYngwM3RSbEtoSUhFcHVD?=
+ =?utf-8?B?SzdWSlRjd3BjZXQ3MVhZeVBtMFRISUlDMk91MGMxUFJsd1BoVlFERTU0OUNz?=
+ =?utf-8?B?UzJLcXFxMWQza2E4bEdjanYwVmhuenlFcXluNDlLRFc5V0F5Z3Q3Z1cyRXE5?=
+ =?utf-8?B?V1ZJd2dIcVNEemVLM3ZLVk9obW9rNjBWZlJqeEJVb05oM3l0OGJib3QySm9a?=
+ =?utf-8?B?ZXpmRkdxOHMzYjdTeFZlWjMzWjFhZnFVUW85QzlWbEZtQ3NKaXQwQWwvNlY4?=
+ =?utf-8?B?UzRSb3lnQjRTNGx1QlVuVTE2dzFLUmhMMy9QTGl1aFlWL21sVFllSzlrK1FE?=
+ =?utf-8?B?R0dLVHZEVzdqak9JSEMxL3YzQW13Vm92WVF1UXVkc3dUdjNKbTRDcUpDeDFN?=
+ =?utf-8?B?RUJUQ0kwencwVzNVcmxYMlByWmdOM1FzWm5RSXIzVVJiaEloMEM5U0RhOVBW?=
+ =?utf-8?B?SEUvTE5sNGxRVVBqdUlnZnU4Z2NrV3J0dmpEMlBYUy93SU42dkI0WTJYdW02?=
+ =?utf-8?B?dlFtc2c0VkIwNGl3Y2JoNTh4VVdZTmdqUVpLeEppTytkN3V3a3FHNlQwTUdv?=
+ =?utf-8?B?THhhbzJaQzRIOTZOeWhhL0tCOTFMNENXZkxLY3psRXo4RlNzVXAvckMzOE9U?=
+ =?utf-8?B?RmtuRS9tbmFXbWJRRlk5Vzc5eWlNVTBjSUVxZmh5YlZiTjE0MmxtbVk5eGU4?=
+ =?utf-8?B?NVBMSU02MXM0Y1RlZFZBOEFobEk0QTJGRzBxN2dteHZUUXl4cWR5amQyRHN1?=
+ =?utf-8?B?N256NFA3STkrM1FnVEZYRjNBYzZObzlhdDVQQUkrdFh6eEpPUXowbzN3TmJz?=
+ =?utf-8?B?bTl4SGg0eGNBZUR3eCsxSjJlUktOMlFacHdOZnNyNTl0aHJSWWRIMXZRWlUx?=
+ =?utf-8?B?VU80UDFyMHNSVW42ZFE3SDBkdWRYazRTRENXK0ZmMzJpMmloL2VPTThQUmRz?=
+ =?utf-8?B?dktJb2lMYmZxZjRYTDR4VHltV081TWkzRWVEV2NWZUVQUU5waHFoQlNid2No?=
+ =?utf-8?Q?wp0fb2xLf/HKJHMH7V2wr1k2+?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7f57223-58ea-4d50-7c18-08dc47ad1b2c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b690d11-b971-4b30-f63f-08dc47aeb299
 X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 00:39:59.1562
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 00:51:22.7085
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U1IVlIQl3tCktj5Lkuoq3KY7XcnjS4LKnmwHTvcwSRZaZia23+MgZ9pc7p0JFxAs
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6189
+X-MS-Exchange-CrossTenant-UserPrincipalName: oCw1p4ID2ep6kuYlyJbWOHrCgOH13tzEQoasrIuMymPQAOt2XdlZrA/CSWq7CfXM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6733
 
+Hello Krzysztof,
 
+Thanks for reviews. Please find my comments below.
 
-On 3/17/24 1:50 PM, Krzysztof Kozlowski wrote:
+On 3/17/24 1:53 PM, Krzysztof Kozlowski wrote:
 > On 15/03/2024 22:15, Tanmay Shah wrote:
->> AMD-Xilinx Versal platform is successor of ZynqMP platform. Real-time
->> Processor Unit R5 cluster IP on Versal is same as of ZynqMP Platform.
->> Only difference is power-domains ID needed by power management firmware.
->> Hence, keeping the compatible property same as of zynqmp node.
+>> AMD-Xilinx Versal-NET platform is successor of Versal platform. It
+>> contains multiple clusters of cortex-R52 real-time processing units.
+>> Each cluster contains two cores of cortex-R52 processors. Each cluster
+>> can be configured in lockstep mode or split mode.
+>> 
+>> Each R52 core is assigned 128KB of TCM memory. ATCM memory is 64KB, BTCM
+>> and CTCM memoreis are 32KB each. Each TCM memory has its own dedicated
+>> power-domain that needs to be requested before using it.
 >> 
 >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 220 +++++++++++++++---
+>>  1 file changed, 184 insertions(+), 36 deletions(-)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+>> index 711da0272250..55654ee02eef 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+>> @@ -18,7 +18,9 @@ description: |
+>>  
+>>  properties:
+>>    compatible:
+>> -    const: xlnx,zynqmp-r5fss
+>> +    enum:
+>> +      - xlnx,zynqmp-r5fss
+>> +      - xlnx,versal-net-r52fss
+>>  
+>>    "#address-cells":
+>>      const: 2
+>> @@ -64,7 +66,9 @@ patternProperties:
+>>  
+>>      properties:
+>>        compatible:
+>> -        const: xlnx,zynqmp-r5f
+>> +        enum:
+>> +          - xlnx,zynqmp-r5f
+>> +          - xlnx,versal-net-r52f
+>>  
+>>        reg:
+>>          minItems: 1
+>> @@ -135,9 +139,11 @@ required:
+>>  allOf:
+>>    - if:
+>>        properties:
+>> -        xlnx,cluster-mode:
+>> -          enum:
+>> -            - 1
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - xlnx,versal-net-r52fss
 > 
-> There is no binding change, so NAK. Platform is not being added to
-> examples. You changed nothing in  Versal support...
+> Why do you touch these lines?
+> 
+>> +
+>>      then:
+>>        patternProperties:
+>>          "^r5f@[0-9a-f]+$":
+>> @@ -149,16 +155,14 @@ allOf:
+>>                items:
+>>                  - description: ATCM internal memory
+>>                  - description: BTCM internal memory
+>> -                - description: extra ATCM memory in lockstep mode
+>> -                - description: extra BTCM memory in lockstep mode
+>> +                - description: CTCM internal memory
+>>  
+>>              reg-names:
+>>                minItems: 1
+>>                items:
+>> -                - const: atcm0
+>> -                - const: btcm0
+>> -                - const: atcm1
+>> -                - const: btcm1
+>> +                - const: atcm
+>> +                - const: btcm
+>> +                - const: ctcm
+>>  
+>>              power-domains:
+>>                minItems: 2
+>> @@ -166,33 +170,70 @@ allOf:
+>>                  - description: RPU core power domain
+>>                  - description: ATCM power domain
+>>                  - description: BTCM power domain
+>> -                - description: second ATCM power domain
+>> -                - description: second BTCM power domain
+>> +                - description: CTCM power domain
+>>  
+>>      else:
+>> -      patternProperties:
+>> -        "^r5f@[0-9a-f]+$":
+>> -          type: object
+>> -
+>> -          properties:
+>> -            reg:
+>> -              minItems: 1
+>> -              items:
+>> -                - description: ATCM internal memory
+>> -                - description: BTCM internal memory
+>> -
+>> -            reg-names:
+>> -              minItems: 1
+>> -              items:
+>> -                - const: atcm0
+>> -                - const: btcm0
+>> -
+>> -            power-domains:
+>> -              minItems: 2
+>> -              items:
+>> -                - description: RPU core power domain
+>> -                - description: ATCM power domain
+>> -                - description: BTCM power domain
+>> +      allOf:
+>> +        - if:
+>> +            properties:
+>> +              xlnx,cluster-mode:
+>> +                enum:
+>> +                  - 1
+> 
+> Whatever you did here, is not really readable. You have now multiple
+> if:then:if:then embedded.
 
-Thanks for reviews.
+For ZynqMP platform, TCM can be configured differently in lockstep mode
+and split mode.
 
-Okay got it. That means I don't really need to add anything related to Versal.
-I will get rid of patch that says "Versal support". Looks like it's not needed
-at all.
+For Versal-NET no such configuration is available, but new CTCM memory
+is added.
 
-Thanks.
+So, I am trying to achieve following representation of TCM for both:
+
+if: versal-net compatible
+then:
+  ATCM - 64KB
+  BTCM - 32KB
+  CTCM - 32KB
+
+else: (ZynqMP compatible)
+  if:
+    xlnx,cluster-mode (lockstep mode)
+  then:
+    ATCM0 - 64KB
+    BTCM0 - 64KB
+    ATCM1 - 64KB
+    BTCM1 - 64KB
+  else: (split mode)
+    ATCM0 - 64KB
+    BTCM0 - 64KB
+
+
+If bindings are getting complicated, does it make sense to introduce
+new file for Versal-NET bindings? Let me know how you would like me
+to proceed.
+
+Thanks,
+Tanmay
+
+> 
+>> +          then:
+>> +            patternProperties:
+>> +              "^r5f@[0-9a-f]+$":
+>> +                type: object
+>> +
+>> +                properties:
+>> +                  reg:
+>> +                    minItems: 1
+>> +                    items:
+>> +                      - description: ATCM internal memory
+>> +                      - description: BTCM internal memory
+>> +                      - description: extra ATCM memory in lockstep mode
+>> +                      - description: extra BTCM memory in lockstep mode
+>> +
+>> +                  reg-names:
+>> +                    minItems: 1
+>> +                    items:
+>> +                      - const: atcm0
+>> +                      - const: btcm0
+>> +                      - const: atcm1
+>> +                      - const: btcm1
+>> +
+>> +                  power-domains:
+>> +                    minItems: 2
+>> +                    items:
+>> +                      - description: RPU core power domain
+>> +                      - description: ATCM power domain
+>> +                      - description: BTCM power domain
+>> +                      - description: second ATCM power domain
+>> +                      - description: second BTCM power domain
+>> +
+>> +          else:
+>> +            patternProperties:
+>> +              "^r5f@[0-9a-f]+$":
+>> +                type: object
+>> +
+>> +                properties:
+>> +                  reg:
+>> +                    minItems: 1
+>> +                    items:
+>> +                      - description: ATCM internal memory
+>> +                      - description: BTCM internal memory
+>> +
+>> +                  reg-names:
+>> +                    minItems: 1
+>> +                    items:
+>> +                      - const: atcm0
+>> +                      - const: btcm0
+>> +
+>> +                  power-domains:
+>> +                    minItems: 2
+>> +                    items:
+>> +                      - description: RPU core power domain
+>> +                      - description: ATCM power domain
+>> +                      - description: BTCM power domain
+>>  
+>>  additionalProperties: false
+>>  
+>> @@ -386,4 +427,111 @@ examples:
+>>              };
+>>          };
+>>      };
+>> +
+>> +  - |
+>> +    // Versal-NET split configuration
+>> +    soc {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+> 
+> Don't add examples per each platform.
+
+Noted. If we go with different file for Versal-NET, then example should
+be included?
 
 > 
 > Best regards,
