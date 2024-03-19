@@ -1,48 +1,49 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2099.outbound.protection.outlook.com [40.107.220.99])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2104.outbound.protection.outlook.com [40.107.244.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0AF363;
-	Tue, 19 Mar 2024 00:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476D8A29;
+	Tue, 19 Mar 2024 01:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.104
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710809488; cv=fail; b=XKc28f049m7gR9ECaClv83nqTErt1aEedF+/OSY9kfBkCc6Fw0UVN9EwO3OK2hrOVwcxUD/HFcKQX9ja2H4I1Uih7HxTsZp67YjCWXyiQ5eNdkHBNR5t0FU8Y/Ls05VWLZ7YyEdYB3mixJvAMfMSC9PwFuspFMoqKfVX3RODddg=
+	t=1710810404; cv=fail; b=hM0o4IscLGlz43WYZPYyd4uLwtflrovUHbTA0l3eOI9QZfo/NZ8UX3oArrx+3aqN7MoFiTAWBW0CyPqTTsSyE9vUT+bLpevqwShjXOIVQeIPrXIwZEDCaJiVpvn/TRy8QbjCjowJ4j2C38qdNsbhUkKXaYhd+gKsw8rgwHrazCM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710809488; c=relaxed/simple;
-	bh=anFuRwCLJE0+xmI/bmM1fYUGfS6YNGFA1+5SHWb87yw=;
+	s=arc-20240116; t=1710810404; c=relaxed/simple;
+	bh=/pmePyVuR1aPrVjMgGD5FbaZkUvdzjCKsKF3DBzxg54=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Fri7wVgVSbFckJTfzMvZ0+fFkU3ZE+GkmBrMwTLa/8/e310sMg8AHg5utrwe8KD+nH/3lH9ZE2mgYeJFuaUrOXaOEPuiD/ocp17F1c5Vo3Pxg/J6KF5Im1e3YDbh860IC94+VSIcfUsmFiC79McURGcdzm9/G60Pz0m8+yJcy08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Wf89nAff; arc=fail smtp.client-ip=40.107.220.99
+	 Content-Type:MIME-Version; b=lShiDRaRg5C0ewaMDiERdnQVndU9nvgns+cbMgW0BHTV037HdIA6GN6y8aeeDp7B+1Yg7ZQDsyg041rHMymbVAroa2rjsj86tex84JnuiSAzlNFxiXrDP1pmlozEf1s7b0lgagH9I8LayUvsXCi59m1EliK3ZlcOMp4O5dkPL+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aGappLma; arc=fail smtp.client-ip=40.107.244.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Wf89nAff"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aGappLma"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mm81mchnlddXWwzMtM4aOy5jDdvHxTRLPXl2+JUibiYV8YO16qpnWIE0ujtk1NM4cBkNCqV5T3+she9oooW0lVsIflsmZOBU0ZT1U8pPu0sJyqLy6F4vdMP17SvW3qlyd/96wJXoyAydN0jFEyOVRgL0tYBjz7ENAoYiVCgz9x+Kj9CDzAAObgprczYe3785oA1DVGm8GegN+nUb8JwKyVXgzfR6ElNMnioo9PNTOSDpQtDwC9cElnzXn8QbpRQ3O0raEy97extL6dgjR9JRnJCxAYmU+R7xRT9zmYtwwp/NHVv0XbBYO0ZWE/9fYwwcA55Eh9WDecxbzoUdT44eTQ==
+ b=TrzCSLlu5oJjid1tcDjRHMuD9hzDkIDje+bnTHnN9YcKEGbGNg5C2VfhjlBLi43KftYpfhu0ixjAFLoUUJmTQ7qvfEUev+2cyEoPFUcHYE+sFCJuQptf19AikNhJSO4TQZ2/ZHz/GvHRJ/4oGTsoJeb1Qkcl6KtGzdY4S8scA3xePkNNZS9M/3uHES0VHQngJAi8W6E1NQVM8IGFdyNUexvGX0Ol9sR6UYI2weUKOmU1OwqVwBE5Ow6z5JhpYdhgQ/WMp6sl62dwOFmrcklpecEg/43paHCeCbesjlMF/aw7T8vRNpEhEIrpAFZNp4m6OL9cTzBRBZIk9U9m+3hAIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oP0Z/+9NlkatBEYG/jVf05CQ1TsvTKAapzSXHeWfJD4=;
- b=Zl7/4LB1hD/qz7Di0ge5B8Podhai893wVpf7IkugtJ7Mdwx+ake7vtrsP45JUHvF/lwlHmhKkQbrddSNKGqoVg3YI0l1FDI3GszotpNoZDYFrcFzfMW09G79dUDmUK2zFVqKBlIG+zIagWn1ihGW6YY1LmgfQbxsB6Ix+rUzsP7wrIhQEK85q/YwU/AQ7O7GiMFkTZ2r5XYcmceNoYgGtpM8t+cLykJ1X47+ZuY5MyWXiGfWa6pe+clrmbsMBgpiSLlFZKBURkI53FeQxlM9ti1R8IK7Tp2x3FfEQhXNi+IxEHoAy6uenIZY2xsS1oJljMPZ6VT4juNPA08a2Ll6rQ==
+ bh=Jh8K0eubbTTIXhu2zvFy2LMqibn/m29opJM7GWuuCOQ=;
+ b=k7RHpOi3SMbYUcNIHL1D19VNwkuu2kljdl22if4rGB9wEjLcvbnkmdWHdLTgIiGFEfzMyACX8EKNj4+pIH4oi62Ds6H4IQB3/yu2gxcRNSu/yulRGpFR6jhqPBrajU2xUJWWLxDeJ8J+RSB6GkFOi1QTIkNP/KUu5Q7hHBNrAEhp+02cy0NOm8D8pgOHMMNzhRQ8nQhIZoXSDyQMZpHn+e4Hca3BHYdg9mH6B0GVb+MwtQ/u9+pHnT51nsAd9aE8AWy3d2/Y1j1oexj/Xax4X4l0GFUvBnLSwknoJuI2SPjAKXcte3gHlT/ye0K4FGWWphpJjR6Mqm2p7We7Gljw/A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oP0Z/+9NlkatBEYG/jVf05CQ1TsvTKAapzSXHeWfJD4=;
- b=Wf89nAffujPzWyN0adgG6luyHMJdLt6/yOjV4KXedSmhtU3NlO5F6z4TcinYnWdJN1yWq1d4lk3q06IEdmATT27xJbLBVYOZ3O7iw+G1TtBDhipwxJIZedL6+LN059XjHf0P+i4hPJ3BfyEfcoFEJLaP2ZfotQrUOjm/dDVcEqM=
+ bh=Jh8K0eubbTTIXhu2zvFy2LMqibn/m29opJM7GWuuCOQ=;
+ b=aGappLmaqmS6raRYy3ygxthMwMhbMORzMgvb/JUdk7CB7bJtvclGBK4Xz9bFh2QWqzLPJ++wjyeJfHIZSvQDGpvqf2KXrYTjcTlY70E5zRKeKgFlzKZRR0uOJlAXRw7mZb07Fhmdc7Wipk77LKlB0i4Ju+Va/207mET5tx+jOyo=
 Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
- by SJ0PR12MB6733.namprd12.prod.outlook.com (2603:10b6:a03:477::9) with
+ by MW3PR12MB4395.namprd12.prod.outlook.com (2603:10b6:303:5c::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Tue, 19 Mar
- 2024 00:51:22 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.27; Tue, 19 Mar
+ 2024 01:06:40 +0000
 Received: from BL1PR12MB5874.namprd12.prod.outlook.com
  ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
  ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7386.025; Tue, 19 Mar 2024
- 00:51:22 +0000
-Message-ID: <14be0aa6-49b7-4342-9ca6-750c30c8e1e9@amd.com>
-Date: Mon, 18 Mar 2024 19:51:19 -0500
+ 01:06:40 +0000
+Message-ID: <a0cdfa4c-9257-49e7-b519-54e7fd0fb230@amd.com>
+Date: Mon, 18 Mar 2024 20:06:37 -0500
 User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: add Versal-NET platform
+Subject: Re: [PATCH 3/3] drivers: remoteproc: add Versal and Versal-NET
+ support
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
@@ -50,15 +51,15 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240315211533.1996543-1-tanmay.shah@amd.com>
- <20240315211533.1996543-3-tanmay.shah@amd.com>
- <3ca1c419-d185-4318-92ed-3c4e40dcf5bb@linaro.org>
+ <20240315211533.1996543-4-tanmay.shah@amd.com>
+ <db6f16af-e715-4ff5-84d6-2d85d62d7c0c@linaro.org>
 Content-Language: en-US
 From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <3ca1c419-d185-4318-92ed-3c4e40dcf5bb@linaro.org>
+In-Reply-To: <db6f16af-e715-4ff5-84d6-2d85d62d7c0c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0045.namprd05.prod.outlook.com
- (2603:10b6:803:41::22) To BL1PR12MB5874.namprd12.prod.outlook.com
+X-ClientProxiedBy: SN4PR0501CA0105.namprd05.prod.outlook.com
+ (2603:10b6:803:42::22) To BL1PR12MB5874.namprd12.prod.outlook.com
  (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -67,301 +68,138 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|SJ0PR12MB6733:EE_
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|MW3PR12MB4395:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	QUssROm+aCy3S36o2bQ7UwlA/Q6t25qLfKKzB9nYUW5CoANpvR/jeME3SPn+Zcinnrq7hP7XOvoQ65P69wiIloJKJIo0sbKhdwNFgZ2bJ6q3G9mdp0fm8QHf8WbGQm53KXzk2zNlZeT6XpC05y9WD6xxTb6vhLs6whNcT2t3tk97CvaXJb+P5xmxTKu6MQessmpAjKIVjs9BzARWHSn1jrYud5XzkoYNN40SrSp25u2ECVYqT/oa0zDyDEgHjrkNXZlh9Cki1BdrI7wG6goeUEn5+6S2+ezXjYej6iQobzObEoATN6F2plo+Zq8Eaka7wZmAc8uYN2Uwacz8JXJJIPtNEzBUrdRmerXF5OuNmr063VmkwKaWJ+oJmv0i2ztvFxfSeHLjycHIqOzeYpyH0tuK9fFclRZKlKuuB+jMYVkYdAIu8ugVeL+XhmeVgZiev/V/LF82ptzqdxIPzuFz4veD+cVf7S+vkubb2AENv71+R0JbmaVTHCPlnVXlCHdGySIdk9aKt4LymGoy1os1oyAyeGIgH7o8pt2ZwylasZwxVaSgA/C8Q6y+h3jr776TIDkSgMTnwGoX8mOPPgJweTxJMx3sm0QJQDjTudHC73/5DeKwpUSWdXHhwGv0liITm+e0/ZoTDIopDZ1H61fWnnQk9Z+wztPhzVtA62ue0FE=
+	1YO/MvtpCRAkxNuQ5CoHQhqZsSLww/a4pihFhtfX7xHSdrAAyKW5n+YltGADcou/Y6zmFoMF+FeO4CzfBA/urNR1UE2WHgC4TnUX6VgKXyPj9sRJFkOJ+G45+FiseQpitNVAWRuqi5CqRoiD+WESrYq7g41Ua2ol8kiMskoHVPwbbzQhS/18bmPRQ93BhtFs6C0EPYaX439OH61Sncxy46xuKcIQNeETdYmWZCF8zPn7N9qMgM+3gWd0WbKV79Tw6zn96Qsfs/QLkLB+t258/RelGDNtAIAJ0B38OuO58D4ENbxGmPfNRZCwIvnoCO8hGKUnYJtQulsw2xrrJ+EV3hsZHBqqYRY3K7lEsqxdqPjGkX6KEt9Dkl9aaJbLXmrt77FlVkmG02I+XqCytaSczLvWqs7g4LEsUXinHsJYCKwTxIUcEUOeyicQ2QrcWqWN75JuEyOPU5jyjWo64MJUR3xVlmWsS+tLT38lx71OGPmOa0A/kNcD0WRFlNYZMViRXG01bmIg879p3sEujMicVMRtE6ybIuxj2bHHdceqXujAb8PnktC3V25wAzuoHJ69mooL2f8BWHZeYNqSMPlBavG77dL1VYB07xbcMiRbeX1Jv1+O56k+FQmHNsZJpzg8gAUrTr0P2yZMqK9atz0g1nptLQmVNO4DLB0jdecOsjY=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MmtUSzlyc1ZjOEVEL0ViMVJjeURHeUUvcWdCT3NPTVJXOXZHRFBnbThhbVYv?=
- =?utf-8?B?S1VKTFRmNkZmcm1FeS9EcnBYMmpiSjJvbVF2U0Zrb1FmM2FoeEwwd09Eczd1?=
- =?utf-8?B?Snl1cVYzSW53d3hMYkFIV29WdGs0TUZuRUdTd29OMEhzR2NxdG8reHRpbWtP?=
- =?utf-8?B?OWRMWHBlWExtMzIvQ0RXeWNWOVUwSis3YjVWbnhMTUVydkdxQ3dFaDRHaWEx?=
- =?utf-8?B?akNLbUVzQ21LMVhLVlRBNGhOZFg2TVVSZVdsYkNaODVIN0ZqMk5TbHJ1aHBU?=
- =?utf-8?B?VUo0WDFtVEtMRzNQMnlCalRaVm5JQU04eEMvZWJCaVRBb1FUcDF3cTF1Q3pr?=
- =?utf-8?B?Y1ErTHU2MG1ReUtLb1FydEYzTldPWXd5b2hMK0QvMWlMZHdUbXJpRWFqTG9a?=
- =?utf-8?B?dnVrb3d6RGZ4VEF4OXdheDZ5UGV5NkI0UkgzQTk1Z29wMjVVRE9sZFpqTkVk?=
- =?utf-8?B?Y2dUMmM5NHFwSVdEYVZYUGlYUG8rWTQ2Q0VCYjl2c0hLSlpuRlk0ODAvVlln?=
- =?utf-8?B?MkQ1Y2RnYnRreko3ODFxaEQ1cXYxYW9mUllTclNwNlJnM2VEMHNqTmowQVVC?=
- =?utf-8?B?RWM2bHFvTzBIOWJkWVYrUmFQZmZkWm5STUlZbUhXWmtzbDE3eDJINmtLVVJj?=
- =?utf-8?B?MXlsTVNwdUlQWC9BTExEOHphSmFJcFZ2bDNLeWxGMy81WjFwZ1gzL0RWdENx?=
- =?utf-8?B?M252VVhxSU1yb013eUljb290VGdLbXlXT1ZIVzh5aU5OL2NQalkyWTN4d0tu?=
- =?utf-8?B?aTJoUVJxVHdYTnZVcVVwTmMrb3AvZk55blI3YURMVk9wSUhGdFJjS3NUVzN2?=
- =?utf-8?B?Y24rK2Q3WTVOd0p1RUJzWGx3Y2FqMm96TDJ2dk1GcnZpdnc3VXNFVkQrWkxt?=
- =?utf-8?B?bXZScEg2Mk9yQmQ3djFVbDRnZ09JTWJiaVMvWThsNmlYc3R4UUYyU0lmZFpl?=
- =?utf-8?B?ZUg5Q2xGVWptNStyUVhIaUhDK1NSQ0N5V01CR3l6REJFNkpVZS9obkN0OUlW?=
- =?utf-8?B?WUpZU2l1V1hrUlRacTZRUjE0ZW95QVVkQU1VaytzUjhYbXI1eGJuVGM4YjV1?=
- =?utf-8?B?S2kvWW9nQmVBT2xsR2U3c0UzUGRUc2ZpN3dTVkVPYngwM3RSbEtoSUhFcHVD?=
- =?utf-8?B?SzdWSlRjd3BjZXQ3MVhZeVBtMFRISUlDMk91MGMxUFJsd1BoVlFERTU0OUNz?=
- =?utf-8?B?UzJLcXFxMWQza2E4bEdjanYwVmhuenlFcXluNDlLRFc5V0F5Z3Q3Z1cyRXE5?=
- =?utf-8?B?V1ZJd2dIcVNEemVLM3ZLVk9obW9rNjBWZlJqeEJVb05oM3l0OGJib3QySm9a?=
- =?utf-8?B?ZXpmRkdxOHMzYjdTeFZlWjMzWjFhZnFVUW85QzlWbEZtQ3NKaXQwQWwvNlY4?=
- =?utf-8?B?UzRSb3lnQjRTNGx1QlVuVTE2dzFLUmhMMy9QTGl1aFlWL21sVFllSzlrK1FE?=
- =?utf-8?B?R0dLVHZEVzdqak9JSEMxL3YzQW13Vm92WVF1UXVkc3dUdjNKbTRDcUpDeDFN?=
- =?utf-8?B?RUJUQ0kwencwVzNVcmxYMlByWmdOM1FzWm5RSXIzVVJiaEloMEM5U0RhOVBW?=
- =?utf-8?B?SEUvTE5sNGxRVVBqdUlnZnU4Z2NrV3J0dmpEMlBYUy93SU42dkI0WTJYdW02?=
- =?utf-8?B?dlFtc2c0VkIwNGl3Y2JoNTh4VVdZTmdqUVpLeEppTytkN3V3a3FHNlQwTUdv?=
- =?utf-8?B?THhhbzJaQzRIOTZOeWhhL0tCOTFMNENXZkxLY3psRXo4RlNzVXAvckMzOE9U?=
- =?utf-8?B?RmtuRS9tbmFXbWJRRlk5Vzc5eWlNVTBjSUVxZmh5YlZiTjE0MmxtbVk5eGU4?=
- =?utf-8?B?NVBMSU02MXM0Y1RlZFZBOEFobEk0QTJGRzBxN2dteHZUUXl4cWR5amQyRHN1?=
- =?utf-8?B?N256NFA3STkrM1FnVEZYRjNBYzZObzlhdDVQQUkrdFh6eEpPUXowbzN3TmJz?=
- =?utf-8?B?bTl4SGg0eGNBZUR3eCsxSjJlUktOMlFacHdOZnNyNTl0aHJSWWRIMXZRWlUx?=
- =?utf-8?B?VU80UDFyMHNSVW42ZFE3SDBkdWRYazRTRENXK0ZmMzJpMmloL2VPTThQUmRz?=
- =?utf-8?B?dktJb2lMYmZxZjRYTDR4VHltV081TWkzRWVEV2NWZUVQUU5waHFoQlNid2No?=
- =?utf-8?Q?wp0fb2xLf/HKJHMH7V2wr1k2+?=
+	=?utf-8?B?MEdpV1FiTG44RXRxWWhtZ1VEeTRXL0tjWEx3dFgxV0VjbzVzOVY2TFNLeVEx?=
+ =?utf-8?B?emg4cDdjSGNmZUVtMHN5K1Y0bVkxdmV1eHRuQnlGSUc4V1VIOC9nYVJ0b29r?=
+ =?utf-8?B?by9iVTdVM25zWnB0UWlSdGZmMUQxeHNodTUzb2I4VXIvL1NXTnFZNHQveHR1?=
+ =?utf-8?B?QStWRklNY1o5RzhRc1EwMEdNSmRuMEFBU1BFWVdZQ2puM1VxaW1EZFdGUGM1?=
+ =?utf-8?B?elhKMlViRHZHSk1HKzZndE5NNUsxOUxTd2RjOE84WTN0c21PcFVsSTFCSEhP?=
+ =?utf-8?B?WkVDdkpMMDBmTlByQit0bWNhZWlWbHRXNkM2a2pzSXhHb05VTWZUUnBwVUJP?=
+ =?utf-8?B?SkpLaTU1NDRsbGRVR0dmL1FoOFZqOUwyNXhENlVhck03VUZsaUZpSHNPTzY0?=
+ =?utf-8?B?dFI4QzJjbnNIbjFQM2JFVE1RRVgwZU4vQnYxY243ZU9zQVo0Tyt5eXNrTGJJ?=
+ =?utf-8?B?OWdYWURmOVgzVkxpUVh0T3ZMTU1BS2dwUVVqUW15WXpaMWJNTXFCZW9saW5D?=
+ =?utf-8?B?SWJaNXppUHI2SlkzRXJFZzhLR1ZFR1JCeUlpeEZkUmhtVmJpT3pqT1F6Q3Ns?=
+ =?utf-8?B?VjMyTzR4K282NDhZUjRPNlN5ZFBTY2tpN2kxcFVGVmhqRHBrREVNTHpVbHVW?=
+ =?utf-8?B?Z21Id3FrMnlxcE9sN2NNeVhoZHFEUFNnaUIxTjkvSVNwWWx0enN5ZFlDVGJE?=
+ =?utf-8?B?WVJJYUprL213N0RCa1crcEwyRVZCdUdQNkx1UHl6SmRuL2hBbkthKzNBa1Bh?=
+ =?utf-8?B?SFozMDAxNmZaV282ekd0YW5UaG1qdGo1bjNQb2VJOTZnbDkwK3lHbklJbjZP?=
+ =?utf-8?B?WE5UZXlmVGRldkx1cEQrdG1ROHJFcFpsQnVLOGlqSHRENXVTeUNIWXFxL0Q3?=
+ =?utf-8?B?QXJNMkNtWlFSbnVqbjNzMW5SNUdMZEpzVUVTdm9na2ZsYTM2WDhLS3Bad2NT?=
+ =?utf-8?B?K3hjZ01nR3UyVjVka0xJSVllWGlwK3VnN21UZTREd2xyTmtYZFljSC9hRTNy?=
+ =?utf-8?B?OUkxNjVUN3Q4K3c3ZkRyRWZjSnBYaXNIc1JzVjdPakhMbVZzNGpJMFVDbUhE?=
+ =?utf-8?B?Y2llQ3JEbVcyM3FXdzZLWEF3ZnpBc0JQNTREcWo2VjV1MWdSNWkzcVdWQVRZ?=
+ =?utf-8?B?dWZMeXpZc3c2OGlsK2U2elhNZWtFQ3UwWGxDd3F5TE51RFRvRHB3SWdyUGRw?=
+ =?utf-8?B?aFFMQUdhNUFEUm1zTEFLem9semt5UFIzdUlWRnlwWEVCY0MwcGtGZlRBK0hp?=
+ =?utf-8?B?WSttRW5hK1hEb0lNZ1pTTWlMV2RwVjY0Y1RpN05qSWEvcUtpMVh5QzM0Z2ZO?=
+ =?utf-8?B?WlB2aWN4NTRZaWhBcHFac3AwcHc1SU5iUU8zVkhhd2pXSy9iRHdMSmpTMXg5?=
+ =?utf-8?B?Z0pkMjFnRVdqK0tETXFIajA0bnVWNVRob3lKQTFIQ1hlMXVid1d4ODUzb0dK?=
+ =?utf-8?B?a2J4bVRDd2V2aEVza0dTNzdMY1A3elZvdi9Zd2R1MGlOMUtLUWZmdFFqOG1Q?=
+ =?utf-8?B?YXdBMGpvdGlWWWpmVmFRTUNBM1l2M3lxVjFuY3ZGNzI5dVlzT2VJdGRSeGRt?=
+ =?utf-8?B?N1dPakJSMmFiZ3pTMTF1UHcwTTlpV3R4TGNtbEhwMXViTlBzVDMxd2J1b0x2?=
+ =?utf-8?B?aVZSQk9yYXhZYUVLaGYySXVhRVVVTFZiYWdlWnlEQStoc0JrQXVNWEEwQ0I3?=
+ =?utf-8?B?YU9iL0VmS2Z2SUw5NisxT3d3eksyVjF2LzlFbTRGUGh4aU1CcFFoTm5GNE50?=
+ =?utf-8?B?eVc2UjRNRTVMOWE0eTlYbXJCUUZQTVYzR3N5SnArbGJVb0xoc21QdUI1MzRw?=
+ =?utf-8?B?bDQ0NldWSE9sZ3dNcVFDbVBiUGRxNmFsOFZhM1AwZ1lBUDdTb0hWWGdZNWVT?=
+ =?utf-8?B?TUdhMFJmb0ZSMVd5bVp4aEQ4TTF6VThEMDlSMUx0eVJsb0ozOVJyWTZqNHJP?=
+ =?utf-8?B?c09xbDlLbzNnQW13Q3dYZEF6aDJWR21qdEx4QUdlMCtiZ1RweVEyeTlERFNC?=
+ =?utf-8?B?SzVyWnN3c0NOQi9PcFFJZE1hc2dpV25RWEVvWUpDL1BIcjFaY2k5bm9MYUpi?=
+ =?utf-8?B?SllNYjdYaDY1Zjg0bTBpR2U2QnkwVFBJblVRZWZLWWtXVmdzVTNzMURDVG9V?=
+ =?utf-8?Q?JLwLfMIZLCozSsYTSOYu6swWq?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b690d11-b971-4b30-f63f-08dc47aeb299
+X-MS-Exchange-CrossTenant-Network-Message-Id: b58ca669-6760-4d87-986f-08dc47b0d573
 X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 00:51:22.7085
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 01:06:40.1832
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oCw1p4ID2ep6kuYlyJbWOHrCgOH13tzEQoasrIuMymPQAOt2XdlZrA/CSWq7CfXM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6733
+X-MS-Exchange-CrossTenant-UserPrincipalName: kGf09f5//RGTr5dUN3WWdwF6WtkxidEDoJhRfA/gzq/3pwA6llwpzuZxBXQEDvys
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4395
 
-Hello Krzysztof,
 
-Thanks for reviews. Please find my comments below.
 
-On 3/17/24 1:53 PM, Krzysztof Kozlowski wrote:
+On 3/17/24 1:55 PM, Krzysztof Kozlowski wrote:
 > On 15/03/2024 22:15, Tanmay Shah wrote:
->> AMD-Xilinx Versal-NET platform is successor of Versal platform. It
->> contains multiple clusters of cortex-R52 real-time processing units.
->> Each cluster contains two cores of cortex-R52 processors. Each cluster
->> can be configured in lockstep mode or split mode.
+>> AMD-Xilinx Versal and Versal-NET are successor of ZynqMP platform. ZynqMP
+>> remoteproc driver is mostly compatible with new platforms except few
+>> platform specific differences.
 >> 
->> Each R52 core is assigned 128KB of TCM memory. ATCM memory is 64KB, BTCM
->> and CTCM memoreis are 32KB each. Each TCM memory has its own dedicated
->> power-domain that needs to be requested before using it.
+>> Versal has same IP of cortex-R5 cores hence maintained compatible string
+>> same as ZynqMP platform. However, hardcode TCM addresses are not
+>> supported for new platforms and must be provided in device-tree as per
+>> new bindings. This makes TCM representation data-driven and easy to
+>> maintain. This check is provided in the driver.
+>> 
+>> For Versal-NET platform, TCM doesn't need to be configured in lockstep
+>> mode or split mode. Hence that call to PMC firmware is avoided in the
+>> driver for Versal-NET platform.
 >> 
 >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 >> ---
->>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 220 +++++++++++++++---
->>  1 file changed, 184 insertions(+), 36 deletions(-)
+>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 19 +++++++++++++++----
+>>  1 file changed, 15 insertions(+), 4 deletions(-)
 >> 
->> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
->> index 711da0272250..55654ee02eef 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
->> @@ -18,7 +18,9 @@ description: |
+>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> index d4a22caebaad..193bc159d1b4 100644
+>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> @@ -323,9 +323,12 @@ static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
+>>  		return ret;
+>>  	}
 >>  
->>  properties:
->>    compatible:
->> -    const: xlnx,zynqmp-r5fss
->> +    enum:
->> +      - xlnx,zynqmp-r5fss
->> +      - xlnx,versal-net-r52fss
+>> -	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
+>> -	if (ret < 0)
+>> -		dev_err(r5_core->dev, "failed to configure TCM\n");
+>> +	/* TCM configuration is not needed in versal-net */
+>> +	if (device_is_compatible(r5_core->dev, "xlnx,zynqmp-r5f")) {
+>> +		ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
+>> +		if (ret < 0)
+>> +			dev_err(r5_core->dev, "failed to configure TCM\n");
+>> +	}
 >>  
->>    "#address-cells":
->>      const: 2
->> @@ -64,7 +66,9 @@ patternProperties:
+>>  	return ret;
+>>  }
+>> @@ -933,10 +936,17 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+>>  	int ret, i;
 >>  
->>      properties:
->>        compatible:
->> -        const: xlnx,zynqmp-r5f
->> +        enum:
->> +          - xlnx,zynqmp-r5f
->> +          - xlnx,versal-net-r52f
->>  
->>        reg:
->>          minItems: 1
->> @@ -135,9 +139,11 @@ required:
->>  allOf:
->>    - if:
->>        properties:
->> -        xlnx,cluster-mode:
->> -          enum:
->> -            - 1
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - xlnx,versal-net-r52fss
-> 
-> Why do you touch these lines?
-> 
+>>  	r5_core = cluster->r5_cores[0];
 >> +
->>      then:
->>        patternProperties:
->>          "^r5f@[0-9a-f]+$":
->> @@ -149,16 +155,14 @@ allOf:
->>                items:
->>                  - description: ATCM internal memory
->>                  - description: BTCM internal memory
->> -                - description: extra ATCM memory in lockstep mode
->> -                - description: extra BTCM memory in lockstep mode
->> +                - description: CTCM internal memory
->>  
->>              reg-names:
->>                minItems: 1
->>                items:
->> -                - const: atcm0
->> -                - const: btcm0
->> -                - const: atcm1
->> -                - const: btcm1
->> +                - const: atcm
->> +                - const: btcm
->> +                - const: ctcm
->>  
->>              power-domains:
->>                minItems: 2
->> @@ -166,33 +170,70 @@ allOf:
->>                  - description: RPU core power domain
->>                  - description: ATCM power domain
->>                  - description: BTCM power domain
->> -                - description: second ATCM power domain
->> -                - description: second BTCM power domain
->> +                - description: CTCM power domain
->>  
->>      else:
->> -      patternProperties:
->> -        "^r5f@[0-9a-f]+$":
->> -          type: object
->> -
->> -          properties:
->> -            reg:
->> -              minItems: 1
->> -              items:
->> -                - description: ATCM internal memory
->> -                - description: BTCM internal memory
->> -
->> -            reg-names:
->> -              minItems: 1
->> -              items:
->> -                - const: atcm0
->> -                - const: btcm0
->> -
->> -            power-domains:
->> -              minItems: 2
->> -              items:
->> -                - description: RPU core power domain
->> -                - description: ATCM power domain
->> -                - description: BTCM power domain
->> +      allOf:
->> +        - if:
->> +            properties:
->> +              xlnx,cluster-mode:
->> +                enum:
->> +                  - 1
+>> +	/*
+>> +	 * New platforms must use device tree for TCM parsing.
+>> +	 * Only ZynqMP uses hardcode TCM.
+>> +	 */
+>>  	if (of_find_property(r5_core->np, "reg", NULL))
+>>  		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
+>> -	else
+>> +	else if (of_machine_is_compatible("xlnx,zynqmp"))
+>>  		ret = zynqmp_r5_get_tcm_node(cluster);
 > 
-> Whatever you did here, is not really readable. You have now multiple
-> if:then:if:then embedded.
+> That's poor code. Your drivers should not depend on platform. I don't
+> understand why you need to do this and how is even related to this patch.
 
-For ZynqMP platform, TCM can be configured differently in lockstep mode
-and split mode.
+You are correct, ideally this shouldn't be needed. However, this driver contains
+hardcode TCM addresses that were used before TCM bindings were designed and available in
+device-tree. This check is provided to maintain backward compatibility with device-tree
+where TCM isn't expected.
 
-For Versal-NET no such configuration is available, but new CTCM memory
-is added.
+For new platforms (Versal and Versal-NET) TCM must be provided in device-tree and for
+ZynqMP if it's not in device-tree then to maintain backward compatibility hardcode
+addresses are used.
 
-So, I am trying to achieve following representation of TCM for both:
+Thanks.
 
-if: versal-net compatible
-then:
-  ATCM - 64KB
-  BTCM - 32KB
-  CTCM - 32KB
-
-else: (ZynqMP compatible)
-  if:
-    xlnx,cluster-mode (lockstep mode)
-  then:
-    ATCM0 - 64KB
-    BTCM0 - 64KB
-    ATCM1 - 64KB
-    BTCM1 - 64KB
-  else: (split mode)
-    ATCM0 - 64KB
-    BTCM0 - 64KB
-
-
-If bindings are getting complicated, does it make sense to introduce
-new file for Versal-NET bindings? Let me know how you would like me
-to proceed.
-
-Thanks,
-Tanmay
 
 > 
->> +          then:
->> +            patternProperties:
->> +              "^r5f@[0-9a-f]+$":
->> +                type: object
->> +
->> +                properties:
->> +                  reg:
->> +                    minItems: 1
->> +                    items:
->> +                      - description: ATCM internal memory
->> +                      - description: BTCM internal memory
->> +                      - description: extra ATCM memory in lockstep mode
->> +                      - description: extra BTCM memory in lockstep mode
->> +
->> +                  reg-names:
->> +                    minItems: 1
->> +                    items:
->> +                      - const: atcm0
->> +                      - const: btcm0
->> +                      - const: atcm1
->> +                      - const: btcm1
->> +
->> +                  power-domains:
->> +                    minItems: 2
->> +                    items:
->> +                      - description: RPU core power domain
->> +                      - description: ATCM power domain
->> +                      - description: BTCM power domain
->> +                      - description: second ATCM power domain
->> +                      - description: second BTCM power domain
->> +
->> +          else:
->> +            patternProperties:
->> +              "^r5f@[0-9a-f]+$":
->> +                type: object
->> +
->> +                properties:
->> +                  reg:
->> +                    minItems: 1
->> +                    items:
->> +                      - description: ATCM internal memory
->> +                      - description: BTCM internal memory
->> +
->> +                  reg-names:
->> +                    minItems: 1
->> +                    items:
->> +                      - const: atcm0
->> +                      - const: btcm0
->> +
->> +                  power-domains:
->> +                    minItems: 2
->> +                    items:
->> +                      - description: RPU core power domain
->> +                      - description: ATCM power domain
->> +                      - description: BTCM power domain
->>  
->>  additionalProperties: false
->>  
->> @@ -386,4 +427,111 @@ examples:
->>              };
->>          };
->>      };
->> +
->> +  - |
->> +    // Versal-NET split configuration
->> +    soc {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
-> 
-> Don't add examples per each platform.
-
-Noted. If we go with different file for Versal-NET, then example should
-be included?
-
 > 
 > Best regards,
 > Krzysztof
