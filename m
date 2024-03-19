@@ -1,177 +1,155 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2124.outbound.protection.outlook.com [40.107.223.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484AF54BC9
-	for <linux-remoteproc@vger.kernel.org>; Mon, 18 Mar 2024 16:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710780759; cv=none; b=SGFIDqjIbSTKztvFtoiIgFvUSw4qsUqAa3x0QUtm0waA94Lchs+zBFtvRSjsa59OhsJOY4F72WPGS+bRB7WpUy1748FZzM8rq27aCj91Hu3kSbF+gdcJ6POSzmdeT5c0z5MKxNG04io5Zx1pmoDc9Zh/q0sAXXkbx3HA43Z6t78=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710780759; c=relaxed/simple;
-	bh=hwVWckIS6m7V2/dHy7sYMSsPpseVCzcmAXXtgHyDN+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKbI4Y3ZN1wmH6tD4ak7y/Ar92FvSvMDXz+kDoHW2Cx3tNYQ8n0iPpdCoKW/apl7SMe/06gfv+f0v8zSI4hXmT3ESTuzQTqLXOCvKbHRH1N9iWcGazdqnRe4SbfWIBLczmxkJMz/rxDdpbVoBGFGpexxNap+1VFbHuOnEArwzY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RpyUBQ6R; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A827FB;
+	Tue, 19 Mar 2024 00:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710808674; cv=fail; b=Q+YH2hMMKON7FFp36y53clOQk+JCT/BR2gxXmXGc443L7ZUsExEhjIJ/hJhtAig6F+GAHOZ0qwziqgzhJWPuMUKN1A6wxl4G22l2QvTDHSxHyYzzSzl+XapDpCFU2HmYxgZ0MNqdGW2OeHx/llFtLDDNkyU7aprsIdONgsTISDk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710808674; c=relaxed/simple;
+	bh=u2lBFc2Mt8yLmToVna75kdas0K1gllyp+fhgvMpZYHA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bHiB00+k07KrEVRVsBO8WPfi8WKHa3qdsIHUa4focFo6ZCfL6lumm6inImI4A8CqKGEr+DL/DZMazaa4Akh6Qn+w5DCffxIVCCQ0XsgE1BimuGIUYgVwEsNU+QsyZPYIbinDJdm8IdzYm5BUEuIuR97NgPMAL9JeHjG43db5zrk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2IBWs+Bn; arc=fail smtp.client-ip=40.107.223.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpyUBQ6R"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e6ee9e3cffso2744639b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Mar 2024 09:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710780756; x=1711385556; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQJIbs2yBMoH3QIXds9BMUYNdFllgWIuuxULBV69aqY=;
-        b=RpyUBQ6RqrShqGtNrGb+GAxbVIVwBISbnsgxha8jfPR1YGlmlaQwSi2YP8AQC7Ijsw
-         8vrEJ3U0j5JZkUfeRoqL/hxYVYnp5TClAf3Pr6s2Vokwh65zpXAw0FWGBEblUsnWa1AQ
-         skARKoENSUJPpExbmJpO1jwQ21ou583/V02x4AqWDlllD/ALvQ7ZDRRNoyBe7wedHcM6
-         yxDMAX8c6WCCci8vNIOJDhgTTxBmluBaDWEnMhwIhyKblF3Ge2OaQ7OZUlwY0w8Ee5sD
-         QunC0IcuugeM+eV3nRJKaB4l7P/WkstDbRwjZ6cY9uDdJyZ70uo9y/RocLUZDyrYTHV0
-         01CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710780756; x=1711385556;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aQJIbs2yBMoH3QIXds9BMUYNdFllgWIuuxULBV69aqY=;
-        b=uujzofPVBxZPUqOHPj7ibuXdqGeZORtZ30VtzvxEaDvMXr2LJIfjTxNZCsseN2iONN
-         jqxwDr1Yvbz4NnYtaZCu8/KX5c2ZSQm5mZl1hn/xpiQ0QHg/RiqGSfGDTvSrxKVt3PvJ
-         kWG7awOO23kawUhoAV4aFA2Hd5oZhgOa28jVZXjulCO98PMEYiLVxjm8CcShCNqHkBzE
-         3SH955GVk7DkGMR36Wz6aGsDVqJ0XyjT9rMr9kgBWtZKSBb+/mp1Xide6ljT/dK+pPUw
-         KH/oK8lxAlZqc1fIHj61uzBZOrbsQzC5124qO1jclDf6usOHXsWTc3WOK5u9qmDusG9H
-         FZxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG9y55VPJO2ssqDhuc+uS4fMtw9N9c8brb0tFZ5VYpXMzXG544+xRS3Km4Rkl6AcEK+baQS5/Z1BwA1GLJchRhuT0rE39INaDPH1zLJY/dZg==
-X-Gm-Message-State: AOJu0YwY4XrhsQbDadgOxQNh0RqsInfMOnDAJ6TJU05oIFmxQRqus8tK
-	wTpTxKX+VVeQ/tmXrI+WnPdo2UIx7IB7NZJGLRtRGjb4WoR29kp6fgcJyVhXiT8=
-X-Google-Smtp-Source: AGHT+IGjp5w2/ZLXnC0IvBs/4igjALHcUODPSqrhOANIDm8m8pvVkBzYwKXyhX88zm8DZZjBP0tGVg==
-X-Received: by 2002:a05:6a00:2389:b0:6e6:30ef:b7e9 with SMTP id f9-20020a056a00238900b006e630efb7e9mr234979pfc.16.1710780756429;
-        Mon, 18 Mar 2024 09:52:36 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1e7:74d5:bebc:a28d])
-        by smtp.gmail.com with ESMTPSA id w2-20020aa79a02000000b006e68b422850sm4112652pfj.81.2024.03.18.09.52.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 09:52:35 -0700 (PDT)
-Date: Mon, 18 Mar 2024 10:52:32 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leonard Crestez <cdleonard@gmail.com>
-Cc: Tanmay Shah <tanmay.shah@amd.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Sarangdhar Joshi <spjoshi@codeaurora.org>,
-	Siddharth Gupta <sidgup@codeaurora.org>,
-	Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: zynqmp: Add coredump support
-Message-ID: <ZfhxUJjrcYfqt9Nd@p14s>
-References: <d4556268-8274-4089-949f-3b97d67793c7@gmail.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2IBWs+Bn"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TVlWMBvjSZOKd9YHrm/gWod0FJuag9Z0faeBgit1tFkMGrxHiJm2i86XPZ046y75GxxdCH4tpg1LUuyVNJA08b1uffgJ3HhkoLJeThQIJxGs59pURxLrXjdDc/CqmzFmpjoXQwzpKxPGeJkGiln1X7zpWlOPBMBJ9RBzDGTP0GaYFjIJ56AC+NdpzRINgKy113WOryPht/inL99BdbiFedGhvzNdGaxNA1nzQwrH2oQx1KAO/qEGHFHO+asi4agrhbr0GTwP/5laTSQnWkHD2AoS90bECErsC2OtnbZ3FzNZf+mnmZDo2vvjpA0nIgH+w7N7EBAr5IaTbBocXzZwsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uBWT44kO2v91oSVWErYABZAHqw1g8QxCscJ3Wjh8kuQ=;
+ b=gywe/7u3q2DBLxPcO8HcslfGodeH+TktcRoUPz1VK1yWiRqUeUOgcv2rTcvXY6T5LyOYWuskFA4qOMAZa3HN/n1Z0K/LIotM9p+0k1uGo/QeXH8ToqoxY94WcJfgw4zuPOJTVptdVFL8Zib7304J6h+zWLEkQBzfoFCjHrueDM0CqQfUzNct82IPQmdM51nvYe57mpQBTBFOw6UZGSSHs9/i0JD6fVtCQgLcbMiVeKqzh+z9yeMpMj/E0IBEdIJJdtsSdxjiCgLL67zvG4mtESBoUVuW76NAA9Jvi/3YjSOVImqOUM4rujEda/KzMwCue5vWyBrFJgCq6ClLz8/SoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uBWT44kO2v91oSVWErYABZAHqw1g8QxCscJ3Wjh8kuQ=;
+ b=2IBWs+BnkaBM4mFHH5XAwNhjVC6/p4133HKv1btxnWU3R7mFOgxtlIAqs2GDEvDzGiUzu5vhlokdsYkJSG69k1afS83QJciJkO612mhoHPs1stNl070+II0wJnDaLdo/Treqi2L/iixjmjX+ba6Dr+l175ylnOPfW+nz+leKkXE=
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
+ by DS7PR12MB6189.namprd12.prod.outlook.com (2603:10b6:8:9a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Tue, 19 Mar
+ 2024 00:37:45 +0000
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7386.025; Tue, 19 Mar 2024
+ 00:37:44 +0000
+Message-ID: <1197b7f7-c43b-4ae6-b914-9e3f547810bb@amd.com>
+Date: Mon, 18 Mar 2024 19:37:42 -0500
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: add Versal platform support
+To: Conor Dooley <conor@kernel.org>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ michal.simek@amd.com, ben.levinsky@amd.com,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240315211533.1996543-1-tanmay.shah@amd.com>
+ <20240315211533.1996543-2-tanmay.shah@amd.com>
+ <20240317-overturn-frozen-b152dc552a2f@spud>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <20240317-overturn-frozen-b152dc552a2f@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0155.namprd11.prod.outlook.com
+ (2603:10b6:806:1bb::10) To BL1PR12MB5874.namprd12.prod.outlook.com
+ (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4556268-8274-4089-949f-3b97d67793c7@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|DS7PR12MB6189:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	fBwHZ7m5ELahLvx3M9uMFmakkdz3FPJxgzLCHhXcIUFQ+vMM9Pe1QofxuRpCQOggHD3v0qscN0QUBg4Rxx4DzTWNxyOJtPVWKjkf7SoeP1rM4lK/TEh2QqNGAxXMVQQzI22A1DOYjNJaoNoYBE2fEPZnbL/4PjNfBsCtLH3CjrL+zvhelLxNr5bzazUiISG8Ez8zF/RFMY1DZ9c4eGb7nEJfG5hYNiZ5LPYP389NWL06avTuFBtidI6Paexyj2jLbi9m/OHilfyEVDMoO7asfc4HGUybWmRIF5ZtaBxWrn8IQctptzFOc2BXiALqBP8Zch8+fNtdPwTocbNJM6gBSy1znMUhjkWphPfUtBhWfGkRYmXmQJQIA9JgEKuMe+LRU+13mquaoxdQ97zNUn3Vp+OQnb1h40OK96wZoumFlYb2xeVKmaB9z+4s3Wz/zkH5dv6dJFRo6MQ+6IU8XX//Y/j70E4c8qzY2WeqYITVJNWkGg35YIVNoRLsEY9r6KApazq52txfCcnSs2lE9W+BskF819irxRxwHKtjxa7fdgW/T4Lr/XD8DkWHMgSHUrtQa04y25xuMsjuHtHlBZq1v2IOUfB3wo7FwJmTFoFZ78FqwpUcfvZZGDT0QHN7m54A+l6hxj5SIRICWQzjD9AZIdGBM8Rj0KEfjvj4K6kdrgY=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eU1IajFSQXZvQmUyVWhjcTBMcXUwQnZzUlJ0S1B6QTdXaGo4ckRTNk9NdWZV?=
+ =?utf-8?B?NjhTcEhqOEFMekZMVnJRa0xCTmFBeUNkOTljTGVLSGU2aUNVbFYrYWhNbDhF?=
+ =?utf-8?B?U1JwZmFsakgvYkVFWTJjdHpEUW1aSUxaOWpQWkNHN2hKeURaNUxaL1hUN1dw?=
+ =?utf-8?B?ZDFyZWoybXhYWDZ2K0RZNEdSdFZVSXVrcnhkZ3A2WmdkYkJNSVFiS1llRG1z?=
+ =?utf-8?B?YmtzcUhJc3puejV0UE55cFNpODNQd2pLNFRGNStKRUR4TStLRnZhaEEvWldx?=
+ =?utf-8?B?NXZtaTlpSW41REljQ0Qwcm1rNkcvcXZIVVg5ck9sYjZQVGxld2hsTStoOSsv?=
+ =?utf-8?B?cjN6SVVkTmtXNCtDcUROU0k0bU94dnV4bHY5ZDl6b2FFdGVKYVB2U29NR1lv?=
+ =?utf-8?B?dDdlUXlOc3ErOXI0UURCR3JpSDlOS2hpU2kyNXlnbk5sRDhnMUY5dDZJQjZj?=
+ =?utf-8?B?RUdHZEkrVFl1RkR1TXFDTkdxZE94VWNQVTk3dUVWcXBXVlM2VFpZNmlxSEw2?=
+ =?utf-8?B?OUN4R1JpUy9UZzRQY0FlelEzd2c5SWpsMnh5dW4yMHl2TU9lVmdhUEVveDVH?=
+ =?utf-8?B?YWFYMTBuY2RYd0ZaMVhkRHhhaGJQVTErQk4xdy9VODZ6OStRWFgwWFdlSzRn?=
+ =?utf-8?B?RE9GdkVQNzRmcHRBMzVzMUJJOEx0R0dmajJ1aTVQTTRHTmFxaHhkV0VSNjV3?=
+ =?utf-8?B?OHFyMjByNzN1RUliRjdQWDNaTy9XWjE0dXgyUFMrTGpmTmpRQnF1Ump5Y2g1?=
+ =?utf-8?B?TytHamdjTnUzRWR4M0U3ZThLMjhRNmtaQUxmS1l1UXh6MmpoRm95S3lHYjMx?=
+ =?utf-8?B?N3dpTFVxdmdrMllsRVhPTGRSSGlKVEIrc05DWjB3SHp6aDBSc1M4bVJCZElB?=
+ =?utf-8?B?c1h0ZXh3b3l4Y3BJV2VYVTUxKzdkRXJNM2Q0TXVQdTlmWCtQc09nRmszd0RC?=
+ =?utf-8?B?WlRUcUtrU0Q4VGtIYlFLamxTNHZQOTFUMTUvVXpUcFhUcFcvcUZXYTIzOHM5?=
+ =?utf-8?B?cDl4UGNGYkRzeTRzbFNERE5rMm5oOUtRV0ZLVk5tRzcrQ3d1K2NFMk1LUWhS?=
+ =?utf-8?B?clJlVnVkVFUzeUF3SUYyWlFZcHd0NkhGR0tTVGE1UmtVVzFGczFwL3hYb210?=
+ =?utf-8?B?eXRQTVRqMlUrRGtHeEcxTWplc1owVW1wOEFMakFiQjVuUTREelpMUGpMakxB?=
+ =?utf-8?B?L1pueVhPT282ZEdoMWhTbERBVW9SNGwwR0J0UXZHNS9CWkE1bHl1WEp4UE15?=
+ =?utf-8?B?K2N1cWNPOWFZcENvYmhRdFJ5QUI2a0tSU3Q4WnlSMVZVOVlOUmptTDZmZzVX?=
+ =?utf-8?B?eEY3ME5rV2x0NmR1UVhmMnZYcjlCNzZaZWRzRnQwODF4NHM1ZTBkdEtlMUlS?=
+ =?utf-8?B?Zm1YSzZyamIrTVhkMUJtdU05WEpYUk4va3FaS3AvWGFGbUl6aytBbEJEaUhY?=
+ =?utf-8?B?YW9nRFVZUDY5ZytEZVBxVmt6RU9iNjZ3L1k4S3cvcnB4NkYwUEIxRFhDYW9V?=
+ =?utf-8?B?R2Jla1FtQ1lSOXBXSWRRWlhUV1VmRk1xblk2VFY1a3RTM2M2VVY3RUlmREh6?=
+ =?utf-8?B?TExHdEN5REZNdytQQUxVNEh6T3VYT0JvbkNEdnRyNzlUdEdJdHRwcTNXWVVL?=
+ =?utf-8?B?S0FjYUE1R2htNEVLV0VXMWFucnBxV1JkcDY5bmxYbGUxZmdWc0dwNTlNbDFH?=
+ =?utf-8?B?aWJneUs4MVo0Y1hQTFMxcmNMczBLVUxRamhtM3FUNTE2bVlXT295Vk5POTJk?=
+ =?utf-8?B?YUpyU1dCQ1FKaEo2dUNTVzZpUlpvamdsRjZUSk1RcTl4YTI3UGZoYktlcm1U?=
+ =?utf-8?B?UlNiTTB3SEpuQklIWGRJQ0dXMWM0ZmkyWHUxYTBjL1c4Y2R0d0JCN1Mvd3F4?=
+ =?utf-8?B?Q2NSaWNkeU9vSXFXRm80ZTRKWnR1UjVOVHF1b0V1cWVkQiswVFFnNmhsbVY1?=
+ =?utf-8?B?WHJ0VUpicURKbVZsTzdCbW14c2t1dTFKenZyZ2NTSjhkNm9pY0tCWkNPTHNU?=
+ =?utf-8?B?U09uQVpUZEhMd0FKNE9EZU9UWld6L0ZPZWw0NmVGVmJVSE11WCtVZVZyQ2lC?=
+ =?utf-8?B?WEhuQWtiQXVZZTk5eDhZa2cydFowZTZ5WFF4OFFBL1ZiUVAvRW5JWGVGQkpL?=
+ =?utf-8?Q?SostVpEFo3fc7fF5KF+GWOozg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0778848-b312-4eae-3d70-08dc47accb22
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 00:37:44.8875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RO01Lu+FTFPie2c7zWfz8kgWHhY00jyNg/pVV4KLzO4xTyw0cqhO8DKRPLe16pcx
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6189
 
-Hi Leonard,
+Hello,
 
-I have queued patches for this driver that will break this patch.  Please
-re-submit when v6.9-rc1 is out and rproc-next has been updated, which should be
-around the middle of next week.
+Thanks for reviews, please find my comments below.
+
+On 3/17/24 9:50 AM, Conor Dooley wrote:
+> On Fri, Mar 15, 2024 at 02:15:31PM -0700, Tanmay Shah wrote:
+>> AMD-Xilinx Versal platform is successor of ZynqMP platform. Real-time
+>> Processor Unit R5 cluster IP on Versal is same as of ZynqMP Platform.
+> 
+>> Only difference is power-domains ID needed by power management firmware.
+>> Hence, keeping the compatible property same as of zynqmp node.
+> 
+> No, don't be lazy. Add a compatible with a fallback please.
+
+It's same IP on different platform. I am not sure how adding compatible string
+adds value. I will refactor this series based on other comments provided.
+
+> This doesn't apply to linux-next either FYI.
+
+Actually cover-letter contains dependent series link that is needed for this
+patch. That series was acked recently but hasn't made to linux-next yet.
+
+I may be missing something in the process. In such case there is no other way
+to send patch except for waiting?
 
 Thanks,
-Mathieu
+Tanmay
 
-On Sat, Mar 16, 2024 at 08:16:42PM +0200, Leonard Crestez wrote:
-> Supporting remoteproc coredump requires the platform-specific driver to
-> register coredump segments to be dumped. Do this by calling
-> rproc_coredump_add_segment for every carveout.
-> 
-> Also call rproc_coredump_set_elf_info when then rproc is created. If the
-> ELFCLASS parameter is not provided then coredump fails with an error.
-> Other drivers seem to pass EM_NONE for the machine argument but for me
-> this shows a warning in gdb. Pass EM_ARM because this is an ARM R5.
-> 
-> Signed-off-by: Leonard Crestez <cdleonard@gmail.com>
-> ---
-> 
-> Tests were done by triggering an deliberate crash using remoteproc
-> debugfs: echo 2 > /sys/kernel/debug/remoteproc/remoteproc0/crash
-> 
-> This was tested using RPU apps which use RAM for everything so TCM dump
-> was not verified. The freertos-gdb script package showed credible data:
-> 
-> https://github.com/espressif/freertos-gdb
-> 
-> The R5 cache is not flushed so RAM might be out of date which is
-> actually very bad because information most relevant to determining the
-> cause of a crash is lost. Possible workaround would be to flush caches
-> in some sort of R5 crash handler? I don't think Linux can do anything
-> about this limitation.
-> 
-> The generated coredump doesn't contain registers, this seems to be a
-> limitation shared with other rproc coredumps. It's not clear how the apu
-> could access rpu registers on zynqmp, my only idea would be to use the
-> coresight dap but that sounds difficult.
-> 
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 4395edea9a64..cfbd97b89c26 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -484,10 +484,11 @@ static int add_mem_regions_carveout(struct rproc *rproc)
->  			of_node_put(it.node);
->  			return -ENOMEM;
->  		}
->  
->  		rproc_add_carveout(rproc, rproc_mem);
-> +		rproc_coredump_add_segment(rproc, rmem->base, rmem->size);
->  
->  		dev_dbg(&rproc->dev, "reserved mem carveout %s addr=%llx, size=0x%llx",
->  			it.node->name, rmem->base, rmem->size);
->  		i++;
->  	}
-> @@ -595,10 +596,11 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
->  			zynqmp_pm_release_node(pm_domain_id);
->  			goto release_tcm_split;
->  		}
->  
->  		rproc_add_carveout(rproc, rproc_mem);
-> +		rproc_coredump_add_segment(rproc, da, bank_size);
->  	}
->  
->  	return 0;
->  
->  release_tcm_split:
-> @@ -674,10 +676,11 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
->  			goto release_tcm_lockstep;
->  		}
->  
->  		/* If registration is success, add carveouts */
->  		rproc_add_carveout(rproc, rproc_mem);
-> +		rproc_coredump_add_segment(rproc, da, bank_size);
->  
->  		dev_dbg(dev, "TCM carveout lockstep mode %s addr=0x%llx, da=0x%x, size=0x%lx",
->  			bank_name, bank_addr, da, bank_size);
->  	}
->  
-> @@ -851,10 +854,12 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  	if (!r5_rproc) {
->  		dev_err(cdev, "failed to allocate memory for rproc instance\n");
->  		return ERR_PTR(-ENOMEM);
->  	}
->  
-> +	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
-> +
->  	r5_rproc->auto_boot = false;
->  	r5_core = r5_rproc->priv;
->  	r5_core->dev = cdev;
->  	r5_core->np = dev_of_node(cdev);
->  	if (!r5_core->np) {
-> -- 
-> 2.34.1
