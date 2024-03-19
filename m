@@ -1,58 +1,59 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8959933C9
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Mar 2024 05:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218AB4085B
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Mar 2024 05:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710825946; cv=none; b=VmFMeHO+Xzw08MK40JxC37QL8Utl4Z7zsbk8Nn7b395OzTZlhrODRKMoBwJQkB2bQeoi6cEUcFCOf67vR32MGS+Ku23r5oV4MywJ4LPlZ+98i2pqQIJR3dQpaj0lGAi8C0C7tbKds2jBgfLwtrztzhkkyoolYT5rHSN2D4Jm1cA=
+	t=1710826146; cv=none; b=BVkoxSQjUxU639lcjiDRJ1xYdckMmo7GYivTJt5PYofmOAHSXX+36vv+Cz0OzYxKtPxCnuEHEhZzOpBKTBCE/Zi2esEKRMKiiL9FqxkD8TTFkX5ozAixyqLFx8pnKL7jsNnUhxEkjsni/zGbJM0RWGh0fztebnr7GzmpX4mqNzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710825946; c=relaxed/simple;
-	bh=xlJw5DDEno2UeELF7izcYnWagKR66XQtubOlkVabBik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7zykj71xoIG8ssK4PAqR/isku8zhZfv7MMwj1av7NbwDiCO6VVcN9gpoMYpO7rA5NPnmwfgm8jPdnJYH5Q987KqhQ2/S2xNEFm21u+tzRaDn07zm/7NHy/lDBp5Su+H1xiZv3GjKfMhtzfyNvLacUyadQkhxsvs1AHp8fZpktQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sZoQUJLR; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1710826146; c=relaxed/simple;
+	bh=K7QToXAAe5HyxCjtqBulr0uqK2YIIFTKc6WGJYf+b2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PbmzVVITESL8O29tj2iWbhvGeaJVCWw04bY0jPtidAKQmQgEgKTw7ZBhDgNEuuaj+ycDodqG/E251VUwMTIMvg2pCbLMsQ9lt+qoYGRVhwDFHZb+NzYKrs93IetZFv1EsdjPWAekbM9r4up4nlix7GX/g6QDCX9Cs4WUC2m2w4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NTK0VcHb; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sZoQUJLR"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso486972766b.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Mar 2024 22:25:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NTK0VcHb"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-568d323e7fbso2568955a12.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Mar 2024 22:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710825942; x=1711430742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q6oinwYj2RW9QvL1NsB8w5LaSXSn9PMQMxOTGnro9J0=;
-        b=sZoQUJLRpYcPTy4r6fDe+jfD3IalurH0WOJA39tmwoCC0tU0+BAl8Y1sBhs8PZRndY
-         M/KbUAXm5e9lXVSJLQPNLz1zzoXZoFwD28T+ZG3NMAh9WyotXxilSnnj1abxRLpVuOSS
-         ZPMCvLaM3Ektfn4ec8LLJemNJGfBR16keH/19apakd62KQp7WkMUBAb6fItCHk9bXJq4
-         DhFuqJz1KMM3JrfA0OLNJ/+UfIy7c1UJsv22qLKGpv7phYwjCUHVawYSDRkrjVa4EMUv
-         y1HwDKpN4+97iPoU7ulcYnQQDjyeFzy8mGvuc1D2s+RMgXa2DfmlA8TE+vWeVST+Xvz/
-         Qalw==
+        d=linaro.org; s=google; t=1710826141; x=1711430941; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AQO/2Swa2FQ79FolhUdfxGgRssFDYSK6sxer+QvsoA=;
+        b=NTK0VcHb8M6pvduuIpM/E/bCQ7lwl3ItbNx+L82Wlmrs0MPhnF2h9njW9OcYY0N8iK
+         b+Nxyl9edlohbCzbIwdkJQz0tIiv06cLw21e6vGnOKvOx0eaSbiDZJO2IztYkXY/jd5R
+         mmtNde/o0Rdv07tpdvvVUFvZA2fm6FmGqJwZA8Dxc7+oQ65ZcXao+7uIePI+SnB9MldF
+         j5RiBWYyYE009YBDQuOoaFsy2X71JvUSzk4cub23cxLkehBeW5wwiGnFYQC2dEsoXPkH
+         Fy5wbDU8oFKunHfQTum2AClWf50cxgt2C3Tp7FlQda/4iXjyzKudpBbuMH09il37TFui
+         gGDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710825942; x=1711430742;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6oinwYj2RW9QvL1NsB8w5LaSXSn9PMQMxOTGnro9J0=;
-        b=fCT6hJWVkogKYstC8bEzgk/MYNvIh3D9jj7ra2IdSobqhxf3DI2KAyqvKGSrrGuqhl
-         zYdOso0nifkI2ZLLBkD1IYy7ZRsTvJ9bkC7PgjNeIyNkGRpYXDbZxzo74BkKHHLg0PV8
-         WY62KDDHlwUuhIGDRdVN5aqDx/P/aRdyC2SfXyLNK2vXGqW84nTbebKwOhAR5nmAuI0s
-         tEL/WKnOYbDK7Lvemw8RxmDWBp6FpatPk4BNBCJbI1kpvi3eliNinxj2FKxXIiLU5G18
-         xH9ipJIq49xNIa4KNCyTit4si7zHEbssB5ApGTSdFgRHFpP89ldrEM6zH/+J7nbheMO/
-         tk8Q==
-X-Gm-Message-State: AOJu0YyGZ4In/MplxldlHzbkBtz9PT2P8bm6MaCt6eJXcqL62Q/mRhSb
-	D4QkXT/HXG+gi5AxiBEFYnnCB4BeF/j3o2wCRpmFnv8KXxMCXLwU6XpHPGjaShk=
-X-Google-Smtp-Source: AGHT+IEWpgg1fSu64M/h3IwcVwL8gooNkA1Q+CBb/2WJmTMukjtW7WIz+iHtiCVrQv9GrWf/A5L76A==
-X-Received: by 2002:a17:906:6a19:b0:a46:af3e:dedc with SMTP id qw25-20020a1709066a1900b00a46af3ededcmr5170830ejc.40.1710825941870;
-        Mon, 18 Mar 2024 22:25:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710826141; x=1711430941;
+        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
+         :from:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6AQO/2Swa2FQ79FolhUdfxGgRssFDYSK6sxer+QvsoA=;
+        b=IPI+hPM4H8k/R8IntNtBNRMCr1I/+McAvzT9uxxLiyqfpK7z+up+1vJiDWGpSwzPKQ
+         QbgRFmTrAhiNZabylkwnOVtiVj3sJRul0j9W4QvioAjDJZbYcZOLvCWGVR/MZi+kBCff
+         oLrweCaQu5tWiEFDcxIOq8/vxHXEpeZc7tBuR+14LZ5Om6ibS4otJGYRE8KIA/oYKdDr
+         UJ1gqXcDRyiSBA5IgC+yrmFrBjwuNLcNveN5OkciZvKlYv80dHgiC5AkMRchCYILQkQD
+         EOsaDBUW8WLCyYsa0LBr1aMHDzFBvYG3w5TXHurF9gXvnTwUpIwgf5QNVVkthsGi8WF+
+         0XOg==
+X-Gm-Message-State: AOJu0YweyUGCUOsLKhgd5usuaczaLrEz6DzNnxjlpug5VS5cQjC55JWW
+	DjNvcP1rpPZ4x640FMhF3AiRnPidWUDX3YZC/dGdVYK9PDah0Zh+qa+dGgPnPZg=
+X-Google-Smtp-Source: AGHT+IFZgAXTNnlTfgh9aF3DLthH2SfgbAvhGWgEWExYIZQitNtiYA6ypFizz++z4ACf/VZ8WTCslg==
+X-Received: by 2002:a05:6402:5418:b0:568:9e82:4899 with SMTP id ev24-20020a056402541800b005689e824899mr11081629edb.9.1710826141461;
+        Mon, 18 Mar 2024 22:29:01 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170907272a00b00a45ff890df0sm5616647ejl.35.2024.03.18.22.25.40
+        by smtp.gmail.com with ESMTPSA id ev19-20020a056402541300b005689c2c6508sm5330103edb.70.2024.03.18.22.29.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 22:25:41 -0700 (PDT)
-Message-ID: <b9bcd0e2-634c-4441-b9ce-839b2f7bfd85@linaro.org>
-Date: Tue, 19 Mar 2024 06:25:39 +0100
+        Mon, 18 Mar 2024 22:29:00 -0700 (PDT)
+Message-ID: <f59d6389-1c7b-45f9-8b85-274dbbeb775a@linaro.org>
+Date: Tue, 19 Mar 2024 06:28:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -60,20 +61,20 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drivers: remoteproc: add Versal and Versal-NET
- support
+Subject: Re: [PATCH v13 2/4] dt-bindings: remoteproc: add Tightly Coupled
+ Memory (TCM) bindings
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
  mathieu.poirier@linaro.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
  michal.simek@amd.com, ben.levinsky@amd.com
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240315211533.1996543-1-tanmay.shah@amd.com>
- <20240315211533.1996543-4-tanmay.shah@amd.com>
- <db6f16af-e715-4ff5-84d6-2d85d62d7c0c@linaro.org>
- <a0cdfa4c-9257-49e7-b519-54e7fd0fb230@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+References: <20240311175926.1625180-1-tanmay.shah@amd.com>
+ <20240311175926.1625180-3-tanmay.shah@amd.com>
+ <d498d76e-b021-4cf7-adca-63f1cd3e1542@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -118,84 +119,48 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <a0cdfa4c-9257-49e7-b519-54e7fd0fb230@amd.com>
+In-Reply-To: <d498d76e-b021-4cf7-adca-63f1cd3e1542@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/03/2024 02:06, Tanmay Shah wrote:
-> 
-> 
-> On 3/17/24 1:55 PM, Krzysztof Kozlowski wrote:
->> On 15/03/2024 22:15, Tanmay Shah wrote:
->>> AMD-Xilinx Versal and Versal-NET are successor of ZynqMP platform. ZynqMP
->>> remoteproc driver is mostly compatible with new platforms except few
->>> platform specific differences.
->>>
->>> Versal has same IP of cortex-R5 cores hence maintained compatible string
->>> same as ZynqMP platform. However, hardcode TCM addresses are not
->>> supported for new platforms and must be provided in device-tree as per
->>> new bindings. This makes TCM representation data-driven and easy to
->>> maintain. This check is provided in the driver.
->>>
->>> For Versal-NET platform, TCM doesn't need to be configured in lockstep
->>> mode or split mode. Hence that call to PMC firmware is avoided in the
->>> driver for Versal-NET platform.
->>>
->>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>> ---
->>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 19 +++++++++++++++----
->>>  1 file changed, 15 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>> index d4a22caebaad..193bc159d1b4 100644
->>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>> @@ -323,9 +323,12 @@ static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
->>>  		return ret;
->>>  	}
->>>  
->>> -	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
->>> -	if (ret < 0)
->>> -		dev_err(r5_core->dev, "failed to configure TCM\n");
->>> +	/* TCM configuration is not needed in versal-net */
->>> +	if (device_is_compatible(r5_core->dev, "xlnx,zynqmp-r5f")) {
->>> +		ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
->>> +		if (ret < 0)
->>> +			dev_err(r5_core->dev, "failed to configure TCM\n");
->>> +	}
->>>  
->>>  	return ret;
->>>  }
->>> @@ -933,10 +936,17 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
->>>  	int ret, i;
->>>  
->>>  	r5_core = cluster->r5_cores[0];
->>> +
->>> +	/*
->>> +	 * New platforms must use device tree for TCM parsing.
->>> +	 * Only ZynqMP uses hardcode TCM.
->>> +	 */
->>>  	if (of_find_property(r5_core->np, "reg", NULL))
->>>  		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
->>> -	else
->>> +	else if (of_machine_is_compatible("xlnx,zynqmp"))
->>>  		ret = zynqmp_r5_get_tcm_node(cluster);
+On 12/03/2024 13:13, Krzysztof Kozlowski wrote:
+> On 11/03/2024 18:59, Tanmay Shah wrote:
+>> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 >>
->> That's poor code. Your drivers should not depend on platform. I don't
->> understand why you need to do this and how is even related to this patch.
+>> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+>> UltraScale+ platform. It will help in defining TCM in device-tree
+>> and make it's access platform agnostic and data-driven.
+>>
+>> Tightly-coupled memories(TCMs) are low-latency memory that provides
+>> predictable instruction execution and predictable data load/store
+>> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+>> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+>>
+>> The TCM resources(reg, reg-names and power-domain) are documented for
+>> each TCM in the R5 node. The reg and reg-names are made as required
+>> properties as we don't want to hardcode TCM addresses for future
+>> platforms and for zu+ legacy implementation will ensure that the
+>> old dts w/o reg/reg-names works and stable ABI is maintained.
+>>
+>> It also extends the examples for TCM split and lockstep modes.
+>>
+>> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>
+>> Changes in v13:
+>>   - Have power-domains property for lockstep case instead of
+>>     keeping it flexible.
+>>   - Add "items:" list in power-domains property
 > 
-> You are correct, ideally this shouldn't be needed. However, this driver contains
-> hardcode TCM addresses that were used before TCM bindings were designed and available in
-> device-tree. This check is provided to maintain backward compatibility with device-tree
-> where TCM isn't expected.
 > 
-> For new platforms (Versal and Versal-NET) TCM must be provided in device-tree and for
-> ZynqMP if it's not in device-tree then to maintain backward compatibility hardcode
-> addresses are used.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-That does not work like this. You cannot bind to some sort of different
-compatible. If you disagree, please list the compatibles the driver
-binds to.
+And unreviewed. It turns out you now mix devices and bring incompatible
+programming models under one compatible. And this leads to problems in
+your further patches.
+
+NAK.
 
 Best regards,
 Krzysztof
