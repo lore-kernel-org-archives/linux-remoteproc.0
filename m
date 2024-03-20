@@ -1,168 +1,98 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2113.outbound.protection.outlook.com [40.107.93.113])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7921E1F608;
-	Tue, 19 Mar 2024 14:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.113
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710860069; cv=fail; b=c/oopKlCWePhZnlsWgevdN+Lu//5CP6VnywxKuemARMZSL2bZAipKLYyYQZ0tR0QkZM1rOpiBj0BNe0g6FyKNAI9x6C+L+Ze4Kod/J0lACTgkGgdYnYa/3fQPtMSHdj980gru+6yuV7zyFRIBaL8KlU/BUf6NrNSqCebLpdju/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710860069; c=relaxed/simple;
-	bh=LEGHRBc1x31SCTNslE3f5c8b10M6h7Gwl/vlYLf1qIQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CRjJna/DLanoFH+UZTMQhFcQ/LuWMpWOzEnztKkcfWCFd+S7W9hJ8h9ZxPgdDYV3zYcFFQnM22FJkDIcHpksqIuidge6zgCjpWM5oup4M0CxPAJ1cwYF+H7iMB78gI7jWIz6B+Qyt1jURc9ZM/G0Z6LtKapMBwSOHqxhNScbyNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CokfzMWl; arc=fail smtp.client-ip=40.107.93.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC53182C5;
+	Wed, 20 Mar 2024 06:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710915277; cv=none; b=dC0J8PFJ3lxRsy0j1HCwr322cUtCPkqZuh/kETADj1/ID+e05hjlkU0Dxsmy1K/+g8tHiYfueAixYy/atw5mVppRwnqeI5/U+hgkaR/eJaZ/7/tJXLnFHACJrVaKsTIlil4UWH5p4DDAsl83PM4M9wcvUZfliUZj5Puf2lLNhNk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710915277; c=relaxed/simple;
+	bh=sYjgMXmmRIeUswy8yAn2bF1ZX+zugdRaoOqJPs8SWpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UlSFu99vvv6TDlxpaGZtb5Iyq14hJhT/l9KKpqRTAYIYybe2DuHeJ56gQFlFeHeuYCVKhubFgrxGBrBBYRM/6vJ12ytOm1xbbIGT2xY23556g3k84oKoUptfQYk33O4K77hnOLo1fp8n9JB/yy5H6llRODzksMOd8NBqE0cNgdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i8lipXK4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CokfzMWl"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hmSTEZFAfREPUlRDwz+7d2ym9komCFOqZ1QvGN7U1tnZs/IB6wo2J8yBiE11/hbZTs+F5ulKy+LL08C/5HRG8CamBKoutdzNSOb37eufPYh22y8CcVtXTeHJoKiv2bWN5zmAQeD8czRfoaoaUMiAhIBLG0e3aMGP51tDQQhzLAZsUSEpVmfeuO95TWW38McoDmGIUuTF250pT6FtRzX1jLko5tUo4jw4gveqCqGPxUcKiyrykbgiNFsMGK5Pwi5iGPDDVaxLSfBUK8eTZxh6LHXVLvPWbtzY8ss255CY1WMbMgZ4zWlxucKncwo5/O1K3X6QV1ry8yvTLVtfQWyU6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2nisB9bKJWVy0DVODthEHHAP4pym85K41o+lvCFCOto=;
- b=QirY4RU5uOhoQW5Eg9ZBPmbHuzjZOFx/J5jFXsoWsaPQAzytJc3sf8dGoB6HD2Ux3CD3XvKQGQiFQ2kPo0NaLLwvY9ZXdDFVGE10+hquv8x9gGOo9u55Qw8tPk8ze1lR3nnSdefMOQhmsyDAEVsvYhQCB0I+/VCgw5tk2Znri6Nm6HRpT5UZ+WgBgbtN1JhstekGWVupf+iGpUMmA3jxR/eGx5c5+QgBrFfZ7cnMkZUHHsA8df0PSl2nIztzlyhnyUzSwiW3qBeqBdL1HtcBVYJXm1IG6GItoHd4+BI7vsA6GRvN7Wd9MgqI0bYY+6dYPPQqlyAzek7F04MXob52XQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2nisB9bKJWVy0DVODthEHHAP4pym85K41o+lvCFCOto=;
- b=CokfzMWlWkIoUvXWbVH5OeFIcts33Y5s2QDGuq6/GNGc8BGSkgM2IMVRFwgSbikHCqT9gxB7P8ruoysH1OMf5AvKuOJ5Cv2mAYpDlWdGQpsCEBFysMmY/V5TFC+r5vaEpDGXpOXwXnfPvUv9ToCSypoQZBVc2RZIm2UvwpJIz/4=
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
- by SA1PR12MB7365.namprd12.prod.outlook.com (2603:10b6:806:2ba::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Tue, 19 Mar
- 2024 14:54:24 +0000
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7386.025; Tue, 19 Mar 2024
- 14:54:24 +0000
-Message-ID: <927c02e6-70cc-4af1-8e46-c4816583a3e7@amd.com>
-Date: Tue, 19 Mar 2024 09:54:21 -0500
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v13 2/4] dt-bindings: remoteproc: add Tightly Coupled
- Memory (TCM) bindings
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- andersson@kernel.org, mathieu.poirier@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- michal.simek@amd.com, ben.levinsky@amd.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-References: <20240311175926.1625180-1-tanmay.shah@amd.com>
- <20240311175926.1625180-3-tanmay.shah@amd.com>
- <84923a4e-6c8e-45b7-b7a8-1a4deeb72347@linaro.org>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <84923a4e-6c8e-45b7-b7a8-1a4deeb72347@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0061.namprd05.prod.outlook.com
- (2603:10b6:803:41::38) To BL1PR12MB5874.namprd12.prod.outlook.com
- (2603:10b6:208:396::17)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i8lipXK4"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42K4Tn5h003074;
+	Wed, 20 Mar 2024 06:14:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Lif/BQbrb6h/PF0d7/WMWEzXs4USXv3wbzbR/YNq5MY=; b=i8
+	lipXK4QmQsjrrcC/1yW0ceum9ADlCnY6tthU5tkJZNsyPNerczg2ADIqxYBT/VUX
+	3A+EwwiCbCNa5zuuC4Nn0XJWoESzwjh2JmdVNE7EQLay2ga95tFVV28Jm+rH0G9V
+	aZN9Paowz+yhAmBFWYK1B5tJOCcTcEOvH4rdzrm7FIfCSMUftBjqSeC5x/Rgv4W0
+	5Igrv/tPYSs++C8WGd1Ib51RSFAmPjZIJf2TpZSkEPVWM/CZJrVlE0bCLcp6j4gH
+	iTVk3fox6NNSEIV20wdRiaG15DgnMtG0NU3OH2woNXc2nQeDa4tZIIfe/+YfMF/t
+	vpBXUm75OXLWm4CZBOoA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wyqh609rr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Mar 2024 06:14:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42K6EU74018131
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Mar 2024 06:14:30 GMT
+Received: from [10.216.4.119] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 19 Mar
+ 2024 23:14:26 -0700
+Message-ID: <8b1da227-ad6b-4fec-b9e9-d07b8bcbd813@quicinc.com>
+Date: Wed, 20 Mar 2024 11:44:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|SA1PR12MB7365:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	7tlKVuoTyHIkF9wj5vSoebcxjwJ0kI5urX2k3xdpwMJ2mRhwxMJRKNB/RQUignwnGog4PuIyhPisqKNkK8BUm/SV7ZY8Tv+/4g1L7eq5SZ3W6sNRd74ySSgBnS+3XRihc0w5aJUtCDq7VLUDkvECOZQdqiqhvWcNAyFqQgMoP7wz2U02yL7LIU17wyfjDqSbMZH5UXmG/YmNKrETZ/tbfTvCAkpes7xbswja/kyij5wgsarDeG3u9/zGetpBntX6Ou+uunWNhsFVvB4dUruhtaEzPa1aiG29B6ZC5Mvp/WToa9vfGWT/A6cqPDoSOunjr37sLcdUkn81qP8+kdjfscBj2Gfqc6HyvKEkZpiCzaS5LQS5NKDCEb8weS/b2L6RkjZ9F1cydvvcc8s2nJ0kgGI4LUVWwWQURKhw0HYuEawHoqtTH55ZGanMbj9zttXvrMJ7/8iz2uar2XuGg02OCWl1gi+faKz4cM2/KZ7NZlWkpgcSS3pTCLA3wo/TzDro6WIpnlZpyyL47qwCxLC6QaX0KHoz/Nf7F4NCrbsmLyHSnI24BkQ8hFULuQ5zFR0DYQ6ntXNoHW2HzKpKSCl9Grk6zYhftsMetJDsUK/m3CTmXfAzW40XbrBWfHHu769bLHpxNxeyFTlPMIZjDB84Ew==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YkVaUjFLd0hVRkorb3lWZWYzK0xqUDdaM2MxVzVGczdselpBUFNRVnNISFJQ?=
- =?utf-8?B?TnFkSXozT0JxRVZIait2dTJBeUdLQWNtV1lkSjVMOWFtM3FOK2hoMStweE1F?=
- =?utf-8?B?cVVCaUVVa3Z0U1kyVmpQcXRjWEY1RWIvM1FaUUlBc1ZyL3Y4YU5oVGVRelJQ?=
- =?utf-8?B?dE5YR0tFRWJNQmxsSmliNUh4NEFndnhDblpVR1cwMklQM0hTNXRJUTdNVytT?=
- =?utf-8?B?cFQxWlJSTDkxcEI0QTRXYUVOYVNQOUJ5RDNaUWVGMjJqbkNHUmlQbWR1Y1k0?=
- =?utf-8?B?dG16cGdQM0ZwdDhVYnc3Q283K3VMRjUwc0RMbStNcmxWMDNKOUltb2hLNEx3?=
- =?utf-8?B?S2FNZmRyWFlzQ0NiOTJZenR5VVpxUFpiZEdYSUErQk5GTTZ2ek1jaFh0RkY0?=
- =?utf-8?B?aFlYcHZRMTJ2T2I3dDI0MTRPVnlJMHAzM2FhcldLaVc5L29qWlhWNkNIaUZ5?=
- =?utf-8?B?RlVPSFRhcWZVY1ZOc2ZBUVRzQjU2RGJmMmVkM09QSWRoU2dvVk9HYjZNb0tB?=
- =?utf-8?B?cFlPTHBTM2pob0plc2dzb1QyNHhPUHZidlFyMEFWN2pBWlgwUm03OTZuOWZw?=
- =?utf-8?B?QkNwUDVyUFR4dUNMRWl4OUs5RW96Vkcxa3ZVOUNIR250NjN1SlM1WWhSZ1Vw?=
- =?utf-8?B?bWZuNEVYSzFrZHdWeWZEM1ZORWd5SUtzSlMwc00waERBVUFkak1uY1VLcC9Y?=
- =?utf-8?B?cCtpTGkvcG04TlVmc0NOQnF1V1ZjaGloV1dGeVBjamsvYk1uRzRxRjZXY2hR?=
- =?utf-8?B?ak9zTm96Tk5rU2U1MGQ1RFlmWHVnTXk4bnQ0aGs2SGJveGVKbW93dDVsNUw5?=
- =?utf-8?B?UTNUbURRcm0xOEkybmdob2lzdVY0UkpzN0pkSFE5Y1d2WHZtMHJ3a281RVFs?=
- =?utf-8?B?K01iQjFvUlRzK01pWVJRSVd2eWRqbTlnWXdjS0liWjB3NHdHTXVqWFlhRHYy?=
- =?utf-8?B?Zll1RWM5WmxKbzZ3N2FFdEtuZUFKRmYvclVwK0pTaGFiVjlNQWFrelE1U1hM?=
- =?utf-8?B?bHIxOG5haDh4NzB0RThaSzB3N01JVXM4dmJNejkwanpRVDIyWGhHSnFYVFdO?=
- =?utf-8?B?MUY5ZndRemVpdFRVbFl3dnhEUno0Ym1OWWprS3RrSnBBblNHazJCcXhGUi9t?=
- =?utf-8?B?QUhHTXdPL0lXMHFmbTdhL1poTTFTaE9OeDBteXpZb1dQRjVnMC9PNGM1anVh?=
- =?utf-8?B?cjllZXFHRzZnazNySG9WWXc0cjk4TmNMZjZlckdNUHJmWVJhREtsaWg5VXFQ?=
- =?utf-8?B?bVAvc2pySTBySDlQWVozTHkra1lHekdaeXliV2lUcEp0eXV5dklMQmNUYUV4?=
- =?utf-8?B?Nm8zWUFEd2lRazZZS3hsR05yVzNnR0tKdmlXUHRsWDI1dmtleVY3N0ZNZHpx?=
- =?utf-8?B?RTJFVzduK1NpL1Ezd1Y3UWlSc0w1Z1hOVUZGUGluRCtheExkUE5FWFlZMWZD?=
- =?utf-8?B?aFFuNXFCdUJpVGZVUVdVMFNkajIvZlBkOVppaitnR3pGb3BNNlhRbUFpdFFE?=
- =?utf-8?B?V3ZQaTRNYk1zbE5zcFFVSUJWOHhOck1aOVp4NUg3OTNCYzZDQkJrbFppTGNS?=
- =?utf-8?B?Q3hnaHdKUlZOcFoyZDdQRUFUdnRnQjRESFI2NVlrQkQrTkRTbVVSVlU1dnFP?=
- =?utf-8?B?ZzJsSS8wVU1RaGlmcGJlcGR5TmZqTWY0NnVodVBFd0JkVXZ3cldnQlFkb0w0?=
- =?utf-8?B?SC9tZDUwV0dWcS9JODNxM2hUVEkyOW9DOTU4U01lb2VpVjlPUHVDNHcyTzAz?=
- =?utf-8?B?NUwrWTBHMS83SkFqVEFKMjhSa1R5a2dETDlJNGVpendQVG1kZXFLMDN5RnNS?=
- =?utf-8?B?SjlSSVd2RTJMNC9SVVM1eUtEOWxRdGJtNy9ibU9oK3c4dXRHSzhQMFVkVFo5?=
- =?utf-8?B?SEdYYUY0T3paYUt6Nmg0VDBmbHZVTHZHdVhyM2RGS0YwOWdOWktJSEV3MFh6?=
- =?utf-8?B?bCtnTEtwNVN6SE9DYTFXUHFRVlpqRFN3YjZjbzFXKzQvSHhkdkJpT1p0TExa?=
- =?utf-8?B?ZHhXV1hzUnhPeVljR3NCSkdBUFQwOTF4bDF3dUJxZVYwMFlON1UvcjlQQUxu?=
- =?utf-8?B?VXZab25UNGRPejZlT092QWtKa2U3UE1WWWNCRGc3S1FXejFpajNUMlJ0RHhO?=
- =?utf-8?Q?Un7Fiyd2hIDm1pYg1bhPQx4Lo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5031c4ef-22ce-48b0-4a9f-08dc482477cb
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 14:54:24.6884
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yUV0QoYmr+bJXvlAQe79MlEvGmnD+kBnyjfpYzFvtS63vU0eGqIex7rLBP36Uork
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7365
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] rpmsg: glink: Add bounds check on tx path
+Content-Language: en-US
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>, <afaerber@suse.com>,
+        <ivan.ivanov@suse.com>
+References: <20240113002505.15503-1-mkoutny@suse.com>
+ <151f5738-791e-42cb-b8fe-e0cfbf9f7dca@quicinc.com>
+ <egp4g4i54le4iizpdfpxi24k563hniwub7iy2dwrk7ul47uhf4@z5scfrisbd46>
+From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+In-Reply-To: <egp4g4i54le4iizpdfpxi24k563hniwub7iy2dwrk7ul47uhf4@z5scfrisbd46>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Ol2m4hLgpHUiR9bNXbXqpc3G4pfj9RU2
+X-Proofpoint-GUID: Ol2m4hLgpHUiR9bNXbXqpc3G4pfj9RU2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-20_03,2024-03-18_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ mlxlogscore=547 malwarescore=0 spamscore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 phishscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403140001 definitions=main-2403200048
 
 
 
-On 3/19/24 12:29 AM, Krzysztof Kozlowski wrote:
-> On 11/03/2024 18:59, Tanmay Shah wrote:
->> From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->> 
->> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
->> UltraScale+ platform. It will help in defining TCM in device-tree
->> and make it's access platform agnostic and data-driven.
->> 
->> Tightly-coupled memories(TCMs) are low-latency memory that provides
->> predictable instruction execution and predictable data load/store
->> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
->> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
->> 
->> The TCM resources(reg, reg-names and power-domain) are documented for
->> each TCM in the R5 node. The reg and reg-names are made as required
->> properties as we don't want to hardcode TCM addresses for future
->> platforms and for zu+ legacy implementation will ensure that the
->> old dts w/o reg/reg-names works and stable ABI is maintained.
->> 
->> It also extends the examples for TCM split and lockstep modes.
->> 
->> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
+On 1/29/2024 10:03 PM, Michal Koutný wrote:
+> On Mon, Jan 29, 2024 at 04:18:36PM +0530, Deepak Kumar Singh <quic_deesin@quicinc.com> wrote:
+>> There is already a patch posted for similar problem -
+>> https://lore.kernel.org/all/20231201110631.669085-1-quic_deesin@quicinc.com/
 > 
-> I responded under my reviewed-tag, but to be clear, also here:
+> I was not aware, thanks for the pointer.
 > 
-> This patch has is not ready. Please do not merge.
+> Do you plan to update your patch to "just" bail-out/zero instead of
+> using slightly random values (as pointed out by Bjorn)?
 > 
-
-Glad we could catch this before merging this.
-I will wait for your reply on other thread for refactoring.
-
-> Best regards,
-> Krzysztof
-> 
-
+> Michal
+Hi Michal,
+Yes, i will be fixing those comments and re post patch.
