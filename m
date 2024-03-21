@@ -1,39 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720DC83CC3;
-	Thu, 21 Mar 2024 12:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911898062A;
+	Thu, 21 Mar 2024 12:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711025519; cv=none; b=vGFEZ3DVAfnrUwq+Ib8o8KNOWOXWHeoxq5OXVpLEeLK/LPBWIuI5CbTW/uypEj5rruE6ZGMuR3kwA/oSXkPbS1He17ByntJ4RMfHRHkfoPqSlHT1P5aeGMZNK7xMZVtF3Q8f0lxjiUaaxHS6U/bNC6Sm8L7oaU2/fFHTK7Eya1Y=
+	t=1711025557; cv=none; b=KsdUeuVChLwUVqdV4rb8NRSnxxrSzEEBjpGQo55qH9j+uPfbzgxT6Np4yS94ibLDfrSo3Gav6+CR8LdcD4s3BipcjffqVBCYKKtfPO1sZoBMp4EO0y025JBEOHHHD/8KuerdvE3LBbRDHIguifalDdD6rYzN275pAGv3B83criw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711025519; c=relaxed/simple;
-	bh=AJeureSQ7z+1aHfZed2T9ZG9lVLmPdFGaRIni9f2ZfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dhKWbPig7tTFa6k9axYqO0lgTvNrqbDBK9wArI3v0OCcn//tFo5pUq0M74SIr6OJOAsrbN4D7wFKTZrHEpIK7YCQG0olCUJn/MtcNLi0xn01noaOemxQUWJ8tuBET3+cJ/HUY8nmFWveiOZftf22c3XvYjRmed+s/cz9M0GO60A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLvncpF9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711025557; c=relaxed/simple;
+	bh=+1MLeFvybcEalYGQKL++8f/M5U9YN7gmE4KskSqtg2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PysxAHW63ZhvMYvrYPuC2HVCdOh0H4T5EKFw3Jp+WkhAb1NPz/KqcBbXqQ8caz/7WaieeV7aems+XQAEieqffYRQSajzAH4KgCvDOe3NjJMfA6FbEJdVS1fE52PRgKlshN05wv45t6GljN78N58aWpU/QTxa+GztPInHnX302Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSkxeRJ5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLvncpF9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB82C433C7;
-	Thu, 21 Mar 2024 12:51:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSkxeRJ5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF5FC433C7;
+	Thu, 21 Mar 2024 12:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711025519;
-	bh=AJeureSQ7z+1aHfZed2T9ZG9lVLmPdFGaRIni9f2ZfI=;
+	s=k20201202; t=1711025557;
+	bh=+1MLeFvybcEalYGQKL++8f/M5U9YN7gmE4KskSqtg2E=;
 	h=From:To:Cc:Subject:Date:From;
-	b=iLvncpF9M/tSdfTl2yltcI5YnPeMoNItBlui+RKCLCEkpWBWyG4+HQYLu2l1Un8nR
-	 xTJz6KGeESHDWvfSmCqFr5dW/jeL5C4HD85n6sBYInljhUVUk6SzTXNtodZeGkbDbP
-	 O9g1526Tn1hpz04e+zH04kvOEnIKx1MQva/wXnTAxYNuAVqu06+5R7trJsWzdbiQOm
-	 huEiDLLpY3kzq9mJl7M5szxJO7EXurQ3ZHrai12GkeV4/Pxf/r0yVrYJJUeec/9010
-	 o4bVCfZ7cv6qfFr1EbwcuHkPp/026dvt7Uw8lZXCis4WpBRdCO9WU5R9rJot0Cqkgq
-	 lcohumOxzNEzg==
+	b=QSkxeRJ5kKk16+tgclhMuYgOAU+Gn2Y/V/1f1I3oTlYFgGDDXMgBmdPGEh/gdSWjV
+	 BhWR/88VmsnDlXEx2txoVNWASVcj/NDczzVhH0Nb+YzLg8oDrC4LBm4ob1h/NTcqtk
+	 CDVdlwe2ylwO9f70wPfnQBMZ8kLjNpLN3OstoxsPV3Zescf9Wig3UI/hBbYF6FJLJr
+	 sS0JUuun8FoMFFeEMJ5P2B+l8HxTK5WnFW61djd1YUWzEvyne5fH4GynILz3yzo63M
+	 IbZl76crkPg0/26LZx4SUmW5AibNTT6N7LmgeISWDLq8HMXFpY3VUx/6vU7xvzTP4F
+	 Rb+1yBB0AFckg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"Ricardo B . Marliere" <ricardo@marliere.net>
-Subject: [GIT PULL] rpmsg updates for v6.9
-Date: Thu, 21 Mar 2024 05:56:51 -0700
-Message-ID: <20240321125653.1676534-1-andersson@kernel.org>
+	Andrew Davis <afd@ti.com>
+Subject: [GIT PULL] hwspinlock updates for v6.9
+Date: Thu, 21 Mar 2024 05:57:28 -0700
+Message-ID: <20240321125730.1676568-1-andersson@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -50,26 +49,23 @@ The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.9
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v6.9
 
-for you to fetch changes up to b03aa6d4e9a74c4289929b6cf3c6bcc80270682d:
+for you to fetch changes up to cebaa386d5ee1a44a58c12f1d220f62cc567fdb0:
 
-  rpmsg: core: Make rpmsg_bus const (2024-02-05 13:43:22 -0700)
-
-----------------------------------------------------------------
-rpmsg updates for v6.9
-
-This transitions rpmsg_ctrl and rpmsg_char drivers away from the
-deprecated ida_simple_*() API. It also makes the rpmsg_bus const.
+  hwspinlock: omap: Use index to get hwspinlock pointer (2024-03-05 20:01:14 -0800)
 
 ----------------------------------------------------------------
-Christophe JAILLET (1):
-      rpmsg: Remove usage of the deprecated ida_simple_xx() API
+hwspinlock updates for v6.9
 
-Ricardo B. Marliere (1):
-      rpmsg: core: Make rpmsg_bus const
+This provides some code cleanup for the OMAP hwspinlock driver.
 
- drivers/rpmsg/rpmsg_char.c | 12 ++++++------
- drivers/rpmsg/rpmsg_core.c |  2 +-
- drivers/rpmsg/rpmsg_ctrl.c | 12 ++++++------
- 3 files changed, 13 insertions(+), 13 deletions(-)
+----------------------------------------------------------------
+Andrew Davis (4):
+      hwspinlock: omap: Remove unneeded check for OF node
+      hwspinlock: omap: Use devm_pm_runtime_enable() helper
+      hwspinlock: omap: Use devm_hwspin_lock_register() helper
+      hwspinlock: omap: Use index to get hwspinlock pointer
+
+ drivers/hwspinlock/omap_hwspinlock.c | 57 +++++++-----------------------------
+ 1 file changed, 10 insertions(+), 47 deletions(-)
