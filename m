@@ -1,57 +1,57 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FBE8624F
-	for <linux-remoteproc@vger.kernel.org>; Thu, 21 Mar 2024 15:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6CA85943
+	for <linux-remoteproc@vger.kernel.org>; Thu, 21 Mar 2024 15:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711034728; cv=none; b=jk1TCZpOnpGoerWJ4vqbknPmgrSxkE2ll998a6WWoDpw7sdA1pIneeLs8Zs53tBvQ0ZdfCx+V/FfVU8ENju/ShrFbPtduUEbf+24N+oWRKJZ5XRMOSjwLkCUU+jgSyGk29nAUGyz/4KzrzpvSN54C7vojcIIEcBT1Y7duPYfMnI=
+	t=1711034831; cv=none; b=n8cUJxCSmkDZ6qOeK5nyLJqmQXaHBjM/ZPQy2jQnSdU5wCDGLACjj1s9ZyfG2Bp4U83yu6gsTKnQFBaTUuMEY4otZ+BXSJ54t0uqnxna0TOGx1XDRncEh5JRQJnCSvcy8kz2hOeV5oM98h7pjxKsysQmol2n4e4TKzXE1Bd3Dxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711034728; c=relaxed/simple;
-	bh=keHTiEytawshQb8pgvqpSP5oSevhiW6x2JK067oi9nc=;
+	s=arc-20240116; t=1711034831; c=relaxed/simple;
+	bh=n8T4C2A5gem4U8d3WvHIEu6sVO6mAM1shyUf70RSvro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9iS6dg5qVmto4qfKNQ3ScAKgavd3pZgG7rIzb0ARhGFj8CxuN+VkR7uQDmRUGVsyISytNh/fgo9m10OkRzwcB/c9gsiiG93syt3/OK6Uzcny6KkpiBWt0s5Z8QQpJO6RG9dCmLSRxVA+h9TeKhC9dVzbU9uLBxqnFMhxqqbIGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iV4b3JuV; arc=none smtp.client-ip=209.85.210.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=E97SJXORqWx8KlIUtSyhkRR+2AZacK37JWi3lXXcxc+wRGQ6OITPb+LeANcI7BRSA6dL0CbrQ0cuOSM0hirqB2TKhRgtIUAF+g5DGetH4eEnpX32C/s899vgrzC20gN7/GwyQhjM+/Ke0FLNNCRSk99Lv+S6YpN+f+PJ4ab337g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=akYgZSmU; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iV4b3JuV"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6e6b54a28d0so775409b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Mar 2024 08:25:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="akYgZSmU"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dddbeac9f9so7113145ad.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Mar 2024 08:27:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711034726; x=1711639526; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711034830; x=1711639630; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=82OI8Gh7oQu/9StlFoR10DICm6BhP8N6L+l5Ik+ILaw=;
-        b=iV4b3JuVmqqxcc46GxoxvkIj+168yQojSblvVjG5JsICN6AEUjE9zAp7VrayNvlvXL
-         4iRFzvkFXJwBfCnqByJzVl3WSg/L/pV5iB+o1fhQ8X2vji+DlVE5ELAoxdVKTH/X2zud
-         qqLwgcheSoI8eM9hyHLW6YwgJuJB20mijs72FfYyx0tUC42ZAZZ0ACgakbhI1d3y43aF
-         paaVuFXs2UNznYRLe8wvm/0FDEQoCYyXfNJi4rLjzpDILZH/IM4kWiJ0j8YdDUHk6Zhw
-         eiwjPieAcyjtaicrNCPTtaZGtrPw9WLZqbM12ivdg/HUBNlnY8UXPR28JjWRbNn05tim
-         ndAA==
+        bh=+xaUG2ldhaQRaRHuk6t4MDB7vN1BXN+/W59BKlbNm/o=;
+        b=akYgZSmUvzmL0HUiIiKO5kfSN46jX00L0Y3uBZH4B4+SYPTo87xY1MvAVQJC+O9WR5
+         YMf8HGmcTQtv4aStnJhY2ORf23v8nM/VS76KRFAz36ZlrNFXniU9nMNtY4akh1+koJ1s
+         Ugp5eKwcXkGIPczST0x2d5RMQvJGnU91zeMXpR8e4HTDBTsIbU1wgBM4TSIop5L71giu
+         dOgy9zwn86x+b9/BQSZtU/rSU/JCYi2S8BBmzrZ7PuJml76H19q2oS0qbvbr74TFbrpy
+         b8P05IW8i+v71seOqlfa3xSonXNtPa3AW88VXTihXpm1stxiVqVTNkW20B0PpK1OG3/5
+         Ok1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711034726; x=1711639526;
+        d=1e100.net; s=20230601; t=1711034830; x=1711639630;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=82OI8Gh7oQu/9StlFoR10DICm6BhP8N6L+l5Ik+ILaw=;
-        b=kwEpGh+9ua609zRv27YVRyj4BQQcVIeIrLT6X2mwfkFZevhsy0AJ6wUi7EKfnfagaY
-         aoa0yk9y2nXgqohoNo61yKCYWeY/4jIcEZW2CMMOuOpcl8OG0s2gWih6g1Uv4WrUseDS
-         n/a5m1FNVBGpVKNF8kJh/IFIqJ/3PX7K7NEObHjli9b8mxzhazxxMdNaoppo7iPkkQID
-         cEdapDSOs8PxviOez1wrX624xTn0XV/3Rqe/9kXrte7divFhVGG5D6YFtolo5a2MTrQ/
-         pskeZFeLph9R3Pgjpjapgup01c+LDORJpEIZhvWQIeBXcaKGZr6XyjjsXltDb6Ngdwqv
-         mZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbRRlfqYb+2VGj6tioytnNwt1578YfGH0+fY8har+grc946dFULTnFF6+OHU3vmqPJKfYhK8u7uNTlvOIiJnjg0lyhwzOo7OdpFr/cThqIVQ==
-X-Gm-Message-State: AOJu0Ywi1i5m7IWRdvkHjqlqWMZWb7MPNHyXF987P9a3nX0TrOGGA3i7
-	t3HW+3FFt5J/pVjvOAX/LPyVA8HFlgoh/eTH/8SXB1JNgXrga3u9n499zMJe/gY=
-X-Google-Smtp-Source: AGHT+IEmFIp+48D2B1hUzpIyAXGeGOM1HqTNVM5BMRBIcH3HZOKodw1pu3F3fpANojgpouNGrD0GsQ==
-X-Received: by 2002:a05:6a00:3d42:b0:6e6:a3b3:923c with SMTP id lp2-20020a056a003d4200b006e6a3b3923cmr2898786pfb.6.1711034726278;
-        Thu, 21 Mar 2024 08:25:26 -0700 (PDT)
+        bh=+xaUG2ldhaQRaRHuk6t4MDB7vN1BXN+/W59BKlbNm/o=;
+        b=M348b0wx7gAnV2QVRy/Rf+685veAAuIRF+pqms2gJpGzcf4kMdCQ0jpIk5ht4a//+K
+         GiqSc67wTT4JB5xBc3W9EafXF1Dyhy4vnV9RX0T8dAKRPdnT/1YRKLYTL9UM3lEbozpq
+         mdjHtll9xpm817amXfHqqhFXXKZikqXk01iCIVpacma1H8W4e+1xgLHCX2y+OQOPRyxs
+         k5b+kJg7crTQeLelkKiqM0aElfCaBaBnhdOp3+aPkWVF9YiOyOg4fs6yehND7zVFXZQw
+         2jLMOnrSQNU/JNlEPxJhuCDIE0X40JqLx9WTztakeTTGZH9nWXVDf1q1kgWidjyV0ZgT
+         F/Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPqxTXh0R6AhiR2x1F/zvmdVUuipdJk9fRTsqQliSOYHKujuMEFWJhrphn8OZlctKv2r5VbBJzA85Hqqo30snOClzQ/rq+Hb5bOt/OcqiCUA==
+X-Gm-Message-State: AOJu0YyuFb0QGRhYn0iV42GvANhZ8A++4yCe85f/mJ4DaegvuixvJnzB
+	IKxEICxOyNi0acpvhgKkmt5WnlPbmeIcbNYWl7yvwoPJXuICAA9Cdc45AFlzek4=
+X-Google-Smtp-Source: AGHT+IFZusUIQQGZ01wR/lIafQ3ProKPMjN3Xn3Bpv3FxV8YHFTb1NMxzLzr2zATgiRssYtdZLM9qA==
+X-Received: by 2002:a17:903:22d0:b0:1e0:1e87:c9d8 with SMTP id y16-20020a17090322d000b001e01e87c9d8mr13021667plg.7.1711034829723;
+        Thu, 21 Mar 2024 08:27:09 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d9a2:e52:d93:c759])
-        by smtp.gmail.com with ESMTPSA id fi37-20020a056a0039a500b006e69a142458sm13534453pfb.213.2024.03.21.08.25.24
+        by smtp.gmail.com with ESMTPSA id q6-20020a170902a3c600b001dee3fe3c1asm15077983plb.258.2024.03.21.08.27.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 08:25:25 -0700 (PDT)
-Date: Thu, 21 Mar 2024 09:25:23 -0600
+        Thu, 21 Mar 2024 08:27:09 -0700 (PDT)
+Date: Thu, 21 Mar 2024 09:27:04 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: andersson@kernel.org, matthias.bgg@gmail.com, tzungbi@kernel.org,
@@ -59,11 +59,11 @@ Cc: andersson@kernel.org, matthias.bgg@gmail.com, tzungbi@kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org, wenst@chromium.org,
 	kernel@collabora.com
-Subject: Re: [PATCH 1/2] remoteproc: mediatek: Make sure IPI buffer fits in
- L2TCM
-Message-ID: <ZfxRY475SKaRYVTj@p14s>
+Subject: Re: [PATCH 2/2] remoteproc: mediatek: Don't parse extraneous
+ subnodes for multi-core
+Message-ID: <ZfxRyMyUqyqtXy8n@p14s>
 References: <20240321084614.45253-1-angelogioacchino.delregno@collabora.com>
- <20240321084614.45253-2-angelogioacchino.delregno@collabora.com>
+ <20240321084614.45253-3-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -72,64 +72,44 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240321084614.45253-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240321084614.45253-3-angelogioacchino.delregno@collabora.com>
 
-Good day,
-
-On Thu, Mar 21, 2024 at 09:46:13AM +0100, AngeloGioacchino Del Regno wrote:
-> The IPI buffer location is read from the firmware that we load to the
-> System Companion Processor, and it's not granted that both the SRAM
-> (L2TCM) size that is defined in the devicetree node is large enough
-> for that, and while this is especially true for multi-core SCP, it's
-> still useful to check on single-core variants as well.
+On Thu, Mar 21, 2024 at 09:46:14AM +0100, AngeloGioacchino Del Regno wrote:
+> When probing multi-core SCP, this driver is parsing all sub-nodes of
+> the scp-cluster node, but one of those could be not an actual SCP core
+> and that would make the entire SCP cluster to fail probing for no good
+> reason.
 > 
-> Failing to perform this check may make this driver perform R/W
-> oeprations out of the L2TCM boundary, resulting (at best) in a
-
-s/oeprations/operations
-
-I will fix that when I apply the patch.
-
-> kernel panic.
+> To fix that, in scp_add_multi_core() treat a subnode as a SCP Core by
+> parsing only available subnodes having compatible "mediatek,scp-core".
 > 
-> To fix that, check that the IPI buffer fits, otherwise return a
-> failure and refuse to boot the relevant SCP core (or the SCP at
-> all, if this is single core).
-> 
-> Fixes: 3efa0ea743b7 ("remoteproc/mediatek: read IPI buffer offset from FW")
+> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/remoteproc/mtk_scp.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index a35409eda0cf..67518291a8ad 100644
+> index 67518291a8ad..fbe1c232dae7 100644
 > --- a/drivers/remoteproc/mtk_scp.c
 > +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -132,7 +132,7 @@ static int scp_elf_read_ipi_buf_addr(struct mtk_scp *scp,
->  static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
->  {
->  	int ret;
-> -	size_t offset;
-> +	size_t buf_sz, offset;
+> @@ -1096,6 +1096,9 @@ static int scp_add_multi_core(struct platform_device *pdev,
+>  	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
 >  
->  	/* read the ipi buf addr from FW itself first */
->  	ret = scp_elf_read_ipi_buf_addr(scp, fw, &offset);
-> @@ -144,6 +144,14 @@ static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
->  	}
->  	dev_info(scp->dev, "IPI buf addr %#010zx\n", offset);
->  
-> +	/* Make sure IPI buffer fits in the L2TCM range assigned to this core */
-> +	buf_sz = sizeof(*scp->recv_buf) + sizeof(*scp->send_buf);
+>  	for_each_available_child_of_node(np, child) {
+> +		if (!of_device_is_compatible(child, "mediatek,scp-core"))
+> +			continue;
 > +
-> +	if (scp->sram_size < buf_sz + offset) {
-> +		dev_err(scp->dev, "IPI buffer does not fit in SRAM.\n");
-> +		return -EOVERFLOW;
-> +	}
-> +
->  	scp->recv_buf = (struct mtk_share_obj __iomem *)
->  			(scp->sram_base + offset);
->  	scp->send_buf = (struct mtk_share_obj __iomem *)
+
+Interesting - what else gets stashed under the remote processor node?  I don't
+see anything specified in the bindings.
+
+Thanks,
+Mathieu
+
+>  		if (!cluster_of_data[core_id]) {
+>  			ret = -EINVAL;
+>  			dev_err(dev, "Not support core %d\n", core_id);
 > -- 
 > 2.44.0
 > 
