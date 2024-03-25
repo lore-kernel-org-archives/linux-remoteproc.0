@@ -1,208 +1,178 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E340256B78
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 Mar 2024 21:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C8514F9F6;
+	Mon, 25 Mar 2024 06:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711141355; cv=none; b=BQVGTGASXc8JEPpDSbPuFsYShBZdJ++1sB03PpZUTyblpJb4wAMnqqvlsZ2XwFGUKw12xdSdICXVxnqZDZd/zUjcTaDlNcXbeE4ZwSoHB8ujc8dsBUNpDMnIVIrowIWbm/qkMsQctBSUqh0YVU8mVc4UfoDU3m7CmLcz8c+eYZM=
+	t=1711346637; cv=none; b=cQCISauqLhTqp4tl3qd/1GI1EnaettVebp4OkUEbADsuaWGGUTQoQ8Tsv/lrX3UYabozxCZOeQLoI/XIREBill9ltlK245MmSne0ctxs7+8an3BeidTdblhGh4Cgyh83ZzV3yTocaD8RNfwxcUjfxxgt5JR1rfS/oWOpJTPffcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711141355; c=relaxed/simple;
-	bh=MJOUiylT1gO5PYdopB+gDEf0uAhJHYMUDIxAepGiL8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfdSFmfV6r8YQqwvyMKL2nXxDufQhyyyO+MtBQ7APV9DYBfTMxsHsPwcrNabweBon4q+wJOhrwKLAdjHAiGqRwFCVI2jbWcTtidnlDUkLiX4tLvjqVrIwp3vRlKwsF3P7BZuuEQ5QIKft3Z5q5SZFsJNU8I9H5Ds+CmqqZjK+u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TVNwm7VM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1711346637; c=relaxed/simple;
+	bh=nh7RRQLuaSddz65FK3Wb9wuNv3HNQBBH9TtjgCZM/8o=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=A7tIcPQgNaob80xGsfi49mwhPIEy9qh+e11mL2LDg86SBDYW5+/xwjZxvLjsOr+Z+vAD3wp6qEs3csOvsxJ+ahw9QGtS2mmPpM4I79HAVUmGjoEGV4LyNDbdvGQAlyvtznWY9CY3mslAR8jFIv4YDsyhJTTLmedVgTxEA9WT9VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ukYZTjjr; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TVNwm7VM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711141352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PFVyegIhf//HHhHfQmh5NpqjlKK9ka89h1dvT9SewD8=;
-	b=TVNwm7VM5ExPcmFYdOYtEnYawPl14lkRAsQ0Agi7l2anWiyckBUy7df443Xl6yChOvzBnE
-	TlEi0PNQby99A6ZVLROBmQSYcVZ97XGRdkL/NN2BKdsOWxoM579RhrmHl4kzcLX25ReXcQ
-	qF/ykoS6wqGZSLIXYiJq/QO1CnimBgY=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-gvRdXc8ePNm213RPxnG3gg-1; Fri, 22 Mar 2024 17:02:31 -0400
-X-MC-Unique: gvRdXc8ePNm213RPxnG3gg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-41463916b89so12327015e9.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Mar 2024 14:02:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711141350; x=1711746150;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PFVyegIhf//HHhHfQmh5NpqjlKK9ka89h1dvT9SewD8=;
-        b=Mn+1UUH96AOip4VMp5O5cVwAGQ3OWE+oVjDFmuC+XSHWMAxc29zY/GvTkx2W8gfGd6
-         CEhsI8GKdYp00v6PNkdqH9oXbKpXdC7YO5mIXySnBXOLFbzfSg24IHcy9hGg86xDQNlj
-         JTCitALv5IyPmOR3a4XDDjjNrrM+8/23bG2LtrbvW44bUsLg66fRHpwqu5XsbDfhDALI
-         r+gxOVh3DgWFJnINmIOTvXiKQSYL7qfXXiGMVWG3m0zZx0MHKcgNlrDlCzCvlIoHrxfx
-         ZdYIF8HyCRzVTbbVKtLutFqIfpxzFiNGKlry0T0U7FYqnulJibcgzgGrytEYutCdG8rV
-         FKew==
-X-Forwarded-Encrypted: i=1; AJvYcCWmgn8A72omLhOayjRd6nmqmYm7NRNkK7uVPiHjyJdkk5KcQ/FVmbUoJS2653DDOBLrb36aUQ+YgaGsiehbm/UGWSZl5E1UW1qAAr+f7WlrIA==
-X-Gm-Message-State: AOJu0Yy9TocA0Pnks6kBk+2x99TPEmJfCd5e25DnoRBXMUOF4+PXDL34
-	LyVUeEVGOyQYh0iENmt1UkxC12J4qPwRmavsSdyIjfK16krs0dO0FkvT9jFpVZpYZoSM1T847tb
-	VYQO/SmRM39TDwTAN1PCYU25ArSczxpNNDSbU3NBWcYCjrSWW6CbyEh1LBNzRhYfOPhs=
-X-Received: by 2002:adf:f544:0:b0:341:a813:2679 with SMTP id j4-20020adff544000000b00341a8132679mr310968wrp.29.1711141350111;
-        Fri, 22 Mar 2024 14:02:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaqp+JyTk4JX0MqO3wQQNDlBTOTaTSJHLvU5DsMsBkD33yBR1gLLawTwsXpzKlCPKxd+Etog==
-X-Received: by 2002:adf:f544:0:b0:341:a813:2679 with SMTP id j4-20020adff544000000b00341a8132679mr310953wrp.29.1711141349682;
-        Fri, 22 Mar 2024 14:02:29 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71b:7e00:9339:4017:7111:82d0? (p200300cbc71b7e0093394017711182d0.dip0.t-ipconnect.de. [2003:cb:c71b:7e00:9339:4017:7111:82d0])
-        by smtp.gmail.com with ESMTPSA id dw1-20020a0560000dc100b0033e3cb02cefsm2861423wrb.86.2024.03.22.14.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Mar 2024 14:02:29 -0700 (PDT)
-Message-ID: <b420a545-0a7a-431c-aa48-c5db3d221420@redhat.com>
-Date: Fri, 22 Mar 2024 22:02:27 +0100
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ukYZTjjr"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1711346627; h=Message-ID:Subject:Date:From:To;
+	bh=2wvKbE33fAJ4kNFKPB3UPmddRQV+uumgQtNtBaMBvfA=;
+	b=ukYZTjjrjHhX2o2r+fAJbe9hE47/vJ9QzoRWspS7blS1koKFCbZ/3vknAEdHiAOdkxI0NGp7J15hs7NNdAWXCrjRsk6vxaknMn9fbB8cczRF4NlXPEeJ6SQnYf4V2twbyf6PJYHNFsk6xh2rS8qJURNumzjj/nRgcttCQ+imAIE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0W39d4bX_1711346625;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W39d4bX_1711346625)
+          by smtp.aliyun-inc.com;
+          Mon, 25 Mar 2024 14:03:46 +0800
+Message-ID: <1711346600.0136697-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH vhost v4 1/6] virtio_balloon: remove the dependence where names[] is null
+Date: Mon, 25 Mar 2024 14:03:20 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Vadim Pasternak <vadimp@nvidia.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Cornelia Huck <cohuck@redhat.com>,
+ Halil Pasic <pasic@linux.ibm.com>,
+ Eric Farman <farman@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>,
+ linux-um@lists.infradead.org,
+ platform-driver-x86@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ linux-s390@vger.kernel.org,
+ kvm@vger.kernel.org,
+ virtualization@lists.linux.dev
+References: <20240321101532.59272-1-xuanzhuo@linux.alibaba.com>
+ <20240321101532.59272-2-xuanzhuo@linux.alibaba.com>
+ <3620be9c-e288-4ff2-a7be-1fcf806e6e6e@redhat.com>
+In-Reply-To: <3620be9c-e288-4ff2-a7be-1fcf806e6e6e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vhost v4 1/6] virtio_balloon: remove the dependence where
- names[] is null
-Content-Language: en-US
-To: Daniel Verkamp <dverkamp@chromium.org>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
- Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, linux-um@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-s390@vger.kernel.org, kvm@vger.kernel.org
-References: <20240321101532.59272-1-xuanzhuo@linux.alibaba.com>
- <20240321101532.59272-2-xuanzhuo@linux.alibaba.com>
- <CABVzXAkwcKMb7pC21aUDLEM=RoyOtGA2Vim+LF0oWQ7mjUx68g@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CABVzXAkwcKMb7pC21aUDLEM=RoyOtGA2Vim+LF0oWQ7mjUx68g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 22.03.24 20:16, Daniel Verkamp wrote:
-> On Thu, Mar 21, 2024 at 3:16 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
->>
->> Currently, the init_vqs function within the virtio_balloon driver relies
->> on the condition that certain names array entries are null in order to
->> skip the initialization of some virtual queues (vqs). This behavior is
->> unique to this part of the codebase. In an upcoming commit, we plan to
->> eliminate this dependency by removing the function entirely. Therefore,
->> with this change, we are ensuring that the virtio_balloon no longer
->> depends on the aforementioned function.
-> 
-> This is a behavior change, and I believe means that the driver no
-> longer follows the spec [1].
-> 
-> For example, the spec says that virtqueue 4 is reporting_vq, and
-> reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set,
-> but there is no mention of its virtqueue number changing if other
-> features are not set. If a device/driver combination negotiates
-> VIRTIO_BALLOON_F_PAGE_REPORTING but not VIRTIO_BALLOON_F_STATS_VQ or
-> VIRTIO_BALLOON_F_FREE_PAGE_HINT, my reading of the specification is
-> that reporting_vq should still be vq number 4, and vq 2 and 3 should
-> be unused. This patch would make the reporting_vq use vq 2 instead in
-> this case.
-> 
-> If the new behavior is truly intended, then the spec does not match
-> reality, and it would need to be changed first (IMO); however,
-> changing the spec would mean that any devices implemented correctly
-> per the previous spec would now be wrong, so some kind of mechanism
-> for detecting the new behavior would be warranted, e.g. a new
-> non-device-specific virtio feature flag.
-> 
-> I have brought this up previously on the virtio-comment list [2], but
-> it did not receive any satisfying answers at that time.
+On Fri, 22 Mar 2024 12:56:46 +0100, David Hildenbrand <david@redhat.com> wrote:
+> On 21.03.24 11:15, Xuan Zhuo wrote:
+> > Currently, the init_vqs function within the virtio_balloon driver relies
+> > on the condition that certain names array entries are null in order to
+> > skip the initialization of some virtual queues (vqs). This behavior is
+> > unique to this part of the codebase. In an upcoming commit, we plan to
+> > eliminate this dependency by removing the function entirely. Therefore,
+> > with this change, we are ensuring that the virtio_balloon no longer
+> > depends on the aforementioned function.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > ---
+> >   drivers/virtio/virtio_balloon.c | 41 +++++++++++++++------------------
+> >   1 file changed, 19 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> > index 1f5b3dd31fcf..becc12a05407 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -531,49 +531,46 @@ static int init_vqs(struct virtio_balloon *vb)
+> >   	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
+> >   	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
+> >   	const char *names[VIRTIO_BALLOON_VQ_MAX];
+> > -	int err;
+> > +	int err, nvqs, idx;
+> >
+> > -	/*
+> > -	 * Inflateq and deflateq are used unconditionally. The names[]
+> > -	 * will be NULL if the related feature is not enabled, which will
+> > -	 * cause no allocation for the corresponding virtqueue in find_vqs.
+> > -	 */
+> >   	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
+> >   	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
+> >   	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
+> >   	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
+>
+> I'd remove the static dependencies here completely and do it
+> consistently:
+>
+> nvqs = 0;
+>
+> callbacks[nvqs] = balloon_ack;
+> names[nvqs++] = "inflate";
+> callbacks[nvqs] = balloon_ack;
+> names[nvqs++] = "deflate";
+>
+>
+> > -	callbacks[VIRTIO_BALLOON_VQ_STATS] = NULL;
+> > -	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
+> > -	callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> > -	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> > -	names[VIRTIO_BALLOON_VQ_REPORTING] = NULL;
+> > +
+> > +	nvqs = VIRTIO_BALLOON_VQ_DEFLATE + 1;
+> >
+> >   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> > -		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
+> > -		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
+> > +		names[nvqs] = "stats";
+> > +		callbacks[nvqs] = stats_request;
+> > +		++nvqs;
+>
+> callbacks[nvqs++] = stats_request;
+>
+> If you prefer to keep it separate, "nvqs++" please.
+>
+> ... same here:
+>
+> idx = 0;
+> vb->inflate_vq = vqs[idx++];
+> vb->deflate_vq = vqs[idx++];
+>
+> ...
+>
+> >
+> >   	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> >   	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> > +
+> > +	idx = VIRTIO_BALLOON_VQ_DEFLATE + 1;
+> > +
+> >   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> >   		struct scatterlist sg;
+> >   		unsigned int num_stats;
+> > -		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
+> > +		vb->stats_vq = vqs[idx++];
+> >
+> >   		/*
+> >   		 * Prime this virtqueue with one buffer so the hypervisor can
+> > @@ -593,10 +590,10 @@ static int init_vqs(struct virtio_balloon *vb)
+> >   	}
+> >
+> >   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
+> > -		vb->free_page_vq = vqs[VIRTIO_BALLOON_VQ_FREE_PAGE];
+> > +		vb->free_page_vq = vqs[idx++];
+> >
+> >   	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING))
+> > -		vb->reporting_vq = vqs[VIRTIO_BALLOON_VQ_REPORTING];
+> > +		vb->reporting_vq = vqs[idx++];
+> >
+>
+> Apart from that LGTM
 
-Rings a bell, but staring at this patch, I thought that there would be
-no behavioral change. Maybe I missed it :/
+Will fix in next version.
 
-I stared at virtio_ccw_find_vqs(), and it contains:
+Thanks.
 
-	for (i = 0; i < nvqs; ++i) {
-		if (!names[i]) {
-			vqs[i] = NULL;
-			continue;
-		}
 
-		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, callbacks[i],
-					     names[i], ctx ? ctx[i] : false,
-					     ccw);
-		if (IS_ERR(vqs[i])) {
-			ret = PTR_ERR(vqs[i]);
-			vqs[i] = NULL;
-			goto out;
-		}
-	}
-
-We increment queue_idx only if an entry was not NULL. SO I thought no
-behavioral change? (at least on s390x :) )
-
-It's late here in Germany, so maybe I'm missing something.
-
--- 
-Cheers,
-
-David / dhildenb
-
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
