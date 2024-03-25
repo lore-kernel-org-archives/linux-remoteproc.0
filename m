@@ -1,45 +1,45 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14265102F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9325675F;
 	Mon, 25 Mar 2024 17:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711387254; cv=none; b=ktz24xKksvVbWZyd87lo/DSlTz7oYD3cAtl6XcDNK4wryyAEauQ6YL1GVK+AHtj4iJBz4VDqznyojnqavIyJOXxI/r0qMVERvgrqhEGC2bYWmSK82qGsb33PqNbv79oT9Amd6YIdw3UlqIk43JVx6pOEJi7BVWawNTIUplHk9wE=
+	t=1711387254; cv=none; b=IAGuiRITZI3ypmL0+I7MyhtYolVq/ETdVB0+kryxxjacD5XJdNeIjXvUBusFYT+y23pageGddS7/Yrfe25YHznpr36V5otB1gS1KHQKNcKydWtHh+qCNCd6LLCUqzMlFIpkdAS5k88MU9CZYYUg2R52YBHPWDrzucEPRJVv8DPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1711387254; c=relaxed/simple;
-	bh=+4mYsDwEIK4ZWqyyDgyiPzXKtR3LJEx4RZaVrdGLE0Q=;
+	bh=RLHrE4+FLPei6drd0nfg5Xsf77bF5ZMVxNn5H4/rTNs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hOY8Rx3YjpX0E1WrqIDbsd4A7lgUi43ynSg2IXUrfqE63Pw9X4wkxcvwqrrp8tSWSCuTBBmBspPSSAUa8wv2aqoxHOJI5xl/zA+sHk3bh4ELRBWJ0KiJbn0xakbrzbHhhuqpOEPgoDJZfKlOfVfbKdX29gr0aPYo5ntrBYgAVFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Eh09a9Cg; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=Jt1YK7DyLZz4MW91ANroLBR5D8KDG2n/fJD+sn7dFZ1gQN6CcZl9l0CR42jj5JSNY8uMCdWzObCO84wFTQYcugkt2M4rzEQrhLqhridH6VD9F7ZopebpV4pPmUrGAY0i1sxxbUBs9wqZr4QIz9xySgjDlJH8X0nXjsLwqYiMxik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iCV8Ufgs; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Eh09a9Cg"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKm5I013563;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iCV8Ufgs"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKm64061072;
 	Mon, 25 Mar 2024 12:20:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1711387248;
-	bh=LRIF3E/X3Th7qLH/f1ml5/H5LIqNgItmvNfm9KSSj1I=;
+	bh=fzz8HZfna6Pp/NIj4g98zvFf9RVRo+dtZspHw7cVATs=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Eh09a9CgZ4YG5hY6r/Y/R5YZV9ihv7PSOP6pwUit23ctN+JHUo6yqWFGdMRlGlwwn
-	 2Ylv3/V/LfSjLr0n57n+oRt6Ht7f3ZhArLQF2LlcPj/tBwJs8aUbBFPVAWD/4niS5I
-	 jvx34+mxTmAynVdjl6WeRJVf5jcr+DfZgErtaqTA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 42PHKmLn042957
+	b=iCV8Ufgs1QUH6WIb1B5DRNuzkNmyXAKqEHChPIUQTtBSupAnvJAGhE3R6s3bqLePM
+	 FSe2yOk+I2B2EWRzb03RJmTjwRNZvMd7vX8qSjnBaURrMv02XPgeDgdLMbl2c9DGNv
+	 7j+V+u81W3BCjkM8GzJR9i/wAN+ihsIoHKBOnklE=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 42PHKmWC008615
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Mon, 25 Mar 2024 12:20:48 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 25
- Mar 2024 12:20:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2024 12:20:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 25 Mar 2024 12:20:48 -0500
+ Frontend Transport; Mon, 25 Mar 2024 12:20:47 -0500
 Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKkYa075282;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKkYZ075282;
 	Mon, 25 Mar 2024 12:20:47 -0500
 From: Andrew Davis <afd@ti.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
@@ -49,9 +49,9 @@ To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 04/13] mailbox: omap: Move fifo size check to point of use
-Date: Mon, 25 Mar 2024 12:20:36 -0500
-Message-ID: <20240325172045.113047-5-afd@ti.com>
+Subject: [PATCH 03/13] mailbox: omap: Move omap_mbox_irq_t into driver
+Date: Mon, 25 Mar 2024 12:20:35 -0500
+Message-ID: <20240325172045.113047-4-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240325172045.113047-1-afd@ti.com>
 References: <20240325172045.113047-1-afd@ti.com>
@@ -65,50 +65,46 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The mbox_kfifo_size can be changed at runtime, the sanity
-check on it's value should be done when it is used, not
-only once at init time.
+This is only used internal to the driver, move it out of the
+public header and into the driver file. While we are here,
+this is not used as a bitwise, so drop that and make it a
+simple enum type.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/mailbox/omap-mailbox.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/mailbox/omap-mailbox.c | 5 +++++
+ include/linux/omap-mailbox.h   | 4 ----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index c083734b6954c..167348fb1b33b 100644
+index 8151722eef383..c083734b6954c 100644
 --- a/drivers/mailbox/omap-mailbox.c
 +++ b/drivers/mailbox/omap-mailbox.c
-@@ -310,6 +310,7 @@ static struct omap_mbox_queue *mbox_queue_alloc(struct omap_mbox *mbox,
- 					void (*work)(struct work_struct *))
- {
- 	struct omap_mbox_queue *mq;
-+	unsigned int size;
+@@ -51,6 +51,11 @@
+ #define MBOX_INTR_CFG_TYPE1		0
+ #define MBOX_INTR_CFG_TYPE2		1
  
- 	if (!work)
- 		return NULL;
-@@ -320,7 +321,10 @@ static struct omap_mbox_queue *mbox_queue_alloc(struct omap_mbox *mbox,
++typedef enum {
++	IRQ_TX = 1,
++	IRQ_RX = 2,
++} omap_mbox_irq_t;
++
+ struct omap_mbox_fifo {
+ 	unsigned long msg;
+ 	unsigned long fifo_stat;
+diff --git a/include/linux/omap-mailbox.h b/include/linux/omap-mailbox.h
+index f8ddf8e814167..3cc5c4ed7f5a6 100644
+--- a/include/linux/omap-mailbox.h
++++ b/include/linux/omap-mailbox.h
+@@ -10,8 +10,4 @@ typedef uintptr_t mbox_msg_t;
  
- 	spin_lock_init(&mq->lock);
+ #define omap_mbox_message(data) (u32)(mbox_msg_t)(data)
  
--	if (kfifo_alloc(&mq->fifo, mbox_kfifo_size, GFP_KERNEL))
-+	/* kfifo size sanity check: alignment and minimal size */
-+	size = ALIGN(mbox_kfifo_size, sizeof(u32));
-+	size = max_t(unsigned int, size, sizeof(u32));
-+	if (kfifo_alloc(&mq->fifo, size, GFP_KERNEL))
- 		goto error;
- 
- 	INIT_WORK(&mq->work, work);
-@@ -838,10 +842,6 @@ static int __init omap_mbox_init(void)
- 	if (err)
- 		return err;
- 
--	/* kfifo size sanity check: alignment and minimal size */
--	mbox_kfifo_size = ALIGN(mbox_kfifo_size, sizeof(u32));
--	mbox_kfifo_size = max_t(unsigned int, mbox_kfifo_size, sizeof(u32));
+-typedef int __bitwise omap_mbox_irq_t;
+-#define IRQ_TX ((__force omap_mbox_irq_t) 1)
+-#define IRQ_RX ((__force omap_mbox_irq_t) 2)
 -
- 	err = platform_driver_register(&omap_mbox_driver);
- 	if (err)
- 		class_unregister(&omap_mbox_class);
+ #endif /* OMAP_MAILBOX_H */
 -- 
 2.39.2
 
