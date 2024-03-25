@@ -1,135 +1,214 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570EF12C7FC;
-	Mon, 25 Mar 2024 17:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B081A70CA8;
+	Mon, 25 Mar 2024 18:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711387269; cv=none; b=rvPP9VVeg7KjNLu+veG2h/RqO2WGsrKNlDvm95CUbnGsY91CWGCQQebrQmy2yoEp9vh8MolvZMtgs9EbYAXRZNLVkGIghRB5F0nRBGXwKSsHJnDcwpUtvIQsWXlP5PueiCOs9JmQORi2eaMOjOHUSUUfOURJhbJDABxyH5/8524=
+	t=1711389808; cv=none; b=WWrdPpMdEx9lZrhSdxc2bTHyoPOaJ+ubsSVJ+0df+PJBU1B5WmDh0ATLpOfs7t6063MGuJE1FjVFPO1sYoe45f+bjO27KWGkh13wZ6V4GOELsPB/jehrX0M41Vk5g2KIkNJVN1bzC0eUR1Ebn2hSVToIe247Dh4pqXO8GEaPkes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711387269; c=relaxed/simple;
-	bh=R1WUXZH6NvJXZIW+AVDPYVj8JHUdfaLxcMfuJ+Z3tRM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnqe3l92jCKcmUnV9kWiwzqR5lalttocYS59/XrsyyNjSBvpShrQ3CNeopyg41yrkWtL6WbAGIeWYJnR0/CmShFSs2n5v/4yYgKywXTj1EuwidBKSZlnQpcTC/45+ve6suvn0TVOt6VsLZPQc2PnVjD3yuWJuj0hA2rJIOPMR84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rOsy2nDr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1711389808; c=relaxed/simple;
+	bh=6+aIENBQ8bUXwWkA6EnXZ933SM0pP3PJVnA3VIK47xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aJ+Uqmb93D9ANMsk/T5ElkiWtf9xX0vsvSZfq4jPZ9CZbbAZWGv8of7YHqnV1yg7V98yj3ZXwP4NWcibobtJFIOSrvT1uN/nGdcyaNY3nGJsIEbIvfQDyWdj+ZvHs+Q0T64UfEfFtnOkjqey8p1Kzv+MrHTTyPyiFM795Qz5T+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dq1Mn8fG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rOsy2nDr"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKp1i022688;
-	Mon, 25 Mar 2024 12:20:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1711387251;
-	bh=BSjhEIQgB4xQ5LpqF3Ho5CnJ8F2Hjtf+UQHpF8YH8Vg=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=rOsy2nDr9AtpOwUuSJHc56xUGOrQhPzmnjEpqG3Bf2yYp+D470U4O6aqd0R4WEZiI
-	 tYOOoR8nPCqO5nAYSdkq5+DPMe7Ja2A87wJcLwP4lsCnoYi4/MaVdetXtN7/r0Mbyi
-	 fEHQqlu19xnTljca2iqUE73uyBcKyKNwSy0VAtus=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 42PHKpU8105045
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 Mar 2024 12:20:51 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 25
- Mar 2024 12:20:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 25 Mar 2024 12:20:51 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 42PHKkYi075282;
-	Mon, 25 Mar 2024 12:20:50 -0500
-From: Andrew Davis <afd@ti.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
-        Nick Saulnier <nsaulnier@ti.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH 12/13] mailbox: omap: Reverse FIFO busy check logic
-Date: Mon, 25 Mar 2024 12:20:44 -0500
-Message-ID: <20240325172045.113047-13-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240325172045.113047-1-afd@ti.com>
-References: <20240325172045.113047-1-afd@ti.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dq1Mn8fG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964A5C433C7;
+	Mon, 25 Mar 2024 18:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711389808;
+	bh=6+aIENBQ8bUXwWkA6EnXZ933SM0pP3PJVnA3VIK47xg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=dq1Mn8fGGfsZ7tJAfQ+3OhyYR5QfWL6XrXUuY9mS1GYl7W53Ib/aikb7asrkQrZ7f
+	 tSHeRw9IFMClejcSerQAQyJrUUT45VJ7R9GcYqCt+XxduE3aSrQQ0C5JnOmhSE2E/o
+	 d+P7UXX/rdIwUaSrP8qTgBaRNAFkoXjNX1s72E8LribBKvcUtk9iGSuMncDud67AZv
+	 UZARax0GISEquSgX74aQjGebHkhj0Kg9kQhEcLRWK8B8Sq9ddyrH8H76LaxKo/ZEXV
+	 WmvuPwVdX4BgnUhVxJT0wJJ9T5hr/rDm/yzSFVc11ShZ2ewCLo/mgD2h5aEltlcXst
+	 YYp+Yn/zESgPg==
+Date: Mon, 25 Mar 2024 12:03:25 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <ZgG8bbEzhmX5nGRE@neat>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It is much more clear to check if the hardware FIFO is full and return
-EBUSY if true. This allows us to also remove one level of indention
-from the core of this function. It also makes the similarities between
-omap_mbox_chan_send_noirq() and omap_mbox_chan_send() more obvious.
+-Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+ready to enable it globally.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
+There is currently an object (`msg`) in multiple structures that
+contains a flexible structure (`struct glink_msg`), for example:
+
+struct glink_defer_cmd {
+        ...
+
+        struct glink_msg msg;
+        u8 data[];
+};
+
+So, in order to avoid ending up with a flexible-array member in the
+middle of another structure, we use the `__struct_group()` helper
+to separate the flexible array from the rest of the members in the
+flexible structure:
+
+struct glink_msg {
+        __struct_group(glink_msg_hdr, hdr, __packed,
+
+        ... the rest of members
+
+        );
+        u8 data[];
+} __packed;
+
+With the change described above, we now declare objects of the type of
+the tagged struct, in this case `struct glink_msg_hdr`, without
+embedding flexible arrays in the middle of other structures:
+
+struct glink_defer_cmd {
+        ...
+
+        struct glink_msg_hdr msg;
+        u8 data[];
+};
+
+Also, use `container_of()` to retrieve a pointer to the flexible structure.
+
+We also use the `DEFINE_RAW_FLEX()` helper for an in-stack definition of
+a flexible structure where the size of the flexible-array member is known
+at compile-time.
+
+So, with these changes, fix the following warnings:
+drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- drivers/mailbox/omap-mailbox.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 38 ++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index 8e2760d2c5b0c..c5d4083125856 100644
---- a/drivers/mailbox/omap-mailbox.c
-+++ b/drivers/mailbox/omap-mailbox.c
-@@ -375,34 +375,33 @@ static void omap_mbox_chan_shutdown(struct mbox_chan *chan)
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 82d460ff4777..878e3461bce1 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -30,9 +30,12 @@
+ #define RPM_GLINK_CID_MAX	65536
  
- static int omap_mbox_chan_send_noirq(struct omap_mbox *mbox, u32 msg)
+ struct glink_msg {
+-	__le16 cmd;
+-	__le16 param1;
+-	__le32 param2;
++	/* New members must be added within the __struct_group() macro below. */
++	__struct_group(glink_msg_hdr, hdr, __packed,
++		__le16 cmd;
++		__le16 param1;
++		__le32 param2;
++	);
+ 	u8 data[];
+ } __packed;
+ 
+@@ -48,7 +51,7 @@ struct glink_msg {
+ struct glink_defer_cmd {
+ 	struct list_head node;
+ 
+-	struct glink_msg msg;
++	struct glink_msg_hdr msg;
+ 	u8 data[];
+ };
+ 
+@@ -455,12 +458,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
+ static int qcom_glink_send_open_req(struct qcom_glink *glink,
+ 				    struct glink_channel *channel)
  {
--	int ret = -EBUSY;
-+	if (mbox_fifo_full(mbox))
-+		return -EBUSY;
+-	struct {
+-		struct glink_msg msg;
+-		u8 name[GLINK_NAME_SIZE];
+-	} __packed req;
++	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
+ 	int name_len = strlen(channel->name) + 1;
+-	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
++	int req_len = ALIGN(sizeof(*req) + name_len, 8);
+ 	int ret;
+ 	unsigned long flags;
  
--	if (!mbox_fifo_full(mbox)) {
--		omap_mbox_enable_irq(mbox, IRQ_RX);
--		mbox_fifo_write(mbox, msg);
--		ret = 0;
--		omap_mbox_disable_irq(mbox, IRQ_RX);
-+	omap_mbox_enable_irq(mbox, IRQ_RX);
-+	mbox_fifo_write(mbox, msg);
-+	omap_mbox_disable_irq(mbox, IRQ_RX);
+@@ -476,10 +476,10 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
  
--		/* we must read and ack the interrupt directly from here */
--		mbox_fifo_read(mbox);
--		ack_mbox_irq(mbox, IRQ_RX);
--	}
-+	/* we must read and ack the interrupt directly from here */
-+	mbox_fifo_read(mbox);
-+	ack_mbox_irq(mbox, IRQ_RX);
+ 	channel->lcid = ret;
  
--	return ret;
-+	return 0;
- }
+-	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
+-	req.msg.param1 = cpu_to_le16(channel->lcid);
+-	req.msg.param2 = cpu_to_le32(name_len);
+-	strcpy(req.name, channel->name);
++	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
++	req->param1 = cpu_to_le16(channel->lcid);
++	req->param2 = cpu_to_le32(name_len);
++	strcpy(req->data, channel->name);
  
- static int omap_mbox_chan_send(struct omap_mbox *mbox, u32 msg)
- {
--	int ret = -EBUSY;
--
--	if (!mbox_fifo_full(mbox)) {
--		mbox_fifo_write(mbox, msg);
--		ret = 0;
-+	if (mbox_fifo_full(mbox)) {
-+		/* always enable the interrupt */
-+		omap_mbox_enable_irq(mbox, IRQ_TX);
-+		return -EBUSY;
- 	}
+ 	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
+ 	if (ret)
+@@ -826,7 +826,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
  
-+	mbox_fifo_write(mbox, msg);
-+
- 	/* always enable the interrupt */
- 	omap_mbox_enable_irq(mbox, IRQ_TX);
--	return ret;
-+	return 0;
- }
+ 	INIT_LIST_HEAD(&dcmd->node);
  
- static int omap_mbox_chan_send_data(struct mbox_chan *chan, void *data)
+-	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
++	qcom_glink_rx_peek(glink,
++			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
++			   sizeof(dcmd->msg) + extra);
+ 
+ 	spin_lock(&glink->rx_lock);
+ 	list_add_tail(&dcmd->node, &glink->rx_queue);
+@@ -843,7 +845,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
+ 	struct glink_core_rx_intent *intent;
+ 	struct glink_channel *channel;
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		__le32 chunk_size;
+ 		__le32 left_size;
+ 	} __packed hdr;
+@@ -965,7 +967,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
+ 	};
+ 
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		struct intent_pair intents[];
+ 	} __packed * msg;
+ 
+@@ -1377,7 +1379,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 	struct glink_core_rx_intent *tmp;
+ 	int iid = 0;
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		__le32 chunk_size;
+ 		__le32 left_size;
+ 	} __packed req;
+@@ -1685,7 +1687,7 @@ static void qcom_glink_work(struct work_struct *work)
+ 		list_del(&dcmd->node);
+ 		spin_unlock_irqrestore(&glink->rx_lock, flags);
+ 
+-		msg = &dcmd->msg;
++		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
+ 		cmd = le16_to_cpu(msg->cmd);
+ 		param1 = le16_to_cpu(msg->param1);
+ 		param2 = le32_to_cpu(msg->param2);
 -- 
-2.39.2
+2.34.1
 
