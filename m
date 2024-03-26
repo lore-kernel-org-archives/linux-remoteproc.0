@@ -1,283 +1,150 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC0E1327E0;
-	Tue, 26 Mar 2024 14:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F07E12D75D
+	for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 14:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711462421; cv=none; b=sMzFE33hiSqoYJafl2QZagIvIAFwsM0r0P7jS92kVLnwOlQsQRMDHuHilJewKyTDklCwDoJVOE3yjWXz34OY3B6J5H44ZhKUS2ymi9x22tfXhFfbEXOQhm1bm1fUXHJGaH0wu7l8MgFldswu4HtzxOyEv/oIDYBCay+qCn/Kd3M=
+	t=1711462852; cv=none; b=tWkKcscJz3LRtzAIMZ+/f2Q6P/26e3KSCYiFnaiYa0KFNLj0gEqeJSNvQ/XaqOrrb7VROFhC7dxfzhUCVtc8NedF6740+IOdeF9egIPdCCVgW3fdbk1aVxpYirYqa+qXr1ggkr6t68/siUGw84mvn8JDYP+JI4S4hTEoJgpTNjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711462421; c=relaxed/simple;
-	bh=Re1PH2hCu1e07IWF+1MrHP4Y/fqaSYonRixS5qqGasI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=llaxJYBMwXrVJIfML1+oqvUK35t9Sfn51LxEK2VNrNa8tq83Gi8R4JsemmfMysoXcO342vr3eosYGyBFS0TufQ12XD2M3r7t+ZIWNiBbMdPOz9oyiD78uilLXeWQhneoefvy3kc4q+ODLiSChe/IxqBC95Vcm9NLQ/f3pfHzdNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UJX0sduR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711462852; c=relaxed/simple;
+	bh=zbQD84N+7FiwZVGN4FdwAoTPSjxSngVc8SRGDkRxKT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uziWq62gKPL8zm7sRIv3cpN1ONfkHETZr1VdJ8m2ORmSwpJF9EQR1bB8CQoLg3iVg3AnD3lpRxvAwltXRkjDsfzGTnpYB+qbkib/tr11yK8bAorxMU4qZ5WKTOZbYYbNuOGVGp8TFNfagqK4PDhHHKw5d66cW+0HoPHnFpaYqo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bbmPwVNX; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UJX0sduR"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42QDEBtp013826;
-	Tue, 26 Mar 2024 14:13:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type; s=qcppdkim1; bh=83+4yrRZKKSRLAx7hjbP
-	3gzxe9Itr1K1moV9W4DXC3A=; b=UJX0sduRpA29fP2y4HK3VkCVfRYq6p98TU8A
-	WWEB9G+Sc69LV6K4Y51UXw1eezTeMxSIw2sMNR+CAlikulaMRTGyUJvDHxGUokb8
-	9cI+40LnsY55mCLsRCI2MAkwkc/p1piI+761mYkNVKspsdbAC8bOLA8xF4wt7NFz
-	5iaqL0G42sNgcAwEtRviO5U8WGaTJsG5IQomT74k6CcObLJUdBVcP0Oxs4N3CDdI
-	QiL4Nhd2pygmtmUtpB77Hy6QtW/vHvk1T5YmrtT5hcGYwd8hbhpZQtpVc5Gr+2yj
-	AxHPOk/uusi5KB4oKIPFGD8nywe8reLCoqt8h9Fa3O3Llql1zQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x3q0n1phh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Mar 2024 14:13:35 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42QEDYPm027930
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Mar 2024 14:13:34 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 26 Mar 2024 07:13:32 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH v9 3/3] remoteproc: qcom: Remove minidump related data from qcom_common.c
-Date: Tue, 26 Mar 2024 19:43:14 +0530
-Message-ID: <1711462394-21540-3-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1711462394-21540-1-git-send-email-quic_mojha@quicinc.com>
-References: <1711462394-21540-1-git-send-email-quic_mojha@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbmPwVNX"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56c1364ff79so2655224a12.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 07:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711462849; x=1712067649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w0pAKQRmRJlibruDxzELT+hsaTaozLHFzCa7oaB4xn8=;
+        b=bbmPwVNXEd/szBZoH1EhEVxstgftUptVmc6d34/st2pIdBYWAjCn96Gncn+Vxu5c4e
+         MNJ4Bi8iEnOOlqBjgeQeRYNG5tS9M9B80FJVtCgiJvDGoZrrSZpQwMd2t5U47EutWzCM
+         MDygHjM58C2qWjF1Q+h4DbWZ+9ZLPl/7DHRH0/5KsB9kQ/BUcvZwaeAE9inM1A+SaXHm
+         YcPuJTWNdujv5sT31GhTvbFje/qpgcc70shaBWZQCByva3DkRctv88cjFfseLjOkxvRf
+         CgiZfeKketgbhNJI46X9BgblqH6Xg7cr16OZZByNXioOgXQBwiXXj105dy/zlTXF8AyW
+         EcDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711462849; x=1712067649;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w0pAKQRmRJlibruDxzELT+hsaTaozLHFzCa7oaB4xn8=;
+        b=I0YK/dwMzZ9rvbuZmS5ZgYcu5kVNzNEJ8KC0/yhx1c7oHKxWDAPfmvIWM0fq1WwBa7
+         VSAoMgyY+kfa1XNbFfRSksnlk0sdhVwtwQP/Qm6NaY4XktmQ3nKlDjVzgwaFClOSQSuf
+         zQ/+BJH9YiwszojKJCouFa8a/0/1BkDBq0lvXKRQ+lUcZJf4fpTSkG9IiIkPWtTXJ4vc
+         4xMB8rorAEAVY8zNIfurfSJK2MexH31Lol/ffIBBzUR7sUt6S1xICiP8dqBc8gwCFzv3
+         FcQt/y5rtbZQJxOALMR51B8dY0R+RXRPJBCFLyMUcMdIdcHE92YNrr4Q0qq8AzzP6ote
+         EIKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5wBq5BhtwX5Vx7bEwAd1PjgKwtZcMmlp1ttMwWsiDuMJz5LwM9HsOpuuL220B6JyNm8ieQFiVblwfM+Pne/31h00dFkXtLFLrM9/1erQPaQ==
+X-Gm-Message-State: AOJu0Yx18OxdiSABnAsKOPe0l6LPr2Qa3zk7xv3FAnBaG1ZKA6dlhkGM
+	G0L7zcUsSmDct88j3YNJzeWYrAyOmkCRQJ/Z99/XB7+BepuY6VpbRnANHRsZaPjfWM10Mfb7VUl
+	0Zd1NOCF7FDodUVfdai7J6c6YOeM8myyEBjn9uw==
+X-Google-Smtp-Source: AGHT+IHUzEZjvpgRrsCaJghKSKw3iJjB0Ths2J/HVSVaWGgZXcyLBL9k9H9rRvQGerf20MW83Wx/xJluM2WUtm1Yl3c=
+X-Received: by 2002:a50:9f4a:0:b0:56c:19d2:85be with SMTP id
+ b68-20020a509f4a000000b0056c19d285bemr3317223edf.11.1711462848915; Tue, 26
+ Mar 2024 07:20:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SmugVgATPULnEJy2gWCt7LJX01_ezQRk
-X-Proofpoint-ORIG-GUID: SmugVgATPULnEJy2gWCt7LJX01_ezQRk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-26_06,2024-03-21_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2403210001 definitions=main-2403260099
+References: <20240307194026.GA355455@e130802.arm.com> <CANLsYkzA20rQdTM6AOvFK=3o28GvcoRbckL=ri8RegHqyHaiCw@mail.gmail.com>
+ <20240311114442.GA82865@e130802.arm.com> <CANLsYkwReJvB1UWvR5TwtSs-w_VqU45kDSUzuQ0k+waetEn6Yw@mail.gmail.com>
+ <20240312173252.GA38992@e130802.arm.com> <ZfHTfNx4um8koTlY@p14s>
+ <20240313171756.GA82165@e130802.arm.com> <ZfMPS+qn0lh5IrS7@p14s>
+ <ZfMQyJWTh15P7Ru3@bogus> <CANLsYkzdfP8Np-XwPDt=GBNLYiSypd8tNdb29KUwr+tyi7gJEA@mail.gmail.com>
+ <20240325171339.GA368569@e130802.arm.com>
+In-Reply-To: <20240325171339.GA368569@e130802.arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 26 Mar 2024 08:20:37 -0600
+Message-ID: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] remoteproc: Add Arm remoteproc driver
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Drew.Reed@arm.com, Adam.Johnston@arm.com, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-As minidump specific data structure and functions move under
-config QCOM_RPROC_MINIDUMP, so remove minidump specific data
-from driver/remoteproc/qcom_common.c .
+On Mon, 25 Mar 2024 at 11:13, Abdellatif El Khlifi
+<abdellatif.elkhlifi@arm.com> wrote:
+>
+> Hi Mathieu,
+>
+> > > > > > > > > This is an initial patchset for allowing to turn on and off the remote processor.
+> > > > > > > > > The FW is already loaded before the Corstone-1000 SoC is powered on and this
+> > > > > > > > > is done through the FPGA board bootloader in case of the FPGA target. Or by the Corstone-1000 FVP model
+> > > > > > > > > (emulator).
+> > > > > > > > >
+> > > > > > > > >From the above I take it that booting with a preloaded firmware is a
+> > > > > > > > scenario that needs to be supported and not just a temporary stage.
+> > > > > > >
+> > > > > > > The current status of the Corstone-1000 SoC requires that there is
+> > > > > > > a preloaded firmware for the external core. Preloading is done externally
+> > > > > > > either through the FPGA bootloader or the emulator (FVP) before powering
+> > > > > > > on the SoC.
+> > > > > > >
+> > > > > >
+> > > > > > Ok
+> > > > > >
+> > > > > > > Corstone-1000 will be upgraded in a way that the A core running Linux is able
+> > > > > > > to share memory with the remote core and also being able to access the remote
+> > > > > > > core memory so Linux can copy the firmware to. This HW changes are still
+> > > > > > > This is why this patchset is relying on a preloaded firmware. And it's the step 1
+> > > > > > > of adding remoteproc support for Corstone.
+> > > > > > >
+> > > > > >
+> > > > > > Ok, so there is a HW problem where A core and M core can't see each other's
+> > > > > > memory, preventing the A core from copying the firmware image to the proper
+> > > > > > location.
+> > > > > >
+> > > > > > When the HW is fixed, will there be a need to support scenarios where the
+> > > > > > firmware image has been preloaded into memory?
+> > > > >
+> > > > > No, this scenario won't apply when we get the HW upgrade. No need for an
+> > > > > external entity anymore. The firmware(s) will all be files in the linux filesystem.
+> > > > >
+> > > >
+> > > > Very well.  I am willing to continue with this driver but it does so little that
+> > > > I wonder if it wouldn't simply be better to move forward with upstreaming when
+> > > > the HW is fixed.  The choice is yours.
+> > > >
+> > >
+> > > I think Robin has raised few points that need clarification. I think it was
+> > > done as part of DT binding patch. I share those concerns and I wanted to
+> > > reaching to the same concerns by starting the questions I asked on corstone
+> > > device tree changes.
+> > >
+> >
+> > I also agree with Robin's point of view.  Proceeding with an initial
+> > driver with minimal functionality doesn't preclude having complete
+> > bindings.  But that said and as I pointed out, it might be better to
+> > wait for the HW to be fixed before moving forward.
+>
+> We checked with the HW teams. The missing features will be implemented but
+> this will take time.
+>
+> The foundation driver as it is right now is still valuable for people wanting to
+> know how to power control Corstone external systems in a future proof manner
+> (even in the incomplete state). We prefer to address all the review comments
+> made so it can be merged. This includes making the DT binding as complete as
+> possible as you advised. Then, once the HW is ready, I'll implement the comms
+> and the FW reload part. Is that OK please ?
+>
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
-Changes in v9:
- - Change in patch order.
- - rebased it.
+I'm in agreement with that plan as long as we agree the current
+preloaded heuristic is temporary and is not a valid long term
+scenario.
 
-v8: https://lore.kernel.org/lkml/20240131105734.13090-1-quic_mojha@quicinc.com/
-v7: https://lore.kernel.org/lkml/20240109153200.12848-1-quic_mojha@quicinc.com/
-v6: https://lore.kernel.org/lkml/1700864395-1479-1-git-send-email-quic_mojha@quicinc.com/
-v5: https://lore.kernel.org/lkml/1694429639-21484-1-git-send-email-quic_mojha@quicinc.com/
-v4: https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
-
- drivers/remoteproc/qcom_common.c | 160 ---------------------------------------
- 1 file changed, 160 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 03e5f5d533eb..085fd73fa23a 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -17,7 +17,6 @@
- #include <linux/rpmsg/qcom_smd.h>
- #include <linux/slab.h>
- #include <linux/soc/qcom/mdt_loader.h>
--#include <linux/soc/qcom/smem.h>
- 
- #include "remoteproc_internal.h"
- #include "qcom_common.h"
-@@ -26,61 +25,6 @@
- #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
- #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
- 
--#define MAX_NUM_OF_SS           10
--#define MAX_REGION_NAME_LENGTH  16
--#define SBL_MINIDUMP_SMEM_ID	602
--#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
--#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
--#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
--
--/**
-- * struct minidump_region - Minidump region
-- * @name		: Name of the region to be dumped
-- * @seq_num:		: Use to differentiate regions with same name.
-- * @valid		: This entry to be dumped (if set to 1)
-- * @address		: Physical address of region to be dumped
-- * @size		: Size of the region
-- */
--struct minidump_region {
--	char	name[MAX_REGION_NAME_LENGTH];
--	__le32	seq_num;
--	__le32	valid;
--	__le64	address;
--	__le64	size;
--};
--
--/**
-- * struct minidump_subsystem - Subsystem's SMEM Table of content
-- * @status : Subsystem toc init status
-- * @enabled : if set to 1, this region would be copied during coredump
-- * @encryption_status: Encryption status for this subsystem
-- * @encryption_required : Decides to encrypt the subsystem regions or not
-- * @region_count : Number of regions added in this subsystem toc
-- * @regions_baseptr : regions base pointer of the subsystem
-- */
--struct minidump_subsystem {
--	__le32	status;
--	__le32	enabled;
--	__le32	encryption_status;
--	__le32	encryption_required;
--	__le32	region_count;
--	__le64	regions_baseptr;
--};
--
--/**
-- * struct minidump_global_toc - Global Table of Content
-- * @status : Global Minidump init status
-- * @md_revision : Minidump revision
-- * @enabled : Minidump enable status
-- * @subsystems : Array of subsystems toc
-- */
--struct minidump_global_toc {
--	__le32				status;
--	__le32				md_revision;
--	__le32				enabled;
--	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
--};
--
- struct qcom_ssr_subsystem {
- 	const char *name;
- 	struct srcu_notifier_head notifier_list;
-@@ -90,110 +34,6 @@ struct qcom_ssr_subsystem {
- static LIST_HEAD(qcom_ssr_subsystem_list);
- static DEFINE_MUTEX(qcom_ssr_subsys_lock);
- 
--static void qcom_minidump_cleanup(struct rproc *rproc)
--{
--	struct rproc_dump_segment *entry, *tmp;
--
--	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
--		list_del(&entry->node);
--		kfree(entry->priv);
--		kfree(entry);
--	}
--}
--
--static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
--			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
--				void *dest, size_t offset, size_t size))
--{
--	struct minidump_region __iomem *ptr;
--	struct minidump_region region;
--	int seg_cnt, i;
--	dma_addr_t da;
--	size_t size;
--	char *name;
--
--	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
--		dev_err(&rproc->dev, "dump segment list already populated\n");
--		return -EUCLEAN;
--	}
--
--	seg_cnt = le32_to_cpu(subsystem->region_count);
--	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
--		      seg_cnt * sizeof(struct minidump_region));
--	if (!ptr)
--		return -EFAULT;
--
--	for (i = 0; i < seg_cnt; i++) {
--		memcpy_fromio(&region, ptr + i, sizeof(region));
--		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
--			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
--			if (!name) {
--				iounmap(ptr);
--				return -ENOMEM;
--			}
--			da = le64_to_cpu(region.address);
--			size = le64_to_cpu(region.size);
--			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
--		}
--	}
--
--	iounmap(ptr);
--	return 0;
--}
--
--void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
--		void (*rproc_dumpfn_t)(struct rproc *rproc,
--		struct rproc_dump_segment *segment, void *dest, size_t offset,
--		size_t size))
--{
--	int ret;
--	struct minidump_subsystem *subsystem;
--	struct minidump_global_toc *toc;
--
--	/* Get Global minidump ToC*/
--	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
--
--	/* check if global table pointer exists and init is set */
--	if (IS_ERR(toc) || !toc->status) {
--		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
--		return;
--	}
--
--	/* Get subsystem table of contents using the minidump id */
--	subsystem = &toc->subsystems[minidump_id];
--
--	/**
--	 * Collect minidump if SS ToC is valid and segment table
--	 * is initialized in memory and encryption status is set.
--	 */
--	if (subsystem->regions_baseptr == 0 ||
--	    le32_to_cpu(subsystem->status) != 1 ||
--	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
--		return rproc_coredump(rproc);
--	}
--
--	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
--		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
--		return;
--	}
--
--	/**
--	 * Clear out the dump segments populated by parse_fw before
--	 * re-populating them with minidump segments.
--	 */
--	rproc_coredump_cleanup(rproc);
--
--	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
--	if (ret) {
--		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
--		goto clean_minidump;
--	}
--	rproc_coredump_using_sections(rproc);
--clean_minidump:
--	qcom_minidump_cleanup(rproc);
--}
--EXPORT_SYMBOL_GPL(qcom_minidump);
--
- static int glink_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
--- 
-2.7.4
-
+> Cheers,
+> Abdellatif
