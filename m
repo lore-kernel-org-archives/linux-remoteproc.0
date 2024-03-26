@@ -1,214 +1,243 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B081A70CA8;
-	Mon, 25 Mar 2024 18:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34B61C6A3
+	for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 04:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711389808; cv=none; b=WWrdPpMdEx9lZrhSdxc2bTHyoPOaJ+ubsSVJ+0df+PJBU1B5WmDh0ATLpOfs7t6063MGuJE1FjVFPO1sYoe45f+bjO27KWGkh13wZ6V4GOELsPB/jehrX0M41Vk5g2KIkNJVN1bzC0eUR1Ebn2hSVToIe247Dh4pqXO8GEaPkes=
+	t=1711426294; cv=none; b=ad9PDd7/ns0rTYblVH9HYSnjEiQ4rQkvB6XwX16SQG/UjyTTXFahzAyJdLx5TXH5ZmhC5fga1X89ne9/fe5sQKn9u5wgHzZQwFpQguoUZQXK61LxHbTcKSrYc9R2zI0uRmsRWcJrXMvDzq5sFAH2IMb9tMEyrgpT/D2tdxxOpdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711389808; c=relaxed/simple;
-	bh=6+aIENBQ8bUXwWkA6EnXZ933SM0pP3PJVnA3VIK47xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aJ+Uqmb93D9ANMsk/T5ElkiWtf9xX0vsvSZfq4jPZ9CZbbAZWGv8of7YHqnV1yg7V98yj3ZXwP4NWcibobtJFIOSrvT1uN/nGdcyaNY3nGJsIEbIvfQDyWdj+ZvHs+Q0T64UfEfFtnOkjqey8p1Kzv+MrHTTyPyiFM795Qz5T+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dq1Mn8fG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711426294; c=relaxed/simple;
+	bh=BaNIUMYLUfYIAxF8Bo7Ytv4+BqNGV2rWnneTGhHa1PQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cGOG6UgJSUeNUihIU6PlBCvUuqgHPuVI7V3/8BL93Iv3wu3KaiScdQaQ85ah//q3/7qr+q6FULG2fKR2GqZm9C7acObCpJ0700BiWBwjj3rjySGIEaDtcXAFI0RjpnM2/Vt38ymYwmshWnXYpMCiIW8Ko+XEkcrh1/9vU3cl7p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jIEjV40H; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dq1Mn8fG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964A5C433C7;
-	Mon, 25 Mar 2024 18:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711389808;
-	bh=6+aIENBQ8bUXwWkA6EnXZ933SM0pP3PJVnA3VIK47xg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dq1Mn8fGGfsZ7tJAfQ+3OhyYR5QfWL6XrXUuY9mS1GYl7W53Ib/aikb7asrkQrZ7f
-	 tSHeRw9IFMClejcSerQAQyJrUUT45VJ7R9GcYqCt+XxduE3aSrQQ0C5JnOmhSE2E/o
-	 d+P7UXX/rdIwUaSrP8qTgBaRNAFkoXjNX1s72E8LribBKvcUtk9iGSuMncDud67AZv
-	 UZARax0GISEquSgX74aQjGebHkhj0Kg9kQhEcLRWK8B8Sq9ddyrH8H76LaxKo/ZEXV
-	 WmvuPwVdX4BgnUhVxJT0wJJ9T5hr/rDm/yzSFVc11ShZ2ewCLo/mgD2h5aEltlcXst
-	 YYp+Yn/zESgPg==
-Date: Mon, 25 Mar 2024 12:03:25 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZgG8bbEzhmX5nGRE@neat>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jIEjV40H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711426291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wQsyVicGgRcIN44As4bUegtDIQaw+ubTJUdf1CG0g5E=;
+	b=jIEjV40HtFWOe3dEAMsHystkTiqSiSqSFN80npmSevKPrzrx2RI7Vz8q4rn0P75vjZIaLA
+	CgtZoCthytYdzajyuJuwdkGaBWs2wdzH5cg0YzVjDQxvI5NHDwNBGWLcDVZGqEbCB8q1sy
+	O3DFM8KbePzkVlIL2whh4FNuDJZjYS0=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-R2c7J9QzP_C6KBKzuXsoGQ-1; Tue, 26 Mar 2024 00:11:27 -0400
+X-MC-Unique: R2c7J9QzP_C6KBKzuXsoGQ-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5ca5b61c841so3557099a12.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Mar 2024 21:11:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711426287; x=1712031087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wQsyVicGgRcIN44As4bUegtDIQaw+ubTJUdf1CG0g5E=;
+        b=n0O7s22JwFswi1XmwIbIhzc3aO+OH6YR7YbcPXgzuWIhOOXEJXT9KL2jP9S2F7Qy/q
+         +YM+hgQfkmKFqUADqWwoaiitfqBhTJMqRP5aZA9isZTV1OtMnZzG/DHR4z8N0k4+FC3t
+         7g4EBYR5HV5Aik2UD1qfSQGtmHyYFk4Yq9HZhCm56ptGZUz2mwFszPGcG3ENbAWv9gFz
+         I40Cpuru6XG8l218V3mw+2F/OiyZjHIPZLMDsoFV1ebMAqWRE9kbWNbkG9RPD3hQN/nu
+         abRFoBzFTXbXbZ8a73dahsMAViTmOJCJjNf31o9Goa9mrwg5lKT7QFHWvUIMy6ZzA7G2
+         39gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVucxqUbbS7Vk/spjYfAcn6WTa2hGo9MvI8Rvoji6vdrMSBIUiw6FYXtW6fpE9Z4E+fEI1iTgkvRVObmxbje5nEiKItzsH1nGPV1Vq6wdkndw==
+X-Gm-Message-State: AOJu0Yz0S8BlF5TQDyppfi77FyEGbe4lKjLn062v35Uy4NkAhbAppLxJ
+	iODoWlJ556v+CXi2MycQ74VYazIDbKheP9FaCFvvRDn6EcFOAe22PWVMrWx9WsHGrP/IudvOnPZ
+	Qsi5SQ0cJe17mDvYkXQkkLWNDVqHWWai+m/zY+bLtUfgEIzjwMhwPMD0me17PIZ4ReMdpdw4kJY
+	OuH/BdfgPx2FsIn8JAlpl4y7n01PnyQ8PCUY5QqvtoeA==
+X-Received: by 2002:a05:6a20:258c:b0:1a3:c38d:3faa with SMTP id k12-20020a056a20258c00b001a3c38d3faamr5648392pzd.42.1711426286935;
+        Mon, 25 Mar 2024 21:11:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFiRyQj7rPG1kUKPZ23XZNSein3zhu5gMpJRn7QAtQMWCO9dHpV877gL0Y33Jgc90wBoRXEcgX2bRa4NFcju8o=
+X-Received: by 2002:a05:6a20:258c:b0:1a3:c38d:3faa with SMTP id
+ k12-20020a056a20258c00b001a3c38d3faamr5648365pzd.42.1711426286588; Mon, 25
+ Mar 2024 21:11:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240321101532.59272-1-xuanzhuo@linux.alibaba.com>
+ <20240321101532.59272-2-xuanzhuo@linux.alibaba.com> <CABVzXAkwcKMb7pC21aUDLEM=RoyOtGA2Vim+LF0oWQ7mjUx68g@mail.gmail.com>
+ <b420a545-0a7a-431c-aa48-c5db3d221420@redhat.com> <1711346901.0977402-2-xuanzhuo@linux.alibaba.com>
+ <87zfum7ii8.fsf@redhat.com>
+In-Reply-To: <87zfum7ii8.fsf@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 26 Mar 2024 12:11:15 +0800
+Message-ID: <CACGkMEv0g9CJmZzO4bH2BjcL5Wc0NxE6+zQ2Wgg=3v2AqR=XQA@mail.gmail.com>
+Subject: Re: [PATCH vhost v4 1/6] virtio_balloon: remove the dependence where
+ names[] is null
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Halil Pasic <pasic@linux.ibm.com>, 
+	Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, linux-um@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org, 
+	Daniel Verkamp <dverkamp@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-ready to enable it globally.
+On Mon, Mar 25, 2024 at 5:44=E2=80=AFPM Cornelia Huck <cohuck@redhat.com> w=
+rote:
+>
+> On Mon, Mar 25 2024, Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
+>
+> > On Fri, 22 Mar 2024 22:02:27 +0100, David Hildenbrand <david@redhat.com=
+> wrote:
+> >> On 22.03.24 20:16, Daniel Verkamp wrote:
+> >> > On Thu, Mar 21, 2024 at 3:16=E2=80=AFAM Xuan Zhuo <xuanzhuo@linux.al=
+ibaba.com> wrote:
+> >> >>
+> >> >> Currently, the init_vqs function within the virtio_balloon driver r=
+elies
+> >> >> on the condition that certain names array entries are null in order=
+ to
+> >> >> skip the initialization of some virtual queues (vqs). This behavior=
+ is
+> >> >> unique to this part of the codebase. In an upcoming commit, we plan=
+ to
+> >> >> eliminate this dependency by removing the function entirely. Theref=
+ore,
+> >> >> with this change, we are ensuring that the virtio_balloon no longer
+> >> >> depends on the aforementioned function.
+> >> >
+> >> > This is a behavior change, and I believe means that the driver no
+> >> > longer follows the spec [1].
+> >> >
+> >> > For example, the spec says that virtqueue 4 is reporting_vq, and
+> >> > reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set,
+> >> > but there is no mention of its virtqueue number changing if other
+> >> > features are not set. If a device/driver combination negotiates
+> >> > VIRTIO_BALLOON_F_PAGE_REPORTING but not VIRTIO_BALLOON_F_STATS_VQ or
+> >> > VIRTIO_BALLOON_F_FREE_PAGE_HINT, my reading of the specification is
+> >> > that reporting_vq should still be vq number 4, and vq 2 and 3 should
+> >> > be unused. This patch would make the reporting_vq use vq 2 instead i=
+n
+> >> > this case.
+> >> >
+> >> > If the new behavior is truly intended, then the spec does not match
+> >> > reality, and it would need to be changed first (IMO); however,
+> >> > changing the spec would mean that any devices implemented correctly
+> >> > per the previous spec would now be wrong, so some kind of mechanism
+> >> > for detecting the new behavior would be warranted, e.g. a new
+> >> > non-device-specific virtio feature flag.
+> >> >
+> >> > I have brought this up previously on the virtio-comment list [2], bu=
+t
+> >> > it did not receive any satisfying answers at that time.
+>
+> I had missed it back then, but now that I read it, I realize that we
+> really have a bit of a mess here :/
+>
+> >>
+> >> Rings a bell, but staring at this patch, I thought that there would be
+> >> no behavioral change. Maybe I missed it :/
+> >>
+> >> I stared at virtio_ccw_find_vqs(), and it contains:
+> >>
+> >>      for (i =3D 0; i < nvqs; ++i) {
+> >>              if (!names[i]) {
+> >>                      vqs[i] =3D NULL;
+> >>                      continue;
+> >>              }
+> >>
+> >>              vqs[i] =3D virtio_ccw_setup_vq(vdev, queue_idx++, callbac=
+ks[i],
+> >>                                           names[i], ctx ? ctx[i] : fal=
+se,
+> >>                                           ccw);
+> >>              if (IS_ERR(vqs[i])) {
+> >>                      ret =3D PTR_ERR(vqs[i]);
+> >>                      vqs[i] =3D NULL;
+> >>                      goto out;
+> >>              }
+> >>      }
+> >>
+> >> We increment queue_idx only if an entry was not NULL. SO I thought no
+> >> behavioral change? (at least on s390x :) )
+>
+> The code for pci behaves in the same way.
+>
+> >>
+> >> It's late here in Germany, so maybe I'm missing something.
+> >
+> > I think we've encountered a tricky issue. Currently, all transports han=
+dle queue
+> > id by incrementing them in order, without skipping any queue id. So, I'=
+m quite
+> > surprised that my changes would affect the spec. The fact that the
+> > 'names' value is null is just a small trick in the Linux kernel impleme=
+ntation
+> > and should not have an impact on the queue id.
+> >
+> > I believe that my recent modification will not affect the spec. So, let=
+'s
+> > consider the issues with this patch set separately for now. Regarding t=
+he Memory
+> > Balloon Device, it has been operational for many years, and perhaps we =
+should
+> > add to the spec that if a certain vq does not exist, then subsequent vq=
+s will
+> > take over its id.
+>
+> The changes here do not really seem to affect the spec issue that Daniel
+> had noted, unless I'm reading the code wrong.
 
-There is currently an object (`msg`) in multiple structures that
-contains a flexible structure (`struct glink_msg`), for example:
+Spec seems to be wrong here:
 
-struct glink_defer_cmd {
-        ...
+5.5.2 Virtqueues
 
-        struct glink_msg msg;
-        u8 data[];
-};
+0 inflateq 1 deflateq 2 statsq 3 free_page_vq4 r eporting_vq
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of another structure, we use the `__struct_group()` helper
-to separate the flexible array from the rest of the members in the
-flexible structure:
+And this is the Qemu implementation:
 
-struct glink_msg {
-        __struct_group(glink_msg_hdr, hdr, __packed,
+5.5.2 Virtqueues
 
-        ... the rest of members
+    s->ivq =3D virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
+    s->dvq =3D virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
+    s->svq =3D virtio_add_queue(vdev, 128, virtio_balloon_receive_stats);
 
-        );
-        u8 data[];
-} __packed;
+    if (virtio_has_feature(s->host_features, VIRTIO_BALLOON_F_FREE_PAGE_HIN=
+T)) {
+        s->free_page_vq =3D virtio_add_queue(vdev, VIRTQUEUE_MAX_SIZE,
+                                           virtio_balloon_handle_free_page_=
+vq);
+        precopy_add_notifier(&s->free_page_hint_notify);
 
-With the change described above, we now declare objects of the type of
-the tagged struct, in this case `struct glink_msg_hdr`, without
-embedding flexible arrays in the middle of other structures:
+        object_ref(OBJECT(s->iothread));
+        s->free_page_bh =3D
+aio_bh_new_guarded(iothread_get_aio_context(s->iothread),
 
-struct glink_defer_cmd {
-        ...
+virtio_ballloon_get_free_page_hints, s,
+                                             &dev->mem_reentrancy_guard);
+    }
 
-        struct glink_msg_hdr msg;
-        u8 data[];
-};
+    if (virtio_has_feature(s->host_features, VIRTIO_BALLOON_F_REPORTING)) {
+        s->reporting_vq =3D virtio_add_queue(vdev, 32,
+                                           virtio_balloon_handle_report);
+    }
 
-Also, use `container_of()` to retrieve a pointer to the flexible structure.
+We need to fix it.
 
-We also use the `DEFINE_RAW_FLEX()` helper for an in-stack definition of
-a flexible structure where the size of the flexible-array member is known
-at compile-time.
+>
+> However, we should try to address the spec mess, where we have at least
+> some of the most popular/important implementations behaving differently
+> than the spec describes... I would suggest to discuss that on the virtio
+> lists -- but they are still dead, and at this point I'm just hoping
+> they'll come back eventually :/
+>
 
-So, with these changes, fix the following warnings:
-drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/rpmsg/qcom_glink_native.c | 38 ++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 82d460ff4777..878e3461bce1 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -30,9 +30,12 @@
- #define RPM_GLINK_CID_MAX	65536
- 
- struct glink_msg {
--	__le16 cmd;
--	__le16 param1;
--	__le32 param2;
-+	/* New members must be added within the __struct_group() macro below. */
-+	__struct_group(glink_msg_hdr, hdr, __packed,
-+		__le16 cmd;
-+		__le16 param1;
-+		__le32 param2;
-+	);
- 	u8 data[];
- } __packed;
- 
-@@ -48,7 +51,7 @@ struct glink_msg {
- struct glink_defer_cmd {
- 	struct list_head node;
- 
--	struct glink_msg msg;
-+	struct glink_msg_hdr msg;
- 	u8 data[];
- };
- 
-@@ -455,12 +458,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
- static int qcom_glink_send_open_req(struct qcom_glink *glink,
- 				    struct glink_channel *channel)
- {
--	struct {
--		struct glink_msg msg;
--		u8 name[GLINK_NAME_SIZE];
--	} __packed req;
-+	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
- 	int name_len = strlen(channel->name) + 1;
--	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
-+	int req_len = ALIGN(sizeof(*req) + name_len, 8);
- 	int ret;
- 	unsigned long flags;
- 
-@@ -476,10 +476,10 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
- 
- 	channel->lcid = ret;
- 
--	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
--	req.msg.param1 = cpu_to_le16(channel->lcid);
--	req.msg.param2 = cpu_to_le32(name_len);
--	strcpy(req.name, channel->name);
-+	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
-+	req->param1 = cpu_to_le16(channel->lcid);
-+	req->param2 = cpu_to_le32(name_len);
-+	strcpy(req->data, channel->name);
- 
- 	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
- 	if (ret)
-@@ -826,7 +826,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
- 
- 	INIT_LIST_HEAD(&dcmd->node);
- 
--	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
-+	qcom_glink_rx_peek(glink,
-+			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
-+			   sizeof(dcmd->msg) + extra);
- 
- 	spin_lock(&glink->rx_lock);
- 	list_add_tail(&dcmd->node, &glink->rx_queue);
-@@ -843,7 +845,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
- 	struct glink_core_rx_intent *intent;
- 	struct glink_channel *channel;
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		__le32 chunk_size;
- 		__le32 left_size;
- 	} __packed hdr;
-@@ -965,7 +967,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
- 	};
- 
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		struct intent_pair intents[];
- 	} __packed * msg;
- 
-@@ -1377,7 +1379,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	struct glink_core_rx_intent *tmp;
- 	int iid = 0;
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		__le32 chunk_size;
- 		__le32 left_size;
- 	} __packed req;
-@@ -1685,7 +1687,7 @@ static void qcom_glink_work(struct work_struct *work)
- 		list_del(&dcmd->node);
- 		spin_unlock_irqrestore(&glink->rx_lock, flags);
- 
--		msg = &dcmd->msg;
-+		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
- 		cmd = le16_to_cpu(msg->cmd);
- 		param1 = le16_to_cpu(msg->param1);
- 		param2 = le32_to_cpu(msg->param2);
--- 
-2.34.1
+Thanks
 
