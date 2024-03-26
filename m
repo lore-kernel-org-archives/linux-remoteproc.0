@@ -1,261 +1,205 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D266513CC41;
-	Tue, 26 Mar 2024 19:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A6613F440
+	for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 20:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711481570; cv=none; b=oL7B7wR7ldHVEQ9pkEKiGlCpmLBsVe2ScFYEmFCQy7tXiK+/YpYJu0cf9AFbybXCR6gAHHuZT7VOoC8CuJ+T4vmPkFw4extfrKu3PK7b43tPmFXlMOZ26YWgdsOBIximYMmKG91g5ZH2+MrGorExGsS0VMOTfPcNHBN/VYdl+tU=
+	t=1711484668; cv=none; b=JGsXYB3CfwWr4CBY5LJNCkpAiQWz7W0Pgwgksglb9pZ61aja7GrmrKlcGNdAfjiLy7oL+nVuNKSsiyNq1Gf/6wK0lJWM4d5PreyQTihGdLobRbFpobusAq0yRlvYtrcKlJvYMm8xmnOTsWiPMDt1/qhSUttl7CEl2AsS8OKnapY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711481570; c=relaxed/simple;
-	bh=ASYjIA4rikkNb+Dh03vIWzKDq33NHhyCndtc/W5T1ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jMKLM3EqXCB0i6t+v3AgAAOYwrvCVJkJILx4HmZPz9PDl7zyfGL0dlhsmk15L3oGdRW1OYuODLMwKqZBwB5KgDA2HF/Vmrul7IdNKNiK8paPtke3rSUCVGLXpAnq5ruxPxpRbPkZADwWDQQzxmfLPWg1TSaJ3HJ9Xm9c48pUDmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=t0c8byvX; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1711484668; c=relaxed/simple;
+	bh=mWwfdGmaJI5/v599SuFLYqcN0BETsqK70kzkErBfIJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bb0aGmFMeU0Ai+hBTp8FFOJLAdObrTyCpxZ50GlbbDeYygpYxqP7MQRiNcahavWa87IPtz88jNmahqad1rI+nLu422tq5g1ExmDoWoxNqakwP94fDCqEZzBTiFLsXDpVelTY4heI94hTNlTXpMlDOtX7c92Y9Zrq6yAw4PGb5CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oA1E0f2C; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="t0c8byvX"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42QCr0FS007214;
-	Tue, 26 Mar 2024 20:32:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=Ul+HEbI6cYBHB5QYUmeHA+sVOAzeUux6CAaaAFte2o8=; b=t0
-	c8byvXd3G/ZfwhVg/grm1HrXYOYgFdELjr997+3MctOBT+3K1ywh0qj6Y8+XYjvK
-	po+1zMBWfg7LRh/uRheNJ0FIoahXu4B8GihUKV3mVeT8u6iErYMjnLhEruTKuvXb
-	D+kCgKeZnYIBFubrGOGegRcLMpLuFBufBWnbHf4TBxWTy68nyO1rXY8+sP86A++h
-	62Blvqf0fvnsxaM8bta6OQN3JWst5jpsOpjmQVLdLDxzRAI8T6RcV4lCZH/sWWsl
-	1vuQn26YyEMd7LoZYPsEvJNpq1tAUo4ZdDAd1yKoBTSIwt54bBViPJVSrDu2tiFM
-	6z4fxQX723ZWMRwo2BQQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3x1n39f33c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Mar 2024 20:32:28 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 730E54002D;
-	Tue, 26 Mar 2024 20:32:25 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BB7A1228A50;
-	Tue, 26 Mar 2024 20:31:35 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 26 Mar
- 2024 20:31:35 +0100
-Received: from [10.201.21.20] (10.201.21.20) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 26 Mar
- 2024 20:31:34 +0100
-Message-ID: <a08add21-b8ff-434a-9689-6af8b05b1965@foss.st.com>
-Date: Tue, 26 Mar 2024 20:31:33 +0100
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oA1E0f2C"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a466fc8fcccso768964666b.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 13:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1711484664; x=1712089464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pnO3hfDzNJhG1W8n4621OnBzOy9cpmEtEz5rXGN5tRg=;
+        b=oA1E0f2CaB1GiL1dpzV8XMmWO4z7f9HPGDLCdu4gLvaMwa5GuenxGmFtEGypCE1RIr
+         5J0kveoU40wYNgDxkqqW626XiMeog2jBfgkt1QGcEv9O+1ev9nHMyV0m/Mj9xawhkFAA
+         yJ250IP+MOMCMXsWcyZTR2WCeMEYQJeiR3TdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711484664; x=1712089464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pnO3hfDzNJhG1W8n4621OnBzOy9cpmEtEz5rXGN5tRg=;
+        b=RO52Uokqs6jya5Jc4shjf7maWornQ4wEuDZVeifXh6xRSxHya9W+VCFmCx/Rm+HbPV
+         +6CpvlnL2Qgu33rTxsMknptSB9JeW6lSd/ZKT5GVXwPV8kIUJwLju0Y3Za38QhNEEU53
+         DFH76SPEwNEspsQh8ulExPe8upq7yuQB6svHKnOvSBYUaz3WFknh5jkpdkSWjJEwuHtL
+         9RM2wFpYaDV2L45tfogTEl0+CafqCSZ5jOumcYbQBjeVxhWK7flSZf7EBs4reTvUoQ0n
+         mTlcw23PNvtf3awVAMnyR3FhrsXqyziPJWopR+xwWnpPF6+Tn1QX3uqbL6yzbJZ1EtQK
+         YPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZvL2QbdMj1lp7eeDbNVHnPueLacWTuPlwBo60q1gtjZDDYhSRnwqHEpvIKhLLJilo6WVEdQGIGQ9Rb3Be5jpzDJt/R2sRSDYsqTpQtxzdhQ==
+X-Gm-Message-State: AOJu0YzmNKVq0QYeGeTmhsCxBJ9mx6Tx3amb7fhhOk+IM796sB52wKCb
+	a2lqoahBk71/DfKafO32bVymmUzBshNp8sPv+NyR8RR6CLIHZyKUdLfnuC4p3XiwyiNy4a+uGGs
+	eiA==
+X-Google-Smtp-Source: AGHT+IFKc5VGLHC0xckyLGA7IvrEClskRJKR5ZE1wFcZ2M8dwAxJIF0zbvttLtLnhk1abnn7KL7YaQ==
+X-Received: by 2002:a17:906:6bd7:b0:a46:bbb3:f0d2 with SMTP id t23-20020a1709066bd700b00a46bbb3f0d2mr1603692ejs.47.1711484664147;
+        Tue, 26 Mar 2024 13:24:24 -0700 (PDT)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id e23-20020a1709062c1700b00a47147abc95sm4544551ejh.41.2024.03.26.13.24.23
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Mar 2024 13:24:23 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4148c65e890so11250275e9.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Mar 2024 13:24:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKDdHsUjBtADtVWlgYQD5Bm7UKMB7sJU6RI4KzMIqjtrvZ2LbBL4xUU+s2wusqN1xgDpNiLQkavhugLNtOisnT52SMOv7omPOwQ567t18OHw==
+X-Received: by 2002:a17:907:2686:b0:a47:3c66:b396 with SMTP id
+ bn6-20020a170907268600b00a473c66b396mr1888708ejc.64.1711484642859; Tue, 26
+ Mar 2024 13:24:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Content-Language: en-US
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20240308144708.62362-1-arnaud.pouliquen@foss.st.com>
- <20240308144708.62362-5-arnaud.pouliquen@foss.st.com> <ZgGrnkcebcIQQic6@p14s>
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <ZgGrnkcebcIQQic6@p14s>
+References: <20240321101532.59272-1-xuanzhuo@linux.alibaba.com>
+ <20240321101532.59272-2-xuanzhuo@linux.alibaba.com> <CABVzXAkwcKMb7pC21aUDLEM=RoyOtGA2Vim+LF0oWQ7mjUx68g@mail.gmail.com>
+ <b420a545-0a7a-431c-aa48-c5db3d221420@redhat.com> <1711346901.0977402-2-xuanzhuo@linux.alibaba.com>
+ <041867ab-6cff-4bd1-9a44-2ca847c1ad63@redhat.com>
+In-Reply-To: <041867ab-6cff-4bd1-9a44-2ca847c1ad63@redhat.com>
+From: Daniel Verkamp <dverkamp@chromium.org>
+Date: Tue, 26 Mar 2024 13:23:35 -0700
+X-Gmail-Original-Message-ID: <CABVzXA=QHxAbkN5qorb5e8gKtd-c9P61z_ft07PPkkzaDMxB_A@mail.gmail.com>
+Message-ID: <CABVzXA=QHxAbkN5qorb5e8gKtd-c9P61z_ft07PPkkzaDMxB_A@mail.gmail.com>
+Subject: Re: [PATCH vhost v4 1/6] virtio_balloon: remove the dependence where
+ names[] is null
+To: David Hildenbrand <david@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, virtualization@lists.linux.dev, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-26_08,2024-03-21_02,2023-05-22_02
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 25, 2024 at 2:11=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 25.03.24 07:08, Xuan Zhuo wrote:
+> > On Fri, 22 Mar 2024 22:02:27 +0100, David Hildenbrand <david@redhat.com=
+> wrote:
+> >> On 22.03.24 20:16, Daniel Verkamp wrote:
+> >>> On Thu, Mar 21, 2024 at 3:16=E2=80=AFAM Xuan Zhuo <xuanzhuo@linux.ali=
+baba.com> wrote:
+> >>>>
+> >>>> Currently, the init_vqs function within the virtio_balloon driver re=
+lies
+> >>>> on the condition that certain names array entries are null in order =
+to
+> >>>> skip the initialization of some virtual queues (vqs). This behavior =
+is
+> >>>> unique to this part of the codebase. In an upcoming commit, we plan =
+to
+> >>>> eliminate this dependency by removing the function entirely. Therefo=
+re,
+> >>>> with this change, we are ensuring that the virtio_balloon no longer
+> >>>> depends on the aforementioned function.
+> >>>
+> >>> This is a behavior change, and I believe means that the driver no
+> >>> longer follows the spec [1].
+> >>>
+> >>> For example, the spec says that virtqueue 4 is reporting_vq, and
+> >>> reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set,
+> >>> but there is no mention of its virtqueue number changing if other
+> >>> features are not set. If a device/driver combination negotiates
+> >>> VIRTIO_BALLOON_F_PAGE_REPORTING but not VIRTIO_BALLOON_F_STATS_VQ or
+> >>> VIRTIO_BALLOON_F_FREE_PAGE_HINT, my reading of the specification is
+> >>> that reporting_vq should still be vq number 4, and vq 2 and 3 should
+> >>> be unused. This patch would make the reporting_vq use vq 2 instead in
+> >>> this case.
+> >>>
+> >>> If the new behavior is truly intended, then the spec does not match
+> >>> reality, and it would need to be changed first (IMO); however,
+> >>> changing the spec would mean that any devices implemented correctly
+> >>> per the previous spec would now be wrong, so some kind of mechanism
+> >>> for detecting the new behavior would be warranted, e.g. a new
+> >>> non-device-specific virtio feature flag.
+> >>>
+> >>> I have brought this up previously on the virtio-comment list [2], but
+> >>> it did not receive any satisfying answers at that time.
+> >>
+> >> Rings a bell, but staring at this patch, I thought that there would be
+> >> no behavioral change. Maybe I missed it :/
+> >>
+> >> I stared at virtio_ccw_find_vqs(), and it contains:
+> >>
+> >>      for (i =3D 0; i < nvqs; ++i) {
+> >>              if (!names[i]) {
+> >>                      vqs[i] =3D NULL;
+> >>                      continue;
+> >>              }
+> >>
+> >>              vqs[i] =3D virtio_ccw_setup_vq(vdev, queue_idx++, callbac=
+ks[i],
+> >>                                           names[i], ctx ? ctx[i] : fal=
+se,
+> >>                                           ccw);
+> >>              if (IS_ERR(vqs[i])) {
+> >>                      ret =3D PTR_ERR(vqs[i]);
+> >>                      vqs[i] =3D NULL;
+> >>                      goto out;
+> >>              }
+> >>      }
+> >>
+> >> We increment queue_idx only if an entry was not NULL. SO I thought no
+> >> behavioral change? (at least on s390x :) )
+> >>
+> >> It's late here in Germany, so maybe I'm missing something.
+> >
+> > I think we've encountered a tricky issue. Currently, all transports han=
+dle queue
+> > id by incrementing them in order, without skipping any queue id. So, I'=
+m quite
+> > surprised that my changes would affect the spec. The fact that the
+> > 'names' value is null is just a small trick in the Linux kernel impleme=
+ntation
+> > and should not have an impact on the queue id.
+> >
+> > I believe that my recent modification will not affect the spec. So, let=
+'s
+> > consider the issues with this patch set separately for now. Regarding t=
+he Memory
+> > Balloon Device, it has been operational for many years, and perhaps we =
+should
+> > add to the spec that if a certain vq does not exist, then subsequent vq=
+s will
+> > take over its id.
+>
+> Right, if I am not missing something your patch should have no
+> functional change in that regard (that the current
+> behavior/implementation might not match the spec is a different discussio=
+n).
+>
+> @Daniel, if I'm missing something, please shout.
 
+Thanks for digging into that - I think you're correct in that the
+patch does not change the behavior, due to changes elsewhere in the
+generic virtio and virtio-pci code. So in that sense, I guess this
+should not block this particular patch.
 
-On 3/25/24 17:51, Mathieu Poirier wrote:
-> On Fri, Mar 08, 2024 at 03:47:08PM +0100, Arnaud Pouliquen wrote:
->> The new TEE remoteproc device is used to manage remote firmware in a
->> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
->> introduced to delegate the loading of the firmware to the trusted
->> execution context. In such cases, the firmware should be signed and
->> adhere to the image format defined by the TEE.
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->> Updates from V3:
->> - remove support of the attach use case. Will be addressed in a separate
->>   thread,
->> - add st_rproc_tee_ops::parse_fw ops,
->> - inverse call of devm_rproc_alloc()and tee_rproc_register() to manage cross
->>   reference between the rproc struct and the tee_rproc struct in tee_rproc.c.
->> ---
->>  drivers/remoteproc/stm32_rproc.c | 60 +++++++++++++++++++++++++++++---
->>  1 file changed, 56 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
->> index 8cd838df4e92..13df33c78aa2 100644
->> --- a/drivers/remoteproc/stm32_rproc.c
->> +++ b/drivers/remoteproc/stm32_rproc.c
->> @@ -20,6 +20,7 @@
->>  #include <linux/remoteproc.h>
->>  #include <linux/reset.h>
->>  #include <linux/slab.h>
->> +#include <linux/tee_remoteproc.h>
->>  #include <linux/workqueue.h>
->>  
->>  #include "remoteproc_internal.h"
->> @@ -49,6 +50,9 @@
->>  #define M4_STATE_STANDBY	4
->>  #define M4_STATE_CRASH		5
->>  
->> +/* Remote processor unique identifier aligned with the Trusted Execution Environment definitions */
-> 
-> Why is this the case?  At least from the kernel side it is possible to call
-> tee_rproc_register() with any kind of value, why is there a need to be any
-> kind of alignment with the TEE?
+It would be good to have the spec situation cleared up, though - I
+guess in practice, all relevant drivers and device implementations are
+already following the model where there are no gaps in the queue
+numbering, rather than what the spec seems to indicate.
 
-
-The use of the proc_id is to identify a processor in case of multi co-processors.
-
-For instance we can have a system with A DSP and a modem. We would use the same
-TEE service, but
-the TEE driver will probably be different, same for the signature key.
-In such case the proc ID allows to identify the the processor you want to address.
-
-
-> 
->> +#define STM32_MP1_M4_PROC_ID    0
->> +
->>  struct stm32_syscon {
->>  	struct regmap *map;
->>  	u32 reg;
->> @@ -257,6 +261,19 @@ static int stm32_rproc_release(struct rproc *rproc)
->>  	return 0;
->>  }
->>  
->> +static int stm32_rproc_tee_stop(struct rproc *rproc)
->> +{
->> +	int err;
->> +
->> +	stm32_rproc_request_shutdown(rproc);
->> +
->> +	err = tee_rproc_stop(rproc);
->> +	if (err)
->> +		return err;
->> +
->> +	return stm32_rproc_release(rproc);
->> +}
->> +
->>  static int stm32_rproc_prepare(struct rproc *rproc)
->>  {
->>  	struct device *dev = rproc->dev.parent;
->> @@ -693,8 +710,19 @@ static const struct rproc_ops st_rproc_ops = {
->>  	.get_boot_addr	= rproc_elf_get_boot_addr,
->>  };
->>  
->> +static const struct rproc_ops st_rproc_tee_ops = {
->> +	.prepare	= stm32_rproc_prepare,
->> +	.start		= tee_rproc_start,
->> +	.stop		= stm32_rproc_tee_stop,
->> +	.kick		= stm32_rproc_kick,
->> +	.load		= tee_rproc_load_fw,
->> +	.parse_fw	= tee_rproc_parse_fw,
->> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
->> +};
->> +
->>  static const struct of_device_id stm32_rproc_match[] = {
->> -	{ .compatible = "st,stm32mp1-m4" },
->> +	{.compatible = "st,stm32mp1-m4",},
->> +	{.compatible = "st,stm32mp1-m4-tee",},
->>  	{},
->>  };
->>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
->> @@ -853,6 +881,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->>  	struct device *dev = &pdev->dev;
->>  	struct stm32_rproc *ddata;
->>  	struct device_node *np = dev->of_node;
->> +	struct tee_rproc *trproc = NULL;
->>  	struct rproc *rproc;
->>  	unsigned int state;
->>  	int ret;
->> @@ -861,9 +890,26 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->>  	if (ret)
->>  		return ret;
->>  
->> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
->> -	if (!rproc)
->> -		return -ENOMEM;
->> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
->> +		/*
->> +		 * Delegate the firmware management to the secure context.
->> +		 * The firmware loaded has to be signed.
->> +		 */
->> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
->> +		if (!rproc)
->> +			return -ENOMEM;
->> +
->> +		trproc = tee_rproc_register(dev, rproc, STM32_MP1_M4_PROC_ID);
->> +		if (IS_ERR(trproc)) {
->> +			dev_err_probe(dev, PTR_ERR(trproc),
->> +				      "signed firmware not supported by TEE\n");
->> +			return PTR_ERR(trproc);
->> +		}
->> +	} else {
->> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
->> +		if (!rproc)
->> +			return -ENOMEM;
->> +	}
->>  
->>  	ddata = rproc->priv;
->>  
->> @@ -915,6 +961,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->>  		dev_pm_clear_wake_irq(dev);
->>  		device_init_wakeup(dev, false);
->>  	}
->> +	if (trproc)
-> 
->         if (rproc->tee_interface)
-> 
-> 
-> I am done reviewing this set.
-
-Thank for your review!
-Arnaud
-
-> 
-> Thanks,
-> Mathieu
-> 
->> +		tee_rproc_unregister(trproc);
->> +
->>  	return ret;
->>  }
->>  
->> @@ -935,6 +984,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
->>  		dev_pm_clear_wake_irq(dev);
->>  		device_init_wakeup(dev, false);
->>  	}
->> +	if (rproc->tee_interface)
->> +		tee_rproc_unregister(rproc->tee_interface);
->> +
->>  }
->>  
->>  static int stm32_rproc_suspend(struct device *dev)
->> -- 
->> 2.25.1
->>
+Thanks,
+-- Daniel
