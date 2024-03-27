@@ -1,128 +1,100 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B11B12DD8B;
-	Wed, 27 Mar 2024 12:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B904415251C;
+	Wed, 27 Mar 2024 12:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711543802; cv=none; b=cq9BUF4yfhyN5kwFTWTpFgWL3+llVpTQaf1vf/p5DqzPpZ0JlROu/IcplP5H1gRWiBSpShbcYoXFUpbuesj4uNoZjLWup/Vwm2zgoOfuWJyFR0uh9+eXq80nrbhJbYZgIBV8O9HErbvQ4ktfdkx+2K9allbQd/aAYrr6xoc8aag=
+	t=1711544175; cv=none; b=lziqLRHkzMO5a/41BZ8RfBZKyw1ZuoMfnVoKhR67CCoLMpbT+pgHg/xfaPc27R1BgdUXoTwvTx5cwsHvbtovVaVliEkE5QM9PVyE4Ax3gh/NiMoVTNfST8x50dN9KYoeCDHFi+E+FmS/vZvGWjPCg7Z8HtKZuqJflWz2U3eGx+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711543802; c=relaxed/simple;
-	bh=ABclRLb/R2quz1tOh/euCSegn/zdsYmPz6ReeOO+m9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1iP/67h73J5MJtihzqoDYlNkGt/9tutZwBmls04XZQd2DAy8vvdKlrtkztCwfd9BhUAi38g7Rv6/CPGv8Qmi5yqWW+4ykd1ZQZCfxpKHTcYBFevWFUbshgd4hlas9jTj/s0Xhxq9imi6KAfJbsxKd+zKBacPvsTENoTf4k3mMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BiKre3Op; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1711544175; c=relaxed/simple;
+	bh=t5Dr+QPEU1FaZbxI2VzHHPUV33oVM25Zuyjp8wRwBxQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=iFm3YA9kLj68XOWKZcMRSYtsJmWzLlxAfwsXERyDsxAoNx3HWu2zAjq//C8KpfGHKaIh/1yL63SZodp8dOBqiUC8HIuV0k4HF8w5tUBXDozTAVIEki1Pmua8JBKKALMd37+APWhJMOPMcYPPQ5aWVRnaqtddhkPWUmIU1B2XmeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeI1DRl9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BiKre3Op"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1711543799;
-	bh=ABclRLb/R2quz1tOh/euCSegn/zdsYmPz6ReeOO+m9s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BiKre3OppgksMn0qvlTpqn8PN0VPd9qAcm+ZlikA9ppXxvpgRiGG2jIaEq3ZXdZyJ
-	 LchSpMT/XOSWQj/OuZb07xVg0mdSi1CpU4HIXgbPIpUMG7ZjJG7vXlWEVwBvhQcR/k
-	 pPZ7g04SXUECZgRkNqMRRKkJ3bcWuQ+bMomk6kgyVcfJFBsJg0fmm9tbqrmSnrb5Pw
-	 zWlVrLfq+IikZG1mwpDiVAP0tWrihYvHlk4My5pvGEYHbI3xDvk+Hnls9VfdEiz2Bd
-	 /ZiLlRTNWNKhxlIKhOjnwZKRyPzcpCLm07y0MEklL605qdgVw+IMGDhZPyNEIPE/+W
-	 FA/Crc/1Czv4g==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B2BF237811CD;
-	Wed, 27 Mar 2024 12:49:58 +0000 (UTC)
-Message-ID: <9ef4e974-740e-4698-bb38-f236521a425c@collabora.com>
-Date: Wed, 27 Mar 2024 13:49:58 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeI1DRl9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C93C43390;
+	Wed, 27 Mar 2024 12:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711544174;
+	bh=t5Dr+QPEU1FaZbxI2VzHHPUV33oVM25Zuyjp8wRwBxQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=PeI1DRl97jSBL5h+TjLof7OmsdrUn8XoRsGQVaXc1QrS2MsqMVnRRdmF+M5dmweaA
+	 Cf4i01dUWOny6pJ6QuLijRvpE44xS0PcZc1e9PeN+WBhzhBO4xJy/Ts3k409QwdVEV
+	 p+A11VpmypxO3Ps9Q8jXDfwY+GDNk4U7h2495MzupWAahXb3s6nMhf4xTbKbYBv9sH
+	 Qg2EVim4HGea+Pk1qx3RaNxw1jAVCalYFQ1zjH9SvFpUEhLNt2Q6UwcJWGcqLuJGpO
+	 jNEGpE3iLazGfTCtetqVqdY3FWUY6/vKk+gRsmlO3tArdLh8t7rKXHMt3Lo2FnfSbu
+	 armFDkXpy3JVQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,  Jason Wang
+ <jasowang@redhat.com>,  Xuan Zhuo <xuanzhuo@linux.alibaba.com>,  Richard
+ Weinberger <richard@nod.at>,  Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>,  Johannes Berg
+ <johannes@sipsolutions.net>,  Paolo Bonzini <pbonzini@redhat.com>,  Stefan
+ Hajnoczi <stefanha@redhat.com>,  Jens Axboe <axboe@kernel.dk>,  Marcel
+ Holtmann <marcel@holtmann.org>,  Luiz Augusto von Dentz
+ <luiz.dentz@gmail.com>,  Olivia Mackall <olivia@selenic.com>,  Herbert Xu
+ <herbert@gondor.apana.org.au>,  Amit Shah <amit@kernel.org>,  Arnd
+ Bergmann <arnd@arndb.de>,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Gonglei <arei.gonglei@huawei.com>,  "David
+ S. Miller" <davem@davemloft.net>,  Viresh Kumar <vireshk@kernel.org>,
+  Linus Walleij <linus.walleij@linaro.org>,  Bartosz Golaszewski
+ <brgl@bgdev.pl>,  David Airlie <airlied@redhat.com>,  Gerd Hoffmann
+ <kraxel@redhat.com>,  Gurchetan Singh <gurchetansingh@chromium.org>,
+  Chia-I Wu <olvaffe@gmail.com>,  Jean-Philippe Brucker
+ <jean-philippe@linaro.org>,  Joerg Roedel <joro@8bytes.org>,  Alexander
+ Graf <graf@amazon.com>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Eric Van
+ Hensbergen <ericvh@kernel.org>,  Latchesar Ionkov <lucho@ionkov.net>,
+  Dominique Martinet <asmadeus@codewreck.org>,  Christian Schoenebeck
+ <linux_oss@crudebyte.com>,  Stefano Garzarella <sgarzare@redhat.com>,  Dan
+ Williams <dan.j.williams@intel.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  Dave Jiang <dave.jiang@intel.com>,  Ira Weiny
+ <ira.weiny@intel.com>,  Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+  Bjorn Andersson <andersson@kernel.org>,  Mathieu Poirier
+ <mathieu.poirier@linaro.org>,  "Martin K. Petersen"
+ <martin.petersen@oracle.com>,  Vivek Goyal <vgoyal@redhat.com>,  Miklos
+ Szeredi <miklos@szeredi.hu>,  Anton Yakovlev
+ <anton.yakovlev@opensynergy.com>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  virtualization@lists.linux.dev,
+  linux-doc@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-um@lists.infradead.org,  linux-block@vger.kernel.org,
+  linux-bluetooth@vger.kernel.org,  linux-crypto@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-gpio@vger.kernel.org,
+  dri-devel@lists.freedesktop.org,  iommu@lists.linux.dev,
+  netdev@vger.kernel.org,  v9fs@lists.linux.dev,  kvm@vger.kernel.org,
+  linux-wireless@vger.kernel.org,  nvdimm@lists.linux.dev,
+  linux-remoteproc@vger.kernel.org,  linux-scsi@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  alsa-devel@alsa-project.org,
+  linux-sound@vger.kernel.org
+Subject: Re: [PATCH 17/22] wireless: mac80211_hwsim: drop owner assignment
+References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
+	<20240327-module-owner-virtio-v1-17-0feffab77d99@linaro.org>
+Date: Wed, 27 Mar 2024 14:55:58 +0200
+In-Reply-To: <20240327-module-owner-virtio-v1-17-0feffab77d99@linaro.org>
+	(Krzysztof Kozlowski's message of "Wed, 27 Mar 2024 13:41:10 +0100")
+Message-ID: <87plvf7s0x.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: mediatek: Don't parse extraneous subnodes
- for multi-core
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, matthias.bgg@gmail.com, tzungbi@kernel.org,
- tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, wenst@chromium.org, kernel@collabora.com
-References: <20240321084614.45253-1-angelogioacchino.delregno@collabora.com>
- <20240321084614.45253-3-angelogioacchino.delregno@collabora.com>
- <ZfxRyMyUqyqtXy8n@p14s>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <ZfxRyMyUqyqtXy8n@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Il 21/03/24 16:27, Mathieu Poirier ha scritto:
-> On Thu, Mar 21, 2024 at 09:46:14AM +0100, AngeloGioacchino Del Regno wrote:
->> When probing multi-core SCP, this driver is parsing all sub-nodes of
->> the scp-cluster node, but one of those could be not an actual SCP core
->> and that would make the entire SCP cluster to fail probing for no good
->> reason.
->>
->> To fix that, in scp_add_multi_core() treat a subnode as a SCP Core by
->> parsing only available subnodes having compatible "mediatek,scp-core".
->>
->> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/remoteproc/mtk_scp.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
->> index 67518291a8ad..fbe1c232dae7 100644
->> --- a/drivers/remoteproc/mtk_scp.c
->> +++ b/drivers/remoteproc/mtk_scp.c
->> @@ -1096,6 +1096,9 @@ static int scp_add_multi_core(struct platform_device *pdev,
->>   	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
->>   
->>   	for_each_available_child_of_node(np, child) {
->> +		if (!of_device_is_compatible(child, "mediatek,scp-core"))
->> +			continue;
->> +
-> 
-> Interesting - what else gets stashed under the remote processor node?  I don't
-> see anything specified in the bindings.
-> 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
 
-Sorry for the late reply - well, in this precise moment in time, upstream,
-nothing yet.
+> virtio core already sets the .owner, so driver does not need to.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I have noticed this while debugging some lockups and wanted to move the scp_adsp
-clock controller node as child of the SCP node (as some of those clocks are located
-*into the SCP's CFG register space*, and it's correct for that to be a child as one
-of those do depend on the SCP being up - and I'll spare you the rest) and noticed
-the unexpected behavior, as the SCP driver was treating those as an SCP core.
+We use "wifi:" in the title, not "wireless:". It would be nice if you
+can fix this during commit.
 
-There was no kernel panic, but the SCP would fail probing.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-This is anyway a missed requirement ... for platforms that want *both* two SCP
-cores *and* the AudioDSP, as that'd at least be two nodes with the same iostart
-(scp@1072000, clock-controller@1072000), other than the reasons I explained some
-lines back.
-
-...and that's why this commit was sent :-)
-
-P.S.: The reason why platforms don't crash without the scp_adsp clock controller
-       as a child of SCP is that the bootloader is actually doing basic init for
-       the SCP, hence the block is powered on when booting ;-)
-
-Cheers,
-Angelo
-
-> Thanks,
-> Mathieu
-> 
->>   		if (!cluster_of_data[core_id]) {
->>   			ret = -EINVAL;
->>   			dev_err(dev, "Not support core %d\n", core_id);
->> -- 
->> 2.44.0
->>
-
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
