@@ -1,160 +1,128 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DCD14B061
-	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Mar 2024 12:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B11B12DD8B;
+	Wed, 27 Mar 2024 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711543604; cv=none; b=R9qIK3qcl8u+EsWYpuf4ZFl0aBueAJCO/rKrzr3s8fFob8tf7DSRtWkukfueW0xQCIRrASweiTPIl5O3EM2pi6fBPHGKFY4Iwjnk1vjtXaYdVRg48yJ+vG+fFoCNH8XD6NfoWDupJV9y5Ulu9B1yY+1KVrbMiBuzsgqhOKGWozc=
+	t=1711543802; cv=none; b=cq9BUF4yfhyN5kwFTWTpFgWL3+llVpTQaf1vf/p5DqzPpZ0JlROu/IcplP5H1gRWiBSpShbcYoXFUpbuesj4uNoZjLWup/Vwm2zgoOfuWJyFR0uh9+eXq80nrbhJbYZgIBV8O9HErbvQ4ktfdkx+2K9allbQd/aAYrr6xoc8aag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711543604; c=relaxed/simple;
-	bh=+b7HD7blN2XR0vp569P7KUgZ+rP9RZRo3/7Ljc6RdPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gd7DEyjVvn7jE5unUkyJxQiObhcNke6PqXIlwNPKQEAOGP0xy6xjS1Uy2MHsMDYMFOvUt+cY1NLARzUyGVOs0CslecPDl2gZsLshohrGFBWBOTNj0vyBzRUgzOglj67s2wJ1i2luW3LKRSKJKlR7bDgLDxedbQP+KXMAyyCcd+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mB+8y+Mb; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711543802; c=relaxed/simple;
+	bh=ABclRLb/R2quz1tOh/euCSegn/zdsYmPz6ReeOO+m9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l1iP/67h73J5MJtihzqoDYlNkGt/9tutZwBmls04XZQd2DAy8vvdKlrtkztCwfd9BhUAi38g7Rv6/CPGv8Qmi5yqWW+4ykd1ZQZCfxpKHTcYBFevWFUbshgd4hlas9jTj/s0Xhxq9imi6KAfJbsxKd+zKBacPvsTENoTf4k3mMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BiKre3Op; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mB+8y+Mb"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a45f257b81fso772164466b.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Mar 2024 05:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711543600; x=1712148400; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TImcoBJxfXGIQgqj3n4MKEXII2pXosMotms9pHsJzXs=;
-        b=mB+8y+MbQ5b4xCQhL5oKRf/rZChAFoUdzVzedv7+FxYhmcK1WhPa3CceQVP4wH8Tl/
-         zRBBH6OzQ7vSoMkaR8/Uj6h/5jXNMlCrTApGXivvLZ1Q2F3PWPVfnLVfWHeKbjn6AlmY
-         FyyilVRPS9xVI4gJ3jvyz8UDHCnjE2iIzBup9EEU+2JDYwcPxg0shBAPcU1o4GE6bQmq
-         1sh6idy/gO6T6Z37tvE8VjguVXMn04oueZYA7uiuYYJSPceMDdMS4XwEubfnB4xGQjp9
-         ZhRgsJIhI97DBOM6tnVIgSCPUziy4LkmNuJq8gAu3yKXvY9+tI1ksHuPbJc7H/bev3/7
-         K5Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711543600; x=1712148400;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TImcoBJxfXGIQgqj3n4MKEXII2pXosMotms9pHsJzXs=;
-        b=Nonm1BIK8kHsPSNEq08hanSRZK+ZeW3qyNSxFFRoe/00vKR+VvuUn8AH0OQa9dw98X
-         5cE75UrV1jMuzAbr5Kcl8sLtPHFuVDeGwB4I27EZ8dkTFM/Kkz25UY7vRAW8YmHPZOih
-         xS5K70JRxkMJaGXWHZmHuDf/dPVsEEV8irvS1BvoLkKrrCJxeBsGASOEnRgqFQ1Bp8/h
-         JaOVp0H67MamTKvn5FHRJkKdqQh1FDoI9swJG7SxvyeA9AWhri5Lh/Wv/KAIH27yF0BR
-         7V6OXcGwTibgC+Q77cyref+QsuCgeE8HyBm7cGwbn/Xu+NvqwYnU954rF5VtP5Gdn4OH
-         oQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi/n4RoNaHoXcoUZXpbupYNqHcWtdZ9kUU38rEiMp9DJVowtNu6J5aHHvoBOe23nfbzvbBVfKMmpMpuEi1hgR20JksCon5EP5mXd5Chs9O/w==
-X-Gm-Message-State: AOJu0Yxml9Nq95KJZF5VED+puzsHqWyoQaNEevyRsRHSIjzbC+nQvX5V
-	99LXX0oii/lur42sk/9mp+Sztq5yrMZ2CYgLVO3rqSVlIsU00gfWruZvqBsJVxQ=
-X-Google-Smtp-Source: AGHT+IHz3XNCa9vYxVdXv7C592UPDYjRtJdl/QW4qXpaVGK+f9EGoToWDlCo1tr4K4SuiD6SS2oOpw==
-X-Received: by 2002:a17:906:5847:b0:a47:1b77:7c4 with SMTP id h7-20020a170906584700b00a471b7707c4mr907960ejs.48.1711543599897;
-        Wed, 27 Mar 2024 05:46:39 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.206.205])
-        by smtp.gmail.com with ESMTPSA id gx16-20020a170906f1d000b00a4707ec7c34sm5379175ejb.166.2024.03.27.05.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 05:46:39 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 27 Mar 2024 13:41:12 +0100
-Subject: [PATCH 19/22] rpmsg: virtio: drop owner assignment
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BiKre3Op"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1711543799;
+	bh=ABclRLb/R2quz1tOh/euCSegn/zdsYmPz6ReeOO+m9s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BiKre3OppgksMn0qvlTpqn8PN0VPd9qAcm+ZlikA9ppXxvpgRiGG2jIaEq3ZXdZyJ
+	 LchSpMT/XOSWQj/OuZb07xVg0mdSi1CpU4HIXgbPIpUMG7ZjJG7vXlWEVwBvhQcR/k
+	 pPZ7g04SXUECZgRkNqMRRKkJ3bcWuQ+bMomk6kgyVcfJFBsJg0fmm9tbqrmSnrb5Pw
+	 zWlVrLfq+IikZG1mwpDiVAP0tWrihYvHlk4My5pvGEYHbI3xDvk+Hnls9VfdEiz2Bd
+	 /ZiLlRTNWNKhxlIKhOjnwZKRyPzcpCLm07y0MEklL605qdgVw+IMGDhZPyNEIPE/+W
+	 FA/Crc/1Czv4g==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B2BF237811CD;
+	Wed, 27 Mar 2024 12:49:58 +0000 (UTC)
+Message-ID: <9ef4e974-740e-4698-bb38-f236521a425c@collabora.com>
+Date: Wed, 27 Mar 2024 13:49:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: mediatek: Don't parse extraneous subnodes
+ for multi-core
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, matthias.bgg@gmail.com, tzungbi@kernel.org,
+ tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, wenst@chromium.org, kernel@collabora.com
+References: <20240321084614.45253-1-angelogioacchino.delregno@collabora.com>
+ <20240321084614.45253-3-angelogioacchino.delregno@collabora.com>
+ <ZfxRyMyUqyqtXy8n@p14s>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <ZfxRyMyUqyqtXy8n@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240327-module-owner-virtio-v1-19-0feffab77d99@linaro.org>
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
-In-Reply-To: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
- Jens Axboe <axboe@kernel.dk>, Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Amit Shah <amit@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Gonglei <arei.gonglei@huawei.com>, "David S. Miller" <davem@davemloft.net>, 
- Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>, 
- Gerd Hoffmann <kraxel@redhat.com>, 
- Gurchetan Singh <gurchetansingh@chromium.org>, 
- Chia-I Wu <olvaffe@gmail.com>, 
- Jean-Philippe Brucker <jean-philippe@linaro.org>, 
- Joerg Roedel <joro@8bytes.org>, Alexander Graf <graf@amazon.com>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>, 
- Dan Williams <dan.j.williams@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
- Ira Weiny <ira.weiny@intel.com>, 
- Pankaj Gupta <pankaj.gupta.linux@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev, 
- kvm@vger.kernel.org, linux-wireless@vger.kernel.org, nvdimm@lists.linux.dev, 
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=768;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=+b7HD7blN2XR0vp569P7KUgZ+rP9RZRo3/7Ljc6RdPk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmBBPqAdq/eg/PtMCEKo1gva2x7VgdnMT6C6Tep
- 2wGqe9FMdyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZgQT6gAKCRDBN2bmhouD
- 1/TJD/4qOl/HewPvOEL3qGcOWPCkSVABYFtSCCfDob4NTUwAYOsNZXbH02ywzlUMcBk5kU1U06e
- AkckuKvzdO/5ojXTRYDkDVHSyZ/6w/2Zete946WspuC9senP7Ez3D3YkNyAxCE+Sk2DVkmiCf2E
- CyINMhaAkygs+ceOFDbHwFTbo7vJVRYCTGaGRm542+GjfTkvYuWVg4xeDHg1ogRagShb3QsonMJ
- iM7hJlEEdxsNQj/ThY3v2hfTnTAx2YlEu+KeqadqilMq04KLM5rus3fTej4xY0P3Ne5G0IffMH1
- EveHiww1oViKjbvjP1s8KwwzV/hlVXkuLkEpSakHpjgTxlrBqrMB2RUdWwPDNaH/T6cC0lQxSHn
- PbZ7RdLNVmu6v4LPR9S1ncpMO//afg+3LNsPd20FwxOaCv3IEiUwKRbUqxkbjuSQH4iwKR6llkU
- IGcF4f5x4/q+EXK6r0Foa98dU3i91q5S1y0X+Fsyceaza2rKKZSTaxY46atCOCfkKWuYH+5+Uju
- 5UESG7t+HFinMBkI1h6Qjkyrz93J+YOK5IKd6DQYtK0YownJLLGBpupYua5HeUemtn1gA/b+4ci
- nrfmHTqXJfXn1sKxAPG+3hj2jFzFA2Ibj7vzIzNYNdcpR33XtvVIbUpTu2kE3HPXhlMaJh18Nxt
- 9eoqc6/7NrkIp+w==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-virtio core already sets the .owner, so driver does not need to.
+Il 21/03/24 16:27, Mathieu Poirier ha scritto:
+> On Thu, Mar 21, 2024 at 09:46:14AM +0100, AngeloGioacchino Del Regno wrote:
+>> When probing multi-core SCP, this driver is parsing all sub-nodes of
+>> the scp-cluster node, but one of those could be not an actual SCP core
+>> and that would make the entire SCP cluster to fail probing for no good
+>> reason.
+>>
+>> To fix that, in scp_add_multi_core() treat a subnode as a SCP Core by
+>> parsing only available subnodes having compatible "mediatek,scp-core".
+>>
+>> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/remoteproc/mtk_scp.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+>> index 67518291a8ad..fbe1c232dae7 100644
+>> --- a/drivers/remoteproc/mtk_scp.c
+>> +++ b/drivers/remoteproc/mtk_scp.c
+>> @@ -1096,6 +1096,9 @@ static int scp_add_multi_core(struct platform_device *pdev,
+>>   	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
+>>   
+>>   	for_each_available_child_of_node(np, child) {
+>> +		if (!of_device_is_compatible(child, "mediatek,scp-core"))
+>> +			continue;
+>> +
+> 
+> Interesting - what else gets stashed under the remote processor node?  I don't
+> see anything specified in the bindings.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Sorry for the late reply - well, in this precise moment in time, upstream,
+nothing yet.
 
----
+I have noticed this while debugging some lockups and wanted to move the scp_adsp
+clock controller node as child of the SCP node (as some of those clocks are located
+*into the SCP's CFG register space*, and it's correct for that to be a child as one
+of those do depend on the SCP being up - and I'll spare you the rest) and noticed
+the unexpected behavior, as the SCP driver was treating those as an SCP core.
 
-Depends on the first patch.
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 1 -
- 1 file changed, 1 deletion(-)
+There was no kernel panic, but the SCP would fail probing.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1062939c3264..e9e8c1f7829f 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -1053,7 +1053,6 @@ static struct virtio_driver virtio_ipc_driver = {
- 	.feature_table	= features,
- 	.feature_table_size = ARRAY_SIZE(features),
- 	.driver.name	= KBUILD_MODNAME,
--	.driver.owner	= THIS_MODULE,
- 	.id_table	= id_table,
- 	.probe		= rpmsg_probe,
- 	.remove		= rpmsg_remove,
+This is anyway a missed requirement ... for platforms that want *both* two SCP
+cores *and* the AudioDSP, as that'd at least be two nodes with the same iostart
+(scp@1072000, clock-controller@1072000), other than the reasons I explained some
+lines back.
 
--- 
-2.34.1
+...and that's why this commit was sent :-)
+
+P.S.: The reason why platforms don't crash without the scp_adsp clock controller
+       as a child of SCP is that the bootloader is actually doing basic init for
+       the SCP, hence the block is powered on when booting ;-)
+
+Cheers,
+Angelo
+
+> Thanks,
+> Mathieu
+> 
+>>   		if (!cluster_of_data[core_id]) {
+>>   			ret = -EINVAL;
+>>   			dev_err(dev, "Not support core %d\n", core_id);
+>> -- 
+>> 2.44.0
+>>
+
 
