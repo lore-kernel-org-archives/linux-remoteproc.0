@@ -1,272 +1,400 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2F12F583
-	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Mar 2024 17:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F0B36AE1
+	for <linux-remoteproc@vger.kernel.org>; Thu, 28 Mar 2024 04:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711559666; cv=none; b=EwTc2gBoV2jeATfGPYfL2NnjNmYdKU+gNJkS6UkS2VGduAd6m3N1MbbodJfzFcucsigzznDnO0n+8EflgDmSeYTEJHy4t/Uu/uhEr+K1MUiQKhKSrUQd5OUtx7yGo3diKYIHKjdKbfuGqZeso0Hjc3ShXnDO7cDtILJAIGel7MQ=
+	t=1711599563; cv=none; b=QssznWh8F4lN6o40f6uc2PxQDP70dYtYw4WaEsIhWvYMajXzCcpWqo4ccVhgFRRTglZHpfmWWZBl4OMcoPUCDNqobdRoac5isTqXu6k70SS9UGtFCzTSSgDUwlX5Y+5ebrxycTmmmLzpkyYSrJysTcsuA82yrLPkrzEZI+601AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711559666; c=relaxed/simple;
-	bh=fK2jVsEBn9iJbm7nNKUjCIWztfRu3IeS99BhFcCgVvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/1EYI2cbqxVTT2Ff3+jUrQlG+TPDkCXk3qce3e3Tc0Muy8waqcOl7cSY5RMOcmfdmoF8NOEclnsXjMNznWhXWyXkcHB2r1dxTw78O4MxlX5qte5eO3k0er1OCnIgsBrwhWozEMfax+dkb67lYlxrrjjLcVSWpEBnZ9v/o6kJMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wawc70My; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711599563; c=relaxed/simple;
+	bh=1ZDDNQUQvY0+ThIzTgJ67rkj+dipkjfyEL+qgEFYHmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFFbL0bZj74n7ISqaijm6B/+0ju4wS3oU0+3h/1XwqRMMvkz5o0YeAa25pNWnMdqJvXRt5WuXwC3FlCphm8tHOpbg/gpkRMjHnzcFE3hfY7cZDsTcaTD3INVzOtvo1FoX5mBT8bvDqxGuFOWuvQ6fQFUUVsYXM1A8LaV0jGAqyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UWgWtShs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wawc70My"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e0b889901bso640815ad.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Mar 2024 10:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711559664; x=1712164464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVDGUtmUaQVtA8J9OsClqc9G7HFCdTwY1X2qQsnwTG0=;
-        b=wawc70MyV27ELsBA2KccZI1wgyVf0dIjWiFNW6TVhKn6hbj0VW9HgxVCbRFoJSeWrf
-         M1aFis5trDNS6R5WNLtpF260JgzzI1lX4NWBDwK6/XIxCyyLt0I1O/fBcjqbAIlQ0KaA
-         3pomMZla3Q277UV8NWNmWm/0kZl0XTZt5XRC6nxVo/rOr4q9PpvFTGVM+bP4i7ZS7T3z
-         FomtWzfBhKC+wocmA5r0froLQqMnSlFvZvatrzz+AS7vHe4Q9XvoXIlthNKfTdthc9MD
-         +P1ld2nF4PiTjtmdP/MNBrzb+lBthwivGmW+knEtDh7mxlLqRyR7oQlhducDNAVRGzoI
-         msVg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UWgWtShs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711599560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=amjfd4M7Bjlz8eF+VEdK92gHvs+RzroD+0WjsBulYN8=;
+	b=UWgWtShsdMnzWebYKHEE8kc4toMGuugZVRjBdp0Zdp8Tps6kxGsLAAdy9q5KWO3hReARk0
+	vL1L89Vy64JUbtd1tDcQIUgWnAPpeFHQ/PNBF2xVIuEWzgUF4q1RPWbWPDgceQftLn6hW1
+	41/HcNWKJVrr6QRrGm5aRWL2UMhx+8k=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-Ug-6NoJSOYWmdQtDx7IeYw-1; Thu, 28 Mar 2024 00:19:18 -0400
+X-MC-Unique: Ug-6NoJSOYWmdQtDx7IeYw-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-29905ac5c21so500511a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Mar 2024 21:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711559664; x=1712164464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVDGUtmUaQVtA8J9OsClqc9G7HFCdTwY1X2qQsnwTG0=;
-        b=wqJ85xBTfPYeC4QmWIBPREaFXOFqSIpi/YMt2RQNyXwcn1FJUt6gwZdE0rjr/zsBHu
-         JoeEeFst8WFy39Wnh4k5FMhyNctiK0dy8segiX937d44dsaQS0lFtDQ8ZKybsi/QhK8Y
-         fcVqKsFxTqmqB0+4gAGpmFuooJPjncPjfWZjy1VDoXVkNAQrRd1xNemJrtRbmCK2zBRr
-         G49K2jMFgNfzhAPpFrGhCBZXRY7hHVZzqt/DbA5Ag+JbtIkbAXBbkQByrV9/Xa+pNs13
-         kce4526Xgg42sL7fkgZVswIogdVi5eu/X5MQlw6Mkjttc6x2PyRf8KV475c/HATOkHtd
-         DLdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVby5byAoI+KL57fQLJwbEa7b6zB4DTX7OmT1H3FHizDoQ1XjnwwWp+WqEGqr1Npwb0GxR+N3fZ9dd6R5ZDyd0UmL6S5rqzco2vsRMbirK2wQ==
-X-Gm-Message-State: AOJu0YxhUL4svbEmdnVirgZrzdEwJuntOd3gXxu+j8SW9rCF5XE62AGX
-	UMDOY3M/GO/kSEOzMZ9bTiRN2v0U+Wo5YlOsDNNRSfwDKBdkjIMroHYrcv1E9cc=
-X-Google-Smtp-Source: AGHT+IEmplxPc3Vi44xU69R4gGYRPZ7qZCQlWmYMhZQFifk5gXQ/J5dkbrXhoE9QrXfziLLS0+T4ig==
-X-Received: by 2002:a17:903:8c5:b0:1de:e84b:74e1 with SMTP id lk5-20020a17090308c500b001dee84b74e1mr368085plb.29.1711559664452;
-        Wed, 27 Mar 2024 10:14:24 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:dd82:60ad:849e:4ab5])
-        by smtp.gmail.com with ESMTPSA id jy8-20020a17090342c800b001e0e999cd8bsm4223492plb.137.2024.03.27.10.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 10:14:24 -0700 (PDT)
-Date: Wed, 27 Mar 2024 11:14:20 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <ZgRT7PtzIogAWc50@p14s>
-References: <20240308144708.62362-1-arnaud.pouliquen@foss.st.com>
- <20240308144708.62362-5-arnaud.pouliquen@foss.st.com>
- <ZgGrnkcebcIQQic6@p14s>
- <a08add21-b8ff-434a-9689-6af8b05b1965@foss.st.com>
+        d=1e100.net; s=20230601; t=1711599557; x=1712204357;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=amjfd4M7Bjlz8eF+VEdK92gHvs+RzroD+0WjsBulYN8=;
+        b=ZLRcpFBqY/P3MLCCTgdMhuZW6sDV8hwsi3Y1sSiKhGT8MHQVwmA83TSajX/9zF5A4P
+         +vMCcIaOYO9Co+cHtcorVffKUGN+l28Get5376WamNU4799L5QBD9ISp3Sl1GHUuolLK
+         E6ZDq+3yOCaaMXiqT+a5mLPyMFJlKQGaI27+2LZILjaTVQsroAtG/26N9nqvIDYcnKiy
+         aRaEq79zJEycfUnZRipiD6zlLYESVsEcEwryIjleK1mKCtQpQg4/GmXlqnEDr4PKfroY
+         Pttq5VR1DdyeZ1pFVmgrt84+XR+GvAJyHG2YVveLF7umx+hnxVf0DKUwlX6xv2rZ58JQ
+         90lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFur+OdLymucRu6LPwGDUjzcxPr8/sUFdL+Pp2HHWSzalCTTKUpDyIfXtcfWEi0k89wfwqDoF7nyWqLRW/kt1pCY5cwY8PG1wKhYUQOHxyOA==
+X-Gm-Message-State: AOJu0YwVwpvG0q5wwTJH5O5x5FOX8sLlVP3xP3G0peafkxpsAtQxJ8Yq
+	UziAedOVv2IXlj2mdi04csm6PelYMqqvYvzqk3j5dw6NU0n/rII/48k0NeQ+9v7tD0ZL77+PU89
+	guBXa6sxPKtR/UDFZfJj2LTHhHZtOVi/Odunp8ilU2Il5IVXJak+xIr3HB0tfLq/t8r7rlnkmQB
+	RSvECFjwyh/b6oIgN5ocpyZkhMUTiLOTWti/wfKsUv3txGto/OqA==
+X-Received: by 2002:a17:90a:bc92:b0:2a1:f55e:d28 with SMTP id x18-20020a17090abc9200b002a1f55e0d28mr1403481pjr.25.1711599556920;
+        Wed, 27 Mar 2024 21:19:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnQ5et3Bf+a41fzKtEhnTvTQHOyLeIImoSeqymV4IHaPJ9Oj7tRYyF0hiiTI7/lajnV52BxGPxUXwl4Fz5BEA=
+X-Received: by 2002:a17:90a:bc92:b0:2a1:f55e:d28 with SMTP id
+ x18-20020a17090abc9200b002a1f55e0d28mr1403471pjr.25.1711599556521; Wed, 27
+ Mar 2024 21:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a08add21-b8ff-434a-9689-6af8b05b1965@foss.st.com>
+References: <20240327095741.88135-1-xuanzhuo@linux.alibaba.com> <20240327095741.88135-3-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <20240327095741.88135-3-xuanzhuo@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 28 Mar 2024 12:19:04 +0800
+Message-ID: <CACGkMEtvf98gRQCB1qDY+fR-2xD-Xya_dnFcb1j_o0bnVqA5ow@mail.gmail.com>
+Subject: Re: [PATCH vhost v6 2/6] virtio: remove support for names array
+ entries being null.
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	David Hildenbrand <david@redhat.com>, linux-um@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024 at 08:31:33PM +0100, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 3/25/24 17:51, Mathieu Poirier wrote:
-> > On Fri, Mar 08, 2024 at 03:47:08PM +0100, Arnaud Pouliquen wrote:
-> >> The new TEE remoteproc device is used to manage remote firmware in a
-> >> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
-> >> introduced to delegate the loading of the firmware to the trusted
-> >> execution context. In such cases, the firmware should be signed and
-> >> adhere to the image format defined by the TEE.
-> >>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >> Updates from V3:
-> >> - remove support of the attach use case. Will be addressed in a separate
-> >>   thread,
-> >> - add st_rproc_tee_ops::parse_fw ops,
-> >> - inverse call of devm_rproc_alloc()and tee_rproc_register() to manage cross
-> >>   reference between the rproc struct and the tee_rproc struct in tee_rproc.c.
-> >> ---
-> >>  drivers/remoteproc/stm32_rproc.c | 60 +++++++++++++++++++++++++++++---
-> >>  1 file changed, 56 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> >> index 8cd838df4e92..13df33c78aa2 100644
-> >> --- a/drivers/remoteproc/stm32_rproc.c
-> >> +++ b/drivers/remoteproc/stm32_rproc.c
-> >> @@ -20,6 +20,7 @@
-> >>  #include <linux/remoteproc.h>
-> >>  #include <linux/reset.h>
-> >>  #include <linux/slab.h>
-> >> +#include <linux/tee_remoteproc.h>
-> >>  #include <linux/workqueue.h>
-> >>  
-> >>  #include "remoteproc_internal.h"
-> >> @@ -49,6 +50,9 @@
-> >>  #define M4_STATE_STANDBY	4
-> >>  #define M4_STATE_CRASH		5
-> >>  
-> >> +/* Remote processor unique identifier aligned with the Trusted Execution Environment definitions */
-> > 
-> > Why is this the case?  At least from the kernel side it is possible to call
-> > tee_rproc_register() with any kind of value, why is there a need to be any
-> > kind of alignment with the TEE?
-> 
-> 
-> The use of the proc_id is to identify a processor in case of multi co-processors.
+On Wed, Mar 27, 2024 at 5:58=E2=80=AFPM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
+om> wrote:
+>
+> commit 6457f126c888 ("virtio: support reserved vqs") introduced this
+> support. Multiqueue virtio-net use 2N as ctrl vq finally, so the logic
+> doesn't apply. And not one uses this.
+>
+> On the other side, that makes some trouble for us to refactor the
+> find_vqs() params.
+>
+> So I remove this support.
+>
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> ---
+>  arch/um/drivers/virtio_uml.c           |  8 ++++----
+>  drivers/remoteproc/remoteproc_virtio.c | 11 ++++-------
+>  drivers/s390/virtio/virtio_ccw.c       |  8 ++++----
+>  drivers/virtio/virtio_mmio.c           |  8 ++++----
+>  drivers/virtio/virtio_pci_common.c     | 18 +++++++++---------
+>  drivers/virtio/virtio_vdpa.c           | 11 ++++-------
+>  include/linux/virtio_config.h          |  2 +-
+>  7 files changed, 30 insertions(+), 36 deletions(-)
+>
+> diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
+> index 8adca2000e51..773f9fc4d582 100644
+> --- a/arch/um/drivers/virtio_uml.c
+> +++ b/arch/um/drivers/virtio_uml.c
+> @@ -1019,8 +1019,8 @@ static int vu_find_vqs(struct virtio_device *vdev, =
+unsigned nvqs,
+>                        struct irq_affinity *desc)
+>  {
+>         struct virtio_uml_device *vu_dev =3D to_virtio_uml_device(vdev);
+> -       int i, queue_idx =3D 0, rc;
+>         struct virtqueue *vq;
+> +       int i, rc;
+>
+>         /* not supported for now */
+>         if (WARN_ON(nvqs > 64))
+> @@ -1032,11 +1032,11 @@ static int vu_find_vqs(struct virtio_device *vdev=
+, unsigned nvqs,
+>
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       rc =3D -EINVAL;
+> +                       goto error_setup;
+>                 }
+>
+> -               vqs[i] =3D vu_setup_vq(vdev, queue_idx++, callbacks[i], n=
+ames[i],
+> +               vqs[i] =3D vu_setup_vq(vdev, i, callbacks[i], names[i],
+>                                      ctx ? ctx[i] : false);
+>                 if (IS_ERR(vqs[i])) {
+>                         rc =3D PTR_ERR(vqs[i]);
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/=
+remoteproc_virtio.c
+> index 83d76915a6ad..8fb5118b6953 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -119,9 +119,6 @@ static struct virtqueue *rp_find_vq(struct virtio_dev=
+ice *vdev,
+>         if (id >=3D ARRAY_SIZE(rvdev->vring))
+>                 return ERR_PTR(-EINVAL);
+>
+> -       if (!name)
+> -               return NULL;
+> -
+>         /* Search allocated memory region by name */
+>         mem =3D rproc_find_carveout_by_name(rproc, "vdev%dvring%d", rvdev=
+->index,
+>                                           id);
+> @@ -187,15 +184,15 @@ static int rproc_virtio_find_vqs(struct virtio_devi=
+ce *vdev, unsigned int nvqs,
+>                                  const bool * ctx,
+>                                  struct irq_affinity *desc)
+>  {
+> -       int i, ret, queue_idx =3D 0;
+> +       int i, ret;
+>
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       ret =3D -EINVAL;
+> +                       goto error;
+>                 }
+>
+> -               vqs[i] =3D rp_find_vq(vdev, queue_idx++, callbacks[i], na=
+mes[i],
+> +               vqs[i] =3D rp_find_vq(vdev, i, callbacks[i], names[i],
+>                                     ctx ? ctx[i] : false);
+>                 if (IS_ERR(vqs[i])) {
+>                         ret =3D PTR_ERR(vqs[i]);
+> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virti=
+o_ccw.c
+> index ac67576301bf..508154705554 100644
+> --- a/drivers/s390/virtio/virtio_ccw.c
+> +++ b/drivers/s390/virtio/virtio_ccw.c
+> @@ -659,7 +659,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *=
+vdev, unsigned nvqs,
+>  {
+>         struct virtio_ccw_device *vcdev =3D to_vc_device(vdev);
+>         unsigned long *indicatorp =3D NULL;
+> -       int ret, i, queue_idx =3D 0;
+> +       int ret, i;
+>         struct ccw1 *ccw;
+>
+>         ccw =3D ccw_device_dma_zalloc(vcdev->cdev, sizeof(*ccw));
+> @@ -668,11 +668,11 @@ static int virtio_ccw_find_vqs(struct virtio_device=
+ *vdev, unsigned nvqs,
+>
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       ret =3D -EINVAL;
+> +                       goto out;
+>                 }
+>
+> -               vqs[i] =3D virtio_ccw_setup_vq(vdev, queue_idx++, callbac=
+ks[i],
+> +               vqs[i] =3D virtio_ccw_setup_vq(vdev, i, callbacks[i],
+
+Nit:
+
+This seems an unnecessary change or we need to remove the queue_idx variabl=
+e.
+
+>                                              names[i], ctx ? ctx[i] : fal=
+se,
+>                                              ccw);
+>                 if (IS_ERR(vqs[i])) {
+> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> index 59892a31cf76..82ee4a288728 100644
+> --- a/drivers/virtio/virtio_mmio.c
+> +++ b/drivers/virtio/virtio_mmio.c
+> @@ -496,7 +496,7 @@ static int vm_find_vqs(struct virtio_device *vdev, un=
+signed int nvqs,
+>  {
+>         struct virtio_mmio_device *vm_dev =3D to_virtio_mmio_device(vdev)=
+;
+>         int irq =3D platform_get_irq(vm_dev->pdev, 0);
+> -       int i, err, queue_idx =3D 0;
+> +       int i, err;
+>
+>         if (irq < 0)
+>                 return irq;
+> @@ -511,11 +511,11 @@ static int vm_find_vqs(struct virtio_device *vdev, =
+unsigned int nvqs,
+>
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       vm_del_vqs(vdev);
+> +                       return -EINVAL;
+>                 }
+>
+> -               vqs[i] =3D vm_setup_vq(vdev, queue_idx++, callbacks[i], n=
+ames[i],
+> +               vqs[i] =3D vm_setup_vq(vdev, i, callbacks[i], names[i],
+
+Similar issue as above.
+
+>                                      ctx ? ctx[i] : false);
+>                 if (IS_ERR(vqs[i])) {
+>                         vm_del_vqs(vdev);
+> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_p=
+ci_common.c
+> index b655fccaf773..eda71c6e87ee 100644
+> --- a/drivers/virtio/virtio_pci_common.c
+> +++ b/drivers/virtio/virtio_pci_common.c
+> @@ -292,7 +292,7 @@ static int vp_find_vqs_msix(struct virtio_device *vde=
+v, unsigned int nvqs,
+>  {
+>         struct virtio_pci_device *vp_dev =3D to_vp_device(vdev);
+>         u16 msix_vec;
+> -       int i, err, nvectors, allocated_vectors, queue_idx =3D 0;
+> +       int i, err, nvectors, allocated_vectors;
+>
+>         vp_dev->vqs =3D kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+>         if (!vp_dev->vqs)
+> @@ -302,7 +302,7 @@ static int vp_find_vqs_msix(struct virtio_device *vde=
+v, unsigned int nvqs,
+>                 /* Best option: one for change interrupt, one per vq. */
+>                 nvectors =3D 1;
+>                 for (i =3D 0; i < nvqs; ++i)
+> -                       if (names[i] && callbacks[i])
+> +                       if (callbacks[i])
+>                                 ++nvectors;
+>         } else {
+>                 /* Second best: one for change, shared for all vqs. */
+> @@ -318,8 +318,8 @@ static int vp_find_vqs_msix(struct virtio_device *vde=
+v, unsigned int nvqs,
+>         allocated_vectors =3D vp_dev->msix_used_vectors;
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       err =3D -EINVAL;
+> +                       goto error_find;
+>                 }
+>
+>                 if (!callbacks[i])
+> @@ -328,7 +328,7 @@ static int vp_find_vqs_msix(struct virtio_device *vde=
+v, unsigned int nvqs,
+>                         msix_vec =3D allocated_vectors++;
+>                 else
+>                         msix_vec =3D VP_MSIX_VQ_VECTOR;
+> -               vqs[i] =3D vp_setup_vq(vdev, queue_idx++, callbacks[i], n=
+ames[i],
+> +               vqs[i] =3D vp_setup_vq(vdev, i, callbacks[i], names[i],
+>                                      ctx ? ctx[i] : false,
+>                                      msix_vec);
+>                 if (IS_ERR(vqs[i])) {
+> @@ -363,7 +363,7 @@ static int vp_find_vqs_intx(struct virtio_device *vde=
+v, unsigned int nvqs,
+>                 const char * const names[], const bool *ctx)
+>  {
+>         struct virtio_pci_device *vp_dev =3D to_vp_device(vdev);
+> -       int i, err, queue_idx =3D 0;
+> +       int i, err;
+>
+>         vp_dev->vqs =3D kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+>         if (!vp_dev->vqs)
+> @@ -378,10 +378,10 @@ static int vp_find_vqs_intx(struct virtio_device *v=
+dev, unsigned int nvqs,
+>         vp_dev->per_vq_vectors =3D false;
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       err =3D -EINVAL;
+> +                       goto out_del_vqs;
+>                 }
+> -               vqs[i] =3D vp_setup_vq(vdev, queue_idx++, callbacks[i], n=
+ames[i],
+> +               vqs[i] =3D vp_setup_vq(vdev, i, callbacks[i], names[i],
+>                                      ctx ? ctx[i] : false,
+>                                      VIRTIO_MSI_NO_VECTOR);
+>                 if (IS_ERR(vqs[i])) {
+> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+> index e803db0da307..e82cca24d6e6 100644
+> --- a/drivers/virtio/virtio_vdpa.c
+> +++ b/drivers/virtio/virtio_vdpa.c
+> @@ -161,9 +161,6 @@ virtio_vdpa_setup_vq(struct virtio_device *vdev, unsi=
+gned int index,
+>         bool may_reduce_num =3D true;
+>         int err;
+>
+> -       if (!name)
+> -               return NULL;
+> -
+>         if (index >=3D vdpa->nvqs)
+>                 return ERR_PTR(-ENOENT);
+>
+> @@ -370,7 +367,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device =
+*vdev, unsigned int nvqs,
+>         struct cpumask *masks;
+>         struct vdpa_callback cb;
+>         bool has_affinity =3D desc && ops->set_vq_affinity;
+> -       int i, err, queue_idx =3D 0;
+> +       int i, err;
+>
+>         if (has_affinity) {
+>                 masks =3D create_affinity_masks(nvqs, desc ? desc : &defa=
+ult_affd);
+> @@ -380,11 +377,11 @@ static int virtio_vdpa_find_vqs(struct virtio_devic=
+e *vdev, unsigned int nvqs,
+>
+>         for (i =3D 0; i < nvqs; ++i) {
+>                 if (!names[i]) {
+> -                       vqs[i] =3D NULL;
+> -                       continue;
+> +                       err =3D -EINVAL;
+> +                       goto err_setup_vq;
+>                 }
+>
+> -               vqs[i] =3D virtio_vdpa_setup_vq(vdev, queue_idx++,
+> +               vqs[i] =3D virtio_vdpa_setup_vq(vdev, i,
+
+And here.
+
+With those fixed.
+
+Acked-by: Jason Wang <jasowang@redhat.com>
+
+Thanks
+
+>                                               callbacks[i], names[i], ctx=
+ ?
+>                                               ctx[i] : false);
+>                 if (IS_ERR(vqs[i])) {
+> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.=
+h
+> index da9b271b54db..1c79cec258f4 100644
+> --- a/include/linux/virtio_config.h
+> +++ b/include/linux/virtio_config.h
+> @@ -56,7 +56,7 @@ typedef void vq_callback_t(struct virtqueue *);
+>   *     callbacks: array of callbacks, for each virtqueue
+>   *             include a NULL entry for vqs that do not need a callback
+>   *     names: array of virtqueue names (mainly for debugging)
+> - *             include a NULL entry for vqs unused by driver
+> + *             MUST NOT be NULL
+>   *     Returns 0 on success or error status
+>   * @del_vqs: free virtqueues found by find_vqs().
+>   * @synchronize_cbs: synchronize with the virtqueue callbacks (optional)
+> --
+> 2.32.0.3.g01195cf9f
+>
 >
 
-That is well understood.
-
-> For instance we can have a system with A DSP and a modem. We would use the same
-> TEE service, but
-
-That too.
-
-> the TEE driver will probably be different, same for the signature key.
-
-What TEE driver are we talking about here?
-
-> In such case the proc ID allows to identify the the processor you want to address.
-> 
-
-That too is well understood, but there is no alignment needed with the TEE, i.e
-the TEE application is not expecting a value of '0'.  We could set
-STM32_MP1_M4_PROC_ID to 0xDEADBEEF and things would work.  This driver won't go
-anywhere for as long as it is not the case.
-
-> 
-> > 
-> >> +#define STM32_MP1_M4_PROC_ID    0
-> >> +
-> >>  struct stm32_syscon {
-> >>  	struct regmap *map;
-> >>  	u32 reg;
-> >> @@ -257,6 +261,19 @@ static int stm32_rproc_release(struct rproc *rproc)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static int stm32_rproc_tee_stop(struct rproc *rproc)
-> >> +{
-> >> +	int err;
-> >> +
-> >> +	stm32_rproc_request_shutdown(rproc);
-> >> +
-> >> +	err = tee_rproc_stop(rproc);
-> >> +	if (err)
-> >> +		return err;
-> >> +
-> >> +	return stm32_rproc_release(rproc);
-> >> +}
-> >> +
-> >>  static int stm32_rproc_prepare(struct rproc *rproc)
-> >>  {
-> >>  	struct device *dev = rproc->dev.parent;
-> >> @@ -693,8 +710,19 @@ static const struct rproc_ops st_rproc_ops = {
-> >>  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> >>  };
-> >>  
-> >> +static const struct rproc_ops st_rproc_tee_ops = {
-> >> +	.prepare	= stm32_rproc_prepare,
-> >> +	.start		= tee_rproc_start,
-> >> +	.stop		= stm32_rproc_tee_stop,
-> >> +	.kick		= stm32_rproc_kick,
-> >> +	.load		= tee_rproc_load_fw,
-> >> +	.parse_fw	= tee_rproc_parse_fw,
-> >> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
-> >> +};
-> >> +
-> >>  static const struct of_device_id stm32_rproc_match[] = {
-> >> -	{ .compatible = "st,stm32mp1-m4" },
-> >> +	{.compatible = "st,stm32mp1-m4",},
-> >> +	{.compatible = "st,stm32mp1-m4-tee",},
-> >>  	{},
-> >>  };
-> >>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
-> >> @@ -853,6 +881,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  	struct device *dev = &pdev->dev;
-> >>  	struct stm32_rproc *ddata;
-> >>  	struct device_node *np = dev->of_node;
-> >> +	struct tee_rproc *trproc = NULL;
-> >>  	struct rproc *rproc;
-> >>  	unsigned int state;
-> >>  	int ret;
-> >> @@ -861,9 +890,26 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  	if (ret)
-> >>  		return ret;
-> >>  
-> >> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> >> -	if (!rproc)
-> >> -		return -ENOMEM;
-> >> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-> >> +		/*
-> >> +		 * Delegate the firmware management to the secure context.
-> >> +		 * The firmware loaded has to be signed.
-> >> +		 */
-> >> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
-> >> +		if (!rproc)
-> >> +			return -ENOMEM;
-> >> +
-> >> +		trproc = tee_rproc_register(dev, rproc, STM32_MP1_M4_PROC_ID);
-> >> +		if (IS_ERR(trproc)) {
-> >> +			dev_err_probe(dev, PTR_ERR(trproc),
-> >> +				      "signed firmware not supported by TEE\n");
-> >> +			return PTR_ERR(trproc);
-> >> +		}
-> >> +	} else {
-> >> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> >> +		if (!rproc)
-> >> +			return -ENOMEM;
-> >> +	}
-> >>  
-> >>  	ddata = rproc->priv;
-> >>  
-> >> @@ -915,6 +961,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
-> >>  		dev_pm_clear_wake_irq(dev);
-> >>  		device_init_wakeup(dev, false);
-> >>  	}
-> >> +	if (trproc)
-> > 
-> >         if (rproc->tee_interface)
-> > 
-> > 
-> > I am done reviewing this set.
-> 
-> Thank for your review!
-> Arnaud
-> 
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> >> +		tee_rproc_unregister(trproc);
-> >> +
-> >>  	return ret;
-> >>  }
-> >>  
-> >> @@ -935,6 +984,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
-> >>  		dev_pm_clear_wake_irq(dev);
-> >>  		device_init_wakeup(dev, false);
-> >>  	}
-> >> +	if (rproc->tee_interface)
-> >> +		tee_rproc_unregister(rproc->tee_interface);
-> >> +
-> >>  }
-> >>  
-> >>  static int stm32_rproc_suspend(struct device *dev)
-> >> -- 
-> >> 2.25.1
-> >>
