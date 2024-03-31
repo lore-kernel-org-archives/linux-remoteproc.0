@@ -1,168 +1,181 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F8E1494CA
-	for <linux-remoteproc@vger.kernel.org>; Sun, 31 Mar 2024 08:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73837144310
+	for <linux-remoteproc@vger.kernel.org>; Sun, 31 Mar 2024 11:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711874786; cv=none; b=meMcp/iheHVU+DdsHT6uMHxfChTqjDSAnyc8STd4zfhgiidHEEL7Pav51FNIs/wIjt1xryKCRakV87y7OPso89RRWiaUOz9YPdLdzVeFZAoNSmO1gLcrXmSefE/fesW8SbDFFpWF4RyaivkwlBSKSPZY2jGfPE5mt6URGxUKSJg=
+	t=1711884043; cv=none; b=X119DD0YXGENKm/VIYfL0gEighE0e0/GRMCp3In2mkcMkBOKYwOQy4MT0wpgtIWdrOa3RyqdbHdG33sVkzzl/lTU31nT2g9/vgboW7rWr0bMytX5a6MRHtF7wzxcpaFbGN2xpsn5adCzCl+567qGJ8d8i89tTbhuVkSzh61nYXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711874786; c=relaxed/simple;
-	bh=ZZgxTq79++b7HHq30K3VBjFNBWdk1QKSfVGAvnwx7/U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MnI/kANxCRCgOuTwCP9ieKh5E32qNm7RCOS9hatsIupcKYPNnkEyN32OrXMQsNvprwNFRYvWvN/909YxaLLkocCkC3nxXkk9V8H0SCkCGwXbFo/RUQQWudxW7/ZgdNDB17lM7tHecLVWznZZHckKsAFfZ+A1ZintuLyiFDlYk4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hjtn5Hln; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711884043; c=relaxed/simple;
+	bh=HA92dRzVt3vZdgr5pQJY02em2UTWtsR+GLFyMiGbHw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1tBTK3Lp+mpwrC8OOTmBGpOqYaaLZDufWoBamCm4oesnba6zWPc8z3Ti5ZywYCr3EeYXp8nMnHFVj6Qx4t0+McvJJCZu6fPQmL62bcbOLzlHuSTMHrjl2AiRIzPWDlbl2ygcNJW0ME2nkcQAt7zIYPipG90yF0RpAExJqOLbzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O9hNEPm9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hjtn5Hln"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-341cf77b86bso2244341f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Sun, 31 Mar 2024 01:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711874782; x=1712479582; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PUGaKwdvwMokLlZR31UQgBcIJ2q0krEU+yZMO7QbwcI=;
-        b=Hjtn5Hlnes+w/e3w0eIr7nTTgSvMkDmZzsGAWeX3YC3DfaOpgP2PPknWKtAJoy6EE/
-         qmCDP91IjqyT+WUq1JbCAoWyjT8nVHhBFmWdVgk0Fe56zIGX0EzaY4w5JojZUz8eOTSq
-         bbVl2PykGm/CmM9SBKHHXHVZBsO5HZaZIDO33uuEaZufu9xJt7GORX5VUBtdXMbrqC/X
-         Y0LErKvrlsDnwUy4CqDF8HF1dE5RNaIEwnyl3cbuOSSMg4B0PyOU51qtlo5YuSt6FLLf
-         MToJ2Fztixc0ZZyl+McVdkXLITXzwverL2iGuRWtvyoEjfDLYSgIL5jdI6FpwhSg6kGH
-         kWPg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O9hNEPm9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711884040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZAFJ+0SeTqdsqNS6GC0N4AccV7yeFgGXHpRB2cwbNo4=;
+	b=O9hNEPm9d0O69v2SYtEVIAv/U2/DkfMVnqoT3sS3hw97Pwv3xLSYQMy3hz8OAtCRArUzk4
+	POezS0OrrZtR9aqD1bN9s6JF162Hg0s7ZbHhe3NUriXHopxotUal9HkHvj149BMkZNsWX8
+	dTvicyJ42irvCew2m05QMhtYhYfYtqI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-210-tV789BZdOgu9RpJmZW47-g-1; Sun, 31 Mar 2024 07:20:35 -0400
+X-MC-Unique: tV789BZdOgu9RpJmZW47-g-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-414ae9b8c04so21085325e9.2
+        for <linux-remoteproc@vger.kernel.org>; Sun, 31 Mar 2024 04:20:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711874782; x=1712479582;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUGaKwdvwMokLlZR31UQgBcIJ2q0krEU+yZMO7QbwcI=;
-        b=Yvm1Y+OvuCLqyypWO/5GYfUlgPZvdOYzdaP7zTKItv6zn7lQceD5HDa1IZd/+SKCHi
-         2GWBAcKN62Eh4J51v3B/SWSA2QxmQsfdRmBE4BtPHtKoHmjZKAPKxZp/wDQD2e+m3sFE
-         HxrtvsC9BDp2AF1s+VNvMmn0YvSgUdsiR46Wy+Xf5T/rOhKtRFRKJ3mWnDTm2gPAQNmr
-         /jC3obio4mdP1gW+05+7KxEnEKriYCL57DFmGKNJUYVKnSFNm+r5eBegpDI/dvQqjXuG
-         K4HioOei+DL2ogm4kPeEIp1JBZu1hA7JjZqWMMwBw3xDGe1lqSAQszWlX08ZrGtUjZOB
-         ZLuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWd9pGuiQGkidZHEeU0CK549F59/tyYyNSj+DWzcONPnwqT++0iglIZAvRkZmuBpNjlw491R8/8+1gyD7g2r9VdjpIYYvWLJaHfvCm9SDFZmQ==
-X-Gm-Message-State: AOJu0YzmwL1BWEIJyUm1fXdycvqCu2HdQSCGjkbg9PoklHqFJCh3v5Nl
-	xQthpn+z0tqK/waWdzpaNfntnOCqAzwG1kseCLrsJNZqxffaD8tXeJUDcPFusPk=
-X-Google-Smtp-Source: AGHT+IF7MARc7H4ZqzG7wJkQ89qaWtgYzIyVWgX/basw0DoDqcekmy5aXwgVIVD/A5uDZbyMRmIPWA==
-X-Received: by 2002:adf:f88f:0:b0:341:d2f9:494c with SMTP id u15-20020adff88f000000b00341d2f9494cmr3575737wrp.55.1711874782419;
-        Sun, 31 Mar 2024 01:46:22 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id k17-20020adff5d1000000b00341b7388dafsm8436003wrp.77.2024.03.31.01.46.18
+        d=1e100.net; s=20230601; t=1711884034; x=1712488834;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZAFJ+0SeTqdsqNS6GC0N4AccV7yeFgGXHpRB2cwbNo4=;
+        b=YXJ8Hjsas/0j342BniouCikquo6RIh+/ufC1DLwQLIHtyFbEjucTj79mdVthAbv3xs
+         zAQlAy1ZbxeRE8YwtnOKxmQxiGjw+j53RCqOB1ufS86+VOL8L8WyRCdgITWhk+G6ozRe
+         fDJvpqVwzdv3BuUfLeHWLEoG+ezbUTIKg4Ke26w0WSFW4btYZps4cVk/YZd7v7NcCUYU
+         eZ5OBWaWBi5IdKF6XiHBLZp3OLoLS+fU+S+jOwj0GA/W7q8qjzZz3MPJsa4V4YitR4Ci
+         LiEASkwQJowlGL4YsAC74GDEF9xMyf7Ci2+OlWwISHuoZso0PYAfZjGClOqd9+5yN+8e
+         8Y+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW2ize+Q15yY/i8NaoNzBdKDVhYI6yO+/3KFg8ch/W+g2DEe1hgESvRL1aImR56ThkPR7LtsNyzbjJGmHam+QW0BxTGOME/yfaSws+Py9EsRA==
+X-Gm-Message-State: AOJu0Yy/cq8LWO0sSkdvu2VXW8Yf2xDp+dKkY83DnZwi1UMTqm2e/oA4
+	TwTq6TqBen3RXaMPXQsobNb7q0824bgYUmPam8kLMt+ttPa6TV08d2T+uBLXE0ANpsNL1Bnn6ta
+	1bECkmGplepLwVqHesIsw0mGTSPofu5T/Tj7nIicnhOznrCcdMfHSHJLimiTPQB/iZ9E=
+X-Received: by 2002:a05:600c:220f:b0:413:e19:337f with SMTP id z15-20020a05600c220f00b004130e19337fmr6115880wml.22.1711884034577;
+        Sun, 31 Mar 2024 04:20:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhoN6xvj4jps7JZJhPCGbovoaf04BQIV4BBUP7925nSfWx1HPIV5PQzN7Ku2MIo02ql2sOQw==
+X-Received: by 2002:a05:600c:220f:b0:413:e19:337f with SMTP id z15-20020a05600c220f00b004130e19337fmr6115845wml.22.1711884033951;
+        Sun, 31 Mar 2024 04:20:33 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:173:c52c:ce6f:ec9c:ca7c:7200])
+        by smtp.gmail.com with ESMTPSA id u22-20020a05600c139600b004148d7b889asm14465567wmf.8.2024.03.31.04.20.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Mar 2024 01:46:21 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sun, 31 Mar 2024 10:44:12 +0200
-Subject: [PATCH v2 25/25] sound: virtio: drop owner assignment
+        Sun, 31 Mar 2024 04:20:33 -0700 (PDT)
+Date: Sun, 31 Mar 2024 07:20:24 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev,
+	kvm@vger.kernel.org, linux-wireless@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 01/22] virtio: store owner from modules with
+ register_virtio_driver()
+Message-ID: <20240331071546-mutt-send-email-mst@kernel.org>
+References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
+ <20240327-module-owner-virtio-v1-1-0feffab77d99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240331-module-owner-virtio-v2-25-98f04bfaf46a@linaro.org>
-References: <20240331-module-owner-virtio-v2-0-98f04bfaf46a@linaro.org>
-In-Reply-To: <20240331-module-owner-virtio-v2-0-98f04bfaf46a@linaro.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jonathan Corbet <corbet@lwn.net>, 
- David Hildenbrand <david@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
- Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Paolo Bonzini <pbonzini@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
- Jens Axboe <axboe@kernel.dk>, Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Amit Shah <amit@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Gonglei <arei.gonglei@huawei.com>, "David S. Miller" <davem@davemloft.net>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>, 
- Gurchetan Singh <gurchetansingh@chromium.org>, 
- Chia-I Wu <olvaffe@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Daniel Vetter <daniel@ffwll.ch>, 
- Jean-Philippe Brucker <jean-philippe@linaro.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Alexander Graf <graf@amazon.com>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>, 
- Dan Williams <dan.j.williams@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
- Ira Weiny <ira.weiny@intel.com>, 
- Pankaj Gupta <pankaj.gupta.linux@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- "James E.J. Bottomley" <jejb@linux.ibm.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: virtualization@lists.linux.dev, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- iommu@lists.linux.dev, netdev@vger.kernel.org, v9fs@lists.linux.dev, 
- kvm@vger.kernel.org, linux-wireless@vger.kernel.org, nvdimm@lists.linux.dev, 
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=719;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=ZZgxTq79++b7HHq30K3VBjFNBWdk1QKSfVGAvnwx7/U=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmCSJm5t8lRjxPTys8b+WU0OKgg1LgcvzKJ4xNt
- n3OV06BuwyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZgkiZgAKCRDBN2bmhouD
- 13W/D/oDYwucjXt0Tt8Y0Uy9LmGcrAbjofc6FyMbOg5ZcMm5e3+WVCaJvH1GzuMW7eKutG1NKq4
- SG+22VBevobbwXkTrzQkvyrydccLRDbeWLWm+HJad5tojpoFvW83SYI4iPlD0b266lNVIdzpKjz
- hcUgfDLubJvg2WN81urFjglAG74SusSyGpct+7+xypg9xUvAMj+j+vblD6MiYvdlR7YTT07NpVb
- CnsXjptZ5D0mdqdAp/yyZAVgxH8IatToMVp+zeRzRlVPHc8mepyeo/z9irAjfvJMoh/GGv0t6Gr
- 6lHVgN1q09NOsaKCBvZgBc1M3JNDSEvRjO4LMT7dAINa97EQdIp9+8ZpNqqX0RQXYDulXZIS5+F
- Fi4LuIifmxFvnLlK3XGafTiE+izB6Av3JwLIwcg0Q9VTwxzmWeoDKL9c1o0P/bZ5TzBsp8cO5Az
- EQrw4GwFCAMD7jfVzip/IzS25Sgb5lVDNqj2sWyi5R9/l0bzGoRd8h0nMUo0h60LV8+UQNG4Qn2
- Z5ijAWCJJVA4mNoA3tp1IfoltFnoxAy+WhGYLKaLo80DfbVnlQAHuwY8P4oIqsfEalA2ZTmhTBx
- qz3zO+FBApnCfqIytRnVYYYjPxsP+kbjFVJOBhR1fGzSU1/is2cPkZduK341zXENT6nHwkNDVK4
- VB34pc8fk3aFIrA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240327-module-owner-virtio-v1-1-0feffab77d99@linaro.org>
 
-virtio core already sets the .owner, so driver does not need to.
+On Wed, Mar 27, 2024 at 01:40:54PM +0100, Krzysztof Kozlowski wrote:
+> Modules registering driver with register_virtio_driver() might forget to
+> set .owner field.  i2c-virtio.c for example has it missing.  The field
+> is used by some of other kernel parts for reference counting
+> (try_module_get()), so it is expected that drivers will set it.
+> 
+> Solve the problem by moving this task away from the drivers to the core
+> amba bus code, just like we did for platform_driver in
+> commit 9447057eaff8 ("platform_device: use a macro instead of
+> platform_driver_register").
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
 
-Depends on the first patch.
----
- sound/virtio/virtio_card.c | 1 -
- 1 file changed, 1 deletion(-)
+This makes sense. So this will be:
 
-diff --git a/sound/virtio/virtio_card.c b/sound/virtio/virtio_card.c
-index 2da20c625247..7805daea0102 100644
---- a/sound/virtio/virtio_card.c
-+++ b/sound/virtio/virtio_card.c
-@@ -438,7 +438,6 @@ static unsigned int features[] = {
- 
- static struct virtio_driver virtsnd_driver = {
- 	.driver.name = KBUILD_MODNAME,
--	.driver.owner = THIS_MODULE,
- 	.id_table = id_table,
- 	.feature_table = features,
- 	.feature_table_size = ARRAY_SIZE(features),
+Fixes: 3cfc88380413 ("i2c: virtio: add a virtio i2c frontend driver")
+Cc: "Jie Deng" <jie.deng@intel.com>
 
--- 
-2.34.1
+and I think I will pick this patch for this cycle to fix
+the bug. The cleanups can go in the next cycle.
+
+
+> ---
+>  Documentation/driver-api/virtio/writing_virtio_drivers.rst | 1 -
+>  drivers/virtio/virtio.c                                    | 6 ++++--
+>  include/linux/virtio.h                                     | 7 +++++--
+>  3 files changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/virtio/writing_virtio_drivers.rst b/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> index e14c58796d25..e5de6f5d061a 100644
+> --- a/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> +++ b/Documentation/driver-api/virtio/writing_virtio_drivers.rst
+> @@ -97,7 +97,6 @@ like this::
+>  
+>  	static struct virtio_driver virtio_dummy_driver = {
+>  		.driver.name =  KBUILD_MODNAME,
+> -		.driver.owner = THIS_MODULE,
+>  		.id_table =     id_table,
+>  		.probe =        virtio_dummy_probe,
+>  		.remove =       virtio_dummy_remove,
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index f173587893cb..9510c551dce8 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -362,14 +362,16 @@ static const struct bus_type virtio_bus = {
+>  	.remove = virtio_dev_remove,
+>  };
+>  
+> -int register_virtio_driver(struct virtio_driver *driver)
+> +int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
+>  {
+>  	/* Catch this early. */
+>  	BUG_ON(driver->feature_table_size && !driver->feature_table);
+>  	driver->driver.bus = &virtio_bus;
+> +	driver->driver.owner = owner;
+> +
+>  	return driver_register(&driver->driver);
+>  }
+> -EXPORT_SYMBOL_GPL(register_virtio_driver);
+> +EXPORT_SYMBOL_GPL(__register_virtio_driver);
+>  
+>  void unregister_virtio_driver(struct virtio_driver *driver)
+>  {
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index b0201747a263..26c4325aa373 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -170,7 +170,7 @@ size_t virtio_max_dma_size(const struct virtio_device *vdev);
+>  
+>  /**
+>   * struct virtio_driver - operations for a virtio I/O driver
+> - * @driver: underlying device driver (populate name and owner).
+> + * @driver: underlying device driver (populate name).
+>   * @id_table: the ids serviced by this driver.
+>   * @feature_table: an array of feature numbers supported by this driver.
+>   * @feature_table_size: number of entries in the feature table array.
+> @@ -208,7 +208,10 @@ static inline struct virtio_driver *drv_to_virtio(struct device_driver *drv)
+>  	return container_of(drv, struct virtio_driver, driver);
+>  }
+>  
+> -int register_virtio_driver(struct virtio_driver *drv);
+> +/* use a macro to avoid include chaining to get THIS_MODULE */
+> +#define register_virtio_driver(drv) \
+> +	__register_virtio_driver(drv, THIS_MODULE)
+> +int __register_virtio_driver(struct virtio_driver *drv, struct module *owner);
+>  void unregister_virtio_driver(struct virtio_driver *drv);
+>  
+>  /* module_virtio_driver() - Helper macro for drivers that don't do
+> 
+> -- 
+> 2.34.1
 
