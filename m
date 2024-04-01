@@ -1,84 +1,100 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AAAC139;
-	Mon,  1 Apr 2024 23:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6CC57303;
+	Mon,  1 Apr 2024 23:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712014766; cv=none; b=QT2PA+0/eeBQu7cJtNLTNB6OvtwEfykJXm1EfOGFZ43eoRpXkGsh/kRfbuBnancQGwpJrLdA1ApUeKh7FXoQzLaroOFoqy+2svKMNXrZC0h70UgyTq+3CvyOl5EocuiXzu7dzd5M5hizymg6pdMagTJqRIqQPnpIMfUCuMxI5YA=
+	t=1712015234; cv=none; b=ISElAImyByPwNv9VdT3t0pajgdf5juLYL9M5OfD7nCDLsW1a2Br+D/7qQWzoVOyahiL5fw+pDqhn4rJ4zZ2a3iWxEyZ/0rGQDQv5jwV2E/gvcngpzpPgo51UXmIxcOA0bM/EiEOIEY9w7WXPU4GJC7UQ6YWeZEwA8lPnoRvVky4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712014766; c=relaxed/simple;
-	bh=qDL79W4tDRSoCxziPmtQJDLHj5eXaeFBf36CANPZYOo=;
+	s=arc-20240116; t=1712015234; c=relaxed/simple;
+	bh=AOoodEPk5RmfeYxvfVLpELQG0Xp56P/7okwOfi5Lspo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XxDK6y7afTFNN1QBQfvGVu4oC34wZ5wAWExtmt6WanNUwfagdZTdHIgR6ORZH7FBIRKBdAGmNPFiD9m/dKZWglZJ0NtKT93nnYO9OH7r3UiQDkMIx5y714yEEltTAxOCY005HgW2DNuGGlyHQTOJz5fM9TIVRuOU3PeI4uYXKmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KhaRwQ+z; arc=none smtp.client-ip=198.47.23.249
+	 In-Reply-To:Content-Type; b=pGd40qyBokND3VcVWp7Ko8x/ezWTkOypLdLanDvw0U8nEpCuuyXJBiYZG0soX3/8efg8B23IbLHpekeDUIHXNAteDlz+1ORpHf/cwPGijlyerRSU9tjq2DL9WPg99TnozNR5UWA+WJlSY/FJCAp5lrDL5NkOXCx05rOe/+7LMko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J/BALkIp; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KhaRwQ+z"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 431NdKDh129217;
-	Mon, 1 Apr 2024 18:39:20 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J/BALkIp"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 431Nl6ct103875;
+	Mon, 1 Apr 2024 18:47:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1712014760;
-	bh=KJec4Lr4hS/3zoW/qDar4/1YlvfzINb6rbydkKiyH4E=;
+	s=ti-com-17Q1; t=1712015226;
+	bh=AOoodEPk5RmfeYxvfVLpELQG0Xp56P/7okwOfi5Lspo=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KhaRwQ+z38nUV3md7+zGyORisTOSw5HWQ5FjwmZfFXgCAkpfpygf7SYFqEdFXWdC2
-	 WI9V2IzZWKSAdSvHcUdxgUcMGu0u8AKvnVuLiNf04LC/4TL930dMnR0+aKZ/7RpuiD
-	 sYUwchQaEKHeuEtORnfhmg++cy4ES5WDEXXDuL90=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 431NdKmu087524
+	b=J/BALkIp4W9XgwnJnxYkNoUsX1RZIWpDnskzpI+fnBjVPEcKC5SxQydh2iYefX0+x
+	 WD6q0K47DTlGej9xgWoUfLvKaZCxpKWbMfm5vgJMl7L8yXyR7Oehpasrh7oWySCs0p
+	 zQ18nMKH8Auc0oxbn+wm+dnOS6Npveit74H3Z1bI=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 431Nl6Jj123295
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Apr 2024 18:39:20 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 1 Apr 2024 18:47:06 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
- Apr 2024 18:39:21 -0500
-Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2024 18:47:06 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 1 Apr 2024 18:39:21 -0500
-Received: from [10.249.48.175] ([10.249.48.175])
-	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 431NdKCO095046;
-	Mon, 1 Apr 2024 18:39:20 -0500
-Message-ID: <761aa56f-55c4-e0d4-9f75-eef8035aa25b@ti.com>
-Date: Mon, 1 Apr 2024 18:39:20 -0500
+ Frontend Transport; Mon, 1 Apr 2024 18:47:06 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 431Nl550034899;
+	Mon, 1 Apr 2024 18:47:06 -0500
+Message-ID: <c297dd68-f331-4c7f-a740-8fe722b347b0@ti.com>
+Date: Mon, 1 Apr 2024 18:47:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 13/13] mailbox: omap: Remove kernel FIFO message queuing
-Content-Language: en-US
-To: Andrew Davis <afd@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Nick
- Saulnier <nsaulnier@ti.com>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] mailbox: omap: Reverse FIFO busy check logic
+To: Hari Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Nick Saulnier <nsaulnier@ti.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mathieu
- Poirier <mathieu.poirier@linaro.org>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20240325172045.113047-1-afd@ti.com>
- <20240325172045.113047-14-afd@ti.com>
-From: Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <20240325172045.113047-14-afd@ti.com>
+ <20240325172045.113047-13-afd@ti.com>
+ <fb0ddca3-3b74-8225-914e-d1799f6c3ca3@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <fb0ddca3-3b74-8225-914e-d1799f6c3ca3@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 3/25/24 12:20, Andrew Davis wrote:
-> The kernel FIFO queue has a couple issues. The biggest issue is that
-> it causes extra latency in a path that can be used in real-time tasks,
-> such as communication with real-time remote processors.
-> 
-> The whole FIFO idea itself looks to be a leftover from before the
-> unified mailbox framework. The current mailbox framework expects
-> mbox_chan_received_data() to be called with data immediately as it
-> arrives. Remove the FIFO and pass the messages to the mailbox
-> framework directly.
-Yes, this would definitely speed up the message receive path. With RT 
-linux, the irq runs in thread context, so that is Ok. But with non-RT 
-the whole receive path runs in interrupt context. So, i think it would 
-be appropriate to use a threaded_irq()?
+On 4/1/24 6:31 PM, Hari Nagalla wrote:
+> On 3/25/24 12:20, Andrew Davis wrote:
+>>   static int omap_mbox_chan_send_noirq(struct omap_mbox *mbox, u32 msg)
+>>   {
+>> -    int ret = -EBUSY;
+>> +    if (mbox_fifo_full(mbox))
+>> +        return -EBUSY;
+>> -    if (!mbox_fifo_full(mbox)) {
+>> -        omap_mbox_enable_irq(mbox, IRQ_RX);
+>> -        mbox_fifo_write(mbox, msg);
+>> -        ret = 0;
+>> -        omap_mbox_disable_irq(mbox, IRQ_RX);
+>> +    omap_mbox_enable_irq(mbox, IRQ_RX);
+>> +    mbox_fifo_write(mbox, msg);
+>> +    omap_mbox_disable_irq(mbox, IRQ_RX);
+>> -        /* we must read and ack the interrupt directly from here */
+>> -        mbox_fifo_read(mbox);
+>> -        ack_mbox_irq(mbox, IRQ_RX);
+>> -    }
+>> +    /* we must read and ack the interrupt directly from here */
+>> +    mbox_fifo_read(mbox);
+>> +    ack_mbox_irq(mbox, IRQ_RX);
+>> -    return ret;
+>> +    return 0;
+>>   }
+> Is n't the interrupt supposed to be IRQ_TX above? i.e TX ready signal?
+
+Hmm, could be, but this patch doesn't actually change anything, only moves code
+around for readability. So if we were are ack'ing the wrong interrupt, then it
+was wrong before. We should check that and fix it if needed in a follow up patch.
+
+Andrew
