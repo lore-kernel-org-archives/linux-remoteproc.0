@@ -1,40 +1,60 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4FA8662E;
-	Tue,  2 Apr 2024 14:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80B12BF21
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Apr 2024 14:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712068395; cv=none; b=pw0Y5sQArvIDdvtPCGS5OLcDAM++gRCiqO3lioFXTqSvwhdq8XwUQhlvHpe26qOcj+RUPZCxksgbc6Zzejf4ez1NKMCC4B9j5B5sRURXWhyCFaIVzZ8YQpxtQHCn4LhzlYNg5z4IHY3BQrjHabDk444V+S7V0F4A0d+DkfQnv4Q=
+	t=1712069251; cv=none; b=bjvLHYReheMWGbrRJ48hRLGcbL0oIhzFIx6nYt4mfzJSUfkyw5OP2G3uzBzmvV+nRpF71oQBOjn8lmjELJOTq7JH/y5GXSr1pONUxhuyTFFFQM8xjpHouEwRdlMLkGwLd5NozLbZWyIMY3RrN7MIEsXny0NcPyW1Hl9dkGDBWaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712068395; c=relaxed/simple;
-	bh=k9jpeeTQRulLlydfpwC6l14dlccqbsTGqCf2ynVuYi0=;
+	s=arc-20240116; t=1712069251; c=relaxed/simple;
+	bh=yOuFMfKt3fhU2KvOiQGXseYLvQBMDDOSvq+QfscMDJI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OX//N74CPMm3NXUcqyaq9eu8hMVhHx2Wm5ZG3ZGSRz+rVbRPahddrcTTypAE/alrJD6yDE/hztYliezKJqh0vEfN2g36j4syKc9yWRCLLlCAOjbS1uzrvJzCuV5WvwosXXB2UF6RJ/NtDZm0QMzLJ6zkCXt1awmJQp7DEPpToGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fBMTao+x; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 In-Reply-To:Content-Type; b=uAYwqJXtrj9UA58noDbkH6e3dDs7p86xI3xbg1qf8QifMPKC3G5gKtCSDAThXn8nB9sDJ40T+BQNfu7/eCAN+oluZB+LBruWEPb/XQr9E3QFAIMxtKrcVp9dP3A6aA44HTz+40xWghuxvqKWGp8SO6Aum9vrqJemKyOlLbTymhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kEOYK3HN; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fBMTao+x"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1712068387;
-	bh=k9jpeeTQRulLlydfpwC6l14dlccqbsTGqCf2ynVuYi0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fBMTao+x11ZZxsEye6B1rpE+VCfhdJsJEjGqi5K6sYPkJRIsjLpxbcoYZAPt3Lmw3
-	 0Dm5fUPMVs19etqTkb2movClXqHhAgw3RPoMOJa5EjRArLD5N17NNs9SvB7sMYarhu
-	 +ruwYVRyPK53FXPcoplIBsC3PBr9n3tLjaiYh+25ATNZaB0+epp7/HqSnBzuJW8PRn
-	 xOMVwv3At1j+V8GzryFc0utZGQ0Fttgb4sbcRvKN1frouteerZzW1Y+kEDDWubM1vV
-	 3dR5SeIgeWjBJtAhvclke5ndjcVQ6BtJNewk8BVtkjsUeiK6OQmSHeEBukIMIjos9e
-	 n+3AwmaA6htOg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 181A93780624;
-	Tue,  2 Apr 2024 14:33:07 +0000 (UTC)
-Message-ID: <1f38ce24-83fa-4370-b036-b6c4bcb39fb3@collabora.com>
-Date: Tue, 2 Apr 2024 16:33:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kEOYK3HN"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-56bc5a3aeb9so6718618a12.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Apr 2024 07:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712069247; x=1712674047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAVh7IlPzqGjm9NpZgxRf0H+NeU99flnbxeI0QSVaJg=;
+        b=kEOYK3HNYBoaLX9mLL2lizwyVaID20fE73Hc56G1UdRcle/UVuCx3hltn8614LQx4I
+         MnvcF6z3yNIYAEFXZU0hFsMKqCiuP56KSD6fhU2B0zp8I8OoKfkoQiFIZCpvPbgEVFtc
+         +Aalx1e5QgW8aYGoJ+l67mSmy+cHvtUWQOpbaHzBWhVm0Su2RGW5ANcQ77OHp1dcpart
+         XcLbUqy3jLBJaQg5zel1yX8eUGabfggA81c2/pop4T8BoTL6mUYSXTHIIqvSHi4kiq39
+         IxltSd6zcQWdv/kw+TIbuFUNwBZXB/YxApYHkCYEYyCI4QpoNHbL3sbqtTbWi10gYmpB
+         M28g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712069247; x=1712674047;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hAVh7IlPzqGjm9NpZgxRf0H+NeU99flnbxeI0QSVaJg=;
+        b=WNxccU4wIbPI/tuRWk/xOj/5vGTy5CMVu4PwTggEHTpDGUv5tED8AcJ0Rsfy7cnxfD
+         IVoSHIO9fTiR0DHrNc8m8fb0NtRDrFIeOAitYcphOqXoJzS+YD9F3CWv2fzEE1wzIeHX
+         PhuuSyYu9i4P8q8TscH6RbgiVrMuXNQWi4tN8+955Ea/lBkcXA5Fhm16xJo2IMzsZSUd
+         H1A4+MViYRfnekeGAwsQYQdtiGXB3Lj8inArZtuZRro/cEeSWw0fwPVFutuQOV5xnrJe
+         IXqfF/JCk4HgqAchUP21GIWCg8WDnmhWZ0sLprxXSTECTZzHEfj7coK2h3MNvibC6TTV
+         qITg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2XF8DZrSEWcp7kkNalHdqz1A6PZRP9/rCF+YV4ePQkH4vlrhVO9R4xvg7T0eqvmEKIY+GW2XlID63P2zeqvLv9d5J3Awk/yF8mMzUmH1uxg==
+X-Gm-Message-State: AOJu0YzCyk+wEEFXlE1lXGijhQUrdzWhCjnmjFtgvyFMY0vOH7rGpb/5
+	UC/oB88R5TuDAu4eRMsl1DPLUN3g4VcM6Xtnc69GqUpRAQIhR9Ah01IcfqrMaz8=
+X-Google-Smtp-Source: AGHT+IFBVqcsXGsRjPp1iqC7U9wiXJJ38gF3zMb3VBwO2QsXOJos6FFUOnkxbTRiPODXCJMx8xQt8A==
+X-Received: by 2002:a05:6402:5190:b0:568:9ba8:8f1a with SMTP id q16-20020a056402519000b005689ba88f1amr9970535edd.7.1712069246823;
+        Tue, 02 Apr 2024 07:47:26 -0700 (PDT)
+Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id r1-20020aa7cb81000000b0056dd4bf7660sm2488730edt.52.2024.04.02.07.47.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Apr 2024 07:47:25 -0700 (PDT)
+Message-ID: <d9ba1e11-44ea-4c1f-ab33-56a8bf57ab63@linaro.org>
+Date: Tue, 2 Apr 2024 16:47:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -42,95 +62,128 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: mediatek: Don't parse extraneous subnodes
- for multi-core
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, matthias.bgg@gmail.com, tzungbi@kernel.org,
- tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, wenst@chromium.org, kernel@collabora.com
-References: <20240321084614.45253-1-angelogioacchino.delregno@collabora.com>
- <20240321084614.45253-3-angelogioacchino.delregno@collabora.com>
- <ZfxRyMyUqyqtXy8n@p14s> <9ef4e974-740e-4698-bb38-f236521a425c@collabora.com>
- <ZgWA/E46i/CaoM74@p14s> <b6ed8710-1608-4343-8a58-5f8e0e16d10d@collabora.com>
- <CANLsYkyu69Pwv094XGfVomuu1Oixw3vxr42q6WOE4F3snATygw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 3/3] arm64: dts: msm8996: add fastrpc nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Sibi Sankar <quic_sibis@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+References: <20240401-msm8996-remoteproc-v1-0-f02ab47fc728@linaro.org>
+ <20240401-msm8996-remoteproc-v1-3-f02ab47fc728@linaro.org>
 Content-Language: en-US
-In-Reply-To: <CANLsYkyu69Pwv094XGfVomuu1Oixw3vxr42q6WOE4F3snATygw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240401-msm8996-remoteproc-v1-3-f02ab47fc728@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 02/04/24 16:23, Mathieu Poirier ha scritto:
-> On Tue, 2 Apr 2024 at 03:56, AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 28/03/24 15:38, Mathieu Poirier ha scritto:
->>> On Wed, Mar 27, 2024 at 01:49:58PM +0100, AngeloGioacchino Del Regno wrote:
->>>> Il 21/03/24 16:27, Mathieu Poirier ha scritto:
->>>>> On Thu, Mar 21, 2024 at 09:46:14AM +0100, AngeloGioacchino Del Regno wrote:
->>>>>> When probing multi-core SCP, this driver is parsing all sub-nodes of
->>>>>> the scp-cluster node, but one of those could be not an actual SCP core
->>>>>> and that would make the entire SCP cluster to fail probing for no good
->>>>>> reason.
->>>>>>
->>>>>> To fix that, in scp_add_multi_core() treat a subnode as a SCP Core by
->>>>>> parsing only available subnodes having compatible "mediatek,scp-core".
->>>>>>
->>>>>> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>>> ---
->>>>>>     drivers/remoteproc/mtk_scp.c | 3 +++
->>>>>>     1 file changed, 3 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
->>>>>> index 67518291a8ad..fbe1c232dae7 100644
->>>>>> --- a/drivers/remoteproc/mtk_scp.c
->>>>>> +++ b/drivers/remoteproc/mtk_scp.c
->>>>>> @@ -1096,6 +1096,9 @@ static int scp_add_multi_core(struct platform_device *pdev,
->>>>>>             cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
->>>>>>             for_each_available_child_of_node(np, child) {
->>>>>> +          if (!of_device_is_compatible(child, "mediatek,scp-core"))
->>>>>> +                  continue;
->>>>>> +
->>>>>
->>>>> Interesting - what else gets stashed under the remote processor node?  I don't
->>>>> see anything specified in the bindings.
->>>>>
->>>>
->>>> Sorry for the late reply - well, in this precise moment in time, upstream,
->>>> nothing yet.
->>>>
->>>> I have noticed this while debugging some lockups and wanted to move the scp_adsp
->>>> clock controller node as child of the SCP node (as some of those clocks are located
->>>> *into the SCP's CFG register space*, and it's correct for that to be a child as one
->>>> of those do depend on the SCP being up - and I'll spare you the rest) and noticed
->>>> the unexpected behavior, as the SCP driver was treating those as an SCP core.
->>>>
->>>> There was no kernel panic, but the SCP would fail probing.
->>>>
->>>> This is anyway a missed requirement ... for platforms that want *both* two SCP
->>>> cores *and* the AudioDSP, as that'd at least be two nodes with the same iostart
->>>> (scp@1072000, clock-controller@1072000), other than the reasons I explained some
->>>> lines back.
->>>>
->>>> ...and that's why this commit was sent :-)
->>>>
->>>
->>> Please update the bindings with the extra clock requirement in your next
->>> revision.
->>>
->>
->> Ok.
->>
->> Can you please take only patch 1/2 of this series so that I can delay this one
->> for a bit? I don't have time to work on that exactly right now.
->>
+On 31.03.2024 11:10 PM, Dmitry Baryshkov wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> It was added to rproc-next last week.
+> The ADSP provides fastrpc/compute capabilities. Enable support for the
+> fastrpc on this DSP.
 > 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 57 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 7ae499fa7d91..cf7ab01f3af6 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -3545,6 +3545,63 @@ q6routing: routing {
+>  						};
+>  					};
+>  				};
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,smd-channels = "fastrpcsmd-apps-dsp";
+> +					label = "adsp";
+> +					qcom,non-secure-domain;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					cb@8 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <8>;
+> +						iommus = <&lpass_q6_smmu 8>;
+> +					};
+> +
+> +					cb@9 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <9>;
+> +						iommus = <&lpass_q6_smmu 9>;
+> +					};
+> +
+> +					cb@10 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <10>;
+> +						iommus = <&lpass_q6_smmu 10>;
+> +					};
+> +
+> +					cb@11 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <11>;
+> +						iommus = <&lpass_q6_smmu 11>;
+> +					};
+> +
+> +					cb@12 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <12>;
+> +						iommus = <&lpass_q6_smmu 12>;
+> +					};
+> +
+> +					cb@5 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <5>;
 
-Ah, sorry, didn't notice that.
+No need to copy downstream's creative alphabetical-but-not-numerical
+sorting.. The entries look OK though.. although, any reason we have
+such a weird binding including faux child nodes and not just an array
+of iommus? Is the only way to discover the fastrpc nodes' properties
+such as qcom,non-secure-domain or vmid belonging through hardcoding?
 
-Thanks again!
+Konrad
 
-
+Konrad
