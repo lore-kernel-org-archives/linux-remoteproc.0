@@ -1,157 +1,152 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16785134743
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Apr 2024 15:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2532A14B07B;
+	Tue,  2 Apr 2024 18:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712073541; cv=none; b=iciATVw5in0kt7Fc67yADZqCtC0tzWXCX0Z3YHgr0Yq2Qt5qbQ6jgUXM3X5SM+RzmNPWrGhG+VXmfQNwS8Y1lLrybEtqQlg4Dwdocs6B54/ADz4hyVyWhBfJhca0VQhOr5Rje1MqAoEVyFDnLhrstQnSErZs1dQvfAKaiyt8mbo=
+	t=1712080901; cv=none; b=Tvm+4h9QI0YOV/Qi1AcMAuf7xcHA5HiZdvjjiz6FXn3HvzUKAVxmtjK9Pabvvvbjjbbltg4mkgUKns5sP7KiIL/xSz6UntPt6ebsM9FsafZ0P+dOitC5yCMvcELLVErwj1SrYYREV4yVglF7Wu2tCRORsz4lTTCkJjQ0IFbs7cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712073541; c=relaxed/simple;
-	bh=8NAIgXsfazcwXjwK5f4+owrNYeHcAdGOOqJqfK2TAl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g4+b22WZ0lZ1UQLrg//tz2HZ2VrzEeVPmuZF+dr/5QsqplV5EZbssT4seSxU+pxdA2obfDZVQBOIXsQMkdtaIlcaOM8G6QNxSlC9P3Zh95oNX2KL/vKTS+gfzl5TYr/S5sV/Ab/MR7MLgVYWkSb9QpWyabb/YqTah+2IrCSN2cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ju3OhhWV; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712080901; c=relaxed/simple;
+	bh=I/KfB5CieqB04RJ8p97BvpVXen9Z0TrS8q4lo+lHyiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OJxHqYr6dWv9nLDPMskoxUjojys/0SnhiWh+itFmbxJnCKFqlJJzYtiFtQZhthwiO0tuMQg8Cy32AsRJcUmjy2oIfY+G4Qp6fbi6j/17I7YFZ1x+fCu5XQ3aMAHid9uHNXh/OGXywRXqw3ghloqxKjK+FL6QWErutIKiRWw8OLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aRpk6iA+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ju3OhhWV"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6ea838bf357so4236564b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Apr 2024 08:58:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712073539; x=1712678339; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+o7XM/+4QFL4NFpVeras/FA7hCjajIU2dOFHOBIo+B4=;
-        b=Ju3OhhWV/JgKLb/LsBqgqqhApdXynk6XID0duRJ5dletGGjZw0vAGFaEKDqlc26PRI
-         CTfrt2IJJZQcS3yfA3C9W7zFJnP4lnUtQzfZYBZX1C4Q9i7YIj297ri5yo89jgfG1LHJ
-         IrXA8sQMS0603egAkZUZBCv4Ioxb5QjTzi7Zz3HdDXaNJ5xIRXF3r1C0F79xJUmGl3lf
-         Lme/p/Ehwhv0x6mLx9Erx1lsvYfNTw1eq5OjSgaWmDhxR+dpMTygEB9DMgsTZ/H3Ejij
-         H9EkYkLzfFeujf+h8b1DJtDOO7/nvOdwGRL23PGEAUmZ0eYeY/tqrPkd9Q9uVes7RsO5
-         a/qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712073539; x=1712678339;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+o7XM/+4QFL4NFpVeras/FA7hCjajIU2dOFHOBIo+B4=;
-        b=Ld+S4qqJ7oB3UdW/lInq8CvrCwgO9gJunkq7Sf5xB1yKIYway3Kl5TwWoDwajmMojk
-         CHbLaRHs9KQ+ZjB98jp+4Rj8OHipCv1/RROoyDFaA0wWoqWd+d0U6qN7UInmlg4PaNL/
-         SzqL1dlaj97dm2J2PHDdIg+Uw7VtvEcMmes9bZneyEVZWkLxZUmU2Ka8xv7+9yiCT0YV
-         kzwQaLuMRVVkx0BgbK4XNK1HG0Sq1lE0Ij9R03+rAkXbxw/DwCGBUZ0D21pIK9JmJUQQ
-         DmvbFGAJuHoihc4J7EGEWvnVlKVVFnL7SccyT9UtugkpJmvYiJY7cXbhup+zEpuRcxud
-         LQUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh4PXYIWfDUmfXebeEIEW0SjknLrUfQgDeKYZ65UZsqjeqe5cq9ykDek9ZvK0N6t+EUc9NUWJcZKKE3YJXGW7PNgjiKWkmALxPCGDJ61rMqA==
-X-Gm-Message-State: AOJu0YxbYCKxvfDdC/uapdqkk+4LaF1v7nLHCA9rS+BsmcoyRJwbU/GE
-	jZu708Po7vwFFTMGt+tYfeUl5fJMgkCzUYgilXsN4bRuzWqyPn3WTrrX/QcY+cFYj1qxA9e6ict
-	82/269o2W3Jy0KAz07X+sGfRiJ2OGtKZCpbDLGQ==
-X-Google-Smtp-Source: AGHT+IEzsVJjfQE5WZje+CSZh6uu8A/j82gSVdAZbljD1m2TlI5e1JTeeViL0IFd5ZW5fAGfo0XB97vETuhPUGuxvMQ=
-X-Received: by 2002:a05:6a20:3946:b0:1a3:32e5:f38a with SMTP id
- r6-20020a056a20394600b001a332e5f38amr13336915pzg.45.1712073539439; Tue, 02
- Apr 2024 08:58:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aRpk6iA+"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 432HqscV029201;
+	Tue, 2 Apr 2024 18:01:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Ge+PCdmfdapG3nCKI7WpuuoKJVjlsUHNMa5EZQPh+Qk=;
+ b=aRpk6iA+UUeeVLtiuFhtNmSaMQsQ7/8MXvzEu8Mz9fU+69iduRNpXZr4ilYShTeGvl7j
+ izRH42UiYy1PGawVts2wptHJH9nKHPEVcb9LeC9zAChnX8rdlYfUdPqXyejA8yLVyAVn
+ bxYtOAW+XsUXB9qZHA8XprmlMQF3LrMq9kFoE6/2LIbrud66CVO1vAVsYomrl6m0O/nC
+ MZu3H4GhAdO0FgpD2zJ+yEFYnXlgSPrjIuQOZ1Tc4Sa9vK0QZ040Glv38O99yavZ9mP0
+ BNS823odZ/QAGUbl7LUJSOPsZi+h31FyUGa/ykcnCSSXz75mj31jzypSvf1L76ucvfrX WA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x8pt70121-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Apr 2024 18:01:14 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 432I1Dtf009350;
+	Tue, 2 Apr 2024 18:01:13 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x8pt7011r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Apr 2024 18:01:13 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 432I0tfR029616;
+	Tue, 2 Apr 2024 18:01:12 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x6ys2ypvh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Apr 2024 18:01:12 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 432I16XT33620508
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Apr 2024 18:01:08 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A898A2004F;
+	Tue,  2 Apr 2024 18:01:06 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 305C120043;
+	Tue,  2 Apr 2024 18:01:05 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.41.83])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Tue,  2 Apr 2024 18:01:05 +0000 (GMT)
+Date: Tue, 2 Apr 2024 20:01:03 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg
+ <johannes@sipsolutions.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ilpo
+ =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+        Vadim Pasternak
+ <vadimp@nvidia.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "Michael
+ S. Tsirkin" <mst@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jason
+ Wang <jasowang@redhat.com>, linux-um@lists.infradead.org,
+        platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        Halil Pasic
+ <pasic@linux.ibm.com>
+Subject: Re: [PATCH vhost v7 2/6] virtio: remove support for names array
+ entries being null.
+Message-ID: <20240402200103.19618d0c.pasic@linux.ibm.com>
+In-Reply-To: <20240328080348.3620-3-xuanzhuo@linux.alibaba.com>
+References: <20240328080348.3620-1-xuanzhuo@linux.alibaba.com>
+	<20240328080348.3620-3-xuanzhuo@linux.alibaba.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240401-msm8996-remoteproc-v1-0-f02ab47fc728@linaro.org>
- <20240401-msm8996-remoteproc-v1-3-f02ab47fc728@linaro.org> <d9ba1e11-44ea-4c1f-ab33-56a8bf57ab63@linaro.org>
-In-Reply-To: <d9ba1e11-44ea-4c1f-ab33-56a8bf57ab63@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 2 Apr 2024 18:58:48 +0300
-Message-ID: <CAA8EJpqn-s=o2D0CcFg3ZMQUQWGW6UiAs+hZK2gM1A5YciS9MA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: msm8996: add fastrpc nodes
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6KSAETINDiOyU9QFEllktnLI-PyY1diP
+X-Proofpoint-GUID: xwEdoevRFYCwufoSFRJa0qEo9oBQY5g_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-02_10,2024-04-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 adultscore=0
+ clxscore=1011 mlxscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ phishscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2403210000 definitions=main-2404020133
 
-On Tue, 2 Apr 2024 at 17:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 31.03.2024 11:10 PM, Dmitry Baryshkov wrote:
-> > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >
-> > The ADSP provides fastrpc/compute capabilities. Enable support for the
-> > fastrpc on this DSP.
-> >
-> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/msm8996.dtsi | 57 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 57 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > index 7ae499fa7d91..cf7ab01f3af6 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> > @@ -3545,6 +3545,63 @@ q6routing: routing {
-> >                                               };
-> >                                       };
-> >                               };
-> > +
-> > +                             fastrpc {
-> > +                                     compatible = "qcom,fastrpc";
-> > +                                     qcom,smd-channels = "fastrpcsmd-apps-dsp";
-> > +                                     label = "adsp";
-> > +                                     qcom,non-secure-domain;
-> > +                                     #address-cells = <1>;
-> > +                                     #size-cells = <0>;
-> > +
-> > +                                     cb@8 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <8>;
-> > +                                             iommus = <&lpass_q6_smmu 8>;
-> > +                                     };
-> > +
-> > +                                     cb@9 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <9>;
-> > +                                             iommus = <&lpass_q6_smmu 9>;
-> > +                                     };
-> > +
-> > +                                     cb@10 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <10>;
-> > +                                             iommus = <&lpass_q6_smmu 10>;
-> > +                                     };
-> > +
-> > +                                     cb@11 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <11>;
-> > +                                             iommus = <&lpass_q6_smmu 11>;
-> > +                                     };
-> > +
-> > +                                     cb@12 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <12>;
-> > +                                             iommus = <&lpass_q6_smmu 12>;
-> > +                                     };
-> > +
-> > +                                     cb@5 {
-> > +                                             compatible = "qcom,fastrpc-compute-cb";
-> > +                                             reg = <5>;
->
-> No need to copy downstream's creative alphabetical-but-not-numerical
-> sorting..
+On Thu, 28 Mar 2024 16:03:44 +0800
+Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
 
-Ack, I'll fix the order.
+> --- a/drivers/s390/virtio/virtio_ccw.c
+> +++ b/drivers/s390/virtio/virtio_ccw.c
+> @@ -659,7 +659,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  {
+>  	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
+>  	unsigned long *indicatorp = NULL;
+> -	int ret, i, queue_idx = 0;
+> +	int ret, i;
+>  	struct ccw1 *ccw;
+>  
+>  	ccw = ccw_device_dma_zalloc(vcdev->cdev, sizeof(*ccw));
+> @@ -668,11 +668,11 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  
+>  	for (i = 0; i < nvqs; ++i) {
+>  		if (!names[i]) {
+> -			vqs[i] = NULL;
+> -			continue;
+> +			ret = -EINVAL;
+> +			goto out;
+>  		}
+>  
+> -		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, callbacks[i],
+> +		vqs[i] = virtio_ccw_setup_vq(vdev, i, callbacks[i],
+>  					     names[i], ctx ? ctx[i] : false,
+>  					     ccw);
+>  		if (IS_ERR(vqs[i])) {
 
-> The entries look OK though.. although, any reason we have
-> such a weird binding including faux child nodes and not just an array
-> of iommus? Is the only way to discover the fastrpc nodes' properties
-> such as qcom,non-secure-domain or vmid belonging through hardcoding?
-
-No idea here. This is how fastrpc nodes are defined on all existing
-platforms. Maybe Srini knows the story and the reason behind the
-bindings??
-
-
-
--- 
-With best wishes
-Dmitry
+For the virtio-ccw part:
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
