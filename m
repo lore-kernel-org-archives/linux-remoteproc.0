@@ -1,121 +1,122 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAEF83CD2
-	for <linux-remoteproc@vger.kernel.org>; Thu,  4 Apr 2024 11:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B0136E00;
+	Thu,  4 Apr 2024 17:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712230893; cv=none; b=B+kMQYrpmFZjpo6UK1jebMlEJxJwmy1SZTbZpFkjCvNlellw+ycc0VnT5nJPsuWCx+wWM6sMbEItZgdMgDtqChqgoI12jnypgGN8VWQ2lLbR6TjexyG0QUkGvc59j+kZAtttJwXpNZGqIXZN273/OJWuGLt9Yx8iLwaJioqvltQ=
+	t=1712253447; cv=none; b=gJPEXX728eHrmMT9I+AFuNI/pcERTmIZKtvby4DWrNC9a2sIsr8XFPZhTaZZPGhWwg4q+ZMPsrcoB3R+7II3oxaMydUxEMpKGY7VfRcgDQvY6UulMrH/SD/dSicPUIyxYaX7YyFL4OEfwBpsSXhZBvlhjBrW1gVzRuys4DvYDiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712230893; c=relaxed/simple;
-	bh=xTu/IdCn/048THaVHddyM991QlKheudeHaOzDUEba/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CbnfdACCpKM7Uc4gFzSIuRFwmKigKjPc5Isqa3rKxlnO63rflNgyWp4oa0Igwxjgy2oh4JUrhAaah0aW3A+CPVh9rXkfOvXd7DPrtRkicJR4IW2sgEQ52w1orcJR64JjxayzrJEsSVFNY9/+GTeLqwau8Gxc92lTxEoXyw1GGzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BzpYfce4; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712253447; c=relaxed/simple;
+	bh=YhU3sEXSw0D2kdXjvQ7QXDBcZkocQIOBobWOsVQFuAY=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qsux/G/UCZGBXkbYe2SeLjwegI7hULP0+nUspmP26sNU2q9vKIvR6cIqUfrU0IOVcCsoJ/jh94DDMKZNCdKTyDzJ5oXDLl/h0cHCB9+ENf3QEssjo/L1qja6Y4tHl8j/ME1pFBh4GdXK2lz7+F9sIp1jqsnSUIws8Kv90uT0yrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bN7JpYg6; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BzpYfce4"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso1019455276.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Apr 2024 04:41:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bN7JpYg6"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6ecbe6dc8c6so1130809b3a.1;
+        Thu, 04 Apr 2024 10:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712230889; x=1712835689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1712253445; x=1712858245; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:date:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xTu/IdCn/048THaVHddyM991QlKheudeHaOzDUEba/4=;
-        b=BzpYfce4q/zv0gCorIvWLSXuzW4HjLtqKmXuLtELMIG7pv5Gw5rD2es8aCVqQFqD//
-         8JggHBzNznjWgNLq2nD9WBWW0NsYaidmHqnL2ihAYJpv7o5gc1VJY6DJ0clWC7aekflL
-         okxkVaJGNSO0qVH2yOxsFJLCq+7hYpnwhkr7HgXgiRTKZmRNaOv51pSZ+2EvNJ7l32Ax
-         3rV1o60Rwqf7/3WoHSX+9OLMYTDALVEnxQwPAvQSTwkL+2+b5q+pMv+fOiTCP+zwNcc+
-         ViJk4rxb2Vw07nE8VHUP+XT2krjKR9JIgTGsriDdaif1hRFImGjHsjVSH1La3PcFbNJH
-         hkUg==
+        bh=OVHlK0SMG0qBoQQG+gZsRC+Q+8tU5y/gfXSNtSzLvIs=;
+        b=bN7JpYg6YSdCznRcRUDJg/4ojbKsU2zWVwPcMW8f/6zaelCwsRLKsvl6TUec8k2Ucv
+         Ont8wfHcUYR8BmpGrS875ymWcXLqaZt6oQ90jKv46NwbY1Kg2hWz5WqQPo5Fjp6oz7BP
+         Olzitb+W0gpmtjyov8xxaDuUVDH5b0a+W40pULYU8Iv+Sc75Oxg//NT6n5vQ1OHyK9Vm
+         uT7/3/dxYm5xZGDmQQjN1t5oNIMIkr8Oqzznh0z2qUPyu1ItNJbCEAFWEndtGJAjL3Dm
+         NVwCZzwMZkYDtgNAmy7e1WgUPafW98hp/5Tk2lInZLLlhB27ySJrdjn1DFcVn0inpIYV
+         kn2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712230889; x=1712835689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1712253445; x=1712858245;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xTu/IdCn/048THaVHddyM991QlKheudeHaOzDUEba/4=;
-        b=M896kCEoZ+WKVurcAduI9B6gkc1Ux3/WDmMGycR0UXn/Xtbrr4PrGP2KWe9j0Snw2t
-         GkT0JIec0LzyQAFBd773XxrAIEcuM3s1UumXzX1h7PO3tHapXAuboKGcuw+pYRK1QHXc
-         6pLi8hdAo7D4CzXsmUwheuVWBA8c4Uea9uw8lhrh0yjze/mG6dY8W25pvFbjHxs7kpK0
-         NjFi/GvUKygdCJ4WgeCiN7rd2kv9SS3RyLTMHZ0nXcvYLD+bp6Sx6OTrZELiqvJDrjx4
-         GzoJRLyduwVK4ZpROP6fHoydJnrZkJkX9na1XFktUJF6XeJKeJRp9LlCPESl0sCai2HC
-         StIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuej7U5KkyooE05RTTq4s+H4Tr5G5RACX4iFFCfW/7ihfsf47ycgWx+0Jx5Q7e/3jj+20ZFW5iwV2/pZGgAwWqortqVeJKSvlSwTh+NpCpuw==
-X-Gm-Message-State: AOJu0YyCg+KgKJgbNxK9GebVFJ3lrjti+sm4oRdYLcXWs54BY5PCScmA
-	xCZjMPBCIoSXcK91yKjqMTvfQmWs6LFBbBSQ00ESZX6q/U6mN8pDp6OcMFqc3R7a3p4Zm6JR7Qk
-	LgwgkjXzKEZEw6PdtCu3w2Zh8YJ7VLnMkCAfmDA==
-X-Google-Smtp-Source: AGHT+IEhL+O4bSIOCRsSy+Vdywn61xtrVBJ3li47sHwN1FOt8H7g9W+tj2/Or7rao9/9euGeRsXbtXq4vPMz7+GnZRc=
-X-Received: by 2002:a25:ba86:0:b0:dd1:6fab:81e4 with SMTP id
- s6-20020a25ba86000000b00dd16fab81e4mr2034373ybg.37.1712230889318; Thu, 04 Apr
- 2024 04:41:29 -0700 (PDT)
+        bh=OVHlK0SMG0qBoQQG+gZsRC+Q+8tU5y/gfXSNtSzLvIs=;
+        b=cJ0puXxsRBlnv76WjK1jcqqqgJVWtS2SXIxKKC8QmPPs76LaaN44k17ywcF/0p9jhI
+         UIL0NJ2j+3ZYa1fvu9EFbWnLLM+faE2QWqHBInL6gEiTz4Kil7dIX5aKodhs/2mXYYZ7
+         9U05U8SKBx6VZlTmF9wxTD4EALfqMJjQdL82a3EeB+kCXiZ/yIQ5yX5Pwnhsd0hxYtFw
+         fYWag2GIa4DsKM9QklVINa984tZj3PB9bCRyQ9gqNQqG3kC/4u1QZU0UyVQLN5HBKOBq
+         0uaUOaqOraMWfQsfJ+6FzPs5yza+51ArwNnFnap1cZHOexvtsmAOCwDhQ2iUxXMDcp+7
+         44Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrZjHbso3lItrdxKAu8HJclsei45spwP6ZqHDiQVI+IME7HrwKImshXqH9g2cv6m5wSOg0ZLHH09rNTj5oQI+Mn+qDdcsaz49I0637
+X-Gm-Message-State: AOJu0YyWchelch/4q7YziLkpLzhOm2BA1wsCsvNVp8o21IBejuAf3qTr
+	adMzvMRZ5d3zkHppJIh5NWcYm5SvW5V7nr0nGFaHlWSI812CRZ8XWEKCxOQJkdE=
+X-Google-Smtp-Source: AGHT+IFKDRLk2i3xeGnF/jxy9Jn4pmGaJmcF66H+hQFmmIl3WVwHo0yK60Pt5nXC11k3VcRteYTUoA==
+X-Received: by 2002:a05:6a00:3d0e:b0:6ea:f026:4003 with SMTP id lo14-20020a056a003d0e00b006eaf0264003mr3811250pfb.3.1712253444957;
+        Thu, 04 Apr 2024 10:57:24 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([201.82.41.210])
+        by smtp.gmail.com with ESMTPSA id lb25-20020a056a004f1900b006ea918dab9csm14043537pfb.157.2024.04.04.10.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Apr 2024 10:57:24 -0700 (PDT)
+From: "=?utf-8?Q?Jo=C3=A3o_Paulo_Silva_Gon=C3=A7alves?=" <jpaulo.silvagoncalves@gmail.com>
+X-Google-Original-From: =?utf-8?Q?Jo=C3=A3o_Paulo_Silva_Gon=C3=A7alves?= <jpgoncalves@joaog-nb.corp.toradex.com>
+Date: Thu, 4 Apr 2024 14:57:18 -0300
+To: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	"Joao Paulo S. Goncalves" <joao.goncalves@toradex.com>
+Subject: iMX8MP Cortex-M7 Relation to Audio Power Domain
+Message-ID: <20240404175718.pzcvffpef72dfuoe@joaog-nb.corp.toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240331-module-owner-virtio-v2-0-98f04bfaf46a@linaro.org> <20240331-module-owner-virtio-v2-12-98f04bfaf46a@linaro.org>
-In-Reply-To: <20240331-module-owner-virtio-v2-12-98f04bfaf46a@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 4 Apr 2024 13:41:18 +0200
-Message-ID: <CACRpkdYpVUq1SgxnPVfRdTiNg3o8dcBePxoxu9GRYy6LdzUE5A@mail.gmail.com>
-Subject: Re: [PATCH v2 12/25] gpio: virtio: drop owner assignment
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jonathan Corbet <corbet@lwn.net>, 
-	David Hildenbrand <david@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
-	"David S. Miller" <davem@davemloft.net>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, David Airlie <airlied@redhat.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Daniel Vetter <daniel@ffwll.ch>, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Alexander Graf <graf@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Kalle Valo <kvalo@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Pankaj Gupta <pankaj.gupta.linux@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, "James E.J. Bottomley" <jejb@linux.ibm.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, virtualization@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, 
-	netdev@vger.kernel.org, v9fs@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org, 
-	linux-sound@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 31, 2024 at 10:45=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Hello all,
 
-> virtio core already sets the .owner, so driver does not need to.
->
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I was investigating why the kernel freezes on the iMX8MP when attempting to boot
+the Cortex-M7 processor using the Linux remoteproc interface. However, with
+v6.5, it started to work, and I was able to pinpoint to commit
+b86c3afabb4f ('arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX') [1] through bisection.
+The patch appeared unrelated to remoteproc, and after some time, I realized there
+is a connection between the functioning of remoteproc and the audio power domain.
+For instance, adding the audio power domain to the node in the device
+tree (below) made it work. The same behavior occurs in the downstream kernel.
+There is a workaround for the problem by setting clkim8mp.mcore_booted=1 in the 
+kernel arguments, but this is not seen as a final solution (it seems to 
+disable all clock gating).
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+imx8mp-cm7 {
+	compatible = "fsl,imx8mp-cm7";
+	clocks = <&clk IMX8MP_CLK_M7_CORE>;
+	clock-names = "core", "audio";
+	mbox-names = "tx", "rx", "rxdb";
+	mboxes = <&mu 0 1
+			&mu 1 1
+			&mu 3 1>;
+	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>, <&m7_reserved>;
+	rsc-da = <0x55000000>;
+	syscon = <&src>;
+	fsl,startup-delay-ms = <500>;
+	power-domains = <&pgc_audio>;
+};
 
-Yours,
-Linus Walleij
+
+Do any of you know anything about the relationship between the audio domain and
+the Cortex-M7 on iMX8MP? The TRM is not very clear on this, and the only thing
+I could find is that there are some mailboxes for Cortex-M7/Audio processor
+communication managed by the audio power domain.
+
+Thanks for the help!
+
+[1] https://github.com/torvalds/linux/commit/b86c3afabb4f4ea146c206508527eb2a15485bcc
+
+
+Regards,
+João Paulo S. Goncalves
