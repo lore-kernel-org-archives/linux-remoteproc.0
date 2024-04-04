@@ -1,122 +1,238 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2122.outbound.protection.outlook.com [40.107.93.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B0136E00;
-	Thu,  4 Apr 2024 17:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712253447; cv=none; b=gJPEXX728eHrmMT9I+AFuNI/pcERTmIZKtvby4DWrNC9a2sIsr8XFPZhTaZZPGhWwg4q+ZMPsrcoB3R+7II3oxaMydUxEMpKGY7VfRcgDQvY6UulMrH/SD/dSicPUIyxYaX7YyFL4OEfwBpsSXhZBvlhjBrW1gVzRuys4DvYDiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712253447; c=relaxed/simple;
-	bh=YhU3sEXSw0D2kdXjvQ7QXDBcZkocQIOBobWOsVQFuAY=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qsux/G/UCZGBXkbYe2SeLjwegI7hULP0+nUspmP26sNU2q9vKIvR6cIqUfrU0IOVcCsoJ/jh94DDMKZNCdKTyDzJ5oXDLl/h0cHCB9+ENf3QEssjo/L1qja6Y4tHl8j/ME1pFBh4GdXK2lz7+F9sIp1jqsnSUIws8Kv90uT0yrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bN7JpYg6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21579367
+	for <linux-remoteproc@vger.kernel.org>; Thu,  4 Apr 2024 20:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712261696; cv=fail; b=gqxTkWgpNa3KptnGPjAPy/pokFGoBlnf1kBwUWZct+OJhn7zFYLDHgwYvHs4XekNvoztKIzz8bkppO2+24cFi6zRcNex8YtoKeA6qYYWY5BB5BIgX4dIzwiW9m7om9yTkaH7HbcjNxWANNcTbXww5DHQelsC/6DCFYgqbHacJf0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712261696; c=relaxed/simple;
+	bh=+/boa5MIVKl3dE9bkBFaakSt/73p65XzAdiEhaszC4E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P7LcMNRDhmeB8gc9T6020PGOCa1TMvubxZu0468eSj8W5DYgocsFauzL9C7UHqhdG4LBloW8oQYtnVeetviz2ahUpxPWYdh4sEH/q3hkNzNB7K6vriCzjiMyRgiRbqST64sjabdLwmOaMdp9Swy0JsfiLmYVORt318FptXQosxQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RDQ7TZSe; arc=fail smtp.client-ip=40.107.93.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bN7JpYg6"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6ecbe6dc8c6so1130809b3a.1;
-        Thu, 04 Apr 2024 10:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712253445; x=1712858245; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:date:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OVHlK0SMG0qBoQQG+gZsRC+Q+8tU5y/gfXSNtSzLvIs=;
-        b=bN7JpYg6YSdCznRcRUDJg/4ojbKsU2zWVwPcMW8f/6zaelCwsRLKsvl6TUec8k2Ucv
-         Ont8wfHcUYR8BmpGrS875ymWcXLqaZt6oQ90jKv46NwbY1Kg2hWz5WqQPo5Fjp6oz7BP
-         Olzitb+W0gpmtjyov8xxaDuUVDH5b0a+W40pULYU8Iv+Sc75Oxg//NT6n5vQ1OHyK9Vm
-         uT7/3/dxYm5xZGDmQQjN1t5oNIMIkr8Oqzznh0z2qUPyu1ItNJbCEAFWEndtGJAjL3Dm
-         NVwCZzwMZkYDtgNAmy7e1WgUPafW98hp/5Tk2lInZLLlhB27ySJrdjn1DFcVn0inpIYV
-         kn2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712253445; x=1712858245;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OVHlK0SMG0qBoQQG+gZsRC+Q+8tU5y/gfXSNtSzLvIs=;
-        b=cJ0puXxsRBlnv76WjK1jcqqqgJVWtS2SXIxKKC8QmPPs76LaaN44k17ywcF/0p9jhI
-         UIL0NJ2j+3ZYa1fvu9EFbWnLLM+faE2QWqHBInL6gEiTz4Kil7dIX5aKodhs/2mXYYZ7
-         9U05U8SKBx6VZlTmF9wxTD4EALfqMJjQdL82a3EeB+kCXiZ/yIQ5yX5Pwnhsd0hxYtFw
-         fYWag2GIa4DsKM9QklVINa984tZj3PB9bCRyQ9gqNQqG3kC/4u1QZU0UyVQLN5HBKOBq
-         0uaUOaqOraMWfQsfJ+6FzPs5yza+51ArwNnFnap1cZHOexvtsmAOCwDhQ2iUxXMDcp+7
-         44Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrZjHbso3lItrdxKAu8HJclsei45spwP6ZqHDiQVI+IME7HrwKImshXqH9g2cv6m5wSOg0ZLHH09rNTj5oQI+Mn+qDdcsaz49I0637
-X-Gm-Message-State: AOJu0YyWchelch/4q7YziLkpLzhOm2BA1wsCsvNVp8o21IBejuAf3qTr
-	adMzvMRZ5d3zkHppJIh5NWcYm5SvW5V7nr0nGFaHlWSI812CRZ8XWEKCxOQJkdE=
-X-Google-Smtp-Source: AGHT+IFKDRLk2i3xeGnF/jxy9Jn4pmGaJmcF66H+hQFmmIl3WVwHo0yK60Pt5nXC11k3VcRteYTUoA==
-X-Received: by 2002:a05:6a00:3d0e:b0:6ea:f026:4003 with SMTP id lo14-20020a056a003d0e00b006eaf0264003mr3811250pfb.3.1712253444957;
-        Thu, 04 Apr 2024 10:57:24 -0700 (PDT)
-Received: from joaog-nb.corp.toradex.com ([201.82.41.210])
-        by smtp.gmail.com with ESMTPSA id lb25-20020a056a004f1900b006ea918dab9csm14043537pfb.157.2024.04.04.10.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 10:57:24 -0700 (PDT)
-From: "=?utf-8?Q?Jo=C3=A3o_Paulo_Silva_Gon=C3=A7alves?=" <jpaulo.silvagoncalves@gmail.com>
-X-Google-Original-From: =?utf-8?Q?Jo=C3=A3o_Paulo_Silva_Gon=C3=A7alves?= <jpgoncalves@joaog-nb.corp.toradex.com>
-Date: Thu, 4 Apr 2024 14:57:18 -0300
-To: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"Joao Paulo S. Goncalves" <joao.goncalves@toradex.com>
-Subject: iMX8MP Cortex-M7 Relation to Audio Power Domain
-Message-ID: <20240404175718.pzcvffpef72dfuoe@joaog-nb.corp.toradex.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RDQ7TZSe"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R/aqLcqKnuD6CnyUadcRJjdiWtd7fKzQqL1pUxZujA3ZxCCe0QFhcf8984AhyiOyicUlDCkyLVBDQ+DCGD5i3VMgmLUR+3Hl3VKMqNu78JETcYoVmPkE9HeU+XYiL8TDUN/CtfH/PGrfG23mT1HUJNFV7BeFj3XK10ApsXsADTqw+8qanRLXuiUNLup2VE1UXq00bimF5E+AzmQ89jupZAwNmy+AFbeyyvQ7i8vnSQxJO7IU80FAh4iKTCIuULNXruOzoaeRYu60sfJVqJnpYOOaurmfWyVpFxB9qiMJyjB6bu604xrwtZgWZQ2WtCWvzqPFLhQfbM8wEZ0ZTVaY/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5IY3Z2MuQFp1NqCXdXX+PjHtf8OF26rOxLJDgA4DcYU=;
+ b=Lo6sW8KMVnM0w60zpxOgTHss92nycRC/1nmjpzcrkIvcDKLg28lEefgCcZ/ha2VwBvrxfjE06vMpq2Ymbww3uN2URm2nJ2tI0QdHM5DmSIyYmY/fSfm8pnm6dykF3p4RPFEF1bB2O6TB8SnHOgOdcd3Q23kUrMXxY835ZfIUNcPs1C1JEy0xCxYMXQoptLnixTt9ho+xjOZvL874ttvmxZUJg7rQWecMfZvyBcjo6cn8TstmjdDIxdtLM8nsDpd34UxNJFQU7HH06izQ4hoSbDcaiS6S+dyhX9zrGAiaYTF9LiUc5+zyWazkodbTtaaVtlFIjfyNCeuC2357HkoBjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5IY3Z2MuQFp1NqCXdXX+PjHtf8OF26rOxLJDgA4DcYU=;
+ b=RDQ7TZSeWh/Kc0ezUBytzlSrRzT/hD6ILsVYfxgbCy7ElsjehFCF2QvWF5kxE8OUrT7JrOpJ6ifKhgsX1e4nYw0H/9O6JGmgiKxQerlm6Z0T1DJ5BxBFwlFqRH10bT92TrAx7yN1yip+xZAyrZUZguX8bTsuZtdIECL4OhEXn/U=
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
+ by PH7PR12MB5950.namprd12.prod.outlook.com (2603:10b6:510:1d9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Thu, 4 Apr
+ 2024 20:14:52 +0000
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a]) by BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::8b3e:57e8:d574:309a%4]) with mapi id 15.20.7409.042; Thu, 4 Apr 2024
+ 20:14:51 +0000
+Message-ID: <6adf7a7c-c9ad-40ae-9e11-cc722c8049dd@amd.com>
+Date: Thu, 4 Apr 2024 15:14:48 -0500
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] remoteproc: zynqmp: Add coredump support
+To: Leonard Crestez <cdleonard@gmail.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michal Simek <michal.simek@amd.com>,
+ Sarangdhar Joshi <spjoshi@codeaurora.org>,
+ Siddharth Gupta <sidgup@codeaurora.org>,
+ Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+ linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <d4556268-8274-4089-949f-3b97d67793c7@gmail.com>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <d4556268-8274-4089-949f-3b97d67793c7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR11CA0028.namprd11.prod.outlook.com
+ (2603:10b6:806:6e::33) To BL1PR12MB5874.namprd12.prod.outlook.com
+ (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|PH7PR12MB5950:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	/Pwwp/AsCO3C9048eiDQWO6axUYiU82lLNSfNzygN4L7lIVN7grct0RYfTzVoxvdTS3pL5t9yM+6bMHbBJ0Hf65Ep+C3HUF9T3Xql4VxeQjuSVUho7OEzBztrPEZpypfWz7rTHjI924dxc3wW2T9tUChuAV9A30LQTAHeMyUWSE4O7jvSAkH2l2SrWkkR2ThkG6iXk5a/ayINe48WEM3YcArUtAudUPviJVevbP+/CHH1CZ2BuE/A6FXAFGMMRe/Xg1FJ3bDuLUPxR1U9Eg0PnASuRQGcDFJNMIvr+XuK73fnnY2emJea5lQqoXl+jBwyNxOzgTjD1Ab10u8LAHyGdKXLENwm1Hr4NSEu2yeH4SgTknVG2N8HiUPqJhfZsbwaBg3Xy4fDqpSe9v/1L6IMNJPqPMYPzU/hxdOUXmDjnyudo7gf3xY9r0yXALYtp2Dsqop8lnc32IvyXVvrq1fsjYqEvlqA5941O9b/uTGXFiNpVW3/MfQAz4GhOQ/LkC/IkidUctwdyAEFqtb1Rq/tD9pkUfdaMW5sqXcQCV1d+EDHkvx0Z6SvHRVQdWNQH4ouIYiakfEpRxX6AdaJXdkxN+w5WLnofV3JBMloR7XHGStEyJNiJAbeAf40TUDu5GZBrHreP6FtfxboQxuaxr5hKsHlZRdC6gHt2CtjJd9f1M=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WEtyUTlmdnFCaDcxb2hjK3g5dEs3UW5TM2h3RkJoSnhJT3lJOERqTXhkWGhi?=
+ =?utf-8?B?ZnpOa2sxUEJGWDZPRVZOSzFVVDE5cUtpV1duTXJQdmtUSzhINFc3R1RaTWRO?=
+ =?utf-8?B?YTVJVTBvc1BFVmZ2eFdGSlFlYkZYVXpoVFRRcFU3cmlQTEVaendCQUhqay90?=
+ =?utf-8?B?MVQ4Z09keFRSRStuT2R2Q0pleEdWcEV1VGhITXFNQ3Q2SGZYV2JZaHR0RG9C?=
+ =?utf-8?B?U252YXlUTFdoNTNmK1J6VlB6WlBQRy9xMkE4UzVpekJsL25pTlRSZ3NJNE9q?=
+ =?utf-8?B?K2s2eS9IRTdhV2RkQmFmYXBEeVpNcUJ0S003VDdvK0cvbEJ6dms1WjVJdWsw?=
+ =?utf-8?B?QUdPTE5palQ0cmZCaVlQajhGRk5oempCemJ4NmJlV2UxR3FRUTdXNENuWDZX?=
+ =?utf-8?B?dHdEQkZ0enhYMWYzU0t4YmlEUXhSbFBMNk9IZi9tRjhpV05QeVpTUkIzeFlU?=
+ =?utf-8?B?dm9vczJWSkZLV3poUWJkRmhiOG5PTUxZSDhaUEpqenU2NHJrbFQ1MytWR01C?=
+ =?utf-8?B?T1JTaFhpS0dEeUNaNG5aQm13amJ5VmcwZFdNenlLV0xnQ2dodmdXcHEyLzRR?=
+ =?utf-8?B?dHVpTlBDN2FzQzBUTkRQczVvMWF1WDBZelRDdnc5aGtKLzNiY3NGRG5BeXRh?=
+ =?utf-8?B?RVQzZ3RsTGhFK0IrOGxPakZVRWFMZENldE9JLzM2Y3pUejlVaGRKQWpBRVNU?=
+ =?utf-8?B?Um9DK1d4RWZabi9ETXVyQ2JGZ2lob2N6NHFXUFJGRk5WZTVFckQ1cUw1cmVB?=
+ =?utf-8?B?eTZHNEdpNS9nOFZEejR4bTdlNVUrZDF1UGNFTGp0a0RMdVFReU5WSzRDaXky?=
+ =?utf-8?B?MmJURC9YMjg1L3BBVzN4NWJMR2VFcXpqUTA2M0hpeHo1VUQ4VWZlOUQrWEU1?=
+ =?utf-8?B?Und2ZDdEUEdmY0xLZHNrbUcrWGNzY1FiaVdqTHZRM3ZyUDNFdWpTL09QWGpW?=
+ =?utf-8?B?a1YzQkFWNm4zQmFuaWIxRW9Eb0JhRUg5clhVdklIQkliWGNyL1lhb1FCbmR0?=
+ =?utf-8?B?cUNZZWw0bE1wSlR1Q1RrcXVWSmhDUnUxajlQK3pFRUR3Tno0RnZGbGJkd1lC?=
+ =?utf-8?B?cFNsdHJObC9XODFNK0ZQc3R5MFBnekU2b2hHaStFSzZDaHpocVFaK3lielZT?=
+ =?utf-8?B?RFdnTlY2NFFXR2ZsSkN2Z3RaV2pFaGVzRVlRMWd2YVVxd3BZVmd5NEtNc1VS?=
+ =?utf-8?B?TS9nYU8xOExRdU9kRE1YcGw1azNzc0pWbThPTGd1VGY1cVpBSFhsaTNYWjlt?=
+ =?utf-8?B?WGlQY21JVXl5aEZKblpCMGZPekJ4MkxGZ01qdEIzZnJETUNVM1FiN3Z6RnJy?=
+ =?utf-8?B?d2p6QklMSVBMSU5ORG5mS21OVmlZenoxTGVmRjg2ZTFmNGRxWW1uREVZcHJ4?=
+ =?utf-8?B?TGF2QkdHNUM4d2ppTUhkb1ZOcDFMMjlCbksxSmtJQ2E1a1gxTGFSYm1jUFY4?=
+ =?utf-8?B?OG1rR3grSFRCekluTE5sQVJuWG12cXdiejAzVjlKaWpOTmVKcXY4VzA4dHBh?=
+ =?utf-8?B?Q2ZkZU5kVFhUYWZyYktTUEpvK1drTHlHcXFLYXdBa3pLTkxlemJOZmhDbi9p?=
+ =?utf-8?B?SXJPMWZsYlVxemRvdzRhQktmR3g1dStzUHFtMjVXNnJMNDQxT21KVEVHSTd4?=
+ =?utf-8?B?d3BxVDhPdkMxUjdzQTkwQnkvUENDZDFyaTlqa3VQTkJKK0Q1S1hiZXFSc01E?=
+ =?utf-8?B?V0ZEKzdOSjNmY2p0TWRRRk9VWWZKcnJiL3V3Ym1DYm5vYW5jVFFQcFlvNDdD?=
+ =?utf-8?B?dU8rQ2lneHhRRU5oTndtdGROQlJuOHlZaGhmem1pa3Y5Mm1Ra2F0Umx3azZU?=
+ =?utf-8?B?RGNDS0I4LzdiK3RSSkg1UXBVV2RoYjZPZEI2czBORlpLNTdQYlhZZXp0aElI?=
+ =?utf-8?B?TWNhZzVTMzlXcmtxZDhvcHg1TnU5OHZrUUNWRTMyck9ZdWk2aXd6eWd0cG9v?=
+ =?utf-8?B?MVA0ejFoOW1heXVMZkVmZThLVFF2VkFxV2dxODZReThnMXRGVHg3SWNoN0J2?=
+ =?utf-8?B?Q2hDZS9BeXJoZk1HMDhiSEkvT1ozT054a0N5dklYMHl5cHk5akQrUUJ5V2x0?=
+ =?utf-8?B?cTFaQkxFQjVtVjEva3V4OE56Rjd6Zk1wQnY5amhRK0pFUDljUnVwMmhwNUUz?=
+ =?utf-8?Q?xHBLRqebpwB+1VAZSvzokzNwS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58fdfb2f-921f-4f21-c4dd-08dc54e3e2a1
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2024 20:14:51.8489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oia5XQKvDsurZ8pcq4PxAlzuwLpy20FZsXt2e2H40qNT9Lj39MZlGq+avT+HqOAl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5950
 
-Hello all,
+Hello,
 
-I was investigating why the kernel freezes on the iMX8MP when attempting to boot
-the Cortex-M7 processor using the Linux remoteproc interface. However, with
-v6.5, it started to work, and I was able to pinpoint to commit
-b86c3afabb4f ('arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX') [1] through bisection.
-The patch appeared unrelated to remoteproc, and after some time, I realized there
-is a connection between the functioning of remoteproc and the audio power domain.
-For instance, adding the audio power domain to the node in the device
-tree (below) made it work. The same behavior occurs in the downstream kernel.
-There is a workaround for the problem by setting clkim8mp.mcore_booted=1 in the 
-kernel arguments, but this is not seen as a final solution (it seems to 
-disable all clock gating).
+Thanks for your patch. Patch looks good to me.
+Please find some comments below.
 
-imx8mp-cm7 {
-	compatible = "fsl,imx8mp-cm7";
-	clocks = <&clk IMX8MP_CLK_M7_CORE>;
-	clock-names = "core", "audio";
-	mbox-names = "tx", "rx", "rxdb";
-	mboxes = <&mu 0 1
-			&mu 1 1
-			&mu 3 1>;
-	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>, <&m7_reserved>;
-	rsc-da = <0x55000000>;
-	syscon = <&src>;
-	fsl,startup-delay-ms = <500>;
-	power-domains = <&pgc_audio>;
-};
+On 3/16/24 1:16 PM, Leonard Crestez wrote:
+> Supporting remoteproc coredump requires the platform-specific driver to
+> register coredump segments to be dumped. Do this by calling
+> rproc_coredump_add_segment for every carveout.
+> 
+> Also call rproc_coredump_set_elf_info when then rproc is created. If the
+> ELFCLASS parameter is not provided then coredump fails with an error.
+> Other drivers seem to pass EM_NONE for the machine argument but for me
+> this shows a warning in gdb. Pass EM_ARM because this is an ARM R5.
+> 
+> Signed-off-by: Leonard Crestez <cdleonard@gmail.com>
+> ---
+> 
+> Tests were done by triggering an deliberate crash using remoteproc
+> debugfs: echo 2 > /sys/kernel/debug/remoteproc/remoteproc0/crash
+> 
+> This was tested using RPU apps which use RAM for everything so TCM dump
+> was not verified. The freertos-gdb script package showed credible data:
+> 
+> https://github.com/espressif/freertos-gdb
 
+Thanks for this testing.
 
-Do any of you know anything about the relationship between the audio domain and
-the Cortex-M7 on iMX8MP? The TRM is not very clear on this, and the only thing
-I could find is that there are some mailboxes for Cortex-M7/Audio processor
-communication managed by the audio power domain.
+> 
+> The R5 cache is not flushed so RAM might be out of date which is
+> actually very bad because information most relevant to determining the
+> cause of a crash is lost. Possible workaround would be to flush caches
+> in some sort of R5 crash handler? I don't think Linux can do anything
+> about this limitation.
+> 
 
-Thanks for the help!
+Correct Linux can't. One workaround is that R5 firmware can mark
+required memory regions as non-cachable in MPU setting. This way information
+loss can be avoided.
 
-[1] https://github.com/torvalds/linux/commit/b86c3afabb4f4ea146c206508527eb2a15485bcc
+> The generated coredump doesn't contain registers, this seems to be a
+> limitation shared with other rproc coredumps. It's not clear how the apu
+> could access rpu registers on zynqmp, my only idea would be to use the
+> coresight dap but that sounds difficult.
 
+Linux doesn't really have access to R5 control registers due to security.
+Instead EEMI calls to platform management controller are used to control R5.
+So R5 control register dump shouldn't needed.
 
-Regards,
-João Paulo S. Goncalves
+Mathieu,
+I am okay to merge this patch.
+
+> 
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 4395edea9a64..cfbd97b89c26 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -484,10 +484,11 @@ static int add_mem_regions_carveout(struct rproc *rproc)
+>  			of_node_put(it.node);
+>  			return -ENOMEM;
+>  		}
+>  
+>  		rproc_add_carveout(rproc, rproc_mem);
+> +		rproc_coredump_add_segment(rproc, rmem->base, rmem->size);
+>  
+>  		dev_dbg(&rproc->dev, "reserved mem carveout %s addr=%llx, size=0x%llx",
+>  			it.node->name, rmem->base, rmem->size);
+>  		i++;
+>  	}
+> @@ -595,10 +596,11 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+>  			zynqmp_pm_release_node(pm_domain_id);
+>  			goto release_tcm_split;
+>  		}
+>  
+>  		rproc_add_carveout(rproc, rproc_mem);
+> +		rproc_coredump_add_segment(rproc, da, bank_size);
+>  	}
+>  
+>  	return 0;
+>  
+>  release_tcm_split:
+> @@ -674,10 +676,11 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+>  			goto release_tcm_lockstep;
+>  		}
+>  
+>  		/* If registration is success, add carveouts */
+>  		rproc_add_carveout(rproc, rproc_mem);
+> +		rproc_coredump_add_segment(rproc, da, bank_size);
+>  
+>  		dev_dbg(dev, "TCM carveout lockstep mode %s addr=0x%llx, da=0x%x, size=0x%lx",
+>  			bank_name, bank_addr, da, bank_size);
+>  	}
+>  
+> @@ -851,10 +854,12 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  	if (!r5_rproc) {
+>  		dev_err(cdev, "failed to allocate memory for rproc instance\n");
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> +	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+> +
+>  	r5_rproc->auto_boot = false;
+>  	r5_core = r5_rproc->priv;
+>  	r5_core->dev = cdev;
+>  	r5_core->np = dev_of_node(cdev);
+>  	if (!r5_core->np) {
+
