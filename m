@@ -1,94 +1,86 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DEC182C5;
-	Sun,  7 Apr 2024 09:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EDF3C08D;
+	Sun,  7 Apr 2024 23:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712483946; cv=none; b=MJdj60qZ1TXvhyBWnXIjzkXMZQWSzk6nUwHAF10aT2AqbjYsqTNauOSq8cPPaU5c1LPt+ILUFX1R6bBlVt46VTT3bqWpyBEh8Y9dmFiyZtgDN/alhIF9SirMhXZA67QPvA/9Rm3QqaWAtr3VhLYPnwJQMD/zs2xA6P4KpUOkk80=
+	t=1712531677; cv=none; b=j0Dp7njlY7zUPBxTZ0k7Gr8cTCXE3pHFHiVcGZ/V/P8fhnRqUXuKPX1VLia4XcvqoJdZOamkmXfvb0cVfzvqC1yADhsIDdh+ShSAa+5PgkMaAskZ/9nzvz/0vbTp0SiJHR5DcagYyTMDsffNqtyT9G0pIRxL62f5L+X0TZsCZd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712483946; c=relaxed/simple;
-	bh=hEn5KuCngulRuFJMxWsYDUEkMcFBFdCbgV7etqkL83Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YcXv/ckj2UPIcJ3puiyvpcqx/NbwP3hLmlUYaWewIzM11NWDrxwTqFvtFibPXFjK5rxqQgDjlC39iwjwRyJ04KuSvJNAvuqOg2CmH/e0hftjwAISpE3/JMa2tq3f+wtT8s3lzAY7UDswIt9l92CmOLZY+wgG1r7VErA8bvS7d/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=BEU7aTqj; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
+	s=arc-20240116; t=1712531677; c=relaxed/simple;
+	bh=/BMAD/yJR2MHiaSVqLdHWB1hpQ0Y8qflUgqPAOQ19a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwJe5dBGVsaI24X3erv5R4ZY0AgcmiaTQI2IzS3xdBLffNONMJZikUfg47HZJyfhtI/ZcukO/5fLnKCKltm+Qwt1j2ARpsm3ygAg45SDUEgcWiDLOI1etwzRwbCri+kpxwqc0qrT18Sf4ckcxQL2c+rx8gXNqHzjwsL21QqABoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXlXUebU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="BEU7aTqj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1712483942; bh=hEn5KuCngulRuFJMxWsYDUEkMcFBFdCbgV7etqkL83Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=BEU7aTqjc3rtebte69IGb3+z6Uz1k5whz+mwyQRtZpHrPcchCEvqmFUyJobCQ17fz
-	 YBkkS3PJ70PuWNKwrYr793zD/NTGq1BFAdaiqANKBoqEDO3YmrFd9HilA3QtPfJQAb
-	 TE+w1VmQZcw1zgsjfx1zSXk1a9rna6k2lJDG09zE=
-From: Luca Weiss <luca@z3ntu.xyz>
-Date: Sun, 07 Apr 2024 11:58:32 +0200
-Subject: [PATCH 3/3] dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix
- qcom,halt-regs definition
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXlXUebU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB971C433C7;
+	Sun,  7 Apr 2024 23:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712531677;
+	bh=/BMAD/yJR2MHiaSVqLdHWB1hpQ0Y8qflUgqPAOQ19a8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pXlXUebU/cWiG3dBbC8sBVNX/jTBxX+GSKdK3umBfot9ohodxMv2qF0ysXimesEm5
+	 2FALGhROMjwnnxFCvZYgxUVBjM9UzunfsVXRO4HNMovhCae0S/IxPEjeiGY1FTNfmg
+	 OFFYBC86p9LvgNJDXqYx5GBKjGBrn21ljwlcdW/TyZk4niouBIOBdtSvJp88oEsgos
+	 Mkt0ObXenubwWVK+50QS/jeidiaN+Wx0/H0Ws6zvPdpaYAfDAxQ6kyS6WQHuIne6wJ
+	 FVSv0SwwY+BPGLfb1Ehyw3RqhkvjLUs2phinDSKTywQTVL/Msg5f7uUuGA7EjjYciF
+	 vESJ9+r53zrmA==
+Date: Sun, 7 Apr 2024 18:14:35 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v4 3/7] soc: qcom: add pd-mapper implementation
+Message-ID: <k5lgwpkfjjt257aq4tlux7lcke7v2euiegqi5mvevygizlvwo7@jg7f3e5rymmk>
+References: <20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org>
+ <20240311-qcom-pd-mapper-v4-3-24679cca5c24@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240407-qcom-halt-regs-fixup-v1-3-a0ea4e2c178e@z3ntu.xyz>
-References: <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
-In-Reply-To: <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1203; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=hEn5KuCngulRuFJMxWsYDUEkMcFBFdCbgV7etqkL83Y=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmEm5ke2yuYjMeIg+qdRpSzS5xbundtHacGOgRK
- qMRv1LUtD6JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZhJuZAAKCRBy2EO4nU3X
- VjXHD/9GYXBgKvBVXEb7vQxl/PdN1gu7j104J148R24dTrJvlTa0iVLB41oIO/x/kMtwdmhz8PX
- YTKA3MI77zTItBtF4CPDiPYtxpOXz8Q4gvjlTZoLqnExasP1aaTW4yQA6Mjrnu2WDFponfFLhyH
- 76cKI0LzLZd06co4+aB2oR6lo0h8bTofWHrYvD4yf+ILqTtJFqYUq5i7FyVejIgeIRzFYUEc9Bz
- vZ8ulKuEi/bzdMG6xGHIJhDbG3ib1B91Npw9qga1UvQNkVEGt9e8pqi2e70b04WFmKjoixOK0Nb
- XlJlg1+FCx7yiGKKKsugYWD5QBOzS6pzJtAdCr1N70mICKYptsj9X/cjXsTGNZvj67yCwDS2aWu
- kwfW7dTtqLI/Zs1iTX5xeU0y69b7Okg8ajFXrkBv+qNB2B0WPKWVvXb0rDynQS+RIOy2FqdkIbQ
- n8WMDsRE6jm5P/mJQRfOaxKPDBQ2tYOxErMvTNXa0bcXGEXpkDhh4VPyqsuPS4934/wSB1Qx/LG
- 3lAqbwg8VtB4aBExm4or8HroKHDB4U0FhE3kPb5rXAxbIyJAFVxm1alP1JNev1UWhaFxwhacphy
- GZUdVfut110mKzML3xI20lqARNfAP1SbHdeNgqzQkTOnw7DPiZxspDvkGKE+wlWG0kRksin6Mm2
- e9VQuoBtYKYvFmQ==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240311-qcom-pd-mapper-v4-3-24679cca5c24@linaro.org>
 
-Set the 'items' correctly for the qcom,halt-regs property and update the
-description to match what it should be.
+On Mon, Mar 11, 2024 at 05:34:03PM +0200, Dmitry Baryshkov wrote:
+> diff --git a/drivers/soc/qcom/qcom_pdm.c b/drivers/soc/qcom/qcom_pdm.c
+[..]
+> +int qcom_pdm_add_domains(const struct qcom_pdm_domain_data * const *data, size_t num_data)
+> +{
+> +	int ret;
+> +	int i;
+> +
+> +	mutex_lock(&qcom_pdm_mutex);
+> +
+> +	if (qcom_pdm_server_added) {
+> +		ret = qmi_del_server(&qcom_pdm_handle, SERVREG_QMI_SERVICE,
+> +				     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
- .../devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml        | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Sorry for the late reply.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-index 20df83a96ef3..a3c74871457f 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-@@ -81,7 +81,11 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     description:
-       Phandle reference to a syscon representing TCSR followed by the
--      three offsets within syscon for q6, modem and nc halt registers.
-+      offset within syscon for q6 halt register.
-+    items:
-+      - items:
-+          - description: phandle to TCSR syscon region
-+          - description: offset to the Q6 halt register
- 
-   qcom,smem-states:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
+I met with the owners of the firmware side of this and we concluded that
+this will unfortunately not work.
 
--- 
-2.44.0
+The typical case is that when the firmware comes up, it queries the
+information from the pd-mapper about itself, so this would obviously
+work just fine.
 
+Further more, if another core causes the server to be deleted and then
+re-added the firmware will wait for pd-mapper to come up. So this will
+work as well - as reported by Chris.
+
+There is however a not too uncommon case where the firmware on one
+remoteproc will inquiry about information of another remoteproc. One
+example is modem coming up, inquiring about where to find audio
+services. This inquiry will be performed once at firmware boot and
+decisions will be made based on the responses, no retries or updates.
+
+As such, starting pd-mapper with an incomplete "database" is
+unfortunately not supported.
+
+Regards,
+Bjorn
