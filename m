@@ -1,96 +1,98 @@
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D3E10A14;
-	Sun,  7 Apr 2024 06:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31801802E;
+	Sun,  7 Apr 2024 09:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712470180; cv=none; b=lwtSm4sabxyUtC6vW3SdjGmG+mQtXt/6msxBcSuYWQzDo7WapWwUblBMmliuQUMg/GXAbx5V9PPJPx0NPuS3b2eY5tuBRYpeXt7ORjvQ8DcHYkRzseCyoILDi31HAqsK5VaafAyFsvfe+HI33w5qbbGNyout+B7WiBTzkizYR1U=
+	t=1712483945; cv=none; b=tAxmGRaY5y4rqNI6gc4twfhTIpjVEQPrVI0ZyXVla4yoQ8JeXklMgGCOmdfLimpbGQrAETkkvVzd8fv+4yVvrdu4M69v1/qwlB7GGCjKAa7DVPcyXgTEpkOszwRlMPYaJAPyexqMuOgbg1txIFNkWNm9wz/oabEbyqveZsFQlLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712470180; c=relaxed/simple;
-	bh=ofRHBQ9pjEzVTU+BhIfnFz15PkMBDFjuXoHrdk58MLg=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To:
-	 Content-Type; b=HAXxFeqMY5yTSz8gIBPEfyGY2GxmSC+3Z4+GB+IfYBiXkLF6+wOLZMlOK4rTdWTbtJFoNLC751ROIyQVvPXYo4Qpj0WgacuedRw0ZixaG8fCxRaUnWQe4pSZxPUMEAoHsTm1caGQMevVCa9P3FTAAAYTHUid1Unw6xs2abnvEco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u83ZXHgo; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1712483945; c=relaxed/simple;
+	bh=91pHJf0RjCkHKMBVz3YAIolmXXmzxfQ9oX5Mm7y5tiU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=by9jCYuqpkrjHC6ztl2HgeQT6SxuNcTjC38Wvoto4sW4UosZh1VYLnpuSXaJWDPw8XXb0HMygJ0OZ/KowOlS1QwTt3lKPyt2jkFkMXyPaXzsTsdDzXoKTlIqb6lYiXnDBIGib+cuadPsQxgqH03RBNwhlXvMcHTwdfP+VcNBOHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=BT1El5WM; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u83ZXHgo"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1712470170; h=Message-ID:Subject:Date:From:To:Content-Type;
-	bh=nv5U4hxWPS4bKJYdRAmApCzcDyYdxKTgR8eKush4hJU=;
-	b=u83ZXHgoUCPBRvV27j5Z9AGqCPMmOPgBC57FMHbfW8cT0NcQd4Z24pM6DK4ziKP1xcrKTVNgwNdB3WSGxu9Nw/yULmZBTeOpRRgehiekGC6c9wFaj+xxV5BF2YcmRAuf/3I8r12ClsF4HX+Wrf6A3wMfgEAIdsAUUWd1rtEfrPY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R541e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0W4.JPHS_1712470168;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W4.JPHS_1712470168)
-          by smtp.aliyun-inc.com;
-          Sun, 07 Apr 2024 14:09:28 +0800
-Message-ID: <1712470058.1558342-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost v7 0/6] refactor the params of find_vqs()
-Date: Sun, 7 Apr 2024 14:07:38 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Eric Farman <farman@linux.ibm.com>
-Cc: Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Hans de Goede <hdegoede@redhat.com>,
- =?utf-8?q?IlpoJ=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Vadim Pasternak <vadimp@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Cornelia Huck <cohuck@redhat.com>,
- Halil Pasic <pasic@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- David Hildenbrand <david@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- linux-um@lists.infradead.org,
- platform-driver-x86@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- linux-s390@vger.kernel.org,
- kvm@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240328080348.3620-1-xuanzhuo@linux.alibaba.com>
- <cbdce01bbf2843062f4afd7e5c9af767e69cc70b.camel@linux.ibm.com>
-In-Reply-To: <cbdce01bbf2843062f4afd7e5c9af767e69cc70b.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="BT1El5WM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
+	t=1712483941; bh=91pHJf0RjCkHKMBVz3YAIolmXXmzxfQ9oX5Mm7y5tiU=;
+	h=From:Subject:Date:To:Cc;
+	b=BT1El5WMzxFAds+jZoUwFt1Qna+WUkaJANQ0c/DLLmWUuBKRS2QFPdegkRTAUYj+K
+	 Ryfme+fx8ro/s+MoZuNkhCRks2U4OoIEuLk1MGII6/nD3nHGSmSu6Lu5w9yoMPbjKl
+	 ijH0vCTfGhDVCuVxX1n0GJuAq3ReA/Do5Plig4RM=
+From: Luca Weiss <luca@z3ntu.xyz>
+Subject: [PATCH 0/3] Fix up qcom,halt-regs definition in various schemas
+Date: Sun, 07 Apr 2024 11:58:29 +0200
+Message-Id: <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEVuEmYC/x2MSQqAMAwAvyI5G6i1KPoV8VBitAHXVkUo/t3ic
+ RhmIgT2wgHaLILnW4Jsa4Iiz4CcXSdGGRKDVtooo2o8aFvQ2flEz1PAUZ5rR00VETd1adhASnf
+ PSfzbrn/fD0F4UyVmAAAA
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1737; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=91pHJf0RjCkHKMBVz3YAIolmXXmzxfQ9oX5Mm7y5tiU=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmEm5KWzBpEFmmDaHOtSoOvyOwel19M/hzCGx1C
+ KXvs99RsImJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZhJuSgAKCRBy2EO4nU3X
+ VsqnD/0eH8nSV0JYqywzV18+4RZ9P0ckv6ZFQ5tNh0cQ8304FZSvUVqrEAeHci1yXifW0r7zrI0
+ hyDbDBZVy2C1dMYjRcGaP0PQQ5OK/+iskD7nBL+VHPP/nGaZyB6g6u5LegglIR9HYQcOhwBlha/
+ zazyeKr0HJOf2mRmaXS5dOl1PRB+6ndF7zLtukThMWvHnpdd0iy+MCUaY2gDnyfV70kyqaJE98M
+ yWUxGzaM81wDsAx1A2ZwXIVwhL16e343YZq3bFrOwzAcheFt93uUZhJo5F+5SxS9uCV/iPwxnXU
+ notK+9rqotPIegHyuWh4TPTkZrcpJJErrV9MDcesqsvpopLRxEHmew/Lz/glvFlNQy3yE5T+VwQ
+ ZnfarhnlcDAsAFvkTG9O6HOLGtfX2XTk8AryX6lZ08tMV1Hm837kwgTDzDx9Fb0kXBzOfpBxlxH
+ P4Hmt0c5DNq1GePVXJcnNIOBdmRzuSimKh53GJGlDVe21zegf7I9dP9kt5uW7SN2rHV+IAZnD3w
+ GIZ9mmdh23UpWQW5CrQyRua+D0yjyaT5BVAMs0UK8ADtGf51RTlB2qRRtWsecB0bEj0Qx22lDuz
+ bQy4l+O3LCflz98NW+PaEf2woKMWYkvjEjxeEpnzJ6B9lmrrrjZtXO2GO2t57768QalB2cBjdy5
+ QHV2duTTmR9eK5g==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-On Mon, 01 Apr 2024 15:57:53 -0400, Eric Farman <farman@linux.ibm.com> wrot=
-e:
-> On Thu, 2024-03-28 at 16:03 +0800, Xuan Zhuo wrote:
-> > This pathset is splited from the
-> >
-> > =C2=A0=C2=A0=C2=A0=C2=A0
-> > http://lore.kernel.org/all/20240229072044.77388-1-xuanzhuo@linux.alibab=
-a.com
-> >
-> > That may needs some cycles to discuss. But that notifies too many
-> > people.
->
-> This will need to be rebased to 6.9; there were some conflicts when I
-> tried to apply this locally which I didn't chase down, but it works
-> fine on 6.8.
+The original motivation is that a bunch of other schemas fail to
+validate qcom,halt-regs, for example like in the following examples:
 
-The target branch is Michael's vhost branch.
+arch/arm64/boot/dts/qcom/apq8016-sbc.dtb: remoteproc@4080000: qcom,halt-regs:0: [20] is too short
+        from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
+arch/arm64/boot/dts/qcom/apq8096-ifc6640.dtb: remoteproc@2080000: qcom,halt-regs:0: [82] is too short
+        from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8996-mss-pil.yaml#
+arch/arm64/boot/dts/qcom/apq8039-t2.dtb: remoteproc@4080000: qcom,halt-regs:0: [32] is too short
+        from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/log/?h=3Dlin=
-ux-next
+While I'm actually not quite sure why these patches fix this in
+the other schemas - feels like a bug/limitation in dt-schema maybe? -
+the patches should be correct anyways to validate qcom,halt-regs in the
+schemas I'm touching.
 
-I will rebase that after Michael updates the branch.
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+Luca Weiss (3):
+      dt-bindings: remoteproc: qcom,qcs404-cdsp-pil: Fix qcom,halt-regs definition
+      dt-bindings: remoteproc: qcom,sc7280-wpss-pil: Fix qcom,halt-regs definition
+      dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix qcom,halt-regs definition
 
-Thanks.
+ .../devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml        | 6 +++++-
+ .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml        | 6 +++++-
+ .../devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml        | 6 +++++-
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+---
+base-commit: 8568bb2ccc278f344e6ac44af6ed010a90aa88dc
+change-id: 20240407-qcom-halt-regs-fixup-2c6cce9734e4
 
+Best regards,
+-- 
+Luca Weiss <luca@z3ntu.xyz>
 
->
-> Thanks,
-> Eric
