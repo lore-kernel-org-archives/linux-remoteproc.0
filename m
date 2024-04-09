@@ -1,72 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297BE130E2A;
-	Tue,  9 Apr 2024 15:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADABE156C59;
+	Tue,  9 Apr 2024 18:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712675444; cv=none; b=JoB+cI70xlD1Unilhr1fPBiXt9Zxj7/Xy1Vkt5W1fYKqKSaGXj4dWVmKsXGYAFYdp0/DuFKcLj+vYMrgh+SvRGjVRXmf66xBqc/+FqSrlF/VFP7cYraatz85o81Gp5Ha6/8rUrisH+Rh7x79pNBbwsO+sGdCZOstkT0K9IHbCpA=
+	t=1712687557; cv=none; b=DL48WSAWHRkwuIGhI8ZqCXabM+6A01wU3G+Iz4xvyi9xkJnSK99awSkd6QhDGEyeou0j5PbSNmIexbYpV2yGT+0/xioizY8cQxCsABgv+1QOcqKVH+/AUXSI2rnxpLDzu9pUSfDdpy0K9w66C/PR6j0UWbORm7yvNGsH4LY/Nuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712675444; c=relaxed/simple;
-	bh=ekT0sGSo3AMhRcIQz//3SzF8DW+WDol7YcBnxFf/pyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZixKs45pttdz8MR/gONRleyFNbJ94NjQxndxLnZeKKrTW2LrKfn4ejMdZlmhMhJtKGGbWZp9eRrMpc6FbKMieFrAp3JO8eofEtzWEhtsxywbw1lFIxgUFykP7h5jc1lMJtxNEd7+/YYSY+ZQCvIjX5mlRuD+SJm82eq/1obrsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTTAoRT8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712687557; c=relaxed/simple;
+	bh=pHkJ+0C4c6a26Bb5wDFsH4ryFH7WrAuqh4ZAgrgWB+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XSEMGSa9CxNXTfT0TzQpIO3+oUGo20Z4NdlRsjVvY+FG3FMqlyZ3hN7Yn2sFJ8wMCGavYyP4VW7UNBqOvfKPVH4XesKenrGcHWuKA1o3hVRu7NYeVbtI2z5zYZDG4k9BhmPVxwOqCCkk+tb3OnAl6qc4bfbFeBMQT1Ofz3BABxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=2qc9t3i7; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTTAoRT8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF39C433F1;
-	Tue,  9 Apr 2024 15:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712675443;
-	bh=ekT0sGSo3AMhRcIQz//3SzF8DW+WDol7YcBnxFf/pyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NTTAoRT8ckbyRuB/D0RFBxU90uJcw1DMXxt/9IhiBNPPMktexx0h677k+lTha1VrB
-	 I6rDY7fDKpiZ5tyu2jX9HWONXvOXfRPyWc87nxGrBjBR/XyavKJlEZrIB/23c9PZWL
-	 NmGoJ8I8GpyN5oteLMBIFvz7LjV1v01NVeDYBYbJz/3+Mhpu2qwOuJx1mlaLRyH5ZN
-	 1XaWKHlXCx8g9CMZ6H84ZPTc1/YQVpqKXtoYhzfyipDyCaPiOwAYiqy+fqzRz1GOFz
-	 HlqiJ23+wJm61+Yb/oXZmIUZwvefPoxv4zUGr8FK4GB92yC7+Cxd1aDnhQL72u5Yqr
-	 pK0GAkPtqfN9A==
-Date: Tue, 9 Apr 2024 10:10:41 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Weiss <luca@z3ntu.xyz>
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="2qc9t3i7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
+	t=1712687547; bh=pHkJ+0C4c6a26Bb5wDFsH4ryFH7WrAuqh4ZAgrgWB+A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=2qc9t3i7xCFfSB/OiHDIneSLqpOOBDt/X4sfKwNVz3oPA5Ikj7EMOpYSU/ncbwMC1
+	 RG8MGX3rJW8vY3PhjKQVl2ULqxy8C2Xxv9QQwjlrk/vHp7qWfRH/T/PxABAGNypwH5
+	 exUUk2PANrB/9NVouoM+Z00LPNqRYakTj7ztiUjM=
+From: Luca Weiss <luca@z3ntu.xyz>
+To: Rob Herring <robh@kernel.org>
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/3] Fix up qcom,halt-regs definition in various schemas
-Message-ID: <20240409151041.GA1141635-robh@kernel.org>
-References: <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
+Date: Tue, 09 Apr 2024 20:32:26 +0200
+Message-ID: <2724472.mvXUDI8C0e@g550jk>
+In-Reply-To: <20240409151041.GA1141635-robh@kernel.org>
+References:
+ <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
+ <20240409151041.GA1141635-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240407-qcom-halt-regs-fixup-v1-0-a0ea4e2c178e@z3ntu.xyz>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Apr 07, 2024 at 11:58:29AM +0200, Luca Weiss wrote:
-> The original motivation is that a bunch of other schemas fail to
-> validate qcom,halt-regs, for example like in the following examples:
+On Dienstag, 9. April 2024 17:10:41 CEST Rob Herring wrote:
+> On Sun, Apr 07, 2024 at 11:58:29AM +0200, Luca Weiss wrote:
+> > The original motivation is that a bunch of other schemas fail to
+> > validate qcom,halt-regs, for example like in the following examples:
+> > 
+> > arch/arm64/boot/dts/qcom/apq8016-sbc.dtb: remoteproc@4080000: qcom,halt-regs:0: [20] is too short
+> >         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
+> > arch/arm64/boot/dts/qcom/apq8096-ifc6640.dtb: remoteproc@2080000: qcom,halt-regs:0: [82] is too short
+> >         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8996-mss-pil.yaml#
+> > arch/arm64/boot/dts/qcom/apq8039-t2.dtb: remoteproc@4080000: qcom,halt-regs:0: [32] is too short
+> >         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
+> > 
+> > While I'm actually not quite sure why these patches fix this in
+> > the other schemas - feels like a bug/limitation in dt-schema maybe? -
 > 
-> arch/arm64/boot/dts/qcom/apq8016-sbc.dtb: remoteproc@4080000: qcom,halt-regs:0: [20] is too short
->         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
-> arch/arm64/boot/dts/qcom/apq8096-ifc6640.dtb: remoteproc@2080000: qcom,halt-regs:0: [82] is too short
->         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8996-mss-pil.yaml#
-> arch/arm64/boot/dts/qcom/apq8039-t2.dtb: remoteproc@4080000: qcom,halt-regs:0: [32] is too short
->         from schema $id: http://devicetree.org/schemas/remoteproc/qcom,msm8916-mss-pil.yaml#
+> Was this with v2024.02? It should be a bit better there. Though it 
+> may just have different errors. The limitation is that property 
+> types and in the case of matrix's (which phandle-array actually is) 
+> range for dimensions are global. So if there's not correct dimensions 
+> for a property, the tools aren't going to decode it properly.
+
+You're right, I doesn't look like I can reproduce this with the latest
+dtschema installed.
+
+Anyways these patches should be good to actually validate qcom,halt-regs for
+the schemas I'm touching here.
+
+Regards
+Luca
+
 > 
-> While I'm actually not quite sure why these patches fix this in
-> the other schemas - feels like a bug/limitation in dt-schema maybe? -
+> Rob
+> 
 
-Was this with v2024.02? It should be a bit better there. Though it 
-may just have different errors. The limitation is that property 
-types and in the case of matrix's (which phandle-array actually is) 
-range for dimensions are global. So if there's not correct dimensions 
-for a property, the tools aren't going to decode it properly.
 
-Rob
+
+
