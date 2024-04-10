@@ -1,46 +1,46 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DF216EBEF;
-	Wed, 10 Apr 2024 13:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584C816F847;
+	Wed, 10 Apr 2024 13:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712757596; cv=none; b=B1tDZ9N3uP2KLnNasRfIZQ7TW5yDo2HhQBKrnG9v0LfKdfJNuZQCc+eeUeb+IEK4suURzcgY4+kWAtQIrS3gv9vSyVi1LDCWRis49X3Sss43TGJ60dHuPVv6VJvFB2kdtVN1EP8iztgEgkdrMb2ztvILXQr1qnQ2SOt3vinOq2I=
+	t=1712757598; cv=none; b=q5GbNzpuNuTduuQU2Uc6iyDcSGZe0gLKpaOaOKG6JYqbLUO90qytRzoK/ufrSflAMnap+cYlCssv1O0n3yGXoWgKwg9sgyjyUIWnU1H5JmOjETmgDHhwtPD10Z1yK4/DxOAkr4MVFlVmOVUzXu6PZFChOznWR8o8SHoALMn2fu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712757596; c=relaxed/simple;
-	bh=qy9PyGlUP2RPUSM/eP2gDf7EcF/g1j8GI4jRMc+CzrY=;
+	s=arc-20240116; t=1712757598; c=relaxed/simple;
+	bh=cHzIUSsWOwL4bdxoqheqXLuQ8KqcDtisXv/t7osIT50=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ki9/2GY5jiTWGjme0AbawbGTPhlx5iaasrrlg9LPFlKkHOLqoOnddYjTqf/6A+zH9Unkz/ytcRs4eeYcpg/M3en6wDU8KKwI9rTQ9cnMJffZ3pGbD0Ho09Xgn/eoI5eg7Rrc3fhRAJfl90Ha2/ve5Nwe1fMsFaAjKx9rARR4qxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qj2zSA2W; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=OXhELYmfb9wfkZJXHlIFLEJWK+0hHYkyENWMh0IZZaQVLb3+UY69GBD9p+v2ALZ8YpculnYrQqhDgeEg+pubrv69s/wmjKsvlHrtCYnVxuFzyMJwlwMqGHsj8KszcfhQCO3dsELacMk5Xh9Xupc/EgXwqG58RgpJWmTc5ljfmjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f/9eBYCT; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qj2zSA2W"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxlgT056758;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f/9eBYCT"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxlTc116055;
 	Wed, 10 Apr 2024 08:59:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1712757587;
-	bh=u3tJ80kY0yv2TU/mG7vJq/vhEjzXqcyTjxZViHgfa30=;
+	bh=MRm7Wfdskw+FskyCTQqKVQqWK3HtEFp0jjB5j6n0QcE=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=qj2zSA2WbHVWo8KsUUo4MaJtG3WokWGOcgXlUg7mspoaC8prO83V6RMO0B67G2NFO
-	 /d+JmHjWAKERnCMoP87dNl8f15JfuOmWGvWtaXvj1t4VbKftzXZDHsGajytnwvZWum
-	 4VK6mlR67iV8LQNMomNo0Q89Gd++epPv+lgtHA6Q=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxlIi011519
+	b=f/9eBYCT5m1M14e4Sp+9ZrpiLYYun76mG5GmbF5dR1Zdr1ps9xxArkKKr24FxxorY
+	 RIGtyeal9425mTyrt2gaAggPmPbWj0sYm3kUVvF3uCzD5nKKf5L1wpNqoSFUoAXPdR
+	 iOrMHW0ZN+W5ql8JJ8RvHIncBsffEx6iXfdvyuOg=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxlXN072373
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Wed, 10 Apr 2024 08:59:47 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Apr 2024 08:59:47 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2024 08:59:46 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Apr 2024 08:59:47 -0500
+ Frontend Transport; Wed, 10 Apr 2024 08:59:46 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhav067183;
-	Wed, 10 Apr 2024 08:59:47 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhat067183;
+	Wed, 10 Apr 2024 08:59:46 -0500
 From: Andrew Davis <afd@ti.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
         Nick Saulnier <nsaulnier@ti.com>,
@@ -49,9 +49,9 @@ To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH v2 11/13] mailbox: omap: Remove mbox_chan_to_omap_mbox()
-Date: Wed, 10 Apr 2024 08:59:40 -0500
-Message-ID: <20240410135942.61667-12-afd@ti.com>
+Subject: [PATCH v2 09/13] mailbox: omap: Use function local struct mbox_controller
+Date: Wed, 10 Apr 2024 08:59:38 -0500
+Message-ID: <20240410135942.61667-10-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410135942.61667-1-afd@ti.com>
 References: <20240410135942.61667-1-afd@ti.com>
@@ -65,62 +65,71 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-This function only checks if mbox_chan *chan is not NULL, but that cannot
-be the case and if it was returning NULL which is not later checked
-doesn't save us from this. The second check for chan->con_priv is
-completely redundant as if it was NULL we would return NULL just the
-same. Simply dereference con_priv directly and remove this function.
+The mbox_controller struct is only needed in the probe function. Make
+it a local variable instead of storing a copy in omap_mbox_device
+to simplify that struct.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/mailbox/omap-mailbox.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/mailbox/omap-mailbox.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index 8e42266cb31a5..8e2760d2c5b0c 100644
+index 17c9b9df78b1d..97f59d9f9f319 100644
 --- a/drivers/mailbox/omap-mailbox.c
 +++ b/drivers/mailbox/omap-mailbox.c
-@@ -103,14 +103,6 @@ static unsigned int mbox_kfifo_size = CONFIG_OMAP_MBOX_KFIFO_SIZE;
- module_param(mbox_kfifo_size, uint, S_IRUGO);
- MODULE_PARM_DESC(mbox_kfifo_size, "Size of omap's mailbox kfifo (bytes)");
+@@ -86,7 +86,6 @@ struct omap_mbox_device {
+ 	u32 num_fifos;
+ 	u32 intr_type;
+ 	struct omap_mbox **mboxes;
+-	struct mbox_controller controller;
+ };
  
--static struct omap_mbox *mbox_chan_to_omap_mbox(struct mbox_chan *chan)
--{
--	if (!chan || !chan->con_priv)
--		return NULL;
--
--	return (struct omap_mbox *)chan->con_priv;
--}
--
- static inline
- unsigned int mbox_read_reg(struct omap_mbox_device *mdev, size_t ofs)
- {
-@@ -357,7 +349,7 @@ static void omap_mbox_fini(struct omap_mbox *mbox)
+ struct omap_mbox {
+@@ -541,7 +540,7 @@ static struct mbox_chan *omap_mbox_of_xlate(struct mbox_controller *controller,
+ 	struct omap_mbox_device *mdev;
+ 	struct omap_mbox *mbox;
  
- static int omap_mbox_chan_startup(struct mbox_chan *chan)
- {
--	struct omap_mbox *mbox = mbox_chan_to_omap_mbox(chan);
-+	struct omap_mbox *mbox = chan->con_priv;
- 	struct omap_mbox_device *mdev = mbox->parent;
- 	int ret = 0;
+-	mdev = container_of(controller, struct omap_mbox_device, controller);
++	mdev = dev_get_drvdata(controller->dev);
+ 	if (WARN_ON(!mdev))
+ 		return ERR_PTR(-EINVAL);
  
-@@ -372,7 +364,7 @@ static int omap_mbox_chan_startup(struct mbox_chan *chan)
+@@ -567,6 +566,7 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *child;
+ 	const struct omap_mbox_match_data *match_data;
++	struct mbox_controller *controller;
+ 	u32 intr_type, info_count;
+ 	u32 num_users, num_fifos;
+ 	u32 tmp[3];
+@@ -685,17 +685,20 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	mdev->intr_type = intr_type;
+ 	mdev->mboxes = list;
  
- static void omap_mbox_chan_shutdown(struct mbox_chan *chan)
- {
--	struct omap_mbox *mbox = mbox_chan_to_omap_mbox(chan);
-+	struct omap_mbox *mbox = chan->con_priv;
- 	struct omap_mbox_device *mdev = mbox->parent;
- 
- 	mutex_lock(&mdev->cfg_lock);
-@@ -415,7 +407,7 @@ static int omap_mbox_chan_send(struct omap_mbox *mbox, u32 msg)
- 
- static int omap_mbox_chan_send_data(struct mbox_chan *chan, void *data)
- {
--	struct omap_mbox *mbox = mbox_chan_to_omap_mbox(chan);
-+	struct omap_mbox *mbox = chan->con_priv;
- 	int ret;
- 	u32 msg = (u32)(uintptr_t)(data);
++	controller = devm_kzalloc(&pdev->dev, sizeof(*controller), GFP_KERNEL);
++	if (!controller)
++		return -ENOMEM;
+ 	/*
+ 	 * OMAP/K3 Mailbox IP does not have a Tx-Done IRQ, but rather a Tx-Ready
+ 	 * IRQ and is needed to run the Tx state machine
+ 	 */
+-	mdev->controller.txdone_irq = true;
+-	mdev->controller.dev = mdev->dev;
+-	mdev->controller.ops = &omap_mbox_chan_ops;
+-	mdev->controller.chans = chnls;
+-	mdev->controller.num_chans = info_count;
+-	mdev->controller.of_xlate = omap_mbox_of_xlate;
+-	ret = devm_mbox_controller_register(mdev->dev, &mdev->controller);
++	controller->txdone_irq = true;
++	controller->dev = mdev->dev;
++	controller->ops = &omap_mbox_chan_ops;
++	controller->chans = chnls;
++	controller->num_chans = info_count;
++	controller->of_xlate = omap_mbox_of_xlate;
++	ret = devm_mbox_controller_register(mdev->dev, controller);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.39.2
