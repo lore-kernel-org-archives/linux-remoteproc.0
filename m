@@ -1,46 +1,46 @@
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C992016DEDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C984116DED8;
 	Wed, 10 Apr 2024 13:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712757594; cv=none; b=FEd+S3qvP+ECHBMrSRPgtH+/m8lPRO5AI1KK3HsUGbdt8gE4w48N2xMU+v++YXrmfej57+ay/vWqe4UF2UewsUsuFUS6cwPCpgNM8/4y+271meVvmFdO/5MaPLNAZ4jzYKYddFqDNerLzZrKolW5sRzNQ4nwsO0W+g8koykHKh4=
+	t=1712757594; cv=none; b=ZudBS8CQ69tCisiDIYu0vesHnngFLVROGFJMoedczKbxT6rXt3HRm/43lXTkJrLXPUpVdO2w7HIGyHC91Th0XMjcEK4HYjG+uLkGUsHPsheospz6/+UyMffVVambJf5aLYAuh8cIBe68735PR5NemyESzS1pm9ZuztI2riSVNrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712757594; c=relaxed/simple;
-	bh=R1WUXZH6NvJXZIW+AVDPYVj8JHUdfaLxcMfuJ+Z3tRM=;
+	bh=P/VnF/qnJ/q/CFLwO6pmKiUWpJe7q8mHYQKoiG5ldhM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F6jUIuTO6b0puTDbROy8dN6jhv4t+b68JOu7EiL6bLnAF8abUwAge5REf+70r9Tk+vBQ6zXaU3TxReJqOqhBsjustVdUgrK3F7rJADz0PQ2Nq/5sli2GpI7BxfoTKJaITo4oEWQvtvoBmOz8wJYtW7i3hg0Wru5boNqZSKTgjiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D6AG8/Yz; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=C+ykrx6r7zC3AuUsq4+mdXJ34eNufqPj9CQn7YlodF79qadYUpXin3IhFyAGNM4OgkWdJ/42wZpFBevw1TCfRq07kpZjJa/kshmyKMx83YGvW1AxRi4fP1WgWXY/3rTDeKMNjEZQI+77Art4EQNr7Barp8kbLKGQLZPKNum8c5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nlYVBXeA; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D6AG8/Yz"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxlho024595;
-	Wed, 10 Apr 2024 08:59:47 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nlYVBXeA"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxksB024582;
+	Wed, 10 Apr 2024 08:59:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1712757587;
-	bh=BSjhEIQgB4xQ5LpqF3Ho5CnJ8F2Hjtf+UQHpF8YH8Vg=;
+	s=ti-com-17Q1; t=1712757586;
+	bh=KDf4x/lczdR2LuWICqLSkiUo9SNZ0/+dHt1tFmC5qbw=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=D6AG8/YzMJRYBsRYtEkYlGfs2CUP1EwG13PzGBjiQ0KWhmDs3GGCli5iC9GDjdV+i
-	 27Del0igCuZt6CXm3MI0dbt14dvqbAmiv57fguluQQnSMmesCoUnFIO07E2Yliu+Xm
-	 Q+l0GNmCmNGrLyUgIbioruDskJXtZEFdbSxvzLBE=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxlSW072427
+	b=nlYVBXeAmz0SnQVSCd5SLZ7Q/7Y7N9+OjXdktqf7opWsFINj54NaiMHP5p7Eunyyz
+	 ScRLjXskJN1o42AWC8WIV/w1xNkOFVZV89t/n/ibFK1m3lsifpVu2yw3WiRFrlrx9f
+	 DTPXQcZ0LTyQ2XZ4zCojEsYkS97rE0H9RgvtADe4=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxk5o029209
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 10 Apr 2024 08:59:47 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 10 Apr 2024 08:59:46 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Apr 2024 08:59:47 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2024 08:59:46 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Apr 2024 08:59:47 -0500
+ Frontend Transport; Wed, 10 Apr 2024 08:59:46 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhaw067183;
-	Wed, 10 Apr 2024 08:59:47 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhas067183;
+	Wed, 10 Apr 2024 08:59:46 -0500
 From: Andrew Davis <afd@ti.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
         Nick Saulnier <nsaulnier@ti.com>,
@@ -49,9 +49,9 @@ To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH v2 12/13] mailbox: omap: Reverse FIFO busy check logic
-Date: Wed, 10 Apr 2024 08:59:41 -0500
-Message-ID: <20240410135942.61667-13-afd@ti.com>
+Subject: [PATCH v2 08/13] mailbox: omap: Merge mailbox child node setup loops
+Date: Wed, 10 Apr 2024 08:59:37 -0500
+Message-ID: <20240410135942.61667-9-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410135942.61667-1-afd@ti.com>
 References: <20240410135942.61667-1-afd@ti.com>
@@ -65,71 +65,182 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-It is much more clear to check if the hardware FIFO is full and return
-EBUSY if true. This allows us to also remove one level of indention
-from the core of this function. It also makes the similarities between
-omap_mbox_chan_send_noirq() and omap_mbox_chan_send() more obvious.
+Currently the driver loops through all mailbox child nodes twice, once
+to read in data from each node, and again to make use of this data.
+Instead read the data and make use of it in one pass. This removes
+the need for several temporary data structures and reduces the
+complexity of this main loop in probe.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/mailbox/omap-mailbox.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/mailbox/omap-mailbox.c | 119 +++++++++++++--------------------
+ 1 file changed, 46 insertions(+), 73 deletions(-)
 
 diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index 8e2760d2c5b0c..c5d4083125856 100644
+index 4f956c7b4072c..17c9b9df78b1d 100644
 --- a/drivers/mailbox/omap-mailbox.c
 +++ b/drivers/mailbox/omap-mailbox.c
-@@ -375,34 +375,33 @@ static void omap_mbox_chan_shutdown(struct mbox_chan *chan)
+@@ -89,19 +89,6 @@ struct omap_mbox_device {
+ 	struct mbox_controller controller;
+ };
  
- static int omap_mbox_chan_send_noirq(struct omap_mbox *mbox, u32 msg)
- {
--	int ret = -EBUSY;
-+	if (mbox_fifo_full(mbox))
-+		return -EBUSY;
- 
--	if (!mbox_fifo_full(mbox)) {
--		omap_mbox_enable_irq(mbox, IRQ_RX);
--		mbox_fifo_write(mbox, msg);
--		ret = 0;
--		omap_mbox_disable_irq(mbox, IRQ_RX);
-+	omap_mbox_enable_irq(mbox, IRQ_RX);
-+	mbox_fifo_write(mbox, msg);
-+	omap_mbox_disable_irq(mbox, IRQ_RX);
- 
--		/* we must read and ack the interrupt directly from here */
--		mbox_fifo_read(mbox);
--		ack_mbox_irq(mbox, IRQ_RX);
--	}
-+	/* we must read and ack the interrupt directly from here */
-+	mbox_fifo_read(mbox);
-+	ack_mbox_irq(mbox, IRQ_RX);
- 
--	return ret;
-+	return 0;
- }
- 
- static int omap_mbox_chan_send(struct omap_mbox *mbox, u32 msg)
- {
--	int ret = -EBUSY;
+-struct omap_mbox_fifo_info {
+-	int tx_id;
+-	int tx_usr;
+-	int tx_irq;
 -
--	if (!mbox_fifo_full(mbox)) {
--		mbox_fifo_write(mbox, msg);
--		ret = 0;
-+	if (mbox_fifo_full(mbox)) {
-+		/* always enable the interrupt */
-+		omap_mbox_enable_irq(mbox, IRQ_TX);
-+		return -EBUSY;
+-	int rx_id;
+-	int rx_usr;
+-	int rx_irq;
+-
+-	const char *name;
+-	bool send_no_irq;
+-};
+-
+ struct omap_mbox {
+ 	const char		*name;
+ 	int			irq;
+@@ -574,8 +561,7 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 	struct mbox_chan *chnls;
+-	struct omap_mbox **list, *mbox, *mboxblk;
+-	struct omap_mbox_fifo_info *finfo, *finfoblk;
++	struct omap_mbox **list, *mbox;
+ 	struct omap_mbox_device *mdev;
+ 	struct omap_mbox_fifo *fifo;
+ 	struct device_node *node = pdev->dev.of_node;
+@@ -609,40 +595,6 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
  
-+	mbox_fifo_write(mbox, msg);
+-	finfoblk = devm_kcalloc(&pdev->dev, info_count, sizeof(*finfoblk),
+-				GFP_KERNEL);
+-	if (!finfoblk)
+-		return -ENOMEM;
+-
+-	finfo = finfoblk;
+-	child = NULL;
+-	for (i = 0; i < info_count; i++, finfo++) {
+-		child = of_get_next_available_child(node, child);
+-		ret = of_property_read_u32_array(child, "ti,mbox-tx", tmp,
+-						 ARRAY_SIZE(tmp));
+-		if (ret)
+-			return ret;
+-		finfo->tx_id = tmp[0];
+-		finfo->tx_irq = tmp[1];
+-		finfo->tx_usr = tmp[2];
+-
+-		ret = of_property_read_u32_array(child, "ti,mbox-rx", tmp,
+-						 ARRAY_SIZE(tmp));
+-		if (ret)
+-			return ret;
+-		finfo->rx_id = tmp[0];
+-		finfo->rx_irq = tmp[1];
+-		finfo->rx_usr = tmp[2];
+-
+-		finfo->name = child->name;
+-
+-		finfo->send_no_irq = of_property_read_bool(child, "ti,mbox-send-noirq");
+-
+-		if (finfo->tx_id >= num_fifos || finfo->rx_id >= num_fifos ||
+-		    finfo->tx_usr >= num_users || finfo->rx_usr >= num_users)
+-			return -EINVAL;
+-	}
+-
+ 	mdev = devm_kzalloc(&pdev->dev, sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev)
+ 		return -ENOMEM;
+@@ -667,36 +619,58 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	if (!chnls)
+ 		return -ENOMEM;
+ 
+-	mboxblk = devm_kcalloc(&pdev->dev, info_count, sizeof(*mbox),
+-			       GFP_KERNEL);
+-	if (!mboxblk)
+-		return -ENOMEM;
++	child = NULL;
++	for (i = 0; i < info_count; i++) {
++		int tx_id, tx_irq, tx_usr;
++		int rx_id,         rx_usr;
 +
- 	/* always enable the interrupt */
- 	omap_mbox_enable_irq(mbox, IRQ_TX);
--	return ret;
-+	return 0;
++		mbox = devm_kzalloc(&pdev->dev, sizeof(*mbox), GFP_KERNEL);
++		if (!mbox)
++			return -ENOMEM;
++
++		child = of_get_next_available_child(node, child);
++		ret = of_property_read_u32_array(child, "ti,mbox-tx", tmp,
++						 ARRAY_SIZE(tmp));
++		if (ret)
++			return ret;
++		tx_id = tmp[0];
++		tx_irq = tmp[1];
++		tx_usr = tmp[2];
++
++		ret = of_property_read_u32_array(child, "ti,mbox-rx", tmp,
++						 ARRAY_SIZE(tmp));
++		if (ret)
++			return ret;
++		rx_id = tmp[0];
++		/* rx_irq = tmp[1]; */
++		rx_usr = tmp[2];
++
++		if (tx_id >= num_fifos || rx_id >= num_fifos ||
++		    tx_usr >= num_users || rx_usr >= num_users)
++			return -EINVAL;
+ 
+-	mbox = mboxblk;
+-	finfo = finfoblk;
+-	for (i = 0; i < info_count; i++, finfo++) {
+ 		fifo = &mbox->tx_fifo;
+-		fifo->msg = MAILBOX_MESSAGE(finfo->tx_id);
+-		fifo->fifo_stat = MAILBOX_FIFOSTATUS(finfo->tx_id);
+-		fifo->intr_bit = MAILBOX_IRQ_NOTFULL(finfo->tx_id);
+-		fifo->irqenable = MAILBOX_IRQENABLE(intr_type, finfo->tx_usr);
+-		fifo->irqstatus = MAILBOX_IRQSTATUS(intr_type, finfo->tx_usr);
+-		fifo->irqdisable = MAILBOX_IRQDISABLE(intr_type, finfo->tx_usr);
++		fifo->msg = MAILBOX_MESSAGE(tx_id);
++		fifo->fifo_stat = MAILBOX_FIFOSTATUS(tx_id);
++		fifo->intr_bit = MAILBOX_IRQ_NOTFULL(tx_id);
++		fifo->irqenable = MAILBOX_IRQENABLE(intr_type, tx_usr);
++		fifo->irqstatus = MAILBOX_IRQSTATUS(intr_type, tx_usr);
++		fifo->irqdisable = MAILBOX_IRQDISABLE(intr_type, tx_usr);
+ 
+ 		fifo = &mbox->rx_fifo;
+-		fifo->msg = MAILBOX_MESSAGE(finfo->rx_id);
+-		fifo->msg_stat =  MAILBOX_MSGSTATUS(finfo->rx_id);
+-		fifo->intr_bit = MAILBOX_IRQ_NEWMSG(finfo->rx_id);
+-		fifo->irqenable = MAILBOX_IRQENABLE(intr_type, finfo->rx_usr);
+-		fifo->irqstatus = MAILBOX_IRQSTATUS(intr_type, finfo->rx_usr);
+-		fifo->irqdisable = MAILBOX_IRQDISABLE(intr_type, finfo->rx_usr);
+-
+-		mbox->send_no_irq = finfo->send_no_irq;
++		fifo->msg = MAILBOX_MESSAGE(rx_id);
++		fifo->msg_stat =  MAILBOX_MSGSTATUS(rx_id);
++		fifo->intr_bit = MAILBOX_IRQ_NEWMSG(rx_id);
++		fifo->irqenable = MAILBOX_IRQENABLE(intr_type, rx_usr);
++		fifo->irqstatus = MAILBOX_IRQSTATUS(intr_type, rx_usr);
++		fifo->irqdisable = MAILBOX_IRQDISABLE(intr_type, rx_usr);
++
++		mbox->send_no_irq = of_property_read_bool(child, "ti,mbox-send-noirq");
+ 		mbox->intr_type = intr_type;
+ 
+ 		mbox->parent = mdev;
+-		mbox->name = finfo->name;
+-		mbox->irq = platform_get_irq(pdev, finfo->tx_irq);
++		mbox->name = child->name;
++		mbox->irq = platform_get_irq(pdev, tx_irq);
+ 		if (mbox->irq < 0)
+ 			return mbox->irq;
+ 		mbox->chan = &chnls[i];
+@@ -743,7 +717,6 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	if (ret < 0 && ret != -ENOSYS)
+ 		return ret;
+ 
+-	devm_kfree(&pdev->dev, finfoblk);
+ 	return 0;
  }
  
- static int omap_mbox_chan_send_data(struct mbox_chan *chan, void *data)
 -- 
 2.39.2
 
