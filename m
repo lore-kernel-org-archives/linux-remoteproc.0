@@ -1,45 +1,46 @@
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C5515F400;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61D15F406;
 	Wed, 10 Apr 2024 13:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712757590; cv=none; b=SBZbLA44sy7i07j1YAHNUP8Q4zGa6zJIere8MvpeS1SY6I4eS0QC2TpcwKWhdFmSGQEpc9Ku4hKc+JG96BIOnEQ+rr/XkGxX+zuVzvjnhahCB7TWKRcyGWZtYmpdc/61pXrSSHQTXcPzt9aRHkkLEnklzNbi0Izwdw6cjtXPXeU=
+	t=1712757591; cv=none; b=oSkxO5J4Cs52iam/gOl4obOVvqKYERYgpLGuHZzvQpI5rZ5CUHIuBdvmOIHS6h+1EeKtq3eWB3FNHV+ai+/P8blJGgBkaKBK0f7v9X2l8NpVcBcTDqex0OrHEZS4KMhxVYrU2A5ibrX3fEL3NNyZnWm1q6VK1llIs8ymihvyTlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712757590; c=relaxed/simple;
-	bh=VyssH3HwGA8ttPNbt05cbLQnHU3BKOP+QGZgSD7GjKs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tEFwWrKipnWFTY95n/rcboxemIbojvtISiXBIWrLWwPjU+T3+x5MHhsXjzm6ZdgY8GyMAa+iGJkXfLCEEmLzY9YtmfqPmXnkIY82UErn/nheRXQh753cjQjMccMJwjfaCU+RWUfSnjkASSftXiFdAJA//7sYSMuxPRDwZPPgZbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FIe9lP7p; arc=none smtp.client-ip=198.47.19.142
+	s=arc-20240116; t=1712757591; c=relaxed/simple;
+	bh=4qCFUoIEU96IBV2b2tUi6AGuM8KAjc2gG9zsDeEvgPM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aLhvjVLYH4FXpGjvUpNPbqymYkBqxBI6YqyVSeuxuavQuvNJF7VzHb/CEvQQqup2UZRSpnYgFObuTaGjIANVM9pgAIvVmNRowVg57hdXQ+J5VBwvSOhaYHAgeEbPzZu/PxyKEmHGNEdp2tRb2tzXSvDKTKNyxLHzwEiN2+Cx12I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JWK419be; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FIe9lP7p"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADximh056735;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JWK419be"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxitJ056739;
 	Wed, 10 Apr 2024 08:59:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1712757584;
-	bh=wohS1UWkRM7giv/XyIaRHM0QVxnTPGRnJbLhd8440+w=;
-	h=From:To:CC:Subject:Date;
-	b=FIe9lP7pGVrH5IL58fh9ZElM9Hmi0tbJdEBi2sBHgQHRXnzU9nBU0NQJZAOugYrwY
-	 wxt7pXt+x0GEG2aWgfrRJ36NIWGt9YXiA3ynDMz/KrmT6lzr0tPW9GKRjbylL0CoXZ
-	 gWS2TcnZVca1VSjrM6TRbA0S/OMD8JFk9cf8uW+M=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxhP1011473
+	bh=9hjSi/2Z4Esm750pB+Wn6BYHE6HYNnn7M/Y0ritzKVA=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=JWK419be5Q/pK8ZJopS7vAsQs2KyLKhDbnYFTUsP+lw4u6YQ5/6QlqbRrgUcXoona
+	 DcWyhw5bNZwcUX2h6myoEgRdiVP3gL9bgwFave/DOXdNBQvSWDf6bplm+x/v0cdPYs
+	 E91rhIj9M4tsbaVQEzZKFbKql7fbhW4aK+q5xbjI=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxi6P029186
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Wed, 10 Apr 2024 08:59:44 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Apr 2024 08:59:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2024 08:59:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Apr 2024 08:59:43 -0500
+ Frontend Transport; Wed, 10 Apr 2024 08:59:44 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhak067183;
-	Wed, 10 Apr 2024 08:59:43 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxham067183;
+	Wed, 10 Apr 2024 08:59:44 -0500
 From: Andrew Davis <afd@ti.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
         Nick Saulnier <nsaulnier@ti.com>,
@@ -48,10 +49,12 @@ To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH v2 00/13] OMAP mailbox FIFO removal
-Date: Wed, 10 Apr 2024 08:59:29 -0500
-Message-ID: <20240410135942.61667-1-afd@ti.com>
+Subject: [PATCH v2 02/13] mailbox: omap: Remove unused omap_mbox_request_channel() function
+Date: Wed, 10 Apr 2024 08:59:31 -0500
+Message-ID: <20240410135942.61667-3-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240410135942.61667-1-afd@ti.com>
+References: <20240410135942.61667-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -62,45 +65,76 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello all,
+This function is not used, remove this function.
 
-Core of this series is the last patch removing the message FIFO
-from OMAP mailbox. This hurts our real-time performance. It was a
-legacy leftover from before the common mailbox framework anyway.
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/mailbox/omap-mailbox.c | 36 ----------------------------------
+ include/linux/omap-mailbox.h   |  6 ------
+ 2 files changed, 42 deletions(-)
 
-The rest of the patches are cleanups found along the way.
-
-Thanks,
-Andrew
-
-Changes for v2:
- - Use threaded irq as suggested by Hari and to
-     fix possible "scheduling while atomic" issue
- - Use oneshot irq as we do not want to enable the
-     irq again until we clear our the messages
- - Rebase on v6.9-rc3
-
-Andrew Davis (13):
-  mailbox: omap: Remove unused omap_mbox_{enable,disable}_irq()
-    functions
-  mailbox: omap: Remove unused omap_mbox_request_channel() function
-  mailbox: omap: Move omap_mbox_irq_t into driver
-  mailbox: omap: Move fifo size check to point of use
-  mailbox: omap: Remove unneeded header omap-mailbox.h
-  mailbox: omap: Remove device class
-  mailbox: omap: Use devm_pm_runtime_enable() helper
-  mailbox: omap: Merge mailbox child node setup loops
-  mailbox: omap: Use function local struct mbox_controller
-  mailbox: omap: Use mbox_controller channel list directly
-  mailbox: omap: Remove mbox_chan_to_omap_mbox()
-  mailbox: omap: Reverse FIFO busy check logic
-  mailbox: omap: Remove kernel FIFO message queuing
-
- drivers/mailbox/Kconfig        |   9 -
- drivers/mailbox/omap-mailbox.c | 519 +++++++--------------------------
- include/linux/omap-mailbox.h   |  13 -
- 3 files changed, 108 insertions(+), 433 deletions(-)
-
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index 624a7ccc27285..8151722eef383 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -389,42 +389,6 @@ static struct omap_mbox *omap_mbox_device_find(struct omap_mbox_device *mdev,
+ 	return mbox;
+ }
+ 
+-struct mbox_chan *omap_mbox_request_channel(struct mbox_client *cl,
+-					    const char *chan_name)
+-{
+-	struct device *dev = cl->dev;
+-	struct omap_mbox *mbox = NULL;
+-	struct omap_mbox_device *mdev;
+-	int ret;
+-
+-	if (!dev)
+-		return ERR_PTR(-ENODEV);
+-
+-	if (dev->of_node) {
+-		pr_err("%s: please use mbox_request_channel(), this API is supported only for OMAP non-DT usage\n",
+-		       __func__);
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+-	mutex_lock(&omap_mbox_devices_lock);
+-	list_for_each_entry(mdev, &omap_mbox_devices, elem) {
+-		mbox = omap_mbox_device_find(mdev, chan_name);
+-		if (mbox)
+-			break;
+-	}
+-	mutex_unlock(&omap_mbox_devices_lock);
+-
+-	if (!mbox || !mbox->chan)
+-		return ERR_PTR(-ENOENT);
+-
+-	ret = mbox_bind_client(mbox->chan, cl);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	return mbox->chan;
+-}
+-EXPORT_SYMBOL(omap_mbox_request_channel);
+-
+ static struct class omap_mbox_class = { .name = "mbox", };
+ 
+ static int omap_mbox_register(struct omap_mbox_device *mdev)
+diff --git a/include/linux/omap-mailbox.h b/include/linux/omap-mailbox.h
+index 426a80fb32b5c..f8ddf8e814167 100644
+--- a/include/linux/omap-mailbox.h
++++ b/include/linux/omap-mailbox.h
+@@ -14,10 +14,4 @@ typedef int __bitwise omap_mbox_irq_t;
+ #define IRQ_TX ((__force omap_mbox_irq_t) 1)
+ #define IRQ_RX ((__force omap_mbox_irq_t) 2)
+ 
+-struct mbox_chan;
+-struct mbox_client;
+-
+-struct mbox_chan *omap_mbox_request_channel(struct mbox_client *cl,
+-					    const char *chan_name);
+-
+ #endif /* OMAP_MAILBOX_H */
 -- 
 2.39.2
 
