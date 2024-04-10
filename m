@@ -1,46 +1,46 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA3D15B568;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C992016DEDA;
 	Wed, 10 Apr 2024 13:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712757594; cv=none; b=UzSKxXoTDlzKGiBnwjjhbSpkWRqCc2afzjS40X6M1C84LoWfohqK4OnJRSH2SmlUaPz4ndAQ0Ji05ReGfF1yYX8snEhpxPjBUSa87txEw7ypkvBZ+YICNsyCWlN+KdzsgdP7+/v+q7hteytT3+7PQECa/fuIprwvPVMAFbO/C5Y=
+	t=1712757594; cv=none; b=FEd+S3qvP+ECHBMrSRPgtH+/m8lPRO5AI1KK3HsUGbdt8gE4w48N2xMU+v++YXrmfej57+ay/vWqe4UF2UewsUsuFUS6cwPCpgNM8/4y+271meVvmFdO/5MaPLNAZ4jzYKYddFqDNerLzZrKolW5sRzNQ4nwsO0W+g8koykHKh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712757594; c=relaxed/simple;
-	bh=NcOCcA1t31ypyx8cNN32oWTH1pjrXQ2t7Fb75KNyUbs=;
+	bh=R1WUXZH6NvJXZIW+AVDPYVj8JHUdfaLxcMfuJ+Z3tRM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jFYOBtUki9e+DMw1GHGBOTbXI4xCBrzIZhAfoc8U8zSD79MpB5qPgCverFQ2EBhTI0oRf4PReYfEAp+rrNrkskbJgrWVpaVo1KRbMSWPW6OwTSzkf3bSdHnXgKHsiCFFPWHUFFFIZHGzT9OEx8qvXarwrBt/2mXZUOtRDpntzpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZRCbb9E/; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=F6jUIuTO6b0puTDbROy8dN6jhv4t+b68JOu7EiL6bLnAF8abUwAge5REf+70r9Tk+vBQ6zXaU3TxReJqOqhBsjustVdUgrK3F7rJADz0PQ2Nq/5sli2GpI7BxfoTKJaITo4oEWQvtvoBmOz8wJYtW7i3hg0Wru5boNqZSKTgjiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D6AG8/Yz; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZRCbb9E/"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxkbv056749;
-	Wed, 10 Apr 2024 08:59:46 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D6AG8/Yz"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxlho024595;
+	Wed, 10 Apr 2024 08:59:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1712757586;
-	bh=nQlvgEyRLvm0RPmSVnsggj8wOBAJLIUCQWiiAO/T3vc=;
+	s=ti-com-17Q1; t=1712757587;
+	bh=BSjhEIQgB4xQ5LpqF3Ho5CnJ8F2Hjtf+UQHpF8YH8Vg=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ZRCbb9E/lIB4TqCLieiinTX04PlE6Y2bh1j7uapwppVO8YXv3W8SZCPDr3a37YK22
-	 uIuNGR434jo+1piBs9oAlOdPiHtroHvWXv+sZ0Y4ri4q7WMNFNK/TGqU2Wna0NUI/C
-	 Vj/pD201RoUUMCkzyJHf/rs7plG5loHYz0OXfpO0=
+	b=D6AG8/YzMJRYBsRYtEkYlGfs2CUP1EwG13PzGBjiQ0KWhmDs3GGCli5iC9GDjdV+i
+	 27Del0igCuZt6CXm3MI0dbt14dvqbAmiv57fguluQQnSMmesCoUnFIO07E2Yliu+Xm
+	 Q+l0GNmCmNGrLyUgIbioruDskJXtZEFdbSxvzLBE=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxkuO011501
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43ADxlSW072427
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 10 Apr 2024 08:59:46 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
+	Wed, 10 Apr 2024 08:59:47 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Apr 2024 08:59:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2024 08:59:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Apr 2024 08:59:46 -0500
+ Frontend Transport; Wed, 10 Apr 2024 08:59:47 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhar067183;
-	Wed, 10 Apr 2024 08:59:45 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43ADxhaw067183;
+	Wed, 10 Apr 2024 08:59:47 -0500
 From: Andrew Davis <afd@ti.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
         Nick Saulnier <nsaulnier@ti.com>,
@@ -49,9 +49,9 @@ To: Jassi Brar <jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH v2 07/13] mailbox: omap: Use devm_pm_runtime_enable() helper
-Date: Wed, 10 Apr 2024 08:59:36 -0500
-Message-ID: <20240410135942.61667-8-afd@ti.com>
+Subject: [PATCH v2 12/13] mailbox: omap: Reverse FIFO busy check logic
+Date: Wed, 10 Apr 2024 08:59:41 -0500
+Message-ID: <20240410135942.61667-13-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410135942.61667-1-afd@ti.com>
 References: <20240410135942.61667-1-afd@ti.com>
@@ -65,60 +65,71 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Use device life-cycle managed runtime enable function to simplify probe
-and exit paths.
+It is much more clear to check if the hardware FIFO is full and return
+EBUSY if true. This allows us to also remove one level of indention
+from the core of this function. It also makes the similarities between
+omap_mbox_chan_send_noirq() and omap_mbox_chan_send() more obvious.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/mailbox/omap-mailbox.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+ drivers/mailbox/omap-mailbox.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index ea467931faf46..4f956c7b4072c 100644
+index 8e2760d2c5b0c..c5d4083125856 100644
 --- a/drivers/mailbox/omap-mailbox.c
 +++ b/drivers/mailbox/omap-mailbox.c
-@@ -726,11 +726,11 @@ static int omap_mbox_probe(struct platform_device *pdev)
- 		return ret;
+@@ -375,34 +375,33 @@ static void omap_mbox_chan_shutdown(struct mbox_chan *chan)
  
- 	platform_set_drvdata(pdev, mdev);
--	pm_runtime_enable(mdev->dev);
-+	devm_pm_runtime_enable(mdev->dev);
+ static int omap_mbox_chan_send_noirq(struct omap_mbox *mbox, u32 msg)
+ {
+-	int ret = -EBUSY;
++	if (mbox_fifo_full(mbox))
++		return -EBUSY;
  
- 	ret = pm_runtime_resume_and_get(mdev->dev);
- 	if (ret < 0)
--		goto unregister;
-+		return ret;
+-	if (!mbox_fifo_full(mbox)) {
+-		omap_mbox_enable_irq(mbox, IRQ_RX);
+-		mbox_fifo_write(mbox, msg);
+-		ret = 0;
+-		omap_mbox_disable_irq(mbox, IRQ_RX);
++	omap_mbox_enable_irq(mbox, IRQ_RX);
++	mbox_fifo_write(mbox, msg);
++	omap_mbox_disable_irq(mbox, IRQ_RX);
  
- 	/*
- 	 * just print the raw revision register, the format is not
-@@ -741,26 +741,14 @@ static int omap_mbox_probe(struct platform_device *pdev)
+-		/* we must read and ack the interrupt directly from here */
+-		mbox_fifo_read(mbox);
+-		ack_mbox_irq(mbox, IRQ_RX);
+-	}
++	/* we must read and ack the interrupt directly from here */
++	mbox_fifo_read(mbox);
++	ack_mbox_irq(mbox, IRQ_RX);
  
- 	ret = pm_runtime_put_sync(mdev->dev);
- 	if (ret < 0 && ret != -ENOSYS)
--		goto unregister;
-+		return ret;
- 
- 	devm_kfree(&pdev->dev, finfoblk);
- 	return 0;
--
--unregister:
--	pm_runtime_disable(mdev->dev);
 -	return ret;
--}
--
--static void omap_mbox_remove(struct platform_device *pdev)
--{
--	struct omap_mbox_device *mdev = platform_get_drvdata(pdev);
--
--	pm_runtime_disable(mdev->dev);
++	return 0;
  }
  
- static struct platform_driver omap_mbox_driver = {
- 	.probe	= omap_mbox_probe,
--	.remove_new = omap_mbox_remove,
- 	.driver	= {
- 		.name = "omap-mailbox",
- 		.pm = &omap_mbox_pm_ops,
+ static int omap_mbox_chan_send(struct omap_mbox *mbox, u32 msg)
+ {
+-	int ret = -EBUSY;
+-
+-	if (!mbox_fifo_full(mbox)) {
+-		mbox_fifo_write(mbox, msg);
+-		ret = 0;
++	if (mbox_fifo_full(mbox)) {
++		/* always enable the interrupt */
++		omap_mbox_enable_irq(mbox, IRQ_TX);
++		return -EBUSY;
+ 	}
+ 
++	mbox_fifo_write(mbox, msg);
++
+ 	/* always enable the interrupt */
+ 	omap_mbox_enable_irq(mbox, IRQ_TX);
+-	return ret;
++	return 0;
+ }
+ 
+ static int omap_mbox_chan_send_data(struct mbox_chan *chan, void *data)
 -- 
 2.39.2
 
