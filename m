@@ -1,101 +1,144 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B824B13BAEF;
-	Thu, 11 Apr 2024 03:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B995313CA88;
+	Thu, 11 Apr 2024 06:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712806684; cv=none; b=uXBokcu+uFI4OiBs3IhnvRSJzGh6OtzecyiLBtrNIEYet18NQILgW2JKLSY+rj5ABXof9Vjg3w5KyEqGnydZ1ZWpLbBZaQdkx6K+ZproFKiWLQxYlhmvN1yeqG9yXtorSheo7eJ+q90cf7dSb0nWmG2/rWEXpOMgMGoSiI6BUGc=
+	t=1712815628; cv=none; b=D7c4yoQxALe/Pxhw9okeAGxqUzxmRG7+XMqfVjIourRxNbY39a7snVbeEDnL1ZiMvqPa6gZk63Hbu6g/in0ugebr/ZGyYfe1YCOyf3P1rUF8jcRMJo00mLEHTpPTCv24LunW5VPeywmxmJd//5j8yZwsOLZYGssdqKEzINeANsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712806684; c=relaxed/simple;
-	bh=pz1rT3cpx3P5SfxVYkWgMRQ4d7jTO20Tqk5wJuH1FFw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XpojevLIUe/1L995JGqzSCTOwSnmtMapju546GwVhSPN4484rbzvJbzFQylSlsxhtHfkTTy6sJC5jFfviwxmSz4mIyUMqqEw/0JRs6Uf7Dtr+G3WdDFeESJTSV8yzktdqFl+7eZOMdMtY0OCv8DRnfQ5sU79pKQ7djuayp5+/Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JLshGaH2; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1712815628; c=relaxed/simple;
+	bh=moQ7vBvBvMlEyceyYgedBVvbftU2N42FEzYpfITRaTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qzOWkZ4m/dzxlPkjZgZfzG8fjpS/tp3w0ZpjMUl6pDpZwon4fz1e3TNtCm3RFcQaEGGUF3gqzDZrn6TZOavc/WTJ3dH2IX4NQ5uYongo/SIQu3H+2QbYOyBw0SwVM0bcaljbeQWrVU8UL0ZDFUqCxDmbtZt5gXQKfnIQUna4V40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIV1iJgY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JLshGaH2"
-X-UUID: e312976cf7b411ee935d6952f98a51a9-20240411
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=CEUv8/vX9Yj8LYxJzEvWBhJg+Z+9IJKRp+0lTzE59Rs=;
-	b=JLshGaH2HuWZgCz+wT3BghPpjZJfR427NB06oU8Zc1GVhjMt0M9imHxbSYoep4+dmyByONjMi2UPqeLtW5KsAPphzkuZTd1nedNH/CMOo3hUlxQSxxiG55OeDl2pS+jkoPLMDSzCmP1YJJkgnMVeF9/sVhfNIPJle1r9EkeLU5Q=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:e1e37312-d11d-4036-9477-7dbbf9cb2a93,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6f543d0,CLOUDID:ceaec6fa-ed05-4274-9204-014369d201e8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e312976cf7b411ee935d6952f98a51a9-20240411
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <olivia.wen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 770570878; Thu, 11 Apr 2024 11:37:57 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 11 Apr 2024 11:37:53 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 11 Apr 2024 11:37:53 +0800
-From: olivia.wen <olivia.wen@mediatek.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"Tinghan Shen" <tinghan.shen@mediatek.com>,
-	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
-	<teddy.chen@mediatek.com>, <olivia.wen@mediatek.com>
-Subject: [PATCH 0/2] Support MT8188 SCP core 1
-Date: Thu, 11 Apr 2024 11:37:48 +0800
-Message-ID: <20240411033750.6476-1-olivia.wen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIV1iJgY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409F3C433C7;
+	Thu, 11 Apr 2024 06:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712815628;
+	bh=moQ7vBvBvMlEyceyYgedBVvbftU2N42FEzYpfITRaTM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uIV1iJgYc7RGw1GTjL3n6XDtSSm6WASongTB6x3M328vjRZRsddzjzTIxsP2MsMNP
+	 Ow8XRWGTXgaPBpNI+RaamkeaH8Q+tGHaspnsraXVBb6jOtS4QFzQBIo6MApGETDdxY
+	 PNJRu7ErXXxQXSSMsvLpuj3uAaNja+qR8uFLTCZUjJR5QFDw6rI1VZn+I5h35Urre0
+	 M1AIanhIoQk6oKuzwfPvfMe0088qs2SHTo+6ghrUK1MIHrX6690zn2HQgesQ6CMyrl
+	 gd8g2lhcHEZGocXBf3Um3xQ8yW4QvPv/StaLas0a1hryRpvGSutqu9ACgvS/UxYpR3
+	 eIB32VqnaEIMg==
+Message-ID: <7598d482-456b-458e-a0b6-b5767f9c4863@kernel.org>
+Date: Thu, 11 Apr 2024 08:06:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--1.728900-8.000000
-X-TMASE-MatchedRID: 5QkmdD6LvPKtGUuyWCB/KosKNaNh88CQTJDl9FKHbrlGL0g1nVmkYV2k
-	xKIqW9ov4vM1YF6AJbZhyT3WNjppUtAtbEEX0MxBxEHRux+uk8jfhP1xgyx3DNbluTaZDCfQexs
-	PsLsZUCpUMEaxhqvmXiMu2Y9Ez16wi+7vFLFx0XSzJ7sL1nbh6SwXJUWXOqeHm110BD6OWbQ2zu
-	p2rewEAI6H7DI0GsVcMmI24qiENwrMpIbcl3IoA+q1XYAYw09qIdY9jOi4lTI=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--1.728900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	744BD5FC53961DB76626F4B855044EB74205B7C16E9164E059E8D277DFA8359C2000:8
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: Support MT8188
+ dual-core SCP
+To: "olivia.wen" <olivia.wen@mediatek.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Tinghan Shen <tinghan.shen@mediatek.com>, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ jason-ch.chen@mediatek.com, yaya.chang@mediatek.com, teddy.chen@mediatek.com
+References: <20240411033750.6476-1-olivia.wen@mediatek.com>
+ <20240411033750.6476-2-olivia.wen@mediatek.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240411033750.6476-2-olivia.wen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add below patches to support MT8188 SCP core 1
-[PATCH 1/2] dt-bindings: remoteproc: mediatek: 
-               Support MT8188 dual-core SCP
-[PATCH 2/2] remoteproc: mediatek: Support MT8188 SCP core 1
+On 11/04/2024 05:37, olivia.wen wrote:
+> Under different applications, the MT8188 SCP can be used as single-core
+> or dual-core.
+> 
+> Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
 
-olivia.wen (2):
-  dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP
-  remoteproc: mediatek: Support MT8188 SCP core 1
+Are you sure you use full name, not email login as name?
 
- .../devicetree/bindings/remoteproc/mtk,scp.yaml    |  3 +-
- drivers/remoteproc/mtk_common.h                    |  5 +-
- drivers/remoteproc/mtk_scp.c                       | 62 ++++++++++++++++++----
- drivers/remoteproc/mtk_scp_ipi.c                   |  9 +++-
- include/linux/remoteproc/mtk_scp.h                 |  1 +
- 5 files changed, 64 insertions(+), 16 deletions(-)
+> ---
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index 507f98f..7e7b567 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -22,7 +22,7 @@ properties:
+>        - mediatek,mt8192-scp
+>        - mediatek,mt8195-scp
+>        - mediatek,mt8195-scp-dual
+> -
+> +      - mediatek,mt8188-scp-dual
 
--- 
-2.6.4
+Missing blank line, misordered.
+
+
+>    reg:
+>      description:
+>        Should contain the address ranges for memory regions SRAM, CFG, and,
+> @@ -195,6 +195,7 @@ allOf:
+>          compatible:
+>            enum:
+>              - mediatek,mt8195-scp-dual
+> +            - mediatek,mt8188-scp-dual
+
+Again, keep the order.
+
+
+
+Best regards,
+Krzysztof
 
