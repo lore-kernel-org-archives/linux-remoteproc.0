@@ -1,40 +1,40 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C16213DDC7;
-	Thu, 11 Apr 2024 07:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B0813DDB2;
+	Thu, 11 Apr 2024 07:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712820846; cv=none; b=aRCR0VQry1oyYc4nlCdIV8ZR2km6U+wPABMX+hfxHtjE0OSN0ggM3yZ5MdR5CO86+sJxhQhwvBe7M6d3ZyKmOL60XIWodUM/XcLzNKG5sFGYpo1qcuo2KRWtHcd/hNRJZCjF/I5MKrWp+KtEy5HZUKXNJ8l8Jf2wqqrcHWYE1/8=
+	t=1712821171; cv=none; b=tqxHFRKL9bR3S3OCpsewMFSkaclKVgGk4+x6KC9X5bRLKaNa1nl/npTc5bo75l+yIq0KHJUPk1hgt8dg6+bMwqxH/bcf4Eb+Dfx+w6LuKnxbGmOiPliLRrGzCaO7mzErqutlqMzESmU7k40KX4RuW+ZDWBH0srfuijhkg1AYYAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712820846; c=relaxed/simple;
-	bh=tt7/MyGPZ0CA5pVeuDeyftgQL+6ly8sZZrwn39jMglk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HGa/cSIzntWEpdUJww/WTiLGe7g0YjTR9vrkYt0kGCP8e9I+ze9l2S55RP6Vb4cY2x6SfdDeCod/I+avt15ZTyDEA8hYzwZN1tSddMpPyQKLlvEmUpbsKQyqTCnbo+DCOZ9+xHN3k70Z4sRkNEQ0VLfHaA7h1CBU5ycKaCVOi4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VHttC232; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1712821171; c=relaxed/simple;
+	bh=hsuaPyyXe500cwQ9jJuWJ0HPIXunGpuk5Dto5iwuLao=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=N4uZnjmI++12yNH//QWNlegGhnRjZ38x+WHH24PXrzG9ncsD5uMGYmt5cU+1vjPajef6q8cgMdrZjuW8OQkom2nk1FaO+keUWVF/GMsOa+a/78Z8pqueZMVUAp+kr3M6DIP0qDlnNFIizfXdbtGfoFnlRpzK8hQEEJLkvt3bWAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zJTpkWsP; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VHttC232"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zJTpkWsP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1712820842;
-	bh=tt7/MyGPZ0CA5pVeuDeyftgQL+6ly8sZZrwn39jMglk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHttC232BqZgFZ0+jXr4HdgW5VlZoJvf0lClSpWMspk5QJXcWMknVOPTUv8fJkVBq
-	 67KLm2FZIVrGTny5FOu+QVxNNZqGd4I8FulfplU22U7uWF6jaSbb9z9ZH7ON+Kbdfr
-	 AIQacg9RcGXjYY10eEREzCxtDeLVAOpX2uBJY1nunWMQuGCTzwjOQ56cU+C7BVeLt/
-	 qnRu1Ap8HIJPsJc3b0Rxp6nwYGWGnv9WNyboDCCq8ViWzgh5x+jR3tHb41bB4vdYyk
-	 2uq/AzPSujtvV9Un+IXjQcIh/olMxCUP1x2p3eDRmcVddiU39gZ6pFevth1JADk5aO
-	 svdwINhZcuBIA==
+	s=mail; t=1712821167;
+	bh=hsuaPyyXe500cwQ9jJuWJ0HPIXunGpuk5Dto5iwuLao=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=zJTpkWsP+ijw64CxiA+6UhA5cy26ShfKAQCEvdPBmas2QwsdDornHYdz8tvpl/gRg
+	 au2FO2XY3m9/E4q9S+G4VVCldwx8FhIXrgyY7KgXKmsopveF9WJx8x8/jv0YsL/6UO
+	 5Z/EnfcCLkUlFR1rPo5Ho6F7uBVEb22DLhSgFaaRun64GqT6Gq9wR8ChI6gfH364Jm
+	 9N082Zcrci3QA4LM8SUL4fem/WBrGYIRJU2uoOf16jPl5isGYfkon/HHJF7JP6DmU9
+	 SjTPRvzyj8Vtv2k74JlmGsEsJbUdBoctkZVxJabWM40TBHLnuv9BAseVDPZoo1uAJM
+	 7gIjxCzWe55Lw==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 96EC93781107;
-	Thu, 11 Apr 2024 07:34:01 +0000 (UTC)
-Message-ID: <5cf005b9-d737-4509-a9fb-f0e59465482c@collabora.com>
-Date: Thu, 11 Apr 2024 09:34:01 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6B4CD3781107;
+	Thu, 11 Apr 2024 07:39:26 +0000 (UTC)
+Message-ID: <6e8e553b-8c5f-404a-a396-17d8b3440d93@collabora.com>
+Date: Thu, 11 Apr 2024 09:39:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,6 +44,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: Support MT8188
  dual-core SCP
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: "olivia.wen" <olivia.wen@mediatek.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
@@ -57,49 +58,59 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  jason-ch.chen@mediatek.com, yaya.chang@mediatek.com, teddy.chen@mediatek.com
 References: <20240411033750.6476-1-olivia.wen@mediatek.com>
  <20240411033750.6476-2-olivia.wen@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+ <5cf005b9-d737-4509-a9fb-f0e59465482c@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20240411033750.6476-2-olivia.wen@mediatek.com>
+In-Reply-To: <5cf005b9-d737-4509-a9fb-f0e59465482c@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 11/04/24 05:37, olivia.wen ha scritto:
-> Under different applications, the MT8188 SCP can be used as single-core
-> or dual-core.
+Il 11/04/24 09:34, AngeloGioacchino Del Regno ha scritto:
+> Il 11/04/24 05:37, olivia.wen ha scritto:
+>> Under different applications, the MT8188 SCP can be used as single-core
+>> or dual-core.
+>>
+>> Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
+>> ---
+>>   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml 
+>> b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+>> index 507f98f..7e7b567 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+>> @@ -22,7 +22,7 @@ properties:
+>>         - mediatek,mt8192-scp
+>>         - mediatek,mt8195-scp
+>>         - mediatek,mt8195-scp-dual
+>> -
 > 
-> Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
-> ---
->   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Don't remove the blank line, it's there for readability.
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index 507f98f..7e7b567 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -22,7 +22,7 @@ properties:
->         - mediatek,mt8192-scp
->         - mediatek,mt8195-scp
->         - mediatek,mt8195-scp-dual
-> -
+>> +      - mediatek,mt8188-scp-dual
 
-Don't remove the blank line, it's there for readability.
+Ah, sorry, one more comment. Please, keep the entries ordered by name.
+8188 goes before 8195.
 
-> +      - mediatek,mt8188-scp-dual
+> 
+> After addressing that comment,
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+>>     reg:
+>>       description:
+>>         Should contain the address ranges for memory regions SRAM, CFG, and,
+>> @@ -195,6 +195,7 @@ allOf:
+>>           compatible:
+>>             enum:
+>>               - mediatek,mt8195-scp-dual
+>> +            - mediatek,mt8188-scp-dual
 
-After addressing that comment,
+same here.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
->     reg:
->       description:
->         Should contain the address ranges for memory regions SRAM, CFG, and,
-> @@ -195,6 +195,7 @@ allOf:
->           compatible:
->             enum:
->               - mediatek,mt8195-scp-dual
-> +            - mediatek,mt8188-scp-dual
->       then:
->         properties:
->           reg:
-
+>>       then:
+>>         properties:
+>>           reg:
+> 
+> 
 
