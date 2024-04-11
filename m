@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340C13C666;
-	Thu, 11 Apr 2024 06:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E19713DDC7;
+	Thu, 11 Apr 2024 07:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712815658; cv=none; b=O/UkKIqspIc2NCo2/spuexpBbipufDpepeeYG2zlDIsKb8t96OHZAtNhTVJJEN6TLn65CS2mlY0MbVGR+zUK9mqXxuqHij9qaGhk31E3QpcEMCXMrJVvanMj8T4RIXOrJZUeKY8OlfoX0M6tFQ3TOk0tMKWRGU4aSWwPhJDPtI4=
+	t=1712820798; cv=none; b=UNTMyqRA2qn9tB65zuQT3x/UJtEoNV/vlyQfRb39M9aLuLIh47lxCvwcLOcIphZHAm6uUaY+X/JRAKEPKegSpBXSAIT57h+LrOEyG4OcvWBOUKAE0lVjNCuUcVt+Pzxxqv0/V+oFr3fmA37SFPZAGph65VaEyN6zE4CiG4bN9w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712815658; c=relaxed/simple;
-	bh=B9P0S8ei0pO62UjBvQK1T5qU7yS4WX0wwsA/9EtFzbA=;
+	s=arc-20240116; t=1712820798; c=relaxed/simple;
+	bh=3sGA9MB5pLcCWit1QbpGnkamKVpv7+p8ZIGvmvFBuQM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VxDJR4ATxzISjivnR/0ulE2UXnOOx//6itFiLTh/QPRvuN9kxBtEhPRobqdXxnkEkFMKfYS605rX0zoWZMibd9Z2l7+Ea1gOcJh7F6JjzXotFTXJpHckXVbtHwBz39XdTZ91ZPIBnu4pD//xBJVQmm1ORnibxTVpD3Kn4K/lv8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/EhupHj; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qj1pEmCRQc4OgaYHq+sqq6NCbIaMN5GHeYeSndO5a+CnjMD6BS5gXrXv/SvfhLLYpxVBDdMy4eWlrbZuM7fX+CDQPNL3WXR89hAjS4hHE3BSgB8CbuZbx3OTmwKHXfavHwhiNqHdmNB/EFV3enr8O1erilvWz7/XLFMSfX3TWkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4Kh5IMSB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/EhupHj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A4AC433F1;
-	Thu, 11 Apr 2024 06:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712815658;
-	bh=B9P0S8ei0pO62UjBvQK1T5qU7yS4WX0wwsA/9EtFzbA=;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4Kh5IMSB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1712820794;
+	bh=3sGA9MB5pLcCWit1QbpGnkamKVpv7+p8ZIGvmvFBuQM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j/EhupHjNjYHdbEBF5TfaxUDYt4sQXHMKkAc3TAEMWow826QHJtliH3TeBmhVsUZG
-	 PmLXX/0koXFooBD4+R/jYQBFmGu9WgJxzzy46ozvqoJmV8lsGdSb2S/rx/3ES4pIRM
-	 tezonYkS+DaCqYvIFglj0pYgUFRVRom91hG66BcJ4lexA6Tu2hehsqMnrDO2AahLhg
-	 oLGdKQIQnnSVBlaSgbM0NePMvVBJDYarUrU3apRkXgd0qVbaeufg721okGqgJfVW9c
-	 rqrxChm1NbdSLfXkRBGCbT5CsINI9wlcyK5acMw8CBBnPKrBj7Kv/Prqkkyh8Dk+SQ
-	 pk8drcQI6XInw==
-Message-ID: <f1bdf524-17b4-4cce-a7ed-abc97786c975@kernel.org>
-Date: Thu, 11 Apr 2024 08:07:29 +0200
+	b=4Kh5IMSBc2jCi654TdE6ycwEwMZCimoiD73XuAFAfIMeRpHDO/htAJykGO+ccFxjW
+	 Bgw9PmkakiLoLaDtnLaraQVqy7nPVEw6mf5sDhY635nAlQgyKZ+bo23Ae8bSWXuxj1
+	 rOW/6YkMriRP+DrbfiIHwnjLojgK0yyAt4+cEWJ6CIWMoR3J3Zr3/vRWqqiG8HkeIu
+	 Eint2ocLbkNTuo2V0Cz8ltUibxXCp4hV3LjlzMIhlXft2HqRCbDxNEtBkoMctj9jMH
+	 pwqgCQCKEybWbAFyhOS1XmqBNh7Nm+2cBy6i6rfei2Rf0o5Vx8D309SOA5XcKLSGc4
+	 5DkD5RYVXXXwQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 21C373781107;
+	Thu, 11 Apr 2024 07:33:13 +0000 (UTC)
+Message-ID: <81df5533-5cae-46a0-bacf-91b1a246147c@collabora.com>
+Date: Thu, 11 Apr 2024 09:33:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -41,78 +48,341 @@ To: "olivia.wen" <olivia.wen@mediatek.com>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ <matthias.bgg@gmail.com>, Tinghan Shen <tinghan.shen@mediatek.com>,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
  Project_Global_Chrome_Upstream_Group@mediatek.com,
  jason-ch.chen@mediatek.com, yaya.chang@mediatek.com, teddy.chen@mediatek.com
 References: <20240411033750.6476-1-olivia.wen@mediatek.com>
  <20240411033750.6476-3-olivia.wen@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
 In-Reply-To: <20240411033750.6476-3-olivia.wen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/04/2024 05:37, olivia.wen wrote:
+Il 11/04/24 05:37, olivia.wen ha scritto:
+> To Support MT8188 SCP core 1 for ISP driver.
+> The SCP on different chips will require different code sizes
+>   and IPI buffer sizes based on varying requirements.
+> 
+> Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
+> ---
+>   drivers/remoteproc/mtk_common.h    |  5 +--
+>   drivers/remoteproc/mtk_scp.c       | 62 +++++++++++++++++++++++++++++++-------
+>   drivers/remoteproc/mtk_scp_ipi.c   |  9 ++++--
+>   include/linux/remoteproc/mtk_scp.h |  1 +
+>   4 files changed, 62 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index 6d7736a..8f37f65 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -78,7 +78,6 @@
+>   #define MT8195_L2TCM_OFFSET			0x850d0
+>   
+>   #define SCP_FW_VER_LEN			32
+> -#define SCP_SHARE_BUFFER_SIZE		288
+>   
+>   struct scp_run {
+>   	u32 signaled;
+> @@ -110,6 +109,8 @@ struct mtk_scp_of_data {
+>   	u32 host_to_scp_int_bit;
+>   
+>   	size_t ipi_buf_offset;
+> +	u32 ipi_buffer_size;
+
+this should be `ipi_share_buf_size`
+
+> +	u32 max_code_size;
+
+max_code_size should probably be dram_code_size or max_dram_size or dram_size.
+
+Also, both should be size_t, not u32.
+
+>   };
+>   
+>   struct mtk_scp_of_cluster {
+> @@ -162,7 +163,7 @@ struct mtk_scp {
+>   struct mtk_share_obj {
+>   	u32 id;
+>   	u32 len;
+> -	u8 share_buf[SCP_SHARE_BUFFER_SIZE];
+> +	u8 *share_buf;
+>   };
+>   
+>   void scp_memcpy_aligned(void __iomem *dst, const void *src, unsigned int len);
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 6751829..270718d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -20,7 +20,6 @@
+>   #include "mtk_common.h"
+>   #include "remoteproc_internal.h"
+>   
+> -#define MAX_CODE_SIZE 0x500000
+>   #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+>   
+>   /**
+> @@ -94,14 +93,14 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>   {
+>   	struct mtk_share_obj __iomem *rcv_obj = scp->recv_buf;
+>   	struct scp_ipi_desc *ipi_desc = scp->ipi_desc;
+> -	u8 tmp_data[SCP_SHARE_BUFFER_SIZE];
+> +	u8 *tmp_data;
+>   	scp_ipi_handler_t handler;
+>   	u32 id = readl(&rcv_obj->id);
+>   	u32 len = readl(&rcv_obj->len);
+>   
+> -	if (len > SCP_SHARE_BUFFER_SIZE) {
+> +	if (len > scp->data->ipi_buffer_size) {
+>   		dev_err(scp->dev, "ipi message too long (len %d, max %d)", len,
+> -			SCP_SHARE_BUFFER_SIZE);
+> +			scp->data->ipi_buffer_size);
+>   		return;
+>   	}
+>   	if (id >= SCP_IPI_MAX) {
+> @@ -109,6 +108,10 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>   		return;
+>   	}
+>   
+> +	tmp_data = kzalloc(len, GFP_KERNEL);
+
+I think that this will be impacting on performance a bit, especially if
+the scp_ipi_handler gets called frequently (and also remember that this
+is in interrupt context).
+
+For best performance, you should allocate this at probe time (in struct mtk_scp
+or somewhere else), then:
+
+len = ipi message length
+memset zero the tmp_data from len to ipi_buffer_size
+
+memcpy_fromio(....) etc
+
+> +	if (!tmp_data)
+> +		return;
+> +
+>   	scp_ipi_lock(scp, id);
+>   	handler = ipi_desc[id].handler;
+>   	if (!handler) {
+> @@ -123,6 +126,7 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>   
+>   	scp->ipi_id_ack[id] = true;
+>   	wake_up(&scp->ack_wq);
+> +	kfree(tmp_data);
+
+There's a possible memory leak. You forgot to kfree in the NULL handler path.
+
+>   }
+>   
+>   static int scp_elf_read_ipi_buf_addr(struct mtk_scp *scp,
+> @@ -133,6 +137,7 @@ static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
+>   {
+>   	int ret;
+>   	size_t buf_sz, offset;
+> +	size_t share_buf_offset;
+>   
+>   	/* read the ipi buf addr from FW itself first */
+>   	ret = scp_elf_read_ipi_buf_addr(scp, fw, &offset);
+> @@ -154,10 +159,12 @@ static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
+>   
+>   	scp->recv_buf = (struct mtk_share_obj __iomem *)
+>   			(scp->sram_base + offset);
+> +	share_buf_offset = sizeof(scp->recv_buf->id)
+> +		+ sizeof(scp->recv_buf->len) + scp->data->ipi_buffer_size;
+>   	scp->send_buf = (struct mtk_share_obj __iomem *)
+> -			(scp->sram_base + offset + sizeof(*scp->recv_buf));
+> -	memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
+> -	memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
+> +			(scp->sram_base + offset + share_buf_offset);
+> +	memset_io(scp->recv_buf, 0, share_buf_offset);
+> +	memset_io(scp->send_buf, 0, share_buf_offset);
+>   
+>   	return 0;
+>   }
+> @@ -891,7 +898,7 @@ static int scp_map_memory_region(struct mtk_scp *scp)
+>   	}
+>   
+>   	/* Reserved SCP code size */
+> -	scp->dram_size = MAX_CODE_SIZE;
+> +	scp->dram_size = scp->data->max_code_size;
+
+Remove the dram_size member from struct mtk_scp and use max_code_size directly.
+
+>   	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp->dram_size,
+>   					   &scp->dma_addr, GFP_KERNEL);
+>   	if (!scp->cpu_addr)
+> @@ -1247,6 +1254,8 @@ static const struct mtk_scp_of_data mt8183_of_data = {
+>   	.host_to_scp_reg = MT8183_HOST_TO_SCP,
+>   	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
+>   	.ipi_buf_offset = 0x7bdb0,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 288,
+>   };
+>   
+>   static const struct mtk_scp_of_data mt8186_of_data = {
+> @@ -1260,18 +1269,22 @@ static const struct mtk_scp_of_data mt8186_of_data = {
+>   	.host_to_scp_reg = MT8183_HOST_TO_SCP,
+>   	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
+>   	.ipi_buf_offset = 0x3bdb0,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 288,
+>   };
+>   
+>   static const struct mtk_scp_of_data mt8188_of_data = {
+>   	.scp_clk_get = mt8195_scp_clk_get,
+> -	.scp_before_load = mt8192_scp_before_load,
+> -	.scp_irq_handler = mt8192_scp_irq_handler,
+> +	.scp_before_load = mt8195_scp_before_load,
+> +	.scp_irq_handler = mt8195_scp_irq_handler,
+
+You should mention the reason of this change in the commit description, or better,
+you should make a separate commit with a Fixes tag for this.
+
+>   	.scp_reset_assert = mt8192_scp_reset_assert,
+>   	.scp_reset_deassert = mt8192_scp_reset_deassert,
+> -	.scp_stop = mt8192_scp_stop,
+> +	.scp_stop = mt8195_scp_stop,
+>   	.scp_da_to_va = mt8192_scp_da_to_va,
+>   	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>   	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 600,
+>   };
+>   
+>   static const struct mtk_scp_of_data mt8192_of_data = {
+> @@ -1284,6 +1297,8 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>   	.scp_da_to_va = mt8192_scp_da_to_va,
+>   	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>   	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 288,
+>   };
+>   
+>   static const struct mtk_scp_of_data mt8195_of_data = {
+> @@ -1296,6 +1311,8 @@ static const struct mtk_scp_of_data mt8195_of_data = {
+>   	.scp_da_to_va = mt8192_scp_da_to_va,
+>   	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>   	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 288,
+>   };
+>   
+>   static const struct mtk_scp_of_data mt8195_of_data_c1 = {
+> @@ -1308,6 +1325,22 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
+>   	.scp_da_to_va = mt8192_scp_da_to_va,
+>   	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>   	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
+> +	.max_code_size = 0x500000,
+> +	.ipi_buffer_size = 288,
 > +};
 > +
->  static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
->  	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
+> +static const struct mtk_scp_of_data mt8188_of_data_c1 = {
+> +	.scp_clk_get = mt8195_scp_clk_get,
+> +	.scp_before_load = mt8195_scp_c1_before_load,
+> +	.scp_irq_handler = mt8195_scp_c1_irq_handler,
+> +	.scp_reset_assert = mt8195_scp_c1_reset_assert,
+> +	.scp_reset_deassert = mt8195_scp_c1_reset_deassert,
+> +	.scp_stop = mt8195_scp_c1_stop,
+> +	.scp_da_to_va = mt8192_scp_da_to_va,
+> +	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+> +	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
+> +	.max_code_size = 0xA00000,
+> +	.ipi_buffer_size = 600,
+
+I wonder if it's more sensible to add a new struct instead,
+so that you can define
+
+static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
+	.max_code_size = 0xA00000,
+	.ipi_buffer_size = 600
+};
+
+...and then reuse like
+
+static const struct mtk_scp_of_data mt8188_of_data_c1 = {
+	..... stuff .....
+	.scp_sizes = &mt8188_scp_sizes
+};
+
+...that'd be more important for mt8192, 95 and the others as those params
+would be reused many, many times.
+
+>   };
+>   
+>   static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
+> @@ -1316,6 +1349,12 @@ static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
+>   	NULL
+>   };
+>   
+> +static const struct mtk_scp_of_data *mt8188_of_data_cores[] = {
+> +	&mt8188_of_data,
+> +	&mt8188_of_data_c1,
+> +	NULL
+> +};
+> +
+>   static const struct of_device_id mtk_scp_of_match[] = {
+>   	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
+>   	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
 > @@ -1323,6 +1362,7 @@ static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
->  	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
->  	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
+>   	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+>   	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
+>   	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
 > +	{ .compatible = "mediatek,mt8188-scp-dual", .data = &mt8188_of_data_cores },
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+> index cd0b601..4ef5491 100644
+> --- a/drivers/remoteproc/mtk_scp_ipi.c
+> +++ b/drivers/remoteproc/mtk_scp_ipi.c
+> @@ -162,10 +162,12 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+>   	struct mtk_share_obj __iomem *send_obj = scp->send_buf;
+>   	u32 val;
+>   	int ret;
+> +	size_t share_buf_offset;
+> +	void __iomem *share_buf_io_address;
+>   
+>   	if (WARN_ON(id <= SCP_IPI_INIT) || WARN_ON(id >= SCP_IPI_MAX) ||
+>   	    WARN_ON(id == SCP_IPI_NS_SERVICE) ||
+> -	    WARN_ON(len > sizeof(send_obj->share_buf)) || WARN_ON(!buf))
+> +	    WARN_ON(len > scp->data->ipi_buffer_size) || WARN_ON(!buf))
+>   		return -EINVAL;
+>   
+>   	ret = clk_prepare_enable(scp->clk);
+> @@ -184,7 +186,10 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+>   		goto unlock_mutex;
+>   	}
+>   
+> -	scp_memcpy_aligned(send_obj->share_buf, buf, len);
+> +	share_buf_offset = offsetof(struct mtk_share_obj, share_buf);
+> +	share_buf_io_address = (void __iomem *)((uintptr_t)scp->send_buf + share_buf_offset);
+> +
+> +	scp_memcpy_aligned(share_buf_io_address, buf, len);
+>   
+>   	writel(len, &send_obj->len);
+>   	writel(id, &send_obj->id);
+> diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
+> index 7c2b7cc9..344ff41 100644
+> --- a/include/linux/remoteproc/mtk_scp.h
+> +++ b/include/linux/remoteproc/mtk_scp.h
+> @@ -43,6 +43,7 @@ enum scp_ipi_id {
+>   	SCP_IPI_CROS_HOST_CMD,
+>   	SCP_IPI_VDEC_LAT,
+>   	SCP_IPI_VDEC_CORE,
+> +	SCP_IPI_IMGSYS_CMD,
 
-Why do you add new entries to the end? Look at the list first.
+There's no mention of the addition of this new IPI ID in the commit description.
+Please write something about it.
 
-Best regards,
-Krzysztof
+Cheers,
+Angelo
+
+>   	SCP_IPI_NS_SERVICE = 0xFF,
+>   	SCP_IPI_MAX = 0x100,
+>   };
+
+
 
