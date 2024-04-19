@@ -1,218 +1,117 @@
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2052.outbound.protection.outlook.com [40.107.100.52])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC2D13F443;
-	Thu, 18 Apr 2024 22:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713477718; cv=fail; b=TjeO0e+CfzS1L7OsKLzKdII51SLW3lcXoKC80fKAT391YCjni7nzlxBRAscgMdDui8DEgu3nGiBbaTxw1m09qfn8SfaUompqfzZ3ZOsyfNYyW+XFmkO9azZXybp2XhOE5SYcyj8K1q7dBRS9as3oDFHqoUiLNE9QDNhgd3uEiko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713477718; c=relaxed/simple;
-	bh=6vMJP2Sfa40s6HljQcX+szegGpiAK/0dZmxG9jupwcw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jjKcJ76H8clplTk9Ov5IG1aeykrjG8QhwPdh1NZ57TpEHh+HleEpn3lrS+iFpIBR04pxii7QOdMUJ4vi+//Iz6f3CKtL4psMNu4Yls4lq4DKwM0JT2wgdR66ZqOCFEx2foT2M9XaUhMyXU6u28XR/WDlJCJS1jC7TddZ8Y2/pvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bqnx3Sxi; arc=fail smtp.client-ip=40.107.100.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C86F4CE05;
+	Fri, 19 Apr 2024 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713516152; cv=none; b=itYnxLGmEFqAQq0R1OTpC6VxpASnXIvfUlrnuoi3ZX0fBYujiQuIJ/27efGY698OPIZtwSJoETiXPD1KrE5Sx9CYLdHPocxAS0LkOAPdCraIhZITlWhW+72JHh+5nHkeFUK21YTemotTeIWhArwdHY1dYrrlr3/NytrLueNqX7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713516152; c=relaxed/simple;
+	bh=UyrmLszsuXov/+2qgDCcmG8ktxC+PNXx0eC/GFzlhgA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fgJwaLp04A9vupL0T2ZfZk+OgLcZIisHTZq025mERgujQGcyr0o0lOyEQh5SdgYshGF8NP4iraO1etB9dqJrFJgATy0DTmBLHxdBKl1a9/GLFk8HXG4clGTBfd0Dxs6uXP1a+W49HekHHDdkovym07SKeR+PwR8MSedTRdN6Z4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=L9oiBrfW; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bqnx3Sxi"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mv985PbWtJSC/3/kVrdN/WU/iCMYxyu7GZ7y8P5xaGsLUq/m34oor7pmqWaHfokLIGhe9Ix7ijsCFGyOvaY0kYC9Mg1EPbLJUqlam1NZRokXtmTwTIhzUpT95pKqrdAn97Mnc8W+0XHPBqUwaOP4/TcDrFHpjOMxhEW/zvlrDZZvvF0PsTT8QXOvldmql0Bt/UA/+pXLI5HutG4e8hH8Wkuo7N4OPR83rfvaci/CpRt27n4KFEQMQU+fmS31NdLJJRjSXVSv6wkWoqiup2xGSV8IgerFtAH19ucCbMWpj7NMjc+Y4Uth/80I6ZJe7C9/6vnbYC0cFhiRyxVqPpUMZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CC0gjHunM6y+l5O/OoETnjVkPlVkFQyEj7VP/YVcA0k=;
- b=fEe+metYt6TE3+0jnaK2FOpbbeUjmIYlt/Q7DMo4x9MilGWB70STytdHDNx/+Ww5dwq1TlLVW1XPAPjae/Fs8LPBjLW9UIqx2s6mqtYJC9ZS2LeQMP3r8HcjX2HdueM2Fp9ETNslgKkNMK8o5Ocwhzf42hdPpiCPllMBgdwBfRVOqZ9worGii0phHZCjyQzb7dzA+qsJ9xs8GDW+HWm7KZC1eQml5Yf67yc4tcqE7n+xFtRcyDB9ZVNEWpFUArgjyUC/y3yzwIRXAv7MYyYpbigmKwxMCcXzxitAnbzN8iye3T/cM/HDdvC+RoLahRYcnGrUoBADno+S5xXzvYagmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CC0gjHunM6y+l5O/OoETnjVkPlVkFQyEj7VP/YVcA0k=;
- b=bqnx3SxiSs2Zu0C43V17DZrqSN8Hp1qhlWJZDje4xW2i07piiDcBNb+2xebvmhtoumimxIjKkvB2M0/DhEJQ5MHqJ+UcqxP3URFr4EBchFhJ0OkrsGUScvES2aqZjHBXcJMsQAniHyTwzBfHZ0dvAqvqY6yxBxpepzRk/xx42x8=
-Received: from MN2PR02CA0011.namprd02.prod.outlook.com (2603:10b6:208:fc::24)
- by SJ0PR12MB6903.namprd12.prod.outlook.com (2603:10b6:a03:485::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.39; Thu, 18 Apr
- 2024 22:01:52 +0000
-Received: from BL6PEPF0001AB59.namprd02.prod.outlook.com
- (2603:10b6:208:fc:cafe::48) by MN2PR02CA0011.outlook.office365.com
- (2603:10b6:208:fc::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7495.26 via Frontend
- Transport; Thu, 18 Apr 2024 22:01:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB59.mail.protection.outlook.com (10.167.241.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7452.22 via Frontend Transport; Thu, 18 Apr 2024 22:01:52 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 18 Apr
- 2024 17:01:51 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 18 Apr
- 2024 17:01:51 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 18 Apr 2024 17:01:50 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH] drivers: remoteproc: xlnx: Add Versal and Versal-NET support
-Date: Thu, 18 Apr 2024 15:01:25 -0700
-Message-ID: <20240418220125.744322-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="L9oiBrfW"
+X-UUID: bf8052c4fe2811eeb8927bc1f75efef4-20240419
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=eAv7xsk4dMZg8O12CSjg7d5I237JEwcCQAw88TJ7XB8=;
+	b=L9oiBrfWmhDUFUxUvUlia7Ib0BRO3e68m05gBqsFlZC4kCKeRFhQqK5LSYvsgDYabp9uLMMNafYdb87c70clCWeFm3fOEd7dQAiEVpZCgMaiME/A6yMefDjFRLHEmk5bPYnDwW1+g/Ibu8I9CIbn+29CIAg7rpQ9fCu6jl2VI2s=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:feac5a27-ab46-4ab4-a8de-e708b384caf3,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:8ef71bfb-ed05-4274-9204-014369d201e8,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: bf8052c4fe2811eeb8927bc1f75efef4-20240419
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <olivia.wen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 58277498; Fri, 19 Apr 2024 16:42:26 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 19 Apr 2024 16:42:23 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 19 Apr 2024 16:42:23 +0800
+From: Olivia Wen <olivia.wen@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"Tinghan Shen" <tinghan.shen@mediatek.com>,
+	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
+	<teddy.chen@mediatek.com>, <olivia.wen@mediatek.com>
+Subject: [PATCH v2 1/2] dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP
+Date: Fri, 19 Apr 2024 16:42:10 +0800
+Message-ID: <20240419084211.31901-2-olivia.wen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20240419084211.31901-1-olivia.wen@mediatek.com>
+References: <20240419084211.31901-1-olivia.wen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB59:EE_|SJ0PR12MB6903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c0a92c5-8256-43db-d75b-08dc5ff3275c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	7iLpwKQONFtZZtq3OtyglGelZL3Q0tV4LsXS9rr5fgSej/ldg+dtN9CcsR1b+Ury4Hb96gbjnx8aII6n2gTGyszVCAIlaXrvIagZXngHLmfnUJ19U3FmTfg+ZBLVsBZtwFDpxo3xGZw4YBNww7Q36oofC+PDMmLZxmeIT4F4X4dC4onxqQ6mlBvyPGC+QEXAXwAQ0oEmITAGlID/POG6qcDRPE5hUK9VsM4oQhVw1csF0jHOWGG6vrO07bOI1vnAk9ro0z/PM0SCFsl112r0ieUWxrSpI8X2TYxAHrVlSwiQ+VOTNBkMbA7yFE/TNtwpEImFN7PI5Sf2dp8+4bN/Xi5qA3tfWF1lEF3ei/7IKryyMvSip/ORZ8ihfO10H6yDauoI6CC1bJZfE0JH07VQKSI/c9eNxtno4v7J6NU5qA0CrJP9ijK7anqVQtlgYAu42OFu75zdOd2+8OdicO3FehTPC1/NOfG/Bw6HPGWol4342yLN0SY24/VsU6ZByj/eYy1YsNHx26uDDtiqxSx1sxfXsCD+gMW94rQ4fvW7aosEOtciRsmaobQ3TBkf529/n1suHCOCN8rWc5iU7C82z1LOTUctoObFltqnZgf3u4fuGGJ56fzpHPTvta16Dm6th5PEkfr7SjVgCBu8agtT4fsnvqG0ANtNntpK6+z7DAxcCqWD4fdQXZ9mq2v4K3saujxJiV3mm5pOBN/ZnAgvzbU+Z8Ca3CR66DD1jpcvZ32mob3waGSrsAg+aYcdJXj1
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400014)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2024 22:01:52.1386
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c0a92c5-8256-43db-d75b-08dc5ff3275c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB59.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6903
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--1.679300-8.000000
+X-TMASE-MatchedRID: UHRyBqsVSvp0BEBFOTiHn1QQ0EgzIoPRmyiLZetSf8mfop0ytGwvXiq2
+	rl3dzGQ1Km7bFwpLlIgo10iBMPAt5xGQBR4wbgQDfi9EVwd+Ihh6foJpzBXqTqbAGcRZbBzXfVV
+	OfiWwENdvy5usIFo8Mc5bvLLRwMDNndCRkxk0cZt0BNB20+SxH7f8mJY57oZddJaBDYald1lvF9
+	+X2GEIHA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--1.679300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: AA43DF781759B6C48867241917EB748AAE5CC2A08526FD2F677B4151BB1D102E2000:8
+X-MTK: N
 
-AMD-Xilinx Versal platform is successor of ZynqMP platform.
-Real-time Processing Unit R5 cluster IP on Versal is same as
-of ZynqMP Platform. Power-domains ids for Versal platform is
-different than ZynqMP.
+From: "olivia.wen" <olivia.wen@mediatek.com>
 
-AMD-Xilinx Versal-NET platform is successor of Versal platform.
-Versal-NET Real-Time Processing Unit has two clusters and each
-cluster contains dual core ARM Cortex-R52 processors. Each R52
-core is assigned 128KB of TCM memory.
+Under different applications, the MT8188 SCP can be used as single-core
+or dual-core.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 53 ++++++++-----------------
- 1 file changed, 17 insertions(+), 36 deletions(-)
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 7b1c12108bff..a6d8ac7394e7 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -300,36 +300,6 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_warn(dev, "failed to send message\n");
- }
- 
--/*
-- * zynqmp_r5_set_mode()
-- *
-- * set RPU cluster and TCM operation mode
-- *
-- * @r5_core: pointer to zynqmp_r5_core type object
-- * @fw_reg_val: value expected by firmware to configure RPU cluster mode
-- * @tcm_mode: value expected by fw to configure TCM mode (lockstep or split)
-- *
-- * Return: 0 for success and < 0 for failure
-- */
--static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
--			      enum rpu_oper_mode fw_reg_val,
--			      enum rpu_tcm_comb tcm_mode)
--{
--	int ret;
--
--	ret = zynqmp_pm_set_rpu_mode(r5_core->pm_domain_id, fw_reg_val);
--	if (ret < 0) {
--		dev_err(r5_core->dev, "failed to set RPU mode\n");
--		return ret;
--	}
--
--	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
--	if (ret < 0)
--		dev_err(r5_core->dev, "failed to configure TCM\n");
--
--	return ret;
--}
--
- /*
-  * zynqmp_r5_rproc_start()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -941,7 +911,7 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 	/* Maintain backward compatibility for zynqmp by using hardcode TCM address. */
- 	if (of_find_property(r5_core->np, "reg", NULL))
- 		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
--	else
-+	else if (device_is_compatible(dev, "xlnx,zynqmp-r5fss"))
- 		ret = zynqmp_r5_get_tcm_node(cluster);
- 
- 	if (ret) {
-@@ -960,12 +930,21 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 			return ret;
- 		}
- 
--		ret = zynqmp_r5_set_mode(r5_core, fw_reg_val, tcm_mode);
--		if (ret) {
--			dev_err(dev, "failed to set r5 cluster mode %d, err %d\n",
--				cluster->mode, ret);
-+		ret = zynqmp_pm_set_rpu_mode(r5_core->pm_domain_id, fw_reg_val);
-+		if (ret < 0) {
-+			dev_err(r5_core->dev, "failed to set RPU mode\n");
- 			return ret;
- 		}
-+
-+		if (of_find_property(dev_of_node(dev), "xlnx,tcm-mode", NULL) ||
-+		    device_is_compatible(dev, "xlnx,zynqmp-r5fss")) {
-+			ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id,
-+						       tcm_mode);
-+			if (ret < 0) {
-+				dev_err(r5_core->dev, "failed to configure TCM\n");
-+				return ret;
-+			}
-+		}
- 	}
- 
- 	return 0;
-@@ -1022,7 +1001,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 		ret = of_property_read_u32(dev_node, "xlnx,tcm-mode", (u32 *)&tcm_mode);
- 		if (ret)
- 			return ret;
--	} else {
-+	} else if (device_is_compatible(dev, "xlnx,zynqmp-r5fss")) {
- 		if (cluster_mode == LOCKSTEP_MODE)
- 			tcm_mode = PM_RPU_TCM_COMB;
- 		else
-@@ -1212,6 +1191,8 @@ static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
- 
- /* Match table for OF platform binding */
- static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
-+	{ .compatible = "xlnx,versal-net-r52fss", },
-+	{ .compatible = "xlnx,versal-r5fss", },
- 	{ .compatible = "xlnx,zynqmp-r5fss", },
- 	{ /* end of list */ },
- };
-
-base-commit: 912ebe48bec5927e2049e91b0e8a9cc682a709d2
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 507f98f..c5dc3c2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -19,6 +19,7 @@ properties:
+       - mediatek,mt8183-scp
+       - mediatek,mt8186-scp
+       - mediatek,mt8188-scp
++      - mediatek,mt8188-scp-dual
+       - mediatek,mt8192-scp
+       - mediatek,mt8195-scp
+       - mediatek,mt8195-scp-dual
+@@ -194,6 +195,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - mediatek,mt8188-scp-dual
+             - mediatek,mt8195-scp-dual
+     then:
+       properties:
 -- 
-2.25.1
+2.6.4
 
