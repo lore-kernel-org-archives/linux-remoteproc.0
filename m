@@ -1,285 +1,266 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E9C12D77D
-	for <linux-remoteproc@vger.kernel.org>; Fri, 19 Apr 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A79E12E1D2;
+	Fri, 19 Apr 2024 17:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713535249; cv=none; b=fxGWmGb1VRbfhWZBubZzXAmTSN/Q+V9xSOla1hNsPcL1dwJjKcbOmO6dv0A4e+QFOMAboUCFEHv0NrwJBMPg7HPEjczTl6iTyOvEjEOCxYjRBS9k3mQrRRuhObS3Jlddfu5RIK/wuXFc8PRIl8MWFqtyVNDd1iyu1ntlD8/4KVk=
+	t=1713546470; cv=none; b=GUd15qWTyaD6/LBlvuT9fOBsUWCLeiUo4g6eOu3qcMtKeRmVnVY0PjHSZvKImiE6NVSBnzxxvocMN5gONhkDSZz18pbgP/EdS5nN1hHhV1/82TSUhYckqtpfiu6lWNsGDdhvC/pkH6Z5ybaf2ALloEpizE28hBxV5L09V48qEZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713535249; c=relaxed/simple;
-	bh=T1QckubuuDLKzfbwGOe4bGJUpGxvHjLrV7SRAZt0Ryk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nG6aJBwkElYDKlMoecUpaCaOXfrG/VCzYtpo2rMYSfonGCzHg2NUDtMiThMNz84eVn61sIFYUFkjeXUestucrres2BRiV1UAqKqS3B91oNa0aeGycte5PLr56ySYUSukhVQzO4vja0LqiWxVquF8pgoxO6d/IEXEVu+/i7QqCMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nRgcUanc; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713546470; c=relaxed/simple;
+	bh=Iszv38Y5a0b+vXguZludZyGUzZrdS1hyUjPveoO0nzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hh9VEL8EmzfYYmNz9hIXuUXG5f2Z1DraO5lO495N/B4+gM7iPhGqDhELIpj19uXhHQqakMKJDguiu+AjnmKy0iDygC2p+//lrlbbtrPXufm9QZs8W6PjPDFRFg9OnpbQdJGIbNIIRB1xHIHqfsYOa34HyEK6vuTnPr/e1Xo58H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTcv1hC4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nRgcUanc"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-571be483ccaso2367531a12.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 19 Apr 2024 07:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713535245; x=1714140045; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gXhJgQXYH8h9D6bhtZp9PtGZt8VvzcZTxKbXRO0AyF0=;
-        b=nRgcUancxsRzL8aZBMeTvnOnJdFc80dx9MCul99fpdqksk7kfmWDuorx89E/rHmled
-         QU5M9+F+tPXuDPah5iZpIKwkPnmSE5vJRJvet+VdwU9gle04E0iEIl5jpgc82m76/3i2
-         fTCCbfwLUXAewI423uaqyB8IzPGy/57ACOEdAHR7HDWzRzmGEN48rWGrhE7NYJghZjGZ
-         7tkE5dgfLxYGTt9dSajzvMY2NZ+Jh/REe+JTZ9ess43MPc+jPCywinR1ZKL0IS5JVQPY
-         bBtP3Q6BYR7lZLZHtTuk8wPaKRgtTrsWqSWu2uvB9K4Uin+OK8t/ouBJr4HEZLSTY7Ky
-         xOtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713535245; x=1714140045;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gXhJgQXYH8h9D6bhtZp9PtGZt8VvzcZTxKbXRO0AyF0=;
-        b=ZCNXLAm3XivOqfuLVHILRGYhrHtdE2sjhgsXAaO4CnbCtqTwZUZxn+gOKAtJCUySVn
-         RjayENOPjC7uysbJKze//H+F7Tnany18t3ZVcmLdUvT1HaxNzOC19sTv7pWFN1ZxJsQT
-         f+kJlobKuUAlUi3J/X78+qwvJfEMCfWE+cgtPX3dr1rrmRZKDguwyWbcV4NLcbCrjkrD
-         DPHtAFcCUR/6Z99UyztMuPpnZqhNKZsIxJbDQ8VMKAE9uejthvU0R6UEbl4jz2Ho31he
-         +oAwMXerzvcty5QAg52gOCpU9HaAprW/qG03nweOtRGtyWw+p1l5RVCWuvnAbOIsbJ3/
-         /viA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzMHZus0CLrmOiQK0l8orp5/r4ZUvqcG5UTxy5/alLaAioRThXnZZ2H8mla3KqAnCRnn9cUFSbntSAa+Kq8Tav9xvrca0xy9STi/SOz0mp7g==
-X-Gm-Message-State: AOJu0Yz1bprZaxOZ0rTvsVR+cc2DN+/ryALHCW8sPaZURkG4XF7RiLgU
-	h/UjUZC6CrzSmlzDuF/ARVzSCADSolc61hfZp3U/8tiRnbYgTD5FUB8TENIEb1opPmpysTcYykS
-	/
-X-Google-Smtp-Source: AGHT+IEBpoVn+rPVd97VIc+PrP3OBopoivhgD3YF2bfDmBFYnmHtYascQVGb/3nL5y3x6owBGUrXaQ==
-X-Received: by 2002:a17:907:bb97:b0:a55:661d:8ab1 with SMTP id xo23-20020a170907bb9700b00a55661d8ab1mr1642070ejc.39.1713535245451;
-        Fri, 19 Apr 2024 07:00:45 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id qy1-20020a170907688100b00a558be8bc03sm532390ejc.150.2024.04.19.07.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 07:00:45 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 19 Apr 2024 17:00:34 +0300
-Subject: [PATCH v5 6/6] remoteproc: qcom: enable in-kernel PD mapper
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTcv1hC4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DE0C072AA;
+	Fri, 19 Apr 2024 17:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713546470;
+	bh=Iszv38Y5a0b+vXguZludZyGUzZrdS1hyUjPveoO0nzc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XTcv1hC4FrwfWsNwMD73TAqk+pS+y9G524mOh9jo+IVFu1qPCQdZPrggExqqVHNHv
+	 5HLnHF5cbEFhzbG3/oXpJfC4VKufdENA9JjsRCjTlf5eorkFEWA2Hh6UaItdttcFaO
+	 IjrDKmOb6GwmVu+hjgbuDgY2nZIPNIsKBKFmjjMCeZj/y+hu6stwBA06pyLe4OGzlZ
+	 nwmsiZpoADFhaaNDJZkENtnt84p57f2oDH3uisCqxp8hmCvk3lwcusgRQF4NwWLA8a
+	 0ivs9IiMNWRz6iqLeZz07g+34M+cggt5jZ3v2tiODk5mMdb3nGVaIf/o9Y5ab/gSFD
+	 ZL/ZYCnE4F6Wg==
+Message-ID: <b26b5d54-d04d-41e1-abe1-600633882989@kernel.org>
+Date: Fri, 19 Apr 2024 19:07:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240419-qcom-pd-mapper-v5-6-e35b6f847e99@linaro.org>
-References: <20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org>
-In-Reply-To: <20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/6] soc: qcom: add pd-mapper implementation
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Sibi Sankar <quic_sibis@quicinc.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Johan Hovold <johan+linaro@kernel.org>, Xilin Wu <wuxilin123@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5226;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=T1QckubuuDLKzfbwGOe4bGJUpGxvHjLrV7SRAZt0Ryk=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmInkFvvRIYipbRMqCm8lKYQre6oKb3JdARLkSs
- rzmPUpIJWqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZiJ5BQAKCRCLPIo+Aiko
- 1QE9B/9zJAYrwFz0VOLx/mahAvqLRwFBNj/9Ul9sn6p5hNgyo6T8Pncyta2rnT2AV1DflqUHP6G
- l79AK9FMEYLh+8fgZZEsDHqMf+E61/sOXEHGkUK2y0azrGiziosIlti0ltzvjQ/C8H9B/ASH3dy
- /C4JojilWTnnVZdO/bokkqj/1odp6nJPVICqxS3L9ym7PNdUG3FpZqWnjcBU7WF+percXoop7XS
- 7xA7uObiCAWFOlRT5xd+L+qALa8lO4iv4ZFnf3l4xsb9pWc+R1ROiTaQ1pNj5eQIB2nkfkBxdvf
- 8KcpWfFUL6xCPpBZBDZOJQgS/+91rmzfLdaJigfNsuVAO76y
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org>
+ <20240419-qcom-pd-mapper-v5-5-e35b6f847e99@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240419-qcom-pd-mapper-v5-5-e35b6f847e99@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Request in-kernel protection domain mapper to be started before starting
-Qualcomm DSP and release it once DSP is stopped. Once all DSPs are
-stopped, the PD mapper will be stopped too.
+On 19/04/2024 16:00, Dmitry Baryshkov wrote:
+> Existing userspace protection domain mapper implementation has several
+> issue. It doesn't play well with CONFIG_EXTRA_FIRMWARE, it doesn't
+> reread JSON files if firmware location is changed (or if firmware was
+> not available at the time pd-mapper was started but the corresponding
+> directory is mounted later), etc.
+> 
+> Provide in-kernel service implementing protection domain mapping
+> required to work with several services, which are provided by the DSP
+> firmware.
+> 
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 11 ++++++++++-
- drivers/remoteproc/qcom_q6v5_mss.c  | 10 +++++++++-
- drivers/remoteproc/qcom_q6v5_pas.c  | 12 +++++++++++-
- drivers/remoteproc/qcom_q6v5_wcss.c | 11 ++++++++++-
- 4 files changed, 40 insertions(+), 4 deletions(-)
+...
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 1d24c9b656a8..02d0c626b03b 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -23,6 +23,7 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/pd_mapper.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
-@@ -375,10 +376,14 @@ static int adsp_start(struct rproc *rproc)
- 	int ret;
- 	unsigned int val;
- 
--	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	ret = qcom_pdm_get();
- 	if (ret)
- 		return ret;
- 
-+	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	if (ret)
-+		goto put_pdm;
-+
- 	ret = adsp_map_carveout(rproc);
- 	if (ret) {
- 		dev_err(adsp->dev, "ADSP smmu mapping failed\n");
-@@ -446,6 +451,8 @@ static int adsp_start(struct rproc *rproc)
- 	adsp_unmap_carveout(rproc);
- disable_irqs:
- 	qcom_q6v5_unprepare(&adsp->q6v5);
-+put_pdm:
-+	qcom_pdm_release();
- 
- 	return ret;
- }
-@@ -478,6 +485,8 @@ static int adsp_stop(struct rproc *rproc)
- 	if (handover)
- 		qcom_adsp_pil_handover(&adsp->q6v5);
- 
-+	qcom_pdm_release();
-+
- 	return ret;
- }
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 1779fc890e10..791f11e7adbf 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -26,6 +26,7 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/pd_mapper.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
- 
-@@ -1581,10 +1582,14 @@ static int q6v5_start(struct rproc *rproc)
- 	int xfermemop_ret;
- 	int ret;
- 
--	ret = q6v5_mba_load(qproc);
-+	ret = qcom_pdm_get();
- 	if (ret)
- 		return ret;
- 
-+	ret = q6v5_mba_load(qproc);
-+	if (ret)
-+		goto put_pdm;
-+
- 	dev_info(qproc->dev, "MBA booted with%s debug policy, loading mpss\n",
- 		 qproc->dp_size ? "" : "out");
- 
-@@ -1613,6 +1618,8 @@ static int q6v5_start(struct rproc *rproc)
- reclaim_mpss:
- 	q6v5_mba_reclaim(qproc);
- 	q6v5_dump_mba_logs(qproc);
-+put_pdm:
-+	qcom_pdm_release();
- 
- 	return ret;
- }
-@@ -1627,6 +1634,7 @@ static int q6v5_stop(struct rproc *rproc)
- 		dev_err(qproc->dev, "timed out on wait\n");
- 
- 	q6v5_mba_reclaim(qproc);
-+	qcom_pdm_release();
- 
- 	return 0;
- }
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 54d8005d40a3..653e54f975fc 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -23,6 +23,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/pd_mapper.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
-@@ -261,10 +262,14 @@ static int adsp_start(struct rproc *rproc)
- 	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 
--	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	ret = qcom_pdm_get();
- 	if (ret)
- 		return ret;
- 
-+	ret = qcom_q6v5_prepare(&adsp->q6v5);
-+	if (ret)
-+		goto put_pdm;
-+
- 	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- 	if (ret < 0)
- 		goto disable_irqs;
-@@ -356,6 +361,9 @@ static int adsp_start(struct rproc *rproc)
- 	/* Remove pointer to the loaded firmware, only valid in adsp_load() & adsp_start() */
- 	adsp->firmware = NULL;
- 
-+put_pdm:
-+	qcom_pdm_release();
-+
- 	return ret;
- }
- 
-@@ -399,6 +407,8 @@ static int adsp_stop(struct rproc *rproc)
- 	if (handover)
- 		qcom_pas_handover(&adsp->q6v5);
- 
-+	qcom_pdm_release();
-+
- 	return ret;
- }
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 94f68c919ee6..33bd30e07bf0 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -240,13 +240,17 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 	int ret;
- 
-+	ret = qcom_pdm_get();
-+	if (ret)
-+		return ret;
-+
- 	qcom_q6v5_prepare(&wcss->q6v5);
- 
- 	/* Release Q6 and WCSS reset */
- 	ret = reset_control_deassert(wcss->wcss_reset);
- 	if (ret) {
- 		dev_err(wcss->dev, "wcss_reset failed\n");
--		return ret;
-+		goto put_pdm;
- 	}
- 
- 	ret = reset_control_deassert(wcss->wcss_q6_reset);
-@@ -288,6 +292,9 @@ static int q6v5_wcss_start(struct rproc *rproc)
- wcss_reset:
- 	reset_control_assert(wcss->wcss_reset);
- 
-+put_pdm:
-+	qcom_pdm_release();
-+
- 	return ret;
- }
- 
-@@ -735,6 +742,8 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 
- 	qcom_q6v5_unprepare(&wcss->q6v5);
- 
-+	qcom_pdm_release();
-+
- 	return 0;
- }
- 
+> +
+> +static const struct of_device_id qcom_pdm_domains[] = {
+> +	{ .compatible = "qcom,apq8096", .data = msm8996_domains, },
+> +	{ .compatible = "qcom,msm8996", .data = msm8996_domains, },
+> +	{ .compatible = "qcom,msm8998", .data = msm8998_domains, },
+> +	{ .compatible = "qcom,qcm2290", .data = qcm2290_domains, },
+> +	{ .compatible = "qcom,qcs404", .data = qcs404_domains, },
+> +	{ .compatible = "qcom,sc7180", .data = sc7180_domains, },
+> +	{ .compatible = "qcom,sc7280", .data = sc7280_domains, },
+> +	{ .compatible = "qcom,sc8180x", .data = sc8180x_domains, },
+> +	{ .compatible = "qcom,sc8280xp", .data = sc8280xp_domains, },
+> +	{ .compatible = "qcom,sda660", .data = sdm660_domains, },
+> +	{ .compatible = "qcom,sdm660", .data = sdm660_domains, },
+> +	{ .compatible = "qcom,sdm670", .data = sdm670_domains, },
+> +	{ .compatible = "qcom,sdm845", .data = sdm845_domains, },
+> +	{ .compatible = "qcom,sm6115", .data = sm6115_domains, },
+> +	{ .compatible = "qcom,sm6350", .data = sm6350_domains, },
+> +	{ .compatible = "qcom,sm8150", .data = sm8150_domains, },
+> +	{ .compatible = "qcom,sm8250", .data = sm8250_domains, },
+> +	{ .compatible = "qcom,sm8350", .data = sm8350_domains, },
+> +	{ .compatible = "qcom,sm8450", .data = sm8350_domains, },
+> +	{ .compatible = "qcom,sm8550", .data = sm8550_domains, },
+> +	{ .compatible = "qcom,sm8650", .data = sm8550_domains, },
+> +	{},
+> +};
 
--- 
-2.39.2
+If this is supposed to be a module, then why no MODULE_DEVICE_TABLE?
+
+> +
+> +static int qcom_pdm_start(void)
+> +{
+> +	const struct of_device_id *match;
+> +	const struct qcom_pdm_domain_data * const *domains;
+> +	struct device_node *root;
+> +	int ret, i;
+> +
+> +	pr_debug("PDM: starting service\n");
+
+Drop simple entry/exit debug messages.
+
+> +
+> +	root = of_find_node_by_path("/");
+> +	if (!root)
+> +		return -ENODEV;
+> +
+> +	match = of_match_node(qcom_pdm_domains, root);
+> +	of_node_put(root);
+> +	if (!match) {
+> +		pr_notice("PDM: no support for the platform, userspace daemon might be required.\n");
+> +		return 0;
+> +	}
+> +
+> +	domains = match->data;
+
+All this is odd a bit. Why is this not a driver? You are open coding
+here of_device_get_match_data().
+
+
+> +	if (!domains) {
+> +		pr_debug("PDM: no domains\n");
+> +		return 0;
+> +	}
+> +
+> +	for (i = 0; domains[i]; i++) {
+> +		ret = qcom_pdm_add_domain(domains[i]);
+> +		if (ret)
+> +			goto free_domains;
+> +	}
+> +
+> +	ret = qmi_handle_init(&qcom_pdm_handle, 1024,
+> +			      NULL, qcom_pdm_msg_handlers);
+> +	if (ret)
+> +		goto free_domains;
+> +
+> +	ret = qmi_add_server(&qcom_pdm_handle, SERVREG_LOCATOR_SERVICE,
+> +			     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
+> +	if (ret) {
+> +		pr_err("PDM: error adding server %d\n", ret);
+> +		goto release_handle;
+> +	}
+> +
+> +	return 0;
+> +
+> +release_handle:
+> +	qmi_handle_release(&qcom_pdm_handle);
+> +
+> +free_domains:
+> +	qcom_pdm_free_domains();
+> +
+> +	return ret;
+> +}
+> +
+> +static void qcom_pdm_stop(void)
+> +{
+> +	qmi_del_server(&qcom_pdm_handle, SERVREG_LOCATOR_SERVICE,
+> +		       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
+> +
+> +	qmi_handle_release(&qcom_pdm_handle);
+> +
+> +	qcom_pdm_free_domains();
+> +
+> +	WARN_ON(!list_empty(&qcom_pdm_services));
+
+This should be handled, not warned.
+
+> +
+> +	pr_debug("PDM: stopped service\n");
+
+Drop debug. Tracing gives you such information.
+
+> +}
+> +
+> +/**
+> + * qcom_pdm_get() - ensure that PD mapper is up and running
+> + */
+
+Please provide full kerneldoc, so also return and short description.
+
+> +int qcom_pdm_get(void)
+> +{
+> +	int ret = 0;
+> +
+> +	mutex_lock(&qcom_pdm_mutex);
+> +
+> +	if (!qcom_pdm_count)
+> +		ret = qcom_pdm_start();
+> +
+> +	if (!ret)
+> +		++qcom_pdm_count;
+> +
+> +	mutex_unlock(&qcom_pdm_mutex);
+
+Looks like you implement refcnt manually...
+
+Also, what happens if this module gets unloaded? How do you handle
+module dependencies? I don't see any device links. Bartosz won't be
+happy... We really need to stop adding more of
+old-style-buggy-never-unload-logic. At least for new code.
+
+> +
+> +	return ret;
+> +}
+
+No export? Isn't this a module?
+
+> +
+> +/**
+> + * qcom_pdm_release() - possibly stop PD mapper service
+> + */
+> +void qcom_pdm_release(void)
+> +{
+
+Best regards,
+Krzysztof
 
