@@ -1,98 +1,105 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C3647A6B
-	for <linux-remoteproc@vger.kernel.org>; Sat, 20 Apr 2024 23:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0187FB64E
+	for <linux-remoteproc@vger.kernel.org>; Sun, 21 Apr 2024 13:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713656535; cv=none; b=e9CefpVyYqkwy85MJkRRtlglmLgAtADHEr8B0nSp8HUROx6RQJ206VIEf/VCJBmj1nJLYgflrz+P0oVJ11b6D8hmVd/gYtFDFQR4sb2vNjCrKgztWBg4csx7sayjVJTUIcFe95NLiPsX7LrKGcKR8bZ+f8PjXOLuQBj3xmCUpVQ=
+	t=1713705383; cv=none; b=P8kMliHkkiCC6vDlUGCt/mnK8AP877H8yPKMvRzFm+WF2RADv4jOp06CrlAj8CRy8lh36EGZ/6hBPk0G2VKs7gPvt5IBLiwM4s0j6BQwaragS6oyz1HL4vb0oF3SbN1+o0knjn+4pR+fS/ofcrrPgZ67QxuKkLeAuJKqsvLImlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713656535; c=relaxed/simple;
-	bh=P7wCgcvk3CXQlUmwNiz9YK/s/qWvghlkgj7Npb/P58U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAXwTHjGEJB69lVYEL7BjXG+1ijSy10R+m5AY7ulpenF0H8Ns63tep3RoQlABSvVOzv9jTVT1rqGOJ8W1zbuoa0xG6W+ECpi9l+iMdh/VkbInKZ2uJNrnEsquYzHGi+TVVMCvGVYIxLtlRqhS6yGpgjKCUmA/oWqHVhWPK0XVC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=feRfuyL7; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+	s=arc-20240116; t=1713705383; c=relaxed/simple;
+	bh=a1fd6e6Gs1jt19mS2k5P5+/TYULLQJhNPZixk4mK/R0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PNjbCe7k/H9ybNDoawLbRvj8mXYY3auw4UPwmDCBW6fvRB8ylEBfqJktzd2QBZivQfKxhxpnRD5yVISV6lnfrTWkFPBExaPgVChw9D8NeWKZyil8KyRqzr4Ta8ZajkN4OVEhaayu/7egPjZJ40ZD+hIAjOJr7kMtQEuVonmCOhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p3ndwcCW; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="feRfuyL7"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3481bb34e7dso1791141f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 20 Apr 2024 16:42:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p3ndwcCW"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-de462f3d992so3648017276.2
+        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Apr 2024 06:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1713656532; x=1714261332; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o4/aAKj7Bape/9U3r/rKTjbwo82BuU6ZKB4zw7USlWg=;
-        b=feRfuyL7Vf9MJyQlxywAxSy3lR4KHYBe8VhK+oMYyJtAAG4jBRF6lX488IdQw38QED
-         YuvFXpbA6lbVeN3QzW5QltToijcXKh0YmQbePWK5qkMeaHRrRdWQtCZA2sMSQikIkc3U
-         THNjVG3OsAqlitfS8lrb3K4vneHSgtLSGltAUwz68Wi0xxmwWUUfGtqwVPTYqDfLXqNf
-         LRnWp3dSwpekSu4ZZUi7QvapP+Xr0twA/rtMhZaqV2PnjbNSWZbKb9hAcDhVolrfcp4I
-         RLLStTjXIac31kel53xqksZLF/ED2PyvwEGy34FL8Qa+RLMM9d5AZmYtv058Nlh2BVr5
-         uMMg==
+        d=linaro.org; s=google; t=1713705380; x=1714310180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9b23fzJgHNWlYEQwRHhUtIVBTetbxKE4NVXPqvIaIrk=;
+        b=p3ndwcCWHeJ/OJYWXoU6TdV3BiNFxxgDLO8i9HxkrRoTwzpsktAu6s61SndT/Rlhn4
+         wiOwi2v6eYrLiUEJAy6jt2RmzlQn8HoG8THHzMVMob0oRcGQHjJlx1+FsJPXmuMMkTLe
+         HV7SHL0fE9BTcCRvmTKQ0nUSK23wt2ddYEr5/vEHV9VepcDv/7ITGRy4cY2AqljYH1T/
+         6cg9c0N5iFhDGMzmcsmqCOlE7n+KSGPa+8VpEpoH2ojq+j5VwZUVgZAu8YOtb9W1MCdO
+         ZFj3uZTLy86AfxyENB6G3wkswsOq4IomI0ie6hCnrAf9HETajSFIDVhzDee8ZgLHF8fC
+         db0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713656532; x=1714261332;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4/aAKj7Bape/9U3r/rKTjbwo82BuU6ZKB4zw7USlWg=;
-        b=KbuWpSfn0v9QQ4ooMXAS7XmErRjEE+dxgeDSvaKPGMfPYYSZCzNT5YjBSIicO/iNQ6
-         jiuobX7o2C50EdMpII+iFBLAvHPiYpv8ITE7qbbxoll470+t0slN/N/yWTTfQfAnZT8b
-         iLkjUck/4qyYUflYHigFfPpdLVDXK0+SWkc/sH9Ituvpk5uKM2n3Ad6NRm+rkELM7rE9
-         6jAm0xZjJ6o1s8eoVUolU41ncJ092ozQaiF5tz+t0VUYiLVk1knp9bpE2+Bgas2o1tLS
-         EP0LkMt8d54rtR1QY34RzAA73y07q6xWyrRpEeQPXJT1vEIGvkqatWJPvIrvzuj/Ump6
-         k+Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUU+mA9lZ7Ch0pJzHizoyX7hO6oGHVm8nz5Ra99mqFRxT6d8XIZXGYbbu1wNwk9gYlK+MtrDNRhzayBVyJoqnbuu500c2lYCOu06J1gUcsfcA==
-X-Gm-Message-State: AOJu0Yx6VdGqCkybMNVW8UtbQP6u81XdJ8dJNAPGy6TpQOeM1zxSzPHi
-	Yuula49RkgntbK9D7Wlv9TcPwjd9m+3xyiWhSCbL9SXU1RK9Lxm0+AzsSFwYdJA=
-X-Google-Smtp-Source: AGHT+IF/vrFe1Yheut9IRQjD08Xl2XKY8vMsIQS2EtJJcZySN1PW/SSIyF+ZMkaAe24Sf62cHcUjhw==
-X-Received: by 2002:a5d:66c2:0:b0:347:2b42:a398 with SMTP id k2-20020a5d66c2000000b003472b42a398mr4031447wrw.2.1713656531594;
-        Sat, 20 Apr 2024 16:42:11 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id p3-20020a5d6383000000b00341b451a31asm7904177wru.36.2024.04.20.16.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Apr 2024 16:42:10 -0700 (PDT)
-Message-ID: <84a70058-38f2-4e76-b62e-b6c44e880f7b@nexus-software.ie>
-Date: Sun, 21 Apr 2024 00:42:09 +0100
+        d=1e100.net; s=20230601; t=1713705380; x=1714310180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9b23fzJgHNWlYEQwRHhUtIVBTetbxKE4NVXPqvIaIrk=;
+        b=EOHCEdpFUiccwkEbE1HZzUBPmzKRF8akcUQ5mX1OgBPFcOehtLfVP8WYIiC5mSvfhQ
+         9KwRp+iGpoOIeHs+Ud5zeIzUSFrR7ZS+pOsB1FtPvet6FT7EprZ8EDNTkc09UjCn+DRs
+         YEbsJiIYYKEMVue+XzbRNsfp/GhlO9tR+b31dOm16UK51s3kUy4tCimPFONvVHufb1l8
+         2ALYY3tlvfZgpcWTPnKFsB9nWRwIdIQtcbjIkOsV/bMdktm+laGdKKGEF+iD+MplbcJ5
+         qGjNZeCaFVlsF4csCjbD8bXyMvjY+8EtaSgfKoyaatTWKqDlbck8SaDPfcBZB80DbIFq
+         iD+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUW1rwrZCpt2FJ+Ux2ib3keIs6zcG4r7vtJQr7PtcR+NJLm59yQ3FzHKuQPXH1be1h0vfFRKuHg/HxiiQjCPxHc92C2cbyA/cIRCEjmk0Gekw==
+X-Gm-Message-State: AOJu0Yyk35a2zLqqIkn39uwAIwHwLQ5xQcKcUTRta6pGAqNivfFFG/T7
+	4Pvb+NmLuBdkQEP4CEGHjwuWl1BL5yeiqTR7Cc49ALSqj4dFXsiwehEXj/S32ztFQ93bD75s/JF
+	TyiHP/dTKal8kQP4ubDjvUXHFemJVSIl90mO47w==
+X-Google-Smtp-Source: AGHT+IHz7/ue+3qHJOx20G0EY6HjLKwRCFO+3MTk6f+JYhQyLzBF67jQE/qFXNu4AbkFXvkPTeDUIc/sANXq+e3DjYI=
+X-Received: by 2002:a25:ae8b:0:b0:dcd:40fa:7bd0 with SMTP id
+ b11-20020a25ae8b000000b00dcd40fa7bd0mr6131741ybj.3.1713705380035; Sun, 21 Apr
+ 2024 06:16:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] soc: qcom: pdr: extract PDR message marshalling
- data
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>, Xilin Wu <wuxilin123@gmail.com>
 References: <20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org>
- <20240419-qcom-pd-mapper-v5-3-e35b6f847e99@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20240419-qcom-pd-mapper-v5-3-e35b6f847e99@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20240419-qcom-pd-mapper-v5-3-e35b6f847e99@linaro.org> <84a70058-38f2-4e76-b62e-b6c44e880f7b@nexus-software.ie>
+In-Reply-To: <84a70058-38f2-4e76-b62e-b6c44e880f7b@nexus-software.ie>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 21 Apr 2024 16:16:09 +0300
+Message-ID: <CAA8EJpoqs_cgqyosnHHZnsTkMepxRbpcWOQSKfT6zZJyVd2zDg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] soc: qcom: pdr: extract PDR message marshalling data
+To: "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>, Xilin Wu <wuxilin123@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/04/2024 15:00, Dmitry Baryshkov wrote:
-> The in-kernel PD mapper is going to use same message structures as the
-> QCOM_PDR_HELPERS module. Extract message marshalling data to separate
-> module that can be used by both PDR helpers and by PD mapper.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Sun, 21 Apr 2024 at 02:42, Bryan O'Donoghue
+<pure.logic@nexus-software.ie> wrote:
+>
+> On 19/04/2024 15:00, Dmitry Baryshkov wrote:
+> > The in-kernel PD mapper is going to use same message structures as the
+> > QCOM_PDR_HELPERS module. Extract message marshalling data to separate
+> > module that can be used by both PDR helpers and by PD mapper.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+> > @@ -0,0 +1,315 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2020 The Linux Foundation. All rights reserved.
+> > + */
+>
+> Is this the right org attributed ? Definitely not the right year/years.
 
-> @@ -0,0 +1,315 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2020 The Linux Foundation. All rights reserved.
-> + */
+Yes, it is the right org & year. While the pdr_internal.h header (from
+which these definitions were moved) didn't contain copyright, the
+pdr_interface.c file was a part of the commit that brought the header
+file in. The file contained this copyright header. Thus I assume the
+most correct action is to use it for the new source file.
 
-Is this the right org attributed ? Definitely not the right year/years.
+>
+> Please fix, then.
+>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Please fix, then.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+-- 
+With best wishes
+Dmitry
