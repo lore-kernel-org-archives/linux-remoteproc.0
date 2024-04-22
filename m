@@ -1,75 +1,65 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3094C15350A
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Apr 2024 15:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FB215350B
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Apr 2024 15:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713800037; cv=none; b=lmdO5t5t6PDsnQtKo+3NBbhb0Wqr2bAD7JiKwPZ357fnR0SbFEi/IhW2eieiq5IcaK0p8LF00jru+xjVrfDu4XT2wfBI6xEtMBnOYZFArZ2zLYIiqbJAfZlR/FayIz9QrTlvrgrIaCP67xaD1av3CG4e+jQ2noMymWdOT0WHWj8=
+	t=1713800076; cv=none; b=sWXheA8EWJvoa/CzOZYHj3T2M9Zjg86j/CVorvOqnY5Q4lzGhan2UeSqVKgROMdFn3IH3MzDV/ItV7gE9w7CG9EvQHgQXcY4sse4HUknYQA044MrR9kfpf5LMkIsiFZYTnFHfwVjMSgaTDFBN20UdWU5mU8xAm5fwUvVuVZozeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713800037; c=relaxed/simple;
-	bh=irdtWnpnc/sFcWuh/FSKxtLO6PVCadV+GOlUWl825wI=;
+	s=arc-20240116; t=1713800076; c=relaxed/simple;
+	bh=7rDy8l0sDwyBXfHsO2TUrRhK/INejU/rzcZpBVr/SuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXs7qdMlpf23PhkKoX/YYQYIOh2FB742Kh3/f9aKCVP9DZbDNZhrv3RsLdTT91MnOuuQc0Yle17aIE9mfbFRRCQh2rXGLGpXFdM0tJXgeRVmQTE7IcHUFM896Tw4ZWX2NhU6pi4ogLG8LxN/YNJogiI25WurA17d4sRr+krtADw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HHmJO+F+; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=tG65HYmNDv1aD5aodSznO/pnD6W6tQGGdnVn2v/3PPtagP0NsNjgfTbGKgYLHIJqQmMvE0j2Loty9eV54v9aoBJ03u3ykaCpUCZPFWANVbqMpEPBc2AIjGayq9SqiAuiy3JKkmWivV3E4hh8ZSH1XND3Zrh2+0PQMvPFUVc45sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BqEjHHG5; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHmJO+F+"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e5715a9ebdso37179255ad.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Apr 2024 08:33:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BqEjHHG5"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e86d56b3bcso26799605ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Apr 2024 08:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713800034; x=1714404834; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713800075; x=1714404875; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I/SOw0pUiSSjpPPaHWiOVLaLSAV+6ewHL/rVDMpowo=;
-        b=HHmJO+F+QBWGrQrIaFgklul7xdKfh4XUf9D79fWw5wVG7SkQuSiC12E8dZxJD7GSG+
-         RUKpHoPnGTWwACYXWQe6CQl2DY5kNcI5AxT2u3VGXRaZsI1mQ4Hf+dDCptptp3IEsFcA
-         56qpJj+y6zhRj0qcSSx8wMas7ldvnVTkYtQiTSeUO+sZsDxg0cdwo4oYBfLdRokbcNnf
-         ltXwo99d3PpKg8gMcJc4lHLbhqEfScx9bi9Zlb3We/IJdIHvR2ohJNj809fhrQ8+9vWR
-         Ny06X4Ljs4nXImjIZdzU5P421lHJXlmyYlFZ9hWGuEUbbbwUkjAASEjPyakEMMPK7ysj
-         I0bA==
+        bh=337wBwclmpc6tEt1+i4HX8mw2rCsniBI2t8I+UU3Arc=;
+        b=BqEjHHG5uqcOa68JJZfN4kB1DlLzkTymvk7fOpaGwQ/O2SRjvfBVyEMvJ64uj7/JyN
+         7PwhFG98P0KAJYZiOrSGb6/X8GtiO1U9/e3t60jdGpBEyGamTiei1HgzoXOQOX9zfiRj
+         0hpmNmWoloZsmkGl6I60DG2gKbaMleObLm/w38F7MT0BCfnwNvBDUDiFvNQ6iuGrx5jt
+         YZ97NGV++jjMY6wSPBEqkOx5bb8Hd/GxYi5PEKewylMB6itsZhrt+iYD/00pkrok3UaO
+         wHuPo3migHuCeNEes25vBV5BFLhDNFMInqDifkJ45XbFvgEV7sEZ9JTNuv6niIBQ1V8+
+         Lz3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713800034; x=1714404834;
+        d=1e100.net; s=20230601; t=1713800075; x=1714404875;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6I/SOw0pUiSSjpPPaHWiOVLaLSAV+6ewHL/rVDMpowo=;
-        b=R1t77I/IrHmI53r4CTFLALCIYG2Rk5IxvpDrwbC5uDv9H2ea8xSTDDpDjHH0KDL/ca
-         cViqhDRJikPpts/0Ots038FGzNRmv7zzUV93Rz5tqJYoBYYyOvTFnfo+w/Y8to7RizuY
-         SI1i9lAPlqo81l16AmOkjHM60LpI/0J8FdHwBDlXD/dA3nksXaRCQfXctaos/uDZjmVM
-         C8Ywv8m3XZVbYSK2Z3u0fVR4Z5x8L7fG5UD962/jEona2/99m2/YdsSk3P41lljNhqyH
-         P06XwYPtXeSRTKeqdLPLu2sDY12SNzB/zkXWQSBFJM2ce+S9+ryAMZy1PKhWXe1eKzx8
-         J9Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUndm1+kInrGOv7VtjF6xwVUxUmB/vPT55mWWNzvI9WjTrsFtJO5qgeXn83mMsZe4spQYGA2SjLHVgj2KtcRTTcLZ73VApdBRUMEdiTkqmx7w==
-X-Gm-Message-State: AOJu0Ywxm9yZwiZtktLOh4Nn0GuNE7iR1GcOWvdFvlbn1w/hvNs+ZYJm
-	j3FML+qgGKdg/Sk0nxPa2O2AD4CFEIEb83FVaO7MhmVgC1KrJ/WNfcIgMlgVIYI=
-X-Google-Smtp-Source: AGHT+IESRvln7rh8eB+yJt/tbRZN/zTg5uJsuuGTINVfKnsg5lO1od5Ktq5lpKD+C397LmEzhzAj4A==
-X-Received: by 2002:a17:902:c405:b0:1e4:6e70:25d8 with SMTP id k5-20020a170902c40500b001e46e7025d8mr12302945plk.13.1713800034239;
-        Mon, 22 Apr 2024 08:33:54 -0700 (PDT)
+        bh=337wBwclmpc6tEt1+i4HX8mw2rCsniBI2t8I+UU3Arc=;
+        b=qNxoHNS40Fk4Kjf94JUJuAuOiUd/l1hLpOnGPnV14jsMOZhDI9JzV9pJoZXz+6WEih
+         K39/F21FD5Pr1zZmJ0LwJ8O7+BLmj6kz7V2957DU0WloW1TQgy3MBmrcrdIrp+UNColY
+         RfjKwBFIxIBORXTbTlGu5BHuy7aUoqsorIm4zxtkNJoG+VdNmtuVSNuAH1F9rA/NMP6R
+         D6PWI6h9lrBWfekbrMiRwXUkOhHKnN5R+Ue+5qLI2jVWH4fkOcXw4E4jK0oILeNO6y0i
+         SFuisrvIycK7xSZFDOjtCth63lw04rirGjGKyJZOoANwXRs2A9WypxXBqejrpcTlNLif
+         skqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcFTnUYdvkTBUmTQefyFOhaWqOhfWK2BmxkHhlmb3HeaMrfAfWd0BUeKNWnSj9ToM9PMTYIkpw0L2OtkzYDBD7exK0OXwkkZ4YtvHSdrRLOg==
+X-Gm-Message-State: AOJu0YzEqZOXTYHHYzk5W8r6bzqoxZYnfcdta5WtSJ6oWq7M5JmB+Py8
+	ABeTV+pEiTntv91fX9vg09S9TxXhZsF7pQJ8iDeqogXu3Loz0pUf54wRT/iNLNs=
+X-Google-Smtp-Source: AGHT+IHe1PTjpEIZG7kkFQ9aDxKVX/PgGZxcewaa3UBNjLsLZf2wJj5hQf8t0zLc6uCo7e7GYLuCKA==
+X-Received: by 2002:a17:902:b18e:b0:1e9:668d:a446 with SMTP id s14-20020a170902b18e00b001e9668da446mr5566962plr.20.1713800074608;
+        Mon, 22 Apr 2024 08:34:34 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:b2a0:f51d:b8f7:33f5])
-        by smtp.gmail.com with ESMTPSA id kf12-20020a17090305cc00b001e43a00ee07sm8269533plb.211.2024.04.22.08.33.51
+        by smtp.gmail.com with ESMTPSA id w3-20020a170902e88300b001e2bbe87912sm8273478plg.11.2024.04.22.08.34.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 08:33:53 -0700 (PDT)
-Date: Mon, 22 Apr 2024 09:33:50 -0600
+        Mon, 22 Apr 2024 08:34:34 -0700 (PDT)
+Date: Mon, 22 Apr 2024 09:34:31 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Olivia Wen <olivia.wen@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tinghan Shen <tinghan.shen@mediatek.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
-	teddy.chen@mediatek.com
-Subject: Re: [PATCH v2 2/2] remoteproc: mediatek: Support MT8188 SCP core 1
-Message-ID: <ZiaDXnFrjEcCxu7Y@p14s>
-References: <20240419084211.31901-1-olivia.wen@mediatek.com>
- <20240419084211.31901-3-olivia.wen@mediatek.com>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: remoteproc: xlnx: Add Versal and Versal-NET
+ support
+Message-ID: <ZiaDh7kRnK+qkaZn@p14s>
+References: <20240418220125.744322-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -78,565 +68,126 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240419084211.31901-3-olivia.wen@mediatek.com>
+In-Reply-To: <20240418220125.744322-1-tanmay.shah@amd.com>
 
-Hi Olivia,
+On Thu, Apr 18, 2024 at 03:01:25PM -0700, Tanmay Shah wrote:
+> AMD-Xilinx Versal platform is successor of ZynqMP platform.
+> Real-time Processing Unit R5 cluster IP on Versal is same as
+> of ZynqMP Platform. Power-domains ids for Versal platform is
+> different than ZynqMP.
+> 
+> AMD-Xilinx Versal-NET platform is successor of Versal platform.
+> Versal-NET Real-Time Processing Unit has two clusters and each
+> cluster contains dual core ARM Cortex-R52 processors. Each R52
+> core is assigned 128KB of TCM memory.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 53 ++++++++-----------------
+>  1 file changed, 17 insertions(+), 36 deletions(-)
+>
 
-On Fri, Apr 19, 2024 at 04:42:11PM +0800, Olivia Wen wrote:
-> From: "olivia.wen" <olivia.wen@mediatek.com>
-> 
-> There are three primary modifications.
-> 
-> 1. The struct mtk_scp_of_data usage on MT8188
-> MT8192 functions are unsuitable for the dual-core MT8188 SCP,
-> which has two RISC-V cores similar to MT8195 but without L1TCM.
-> We've added MT8188-specific functions to configure L1TCM
-> in multicore setups.
-> 
-> 2. SCP_IPI_IMGSYS_CMD feature
-> This version also adds SCP_IPI_IMGSYS_CMD to facilitate
-> communication between the imgsys kernel and the backend driver.
-> 
-> 3. Different code sizes and IPI share buffer sizes
-> Each SCP necessitates different code and IPI share buffer sizes.
-> Introducing a structure mtk_scp_sizes_data to handle them.
-> 
-
-Please split in 3 different patches and in the changelog, concentrate on "why"
-you are making the changes rather than "what" changes are done.
+Applied.
 
 Thanks,
 Mathieu
 
-> Signed-off-by: olivia.wen <olivia.wen@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_common.h    |  11 +-
->  drivers/remoteproc/mtk_scp.c       | 230 +++++++++++++++++++++++++++++++++----
->  drivers/remoteproc/mtk_scp_ipi.c   |   7 +-
->  include/linux/remoteproc/mtk_scp.h |   1 +
->  4 files changed, 223 insertions(+), 26 deletions(-)
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 7b1c12108bff..a6d8ac7394e7 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -300,36 +300,6 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+>  		dev_warn(dev, "failed to send message\n");
+>  }
+>  
+> -/*
+> - * zynqmp_r5_set_mode()
+> - *
+> - * set RPU cluster and TCM operation mode
+> - *
+> - * @r5_core: pointer to zynqmp_r5_core type object
+> - * @fw_reg_val: value expected by firmware to configure RPU cluster mode
+> - * @tcm_mode: value expected by fw to configure TCM mode (lockstep or split)
+> - *
+> - * Return: 0 for success and < 0 for failure
+> - */
+> -static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
+> -			      enum rpu_oper_mode fw_reg_val,
+> -			      enum rpu_tcm_comb tcm_mode)
+> -{
+> -	int ret;
+> -
+> -	ret = zynqmp_pm_set_rpu_mode(r5_core->pm_domain_id, fw_reg_val);
+> -	if (ret < 0) {
+> -		dev_err(r5_core->dev, "failed to set RPU mode\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id, tcm_mode);
+> -	if (ret < 0)
+> -		dev_err(r5_core->dev, "failed to configure TCM\n");
+> -
+> -	return ret;
+> -}
+> -
+>  /*
+>   * zynqmp_r5_rproc_start()
+>   * @rproc: single R5 core's corresponding rproc instance
+> @@ -941,7 +911,7 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+>  	/* Maintain backward compatibility for zynqmp by using hardcode TCM address. */
+>  	if (of_find_property(r5_core->np, "reg", NULL))
+>  		ret = zynqmp_r5_get_tcm_node_from_dt(cluster);
+> -	else
+> +	else if (device_is_compatible(dev, "xlnx,zynqmp-r5fss"))
+>  		ret = zynqmp_r5_get_tcm_node(cluster);
+>  
+>  	if (ret) {
+> @@ -960,12 +930,21 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+>  			return ret;
+>  		}
+>  
+> -		ret = zynqmp_r5_set_mode(r5_core, fw_reg_val, tcm_mode);
+> -		if (ret) {
+> -			dev_err(dev, "failed to set r5 cluster mode %d, err %d\n",
+> -				cluster->mode, ret);
+> +		ret = zynqmp_pm_set_rpu_mode(r5_core->pm_domain_id, fw_reg_val);
+> +		if (ret < 0) {
+> +			dev_err(r5_core->dev, "failed to set RPU mode\n");
+>  			return ret;
+>  		}
+> +
+> +		if (of_find_property(dev_of_node(dev), "xlnx,tcm-mode", NULL) ||
+> +		    device_is_compatible(dev, "xlnx,zynqmp-r5fss")) {
+> +			ret = zynqmp_pm_set_tcm_config(r5_core->pm_domain_id,
+> +						       tcm_mode);
+> +			if (ret < 0) {
+> +				dev_err(r5_core->dev, "failed to configure TCM\n");
+> +				return ret;
+> +			}
+> +		}
+>  	}
+>  
+>  	return 0;
+> @@ -1022,7 +1001,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+>  		ret = of_property_read_u32(dev_node, "xlnx,tcm-mode", (u32 *)&tcm_mode);
+>  		if (ret)
+>  			return ret;
+> -	} else {
+> +	} else if (device_is_compatible(dev, "xlnx,zynqmp-r5fss")) {
+>  		if (cluster_mode == LOCKSTEP_MODE)
+>  			tcm_mode = PM_RPU_TCM_COMB;
+>  		else
+> @@ -1212,6 +1191,8 @@ static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
+>  
+>  /* Match table for OF platform binding */
+>  static const struct of_device_id zynqmp_r5_remoteproc_match[] = {
+> +	{ .compatible = "xlnx,versal-net-r52fss", },
+> +	{ .compatible = "xlnx,versal-r5fss", },
+>  	{ .compatible = "xlnx,zynqmp-r5fss", },
+>  	{ /* end of list */ },
+>  };
 > 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 6d7736a..fd5c539 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -78,7 +78,6 @@
->  #define MT8195_L2TCM_OFFSET			0x850d0
->  
->  #define SCP_FW_VER_LEN			32
-> -#define SCP_SHARE_BUFFER_SIZE		288
->  
->  struct scp_run {
->  	u32 signaled;
-> @@ -97,6 +96,11 @@ struct scp_ipi_desc {
->  
->  struct mtk_scp;
->  
-> +struct mtk_scp_sizes_data {
-> +	size_t max_dram_size;
-> +	size_t ipi_share_buffer_size;
-> +};
-> +
->  struct mtk_scp_of_data {
->  	int (*scp_clk_get)(struct mtk_scp *scp);
->  	int (*scp_before_load)(struct mtk_scp *scp);
-> @@ -110,6 +114,7 @@ struct mtk_scp_of_data {
->  	u32 host_to_scp_int_bit;
->  
->  	size_t ipi_buf_offset;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  };
->  
->  struct mtk_scp_of_cluster {
-> @@ -141,10 +146,10 @@ struct mtk_scp {
->  	struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
->  	bool ipi_id_ack[SCP_IPI_MAX];
->  	wait_queue_head_t ack_wq;
-> +	u8 *share_buf;
->  
->  	void *cpu_addr;
->  	dma_addr_t dma_addr;
-> -	size_t dram_size;
->  
->  	struct rproc_subdev *rpmsg_subdev;
->  
-> @@ -162,7 +167,7 @@ struct mtk_scp {
->  struct mtk_share_obj {
->  	u32 id;
->  	u32 len;
-> -	u8 share_buf[SCP_SHARE_BUFFER_SIZE];
-> +	u8 *share_buf;
->  };
->  
->  void scp_memcpy_aligned(void __iomem *dst, const void *src, unsigned int len);
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 6751829..e281d28 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -20,7 +20,6 @@
->  #include "mtk_common.h"
->  #include "remoteproc_internal.h"
->  
-> -#define MAX_CODE_SIZE 0x500000
->  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
->  
->  /**
-> @@ -94,14 +93,15 @@ static void scp_ipi_handler(struct mtk_scp *scp)
->  {
->  	struct mtk_share_obj __iomem *rcv_obj = scp->recv_buf;
->  	struct scp_ipi_desc *ipi_desc = scp->ipi_desc;
-> -	u8 tmp_data[SCP_SHARE_BUFFER_SIZE];
->  	scp_ipi_handler_t handler;
->  	u32 id = readl(&rcv_obj->id);
->  	u32 len = readl(&rcv_obj->len);
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
-> -	if (len > SCP_SHARE_BUFFER_SIZE) {
-> -		dev_err(scp->dev, "ipi message too long (len %d, max %d)", len,
-> -			SCP_SHARE_BUFFER_SIZE);
-> +	scp_sizes = scp->data->scp_sizes;
-> +	if (len > scp_sizes->ipi_share_buffer_size) {
-> +		dev_err(scp->dev, "ipi message too long (len %d, max %zd)", len,
-> +			scp_sizes->ipi_share_buffer_size);
->  		return;
->  	}
->  	if (id >= SCP_IPI_MAX) {
-> @@ -117,8 +117,9 @@ static void scp_ipi_handler(struct mtk_scp *scp)
->  		return;
->  	}
->  
-> -	memcpy_fromio(tmp_data, &rcv_obj->share_buf, len);
-> -	handler(tmp_data, len, ipi_desc[id].priv);
-> +	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
-> +	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
-> +	handler(scp->share_buf, len, ipi_desc[id].priv);
->  	scp_ipi_unlock(scp, id);
->  
->  	scp->ipi_id_ack[id] = true;
-> @@ -133,6 +134,8 @@ static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
->  {
->  	int ret;
->  	size_t buf_sz, offset;
-> +	size_t share_buf_offset;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
->  	/* read the ipi buf addr from FW itself first */
->  	ret = scp_elf_read_ipi_buf_addr(scp, fw, &offset);
-> @@ -152,12 +155,15 @@ static int scp_ipi_init(struct mtk_scp *scp, const struct firmware *fw)
->  		return -EOVERFLOW;
->  	}
->  
-> +	scp_sizes = scp->data->scp_sizes;
->  	scp->recv_buf = (struct mtk_share_obj __iomem *)
->  			(scp->sram_base + offset);
-> +	share_buf_offset = sizeof(scp->recv_buf->id)
-> +		+ sizeof(scp->recv_buf->len) + scp_sizes->ipi_share_buffer_size;
->  	scp->send_buf = (struct mtk_share_obj __iomem *)
-> -			(scp->sram_base + offset + sizeof(*scp->recv_buf));
-> -	memset_io(scp->recv_buf, 0, sizeof(*scp->recv_buf));
-> -	memset_io(scp->send_buf, 0, sizeof(*scp->send_buf));
-> +			(scp->sram_base + offset + share_buf_offset);
-> +	memset_io(scp->recv_buf, 0, share_buf_offset);
-> +	memset_io(scp->send_buf, 0, share_buf_offset);
->  
->  	return 0;
->  }
-> @@ -471,6 +477,86 @@ static int mt8186_scp_before_load(struct mtk_scp *scp)
->  	return 0;
->  }
->  
-> +static int mt8188_scp_l2tcm_on(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-> +
-> +	mutex_lock(&scp_cluster->cluster_lock);
-> +
-> +	if (scp_cluster->l2tcm_refcnt == 0) {
-> +		/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-> +		writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-> +
-> +		/* Power on L2TCM */
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-> +	}
-> +
-> +	scp_cluster->l2tcm_refcnt += 1;
-> +
-> +	mutex_unlock(&scp_cluster->cluster_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt8188_scp_before_load(struct mtk_scp *scp)
-> +{
-> +	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
-> +
-> +	mt8188_scp_l2tcm_on(scp);
-> +
-> +	scp_sram_power_on(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
-> +
-> +	/* enable MPU for all memory regions */
-> +	writel(0xff, scp->cluster->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt8188_scp_c1_before_load(struct mtk_scp *scp)
-> +{
-> +	u32 sec_ctrl;
-> +	struct mtk_scp *scp_c0;
-> +	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-> +
-> +	scp->data->scp_reset_assert(scp);
-> +
-> +	mt8188_scp_l2tcm_on(scp);
-> +
-> +	scp_sram_power_on(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
-> +
-> +	/* enable MPU for all memory regions */
-> +	writel(0xff, scp->cluster->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
-> +
-> +	/*
-> +	 * The L2TCM_OFFSET_RANGE and L2TCM_OFFSET shift the destination address
-> +	 * on SRAM when SCP core 1 accesses SRAM.
-> +	 *
-> +	 * This configuration solves booting the SCP core 0 and core 1 from
-> +	 * different SRAM address because core 0 and core 1 both boot from
-> +	 * the head of SRAM by default. this must be configured before boot SCP core 1.
-> +	 *
-> +	 * The value of L2TCM_OFFSET_RANGE is from the viewpoint of SCP core 1.
-> +	 * When SCP core 1 issues address within the range (L2TCM_OFFSET_RANGE),
-> +	 * the address will be added with a fixed offset (L2TCM_OFFSET) on the bus.
-> +	 * The shift action is tranparent to software.
-> +	 */
-> +	writel(0, scp->cluster->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_LOW);
-> +	writel(scp->sram_size, scp->cluster->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_HIGH);
-> +
-> +	scp_c0 = list_first_entry(&scp_cluster->mtk_scp_list, struct mtk_scp, elem);
-> +	writel(scp->sram_phys - scp_c0->sram_phys, scp->cluster->reg_base + MT8195_L2TCM_OFFSET);
-> +
-> +	/* enable SRAM offset when fetching instruction and data */
-> +	sec_ctrl = readl(scp->cluster->reg_base + MT8195_SEC_CTRL);
-> +	sec_ctrl |= MT8195_CORE_OFFSET_ENABLE_I | MT8195_CORE_OFFSET_ENABLE_D;
-> +	writel(sec_ctrl, scp->cluster->reg_base + MT8195_SEC_CTRL);
-> +
-> +	return 0;
-> +}
-> +
->  static int mt8192_scp_before_load(struct mtk_scp *scp)
->  {
->  	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-> @@ -661,14 +747,16 @@ static int scp_start(struct rproc *rproc)
->  static void *mt8183_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
->  {
->  	int offset;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
-> +	scp_sizes = scp->data->scp_sizes;
->  	if (da < scp->sram_size) {
->  		offset = da;
->  		if (offset >= 0 && (offset + len) <= scp->sram_size)
->  			return (void __force *)scp->sram_base + offset;
-> -	} else if (scp->dram_size) {
-> +	} else if (scp_sizes->max_dram_size) {
->  		offset = da - scp->dma_addr;
-> -		if (offset >= 0 && (offset + len) <= scp->dram_size)
-> +		if (offset >= 0 && (offset + len) <= scp_sizes->max_dram_size)
->  			return scp->cpu_addr + offset;
->  	}
->  
-> @@ -678,7 +766,9 @@ static void *mt8183_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
->  static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
->  {
->  	int offset;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
-> +	scp_sizes = scp->data->scp_sizes;
->  	if (da >= scp->sram_phys &&
->  	    (da + len) <= scp->sram_phys + scp->sram_size) {
->  		offset = da - scp->sram_phys;
-> @@ -694,9 +784,9 @@ static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
->  	}
->  
->  	/* optional memory region */
-> -	if (scp->dram_size &&
-> +	if (scp_sizes->max_dram_size &&
->  	    da >= scp->dma_addr &&
-> -	    (da + len) <= scp->dma_addr + scp->dram_size) {
-> +	    (da + len) <= scp->dma_addr + scp_sizes->max_dram_size) {
->  		offset = da - scp->dma_addr;
->  		return scp->cpu_addr + offset;
->  	}
-> @@ -717,6 +807,47 @@ static void mt8183_scp_stop(struct mtk_scp *scp)
->  	writel(0, scp->cluster->reg_base + MT8183_WDT_CFG);
->  }
->  
-> +static void mt8188_scp_l2tcm_off(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-> +
-> +	mutex_lock(&scp_cluster->cluster_lock);
-> +
-> +	if (scp_cluster->l2tcm_refcnt > 0)
-> +		scp_cluster->l2tcm_refcnt -= 1;
-> +
-> +	if (scp_cluster->l2tcm_refcnt == 0) {
-> +		/* Power off L2TCM */
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-> +	}
-> +
-> +	mutex_unlock(&scp_cluster->cluster_lock);
-> +}
-> +
-> +static void mt8188_scp_stop(struct mtk_scp *scp)
-> +{
-> +	mt8188_scp_l2tcm_off(scp);
-> +
-> +	scp_sram_power_off(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
-> +
-> +	/* Disable SCP watchdog */
-> +	writel(0, scp->cluster->reg_base + MT8192_CORE0_WDT_CFG);
-> +}
-> +
-> +static void mt8188_scp_c1_stop(struct mtk_scp *scp)
-> +{
-> +	mt8188_scp_l2tcm_off(scp);
-> +
-> +	/* Power off CPU SRAM */
-> +	scp_sram_power_off(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
-> +
-> +	/* Disable SCP watchdog */
-> +	writel(0, scp->cluster->reg_base + MT8195_CORE1_WDT_CFG);
-> +}
-> +
->  static void mt8192_scp_stop(struct mtk_scp *scp)
->  {
->  	/* Disable SRAM clock */
-> @@ -876,6 +1007,7 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
->  static int scp_map_memory_region(struct mtk_scp *scp)
->  {
->  	int ret;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
->  	ret = of_reserved_mem_device_init(scp->dev);
->  
-> @@ -891,8 +1023,8 @@ static int scp_map_memory_region(struct mtk_scp *scp)
->  	}
->  
->  	/* Reserved SCP code size */
-> -	scp->dram_size = MAX_CODE_SIZE;
-> -	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp->dram_size,
-> +	scp_sizes = scp->data->scp_sizes;
-> +	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
->  					   &scp->dma_addr, GFP_KERNEL);
->  	if (!scp->cpu_addr)
->  		return -ENOMEM;
-> @@ -902,10 +1034,13 @@ static int scp_map_memory_region(struct mtk_scp *scp)
->  
->  static void scp_unmap_memory_region(struct mtk_scp *scp)
->  {
-> -	if (scp->dram_size == 0)
-> +	const struct mtk_scp_sizes_data *scp_sizes;
-> +
-> +	scp_sizes = scp->data->scp_sizes;
-> +	if (scp_sizes->max_dram_size == 0)
->  		return;
->  
-> -	dma_free_coherent(scp->dev, scp->dram_size, scp->cpu_addr,
-> +	dma_free_coherent(scp->dev, scp_sizes->max_dram_size, scp->cpu_addr,
->  			  scp->dma_addr);
->  	of_reserved_mem_device_release(scp->dev);
->  }
-> @@ -969,6 +1104,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  	struct resource *res;
->  	const char *fw_name = "scp.img";
->  	int ret, i;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
->  
->  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
->  	if (ret < 0 && ret != -EINVAL)
-> @@ -1016,6 +1152,13 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  		goto release_dev_mem;
->  	}
->  
-> +	scp_sizes = scp->data->scp_sizes;
-> +	scp->share_buf = kzalloc(scp_sizes->ipi_share_buffer_size, GFP_KERNEL);
-> +	if (!scp->share_buf) {
-> +		dev_err(dev, "Failed to allocate IPI share buffer\n");
-> +		goto release_dev_mem;
-> +	}
-> +
->  	init_waitqueue_head(&scp->run.wq);
->  	init_waitqueue_head(&scp->ack_wq);
->  
-> @@ -1035,6 +1178,8 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  remove_subdev:
->  	scp_remove_rpmsg_subdev(scp);
->  	scp_ipi_unregister(scp, SCP_IPI_INIT);
-> +	kfree(scp->share_buf);
-> +	scp->share_buf = NULL;
->  release_dev_mem:
->  	scp_unmap_memory_region(scp);
->  	for (i = 0; i < SCP_IPI_MAX; i++)
-> @@ -1050,6 +1195,8 @@ static void scp_free(struct mtk_scp *scp)
->  
->  	scp_remove_rpmsg_subdev(scp);
->  	scp_ipi_unregister(scp, SCP_IPI_INIT);
-> +	kfree(scp->share_buf);
-> +	scp->share_buf = NULL;
->  	scp_unmap_memory_region(scp);
->  	for (i = 0; i < SCP_IPI_MAX; i++)
->  		mutex_destroy(&scp->ipi_desc[i].lock);
-> @@ -1236,6 +1383,21 @@ static void scp_remove(struct platform_device *pdev)
->  	mutex_destroy(&scp_cluster->cluster_lock);
->  }
->  
-> +static const struct mtk_scp_sizes_data default_scp_sizes = {
-> +	.max_dram_size = 0x500000,
-> +	.ipi_share_buffer_size = 288,
-> +};
-> +
-> +static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
-> +	.max_dram_size = 0x500000,
-> +	.ipi_share_buffer_size = 600,
-> +};
-> +
-> +static const struct mtk_scp_sizes_data mt8188_scp_c1_sizes = {
-> +	.max_dram_size = 0xA00000,
-> +	.ipi_share_buffer_size = 600,
-> +};
-> +
->  static const struct mtk_scp_of_data mt8183_of_data = {
->  	.scp_clk_get = mt8183_scp_clk_get,
->  	.scp_before_load = mt8183_scp_before_load,
-> @@ -1247,6 +1409,7 @@ static const struct mtk_scp_of_data mt8183_of_data = {
->  	.host_to_scp_reg = MT8183_HOST_TO_SCP,
->  	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
->  	.ipi_buf_offset = 0x7bdb0,
-> +	.scp_sizes = &default_scp_sizes,
->  };
->  
->  static const struct mtk_scp_of_data mt8186_of_data = {
-> @@ -1260,18 +1423,33 @@ static const struct mtk_scp_of_data mt8186_of_data = {
->  	.host_to_scp_reg = MT8183_HOST_TO_SCP,
->  	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
->  	.ipi_buf_offset = 0x3bdb0,
-> +	.scp_sizes = &default_scp_sizes,
->  };
->  
->  static const struct mtk_scp_of_data mt8188_of_data = {
->  	.scp_clk_get = mt8195_scp_clk_get,
-> -	.scp_before_load = mt8192_scp_before_load,
-> -	.scp_irq_handler = mt8192_scp_irq_handler,
-> +	.scp_before_load = mt8188_scp_before_load,
-> +	.scp_irq_handler = mt8195_scp_irq_handler,
->  	.scp_reset_assert = mt8192_scp_reset_assert,
->  	.scp_reset_deassert = mt8192_scp_reset_deassert,
-> -	.scp_stop = mt8192_scp_stop,
-> +	.scp_stop = mt8188_scp_stop,
->  	.scp_da_to_va = mt8192_scp_da_to_va,
->  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
->  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
-> +	.scp_sizes = &mt8188_scp_sizes,
-> +};
-> +
-> +static const struct mtk_scp_of_data mt8188_of_data_c1 = {
-> +	.scp_clk_get = mt8195_scp_clk_get,
-> +	.scp_before_load = mt8188_scp_c1_before_load,
-> +	.scp_irq_handler = mt8195_scp_c1_irq_handler,
-> +	.scp_reset_assert = mt8195_scp_c1_reset_assert,
-> +	.scp_reset_deassert = mt8195_scp_c1_reset_deassert,
-> +	.scp_stop = mt8188_scp_c1_stop,
-> +	.scp_da_to_va = mt8192_scp_da_to_va,
-> +	.host_to_scp_reg = MT8192_GIPC_IN_SET,
-> +	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
-> +	.scp_sizes = &mt8188_scp_c1_sizes,
->  };
->  
->  static const struct mtk_scp_of_data mt8192_of_data = {
-> @@ -1284,6 +1462,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
->  	.scp_da_to_va = mt8192_scp_da_to_va,
->  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
->  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
-> +	.scp_sizes = &default_scp_sizes,
->  };
->  
->  static const struct mtk_scp_of_data mt8195_of_data = {
-> @@ -1296,6 +1475,7 @@ static const struct mtk_scp_of_data mt8195_of_data = {
->  	.scp_da_to_va = mt8192_scp_da_to_va,
->  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
->  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
-> +	.scp_sizes = &default_scp_sizes,
->  };
->  
->  static const struct mtk_scp_of_data mt8195_of_data_c1 = {
-> @@ -1308,6 +1488,13 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
->  	.scp_da_to_va = mt8192_scp_da_to_va,
->  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
->  	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
-> +	.scp_sizes = &default_scp_sizes,
-> +};
-> +
-> +static const struct mtk_scp_of_data *mt8188_of_data_cores[] = {
-> +	&mt8188_of_data,
-> +	&mt8188_of_data_c1,
-> +	NULL
->  };
->  
->  static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
-> @@ -1320,6 +1507,7 @@ static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
->  	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
->  	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
-> +	{ .compatible = "mediatek,mt8188-scp-dual", .data = &mt8188_of_data_cores },
->  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
->  	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
->  	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
-> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-> index cd0b601..c068227 100644
-> --- a/drivers/remoteproc/mtk_scp_ipi.c
-> +++ b/drivers/remoteproc/mtk_scp_ipi.c
-> @@ -162,10 +162,13 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
->  	struct mtk_share_obj __iomem *send_obj = scp->send_buf;
->  	u32 val;
->  	int ret;
-> +	const struct mtk_scp_sizes_data *scp_sizes;
-> +
-> +	scp_sizes = scp->data->scp_sizes;
->  
->  	if (WARN_ON(id <= SCP_IPI_INIT) || WARN_ON(id >= SCP_IPI_MAX) ||
->  	    WARN_ON(id == SCP_IPI_NS_SERVICE) ||
-> -	    WARN_ON(len > sizeof(send_obj->share_buf)) || WARN_ON(!buf))
-> +	    WARN_ON(len > scp_sizes->ipi_share_buffer_size) || WARN_ON(!buf))
->  		return -EINVAL;
->  
->  	ret = clk_prepare_enable(scp->clk);
-> @@ -184,7 +187,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
->  		goto unlock_mutex;
->  	}
->  
-> -	scp_memcpy_aligned(send_obj->share_buf, buf, len);
-> +	scp_memcpy_aligned(&send_obj->share_buf, buf, len);
->  
->  	writel(len, &send_obj->len);
->  	writel(id, &send_obj->id);
-> diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
-> index 7c2b7cc9..344ff41 100644
-> --- a/include/linux/remoteproc/mtk_scp.h
-> +++ b/include/linux/remoteproc/mtk_scp.h
-> @@ -43,6 +43,7 @@ enum scp_ipi_id {
->  	SCP_IPI_CROS_HOST_CMD,
->  	SCP_IPI_VDEC_LAT,
->  	SCP_IPI_VDEC_CORE,
-> +	SCP_IPI_IMGSYS_CMD,
->  	SCP_IPI_NS_SERVICE = 0xFF,
->  	SCP_IPI_MAX = 0x100,
->  };
+> base-commit: 912ebe48bec5927e2049e91b0e8a9cc682a709d2
 > -- 
-> 2.6.4
+> 2.25.1
 > 
