@@ -1,131 +1,231 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DAA16C450;
-	Wed, 24 Apr 2024 16:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABDB1FDD;
+	Wed, 24 Apr 2024 19:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713977739; cv=none; b=TlT/f3bI+RLgST/CBW25SUnWzZAO+5n2zhV4yVbe+urcZiJpsOx1VFxzVYUAURg+EKRdCuPjqtogAnajt6yjSlceQbDHXpZW3KaCmsGzQFkgbwB7fGDc9E9TMiHKzm68J0LgowBqB6cMVKYkN1pahUZhEfgB07xsEgz+3oL/3Qg=
+	t=1713985595; cv=none; b=sqbORk1vmyBYRCF2r7/pVmQX2RSsxnQZyduOQ77k/Kq04a1ivKh4j+rYRdYmW6fZyqPn7cw4tbdRaf/jheNADfnj3B/1Qfs/KY2Ozx03bjSdAa+f9Ei+Etf9uIMs3K1ocYPkhVrMxl0NqYHLl4ck2bt0JxRoMd6HK0Y65jqucks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713977739; c=relaxed/simple;
-	bh=ismdr1NH89EyqlRlfJMRiCPmKdo+TMgxDhu4SNwwFKM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izHC4Cq7Tka0vxVSy0aVB3jM3+lVC5+/wDPw+O36JRzScB45yX3SPI3PhPtp32RVYTHJF05IMnu6UI6xJBdFTu0V6CLjEOUW8KSoI/xU9sn1ZqlrtZlc9cPPnVyY+76WmKYt8CqM7bpPCpmXAM7J8zkyscR7SEe8W+OlpjZisuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mMZVtqoB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1713985595; c=relaxed/simple;
+	bh=SWi698zF+BZdijoz1De2x7itihQIogUwFgQiH4l+iFo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d2oKiP0X3I24O/CRmAhcjT2BbzrcgFJQ06L5oMrZRhkTNLR9sAeLACE8DjRE/kZZwYnnNZ0v+oFXIw9ahwTB+vvRE6aCjV4xXTj4nHkuZN6Z8EWozwfMSP+QHVZF1q+uI3UdHTlCeBlvM/bdNA4O+IVtvbJmDSSz7yansM7DsM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZbbfHqQk; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mMZVtqoB"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43OGrFNG018626;
-	Wed, 24 Apr 2024 16:55:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=S3QwG/gp7sGhYK+iMw8kH
-	vsDhub3gIJuqyRymC6Hyns=; b=mMZVtqoBq1oaB0lOfFqvvBc0fcWm9kvADGZWT
-	tGp19sacBYS0+2Vwq40/MdKK/pWfK93DUxOcEksATBJ/oEoJEDFk9e32d/ysQNMD
-	3eDHG51iVFZH7/ULg2RDWglFU5xGToV7rvN9WSn+4bnvYSvSbwpq6bpwrphe1ebE
-	kXaZMdIwL0/OZXI1fAu+7AukFa+xHvqwvQkSOd89W1pz3Dyi2ahDnKK4QB9d9qSm
-	QecIkmOYNyxx1AWcf7xm/jsoy8lTW+hjiNCUd722QKX2ak55hUdQFvGg1xbN6vMz
-	bjXq0VXGyW5zeH8iM6IG0aIdd6nKhhwDx4/F/7IF4lzyN/VGg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xpv9g9hqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Apr 2024 16:55:32 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43OGtVgX031427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Apr 2024 16:55:31 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 24 Apr 2024 09:55:31 -0700
-Date: Wed, 24 Apr 2024 09:55:30 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Luca Weiss <luca@z3ntu.xyz>
-CC: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZbbfHqQk"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43OJ6E5G051404;
+	Wed, 24 Apr 2024 14:06:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1713985574;
+	bh=zWDlDlmucuUnfBdvu41xX0KB/r0eFHTBC5jIEonL9Oc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ZbbfHqQkM9kxkSC4iLrb8y80JrSxBrND6TEcvirqEtT55wsJ/ZKBletOJj1dc8S/5
+	 +ZAVr/ZO2oKbmIkpdoJLcxw1AZAjhCUmKlTBcMlcFoNoifI027+I+oXue5ek6sYcP3
+	 tSCf4q0tV6qQFVR1YkYR1N1UIviybSJgCBGP/Yak=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43OJ6Eke106507
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 24 Apr 2024 14:06:14 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 24
+ Apr 2024 14:06:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 24 Apr 2024 14:06:13 -0500
+Received: from ula0226330.dhcp.ti.com (ula0226330.dhcp.ti.com [10.219.51.241])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43OJ6DqO067070;
+	Wed, 24 Apr 2024 14:06:13 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
 	<mathieu.poirier@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 0/7] Use mboxes instead of syscon for APCS (arm32 & arm64)
-Message-ID: <Zik5gmTixGpk13qj@hu-bjorande-lv.qualcomm.com>
-References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth
+ Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hari Nagalla
+	<hnagalla@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v8 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+Date: Wed, 24 Apr 2024 14:06:09 -0500
+Message-ID: <20240424190612.17349-2-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240424190612.17349-1-afd@ti.com>
+References: <20240424190612.17349-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hQv8mAhEPOsbXGPMhm9SQ19NB9rfqNBn
-X-Proofpoint-GUID: hQv8mAhEPOsbXGPMhm9SQ19NB9rfqNBn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-24_14,2024-04-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=922 malwarescore=0 adultscore=0
- mlxscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
- definitions=main-2404240072
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Apr 24, 2024 at 06:23:53PM +0200, Luca Weiss wrote:
-> The first patch is for removing a bogus error warning I've noticed while
-> developing this on msm8226 - there the patches are also coming later for
-> this SoC since apcs is getting hooked up to cpufreq there also.
-> 
-> Apart from usages from the qcom,smsm driver (patches coming!) all other
-> usages of the apcs mailbox now go via the mailbox driver - where one is
-> used, so some arm32 boards will continue using "qcom,ipc*" properties in
-> the short or long term.
-> 
+From: Hari Nagalla <hnagalla@ti.com>
 
-Very nice, thank you for cleaning this up.
+K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+The remote processor's life cycle management and IPC mechanisms are
+similar across the R5F and M4F cores from remote processor driver
+point of view. However, there are subtle differences in image loading
+and starting the M4F subsystems.
 
-Regards,
-Bjorn
+The YAML binding document provides the various node properties to be
+configured by the consumers of the M4F subsystem.
 
-> Only compile-tested apart from msm8953 (tested on sdm632-fairphone-fp3)
-> and msm8974 (tested on msm8974pro-fairphone-fp2), but I don't expect any
-> complications with this.
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
-> Luca Weiss (7):
->       rpmsg: qcom_smd: Don't print error during probe deferral
->       ARM: dts: qcom: msm8974: Use mboxes properties for APCS
->       arm64: dts: qcom: msm8916: Use mboxes properties for APCS
->       arm64: dts: qcom: msm8939: Use mboxes properties for APCS
->       arm64: dts: qcom: msm8953: Use mboxes properties for APCS
->       arm64: dts: qcom: msm8976: Use mboxes properties for APCS
->       arm64: dts: qcom: msm8994: Use mboxes properties for APCS
-> 
->  arch/arm/boot/dts/qcom/qcom-msm8974.dtsi | 14 +++++++-------
->  arch/arm64/boot/dts/qcom/msm8916.dtsi    | 10 +++++-----
->  arch/arm64/boot/dts/qcom/msm8939.dtsi    |  4 ++--
->  arch/arm64/boot/dts/qcom/msm8953.dtsi    | 10 +++++-----
->  arch/arm64/boot/dts/qcom/msm8976.dtsi    |  8 ++++----
->  arch/arm64/boot/dts/qcom/msm8994.dtsi    |  6 +++---
->  drivers/rpmsg/qcom_smd.c                 |  3 ++-
->  7 files changed, 28 insertions(+), 27 deletions(-)
-> ---
-> base-commit: 43173e6dbaa227f3107310d4df4a3bacd5e0df33
-> change-id: 20240423-apcs-mboxes-12ee6c01a5b3
-> 
-> Best regards,
-> -- 
-> Luca Weiss <luca@z3ntu.xyz>
-> 
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+new file mode 100644
+index 0000000000000..3629ddd6efa8c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI K3 M4F processor subsystems
++
++maintainers:
++  - Hari Nagalla <hnagalla@ti.com>
++  - Mathieu Poirier <mathieu.poirier@linaro.org>
++
++description: |
++  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
++  family with a M4F core. Typically safety oriented applications may use
++  the M4F core in isolation without an IPC. Where as some industrial and
++  home automation applications, may use the M4F core as a remote processor
++  with IPC communications.
++
++$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - ti,am64-m4fss
++
++  power-domains:
++    maxItems: 1
++
++  "#address-cells":
++    const: 2
++
++  "#size-cells":
++    const: 2
++
++  reg:
++    items:
++      - description: IRAM internal memory region
++      - description: DRAM internal memory region
++
++  reg-names:
++    items:
++      - const: iram
++      - const: dram
++
++  resets:
++    maxItems: 1
++
++  firmware-name:
++    maxItems: 1
++    description: Name of firmware to load for the M4F core
++
++  mboxes:
++    description: |
++      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
++      communication with the remote processor. This property should match
++      with the sub-mailbox node used in the firmware image.
++    maxItems: 1
++
++  memory-region:
++    description: |
++      phandle to the reserved memory nodes to be associated with the
++      remoteproc device. The reserved memory nodes should be carveout nodes,
++      and should be defined with a "no-map" property as per the bindings in
++      Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
++      Optional memory regions available for firmware specific purposes.
++    maxItems: 8
++    items:
++      - description: regions used for DMA allocations like vrings, vring buffers
++                     and memory dedicated to firmware's specific purposes.
++    additionalItems: true
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - ti,sci
++  - ti,sci-dev-id
++  - ti,sci-proc-ids
++  - resets
++  - firmware-name
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
++            compatible = "shared-dma-pool";
++            reg = <0x00 0x9cb00000 0x00 0x100000>;
++            no-map;
++        };
++
++        mcu_m4fss_memory_region: m4f-memory@9cc00000 {
++            compatible = "shared-dma-pool";
++            reg = <0x00 0x9cc00000 0x00 0xe00000>;
++            no-map;
++        };
++    };
++
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        mailbox0_cluster0: mailbox-0 {
++            #mbox-cells = <1>;
++        };
++
++        remoteproc@5000000 {
++            compatible = "ti,am64-m4fss";
++            reg = <0x00 0x5000000 0x00 0x30000>,
++                  <0x00 0x5040000 0x00 0x10000>;
++            reg-names = "iram", "dram";
++            ti,sci = <&dmsc>;
++            ti,sci-dev-id = <9>;
++            ti,sci-proc-ids = <0x18 0xff>;
++            resets = <&k3_reset 9 1>;
++            firmware-name = "am62-mcu-m4f0_0-fw";
++            mboxes = <&mailbox0_cluster0>, <&mbox_m4_0>;
++            memory-region = <&mcu_m4fss_dma_memory_region>,
++                            <&mcu_m4fss_memory_region>;
++         };
++    };
+-- 
+2.39.2
+
