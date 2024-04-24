@@ -1,40 +1,40 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57C159908;
-	Wed, 24 Apr 2024 10:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B6D15920C;
+	Wed, 24 Apr 2024 10:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713952957; cv=none; b=lF/N6TV5nVhE/X1mcTxp+aq3QOtE2HH96vMSwk2GpLYHHYHAu6t3JXQee/gheA1IPyA2Y00V3t+Z6dRQhICx+hVHplzsLFdOBKRe9kAnfOBZyUeax0Tdtzs3Wo++E//f11SAHi5qC7jZlCykAqbAFKWZkRpHVpMCWHcsddDGMTc=
+	t=1713953102; cv=none; b=cD9gL+gUdQ8zHfnDNjR+2ojUhjgRtIxUhm2oQjXvKcl27yknnJt9AqGf9XIYK2dBwrAim0qiPdlhviu6Gkv3WQZGfmh797Ueuap3hlHnrr0DiW4/9ezKcLX+hnoP87EWuTVQWkynuxhUpnj8shgukVhXqz4G8M3CZgt/TtKQxzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713952957; c=relaxed/simple;
-	bh=nZK5irVR2uIXCl1fxQYGDrvG2jZj3KlZwFclmsGUUjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cW1l0cylXWsDYeRK83BedaI0AfYfKIo/bFc2nMe+LzIzaRf2WeOWvrksAKs5JpDTgwDbhkrIjR9Uu5EmhNFj7rlhwlwTpxTDN9tORmzE3whlxG9KreBkJen8fq/H2SkRGc+4bHfqMHGpLkTBzEal52PtPWLe40wfdxwHzhTnBvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gVnxQX4W; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1713953102; c=relaxed/simple;
+	bh=Dttdz89FIcwSI+qU5QOqEj7dsUHDKBbSrFIK3xtH5GI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qFpiqQmFzmM67Y2UDsh8Y9zw7Jak79IGnlJn/PDs54JyFV1mZzxNIZfPbpNuMJW9vyPc3C71sRtbSZePtbKhuatF99rDSRKk2NAImLowgxy/GW/7txdEm14al826Y4UUEXD9oIV6KsFuwUpoI9CNjqTWxi34hUk3GLNoOFDtmH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0eGGlTX2; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gVnxQX4W"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0eGGlTX2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1713952951;
-	bh=nZK5irVR2uIXCl1fxQYGDrvG2jZj3KlZwFclmsGUUjc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gVnxQX4WvAFaZyHnI8bBEmo2M9V/VUoMmCAW3Cc5O4TwdKHj9MWP7NYjYUZ5lz+fP
-	 kKatbrN/7bWiU4Q9PKnbF3Et76Ap8sNkU3tvEC3MOoaVpo5OJeWJu1NcNnzAndvncF
-	 ftAgwckMUrv0CGW6fX6umdmHqhRYFmgZ4Y0tS+OvZ8Spfo3u5PfOdDtKDIOP5ZBvsC
-	 r/9ckIvPj0LXx3mxB5alDGGt57uvbwn4ocNFpIrFfFpWk380kv/Lb0CWiA1tPbZZMW
-	 +zQH4+Ng++PXuA4jNOH7gvT4rsmjQee/MQRxSGnpwUv/SMj42hKroHiR8ZhORmwo+u
-	 Ch33dWBiH77Kg==
+	s=mail; t=1713953096;
+	bh=Dttdz89FIcwSI+qU5QOqEj7dsUHDKBbSrFIK3xtH5GI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=0eGGlTX2P4iDYJDDhzfSb/E3Ax5+NobVXVUIICoaLko7Nxr5TajiNpS69ohdVVWIg
+	 uL1nOqKdgQhj1JdK/yryl1h9Et2TgROJH7d/WXYUb4hkbAfm0Yk2HXrAi1vUHlp6r7
+	 mgNm7rSEUfc88c5ZIWg3u5NaYmdbLC6tIav9PT+xLpRcYCJxOH40V4OGy+uRfY4oUB
+	 BZX/8gKT3vWwKVo/mv+xtqlAZ5LJtfEpayziBiGqPjf4RjuYUETkAWBMw/iCQgzICM
+	 N6inOyg7qnPxIHhNtRu28OADXtOwsuSx8eNfNVnwUdM6qoygiXp17hGVxsajvAmeVT
+	 kDhuV7bAXSRYQ==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 263D2378107C;
-	Wed, 24 Apr 2024 10:02:30 +0000 (UTC)
-Message-ID: <ba25cb7b-ff93-4fcb-b943-154e960d45a0@collabora.com>
-Date: Wed, 24 Apr 2024 12:02:29 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6882A378107C;
+	Wed, 24 Apr 2024 10:04:55 +0000 (UTC)
+Message-ID: <fd24398f-a915-4e9a-9c19-4eb644178987@collabora.com>
+Date: Wed, 24 Apr 2024 12:04:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -43,6 +43,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 4/4] media: mediatek: imgsys: Support image processing
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: Olivia Wen <olivia.wen@mediatek.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
@@ -56,39 +57,53 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  jason-ch.chen@mediatek.com, yaya.chang@mediatek.com, teddy.chen@mediatek.com
 References: <20240424030351.5294-1-olivia.wen@mediatek.com>
  <20240424030351.5294-5-olivia.wen@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+ <ba25cb7b-ff93-4fcb-b943-154e960d45a0@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20240424030351.5294-5-olivia.wen@mediatek.com>
+In-Reply-To: <ba25cb7b-ff93-4fcb-b943-154e960d45a0@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 24/04/24 05:03, Olivia Wen ha scritto:
-> Integrate the imgsys core architecture driver for image processing on
-> the MT8188 platform.
+Il 24/04/24 12:02, AngeloGioacchino Del Regno ha scritto:
+> Il 24/04/24 05:03, Olivia Wen ha scritto:
+>> Integrate the imgsys core architecture driver for image processing on
+>> the MT8188 platform.
+>>
+>> Signed-off-by: Olivia Wen <olivia.wen@mediatek.com>
 > 
-> Signed-off-by: Olivia Wen <olivia.wen@mediatek.com>
-
-This should be reordered before introducing the 8188 scp core 1 support commit,
-but let's check with Mathieu before sending a v4.
-
-With that reordered,
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> ---
->   include/linux/remoteproc/mtk_scp.h | 1 +
->   1 file changed, 1 insertion(+)
+> This should be reordered before introducing the 8188 scp core 1 support commit,
+> but let's check with Mathieu before sending a v4.
 > 
-> diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
-> index 7c2b7cc9..344ff41 100644
-> --- a/include/linux/remoteproc/mtk_scp.h
-> +++ b/include/linux/remoteproc/mtk_scp.h
-> @@ -43,6 +43,7 @@ enum scp_ipi_id {
->   	SCP_IPI_CROS_HOST_CMD,
->   	SCP_IPI_VDEC_LAT,
->   	SCP_IPI_VDEC_CORE,
-> +	SCP_IPI_IMGSYS_CMD,
->   	SCP_IPI_NS_SERVICE = 0xFF,
->   	SCP_IPI_MAX = 0x100,
->   };
+> With that reordered,
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Wait, no. Sorry. I just noticed that the commit message is totally wrong.
+
+This is not a media commit, but remoteproc, and you're not adding support for
+image processing with this commit - not in media at least.
+Also, you're not adding any imgsys core architecture driver.
+
+Please fix both commit description and title.
+
+Regards,
+Angelo
+
+> 
+>> ---
+>>   include/linux/remoteproc/mtk_scp.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
+>> index 7c2b7cc9..344ff41 100644
+>> --- a/include/linux/remoteproc/mtk_scp.h
+>> +++ b/include/linux/remoteproc/mtk_scp.h
+>> @@ -43,6 +43,7 @@ enum scp_ipi_id {
+>>       SCP_IPI_CROS_HOST_CMD,
+>>       SCP_IPI_VDEC_LAT,
+>>       SCP_IPI_VDEC_CORE,
+>> +    SCP_IPI_IMGSYS_CMD,
+>>       SCP_IPI_NS_SERVICE = 0xFF,
+>>       SCP_IPI_MAX = 0x100,
+>>   };
+> 
 
