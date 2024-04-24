@@ -1,137 +1,138 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD9315B159;
-	Wed, 24 Apr 2024 13:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C5D13DBB2
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 15:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713963935; cv=none; b=rafroKhUM30dMkmpffjtM9VJV2DpAIZgLM0zn957f+6TMNtrIxDVXCfPyD+QhzaxqjHhZU89j0XQFwMh7L3zzvFajADCNJTGZbh8bKjKzFHJHweHA1nTTHEaqxcqg5AMzv0JNmlcGXpYlZyzB25SX5CLCts9soo1Th/+g85BN5s=
+	t=1713973955; cv=none; b=B491hbAfwmBrVZDdjMEIt4iEn/LYtZX57pjAv7Bp0ZERrC6W0OWW0+qTpAocFxDjogvG+Ja0UYXvGFCwNSizfs3iovxdCv1PBEFGxwltex9kfeyNGPr0fd45/aOA7Ppwm/n9VnxIm6LfHR0P1fuXDbIFW/v4zlIX05T4qCDRiwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713963935; c=relaxed/simple;
-	bh=xUkwDJI+0sKr7foO8qmRrScI6/JnFwKaztK/o/qF0as=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t7J5/Xuc6+OpFfin/2L3wIkRR1jtWMT9KVm/HWqlWuTwy/BCXE9mTXK2I2dbdee0hSMLzOsYp8/Q1GtM0iCMneYZvW9zW+2QP8woeNAVR9J0BlBGYx4tx8+4aukDSOmft5Wrkoox2SeSC9SiLwXFSGUHKrc+xfk/RyEEGjY57As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Kj/qOvn6; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1713973955; c=relaxed/simple;
+	bh=oo33Ekn8sNMAj8kE0HDHgjQpsSxVRvX5+mLw4VDaKTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OtQ7rcuSZgAdgh5FlMv1KsWOPefXQ4ICMz3RkleIo8Jc4JgtsWGa9S3yoXvXZqx4CKYQK/XCci82SWCVWhHxfl+pNNtPSB5qB0IxB+F96SiaZp+gj2jMXlI0lAFI6oe24GEMkQTr2Z2EOPnhySeL9myVkpohmMbT1EaBwHu1hyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ta301A7l; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kj/qOvn6"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43OD5EiY076780;
-	Wed, 24 Apr 2024 08:05:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1713963914;
-	bh=q3Fy/Ibc5qZtK2bfrQr32IluwMsanIJO4c82EsXkxL0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Kj/qOvn6kN5VnB/zMQivKw+b+2zBLDYTY/bdGWwdibm2gRovNIueZvAyY193a5uDI
-	 +s1IZhBDmU+cE367aTutztSdYTV74rtsi8NAFzhnIAH5fmYk+G8rYf0L+DgesRhTMv
-	 hLbxzwpr3MM1CAcEm54ksIMfl4dBiIXQg+kJIj8g=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43OD5DwI002947
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 24 Apr 2024 08:05:13 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 24
- Apr 2024 08:05:13 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 24 Apr 2024 08:05:13 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43OD54bR029300;
-	Wed, 24 Apr 2024 08:05:11 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>
-CC: <mathieu.poirier@linaro.org>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>, <nm@ti.com>, <devarsht@ti.com>, <hnagalla@ti.com>
-Subject: [PATCH v2 2/2] remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs
-Date: Wed, 24 Apr 2024 18:35:04 +0530
-Message-ID: <20240424130504.494916-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240424130504.494916-1-b-padhi@ti.com>
-References: <20240424130504.494916-1-b-padhi@ti.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ta301A7l"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso4947044a12.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 08:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713973952; x=1714578752; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rrg8wwpA92kjivH0TKg4TZtfTIvVrn3ddePAYWoa0qw=;
+        b=Ta301A7lDHfvZhNn8Yvri60QGrwM8ArewiyTL97NuO2+HFRd/C8sqIa8hjjVCfcbLL
+         Qy2x+qrOnhXkI6qRV4zRcXkewFzl/YnNRqdryHXU3UHFwk91OaVmmZtr5PKwosMQfc0r
+         rxxj07ddwo6TsJLJlZOwgdK+624PZOWgjxhWSEZ/FXlcsBdg1N8MraZsact/UTT/bJ6r
+         slf3RhcKS7tT4U3DZfUN7OJow46+Vd/4v5YUvL47uKv0N3u3xKTAJYoUTwvcZGky9RoQ
+         eueOoaWIwNaSO+C14JsLPbPPzG9fl5iWPabYkasUmHj1AFSbaq83bhNl7xa1wzKdy3eD
+         vcdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713973952; x=1714578752;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rrg8wwpA92kjivH0TKg4TZtfTIvVrn3ddePAYWoa0qw=;
+        b=RjBJ5zbh2omrI3u2WJszqJedCJMZ0Un2x/SJlLPukPUadhMYmJ5fnrxYjko0R4DUWw
+         gVa1TNELbLDDT8lyby9arJkL0mvgjNCChVPUkGwiujgzjjE+ho3xWXj5pLDLu4mxOOGO
+         2NtmnnTmEjnHgv2e5EoccABXFoM2bzktUvhYAJTMoxi+3+9GFbPYrpuXJ6pylYDHbIpO
+         sGH6jCKrIUb2pS1JOJuKlxHRb7zyi8QkAvNjyh6+8UV7yPSdxByAkb1TA22fBBM4w1tn
+         yOctIGk4iYuoCU10ce8tq/zlVRXB70j0QbJ2qYQI2knUwz5xF9FbCJCHu8u3P+dUKQls
+         Y1ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/qn0K81AJXVV+HpQ5GAzG3g7eC0A1Op5zpF04vdwds4gRxlWorz/5+UKbRYehIaKuzBAmZ755zL1bb5ipiGOBuaMFOWxvFGxup7eY/GBmPA==
+X-Gm-Message-State: AOJu0Yx1zYqIvXsgc+XJOWyCzT5n76tYP867FMDoyXPE2+QIzG+mDzHN
+	z8RG30z9X/r4VBR8IH1OjPldaDSln/xUchDsH67p+dexpYtoOrmf8E9C+oyrCeQ=
+X-Google-Smtp-Source: AGHT+IFJz2davFxl/umAykqWCqyRrrGNTJwfxgAOiKqEZ16/Hd7Gt5Q+2HCcbgUlPTtL3ULXGxROYQ==
+X-Received: by 2002:a05:6a21:33a0:b0:1aa:6167:b6d6 with SMTP id yy32-20020a056a2133a000b001aa6167b6d6mr3249147pzb.42.1713973951946;
+        Wed, 24 Apr 2024 08:52:31 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:e523:8f5:a4a3:fdaf])
+        by smtp.gmail.com with ESMTPSA id v22-20020aa78516000000b006f03a06314esm11614021pfn.195.2024.04.24.08.52.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 08:52:31 -0700 (PDT)
+Date: Wed, 24 Apr 2024 09:52:28 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Olivia Wen <olivia.wen@mediatek.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
+	teddy.chen@mediatek.com
+Subject: Re: [PATCH v3 4/4] media: mediatek: imgsys: Support image processing
+Message-ID: <ZikqvOwh5aHi6iug@p14s>
+References: <20240424030351.5294-1-olivia.wen@mediatek.com>
+ <20240424030351.5294-5-olivia.wen@mediatek.com>
+ <ba25cb7b-ff93-4fcb-b943-154e960d45a0@collabora.com>
+ <fd24398f-a915-4e9a-9c19-4eb644178987@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <fd24398f-a915-4e9a-9c19-4eb644178987@collabora.com>
 
-PSC controller has a limitation that it can only power-up the second
-core when the first core is in ON state. Power-state for core0 should be
-equal to or higher than core1.
+On Wed, Apr 24, 2024 at 12:04:54PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 24/04/24 12:02, AngeloGioacchino Del Regno ha scritto:
+> > Il 24/04/24 05:03, Olivia Wen ha scritto:
+> > > Integrate the imgsys core architecture driver for image processing on
+> > > the MT8188 platform.
+> > > 
+> > > Signed-off-by: Olivia Wen <olivia.wen@mediatek.com>
+> > 
+> > This should be reordered before introducing the 8188 scp core 1 support commit,
+> > but let's check with Mathieu before sending a v4.
+> > 
 
-Therefore, prevent core1 from powering up before core0 during the start
-process from sysfs. Similarly, prevent core0 from shutting down before
-core1 has been shut down from sysfs.
+I don't have a strong preference.
 
-Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> > With that reordered,
+> > 
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> Wait, no. Sorry. I just noticed that the commit message is totally wrong.
+> 
+> This is not a media commit, but remoteproc, and you're not adding support for
+> image processing with this commit - not in media at least.
+> Also, you're not adding any imgsys core architecture driver.
+> 
+> Please fix both commit description and title.
+> 
 
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+I agree.
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 5a9bd5d4a2ea..b9d2a16af563 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -548,7 +548,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
- 	struct device *dev = kproc->dev;
--	struct k3_r5_core *core;
-+	struct k3_r5_core *core0, *core;
- 	u32 boot_addr;
- 	int ret;
- 
-@@ -574,6 +574,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 				goto unroll_core_run;
- 		}
- 	} else {
-+		/* do not allow core 1 to start before core 0 */
-+		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
-+					 elem);
-+		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
-+			dev_err(dev, "%s: can not start core 1 before core 0\n",
-+				__func__);
-+			return -EPERM;
-+		}
-+
- 		ret = k3_r5_core_run(core);
- 		if (ret)
- 			goto put_mbox;
-@@ -619,7 +628,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct k3_r5_core *core = kproc->core;
-+	struct device *dev = kproc->dev;
-+	struct k3_r5_core *core1, *core = kproc->core;
- 	int ret;
- 
- 	/* halt all applicable cores */
-@@ -632,6 +642,15 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 			}
- 		}
- 	} else {
-+		/* do not allow core 0 to stop before core 1 */
-+		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
-+					elem);
-+		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
-+			dev_err(dev, "%s: can not stop core 0 before core 1\n",
-+				__func__);
-+			return -EPERM;
-+		}
-+
- 		ret = k3_r5_core_halt(core);
- 		if (ret)
- 			goto out;
--- 
-2.34.1
-
+> Regards,
+> Angelo
+> 
+> > 
+> > > ---
+> > >   include/linux/remoteproc/mtk_scp.h | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
+> > > index 7c2b7cc9..344ff41 100644
+> > > --- a/include/linux/remoteproc/mtk_scp.h
+> > > +++ b/include/linux/remoteproc/mtk_scp.h
+> > > @@ -43,6 +43,7 @@ enum scp_ipi_id {
+> > >       SCP_IPI_CROS_HOST_CMD,
+> > >       SCP_IPI_VDEC_LAT,
+> > >       SCP_IPI_VDEC_CORE,
+> > > +    SCP_IPI_IMGSYS_CMD,
+> > >       SCP_IPI_NS_SERVICE = 0xFF,
+> > >       SCP_IPI_MAX = 0x100,
+> > >   };
+> > 
+> 
