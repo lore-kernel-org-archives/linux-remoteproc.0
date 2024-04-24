@@ -1,62 +1,60 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162AE158DA2
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 09:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4033158DB8
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 09:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713950886; cv=none; b=RGaI7TxTxHvU9NJ9wKf+4Sb6Chr5Rw27OXD4ONrRa5+alEPemfWzucd1U0k7yzG9I6ErT3fXHXvNArED6ZzLQEU9zxTi3svUh7YTXKu6+CdIPGFmOhqLKxr960iW27KaJEtqQDRljMyk7ok6maAnqwe1+9S88EB1JrYapbLc0E8=
+	t=1713950887; cv=none; b=rsmNu/y+BWOvcnJdcH3i06AcDCUcRYOY5Kc/06FPE9ldZSvyMHgMPR2NTJr+9p4ok4itUkowPAZ8tkK4S39P+c1hNqeJVQ4pwklKNXbO8yEpOgbzVswQCjNvD5uCIgZus2otFmxjNoOiD/a7jbgFEEb7LUs1B47s2kszTm1Xomw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713950886; c=relaxed/simple;
-	bh=v570ahBWF8ORIfZM6BH0hIA1GZMDcQxNJqsiqERo9kw=;
+	s=arc-20240116; t=1713950887; c=relaxed/simple;
+	bh=fvMToiiNdTZTq3/y+FkrPuwl0NqwcqEAFZtgK2uk0Fw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D90G6PJsmGMxZSupEB9lOm0v1ohgpK6BRvIA1WBA8/1Nc/1FnjG4Pk4itdDRN4lHa7uOHlBgN9soOUbvAxAMQshrrM4DdLeMx5M+MlCP534Y8y1f1Py2QXo6z6jhFYsKI5F+5Vw24UYrFCr+2fwQLs5JC2f7D29ygc9DI6OhkiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lHKnUZsp; arc=none smtp.client-ip=209.85.208.170
+	 In-Reply-To:To:Cc; b=BzSb6fozCFdSME+Hssll8DApv71BCpVSc3rRwQSP3M6wBGir01nK2SZ+MTrLdSD0vCZv702Kg86OG4xuiOowOfNz68nTFQ1rVQM51A1wyJl9/dmljGCBHNKM7v7+uS2GEzmZbTAqf/gCH6Gl4Aowbu3riefCchxH3yTtdDDy5Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XoVFoPZo; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lHKnUZsp"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d8b2389e73so80263951fa.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 02:28:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XoVFoPZo"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2d872102372so5676611fa.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 02:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713950881; x=1714555681; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713950882; x=1714555682; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MS2KNkWq4ZyeLPsMtcVRix58GXeTzapt58TUhwImAs0=;
-        b=lHKnUZspBuH13OPjUfqUMZGg81bfsKyaqv4jZQ8Ww9MkeTdxo2rdCgOhiTv7uTFT53
-         YTAcEljslHBHER7om5xzlLcpf1H13eoQEghHzFVvOjp7WMYFCYzko9SBP0uyTHlQP+g0
-         iNnZcv+MfKuXlG2mAR10l7OeXY60RU45bRxwjU7Eq/YjKlx788eu00Z+XMRUasUdkRQy
-         Xyi/jCjS7FuTYmFqtpVH0WBfURE2ybhETfR6OQK1SypLevzErhnzA5Z2Ulp0vqvlwCVx
-         N4DuWgsOWIgZTCUehqw1d7BXJjlxtPy/4iJiNGHowYUYYgii69lESqqdN83YOPQlPveU
-         hLMQ==
+        bh=WKIDfr5zIf6Ah4i9hZjm4f94DXkgUa1CksRrZAM9u2Y=;
+        b=XoVFoPZoeqy5o3elJP283O6pj87b+pEe15vykP9b7+wtJhP5HzJRdn8Zmvb1uOoW7i
+         Y0lqqzzFwVFGeYpsEZB7XWbq2nevB1Vhbiv0G/HpFsu6dBIK781JGJvzw0jk5NEzzBsy
+         HzDJM/zPNI5xUA4B4AyWl81mPr35xT7yllF/P7bncmpxqqjxLMseXdn82/OLvqbTRrAX
+         iL5fvk3Z7LJNPv3qntDrFviA5QzStX24Tyo/axbnnqG3deU4Nv3nAkwP0PNHsCtBx+zS
+         iYeeNZWf8otxK50aFGvfiumZobcPrVImFJ8Bt9jVEeO0pd3qPYyw2ZjpIMQXIUx+7Sn4
+         4vCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713950881; x=1714555681;
+        d=1e100.net; s=20230601; t=1713950882; x=1714555682;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MS2KNkWq4ZyeLPsMtcVRix58GXeTzapt58TUhwImAs0=;
-        b=GapAEbxFN4JwpAVkVFqrjHR2AER9xP0mxh7Y4L4wky/gwGvgGIbQ1TxsJKHiBi9y4X
-         sWpoCMwnK4ACob2p5iuNYaY2a48ZSkyvjWnRNcbSmxQ1VXhHP3ITl4aZTbbkOLGgozGw
-         KoO805M7y0kyh+qemPDQaWSRGoEgAZUkfAENdrVzT6mKDraJeRFdRV8dBN8tBIWcKgFl
-         a9kLRblMAwBegdoXBXAQdG3Yy6uMxk+t520f2F/9ndAyIrlHz9DwwXI42sOSZySzALQI
-         +VNJ6hTNnMnO2bxFNqeSDrKanfOsAJ6iIw4yJEqxlYr/GHrLAicuaZOGhrxLuPLDYLeh
-         uCVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsYwojOdiNUZmwtUspb/OdBwZUrBDQx637vfbtsDp2IP/bKU74UNj+PViPVWJ6XJxbUXLf4n9j8puqDuCizhjCKQt6omgxosysxhz4ajn3dQ==
-X-Gm-Message-State: AOJu0YyhOX0PiWPcG9s4CPaW0j78cawS1VWivrYp6ZNbQODep8LKSn1+
-	WClka1P9juLz4yeDGH3J0vnSruJPUou7RhIKkGjI8t3L6zZzUMaBhqfI5lModusfaWxD136gQlY
-	Q
-X-Google-Smtp-Source: AGHT+IF+E+/3DgPwa1Lg2IViJVPRe7oEh2Sr4rYrG3IKW/bfa70oHSZuv0/JhCOxsXVvsdHNrhm1Gw==
-X-Received: by 2002:a2e:3308:0:b0:2db:a7c7:5d11 with SMTP id d8-20020a2e3308000000b002dba7c75d11mr926288ljc.47.1713950881340;
-        Wed, 24 Apr 2024 02:28:01 -0700 (PDT)
+        bh=WKIDfr5zIf6Ah4i9hZjm4f94DXkgUa1CksRrZAM9u2Y=;
+        b=aMezJ/AiZzZG61mHv8rUdnt5eU3iH9tQwm7ogWMuDbm9KHI0jbH0Q+0JckFv+uG2i8
+         mkcMlFDUFGs0z3KgQO9pUdU9M0DSR7BA3X+Z8T014Lsi5WouLGOABTcGTIkr7jP7Hxco
+         L73vSo/xUjnxdE6YufSH5PUxzTWYj5KJQBWrfoJxuVWBuq5uM8RB+J0+MrosTXRPSqYi
+         21IDQXQKAo7KvRO3Womk/lPmx6BNUEc2DUMl7Vv/vT/8+0SkdYW1Wrp/Ebv5z9dZe2pN
+         KZWBqL6SeFzARBtwP3ta8/0VhW467S3IDd9jAODvXZBgtJ4tgfyBpW+wfI/SINrEHFwX
+         S8Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuqVY+u/1HyZaQPF3o9gMLDslMmzOb+JIhyBx6x4fQD02GdaCXyU+l2nnk5nG/ay0SLu2HWJMB8IXj1fg4BCXzqN0bDbQdEYnOZXVv8SxOAg==
+X-Gm-Message-State: AOJu0Yxe+3NAnDNECuVbBVNf9P0eQ5C0PCPHrxlGkA5FLYqVJT+zwsga
+	hIC2rZeelc2s4K81CFteFPBfzreQSGrpoMtjJCrBJ9CBwrFM7GbxnpQm9PkD12w=
+X-Google-Smtp-Source: AGHT+IHebM75drxdOnrxsgY5l4bNvlEn1Sev4Za7ABMcDvjoldc82tcuIYbgC9vqcExAIbiS4tnQoQ==
+X-Received: by 2002:a2e:a162:0:b0:2da:7932:435c with SMTP id u2-20020a2ea162000000b002da7932435cmr1669436ljl.10.1713950882166;
+        Wed, 24 Apr 2024 02:28:02 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id u2-20020a2e8442000000b002d8744903ebsm1916849ljh.68.2024.04.24.02.28.00
+        by smtp.gmail.com with ESMTPSA id u2-20020a2e8442000000b002d8744903ebsm1916849ljh.68.2024.04.24.02.28.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 02:28:00 -0700 (PDT)
+        Wed, 24 Apr 2024 02:28:01 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 24 Apr 2024 12:27:59 +0300
-Subject: [PATCH v7 3/6] soc: qcom: pdr: extract PDR message marshalling
- data
+Date: Wed, 24 Apr 2024 12:28:00 +0300
+Subject: [PATCH v7 4/6] soc: qcom: qmi: add a way to remove running service
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -65,7 +63,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240424-qcom-pd-mapper-v7-3-05f7fc646e0f@linaro.org>
+Message-Id: <20240424-qcom-pd-mapper-v7-4-05f7fc646e0f@linaro.org>
 References: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
 In-Reply-To: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -75,751 +73,125 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
  Xilin Wu <wuxilin123@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=21841;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3574;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=v570ahBWF8ORIfZM6BH0hIA1GZMDcQxNJqsiqERo9kw=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmKNCdpOUuqL2nBjaAAH48juxLybSZr6wQFp63C
- hgx8pGoTxKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZijQnQAKCRCLPIo+Aiko
- 1SC6CAClPv9e2kapIZKvwE5ErS1Qxb7lUvVtnURhtxlvwsafysiM/pW2zro8C61bHj35hKLKi9l
- nztJeY4gXNWtN1zWfjHLe7sXH2YP+aA6cjjYl6xlrJ8OuMKl3Dm9eMl89GzctkTS1tpEhB1K8Sh
- V+aFSRx5xezz4/V2tekuE/L4U9nJI40xXBlR00VzBX7RdRgcWLedAW6Lvdq7XLuCQNV/ibb6Nx/
- cYY/f0a2Mt/EeM6Qoy6bfsqacVWqmx95YNc+/M2CX2CE4gRn6ODqqv/CuyJ05LA9EVlybjAIXJH
- B3Wm+v8Ubv6kBPF/jB/nfrdi/+bJyjbRmPknEF3CcWW+KNyO
+ bh=fvMToiiNdTZTq3/y+FkrPuwl0NqwcqEAFZtgK2uk0Fw=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmKNCdpQLEwZxPfgyslqbii/uZUTzYjcRAKy4JN
+ hOMIlXpie2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZijQnQAKCRCLPIo+Aiko
+ 1eVVCACD4gAYfHo1HZS2t0ulf3VsZtOrCvAC6LXJrVC4ifoQ1XwH/qiCi6yS8APzGyPRMzWs6C8
+ PlBfdjpMAnuFEshPh5B6/LzDIwspXNcNR7zZxoP33KBuszyatGdoWJzC8zjCjZ5Z4Fvvjo/Ncm+
+ JvwXZDhzXyL5ujA+yGFKvgnwKhLBTdjzvnnwzqOHhLjwIB+HU88SdJjLDJcqziNsouxj+UH9pa4
+ Jbj6josUrnKkgzY6tMUU9qRUgZEBNaxBl45NpfpcXTCyY7bBO35ir48eyEJ4VscDHwF+SmXPY+e
+ X/FVuibkg0H9XO4kkvvLNkaHm31vcU7bCvrDHBcv3HH4/xDz
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The in-kernel PD mapper is going to use same message structures as the
-QCOM_PDR_HELPERS module. Extract message marshalling data to separate
-module that can be used by both PDR helpers and by PD mapper.
+Add qmi_del_server(), a pair to qmi_add_server(), a way to remove
+running server from the QMI socket. This is e.g. necessary for
+pd-mapper, which needs to readd a server each time the DSP is started or
+stopped.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/soc/qcom/Kconfig        |   4 +
- drivers/soc/qcom/Makefile       |   1 +
- drivers/soc/qcom/pdr_internal.h | 306 ++------------------------------------
- drivers/soc/qcom/qcom_pdr_msg.c | 319 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 334 insertions(+), 296 deletions(-)
+ drivers/soc/qcom/qmi_interface.c | 67 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/soc/qcom/qmi.h     |  2 ++
+ 2 files changed, 69 insertions(+)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 5af33b0e3470..95973c6b828f 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -75,8 +75,12 @@ config QCOM_OCMEM
- config QCOM_PDR_HELPERS
- 	tristate
- 	select QCOM_QMI_HELPERS
-+	select QCOM_PDR_MSG
- 	depends on NET
+diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+index bb98b06e87f8..18ff2015c682 100644
+--- a/drivers/soc/qcom/qmi_interface.c
++++ b/drivers/soc/qcom/qmi_interface.c
+@@ -289,6 +289,73 @@ int qmi_add_server(struct qmi_handle *qmi, unsigned int service,
+ }
+ EXPORT_SYMBOL_GPL(qmi_add_server);
  
-+config QCOM_PDR_MSG
-+	tristate
++static void qmi_send_del_server(struct qmi_handle *qmi, struct qmi_service *svc)
++{
++	struct qrtr_ctrl_pkt pkt;
++	struct sockaddr_qrtr sq;
++	struct msghdr msg = { };
++	struct kvec iv = { &pkt, sizeof(pkt) };
++	int ret;
 +
- config QCOM_PMIC_PDCHARGER_ULOG
- 	tristate "Qualcomm PMIC PDCharger ULOG driver"
- 	depends on RPMSG
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index ca0bece0dfff..3110ac3288bc 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
- obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
- obj-$(CONFIG_QCOM_PDR_HELPERS)	+= pdr_interface.o
-+obj-$(CONFIG_QCOM_PDR_MSG)	+= qcom_pdr_msg.o
- obj-$(CONFIG_QCOM_PMIC_GLINK)	+= pmic_glink.o
- obj-$(CONFIG_QCOM_PMIC_GLINK)	+= pmic_glink_altmode.o
- obj-$(CONFIG_QCOM_PMIC_PDCHARGER_ULOG)	+= pmic_pdcharger_ulog.o
-diff --git a/drivers/soc/qcom/pdr_internal.h b/drivers/soc/qcom/pdr_internal.h
-index 03c282b7f17e..7e5bb5a95275 100644
---- a/drivers/soc/qcom/pdr_internal.h
-+++ b/drivers/soc/qcom/pdr_internal.h
-@@ -28,83 +28,12 @@ struct servreg_location_entry {
- 	u32 instance;
- };
- 
--static const struct qmi_elem_info servreg_location_entry_ei[] = {
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0,
--		.offset         = offsetof(struct servreg_location_entry,
--					   name),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_4_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u32),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0,
--		.offset         = offsetof(struct servreg_location_entry,
--					   instance),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_1_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0,
--		.offset         = offsetof(struct servreg_location_entry,
--					   service_data_valid),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_4_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u32),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0,
--		.offset         = offsetof(struct servreg_location_entry,
--					   service_data),
--	},
--	{}
--};
--
- struct servreg_get_domain_list_req {
- 	char service_name[SERVREG_NAME_LENGTH + 1];
- 	u8 domain_offset_valid;
- 	u32 domain_offset;
- };
- 
--static const struct qmi_elem_info servreg_get_domain_list_req_ei[] = {
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x01,
--		.offset         = offsetof(struct servreg_get_domain_list_req,
--					   service_name),
--	},
--	{
--		.data_type      = QMI_OPT_FLAG,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_get_domain_list_req,
--					   domain_offset_valid),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_4_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u32),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_get_domain_list_req,
--					   domain_offset),
--	},
--	{}
--};
--
- struct servreg_get_domain_list_resp {
- 	struct qmi_response_type_v01 resp;
- 	u8 total_domains_valid;
-@@ -116,264 +45,49 @@ struct servreg_get_domain_list_resp {
- 	struct servreg_location_entry domain_list[SERVREG_DOMAIN_LIST_LENGTH];
- };
- 
--static const struct qmi_elem_info servreg_get_domain_list_resp_ei[] = {
--	{
--		.data_type      = QMI_STRUCT,
--		.elem_len       = 1,
--		.elem_size      = sizeof(struct qmi_response_type_v01),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   resp),
--		.ei_array      = qmi_response_type_v01_ei,
--	},
--	{
--		.data_type      = QMI_OPT_FLAG,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   total_domains_valid),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_2_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u16),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   total_domains),
--	},
--	{
--		.data_type      = QMI_OPT_FLAG,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x11,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   db_rev_count_valid),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_2_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u16),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x11,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   db_rev_count),
--	},
--	{
--		.data_type      = QMI_OPT_FLAG,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x12,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   domain_list_valid),
--	},
--	{
--		.data_type      = QMI_DATA_LEN,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x12,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   domain_list_len),
--	},
--	{
--		.data_type      = QMI_STRUCT,
--		.elem_len       = SERVREG_DOMAIN_LIST_LENGTH,
--		.elem_size      = sizeof(struct servreg_location_entry),
--		.array_type	= VAR_LEN_ARRAY,
--		.tlv_type       = 0x12,
--		.offset         = offsetof(struct servreg_get_domain_list_resp,
--					   domain_list),
--		.ei_array      = servreg_location_entry_ei,
--	},
--	{}
--};
--
- struct servreg_register_listener_req {
- 	u8 enable;
- 	char service_path[SERVREG_NAME_LENGTH + 1];
- };
- 
--static const struct qmi_elem_info servreg_register_listener_req_ei[] = {
--	{
--		.data_type      = QMI_UNSIGNED_1_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x01,
--		.offset         = offsetof(struct servreg_register_listener_req,
--					   enable),
--	},
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_register_listener_req,
--					   service_path),
--	},
--	{}
--};
--
- struct servreg_register_listener_resp {
- 	struct qmi_response_type_v01 resp;
- 	u8 curr_state_valid;
- 	enum servreg_service_state curr_state;
- };
- 
--static const struct qmi_elem_info servreg_register_listener_resp_ei[] = {
--	{
--		.data_type      = QMI_STRUCT,
--		.elem_len       = 1,
--		.elem_size      = sizeof(struct qmi_response_type_v01),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_register_listener_resp,
--					   resp),
--		.ei_array      = qmi_response_type_v01_ei,
--	},
--	{
--		.data_type      = QMI_OPT_FLAG,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u8),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_register_listener_resp,
--					   curr_state_valid),
--	},
--	{
--		.data_type      = QMI_SIGNED_4_BYTE_ENUM,
--		.elem_len       = 1,
--		.elem_size      = sizeof(enum servreg_service_state),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x10,
--		.offset         = offsetof(struct servreg_register_listener_resp,
--					   curr_state),
--	},
--	{}
--};
--
- struct servreg_restart_pd_req {
- 	char service_path[SERVREG_NAME_LENGTH + 1];
- };
- 
--static const struct qmi_elem_info servreg_restart_pd_req_ei[] = {
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x01,
--		.offset         = offsetof(struct servreg_restart_pd_req,
--					   service_path),
--	},
--	{}
--};
--
- struct servreg_restart_pd_resp {
- 	struct qmi_response_type_v01 resp;
- };
- 
--static const struct qmi_elem_info servreg_restart_pd_resp_ei[] = {
--	{
--		.data_type      = QMI_STRUCT,
--		.elem_len       = 1,
--		.elem_size      = sizeof(struct qmi_response_type_v01),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_restart_pd_resp,
--					   resp),
--		.ei_array      = qmi_response_type_v01_ei,
--	},
--	{}
--};
--
- struct servreg_state_updated_ind {
- 	enum servreg_service_state curr_state;
- 	char service_path[SERVREG_NAME_LENGTH + 1];
- 	u16 transaction_id;
- };
- 
--static const struct qmi_elem_info servreg_state_updated_ind_ei[] = {
--	{
--		.data_type      = QMI_SIGNED_4_BYTE_ENUM,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u32),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x01,
--		.offset         = offsetof(struct servreg_state_updated_ind,
--					   curr_state),
--	},
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_state_updated_ind,
--					   service_path),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_2_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u16),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x03,
--		.offset         = offsetof(struct servreg_state_updated_ind,
--					   transaction_id),
--	},
--	{}
--};
--
- struct servreg_set_ack_req {
- 	char service_path[SERVREG_NAME_LENGTH + 1];
- 	u16 transaction_id;
- };
- 
--static const struct qmi_elem_info servreg_set_ack_req_ei[] = {
--	{
--		.data_type      = QMI_STRING,
--		.elem_len       = SERVREG_NAME_LENGTH + 1,
--		.elem_size      = sizeof(char),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x01,
--		.offset         = offsetof(struct servreg_set_ack_req,
--					   service_path),
--	},
--	{
--		.data_type      = QMI_UNSIGNED_2_BYTE,
--		.elem_len       = 1,
--		.elem_size      = sizeof(u16),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_set_ack_req,
--					   transaction_id),
--	},
--	{}
--};
--
- struct servreg_set_ack_resp {
- 	struct qmi_response_type_v01 resp;
- };
- 
--static const struct qmi_elem_info servreg_set_ack_resp_ei[] = {
--	{
--		.data_type      = QMI_STRUCT,
--		.elem_len       = 1,
--		.elem_size      = sizeof(struct qmi_response_type_v01),
--		.array_type	= NO_ARRAY,
--		.tlv_type       = 0x02,
--		.offset         = offsetof(struct servreg_set_ack_resp,
--					   resp),
--		.ei_array       = qmi_response_type_v01_ei,
--	},
--	{}
--};
-+extern const struct qmi_elem_info servreg_location_entry_ei[];
-+extern const struct qmi_elem_info servreg_get_domain_list_req_ei[];
-+extern const struct qmi_elem_info servreg_get_domain_list_resp_ei[];
-+extern const struct qmi_elem_info servreg_register_listener_req_ei[];
-+extern const struct qmi_elem_info servreg_register_listener_resp_ei[];
-+extern const struct qmi_elem_info servreg_restart_pd_req_ei[];
-+extern const struct qmi_elem_info servreg_restart_pd_resp_ei[];
-+extern const struct qmi_elem_info servreg_state_updated_ind_ei[];
-+extern const struct qmi_elem_info servreg_set_ack_req_ei[];
-+extern const struct qmi_elem_info servreg_set_ack_resp_ei[];
- 
- #endif
-diff --git a/drivers/soc/qcom/qcom_pdr_msg.c b/drivers/soc/qcom/qcom_pdr_msg.c
-new file mode 100644
-index 000000000000..9b46f42aa146
---- /dev/null
-+++ b/drivers/soc/qcom/qcom_pdr_msg.c
-@@ -0,0 +1,319 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 The Linux Foundation. All rights reserved.
++	memset(&pkt, 0, sizeof(pkt));
++	pkt.cmd = cpu_to_le32(QRTR_TYPE_DEL_SERVER);
++	pkt.server.service = cpu_to_le32(svc->service);
++	pkt.server.instance = cpu_to_le32(svc->version | svc->instance << 8);
++	pkt.server.node = cpu_to_le32(qmi->sq.sq_node);
++	pkt.server.port = cpu_to_le32(qmi->sq.sq_port);
++
++	sq.sq_family = qmi->sq.sq_family;
++	sq.sq_node = qmi->sq.sq_node;
++	sq.sq_port = QRTR_PORT_CTRL;
++
++	msg.msg_name = &sq;
++	msg.msg_namelen = sizeof(sq);
++
++	mutex_lock(&qmi->sock_lock);
++	if (qmi->sock) {
++		ret = kernel_sendmsg(qmi->sock, &msg, &iv, 1, sizeof(pkt));
++		if (ret < 0)
++			pr_err("send service deregistration failed: %d\n", ret);
++	}
++	mutex_unlock(&qmi->sock_lock);
++}
++
++/**
++ * qmi_del_server() - register a service with the name service
++ * @qmi:	qmi handle
++ * @service:	type of the service
++ * @instance:	instance of the service
++ * @version:	version of the service
++ *
++ * Remove registration of the service with the name service. This notifies
++ * clients that they should no longer send messages to the client associated
++ * with @qmi.
++ *
++ * Return: 0 on success, negative errno on failure.
 + */
++int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
++		   unsigned int version, unsigned int instance)
++{
++	struct qmi_service *svc;
++	struct qmi_service *tmp;
 +
-+#include <linux/module.h>
-+#include <linux/soc/qcom/qmi.h>
++	list_for_each_entry_safe(svc, tmp, &qmi->services, list_node) {
++		if (svc->service != service ||
++		    svc->version != version ||
++		    svc->instance != instance)
++			continue;
 +
-+#include "pdr_internal.h"
++		qmi_send_del_server(qmi, svc);
++		list_del(&svc->list_node);
++		kfree(svc);
 +
-+const struct qmi_elem_info servreg_location_entry_ei[] = {
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0,
-+		.offset         = offsetof(struct servreg_location_entry,
-+					   name),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_4_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0,
-+		.offset         = offsetof(struct servreg_location_entry,
-+					   instance),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0,
-+		.offset         = offsetof(struct servreg_location_entry,
-+					   service_data_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_4_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0,
-+		.offset         = offsetof(struct servreg_location_entry,
-+					   service_data),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_location_entry_ei);
++		return 0;
++	}
 +
-+const struct qmi_elem_info servreg_get_domain_list_req_ei[] = {
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x01,
-+		.offset         = offsetof(struct servreg_get_domain_list_req,
-+					   service_name),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_get_domain_list_req,
-+					   domain_offset_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_4_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_get_domain_list_req,
-+					   domain_offset),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_get_domain_list_req_ei);
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(qmi_del_server);
 +
-+const struct qmi_elem_info servreg_get_domain_list_resp_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   resp),
-+		.ei_array      = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   total_domains_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_2_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   total_domains),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x11,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   db_rev_count_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_2_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x11,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   db_rev_count),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x12,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   domain_list_valid),
-+	},
-+	{
-+		.data_type      = QMI_DATA_LEN,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x12,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   domain_list_len),
-+	},
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = SERVREG_DOMAIN_LIST_LENGTH,
-+		.elem_size      = sizeof(struct servreg_location_entry),
-+		.array_type	= VAR_LEN_ARRAY,
-+		.tlv_type       = 0x12,
-+		.offset         = offsetof(struct servreg_get_domain_list_resp,
-+					   domain_list),
-+		.ei_array      = servreg_location_entry_ei,
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_get_domain_list_resp_ei);
-+
-+const struct qmi_elem_info servreg_register_listener_req_ei[] = {
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x01,
-+		.offset         = offsetof(struct servreg_register_listener_req,
-+					   enable),
-+	},
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_register_listener_req,
-+					   service_path),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_register_listener_req_ei);
-+
-+const struct qmi_elem_info servreg_register_listener_resp_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_register_listener_resp,
-+					   resp),
-+		.ei_array      = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_register_listener_resp,
-+					   curr_state_valid),
-+	},
-+	{
-+		.data_type      = QMI_SIGNED_4_BYTE_ENUM,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(enum servreg_service_state),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct servreg_register_listener_resp,
-+					   curr_state),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_register_listener_resp_ei);
-+
-+const struct qmi_elem_info servreg_restart_pd_req_ei[] = {
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x01,
-+		.offset         = offsetof(struct servreg_restart_pd_req,
-+					   service_path),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_restart_pd_req_ei);
-+
-+const struct qmi_elem_info servreg_restart_pd_resp_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_restart_pd_resp,
-+					   resp),
-+		.ei_array      = qmi_response_type_v01_ei,
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_restart_pd_resp_ei);
-+
-+const struct qmi_elem_info servreg_state_updated_ind_ei[] = {
-+	{
-+		.data_type      = QMI_SIGNED_4_BYTE_ENUM,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x01,
-+		.offset         = offsetof(struct servreg_state_updated_ind,
-+					   curr_state),
-+	},
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_state_updated_ind,
-+					   service_path),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_2_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x03,
-+		.offset         = offsetof(struct servreg_state_updated_ind,
-+					   transaction_id),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_state_updated_ind_ei);
-+
-+const struct qmi_elem_info servreg_set_ack_req_ei[] = {
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = SERVREG_NAME_LENGTH + 1,
-+		.elem_size      = sizeof(char),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x01,
-+		.offset         = offsetof(struct servreg_set_ack_req,
-+					   service_path),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_2_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_set_ack_req,
-+					   transaction_id),
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_set_ack_req_ei);
-+
-+const struct qmi_elem_info servreg_set_ack_resp_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type       = 0x02,
-+		.offset         = offsetof(struct servreg_set_ack_resp,
-+					   resp),
-+		.ei_array       = qmi_response_type_v01_ei,
-+	},
-+	{}
-+};
-+EXPORT_SYMBOL_GPL(servreg_set_ack_resp_ei);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Qualcomm Protection Domain messages data");
+ /**
+  * qmi_txn_init() - allocate transaction id within the given QMI handle
+  * @qmi:	QMI handle
+diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
+index 469e02d2aa0d..5039c30e4bdc 100644
+--- a/include/linux/soc/qcom/qmi.h
++++ b/include/linux/soc/qcom/qmi.h
+@@ -241,6 +241,8 @@ int qmi_add_lookup(struct qmi_handle *qmi, unsigned int service,
+ 		   unsigned int version, unsigned int instance);
+ int qmi_add_server(struct qmi_handle *qmi, unsigned int service,
+ 		   unsigned int version, unsigned int instance);
++int qmi_del_server(struct qmi_handle *qmi, unsigned int service,
++		   unsigned int version, unsigned int instance);
+ 
+ int qmi_handle_init(struct qmi_handle *qmi, size_t max_msg_len,
+ 		    const struct qmi_ops *ops,
 
 -- 
 2.39.2
