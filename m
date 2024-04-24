@@ -1,145 +1,154 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2076.outbound.protection.outlook.com [40.107.102.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8416C848;
-	Wed, 24 Apr 2024 16:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713976466; cv=none; b=Ew5WSy3PJ83gUiwPMHzOUsKX51Pd/aIqnIp6xmgszYO2O6EugjHKaXBvxRziWPq5/LXHCpoJNyNrKo/Qct+YKwsENcigxrm9WGWVkNX5kDn1s1kbUhCHsIzyJ6qXqO+PeVia31Xo2RbSTzHomdkTVT6v6p/HJ1LROB9gs9KRBWc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713976466; c=relaxed/simple;
-	bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LKTVd2fWkufEo+HTWvorANdlrIgKZW9NGROKMMmrFd6dpAd6WpgT8ibZSeBOk8TdUj2iRJkkxA3tuoq5hxzUNG2W+cM3VA5nx5++CYeHWDWlsDnqlJM76axEjDQ3PeVZ3Sz927Uu4Phy+BSHNzoN41J18md5V6ddifCCvzW3VYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=bfZsS8xB; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3B9224E8;
+	Wed, 24 Apr 2024 16:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713976489; cv=fail; b=OcWUQX6iS5qbFhX5yvjenxlnNknN/YB1bKbsbDrk1TeGks8sm0jRpdeF6ewnwsGTA+0AFH6KyISclTRQJL1hgC5S8CENeoGRoVMcuw2qqBpsN8Xf/5KpGFDgBP4aLoxFGhMsIVDASoUV708SG7EiWpwVpxy9fdsDuT82e0Ylf5U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713976489; c=relaxed/simple;
+	bh=lQ8zjGEeBwZJi8RASLYfthfgxZ1OIcIs1U6uxjmBG+E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KDQpSnDpOxxmuBEZ1StjrUH7/CgOhAJ5sgtuz/FAvmHZMsQ5dosSSS2je9I5t/HZ8dN75TpOJVtr+L6k6GIyDAidowk40vaD1/bXhQYXyBztNz3DQFQn5xpA1OhDgX+hbpCBGPzzJQb+8gLG6iYVrwid5oVROAUxARzgnEJ9WCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lPPceh0p; arc=fail smtp.client-ip=40.107.102.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="bfZsS8xB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1713975864; bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=bfZsS8xBUZ8n09cljicZ9F7WgkbE0KzMTFLKT1IADiSWVn7Ey3vqoWw33+BpjGIDA
-	 5u7oB2EEGnFzZF1HIOxh72+OEVb8SMU/Gdsku7XuXrPksr9LZlkabKyccFr3s1P7Ll
-	 uZC5/MCQxrqMHJtVLjWhGaI8Ozp0aIPn9somfq+Q=
-From: Luca Weiss <luca@z3ntu.xyz>
-Date: Wed, 24 Apr 2024 18:23:55 +0200
-Subject: [PATCH 2/7] ARM: dts: qcom: msm8974: Use mboxes properties for
- APCS
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lPPceh0p"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AgtuRiQMdmojxOuWTMGoTe0EFF7UApUTGoEiseFJNlEYD0RcNHP/d/P0B9DJ/tNo9Wxvmp0zkcr5HimwtE5A5Q5bmyOM1x6I+9bwGy13JXSg1K77ap31SsJmQ4yaQWnkaxqan8H41BkWpIrx/i3dskI/tsSpFeulNAqHcdOOnBXCLlDGETWCkSqXc0KmkjDFnTRMaSEmTpANAe3p7wGFxMePocinBTqn8f+Iq1VFiqFP4z/JrHa7MAiVH8thA+Hr1Rb51rgRHWUH+enU7ANeiyJ1/U6d5Ao8oWTCJnaXCz/5KOoGpJJv3EToPaY38xxBjTZ6PMre4iYumuGbq0Ttug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ffz1ZsiwaLMPJbuaw4rUdcCvurrBpw2J+vcM8i71O8=;
+ b=GsGuUUE5B0DY31GpUnM23DIT19Wnv9UZHNIB05cFXSicyQHnEnKQs6o3M1fcR+oM+Ee27QfJ/4q6+RcII9WpuCaRxoV/4IfWTrunZFySJSpO59IRAemhgBrK8biFKu1CQcHj9YpIRl7b+ooTJ2zriWgZqLNUyhosuk4Z25jPVW2QN1glqQU9o89iQ2h2vSG0CPPQpPo77zNrnDEUhBiNbk71/ZddnYmhNBKULvA0f4f7j9fdrnQjmJ6lnCW3ctLT9zNnri4l0xheZ9TZhjId0xvflHeiqN26eoFdsUdd7qGH3G6k7Pw83B39IBMEsPMZlKhLnExajT+wNnyATUWCew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ffz1ZsiwaLMPJbuaw4rUdcCvurrBpw2J+vcM8i71O8=;
+ b=lPPceh0pYFU/pmxVuwAruk0/EGpIMXsASkU+EC2Ub3U/pYP4keeZ525GHDWWtv1Vt00HHFrStHMOqpjvfcQtBkQfw/QMqh8MP+kzw2qrYTJKBq41Olyk/C1eXld8FmM1A0tFumWC52wI++fEo9ABTem+YsiVLo165EQMMm7K7f0=
+Received: from CH2PR15CA0003.namprd15.prod.outlook.com (2603:10b6:610:51::13)
+ by CH3PR12MB8209.namprd12.prod.outlook.com (2603:10b6:610:123::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Wed, 24 Apr
+ 2024 16:34:43 +0000
+Received: from CH2PEPF00000145.namprd02.prod.outlook.com
+ (2603:10b6:610:51:cafe::d6) by CH2PR15CA0003.outlook.office365.com
+ (2603:10b6:610:51::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22 via Frontend
+ Transport; Wed, 24 Apr 2024 16:34:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000145.mail.protection.outlook.com (10.167.244.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7519.19 via Frontend Transport; Wed, 24 Apr 2024 16:34:43 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 24 Apr
+ 2024 11:34:42 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 24 Apr
+ 2024 11:34:42 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 24 Apr 2024 11:34:41 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<tanmay.shah@amd.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drivers: remoteproc: xlnx: fix uninitialized tcm mode
+Date: Wed, 24 Apr 2024 09:33:45 -0700
+Message-ID: <20240424163344.1344304-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240424-apcs-mboxes-v1-2-6556c47cb501@z3ntu.xyz>
-References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
-In-Reply-To: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2125; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmKTIx82l/iOWVQcYwyxo2ipCDEb1hZTih+NxHs
- gP1/0HBDnGJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZikyMQAKCRBy2EO4nU3X
- VgJFEADG3tSW6vL6ozetJ/js5B1C2Du/4KIimBN3lOMvC2aY0e4bXCFi2CKweDtIBJTHa0G5MVg
- Dpbm7ipWytLVEiQrkxQWUXE+CT2GuOoEXIR1jI17uDPiTiL9yX7a3dK3jvkJPomjSW5AnVrRq4L
- 4jeMasg/YTs4YKxvXFnIPH38T13KFLwW5A5K4NkYRd8uUb0wwl1mQKT5izHIA0qLUM/8KBtKNqA
- SW+t5lITCZ6VPCtyBS9B3qk0GOdbHt+2vAbD1VzTa1AQrO7DtqkapL3xoYuPvTNIhh1znStl3jn
- vL1WOCl6aerSW7iKiKc1MeGmUeTQeA/pH4rul60iD1hcZJ5r3Sua4VPgqGYGVBPwIsAAOaDPIB5
- P7bCSvBd/dPBy8aoi8WrCh5vGJ3s5NS84mxJpYL8YNoAoJZ7pMkD4byahcWyHn7QMbyW09DGLj4
- NnVrUifEJkCPDZhNZHat5MvK5iikQGbftSGB4KPonXyhuatmGGzINLtUiEP8AOp7WY/MwL6j7Ae
- hfH5TLFLG9a1c6GAR0W0UHmgpkyVWV2BbRwfPUNKVklbaO1gSXZEeu245x95TFBLBy5bT8MzjSU
- LH4l3vV2FCUUwMzDKFnXGXWCcIGEOTXUZ0Y/E7mLLp2jZ3xHJ9mkWlpMDgPoJcpA2pW/YhSadVw
- +K9z18JknPvuZ8A==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000145:EE_|CH3PR12MB8209:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63d70ab4-4070-4174-8e76-08dc647c720a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?N6mrPhgJgg9co8oAWGCXt4nQG7TPLRc1ScGX/uEr00FNitjlDEgoAtEeA1B9?=
+ =?us-ascii?Q?hLQGnmpoWX4EySpMg+P6+/PeLU6JWgNUKDn0tDQ63AhsxzXo2n6sIeqcjEfm?=
+ =?us-ascii?Q?mz56Ouc1LTaE5+tlnl2Qd8POIGQKf+k5X/2coi7KxoveHNUwbXvm6CkvJLsb?=
+ =?us-ascii?Q?ivrROsWswF34hHmkbZHRsoBTZNE/LGw7UZe2KB5Vjw1C/GbsH4RJusLzOcSL?=
+ =?us-ascii?Q?P2zELueBNivwTXCJNQoIwabCcULI6f7/XxCSkVU9j1a697icOyrb0ZD0Q1Hy?=
+ =?us-ascii?Q?yzk5+56doNCeO3GEgxu2qOofNTsAZT7QAD46DOlvAE9zhnCmhd/aFJ3WtVZJ?=
+ =?us-ascii?Q?m+Wauo2dOfZX3tEs04xJ99DD5JZl460r5dj4zdOZkK9P0w8siLZkpq/ZO6a+?=
+ =?us-ascii?Q?C+YnguoYaCpLJtP4hFwDNTW+uek+2s/EK5B3ffmxKNK72WEnmSMhVvZuV1Gv?=
+ =?us-ascii?Q?smdcY4t+t8S/GjD5LUjbBrEYlLzjX6rwpylA73a1d6sa4CRVl64afVSQpwpB?=
+ =?us-ascii?Q?hF58ukivq0qBklC2k68E9pM99sxFGnTEorg/EgHA60t4Hi5RYYVNc8B2Ptqi?=
+ =?us-ascii?Q?Dgvy/ZHKPTY4MMLBkNqV4/c4GDEOmiiShF5vYTEwH3EGKRkK+YrUU+WAZhgJ?=
+ =?us-ascii?Q?N2wO95QsEBtMgDarZFS6xXhdh68VHKnH50z9UwVkNoolgceEXYOHDvgv7/dV?=
+ =?us-ascii?Q?eIOb5jlD86JXzwZFpOrmdNteh1x5lj5GKqj+N9JIvabUa+FSGnI4vhN6TIBn?=
+ =?us-ascii?Q?GWJ/maxRNc1/pHsSpZa93GjfXHBzeTiCjwPpLoKJ9BxSfrlKbOPQFGpV2lbS?=
+ =?us-ascii?Q?iUwD3eP1z+yfViAABiDjuAXgeUv4b6yjws6XgG6z9o5RUbYFslHVmP97cvFE?=
+ =?us-ascii?Q?DMrqLc4JHHgmjmSUaiWjJW2M3cD8yHCKsMv58headXi6A3u1TdXNAJ53bSC8?=
+ =?us-ascii?Q?72FgmhevtTc76GuTKW1XFPYI2y5bWsJ2hqlwhYPsVx1Tuj+wLDbrnOQE+ZQP?=
+ =?us-ascii?Q?iEFAjzXj3LNqrM3sUD7f0YjdL7dnGjcn4SDHuiqWl2L2uoVIRe2HD38RKyyI?=
+ =?us-ascii?Q?BS6mB0rJnvfWmN9kdoncv0anWoKUOux9ikv1cN85niGB3R+zP4OSf2Kn4cdf?=
+ =?us-ascii?Q?l63NU+5/pKrs20mka28gqo2fJfafGIvG5/rq8fd6AWSV3qB5d9G7usEiSiui?=
+ =?us-ascii?Q?Bv+mM+RRhzwB56dPuwm1P/yLY+OQX6nrb8FzuXb87YU9qaDhb/pYfqgfv+CX?=
+ =?us-ascii?Q?L3m3s/BwRM7gPS6r+A1dvDTyU05W7Tu0rLNSJnf622otUDoNufdoF5ZiuHF2?=
+ =?us-ascii?Q?wyNv/R3H31v9GMZNQNrY/0apLBz0dEo+GE18bNMIf/gAZdVRQUcq6pZh0UT2?=
+ =?us-ascii?Q?R/6wovgloLLMDXkABqFAJLJuNKRZ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400014)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2024 16:34:43.1159
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63d70ab4-4070-4174-8e76-08dc647c720a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000145.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8209
 
-Instead of passing the syscon to the various nodes, use the mbox
-interface using the mboxes property.
+Add "else" case for default tcm mode to silent following static check:
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+zynqmp_r5_cluster_init()
+ error: uninitialized symbol 'tcm_mode'.
+
+Fixes: a6b974b40f94 ("drivers: remoteproc: xlnx: Add Versal and Versal-NET support")
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
- arch/arm/boot/dts/qcom/qcom-msm8974.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
-index 20958c47ff3a..0f1dc4355c7a 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
-@@ -130,7 +130,7 @@ master-stats {
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index d98940d7ef8f..84243d1dff9f 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -1006,6 +1006,8 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+ 			tcm_mode = PM_RPU_TCM_COMB;
+ 		else
+ 			tcm_mode = PM_RPU_TCM_SPLIT;
++	} else {
++		tcm_mode = PM_RPU_TCM_COMB;
+ 	}
  
- 		smd-edge {
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
--			qcom,ipc = <&apcs 8 0>;
-+			mboxes = <&apcs 0>;
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
-@@ -217,7 +217,7 @@ smp2p-adsp {
- 		interrupt-parent = <&intc>;
- 		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 8 10>;
-+		mboxes = <&apcs 10>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <2>;
-@@ -242,7 +242,7 @@ smp2p-modem {
- 		interrupt-parent = <&intc>;
- 		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 8 14>;
-+		mboxes = <&apcs 14>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <1>;
-@@ -267,7 +267,7 @@ smp2p-wcnss {
- 		interrupt-parent = <&intc>;
- 		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 8 18>;
-+		mboxes = <&apcs 18>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <4>;
-@@ -757,7 +757,7 @@ iris {
- 			smd-edge {
- 				interrupts = <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>;
- 
--				qcom,ipc = <&apcs 8 17>;
-+				mboxes = <&apcs 17>;
- 				qcom,smd-edge = <6>;
- 
- 				wcnss {
-@@ -1576,7 +1576,7 @@ bam_dmux: bam-dmux {
- 			smd-edge {
- 				interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
- 
--				qcom,ipc = <&apcs 8 12>;
-+				mboxes = <&apcs 12>;
- 				qcom,smd-edge = <0>;
- 
- 				label = "modem";
-@@ -2213,7 +2213,7 @@ remoteproc_adsp: remoteproc@fe200000 {
- 			smd-edge {
- 				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
- 
--				qcom,ipc = <&apcs 8 8>;
-+				mboxes = <&apcs 8>;
- 				qcom,smd-edge = <1>;
- 				label = "lpass";
- 			};
+ 	/*
 
+base-commit: a49a6c600193e32123e8885515051b34a5d711ff
 -- 
-2.44.0
+2.25.1
 
