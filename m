@@ -1,30 +1,31 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCFF1635D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8416C848;
 	Wed, 24 Apr 2024 16:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713976465; cv=none; b=Q6UQgf/mTunVfYI9/wHCksV2NCeXD+GAKw6N3Uu8DdHp1tGE+/HjdD4OfJr3f/Nllj2lsPORi0PMWHeLzwldiJV/5RQu6rocOzQMlqWcld5OvX+B3h2pIBvF9jJy8CjHktx6ea4xSLP/EtZrt5YWFK4CQuvV94PS8g2v7M3ejK8=
+	t=1713976466; cv=none; b=Ew5WSy3PJ83gUiwPMHzOUsKX51Pd/aIqnIp6xmgszYO2O6EugjHKaXBvxRziWPq5/LXHCpoJNyNrKo/Qct+YKwsENcigxrm9WGWVkNX5kDn1s1kbUhCHsIzyJ6qXqO+PeVia31Xo2RbSTzHomdkTVT6v6p/HJ1LROB9gs9KRBWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713976465; c=relaxed/simple;
-	bh=CE/vE82s42dTzKYS5OV7+jlr832co3EMcLKt1GJy/LU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fSABXSrnkijHINfY9KGf9Z6KNfUYTCHr7SEYkcmZkfBTBL/xtSIf55oue33F26RsxsNMT7PC6F+QCJVdZa7iDlUz+AntIC1iYFSwHwkxEFKlt2HDgQVgHtxs58hwP6zlk731pniA+g0m3VlMKMksHfzJeZqsbRG3dCoG7INhFdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=N1tPo0oD; arc=none smtp.client-ip=128.199.32.197
+	s=arc-20240116; t=1713976466; c=relaxed/simple;
+	bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LKTVd2fWkufEo+HTWvorANdlrIgKZW9NGROKMMmrFd6dpAd6WpgT8ibZSeBOk8TdUj2iRJkkxA3tuoq5hxzUNG2W+cM3VA5nx5++CYeHWDWlsDnqlJM76axEjDQ3PeVZ3Sz927Uu4Phy+BSHNzoN41J18md5V6ddifCCvzW3VYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=bfZsS8xB; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="N1tPo0oD"
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="bfZsS8xB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1713975863; bh=CE/vE82s42dTzKYS5OV7+jlr832co3EMcLKt1GJy/LU=;
-	h=From:Subject:Date:To:Cc;
-	b=N1tPo0oDHNUJKrHdwC3afgjMS88y0jAwKcFTOXSclWWzqY2sg0RmeffascYRwiR4L
-	 VZrhZrjPVDaUh+2fW/NDrSD3TcYd1oxY6MGqygxDjeYDK3ak+h8MOu3s8U8Bt2XhaT
-	 GmFld39DxQ11NNuLV8QqdC71JKLHx+xHHhl8hd+Y=
+	t=1713975864; bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=bfZsS8xBUZ8n09cljicZ9F7WgkbE0KzMTFLKT1IADiSWVn7Ey3vqoWw33+BpjGIDA
+	 5u7oB2EEGnFzZF1HIOxh72+OEVb8SMU/Gdsku7XuXrPksr9LZlkabKyccFr3s1P7Ll
+	 uZC5/MCQxrqMHJtVLjWhGaI8Ozp0aIPn9somfq+Q=
 From: Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 0/7] Use mboxes instead of syscon for APCS (arm32 & arm64)
-Date: Wed, 24 Apr 2024 18:23:53 +0200
-Message-Id: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
+Date: Wed, 24 Apr 2024 18:23:55 +0200
+Subject: [PATCH 2/7] ARM: dts: qcom: msm8974: Use mboxes properties for
+ APCS
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -33,9 +34,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABkyKWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDEyNj3cSC5GLd3KT8itRiXUOj1FSzZAPDRNMkYyWgjoKi1LTMCrBp0bG
- 1tQDmXRhhXQAAAA==
+Message-Id: <20240424-apcs-mboxes-v1-2-6556c47cb501@z3ntu.xyz>
+References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
+In-Reply-To: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
  Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, 
@@ -46,60 +47,99 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1765; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=CE/vE82s42dTzKYS5OV7+jlr832co3EMcLKt1GJy/LU=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmKTIlZXfpVu3W4tlAjddI/JmsM2Ii7RShTsP4V
- si674OdD3eJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZikyJQAKCRBy2EO4nU3X
- VlPSD/4pG1g+DbW+6eg7lH+c1hYJ0hjd48VZ7jE9MqEPZW5tAJPgA+09VMzSPV8lA2OBnOz/7El
- crbRLL7aOHiMN1+6bsDsyJ8d6m5Qq+3npbCDQWd14MgtS8/D3jIMkR4B4yLyrpBEuHslP+TVb6/
- rjMppyGPF9XYHZMy6dmMmSnbB9RybPLtVzeKv4z0JTQnpbgPsheIPByQFrrkG48pDPipDsAwLQV
- 9zXJERAYQS4blrmN54pr8c0TuAmVm3pz163N0zgcI3xC5Dfp+czF42yyK8zDyyIwkOnlpHBCbGn
- woR/cm59KVKBt/mDhKR8OiPc0twpjA3J92SehY5H8de4XiMZc37k9tajRqx+x6I21NiRw+rTDyc
- NqemIlc4jMmETsDObaHop2VaTkBJspfxeLhQTq+mISLtC4gULg0Q5E33ZEFaetTAYsAwrkpcw1I
- vYPDtf1jiKV+dzSAkqDuxaszpK2CNL3wC5D9wx7/80dOkuxmDe6nbEeA+ND2cs+oVqsfnqBqRVp
- l7nZAqCYj2rv/TsAYPrsiLnksg5AIlAiPzdL9HTujUH2HAE1pkf1qghRUdBRt5lIs4SFlffErSa
- 32U04n/F+XOnNVuzlUa+b9TdtUvg1ZxfMpm+1msVyzB2wjZ+gtNDnsJm4iZDrQzGvxk2K2k1M0/
- UkfmtRmlNNXRBcg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2125; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=T/HcisR2UIcbgArGuXsZIfK+Cy4lJBfreWW6I7UuzJg=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmKTIx82l/iOWVQcYwyxo2ipCDEb1hZTih+NxHs
+ gP1/0HBDnGJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZikyMQAKCRBy2EO4nU3X
+ VgJFEADG3tSW6vL6ozetJ/js5B1C2Du/4KIimBN3lOMvC2aY0e4bXCFi2CKweDtIBJTHa0G5MVg
+ Dpbm7ipWytLVEiQrkxQWUXE+CT2GuOoEXIR1jI17uDPiTiL9yX7a3dK3jvkJPomjSW5AnVrRq4L
+ 4jeMasg/YTs4YKxvXFnIPH38T13KFLwW5A5K4NkYRd8uUb0wwl1mQKT5izHIA0qLUM/8KBtKNqA
+ SW+t5lITCZ6VPCtyBS9B3qk0GOdbHt+2vAbD1VzTa1AQrO7DtqkapL3xoYuPvTNIhh1znStl3jn
+ vL1WOCl6aerSW7iKiKc1MeGmUeTQeA/pH4rul60iD1hcZJ5r3Sua4VPgqGYGVBPwIsAAOaDPIB5
+ P7bCSvBd/dPBy8aoi8WrCh5vGJ3s5NS84mxJpYL8YNoAoJZ7pMkD4byahcWyHn7QMbyW09DGLj4
+ NnVrUifEJkCPDZhNZHat5MvK5iikQGbftSGB4KPonXyhuatmGGzINLtUiEP8AOp7WY/MwL6j7Ae
+ hfH5TLFLG9a1c6GAR0W0UHmgpkyVWV2BbRwfPUNKVklbaO1gSXZEeu245x95TFBLBy5bT8MzjSU
+ LH4l3vV2FCUUwMzDKFnXGXWCcIGEOTXUZ0Y/E7mLLp2jZ3xHJ9mkWlpMDgPoJcpA2pW/YhSadVw
+ +K9z18JknPvuZ8A==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-The first patch is for removing a bogus error warning I've noticed while
-developing this on msm8226 - there the patches are also coming later for
-this SoC since apcs is getting hooked up to cpufreq there also.
-
-Apart from usages from the qcom,smsm driver (patches coming!) all other
-usages of the apcs mailbox now go via the mailbox driver - where one is
-used, so some arm32 boards will continue using "qcom,ipc*" properties in
-the short or long term.
-
-Only compile-tested apart from msm8953 (tested on sdm632-fairphone-fp3)
-and msm8974 (tested on msm8974pro-fairphone-fp2), but I don't expect any
-complications with this.
+Instead of passing the syscon to the various nodes, use the mbox
+interface using the mboxes property.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-Luca Weiss (7):
-      rpmsg: qcom_smd: Don't print error during probe deferral
-      ARM: dts: qcom: msm8974: Use mboxes properties for APCS
-      arm64: dts: qcom: msm8916: Use mboxes properties for APCS
-      arm64: dts: qcom: msm8939: Use mboxes properties for APCS
-      arm64: dts: qcom: msm8953: Use mboxes properties for APCS
-      arm64: dts: qcom: msm8976: Use mboxes properties for APCS
-      arm64: dts: qcom: msm8994: Use mboxes properties for APCS
-
  arch/arm/boot/dts/qcom/qcom-msm8974.dtsi | 14 +++++++-------
- arch/arm64/boot/dts/qcom/msm8916.dtsi    | 10 +++++-----
- arch/arm64/boot/dts/qcom/msm8939.dtsi    |  4 ++--
- arch/arm64/boot/dts/qcom/msm8953.dtsi    | 10 +++++-----
- arch/arm64/boot/dts/qcom/msm8976.dtsi    |  8 ++++----
- arch/arm64/boot/dts/qcom/msm8994.dtsi    |  6 +++---
- drivers/rpmsg/qcom_smd.c                 |  3 ++-
- 7 files changed, 28 insertions(+), 27 deletions(-)
----
-base-commit: 43173e6dbaa227f3107310d4df4a3bacd5e0df33
-change-id: 20240423-apcs-mboxes-12ee6c01a5b3
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Best regards,
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
+index 20958c47ff3a..0f1dc4355c7a 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8974.dtsi
+@@ -130,7 +130,7 @@ master-stats {
+ 
+ 		smd-edge {
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs 8 0>;
++			mboxes = <&apcs 0>;
+ 			qcom,smd-edge = <15>;
+ 
+ 			rpm_requests: rpm-requests {
+@@ -217,7 +217,7 @@ smp2p-adsp {
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
+ 
+-		qcom,ipc = <&apcs 8 10>;
++		mboxes = <&apcs 10>;
+ 
+ 		qcom,local-pid = <0>;
+ 		qcom,remote-pid = <2>;
+@@ -242,7 +242,7 @@ smp2p-modem {
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
+ 
+-		qcom,ipc = <&apcs 8 14>;
++		mboxes = <&apcs 14>;
+ 
+ 		qcom,local-pid = <0>;
+ 		qcom,remote-pid = <1>;
+@@ -267,7 +267,7 @@ smp2p-wcnss {
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
+ 
+-		qcom,ipc = <&apcs 8 18>;
++		mboxes = <&apcs 18>;
+ 
+ 		qcom,local-pid = <0>;
+ 		qcom,remote-pid = <4>;
+@@ -757,7 +757,7 @@ iris {
+ 			smd-edge {
+ 				interrupts = <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>;
+ 
+-				qcom,ipc = <&apcs 8 17>;
++				mboxes = <&apcs 17>;
+ 				qcom,smd-edge = <6>;
+ 
+ 				wcnss {
+@@ -1576,7 +1576,7 @@ bam_dmux: bam-dmux {
+ 			smd-edge {
+ 				interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
+ 
+-				qcom,ipc = <&apcs 8 12>;
++				mboxes = <&apcs 12>;
+ 				qcom,smd-edge = <0>;
+ 
+ 				label = "modem";
+@@ -2213,7 +2213,7 @@ remoteproc_adsp: remoteproc@fe200000 {
+ 			smd-edge {
+ 				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
+ 
+-				qcom,ipc = <&apcs 8 8>;
++				mboxes = <&apcs 8>;
+ 				qcom,smd-edge = <1>;
+ 				label = "lpass";
+ 			};
+
 -- 
-Luca Weiss <luca@z3ntu.xyz>
+2.44.0
 
