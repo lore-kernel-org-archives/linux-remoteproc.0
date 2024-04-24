@@ -1,59 +1,59 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DFD14389A
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 20:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FC013E3E4
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 20:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713989673; cv=none; b=aSt4XQqkaurjn+d+AnW2KTqL1AOr8ktCd90TZ26nJrJQoeu/YB962BZZVBIbe9Z7wmz6fWQ/vDA+TKUMbiFoN9usyyL18T5I5p5XtQoJjtDqIhjeqTw1VnSwzWE4Qv06uCU1VIIIcTdIukA8EKyIHXdWTXc89mlH8/JrnSrMXds=
+	t=1713989687; cv=none; b=BfZNOGRrN3wCKX7IezDMSjlVxMGRXN4KfXMvcFRj+n7MMqHyvoL8o9HTqcVOGtSbjXi1I3O1IV5g86vb4BErFMCErI2F2xGwh+juhh1pByNnAFgJg2mK0x4IrnErjXJaGmNyTsX5l32d81VbA5m/zvcT1BPBFdcsr2yI1DruC/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713989673; c=relaxed/simple;
+	s=arc-20240116; t=1713989687; c=relaxed/simple;
 	bh=5juKDdGEYxNl2ENPjsF/4a/Y2iZb9ON1oaGj0sw8O/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qSAhwkZcqtKkVdUAs+XXFYtPyT7S4iqNBvytm56JjhsKyQK8Cz+cfNdpaO1XfkA8dkBzuGqBCwRUx3dTPbGeIS/StVzh+/YfV4+JIAXi90cvGtmo2UKIEJjyXsT0nGKLGC5svIZxai9srp7pl9lRPMiZxZ3S0U1Pw1alqXBXD7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RrqdHiPR; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:Content-Type; b=RW5ltnXSyuorbWuXQlyQNREiyzRshwY2S6tQqLnaHVvApVfOyKXydZxQwv1J5OxjIdVJg8NOKbgBD+0rUxTQqdEv0RBzt/ikMfNtMh2LyxhsVA0wzXsz1hwRpZF8nkrb0JjNLc0Kg2JVZ+b1E9soFBn6SQ8+GYA+UkVrjtnNIPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kssF1u+2; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RrqdHiPR"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51ae315bb20so266894e87.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 13:14:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kssF1u+2"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2dae975d0dcso14159311fa.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Apr 2024 13:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713989669; x=1714594469; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713989683; x=1714594483; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
         bh=rcWOpWv1JwDPxWKBqvGmsKPJY5XCaFq86YjpwkCYxAM=;
-        b=RrqdHiPRlzFgB/YHAMjNRtEi7bA1Korr7bo5TaSAuiPLAgpN6Gg3Qprhmnfoij7Rmn
-         ddbEX2E9guF73Gl/qxCubSjrKEgeOaLY7ph20jVyt1pvkm8s+yFa4ikJwy8vLJlFdzcL
-         SejCQ3VfanAHPgQu9t4A2kxM1wq6Igs/BJqyd0ja+/aH3It3Clm/2LHdogFICDVdpAVW
-         ukYfXsKeQNklSqDgciqkSIIz2t0FoG5gJYKW3VCvhybAqp0ddcvRvCg/bEtCXLHDDOcT
-         WKf5ucguoxopL7hJuVLRKs4P2aSuJHDivsRDBV1bq/ihs2z4ytXPGRQOXyYWhBZSipy+
-         ENfg==
+        b=kssF1u+2ueTxkV7YbInRzGjki5stAj8wmtxHqAiCG9YpVuKukEl02cjJp3Zs87r/92
+         k95bQlhf9OjGvOloeorkLFi1ncIHw+MuzURhFILZ/UZK3m4/UaiYNsq99TjjGl+myvQh
+         RJyr51AJjEhvXIWq36n12VxViLhi/+8xGqSCFmkPC2xVJ1FJ56LJ1wSz48vASnqQaAEp
+         QroSl4+vKtt4nuKn76G1HGSvxNoNUP4h6DoDC67+TkA/xd/HTWpapwaviLhSN/wA2OmM
+         jwGodqGsaJvqJa0hpwfuzA1dgmdJr3OgQ9Z6S5dbD5ZQhggcD9/Xr03jBUR6m+jhFuws
+         VGqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713989669; x=1714594469;
+        d=1e100.net; s=20230601; t=1713989683; x=1714594483;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=rcWOpWv1JwDPxWKBqvGmsKPJY5XCaFq86YjpwkCYxAM=;
-        b=Yqqe+nSna+kF8X1X3G8rGeLwnVK9DUYcwCTj19dEL7Xyhlk0NFwpWJYsNXjHGxAXr0
-         31KnW1miajhY9NAR1/ys0jsxXhCJ6qT3qPUmPeTe6m9a1Y/49ziPHMYqYwOjEbseTaoU
-         db6oIkdbZy+RST5rXqIfis7YpVnQyfX2c74AudEUdhys5vS4DUI/w3L60ECK9i9lTWZo
-         kGnCfsPJ+Wky1FyKHMUFXMHimIHFIA0xccasWQJ7LhgDaW+4lH6r3i+YmEA1ihs0r9Tb
-         5/OnnGx2ha0faxeWy2eQht48wVFXxnxHyB3VUwPy8UYfzk3eRW2XJsrFmZkWwI3pQGG2
-         w2AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGPkesSSZ6Xga2f+tYzB/Sq/Dv3LX/Lh81G7+xbzLaNEV4KGjSTQP/RIg1wyS/tgNBqlPsnnTkn0yAAn7ZskSweSMP9dNp2mrGR7N4/viNGw==
-X-Gm-Message-State: AOJu0Ywnbmezg5ICchSRaWMEWaYYVh3sO3yww3r6hQGDb6Cckzw1XFTd
-	qluYbH48FLALAyPNCpcXpBU6ssfa6PBq/nITGpm5LF1lArFff55kXxUcEUf+Xi4=
-X-Google-Smtp-Source: AGHT+IFIzbbNTj6m6kGkpPa8i8ekvwbmU0oCByomId+50qDRUiDv1Koq7Q2A9H7ah8qGTSTuaqVT6g==
-X-Received: by 2002:ac2:4887:0:b0:519:5acc:b114 with SMTP id x7-20020ac24887000000b005195accb114mr2433319lfc.45.1713989669504;
-        Wed, 24 Apr 2024 13:14:29 -0700 (PDT)
+        b=qeY3esYnHFPdSkoskOI2VMVttbXC6XxyY+ZhqC+HeyFFDC+FwzpxqRlr0/7YiU9eut
+         oRFsi+NsV+M8S8Z3byDJC/cpJhlkxBs4COK74jbmMa1Jg0+5wy8e451tNyNXLzImNOPW
+         kcNqTTqw5ooRsepqZu1nUVFEu1Qbd4wzVYWpHjvIXbMUBnm4bCRLE6vDBy1kq05AK9V+
+         bWk2kazqa7SXRdzuy+PRHZmqFGpcOvjMxRL/Ugjj/dvXxp05/kgDWfSJJnMWje6NP/f2
+         aJhCvUbwRg4MuvUbMyqPU/eALb4udIwqOzLzIc94c/1BCyFr88S3JXV1yT8LsAZKjnOE
+         EWOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHlim0HjoE2x+aAcRpNGHGOZVIdrIt9Fwf8tU3tyiMY5hzo15kH5mYSAQIUYb4xUyPsOVWuM2rBYTS0EwYiGE52/pKmRoEy8T/GrW8aC6l1Q==
+X-Gm-Message-State: AOJu0Yx9q+NbEHs/xELFLLlyj5UDNiGkb7hXKEbaigPxDY2emrqnZ8uT
+	GHVTxbYTVGULEeXN5hltAgBFCLzWGkZkNO50ajwVgxmOgYO4DLXDpf8FY0f8tAY=
+X-Google-Smtp-Source: AGHT+IH9wlcx4Zg+9QomKNqCiiTVcanWix96jlPdIDd7H3SL1paT78g+EIL8htxmS7imEX6O6XqwzA==
+X-Received: by 2002:a19:914a:0:b0:513:d71e:eebd with SMTP id y10-20020a19914a000000b00513d71eeebdmr190966lfj.32.1713989683584;
+        Wed, 24 Apr 2024 13:14:43 -0700 (PDT)
 Received: from [172.30.204.223] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id s6-20020a197706000000b00518d7c38cb9sm2567308lfc.284.2024.04.24.13.14.27
+        by smtp.gmail.com with ESMTPSA id n1-20020ac242c1000000b00515b5cd2361sm2485942lfl.164.2024.04.24.13.14.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 13:14:28 -0700 (PDT)
-Message-ID: <4d941a6f-ba47-4c1a-94c6-cad24c6f59cf@linaro.org>
-Date: Wed, 24 Apr 2024 22:14:26 +0200
+        Wed, 24 Apr 2024 13:14:43 -0700 (PDT)
+Message-ID: <439e44a6-8026-4283-a2b9-6a2d655f28fb@linaro.org>
+Date: Wed, 24 Apr 2024 22:14:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: qcom: msm8939: Use mboxes properties for
+Subject: Re: [PATCH 5/7] arm64: dts: qcom: msm8953: Use mboxes properties for
  APCS
 To: Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
@@ -70,10 +70,10 @@ To: Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
- <20240424-apcs-mboxes-v1-4-6556c47cb501@z3ntu.xyz>
+ <20240424-apcs-mboxes-v1-5-6556c47cb501@z3ntu.xyz>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240424-apcs-mboxes-v1-4-6556c47cb501@z3ntu.xyz>
+In-Reply-To: <20240424-apcs-mboxes-v1-5-6556c47cb501@z3ntu.xyz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
