@@ -1,119 +1,90 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EED2D627;
-	Thu, 25 Apr 2024 19:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C202135A;
+	Thu, 25 Apr 2024 19:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714071840; cv=none; b=YQ+UsTVw12IjAWAzuHC1TBBznoFdnWu7sUwVUkWAdi8U2dP2fsLNy424mAOG+kmEMbiSrCx6uCMJ55AH/Dk4EVzau6W+RUW1IC7ydIAAO1zIBLfP/Afc00lb+WEAmL/38QaCdZF8EU2zy5z5jrFWPvzG8kcmUHycXdNaoUqp61g=
+	t=1714072504; cv=none; b=bY4qA8ktwou7iq03zYZ58ziE/1wYjgSz4BWAdlHNfoaCfMoaPkyyq8cV2T5CF6QouEI+pGGhUGcQtw9ySpaDrsIOPfPjLSTYDMZaeqZ8dKpHrnpgx6R85Ye98v11MDaDSE3XKRGXRg9Fs36SZNX5NvsBILsnQOy7nrd0/QH4fes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714071840; c=relaxed/simple;
-	bh=l4wqcIAPZf476EKFqK75oCbeHyiGBYCR7vbC5Cof4UY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tT1Ldjq8SwT5eKDYmsO7bHw2pmK+4WvhaeTfc5zFbyfN7yk9U0iaG3gOmOKDUR9Go6xYf2TyQoDP2P4o8yczLl6dTwZ0HuhhU5PitAy12mDnyWLIzz9+mCxkuo2NpHEY1rO/wvpRYLKVVPL/F1cRVZWKdCoiaAEYHIrz+nWYesw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ufgi97AB; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1714072504; c=relaxed/simple;
+	bh=QvJQW5/tPo0PBeZh3lFDVxmj9QN7Tn9WNxdlpoVVeNY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TunpT3ntry9uzveQ+nclyBkjIo5yb+q5vjTxVJ+h2mE+QSV3hwYfHJZBtbfGoZ32kutTTy2tIryMQXyniIaXYgFsqZNDaH+psjg8XkU4gZG+OPD+cWZMlyHlpABOy8siuQppJxiPqwRfOZcNaXUVSlB4YhnkftQtUWIPSmpjnQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=GwFer7Rr; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ufgi97AB"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43PJ3aH2009932;
-	Thu, 25 Apr 2024 14:03:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1714071816;
-	bh=f/j51iHm9g/xIoVM7pqMu6jNQnAkUZLA+0hNmM4kd8w=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ufgi97ABTPRoFQWqSbgl/ZZltiQO6o7Qz7UVcJs9tS4YR2rkIijYrE3B3m4F37sPP
-	 WrkeVBek2v78cri71IDahZQE9VoKMvH4Q6Zrr6KQ/IFyHWxDGKk0igy4A0qg2ekPCl
-	 5jQGafl98XcGxWPBhK6EzM5fEq6rq6D72M0BrH2k=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43PJ3as2017054
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 25 Apr 2024 14:03:36 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 25
- Apr 2024 14:03:36 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 25 Apr 2024 14:03:36 -0500
-Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43PJ3aml053300;
-	Thu, 25 Apr 2024 14:03:36 -0500
-Message-ID: <35e37395-c6d9-42ef-839c-bac47b50f3bf@ti.com>
-Date: Thu, 25 Apr 2024 14:03:36 -0500
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="GwFer7Rr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
+	t=1714072501; bh=QvJQW5/tPo0PBeZh3lFDVxmj9QN7Tn9WNxdlpoVVeNY=;
+	h=From:Subject:Date:To:Cc;
+	b=GwFer7RrH2IJE270lw3hm7pfGbT4mYC1lv8Z6Y/bAeIj3aE6z1KDckCMY9jpSkAB4
+	 zF/+bqHi2R0655+ZPwDvtVzGelgcjbjMjUsiogWXpwleOHhDOLsQxueagp69IQBuHb
+	 N9DXOUlq890EiyDYcDeovCsuJTM9OgIr8EaROius=
+From: Luca Weiss <luca@z3ntu.xyz>
+Subject: [PATCH 0/2] Mark qcom,ipc as deprecated in two schemas
+Date: Thu, 25 Apr 2024 21:14:29 +0200
+Message-Id: <20240425-qcom-ipc-deprecate-v1-0-a8d8034253ea@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>
-CC: Nishanth Menon <nm@ti.com>, Bjorn Andersson <andersson@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <kristo@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20240424190612.17349-1-afd@ti.com>
- <20240424190612.17349-2-afd@ti.com>
- <171399099843.670532.4326365049493230346.robh@kernel.org>
- <20240425-herself-brigade-5b6b53dc5133@spud>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240425-herself-brigade-5b6b53dc5133@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-B4-Tracking: v=1; b=H4sIAJWrKmYC/x2MQQqAIBAAvxJ7bsG0CPpKdLB1qz2kphFB9Pek4
+ wzMPJA5CWcYqgcSX5Il+AJNXQFt1q+M4gqDVrpVre7woLCjRELHMTHZk9H0dpnZGLKOoITFL3L
+ /03F63w+/XJkZZAAAAA==
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=883; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=QvJQW5/tPo0PBeZh3lFDVxmj9QN7Tn9WNxdlpoVVeNY=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmKqugrhDSHoYG60xXLK1PX+EXWogXQO/qABGhn
+ OJQRloOgpmJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZiqroAAKCRBy2EO4nU3X
+ VhazEADSzmJbKb1diAv9PI8AKWDeJtScDVudXGSs8YSkjoFRx6c+gZ4JtSYcktnXEVB2mPGS1e9
+ Z8pOgceZZf6k+oEvDFObS9y8Vtu+UUG23rmf19VSFy6GoT3PmYMUznceGQBjs4jJdhzDmS3VhFd
+ 3r5e7jLGBDderm7mbMxJXlWyxJ9Z7a/48c3WnBw7jSmpI8lxoFXNxBzwvyh4sWN0anKKr+66efe
+ SQcx8WQhq9QTwPOsxSOKdQ4uY/fkYoKUpP4ru9pdo4yxawFOLbBm/7Vz+VXOnRszY5P/mUpFEEv
+ 2TeBfgZSa0xQu8lCX1LkgijPFhCO1pHvSs1k4+CCW3A5FSOEuBTWLgqzJOorW4er3Mr4hOkEFrc
+ 7dLryo8M8D/hch//VeDO5E3LNajZBqkAX95HtQw3MlJvxvMTv54vNn4SFX9qHdNJ+amxe2d7LCa
+ 0AxRuhVdf5m4UW5/30RbqJYzlMYetWt0roVgj0uOFmWsS5hHVbSGWiDKyLP/Ry/cXWnA/n3uSO1
+ ZojTFgz+l/D3IzyF414qU2j3GtpALrB2FSVZjtEIFWc3RQCNadWz2Syzx+vasiH/p7idjaMcEDY
+ e02ZUo1yNELQq5O04zlAaDiOXF+vJYJAuNnbStfuhR/lCYNzaKiVwGZ+S6rnNf6ycQhUpWvHhDp
+ fucrWnFpcy0NNqQ==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-On 4/25/24 12:15 PM, Conor Dooley wrote:
-> On Wed, Apr 24, 2024 at 03:36:39PM -0500, Rob Herring wrote:
->>
->> On Wed, 24 Apr 2024 14:06:09 -0500, Andrew Davis wrote:
->>> From: Hari Nagalla <hnagalla@ti.com>
->>>
->>> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
->>> The remote processor's life cycle management and IPC mechanisms are
->>> similar across the R5F and M4F cores from remote processor driver
->>> point of view. However, there are subtle differences in image loading
->>> and starting the M4F subsystems.
->>>
->>> The YAML binding document provides the various node properties to be
->>> configured by the consumers of the M4F subsystem.
->>>
->>> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
->>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->>> Signed-off-by: Andrew Davis <afd@ti.com>
->>> ---
->>>   .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 126 ++++++++++++++++++
->>>   1 file changed, 126 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->>
->>
->> doc reference errors (make refcheckdocs):
->> Warning: Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
->> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-> 
-> The file is now in dt-schema:
-> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/reserved-memory/reserved-memory.yaml
+The mboxes property has been supported in those bindings since a while
+and was always meant to the replace qcom,ipc properties, so let's mark
+qcom,ipc as deprecated - and update the examples to use mboxes.
 
-So should I use "reserved-memory/reserved-memory.yaml" here, or just
-drop this line completely?
+Related:
+https://lore.kernel.org/linux-arm-msm/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz/
 
-Andrew
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+Luca Weiss (2):
+      dt-bindings: remoteproc: qcom,smd-edge: Mark qcom,ipc as deprecated
+      dt-bindings: soc: qcom,smp2p: Mark qcom,ipc as deprecated
+
+ Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml | 3 ++-
+ Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml      | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+---
+base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
+change-id: 20240425-qcom-ipc-deprecate-37afbe33cadc
+
+Best regards,
+-- 
+Luca Weiss <luca@z3ntu.xyz>
+
