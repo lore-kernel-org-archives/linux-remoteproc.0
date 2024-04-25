@@ -1,104 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA3514D715;
-	Thu, 25 Apr 2024 17:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EED2D627;
+	Thu, 25 Apr 2024 19:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714065413; cv=none; b=ieVuYrGwFb1faE6Wvv0R4Dpvt4Lztg9BhQzcpceAd1dJXsRPHSlws3gFHqLEIgWJdm6gfYi3+u6lVCrgnsM7WD00GJchoGeL4f7ST4ijEW+7zH5wNtYM/HXdNfAehnuQxAi65VfovuvDKyAoTByschJEgzOMeWXUysKxI7uyLKo=
+	t=1714071840; cv=none; b=YQ+UsTVw12IjAWAzuHC1TBBznoFdnWu7sUwVUkWAdi8U2dP2fsLNy424mAOG+kmEMbiSrCx6uCMJ55AH/Dk4EVzau6W+RUW1IC7ydIAAO1zIBLfP/Afc00lb+WEAmL/38QaCdZF8EU2zy5z5jrFWPvzG8kcmUHycXdNaoUqp61g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714065413; c=relaxed/simple;
-	bh=h3nuslD7o3VWJfas8RPx62jlgO84B3ru7Ne0t4ZCwWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H16hw+5XnQZUTQQalwk/euf//m0YTXlgN+D4dhwRGduCXkmSmM0m9TeJ9byhwwGASAzg2gV/ZE/ieeXP612cG9OInDSRzrHp9fJFzzVr3H7f8tV6secJ2s8yu5Izx8d8lI/CuSFsa3PR0oBOCVLM0P7QxWFy+deplr3T9vYDTJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3rwQr1+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714071840; c=relaxed/simple;
+	bh=l4wqcIAPZf476EKFqK75oCbeHyiGBYCR7vbC5Cof4UY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tT1Ldjq8SwT5eKDYmsO7bHw2pmK+4WvhaeTfc5zFbyfN7yk9U0iaG3gOmOKDUR9Go6xYf2TyQoDP2P4o8yczLl6dTwZ0HuhhU5PitAy12mDnyWLIzz9+mCxkuo2NpHEY1rO/wvpRYLKVVPL/F1cRVZWKdCoiaAEYHIrz+nWYesw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ufgi97AB; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3rwQr1+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45ABAC113CC;
-	Thu, 25 Apr 2024 17:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714065413;
-	bh=h3nuslD7o3VWJfas8RPx62jlgO84B3ru7Ne0t4ZCwWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q3rwQr1+fYZV/qTG7uDmYccAUXd/63FxMe5uciWqmaI9hW6mDDwpggQ3oomNLwTE6
-	 FP/GNqBajwR+w9nBZensVdHrVoVwGf7G7OKcoa+RHAtyw1niecffkX86SFj4H2okGl
-	 rK3GAvoUQ6QMQzA6G2PHOXR41GmWpsPs1n/zBpToKMHCtkekJ8j0l3OMaHyr1BSjKR
-	 /WTqN/g7HkG/GL4Ij7LSPFlEPUvlQ4XyiuRH686nfy0vTD108h56S1MfdCgIFVRR26
-	 kQ7uoKnpJDXoNKLpJLgxBXIOisV0OVHcGYXJPYuKfZCGUeR0H2WVvds+hz7rWSloTv
-	 O26c82nConYxw==
-Date: Thu, 25 Apr 2024 18:16:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hari Nagalla <hnagalla@ti.com>, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-Message-ID: <20240425-bribe-suitcase-1adc5b66021e@spud>
-References: <20240424190612.17349-1-afd@ti.com>
- <20240424190612.17349-2-afd@ti.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ufgi97AB"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43PJ3aH2009932;
+	Thu, 25 Apr 2024 14:03:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1714071816;
+	bh=f/j51iHm9g/xIoVM7pqMu6jNQnAkUZLA+0hNmM4kd8w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ufgi97ABTPRoFQWqSbgl/ZZltiQO6o7Qz7UVcJs9tS4YR2rkIijYrE3B3m4F37sPP
+	 WrkeVBek2v78cri71IDahZQE9VoKMvH4Q6Zrr6KQ/IFyHWxDGKk0igy4A0qg2ekPCl
+	 5jQGafl98XcGxWPBhK6EzM5fEq6rq6D72M0BrH2k=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43PJ3as2017054
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 25 Apr 2024 14:03:36 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 25
+ Apr 2024 14:03:36 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 25 Apr 2024 14:03:36 -0500
+Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43PJ3aml053300;
+	Thu, 25 Apr 2024 14:03:36 -0500
+Message-ID: <35e37395-c6d9-42ef-839c-bac47b50f3bf@ti.com>
+Date: Thu, 25 Apr 2024 14:03:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aOAHaQZ3KdQOTFmk"
-Content-Disposition: inline
-In-Reply-To: <20240424190612.17349-2-afd@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Bjorn Andersson <andersson@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <kristo@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20240424190612.17349-1-afd@ti.com>
+ <20240424190612.17349-2-afd@ti.com>
+ <171399099843.670532.4326365049493230346.robh@kernel.org>
+ <20240425-herself-brigade-5b6b53dc5133@spud>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240425-herself-brigade-5b6b53dc5133@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+On 4/25/24 12:15 PM, Conor Dooley wrote:
+> On Wed, Apr 24, 2024 at 03:36:39PM -0500, Rob Herring wrote:
+>>
+>> On Wed, 24 Apr 2024 14:06:09 -0500, Andrew Davis wrote:
+>>> From: Hari Nagalla <hnagalla@ti.com>
+>>>
+>>> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+>>> The remote processor's life cycle management and IPC mechanisms are
+>>> similar across the R5F and M4F cores from remote processor driver
+>>> point of view. However, there are subtle differences in image loading
+>>> and starting the M4F subsystems.
+>>>
+>>> The YAML binding document provides the various node properties to be
+>>> configured by the consumers of the M4F subsystem.
+>>>
+>>> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+>>> Signed-off-by: Andrew Davis <afd@ti.com>
+>>> ---
+>>>   .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 126 ++++++++++++++++++
+>>>   1 file changed, 126 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>>
+>>
+>> doc reference errors (make refcheckdocs):
+>> Warning: Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+>> Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+> 
+> The file is now in dt-schema:
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/reserved-memory/reserved-memory.yaml
 
---aOAHaQZ3KdQOTFmk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So should I use "reserved-memory/reserved-memory.yaml" here, or just
+drop this line completely?
 
-On Wed, Apr 24, 2024 at 02:06:09PM -0500, Andrew Davis wrote:
-> From: Hari Nagalla <hnagalla@ti.com>
->=20
-> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-> The remote processor's life cycle management and IPC mechanisms are
-> similar across the R5F and M4F cores from remote processor driver
-> point of view. However, there are subtle differences in image loading
-> and starting the M4F subsystems.
->=20
-> The YAML binding document provides the various node properties to be
-> configured by the consumers of the M4F subsystem.
->=20
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> +  mboxes:
-> +    description: |
-
-> +  memory-region:
-> +    description: |
-
-Not sure that either chomping operator is needed here, but that's a nit.
-With the incorrect link fixed up,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
-
---aOAHaQZ3KdQOTFmk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZiqQAAAKCRB4tDGHoIJi
-0uyVAQCqBjDR1HNWDm/Ft288FX/CtCgwrAAwaYRV3CVSjfCgEAD+JrQLglCD8B37
-8LYXCjdNLlQdR1B6Hs5HAhHIfZxW8gs=
-=n4e7
------END PGP SIGNATURE-----
-
---aOAHaQZ3KdQOTFmk--
+Andrew
