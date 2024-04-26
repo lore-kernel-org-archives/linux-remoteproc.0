@@ -1,149 +1,130 @@
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D53F146D69
-	for <linux-remoteproc@vger.kernel.org>; Fri, 26 Apr 2024 14:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1181DDD6;
+	Fri, 26 Apr 2024 16:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714140134; cv=none; b=fvZ8h7iSuTtMmqsFlbjcm4Ko0B8kqZjYTdw4MinlOB+Zh/et9Flczb2VW/XNbx7MLHt5g31LPPry0bhzUzX1kv+Fr8nhekDGNDloL1qM2eeLOrMWX4KCpkmX2zPv/D638g+tDOGVaT8dBcOxkX4XyaGtMUKHJTr3rlJBxBi9Qeg=
+	t=1714150365; cv=none; b=bQ5XdwkuTatevfoPQDAVEPLTn8HIcX8ov5h7nW7ilWs+8Ouzakokth6yTS9yUZGC3VfqOaR5jdp80q8jSzMFXxyLesEmw037G39CsbzZ5UWcvPojeQldqTH9A7VRyfN4C9fkuydItrQ+xvzuAKYyIp4kGKtzMhriBwr0+MchZZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714140134; c=relaxed/simple;
-	bh=HZDsGbmh+YJvzqUYjBzipiRUUq1OHnGZ+Kln31mCXY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AG7PneOdd5Jo2M/IpLaPO1iRnPjIbXCxBRuy2XlVFRfKBNXRx1ArwyUcYG4rNsaO/4TQa+oO0VOLHKVuji2I8dReKUbXeUekl1nS4uoxS8EHFngUEnGlwK4XvREG5gx8ytEv8l9rqw+a9bxXiA43ri3u52J4POjKNDEKOVYUSyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=AKQocuZd; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1714150365; c=relaxed/simple;
+	bh=oy7M0iXV3Jc2uK9BPIoM43n9kP46AB/HVoIMmAA8lts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZ+bOPF+pydLn+6FdzJE+/rh3H+cprUR3AlCLz/PmBGw2LZy7fIsrxNEvE0XnS5mvhnHCHYQzSRM3DTxQMW3JxwOz28jt+Bjcjxkw/75MxJok+B1w3u4UlyURgzC/PZ+aOhlsvulRU7nOFioa+eJNPpHX3cb0FteXgkdnZHHuaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQCNwD/0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="AKQocuZd"
-Message-ID: <9c5b1759-24fd-44f8-bfee-d1ff61a3fd41@postmarketos.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1714140129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=set4n7Bfvg/nCVRqXHEkPOl5DaTKubnkbfpADbsPLsA=;
-	b=AKQocuZdWNFvfJGaHtn03BiXdNglxDXGBarueV50w5UMXjGwSzsaZCc5s77EIgI85LQX27
-	Cr6T/s5qeguXtKV128lBSAxqnsDOlXYWp15X6CvT7ZJ0fjTtqXeqYXRGVSPgJA9NUFQbFv
-	zr+no3hgkVF4Vwgx/jfPgAuO+4M9EoMgyYpsei92lh41IE52wKphLUFb5ruN6woYPpZ0mg
-	ZUJ3tiTD25dyjnXRu6zFzCPLUg7XRHnJuoA7bjhFpsiMGQKU+n/gSlqPmou76dgHExLd0/
-	xWf2oIe/sKXJA54FMqolxZnfZ1oNDbZWD5QW4z+c7NQVEt3FhxdQja2ijwcIew==
-Date: Fri, 26 Apr 2024 17:02:06 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQCNwD/0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE999C113CD;
+	Fri, 26 Apr 2024 16:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714150364;
+	bh=oy7M0iXV3Jc2uK9BPIoM43n9kP46AB/HVoIMmAA8lts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VQCNwD/0EhDY7ObHVfGsSQj0XNHGVJacPU6VY2eYMxEmTaoH8W1073AGtDAfsWJyG
+	 gJBC4qg+2dkiysJvKY5U83xLYYNU0KlmEfdHb6Y2m37PQ8FT+r9r3H3b14BaTKjMNF
+	 LD6CeURfSLiG++/6jZ4corsGc6FJ2IqncdyxwlYZkHLpym1TR/8fi1b6lySLM7IjnO
+	 N3av+NwYEAH1CXkBR6mopyJ4A4ChoiWSBIPEDqAycAwcbFnkziLMCgb+Aq5a6tfKNf
+	 S1ENVGFdJbQK9Dh5Sb3Gd5et/ufaBrxjLoDhxkUMapxvhMFXqOS/D3rXhOmXPttLex
+	 p8hDxgoobOwJQ==
+Date: Fri, 26 Apr 2024 17:52:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+	linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v8 1/4] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+Message-ID: <20240426-iodine-unclamped-c5b74361761d@spud>
+References: <20240424190612.17349-1-afd@ti.com>
+ <20240424190612.17349-2-afd@ti.com>
+ <171399099843.670532.4326365049493230346.robh@kernel.org>
+ <20240425-herself-brigade-5b6b53dc5133@spud>
+ <35e37395-c6d9-42ef-839c-bac47b50f3bf@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v7 0/6] soc: qcom: add in-kernel pd-mapper implementation
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>,
- Xilin Wu <wuxilin123@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alexey Minnekhanov <alexeymin@postmarketos.org>
-In-Reply-To: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+4EvlqZoEW1CXVa2"
+Content-Disposition: inline
+In-Reply-To: <35e37395-c6d9-42ef-839c-bac47b50f3bf@ti.com>
 
 
+--+4EvlqZoEW1CXVa2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 24.04.2024 12:27, Dmitry Baryshkov wrote:
-> Protection domain mapper is a QMI service providing mapping between
-> 'protection domains' and services supported / allowed in these domains.
-> For example such mapping is required for loading of the WiFi firmware or
-> for properly starting up the UCSI / altmode / battery manager support.
-> 
-> The existing userspace implementation has several issue. It doesn't play
-> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
-> firmware location is changed (or if the firmware was not available at
-> the time pd-mapper was started but the corresponding directory is
-> mounted later), etc.
-> 
-> However this configuration is largely static and common between
-> different platforms. Provide in-kernel service implementing static
-> per-platform data.
-> 
-> Unlike previous revisions of the patchset, this iteration uses static
-> configuration per platform, rather than building it dynamically from the
-> list of DSPs being started.
-> 
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konrad.dybcio@linaro.org>
-> To: Sibi Sankar <quic_sibis@quicinc.com>
-> To: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Xilin Wu <wuxilin123@gmail.com>
-> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> --
-> 
-> Changes in v7:
-> - Fixed modular build (Steev)
-> - Link to v6: https://lore.kernel.org/r/20240422-qcom-pd-mapper-v6-0-f96957d01207@linaro.org
-> 
-> Changes in v6:
-> - Reworked mutex to fix lockdep issue on deregistration
-> - Fixed dependencies between PD-mapper and remoteproc to fix modular
->    builds (Krzysztof)
-> - Added EXPORT_SYMBOL_GPL to fix modular builds (Krzysztof)
-> - Fixed kerneldocs (Krzysztof)
-> - Removed extra pr_debug messages (Krzysztof)
-> - Fixed wcss build (Krzysztof)
-> - Added platforms which do not require protection domain mapping to
->    silence the notice on those platforms
-> - Link to v5: https://lore.kernel.org/r/20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org
-> 
-> Changes in v5:
-> - pdr: drop lock in pdr_register_listener, list_lock is already held (Chris Lew)
-> - pd_mapper: reworked to provide static configuration per platform
->    (Bjorn)
-> - Link to v4: https://lore.kernel.org/r/20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org
-> 
-> Changes in v4:
-> - Fixed missing chunk, reenabled kfree in qmi_del_server (Konrad)
-> - Added configuration for sm6350 (Thanks to Luca)
-> - Removed RFC tag (Konrad)
-> - Link to v3: https://lore.kernel.org/r/20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org
-> 
-> Changes in RFC v3:
-> - Send start / stop notifications when PD-mapper domain list is changed
-> - Reworked the way PD-mapper treats protection domains, register all of
->    them in a single batch
-> - Added SC7180 domains configuration based on TCL Book 14 GO
-> - Link to v2: https://lore.kernel.org/r/20240301-qcom-pd-mapper-v2-0-5d12a081d9d1@linaro.org
-> 
-> Changes in RFC v2:
-> - Swapped num_domains / domains (Konrad)
-> - Fixed an issue with battery not working on sc8280xp
-> - Added missing configuration for QCS404
-> 
+On Thu, Apr 25, 2024 at 02:03:36PM -0500, Andrew Davis wrote:
+> On 4/25/24 12:15 PM, Conor Dooley wrote:
+> > On Wed, Apr 24, 2024 at 03:36:39PM -0500, Rob Herring wrote:
+> > >=20
+> > > On Wed, 24 Apr 2024 14:06:09 -0500, Andrew Davis wrote:
+> > > > From: Hari Nagalla <hnagalla@ti.com>
+> > > >=20
+> > > > K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
+> > > > The remote processor's life cycle management and IPC mechanisms are
+> > > > similar across the R5F and M4F cores from remote processor driver
+> > > > point of view. However, there are subtle differences in image loadi=
+ng
+> > > > and starting the M4F subsystems.
+> > > >=20
+> > > > The YAML binding document provides the various node properties to be
+> > > > configured by the consumers of the M4F subsystem.
+> > > >=20
+> > > > Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> > > > Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> > > > Signed-off-by: Andrew Davis <afd@ti.com>
+> > > > ---
+> > > >   .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 126 +++++++++++++=
++++++
+> > > >   1 file changed, 126 insertions(+)
+> > > >   create mode 100644 Documentation/devicetree/bindings/remoteproc/t=
+i,k3-m4f-rproc.yaml
+> > > >=20
+> > >=20
+> > > My bot found errors running 'make dt_binding_check' on your patch:
+> > >=20
+> > > yamllint warnings/errors:
+> > >=20
+> > > dtschema/dtc warnings/errors:
+> > >=20
+> > >=20
+> > > doc reference errors (make refcheckdocs):
+> > > Warning: Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc=
+=2Eyaml references a file that doesn't exist: Documentation/devicetree/bind=
+ings/reserved-memory/reserved-memory.yaml
+> > > Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml: Do=
+cumentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
+> >=20
+> > The file is now in dt-schema:
+> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/=
+reserved-memory/reserved-memory.yaml
+>=20
+> So should I use "reserved-memory/reserved-memory.yaml" here, or just
+> drop this line completely?
 
-I've tested this series on sdm660 device, with userspace pd-mapper
-service disabled, and don't see any regressions - e.g Wi-Fi/BT
-still come online and work as before.
+The only other example that I could find that didn't reference the text
+binding (which points to dt-schema) said:
+"(see reserved-memory/reserved-memory.yaml in dtschema project)"
 
-Debug logs:
-https://paste.sr.ht/~minlexx/bd03db4c582a3275078ce4fd05ea76ce46a52b8e
+--+4EvlqZoEW1CXVa2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Missing cdsp_root and adsp_sensors PDs are not currently an issue,
-because those are not enabled yet on SDM660 or hard to test, so
+-----BEGIN PGP SIGNATURE-----
 
-Tested-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZivb1wAKCRB4tDGHoIJi
+0sFAAQCE26iVq+TBfiAaSZAlbmVskHWiA0rzfsJCTpipRqEv1gD8DwDsmF1fYkkF
+Y9pheRDvXsneCjGJmeN7gV3XdJj68QE=
+=BPm1
+-----END PGP SIGNATURE-----
 
--- 
-Regards,
-Alexey Minnekhanov
-postmarketOS developer
+--+4EvlqZoEW1CXVa2--
