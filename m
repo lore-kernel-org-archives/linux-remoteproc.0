@@ -1,143 +1,136 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B952D627;
-	Sat, 27 Apr 2024 01:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7D2381CC
+	for <linux-remoteproc@vger.kernel.org>; Sat, 27 Apr 2024 01:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714179836; cv=none; b=mEut1vzQ6kkHD8iMaXLcB0GJCZ731Spi3TNYCf8chxpm3navRiudANKjoVYjcrhvvdQIt+3gZ0/XkU5GSEWwlvxHriI8rSRopNFh89UbrGqvEGxqO5BYBAXHygI8v0lY53OtFm6RpnRl+t3I1YKWiOYHShNGkgglelUOB2jxMPM=
+	t=1714181786; cv=none; b=CW6Jg2dsgjTSV5hMgcxh9KEFhgTE98H+DwN6sX/M1fIXtM7inxSPDkSuiJo8ErXpx2dhcxipdq9f/igMKH0Lyj/MRQADivkZxhDDBiTqCFyK+5LDG/L8Hd2J/zV4fFOGA8eGJ51pCkZpbX4JIRnMsbV/Pz2gxDu23zK699IWAlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714179836; c=relaxed/simple;
-	bh=wYFR5Jwm6sJT7rAqaF5ytlgZfLgTIhtKlQoOLL4qvGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y4wdF2XVaBM6TzTUxhdRsEBVb00kOp0+etjUECrCyq3bD/kObKwiE9bGlCQ3OmEDrIo4yqPapbucH/OQThNjuO9v/kZd9f+o3jreAGB+YpuxDs+yX4N9E5LnbkesbuJeaohAsV13UFgFB4BXsaXs45fdNY1tpg4pEOr4n8czHCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Uo8bzQGl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714181786; c=relaxed/simple;
+	bh=RdoQEjsfDLaQLxmZJ7q6grWn9U77AJJaiBSCfDtS9V4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YG4x6xFTSpJOejOXMpcsSUoCRGy07Y2F8TM2lNvDnqzgsiX/ThOcUS+vPJau4ceE7WJhaeMSf1qmAb5RZ6hG6AggF1WclRGCU4KQSpeQZSJHvkSGcI8hFVOHqp61XxYetOnwF2tNqECywC5sMU1Ywz354pyxofLrDfb4JCzCzBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p94PWi38; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uo8bzQGl"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43R0guAm002902;
-	Sat, 27 Apr 2024 01:03:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=+/vH5sNN1cJT9Kyhu3EW40Dh97RLGyJ0/8gBBv7WljQ=; b=Uo
-	8bzQGld610YvOw+pdW0HPHemdbU/YyEo+DuwAEpk/LXI/IybGB1qbpNXfa+BxAfz
-	jMdurpkmQ69z92iQY9iiYOkpxQ4oTR3uGuPCCCfWSNmMG1uizEqtTS1gXyeDx0vI
-	rlxZwM24bb+ybpy5ZvlnERUrUnxonajJSz0QpS7yZPaY/arlCOBxaKYVzXtVcnxx
-	SfEihrp88ZKPkwLXlxLhbTTCAWTsQbpb7DV31Q2+Qto7HuccE+fFFnYEGnVpzqpM
-	qKXb1N8xlUNncydrjYiS0aaqwBFWLuiO2Eh+hPDaaQ31r4wZehaKXi0UWmCrvjvn
-	BhE8ViSw81MzAAmrLJIQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xr7yg23n3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 27 Apr 2024 01:03:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43R13kSx015509
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 27 Apr 2024 01:03:47 GMT
-Received: from [10.110.11.138] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
- 2024 18:03:46 -0700
-Message-ID: <f1ee1fc0-64cb-5610-db92-3a06d477e8b8@quicinc.com>
-Date: Fri, 26 Apr 2024 18:03:45 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p94PWi38"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-617cd7bd929so29400297b3.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 26 Apr 2024 18:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714181784; x=1714786584; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNCnVj1Y2/lmMmkRb2EKBZBX4wqTajwlwp5m2yeDx44=;
+        b=p94PWi38iBSTEVWR/dHuUERmQQewEYrXNycrqB5V2bLkpu4tDtJfDHtZQxTQHKrqmc
+         18Y4oSMelvgYr4obxNFpurT4tmg5aOK5w+5SfM944Md3FbFFGIOgKgahabTtgZN6hU4i
+         Uu53Qc8gXTX9bG9dl/7YPrAzuZYnfik+v7aFKetbXhXbUQ+wDVqf6MpUphQ/Vf3xXzxV
+         zaJ2YDR0xvgY7MWyZVKguI6RR2lTZuXj7vKihi8XsyNBDaUQOZg2pFw8HekV/ZQDU+np
+         yr8q7KL1Evt6CgsHcIESGx4vUXzflilZxR4AOY3HJzIsh9FWIzHVVZzLPiCpAXlIwC3o
+         bUkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714181784; x=1714786584;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DNCnVj1Y2/lmMmkRb2EKBZBX4wqTajwlwp5m2yeDx44=;
+        b=tMooVehDe0nTnNi0e9tAmR+kqY+HngMJAgWJbHZhmQWJlNu+aeAhpMqoBWneJA1smz
+         RrPj/VX96Z+5F/h9CSzqR7bgSvX5MqhUSFygXTT88bwhsQ9FsHxLNpkBJCzV5wuPNg5d
+         gfDvZOkxj5yutdvyKoJYPMtRPkvsqitZ0H9SxdxvklnnxJ1aYanWnoX5dcG73rX7l+U5
+         dMjkfHrdsPp27AeQJtkRBLlYqhXMt9WU7sKAfSOwpgp4ZXNGYtG6en+Hl8Naeu+p/5xl
+         OP10vazkb2VIy4cDwd1GAYKPuxalGvVn24rrzbDgCiA90gWR1+OO9f9jHiLgYXrGAj8y
+         1vGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhO8rWmQXNIVVYRRo6AmDeMMaJ0cJn0qvtgZVFRkx5a82R4oK8ZtBdNERnkZl50y4wQqYTDk+W++tT/XJOeIpvkBqO8XRqxS4UangAHs2ViA==
+X-Gm-Message-State: AOJu0YxoaR3TojCAGQw9wANWc3Sfjarp7yxz2lEwiqztprYPB+jJFVT5
+	LfnJS0hEsHFpNmKKWM/Ya0ryySle9dUnekdFxFDhj6pUxJ8e/1SCGEbt2umAQpMs1YYy1ljGWq1
+	mvo0Iz//QMEeXbgtcjGwv+2I7z+e5561rkgEQ+A==
+X-Google-Smtp-Source: AGHT+IFisVSHK3bri2d3dp8z+/w4P0d7YMFifFNKBTl5xkxnQFIHLo94xPnn1vjQbgMSAcY7JL1avzEt2+BlPwPhBn4=
+X-Received: by 2002:a05:690c:630d:b0:618:9353:1023 with SMTP id
+ ho13-20020a05690c630d00b0061893531023mr5892671ywb.17.1714181784203; Fri, 26
+ Apr 2024 18:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v7 6/6] remoteproc: qcom: enable in-kernel PD mapper
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Xilin Wu <wuxilin123@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>
 References: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
- <20240424-qcom-pd-mapper-v7-6-05f7fc646e0f@linaro.org>
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240424-qcom-pd-mapper-v7-6-05f7fc646e0f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dDFGYWOFj9rGgfhMFqOThmJg_v9db-1p
-X-Proofpoint-ORIG-GUID: dDFGYWOFj9rGgfhMFqOThmJg_v9db-1p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-26_21,2024-04-26_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404270005
+ <20240424-qcom-pd-mapper-v7-6-05f7fc646e0f@linaro.org> <f1ee1fc0-64cb-5610-db92-3a06d477e8b8@quicinc.com>
+In-Reply-To: <f1ee1fc0-64cb-5610-db92-3a06d477e8b8@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 27 Apr 2024 04:36:13 +0300
+Message-ID: <CAA8EJpoDuKyy2_7Lwih6gLW3UO4sduV6Fun6RSzJg6RHSHgMsQ@mail.gmail.com>
+Subject: Re: [PATCH v7 6/6] remoteproc: qcom: enable in-kernel PD mapper
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
+	Xilin Wu <wuxilin123@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+
+On Sat, 27 Apr 2024 at 04:03, Chris Lew <quic_clew@quicinc.com> wrote:
+>
+>
+>
+> On 4/24/2024 2:28 AM, Dmitry Baryshkov wrote:
+> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > index 1d24c9b656a8..02d0c626b03b 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > @@ -23,6 +23,7 @@
+> >   #include <linux/remoteproc.h>
+> >   #include <linux/reset.h>
+> >   #include <linux/soc/qcom/mdt_loader.h>
+> > +#include <linux/soc/qcom/pd_mapper.h>
+> >   #include <linux/soc/qcom/smem.h>
+> >   #include <linux/soc/qcom/smem_state.h>
+> >
+> > @@ -375,10 +376,14 @@ static int adsp_start(struct rproc *rproc)
+> >       int ret;
+> >       unsigned int val;
+> >
+> > -     ret = qcom_q6v5_prepare(&adsp->q6v5);
+> > +     ret = qcom_pdm_get();
+> >       if (ret)
+> >               return ret;
+>
+> Would it make sense to try and model this as a rproc subdev? This
+> section of the remoteproc code seems to be focused on making specific
+> calls to setup and enable hardware resources, where as pd mapper is
+> software.
+>
+> sysmon and ssr are also purely software and they are modeled as subdevs
+> in qcom_common. I'm not an expert on remoteproc organization but this
+> was just a thought.
+
+Well, the issue is that the pd-mapper is a global, not a per-remoteproc instance
+
+>
+> Thanks!
+> Chris
+>
+> >
+> > +     ret = qcom_q6v5_prepare(&adsp->q6v5);
+> > +     if (ret)
+> > +             goto put_pdm;
+> > +
+> >       ret = adsp_map_carveout(rproc);
+> >       if (ret) {
+> >               dev_err(adsp->dev, "ADSP smmu mapping failed\n");
+> > @@ -446,6 +451,8 @@ static int adsp_start(struct rproc *rproc)
+> >       adsp_unmap_carveout(rproc);
+> >   disable_irqs:
+> >       qcom_q6v5_unprepare(&adsp->q6v5);
+> > +put_pdm:
+> > +     qcom_pdm_release();
+> >
+> >       return ret;
+> >   }
+>
 
 
-
-On 4/24/2024 2:28 AM, Dmitry Baryshkov wrote:
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 1d24c9b656a8..02d0c626b03b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -23,6 +23,7 @@
->   #include <linux/remoteproc.h>
->   #include <linux/reset.h>
->   #include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/pd_mapper.h>
->   #include <linux/soc/qcom/smem.h>
->   #include <linux/soc/qcom/smem_state.h>
->   
-> @@ -375,10 +376,14 @@ static int adsp_start(struct rproc *rproc)
->   	int ret;
->   	unsigned int val;
->   
-> -	ret = qcom_q6v5_prepare(&adsp->q6v5);
-> +	ret = qcom_pdm_get();
->   	if (ret)
->   		return ret;
-
-Would it make sense to try and model this as a rproc subdev? This 
-section of the remoteproc code seems to be focused on making specific 
-calls to setup and enable hardware resources, where as pd mapper is 
-software.
-
-sysmon and ssr are also purely software and they are modeled as subdevs 
-in qcom_common. I'm not an expert on remoteproc organization but this 
-was just a thought.
-
-Thanks!
-Chris
-
->   
-> +	ret = qcom_q6v5_prepare(&adsp->q6v5);
-> +	if (ret)
-> +		goto put_pdm;
-> +
->   	ret = adsp_map_carveout(rproc);
->   	if (ret) {
->   		dev_err(adsp->dev, "ADSP smmu mapping failed\n");
-> @@ -446,6 +451,8 @@ static int adsp_start(struct rproc *rproc)
->   	adsp_unmap_carveout(rproc);
->   disable_irqs:
->   	qcom_q6v5_unprepare(&adsp->q6v5);
-> +put_pdm:
-> +	qcom_pdm_release();
->   
->   	return ret;
->   }
-
+-- 
+With best wishes
+Dmitry
