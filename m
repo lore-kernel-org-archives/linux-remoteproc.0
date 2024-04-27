@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3FF3A8E4;
-	Fri, 26 Apr 2024 23:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B952D627;
+	Sat, 27 Apr 2024 01:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714173939; cv=none; b=YSBWoNsxikzGq2ZY5EJrLVarLU0DGP8GcsSb7SPfhDLFPhz53eZPnyCR2R/i7BN6bv54doCLNf6bU3uPocKN3K8/MTTEr8LKLfUOApZpFi6TfM6YXYE7YT0L08LfcKiSYzyEpqbVJIP7X6J0xYQsvIWVwV9ZvMWafGMwvGHKpXc=
+	t=1714179836; cv=none; b=mEut1vzQ6kkHD8iMaXLcB0GJCZ731Spi3TNYCf8chxpm3navRiudANKjoVYjcrhvvdQIt+3gZ0/XkU5GSEWwlvxHriI8rSRopNFh89UbrGqvEGxqO5BYBAXHygI8v0lY53OtFm6RpnRl+t3I1YKWiOYHShNGkgglelUOB2jxMPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714173939; c=relaxed/simple;
-	bh=Oo3OtoMFZgV8oyBBeZdB6VsYE2VPjoVz9FYqPtF9BJ0=;
+	s=arc-20240116; t=1714179836; c=relaxed/simple;
+	bh=wYFR5Jwm6sJT7rAqaF5ytlgZfLgTIhtKlQoOLL4qvGg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gvoR41PXNmd6YrLu3+82eKtJvmh9bg6jvWLIOHFnDL6cZhsDQnrE575gtZ+v4TIjjVFy0nUVBT2abrDanKoKwVw8SSUdJcCUbfisIQsNrjZYxPw50kvWUa/WZbG+ACFfWdOrWPks13HRfFjlWkwTmCLhilZDCFz89GZCA+LC3bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Frlo/t2R; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=Y4wdF2XVaBM6TzTUxhdRsEBVb00kOp0+etjUECrCyq3bD/kObKwiE9bGlCQ3OmEDrIo4yqPapbucH/OQThNjuO9v/kZd9f+o3jreAGB+YpuxDs+yX4N9E5LnbkesbuJeaohAsV13UFgFB4BXsaXs45fdNY1tpg4pEOr4n8czHCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Uo8bzQGl; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Frlo/t2R"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43QNMkCt023899;
-	Fri, 26 Apr 2024 23:25:32 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uo8bzQGl"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43R0guAm002902;
+	Sat, 27 Apr 2024 01:03:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	message-id:date:mime-version:subject:to:cc:references:from
 	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=XDkUIigcVGqC8gCqZT1/+lGYK1cHWMUguzns/fZY7WU=; b=Fr
-	lo/t2RcNY7/5flTCMi4u2SOlyAMPDSEwsc5QfQXcCIxS/7krFsc6Lq4Iflf9zr6i
-	/KB3S0Ff0e+eKDWwkJ3GaAQEnsFsUlWS3fJuhYBdxQ5ZMhmGEbrhnAje3z17BHkv
-	qBOH1+Ck/IOC1lcMHAd88IE1G24mdO1gTQWp6WD5RuszIw59q6QKhT72fye/w9z+
-	08iaTt495KwEfjPo90H2rQ6h0d7Cl4su0QtW7I/ipP4Ecssd6fOEgJA6tShzDrYO
-	/9RW9FZAy2q0Z4GInnmmSXRjyM2X1DQTcAw/796v579I1WnO7oJyWHBrCULi8pzh
-	+He/KOi+cVVQkF3JXBOw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xranmhfnq-1
+	qcppdkim1; bh=+/vH5sNN1cJT9Kyhu3EW40Dh97RLGyJ0/8gBBv7WljQ=; b=Uo
+	8bzQGld610YvOw+pdW0HPHemdbU/YyEo+DuwAEpk/LXI/IybGB1qbpNXfa+BxAfz
+	jMdurpkmQ69z92iQY9iiYOkpxQ4oTR3uGuPCCCfWSNmMG1uizEqtTS1gXyeDx0vI
+	rlxZwM24bb+ybpy5ZvlnERUrUnxonajJSz0QpS7yZPaY/arlCOBxaKYVzXtVcnxx
+	SfEihrp88ZKPkwLXlxLhbTTCAWTsQbpb7DV31Q2+Qto7HuccE+fFFnYEGnVpzqpM
+	qKXb1N8xlUNncydrjYiS0aaqwBFWLuiO2Eh+hPDaaQ31r4wZehaKXi0UWmCrvjvn
+	BhE8ViSw81MzAAmrLJIQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xr7yg23n3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Apr 2024 23:25:32 +0000 (GMT)
+	Sat, 27 Apr 2024 01:03:48 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43QNPV1I031896
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43R13kSx015509
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Apr 2024 23:25:31 GMT
+	Sat, 27 Apr 2024 01:03:47 GMT
 Received: from [10.110.11.138] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
- 2024 16:25:30 -0700
-Message-ID: <6b6298c4-485d-ebe5-fa8d-9edc461467a0@quicinc.com>
-Date: Fri, 26 Apr 2024 16:25:29 -0700
+ 2024 18:03:46 -0700
+Message-ID: <f1ee1fc0-64cb-5610-db92-3a06d477e8b8@quicinc.com>
+Date: Fri, 26 Apr 2024 18:03:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,7 +51,8 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.1
-Subject: Re: [PATCH v7 5/6] soc: qcom: add pd-mapper implementation
+Subject: Re: [PATCH v7 6/6] remoteproc: qcom: enable in-kernel PD mapper
+Content-Language: en-US
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Bjorn Andersson
 	<andersson@kernel.org>,
@@ -66,104 +67,77 @@ CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Bryan O'Donoghue
 	<bryan.odonoghue@linaro.org>
 References: <20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org>
- <20240424-qcom-pd-mapper-v7-5-05f7fc646e0f@linaro.org>
-Content-Language: en-US
+ <20240424-qcom-pd-mapper-v7-6-05f7fc646e0f@linaro.org>
 From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240424-qcom-pd-mapper-v7-5-05f7fc646e0f@linaro.org>
+In-Reply-To: <20240424-qcom-pd-mapper-v7-6-05f7fc646e0f@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xiSbrLKX4H3KLGrkCGae4cBJFRNzDXEx
-X-Proofpoint-ORIG-GUID: xiSbrLKX4H3KLGrkCGae4cBJFRNzDXEx
+X-Proofpoint-GUID: dDFGYWOFj9rGgfhMFqOThmJg_v9db-1p
+X-Proofpoint-ORIG-GUID: dDFGYWOFj9rGgfhMFqOThmJg_v9db-1p
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-26_20,2024-04-26_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404260166
+ definitions=2024-04-26_21,2024-04-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404270005
 
 
 
 On 4/24/2024 2:28 AM, Dmitry Baryshkov wrote:
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 1d24c9b656a8..02d0c626b03b 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/remoteproc.h>
+>   #include <linux/reset.h>
+>   #include <linux/soc/qcom/mdt_loader.h>
+> +#include <linux/soc/qcom/pd_mapper.h>
+>   #include <linux/soc/qcom/smem.h>
+>   #include <linux/soc/qcom/smem_state.h>
+>   
+> @@ -375,10 +376,14 @@ static int adsp_start(struct rproc *rproc)
+>   	int ret;
+>   	unsigned int val;
+>   
+> -	ret = qcom_q6v5_prepare(&adsp->q6v5);
+> +	ret = qcom_pdm_get();
+>   	if (ret)
+>   		return ret;
 
-> +static int qcom_pdm_start(void)
-> +{
-> +	const struct of_device_id *match;
-> +	const struct qcom_pdm_domain_data * const *domains;
-> +	struct device_node *root;
-> +	int ret, i;
-> +
-> +	root = of_find_node_by_path("/");
-> +	if (!root)
-> +		return -ENODEV;
-> +
-> +	match = of_match_node(qcom_pdm_domains, root);
-> +	of_node_put(root);
-> +	if (!match) {
-> +		pr_notice("PDM: no support for the platform, userspace daemon might be required.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	domains = match->data;
-> +	if (!domains) {
-> +		pr_debug("PDM: no domains\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	mutex_lock(&qcom_pdm_mutex);
-> +	for (i = 0; domains[i]; i++) {
-> +		ret = qcom_pdm_add_domain(domains[i]);
-> +		if (ret)
-> +			goto free_domains;
-> +	}
-> +
-> +	ret = qmi_handle_init(&qcom_pdm_handle, 1024,
-> +			      NULL, qcom_pdm_msg_handlers);
+Would it make sense to try and model this as a rproc subdev? This 
+section of the remoteproc code seems to be focused on making specific 
+calls to setup and enable hardware resources, where as pd mapper is 
+software.
 
-1024 here seems arbitrary, I think most other usage of qmi_handle_init 
-has a macro defined for the max message length of the qmi service.
+sysmon and ssr are also purely software and they are modeled as subdevs 
+in qcom_common. I'm not an expert on remoteproc organization but this 
+was just a thought.
 
+Thanks!
+Chris
+
+>   
+> +	ret = qcom_q6v5_prepare(&adsp->q6v5);
 > +	if (ret)
-> +		goto free_domains;
+> +		goto put_pdm;
 > +
-> +	ret = qmi_add_server(&qcom_pdm_handle, SERVREG_LOCATOR_SERVICE,
-> +			     SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
-> +	if (ret) {
-> +		pr_err("PDM: error adding server %d\n", ret);
-> +		goto release_handle;
-> +	}
-> +	mutex_unlock(&qcom_pdm_mutex);
-> +
-> +	return 0;
-> +
-> +release_handle:
-> +	qmi_handle_release(&qcom_pdm_handle);
-> +
-> +free_domains:
-> +	qcom_pdm_free_domains();
-> +	mutex_unlock(&qcom_pdm_mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +static void qcom_pdm_stop(void)
-> +{
-> +	qmi_del_server(&qcom_pdm_handle, SERVREG_LOCATOR_SERVICE,
-> +		       SERVREG_QMI_VERSION, SERVREG_QMI_INSTANCE);
-> +
-> +	qmi_handle_release(&qcom_pdm_handle);
-> +
+>   	ret = adsp_map_carveout(rproc);
+>   	if (ret) {
+>   		dev_err(adsp->dev, "ADSP smmu mapping failed\n");
+> @@ -446,6 +451,8 @@ static int adsp_start(struct rproc *rproc)
+>   	adsp_unmap_carveout(rproc);
+>   disable_irqs:
+>   	qcom_q6v5_unprepare(&adsp->q6v5);
+> +put_pdm:
+> +	qcom_pdm_release();
+>   
+>   	return ret;
+>   }
 
-I don't think doing an explicit qmi_del_server() is necessary. As part 
-of the qmi_handle_release(), the qrtr socket will be closed and the qrtr 
-ns will broadcast a DEL_SERVER and DEL_CLIENT notification as part of 
-the cleanup.
-
-> +	qcom_pdm_free_domains();
-> +}
-> +
