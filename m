@@ -1,172 +1,106 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24ED8565B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Apr 2024 16:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056161843;
+	Tue, 30 Apr 2024 01:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714408715; cv=none; b=b0eF6BZm7jekD5oxIZrj3ScIhHZPxaN++VBn+UzYswsj6uyQHRuGiYCtjVIozehZayXw3H5iMrFSxaBTkbGEhzZeY0LDsBm32WTDqGfV10UW62InCSGcVimKCWnlhaaXvoXx0XWiMZmm37l1W1Z4h2/oWFcfBfo21gyfeB0lEro=
+	t=1714439759; cv=none; b=O0fbcuCVwpZNJHjrZNSiCJx7W4D8CzGvtKbSGEZxDgXx0LB8NcR/1mV1//lu8bGSjFdk2zCIydKzOsDlUPQCsD1wdZ43FMghj0rDwcXlCNiaQs86AeQqnjd0ITvQB75b+kmwwec7Wl82TYW29zQUi8zj6NzHxoXS4tKeTb1PSHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714408715; c=relaxed/simple;
-	bh=zzQLDSf8QCqzlsm92G/iDCAL1afFjJirvI3oBkxEXl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQr7y+Fy00zhXM0hjn5QdNZCgtrqHJqMt1KFf17o+4hitm4Gmx2HKC5xO2Sa6vYA3+MqvlM/j+gjGmcsPNH8Xp4MJeI2AwGnicw8234qafjrp6ffAjAZHbygX4BwfZoRo+tx03WWyep2Wtqb75jY2HAt/ut1yTuPqwnBmYznv2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LEhubX+9; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1714439759; c=relaxed/simple;
+	bh=TxQHHD8ReW3yKrct5j+9dICT7Gj2PjIjiCUfAWik3tI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KYhFE3kfbCXazUPXpAulplgJeSoFAkP+q49eCYkUy0t5aM7r1ANnUUhyDQYgveePrfIXQamXMsiaqZonngB6Mo5kUkoC0NydvhFQOUyrwC/OQ6+q5l/qyDajRhfRD2ekUzWHdi98cmZbeNuvVVa3qG5G8lyNg7DuBNyUnyrMkDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=E8VP487r; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LEhubX+9"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1e8bbcbc2b7so42436715ad.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Apr 2024 09:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714408713; x=1715013513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWPJdB/cSlyp73RwVZm1H6IMvyasz+OHn5rJwfM1czU=;
-        b=LEhubX+9Alqj/OCVgnQgK0olQchR1Iu6SqvPor+QeQex7v6Sffv9Dq8znnlJjqjhjt
-         Oj4XxzimahDvZ5Wx3c59dLo3ygLh6TIF8RY9EnY8xxS1wI9AbIdG303M/O4HCNMUEx8K
-         whNQprGHEib09Bl/qQdmN4q8ism14AGC3nLRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714408713; x=1715013513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oWPJdB/cSlyp73RwVZm1H6IMvyasz+OHn5rJwfM1czU=;
-        b=TN9GEbSzzte5JCn/zCM/nmDDLISKJaZbwuHYpqCiLuRiKD7sunUy3uDtnLfVNflVAT
-         WD/UyohrmsbmmfWTI3kgsgMh1ooyyYJwjT1kFZN28BA8cUtvNnI32fmkrkboOUvlri2t
-         H5+D5OEGFDD6bHMgXq/JT3UVl7o9T5WX4zorDXiRuGFEp/WGUbKm11yB3o/4JbeBwCt8
-         Swm0nNvfXYrc8+BxbHs5w7Fo6cwxMfTwvuDGCTe9gyXR5Ji3fVDiqvCcPKBd9M2u/UUK
-         WERM9hGyhqNeS00mhhnEBiAxsnmUbcdMIx7SGa8pnpQQ6DrT/kVsPnxLccPy4CZ3tptv
-         58JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWE4YiUc0qa12DpTEy2LNvFuWVMZZ0mCSbv5ZVC0UyGQhFZlV2nrKdeF0ftXKO4rTyTxfDnCbgvHt4sO0dZywwg/HMxn2QxQLpRTJcvIBKj2Q==
-X-Gm-Message-State: AOJu0Yw6H/UH9K70JtwY3gfuHP+pwTEXeiDkCcPp5dxVZzCBGeeywPjM
-	9BgM6xJC8HPkds+irByK1BnuhF3G6UYqz0cBj26pHwuiN4UHfbf8kfxj7mQDjw==
-X-Google-Smtp-Source: AGHT+IH/1T9jHNNNCaTcEgyVwTWxxXD0FLNfQwEJ2iZeJ96Js8aCUDwFpJsdmhmvt08FTazyJSQEiA==
-X-Received: by 2002:a17:902:cccb:b0:1ea:f7d4:2327 with SMTP id z11-20020a170902cccb00b001eaf7d42327mr15393377ple.9.1714408713045;
-        Mon, 29 Apr 2024 09:38:33 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id w8-20020a170902a70800b001dd82855d47sm20510893plq.265.2024.04.29.09.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 09:38:32 -0700 (PDT)
-Date: Mon, 29 Apr 2024 09:38:31 -0700
-From: Kees Cook <keescook@chromium.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <202404290937.C22567C1@keescook>
-References: <ZgG8bbEzhmX5nGRE@neat>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="E8VP487r"
+X-UUID: 2f05b33c068f11efb92737409a0e9459-20240430
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=YVDy5/ZsVM8z4DOMITGRoXpjJasjzOPGDsnn36hyu4g=;
+	b=E8VP487ryJruVJ9L2N1nbGRDHCoLabChVfBKYEAf5lpNbFN+gt11ZDGDfAJTbcnwAOqgfXCdJ/EkIX87zDKfqwSXUPTZ4an1lI55RGuM2cHwyCMU0fHiso45mwBGW7aAGLux8Yo+hKvDGjxKayrZbeaYva8EdZrXZcEGsqUrI/4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:1e066d05-1fb7-4979-bd8f-68fa7937e08d,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:2b004383-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2f05b33c068f11efb92737409a0e9459-20240430
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <olivia.wen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2014040387; Tue, 30 Apr 2024 09:15:51 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 30 Apr 2024 09:15:49 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 30 Apr 2024 09:15:49 +0800
+From: Olivia Wen <olivia.wen@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Tinghan
+ Shen <tinghan.shen@mediatek.com>, <linux-remoteproc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
+	<teddy.chen@mediatek.com>, <olivia.wen@mediatek.com>
+Subject: [PATCH v4 1/4] dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP
+Date: Tue, 30 Apr 2024 09:15:31 +0800
+Message-ID: <20240430011534.9587-2-olivia.wen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20240430011534.9587-1-olivia.wen@mediatek.com>
+References: <20240430011534.9587-1-olivia.wen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZgG8bbEzhmX5nGRE@neat>
+Content-Type: text/plain
+X-MTK: N
 
-On Mon, Mar 25, 2024 at 12:03:25PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-> ready to enable it globally.
-> 
-> There is currently an object (`msg`) in multiple structures that
-> contains a flexible structure (`struct glink_msg`), for example:
-> 
-> struct glink_defer_cmd {
->         ...
-> 
->         struct glink_msg msg;
->         u8 data[];
-> };
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of another structure, we use the `__struct_group()` helper
-> to separate the flexible array from the rest of the members in the
-> flexible structure:
-> 
-> struct glink_msg {
->         __struct_group(glink_msg_hdr, hdr, __packed,
-> 
->         ... the rest of members
-> 
->         );
->         u8 data[];
-> } __packed;
-> 
-> With the change described above, we now declare objects of the type of
-> the tagged struct, in this case `struct glink_msg_hdr`, without
-> embedding flexible arrays in the middle of other structures:
-> 
-> struct glink_defer_cmd {
->         ...
-> 
->         struct glink_msg_hdr msg;
->         u8 data[];
-> };
-> 
-> Also, use `container_of()` to retrieve a pointer to the flexible structure.
-> 
-> We also use the `DEFINE_RAW_FLEX()` helper for an in-stack definition of
-> a flexible structure where the size of the flexible-array member is known
-> at compile-time.
-> 
-> So, with these changes, fix the following warnings:
-> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 38 ++++++++++++++++---------------
->  1 file changed, 20 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 82d460ff4777..878e3461bce1 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -30,9 +30,12 @@
->  #define RPM_GLINK_CID_MAX	65536
->  
->  struct glink_msg {
-> -	__le16 cmd;
-> -	__le16 param1;
-> -	__le32 param2;
-> +	/* New members must be added within the __struct_group() macro below. */
-> +	__struct_group(glink_msg_hdr, hdr, __packed,
-> +		__le16 cmd;
-> +		__le16 param1;
-> +		__le32 param2;
-> +	);
->  	u8 data[];
->  } __packed;
->  
-> @@ -48,7 +51,7 @@ struct glink_msg {
->  struct glink_defer_cmd {
->  	struct list_head node;
->  
-> -	struct glink_msg msg;
-> +	struct glink_msg_hdr msg;
->  	u8 data[];
->  };
+Under different applications, the MT8188 SCP can be used as single-core
+or dual-core.
 
-Instead of this change (and the container_of() uses below), I think you
-can just simply drop "data" here. I don't see anything using it except
-the struct_size()s which can all change their "data" argument to
-msg.data. e.g.:
+Signed-off-by: Olivia Wen <olivia.wen@mediatek.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
--       dcmd = kzalloc(struct_size(dcmd, data, extra), GFP_ATOMIC);
-+       dcmd = kzalloc(struct_size(dcmd, msg.data, extra), GFP_ATOMIC);
+---
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-With those changed, I think this patch becomes more readable.
-
--Kees
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 507f98f..c5dc3c2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -19,6 +19,7 @@ properties:
+       - mediatek,mt8183-scp
+       - mediatek,mt8186-scp
+       - mediatek,mt8188-scp
++      - mediatek,mt8188-scp-dual
+       - mediatek,mt8192-scp
+       - mediatek,mt8195-scp
+       - mediatek,mt8195-scp-dual
+@@ -194,6 +195,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - mediatek,mt8188-scp-dual
+             - mediatek,mt8195-scp-dual
+     then:
+       properties:
 -- 
-Kees Cook
+2.6.4
+
