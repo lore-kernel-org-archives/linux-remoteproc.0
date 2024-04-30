@@ -1,73 +1,104 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64683FE37;
-	Tue, 30 Apr 2024 07:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91E612C490;
+	Tue, 30 Apr 2024 10:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714463776; cv=none; b=OLoi4HEzFxhVm5k4jLCHuBmcqqq0mF3S7QOK0wzmwy0KpoOahfynFXSBwBr8DVhxw2cczwca9AaAhd1sfpEGdu6Wx/f3/Fpzyt6hl//BYtwkUz7Xxn7HI+4XleGnSGMNLR3Zt/8SUbjPmDE5DCcM9sAo+Li01Ys0wFvUpyDqp4k=
+	t=1714474396; cv=none; b=ivLotGuJqlP3CMB2VKmJ5ZEUfuw/Y4HtoByLhnZvW3kiP4sA7uHHsxGK+NIPuK+X7gecIay0x/9gmaFVf/gGUk39QTyQKNlozQHfGezuxKNQpnlWzuaPQOSO84zHbL1qx4kdsdui7WkqCt3St4EJGFlttnRduuH2OXEmgFNYulo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714463776; c=relaxed/simple;
-	bh=GeswxmYT4bGFOK2AR1iOj85iEdpchJiz/hwjIyiKyeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZfJuDXVc8iILxQh2EfwwDom9kDIDjsQnTXRhVANAtlaAoErtqOkzWmfbe2wQwW8o37lnqS31fwUbbeSY6apqdWiUh+6BtNj2Le9P9+iELx/F2uDjynEgNBBtKGcx9IvchEHIeubf+vGNpK3rvjT8chSz+52lNn+cHLwLqXSMaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1toP7IcX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1714474396; c=relaxed/simple;
+	bh=RWRXpLCKdKSQs2XuJN03r9hEXbuXWjMhl2cAlMgAKaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XtQnurGgEZBZAecsX7ZAXo5JcdnMTK19fl2YtQJl+9JSEsPABfKBfYevzJvy1dOokCxCtAjxqrFa7rChwwjqX3eocdCO9NSIhcNi0BUNCZPfRgtsRauUd4HtTIBBfYQa7Dzj2UPAp063U+7OESu18u11L6VL0hhwI9GfHhoGL8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tzWSFHll; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1toP7IcX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714463773;
-	bh=GeswxmYT4bGFOK2AR1iOj85iEdpchJiz/hwjIyiKyeY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=1toP7IcX3n2JvpjsyDkchdN1CczXhxVUlN8SskxrFLfuEfNhs9cCFHLj44Ib9sBJ9
-	 DaWmnuRs5DzJov4hx2XLarT/dT5vNTH37o3dt5ebbb/1AzXuzcDl4a0FOtV4EwpJEu
-	 2qa/8SEwbCAZ0o1faIRMFE79UxwtqVtxa5VIU+NtKHPlS27PwFbEH5+Jj4eqbYNH9U
-	 99NtMtMupkIzwMaXPMMUUv1VwROj7isL4MrlBlAErC9hspOQyRqtOoVQ03GnutZRnG
-	 3zKXhPoub+DDlj5S7zh2LKv6azNbUu5/10szukkx2R/A55GhLc7+d54vhpsoUI9ZUR
-	 p8vKB0Fs1rs1g==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 016123781F9A;
-	Tue, 30 Apr 2024 07:56:11 +0000 (UTC)
-Message-ID: <f104a34a-a1d2-4eb9-8127-cfdb8560872d@collabora.com>
-Date: Tue, 30 Apr 2024 09:56:11 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tzWSFHll"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43UArCWV130406;
+	Tue, 30 Apr 2024 05:53:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1714474392;
+	bh=/S2o4fuM/8KSLXddRuXzzl3ArTQb6LjGDSIjynvSBeE=;
+	h=From:To:CC:Subject:Date;
+	b=tzWSFHll6BhIJfv4TEZK5d0zamDSqyPUKJkqcjJ7epNkQuJlOv37VK3QJjb1Qfb7y
+	 xlfK61KdjzJPzmKS5OrL0x249Zy29Ww7rexEHE64nPzy4aPIfV4pjmgCnhjyWnUxRl
+	 U2pllCVYx0fkzSrskT4zqlBxC/lzMFbmDVvas3TY=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43UArCKx004449
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 30 Apr 2024 05:53:12 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 30
+ Apr 2024 05:53:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 30 Apr 2024 05:53:11 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43UAr8Dp038508;
+	Tue, 30 Apr 2024 05:53:09 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>
+CC: <mathieu.poirier@linaro.org>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <u-kumar1@ti.com>, <nm@ti.com>, <devarsht@ti.com>, <hnagalla@ti.com>
+Subject: [PATCH v3 0/2] remoteproc: k3-r5: Wait for core0 power-up before powering up core1
+Date: Tue, 30 Apr 2024 16:23:05 +0530
+Message-ID: <20240430105307.1190615-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] remoteproc: mediatek: Add IMGSYS IPI command
-To: Olivia Wen <olivia.wen@mediatek.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Tinghan Shen <tinghan.shen@mediatek.com>,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- jason-ch.chen@mediatek.com, yaya.chang@mediatek.com, teddy.chen@mediatek.com
-References: <20240430011534.9587-1-olivia.wen@mediatek.com>
- <20240430011534.9587-5-olivia.wen@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240430011534.9587-5-olivia.wen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Il 30/04/24 03:15, Olivia Wen ha scritto:
-> Add an IPI command definition for communication with IMGSYS through
-> SCP mailbox.
-> 
-> Signed-off-by: Olivia Wen <olivia.wen@mediatek.com>
+PSC controller has a limitation that it can only power-up the second core
+when the first core is in ON state. Power-state for core0 should be equal
+to or higher than core1, else the kernel is seen hanging during rproc
+loading.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Make the powering up of cores sequential, by waiting for the current core
+to power-up before proceeding to the next core, with a timeout of 2sec.
+Add a wait queue event in k3_r5_cluster_rproc_init call, that will wait
+for the current core to be released from reset before proceeding with the
+next core.
 
+Also, ensure that core1 can not be powered on before core0 when starting
+cores from sysfs. Similarly, ensure that core0 can not be shutdown
+before core1 from sysfs.
+
+v3: Changelog:
+1) Added my own Signed-off-by in PATCH 1, specifying the changes done
+2) Addressed changes requested by adding comments in code in PATCH 1
+
+Link to v2:
+https://lore.kernel.org/all/20240424130504.494916-1-b-padhi@ti.com/
+
+v2: Changelog:
+1) Fixed multi-line comment format
+2) Included root cause of bug in comments
+3) Added a patch to ensure power-up/shutdown is sequential via sysfs
+
+Link to v1:
+https://lore.kernel.org/all/20230906124756.3480579-1-a-nandan@ti.com/
+
+Apurva Nandan (1):
+  remoteproc: k3-r5: Wait for core0 power-up before powering up core1
+
+Beleswar Padhi (1):
+  remoteproc: k3-r5: Do not allow core1 to power up before core0 via
+    sysfs
+
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 56 +++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
 
