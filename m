@@ -1,330 +1,145 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304391CA96;
-	Thu,  2 May 2024 07:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C620322;
+	Thu,  2 May 2024 23:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714636343; cv=fail; b=rdrTjLS5iFlQ3ZB8ewfUiAGFpS63Hte4KKcttUVlmj52TqN/qniB50mKGe2h0GJma5dfTqEhlq4FnFJghNslmQ/rSJNwq/JRI9Aq5nYpTkgW9aCC5afZyOVJ/Uumo4a4hvX4NxI+0rWx60ykwwnlQQdQf+onLwaGEAVQv/qMeqE=
+	t=1714691442; cv=fail; b=Uglxji2IA6Nl2UXooITRfve2EhMP6b1ruKWofPjopcyqD5r2JWlXBPM8CSosRltTM+/9gAyKrfMm2qkKpHbVjPfyXXMgAnye2MSGAts1EHUK3QrttlRWsxxiwFcg5HUu8BH6aOnwCTIKCedqZnJ57VhJlgtVUn4vbyolASrkTIA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714636343; c=relaxed/simple;
-	bh=FOkBg0pV4/kC0zZNAYFfWHyuFMIUGhCwcEUlLnGnRQI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=asQwOozWIB8g7nnlWBAMgF+R43j5g2hUVFnHuLhArmteSpZcKgNYEPH0ie+jbqOOFyX5pYSDNu1nWyMFaLflcbk8fdflCn2xa53o5tz4MJTGsCXR7Ab4GmNvm6dxkIDSq5qYBXyLnLGLdcHb0Q93zzM84RvNagX1Sc4CD2M8vNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SRXVx60u; arc=fail smtp.client-ip=40.107.94.50
+	s=arc-20240116; t=1714691442; c=relaxed/simple;
+	bh=HYV6Nx/9pVA0TXb4xhgkn3A2RFm5u9x6T6zQHoAyMHk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRsaCjRrc5EV777v1IaOMxkuE6ijvCV5rmBgENQIEcSSy99cioFRbd/ewqcxbICH0+qe1z3ee6xFPzhpLaDG3/ndtzTTYzFToDXA1NBbUStbuDTwQ2cKn2fQpBLRdnxDDOD1zeuso9as46SoLRVK/FYP64pYdQjzc6h00bQAnsc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vFrLBBIE; arc=fail smtp.client-ip=40.107.243.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SRXVx60u"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vFrLBBIE"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wu1y/1h8Gc7OKqt1bTVjq7CATvw+aFBtTHgOOUI53OVml/bf0hEMSt7OIrJWrqiPOIPpammukSm2+pFHrOjhNlqucOmEpLYz8p5nSaKO6qSxsvS9YVoa21HUyYkHymw27Gke6U3ThQVlsSFQLwMHl3vk0xkaJLIY2JoKD+o9w59Dete2LdMCb/cMdsuRAb9EkyLUVUV10CoBw8nBAQIEQitcbC6rfzfwDlGovErn1PikAtW1ehZn8N+L2wUMG/+G7Ccriu3jAG7wDNrdopLv9YOH413TiE70lRRMevvuBhi3OHthPFEq2Ch1PpTwFBKfM8n1t/BV3tvxwLSPtDzPSg==
+ b=aHvrt2Gr7O3DwvTyh+aycXDSm3rawWEwBv4bwxnGGmTF+r6N13H4VVAIrqcDrEtqU1IslKdBTVTRkI4VfFqMcH8SWX74MfEbOBMdKjk6XAUQN90uL2zyktJJy1tM8dUAI5O879uz6Z9BT5CF/KgxOyOZE3DkOWKXD0nYUqAaKHfz9QxagAniMMCKlmDM6rDgjwKqaXvbHoCAa9Tj0n7LbbgEkzjnPltZQEXlmfhjuKYm/MnDXVpmTDuui6+I88+QiK91iP6AEuHGZwZJfquL0PUejXXiHybz8QGMrGABU6n6aBHCaSsQUovY0QRXF6aiz3XkYhuT7CwfUmiEHKqRWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r01Z1aNdEjHW5JYEGRR9MtlM+U8roH/M60jzq9Q+xiE=;
- b=ZuicAdobpzv/hjoo9BBu6ZeAEjL11hUUXyyvG64A2N56rcCe4/h2V2+opb7go1HPGxlLa/YTakoJJZQU9jN6lDCeI2J3t9Bl2GylhLod+kUcXvXPpMXinMK3QFPUL3cqKqAWr8lLjEIrtoYkDoAGmjq/zBDo44zFa0EzJQs0M5OZRrd0zNlgXPTb3q3kyZyMG+rP0IQkLla68wj5BOh4ekkyUg9h9Tk3CWRpMj3lETeg6/caEVxKv9Atr6cJGP9+PdYUmvtLkIDl1aD2NF64ixTdXdKDHEXs7xHe3zl+MhtayiwJ0EPeK6uJZAJu4odqhINpbSrtIQ/5wzAz0JjrLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=AUTHSxFxRFuPGLGaWKBjDzlEjY2+Z4E5wkLyVslsEpI=;
+ b=ab2h9ZvrLCRZItw9QPB36ieKnxCwTaKysLQa4suCBD+FM0pUjCyKyUvCcjdc+6LJkrDijv8pjkF/gxzmWijLB5ryL9bQh2bfmcjFV5yNcF5zLjIdBA0e7xpPK7VHj4l1c2NM9+VYxHlVEO9cT9MDfsm7inj3Uqf0h02D3knDEL4+OxoJQmsoxevXGrRQd+lQlY05ZoL14K4lM7Xvbusc4R+b4A5hhAAjTnWYn0qvxY26D0dWglij3JfoYEx3u6bYSPVE9fQlfzIHRaECtgJd1/Yaem9WCt1/A0NQWbP8xOhe3Msjq2AeB8pKxU/Sfh1TVsQhfq8ppHZGr73AsMtaGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r01Z1aNdEjHW5JYEGRR9MtlM+U8roH/M60jzq9Q+xiE=;
- b=SRXVx60uNDP9f3AVA64Ph+j4EaA/sgL81Leouz8zd2lJgTHUQFzzKom+6pnO1ACnBtK4v0woCsHTcqwn11MSMolEnIyw196T44M8b1WjSsZRtAiodCRqbjkxq6J90bSqe5WC4Pcmco7dlto8SxQFJ0UWIoYMKgkItcf/NnMm/2Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7) with
+ bh=AUTHSxFxRFuPGLGaWKBjDzlEjY2+Z4E5wkLyVslsEpI=;
+ b=vFrLBBIE7M2h+lhM3vTu9kMra2ivdQl4SvCcnzxYsew3mQormo+cNABSiMC9vkh/rOM1JwHdAqRH/+96mneMwV/8PyXXLbtzLO4RpKuOj5TPl1haq8qjzS8A6PYtggt6Hj0iOXD0EgFTNcwdfHnE4Tp6IjnmHV6Z12sYaDv7GdE=
+Received: from BL0PR03CA0027.namprd03.prod.outlook.com (2603:10b6:208:2d::40)
+ by SA3PR12MB7858.namprd12.prod.outlook.com (2603:10b6:806:306::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.35; Thu, 2 May
- 2024 07:52:18 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::c3fc:3be9:dde7:745f]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::c3fc:3be9:dde7:745f%7]) with mapi id 15.20.7519.035; Thu, 2 May 2024
- 07:52:18 +0000
-Message-ID: <1ef49f0c-02b4-4f8b-b220-cea74a4b8d29@amd.com>
-Date: Thu, 2 May 2024 09:52:02 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 3/4] dts: zynqmp: add properties for TCM in remoteproc
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, ben.levinsky@amd.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240412183708.4036007-1-tanmay.shah@amd.com>
- <20240412183708.4036007-4-tanmay.shah@amd.com>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- xsFNBFFuvDEBEAC9Amu3nk79+J+4xBOuM5XmDmljuukOc6mKB5bBYOa4SrWJZTjeGRf52VMc
- howHe8Y9nSbG92obZMqsdt+d/hmRu3fgwRYiiU97YJjUkCN5paHXyBb+3IdrLNGt8I7C9RMy
- svSoH4WcApYNqvB3rcMtJIna+HUhx8xOk+XCfyKJDnrSuKgx0Svj446qgM5fe7RyFOlGX/wF
- Ae63Hs0RkFo3I/+hLLJP6kwPnOEo3lkvzm3FMMy0D9VxT9e6Y3afe1UTQuhkg8PbABxhowzj
- SEnl0ICoqpBqqROV/w1fOlPrm4WSNlZJunYV4gTEustZf8j9FWncn3QzRhnQOSuzTPFbsbH5
- WVxwDvgHLRTmBuMw1sqvCc7CofjsD1XM9bP3HOBwCxKaTyOxbPJh3D4AdD1u+cF/lj9Fj255
- Es9aATHPvoDQmOzyyRNTQzupN8UtZ+/tB4mhgxWzorpbdItaSXWgdDPDtssJIC+d5+hskys8
- B3jbv86lyM+4jh2URpnL1gqOPwnaf1zm/7sqoN3r64cml94q68jfY4lNTwjA/SnaS1DE9XXa
- XQlkhHgjSLyRjjsMsz+2A4otRLrBbumEUtSMlPfhTi8xUsj9ZfPIUz3fji8vmxZG/Da6jx/c
- a0UQdFFCL4Ay/EMSoGbQouzhC69OQLWNH3rMQbBvrRbiMJbEZwARAQABzSlNaWNoYWwgU2lt
- ZWsgKEFNRCkgPG1pY2hhbC5zaW1la0BhbWQuY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
- CwIEFgIDAQIeAQIXgBYhBGc1DJv1zO6bU2Q1ajd8fyH+PR+RBQJkK9VOBQkWf4AXAAoJEDd8
- fyH+PR+ROzEP/1IFM7J4Y58SKuvdWDddIvc7JXcal5DpUtMdpuV+ZiHSOgBQRqvwH4CVBK7p
- ktDCWQAoWCg0KhdGyBjfyVVpm+Gw4DkZovcvMGUlvY5p5w8XxTE5Xx+cj/iDnj83+gy+0Oyz
- VFU9pew9rnT5YjSRFNOmL2dsorxoT1DWuasDUyitGy9iBegj7vtyAsvEObbGiFcKYSjvurkm
- MaJ/AwuJehZouKVfWPY/i4UNsDVbQP6iwO8jgPy3pwjt4ztZrl3qs1gV1F4Zrak1k6qoDP5h
- 19Q5XBVtq4VSS4uLKjofVxrw0J+sHHeTNa3Qgk9nXJEvH2s2JpX82an7U6ccJSdNLYbogQAS
- BW60bxq6hWEY/afbT+tepEsXepa0y04NjFccFsbECQ4DA3cdA34sFGupUy5h5la/eEf3/8Kd
- BYcDd+aoxWliMVmL3DudM0Fuj9Hqt7JJAaA0Kt3pwJYwzecl/noK7kFhWiKcJULXEbi3Yf/Y
- pwCf691kBfrbbP9uDmgm4ZbWIT5WUptt3ziYOWx9SSvaZP5MExlXF4z+/KfZAeJBpZ95Gwm+
- FD8WKYjJChMtTfd1VjC4oyFLDUMTvYq77ABkPeKB/WmiAoqMbGx+xQWxW113wZikDy+6WoCS
- MPXfgMPWpkIUnvTIpF+m1Nyerqf71fiA1W8l0oFmtCF5oTMkzsFNBFFuvDEBEACXqiX5h4IA
- 03fJOwh+82aQWeHVAEDpjDzK5hSSJZDE55KP8br1FZrgrjvQ9Ma7thSu1mbr+ydeIqoO1/iM
- fZA+DDPpvo6kscjep11bNhVa0JpHhwnMfHNTSHDMq9OXL9ZZpku/+OXtapISzIH336p4ZUUB
- 5asad8Ux70g4gmI92eLWBzFFdlyR4g1Vis511Nn481lsDO9LZhKyWelbif7FKKv4p3FRPSbB
- vEgh71V3NDCPlJJoiHiYaS8IN3uasV/S1+cxVbwz2WcUEZCpeHcY2qsQAEqp4GM7PF2G6gtz
- IOBUMk7fjku1mzlx4zP7uj87LGJTOAxQUJ1HHlx3Li+xu2oF9Vv101/fsCmptAAUMo7KiJgP
- Lu8TsP1migoOoSbGUMR0jQpUcKF2L2jaNVS6updvNjbRmFojK2y6A/Bc6WAKhtdv8/e0/Zby
- iVA7/EN5phZ1GugMJxOLHJ1eqw7DQ5CHcSQ5bOx0Yjmhg4PT6pbW3mB1w+ClAnxhAbyMsfBn
- XxvvcjWIPnBVlB2Z0YH/gizMDdM0Sa/HIz+q7JR7XkGL4MYeAM15m6O7hkCJcoFV7LMzkNKk
- OiCZ3E0JYDsMXvmh3S4EVWAG+buA+9beElCmXDcXPI4PinMPqpwmLNcEhPVMQfvAYRqQp2fg
- 1vTEyK58Ms+0a9L1k5MvvbFg9QARAQABwsF8BBgBCAAmAhsMFiEEZzUMm/XM7ptTZDVqN3x/
- If49H5EFAmQr1YsFCRZ/gFoACgkQN3x/If49H5H6BQ//TqDpfCh7Fa5v227mDISwU1VgOPFK
- eo/+4fF/KNtAtU/VYmBrwT/N6clBxjJYY1i60ekFfAEsCb+vAr1W9geYYpuA+lgR3/BOkHlJ
- eHf4Ez3D71GnqROIXsObFSFfZWGEgBtHBZ694hKwFmIVCg+lqeMV9nPQKlvfx2n+/lDkspGi
- epDwFUdfJLHOYxFZMQsFtKJX4fBiY85/U4X2xSp02DxQZj/N2lc9OFrKmFJHXJi9vQCkJdIj
- S6nuJlvWj/MZKud5QhlfZQsixT9wCeOa6Vgcd4vCzZuptx8gY9FDgb27RQxh/b1ZHalO1h3z
- kXyouA6Kf54Tv6ab7M/fhNqznnmSvWvQ4EWeh8gddpzHKk8ixw9INBWkGXzqSPOztlJbFiQ3
- YPi6o9Pw/IxdQJ9UZ8eCjvIMpXb4q9cZpRLT/BkD4ttpNxma1CUVljkF4DuGydxbQNvJFBK8
- ywyA0qgv+Mu+4r/Z2iQzoOgE1SymrNSDyC7u0RzmSnyqaQnZ3uj7OzRkq0fMmMbbrIvQYDS/
- y7RkYPOpmElF2pwWI/SXKOgMUgigedGCl1QRUio7iifBmXHkRrTgNT0PWQmeGsWTmfRit2+i
- l2dpB2lxha72cQ6MTEmL65HaoeANhtfO1se2R9dej57g+urO9V2v/UglZG1wsyaP/vOrgs+3
- 3i3l5DA=
-In-Reply-To: <20240412183708.4036007-4-tanmay.shah@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR07CA0245.eurprd07.prod.outlook.com
- (2603:10a6:802:58::48) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.34; Thu, 2 May
+ 2024 23:10:38 +0000
+Received: from BL6PEPF0001AB55.namprd02.prod.outlook.com
+ (2603:10b6:208:2d:cafe::9b) by BL0PR03CA0027.outlook.office365.com
+ (2603:10b6:208:2d::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.30 via Frontend
+ Transport; Thu, 2 May 2024 23:10:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB55.mail.protection.outlook.com (10.167.241.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Thu, 2 May 2024 23:10:38 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 2 May
+ 2024 18:10:37 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 2 May 2024 18:10:37 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH 0/2] remoteproc: xlnx: Add attach detach ops and sram support
+Date: Thu, 2 May 2024 16:10:19 -0700
+Message-ID: <20240502231021.370047-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|IA0PR12MB8374:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63c03574-8318-47ba-41b6-08dc6a7cca1e
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB55:EE_|SA3PR12MB7858:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1eee907-3441-43b5-1658-08dc6afd145b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|36860700004;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z1VCRDFmOGU1azI1TUsvdkJWVlNUemdSZktqV2tBdS9vVXBoN0VpaUhQdkcz?=
- =?utf-8?B?ZHJJYlFqNGpvWnpDZ0tpVGU0ZGZ6TUNsSi9HT05WTzJCbVpyTGllVmdyRUhy?=
- =?utf-8?B?T0RraTNnYmo1dXZjQkw2UUxnSThPSU9PVWpQSW1qa09XYWZ1RmtOVHQ2Nit4?=
- =?utf-8?B?N3d6TEFCell0cGNTRDd0SkRPT1hZUitMczBlT1Q0ZkxaZkN3OWxqUkNnNWdD?=
- =?utf-8?B?dC9RQkpDM1daRzcyRXE4cHV1QWhROUFWUE5DWVF6M3ovbm52UkQzWGpBZ0hy?=
- =?utf-8?B?WFdLT3RXK3grS0Z1UmVnWWNZaTdLTEI2cGFISXM2SVZwOHFscUx4UDhUWGlU?=
- =?utf-8?B?LzhDbmVzQnJORjVMSXovV1NJK0wwSHVSWktqeFgxaFNjZFdvZFJ1UkxpcmVV?=
- =?utf-8?B?NmlMbENuTWFCYmxxRGFVQzFsWlRKSWZxd1J3ZEo4anBvd3pvQUVUdndmelor?=
- =?utf-8?B?cmlZNkoyVkF5WUl2SDM1UGVCWEhEVEQ4aURmVHdVL2JDQjl3RlpLNDBaVXNG?=
- =?utf-8?B?K1FsdzNvOERkL3NEQ3ZHRUdVa2xPRm1BWDZBNUc3WlVHUGZvcys0MWhOZUxr?=
- =?utf-8?B?QTc5QjVscDAwSTRya0xvczdVU3VRY3pOMDlSQW5mN2IyMmhDcmpxajBDekF3?=
- =?utf-8?B?ZENqNU05SWV3bXVVZmNlVWNWemErU2xGWU52bnZmV3pneTRGNUZQOVN2Z1pM?=
- =?utf-8?B?TG5oaXJzWm9uRnc5Ky9ZcTVaYm1WMTBPaTBYd0N6TWlucUFqNFoyd2ZVYjFV?=
- =?utf-8?B?UlkrbTFYS1MvL3gxVGh1bDNlSjdCK3dXVWt4L1BiRjVwend4WlVDY2RGS1Vq?=
- =?utf-8?B?d05jY0JkVjZkUTJjbVVmWkprQmU4dExEcnN6QlFFdDZseldWRmJUOEk1RXJm?=
- =?utf-8?B?SHdwbGpCVjBRMjV1dWJMNnRlYWd5T1hzTWw2NHVaWG9tZ29tZmNUT3p2RWEw?=
- =?utf-8?B?UHhDUkM2S203SDRRcGlsRm52VnE2WkQwbjdRelM1RUI3MDRIbWtZU3VvdmRJ?=
- =?utf-8?B?VnFsYUVkQ0xlejFOOFo5b1dkcjZUSlY1Tlo1V3NVaUsrZEpIWjdoNE1JK2dQ?=
- =?utf-8?B?c2o1aVNhOUVzZEJ3YWVoVU5ubUJ3cTAyditVNVlGQ0NuNVZrOFQzTks5TGJl?=
- =?utf-8?B?dThMMisxSExuYytrVWRsS2N2amlBKzBKdC84UVVwczRJWW84NHBqVnpNTUpU?=
- =?utf-8?B?NHQvbVVkdVpTZDgzOG93QUI2NXBPVXkwQmtWVnhVOTNpeTRuNHBCcXpRUDVN?=
- =?utf-8?B?ajBCbndGTHhzWUVqRitGNTRkRXZwU28rL0pIZDY0Nkl1OUx3bjlpNGFPQzlo?=
- =?utf-8?B?NzhQTzREeEJ0bzUzQmhjSzRQdzRDbWxhcXdjdCs4VXhaek5YdGhsREZsTGFh?=
- =?utf-8?B?RllGNTE3NXI2dDFiTmh3ZGJpTFJFSVhjdDBnNW83SUJMZG9sdW5oQ2ZVT1FH?=
- =?utf-8?B?eUtEbkdsVEJCV2JSVjZob1RtUVo3TlFCV3NkMHR2SWQ0TzM4ajlHZHN1c29C?=
- =?utf-8?B?c3A4M1NzMXRiMmYvMXQwaGRCYzF1UkhaVFhjZkMxT0RZdDBOaWR0clVTN21w?=
- =?utf-8?B?dXFPV2ZhbUU2L0FHcHIyQzhRbjgrOHUreUhWSlo2Ui8rQ0E1YXAyNmZxNW5p?=
- =?utf-8?B?Y3c5Z0R4U1dlVHprK2R3UTlPcUEyL1dGa0pTQUNiQmhNVFlPdEJUL3pLTjQz?=
- =?utf-8?B?dEhlSERwZWlGbjc3eWkyVkNyTU1GcG9yejh1N05jQnZzNVdUZWlkS2pBPT0=?=
+	=?us-ascii?Q?y6vGCoDiUaCIWNlTiL1BEe1FquI+iypKxMdMBplPIHtI76JgMOTO+jrO0+xt?=
+ =?us-ascii?Q?ovjwzM2UFN+RFzWqsxoBzonNiZ6A1NvQhsvekn9oMLPLsCzVdu6oZwUj9DU1?=
+ =?us-ascii?Q?0OnETYoWhZa+3hvgiChxbyQbvAkK2YkeVpGRD2tw0zrh0VXh5JNTjYVrnR5K?=
+ =?us-ascii?Q?s7+Px2aFFEqS1nIFbTR9meeQr9yjSop3PRpE7eOljpCv6vegmNnMAtG8n7Xf?=
+ =?us-ascii?Q?CAYaOwvabocN6GydFJ6X1YAXyohf7DaTdIBnDHzAagSTQzJfkd2CQXryfrir?=
+ =?us-ascii?Q?geVacZQlsQK0PgeR2R79m4zOBVAypWAbOOqYQxLQjceCsbKo2w5zpxuQeTGe?=
+ =?us-ascii?Q?xj9VOH4fm1hIIgMHPgny7mmDz5ui9yH8EKVV92fZeMT0Sf8/0dFQGQrAbwZ2?=
+ =?us-ascii?Q?4mMO/zDUO+e2tJ0gZX8drhJSn19LUxLfxAcp9C6aN0iA6O/HiBD+unsfRiUR?=
+ =?us-ascii?Q?2vmH/X1CL/Rx+O9pmuND3tT5b4H3BWghTzTpP/C7qg7deczL6wPRA2N0VKGj?=
+ =?us-ascii?Q?SJAlXNErC2BtDM1YPXAZSRbJwJrLTNJZP5H8OiOL5fMyPXOIRDL5pWZSdmHM?=
+ =?us-ascii?Q?q2JhQwLDaDdt/z3E5yHuwwfMLehThArr7eM+pKNBkksOiKA7h3cMGbShQgdV?=
+ =?us-ascii?Q?dyDWm9jHPJa+z01wsgnUOkMkaIN+O4E7Bayx+Mtm/NgLuC3/o3x81LagMuuc?=
+ =?us-ascii?Q?F+PI3Fsm5lYCcmalgwpIl+6vmMdghDSku5MuhTpsPGlJuy4cVua2fK3w8TZq?=
+ =?us-ascii?Q?A4Yd1iZiFbhZ1DS4An5csgXBcb1OVCjoE66IS+vELdnDpprZ+BmEnQy9GP6j?=
+ =?us-ascii?Q?4kofsITa4aZoJZBBqdXHKjKR1ruX4WjU8TA0CKaavvpC+wzB9XcvI/6cD3t6?=
+ =?us-ascii?Q?6KQZAtkSwYX1oziA40XvgxysuG+iAas8AFRux5Kd1gBz8w53cL5uBi9nheCK?=
+ =?us-ascii?Q?ZvKXFnTrPc/20gw7WCZOATRq+Sm0TVxnBLMZjvgNaarDe0KCZ2WMgefLnm98?=
+ =?us-ascii?Q?8ImUKNarA22HPAKcK+EtOIuASg96hawbWUW1w3v1O18YCzwpGTB+VWIZ1a2Q?=
+ =?us-ascii?Q?3veC7a+L9GFX396CB8fFlj1eggov5SybHh8PWj4fvenUdCY23jyKNdrETQgn?=
+ =?us-ascii?Q?IoNRRFgMBb5pSBnLxANjBlgUFFj7pK0ZGEIsff8AORNW+sGd+f0ZPNiwTrMy?=
+ =?us-ascii?Q?fC6uYri81aTNvC5/+ytKRMRgHyU23I0Mn3x4IGxTf0CoEe+QToHJTXqrWLJF?=
+ =?us-ascii?Q?fCsXbekGcS1B2eDcfG1M7WqQYmJfyATsg9plXydo1yFdpXZTuzKIKG9d2Ony?=
+ =?us-ascii?Q?B+UBgA6UuP1PWxSooH6AaUatqJjaEKdVk2M20kK4y+nC4j5DAJsV7W6y/En8?=
+ =?us-ascii?Q?qTWzm1k2qUPfJGHYebM5IYZSaeNm?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c1AxVGNvTFN6eGpwT1RPeHlmbnV1NllXbVlpZnlLcm1SKzcxd2ZjcWlzRUc4?=
- =?utf-8?B?Mk9yUGJIVFlwOXBJak5GSlh4TUQwa1pZTklkTHlhMTF4NitFdnNkZ0xaM2tD?=
- =?utf-8?B?QkRITDFOTWVyYzE4T2pLeWxvOHlIWG0yOHM1TTUvalRoSzFFdEZCNkdicGQx?=
- =?utf-8?B?d2ROVHhZK211S3huVVhwRm44dGlnSS9hRDM0V2VyM1hJaUxhWUd1OG4zckI1?=
- =?utf-8?B?dGRidUlHOUtqMkJNZHBlSUJmbU5sZWdhZHE0Tkk1SklySzZCU1FOM0VqdHUz?=
- =?utf-8?B?eE9RcUwrS2ZSN0puMmRyNW5LRERUQ2Z6VFFBMlBZVU9nMUNJczFDU0ZxWFc0?=
- =?utf-8?B?QW5hZUhCajZ5V1hKc2p1MWgrbTZhSnJ0NmFUMkpsSzUxZHdKQzdWRTVjaXoz?=
- =?utf-8?B?Uk95RjVuR3V6WTNKdlZNMGxVL2c1bHdzWk5GRGRJc1ByWnQyb1lDSlVUR2hS?=
- =?utf-8?B?R3hjeURKa2krUFF3RDRPdWF2UVpYcHZJMTRJQ3dwRThwRU93R2JGRkxvRjlN?=
- =?utf-8?B?a01SNjVCdlRTWVk4OWlhR1NHZGNyR0UwdXNjN1lDejYvVnVOTFloZ2FxcDZw?=
- =?utf-8?B?ZTNNMHpmUjU0RkVYTGI4cHRWK0YySHl0bkp3SGhsNEg0Qll6ZlNFNFByMmZ5?=
- =?utf-8?B?eEZ3c0o1R09zZ05JR2ZhSGp1Z0MyN0pHQlloSzB0dGNzM0xYcXFLTFltdFFI?=
- =?utf-8?B?STRxdDB6ZUxxeTNwc2hSMk52eS9zdUVjRmJqYnQrOG9td3M0VW1EYVdkRlVv?=
- =?utf-8?B?VGdYZ0luMVFBRjZMN1VSTmVickhFY0UxaDlHcGNCRXF4RUE0SHdvUUU2aHpp?=
- =?utf-8?B?T3hkeWxyTGRSdGpvSlB6eWxHTHlCaGs2RGM1bVV2aS9KTlprWlRHcHdMMDZu?=
- =?utf-8?B?LzFEL05JekJVVktpSHBPVkszeUlFcHBHUS9IL2tZZERKemE0aHhnaFB4b2Ey?=
- =?utf-8?B?YlRPOWFqMmZITzRVMU10NVZpMXRsY1ZtNHlsblBPNmgzSE5KQ3A3YnlZWGY3?=
- =?utf-8?B?eXZiU1M1djFBU3ZMZzhhUk5OR2ZWSGdJdFhDMEpyMjl4Q200L2R5M3h0Q3dr?=
- =?utf-8?B?TG1vRGRkVzlSQ3B4VXZpN0c2NkJvZDRyTUVYTm1HYjNZVkdoamlITmpkdjh3?=
- =?utf-8?B?RWY0U0ErMFZtek5SeXNYc3hUY0RLQjdoNkpsREhLa0lFWTFtMXBET0NlaUg2?=
- =?utf-8?B?eTlVYXQ2MG55RmduaTIyT0ZldSt0MzBpbHZBWW5nc2loV3hRTCswcDB5U2F3?=
- =?utf-8?B?UmRoM3luajVYQ1pnbHFuTlJQSU9VbGJYT0JlNTJROGExK29IMys0UkZWa2hV?=
- =?utf-8?B?RzEzV0I3bzlFaVgrYnE1bitUdUY1blZmMmlFR0o3eSt0MTJjKzFydFRGZkZM?=
- =?utf-8?B?WHFDL3crcHg5TzFGZzhmeHdGbUtRK1dqLzU4emFiY1ZpZUVLRC9xQXVjc3o4?=
- =?utf-8?B?akZCTEVGSWE5eTEzS3dVSWovZ3pyS0lSKy9CWC80T3FDN3g4bWozMmgxelRS?=
- =?utf-8?B?c0xxeTVIOHhTQXQ3UStoS29QQkttY2RNZlAxSTYzdjlmWHRLTnlMWW5aaTl4?=
- =?utf-8?B?bTM0RHhLbFE0bjAyL1N1em9kWUVaaEY4TElKcG1LNEVjNU5WYTNaYnovR0FI?=
- =?utf-8?B?RlRUaTQ0VCsxZzJ1RFBLSlZjRXllbFNqd05wZU1SWExUalpSZ0pqcWVkV0dp?=
- =?utf-8?B?Q3Iway8vRVpoOUhtRUhsR2xTODNpVDdFQkthU3JKMzk2VFc4YVpMQWJBOXJs?=
- =?utf-8?B?eWNZRVBOMHczaHJiQnQ5WFcza05VeVNiS0k1bWFYRDR5RVVzV09iZG5PWHg5?=
- =?utf-8?B?R1dHZ2xkV3RCcThhWGNGdkdoeE5FeXdsUmdLR1JTZ3VyYUlpbDkrcDZXVlRZ?=
- =?utf-8?B?VWcySHhUZjJxbzhmYkY5UFBNNXIzdG9vaFVYTFRhd2JoY3NkYysyRUs2UnBO?=
- =?utf-8?B?WGtJMGhvZ0drejV1c1lpZWhkUm80UkpkNkpXVGFqUFI5Q1NqZmk4aENCMy8y?=
- =?utf-8?B?K09HWWZEaHpZY3RiWlJBbkdtS2VhQzNOdmx6SU1MNWt2YjQ1RVIyYzhTU0Z2?=
- =?utf-8?B?SXhtU2ROYkdsS3lVdXY1MU9yK3c0MDRuck1HdW9ENElGZS9OM0lBajZmL3cr?=
- =?utf-8?Q?E9Sn7fpQQKa4tBM0MwbgWzT5i?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63c03574-8318-47ba-41b6-08dc6a7cca1e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 07:52:18.2038
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 23:10:38.0083
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1eee907-3441-43b5-1658-08dc6afd145b
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bcUlv2nhyMFBwS4DHk7fIAJueMT2OD3aBg60XmHZgK4CW+8xjgOfj7+Mdp+48SLj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8374
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB55.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7858
+
+Attach detach ops are needed to connect to remote processor that is
+running before remoteproc driver is probed. Implement remoteproc
+framework ops that enables such use case on AMD-Xilinx platforms.
+
+Remote processor can also use On Chip sram Memory (OCM) for various
+purpose. For example, for fast code execution or data access compare
+to DDR memory. Such sram region is made available to remoteproc nodes
+via "sram" property. Add support in driver to parse and use OCM memory
+via sram property.
+
+Tanmay Shah (2):
+  drivers: remoteproc: xlnx: add attach detach support
+  drivers: remoteproc: xlnx: add sram support
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 385 +++++++++++++++++++++++-
+ 1 file changed, 380 insertions(+), 5 deletions(-)
 
 
+base-commit: 0496190c4d42965acb31b9da1b6dac3509791062
+-- 
+2.25.1
 
-On 4/12/24 20:37, Tanmay Shah wrote:
-> Add properties as per new bindings in zynqmp remoteproc node
-> to represent TCM address and size.
-> 
-> This patch also adds alternative remoteproc node to represent
-> remoteproc cluster in split mode. By default lockstep mode is
-> enabled and users should disable it before using split mode
-> dts. Both device-tree nodes can't be used simultaneously one
-> of them must be disabled. For zcu102-1.0 and zcu102-1.1 board
-> remoteproc split mode dts node is enabled and lockstep mode
-> dts is disabled.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->   .../boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts  |  8 +++
->   arch/arm64/boot/dts/xilinx/zynqmp.dtsi        | 67 +++++++++++++++++--
->   2 files changed, 70 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
-> index c8f71a1aec89..495ca94b45db 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev1.0.dts
-> @@ -14,6 +14,14 @@ / {
->   	compatible = "xlnx,zynqmp-zcu102-rev1.0", "xlnx,zynqmp-zcu102", "xlnx,zynqmp";
->   };
->   
-> +&rproc_split {
-> +	status = "okay";
-> +};
-> +
-> +&rproc_lockstep {
-> +	status = "disabled";
-> +};
-> +
->   &eeprom {
->   	#address-cells = <1>;
->   	#size-cells = <1>;
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> index 25d20d803230..ef31b0fc73d1 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> @@ -260,19 +260,76 @@ fpga_full: fpga-full {
->   		ranges;
->   	};
->   
-> -	remoteproc {
-> +	rproc_lockstep: remoteproc@ffe00000 {
->   		compatible = "xlnx,zynqmp-r5fss";
->   		xlnx,cluster-mode = <1>;
-> +		xlnx,tcm-mode = <1>;
->   
-> -		r5f-0 {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +
-> +		ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
-> +			 <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
-> +			 <0x0 0x10000 0x0 0xffe10000 0x0 0x10000>,
-> +			 <0x0 0x30000 0x0 0xffe30000 0x0 0x10000>;
-> +
-> +		r5f@0 {
-> +			compatible = "xlnx,zynqmp-r5f";
-> +			reg = <0x0 0x0 0x0 0x10000>,
-> +			      <0x0 0x20000 0x0 0x10000>,
-> +			      <0x0 0x10000 0x0 0x10000>,
-> +			      <0x0 0x30000 0x0 0x10000>;
-> +			reg-names = "atcm0", "btcm0", "atcm1", "btcm1";
-> +			power-domains = <&zynqmp_firmware PD_RPU_0>,
-> +					<&zynqmp_firmware PD_R5_0_ATCM>,
-> +					<&zynqmp_firmware PD_R5_0_BTCM>,
-> +					<&zynqmp_firmware PD_R5_1_ATCM>,
-> +					<&zynqmp_firmware PD_R5_1_BTCM>;
-> +			memory-region = <&rproc_0_fw_image>;
-> +		};
-> +
-> +		r5f@1 {
-> +			compatible = "xlnx,zynqmp-r5f";
-> +			reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
-> +			reg-names = "atcm0", "btcm0";
-> +			power-domains = <&zynqmp_firmware PD_RPU_1>,
-> +					<&zynqmp_firmware PD_R5_1_ATCM>,
-> +					<&zynqmp_firmware PD_R5_1_BTCM>;
-> +			memory-region = <&rproc_1_fw_image>;
-> +		};
-> +	};
-> +
-> +	rproc_split: remoteproc-split@ffe00000 {
-> +		status = "disabled";
-> +		compatible = "xlnx,zynqmp-r5fss";
-> +		xlnx,cluster-mode = <0>;
-> +		xlnx,tcm-mode = <0>;
-> +
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +
-> +		ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x10000>,
-> +			 <0x0 0x20000 0x0 0xffe20000 0x0 0x10000>,
-> +			 <0x1 0x0 0x0 0xffe90000 0x0 0x10000>,
-> +			 <0x1 0x20000 0x0 0xffeb0000 0x0 0x10000>;
-> +
-> +		r5f@0 {
->   			compatible = "xlnx,zynqmp-r5f";
-> -			power-domains = <&zynqmp_firmware PD_RPU_0>;
-> +			reg = <0x0 0x0 0x0 0x10000>, <0x0 0x20000 0x0 0x10000>;
-> +			reg-names = "atcm0", "btcm0";
-> +			power-domains = <&zynqmp_firmware PD_RPU_0>,
-> +					<&zynqmp_firmware PD_R5_0_ATCM>,
-> +					<&zynqmp_firmware PD_R5_0_BTCM>;
->   			memory-region = <&rproc_0_fw_image>;
->   		};
->   
-> -		r5f-1 {
-> +		r5f@1 {
->   			compatible = "xlnx,zynqmp-r5f";
-> -			power-domains = <&zynqmp_firmware PD_RPU_1>;
-> +			reg = <0x1 0x0 0x0 0x10000>, <0x1 0x20000 0x0 0x10000>;
-> +			reg-names = "atcm0", "btcm0";
-> +			power-domains = <&zynqmp_firmware PD_RPU_1>,
-> +					<&zynqmp_firmware PD_R5_1_ATCM>,
-> +					<&zynqmp_firmware PD_R5_1_BTCM>;
->   			memory-region = <&rproc_1_fw_image>;
->   		};
->   	};
-
-Applied.
-
-Thanks,
-Michal
