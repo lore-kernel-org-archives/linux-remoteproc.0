@@ -1,139 +1,62 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E882F22097;
-	Wed,  1 May 2024 02:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581C011718
+	for <linux-remoteproc@vger.kernel.org>; Thu,  2 May 2024 01:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714532397; cv=none; b=dvjGTcpiDJSeU5lK5NufLwXYlCL/S0Xb4O1OHgB5OHFTDNSQEoH4KfTcGdqbiud38kiKYMdJ459XtwnWMvc3yUxh0u1cNv/YUZELTXWz5iRccdc93HsgKXOYanzGy02uMwzGIH7FSvKU2s9/0TqNzoR3WKc7OwP7axEVHUJc+CA=
+	t=1714613035; cv=none; b=uo9Qr96jSUfE23ZSIBDsJAC/UpAHdmeFnBvstsw+IV48YyHZImXDbjr7ldTbv1/IY/VnRJUMY1/92OwUdJVEFgfrRUOkVqVJ0iq4YPNz5fWjMGLi6R/I83sSlIv/6w5dxEQ4C1OCLGta6AxomRO//x4FGlIZ9RNdXm64PphaX0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714532397; c=relaxed/simple;
-	bh=MQnN5PUuQD+tzgRsaSHWclswZAoVZ7LLD6yIhGN1XvA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouV3xd/kkwRiFofRUDsbzmHcVsou+/QtgPbjWakReNM4+G29zwWI8aKoh23k27le83mtvq0NvBpu/H+bl4IQTfuSQgF2fdwvQI48JeFgAp2bLIQnvUFqbJkZq3tTvpOMLbjzuPec+lAijX+yaY+vsJaKWf9pHMuqAlMDuRnjAzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iqc7cXV6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714613035; c=relaxed/simple;
+	bh=5WkPVuKqbuFm4ZRcDTnLhlyrVQwJDjrUhpZ1o3Tb55w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ijAHuiUftcVPWgz3mAFvFtTcs6X6mVtl5Cc+4XYNBZ/gKkUtzG17dDoa/87I1vkI6NQYFkSlqQPLEJGToaH4X8suJLgpzHp6//MPx5uWCLUBT4jVGwm0w7Ko0zKpwE6te7wj0GLOBQBKeJ96YbJyzRoLHzG0ofRJ+38wSuBuiTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KBSBqDrf; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iqc7cXV6"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4412kUFv024656;
-	Wed, 1 May 2024 02:59:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=+2pVsfwpmu4Mx3VqoZ/aN
-	oUk63zhgmR6SWkGMUXmiz0=; b=iqc7cXV6PF7WrC6ExDiLMN9ryWSWODbIfTPv7
-	LKXDIJIkd25rlHNBCsumfrqEASi5sYPZFIE3QLb963On2xViaSRXbToqfys+fwHc
-	AEth8QCVVR2ty4fvpccLxo+jnCDI5oxP34WY119LjaXVvaV0QMG12lblkM0ug5+v
-	KVuhYV9cqPfFCxfy/DNFVavgPGwwwgdg3mUaJHBLwI9jWSQg/00B6lhjlrtnMF81
-	PAUpE+dQcSt1Q5VeWMz9ZEF7zm7eTrK1XxGanWCRuwZmVkqZdjEDwhTV+T7zCyKH
-	LwgomdgnZ4trenwVOce7+DFyVVt1u4QMO8+en+fbpjWRUi+DA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xtw1hjbd9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 May 2024 02:59:51 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4412xSXX007611
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 1 May 2024 02:59:28 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Apr 2024 19:59:27 -0700
-Date: Tue, 30 Apr 2024 19:59:26 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Chris Lew <quic_clew@quicinc.com>
-CC: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <quic_deesin@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V1] soc: qcom: smp2p: Introduce tracepoint support
-Message-ID: <ZjGwDhqqe/MCKcEF@hu-bjorande-lv.qualcomm.com>
-References: <20240429075528.1723133-1-quic_sudeepgo@quicinc.com>
- <172ab19b-4643-6ac0-53ab-d2d1e217171c@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KBSBqDrf"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e0a0cc5e83so44397301fa.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 01 May 2024 18:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714613031; x=1715217831; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5WkPVuKqbuFm4ZRcDTnLhlyrVQwJDjrUhpZ1o3Tb55w=;
+        b=KBSBqDrfjYBzXNAZes1y2C+3XEJaVMRy0rH+Kq7Blusc3us/1KSsCslanNAcb/KHBA
+         l8dDzpaDWHvvmpCrKTuxocevdkLCqB+++K2tHh2FAWje8hUIn6Uh+7dPz9m7q7tgG6pX
+         Yg0nJMNVD4VkNa0lWmdXq2Z3F4CnijGUUJCW2Up+poOO2oL3BXprOFM9FQC8lyTAzlP1
+         lTGL0BYv95IE7k2E9vhS1/fdFgK02ZC9Lv42jw8LvdNX4GXfLZXtDVPfmBgaKcwrPS2A
+         nd5mUEbLX20QqYO7o00Rm7R7L8b6AjoIJ7vDjhAtQVLU8C/HwLNzwxysDuQ0pXTb5tSG
+         XIBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714613031; x=1715217831;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5WkPVuKqbuFm4ZRcDTnLhlyrVQwJDjrUhpZ1o3Tb55w=;
+        b=vCwigFpX+fs8lNbJ/PCjS/7USZd9DmZFT2EvENr1E/s1uQpGVbBzqbvHKqTTvtJFC1
+         dVDvXIelMWuA1IPUaL11VjHQ1G1MLKm451bzNLPyfdDaZPsTpKcKXQlo6JANXqWZbqRS
+         eOkN+4VUsxve/x9ODMBzAHFV/B/2/Z+cqqODNRvv/vu/OCry0p+dZi2Hbl8xv2B423LY
+         PPFNveHK2Ydl1Y4DNIs2xWdFJwlNsPVJv7nttm0r02OEo2JTdbb0LHLK1AkIU23+PLF+
+         UeKtfTcIaXoxRzCQcIGKiaLN/UFVcLVGHznWWLkCkYmzsqQY+V4gyD49k49mfK0fAIxD
+         l1GQ==
+X-Gm-Message-State: AOJu0Yw0tiph1FgIdMoZJ7hMqcLa9aUeWxWtS90z4quFSwMkMboaA1AF
+	GHzxu1BS7Gqtv4QTtMXB1V2iRGKTtZC+qO2z37HqQabLKe/xhgWxyAJbhYeXQwXcBcnVpNSQ18b
+	4Jkzh4U1IJKEGYaUQRSbWVLfDKNIIbnDtbUbtsJHavgR8Wv8iSLo=
+X-Google-Smtp-Source: AGHT+IG7e2s5Za3pmmBTmMkrwLUtpB0cUrQtmJZm49JMy7VgCFGRwlMstoTWx0Ur4upZRXdL/uNHrMrvcnKMb9/4LNc=
+X-Received: by 2002:a2e:780d:0:b0:2da:bbf4:81b8 with SMTP id
+ t13-20020a2e780d000000b002dabbf481b8mr418511ljc.14.1714613028955; Wed, 01 May
+ 2024 18:23:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <172ab19b-4643-6ac0-53ab-d2d1e217171c@quicinc.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WxdHsINzVHe2zT8a_15d1-NDMz_OkjV6
-X-Proofpoint-ORIG-GUID: WxdHsINzVHe2zT8a_15d1-NDMz_OkjV6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-01_02,2024-04-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- mlxlogscore=973 clxscore=1015 bulkscore=0 impostorscore=0 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405010021
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 1 May 2024 19:23:37 -0600
+Message-ID: <CANLsYkyUiU9WoWwU3Lgjb08wJqXOTB-fn8_xi10dbqdtkOxzrw@mail.gmail.com>
+Subject: Remoteproc/RPMSG patchset review order for May 2nd 2024
+To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 30, 2024 at 04:18:27PM -0700, Chris Lew wrote:
-> On 4/29/2024 12:55 AM, Sudeepgoud Patil wrote:
-> > Introduce tracepoint support for smp2p providing useful logging
-> > for communication between clients.
-> > 
-> 
-> Let's add some more description as to why these tracepoint are useful. Do
-> they help us track latency? debugging information for us? for clients?
-
-+1
-
-> > diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-[..]
-> > diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> > index a21241cbeec7..dde8513641ae 100644
-> > --- a/drivers/soc/qcom/smp2p.c
-> > +++ b/drivers/soc/qcom/smp2p.c
-> > @@ -20,6 +20,9 @@
-> >   #include <linux/soc/qcom/smem_state.h>
-> >   #include <linux/spinlock.h>
-> > +#define CREATE_TRACE_POINTS
-> > +#include "trace-smp2p.h"
-> > +
-> >   /*
-> >    * The Shared Memory Point to Point (SMP2P) protocol facilitates communication
-> >    * of a single 32-bit value between two processors.  Each value has a single
-> > @@ -191,6 +194,7 @@ static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
-> >   	struct smp2p_smem_item *out = smp2p->out;
-> >   	u32 val;
-> > +	trace_smp2p_ssr_ack(smp2p->remote_pid);
-> >   	smp2p->ssr_ack = !smp2p->ssr_ack;
-> >   	val = out->flags & ~BIT(SMP2P_FLAGS_RESTART_ACK_BIT);
-> > @@ -213,6 +217,7 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
-> >   			smp2p->ssr_ack_enabled = true;
-> >   		smp2p->negotiation_done = true;
-> > +		trace_smp2p_negotiate(smp2p->remote_pid, smp2p->ssr_ack_enabled);
-> 
-> since this tracepoint is for negotiating, maybe we should capture all of the
-> features (out->features) instead of just the ssr_ack feature.
-> 
-
-Perhaps we can use __print_flags() in TP_printk() for that, it will
-attempt to resolve the bits and if it fails include the numeric value.
-
-> >   	}
-> >   }
-[..]
-> > diff --git a/drivers/soc/qcom/trace-smp2p.h b/drivers/soc/qcom/trace-smp2p.h
-[..]
-> > +TRACE_EVENT(smp2p_ssr_ack,
-> > +	TP_PROTO(unsigned int remote_pid),
-> 
-> Is there any way we can map the remote pid's to a string? I feel like the
-> tracepoints would be more useful if they called out modem, adsp, etc instead
-> of an integer value.
-> 
-
-And __print_symbolic() for this one.
-
-Regards,
-Bjorn
+[PATCH v9 0/5] TI K3 M4F support on AM62 SoCs
