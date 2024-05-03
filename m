@@ -1,370 +1,592 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BFE41A80;
-	Thu,  2 May 2024 23:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714691443; cv=fail; b=eHFI81NZbQWOi6/s0hlKzNGp6hxXMT2IK3qB2hJuAITgOsvpX5w/qR2G858lKUnZwSwMzZdory0nyZTYKhm1thN36fz/awH3fcqtL4/tHNpI49M+MBKgPzS1eIE2yXMhFCHJk2rR+4xcUvLxuRW3kZXM36BwF7pV6+XqCaRhKp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714691443; c=relaxed/simple;
-	bh=F7V6/iE0BSEsTNEEdjLbTtarHbL0vN7iMH09ivQU1+0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bhj0dVrhMcL1TL26g4P0bdFb9Rp63k3hezVGBIOn5PtDTXwG2/mYsvxz0EAxGKLwiqaW6/1+EpcA69ooqv4iKYT2jQZOb5/6xWnaKw7xxvfi/FZIll9yXsKDWSdXuKkWJ4C2fUInCjZn9fhsF9ACn9fmN8AjGRZjs9qYH09NNHo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x9RqKEks; arc=fail smtp.client-ip=40.107.223.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00D14882E;
+	Fri,  3 May 2024 08:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714724308; cv=none; b=q7VacqiXl5Wfv/o24bHQeiaPlyvl7QZ4WK5iH01J/0cUFQULWyXc5E0xiSDgzzK3V9LKOc3RN6KnHQ/vyHODpH7Sh4Kdgp+qj6WIVkc+6Si6TM2AgPQLln4LOGKsSexTsG6LONZ3oJtijuimfbwoRFAA2/HeAxxdCmMViwiLCC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714724308; c=relaxed/simple;
+	bh=SiIcFuRazaEs0jvJDpEmCANpU8UJM+zhB0RisWWFIeo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ercGGVpR0JYyqytA1nns4Fhf8XgNglZNJbaXzSWEneOOuFWP/j4PbB8LLu+bBqIxn75LpDMsJXgRge2D7G6xdq8AC6EuWG8evTrG1U7b2c9IzyNRJ9SNLK0yx/LbmlHkVQnFbJbcYPzoxItFlJquLl+UBAvaFNeaq04tl8kC8fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VPDl76kF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x9RqKEks"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aG73agcNRxQ6kLUhzOtJ6KHDZLNPWJTfZYwOBA3R5JUE1RwX7xi0w+Zp8UBFjN6ACFaz9zWLT7u/KP45EDMaJuUNqaWgwLyD635EPtscHj524fkoRA6M/+p59nOkAHiE2Vyru4st7ZlWgA4eQGZr9BYPY9gjJXyfQhG11crS3kkwfjYF/jCjhO9YkHKBbKLoUWkoKEkgfKJlI6xMFhbkjWE8x8CQgap1pD2hWt+V6liS3i1QPxXwahSwy0YP1w454wZFHstS+A9ncsY8DWGoS8zEjIR19lcFUfmUgGrNS6BSWlK7VR2vWJcL2YP9DIcgBabA1Zd9NwuEuddQ0KtU6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oxxJRFFiWMrYhO8xyh3Wp1pfR86bOPMFxxUqEuFHLH8=;
- b=oEzqfNDF47h3iWFlmCD0oPAEiWTyjys0fk+0vfdAGh9+/J1+cfi/r2LhuN0Q78AgvzhyDKKf1kv1Fza98b/3nElDjsWkyQ3iD9KCsvFvRZlwTcSZI1N7G3S1PcYyp4dGMlL7dJkJ9Y1jVYvqFARbAwcl/oPfW6HkBgrxAAOj2yU+oyCs0BdnX5qOZgRO+usKb6u1Ex55lU+coBPDFp5aTZd271O4Mw81hbIgIy+Bd+e8Nfygxm9q6dRtDuDCOXAIh1gbF/w5Mm2jPlFxfjZCtYISxUgJcEukWYXX4rub9saiK6BzXms8RSEjzeumT+dg8qj47p0xHuKVvVAO2ZJy7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oxxJRFFiWMrYhO8xyh3Wp1pfR86bOPMFxxUqEuFHLH8=;
- b=x9RqKEksOxskcrvy5Pbus1pEul+4w8E17F/jmiOXRuezXCLHpjG7P6xJ0GxHqBrI9ObR16+ociPAnUlrTd+kNskGRT1zJbzS1sRTEcfKJBnTVFEzZg/VN+Y0y8/QB3vuhZvz6fD/teSKhh8ySBsfaJS4u1K49Wk/3mc+pdPJ6HE=
-Received: from BL0PR03CA0033.namprd03.prod.outlook.com (2603:10b6:208:2d::46)
- by CH3PR12MB8936.namprd12.prod.outlook.com (2603:10b6:610:179::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.29; Thu, 2 May
- 2024 23:10:39 +0000
-Received: from BL6PEPF0001AB55.namprd02.prod.outlook.com
- (2603:10b6:208:2d:cafe::83) by BL0PR03CA0033.outlook.office365.com
- (2603:10b6:208:2d::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.30 via Frontend
- Transport; Thu, 2 May 2024 23:10:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0001AB55.mail.protection.outlook.com (10.167.241.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Thu, 2 May 2024 23:10:39 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 2 May
- 2024 18:10:38 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 2 May 2024 18:10:37 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH 1/2] drivers: remoteproc: xlnx: add attach detach support
-Date: Thu, 2 May 2024 16:10:20 -0700
-Message-ID: <20240502231021.370047-2-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240502231021.370047-1-tanmay.shah@amd.com>
-References: <20240502231021.370047-1-tanmay.shah@amd.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VPDl76kF"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4437TKdT002962;
+	Fri, 3 May 2024 08:18:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type; s=
+	qcppdkim1; bh=jIEYjPbHLqtdgTOM5q/0/KC9z4FSIgaaRckuPHZAohg=; b=VP
+	Dl76kFSusXZmTKWKSfsesDaK4ksw0+IuXrVFhchO5HhLKwbloubhe3N7L/hl0sWw
+	E2dawlaB81piBGLU65orHhmJ1hRL2LeysIfrKrR1oXNaZ2ePdbp5ohRLPZ74dTPM
+	PiRA5nHNw+P0HpFxEM7X5/NFAeQVZUuX7pt2neBUTKa1/x5xZYPcW46F49vvj5lX
+	ZKiN2X2tuGY/nySBG1kfF1SiLBoEXdyC5gyZbLMKxkYlz/2qbbDBBKZU79UY4ZQ4
+	E9EY9Tc9eLubuQ6LYQESJDAHvV4JXMh4K5ncN73NR7YjmzljH8VZwNRPDekejaYf
+	QLTcffR5n01QHsiIpRHA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xvmxyrpj4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 May 2024 08:18:19 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4438II5l006690
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 3 May 2024 08:18:18 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 3 May 2024 01:18:15 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+        <konrad.dybcio@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH v10] remoteproc: qcom: Move minidump related layout and API to soc/qcom directory
+Date: Fri, 3 May 2024 13:48:07 +0530
+Message-ID: <1714724287-12518-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB55:EE_|CH3PR12MB8936:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b356a5e-72ef-4c6b-3647-08dc6afd14fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|36860700004|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zPtt7UcQ+t3vD8AKr7sRu0w40o0nJSbNkluZULkR9ytiSOSUqzb6E+fdq80/?=
- =?us-ascii?Q?6vH+mnCuAl/tPpPJHKYyH6w6w7ZwN2JwbRpfhkvUgGS3se3BV9x/3fV7/mTw?=
- =?us-ascii?Q?Z32E37e69FS2plNWx8gzqDXh/gnK1EkdwX8Yoi3ovBHKjiFMNTVnBWlDwjF/?=
- =?us-ascii?Q?9gngrZlKxiVZYlG7HSfUZeyXg+MWNRvzo0zrTxvna4cZmdUKpPfCV95TT5D6?=
- =?us-ascii?Q?hp/RhyFv5NXdV6qhnqm2JrcuJNgqnwxXJN9wEj/oqsuBg0r5EYLVYUdLxBau?=
- =?us-ascii?Q?1IvjeXlahoNZ/bXDt/RtKBuG3aOvqaPArLaoBxYDq7O+/1EnWevIiZoySrh3?=
- =?us-ascii?Q?fFyjTJ4PQDekMcw2KqZu/9pIdN+UXPzcJxpRJGRIVbt/g2T1dg3W8n1EJugg?=
- =?us-ascii?Q?1Fckpjw0lHzdKWh4bYphHCC6Nzu4/pTSrDEVxvkTFfHyRgCoJjE4A1ewWvbd?=
- =?us-ascii?Q?oC+giuEhBDP86WnxAySaRyFqALbzU8kGbbqQdysfhqHqQ2FMbzR1O0IhYNr7?=
- =?us-ascii?Q?IL9se6e17u7fVltEZi7IoUPmAqSUjABvuMKHIalmePyeXDB3gARgh12PllXf?=
- =?us-ascii?Q?t4GC4IESLOSIym4F4sUDtz0reoWutUGKNB+nbj/ueYpCxncaSN/Zd8IaZyjS?=
- =?us-ascii?Q?JF+c/jDe9sCEi/VMk9LE4MdWxa/7qhK2kE4AeD44ITp+66rBMBU+Z9mlJAjp?=
- =?us-ascii?Q?mHctFHPFsYlsc/W0HBfNAHYgnZ+HWS69z5HVeck49s2QZ6s1+0k+HiRFUR/u?=
- =?us-ascii?Q?CrkuBYCxbe0/KjjGJ3shm60sMeAAuTh8/MCiVIg0xeaWaafyC7M8eg2aEgue?=
- =?us-ascii?Q?2SKa09mYgh4c7toOEl0EPd2WAy/L6Jty8fZjYanoTfD0hOQLvvaw7e6EO2yj?=
- =?us-ascii?Q?Uwdn/R90RaP9cyZiTuR6aTT8QAhlLBuHEjwaOEAJmqbR4oW0L8UoMDgWxPD5?=
- =?us-ascii?Q?KVicGP1DUy+E5oO10v9JwkB0LCA35lDdBoPwSF06BZ2e/x2i8dGG9LpHOZh3?=
- =?us-ascii?Q?iXn+g9MskOMp42VpVoOCopvo+mMSU54LIEbnYpXycjhb67oBLplD/CicSR3l?=
- =?us-ascii?Q?uOUJYsrJiRt/QoBRJpYr7WSZudqa5nB1YDbYN8r+n3HgdSNvH0U+A/jmOICR?=
- =?us-ascii?Q?FgfhUrLkR6pxiMOvSJjKLSorvNa38ZD+LieNgYGuxe7nuf2L+2OnpTr74aNK?=
- =?us-ascii?Q?blE/Ql4Uy3XesR3X7FFKsqCC/VUEbLe2jpLMI5AOsSBfSL0UJ9DSU+U4sEA8?=
- =?us-ascii?Q?gA9cXOGT1EGUENEDhvTEc0JmLdjkdkCOAchH+4UT0tTzzzG6TBoofjG67Nu4?=
- =?us-ascii?Q?Hh5CwP7H9Ckq+PzAlQ15nCBo3BssNNUFYAInzCg52wPnYko6mtJm7Hd1FcB5?=
- =?us-ascii?Q?4MZ95MJouw3pvgiMEj5HW/iZTXan?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 23:10:39.0708
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b356a5e-72ef-4c6b-3647-08dc6afd14fd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB55.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8936
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lKFzRi7PufLAbSk4uW-l8Yu0KcZhPbbj
+X-Proofpoint-ORIG-GUID: lKFzRi7PufLAbSk4uW-l8Yu0KcZhPbbj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-03_04,2024-05-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405030058
 
-It is possible that remote processor is already running before
-linux boot or remoteproc platform driver probe. Implement required
-remoteproc framework ops to provide resource table address and
-connect or disconnect with remote processor in such case.
+Currently, Qualcomm Minidump is being used to collect mini version of
+remoteproc coredump with the help of boot firmware however, Minidump
+as a feature is not limited to be used only for remote processor and
+can also be used for Application processors. So, in preparation of
+using it move the Minidump related data structure and its function
+to its own file under drivers/soc/qcom with qcom_rproc_minidump.c
+which clearly says it is only for remoteproc minidump.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Extra changes made apart from the movement is,
+1. Adds new config, kernel headers and module macros to get this
+   module compiled.
+2. Guards the qcom_minidump() with CONFIG_QCOM_RPROC_MINIDUMP.
+3. Selects this QCOM_RPROC_MINIDUMP config when QCOM_RPROC_COMMON
+   enabled.
+4. Added new header qcom_minidump.h .
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 164 +++++++++++++++++++++++-
- 1 file changed, 160 insertions(+), 4 deletions(-)
+Changes in v10:
+ - Converted all 3 changes sent in v9 to a single to properly
+   reflect the movement in git history as per suggestion made by [Bjorn.A]
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 84243d1dff9f..af7aff5e9098 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -25,6 +25,10 @@
- /* RX mailbox client buffer max length */
- #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
- 				 sizeof(struct zynqmp_ipi_message))
-+
-+#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
-+				 (uint32_t)'m' << 8 | (uint32_t)'p')
-+
- /*
-  * settings for RPU cluster mode which
-  * reflects possible values of xlnx,cluster-mode dt-property
-@@ -73,6 +77,15 @@ struct mbox_info {
- 	struct mbox_chan *rx_chan;
- };
+ - Described the reason of the change in commit text.
+
+Changes in v9: https://lore.kernel.org/lkml/1711462394-21540-1-git-send-email-quic_mojha@quicinc.com/
+ - Added source file driver/remoteproc/qcom_common.c copyright
+   to qcom_rproc_minidump.c
+ - Dissociated it from minidump series as this can go separately
+   and minidump can put it dependency for the data structure files.
+
+Nothing much changed in these three patches from previous version,
+However, giving the link of their older versions.
+
+v8: https://lore.kernel.org/lkml/20240131105734.13090-1-quic_mojha@quicinc.com/
+v7: https://lore.kernel.org/lkml/20240109153200.12848-1-quic_mojha@quicinc.com/
+v6: https://lore.kernel.org/lkml/1700864395-1479-1-git-send-email-quic_mojha@quicinc.com/
+v5: https://lore.kernel.org/lkml/1694429639-21484-1-git-send-email-quic_mojha@quicinc.com/
+v4: https://lore.kernel.org/lkml/1687955688-20809-1-git-send-email-quic_mojha@quicinc.com/
+
+ drivers/remoteproc/Kconfig             |   1 +
+ drivers/remoteproc/qcom_common.c       | 160 -----------------------------
+ drivers/remoteproc/qcom_common.h       |   5 -
+ drivers/remoteproc/qcom_q6v5_pas.c     |   1 +
+ drivers/soc/qcom/Kconfig               |  11 ++
+ drivers/soc/qcom/Makefile              |   1 +
+ drivers/soc/qcom/qcom_rproc_minidump.c | 177 +++++++++++++++++++++++++++++++++
+ include/soc/qcom/qcom_minidump.h       |  23 +++++
+ 8 files changed, 214 insertions(+), 165 deletions(-)
+ create mode 100644 drivers/soc/qcom/qcom_rproc_minidump.c
+ create mode 100644 include/soc/qcom/qcom_minidump.h
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 48845dc8fa85..cea960749e2c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -166,6 +166,7 @@ config QCOM_PIL_INFO
  
-+/* Xilinx Platform specific data structure */
-+struct rsc_tbl_data {
-+	const int version;
-+	const u32 magic_num;
-+	const u32 comp_magic_num;
-+	const u32 rsc_tbl_size;
-+	const uintptr_t rsc_tbl;
-+} __packed;
-+
- /*
-  * Hardcoded TCM bank values. This will stay in driver to maintain backward
-  * compatibility with device-tree that does not have TCM information.
-@@ -95,20 +108,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
- /**
-  * struct zynqmp_r5_core
-  *
-+ * @rsc_tbl_va: resource table virtual address
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-  * @tcm_banks: array of each TCM bank data
-  * @rproc: rproc handle
-+ * @rsc_tbl_size: resource table size retrieved from remote
-  * @pm_domain_id: RPU CPU power domain id
-  * @ipi: pointer to mailbox information
-  */
- struct zynqmp_r5_core {
-+	struct resource_table *rsc_tbl_va;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
- 	struct mem_bank_data **tcm_banks;
- 	struct rproc *rproc;
-+	u32 rsc_tbl_size;
- 	u32 pm_domain_id;
- 	struct mbox_info *ipi;
- };
-@@ -621,10 +638,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- {
- 	int ret;
+ config QCOM_RPROC_COMMON
+ 	tristate
++	select QCOM_RPROC_MINIDUMP
  
--	ret = add_tcm_banks(rproc);
+ config QCOM_Q6V5_COMMON
+ 	tristate
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 03e5f5d533eb..085fd73fa23a 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -17,7 +17,6 @@
+ #include <linux/rpmsg/qcom_smd.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+-#include <linux/soc/qcom/smem.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+@@ -26,61 +25,6 @@
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+ #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+ 
+-#define MAX_NUM_OF_SS           10
+-#define MAX_REGION_NAME_LENGTH  16
+-#define SBL_MINIDUMP_SMEM_ID	602
+-#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+-#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
+-#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
+-
+-/**
+- * struct minidump_region - Minidump region
+- * @name		: Name of the region to be dumped
+- * @seq_num:		: Use to differentiate regions with same name.
+- * @valid		: This entry to be dumped (if set to 1)
+- * @address		: Physical address of region to be dumped
+- * @size		: Size of the region
+- */
+-struct minidump_region {
+-	char	name[MAX_REGION_NAME_LENGTH];
+-	__le32	seq_num;
+-	__le32	valid;
+-	__le64	address;
+-	__le64	size;
+-};
+-
+-/**
+- * struct minidump_subsystem - Subsystem's SMEM Table of content
+- * @status : Subsystem toc init status
+- * @enabled : if set to 1, this region would be copied during coredump
+- * @encryption_status: Encryption status for this subsystem
+- * @encryption_required : Decides to encrypt the subsystem regions or not
+- * @region_count : Number of regions added in this subsystem toc
+- * @regions_baseptr : regions base pointer of the subsystem
+- */
+-struct minidump_subsystem {
+-	__le32	status;
+-	__le32	enabled;
+-	__le32	encryption_status;
+-	__le32	encryption_required;
+-	__le32	region_count;
+-	__le64	regions_baseptr;
+-};
+-
+-/**
+- * struct minidump_global_toc - Global Table of Content
+- * @status : Global Minidump init status
+- * @md_revision : Minidump revision
+- * @enabled : Minidump enable status
+- * @subsystems : Array of subsystems toc
+- */
+-struct minidump_global_toc {
+-	__le32				status;
+-	__le32				md_revision;
+-	__le32				enabled;
+-	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
+-};
+-
+ struct qcom_ssr_subsystem {
+ 	const char *name;
+ 	struct srcu_notifier_head notifier_list;
+@@ -90,110 +34,6 @@ struct qcom_ssr_subsystem {
+ static LIST_HEAD(qcom_ssr_subsystem_list);
+ static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+ 
+-static void qcom_minidump_cleanup(struct rproc *rproc)
+-{
+-	struct rproc_dump_segment *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
+-		list_del(&entry->node);
+-		kfree(entry->priv);
+-		kfree(entry);
+-	}
+-}
+-
+-static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
+-			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
+-				void *dest, size_t offset, size_t size))
+-{
+-	struct minidump_region __iomem *ptr;
+-	struct minidump_region region;
+-	int seg_cnt, i;
+-	dma_addr_t da;
+-	size_t size;
+-	char *name;
+-
+-	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
+-		dev_err(&rproc->dev, "dump segment list already populated\n");
+-		return -EUCLEAN;
+-	}
+-
+-	seg_cnt = le32_to_cpu(subsystem->region_count);
+-	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
+-		      seg_cnt * sizeof(struct minidump_region));
+-	if (!ptr)
+-		return -EFAULT;
+-
+-	for (i = 0; i < seg_cnt; i++) {
+-		memcpy_fromio(&region, ptr + i, sizeof(region));
+-		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
+-			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+-			if (!name) {
+-				iounmap(ptr);
+-				return -ENOMEM;
+-			}
+-			da = le64_to_cpu(region.address);
+-			size = le64_to_cpu(region.size);
+-			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
+-		}
+-	}
+-
+-	iounmap(ptr);
+-	return 0;
+-}
+-
+-void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+-		void (*rproc_dumpfn_t)(struct rproc *rproc,
+-		struct rproc_dump_segment *segment, void *dest, size_t offset,
+-		size_t size))
+-{
+-	int ret;
+-	struct minidump_subsystem *subsystem;
+-	struct minidump_global_toc *toc;
+-
+-	/* Get Global minidump ToC*/
+-	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+-
+-	/* check if global table pointer exists and init is set */
+-	if (IS_ERR(toc) || !toc->status) {
+-		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+-		return;
+-	}
+-
+-	/* Get subsystem table of contents using the minidump id */
+-	subsystem = &toc->subsystems[minidump_id];
+-
+-	/**
+-	 * Collect minidump if SS ToC is valid and segment table
+-	 * is initialized in memory and encryption status is set.
+-	 */
+-	if (subsystem->regions_baseptr == 0 ||
+-	    le32_to_cpu(subsystem->status) != 1 ||
+-	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+-		return rproc_coredump(rproc);
+-	}
+-
+-	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+-		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+-		return;
+-	}
+-
+-	/**
+-	 * Clear out the dump segments populated by parse_fw before
+-	 * re-populating them with minidump segments.
+-	 */
+-	rproc_coredump_cleanup(rproc);
+-
+-	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
 -	if (ret) {
--		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
--		return ret;
-+	/**
-+	 * For attach/detach use case, Firmware is already loaded so
-+	 * TCM isn't really needed at all. Also, for security TCM can be
-+	 * locked in such case and linux may not have access at all.
-+	 * So avoid adding TCM banks. TCM power-domains requested during attach
-+	 * callback.
-+	 */
-+	if (rproc->state != RPROC_DETACHED) {
-+		ret = add_tcm_banks(rproc);
-+		if (ret) {
-+			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	ret = add_mem_regions_carveout(rproc);
-@@ -662,6 +688,123 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 	return 0;
- }
- 
-+static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
-+							     size_t *size)
-+{
-+	struct zynqmp_r5_core *r5_core;
-+
-+	r5_core = rproc->priv;
-+
-+	*size = r5_core->rsc_tbl_size;
-+
-+	return r5_core->rsc_tbl_va;
-+}
-+
-+static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-+{
-+	struct device *dev = r5_core->dev;
-+	struct rsc_tbl_data *rsc_data_va;
-+	struct resource_table *rsc_addr;
-+	struct resource res_mem;
-+	struct device_node *np;
-+	int ret;
-+
-+	/**
-+	 * It is expected from remote processor firmware to provide resource
-+	 * table address via struct rsc_tbl_data data structure.
-+	 * Start address of first entry under "memory-region" property list
-+	 * contains that data structure which holds resource table address, size
-+	 * and some magic number to validate correct resource table entry.
-+	 */
-+	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-+	if (!np) {
-+		dev_err(dev, "failed to get memory region dev node\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(np, 0, &res_mem);
-+	if (ret) {
-+		dev_err(dev, "failed to get memory-region resource addr\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_data_va = devm_ioremap_wc(dev, res_mem.start,
-+				      sizeof(struct rsc_tbl_data));
-+	if (!rsc_data_va) {
-+		dev_err(dev, "failed to map resource table data address\n");
-+		return -EIO;
-+	}
-+
-+	/**
-+	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-+	 * do not consider resource table address valid and don't attach
-+	 */
-+	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-+	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-+		dev_dbg(dev, "invalid magic number, won't attach\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_addr = ioremap_wc(rsc_data_va->rsc_tbl,
-+			      rsc_data_va->rsc_tbl_size);
-+	if (!rsc_addr) {
-+		dev_err(dev, "failed to get rsc_addr\n");
-+		return -EINVAL;
-+	}
-+
-+	/**
-+	 * As of now resource table version 1 is expected. Don't fail to attach
-+	 * but warn users about it.
-+	 */
-+	if (rsc_addr->ver != 1)
-+		dev_warn(dev, "unexpected resource table version %d\n",
-+			 rsc_addr->ver);
-+
-+	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-+	r5_core->rsc_tbl_va = rsc_addr;
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_attach(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	int i, pm_domain_id, ret;
-+
-+	/*
-+	 * Firmware is loaded in TCM. Request TCM power domains to notify
-+	 * platform management controller that TCM is in use. This will be
-+	 * released during unprepare callback.
-+	 */
-+	for (i = 0; i < r5_core->tcm_bank_count; i++) {
-+		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-+		ret = zynqmp_pm_request_node(pm_domain_id,
-+					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-+					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+		if (ret < 0)
-+			pr_warn("TCM %d can't be requested\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_detach(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+
-+	/*
-+	 * Generate last notification to remote after clearing virtio flag.
-+	 * Remote can avoid polling on virtio reset flag if kick is generated
-+	 * during detach by host and check virtio reset flag on kick interrupt.
-+	 */
-+	zynqmp_r5_rproc_kick(rproc, 0);
-+
-+	iounmap(r5_core->rsc_tbl_va);
-+	r5_core->rsc_tbl_va = NULL;
-+
-+	return 0;
-+}
-+
- static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.prepare	= zynqmp_r5_rproc_prepare,
- 	.unprepare	= zynqmp_r5_rproc_unprepare,
-@@ -673,6 +816,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- 	.kick		= zynqmp_r5_rproc_kick,
-+	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-+	.attach		= zynqmp_r5_attach,
-+	.detach		= zynqmp_r5_detach,
+-		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+-		goto clean_minidump;
+-	}
+-	rproc_coredump_using_sections(rproc);
+-clean_minidump:
+-	qcom_minidump_cleanup(rproc);
+-}
+-EXPORT_SYMBOL_GPL(qcom_minidump);
+-
+ static int glink_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index 9ef4449052a9..af3038ae954b 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -34,11 +34,6 @@ struct qcom_rproc_ssr {
+ 	struct qcom_ssr_subsystem *info;
  };
  
- /**
-@@ -723,6 +869,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 		goto free_rproc;
- 	}
+-void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+-			void (*rproc_dumpfn_t)(struct rproc *rproc,
+-				struct rproc_dump_segment *segment, void *dest, size_t offset,
+-				size_t size));
+-
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+ 			   const char *ssr_name);
+ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 54d8005d40a3..20664426150f 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -25,6 +25,7 @@
+ #include <linux/soc/qcom/mdt_loader.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
++#include <soc/qcom/qcom_minidump.h>
  
-+	/*
-+	 * Move rproc state to DETACHED to give one time opportunity to attach
-+	 * if firmware is already available in the memory. This can happen if
-+	 * firmware is loaded via debugger or by any other agent in the system.
-+	 * If firmware isn't available in the memory and resource table isn't found,
-+	 * then rproc state stay OFFLINE.
-+	 */
-+	if (!zynqmp_r5_get_rsc_table_va(r5_core))
-+		r5_rproc->state = RPROC_DETACHED;
+ #include "qcom_common.h"
+ #include "qcom_pil_info.h"
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5af33b0e3470..7732b9e79ed2 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -277,4 +277,15 @@ config QCOM_PBS
+ 	  This module provides the APIs to the client drivers that wants to send the
+ 	  PBS trigger event to the PBS RAM.
+ 
++config QCOM_RPROC_MINIDUMP
++	tristate "QCOM Remoteproc Minidump Support"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on QCOM_SMEM
++	help
++	  Enablement of core Minidump feature is controlled from boot firmware
++	  side, so if it is enabled from firmware, this config allow Linux to
++	  query predefined Minidump segments associated with the remote processor
++	  and check its validity and end up collecting the dump on remote processor
++	  crash during its recovery.
 +
- 	r5_core->rproc = r5_rproc;
- 	return r5_core;
- 
+ endmenu
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index ca0bece0dfff..a298552872cd 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -36,3 +36,4 @@ obj-$(CONFIG_QCOM_ICC_BWMON)	+= icc-bwmon.o
+ qcom_ice-objs			+= ice.o
+ obj-$(CONFIG_QCOM_INLINE_CRYPTO_ENGINE)	+= qcom_ice.o
+ obj-$(CONFIG_QCOM_PBS) +=	qcom-pbs.o
++obj-$(CONFIG_QCOM_RPROC_MINIDUMP) += qcom_rproc_minidump.o
+diff --git a/drivers/soc/qcom/qcom_rproc_minidump.c b/drivers/soc/qcom/qcom_rproc_minidump.c
+new file mode 100644
+index 000000000000..29951e99f091
+--- /dev/null
++++ b/drivers/soc/qcom/qcom_rproc_minidump.c
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Qualcomm Remoteproc Minidump helper module
++ *
++ * Copyright (C) 2016 Linaro Ltd
++ * Copyright (C) 2015 Sony Mobile Communications Inc
++ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/remoteproc.h>
++#include <linux/soc/qcom/smem.h>
++#include <soc/qcom/qcom_minidump.h>
++
++#define MAX_NUM_OF_SS           10
++#define MAX_REGION_NAME_LENGTH  16
++#define SBL_MINIDUMP_SMEM_ID	602
++#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
++#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
++#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
++
++/**
++ * struct minidump_region - Minidump region
++ * @name		: Name of the region to be dumped
++ * @seq_num:		: Use to differentiate regions with same name.
++ * @valid		: This entry to be dumped (if set to 1)
++ * @address		: Physical address of region to be dumped
++ * @size		: Size of the region
++ */
++struct minidump_region {
++	char	name[MAX_REGION_NAME_LENGTH];
++	__le32	seq_num;
++	__le32	valid;
++	__le64	address;
++	__le64	size;
++};
++
++/**
++ * struct minidump_subsystem - Subsystem's SMEM Table of content
++ * @status : Subsystem toc init status
++ * @enabled : if set to 1, this region would be copied during coredump
++ * @encryption_status: Encryption status for this subsystem
++ * @encryption_required : Decides to encrypt the subsystem regions or not
++ * @region_count : Number of regions added in this subsystem toc
++ * @regions_baseptr : regions base pointer of the subsystem
++ */
++struct minidump_subsystem {
++	__le32	status;
++	__le32	enabled;
++	__le32	encryption_status;
++	__le32	encryption_required;
++	__le32	region_count;
++	__le64	regions_baseptr;
++};
++
++/**
++ * struct minidump_global_toc - Global Table of Content
++ * @status : Global Minidump init status
++ * @md_revision : Minidump revision
++ * @enabled : Minidump enable status
++ * @subsystems : Array of subsystems toc
++ */
++struct minidump_global_toc {
++	__le32				status;
++	__le32				md_revision;
++	__le32				enabled;
++	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
++};
++
++static void qcom_minidump_cleanup(struct rproc *rproc)
++{
++	struct rproc_dump_segment *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
++		list_del(&entry->node);
++		kfree(entry->priv);
++		kfree(entry);
++	}
++}
++
++static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
++			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
++				void *dest, size_t offset, size_t size))
++{
++	struct minidump_region __iomem *ptr;
++	struct minidump_region region;
++	int seg_cnt, i;
++	dma_addr_t da;
++	size_t size;
++	char *name;
++
++	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
++		dev_err(&rproc->dev, "dump segment list already populated\n");
++		return -EUCLEAN;
++	}
++
++	seg_cnt = le32_to_cpu(subsystem->region_count);
++	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
++		      seg_cnt * sizeof(struct minidump_region));
++	if (!ptr)
++		return -EFAULT;
++
++	for (i = 0; i < seg_cnt; i++) {
++		memcpy_fromio(&region, ptr + i, sizeof(region));
++		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
++			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
++			if (!name) {
++				iounmap(ptr);
++				return -ENOMEM;
++			}
++			da = le64_to_cpu(region.address);
++			size = le64_to_cpu(region.size);
++			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
++		}
++	}
++
++	iounmap(ptr);
++	return 0;
++}
++
++void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
++		void (*rproc_dumpfn_t)(struct rproc *rproc,
++		struct rproc_dump_segment *segment, void *dest, size_t offset,
++		size_t size))
++{
++	int ret;
++	struct minidump_subsystem *subsystem;
++	struct minidump_global_toc *toc;
++
++	/* Get Global minidump ToC*/
++	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
++
++	/* check if global table pointer exists and init is set */
++	if (IS_ERR(toc) || !toc->status) {
++		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
++		return;
++	}
++
++	/* Get subsystem table of contents using the minidump id */
++	subsystem = &toc->subsystems[minidump_id];
++
++	/**
++	 * Collect minidump if SS ToC is valid and segment table
++	 * is initialized in memory and encryption status is set.
++	 */
++	if (subsystem->regions_baseptr == 0 ||
++	    le32_to_cpu(subsystem->status) != 1 ||
++	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
++		return rproc_coredump(rproc);
++	}
++
++	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
++		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
++		return;
++	}
++
++	/**
++	 * Clear out the dump segments populated by parse_fw before
++	 * re-populating them with minidump segments.
++	 */
++	rproc_coredump_cleanup(rproc);
++
++	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
++	if (ret) {
++		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
++		goto clean_minidump;
++	}
++	rproc_coredump_using_sections(rproc);
++clean_minidump:
++	qcom_minidump_cleanup(rproc);
++}
++EXPORT_SYMBOL_GPL(qcom_minidump);
++
++MODULE_DESCRIPTION("Qualcomm Remoteproc Minidump helper module");
++MODULE_LICENSE("GPL");
+diff --git a/include/soc/qcom/qcom_minidump.h b/include/soc/qcom/qcom_minidump.h
+new file mode 100644
+index 000000000000..0fe156066bc0
+--- /dev/null
++++ b/include/soc/qcom/qcom_minidump.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _QCOM_MINIDUMP_H_
++#define _QCOM_MINIDUMP_H_
++
++struct rproc;
++struct rproc_dump_segment;
++
++#if IS_ENABLED(CONFIG_QCOM_RPROC_MINIDUMP)
++void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
++		   void (*rproc_dumpfn_t)(struct rproc *rproc,
++		   struct rproc_dump_segment *segment, void *dest, size_t offset,
++		   size_t size));
++#else
++static inline void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
++		   void (*rproc_dumpfn_t)(struct rproc *rproc,
++		   struct rproc_dump_segment *segment, void *dest, size_t offset,
++		   size_t size)) { }
++#endif /* CONFIG_QCOM_RPROC_MINIDUMP */
++#endif /* _QCOM_MINIDUMP_H_ */
 -- 
-2.25.1
+2.7.4
 
