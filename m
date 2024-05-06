@@ -1,68 +1,112 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206B535280;
-	Mon,  6 May 2024 12:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106513CF8D;
+	Mon,  6 May 2024 14:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999829; cv=none; b=AX9p78t8WAGYRnsUuIvaGYDIvyw0LuUkvmxGsZaRXGR+SMv4ZHFa7mzMt+YnFmwYWdQYnaUM4+wn+esopkgEDLdiFLU9bNfXhHfG1AEfVhXD3k3CGAwv8Kfh25GtoC6AzefViNZdwrHzrkERZvEWPGz6VpEP/eYUgjKpQbXB7eE=
+	t=1715005152; cv=none; b=isqseuPQNSim1IKKMqps82MaqU+yNA4nIYsBFPukR2eN2sIF0U3vKVkrNoL39nGATx6to5Kgry1NPGlJ0Qft8BxFQxnqAGtRFomTTS64paH7n4nIPPKEPfy62mWlgG9wOX+Gw39SdYqLsgttMJXAf6P+qa2aICeqQbNnfjuZAxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999829; c=relaxed/simple;
-	bh=7YmFAKYR4v2H/+//mZ++hNH0JQRI9liSvEk0JvHYCDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBAMwXahd1V9djyJZ9yPZ7YDelbU1o5FqkVv44NlMxrajfIFpYDncyJ64O0Zac8WlXuSw0g0/D6P+1HzadSC9SA643RekLhlSAabOL7NdA7G46zXRYsWbUlqRHQjyEdTM+U7RSTRbpTjBJolXvXzHUI9LwZK/WDxmr6r03FZ1LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i8KFlH6A; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1715005152; c=relaxed/simple;
+	bh=FAKNQBGUKKFusDeatYhafNln5MX8xfJagk0O96bWMBA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VRcSW9h1vsrGlwjFNgE7oA2d5zMw1aut/2ReJCT0KB7EOvU/eucv+8SvFcPQyOe2rUu9igBU3OcUqDCEAyVE0eVRCEORPFsOpDW0HCyz9ACJC62OV2MUmmbjAY0XCC3zwSjJ/WFW+dWfI4Bwn/m/7lI9ps0U+t5sWB91hwlhsNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tboUKVnZ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i8KFlH6A"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714999826;
-	bh=7YmFAKYR4v2H/+//mZ++hNH0JQRI9liSvEk0JvHYCDY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i8KFlH6AamyBlWjrQW9iREnPXwHPMfII4+McxwIl577WfJtA/6aR5l2FM7I/nqoXG
-	 faMYdZFR7GLYhlJ2dOIuYwYaGKb81WK5kXPJZoIln53XaVX7pqW093ee7s3U9p3EmO
-	 amG8oPfOXYLCpIHmOq1i/oUXNRp4VIBp4LGnf8ksViwv0rarxbkhg3HolFR/dShDqn
-	 E0vjJw5DYeGyZVOadgE+wPjLeyGDnMCoU19r0Wz0qzgff24Q5/Z71BwDusEvGOjbtc
-	 uX/k329PMkE1Q6hpRbnEAWxNDpNcI4mS6SsJ/7nTHiYv8Wb0gKdc76PZ62cpm+Q4b9
-	 HG32n7WzKDhMg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DDB5837813E3;
-	Mon,  6 May 2024 12:50:25 +0000 (UTC)
-Message-ID: <d368c0c2-bffb-4801-a6be-c83dea738b70@collabora.com>
-Date: Mon, 6 May 2024 14:50:25 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tboUKVnZ"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 446EIr87017415;
+	Mon, 6 May 2024 09:18:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715005133;
+	bh=vGrj2I00iop+9WWPNabe2FeZlqglag8xAYaGInOumy0=;
+	h=From:To:CC:Subject:Date;
+	b=tboUKVnZRbaMKXkeRZ5lXnavmhrCdvLMiwi1/0w3mWhA0UAGGSRnrrBmu/9xNsJdn
+	 fsfPYZm0PxYXf8EqlXXvqJrrAdLHoXZRQqtaP2nt/vAJq3RMH9XWZf3P45nxZEPf9C
+	 dEQabbYjFVPSn7DILnG1TmLEj/qkE5QHZiVZh9wM=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 446EIrw3041746
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 6 May 2024 09:18:53 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 6
+ May 2024 09:18:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 6 May 2024 09:18:53 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 446EInOp083672;
+	Mon, 6 May 2024 09:18:50 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>
+CC: <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dan.carpenter@linaro.org>,
+        <hnagalla@ti.com>, <devarsht@ti.com>, <nm@ti.com>, <s-anna@ti.com>,
+        <u-kumar1@ti.com>
+Subject: [PATCH] remoteproc: k3-r5: Jump to error handling labels in start/stop errors
+Date: Mon, 6 May 2024 19:48:49 +0530
+Message-ID: <20240506141849.1735679-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: mediatek: Fix error code in scp_rproc_init()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Olivia Wen <olivia.wen@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-remoteproc@vger.kernel.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Il 04/05/24 13:26, Dan Carpenter ha scritto:
-> Set the error code to ERR_PTR(-ENOMEM).  Otherwise if there is an
-> allocation failure it leads to a NULL dereference in the caller.
-> 
-> Fixes: c08a82494500 ("remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+In case of errors during core start operation from sysfs, the driver
+directly returns with the -EPERM error code. Fix this to ensure that
+mailbox channels are freed on error before returning by jumping to the
+'put_mbox' error handling label. Similarly, jump to the 'out' error
+handling label to return with required -EPERM error code during the
+core stop operation from sysfs.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
 
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+As stated in the bug-report[0], Smatch complains that:
+drivers/remoteproc/ti_k3_r5_remoteproc.c:583 k3_r5_rproc_start() warn: missing unwind goto?
+drivers/remoteproc/ti_k3_r5_remoteproc.c:651 k3_r5_rproc_stop() warn: missing unwind goto?
+
+This patch addresses the warnings by jumping to appropriate error
+labels in case an error occurs during start/stop operation from sysfs.
+
+[0]-https://lore.kernel.org/all/acc4f7a0-3bb5-4842-95a5-fb3c3fc8554b@moroto.mountain/
+
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 1799b4f6d11e..50e486bcfa10 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -580,7 +580,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+ 			dev_err(dev, "%s: can not start core 1 before core 0\n",
+ 				__func__);
+-			return -EPERM;
++			ret = -EPERM;
++			goto put_mbox;
+ 		}
+ 
+ 		ret = k3_r5_core_run(core);
+@@ -648,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+ 			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+ 				__func__);
+-			return -EPERM;
++			ret = -EPERM;
++			goto out;
+ 		}
+ 
+ 		ret = k3_r5_core_halt(core);
+-- 
+2.34.1
 
