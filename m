@@ -1,68 +1,67 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F21D15ADB6
-	for <linux-remoteproc@vger.kernel.org>; Mon,  6 May 2024 19:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EC4157E62
+	for <linux-remoteproc@vger.kernel.org>; Mon,  6 May 2024 19:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024580; cv=none; b=fqH76RgB3buKm8SIaUyzFm9ILEh8V8zMiFcaN9H/6X6r3p71KvSzda+ZTFzQq2s6+CF+WMSGgIE91FZjEg2Lg5XJ1dXFjTclUrBvsmvJ1iDHZ0FdOJTXCI5OvXCHH1jOlZ8cHTS/kwbvuZidR56NbtbQdvP1CSddik2eQetOeFo=
+	t=1715024616; cv=none; b=jsPGIQ55t0jVCCCPw1fM5mGB1YZQIUiciMzYYLwMF6sXJQldDpp/WzF6AGK46nTLh92tNftZU6RBppg/slkdjBF0GicilQWuZS9JbloHP639k+KuqF836gkdc5UxcKJFYvwaE9yf7fizxXS7JoopNvIiqWYViNDQp/cz5PJ9rLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024580; c=relaxed/simple;
-	bh=h+2r0KY2d/YSb1EViAvSbFH0CkwFTDZBvlP12Ftx8GU=;
+	s=arc-20240116; t=1715024616; c=relaxed/simple;
+	bh=DKq1/S1mvND3bjPrxatyn7VET9OItUwcH7q3NBufJKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1qqkxqUJ+99RTJx8WUK5XW+zsh6AIrBOZDj0+t39d6nyIGftE0R2TivrYieTfPz90xm3gy+vDz3uyCsIhDEhTkND5ZMTvFIsBoshTGPOxXGrpQGoi4qCkaow4sY5n4JfndoGL2sN/puvJA7dV8uHthyW1OCJObjO/QVGkl9J4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pe9Br3NS; arc=none smtp.client-ip=209.85.214.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdSTn8DXbX5hdjuFNovsX/h4Z8sH2nohJV92tygJ96i/QSRMpKnDLYfbaSda7j+Qn87+ek1C88hqOocDjsR9P0nuU/iTNRqr8kimiCOTNh7VgpPpB7tBmLTsyQGQvXkG3lonID9xd2I9vz17Vuuct+4ruX8Vzyy2iWKW9k78gCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8/zrvH2; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pe9Br3NS"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ec486198b6so18699025ad.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 May 2024 12:42:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8/zrvH2"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2b239b5fedaso1846865a91.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 May 2024 12:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715024578; x=1715629378; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715024615; x=1715629415; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RAOWZHhFt8Wc+lwUcH+BSWxp87XVVq5/2anFeAYpi+Y=;
-        b=Pe9Br3NSEqtiC4lnjmbMr08Cd2JU8dM1J14wrr3YCH094butT6YRTQrsX1+5Dt5RU6
-         YOnCR2mFsItIz7yBLDJ6+W6LHa9z7PvoIGOzS8auTPT9MDHVIA3+a8+XJdRMjM0l+AoF
-         /kRp1ZkKhmMj4dq8aLwPPioLpxQcJRxL3YHG1ofWIlYMCQJRzT6pV/Wads4uS14t7Isb
-         wsbzGWN0ho+x7OrUYh1P/YqDLfPR7lyh6h8KE1oby/mIyIV9UnJ2Wl1jZEuGM8kWJ661
-         xknNlMif6TgKX7TI8eHNUX75gNQipK3ZNLrpBzuxR/98fBq4lV71Wk5q24zWNQWHutRd
-         hLRA==
+        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
+        b=s8/zrvH2PP02FyIYUm630fpQIr9AuuQb5IXm7WAjLE48zxIUHC8KQKZDK/z+rN8op3
+         DQno0AK92LsNAU8WkmlbkI1KH2/p6mPP1bCod2kBvvXKgIgpj00vfdJufhZcytPaiSoe
+         PWRsmrVdRDCacYvREfGSiKaQBTXDdG6/bctIdvVMxksvSZLwRG1z+kfcRlJmbhpRzLpH
+         lSk6M3ILILmcYacZSojev5M7qUqmatQ9+PKpFP7PAA9mUAxDWunBFiGN9k0p1SaBxKsc
+         MgjQ+/AZBIdapT+Olj+l/E9sIPKY/e4nJAtxq1fxs4WZpt9Kh+0Sf3fx5mw/9mhMZ2ut
+         tnpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715024578; x=1715629378;
+        d=1e100.net; s=20230601; t=1715024615; x=1715629415;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RAOWZHhFt8Wc+lwUcH+BSWxp87XVVq5/2anFeAYpi+Y=;
-        b=rZ36+yHoOPAdWWpmpB1rmMSsHDISBVZH9miQZX7ActL2v81u+aQMplm/rgxrLPlLb9
-         fOf0EB+aR3rA7cCspoudjTEfz+99t05vulhULqwDZJ+hKV9Y0s6uHL0QiGQEiQFYuNPB
-         V+0Rvc8BBlWD5+N1RY5Qi+dGfcu5z2s+Nu4D4EKBDnNq/aImA0etnycOqW4+/peSsxO8
-         ffSOs7Hj4cdLtHCMHL5kAxxa6APpZMriQLon4Uwy3NvD2sDFBRvDSdQLbHjh/zM1KiO1
-         yV0yn2s5mZPBwoneYj/8uzOjD4smeHIy8AXiaby/uiuiM3d5g64dsb1F6GzX879h9CFr
-         CbbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXy4FmvCQP/YALPe9Kw9Fj91tyL8AaKFjSUSCSIshibb5LGappLr1AwrsxhmB7ntVz6KCH/kH5MOSItxWyWSvvWrS9lAwYXPQ8fL8idfctNTg==
-X-Gm-Message-State: AOJu0YysaxUydH2gEMG11w1fDk/jGaudWNcrdxEza9u1gtz67H6iGMSr
-	OyjFATQPKkoLpr8J/O8rhtp1gn3vTJ94u/kNoyo+OxleqlU9FMB6jYTYLxrUZA8=
-X-Google-Smtp-Source: AGHT+IGwS1FDFCkf5egNjpQBZQYUjij5H16IdPJ7aQt+EL6jbiC0XsfnTSn1KSAGBqBRJX2WD4uCeg==
-X-Received: by 2002:a17:902:c412:b0:1eb:1663:c7f7 with SMTP id k18-20020a170902c41200b001eb1663c7f7mr13806723plk.43.1715024578211;
-        Mon, 06 May 2024 12:42:58 -0700 (PDT)
+        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
+        b=aMhRm9hS/iAmTk//wtnAICCVhC3sQdPAcQca8OgGABXNlvmicgKNTOB+xhqEtx0rLp
+         GIvm0UXThkGktDb1kWSLvVDtFcRbFLCoyIsEPb1/jpX989Cdf5Z8OXwGMFDuZbGfXGr4
+         cpPxHcsGUH+0EFpWYB9HWuLb7EysXLw8Y/z9ptbpZ3FM18+i5SX/0FNl9IZbjqNZEcPE
+         mN1CiA86N+ffKFXiGu6oRjLNTMoA5uIM85jn+xn2lfRCkm3jTsAkS1hlSkIgO6GxPacd
+         9ahyB5u/EXkgxVEPwrLJPU3+QnrGU00l2wA4L5Dg+97FgY/FmtQlWu4o/SJV/NIxpv+k
+         od+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpv7gA09v5y67ssTiDpE+WjFpBDzVjtKzbagbol/pIe7bDLlvQFI5yvbz9GlkDHduSVZGr+dgMI3UFsEZsXDtfBoFnjDDl6dHGy9ygXu6xvA==
+X-Gm-Message-State: AOJu0YxwY+UBHO9XLTZhA0RUXLsUKHeaCYyK9uI4SXiDnQvp0WqqPEF7
+	fFSFhebHh2NCt5Mx92i/vDLtUwiVm1Ds/nlvZ1FbjOt6QR1ebvWHImokbHEaAtI=
+X-Google-Smtp-Source: AGHT+IGkB7X6GUEdfi+4pYo7W9/+lkuI+IkhEHYzDeewt/ILJR/tYZgRUhk8GJOD/BNtvf2Lt54RFg==
+X-Received: by 2002:a17:90a:68ce:b0:2a5:badb:30ea with SMTP id q14-20020a17090a68ce00b002a5badb30eamr9053231pjj.36.1715024614703;
+        Mon, 06 May 2024 12:43:34 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d0a8:32b:6e71:43af])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902654a00b001e435350a7bsm4904648pln.259.2024.05.06.12.42.56
+        by smtp.gmail.com with ESMTPSA id st12-20020a17090b1fcc00b002a5d62a7e75sm10393094pjb.52.2024.05.06.12.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 12:42:57 -0700 (PDT)
-Date: Mon, 6 May 2024 13:42:39 -0600
+        Mon, 06 May 2024 12:43:34 -0700 (PDT)
+Date: Mon, 6 May 2024 13:43:29 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Olivia Wen <olivia.wen@mediatek.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: mediatek: Fix error code in scp_rproc_init()
-Message-ID: <Zjkyrx5j8R+ejwbv@p14s>
-References: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	hnagalla@ti.com, devarsht@ti.com, nm@ti.com, s-anna@ti.com,
+	u-kumar1@ti.com
+Subject: Re: [PATCH] remoteproc: k3-r5: Jump to error handling labels in
+ start/stop errors
+Message-ID: <Zjky4V7dAcaDKjL3@p14s>
+References: <20240506141849.1735679-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,29 +70,54 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
+In-Reply-To: <20240506141849.1735679-1-b-padhi@ti.com>
 
-On Sat, May 04, 2024 at 02:26:46PM +0300, Dan Carpenter wrote:
-> Set the error code to ERR_PTR(-ENOMEM).  Otherwise if there is an
-> allocation failure it leads to a NULL dereference in the caller.
+On Mon, May 06, 2024 at 07:48:49PM +0530, Beleswar Padhi wrote:
+> In case of errors during core start operation from sysfs, the driver
+> directly returns with the -EPERM error code. Fix this to ensure that
+> mailbox channels are freed on error before returning by jumping to the
+> 'put_mbox' error handling label. Similarly, jump to the 'out' error
+> handling label to return with required -EPERM error code during the
+> core stop operation from sysfs.
 > 
-> Fixes: c08a82494500 ("remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 1 +
->  1 file changed, 1 insertion(+)
+> As stated in the bug-report[0], Smatch complains that:
+> drivers/remoteproc/ti_k3_r5_remoteproc.c:583 k3_r5_rproc_start() warn: missing unwind goto?
+> drivers/remoteproc/ti_k3_r5_remoteproc.c:651 k3_r5_rproc_stop() warn: missing unwind goto?
 > 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index e281d28242dd..b8498772dba1 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1156,6 +1156,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  	scp->share_buf = kzalloc(scp_sizes->ipi_share_buffer_size, GFP_KERNEL);
->  	if (!scp->share_buf) {
->  		dev_err(dev, "Failed to allocate IPI share buffer\n");
-> +		ret = -ENOMEM;
->  		goto release_dev_mem;
->  	}
+> This patch addresses the warnings by jumping to appropriate error
+> labels in case an error occurs during start/stop operation from sysfs.
+> 
+> [0]-https://lore.kernel.org/all/acc4f7a0-3bb5-4842-95a5-fb3c3fc8554b@moroto.mountain/
+> 
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 1799b4f6d11e..50e486bcfa10 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -580,7 +580,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+>  			dev_err(dev, "%s: can not start core 1 before core 0\n",
+>  				__func__);
+> -			return -EPERM;
+> +			ret = -EPERM;
+> +			goto put_mbox;
+>  		}
+>  
+>  		ret = k3_r5_core_run(core);
+> @@ -648,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>  		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+>  			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+>  				__func__);
+> -			return -EPERM;
+> +			ret = -EPERM;
+> +			goto out;
+>  		}
 
 Applied
 
@@ -101,6 +125,7 @@ Thanks,
 Mathieu
 
 >  
+>  		ret = k3_r5_core_halt(core);
 > -- 
-> 2.43.0
+> 2.34.1
 > 
