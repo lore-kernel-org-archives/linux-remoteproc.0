@@ -1,54 +1,54 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24516EC01
-	for <linux-remoteproc@vger.kernel.org>; Thu,  9 May 2024 15:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B223816F0C7
+	for <linux-remoteproc@vger.kernel.org>; Thu,  9 May 2024 15:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715268176; cv=none; b=NMlmpQh/M9m5yS3rQct4o0k33VMeo7/h6E9vfyWnqIftgzLjgvwQjNyf8M8FzoKOCM6/Z0i+09xgkhMx+z8c12Z9r7Cj8CuVk5NVQsS4We7uW04WZ2/wGCRv8Qk+ykRM6xSg5SRvPP1jULRI0fcrlURktyuyNNd94bR1rOZBzkc=
+	t=1715268737; cv=none; b=M8JtRWr+MQUOWWLeHi/vRsIqro9E/6SQlouaG9aJ4AAId0cKyYMT05Bn1ZRiXZrGGhhzYZgQScdt2tXufguuE81tcr4DIGD71gvq00N6niTwG/uQDZxY8XgivWhcgSxegPqI0yUDonLUJNii/HFoOOGd8N+r7Q1+dvQSgU9tdAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715268176; c=relaxed/simple;
-	bh=okYDNYSJl2ftgwkXuyBP2mXx4BZ1cHqkiSyHYqbQXQE=;
+	s=arc-20240116; t=1715268737; c=relaxed/simple;
+	bh=R/3rliMb/BP11b3YXiej01h0lLJh1wUlcsSMKIEA4Ss=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LryQjHPBiM17uzE3L4stha4iWBF1/WpH9D8eYS01GsFRZP73AixyplLaGwjchEqVILnZBxAfNXf7vkfepsl2GPkj82fu5ToOAee9oylx3rq1oiXzi2IVbG3HcO64Hmp0SmBqY2Zb7uYtcrzPg1oJyfOaFUJOn7iL01f98uluj1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AonVJj+m; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=Q20eEdsCaIN4LFUqKc/zcja78EiVFoZSDbHiiE+a/w/u0xTGyXnRF3288Eqz+8MhD4p70eW5SFBPqYivHqN4vfTlix5hDc5dVsxzouHPeqSf2E/ZULfgKTD15dCEc/1U3K9/q0qByXFz3VbDjSSJMWegcPlVY+khv12F0gsUjoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GSugu1EZ; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AonVJj+m"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a157a1cd1so241124166b.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 May 2024 08:22:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GSugu1EZ"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59ae3efbb3so109902366b.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 May 2024 08:32:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715268172; x=1715872972; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715268732; x=1715873532; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdVWE5ImEzRveuO5bDk+1PZh2fGbqKaxlF9S50IAeVI=;
-        b=AonVJj+my3f+1pKvgczkVWpQOR68973Cltir470fSdm2cln6xmPpf1zTZgDWQ2GJP1
-         VDiQt/P4u+nIRlwE2ftYPAd7ZfJh2u/xaxRUpmavp1sk7AnhcgrwbeCA8UUxjEJjPkX1
-         BMZAUM0Up+e7HKk3M0JISeHhjeheijrho2upLZ2W1EMDTaiPVyzqJl8tAs7m1T5IZTJi
-         ROK7XDV0T+3KqJgOfM5Qx0sSSWtxPTS30LSvNisMO0Vls+gzmD9HSp1TR1KOyuQOWi9F
-         sf5HYH1VfBRAKllGWeTHIeWfHCkcrEzoGcJewDMYoB6qk/o1Yg15KOLdIS7hiSh0wUHg
-         XxdQ==
+        bh=LNaTWNriC633kantuyTlOuf98Y7pO6+ByhJ8o92GESQ=;
+        b=GSugu1EZwCdlvC1UvxZR3brmnidNdqDGPsH7d7nbKuFYHLElXKuVdoM8P7iTM2U6Ii
+         iGqr13RWeXcJSA8NmKnp7X4d15znbnXfwwXa2iI/h01pKNZ+9jZ1Y7Nuv3ZWv/PEPZ7I
+         HVXkVo52zaAy9IL92dACfn9u7Vty5eEYbQBx/U4DvTnBzAiqVa4UXsD87GV0TET30dKU
+         W+4MCGzoQBx2PMU1W0pMca1R0cggNJXllIL/Fmf+0gB497ELw9a8SMMsMc4sfpzUN2Tz
+         xHEI39Du/l2jfttniy1PjduQi0sBVU3vzNoWrxpph5wuQE+RXkdPfVf4/ij4E3RM0vJ7
+         6YpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715268172; x=1715872972;
+        d=1e100.net; s=20230601; t=1715268732; x=1715873532;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YdVWE5ImEzRveuO5bDk+1PZh2fGbqKaxlF9S50IAeVI=;
-        b=MhI1H+DQSszLSPRN6Dpl3g6gc59depJX7BCNRPmfImxlH6/HonZMvvLRYiWBdQkI7k
-         Ee8bUKRy3wTvN2SQ2+tRORAwORfqHjfOHut+rugDM5rxUBX4lfxu3v+djfpSSQiSojUy
-         D7WEZRF5WbDgcp23p97mqk89fUVtPO5h5o63AYT3/VA5bixVaQvS9kyrVVuAwolYSJvn
-         yjNFMS2QIwfluUKM3hlwjpf2lG5w4tYdPjqhnLkDS+3aLXeGZEQTaUF2bgvnMStXXyTy
-         DUXCOUCO29Ny/DEQDaTveOO/BeWp0ow9ekfi25c8R4mhc5w6ZOHZOqo8QzFpMf/0863A
-         xaCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu0IO++Mwbd05wl6fSszsZZshpcPIzd9nUTL6M8G0wsCpjEuV/TX68LykXQBbDxTFKGF1VNkZgVLrmnk0N5h+DGa336oMwSGMILtPp7txnvA==
-X-Gm-Message-State: AOJu0YytJY+pUkiwVF1zJV6Re6QND31sVFNbWoxwrbpY4R7/0tXXLKtp
-	ermJjyKK4DNKO277bKaKjIN69yCZYC+b+slQWuFguArERaPMR7Z/wRT/rt4jS7NCP0LiFnQn31S
-	6Bz/jtAh5924HcT7Mk9+xdApbiEtudIcv3p/NKw==
-X-Google-Smtp-Source: AGHT+IEsYfycdGHXtwPinZtqdKJ4y7ukqMYZaBq3VMGYM3YYx1FC3syfxvxk6Eyq7NHECp4qFpsqckvL3ckKuB6butM=
-X-Received: by 2002:a50:d543:0:b0:572:9bd2:9a90 with SMTP id
- 4fb4d7f45d1cf-5734d6ecbb5mr7621a12.31.1715268171342; Thu, 09 May 2024
- 08:22:51 -0700 (PDT)
+        bh=LNaTWNriC633kantuyTlOuf98Y7pO6+ByhJ8o92GESQ=;
+        b=gZBFdmK7948YCqcoFMEqQObf8+U7RnqJrxoFh7FylIrNEN3OOWao+hAHkHav+LSkEo
+         wZz9q1H304L48sbgPczAzpm3z7/7totnWgjtJViJGqPGP6zOV5eVmxSzcOnQAYVXCqcp
+         z+h2qdiUpYsc3RfCcFbOq2vR9KOElfrT9vxaR7/Vu6v7r4q6YV6zC+Y6NzPLmW1b+Z//
+         15p1o308dOsxXAl7oeh7X62jzeqFOhapD/yNs/Y4+eNffM7SuPtr1tDxrOEAui8Uq4P8
+         RyjTff2Ki5Gv+vjMjmTTN4lp7vkfhhTcDNJH9ktBobjQoJUIjw+Mp9DXHLltHtRH3yPm
+         GPBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr0BCxaHx7kVth4L+VRuPxpFbe6FdzWHPoC3RdPS9BdzEOpKvheznQVRJE6xAOx1W2sil93Bx5OxPzlmCVyIEEqlxilq8Ifd4xdDffqcsibQ==
+X-Gm-Message-State: AOJu0YydmdIpCKog/RcQcG3KXkpv7s3MAdza66+iKB0NUYlutVz4xlPo
+	9Zsx5UcnX+zXQcz/b4p0P8Rr2A4QZVnm5xdDfdh2PN6+n3xg73gvqjF8kbllQut3vLNqpPjvCq5
+	RHSBYUisOp1Y2pkmJ2FRJ5xTA7YBR+3lp0XdfQA==
+X-Google-Smtp-Source: AGHT+IE4VxIFkw1Zl74f567FmQhjzUb4AnfbsmQ8M0+e7xldOPZt0B6bp3FPgeR0TBhyWL6qgBzBwi/A8t2PCbqqsPw=
+X-Received: by 2002:a50:9ea5:0:b0:572:a731:dd18 with SMTP id
+ 4fb4d7f45d1cf-5734d5c2570mr51676a12.18.1715268731866; Thu, 09 May 2024
+ 08:32:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -56,11 +56,11 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240426191811.32414-1-afd@ti.com> <20240426191811.32414-3-afd@ti.com>
- <ZjlBrf2mxENSZb8E@p14s> <b66e8bbe-8228-401a-9bb8-848b2d132ca0@ti.com>
-In-Reply-To: <b66e8bbe-8228-401a-9bb8-848b2d132ca0@ti.com>
+ <ZjqQ3e1Qd4NBiFsi@p14s> <f56afda7-1a99-431b-b212-113e314d164b@ti.com>
+In-Reply-To: <f56afda7-1a99-431b-b212-113e314d164b@ti.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 9 May 2024 09:22:39 -0600
-Message-ID: <CANLsYkzZg+BCsn59aX5Uz7LtzYYbcmep3j64JFGN4A+eo1yxoA@mail.gmail.com>
+Date: Thu, 9 May 2024 09:32:00 -0600
+Message-ID: <CANLsYkyAeO64BqHDdHWpO1AcaghmmMur3CpJ-q+AvZXwvXmbwA@mail.gmail.com>
 Subject: Re: [PATCH v9 2/5] remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
 To: Andrew Davis <afd@ti.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -71,15 +71,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
+On Wed, 8 May 2024 at 10:54, Andrew Davis <afd@ti.com> wrote:
 >
-> On 5/6/24 3:46 PM, Mathieu Poirier wrote:
-> > Good day,
-> >
-> > I have started reviewing this patchset.  Comments will be scattered over
-> > multiple days and as such, I will explicitly inform you when  am done with the
-> > review.
-> >
+> On 5/7/24 3:36 PM, Mathieu Poirier wrote:
 > > On Fri, Apr 26, 2024 at 02:18:08PM -0500, Andrew Davis wrote:
 > >> From: Martyn Welch <martyn.welch@collabora.com>
 > >>
@@ -306,6 +300,23 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +
 > >> +    /* send the index of the triggered virtqueue in the mailbox payload */
 > >> +    ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)msg);
+> >
+> > I remember discussing this but can't recall the outcome.  Still, I don't see
+> > why (uintptr_t) is needed here.
+> >
+>
+> Was discussed here: https://lkml.org/lkml/2024/3/28/974
+>
+> Re-quoting my response from last time:
+>
+> > Doing that in one step (u32 -> void*) causes a warning when void* is 64bit
+> > (cast from int to pointer of different size).
+>
+
+I remember now - please add a comment that supports using the syntax.
+That way we avoid receiving patches and once again having to review
+this.
+
 > >> +    if (ret < 0)
 > >> +            dev_err(dev, "failed to send mailbox message, status = %d\n",
 > >> +                    ret);
@@ -359,6 +370,15 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +            dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
 > >> +            if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
 > >> +                                                      kproc->ti_sci_id))
+> >
+> > This is done unconditionally, even when dev_ops.get_device() above hasn't been
+> > called.
+> >
+>
+> Will rework to fix that, seems this is also a problem for ti_k3_dsp_remoteproc.c
+> from which this function was based. Will fix that too when we factor out these
+> common functions.
+>
 > >> +                    dev_warn(dev, "module-reset assert back failed\n");
 > >> +    }
 > >> +
@@ -583,6 +603,19 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +
 > >> +            dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
 > >> +                    data->mems[i].name, &kproc->mem[i].bus_addr,
+> >
+> > I'm pretty sure you are intrested in kproc->mem[i].bus_addr rather than
+> > &kproc->mem[i].bus_addr.
+> >
+>
+> I think this is correct as it is, the %pa format takes a "reference" to what
+> we are interested in, so we need to pass the address of the address :)
+>
+
+You are correct.
+
+> https://www.kernel.org/doc/Documentation/printk-formats.txt
+>
 > >> +                    kproc->mem[i].size, kproc->mem[i].cpu_addr,
 > >> +                    kproc->mem[i].dev_addr);
 > >> +    }
@@ -612,6 +645,14 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +    if (num_rmems < 0) {
 > >> +            dev_err(dev, "device does not reserved memory regions (%pe)\n",
 > >> +                    ERR_PTR(num_rmems));
+> >
+> > Why use %pe and ERR_PTR() when function of_property_count_elems_of_size()
+> > returns a simple error code?
+> >
+>
+> Done to match the same in ti_k3_dsp_remoteproc.c but I see no good reason
+> for it, will fix.
+>
 > >> +            return -EINVAL;
 > >> +    }
 > >> +    if (num_rmems < 2) {
@@ -625,6 +666,9 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +    if (ret) {
 > >> +            dev_err(dev, "device cannot initialize DMA pool (%pe)\n",
 > >> +                    ERR_PTR(ret));
+> >
+> > Same
+> >
 > >> +            return ret;
 > >> +    }
 > >> +    ret = devm_add_action_or_reset(dev, k3_m4_rproc_dev_mem_release, dev);
@@ -843,17 +887,6 @@ On Wed, 8 May 2024 at 09:36, Andrew Davis <afd@ti.com> wrote:
 > >> +    kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
 > >> +    if (IS_ERR(kproc->reset))
 > >> +            return dev_err_probe(dev, PTR_ERR(kproc->reset), "failed to get reset\n");
-> >
-> > What happens when devm_reset_control_get_exclusive() returns NULL?
-> >
->
-> Only the _optional_ version of this fuction can return NULL, this fuction
-> will always return an error if the reset cannot be taken.
->
-
-What does optional mean?  Regardless, it's only a matter of time
-before some automated tool starts complaining.
-
 > >> +
 > >> +    kproc->tsp = k3_m4_rproc_of_get_tsp(dev, kproc->ti_sci);
 > >> +    if (IS_ERR(kproc->tsp))
@@ -893,16 +926,6 @@ before some automated tool starts complaining.
 > >> +            rproc->ops->attach = k3_m4_rproc_attach;
 > >> +            rproc->ops->detach = k3_m4_rproc_detach;
 > >> +            rproc->ops->get_loaded_rsc_table = k3_m4_get_loaded_rsc_table;
-> >
-> > Why are the last 3 assignment needed when they are already set in the
-> > declaration of k3_m4_rproc_ops?
-> >
->
-> Good point, seems none of these overrides should be needed, start()/stop()
-> are not called for ATTCHED/DETACHED cores anyway, opposite is true for attach()/detach().
->
-> I'll drop these overrides.
->
 > >> +    } else {
 > >> +            dev_info(dev, "configured M4 for remoteproc mode\n");
 > >> +            /*
@@ -933,27 +956,28 @@ before some automated tool starts complaining.
 > >> +    { .name = "iram", .dev_addr = 0x0 },
 > >> +    { .name = "dram", .dev_addr = 0x30000 },
 > >> +};
-> >
-> > Is this hardcoded in the hardware and never expected to change?  If not please
-> > add to the DT bindings.
-> >
->
-> This is a hardware hardcoded address and will be the same for this class
-> of K3 M4 cores.
->
-> Thanks,
-> Andrew
->
-> > More comments later or tomorrow.
-> >
-> > Thanks,
-> > Mathieu
-> >
 > >> +
 > >> +static const struct k3_m4_rproc_dev_data am64_m4_data = {
 > >> +    .mems = am64_m4_mems,
 > >> +    .num_mems = ARRAY_SIZE(am64_m4_mems),
 > >> +    .uses_lreset = true,
+> >
+> > If this is the case, why carrying k3_m4_rproc_dev_data::uses_lreset and all the
+> > code around it?
+> >
+>
+> It was to keep most of these functions consistent with k3-r5 and k3-dsp drivers
+> which do optionally have this local reset. For now I'll just remove it from
+> here.
+>
+> Thanks,
+> Andrew
+>
+> > I am done reviewing this set.
+> >
+> > Regards,
+> > Mathieu
+> >
 > >> +};
 > >> +
 > >> +static const struct of_device_id k3_m4_of_match[] = {
