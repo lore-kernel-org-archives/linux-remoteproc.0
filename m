@@ -1,200 +1,128 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEFD145B16
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 May 2024 03:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8501A2C01;
+	Thu, 16 May 2024 22:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715570623; cv=none; b=fbu2d9Rqt4G1I5x6cv3fJ4QxIkxZwpXbQ2kKzjsUfYTnoaKb9TCrCtv060xxapNhTLNVtFyvB1pN1qnxfwnLH5JmyDFflpCSzzQz3QI8JQOmhFvHs39ZapK8wqwpNfkBI/uAsXXyUmTdbfP6Mms8JmJ2SMECEI7Z08DOioiHR/E=
+	t=1715900384; cv=none; b=ZCNwmmw2JxNYVgnw5njgKFc5k/rkie79nAtHarOzLx3PzQMc48bkbQ1a31m97iURXoTt/soLHyNFSsv2rULqTZlr12qKSH+8PEEcED0KptisjP5zroloRqgG69qdAuT092ELldGX4RhtBLG8/NFPxiugWtXl1Mbvpgcd/3s8oes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715570623; c=relaxed/simple;
-	bh=XoegDtlcSO/zIWKuRP063e2zFQ+RAdHrnLhPXIuNUEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AeuArVLRZ0hle7sm0F6ZE/4IHjr7f4WWUxdcXmMC5Qf5hlGP6mvFp68cdQbjrhNIrpRdsFwj/nSaCS8R35JUraSBF0Zw6bYkQCZDr+SvvpyARMxU3TGbvWHMWhLDdInb0d9NVbwF+ma3hxo2HFd5+axzhPaLIafarBrYotb3vB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=P7IiSgus; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+	s=arc-20240116; t=1715900384; c=relaxed/simple;
+	bh=Jjc+GJYzicTjx6js4GerbYp99kWiJrFUOJeZVVAgHEA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=PINZ8c5SXg/6yuSCszP0LbzXxjoOgToXG0ZJ+LJUDxW7MOEvJ3pJwg7cdpOiXIV2kSydejPeANSi3sVtLwVa+gbl3boquR7463v6FmYjHRRJXH/+di80gAyQChnQQOS//No406ynasDwaqPITo+KH/edPTL1RWWNviJZ6DQHiv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F6oNxWC+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="P7IiSgus"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f72a29f13so4855207e87.3
-        for <linux-remoteproc@vger.kernel.org>; Sun, 12 May 2024 20:23:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1715570620; x=1716175420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e3m7C5s1EzbrOCKMut3xyPmXWEUzIM5EzWY1SS9dSVQ=;
-        b=P7IiSgusaN8tA/JtV2ZeR7LTt62mSdbHpi7C14dNPD54cI5D1X5HFaYTot85dhoctB
-         /nKJPziKXkJlsDqDp5N8S8c1PVYypEb9IhzhV88+CLOKmP+92UAzTi/hf4jL3H5Ix7fu
-         7o2cMlD29pERtxRN9L3HPvLSW4D1GBjwWd8PQ3ZaSOrSwUg9mhlNg+dzB/omgv/UmFTw
-         ZcqTsGvCgfx958jHOEWSbBKur7/jWW++jNe3umLoC4rjLAH5yqLesr4Q7kVkcxQ7804a
-         uJmmesqZSsH3GMJ3NnEi+8aTBFpvcTD7578zbhsZTYPqDunFezuCME1zzvZKATDgEreJ
-         vj2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715570620; x=1716175420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3m7C5s1EzbrOCKMut3xyPmXWEUzIM5EzWY1SS9dSVQ=;
-        b=IQS/MTGW3OiCUl6tNYNGnUJlBqu9nxGXXA/chCNdW6TVC6x1oS4HnEx2eBdz1NW2op
-         UlPU2ECna5irR6a2MULIBj0Gc4C99vabGofiAlYercqheZTxF3uIoiTqjL3Xp9xaKg0a
-         s+ukfgxEkJc6jhtzKt1u0n4ejwx2uN+jg4zqgYapH6Oymj2qju1hv2UjZYf6xpK6rXLo
-         z7LFZ4pbH8HfR7WMcNUUgqbQm5IyQY4inNafuKI0b7tlDLR8fhPm2ob95J+ivJJnkYTw
-         iByeHSMLlRSpP+gGDFKiGw2YDuyVAagyJdy+dqUGFduxZedNz//CLSpSjktfUdzXzKR8
-         p3Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYhRjW+436GbwZedyc32gCk5yHSE/XeehwDyVZk7EYbKhduLZSwPUU6iN5nVGvAgtz6HvrixxBf2DXClET6nZ9ycAAjUyUNsAG0JVr9OzC4g==
-X-Gm-Message-State: AOJu0YynOVMZzdEh1egjS9+y4RjHa4Y0ZytfotZoKscxm84ZkTqPUK0h
-	1d9/CwOjG8C4v9yI2tIpepG3RsEa3/UjxyoNTNVI6BubHYkyen2KcP4XjB+sJyCjR/OcLt556wU
-	y2nh2wZoICUNonYL7clHyfHHcMBmbiTMt/ndN0w==
-X-Google-Smtp-Source: AGHT+IHy34Cl4xZziZ107yfN01l4O0AakzJJxSzjElicrXFSsUZTQI+ymQEJT0TItQo7MqTqkqjIYns4wqu3zrFqwIE=
-X-Received: by 2002:a19:6410:0:b0:51a:d5d3:ee52 with SMTP id
- 2adb3069b0e04-5221006e6f8mr5380369e87.17.1715570619914; Sun, 12 May 2024
- 20:23:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F6oNxWC+"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKNAhZ007332;
+	Thu, 16 May 2024 22:59:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:references:in-reply-to:to
+	:cc; s=qcppdkim1; bh=Ema2+2A9vujXjn0yFcon4n+NzkviWKE52u8O3MUlHwE
+	=; b=F6oNxWC+hp0VJ6CjvibKqboMLMJ7xBqwimqcbRdjK2MGS7FGVkBX9MnihdY
+	MgEAZShB8RfjhWD649NsNTbwOxPeiJZ6eE10baGSAaiiKz/StNqnAgz8HdBWZcBv
+	UiHWoUUAOT38qbP6F5z9PHXHNeK7foRH5En2RfC4v2OM+w/GHuxq7uOS3C2DW1xb
+	klBsRlCemm9yrRcuDMizyqhf4RFfZkHG3xid7OtzvbeqIf+Eo6wRF+peK7+1BjXe
+	JXjVYKaup2vkjSR2jxDzA7yEfIP80XY7daGuBN8y+toAv9aYQSjuZSS2cdwPooND
+	T0SCaECA2TG/1wijbPu4Iq6wZWQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47f46tq1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 22:59:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44GMx6K4012432
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 May 2024 22:59:06 GMT
+Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 16 May 2024 15:59:06 -0700
+From: Chris Lew <quic_clew@quicinc.com>
+Date: Thu, 16 May 2024 15:58:23 -0700
+Subject: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
-In-Reply-To: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
-From: Steev Klimaszewski <steev@kali.org>
-Date: Sun, 12 May 2024 22:23:28 -0500
-Message-ID: <CAKXuJqjLFL4iYFf_FxTpKUpHPL2-G095Pyp0Qn0ofBCKwFqRRA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] soc: qcom: add in-kernel pd-mapper implementation
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
-	Xilin Wu <wuxilin123@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Alexey Minnekhanov <alexeymin@postmarketos.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+In-Reply-To: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo
+ Molnar" <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long
+	<longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Jonathan Corbet
+	<corbet@lwn.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Chris Lew <quic_clew@quicinc.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715900345; l=824;
+ i=quic_clew@quicinc.com; s=20240508; h=from:subject:message-id;
+ bh=Jjc+GJYzicTjx6js4GerbYp99kWiJrFUOJeZVVAgHEA=;
+ b=xzKylqpOHoFsq+WH5F1VcT5ZBBSUftVR5DOi6x/eDdh53M9L28Z0uUCMfA2Kba58JK8k0g4LI
+ KNlskJ2vMmQByp0hvzE3BSh7EY0SflJfnxW/rZ9PHo6ZwDgynCLOJiT
+X-Developer-Key: i=quic_clew@quicinc.com; a=ed25519;
+ pk=lEYKFaL1H5dMC33BEeOULLcHAwjKyHkTLdLZQRDTKV4=
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1lqfqvuSgY5gUydpbDu7lFNE6Ah42Gts
+X-Proofpoint-ORIG-GUID: 1lqfqvuSgY5gUydpbDu7lFNE6Ah42Gts
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=897
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405160168
 
-On Sat, May 11, 2024 at 4:56=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> Protection domain mapper is a QMI service providing mapping between
-> 'protection domains' and services supported / allowed in these domains.
-> For example such mapping is required for loading of the WiFi firmware or
-> for properly starting up the UCSI / altmode / battery manager support.
->
-> The existing userspace implementation has several issue. It doesn't play
-> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
-> firmware location is changed (or if the firmware was not available at
-> the time pd-mapper was started but the corresponding directory is
-> mounted later), etc.
->
-> However this configuration is largely static and common between
-> different platforms. Provide in-kernel service implementing static
-> per-platform data.
->
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konrad.dybcio@linaro.org>
-> To: Sibi Sankar <quic_sibis@quicinc.com>
-> To: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Xilin Wu <wuxilin123@gmail.com>
-> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> Cc: Steev Klimaszewski <steev@kali.org>
-> Cc: Alexey Minnekhanov <alexeymin@postmarketos.org>
->
-> --
->
-> Changes in v8:
-> - Reworked pd-mapper to register as an rproc_subdev / auxdev
-> - Dropped Tested-by from Steev and Alexey from the last patch since the
->   implementation was changed significantly.
-> - Add sensors, cdsp and mpss_root domains to 660 config (Alexey
->   Minnekhanov)
-> - Added platform entry for sm4250 (used for qrb4210 / RB2)
-> - Added locking to the pdr_get_domain_list() (Chris Lew)
-> - Remove the call to qmi_del_server() and corresponding API (Chris Lew)
-> - In qmi_handle_init() changed 1024 to a defined constant (Chris Lew)
-> - Link to v7: https://lore.kernel.org/r/20240424-qcom-pd-mapper-v7-0-05f7=
-fc646e0f@linaro.org
->
-> Changes in v7:
-> - Fixed modular build (Steev)
-> - Link to v6: https://lore.kernel.org/r/20240422-qcom-pd-mapper-v6-0-f969=
-57d01207@linaro.org
->
-> Changes in v6:
-> - Reworked mutex to fix lockdep issue on deregistration
-> - Fixed dependencies between PD-mapper and remoteproc to fix modular
->   builds (Krzysztof)
-> - Added EXPORT_SYMBOL_GPL to fix modular builds (Krzysztof)
-> - Fixed kerneldocs (Krzysztof)
-> - Removed extra pr_debug messages (Krzysztof)
-> - Fixed wcss build (Krzysztof)
-> - Added platforms which do not require protection domain mapping to
->   silence the notice on those platforms
-> - Link to v5: https://lore.kernel.org/r/20240419-qcom-pd-mapper-v5-0-e35b=
-6f847e99@linaro.org
->
-> Changes in v5:
-> - pdr: drop lock in pdr_register_listener, list_lock is already held (Chr=
-is Lew)
-> - pd_mapper: reworked to provide static configuration per platform
->   (Bjorn)
-> - Link to v4: https://lore.kernel.org/r/20240311-qcom-pd-mapper-v4-0-2467=
-9cca5c24@linaro.org
->
-> Changes in v4:
-> - Fixed missing chunk, reenabled kfree in qmi_del_server (Konrad)
-> - Added configuration for sm6350 (Thanks to Luca)
-> - Removed RFC tag (Konrad)
-> - Link to v3: https://lore.kernel.org/r/20240304-qcom-pd-mapper-v3-0-6858=
-fa1ac1c8@linaro.org
->
-> Changes in RFC v3:
-> - Send start / stop notifications when PD-mapper domain list is changed
-> - Reworked the way PD-mapper treats protection domains, register all of
->   them in a single batch
-> - Added SC7180 domains configuration based on TCL Book 14 GO
-> - Link to v2: https://lore.kernel.org/r/20240301-qcom-pd-mapper-v2-0-5d12=
-a081d9d1@linaro.org
->
-> Changes in RFC v2:
-> - Swapped num_domains / domains (Konrad)
-> - Fixed an issue with battery not working on sc8280xp
-> - Added missing configuration for QCS404
->
-> ---
-> Dmitry Baryshkov (5):
->       soc: qcom: pdr: protect locator_addr with the main mutex
->       soc: qcom: pdr: fix parsing of domains lists
->       soc: qcom: pdr: extract PDR message marshalling data
->       soc: qcom: add pd-mapper implementation
->       remoteproc: qcom: enable in-kernel PD mapper
->
->  drivers/remoteproc/qcom_common.c    |  87 +++++
->  drivers/remoteproc/qcom_common.h    |  10 +
->  drivers/remoteproc/qcom_q6v5_adsp.c |   3 +
->  drivers/remoteproc/qcom_q6v5_mss.c  |   3 +
->  drivers/remoteproc/qcom_q6v5_pas.c  |   3 +
->  drivers/remoteproc/qcom_q6v5_wcss.c |   3 +
->  drivers/soc/qcom/Kconfig            |  15 +
->  drivers/soc/qcom/Makefile           |   2 +
->  drivers/soc/qcom/pdr_interface.c    |  17 +-
->  drivers/soc/qcom/pdr_internal.h     | 318 ++---------------
->  drivers/soc/qcom/qcom_pd_mapper.c   | 676 ++++++++++++++++++++++++++++++=
-++++++
->  drivers/soc/qcom/qcom_pdr_msg.c     | 353 +++++++++++++++++++
->  12 files changed, 1190 insertions(+), 300 deletions(-)
-> ---
-> base-commit: e5119bbdaca76cd3c15c3c975d51d840bbfb2488
-> change-id: 20240301-qcom-pd-mapper-e12d622d4ad0
->
-> Best regards,
-> --
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
+Add hwlocks property to describe the hwspinlock that remoteproc can try
+to bust on behalf of the remoteproc's smem.
 
-I've tested this over the weekend on my Thinkpad X13s with a number of
-reboots and seems to do the correct thing in v8 as well.
-Tested-by: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+---
+ Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+index 63a82e7a8bf8..483a8ff5f47e 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+@@ -77,6 +77,9 @@ properties:
+       and devices related to the ADSP.
+     unevaluatedProperties: false
+ 
++  hwlocks:
++    maxItems: 1
++
+ required:
+   - clocks
+   - clock-names
+
+-- 
+2.25.1
+
