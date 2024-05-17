@@ -1,170 +1,166 @@
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E628BEE;
-	Fri, 17 May 2024 01:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7675C171C8;
+	Fri, 17 May 2024 07:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715909460; cv=none; b=gZL/9sbE+CLLl2NRjjfeVp/z1fs7idOWJaUjvwrHKfwg6r6/qEuCblh6xql5U7P5BXA9GEYLCCEbNJtx9XLqErn41+CITR773/lPsDUnJTd0HrWN6PaTKRa+jTaN2FkmW6VovEdEw9epb10BkP3j1eze9EAEFY9Lu6O7XeDKQow=
+	t=1715930431; cv=none; b=lMT91jZqSO3ciKahVrwSeXTWSSFIrRGmovHSjXK/kxZRyTiSVAFpbnu9wV75bJ7QEjolhgnjz8Rk8wrby1yWtBAh7mZGI90RHkqZmdPKnT5+j69ADMzRBrPaJ6c+VIED/oaoOZi3hiVXGUCQRMFD+n3hiHKfoK194H2DduxKCzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715909460; c=relaxed/simple;
-	bh=aHQtSq3DOcQQu9w62vM/PGD8H1BowW3iosax14z4l7Q=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=eTUfVUhEevAEWgDHa5NYLXX4pbQhPfOK8ongB6ztKxLzs6jtm9EZk3uRvOZuG/dJIFUy+Ls9yQm0t4PzHWHjNc0ojIz5b9S+tCPjtbrMoocrLOGWvQ2jDvhq6OkcZ92eR7lts16iA3kEGCy6/o3PUhZuzgc3nQiI1PEjHiug51I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n3O8ywTo; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1715930431; c=relaxed/simple;
+	bh=r7NLOcVOLcY+DFIoJzb0OFwv9OcP/ogxNDe9/qB2lVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cyNw6faKRL/wL2j8Q5Elg7qK51ZinFcpac/okIK4LP6mp0MK0rwgWS7WFMqbpARwubgZ6nw+iNlenClBuUlLbDci14F1Qgcx//4syn+IscHbBkgh3HcGhPmx+VQ7a6TFKdmCQHmaA9lVb1KME92IzGrEyIof7hao+Cbms9lWOGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FqQIaaU7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n3O8ywTo"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715909449; h=Message-ID:Subject:Date:From:To;
-	bh=KrEPs691Td3NZbxOFWTzxJL2b3bXbcRVeAlZkrnOcRA=;
-	b=n3O8ywTorffYP9O84pRwyDfc/Ey4mGW1ZhRnPY32EMomgg0Eo3qRq+/a7TYCDtacbOIwW9opTn1ihzSERvgVNcLjF6ws6fc7sz14mVTBfFJj9GV1M0JBSu4M4l1YI0OBW9O5TG283dqi5FQooW65l+K4A2WGXlePA/FFySrqzU0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=26;SR=0;TI=SMTPD_---0W6cslx7_1715909446;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W6cslx7_1715909446)
-          by smtp.aliyun-inc.com;
-          Fri, 17 May 2024 09:30:47 +0800
-Message-ID: <1715909158.0435698-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost v9 0/6] refactor the params of find_vqs()
-Date: Fri, 17 May 2024 09:25:58 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Hans de Goede <hdegoede@redhat.com>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Vadim Pasternak <vadimp@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Cornelia Huck <cohuck@redhat.com>,
- Halil Pasic <pasic@linux.ibm.com>,
- Eric Farman <farman@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- David Hildenbrand <david@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- linux-um@lists.infradead.org,
- platform-driver-x86@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- linux-s390@vger.kernel.org,
- kvm@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FqQIaaU7"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKMaQW007096;
+	Fri, 17 May 2024 07:20:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=uY1zTHz8LU8EGSAVc2VKG3qcU0iZZ32JvHNT0TH28cA=; b=Fq
+	QIaaU7nFCC+93sdCNvEA+Nujl2gGyfvHHp00O2fAZI/8BJ7M8FfILsxVLw4OBzvK
+	rhZ6cFVMM7ful5O1TdXo4jixidLegTnC+VnZZJpnPPMnR4XKQsqkuQnDb0bhaaQd
+	X55P3+R9oweYP1wRX1asLxbkBk53PCutsVSU5VPzrD0/i3XHKDVkM700SysN7vrh
+	xlQvO6GHzgoj2LwVuT86kDZw5W2matDUODMU2CXO4GOIkxOSYJKLOmdJ6zedvpiC
+	qFjszYAmjzmnFbrpnMpVnoq1TXC8iKptiiuAMnDOY5NGcEyyMwpV5M8p8JgZzOrR
+	+13+5a6YrP4TWO7m71Ng==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47egfmf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:20:06 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H7K489016321
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 07:20:04 GMT
+Received: from [10.216.53.65] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 00:19:56 -0700
+Message-ID: <be23b02d-d2b5-2bec-487b-35caf90f29f7@quicinc.com>
+Date: Fri, 17 May 2024 12:49:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
+ stop
+Content-Language: en-US
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>,
+        Boqun Feng
+	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ji2uEMqRe5cnnI3ZhmT3R5tX19g0KEvH
+X-Proofpoint-ORIG-GUID: Ji2uEMqRe5cnnI3ZhmT3R5tX19g0KEvH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170057
 
-Hi, Michael
-
-I hope this in your for_linus branch to merge to Linux 6.9.
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/log/?h=linux-next
-
-And some commits from me in your branch are changed after you picked them.
-And there are merged by net-next.
-
-virtio_net: remove the misleading comment
-virtio_net: rx remove premapped failover code
-virtio_net: enable premapped by default
-virtio_net: big mode support premapped
-virtio_net: replace private by pp struct inside page
-virtio_ring: enable premapped mode whatever use_dma_api
-virtio_ring: introduce dma map api for page
-
-Thanks.
 
 
+On 5/17/2024 4:28 AM, Chris Lew wrote:
+> From: Richard Maina <quic_rmaina@quicinc.com>
+> 
+> When remoteproc goes down unexpectedly this results in a state where any
+> acquired hwspinlocks will remain locked possibly resulting in deadlock.
+> In order to ensure all locks are freed we include a call to
+> hwspin_lock_bust() during remoteproc shutdown.
+> 
+> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
+> is used to take the hwspinlock. Remoteproc should use this id to try and
+> bust the lock on remoteproc stop.
+> 
+> This edge case only occurs with q6v5_pas watchdog crashes. The error
+> fatal case has handling to clear the hwspinlock before the error fatal
+> interrupt is triggered.
+> 
+> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 54d8005d40a3..57178fcb9aa3 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/clk.h>
+>   #include <linux/delay.h>
+>   #include <linux/firmware.h>
+> +#include <linux/hwspinlock.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+> @@ -52,6 +53,7 @@ struct adsp_data {
+>   	const char *ssr_name;
+>   	const char *sysmon_name;
+>   	int ssctl_id;
+> +	int hwlock_id;
+>   
+>   	int region_assign_idx;
+>   	int region_assign_count;
+> @@ -84,6 +86,9 @@ struct qcom_adsp {
+>   	bool decrypt_shutdown;
+>   	const char *info_name;
+>   
+> +	struct hwspinlock *hwlock;
+> +	int hwlock_id;
+> +
+>   	const struct firmware *firmware;
+>   	const struct firmware *dtb_firmware;
+>   
+> @@ -399,6 +404,12 @@ static int adsp_stop(struct rproc *rproc)
+>   	if (handover)
+>   		qcom_pas_handover(&adsp->q6v5);
+>   
+> +	if (adsp->hwlock) {
+> +		ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
+> +		if (ret)
+> +			dev_info(adsp->dev, "failed to bust hwspinlock\n");
+> +	}
+> +
 
-On Wed, 24 Apr 2024 17:15:27 +0800, Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
-> This pathset is splited from the
->
->      http://lore.kernel.org/all/20240229072044.77388-1-xuanzhuo@linux.alibaba.com
->
-> That may needs some cycles to discuss. But that notifies too many people.
->
-> But just the four commits need to notify so many people.
-> And four commits are independent. So I split that patch set,
-> let us review these first.
->
-> The patch set try to  refactor the params of find_vqs().
-> Then we can just change the structure, when introducing new
-> features.
->
-> Thanks.
->
-> v8:
->   1. rebase the vhost branch
->
-> v7:
->   1. fix two bugs. @Jason
->
-> v6:
->   1. virtio_balloon: a single variable for both purposes.
->   2. if names[i] is null, return error
->
-> v5:
->   1. virtio_balloon: follow David Hildenbrand's suggest
->     http://lore.kernel.org/all/3620be9c-e288-4ff2-a7be-1fcf806e6e6e@redhat.com
->   2. fix bug of the reference of "cfg_idx"
->     http://lore.kernel.org/all/202403222227.Sdp23Lcb-lkp@intel.com
->
-> v4:
->   1. remove support for names array entries being null
->   2. remove cfg_idx from virtio_vq_config
->
-> v3:
->   1. fix the bug: "assignment of read-only location '*cfg.names'"
->
-> v2:
->   1. add kerneldoc for "struct vq_transport_config" @ilpo.jarvinen
->
-> v1:
->   1. fix some comments from ilpo.jarvinen@linux.intel.com
->
->
->
->
->
->
->
->
->
-> Xuan Zhuo (6):
->   virtio_balloon: remove the dependence where names[] is null
->   virtio: remove support for names array entries being null.
->   virtio: find_vqs: pass struct instead of multi parameters
->   virtio: vring_create_virtqueue: pass struct instead of multi
->     parameters
->   virtio: vring_new_virtqueue(): pass struct instead of multi parameters
->   virtio_ring: simplify the parameters of the funcs related to
->     vring_create/new_virtqueue()
->
->  arch/um/drivers/virtio_uml.c             |  36 +++--
->  drivers/platform/mellanox/mlxbf-tmfifo.c |  23 +--
->  drivers/remoteproc/remoteproc_virtio.c   |  37 +++--
->  drivers/s390/virtio/virtio_ccw.c         |  38 ++---
->  drivers/virtio/virtio_balloon.c          |  48 +++---
->  drivers/virtio/virtio_mmio.c             |  36 +++--
->  drivers/virtio/virtio_pci_common.c       |  69 ++++-----
->  drivers/virtio/virtio_pci_common.h       |   9 +-
->  drivers/virtio/virtio_pci_legacy.c       |  16 +-
->  drivers/virtio/virtio_pci_modern.c       |  37 +++--
->  drivers/virtio/virtio_ring.c             | 177 ++++++++---------------
->  drivers/virtio/virtio_vdpa.c             |  51 +++----
->  include/linux/virtio_config.h            |  76 +++++++---
->  include/linux/virtio_ring.h              |  93 +++++++-----
->  tools/virtio/virtio_test.c               |   4 +-
->  tools/virtio/vringh_test.c               |  28 ++--
->  16 files changed, 384 insertions(+), 394 deletions(-)
->
-> --
-> 2.32.0.3.g01195cf9f
->
+What if recovery is disabled, fatal case is clearing the hwspinlock but
+wdog case is not, right ?
+
+-Mukesh
