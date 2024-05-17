@@ -1,117 +1,104 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F332421A
-	for <linux-remoteproc@vger.kernel.org>; Fri, 17 May 2024 09:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC1712F5A3;
+	Fri, 17 May 2024 16:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715936925; cv=none; b=kv3iTC1UweyWp/8y8qRk7PN1zwGbniMWTT90yGooIHQ6ioOsSeIxhgRa0VCfzcodYzs5IQhMIgv53ENsfkFYn4RzEIhphvcGsG/d/1zJ7KGpUpsH246rWKmI/0ijHN+InGv+SAlBD8bMypsUl+pFxlemK3iek8ZlY6L0ck3B/xc=
+	t=1715965084; cv=none; b=MDbKne30dv5urTKFwumbjkHw9x8f0tC89t+zSIuURrE7/20TH10egMF4zptzr1I4hZS2j/lsIgj/BZGuTbfka2s7EsIGg+s68yD4gBhAnDytPunWApk6NJQOBOKRJahY6s5LhTV9T5e4OIewnG7NuVCR9JlYvDSQfFtCDmvgU4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715936925; c=relaxed/simple;
-	bh=TEHtCpgbdlqVzF1zXyzG1Szb517FKtFzCdajAHVAtmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d5FIIgRa1JMIef/17PXR8Yn7QCpbSqTxA1HTW2rhU1NsxXeDHvrrLmfKfxhdFkdkTeEhBCJxq8W58nAylLqPgoYJCtKWvsy6C2mvW3GBXt4MRgiA3NQnYNg9D26rkSYmVd7con6CMD9inGa1gRgqK2u4qdHVnW14xPMWUOQ87IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=fCQKzEXp; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+	s=arc-20240116; t=1715965084; c=relaxed/simple;
+	bh=N1jRIc/DBq8MLb90YRps/mPuCZbB3kUgLV3pTCDOQJo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGi8ZImS2WkrqSqWWuol2Gvhejt60F74cdFn0D1kMusx2+xEvlFCkKYOKJxDQrVfPrxIcZgrK/94mXmKqkjUHexi3Y8Y1/wx80SBhML25Sfz51PdpwVoFyS9JPx1czAZAGx2b7nopCEgAClLtT/MkqCOY+O3eijWYCPj2r3w2/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LlWxPsbj; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="fCQKzEXp"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-56e47843cc7so4133374a12.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 May 2024 02:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1715936922; x=1716541722; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xwh3lnhUhd7oHBvNUUgJZI2n83eK0ml7NC11m5y4KDs=;
-        b=fCQKzEXpavPM+TuuR2ydaqtoyHospQaCnY360d1397CsR/nVbCTa1Qy0Q6YgjGqt/L
-         tkD71mYnNkf4JPg+za0s+krI91AaiQcmsYTm4eo+hR1+6FJ+qk/r5PdHGmxxoOu+1SCX
-         F9V6iL22RWAp6X/30O+cd43S0eAmvVGbO5AUngW1ROKKRaBdzP0CjmFdyCyKzmBiHMny
-         XTxVCY32sQO2rL7jTXyskzCSalfN9RyM42mpoT51TCTfzB3+een6ul3CRmKuVeFabpZG
-         jAaJH9a6IS9HafT9TBmAZe1RcPATh6djiTWWBCIZnVzt7R7M4BGByqqfEZGdWKs9ZCyh
-         SsOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715936922; x=1716541722;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xwh3lnhUhd7oHBvNUUgJZI2n83eK0ml7NC11m5y4KDs=;
-        b=m+YCBs/8MBaeug/iEHXc6gcYGTBEoNGT21yUHWSQsv86ZQ3Um4n0VtdDrbQmEi6DAy
-         6PDGdMhHEq7FHUwPGhW95m/4NGMk8YWUx1fx/dx4GFssay0nUYS4Qb8h+100EiV9N2s1
-         tgMsmQcf/HTT8uP5hxMk7nEbQ39OFRKGiGudypPNhRurnK/I0Eea4GTL3ixGu0TgxtUw
-         fBOGeQJdcgAFPzGrDJ1FVSDqitDYVZtQ8SnYPEF+3zFjs9KXmd0q04kLiNrnX2j+1d8o
-         PIDGeN5RrJ7XDDN1o132tUTOE6FF5QkG/D4kAerxPOG4bTlg3/LILYruy79kr2fh4SIt
-         aqZA==
-X-Gm-Message-State: AOJu0YwtvyZtpVNTOIqtET5+Z5IZIUepxLLx+GEwMxQDiPIi1TyRwgNo
-	PpknmF/tROxjYy2S9YzzMVlluE/IYehFofrHfXAV2tZILfe2Nj/c6Qec+JKwc58=
-X-Google-Smtp-Source: AGHT+IEgG+ysyN5p95zBEB/teN7eTbSrbUtVmUotuv5u7b9gbXK+Nvx5y+aX5ItM1vbciitmK35z4g==
-X-Received: by 2002:a17:906:4886:b0:a59:a83b:d435 with SMTP id a640c23a62f3a-a5a2d55aa50mr1373772366b.18.1715936921554;
-        Fri, 17 May 2024 02:08:41 -0700 (PDT)
-Received: from [10.91.1.133] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17886sm1097162266b.210.2024.05.17.02.08.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 02:08:40 -0700 (PDT)
-Message-ID: <40730e9f-ae2b-4b56-89bd-f839876271fe@nexus-software.ie>
-Date: Fri, 17 May 2024 11:08:38 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LlWxPsbj"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HB5Q50030594;
+	Fri, 17 May 2024 18:57:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=1x3zNv0
+	wWyw7cTZL90zUJ++UJYF71S4Lfwa4wuiTe/Q=; b=LlWxPsbjkwgETGOhbaETgRJ
+	Yf+VExUD/jsQLWreFofcrhZuwrR5P4M4fHJ4oFZrjUF7MGG3vi0cUPXTxYvtCanV
+	YJ4hss9p5gC5cd5vaE6korNe5/9qipUQl6Xx97t6vOQJRadkV9N3i1d9Lz5tXKmX
+	jcxdiJigPIfYoJZp+v4a/r+Ky3hQJ3aRV7uDLcUXsgY4STSFdCn3v5YRx7YLGYeF
+	T56YVZNzTqTVCtUWWe2Z/ER6Z2nXpE75Ws0nj8TqTueLxbBtm9MB0vGdkJlyiOg+
+	zztbtpOZzK5lFEPj1p4NzAXhfToRm680ZdROItthkdbDK4Kl/8uExrb+GvnixTg=
+	=
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y6628h8jd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 18:57:35 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BBBB140044;
+	Fri, 17 May 2024 18:57:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3054C223F00;
+	Fri, 17 May 2024 18:57:08 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
+ 2024 18:57:08 +0200
+Received: from localhost (10.252.31.224) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
+ 2024 18:57:07 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH] rpmsg: char: fix rpmsg_eptdev structure documentation
+Date: Fri, 17 May 2024 18:56:54 +0200
+Message-ID: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
-Content-Language: en-US
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_07,2024-05-17_03,2023-05-22_02
 
-On 17/05/2024 00:58, Chris Lew wrote:
-> From: Richard Maina <quic_rmaina@quicinc.com>
-> 
-> When remoteproc goes down unexpectedly this results in a state where any
-> acquired hwspinlocks will remain locked possibly resulting in deadlock.
-> In order to ensure all locks are freed we include a call to
-> hwspin_lock_bust() during remoteproc shutdown.
-> 
-> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
-> is used to take the hwspinlock. Remoteproc should use this id to try and
-> bust the lock on remoteproc stop.
-> 
-> This edge case only occurs with q6v5_pas watchdog crashes. The error
-> fatal case has handling to clear the hwspinlock before the error fatal
-> interrupt is triggered.
-> 
-> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> ---
+Add missing @ tags for some rpmsg_eptdev structure parameters.
 
-> +	if (adsp->hwlock) {
-> +		ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
-> +		if (ret)
-> +			dev_info(adsp->dev, "failed to bust hwspinlock\n");
+This fixes warning messages on build:
+drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_restricted' not described in 'rpmsg_eptdev'
+drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_updated' not described in 'rpmsg_eptdev'
 
-qcom_hwspinlock_bust() already prints an error on failure, you're 
-printing a second error here.
+Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
 
-Choose at most one.
-
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
-bod
+ drivers/rpmsg/rpmsg_char.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 1cb8d7474428..98d95ce5b6fb 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -52,8 +52,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
+  * @readq:	wait object for incoming queue
+  * @default_ept: set to channel default endpoint if the default endpoint should be re-used
+  *              on device open to prevent endpoint address update.
+- * remote_flow_restricted: to indicate if the remote has requested for flow to be limited
+- * remote_flow_updated: to indicate if the flow control has been requested
++ * @remote_flow_restricted: to indicate if the remote has requested for flow to be limited
++ * @remote_flow_updated: to indicate if the flow control has been requested
+  */
+ struct rpmsg_eptdev {
+ 	struct device dev;
+-- 
+2.25.1
+
