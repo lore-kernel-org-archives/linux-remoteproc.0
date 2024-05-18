@@ -1,48 +1,40 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15771A2C19;
-	Fri, 17 May 2024 18:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A961BC3C;
+	Sat, 18 May 2024 10:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715970784; cv=none; b=WtmqlXDOMEytUsNfn9+cZeUyg9kAoUT1fkESm6YKMB04q44adJ1K7pYQdd0z8iGhsfe4zCLBFKdqehWU8/cGSPKsb3o8ozKpQR6mgkRcy7IIE1qiqGu+VMA2miLzBqL9FSSSeRcwwc78ulXMeopNqO6rQos5qSv9WNRhiOzmwc8=
+	t=1716029103; cv=none; b=j4czcIQkxSPOSAwZ+tLIZh/oRofuLuYf4AdWbfSJWKNk9Wlj+I1NZ3sN3NJqpnca3lyEN9jAXI/70U4Bu8X1fOY6pWdUx15KYIcp9M8PyBfaCLgcq43js6g0ZzMXHZNKWwn+bMRNhZVWv2h4dw1oxE6DEeVhBkEdKrkkyRLFaDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715970784; c=relaxed/simple;
-	bh=IpHKn100vUjrZafmZKJ1y8v2H5IiPMdG53S1ZMl4E+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JZBaN1w1C4Z15A0SGIW36kQ6DFv2+fd5nxMyLqQay5WxT+iArhHmSPFZzHjWU25SS7hNbQdiLqcQiXH3+C93mdVvuZrYBStqalYuR/8uJQ9988JfH0pSQRgZpDdMIjuO5VMnDUt8k1nYNKiy4VfmyIJBGp4kal+/LaC+RMkdzXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vg79+cHH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716029103; c=relaxed/simple;
+	bh=w9uO90PEVchWF/KDLtiQBRWtcj+my9bPQ3PyABa0620=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QMMoYTK8a6QHmdeJUhWC/4tsvUYVMQNmik/LBafD64VY806dU9gohFKGEQvtky7xdyIZd/TB6nf/wB3FKsdJu9/BppmioVmFM9lanGvxEfNR8ICQP1naW94/zbPoVbN4QcXIcBNO3pgnT2r81uWactgdNxfxKTGHy74lEjdAh9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MubZWbbp; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vg79+cHH"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H98KQL007278;
-	Fri, 17 May 2024 18:32:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=trmdsobqOMWDgc1D8NKUUfFAo9qR0PrBuwm8lSkrz3c=; b=Vg
-	79+cHHTr16tp9TBmcnGCAcEW4MomLM4m1TKiTIMTQjhQhCHjjJmqRKuVQpASP1VN
-	gxPAIarbirbphn6E+t149eDVGIc8hRdrMDvVL2EPWF0/JqMPMC+sDo22wQMCLsD9
-	TaDEpjCGVD6MyiiC+Zypj2Qh8NGx1wx/BT6qe8gGgVukepc9SfhRSypj9nwj2AXF
-	pdjF1XthSOHFf1ZIDamd8/2hyO6puG00UnQXR3gmAhQeqdI7avackgQZta38hLf+
-	F7v7kO4aoxLR8t6au8FWW0Go2wxeAf7yXaKYIS9GNA8dwVz211WwZI8AzmkmrsoI
-	kP19QtIyiZjB95ADFoOA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49ge0tmx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 18:32:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HIWlH1005033
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 18:32:47 GMT
-Received: from [10.110.126.2] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
- 2024 11:32:46 -0700
-Message-ID: <8000851c-f3e2-4fcb-b4d4-9acaf9763fdb@quicinc.com>
-Date: Fri, 17 May 2024 11:32:45 -0700
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MubZWbbp"
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8HYOsF27V8l328HYOsn98a; Sat, 18 May 2024 12:44:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716029082;
+	bh=CnHWkfDAsDJHSUGxw5qt7rqfqyEiFLAjpWktp56bQ+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=MubZWbbpbZ3c+j/jDwgju82KMsgt+psBSNdHLGfXsH58n04rw1MlW4ZNCTFcY2QGL
+	 yCBkWFWanH+ekkYkHzQKG2+nu4uERUD28J3d/hCtIAUe6rLoSTQSnfnZQ3AIkYz64L
+	 GtJ+CIPBU9Kx1PQ74L2ZlJv0LLnZdflmoG1JSMaTbL/J+AZHZvmJKCJe2RZH4HyTZK
+	 adnu+08kdbp3MQdqfw/xFgy6k1ppyo/D9RIVyw7tyOiSMe8YGVR80DvTLCg+ZYZmMX
+	 7e8e/lpKecQs8hT9O3Q/LHh9T/+YNiVkgg9ZEPQjiMJ+/jYoj7qljJqKdbe7vdKpIP
+	 QXbjpEYyitC+g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 May 2024 12:44:42 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <954f974f-8b97-4ff6-bb57-35501fa9ceb9@wanadoo.fr>
+Date: Sat, 18 May 2024 12:44:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,71 +42,100 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] hwspinlock: Introduce refcount
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-1-47a90a859238@quicinc.com>
- <edfb049a-b56e-424f-bca7-556dffa6c87d@linaro.org>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <edfb049a-b56e-424f-bca7-556dffa6c87d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v3 2/2] remoteproc: k3-r5: Do not allow core1 to power up
+ before core0 via sysfs
+To: Beleswar Padhi <b-padhi@ti.com>, andersson@kernel.org
+Cc: mathieu.poirier@linaro.org, s-anna@ti.com,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ u-kumar1@ti.com, nm@ti.com, devarsht@ti.com, hnagalla@ti.com
+References: <20240430105307.1190615-1-b-padhi@ti.com>
+ <20240430105307.1190615-3-b-padhi@ti.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240430105307.1190615-3-b-padhi@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iv9sI3L20wtxJZlWpyoVobWcaFr13M2_
-X-Proofpoint-ORIG-GUID: iv9sI3L20wtxJZlWpyoVobWcaFr13M2_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_08,2024-05-17_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=888
- impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170144
 
-
-
-On 5/17/2024 1:58 AM, Bryan O'Donoghue wrote:
-> On 17/05/2024 00:58, Chris Lew wrote:
->> +    unsigned int refcnt;
+Le 30/04/2024 à 12:53, Beleswar Padhi a écrit :
+> PSC controller has a limitation that it can only power-up the second
+> core when the first core is in ON state. Power-state for core0 should be
+> equal to or higher than core1.
 > 
-> Why int and not refcount_t ?
+> Therefore, prevent core1 from powering up before core0 during the start
+> process from sysfs. Similarly, prevent core0 from shutting down before
+> core1 has been shut down from sysfs.
 > 
-> Have you an argument for or against use of one over another ?
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
 > 
-
-I wanted to avoid the warning if you try to do a refcount_inc on 0. In 
-this case, 0 means the the hwlock is unused but the hwlock should 
-persist while waiting for another request. It seemed like refcount_t 
-expected the associated object to be released once the count hit 0.
-
-Also the count here is serialized by hwspinlock_tree_lock so the need 
-for the atomicity provided by refcount_t was unneeded. Using unsigned 
-int here seemed simpler.
-
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
-> bod
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 23 +++++++++++++++++++++--
+>   1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 6d6afd6beb3a..1799b4f6d11e 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -548,7 +548,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+>   	struct device *dev = kproc->dev;
+> -	struct k3_r5_core *core;
+> +	struct k3_r5_core *core0, *core;
+>   	u32 boot_addr;
+>   	int ret;
+>   
+> @@ -574,6 +574,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   				goto unroll_core_run;
+>   		}
+>   	} else {
+> +		/* do not allow core 1 to start before core 0 */
+> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
+> +					 elem);
+> +		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+> +			dev_err(dev, "%s: can not start core 1 before core 0\n",
+> +				__func__);
+> +			return -EPERM;
+> +		}
+> +
+>   		ret = k3_r5_core_run(core);
+>   		if (ret)
+>   			goto put_mbox;
+> @@ -619,7 +628,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   {
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+> -	struct k3_r5_core *core = kproc->core;
+> +	struct device *dev = kproc->dev;
+> +	struct k3_r5_core *core1, *core = kproc->core;
+>   	int ret;
+>   
+>   	/* halt all applicable cores */
+> @@ -632,6 +642,15 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   			}
+>   		}
+>   	} else {
+> +		/* do not allow core 0 to stop before core 1 */
+> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+> +					elem);
+> +		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+> +			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+> +				__func__);
+> +			return -EPERM;
+
+Hi,
+
+this patch has already reached -next, but should this "return -EPERM;" be :
+	ret = -EPERM;
+	goto put_mbox;
+
+instead?
+
+CJ
+
+> +		}
+> +
+>   		ret = k3_r5_core_halt(core);
+>   		if (ret)
+>   			goto out;
+
