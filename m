@@ -1,113 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A514A81;
-	Sun, 19 May 2024 17:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979620EB;
+	Mon, 20 May 2024 11:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140214; cv=none; b=Pbl4tmbUowaeH/RgQqjUNEM0CGwTtZOErtnDTK7dnRaNhtN2i4HXJ68aOU9DIgprd1m7OxxIaPudX44H/M3jsGGqL9k9lmWq39CieuGSJgNTGjFFahtk3H/xWN4hBs3cbZM8y5St9Dic6o36rgxPKVNiY3iNwq7IsEIQSwO/9a8=
+	t=1716204450; cv=none; b=uhDLHpCSXqecXcqB7bWiGsvlU66pMJz1eIe1fxpzCFtbn6NH3cNAxGBMFy0PoRV82dUMpT6o+cGKhAgEmQZRdDlG5Pk+Do2bj95XfJDtnhuu8Mebkeq5tHs/BPGhfJ5j4pRyXD96L+3g/As5OQSOrT9L7jdaO1JxT0ircUZk01o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140214; c=relaxed/simple;
-	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPBEbEU1Wwmimef8wCs2AeEfBCM1M5XvkCyBLP4egep86573wLcZ7J+0UY4C+yqX9U0N+OL4VlZ2lmFuVjqSLB5q9dEAEScMnSiFaZtq9D1csIK5Ef+2SUkZiAabLmrFGlhuTPziiQQvmYema9aj/+ZAqB+9kcNrV5/ZJDmOlqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtGQ7N+F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716204450; c=relaxed/simple;
+	bh=TugNqe9PlBp1NJ5MSXmFZQM1MVvwZOYkkhks49lJzMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DD9jinDQqwWn5Fvox/0vISKfJ8iJmtA8Zd5g5zxN96vlPFe3f9bMqe7k42iNJv9Z05tYRBpZeDAjoZWcufFoSn+JuyZtn94H8XEPgphmavLW79ruPzc/QsKChp9MvlqwJXQl5IKBWpcdpgnHf0d5tvR1znUtVT5BIEbfsL1pOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nr8DTS66; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtGQ7N+F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69A8C32781;
-	Sun, 19 May 2024 17:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140214;
-	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RtGQ7N+FB7NrCMWMjlPXPNI+TIjSqq9wL69w8b1BJoaAOvAgfk+GM26LM5ZRznQ1b
-	 feYTg4OsmBBOED/bv2gg26qqTtEs+Z7dNe4ufrdmQorgW9yUDsqRqI/AsYefxNrOOT
-	 ucMKo6Xz7oEn/k4t3dvseP6kev8chYG2eOWrK1wzX1YjuFTjpy9lyml01KdMyuKm/Z
-	 uhUGxE0LY9dHTkdeYtd8F3dQCRU1nDHRY/4Njr3w9sv1qtgUuiepnkYtTSUqd1fuzY
-	 v1zyi1npymvYvMZ7S15wz89u1p00xLkPzyy7/RbgujE4wdMXN13hRPJVpSE+d66ZWW
-	 prq/3CwfgukoQ==
-Message-ID: <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
-Date: Sun, 19 May 2024 19:36:46 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nr8DTS66"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716204447;
+	bh=TugNqe9PlBp1NJ5MSXmFZQM1MVvwZOYkkhks49lJzMo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nr8DTS66gLZaW4X+w+Uv/tuKcFUStU+GvdhLQPuJsWF6N2J/AeLKzJlaCrbdHeHPV
+	 wF5qZXK6qH+0otnO0KZePovIQZ5wUUgttPqRj2H6m8VwcZ1YM8LS4q9WOzzEynsqP2
+	 UGGc5ix3SAGst/HSwDWh42aF/JikrXPbYVYLP4h08H4mZC56+mjjvjg2kIOvRI2d86
+	 MgcnZoUoZqoaQZOTFxaGXyP8IGMFjEl/KMqob1R81lGCyqGv6cDieiANg5HB1rL4ti
+	 /jFfJJ8P5zLGngFoaKGvNEVS/TjoPC0OpL5vzOzwnezaKC7cr81KjZevPwqUQXUDb5
+	 F/raaUKoD42vg==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D88DD3780BFE;
+	Mon, 20 May 2024 11:27:26 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: mathieu.poirier@linaro.org
+Cc: andersson@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] remoteproc: mediatek: Zero out only remaining bytes of IPI buffer
+Date: Mon, 20 May 2024 13:27:24 +0200
+Message-ID: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/05/2024 00:58, Chris Lew wrote:
-> Add hwlocks property to describe the hwspinlock that remoteproc can try
-> to bust on behalf of the remoteproc's smem.
+In scp_ipi_handler(), instead of zeroing out the entire shared
+buffer, which may be as large as 600 bytes, overwrite it with the
+received data, then zero out only the remaining bytes.
 
-Sorry, as you wrote, the lock is part of smem, not here. Drivers do not
-crash, so if your crashes as you imply in the cover letter, then first
-fix the driver.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/remoteproc/mtk_scp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index e5214d43181e..dc70cf7db44d 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -117,8 +117,8 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+ 		return;
+ 	}
+ 
+-	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
+ 	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
++	memset(&scp->share_buf[len], 0, scp_sizes->ipi_share_buffer_size - len);
+ 	handler(scp->share_buf, len, ipi_desc[id].priv);
+ 	scp_ipi_unlock(scp, id);
+ 
+-- 
+2.45.1
 
