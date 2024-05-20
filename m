@@ -1,98 +1,175 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E13C28E7;
-	Mon, 20 May 2024 15:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5D2136E0E
+	for <linux-remoteproc@vger.kernel.org>; Mon, 20 May 2024 15:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217580; cv=none; b=X4aMM85K3AQ8A5Y8sruYF5zXZN8p15eeAjlUp3w44eWc9Bktht/t1V83sKHJdMScoon5QoZYNvB/Ii2UJbc6zNJrLsSvFwgjSUob3WKTf63r+2vOa3kMhOQ9OMTP56Cg4B/ecjm7H53oUu7Ah9EBVNdfW4t2HKRyN0vcmz5efQY=
+	t=1716218092; cv=none; b=RY9ekMiLH1ng7ZIdZoSbrdXfqG9CxXzr16X0HgQ4CwaacjsyEVeE3rl2uO3dC4aGlU9oSgDLdPFkxLl0Z0YwwUEXHxuQ6e0N5UfOSZnAI4wzp+d4pdPy3LMN0F/nQcQZnW8i/go0FG8v25RPxMSAuiJcBchmuvDBlpxeIh+NSBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217580; c=relaxed/simple;
-	bh=cq2AutFBNcE4IKUuF38V75vCKDlyHWW3DIw4p+lv/Tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DReMpYsRiANEGWUpQ+U7oqED4BBH1GbztoEJmARD+xYEF7EjuY4Sh1Rpm7MaHym43JFwF918JC0XImS5iEz8ZPaAn/I/cxxvh2lp6z4T5hJgyBzzmqOj+TNl+IQmnOneF6MK+gALWFrvrCs1E6iVE86soePW3qsztnEvyQ7y7P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iLwK1OFU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716218092; c=relaxed/simple;
+	bh=aFdkKXMgw7IZRUOUAg2Gv8HZiNrYgQERd5uStPFtaHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Humvg7pqwqnPTgl4lSWZaEQWLFvIjxmM9vsDTfxb1iPLOXPvK2/hbVNppouJLajIMleLyV7lPDa4j9lR3AtSZFBk7PXeUWXqWWKdC2SsRYhM2RcptkNzK28aNSvtVK4i6NL6g3v9QgInn4GjAaH+IU5TCAwujhFeJQD45xlnXA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XfQITgr5; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iLwK1OFU"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KC1fAq030201;
-	Mon, 20 May 2024 15:05:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=cRUbjug0mchDdOc/J9+wic0AfN/3tGGWfkEN3WY8+1A=; b=iL
-	wK1OFUAifEAfVKxl0guSZayGvMo03m9qfZR+hZEYXccgrg+1o1Ko1rhal54mnI1t
-	trB7SQg7NsZEKjOq/srZPuEw7hwsZW0nECMGRjK5JctdyqthVq+XVboleg2Xhssf
-	Mlb0XhfscyC2G1utCfXxJ+zHoMUjpwyUFO/X8qUNF+72uMlz3CbHtg2mukAb3cU2
-	i9ZxC+2lZQ6P/dYjaZFoVKgPLXD+IYsL2uDrxcenslkaEFIPzaoDhCVEdoQPhjkA
-	W+AIiaQris3Sv24PSqJd3M9vlZWyoT8d4q7uZ4jvDEVcp5GBpJq1QGdLbFLLD7tD
-	xlXrbGGCq4HHdGxhzgpA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc3fup-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 15:05:57 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KF5ubq000394
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 15:05:56 GMT
-Received: from [10.216.60.210] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
- 2024 08:05:53 -0700
-Message-ID: <f2b7c45f-d5d4-8a47-26c4-71f139b69971@quicinc.com>
-Date: Mon, 20 May 2024 20:35:49 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XfQITgr5"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e564cad1f6so61747301fa.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 May 2024 08:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716218088; x=1716822888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8a5RomlnN7TsyUGfzH2IKfbBBCjtXMvPMQ0e+f389oQ=;
+        b=XfQITgr5fo8pYIbVPV/dy+anzdYuYM2D2t32nXelhu2snUKK/sRjWKapKvyh6YTCcH
+         nDlRshbm/xi7R6NWTXDyCQUKUMrcG2OePij+j+06hAWkJ9ktkekkHsxirgiUTtIIpnUz
+         bI0B6fquwatURLlzjsTC+sJTnQGEtmlOVlq0rh+nqLcscc/d4p+/za3/uIvjApYbTDXb
+         wM8kPsUMt6vL4JpNXH3I27xlCHSpJqKHOa20IiHUKqLdWClAybsd80QwTzQjNnNoM78d
+         /9qNrAOF+8VXl/kgWtwQgYf/gq67X4b4CFphvjh+bnO+0tdA2CeJ/UPxaJXASebq8jXs
+         AXcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716218088; x=1716822888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8a5RomlnN7TsyUGfzH2IKfbBBCjtXMvPMQ0e+f389oQ=;
+        b=u6zLqOGUZVhg1Xzc0l5GUkfxSZ0Ri+FCkeXCSroqOIz+f2M9eL0gAlJVnbnpcMSnVf
+         HL1+e9u9uIiEpxOEsqWqgoY3s3z+Ut3CHhS+JFOm399n9i2yWQj+/dGuXUpfC3WokPls
+         fFZ3qDz9ODiWKlSUA95tAx+Q3V0a17+8rW3mftIMrqhNa/+8s07Uc1Ck2i80DLPU3SqX
+         3searX3Wp5kivII5ckK36eHO9+6KvX7nFP1RNxzwfaSmyj3afq1qcYwCfXY2z+Nd1LMp
+         qmR9uYc2O1AZZIYVtE4vIZ9Gi7arc7VqmRUxUj58xmh/FWA1fN2d957a/xSJxBgxI+M7
+         +DRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLC6o9JCqC9GwxkKTS70JWTWCIk5wOhfHUgvqZQSZeggtGD8euDpHipi7ka3S0wmOC49ZO047uAfUT4v/BAVaV+TqCVybEyz7pGfw3n/DO8Q==
+X-Gm-Message-State: AOJu0YzPrdp9ICK1FV7nhU2MYguKIAc1/qT/SrZtSGhNMGBYouNv78lf
+	pcYh8g7xuS9b87P0Lw9CuliIAlderd5BiZEU5j6gxFBABRx3Zc+RXh+A6Nnc4u+RVCQXjD+Os5H
+	AXVsYz9hfmsy0sTA7V/WQ11rw220BYSNeuParqw==
+X-Google-Smtp-Source: AGHT+IGOXShFs30lQnhQLOEgZQ8QsxTjLN/aoAVIEKU7vh4edvsbFuB9I715CHqiF72yWbQBIxAVVEWz6TsCZrP11y4=
+X-Received: by 2002:a2e:7c02:0:b0:2e0:5f2c:e0c0 with SMTP id
+ 38308e7fff4ca-2e5204b2edfmr187637791fa.37.1716218087754; Mon, 20 May 2024
+ 08:14:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] rpmsg: char: fix rpmsg_eptdev structure documentation
-Content-Language: en-US
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -9YZW9fVy6pa1O6N5mdAL-6MV9-yZGA5
-X-Proofpoint-GUID: -9YZW9fVy6pa1O6N5mdAL-6MV9-yZGA5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=803 impostorscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 spamscore=0 suspectscore=0 mlxscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405200120
+References: <20240430105307.1190615-1-b-padhi@ti.com> <20240430105307.1190615-3-b-padhi@ti.com>
+ <954f974f-8b97-4ff6-bb57-35501fa9ceb9@wanadoo.fr>
+In-Reply-To: <954f974f-8b97-4ff6-bb57-35501fa9ceb9@wanadoo.fr>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 20 May 2024 09:14:36 -0600
+Message-ID: <CANLsYkxjFGZ3EaTQjmtJ5Vtad5CV0CNfC4F88XurXknXRCmmBw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] remoteproc: k3-r5: Do not allow core1 to power up
+ before core0 via sysfs
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Beleswar Padhi <b-padhi@ti.com>, andersson@kernel.org, s-anna@ti.com, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	u-kumar1@ti.com, nm@ti.com, devarsht@ti.com, hnagalla@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, 18 May 2024 at 04:44, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 30/04/2024 =C3=A0 12:53, Beleswar Padhi a =C3=A9crit :
+> > PSC controller has a limitation that it can only power-up the second
+> > core when the first core is in ON state. Power-state for core0 should b=
+e
+> > equal to or higher than core1.
+> >
+> > Therefore, prevent core1 from powering up before core0 during the start
+> > process from sysfs. Similarly, prevent core0 from shutting down before
+> > core1 has been shut down from sysfs.
+> >
+> > Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5=
+F subsystem")
+> >
+> > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> > ---
+> >   drivers/remoteproc/ti_k3_r5_remoteproc.c | 23 +++++++++++++++++++++--
+> >   1 file changed, 21 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remotep=
+roc/ti_k3_r5_remoteproc.c
+> > index 6d6afd6beb3a..1799b4f6d11e 100644
+> > --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> > +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> > @@ -548,7 +548,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >       struct k3_r5_rproc *kproc =3D rproc->priv;
+> >       struct k3_r5_cluster *cluster =3D kproc->cluster;
+> >       struct device *dev =3D kproc->dev;
+> > -     struct k3_r5_core *core;
+> > +     struct k3_r5_core *core0, *core;
+> >       u32 boot_addr;
+> >       int ret;
+> >
+> > @@ -574,6 +574,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >                               goto unroll_core_run;
+> >               }
+> >       } else {
+> > +             /* do not allow core 1 to start before core 0 */
+> > +             core0 =3D list_first_entry(&cluster->cores, struct k3_r5_=
+core,
+> > +                                      elem);
+> > +             if (core !=3D core0 && core0->rproc->state =3D=3D RPROC_O=
+FFLINE) {
+> > +                     dev_err(dev, "%s: can not start core 1 before cor=
+e 0\n",
+> > +                             __func__);
+> > +                     return -EPERM;
+> > +             }
+> > +
+> >               ret =3D k3_r5_core_run(core);
+> >               if (ret)
+> >                       goto put_mbox;
+> > @@ -619,7 +628,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+> >   {
+> >       struct k3_r5_rproc *kproc =3D rproc->priv;
+> >       struct k3_r5_cluster *cluster =3D kproc->cluster;
+> > -     struct k3_r5_core *core =3D kproc->core;
+> > +     struct device *dev =3D kproc->dev;
+> > +     struct k3_r5_core *core1, *core =3D kproc->core;
+> >       int ret;
+> >
+> >       /* halt all applicable cores */
+> > @@ -632,6 +642,15 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+> >                       }
+> >               }
+> >       } else {
+> > +             /* do not allow core 0 to stop before core 1 */
+> > +             core1 =3D list_last_entry(&cluster->cores, struct k3_r5_c=
+ore,
+> > +                                     elem);
+> > +             if (core !=3D core1 && core1->rproc->state !=3D RPROC_OFF=
+LINE) {
+> > +                     dev_err(dev, "%s: can not stop core 0 before core=
+ 1\n",
+> > +                             __func__);
+> > +                     return -EPERM;
+>
+> Hi,
+>
+> this patch has already reached -next, but should this "return -EPERM;" be=
+ :
+>         ret =3D -EPERM;
+>         goto put_mbox;
+>
+> instead?
+>
 
+This has already been addressed:
 
-On 5/17/2024 10:26 PM, Arnaud Pouliquen wrote:
-> Add missing @ tags for some rpmsg_eptdev structure parameters.
-> 
-> This fixes warning messages on build:
-> drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_restricted' not described in 'rpmsg_eptdev'
-> drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_updated' not described in 'rpmsg_eptdev'
-> 
-> Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/commit=
+/?h=3Drproc-next&id=3D1dc7242f6ee0c99852cb90676d7fe201cf5de422
 
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--Mukesh
-
+> CJ
+>
+> > +             }
+> > +
+> >               ret =3D k3_r5_core_halt(core);
+> >               if (ret)
+> >                       goto out;
+>
