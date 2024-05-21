@@ -1,80 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1C975818;
-	Tue, 21 May 2024 11:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9113B757F7;
+	Tue, 21 May 2024 12:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716290441; cv=none; b=Zu8Z3X1t8DwH362/o45ZmLkB2Z/A1J2oX25BPzbgnJfyHjUUxmjCfjPQyZiX5S9x80L8dHrJVk/kYHoDSCquHWuLhcdtwaa4+I3gz6hyJh6xCiEKw0cXptC+APof/LgQ0+G9uco+myhO/il/7+aU20jIAu1LdkX74mI/CSolBhU=
+	t=1716293876; cv=none; b=oduoCR+WQXoTkYzbYV5C2y8QLO5yzHxNwqRpcLQDGGDVdvX6HQ4JuLnpUoXULUmq+9cilEnNoNx/NQnHShKSGg3JM+ueYY2ki11HP1ETC+Nb9p5RNKcZll9Tl35dAKWtVLfIFEi2pHRWdGEhyoc4dsPpCQvZ+csSlrI13J+ADfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716290441; c=relaxed/simple;
-	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=TWwHmQTlzrbpOMxIlULvswZu9etAxP84lxAVHKvL50gO11i+6S6SdYWjpqw5fboh53EXALcsUuRfqdtKilKnLETSyz2MtDDJWrtinvjK8iUuDz64D8xrTAFHP/Bgr1PLfM6ybHrwreT9bzAmO4QIWzfQAQezu7Z3Gitnxin/7Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWtljR7C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716293876; c=relaxed/simple;
+	bh=nNkhGw3YG1Wk2LjkcE5/lhfywpxP0++zWLyUl2c3+Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RIwKATNj0GaJI+pJH7umJeq4m3fUpo8ToiUWtXIYNRK56o6WSuS/MfhviOqiEtGwTd5OLXPnj04dNcCcKcLzHPlOVzF5gzeaYtSJ622Y0Qx738iuntRni36y7LsmfyCila8LEvwbA2pZCIhjE2oddgsT6o77GyOhysruxVco6vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NWsKLMmV; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWtljR7C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065A1C2BD11;
-	Tue, 21 May 2024 11:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716290441;
-	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=CWtljR7CkZBF4Vz4fhIRTYAUQb9nXzsdaXgTiYY4i+cO9p9i0Ii+LmMUI6DkJqRA1
-	 kFX4MIEXkRG6My5WjKY3emmLMRtADTjc2pydbnYdgpaCEZWSNSajpqQPXAUjCUIE54
-	 uFO2gp5AvOfYsgEfNKwsqnO7VpPH1y+Z1235QczQQwNv8akbiz+6Qtfm89GzT8Lj7x
-	 teHOHdwJHJ8TWg3JnwWacb+BEd5MKrS6dUiJK94dNDmTBu7YsBxcme1Fo5z7pxOvVd
-	 A5oG/3JYqLQPZUOiSebj4gdmVlv/EZYu9SwQ0ftwqZN1lya9nLaxtI1A314yObZ8qt
-	 lncBLEW8P6ZRQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: neil.armstrong@linaro.org,  Bjorn Andersson <andersson@kernel.org>,
-  Konrad Dybcio <konrad.dybcio@linaro.org>,  Loic Poulain
- <loic.poulain@linaro.org>,  Mathieu Poirier <mathieu.poirier@linaro.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
-  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
-	<20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
-	<a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
-	<CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
-Date: Tue, 21 May 2024 14:20:36 +0300
-In-Reply-To: <CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
-	(Dmitry Baryshkov's message of "Tue, 21 May 2024 13:01:45 +0300")
-Message-ID: <878r03csxn.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NWsKLMmV"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LBRr0a019207;
+	Tue, 21 May 2024 14:17:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=NB18YDuzAPhccihOvrNVEn535LLvcSqVIm6q6GCowLk=; b=NW
+	sKLMmVnuP5no2/j0pXbYlId8pyR1WjzvXloM+f+9wc/2IXqZ01GrlUFcy4x8Dr8X
+	5mya/Z5J3547aeYnsSdQLyiIvWwiI3KD/gqvyqryUt1/Ip7/hSLJ6d/kZSGBCTjN
+	ebH2L2X8tIbDk4v9RZpMkPWNpyfigSzu5UVgG+6gLNO7wuWK3EgMbsOGL5LFcbGy
+	fa4BMItreNQq0G+KBfj381mzXyqU+OkdRAUIZ9NTpaqfpdToqjEEww33P2DQ1/Jn
+	o1v3YyV7fSKm6+vVtOeMlg9MBhk40o3Xih2T0qAbxls5c2bTaF79X/CLVT0Q6RZm
+	JIlMJm/Pc9wdARZT/ZWA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y75w0a23s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 14:17:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B22CF4002D;
+	Tue, 21 May 2024 14:17:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B82B2194DB;
+	Tue, 21 May 2024 14:16:58 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
+ 2024 14:16:57 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
+ 2024 14:16:57 +0200
+Message-ID: <498403f4-98ff-40ec-adfc-c0ffba6450aa@foss.st.com>
+Date: Tue, 21 May 2024 14:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/7] dt-bindings: remoteproc: Add compatibility for TEE
+ support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-3-arnaud.pouliquen@foss.st.com>
+ <dfb3c96e-0684-4e61-b1c9-5a83f61e0418@kernel.org>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <dfb3c96e-0684-4e61-b1c9-5a83f61e0418@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_08,2024-05-21_01,2024-05-17_01
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
 
-> On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
+On 5/21/24 11:24, Krzysztof Kozlowski wrote:
+> On 21/05/2024 10:09, Arnaud Pouliquen wrote:
+>> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+>> where the Cortex-M4 firmware is loaded by the Trusted execution Environment
+>> (TEE).
+>> For instance, this compatible is used in both the Linux and OP-TEE
+>> device-tree:
+>> - In OP-TEE, a node is defined in the device tree with the
+>>   st,stm32mp1-m4-tee to support signed remoteproc firmware.
+>>   Based on DT properties, OP-TEE authenticates, loads, starts, and stops
+>>   the firmware.
+>> - On Linux, when the compatibility is set, the Cortex-M resets should not
+>>   be declared in the device tree.
 >>
->> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
->> > Qualcomm platforms have different sets of the firmware files, which
->> > differ from platform to platform (and from board to board, due to the
->> > embedded signatures). Rather than listing all the firmware files,
->> > including full paths, in the DT, provide a way to determine firmware
->> > path based on the root DT node compatible.
->>
->> Ok this looks quite over-engineered but necessary to handle the legacy,
->> but I really think we should add a way to look for a board-specific path
->> first and fallback to those SoC specific paths.
->
-> Again, CONFIG_FW_LOADER_USER_HELPER => delays.
+> 
+> Not tested.
+> 
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline), work on fork of kernel
+> (don't, instead use mainline) or you ignore some maintainers (really
+> don't). Just use b4 and everything should be fine, although remember
+> about `b4 prep --auto-to-cc` if you added new patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time, thus I will skip this patch entirely till you follow
+> the process allowing the patch to be tested.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
 
-To me this also looks like very over-engineered, can you elaborate more
-why this is needed? Concrete examples would help to understand better.
+I apologize for this oversight; I will resend the pull request and adding
+the missing CC and To.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Thanks!
+Arnaud
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> 
+> Best regards,
+> Krzysztof
+> 
