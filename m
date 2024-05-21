@@ -1,133 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD2B6BFB0;
-	Tue, 21 May 2024 09:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EF65FBA0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 21 May 2024 09:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283501; cv=none; b=pjw1zktIZlIpA7Q7xtBRvIX9QuWlWI2oTSpJdtYVCKyyECDoDvp280JnCInHh/jrnLj4XFEFC+rSNtGshM2rgCLSlGhTGxMnUgQTVk0mJ4zJ0mQcYWAVfF0F12ff29Z3Doy53TWknjKz5YiJXEMg21IKN+imRSzLlXJ5DSMTnSg=
+	t=1716284728; cv=none; b=nwoBg9OkPY0ezkCgaTqytqr7z2voK/xZDT8tm7BebgHnuYwzNnXyNI3WSqJPbMgy2z4X2ryIbWjmT7UYmFKo1/qzEEkWX75FdHsQlGIaZ28P2G82cGMm7WaNJYVQjkYWYnPP2J+X3wp+mZB0J/0etS63evLEApT9MpXTq4tA2lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283501; c=relaxed/simple;
-	bh=7UjuBpo0nPk3k1xpFRXIl2Wu3JPp5WiyviZb9i6QPtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZWMrJifSolcTohAZnzGUbf4h4yevsOQKV1Pm0LhWOq1rRdS+M9ZGv7YRSb/K4hktOqNlc/Ft5oCtzK8WVY4f2DbJfh2mMDSeDUfEF1Ez720BwWbmO6PRVbulu64vwrJU8XzyJlT1Hka2f6IR7iQP2IIWG9HLgTKLTtSgCxybztw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2EJwDQT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716284728; c=relaxed/simple;
+	bh=7qLaoqIIAaTz5fph0kyugjFXnFjLbaUGL7rC2ceDlok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jlNn0T1jXy+uRnx4IJSzM5o4KlJMEIob7AyKEJeJUhf2UXtOY629eAZBBBH97jWvqXXQTW+IdnTq0Yeo556oi4D1rq3lT1r9IfTClUWRVtB8pt9bwFyOybJprC8uEN+l7sQ+rO559Rur6blD0xrraePSou6iOGKHXChXad1phEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QatskZQI; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2EJwDQT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C49FC2BD11;
-	Tue, 21 May 2024 09:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716283501;
-	bh=7UjuBpo0nPk3k1xpFRXIl2Wu3JPp5WiyviZb9i6QPtQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N2EJwDQTWj924EnJGtlFf6VrSLnVM9Aof2AV+hmTqkyByd+LPhYlsof3tZx8U7QF3
-	 ZWbpWp/Y8PgDtq4MSD1rxoj6mF61DMDaPNqv3qKO0wyjBJahZJ4WrnSrPMs5mQHNO7
-	 JdhKNYNVsUTMOVcuVK9i/Pgb8WYPa1wS32hlQj0fxMpu2lOFG5xkYpQpbNgJJjqGjq
-	 So7TKSkkj49YHUiFikERpZlOFiYe10zxvfcVRGFp8EYU71vQ2YO/xQXBSsknXZURZf
-	 RQyvuNc8Z3lV+7KUE2BRxyC4bTx9EOLz/3kfogbo0tJFieUAgKADdhQMo+IY7hpcKF
-	 umg6YI3SW/HxA==
-Message-ID: <dfb3c96e-0684-4e61-b1c9-5a83f61e0418@kernel.org>
-Date: Tue, 21 May 2024 11:24:57 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QatskZQI"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e6792ea67fso60402251fa.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 May 2024 02:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716284725; x=1716889525; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Md+WRwALrBDV2V3shAX8d3uWCybuvTD8xlgzEt6mj3s=;
+        b=QatskZQIbHWGZW+tpnSfL3wmD6MmPZjHIDBDY73stAXPfnCuv39Wimi9Tdu2n4jtDb
+         bnkM9jMHm9VvxAi35ZjlndBBH4+JAVH7u40dsS1omHmyrqV1LcvZLqmguLYj1wwk9bVj
+         nbZKUrny1/6CXq6+hIAJ+J4V94QqYbLhhs5VMKFEM6NoiRGJhTrRPSjhbQTgBMPDNdkz
+         0h3Opsda1oGtmjK9+osG2JU2SFIFcDC/Zi03QNjdeQ7eIbO57pGJMSI4AcjIlPgWJBj0
+         t6KW9M9BipEmEjkTq9/By/twYvlxbnfEn2r5Rfu6Avx4k8QTqKUwF+Run50oCtDXoI3o
+         eEuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716284725; x=1716889525;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Md+WRwALrBDV2V3shAX8d3uWCybuvTD8xlgzEt6mj3s=;
+        b=iEzKfGIcsMY67sk44EcyZeZCNiSwRFy3xbFAT3zWbXP1zZP2WgpEIKIygAudmimIwg
+         KVMedwfOIlR1k8wgoFuht8vkspvIDAvlh4hQbWYzFBLWDGwji6QxvSC1jtzPwIABEqet
+         XFi9kHFx8e/+rpSYEEJ3mX3tBXLHun1fqtWVaqk9Z/vS0P7MMiPORvn4gCTCa36uGMhi
+         pkEeHloYUzTP+06CnfVwr/kx1wUzdpLNxP3R13qlYw+hf3mFZH9dlXHk73XgcbeSpW8c
+         BAQAikcA7ZRPNyTSZ6hJDhRnH65upPt7b05PjZFaIExYvp31wzGEiPGM28El7gqWzqfp
+         XimQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXadbpl/QGkis3RcL/xnCZqTFvYoeL0yqCFDhun+CS1C292VuW8KiLcsESFFqCUFJ4cOXTcMtUSDcXq9LlJcLs1zllqB930cR29psrd7FmUg==
+X-Gm-Message-State: AOJu0YxG1m9HWjVbJZgtlCxMvNCCbHTH0ZTkTIVKlD4GPOgaS5koka2v
+	P30nxukQDlqe/Xn5D7wgd9E3K+nVrw3BfDKo+oOKE5keAaBLTaQWKetUENwzp58=
+X-Google-Smtp-Source: AGHT+IHei8MVuGwNP1mQ+VWZ8la4NiILOnWDAPhCft9QiMk5UUjYW5f5kC0nYQH6ZN+vh0aDQ4fT2g==
+X-Received: by 2002:a05:651c:50f:b0:2df:7ac1:b27 with SMTP id 38308e7fff4ca-2e52006399cmr239371871fa.28.1716284725211;
+        Tue, 21 May 2024 02:45:25 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e706ee0a65sm13906261fa.112.2024.05.21.02.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 02:45:24 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 00/12] arm64: qcom: autodetect firmware paths
+Date: Tue, 21 May 2024 12:45:20 +0300
+Message-Id: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/7] dt-bindings: remoteproc: Add compatibility for TEE
- support
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-3-arnaud.pouliquen@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521081001.2989417-3-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADBtTGYC/x3MQQqDMBBG4avIrB2IqbHgVYqLwf7RWSS2E6iCe
+ PcGl9/ivZMKTFFobE4y/LToliu6tqF5lbyA9V1N3vneBe/4O2+Jo1raxcBZEliA6Icgz/AQquH
+ HEPW4p6/puv54QBvvZAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Loic Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3460;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=7qLaoqIIAaTz5fph0kyugjFXnFjLbaUGL7rC2ceDlok=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTG0yaDfbXvoevOUjHPs8IuKzmJYGjmc1kguRR
+ zAiKXLcMdeJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZkxtMgAKCRCLPIo+Aiko
+ 1UIfB/sE3R07GqWvVQQIOHXBJLGbD/snQft/uArKi60KzVDniDBBl5qB//sKVqDrgc3OWAJcIqA
+ 1RcJbCi4Mxee4Xz73+ryd3ZTjnkLDsBiodcG9KzI0CtjtpgFHlHAc2tMMdrgXbMi+U8tLzLDVBN
+ w7ibw4ArXfhNbEuUTgphqgJPC83Xi77j41x7WENSEaBKKtfv39qBbAI7iyVsravdcFw8lgTzmOg
+ FThYcPmWCgMS6Lxo8zlQ1K5O9skLBZJdhpIpn8qNmy3Q+AULTfMilXHVSYwp9rzXsFAuqBwhym2
+ Gm8oVGyD77ZzYIiUCWRUX7GtOHE+J1iq8/t6xHllnWz+eb9L
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 21/05/2024 10:09, Arnaud Pouliquen wrote:
-> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
-> where the Cortex-M4 firmware is loaded by the Trusted execution Environment
-> (TEE).
-> For instance, this compatible is used in both the Linux and OP-TEE
-> device-tree:
-> - In OP-TEE, a node is defined in the device tree with the
->   st,stm32mp1-m4-tee to support signed remoteproc firmware.
->   Based on DT properties, OP-TEE authenticates, loads, starts, and stops
->   the firmware.
-> - On Linux, when the compatibility is set, the Cortex-M resets should not
->   be declared in the device tree.
-> 
+This is a followup to the discussion during the Linaro Connect. Remove
+most of the firmware-name properties from the board DT by using
+root node compatible to detect firmware path.
 
-Not tested.
+The most obvious change is that the drivers now have to look for the
+MBN firmware files by default, so this might break the case of the user
+simply mounting vendor's firmware partition to /lib/firmware and
+expecting it to work.
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Also things are slightly more complex for the platforms like DB845c and
+Qualcomm RB5. These platforms have generic SoC firmware in qcom/sdm845
+and qcom/sm8250 and also the board-specific firmware at
+qcom/sdm845/Thundercomm/DB845C and qcom/sm8250/Thundercomm/RB5
+respectively. Making these boards follow up the scheme would require
+additional symlinks in the firmware dir.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline), work on fork of kernel
-(don't, instead use mainline) or you ignore some maintainers (really
-don't). Just use b4 and everything should be fine, although remember
-about `b4 prep --auto-to-cc` if you added new patches to the patchset.
++Link: qcom/sdm845/Thundercomm/db845c/a630_zap.mbn -> ../../a630_zap.mbn
++Link: qcom/sm8250/Thundercomm/RB5/a650_zap.mbn -> ../../a650_zap.mbn
++Link: qcom/sdm845/Thundercomm/db845c/adsp.mbn -> ../../adsp.mbn
++Link: qcom/sdm845/Thundercomm/db845c/adspr.jsn -> ../../adspr.jsn
++Link: qcom/sdm845/Thundercomm/db845c/adspua.jsn -> ../../adspua.jsn
++Link: qcom/sdm845/Thundercomm/db845c/cdsp.mbn -> ../../cdsp.mbn
++Link: qcom/sdm845/Thundercomm/db845c/cdspr.jsn -> ../../cdspr.jsn
++Link: qcom/sm8250/Thundercomm/RB5/adsp.mbn -> ../../adsp.mbn
++Link: qcom/sm8250/Thundercomm/RB5/adspr.jsn -> ../../adspr.jsn
++Link: qcom/sm8250/Thundercomm/RB5/adspua.jsn -> ../../adspua.jsn
++Link: qcom/sm8250/Thundercomm/RB5/cdsp.mbn -> ../../cdsp.mbn
++Link: qcom/sm8250/Thundercomm/RB5/cdspr.jsn -> ../../cdspr.jsn
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time, thus I will skip this patch entirely till you follow
-the process allowing the patch to be tested.
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (12):
+      soc: qcom: add firmware name helper
+      wifi: wcn36xx: make use of QCOM_FW_HELPER
+      soc: qcom: wcnss_ctrl: make use of QCOM_FW_HELPER
+      remoteproc: qcom_q6v5_mss: switch to mbn files by default
+      remoteproc: qcom_q6v5_mss: make use of QCOM_FW_HELPER
+      remoteproc: qcom_q6v5_pas: switch to mbn files by default
+      remoteproc: qcom_q6v5_pas: make use of QCOM_FW_HELPER
+      remoteproc: qcom_wcnss: switch to mbn files by default
+      remoteproc: qcom_wcnss: make use of QCOM_FW_HELPER
+      remoteproc: qcom_wcnss: make use of QCOM_FW_HELPER
+      arm64: dts: qcom: apq8016-sbc: drop firmware-name properties
+      arm64: dts: qcom: apq8096-db820c: drop firmware-name properties
 
-Please kindly resend and include all necessary To/Cc entries.
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dts    |  5 +-
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |  2 -
+ drivers/net/wireless/ath/wcn36xx/Kconfig    |  1 +
+ drivers/net/wireless/ath/wcn36xx/main.c     |  5 ++
+ drivers/remoteproc/Kconfig                  |  3 +
+ drivers/remoteproc/qcom_q6v5_mss.c          | 12 +++-
+ drivers/remoteproc/qcom_q6v5_pas.c          | 85 +++++++++++++++-------------
+ drivers/remoteproc/qcom_wcnss.c             |  8 ++-
+ drivers/soc/qcom/Kconfig                    |  6 ++
+ drivers/soc/qcom/Makefile                   |  1 +
+ drivers/soc/qcom/qcom_fw_helper.c           | 86 +++++++++++++++++++++++++++++
+ drivers/soc/qcom/wcnss_ctrl.c               |  9 +++
+ include/linux/soc/qcom/fw_helper.h          | 10 ++++
+ 13 files changed, 187 insertions(+), 46 deletions(-)
+---
+base-commit: 632483ea8004edfadd035de36e1ab2c7c4f53158
+change-id: 20240520-qcom-firmware-name-aeef265a753a
 
 Best regards,
-Krzysztof
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
