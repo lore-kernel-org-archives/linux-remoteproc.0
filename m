@@ -1,100 +1,107 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D8B1CD1F;
-	Tue, 21 May 2024 16:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5DED520
+	for <linux-remoteproc@vger.kernel.org>; Tue, 21 May 2024 16:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716308666; cv=none; b=aMzOx5V0rZ5DFmunACQiwg29+SRtGUjoP1pp68l7eF8rwrADUz9gMqkeXe0gq2wFlVDVU+ZZUvkuq+z+5o82U+McwZ/xVvojgWgCcp77fBExiOV5i4V/OqO+D2JTg/dxcQ3qBOWwfqZqtrI19CzWpAB/ff5cFyEb+NOScF8/liE=
+	t=1716310058; cv=none; b=GmYG+z0HQhH3bBpXQCL3aZQhVgpWZ891GIMx1h37aVxh6NpaROn3Qerg5q+e8CaXYHZAaUAC1pMFTrf1/FhfEml1ltbDYF2gwxOjJgAIK19ABzeusMNuC2MwNZKr1MFJjI3VQn5tYuhJLx/DSLbjybgrOz+XqycM/+WE1brkOKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716308666; c=relaxed/simple;
-	bh=r8UYuML328Rse1sl+1Cyo4/LmLgtLYzTHlziAkhudkQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xtj2dvzJtJI8Tn7X9igP5P9L6JgZrc3meInglfdMPxFXJvD8qGcL1YXbauZ5x0e/6oUcbstv7w4cGikH8B4KHkOnwJLs9fpdEH7Ar75kL3yfDmJXBhhjQmo6SvvYw4dw9+y4tZKfs/7R4suH+Aq6xODOdL8bMcC9AlbzBrJQD5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wnmeCwMY; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1716310058; c=relaxed/simple;
+	bh=7iOACG5IfAwJdby/0fwuDdIGvtdK3YwQtEFtX0fPrkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8DaDDJI6FqxaxHaNIUq9NcfJgSvIGaGY/BScU9lNFWiM845K7Iax9qdThvgz/BNLdaIarjv8ou4jvyT1NZyZ2iDgOyhW8iDMLcZs9tXcUpMzwB6CvmsM8H1266gpwv0DPyRwShvISRTkvT5cYl/aMcBSG4PQ6AJLmfYdg76SQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P1vr8UKl; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wnmeCwMY"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LGIfkR011115;
-	Tue, 21 May 2024 18:24:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=selector1; bh=NqC2Z7u
-	c3q/WlEKnSoaFIEs4EfwdkefIzuUpW2dO1iw=; b=wnmeCwMYjWSjSmoTbH3DOl/
-	8gX81tlwXNhmKI4w6BTHwUtqNVIMf9i0jryQZAYT4nNED2JZH35WV081KDXw1vvd
-	MDa8DUbZGgTzftUUhcFXeVnRxFImGyuEf2QZ0KFyxZGrn3IdKuFn3hRiQvZ+kr9M
-	sUY0NPCckAC1gHwbFyAlxUHh1tsVC3S6M01j/6NoLzdgp0ZUH+mYZuvOxVlWEjZU
-	MkdH6BOJMeS3/rdHGa9BmRKsO4Ob8x8ehs3LFtY4ghaSwJucila1IdIQ914d0LhU
-	pSx74//U/krIrGWOdtMMN/lzrhNHXRvZ2YGieEk29nlN6ZxgD3gOy3eLvw2sM9A=
-	=
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y8vqh8n6u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 18:23:59 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CE2174002D;
-	Tue, 21 May 2024 18:23:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DD1602258A8;
-	Tue, 21 May 2024 18:23:31 +0200 (CEST)
-Received: from localhost (10.48.86.146) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
- 2024 18:23:31 +0200
-From: Gwenael Treuveur <gwenael.treuveur@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Arnaud Pouliquen
-	<arnaud.pouliquen@foss.st.com>,
-        Gwenael Treuveur
-	<gwenael.treuveur@foss.st.com>
-Subject: [PATCH] remoteproc: stm32_rproc: Fix mailbox interrupts queuing
-Date: Tue, 21 May 2024 18:23:16 +0200
-Message-ID: <20240521162316.156259-1-gwenael.treuveur@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P1vr8UKl"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f67f4bebadso557076b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 May 2024 09:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716310056; x=1716914856; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZAIDSZz5noc6if4QKqooN9MLNYkeL9UbakI+8iRBos=;
+        b=P1vr8UKl70aTwginlilJZb+vlUxgG6NpmM1BZ8cHGDE1j3UirMTlGYF1UMF4bqTyrG
+         x02MCGUxqFpjwERKKh/qAQPKtzxN679ahg29hNLRkAH5SboMnYsBULDhGhdLd7ysCI2l
+         blmkyU8J49BSz6m991r0ULZnYpPo6zqkR0ne0X9Mac90Dj9yczmO1cyAO4SdVvH0mDI0
+         5O8rFf5CyLnOtdT6oRbx5TAVrCmThYkOLBY39sH4c7fQbBdwRfDtscl9V5hCclbR/DuD
+         hdlJ0HLGeZ8Ta93Hn8cLNVrBkXOEK/L2O7K/oeVhaWqVhSo16ZtRBr8wNv3nokLElWfk
+         1p9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716310056; x=1716914856;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PZAIDSZz5noc6if4QKqooN9MLNYkeL9UbakI+8iRBos=;
+        b=b2YfeMRduH4KbKe/Fap+IJcqgtmBpBJNxz7+V6hMYmFAqY7knM9SlRIGuvmZNwX8/W
+         4N2pS/20cMYDJqc0MCcnPdRctTli4ZvxgA7Qzd6k1hAQYd2A/Z89MUUAgPjCD66/GWWW
+         /2CuUtXBH0MQSSm9bor5eCva5Qhan+MKG93gnJWFCL764y9NROs2jJTnsV7eDOHpgW2A
+         IYtweESRg2BmZOvIKhuVlLsxMYn7oXIsq5GfSh218ULsdXHHBtQDg1lcgppP2M1Tyl12
+         enjRRBJld5KPJRmaR/sGK4av53lVkgIkpn3SgjJIHVsmv570WRVvVUMeUwwaj/hi+7BY
+         Ldag==
+X-Forwarded-Encrypted: i=1; AJvYcCUmn7qVSizRjZHg6B9Dq/V70a6aUdUzuuFpuJGhkeMSqitp10H39aOhL6IlUTZB6mx4deOVvEdtzt3Wsp4berhBUiGzzZsfJC8mtSBaL8DY9A==
+X-Gm-Message-State: AOJu0YwK5FAD8o13E6Tg2q9hdZxF0FcOE7sLeW+tE5VmarCz/M+bP60k
+	0+qiPHlaTlxF7eAdW5V8BqXPmRHJ6uWeyAKjsIdI8gl+xndcl/68C9gXq8E6NSI=
+X-Google-Smtp-Source: AGHT+IEM61ROSOw0CzG0X8FSdmCEEg6WGFlarYhclikyQ2fR7QmVIqgP4xaOcvcYDgnr0vf49H+LBA==
+X-Received: by 2002:a05:6a00:2284:b0:6ee:1d68:d33 with SMTP id d2e1a72fcca58-6f4e02ca2abmr35478343b3a.15.1716310056526;
+        Tue, 21 May 2024 09:47:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:df1a:22de:40b2:f110])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6584e7897bdsm9707304a12.21.2024.05.21.09.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 09:47:36 -0700 (PDT)
+Date: Tue, 21 May 2024 10:47:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: andersson@kernel.org, matthias.bgg@gmail.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH] remoteproc: mediatek: Zero out only remaining bytes of
+ IPI buffer
+Message-ID: <ZkzQJepyjPz4Su+k@p14s>
+References: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_10,2024-05-21_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
 
-Manage interrupt coming from coprocessor also when state is
-ATTACHED.
+On Mon, May 20, 2024 at 01:27:24PM +0200, AngeloGioacchino Del Regno wrote:
+> In scp_ipi_handler(), instead of zeroing out the entire shared
+> buffer, which may be as large as 600 bytes, overwrite it with the
+> received data, then zero out only the remaining bytes.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e5214d43181e..dc70cf7db44d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -117,8 +117,8 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>  		return;
+>  	}
+>  
+> -	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
+>  	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
+> +	memset(&scp->share_buf[len], 0, scp_sizes->ipi_share_buffer_size - len);
 
-Fixes: 35bdafda40cc ("remoteproc: stm32_rproc: Add mutex protection for workqueue")
-Signed-off-by: Gwenael Treuveur <gwenael.treuveur@foss.st.com>
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/stm32_rproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will apply this patch when rc1 comes out next week.
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 88623df7d0c3..8c7f7950b80e 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -294,7 +294,7 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
- 
- 	mutex_lock(&rproc->lock);
- 
--	if (rproc->state != RPROC_RUNNING)
-+	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
- 		goto unlock_mutex;
- 
- 	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+Thanks,
+Mathieu
 
-base-commit: 4d5ba6ead1dc9fa298d727e92db40cd98564d1ac
--- 
-2.25.1
-
+>  	handler(scp->share_buf, len, ipi_desc[id].priv);
+>  	scp_ipi_unlock(scp, id);
+>  
+> -- 
+> 2.45.1
+> 
