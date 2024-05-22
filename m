@@ -1,132 +1,130 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1759257C8E;
-	Wed, 22 May 2024 17:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA04D51E;
+	Wed, 22 May 2024 19:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400343; cv=none; b=RI0QJOG6OGIVzzHwH1StBvR2WzEKiV+TjIg/BYZ45elOjS8Aq/7BYHP17t4q9kU6jhDkz7xBBfSRAWD5OyMhgHxkP2h+e53ZTeUXPG0yzULJJxRinjqdh/8ilX9pbactm7CKgxmyg5fI++o2Lq8zTez1/wWkFD70DCj0CadwByE=
+	t=1716405738; cv=none; b=UC2EoYqIh8pLw/ourwgQgXLxVn1l/n0xbYwz0f4N+QJpk+alJOuBOH4lNpIE6v8aDJxw+ok2lnhC1lpdhEKXShYWPS5W1OWpFfMRyeJhsHAEKggB3+NEkpsXMkK64RnB/VgHdkOq09/VBAUHhOhI/SNbYlfQH/Jp3g7lTN/tX5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400343; c=relaxed/simple;
-	bh=GqUR8YikJ6aus54l8QP7m+6LW+eBsJvJWssh9eElXjA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NemlFeY12PFSDdfxYI1AFpH9myTCLnGhBkJZd2mNcfk7SeIiaQSlujE9lnrFl2UY31yxMAuwLrRl31yZ9W8PhIqdPUG+TksaisvcRcLbV6Ih1kXw5VZmG2b74fkQqb58SOCif2N6cNPUR01NkZl2aZjX1KqitzNZz0Nj+Ef2pZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q1jefk0y; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1716405738; c=relaxed/simple;
+	bh=0+7xrxHcIqXbOHoXrH88X8Y9k/W+g9wVdubBgA6njtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=anp9vaEcf6CkQ6UF7QVpO2Jq8gg1q10m7y0aTw8hlzvKCSiNfLk2nqyDSsjZE1sClkhnOXJc22zAnIF2Ia2qBOmbgkcHc51YLfy1/RdHdGOAZhjj+uu0lqR287BDY+6SZBmLRPkTjyyQO6GOldX6BerMHgLcu9z6TIHlTtE0tU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GvZ1JmSf; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q1jefk0y"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M8Go04025175;
-	Wed, 22 May 2024 17:52:00 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GvZ1JmSf"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MAGZHn010057;
+	Wed, 22 May 2024 19:22:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=by0d6FIgykBOIQ2rkYvOY
-	1RYbDxocjPFrC4pjQMP+Sk=; b=Q1jefk0y1G31BaP6KSmzXhs+f6jbYI1BT3cM4
-	aWIUZoXSnyO1qRYfpHgFSgjckaKKm6/2SCJyD2ZimZB1EfZsRk7tNbS/P+u6tjiH
-	oiM5P8dgdX6zTTZHl+YAk0XyCZbxKWvzyzEO9vfRQERap8U1iamPfrqtAHdefsfL
-	pBgncK1pSaqbAyq62W8mmToT+MGKjlzhENh2VH1xr2IKoRPcG4PVaX5TNvJa0/TO
-	isq/GszcDGgNxqoJNI56pW0NNjuguMj07QueIluhvoGUWV27UhH5sJDsWy4tD51h
-	QdenswZapdu7SJzKm4J4TQ9tIN6hicCIf3nfX+MN7ySKshJAg==
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=7Y/RN1PFOa+6BTPyCnx/ocDE9nnxvEeXbmZ9MEkrzO4=; b=Gv
+	Z1JmSfS1vvNVPQTnLGqdl+x9gxWcNFS4ntVe5Eq94REbmTW454DnozK9aOC3zrgC
+	88C413A/v/akbbc2Wo9pS+4jteqrVNTEfZbtmOMRLty7NPxRMI2K0M2yYrbYLRGE
+	qobUyNBFTHj+I9b+S/LrkWX9vxZX+H91rsJrB3/DjkANzM9iqgJeAD/cvtndKmU2
+	9DLHOlmOz7OPuzgzM0dfRv7wTiO/EmaI3865ZeOwliasLDLmzqg/j9bWe9MfmYua
+	2+HU8WMIhgKXBuGqmxn1rDhyYVSj5JvWbEM6X/zBOqYkVv41s+jmp3MbVmecBi8E
+	s49B9m5b37OUOxrWufzg==
 Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4pa5u1-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4ghuht-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 17:52:00 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MHpxHl003730
+	Wed, 22 May 2024 19:22:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MJLx7C018637
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 17:51:59 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 10:51:58 -0700
-Date: Wed, 22 May 2024 10:51:57 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: sm8650: Add hwlock to remoteproc
-Message-ID: <Zk4wvTjld4QVBMDY@hu-bjorande-lv.qualcomm.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-7-47a90a859238@quicinc.com>
- <c2905eaf-7194-4f2b-98c8-52b1907e398a@kernel.org>
+	Wed, 22 May 2024 19:21:59 GMT
+Received: from [10.110.17.44] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 22 May
+ 2024 12:21:58 -0700
+Message-ID: <a553622c-7576-4662-abac-68abe7ea7918@quicinc.com>
+Date: Wed, 22 May 2024 12:21:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c2905eaf-7194-4f2b-98c8-52b1907e398a@kernel.org>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/12] remoteproc: qcom_wcnss: make use of QCOM_FW_HELPER
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Loic
+ Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <wcn36xx@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>
+References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
+ <20240521-qcom-firmware-name-v1-9-99a6d32b1e5e@linaro.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240521-qcom-firmware-name-v1-9-99a6d32b1e5e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qHvMGm8dNuCWFSgpif71DXrFX8vzWdMh
-X-Proofpoint-GUID: qHvMGm8dNuCWFSgpif71DXrFX8vzWdMh
+X-Proofpoint-GUID: 6Cd_Uw9DlpwQ2Q_X57Sv7uAZhpOsr7NT
+X-Proofpoint-ORIG-GUID: 6Cd_Uw9DlpwQ2Q_X57Sv7uAZhpOsr7NT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-22_10,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 spamscore=0
- impostorscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
- mlxlogscore=794 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405220123
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405220134
 
-On Wed, May 22, 2024 at 09:27:29AM +0200, Krzysztof Kozlowski wrote:
-> On 17/05/2024 00:58, Chris Lew wrote:
-> > Add the hwlock property to remoteproc. This enables the remoteproc to
-> > try and bust the smem hwspinlock if the remoteproc has crashed while
-> > holding the hwspinlock.
-> > 
-> > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > index 62a6e77730bc..a65a1679f003 100644
-> > --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > @@ -2878,6 +2878,7 @@ remoteproc_mpss: remoteproc@4080000 {
-> >  
-> >  			qcom,smem-states = <&smp2p_modem_out 0>;
-> >  			qcom,smem-state-names = "stop";
-> > +			hwlocks = <&tcsr_mutex 3>;
+On 5/21/2024 2:45 AM, Dmitry Baryshkov wrote:
+> Make the driver use qcom_fw_helper to autodetect the path to the
+> calibration data file.
 > 
-> lock #3 is used by smem, so this proves you are taking someone else's
-> lock.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/remoteproc/qcom_wcnss.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index 421a3943a90d..45fc578ae30b 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/remoteproc.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+> +#include <linux/soc/qcom/fw_helper.h>
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+>  
+> @@ -555,8 +556,13 @@ static int wcnss_probe(struct platform_device *pdev)
+>  	if (ret < 0 && ret != -EINVAL)
+>  		return ret;
+>  
+> +	fw_name = qcom_get_board_fw(fw_name);
+> +	if (!fw_name)
+> +		return -ENOMEM;
+> +
+>  	rproc = devm_rproc_alloc(&pdev->dev, pdev->name, &wcnss_ops,
+>  				 fw_name, sizeof(*wcnss));
+> +	kfree(fw_name);
+>  	if (!rproc) {
+>  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+>  		return -ENOMEM;
+> 
 
-The lock is a shared resource, it's not "some else's lock".
-
-Regards,
-Bjorn
-
-> I commented on this in the binding, but let's be specific:
-> 
-> NAK, please carry:
-> 
-> Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+can you cleanly bisect to this patch? seems it depends upon patch 10.
+should 09 & 10 be swapped, or perhaps squashed?
