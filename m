@@ -1,171 +1,256 @@
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689A413D61A;
-	Wed, 22 May 2024 12:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C483613C9D8
+	for <linux-remoteproc@vger.kernel.org>; Wed, 22 May 2024 12:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716381692; cv=none; b=p5U6QwBFYCGr34V9gEvi8uYATx186reKPEN5FzsiJC8erexxamSFTVn80Qc6UqwScpD1H+gdZ4qmu78VZAYDy/emauLQ68Cbne128jyzq8r2Y4IxksItGknke5Lzptszfg6TOD/awBNDY/JZ4KXYFNXMruKnafC6q4U60zs6vKI=
+	t=1716381750; cv=none; b=DxmNqI7EjSnkkLLe/VPzBrgJN9AFap3vdQHF/Ai4IiUA/CRwb9K3cITWBDoowGBxEY2sQwTDjaZWdNb1GhMBuf0MvLBesGnoBCuBdS+VqXxKB5xjzyrQ+eHbC9ZaunEbdDcl89qElUA33tdc/B2CBCG1y/FLNzwAGBqI5pMg1ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716381692; c=relaxed/simple;
-	bh=E7CA4yr2gUx/CdKF+BADYtjytvmGLX2W3OhjfrhmVcs=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=HlARCtxCJbl7IYcW0yGh5LviCrp66lG11sQH7j52ABByF89jD6ZD0J7VzzOfpI47gSTdV/Ih5SPYZIyZ6NcP0Wx34ZK5yuaj7ZujCvdkw4TypnsOFPzSiPt6yO/JXUVf3yAEt3zY0a9cUqkt5gJLx8Vbj4r4PtrlRS0vWaVfIlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MmSrT06W; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1716381750; c=relaxed/simple;
+	bh=7wiXa/iWDYflvFRo8c5DidPTf7zKXEj/6WnLlAc9P70=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mf/zlPHNj3fTX0dZhFndorYO+jW/cfI4aTJ/hCQPndaANUaETuM3km6Q9svQvinB+VnsDcav7qKwwADs5LY0xcU8vLMsibafKdcCASVVxcFunzd4ynRZfIs2Ufa7SG9GQdNiFG4TphytLWv71miPcb61HyQD2izxTspGiO/Lwn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E3BTuPI0; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MmSrT06W"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716381686; h=Message-ID:Subject:Date:From:To;
-	bh=kaW0YgGw3dq/rQoPZq4yGMzGnulifIeN6HXu9g9dSzU=;
-	b=MmSrT06WWiWS6KU6UvSKkZEKGSgvsk9HtfPvjXPpHrwZw/mhi8JihX/qPikDfpznCsx/j4+tbRgLVjJNGw5ufCO/tLTTy+PbjfCIC9s+cq2CQ93Y+5UDXBibCE6UuU0C0cfi3JrkGuotnNd+YOP6g9G2tQfItiX5Ov4gc7B3Yns=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0W7.bw5p_1716381683;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W7.bw5p_1716381683)
-          by smtp.aliyun-inc.com;
-          Wed, 22 May 2024 20:41:24 +0800
-Message-ID: <1716381321.6426032-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH vhost v9 0/6] refactor the params of find_vqs()
-Date: Wed, 22 May 2024 20:35:21 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux.dev,
- Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Hans de Goede <hdegoede@redhat.com>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Vadim Pasternak <vadimp@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Cornelia Huck <cohuck@redhat.com>,
- Halil Pasic <pasic@linux.ibm.com>,
- Eric Farman <farman@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- linux-um@lists.infradead.org,
- platform-driver-x86@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- linux-s390@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
- <20240522082732-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240522082732-mutt-send-email-mst@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3BTuPI0"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so10789525a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 May 2024 05:42:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716381747; x=1716986547; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3cwBpBrNlg7bYd5+wIqoNBCJCZKw3R87piqG048jZ3k=;
+        b=E3BTuPI0Je9gmniVxelXrM3oXdmA6DnC0rnFXmmFiHG8H65lAgx2qAAhccyZi2Lx8E
+         KpUbyde3/jsgHIEucuodqgn5FiR8G+z93StdsOCWAc1M0nqD4ix+swc34eFFiA6LHbX0
+         BHBSH1MCXp3N89rHjfaMrRHuqLNce0QZcxpV4L+Yj2wgtF2CJv3lUDzgHdkULwemXCRr
+         hThxotb8EDNhkyYKqxg340OJR/FPo/YVSgRyzrRBrDvJbAz1pQQQintrRIuM4Ijqwluv
+         AtnxSKeD58Gp4glZJLEhu+oVXMsvYiVICzGrTLRAoWy/DVrzuwRqJwh3Vk5URC8oiYsM
+         9l/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716381747; x=1716986547;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3cwBpBrNlg7bYd5+wIqoNBCJCZKw3R87piqG048jZ3k=;
+        b=PNhNZxAoVFQ5sQ6/6sJ3yzw/Hlyc5N8GmzCNrJE5vnW9kwx9DjLp8Wm2Spw5Jv4/uV
+         wMKI7u0GEP7oJl3kwJQvaI5zjQNM3MtgVhvtvBJleHVTSGahaPGaRoK9e4zlknFaRA8j
+         47J46VnqZ2JN/cGKX8xlmLB+TBRnwlJ0wDlqDkmp/yBhyZxJ6yEYPyt4T+VS9ZhJ5Ao/
+         wDRoFxfe4/z7inH0cZ9IlTO/EHzC29RBQ3vYHcF30/xZebRgmmDIE6IFKPa/mpDkdl01
+         SGQH/Rc8LHOP8sYR9ol5Ffz21G3lIrNCm86xo0pHpnzKufB8Dp82So7IOXux9GPuyHxI
+         SghA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgbvZmsc8dFTVqAjqTs/Y4FI0YrL1FvP/laXhJLEd63pYs98kNiFzD0qraGkZPF+SyufXRrMwn4F5CBvpFS8XLXE6KyRO/xc82AHtQQ03eTA==
+X-Gm-Message-State: AOJu0YxUhqH+6tNWQLHsP+HM50WfOoSnHxcZML/nI/yWLy9WWrXL0hxe
+	SjWDZoePZZbtqkroCxCGqTjOaFgRsSFEr9YGt1A6Qokckm7SRZs8g0E1mstfvnk=
+X-Google-Smtp-Source: AGHT+IE5Tnokc7QdDplSczZ+cKv9LxnraYIxNIAltSdB9dqDye8mcBSttNmQnCIsVVqHNgSPb3W/yw==
+X-Received: by 2002:a50:8d4d:0:b0:56e:232b:95cd with SMTP id 4fb4d7f45d1cf-57832c8a6f8mr987724a12.41.1716381746888;
+        Wed, 22 May 2024 05:42:26 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c323866sm18286039a12.87.2024.05.22.05.42.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 05:42:26 -0700 (PDT)
+Message-ID: <e89c3270-e51f-4d5b-87db-09ff8f0961e6@linaro.org>
+Date: Wed, 22 May 2024 14:42:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Document
+ the SA8775p ADSP, CDSP and GPDSP
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tengfei Fan <quic_tengfan@quicinc.com>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Alex Elder <elder@kernel.org>
+References: <20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org>
+ <20240522-topic-lemans-iot-remoteproc-v1-1-af9fab7b27f0@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240522-topic-lemans-iot-remoteproc-v1-1-af9fab7b27f0@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 22 May 2024 08:28:43 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> On Wed, Apr 24, 2024 at 05:15:27PM +0800, Xuan Zhuo wrote:
-> > This pathset is splited from the
-> >
-> >      http://lore.kernel.org/all/20240229072044.77388-1-xuanzhuo@linux.alibaba.com
-> >
-> > That may needs some cycles to discuss. But that notifies too many people.
-> >
-> > But just the four commits need to notify so many people.
-> > And four commits are independent. So I split that patch set,
-> > let us review these first.
-> >
-> > The patch set try to  refactor the params of find_vqs().
-> > Then we can just change the structure, when introducing new
-> > features.
-> >
-> > Thanks.
->
-> It's nice but I'd like to see something that uses this before I bother
-> merging. IIUC premapped is dropped - are we going to use this in practice?
+On 22/05/2024 14:08, Bartosz Golaszewski wrote:
+> From: Tengfei Fan <quic_tengfan@quicinc.com>
+> 
+> Document the compatibles for the components used to boot the ADSP, CDSP0,
+> CDSP1, GPDSP0 and GPDSP1 on the SA8775p SoC.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 76 +++++++++++++++++++++-
+>   1 file changed, 75 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> index 73fda7565cd1..9d3a862c39e1 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> @@ -16,6 +16,11 @@ description:
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,sa8775p-adsp-pas
+> +      - qcom,sa8775p-cdsp0-pas
+> +      - qcom,sa8775p-cdsp1-pas
+> +      - qcom,sa8775p-gpdsp0-pas
+> +      - qcom,sa8775p-gpdsp1-pas
+>         - qcom,sm8550-adsp-pas
+>         - qcom,sm8550-cdsp-pas
+>         - qcom,sm8550-mpss-pas
+> @@ -44,12 +49,13 @@ properties:
+>   
+>     firmware-name:
+>       $ref: /schemas/types.yaml#/definitions/string-array
+> +    minItems: 1
 
+This will allow a single firmware name for all compatible,
+which is wrong
 
-1. You know this modification makes sense.
-2. This modification is difficult. Unlike modifying virtio ring or virtio-net,
-   this patch set requires modifying many modules and being reviewed by
-   many people.
-3. If you do not merge it now, then this patch set will most likely be
-   abandoned. And I worked a lot on that.
-4. premapped has not been abandoned, I have been advancing this work. What was
-   abandoned was just virtio-net big mode's support for premapped.
-5. My plan is to complete virtio-net support for af-xdp in 6.10. This must
-   depend on premapped.
+>       items:
+>         - description: Firmware name of the Hexagon core
+>         - description: Firmware name of the Hexagon Devicetree
+>   
+>     memory-region:
+> -    minItems: 2
+> +    minItems: 1
 
-So, I hope you merge this patch set.
+Same here
 
-Thanks.
+>       items:
+>         - description: Memory region for main Firmware authentication
+>         - description: Memory region for Devicetree Firmware authentication
+> @@ -81,6 +87,21 @@ allOf:
+>             maxItems: 5
+>           memory-region:
+>             maxItems: 2
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sa8775p-adsp-pas
+> +            - qcom,sa8775p-cdsp0-pas
+> +            - qcom,sa8775p-cdsp1-pas
+> +            - qcom,sa8775p-gpdsp0-pas
+> +            - qcom,sa8775p-gpdsp1-pas
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          maxItems: 5
+> +        interrupt-names:
+> +          maxItems: 5
+>     - if:
+>         properties:
+>           compatible:
+> @@ -128,6 +149,7 @@ allOf:
+>         properties:
+>           compatible:
+>             enum:
+> +            - qcom,sa8775p-adsp-pas
+>               - qcom,sm8550-adsp-pas
+>               - qcom,sm8650-adsp-pas
+>               - qcom,x1e80100-adsp-pas
+> @@ -177,6 +199,58 @@ allOf:
+>               - const: cx
+>               - const: mxc
+>               - const: nsp
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sa8775p-cdsp-pas
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: CX power domain
+> +            - description: MXC power domain
+> +            - description: NSP0 power domain
+> +        power-domain-names:
+> +          items:
+> +            - const: cx
+> +            - const: mxc
+> +            - const: nsp0
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sa8775p-cdsp1-pas
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: CX power domain
+> +            - description: MXC power domain
+> +            - description: NSP1 power domain
+> +        power-domain-names:
+> +          items:
+> +            - const: cx
+> +            - const: mxc
+> +            - const: nsp1
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sa8775p-gpdsp0-pas
+> +            - qcom,sa8775p-gpdsp1-pas
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: CX power domain
+> +            - description: MXC power domain
+> +        power-domain-names:
+> +          items:
+> +            - const: cx
+> +            - const: mxc
+>   
+>   unevaluatedProperties: false
+>   
+> 
 
-
->
-> > v8:
-> >   1. rebase the vhost branch
-> >
-> > v7:
-> >   1. fix two bugs. @Jason
-> >
-> > v6:
-> >   1. virtio_balloon: a single variable for both purposes.
-> >   2. if names[i] is null, return error
-> >
-> > v5:
-> >   1. virtio_balloon: follow David Hildenbrand's suggest
-> >     http://lore.kernel.org/all/3620be9c-e288-4ff2-a7be-1fcf806e6e6e@redhat.com
-> >   2. fix bug of the reference of "cfg_idx"
-> >     http://lore.kernel.org/all/202403222227.Sdp23Lcb-lkp@intel.com
-> >
-> > v4:
-> >   1. remove support for names array entries being null
-> >   2. remove cfg_idx from virtio_vq_config
-> >
-> > v3:
-> >   1. fix the bug: "assignment of read-only location '*cfg.names'"
-> >
-> > v2:
-> >   1. add kerneldoc for "struct vq_transport_config" @ilpo.jarvinen
-> >
-> > v1:
-> >   1. fix some comments from ilpo.jarvinen@linux.intel.com
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> > Xuan Zhuo (6):
-> >   virtio_balloon: remove the dependence where names[] is null
-> >   virtio: remove support for names array entries being null.
-> >   virtio: find_vqs: pass struct instead of multi parameters
-> >   virtio: vring_create_virtqueue: pass struct instead of multi
-> >     parameters
-> >   virtio: vring_new_virtqueue(): pass struct instead of multi parameters
-> >   virtio_ring: simplify the parameters of the funcs related to
-> >     vring_create/new_virtqueue()
-> >
-> >  arch/um/drivers/virtio_uml.c             |  36 +++--
-> >  drivers/platform/mellanox/mlxbf-tmfifo.c |  23 +--
-> >  drivers/remoteproc/remoteproc_virtio.c   |  37 +++--
-> >  drivers/s390/virtio/virtio_ccw.c         |  38 ++---
-> >  drivers/virtio/virtio_balloon.c          |  48 +++---
-> >  drivers/virtio/virtio_mmio.c             |  36 +++--
-> >  drivers/virtio/virtio_pci_common.c       |  69 ++++-----
-> >  drivers/virtio/virtio_pci_common.h       |   9 +-
-> >  drivers/virtio/virtio_pci_legacy.c       |  16 +-
-> >  drivers/virtio/virtio_pci_modern.c       |  37 +++--
-> >  drivers/virtio/virtio_ring.c             | 177 ++++++++---------------
-> >  drivers/virtio/virtio_vdpa.c             |  51 +++----
-> >  include/linux/virtio_config.h            |  76 +++++++---
-> >  include/linux/virtio_ring.h              |  93 +++++++-----
-> >  tools/virtio/virtio_test.c               |   4 +-
-> >  tools/virtio/vringh_test.c               |  28 ++--
-> >  16 files changed, 384 insertions(+), 394 deletions(-)
-> >
-> > --
-> > 2.32.0.3.g01195cf9f
->
