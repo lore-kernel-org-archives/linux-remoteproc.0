@@ -1,61 +1,61 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FFD13AA20
-	for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 08:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADE813AA59
+	for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799458; cv=none; b=GfiWoLZzmqxE+EjLs7E5lUhCUUChelM9obew8rR4ZgMSO+XVB9FjWoBLbnJt7JZdiyVQKq3N3i7MqquFosLTtfkCWGTIXzvgJqGivp1b5VtArjcrN0RZ8Vd6IpgrRi1SsLTSFqJjrxaXgGqxlbTWG15vNKmCEqiY2ZkcC5FC8H8=
+	t=1716799460; cv=none; b=di7htwo7+hl4JF4U80feM701MSStX08FszZa2io7OCri2CmbEG1xEVldUM6+FB+yHuI2me4we6tIZ6zisirXMuFYLM/tlQSyp5AGId3KoQ0mGsCbh+pKaxZMu63cbivxTI4JV0JAKzBVxIS0bEKucDA0LNNhmvLvEs1pFKKEf0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799458; c=relaxed/simple;
-	bh=WC5t9WJX9lXcwGywBsZysQERtwOQQGRD77DNGgPmsMU=;
+	s=arc-20240116; t=1716799460; c=relaxed/simple;
+	bh=P55jtoyNrhUYwJD0bT7FCymn+mdEeLeoZfSL1k2d32g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Etx+RjYsORwDG04U7jfJW3bVk/4nPo4zrZP7EvKKtOyhmjqd96/0zdZiXE+pvyKDdrvaEVpI1YMyT1MMZtBQ1KkOo8j0c2SZBTOkICFeIprvA8RnGPeMEzzs8JzkC9vpnhdlscX+jW1YThEk80jwzOYJ273i24YMlIhglPnCKao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rWGpU9n/; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:To:Cc; b=J2zhKUaARvpoFlDrijiDeAGaM3vZ+UM+fW9lrMQY6XFn9WU0bf3e7L617ZeLHTfzKCITChVmv0s4G8BP7+ZjhFStBcBpDa/4j1ECSqtjHOLTueRy6SEShlNASeu/+bpYivGhjCG8sD4B1EoE5RLucz8fFGlBWSvHBIYqTrVv76Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mKRBNVCx; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rWGpU9n/"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e95a7622cfso34172101fa.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 01:44:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mKRBNVCx"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5295e488248so3256534e87.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 01:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799455; x=1717404255; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799456; x=1717404256; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Whg0Dc1FYMXBytTq0QfKHAfxqeAkThzFIKkCrZ14fSk=;
-        b=rWGpU9n/Dct9b+w6SmnETXuD4DPPWt9f+DUPsaPNn1d1MX2/iuZnTyRIidjyVRzxaA
-         fc054S8b3ltzcyKZV3bxyn0wxpMqOFMJspqsXp3UnVG8iI+GXajlsoDRaVld8DQh92Gl
-         pCqSUlGjA/DBqxAr+JePE7HlacBv/pFpw5oc8jpFvuOJDtCDWx1g61p+/Az0JjVFIR3E
-         hNbCBdaSwYywy8cWH8US+NInPH3JSijpdmy6EPjr4eWTCwTZgA4or/HFAVZvtzaP2nDr
-         JpvjBu2iIhj/hSdqdNm8xze+pMa+6C0oJLzULtOD6mhf3TEKcfVTj+mWEWpncdLQngjX
-         tOLw==
+        bh=dBbl/FgcZn6F0X7Ky+upS0///p1fkbnapcfH14eSyO0=;
+        b=mKRBNVCxHl/Rd6NLytEkkSLIiCnmMM/TgxWcLXI6lnLzPcIEWTHCgoYl5aaBzyHjDT
+         VuJcrqzZrF3pwEjsbWTtS0lgo4KG7lRhzZdwST3xK6+bTSxL2hfvb2+j+d2SEb8x4hiY
+         T0T55GJK86Krmp3Dgh8WiSeeoAv1EFqJzmyxJDFxixJ4Rs5M81YdZIskOja9St+qymnf
+         RzoWFs4FHkUwlDGFkgy1wC0GyAh7URGS7oQ7xtO8UZ3qSbc+c1ZjePDyTTNbhsUNoLHY
+         VdXJtbde51WSzKwYABI9IVmRxrjULRPtMaSfrmgN7kPOj4BezWlnzFoFWFxwH/4xK1H8
+         Eiuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716799455; x=1717404255;
+        d=1e100.net; s=20230601; t=1716799456; x=1717404256;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Whg0Dc1FYMXBytTq0QfKHAfxqeAkThzFIKkCrZ14fSk=;
-        b=EtlN9ezW9srVB/BlqYndmIi7b/f0L8M2m/rp5a0DyG9+yuQGaONSYbifnNppT13elo
-         S0CwWwGmSNBrK+Ze+2DqeRgIhFP9mWEzPvkl0VpoDGVFRgika62AVbK1oI9vgVRpFGpZ
-         lU14G54zKASUz+nbsJ0yaxKygRV8IY5ImK3y+EI0Ppj2v77lUDWh6db9gUkFYPyekXDf
-         Ay77J8RrFGl51u3UBm/RQAixAy3aHmbsydIL5eXBrarKJnfkqoJZEeWDk97i7ELPmKVv
-         P4vuHmwr80n96a1limEvCKIHJEVkDHFoYLASaVHCwKF6YpQPXoKc9XC3V1MePOPedydZ
-         OARQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsCds7t0JgDVe0jpC2GZGoIDz2M1EmF27P9lYR9XAsvoO1Wowg7Lw+0fode4ziYYj/L6yHLCoeFt6PyoUtVxua82ajDQUjgYJzx0FuWD/qcA==
-X-Gm-Message-State: AOJu0YzxlITccBMwNl8cZm94joPcrrwWQGgDXpBwYrn4HZFNIPNB3djc
-	jRWb6Ye3/OGgWDnF9LVnqD0Y9GNEb9j9K2yGb8oAa1JyiOc54k/S37QXRL9gdC0=
-X-Google-Smtp-Source: AGHT+IEWt0u/t8Qaa5BYXiEFGNwc5PwERsRrwFb9KhoDMobp9TEkf9v4PF3TQDi0k2waH4ei6Goz6A==
-X-Received: by 2002:a2e:90d5:0:b0:2e7:2d1f:edc2 with SMTP id 38308e7fff4ca-2e95b242205mr50404141fa.38.1716799454709;
-        Mon, 27 May 2024 01:44:14 -0700 (PDT)
+        bh=dBbl/FgcZn6F0X7Ky+upS0///p1fkbnapcfH14eSyO0=;
+        b=fPc1asXp85XRfXuERl6UZEonmfZ2NTNLTOrWvdpChbpKL+IFlsRvBARXP1ZixCfa08
+         kD2m7h+3lOvMM5C4H7fBn9X5tEnRdD8Srf2f4jb34oxZdXbCvBxtlEELML+QUPzuNaJc
+         dmefb4Qm+BzMAuQq77zBLDyUcWNip5D+6C/zz0kJUgZwxil4T01h2CPMfiYYqMI4OE4c
+         2r+XCkKc6BdT6IE/yj9g/STfFEqjVqWK9sFoGyq8qbA+oFmPCGnaBhvRmGNAUIBqdJk1
+         PnmUaMyzhUBZ7WPCTsArHZByDlQnCsQJ8Y7PsQG0BboUDsWNxNCNUiPOcMOAmLhvlLy3
+         hdUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1tt3byns/QaSs9vaAKXdq8tZdSemtR96jIbUTooeh/eOfcEtxE5lmH3rFryTP5o5Dn9ZsqMlAnsHqkoUHOBwejvVZrRkjSGOvY/NvudUl1w==
+X-Gm-Message-State: AOJu0YwHs04aVdhQM6j+PKtfZrsVa51wr4LWcV8Htql1fLHfYhKwtBtk
+	7XUKZGHuDkr9D2AyOTMoVTDrWUKsRor1Q3wBxylqg3j2HyJ/fiiSO9eqD1ZqWGc=
+X-Google-Smtp-Source: AGHT+IHR91qKrZAey7UMKMblToGChyC/IA/h9swBp60xa0r3LYNNQUQ65AEgwkkjUSTH3yhUpBxAJw==
+X-Received: by 2002:a19:7502:0:b0:524:68f8:9566 with SMTP id 2adb3069b0e04-52964bb2c9dmr4933943e87.30.1716799456042;
+        Mon, 27 May 2024 01:44:16 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:44:13 -0700 (PDT)
+        Mon, 27 May 2024 01:44:15 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 May 2024 10:43:50 +0200
-Subject: [PATCH v2 3/5] remoteproc: qcom_q6v5_pas: Add support for SA8775p
- ADSP, CDSP and GPDSP
+Date: Mon, 27 May 2024 10:43:51 +0200
+Subject: [PATCH v2 4/5] arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP
+ nodes
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-3-8d24e3409daf@linaro.org>
+Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-4-8d24e3409daf@linaro.org>
 References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
 In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -81,160 +81,400 @@ Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
  Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
  Alex Elder <elder@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4035;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10650;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=8QckCTJd4Kk+SVsJgULozGfhpAdR9WlTYPz4JkRMW+0=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfZEPjkG7EDeDr+8Cja21yKzpf1H0zSGheZi
- pYtKf2PX26JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH2QAKCRARpy6gFHHX
- ctdwEACK3txeA+4QXB3RGBWW4+2bCJftoYBQkfd2qqyVmadFu3lp+Zi+1sw6Y7BctzTcpTObEby
- NaquBekLgZVRRg8AFCOwBxUA9OEHvd+V2TByairVxO4BjfIiz0GfmDbmzxKWJJ+Dr4P1RwFE78O
- SO9QqQ2cbFz/28Av8nqau8rUysBkKCuYHaU21nf4LY/5VxYgYF9kCNDg+aPIhI/1sW0Sl64gMEE
- ZgL7tqfbVRFdBixpjsGhMB0GkOAf3XpXbHg0Yv/k3k86yunCl5eSfIDxtmkwPac4NvF+W2Udk9D
- +iNirb8iq+0GhckhaO7AUQkyCjPlQag89wy+CioCd7OFDkVe9ZQeoCbIuk86IxVPy9W6bUKV/YU
- T/uHTRoYchG6fdWw3paMgYQz+ANL1iA0XwrkyP121Eb8JzHHXi8wrzh6ulP2rPDdHocViQmzKmN
- 2pnuskqMFAVengJ5yLttkAgQ3SDOH8YBHVsJTYExXE4mNj+wE1yFd8HHuSg3JW+keEsmCZRliCT
- lZWqAh7EoqEDRQWMrrrukZilIOrJKYFCJdxh5o9ppTTq1k1gOnVxkEEgZcVus8Lw4cYlJJz4TUk
- +UsT95XiwPQ+zQIp9oKXBYJFfUEMfNJBFnY6w283LrYBwLO6tfyrpIBuovyf1fgBlejqyufSf6+
- MqzTX7CdxqDBgCw==
+ bh=AM9WVgcgmAjbCC/W9GHvUGcjVNV77PVD1BSfacCfkHY=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfZOKBk8uF4pv0CVY6D5nxXvshJuNEbijbZE
+ 8jA8qPp362JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH2QAKCRARpy6gFHHX
+ coNQD/425y25tKpbCMHXa+HkWcbksC8F49IrmvN+T7GB5ZOhIbGEyWWqAOZPxhzSC+OKeZL1fx7
+ qZvrZNCHtjYBI/eqSH33eJm0RDtOoqXrr9lsu2pVnYyIs0eZW51tZAJzIdIFUu7AnzhHHzddrR3
+ FraWzM2BO9AwMWHrBwV2ckm2Yz+zUIWaYk0gvX6MRs8zj0m9YHnERqYpRfcVv/SRbCohS+38s3L
+ YAJxuH8ifiPw5yvJvC+BhtmotxbfRUkR01SU120juA6B2ykeHcudSwfUbOoEVu3ck5IECDsEt5y
+ rifQow7JmVPptSW6x9hRoQmH2IVOj3gIdZerCRitGcxiGJLdl1a9IijB3am5hK1FbBO/4VJ7T3U
+ O0znE9+QdEAiCQnVrkVMOErlQa7iOw7S2tiCC3et7EiLk29z5N2nt4zGcoEDPgze0spvOsFX3ZQ
+ x8dUzs1kGkgl3LIn+k8KXAXGntqVbP1zlQa/plabTxPsAgJBRajiznVzXmmgDZ3CVl92gFQEkBp
+ 0b3Wz8ZdT03e2mxP1skaaWKbuegr02azCZ4/iP9TamlDJGiFNUrK2tHfZXh2GJGmKqnJJOxQvk0
+ 944SIo7/HAulAnVx6AV8U8fY1g3OybeBUYLuO0bdCSQd47jPrgn8n0UeXrxSrFYF/TkwiaKoUYU
+ /Y+3Jxhzx1RhiwQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Tengfei Fan <quic_tengfan@quicinc.com>
 
-Add support for PIL loading on ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 on
+Add nodes for remoteprocs: ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 for
 SA8775p SoCs.
 
 Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 92 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 332 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 332 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 54d8005d40a3..16053aa99298 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -820,6 +820,23 @@ static const struct adsp_data adsp_resource_init = {
- 	.ssctl_id = 0x14,
- };
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 31de73594839..5c0b61a5624b 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+ #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+ #include <dt-bindings/mailbox/qcom-ipcc.h>
++#include <dt-bindings/power/qcom,rpmhpd.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
  
-+static const struct adsp_data sa8775p_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.minidump_id = 5,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
-+
- static const struct adsp_data sdm845_adsp_resource_init = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
-@@ -933,6 +950,42 @@ static const struct adsp_data cdsp_resource_init = {
- 	.ssctl_id = 0x17,
- };
+@@ -544,6 +545,121 @@ cpucp_fw_mem: cpucp-fw@db200000 {
+ 		};
+ 	};
  
-+static const struct adsp_data sa8775p_cdsp0_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp0.mdt",
-+	.pas_id = 18,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp0",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
++	smp2p-adsp {
++		compatible = "qcom,smp2p";
++		qcom,smem = <443>, <429>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_SMP2P>;
 +
-+static const struct adsp_data sa8775p_cdsp1_resource = {
-+	.crash_reason_smem = 633,
-+	.firmware_name = "cdsp1.mdt",
-+	.pas_id = 30,
-+	.minidump_id = 20,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp1",
-+		NULL
-+	},
-+	.load_state = "nsp",
-+	.ssr_name = "cdsp1",
-+	.sysmon_name = "cdsp1",
-+	.ssctl_id = 0x20,
-+};
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <2>;
 +
- static const struct adsp_data sdm845_cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
-@@ -1074,6 +1127,40 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.ssctl_id = 0x17,
- };
++		smp2p_adsp_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_adsp_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-cdsp0 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <94>, <432>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_CDSP IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <5>;
++
++		smp2p_cdsp0_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_cdsp0_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-cdsp1 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_NSP1 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <12>;
++
++		smp2p_cdsp1_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_cdsp1_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-gpdsp0 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_GPDSP0 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <17>;
++
++		smp2p_gpdsp0_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_gpdsp0_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-gpdsp1 {
++		compatible = "qcom,smp2p";
++		qcom,smem = <617>, <616>;
++		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
++					     IPCC_MPROC_SIGNAL_SMP2P
++					     IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&ipcc IPCC_CLIENT_GPDSP1 IPCC_MPROC_SIGNAL_SMP2P>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <18>;
++
++		smp2p_gpdsp1_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_gpdsp1_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
+ 	soc: soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -2479,6 +2595,92 @@ cpufreq_hw: cpufreq@18591000 {
+ 			#freq-domain-cells = <1>;
+ 		};
  
-+static const struct adsp_data sa8775p_gpdsp0_resource = {
-+	.crash_reason_smem = 640,
-+	.firmware_name = "gpdsp0.mdt",
-+	.pas_id = 39,
-+	.minidump_id = 21,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "gpdsp0",
-+	.ssr_name = "gpdsp0",
-+	.sysmon_name = "gpdsp0",
-+	.ssctl_id = 0x21,
-+};
++		remoteproc_gpdsp0: remoteproc@20c00000 {
++			compatible = "qcom,sa8775p-gpdsp0-pas";
++			reg = <0x0 0x20c00000 0x0 0x10000>;
 +
-+static const struct adsp_data sa8775p_gpdsp1_resource = {
-+	.crash_reason_smem = 641,
-+	.firmware_name = "gpdsp1.mdt",
-+	.pas_id = 40,
-+	.minidump_id = 22,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "gpdsp1",
-+	.ssr_name = "gpdsp1",
-+	.sysmon_name = "gpdsp1",
-+	.ssctl_id = 0x22,
-+};
++			interrupts-extended = <&intc GIC_SPI 768 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_gpdsp0_in 0 0>,
++					      <&smp2p_gpdsp0_in 2 0>,
++					      <&smp2p_gpdsp0_in 1 0>,
++					      <&smp2p_gpdsp0_in 3 0>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
 +
- static const struct adsp_data mpss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1315,6 +1402,11 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
-+	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
-+	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
-+	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
-+	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
- 	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
- 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>;
++			power-domain-names = "cx", "mxc";
++
++			interconnects = <&gpdsp_anoc MASTER_DSP0 0
++					 &config_noc SLAVE_CLK_CTL 0>;
++
++			memory-region = <&pil_gdsp0_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_gpdsp0_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_GPDSP0
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "gpdsp0";
++				qcom,remote-pid = <17>;
++			};
++		};
++
++		remoteproc_gpdsp1: remoteproc@21c00000 {
++			compatible = "qcom,sa8775p-gpdsp1-pas";
++			reg = <0x0 0x21c00000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_gpdsp1_in 0 0>,
++					      <&smp2p_gpdsp1_in 2 0>,
++					      <&smp2p_gpdsp1_in 1 0>,
++					      <&smp2p_gpdsp1_in 3 0>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>;
++			power-domain-names = "cx", "mxc";
++
++			interconnects = <&gpdsp_anoc MASTER_DSP1 0
++					 &config_noc SLAVE_CLK_CTL 0>;
++
++			memory-region = <&pil_gdsp1_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_gpdsp1_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_GPDSP1
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "gpdsp1";
++				qcom,remote-pid = <18>;
++			};
++		};
++
+ 		ethernet1: ethernet@23000000 {
+ 			compatible = "qcom,sa8775p-ethqos";
+ 			reg = <0x0 0x23000000 0x0 0x10000>,
+@@ -2546,6 +2748,136 @@ ethernet0: ethernet@23040000 {
+ 
+ 			status = "disabled";
+ 		};
++
++		remoteproc_cdsp0: remoteproc@26300000 {
++			compatible = "qcom,sa8775p-cdsp0-pas";
++			reg = <0x0 0x26300000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>,
++					<&rpmhpd RPMHPD_NSP0>;
++			power-domain-names = "cx", "mxc", "nsp0";
++
++			interconnects = <&nspa_noc MASTER_CDSP_PROC 0
++					 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_cdsp0_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_cdsp0_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_CDSP
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "cdsp";
++				qcom,remote-pid = <5>;
++			};
++		};
++
++		remoteproc_cdsp1: remoteproc@2a300000 {
++			compatible = "qcom,sa8775p-cdsp1-pas";
++			reg = <0x0 0x2A300000 0x0 0x10000>;
++
++			interrupts-extended = <&intc GIC_SPI 798 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_CX>,
++					<&rpmhpd RPMHPD_MXC>,
++					<&rpmhpd RPMHPD_NSP1>;
++			power-domain-names = "cx", "mxc", "nsp1";
++
++			interconnects = <&nspb_noc MASTER_CDSP_PROC_B 0
++					 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_cdsp1_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_cdsp1_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_NSP1
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "cdsp1";
++				qcom,remote-pid = <12>;
++			};
++		};
++
++		remoteproc_adsp: remoteproc@30000000 {
++			compatible = "qcom,sa8775p-adsp-pas";
++			reg = <0x0 0x30000000 0x0 0x100>;
++
++			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready", "handover",
++					  "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++
++			power-domains = <&rpmhpd RPMHPD_LCX>,
++					<&rpmhpd RPMHPD_LMX>;
++			power-domain-names = "lcx", "lmx";
++
++			interconnects = <&lpass_ag_noc MASTER_LPASS_PROC 0 &mc_virt SLAVE_EBI1 0>;
++
++			memory-region = <&pil_adsp_mem>;
++
++			qcom,qmp = <&aoss_qmp>;
++
++			qcom,smem-states = <&smp2p_adsp_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++
++			remoteproc_adsp_glink: glink-edge {
++				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++							     IPCC_MPROC_SIGNAL_GLINK_QMP
++							     IRQ_TYPE_EDGE_RISING>;
++				mboxes = <&ipcc IPCC_CLIENT_LPASS
++						IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++				label = "lpass";
++				qcom,remote-pid = <2>;
++			};
++		};
+ 	};
+ 
+ 	thermal-zones {
 
 -- 
 2.43.0
