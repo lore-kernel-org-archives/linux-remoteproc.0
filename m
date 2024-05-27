@@ -1,60 +1,61 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F826A33D
-	for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 08:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C96A13A26F
+	for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 08:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799454; cv=none; b=BH1dnWlEgPVicQHhjAbqLE4eXj5vkxxDWPkqJR/wHUhfnhw/Pci1gU3XBiibOQHYN9g1GYEbLMlRw8GhUjfizAcq/VO22LEDS+ggzYJWBS8yze0eU2nCLdqcuLkfBUOFNwzvobF9ftVK8nK3VNvXiPDdvQATNenHMeb0rq1F+uY=
+	t=1716799455; cv=none; b=K0wEPOM2YhRHq1MgSyf8dlJiblXyslWeZJ5WmzI9XNsA/RveYBpueqqZi/9JA8xUOZv1eF7iZnUuopT5KzOD/YmlCwBO5qmMa5MBXkVv2IBu8l14byVkqkvdtUj7YeRuuFFHeEd8OMNrQz+eRBosq5k2v4e6Ylny78TSCIULZhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799454; c=relaxed/simple;
-	bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mb6yA/jAK5sUSavNfbqntJOz+trtnyQMy7KuivkTa1XQHQZlabOqykjryUnBFqtnV4tEC530iW47WRVNyJZ03XUXoRzDRcf1wONSaeIX0wYLctKX56yoUn9TRWX4LwRXnid2ndfBEMWVxSdXAXbx4AnPMFegFL7WtEyPpf+SIf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xSG3NXNq; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1716799455; c=relaxed/simple;
+	bh=7DF5HwF7p6U8Nx8Na6sa5PgjqUlkBVILFpybaxwEmk8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dh0S+Ze6n99l1Gb0TEHQvu2j3DiBaR0UR/O6QxOCynMEuj+aENjjXyATGlPJuwRqXZLcBcLAaPbl/UAzqU9p/jVLvvA/dQF24ShfthUQRJclGbdlFT98MmXk1yOaegmrVA6LPRD8kaxLwi+TCKyBUNJTM99X1pLg3aKGm3SgIUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CREjDOIe; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xSG3NXNq"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4210aa0154eso13335605e9.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 01:44:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CREjDOIe"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4202ca70318so77020175e9.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 01:44:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799451; x=1717404251; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
-        b=xSG3NXNq2W8HNQ6iTpkHyGRX4NPTZY9u3XgH2dev3OBXG4N4aTt258ARHYremhjE9q
-         P1luuzXMbX7BO7kKD67q3maueRIxXtvDkK7K/bMEh9qSIcVy++GONZ3Pjolt9QiGo6QL
-         F1SiZ0e1UkTH6vPYM5iGokg+EdbhtJjI3hxuZq4EprJFD1bACpGR4vRL49KAEMK4Y4DA
-         RXTzodfhvUGCFP9YDUf8RuAWHM8P05EpVV8MbVGuitL4vv1pHdrXV5KQ1YynGEMimwOM
-         Lsr0nPPAjbWYPU0Fs0L2ii4CO1jD9MoDS+KyG+7AAOITn6GqdHhfcSbsjoqeVjtaRvng
-         2XQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716799451; x=1717404251;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799452; x=1717404252; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
-        b=rgMBk2J6+IUNezb9dLsHFEDLwX6gFZW5ttaftfo4L6Xud0vMrH9pM9L8ePsHdhcwDi
-         hv9Ibx2TDb6WBUx1ab8cBfYMW9f9s1u302vmRir1zlia/L6sHaAVXM5AWqEGlTJGEYOQ
-         Y50L1QatGlEbYI7SGYwo5VLhx3bhy1YUL5+RJdKrtQoMSu1oDZ4f3a+FzbX/sc5Um8Ob
-         MruscTEzOVmZkP3KyLMdtWJbGESGVgz3+14Xb+3carXDUq0Q8b8Of+GfF++tf4ykntCP
-         mMxuZCwaAnudZAKDbIE8Srsv0jrgD5Pxf4oYaqTJZywVu9oEQQKc4OMvMyYTis+xaqZb
-         3Hmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnWEbEif9jbW9GIo2A39evuLPWi50oRJYLsL3hr9/CQ/OogKB5IdbJ69APkOXmugnDrDJ1kP7YjjL85CNOdlmGjKp5qdeoMEUE8FK/daA98A==
-X-Gm-Message-State: AOJu0Yym69XLQL91NFEZHTp+x0rpJ26FtX9tm2gBAUTCbrXA2bnVVN95
-	Dg4Luayz9Ir2vxrXdf3s0EfuZrOkOg/CYAkfzUrszKUAfewA0C1VEMga8byFJvc=
-X-Google-Smtp-Source: AGHT+IFaQ0PooOmv8dR+W3Bvgay3MJRwZ6H83frgJJ4+v0ifb/G833kRttFTAQT8su8CbqpnD0plVg==
-X-Received: by 2002:a05:600c:4f4d:b0:420:ffe3:8536 with SMTP id 5b1f17b1804b1-42108a17f90mr86967745e9.37.1716799450826;
-        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+        bh=tgkx0eCP4rrk+JD+2W4qCpUZmtiCMe6qIUFxLraX3gw=;
+        b=CREjDOIef1XntHsMNXuCgGK//HFVq67MYbCtmXnUjgKk5Z2XMTcyof3f7uKULMr3o4
+         kTniaA++QpF7i4izCrhXb6I1hL2HmbnSdU1kopKkYUOp8MzgR59eZp7gFQfd6/JMyQVO
+         eeCEOqotoTrl/Dayf0A/pHL+G1VzET5vN8OwqnEvfWTk62c1H1tffTDPGp8/vsuSTNq3
+         AiQGFn6o0SlOVOL8Ln5XmoEJGR9rzm6M+6wK0m336H91PTqI3V8Sv1GwNECUANWF8OLc
+         Xi95hOw/N83ixJUxM8gS7zuxZlmzOT8TZXUyghG3tBoM2W1mKgy1ndwX0Oqyjf2HOowf
+         r+uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799452; x=1717404252;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tgkx0eCP4rrk+JD+2W4qCpUZmtiCMe6qIUFxLraX3gw=;
+        b=AmWNFxhTOOj8t7B1br3UOv5Vi46I+zWTRSHLCgbxiRRG6550v/RbXItjfeA7sPj7i/
+         mxT9glKPmAJ/X2oo/w4HXG1ESEJK0U+LuGsy2zz6NwSv59xzEnTEzDf8ApUdkP0J1dB3
+         H/GXbk0QhvQkIlnq4GC/pi3galkTpWuWpqYbYv3M+BX4kBj0ozx9YbDGNDoKzOhbPLdm
+         FcZ6Qkt1cLQOLHel4A1mg+ytN+IzsideZ20ZIjOOy4YG+G4EM0IAuXNh/gABHcT1sA60
+         5dN5ufupxfC1L4+YKnOH49RP2EULJpWSndmu7JEw3DJbj8H7nt/vo/aq7tsnK0vF4W1E
+         e2LA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYMvF+w8mL4pnBkJEsgk6I2784vdSRsudvbJYOv7l8F66VlnUQn6ovwNWKihV4hfTJJUOzS37APSrwlVavPKme7XEpFfSRDkTS7sGxXUOflg==
+X-Gm-Message-State: AOJu0YzkSLJ+lYRThXyuZkXezXXDkPqOXV5xTkmHZxg5emUX4KEC9P6d
+	mFmrMKqJlnOFSwf1r83Uf2wvQvBnkUTbQ4ln6JnKFyB8KhRdQnBDkg7st8ZqVJQ=
+X-Google-Smtp-Source: AGHT+IEJoX7+tUcPr/AjtrU1kkpAaWkjeV8h5mr32bTS32MycTKwC2XhxrDWVyrN/rAtxoJFxk7vSw==
+X-Received: by 2002:a7b:cd94:0:b0:41a:f76f:3362 with SMTP id 5b1f17b1804b1-421089d3927mr60081775e9.21.1716799451943;
+        Mon, 27 May 2024 01:44:11 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+        Mon, 27 May 2024 01:44:11 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/5] arm64: qcom: sa8775p: enable remoteprocs - ADSP,
- CDSP and GPDSP
-Date: Mon, 27 May 2024 10:43:47 +0200
-Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+Date: Mon, 27 May 2024 10:43:48 +0200
+Subject: [PATCH v2 1/5] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
+ the SA8775p ADSP, CDSP and GPDSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,10 +64,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMNHVGYC/33NQQ6CMBCF4auQrq0pE6DqynsYFgWnMAl0yLQhG
- sLdrcS1y/8tvrepiEIY1a3YlOBKkTjkgFOh+tGFATU9cyswUJnaWJ14oV5POLsQNXHSgjMnXIR
- 73TSV7WoDlxJBZWER9PQ69Eebe6SYWN7H2Vp+158L8NddS22081fvOtuB9eY+UXDCZ5ZBtfu+f
- wB+6iZ7xwAAAA==
+Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-1-8d24e3409daf@linaro.org>
+References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
+In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -79,57 +79,221 @@ Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Tengfei Fan <quic_tengfan@quicinc.com>, 
  Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
- Alex Elder <elder@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Alex Elder <elder@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1371;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5544;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfUUSoOSnd4Lg2WXapEDvJlPvhJL9WnYSNLV
- 39XOGrG8PeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH1AAKCRARpy6gFHHX
- co+nD/4yLxWTvxT139Y/T6PIgSgnJzMWiDpPVULWixjcf7St3IUskTd4CqVWRBzUS4IsZAU6fBl
- TK15b4kVvCaDyyxZTKfGvpbDXci5H2IkIgLCp8Sg5KsCluJj0onru5j9pzJaGN3Q29hZqXpBYR2
- TRJtQDBbkg9IOJBVdW8IQ6Cq2pjeGhOpQiLaW0kfWKb5QuGFvmhJ/Zv+Ab3YrHzL2kjDF4hDlqS
- hdhZuWusgFcimvxIbsUL6sVgdRKePFTX7z2/ofq9FTwrgeVCJsBzUNjW8Sn8f3dRqvHWk8yzXaD
- qu8kYSHZAlvupAHC1k+UBNh/q3ebCN92XSy4mxMKjUc9UoFEnErQQPWS9apR+Yj1t/o63Yt1ML4
- gi5x7JN0R88P1P4Yy0daYJA/RYokbvuSIGBIm6tmY5WGyRwwfjWFfKj3kQXpnwFQnfvIcN3pjkc
- Vq/3ZBi68yyvPIQhEYi5Xh5Zu2Bzp8croZzPrrW4g+R3SmSsh7mTshLSgZN5gYVbL+oHyiG6yIT
- jj7QGyTqFWHlHYlN/I3JYEPsV3/Hd+werpeRjzP93DlRTkUdDoRlcPD/sHOv0Fueaw4lv3N7M4r
- +uAkDdK1PC9U6hA53tZEqwWDLs7oCBjvqFsibvkqkAeLfDbViqfJ+lMdkspYJYfj0mjW8pMmoh9
- BPcfVZlIIEzxSKQ==
+ bh=leIKa/UcmJaFYJmvDmKOwmxkj/TaQjJErtw/XziYiaA=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfY6nwdfzrqX8cHFFoaGHLnzqVJU/+XYmdGa
+ UphrjRvxQGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH2AAKCRARpy6gFHHX
+ cmBcD/0bv1CgoCxlmxwCDDkrweb13DNecIupZMc6hBdxEg8fHluwWV7gPV2/z+yxd79BK3gIW1i
+ fk3unXUef9GCePd5rHWlIatX5TMeBD2TjInGEEVxAt6d73BcaEhZevMk7BQgIUEsi0z8FRGSvOp
+ 1rE+mz96Z/gybygAvPEop3avY8PMXkohUmgI9rD7k67GtLmwDtrIDIktx+9heR/h4j1yVI9N00g
+ x30++JLjwJZTecrxBRe9XEhn7ifleW8wNpfGapvymIHis0k68N8qEP5g2XLu0ZorSZbX5pO+vTU
+ nDwudyO8DMYGZVm6m67ZcryZGca9QjmesnmpKAuhK8Yz2E/grLUjO5EL0mP0b+Lzu1NKMbomZdd
+ QzvoVWaWL3eDdOF9iIhGmHdm8zbbxMNLRkaxvvP1uvSn9R3pBv5ir0ynHfi8VzG88LmtMUtFfAW
+ Yk3gfUUQo/cjaaY6LqD0iK8f3nNSpPqdSku7nP2PPo0EUBdj4Qh+HwtKyASCJ4nO5Ff/AFxl4Nc
+ Va/j2QZQHpArIIlCAMctsvvO4cSgY92qCVshbhHSrTc5Neivi6ms9ZeQw5juFzRdCpbAyjsrwLo
+ sXofb0kWnJioLQpQyDH21cmmuRxYzNexpWYF/IfLUMqYhJgJAagmEGX1Kd8ww8RXADK8et/paY4
+ CYiAbsVCzykEIvA==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add DT bindings, relevant DT defines, DTS nodes and driver changes
-required to enable the remoteprocs on sa8775p.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Document the components used to boot the ADSP, CDSP0, CDSP1, GPDSP0 and
+GPDSP1 on the SA8775p SoC.
+
+Co-developed-by: Tengfei Fan <quic_tengfan@quicinc.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changes in v2:
-- Move the DT bindings for sa8775p-pas into a separate file
-- Link to v1: https://lore.kernel.org/r/20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 177 +++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
 
----
-Bartosz Golaszewski (2):
-      dt-bindings: remoteproc: qcom,sa8775p-pas: Document the SA8775p ADSP, CDSP and GPDSP
-      arm64: dts: qcom: sa8775p-ride: enable remoteprocs
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+new file mode 100644
+index 000000000000..77a5e11555de
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+@@ -0,0 +1,177 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/qcom,sa8775p-pas.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SA8775p Peripheral Authentication Service
++
++maintainers:
++  - Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++description:
++  Qualcomm SA8775p SoC Peripheral Authentication Service loads and boots firmware
++  on the Qualcomm DSP Hexagon cores.
++
++properties:
++  compatible:
++    enum:
++      - qcom,sa8775p-adsp-pas
++      - qcom,sa8775p-cdsp0-pas
++      - qcom,sa8775p-cdsp1-pas
++      - qcom,sa8775p-gpdsp0-pas
++      - qcom,sa8775p-gpdsp1-pas
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: XO clock
++
++  clock-names:
++    items:
++      - const: xo
++
++  qcom,qmp:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Reference to the AOSS side-channel message RAM.
++
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    items:
++      - description: Firmware name of the Hexagon core
++
++  memory-region:
++    items:
++      - description: Memory region for main Firmware authentication
++
++  interrupts:
++    maxItems: 5
++
++  interrupt-names:
++    maxItems: 5
++
++required:
++  - compatible
++  - reg
++  - memory-region
++
++allOf:
++  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sa8775p-adsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: LCX power domain
++            - description: LMX power domain
++        power-domain-names:
++          items:
++            - const: lcx
++            - const: lmx
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sa8775p-cdsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MXC power domain
++            - description: NSP0 power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mxc
++            - const: nsp0
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sa8775p-cdsp1-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MXC power domain
++            - description: NSP1 power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mxc
++            - const: nsp1
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sa8775p-gpdsp0-pas
++            - qcom,sa8775p-gpdsp1-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MXC power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mxc
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/mailbox/qcom-ipcc.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++
++    remoteproc@30000000 {
++        compatible = "qcom,sa8775p-adsp-pas";
++        reg = <0x30000000 0x100>;
++
++        interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
++
++        clocks = <&rpmhcc RPMH_CXO_CLK>;
++        clock-names = "xo";
++
++        power-domains = <&rpmhpd RPMHPD_LCX>, <&rpmhpd RPMHPD_LMX>;
++        power-domain-names = "lcx", "lmx";
++
++        interconnects = <&lpass_ag_noc MASTER_LPASS_PROC 0 &mc_virt SLAVE_EBI1 0>;
++
++        memory-region = <&pil_adsp_mem>;
++
++        qcom,qmp = <&aoss_qmp>;
++
++        qcom,smem-states = <&smp2p_adsp_out 0>;
++        qcom,smem-state-names = "stop";
++
++        glink-edge {
++            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++                                   IPCC_MPROC_SIGNAL_GLINK_QMP
++                                   IRQ_TYPE_EDGE_RISING>;
++            mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++            label = "lpass";
++            qcom,remote-pid = <2>;
++        };
++    };
 
-Tengfei Fan (3):
-      dt-bindings: mailbox: qcom-ipcc: Add GPDSP0 and GPDSP1 clients
-      remoteproc: qcom_q6v5_pas: Add support for SA8775p ADSP, CDSP and GPDSP
-      arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP nodes
-
- .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 177 +++++++++++
- arch/arm64/boot/dts/qcom/sa8775p-ride.dts          |  25 ++
- arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 332 +++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c                 |  92 ++++++
- include/dt-bindings/mailbox/qcom-ipcc.h            |   2 +
- 5 files changed, 628 insertions(+)
----
-base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
-change-id: 20240507-topic-lemans-iot-remoteproc-6647b50281e2
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0
 
