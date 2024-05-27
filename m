@@ -1,201 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EA0F4FC;
-	Sat, 25 May 2024 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F826A33D
+	for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 08:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716655562; cv=none; b=fStTkuFQa8H6ctqpBVKj2UjguF7CaFa1FvgBlqlwsrIm1OqV8Uv51Afsvjf8OHzis7HMb7bPqX8uq8/M8tiyCX/53IfLWn1x29k7cCrbpD8gpFDmtV70IAVHlbYKSJgHE8spxfrNfG0dnVRicJjXU5WjF/OzRbAp239naRI/AVI=
+	t=1716799454; cv=none; b=BH1dnWlEgPVicQHhjAbqLE4eXj5vkxxDWPkqJR/wHUhfnhw/Pci1gU3XBiibOQHYN9g1GYEbLMlRw8GhUjfizAcq/VO22LEDS+ggzYJWBS8yze0eU2nCLdqcuLkfBUOFNwzvobF9ftVK8nK3VNvXiPDdvQATNenHMeb0rq1F+uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716655562; c=relaxed/simple;
-	bh=rpJb9ufSOqQvGtI1L3Z0XIm/GwLfEIO5aOLPxpga49w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qlb2VunVICcI8j6s6pOpOJR8EOqPR1++NOGBq4jRugAdwgojrb7hQYLz5zQDj80JQmsK3wgQZM4CZbYlw6ohET7VVBoVM9ARAd/AiXNmoGO6tl2S5kDsdWiMBkCraA6xbx8MSf5twBCuswCTWYsE3txCe7N8wc6tXVMHc2Hc2Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYX5D08o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716799454; c=relaxed/simple;
+	bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mb6yA/jAK5sUSavNfbqntJOz+trtnyQMy7KuivkTa1XQHQZlabOqykjryUnBFqtnV4tEC530iW47WRVNyJZ03XUXoRzDRcf1wONSaeIX0wYLctKX56yoUn9TRWX4LwRXnid2ndfBEMWVxSdXAXbx4AnPMFegFL7WtEyPpf+SIf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xSG3NXNq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYX5D08o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0742BC2BD11;
-	Sat, 25 May 2024 16:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716655562;
-	bh=rpJb9ufSOqQvGtI1L3Z0XIm/GwLfEIO5aOLPxpga49w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SYX5D08onJBpVQ0l1x8JMjv0c4uyhIDVRKjWvhX40JnIinzy9zsLG9+KIOqcxYTOb
-	 gqtJGmLOl//Vxb+xZySwEn1BiGFqpUV2Gy8npwPOPeYmhO8BBy9PYQGJLwGRhxzXRP
-	 VVKzo09UjONo82nh42uILilKpLIw8bha4Wsg13ce02UqWPCT7tUn2aXrOzzHI0Y1mm
-	 NIoqZjiGTONCFignxTZ1wCYxvRVUvhqncPJQg5f2zQu4SxewOtu2Z4TVIKIqweZ0ZP
-	 ged4LTMSWFkJMb4tLwu17bsbhk+yqLMEHpr62adXlIAhTMaNy3RB7HCaKi7a9q2dCa
-	 HzJB9s2E2MNdg==
-Message-ID: <27151624-0c3c-43da-9983-5de86f431d82@kernel.org>
-Date: Sat, 25 May 2024 18:45:54 +0200
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xSG3NXNq"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4210aa0154eso13335605e9.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 May 2024 01:44:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716799451; x=1717404251; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
+        b=xSG3NXNq2W8HNQ6iTpkHyGRX4NPTZY9u3XgH2dev3OBXG4N4aTt258ARHYremhjE9q
+         P1luuzXMbX7BO7kKD67q3maueRIxXtvDkK7K/bMEh9qSIcVy++GONZ3Pjolt9QiGo6QL
+         F1SiZ0e1UkTH6vPYM5iGokg+EdbhtJjI3hxuZq4EprJFD1bACpGR4vRL49KAEMK4Y4DA
+         RXTzodfhvUGCFP9YDUf8RuAWHM8P05EpVV8MbVGuitL4vv1pHdrXV5KQ1YynGEMimwOM
+         Lsr0nPPAjbWYPU0Fs0L2ii4CO1jD9MoDS+KyG+7AAOITn6GqdHhfcSbsjoqeVjtaRvng
+         2XQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716799451; x=1717404251;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WQ3DCBLj1ltVFhHC9umt9a5pdQk6fg3FYn6QQceaTjA=;
+        b=rgMBk2J6+IUNezb9dLsHFEDLwX6gFZW5ttaftfo4L6Xud0vMrH9pM9L8ePsHdhcwDi
+         hv9Ibx2TDb6WBUx1ab8cBfYMW9f9s1u302vmRir1zlia/L6sHaAVXM5AWqEGlTJGEYOQ
+         Y50L1QatGlEbYI7SGYwo5VLhx3bhy1YUL5+RJdKrtQoMSu1oDZ4f3a+FzbX/sc5Um8Ob
+         MruscTEzOVmZkP3KyLMdtWJbGESGVgz3+14Xb+3carXDUq0Q8b8Of+GfF++tf4ykntCP
+         mMxuZCwaAnudZAKDbIE8Srsv0jrgD5Pxf4oYaqTJZywVu9oEQQKc4OMvMyYTis+xaqZb
+         3Hmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnWEbEif9jbW9GIo2A39evuLPWi50oRJYLsL3hr9/CQ/OogKB5IdbJ69APkOXmugnDrDJ1kP7YjjL85CNOdlmGjKp5qdeoMEUE8FK/daA98A==
+X-Gm-Message-State: AOJu0Yym69XLQL91NFEZHTp+x0rpJ26FtX9tm2gBAUTCbrXA2bnVVN95
+	Dg4Luayz9Ir2vxrXdf3s0EfuZrOkOg/CYAkfzUrszKUAfewA0C1VEMga8byFJvc=
+X-Google-Smtp-Source: AGHT+IFaQ0PooOmv8dR+W3Bvgay3MJRwZ6H83frgJJ4+v0ifb/G833kRttFTAQT8su8CbqpnD0plVg==
+X-Received: by 2002:a05:600c:4f4d:b0:420:ffe3:8536 with SMTP id 5b1f17b1804b1-42108a17f90mr86967745e9.37.1716799450826;
+        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:c322:131e:ff9d:ef41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966682sm101365575e9.2.2024.05.27.01.44.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 01:44:10 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/5] arm64: qcom: sa8775p: enable remoteprocs - ADSP,
+ CDSP and GPDSP
+Date: Mon, 27 May 2024 10:43:47 +0200
+Message-Id: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
- <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
- <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
- <c9882ba0-bbbf-44ec-9606-ebe68bcb8866@kernel.org>
- <ZkzzY311XiRigJPt@hu-bjorande-lv.qualcomm.com>
- <92dcd555-69b1-4111-92dd-debe5107d526@kernel.org>
- <Zk4wab/NZOOZ3hA6@hu-bjorande-lv.qualcomm.com>
- <aed37430-7e87-4516-86da-3997c01a8aa8@kernel.org>
- <ZlDpFV8bL8/lwGOP@hu-bjorande-lv.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZlDpFV8bL8/lwGOP@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMNHVGYC/33NQQ6CMBCF4auQrq0pE6DqynsYFgWnMAl0yLQhG
+ sLdrcS1y/8tvrepiEIY1a3YlOBKkTjkgFOh+tGFATU9cyswUJnaWJ14oV5POLsQNXHSgjMnXIR
+ 73TSV7WoDlxJBZWER9PQ69Eebe6SYWN7H2Vp+158L8NddS22081fvOtuB9eY+UXDCZ5ZBtfu+f
+ wB+6iZ7xwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tengfei Fan <quic_tengfan@quicinc.com>, 
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Alex Elder <elder@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1371;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=yShl8MjzatLpaUkL+LtamO0kwi5jdP9TdNAOUA2vhZw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVEfUUSoOSnd4Lg2WXapEDvJlPvhJL9WnYSNLV
+ 39XOGrG8PeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlRH1AAKCRARpy6gFHHX
+ co+nD/4yLxWTvxT139Y/T6PIgSgnJzMWiDpPVULWixjcf7St3IUskTd4CqVWRBzUS4IsZAU6fBl
+ TK15b4kVvCaDyyxZTKfGvpbDXci5H2IkIgLCp8Sg5KsCluJj0onru5j9pzJaGN3Q29hZqXpBYR2
+ TRJtQDBbkg9IOJBVdW8IQ6Cq2pjeGhOpQiLaW0kfWKb5QuGFvmhJ/Zv+Ab3YrHzL2kjDF4hDlqS
+ hdhZuWusgFcimvxIbsUL6sVgdRKePFTX7z2/ofq9FTwrgeVCJsBzUNjW8Sn8f3dRqvHWk8yzXaD
+ qu8kYSHZAlvupAHC1k+UBNh/q3ebCN92XSy4mxMKjUc9UoFEnErQQPWS9apR+Yj1t/o63Yt1ML4
+ gi5x7JN0R88P1P4Yy0daYJA/RYokbvuSIGBIm6tmY5WGyRwwfjWFfKj3kQXpnwFQnfvIcN3pjkc
+ Vq/3ZBi68yyvPIQhEYi5Xh5Zu2Bzp8croZzPrrW4g+R3SmSsh7mTshLSgZN5gYVbL+oHyiG6yIT
+ jj7QGyTqFWHlHYlN/I3JYEPsV3/Hd+werpeRjzP93DlRTkUdDoRlcPD/sHOv0Fueaw4lv3N7M4r
+ +uAkDdK1PC9U6hA53tZEqwWDLs7oCBjvqFsibvkqkAeLfDbViqfJ+lMdkspYJYfj0mjW8pMmoh9
+ BPcfVZlIIEzxSKQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On 24/05/2024 21:23, Bjorn Andersson wrote:
-> On Thu, May 23, 2024 at 08:15:54AM +0200, Krzysztof Kozlowski wrote:
->> On 22/05/2024 19:50, Bjorn Andersson wrote:
->>>>>>>
->>>>>>> We did consider tying this to the SMEM instance, but the entitiy 
->>>>>>> relating to firmware is the remoteproc instance.
->>>>>>
->>>>>> I still do not understand why you have to add hwlock to remoteproc, even
->>>>>> though it is not directly used. Your driver problem looks like lack of
->>>>>> proper driver architecture - you want to control the locks not from the
->>>>>> layer took the lock, but one layer up. Sorry, no, fix the driver
->>>>>> architecture.
->>>>>>
->>>>>
->>>>> No, it is the firmware's reference to the lock that is represented in
->>>>> the remoteproc node, while SMEM deals with Linux's reference to the lock.
->>>>>
->>>>> This reference would be used to release the lock - on behalf of the
->>>>> firmware - in the event that the firmware held it when it
->>>>> stopped/crashed.
->>>>
->>>> I understood, but the remoteproc driver did not acquire the hardware
->>>> lock. It was taken by smem, if I got it correctly, so you should poke
->>>> smem to bust the spinlock.
->>>>
->>>
->>> The remoteproc instance is the closest representation of the entity that
->>> took the lock (i.e. the firmware). SMEM here is just another consumer of
->>> the same lock.
->>>
->>>> The hwlock is not a property of remote proc, because remote proc does
->>>> not care, right? Other device cares... and now for every smem user you
->>>> will add new binding property?
->>>>
->>>
->>> Right, the issue seen relates to SMEM, because the remote processor (not
->>> the remoteproc driver) took the lock.
->>>
->>>> No, you are adding a binding based on your driver solution.
->>>
->>> Similar to how hwspinlocks are used in other platforms (e.g. TI) the
->>> firmware could take multiple locks, e.g. to synchronize access to other
->>> shared memory mechanism (i.e. not SMEM). While I am not aware of such
->>> use case today, my expectation was that in such case we just list all
->>> the hwlocks related to the firmware and bust those from the remoteproc
->>> instance.
->>>
->>> Having to export APIs from each one of such drivers and make the
->>> remoteproc identify the relevant instances and call those APIs does
->>> indeed seem inconvenient.
->>> SMEM is special here because it's singleton, but this would not
->>> necessarily be true for other cases.
->>
->> I don't think that exporting such API is unreasonable, but quite
->> opposite - expected. The remote processor crashed, so the remoteproc
->> driver is supposed to call some sort of smem_cleanup() or
->> smem_cleanup_on_crash() and call would bust/release the lock. That way
->> lock handling is encapsulated entirely in one driver which already takes
->> and releases the lock.
->>
-> 
-> I don't agree.
-> 
-> SMEM does indeed acquire and release the same, shared, lock. But the
-> SMEM driver instance on our side is not involved in taking the lock for
-> the firmware.
-> 
-> There exist an equivalent SMEM driver instance in the firmware that
-> crashed and that's the thing that needs to be released.
+Add DT bindings, relevant DT defines, DTS nodes and driver changes
+required to enable the remoteprocs on sa8775p.
 
-Then please include relevant explanation in the commit msg.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- Move the DT bindings for sa8775p-pas into a separate file
+- Link to v1: https://lore.kernel.org/r/20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org
 
-> 
-> 
-> We're also not tearing down, or cleaning up anything in our SMEM
-> instance. It is simply "when remoteproc id N died, check if N is holding
-> the lock and if so force a release of the lock - so that others can grab
-> it".
-> 
->> Just like freeing any memory. remoteproc driver does not free other
->> driver's memory only because processor crashed.
->>
-> 
-> That's a good comparison. Because when the firmware running on the
-> remote processor crashes, it is indeed the job of the remoteproc driver
-> to clean up the memory allocated to run the remote processor.
+---
+Bartosz Golaszewski (2):
+      dt-bindings: remoteproc: qcom,sa8775p-pas: Document the SA8775p ADSP, CDSP and GPDSP
+      arm64: dts: qcom: sa8775p-ride: enable remoteprocs
 
+Tengfei Fan (3):
+      dt-bindings: mailbox: qcom-ipcc: Add GPDSP0 and GPDSP1 clients
+      remoteproc: qcom_q6v5_pas: Add support for SA8775p ADSP, CDSP and GPDSP
+      arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP nodes
+
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 177 +++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts          |  25 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 332 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  92 ++++++
+ include/dt-bindings/mailbox/qcom-ipcc.h            |   2 +
+ 5 files changed, 628 insertions(+)
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240507-topic-lemans-iot-remoteproc-6647b50281e2
 
 Best regards,
-Krzysztof
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
