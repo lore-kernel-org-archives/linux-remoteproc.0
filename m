@@ -1,484 +1,97 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBD217BD6;
-	Tue, 28 May 2024 03:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016604501E
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 07:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716865271; cv=none; b=cxM3BltDqXEaq9J/rm3/T1ArI19VDP0BIKvzCiS6Dnu1o4qshbTEk5lNp+EqucJoXdVAWrpTOeditQnPoboj46cj14xAGmle1k0OszjhGIgjejZYtaFS1hBJk7gfcQkpLg9ac1IK56YrP7n7dihrRuj5oWDTHK91sicJEK6u+cY=
+	t=1716881192; cv=none; b=asCVr4M5rjMdWd7ExhICiOWoYw7vixH2GwkfPDWd08WOBCHADsyylBlrgMPyonH6qYfKZZ1/YlA8K2O2shqw4Bm0zIraWSjBQOoXHXcNKxqJ0AmXrEEohSfplSL74SEc+HGvLaw/hhvo1rcR/Vuia9ya7qwppss+oQfqIXTDz1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716865271; c=relaxed/simple;
-	bh=8Rs07PERfecynx5s5/RpJ7iBfy5BVz0HmIV+jAfTlgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fGsn0g882rsnemFh+tYiKMdIwrjkuB7KivgS5Yi03vYFSDmkhBh+oO7qzXAqcsQr7n0tCGIZLABWNWicRCqz/UP7jS9apWBi1Mef0lghDMGW7L3FFsZrsJ/eeCNSysVJpkkRkTdYzDByu0PTpRMgEgMZF74Qq2Yoo2JjZLiJq1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d2yvxO+A; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716881192; c=relaxed/simple;
+	bh=Wb7/vxmVn2sLhr5nQIemWiJRmtkq/q6L+aljI3e6J2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vi4ce0RG/EBl1F3JWDrwEQgTlWxNecj8Wj5Ee5RP6XAwTJ9qEut7BIW2C9gnDhVZrdVvsm9JgtsrSEKOQokG5UItVqFYuPaAGXAb5efNM8kpXLUxwhr/6/WEp6zAb1l2Ych8QUpm+U/I2AxsIsS2CkadpLd9dpQeuKIuQ9o4c/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nZNYbyvQ; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d2yvxO+A"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RNrrFG012130;
-	Tue, 28 May 2024 03:01:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y2KOo+zQ11WgMEDh7gF8uyTLfoJU4chlwexasLNAJss=; b=d2yvxO+Am/+Fs7p1
-	SP/Ilnvw0xK+1aya4iSNf3OcI0HS4g6F90FNCMPNqDIylrN2p7+7gHBY6hUfWb7U
-	lyobEhxA8mgM4+lUg6K1mKNHGFuRkIBq2AJMMABFDogIhVGLxLK0da/p4ANq1np/
-	leSRcm7FvpIgxNSRFnM8zrpP268hBEgroNAPOyr0hjSxhCvNQb/GwU/CdQz/B0Ev
-	vq0PunlspNY64n8Vnn30kX2FLG4RInjh2DxQONU+VDFN/IQtCtPYNWeFjM8Ke6rt
-	pCZNh8r9uWS+onbnoAZULmjXn579Mem5lB9r42Fz6uZ5uzjjjBtkq019clcmDbme
-	f60nKg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0g51ay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 03:01:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44S313Uk028975
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 03:01:03 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 20:00:59 -0700
-Message-ID: <c05c9dd5-0755-4f64-9935-824081766447@quicinc.com>
-Date: Tue, 28 May 2024 11:00:57 +0800
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nZNYbyvQ"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so5620211fa.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 00:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716881189; x=1717485989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wb7/vxmVn2sLhr5nQIemWiJRmtkq/q6L+aljI3e6J2Y=;
+        b=nZNYbyvQouo36WbOzltHwO2RGZZSFKaJqbl3qhxdfNjXXlovCDkO25r4k//d7AVgDB
+         tR+h5zVO4C0IlFI1t7E374z4KcJfQ8qrhQXTtZ2cJuuiN0y2nAYHYJpC7f1nleWTdeiV
+         4qN0yqnYrBGVdO9I9QK9HrfGSOiSXb0yuwECs1o8q51qbhYfQLToeh7zhGJZRRexp5pN
+         9BIe7+oegzWVdpYDCRVxln9jxokQlnZ/VtEYveMCfJrK6pTXUgoftbokE2h8yhR1qVrp
+         AE9doHCra7mR+vLLSW69mYezRiyro16h5JxvK6BgUhAda9aDkMn3DnijrslpneK4FgvJ
+         jagA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716881189; x=1717485989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wb7/vxmVn2sLhr5nQIemWiJRmtkq/q6L+aljI3e6J2Y=;
+        b=eWnAaZlh8Obv49l3p3/b8Z/54gxu9JIUB6bnepV4wPHf7Qqz3l44HZY8ANYj3bAlIi
+         cC8JXooHb1VuqcihQNRg2PQ9JKOOlvOEDTJ1rPEtJIEt3Uq/NypFgf0Y/4JknFXv2Cri
+         RKweN+No/Zwrq3KYJ9RI66vvhKsz31yVDWjxu5lq8lXIMuYGjpQ4Jx+Kl8tzh0dBHw5K
+         ah3XHuy7AViJofzQjSxQw/tRBZwstcM2RYafA/x06OCa9rBPm2YTToq1GiLJGGFRs80H
+         KUxP2m3M2O6OfQ20dOTQfXhiIAh/HYJkv7leOymxg+s/G5EN/AY6cO4Cv6sQS8FHPzMl
+         euIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIgZ3NzQlb0hplv50kMWNPZgZgZlffIC4Z083IXIyrKBKaLb0Ri+nhFt1PrzgIa7E2bDVoNJyRtLGUUl/OHEoQvgu4r0lsEny03bG69cwDsw==
+X-Gm-Message-State: AOJu0YwclfldxaCz+xQtCC5JUgM7tsx8P5I6hvMNuVopD1vrDWcwMtq3
+	Zn63mC0aNbGGTYhuOjJUhSiFNsin5kjMMrjUGyzzeMOPemYwhIpVKQP+0UeRa7HK1VfTjUKsh1N
+	Seqjjdrguk0i7aW4Lsra5jIu8syRHzw1vU2cbEQ==
+X-Google-Smtp-Source: AGHT+IEqwG8lGB63TRtEHQ50qoCp6W8M3rlfT/je1S6Zp1mGlceEHeIquoczIa/UPZy5YbMAUDrdbQWUFj+EH+rU4f4=
+X-Received: by 2002:a2e:83d6:0:b0:2e7:1b8:7b77 with SMTP id
+ 38308e7fff4ca-2e95b0c163cmr71809171fa.22.1716881189068; Tue, 28 May 2024
+ 00:26:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: sa8775p: add ADSP, CDSP and
- GPDSP nodes
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>
-CC: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Srini
- Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alex Elder <elder@kernel.org>
 References: <20240527-topic-lemans-iot-remoteproc-v2-0-8d24e3409daf@linaro.org>
- <20240527-topic-lemans-iot-remoteproc-v2-4-8d24e3409daf@linaro.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <20240527-topic-lemans-iot-remoteproc-v2-4-8d24e3409daf@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8OCuW-d-7rjvkWPOEAp2aN4yxF_hxzLC
-X-Proofpoint-ORIG-GUID: 8OCuW-d-7rjvkWPOEAp2aN4yxF_hxzLC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_06,2024-05-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=907 malwarescore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280023
+ <20240527-topic-lemans-iot-remoteproc-v2-1-8d24e3409daf@linaro.org> <ae768bb2-cb96-4a05-8752-66bc6bfdab1b@kernel.org>
+In-Reply-To: <ae768bb2-cb96-4a05-8752-66bc6bfdab1b@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 28 May 2024 09:26:17 +0200
+Message-ID: <CAMRc=Me9B3H9NM2VKrVSSce0-o=ZZuC2TQxt7eYLD5aWEKy+SA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: qcom,sa8775p-pas:
+ Document the SA8775p ADSP, CDSP and GPDSP
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Alex Elder <elder@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, May 27, 2024 at 10:56=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On 27/05/2024 10:43, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Document the components used to boot the ADSP, CDSP0, CDSP1, GPDSP0 and
+> > GPDSP1 on the SA8775p SoC.
+> >
+> > Co-developed-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>
+> Missing SoB.
+>
 
+Does it though? The patch never passed through Tengfei's hands, I just
+wanted to give him credit for the work modifying the sm8550-pas
+bindings.
 
-On 5/27/2024 4:43 PM, Bartosz Golaszewski wrote:
-> From: Tengfei Fan <quic_tengfan@quicinc.com>
-> 
-> Add nodes for remoteprocs: ADSP, CDSP0, CDSP1, GPDSP0 and GPDSP1 for
-> SA8775p SoCs.
-> 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 332 ++++++++++++++++++++++++++++++++++
->   1 file changed, 332 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 31de73594839..5c0b61a5624b 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -10,6 +10,7 @@
->   #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->   #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->   #include <dt-bindings/mailbox/qcom-ipcc.h>
-> +#include <dt-bindings/power/qcom,rpmhpd.h>
->   #include <dt-bindings/power/qcom-rpmpd.h>
->   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->   
-> @@ -544,6 +545,121 @@ cpucp_fw_mem: cpucp-fw@db200000 {
->   		};
->   	};
->   
-> +	smp2p-adsp {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <443>, <429>;
-> +		interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
-> +					     IPCC_MPROC_SIGNAL_SMP2P
-> +					     IRQ_TYPE_EDGE_RISING>;
-> +		mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_SMP2P>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <2>;
-> +
-> +		smp2p_adsp_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		smp2p_adsp_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-cdsp0 {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <94>, <432>;
-> +		interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
-> +					     IPCC_MPROC_SIGNAL_SMP2P
-> +					     IRQ_TYPE_EDGE_RISING>;
-> +		mboxes = <&ipcc IPCC_CLIENT_CDSP IPCC_MPROC_SIGNAL_SMP2P>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <5>;
-> +
-> +		smp2p_cdsp0_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		smp2p_cdsp0_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-cdsp1 {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <617>, <616>;
-> +		interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
-> +					     IPCC_MPROC_SIGNAL_SMP2P
-> +					     IRQ_TYPE_EDGE_RISING>;
-> +		mboxes = <&ipcc IPCC_CLIENT_NSP1 IPCC_MPROC_SIGNAL_SMP2P>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <12>;
-> +
-> +		smp2p_cdsp1_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		smp2p_cdsp1_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-gpdsp0 {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <617>, <616>;
-> +		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
-> +					     IPCC_MPROC_SIGNAL_SMP2P
-> +					     IRQ_TYPE_EDGE_RISING>;
-> +		mboxes = <&ipcc IPCC_CLIENT_GPDSP0 IPCC_MPROC_SIGNAL_SMP2P>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <17>;
-> +
-> +		smp2p_gpdsp0_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		smp2p_gpdsp0_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-gpdsp1 {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <617>, <616>;
-> +		interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
-> +					     IPCC_MPROC_SIGNAL_SMP2P
-> +					     IRQ_TYPE_EDGE_RISING>;
-> +		mboxes = <&ipcc IPCC_CLIENT_GPDSP1 IPCC_MPROC_SIGNAL_SMP2P>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <18>;
-> +
-> +		smp2p_gpdsp1_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		smp2p_gpdsp1_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
->   	soc: soc@0 {
->   		compatible = "simple-bus";
->   		#address-cells = <2>;
-> @@ -2479,6 +2595,92 @@ cpufreq_hw: cpufreq@18591000 {
->   			#freq-domain-cells = <1>;
->   		};
->   
-> +		remoteproc_gpdsp0: remoteproc@20c00000 {
-> +			compatible = "qcom,sa8775p-gpdsp0-pas";
-> +			reg = <0x0 0x20c00000 0x0 0x10000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 768 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_gpdsp0_in 0 0>,
-> +					      <&smp2p_gpdsp0_in 2 0>,
-> +					      <&smp2p_gpdsp0_in 1 0>,
-> +					      <&smp2p_gpdsp0_in 3 0>;
-> +			interrupt-names = "wdog", "fatal", "ready",
-> +					  "handover", "stop-ack";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MXC>;
-> +			power-domain-names = "cx", "mxc";
-> +
-> +			interconnects = <&gpdsp_anoc MASTER_DSP0 0
-> +					 &config_noc SLAVE_CLK_CTL 0>;
-> +
-> +			memory-region = <&pil_gdsp0_mem>;
-> +
-> +			qcom,qmp = <&aoss_qmp>;
-> +
-> +			qcom,smem-states = <&smp2p_gpdsp0_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			status = "disabled";
-> +
-> +			glink-edge {
-> +				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP0
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +				mboxes = <&ipcc IPCC_CLIENT_GPDSP0
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				label = "gpdsp0";
-> +				qcom,remote-pid = <17>;
-> +			};
-> +		};
-> +
-> +		remoteproc_gpdsp1: remoteproc@21c00000 {
-> +			compatible = "qcom,sa8775p-gpdsp1-pas";
-> +			reg = <0x0 0x21c00000 0x0 0x10000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_gpdsp1_in 0 0>,
-> +					      <&smp2p_gpdsp1_in 2 0>,
-> +					      <&smp2p_gpdsp1_in 1 0>,
-> +					      <&smp2p_gpdsp1_in 3 0>;
-> +			interrupt-names = "wdog", "fatal", "ready",
-> +					  "handover", "stop-ack";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MXC>;
-> +			power-domain-names = "cx", "mxc";
-> +
-> +			interconnects = <&gpdsp_anoc MASTER_DSP1 0
-> +					 &config_noc SLAVE_CLK_CTL 0>;
-> +
-> +			memory-region = <&pil_gdsp1_mem>;
-> +
-> +			qcom,qmp = <&aoss_qmp>;
-> +
-> +			qcom,smem-states = <&smp2p_gpdsp1_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			status = "disabled";
-> +
-> +			glink-edge {
-> +				interrupts-extended = <&ipcc IPCC_CLIENT_GPDSP1
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +				mboxes = <&ipcc IPCC_CLIENT_GPDSP1
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				label = "gpdsp1";
-> +				qcom,remote-pid = <18>;
-> +			};
-> +		};
-> +
->   		ethernet1: ethernet@23000000 {
->   			compatible = "qcom,sa8775p-ethqos";
->   			reg = <0x0 0x23000000 0x0 0x10000>,
-> @@ -2546,6 +2748,136 @@ ethernet0: ethernet@23040000 {
->   
->   			status = "disabled";
->   		};
-> +
-> +		remoteproc_cdsp0: remoteproc@26300000 {
-> +			compatible = "qcom,sa8775p-cdsp0-pas";
-> +			reg = <0x0 0x26300000 0x0 0x10000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp0_in 0 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp0_in 2 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp0_in 1 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp0_in 3 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "wdog", "fatal", "ready",
-> +					  "handover", "stop-ack";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&rpmhpd RPMHPD_NSP0>;
-> +			power-domain-names = "cx", "mxc", "nsp0";
-
-s/nsp0/nsp/
-
-> +
-> +			interconnects = <&nspa_noc MASTER_CDSP_PROC 0
-> +					 &mc_virt SLAVE_EBI1 0>;
-> +
-> +			memory-region = <&pil_cdsp0_mem>;
-> +
-> +			qcom,qmp = <&aoss_qmp>;
-> +
-> +			qcom,smem-states = <&smp2p_cdsp0_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			status = "disabled";
-> +
-> +			glink-edge {
-> +				interrupts-extended = <&ipcc IPCC_CLIENT_CDSP
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +				mboxes = <&ipcc IPCC_CLIENT_CDSP
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				label = "cdsp";
-> +				qcom,remote-pid = <5>;
-> +			};
-> +		};
-> +
-> +		remoteproc_cdsp1: remoteproc@2a300000 {
-> +			compatible = "qcom,sa8775p-cdsp1-pas";
-> +			reg = <0x0 0x2A300000 0x0 0x10000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 798 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp1_in 0 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp1_in 2 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp1_in 1 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_cdsp1_in 3 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "wdog", "fatal", "ready",
-> +					  "handover", "stop-ack";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&rpmhpd RPMHPD_NSP1>;
-> +			power-domain-names = "cx", "mxc", "nsp1";
-
-s/nsp1/nsp/
-
-> +
-> +			interconnects = <&nspb_noc MASTER_CDSP_PROC_B 0
-> +					 &mc_virt SLAVE_EBI1 0>;
-> +
-> +			memory-region = <&pil_cdsp1_mem>;
-> +
-> +			qcom,qmp = <&aoss_qmp>;
-> +
-> +			qcom,smem-states = <&smp2p_cdsp1_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			status = "disabled";
-> +
-> +			glink-edge {
-> +				interrupts-extended = <&ipcc IPCC_CLIENT_NSP1
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +				mboxes = <&ipcc IPCC_CLIENT_NSP1
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				label = "cdsp1";
-> +				qcom,remote-pid = <12>;
-> +			};
-> +		};
-> +
-> +		remoteproc_adsp: remoteproc@30000000 {
-> +			compatible = "qcom,sa8775p-adsp-pas";
-> +			reg = <0x0 0x30000000 0x0 0x100>;
-> +
-> +			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "wdog", "fatal", "ready", "handover",
-> +					  "stop-ack";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_LCX>,
-> +					<&rpmhpd RPMHPD_LMX>;
-> +			power-domain-names = "lcx", "lmx";
-> +
-> +			interconnects = <&lpass_ag_noc MASTER_LPASS_PROC 0 &mc_virt SLAVE_EBI1 0>;
-> +
-> +			memory-region = <&pil_adsp_mem>;
-> +
-> +			qcom,qmp = <&aoss_qmp>;
-> +
-> +			qcom,smem-states = <&smp2p_adsp_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			status = "disabled";
-> +
-> +			remoteproc_adsp_glink: glink-edge {
-> +				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +				mboxes = <&ipcc IPCC_CLIENT_LPASS
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				label = "lpass";
-> +				qcom,remote-pid = <2>;
-> +			};
-> +		};
->   	};
->   
->   	thermal-zones {
-> 
-
--- 
-Thx and BRs,
-Tengfei Fan
+Bart
