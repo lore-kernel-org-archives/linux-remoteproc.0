@@ -1,67 +1,40 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356772563
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 21:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5237A17B432;
+	Tue, 28 May 2024 21:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716930241; cv=none; b=mQ6Ru0qPO2TclwLCBTFr3bjjsgPNOkgfc9tjSoSyTAZ261sgiF7Oqlauj5fSdUYe7A+U4nfS31gYZlZZGFoLbDU6TBKFbFbM4c6NCMfnCCxUVpWpJ5l3hATowsBZJGRrfzpRLYXfCv6Q/Bjj477ySZZ9po/FyrszHYMj9vcRO4M=
+	t=1716931634; cv=none; b=SJw0v5SLS0seIXz7ti/7aKH5FRhELVMkAFLS4bbDvfnVftahwO/YeFVISswC6pkzNqOAa88tP7eAdf6Jg7Rw5yVeqZMGBu05rM1lmgeixl8xIy1em98RXRiIEnx4jpvY/dYFIe9vuRZGgW46fPEgm8IXWO3TZg5Tuy2n+1J/0Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716930241; c=relaxed/simple;
-	bh=NrCL3ttWtjWyjhUzmrA/40ri0lQhmCPKGkcqsktYAIA=;
+	s=arc-20240116; t=1716931634; c=relaxed/simple;
+	bh=I1/rPkBVRL+mZ4abLJj6ktTmgOZwov5VOgii3O+1e/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8hQxtjSV32mSwkBFQbSGBf5FrBM1mi6loMVuBUVCjjr6ig9aGGFYGCzInzAKFHrui1ZRfIqkialboT94o6LvhtoDUfNJDVpr5VO7YG4bxG5I+W9u4kuME41PB2ikPkpIYWO5I64wdoxT5+WmgUaBShsOgCOcCkcmHUJbGl424s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozQOsBPs; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9K+WgTyrFZhNRiynfjcF9AjhICVxGIPqR05PtXMRVhH4II8tZrtOEDo1iyEY7i4e39nQx3w3WKRn0DuSSbSiw6tvVGyETevZTDAsHA5UWbFouDI0F6opyRUtH7L0GYZZrC8vRp8a28kC1cKoNE5287YfoE/wO2BkhNinuKzcLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onsvdPnv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozQOsBPs"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4a5344ec7so1837515ad.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 14:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716930238; x=1717535038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RmEhT88aTz3DGDqj6R9iZYqHzSu06mmxBxyiGQRj0OU=;
-        b=ozQOsBPsLV9xtQdcp5pXzFh60IveYz7C5eCIfuOTVGgI/euTNh7lNx3lLUduy56cwg
-         X57aDi+OU/LinOvHy4HPJR/iaSzvjr9csschHFTZugLgVpKxtzWZaDID1XYYcGK9Zzq9
-         pKPGyJ9pOy0TZ2/i1+73prBrKrMeiPsKJOvg/pMF0qI1xPY7IqP7j69zCE6xtSAt4gIw
-         XKrMyZlfXTNZNcevcGRit/cWQ6GlPYvJd5SJs5weNHVCHQvOndsMZKdLNxsyaA2Ssxz6
-         WnnxdK+xtGh9WG8TdQxzi14UAJhh6zC2WGMaCHx5kgyKcFntvLRHFWIkV+VE2S1SpKOY
-         4WyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716930238; x=1717535038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmEhT88aTz3DGDqj6R9iZYqHzSu06mmxBxyiGQRj0OU=;
-        b=Bxg9mNqXA52FW2/JWZCe4Jo/1wIJev+z5ucUW25Xhvx4F4XwvwPFziNVtSY+3U351d
-         3J8tV2yKoZTHuAcmiVBpHdRPttXjYWmq4SOZ+abqAp3aKjFXIMoCylgkB4skN3NavFla
-         2BOrny0meu//Gbe5qvbPc+pWHyw6zgqqO5i/sOfuSNWysS6/0ZmB1Hsm6rfORnWWXoz9
-         etFwkoqNkKXPjd48woSgLaVD0i4v8PzeKzID6Y6tTJUDMq2BLMispnkGOh0r81Cc3l7Q
-         RIFtYq7AYcijK3uzD8yqFN+0UucZPZNN+HG9dV0dpI8rqql07frUTi06kMAWOJa+YEwn
-         9byw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcyyPs103KCKKjeuX2kizhS2ZoucaPVW9JWXHFktqxdDYRdxU9CITUmadR6WIn3tZYLbmSpb5OvFNRtLrtE51Vv9lMU2RKN7H3Zu89DzgiXg==
-X-Gm-Message-State: AOJu0YyRgiGIsb7tMK/A59W12jqZ29o2joFEZ7UnYhtS4RWAT5yTj+84
-	Sax6b0G3KOXDC3Z5lJKqiMOvlnhclIYZ+bfVDMCZLYqA2FjFMd8zzKC23GjrO34=
-X-Google-Smtp-Source: AGHT+IFSLsuBgNepaa9uXWFhRm7TTE7smDcKQUDGy+q3E60dnDvPx31raQ/EGznET3bpmPoPeK+Vjg==
-X-Received: by 2002:a17:902:d485:b0:1f3:1092:ab45 with SMTP id d9443c01a7336-1f4eaaebf79mr2195525ad.26.1716930238350;
-        Tue, 28 May 2024 14:03:58 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:4c7:2691:aa4a:e6b7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c96fd68sm84916855ad.171.2024.05.28.14.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 14:03:57 -0700 (PDT)
-Date: Tue, 28 May 2024 15:03:55 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v5 4/7] remoteproc: core introduce
- rproc_set_rsc_table_on_start function
-Message-ID: <ZlZGu16h1xsM3es5@p14s>
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onsvdPnv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64163C3277B;
+	Tue, 28 May 2024 21:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716931633;
+	bh=I1/rPkBVRL+mZ4abLJj6ktTmgOZwov5VOgii3O+1e/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=onsvdPnvSR9jUn3MMH6xETjjunFTtNntwjGExPLhXIBUT8afQHyqUkn+F2Oy1LXm9
+	 frU+wsqgNJ8Eir0x+deTPWksi4qsdT5WO97baiEBFnE6A2jGVZVQR5EXcNHYUVQCuo
+	 7bmqu3MJGwkSASwLB/DLTHss8kUcWVEZ8HjnbmanYhx/3QxNhLY8Uz8JOe9AoxX5Yk
+	 u4Gogfch8L6RHnGDnRbGA1Jr6rEUgzOnYK0fBxnTBaqjm5hbMjhMN006Hazgh/GZBx
+	 D9rgeVO08BcqmnemFTV2ff8el4BzvtsShc1VllPob0bcBUdKJlFs9TWKQN8XAzl5NL
+	 /zZiXMB53X49Q==
+Date: Tue, 28 May 2024 16:27:11 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: mathieu.poirier@linaro.org, konrad.dybcio@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v10] remoteproc: qcom: Move minidump related layout and
+ API to soc/qcom directory
+Message-ID: <jukn3ip6m6twfgxs6olnn5nxfsskewfwgfms3fb47w5jefuful@lne6rvpcqqju>
+References: <1714724287-12518-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -70,196 +43,130 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240521081001.2989417-5-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <1714724287-12518-1-git-send-email-quic_mojha@quicinc.com>
 
-On Tue, May 21, 2024 at 10:09:58AM +0200, Arnaud Pouliquen wrote:
-> Split rproc_start()to prepare the update of the management of
-
-I don't see any "splitting" for rproc_start() in this patch.  Please consider
-rewording or removing.
-
-> the cache table on start, for the support of the firmware loading
-> by the TEE interface.
-> - create rproc_set_rsc_table_on_start() to address the management of
->   the cache table in a specific function, as done in
->   rproc_reset_rsc_table_on_stop().
-> - rename rproc_set_rsc_table in rproc_set_rsc_table_on_attach()
-> - move rproc_reset_rsc_table_on_stop() to be close to the
->   rproc_set_rsc_table_on_start() function
-
-This patch is really hard to read due to all 3 operations happening at the same
-time.  Please split in 3 smaller patches.
-
+On Fri, May 03, 2024 at 01:48:07PM GMT, Mukesh Ojha wrote:
+> Currently, Qualcomm Minidump is being used to collect mini version of
+> remoteproc coredump with the help of boot firmware however, Minidump
+> as a feature is not limited to be used only for remote processor and
+> can also be used for Application processors. So, in preparation of
+> using it move the Minidump related data structure and its function
+> to its own file under drivers/soc/qcom with qcom_rproc_minidump.c
+> which clearly says it is only for remoteproc minidump.
 > 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 116 ++++++++++++++-------------
->  1 file changed, 62 insertions(+), 54 deletions(-)
+> Extra changes made apart from the movement is,
+> 1. Adds new config, kernel headers and module macros to get this
+>    module compiled.
+> 2. Guards the qcom_minidump() with CONFIG_QCOM_RPROC_MINIDUMP.
+> 3. Selects this QCOM_RPROC_MINIDUMP config when QCOM_RPROC_COMMON
+>    enabled.
+> 4. Added new header qcom_minidump.h .
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..42bca01f3bde 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1264,18 +1264,9 @@ void rproc_resource_cleanup(struct rproc *rproc)
->  }
->  EXPORT_SYMBOL(rproc_resource_cleanup);
->  
-> -static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> +static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct resource_table *loaded_table;
-> -	struct device *dev = &rproc->dev;
-> -	int ret;
-> -
-> -	/* load the ELF segments to memory */
-> -	ret = rproc_load_segments(rproc, fw);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to load program segments: %d\n", ret);
-> -		return ret;
-> -	}
->  
->  	/*
->  	 * The starting device has been given the rproc->cached_table as the
-> @@ -1291,6 +1282,64 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  		rproc->table_ptr = loaded_table;
->  	}
->  
-> +	return 0;
-> +}
-> +
-> +static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+I wouldn't be able to merge this without anything depending on it...
+
+[..]
+> diff --git a/drivers/soc/qcom/qcom_rproc_minidump.c b/drivers/soc/qcom/qcom_rproc_minidump.c
+[..]
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		size_t size))
 > +{
-> +	/* A resource table was never retrieved, nothing to do here */
-> +	if (!rproc->table_ptr)
-> +		return 0;
-> +
-> +	/*
-> +	 * If a cache table exists the remote processor was started by
-> +	 * the remoteproc core.  That cache table should be used for
-> +	 * the rest of the shutdown process.
-> +	 */
-> +	if (rproc->cached_table)
-> +		goto out;
-> +
-> +	/*
-> +	 * If we made it here the remote processor was started by another
-> +	 * entity and a cache table doesn't exist.  As such make a copy of
-> +	 * the resource table currently used by the remote processor and
-> +	 * use that for the rest of the shutdown process.  The memory
-> +	 * allocated here is free'd in rproc_shutdown().
-> +	 */
-> +	rproc->cached_table = kmemdup(rproc->table_ptr,
-> +				      rproc->table_sz, GFP_KERNEL);
-> +	if (!rproc->cached_table)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * Since the remote processor is being switched off the clean table
-> +	 * won't be needed.  Allocated in rproc_set_rsc_table_on_start().
-> +	 */
-> +	kfree(rproc->clean_table);
-> +
-> +out:
-> +	/*
-> +	 * Use a copy of the resource table for the remainder of the
-> +	 * shutdown process.
-> +	 */
-> +	rproc->table_ptr = rproc->cached_table;
-> +	return 0;
-> +}
-> +
-> +static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct device *dev = &rproc->dev;
 > +	int ret;
+> +	struct minidump_subsystem *subsystem;
+> +	struct minidump_global_toc *toc;
 > +
-> +	/* load the ELF segments to memory */
-> +	ret = rproc_load_segments(rproc, fw);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to load program segments: %d\n", ret);
-> +		return ret;
+> +	/* Get Global minidump ToC*/
+> +	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+> +
+> +	/* check if global table pointer exists and init is set */
+> +	if (IS_ERR(toc) || !toc->status) {
+> +		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+> +		return;
 > +	}
 > +
-> +	rproc_set_rsc_table_on_start(rproc, fw);
+> +	/* Get subsystem table of contents using the minidump id */
+> +	subsystem = &toc->subsystems[minidump_id];
 > +
->  	ret = rproc_prepare_subdevices(rproc);
->  	if (ret) {
->  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
-> @@ -1450,7 +1499,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> -static int rproc_set_rsc_table(struct rproc *rproc)
-> +static int rproc_set_rsc_table_on_attach(struct rproc *rproc)
->  {
->  	struct resource_table *table_ptr;
->  	struct device *dev = &rproc->dev;
-> @@ -1540,54 +1589,13 @@ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
->  
->  	/*
->  	 * The clean resource table is no longer needed.  Allocated in
-> -	 * rproc_set_rsc_table().
-> +	 * rproc_set_rsc_table_on_attach().
->  	 */
->  	kfree(rproc->clean_table);
->  
->  	return 0;
->  }
->  
-> -static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
-> -{
-> -	/* A resource table was never retrieved, nothing to do here */
-> -	if (!rproc->table_ptr)
-> -		return 0;
-> -
-> -	/*
-> -	 * If a cache table exists the remote processor was started by
-> -	 * the remoteproc core.  That cache table should be used for
-> -	 * the rest of the shutdown process.
-> -	 */
-> -	if (rproc->cached_table)
-> -		goto out;
-> -
-> -	/*
-> -	 * If we made it here the remote processor was started by another
-> -	 * entity and a cache table doesn't exist.  As such make a copy of
-> -	 * the resource table currently used by the remote processor and
-> -	 * use that for the rest of the shutdown process.  The memory
-> -	 * allocated here is free'd in rproc_shutdown().
-> -	 */
-> -	rproc->cached_table = kmemdup(rproc->table_ptr,
-> -				      rproc->table_sz, GFP_KERNEL);
-> -	if (!rproc->cached_table)
-> -		return -ENOMEM;
-> -
-> -	/*
-> -	 * Since the remote processor is being switched off the clean table
-> -	 * won't be needed.  Allocated in rproc_set_rsc_table().
-> -	 */
-> -	kfree(rproc->clean_table);
-> -
-> -out:
-> -	/*
-> -	 * Use a copy of the resource table for the remainder of the
-> -	 * shutdown process.
-> -	 */
-> -	rproc->table_ptr = rproc->cached_table;
-> -	return 0;
-> -}
-> -
->  /*
->   * Attach to remote processor - similar to rproc_fw_boot() but without
->   * the steps that deal with the firmware image.
-> @@ -1614,7 +1622,7 @@ static int rproc_attach(struct rproc *rproc)
->  		goto disable_iommu;
->  	}
->  
-> -	ret = rproc_set_rsc_table(rproc);
-> +	ret = rproc_set_rsc_table_on_attach(rproc);
->  	if (ret) {
->  		dev_err(dev, "can't load resource table: %d\n", ret);
->  		goto unprepare_device;
+> +	/**
+> +	 * Collect minidump if SS ToC is valid and segment table
+> +	 * is initialized in memory and encryption status is set.
+> +	 */
+> +	if (subsystem->regions_baseptr == 0 ||
+> +	    le32_to_cpu(subsystem->status) != 1 ||
+> +	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+> +		return rproc_coredump(rproc);
+> +	}
+> +
+> +	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+> +		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+> +		return;
+> +	}
+> +
+> +	/**
+> +	 * Clear out the dump segments populated by parse_fw before
+> +	 * re-populating them with minidump segments.
+> +	 */
+> +	rproc_coredump_cleanup(rproc);
+
+I don't think this should be invoked outside drivers/remoteproc, and the
+comment talks about a remoteproc-internal concern...
+
+> +
+> +	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
+
+This function changes the internal state of the remoteproc and relies on
+other operations to clean things up.
+
+I think we could come up with a better design of this, and I don't think
+we should spread this outside of the remoteproc framework.
+
+Regards,
+Bjorn
+
+> +	if (ret) {
+> +		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+> +		goto clean_minidump;
+> +	}
+> +	rproc_coredump_using_sections(rproc);
+> +clean_minidump:
+> +	qcom_minidump_cleanup(rproc);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_minidump);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Remoteproc Minidump helper module");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/soc/qcom/qcom_minidump.h b/include/soc/qcom/qcom_minidump.h
+> new file mode 100644
+> index 000000000000..0fe156066bc0
+> --- /dev/null
+> +++ b/include/soc/qcom/qcom_minidump.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _QCOM_MINIDUMP_H_
+> +#define _QCOM_MINIDUMP_H_
+> +
+> +struct rproc;
+> +struct rproc_dump_segment;
+> +
+> +#if IS_ENABLED(CONFIG_QCOM_RPROC_MINIDUMP)
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		   void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		   struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		   size_t size));
+> +#else
+> +static inline void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+> +		   void (*rproc_dumpfn_t)(struct rproc *rproc,
+> +		   struct rproc_dump_segment *segment, void *dest, size_t offset,
+> +		   size_t size)) { }
+> +#endif /* CONFIG_QCOM_RPROC_MINIDUMP */
+> +#endif /* _QCOM_MINIDUMP_H_ */
 > -- 
-> 2.25.1
+> 2.7.4
 > 
