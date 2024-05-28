@@ -1,66 +1,47 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487AF2FB2
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 21:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5A41DA23;
+	Tue, 28 May 2024 21:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716931844; cv=none; b=YZsn0e5L/hOF0FTwGMKzftwLEm5XgBZyvVPuxNxkVhMquPi3KNFegKByAnkh3rWQbatUVpo+Ih2l7FDjQxkdqneV5MRF8wVUj7PDdJ5XcoZnkZNPSnridNH2UsiffgxjbA5S+vtvOr4QVYknBo1LlfCP/s2d9McPYB1qyC4vpf4=
+	t=1716933355; cv=none; b=GXkr/oWMgPpiO8XmQe6m/vu4BJptZGdKxnccAYXeA9ABb9vJmSbVKRWbi1Wny9Ztohaf/eInzqm7NzD0e5U836EXagRpxwTKC8TqjOqGwQ2o33qH0HdjUtU7GyfO3+B7G2cv6z3OscXef46ZAMoxatoGcN/uL4b+hbl2F3EBy4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716931844; c=relaxed/simple;
-	bh=5rJ6C2fvM31iHiu5ju1m5SG2s+zChPz9rDT003tlYZg=;
+	s=arc-20240116; t=1716933355; c=relaxed/simple;
+	bh=tthgWJCVupl6ERWmdbjXbvx9AlEgF2aFcE/8hKqKCZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I67FrXaBR4J6kalRkCfZ7NIgMK40dT1u0/DwQv259OIw2M89NneAiGGMcBlOPyVkTuwSHlCLIPlj5RqnGKl9Entjeeoj9Z2ILyjAaHgHLBh+LM2cUSh4W2oTqMeoGxkrzq53UuWhuoLfxgQxwOgOEUF+z5xGQzuOtk1t7Ab3kHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wc594tiK; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqRSQW+bQ9LpXQ1QcU/fL+aqC+XsfmTMEKXDddgi3fxzYT8arKR638orD9wAWxMLdebXbylDlPr8GauKVfMbkeCD09/txeB17GhMfs2GQVT5Cqv1baf3hNVbIy39A5W7QaYllfVdBPTvg8L6sVClJ9e3wEkgy8FUW7up6u5nsqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeOVer9D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wc594tiK"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47f0d8ec9so12721415ad.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 May 2024 14:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716931841; x=1717536641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/886KhgNlZLfUXdG7YdFOApfJCvvDP8iK4brhkLxPE=;
-        b=wc594tiKNC7VBSM9g457bt+sTju58yY6+dkPGKAWyOY/GecwCGOeKJRZOo6XkLGT89
-         lxUpQNZoKNHgATwuD+ERmGE6f6Hx4SFYUIQgBVIv7ve5nhaRyD3c4gcxQnEEWUrcBeB0
-         amHEm/85B2Y65i+30pbEhjV81AOCGdX7h2yQmHBr/71Hv6AjT5S4lxOugKPhoj14VLJn
-         bGF3AA8vynTtPimXEh/JPNQFR3fmf3uvvIYbHfT9Al+Yr6zNEMXK2R5LjRDBXtqfTlkb
-         e7YuwXGJeaUYpwYO7+6vu7fnw02CiB0h54n3KSHtwM8yHycF98wnEAz8zYzOJ0NBxLfY
-         DAow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716931841; x=1717536641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/886KhgNlZLfUXdG7YdFOApfJCvvDP8iK4brhkLxPE=;
-        b=sio5/UkgGWIipRPHcMCKvUNyC+anuv1FJ3HLS/4wOe4dfwIu3BX579IR3HFqKvt1sG
-         Q1MmxF5DSlTjxlMlzkb9KTBJzD/n6i3HySO666QOav5g9dYuKw6Okw/aOjjquF1NKcn+
-         AEHdVJl9vlGi4p46pvdpj59pbTBcV+roNBr0THT1J8oVJb1yCcE+DPWOfcAsvdVNgzGp
-         0fE6A1/MRrEf8xbPrtG2HJoSlDsUZnXy43wJ2ImMerjEMySFnqkoXrgD0iDnXY3RACWO
-         hhNhHiIBo1UA6XDawNIZJM8uGz/XZVHCiP3HPrtMaz2pm0WcPr2r+YyuUbJU8ks6dk8e
-         Bdfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtYi3CFP5DUpxrEYyBw63t9aFR4ATRqz892NuQ8+yFfUZudOeXAf7dO5dm409OaQqdImdyBz4EbPAAH8NhZhfmADaf5jFNgTVbM+zaYbUVng==
-X-Gm-Message-State: AOJu0YybPjbvUcqCkhTM4GjfJ0al7pzV3fwgF9KNK6Z0M1F5RQw4AYvp
-	/atTcjWFcNAZN7PbA7p+nAv3xptqyUK8nUpz+3n6k5cCNEXPF185WV7Xvu6AVOc=
-X-Google-Smtp-Source: AGHT+IEP4vGis8cJF35Vj03cY02Mx4GSJp1qf2JV+6D5QpG98m20SLH34o1uGa6a3mw4BJaNA2Si8g==
-X-Received: by 2002:a17:903:2283:b0:1f2:fb89:1d3e with SMTP id d9443c01a7336-1f4486bd871mr151487525ad.7.1716931841312;
-        Tue, 28 May 2024 14:30:41 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:4c7:2691:aa4a:e6b7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9a50fbsm84917215ad.217.2024.05.28.14.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 14:30:40 -0700 (PDT)
-Date: Tue, 28 May 2024 15:30:38 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
-Message-ID: <ZlZM/hgSO4EeRVqS@p14s>
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeOVer9D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8534C3277B;
+	Tue, 28 May 2024 21:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716933355;
+	bh=tthgWJCVupl6ERWmdbjXbvx9AlEgF2aFcE/8hKqKCZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MeOVer9DpU1XjBV10SP47aXhFGt4HUm8faTIBQLbS7zPZ6585uXYSiNOiPJd2Os1n
+	 7pdwSwF+W+tRsf8WlrPBYcc03rvODX6OVYPrG2mPlquRlfUjnVMB/tuFKkFJssVJ0t
+	 UHUc0j8lAHd7cNboljjzXMDbXiEEIMPrcNoDmBMCgUlgnWFLuFz9hIN+Of0sxMZmMv
+	 Snv7bOHhWG5599Z124M2o4Jw1T00019os/KZX+SKkmhTn08pyZ3Ay8MBys9WvCsppK
+	 8CYFkM/yDGzYsLNwK+Gdi2HREUALIqkjReBoHcATe4d7J+NiDT+VqXCSgJHL0/nSqb
+	 ZsQnf+Jl/+2Dw==
+Date: Tue, 28 May 2024 16:55:52 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] soc: qcom: smem: Add
+ qcom_smem_bust_hwspin_lock_by_host()
+Message-ID: <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
+References: <20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com>
+ <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,103 +50,86 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
 
-On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
-> 1) on start:
-> - Using the TEE loader, the resource table is loaded by an external entity.
-> In such case the resource table address is not find from the firmware but
-> provided by the TEE remoteproc framework.
-> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
-> - test that rproc->cached_table is not null before performing the memcpy
+On Fri, May 24, 2024 at 06:26:42PM GMT, Chris Lew wrote:
+> Add qcom_smem_bust_hwspin_lock_by_host to enable remoteproc to bust the
+> hwspin_lock owned by smem. In the event the remoteproc crashes
+> unexpectedly, the remoteproc driver can invoke this API to try and bust
+> the hwspin_lock and release the lock if still held by the remoteproc
+> device.
 > 
-> 2)on stop
-> The use of the cached_table seems mandatory:
-> - during recovery sequence to have a snapshot of the resource table
->   resources used,
-> - on stop to allow  for the deinitialization of resources after the
->   the remote processor has been shutdown.
-> However if the TEE interface is being used, we first need to unmap the
-> table_ptr before setting it to rproc->cached_table.
-> The update of rproc->table_ptr to rproc->cached_table is performed in
-> tee_remoteproc.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 8 deletions(-)
+>  drivers/soc/qcom/smem.c       | 28 ++++++++++++++++++++++++++++
+>  include/linux/soc/qcom/smem.h |  2 ++
+>  2 files changed, 30 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 42bca01f3bde..3a642151c983 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
->  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct resource_table *loaded_table;
-> +	struct device *dev = &rproc->dev;
+> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+> index 7191fa0c087f..683599990387 100644
+> --- a/drivers/soc/qcom/smem.c
+> +++ b/drivers/soc/qcom/smem.c
+> @@ -359,6 +359,34 @@ static struct qcom_smem *__smem;
+>  /* Timeout (ms) for the trylock of remote spinlocks */
+>  #define HWSPINLOCK_TIMEOUT	1000
 >  
->  	/*
->  	 * The starting device has been given the rproc->cached_table as the
-> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
->  	 * this information to device memory. We also update the table_ptr so
->  	 * that any subsequent changes will be applied to the loaded version.
->  	 */
-> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-> -	if (loaded_table) {
-> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
-> -		rproc->table_ptr = loaded_table;
-> +	if (rproc->tee_interface) {
-> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
-> +		if (IS_ERR(loaded_table)) {
-> +			dev_err(dev, "can't get resource table\n");
-> +			return PTR_ERR(loaded_table);
-> +		}
-> +	} else {
-> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
->  	}
->  
-> +	if (loaded_table && rproc->cached_table)
-> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+> +/* The qcom hwspinlock id is always plus one from the smem host id */
+> +#define SMEM_HOST_ID_TO_HWSPINLOCK_ID(__x) ((__x) + 1)
 > +
+> +/**
+> + * qcom_smem_bust_hwspin_lock_by_host() - bust the smem hwspinlock for an smem host id
+> + * @host:	remote processor id
+> + *
+> + * Busts the hwspin_lock for the given smem host id. This helper is intended for remoteproc drivers
+> + * that manage remoteprocs with an equivalent smem driver instance in the remote firmware. Drivers
+> + * can force a release of the smem hwspin_lock if the rproc unexpectedly goes into a bad state.
 
-Why is this not part of the else {} above as it was the case before this patch?
-And why was an extra check for ->cached_table added?
+Please wrap these at 80 characters.
 
-This should be a simple change, i.e introduce an if {} else {} block to take
-care of the two scenarios.  Plus the comment is misplaced now. 
+> + *
+> + * Context: Process context.
+> + *
+> + * Returns: 0 on success, otherwise negative errno.
+> + */
+> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host)
+> +{
+> +	if (!__smem)
+> +		return -EPROBE_DEFER;
 
-More comments tomorrow.
+This would be called at a time where -EPROBE_DEFER isn't appropriate,
+the client should invoke qcom_smem_is_available() at probe time to guard
+against this.
 
-Thanks,
-Mathieu
-
-> +	rproc->table_ptr = loaded_table;
 > +
->  	return 0;
->  }
+> +	/* This function is for remote procs, so ignore SMEM_HOST_APPS */
+> +	if (host == SMEM_HOST_APPS ||host >= SMEM_HOST_COUNT)
+
+Missing <space> after ||
+
+Regards,
+Bjorn
+
+> +		return -EINVAL;
+> +
+> +	return hwspin_lock_bust(__smem->hwlock, SMEM_HOST_ID_TO_HWSPINLOCK_ID(host));
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_smem_bust_hwspin_lock_by_host);
+> +
+>  /**
+>   * qcom_smem_is_available() - Check if SMEM is available
+>   *
+> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
+> index a36a3b9d4929..959eea0812bb 100644
+> --- a/include/linux/soc/qcom/smem.h
+> +++ b/include/linux/soc/qcom/smem.h
+> @@ -14,4 +14,6 @@ phys_addr_t qcom_smem_virt_to_phys(void *p);
 >  
-> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
->  	kfree(rproc->clean_table);
+>  int qcom_smem_get_soc_id(u32 *id);
 >  
->  out:
-> -	/*
-> -	 * Use a copy of the resource table for the remainder of the
-> -	 * shutdown process.
-> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
-> +	 * before updating the proc->table_ptr reference.
->  	 */
-> -	rproc->table_ptr = rproc->cached_table;
-> +	if (!rproc->tee_interface) {
-> +		/*
-> +		 * Use a copy of the resource table for the remainder of the
-> +		 * shutdown process.
-> +		 */
-> +		rproc->table_ptr = rproc->cached_table;
-> +	}
->  	return 0;
->  }
->  
+> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host);
+> +
+>  #endif
+> 
 > -- 
 > 2.25.1
 > 
