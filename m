@@ -1,49 +1,48 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19551C0DCC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7701C0DFB;
 	Wed, 29 May 2024 18:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717006222; cv=none; b=hj010PddS3lcQBCtllsMDwJ4e7DXgF50ALihFr13yGA43+QEMuqGBBerH8HGuqVjYdFAkLX8cBtHAon/jau/z0CEAPw0+ys8Zg4NCP39dsJFgYb3Fwt9tFAAFoYIVet4uE407r0cW/x9o04m3osp3rqql/p4ceN3zmWOcyJGfoM=
+	t=1717006222; cv=none; b=ru15gCmbUe/f1lzYRhhbXK43NafSmnYo74X3Pde7QuNYDgsNUlaamzz5xiIKL38vBTzDsgj81bAcMbJFhoCVBA26yHW3AlAUISCPoBlzxT1MKn0WrftKxl8KbbS6BSwIIZw5oY0dS7SsqGE1CG22oRgOSn0eis5gbh418voZSvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717006222; c=relaxed/simple;
-	bh=U8zNeyBZ2/k85kcSrtkTjJBXpZlYLrDaA+wZkSc1Tk8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UjhyKBzFZOJwqzABirCXJGSYezQXMRAwkQDmgMrN/p2h2fxiqIza5qc5wrJ0vbFrAM1D4dVz17X0Ox3dqJDu+9pFuCipVGjBwkWs3hzsU6RoYB/7ziz5FQljLwqV4aS8l1eVuGAJ4fyvj7qhJ/NcT9saRdRevbXm6zQqKdoKiSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p0tWw72F; arc=none smtp.client-ip=205.220.180.131
+	bh=vGabm37tC269RBMvbuwrjb2bM7+ngBO/85FI8CiwzQY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=BeM1f3JVYf7gGbp/BXOyTVAPFhMtkzygQsYN2OnqS8SFaq0fvoJDBXkWbapXyVCIs3iuYvRaeUjUkHtfvSz2Ur8zhVDbA6YRKLA/He1u6zMSH7w13VSO4QIND8AHpQjRtIsOl787jU9PoDP5SAe568LKZ55hTm94Lf5xL6ZXoWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kWuseCyp; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p0tWw72F"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9qucW012513;
-	Wed, 29 May 2024 18:10:02 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kWuseCyp"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TAm8km023423;
+	Wed, 29 May 2024 18:10:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o++/LFsFJU7qKLCW6Zw9bAt7A393Bq5rYwa053ro+tc=; b=p0tWw72Fl32uUNhq
-	s6Eq79YBe73M7lbenOzWVcCZYrPRuGTI1CnlUtCnB9Yc7x+XKPsWeErjBs5iqNo/
-	UC4O3/xTPAh3I53+4ysBpK+kiKv8uCmO+6e2ZfajGNjMr9EtGDj5YL9wt7nPEHB2
-	UMb7FvvEoRPRUeG77RwldynRsdnJ6RG00xBp/Tri0qQTY0hRAqpPUEuwt9CtzeQ+
-	zLBusNSq91zfdMqpVPOc6Bd107unfDdfEhq2Jm6f9HotNrdPiaqsBZ0o3GMnOXni
-	COJPCmWJFNdGu25WRMgIr4+ecpNCjhGv2uc0048bKV25uCSpYRHRt/j7iU60RZxc
-	tvXvEw==
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iG3MTIFwvWdFAw8PEShyLw
+	jKjHSMW7X/BW138vB+qfI=; b=kWuseCypNhVn0/ZyhrJAMXCjQGZdrDBhbpVkTb
+	8VkZOdQaA7eWNqUAkx05OfMgv+e9hJYAGyqhkoyNVAiMRg0eFDdZH16YpV5KvzPz
+	6PSe6mrm6wwWK2T985P2ff6fmMIc4udI3ClB1qoos+dJ7swhJe5dlGyH44j+T8Wf
+	bfqtu44NjfQuePIdiQ1+aSmQAxsQEFcg6Jr9WRSIbXN8pVzv8/tkL2Nj9TkDudUf
+	wgKEwOOLkikQt+1DkGJiCEycJkUtQ6tXFPBIilhK4RNgL+V3yR9Jp+0tSL520yJD
+	Ha2FYYklDAz3N/jlUgiU4amGubmuGeqOUpCqMzR/Ugy5eeGA==
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qhurq-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yj9xbb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 29 May 2024 18:10:01 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TIA0Zw003974
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TI9xCG003967
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 18:10:00 GMT
+	Wed, 29 May 2024 18:09:59 GMT
 Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 29 May 2024 11:10:00 -0700
+ 15.2.1544.9; Wed, 29 May 2024 11:09:59 -0700
 From: Chris Lew <quic_clew@quicinc.com>
-Date: Wed, 29 May 2024 11:09:56 -0700
-Subject: [PATCH v3 2/4] hwspinlock: qcom: implement bust operation
+Subject: [PATCH v3 0/4] Add support for hwspinlock bust
+Date: Wed, 29 May 2024 11:09:54 -0700
+Message-ID: <20240529-hwspinlock-bust-v3-0-c8b924ffa5a2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -52,9 +51,10 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240529-hwspinlock-bust-v3-2-c8b924ffa5a2@quicinc.com>
-References: <20240529-hwspinlock-bust-v3-0-c8b924ffa5a2@quicinc.com>
-In-Reply-To: <20240529-hwspinlock-bust-v3-0-c8b924ffa5a2@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHNvV2YC/22OQQ6CMBBFr0K6tmZairSuvIdxUUqRiVqQAmoId
+ 7egCwku3yTv/RmItw1aT/bRQBrbo8fKBYg3ETGldmdLMQ9MOHABCShaPnyN7lqZC80639JcqFS
+ nYJiONQlW3dgCn3PxeApcom+r5jUP9Hy6flsMVq2eU6BJpqUREpjM1eHeoUFntqa6TfGPycV/s
+ 8ikLHKWGg3Zwpz+6Nnv9m5dYKEgUq1Ay0TxWC4L4zi+ASLEnPQsAQAA
 To: Bjorn Andersson <andersson@kernel.org>,
         Baolin Wang
 	<baolin.wang@linux.alibaba.com>,
@@ -80,81 +80,86 @@ CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Richard
  Maina" <quic_rmaina@quicinc.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717006199; l=1530;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717006199; l=2680;
  i=quic_clew@quicinc.com; s=20240508; h=from:subject:message-id;
- bh=mmkPN43S9HCXd6+6jOFUT/6hMs9iDUCiyyz1fShSCPc=;
- b=ltIJvzIIjKUAYZzm1HLMnw4x+GwkDr0kod2QiaGQp8Tlh2KV0QNtAklJkGaP9yelpOx+JX4Tw
- qwLZaDHNz43DmZYmwhDIrij+pWqq+Nodr1glbSesLR0lwb+Wv2p5pGz
+ bh=vGabm37tC269RBMvbuwrjb2bM7+ngBO/85FI8CiwzQY=;
+ b=L44KNjGru1XSqCRGaXQsV0aSR7QuWYj0hVBs5xma6PClnv6uww54NOfsT2+2gLpR/FxT/Ea03
+ a7LRYMPphxVD45NkriJA9bhm2EOS9EHTTC4gqxGjXNSC0drnjuObvgC
 X-Developer-Key: i=quic_clew@quicinc.com; a=ed25519;
  pk=lEYKFaL1H5dMC33BEeOULLcHAwjKyHkTLdLZQRDTKV4=
 X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bgVoQ_XHxHuMiFm8ZUnjoiYulu5l_YMu
-X-Proofpoint-ORIG-GUID: bgVoQ_XHxHuMiFm8ZUnjoiYulu5l_YMu
+X-Proofpoint-GUID: 9Y-tH7HSJOzxgARNPd5dRV2MqWjkSk19
+X-Proofpoint-ORIG-GUID: 9Y-tH7HSJOzxgARNPd5dRV2MqWjkSk19
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-29_14,2024-05-28_01,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=913 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405170001 definitions=main-2405290127
 
-From: Richard Maina <quic_rmaina@quicinc.com>
+hwspinlocks can be acquired by many devices on the SoC. If any of these
+devices go into a bad state before the device releases the hwspinlock,
+then that hwspinlock may end up in an unusable state.
 
-Implement a new operation qcom_hwspinlock_bust() which can be invoked
-to bust any locks that are in use when a remoteproc is stopped or
-crashed.
+In the case of smem, each remoteproc takes a hwspinlock before trying to
+allocate an smem item. If the remoteproc were to suddenly crash without
+releasing this, it would be impossible for other remoteprocs to allocate
+any smem items.
 
-Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+We propose a new api to bust a hwspinlock. A driver can use the
+the bust api if it detects the device has gone into an error state, thus
+allowing other entities in the system to use the hwspinlock.
+
+These patches were tested on an sm8650 mtp using engineering cdsp
+firmware that triggers a watchdog with the smem hwspinlock acquired.
+
+Checked for error in dt-bindings with below.
+ - make DT_CHECKER_FLAGS=-m DT_SCHEMA_FILES=remoteproc/qcom,pas-common.yaml dt_binding_check
+ - make qcom/sm8650-mtp.dtb CHECK_DTBS=1
+
 Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 ---
- drivers/hwspinlock/qcom_hwspinlock.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Changes in v3:
+- Fixed 80 char comment formatting and missing space suggested by Bjorn
+- Changed unsigned to unsigned int in smem apis from checkpatch warning
+- Removed null pointer check in smem bust api
+- Picked up reviewed-by trailers from Bjorn
+- Link to v2: https://lore.kernel.org/r/20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com
 
-diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-index 814dfe8697bf..0390979fd765 100644
---- a/drivers/hwspinlock/qcom_hwspinlock.c
-+++ b/drivers/hwspinlock/qcom_hwspinlock.c
-@@ -64,9 +64,34 @@ static void qcom_hwspinlock_unlock(struct hwspinlock *lock)
- 		pr_err("%s: failed to unlock spinlock\n", __func__);
- }
- 
-+static int qcom_hwspinlock_bust(struct hwspinlock *lock, unsigned int id)
-+{
-+	struct regmap_field *field = lock->priv;
-+	u32 owner;
-+	int ret;
-+
-+	ret = regmap_field_read(field, &owner);
-+	if (ret) {
-+		dev_err(lock->bank->dev, "unable to query spinlock owner\n");
-+		return ret;
-+	}
-+
-+	if (owner != id)
-+		return 0;
-+
-+	ret = regmap_field_write(field, 0);
-+	if (ret) {
-+		dev_err(lock->bank->dev, "failed to bust spinlock\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct hwspinlock_ops qcom_hwspinlock_ops = {
- 	.trylock	= qcom_hwspinlock_trylock,
- 	.unlock		= qcom_hwspinlock_unlock,
-+	.bust		= qcom_hwspinlock_bust,
- };
- 
- static const struct regmap_config sfpb_mutex_config = {
+Changes in v2:
+- Remove extra print in qcom_q6v5_pas as suggested by Bryan
+- Expose SMEM API that remotproc can call to bust the smem hwlock as suggested by Krzysztof
+- Drop patches related to multiple references on a hwlock
+- Link to v1: https://lore.kernel.org/r/20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com
 
+---
+Chris Lew (1):
+      soc: qcom: smem: Add qcom_smem_bust_hwspin_lock_by_host()
+
+Richard Maina (3):
+      hwspinlock: Introduce hwspin_lock_bust()
+      hwspinlock: qcom: implement bust operation
+      remoteproc: qcom_q6v5_pas: Add hwspinlock bust on stop
+
+ Documentation/locking/hwspinlock.rst     | 11 +++++++++++
+ drivers/hwspinlock/hwspinlock_core.c     | 28 ++++++++++++++++++++++++++++
+ drivers/hwspinlock/hwspinlock_internal.h |  3 +++
+ drivers/hwspinlock/qcom_hwspinlock.c     | 25 +++++++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c       | 11 +++++++++++
+ drivers/soc/qcom/smem.c                  | 26 ++++++++++++++++++++++++++
+ include/linux/hwspinlock.h               |  6 ++++++
+ include/linux/soc/qcom/smem.h            |  2 ++
+ 8 files changed, 112 insertions(+)
+---
+base-commit: e7b4ef8fffaca247809337bb78daceb406659f2d
+change-id: 20240509-hwspinlock-bust-d497a70c1a3a
+
+Best regards,
 -- 
-2.25.1
+Chris Lew <quic_clew@quicinc.com>
 
