@@ -1,50 +1,49 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F4B1836DE;
-	Wed, 29 May 2024 18:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19551C0DCC;
+	Wed, 29 May 2024 18:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717006221; cv=none; b=sSClYK/HuyKWNum7phfVt7RM3Vj02MqPUo54Tq3e16rP74yyD4gwTDDHYvl7hELRFkr9N2s0ltvun6F20BgE+cdlx3RdK7doTvl0NRv3F2l3ipU+EeL5wkYpXMplFhfDWB4fx1xyk896JR1uzxqXY7eerYvwFQBBk9mTRXG6go0=
+	t=1717006222; cv=none; b=hj010PddS3lcQBCtllsMDwJ4e7DXgF50ALihFr13yGA43+QEMuqGBBerH8HGuqVjYdFAkLX8cBtHAon/jau/z0CEAPw0+ys8Zg4NCP39dsJFgYb3Fwt9tFAAFoYIVet4uE407r0cW/x9o04m3osp3rqql/p4ceN3zmWOcyJGfoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717006221; c=relaxed/simple;
-	bh=0kcDD/5ugp1alfrK4+zeqPWHZ6Ox9wD0gGIKPMAxpIg=;
+	s=arc-20240116; t=1717006222; c=relaxed/simple;
+	bh=U8zNeyBZ2/k85kcSrtkTjJBXpZlYLrDaA+wZkSc1Tk8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=NiOKgqlRl+f8HSqXo+vFSLLpWrxrShSGF4e0OHb1HHa1fV9CUa8GrviKMSc1kM5pkYbc4nCr6xVpbIXX8Eo3RfcXhRFQlH+Hy3imio8lN/udB6+mKnNn/w5dHBQcqOe4vS6h7245xjz3g7rKtM/gt8zzSIRsec99Uznt4PeOLc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QicqMx7Q; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:CC; b=UjhyKBzFZOJwqzABirCXJGSYezQXMRAwkQDmgMrN/p2h2fxiqIza5qc5wrJ0vbFrAM1D4dVz17X0Ox3dqJDu+9pFuCipVGjBwkWs3hzsU6RoYB/7ziz5FQljLwqV4aS8l1eVuGAJ4fyvj7qhJ/NcT9saRdRevbXm6zQqKdoKiSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p0tWw72F; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QicqMx7Q"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p0tWw72F"
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TBHdm9012837;
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44T9qucW012513;
 	Wed, 29 May 2024 18:10:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4CscIOPSIzNF/B8vuaT4PurRNfIAAhpAp22/FUwa6ww=; b=QicqMx7QD6mdsxIL
-	opZ57MCOeAvyP046IyzXUsMcPjr86HcDI/m21Q8A+Yxb5PERR7euQm0Q6WR/phw8
-	24HumrXwCLHTmtxkPwtSCczMjB+BT5gk9db5jChcaCo+gKjk/QOk03KnrRLsij80
-	LHhgChrbCXQOWgWxfpVspLjqp+7lsnYm6u1nq7wxHSUuf3gPqXPUeW5G1O9LILqK
-	4UVUCegxKtZWT7nbNlKzcRaUf7fS6reH3Co64zxajRDQRofU9/LbiLjKb3mAz3jJ
-	SmhVI5YSKIqqUZ6y1AbjxS7F1E+QMEcaDugbpGbAfL6WOV/tj6GsQLGkDNjlGavv
-	YNdPPg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qhurr-1
+	o++/LFsFJU7qKLCW6Zw9bAt7A393Bq5rYwa053ro+tc=; b=p0tWw72Fl32uUNhq
+	s6Eq79YBe73M7lbenOzWVcCZYrPRuGTI1CnlUtCnB9Yc7x+XKPsWeErjBs5iqNo/
+	UC4O3/xTPAh3I53+4ysBpK+kiKv8uCmO+6e2ZfajGNjMr9EtGDj5YL9wt7nPEHB2
+	UMb7FvvEoRPRUeG77RwldynRsdnJ6RG00xBp/Tri0qQTY0hRAqpPUEuwt9CtzeQ+
+	zLBusNSq91zfdMqpVPOc6Bd107unfDdfEhq2Jm6f9HotNrdPiaqsBZ0o3GMnOXni
+	COJPCmWJFNdGu25WRMgIr4+ecpNCjhGv2uc0048bKV25uCSpYRHRt/j7iU60RZxc
+	tvXvEw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qhurq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 18:10:02 +0000 (GMT)
+	Wed, 29 May 2024 18:10:01 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TIA0V5023051
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TIA0Zw003974
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 18:10:01 GMT
+	Wed, 29 May 2024 18:10:00 GMT
 Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.9; Wed, 29 May 2024 11:10:00 -0700
 From: Chris Lew <quic_clew@quicinc.com>
-Date: Wed, 29 May 2024 11:09:58 -0700
-Subject: [PATCH v3 4/4] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
+Date: Wed, 29 May 2024 11:09:56 -0700
+Subject: [PATCH v3 2/4] hwspinlock: qcom: implement bust operation
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240529-hwspinlock-bust-v3-4-c8b924ffa5a2@quicinc.com>
+Message-ID: <20240529-hwspinlock-bust-v3-2-c8b924ffa5a2@quicinc.com>
 References: <20240529-hwspinlock-bust-v3-0-c8b924ffa5a2@quicinc.com>
 In-Reply-To: <20240529-hwspinlock-bust-v3-0-c8b924ffa5a2@quicinc.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -81,19 +80,19 @@ CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Richard
  Maina" <quic_rmaina@quicinc.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717006199; l=3424;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717006199; l=1530;
  i=quic_clew@quicinc.com; s=20240508; h=from:subject:message-id;
- bh=Fh1qjcjJVfLujRu9lV+ilZpdx4nr3R2fYPbCuSucud0=;
- b=rSI4BNpbFLSlMfe4BSfPwSXFFERdnA9hNZRn5X7NWLgT5aXlj/qia48D3MpjOhCfOULFqWbdr
- cZpOhCtr0lkAotxvR3KzsH3e4Cbd3+qWy8YU+UZjgN/faI9K+LF15cf
+ bh=mmkPN43S9HCXd6+6jOFUT/6hMs9iDUCiyyz1fShSCPc=;
+ b=ltIJvzIIjKUAYZzm1HLMnw4x+GwkDr0kod2QiaGQp8Tlh2KV0QNtAklJkGaP9yelpOx+JX4Tw
+ qwLZaDHNz43DmZYmwhDIrij+pWqq+Nodr1glbSesLR0lwb+Wv2p5pGz
 X-Developer-Key: i=quic_clew@quicinc.com; a=ed25519;
  pk=lEYKFaL1H5dMC33BEeOULLcHAwjKyHkTLdLZQRDTKV4=
 X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yKndioMBwa7xc8se-FGAO4lSJwVPx5JN
-X-Proofpoint-ORIG-GUID: yKndioMBwa7xc8se-FGAO4lSJwVPx5JN
+X-Proofpoint-GUID: bgVoQ_XHxHuMiFm8ZUnjoiYulu5l_YMu
+X-Proofpoint-ORIG-GUID: bgVoQ_XHxHuMiFm8ZUnjoiYulu5l_YMu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-29_14,2024-05-28_01,2024-05-17_01
@@ -105,104 +104,56 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorit
 
 From: Richard Maina <quic_rmaina@quicinc.com>
 
-When remoteproc goes down unexpectedly this results in a state where any
-acquired hwspinlocks will remain locked possibly resulting in deadlock.
-In order to ensure all locks are freed we include a call to
-qcom_smem_bust_hwspin_lock_by_host() during remoteproc shutdown.
-
-For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned smem
-host_id. Remoteproc can pass this id to smem to try and bust the lock on
-remoteproc stop.
-
-This edge case only occurs with q6v5_pas watchdog crashes. The error
-fatal case has handling to clear the hwspinlock before the error fatal
-interrupt is triggered.
+Implement a new operation qcom_hwspinlock_bust() which can be invoked
+to bust any locks that are in use when a remoteproc is stopped or
+crashed.
 
 Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
 Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/hwspinlock/qcom_hwspinlock.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 54d8005d40a3..8458bcfe9e19 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -52,6 +52,7 @@ struct adsp_data {
- 	const char *ssr_name;
- 	const char *sysmon_name;
- 	int ssctl_id;
-+	unsigned int smem_host_id;
- 
- 	int region_assign_idx;
- 	int region_assign_count;
-@@ -81,6 +82,7 @@ struct qcom_adsp {
- 	int lite_pas_id;
- 	unsigned int minidump_id;
- 	int crash_reason_smem;
-+	unsigned int smem_host_id;
- 	bool decrypt_shutdown;
- 	const char *info_name;
- 
-@@ -399,6 +401,9 @@ static int adsp_stop(struct rproc *rproc)
- 	if (handover)
- 		qcom_pas_handover(&adsp->q6v5);
- 
-+	if (adsp->smem_host_id)
-+		ret = qcom_smem_bust_hwspin_lock_by_host(adsp->smem_host_id);
-+
- 	return ret;
+diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
+index 814dfe8697bf..0390979fd765 100644
+--- a/drivers/hwspinlock/qcom_hwspinlock.c
++++ b/drivers/hwspinlock/qcom_hwspinlock.c
+@@ -64,9 +64,34 @@ static void qcom_hwspinlock_unlock(struct hwspinlock *lock)
+ 		pr_err("%s: failed to unlock spinlock\n", __func__);
  }
  
-@@ -727,6 +732,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->pas_id = desc->pas_id;
- 	adsp->lite_pas_id = desc->lite_pas_id;
- 	adsp->info_name = desc->sysmon_name;
-+	adsp->smem_host_id = desc->smem_host_id;
- 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	adsp->region_assign_idx = desc->region_assign_idx;
- 	adsp->region_assign_count = min_t(int, MAX_ASSIGN_COUNT, desc->region_assign_count);
-@@ -1196,6 +1202,7 @@ static const struct adsp_data sm8550_adsp_resource = {
- 	.ssr_name = "lpass",
- 	.sysmon_name = "adsp",
- 	.ssctl_id = 0x14,
-+	.smem_host_id = 2,
++static int qcom_hwspinlock_bust(struct hwspinlock *lock, unsigned int id)
++{
++	struct regmap_field *field = lock->priv;
++	u32 owner;
++	int ret;
++
++	ret = regmap_field_read(field, &owner);
++	if (ret) {
++		dev_err(lock->bank->dev, "unable to query spinlock owner\n");
++		return ret;
++	}
++
++	if (owner != id)
++		return 0;
++
++	ret = regmap_field_write(field, 0);
++	if (ret) {
++		dev_err(lock->bank->dev, "failed to bust spinlock\n");
++		return ret;
++	}
++
++	return 0;
++}
++
+ static const struct hwspinlock_ops qcom_hwspinlock_ops = {
+ 	.trylock	= qcom_hwspinlock_trylock,
+ 	.unlock		= qcom_hwspinlock_unlock,
++	.bust		= qcom_hwspinlock_bust,
  };
  
- static const struct adsp_data sm8550_cdsp_resource = {
-@@ -1216,6 +1223,7 @@ static const struct adsp_data sm8550_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
- };
- 
- static const struct adsp_data sm8550_mpss_resource = {
-@@ -1236,6 +1244,7 @@ static const struct adsp_data sm8550_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	.smem_host_id = 1,
- 	.region_assign_idx = 2,
- 	.region_assign_count = 1,
- 	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-@@ -1275,6 +1284,7 @@ static const struct adsp_data sm8650_cdsp_resource = {
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
- 	.region_assign_idx = 2,
- 	.region_assign_count = 1,
- 	.region_assign_shared = true,
-@@ -1299,6 +1309,7 @@ static const struct adsp_data sm8650_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	.smem_host_id = 1,
- 	.region_assign_idx = 2,
- 	.region_assign_count = 3,
- 	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
+ static const struct regmap_config sfpb_mutex_config = {
 
 -- 
 2.25.1
