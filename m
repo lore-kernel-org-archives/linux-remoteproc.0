@@ -1,138 +1,77 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AFD17E8F3;
-	Tue, 28 May 2024 22:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D501A15B0EE;
+	Wed, 29 May 2024 02:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716936645; cv=none; b=GlilYxSt8dpaxLKU+cZJmrYy89WT2Lpbm2iIpv9aXPzIV7jfKxvbVNgNO1/jV0mpOZAlFUEOi4XqRKI9+0cwzSKlbLBfP9GIpvfsmrmqHLb/UqGelDmLLaJezjHuxA4AKC1Z4tHBK1l4pIsKOcubU1f6XCiNcusosVmtd4x7pdA=
+	t=1716948134; cv=none; b=LTpd07NaK+C53qkG/2zlql6tvGB7CnzE0BPJ7eAsmfhEAgrfQ7iHHXR9XqhIE6ukuH0NU5cucrP8wSNYiPfO2PFQ/57wCItZWzj+AbGlP3dPOH/77rYUZTKo08hLBCPSnPw8sSCSFm3Gy4YH69KnZRYs4sml7OOK/alDAcK787k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716936645; c=relaxed/simple;
-	bh=A1q/7/z20DOapqs/UB4zxXko6V8H8clAPjkctrHxIgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jpHaEFdTtJhQ03hsMDgJmZDL0VAftK4nv+s9J1tuQMsOmxNfa1dLGraps+y5FjW+w8FoIyjM4GWRTdq95mndO7HgIG8ENBJkm1P+D+lwrauRoXqJTTIqoeh7jDScE1epTos0pBaQzV1ZVruvgPkn7T7GbG6ocs8wI88WPvesoe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cRDsKCQD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716948134; c=relaxed/simple;
+	bh=6wEr4j3nqrV3Xer+zYHvj/gdXXgSgZ5QOcoBvjj+iDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YscX9iVRFGwpro/JK0qM/vif1ucQ75JWllWvW5scFVQge7UROFmpXC6/lC3fM4dSd8i/9Tts7y0U0sXXbZULhHUxl8Yh16N4cT9vjKewQccT76YhHTKuaQ+uqjmvHsiinDB2UrEmmQNRVDr5KKJOGUQ9uh/V0ENLS9uUDH9oNMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHKYa9xW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cRDsKCQD"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SKh8u4001482;
-	Tue, 28 May 2024 22:50:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	85GvXhYFcNOFmEbbjkprq9ObtrDiCSDrMIpcOiC1kbg=; b=cRDsKCQDUTBoA3XM
-	rrbboJyfFUgxaXQlzhiqFfpQm6xKwnFugUKTvgpwViuCqocvER4P1vNYGV/6FrIA
-	mc5ekUCae0fL7pk3D4ye0sY7FJQrik5BkzTCHTs2gXfvcn92GvBiY6pJvlfbQDsE
-	PGzdxykhw5VlLOPKW/OfZYwfSw6aE/lCKRYb0R8O2+1vahSte62BNjMRAW1YlMk1
-	L96fqP5F91rdA/ideJkE7BeHTFdCCmqQfWZFO34t2hsnydKC9KuLBOEHwhFQkPNP
-	CwYt6uQ/e6LIcwHq4meRxAlj1FTVZl3cJTbPUzU8RO6k27WxQMbJ+Riv8UgQklLu
-	n56gaQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k7gh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:50:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SMoRta030147
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 22:50:27 GMT
-Received: from [10.110.115.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 15:50:25 -0700
-Message-ID: <f0881f3b-036b-462a-9e0c-42ca81807b86@quicinc.com>
-Date: Tue, 28 May 2024 15:50:25 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHKYa9xW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E97C4AF08;
+	Wed, 29 May 2024 02:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716948133;
+	bh=6wEr4j3nqrV3Xer+zYHvj/gdXXgSgZ5QOcoBvjj+iDs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FHKYa9xW9fJs5D8XSB6pFDfJBcokOLNWhgM5hyb2xd03pAnHH3XVcNe1rT2+2o/AL
+	 uafM9N1A5gSsUfF/oSVuh5gqnS3v8ZlcBUjKSBB8CMSGzDMtp14E1EfwV/ioBXbZ5P
+	 3pCdwbQXeyrcCMn2G61Xz06ThlQV7ZrEwlO/QIzNt/lVaQvzE1OXmSEvewbQI8S1j2
+	 L514I8rkl9i9WrWlMNynpcm5a51gTQp+rm8P3cDOv3BWJtUkQ/0W+slY7JZeHhD8Kf
+	 /ICdyDCoMYw6Y7QtvQAViLWHpvzgboM4FMR3CCWlnfTVkkKfFXVRjRtI205h2mPEZG
+	 7s6RbLbLFxilw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Andy Gross <agross@kernel.org>,
+	Luca Weiss <luca@z3ntu.xyz>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 0/2] Mark qcom,ipc as deprecated in two schemas
+Date: Tue, 28 May 2024 21:01:52 -0500
+Message-ID: <171694812075.574781.12396513809519748834.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240425-qcom-ipc-deprecate-v1-0-a8d8034253ea@z3ntu.xyz>
+References: <20240425-qcom-ipc-deprecate-v1-0-a8d8034253ea@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] soc: qcom: smem: Add
- qcom_smem_bust_hwspin_lock_by_host()
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20240524-hwspinlock-bust-v2-0-fb88fd17ca0b@quicinc.com>
- <20240524-hwspinlock-bust-v2-3-fb88fd17ca0b@quicinc.com>
- <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <nwoeg22jg5yd4amgqqegplygy6aickehvfc6eanmody74h6nss@cmixbwx6vpx4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cb4X0bwGrqvA1FY1dK4x4i_BT0n7u3hX
-X-Proofpoint-GUID: cb4X0bwGrqvA1FY1dK4x4i_BT0n7u3hX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280169
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-
-On 5/28/2024 2:55 PM, Bjorn Andersson wrote:
-> On Fri, May 24, 2024 at 06:26:42PM GMT, Chris Lew wrote:
->> Add qcom_smem_bust_hwspin_lock_by_host to enable remoteproc to bust the
->> hwspin_lock owned by smem. In the event the remoteproc crashes
->> unexpectedly, the remoteproc driver can invoke this API to try and bust
->> the hwspin_lock and release the lock if still held by the remoteproc
->> device.
->>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> ---
->>   drivers/soc/qcom/smem.c       | 28 ++++++++++++++++++++++++++++
->>   include/linux/soc/qcom/smem.h |  2 ++
->>   2 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
->> index 7191fa0c087f..683599990387 100644
->> --- a/drivers/soc/qcom/smem.c
->> +++ b/drivers/soc/qcom/smem.c
-...
->> + *
->> + * Context: Process context.
->> + *
->> + * Returns: 0 on success, otherwise negative errno.
->> + */
->> +int qcom_smem_bust_hwspin_lock_by_host(unsigned host)
->> +{
->> +	if (!__smem)
->> +		return -EPROBE_DEFER;
+On Thu, 25 Apr 2024 21:14:29 +0200, Luca Weiss wrote:
+> The mboxes property has been supported in those bindings since a while
+> and was always meant to the replace qcom,ipc properties, so let's mark
+> qcom,ipc as deprecated - and update the examples to use mboxes.
 > 
-> This would be called at a time where -EPROBE_DEFER isn't appropriate,
-> the client should invoke qcom_smem_is_available() at probe time to guard
-> against this.
+> Related:
+> https://lore.kernel.org/linux-arm-msm/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz/
 > 
+> [...]
 
-Should we keep the null pointer check to prevent null pointer 
-dereference and return 0? Or would it be better to allow the null 
-pointer deference to go through so we can catch misuse of the API and 
-ask clients to use qcom_smem_is_available()?
+Applied, thanks!
 
+[2/2] dt-bindings: soc: qcom,smp2p: Mark qcom,ipc as deprecated
+      commit: 7ce966eb6f1288eb92bc2eb5df8933acee1ae6ed
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
