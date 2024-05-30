@@ -1,165 +1,241 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3F3176AD8;
-	Thu, 30 May 2024 10:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E164117623B;
+	Thu, 30 May 2024 14:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717065409; cv=none; b=JC9mFG0SSJFSZx1BvwMdUHP4DVAsq2oTWm3/zvQX9AQ5Bk7nytjOg0usXdxZ28FXqViuhjTzFOW9f7lJOr7wMZKpBy/Q3P4CaTI6o0sHPB6at89nvVMrb0SSoQrSh85GFrxwR43c231Dsan0pgtoybSoD+7aKzqCdsTl/g7gyrk=
+	t=1717078583; cv=none; b=Qif2C+r32W3DnOPKb7EUjbnDqbY3yrTz8zdSIZc8Kh2Lraj9vGaT8+GfWuqVCYAxoIuDIleeQixlC4UXMPgFE3scGXyA6dPexvj5dcbJZoZqMdkbVlODvqgxbRfdVp3PmiyT/dgtknJwAqC/x3r91Py41L/d+furfqha3EBiN7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717065409; c=relaxed/simple;
-	bh=HtQkjd8HbGFPhLH8WRqqtICqoILT+VZVoC0M3XmXh5I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1aDbA55DYAx169XdaYgKicOlWbDJtJw/iTpkt9waYDm9SfxE/rXnM8BFqM1rUBiQ+h3j53PZ7k3IzrJrsukapCVznA5iannQ56oJez2hY/ZAlOMEkf272yUyswk3PCRZLfyMxmD6VId96Q8mPGAWZBj8Ij74625cDIFoMxOgGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X91e4lnQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717078583; c=relaxed/simple;
+	bh=XHEzmTU6TsMl2HL0lh7xh7EcI1/rI7nfT7EpcRQgBqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tpWagJitcWJEP+yjd2NEThWzb/lDC/ayvtRl5tRw31d5VsKU1BI7mJ48akBMKUNxUAQ1iMiEORx717psiCQPi23J3phSqJ7W2vhksgTEldOozdi6Z4LUuWmP1O1p+wWprquXsF5KuKrKa/v1JLMY+QpZ28nsXCXLTWhlmQUiVcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x4UrbRbz; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X91e4lnQ"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U7EYDx021301;
-	Thu, 30 May 2024 10:36:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gzOfkFz9gtephlRxc0+JcL
-	G5OjU7gABvXKX433mLQGU=; b=X91e4lnQEJISNSIKvjbX8cP0oxcm10MUW3xuwf
-	CuA3XTW1uwbMID8M094kzSq+pk/A9zk7BkaxlIDBI3ukPOyEYk25BY96MR+gF2G1
-	D1EcP4D97Im/cpPKkN5q++N7zzcMaJ8xaxeA4gvP6o8qBBpbjUBSlC+zzZuUGomk
-	3eky9zdyAmMPw7Rp3fWuBgF4AXnCE9ex9vk7NHrQ73clLd46nBQeXXtduI7wwkTU
-	zuKSIAStluvtwg12eHvzfaG+KFyhk/VP/oavQ28Arbzqj2eB34sF2p/8XKWwcCSD
-	GFwkAlNMeYtiU+/FmlmNdxoJMS9H+btUscnRsX7KgkmEqpNw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0gbve2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:36:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UAabsG030467
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 10:36:37 GMT
-Received: from hu-sarannya-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 30 May 2024 03:36:32 -0700
-From: Sarannya S <quic_sarannya@quicinc.com>
-To: <quic_bjorande@quicinc.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, Chris Lew <quic_clew@quicinc.com>,
-        Sarannya Sasikumar <quic_sarannya@quicinc.com>,
-        Simon Horman
-	<horms@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open
- list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: [PATCH V2] net: qrtr: ns: Ignore ENODEV failures in ns
-Date: Thu, 30 May 2024 16:06:17 +0530
-Message-ID: <20240530103617.3536374-1-quic_sarannya@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x4UrbRbz"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44UEGF5V048621;
+	Thu, 30 May 2024 09:16:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717078575;
+	bh=LGzBrnsj8DdUIyYlEUEk6HInlbCKMlcPqN6HFAbEEFM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=x4UrbRbz+g461/P3arZtghw29F1sZpygj5nGhy6YNW5nX6e/PRQtCSb5E1Vh7a0qe
+	 G69TomoUm1RoCWwMnuqV35lOuxgHJbZd/0N2YI0JR33nkpcIN3Au430XoYO+4GrGnL
+	 0JglcsXNzGDsv9vD/g9EAkzpI0NYbw4RrJ8A5dRs=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44UEGFQJ038600
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 09:16:15 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 09:16:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 09:16:15 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44UEGFw0034727;
+	Thu, 30 May 2024 09:16:15 -0500
+Message-ID: <b5582d8a-b7bf-49e2-a8a3-879275a881b2@ti.com>
+Date: Thu, 30 May 2024 09:16:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1dcE_oZy_82EA_e_phq5Cs11fPc76zGN
-X-Proofpoint-ORIG-GUID: 1dcE_oZy_82EA_e_phq5Cs11fPc76zGN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_07,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- mlxlogscore=700 malwarescore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300080
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] remoteproc: k3-r5: Acquire mailbox handle during
+ probe
+To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240530090737.655054-1-b-padhi@ti.com>
+ <20240530090737.655054-3-b-padhi@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240530090737.655054-3-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Chris Lew <quic_clew@quicinc.com>
+On 5/30/24 4:07 AM, Beleswar Padhi wrote:
+> Acquire the mailbox handle during device probe and do not release handle
+> in stop/detach routine or error paths. This removes the redundant
+> requests for mbox handle later during rproc start/attach. This also
+> allows to defer remoteproc driver's probe if mailbox is not probed yet.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 66 ++++++++----------------
+>   1 file changed, 21 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 26362a509ae3..157e8fd57665 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -391,6 +391,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+>   	struct mbox_client *client = &kproc->client;
+>   	struct device *dev = kproc->dev;
+>   	int ret;
+> +	long err;
+>   
+>   	client->dev = dev;
+>   	client->tx_done = NULL;
+> @@ -400,10 +401,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+>   
+>   	kproc->mbox = mbox_request_channel(client, 0);
+>   	if (IS_ERR(kproc->mbox)) {
+> -		ret = -EBUSY;
+> -		dev_err(dev, "mbox_request_channel failed: %ld\n",
+> -			PTR_ERR(kproc->mbox));
+> -		return ret;
+> +		err = PTR_ERR(kproc->mbox);
+> +		dev_err(dev, "mbox_request_channel failed: %ld\n", err);
+> +		return (err == -EPROBE_DEFER) ? -EPROBE_DEFER : -EBUSY;
 
-Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
-indicate that either the local port has been closed or the remote has
-gone down. Neither of these scenarios are fatal and will eventually be
-handled through packets that are later queued on the control port.
+Why turn all other errors into EBUSY? If you just return the error as-is you
+can simply make these 3 lines just:
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Sarannya Sasikumar <quic_sarannya@quicinc.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
+return dev_err_probe(dev, PTR_ERR(kproc->mbox), "mbox_request_channel failed\n");
 
-Changes from previous revision:
-Changed return type of service_announce_del from int to void.
+>   	}
+>   
+>   	/*
+> @@ -552,10 +552,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   	u32 boot_addr;
+>   	int ret;
+>   
+> -	ret = k3_r5_rproc_request_mbox(rproc);
+> -	if (ret)
+> -		return ret;
+> -
+>   	boot_addr = rproc->bootaddr;
+>   	/* TODO: add boot_addr sanity checking */
+>   	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
+> @@ -564,7 +560,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   	core = kproc->core;
+>   	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
+>   	if (ret)
+> -		goto put_mbox;
+> +		goto out;
 
- net/qrtr/ns.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+The label "out" doesn't do anything, just directly `return ret;` here and
+in the other cases below.
 
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index 654a3cc0d347..e821101e7a4b 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -132,7 +132,7 @@ static int service_announce_new(struct sockaddr_qrtr *dest,
- 	return kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
- }
- 
--static int service_announce_del(struct sockaddr_qrtr *dest,
-+static void service_announce_del(struct sockaddr_qrtr *dest,
- 				struct qrtr_server *srv)
- {
- 	struct qrtr_ctrl_pkt pkt;
-@@ -157,10 +157,10 @@ static int service_announce_del(struct sockaddr_qrtr *dest,
- 	msg.msg_namelen = sizeof(*dest);
- 
- 	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--	if (ret < 0)
-+	if (ret < 0 && ret != -ENODEV)
- 		pr_err("failed to announce del service\n");
- 
--	return ret;
-+	return;
- }
- 
- static void lookup_notify(struct sockaddr_qrtr *to, struct qrtr_server *srv,
-@@ -188,7 +188,7 @@ static void lookup_notify(struct sockaddr_qrtr *to, struct qrtr_server *srv,
- 	msg.msg_namelen = sizeof(*to);
- 
- 	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--	if (ret < 0)
-+	if (ret < 0 && ret != -ENODEV)
- 		pr_err("failed to send lookup notification\n");
- }
- 
-@@ -207,6 +207,9 @@ static int announce_servers(struct sockaddr_qrtr *sq)
- 	xa_for_each(&node->servers, index, srv) {
- 		ret = service_announce_new(sq, srv);
- 		if (ret < 0) {
-+			if (ret == -ENODEV)
-+				continue;
-+
- 			pr_err("failed to announce new service\n");
- 			return ret;
- 		}
-@@ -369,7 +372,7 @@ static int ctrl_cmd_bye(struct sockaddr_qrtr *from)
- 		msg.msg_namelen = sizeof(sq);
- 
- 		ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--		if (ret < 0) {
-+		if (ret < 0 && ret != -ENODEV) {
- 			pr_err("failed to send bye cmd\n");
- 			return ret;
- 		}
-@@ -443,7 +446,7 @@ static int ctrl_cmd_del_client(struct sockaddr_qrtr *from,
- 		msg.msg_namelen = sizeof(sq);
- 
- 		ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
--		if (ret < 0) {
-+		if (ret < 0 && ret != -ENODEV) {
- 			pr_err("failed to send del client cmd\n");
- 			return ret;
- 		}
--- 
-2.25.1
+>   
+>   	/* unhalt/run all applicable cores */
+>   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+> @@ -581,12 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   			dev_err(dev, "%s: can not start core 1 before core 0\n",
+>   				__func__);
+>   			ret = -EPERM;
+> -			goto put_mbox;
+> +			goto out;
+>   		}
+>   
+>   		ret = k3_r5_core_run(core);
+>   		if (ret)
+> -			goto put_mbox;
+> +			goto out;
+>   	}
+>   
+>   	return 0;
+> @@ -596,8 +592,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   		if (k3_r5_core_halt(core))
+>   			dev_warn(core->dev, "core halt back failed\n");
+>   	}
+> -put_mbox:
+> -	mbox_free_channel(kproc->mbox);
+> +out:
+>   	return ret;
+>   }
+>   
+> @@ -658,8 +653,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   			goto out;
+>   	}
+>   
+> -	mbox_free_channel(kproc->mbox);
+> -
+>   	return 0;
+>   
+>   unroll_core_halt:
+> @@ -674,42 +667,21 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   /*
+>    * Attach to a running R5F remote processor (IPC-only mode)
+>    *
+> - * The R5F attach callback only needs to request the mailbox, the remote
+> - * processor is already booted, so there is no need to issue any TI-SCI
+> - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
+> - * only in IPC-only mode.
+> + * The R5F attach callback is a NOP. The remote processor is already booted, and
+> + * all required resources have been acquired during probe routine, so there is
+> + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
+> + * This callback is invoked only in IPC-only mode and exists for sanity sake.
+>    */
+> -static int k3_r5_rproc_attach(struct rproc *rproc)
+> -{
+> -	struct k3_r5_rproc *kproc = rproc->priv;
+> -	struct device *dev = kproc->dev;
+> -	int ret;
+> -
+> -	ret = k3_r5_rproc_request_mbox(rproc);
+> -	if (ret)
+> -		return ret;
+> -
+> -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
+> -	return 0;
+> -}
+> +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
+>   
+>   /*
+>    * Detach from a running R5F remote processor (IPC-only mode)
+>    *
+> - * The R5F detach callback performs the opposite operation to attach callback
+> - * and only needs to release the mailbox, the R5F cores are not stopped and
+> - * will be left in booted state in IPC-only mode. This callback is invoked
+> - * only in IPC-only mode.
+> + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
+> + * left in booted state in IPC-only mode. This callback is invoked only in
+> + * IPC-only mode and exists for sanity sake.
+>    */
+> -static int k3_r5_rproc_detach(struct rproc *rproc)
+> -{
+> -	struct k3_r5_rproc *kproc = rproc->priv;
+> -	struct device *dev = kproc->dev;
+> -
+> -	mbox_free_channel(kproc->mbox);
+> -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
+> -	return 0;
+> -}
+> +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
 
+Do we still need to disable the mbox channel somehow here to prevent
+receiving more messages from the detached core?
+
+>   
+>   /*
+>    * This function implements the .get_loaded_rsc_table() callback and is used
+> @@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>   		kproc->rproc = rproc;
+>   		core->rproc = rproc;
+>   
+> +		ret = k3_r5_rproc_request_mbox(rproc);
+
+Now that we get the channel here in init you'll want to add a matching
+mbox_free_channel() call to k3_r5_cluster_rproc_exit().
+
+Andrew
+
+> +		if (ret)
+> +			return ret;
+> +
+>   		ret = k3_r5_rproc_configure_mode(kproc);
+>   		if (ret < 0)
+>   			goto err_config;
