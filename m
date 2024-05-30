@@ -1,248 +1,219 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D43355886;
-	Thu, 30 May 2024 07:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A5C183963;
+	Thu, 30 May 2024 09:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717055003; cv=none; b=Mapk5yuGQktV7r4pkuIjcElIo3w1J6uGeTep7RYm+aPTGiVhZASm7EPQkh6royWs/O7255nBjvY/BDi4/Vo+BvTo6YLe8wX6o94YQ+F7Z/4nfDa8FPtvzUDSwLYYpkka2jxPE5swzZXNOHCDiOKgSpLoLOoMo7Xht1U4Q8wUUZo=
+	t=1717060072; cv=none; b=uPbRXkdR4k5CxQdwrKdcRtr4rc2IhMnF6N9CqUZAczs64ShFRgeUVfurgCd8lw+IX5BmvFwTkaT3PRVru6oEWbakiP8RRp7UZ7ktnxgdvk/2/Zny7L2DBaMUlyo+AgiOQyU07jogdCjgBeCCq37rFOzqWM2dcMMUUOXqkai2my0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717055003; c=relaxed/simple;
-	bh=oNJJ11ENx+WMZjobi6GIrYKXMhzMc273SSWi42nY6Ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DlxX6Z6mChGFTtoohtg5bBMMKDQYe8cFNKkRhW9iG6h+tz3gKRhhDMuUwlxKrHrfb8CD9ippLGmYyehP6I/xvDlMgjTzsIzLY6adWHOihIhpHJYSBAQZxysHghcclLcsdd5n0GLMnNxzU3Vwo2O9Xxo6a6ONwqfbJiSP97rcrVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wV9dgpG7; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1717060072; c=relaxed/simple;
+	bh=80O/avVgyRmR5/cGtT+wKdgX1l4HaWOoIruqZS8mlng=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J9IgQWj0WDaM8xsUtUFPblNhKH+v2qyv/BbJdE+FcuN7VbIbXKnR+1je5R4a9SFMaDZrwTrs3IbxhdNIasaxriUTOFkfwDyxf6iADAreQHIK6q+CR+d7QRgibTUgrwhjY6N4QvsX61jQPElc4gkRpl1C6/PSQ+hzNWF4EAUchZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cX4czNbj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wV9dgpG7"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TNlAgZ026127;
-	Thu, 30 May 2024 09:42:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4QyPR8FDRiyaoOXm3lR6AWDjZbHHST1J21PyvsDPG5E=; b=wV9dgpG7mTCii7J9
-	Zo1SP1nG2/JNbrP+4O47gapc680bmAr8C44lZj+MyntWKawgZElT687QozlT/1Gm
-	EWNmgME1mnS2FrWJyiJEQ0JRvrM2ppb9ovZGAj0QHkSJn/7RKhvth1v1SsQbsgKp
-	gBuAqhhmSjsGKMt9biZblBAME17Eb5yFCU+Tir7QGiVA5opUZWhlboo5iQJreNCx
-	YavHdggWSx5NlloR4Bx1ucsaPgvJx4hKK78UDbMSND8uLIDx67UfHmP1H5VzIvU5
-	qGQxcQTTTVZVjNMTtrmyBA/JkUKkj/adeuOd9PiT+f3nira80fly+dZ+aqTS05yY
-	4RyYFg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yba5246k3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 09:42:54 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 74BC540046;
-	Thu, 30 May 2024 09:42:48 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C122A2128B7;
-	Thu, 30 May 2024 09:42:27 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 30 May
- 2024 09:42:27 +0200
-Received: from [10.252.16.204] (10.252.16.204) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 30 May
- 2024 09:42:27 +0200
-Message-ID: <5b3f8346-d6db-4da3-9613-20cf9f3c226b@foss.st.com>
-Date: Thu, 30 May 2024 09:42:26 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cX4czNbj"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U97kQF117563;
+	Thu, 30 May 2024 04:07:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717060066;
+	bh=aB4XUryfXOQe2WgbvfYnussa3QvExaMJC1tVvIKNdLY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=cX4czNbjSjMMQQG3OFzFLgYyX8O/Tcx1TOWEudXM7whlNPrUW79VLKgpvwPHzID/0
+	 VZ04ZB4SA4mJ7I7LFPQaWGTcwcI7CevxcN5POOaCkzwivRWK36g6PmFGBiSWgxXuU5
+	 o461aX5ms/e6kG4wyHxyuzRLsY376VC2R3dRSlmM=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U97kfZ038322
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 30 May 2024 04:07:46 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
+ May 2024 04:07:46 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 30 May 2024 04:07:46 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U97clo043154;
+	Thu, 30 May 2024 04:07:44 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <afd@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/3] remoteproc: k3-r5: Acquire mailbox handle during probe
+Date: Thu, 30 May 2024 14:37:36 +0530
+Message-ID: <20240530090737.655054-3-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240530090737.655054-1-b-padhi@ti.com>
+References: <20240530090737.655054-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/7] remoteproc: core: support of the tee interface
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
- <20240521081001.2989417-6-arnaud.pouliquen@foss.st.com>
- <ZlZM/hgSO4EeRVqS@p14s> <d9e1356a-d8bf-40a3-9a78-424ead8089a9@foss.st.com>
- <ZleReEIgD8O5zATO@p14s>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <ZleReEIgD8O5zATO@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_05,2024-05-28_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello Mathieu,
+Acquire the mailbox handle during device probe and do not release handle
+in stop/detach routine or error paths. This removes the redundant
+requests for mbox handle later during rproc start/attach. This also
+allows to defer remoteproc driver's probe if mailbox is not probed yet.
 
-On 5/29/24 22:35, Mathieu Poirier wrote:
-> On Wed, May 29, 2024 at 09:13:26AM +0200, Arnaud POULIQUEN wrote:
->> Hello Mathieu,
->>
->> On 5/28/24 23:30, Mathieu Poirier wrote:
->>> On Tue, May 21, 2024 at 10:09:59AM +0200, Arnaud Pouliquen wrote:
->>>> 1) on start:
->>>> - Using the TEE loader, the resource table is loaded by an external entity.
->>>> In such case the resource table address is not find from the firmware but
->>>> provided by the TEE remoteproc framework.
->>>> Use the rproc_get_loaded_rsc_table instead of rproc_find_loaded_rsc_table
->>>> - test that rproc->cached_table is not null before performing the memcpy
->>>>
->>>> 2)on stop
->>>> The use of the cached_table seems mandatory:
->>>> - during recovery sequence to have a snapshot of the resource table
->>>>   resources used,
->>>> - on stop to allow  for the deinitialization of resources after the
->>>>   the remote processor has been shutdown.
->>>> However if the TEE interface is being used, we first need to unmap the
->>>> table_ptr before setting it to rproc->cached_table.
->>>> The update of rproc->table_ptr to rproc->cached_table is performed in
->>>> tee_remoteproc.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> ---
->>>>  drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++-------
->>>>  1 file changed, 23 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>>> index 42bca01f3bde..3a642151c983 100644
->>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>> @@ -1267,6 +1267,7 @@ EXPORT_SYMBOL(rproc_resource_cleanup);
->>>>  static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmware *fw)
->>>>  {
->>>>  	struct resource_table *loaded_table;
->>>> +	struct device *dev = &rproc->dev;
->>>>  
->>>>  	/*
->>>>  	 * The starting device has been given the rproc->cached_table as the
->>>> @@ -1276,12 +1277,21 @@ static int rproc_set_rsc_table_on_start(struct rproc *rproc, const struct firmwa
->>>>  	 * this information to device memory. We also update the table_ptr so
->>>>  	 * that any subsequent changes will be applied to the loaded version.
->>>>  	 */
->>>> -	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
->>>> -	if (loaded_table) {
->>>> -		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
->>>> -		rproc->table_ptr = loaded_table;
->>>> +	if (rproc->tee_interface) {
->>>> +		loaded_table = rproc_get_loaded_rsc_table(rproc, &rproc->table_sz);
->>>> +		if (IS_ERR(loaded_table)) {
->>>> +			dev_err(dev, "can't get resource table\n");
->>>> +			return PTR_ERR(loaded_table);
->>>> +		}
->>>> +	} else {
->>>> +		loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
->>>>  	}
->>>>  
->>>> +	if (loaded_table && rproc->cached_table)
->>>> +		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
->>>> +
->>>
->>> Why is this not part of the else {} above as it was the case before this patch?
->>> And why was an extra check for ->cached_table added?
->>
->> Here we have to cover 2 use cases if rproc->tee_interface is set.
->> 1) The remote processor is in stop state
->>      - loaded_table points to the resource table in the remote memory and
->>      -  rproc->cached_table is null
->>      => no memcopy
->> 2) crash recovery
->>      - loaded_table points to the resource table in the remote memory
->>      - rproc-cached_table point to a copy of the resource table
-> 
-> A cached_table exists because it was created in rproc_reset_rsc_table_on_stop().
-> But as the comment says [1], that part of the code was meant to be used for the
-> attach()/detach() use case.  Mixing both will become extremely confusing and
-> impossible to maintain.
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 66 ++++++++----------------
+ 1 file changed, 21 insertions(+), 45 deletions(-)
 
-i am not sure to understand your point here... the cached_table table was
-already existing for the "normal" case[2]. Seems to me that the cache table is
-needed on stop in all scenarios.
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 26362a509ae3..157e8fd57665 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -391,6 +391,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+ 	struct mbox_client *client = &kproc->client;
+ 	struct device *dev = kproc->dev;
+ 	int ret;
++	long err;
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
+@@ -400,10 +401,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+ 
+ 	kproc->mbox = mbox_request_channel(client, 0);
+ 	if (IS_ERR(kproc->mbox)) {
+-		ret = -EBUSY;
+-		dev_err(dev, "mbox_request_channel failed: %ld\n",
+-			PTR_ERR(kproc->mbox));
+-		return ret;
++		err = PTR_ERR(kproc->mbox);
++		dev_err(dev, "mbox_request_channel failed: %ld\n", err);
++		return (err == -EPROBE_DEFER) ? -EPROBE_DEFER : -EBUSY;
+ 	}
+ 
+ 	/*
+@@ -552,10 +552,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 	u32 boot_addr;
+ 	int ret;
+ 
+-	ret = k3_r5_rproc_request_mbox(rproc);
+-	if (ret)
+-		return ret;
+-
+ 	boot_addr = rproc->bootaddr;
+ 	/* TODO: add boot_addr sanity checking */
+ 	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
+@@ -564,7 +560,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 	core = kproc->core;
+ 	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
+ 	if (ret)
+-		goto put_mbox;
++		goto out;
+ 
+ 	/* unhalt/run all applicable cores */
+ 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+@@ -581,12 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 			dev_err(dev, "%s: can not start core 1 before core 0\n",
+ 				__func__);
+ 			ret = -EPERM;
+-			goto put_mbox;
++			goto out;
+ 		}
+ 
+ 		ret = k3_r5_core_run(core);
+ 		if (ret)
+-			goto put_mbox;
++			goto out;
+ 	}
+ 
+ 	return 0;
+@@ -596,8 +592,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 		if (k3_r5_core_halt(core))
+ 			dev_warn(core->dev, "core halt back failed\n");
+ 	}
+-put_mbox:
+-	mbox_free_channel(kproc->mbox);
++out:
+ 	return ret;
+ }
+ 
+@@ -658,8 +653,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 			goto out;
+ 	}
+ 
+-	mbox_free_channel(kproc->mbox);
+-
+ 	return 0;
+ 
+ unroll_core_halt:
+@@ -674,42 +667,21 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ /*
+  * Attach to a running R5F remote processor (IPC-only mode)
+  *
+- * The R5F attach callback only needs to request the mailbox, the remote
+- * processor is already booted, so there is no need to issue any TI-SCI
+- * commands to boot the R5F cores in IPC-only mode. This callback is invoked
+- * only in IPC-only mode.
++ * The R5F attach callback is a NOP. The remote processor is already booted, and
++ * all required resources have been acquired during probe routine, so there is
++ * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
++ * This callback is invoked only in IPC-only mode and exists for sanity sake.
+  */
+-static int k3_r5_rproc_attach(struct rproc *rproc)
+-{
+-	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct device *dev = kproc->dev;
+-	int ret;
+-
+-	ret = k3_r5_rproc_request_mbox(rproc);
+-	if (ret)
+-		return ret;
+-
+-	dev_info(dev, "R5F core initialized in IPC-only mode\n");
+-	return 0;
+-}
++static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
+ 
+ /*
+  * Detach from a running R5F remote processor (IPC-only mode)
+  *
+- * The R5F detach callback performs the opposite operation to attach callback
+- * and only needs to release the mailbox, the R5F cores are not stopped and
+- * will be left in booted state in IPC-only mode. This callback is invoked
+- * only in IPC-only mode.
++ * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
++ * left in booted state in IPC-only mode. This callback is invoked only in
++ * IPC-only mode and exists for sanity sake.
+  */
+-static int k3_r5_rproc_detach(struct rproc *rproc)
+-{
+-	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct device *dev = kproc->dev;
+-
+-	mbox_free_channel(kproc->mbox);
+-	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
+-	return 0;
+-}
++static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
+ 
+ /*
+  * This function implements the .get_loaded_rsc_table() callback and is used
+@@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 		kproc->rproc = rproc;
+ 		core->rproc = rproc;
+ 
++		ret = k3_r5_rproc_request_mbox(rproc);
++		if (ret)
++			return ret;
++
+ 		ret = k3_r5_rproc_configure_mode(kproc);
+ 		if (ret < 0)
+ 			goto err_config;
+-- 
+2.34.1
 
-[2]
-https://elixir.bootlin.com/linux/v4.20.17/source/drivers/remoteproc/remoteproc_core.c#L1402
-
-> 
-> I think the TEE scenario should be as similar as the "normal" one where TEE is
-> not involved.  To that end, I suggest to create a cached_table in
-> tee_rproc_parse_fw(), exactly the same way it is done in
-> rproc_elf_load_rsc_table().  That way the code path in
-> rproc_set_rsc_table_on_start() become very similar and we have a cached_table to
-> work with when the remote processor is recovered.  In fact we may not need
-> rproc_set_rsc_table_on_start() at all but that needs to be asserted.
-
-This is was I proposed in my V4 [3]. Could you please confirm that this aligns
-with what you have in mind?
-In such a case, should I keep the updates below in
-rproc_reset_rsc_table_on_stop(), or should I revert to using rproc->rsc_table to
-store the pointer to the resource table in tee_remoteproc for the associated
-memory map/unmap?"
-
-[3]
-https://patchwork.kernel.org/project/linux-remoteproc/patch/20240308144708.62362-2-arnaud.pouliquen@foss.st.com/
-
-Thanks,
-Arnaud
-
-> 
-> [1]. https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/remoteproc/remoteproc_core.c#L1565
-> 
->>      => need to perform the memcpy to reapply settings in the resource table
->>
->> I can duplicate the memcpy in if{} and else{} but this will be similar code
->> as needed in both case.
->> Adding rproc->cached_table test if proc->tee_interface=NULL seems also
->> reasonable as a memcpy from 0 should not be performed.
->>
->>
->>>
->>> This should be a simple change, i.e introduce an if {} else {} block to take
->>> care of the two scenarios.  Plus the comment is misplaced now. 
->>
->> What about split it in 2 patches?
->> - one adding the test on rproc->cached_table for the memcpy
->> - one adding the if {} else {}?
->>
->> Thanks,
->> Arnaud
->>
->>
->>>
->>> More comments tomorrow.
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>> +	rproc->table_ptr = loaded_table;
->>>> +
->>>>  	return 0;
->>>>  }
->>>>  
->>>> @@ -1318,11 +1328,16 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
->>>>  	kfree(rproc->clean_table);
->>>>  
->>>>  out:
->>>> -	/*
->>>> -	 * Use a copy of the resource table for the remainder of the
->>>> -	 * shutdown process.
->>>> +	/* If the remoteproc_tee interface is used, then we have first to unmap the resource table
->>>> +	 * before updating the proc->table_ptr reference.
->>>>  	 */
->>>> -	rproc->table_ptr = rproc->cached_table;
->>>> +	if (!rproc->tee_interface) {
->>>> +		/*
->>>> +		 * Use a copy of the resource table for the remainder of the
->>>> +		 * shutdown process.
->>>> +		 */
->>>> +		rproc->table_ptr = rproc->cached_table;
->>>> +	}
->>>>  	return 0;
->>>>  }
->>>>  
->>>> -- 
->>>> 2.25.1
->>>>
