@@ -1,53 +1,53 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A5C183963;
-	Thu, 30 May 2024 09:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A0018396E;
+	Thu, 30 May 2024 09:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060072; cv=none; b=uPbRXkdR4k5CxQdwrKdcRtr4rc2IhMnF6N9CqUZAczs64ShFRgeUVfurgCd8lw+IX5BmvFwTkaT3PRVru6oEWbakiP8RRp7UZ7ktnxgdvk/2/Zny7L2DBaMUlyo+AgiOQyU07jogdCjgBeCCq37rFOzqWM2dcMMUUOXqkai2my0=
+	t=1717060075; cv=none; b=CmzPcITBhqKmHGMESRTJ1IB65meInKRbCvGnO1LO7e0FHhrC3lxPn2FxGJ8rmpH3m3NqcwgseMjjhMMa217ymCDtX4JkFD8cscbXMuNjTtJOSGpEndbD63YQ5spAPfz7qOQiaRdDdl6NSdn66ZrM9JxfyMCCIvbVCEpcaY5ucMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060072; c=relaxed/simple;
-	bh=80O/avVgyRmR5/cGtT+wKdgX1l4HaWOoIruqZS8mlng=;
+	s=arc-20240116; t=1717060075; c=relaxed/simple;
+	bh=5Y03twfQVgQmuNLj0UEmzZLgRbVlG6Rhm/xcpfzLatA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J9IgQWj0WDaM8xsUtUFPblNhKH+v2qyv/BbJdE+FcuN7VbIbXKnR+1je5R4a9SFMaDZrwTrs3IbxhdNIasaxriUTOFkfwDyxf6iADAreQHIK6q+CR+d7QRgibTUgrwhjY6N4QvsX61jQPElc4gkRpl1C6/PSQ+hzNWF4EAUchZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cX4czNbj; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=oA7tQZCVfNwh0yvBmtG8t+4zuX6VPT+r37NzlDcMOCLHA795WhRtXzA3RAWmat2IaZc6oBQi8pEfzNfPtzUfYrEJrmeYFLSLJAPSaN3Jogw6g+xQsJA+0JFp2m17lpO7AVXLWOuNIMDHc3R67Ndzwkr7fqBxlV3uKwOGcu1roT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k5tc6uBQ; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cX4czNbj"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U97kQF117563;
-	Thu, 30 May 2024 04:07:46 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k5tc6uBQ"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44U97nMF024374;
+	Thu, 30 May 2024 04:07:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717060066;
-	bh=aB4XUryfXOQe2WgbvfYnussa3QvExaMJC1tVvIKNdLY=;
+	s=ti-com-17Q1; t=1717060069;
+	bh=GJzDRdOQb8ekKWtlPjrGD6Uo4aZvHTZhxUEY0veqFBM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cX4czNbjSjMMQQG3OFzFLgYyX8O/Tcx1TOWEudXM7whlNPrUW79VLKgpvwPHzID/0
-	 VZ04ZB4SA4mJ7I7LFPQaWGTcwcI7CevxcN5POOaCkzwivRWK36g6PmFGBiSWgxXuU5
-	 o461aX5ms/e6kG4wyHxyuzRLsY376VC2R3dRSlmM=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U97kfZ038322
+	b=k5tc6uBQnu6igfTRs+SHCHrw9qXE3Pp96NUx3pWj5oh9Koa9kgZmwyEsBGDarmLMZ
+	 sH4eo5cGXylY7f2i3+Ui2TRvspo1Co8tI3HjwTNHZbBCTPVDekdoVUwdHEFJvDEO2K
+	 BQh9pWAYh+fBmSg3FFJEkTP6khEw5dwmAJ+py584=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44U97nf1111857
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 30 May 2024 04:07:46 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 30 May 2024 04:07:49 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 30
- May 2024 04:07:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ May 2024 04:07:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 30 May 2024 04:07:46 -0500
+ Frontend Transport; Thu, 30 May 2024 04:07:48 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U97clo043154;
-	Thu, 30 May 2024 04:07:44 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44U97clp043154;
+	Thu, 30 May 2024 04:07:46 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <afd@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/3] remoteproc: k3-r5: Acquire mailbox handle during probe
-Date: Thu, 30 May 2024 14:37:36 +0530
-Message-ID: <20240530090737.655054-3-b-padhi@ti.com>
+Subject: [PATCH 3/3] remoteproc: k3-dsp: Acquire mailbox handle during probe routine
+Date: Thu, 30 May 2024 14:37:37 +0530
+Message-ID: <20240530090737.655054-4-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240530090737.655054-1-b-padhi@ti.com>
 References: <20240530090737.655054-1-b-padhi@ti.com>
@@ -68,14 +68,14 @@ allows to defer remoteproc driver's probe if mailbox is not probed yet.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 66 ++++++++----------------
- 1 file changed, 21 insertions(+), 45 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 67 +++++++----------------
+ 1 file changed, 21 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 26362a509ae3..157e8fd57665 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -391,6 +391,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 3555b535b168..88cda609a5eb 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -222,6 +222,7 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
  	struct mbox_client *client = &kproc->client;
  	struct device *dev = kproc->dev;
  	int ret;
@@ -83,7 +83,7 @@ index 26362a509ae3..157e8fd57665 100644
  
  	client->dev = dev;
  	client->tx_done = NULL;
-@@ -400,10 +401,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+@@ -231,10 +232,9 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
  
  	kproc->mbox = mbox_request_channel(client, 0);
  	if (IS_ERR(kproc->mbox)) {
@@ -97,123 +97,114 @@ index 26362a509ae3..157e8fd57665 100644
  	}
  
  	/*
-@@ -552,10 +552,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+@@ -315,31 +315,25 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
  	u32 boot_addr;
  	int ret;
  
--	ret = k3_r5_rproc_request_mbox(rproc);
+-	ret = k3_dsp_rproc_request_mbox(rproc);
 -	if (ret)
 -		return ret;
 -
  	boot_addr = rproc->bootaddr;
- 	/* TODO: add boot_addr sanity checking */
- 	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-@@ -564,7 +560,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 	core = kproc->core;
- 	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
+ 	if (boot_addr & (kproc->data->boot_align_addr - 1)) {
+ 		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 0x%x boundary\n",
+ 			boot_addr, kproc->data->boot_align_addr);
+ 		ret = -EINVAL;
+-		goto put_mbox;
++		goto out;
+ 	}
+ 
+ 	dev_err(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
+ 	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
  	if (ret)
 -		goto put_mbox;
 +		goto out;
  
- 	/* unhalt/run all applicable cores */
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-@@ -581,12 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 			dev_err(dev, "%s: can not start core 1 before core 0\n",
- 				__func__);
- 			ret = -EPERM;
--			goto put_mbox;
-+			goto out;
- 		}
- 
- 		ret = k3_r5_core_run(core);
- 		if (ret)
--			goto put_mbox;
-+			goto out;
- 	}
+ 	ret = k3_dsp_rproc_release(kproc);
+ 	if (ret)
+-		goto put_mbox;
++		goto out;
  
  	return 0;
-@@ -596,8 +592,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 		if (k3_r5_core_halt(core))
- 			dev_warn(core->dev, "core halt back failed\n");
- 	}
+-
 -put_mbox:
 -	mbox_free_channel(kproc->mbox);
 +out:
  	return ret;
  }
  
-@@ -658,8 +653,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 			goto out;
- 	}
+@@ -353,8 +347,6 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
+ {
+ 	struct k3_dsp_rproc *kproc = rproc->priv;
  
 -	mbox_free_channel(kproc->mbox);
 -
- 	return 0;
+ 	k3_dsp_rproc_reset(kproc);
  
- unroll_core_halt:
-@@ -674,42 +667,21 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 	return 0;
+@@ -363,42 +355,21 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
  /*
-  * Attach to a running R5F remote processor (IPC-only mode)
+  * Attach to a running DSP remote processor (IPC-only mode)
   *
-- * The R5F attach callback only needs to request the mailbox, the remote
+- * This rproc attach callback only needs to request the mailbox, the remote
 - * processor is already booted, so there is no need to issue any TI-SCI
-- * commands to boot the R5F cores in IPC-only mode. This callback is invoked
-- * only in IPC-only mode.
-+ * The R5F attach callback is a NOP. The remote processor is already booted, and
-+ * all required resources have been acquired during probe routine, so there is
-+ * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-+ * This callback is invoked only in IPC-only mode and exists for sanity sake.
+- * commands to boot the DSP core. This callback is invoked only in IPC-only
+- * mode.
++ * This rproc attach callback is a NOP. The remote processor is already booted,
++ * and all required resources have been acquired during probe routine, so there
++ * is no need to issue any TI-SCI commands to boot the DSP core. This callback
++ * is invoked only in IPC-only mode and exists for sanity sake.
   */
--static int k3_r5_rproc_attach(struct rproc *rproc)
+-static int k3_dsp_rproc_attach(struct rproc *rproc)
 -{
--	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_dsp_rproc *kproc = rproc->priv;
 -	struct device *dev = kproc->dev;
 -	int ret;
 -
--	ret = k3_r5_rproc_request_mbox(rproc);
+-	ret = k3_dsp_rproc_request_mbox(rproc);
 -	if (ret)
 -		return ret;
 -
--	dev_info(dev, "R5F core initialized in IPC-only mode\n");
+-	dev_info(dev, "DSP initialized in IPC-only mode\n");
 -	return 0;
 -}
-+static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
++static int k3_dsp_rproc_attach(struct rproc *rproc) { return 0; }
  
  /*
-  * Detach from a running R5F remote processor (IPC-only mode)
+  * Detach from a running DSP remote processor (IPC-only mode)
   *
-- * The R5F detach callback performs the opposite operation to attach callback
-- * and only needs to release the mailbox, the R5F cores are not stopped and
-- * will be left in booted state in IPC-only mode. This callback is invoked
-- * only in IPC-only mode.
-+ * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
-+ * left in booted state in IPC-only mode. This callback is invoked only in
+- * This rproc detach callback performs the opposite operation to attach callback
+- * and only needs to release the mailbox, the DSP core is not stopped and will
+- * be left to continue to run its booted firmware. This callback is invoked only
+- * in IPC-only mode.
++ * This rproc detach callback is a NOP. The DSP core is not stopped and will be
++ * left to continue to run its booted firmware. This callback is invoked only in
 + * IPC-only mode and exists for sanity sake.
   */
--static int k3_r5_rproc_detach(struct rproc *rproc)
+-static int k3_dsp_rproc_detach(struct rproc *rproc)
 -{
--	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_dsp_rproc *kproc = rproc->priv;
 -	struct device *dev = kproc->dev;
 -
 -	mbox_free_channel(kproc->mbox);
--	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
+-	dev_info(dev, "DSP deinitialized in IPC-only mode\n");
 -	return 0;
 -}
-+static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
++static int k3_dsp_rproc_detach(struct rproc *rproc) { return 0; }
  
  /*
   * This function implements the .get_loaded_rsc_table() callback and is used
-@@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 		kproc->rproc = rproc;
- 		core->rproc = rproc;
+@@ -697,6 +668,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	kproc->dev = dev;
+ 	kproc->data = data;
  
-+		ret = k3_r5_rproc_request_mbox(rproc);
-+		if (ret)
-+			return ret;
++	ret = k3_dsp_rproc_request_mbox(rproc);
++	if (ret)
++		return ret;
 +
- 		ret = k3_r5_rproc_configure_mode(kproc);
- 		if (ret < 0)
- 			goto err_config;
+ 	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+ 	if (IS_ERR(kproc->ti_sci))
+ 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
 -- 
 2.34.1
 
