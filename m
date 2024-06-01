@@ -1,69 +1,57 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCA17E761;
-	Fri, 31 May 2024 18:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6051B1EA91;
+	Sat,  1 Jun 2024 23:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717181610; cv=none; b=W4jm0eq++NEXv+5UBt8brub9Lk+e/uYv7SAiq5OByUj9ODwKi0y2d4LPeOZLV+QE5kLqVpiZFYLDwYcYUo5jBChYhGS3UasZ22h/caUZvvKdFLJcLcPDQZb9jUAPKKggfbvMpsRPYnklelK70V3YWFVHB4Y18EcFvtuFPAnxdOM=
+	t=1717286173; cv=none; b=HWCD6S/w8wjZS3U/4mEXRD8ekhlH477EWO7NoqulB3kVLGnO5E2DVrJ5ZkWSpbjIqH16A20KSZ9fBCzcqfaXpuWsSRMmjTPChqIDpZbRC2OPdvNYcdeWzgFmDttGrO7+rrQGGlVxiFaCLsj68BNoBAD+cjywDcXWo2WASWYASho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717181610; c=relaxed/simple;
-	bh=kP2teycQbL2Gc6/fKZ6aB8TWymQ7VtmJws0fyRjuoSs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=QpVd5S9qxuCTuObxuiVBJLyjR8az3756BIZndaOxYPebQ6WmycfbHuLsN8XxXquVwAS6HV80cok97cD3aFOc5Ec7vcCFAFkfkQasn+4BY6DQMiKF1abldf0fMUukfWihCPt3T5krZbpkAC/03/WxoWfG6trTwEiYIidPu4tTxxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPU2yyuK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717286173; c=relaxed/simple;
+	bh=8XwwMsiULlR5UpZba5VbfZR8Iq2Le3N3f/pvR70D2vY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bmna1Jf27A9Ijsov5HRlXWtKa4nl0drbtt9V41qqfbTEZomfcHp8M+uqYMntT6Wxwmr9B3+plhrVoMGr0sLOgoBnc0CrBVyG+gpefDN38tTUylgKPfnYGkZc6Yjva5zuTgDnt9mpHmxw4FxOGTwPmDUzAFK4RKoy9KHW17a5UDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeHNRvPk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPU2yyuK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CCCC116B1;
-	Fri, 31 May 2024 18:53:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeHNRvPk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5D7C116B1;
+	Sat,  1 Jun 2024 23:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717181610;
-	bh=kP2teycQbL2Gc6/fKZ6aB8TWymQ7VtmJws0fyRjuoSs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=LPU2yyuKc1kxS15QMNDL0ebEIhqNUtLH5hw1khLndbJVeXI/e4OBBbK7z3kn+9OhP
-	 BT5PD/PIsBAdW4rDlLBe3gQjqFShgjLw6TvJoqd6zUH8r7IvMwaf72SCgQ9kQhsRMu
-	 56XdZg8e2r2leNQZ8wfNsNpMrykucZ+gUXN91EOZNHmyaGMh/rTxR179x5AtQRwhxC
-	 MoUbH1oGToEwEhUo+KbEKgPmQQ7xMUAMhjCtLYC8ngeeDd4bp3i6JbLdL+spBaWCR8
-	 cN2/tDvITUgArD5GbLNmMb0pB+ZGXNc23+SutWhroGl0hggOT1SrIuPW6y1QV+W018
-	 u1AUCaZI/Y/pg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,  Konrad Dybcio
- <konrad.dybcio@linaro.org>,  Loic Poulain <loic.poulain@linaro.org>,
-  Mathieu Poirier <mathieu.poirier@linaro.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
-  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 02/12] wifi: wcn36xx: make use of QCOM_FW_HELPER
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
-	<20240521-qcom-firmware-name-v1-2-99a6d32b1e5e@linaro.org>
-Date: Fri, 31 May 2024 21:53:25 +0300
-In-Reply-To: <20240521-qcom-firmware-name-v1-2-99a6d32b1e5e@linaro.org>
-	(Dmitry Baryshkov's message of "Tue, 21 May 2024 12:45:22 +0300")
-Message-ID: <87ed9hvmmy.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1717286172;
+	bh=8XwwMsiULlR5UpZba5VbfZR8Iq2Le3N3f/pvR70D2vY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YeHNRvPkPNIeRQWZOYkqfF2kv9uGQLztt1Meh7H3OWRFFnLOCPsHYNj8Br6Zq332C
+	 wrrAI4k1xTxsWXVI/lEoy7Gh17J3fU13YjlYnSqI/CSwJEsZMpcGUYwx1q24g9eqJY
+	 s3Arsbp/gucbfWw8j0O6EWmv0KdB34NucwNY3XR9SGjCZejmXNI7olw0qyk0RglYnu
+	 1gEopzQtpF6VtDxJWKB13gwjq0+EeGFeYqTEHbNvKk/hWBrrYWZKMty+08yuyRa6SD
+	 hqp8RSTWxYGdS+L8AZNy2/qiDDcPSdRkJ1YkpWIw+o6IKznnwGf29Mqn0k3pBVXilp
+	 9Lpz7Su4Xw9iA==
+Date: Sat, 1 Jun 2024 16:56:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sarannya S <quic_sarannya@quicinc.com>
+Cc: <quic_bjorande@quicinc.com>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>, Chris
+ Lew <quic_clew@quicinc.com>, Simon Horman <horms@kernel.org>, Manivannan
+ Sadhasivam <manivannan.sadhasivam@linaro.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, "open list:NETWORKING [GENERAL]"
+ <netdev@vger.kernel.org>
+Subject: Re: [PATCH V2] net: qrtr: ns: Ignore ENODEV failures in ns
+Message-ID: <20240601165611.418dd7ba@kernel.org>
+In-Reply-To: <20240530103617.3536374-1-quic_sarannya@quicinc.com>
+References: <20240530103617.3536374-1-quic_sarannya@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
+On Thu, 30 May 2024 16:06:17 +0530 Sarannya S wrote:
+> -static int service_announce_del(struct sockaddr_qrtr *dest,
+> +static void service_announce_del(struct sockaddr_qrtr *dest,
+>  				struct qrtr_server *srv)
 
-> Make the driver use qcom_fw_helper to autodetect the path to the
-> calibration data file.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Not a fan of one sentence commit messages. It would be nice to explain a
-bit more in the commit message, for instance answering to the question
-'why?' and maybe provide a short example how this is supposed to work?
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+nit: please realign the continuation line
