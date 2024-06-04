@@ -1,186 +1,59 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E15149E1A;
-	Tue,  4 Jun 2024 17:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC183CD6;
+	Tue,  4 Jun 2024 20:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717521301; cv=none; b=WbDM8fvSFpIu5t0rUgHui6pbP7b29XkXYwahhJ0/R2YmxdbUt0gxn57axKFLnPNwUheJqTlQ1kY6Nb0JbM8UxE4ORklMhooaAAPHzfBSVGntBAIDitF24aLVGxbH21JDpf52l5IwTRguq1YCuRcNRFRASuxEoa87F1XrdqpTaT8=
+	t=1717532318; cv=none; b=M5Q7vGR0S9YOfJC7Zzx2S0nHGvMhDSBXGD/LaDI2Ih3WQr3NlKmj//4o1KBQUdXKkXsz1EDcumBjSJ7NL/v3eGA7KxSFAXEO6wlccqefXUwigVkNYkbtApLmH8VSMf5R0KAq6JoUh09JuHPBmt6nBjT8xqUK7JDD6aCRXAQu994=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717521301; c=relaxed/simple;
-	bh=gryU1d/X0GPFWbzUj9dRkMeQSfxNdzr55wMLabnRd8o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b5l+nvmocsa96nxeyKL3diEVCDT07vYOcTe37TW9akIgVP5Hps+fNTgYlf6+MS7D0FllbsT3dAmT4peyJ5Y1/uDdF+KTXaUFYm3scVt5fvAsc/RFqHu123WOerayE3X4V9h8eU+uJrhzsqvr4yhlcqxeYOeQV1Y0XywU6UmOHcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kWBzRrQY; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1717532318; c=relaxed/simple;
+	bh=0BUG/LD9w8zBQ2o9IC9TBMii5AV3XOnsct+AhdNAvC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LaRjzo6VyYt7cqUOmXIWeA5ua4wRDRqa+FheyOl7XOek7lhzEan9Fv5M+BIWSKDB+NwgGeSEpABVG5fxG0JgXyLy+NSMd/0pu1Ap695uimvWvw4SV5HHWunzyX1Pg7SenP9XJzS/cH2xdmQWIcou/andgeWpSz0lrPtkSM5bi18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/f3Iijk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kWBzRrQY"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454HEpSP050372;
-	Tue, 4 Jun 2024 12:14:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717521291;
-	bh=i58hEfuFh9fPON97O9JHgkfTKfM+WPtWzpWCTg0ZfyM=;
-	h=From:To:CC:Subject:Date;
-	b=kWBzRrQYNMQJb1OlkPJXeh6UoRIXfjwwTgas4Ytm4nFJxnw1chCl2dlda2TStC3E5
-	 juPTnarFs1BCP/dwvOj6xA5/E6ew5d92XImpfBPdv0g4FD6HdQzA5Of2fNsdyNDr82
-	 9rXLqsA9zpWLGs0Atbj6GxPODESKAgPA/dFXwtyI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454HEpk3047931
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 12:14:51 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 12:14:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 12:14:50 -0500
-Received: from localhost ([10.249.48.175])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454HEomB081681;
-	Tue, 4 Jun 2024 12:14:50 -0500
-From: Hari Nagalla <hnagalla@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh+dt@kernel.org>,
-        <devarsht@ti.com>, <s-anna@ti.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3] dt-bindings: remoteproc: k3-dsp: correct optional sram properties for AM62A SoCs
-Date: Tue, 4 Jun 2024 12:14:50 -0500
-Message-ID: <20240604171450.2455-1-hnagalla@ti.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/f3Iijk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654A0C2BBFC;
+	Tue,  4 Jun 2024 20:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717532317;
+	bh=0BUG/LD9w8zBQ2o9IC9TBMii5AV3XOnsct+AhdNAvC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/f3IijkXHpGZlqdkTyZwG9/hvQG39wN9CC6UZmYLCyotLJmTS8LD7oWFDiIL9mwy
+	 Qq9UtHgeaSHl6SQscw63XGk7nsnXl8iPNu+VHKRW6VJbH/hLd/kbtHod3TH2BsGj9v
+	 prD16ii84Co6NdmVSx6CfqFdNOgbo24XlcUzdaZGiV8vZqXNvgMRuyv9Ro3rOvVYQ+
+	 3dmUwyn7+lsSDJnXWyeahEZQOJZ0QS2j1M2uMxCePyX0/zPyGQnhvd59akO/1YnyZb
+	 dl+eebSo3Mm9nHiUZDpzQcPGAy70xOejzqCSK9a3dsuJZ1WSSfd++YghskQNgWRNcj
+	 CiAXUVCNlSSwg==
+Date: Tue, 4 Jun 2024 13:23:45 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] drivers: remoteproc: xlnx: add attach detach support
+Message-ID: <chqsvuwi7gukbw3l2y6xoxmd3lh6vlqhs2wjd4lylbhsg5m2hc@vnmesij3xoiu>
+References: <20240603203437.973009-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603203437.973009-1-tanmay.shah@amd.com>
 
-The C7xv-dsp on AM62A have 32KB L1 I-cache and a 64KB L1 D-cache. It
-does not have an addressable l1dram . So, remove this optional sram
-property from the bindings to fix device tree build warnings.
+On Mon, Jun 03, 2024 at 01:34:38PM -0700, Tanmay Shah wrote:
+> It is possible that remote processor is already running before
+> linux boot or remoteproc platform driver probe. Implement required
+> remoteproc framework ops to provide resource table address and
+> connect or disconnect with remote processor in such case.
+> 
 
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
----
-Changes in v3:
-*) Use allOf keyword with separate ifs for each variant instead 
-   of nested if/else conditions.
+I know if changes the current style for this driver, but could we drop
+"drivers: " from the subject prefix, to align changes to this driver
+with others?
 
-v2: https://lore.kernel.org/all/20240530164816.1051-1-hnagalla@ti.com/
-
- .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 89 +++++++++++--------
- 1 file changed, 51 insertions(+), 38 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index 9768db8663eb..b51bb863d759 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -25,9 +25,6 @@ description: |
-   host processor (Arm CorePac) to perform the device management of the remote
-   processor and to communicate with the remote processor.
- 
--allOf:
--  - $ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
--
- properties:
-   compatible:
-     enum:
-@@ -89,41 +86,57 @@ properties:
-       should be defined as per the generic bindings in,
-       Documentation/devicetree/bindings/sram/sram.yaml
- 
--if:
--  properties:
--    compatible:
--      enum:
--        - ti,j721e-c66-dsp
--then:
--  properties:
--    reg:
--      items:
--        - description: Address and Size of the L2 SRAM internal memory region
--        - description: Address and Size of the L1 PRAM internal memory region
--        - description: Address and Size of the L1 DRAM internal memory region
--    reg-names:
--      items:
--        - const: l2sram
--        - const: l1pram
--        - const: l1dram
--else:
--  if:
--    properties:
--      compatible:
--        enum:
--          - ti,am62a-c7xv-dsp
--          - ti,j721e-c71-dsp
--          - ti,j721s2-c71-dsp
--  then:
--    properties:
--      reg:
--        items:
--          - description: Address and Size of the L2 SRAM internal memory region
--          - description: Address and Size of the L1 DRAM internal memory region
--      reg-names:
--        items:
--          - const: l2sram
--          - const: l1dram
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,j721e-c66-dsp
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: Address and Size of the L2 SRAM internal memory region
-+            - description: Address and Size of the L1 PRAM internal memory region
-+            - description: Address and Size of the L1 DRAM internal memory region
-+        reg-names:
-+          items:
-+            - const: l2sram
-+            - const: l1pram
-+            - const: l1dram
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,j721e-c71-dsp
-+            - ti,j721s2-c71-dsp
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: Address and Size of the L2 SRAM internal memory region
-+            - description: Address and Size of the L1 DRAM internal memory region
-+        reg-names:
-+          items:
-+            - const: l2sram
-+            - const: l1dram
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,am62a-c7xv-dsp
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: Address and Size of the L2 SRAM internal memory region
-+        reg-names:
-+          items:
-+            - const: l2sram
-+
-+  - $ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
- 
- required:
-   - compatible
--- 
-2.34.1
-
+Regards,
+Bjorn
