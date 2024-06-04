@@ -1,59 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC183CD6;
-	Tue,  4 Jun 2024 20:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B5C140366;
+	Tue,  4 Jun 2024 20:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717532318; cv=none; b=M5Q7vGR0S9YOfJC7Zzx2S0nHGvMhDSBXGD/LaDI2Ih3WQr3NlKmj//4o1KBQUdXKkXsz1EDcumBjSJ7NL/v3eGA7KxSFAXEO6wlccqefXUwigVkNYkbtApLmH8VSMf5R0KAq6JoUh09JuHPBmt6nBjT8xqUK7JDD6aCRXAQu994=
+	t=1717533286; cv=none; b=Fr54kxDJS457xC3gLLT9x+qdgG/e/2NpOFlh4T9gTPO1AhphYJpdPBFIe7rSMi8iVxDlCvcIPO+BFvx2/j9Z+fllUMfmWgyQBmkJIRgcMSEV8Mz9e4lhDFNvj/tViEOXIj6ZLilEI6lHYN/IRsSVgGdzwpWxO9t13chLx20FTZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717532318; c=relaxed/simple;
-	bh=0BUG/LD9w8zBQ2o9IC9TBMii5AV3XOnsct+AhdNAvC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LaRjzo6VyYt7cqUOmXIWeA5ua4wRDRqa+FheyOl7XOek7lhzEan9Fv5M+BIWSKDB+NwgGeSEpABVG5fxG0JgXyLy+NSMd/0pu1Ap695uimvWvw4SV5HHWunzyX1Pg7SenP9XJzS/cH2xdmQWIcou/andgeWpSz0lrPtkSM5bi18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/f3Iijk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717533286; c=relaxed/simple;
+	bh=t/Iix1YlalREUNAkAGmD5+kSuxQb/H8mBr6yvJWWpR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XC73yviAF3EtQA2CdTav5eVpOGRWqm0IsDBiaDG6kTK3Dssl3Tk57Bn0we+k5i2rFioLdpV3+88+KLOdDI7IIteiSkcSmMg+h/bHnkriwHQIxglvhZnTfLsPGEyyL7ElxcfeNxXwS4qinVfZVmB4/dwm11wfo3QhGTOQg385nf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn/4RFmP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/f3Iijk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654A0C2BBFC;
-	Tue,  4 Jun 2024 20:18:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn/4RFmP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31584C2BBFC;
+	Tue,  4 Jun 2024 20:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717532317;
-	bh=0BUG/LD9w8zBQ2o9IC9TBMii5AV3XOnsct+AhdNAvC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C/f3IijkXHpGZlqdkTyZwG9/hvQG39wN9CC6UZmYLCyotLJmTS8LD7oWFDiIL9mwy
-	 Qq9UtHgeaSHl6SQscw63XGk7nsnXl8iPNu+VHKRW6VJbH/hLd/kbtHod3TH2BsGj9v
-	 prD16ii84Co6NdmVSx6CfqFdNOgbo24XlcUzdaZGiV8vZqXNvgMRuyv9Ro3rOvVYQ+
-	 3dmUwyn7+lsSDJnXWyeahEZQOJZ0QS2j1M2uMxCePyX0/zPyGQnhvd59akO/1YnyZb
-	 dl+eebSo3Mm9nHiUZDpzQcPGAy70xOejzqCSK9a3dsuJZ1WSSfd++YghskQNgWRNcj
-	 CiAXUVCNlSSwg==
-Date: Tue, 4 Jun 2024 13:23:45 -0700
+	s=k20201202; t=1717533285;
+	bh=t/Iix1YlalREUNAkAGmD5+kSuxQb/H8mBr6yvJWWpR0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pn/4RFmPccqCJvRAhqGwP335K8sqkPOSbgNHIkAscVcSqapzXr/+9/C2TmTrnwF6l
+	 s5xte9A5mmM538UehYItRNWYQY2dYXae+5kS8YKttEdoODQ64LB++I40LY6zGIl/qh
+	 wilToRV0sivHlHmOBsWbuMhyrLAq+CV9OrK266Ic/4g/mwaFryGczaXT2U5XTRmzQB
+	 UdUy+t+R3859d38snmZpUquYQoK0mlPN5n1LmpUUNfx24Wi5kXaHwwCmymrijbIAF9
+	 wDGIal7QzCkh8oFoBf8fLy0l9JoixtChSTF/XLrbHexbXu6axIcaLE6EmMqw57wAdv
+	 jhPu5On0P7G5w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] drivers: remoteproc: xlnx: add attach detach support
-Message-ID: <chqsvuwi7gukbw3l2y6xoxmd3lh6vlqhs2wjd4lylbhsg5m2hc@vnmesij3xoiu>
-References: <20240603203437.973009-1-tanmay.shah@amd.com>
+To: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Luca Weiss <luca@z3ntu.xyz>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/7] Use mboxes instead of syscon for APCS (arm32 & arm64)
+Date: Tue,  4 Jun 2024 15:34:42 -0500
+Message-ID: <171753327818.708182.102935741283235992.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
+References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603203437.973009-1-tanmay.shah@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03, 2024 at 01:34:38PM -0700, Tanmay Shah wrote:
-> It is possible that remote processor is already running before
-> linux boot or remoteproc platform driver probe. Implement required
-> remoteproc framework ops to provide resource table address and
-> connect or disconnect with remote processor in such case.
+
+On Wed, 24 Apr 2024 18:23:53 +0200, Luca Weiss wrote:
+> The first patch is for removing a bogus error warning I've noticed while
+> developing this on msm8226 - there the patches are also coming later for
+> this SoC since apcs is getting hooked up to cpufreq there also.
 > 
+> Apart from usages from the qcom,smsm driver (patches coming!) all other
+> usages of the apcs mailbox now go via the mailbox driver - where one is
+> used, so some arm32 boards will continue using "qcom,ipc*" properties in
+> the short or long term.
+> 
+> [...]
 
-I know if changes the current style for this driver, but could we drop
-"drivers: " from the subject prefix, to align changes to this driver
-with others?
+Applied, thanks!
 
-Regards,
-Bjorn
+[3/7] arm64: dts: qcom: msm8916: Use mboxes properties for APCS
+      commit: 3e971470619d80dd343e3abd80cb997bcb48f200
+[4/7] arm64: dts: qcom: msm8939: Use mboxes properties for APCS
+      commit: 22e4e43484c4dd1f29a72cc62411072758e0681a
+[5/7] arm64: dts: qcom: msm8953: Use mboxes properties for APCS
+      commit: 11dff973ebe21950c7c5221919141fb0cb16354e
+[6/7] arm64: dts: qcom: msm8976: Use mboxes properties for APCS
+      commit: a3d5570d8c8c6efc3d15d015b517f4e8bd11898f
+[7/7] arm64: dts: qcom: msm8994: Use mboxes properties for APCS
+      commit: ba5d9a91f8c3caf6867b3b87dce080d056222561
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
