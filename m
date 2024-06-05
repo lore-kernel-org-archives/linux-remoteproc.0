@@ -1,104 +1,173 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A4A14F9DC;
-	Wed,  5 Jun 2024 19:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F9213BC3E;
+	Wed,  5 Jun 2024 22:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717616155; cv=none; b=OCHJsQ+fKdtxeN0J9RoTTnP0lkB/LRf6h75jS3pNlnOqasl9MsNJVqwiGAD67qoqdOf2Ns8hlg3K19Ts2NpYGltUPnJpqdnCUKnchfrD5c5mClgiUXBaWfBuGuXKZafYOpsUVCfbw97I2wkgKLDgix2VtCjvIgiRHFLQB+UUhw8=
+	t=1717627708; cv=none; b=hmufJCBcL0OTPcRui0xk20LW8SDC1L1py/uHDq940a4fzVCDtD8VlMsiKLZPBgnHqC+onhEbG79Wlq0z9JlokA07FiEfL5c3uqCkqCLf8CRwIOSaq4xEELSyTbThCAICzqPTiLb6XIh8egm/BH2Wl2hVTr7yH5x/n8s0BkOsIWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717616155; c=relaxed/simple;
-	bh=/OOgdOrNQp1uReXHDPfdGQSEZv1TGjR7OU/fKbfzaD0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eDtR5coVZD18kcBFaxE5jUscZ5ERzQgcFtSUaYPZkGV9OzWhPkileNK3Las1PO8oi/zao2a56zldqyKKBkuLrrWAjUo9w/U6OErS+3CYHmP5wRfVcHLs7XXva+WCUzKXx8FMa2OHCPtPa0CQQbPJhcjo4gTs/ZEjne00AsZkrx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pRspisL6; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1717627708; c=relaxed/simple;
+	bh=SaKkEONMcXz5VuiwJ8gPQQzVNVB04hLirJVwtDBEQQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bV/SmgECsGz1IUo0Jd0oZSTKJhGbSuHPzK4tDPBPw2wyZkJbeE2odRwl8mgmT17hjL2vFY6J8Kfqx1ZYb1Q+k4VfaNOuhUj6KPwy4I4rToMd14NQ2q28Ss3lbp2iCE5bUKf8jiMDSAWzQ6P2dRV0aaMja35ICkgtJ0R7rQawFZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ow8m+FnD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pRspisL6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717616150;
-	bh=/OOgdOrNQp1uReXHDPfdGQSEZv1TGjR7OU/fKbfzaD0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pRspisL6ZFGD72AhvmkFlChFLPnCLMKYivkNMgGTSVW1fVa3s8f3pr/H0EBiPmlub
-	 9rzJRO7+DeoHX+Gv9XIG9AFNPhkBYpHelKf6cd9RFCkB9kletam3kHhL/QhEbQPH8n
-	 K69UUfhBH9DQYk5VJgaVrByIB2ustDGamGqmP56XOO9OmzwfW+NQmN/lqHpV+699mq
-	 kPN4OyUf4udZJU1i4kkGtJ63y8oRb5sF460GAlbK5/DgmBg9zDeB2hJVI6+q6CT2vH
-	 dVH5gmktk63yj4clNSHXM5uIpQaaqZY4w7GqVoXzLvgSd5aFKg3mTnzxcr/Rc8Ex6e
-	 TKKaOUL9mSQog==
-Received: from [192.168.1.251] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D518237821B7;
-	Wed,  5 Jun 2024 19:35:48 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 05 Jun 2024 15:35:44 -0400
-Subject: [PATCH] remoteproc: mediatek: Don't print error when optional scp
- handle is missing
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ow8m+FnD"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1UFW031684;
+	Wed, 5 Jun 2024 22:48:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B5SNWx6UZouir9JNN7giO4PUeXl6JfqRb+48Qd1gCn4=; b=ow8m+FnDxYRPGzHp
+	tRvFBGZ8B1i6M+7zVay1pEmG+z9zuFGt8BkYbFPI5QLEwvOixTvskS7fNrTzlXjw
+	9Wj2G3Ne0CIYQftdsEmumugjPKVUNkk0VSjHzEvZaiePlqMif4sRVYEVTWwhTWQx
+	2WUSPhl8uarn4obQXkUEAKMge018ZaC4OSrNxcNtC6VPzHVcifLmroNPcuYFrujX
+	46iaAwNFGvSAe6TBjV0W8AXxMKmqwjESqPlqvfXhYL1LySdHaUETm+pW8vN3uEPW
+	mPHQ+4lUUsAnNZOPcopzNKAQ1SHiUShhRBmFHQBpzk9RsaGqVZUX4P7sV3DbDiT6
+	kSbhLw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjh3tt8rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 22:48:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455Mm9DB009493
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 22:48:09 GMT
+Received: from [10.110.119.103] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 15:48:08 -0700
+Message-ID: <d9a2004a-0a3b-41a6-92a4-eea7b1b3f804@quicinc.com>
+Date: Wed, 5 Jun 2024 15:48:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAA++YGYC/x3MMQqAMAxA0atIZgO12KJeRRyKiZrBKqmIULy7x
- fEN/2dIrMIJhiqD8i1JjljQ1BXMW4gro1AxWGNb443D/eqa3iHtAdN8YjyIkVXRh444WE/t4qD
- Up/Iiz38ep/f9ADxlMk9pAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/5] soc: qcom: pdr: protect locator_addr with the main
+ mutex
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Xilin Wu <wuxilin123@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Steev Klimaszewski <steev@kali.org>,
+        "Alexey
+ Minnekhanov" <alexeymin@postmarketos.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
+ <20240512-qcom-pd-mapper-v8-1-5ecbb276fcc0@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240512-qcom-pd-mapper-v8-1-5ecbb276fcc0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Wqs08OC1n35NM-bPWOi_M7MKTo19eJng
+X-Proofpoint-ORIG-GUID: Wqs08OC1n35NM-bPWOi_M7MKTo19eJng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1011 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406050171
 
-The scp_get() helper has two users: the mtk-vcodec and the mtk-mdp3
-drivers. mdp3 considers the mediatek,scp phandle optional, and when it's
-missing mdp3 will directly look for the scp node based on compatible.
+Hi Dmitry,
 
-For that reason printing an error in the helper when the handle is
-missing is wrong, as it's not always an actual error. Besides, the other
-user, vcodec, already prints an error message on its own when the helper
-fails so this message doesn't add that much information.
+On 5/11/2024 2:56 PM, Dmitry Baryshkov wrote:
+...
+> @@ -76,12 +76,12 @@ static int pdr_locator_new_server(struct qmi_handle *qmi,
+>   					      locator_hdl);
+>   	struct pdr_service *pds;
+>   
+> +	mutex_lock(&pdr->lock);
+>   	/* Create a local client port for QMI communication */
+>   	pdr->locator_addr.sq_family = AF_QIPCRTR;
+>   	pdr->locator_addr.sq_node = svc->node;
+>   	pdr->locator_addr.sq_port = svc->port;
+>   
+> -	mutex_lock(&pdr->lock);
+>   	pdr->locator_init_complete = true;
+>   	mutex_unlock(&pdr->lock);
+>   
+> @@ -104,10 +104,10 @@ static void pdr_locator_del_server(struct qmi_handle *qmi,
+>   
+>   	mutex_lock(&pdr->lock);
+>   	pdr->locator_init_complete = false;
+> -	mutex_unlock(&pdr->lock);
+>   
+>   	pdr->locator_addr.sq_node = 0;
+>   	pdr->locator_addr.sq_port = 0;
+> +	mutex_unlock(&pdr->lock);
+>   }
+>   
+>   static const struct qmi_ops pdr_locator_ops = {
+> @@ -365,6 +365,7 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> +	mutex_lock(&pdr->lock);
+>   	ret = qmi_send_request(&pdr->locator_hdl,
+>   			       &pdr->locator_addr,
+>   			       &txn, SERVREG_GET_DOMAIN_LIST_REQ,
+> @@ -373,15 +374,16 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   			       req);
+>   	if (ret < 0) {
+>   		qmi_txn_cancel(&txn);
+> -		return ret;
+> +		goto err_unlock;
+>   	}
+>   
+>   	ret = qmi_txn_wait(&txn, 5 * HZ);
+>   	if (ret < 0) {
+>   		pr_err("PDR: %s get domain list txn wait failed: %d\n",
+>   		       req->service_name, ret);
+> -		return ret;
+> +		goto err_unlock;
+>   	}
+> +	mutex_unlock(&pdr->lock);
 
-Remove the error message from the helper. This gets rid of the deceptive
-error on MT8195-Tomato:
+I'm not sure it is necessary to hold the the mutex during the 
+qmi_txn_wait() since the only variable we are trying to protect is 
+locator_addr.
 
-  mtk-mdp3 14001000.dma-controller: can't get SCP node
+Wouldn't this delay other work like new/del server notifications if this 
+qmi service is delayed or non-responsive?
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/remoteproc/mtk_scp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks,
+Chris
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index b885a9a041e4..f813117b6312 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -37,10 +37,8 @@ struct mtk_scp *scp_get(struct platform_device *pdev)
- 	struct platform_device *scp_pdev;
- 
- 	scp_node = of_parse_phandle(dev->of_node, "mediatek,scp", 0);
--	if (!scp_node) {
--		dev_err(dev, "can't get SCP node\n");
-+	if (!scp_node)
- 		return NULL;
--	}
- 
- 	scp_pdev = of_find_device_by_node(scp_node);
- 	of_node_put(scp_node);
-
----
-base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-change-id: 20240605-mt8195-dma-scp-node-err-6a8dea26d4f5
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+>   
+>   	if (resp->resp.result != QMI_RESULT_SUCCESS_V01) {
+>   		pr_err("PDR: %s get domain list failed: 0x%x\n",
+> @@ -390,6 +392,11 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   	}
+>   
+>   	return 0;
+> +
+> +err_unlock:
+> +	mutex_unlock(&pdr->lock);
+> +
+> +	return ret;
+>   }
+>   
