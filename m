@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577E43AB7;
-	Thu,  6 Jun 2024 06:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88442260C;
+	Thu,  6 Jun 2024 07:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717656176; cv=none; b=NBHRFvsyj3z6g8kOqps5sKzthR2W4tQ8ewIwg+cMO8QChuCQE1CtKZzvwRr79EcuarbZ4kkJCBUidPm2O1zJIbCcHrdS4lDbC9uj1p/gQqsyCiCbTV8H+If5kwTsRu1bA+8suPPrEZcSaScSYhZG5AdXPEOHFbqmzIiLiHJbTPk=
+	t=1717659678; cv=none; b=Y6Vzj25QfxKihf92wLjCixorem3HoJ9l1YVgzL9vC7iRcJUvMwGUjUzhfwPP8fs2xUjJAEASpeOWca8gEWS5tlNGSBIBaC6VsP67p/weFhL65KVX+08nM3dMiICel2zz3MnQJSJhVgdMlioWQP6W2cIH+pg40D5UBGfGpCUlwg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717656176; c=relaxed/simple;
-	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LouuWxZaVmYnHlSPzyaQBJGQsl4YtdXp8ZSxTRH4BMyrt60MFvtBH3EDcpCnnOV4J49wkpxOUI6iMf005nh7QXa0j/L2C9RExHEcAmMW+Rs4t3oa0Yl52CLt7ryzICL7LNZKROcdA6giWlEgAls61lvi/arnTJ0tYZhJ7ZIkF6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsb83SIM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717659678; c=relaxed/simple;
+	bh=wjbZdYqzy5eUkyHPz8EN75RLXTXkBn6jMASIbOAA/HA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inP7y0uKAsbw0jsrg2kWNvV9023QjL4V7i6lLQx3Tw9ZUwjnaI8aJxSloWGgm6T99yJwYtcuNdRLbzlCiktD8FoqpeT9+ON0dq4Tl2cV4inyCzS1weUIEwnj5GntTYjS88/eATUPzOG5wvCi4oRefQ2uaDGr2jK4Uiph46N5JI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6b1Ktze; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsb83SIM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4708C3277B;
-	Thu,  6 Jun 2024 06:42:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6b1Ktze"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F47C2BD10;
+	Thu,  6 Jun 2024 07:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717656175;
-	bh=IVm4GBK+EUL7qtaYcd3QzD3U1t+bEREQP2cYVxz4d/M=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Nsb83SIMVtw+ghHxIM2giiqGIlGzPuX7YNekKTNZNk6IQVJaEDDRiKTCelplHLdaJ
-	 sNDn31y/YHTSGIFy/K383Z+XjWPVJVY0ydW9Njy16uOyZpEKnwj4e5XWD0ITjwBoxn
-	 hRwyfxUvplo27U3yxgYAcUam83yYPRQVKxI91I0Bbb2Vcm0PsjXC/qnrE4w+EFm06e
-	 6I9RVh5VO6kPhB+fIExmM44yF6V5pH1NUK+tewQS9R1MjoE5dIwRGzoxzZpQgenfsd
-	 pwvVEoIIUeW7JLv0dOpcHTvjg5E7rchjC/hfrsrl15QwBn1ijs8jBuY6clcDVc+v32
-	 XoNa3UC+hZLuw==
-Message-ID: <5f8ccd9b-d419-4a77-9e05-c2290c40b9d0@kernel.org>
-Date: Thu, 6 Jun 2024 08:42:50 +0200
+	s=k20201202; t=1717659678;
+	bh=wjbZdYqzy5eUkyHPz8EN75RLXTXkBn6jMASIbOAA/HA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g6b1Ktzeo/ZHzmlOZIozxQML1vv2NJdqWXaqt2D4iRfKgJhUtFowooAMqyVYf011F
+	 3Go49V7UQaEdhVk9NsD1DvktayWYqmkWUipS/9WIztZddzXOTuYxAp77agDucuSvtK
+	 EjCgIeaH3Hzic7XGeeiY23SEG5B4wjNdwqKmfbj58EVJq0aGI0u0b6+9Y2aSkmPzlx
+	 i3PGjEnqGtmd/tdx2KM4mXR1WQ860eGwF6fA/ILmI2jXAjdoIttz4Ujc61d/oSHU0i
+	 /RngKFLkbGHRTpzIUAnBsSoMR9K5DjAQLthB/c9cBYjtX0WvQcl08CaMZfNzQ/jzuQ
+	 gMw0k6/67O+lg==
+Message-ID: <bdacbd27-283a-4e0a-bdda-a7a959ee476a@kernel.org>
+Date: Thu, 6 Jun 2024 09:41:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,24 +35,23 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: remoteproc: imx_rproc: add minItems for
- power-domain
-To: Frank Li <Frank.Li@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v3 1/5] dt-bindings: remoteproc: qcom,sa8775p-pas:
+ Document the SA8775p ADSP, CDSP and GPDSP
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
- "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM"
- <linux-remoteproc@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240605193409.1131220-1-Frank.Li@nxp.com>
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Tengfei Fan <quic_tengfan@quicinc.com>, Alex Elder <elder@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com
+References: <20240605-topic-sa8775p-iot-remoteproc-v3-0-a437355b8c7f@linaro.org>
+ <20240605-topic-sa8775p-iot-remoteproc-v3-1-a437355b8c7f@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,61 +97,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240605193409.1131220-1-Frank.Li@nxp.com>
+In-Reply-To: <20240605-topic-sa8775p-iot-remoteproc-v3-1-a437355b8c7f@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/06/2024 21:34, Frank Li wrote:
-> "fsl,imx8qxp-cm4" just need 2 power domains. Keep the same restriction for
-> other compatible string.
+On 05/06/2024 18:56, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Document the components used to boot the ADSP, CDSP0, CDSP1, GPDSP0 and
+> GPDSP1 on the SA8775p SoC.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
-> 
-> Notes:
->     pass dt_binding_check.
->     
->     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
->       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->       CHKDT   Documentation/devicetree/bindings
->       LINT    Documentation/devicetree/bindings
->       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
->       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml       | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index df36e29d974ca..60267c1ba94e0 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -59,6 +59,7 @@ properties:
->      maxItems: 32
->  
->    power-domains:
-> +    minItems: 1
+>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 160 +++++++++++++++++++++
+>  1 file changed, 160 insertions(+)
 
-Then here should be 2.
-
->      maxItems: 8
->  
->    fsl,auto-boot:
-> @@ -99,6 +100,21 @@ allOf:
->        properties:
->          fsl,iomuxc-gpr: false
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8qxp-cm4
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          minItems: 2
-
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
