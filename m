@@ -1,130 +1,93 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA90FC13C;
-	Thu,  6 Jun 2024 19:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C444C68;
+	Thu,  6 Jun 2024 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717700525; cv=none; b=tHHOYpzvKtNSKPpuwSdzpUCYgtXFPccmoP60SsWEOAt1qoMvhNZ5gUxOktdvYxajyZbeaaQi9iwNDC9EMoU3n4yJVfjY/R+G8bmmhRK83Jyb5MeCHLmqgMEgfFh6EHmfYgioxwDyb3NijRce7e0yVWQ/tOwJtzqSlLdwqzVA53g=
+	t=1717701075; cv=none; b=OF2SCzG1OJShmjgddgG38eZ9nT4fhOA2nffjGUT4NuqCCAncQ7bLJcdcrBPDDhzgfdkb3du+RAupVIy4mFuhKJRz0rRwChui1jVHLYkAcpdl+o+Tef3ys4CR7Ideq8+tWvQACH9oV1NHYoRp/RlWxqFaGqOOMd0hUIfhJhVCAEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717700525; c=relaxed/simple;
-	bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WIUIDLzxwEtw2N+Ui1vkOn7WFl6I+yuGUwrBj3mLdvl+fDJxSHdq42NG70xYxL1Nualiy8jnuEwXHi+Z2qKV3APNvX1XO+xMDOGG/QqbNL6NMBt1x1SvD0hygW3wEb7gURsEyrWtpBCszASuqzPBmNjBNu6OOP45ttsLLbbilt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=6AWs8Y5f; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
+	s=arc-20240116; t=1717701075; c=relaxed/simple;
+	bh=aISHoo9eqcpGDfEfq7sQGEadbxdEPOe8NFZxhgBU8jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQpVBm+tcN7D4loqAIpSarwpRboZUeuOr8JOMAGq4Xobr/GS8EW8I/9LcUtHtgKdoz3crf/d0XbfJAJjyBTfL3IRLcCRTqtFU+rz/9iBTr68CBGzluxM41kWuNYrYGON5K2OxLIPK4I/l7jj4ZhPweFbJkSkANuvxbGlADQHunA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P7nZUQUR; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="6AWs8Y5f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1717700516; bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
-	h=From:Date:Subject:To:Cc;
-	b=6AWs8Y5fFaVUOI9E3xqm++CeJkqm2Lr9Fioz8q0o7WiJTGvuJoRC5uiaR5lahQkL+
-	 Fo8WS5j8UQCIbvtB66dojdsg+Mrb9BYoDQINvgeAo5uwY6mvW/zrY9ggwu4W6vogen
-	 6vmEtrJtW7rDWEE8zdhi59lNLx/luGbydSPKuE1k=
-From: Luca Weiss <luca@z3ntu.xyz>
-Date: Thu, 06 Jun 2024 21:01:36 +0200
-Subject: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
- qcom_smd_parse_edge
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P7nZUQUR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717701072;
+	bh=aISHoo9eqcpGDfEfq7sQGEadbxdEPOe8NFZxhgBU8jg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P7nZUQURpBOQzSMFx1ivIMnAlTKc51oSoTL53hhjdnM46/9TwJaxSxuFf/LM3Ehhq
+	 vdT0dVZ+XBRIfc2ZC0Mjy3zBKTzxjWDO5bpq8Savkqc90SDhxfglSrHHpXmotRmJRM
+	 ss1W1Ndc2EayE+ddroBj4y+kZnDdom4lTBSAjtrX/Gx5SmG3jjDNCa+ZXWuh1FjLfO
+	 f2twwKH1qJSYP3caT+4zMcTklL33OlXh7Sn19IZQLFy/eE+y52TpZitSQxaX6h6PBm
+	 Hv5oY28vXFgXIfUvOxDgSmiGybN0iTau+ldY5O2BNF+qRC08xkdObnxMVSz+2nky2x
+	 q3CWPk+cuhg5g==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2DA7E378000A;
+	Thu,  6 Jun 2024 19:11:11 +0000 (UTC)
+Date: Thu, 6 Jun 2024 15:11:09 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, kernel@collabora.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: mediatek: Don't print error when optional
+ scp handle is missing
+Message-ID: <08125ad3-e5c8-4e96-912c-986b0e08b078@notapiano>
+References: <20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com>
+ <99d19104-875c-4214-b4a4-4c228cc08b66@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
-X-B4-Tracking: v=1; b=H4sIAI8HYmYC/1XMSw7CIBSF4a00dyyGt4kj99F0AHi1DKQNVELbs
- HexiQOH/0nOt0PC6DHBtdshYvbJT6EFP3XgRhOeSPy9NXDKJZVcEDO7RF52KpgI44jaUWaUFdA
- ec8SHL4fWD61Hn5Yprgee2Xf9OfLPyYxQopXSTl6cVZTdNhGW97msGwy11g/4NvzIpgAAAA==
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2126; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=dLOTe0zOfFf2wx2GkwFTCa1WlboZXkpBx3ZTdW9qpb0=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmYgeTBV2CHlVz8nTGb2PKIdfgFUnhX3hXJ9DWr
- mqDvptT3qeJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZmIHkwAKCRBy2EO4nU3X
- VtX2D/0XsWEsql04EZT3rb2O7Nc8FqfwJRRLnuNymbfypuBcK90667hlJOp2V0vbWR6ClcU4RD/
- FdnvGd3py5D1fTPQEY8fX58tSiZFZfVkXdKZzkeEi8YxqZ173luZ+C5RKYYHCPRHywKUohhL5MK
- v1SwGoLV7ptmURAvJwxqGa7Ls/SeS0lIEQwT78MgaVj3uG0EGDeDVFnYYNBPHmdNFtB4x55Ve8J
- GHzsWewFeYBN7DGUDnrh1tiQ92sD6i4fmum8oH2xvts3nMMDsmUaY2OWbURnIvIg70dcAtmMXBg
- M1oh2Ou68Vz58qRHA4oKZ2+Zk67RntBBUcKvrYc2+CBUi0MCQZcLWcESYr+BQaKYosKapnAcvy+
- fOdHN2RkbwImB1C9YRqiA7kB5vrSCRQuJkcTOGfvkDgAl+SmTfILMdANJ6VZdEz7IiVZryBM8WC
- w1ZNWcoJtn0YG7rgJcJxFnZhkNFIJpYCHJ5AuTyUlV2kb78fdl2/0+E0Wp8zr+OsVkrJ6NvVK9E
- kerlfGBpuOWK6AU+JwXlrcSZ+CYmMQ6U1mCLUZkEnCY4BAeycmdjpdmYdkGpvCbdYwxLEFknAsF
- yo976zIPpSxU2K07Y96+gTjDg03sa3Q4qyKFDES8mYOjabuVHEnTzuFJi19NvqK0TgQmrmyAc0+
- cneUVpd95Z8csjg==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99d19104-875c-4214-b4a4-4c228cc08b66@collabora.com>
 
-When the mailbox driver has not probed yet, the error message "failed to
-parse smd edge" is just going to confuse users, so improve the error
-prints a bit.
+On Thu, Jun 06, 2024 at 12:50:56PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 05/06/24 21:35, Nícolas F. R. A. Prado ha scritto:
+> > The scp_get() helper has two users: the mtk-vcodec and the mtk-mdp3
+> > drivers. mdp3 considers the mediatek,scp phandle optional, and when it's
+> > missing mdp3 will directly look for the scp node based on compatible.
+> > 
+> > For that reason printing an error in the helper when the handle is
+> > missing is wrong, as it's not always an actual error. Besides, the other
+> > user, vcodec, already prints an error message on its own when the helper
+> > fails so this message doesn't add that much information.
+> > 
+> > Remove the error message from the helper. This gets rid of the deceptive
+> > error on MT8195-Tomato:
+> > 
+> >    mtk-mdp3 14001000.dma-controller: can't get SCP node
+> 
+> I'm way more for giving it a SCP handle instead of silencing this print... the
+> SCP handle way *is* the correct one and I prefer it, as that'd also be the only
+> way to support Dual-Core SCP in MDP3.
+> 
+> I really want to see hardcoded stuff disappear and I really really *really* want
+> to see more consistency across DT nodes in MediaTek platforms.
+> 
+> So, still a one-line change, but do it on the devicetree instead of here please.
 
-Cover the last remaining exits from qcom_smd_parse_edge with proper
-error prints, especially the one for the mbox_chan deserved
-dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
-also to be complete.
+Sure. So the missing scp phandle case is maintained exclusively for
+backwards-compatibility. And we're ok that the old DTs will keep getting the
+error.
 
-With this done, we can remove the outer print completely.
+I'll send a v2 adding the phandle in the DT instead.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-Changes in v2:
-- Rebase on qcom for-next, drop dts patches which have been applied
-- Improve error printing situation (Bjorn)
-- Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
----
- drivers/rpmsg/qcom_smd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 43f601c84b4f..06e6ba653ea1 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
- 	if (IS_ERR(edge->mbox_chan)) {
- 		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
--			ret = PTR_ERR(edge->mbox_chan);
-+			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
-+					    "failed to acquire IPC mailbox\n");
- 			goto put_node;
- 		}
- 
-@@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 		of_node_put(syscon_np);
- 		if (IS_ERR(edge->ipc_regmap)) {
- 			ret = PTR_ERR(edge->ipc_regmap);
-+			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
- 			goto put_node;
- 		}
- 
-@@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 	}
- 
- 	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
--	if (ret) {
--		dev_err(&edge->dev, "failed to parse smd edge\n");
-+	if (ret)
- 		goto unregister_dev;
--	}
- 
- 	ret = qcom_smd_create_chrdev(edge);
- 	if (ret) {
-
----
-base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
-change-id: 20240423-apcs-mboxes-12ee6c01a5b3
-
-Best regards,
--- 
-Luca Weiss <luca@z3ntu.xyz>
-
+Thanks,
+Nícolas
