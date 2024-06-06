@@ -1,61 +1,40 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114F153BC3
-	for <linux-remoteproc@vger.kernel.org>; Thu,  6 Jun 2024 09:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1CA194C96;
+	Thu,  6 Jun 2024 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717667261; cv=none; b=c8Xn7/ANG3s6DseiXaUCb8fypx+WqG5uWEt2WWJHAHOxIwViu9z5166FXKL5HEAOq0FJneymVDai44LWQYNzGBn5+da5Mf0Fj5LLiKfzUH9vE3tgl/yJtv4zhLe45HyQR1DkcpL3ZuLey3SZgGPJR9nOXnsg2dyFxDdPGf85Ges=
+	t=1717671060; cv=none; b=Kt9keCPyoqPEQ/vgBxU7De2YZ/CDwzKW1Kj2A+STjRbgfCigqk9uZ3HNDHMnds3ZUZ3cG+hQ/h/NSXqlpjdY6aH9YjQHN/iuOTnTeFQcE8flq4ZyzXlOBWpCpC7jcF5BhT0JFqsR54E0V2mlFqdK3T5WGPIKFMW9NpwdkzP2vKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717667261; c=relaxed/simple;
-	bh=Hi0neK8a5ZCe3IvW2h1FQfZB7W5FmPki1KuXMEWVHEc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jdUTGqjljoGspphhKiBkEJOWoBdeAgTXAGeJZt4iP3gLVVX/vu3MG4c9btGh7aVsjTuqjHSy6GJdZVtLd1KrrHc5Wr4oPeyodiejiJjOh/0PQwug9izwbj5ZkwVq+8TPZGTQ+0jjNS45IIEHQUyFU3EifMDVdJyeEex7qO7iqdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=anMOK0Iu; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717671060; c=relaxed/simple;
+	bh=V5kYSuM39lIyPyl/wBUgkddb3iuaXISbMV793lW+VO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0QxpH40QBlAwyz0IA6BuHvsuhqPwjDF8QQbW/V9rbuapiyp3okpUXMhQNuP02plMuJBM7IWBRRej4T69pc1dMns9JcV1oJDzpX7y3Z69QrGCG6s5hdZ1LDkHnTnOQCJrfA5wEa31nxiCJB0WcA17NChwY6M4EaQ47gHi2hr6lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XMmtKzPg; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="anMOK0Iu"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52b83225088so886877e87.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Jun 2024 02:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717667256; x=1718272056; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jEOxwJ2kGSzIBxrSyY+xehPPjLW7bypGPaSh+KZyDyU=;
-        b=anMOK0IuCTZI5l/kZ+oMqBxGqrEfrhY20k2ZOvOg80X0jfBitt3D9fimwrDTMwEHJJ
-         wO2Jw5SFVzAatg6g6ZR4jBxIK2z9tEcpGv0B8BxYIMqNKkp5K1cg2VUZUsWlSW7M/a0q
-         xHgv7LlV1Eic+WwbfDLCDmfSSxPKgW/CaQKiaRQNAvqI0Wgb2mz/nkiuXBuFQslJiIkZ
-         QCZI0/2omxwMlGFCFT3MsuzKIg20+lTxBK14Q3H0Qze3QX885LjkdyrHjS8VahxsMIBA
-         xOlpkK+b97h1mjeOxekO7O2L8m6cOT/JHbnCfNgu4v6kwUI1bxCUs6dO0q3hDNoaA/hh
-         aAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717667256; x=1718272056;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jEOxwJ2kGSzIBxrSyY+xehPPjLW7bypGPaSh+KZyDyU=;
-        b=MD5ZxHS8XDDPB8G8wZbWUzDf/XV9B3l3foiQlrZWoU8sSFwpOOaQfEy/LdJR+CW+qD
-         hTjDugS+bge3QuqRiK9Vsh7m/bu0h3LRrt2B4GjFgqXAK3vsxO0/eVzGJbEvQ6ug+CYP
-         EWdzg/t4O917liOPowBTrNCqRVs59GmwE/6El9Dd8Kz9BPGq35d1B7hiuJ+2X2XeynSn
-         0essZrHVWgrGRH0nOR8+FVejnLZ4jCd00QvAe6xfN6P7iNsSKcFfEiVS6IMrl5iBg5+m
-         5yVrDMQRREt6+urMp2QORBGQDyOhU3eebXqZN3T6LPpSc09G4ROS5LDr2bYk7wVkJ/8w
-         iGnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSq5OMAG4iTqx5d/Yxo3nOZTCMKO3LKRwMCcbeIPG38dzf4637KV2O4dcOQ6EWGNIMESWjadHCwd6egE3/hfug4wBGZm0cPaB1kMr9tqHz/A==
-X-Gm-Message-State: AOJu0Yz2WLzGA6/vfR2q7tMWpnSmni+BNipSdOKdF0ML7Ij2ji0ukw8s
-	DeI5CXMN5laBlocwpji5JzI/jvvtBgvFobQ+ADOPTjGGEAQeRcNzGaF4wZ5E5vs=
-X-Google-Smtp-Source: AGHT+IG0yvEL0O3oat+GTMYZEZNdBMDvDLjdTiuRfzC3KCgGXCSd1rKmECmcW4B/bNfy74c09Rvnzw==
-X-Received: by 2002:a05:6512:234a:b0:52b:aa2f:d8a3 with SMTP id 2adb3069b0e04-52bab4d813amr3391217e87.34.1717667255898;
-        Thu, 06 Jun 2024 02:47:35 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2? ([2a01:e0a:982:cbb0:22fd:4ae6:287f:17f2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158111143sm50138045e9.20.2024.06.06.02.47.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 02:47:35 -0700 (PDT)
-Message-ID: <1d9bf8bb-af00-40d7-9c58-fbb6f6dd9e77@linaro.org>
-Date: Thu, 6 Jun 2024 11:47:34 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XMmtKzPg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717671057;
+	bh=V5kYSuM39lIyPyl/wBUgkddb3iuaXISbMV793lW+VO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XMmtKzPgFURGg6x7dDHARuSpRJmfp6YZhIZxS1Y+vK/tt8JbTXZ1/0oLVpARHtFXy
+	 lbNyoV1Y35lhQVP4Zorf2vsKM5S0LSMaE7A8uOwTIdzCZqV8ChpP9BnoQ/Ih1UBQhV
+	 Oj8P2sgE97ymMJ8sw70wj2Vc2Gsd1lFgnUJ//U9stRLIaAGlWQFRo6EKuRJeEh08fM
+	 FlzmvRPERk+/kkcsBNYOJ0Z6DBFyCquSC0coyahHsXfRtNyt1BqrqW2min272MnTZR
+	 5N22aB7Wx3kMoDf9J3645pyOHZaiMeocO0JRD1TNX6u0O4vqC78MM2oCcyqgA/0RWC
+	 XvXWCAAWsZOlA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C3FA63780627;
+	Thu,  6 Jun 2024 10:50:56 +0000 (UTC)
+Message-ID: <99d19104-875c-4214-b4a4-4c228cc08b66@collabora.com>
+Date: Thu, 6 Jun 2024 12:50:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,164 +42,75 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v8 0/5] soc: qcom: add in-kernel pd-mapper implementation
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+Subject: Re: [PATCH] remoteproc: mediatek: Don't print error when optional scp
+ handle is missing
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
  Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>,
- Xilin Wu <wuxilin123@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Steev Klimaszewski <steev@kali.org>,
- Alexey Minnekhanov <alexeymin@postmarketos.org>
-References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240605-mt8195-dma-scp-node-err-v1-1-f2cb42f24d6e@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/05/2024 23:56, Dmitry Baryshkov wrote:
-> Protection domain mapper is a QMI service providing mapping between
-> 'protection domains' and services supported / allowed in these domains.
-> For example such mapping is required for loading of the WiFi firmware or
-> for properly starting up the UCSI / altmode / battery manager support.
+Il 05/06/24 21:35, Nícolas F. R. A. Prado ha scritto:
+> The scp_get() helper has two users: the mtk-vcodec and the mtk-mdp3
+> drivers. mdp3 considers the mediatek,scp phandle optional, and when it's
+> missing mdp3 will directly look for the scp node based on compatible.
 > 
-> The existing userspace implementation has several issue. It doesn't play
-> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
-> firmware location is changed (or if the firmware was not available at
-> the time pd-mapper was started but the corresponding directory is
-> mounted later), etc.
+> For that reason printing an error in the helper when the handle is
+> missing is wrong, as it's not always an actual error. Besides, the other
+> user, vcodec, already prints an error message on its own when the helper
+> fails so this message doesn't add that much information.
 > 
-> However this configuration is largely static and common between
-> different platforms. Provide in-kernel service implementing static
-> per-platform data.
+> Remove the error message from the helper. This gets rid of the deceptive
+> error on MT8195-Tomato:
 > 
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konrad.dybcio@linaro.org>
-> To: Sibi Sankar <quic_sibis@quicinc.com>
-> To: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: Johan Hovold <johan+linaro@kernel.org>
-> Cc: Xilin Wu <wuxilin123@gmail.com>
-> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> Cc: Steev Klimaszewski <steev@kali.org>
-> Cc: Alexey Minnekhanov <alexeymin@postmarketos.org>
+>    mtk-mdp3 14001000.dma-controller: can't get SCP node
+
+I'm way more for giving it a SCP handle instead of silencing this print... the
+SCP handle way *is* the correct one and I prefer it, as that'd also be the only
+way to support Dual-Core SCP in MDP3.
+
+I really want to see hardcoded stuff disappear and I really really *really* want
+to see more consistency across DT nodes in MediaTek platforms.
+
+So, still a one-line change, but do it on the devicetree instead of here please.
+
+Cheers,
+Angelo
+
 > 
-> --
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   drivers/remoteproc/mtk_scp.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> Changes in v8:
-> - Reworked pd-mapper to register as an rproc_subdev / auxdev
-> - Dropped Tested-by from Steev and Alexey from the last patch since the
->    implementation was changed significantly.
-> - Add sensors, cdsp and mpss_root domains to 660 config (Alexey
->    Minnekhanov)
-> - Added platform entry for sm4250 (used for qrb4210 / RB2)
-> - Added locking to the pdr_get_domain_list() (Chris Lew)
-> - Remove the call to qmi_del_server() and corresponding API (Chris Lew)
-> - In qmi_handle_init() changed 1024 to a defined constant (Chris Lew)
-> - Link to v7: https://lore.kernel.org/r/20240424-qcom-pd-mapper-v7-0-05f7fc646e0f@linaro.org
-> 
-> Changes in v7:
-> - Fixed modular build (Steev)
-> - Link to v6: https://lore.kernel.org/r/20240422-qcom-pd-mapper-v6-0-f96957d01207@linaro.org
-> 
-> Changes in v6:
-> - Reworked mutex to fix lockdep issue on deregistration
-> - Fixed dependencies between PD-mapper and remoteproc to fix modular
->    builds (Krzysztof)
-> - Added EXPORT_SYMBOL_GPL to fix modular builds (Krzysztof)
-> - Fixed kerneldocs (Krzysztof)
-> - Removed extra pr_debug messages (Krzysztof)
-> - Fixed wcss build (Krzysztof)
-> - Added platforms which do not require protection domain mapping to
->    silence the notice on those platforms
-> - Link to v5: https://lore.kernel.org/r/20240419-qcom-pd-mapper-v5-0-e35b6f847e99@linaro.org
-> 
-> Changes in v5:
-> - pdr: drop lock in pdr_register_listener, list_lock is already held (Chris Lew)
-> - pd_mapper: reworked to provide static configuration per platform
->    (Bjorn)
-> - Link to v4: https://lore.kernel.org/r/20240311-qcom-pd-mapper-v4-0-24679cca5c24@linaro.org
-> 
-> Changes in v4:
-> - Fixed missing chunk, reenabled kfree in qmi_del_server (Konrad)
-> - Added configuration for sm6350 (Thanks to Luca)
-> - Removed RFC tag (Konrad)
-> - Link to v3: https://lore.kernel.org/r/20240304-qcom-pd-mapper-v3-0-6858fa1ac1c8@linaro.org
-> 
-> Changes in RFC v3:
-> - Send start / stop notifications when PD-mapper domain list is changed
-> - Reworked the way PD-mapper treats protection domains, register all of
->    them in a single batch
-> - Added SC7180 domains configuration based on TCL Book 14 GO
-> - Link to v2: https://lore.kernel.org/r/20240301-qcom-pd-mapper-v2-0-5d12a081d9d1@linaro.org
-> 
-> Changes in RFC v2:
-> - Swapped num_domains / domains (Konrad)
-> - Fixed an issue with battery not working on sc8280xp
-> - Added missing configuration for QCS404
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index b885a9a041e4..f813117b6312 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -37,10 +37,8 @@ struct mtk_scp *scp_get(struct platform_device *pdev)
+>   	struct platform_device *scp_pdev;
+>   
+>   	scp_node = of_parse_phandle(dev->of_node, "mediatek,scp", 0);
+> -	if (!scp_node) {
+> -		dev_err(dev, "can't get SCP node\n");
+> +	if (!scp_node)
+>   		return NULL;
+> -	}
+>   
+>   	scp_pdev = of_find_device_by_node(scp_node);
+>   	of_node_put(scp_node);
 > 
 > ---
-> Dmitry Baryshkov (5):
->        soc: qcom: pdr: protect locator_addr with the main mutex
->        soc: qcom: pdr: fix parsing of domains lists
->        soc: qcom: pdr: extract PDR message marshalling data
->        soc: qcom: add pd-mapper implementation
->        remoteproc: qcom: enable in-kernel PD mapper
-> 
->   drivers/remoteproc/qcom_common.c    |  87 +++++
->   drivers/remoteproc/qcom_common.h    |  10 +
->   drivers/remoteproc/qcom_q6v5_adsp.c |   3 +
->   drivers/remoteproc/qcom_q6v5_mss.c  |   3 +
->   drivers/remoteproc/qcom_q6v5_pas.c  |   3 +
->   drivers/remoteproc/qcom_q6v5_wcss.c |   3 +
->   drivers/soc/qcom/Kconfig            |  15 +
->   drivers/soc/qcom/Makefile           |   2 +
->   drivers/soc/qcom/pdr_interface.c    |  17 +-
->   drivers/soc/qcom/pdr_internal.h     | 318 ++---------------
->   drivers/soc/qcom/qcom_pd_mapper.c   | 676 ++++++++++++++++++++++++++++++++++++
->   drivers/soc/qcom/qcom_pdr_msg.c     | 353 +++++++++++++++++++
->   12 files changed, 1190 insertions(+), 300 deletions(-)
-> ---
-> base-commit: e5119bbdaca76cd3c15c3c975d51d840bbfb2488
-> change-id: 20240301-qcom-pd-mapper-e12d622d4ad0
+> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+> change-id: 20240605-mt8195-dma-scp-node-err-6a8dea26d4f5
 > 
 > Best regards,
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-HDK
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-
-Thanks,
-Neil
