@@ -1,93 +1,98 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2642B3A8C0;
-	Thu,  6 Jun 2024 11:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5031974FE;
+	Thu,  6 Jun 2024 14:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717671616; cv=none; b=XXBWCd50JVVxABMIyTwPqnXZmpxjuhr08vTKhPK5hUVX0JU2ply2xsODEYZ5aLnz9rJfAeG/n+QFYH6zr/D0U3NNvzb0vFmBHcrQpVg6vo9ToAg76p6fdajNGfQvehSxDI+MXZTm/RAD3/VPsLiauSp7bWNxhDlshJoBymRDPfA=
+	t=1717684817; cv=none; b=U6IpN8PNJkb9/LxnzfwtU68ZXGCuYDzJd21g3N9wDwzq7sPEvEweJumY1fN6CZkNPH/iXqqqxzL73rc0SRlYvZ49VDnBjv8tw6J+PpGNCjv5NRUSnBXaVGt+163Qxcrmi1N5Fj678U0WwSzC8gVzDJ/nLVRHmQFuEl41eKiYWyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717671616; c=relaxed/simple;
-	bh=JzIE2Q/8PA+vyQON4VFwI2P8T+iJyPY9/E/Fb2Kzq1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9/2tqkVwsKCbUeCFJtN0Ud+CWMVwuHwY/rAc71x5Qmmy4uDhx1q3Ad1iYzsPSetICbkqdmLsy3Kpb6HWVK/0Jc/IDLw/h6AnuMdqirqobe8N5qsKZGCLr45TkFPPqo83/W3C/3fiGFZmcyDFiUiCod1ZekJNITByWyf5H/J7Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0ZmMNiJf; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1717684817; c=relaxed/simple;
+	bh=ZGB3juOxwVTV9EOeSwh34a8EfYqp00QVXUiUxC+Ea5I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nuBVIeoNEDaTUA/chx4ECJs+Bk/x9BTK/S+X3KDDwpxJM1Lhx7mdvwJufsO0bfl2l3zqwEnZagIdq1dwoFbB2NXO+tlK+0PxxNLVCAI7pii80zxOTAWh/vcn9i9S7thjSTAKKDH7vOFcn9gKnHcN98z7s6ZsLZGfbQ5HR4dYowI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AG1g5oic; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0ZmMNiJf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717671613;
-	bh=JzIE2Q/8PA+vyQON4VFwI2P8T+iJyPY9/E/Fb2Kzq1M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=0ZmMNiJfCXQNZ6B1t1p8nN0KJbN3Y0lJhaKaOnM2yopq9SmacDqCwiU8+zV7oxQ/G
-	 LKkFhKvRkS/2g63MVpQl9pOg7mvmm7QzilHpD0emoMusur0ee4XPB5RuH3peLHPA2+
-	 sDAkdrPgB6XjEfnqOEFBZjdEYOLGD0SmlLImdnZPIAytjjtbDpyWSsSKZqfCe+zEJV
-	 MZpdwPL5ylCgJHhPnVRbGEw5XdH8+OhCF13Srg8PN7C9JDaDC2dF8JZE8r+GjWtPG9
-	 Zi0qA0Sq9DDXUOhV5d23SAa0G1lFYv/0jjYywDb0csSEZgKMe8bPDzgBeqp1ApdJxR
-	 /g+6RaZExrYHQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9813C3780627;
-	Thu,  6 Jun 2024 11:00:12 +0000 (UTC)
-Message-ID: <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
-Date: Thu, 6 Jun 2024 13:00:11 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AG1g5oic"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45699e8M016166;
+	Thu, 6 Jun 2024 14:40:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=VCPJV/VzG/M+IhNnUHL+ziLX+EjaBPDAUVTfhaUS/lA=; b=AG
+	1g5oicFc4NZ6QEWNF6Xl2Nf0HGSU3em582cnahrOLMnHwu4LZqqVNcmx23UnngYX
+	KGi568hk/+HzkZ1CuqRFYOGKGGy3AbNeUJTgnc0GrJafVBUgOf64LOjTc1GCwSkd
+	5lvtnADKP10LgH3JXs4NRKUx1pgE1wBGbJEgpkyhXvAiItiP4keHQNP9gOFHvkuD
+	hQhsmMB3EsKG+2l3yqwy94BHT+J2oTuAKMcofBu6U7VWvEhHAaIAhQTnE3F0Y8rT
+	UAFh1FEPQ8retAnv8tZYjp1Nx0eByLlGneYw4k7TP6TqygHw3PZUY8oV7Ndmc8C6
+	PP5+whaamTQ1C+ko44cA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yka7p8rjv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Jun 2024 14:40:12 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 456EeACl009445
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Jun 2024 14:40:10 GMT
+Received: from hyd-e160-a01-3-01.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Jun 2024 07:40:06 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_nainmeht@quicinc.com>
+Subject: [PATCH 0/5] Add MPSS remoteproc support for SDX75
+Date: Thu, 6 Jun 2024 20:08:53 +0530
+Message-ID: <20240606143858.4026-1-quic_nainmeht@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: mediatek: Increase MT8188 SCP core0 DRAM size
-To: jason-ch chen <jason-ch.chen@mediatek.corp-partner.google.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Jason Chen <Jason-ch.Chen@mediatek.com>
-References: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9PpGwCdiY-hS7m9_aHwm7xl7e4sVnC4q
+X-Proofpoint-ORIG-GUID: 9PpGwCdiY-hS7m9_aHwm7xl7e4sVnC4q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-06_01,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1011
+ phishscore=0 mlxlogscore=766 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406060106
 
-Il 06/06/24 11:06, jason-ch chen ha scritto:
-> From: Jason Chen <Jason-ch.Chen@mediatek.com>
-> 
-> Increase MT8188 SCP core0 DRAM size for HEVC driver.
-> 
+Add modem support to SDX75 using the PAS remoteproc driver.
+Also, add qlink_logging memory region and split MPSS DSM
+region into 2 separate regions.
 
-....so the second core only gets a maximum of 0x200000 of SRAM?
-I'm not sure how useful is the secondary SCP core, at this point, with so little
-available SRAM but... okay, as you wish.
+These patches were co-authored by Rohit Agarwal while at
+Qualcomm.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Naina Mehta (5):
+  dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
+  remoteproc: qcom: pas: Add SDX75 remoteproc support
+  arm64: dts: qcom: sdx75: add missing qlink_logging reserved memory for
+    mpss
+  arm64: dts: qcom: sdx75: Add remoteproc node
+  arm64: dts: qcom: sdx75-idp: enable MPSS remoteproc node
 
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml  |  1 +
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts        |  6 ++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi           | 64 +++++++++++++++++--
+ drivers/remoteproc/qcom_q6v5_pas.c            |  1 +
+ 4 files changed, 68 insertions(+), 4 deletions(-)
 
-> Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
-> ---
->   drivers/remoteproc/mtk_scp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index b885a9a041e4..2119fc62c3f2 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1390,7 +1390,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
->   };
->   
->   static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
-> -	.max_dram_size = 0x500000,
-> +	.max_dram_size = 0x800000,
->   	.ipi_share_buffer_size = 600,
->   };
->   
-
+-- 
+2.17.1
 
