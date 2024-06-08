@@ -1,113 +1,149 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5284563CF;
-	Sat,  8 Jun 2024 00:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E4920EB;
+	Sat,  8 Jun 2024 03:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717807599; cv=none; b=CjXGWbEYyK5Ar+9bbLAZzn//6TqWndgK46Ebuza+dbG3pHpbLldxya0qGnba/viRA7Glp7GbZX4YrwkVVIfJMqBF7jKgm9ZuZ0xNuIqmH5xWAQzOQRy7inJVJx+Oub0dWvuDTu00+kz13bN/hFaHNc0obOfJLefojsFpN76qpPc=
+	t=1717817468; cv=none; b=SJ3UlAdY9bkDVG0gd2Isxp6P7oa0trcl18a7uzlofY+ZvgKfOQj/Jj7iWzeh9Cs4DPtUfImUU6pt6oE78wqQYU4v9jEQTUkzhyxfy0HL5NHctePzzeCIWO7VUeyKqbvbC+NqsPFnMmKgVB+3mqCx6pTYQo8uhyi/qFI173jkJrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717807599; c=relaxed/simple;
-	bh=Qy4HZTKZjW/5esVi/ngfnvw6RkfErWE8FRdnG0OedSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FH0aeqvzcDA6E3VD++GM6ygsoLVwC8Pj5ejw98zDpWquG8llSO+mzMdhntH4TpcTuJz+NFqtCGpUVjDOTOIFOqU2MYfiwBINQMQlCohWNiiUlfrgNXlB9PhCecCzri1K1yGg4zhURsFSroW6kRTTr7OLkiSeL7Cok6vR30WYZsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eKLKvHeu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717817468; c=relaxed/simple;
+	bh=/sX6sFjxJG1dDPpY4Isus+wzeR8BUHZdaJGCCe58Hjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMYg6u/WJFM+AoKTysFxuWjiz3S7GXD4xyzaLUurRQB+HOW2T8mXCC7ahz1eFA0xlik883vn/IQU4XGKSR10IXpo+QrtGA5W+KS9h7oVg8E0vwDXAmpClvQtsZfTLWL79WPUyFkRyu2gDihIfFu0qCLAoAhdXCOo20csBHsfUls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKQq6phf; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eKLKvHeu"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457L8oPG025762;
-	Sat, 8 Jun 2024 00:46:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	chSzIRgENd/J1rGKgmWI1PC4ROoFSMddsKn62eWgNaw=; b=eKLKvHeuntk1IJUK
-	QLC6KQj4Y/kfM184LDXxPGDi0+aA2qqK63QhhrQrHEBu3qQ/esr8FWum23+hMq8B
-	Fw9hqtJ36h2DrgUbF+yKAv0sKb3BuFUIGOwWcs/HKQcHid+P8hOHORm/sZXq7WBM
-	tzDGfyhNvTLcbrQEVhbPiDTdUkiUNqpsZjy/HK1KLYr3IKrGkbgah7EvjyG1BNdp
-	lqsk6/GYVSSri5WrxZ7JUO0PnKFk88AdTjQgU55oqesPmfBAW3o3zAyHVoKWfPVF
-	Dnaxuf8aNi3ktN0ug8iPvFLtYnLfY0hAOh3mVNQvVKcII7nzT/ivymtDzSndIQBi
-	DJ5Ypw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym49w1614-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 08 Jun 2024 00:46:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4580kU7g027448
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 8 Jun 2024 00:46:30 GMT
-Received: from [10.110.22.192] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 17:46:29 -0700
-Message-ID: <933f7759-3561-4ad3-8d4e-a05e5fb0ddf3@quicinc.com>
-Date: Fri, 7 Jun 2024 17:46:29 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKQq6phf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717817466; x=1749353466;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/sX6sFjxJG1dDPpY4Isus+wzeR8BUHZdaJGCCe58Hjg=;
+  b=fKQq6phfRtC6fUEyhQOsg9zA21250k/7gYdSem9vKrKSnE+K1YKQ6hC5
+   98h5B9IJqbz+U+SoB8nw847frPKy5USOvWRureZSJp1HYBh5wCc2tBgeR
+   2jplj654DtvNjRFxb6ZEvoPYqrG5w8xGOgw9lku4x0eiZb4KbiSfU0L/V
+   s5XlnAnYrE0G8o3njrMSyOzSYcS4kgO5mNr9c1RjB313rkHEVgSiPacpI
+   9ZSdL/hm1IS/Rb51PF8CeWpug+YX4vzhRN4U5Dwg6E+0dsliHNl6ZuBRu
+   1XI9BTxcGPu3DGFaUsXTierB2E0egJHQGr7DVaRxH+2DkpW1DWHktflAs
+   Q==;
+X-CSE-ConnectionGUID: 91efLc6zQeOOS7JAO6p9gA==
+X-CSE-MsgGUID: 7aJlLoEDTRCOm/CZSQeDwQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="14436254"
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="14436254"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 20:31:05 -0700
+X-CSE-ConnectionGUID: KauwOKdARrOh7dsnIQJUCw==
+X-CSE-MsgGUID: ecCI/N7VQMOA9VeHuekkXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
+   d="scan'208";a="38611823"
+Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Jun 2024 20:31:02 -0700
+Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sFmnE-0000uQ-0W;
+	Sat, 08 Jun 2024 03:31:00 +0000
+Date: Sat, 8 Jun 2024 11:30:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH v6 5/5] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
+Message-ID: <202406081159.KM501g5C-lkp@intel.com>
+References: <20240607093326.369090-6-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/5] remoteproc: qcom: enable in-kernel PD mapper
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Xilin Wu <wuxilin123@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Steev Klimaszewski <steev@kali.org>,
-        "Alexey
- Minnekhanov" <alexeymin@postmarketos.org>
-References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
- <20240512-qcom-pd-mapper-v8-5-5ecbb276fcc0@linaro.org>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240512-qcom-pd-mapper-v8-5-5ecbb276fcc0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: b9iPqyYF3nWn2F3acMDqbuIfSVlp9gMd
-X-Proofpoint-GUID: b9iPqyYF3nWn2F3acMDqbuIfSVlp9gMd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_16,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=710 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406080003
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607093326.369090-6-arnaud.pouliquen@foss.st.com>
+
+Hi Arnaud,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20240607-183305
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240607093326.369090-6-arnaud.pouliquen%40foss.st.com
+patch subject: [PATCH v6 5/5] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+config: i386-buildonly-randconfig-002-20240608 (https://download.01.org/0day-ci/archive/20240608/202406081159.KM501g5C-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081159.KM501g5C-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406081159.KM501g5C-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/remoteproc/stm32_rproc.c:23:
+>> include/linux/tee_remoteproc.h:94:2: error: expected parameter declarator
+      94 |         WARN_ON(1);
+         |         ^
+   include/asm-generic/bug.h:122:29: note: expanded from macro 'WARN_ON'
+     122 | #define WARN_ON(condition) ({                                           \
+         |                             ^
+   In file included from drivers/remoteproc/stm32_rproc.c:23:
+>> include/linux/tee_remoteproc.h:94:2: error: expected ')'
+   include/asm-generic/bug.h:122:29: note: expanded from macro 'WARN_ON'
+     122 | #define WARN_ON(condition) ({                                           \
+         |                             ^
+   include/linux/tee_remoteproc.h:94:2: note: to match this '('
+   include/asm-generic/bug.h:122:28: note: expanded from macro 'WARN_ON'
+     122 | #define WARN_ON(condition) ({                                           \
+         |                            ^
+   In file included from drivers/remoteproc/stm32_rproc.c:23:
+>> include/linux/tee_remoteproc.h:92:32: error: function cannot return function type 'struct resource_table *()'
+      92 | tee_rproc_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+         |                                ^
+>> include/linux/tee_remoteproc.h:94:2: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
+      94 |         WARN_ON(1);
+         |         ^
+   include/asm-generic/bug.h:122:28: note: expanded from macro 'WARN_ON'
+     122 | #define WARN_ON(condition) ({                                           \
+         |                            ^
+   In file included from drivers/remoteproc/stm32_rproc.c:23:
+>> include/linux/tee_remoteproc.h:96:2: error: expected identifier or '('
+      96 |         return NULL;
+         |         ^
+>> include/linux/tee_remoteproc.h:97:1: error: extraneous closing brace ('}')
+      97 | }
+         | ^
+   6 errors generated.
 
 
+vim +94 include/linux/tee_remoteproc.h
 
-On 5/11/2024 2:56 PM, Dmitry Baryshkov wrote:
-> Request in-kernel protection domain mapper to be started before starting
-> Qualcomm DSP and release it once DSP is stopped. Once all DSPs are
-> stopped, the PD mapper will be stopped too.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/remoteproc/qcom_common.c    | 87 +++++++++++++++++++++++++++++++++++++
->   drivers/remoteproc/qcom_common.h    | 10 +++++
->   drivers/remoteproc/qcom_q6v5_adsp.c |  3 ++
->   drivers/remoteproc/qcom_q6v5_mss.c  |  3 ++
->   drivers/remoteproc/qcom_q6v5_pas.c  |  3 ++
->   drivers/remoteproc/qcom_q6v5_wcss.c |  3 ++
->   6 files changed, 109 insertions(+)
-> 
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07  90  
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07  91  static inline struct resource_table *
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07 @92  tee_rproc_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07  93  	/* This shouldn't be possible */
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07 @94  	WARN_ON(1);
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07  95  
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07 @96  	return NULL;
+5c0eb7b2737b6e Arnaud Pouliquen 2024-06-07 @97  }
 
-Thanks for looking into whether this could be implemented as a 
-remoteproc subdevice.
-
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
