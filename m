@@ -1,168 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051DE22081;
-	Mon, 10 Jun 2024 07:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873DF15218E;
+	Mon, 10 Jun 2024 15:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005084; cv=none; b=Q+PKJsEMR5hhM8otjPWee0mVKdc8cm0fmhMFGPOPIeVHMxb33pSw6Mr9oBeeK2CiNa0I/kCBYeRqhFHrh5eTO/F2F4pR9veDVSAsj+x6DIMQVMDytKJ6IjZZs4G6mRgxn3/Mk3yFQsQ/6dkiFO+O9ixULIaiUqGJ/+dZmUqG7uc=
+	t=1718032649; cv=none; b=Pp82xPDPN6MVQ4I4CVLVhnQokuFZCtTEUV4lMYpTBQ6kNnk9utrEgnWvq5cxYV600vM0ZQgBqiADp1sgoLXK8KzyKETBt8bFdFI4vPfyCqhBkLOAzgjl2TofsK7L/+0PiTd83M5igiWb8PTkEzz3dT5TfOOxT7O1lhXQgieUnfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005084; c=relaxed/simple;
-	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDeQ3hKhI3k1l8/+7rV6n5sufJMGT3Q5BW4apyCLf6/8z1BTMadKhOhB8pBXdrqMJrYZTtBRx9nxojevQPLWuaUG6h95w6wO5ph+oOwmDnByuZDLv0jcBaBBe/IHdsCwFxKiJZwT/wSVWw63h+OIqXbEAYHoaNuNtcXoqS95rmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xq+M6SYo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718032649; c=relaxed/simple;
+	bh=34IBcVJRT9a1iGd/s4e2KmsiacQ/fwBWEn/GfLuaU84=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SWD/ZeVPJ+yXQk80QcWPTQXPrON2eOImTLiW4K9+Zz/qoBhKwyPjhTJ8nxUO1fSk9aKbG2TeudkudcAHSzE0r9utTGdUnfVYOKhHjm9PC9gCV6NVOH6zvz5cYyGH1uWP2p962jKphL308WL0GTOC+gJcpRmbR+SGL55g2ASsvhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BymZSzbP; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xq+M6SYo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A3C2BBFC;
-	Mon, 10 Jun 2024 07:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718005083;
-	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xq+M6SYoiXTTgSBMjBLlIarHnOx21mTKAc77p3F/gX5OraHEk47d/6C25s+4a+ZW+
-	 SwAba5UtfZ8nZRgTjBHOVAWJS/arx4aJ35R6ijq+lTvJNbRLFOe9Nrl99bN7JKhGGs
-	 U2cuvYvom6JZYKoqHdEr6BSHZepKlbrreOvW6Znl18D8Kcosg/Gqd/+12PGsgRsOMk
-	 WNJjh0BLPv0oHDwNlSkQPKoxcEdYkl69Exi7RuVb3/pttgYWhMNnqiz6juo8dAR3ZF
-	 RsDURgHU8B79HiqfVnihSySRTaER3X1cxN+mczemkwnZhoTMIjDexJUSKnYexZUfIM
-	 8tgteJvwX+U2A==
-Message-ID: <d78b7a50-8f79-4733-bf2b-ee7d70501c47@kernel.org>
-Date: Mon, 10 Jun 2024 09:37:56 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BymZSzbP"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AFHOmX126249;
+	Mon, 10 Jun 2024 10:17:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718032644;
+	bh=r0k+DvL6KY1JUyaLhso3b+X98/K/2Xw/JXU0kRkC/zo=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=BymZSzbPbO7i5E0wLt2YsTRQ40RnqIjnWrjxCVAp9JDcBa+deQnhZ2+f4MMCxHof7
+	 OdrnI3DQIQkXMDzTcAUXXGvFtblS4GG8AZ605152jsG0Zzb3tMPYKF97MJX1OyZBV9
+	 iZogwg5sqxDowAJSZ2mmoVQpGUvrhuz5BOePqg1s=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AFHOjQ017905
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Jun 2024 10:17:24 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
+ Jun 2024 10:17:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 10 Jun 2024 10:17:23 -0500
+Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AFHMqd017714;
+	Mon, 10 Jun 2024 10:17:23 -0500
+From: Andrew Davis <afd@ti.com>
+To: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 3/6] remoteproc: omap: Use devm_rproc_add() helper
+Date: Mon, 10 Jun 2024 10:17:18 -0500
+Message-ID: <20240610151721.189472-3-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240610151721.189472-1-afd@ti.com>
+References: <20240610151721.189472-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
- for power-domain
-To: Frank Li <Frank.li@nxp.com>
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- mathieu.poirier@linaro.org, peng.fan@nxp.com, robh@kernel.org,
- s.hauer@pengutronix.de, shawnguo@kernel.org
-References: <20240606150030.3067015-1-Frank.Li@nxp.com>
- <19058054-5138-4d37-860f-dd430abd3a0f@kernel.org>
- <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 07/06/2024 17:19, Frank Li wrote:
-> On Fri, Jun 07, 2024 at 09:32:26AM +0200, Krzysztof Kozlowski wrote:
->> On 06/06/2024 17:00, Frank Li wrote:
->>> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Keep
->>> the same restriction for other compatible string.
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>>
->>> Notes:
->>>     Change from v1 to v2
->>>     - set minitem to 2 at top
->>>     - Add imx8qm compatible string also
->>>     - use not logic to handle difference compatible string restriction
->>>     - update commit message.
->>>     
->>>     pass dt_binding_check.
->>>     
->>>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
->>>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->>>       CHKDT   Documentation/devicetree/bindings
->>>       LINT    Documentation/devicetree/bindings
->>>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
->>>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
->>>
->>>  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 14 ++++++++++++++
->>>  1 file changed, 14 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->>> index df36e29d974ca..da108a39df435 100644
->>> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->>> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->>> @@ -59,6 +59,7 @@ properties:
->>>      maxItems: 32
->>>  
->>>    power-domains:
->>> +    minItems: 2
->>>      maxItems: 8
->>>  
->>>    fsl,auto-boot:
->>> @@ -99,6 +100,19 @@ allOf:
->>>        properties:
->>>          fsl,iomuxc-gpr: false
->>>  
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          not:
->>> +            contains:
->>> +              enum:
->>> +                - fsl,imx8qxp-cm4
->>> +                - fsl,imx8qm-cm4
->>> +    then:
->>> +      properties:
->>> +        power-domains:
->>> +          minItems: 8
->>
->> What happened with the "else:"? How many power domains is needed for
->> other devices?
-> 
-> So far, only fsl,imx8qxp-cm4 ind fsl,imx8qm-cm4 need power domain (2-8). 
-> Power-domains is option property. 
-> 
-> Can I just remove whole "if"?
+Use the device lifecycle managed add function. This helps prevent mistakes
+like deleting out of order in cleanup functions and forgetting to delete
+on error paths.
 
-No, I rather expect else.
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/remoteproc/omap_remoteproc.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index df46be84658f7..9ae2e831456d5 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -1359,20 +1359,13 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, rproc);
+ 
+-	ret = rproc_add(rproc);
++	ret = devm_rproc_add(&pdev->dev, rproc);
+ 	if (ret)
+ 		return ret;
+ 
+ 	return 0;
+ }
+ 
+-static void omap_rproc_remove(struct platform_device *pdev)
+-{
+-	struct rproc *rproc = platform_get_drvdata(pdev);
+-
+-	rproc_del(rproc);
+-}
+-
+ static const struct dev_pm_ops omap_rproc_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
+ 	SET_RUNTIME_PM_OPS(omap_rproc_runtime_suspend,
+@@ -1381,7 +1374,6 @@ static const struct dev_pm_ops omap_rproc_pm_ops = {
+ 
+ static struct platform_driver omap_rproc_driver = {
+ 	.probe = omap_rproc_probe,
+-	.remove_new = omap_rproc_remove,
+ 	.driver = {
+ 		.name = "omap-rproc",
+ 		.pm = &omap_rproc_pm_ops,
+-- 
+2.39.2
 
