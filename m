@@ -1,45 +1,46 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F421420DD;
-	Mon, 10 Jun 2024 18:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D82757E3;
+	Mon, 10 Jun 2024 18:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718042792; cv=none; b=Be5uU/baFMdkjA74sm505rvr47ZneXCMKoVMzL9dET7EGrP1+SiESjP+3CXeFr8Wy+yI1aJkF9yysMhcpcfNPfJWJ8RGmqyhsrna603jgugIRUWvyHf/IXxp3UsYsMOh1wIfaoeOUHRCpWjNPMFioSxJdyQnwwrVxgHPjctiNy0=
+	t=1718042793; cv=none; b=VIG7azse03DaGAEh/tiI+wgDn1PjNrDZR7QBeMdtD4aoZWvf5cjEP67u6KgG7jm3Qcl3LZhIFTyQfeXkAo8DeMu079cy3PSMfZhbdeIOpq2UmhA+tom7N5zjuGRnRwCwsFquL3VO68uh3t9kw5PTihOAd2/iIkBRuYOyZKyeNPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718042792; c=relaxed/simple;
-	bh=SGlTXlbAHbufnPd6Eo1oHjPC/WB5/kPMxMReDNymQY8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SOLfcB7Ab4VXWokScUAhgNrzJNsKllzfJiRS2g3P3t5nGmfNy6yJEDYmiyZRMHJeQC7kczG6ZD1Q2gwZWKPYctTtkWwiN0K+UWIzTh/qG9wvee38oQRVZ4joE+xa3xjzzaTwoukKpCvoVPfT7rXW7Jc6leZvqiIDqceAa0KOHYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vA76jLLq; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1718042793; c=relaxed/simple;
+	bh=nsZCppXmh8lxPmCUagHvnCSHS+UbJBgIFsgwfI9awYY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZUW1Uxwdy8oVwUsHdpJ2QvquWhv9Bo6ZTQ+noqKJr+I+9nNOFDnmoxvoo3j203U6/RhCjF2ONSCpGk1MY64djV1k3oG0GECcj9ufn2r6LUW88KRgcaa3YK3hV/3HFzZLN+9hEst6nhDP253Gdr2Gm7q4lwONyhUfqxEO0Z3GWb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uv8hS2hm; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vA76jLLq"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uv8hS2hm"
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6HdW057292;
-	Mon, 10 Jun 2024 13:06:17 -0500
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6JmY063944;
+	Mon, 10 Jun 2024 13:06:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718042777;
-	bh=h5VEq1G9dRBm6MKM7VYTq1WEKIHpwg4F8MH0iitI/x0=;
-	h=From:To:CC:Subject:Date;
-	b=vA76jLLqRjRRQ+XjFIFTkUne3Ll1Orh2yVNdhBXfBnjcFkRA3LHd6rpPdMfLbyhsx
-	 qkUp3oStrWXExp8HXxsk7XS+Z5WjwCAUrh7TmWXjye9MbppGXq0pgVS5rQl2JNEZyj
-	 Ns6WSvDZPRROSMmWrniouy1bWI7cGr9n4B7/4Adc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AI6H96011773
+	s=ti-com-17Q1; t=1718042779;
+	bh=IUAoumEhy+wq6Tu6vsgEuKclmExrdXZar+JrMRHsA5Q=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=uv8hS2hm7MhPgqAHoR1aWKd2QA6lG9bzq4B+eqGjFUhkEgLI3F+ab/vcMzXSmpJgf
+	 ZcGurYn9p8ULvtqqxw6/BQnc2bnC9opWFq7+bhd8XF2/SqYLrliGUiAxXIex3qJ1gs
+	 cHFkrPsb1la0aNEQ4xWU4/EHEj8P48voohVDbbEQ=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45AI6JII011796
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Jun 2024 13:06:17 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 10 Jun 2024 13:06:19 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 10
- Jun 2024 13:06:16 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 13:06:19 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 10 Jun 2024 13:06:16 -0500
+ Frontend Transport; Mon, 10 Jun 2024 13:06:18 -0500
 Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6Gtf056905;
-	Mon, 10 Jun 2024 13:06:16 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45AI6Gtj056905;
+	Mon, 10 Jun 2024 13:06:18 -0500
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -58,78 +59,78 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Andrew Davis <afd@ti.com>
-Subject: [PATCH v10 0/8] TI K3 M4F support on AM62 and AM64 SoCs
-Date: Mon, 10 Jun 2024 13:06:07 -0500
-Message-ID: <20240610180615.313622-1-afd@ti.com>
+Subject: [PATCH v10 4/8] arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
+Date: Mon, 10 Jun 2024 13:06:11 -0500
+Message-ID: <20240610180615.313622-5-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240610180615.313622-1-afd@ti.com>
+References: <20240610180615.313622-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello all,
+From: Hari Nagalla <hnagalla@ti.com>
 
-This is the continuation of the M4F RProc support series from here[0].
-I'm helping out with the upstream task for Hari and so versions (v8+)
-is a little different than the previous(v7-) postings[0]. Most notable
-change I've introduced being the patches factoring out common support
-from the current K3 R5 and DSP drivers have been dropped. I'd like
-to do that re-factor *after* getting this driver in shape, that way
-we have 3 similar drivers to factor out from vs trying to make those
-changes in parallel with the series adding M4 support.
+The AM62x SoCs of the TI K3 family have a Cortex M4F core in the MCU
+domain. This core can be used by non safety applications as a remote
+processor. When used as a remote processor with virtio/rpmessage IPC,
+two carveout reserved memory nodes are needed. The first region is used
+as a DMA pool for the rproc device, and the second region will furnish
+the static carveout regions for the firmware memory.
 
-Anyway, details on our M4F subsystem can be found the
-the AM62 TRM in the section on the same:
+The current carveout addresses and sizes are defined statically for
+each rproc device. The M4F processor does not have an MMU, and as such
+requires the exact memory used by the firmware to be set-aside.
 
-AM62x Technical Reference Manual (SPRUIV7A – MAY 2022)
-https://www.ti.com/lit/pdf/SPRUIV7A
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Thanks,
-Andrew
-
-[0] https://lore.kernel.org/linux-arm-kernel/20240202175538.1705-5-hnagalla@ti.com/T/
-
-Changes for v10:
- - Rebased on v6.10-rc3
- - Added AM64 M4 support in DT
- - Addressed comments by Mathieu from v9
-
-Changes for v9:
- - Fixed reserved-memory.yaml text in [1/5]
- - Split dts patch into one for SoC and one for board enable
- - Corrected DT property order and formatting [4/5][5/5]
-
-Hari Nagalla (7):
-  dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-  arm64: dts: ti: k3-am62: Add M4F remoteproc node
-  arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
-  arm64: dts: ti: k3-am64: Add M4F remoteproc node
-  arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
-  arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
-  arm64: defconfig: Enable TI K3 M4 remoteproc driver
-
-Martyn Welch (1):
-  remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
-
- .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 +++
- arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  13 +
- .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
- arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  13 +
- arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  19 +
- arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  19 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/remoteproc/Kconfig                    |  13 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/ti_k3_m4_remoteproc.c      | 760 ++++++++++++++++++
- 10 files changed, 983 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
- create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+index 3c45782ab2b78..167bec5c80006 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+@@ -48,6 +48,18 @@ ramoops@9ca00000 {
+ 			pmsg-size = <0x8000>;
+ 		};
+ 
++		mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
++			compatible = "shared-dma-pool";
++			reg = <0x00 0x9cb00000 0x00 0x100000>;
++			no-map;
++		};
++
++		mcu_m4fss_memory_region: m4f-memory@9cc00000 {
++			compatible = "shared-dma-pool";
++			reg = <0x00 0x9cc00000 0x00 0xe00000>;
++			no-map;
++		};
++
+ 		secure_tfa_ddr: tfa@9e780000 {
+ 			reg = <0x00 0x9e780000 0x00 0x80000>;
+ 			alignment = <0x1000>;
+@@ -457,6 +469,13 @@ mbox_m4_0: mbox-m4-0 {
+ 	};
+ };
+ 
++&mcu_m4fss {
++	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
++	memory-region = <&mcu_m4fss_dma_memory_region>,
++			<&mcu_m4fss_memory_region>;
++	status = "okay";
++};
++
+ &usbss0 {
+ 	bootph-all;
+ 	status = "okay";
 -- 
 2.39.2
 
