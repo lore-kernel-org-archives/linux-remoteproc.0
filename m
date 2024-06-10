@@ -1,141 +1,168 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ECAFC0C;
-	Sat,  8 Jun 2024 04:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051DE22081;
+	Mon, 10 Jun 2024 07:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717821914; cv=none; b=dkkAUOY9SPI5kZqy/ktG1nR3e13tA5XW1qgMqC8JoA4HtGE1HkI87VqUMsUyEHhyf5SIg54FO9c9LcVQcQ7L8oYF4sHPsWTVeBOXxTPGw/4iqZGg+NAZsFuAbr4OkNmOK/HXBcNz2Hg3mIoioQ2CZM4ZdHOChlH5bfeS2HuGhsg=
+	t=1718005084; cv=none; b=Q+PKJsEMR5hhM8otjPWee0mVKdc8cm0fmhMFGPOPIeVHMxb33pSw6Mr9oBeeK2CiNa0I/kCBYeRqhFHrh5eTO/F2F4pR9veDVSAsj+x6DIMQVMDytKJ6IjZZs4G6mRgxn3/Mk3yFQsQ/6dkiFO+O9ixULIaiUqGJ/+dZmUqG7uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717821914; c=relaxed/simple;
-	bh=NwIBSgN012cg278cQekaAqgO/G/C8N0xznx9WA+9OAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TseqAkLQMr07l3BtLH7ZV/L3b9vlKx5q6cm51AD6JTaqzRLbmhgHwRJcVe/hE1F5eBuRW1fT4G5GyqQRuDTxNvPMrW3MDyEjZw18FkVVsBsx63t8D40/o2zfOU3i4FJVdyURJWkRv3vvfqLZkWd/s8EhUICZ4CDkkG9tMBsBGJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XMwsqUp9; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1718005084; c=relaxed/simple;
+	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDeQ3hKhI3k1l8/+7rV6n5sufJMGT3Q5BW4apyCLf6/8z1BTMadKhOhB8pBXdrqMJrYZTtBRx9nxojevQPLWuaUG6h95w6wO5ph+oOwmDnByuZDLv0jcBaBBe/IHdsCwFxKiJZwT/wSVWw63h+OIqXbEAYHoaNuNtcXoqS95rmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xq+M6SYo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XMwsqUp9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717821912; x=1749357912;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NwIBSgN012cg278cQekaAqgO/G/C8N0xznx9WA+9OAE=;
-  b=XMwsqUp9slQDhOWNxzv5MfcWfr/T7YxRZOvb9s0ZRg7IFY6887X2ZlAT
-   kMuY0cf7OhAZtud41bIDhKeHKCndKVM3dhtyiGtnALrN46qcWUGQzsBB5
-   Cl/qq/ivBdJltuq2FCp/klHOcX3oMvnzcB1Kz7nVo20Zz2ucj6iykAhb2
-   isxjUcGPs2jfh79Np7vD4YOQI3Ay1l4OQCY+zbZyJWfuR5BlJSEvwaG27
-   8CoGanJYiX21OepdQ7NE/KEvnEFtdjzEJ0xh/v1+nOqClL+vPCc7bG9sQ
-   +hdr4Ey5YQudDPSHSM+yav2stkFrvZVEPXyAw7HHhM/lHTgovMpPzTa66
-   Q==;
-X-CSE-ConnectionGUID: J4M4pCjfQ7e+3CtAQV/D7A==
-X-CSE-MsgGUID: spPZ9vRvRPaJfvvKk8PSpQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11096"; a="32048697"
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="32048697"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 21:45:11 -0700
-X-CSE-ConnectionGUID: oFNwwNMPRs+Vl995yiH1qA==
-X-CSE-MsgGUID: SVmaGNLQRFij+Ekypuz7+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,222,1712646000"; 
-   d="scan'208";a="42963533"
-Received: from lkp-server01.sh.intel.com (HELO 472b94a103a1) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Jun 2024 21:45:08 -0700
-Received: from kbuild by 472b94a103a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sFnwv-00011O-2R;
-	Sat, 08 Jun 2024 04:45:05 +0000
-Date: Sat, 8 Jun 2024 12:45:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH v6 5/5] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <202406081214.qFAil90A-lkp@intel.com>
-References: <20240607093326.369090-6-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xq+M6SYo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A3C2BBFC;
+	Mon, 10 Jun 2024 07:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718005083;
+	bh=JKT8jeUz+peHP9dNxGhf4e2EBO7WzNrYvduLRcI94GQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xq+M6SYoiXTTgSBMjBLlIarHnOx21mTKAc77p3F/gX5OraHEk47d/6C25s+4a+ZW+
+	 SwAba5UtfZ8nZRgTjBHOVAWJS/arx4aJ35R6ijq+lTvJNbRLFOe9Nrl99bN7JKhGGs
+	 U2cuvYvom6JZYKoqHdEr6BSHZepKlbrreOvW6Znl18D8Kcosg/Gqd/+12PGsgRsOMk
+	 WNJjh0BLPv0oHDwNlSkQPKoxcEdYkl69Exi7RuVb3/pttgYWhMNnqiz6juo8dAR3ZF
+	 RsDURgHU8B79HiqfVnihSySRTaER3X1cxN+mczemkwnZhoTMIjDexJUSKnYexZUfIM
+	 8tgteJvwX+U2A==
+Message-ID: <d78b7a50-8f79-4733-bf2b-ee7d70501c47@kernel.org>
+Date: Mon, 10 Jun 2024 09:37:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607093326.369090-6-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
+ for power-domain
+To: Frank Li <Frank.li@nxp.com>
+Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ mathieu.poirier@linaro.org, peng.fan@nxp.com, robh@kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org
+References: <20240606150030.3067015-1-Frank.Li@nxp.com>
+ <19058054-5138-4d37-860f-dd430abd3a0f@kernel.org>
+ <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZmMk/T3I1jNcxKOB@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Arnaud,
+On 07/06/2024 17:19, Frank Li wrote:
+> On Fri, Jun 07, 2024 at 09:32:26AM +0200, Krzysztof Kozlowski wrote:
+>> On 06/06/2024 17:00, Frank Li wrote:
+>>> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Keep
+>>> the same restriction for other compatible string.
+>>>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>
+>>> Notes:
+>>>     Change from v1 to v2
+>>>     - set minitem to 2 at top
+>>>     - Add imx8qm compatible string also
+>>>     - use not logic to handle difference compatible string restriction
+>>>     - update commit message.
+>>>     
+>>>     pass dt_binding_check.
+>>>     
+>>>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
+>>>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>>>       CHKDT   Documentation/devicetree/bindings
+>>>       LINT    Documentation/devicetree/bindings
+>>>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
+>>>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
+>>>
+>>>  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 14 ++++++++++++++
+>>>  1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> index df36e29d974ca..da108a39df435 100644
+>>> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>> @@ -59,6 +59,7 @@ properties:
+>>>      maxItems: 32
+>>>  
+>>>    power-domains:
+>>> +    minItems: 2
+>>>      maxItems: 8
+>>>  
+>>>    fsl,auto-boot:
+>>> @@ -99,6 +100,19 @@ allOf:
+>>>        properties:
+>>>          fsl,iomuxc-gpr: false
+>>>  
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          not:
+>>> +            contains:
+>>> +              enum:
+>>> +                - fsl,imx8qxp-cm4
+>>> +                - fsl,imx8qm-cm4
+>>> +    then:
+>>> +      properties:
+>>> +        power-domains:
+>>> +          minItems: 8
+>>
+>> What happened with the "else:"? How many power domains is needed for
+>> other devices?
+> 
+> So far, only fsl,imx8qxp-cm4 ind fsl,imx8qm-cm4 need power domain (2-8). 
+> Power-domains is option property. 
+> 
+> Can I just remove whole "if"?
 
-kernel test robot noticed the following build errors:
+No, I rather expect else.
 
-[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+Best regards,
+Krzysztof
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20240607-183305
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240607093326.369090-6-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH v6 5/5] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240608/202406081214.qFAil90A-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240608/202406081214.qFAil90A-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406081214.qFAil90A-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/bug.h:5,
-                    from include/linux/fortify-string.h:6,
-                    from include/linux/string.h:374,
-                    from include/linux/dma-mapping.h:7,
-                    from drivers/remoteproc/stm32_rproc.c:9:
->> arch/s390/include/asm/bug.h:53:21: error: expected declaration specifiers or '...' before '{' token
-      53 | #define WARN_ON(x) ({                                   \
-         |                     ^
-   include/linux/tee_remoteproc.h:94:9: note: in expansion of macro 'WARN_ON'
-      94 |         WARN_ON(1);
-         |         ^~~~~~~
-   In file included from drivers/remoteproc/stm32_rproc.c:23:
-   include/linux/tee_remoteproc.h:96:9: error: expected identifier or '(' before 'return'
-      96 |         return NULL;
-         |         ^~~~~~
-   include/linux/tee_remoteproc.h:97:1: error: expected identifier or '(' before '}' token
-      97 | }
-         | ^
-   drivers/remoteproc/stm32_rproc.c:717:34: error: 'tee_rproc_find_loaded_rsc_table' undeclared here (not in a function); did you mean 'rproc_find_loaded_rsc_table'?
-     717 |         .find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                  rproc_find_loaded_rsc_table
-
-
-vim +53 arch/s390/include/asm/bug.h
-
-a9df8e325d0de5 arch/s390/include/asm/bug.h Heiko Carstens 2010-01-13  52  
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27 @53  #define WARN_ON(x) ({					\
-fd0cbdd378258f include/asm-s390/bug.h      Heiko Carstens 2007-08-02  54  	int __ret_warn_on = !!(x);			\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  55  	if (__builtin_constant_p(__ret_warn_on)) {	\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  56  		if (__ret_warn_on)			\
-b2be05273a1744 arch/s390/include/asm/bug.h Ben Hutchings  2010-04-03  57  			__WARN();			\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  58  	} else {					\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  59  		if (unlikely(__ret_warn_on))		\
-b2be05273a1744 arch/s390/include/asm/bug.h Ben Hutchings  2010-04-03  60  			__WARN();			\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  61  	}						\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  62  	unlikely(__ret_warn_on);			\
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  63  })
-c0007f1a65762e include/asm-s390/bug.h      Heiko Carstens 2007-04-27  64  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
