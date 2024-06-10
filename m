@@ -1,71 +1,72 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CC4143752
-	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Jun 2024 16:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9B1474A9
+	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Jun 2024 16:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037261; cv=none; b=oYQMUZmWmv6IfVH6q0hQooIkVsMBtiIcCN1+Vjzuny06/UiOf6AJhLso1ybDrVJ9LfBIyi+NDfJ8HLDdVLlCUrrDio9Z+MSX1XQ3yafqoWCkWCa3D/RoQqojvw8Fo64tneK0j1G9EOPXQlUD6xL2wTj6cEwaM0zAa7F5IiYT16s=
+	t=1718038043; cv=none; b=kmC9rTEY92OrMfylEvihqPdlpyBcYVcKqckkbYsaEmGKjsobQRi63MY7VOD7Rr+ogUjyuNjI0NqAxJxMwRQByicFDR1119dbi7Ja4Alw7Vok9Vf/OIOhQQsI5G4btXKHMSPT/9hVbmpS4WhMb8XBJOWP+KY4DQK6daENPA0ZCSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037261; c=relaxed/simple;
-	bh=piTSS9jjVGMaUmkjcHVWQ3lRn0ub4PfPACxHNXWXx5A=;
+	s=arc-20240116; t=1718038043; c=relaxed/simple;
+	bh=4Hj9IG1LMlzHH3A3y0qYTvhcNtKcDqLmxJ6EzjUt+qQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4q9uCdNJkZsoNi9TLn6L/x28os0LnjGIajJKxyVwZuw8GaYmIXGRbkRd0iteBXKCzdE2R5pmdu3dChRjD5CvjDncC4deFnbLBbR8uB2nyyHlT74PjYpUSKkQHpxL6kTEKiiXeYmrwONSX9AuCvkJ4K+ZEEaey8v+YSqnvwPyXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mGzbU5cN; arc=none smtp.client-ip=209.85.210.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=PABKVWyoPRzn63oZeP5jz+rL2bmQdRDBK8ise98Fb3eAFVR+unIBRI3xNuOtVTrQ1oFOnrgCtA7dwW5LCRmliycdOFp6bZmt7YsEJJy81p9donBBT/XsUQwcOxGW6n6MgDF7tlcfijGPBizoX8D7lsOSBewGIJaEne9JBIck1ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEmR3EIJ; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mGzbU5cN"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70417a6c328so2372854b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Jun 2024 09:34:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEmR3EIJ"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-704261a1f67so156029b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Jun 2024 09:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718037259; x=1718642059; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718038041; x=1718642841; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a5ZVwjIOaq5V5ku6UjCPO2SyGYT7pllWaiMtecMSfuM=;
-        b=mGzbU5cN9lw39SBQbZdW06hKPmf1PLfH+VOTGybIzcFqW4EV/wxYfVB/LqnHJjLIne
-         hWW1DrQO27VT40Yvc9O8FzbOtn+iLsb631AihPHwcVtl4l06J8Qqfkn3FrlxhH+4VU9e
-         EXeq2mmo9AZdxio4NmZ/F32azI07evhqRa+e1rlrZcabNDgihk6UqJX3pb4JK4dbZlXC
-         hlbBffrAggv1hn2qgRL1Qx1Ttdx3gwy37TUkokIDnt4ILjS0sBq+AYqVJxzlvcOOBUSY
-         fu/2es4+7ovJHVYvDxXW9cnab3WPJ5vFYn7VE+ORN+3Nwr0vF+WRvvj/mzBcXreFT92P
-         GIyQ==
+        bh=GltpCEOROqdEZtPzqZDYIjfn931I+xP8uUPheSuWph8=;
+        b=CEmR3EIJ4PoH1DfyHnjBX5hNlJ9uYuGFk88XT3SmMao9uI6Yhe9HXqP6qybWOG58NH
+         fnhSlY5S46dpm4rzVDVm+NMbaXkIcTPyznOTFHXaTX/ofyA6DreOeUZInOV3JlCdgWyg
+         2WGbd+J+2ugZEXDzReyiifJU272zUmi2XbvSaQR5tIO9ihLHh/2Qfybd5K0U8QqUk0P7
+         PI5fL5kHL9laNZZkQq+hMaea4cWSyZGw1lBGGt5tL3pn7YOzZVCYBvk9YpYhEjH43uSW
+         ++THTrMQ0oFbUjDDKsaGL1knxZCPu6MWHYQDHqec5YBNdnqyxAhH+IawtAoFdcCfP+Aw
+         sEdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718037259; x=1718642059;
+        d=1e100.net; s=20230601; t=1718038041; x=1718642841;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a5ZVwjIOaq5V5ku6UjCPO2SyGYT7pllWaiMtecMSfuM=;
-        b=XCMuN6C7NQGDfpUY/71W1mV0FzjmhSRrdv6R3FXSnmc9pE6rm6YhK0E04f3W+2P8yO
-         DkTBSWzuBZjZUi3K9CiydIDAIKv3BWqvs1WlfqTuUD37euNknokOSIMDEw9y3jkzYPBu
-         Yo7xA4z4tQOakT2H0na4VN26FPPQzl3tlK+kST94Jk5IZ9+T0KDt5m0u7W8YPS6+qfiB
-         T7fLfYuPZyUxmOJHJuDXoOVJa6sA/ZJ0yT+/KtIqLxid8UlIp9na//dpk0bjIZSayaM7
-         4La4u19kxkNS28t/ttNYj5GnQfYMMCZkcmuoTXS/xKqGOpzTv/1ESuPLu330QCuo2FrB
-         0/Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1nw2MiPjg2RybvoTADIgr1VbKKo2nutJP4MN9bJPtHxTyRHJiyFzSINzOkWBg7AfFhekKnk3ka6mDYlIGdR5jptQ1JC+LxTW14dROf95zXA==
-X-Gm-Message-State: AOJu0YzahKTvmXTkQQrGrHT0JOeiCtmvcf04Cyh3FTU3ig0LzU9NZV4B
-	QKOm8a3tZ2DrmikYHKrtO7CL83qxHvEnAnkTO4r9eMzw2VdA3OVXZivrupzgNxc=
-X-Google-Smtp-Source: AGHT+IFiC+4Uq+TF9IRTc1VdS1ljR22BVVSd4bbzZX2VtGNhB8sV09mNvEyNr5N0F8tE3bUBY+/nLQ==
-X-Received: by 2002:a17:90b:33d0:b0:2c2:fdc5:2619 with SMTP id 98e67ed59e1d1-2c2fdc52e9bmr3594071a91.31.1718037259439;
-        Mon, 10 Jun 2024 09:34:19 -0700 (PDT)
+        bh=GltpCEOROqdEZtPzqZDYIjfn931I+xP8uUPheSuWph8=;
+        b=uiWDDaS+/cNhR33gQvYyL9PavHSa8PG66DGlpzZFF9rpSmhIeSxvdiPlEvRF1Tf+OJ
+         0yA5ktVFR+dHXBlVouve31b3i9F7F6pqR6tsgKw9KxbnSOgKL7sJfVCMSnK0Eeg8XCcD
+         EtuihWlVmnwl8sHQGETDaW9y1SYqWYT9IsRMYI6R1/9VjFOxE4MlToa0F+8VN/L8CcGX
+         mhf+BKSy2WBrB6rUlX4JEYEkkEOCxkEnC5WcPwlT1I6KceOp2KZLzgBF8qjLq238ezSt
+         ma90+Tcq8Vgfp91FrGIewNLBc6Y4y5lWwmcNFlD4dpqvBzzmIhdutP5NFnNsaufSyEux
+         TYDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTdbkWCk5ON9d7/nLO5Q5GPbhj3y3EiPtRTgUhooU8RaLMzHlE2js5bUWJjkui2maWNlL2fbxF5IOU6+FsIiJBBbmePSrvr4TlBpf5SKsNdg==
+X-Gm-Message-State: AOJu0Yw+MrLgh5ql07ynNHeX+9VZhACZEtaqOS1PaWyqpOzGwskbNA9E
+	OLndyZqBdZzg/HapTBJsV+MV7ARifP/zO4nkmW4bSjqxOZJ5b7dHeW+oWtTrXTw=
+X-Google-Smtp-Source: AGHT+IGb/lXCCC+JbIDGUdr375qb0RgEL7LsqGDkkx+quxB1SnI5zlcCI8SeIz3Y9Zc+WyklRsuyOQ==
+X-Received: by 2002:a05:6a00:8506:b0:704:25de:f297 with SMTP id d2e1a72fcca58-70425def3f2mr4676511b3a.29.1718038041356;
+        Mon, 10 Jun 2024 09:47:21 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:9b34:fecc:a6c:e2bc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2f8fbc87asm3495711a91.47.2024.06.10.09.34.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70426cc74f3sm4045691b3a.35.2024.06.10.09.47.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:34:18 -0700 (PDT)
-Date: Mon, 10 Jun 2024 10:34:16 -0600
+        Mon, 10 Jun 2024 09:47:20 -0700 (PDT)
+Date: Mon, 10 Jun 2024 10:47:17 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: jason-ch chen <jason-ch.chen@mediatek.corp-partner.google.com>,
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Jason Chen <Jason-ch.Chen@mediatek.com>
-Subject: Re: [PATCH] remoteproc: mediatek: Increase MT8188 SCP core0 DRAM size
-Message-ID: <ZmcrCLOCo0Q0W6AU@p14s>
-References: <20240606090609.3199-1-jason-ch.chen@mediatek.corp-partner.google.com>
- <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Adjust phandle parsing issue
+ while remapping optional addresses in imx_rproc_addr_init()
+Message-ID: <ZmcuFRfjKRQG9OXI@p14s>
+References: <20240606075204.12354-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,47 +75,39 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bc12b046-d2fb-48ae-bd5b-a6ef6cc78c07@collabora.com>
+In-Reply-To: <20240606075204.12354-1-amishin@t-argos.ru>
 
-On Thu, Jun 06, 2024 at 01:00:11PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 06/06/24 11:06, jason-ch chen ha scritto:
-> > From: Jason Chen <Jason-ch.Chen@mediatek.com>
-> > 
-> > Increase MT8188 SCP core0 DRAM size for HEVC driver.
-
-This is telling me _what_ gets done rather than _why_ it gets done.
-
-> > 
+On Thu, Jun 06, 2024 at 10:52:04AM +0300, Aleksandr Mishin wrote:
+> In imx_rproc_addr_init() "nph = of_count_phandle_with_args()" just counts
+> number of phandles. But phandles may be empty. So of_parse_phandle() in
+> the parsing loop (0 < a < nph) may return NULL which is later dereferenced.
+> Adjust this issue by adding NULL-return check.
 > 
-> ....so the second core only gets a maximum of 0x200000 of SRAM?
-> I'm not sure how useful is the secondary SCP core, at this point, with so little
-> available SRAM but... okay, as you wish.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> 
-> > Signed-off-by: Jason Chen <Jason-ch.Chen@mediatek.com>
-> > ---
-> >   drivers/remoteproc/mtk_scp.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> > index b885a9a041e4..2119fc62c3f2 100644
-> > --- a/drivers/remoteproc/mtk_scp.c
-> > +++ b/drivers/remoteproc/mtk_scp.c
-> > @@ -1390,7 +1390,7 @@ static const struct mtk_scp_sizes_data default_scp_sizes = {
-> >   };
-> >   static const struct mtk_scp_sizes_data mt8188_scp_sizes = {
-> > -	.max_dram_size = 0x500000,
-> > +	.max_dram_size = 0x800000,
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 5a3fb902acc9..39eacd90af14 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -726,6 +726,8 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  		struct resource res;
+>  
+>  		node = of_parse_phandle(np, "memory-region", a);
+> +		if (!node)
 
-Do you require to fix a "reserved-memory" node in a device tree file to account
-for this?
+You're missing an "of_node_put()" before continuing.
 
-Thanks,
-Mathieu
-
-> >   	.ipi_share_buffer_size = 600,
-> >   };
+> +			continue;
+>  		/* Not map vdevbuffer, vdevring region */
+>  		if (!strncmp(node->name, "vdev", strlen("vdev"))) {
+>  			of_node_put(node);
+> -- 
+> 2.30.2
 > 
 > 
