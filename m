@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA5213D60A;
-	Thu, 13 Jun 2024 10:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10EF145A05;
+	Thu, 13 Jun 2024 12:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718274936; cv=none; b=p7dIKjrAMHOIsSxmElP6nV/Gq0lfknuUAkgARvGmSryTsKDsPtzk4WMoHYpvn8HgbetHSqaTHrNx2S5b5Cx5s4F6JdSIH7tWYxAEjOIGz2N5FQTJqev0Lqaxr9yVdpxEYNYddg3YIMDvxGdmuslSgxo09IOQDeUpzDMNpkT3/O0=
+	t=1718281388; cv=none; b=W5sIGvQqCfATYf9570meFaieyzqiVCLqWB+bxRZxCKIBNUYz2nAhsR27aiMkC3JJNDjbhRbCM9DQSg/00W2FLyjCUgcDP0aZWZcUvwAF65XtW51LZw26JUYJicyDdzwwPG0PMlkeWIYhkKugdBOeamHPFbl/xCbGRjtFM3prOLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718274936; c=relaxed/simple;
-	bh=C+qf5rjgWLdEaQaJSm45myQqiK85mNlatx2p23x3Pu4=;
+	s=arc-20240116; t=1718281388; c=relaxed/simple;
+	bh=7BhglA9P1ktApG4exvx07jkQ2/kEZPDx3zbnhN9Zbjo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nxtdDLrR0b7jSn1oJI+WkcseWioL5CdBuT8YAKPa9kdp5NqCQb+FN2fE//YqQqs7LU7EzALKEoZCVnULG0FybzX/J+ffEvAGXbTt6DegVLoIRbNzmMxSrNrDYeYLafcrpbYbya07C3fR3+kqKAmcHzY+GYxJk0boiRWoLjfg9Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PRwBQ+Z7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	 In-Reply-To:Content-Type; b=FAMTWcQecIKwTGmQI4aFhXJTbx4J3rD34IkJUrpRs64FRrSZ66IlnQUx+Lg/Fxa+msztOGJ9SFODwClxZX2wy7X6b+9pr6v/c9kt679YpnY5kjpuy2gF8OelXaMXw4sY4myuO1iHZwU4yIhw4o50E5XMeRYfYqeSLgsJ9+wY764=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rWr+RYog; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PRwBQ+Z7"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D8ckTZ023709;
-	Thu, 13 Jun 2024 10:35:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5XFOYjzhzVrVvkzd1b9OyHEmzOD4uZ1J77WF+qZAOHY=; b=PRwBQ+Z7R/ZUfuDX
-	1PWE7jO/VnAOVWugM2C1QfZbwZ9/79JK/k/bz/RceJEh+vdUcH56UF58bJuwJOoe
-	edYMeRXtswRG8F5yg1gqUFUZ52g9pHyyqyYPR+7EKmVnDiuQH7Q57FOqxfpYbi0u
-	kNp/qY7RT+BVTgniKbBH18gQbPg6w7hLCBBYGghB4t0QWtZhRNlkaNgVqazqtMSZ
-	ABOndztMhiaoWRoJMw46egmuBwdovPPZ7qMzMr9/EPBs8C8dgMoxLZux1Mex2Rnx
-	Mu7Ms7W2XNFV/8Org5J/ZpgaTB2A5cpU8rpSiEzV0sGUW75Au5kZP6SHO9Lq3Eps
-	XNFv4Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqcxtjr3u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 10:35:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DAZUUv003871
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 10:35:30 GMT
-Received: from [10.217.239.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 03:35:27 -0700
-Message-ID: <275417c5-223a-436b-8405-ba3571e19ced@quicinc.com>
-Date: Thu, 13 Jun 2024 16:05:17 +0530
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rWr+RYog"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45DCMwxn027663;
+	Thu, 13 Jun 2024 07:22:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718281378;
+	bh=L70UNxdpaq0S2wJPrq0c1IXObwK10+BK3AYf6wz/scc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rWr+RYogOHS6KQGFq65jT4uAdN0Dq72bXcDtwvzFkX3PJgOSJ7ysXNL09uPLtvsin
+	 DNk5jNnaPBxUTqQix74q9HIdirkv/+FWHpi/2Kw9EOgdOHajz8lpjLskyEYn+maedp
+	 nL8k2nfsMaJXMN736KJ5iPF/fq+2A3IYII1OVdJU=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45DCMw74001144
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Jun 2024 07:22:58 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Jun 2024 07:22:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Jun 2024 07:22:57 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45DCMvMT007951;
+	Thu, 13 Jun 2024 07:22:57 -0500
+Message-ID: <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
+Date: Thu, 13 Jun 2024 07:22:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,131 +50,86 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] rpmsg: glink: Make glink smem interrupt wakeup capable
-To: Caleb Connolly <caleb.connolly@linaro.org>, <quic_bjorande@quicinc.com>,
-        <andersson@kernel.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <quic_sarannya@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20240603073648.3475123-1-quic_deesin@quicinc.com>
- <8d10fbbb-471e-4960-a52a-1658df9fbc0c@linaro.org>
+Subject: Re: [PATCH v2 00/13] OMAP mailbox FIFO removal
+To: Dominic Rath <dominic.rath@ibv-augsburg.net>,
+        Jassi Brar
+	<jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
+        Nick Saulnier
+	<nsaulnier@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240410135942.61667-1-afd@ti.com>
+ <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
 Content-Language: en-US
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <8d10fbbb-471e-4960-a52a-1658df9fbc0c@linaro.org>
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: RY5pgN22D8oJsnP-hz6NAxSB9YZ415N8
-X-Proofpoint-GUID: RY5pgN22D8oJsnP-hz6NAxSB9YZ415N8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_02,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130076
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+On 6/13/24 2:58 AM, Dominic Rath wrote:
+> Hello Andrew,
+> 
+> On 10.04.2024 15:59, Andrew Davis wrote:
+>> Changes for v2:
+>>   - Use threaded irq as suggested by Hari and to
+>>       fix possible "scheduling while atomic" issue
+> 
+> sorry for beeing late, I noticed this already got merged.
+> 
+> I was wondering what the reason was for ending up with the
+> threaded irq.
+> 
+> In your v1 thread your final conclusion appeared to be
+> 
+>> So for now I just kept this using the regular IRQ context as before.
+> 
+> We looked into this some time ago, and noticed that the IRQ approach caused problems in the virtio/rpmsg code. I'd like to understand if your change was for the same reason, or something else we missed before.
+> 
 
+It is most likely the same reason. Seems despite its name, rproc_vq_interrupt() cannot
+be called from an IRQ/atomic context. As the following backtrace shows, that function
+calls down into functions which are not IRQ safe. So we needed to keep it threaded:
 
-On 6/3/2024 3:07 PM, Caleb Connolly wrote:
-> Hi Deepak,
-> 
-> On 03/06/2024 09:36, Deepak Kumar Singh wrote:
->> There are certain usecases which require glink interrupt to be
->> wakeup capable. For example if handset is in sleep state and
->> usb charger is plugged in, dsp wakes up and sends glink interrupt
->> to host for glink pmic channel communication. Glink is suppose to
->> wakeup host processor completely for further glink data handling.
->> IRQF_NO_SUSPEND does not gurantee complete wakeup, system may again
->> enter sleep after interrupt handling and glink data may not be
->> handled by pmic client driver.
->>
->> To ensure data handling by client configure glink smem device as
->> wakeup source and attach glink interrupt as wakeup irq. Remove
->> IRQF_NO_SUSPEND flag as it is no longer required.
-> 
-> I'm not sure I agree with this approach, glink is used for lots of 
-> things -- like QRTR, where the sensor DSP and modem may also need to 
-> wake the system up (e.g. for "wake on pickup" on mobile, or for incoming 
-> calls/sms).
-> 
-> Configuring this to always wake up the system fully will result in a lot 
-> of spurious wakeups for arbitrary modem notifications (e.g. signal 
-> strength changes) if userspace hasn't properly configured these 
-> (something ModemManager currently lacks support for).
+[    5.389374] BUG: scheduling while atomic: (udev-worker)/232/0x00010002
+[    5.395917] Modules linked in: videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 phy_j721e_wiz display_connector omap_mailbox(+) videodev tps6594_i2c(+) videobuf2_common phy_can_transceiver at24 cd6
+[    5.433562] CPU: 0 PID: 232 Comm: (udev-worker) Not tainted 6.10.0-rc1-next-20240528-dirty #10
+[    5.442158] Hardware name: Texas Instruments AM69 SK (DT)
+[    5.447540] Call trace:
+[    5.449976]  dump_backtrace+0x94/0xec
+[    5.453640]  show_stack+0x18/0x24
+[    5.456944]  dump_stack_lvl+0x78/0x90
+[    5.460598]  dump_stack+0x18/0x24
+[    5.463900]  __schedule_bug+0x50/0x68
+[    5.467552]  __schedule+0x80c/0xb0c
+[    5.471029]  schedule+0x34/0x104
+[    5.474243]  schedule_preempt_disabled+0x24/0x40
+[    5.478845]  rwsem_down_write_slowpath+0x31c/0x56c
+[    5.483622]  down_write+0x90/0x94
+[    5.486924]  kernfs_add_one+0x3c/0x148
+[    5.490661]  kernfs_create_dir_ns+0x50/0x94
+[    5.494830]  sysfs_create_dir_ns+0x70/0x10c
+[    5.498999]  kobject_add_internal+0x98/0x26c
+[    5.503254]  kobject_add+0x9c/0x10c
+[    5.506729]  device_add+0xc0/0x790
+[    5.510120]  rpmsg_register_device_override+0x10c/0x1c0
+[    5.515333]  rpmsg_register_device+0x14/0x20
+[    5.519590]  virtio_rpmsg_create_channel+0xb0/0x104
+[    5.524452]  rpmsg_create_channel+0x28/0x60
+[    5.528622]  rpmsg_ns_cb+0x100/0x1dc
+[    5.532185]  rpmsg_recv_done+0x114/0x2e4
+[    5.536094]  vring_interrupt+0x68/0xa4
+[    5.539833]  rproc_vq_interrupt+0x2c/0x48
+[    5.543830]  k3_r5_rproc_mbox_callback+0x84/0x90 [ti_k3_r5_remoteproc]
+[    5.550348]  mbox_chan_received_data+0x1c/0x2c
+[    5.554779]  mbox_interrupt+0xa0/0x17c [omap_mailbox]
+[    5.559820]  __handle_irq_event_percpu+0x48/0x13c
+[    5.564511]  handle_irq_event+0x4c/0xac
 
-In internal testing at least we don't see such issues, may be downstream 
-modem manager is configuring things properly. Also with devices having 
-proper auto suspend feature this change may not be affecting power 
-numbers significantly.
+Andrew
 
-Additionally my understanding is by definition glink interrupt should be 
-wakeup capable. May be Bjorn can comment more on this.
-
-Thanks,
-Deepak
+> Regards,
 > 
-> IRQF_NO_SUSPEND is presumably necessary to keep the DSPs happy? iirc 
-> downstream Qualcomm kernels have historically taken this approach to 
-> avoid spurious wakeups.
-> 
-> I proposed an alternative approach some time back that would allow the 
-> wakeup to be configured on a per-channel basis.
-> 
-> https://lore.kernel.org/linux-arm-msm/20230117142414.983946-1-caleb.connolly@linaro.org/
-> 
-> Back then Bjorn proposed using some socket specific mechanism to handle 
-> this for QRTR, but given this is now a common issue for multiple glink 
-> channels, maybe it's something we could revisit.
-> 
-> Requiring the wakeup be enabled by userspace clearly doesn't make sense 
-> for your proposed usecase, perhaps there's a way to configure this on a 
-> per-channel basis in-kernel (maybe as the rpmsg API?).
-> 
-> Thanks and regards,
->>
->> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
->> ---
->>   drivers/rpmsg/qcom_glink_smem.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/rpmsg/qcom_glink_smem.c 
->> b/drivers/rpmsg/qcom_glink_smem.c
->> index 7a982c60a8dd..f1b553efab13 100644
->> --- a/drivers/rpmsg/qcom_glink_smem.c
->> +++ b/drivers/rpmsg/qcom_glink_smem.c
->> @@ -22,6 +22,7 @@
->>   #include <linux/regmap.h>
->>   #include <linux/workqueue.h>
->>   #include <linux/list.h>
->> +#include <linux/pm_wakeirq.h>
->>   #include <linux/rpmsg/qcom_glink.h>
->> @@ -306,8 +307,7 @@ struct qcom_glink_smem 
->> *qcom_glink_smem_register(struct device *parent,
->>       smem->irq = of_irq_get(smem->dev.of_node, 0);
->>       ret = devm_request_irq(&smem->dev, smem->irq, qcom_glink_smem_intr,
->> -                   IRQF_NO_SUSPEND | IRQF_NO_AUTOEN,
->> -                   "glink-smem", smem);
->> +                   IRQF_NO_AUTOEN, "glink-smem", smem);
->>       if (ret) {
->>           dev_err(&smem->dev, "failed to request IRQ\n");
->>           goto err_put_dev;
->> @@ -346,6 +346,8 @@ struct qcom_glink_smem 
->> *qcom_glink_smem_register(struct device *parent,
->>       smem->glink = glink;
->> +    device_init_wakeup(dev, true);
->> +    dev_pm_set_wake_irq(dev, smem->irq);
->>       enable_irq(smem->irq);
->>       return smem;
->> @@ -365,6 +367,8 @@ void qcom_glink_smem_unregister(struct 
->> qcom_glink_smem *smem)
->>       struct qcom_glink *glink = smem->glink;
->>       disable_irq(smem->irq);
->> +    dev_pm_clear_wake_irq(&smem->dev);
->> +    device_init_wakeup(&smem->dev, false);
->>       qcom_glink_native_remove(glink);
-> 
+> Dominic
