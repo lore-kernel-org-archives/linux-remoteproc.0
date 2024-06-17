@@ -1,69 +1,71 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDD415ECD7
-	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 14:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400B315EFAE
+	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 14:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635311; cv=none; b=CacsypUJMIj6LwQXpUDxk6P2+D+xcl/n2qy6ePpSUIj0rZPBO5zQbkrtpxzuxcbmiIK78D6miBpyt42oqzQvB9rNhZLE07JANKyM55dsXcVXNXjm7lryfuPBgdvGLEgU8Qp3FLnSVvEPPgpntCpWUFmZ4o2mjA3mZhPhPnvpKIc=
+	t=1718635341; cv=none; b=eOV+x0xN031wSqpxeAjYmNHhYKxZelxfNIuyCgTIaz/KqjS5WJw47ckID8gi79iTQmlOxjQtST2tXf2WCqK29pQUjSX8OhXlmDmxObboG23BSt95kydjMaQir8Cd78tjVmDxlmGbrtvDv+CQ/BI4i/IY3Ob1Ve/8WBCE6t2l/nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635311; c=relaxed/simple;
-	bh=D0uG/F1rquD9j/tgu8XpSkKW0CgsYMnGbyRirrsrnsI=;
+	s=arc-20240116; t=1718635341; c=relaxed/simple;
+	bh=JR4bM3IEVw9/uptU8LIQo4w5Uach0rp8uHcOdCmDgt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5TQOBCGhee9cHG8TELBvXHsPZQtBxdaoAOipZteY8aylAS3WjERWo63w65uMgcVwUAAaqMjP5Fs3AGRCDSqUYI7zIInV5Uoh6tNDPQSJWKXpHdyPWdBr+ytqciBQTUU3wi4CZ8ERR74Q8UebanE5dj2K6L+4KbEHOpVo3krGzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WGM9+vyw; arc=none smtp.client-ip=209.85.214.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=sop10GKg2cLZKOQW0kKzaU8i3SvlLt30K+ezs5c73EYEARj9EDADrcfExkxAItzh6Ez4H7znveowP5xf9DYE35M/nT2zUzIqGFRyNme/ogOHoJSvCU1qs+EPI/ufeasVU2cQ4YmxDZ1Io+0dEc3UZ0KG4Jhl1l/zU149rdMh28c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RgZTHipW; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WGM9+vyw"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f70c457823so34594955ad.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 07:41:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RgZTHipW"
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3758fdbd2daso16654905ab.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 07:42:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718635309; x=1719240109; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718635339; x=1719240139; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Tb9ql9Key2zaR+IQJeo7On9ydITOd8hoL6sLepVlgY=;
-        b=WGM9+vyw64nQDRnlmT83X3BavWWacvljrJ9GhgZ1y3ZRVqeQgMFMsILMoVEuQLseg8
-         +RUs/WeaY7/IS3JSqTKIUkIzMxyA9XWYZfpL6UiGxGFIQ7npX/cX3gySnsZsfbQO7VPp
-         yeefQLhyuGArvfInDIynw8wACAnH+wzKGsBfqS7M1Ozmu3w085FnuL18CgF28CJ2P3Jn
-         7mzOzehLSkMXpoNrolrpCyp7xHbLcMuQsmlZMCMvUiFaOlTjL5Lvi9K7htjPd1Ka3YKO
-         kmNtfNO3QYmljkwfLZRdgR+wY+GdZzN4UKLGK55fD4HYcQ78CjkcSYbb54Sz3joyoYNO
-         EjCw==
+        bh=PEZjeteQXfzQdcWVQrn0yV9Qj7kNGp+WUXl9yT7pJIM=;
+        b=RgZTHipWzDLWD0NcP+D0ZnzLsnhYll/JN2zMyMyLtj1iXCdDpMeuBRtLrjHZ+i3c9h
+         2RmcYtmBljwlstWIfPJHqVzY/Y5mjO1bm7D6tjTZTTj+vBiBcBEqzVfktDrbTlMXABsU
+         Wl+QwuZhI8LM34WKbXFb/1p6+BIRVo0ixTwMLRk+wqeaAQQxB2CiCM5tR/brJunfzRx6
+         /UwYyuKdCGMt8NgnFgAPhyydg5f4HOcOuakmEEQC/z7AsBr6h2cU102nkOMSGjsmxv9q
+         /OrdEj2avr8eBbP0q4EmQd/PC1a4P+3Dea7TJXPCe3ASQxifhD6K7Ogt1sluyC5kgD6P
+         APzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718635309; x=1719240109;
+        d=1e100.net; s=20230601; t=1718635339; x=1719240139;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Tb9ql9Key2zaR+IQJeo7On9ydITOd8hoL6sLepVlgY=;
-        b=kkBP3qCJKokPjW6nuLMKPPUd5uW5npV1ZmnlUKRmoVaKHVJUOaVNtvrK183niNaNRO
-         vQrTNeQwJaEjzJeE6pWwZOcDIqEB3MOGoObCHYzeQ1n9PncD3Kk5xrT2JyAkTg57Z26N
-         OeirMFmzNabex2z2XS39jyYBVybMoUe2I7Oer6Udezmx1C0TBp3mNfH3IeHlQWF8z5qR
-         ZROP7ZD70JD13BPyXIK3P2uWakpmibZm12Rqyf9cp8Bhirl/gasnLOidtBByIKHVxIlT
-         MNLwKwpttkKuLONzY+RjYCdv858VA3sj48Ah+uilJorU5RQTypUYQxNdTOE/zV1zI33c
-         Mbfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1Y5kC+ON8McOZFZ+O1qpyRpKfFFiAakx1/5h09HzE3ezkZ19JEYS5R+7qSMrO7rKOG9uC7x3ePZgUgYfE5Sg4thfd3Cb6R/vruk3INPg7IQ==
-X-Gm-Message-State: AOJu0YyOU7VM6BAxB1JKDXT/lN5uAy7ff5ATXLWBjUnMSderRsWHFDlH
-	BTd/atKUBTodHqFJyKnUpzpsab6iNb+snm+UXf1gCHtl/Pw+uf/NJtoI0YvfD08=
-X-Google-Smtp-Source: AGHT+IEmf39oVNc/A1nD73Ny6p2Cl2YYugmm0/bVmzsrkdWLmqjObFWN5+zXKksSeTd5xGX4xozfzg==
-X-Received: by 2002:a17:902:6508:b0:1f7:21e2:6d9b with SMTP id d9443c01a7336-1f8625d4880mr92934795ad.24.1718635309309;
-        Mon, 17 Jun 2024 07:41:49 -0700 (PDT)
+        bh=PEZjeteQXfzQdcWVQrn0yV9Qj7kNGp+WUXl9yT7pJIM=;
+        b=MoNMe+gTKwPxX5ul7DwP/9nES7zw0+oExols+4VFXp4SQrezAMI4EyrF1D2kVmBWNW
+         7fNVmAl6qaJtZr7CuIjydNRbFzFKhfLCNCiJ/VMBnWDiZ0WXr2WrGk/2NH+t1/CVFz6f
+         CSKP8ZllYGx+LWlbFvQ76/WkAOjZpBFWBBLJT13BF6eynsjKCHRMsmwHVHPRRFm8PySt
+         4nQx+wWVQzlWbbsRFphoRjrv0txYnT0Sx+9aXFhduNFDdaSp1MOSZtXO+gaUJAqFVPa3
+         OXtlDs9kOPo6JGTXA6JCSj5ARK4LomhXXbYG1CeG+VVTcSRuWnTDny4UBreDgktSRPN1
+         UGJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc4gUp/fDI9aOEg/kDGNwqEj8rn+QO4+dX88OvAJXt9q2lSbSLpPOs+oYgmjklMcJRAhfc6GtIE2Z4t5koWtso+js5ZcCzq54iDTW/nxtIXQ==
+X-Gm-Message-State: AOJu0YyruBO15VQUdPkmZt8+KzD7XYm5AD+V9akxAfzcZwhzR7Isa1Cy
+	cOUJTsjIvdU9m6cxW3+OHOLwsuhqGLD115vvqU3hrv/Eo9UKiAmdSFHribF6MoY=
+X-Google-Smtp-Source: AGHT+IEYXBLlZaTCF/KozlYWXmX+1dC92NpMDk5cKK1l7LyVT2phM7sLrhcf7MZdinEAwBHySA2uwA==
+X-Received: by 2002:a05:6e02:152e:b0:374:8928:83a4 with SMTP id e9e14a558f8ab-375e0e30792mr118277925ab.14.1718635339363;
+        Mon, 17 Jun 2024 07:42:19 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:e681:7328:24ae:62a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f53e80sm79448555ad.297.2024.06.17.07.41.47
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fede16ad2fsm6720686a12.32.2024.06.17.07.42.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 07:41:48 -0700 (PDT)
-Date: Mon, 17 Jun 2024 08:41:45 -0600
+        Mon, 17 Jun 2024 07:42:18 -0700 (PDT)
+Date: Mon, 17 Jun 2024 08:42:16 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: krzk@kernel.org, andersson@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, krzk+dt@kernel.org,
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, peng.fan@nxp.com, robh@kernel.org,
-	s.hauer@pengutronix.de, shawnguo@kernel.org
-Subject: Re: [PATCH v3 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
- for power-domain
-Message-ID: <ZnBLKV+RxX+CclRA@p14s>
-References: <20240610151721.274424-1-Frank.Li@nxp.com>
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Fix refcount mistake in
+ imx_rproc_addr_init
+Message-ID: <ZnBLSG/Yy1E4A+Og@p14s>
+References: <20240612131714.12907-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -72,37 +74,21 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610151721.274424-1-Frank.Li@nxp.com>
+In-Reply-To: <20240612131714.12907-1-amishin@t-argos.ru>
 
-On Mon, Jun 10, 2024 at 11:17:21AM -0400, Frank Li wrote:
-> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Other
-> platform doesn't require 'power-domain'.
+On Wed, Jun 12, 2024 at 04:17:14PM +0300, Aleksandr Mishin wrote:
+> In imx_rproc_addr_init() strcmp() is performed over the node after the
+> of_node_put() is performed over it.
+> Fix this error by moving of_node_put() calls.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 5e4c1243071d ("remoteproc: imx_rproc: support remote cores booted before Linux Kernel")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 > ---
-> 
-> Notes:
->     Change from v2 to v3
->     - only imx8qxp and imx8qm need power-domain, other platform don't need it.
->     - update commit message.
->     
->     Change from v1 to v2
->     - set minitem to 2 at top
->     - Add imx8qm compatible string also
->     - use not logic to handle difference compatible string restriction
->     - update commit message.
->     
->     pass dt_binding_check.
->     
->     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
->       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->       CHKDT   Documentation/devicetree/bindings
->       LINT    Documentation/devicetree/bindings
->       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
->       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml        | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>  drivers/remoteproc/imx_rproc.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 >
 
 Applied.
@@ -110,39 +96,43 @@ Applied.
 Thanks,
 Mathieu
 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index df36e29d974ca..57d75acb0b5e5 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -59,6 +59,7 @@ properties:
->      maxItems: 32
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 39eacd90af14..144c8e9a642e 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -734,25 +734,29 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  			continue;
+>  		}
+>  		err = of_address_to_resource(node, 0, &res);
+> -		of_node_put(node);
+>  		if (err) {
+>  			dev_err(dev, "unable to resolve memory region\n");
+> +			of_node_put(node);
+>  			return err;
+>  		}
 >  
->    power-domains:
-> +    minItems: 2
->      maxItems: 8
+> -		if (b >= IMX_RPROC_MEM_MAX)
+> +		if (b >= IMX_RPROC_MEM_MAX) {
+> +			of_node_put(node);
+>  			break;
+> +		}
 >  
->    fsl,auto-boot:
-> @@ -99,6 +100,20 @@ allOf:
->        properties:
->          fsl,iomuxc-gpr: false
+>  		/* Not use resource version, because we might share region */
+>  		priv->mem[b].cpu_addr = devm_ioremap_wc(&pdev->dev, res.start, resource_size(&res));
+>  		if (!priv->mem[b].cpu_addr) {
+>  			dev_err(dev, "failed to remap %pr\n", &res);
+> +			of_node_put(node);
+>  			return -ENOMEM;
+>  		}
+>  		priv->mem[b].sys_addr = res.start;
+>  		priv->mem[b].size = resource_size(&res);
+>  		if (!strcmp(node->name, "rsc-table"))
+>  			priv->rsc_table = priv->mem[b].cpu_addr;
+> +		of_node_put(node);
+>  		b++;
+>  	}
 >  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,imx8qxp-cm4
-> +              - fsl,imx8qm-cm4
-> +    then:
-> +      required:
-> +        - power-domains
-> +    else:
-> +      properties:
-> +        power-domains: false
-> +
->  additionalProperties: false
->  
->  examples:
 > -- 
-> 2.34.1
+> 2.30.2
+> 
 > 
