@@ -1,108 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ACA6F06E;
-	Mon, 17 Jun 2024 12:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDD415ECD7
+	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 14:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626964; cv=none; b=q6L9WHU+veQ4Fm617u/ed2L3e7UpeVp8rC40Rhod9Ldmx6C7iCnysRHFKClR25CJUSDyBoJKQIiXezXSAuNEJiaOpmLT7RATu8HkeRVqxDa5jjd/F7XCJYG9nHHZHo2WXVuT3QS6zS4sJO4sMvxpoiQh/jV4KLC1WiotlUR1dOg=
+	t=1718635311; cv=none; b=CacsypUJMIj6LwQXpUDxk6P2+D+xcl/n2qy6ePpSUIj0rZPBO5zQbkrtpxzuxcbmiIK78D6miBpyt42oqzQvB9rNhZLE07JANKyM55dsXcVXNXjm7lryfuPBgdvGLEgU8Qp3FLnSVvEPPgpntCpWUFmZ4o2mjA3mZhPhPnvpKIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626964; c=relaxed/simple;
-	bh=lkKxpNaSV6lfi6nDNdBeaY7vVrJ14XqmL3LuVo6pHtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRV2PYhYvK0kC0rg/zEMTG2ZoNN7yhroZUvNExr5pl0VUY51BxSvrdrfnhbHhhMD+oSDPXsJ/G7wNjsLArgsLM+S/4IlH3uKtFXtiA2m/rZayPn8MlD1eIhM8TbNytFEC8tLluklb8kvW2VxVeRu6fbEYMNzWLzyzOwM8HRyics=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+PJZR8z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718635311; c=relaxed/simple;
+	bh=D0uG/F1rquD9j/tgu8XpSkKW0CgsYMnGbyRirrsrnsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5TQOBCGhee9cHG8TELBvXHsPZQtBxdaoAOipZteY8aylAS3WjERWo63w65uMgcVwUAAaqMjP5Fs3AGRCDSqUYI7zIInV5Uoh6tNDPQSJWKXpHdyPWdBr+ytqciBQTUU3wi4CZ8ERR74Q8UebanE5dj2K6L+4KbEHOpVo3krGzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WGM9+vyw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+PJZR8z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C09C2BD10;
-	Mon, 17 Jun 2024 12:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626963;
-	bh=lkKxpNaSV6lfi6nDNdBeaY7vVrJ14XqmL3LuVo6pHtY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g+PJZR8zked5ZXgE9a8J+vqgm+V+cVfxWuJY+wf5ccDRmgq+/fIm2sm1cx2mpDjLE
-	 msuMcvvzU4pbZHn/YAP1UMpG8vnoExHS6xIfje6iHiZUJx7Gbd6Fd8UCjAiaTuR7lA
-	 kBZPCWWh/mF5G2P3N3pUgQ6nTJsd/Z86DLmcSv0ayWAfAMMPdK8sGo+JEeAgRTFUfh
-	 ouWNmeWltiDh8m/n0VyA1WrfEztdTXz2mk05/Tydp9POhN/43akEow4U3kS4qn9Yfz
-	 DCLq03rjv4N5iDoOgheHP55p98/FYRFL3651cMr87QRkxBqEkPqx5b0gYrNHCDCATu
-	 jXoLJAWc6NdJA==
-Message-ID: <57568cd3-51de-4df6-bfc6-4036df3393d5@kernel.org>
-Date: Mon, 17 Jun 2024 14:22:38 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WGM9+vyw"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f70c457823so34594955ad.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 07:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718635309; x=1719240109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Tb9ql9Key2zaR+IQJeo7On9ydITOd8hoL6sLepVlgY=;
+        b=WGM9+vyw64nQDRnlmT83X3BavWWacvljrJ9GhgZ1y3ZRVqeQgMFMsILMoVEuQLseg8
+         +RUs/WeaY7/IS3JSqTKIUkIzMxyA9XWYZfpL6UiGxGFIQ7npX/cX3gySnsZsfbQO7VPp
+         yeefQLhyuGArvfInDIynw8wACAnH+wzKGsBfqS7M1Ozmu3w085FnuL18CgF28CJ2P3Jn
+         7mzOzehLSkMXpoNrolrpCyp7xHbLcMuQsmlZMCMvUiFaOlTjL5Lvi9K7htjPd1Ka3YKO
+         kmNtfNO3QYmljkwfLZRdgR+wY+GdZzN4UKLGK55fD4HYcQ78CjkcSYbb54Sz3joyoYNO
+         EjCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718635309; x=1719240109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Tb9ql9Key2zaR+IQJeo7On9ydITOd8hoL6sLepVlgY=;
+        b=kkBP3qCJKokPjW6nuLMKPPUd5uW5npV1ZmnlUKRmoVaKHVJUOaVNtvrK183niNaNRO
+         vQrTNeQwJaEjzJeE6pWwZOcDIqEB3MOGoObCHYzeQ1n9PncD3Kk5xrT2JyAkTg57Z26N
+         OeirMFmzNabex2z2XS39jyYBVybMoUe2I7Oer6Udezmx1C0TBp3mNfH3IeHlQWF8z5qR
+         ZROP7ZD70JD13BPyXIK3P2uWakpmibZm12Rqyf9cp8Bhirl/gasnLOidtBByIKHVxIlT
+         MNLwKwpttkKuLONzY+RjYCdv858VA3sj48Ah+uilJorU5RQTypUYQxNdTOE/zV1zI33c
+         Mbfg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Y5kC+ON8McOZFZ+O1qpyRpKfFFiAakx1/5h09HzE3ezkZ19JEYS5R+7qSMrO7rKOG9uC7x3ePZgUgYfE5Sg4thfd3Cb6R/vruk3INPg7IQ==
+X-Gm-Message-State: AOJu0YyOU7VM6BAxB1JKDXT/lN5uAy7ff5ATXLWBjUnMSderRsWHFDlH
+	BTd/atKUBTodHqFJyKnUpzpsab6iNb+snm+UXf1gCHtl/Pw+uf/NJtoI0YvfD08=
+X-Google-Smtp-Source: AGHT+IEmf39oVNc/A1nD73Ny6p2Cl2YYugmm0/bVmzsrkdWLmqjObFWN5+zXKksSeTd5xGX4xozfzg==
+X-Received: by 2002:a17:902:6508:b0:1f7:21e2:6d9b with SMTP id d9443c01a7336-1f8625d4880mr92934795ad.24.1718635309309;
+        Mon, 17 Jun 2024 07:41:49 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:e681:7328:24ae:62a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f53e80sm79448555ad.297.2024.06.17.07.41.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 07:41:48 -0700 (PDT)
+Date: Mon, 17 Jun 2024 08:41:45 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: krzk@kernel.org, andersson@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, peng.fan@nxp.com, robh@kernel.org,
+	s.hauer@pengutronix.de, shawnguo@kernel.org
+Subject: Re: [PATCH v3 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
+ for power-domain
+Message-ID: <ZnBLKV+RxX+CclRA@p14s>
+References: <20240610151721.274424-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: document
- the SDX75 PAS
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, konrad.dybcio@linaro.org,
- manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
- <20240617093428.3616194-2-quic_nainmeht@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240617093428.3616194-2-quic_nainmeht@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610151721.274424-1-Frank.Li@nxp.com>
 
-On 17/06/2024 11:34, Naina Mehta wrote:
-> Document the MPSS Peripheral Authentication Service on SDX75 platform.
+On Mon, Jun 10, 2024 at 11:17:21AM -0400, Frank Li wrote:
+> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Other
+> platform doesn't require 'power-domain'.
 > 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
+> 
+> Notes:
+>     Change from v2 to v3
+>     - only imx8qxp and imx8qm need power-domain, other platform don't need it.
+>     - update commit message.
+>     
+>     Change from v1 to v2
+>     - set minitem to 2 at top
+>     - Add imx8qm compatible string also
+>     - use not logic to handle difference compatible string restriction
+>     - update commit message.
+>     
+>     pass dt_binding_check.
+>     
+>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       CHKDT   Documentation/devicetree/bindings
+>       LINT    Documentation/devicetree/bindings
+>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
+>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
+> 
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml        | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
 
+Applied.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks,
+Mathieu
 
-Best regards,
-Krzysztof
-
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index df36e29d974ca..57d75acb0b5e5 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -59,6 +59,7 @@ properties:
+>      maxItems: 32
+>  
+>    power-domains:
+> +    minItems: 2
+>      maxItems: 8
+>  
+>    fsl,auto-boot:
+> @@ -99,6 +100,20 @@ allOf:
+>        properties:
+>          fsl,iomuxc-gpr: false
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qxp-cm4
+> +              - fsl,imx8qm-cm4
+> +    then:
+> +      required:
+> +        - power-domains
+> +    else:
+> +      properties:
+> +        power-domains: false
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> -- 
+> 2.34.1
+> 
