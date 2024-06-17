@@ -1,106 +1,90 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C343A194AF9;
-	Mon, 17 Jun 2024 09:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E151802A3
+	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 10:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616965; cv=none; b=eX6Tp1QrY68hl0eMoVvNlHP/p3l82i8bLMqjRUafsL1l4EcTD3LVmnR7ZamI52cwKVL9spdvRIg+vBgVtcLl/Ut6TaOqV/qXvAbJ2yjYdoxa6t1RQoVCSnK4MbeQPTHgB/yYvE6a4hn/EZAvdv/MhvM2sc2GqzGllPVqRQnkDK0=
+	t=1718618536; cv=none; b=ZMV1VYUG4YEkH9qFB4UN2H6erucH6R4YmkQsK2wFFkoOk0wIO8pRnLV//y7JanbVpGVOGno7DQdpPrHsSMq4HXe8zX8MzfDvMhA6OwbBrtV5R+T95zZ+UCaW493sIY5P47W/rKKsv/h57z2riE7AOX21FaJrfd6l0uDsrNwBQ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616965; c=relaxed/simple;
-	bh=vQqTvbivMs+MNtHTioR/qckxEhiqb5TTenbL4zuI1zQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBXyv4HcaqZ2WVrqlmB9xp03hsFLXTpAuliwsOVtfcKpHtsjk+j1hnV/RwtiE2JWpwkrPY/H6AqNoG9m0ndL/G5Vo89bRlqJGRfW79WP+obUjYrGzfNB3hv2oE7ke1J8Gyskaw/WnryvGeVZSlwKjh5SY6mGd+3G6wvylvF/Xmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RA9g7i2x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718618536; c=relaxed/simple;
+	bh=qtA4vdLpStckZ4K+HJdtG+Yn+DDVup8OpUIHT1OfTTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EE/H59TvEmxM1+xEn+nZRKmMtwFwM6QqISEITEgvH1Nrlk4pERVmzqq8niO9s47U6S2/SPiXJNzFtVulhdtYNrbKRjCg/WdnmUK2UIKUe3p7QIj/Iduq340jXMUNeHMTIquzXdVq/6E/WDkHHpe8fkuXcQTLPFaBqEGxI7SPhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nOdXaef5; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RA9g7i2x"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H0aCK0028294;
-	Mon, 17 Jun 2024 09:36:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qlf8nNst8S52KWr/4lUQRbOdt7tnowKDVkaY8PGgG7A=; b=RA9g7i2xGIYeqcaw
-	fiRuiq3a/ptDioN1hESxslZkEWBJg7p1kJ3t5ae3CrJp8Hg0WCh6W54h4bde9G/n
-	jY242t1/cC/21u/aNDQxKpvBxmRgRwgpFGpPOnrSfMLLn44f9oVSDTOPPFX/2x77
-	vKDapd8/14Uz8b5rfMIWXBsnqMKf8YE28Ddg4GdPWWbjN3J05lTE6IF48Jw6PuWA
-	fntSgWIhup7NLIVEwpg0UvAgsyXI3Hjlbc5OWxY53Ayxj+qHN4ReHwc1tJQ8lgv3
-	dSjHkxkomILD1wnLEW7gdx7dgZuuiVtTI0bVNwAJgPF7jRW6Z95Q3U51N2ezD9Fe
-	FmJbsg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys2hxb8hr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:36:00 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H9Zxgn003141
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 09:35:59 GMT
-Received: from hu-nainmeht-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Jun 2024 02:35:55 -0700
-From: Naina Mehta <quic_nainmeht@quicinc.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konrad.dybcio@linaro.org>, <manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_nainmeht@quicinc.com>
-Subject: [PATCH v2 5/5] arm64: dts: qcom: sdx75-idp: enable MPSS remoteproc node
-Date: Mon, 17 Jun 2024 15:04:28 +0530
-Message-ID: <20240617093428.3616194-6-quic_nainmeht@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nOdXaef5"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so28218501fa.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jun 2024 03:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718618533; x=1719223333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ej4HKaTXNbtrLZvPteJwUzGUeQdd3JpTOE58bTuRP4g=;
+        b=nOdXaef53XeEmVn3q8HDoZ9MFOhX4JF9mJ3/7uU/HWs/gkNi1Ron/Fvz/1kJd3PhTA
+         4ZC93SVl93LuXk5eW3978yTgo5UBLAk7+J6453tR5CkiSqkIOWSeeKEp3TA4Do6+9nvf
+         ZPLdzsto2icMJ0/IazAB+R8n9zLnQVHjTAgKyCvJSBjeXqU9RZDHLG45qTUhSjxcZ2/f
+         RXfj7IAPZobrnFR1F9Xo/KEiM742SUofrv3BEh7Vm6GdQHMHQ8z/apWD/puasXPncybJ
+         TXYxb24V8SxnKbfu2mVMcWKRC4a+8Q/jNHJWIZSFCuvMd+KY+olsrs3pUBl2f/mHIs9u
+         A1sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718618533; x=1719223333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ej4HKaTXNbtrLZvPteJwUzGUeQdd3JpTOE58bTuRP4g=;
+        b=Lu51FMlKMsT7R2xrPSzPjaMyT/BCNrSbi/F3t80SbF90psbsKCtW+CUgyCNyK5pe4z
+         M8I2b5aa4SyNuJkOFi6GgehfI7W7TKo4Tv9A12a7XIILQd9lAj1L/E8T6nZcJGOrUsh3
+         F+NoaCzYOgg98Ku0x4s+bSVpj2PB+EkeV1LMhTq/wR0gU5CRkxJGlvgdkg6Zj013Quxj
+         WQvk2CMQH4Vpu1mnV0CGa1Zd/TMfccPHi1p0roHHox0nr/i6pGkfg4K909Fc1yEkzlph
+         DDVPaPFXsVxb2nZhHLv+jutDpwhmEPoApgCG2zTZWvYsU7S7nlHtGEDQFDshdQnSiSbr
+         nnTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGu5fi+bakivJPHgO+Jsmp8eueBmdVkC5wv7mFXrHzQINO5faEEHeuh0CGkR5LzR8I/vV/HNry4adFUyRENDH7Csk5oxpH+v8L0zYX7CoY9A==
+X-Gm-Message-State: AOJu0YxZyL2st3QMVC1vbY2R7QHwTSrXxxfH7KL+hq3Da/Wi5L8fg+dB
+	5eyD+yr8KJuKejAn5aKo2ggUxBJTFK3Cj5+GF4yyW/WioFqJ+d46vAW2teZGcU4=
+X-Google-Smtp-Source: AGHT+IH7zs1ElNWSLauUoxe6oUcxbMknt8N4yLuI0xWzD1LWnvcGVtunFezu9q6l/fZs7aoYPEqeug==
+X-Received: by 2002:a2e:2e0f:0:b0:2eb:e840:4a1b with SMTP id 38308e7fff4ca-2ec0e5b5e75mr59433771fa.7.1718618533565;
+        Mon, 17 Jun 2024 03:02:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c16c91sm13197401fa.63.2024.06.17.03.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 03:02:13 -0700 (PDT)
+Date: Mon, 17 Jun 2024 13:02:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Naina Mehta <quic_nainmeht@quicinc.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org, 
+	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: sdx75: Add remoteproc node
+Message-ID: <mkthvgckbcttjh5d6ikv2tgmxyix6au4vcqobrcy7ukf3rtyn2@yyg2tvfkoawo>
 References: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
+ <20240617093428.3616194-5-quic_nainmeht@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lEHMSu-eLMhLcOEggCjp1AIJpX6PKNyJ
-X-Proofpoint-ORIG-GUID: lEHMSu-eLMhLcOEggCjp1AIJpX6PKNyJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=928 clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 mlxscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406170073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617093428.3616194-5-quic_nainmeht@quicinc.com>
 
-Enable MPSS remoteproc node on sdx75-idp platform.
+On Mon, Jun 17, 2024 at 03:04:27PM GMT, Naina Mehta wrote:
+> Add MPSS remoteproc node for SDX75 SoC.
+> 
+> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sdx75.dtsi | 47 +++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
 
-Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sdx75-idp.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-index fde16308c7e2..f1bbe7ab01ab 100644
---- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-@@ -282,6 +282,12 @@ &qupv3_id_0 {
- 	status = "okay";
- };
- 
-+&remoteproc_mpss {
-+	firmware-name = "qcom/sdx75/modem.mbn",
-+			"qcom/sdx75/modem_dtb.mbn";
-+	status = "okay";
-+};
-+
- &sdhc {
- 	cd-gpios = <&tlmm 103 GPIO_ACTIVE_LOW>;
- 	vmmc-supply = <&reg_2v95_vdd>;
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
