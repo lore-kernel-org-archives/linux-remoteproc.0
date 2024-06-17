@@ -1,35 +1,55 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296D78C90;
-	Fri, 14 Jun 2024 11:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45229193094;
+	Mon, 17 Jun 2024 09:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718364632; cv=none; b=HfYKnvstb+82UyzLCXhMliN72S0Dgoxy04NucrMel6JZj69jfVpcWOKZWj9ynYA1f1PFXqFK1A9+dPC5uODteJG/ilVrk7O1YhSnMec7tIyrJxzVyINT2aLQ7+6zHGuREgj8eX8fI4+IOnAPwIPOElgg7qgCE984OBJRxAQxnwo=
+	t=1718616937; cv=none; b=j/hJ4gLeRYmnQCW3doQh4xIeUZ0KfSaM2pt1Y2loIAbStBVZwvmmWy+f3Lm2z1pYjaYLkIUdMP+2oJFRYpNSpLXMy2NZtf5I1fLotoIl4jaRotpgZ06erMve7/+++Ud8XGjR2Un739TJDe9fJ42NduRMDDIWT4czd+o3ue0vZ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718364632; c=relaxed/simple;
-	bh=lfRCLHPC8Ch+I0PcReVwhlTRxiD9uf5JH4scsOMzT+A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hRqROMxMqtIhrlOq26TobRvgVyB3H8NQ33k2GGMd2ybJznnK2jcgsbW+Z36jb6g62QNjPaC8yQ6McjHY3oo9Mq6XvtUFEeIakbS0ip6zWj9k+zyRdwj7KENLrQ3Mcick1ns3OHEGm26T5Mb3P4DIEGTCQqLp///GRP/Mx5RGooQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQFTM64h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718616937; c=relaxed/simple;
+	bh=KPtRsY5JATCPI85WE80r9lc0seUyTRM7rViLe7q49Qc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ghRYinvXyq59lM0o2512f64YyVsH4hD4F5GPgwLGf4wTsctxd3lIHVW0hw0jAFEv2712K2nTvAAWd/BZ9SZ61QqaQ4nYj51DdshbwnaMl6Rp7XCZMaRjMcV/BJNMc8C04filmfZKjtsCxvAvGY9hvXfNJH4olefd1dshgE/HcR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bt9cPtLR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQFTM64h"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C7802C4AF1C;
-	Fri, 14 Jun 2024 11:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718364631;
-	bh=lfRCLHPC8Ch+I0PcReVwhlTRxiD9uf5JH4scsOMzT+A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OQFTM64hcf6EdmMTMzW250pNQbG8uVZnoZqQjBetPDqDwctfpfO+GQVAdqm4UpTFk
-	 PGCZRMyvPiIOUOuuwPqYgcdA4ezKWKI2RL5QBwtwg0AomwmMxLvNgslDVEfMoOMwkt
-	 stBTrkE92SrwQ5Ymqh/6bL2FjX9zDcimxYoGQPfvvKaRvr5ALU7dvGn4m6UQKdDyJq
-	 1ig2I9Rpi73LXjmaMTr+yaCmdyd7nUic4Xc5NvGjqpFV7mDWXnMIcq6QPiD5dK3QyL
-	 hCtZksP9Lmgji9VDQ5MooTNtiOKIha8Iix/HK2o3XnuYdnocp0rW20eh46YrbZdw+5
-	 FHpdlITrJzL9A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B1FEFC43612;
-	Fri, 14 Jun 2024 11:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bt9cPtLR"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNxC9X020406;
+	Mon, 17 Jun 2024 09:35:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U/r+pAuGg8tFEwmoHF2axW
+	mzM4MXvul5yjS9Uzk3niw=; b=bt9cPtLRL/2b16OV4dj6a51AFT3PTCLZeYXANT
+	BehVLUKK+IIJxsTRRTUSDfcBcy7r9N58ayNNqhKurn6r9N3idZcZWl3TpIcYsnRU
+	elVT4ks1c8ZaFYL3WrWi9IAuZGz0i/xG+KkNJQhvXBtr1SEJQSu+twpi06m+VBUG
+	sXLiSIZI6RcR8Pza5/WzMu8hbNqiS1fq3pTN7DI4iuwl04qmh4E3hL1WCaWCW7n3
+	EqJGK6K7womW2GDSgex56OF+cJ1Md1IqjB1i96kluZoF+2Bv7M0UoTSTAmV/kS3a
+	LQ4UhsvGjca7jAHpFhRpNzhTQLncvoJM2g45m0sgBA3n6dHQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys44ju2gw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:35:33 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H9ZWAB013966
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 09:35:32 GMT
+Received: from hu-nainmeht-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Jun 2024 02:35:28 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_nainmeht@quicinc.com>
+Subject: [PATCH v2 0/5] Add MPSS remoteproc support for SDX75
+Date: Mon, 17 Jun 2024 15:04:23 +0530
+Message-ID: <20240617093428.3616194-1-quic_nainmeht@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -37,42 +57,48 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V2] net: qrtr: ns: Ignore ENODEV failures in ns
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171836463172.3341.2623972340502158266.git-patchwork-notify@kernel.org>
-Date: Fri, 14 Jun 2024 11:30:31 +0000
-References: <20240612063156.1377210-1-quic_sarannya@quicinc.com>
-In-Reply-To: <20240612063156.1377210-1-quic_sarannya@quicinc.com>
-To: Sarannya S <quic_sarannya@quicinc.com>
-Cc: quic_bjorande@quicinc.com, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- quic_clew@quicinc.com, horms@kernel.org, manivannan.sadhasivam@linaro.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qkprO6T9KUvPTbx7w6gMUOVixKYBYWde
+X-Proofpoint-ORIG-GUID: qkprO6T9KUvPTbx7w6gMUOVixKYBYWde
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_08,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=742 spamscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406170072
 
-Hello:
+Add modem support to SDX75 using the PAS remoteproc driver.
+Also, add qlink_logging memory region and split MPSS DSM
+region into 2 separate regions.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+These patches were co-authored by Rohit Agarwal while at
+Qualcomm.
 
-On Wed, 12 Jun 2024 12:01:56 +0530 you wrote:
-> From: Chris Lew <quic_clew@quicinc.com>
-> 
-> Ignore the ENODEV failures returned by kernel_sendmsg(). These errors
-> indicate that either the local port has been closed or the remote has
-> gone down. Neither of these scenarios are fatal and will eventually be
-> handled through packets that are later queued on the control port.
-> 
-> [...]
+Changes in v2:
+ - Added missing binding for SDX75 to allOf constraints.
+ - Updated reserved memory node names to remove underscores.
+ - Link to v1: https://lore.kernel.org/all/20240606143858.4026-1-quic_nainmeht@quicinc.com/
 
-Here is the summary with links:
-  - [V2] net: qrtr: ns: Ignore ENODEV failures in ns
-    https://git.kernel.org/netdev/net-next/c/404dbd26322f
+Naina Mehta (5):
+  dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
+  remoteproc: qcom: pas: Add SDX75 remoteproc support
+  arm64: dts: qcom: sdx75: add missing qlink_logging reserved memory for
+    mpss
+  arm64: dts: qcom: sdx75: Add remoteproc node
+  arm64: dts: qcom: sdx75-idp: enable MPSS remoteproc node
 
-You are awesome, thank you!
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml  |  3 +
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts        |  6 ++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi           | 64 +++++++++++++++++--
+ drivers/remoteproc/qcom_q6v5_pas.c            |  1 +
+ 4 files changed, 70 insertions(+), 4 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
