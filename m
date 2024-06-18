@@ -1,932 +1,508 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8592E13AD12;
-	Tue, 18 Jun 2024 17:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718730489; cv=none; b=GVzkl+v8cc955h1mgtAvwR03DVUCStLsFaFRHMSm3u+LxJumwEzg/ZP/utEZV7Nn0xaJ7JdANPcR0MnTOfblLM7feVv5QU4U3H8S5phCVQSrkMAVEtalA4wFn/dydSmhudEx9OlfUOInY7DaM1LidoYv++0muPAhmFtzNffaNrc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718730489; c=relaxed/simple;
-	bh=thy20pUMxrj2WpEXOToClpW/n1GJG0tshE7vQXC19aQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VHTq3FdLSJmRI5gFhtVGNPjrD+HVp/wFGaHSIkjNODv5P/ab/AsRU6pUifB4kQPE5mB+9cvZmM2MKxqqAwICJoag/cLOJ801DEjd5FV9cIAPx2lGNV8HOBaVPiLXEd4veBVPKZYuZ8FYskjgQCM1JHeAEYbrRF8346qXh0QoDc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OIfJqdE0; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AF02139DD;
+	Tue, 18 Jun 2024 17:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718731588; cv=fail; b=Q5yEZQ/nguk0Ws0ab6HAyB4LYrfY8DwkUVdWwWTo++k+ThSxpprHBJM21cx81XYgWRN5A3n0WNgQNfTMz6P0TNGbiilzbTdgly1Lt9mqEUY1+wxxAF60+iifP1X5fbS017a7V9wir64axHbO1XObFwZEwZQTfUdn729g3g4ca7M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718731588; c=relaxed/simple;
+	bh=GSggcoyShBOLAPob9e+inVblG6lH7wuETkAFIcf/qQA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cxb0aG0/GMSdTDoLrFCk5tVz35aNORZKMvQbbNzNk45dn40ZIHgAkg9y6QYWdsPEoFrS4TZH+YulMd+XH4/24V/yzexW96Y8Y//Tx74QR4/PYxD9semouSt8q8/yquovxiFtnHYt6g3dyjXBBT6exdvAKQ/8Bg8sULWcIkNo3Fw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yzuwgaOD; arc=fail smtp.client-ip=40.107.244.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OIfJqdE0"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45IH7jgE081792;
-	Tue, 18 Jun 2024 12:07:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718730465;
-	bh=Y5oaRH/YC0y81CZ8rqfj62L1WmTLeTM5PDRR0LZMnwc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=OIfJqdE0EK/p4rNGKctx9QtOofoxse+Sz1C+cnt3nVp93RzSwNjg5bdWclRbKrMtP
-	 DVYwOpqEGRVUaMjlpSqoPC4yWrSZBsv9EfwAWSsvNTSC7WSBSbHhMwKkgVb6ZhqAaB
-	 XNeleibB3sUfJB0TSlOxLqS6bxaSxbXa5oKHETXY=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45IH7jNA009128
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Jun 2024 12:07:45 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Jun 2024 12:07:45 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Jun 2024 12:07:45 -0500
-Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45IH7jFi009260;
-	Tue, 18 Jun 2024 12:07:45 -0500
-Message-ID: <33550e82-4fd3-4066-b78d-27534584fa5b@ti.com>
-Date: Tue, 18 Jun 2024 12:07:45 -0500
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yzuwgaOD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BnCn4JGPLMQpGyzmEqzu9dXZ0Rjiu5UOLoqfn0VxyhrmH/RTDSp8yFJ2IlISreM+sIO5bNfigb1f1AOY0HWgVKSJbcPmVOzxmS3KrOXMaB3d6sT8/bJjqBU+im4ucSK+OoB5n3PW58034mZlb5CZabbXMqEDOahvnyiAVg7XDodOwP3C2r7kp06Iv3QjMRKW+kdx9o5BmaOwD2CF0ZIAkqDUPfxTmX3OtX+Wj+fcrlYlhwpEGa2HK95QuYn15fIfyA1bMqt7xEITPYEd6QPjWroHyjWvhG4CiP6qDKru21km2hpF1Q/NAFxQNjb5MI9Bwwatm7DeEPNFAh0qF6wnkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Er7O4xDlhkI0jxUHaZmmLNXZz2dmKze8UyLdhYnOiGk=;
+ b=jaq3gbqkN3VMy72T29ipt6Sn3wzkc6zKeHm5vwOP9QGqpJHguexSy9X3W/UIPMe8A5ocfgEQlKEdbPiJrwnNFhldoiDSdT0/Ndfa5KQiJPQQCiaC4u1IMot5xS56OnVupYyA8ngVbviUqpn++QEHmD11F55wd7WDp7VgUixW8M4UvdjJQxch6nVpRNzRV3x9uAMuI4FRHEcKu6DM5tMfuLWDYk/niYtxVGB3+Czcwa6uh3UHjtQlYtJDb0eoJE2OJrADNrreTqGQMRrHeLiatT0txy4+DCmIlPitdwm/ttWvSrXK5hVnIJb780eyoddvETPlRJbN4OYEuoErrHbmMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Er7O4xDlhkI0jxUHaZmmLNXZz2dmKze8UyLdhYnOiGk=;
+ b=yzuwgaOD0wumokcxmk8qQ9pbubK1tMFdNYR86GoxZoKOV8gMjY3nVo06AcvuhVnXo77yzESxEWVOSoXbU5H8S2ri4mRGWwB2f6RaxfcsuZ1aTUl7qaiyFU+GYViC59ak8IPk7wdfg9klAm4l6e5C9JYYzLVtK+yVYwMUZP6Qihs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
+ by BY1PR12MB8445.namprd12.prod.outlook.com (2603:10b6:a03:523::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 18 Jun
+ 2024 17:26:22 +0000
+Received: from BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::5a16:a4db:8bed:1f5d]) by BL1PR12MB5874.namprd12.prod.outlook.com
+ ([fe80::5a16:a4db:8bed:1f5d%5]) with mapi id 15.20.7698.017; Tue, 18 Jun 2024
+ 17:26:21 +0000
+Message-ID: <c3f64b43-1ba2-4865-9836-5ba4a32c2c8f@amd.com>
+Date: Tue, 18 Jun 2024 12:26:19 -0500
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v5] remoteproc: xlnx: add attach detach support
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: "andersson@kernel.org" <andersson@kernel.org>,
+ "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240610154227.3104790-1-tanmay.shah@amd.com>
+ <ZnBY0UtG9fyfxdTh@p14s> <f51ec569-195a-4434-8f3e-36401aabef89@amd.com>
+ <ZnG77WlE4o/rxebU@p14s>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <ZnG77WlE4o/rxebU@p14s>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0024.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::29) To BL1PR12MB5874.namprd12.prod.outlook.com
+ (2603:10b6:208:396::17)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/8] remoteproc: k3-m4: Add a remoteproc driver for
- M4F subsystem
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hari
- Nagalla <hnagalla@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240610180615.313622-1-afd@ti.com>
- <20240610180615.313622-3-afd@ti.com> <ZnG+QD/9QzmWfPCT@p14s>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <ZnG+QD/9QzmWfPCT@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|BY1PR12MB8445:EE_
+X-MS-Office365-Filtering-Correlation-Id: 442f678e-0c3f-4656-d31d-08dc8fbbc598
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R3VhSnV0czFqanVyWGRVQ1FvdGNUQ0Znb0hML0pzdmpja2FxK3hQSnR0eHZW?=
+ =?utf-8?B?WTdDbThQenBhOE55Mjg5ckRRZk9qMytEV0I3SUIwY0VYMHFQUDNJWVVkMFdp?=
+ =?utf-8?B?Uk9nU0ZmRFJaQi8vbUhDaVMwZjB1ZGVRcWNqc0kvaVZEblJTUUZiZk43TUZC?=
+ =?utf-8?B?Yi95ZlkyWHpNTFpvY0YvVmN0M3lNeStndHFrb0RjOWhLdGxRejIvOEdXYUpF?=
+ =?utf-8?B?S2NWUUdTS2l6TnpBNlNNVDlIamtZaGUyeHkrWTNmVDFXeHlYSXYyT04xdDFL?=
+ =?utf-8?B?TW12NWt3WFlCeDM2M0hEMlpmcDVLaFR5Qk5OUWIrOGpkak0za0Nna2dyRm5H?=
+ =?utf-8?B?UmhrbFNsTmpVdS9MbWZjUHh1TjFnT1Q3eE5pUE5KZ0pVbE1tQi9PL2xabCsw?=
+ =?utf-8?B?Qk9NbWhIaHd6Y2FVYllzMFAvckMxeThpdlVNNzNQbTJqYi9qeUlpeVJFWFYw?=
+ =?utf-8?B?NWYrZmpjSTFSQU5iVGtET3JKbGFMUys2U1hNbkZITG1aejYyL1AvajRGb200?=
+ =?utf-8?B?YnE3WHUzbjdJQ0VsZFc1d091RkIxdE1Qb0F1QTdEaTJFVWsyU1NSWjM1VXNa?=
+ =?utf-8?B?QkJqSXVWV09rbmV4VDdjOXJJU2dPSzdiSzJwV3ZaR1VNVDIxZnREVWV4bjY5?=
+ =?utf-8?B?cEdBdTFzWTJzOXRXaXQzejB5VTZCWjhLZ1VnR01Ed3FTTDRaVUhHU2owRjV0?=
+ =?utf-8?B?dDB6czUvbWdrNmxxZjIzT2gyaDVMZzhwU1B6WHRDb2s4eXdUV3ZERGsyUGR4?=
+ =?utf-8?B?R09iQk92ZjJXTGlPbGh6eDFPZ2xjSzh1MjdrUENRVEprT3hKUmNMTkJ4bHh2?=
+ =?utf-8?B?Ukp3MWxWNGRCa3p5eGZPWWxTNjBOeC8weGgrTnVyYkFWK1NYbXpjZlByNUQx?=
+ =?utf-8?B?UVh6b3NDSXBDblRjZEZTRWRUUGk5a0VDMnVyeEdVWHVvZ1hQb0Exd1FVN1A0?=
+ =?utf-8?B?UCt5bVhLR015OEwyR1d3aFd0N05nNC9hV3dWdUs0RC9VUWRBOXAwbEZoZTls?=
+ =?utf-8?B?SkFaWE1RMWx1dGp0akd2YkJ1MGp5Qkg1V3JMaTJGUktwWVBmRDVZMGNKenIx?=
+ =?utf-8?B?QWRmYlEzcTZOalJ2ZXVjb2F0cXE4VU8vWUJxV1RKVFg1SUFXdG81bS9uYTR6?=
+ =?utf-8?B?eUJOSWdmd3g4T1lhSm81UDloYTA0c1UwazNRUm8zM1JRWE9OOG5mb2VsWFJX?=
+ =?utf-8?B?ZndiMVZXMHdBRVowT1pXTVluaVF5K2hQUERkaVNsK093YW11TjlzYXpnZ0pD?=
+ =?utf-8?B?MTZoS09uTGZsaENsTDhFV3pFck1lTG44U3g1eTJUYkdneTFKNHdTamJvcWhO?=
+ =?utf-8?B?TUtHZmhuUXFpWXFuOTZaYSs2ZEF4QXE1a3pYZmFlRTFHaElvaXhkZlRBa25y?=
+ =?utf-8?B?Yk9rZ3NoaWR4dVV1eFEzdUcvQjJ4QjhwZ2o5a240aDRMZjhLcDFsc2E3ZXI2?=
+ =?utf-8?B?YWsvQ2hQbGtRdW94SnBtOHVUNmZKL2I0OWtyMDNuaWlrRUFMK09WN1drdktP?=
+ =?utf-8?B?cUF4TXNVdCs2NlNhWWMxbnRiTURyTVNVWTYrbGg3ZVV4TjhUL1IvdituQmpx?=
+ =?utf-8?B?Q0FHZ3ZNQkNYVllpUEh4R1RBaUtYcCtoWlZoRC94eDhsejUrZUc1MHlFMVoy?=
+ =?utf-8?B?SlNCMWcwczNrTERWTytGaUhBNVU1MzZkUWxBcVgyZHdGb2xTUHYxQy84MXZ1?=
+ =?utf-8?B?SDdxWVZINjMwUVNrK2hsdTFReFRNNjdlVXY5cGh4UDdhcm5DcDNFaWh5SE95?=
+ =?utf-8?Q?KLh7zUL6d0QHgfKYSJpdhj5uZ/8iodZO6zwJ24B?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SXNKWko2N2xjemRRRTZ0eUduZkRaeUhDVW1JNzlGWVd2em5QKzVqdndxUU1M?=
+ =?utf-8?B?R043d0NXalcvbnR6VEFyT1ZXS29EVVVTd1M5dmt4WlVCcnJEQitrdkppbFlE?=
+ =?utf-8?B?aXBSZE5jU1FNYU85RXpXZnFYZVlKSmFUdXVqMWxuODdaWTNseGRUdGQyZTdS?=
+ =?utf-8?B?WmpIZFBnV3NCSndhTGJpZlIvVzRITCsyN0FXR0RXRmlYUVd4OGdtWHRTdU1I?=
+ =?utf-8?B?MUxLOWtCajBkeHBPSmpmblBBWTFnd24wK2tUQjYyMFJrRTY0d3ZvUTNwVHB6?=
+ =?utf-8?B?emo1dkNUemN4aGxEam83QXQ5OXZoRjB2MHp4Y1dZb1NqWmdHQk56ZUJ1K3cx?=
+ =?utf-8?B?SjJqaURyTFJuNlBscStUbE5hOUUzUm9yT2lES0VxbXlRQU8vSndXVC9DVkZP?=
+ =?utf-8?B?NWpPWm1jL3NORGpTaXJzRnZKTTIyY2daOTE3U2RvNHlzOVp3RWVlVFpsZlJq?=
+ =?utf-8?B?Ym81K1BTNGtEZVV3ZjJkZ21YVERXWTlrYWZmZUwrNU5obEZKOTArdDU0OWNl?=
+ =?utf-8?B?bUdnZjZISUNvQ0d1RHlNMTZHVXNSNWRvV2QrWFUyVWw5c0ZoQWprRmxlS1RG?=
+ =?utf-8?B?NXR5eHowbGE4TVYwYjYvL2djdjZDTFd2UEJtT3N5dGN6SktLME9iaURXOUFW?=
+ =?utf-8?B?ejNxbElRMnk4Mm54VUNzZTd3NUovcmNWUUN1UldLVWRvbGlwUDFGNklJNS9I?=
+ =?utf-8?B?alg1Q1hRTHpMMGNuekpoTVFHUkR5ZjN2NnVmZzlGcFUrMFAxTVV0UHRxc3JF?=
+ =?utf-8?B?MG1lWkljRWR5eFRZVWhybDhmeHNTWjlLck5tMXVSTWZZSFRMS1hkY254M3VK?=
+ =?utf-8?B?ZFNtOG9lNWhBSWhVeFBUVnRXOE5uT1psZFFRSzBsbFBvVmhmQlFwVFhFMFM0?=
+ =?utf-8?B?TnZ5ME5oT2ExSEJFRWRaYVY4ME1taXpmQ21CR081Zm9rQkxnUmJ0UG81VEc0?=
+ =?utf-8?B?djk1MUMwd0h2ZXc1eTFoeWx2WGd2VnpLWGVnVnRDOHJBeUxTUG9iVzRvK3M1?=
+ =?utf-8?B?dWZSZ29ILyttaGhwQWhRd0t4b1V1TUJ0SDRCbVlDcUlZVk1XUk5Ec29BOUdk?=
+ =?utf-8?B?TGpFYVRPUEYyNUYyNmpRVzJKWmNVQXlRWThaOFd2ZFZhM0I2dG04azdsSEww?=
+ =?utf-8?B?ZWpNS0FkU1hOWEFHay8wN1BXUUJ0SVBHTnNCTHFiZit4aDhzekVvZ0tld0lH?=
+ =?utf-8?B?bE80UEVOSlBHZTlrWGQyNFRuT3hrVDd5Ym8xeGVva2E1dUVvek5kR0JiRWJS?=
+ =?utf-8?B?aHFHRkVsemtaV2FMTjRrcUVablpQZVBqZWFsTGZXS3VYZ0pGbFBRaDBQUU9I?=
+ =?utf-8?B?M2NnUmhKRU53TTM2REgvYkwySG9RWUpRMDRoZmJXTVdPdVB1RFpNdVp4NWwz?=
+ =?utf-8?B?eTFnVnFkRllYMDFRMjdBK3JPZGdESDlnWDRWR3ZqeCtrTkNScGdHZzBlMVBn?=
+ =?utf-8?B?em9OTldwMkE5dG5ReVdKWXljZjI2LzFTbWRVVGwyc0RQNGEvWjRqaFIyN0dz?=
+ =?utf-8?B?KzltVmtFbXhGQ1NGaFU3S0RmUFg0TDBzOHoxdW9qU1l2TTNEMGU2VnNkMEFS?=
+ =?utf-8?B?NVNzS2tZZG4rWXlCTWltaFVGZWppOGpmU2FPK1o0N3NRODhId3c3c2MzTHY3?=
+ =?utf-8?B?NXhMRGhyS0VHc2VZaGlKZExaOEllMk1wN1VFenVjWFR1eWw2c21kQmRETmpz?=
+ =?utf-8?B?NW1DOGI3L25tSlV6a3FrbEd1MXNkUmtNU2JKYm5XV3cySVRBTkhYNm9VdTZ0?=
+ =?utf-8?B?OVE3bXh0OFgvWXc2S3hDdURDN3lRZjlkN2pxSXgwQ3BLNGplbzd5WjZHL0RV?=
+ =?utf-8?B?Z2xoU2ZGY0dyOHVVRGllTXE0KzRUNzBQaTVVY0ZsTng4R2pIMkRWblM5MDl3?=
+ =?utf-8?B?dzNCcVpSNzFTZWtneVo4MDVxNDN0RTNubWxmNlB1azVOQkVXTG1jYjlMTCt4?=
+ =?utf-8?B?T3hiL2tTQU9QS2JQQW95NEV3WWhiZmt3OVFNMkE3YzU2c2pnL3FqWGx5K0FY?=
+ =?utf-8?B?TzVDTTB5c0ZlWUIvQ25odEltNFhXeDIwU241SGtac1p6aWxLWkI1RXQwaklN?=
+ =?utf-8?B?RFhSOXZWcisxblpMRzlMbVh0bVdROU96dUNZQTB0Z3F4NEVGTUFGZzhDTFBO?=
+ =?utf-8?Q?0ldyaL2VrlTLItgtkOGuRdMQO?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 442f678e-0c3f-4656-d31d-08dc8fbbc598
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2024 17:26:21.7849
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hinI8h85qujeEORyC1DN0KhqdJXKoCw74tbODipiFpyVnH8R/7/zSlLyroCbNInj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB8445
 
-On 6/18/24 12:05 PM, Mathieu Poirier wrote:
-> Good morning,
+
+
+On 6/18/24 11:55 AM, Mathieu Poirier wrote:
+> On Tue, Jun 18, 2024 at 11:45:28AM -0500, Tanmay Shah wrote:
+>> 
+>> 
+>> On 6/17/24 10:40 AM, Mathieu Poirier wrote:
+>> > Good day,
+>> > 
+>> > On Mon, Jun 10, 2024 at 08:42:27AM -0700, Tanmay Shah wrote:
+>> >> It is possible that remote processor is already running before
+>> >> linux boot or remoteproc platform driver probe. Implement required
+>> >> remoteproc framework ops to provide resource table address and
+>> >> connect or disconnect with remote processor in such case.
+>> >> 
+>> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> >> ---
+>> >> 
+>> >> Changes in v5:
+>> >>   - Fix comment on assigning DETACHED state to remoteproc instance
+>> >>     during driver probe.
+>> >>   - Fix patch subject and remove "drivers"
+>> >> 
+>> >> Changes in v4:
+>> >>   - Move change log out of commit text
+>> >> 
+>> >> Changes in v3:
+>> >>   - Drop SRAM patch from the series
+>> >>   - Change type from "struct resource_table *" to void __iomem *
+>> >>   - Change comment format from /** to /*
+>> >>   - Remove unmap of resource table va address during detach, allowing
+>> >>     attach-detach-reattach use case.
+>> >>   - Unmap rsc_data_va after retrieving resource table data structure.
+>> >>   - Unmap resource table va during driver remove op
+>> >> 
+>> >> Changes in v2:
+>> >>   - Fix typecast warnings reported using sparse tool.
+>> >>   - Fix following sparse warnings:
+>> >> 
+>> >>  drivers/remoteproc/xlnx_r5_remoteproc.c | 173 +++++++++++++++++++++++-
+>> >>  1 file changed, 169 insertions(+), 4 deletions(-)
+>> >> 
+>> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> >> index 84243d1dff9f..6ddce5650f95 100644
+>> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> >> @@ -25,6 +25,10 @@
+>> >>  /* RX mailbox client buffer max length */
+>> >>  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+>> >>  				 sizeof(struct zynqmp_ipi_message))
+>> >> +
+>> >> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
+>> >> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
+>> >> +
+>> >>  /*
+>> >>   * settings for RPU cluster mode which
+>> >>   * reflects possible values of xlnx,cluster-mode dt-property
+>> >> @@ -73,6 +77,26 @@ struct mbox_info {
+>> >>  	struct mbox_chan *rx_chan;
+>> >>  };
+>> >>  
+>> >> +/**
+>> >> + * struct rsc_tbl_data
+>> >> + *
+>> >> + * Platform specific data structure used to sync resource table address.
+>> >> + * It's important to maintain order and size of each field on remote side.
+>> >> + *
+>> >> + * @version: version of data structure
+>> >> + * @magic_num: 32-bit magic number.
+>> >> + * @comp_magic_num: complement of above magic number
+>> >> + * @rsc_tbl_size: resource table size
+>> >> + * @rsc_tbl: resource table address
+>> >> + */
+>> >> +struct rsc_tbl_data {
+>> >> +	const int version;
+>> >> +	const u32 magic_num;
+>> >> +	const u32 comp_magic_num;
+>> >> +	const u32 rsc_tbl_size;
+>> >> +	const uintptr_t rsc_tbl;
+>> >> +} __packed;
+>> >> +
+>> >>  /*
+>> >>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+>> >>   * compatibility with device-tree that does not have TCM information.
+>> >> @@ -95,20 +119,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>> >>  /**
+>> >>   * struct zynqmp_r5_core
+>> >>   *
+>> >> + * @rsc_tbl_va: resource table virtual address
+>> >>   * @dev: device of RPU instance
+>> >>   * @np: device node of RPU instance
+>> >>   * @tcm_bank_count: number TCM banks accessible to this RPU
+>> >>   * @tcm_banks: array of each TCM bank data
+>> >>   * @rproc: rproc handle
+>> >> + * @rsc_tbl_size: resource table size retrieved from remote
+>> >>   * @pm_domain_id: RPU CPU power domain id
+>> >>   * @ipi: pointer to mailbox information
+>> >>   */
+>> >>  struct zynqmp_r5_core {
+>> >> +	void __iomem *rsc_tbl_va;
+>> >>  	struct device *dev;
+>> >>  	struct device_node *np;
+>> >>  	int tcm_bank_count;
+>> >>  	struct mem_bank_data **tcm_banks;
+>> >>  	struct rproc *rproc;
+>> >> +	u32 rsc_tbl_size;
+>> >>  	u32 pm_domain_id;
+>> >>  	struct mbox_info *ipi;
+>> >>  };
+>> >> @@ -621,10 +649,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
+>> >>  {
+>> >>  	int ret;
+>> >>  
+>> >> -	ret = add_tcm_banks(rproc);
+>> >> -	if (ret) {
+>> >> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+>> >> -		return ret;
+>> >> +	/*
+>> >> +	 * For attach/detach use case, Firmware is already loaded so
+>> >> +	 * TCM isn't really needed at all. Also, for security TCM can be
+>> >> +	 * locked in such case and linux may not have access at all.
+>> >> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
+>> >> +	 * callback.
+>> >> +	 */
+>> >> +	if (rproc->state != RPROC_DETACHED) {
+>> >> +		ret = add_tcm_banks(rproc);
+>> >> +		if (ret) {
+>> >> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+>> >> +			return ret;
+>> >> +		}
+>> > 
+>> > In the normal case function add_tcm_banks() will call zynqmp_pm_request_node()
+>> > but in the attach case, that gets done in zynqmp_r5_attach().  Either way,
+>> > zynqmp_pm_release_node() is called in zynqmp_r5_rproc_unprepare().  This is
+>> > highly confusing.
+>> > 
+>> > I suggest adding a check to see if the remote processor is being attached to in
+>> > add_tcm_banks() and skip the rest of the TCM initialization if it is the case.
+>> > 
+>> 
+>> If we move this check to add_tcm_banks, then I think I should perform request_node
+>> from within add_tcm_banks only and remove registering attach() op as well. I can call
+>> request_node from within add_tcm_banks() and then avoid rest of initialization.
+>> 
+>> I am not sure if without attach() registartion, I can still register detach() and
+>> it's valid. I will test this.
+>>
 > 
-> On Mon, Jun 10, 2024 at 01:06:09PM -0500, Andrew Davis wrote:
->> From: Martyn Welch <martyn.welch@collabora.com>
->>
->> The AM62x and AM64x SoCs of the TI K3 family has a Cortex M4F core in
->> the MCU domain. This core is typically used for safety applications in a
->> stand alone mode. However, some application (non safety related) may
->> want to use the M4F core as a generic remote processor with IPC to the
->> host processor. The M4F core has internal IRAM and DRAM memories and are
->> exposed to the system bus for code and data loading.
->>
->> A remote processor driver is added to support this subsystem, including
->> being able to load and boot the M4F core. Loading includes to M4F
->> internal memories and predefined external code/data memories. The
->> carve outs for external contiguous memory is defined in the M4F device
->> node and should match with the external memory declarations in the M4F
->> image binary. The M4F subsystem has two resets. One reset is for the
->> entire subsystem i.e including the internal memories and the other, a
->> local reset is only for the M4F processing core. When loading the image,
->> the driver first releases the subsystem reset, loads the firmware image
->> and then releases the local reset to let the M4F processing core run.
->>
->> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
->> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->> Signed-off-by: Andrew Davis <afd@ti.com>
->> ---
->>   drivers/remoteproc/Kconfig               |  13 +
->>   drivers/remoteproc/Makefile              |   1 +
->>   drivers/remoteproc/ti_k3_m4_remoteproc.c | 760 +++++++++++++++++++++++
->>   3 files changed, 774 insertions(+)
->>   create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
->>
->> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index 48845dc8fa852..1a7c0330c91a9 100644
->> --- a/drivers/remoteproc/Kconfig
->> +++ b/drivers/remoteproc/Kconfig
->> @@ -339,6 +339,19 @@ config TI_K3_DSP_REMOTEPROC
->>   	  It's safe to say N here if you're not interested in utilizing
->>   	  the DSP slave processors.
->>   
->> +config TI_K3_M4_REMOTEPROC
->> +	tristate "TI K3 M4 remoteproc support"
->> +	depends on ARCH_K3 || COMPILE_TEST
->> +	select MAILBOX
->> +	select OMAP2PLUS_MBOX
->> +	help
->> +	  Say m here to support TI's M4 remote processor subsystems
->> +	  on various TI K3 family of SoCs through the remote processor
->> +	  framework.
->> +
->> +	  It's safe to say N here if you're not interested in utilizing
->> +	  a remote processor.
->> +
->>   config TI_K3_R5_REMOTEPROC
->>   	tristate "TI K3 R5 remoteproc support"
->>   	depends on ARCH_K3
->> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->> index 91314a9b43cef..5ff4e2fee4abd 100644
->> --- a/drivers/remoteproc/Makefile
->> +++ b/drivers/remoteproc/Makefile
->> @@ -37,5 +37,6 @@ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
->>   obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
->>   obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
->>   obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
->> +obj-$(CONFIG_TI_K3_M4_REMOTEPROC)	+= ti_k3_m4_remoteproc.o
->>   obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
->>   obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
->> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->> new file mode 100644
->> index 0000000000000..880e8f0ad1ba3
->> --- /dev/null
->> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->> @@ -0,0 +1,760 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * TI K3 Cortex-M4 Remote Processor(s) driver
->> + *
->> + * Copyright (C) 2021-2024 Texas Instruments Incorporated - https://www.ti.com/
->> + *	Hari Nagalla <hnagalla@ti.com>
->> + */
->> +
->> +#include <linux/io.h>
->> +#include <linux/mailbox_client.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_reserved_mem.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/remoteproc.h>
->> +#include <linux/reset.h>
->> +#include <linux/slab.h>
->> +
->> +#include "omap_remoteproc.h"
->> +#include "remoteproc_internal.h"
->> +#include "ti_sci_proc.h"
->> +
->> +/**
->> + * struct k3_m4_rproc_mem - internal memory structure
->> + * @cpu_addr: MPU virtual address of the memory region
->> + * @bus_addr: Bus address used to access the memory region
->> + * @dev_addr: Device address of the memory region from remote processor view
->> + * @size: Size of the memory region
->> + */
->> +struct k3_m4_rproc_mem {
->> +	void __iomem *cpu_addr;
->> +	phys_addr_t bus_addr;
->> +	u32 dev_addr;
->> +	size_t size;
->> +};
->> +
->> +/**
->> + * struct k3_m4_rproc_mem_data - memory definitions for a remote processor
->> + * @name: name for this memory entry
->> + * @dev_addr: device address for the memory entry
->> + */
->> +struct k3_m4_rproc_mem_data {
->> +	const char *name;
->> +	const u32 dev_addr;
->> +};
->> +
->> +/**
->> + * struct k3_m4_rproc_dev_data - device data structure for a remote processor
->> + * @mems: pointer to memory definitions for a remote processor
->> + * @num_mems: number of memory regions in @mems
->> + */
->> +struct k3_m4_rproc_dev_data {
->> +	const struct k3_m4_rproc_mem_data *mems;
->> +	u32 num_mems;
->> +};
->> +
->> +/**
->> + * struct k3_m4_rproc - k3 remote processor driver structure
->> + * @dev: cached device pointer
->> + * @rproc: remoteproc device handle
->> + * @mem: internal memory regions data
->> + * @num_mems: number of internal memory regions
->> + * @rmem: reserved memory regions data
->> + * @num_rmems: number of reserved memory regions
->> + * @reset: reset control handle
->> + * @data: pointer to device data
->> + * @tsp: TI-SCI processor control handle
->> + * @ti_sci: TI-SCI handle
->> + * @ti_sci_id: TI-SCI device identifier
->> + * @mbox: mailbox channel handle
->> + * @client: mailbox client to request the mailbox channel
->> + */
->> +struct k3_m4_rproc {
->> +	struct device *dev;
->> +	struct rproc *rproc;
->> +	struct k3_m4_rproc_mem *mem;
->> +	int num_mems;
->> +	struct k3_m4_rproc_mem *rmem;
->> +	int num_rmems;
->> +	struct reset_control *reset;
->> +	const struct k3_m4_rproc_dev_data *data;
->> +	struct ti_sci_proc *tsp;
->> +	const struct ti_sci_handle *ti_sci;
->> +	u32 ti_sci_id;
->> +	struct mbox_chan *mbox;
->> +	struct mbox_client client;
->> +};
->> +
->> +/**
->> + * k3_m4_rproc_mbox_callback() - inbound mailbox message handler
->> + * @client: mailbox client pointer used for requesting the mailbox channel
->> + * @data: mailbox payload
->> + *
->> + * This handler is invoked by the K3 mailbox driver whenever a mailbox
->> + * message is received. Usually, the mailbox payload simply contains
->> + * the index of the virtqueue that is kicked by the remote processor,
->> + * and we let remoteproc core handle it.
->> + *
->> + * In addition to virtqueue indices, we also have some out-of-band values
->> + * that indicate different events. Those values are deliberately very
->> + * large so they don't coincide with virtqueue indices.
->> + */
->> +static void k3_m4_rproc_mbox_callback(struct mbox_client *client, void *data)
->> +{
->> +	struct k3_m4_rproc *kproc = container_of(client, struct k3_m4_rproc,
->> +						  client);
->> +	struct device *dev = kproc->rproc->dev.parent;
->> +	const char *name = kproc->rproc->name;
->> +	u32 msg = (u32)(uintptr_t)(data);
->> +
->> +	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->> +
->> +	switch (msg) {
->> +	case RP_MBOX_CRASH:
->> +		/*
->> +		 * remoteproc detected an exception, but error recovery is not
->> +		 * supported. So, just log this for now
->> +		 */
->> +		dev_err(dev, "K3 rproc %s crashed\n", name);
->> +		break;
->> +	case RP_MBOX_ECHO_REPLY:
->> +		dev_info(dev, "received echo reply from %s\n", name);
->> +		break;
->> +	default:
->> +		/* silently handle all other valid messages */
->> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
->> +			return;
->> +		if (msg > kproc->rproc->max_notifyid) {
->> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
->> +			return;
->> +		}
->> +		/* msg contains the index of the triggered vring */
->> +		if (rproc_vq_interrupt(kproc->rproc, msg) == IRQ_NONE)
->> +			dev_dbg(dev, "no message was found in vqid %d\n", msg);
->> +	}
->> +}
->> +
->> +/*
->> + * Kick the remote processor to notify about pending unprocessed messages.
->> + * The vqid usage is not used and is inconsequential, as the kick is performed
->> + * through a simulated GPIO (a bit in an IPC interrupt-triggering register),
->> + * the remote processor is expected to process both its Tx and Rx virtqueues.
->> + */
->> +static void k3_m4_rproc_kick(struct rproc *rproc, int vqid)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = rproc->dev.parent;
->> +	u32 msg = (u32)vqid;
->> +	int ret;
->> +
->> +	/*
->> +	 * Send the index of the triggered virtqueue in the mailbox payload.
->> +	 * NOTE: msg is cast to uintptr_t to prevent compiler warnings when
->> +	 * void* is 64bit. It is safely cast back to u32 in the mailbox driver.
->> +	 */
->> +	ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)msg);
->> +	if (ret < 0)
->> +		dev_err(dev, "failed to send mailbox message, status = %d\n",
->> +			ret);
->> +}
->> +
->> +/* Put the remote processor into reset */
->> +static int k3_m4_rproc_reset(struct k3_m4_rproc *kproc)
->> +{
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	ret = reset_control_assert(kproc->reset);
->> +	if (ret) {
->> +		dev_err(dev, "local-reset assert failed, ret = %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/* Release the remote processor from reset */
->> +static int k3_m4_rproc_release(struct k3_m4_rproc *kproc)
->> +{
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	ret = reset_control_deassert(kproc->reset);
->> +	if (ret) {
->> +		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int k3_m4_rproc_request_mbox(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct mbox_client *client = &kproc->client;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	client->dev = dev;
->> +	client->tx_done = NULL;
->> +	client->rx_callback = k3_m4_rproc_mbox_callback;
->> +	client->tx_block = false;
->> +	client->knows_txdone = false;
->> +
->> +	kproc->mbox = mbox_request_channel(client, 0);
->> +	if (IS_ERR(kproc->mbox)) {
->> +		ret = -EBUSY;
->> +		dev_err(dev, "mbox_request_channel failed: %ld\n",
->> +			PTR_ERR(kproc->mbox));
->> +		return ret;
->> +	}
->> +
->> +	/*
->> +	 * Ping the remote processor, this is only for sanity-sake for now;
->> +	 * there is no functional effect whatsoever.
->> +	 *
->> +	 * Note that the reply will _not_ arrive immediately: this message
->> +	 * will wait in the mailbox fifo until the remote processor is booted.
->> +	 */
->> +	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
->> +	if (ret < 0) {
->> +		dev_err(dev, "mbox_send_message failed: %d\n", ret);
->> +		mbox_free_channel(kproc->mbox);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * The M4 cores have a local reset that affects only the CPU, and a
->> + * generic module reset that powers on the device and allows the internal
->> + * memories to be accessed while the local reset is asserted. This function is
->> + * used to release the global reset on remote cores to allow loading into the
->> + * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
->> + * firmware loading, and is followed by the .start() ops after loading to
->> + * actually let the remote cores to run. This callback is invoked only in
->> + * remoteproc mode.
+> Just add an attach() that returns 0.
+
+Thanks, Ack.
+
 > 
-> The prepare() and unpreapre() callbacks are called invariably, i.e whether the
-> remote processor is started by an external entity of the kernel.  As such
-> the last statement of the above comment - and the one for
-> k3_m4_rproc_unprepare() - are erroneous.
+>> 
+>> >>  	}
+>> >>  
+>> >>  	ret = add_mem_regions_carveout(rproc);
+>> >> @@ -662,6 +699,120 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+>> >>  	return 0;
+>> >>  }
+>> >>  
+>> >> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
+>> >> +							     size_t *size)
+>> >> +{
+>> >> +	struct zynqmp_r5_core *r5_core;
+>> >> +
+>> >> +	r5_core = rproc->priv;
+>> >> +
+>> >> +	*size = r5_core->rsc_tbl_size;
+>> >> +
+>> >> +	return (struct resource_table *)r5_core->rsc_tbl_va;
+>> >> +}
+>> >> +
+>> >> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+>> >> +{
+>> >> +	struct resource_table *rsc_tbl_addr;
+>> >> +	struct device *dev = r5_core->dev;
+>> >> +	struct rsc_tbl_data *rsc_data_va;
+>> >> +	struct resource res_mem;
+>> >> +	struct device_node *np;
+>> >> +	int ret;
+>> >> +
+>> >> +	/*
+>> >> +	 * It is expected from remote processor firmware to provide resource
+>> >> +	 * table address via struct rsc_tbl_data data structure.
+>> >> +	 * Start address of first entry under "memory-region" property list
+>> >> +	 * contains that data structure which holds resource table address, size
+>> >> +	 * and some magic number to validate correct resource table entry.
+>> >> +	 */
+>> >> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
+>> >> +	if (!np) {
+>> >> +		dev_err(dev, "failed to get memory region dev node\n");
+>> >> +		return -EINVAL;
+>> >> +	}
+>> >> +
+>> >> +	ret = of_address_to_resource(np, 0, &res_mem);
+>> > 
+>> > Shouldn't an of_put_node() be added right here?
+>> 
+>> Usually function documentation explicitly ask if it is needed. I will check
+>> and add if required. I will also check any other references in kernel.
+>> 
 > 
-> I am almost done reviewing this set, something I will do tomorrow.  If I don't
-> find any issues and the DT modifications come back clean, should I fix the
-> comments or you'd rather send another revision?
+> You need to release @np acquired by of_parse_phandle() above.
 > 
 
-If no other changes end up being needed, please feel free to fix the comments.
+Yes I missed that part. I was looking at of_address_to_resource documentation.
+Thanks.
 
-Thanks,
-Andrew
-
-> Thanks,
-> Mathieu
+>> > 
+>> >> +	if (ret) {
+>> >> +		dev_err(dev, "failed to get memory-region resource addr\n");
+>> >> +		return -EINVAL;
+>> >> +	}
+>> >> +
+>> >> +	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
+>> >> +							sizeof(struct rsc_tbl_data));
+>> >> +	if (!rsc_data_va) {
+>> >> +		dev_err(dev, "failed to map resource table data address\n");
+>> >> +		return -EIO;
+>> >> +	}
+>> >> +
+>> >> +	/*
+>> >> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
+>> >> +	 * do not consider resource table address valid and don't attach
+>> >> +	 */
+>> >> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
+>> >> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
+>> >> +		dev_dbg(dev, "invalid magic number, won't attach\n");
+>> >> +		return -EINVAL;
+>> >> +	}
+>> >> +
+>> >> +	r5_core->rsc_tbl_va = ioremap_wc(rsc_data_va->rsc_tbl,
+>> >> +					 rsc_data_va->rsc_tbl_size);
+>> >> +	if (!r5_core->rsc_tbl_va) {
+>> >> +		dev_err(dev, "failed to get resource table va\n");
+>> >> +		return -EINVAL;
+>> >> +	}
+>> >> +
+>> >> +	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
+>> >> +
+>> >> +	/*
+>> >> +	 * As of now resource table version 1 is expected. Don't fail to attach
+>> >> +	 * but warn users about it.
+>> >> +	 */
+>> >> +	if (rsc_tbl_addr->ver != 1)
+>> >> +		dev_warn(dev, "unexpected resource table version %d\n",
+>> >> +			 rsc_tbl_addr->ver);
+>> >> +
+>> >> +	iounmap((void __iomem *)rsc_data_va);
+>> >> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
+>> >> +
+>> > 
+>> > Can you spot the problem here?
+>> 
+>> Ah! It's like use-after-free problem. Address should have been unmapped
+>> at then end of the function. Surprisingly My test passed on platform, so I
+>> didn't pay attention. This will be fixed in next revision.
 > 
->> + */
->> +static int k3_m4_rproc_prepare(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	/* If the core is running already no need to deassert the module reset */
->> +	if (rproc->state == RPROC_DETACHED)
->> +		return 0;
->> +
->> +	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->> +						    kproc->ti_sci_id);
->> +	if (ret) {
->> +		dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * This function implements the .unprepare() ops and performs the complimentary
->> + * operations to that of the .prepare() ops. The function is used to assert the
->> + * global reset on applicable cores. This completes the second portion of
->> + * powering down the remote core. The cores themselves are only halted in the
->> + * .stop() callback through the local reset, and the .unprepare() ops is invoked
->> + * by the remoteproc core after the remoteproc is stopped to balance the global
->> + * reset. This callback is invoked only in remoteproc mode.
->> + */
->> +static int k3_m4_rproc_unprepare(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	/* If the core is going to be detached do not assert the module reset */
->> +	if (rproc->state == RPROC_ATTACHED)
->> +		return 0;
->> +
->> +	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +						    kproc->ti_sci_id);
->> +	if (ret) {
->> +		dev_err(dev, "module-reset assert failed\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * This function implements the .get_loaded_rsc_table() callback and is used
->> + * to provide the resource table for a booted remote processor in IPC-only
->> + * mode. The remote processor firmwares follow a design-by-contract approach
->> + * and are expected to have the resource table at the base of the DDR region
->> + * reserved for firmware usage. This provides flexibility for the remote
->> + * processor to be booted by different bootloaders that may or may not have the
->> + * ability to publish the resource table address and size through a DT
->> + * property.
->> + */
->> +static struct resource_table *k3_m4_get_loaded_rsc_table(struct rproc *rproc,
->> +							 size_t *rsc_table_sz)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = kproc->dev;
->> +
->> +	if (!kproc->rmem[0].cpu_addr) {
->> +		dev_err(dev, "memory-region #1 does not exist, loaded rsc table can't be found");
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->> +
->> +	/*
->> +	 * NOTE: The resource table size is currently hard-coded to a maximum
->> +	 * of 256 bytes. The most common resource table usage for K3 firmwares
->> +	 * is to only have the vdev resource entry and an optional trace entry.
->> +	 * The exact size could be computed based on resource table address, but
->> +	 * the hard-coded value suffices to support the IPC-only mode.
->> +	 */
->> +	*rsc_table_sz = 256;
->> +	return (__force struct resource_table *)kproc->rmem[0].cpu_addr;
->> +}
->> +
->> +/*
->> + * Custom function to translate a remote processor device address (internal
->> + * RAMs only) to a kernel virtual address.  The remote processors can access
->> + * their RAMs at either an internal address visible only from a remote
->> + * processor, or at the SoC-level bus address. Both these addresses need to be
->> + * looked through for translation. The translated addresses can be used either
->> + * by the remoteproc core for loading (when using kernel remoteproc loader), or
->> + * by any rpmsg bus drivers.
->> + */
->> +static void *k3_m4_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	void __iomem *va = NULL;
->> +	phys_addr_t bus_addr;
->> +	u32 dev_addr, offset;
->> +	size_t size;
->> +	int i;
->> +
->> +	if (len == 0)
->> +		return NULL;
->> +
->> +	for (i = 0; i < kproc->num_mems; i++) {
->> +		bus_addr = kproc->mem[i].bus_addr;
->> +		dev_addr = kproc->mem[i].dev_addr;
->> +		size = kproc->mem[i].size;
->> +
->> +		/* handle M4-view addresses */
->> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
->> +			offset = da - dev_addr;
->> +			va = kproc->mem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +
->> +		/* handle SoC-view addresses */
->> +		if (da >= bus_addr && ((da + len) <= (bus_addr + size))) {
->> +			offset = da - bus_addr;
->> +			va = kproc->mem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +	}
->> +
->> +	/* handle static DDR reserved memory regions */
->> +	for (i = 0; i < kproc->num_rmems; i++) {
->> +		dev_addr = kproc->rmem[i].dev_addr;
->> +		size = kproc->rmem[i].size;
->> +
->> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
->> +			offset = da - dev_addr;
->> +			va = kproc->rmem[i].cpu_addr + offset;
->> +			return (__force void *)va;
->> +		}
->> +	}
->> +
->> +	return NULL;
->> +}
->> +
->> +static int k3_m4_rproc_of_get_memories(struct platform_device *pdev,
->> +				       struct k3_m4_rproc *kproc)
->> +{
->> +	const struct k3_m4_rproc_dev_data *data = kproc->data;
->> +	struct device *dev = &pdev->dev;
->> +	struct resource *res;
->> +	int num_mems = 0;
->> +	int i;
->> +
->> +	num_mems = kproc->data->num_mems;
->> +	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
->> +				  sizeof(*kproc->mem), GFP_KERNEL);
->> +	if (!kproc->mem)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < num_mems; i++) {
->> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->> +						   data->mems[i].name);
->> +		if (!res) {
->> +			dev_err(dev, "found no memory resource for %s\n",
->> +				data->mems[i].name);
->> +			return -EINVAL;
->> +		}
->> +		if (!devm_request_mem_region(dev, res->start,
->> +					     resource_size(res),
->> +					     dev_name(dev))) {
->> +			dev_err(dev, "could not request %s region for resource\n",
->> +				data->mems[i].name);
->> +			return -EBUSY;
->> +		}
->> +
->> +		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
->> +							 resource_size(res));
->> +		if (!kproc->mem[i].cpu_addr) {
->> +			dev_err(dev, "failed to map %s memory\n",
->> +				data->mems[i].name);
->> +			return -ENOMEM;
->> +		}
->> +		kproc->mem[i].bus_addr = res->start;
->> +		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
->> +		kproc->mem[i].size = resource_size(res);
->> +
->> +		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
->> +			data->mems[i].name, &kproc->mem[i].bus_addr,
->> +			kproc->mem[i].size, kproc->mem[i].cpu_addr,
->> +			kproc->mem[i].dev_addr);
->> +	}
->> +	kproc->num_mems = num_mems;
->> +
->> +	return 0;
->> +}
->> +
->> +static void k3_m4_rproc_dev_mem_release(void *data)
->> +{
->> +	struct device *dev = data;
->> +
->> +	of_reserved_mem_device_release(dev);
->> +}
->> +
->> +static int k3_m4_reserved_mem_init(struct k3_m4_rproc *kproc)
->> +{
->> +	struct device *dev = kproc->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *rmem_np;
->> +	struct reserved_mem *rmem;
->> +	int num_rmems;
->> +	int ret, i;
->> +
->> +	num_rmems = of_property_count_elems_of_size(np, "memory-region",
->> +						    sizeof(phandle));
->> +	if (num_rmems < 0) {
->> +		dev_err(dev, "device does not reserved memory regions (%d)\n",
->> +			num_rmems);
->> +		return -EINVAL;
->> +	}
->> +	if (num_rmems < 2) {
->> +		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
->> +			num_rmems);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* use reserved memory region 0 for vring DMA allocations */
->> +	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
->> +	if (ret) {
->> +		dev_err(dev, "device cannot initialize DMA pool (%d)\n", ret);
->> +		return ret;
->> +	}
->> +	ret = devm_add_action_or_reset(dev, k3_m4_rproc_dev_mem_release, dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	num_rmems--;
->> +	kproc->rmem = devm_kcalloc(dev, num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
->> +	if (!kproc->rmem)
->> +		return -ENOMEM;
->> +
->> +	/* use remaining reserved memory regions for static carveouts */
->> +	for (i = 0; i < num_rmems; i++) {
->> +		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
->> +		if (!rmem_np)
->> +			return -EINVAL;
->> +
->> +		rmem = of_reserved_mem_lookup(rmem_np);
->> +		if (!rmem) {
->> +			of_node_put(rmem_np);
->> +			return -EINVAL;
->> +		}
->> +		of_node_put(rmem_np);
->> +
->> +		kproc->rmem[i].bus_addr = rmem->base;
->> +		/* 64-bit address regions currently not supported */
->> +		kproc->rmem[i].dev_addr = (u32)rmem->base;
->> +		kproc->rmem[i].size = rmem->size;
->> +		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
->> +		if (!kproc->rmem[i].cpu_addr) {
->> +			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
->> +				i + 1, &rmem->base, &rmem->size);
->> +			return -ENOMEM;
->> +		}
->> +
->> +		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
->> +			i + 1, &kproc->rmem[i].bus_addr,
->> +			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
->> +			kproc->rmem[i].dev_addr);
->> +	}
->> +	kproc->num_rmems = num_rmems;
->> +
->> +	return 0;
->> +}
->> +
->> +static struct ti_sci_proc *k3_m4_rproc_of_get_tsp(struct device *dev,
->> +						  const struct ti_sci_handle *sci)
->> +{
->> +	struct ti_sci_proc *tsp;
->> +	u32 temp[2];
->> +	int ret;
->> +
->> +	ret = of_property_read_u32_array(dev->of_node, "ti,sci-proc-ids",
->> +					 temp, 2);
->> +	if (ret < 0)
->> +		return ERR_PTR(ret);
->> +
->> +	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
->> +	if (!tsp)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	tsp->dev = dev;
->> +	tsp->sci = sci;
->> +	tsp->ops = &sci->ops.proc_ops;
->> +	tsp->proc_id = temp[0];
->> +	tsp->host_id = temp[1];
->> +
->> +	return tsp;
->> +}
->> +
->> +static void k3_m4_release_tsp(void *data)
->> +{
->> +	struct ti_sci_proc *tsp = data;
->> +
->> +	ti_sci_proc_release(tsp);
->> +}
->> +
->> +/*
->> + * Power up the M4F remote processor.
->> + *
->> + * This function will be invoked only after the firmware for this rproc
->> + * was loaded, parsed successfully, and all of its resource requirements
->> + * were met. This callback is invoked only in remoteproc mode.
->> + */
->> +static int k3_m4_rproc_start(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	int ret;
->> +
->> +	ret = k3_m4_rproc_request_mbox(rproc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = k3_m4_rproc_release(kproc);
->> +	if (ret)
->> +		goto put_mbox;
->> +
->> +	return 0;
->> +
->> +put_mbox:
->> +	mbox_free_channel(kproc->mbox);
->> +	return ret;
->> +}
->> +
->> +/*
->> + * Stop the M4 remote processor.
->> + *
->> + * This function puts the M4 processor into reset, and finishes processing
->> + * of any pending messages. This callback is invoked only in remoteproc mode.
->> + */
->> +static int k3_m4_rproc_stop(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +
->> +	mbox_free_channel(kproc->mbox);
->> +
->> +	k3_m4_rproc_reset(kproc);
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * Attach to a running M4 remote processor (IPC-only mode)
->> + *
->> + * This rproc attach callback only needs to request the mailbox, the remote
->> + * processor is already booted, so there is no need to issue any TI-SCI
->> + * commands to boot the M4 core. This callback is used only in IPC-only mode.
->> + */
->> +static int k3_m4_rproc_attach(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = kproc->dev;
->> +	int ret;
->> +
->> +	ret = k3_m4_rproc_request_mbox(rproc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	dev_info(dev, "M4 initialized in IPC-only mode\n");
->> +	return 0;
->> +}
->> +
->> +/*
->> + * Detach from a running M4 remote processor (IPC-only mode)
->> + *
->> + * This rproc detach callback performs the opposite operation to attach callback
->> + * and only needs to release the mailbox, the M4 core is not stopped and will
->> + * be left to continue to run its booted firmware. This callback is invoked only in
->> + * IPC-only mode.
->> + */
->> +static int k3_m4_rproc_detach(struct rproc *rproc)
->> +{
->> +	struct k3_m4_rproc *kproc = rproc->priv;
->> +	struct device *dev = kproc->dev;
->> +
->> +	mbox_free_channel(kproc->mbox);
->> +	dev_info(dev, "M4 deinitialized in IPC-only mode\n");
->> +	return 0;
->> +}
->> +
->> +static const struct rproc_ops k3_m4_rproc_ops = {
->> +	.prepare = k3_m4_rproc_prepare,
->> +	.unprepare = k3_m4_rproc_unprepare,
->> +	.start = k3_m4_rproc_start,
->> +	.stop = k3_m4_rproc_stop,
->> +	.attach = k3_m4_rproc_attach,
->> +	.detach = k3_m4_rproc_detach,
->> +	.kick = k3_m4_rproc_kick,
->> +	.da_to_va = k3_m4_rproc_da_to_va,
->> +	.get_loaded_rsc_table = k3_m4_get_loaded_rsc_table,
->> +};
->> +
->> +static int k3_m4_rproc_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	const struct k3_m4_rproc_dev_data *data;
->> +	struct k3_m4_rproc *kproc;
->> +	struct rproc *rproc;
->> +	const char *fw_name;
->> +	bool r_state = false;
->> +	bool p_state = false;
->> +	int ret = 0;
->> +
->> +	data = device_get_match_data(dev);
->> +	if (!data)
->> +		return -ENODEV;
->> +
->> +	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to parse firmware-name property\n");
->> +
->> +	rproc = devm_rproc_alloc(dev, dev_name(dev), &k3_m4_rproc_ops, fw_name,
->> +				 sizeof(*kproc));
->> +	if (!rproc)
->> +		return -ENOMEM;
->> +
->> +	rproc->has_iommu = false;
->> +	rproc->recovery_disabled = true;
->> +	kproc = rproc->priv;
->> +	kproc->rproc = rproc;
->> +	kproc->dev = dev;
->> +	kproc->data = data;
->> +
->> +	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
->> +	if (IS_ERR(kproc->ti_sci))
->> +		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
->> +				     "failed to get ti-sci handle\n");
->> +
->> +	ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "missing 'ti,sci-dev-id' property\n");
->> +
->> +	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
->> +	if (IS_ERR(kproc->reset))
->> +		return dev_err_probe(dev, PTR_ERR(kproc->reset), "failed to get reset\n");
->> +
->> +	kproc->tsp = k3_m4_rproc_of_get_tsp(dev, kproc->ti_sci);
->> +	if (IS_ERR(kproc->tsp))
->> +		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
->> +				     "failed to construct ti-sci proc control\n");
->> +
->> +	ret = ti_sci_proc_request(kproc->tsp);
->> +	if (ret < 0)
->> +		return dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
->> +	ret = devm_add_action_or_reset(dev, k3_m4_release_tsp, kproc->tsp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = k3_m4_rproc_of_get_memories(pdev, kproc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = k3_m4_reserved_mem_init(kproc);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "reserved memory init failed\n");
->> +
->> +	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
->> +					       &r_state, &p_state);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "failed to get initial state, mode cannot be determined\n");
->> +
->> +	/* configure devices for either remoteproc or IPC-only mode */
->> +	if (p_state) {
->> +		rproc->state = RPROC_DETACHED;
->> +		dev_info(dev, "configured M4 for IPC-only mode\n");
->> +	} else {
->> +		/*
->> +		 * ensure the M4 local reset is asserted to ensure the core
->> +		 * doesn't execute bogus code in .prepare() when the module
->> +		 * reset is released.
->> +		 */
->> +		ret = reset_control_status(kproc->reset);
->> +		if (ret < 0) {
->> +			return dev_err_probe(dev, ret, "failed to get reset status\n");
->> +		} else if (ret == 0) {
->> +			dev_warn(dev, "local reset is deasserted for device\n");
->> +			k3_m4_rproc_reset(kproc);
->> +		}
->> +		dev_info(dev, "configured M4 for remoteproc mode\n");
->> +	}
->> +
->> +	ret = devm_rproc_add(dev, rproc);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "failed to add register device with remoteproc core\n");
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct k3_m4_rproc_mem_data am64_m4_mems[] = {
->> +	{ .name = "iram", .dev_addr = 0x0 },
->> +	{ .name = "dram", .dev_addr = 0x30000 },
->> +};
->> +
->> +static const struct k3_m4_rproc_dev_data am64_m4_data = {
->> +	.mems = am64_m4_mems,
->> +	.num_mems = ARRAY_SIZE(am64_m4_mems),
->> +};
->> +
->> +static const struct of_device_id k3_m4_of_match[] = {
->> +	{ .compatible = "ti,am64-m4fss", .data = &am64_m4_data, },
->> +	{ /* sentinel */ },
->> +};
->> +MODULE_DEVICE_TABLE(of, k3_m4_of_match);
->> +
->> +static struct platform_driver k3_m4_rproc_driver = {
->> +	.probe	= k3_m4_rproc_probe,
->> +	.driver	= {
->> +		.name = "k3-m4-rproc",
->> +		.of_match_table = k3_m4_of_match,
->> +	},
->> +};
->> +module_platform_driver(k3_m4_rproc_driver);
->> +
->> +MODULE_AUTHOR("Hari Nagalla <hnagalla@ti.com>");
->> +MODULE_DESCRIPTION("TI K3 M4 Remoteproc driver");
->> +MODULE_LICENSE("GPL");
->> -- 
->> 2.39.2
->>
+> I'm also surprised - this should have blown up.
+> 
+>> 
+>> Thanks,
+>> Tanmay
+>> 
+>> > 
+>> > Thanks,
+>> > Mathieu
+>> > 
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static int zynqmp_r5_attach(struct rproc *rproc)
+>> >> +{
+>> >> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+>> >> +	int i, pm_domain_id, ret;
+>> >> +
+>> >> +	/*
+>> >> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
+>> >> +	 * platform management controller that TCM is in use. This will be
+>> >> +	 * released during unprepare callback.
+>> >> +	 */
+>> >> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+>> >> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+>> >> +		ret = zynqmp_pm_request_node(pm_domain_id,
+>> >> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+>> >> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+>> >> +		if (ret < 0)
+>> >> +			pr_warn("TCM %d can't be requested\n", i);
+>> >> +	}
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static int zynqmp_r5_detach(struct rproc *rproc)
+>> >> +{
+>> >> +	/*
+>> >> +	 * Generate last notification to remote after clearing virtio flag.
+>> >> +	 * Remote can avoid polling on virtio reset flag if kick is generated
+>> >> +	 * during detach by host and check virtio reset flag on kick interrupt.
+>> >> +	 */
+>> >> +	zynqmp_r5_rproc_kick(rproc, 0);
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>> >>  	.prepare	= zynqmp_r5_rproc_prepare,
+>> >>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+>> >> @@ -673,6 +824,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>> >>  	.sanity_check	= rproc_elf_sanity_check,
+>> >>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>> >>  	.kick		= zynqmp_r5_rproc_kick,
+>> >> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+>> >> +	.attach		= zynqmp_r5_attach,
+>> >> +	.detach		= zynqmp_r5_detach,
+>> >>  };
+>> >>  
+>> >>  /**
+>> >> @@ -723,6 +877,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>> >>  		goto free_rproc;
+>> >>  	}
+>> >>  
+>> >> +	/*
+>> >> +	 * If firmware is already available in the memory then move rproc state
+>> >> +	 * to DETACHED. Firmware can be preloaded via debugger or by any other
+>> >> +	 * agent (processors) in the system.
+>> >> +	 * If firmware isn't available in the memory and resource table isn't
+>> >> +	 * found, then rproc state remains OFFLINE.
+>> >> +	 */
+>> >> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
+>> >> +		r5_rproc->state = RPROC_DETACHED;
+>> >> +
+>> >>  	r5_core->rproc = r5_rproc;
+>> >>  	return r5_core;
+>> >>  
+>> >> @@ -1134,6 +1298,7 @@ static void zynqmp_r5_cluster_exit(void *data)
+>> >>  	for (i = 0; i < cluster->core_count; i++) {
+>> >>  		r5_core = cluster->r5_cores[i];
+>> >>  		zynqmp_r5_free_mbox(r5_core->ipi);
+>> >> +		iounmap(r5_core->rsc_tbl_va);
+>> >>  		of_reserved_mem_device_release(r5_core->dev);
+>> >>  		put_device(r5_core->dev);
+>> >>  		rproc_del(r5_core->rproc);
+>> >> 
+>> >> base-commit: d7faf9a16886a748c9dd4063ea897f1e68b412f2
+>> >> -- 
+>> >> 2.37.6
+>> >> 
+>> 
+
