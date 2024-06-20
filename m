@@ -1,72 +1,69 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381E47FBBD
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 21:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12FA78C8C
+	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 21:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718918945; cv=none; b=fGt4SQQJQ5D6acQbnLCwy3OIlKGtp5vRuAgjpkZRPRdfZp6HvITOQwE/n/mNkNXedjT7YSnic+UE2Lv0ycgv0zGnzgiTYl7L4w4FHg7IeIAMxaWawCN6j0OVhIpH52ydy6s48FBeh7dsOzAa9qbgekwUzqc3vt/ih9WS2w8zb4c=
+	t=1718919540; cv=none; b=SrCD2C7DRByD+xntLAkbpDA8EhYS6BYQfc6S3baJ/zyN0FNtjQPobHj86CaQ54qZfCot42bh4KI5eGunBfBsGGjYfnXrvEUBBR1E+SWGvaWerV8SeLtH1yMyp9AngQxhKs8L9ZlDJDzWz9kW0d0Rkoaeke7n56npfgVg6L/vo2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718918945; c=relaxed/simple;
-	bh=0/zeAXqfW2oltaDHEjTacTvAs02fOUXZz68GM++pw3Q=;
+	s=arc-20240116; t=1718919540; c=relaxed/simple;
+	bh=R+gP8GWTKEf6vW2sVTmz7saJ84W+0KRqig3G9hZeYTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gilYgbMldD4bnNn/lR8EFYujRRsk4OZcnkoFdhxQG/KWbKnbDBFBIPjNq+pnvyrCt4qB3NsBAEJJE/Q2NBgRQZ1b/rKvh6kqTJ0Or3WeVU8mFPZIkSFXe3C3H3mRsl/e63hhShdFKy1AFZaLUACaqvpsAUgazMk0jI6bHrCA95U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M4mGa7f2; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=gC6AKrSnIzM3FXfboSiHq0bRp3Hnr4VriND7x+pyZW5Dv7opqaNVg+8cb1L9tZKgjnOn9nKRyGyW0/JlB5LgCjTpPUuPurM20YJtR+gHgNp5rhMSt49gCP1yIJ+7/XH8tQJk+S+E6UqfnoltyzTtU2I3nhbniaiKYpzq3qqSJ6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xf6bmuRc; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M4mGa7f2"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f9e5fb4845so307405ad.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 14:29:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xf6bmuRc"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so16828641fa.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 14:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718918942; x=1719523742; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718919537; x=1719524337; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1B8n/9x5UV/1SNK0e2sD4WDigveg5fhKDxICWDMhEd8=;
-        b=M4mGa7f2BJBaZHF6/cHaV7Xs2f4h/ngSLZew7tIUBHEgLEGg5sFs12ieQTCekvC17B
-         RTbSSDLKHC1/y+Vb8/VIxE/ope3mLAoXZxRpbiHi4HvWl8IjEEG8RqUKOO7xwBURjK76
-         rC79c+NiWZCtHuC0AQo3GSTXFg/vSBXhM05K7db9FjDJ2zjzvk4ADnznMivvAdEkcjyt
-         tA1gtPVRbH3uMIolgtDI71J7u6Nq2gJOmLzn49W1schMvyBuZaXs802z7Yuc+EPG1pAu
-         YvewnSj5yL44HELxxO42LMlwddtPw5ytxGdlrTTvkYIxBD1pLGYVP8nRjJvcK2B6pAYM
-         RFfA==
+        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
+        b=Xf6bmuRcIBSs6UIqrNKcuq6P1dkrjnFFEEe3i1cW2OADRLdsH+CnUKg3he6BG3fMAL
+         owLPQ8VqHXKBH8STQfZwQ/NgPSHEQsHBBb69E76Pel9XIboU0ls1aNSsnkiMNy9hyWg/
+         syOltxdCh7IYypo88M0X88oYisqlBQwde7eWQHLVMHgKDHf1+goUOOthqayXVzI4E/5x
+         3jKgDvf+SR+DwccenD+JohCVgk7ZKBqpphNpmYQ4D/xtJgoiXtzuUMSABNA+2mAjMe+R
+         AymCQ2tyzPzkVo3k2z0VfD0h682YGNWrYTPTejVaI3kD0XI+I9BR7PzuAEboxPGMoXHt
+         pXtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718918942; x=1719523742;
+        d=1e100.net; s=20230601; t=1718919537; x=1719524337;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1B8n/9x5UV/1SNK0e2sD4WDigveg5fhKDxICWDMhEd8=;
-        b=BHRSRLQGv0FQKVgJBcvsCcJcyQH3Wh0TtbLmwDF7PmnLOlT9gqXMf5rcI6TbBF+GEm
-         iFgvT+toaP7hB66PKV+POmvu7RLZTP7QyVsyJbZFNx7Wj8CqDTB8juhs786Kek2Le9rs
-         C2/6sLkv8GWhfAiluLHm4+6xWZsW3xn+aRUPx6VazGlCrll4jw8I89EkXCRWXWC+U6lq
-         oU0fA7faYqORQ9xG5h4PtPRp2t4tlAEz/cJDKrWbPon8CjOLmv72H7Fh/yX217Ym7Npj
-         Zl7CSv5FXcUujs5AY0hu9Qte+2IrzTyxcAfeCLg0qQn2rymjzxAW6MMFKIagG1Rz42Zs
-         YOGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDl8KqgdTxHo3Drf5wprdqJcU0NJaq9+S6+Bl+wM6udblBWq+hjBs/Q08FcvIiCbasTjjw2652euO0bBVnxu+Dws984ae4DA3Mv1q7weJszg==
-X-Gm-Message-State: AOJu0YwY1aWFmVoxk89sEsJK3l4HeG+5CFYOhrPQpUO3yq3vOLxbgETH
-	al+GnRnS+KfMCFcH1c/mU2FFtLT5QZAVMLhhPBuqTrx4n5g8bC5OZUKXZr34X0E=
-X-Google-Smtp-Source: AGHT+IGRZRV15RUYJQ36Wvbuz7tQOaEP3gRrX62dbm+NaihBOC+cfum9DmWH761VwwydaedMpum6CQ==
-X-Received: by 2002:a17:902:daca:b0:1f8:66fb:1679 with SMTP id d9443c01a7336-1f9a9274fb1mr93302075ad.30.1718918942421;
-        Thu, 20 Jun 2024 14:29:02 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800::9eba])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbbc1cbsm698255ad.282.2024.06.20.14.29.00
+        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
+        b=FAkfIfzSe6/jZCsTbYbnW0bvkIUb1M2pqrqEIAlnY9Y/dvXAed45HYlmD1e3dyyLaV
+         bLqa/EdKNy/QH7lNwL1S8eKWfGVi9+aErlTyAKnzX3VmMyOUAyOIeeCddnNB3dtACdd3
+         zKpVVJ7yQi1KQyq3DKDU58Z6LE1OkIJDxCn5jNT4udTFaqP6nN9iCNInRw2g2oEdu6q1
+         KO2MdnFgv5kiOoXEIljr0RoUyHqy0h8Cm8Oqd6pS5k0omQkVR2NjVvf7/04c7xwOtN4c
+         L1VJmGh67O1lKBUwX/9fcyeZca7Q0uPm0X1GYC7u6QBxffu8ZeHdPTmpaz/teoLv8I1O
+         lQWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlJnWSyfpp9WYae/U7JKaK7AxpzobB7sRZgsyMd1lIgqFaHEOdXE1iJRHtcigL3NciEjYPXjuSDfYbcGGW3TVk0Sqk4W2BgDea76WaiCgWuA==
+X-Gm-Message-State: AOJu0YyWYKUwz2nTsmYtiFtDLVpYaUxk0Ur5YZekVCQk2EY8Ru4WaMAf
+	aM5SL8hlpoLJIPOw0nt8wH417u1hw2rl52GfRYlp8KazXB1JuRqo4pyVVpjsmNw=
+X-Google-Smtp-Source: AGHT+IHiMxxgvNQOz2qJ9dqor7EtzwDmQRBfBf4gn70dlQm9/1P3yzhIJXB4quhP1LKkp/I04wrZuA==
+X-Received: by 2002:a2e:914b:0:b0:2ec:1c9:badb with SMTP id 38308e7fff4ca-2ec3ce7dcd8mr44568761fa.9.1718919537058;
+        Thu, 20 Jun 2024 14:38:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d7090f2sm319011fa.56.2024.06.20.14.38.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 14:29:01 -0700 (PDT)
-Date: Thu, 20 Jun 2024 15:28:58 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] remoteproc: core: Introduce rproc_pa_to_va helper
-Message-ID: <ZnSfGkcjxr/4qJn/@p14s>
-References: <20240611073904.475019-1-arnaud.pouliquen@foss.st.com>
- <20240611073904.475019-2-arnaud.pouliquen@foss.st.com>
+        Thu, 20 Jun 2024 14:38:56 -0700 (PDT)
+Date: Fri, 21 Jun 2024 00:38:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Melody Olvera <quic_molvera@quicinc.com>
+Subject: Re: [PATCH v3 2/4] remoteproc: qcom: q6v5: Add support for q6 rmb
+ registers
+Message-ID: <o6aqjxyinwowtexwsucavwfqylx3wv3sihxvla442kskzqprbr@37rfxxzwsolg>
+References: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
+ <20240620120143.12375-3-quic_kbajaj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -75,157 +72,74 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611073904.475019-2-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20240620120143.12375-3-quic_kbajaj@quicinc.com>
 
-On Tue, Jun 11, 2024 at 09:39:00AM +0200, Arnaud Pouliquen wrote:
-> When a resource table is loaded by an external entity such as U-boot or
-> OP-TEE, we do not necessary get the device address(da) but the physical
-
-s/necessary/necessarily
-
-> address(pa).
-> This helper performs similar translation than the rproc_da_to_va()
-> but based on a physical address.
+On Thu, Jun 20, 2024 at 05:31:41PM GMT, Komal Bajaj wrote:
+> From: Melody Olvera <quic_molvera@quicinc.com>
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> When attaching a running Q6, the remoteproc driver needs a way
+> to communicate with the Q6 using rmb registers, so allow the
+> rmb register to be gotten from the device tree if present.
+
+rmb or RMB? And what is it?
+
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 74 +++++++++++++++++++++++++++-
->  include/linux/remoteproc.h           |  3 ++
->  2 files changed, 75 insertions(+), 2 deletions(-)
+>  drivers/remoteproc/qcom_q6v5.h     | 8 ++++++++
+>  drivers/remoteproc/qcom_q6v5_pas.c | 4 ++++
+>  2 files changed, 12 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..3fdec0336fd6 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -230,6 +230,77 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  }
->  EXPORT_SYMBOL(rproc_da_to_va);
->  
-> +/**
-> + * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
-> + * memory
-> + *
-> + * @rproc: handle of a remote processor
-> + * @pa: remoteproc physical address
-> + * @len: length of the memory region @pa is pointing to
-> + * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
-> + *
-> + * Some remote processors will ask us to allocate them physically contiguous
-> + * memory regions (which we call "carveouts"), and map them to specific
-> + * device addresses (which are hardcoded in the firmware). They may also have
-> + * dedicated memory regions internal to the processors, and use them either
-> + * exclusively or alongside carveouts.
-> + *
-> + * They may then ask us to copy objects into specific addresses (e.g.
-> + * code/data sections) or expose us certain symbols in other device address
-> + * (e.g. their trace buffer).
-> + *
-> + * This function is a helper function with which we can go over the allocated
-> + * carveouts and translate specific physical addresses to kernel virtual addresses
-> + * so we can access the referenced memory. This function also allows to perform
-> + * translations on the internal remoteproc memory regions through a platform
-> + * implementation specific pa_to_va ops, if present.
-> + *
-> + * Note: phys_to_virt(iommu_iova_to_phys(rproc->domain, da)) will work too,
-> + * but only on kernel direct mapped RAM memory. Instead, we're just using
-> + * here the output of the DMA API for the carveouts, which should be more
-> + * correct.
-
-No point in copying all this.  Just say that it does the same thing as
-rproc_da_to_va(), but with the PA address.
-
-> + *
-> + * Return: a valid kernel address on success or NULL on failure
-> + */
-> +void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
-> +{
-> +	struct rproc_mem_entry *carveout;
-> +	void *ptr = NULL;
-> +
-> +	if (rproc->ops->da_to_va) {
-
-This is really wrong.
-
-> +		ptr = rproc->ops->pa_to_va(rproc, pa, len);
-> +		if (ptr)
-> +			goto out;
-> +	}
-
-There is no current customer for ops::pa_to_va() so please remove.
-
-Thanks,
-Mathieu
-
-> +
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		int offset = pa - carveout->dma;
-> +
-> +		/*  Verify that carveout is allocated */
-> +		if (!carveout->va)
-> +			continue;
-> +
-> +		/* try next carveout if da is too small */
-> +		if (offset < 0)
-> +			continue;
-> +
-> +		/* try next carveout if da is too large */
-> +		if (offset + len > carveout->len)
-> +			continue;
-> +
-> +		ptr = carveout->va + offset;
-> +
-> +		if (is_iomem)
-> +			*is_iomem = carveout->is_iomem;
-> +
-> +		break;
-> +	}
-> +
-> +out:
-> +	return ptr;
-> +}
-> +EXPORT_SYMBOL(rproc_pa_to_va);
-> +
->  /**
->   * rproc_find_carveout_by_name() - lookup the carveout region by a name
->   * @rproc: handle of a remote processor
-> @@ -724,8 +795,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
->  	 * firmware was compiled with.
->  	 *
->  	 * In this case, we must use the IOMMU API directly and map
-> -	 * the memory to the device address as expected by the remote
-> -	 * processor.
-> +	 * the memory to the device address as etable
->  	 *
->  	 * Obviously such remote processor devices should not be configured
->  	 * to use the iommu-based DMA API: we expect 'dma' to contain the
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index b4795698d8c2..28aa62a3b505 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -367,6 +367,7 @@ enum rsc_handling_status {
->   * @detach:	detach from a device, leaving it powered up
->   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
->   * @da_to_va:	optional platform hook to perform address translations
-> + * @pa_to_va:	optional platform hook to perform address translations
->   * @parse_fw:	parse firmware to extract information (e.g. resource table)
->   * @handle_rsc:	optional platform hook to handle vendor resources. Should return
->   *		RSC_HANDLED if resource was handled, RSC_IGNORED if not handled
-> @@ -391,6 +392,7 @@ struct rproc_ops {
->  	int (*detach)(struct rproc *rproc);
->  	void (*kick)(struct rproc *rproc, int vqid);
->  	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
-> +	void * (*pa_to_va)(struct rproc *rproc, phys_addr_t da, size_t len);
->  	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
->  	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
->  			  int offset, int avail);
-> @@ -690,6 +692,7 @@ int rproc_detach(struct rproc *rproc);
->  int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
->  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
->  void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
-> +void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
->  
->  /* from remoteproc_coredump.c */
->  void rproc_coredump_cleanup(struct rproc *rproc);
-> -- 
-> 2.25.1
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c41896e..95824d5b64ce 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -7,6 +7,12 @@
+>  #include <linux/completion.h>
+>  #include <linux/soc/qcom/qcom_aoss.h>
 > 
+> +#define RMB_BOOT_WAIT_REG 0x8
+> +#define RMB_BOOT_CONT_REG 0xC
+> +#define RMB_Q6_BOOT_STATUS_REG 0x10
+> +
+> +#define RMB_POLL_MAX_TIMES 250
+> +
+>  struct icc_path;
+>  struct rproc;
+>  struct qcom_smem_stat;
+> @@ -16,6 +22,8 @@ struct qcom_q6v5 {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+> 
+> +	void __iomem *rmb_base;
+> +
+
+Why is this a part of the common structure and is not a part of the _pas
+struct?
+
+>  	struct qcom_smem_state *state;
+>  	struct qmp *qmp;
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 8458bcfe9e19..b9759f6b2283 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -770,6 +770,10 @@ static int adsp_probe(struct platform_device *pdev)
+>  		goto free_rproc;
+>  	adsp->proxy_pd_count = ret;
+> 
+> +	adsp->q6v5.rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
+> +	if (IS_ERR(adsp->q6v5.rmb_base))
+> +		adsp->q6v5.rmb_base = NULL;
+> +
+>  	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
+>  			     qcom_pas_handover);
+>  	if (ret)
+> --
+> 2.42.0
+> 
+
+-- 
+With best wishes
+Dmitry
