@@ -1,222 +1,231 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CED171E6A
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 08:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B7017C7BE
+	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 08:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870911; cv=none; b=gNu+WRnoejQ0z4RjjZBnELZw9LTbb3QRPvtGpBc/YD8O9jLd1oM7ghIhH+gN/G376H7YJIXs3u/Bwg1PhQJcToHUrlOFEAlxi4BLYsw4TEeHi9PKNe7ROwDG8EGK1CT45MeqAyaC1FPi6GszYp3Occ+ShfTgksuep62OqPP3RQA=
+	t=1718871686; cv=none; b=rDl25CPY1OaLDUTVcOHt/preCzAJpnGGB7tP5gvVuwI3a/vrQruf6axdpbG603EECsl5psbed/hZShA7CNpTbsj8d6biaovIPciGpWzvtOMT0QsREoAq3fDO/0pIQ0R1swCN2ew7Ta3Iy8pxIFBP+eyUuuLq+XSKHgV7N/HT2eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870911; c=relaxed/simple;
-	bh=iZmgo2+TOhUg1x9YUztlK/dbvEtJpfYQSCVEMXHMeyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5Pu3XCLXmJrYzZ9/rfLNTy2OuVIh74b2UOWEjzXl//pEf6qhPazetTahcylW5X9aaz3w7SFmsm+WWYmYH1I8QGDb8IpcqaUqOZvwKdA7czuv9w7ATx3akr5oyfRQFYSPhBSCN2jO80cd7rsedQCh+S4n3fwrbJztvNP7ORRfIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bF2P88s4; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1718871686; c=relaxed/simple;
+	bh=LR/K+J6KzpZJF93eE1SpQIRs80lV/+fTYln8iY77+Ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRhT55wlSh3pWdkmnc+dBNi9zn+mrMh3lzErMKKCLSDUuPcHwGFpgJZPE/7RB8lDmrAKsxVzweIGKOjdoEPzldzcPW46qhQ+EPCVbze0uESGVPdxS3K399ecFWfVQ6oMgotc5uhLkpKeRjzwejXnRfKgZXqZA/PUo4Y3j4rVuo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DrcXlpGv; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bF2P88s4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DrcXlpGv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718870907;
+	s=mimecast20190719; t=1718871683;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fYkcvH1qikOhnYAi1RzJNYy38ecUZaxzjAiohS4BdJU=;
-	b=bF2P88s4SX3EaUwaeIwnArorSHARc3SzTla3IYss7j/qpYCU6LkXZBlS0zfg3IEcFxyo/2
-	gtEsz+XWgkR2Ype+hZrBExturpTSxIKm6JHPGWpRP6V3YGCG058JwbtFWkkJELZyChz0Of
-	4ckXhx6+JQ30wt2EWW6f1jtH9j785Sc=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UycNLq/jPjHQqHMLXV0878YjLaKSICJpDUuvwOlKQOg=;
+	b=DrcXlpGvkVH2pX0sQ1oMayEWV7kLEt6qj5t5wur6jUYEH75d62/jQQdER+4qjzTnrRIJ1f
+	sklGMV6BKDu4D1w0XRPKQpcQpuSNpy6Imq9/2SXp8Ey7ybH44VeVKMJWr/K2OqraOlLTLC
+	PpCe/mhrFZzWdbNS9KStrtnnvGggZI4=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-Ovq9Yc8KNayrlvzS54FtFQ-1; Thu, 20 Jun 2024 04:08:25 -0400
-X-MC-Unique: Ovq9Yc8KNayrlvzS54FtFQ-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57cad3fa0a1so391153a12.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 01:08:25 -0700 (PDT)
+ us-mta-554-K8-5-PSwNHaS5NpKVHtviQ-1; Thu, 20 Jun 2024 04:21:21 -0400
+X-MC-Unique: K8-5-PSwNHaS5NpKVHtviQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c6f1c0365eso718587a91.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Jun 2024 01:21:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718870904; x=1719475704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fYkcvH1qikOhnYAi1RzJNYy38ecUZaxzjAiohS4BdJU=;
-        b=SgScqbVuFFz0Kgv6RLO3lUob1Xwc2H1R9rLTNJ29hMp22Z/6haYZmBvLmRrWR8yHhi
-         JO5JE3jgXgkjCSfyGCBkfZiJZtwSYs5j8RYeSspkE9RcMskKiTitdfx8IHlI6DolK20o
-         v9krXLxYivSgZCEwizSVDF/sltk6Y14FaMK2cxo77WCg4OCBb4oaZQvow/PU1eSFP4PG
-         BlyXc6hT9Y+5eaDw0OR/vpIdj/6FsRJdc0HPFsVkkwsrnH1yfTtwJiKIMG1jWmgBrOy/
-         9a93BqRhbHglnf1BNhrjvHKLhAtTFmrv0701bnSbO5i1HDAg5ZLVTvmAucPJ4LJpAGN2
-         CWXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3V6I50/uL/uRsRLD/2/pSMYLk0KJMCLxtambVr5wO7OzPCUX+8Kp+SIKU5OJVyxQGEem9o09QZzxsPFUnSPdBVgKSlDzxautM2m9Y6Xj97g==
-X-Gm-Message-State: AOJu0Yx9hs0BGBsd5OJURMzbRtG0TAnG4SWvqQXj81w20hf3qpeikabL
-	vdgFWiSdhxTAuT76BGHXPbb8GMRTObrZCFrFO0FAKcCrCcjt4hNSB2d3Q5NN/S3SxFfw+6WD9G6
-	iHZ0WU3BmqXrfH94cdg4nLrA1S3TJ7vvFtZFCo4rrxSRjw9J3FRyMy8B0XQntTVb1PyQ=
-X-Received: by 2002:a50:ab18:0:b0:57d:12c3:eca6 with SMTP id 4fb4d7f45d1cf-57d12c3ed79mr2054063a12.18.1718870903881;
-        Thu, 20 Jun 2024 01:08:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElyy2gCyt3ovTk4v5Gf3L+EBBsQDxCvTGnZmU0yxgu5HjKvNiZ0eDBqsa0yCdr2XWpOKzZ1g==
-X-Received: by 2002:a50:ab18:0:b0:57d:12c3:eca6 with SMTP id 4fb4d7f45d1cf-57d12c3ed79mr2054031a12.18.1718870902978;
-        Thu, 20 Jun 2024 01:08:22 -0700 (PDT)
-Received: from redhat.com ([2.52.146.100])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cd24df611sm5962871a12.16.2024.06.20.01.08.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 01:08:22 -0700 (PDT)
-Date: Thu, 20 Jun 2024 04:08:15 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, linux-um@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH vhost v9 1/6] virtio_balloon: remove the dependence where
- names[] is null
-Message-ID: <20240620040415-mutt-send-email-mst@kernel.org>
-References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
- <20240424091533.86949-2-xuanzhuo@linux.alibaba.com>
+        d=1e100.net; s=20230601; t=1718871681; x=1719476481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UycNLq/jPjHQqHMLXV0878YjLaKSICJpDUuvwOlKQOg=;
+        b=HRraF8UttYeh/EbaoXIk7BLpcVBshQVG9w0Yg5z2a0wLux2SNG9SXQhGNzcFI3crBG
+         TtfrMFTdM/goJWBR5qc4Yd6J7X/7DynBAeyChWW/nAraGLtLhnKedJpNKTxvdYb8swj3
+         r+PQgWmYk4YVjPAIj++g1CgUw5tpb+DOSHuW2MIAwSZK7RpMjEhmCobHA1zKZNx9qzgb
+         Uqkbbo2uEMGum23NnNRJgj9lkHIKl8aUm/QcYpPP+shJ93qTNsVb86gPHLsfQ4PKfdNv
+         FUBAckEEl8yVxcssWh7+vo2ib4j1+pchC0KA1mj63XnfZqxJuxTJXjWss5AexSFcVcce
+         /TCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuWnKY8HFaiLdOy8Bft07H3Iz6mwK1r6OhjJmVIban9usWvP90YQ6o4Xk6oSEuPVPIq6Tm0HwxDu+X3yWgNlJqxU8uXzA027BPD4UXVkQeGQ==
+X-Gm-Message-State: AOJu0YylxzxfvV/GSFUTlG7jKjFNG6NZc1dndqVy2+Ayy7derofnLLzf
+	i27FrBqCyxiF26JgT8QL9AuHnBric8Isi2+mzLY1Nf8SSC9oMj2lOKPDtEOvTuuWud0ltZmco1K
+	VUWxVZCk5gM6ixwNLXsMD0LYwi2tmrUID9ws2XLueWDoa4bpDg/qyB6YFIpLJI4HJRgqC3qWWC7
+	L9KMYTGxmoWHz8wtX4gi807ym1DMielfNIHsYbW5aJmQ==
+X-Received: by 2002:a17:90a:12cf:b0:2c2:deda:8561 with SMTP id 98e67ed59e1d1-2c7b5dc9665mr4142099a91.41.1718871680846;
+        Thu, 20 Jun 2024 01:21:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtYn/rf/kl6Qj5/Pavju1IvIHJQmkYLZpAJM3Hav28b/FHSe46aqQwH/hKX1cWbXvGnnxKId86W9xKimIuLO4=
+X-Received: by 2002:a17:90a:12cf:b0:2c2:deda:8561 with SMTP id
+ 98e67ed59e1d1-2c7b5dc9665mr4142074a91.41.1718871680356; Thu, 20 Jun 2024
+ 01:21:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240424091533.86949-2-xuanzhuo@linux.alibaba.com>
+References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
+ <20240424091533.86949-2-xuanzhuo@linux.alibaba.com> <20240620040415-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240620040415-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 20 Jun 2024 16:21:08 +0800
+Message-ID: <CACGkMEuGcP1gqmNUGSXx5QLwqizL=DUYWKm5AUycx96pz0JhsA@mail.gmail.com>
+Subject: Re: [PATCH vhost v9 1/6] virtio_balloon: remove the dependence where
+ names[] is null
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, virtualization@lists.linux.dev, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Vadim Pasternak <vadimp@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, David Hildenbrand <david@redhat.com>, linux-um@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 24, 2024 at 05:15:28PM +0800, Xuan Zhuo wrote:
-> Currently, the init_vqs function within the virtio_balloon driver relies
-> on the condition that certain names array entries are null in order to
-> skip the initialization of some virtual queues (vqs). This behavior is
-> unique to this part of the codebase. In an upcoming commit, we plan to
-> eliminate this dependency by removing the function entirely. Therefore,
-> with this change, we are ensuring that the virtio_balloon no longer
-> depends on the aforementioned function.
-> 
-> As specification 1.0-1.2, vq indexes should not be contiguous if some
-> vq does not exist. But currently the virtqueue index is contiguous for
-> all existing devices. The Linux kernel does not implement functionality
-> to allow vq indexes to be discontinuous. So the current behavior of the
-> virtio-balloon device is different for the spec. But this commit has no
-> functional changes.
-> 
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Jason Wang <jasowang@redhat.com>
+On Thu, Jun 20, 2024 at 4:08=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Wed, Apr 24, 2024 at 05:15:28PM +0800, Xuan Zhuo wrote:
+> > Currently, the init_vqs function within the virtio_balloon driver relie=
+s
+> > on the condition that certain names array entries are null in order to
+> > skip the initialization of some virtual queues (vqs). This behavior is
+> > unique to this part of the codebase. In an upcoming commit, we plan to
+> > eliminate this dependency by removing the function entirely. Therefore,
+> > with this change, we are ensuring that the virtio_balloon no longer
+> > depends on the aforementioned function.
+> >
+> > As specification 1.0-1.2, vq indexes should not be contiguous if some
+> > vq does not exist. But currently the virtqueue index is contiguous for
+> > all existing devices. The Linux kernel does not implement functionality
+> > to allow vq indexes to be discontinuous. So the current behavior of the
+> > virtio-balloon device is different for the spec. But this commit has no
+> > functional changes.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+>
+> I can't make heads of tails of this.
+>
+> David you acked so maybe you can help rewrite the commit log here?
+>
+> I don't understand what this says.
+> What in the balloon driver is out of spec?
 
-I can't make heads of tails of this.
+The problem is the spec has bug, see this:
 
-David you acked so maybe you can help rewrite the commit log here?
+https://www.mail-archive.com/linux-um@lists.infradead.org/msg04359.html
 
-I don't understand what this says.
-What in the balloon driver is out of spec?
-NULL in names *exactly* allows skipping init for some vqs.
-How is that "does not implement"?
-
-And so on.
+Thanks
 
 
-> ---
->  drivers/virtio/virtio_balloon.c | 48 ++++++++++++++-------------------
->  1 file changed, 20 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index c0a63638f95e..ccda6d08493f 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -548,49 +548,41 @@ static int init_vqs(struct virtio_balloon *vb)
->  	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
->  	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
->  	const char *names[VIRTIO_BALLOON_VQ_MAX];
-> -	int err;
-> +	int err, idx = 0;
->  
-> -	/*
-> -	 * Inflateq and deflateq are used unconditionally. The names[]
-> -	 * will be NULL if the related feature is not enabled, which will
-> -	 * cause no allocation for the corresponding virtqueue in find_vqs.
-> -	 */
-> -	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
-> -	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
-> -	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
-> -	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
-> -	callbacks[VIRTIO_BALLOON_VQ_STATS] = NULL;
-> -	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
-> -	callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> -	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> -	names[VIRTIO_BALLOON_VQ_REPORTING] = NULL;
-> +	callbacks[idx] = balloon_ack;
-> +	names[idx++] = "inflate";
-> +	callbacks[idx] = balloon_ack;
-> +	names[idx++] = "deflate";
->  
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-> -		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
-> -		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
-> +		names[idx] = "stats";
-> +		callbacks[idx++] = stats_request;
->  	}
->  
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-> -		names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "free_page_vq";
-> -		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> +		names[idx] = "free_page_vq";
-> +		callbacks[idx++] = NULL;
->  	}
->  
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
-> -		names[VIRTIO_BALLOON_VQ_REPORTING] = "reporting_vq";
-> -		callbacks[VIRTIO_BALLOON_VQ_REPORTING] = balloon_ack;
-> +		names[idx] = "reporting_vq";
-> +		callbacks[idx++] = balloon_ack;
->  	}
->  
-> -	err = virtio_find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX, vqs,
-> -			      callbacks, names, NULL);
-> +	err = virtio_find_vqs(vb->vdev, idx, vqs, callbacks, names, NULL);
->  	if (err)
->  		return err;
->  
-> -	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
-> -	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
-> +	idx = 0;
-> +
-> +	vb->inflate_vq = vqs[idx++];
-> +	vb->deflate_vq = vqs[idx++];
-> +
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
->  		struct scatterlist sg;
->  		unsigned int num_stats;
-> -		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
-> +		vb->stats_vq = vqs[idx++];
->  
->  		/*
->  		 * Prime this virtqueue with one buffer so the hypervisor can
-> @@ -610,10 +602,10 @@ static int init_vqs(struct virtio_balloon *vb)
->  	}
->  
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
-> -		vb->free_page_vq = vqs[VIRTIO_BALLOON_VQ_FREE_PAGE];
-> +		vb->free_page_vq = vqs[idx++];
->  
->  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING))
-> -		vb->reporting_vq = vqs[VIRTIO_BALLOON_VQ_REPORTING];
-> +		vb->reporting_vq = vqs[idx++];
->  
->  	return 0;
->  }
-> -- 
-> 2.32.0.3.g01195cf9f
+> NULL in names *exactly* allows skipping init for some vqs.
+> How is that "does not implement"?
+>
+> And so on.
+>
+>
+> > ---
+> >  drivers/virtio/virtio_balloon.c | 48 ++++++++++++++-------------------
+> >  1 file changed, 20 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_ba=
+lloon.c
+> > index c0a63638f95e..ccda6d08493f 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -548,49 +548,41 @@ static int init_vqs(struct virtio_balloon *vb)
+> >       struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
+> >       vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
+> >       const char *names[VIRTIO_BALLOON_VQ_MAX];
+> > -     int err;
+> > +     int err, idx =3D 0;
+> >
+> > -     /*
+> > -      * Inflateq and deflateq are used unconditionally. The names[]
+> > -      * will be NULL if the related feature is not enabled, which will
+> > -      * cause no allocation for the corresponding virtqueue in find_vq=
+s.
+> > -      */
+> > -     callbacks[VIRTIO_BALLOON_VQ_INFLATE] =3D balloon_ack;
+> > -     names[VIRTIO_BALLOON_VQ_INFLATE] =3D "inflate";
+> > -     callbacks[VIRTIO_BALLOON_VQ_DEFLATE] =3D balloon_ack;
+> > -     names[VIRTIO_BALLOON_VQ_DEFLATE] =3D "deflate";
+> > -     callbacks[VIRTIO_BALLOON_VQ_STATS] =3D NULL;
+> > -     names[VIRTIO_BALLOON_VQ_STATS] =3D NULL;
+> > -     callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D NULL;
+> > -     names[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D NULL;
+> > -     names[VIRTIO_BALLOON_VQ_REPORTING] =3D NULL;
+> > +     callbacks[idx] =3D balloon_ack;
+> > +     names[idx++] =3D "inflate";
+> > +     callbacks[idx] =3D balloon_ack;
+> > +     names[idx++] =3D "deflate";
+> >
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> > -             names[VIRTIO_BALLOON_VQ_STATS] =3D "stats";
+> > -             callbacks[VIRTIO_BALLOON_VQ_STATS] =3D stats_request;
+> > +             names[idx] =3D "stats";
+> > +             callbacks[idx++] =3D stats_request;
+> >       }
+> >
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)=
+) {
+> > -             names[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D "free_page_vq";
+> > -             callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D NULL;
+> > +             names[idx] =3D "free_page_vq";
+> > +             callbacks[idx++] =3D NULL;
+> >       }
+> >
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
+> > -             names[VIRTIO_BALLOON_VQ_REPORTING] =3D "reporting_vq";
+> > -             callbacks[VIRTIO_BALLOON_VQ_REPORTING] =3D balloon_ack;
+> > +             names[idx] =3D "reporting_vq";
+> > +             callbacks[idx++] =3D balloon_ack;
+> >       }
+> >
+> > -     err =3D virtio_find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX, vqs,
+> > -                           callbacks, names, NULL);
+> > +     err =3D virtio_find_vqs(vb->vdev, idx, vqs, callbacks, names, NUL=
+L);
+> >       if (err)
+> >               return err;
+> >
+> > -     vb->inflate_vq =3D vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> > -     vb->deflate_vq =3D vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> > +     idx =3D 0;
+> > +
+> > +     vb->inflate_vq =3D vqs[idx++];
+> > +     vb->deflate_vq =3D vqs[idx++];
+> > +
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> >               struct scatterlist sg;
+> >               unsigned int num_stats;
+> > -             vb->stats_vq =3D vqs[VIRTIO_BALLOON_VQ_STATS];
+> > +             vb->stats_vq =3D vqs[idx++];
+> >
+> >               /*
+> >                * Prime this virtqueue with one buffer so the hypervisor=
+ can
+> > @@ -610,10 +602,10 @@ static int init_vqs(struct virtio_balloon *vb)
+> >       }
+> >
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)=
+)
+> > -             vb->free_page_vq =3D vqs[VIRTIO_BALLOON_VQ_FREE_PAGE];
+> > +             vb->free_page_vq =3D vqs[idx++];
+> >
+> >       if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING))
+> > -             vb->reporting_vq =3D vqs[VIRTIO_BALLOON_VQ_REPORTING];
+> > +             vb->reporting_vq =3D vqs[idx++];
+> >
+> >       return 0;
+> >  }
+> > --
+> > 2.32.0.3.g01195cf9f
+>
 
