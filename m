@@ -1,35 +1,35 @@
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D286B250EC;
-	Fri, 21 Jun 2024 15:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A73208A8;
+	Fri, 21 Jun 2024 15:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982073; cv=none; b=dUQXCnb1DHS2aQ4fk5xL0EF2P54Okme7AeXbYOKvoR+zUDzY6ytb+REy6uf/27R3du8y0RFdIdGSSxDEiQC06lHYnAHgLKRr2SFXhZqmZtyvMyiMA6wZvyw7SqWvChJCcK4aZX5KE3qLKQcwql1ZJbSlMDJMc7gjnoxL73hEVf0=
+	t=1718982073; cv=none; b=grhqMP3iEBrBFhq56QDePmeBvCnZYYPuO+hjFPoYj4fjT/oHpaOetfdI/awzlwR4fLgqPBW6tL1KIYhEcRtbyA9iWq4vA9l4Wprdz6zF/2KW9ET5dt61A/hIHCSyv25QCQWhn5FwNHSKz/Hpjf7Saz4aD2SNguEvedNSwt1OEoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718982073; c=relaxed/simple;
-	bh=pMRaKVSGB844vR9DoFg3TYRLrXGGW7Jn25FhV1Gu344=;
+	bh=t0Qy22MrGv3aVpFGYWrgqFZdFYqVsgKbZyjJjDqP0Gk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RX1kvwe8rBh2SQaYdlyj6v65uvLuk+EQFPzvTOBTm6Reeex6/129ej/ylM+12jORabA2Oo+KiuKkeDXltVv5B0NxERQvJGY07zhJ8YtUSpScZF51BGatPh1jI8JNrfPXmp4hmApn/gNPXnJNBvUmMBkSz+ED9MepjnFNxdI2wSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ewaHAY2G; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version; b=TnDigFpZemilP9+wePJUy0NkGxGPK6VfmWsre3SXBEz99g4sj73e4GNN9wIu0dQTOmphY3jHyIvblcEptTFeMUVhGE8wkq4Cvmnn6Dvh8Wz3uIIkW7SeYc+QiNn4qMcWjsCQT4r004pq1whMxOgo6j/sJdWnMlviw+nZ2wmoSj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h3xUw6mt; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ewaHAY2G"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B47824000A;
-	Fri, 21 Jun 2024 15:01:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h3xUw6mt"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F1EC240007;
+	Fri, 21 Jun 2024 15:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718982069;
+	t=1718982067;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=S3IObYGLRPk0AKUB9TG2rIfdLhnbghQZRr0H2amdorI=;
-	b=ewaHAY2GhSBNigXagfVc2j7RKb0akdlPnHiIzJOwD/jaQAOm/8Wo2rublarYkrioqoDf93
-	R6yZyKAZRYJT9LE+Xn/TS9QgyZtqO3o14Zccmlvxfgf2Q7U9S0m4co3t2vqFblwJR1YA9Q
-	qaI2Tua5tKJ4Grovyf8vdPWWXdYZMwe6mbWlpb+GKHwofvbe0g77Cg6iPNnMcJ4AyeeQ4F
-	6+MnSZVDGa12ulzyUbnzZJ+JS+IEc2qhju+wJ4dFIN8A1dp1sUx4ep48pC/fg0zZHIkxi3
-	Q6D8klXRp10SeoFAxsftyf0HiOKiI5ZmMXJw91bQpgfquk1In1UdgFlANUqpow==
+	bh=1BRiKHP7y9+z4NPu0dePgtaqHBp5JIDPh01b9uiscGo=;
+	b=h3xUw6mt7PVsTONuDgVf4uSSsqKw8mg432SKkz4E4dAC2EYHhMvWJBvWxqdrgRxnoMoVEh
+	qMtckIZuGYYds7wALZcgMl0XrYuz5jfuNUIbylzjbV5dDhBmc7sezjX83y1P+ICJK2Ag59
+	LmodvLrsal19nuTfggz9T4wt4Df/BAqAScaWsba1DZTkrbZ8MtEcB9Ht+snZjn7hBYkm46
+	EiQUYExGtvj3mJreTxQ0HbAr/E53mDIRt09p4cvY/hdrNS1hXaJxZyY8sSl5Zzz2yp4Yhy
+	cAzyP2cZ6c/zCVBS402xL+i2GvfUMqGFryTcB9spSZXwykc3dlmFiOfm/CwE3g==
 From: Richard Genoud <richard.genoud@bootlin.com>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -45,9 +45,9 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH 3/4] remoteproc: k3-r5: k3_r5_rproc_stop: code reorder
-Date: Fri, 21 Jun 2024 17:00:57 +0200
-Message-ID: <20240621150058.319524-4-richard.genoud@bootlin.com>
+Subject: [PATCH 1/4] remoteproc: k3-r5: Fix IPC-only mode detection
+Date: Fri, 21 Jun 2024 17:00:55 +0200
+Message-ID: <20240621150058.319524-2-richard.genoud@bootlin.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240621150058.319524-1-richard.genoud@bootlin.com>
 References: <20240621150058.319524-1-richard.genoud@bootlin.com>
@@ -60,72 +60,75 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: richard.genoud@bootlin.com
 
-In the next commit, a RP_MBOX_SHUTDOWN message will be sent in
-k3_r5_rproc_stop() to the remote proc (in lockstep on not)
-Thus, the sanity check "do not allow core 0 to stop before core 1"
-should be moved at the beginning of the function so that the generic case
-can be dealt with.
+ret variable was used to test reset status, get from
+reset_control_status() call. But this variable was overwritten by
+ti_sci_proc_get_status() a few lines bellow.
+And as ti_sci_proc_get_status() returns 0 or a negative value (in this
+latter case, followed by a return), the expression !ret was always true,
 
-In order to have an easier patch to review, those actions are broke in
-two patches:
-- this patch: moving the sanity check at the beginning (No functional
-  change).
-- next patch: doing the real job (sending shutdown messages to remote
-  procs before halting them).
+Clearly, this was not what was intended:
+In the comment above it's said that "requires both local and module
+resets to be deasserted"; if reset_control_status() returns 0 it means
+that the reset line is deasserted.
+So, it's pretty clear that the return value of reset_control_status()
+was intended to be used instead of ti_sci_proc_get_status() return
+value.
 
-Basically, we had:
-- cluster_mode actions
-- !cluster_mode sanity check
-- !cluster_mode actions
-And now:
-- !cluster_mode sanity check
-- cluster_mode actions
-- !cluster_mode actions
+This could lead in an incorrect IPC-only mode detection if reset line is
+asserted (so reset_control_status() return > 0) and c_state != 0 and
+halted == 0.
+In this case, the old code would have detected an IPC-only mode instead
+of a mismatched mode.
 
+Fixes: 1168af40b1ad ("remoteproc: k3-r5: Add support for IPC-only mode for all R5Fs")
 Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 ---
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 1f18b08618c8..a2ead87952c7 100644
+index 50e486bcfa10..39a47540c590 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -636,16 +636,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 	struct k3_r5_core *core1, *core = kproc->core;
+@@ -1144,6 +1144,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 	u32 atcm_enable, btcm_enable, loczrama;
+ 	struct k3_r5_core *core0;
+ 	enum cluster_mode mode = cluster->mode;
++	int reset_ctrl_status;
  	int ret;
  
--	/* halt all applicable cores */
--	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
--		list_for_each_entry(core, &cluster->cores, elem) {
--			ret = k3_r5_core_halt(core);
--			if (ret) {
--				core = list_prev_entry(core, elem);
--				goto unroll_core_halt;
--			}
--		}
--	} else {
-+
-+	if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
- 		/* do not allow core 0 to stop before core 1 */
- 		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
- 					elem);
-@@ -656,6 +648,18 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 			ret = -EPERM;
- 			goto out;
- 		}
-+	}
-+
-+	/* halt all applicable cores */
-+	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-+		list_for_each_entry(core, &cluster->cores, elem) {
-+			ret = k3_r5_core_halt(core);
-+			if (ret) {
-+				core = list_prev_entry(core, elem);
-+				goto unroll_core_halt;
-+			}
-+		}
-+	} else {
+ 	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+@@ -1160,11 +1161,11 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 			 r_state, c_state);
+ 	}
  
- 		ret = k3_r5_core_halt(core);
- 		if (ret)
+-	ret = reset_control_status(core->reset);
+-	if (ret < 0) {
++	reset_ctrl_status = reset_control_status(core->reset);
++	if (reset_ctrl_status < 0) {
+ 		dev_err(cdev, "failed to get initial local reset status, ret = %d\n",
+-			ret);
+-		return ret;
++			reset_ctrl_status);
++		return reset_ctrl_status;
+ 	}
+ 
+ 	/*
+@@ -1199,7 +1200,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 	 * irrelevant if module reset is asserted (POR value has local reset
+ 	 * deasserted), and is deemed as remoteproc mode
+ 	 */
+-	if (c_state && !ret && !halted) {
++	if (c_state && !reset_ctrl_status && !halted) {
+ 		dev_info(cdev, "configured R5F for IPC-only mode\n");
+ 		kproc->rproc->state = RPROC_DETACHED;
+ 		ret = 1;
+@@ -1217,7 +1218,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 		ret = 0;
+ 	} else {
+ 		dev_err(cdev, "mismatched mode: local_reset = %s, module_reset = %s, core_state = %s\n",
+-			!ret ? "deasserted" : "asserted",
++			!reset_ctrl_status ? "deasserted" : "asserted",
+ 			c_state ? "deasserted" : "asserted",
+ 			halted ? "halted" : "unhalted");
+ 		ret = -EINVAL;
