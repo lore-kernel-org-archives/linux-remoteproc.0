@@ -1,272 +1,104 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCE172BA5;
-	Fri, 21 Jun 2024 11:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0DA17335C;
+	Fri, 21 Jun 2024 11:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968507; cv=none; b=HamsL9+O/SqiWGjHOY9vyNmABvvECB1SsUAx/Rqji+axC6X7kZnMTdvPGTNkfFCWT/FnPpEspkaZnsUhtC/hAyjU7F+4MitQPrse/+9E5BFzxSdDhe1nUtRifD6TphGJd9Jl8ReJF7VAQjlPVCzUiwIWfgKtj7VKZsZrztoLEvg=
+	t=1718970483; cv=none; b=lsgxB9AL+d777rB2OkzgO9uaC0Qj+U3+xzdrWt+pvzdZOJ2+aKejhA9IHA0PYRlAEmZzoiP1dCLa8xIoXNSAotPwGuTJgnLW2xVLb3sr+N+vDKvu5nZpP1qUvCU5XpNd8Yf7XlqKJspAEXhrqn8bfFVcLrNGMtL04MJVNnpJDMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968507; c=relaxed/simple;
-	bh=01nS62HSk6gjLSy1DwcUDp9QaAYYf9boxCpBRZuhnmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AD9ZNeq/LPUB3HW54Dv5xdLzMAdrPwOUAw5sYnE77YRSUndyqkAd26awZ/VBmgmWwWwCVEmjp+6By9jELw9s8talRpSwF21fkg6rSe0TolZtZBI8bUyINt6sCR7HfbaRH6G4Z3BmBI+vW3z88qcyD4B+uozKjdPNNcaNq4lUh5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J/EMqpsN; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1718970483; c=relaxed/simple;
+	bh=7Z+8FcX1N2P4XzCec6u30kS5YpcYPjQl4yJIYffpZ3g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aIqIhnPeBF4OyFoaNNJj8tBk+V9Yo1P92W2Qu7I8pkVUgB3rUHLaJryZeqs3esBsn7/HOfLdbqE7EL3wbDhqPV6U//L7pf3JB+ekMPRTV6JX2alHIphzTW+UytlDvhCydgUmEe0LJbDrD2ryc4s13Oo6kndmZofPQa8EG0Bx9TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BXzEOAQ9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J/EMqpsN"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LBEwAu020025;
-	Fri, 21 Jun 2024 06:14:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718968498;
-	bh=HRRjFNHUHFJ+Y9g/6FN//DMylwrOkfjCSc2QNeiG10k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=J/EMqpsNbmHg/qBeTL7xakmjwQG7HdYTj3qZ74HRd//IE5mZAuSdSDOCkiuK+7AgN
-	 3IsNcbNQzlzZwENQqO8XfMKLTk8LwZ6OUrpzHkUcCfBp7f+ycWFrUxj/b+7krDcHwF
-	 IaMXBZmqx5Bl4XmuuEB0fU5fADcS4FESvBhYvaGY=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LBEw2Z037026
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 06:14:58 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 06:14:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 06:14:57 -0500
-Received: from [10.24.69.66] (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LBEtaR101126;
-	Fri, 21 Jun 2024 06:14:55 -0500
-Message-ID: <e073c465-c01c-449a-a29a-10fd88c935e5@ti.com>
-Date: Fri, 21 Jun 2024 16:44:54 +0530
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BXzEOAQ9"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L8i1wd021385;
+	Fri, 21 Jun 2024 11:47:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+ouvelZxylIYzDsDNrPHND
+	Hg91pcIf3hHhEAdWgue/M=; b=BXzEOAQ9lWcUvXPJ9SodSPcjT1R/OiGUJFL3Ho
+	PHP8RMiMRyc7hLKC19ZbgpkGTO7ZWSrcXJqPDkXmnCOH/VBwK4OOcFXlwzyOm44z
+	+IIORfVjK+kZwMaNATwsMnbefw0gpFhXriwTE7ctRSlxfWFQ1Saa46NMVzc2kmm2
+	mfcVCpYLyVxrLAxe63XWj/bSzuW1LevMc7tLMwwGUOiGxV3OhGLaZR4O5wq6ZLtH
+	JOTSX7uhWQDC2OeEN/Ig+/DGaoGRhff4kRT20ZQVWEGAQ1/E99NEYQZYQPtu3NrJ
+	j2mr1+6fYvecw+Fzh8rI0MA0Ojndf87BpNFeCnIPVFM1vHSQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yw6920dw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 11:47:23 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LBlL8l023071
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 11:47:21 GMT
+Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Jun 2024 04:47:16 -0700
+From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+To: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>
+CC: <gokulsri@codeaurora.org>
+Subject: [PATCH v9 0/8] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date: Fri, 21 Jun 2024 17:16:51 +0530
+Message-ID: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240604051722.3608750-1-b-padhi@ti.com>
- <20240604051722.3608750-3-b-padhi@ti.com>
- <e7b98867-3493-4c76-863a-a04795333620@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <e7b98867-3493-4c76-863a-a04795333620@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ltZ0Ud7emP-AmLq_72k7T8yRPOTSW_rQ
+X-Proofpoint-GUID: ltZ0Ud7emP-AmLq_72k7T8yRPOTSW_rQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210087
 
-Hi Andrew,
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-On 04/06/24 22:40, Andrew Davis wrote:
-> On 6/4/24 12:17 AM, Beleswar Padhi wrote:
->> Acquire the mailbox handle during device probe and do not release handle
->> in stop/detach routine or error paths. This removes the redundant
->> requests for mbox handle later during rproc start/attach. This also
->> allows to defer remoteproc driver's probe if mailbox is not probed yet.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 74 +++++++++---------------
->>   1 file changed, 26 insertions(+), 48 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 26362a509ae3c..7e02e3472ce25 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct 
->> mbox_client *client, void *data)
->>       const char *name = kproc->rproc->name;
->>       u32 msg = omap_mbox_message(data);
->>   +    /* Do not forward message to a detached core */
->
-> s/to/from
->
-> This is the receive side from the core.
->
->> +    if (kproc->rproc->state == RPROC_DETACHED)
->> +        return;
->> +
->
-> Do we need a similar check when sending messages to the core in
-> k3_r5_rproc_kick()? No one should be sending anything as they
-> all should have detached at this point, but something to double
-> check on.
-Will add this in the next revision.
->
->>       dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->>         switch (msg) {
->> @@ -399,12 +403,9 @@ static int k3_r5_rproc_request_mbox(struct rproc 
->> *rproc)
->>       client->knows_txdone = false;
->>         kproc->mbox = mbox_request_channel(client, 0);
->> -    if (IS_ERR(kproc->mbox)) {
->> -        ret = -EBUSY;
->> -        dev_err(dev, "mbox_request_channel failed: %ld\n",
->> -            PTR_ERR(kproc->mbox));
->> -        return ret;
->> -    }
->> +    if (IS_ERR(kproc->mbox))
->> +        return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->> +                     "mbox_request_channel failed\n");
->
-> This is good cleanup, but maybe something for its own patch.
-I think this cleanup is dependent to this patch itself. The current 
-patch moves the mbox_handle_request to probe routine. And the cleanup 
-returns an -EDEFER_PROBE ERR code. So, this cleanup is only valid if the 
-current patch is applied. Else, if this err code is returned at any 
-point after creation of child devices, it could lead to a infinite 
-loop[0]. Please correct me if I am wrong..?
+changes since v8:
+ - Rebased on top of Linux 6.10-rc4
 
-[0]: 
-https://www.kernel.org/doc/html/v6.5-rc3/driver-api/driver-model/driver.html#callbacks
->
->>         /*
->>        * Ping the remote processor, this is only for sanity-sake for 
->> now;
->> @@ -552,10 +553,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>       u32 boot_addr;
->>       int ret;
->>   -    ret = k3_r5_rproc_request_mbox(rproc);
->> -    if (ret)
->> -        return ret;
->> -
->>       boot_addr = rproc->bootaddr;
->>       /* TODO: add boot_addr sanity checking */
->>       dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", 
->> boot_addr);
->> @@ -564,7 +561,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>       core = kproc->core;
->>       ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->>       if (ret)
->> -        goto put_mbox;
->> +        return ret;
->>         /* unhalt/run all applicable cores */
->>       if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->> @@ -580,13 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>           if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->>               dev_err(dev, "%s: can not start core 1 before core 0\n",
->>                   __func__);
->> -            ret = -EPERM;
->> -            goto put_mbox;
->> +            return -EPERM;
->>           }
->>             ret = k3_r5_core_run(core);
->>           if (ret)
->> -            goto put_mbox;
->> +            return ret;
->>       }
->>         return 0;
->> @@ -596,8 +592,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>           if (k3_r5_core_halt(core))
->>               dev_warn(core->dev, "core halt back failed\n");
->>       }
->> -put_mbox:
->> -    mbox_free_channel(kproc->mbox);
->>       return ret;
->>   }
->>   @@ -658,8 +652,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>               goto out;
->>       }
->>   -    mbox_free_channel(kproc->mbox);
->> -
->>       return 0;
->>     unroll_core_halt:
->> @@ -674,42 +666,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   /*
->>    * Attach to a running R5F remote processor (IPC-only mode)
->>    *
->> - * The R5F attach callback only needs to request the mailbox, the 
->> remote
->> - * processor is already booted, so there is no need to issue any TI-SCI
->> - * commands to boot the R5F cores in IPC-only mode. This callback is 
->> invoked
->> - * only in IPC-only mode.
->> + * The R5F attach callback is a NOP. The remote processor is already 
->> booted, and
->> + * all required resources have been acquired during probe routine, 
->> so there is
->> + * no need to issue any TI-SCI commands to boot the R5F cores in 
->> IPC-only mode.
->> + * This callback is invoked only in IPC-only mode and exists because
->> + * rproc_validate() checks for its existence.
->>    */
->> -static int k3_r5_rproc_attach(struct rproc *rproc)
->> -{
->> -    struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct device *dev = kproc->dev;
->> -    int ret;
->> -
->> -    ret = k3_r5_rproc_request_mbox(rproc);
->> -    if (ret)
->> -        return ret;
->> -
->> -    dev_info(dev, "R5F core initialized in IPC-only mode\n");
->> -    return 0;
->> -}
->> +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
->
-> I wonder if rproc_validate() should be updated to allow not
-> having an attach/detach for cases like this. Then we could drop
-> this function completely.
->
-> Andrew
->
->>     /*
->>    * Detach from a running R5F remote processor (IPC-only mode)
->>    *
->> - * The R5F detach callback performs the opposite operation to attach 
->> callback
->> - * and only needs to release the mailbox, the R5F cores are not 
->> stopped and
->> - * will be left in booted state in IPC-only mode. This callback is 
->> invoked
->> - * only in IPC-only mode.
->> + * The R5F detach callback is a NOP. The R5F cores are not stopped 
->> and will be
->> + * left in booted state in IPC-only mode. This callback is invoked 
->> only in
->> + * IPC-only mode and exists for sanity sake.
->>    */
->> -static int k3_r5_rproc_detach(struct rproc *rproc)
->> -{
->> -    struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct device *dev = kproc->dev;
->> -
->> -    mbox_free_channel(kproc->mbox);
->> -    dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
->> -    return 0;
->> -}
->> +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
->>     /*
->>    * This function implements the .get_loaded_rsc_table() callback 
->> and is used
->> @@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>           kproc->rproc = rproc;
->>           core->rproc = rproc;
->>   +        ret = k3_r5_rproc_request_mbox(rproc);
->> +        if (ret)
->> +            return ret;
->> +
->>           ret = k3_r5_rproc_configure_mode(kproc);
->>           if (ret < 0)
->>               goto err_config;
->> @@ -1393,6 +1369,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>               }
->>           }
->>   +        mbox_free_channel(kproc->mbox);
->> +
->>           rproc_del(rproc);
->>             k3_r5_reserved_mem_exit(kproc);
+Gokul Sriram Palanisamy (8):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi        |  80 +++++++++
+ drivers/clk/qcom/gcc-ipq8074.c               |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c          | 162 +++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h |   1 +
+ 4 files changed, 212 insertions(+), 32 deletions(-)
+
+-- 
+2.34.1
+
