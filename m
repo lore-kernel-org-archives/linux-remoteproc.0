@@ -1,366 +1,282 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725A117C7D9
-	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Jun 2024 22:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007429; cv=none; b=jCzAip6Ni41geFnFs0hqek918+kn40n900uuZEeiuaC+dwwEfJU0/YHf1atyUUQGx9C4LXqbtASsY9FMFyxOJJpsAUuc7Om9aVn7mrqTB+BVdVACl9ywQtPwLOvYSJ+CsLeX/0SkFPUA0P6zKL+W/2+dImgTMHnpu1ld0SjEdNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719007429; c=relaxed/simple;
-	bh=ERzl1vOfSWUTdRssx1gYQEEpeL4zdtyW1p5ZcdM048M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zt23+0jWJ+B6CID9VZFMf12dSrmfAbWgzqPl54kF0sinsgMhsSoE8/yd7tNF9d7JGuo7dx6BeMxkzeuNGHwxxgFzhG6sGvklj2m4wwWc3J6kCXGXvRk+VYUpv4bpHn9KaxQuRRiPyg7sFX1NmPucSJng4A+nEuyBr6IJRIa4DdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsD7AmYK; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81088F66;
+	Sat, 22 Jun 2024 06:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719036467; cv=fail; b=MKrT3DjysS/lcre/usNIC0p+C+95goBMjWp84QkjoLDu3kXDCoKQoMv5KZBQ9lQ0MLI0YNkMfu8xVhTQ0/6JTFk3LTr3ztmy7rW6c/63LD8xmUCvJlUbZ6YoPvtU3f3d4ewTkWolQ3PYbm9koIO1HUEt7WlMjJedpLW5MJWrlj8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719036467; c=relaxed/simple;
+	bh=xvDu0IERs33YFFpOIqsSC03l24wzHA82W7XARUl+RcA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I2NJ1csqiGvrHIlYQLz4QUGY/1CR4Aq74N3RjQzWP0gKZ8myWfOBYOoyyGgd55To2gpE2MMwkniX0EKUscfPSXUCX/9Lspxi601tNpba1YzKXJmLAtXbeE9pB2gh9/UQswSWRCDgWc88y6zKDmWWZP3uSFcPzf1OKEqYK4UJWBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c0eT1+i9; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsD7AmYK"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cd9f9505cso1077651e87.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Jun 2024 15:03:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719007426; x=1719612226; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NNV+yfMl4wzIlPe6Pg4OBBplV6ElcGrIImNf/vZG4m0=;
-        b=JsD7AmYK8DaiHDGZFojiPJbkmK5uiYXsQeUdTvGk2xHguC/Yr7CPjekJUjE5I8OCfU
-         xgHEHQRRdXorTw7FtNRfarnhI8qBlQQB2xUQBRo/NXgoMXi9elUk41ZyJxkdDBF0nkHI
-         D+flGYeFU8aYTfifm9lJuWST4A7WoB1H9UiNyPDHvJP0T7ZDMMgQpll/3WyYXPKrbKRR
-         Pd031gm4UYTERaQLzvC1lKr41YFZp3IOOiZG5bw8MWBXrx2WMNHN1iWZ7mzekXgYg4Pp
-         1v0qrz1bykTxqGCPP87NtoAxTga++Q1/dItk6amthZGJ3iAAMoko86ZUSZ8p/KL9zLWJ
-         j4KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719007426; x=1719612226;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NNV+yfMl4wzIlPe6Pg4OBBplV6ElcGrIImNf/vZG4m0=;
-        b=J6NFo9zMck3TnMjLBGR33gszpryNAs1hsjUbRAwlkbJYt6Ujw7OLNdy1aJ1BVJv7VW
-         lPzgBQYT1ovKgDtQsQ5tUUHEkiCzFFnkl2F+hCCbLkY6krdUvb4fThLQw4Z7o18zLV0Z
-         baDxbDssbVofKj8D95hGo4x7TU5ADraNksC1qsXcN5rov0JjV1ROCzdh6PUuox1SMvgQ
-         3r2+Nv6Nci37T5VP+fSO4lQ8dCAjY3XSRCKYds2T58OhLSAXt+HPo4CvKJ8tVJOhFFfL
-         lP2XNIujMWz2wpJAHrr3yLezok/n/4WkZrleesWmEup9TqCZijgFxcRS26PCvJ+Pg6cl
-         loxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbClq4OFBmk0G4r9YgKHrsgY/j0udPkRH6XH2GVbqhk9KadU18L2fP2E81VDoT7XiD/jWzbY0wvqxmfQA4WcztRXc+bzm+QM/Eb1fstejRmA==
-X-Gm-Message-State: AOJu0YzpzIxmfHSfwvZOts3wYacGCYYA88FJaD/CX6yx6PCc8veJWUE6
-	OK83/XGJ9IK7KAl9Bb6Bh8CyoIKYIoDNO31SBVpSHcDVRBwxcrXGQnH1LBTHgKs=
-X-Google-Smtp-Source: AGHT+IHWKfpxf222Z6fpO/pG32g0rZ3+yfuIB65S+L6Ajx161gbLUon+dQfSytPM2Kwd93xWGyThTQ==
-X-Received: by 2002:a05:6512:324c:b0:52c:dd8d:8b44 with SMTP id 2adb3069b0e04-52cdd8d8bdfmr207721e87.22.1719007425680;
-        Fri, 21 Jun 2024 15:03:45 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd6431fcdsm318293e87.210.2024.06.21.15.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 15:03:45 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 22 Jun 2024 01:03:44 +0300
-Subject: [PATCH v9 5/5] remoteproc: qcom: enable in-kernel PD mapper
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c0eT1+i9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719036465; x=1750572465;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xvDu0IERs33YFFpOIqsSC03l24wzHA82W7XARUl+RcA=;
+  b=c0eT1+i9XC3GNdJM+G1t8WIAdcrlvWGzo6AKKBLQW+LtBrOqlYONsg06
+   TirMJD6NYmTHaoGIh06I8E8/6Ezr2IgdCDP3E43y4kJE1cDQeGmiL17A0
+   SdE0FUhEFMJ9Rq96r6SSBJPzfvYfYzR9arPaT82gPwu0hIieGOFa//pnt
+   /CKswYzRn0tLq5O47EvOmqGHBg7tsMU/i32SO1leICtGMlv2EgKgiX88K
+   na5J574Zm0C5XlCJrIrepjoqKutACVWhBKA1sP0qmy10gUO7FtxfAnuZY
+   bJ+XERAikeJfGtlG/LnNP/r2Irx88ZhNY312EBiKUFI3x5Sw/tYeDFtfE
+   w==;
+X-CSE-ConnectionGUID: rJlH39JKTcqc98mq/OMisA==
+X-CSE-MsgGUID: TgaOXGRaSSO1Lo3opCLXTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="12190096"
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="12190096"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 23:07:44 -0700
+X-CSE-ConnectionGUID: DWiZ2G8XRuWXNyVLO+9scg==
+X-CSE-MsgGUID: VW4dFkxfTx6axeYnzQNc0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="43230573"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Jun 2024 23:07:44 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 23:07:43 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 23:07:43 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 23:07:43 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 23:07:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kx4pKDe5nB8R8XduQujUCIO2U3eHRYlWFmzcGYE41iGP2N2gds1iAQSGVNtgo4cpEDaHjIFiMUas58cGp211lrd80AfXJ7HJe/cq7DBBzR/L8q92p8o/wBVlbXtcmNL2r4WqYcRz28JtjCLRVG4WFlpH0kDahhLLwgT8BA/y5HP2p3YN4Ao8DHUkbfvrLKrwnUqOgE6rLuEGo6OtDKTwYMq0Iy73RhltocaozOWc2zLjfpExUElXVsy95sIyb4vv3v19a4KZa0LD+ZSHGBodTDltefSojmIUfTYeZqXKHEDIRGt+vH4ZWf0cRkECZ4ULBcViyAp6+yo/pT9X7ZZzYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3S93vVE9s7VvxIMidbK21k6nyVsuLzvWA8A2RJx3ne8=;
+ b=iw/mRGCU9JUxfiZ0zz4ZsufCN9uo6EeFPWNkbmHgtKg9L9VpZrW5M9ZQRSpy/EFIam/qertbd0H2Zyp+5VOTlr1S8deE0La8CCoYipZn0z5kN5uaFv1+bUXr+71CCvwIKwEMeTfnf6z/7CZ9awq8peZUYy3SZmHS3+Y/2I01dYKS+sBw4P00p16vHKx04V4XH/92qhFcu+L4bCMRtOuhkkNq2lyidC0vP92gFyfgOS3HYJbXeSG+h3A/kJQl6kIaAdthh/2J4Xwf9dkGT/nulYkVGlmqS6fHjgGGQJxPD9YR0RLXkAmqFStYOpACQFMxJ+e3osTH7mI694dGgtwAHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS0PR11MB6373.namprd11.prod.outlook.com (2603:10b6:8:cb::20) by
+ MN6PR11MB8219.namprd11.prod.outlook.com (2603:10b6:208:471::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.22; Sat, 22 Jun 2024 06:07:36 +0000
+Received: from DS0PR11MB6373.namprd11.prod.outlook.com
+ ([fe80::2dd5:1312:cd85:e1e]) by DS0PR11MB6373.namprd11.prod.outlook.com
+ ([fe80::2dd5:1312:cd85:e1e%4]) with mapi id 15.20.7677.030; Sat, 22 Jun 2024
+ 06:07:35 +0000
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>
+CC: "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	"Richard Weinberger" <richard@nod.at>, Anton Ivanov
+	<anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>,
+	Hans de Goede <hdegoede@redhat.com>, =?iso-8859-1?Q?Ilpo_J=E4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, Vadim Pasternak <vadimp@nvidia.com>, "Bjorn
+ Andersson" <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, Halil Pasic
+	<pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, Heiko Carstens
+	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, David Hildenbrand <david@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, "linux-um@lists.infradead.org"
+	<linux-um@lists.infradead.org>, "platform-driver-x86@vger.kernel.org"
+	<platform-driver-x86@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: RE: [PATCH vhost v9 2/6] virtio: remove support for names array
+ entries being null.
+Thread-Topic: [PATCH vhost v9 2/6] virtio: remove support for names array
+ entries being null.
+Thread-Index: AQHaligQYdJ7G3/Ep0SOtqEoL6Vt7bHQpCeAgAAKTgCAAAYCAIAC0a8A
+Date: Sat, 22 Jun 2024 06:07:35 +0000
+Message-ID: <DS0PR11MB6373310FBF95058B8FE8CD95DCCA2@DS0PR11MB6373.namprd11.prod.outlook.com>
+References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
+ <20240424091533.86949-3-xuanzhuo@linux.alibaba.com>
+ <20240620035749-mutt-send-email-mst@kernel.org>
+ <1718872778.4831812-1-xuanzhuo@linux.alibaba.com>
+ <20240620044839-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240620044839-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB6373:EE_|MN6PR11MB8219:EE_
+x-ms-office365-filtering-correlation-id: d216aa01-a40f-45c0-0616-08dc92819cca
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|366013|7416011|376011|38070700015;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?fKDwNw+VGHC0SYJZLY7t4E40jBlGIpQGzu17hMb/EsIfbdc6xyQ+QhuaLh?=
+ =?iso-8859-1?Q?8nTXGaaSfDVuUVsOillAglm/1z52/YXzWlGwETQSGVGi9872IuYPcQ9/Ia?=
+ =?iso-8859-1?Q?TtyWSZ2jTXA2EbdAD550XPJQtr3GMmkC388wTvQbCKeuUICVKj+1iG3fBw?=
+ =?iso-8859-1?Q?neRs0dBDh8dCrGWFWnRtHxRoI/P0l0X2xkl0fdMslAQX45nFBC1cBurR/h?=
+ =?iso-8859-1?Q?OisBpf5xqWwjYzQmA0+GrnHwBtHibCCCOxQsoQn6Y0XUCgr3YQSN3Gd0q1?=
+ =?iso-8859-1?Q?ZS8814tRgRKOphVLb7DopXRtfOYxij7NUzWoz7KYcVAYP+5Czr1ruXNDbh?=
+ =?iso-8859-1?Q?J1tyF9gni6bK/NXv/6S/aq2d5ewN/E2I8HpnZONTUjcRnJY/s8jiGgrl2C?=
+ =?iso-8859-1?Q?6QnpabYOiHkmkOot6yQmclsGF5zbrBR1B6Xifsg3fG3G5PKh4JFP38TqiJ?=
+ =?iso-8859-1?Q?eJ0si6RXR7r0finlyDuJMeOUXgssiRH9eYLwEuBgVpi1bXPRPO+OC2/9nk?=
+ =?iso-8859-1?Q?pXCbup7yohNPFWpTns/xhIQJ3A/WAjN4V8cXjwMtrP8NbTxzG5j/SqNnNQ?=
+ =?iso-8859-1?Q?qyXT1yhhhSpgVS00Flj1arf/3Ciiv5dS1vAEc4EgVR+ukEV0s3FuxKiN42?=
+ =?iso-8859-1?Q?4OtoWPcriirpGJlRDoqTDfAhX6beKq3x7JxmuZrB2XUIm6qjqMlnb4EP9/?=
+ =?iso-8859-1?Q?p0GJrHEN0j68qbVgFVHtzGG7dmsVfhRXG1DNb3L/l2PwlKSKdF51DJnyVE?=
+ =?iso-8859-1?Q?vMXpE08t2lhvzGoIU6Liev5aMUpN3OfHvJeChqe3JpcVAlDm51UZu0PSES?=
+ =?iso-8859-1?Q?eJKbXW1eYyI5Tqjws0tqez+m6BbeClEMQDXeUatQi8yrEyzeL1OsJQ+XSb?=
+ =?iso-8859-1?Q?Bh9Q3JCqjhIuN3l7N6Jg+p8FnsMIXR5r3YEdlhC6Uln7pa9DiLlMlG/k0D?=
+ =?iso-8859-1?Q?Sa91sj2T90OxsdPOSNYuMcKDZv/C1zenkzlhx3p1Lb6Zl3g2LS5mr6mqbY?=
+ =?iso-8859-1?Q?NbuT3RFytAHIbb+dQ8O/COUy0G/4wLI4k73PpmqpiLROcqyyiO/WYXURqe?=
+ =?iso-8859-1?Q?IKBmD3nXLxvnRZFeoqGNKvEi+Lv5EnWNnE48EHt47WjKB91fgzBdyWv8Yv?=
+ =?iso-8859-1?Q?/RCg5AH0JD2sOOscgtshkP6vS73sT4wD8kofHxnRRM4MhchBHL9VptylsS?=
+ =?iso-8859-1?Q?7qyRFpkU8Zj0Kke+HLdFmlgZvb6Kz4GhiSUIje8TLwlp0jN5o8jg1GT2Yv?=
+ =?iso-8859-1?Q?pU6XIufy03SIji3yADto0ibzCaXgA5a6NODMaHyZeOjCuLVifmI7xUwjrQ?=
+ =?iso-8859-1?Q?X0pARD4/g0kntFx66KUnOfabPOy6AfuBGfFgi/TjDzSUxCE11VUZjddWb3?=
+ =?iso-8859-1?Q?C3JDkicE/prvGYWAACtHgrIWFp3AvmpeWL9uQQdJaroy2Q/By/+w0=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB6373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?jq+Z23GM4aUFwhVYxkThuhBTzlP+rpyv51+Gy/D+ozAlZZB6uSehDi/YDm?=
+ =?iso-8859-1?Q?qu0oK0LwNNItb8rT64bui5ZNcYHF86XyO0FBIkjFXIGM1mKChwJodk+baU?=
+ =?iso-8859-1?Q?7OFiqrR2Vj08NPY0Pbuz4M9NAfa4S9HIS3d2lxqJKIYvbPWl/+x5+UiOEt?=
+ =?iso-8859-1?Q?MXCJRAeqLPeQKIdsm50o+I1vdQhSR0nHaB9VXLFByl/JOygePmDSOJrepe?=
+ =?iso-8859-1?Q?c2HSEImuFR/uP4+vvZq6mtBisV9prlEOa4xFOplKoMT+G78lbQylvjdaw5?=
+ =?iso-8859-1?Q?t49sIB40I1kYkppdzkI7cXQoxiy7zWEA2MqrelmpmavsEwCzXXsHCvOxta?=
+ =?iso-8859-1?Q?OFV+EHhKbM8SrDipvaDbuPyBV+3kpGTeERdIopUnFQF9RuyUPiKVZVES45?=
+ =?iso-8859-1?Q?Id3vWdvVKDAsKBrYQaJyan1qd3LyVKLh7T9F1yrEmICwwl2oeTpOpP/ezH?=
+ =?iso-8859-1?Q?QOm46cNFYDQDtIVax8n1ktzYLIq0L+7RC3zNMQVKB9AsSMD0Tbmt6iGtg7?=
+ =?iso-8859-1?Q?oBThv5hJqj511JVyNe9ST2KRs0+1iSB+rSnhdMNE8BSJtr2NEjdGJIMtDF?=
+ =?iso-8859-1?Q?Lf7WlOenSYLmJw9TFckTyrWnIDeM/KgB7APt/WO4+IxeeL+/ZisR8hXQp2?=
+ =?iso-8859-1?Q?JHH7FwYfhKb2pFCmMeeAq+rqV1cmAYI2WA8Esga6unpVscBi6OAfE6RgJI?=
+ =?iso-8859-1?Q?g8GVU0jZNNTOMoB7xj6lwoY3sPS4KZZCIik1C5KekK864dz2mH50PGY2OK?=
+ =?iso-8859-1?Q?3VqnWd3/mFpj0TjgwwmFiio5yCZe26Oba5M4YAZ5x0QQOprdAdOTFgAWFF?=
+ =?iso-8859-1?Q?+31BkpPWz8tbpz+oWgLC+vF/xH+4axrYpUg6o9sVhZSv0F5Y4uNphtn5aF?=
+ =?iso-8859-1?Q?8EP1L5wMX9TzjgrkNJviLUWsqZd83rOpYGc/v+eXML0+8tHqS8y2O6D6O1?=
+ =?iso-8859-1?Q?V4mIku1P6wCS1cGCk857vust75g7VaSAC8sRMyhre9LZH9zcLDRU92Qsn8?=
+ =?iso-8859-1?Q?O8NsYEpp4KCptMqWmUdE0bm4PmTeQsFqWKgLNUxsJehQugJzgbAfwT+V26?=
+ =?iso-8859-1?Q?JWcXA4QdLz7QTkhHa93UbEOTQ+4HfCRSWyj2GJyoNKPIPsY+QtqqrjICfE?=
+ =?iso-8859-1?Q?dOZ+FODMoaHo+x4FHW+UlMPdDCgxHsvlsymMItPlaxoaJRaAh3WPQnz2OI?=
+ =?iso-8859-1?Q?qXkTUi2ZwfxT3lAomtXalA7x+rglTJI8bhvMd552zHVcxXAWxLANMJ0jKS?=
+ =?iso-8859-1?Q?1543kPZ2y2y90oC9RO33da49TIEn3wgLb6dZVE1SeGrGtC8riJC7LrkIru?=
+ =?iso-8859-1?Q?ycxFpxYrW+VxN3oKGFWb8Lt08110A/Mng55Q5Nsb3SYRrAGF3Iqf4jCwun?=
+ =?iso-8859-1?Q?Te5vgG30gIQEkMWm7kTbG+QkJ6+I4cfqngFllNdry2Q2SP7+v/6lodHSb2?=
+ =?iso-8859-1?Q?5Xqc/hw4GwbfVX000nk8YocCr2qUQ1N/tV8cg98rV2BPyIMdeqYzBk8/sh?=
+ =?iso-8859-1?Q?NWdl2YPOZUJaZ+eMWJoPW0sblSyxoX90ldqZGwOCPu2DKnti7zsdut/3UQ?=
+ =?iso-8859-1?Q?ZXFbvzSSm8fJZ9eQwDLBbU4tIcEMNWnlAlcMG42eKwURiTPpfTq7VRBN0c?=
+ =?iso-8859-1?Q?qCjGXF2yNq2KU/+Pv0S1ifeovgZcn8FPgU?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240622-qcom-pd-mapper-v9-5-a84ee3591c8e@linaro.org>
-References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
-In-Reply-To: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
- Xilin Wu <wuxilin123@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Steev Klimaszewski <steev@kali.org>, 
- Alexey Minnekhanov <alexeymin@postmarketos.org>, 
- Chris Lew <quic_clew@quicinc.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9639;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ERzl1vOfSWUTdRssx1gYQEEpeL4zdtyW1p5ZcdM048M=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmdfi8S27dm1fHUp48zQ0eg0UMYWHJlD12WN38l
- gY46J4uqYqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnX4vAAKCRCLPIo+Aiko
- 1YAiCACzBqZDblGXcwb7Kv48HLNNpvqWibCx3M+4oFkup/CSa7odlypo4iJCuV8kSZrlr7ipDkP
- AesR6oXFZPO/2u2dp3eZ7I6gC9uGJ5qIUAQQ0XaBYZQlguJwMEmOowbzk4FtJPY0pr0cu9QrcFu
- B2tUgKKyYfRh7KsSPvE2CsCBCMch23vJVplVO83UWXgudsZ9IH95xfyL9JNG+brs8uisw5YDKv6
- FiZkYW15nt49b/TY1f0Aww5xNBoFAyFRvVMDg7Ao6Yr4McSS1wG1Rpp0jtsKUKCBkj/JOJzvn10
- UCujwA3P7F5SNt+3FhCoCZlCf0h0nC3HhHaacLWv1wTQhEPU
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB6373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d216aa01-a40f-45c0-0616-08dc92819cca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2024 06:07:35.8292
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Y2s7IXeti5mwsCGKtdPlgXkZYUZrDQMNvyv3NDpWB4vcWcuhQrJf0JosAoqNgyRbupbptm4JmOe5EFAWYeFKZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8219
+X-OriginatorOrg: intel.com
 
-Request in-kernel protection domain mapper to be started before starting
-Qualcomm DSP and release it once DSP is stopped. Once all DSPs are
-stopped, the PD mapper will be stopped too.
+On Thursday, June 20, 2024 5:01 PM, Michael S. Tsirkin wrote:
+> On Thu, Jun 20, 2024 at 04:39:38PM +0800, Xuan Zhuo wrote:
+> > On Thu, 20 Jun 2024 04:02:45 -0400, "Michael S. Tsirkin" <mst@redhat.co=
+m>
+> wrote:
+> > > On Wed, Apr 24, 2024 at 05:15:29PM +0800, Xuan Zhuo wrote:
+> > > > commit 6457f126c888 ("virtio: support reserved vqs") introduced
+> > > > this support. Multiqueue virtio-net use 2N as ctrl vq finally, so
+> > > > the logic doesn't apply. And not one uses this.
+> > > >
+> > > > On the other side, that makes some trouble for us to refactor the
+> > > > find_vqs() params.
+> > > >
+> > > > So I remove this support.
+> > > >
+> > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > Acked-by: Jason Wang <jasowang@redhat.com>
+> > > > Acked-by: Eric Farman <farman@linux.ibm.com> # s390
+> > > > Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> > >
+> > >
+> > > I don't mind, but this patchset is too big already.
+> > > Why do we need to make this part of this patchset?
+> >
+> >
+> > If some the pointers of the names is NULL, then in the virtio ring, we
+> > will have a trouble to index from the arrays(names, callbacks...).
+> > Becasue that the idx of the vq is not the index of these arrays.
+> >
+> > If the names is [NULL, "rx", "tx"], the first vq is the "rx", but
+> > index of the vq is zero, but the index of the info of this vq inside th=
+e arrays is
+> 1.
+>=20
+>=20
+> Ah. So actually, it used to work.
+>=20
+> What this should refer to is
+>=20
+> commit ddbeac07a39a81d82331a312d0578fab94fccbf1
+> Author: Wei Wang <wei.w.wang@intel.com>
+> Date:   Fri Dec 28 10:26:25 2018 +0800
+>=20
+>     virtio_pci: use queue idx instead of array idx to set up the vq
+>=20
+>     When find_vqs, there will be no vq[i] allocation if its corresponding
+>     names[i] is NULL. For example, the caller may pass in names[i] (i=3D4=
+)
+>     with names[2] being NULL because the related feature bit is turned of=
+f,
+>     so technically there are 3 queues on the device, and name[4] should
+>     correspond to the 3rd queue on the device.
+>=20
+>     So we use queue_idx as the queue index, which is increased only when =
+the
+>     queue exists.
+>=20
+>     Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+>     Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>=20
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
-Tested-by: Steev Klimaszewski <steev@kali.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/remoteproc/qcom_common.c    | 87 +++++++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_common.h    | 10 +++++
- drivers/remoteproc/qcom_q6v5_adsp.c |  3 ++
- drivers/remoteproc/qcom_q6v5_mss.c  |  3 ++
- drivers/remoteproc/qcom_q6v5_pas.c  |  3 ++
- drivers/remoteproc/qcom_q6v5_wcss.c |  3 ++
- 6 files changed, 109 insertions(+)
+The approach was taken to prevent the creation (by the device) of unnecessa=
+ry
+queues that would remain unused when the feature bit is turned off. Otherwi=
+se,
+the device is required to create all conditional queues regardless of their=
+ necessity.
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 03e5f5d533eb..8c8688f99f0a 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -13,6 +13,7 @@
- #include <linux/notifier.h>
- #include <linux/remoteproc.h>
- #include <linux/remoteproc/qcom_rproc.h>
-+#include <linux/auxiliary_bus.h>
- #include <linux/rpmsg/qcom_glink.h>
- #include <linux/rpmsg/qcom_smd.h>
- #include <linux/slab.h>
-@@ -25,6 +26,7 @@
- #define to_glink_subdev(d) container_of(d, struct qcom_rproc_glink, subdev)
- #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
- #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
-+#define to_pdm_subdev(d) container_of(d, struct qcom_rproc_pdm, subdev)
- 
- #define MAX_NUM_OF_SS           10
- #define MAX_REGION_NAME_LENGTH  16
-@@ -519,5 +521,90 @@ void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
- }
- EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
- 
-+static void pdm_dev_release(struct device *dev)
-+{
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-+
-+	kfree(adev);
-+}
-+
-+static int pdm_notify_prepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_pdm *pdm = to_pdm_subdev(subdev);
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return -ENOMEM;
-+
-+	adev->dev.parent = pdm->dev;
-+	adev->dev.release = pdm_dev_release;
-+	adev->name = "pd-mapper";
-+	adev->id = pdm->index;
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret) {
-+		kfree(adev);
-+		return ret;
-+	}
-+
-+	ret = auxiliary_device_add(adev);
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		return ret;
-+	}
-+
-+	pdm->adev = adev;
-+
-+	return 0;
-+}
-+
-+
-+static void pdm_notify_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_pdm *pdm = to_pdm_subdev(subdev);
-+
-+	if (!pdm->adev)
-+		return;
-+
-+	auxiliary_device_delete(pdm->adev);
-+	auxiliary_device_uninit(pdm->adev);
-+	pdm->adev = NULL;
-+}
-+
-+/**
-+ * qcom_add_pdm_subdev() - register PD Mapper subdevice
-+ * @rproc:	rproc handle
-+ * @pdm:	PDM subdevice handle
-+ *
-+ * Register @pdm so that Protection Device mapper service is started when the
-+ * DSP is started too.
-+ */
-+void qcom_add_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm)
-+{
-+	pdm->dev = &rproc->dev;
-+	pdm->index = rproc->index;
-+
-+	pdm->subdev.prepare = pdm_notify_prepare;
-+	pdm->subdev.unprepare = pdm_notify_unprepare;
-+
-+	rproc_add_subdev(rproc, &pdm->subdev);
-+}
-+EXPORT_SYMBOL_GPL(qcom_add_pdm_subdev);
-+
-+/**
-+ * qcom_remove_pdm_subdev() - remove PD Mapper subdevice
-+ * @rproc:	rproc handle
-+ * @pdm:	PDM subdevice handle
-+ *
-+ * Remove the PD Mapper subdevice.
-+ */
-+void qcom_remove_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm)
-+{
-+	rproc_remove_subdev(rproc, &pdm->subdev);
-+}
-+EXPORT_SYMBOL_GPL(qcom_remove_pdm_subdev);
-+
- MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index 9ef4449052a9..b07fbaa091a0 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -34,6 +34,13 @@ struct qcom_rproc_ssr {
- 	struct qcom_ssr_subsystem *info;
- };
- 
-+struct qcom_rproc_pdm {
-+	struct rproc_subdev subdev;
-+	struct device *dev;
-+	int index;
-+	struct auxiliary_device *adev;
-+};
-+
- void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
- 			void (*rproc_dumpfn_t)(struct rproc *rproc,
- 				struct rproc_dump_segment *segment, void *dest, size_t offset,
-@@ -52,6 +59,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
- 			 const char *ssr_name);
- void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr);
- 
-+void qcom_add_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
-+void qcom_remove_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
-+
- #if IS_ENABLED(CONFIG_QCOM_SYSMON)
- struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 					   const char *name,
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 1d24c9b656a8..572dcb0f055b 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -112,6 +112,7 @@ struct qcom_adsp {
- 	struct dev_pm_domain_list *pd_list;
- 
- 	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 
-@@ -726,6 +727,7 @@ static int adsp_probe(struct platform_device *pdev)
- 		goto disable_pm;
- 
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
-+	qcom_add_pdm_subdev(rproc, &adsp->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
- 	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
- 					      desc->sysmon_name,
-@@ -755,6 +757,7 @@ static void adsp_remove(struct platform_device *pdev)
- 
- 	qcom_q6v5_deinit(&adsp->q6v5);
- 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
-+	qcom_remove_pdm_subdev(adsp->rproc, &adsp->pdm_subdev);
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
- 	qcom_rproc_pds_detach(adsp);
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 1779fc890e10..2a42215ce8e0 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -228,6 +228,7 @@ struct q6v5 {
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 	struct platform_device *bam_dmux;
-@@ -2102,6 +2103,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qcom_add_glink_subdev(rproc, &qproc->glink_subdev, "mpss");
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
-+	qcom_add_pdm_subdev(rproc, &qproc->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
- 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
- 	if (IS_ERR(qproc->sysmon)) {
-@@ -2143,6 +2145,7 @@ static void q6v5_remove(struct platform_device *pdev)
- 	qcom_q6v5_deinit(&qproc->q6v5);
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
- 	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
-+	qcom_remove_pdm_subdev(rproc, &qproc->pdm_subdev);
- 	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
- 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 8458bcfe9e19..88e7b84f223c 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -111,6 +111,7 @@ struct qcom_adsp {
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 
-@@ -777,6 +778,7 @@ static int adsp_probe(struct platform_device *pdev)
- 
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
- 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-+	qcom_add_pdm_subdev(rproc, &adsp->pdm_subdev);
- 	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
- 					      desc->sysmon_name,
- 					      desc->ssctl_id);
-@@ -811,6 +813,7 @@ static void adsp_remove(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
-+	qcom_remove_pdm_subdev(adsp->rproc, &adsp->pdm_subdev);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
- 	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- 	device_init_wakeup(adsp->dev, false);
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 94f68c919ee6..e913dabae992 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -148,6 +148,7 @@ struct q6v5_wcss {
- 	bool requires_force_stop;
- 
- 	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- };
- 
-@@ -1052,6 +1053,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	qcom_add_glink_subdev(rproc, &wcss->glink_subdev, "q6wcss");
-+	qcom_add_pdm_subdev(rproc, &wcss->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, "q6wcss");
- 
- 	if (desc->ssctl_id)
-@@ -1074,6 +1076,7 @@ static void q6v5_wcss_remove(struct platform_device *pdev)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 
- 	qcom_q6v5_deinit(&wcss->q6v5);
-+	qcom_remove_pdm_subdev(rproc, &wcss->pdm_subdev);
- 	rproc_del(rproc);
- }
- 
+>=20
+> Which made it so setting names NULL actually does not reserve a vq.
 
--- 
-2.39.2
+If there is a need for an explicit queue reservation, it might be feasible =
+to assign
+a specific name to the queue(e.g. "reserved")?
+This will require the device to have the reserved queue added.
+
+>=20
+> But I worry about non pci transports - there's a chance they used a diffe=
+rent
+> index with the balloon. Did you test some of these?
+>=20
+> --
+> MST
+>=20
 
