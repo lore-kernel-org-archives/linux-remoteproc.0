@@ -1,190 +1,116 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FE785298
-	for <linux-remoteproc@vger.kernel.org>; Sun, 23 Jun 2024 10:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4154137758;
+	Mon, 24 Jun 2024 11:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719137707; cv=none; b=qnLJY1x/ONGmxeMxNswBDBJ8Pde9u4/AmJGMBxUwEsSn2TlxEw60BB/hfjg4j+znSkmZ6L52mWOsE8X1ti2CxNZTWCX+LlT3hopwAt4ptuEvxhMW1NrU+IXNWTxj1Et19Z7DnyXkPbegtwDJKld/T9q6+CTljQIChe9FbyWhIIs=
+	t=1719228132; cv=none; b=TubEWkYDcjTyn7OSU5bWnLMVcQIF7HPozI10qji/Q7KbTl9/WaOJXX4WN8wmW/EdJ0mcIxfS2Th5dIWMLQisTQ1CAwdKFjNDJwTQorOKPP9ZxsALwFFbYmb7z0UMravDxE1ujhf0JNouWv1qnQKDgCNhiw4b2/fBkzyc56XQ5rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719137707; c=relaxed/simple;
-	bh=OuR2sYZAr2eBHxaMxpLs26oNyCGBj4JLZvUZ0k+VmS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LX2oTcJH32qTF2Hg5c2Kwaf9X8zsLZmXkpuRrWxvb11Mj30fZkN5LC/Mr/XlmQGXIMs5p0xgEavVL7PPeu9j8NV7oQwGd55Xmr6RTjqULmILAfiKKxhi4CYwm1vg60sclXq2HYO1uNZx7z+lslxJzJhgIFU6UPnLL1xuJZiYFGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aZBIjQUe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1719228132; c=relaxed/simple;
+	bh=LGFzxEq9GIYT5eEJul9AB2CmTR+3zd4Vz6DgOmBbQ50=;
+	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OR/XQdT9rfw/kBHoUoWgCp8E8b/EUzu94ZK932LMfEBI7msCQCVmnZ6n2b+vUoV9ivWAos1sjLm6r6wcb6cxSj00uABRJ7HfFUbI/f2aG6wtBjqD0N5WI8MA3eJ8OlR3a17x2zhiFnEYdOTsRvgOsj2OOF2loD3BhU2/ObiY3ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N4K718ta; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aZBIjQUe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719137704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sOci2B9Gr4WI6Fbop3cV6xh51JciMNHVROXI0Qgvuqs=;
-	b=aZBIjQUeGKIO1FQp5W1oNjRQpDASA35eq+HF3GawsyzUVDEO3hYoZZED111KafQWNjv/y7
-	DVzLW34wQFtazkjRa9sri9bPFgt6D7zd5Pby/9s3TdSXxwnWUzVf6s644W/pq0D3a3Pf2P
-	qBV3i3vIMUFD36/XdQaMV83GsJhUJJo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-OCd662vUOr6h8zYze-MLVw-1; Sun, 23 Jun 2024 06:15:03 -0400
-X-MC-Unique: OCd662vUOr6h8zYze-MLVw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-366e0a4c965so490066f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 23 Jun 2024 03:15:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719137702; x=1719742502;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sOci2B9Gr4WI6Fbop3cV6xh51JciMNHVROXI0Qgvuqs=;
-        b=uTP9+38S87lfP7Umojx25lPoEcBau1jM1P7sUSLe/19gkC5PEZpTPw3kNOrpdTz1XZ
-         C9vKXVTbNHfXq0hR1FejuDXDNoJceFxE/lv5r/EInHVyYSahLr2TZbLozgq38BPzNv4m
-         G5o9fP0j6yVMrotgKOjt7dgB/PGNlczbWxuEnkwueVVgSSkqI8BgiyMwERaRMP/EXYxR
-         wxf50QQ0ydNgYF2OKb3hoHGkUfvkjdwxUxnSJ59AisoVz9PqI8j0dBOEsf7WW1m9PT08
-         RI1dEN3ffpJs+Mq6iwfJwAKJSCpS2wZpKvOkcJCsNKREEXRj9KkN2WUZMm7PWdNMr7Gr
-         jWkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIKZrlrHCZn5cqWbiEdc+hcFHxkbv5dzgMapYxTUay5T1Mwewf02XLUNuXxsXCuL1h4rcs4Ass3SMyrHbqnyRarZfd4df1kJCz7+IQFcUc8A==
-X-Gm-Message-State: AOJu0YzDcdLaB+W7zZFNDbOhbhbbfzVVEUMAPWHOySf9NvuRnFon7ocR
-	JS3zR+Q9xHR4cmQzUtSE0irsU5fiyELAAPUy4uGdufBS+qI4J/rr17p4bsrkA/vXSUozu6XmhK+
-	7TuWXEzGmi0RTRf3GSHUBrJi2gNgnqhIPQYAeDCZ/erUABTGiriDQwWWzsnDFXj2bXkk=
-X-Received: by 2002:a05:6000:dcd:b0:35f:1c34:adfc with SMTP id ffacd0b85a97d-366e96bf06bmr1002439f8f.67.1719137701822;
-        Sun, 23 Jun 2024 03:15:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPPDC3HI60pWL+wtMB9iK/gooIH7i9Iz/3lSKlTGUXQzR11017FM83y2VnixVMSw+lIyxO0Q==
-X-Received: by 2002:a05:6000:dcd:b0:35f:1c34:adfc with SMTP id ffacd0b85a97d-366e96bf06bmr1002414f8f.67.1719137701075;
-        Sun, 23 Jun 2024 03:15:01 -0700 (PDT)
-Received: from redhat.com ([2.52.146.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b861bsm6874269f8f.29.2024.06.23.03.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 03:15:00 -0700 (PDT)
-Date: Sun, 23 Jun 2024 06:14:53 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: "Wang, Wei W" <wei.w.wang@intel.com>
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH vhost v9 2/6] virtio: remove support for names array
- entries being null.
-Message-ID: <20240623061141-mutt-send-email-mst@kernel.org>
-References: <20240424091533.86949-1-xuanzhuo@linux.alibaba.com>
- <20240424091533.86949-3-xuanzhuo@linux.alibaba.com>
- <20240620035749-mutt-send-email-mst@kernel.org>
- <1718872778.4831812-1-xuanzhuo@linux.alibaba.com>
- <20240620044839-mutt-send-email-mst@kernel.org>
- <DS0PR11MB6373310FBF95058B8FE8CD95DCCA2@DS0PR11MB6373.namprd11.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N4K718ta"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8Yc4u001514;
+	Mon, 24 Jun 2024 11:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gJNdQbK2gK2RYTmxVTnJNWU0R/RM083z0YR2Im8uMmk=; b=N4K718ta5j+Fgfv9
+	4u5OthO9IW7ObNFfXx/0ETptMm8EmkzGQ/ioe9LIG+9RMbvjMpmc1bpUS2tLJ5Rt
+	JiZzMmI/hkhPdkP/ZVfPqZf0pc00MwmSBu4DQHbIH4XHyEJPYVKaQ+EuFBf82VdI
+	WTx5IDcFBgE0RHsF/yj5CTJrbrx4UlpL2Bq+reTHxLlr+DOMsjTUTr8rxTai3Eqy
+	ZPSb34ekR8baSwN7pm2p8dtwp4cMp2h2PMdU0tYOQQHo8sDSnNv7XqJD8iMnymGW
+	BJ2uvGUcMiZ0kOeYPR7xlgwHviqU0Fkzv57ktOLk5AYaxbVHMr6TtaCdzGA8YuFe
+	82EXZg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaeunag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 11:22:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OBM5Z5011086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 11:22:05 GMT
+Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 04:22:02 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+Message-ID: <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+Date: Mon, 24 Jun 2024 16:51:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS0PR11MB6373310FBF95058B8FE8CD95DCCA2@DS0PR11MB6373.namprd11.prod.outlook.com>
+In-Reply-To: <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KnjzrKftx_rUhhBC1-H2QVbmA3ABuHvV
+X-Proofpoint-GUID: KnjzrKftx_rUhhBC1-H2QVbmA3ABuHvV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_09,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240091
 
-On Sat, Jun 22, 2024 at 06:07:35AM +0000, Wang, Wei W wrote:
-> On Thursday, June 20, 2024 5:01 PM, Michael S. Tsirkin wrote:
-> > On Thu, Jun 20, 2024 at 04:39:38PM +0800, Xuan Zhuo wrote:
-> > > On Thu, 20 Jun 2024 04:02:45 -0400, "Michael S. Tsirkin" <mst@redhat.com>
-> > wrote:
-> > > > On Wed, Apr 24, 2024 at 05:15:29PM +0800, Xuan Zhuo wrote:
-> > > > > commit 6457f126c888 ("virtio: support reserved vqs") introduced
-> > > > > this support. Multiqueue virtio-net use 2N as ctrl vq finally, so
-> > > > > the logic doesn't apply. And not one uses this.
-> > > > >
-> > > > > On the other side, that makes some trouble for us to refactor the
-> > > > > find_vqs() params.
-> > > > >
-> > > > > So I remove this support.
-> > > > >
-> > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > > > > Acked-by: Eric Farman <farman@linux.ibm.com> # s390
-> > > > > Acked-by: Halil Pasic <pasic@linux.ibm.com>
-> > > >
-> > > >
-> > > > I don't mind, but this patchset is too big already.
-> > > > Why do we need to make this part of this patchset?
-> > >
-> > >
-> > > If some the pointers of the names is NULL, then in the virtio ring, we
-> > > will have a trouble to index from the arrays(names, callbacks...).
-> > > Becasue that the idx of the vq is not the index of these arrays.
-> > >
-> > > If the names is [NULL, "rx", "tx"], the first vq is the "rx", but
-> > > index of the vq is zero, but the index of the info of this vq inside the arrays is
-> > 1.
-> > 
-> > 
-> > Ah. So actually, it used to work.
-> > 
-> > What this should refer to is
-> > 
-> > commit ddbeac07a39a81d82331a312d0578fab94fccbf1
-> > Author: Wei Wang <wei.w.wang@intel.com>
-> > Date:   Fri Dec 28 10:26:25 2018 +0800
-> > 
-> >     virtio_pci: use queue idx instead of array idx to set up the vq
-> > 
-> >     When find_vqs, there will be no vq[i] allocation if its corresponding
-> >     names[i] is NULL. For example, the caller may pass in names[i] (i=4)
-> >     with names[2] being NULL because the related feature bit is turned off,
-> >     so technically there are 3 queues on the device, and name[4] should
-> >     correspond to the 3rd queue on the device.
-> > 
-> >     So we use queue_idx as the queue index, which is increased only when the
-> >     queue exists.
-> > 
-> >     Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> >     Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > 
+
+
+On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
 > 
-> The approach was taken to prevent the creation (by the device) of unnecessary
-> queues that would remain unused when the feature bit is turned off. Otherwise,
-> the device is required to create all conditional queues regardless of their necessity.
 > 
-> > 
-> > Which made it so setting names NULL actually does not reserve a vq.
+> On 6/18/24 15:13, Naina Mehta wrote:
+>> Rename qdss@88800000 memory region as qlink_logging memory region
+>> and add qdss_mem memory region at address of 0x88500000.
+>> Split mpss_dsmharq_mem region into 2 separate regions and
+>> reduce the size of mpssadsp_mem region.
+>>
+>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>> ---
 > 
-> If there is a need for an explicit queue reservation, it might be feasible to assign
-> a specific name to the queue(e.g. "reserved")?
-> This will require the device to have the reserved queue added.
+> Alright, we're getting somewhere. The commit message should however 
+> motivate
+> why such changes are necessary. For all we know, the splitting in two is
+> currently done for no reason, as qdss_mem and qlink_logging_mem are 
+> contiguous
+> - does the firmware have some expectations about them being separate?
+> 
 
-That's quite a hack, NULL as a special value is much more
-idiomatic.
+Since different DSM region size is required for different modem 
+firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+This would provide the flexibility to remove the region which is
+not required for a particular platform.
+qlink_logging is being added at the memory region at the address of
+0x88800000 as the region is being used by modem firmware.
 
-Given driver and qemu are both non spec compliant but *in splightly
-different ways* I think we should just fix both the driver and qemu to
-be spec compliant.
+Regards,
+Naina
 
-
-> > 
-> > But I worry about non pci transports - there's a chance they used a different
-> > index with the balloon. Did you test some of these?
-> > 
-> > --
-> > MST
-> > 
-
+> Konrad
