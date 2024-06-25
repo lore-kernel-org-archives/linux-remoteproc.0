@@ -1,108 +1,87 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E533B7A8;
-	Tue, 25 Jun 2024 00:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575254BA94;
+	Tue, 25 Jun 2024 03:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719276766; cv=none; b=q9EGVaYeWt7J7zBQdRTsR7s54qUiWVehQSDdqDSE8hcp6ftcUlbnAkcNsZWLyO7yJTlb7KQE3aN+GKJJMvLFGV0H7v3ejNTGmZn9AYOjrcKuAjtyO5W3erHkJ3nNHuo3hONPfNPsffzFuhvZDpYvBatmalrvlQuzjDaELzt54f8=
+	t=1719285390; cv=none; b=jdpfgZfccrdz00roGzUaYZyEkxMc5RgzyL5lKpw27IoX8R+Af3plYtSG7FDendC6dd8Qc3AUAodRX2E7vzUqVesgSTJmDLsc+1p4Q0J0lhlcQgihI0HcWL6JnnuDv1IJAW0/LqFJSk6uKBrHegHH5TuGNGtCqCjZJyeCoGWKyaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719276766; c=relaxed/simple;
-	bh=So/F8y4HqDbzH8FjFEYDBRG0qxp7bBgvTlG4bt4waM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rvb5Pul65+FyX5VN1HzubLQD/0o+Q6yx8NMUqoDQuuTlmf+kX92xkCTIP5joMLW3zHUnXSp+ctjCSvZY2Qz5aLzuBpeEkEUaibBiQg+cw9kT8+Krf4OMer37JI7RNVuqZdcs9/kLATyGNBmyjiqkhCvUaEgKoNjaQ8MOJzGDg9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i6FhGy1F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719285390; c=relaxed/simple;
+	bh=rOTOxM/UbkKrcInxCB24RhMXUDzg8lvf241J4Xb53hA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ljw73L7x+aVhsLnMBB9pn8ut8rbAEduGDfNmW8ZTt7kNwBa3H157iPBqu9uBAD5cz9Srcp6zKCjHfDOJXuC6l8qlPLkqbpfQQgmBw8xmchSyzmEz7AfguaopqXChGFyxLTi/LauvzEKDz3SMmxlDRYSdoBHWO/d7xeNJH/t3eC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpr8kU8p; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i6FhGy1F"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OK1G8d014014;
-	Tue, 25 Jun 2024 00:52:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	04HLdGB3gU2fUKwtvgGY38yKf3y7Y0bAlY+VaLngquU=; b=i6FhGy1FSqOuMgeg
-	/MFUfQ3YRWEqE100/UuKpp7nna6QP3zq6Q7AimKzSvS/upF/Frwh5Ydr2LzfKjKA
-	QmznfexsjAZjURdql49MPA/ZKEAk/dtl07TYLV4ydKEjcBLM65Iv2wJ5VENmaRHo
-	wmRbB1GWevOzc3z89WMECIhL9Af2Fqm/G8yNL2305oBumC6YE9Om+hR6wUE5ULw9
-	jsIHaWRvRBhIOt68ZZE9xuOWzL0FUDPvxRhGBzDincckzSW/8MvLsKo4Z0uR0uvL
-	5JUL9iomQ1xS6ZDNoH+mYn8Q6QPwSv1oXo5uZJxSJx6C1uQrXBD4gMFHCV88Fr+E
-	vG61Zw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnxgw07f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 00:52:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P0qadO028669
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 00:52:36 GMT
-Received: from [10.71.112.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 17:52:35 -0700
-Message-ID: <80a475ab-827d-4c9f-a82f-64fc1fcaf6dc@quicinc.com>
-Date: Mon, 24 Jun 2024 17:52:34 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpr8kU8p"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DE3C32789;
+	Tue, 25 Jun 2024 03:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719285389;
+	bh=rOTOxM/UbkKrcInxCB24RhMXUDzg8lvf241J4Xb53hA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tpr8kU8pZN4K3YZh7GPimpVKWJKoTFDlmry33NongBMJEDPWTFwXg5vUYvFd88Bsp
+	 j6VuYUV6jVgUhMWRoTe1NoUsqpVZBtalVRH5yEcaTBi2K0spw78fNHUjPLUrclm82G
+	 Lz7DLMHo+Mp6BUrDkysMSvpwpKZrJQX5DpNb9s9oYR7fWBmugoMdWaKJzbhpt87SRx
+	 957tsftugknT8jmxD9UaH/4kGg8wdZZGWN574UYWwbKOHknafe8Iei1olv3dypoRKI
+	 9c7jetrHmHdfYlrBYpVqWSQ7eADqVIr7/NmNffkvBQyRPSKYChMhUJPKBJSJbI7vJN
+	 YCfrgb86nA97Q==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Xilin Wu <wuxilin123@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Steev Klimaszewski <steev@kali.org>,
+	Alexey Minnekhanov <alexeymin@postmarketos.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Lew <quic_clew@quicinc.com>
+Subject: Re: (subset) [PATCH v9 0/5] soc: qcom: add in-kernel pd-mapper implementation
+Date: Mon, 24 Jun 2024 22:16:25 -0500
+Message-ID: <171928538270.25855.4993022152157455848.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
+References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/5] soc: qcom: pdr: protect locator_addr with the main
- mutex
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Xilin Wu <wuxilin123@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Steev Klimaszewski <steev@kali.org>,
-        "Alexey
- Minnekhanov" <alexeymin@postmarketos.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
- <20240622-qcom-pd-mapper-v9-1-a84ee3591c8e@linaro.org>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240622-qcom-pd-mapper-v9-1-a84ee3591c8e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oAPi9LXyEJp1DIT4q6U5qsz6Whasfloe
-X-Proofpoint-ORIG-GUID: oAPi9LXyEJp1DIT4q6U5qsz6Whasfloe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_21,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=996 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406250005
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-
-On 6/21/2024 3:03 PM, Dmitry Baryshkov wrote:
-> If the service locator server is restarted fast enough, the PDR can
-> rewrite locator_addr fields concurrently. Protect them by placing
-> modification of those fields under the main pdr->lock.
+On Sat, 22 Jun 2024 01:03:39 +0300, Dmitry Baryshkov wrote:
+> Protection domain mapper is a QMI service providing mapping between
+> 'protection domains' and services supported / allowed in these domains.
+> For example such mapping is required for loading of the WiFi firmware or
+> for properly starting up the UCSI / altmode / battery manager support.
 > 
-> Fixes: fbe639b44a82 ("soc: qcom: Introduce Protection Domain Restart helpers")
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Tested-by: Steev Klimaszewski <steev@kali.org>
-> Tested-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> The existing userspace implementation has several issue. It doesn't play
+> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
+> firmware location is changed (or if the firmware was not available at
+> the time pd-mapper was started but the corresponding directory is
+> mounted later), etc.
+> 
+> [...]
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Applied, thanks!
+
+[1/5] soc: qcom: pdr: protect locator_addr with the main mutex
+      commit: 107924c14e3ddd85119ca43c26a4ee1056fa9b84
+[2/5] soc: qcom: pdr: fix parsing of domains lists
+      commit: 57f20d51f35780f240ecf39d81cda23612800a92
+[3/5] soc: qcom: pdr: extract PDR message marshalling data
+      commit: 0ac5c7d933de6570e0efa62bb5ef9e440311a6fe
+[4/5] soc: qcom: add pd-mapper implementation
+      commit: 1ebcde047c547134e894508468ead0b7bd3b967d
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
