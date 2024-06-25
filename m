@@ -1,108 +1,81 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDAA1465BA
-	for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jun 2024 07:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E93713B2B0;
+	Tue, 25 Jun 2024 16:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299639; cv=none; b=lKEO1Vjuk2ljK7wnOghs0b163FJ+syv99nrlQ74aP0ZmfUFx+AkukflNDdz6XP9rxzfRm/2+o6RZk85YvOsnZBIVVEcGCKsSik9aI4roHbry7GOrmASzsIQFtyc4qqGmQ9OtQf2zJHg2Ip2wueoAsdLWU8ULf6b+RDSLv0WIOno=
+	t=1719333604; cv=none; b=UtBVHL8p3fvGWuFtSK1NBY4PTrTnVLsSwm2FDZb5hPOotaHVwSUF9vZunj2HYxTvgJq135zlSsiT+a//WaEQ0M/KC9/ExB4d2dFeskhvI2yKWD55OWpHQp3OJGH67iv/5Bk6TA9q5/N5F9C7E1w234wgL+pWsgjdGSTZIpaW8wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299639; c=relaxed/simple;
-	bh=M0PusBwUOnvIKi4gdlLdWjip9P0B6wyISd2JaNhue0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ekvUszgr8N1yTdQfbW2KEyHIA7rLwkHUzLW4fQ9QU9GLH9Mdjry73b8fXc9IGFz7CGWyPU3A8WR4VkQiNLUO68mRFeKijjsdoNr7wvzBuzaaBpebnpLWGd8VQvyy0vGSXdd6YJmKKP5f1n3/IVfBQ2bGf9uNdGrkfhDQbu8XGYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXmifm8q; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719333604; c=relaxed/simple;
+	bh=zs0R/nUMW9F+9o//+MVNBbmIzx9PAPVGu5kurOrvf3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YFYOMFYz1EIYYmAA0yq2G7ieYptSTUCvXJablZ7c3INJ2v/CRvelbR3hv9s8H9vz1kKEphGw6lgGlZKhuldG4ZhKC9u0iApF9vVwHZGDA7gnGk9icRwqlNhokDHxFcOKTn52nlDjY1q1OuogMDX5YkXJm1DAIO54dVqf1Ns9BqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0i01YGN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXmifm8q"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52cd80e55efso6158664e87.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jun 2024 00:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719299635; x=1719904435; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
-        b=vXmifm8q/8E5agcvZoJRFXS/zmOUa5QSFcvCZpOm3ZkFXx2PCkHMiAyn2BFChQP5Pu
-         BKSM3cUytxBEtk0/eMNWWvh20Yp8vEEBqVbXiAW2DZNTyneXlG5PBoUDZS6fdfUqylkR
-         aUwnPjqLNcPaN9Sva7E5zEpbGaoJTTXspyhdNedhwpjnE0Ag7i76kvLoP+7OYsU04IgA
-         qP9eaIYz0MslDR4eQhHs+Jmlg4TyBNm52LPYVyFBu+Eo2x1B9VU/yCsFIg1P5zCELiIC
-         eEK9ocgXWDclrGO/QAu1biEYJ0Fe3q+MFa8y8tEVlctxqzD59LFXGICjn5vOZfujkMr0
-         zHgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719299635; x=1719904435;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
-        b=rsDfT4foH9vuPnuMrRpSv9/qY3z91UUaQkjgoOe7ZGlTfi3cQYFTQO7/H4KqQz6DNm
-         QeM5PTtQeFrcMQ7zRT8NuyCLlp4BzD0fY/1n71lwS35cIqVxHxbZDJDaQOutT/Gm8aKu
-         IaF1DnP7wiGfQLA/jmrpwR3C6al/1Cm6AD527ByTTMAuoGDc3MTLiIBwLr6N0uOoC7zU
-         dlIHIPVr9hK8ppTaEU34h/ure5dyFGoyZHmz5FTmu4whYc4bpyqiJOE3AL4fRXuNzO0x
-         UClggqq+VDJKIOv4YmcJ7OJZEzsFLBHr8TRskpO/ObeJ8/2xwV8y6XCFdM7Itup9yZ5q
-         i9iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV71l4+TJVYd89bF+RsTeypvIDoMzNxucEiv7hri20Kx8d14m2PWSdumHxrr45SWypRnvG/owVtVvM4s7b15kbJbEH4oauBOb8OoU/pBPPhBQ==
-X-Gm-Message-State: AOJu0Yw6LgWMhZTOoKOFtj1xmhBit8by/ZrhH0pJfbZFrxrCQkRtIIKK
-	mm6BUQmzXZT0z6Fy5NetwNURAPhft4J7HzigdOz9XEKp5eqXIn9UhBQojdDeOyY=
-X-Google-Smtp-Source: AGHT+IG64J5RDl5yaNGvIky6EGoSsPTbRPhzUi9sDW1lxe4MxCOfYS/ESUmKFf0+XtJh628T1VqfDg==
-X-Received: by 2002:a05:6512:308c:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52ce185ce9amr6238633e87.60.1719299634940;
-        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdeafa562sm820431e87.154.2024.06.25.00.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:13:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gokul Sriram P <quic_gokulsri@quicinc.com>, sboyd@kernel.org, 
-	andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, 
-	devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org, 
-	sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
-Message-ID: <76mrajqeteocstj2akjtyk7rhfnqvksqw3fqsntlm6n3mqqaff@z343xmmunnzj>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
- <d7923435-ba13-4aad-b3f1-67e3469ec7fc@kernel.org>
- <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
- <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0i01YGN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944F4C32781;
+	Tue, 25 Jun 2024 16:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719333603;
+	bh=zs0R/nUMW9F+9o//+MVNBbmIzx9PAPVGu5kurOrvf3I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=q0i01YGNhy/WDsdDsPUax/XbA6NHWKsM8HjwWXbtPBfI2rQhGzYptx6Usd4LMzGdK
+	 XInOGbVJ/59S9x0mGss+0A/b685BUwM22rPzl3wekboi3vcTEo7H9Bsr5rLbfwlBNI
+	 dFLwrG6He0DW2MBQp605m0JafM9LgHZfELzrbCrOQ1k8JgM8rhKlkqaqWNKW+np1Wi
+	 Udxhr5croQ+Fdp+dcUAZofVhZccJFiGlodo72KM1nnfdXTqta5Y6aF7KgNKbq9ZJMi
+	 VJ5Wh1KcBR7W1HlkcOaai7WCaE12+agyDOWmfTqWygLXoqFLnOKBk1cXtpfL1+ipP5
+	 ix8BCT/GxDKjA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Xilin Wu <wuxilin123@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Steev Klimaszewski <steev@kali.org>,
+	Alexey Minnekhanov <alexeymin@postmarketos.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Lew <quic_clew@quicinc.com>
+Subject: Re: (subset) [PATCH v9 0/5] soc: qcom: add in-kernel pd-mapper implementation
+Date: Tue, 25 Jun 2024 09:45:13 -0700
+Message-ID: <171933390698.2418820.597257098896589015.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
+References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
 
-On Tue, Jun 25, 2024 at 09:04:17AM GMT, Krzysztof Kozlowski wrote:
-> On 25/06/2024 08:28, Gokul Sriram P wrote:
-> > 
-> > On 6/21/2024 8:40 PM, Krzysztof Kozlowski wrote:
-> >> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
-> >>> Add name for ssr subdevice on IPQ8074 SoC.
-> >> Why?
-> >    Oops! Missed the change. Will add and update.
-> >>> Signed-off-by: Nikhil Prakash V<quic_nprakash@quicinc.com>
-> >>> Signed-off-by: Sricharan R<quic_srichara@quicinc.com>
-> >>> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
-> >> Three people developed that single line?
-> >>
-> >> Something is really odd with your DCO chain.
-> >   The change was originally authored by Nikhil and reviewed by 
-> > Sricharan. I'm just submitting the change to upstream so retained their 
-> > names.
-> >>
+
+On Sat, 22 Jun 2024 01:03:39 +0300, Dmitry Baryshkov wrote:
+> Protection domain mapper is a QMI service providing mapping between
+> 'protection domains' and services supported / allowed in these domains.
+> For example such mapping is required for loading of the WiFi firmware or
+> for properly starting up the UCSI / altmode / battery manager support.
 > 
-> Then your DCO chain is not correct. Please carefully read submitting
-> patches, especially documents about authorship, DCO, reviewed tags.
+> The existing userspace implementation has several issue. It doesn't play
+> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
+> firmware location is changed (or if the firmware was not available at
+> the time pd-mapper was started but the corresponding directory is
+> mounted later), etc.
+> 
+> [...]
 
-Also there should be From: Nikhil header before the patch.
+Applied, thanks!
 
+[5/5] remoteproc: qcom: enable in-kernel PD mapper
+      commit: 5b9f51b200dcb2c3924ecbff324fa52f1faa84d3
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
