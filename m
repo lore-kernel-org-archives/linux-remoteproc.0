@@ -1,107 +1,113 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C674214F102
-	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 19:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AA416A928;
+	Wed, 26 Jun 2024 21:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429442; cv=none; b=IXaIUkFnyhd//ztsW2z+s0KYPH1VeQWQlxrF6hit0vK0UI1OnsTusySAgdYAssZLpRdfWGJi71rPiWFkWSEzhTRed6PphEUkg3XYIhebc2XQ/8vFUqErUGdmRb9eyhU8Pbsp3Qbnffv+DZLQLpuRycDs6KSwCkML+k9Kfs8jHt4=
+	t=1719437172; cv=none; b=J5vVrNoX+ViCptf85dG2/WWfEvYMQyonr66Hc2a9kantrCwbS3V+XtUnv8XM3o/6N+bMR6ng3HTWHyMqbNkYGvJ5ZgJpMFFfaVyC03eE5lNxs9c7CLAfepWuiDw3cvGB+RZnj7fC7pzUdu9Hx3pogkRFzWMaJd9KZzdv58F3fL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429442; c=relaxed/simple;
-	bh=wZPdg1xi4qRyJlyk7LfqlaJ7fDLSDBw9fw7OGRNwYl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEzi+6A0J9EVsbTC3fZwMEcdMUnB/UFizkxTCDP0cVnWzWL3CVxDUpObhDNRRpNOsGQIMl2p5xOSLHLyolaiI67ziLHKhre4AksVRINkQwSFn8UrqCYqbokuHAxJYPEJ59KgTDisqG1y5ylh8hLR4QTWDDOVX8lg9aeT1pzLiQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdF6c38Q; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719437172; c=relaxed/simple;
+	bh=y0QUyde4VscRphK3UjmSaFcQBvSU0PHJa3DLpUQtEI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WWYoPjpl52yAzYFHH5OaC2K2XXeqF+iCuNhlt65a+DlxEDABrd/AWazrz/5/9QQiPBx1ekHi7DdtJZwX/Q38094C0P9MjWIlNiRuUvHa9Z1URwHRZfFCDTTOJSL7RYnFseyqa4KBpZqZneC0FTRLIKJKB2+ncdgycP3gqAUxxbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XPZd+big; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdF6c38Q"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52db11b1d31so1900377e87.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 12:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719429438; x=1720034238; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
-        b=bdF6c38QBUdDjQCXET6Ae6XTz9eVDupe6JNWAxfkoLAy9v6hr0ZSWlAjvaA52Bi987
-         eA86ed5YG9ThpMRAaVIx67Pq1oKjVjFhaYXm18G4A5ipD0oEqlvgW+LwhC4DaXF3SAkB
-         E/pxdVjtDGJUMcRbBBp0xutTR/hgBU9udoeWZxLHkgk/NEIEQ6QxRpjmxyp+68G+KU6M
-         c/u6oTK61jxogveuRB4lhNVEI0WEvWULNBAJIvkjxVfiervIQlzdkWT0UrChocMIzyCd
-         XhgYZMghHlrFJEqLXYRv7tAbkO8DoMAMvjxzcZH68j7kSvIL00R5G/CsX02/pAvsO3ai
-         ZbEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429438; x=1720034238;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
-        b=TsBuQlMj3P6K0bKgM8ZExK13CSLL6TDWtuH7tCOH4LNhdWb5DXh+5RPKZiE36HZ+t4
-         UjT5Gsz+WurzGziaXRrrMguny+fLmcWnH3K3CUy1hRNCjcRkIQOLDH/A/peB339tN/Bm
-         Osyyu/5R49eCqz+8dNRKb8V5dxdf6b7zbuxl9WKThg+QCYDHXUosYMrybJO0cFqW3O/J
-         03Up/0sBooELKDdHdoMP75nIF5RY6Cnqi6poka9zSRISU1IQ+2wWy4QmQxERrvD0b9dl
-         GEYkHDt9UlTQJ6CLY+FcoQVV8iQZ0grfvqUJnnD/H3/U0A2BNTD6A8xDP/EnoZnbmcU8
-         Afxw==
-X-Forwarded-Encrypted: i=1; AJvYcCW80zWACtfWnbaqMc5gr+CogBxO4uAwnzVCQGIZ45CRMkIw5oc5h+Q5/aBwpVT/bOxeTXAMx4wp1BR0d5pISEWLm1uCCHKHjvuMhy8V+rIiDA==
-X-Gm-Message-State: AOJu0YwYNI5h9TWM+mPlnngAKWlc5BmV03l3wgiEg9JtA0e6jpCVsUdD
-	mGfz1wFbWJgcoYntTLQ4f8Fdxg1gRkoT7NRjumFOqcmcQwbDZSV+3QuHc68VWM8=
-X-Google-Smtp-Source: AGHT+IHV/jft8RtNZmUB7mEGILVCEPrignxw3W0VzQYDTf1gbiJqRpR7V0F3dldHCqlThMgWvlblJQ==
-X-Received: by 2002:a05:6512:60b:b0:52c:c5c4:43d2 with SMTP id 2adb3069b0e04-52cdf8209b9mr8426942e87.47.1719429437950;
-        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce663d1d6sm1018227e87.157.2024.06.26.12.17.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
-Date: Wed, 26 Jun 2024 22:17:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Gokul Sriram P <quic_gokulsri@quicinc.com>
-Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
-	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
-	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-Message-ID: <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
- <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
- <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XPZd+big"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfKEu018763;
+	Wed, 26 Jun 2024 21:26:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UjxjbUTxad9on4j9CLjzrCNfUV50ltddd/nEBUe6yrA=; b=XPZd+bigEOeKcKLY
+	CinjTOiyAkspQ3szgOiHdCLUAAjmxd54q62OeDY2j2Z/K2I0om1QfYlc6HkpJwnJ
+	muIJJZS5xWjfKX3kqSiz0pO3rEd0wGvLtEEhkx+hMN++CcDnH/vS/wyspXqKZAMf
+	xXFMYfRbfD/lpNnR17mt/p1uB4XJY+fGLvndgBTZrHSE9yghNXMnwG4w/46lx9NU
+	jDefMc5RRIyvA7aCBr3H4HS1VscDX1geN0srFb/rju2Pk9ZO6Uc88ZoI3G7HGbOz
+	XHoRiFN4URGdaWYMNe0baGBgsbKD2KQtO4S0poUIrTJq1wU282q3MsGEF5pRMYnU
+	6A9GkA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90hux0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 21:26:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QLQ5uQ015806
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 21:26:05 GMT
+Received: from [10.110.61.112] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 14:26:04 -0700
+Message-ID: <e30cd263-0340-4d6b-8f29-ae2ba3efaf68@quicinc.com>
+Date: Wed, 26 Jun 2024 14:26:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] soc: qcom: add missing pd-mapper dependencies
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>
+CC: Mark Brown <broonie@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org>
+ <20240626-qcom-pd-mapper-fix-deps-v1-1-644678dc4663@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240626-qcom-pd-mapper-fix-deps-v1-1-644678dc4663@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Vo7CLpNXXtRpTZLijcD1KcDHLbGc77Kh
+X-Proofpoint-GUID: Vo7CLpNXXtRpTZLijcD1KcDHLbGc77Kh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_14,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260157
 
-On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+
+
+On 6/26/2024 12:12 PM, Dmitry Baryshkov wrote:
+> The pd-mapper driver uses auxiliary bus and Qualcomm PDR message format
+> data. Add missing dependencies to the driver's Kconfig entry.
 > 
-> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
-> > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
-> > > PRNG clock is needed by the secure PIL, support for the same
-> > > is added in subsequent patches.
-> > Which 'same'?
-> > What is 'secure PIL'?
->   will elaborate in the updated version.
->   To answer your question, secure PIL is signed PIL image which only
-> TrustZone can authenticate and load.
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Fixes: 1ebcde047c54 ("soc: qcom: add pd-mapper implementation")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/soc/qcom/Kconfig | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 0a2f2bfd7863..432c85bd8ad4 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -75,6 +75,8 @@ config QCOM_OCMEM
+>   config QCOM_PD_MAPPER
+>   	tristate "Qualcomm Protection Domain Mapper"
+>   	select QCOM_QMI_HELPERS
+> +	select QCOM_PDR_MSG
+> +	select AUXILIARY_BUS
+>   	depends on NET && QRTR
+>   	default QCOM_RPROC_COMMON
+>   	help
+> 
 
-Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
-that correct? Or was there some kind of firmware interface change? The
-driver was added in 2018, so I can only hope that at that point it
-worked. Could you please explain, what happened?
 
-> > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
-> > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> > > ---
-> > >   drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
-> > >   1 file changed, 47 insertions(+), 18 deletions(-)
-
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
