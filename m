@@ -1,100 +1,106 @@
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554B214D458
-	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 19:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA4C14EC65
+	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 19:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719428450; cv=none; b=tKmvfLDuFdglMpd1t63kWaPAF1FigfjzMROp3+cKEbkfmgR4xxaixkp5NSuY8HUlDwb5sKXvrjW9F+HAR2sSOEC0YAQ0sBKCCfUK5lgjihdVtGTdksfsybjDX2Z35QG0t8nniQJ9gzhznkFL+pPqgQ2iXC1u4KUQZASVLQKycp0=
+	t=1719429162; cv=none; b=e5n6diFEoGp9Jbtb2JT28sYxJUUzPlWpwjV3nYYkQOTwP5kTf5tktZrQPUn76QBbV/oE1UoIeaKyPBCiRij6WFctSZS//7zROP5oEcnTRkvbfJk7LXqWnLffAj0fHsIaiW0XpLHpgVNqKrGMbMjcjD6datP6ntgrf0O3+856hLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719428450; c=relaxed/simple;
-	bh=v4bLV4jmhvJseRbPLHNASiuysy2YhxfJE8ihKJ5x/o8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LkXdjxGdwKRLGbuH5dyKK3VStOar3+xV4GpqYetcMAjzzVjltvTXgbOW5RQ0RKnWfwpd/WMRsKoDPq8ki3rRq69sR3GFZ7A9H0jPIJ0c76b5/VAylUravleJBZcrHJg/hABttQRq/mp+yB1Xth3c1lhinLGyJkKw57nzgRr5aBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=YmG2WF0h; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+	s=arc-20240116; t=1719429162; c=relaxed/simple;
+	bh=u2SDf7fYGpc3E0DhCbMR56gaPqX/IPfUMmRhQjk5K4c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hsdyy/pS+v139Nkk8+OaIb+zzFrDoET2cP6NEMe7qQPSw1vpsecKeCNstiG74lVlnyNGzkDj9Va0JaKEnbtd62Wc/oR+tcIeJIFWbbYjuX5v3kG4TF61Q9W56+LYAWuhvN4mfq8X8IZeBFaOnBSJQfMSKXbolxA/DC36wksL8Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RXHzNd1h; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="YmG2WF0h"
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1719428438; x=1722020438;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=v4bLV4jmhvJseRbPLHNASiuysy2YhxfJE8ihKJ5x/o8=;
-	b=YmG2WF0hl1LHYc1EiUa5OcNh1ENDlgpSyqIJw8O+cs5IaCobW3RZgQmhlvZQJRIB
-	yVY6FIK8V024zqvlSjbHrcrpgKC+rY4s//KnHCwB0y98pvoPSbRwnzNVd4s53ID/
-	U5eTd8g9bNwSCOTEgmCy8yQaz9ePRQnJUBkoEL30A5I=;
-X-AuditID: ac14000a-03251700000021bc-b3-667c655632e1
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D0.B1.08636.6556C766; Wed, 26 Jun 2024 21:00:38 +0200 (CEST)
-Received: from [192.168.10.3] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 26 Jun
- 2024 21:00:37 +0200
-Message-ID: <f426d54e-9e70-4dfa-a989-c3b21aeca85a@phytec.de>
-Date: Wed, 26 Jun 2024 21:00:36 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RXHzNd1h"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso84795311fa.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 12:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719429159; x=1720033959; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fBaZ29rBHA0IbizvOuiU1ifvZy32PfYnRdTmhCFJeeY=;
+        b=RXHzNd1hjy7gc9xHnCu5e+DN5Xfg62u9nCrLI8Nvn0Ve1VevVurugiatygeFenyR0P
+         QUmYNOXGIcpMlb5qlX07HNvhbttcoZorCq6V9rt4nuIUr9Ogph0g55iemrYep4PUtugy
+         Buq9Ohs62s1kh4AOZYpOhb30jsYf7bPPxDl+X3c+4k73ja9P4EZP17sl6x/5GZT0afK3
+         3mj2OY9aYrUmJG22CL85YVDXpMJdOurujifXDGnhSfC0liqChmlVFRhIA8CXjTAgoNIV
+         VHPMRp8TQp1PnqtXSqpYf0xVzBYFj6fQ2zWV23M3Cg9eGMWLoywLzjMHdmxnxtGR5Etl
+         8Gow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719429159; x=1720033959;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fBaZ29rBHA0IbizvOuiU1ifvZy32PfYnRdTmhCFJeeY=;
+        b=lQmBZe6Nok6Re4PTUgV/DNAmpBKIo03Pj6fEhMwc8pHlLEXt4kpMLSiu49k9HSuBUl
+         CDZJ2KFfHfcdIhikEB2J2eoeoSXy0AgKjSz9oUBhKFPhk12WfTQPTMwo7AKZCtjW7bdo
+         TzXScZmjiBwtMmX4p/fBDcZ0uDBjej/M0Ne+wjqoNetdHB3CAfvZ8IOJF8QUtj9v/unt
+         7+FBWi+LNcnklxo5cmyZtiPC2PxL936IodEkBJs23fovtRCWu1DsvHo5M9qYIVg4kwHO
+         umaC/t8J3+U3N/6MaxQeEN2PXG5Jy/b/YtzwgbkNnywo+hdVJrzyCBLhUY/8M7Yf0Ez7
+         eJLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYp850hLO+FkMaL1IZBKKBnNMlqGBbaMTbn9lCt9ZP+6MxhU8WNhkEUtOsI7YpQWtgIklkDVg3mIdq3t+ej9TxYpWgkFCs6Z5Fjbwt5OQsVQ==
+X-Gm-Message-State: AOJu0YzcymEqk6QWByn9D5xaay7N9DhcjJQwlAgcSBJSXZmy+Pn0wwlX
+	jkfQ8intvCU5+4Pz0l/JtkvlUjODufo5EeyO3x1AqsHI0yNzpyGsR2g/wGKVPVo=
+X-Google-Smtp-Source: AGHT+IHt8X0oQPttO5mD+BLMd02xe27Ttt47+NYZAlKzFcgo1uJcEXeR11B1YvqMZXGK8ElWADnPyg==
+X-Received: by 2002:a2e:8690:0:b0:2ec:50c5:a43a with SMTP id 38308e7fff4ca-2ec593c149cmr70988991fa.8.1719429159401;
+        Wed, 26 Jun 2024 12:12:39 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5ef9d5fbsm9737091fa.136.2024.06.26.12.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 12:12:38 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] qcom: fix missing dependencies for the QCOM_PD_MAPPER
+Date: Wed, 26 Jun 2024 22:12:36 +0300
+Message-Id: <20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: k3-r5: Fix log levels where appropriate
-To: Garrett Giordano <ggiordano@phytec.com>, <andersson@kernel.org>,
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<upstream@lists.phytec.de>
-References: <20240626162203.3484272-1-ggiordano@phytec.com>
- <20240626162203.3484272-2-ggiordano@phytec.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20240626162203.3484272-2-ggiordano@phytec.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWyRpKBRzcstSbNYOYMOYttHTYW67f8ZrO4
-	vGsOm0XzeSWLrXsOMFl0v1N3YPPYtKqTzePOtT1sHv3dLawefy6+Y/X4vEkugDWKyyYlNSez
-	LLVI3y6BK2Pqr9fsBVs5Kvp/trA2MH5i62Lk5JAQMJHYM/kpYxcjF4eQwBImiTePr7BAOHcZ
-	JZrfzmLqYuTg4BWwkbi9SQqkgUVAVWLy1T4mEJtXQFDi5MwnLCC2qIC8xP1bM9hBbGEBH4kJ
-	e1Ywg9giAskS0/4uA7OZBVIkXq3aCNYrJJArcfvcZiaIuLjErSfzwWw2AXWJOxu+sYLYnEBr
-	Z57eDVVjIbH4zUF2CFteYvvbOcwQc+QlXlxazgLxjLzEtHOvmSHsUIkjm1YzTWAUnoXk1FlI
-	1s1CMnYWkrELGFlWMQrlZiZnpxZlZusVZFSWpCbrpaRuYgTFiwgD1w7GvjkehxiZOBgPMUpw
-	MCuJ8IaWVKUJ8aYkVlalFuXHF5XmpBYfYpTmYFES513dEZwqJJCeWJKanZpakFoEk2Xi4JRq
-	YPRe+v+fhojZ2Y6o0LiGMG9uqQdz3Et/nz8tIiEjebKm1olfcIJgiH9o/qqyjeZZb+YVL+D2
-	lxedrZK+SLREUWRhxPbP8zzX7Fh+tvyzTVTVxgezeX/OmTSfsSru6hwtvul5qj21iu/Y1zpn
-	V95+HCDQ6fo1+7rlq/l7trPNuaaQo3fm5KxHv5VYijMSDbWYi4oTAYAH5oyFAgAA
+X-B4-Tracking: v=1; b=H4sIACVofGYC/x2MwQrDIBAFfyXsuQsq1kJ/JfQQ9CXZg2ajUArBf
+ 4/0OAwzFzVUQaP3dFHFV5ocZYB9TBT3pWxgSYPJGedNcIHPeGTWxHlRReVVfpygjW1cTfCAf9k
+ njVorhvuf50/vN8ZRMLZpAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Chris Lew <quic_clew@quicinc.com>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=630;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=u2SDf7fYGpc3E0DhCbMR56gaPqX/IPfUMmRhQjk5K4c=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmfGgmBMoPQseeSdH65m03cqcpEypmIOZ7nWkuo
+ zJG7Rv7U7yJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnxoJgAKCRCLPIo+Aiko
+ 1YDZB/9Ue0R33VS4KT+7ba72CxUZxuRwcF18ZHN40gIdk+M+In6AjdrZ1QESoJ9v1m3w+wZouBX
+ WHECfjbAUlTsJKao1JO1n9GvRK8qECSn3dK9/0NCjMUga6jguT7o//poHIpJonJG6NU3w9qcoHP
+ SgK8VNJKjcDjB+XDsDWc3+rkKY17/YsUFL6vMKMrNs3tMUNVq61w9cAdyr2uXc5Id/YVp67uTbJ
+ 1lPt2XvS2a2KQZZ22LsuL0UtcE+RN6Y4ch6mHxICGpVVyGVzijDAsoiklKOEo/0KZbLp5i3Pdu3
+ PKrC27tNp12nLxQIc2BUpHn6rLyWrOMr+iTthixttq9SXJ0o
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi Garrett,
+While refactoring pd-mapper to use auxiliary bus for the PD mapper
+instantiation I forgot to select the bus in Kconfig entries. Fix it now.
 
-Am 26.06.24 um 18:22 schrieb Garrett Giordano:
-> Driver was logging information as debug. Changed dev_dbg to dev_info
-> where appropriate.
-> 
-> Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
-> ---
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 50e486bcfa10..5821b6517063 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -558,7 +558,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->   
->   	boot_addr = rproc->bootaddr;
->   	/* TODO: add boot_addr sanity checking */
-> -	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> +	dev_info(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-There is no need for this debug message to be in info level.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      soc: qcom: add missing pd-mapper dependencies
+      remoteproc: qcom: select AUXILIARY_BUS
 
-Regards,
-Wadim
->   
->   	/* boot vector need not be programmed for Core1 in LockStep mode */
->   	core = kproc->core;
+ drivers/remoteproc/Kconfig | 1 +
+ drivers/soc/qcom/Kconfig   | 2 ++
+ 2 files changed, 3 insertions(+)
+---
+base-commit: b07e1e375f6389b6715b9aca590da17039bcd447
+change-id: 20240626-qcom-pd-mapper-fix-deps-1cf064ee4715
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
