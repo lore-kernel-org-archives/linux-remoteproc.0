@@ -1,48 +1,60 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9455EA92F;
-	Wed, 26 Jun 2024 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06333A92F
+	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 15:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719415853; cv=none; b=ggBXDPMAPTM4ngn/30vzzsHRIVa7nATPWOH5cnKHS2BjpeElkqwKgPJmXmRq6eX8aZflyb3xhUf0t+RnEx7A70/ETLWKM2fu9zWkoH79dI6oCBbYOm1RWFVM15a+ZAnPqLB7HeX+Vfckx4wxymEy/pZrbITDb68B/3oZJumQp1I=
+	t=1719416546; cv=none; b=rL3M7pi929Psfbtcx/9TBFeUQE/e4dh3GgsH55XvlC3tbFfj9qYpi4AHce347tZ0cLu2XzF3A2QxeEYEETD5thqOReKyzlMRIrtd+NKIE93GO/uTN6d/H9ClGBOp9nx+EXKd0WhfSaxosoGeW4NR73w1258WMH09DAIIkDjuDeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719415853; c=relaxed/simple;
-	bh=fFp0838cK4WK9K1qwSkSPH7/A3jgQFtonDkAJS3XY1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QogYepYAwmbsnY3GK3sRbrTHtzkIe81I8E4TWgFC+lC0DMm2DMeRTcykHcGCgkS04+SJKGCU4z9TbDfn560vq8aONVH9Acq+FfFMA68ezWHd8PpQ//HFZbUBlhlXDz7BlEAIXFfDqrZC4ftm+t5bx7DFRk4SKqg813lmCj4lSQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aONz+7IJ; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1719416546; c=relaxed/simple;
+	bh=XRowxFSkrysMUs9XyN0Exv9sB2feFYzAvaPvT89v0go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kcdf4+U/mR7Ix8Ez40RrubLvcMB9yGNrEcs1LsXWZbypfDql8ulDm+epfKeObHoI6cWtrPNY74rpL0gW7klLRAmJeXRE8DUg70XIWTBtvUayMwU2+6d8L78BO6zktVTc2a1fKL7LiZdRNJQP2UQvJKNOw9CIDScYiaqPYdRj5jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BisweaEA; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aONz+7IJ"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QFUiJ0037193;
-	Wed, 26 Jun 2024 10:30:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719415844;
-	bh=c1BKW0TIX5+dFP1dSLMaXY0snDU+rt9d8qpqqQ+MtY4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=aONz+7IJ46w557UboMCn75YiX3i+38U91EmA2ogjaXceEJoQozo6FWA/wZ2CZC6Kh
-	 Nse9VT4WZ+dxVjjcy2sJJqVwmwU5RAG9ROdsNX8v+MK0Pxpw4kMxG9f0p4wcIA527a
-	 h0/75LbJnz3KZO2TWjiifVw9Cxqg6mPZlYwPXakw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QFUidV062577
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 10:30:44 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 10:30:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 10:30:43 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QFUhEi031952;
-	Wed, 26 Jun 2024 10:30:43 -0500
-Message-ID: <c997b261-d558-4ec6-a2de-53992bfbb1a2@ti.com>
-Date: Wed, 26 Jun 2024 10:30:42 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BisweaEA"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso581200a12.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jun 2024 08:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719416543; x=1720021343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
+        b=BisweaEAztHt03VNrk88j42Xe8Y50NPt+yWiUoVLjRz9u2gLcEVyquP5U5YRDGMzDY
+         6GflCg1jcFoCJIQ8CzeLdvIVvlfDOFRH9x5wp5DzcqtNBRR7jBIliaZsER0FfM/y9Ffe
+         UMLDqKuujBu11mq1E3E4q1Q3N1JXcCeTAV0+ayJcaEP8RjMG0mz9dzSAbzAFSRxnQklp
+         rSyVpEC0RT8E0G/Lyi3qKT06prUp5lt57MOgkGYgCa66y7SJjcAv23BqYEgbVvjUr5lP
+         4i5wA5NF9G28fmEy6kpgTILi7J+7u58PFwkfsJWcrspGjZTDiHZn1IWyA9CEcng+Ibew
+         CzWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719416543; x=1720021343;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
+        b=xB+ocI1SOPJ2BjsC0PZnj65DzLNlZdBokF1NWHLbytYIZbtnBqa3s+PfLX85k5sD6Y
+         /cRETqZUGrtyWs5BMUTp19c9wqY/bAhgSC8TAOCI6vVkWu4+iMW0HUV5gtxTO7r5bBCv
+         J9pOpyKHX0OSCkCap8x6aRARbPim62aOurzHh8EQ12lDK7bDwfviPaj0TlN3+BwLHvlk
+         An/DIMLOQL5R3cMWdAMg2wbO498MPG8Qig1N2vjpE0KS1jUfEWVi7UdYe7Rta5Du5nTi
+         8WTK9GIpQ9bQXtisgOmp+R3fB3/o121yeTqL7svTwQF3jUgIpFn7vjuZSYqUKM3Wntwc
+         Qx5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjeudxdb0BrOrpBPvZLPZ6AqIIIu8WGkgsOkHv4PLzET+xJVF6vtu11aJPZuX0JFaw5DkrlKaX3KQEhR4PP4SbaHCzMV0XBBxVyuS9k9eLkg==
+X-Gm-Message-State: AOJu0YzgMN+l4eOOioBmCjiJIe+KzvZ8pOjs/sxqq5n6xfsz3QFC291A
+	uXYmRLh8KmhoenqJoOoYMalqh5aCJzD4sNkTCSVto5I4b841Fd0RIcS9eAVFLRM=
+X-Google-Smtp-Source: AGHT+IFZgo0qywXUrbYFvzsX7j5NG3UwUTK5YD3F6ShNKbFTpBUUBLsG6g1DyGpehW77M6FgbbubwA==
+X-Received: by 2002:aa7:cb50:0:b0:57d:4b56:da11 with SMTP id 4fb4d7f45d1cf-57d4b56da8emr10735227a12.11.1719416543275;
+        Wed, 26 Jun 2024 08:42:23 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da2b5sm7362066a12.6.2024.06.26.08.42.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 08:42:22 -0700 (PDT)
+Message-ID: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Date: Wed, 26 Jun 2024 17:42:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,94 +62,91 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] OMAP mailbox FIFO removal
-To: Dominic Rath <dominic.rath@ibv-augsburg.net>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
-        Nick Saulnier
-	<nsaulnier@ti.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240410135942.61667-1-afd@ti.com>
- <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
- <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
- <5980f22f-44ef-4984-8912-163ca4773568@ibv-augsburg.net>
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+ <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <5980f22f-44ef-4984-8912-163ca4773568@ibv-augsburg.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/26/24 9:39 AM, Dominic Rath wrote:
-> On 13.06.2024 14:22, Andrew Davis wrote:
->>> We looked into this some time ago, and noticed that the IRQ approach caused problems in the virtio/rpmsg code. I'd like to understand if your change was for the same reason, or something else we missed before.
+On 24.06.2024 1:21 PM, Naina Mehta wrote:
+> 
+> 
+> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
+>>
+>>
+>> On 6/18/24 15:13, Naina Mehta wrote:
+>>> Rename qdss@88800000 memory region as qlink_logging memory region
+>>> and add qdss_mem memory region at address of 0x88500000.
+>>> Split mpss_dsmharq_mem region into 2 separate regions and
+>>> reduce the size of mpssadsp_mem region.
 >>>
+>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>> ---
 >>
->> It is most likely the same reason. Seems despite its name, rproc_vq_interrupt() cannot
->> be called from an IRQ/atomic context. As the following backtrace shows, that function
->> calls down into functions which are not IRQ safe. So we needed to keep it threaded:
->>
->> [    5.389374] BUG: scheduling while atomic: (udev-worker)/232/0x00010002
->> [    5.395917] Modules linked in: videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 phy_j721e_wiz display_connector omap_mailbox(+) videodev tps6594_i2c(+) videobuf2_common phy_can_transceiver at24 cd6
->> [    5.433562] CPU: 0 PID: 232 Comm: (udev-worker) Not tainted 6.10.0-rc1-next-20240528-dirty #10
->> [    5.442158] Hardware name: Texas Instruments AM69 SK (DT)
->> [    5.447540] Call trace:
->> [    5.449976]  dump_backtrace+0x94/0xec
->> [    5.453640]  show_stack+0x18/0x24
->> [    5.456944]  dump_stack_lvl+0x78/0x90
->> [    5.460598]  dump_stack+0x18/0x24
->> [    5.463900]  __schedule_bug+0x50/0x68
->> [    5.467552]  __schedule+0x80c/0xb0c
->> [    5.471029]  schedule+0x34/0x104
->> [    5.474243]  schedule_preempt_disabled+0x24/0x40
->> [    5.478845]  rwsem_down_write_slowpath+0x31c/0x56c
->> [    5.483622]  down_write+0x90/0x94
->> [    5.486924]  kernfs_add_one+0x3c/0x148
->> [    5.490661]  kernfs_create_dir_ns+0x50/0x94
->> [    5.494830]  sysfs_create_dir_ns+0x70/0x10c
->> [    5.498999]  kobject_add_internal+0x98/0x26c
->> [    5.503254]  kobject_add+0x9c/0x10c
->> [    5.506729]  device_add+0xc0/0x790
->> [    5.510120]  rpmsg_register_device_override+0x10c/0x1c0
->> [    5.515333]  rpmsg_register_device+0x14/0x20
->> [    5.519590]  virtio_rpmsg_create_channel+0xb0/0x104
->> [    5.524452]  rpmsg_create_channel+0x28/0x60
->> [    5.528622]  rpmsg_ns_cb+0x100/0x1dc
->> [    5.532185]  rpmsg_recv_done+0x114/0x2e4
->> [    5.536094]  vring_interrupt+0x68/0xa4
->> [    5.539833]  rproc_vq_interrupt+0x2c/0x48
->> [    5.543830]  k3_r5_rproc_mbox_callback+0x84/0x90 [ti_k3_r5_remoteproc]
->> [    5.550348]  mbox_chan_received_data+0x1c/0x2c
->> [    5.554779]  mbox_interrupt+0xa0/0x17c [omap_mailbox]
->> [    5.559820]  __handle_irq_event_percpu+0x48/0x13c
->> [    5.564511]  handle_irq_event+0x4c/0xac
+>> Alright, we're getting somewhere. The commit message should however motivate
+>> why such changes are necessary. For all we know, the splitting in two is
+>> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
+>> - does the firmware have some expectations about them being separate?
 >>
 > 
-> I looked into this a bit more closely, together with the colleague who implemented our internal workaround, and we came up with one more concern:
-> 
-> Have you considered that this synchronous path from the (threaded) IRQ draining the mailbox down to the (potentially blocking) rpmsg_* calls might let the hardware mailbox grow full?
-> 
->  From what I remember the vring (?) has room for 512 messages, but the hardware mailbox on e.g. the AM64x can only handle four messages. At least with the current implementation on TI's MCU+ SDK running on the R5f that could cause the R5f to block, waiting for room in the hardware mailbox, while there are plenty of vring buffers available.
-> 
+> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+> This would provide the flexibility to remove the region which is
+> not required for a particular platform.
+> qlink_logging is being added at the memory region at the address of
+> 0x88800000 as the region is being used by modem firmware.
 
-We would like to switch back to the non-threaded handler at some point. As you mention doing this
-in a threaded way increase the risk of the hardware message queue filling and blocking the remote side.
-(Plus the threaded handling can add latency to the message handling which should be avoided for real-time
-reasons)
+Ok, now put that in the commit message :)
 
-The fix might be to have rpmsg_recv_done() callback simply queue the message and then schedule another
-worker to actually do the next stage processing. That way complex actions on messages do not block
-vring_interrupt() which should be treated like an atomic context call.
+And I suppose:
 
-Anyway for now, I'd expect the much faster host core (2xA53 @ 1GHZ in AM64) to be able to outpace the
-R5s and keep the mailbox drained. Are you actually running into this issue or is the concern based on
-ensuring RT performance(not blocking on mailbox queue filled) on the R5 side?
+"This would provide the flexibility to remove the region which is not
+required for a particular platform." - but you still pass both to the
+remoteproc in patch 4. Are these regions mutually exclusive?
 
-Andrew
-
-> Best Regards,
-> 
-> Dominic
+Konrad
