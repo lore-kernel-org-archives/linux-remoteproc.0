@@ -1,117 +1,137 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C7415ECEF;
-	Thu, 27 Jun 2024 12:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41E6190698
+	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Jun 2024 13:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492210; cv=none; b=CZnuv/w2EF5TtssFPSqyCF8AcmqnVjSIxpTf3YxM69XXN2NHujZVvsOwVKGGMm2kgv7pVReQjEDuMkemfjZ/ld/x6oY0vQehrTYaaWqhjJD9tWmvMKlbXWAz7OlP0BJ3dRv2ZXpBmBNWHsXPHtpULjOPn+bWnHyiiWBDuDaZMu0=
+	t=1719495342; cv=none; b=h8r2D8DqN4/xA0G3qeQ0tqamaIiK1abmoDPtP9UuI+LMX05K9WesNC09vxxaKEl8yYzLP1Tm3jPtJJjro0u86TM3uPcenlSxjHCprAV3XM3piArfxkaFsTHihuWS1K7PbeNWZHtr30LOpQTgpO466W/Z7B1V+TssbbU9Ahvxu+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492210; c=relaxed/simple;
-	bh=MIa5UbAwdN0MQZHDYIq4AocxOOiHJlQicygyyMYL9aU=;
+	s=arc-20240116; t=1719495342; c=relaxed/simple;
+	bh=ECkLSbvH8iNObOSfLRnRBRh9gep68lBkVwbXIQFEdNY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRF8Ul9G/vrjynbzR/FRX5lXRpyU0mGoGVk9aLgFdM7Q7TXQQC0Z9RUHpUnDtsEEw+rxyVfzs8Y6rKRRoqNh9hGvGXFHP3/2LhqEZ3yBqiPCdd6gJSuKIvkvXoahwcfYCf5zuI8GlANxUyUZ98CrP7Ty/Y42CuoBRpipr3smpXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixL28et/; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uox21UG2AT94wOVV+cEx7pyeTh5Y5Y89jLbBCDCxvLKgc2az+8tCH+PntB7sd6Iz4qyzz6t+omH4agf7+EKf5TY1xVB0SC6ay9m5KNTMYmvx0mwBZRx12mw6XgFN2i5yucbPNsIQkL1tJrqXJ/7QoQNb7lkrbgCQZRS4A1+++7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZUsRIpzK; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixL28et/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719492209; x=1751028209;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MIa5UbAwdN0MQZHDYIq4AocxOOiHJlQicygyyMYL9aU=;
-  b=ixL28et/Cx921ZfyPz+SP9YS/Y8zAk8A0q/s2f/2/vx1Wq3FTTpTIKay
-   kLr1gw93kqlWb43HPx3YNg9tmp3z2f0clxiQGfZtt7FGMQ0RFVyjZnHwP
-   yNbSxr6A7XUyY1AY6slsmmVxQCBwzBoTb4iAhjQIBa8lWUSuPcKWmWlbI
-   orvV8wyNCb8IZv0QlzNSifGmHayLXqZ5LkOk7N5Kx4AdRpg6SOMBjRKY6
-   WVpWA4Hw4dlBOmAhQl2J06gCo3eBhfyJ2xIpp6HBX//gsc996jGri2hRv
-   EaeK+6+ftL+HtbmYBGmU2nkr4moG3tPKF1b97dv814D+xT4d5UySe+lj3
-   A==;
-X-CSE-ConnectionGUID: HXSwzJDbR3C8+M9dPg5xTw==
-X-CSE-MsgGUID: XEjtTFj6RhWK4/4+/+5I2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="20435161"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="20435161"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:43:27 -0700
-X-CSE-ConnectionGUID: wtTd6FqOQ+SyMrQRmMdeLg==
-X-CSE-MsgGUID: TxNoo/aqRMu0POgQB/IcaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="45022904"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 27 Jun 2024 05:43:23 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMoTA-000GCo-17;
-	Thu, 27 Jun 2024 12:43:20 +0000
-Date: Thu, 27 Jun 2024 20:42:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
-	andersson@kernel.org, bjorn.andersson@linaro.org,
-	david.brown@linaro.org, devicetree@vger.kernel.org,
-	jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-	mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org,
-	sricharan@codeaurora.org
-Cc: oe-kbuild-all@lists.linux.dev, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Message-ID: <202406272012.krpg0wbC-lkp@intel.com>
-References: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZUsRIpzK"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52d259dbe3cso2820808e87.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Jun 2024 06:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719495339; x=1720100139; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZTpZBZTgTtJPGy1DDYqfUaipYcevWqb53smMmBjlmaU=;
+        b=ZUsRIpzKPmFLPjWeWauv/NVMjwoq9m8ioZB6Bo5/Ne2iHUKVbZHNJ4EIKW36J601+O
+         m6mNUnZDJFcV9Eb/Cl1ODUxfjm7Ge3iJ8HL1vWJS878JOiFpWH1rkExKu8UGyTZlztNi
+         9bL1RR3Kvr20X+KHGwK+FDpG6RWcHmY4odD18fSPUSVb2BZfu74GrIeu9pcxxBdl0+KM
+         5uihcUVa06TU/KvJ+569GUh9Qs5nIsIlhWhOL9JgbA7aNm0cjMZw7kR0rY7tX3zrunMG
+         xVVUHn2V8I2D+dOlKgy95PG96nyqL/j5fRegIDQDcWt+jtGBVhpa+3oxkOlBmaDQaRtq
+         DWBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719495339; x=1720100139;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZTpZBZTgTtJPGy1DDYqfUaipYcevWqb53smMmBjlmaU=;
+        b=uGmz5Qoigko9zKim3GX1Hz8+Os+bRE+IY1SqaMwxFk/c5qDDAtRtHTdk4aSWEyyA9P
+         3kppW4ETFsuWij02E6hL53RvKwwxPDMT3eaW3Vg2QC6V7u9GFOZNbC6HPi8cSUSp2HZ8
+         yLgF38j6Di9IZ9YCZneCjMp8oT+8yVgwPvMf2JQgY520UVPBIN5sEsSimmEaATQXLl6i
+         x7PtSOP4VNeBFpZ7lkZ9bdNN02ecit8nZmmg2pOb01uMcxmOb+C5DLr9OZlAO1O8XrTM
+         GmqDLTkiVeYGrMZNN8YXrmLMIfgMsUbNOLp7w4V/dBy5R2pgv3UmCtoUKtgC6S6ZUV7Y
+         tZFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcP9Y7IohkMO0GXB5MwNTkC52gKH0l2ii9CU+VBsbRX5H5UcwfWR+bz9IMobEN3EF8RF2kziyvlc8NvRjhYeTUDhrq7qCSFXFzvbxv+WqfaQ==
+X-Gm-Message-State: AOJu0YxyxswoJGq+XTxXgy2uQRQ52aNgSvA4OG7EDynnkBiTXJk005LJ
+	J1j3gzNJHTN8pa46ECZaey/iWYdKbL8E0QC9D99P6jrVADhxxEYeTMFQJfWkatM=
+X-Google-Smtp-Source: AGHT+IGu+u7lilJ/SxexYfMDvtjObFRCTV7LJmuSqktWIcvggXQyFmIyf0BupY2gXWdHAQKjaV1txQ==
+X-Received: by 2002:a05:6512:556:b0:52c:df5f:7b4e with SMTP id 2adb3069b0e04-52ce0620086mr10409184e87.38.1719495339003;
+        Thu, 27 Jun 2024 06:35:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71305ebbsm207295e87.126.2024.06.27.06.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 06:35:38 -0700 (PDT)
+Date: Thu, 27 Jun 2024 16:35:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+Message-ID: <ybcxapxxq7ieguql3lxebxpgd7mt2hsvjoaohaynhyymrbjgyl@visloguhac4d>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+ <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+ <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
+ <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
+ <2ba4b368-d706-4723-a0aa-f1579600db23@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ba4b368-d706-4723-a0aa-f1579600db23@quicinc.com>
 
-Hi Gokul,
+On Thu, Jun 27, 2024 at 04:59:38PM GMT, Gokul Sriram P wrote:
+> 
+> On 6/27/2024 4:38 PM, Dmitry Baryshkov wrote:
+> > On Thu, Jun 27, 2024 at 03:31:01PM GMT, Gokul Sriram P wrote:
+> > > On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
+> > > > On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+> > > > > On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+> > > > > > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+> > > > > > > PRNG clock is needed by the secure PIL, support for the same
+> > > > > > > is added in subsequent patches.
+> > > > > > Which 'same'?
+> > > > > > What is 'secure PIL'?
+> > > > >     will elaborate in the updated version.
+> > > > >     To answer your question, secure PIL is signed PIL image which only
+> > > > > TrustZone can authenticate and load.
+> > > > Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+> > > > that correct? Or was there some kind of firmware interface change? The
+> > > > driver was added in 2018, so I can only hope that at that point it
+> > > > worked. Could you please explain, what happened?
+> > > The existing wcss driver can load unsigned PIL images without the
+> > > involvement of TrustZone. That works even now.
+> > > With the current change, we are trying to add signed PIL as an option based
+> > > on "wcss->need_mem_protection" if set. For signed PIL alone, we send a PAS
+> > > request to TrustZone to authenticate and load.
+> > I see that you are enabling it unconditionally for IPQ8074. How is it
+> > going to work?
+> 
+> Correct Dmitry. In this change, it is forcing secure PIL. With a separate
+> driver for secure PIL, this will be sorted right?
 
-kernel test robot noticed the following build warnings:
+That depends. How will the running system decide, which driver to use?
+It can not be a compile-time decision.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on clk/clk-next robh/for-next linus/master v6.10-rc5 next-20240626]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-Sriram-Palanisamy/remoteproc-qcom-Add-PRNG-proxy-clock/20240625-162317
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240621114659.2958170-9-quic_gokulsri%40quicinc.com
-patch subject: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240627/202406272012.krpg0wbC-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406272012.krpg0wbC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406272012.krpg0wbC-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdd-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
->> arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+> 
+> Regards,
+> 
+> Gokul
+> 
+> > > I also just noticed that Bjorn had suggested to submit a new driver for the
+> > > PAS based IPQ WCSS instead of overloading this driver. Will also address
+> > > that and post a new driver in updated revision.
+> > > 
+> > > Regards,
+> > > Gokul
+> > > > > > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> > > > > > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> > > > > > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> > > > > > > ---
+> > > > > > >     drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+> > > > > > >     1 file changed, 47 insertions(+), 18 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
