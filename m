@@ -1,120 +1,114 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778834501F;
-	Thu, 27 Jun 2024 10:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EAD13D281;
+	Thu, 27 Jun 2024 10:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719482517; cv=none; b=cWNqb1pZVPRL4efekNy5vgaFXUCQXhXzCn18RqHO2WE67LwErf04FR50NByjDYxCiSg7SqtS1aSQUTxUadVIj+7Skjbc+WIr3wku7Phtud0JRmJYvPSy3kOjDZske+XW8LAEx45PfOuBeqmtbGE50TTqCZ1HlpUVyjtHyrDVRs0=
+	t=1719485345; cv=none; b=aqa5iufrFl0O2kH7u0bEAWzYvKc1IJeGsJp4QI2Fi1k/vhk0/3e5KedSXX2lpIe4ZZvS/5cnBLTuRLXGJXcdefKzG9f5hATcstQQh7Hil0oIjbDVhc/5bpR67yu+NOPZW73oxi+kioIch3SPdXCC2T5WL9Uvw7KgAlWtHhNupA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719482517; c=relaxed/simple;
-	bh=PYuXoyzrovl+I/Cj82uWg5mIugIlRxhYi+eRZ6sUCic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EFkXR6MO0Qt9FoHuE4qrHdOp8W8Y3WN/wbF28vDIFWUoNLklVTmBt5TB2n3gDIjqau+RtqnfrLerCUsyhCxG9dMKCb1gcc2umb9tdz8k80k/wuLwo5DXKiQXfuf7SPSAI835T9djPUIgBuaTqbKHIgumrSpaVoB3n5wQWyw1Yc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FR0VF5Rl; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1719485345; c=relaxed/simple;
+	bh=Z5RiEuFD5dZgb7gBpg4wx36c4M95eK7byLmxwTne7Qg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nxxLyXWGjv0CVy0JmEahpEzElxr2pvrpffchsZMdqphIq1Mu+wCx/AoY4P+sF5VZVvjYLVnKTe9zdfc/VomFH6b2NQ6XusOXFsWczD6BCSrFt2Q7t2pUrV9m+75PmffYMY2jYiWImzCf6bO+e4ybvF6mC23vOj1jVpOtiYkZxUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U+3UxsUN; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FR0VF5Rl"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U+3UxsUN"
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R0nGvB018804;
-	Thu, 27 Jun 2024 10:01:11 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RAUfwH018909;
+	Thu, 27 Jun 2024 10:48:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jtCa7cMb9eryGghcwAs7CfCedLjaHIhzuMxL9+IUFLU=; b=FR0VF5RllHY8dNgO
-	/XI6qz3L/T4ihk45xOK8D2GpH0XONghwQPeZey6phiKK79Xrw2sc0sQXw8AlrJkC
-	AuK1UhS7nUhufE6ziuVTHJ09lis5bAr1AlwjBHSUKsoUPNdTJCAwhQP0rIHmffiu
-	1oqd/EvpJjR8cV3djl5UMkRN/pc2BT9wvVMyvJ4pNvvDJosdmrL9LYT+EIqn4ZFq
-	bNnZ6Pt5c24L6lSHMgRsC99X7skIc6WddR9OhFMTYWKlYf0UA0AtXubenzWKiN4u
-	m7euT5ctfH6Q8vpGXGTGhh2i5hPgFJDg9HT1m1wrEI1rgVsMhT56K7NfE/u2D0Yq
-	dqeVCw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90k6y1-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GsgZT5Z4g2kvk33R5eXDAg
+	V0SK4udKH/IBaEqPmFv/s=; b=U+3UxsUNKw5fC2iv2MM8xFtpDD5gJ4O2Y+keNt
+	aa2m45z+gTTGM2Gig+4O+hYC/UES8cJ4n2Szd2i444rK4ZDOeUtzjhXS3cEzcGXg
+	I50+anJq0CW9kqqbEOM7uFPFjGtPB179cDUH8darpp5jN0BzWpRhO6pS3f6pjnfn
+	2agBY4QRCPAPGtXiwM4zUbOy4OPcTWIbEi1blyIGuBz3B4j+9ircNDjvhSp14r5b
+	7bQKI45Jwc7TfMKSrLtHnZSdgvc/5Q8Ev/ww4fKaUMTRQbA7nRAkk0L7tuIW/jLh
+	Bt4IQbcahCJEcld2F800QT5UpP261LmXsbQNV3QDOQNgZeuQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90kax4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 10:01:11 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RA1Aa0020729
+	Thu, 27 Jun 2024 10:48:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RAms21002016
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 10:01:10 GMT
-Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 03:01:04 -0700
-Message-ID: <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
-Date: Thu, 27 Jun 2024 15:31:01 +0530
+	Thu, 27 Jun 2024 10:48:54 GMT
+Received: from hu-sudeepgo-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Jun 2024 03:48:51 -0700
+From: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+To: <quic_bjorande@quicinc.com>, <andersson@kernel.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <quic_deesin@quicinc.com>,
+        <quic_sudeepgo@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+Subject: [PATCH V3 0/2] Use of devname for interrupt descriptions and tracepoint support for smp2p
+Date: Thu, 27 Jun 2024 16:18:29 +0530
+Message-ID: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
-        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
-        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
-        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
-        <sricharan@codeaurora.org>, <gokulsri@codeaurora.org>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
- <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
- <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
- <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
-Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
+ nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vwlrfvxYq8a7c7s_Xhjl0t-js0hOpxUn
-X-Proofpoint-GUID: vwlrfvxYq8a7c7s_Xhjl0t-js0hOpxUn
+X-Proofpoint-ORIG-GUID: P0xvFQMqfF8gFxU2JBBb9tpu3rF0S8zc
+X-Proofpoint-GUID: P0xvFQMqfF8gFxU2JBBb9tpu3rF0S8zc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
  spamscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 adultscore=0
  impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270075
+ engine=8.19.0-2406140001 definitions=main-2406270081
 
+This commit enhances the smp2p driver by adding support for using the device
+name in interrupt descriptions and introducing tracepoint functionality.
+These improvements facilitate more effective debugging of smp2p-related issues.
 
-On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
-> On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
->> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
->>> On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
->>>> PRNG clock is needed by the secure PIL, support for the same
->>>> is added in subsequent patches.
->>> Which 'same'?
->>> What is 'secure PIL'?
->>    will elaborate in the updated version.
->>    To answer your question, secure PIL is signed PIL image which only
->> TrustZone can authenticate and load.
-> Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
-> that correct? Or was there some kind of firmware interface change? The
-> driver was added in 2018, so I can only hope that at that point it
-> worked. Could you please explain, what happened?
-The existing wcss driver can load unsigned PIL images without the 
-involvement of TrustZone. That works even now.
-With the current change, we are trying to add signed PIL as an option 
-based on "wcss->need_mem_protection" if set. For signed PIL alone, we 
-send a PAS request to TrustZone to authenticate and load.
-I also just noticed that Bjorn had suggested to submit a new driver for 
-the PAS based IPQ WCSS instead of overloading this driver. Will also 
-address that and post a new driver in updated revision.
+The devname patch, along with the callback to print the irq chip name as the
+device name and the removal of the ‘smp2p’ string from the irq request,
+results in a unique interrupt description.
 
-Regards,
-Gokul
->>>> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
->>>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->>>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
->>>> ---
->>>>    drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
->>>>    1 file changed, 47 insertions(+), 18 deletions(-)
->
+Tracepoint functionality captures essential details such as subsystem name,
+negotiation specifics, supported features, bit changes, and subsystem restart
+activity. These enhancements significantly improve debugging capabilities
+for inter-subsystem issues.
+
+Changes in v3:
+- Updated patch to use devname for interrupt descriptions with a different approach.
+- Modified tracepoint patch by removing remote_pid field from all tracepoints.
+- Using SMP2P_FEATURE_SSR_ACK definition from smp2p.c instead of redefiniton. 
+- Link to v2: https://lore.kernel.org/all/20240611123351.3813190-1-quic_sudeepgo@quicinc.com
+
+Changes in v2:
+- Added support to include the remote name in the smp2p IRQ devname, allowing for remote PID-name mapping
+- Mapped the remote PID (Process ID) along with the remote name in tracepoints, as suggested by Chris
+- Modified to capture all `out->features` instead of just the `ssr_ack`, following Chris's recommendation
+- Expanded the commit description to provide additional context
+- Link to v1: https://lore.kernel.org/all/20240429075528.1723133-1-quic_sudeepgo@quicinc.com
+
+Chris Lew (1):
+  soc: qcom: smp2p: Use devname for interrupt descriptions
+
+Sudeepgoud Patil (1):
+  soc: qcom: smp2p: Introduce tracepoint support
+
+ drivers/soc/qcom/Makefile      |  1 +
+ drivers/soc/qcom/smp2p.c       | 20 ++++++-
+ drivers/soc/qcom/trace-smp2p.h | 98 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 118 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/qcom/trace-smp2p.h
+
+-- 
+
