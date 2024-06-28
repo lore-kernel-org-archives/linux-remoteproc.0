@@ -1,136 +1,161 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710701C232C
-	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Jun 2024 18:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511C074059
+	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Jun 2024 19:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597873; cv=none; b=KZ3jGECjuMFrY3fcJsUiz9m0RrakK5WxbEFRv6nQFgOm3Q8j8fTNeJaHRWB7qSVbmmPfnqErLe/vdFI5P+SLhF8ZpdO8NgCNvLIxRgcuB5QnkKm+qMTVdUc4L4IOdj/ZMOlNdKoWIldOJJEHX9qB+5ePGIJfxvTyLIaOXKGS58o=
+	t=1719604416; cv=none; b=A/beSE1KGWhps0JeLoWCL8LN0UUwyuBHyO5N/bHrcJyAYTGGBjq7MMbp9SKbJYYJ1mCaat5lx5+fSeRWhuMTxLVqN1ooLJA37ZZxzMDWLyrX31fdC8v2bgehHjS4jxxv/yIgptGCtAb5V9OhhjIWPhJ9wIhoWChypNBZ86HPVK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597873; c=relaxed/simple;
-	bh=lyCr9Ts8yOItO/JjBC31u0Jzvm/bIEehcd6kdgpqGmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiKTOSkPOQCyt7bcN7Ofo1chbwudaTy4vjrWYDNrfEemBsR1616Q94YAhgqPjcw7yMSUu8Au2i4nqSuFK+7uI+gEpZ9g2rd8k/uXGmh5cy/bOa0r8GG1CW8jvm9eWC6TGo/zy3SijLbTcIXee1AW8RWF3Uzwj3MKev5aaljw+5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UxtV2BLH; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1719604416; c=relaxed/simple;
+	bh=/CKACYWLUIqjV38aqh2m2zOYGnLhG7wNTvhY4HFHgYY=;
+	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f07WuwSLtKsrPnBtMmkeMPEcWeLo0g6iQaLB7ZID5zxYxTv9/MK0yXldg540IYEh5cPhBug+DPGL6BsPECdF7DDEQTo6YboOPnfeYC3j9i+XtSDZf3L/YZpKwl5dS/pVQwcoJeN6SvViB1bZfBlFSWY28DKOsugSL1JdSFjiwqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DCEmaBr0; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UxtV2BLH"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa2ea1c443so6888585ad.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 28 Jun 2024 11:04:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DCEmaBr0"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-707f9c3bd02so839781b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 28 Jun 2024 12:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719597872; x=1720202672; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H+ruGPETppbEAZdscNhJIuUHT64dVUBzmWwyvnp1b7w=;
-        b=UxtV2BLHFb/9O6h1o9CA/8Vv/NfuTKXWDh+9SQmahY1MQRibbV/n8o7tyuekSdB8Yz
-         +CQdjON5kqe5Mkm8VTGxyVZD8S5UxHY7sUhTyIOdIqdFnTTudhdtdnUg+rVrtCFrgD7y
-         k5aebTuSyjLxXlvkJG9WXvzV3y9JvaAuWLbbiDSLYZAHpkscKn1dBZEUKmEvtpkRDMes
-         zu9lNwLVWQwDnc/JPqffCG+gcjBBVZn65whi871j6a3ERZKwJ4nD0Jl6e5shWXKoLW7+
-         M3ePNQ81SAILM/gZl+QczNAaPX+cg951HID+30E3uQwxJWY0Yl1Xv7sM6Qgxingt5d00
-         U+nQ==
+        d=linaro.org; s=google; t=1719604414; x=1720209214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/jH00phhVWAYucey8EridRtG9VCd7OvweCgJMd7i18=;
+        b=DCEmaBr0LLBA3eALClfeInde0qF5lERaAhmaAWgQDZizmcNqqiiA3vQaU46YnJTZwr
+         2//1vXNUTvkhOYs6RmawHwruIuwYmz1V1SJgkaf0Ty7UAV2cU41xIVzeDSod8WF89As1
+         hleEh+iV0qWjRMUSMZxsz8cnYWmU+Da56zgtB8kuC7hlVm0F+2VU3ZDpN8W2Cv76dc1i
+         uF4tqUUBiNr7BlHyed/RY/ivCx7inNyIVzFV5BHOZj+y+C3Bxf+S+L686ZEn0/XpSEmk
+         YwEanWE61l50lmfqU9FJYgKJJKHvfSR1+NTuMcWZRhg5TFmcs/1lg/kyTv2fOXPww2VX
+         YSQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719597872; x=1720202672;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H+ruGPETppbEAZdscNhJIuUHT64dVUBzmWwyvnp1b7w=;
-        b=sT3X5Lb+VoZ3snRWIukg+fEAlvBqbM6rWBwEog4hit53eruonfIVmnRtkQzHclzErj
-         yYNCJ0uMUIV67OSy9qe/4C3LYNbTpSkmbeydzigicHGx6WIjoy3aF5uImrPRyHlN30xu
-         GJxKHzrDogQk/N8YmDCBPWB1ZfhRE9bu1fCjohDsN6C2irnzszXo+NomHI1WU+qRveIe
-         JtFj2mdrIkwI4CLqnC+7goNnksRxpRm5fC2InMKOhvYIG0zO5rdEL+IZxk1hq4dGVb4c
-         +qWfKwsoPBbjc5aqftwXu6Ra8BJPhi1SqCeY8RpAIpwI28cBR1HE8W3kW0jHr5QQr8Dm
-         6wxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkH00hiKES8e9sj0vv2qATYLNdyiJX45kOeVVLj0RqFhezFryMBcBu7gZjBDAAfioST63xo5d/jzi5zH5not8R0uckfnYezzGNTb/3If1dUQ==
-X-Gm-Message-State: AOJu0YxPgjQJMdymN6K10WP9r+ZnUl//nYHpaG59jzB+gDGYYIBHHh4A
-	G6xSQMPtYzf5jfWrzF9lwKjfRKyFTqYYl9epMddEaiGQFwx25LgA0bx/8cf/KeE=
-X-Google-Smtp-Source: AGHT+IGCvLrXWzySAlrNqbCAvh3eBYrqwRFPdz21iCBkv/nqIVi2SUvaRkJ9vc+Fe8iroSuxGmGXCw==
-X-Received: by 2002:a17:902:ce81:b0:1f7:2bed:226 with SMTP id d9443c01a7336-1fa23ecee77mr197498935ad.36.1719597871540;
-        Fri, 28 Jun 2024 11:04:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719604414; x=1720209214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/jH00phhVWAYucey8EridRtG9VCd7OvweCgJMd7i18=;
+        b=OZPqK7osNsCzcrPZSWMHL+jGEusjzqk6pbAzVQ4Cc6TA8FFy1W7CvZ76GmDm0K6EZ9
+         CBqUBrYS7qE6CB9AUVsCLibx48QyJxgJ+Uvo0zAwPoHFzm/kJLLdgLyhjFqPN+LZw4F+
+         YhN8UG6+kBV83SJ3Sw0ZgodxCiB+hQz6o2hkBlem/GJVqV7o9MImImU8rtVnbwf61wp1
+         5tZq/SaWb3mu/XR4Q1aqqgjfb3vYP0UD8McCAo0zSL9llPgyHGRA6P4Fy2p3N7nTQUUI
+         o1p9ruxZgqpcgDsMyHHHX9AFj7xWR2ypUnzFCBPIELGQzcJka5IgDKvFMPmSyCC5VYYi
+         bdnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9ubvpDkFmCQnB1bxzBbOn1bFVVRKUs9nBR1sOR4My+0oI1dz2esBf1pLEzITjs70PDB+DWR64Cy8BRaxZ9OlL4s9PzF9vD8U8O4Jv+f53Q==
+X-Gm-Message-State: AOJu0YycKphHXRsn9PnAnjTbEmbooNDyRS4yQAy6jcuHn+Fxzt75A2w2
+	sApR+prE6pst6979s8FLOA/jeC4scEH0t4vxe5e01sVA2Vy7GpT5a+2zZC2qU2U=
+X-Google-Smtp-Source: AGHT+IGGVpZm0QgAO8OiY/RswohPQdDDzJOJzZYPS1dn9RuOsBpSkWpHg7go+YNF2koi9gk2JWcBsw==
+X-Received: by 2002:aa7:9d85:0:b0:706:5bf1:586f with SMTP id d2e1a72fcca58-70674363825mr17052236b3a.0.1719604414459;
+        Fri, 28 Jun 2024 12:53:34 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:e53e:a53d:f473:181e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8695sm18341165ad.109.2024.06.28.11.04.29
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e53b47sm2022516b3a.37.2024.06.28.12.53.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:04:30 -0700 (PDT)
-Date: Fri, 28 Jun 2024 12:04:27 -0600
+        Fri, 28 Jun 2024 12:53:34 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:53:30 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, kernel@collabora.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: mediatek: Don't attempt to remap l1tcm
- memory if missing
-Message-ID: <Zn77K/nny10G4sXN@p14s>
-References: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
+	Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] remoteproc: k3-r5: Fix IPC-only mode detection
+Message-ID: <Zn8UumUllbGS4/p9@p14s>
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-2-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
+In-Reply-To: <20240621150058.319524-2-richard.genoud@bootlin.com>
 
-On Thu, Jun 27, 2024 at 05:20:55PM -0400, Nícolas F. R. A. Prado wrote:
-> The current code doesn't check whether platform_get_resource_byname()
-> succeeded to get the l1tcm memory, which is optional, before attempting
-> to map it. This results in the following error message when it is
-> missing:
-> 
->   mtk-scp 10500000.scp: error -EINVAL: invalid resource (null)
-> 
-> Add a check so that the remapping is only attempted if the memory region
-> exists. This also allows to simplify the logic handling failure to
-> remap, since a failure then is always a failure.
-> 
-> Fixes: ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index b885a9a041e4..b17757900cd7 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1344,14 +1344,12 @@ static int scp_probe(struct platform_device *pdev)
->  
->  	/* l1tcm is an optional memory region */
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> -	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(scp_cluster->l1tcm_base)) {
-> -		ret = PTR_ERR(scp_cluster->l1tcm_base);
-> -		if (ret != -EINVAL)
-> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> +	if (res) {
-> +		scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-> +		if (IS_ERR(scp_cluster->l1tcm_base))
-> +			return dev_err_probe(dev, PTR_ERR(scp_cluster->l1tcm_base),
-> +					     "Failed to map l1tcm memory\n");
->  
-> -		scp_cluster->l1tcm_base = NULL;
-> -	} else {
+Good day,
 
-Much better - I have applied this patch.
+On Fri, Jun 21, 2024 at 05:00:55PM +0200, Richard Genoud wrote:
+> ret variable was used to test reset status, get from
+> reset_control_status() call. But this variable was overwritten by
+> ti_sci_proc_get_status() a few lines bellow.
+> And as ti_sci_proc_get_status() returns 0 or a negative value (in this
+> latter case, followed by a return), the expression !ret was always true,
+> 
+> Clearly, this was not what was intended:
+> In the comment above it's said that "requires both local and module
+> resets to be deasserted"; if reset_control_status() returns 0 it means
+> that the reset line is deasserted.
+> So, it's pretty clear that the return value of reset_control_status()
+> was intended to be used instead of ti_sci_proc_get_status() return
+> value.
+> 
+> This could lead in an incorrect IPC-only mode detection if reset line is
+> asserted (so reset_control_status() return > 0) and c_state != 0 and
+> halted == 0.
+> In this case, the old code would have detected an IPC-only mode instead
+> of a mismatched mode.
+> 
 
-Regards,
+Your assessment seems to be correct.  That said I'd like to have an RB or a TB
+from someone in the TI delegation - guys please have a look.
+
+Thanks,
 Mathieu
 
->  		scp_cluster->l1tcm_size = resource_size(res);
->  		scp_cluster->l1tcm_phys = res->start;
->  	}
-> 
+> Fixes: 1168af40b1ad ("remoteproc: k3-r5: Add support for IPC-only mode for all R5Fs")
+> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 > ---
-> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-> change-id: 20240627-scp-invalid-resource-l1tcm-9f7cf45c17e6
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 > 
-> Best regards,
-> -- 
-> Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 50e486bcfa10..39a47540c590 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1144,6 +1144,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  	u32 atcm_enable, btcm_enable, loczrama;
+>  	struct k3_r5_core *core0;
+>  	enum cluster_mode mode = cluster->mode;
+> +	int reset_ctrl_status;
+>  	int ret;
+>  
+>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+> @@ -1160,11 +1161,11 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  			 r_state, c_state);
+>  	}
+>  
+> -	ret = reset_control_status(core->reset);
+> -	if (ret < 0) {
+> +	reset_ctrl_status = reset_control_status(core->reset);
+> +	if (reset_ctrl_status < 0) {
+>  		dev_err(cdev, "failed to get initial local reset status, ret = %d\n",
+> -			ret);
+> -		return ret;
+> +			reset_ctrl_status);
+> +		return reset_ctrl_status;
+>  	}
+>  
+>  	/*
+> @@ -1199,7 +1200,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  	 * irrelevant if module reset is asserted (POR value has local reset
+>  	 * deasserted), and is deemed as remoteproc mode
+>  	 */
+> -	if (c_state && !ret && !halted) {
+> +	if (c_state && !reset_ctrl_status && !halted) {
+>  		dev_info(cdev, "configured R5F for IPC-only mode\n");
+>  		kproc->rproc->state = RPROC_DETACHED;
+>  		ret = 1;
+> @@ -1217,7 +1218,7 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  		ret = 0;
+>  	} else {
+>  		dev_err(cdev, "mismatched mode: local_reset = %s, module_reset = %s, core_state = %s\n",
+> -			!ret ? "deasserted" : "asserted",
+> +			!reset_ctrl_status ? "deasserted" : "asserted",
+>  			c_state ? "deasserted" : "asserted",
+>  			halted ? "halted" : "unhalted");
+>  		ret = -EINVAL;
