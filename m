@@ -1,117 +1,69 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B038D1C6A4;
-	Fri, 28 Jun 2024 02:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A5E1BF37;
+	Fri, 28 Jun 2024 03:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719542865; cv=none; b=kpC0jrp2MzhOCz/2sbCKQ3rGgr63IA8a8RS9/FtOBqJoyKNA+e9buzO8F7l9JnDTHKlL1BoNLAkcFwSJv8HD7E3o8PAlj84ELTmf0YTGjZAGv6LhUpkKO2Q0MYmq8o9sgEkJnshNdB0c/CjKAZcDC116g+z4t8KDitJqLyd/G30=
+	t=1719544376; cv=none; b=E5BbhfkdgrnfAKi99t2YsCvMEuIfJVqt4IHEX9BARSymUE3dKAq++ra4oHLPV65MjKW1kmUhnpHv5FFpCz6IJxlkRIDGV8fuAQudZG+kjVaHfCl6jCczG2YCBpHSUQckbV3D91AUPLfzXhJqvgVv/5ZIsDlPv6nlmboCcNg5Ygk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719542865; c=relaxed/simple;
-	bh=RugJsmSoFQ0Opqso7x3i6LNEuu1OqPbWR4QAu9YtPQI=;
+	s=arc-20240116; t=1719544376; c=relaxed/simple;
+	bh=3nifBkuhyILV0xYL5KUSjJ3xZHJ6CLiSboXZwYqFvu4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNd6EEkojHfe7RqcNnt6FiMWN1ZSS7lBelRmJkPaBjkdrdhnSyI7B7Zv5kn+qwxYvxt0B0mohtsk/7bgC1OvJKXTZcapYkNReDU87vOqIWh3rQAWD8CMJ+ku/d2lkrJZ5vIHEZK0SwawcvFZ0qBoulO563KwiKDIwLlJTqWfCSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nW1FkHOn; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUdU7CwHQPXSRJ0KSerNN35jBiB68GdvPF3F6AC4BbLT2Od4DG+lFZsnXm0wxoqQfq1UUvz3bnXJJKXATzJ3bDUWzYyKynAqDVfGulr3PVpPtl/eFUiSgO69d1PjY2Re6tpoDVrHKnNR/NFlA7dKL7Jr1hJx4bQFpilOGy/osr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tomto9na; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nW1FkHOn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719542864; x=1751078864;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RugJsmSoFQ0Opqso7x3i6LNEuu1OqPbWR4QAu9YtPQI=;
-  b=nW1FkHOnP1gqYRdE4mrG8BYvthA7CXPkNmSTaDM2gn+0QvM4OSYl7+vL
-   Hu1maylCNZmgqxTXJdUn2W5+h2s3WFcvbZEwg5csnsECBNrwlNDoNWJjX
-   ZkULuCWQo27coMCjdHQO+6/1qY8ULnNH4nwny1rv3UG7L/9ZsXGO58OjH
-   KUwQgPlXtLpFodr99GZ9i5yGCtHcvi+STmY7u3G8HFLuJ9CcrilfT2yPh
-   g0DkKUKDP8uumtRIWo4OqS6wf0d05ax2liDBQ5P3+sPjT5+olbkpuqjzn
-   F+4ptPaGQ19x/dNvqQIysRi3DJ1kNvTn9PjH8bELJyzjtOY8lswkd2Bj7
-   w==;
-X-CSE-ConnectionGUID: Y5NZR/XLSWuKhNTxuDTtrA==
-X-CSE-MsgGUID: 7GeDU7PMR2iTKj7rfJie9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16841296"
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="16841296"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 19:47:43 -0700
-X-CSE-ConnectionGUID: 0C3QM5UYRGaMVHm8ynMGug==
-X-CSE-MsgGUID: 6Ri0fHKYTxyAa0KtLme04A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="49554408"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 27 Jun 2024 19:47:39 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sN1eC-000Gjq-2k;
-	Fri, 28 Jun 2024 02:47:36 +0000
-Date: Fri, 28 Jun 2024 10:47:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
-	andersson@kernel.org, bjorn.andersson@linaro.org,
-	david.brown@linaro.org, devicetree@vger.kernel.org,
-	jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-	mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org,
-	sricharan@codeaurora.org
-Cc: oe-kbuild-all@lists.linux.dev, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Message-ID: <202406281044.3vIaThJc-lkp@intel.com>
-References: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tomto9na"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B868C116B1;
+	Fri, 28 Jun 2024 03:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719544376;
+	bh=3nifBkuhyILV0xYL5KUSjJ3xZHJ6CLiSboXZwYqFvu4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tomto9naGoth49hJ1Rqkjib9MtgFAQm2S7pTq48tc6rqrauyDcKmnKlwpoPr/rngK
+	 9xbddlb7mrhi5Qqy+ffwIryqSTByhVCfm02zT0UJ1QF9FTuegKKOCG+f4368GCcTA+
+	 nhVA0h+3qZWJcqHsdFT1i8QVGF61Svws6Jzzq848yHBAWDkWzVMKNQcqxfZmJ164Z5
+	 Kgv6HRaNY7fupHqT0u3eJEuehwpyiclDcw82J0dIu7FLpleEMj6OoVMYwpRGLjaz0p
+	 w9JF5O5yCA/ORfJCdZWjauPvRDsGDMjpiqcu2qRZYwKj5svrGQ4vboyHk1naQEyEdV
+	 PJnqTj5Yj+4xQ==
+Date: Fri, 28 Jun 2024 11:12:50 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	kernel@collabora.com, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: mediatek: Don't attempt to remap l1tcm
+ memory if missing
+Message-ID: <Zn4qMmeuIqeszQOA@tzungbi-laptop>
+References: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
 
-Hi Gokul,
+On Thu, Jun 27, 2024 at 05:20:55PM -0400, Nícolas F. R. A. Prado wrote:
+> The current code doesn't check whether platform_get_resource_byname()
+> succeeded to get the l1tcm memory, which is optional, before attempting
+> to map it. This results in the following error message when it is
+> missing:
+> 
+>   mtk-scp 10500000.scp: error -EINVAL: invalid resource (null)
+> 
+> Add a check so that the remapping is only attempted if the memory region
+> exists. This also allows to simplify the logic handling failure to
+> remap, since a failure then is always a failure.
+> 
+> Fixes: ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on clk/clk-next robh/for-next linus/master v6.10-rc5 next-20240627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-Sriram-Palanisamy/remoteproc-qcom-Add-PRNG-proxy-clock/20240625-162317
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240621114659.2958170-9-quic_gokulsri%40quicinc.com
-patch subject: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240628/202406281044.3vIaThJc-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
-dtschema version: 2024.6.dev2+g3b69bad
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281044.3vIaThJc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406281044.3vIaThJc-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdd-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
->> arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
