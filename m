@@ -1,48 +1,60 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032FC7710F;
-	Fri, 28 Jun 2024 22:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158551E4A0
+	for <linux-remoteproc@vger.kernel.org>; Sat, 29 Jun 2024 13:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719615076; cv=none; b=LpI6eA9rxjJaT32psdhQC9T9ko/X62NOGVEwWeBYqjpXSz2qi0IMeFc8DIYrqF5t6U/8pSZ+14KukI5dUTvPA7GyUoxpbmueiKc7NDcC9B94UJphT9owMEGVM+wrc+Sx/MzYDrsdLBWy51tiL1hWQxL22m62wMi53WQp8E2sQeE=
+	t=1719666207; cv=none; b=mMd/ks4UiCaNVJVxgE1YfZ7UbFol2135F9/LHbhQamo6JdJW4H32cRc7/Adj6WAJViLo33b3AWJZQxFVDEjb4iDTbEzKzYVnacU550/F0FPBXuzHZe08tKNblUph/7rAZWZhhzU0/5g5y5ZZJubzcqTJqkgtFWD8CinHXxvAbFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719615076; c=relaxed/simple;
-	bh=pA5C/H6YxUiV2vdWADKr9YMpQnjgZDOv/o6WNDTL2Ss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R+RYc2k+A2DBjN+mH+QticWeBckFh1hPAu+iRqfoSh5ucsnNIuwobUDbCTdtqA6t/e6PEA7BmBGLIh93c5xA2Mmp3UEFuvFelRvhnMdaefUj15JqibLXbdIU3FouP7wWLagc3GxiJdmKPPAXSpsViB+Fa5+vVY8aBU9tk7jWn7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vO3HjLKD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1719666207; c=relaxed/simple;
+	bh=+dukUqqO7cIErap+h/ymTCUcq+zEUjZtEffudb1in58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B6wd8/IjoTy0NpvIOF4BElWMkJYzMwm/KAZHBbtX3/FBZj1Nm0ALNsQ81lRveg3FZ4OUyBZ/8AQUOJ2dzyWmYSF8J1KkK4tSHhj1MKD8wqAQxLu0Ry0DGPAE2Lhlh3zqUjIykVdec0wJX6OJsyQTSYtBx40iWD7kBalSVJ9fR9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GjnjQtUZ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vO3HjLKD"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45SMorVO111278;
-	Fri, 28 Jun 2024 17:50:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719615053;
-	bh=2R9YT7rCyPZ2fpTOPR5YigBlSmeQiT0rxfvaoKX+Hu4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=vO3HjLKDhQtpQfzNc+GP8whnUU2v0I/wHMxRFhYXIGXQNPugRZ7rAg0cDou/o482W
-	 l7iTkiKWASYuMyaKZUhZ/7SuY/CjwUSXhygNf65UgoWY1FMfU9AtIty0R6v7W8S1Mv
-	 xv0sq+HfFcS/8N8v13KjlwiTifVNxqQL3n8ZOH6s=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45SMor0v051001
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 28 Jun 2024 17:50:53 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
- Jun 2024 17:50:53 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 28 Jun 2024 17:50:52 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45SMoqf2091085;
-	Fri, 28 Jun 2024 17:50:52 -0500
-Message-ID: <33d97f00-dd9a-4643-8210-859c2ab38a97@ti.com>
-Date: Fri, 28 Jun 2024 17:50:52 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjnjQtUZ"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd80e55efso2529504e87.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 29 Jun 2024 06:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719666203; x=1720271003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AcFnKL/ViQqZRLkBUtcYy5DNPj56xFfRsRoffNy4BM0=;
+        b=GjnjQtUZpPzFoIkUINBn8x/RFxUUXPek0B3KxeADJcZxt5TIHRlTV2BMdUUChblQ8c
+         HWdvLrKQ0NhnFTvriNXwlfYwoeQeZ3dWQtQvcWcPqYCEMi/hxlTYpSKFbZpGj0f7OSin
+         Ustqe6y3/RVP3zB2eSwrHm1c4YGum4Ou0oIv1IR4VZtjT6RSUf/2u9RJM0047qf6bI/s
+         tLk4Ek5hWrIoy1+Z/lTGOvU+ZkkhT4Yih1+l0Bp/kJnIoCz0riBIYvh+/+FhCi5j5DZc
+         j2uPM3vHmhKxUQEcBaTltGiVhQNT//PLmnSUgLxvX91y5PiIJJoSbKCIUAeXJtZaAJeZ
+         D94w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719666203; x=1720271003;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AcFnKL/ViQqZRLkBUtcYy5DNPj56xFfRsRoffNy4BM0=;
+        b=mUTEqj8yo8TblOT+uBq0nBfJeonWAhEgrXzeaPthxchj3zxXQXCTGQDUgsHvDXTrrT
+         Fd0+3Y1tsJgOeo0G0HzjJLidRBw25CeBuh7lz5yzLfCpwk1GORHxDsunixlyk4Ur+pVe
+         1SXTH9SiOOOQRhyn48h/qIxVnRCulBcq793D9ncT5QlXmH7xzDQWbZojYfU/y6/HTiUI
+         1QCCa6q4tDsF91XRqYXZs8KwB1SSh6UwtAztMXNgXDrzoVwyOy/27Zq7zLarbPsbmvnK
+         4TiaFpDbYXkKUMBclm/KIQ/W0Ogsbl5N3qZgOmkhM1dA5tltNJV13uj+IXWoGvtKQOqw
+         8TqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTrQA6BLbJvny0QinlPohDAceqWDOEV+cvc2tAD6hKklsx0IBGgTfUOXYJ46FrJ6tdu/s+09D9D7DyKW0JxMOEVzAwL8j8HCJi83UnxQtm9A==
+X-Gm-Message-State: AOJu0YwDG8ubp1Z76lh2mlGcKp9VcRESLm6JK7UNZxCO5gj/3aXEIJo/
+	+Ekkdy0frhiAOSzu11p74wzxtAsyEkZVzaO/rJysN+84FpKWMb83/qKYpajqi80=
+X-Google-Smtp-Source: AGHT+IEK1INTGjBjGmb3jwaEpotqKfPa2KCAiFV23CqI8Zcnh6V+H+84uY63hTBaHkeMGrOEwwZfsw==
+X-Received: by 2002:a05:6512:31cc:b0:52d:3ada:4b6b with SMTP id 2adb3069b0e04-52e8264b5c8mr990021e87.1.1719666202369;
+        Sat, 29 Jun 2024 06:03:22 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf6336csm162734266b.70.2024.06.29.06.03.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 06:03:21 -0700 (PDT)
+Message-ID: <ee324f78-4789-4873-b8e5-e2ae7b42a5b2@linaro.org>
+Date: Sat, 29 Jun 2024 15:03:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,182 +62,104 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of
- remote cores
-To: Richard Genoud <richard.genoud@bootlin.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
-        Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Udit Kumar <u-kumar1@ti.com>,
-        Thomas Richard
-	<thomas.richard@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Hari Nagalla <hnagalla@ti.com>,
-        =?UTF-8?Q?Th=C3=A9o_Lebrun?=
-	<theo.lebrun@bootlin.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240621150058.319524-1-richard.genoud@bootlin.com>
- <20240621150058.319524-5-richard.genoud@bootlin.com>
+Subject: Re: [PATCH V3 1/2] soc: qcom: smp2p: Use devname for interrupt
+ descriptions
+To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, quic_bjorande@quicinc.com,
+ andersson@kernel.org, quic_clew@quicinc.com, mathieu.poirier@linaro.org
+Cc: linux-kernel@vger.kernel.org, quic_deesin@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
+ <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
 Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240621150058.319524-5-richard.genoud@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/21/24 10:00 AM, Richard Genoud wrote:
-> Introduce software IPC handshake between the K3-R5 remote proc driver
-> and the R5 MCU to gracefully stop/reset the remote core.
+On 27.06.2024 12:48 PM, Sudeepgoud Patil wrote:
+> From: Chris Lew <quic_clew@quicinc.com>
 > 
-> Upon a stop request, K3-R5 remote proc driver sends a RP_MBOX_SHUTDOWN
-> mailbox message to the remote R5 core.
-> The remote core is expected to:
-> - relinquish all the resources acquired through Device Manager (DM)
-> - disable its interrupts
-> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
-> - enter WFI state.
+> When using /proc/interrupts to collect statistics on smp2p interrupt
+> counts, it is hard to distinguish the different instances of smp2p from
+> each other. For example to debug a processor boot issue, the ready and
+> handover interrupts are checked for sanity to ensure the firmware
+> reached a specific initialization stage.
 > 
-> Meanwhile, the K3-R5 remote proc driver does:
-> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
-> - wait for the remote proc to enter WFI state
-> - reset the remote core through device manager
+> Remove "smp2p" string from the irq request so that the irq will default
+> to the device name. Add an .irq_print_chip() callback to print the irq
+> chip name as the device name. These two changes allow for a unique name
+> to be used in /proc/interrupts as shown below.
 > 
-> Based on work from: Hari Nagalla <hnagalla@ti.com>
+> / # cat /proc/interrupts | grep smp2p
+>  18:  ...      ipcc 196610 Edge      smp2p-adsp
+>  20:  ...      ipcc 131074 Edge      smp2p-modem
+> 170:  ...  smp2p-modem   1 Edge      q6v5 ready
+> 178:  ...  smp2p-adsp   1 Edge      q6v5 ready
 > 
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 > ---
->   drivers/remoteproc/omap_remoteproc.h     |  9 +++++-
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 ++++++++++++++++++++++++
->   2 files changed, 48 insertions(+), 1 deletion(-)
+>  drivers/soc/qcom/smp2p.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-> index 828e13256c02..c008f11fa2a4 100644
-> --- a/drivers/remoteproc/omap_remoteproc.h
-> +++ b/drivers/remoteproc/omap_remoteproc.h
-> @@ -42,6 +42,11 @@
->    * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
->    * on a suspend request
->    *
-> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
-> + *
-> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
-> + * shutdown request. The remote processor should be in WFI state short after.
-> + *
->    * Introduce new message definitions if any here.
->    *
->    * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
->   	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
->   	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
->   	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
-> -	RP_MBOX_END_MSG		= 0xFFFFFF14,
-> +	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
-> +	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
-> +	RP_MBOX_END_MSG		= 0xFFFFFF16,
->   };
->   
->   #endif /* _OMAP_RPMSG_H */
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index a2ead87952c7..918a15e1dd9a 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -21,6 +21,7 @@
->   #include <linux/pm_runtime.h>
->   #include <linux/remoteproc.h>
->   #include <linux/suspend.h>
-> +#include <linux/iopoll.h>
->   #include <linux/reset.h>
->   #include <linux/slab.h>
->   
-> @@ -172,8 +173,23 @@ struct k3_r5_rproc {
->   	struct k3_r5_core *core;
->   	struct k3_r5_mem *rmem;
->   	int num_rmems;
-> +	struct completion shutdown_complete;
->   };
->   
-> +/*
-> + * This will return true if the remote core is in Wait For Interrupt state.
-> + */
-> +static bool k3_r5_is_core_in_wfi(struct k3_r5_core *core)
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index a21241cbeec7..696c2a8387d0 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_wakeirq.h>
+>  #include <linux/regmap.h>
+> +#include <linux/seq_file.h>
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+>  #include <linux/spinlock.h>
+> @@ -353,11 +354,19 @@ static int smp2p_set_irq_type(struct irq_data *irqd, unsigned int type)
+>  	return 0;
+>  }
+>  
+> +static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
 > +{
-> +	int ret;
-> +	u64 boot_vec;
-> +	u32 cfg, ctrl, stat;
+> +	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
 > +
-> +	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
-> +
-> +	return !ret ? !!(stat & PROC_BOOT_STATUS_FLAG_R5_WFI) : false;
+> +	seq_printf(p, " %8s", dev_name(entry->smp2p->dev));
 
-Too fancy for me :) Just return if (ret) right after get_status().
+Not sure if the number is necessary but as you wish
 
-Looks like this function is called in a polling loop, if
-ti_sci_proc_get_status() fails once, it won't get better,
-no need to keep checking, we should just error out of
-the polling loop.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Andrew
-
-> +}
-> +
->   /**
->    * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
->    * @client: mailbox client pointer used for requesting the mailbox channel
-> @@ -209,6 +225,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->   	case RP_MBOX_ECHO_REPLY:
->   		dev_info(dev, "received echo reply from %s\n", name);
->   		break;
-> +	case RP_MBOX_SHUTDOWN_ACK:
-> +		dev_dbg(dev, "received shutdown_ack from %s\n", name);
-> +		complete(&kproc->shutdown_complete);
-> +		break;
->   	default:
->   		/* silently handle all other valid messages */
->   		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-> @@ -634,6 +654,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   	struct k3_r5_cluster *cluster = kproc->cluster;
->   	struct device *dev = kproc->dev;
->   	struct k3_r5_core *core1, *core = kproc->core;
-> +	bool wfi;
->   	int ret;
->   
->   
-> @@ -650,6 +671,24 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   		}
->   	}
->   
-> +	/* Send SHUTDOWN message to remote proc */
-> +	reinit_completion(&kproc->shutdown_complete);
-> +	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_SHUTDOWN);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Sending SHUTDOWN message failed: %d. Halting core anyway.\n", ret);
-> +	} else {
-> +		ret = wait_for_completion_timeout(&kproc->shutdown_complete,
-> +						  msecs_to_jiffies(1000));
-> +		if (ret == 0) {
-> +			dev_err(dev, "Timeout waiting SHUTDOWN_ACK message. Halting core anyway.\n");
-> +		} else {
-> +			ret = readx_poll_timeout(k3_r5_is_core_in_wfi, core,
-> +						 wfi, wfi, 200, 2000);
-> +			if (ret)
-> +				dev_err(dev, "Timeout waiting for remote proc to be in WFI state. Halting core anyway.\n");
-> +		}
-> +	}
-> +
->   	/* halt all applicable cores */
->   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->   		list_for_each_entry(core, &cluster->cores, elem) {
-> @@ -1410,6 +1449,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   			goto err_config;
->   		}
->   
-> +		init_completion(&kproc->shutdown_complete);
->   init_rmem:
->   		k3_r5_adjust_tcm_sizes(kproc);
->   
-> 
+Konrad
