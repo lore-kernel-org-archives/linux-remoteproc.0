@@ -1,188 +1,133 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563E6823AC;
-	Mon,  1 Jul 2024 08:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9005839F4;
+	Mon,  1 Jul 2024 08:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821022; cv=none; b=a7cP20tngKxhMS/fRxf9eVUsItBEXyiwxL6Cw3WRaj8EX2dQPGoXhvQIWaDmUUx4qUywxqiPGaa3+tPMLM/N+oo8vxt/h9bRDbFqkijHzMvz2Wx9ifpxVyQvJzmyVU9XsJ+m8/yZ1ljthl0TeEsLlR+vFZsEkGVavOVBC9K0DiI=
+	t=1719823234; cv=none; b=rD8k06mDFxncuNLhRvhk/Agz8dbJfJFIWZa1NmzbQNCx0gCRobqb4OBjH5GRX29jZllAG7XjRiYYkX0Xw2R08ZqxCvVQypOFln86CPspi7dmPUWozpJj1Z1EzCaHgKmuiOHD1jIbvKy1HebsKuGFZvYDQLilQnzsHejGmCzRF0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821022; c=relaxed/simple;
-	bh=cpfR32a1Lwgihev+XaLBCrXmsNWGxl02s+JaOudV2kY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cf8OQFbPRLU6qsrepYTEHs3GeBB4Rvhe+6ZEobek2VHGTlBHii0ef3sNcf7iFmcyo6xFn5UVDxd7lwIJN5wD1wElOdSd/20s4kyptGvF6RZPX/voxMEmqXP/zOT0uU+fOPaeejsI+HZpwcPEJsSNlyr5a3hKkSSga3dk2nvrZX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FeNrl3GD; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1719823234; c=relaxed/simple;
+	bh=lQDakvkuTP95XC9nGbLvBkMLIuh0XUah0cZPHLuoKsE=;
+	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aFlIIBZlKUAQylQH5xpS1T6D7BD82WQS1Hn2OvUTP/I+9LBfmvdY/lb/Y/13tF7FGZ/A47tFobpns8tELYZ1DfrkXSyw7LWu+JhcVXdNxfdmdfAr9aX43HO22+U2Z6a+ckilieITyQRpKlPbWqe/HSBsrm7XZcBpeIEkAaKcme8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d+4eF9Pm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FeNrl3GD"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B4D3D6000A;
-	Mon,  1 Jul 2024 08:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719821012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i7zzaMOB3H3VIdafDhVchquQ2z/n9pIHHt5+1WtsEro=;
-	b=FeNrl3GD//bAi0NH6B9N3WqpFpWoApnZdNtqhHgKr3kn3KLHqy25zfeCOpx2NSX2ylOGy/
-	x7Z5ldiV+MB42KzeT/l1xinAt3RKAwG3rH+4J6q40TycHjN7bySkglZehsu5NrQtEZXf8X
-	WKliGpuvcj3Qi/PoW978+V4b5/bo63WCwHKSglRcdRuSwzHXcanKx/SDyQXAmwtTtQXnp9
-	pYwO3V1Lhyc4XXon3eJlh8pe1xA6XDtHn5PdFzOntpknkovMngzJyvOYSJlJBlpcT11tvx
-	nmAxdde/dR4yBKl1/EN2zF+nA/S/lr2P91TZcCptqmi14gIr63uXO17wHQfsDg==
-Message-ID: <99496000-a994-4641-861a-10cbb501910e@bootlin.com>
-Date: Mon, 1 Jul 2024 10:03:22 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d+4eF9Pm"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ULuuvT006937;
+	Mon, 1 Jul 2024 08:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ILgMAm3EqPPh0KqXEOvCXs48fV2I2eMWHuby+dIR9PY=; b=d+4eF9PmHd5p3WEU
+	0raCfLW2iM/UaunLmOj/TPp9ymzWT+XPW94xCgam/rhbE3gJUB10Z9S1kX6POIG0
+	c37+Z1KJjVBfTDX0V9L/rNTEBFlv8rZ4xrLk9pghRkljBnbH5OX/dOVaiw+350nW
+	tXa+oy8RBSADea6SVlFM+/YaZGTvr6rLwIKVYTtqXd8CUK6eE7rTiB5VOaIk+kt+
+	ktPbmiyAhGvdqMVbw/G0wdShoAu0e4hXVPiQkU2TcKZa8xKDBcNeHxsE/fneOLEJ
+	muZich7gjc8IZ85XLetkfrsFveOU7DMRBu+bTN4VI+Q7UMkOs8D+yH+WciMqNIXB
+	I1Gbcw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bejk8vj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 08:40:28 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4618eRqi007170
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 08:40:27 GMT
+Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
+ 01:40:23 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+ <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+ <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Message-ID: <fc7e3c93-1a79-6911-04c2-19ddc7e298cb@quicinc.com>
+Date: Mon, 1 Jul 2024 14:10:20 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] remoteproc: k3-r5: k3_r5_rproc_stop: code reorder
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Udit Kumar <u-kumar1@ti.com>, Thomas Richard <thomas.richard@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>, Hari Nagalla
- <hnagalla@ti.com>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240621150058.319524-1-richard.genoud@bootlin.com>
- <20240621150058.319524-4-richard.genoud@bootlin.com> <Zn8orCbTx9VtA9Em@p14s>
-Content-Language: en-US, fr
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Organization: Bootlin
-In-Reply-To: <Zn8orCbTx9VtA9Em@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: richard.genoud@bootlin.com
+In-Reply-To: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
+X-Proofpoint-ORIG-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_07,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 clxscore=1015 mlxscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010066
 
-Le 28/06/2024 à 23:18, Mathieu Poirier a écrit :
-> On Fri, Jun 21, 2024 at 05:00:57PM +0200, Richard Genoud wrote:
->> In the next commit, a RP_MBOX_SHUTDOWN message will be sent in
->> k3_r5_rproc_stop() to the remote proc (in lockstep on not)
->> Thus, the sanity check "do not allow core 0 to stop before core 1"
->> should be moved at the beginning of the function so that the generic case
->> can be dealt with.
+
+
+On 6/26/2024 9:12 PM, Konrad Dybcio wrote:
+> On 24.06.2024 1:21 PM, Naina Mehta wrote:
 >>
->> In order to have an easier patch to review, those actions are broke in
->> two patches:
->> - this patch: moving the sanity check at the beginning (No functional
->>    change).
->> - next patch: doing the real job (sending shutdown messages to remote
->>    procs before halting them).
 >>
->> Basically, we had:
->> - cluster_mode actions
->> - !cluster_mode sanity check
->> - !cluster_mode actions
->> And now:
->> - !cluster_mode sanity check
->> - cluster_mode actions
->> - !cluster_mode actions
+>> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 6/18/24 15:13, Naina Mehta wrote:
+>>>> Rename qdss@88800000 memory region as qlink_logging memory region
+>>>> and add qdss_mem memory region at address of 0x88500000.
+>>>> Split mpss_dsmharq_mem region into 2 separate regions and
+>>>> reduce the size of mpssadsp_mem region.
+>>>>
+>>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>>> ---
+>>>
+>>> Alright, we're getting somewhere. The commit message should however motivate
+>>> why such changes are necessary. For all we know, the splitting in two is
+>>> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
+>>> - does the firmware have some expectations about them being separate?
+>>>
 >>
->> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 24 ++++++++++++++----------
->>   1 file changed, 14 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 1f18b08618c8..a2ead87952c7 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -636,16 +636,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   	struct k3_r5_core *core1, *core = kproc->core;
->>   	int ret;
->>   
->> -	/* halt all applicable cores */
->> -	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->> -		list_for_each_entry(core, &cluster->cores, elem) {
->> -			ret = k3_r5_core_halt(core);
->> -			if (ret) {
->> -				core = list_prev_entry(core, elem);
->> -				goto unroll_core_halt;
->> -			}
->> -		}
->> -	} else {
->> +
->> +	if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
->>   		/* do not allow core 0 to stop before core 1 */
->>   		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
->>   					elem);
->> @@ -656,6 +648,18 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   			ret = -EPERM;
->>   			goto out;
->>   		}
->> +	}
->> +
->> +	/* halt all applicable cores */
->> +	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->> +		list_for_each_entry(core, &cluster->cores, elem) {
->> +			ret = k3_r5_core_halt(core);
->> +			if (ret) {
->> +				core = list_prev_entry(core, elem);
->> +				goto unroll_core_halt;
->> +			}
->> +		}
->> +	} else {
->>   
->>   		ret = k3_r5_core_halt(core);
->>   		if (ret)
+>> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+>> This would provide the flexibility to remove the region which is
+>> not required for a particular platform.
+>> qlink_logging is being added at the memory region at the address of
+>> 0x88800000 as the region is being used by modem firmware.
 > 
-> With this patch, the "else" in this "if" condition is coupled with the "if" from
-> the lockstep mode, making the code extremaly hard to read.  The original code
-> has a k3_r5_core_halt() in both "if" conditions, making the condition
-> independent from one another.
+> Ok, now put that in the commit message :)
 > 
-I'm not sure I understand what you mean.
-Anyway, I'm not happy with this diff, it doesn't reflect what was intended.
-(which is moving the check "core 0 should not be stop before core 1" at the beginning)
+> And I suppose:
+> 
+> "This would provide the flexibility to remove the region which is not
+> required for a particular platform." - but you still pass both to the
+> remoteproc in patch 4. Are these regions mutually exclusive?
+> 
 
-Tweaking around with the diff algorithms, I came with something way easier to read I think:
+Yes, for IDP platform, we are using both the DSM regions.
+Based on the modem firmware either both the regions have to be used or 
+only mpss_dsm_mem has to be used.
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 1f18b08618c8..a2ead87952c7 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -636,6 +636,20 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
-         struct k3_r5_core *core1, *core = kproc->core;
-         int ret;
-  
-+
-+       if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
-+               /* do not allow core 0 to stop before core 1 */
-+               core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
-+                                       elem);
-+               if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
-+                   core1->rproc->state != RPROC_SUSPENDED) {
-+                       dev_err(dev, "%s: can not stop core 0 before core 1\n",
-+                               __func__);
-+                       ret = -EPERM;
-+                       goto out;
-+               }
-+       }
-+
-         /* halt all applicable cores */
-         if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-                 list_for_each_entry(core, &cluster->cores, elem) {
-@@ -646,16 +660,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
-                         }
-                 }
-         } else {
--               /* do not allow core 0 to stop before core 1 */
--               core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
--                                       elem);
--               if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
--                   core1->rproc->state != RPROC_SUSPENDED) {
--                       dev_err(dev, "%s: can not stop core 0 before core 1\n",
--                               __func__);
--                       ret = -EPERM;
--                       goto out;
--               }
-  
-                 ret = k3_r5_core_halt(core);
-                 if (ret)
+Regards,
+Naina
 
-
+> Konrad
+> 
