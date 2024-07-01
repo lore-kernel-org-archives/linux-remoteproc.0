@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FB916B739;
-	Mon,  1 Jul 2024 19:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E5E171655;
+	Mon,  1 Jul 2024 21:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719860595; cv=none; b=OQfL9WlfcPUqKUdTcAa5W3X9qdFbmcx5+K/GZgwiKKXmaiVAkR0hEKR90F6B91zC8k38O9mEkVjlWcdDVibFZ3ansdSzoEAAiWWF1u1fzjhYQSu7Btu+1Zt50PNtnz0s7N1jY5eZohQkRn2jWxe04PN+qWXhAuh+zlfyXWmo3VU=
+	t=1719870950; cv=none; b=YBAu3F0g7HS1GV357H4Y7DyJ2kbr/pHcdv+j9Jq18Y7NlEKDgTqEnPRBmn6zdcwoaa8BxfGkHi3a5RjqjVnxL/g9yIRWn7f+FPQvMlXOf6bV+K3YvZNrT3UHOGLalKyfl1KY9wweWS85fN0NzqxHmDH4CFAYmFX6kE5oaMefMrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719860595; c=relaxed/simple;
-	bh=syBB+GBgrIJzvjby4f6Kmu4tkXEjlehhnHRycXD00+Y=;
+	s=arc-20240116; t=1719870950; c=relaxed/simple;
+	bh=ME3ilb4FHEZ3mZernUfGxhML5T9AJtAT2qDyd5Im25E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiV58QWxLUVoFFs0B0DpLW+z2JsSzXojMg8axKXnw188ma6OkpD8lScRmnfTNSKxQD2VWZSWNDvKSwb1M46CnEh44v4uKr5zWWGA9qT9lcXEZGiDpSZmEkPcyLVqW8n8bfEemrXOR/5zCsQCnL3xDxTJEbyohtrG/XswSL3hUs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BovxnuEn; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPpDnvZr7Vcf9Ma+bozl2tGvMx9hVeH3cU0MFIDlr8F4AAvg3rKlOcYudtRnuSz+pXxqmVZhig55Wq6XiGZ9v+nUq7s9ZnCEDJDU9Otx1ukly/WFbBbviX0vZ5bYoM80NEh2Qpag7t3sVuYO+7BvI6Hx0KOiRA/dBjNN3T5KIC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dVkiVV5S; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BovxnuEn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dVkiVV5S"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719860589; x=1751396589;
+  t=1719870944; x=1751406944;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=syBB+GBgrIJzvjby4f6Kmu4tkXEjlehhnHRycXD00+Y=;
-  b=BovxnuEnyYGxuOy0u18IUYFJ5DQmcywb18cr9HXIKTJyRo/PZSw/SAgx
-   qHeUcmoGHczTMsFGJ0jL9RK+xT9c5ceg1xUthkrz0VvpUT+PqHPzN3jOk
-   N23+dfB48iMYm2Gks9m/KYoWzmkGDrBANQXEjp9A8w0usyaOJdJn7AH0H
-   0wnVHe0v4goRc+Rq3mKYajUMOeMvatAtUnAWtW1qznViSwpC5XGaq4dkD
-   uI9QxBXo9F2HAlv4+KxnXWyHsiG7g6KDvb7LjhegWz1/0cVQ/iUPBnbTI
-   V7WYrHRWHlSB6I44T7v158QwA10qN52MF4MU3qSmaOxsKH7znUk6eTuyN
-   A==;
-X-CSE-ConnectionGUID: 10VM+1EbSOuHGqfgg6xL4A==
-X-CSE-MsgGUID: OBKvJtdQR/2CmGrRENyl2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16849438"
+  bh=ME3ilb4FHEZ3mZernUfGxhML5T9AJtAT2qDyd5Im25E=;
+  b=dVkiVV5S24/QxVQEgbms8nZoEghETMjansuwwv/GlAIJe4TppS50C5Ek
+   MY1GWgU//MFpecbyMhe1zAxIb7+IrHxn45FdR3G5OfJtV56IBhm9Ai7Qi
+   RFm2D6zqlq0KpeWpX3t/NFBNchQg642h/lLsr2iG4QessFrsZTQTzOtCv
+   v54RCiMpBJKoBiYRFu5o+dMrCRCYPc1MAt0npkmuqEmuqL8bZZDT0sA+X
+   9UCAA2TaB6UGEQ9vsiJ41cywstbOohTXZOdywCbz+DAxEO1wMNoJlpmYg
+   2Mjl9ZSiEdfEGb72CD8h+6Ed5J7FtDF/Wg7HWyGik7ifdUQFw/dKd+V3l
+   Q==;
+X-CSE-ConnectionGUID: /KXF5CSHQxKc5Pu9sReAtA==
+X-CSE-MsgGUID: DxDzYns1SbiaBt867S9sTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17163197"
 X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="16849438"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 12:03:08 -0700
-X-CSE-ConnectionGUID: LatNld+VRkqskYtDeY8b/w==
-X-CSE-MsgGUID: TOWk7n/3SHOeJhAMBZnGUg==
+   d="scan'208";a="17163197"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 14:55:43 -0700
+X-CSE-ConnectionGUID: w6T6MVkKSyWlTLCV28Zz2g==
+X-CSE-MsgGUID: 1TDZN2XeTa6uViVylbgvNA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="45590469"
+   d="scan'208";a="68882211"
 Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 01 Jul 2024 12:03:03 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 01 Jul 2024 14:55:39 -0700
 Received: from kbuild by 68891e0c336b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sOMIn-000NDf-0m;
-	Mon, 01 Jul 2024 19:03:01 +0000
-Date: Tue, 2 Jul 2024 03:02:44 +0800
+	id 1sOOzn-000NQC-36;
+	Mon, 01 Jul 2024 21:55:35 +0000
+Date: Tue, 2 Jul 2024 05:55:23 +0800
 From: kernel test robot <lkp@intel.com>
 To: Richard Genoud <richard.genoud@bootlin.com>,
 	Bjorn Andersson <andersson@kernel.org>,
@@ -63,22 +63,22 @@ Cc: oe-kbuild-all@lists.linux.dev, Philipp Zabel <p.zabel@pengutronix.de>,
 	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Richard Genoud <richard.genoud@bootlin.com>
-Subject: Re: [PATCH 2/4] remoteproc: k3-r5: Introduce PM suspend/resume
- handlers
-Message-ID: <202407020242.9zgLSOC0-lkp@intel.com>
-References: <20240621150058.319524-3-richard.genoud@bootlin.com>
+Subject: Re: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of
+ remote cores
+Message-ID: <202407020526.IJBgqeV4-lkp@intel.com>
+References: <20240621150058.319524-5-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="pKApOSwMlw4CLzZu"
+Content-Type: multipart/mixed; boundary="RKScPvT4LZRhq3gK"
 Content-Disposition: inline
-In-Reply-To: <20240621150058.319524-3-richard.genoud@bootlin.com>
+In-Reply-To: <20240621150058.319524-5-richard.genoud@bootlin.com>
 
 
---pKApOSwMlw4CLzZu
+--RKScPvT4LZRhq3gK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -94,8 +94,8 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Genoud/remoteproc-k3-r5-Fix-IPC-only-mode-detection/20240625-201619
 base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240621150058.319524-3-richard.genoud%40bootlin.com
-patch subject: [PATCH 2/4] remoteproc: k3-r5: Introduce PM suspend/resume handlers
+patch link:    https://lore.kernel.org/r/20240621150058.319524-5-richard.genoud%40bootlin.com
+patch subject: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of remote cores
 config: arm64-randconfig-003-20240701
 compiler: aarch64-linux-gcc (GCC) 13.2.0
 reproduce (this is a W=1 build):
@@ -103,39 +103,46 @@ reproduce (this is a W=1 build):
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407020242.9zgLSOC0-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407020526.IJBgqeV4-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
->> drivers/remoteproc/ti_k3_r5_remoteproc.c:117: warning: Function parameter or struct member 'pm_notifier' not described in 'k3_r5_cluster'
+   drivers/remoteproc/ti_k3_r5_remoteproc.c:118: warning: Function parameter or struct member 'pm_notifier' not described in 'k3_r5_cluster'
+>> drivers/remoteproc/ti_k3_r5_remoteproc.c:177: warning: Function parameter or struct member 'shutdown_complete' not described in 'k3_r5_rproc'
 
 
-vim +117 drivers/remoteproc/ti_k3_r5_remoteproc.c
+vim +177 drivers/remoteproc/ti_k3_r5_remoteproc.c
 
-7508ea19b20da8 Suman Anna     2020-11-18  101  
-6dedbd1d544389 Suman Anna     2020-10-02  102  /**
-6dedbd1d544389 Suman Anna     2020-10-02  103   * struct k3_r5_cluster - K3 R5F Cluster structure
-6dedbd1d544389 Suman Anna     2020-10-02  104   * @dev: cached device pointer
-6dedbd1d544389 Suman Anna     2020-10-02  105   * @mode: Mode to configure the Cluster - Split or LockStep
-6dedbd1d544389 Suman Anna     2020-10-02  106   * @cores: list of R5 cores within the cluster
-61f6f68447aba0 Apurva Nandan  2024-04-30  107   * @core_transition: wait queue to sync core state changes
-7508ea19b20da8 Suman Anna     2020-11-18  108   * @soc_data: SoC-specific feature data for a R5FSS
-6dedbd1d544389 Suman Anna     2020-10-02  109   */
-6dedbd1d544389 Suman Anna     2020-10-02  110  struct k3_r5_cluster {
-6dedbd1d544389 Suman Anna     2020-10-02  111  	struct device *dev;
-6dedbd1d544389 Suman Anna     2020-10-02  112  	enum cluster_mode mode;
-6dedbd1d544389 Suman Anna     2020-10-02  113  	struct list_head cores;
-61f6f68447aba0 Apurva Nandan  2024-04-30  114  	wait_queue_head_t core_transition;
-7508ea19b20da8 Suman Anna     2020-11-18  115  	const struct k3_r5_soc_data *soc_data;
-2d0e76f2a8f41f Richard Genoud 2024-06-21  116  	struct notifier_block pm_notifier;
-6dedbd1d544389 Suman Anna     2020-10-02 @117  };
-6dedbd1d544389 Suman Anna     2020-10-02  118  
+6dedbd1d544389 Suman Anna     2020-10-02  155  
+6dedbd1d544389 Suman Anna     2020-10-02  156  /**
+6dedbd1d544389 Suman Anna     2020-10-02  157   * struct k3_r5_rproc - K3 remote processor state
+6dedbd1d544389 Suman Anna     2020-10-02  158   * @dev: cached device pointer
+6dedbd1d544389 Suman Anna     2020-10-02  159   * @cluster: cached pointer to parent cluster structure
+6dedbd1d544389 Suman Anna     2020-10-02  160   * @mbox: mailbox channel handle
+6dedbd1d544389 Suman Anna     2020-10-02  161   * @client: mailbox client to request the mailbox channel
+6dedbd1d544389 Suman Anna     2020-10-02  162   * @rproc: rproc handle
+6dedbd1d544389 Suman Anna     2020-10-02  163   * @core: cached pointer to r5 core structure being used
+6dedbd1d544389 Suman Anna     2020-10-02  164   * @rmem: reserved memory regions data
+6dedbd1d544389 Suman Anna     2020-10-02  165   * @num_rmems: number of reserved memory regions
+6dedbd1d544389 Suman Anna     2020-10-02  166   */
+6dedbd1d544389 Suman Anna     2020-10-02  167  struct k3_r5_rproc {
+6dedbd1d544389 Suman Anna     2020-10-02  168  	struct device *dev;
+6dedbd1d544389 Suman Anna     2020-10-02  169  	struct k3_r5_cluster *cluster;
+6dedbd1d544389 Suman Anna     2020-10-02  170  	struct mbox_chan *mbox;
+6dedbd1d544389 Suman Anna     2020-10-02  171  	struct mbox_client client;
+6dedbd1d544389 Suman Anna     2020-10-02  172  	struct rproc *rproc;
+6dedbd1d544389 Suman Anna     2020-10-02  173  	struct k3_r5_core *core;
+6dedbd1d544389 Suman Anna     2020-10-02  174  	struct k3_r5_mem *rmem;
+6dedbd1d544389 Suman Anna     2020-10-02  175  	int num_rmems;
+04ad7e52fa3358 Richard Genoud 2024-06-21  176  	struct completion shutdown_complete;
+6dedbd1d544389 Suman Anna     2020-10-02 @177  };
+6dedbd1d544389 Suman Anna     2020-10-02  178  
 
 -- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
---pKApOSwMlw4CLzZu
+--RKScPvT4LZRhq3gK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
@@ -144,13 +151,13 @@ reproduce (this is a W=1 build):
         git remote add remoteproc git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
         git fetch remoteproc rproc-next
         git checkout remoteproc/rproc-next
-        b4 shazam https://lore.kernel.org/r/20240621150058.319524-3-richard.genoud@bootlin.com
+        b4 shazam https://lore.kernel.org/r/20240621150058.319524-5-richard.genoud@bootlin.com
         # save the config file
         mkdir build_dir && cp config build_dir/.config
         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/remoteproc/
 
---pKApOSwMlw4CLzZu
+--RKScPvT4LZRhq3gK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=config
 
@@ -7142,4 +7149,4 @@ CONFIG_ARCH_USE_MEMTEST=y
 # CONFIG_WARN_ABI_ERRORS is not set
 # end of Documentation
 
---pKApOSwMlw4CLzZu--
+--RKScPvT4LZRhq3gK--
