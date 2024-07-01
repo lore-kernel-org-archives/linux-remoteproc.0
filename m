@@ -1,133 +1,92 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9005839F4;
-	Mon,  1 Jul 2024 08:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019A5C614;
+	Mon,  1 Jul 2024 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823234; cv=none; b=rD8k06mDFxncuNLhRvhk/Agz8dbJfJFIWZa1NmzbQNCx0gCRobqb4OBjH5GRX29jZllAG7XjRiYYkX0Xw2R08ZqxCvVQypOFln86CPspi7dmPUWozpJj1Z1EzCaHgKmuiOHD1jIbvKy1HebsKuGFZvYDQLilQnzsHejGmCzRF0I=
+	t=1719825194; cv=none; b=IHbD3XkwWdqAcbYnpq1nrhzorfzEJF/d8FtJ/kMrHd2pu4IdtR9RszucvbxZxu6kCNv87gW2DH6YfZt37vEuOtT9i0i2yAHs3JT+T09KN2UeGTKpOGn2RCal0gahMoJmtxaqnBvydwbKo9kzRGNHHgBhFHiniKIQT3KsjdrrG8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823234; c=relaxed/simple;
-	bh=lQDakvkuTP95XC9nGbLvBkMLIuh0XUah0cZPHLuoKsE=;
-	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aFlIIBZlKUAQylQH5xpS1T6D7BD82WQS1Hn2OvUTP/I+9LBfmvdY/lb/Y/13tF7FGZ/A47tFobpns8tELYZ1DfrkXSyw7LWu+JhcVXdNxfdmdfAr9aX43HO22+U2Z6a+ckilieITyQRpKlPbWqe/HSBsrm7XZcBpeIEkAaKcme8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d+4eF9Pm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719825194; c=relaxed/simple;
+	bh=lH6Op+NEqMEMhLVrlVLSaicKVq6DDK95y/ji3hzNK7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uT7ivgqrdHCQhxuZE61IfzkvRTqZy4gBO+Xvnot6VmIzkrMBsfdSoxBHNnD8a/x61wb/p59f2ZKuwvJUHU3WtCDFlKQqw6HtzCPjiMYvFB7FJcBcWsTN0WWWVkir9BnlDcq+aTzz7F4kTH0NwlNsJgA8BHTNeEG8INYtRrk7Eos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LmHfupoh; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d+4eF9Pm"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ULuuvT006937;
-	Mon, 1 Jul 2024 08:40:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ILgMAm3EqPPh0KqXEOvCXs48fV2I2eMWHuby+dIR9PY=; b=d+4eF9PmHd5p3WEU
-	0raCfLW2iM/UaunLmOj/TPp9ymzWT+XPW94xCgam/rhbE3gJUB10Z9S1kX6POIG0
-	c37+Z1KJjVBfTDX0V9L/rNTEBFlv8rZ4xrLk9pghRkljBnbH5OX/dOVaiw+350nW
-	tXa+oy8RBSADea6SVlFM+/YaZGTvr6rLwIKVYTtqXd8CUK6eE7rTiB5VOaIk+kt+
-	ktPbmiyAhGvdqMVbw/G0wdShoAu0e4hXVPiQkU2TcKZa8xKDBcNeHxsE/fneOLEJ
-	muZich7gjc8IZ85XLetkfrsFveOU7DMRBu+bTN4VI+Q7UMkOs8D+yH+WciMqNIXB
-	I1Gbcw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bejk8vj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 08:40:28 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4618eRqi007170
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 08:40:27 GMT
-Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 01:40:23 -0700
-From: Naina Mehta <quic_nainmeht@quicinc.com>
-Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
- regions for mpss
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
- <20240618131342.103995-4-quic_nainmeht@quicinc.com>
- <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
- <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
- <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
-Message-ID: <fc7e3c93-1a79-6911-04c2-19ddc7e298cb@quicinc.com>
-Date: Mon, 1 Jul 2024 14:10:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LmHfupoh"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4619D1GD062498;
+	Mon, 1 Jul 2024 04:13:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719825181;
+	bh=gJqfpGs0H64qLnpC4fB9AmSwexSr+s5EWCWrwDYrIYw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LmHfupoh1oy0fRMKIRgVGeISn6aev/W3pz1QSTfbjAdXO9Pe4n6pRZzheCOzTbfPS
+	 /tU4l0VV/G1zMrWywQmqz6t46tSWlLUavwDu82ubLLXT1L0boOpK1KgCzK/7NiZwhv
+	 nlgRtYhxZIsQv7XKu4hdhG5FwkBntahEkZBLLhTI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4619D1ID090792
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 1 Jul 2024 04:13:01 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
+ Jul 2024 04:13:00 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 1 Jul 2024 04:13:00 -0500
+Received: from [10.249.48.175] ([10.249.48.175])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4619D0qo023569;
+	Mon, 1 Jul 2024 04:13:00 -0500
+Message-ID: <3064a3cb-9153-3bd1-4c55-79e8911f029f@ti.com>
+Date: Mon, 1 Jul 2024 04:13:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/4] remoteproc: k3-r5: Fix IPC-only mode detection
 Content-Language: en-US
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, "Andrew F. Davis" <afd@ti.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Udit Kumar <u-kumar1@ti.com>,
+        Thomas Richard
+	<thomas.richard@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        =?UTF-8?Q?Th=c3=a9o_Lebrun?= <theo.lebrun@bootlin.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-2-richard.genoud@bootlin.com> <Zn8UumUllbGS4/p9@p14s>
+ <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
+From: Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
-X-Proofpoint-ORIG-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_07,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- impostorscore=0 spamscore=0 clxscore=1015 mlxscore=0 suspectscore=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010066
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 6/26/2024 9:12 PM, Konrad Dybcio wrote:
-> On 24.06.2024 1:21 PM, Naina Mehta wrote:
+On 6/28/24 14:58, Mathieu Poirier wrote:
+>> This could lead in an incorrect IPC-only mode detection if reset line is
+>> asserted (so reset_control_status() return > 0) and c_state != 0 and
+>> halted == 0.
+>> In this case, the old code would have detected an IPC-only mode instead
+>> of a mismatched mode.
 >>
->>
->> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
->>>
->>>
->>> On 6/18/24 15:13, Naina Mehta wrote:
->>>> Rename qdss@88800000 memory region as qlink_logging memory region
->>>> and add qdss_mem memory region at address of 0x88500000.
->>>> Split mpss_dsmharq_mem region into 2 separate regions and
->>>> reduce the size of mpssadsp_mem region.
->>>>
->>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
->>>> ---
->>>
->>> Alright, we're getting somewhere. The commit message should however motivate
->>> why such changes are necessary. For all we know, the splitting in two is
->>> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
->>> - does the firmware have some expectations about them being separate?
->>>
->>
->> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
->> This would provide the flexibility to remove the region which is
->> not required for a particular platform.
->> qlink_logging is being added at the memory region at the address of
->> 0x88800000 as the region is being used by modem firmware.
-> 
-> Ok, now put that in the commit message :)
-> 
-> And I suppose:
-> 
-> "This would provide the flexibility to remove the region which is not
-> required for a particular platform." - but you still pass both to the
-> remoteproc in patch 4. Are these regions mutually exclusive?
-> 
+> Your assessment seems to be correct.  That said I'd like to have an RB or a TB
+> from someone in the TI delegation - guys please have a look.
+Agree with Richard's assessment, and the proposed fix looks good.
 
-Yes, for IDP platform, we are using both the DSM regions.
-Based on the modem firmware either both the regions have to be used or 
-only mpss_dsm_mem has to be used.
-
-Regards,
-Naina
-
-> Konrad
-> 
+Reviewed-by:
+Hari Nagalla <hnagalla@ti.com>
