@@ -1,60 +1,37 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158551E4A0
-	for <linux-remoteproc@vger.kernel.org>; Sat, 29 Jun 2024 13:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039601B809;
+	Mon,  1 Jul 2024 07:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719666207; cv=none; b=mMd/ks4UiCaNVJVxgE1YfZ7UbFol2135F9/LHbhQamo6JdJW4H32cRc7/Adj6WAJViLo33b3AWJZQxFVDEjb4iDTbEzKzYVnacU550/F0FPBXuzHZe08tKNblUph/7rAZWZhhzU0/5g5y5ZZJubzcqTJqkgtFWD8CinHXxvAbFk=
+	t=1719819026; cv=none; b=YMIzOOLMqIKIZ/FStqRJFnvwt/ntfhomGIl1UfTLSwp+f6ELGR6AbttWWTPvzqE5gEYML5QWvOqp5ZSEOJi0FCFrOMYdFtZQm60rmADpEjwx3QM9HvOwK0RnNkZZ6WTpU0JyAn1XY+2+4uB8doEW6IB4XjIF/MpRjgHYPWD4mvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719666207; c=relaxed/simple;
-	bh=+dukUqqO7cIErap+h/ymTCUcq+zEUjZtEffudb1in58=;
+	s=arc-20240116; t=1719819026; c=relaxed/simple;
+	bh=6QpzKrdq9hDHzpEtzW51Klv7nB30HfBbSH5puIaCmf0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B6wd8/IjoTy0NpvIOF4BElWMkJYzMwm/KAZHBbtX3/FBZj1Nm0ALNsQ81lRveg3FZ4OUyBZ/8AQUOJ2dzyWmYSF8J1KkK4tSHhj1MKD8wqAQxLu0Ry0DGPAE2Lhlh3zqUjIykVdec0wJX6OJsyQTSYtBx40iWD7kBalSVJ9fR9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GjnjQtUZ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=eizY8dCfQPVHCTVdwbjMLdLiyuTJ2tOt3Alp/GViiJEMziSjOZsYQr8jbOMQZNGglVY/c8N7m+O0iQsyXjl6OxxgOgasaM8WSXfWkdNRsKnVboYU8IXKpkV2LiidaDJN7aYwualjyg/9vTkbdjXfGHF5B0cYjTgXrimwxPP0dmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XStTZMlw; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjnjQtUZ"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd80e55efso2529504e87.0
-        for <linux-remoteproc@vger.kernel.org>; Sat, 29 Jun 2024 06:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719666203; x=1720271003; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcFnKL/ViQqZRLkBUtcYy5DNPj56xFfRsRoffNy4BM0=;
-        b=GjnjQtUZpPzFoIkUINBn8x/RFxUUXPek0B3KxeADJcZxt5TIHRlTV2BMdUUChblQ8c
-         HWdvLrKQ0NhnFTvriNXwlfYwoeQeZ3dWQtQvcWcPqYCEMi/hxlTYpSKFbZpGj0f7OSin
-         Ustqe6y3/RVP3zB2eSwrHm1c4YGum4Ou0oIv1IR4VZtjT6RSUf/2u9RJM0047qf6bI/s
-         tLk4Ek5hWrIoy1+Z/lTGOvU+ZkkhT4Yih1+l0Bp/kJnIoCz0riBIYvh+/+FhCi5j5DZc
-         j2uPM3vHmhKxUQEcBaTltGiVhQNT//PLmnSUgLxvX91y5PiIJJoSbKCIUAeXJtZaAJeZ
-         D94w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719666203; x=1720271003;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AcFnKL/ViQqZRLkBUtcYy5DNPj56xFfRsRoffNy4BM0=;
-        b=mUTEqj8yo8TblOT+uBq0nBfJeonWAhEgrXzeaPthxchj3zxXQXCTGQDUgsHvDXTrrT
-         Fd0+3Y1tsJgOeo0G0HzjJLidRBw25CeBuh7lz5yzLfCpwk1GORHxDsunixlyk4Ur+pVe
-         1SXTH9SiOOOQRhyn48h/qIxVnRCulBcq793D9ncT5QlXmH7xzDQWbZojYfU/y6/HTiUI
-         1QCCa6q4tDsF91XRqYXZs8KwB1SSh6UwtAztMXNgXDrzoVwyOy/27Zq7zLarbPsbmvnK
-         4TiaFpDbYXkKUMBclm/KIQ/W0Ogsbl5N3qZgOmkhM1dA5tltNJV13uj+IXWoGvtKQOqw
-         8TqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTrQA6BLbJvny0QinlPohDAceqWDOEV+cvc2tAD6hKklsx0IBGgTfUOXYJ46FrJ6tdu/s+09D9D7DyKW0JxMOEVzAwL8j8HCJi83UnxQtm9A==
-X-Gm-Message-State: AOJu0YwDG8ubp1Z76lh2mlGcKp9VcRESLm6JK7UNZxCO5gj/3aXEIJo/
-	+Ekkdy0frhiAOSzu11p74wzxtAsyEkZVzaO/rJysN+84FpKWMb83/qKYpajqi80=
-X-Google-Smtp-Source: AGHT+IEK1INTGjBjGmb3jwaEpotqKfPa2KCAiFV23CqI8Zcnh6V+H+84uY63hTBaHkeMGrOEwwZfsw==
-X-Received: by 2002:a05:6512:31cc:b0:52d:3ada:4b6b with SMTP id 2adb3069b0e04-52e8264b5c8mr990021e87.1.1719666202369;
-        Sat, 29 Jun 2024 06:03:22 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf6336csm162734266b.70.2024.06.29.06.03.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 06:03:21 -0700 (PDT)
-Message-ID: <ee324f78-4789-4873-b8e5-e2ae7b42a5b2@linaro.org>
-Date: Sat, 29 Jun 2024 15:03:19 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XStTZMlw"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 91945E0002;
+	Mon,  1 Jul 2024 07:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719819015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6xQac1g+CPH16xgQBI2BybKdUvmhLG35nudFFtpCgzc=;
+	b=XStTZMlwjzx/eG1nbTGu5KT8s+ohiub9+2FtDqSIDpga2Wh1MDgoT35YaoERGMloznsIzP
+	8Q9Y0ejrko1WQL6CN+HeaK5i4g2tNLp3NlsiUyCSQefln8cGXLEDHj8prBIqGVipvu8Xq3
+	3RezTrDb7DxEklw/MM4TEyL4H6k+A4hY9iGvdr0yvhlrOrHNY33A+nPJwt9j0pzNUFU63n
+	p8qlRASIwcPR0owH3XLdR5+zBpxEvL9XQXSSCW/5Ah2BCuK+lj+I3Rmuzl3XiloPdGkGfE
+	8QsDY5Q9HAgo0ELRXQ7MmxnW4Lr3qBV36FVHNMkd8WRX5KGPegpo1X7ibq+wAA==
+Message-ID: <ec73b430-1d63-4c77-8420-170c7727d454@bootlin.com>
+Date: Mon, 1 Jul 2024 09:30:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -62,104 +39,238 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/2] soc: qcom: smp2p: Use devname for interrupt
- descriptions
-To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, quic_bjorande@quicinc.com,
- andersson@kernel.org, quic_clew@quicinc.com, mathieu.poirier@linaro.org
-Cc: linux-kernel@vger.kernel.org, quic_deesin@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
- <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/4] remoteproc: k3-r5: Introduce PM suspend/resume
+ handlers
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Udit Kumar <u-kumar1@ti.com>, Thomas Richard <thomas.richard@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>, Hari Nagalla
+ <hnagalla@ti.com>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-3-richard.genoud@bootlin.com> <Zn8htULTLxyfMiWk@p14s>
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Content-Language: en-US, fr
+Organization: Bootlin
+In-Reply-To: <Zn8htULTLxyfMiWk@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-On 27.06.2024 12:48 PM, Sudeepgoud Patil wrote:
-> From: Chris Lew <quic_clew@quicinc.com>
+Le 28/06/2024 à 22:48, Mathieu Poirier a écrit :
+> On Fri, Jun 21, 2024 at 05:00:56PM +0200, Richard Genoud wrote:
+>> This patch adds the support for system suspend/resume to the ti_k3_R5
+>> remoteproc driver.
+>>
+>> In order to save maximum power, the approach here is to shutdown
+>> completely the cores that were started by the kernel (i.e. those in
+>> RUNNING state).
+>> Those which were started before the kernel (in attached mode) will be
+>> detached.
+>>
+>> The pm_notifier mechanism is used here because the remote procs firmwares
+>> have to be reloaded at resume, and thus the driver must have access to
+>> the file system were the firmware is stored.
+>>
+>> On suspend, the running remote procs are stopped, the attached remote
+>> procs are detached and processor control released.
+>>
+>> On resume, the reverse operation is done.
+>>
+>> Based on work from: Hari Nagalla <hnagalla@ti.com>
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> ---
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 123 ++++++++++++++++++++++-
+>>   1 file changed, 121 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 39a47540c590..1f18b08618c8 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -20,6 +20,7 @@
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/remoteproc.h>
+>> +#include <linux/suspend.h>
+>>   #include <linux/reset.h>
+>>   #include <linux/slab.h>
+>>   
+>> @@ -112,6 +113,7 @@ struct k3_r5_cluster {
+>>   	struct list_head cores;
+>>   	wait_queue_head_t core_transition;
+>>   	const struct k3_r5_soc_data *soc_data;
+>> +	struct notifier_block pm_notifier;
+>>   };
+>>   
+>>   /**
+>> @@ -577,7 +579,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>>   		/* do not allow core 1 to start before core 0 */
+>>   		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
+>>   					 elem);
+>> -		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+>> +		if (core != core0 && (core0->rproc->state == RPROC_OFFLINE ||
+>> +				      core0->rproc->state == RPROC_SUSPENDED)) {
 > 
-> When using /proc/interrupts to collect statistics on smp2p interrupt
-> counts, it is hard to distinguish the different instances of smp2p from
-> each other. For example to debug a processor boot issue, the ready and
-> handover interrupts are checked for sanity to ensure the firmware
-> reached a specific initialization stage.
-> 
-> Remove "smp2p" string from the irq request so that the irq will default
-> to the device name. Add an .irq_print_chip() callback to print the irq
-> chip name as the device name. These two changes allow for a unique name
-> to be used in /proc/interrupts as shown below.
-> 
-> / # cat /proc/interrupts | grep smp2p
->  18:  ...      ipcc 196610 Edge      smp2p-adsp
->  20:  ...      ipcc 131074 Edge      smp2p-modem
-> 170:  ...  smp2p-modem   1 Edge      q6v5 ready
-> 178:  ...  smp2p-adsp   1 Edge      q6v5 ready
-> 
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> ---
->  drivers/soc/qcom/smp2p.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index a21241cbeec7..696c2a8387d0 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -16,6 +16,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_wakeirq.h>
->  #include <linux/regmap.h>
-> +#include <linux/seq_file.h>
->  #include <linux/soc/qcom/smem.h>
->  #include <linux/soc/qcom/smem_state.h>
->  #include <linux/spinlock.h>
-> @@ -353,11 +354,19 @@ static int smp2p_set_irq_type(struct irq_data *irqd, unsigned int type)
->  	return 0;
->  }
->  
-> +static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
-> +{
-> +	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
-> +
-> +	seq_printf(p, " %8s", dev_name(entry->smp2p->dev));
+> If I understand correctly, this is to address a possible race condition between
+> user space wanting to start core1 via sysfs while the system is being suspended.
+> Is this correct?  If so, please add a comment to explain what is going on.
+> Otherwise a comment is obviously needed.
+Yes, you're right, I'll add a comment on the race condition at suspend.
 
-Not sure if the number is necessary but as you wish
+> 
+>>   			dev_err(dev, "%s: can not start core 1 before core 0\n",
+>>   				__func__);
+>>   			ret = -EPERM;
+>> @@ -646,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>>   		/* do not allow core 0 to stop before core 1 */
+>>   		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+>>   					elem);
+>> -		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+>> +		if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
+>> +		    core1->rproc->state != RPROC_SUSPENDED) {
+>>   			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+>>   				__func__);
+>>   			ret = -EPERM;
+>> @@ -1238,6 +1242,117 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>>   	return ret;
+>>   }
+>>   
+>> +static int k3_r5_rproc_suspend(struct k3_r5_rproc *kproc)
+>> +{
+>> +	unsigned int rproc_state = kproc->rproc->state;
+>> +	int ret;
+>> +
+>> +	if (rproc_state != RPROC_RUNNING && rproc_state != RPROC_ATTACHED)
+>> +		return 0;
+>> +
+>> +	if (rproc_state == RPROC_RUNNING)
+>> +		ret = rproc_shutdown(kproc->rproc);
+>> +	else
+>> +		ret = rproc_detach(kproc->rproc);
+>> +
+>> +	if (ret) {
+>> +		dev_err(kproc->dev, "Failed to %s rproc (%d)\n",
+>> +			(rproc_state == RPROC_RUNNING) ? "shutdown" : "detach",
+>> +			ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	kproc->rproc->state = RPROC_SUSPENDED;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int k3_r5_rproc_resume(struct k3_r5_rproc *kproc)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (kproc->rproc->state != RPROC_SUSPENDED)
+>> +		return 0;
+>> +
+>> +	ret = k3_r5_rproc_configure_mode(kproc);
+>> +	if (ret < 0)
+>> +		return -EBUSY;
+>> +
+>> +	/*
+>> +	 * ret > 0 for IPC-only mode
+>> +	 * ret == 0 for remote proc mode
+>> +	 */
+>> +	if (ret == 0) {
+>> +		/*
+>> +		 * remote proc looses its configuration when powered off.
+>> +		 * So, we have to configure it again on resume.
+>> +		 */
+>> +		ret = k3_r5_rproc_configure(kproc);
+>> +		if (ret < 0) {
+>> +			dev_err(kproc->dev, "k3_r5_rproc_configure failed (%d)\n", ret);
+>> +			return -EBUSY;
+>> +		}
+>> +	}
+>> +
+>> +	return rproc_boot(kproc->rproc);
+>> +}
+>> +
+>> +static int k3_r5_cluster_pm_notifier_call(struct notifier_block *bl,
+>> +					  unsigned long state, void *unused)
+>> +{
+>> +	struct k3_r5_cluster *cluster = container_of(bl, struct k3_r5_cluster,
+>> +						     pm_notifier);
+>> +	struct k3_r5_core *core;
+>> +	int ret;
+>> +
+>> +	switch (state) {
+>> +	case PM_HIBERNATION_PREPARE:
+>> +	case PM_RESTORE_PREPARE:
+>> +	case PM_SUSPEND_PREPARE:
+>> +		/* core1 should be suspended before core0 */
+>> +		list_for_each_entry_reverse(core, &cluster->cores, elem) {
+>> +			/*
+>> +			 * In LOCKSTEP mode, rproc is allocated only for
+>> +			 * core0
+>> +			 */
+>> +			if (core->rproc) {
+>> +				ret = k3_r5_rproc_suspend(core->rproc->priv);
+>> +				if (ret)
+>> +					dev_warn(core->dev,
+>> +						 "k3_r5_rproc_suspend failed (%d)\n", ret);
+>> +			}
+>> +
+>> +			ret = ti_sci_proc_release(core->tsp);
+>> +			if (ret)
+>> +				dev_warn(core->dev, "ti_sci_proc_release failed (%d)\n", ret);
+>> +		}
+>> +		break;
+>> +	case PM_POST_HIBERNATION:
+>> +	case PM_POST_RESTORE:
+>> +	case PM_POST_SUSPEND:
+>> +		/* core0 should be started before core1 */
+>> +		list_for_each_entry(core, &cluster->cores, elem) {
+>> +			ret = ti_sci_proc_request(core->tsp);
+>> +			if (ret)
+>> +				dev_warn(core->dev, "ti_sci_proc_request failed (%d)\n", ret);
+>> +
+>> +			/*
+>> +			 * In LOCKSTEP mode, rproc is allocated only for
+>> +			 * core0
+>> +			 */
+>> +			if (core->rproc) {
+>> +				ret = k3_r5_rproc_resume(core->rproc->priv);
+>> +				if (ret)
+>> +					dev_warn(core->dev,
+>> +						 "k3_r5_rproc_resume failed (%d)\n", ret);
+>> +			}
+>> +		}
+>> +		break;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>   {
+>>   	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+>> @@ -1336,6 +1451,9 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>   		}
+>>   	}
+>>   
+>> +	cluster->pm_notifier.notifier_call = k3_r5_cluster_pm_notifier_call;
+>> +	register_pm_notifier(&cluster->pm_notifier);
+>> +
+>>   	return 0;
+>>   
+>>   err_split:
+>> @@ -1402,6 +1520,7 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>>   		rproc_free(rproc);
+>>   		core->rproc = NULL;
+>>   	}
+>> +	unregister_pm_notifier(&cluster->pm_notifier);
+>>   }
+>>   
+>>   static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Thanks !
 
-Konrad
