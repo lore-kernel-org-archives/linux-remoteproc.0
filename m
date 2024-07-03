@@ -1,141 +1,177 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFAF16F8F5;
-	Wed,  3 Jul 2024 11:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EAD85298;
+	Wed,  3 Jul 2024 12:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007606; cv=none; b=oicZClG6WggIbl4P83q92czPnkOD5whkqCnCnDvR4lXz+2vaolMUFpY8dujNeSUqJcOmOMxqpyRLJWWJ/BeiCjJV4pCw2V1qpYY8JtMdIqC+JTLVZ+QgS8ALypZb+wECGmGUcE61XLt9KjQ1HJdsSePQdeA4qbPvkYS6BIFrtyE=
+	t=1720009598; cv=none; b=YDsLg8N/8dffCOeErj6i8bCEm69OZSgNvDNJcQgX4dxb6Z7xV4vhLfy4ePyBJ2wY/vM13R2yZpdum4vQLH6loKIQT4zxBjmwJRHqDXelOC4yvVY+vCDkQGqUzsMmybRVabF7Q0Rtk47mvn3bpuvl4KVRsoz0UbqK0m/QxWMc4Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007606; c=relaxed/simple;
-	bh=/m1aybwXVDqT4wfLqQkBnjr1+YSMqNOJ/CoRq2aM3go=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lvWzlvmFrE2D86CpsUVQxt+Tey/FKe8xl0IpPbO4lBBHCxTFa+Xs3mht1JCKclDxKWoKfivBYPC+aBe7nrjnOOh1o7PmQ1x7KLsRn9d5dcfMMsMf0nbdI14bbENzUOMzXXBfSPUZAchiZEBatSc23lwPAWXjODEZQ1xChVFfOn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NKaGM0vz; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1720009598; c=relaxed/simple;
+	bh=h2LjxXC0OzDiJd2LZJkR6AgXeDFIt2ME+WnIdf3EMAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oWByK92Wr0PTl9gDWJK6mbTO95yQ3gsrJUdt5IKwPRDTF6MfEmeI8wA2wodQYdUZ3tX+MoroPxp/jE0iPl7rjFMAflHpJLqPxX9CdQs6PHZC7Zcx95stcNijVNtv3M5ydMs/ED4NMU5LDLIeMHKnQl0tq86rPWAPuSxGV1vh+Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKhx1sjR; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NKaGM0vz"
-X-UUID: d551591e393211ef99dc3f8fac2c3230-20240703
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=75FkGdUKgt+Z9hXJnJSQngHwHaha+5GUkIFIvukvpH4=;
-	b=NKaGM0vzZOZyrtlEqFXiDOsmDOeKz0DSeoyHprO9wvNf7oiKmYwsWEwgUh4rFiIdjGwBY2nLltQfXuQqFMrAPTm1DcjbgBfT8XpGHI0Xi4IdSSi78jrV2CHCJJvWXBux11Hkb6xJ4g0B3L4bamYW0NaVONsXTbIx9xqpZlSDPwQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:cede9587-a949-4299-b78e-5d9afc42bf30,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:e48ae8d4-0d68-4615-a20f-01d7bd41f0bb,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: d551591e393211ef99dc3f8fac2c3230-20240703
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <shun-yi.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1428062565; Wed, 03 Jul 2024 19:53:16 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 3 Jul 2024 19:53:13 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 3 Jul 2024 19:53:13 +0800
-From: Shun-yi Wang <shun-yi.wang@mediatek.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
-	<teddy.chen@mediatek.com>, <olivia.wen@mediatek.com>, shun-yi.wang
-	<shun-yi.wang@mediatek.com>
-Subject: [PATCH 1/1] remoteproc: mediatek: Support multiple reserved memory regions
-Date: Wed, 3 Jul 2024 19:53:08 +0800
-Message-ID: <20240703115308.17436-2-shun-yi.wang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
-References: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKhx1sjR"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4256f102e89so36167535e9.0;
+        Wed, 03 Jul 2024 05:26:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720009595; x=1720614395; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b7FAFQKiJKwdtByQPY9Z255c9YVtWF2910FResQyaq4=;
+        b=iKhx1sjR9CXgGTeerYy4JmNE/rD3ZgW+EN4OkEDuVf1r32WWaJtHEFpSbSeWrq2TcF
+         J0H2uQQDgYPOrV58G7XGXj1DQnvQyIFzrpKf/w2QN/5swnZabL5ovcWFpZihOAzvXldW
+         guRSi3fRoxYFzfH4teaDbBCh9OJvcoYFjb88tv+Wb/BbFQ8dqO1uJdCRhB1t3XA+BAn3
+         kdSTdMRsY3LIUU++58YcIl9lPX2F7KqU2oR/lFZ6EEEhY3aJGEoDHYUWaZszCArhuRv1
+         NPF6UEYsjQhGWyAXY4lx3IWFZFCUfFBq1cIjkGvJoNt4cWne0AteOYcMTrmqWsD1udZ6
+         a2mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720009595; x=1720614395;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7FAFQKiJKwdtByQPY9Z255c9YVtWF2910FResQyaq4=;
+        b=xDOUj3kmYZGVrQwurJ3s6J/8U0lbnXqHx1AMWSFbz6d8rv1Ooq/YRQpMZJVPVY30DG
+         6neSS1D5plVB5bbeBS0yBlsUv0x+ZiJlXqjiJu2uNcjXT8IiU4hg0ujeLVLovHaiNth1
+         VDBOqInRIRBFNFBii3uNBYDX5dxc8NcoQLdW6Hj9j3XerEKGZgDBhEkMN6qFDOv2tXeF
+         VxSvqOUv0ZpVRR6KfFWNo+ZCA+qFTrTtqlGZ5mWsUJ9/+jtTYy+gUlvMP/Wffo6KVbGK
+         XHztK8bAezh3sJnKyg5jL78WlHUbKQiDJpqY+8bKS+nQiVlFePLNxo908rINULMRs096
+         9zMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoiTsMC/YfCQNoYZCtfQt1/G4aOGeaFiVlxRD7IklgUCiIij+aCj6WQt83SNTXpU5gQzjvBL7CG91LU3HQzumqO4ebyg+mAzMso1BkZBYySvpdUeWnKVPOPmMoopuIMfavCEx37F+pcA==
+X-Gm-Message-State: AOJu0YwWWqRhnBYrsE16VR68IKQjGUC1F05mHrzb8N8z6fSp45BN3hAM
+	7rwBUZFsbida6Jj+piW8/WXGXlAxJH8V+KpiHWCr8nd9r0nG53Z6z/bKxg==
+X-Google-Smtp-Source: AGHT+IEbC62WyVRYSYk89Jxzx2m+kO+O2DjKrDtUHxJi5KUMHCWNCu5CY/nLJuBq8xo7BP1Ckx/HeQ==
+X-Received: by 2002:a5d:64c5:0:b0:360:89a3:5293 with SMTP id ffacd0b85a97d-3677561fce9mr8359135f8f.0.1720009594435;
+        Wed, 03 Jul 2024 05:26:34 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e143csm15727240f8f.59.2024.07.03.05.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 05:26:33 -0700 (PDT)
+Date: Wed, 3 Jul 2024 14:26:32 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, baolin.wang7@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: hwlock: sprd-hwspinlock: convert to YAML
+Message-ID: <ZoVDeHCUCTZu7AT/@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.883000-8.000000
-X-TMASE-MatchedRID: Ei0WBMmFdJjleW6zTRN7wAPZZctd3P4B6tEkNTIMeQjEosIs7IJbkCpJ
-	3T68EJKPg/N7mdNXD1c8RLY2vU8PD4/opKiQWjqUdXu122+iJtp6zDxGcFEbChL6MU7t349bxsr
-	6m7RljBHftLFtxOSbQ4Ay6p60ZV62fJ5/bZ6npdjKayT/BQTiGlIc3O7Mj/yCMO7Fp3VK5MEhmu
-	FTYDf84D50unEEcwa99dfwm9WweGYZ3afb2GJc48A9F3ly54VehHNYhwwtQTza6j4tja6OgKCjN
-	WMcfCKKdATQdtPksR+3/JiWOe6GXXSWgQ2GpXdZhztLVWA1eE9DDKa3G4nrLQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.883000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	E45F84B53C2F9FE0E27731A6831DB9EC31E41B727B72E08D8A7DF8CAA7380CC92000:8
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+Convert the Spreadtrum hardware spinlock bindings to DT schema.
 
-SCP supports multiple reserved memory regions, intended for
-specific hardwards.
-
-Signed-off-by: shun-yi.wang <shun-yi.wang@mediatek.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
- drivers/remoteproc/mtk_scp.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ .../bindings/hwlock/sprd,hwspinlock-r3p0.yaml | 55 +++++++++++++++++++
+ .../bindings/hwlock/sprd-hwspinlock.txt       | 23 --------
+ 2 files changed, 55 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+ delete mode 100644 Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 9ecd5ea04b5f3..1902826cea0af 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1006,22 +1006,31 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
- 
- static int scp_map_memory_region(struct mtk_scp *scp)
- {
--	int ret;
-+	int ret, i, err;
- 	const struct mtk_scp_sizes_data *scp_sizes;
-+	struct device_node *node = scp->dev->of_node;
-+	struct of_phandle_iterator it;
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+new file mode 100644
+index 000000000000..b146b1c20edb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwlock/sprd,hwspinlock-r3p0.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	i = 0;
-+	of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
-+		ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
++title: Spreadtrum hardware spinlock
 +
-+		if (ret) {
-+			dev_err(scp->dev, "failed to assign memory-region: %s\n",
-+				it.node->name);
-+			of_node_put(it.node);
-+			return -ENOMEM;
-+		}
- 
--	ret = of_reserved_mem_device_init(scp->dev);
-+		i++;
-+	}
- 
- 	/* reserved memory is optional. */
--	if (ret == -ENODEV) {
-+	if (!i) {
- 		dev_info(scp->dev, "skipping reserved memory initialization.");
- 		return 0;
- 	}
- 
--	if (ret) {
--		dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
--		return -ENOMEM;
--	}
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,hwspinlock-r3p0
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: enable
++
++  '#hwlock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#hwlock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,sc9860-clk.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      hwlock@40500000 {
++        compatible  = "sprd,hwspinlock-r3p0";
++        reg = <0 0x40500000 0 0x1000>;
++        clocks = <&aon_gate CLK_SPLK_EB>;
++        clock-names = "enable";
++        #hwlock-cells = <1>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+deleted file mode 100644
+index 581db9d941ba..000000000000
+--- a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-SPRD Hardware Spinlock Device Binding
+--------------------------------------
 -
- 	/* Reserved SCP code size */
- 	scp_sizes = scp->data->scp_sizes;
- 	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
+-Required properties :
+-- compatible : should be "sprd,hwspinlock-r3p0".
+-- reg : the register address of hwspinlock.
+-- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+-	hwlock, so the number of cells should be <1> here.
+-- clock-names : Must contain "enable".
+-- clocks : Must contain a phandle entry for the clock in clock-names, see the
+-	common clock bindings.
+-
+-Please look at the generic hwlock binding for usage information for consumers,
+-"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+-
+-Example of hwlock provider:
+-	hwspinlock@40500000 {
+-		compatible  = "sprd,hwspinlock-r3p0";
+-		reg = <0 0x40500000 0 0x1000>;
+-		#hwlock-cells = <1>;
+-		clock-names = "enable";
+-		clocks = <&clk_aon_apb_gates0 22>;
+-	};
 -- 
-2.18.0
+2.34.1
 
