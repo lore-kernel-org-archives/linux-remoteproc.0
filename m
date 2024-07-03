@@ -1,46 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4F93CF73;
-	Wed,  3 Jul 2024 03:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0A3136E34;
+	Wed,  3 Jul 2024 03:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719977863; cv=none; b=gS85c0nOpigNpawki1z5tN36g6Do9BMbzh2L2xsvRWt51QWrCP/MG3iAxJ6bZVe35tzWzVDd6a4zbQtBdq2TeiyLv9gOVSWuDSKRUPZNpP3pa9/C+L2l6gAQom54Vt+X8iAo/AJd8jDsjAam1sOUWYE706CFiK3KGgmbzENNNn4=
+	t=1719977873; cv=none; b=PoVzxUw6ZIqDctND0VzBJ/NMqeub6cWzTjDGzwmpjAVNZTrzeHX7NJR6p5ug0CuTnFSqgVUeuw869pcQJZYfvltSpdaTAUFKdzUQyruLwjbcPnmMguwuZY0oaT970uMlDVB9FOl4Wh0BS2J10bqF7ydwPD3SwXRFQPLvu5hhSNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719977863; c=relaxed/simple;
-	bh=IQKmGLGA4Sltc/YzMkzZrkzhPn+PBbSEtBAa1q25RHA=;
+	s=arc-20240116; t=1719977873; c=relaxed/simple;
+	bh=AWlKbGxkg8EHIpMhkU6ZC3GVkJjPIGmUP8n5jnBrS9g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dP6vri9rfdYWIL5U3GzLniPL3lwq+Q5FUDkxk2kbA61+G3NmEm2q8ongparwsEffQnsVYZz9ivy30boPN8v8j51M0tJFF0Md4JW6tveYtXpHmeeXfXVTIUvYers0+yPuOfY0eIG08SuRkWIN+Es9L/baN0fNv4rdLtrQ+m575AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mtI9SEOV; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=MbW7j+vYuA6W+YUqYujTXDLMpaBwBzyfvd95TFj2FsF+8RTyYpA1id7QF0m7vkKoQH4aGR+WWwWLf3zraemNnw/Q/e4MZa1Vlp6EaLKUHu722MvIiIF9o6siqU6l1l3tK+01Z6STYAs2bUABn1a0nPlpwzBYkjWWaQoGf6Bxt2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXO/cnDk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtI9SEOV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E543C4AF13;
-	Wed,  3 Jul 2024 03:37:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXO/cnDk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E178C4AF0A;
+	Wed,  3 Jul 2024 03:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719977862;
-	bh=IQKmGLGA4Sltc/YzMkzZrkzhPn+PBbSEtBAa1q25RHA=;
+	s=k20201202; t=1719977872;
+	bh=AWlKbGxkg8EHIpMhkU6ZC3GVkJjPIGmUP8n5jnBrS9g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mtI9SEOV0LE6Nh+22vHdJPw7DYBu/cenTbyowxiDnIGdqDUG7Y94Y6Fns+crLf0S2
-	 dkiaQpgkwOZKx3Xvt6E7I9LcQ68yVKkOlaU7p4FuzIaxbOuyYDGApSc8ObfRNVkvLz
-	 aPt3Na0CYLBdOiB74+4JXn+eaIpg2kiORQ/CPlgQiOyBP4CahtT/FolB1jqmGsM2zr
-	 qDzpgRgsiwoaZlbRI0BOeQBFc922hwI6wSkEuhlpJFYko+KI/BX4ZYkpkNQ0rozZ6u
-	 1e/WeZrgICqcDyhD56Y48A7edZniLyI2Fd7ufhO8E4CM8QMw8x+dcTJ6TiJwt14yBC
-	 h8VTnNx7P+zzA==
+	b=pXO/cnDkzqVGKoxNklZMnAv/7bhs9NO+VSnz8KKt7ior4n35gSATz/V4uxJqD/zQj
+	 NxR7Qw41Knk3e0NMly9OdJA0cRbz7bnY7yr6AVvJluqXK43XgblKe0DSD/NnHqvijB
+	 LZMrydIM/ATW/VspL9JCaQEcRJ2B2kM0RugGIm0V+XEhpLvAtxVkhum9F1WMhCtK3h
+	 ydvuplmjaSrhLyy/g/SpxdgJQYkwjavGKYSZzRnl/VaWu2TSKzqf3BmVwMnq+qLV3P
+	 WTLMgC5vHanT0uMpzzAMcNRZbwhjUHk8fWQ6qiNu9+dsbLYj0WieBuA8KhlSBYebJ2
+	 BeqorRIw8QMFQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>,
+To: quic_bjorande@quicinc.com,
+	quic_clew@quicinc.com,
+	mathieu.poirier@linaro.org,
+	Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	quic_deesin@quicinc.com,
 	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/2] qcom: fix missing dependencies for the QCOM_PD_MAPPER
-Date: Tue,  2 Jul 2024 22:37:25 -0500
-Message-ID: <171997785345.348959.9767564474353680940.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH V3 0/2] Use of devname for interrupt descriptions and tracepoint support for smp2p
+Date: Tue,  2 Jul 2024 22:37:34 -0500
+Message-ID: <171997785365.348959.8013084242190824614.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org>
-References: <20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org>
+In-Reply-To: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
+References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,16 +51,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 26 Jun 2024 22:12:36 +0300, Dmitry Baryshkov wrote:
-> While refactoring pd-mapper to use auxiliary bus for the PD mapper
-> instantiation I forgot to select the bus in Kconfig entries. Fix it now.
+On Thu, 27 Jun 2024 16:18:29 +0530, Sudeepgoud Patil wrote:
+> This commit enhances the smp2p driver by adding support for using the device
+> name in interrupt descriptions and introducing tracepoint functionality.
+> These improvements facilitate more effective debugging of smp2p-related issues.
 > 
+> The devname patch, along with the callback to print the irq chip name as the
+> device name and the removal of the ‘smp2p’ string from the irq request,
+> results in a unique interrupt description.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/2] soc: qcom: add missing pd-mapper dependencies
-      commit: b89c5bc72102469a87f0c6ec0ee7112ef2eba01f
+[1/2] soc: qcom: smp2p: Use devname for interrupt descriptions
+      commit: e49380c155940cb47e291a4b3fcb7fdffee6aa4d
 
 Best regards,
 -- 
