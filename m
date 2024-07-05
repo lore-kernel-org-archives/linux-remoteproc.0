@@ -1,274 +1,102 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4424B143C7B
-	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Jul 2024 10:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C016A93F;
+	Fri,  5 Jul 2024 16:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720174155; cv=none; b=iXhhe2P4HGXqBxrMIR2MjEPB4y2/Q8jH4hG8x+LzzuxNpauWHXhs9GVq/X6PiKyoEAqm6MQ0s3OpjytgBx0ul/iWPewH/pGFgwKDKTep+/zzZegoTlC3Z/0DrNF7KXjQU4METSVgE3AWTl/o6bGX5DpaB0XJlG0tUd8WpnOZ2WE=
+	t=1720195475; cv=none; b=XI52DBdFfkPcLkrThbichj3yNEZJ45M5K/eNsqdkh9Ls3GBW4e99BXzLjRI7OGU+9M9N6OKg1lnSoB0MAoEtDmF/iluevpaAjgcxCvvQbvSZJlsL+rToO9GTg04y2scfklZxX6cmslZn75ejX0+wHCvEboaj1tQopbsD/ulNtW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720174155; c=relaxed/simple;
-	bh=hTt1vb2rlKzdwlZrBwUZKYn386WW4/puEcuG/xh7pBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwjlZmEgw9DJ7PmAlulraP8T4IKcF5aOKgtOl2t1qb/uptARopPhyGuwKQYkJJfk9CfgShs/ekXcJ+j3hQ5gjCxO3XupV5Ai4MZhnvFkxlzeTK9ua2b3xPC2ZhGev3yZO7+1gNPLYErgd2lCmjbQ9Tfp0IB7U8yg/uNbSMKF2xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BdDZ5HD0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720195475; c=relaxed/simple;
+	bh=7SynWHHBuqFe3HgOFQJijIONqO1w8lyA7ZQo45G4wrA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sihUjTXIOyx7hLg7iiZwJ+cZS3f6kbnyAw+nK9dxxtlsixj8cUFCHMc6KJZQVJs2Mo8hFtFTBxSox4NjlGtiKfoDDTzAaxMBQb41TE64z7Vw7SefNjlq0sNkkPky+qTvW+dn921uY7ICl7lkcqpKNNzhqM30L/xd70gZ7ejfl/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=Q7RO3a22; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BdDZ5HD0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720174152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Odn3kI68k2nJO/AKzhT19WX3OnWz2Ozg0VobWfUmy3A=;
-	b=BdDZ5HD0iyApu7/ZuXewiaa6jDPczxjRgUAba/STsMigGySzcIc3ZrxA5GDOz84DlB6ss3
-	CRI72Kbdw34pa7Fpf2IhD0EDg6I0f6jS7cNdD0GnjC60HxZubzjbPLXA9x8ft1rTb6+wqx
-	JZ6WCPFP4t2O/4qyA+TmCPcALAp5E3g=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-YWOzooAtPWiG8nI0tjmk6g-1; Fri, 05 Jul 2024 06:09:11 -0400
-X-MC-Unique: YWOzooAtPWiG8nI0tjmk6g-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-367a531a2f0so483886f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Jul 2024 03:09:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720174150; x=1720778950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Odn3kI68k2nJO/AKzhT19WX3OnWz2Ozg0VobWfUmy3A=;
-        b=qYDcyVhIWznrTyIRmcUpZ6ZlGtyKrkK+YFgDmYNZ40SAvIJvkA7f5OWZsowrh37svF
-         fTFt8Cufmbcoo1NvOSuCgU9JVyZUfVsNsUzFMHNRwQPAHcxB8hCF6jTr6kYgxxFagp6P
-         +7GptH6LatHS5VClJbrfVcMzjMpJMLThwjLeBdXeF1LMS6v6Acf/bQT2pqfWqv80Rvy3
-         Bu+OYVtroeEk5VbchteFCmTYGzk2LFVCeywdrhcPz6TdbEyvqOEFbCgO+Ad6VHeVUAms
-         5Ng8U7iSjtGEqqSH2mxDBfKFJeRZDUzCRkGUGGKg+Wn2pn9J+2l2e3X9iTYmmBj/rzT0
-         jyRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUid0qw64s4Lsr6RWLkq0Xh+XeIvw9M5p2jKLkeGpZeoCk2vWz0ppUJ3c8tLwM3XKhpcJLNN6g1shuT8TQIHqSKWO5BIzf5hqY45V/cE3DkIQ==
-X-Gm-Message-State: AOJu0YzouL7DiffD2Bs3eKLrumq4xJLDHQwZE6u0Y5+AGcVp8fcl9Prz
-	u9w0mCyL1DS7ZhnNCrRcXG97tWBoOU1RVpa6x4uCoHVafcHY71HRjYRQPjxv2w8pthsHPhXAGOa
-	3myu7qMu8oVLH32g9YrJT6uQmYWc/rJpV6NqJbn3cCU0IzFMaFuhI+/3wY7GJbUm/804=
-X-Received: by 2002:a05:6000:18d1:b0:366:f001:78d5 with SMTP id ffacd0b85a97d-3679dd15831mr2701309f8f.13.1720174149717;
-        Fri, 05 Jul 2024 03:09:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4wwtYRyztkbCukZKtbADwQgiOS0R3XAJxhjPsgDTBQMKf8FQrtcOZyu+TAhVhA0306KQefg==
-X-Received: by 2002:a05:6000:18d1:b0:366:f001:78d5 with SMTP id ffacd0b85a97d-3679dd15831mr2701283f8f.13.1720174149018;
-        Fri, 05 Jul 2024 03:09:09 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f0:a185:2de6:83fc:7632:9788])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678eb6593bsm7742101f8f.93.2024.07.05.03.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:09:08 -0700 (PDT)
-Date: Fri, 5 Jul 2024 06:09:01 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org
-Subject: [PATCH 2/2] virtio: fix vq # when vq skipped
-Message-ID: <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
-References: <cover.1720173841.git.mst@redhat.com>
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="Q7RO3a22"
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id BD16E100002;
+	Fri,  5 Jul 2024 19:04:10 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720195450; bh=PSUhGWftozkwODPH+8H3q/nMrrK4aDrUh1tSE1Yvgqc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=Q7RO3a22IdmWNkaU7rZav/3RlxDylQPbgZzP/MP0lwGTUMmWi9tc5WPstaJ55hCa+
+	 KhfE+A8usfEm8QTzn5eUCnZAyE2A5JyjcPelL7SbH854C0ynVzXldksLWvK4rbazgA
+	 fFAysh3nCLBveXWdnRqStsfO595csAcQY+lgUWvv4vNq/IOwWEEpYr/TaKafBjE5N8
+	 FtOu5h+AW+eZRJyq5FoEUSzea0zNbPAO4Q4o0pbmmf8M0amEcQ9zft6FoCICp8L7Th
+	 HCMbDQ2IftFEIM6I5ZI3P0PPbsLQODR3kV08F2eFLhNimwLUOx9mxHry2VVAZIgM3C
+	 E/p0IWj4yYUcA==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Fri,  5 Jul 2024 19:03:26 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 5 Jul 2024
+ 19:03:05 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Siddharth Gupta <sidgup@codeaurora.org>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rishabh
+ Bhatnagar <rishabhb@codeaurora.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] remoteproc: Remove unneeded check in elf_strtbl_add()
+Date: Fri, 5 Jul 2024 19:02:52 +0300
+Message-ID: <20240705160252.9628-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1720173841.git.mst@redhat.com>
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186342 [Jul 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/05 14:29:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/05 10:39:00 #25854340
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-virtio balloon communicates to the core that in some
-configurations vq #s are non-contiguous by setting name
-pointer to NULL.
+In elf_strtbl_add() pointer 'strtab', which value is a result of shifting
+after dereference of another pointer 'ehdr', is compared to NULL, which is
+useless.
 
-Unfortunately, core then turned around and just made them
-contiguous again. Result is that driver is out of spec.
+Fix this issue by removing unneeded check.
 
-Implement what the API was supposed to do
-in the 1st place. Compatibility with buggy hypervisors
-is handled inside virtio-balloon, which is the only driver
-making use of this facility, so far.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: abc72b646066 ("remoteproc: coredump: Add minidump functionality")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 ---
- arch/um/drivers/virtio_uml.c           | 4 ++--
- drivers/remoteproc/remoteproc_virtio.c | 4 ++--
- drivers/s390/virtio/virtio_ccw.c       | 4 ++--
- drivers/virtio/virtio_mmio.c           | 4 ++--
- drivers/virtio/virtio_pci_common.c     | 8 ++++----
- drivers/virtio/virtio_vdpa.c           | 4 ++--
- 6 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/remoteproc/remoteproc_elf_helpers.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-index 77faa2cf3a13..d65346cd340e 100644
---- a/arch/um/drivers/virtio_uml.c
-+++ b/arch/um/drivers/virtio_uml.c
-@@ -1019,7 +1019,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		       struct irq_affinity *desc)
- {
- 	struct virtio_uml_device *vu_dev = to_virtio_uml_device(vdev);
--	int i, queue_idx = 0, rc;
-+	int i, rc;
- 	struct virtqueue *vq;
+diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
+index e6de53a5000c..7c57fb553466 100644
+--- a/drivers/remoteproc/remoteproc_elf_helpers.h
++++ b/drivers/remoteproc/remoteproc_elf_helpers.h
+@@ -107,7 +107,7 @@ static inline unsigned int elf_strtbl_add(const char *name, void *ehdr, u8 class
+ 	shdr = ehdr + elf_size_of_hdr(class) + shstrndx * elf_size_of_shdr(class);
+ 	strtab = ehdr + elf_shdr_get_sh_offset(class, shdr);
+ 	idx = index ? *index : 0;
+-	if (!strtab || !name)
++	if (!name)
+ 		return 0;
  
- 	/* not supported for now */
-@@ -1036,7 +1036,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 			continue;
- 		}
- 
--		vqs[i] = vu_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
-+		vqs[i] = vu_setup_vq(vdev, i, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			rc = PTR_ERR(vqs[i]);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 25b66b113b69..2d17135abb66 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -187,7 +187,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 				 const bool * ctx,
- 				 struct irq_affinity *desc)
- {
--	int i, ret, queue_idx = 0;
-+	int i, ret;
- 
- 	for (i = 0; i < nvqs; ++i) {
- 		if (!names[i]) {
-@@ -195,7 +195,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 			continue;
- 		}
- 
--		vqs[i] = rp_find_vq(vdev, queue_idx++, callbacks[i], names[i],
-+		vqs[i] = rp_find_vq(vdev, i, callbacks[i], names[i],
- 				    ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			ret = PTR_ERR(vqs[i]);
-diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-index d6491fc84e8c..64541b3bb8a2 100644
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -696,7 +696,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- {
- 	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
- 	dma64_t *indicatorp = NULL;
--	int ret, i, queue_idx = 0;
-+	int ret, i;
- 	struct ccw1 *ccw;
- 	dma32_t indicatorp_dma = 0;
- 
-@@ -710,7 +710,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 			continue;
- 		}
- 
--		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, callbacks[i],
-+		vqs[i] = virtio_ccw_setup_vq(vdev, i, callbacks[i],
- 					     names[i], ctx ? ctx[i] : false,
- 					     ccw);
- 		if (IS_ERR(vqs[i])) {
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index 173596589c71..a3a66a0b7cb1 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -496,7 +496,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- {
- 	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
- 	int irq = platform_get_irq(vm_dev->pdev, 0);
--	int i, err, queue_idx = 0;
-+	int i, err;
- 
- 	if (irq < 0)
- 		return irq;
-@@ -515,7 +515,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 			continue;
- 		}
- 
--		vqs[i] = vm_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
-+		vqs[i] = vm_setup_vq(vdev, i, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
- 			vm_del_vqs(vdev);
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index f6b0b00e4599..eeff060cacec 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -292,7 +292,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
- 	u16 msix_vec;
--	int i, err, nvectors, allocated_vectors, queue_idx = 0;
-+	int i, err, nvectors, allocated_vectors;
- 
- 	vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
- 	if (!vp_dev->vqs)
-@@ -328,7 +328,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
- 			msix_vec = allocated_vectors++;
- 		else
- 			msix_vec = VP_MSIX_VQ_VECTOR;
--		vqs[i] = vp_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
-+		vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false,
- 				     msix_vec);
- 		if (IS_ERR(vqs[i])) {
-@@ -365,7 +365,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
- 		const char * const names[], const bool *ctx)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
--	int i, err, queue_idx = 0;
-+	int i, err;
- 
- 	vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
- 	if (!vp_dev->vqs)
-@@ -383,7 +383,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
- 			vqs[i] = NULL;
- 			continue;
- 		}
--		vqs[i] = vp_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
-+		vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
- 				     ctx ? ctx[i] : false,
- 				     VIRTIO_MSI_NO_VECTOR);
- 		if (IS_ERR(vqs[i])) {
-diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-index e803db0da307..fe91a5d673dc 100644
---- a/drivers/virtio/virtio_vdpa.c
-+++ b/drivers/virtio/virtio_vdpa.c
-@@ -370,7 +370,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 	struct cpumask *masks;
- 	struct vdpa_callback cb;
- 	bool has_affinity = desc && ops->set_vq_affinity;
--	int i, err, queue_idx = 0;
-+	int i, err;
- 
- 	if (has_affinity) {
- 		masks = create_affinity_masks(nvqs, desc ? desc : &default_affd);
-@@ -384,7 +384,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 			continue;
- 		}
- 
--		vqs[i] = virtio_vdpa_setup_vq(vdev, queue_idx++,
-+		vqs[i] = virtio_vdpa_setup_vq(vdev, i,
- 					      callbacks[i], names[i], ctx ?
- 					      ctx[i] : false);
- 		if (IS_ERR(vqs[i])) {
+ 	ret = idx;
 -- 
-MST
+2.30.2
 
