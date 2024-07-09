@@ -1,57 +1,56 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB611514C3;
-	Tue,  9 Jul 2024 06:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFCD1527B1;
+	Tue,  9 Jul 2024 06:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720507830; cv=none; b=nFfuyiRZPCS7jU7Z+iDbvTM7krgbD5y2t+aQTvjTKA846JBzIpc+r/cq+QjiDXAas7WHWl7LDe8ePuVMoGTfwu16Yc3E/kxTDevp1l1wKGjudohaeYNRbSm9fzer5PMnMB2s74tO/4uy5sVSjUbOlulEw89y7Jm/Y+K2oLoLtR4=
+	t=1720507834; cv=none; b=lK9NYaAhC84mjx7dcdyJxitft2Za/mcsN3Oy9DN9DwlIu5VZO2YFENH6F4I0/B6gIyG4vVicDXUKAxkInAwdbr4AZOodiwA7Q3QRoiqI42QBN7y+iI5Jf8KTSs7/pOQtdgHMgO/g8HKYjtW3qSqJdGgFiML5srr007x+nbxjg24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720507830; c=relaxed/simple;
-	bh=BC53NUr5S1tyon6u7PNyp0ncpVxZDaFWVQC6lOvIsPs=;
+	s=arc-20240116; t=1720507834; c=relaxed/simple;
+	bh=vyiCg4OA5vtk16XHfxPS06sYmXJr8alKtPnAxMdY8lI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qTg48YSM0uUUhM7z13YmQcvxuOKWU71tTknaeZeS2ora7Gxniixfvv/sV9EzbqDxv1diDQfHJDn2FYypJa01+aJ9cw/LCyBR+UlHAmXIDa0LVSin/54AClN5agUASxZmoC6VtIax/2yxOWRSd60K21mXiVva0gtnOijwDCSO5U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PQipfchM; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version:Content-Type; b=cMDTMB6RMxAcytWTBTWxaqNNl6m+a6eN4+WfUwp8/6negvFC21qYaVmfXJerp2p/NaBe8bnhw/oGQhOMnqosa8B11TD1nHKaCJKvttrwvHU8X7f37CZu5FrDHudz8BaeU9CusAi2kdq4F5yR+74Hc1yxxCClcP4oDzUw4a+vV4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XEgDIUuA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PQipfchM"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468MxNuY003205;
-	Tue, 9 Jul 2024 06:50:26 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XEgDIUuA"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468M84uE016975;
+	Tue, 9 Jul 2024 06:50:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8AXDN2cjC6HX8I8LZqU07wi/8NyC63TdGCzNBVTdp1s=; b=PQipfchMdlnON4E2
-	BxkkXuw+5C7mBkOQA0z++hIIiDzAVuriW8AJHvnDDVwqj7w5mVVP/ea21jmrckNu
-	mNNvhMOM1TtRQ99IfyMFik7ucjVrq4RTyAoU1mVODLoM4fWmqcaWRp23Fsr25yqj
-	ZrsysHAhuQh2aeM+duuOxHDPOMQaalinPbxrCuZ7NSghJrNc0y4X8ddNbDWJ9lH8
-	xGZ/5uOYE8o4i59mHATholrcnG73x66iSoCuHAjbW7bf7SvPjDo42+c/3oINU96u
-	aV2HNRjYRr5V/etDpqyYsAVYhc3AAeLc/fG41UhuxF8lidT9rBZHI1at13pjF1ZV
-	C7UAaQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x515q2c-1
+	YK1kPZKLRTwNe3RX5PiAf0/CTmCjBNPlc81MjsGd+1c=; b=XEgDIUuADiNT1qms
+	aaDU5LufvxoYNcQJVPQSJ02Bl99MpkEKSnEDrrTqYumpE+X8WC5CtqUd0GMP1bD/
+	cxqSgDM8V+IYMZAFJg76QpKftf2VujTdpPUXbobudXWWYd+ttfHJLFu2dAWUaHIv
+	qSWIsMF7O4LU2aLDPX+A7cl/LJtl+plDUnHd8j2M5UwhQOsWbA+dfpE1s+70uJIt
+	Gj4Ncv3k4bzT21Po0xMj4BHnM/pHfkMkMs41Yjx4ztAXw0p0oTLx+Oa+iKenvnUO
+	dJ3CFGk5F2JVgy+i5KWdys4M6zPqz8VIVZp7uqye92eK4OE61onzvPThixYvZgB9
+	uRsMVQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t5ryu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 06:50:25 +0000 (GMT)
+	Tue, 09 Jul 2024 06:50:28 +0000 (GMT)
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4696oPZq021625
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4696oFNJ006801
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 06:50:25 GMT
+	Tue, 9 Jul 2024 06:50:15 GMT
 Received: from hu-nainmeht-hyd.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 8 Jul 2024 23:50:21 -0700
+ 15.2.1544.9; Mon, 8 Jul 2024 23:50:11 -0700
 From: Naina Mehta <quic_nainmeht@quicinc.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <konrad.dybcio@linaro.org>, <manivannan.sadhasivam@linaro.org>
 CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_nainmeht@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v4 5/5] arm64: dts: qcom: sdx75-idp: enable MPSS remoteproc node
-Date: Tue, 9 Jul 2024 12:19:24 +0530
-Message-ID: <20240709064924.325478-6-quic_nainmeht@quicinc.com>
+        <quic_nainmeht@quicinc.com>
+Subject: [PATCH v4 3/5] arm64: dts: qcom: sdx75: update reserved memory regions for mpss
+Date: Tue, 9 Jul 2024 12:19:22 +0530
+Message-ID: <20240709064924.325478-4-quic_nainmeht@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
 References: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
@@ -67,42 +66,76 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aGpN8HRr2X-0rx4Qx7IvXXYCdAzn9YMs
-X-Proofpoint-ORIG-GUID: aGpN8HRr2X-0rx4Qx7IvXXYCdAzn9YMs
+X-Proofpoint-GUID: B21I3WKOdgBR3f7N5EhBRJDj6NGp5B8c
+X-Proofpoint-ORIG-GUID: B21I3WKOdgBR3f7N5EhBRJDj6NGp5B8c
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=962 mlxscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090044
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=885 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090045
 
-Enable MPSS remoteproc node on sdx75-idp platform.
+Rename qdss@88800000 memory region as qlink_logging memory region
+and add qdss_mem memory region at address of 0x88500000,
+qlink_logging is being added at the memory region at the address
+of 0x88800000 as the region is being used by modem firmware.
+Since different DSM region size is required for different modem
+firmware, split mpss_dsmharq_mem region into 2 separate regions.
+This would provide the flexibility to remove the region which is
+not required for a particular platform. Based on the modem firmware
+either both the regions have to be used or only mpss_dsm_mem has
+to be used. Also, reduce the size of mpssadsp_mem region.
 
 Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sdx75-idp.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/qcom/sdx75.dtsi | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-index fde16308c7e2..f1bbe7ab01ab 100644
---- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
-@@ -282,6 +282,12 @@ &qupv3_id_0 {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+index 9b93f6501d55..6f0abcc87a3b 100644
+--- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+@@ -366,7 +366,12 @@ uefi_log_mem: uefi-log@87f75000 {
+ 			no-map;
+ 		};
  
-+&remoteproc_mpss {
-+	firmware-name = "qcom/sdx75/modem.mbn",
-+			"qcom/sdx75/modem_dtb.mbn";
-+	status = "okay";
-+};
+-		qdss_mem: qdss@88800000 {
++		qdss_mem: qdss@88500000 {
++			reg = <0x0 0x88500000 0x0 0x300000>;
++			no-map;
++		};
 +
- &sdhc {
- 	cd-gpios = <&tlmm 103 GPIO_ACTIVE_LOW>;
- 	vmmc-supply = <&reg_2v95_vdd>;
++		qlink_logging_mem: qlink-logging@88800000 {
+ 			reg = <0x0 0x88800000 0x0 0x300000>;
+ 			no-map;
+ 		};
+@@ -377,8 +382,13 @@ audio_heap_mem: audio-heap@88b00000 {
+ 			no-map;
+ 		};
+ 
+-		mpss_dsmharq_mem: mpss-dsmharq@88f00000 {
+-			reg = <0x0 0x88f00000 0x0 0x5080000>;
++		mpss_dsm_mem_2: mpss-dsm-2@88f00000 {
++			reg = <0x0 0x88f00000 0x0 0x2500000>;
++			no-map;
++		};
++
++		mpss_dsm_mem: mpss-dsm@8b400000 {
++			reg = <0x0 0x8b400000 0x0 0x2b80000>;
+ 			no-map;
+ 		};
+ 
+@@ -388,7 +398,7 @@ q6_mpss_dtb_mem: q6-mpss-dtb@8df80000 {
+ 		};
+ 
+ 		mpssadsp_mem: mpssadsp@8e000000 {
+-			reg = <0x0 0x8e000000 0x0 0xf400000>;
++			reg = <0x0 0x8e000000 0x0 0xf100000>;
+ 			no-map;
+ 		};
+ 
 -- 
 2.34.1
 
