@@ -1,267 +1,101 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1810194153
-	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 15:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DF194A45
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 15:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720625331; cv=none; b=V+tGJ1oKBGZlFuCGEHwAK1IpBX867uasR7u8DjhxHF32FYcaVBDzz8Pd/md6Hbp5DzVQdwreyqZT/5yhGabDXAIsNCM+dCfGXh80GKQ8fB1i6Z3I/BNmNfecHexufL3uPVCBllUxllATDoUaJKN/9qZGFeU0TspsxIzXAM2FcFE=
+	t=1720626867; cv=none; b=H40K9Ei3uguSg++1PuHW7zP2YjLmUBL4Fonte7GDxgA4s7MX5ASFTbI8gU8Rojk3nzKzxVDFnmoOPjrTSQlYxHCjfKTQki1FVrRULBsGm4Lb5O4ML+pPXTUbMUqKPxFmshF6FPtRrVULBQlYVg0/6cs4/CtIi8Pafcyod6wuXEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720625331; c=relaxed/simple;
-	bh=0lWURBss3nBOg5NlkB2tEwctfOSX76EvuB40iqcOCUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GHoTzqxJJaPSCHyLcNuG4HJG6SPikz8Dz15Dl94w21wVGbz+AEtv96lquZkTDWbJICuh5/5Oc8piRXG0jsFAYnacYJsFSAQlwjuMjf5ZfAH4Xa7QnVlqBvu0Hs5a+zG5FlZlAO8XM7bd0f+dAWG/LC3E5UJ8QHdpXtKH1Jc54pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f54uXUuH; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1720626867; c=relaxed/simple;
+	bh=5zXJc6o5WFID6Ss47lJRv2Q5FBvPxZYh92dhVrPPWiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2RFOcvjQM79Llbm7TO/bI1FrL1w4t2EnLhOxqPWf+jU1iC20e/84y/Jj208Oy22MPtMsee6FDyAWekTMZ7N+kl1OvdnjqMGIGd4S6Y6iz3RSXzzfIph6ku38an/OCMWdRsxkcWWqF0DzxoxroSIbJ5rbPc3TrM0MfTFYm/qcHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q4GILrDZ; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f54uXUuH"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea1a69624so7389074e87.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 08:28:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4GILrDZ"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70b3c0a00f2so2106496b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 08:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720625328; x=1721230128; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZ/UGiqczEfNWeKnxq+ScYWf6jHGQxfDprcFSlNwXPQ=;
-        b=f54uXUuHxSsvHXlzowlUBk+wqFMgry4IMtaaCDxWrsQAdhC3vF/xc16hfpdeImFqXs
-         d9UCWTq6vBQO/14G8a8Ol5ZOukaZ3oO5hKVhS/Ku65SIrEzpmiURHdHsVavkEUoCQj19
-         IljLmcdjujsq5V7lwhGk7AUakvbHmpV01wT6bRbD8m3sducFGbNgh6ZhP7RCpAYqpGdP
-         j71Xr+xr3du8qC8oPNvfS3yfY8BOexqM/LqBb9TfmYmZqkXO0bQCoPumGfc15Xavd1Ym
-         WbWMMali1ICllOXmNbMxMJ0wVy32cEd1wG7A/EBbakuMNmlAKAKo2ow7/a/y2YH0Wecx
-         HfQQ==
+        d=linaro.org; s=google; t=1720626866; x=1721231666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nK0ZtBYtuw7fpnAqJ6Vx7USrS3cI47s6ZHZHseYaOts=;
+        b=Q4GILrDZpn5ibtUSGcQ0DjtKsKpfd/x/bZ/Rgug8GoMSnWq11LwIfihcTxcZZ4mn4t
+         zQLRcn/mmSnBFtk0gXIIAYjjiBTt0PHwEUttoSbBUHDV/n+Mt/WxA7uzwugnidAuYHGn
+         TLdJHp3CvzpjOlEOOdzIKzrBFTsfOAE7+ZwSXjtT4P3NrK4uKKw5xaVOsVWNSEe77s8+
+         MSDNHKvMG4o3xjZBTZiF/e4U+12TM5VrTZdrSJ4KVOKeeC24YhQjsO3JoCNm7FMHPwHp
+         clFrqOPIw2z1IdbrhgTlpWNjfZBhQZ+wlobb/UrdCzplhSKkEeq7DPCNR6oYHOpMqZW0
+         cesw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720625328; x=1721230128;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BZ/UGiqczEfNWeKnxq+ScYWf6jHGQxfDprcFSlNwXPQ=;
-        b=tZFGGP3ExqOpktzATcSWHwuw/o1k0oljHmWgdyvJAf74vtNygTrIUR6iBhyDu7S996
-         LeIf5bUeRjbsCJXsNdI8xLK75OcfQ1V10ursCblagyXlW/YpPP0SmXpYraLMXPrzRtom
-         Jv/5Jq/8iK7E+VbdSRX0L5jpHWEhhXQSJOnBTHCJdxl2yR1jVv3QQ9XozRkb4SnGAJqP
-         evx46JXIOCJ9r+MMdskrP/T2uGOX5Nq3Bg2LzKh2O55qI0zxGqqwZ38R0mPNABZO98JQ
-         nPSH/Y86NHN1NaMNAg1IXT5YjxpGpOVN4vqGkkEiAnqOgAEa83CAcrw7ip57FOSJ5vtK
-         +l/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwdY+X+C5v7I3jPcKoa0+Pe/kptEf8MRi18Opek0zOpz8YSSFrGOpvBuvPZyMeLhArLGT6tlxa/4XbIDMeuIcH674w0r8j4aK+5by/i5LLQg==
-X-Gm-Message-State: AOJu0YyO9C0KnTk5SAULII8Im6yTDtZM198eqkP1An4OTeuWWIjQEeX9
-	Xx5avmCAdO0c3M4BN6xXcNCf9w3I2aRAi+uNTt5SojMRHnZQ5cIHwTvmD9WEhBXCICwqzKzp2KY
-	bAVVNkiYWA4zpt4uvKfavI41QnXT7vkxUNyDu5w==
-X-Google-Smtp-Source: AGHT+IFva/aOSUrC0d2gfrJaELKiBejlXq7juoOS4NWsej9fRXJn2qGo6TDgD4S8OrEaTK71/Fglkt59vHORRLv93uk=
-X-Received: by 2002:a05:6512:1189:b0:52c:d8e9:5d8b with SMTP id
- 2adb3069b0e04-52eb999446emr3966106e87.25.1720625328028; Wed, 10 Jul 2024
- 08:28:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720626866; x=1721231666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nK0ZtBYtuw7fpnAqJ6Vx7USrS3cI47s6ZHZHseYaOts=;
+        b=JZnzw+s9Ik8rLbzLCqEupLwC3d3+54Y2NA9iLKC7F98w3re3VOG9r06z+vI3wPitLj
+         YugrVSjad6mk86nZXlEi3HeO4StV3Tgnha4fxBYxR5r82x1AcXrngxoHn/7+5HOv5pTW
+         X+CX2Y5MJGrssBayFGkzf6qLI6O3+LymY2Ch+AQDXE1crRK9Juv5TtGnv2I/XdhCkM6o
+         EzXrCLPvFdbJRZokocS/WyGQnIQjvHDSEckQxOKdVgfDmDerklbcTxjDOWLXECCGjNP2
+         Tkj2ERqsVs7VOaCuDXGYj2Anpzd25jNxxvy3AK+j7MTcvZTBxFABFUKa8d7Sp0x5ZoAT
+         iyRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGfLfYJ2uEpCSceZlkYQ+JAdfJNd/TqPp30IP2bhRbXCHSbDB1p+19Zq/6iPu677kqhZrsP+RqAPXF1ySF409pq8ZjTh9S17LlpQoq4DElfA==
+X-Gm-Message-State: AOJu0YwAG1Ckle5kzAurFAPRXYzqOS1pBuIMNgu4MXrAaQIGFpyA7oMS
+	QSMJ+fmksbkDaNyrgpsCNsQGzdPqIi5VSGPPU+GimY5HSg+zrGZVlVX6aQtbves=
+X-Google-Smtp-Source: AGHT+IGBjfdGcpzMj6d4WA2gZ3ribwtBdZ/W3krvf0I4UIgH0q8heu072Iu/MgBGkLWE/ls9bwaHVw==
+X-Received: by 2002:a05:6a20:a11b:b0:1c1:61a9:de5a with SMTP id adf61e73a8af0-1c298243012mr6526092637.32.1720626865760;
+        Wed, 10 Jul 2024 08:54:25 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8408:4ecd:288d:848b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab7687sm35271645ad.140.2024.07.10.08.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 08:54:25 -0700 (PDT)
+Date: Wed, 10 Jul 2024 09:54:22 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shun-yi Wang <shun-yi.wang@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
+	teddy.chen@mediatek.com, olivia.wen@mediatek.com
+Subject: Re: [PATCH 0/1] Support multiple reserved memory regions
+Message-ID: <Zo6urhrP/Wl57sUp@p14s>
+References: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720611677.git.mst@redhat.com> <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 10 Jul 2024 09:28:36 -0600
-Message-ID: <CANLsYkyqhdmOWtHbNi5npOFXtMKrs7s21j+axW_4N=yQh=eHbw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Bjorn Andersson <andersson@kernel.org>, 
-	Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>, 
-	Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
 
-On Wed, 10 Jul 2024 at 05:43, Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> virtio balloon communicates to the core that in some
-> configurations vq #s are non-contiguous by setting name
-> pointer to NULL.
->
-> Unfortunately, core then turned around and just made them
-> contiguous again. Result is that driver is out of spec.
->
-> Implement what the API was supposed to do
-> in the 1st place. Compatibility with buggy hypervisors
-> is handled inside virtio-balloon, which is the only driver
-> making use of this facility, so far.
->
-> Message-ID: <cover.1720173841.git.mst@redhat.com>
-> Fixes: b0c504f15471 ("virtio-balloon: add support for providing free page reports to host")
-> Cc: "Alexander Duyck" <alexander.h.duyck@linux.intel.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  arch/um/drivers/virtio_uml.c           |  4 ++--
->  drivers/remoteproc/remoteproc_virtio.c |  4 ++--
+Good morning,
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+On Wed, Jul 03, 2024 at 07:53:07PM +0800, Shun-yi Wang wrote:
+> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+> 
+> Besides the reserved memory region for SCP, there are additional 
+> reserved memory regions for specific hardware use.
+> Currently, only a single memory region is supported.
+> Modifications are made to support multiple memory regions.
+> 
 
->  drivers/s390/virtio/virtio_ccw.c       |  4 ++--
->  drivers/virtio/virtio_mmio.c           |  4 ++--
->  drivers/virtio/virtio_pci_common.c     | 11 ++++++++---
->  drivers/virtio/virtio_vdpa.c           |  4 ++--
->  6 files changed, 18 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-> index 2b6e701776b6..c903e4959f51 100644
-> --- a/arch/um/drivers/virtio_uml.c
-> +++ b/arch/um/drivers/virtio_uml.c
-> @@ -1019,7 +1019,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                        struct irq_affinity *desc)
->  {
->         struct virtio_uml_device *vu_dev = to_virtio_uml_device(vdev);
-> -       int i, queue_idx = 0, rc;
-> +       int i, rc;
->         struct virtqueue *vq;
->
->         /* not supported for now */
-> @@ -1038,7 +1038,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = vu_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vu_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         rc = PTR_ERR(vqs[i]);
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index d3f39009b28e..1019b2825c26 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -185,7 +185,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                                  struct virtqueue_info vqs_info[],
->                                  struct irq_affinity *desc)
->  {
-> -       int i, ret, queue_idx = 0;
-> +       int i, ret;
->
->         for (i = 0; i < nvqs; ++i) {
->                 struct virtqueue_info *vqi = &vqs_info[i];
-> @@ -195,7 +195,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = rp_find_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = rp_find_vq(vdev, i, vqi->callback,
->                                     vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         ret = PTR_ERR(vqs[i]);
-> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-> index 62eca9419ad7..82a3440bbabb 100644
-> --- a/drivers/s390/virtio/virtio_ccw.c
-> +++ b/drivers/s390/virtio/virtio_ccw.c
-> @@ -694,7 +694,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->  {
->         struct virtio_ccw_device *vcdev = to_vc_device(vdev);
->         dma64_t *indicatorp = NULL;
-> -       int ret, i, queue_idx = 0;
-> +       int ret, i;
->         struct ccw1 *ccw;
->         dma32_t indicatorp_dma = 0;
->
-> @@ -710,7 +710,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = virtio_ccw_setup_vq(vdev, i, vqi->callback,
->                                              vqi->name, vqi->ctx, ccw);
->                 if (IS_ERR(vqs[i])) {
->                         ret = PTR_ERR(vqs[i]);
-> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-> index 90e784e7b721..db6a0366f082 100644
-> --- a/drivers/virtio/virtio_mmio.c
-> +++ b/drivers/virtio/virtio_mmio.c
-> @@ -494,7 +494,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->  {
->         struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
->         int irq = platform_get_irq(vm_dev->pdev, 0);
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         if (irq < 0)
->                 return irq;
-> @@ -515,7 +515,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = vm_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vm_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         vm_del_vqs(vdev);
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 7d82facafd75..fa606e7321ad 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -293,7 +293,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
->         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
->         struct virtqueue_info *vqi;
->         u16 msix_vec;
-> -       int i, err, nvectors, allocated_vectors, queue_idx = 0;
-> +       int i, err, nvectors, allocated_vectors;
->
->         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->         if (!vp_dev->vqs)
-> @@ -332,7 +332,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
->                         msix_vec = allocated_vectors++;
->                 else
->                         msix_vec = VP_MSIX_VQ_VECTOR;
-> -               vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vp_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx, msix_vec);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> @@ -368,7 +368,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
->                             struct virtqueue_info vqs_info[])
->  {
->         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->         if (!vp_dev->vqs)
-> @@ -388,8 +388,13 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
->                         vqs[i] = NULL;
->                         continue;
->                 }
-> +<<<<<<< HEAD
->                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
->                                      vqi->name, vqi->ctx,
-> +=======
-> +               vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
-> +                                    ctx ? ctx[i] : false,
-> +>>>>>>> f814759f80b7... virtio: fix vq # for balloon
->                                      VIRTIO_MSI_NO_VECTOR);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-> index 7364bd53e38d..149e893583e9 100644
-> --- a/drivers/virtio/virtio_vdpa.c
-> +++ b/drivers/virtio/virtio_vdpa.c
-> @@ -368,7 +368,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->         struct cpumask *masks;
->         struct vdpa_callback cb;
->         bool has_affinity = desc && ops->set_vq_affinity;
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         if (has_affinity) {
->                 masks = create_affinity_masks(nvqs, desc ? desc : &default_affd);
-> @@ -384,7 +384,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = virtio_vdpa_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = virtio_vdpa_setup_vq(vdev, i, vqi->callback,
->                                               vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> --
-> MST
->
+This is the changelog that should be in the patch.  Usually there is no need for
+a cover letter when there is a single patch in the set.
+
+> shun-yi.wang (1):
+>   remoteproc: mediatek: support multiple reserved memory
+> 
+>  drivers/remoteproc/mtk_scp.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> -- 
+> 2.18.0
+> 
