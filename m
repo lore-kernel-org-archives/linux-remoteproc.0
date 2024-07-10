@@ -1,108 +1,106 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7843C37169
-	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 03:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD684D535;
+	Wed, 10 Jul 2024 08:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720581931; cv=none; b=eljFKW2wMCQ97AjmQ5w3Oh4uM4rpQm52g5ChMevngNFkFzNMkZ3ZpXh3QYexQovF7wdvuEfQAX85ZsoT9ERJBl4g9KoPn48u0fFj6D1gxEUy5vyoUo0bzDwEXoQHOuPxzN6NNBkiUjxg8dzvq+XCJ39IYu9Uo/saRXKS10Ep/Tc=
+	t=1720600961; cv=none; b=diGbVho7gWEOTmJyUWGft2YyJYzB/i21tHHJ4Waa0YIPOiFWYInsVlXBsqNud1+bVXqnAdMh9hq1wO0SoUGfSrXdXsoBxB9XXRlkgv6hdgwAD7oPPNJFQyUAg8zJ5+r6vQhkKY4s0nyfiGSxVXRrN1QWPzgtHFOCRg4khUsxSzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720581931; c=relaxed/simple;
-	bh=9sbwGihOLkbKRAKocXOlId4hhNDwPbs0zE0X3aDWblY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uaYZPDb66N4NIOS+YPoeK1XzdYyt7vczF9gj4hhpLaqJq01yEUzbm8+hZw1IRiHtbsJVuQD2JJs8ebWLig8CASBvXUXjZduTvX4AeWeZ2jDXn3X0MP/JQDdoRmnGp4GQN2QAZn63s7EZCg1PumNkQkIgLIqJkew/3ZcbYXb5S78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J9+gW/ky; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720600961; c=relaxed/simple;
+	bh=/cSixCFKERN/J7DRtssnHK2SWpy1fqsCyCoIL53VSHw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWDpAHeruqOgKcKb6RwtHc+N3y6YJIx/CGuc3mzFLIR4mEVpsdJQ2+g5510PqTu4rr43/Oeucn8EHvqMAJRl0v4pN/w6qTLTnGdftnLCeir002F7T2dzLbalHxrXAGrYEQmFI3a/5SBmAemWP6Lb/Iap244d93BYyCZzmFNoJ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fctuXaPG; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J9+gW/ky"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720581929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9sbwGihOLkbKRAKocXOlId4hhNDwPbs0zE0X3aDWblY=;
-	b=J9+gW/kyku5xY2J5dOvBApjGnq5sERW/z81ud9o6asJToE1L8TmPbeJ0ioCAj4/oEOdgQF
-	b8M6MKImF1v6S15mJ+SiP1tCeYxwRE9HAdOJsttPSRdCaqbFsQUpXjdTwHDt+vdBe+L4+d
-	/VIKsfoOgvCfTiHB5URXENTNWVaI8/8=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-100-Zxo6O--VPECon3S6-0vv3w-1; Tue, 09 Jul 2024 23:25:25 -0400
-X-MC-Unique: Zxo6O--VPECon3S6-0vv3w-1
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3835285561fso66184265ab.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Jul 2024 20:25:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720581924; x=1721186724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sbwGihOLkbKRAKocXOlId4hhNDwPbs0zE0X3aDWblY=;
-        b=dmsflQAfT9kL+LC6YQHSK8UMIOYovzr9f4IqNgxTJ16TDs9nsAT5CztN4Lo8BDAGCD
-         RiLI3j+FZ7HjRSvndym9WgN8V0RgsREmeIhPLHBJm7pn5eeQMZt6WNSwuATIEaom7WV4
-         +ak1bGZPxpySNoenVo3jOsKraBmvnX1QZTozWSLAc5HFNf3PYDR6xmCa4Kwxt2XgONWs
-         HRP4YGOz6x263286luv5cnZrVBmbKTkPB6lFXSmvBouIME+oqCkJYrFOr466yWPJvcDI
-         DSYiDN/S4XwGG4y0aALzbrkTADtDPwxS0+22meCwHM651CbtkiJ/lU+V7pTmWjcUW43u
-         aO1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVwZlLD19ccEYwqvz6cmCg7lhj7GpruSW3Ay7Qqs5nBtx2DQrEeyF0Ikm1lxAxHSsZpByXiFj1rqE3X6XsxmWoPbHvI4/zyBnJYUhXBx37TTw==
-X-Gm-Message-State: AOJu0YysC9ARZSYRev6e8rTvz5McflTdu5nL92GIe8m03+f0iqiohhDK
-	LmU+g3I61oZLr3BbA/3K99fRghAlwDo1Tug2fRfQvyX8ONVBBhzHDgMPsbd1G6PTASrLFDGCs4U
-	ZgGRxa4+izWwcWhL/O65RY0fh/ha1LD2lgTOVT0ZBuVGqZS/kCe1K/aHs+5iZfwsALGkfTWDcf4
-	6gphD+JMimLIWDcHYBkM1CHwuu+EZmFLrZ+G+y4+yr0w==
-X-Received: by 2002:a05:6e02:170b:b0:382:b436:ecbb with SMTP id e9e14a558f8ab-38a57bcd755mr44254715ab.11.1720581923966;
-        Tue, 09 Jul 2024 20:25:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEW8tp760Eusr7cpOewOOzt8KywljVE5imblpi4EA9nOMhtnhRxpdbKT5KwR6ZV/XXWj53jrT/VMHmkMmslXtc=
-X-Received: by 2002:a05:6e02:170b:b0:382:b436:ecbb with SMTP id
- e9e14a558f8ab-38a57bcd755mr44254435ab.11.1720581923592; Tue, 09 Jul 2024
- 20:25:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fctuXaPG"
+X-UUID: 54ca3f843e9811efb5b96b43b535fdb4-20240710
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=00qi1vCjVrBTnoMM1ymQIUcx+b2b5UPxjpcAqXcyXco=;
+	b=fctuXaPG4XNC8Fosfr6HyRUpTLneQC6ks+9KSIYTKQFaeHHUw2ZBUvuf1BIwkHcXh8mBdYzrs2yI4FeXbkn41uthyGpoV9+lpGC+Uw7hXCGEeMgMRyh2u8K5EVTGGBt6Lf7C4klTOQhGjHM/OW0I6phTVfl44eIAsm2UA5/xPHY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:1ec12272-4b5e-483a-b3fa-59c4e5725506,IP:0,U
+	RL:0,TC:0,Content:35,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:35
+X-CID-META: VersionHash:ba885a6,CLOUDID:5683490d-46b0-425a-97d3-4623fe284021,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 54ca3f843e9811efb5b96b43b535fdb4-20240710
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <shun-yi.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1828831548; Wed, 10 Jul 2024 16:42:25 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 10 Jul 2024 01:42:24 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 10 Jul 2024 16:42:24 +0800
+From: Shun-yi Wang <shun-yi.wang@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
+	<teddy.chen@mediatek.com>, shun-yi.wang <shun-yi.wang@mediatek.com>
+Subject: [PATCH RFC 0/1] Support CMA regions
+Date: Wed, 10 Jul 2024 16:41:59 +0800
+Message-ID: <20240710084200.6561-1-shun-yi.wang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720173841.git.mst@redhat.com> <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
-In-Reply-To: <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 10 Jul 2024 11:25:10 +0800
-Message-ID: <CACGkMEsg0+vpav1Fo8JF1isq4Ef8t4_CFN1scyztDO8bXzRLBQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] virtio: fix vq # when vq skipped
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
-	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MTK: N
 
-On Fri, Jul 5, 2024 at 6:09=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
->
-> virtio balloon communicates to the core that in some
-> configurations vq #s are non-contiguous by setting name
-> pointer to NULL.
->
-> Unfortunately, core then turned around and just made them
-> contiguous again. Result is that driver is out of spec.
->
-> Implement what the API was supposed to do
-> in the 1st place. Compatibility with buggy hypervisors
-> is handled inside virtio-balloon, which is the only driver
-> making use of this facility, so far.
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+In order to reserve specific Contiguous Memory Allocator (CMA) regions 
+for hardware use. When the name of the reserved region contains "cma", 
+then a corresponding CMA heap is added.
 
-Thanks
+In the DTS (Device Tree Source), we may have several memory regions 
+with different names, e.g.,
+&scp {
+	...
+	memory-region = <&mem_reserved_1>, <&mem_reserved_2>;
+};
+
+mem_reserved_1: xxx-xxx-region {
+	...
+};
+mem_reserved_2: xxx-xxx-cma-region {
+	...
+};
+
+When the name of the region contains "cma", a corresponding heap 
+allocator is added by cma_heap_add().
+However, we are unsure if using the name "cma" as an identifier
+is a good practice.
+I sincerely hope that you can provide me some suggestions, thanks.
+Especially within the segment of '#ifdef CONFIG_DMA_BUF_HEAPS_CMA'
+
+Note: The cma_heap_add() is introduced from this patch:
+dma-buf: heaps: Introduce cma_heap_add() for non-default CMA heap
+
+shun-yi.wang (1):
+  remoteproc: mediatek: Support reserved CMA regions
+
+ drivers/remoteproc/mtk_scp.c | 38 ++++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
+
+-- 
+2.18.0
 
