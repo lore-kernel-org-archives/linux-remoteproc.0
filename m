@@ -1,60 +1,66 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92321552FC
-	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Jul 2024 09:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AE522331
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 03:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518385; cv=none; b=I9jNYkQdyKpgcDYBAUXx/lWv4YosLcUY2AchPnn3W+NRdNQoc7673dicwQjnSJ8KbG6CPN3Igi9lLynmOVGcUlKxrWIYvrDUoyJ4g6UGq7U51zUa/U4yTDi7J6IO4r5tpFe/AMkmScoLjMGK/jHru+qJqR/TaX+rgzUv+TVb/Mc=
+	t=1720581112; cv=none; b=ueWb5hIxmRXkjFEjFVXZ2agBnnP9Y5+WB+WGYgNewf4SrGh1wGBtqMWuc1C7Ah4wEYs2zlClr4o3sYv3OazrwHNFgfsKBpUjtsLOI8l3ntwobqlyan1KxU6d3K4WROb5vTCj1Eyq0ncde4gcs90AE/tKb8b9Rm3Yp7/pUv0OXHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518385; c=relaxed/simple;
-	bh=xrX9189y3J6RTL9wsavIida+ycAnE1HLJ4O+uVBj2NA=;
+	s=arc-20240116; t=1720581112; c=relaxed/simple;
+	bh=3NOnxPeqz46/sAvEE83H7u7j2ktfneTnXDn1vhrcZa8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a76uIgNIu8Z18NcSQ9Ovs7toXOqOZmvm/nFRzLfPCjZEYc7PomD9byn21k+ii+j1jljDXpqHHrHqYruUgFGIJSdSqcnOAhG+xDEpf98nsoJ8Zy64RuYeD0DZqBQYfkBYk9EdF0cdBkU41B9rzstVj55UMHcuPqFDo1RovgNcBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mH9RaYcf; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=QdQn3TM/QpwV3YjXplD30UohZuloF5DmtNBiohtaqP2T6Fb39eu+G/gmCSHiaKSPP8+uw43EUuRBPTAjWioQxos/hOaQ4UpOkAuF1/Zhc9sVpFhsDTTl/krSAnbH1c46myNxIUG+hmzZtGtZIoUEfrV6FhEYX8vUJ19UczOwn/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eEL6Aga2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mH9RaYcf"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58bac81f3f9so6324078a12.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Jul 2024 02:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720518382; x=1721123182; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xndzXPaOahAfjvRuCniO4KjfCO34NFKI528Yw+eLHAU=;
-        b=mH9RaYcfzGjv+AkSavGyyq2EBkJym+eyoFHZU8iXnMSi5qK+s4WHqYpPd9PuB94P4E
-         N1QfB/wRRNzec3h79GLkJth3H7h6g4uUKe/Y+TASj/BgcOQkrMOGSgk7Bz+AHnHm2L/k
-         N6r7kzElcbkazufjqCsP+m05qAWkAWuAa8sWmwTamW+gY45F1r6GmktW+UUopq/tF67x
-         mBH8s780ufKTN0JNL9DdttIqGYuZ6Gea10rrFGELAn3GcnXx/P15pJP6gZEUBNR5qAMV
-         H6klOF/3kmX6o+DiLR1EqM7oPpJlk2hYfOsd2Fj/iiGYGo+yNn7w8+MubK5LTUJjYt7S
-         dgCw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eEL6Aga2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720581109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vCNOA7gvvgVnC+LVcxVufvda3OPPudA6Qls0CypVWcA=;
+	b=eEL6Aga2DGKV7k1BxE4QLFTpOXRGaOt8getLbG6NZLbjqgfcoF0wfYqzD28s9sT12ltc3d
+	KU25EYRe0Pu6P9EBk4K6Dx+BU7RdllaGj2TkpQWkxJIEVoNHsqsVLO0hNpUrfjdYjvVfMq
+	w6mGW5xgScs0qPquGcJKM4HHrLFCnDc=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-8IB18WEIPUqEUTBjc_AH1Q-1; Tue, 09 Jul 2024 23:11:48 -0400
+X-MC-Unique: 8IB18WEIPUqEUTBjc_AH1Q-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-70b12d4d4f4so4394236b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Jul 2024 20:11:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720518382; x=1721123182;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xndzXPaOahAfjvRuCniO4KjfCO34NFKI528Yw+eLHAU=;
-        b=vmeJWMMgc2x6FjzMXpv9NCZ8L0Lup2Y9mOFx/SPO0pbJVM15p9Gart9ZAK/2Diq36M
-         yCChc6ianVgDMMkXTS0IQdnshQYo/u66i8Y/YJ2E9ggPX2Fd/t0bzFBc/zSs3GBCuA0u
-         I/Hqo32iv/CMpmZ5I7ynNP0IB7vCRYQhH1Vya7C2UIvj5AmTEiXN5NAQEm7p690qp9ZH
-         U7sAPbfmd4qDft6zVNCy3tY0avlgtMXHr964R3fAFA0kHIwidw+2caa6PV885Df3w/jZ
-         x1h/gTnrzbojTIUt96qt7JO2NyajtC9NfHxWiRzIOo0eql1A1sxrkviql5WN0VdRgnMP
-         xNHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXi/SZkERwfrdDmfzwfOH54ExxUxeOrQEPrOYHa7I7Zt4DDLt3tSH5/PC8UaN2dMAAy1ONNuPUJ1NYrjR+vZvDKe4HuFRG909VIl1/p661rmw==
-X-Gm-Message-State: AOJu0YwsBhjEirq9fIu6WdSiEUdesDSIsxZYmbVWN1JMfrJ10Rl2haPB
-	ukw6NPG4I0hStaMNZ9B421Fi5zAIu/j4mq+Gibzt4iaVaBULSKgyk195hkCVhac=
-X-Google-Smtp-Source: AGHT+IHjPy7oHxBkWuRW/Jl+7QaB0fxfudKtoUsrHhltTvPwL7lfVnDuCLwUMhpeiB4EqK+93Z30TQ==
-X-Received: by 2002:a05:6402:517a:b0:58a:e810:227d with SMTP id 4fb4d7f45d1cf-594ba59f8d6mr1113424a12.21.1720518382094;
-        Tue, 09 Jul 2024 02:46:22 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a162sm849610a12.68.2024.07.09.02.46.20
+        d=1e100.net; s=20230601; t=1720581107; x=1721185907;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vCNOA7gvvgVnC+LVcxVufvda3OPPudA6Qls0CypVWcA=;
+        b=Na1AegJZHeFPBgqKdE1I7lDd9r28iwCd6929yVOKfQms196Laqy/VNXnIz3PsNgxF2
+         pYPv+08C8YjDqCaBKmxCuZJiVsKY5LxKfGkqvHXlP+gp5bvLqSLsgrXpF3t6uW6K0Jjb
+         awZnpaT4/iiq96yKUGC4pKhKlEZtBww5+afxh87Ze+nawBT0jFXcdKWm2sNw88zxScZ4
+         8CCj4zV5W96rpDC7/Y5ClFtENCp1FgXzC2GHArOH35xbrbKNJPhoj3/fEMoWIFaJTkK1
+         JiAP5RlcuxN1LxgF6UBPw4+ZnP4Ki4FxLmlkUZ2K8Jd5u1NnTA5RUSG5cUgVBYilqE0p
+         5kkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX7ve5GkXBIg7oqLvxurvD6PCerxXTT9PbAaK9hqTv8uH9tvAyJxR8IRD+CULmodQ9yJmcG7DL+EH5CGlgcBl3V/ouhj4KSn0I5d38Yb1wFQ==
+X-Gm-Message-State: AOJu0YzhPMmaAkTc7yqRogwWN44W9lYFtNTu80jWNcATqJN/GOR+42Ys
+	maM4tLH9PBrFdADiT4ftDGuFJK0c95SB6gK5YRKz3lBDRdTcgKihREz2Gn6ZwZ3pn4N3NIpVF7k
+	ttToCaQo77vtye360j4SsJzXaYK+FcttjFcf0+UVYO6O4axFd33BhcEz38VafVYH6S9g=
+X-Received: by 2002:a05:6a00:1949:b0:704:23dc:6473 with SMTP id d2e1a72fcca58-70b436166edmr5499424b3a.30.1720581107113;
+        Tue, 09 Jul 2024 20:11:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8oI2aN4+ak8c3jDP61GEReq16JAGEtkM86sB98aWAD5Ov3rnJ9XEgn6CuTL8JfIJu3pFWLg==
+X-Received: by 2002:a05:6a00:1949:b0:704:23dc:6473 with SMTP id d2e1a72fcca58-70b436166edmr5499408b3a.30.1720581106688;
+        Tue, 09 Jul 2024 20:11:46 -0700 (PDT)
+Received: from [172.20.2.228] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b9afbsm2586937b3a.191.2024.07.09.20.11.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 02:46:21 -0700 (PDT)
-Message-ID: <ac53d26a-b2f8-4172-987d-b4fcbb7f6e51@linaro.org>
-Date: Tue, 9 Jul 2024 11:46:19 +0200
+        Tue, 09 Jul 2024 20:11:46 -0700 (PDT)
+Message-ID: <d5fb2840-aff0-4f7a-a7ac-dcee155ddca2@redhat.com>
+Date: Wed, 10 Jul 2024 05:11:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -62,73 +68,98 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] arm64: dts: qcom: sdx75: update reserved memory
- regions for mpss
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
- <20240709064924.325478-4-quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH 2/2] virtio: fix vq # when vq skipped
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
+ Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Jason Wang <jasowang@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org
+References: <cover.1720173841.git.mst@redhat.com>
+ <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <20240709064924.325478-4-quic_nainmeht@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9.07.2024 8:49 AM, Naina Mehta wrote:
-> Rename qdss@88800000 memory region as qlink_logging memory region
-> and add qdss_mem memory region at address of 0x88500000,
-> qlink_logging is being added at the memory region at the address
-> of 0x88800000 as the region is being used by modem firmware.
-> Since different DSM region size is required for different modem
-> firmware, split mpss_dsmharq_mem region into 2 separate regions.
-> This would provide the flexibility to remove the region which is
-> not required for a particular platform. Based on the modem firmware
-> either both the regions have to be used or only mpss_dsm_mem has
-> to be used. Also, reduce the size of mpssadsp_mem region.
+On 05.07.24 12:09, Michael S. Tsirkin wrote:
+> virtio balloon communicates to the core that in some
+> configurations vq #s are non-contiguous by setting name
+> pointer to NULL.
 > 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> Unfortunately, core then turned around and just made them
+> contiguous again. Result is that driver is out of spec.
+> 
+> Implement what the API was supposed to do
+> in the 1st place. Compatibility with buggy hypervisors
+> is handled inside virtio-balloon, which is the only driver
+> making use of this facility, so far.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > ---
 
-Thanks
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+-- 
+Cheers,
 
-Konrad
+David / dhildenb
+
