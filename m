@@ -1,70 +1,60 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A0D433D8
-	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 23:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55E315EFAE;
+	Thu, 11 Jul 2024 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720652731; cv=none; b=bC4puzduJuSqb7aJ+kYI67ITody09rSHlQbFy8IXVhIB+nk8+9ViwYG5aNfOP+ZqpZWHSbYoO/XSfVZCYrXE4XP1ttmurl0tNPt5VTRTxthfzqZ826GZGulhFpN9Wi9DQnPVOE2uKs8tZHHhk0Wx1NE7t6bqkijzMmIWC5LVT70=
+	t=1720704275; cv=none; b=DcrtpGiFgQxfmVanrZV55YdZJZwbAjUaKizax53D199ElkrD1tJTdf1nJPMcAYU8BX1JZk/ROISac/EDJhON1/6+hnayk++4cNj6XTnW8kIa1Ga8InSFUVBc45cS0Fm88iaJWtL68DlhZwx+PgNOVCR6avSKOuGGoIyeHOCpJiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720652731; c=relaxed/simple;
-	bh=dHyQFmMz5lxrpJK4rm2aTZY4iDQooBZuodwjk+/rx7A=;
+	s=arc-20240116; t=1720704275; c=relaxed/simple;
+	bh=w1u81luxRSKXuuP8bL2ZtVySjx/0jxSrRzrfaS7TWpk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bS2gXy80mM0XwbUCiOMH6L6eWbgtI7HHHkcctBF4v+K+Cm04fRBaN8DVY+0F7GlIt+efihBwjZ4qd3kKZpaFZtJM5Yb53t/P6HZUQ5+50z/Yofl9DQOSqJogc1lum72GgmGAnpc6z6/BT9lq1u7RGlpHXlgUZ1cTT1wbKCpIwyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DwVM0d4b; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqsHFzUONatg617mG+Jvr+lsFMhL3wcqPgYCg7oDffTzAhvD7BEMSW4upEKgQ66nsgg8lXqWqWMUXFrMm9ambFuwaiHEoPAJPuF5bqYFPJs+KQPuuvUSZFhHvuYuWkrdIcoUlm3TvHcv/vy7YZ7ARohRVn2IXSKOA9n/7NCwDmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnKlRyzT; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DwVM0d4b"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720652728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pocGWFShxQ+GSWj0tkDTAgxmCbZcO+UfiqU5SyA0Efs=;
-	b=DwVM0d4b6Y12iVLuUEVLL0Atdz5CK7jrTtCR8n+aO0+L9PhX9nL6gDJPYIPWLHuzn/YTzg
-	wQzospDOwRVaSnfsbaoEQwWwi6xRA9LpMoAcsP8Grtc+6w4l/Qth6fhnPvggOSiUEq1Oe2
-	OGGq2XkTc1mIhMdW41lEMroF59V0QB0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-sGDklnv9PZSqD9YFykvT6g-1; Wed, 10 Jul 2024 19:05:27 -0400
-X-MC-Unique: sGDklnv9PZSqD9YFykvT6g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-367960f4673so698692f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jul 2024 16:05:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720652726; x=1721257526;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pocGWFShxQ+GSWj0tkDTAgxmCbZcO+UfiqU5SyA0Efs=;
-        b=XAmVmR8D0BwjzyY2iUO8rnOaq3IEt8DI9LpjGbo7xm1NJk2343r2O0RglwaKDeDmqF
-         4cGxl+HeL09XDc6ek19h1/k0jtck5Hbu1hSpM8OConwRXwwnkV/0xXQt56z4BoXG3ixz
-         CeXsh6XqZ9bNxjT69Sh37AYWXUnjYS6m+uM/05yKVhDWGSMyfW0rsWNSesaHOEFUy6ag
-         Us+rmsh63IizN4wC+NzBTKZRdSgu+jcchcQrWDn8idcy8a+4zGkOF1UBrg3AYzsvZFvn
-         Upyk8zScchsic5LTFLTZCy1jwZK4AUCxcI2jOulZymla2/AqosGwo7PDvRBwi4FEuccx
-         YhFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV69kw+vmeOiK7XQtnEytjIAKZWnT2b89BjPuAWSuOJlrY00GlRoSHyHjznApUClXQfXEGKwJiatc3LjcF73ckXoeorFMO+frmHLoxAzyzVXQ==
-X-Gm-Message-State: AOJu0Yx/PzUeyUDcpjab3vwuMcNsaGIrYTXIFKjC44cP64wzVez9jIY0
-	r90WKl+vKCZ3en+aMt956oqGGFquIWqtp+lB80ysfiR8PhlFvSG409H7H2YJVXhIBZ0K9p2NWCd
-	AKF7LPZfxBPSchEkGsTZMyirFNw+QDQPezu/ab/GcI30GiM2ynF0nXmKSKW/qD2ZwGng=
-X-Received: by 2002:a5d:674d:0:b0:366:e9f7:4e73 with SMTP id ffacd0b85a97d-367f04c394fmr848922f8f.5.1720652726250;
-        Wed, 10 Jul 2024 16:05:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfrrspXtlMpDRODV1gtZ6UbNGtoYk75D8SS60rLLEn4NhjjhpRqJHKf/56m95g7RzAi+V6jQ==
-X-Received: by 2002:a5d:674d:0:b0:366:e9f7:4e73 with SMTP id ffacd0b85a97d-367f04c394fmr848885f8f.5.1720652725448;
-        Wed, 10 Jul 2024 16:05:25 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8904csm6208508f8f.49.2024.07.10.16.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 16:05:24 -0700 (PDT)
-Date: Wed, 10 Jul 2024 19:05:20 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Daniel Verkamp <dverkamp@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnKlRyzT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720704274; x=1752240274;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w1u81luxRSKXuuP8bL2ZtVySjx/0jxSrRzrfaS7TWpk=;
+  b=fnKlRyzTMusmSQxIr//bTdOI1F6boLgTfbRyVQUJnNsQyZPOY7wrhGDR
+   OVJhlorejfnUVWxDwHVLbCP2luSVg9K5/RGzYx5QYH2mknkAeEc2MKoZy
+   0iAzz6Q/jZPGk3T0DsDCqKdPbPiWnLEAJd2GEROsNHJj6UgdPqTFj1lwI
+   /yHfD7OGTnXPVQ20SqJx4tCKwPNWJuKRX0zg5SyK+U8Acf1A12nqA/Jt0
+   fB2EOBEy4pxASqpJsvqgbMp95mmV2QpM3NypwPYC6hxJTAUcGWnq2lwvQ
+   N/wylCQ9rNKZKOkFztasjAYZm2hYXjsckhqre+yEd1YAn+2Ll5+7/I8fS
+   w==;
+X-CSE-ConnectionGUID: 8hmpUz8XR5+VWRgfZtNGig==
+X-CSE-MsgGUID: +ZeZT5nYSlK2yJu456jxQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28676502"
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="28676502"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 06:24:33 -0700
+X-CSE-ConnectionGUID: w68rnNGyTX+raf3+ra/vZQ==
+X-CSE-MsgGUID: xfhpknJGQvakxEtM1SwOLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="53376105"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 11 Jul 2024 06:24:27 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRtmZ-000ZJz-2y;
+	Thu, 11 Jul 2024 13:24:23 +0000
+Date: Thu, 11 Jul 2024 21:23:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
 	David Hildenbrand <david@redhat.com>,
 	Richard Weinberger <richard@nod.at>,
 	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
@@ -85,150 +75,101 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
 	kvm@vger.kernel.org
 Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-Message-ID: <20240710190222-mutt-send-email-mst@kernel.org>
-References: <cover.1720611677.git.mst@redhat.com>
- <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
- <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
- <20240710142239-mutt-send-email-mst@kernel.org>
- <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
- <20240710162640-mutt-send-email-mst@kernel.org>
- <CABVzXA=W0C6NNNSYnjop67B=B3nA2MwAetkxM1vY3VggbBVsMg@mail.gmail.com>
+Message-ID: <202407112113.SzSpdDLK-lkp@intel.com>
+References: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVzXA=W0C6NNNSYnjop67B=B3nA2MwAetkxM1vY3VggbBVsMg@mail.gmail.com>
+In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
 
-On Wed, Jul 10, 2024 at 03:54:22PM -0700, Daniel Verkamp wrote:
-> On Wed, Jul 10, 2024 at 1:39 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 12:58:11PM -0700, Daniel Verkamp wrote:
-> > > On Wed, Jul 10, 2024 at 11:39 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
-> > > > > On Wed, Jul 10, 2024 at 4:43 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > >
-> > > > > > virtio balloon communicates to the core that in some
-> > > > > > configurations vq #s are non-contiguous by setting name
-> > > > > > pointer to NULL.
-> > > > > >
-> > > > > > Unfortunately, core then turned around and just made them
-> > > > > > contiguous again. Result is that driver is out of spec.
-> > > > >
-> > > > > Thanks for fixing this - I think the overall approach of the patch looks good.
-> > > > >
-> > > > > > Implement what the API was supposed to do
-> > > > > > in the 1st place. Compatibility with buggy hypervisors
-> > > > > > is handled inside virtio-balloon, which is the only driver
-> > > > > > making use of this facility, so far.
-> > > > >
-> > > > > In addition to virtio-balloon, I believe the same problem also affects
-> > > > > the virtio-fs device, since queue 1 is only supposed to be present if
-> > > > > VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
-> > > > > meant to be queue indexes 2 and up. From a look at the Linux driver
-> > > > > (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
-> > > > > and assumes that request queues start at index 1 rather than 2, which
-> > > > > looks out of spec to me, but the current device implementations (that
-> > > > > I am aware of, anyway) are also broken in the same way, so it ends up
-> > > > > working today. Queue numbering in a spec-compliant device and the
-> > > > > current Linux driver would mismatch; what the driver considers to be
-> > > > > the first request queue (index 1) would be ignored by the device since
-> > > > > queue index 1 has no function if F_NOTIFICATION isn't negotiated.
-> > > >
-> > > >
-> > > > Oh, thanks a lot for pointing this out!
-> > > >
-> > > > I see so this patch is no good as is, we need to add a workaround for
-> > > > virtio-fs first.
-> > > >
-> > > > QEMU workaround is simple - just add an extra queue. But I did not
-> > > > reasearch how this would interact with vhost-user.
-> > > >
-> > > > From driver POV, I guess we could just ignore queue # 1 - would that be
-> > > > ok or does it have performance implications?
-> > >
-> > > As a driver workaround for non-compliant devices, I think ignoring the
-> > > first request queue would be a reasonable approach if the device's
-> > > config advertises num_request_queues > 1. Unfortunately, both
-> > > virtiofsd and crosvm's virtio-fs device have hard-coded
-> > > num_request_queues =1, so this won't help with those existing devices.
-> >
-> > Do they care what the vq # is though?
-> > We could do some magic to translate VQ #s in qemu.
-> >
-> >
-> > > Maybe there are other devices that we would need to consider as well;
-> > > commit 529395d2ae64 ("virtio-fs: add multi-queue support") quotes
-> > > benchmarks that seem to be from a different virtio-fs implementation
-> > > that does support multiple request queues, so the workaround could
-> > > possibly be used there.
-> > >
-> > > > Or do what I did for balloon here: try with spec compliant #s first,
-> > > > if that fails then assume it's the spec issue and shift by 1.
-> > >
-> > > If there is a way to "guess and check" without breaking spec-compliant
-> > > devices, that sounds reasonable too; however, I'm not sure how this
-> > > would work out in practice: an existing non-compliant device may fail
-> > > to start if the driver tries to enable queue index 2 when it only
-> > > supports one request queue,
-> >
-> > You don't try to enable queue - driver starts by checking queue size.
-> > The way my patch works is that it assumes a non existing queue has
-> > size 0 if not available.
-> >
-> > This was actually a documented way to check for PCI and MMIO:
-> >         Read the virtqueue size from queue_size. This controls how big the virtqueue is (see 2.6 Virtqueues).
-> >         If this field is 0, the virtqueue does not exist.
-> > MMIO:
-> >         If the returned value is zero (0x0) the queue is not available.
-> >
-> > unfortunately not for CCW, but I guess CCW implementations outside
-> > of QEMU are uncommon enough that we can assume it's the same?
-> >
-> >
-> > To me the above is also a big hint that drivers are allowed to
-> > query size for queues that do not exist.
-> 
-> Ah, that makes total sense - detecting queue presence by non-zero
-> queue size sounds good to me, and it should work in the normal virtio
-> device case.
-> 
-> I am not sure about vhost-user, since there is no way for the
-> front-end to ask the back-end for a queue's size; the confusingly
-> named VHOST_USER_SET_VRING_NUM allows the front-end to configure the
-> size of a queue, but there's no corresponding GET message.
+Hi Michael,
 
-So for vhost user I would assume it is non spec compliant
-and qemu remaps queue numbers?
-And can add a backend feature for supporting
-VHOST_USER_GET_VRING_NUM and with that, also
-require that backends are spec compliant?
-And again, qemu can remap queue numbers.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on next-20240710]
+[cannot apply to uml/next remoteproc/rproc-next s390/features linus/master uml/fixes v6.10-rc7 v6.10-rc6 v6.10-rc5 v6.10-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Michael-S-Tsirkin/virtio_balloon-add-work-around-for-out-of-spec-QEMU/20240711-004346
+base:   next-20240710
+patch link:    https://lore.kernel.org/r/3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst%40redhat.com
+patch subject: [PATCH v2 2/2] virtio: fix vq # for balloon
+config: i386-randconfig-014-20240711 (https://download.01.org/0day-ci/archive/20240711/202407112113.SzSpdDLK-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407112113.SzSpdDLK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407112113.SzSpdDLK-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/virtio/virtio_pci_common.c:391:1: error: version control conflict marker in file
+     391 | <<<<<<< HEAD
+         | ^
+>> drivers/virtio/virtio_pci_common.c:392:30: error: use of undeclared identifier 'queue_idx'
+     392 |                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+         |                                            ^
+   2 errors generated.
 
 
+vim +391 drivers/virtio/virtio_pci_common.c
 
-> > > and a spec-compliant device would probably
-> > > balk if the driver tries to enable queue 1 but does not negotiate
-> > > VIRTIO_FS_F_NOTIFICATION. If there's a way to reset and retry the
-> > > whole virtio device initialization process if a device fails like
-> > > this, then maybe it's feasible. (Or can the driver tweak the virtqueue
-> > > configuration and try to set DRIVER_OK repeatedly until it works? It's
-> > > not clear to me if this is allowed by the spec, or what device
-> > > implementations actually do in practice in this scenario.)
-> > >
-> > > Thanks,
-> > > -- Daniel
-> >
-> > My patch starts with a spec compliant behaviour. If that fails,
-> > try non-compliant one as a fallback.
-> 
-> Got it, that sounds reasonable to me given the explanation above.
-> 
-> Thanks,
-> -- Daniel
+   365	
+   366	static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
+   367				    struct virtqueue *vqs[],
+   368				    struct virtqueue_info vqs_info[])
+   369	{
+   370		struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+   371		int i, err;
+   372	
+   373		vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+   374		if (!vp_dev->vqs)
+   375			return -ENOMEM;
+   376	
+   377		err = request_irq(vp_dev->pci_dev->irq, vp_interrupt, IRQF_SHARED,
+   378				dev_name(&vdev->dev), vp_dev);
+   379		if (err)
+   380			goto out_del_vqs;
+   381	
+   382		vp_dev->intx_enabled = 1;
+   383		vp_dev->per_vq_vectors = false;
+   384		for (i = 0; i < nvqs; ++i) {
+   385			struct virtqueue_info *vqi = &vqs_info[i];
+   386	
+   387			if (!vqi->name) {
+   388				vqs[i] = NULL;
+   389				continue;
+   390			}
+ > 391	<<<<<<< HEAD
+ > 392			vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+   393					     vqi->name, vqi->ctx,
+   394	=======
+   395			vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
+   396					     ctx ? ctx[i] : false,
+   397	>>>>>>> f814759f80b7... virtio: fix vq # for balloon
+   398					     VIRTIO_MSI_NO_VECTOR);
+   399			if (IS_ERR(vqs[i])) {
+   400				err = PTR_ERR(vqs[i]);
+   401				goto out_del_vqs;
+   402			}
+   403		}
+   404	
+   405		return 0;
+   406	out_del_vqs:
+   407		vp_del_vqs(vdev);
+   408		return err;
+   409	}
+   410	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
