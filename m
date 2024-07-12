@@ -1,166 +1,131 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF3E15ECCA
-	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jul 2024 14:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DDA13D601;
+	Fri, 12 Jul 2024 08:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707607; cv=none; b=nbe00TCwL2zFul4rIfQe3QtPPvcaznAkV6uT6ZouDD8xduVgCgU7bpTGKk7sETvdZZiuv4yZKxMFTihzf/ypfnUvLxSTSzLtMQawqSIM0i783mlftUT5+UnsEp4YzzlZOHQl9JJy5mpIhdW6js/SokJilGy9ZhfPiNpqQ9EVaJU=
+	t=1720772472; cv=none; b=jnmFikqEJOyY3NpkQD7W2iVK7q2cLEKrKCqutVvnTWmuC5MN9ybUB+sP8LV9ZrKM1TlADcAkkx+1tlKjFd8L0oh3Aoh4eDYmXcwFYfYX6IWrOHX+iSpa2NrAFEo9V6yC83H2y3QIQSzIA8mv30ABfbWQhZSpDg8vvr6UodaRBwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707607; c=relaxed/simple;
-	bh=+hIY6jEEHY+QzykeVvjms7qfTGWHP59V5+6Y4tJ3yKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z7yS0zBxFITn9NTDRahCRSKht2ywnE9dtR86SnwBMhT/FwAqlPWS6R+gqJg9gK5UvEmhNkblX1nuLJzXbBiwfvPIXBcwbSp1nVtI4qRHFsIxS12pR5YWXHJWZ4drp0uBiUj52MK6109eCr0EQVewcLi654ZmhaaxbGkc4rJrLX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B4fKK69+; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720772472; c=relaxed/simple;
+	bh=UYd8B6nbv4Ic8XdLU0JyQpuWnMpczUrarlWTU56zvyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTUrOqGJ7X6FfpYNFMAlemCQaMqIx6nFIXapEm77AID+CHlQOMDGUs6nsrRwe53jFCkruhI4MlRv2+eqQXU4bvuQHsQUCe7UaV6il+jLVfkylaPZW2PGnBGwCTy8IYmE6WSyacK/R3GTZlWmpcyI7qzipQRcN5bBPHy6g76btTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ve9dDWD1; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B4fKK69+"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58bac81f40bso1376973a12.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jul 2024 07:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720707603; x=1721312403; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o3npd6EQvPKgtV4//EqEfrX3c75XqGVaZsV1QiKxfuw=;
-        b=B4fKK69+CRAu1noe+uvQPknNc3N9myp1pIWy0dK7w/pGG7pmDrqg6UbG+bSt991SR/
-         ngQ9++5bZk3Y+IUAHqSzc8FideYnh/JhqXePAlN+ISS0AJBmKETCp+R4sTNKIcVl/Nyo
-         GO9JZTmWn0/n6BQNfuzj7eItXQtKlqFvRBRTPsNuGSxc+bdsdWcOYzIjV54Y1xfJRa/l
-         Tm0aFMo1FWPyd8zWTDqWaULWbbp8sG9DFxHFtd/4BEPg8aL4/hc2u4bJPIsah5pCNG0d
-         j0WPeVsoBGN84veei1+TWbmycfM5bZ/KcbOdRhJK5j8oE2/58lo1kvvc0uux7huS4jT3
-         iHhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720707603; x=1721312403;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o3npd6EQvPKgtV4//EqEfrX3c75XqGVaZsV1QiKxfuw=;
-        b=Z8dcT2xVrgbY/ShuAOpaS9y806ubN9W8fNwvo5MkQcNQ1HYgNoYu6/nQaqO+NW1jUR
-         Ioi2ZJr9wpYT8G1TGS114ogmULKwUZwV7TKice4He6Gnf+UbrYxNPcHGgWozYAe0+WGR
-         FxJJcVkaEMhVifNYUb3s8wcpKZia5rR1OhQkoIFPBBykajxAui3ANud2gLW/ILTYIcxK
-         b8VWKsjKxEzyIDXEdu11i3x1LKvGS2w3MKb6mj86Li/0Xb8dOREym3EpepQrMM0aSdIn
-         SJkWDbDaaXh7fs0DdopECMMwn0SZb93tt3SrHN8p8R6tn+5Yxch+lO6KvMFwan/Jt9/k
-         voZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqCrPhD2ZeflzcdmntFjzZMV8O+/fqv0lYg4ogqKSGoe9OS5vCJmLvYsJoB/F6hsL/MrpnTFJhGpgFm/V+2/TjRsQjUufVREuaXQMduCIJCA==
-X-Gm-Message-State: AOJu0Yyk1R4d/A1zr7hF9mbGynCwZ4sKv2+IAtGhWKLG5dWt8NC0dvay
-	atJ5QGZxFdlv5S7YK4DBv3CNhSgtMzFss46ECcc8udyOatg6Bgo+B4ocGXHYJFfCkybnuODxN3V
-	AZzlBdeUqQX4PGFhsVz1vWeV8BJ2DJJUpIDYEqw==
-X-Google-Smtp-Source: AGHT+IE5YvixzSQthswNAQ80xQ/qshZBUGeuPv0J87cnzFcQKMSwoY8hFu9XvKRCoFQLhJKzWznYERboE6rsk2B8lPk=
-X-Received: by 2002:a05:6402:13d6:b0:58b:b864:ec77 with SMTP id
- 4fb4d7f45d1cf-594bcab03a8mr7502600a12.39.1720707603305; Thu, 11 Jul 2024
- 07:20:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ve9dDWD1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720772468;
+	bh=UYd8B6nbv4Ic8XdLU0JyQpuWnMpczUrarlWTU56zvyw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ve9dDWD1aMPL0aCuq0X9Tw+Vhke0eUwIIUSRuo5vv6m6/8JSUbSBzvt7t8kj0Ljm7
+	 E+8Z7c2wGe8gnXN1bOpDmUXd4p6Q611eDZyN2O65PAGn5LtfWSZK+revM4ypRIjH43
+	 vq/ZcKQR1QuRDke5ZnK1jQJAwlAY8CfF3WNY3gily2fq3vTTflaN5vQyJPQFAMWRfj
+	 eWshNOdFAEN/F5r08h8yvtoVvF2ov+TV0QaBn5I4u8Vd6RlSFZeCrYtUaoRSCUKwsO
+	 gAyROsWj0CR9eJ36bgaOnt7GU4pQ1OHI7sLLNJG5/MH1IzV9F0koJSqHZRAstj568M
+	 SjtfhGCIV7Bmw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EB48237821DB;
+	Fri, 12 Jul 2024 08:21:07 +0000 (UTC)
+Message-ID: <1b1231e5-cf10-4a26-8a62-311f4d8bcae9@collabora.com>
+Date: Fri, 12 Jul 2024 10:21:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710084200.6561-1-shun-yi.wang@mediatek.com> <20240710084200.6561-2-shun-yi.wang@mediatek.com>
-In-Reply-To: <20240710084200.6561-2-shun-yi.wang@mediatek.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 11 Jul 2024 08:19:52 -0600
-Message-ID: <CANLsYkw8vanrYi0jvP+1jfZWrYBtTuXSJ5xywJYUDLhyRQUrWw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/1] remoteproc: mediatek: Support reserved CMA regions
-To: Shun-yi Wang <shun-yi.wang@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com, jason-ch.chen@mediatek.com, 
-	yaya.chang@mediatek.com, teddy.chen@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] remoteproc: mediatek: Support multiple reserved
+ memory regions
+To: Shun-yi Wang <shun-yi.wang@mediatek.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
+ teddy.chen@mediatek.com, olivia.wen@mediatek.com
+References: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
+ <20240703115308.17436-2-shun-yi.wang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240703115308.17436-2-shun-yi.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Jul 2024 at 02:42, Shun-yi Wang <shun-yi.wang@mediatek.com> wrote:
->
+Il 03/07/24 13:53, Shun-yi Wang ha scritto:
 > From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
->
-> In order to reserve specific Contiguous Memory Allocator (CMA) regions
-> for hardware use. When the name of the reserved region contains "cma",
-> then a corresponding CMA heap is added.
->
+> 
+> SCP supports multiple reserved memory regions, intended for
+> specific hardwards.
+> 
 > Signed-off-by: shun-yi.wang <shun-yi.wang@mediatek.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 38 ++++++++++++++++++++++++++++--------
->  1 file changed, 30 insertions(+), 8 deletions(-)
->
-
-I'm not sure what to do with this patch...  Is it a superset of your
-other patch [1]?  And if so why is it labelled as an RFC?
-
-Please read the documentation on submitting patches [2] and subscribe
-to the remoteproc mailing list to give you an idea of the patch
-workflow that is expected.
-
-Thanks,
-Mathieu
-
-[1]. [PATCH 1/1] remoteproc: mediatek: Support multiple reserved memory regions
-[2]. https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst
-
+>   drivers/remoteproc/mtk_scp.c | 25 +++++++++++++++++--------
+>   1 file changed, 17 insertions(+), 8 deletions(-)
+> 
 > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index e744c07507ee..ca0a4a52ece9 100644
+> index 9ecd5ea04b5f3..1902826cea0af 100644
 > --- a/drivers/remoteproc/mtk_scp.c
 > +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -4,6 +4,7 @@
->
->  #include <asm/barrier.h>
->  #include <linux/clk.h>
-> +#include <linux/dma-heap.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
-> @@ -1006,22 +1007,43 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
->
->  static int scp_map_memory_region(struct mtk_scp *scp)
->  {
-> -       int ret;
-> +       int ret, i, err;
->         const struct mtk_scp_sizes_data *scp_sizes;
-> +       struct device_node *node = scp->dev->of_node;
-> +       struct of_phandle_iterator it;
+> @@ -1006,22 +1006,31 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
+>   
+>   static int scp_map_memory_region(struct mtk_scp *scp)
+>   {
+> -	int ret;
+> +	int ret, i, err;
+>   	const struct mtk_scp_sizes_data *scp_sizes;
+> +	struct device_node *node = scp->dev->of_node;
+> +	struct of_phandle_iterator it;
+
+
+	struct device_node *node = scp->dev->of_node;
+  	const struct mtk_scp_sizes_data *scp_sizes;
+	struct of_phandle_iterator it;
+	int i = 0;
+	int ret;
+
+	of_for_each_phandle(&it, ret, node, "memory-region", NULL, 0) {
+		ret = ...
+		if (ret) .....
+		i++;
+	}
+
 > +
-> +       i = 0;
-> +       of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
-> +               ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
+> +	i = 0;
+> +	of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
+> +		ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
 > +
-> +               if (ret) {
-> +                       dev_err(scp->dev, "failed to assign memory-region: %s\n",
-> +                               it.node->name);
-> +                       of_node_put(it.node);
-> +                       return -ENOMEM;
-> +               }
-> +
-> +#ifdef CONFIG_DMABUF_HEAPS_CMA
-> +               if (strstr(it.node->name, "cma")) {
-> +                       /* Reserved cma memory region */
-> +                       ret = dma_heap_add_cma(scp->dev);
-> +                       if (ret) {
-> +                               dev_err(scp->dev, "Failed to add reserved cma");
-> +                               of_node_put(it.node);
-> +                               return ret;
-> +                       }
-> +               }
-> +#endif /* CONFIG_DMABUF_HEAPS_CMA */
->
-> -       ret = of_reserved_mem_device_init(scp->dev);
-> +               i++;
-> +       }
->
->         /* reserved memory is optional. */
-> -       if (ret == -ENODEV) {
-> +       if (!i) {
->                 dev_info(scp->dev, "skipping reserved memory initialization.");
->                 return 0;
->         }
->
-> -       if (ret) {
-> -               dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
-> -               return -ENOMEM;
-> -       }
-> -
->         /* Reserved SCP code size */
->         scp_sizes = scp->data->scp_sizes;
->         scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
-> --
-> 2.18.0
->
+> +		if (ret) {
+> +			dev_err(scp->dev, "failed to assign memory-region: %s\n",
+> +				it.node->name);
+> +			of_node_put(it.node);
+> +			return -ENOMEM;
+> +		}
+>   
+> -	ret = of_reserved_mem_device_init(scp->dev);
+> +		i++;
+> +	}
+>   
+>   	/* reserved memory is optional. */
+> -	if (ret == -ENODEV) {
+> +	if (!i) {
+
+	if (i == 0) {
+		dev_dbg(scp->dev, "skipping reserved memory initialization\n");
+		return 0;
+	}
+
+
+Regards,
+Angelo
+
+
