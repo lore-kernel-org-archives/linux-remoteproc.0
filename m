@@ -1,146 +1,124 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0913A416;
-	Tue, 16 Jul 2024 10:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B202A19B3E2
+	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Jul 2024 15:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721127457; cv=none; b=gIaamZXbhCbUPaaQLqc9/vwhBu1euNMcUGqL8apnqaD8wPgyRpfVd4BuRpswRiA+sErWeJNB/nfMj2fjoOiMEcJl+Ug2WxnYgKcpFD3Wo+fFfRQ3sZpbuiKZ6dyNG0y00Ax6lmr0KCnU+Y4HgLZVkw37JkOwDSGC2W+KTElnOgg=
+	t=1721143015; cv=none; b=RwhQLrVSp3kxBfihsJVAJ3Q4chdKggL0zKr8a3+aPIFFm7YCQ62vzRrkL1ETa5WMQAprE1iB6BhDUVnWIyH9IwboeM36ehb9vBlWP+lBNETVY/A4QoRM4hhHAgcaeo1z1Xe1mNFI69/GFcfPPxuDesxfRggAitLD2Zme+sO5E7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721127457; c=relaxed/simple;
-	bh=u3tdViBmCFTWsqM5V2S0H18K58R1pakhIEDmxZF6AJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5WI6relJD1sCEc2vHZ/ptOYWLn9BNiDgOxKxMbYmCRWV9kJ8ZmgMT4Quoup977rNV37KkHHpfWiQ7fipAx0A8+AmxfMizmkKFyiAlEJTuiAZZgU3IxcWUNMRmBPYn3tcr29Y1bGEzk8BJCE24vfXSgNfQ3qh9LhORWAFeT1TyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g1MqdYC1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1721143015; c=relaxed/simple;
+	bh=QdugAtkkmtyw1j2n4aC/U95y3fRjs/Qu67PPL3gShUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZdWIG3X1ZagoqsS+Rix4EnTCpejtj31cGwNPydXGE1u5B+2wN8off4tbo2YftZdGPbhfbh015wTV+lfOnAD2haQNoKYc7SkKsvfqLKf66/2509zxHWZHztHqvbXmpy+/9w6IISJxELcAhcg5lJ8SeD0BN9PHEKgvO290baLrPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dn8L3TNZ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g1MqdYC1"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GAlTkY013924;
-	Tue, 16 Jul 2024 10:57:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	5YpLZBFHa4u/yz0h1zDRTMe6ArvUdZ8SFwam82a19uI=; b=g1MqdYC16MSvXnSC
-	RNEUUAV6nWW70hptfnT8bMAMjyQxdsV2SFbXGn8CI13yDWySB4Ja2XsLnHD9WD+w
-	F4dCLeD19qYDE+Hanm7ADpvxXUtJ+1xh5ydIb236y6HJVCuAM4FiZ0ezaYWbFPWo
-	U7LlV9dh+yAjYN6Gb5wAk9KzmylwwBSXGUU8sHtOPAyl6dLSWYDhnfYOoOfLw2LK
-	Jjps/xcGLznmIpWBejvZ+cjh5WYclyfHesVhYvVizdkJrLT2GFOHnaw6GCqLTnF0
-	zWJAk0TggqHOX5ZKbTf8tqrhLJRIFC2PNVQcUcIwBt/7tpZF7ckkIM9OMD6GC/Vo
-	XPo38A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dq4wr1fr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 10:57:06 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46GAv5nb025254;
-	Tue, 16 Jul 2024 10:57:05 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dq4wr1cv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 10:57:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G8jlL1030523;
-	Tue, 16 Jul 2024 10:52:27 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40c4a0ktt3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 10:52:27 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46GAqMU322872322
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Jul 2024 10:52:24 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA57920043;
-	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8C3D220040;
-	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
-Date: Tue, 16 Jul 2024 12:52:20 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        Alexander Duyck
- <alexander.h.duyck@linux.intel.com>,
-        Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg
- <johannes@sipsolutions.net>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck
- <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Jason
- Wang <jasowang@redhat.com>,
-        Eugenio =?UTF-8?B?UMOpcmV6?=
- <eperezma@redhat.com>,
-        linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org, Halil Pasic
- <pasic@linux.ibm.com>
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-Message-ID: <20240716125220.677dccf4.pasic@linux.ibm.com>
-In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-References: <cover.1720611677.git.mst@redhat.com>
-	<3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dn8L3TNZ"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70af4868d3dso4283512b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Jul 2024 08:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721143012; x=1721747812; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+oBquCC6Yqm7bL0Kr3aJX57Dgk/RB3bFu+I79pPnBY=;
+        b=Dn8L3TNZ+4GGHpZzyY6vTKGmsQrmp6593yYDWGI+s/3GXs4bR/n9muz4eFXLl4OtJZ
+         SbX5ID/EbzALM0A5dWt1+faK8GtoKVEoZ5D88z1p/G6b6alCgKeVc3EdMy20SHW/kBmH
+         K6yG2wkNVcQmB3vWAR4H+wANKzc7agRoRQvB2lxkPdX8bUA28b3bRS9cq/rR2XT2Bhb8
+         cWSDvQqxS4Za8Az0kMSNlEISoW8C21H3egfBB2l4SjDoC3BcWn2lX+OO46L+cNLqWEp+
+         abL3BKZXG85hzW71VgUZdKk6CvCOKDNdj355ZYA4wqudoHychEdMtCD3Iu+vRBW2KHFt
+         2Ksw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721143012; x=1721747812;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+oBquCC6Yqm7bL0Kr3aJX57Dgk/RB3bFu+I79pPnBY=;
+        b=Zu6znxaWWqsDEMzyYG5QYqc25ZEgJhKIY/8Yr8RoZ1CE+WV2mXZ1qiNDxjnev0YRpi
+         iPy0hIr+DZfMMB+rKa6ALIP5YzBaNFkgSTqw4nfgVH62nJPtYjVIEbuTgwZbAU5Ickyh
+         h49jT6i1ipdGtCHlEHsxK5f2Q/6Z7ANkC8faGf8+cSZtN9Bek1YnS0myQ67jmS00Au0T
+         ghv/66kLt/bqiPxj/9CjrrX/PTsZZxwkwPM9HhKwBGvCxe6tevzc0STycXKIcnA7wiWR
+         5ucW5AS39DQMRW2wc2ZUz/uI1PL/cDtz1xTIpa6mlRq9h8M9IQ2tFrjkplbaek5eWBNg
+         VeWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyVP6GoPmRKlR/oFaAuXDLzeGKVkdGkPrb7FbNck35dc/X1wC/+S80FcSYlF+A1CemM8RaZ+nfs8BXHIVlRK3zUj04llILC4A01KastRILeQ==
+X-Gm-Message-State: AOJu0YwJr7gJRQgnDLjF3C6hXLqlHeSXghFJRmSfDRIJ7UqCBpSRABkP
+	UKLN0NVTY8XtySLSnszNbD6UMjsSf6UyK5q0BqB8Cji9BURGDs4UYEd8KXqLG84=
+X-Google-Smtp-Source: AGHT+IHK38fZflwQZj+0YBMxhcUoqsY5qUO9G0uXW0RmTRimetE4YldMaHWfupwsPvdp5aX1P8Rc/w==
+X-Received: by 2002:a05:6a00:238c:b0:6ec:f2e7:21a8 with SMTP id d2e1a72fcca58-70c2e9942e1mr3475412b3a.21.1721143011828;
+        Tue, 16 Jul 2024 08:16:51 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:5d01:167d:9cf4:148e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7da19sm6413009b3a.133.2024.07.16.08.16.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 08:16:51 -0700 (PDT)
+Date: Tue, 16 Jul 2024 09:16:48 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, marex@denx.de,
+	iuliana.prodan@nxp.com, daniel.baluta@nxp.com
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
+Subject: Re: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
+Message-ID: <ZpaO4FDEYoA0cpae@p14s>
+References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
+ <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -ciPuNbu1ulB9x3MDH6mw0VxJdTjfl_5
-X-Proofpoint-ORIG-GUID: _zkRs-FyWlqEBV9NEtx1Xwx1HT6kmSDZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 clxscore=1011 priorityscore=1501 adultscore=0
- impostorscore=0 phishscore=0 mlxlogscore=866 spamscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407160079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
 
-On Wed, 10 Jul 2024 07:42:46 -0400
-"Michael S. Tsirkin" <mst@redhat.com> wrote:
+Good morning,
 
-> --- a/drivers/s390/virtio/virtio_ccw.c
-> +++ b/drivers/s390/virtio/virtio_ccw.c
-> @@ -694,7 +694,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->  {
->  	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
->  	dma64_t *indicatorp = NULL;
-> -	int ret, i, queue_idx = 0;
-> +	int ret, i;
->  	struct ccw1 *ccw;
->  	dma32_t indicatorp_dma = 0;
->  
-> @@ -710,7 +710,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->  			continue;
->  		}
->  
-> -		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, vqi->callback,
-> +		vqs[i] = virtio_ccw_setup_vq(vdev, i, vqi->callback,
->  					     vqi->name, vqi->ctx, ccw);
->  		if (IS_ERR(vqs[i])) {
->  			ret = PTR_ERR(vqs[i]);
+On Fri, Jul 12, 2024 at 04:34:54PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The DDR Alias address should be 0x40000000 according to RM, so correct
+> it.
+> 
+> Fixes: 4ab8f9607aad ("remoteproc: imx_rproc: support i.MX8MQ/M")
 
-Acked-by: Halil Pasic <pasic@linux.ibm.com> #s390
+This commit was merged more than 3 years ago...  I don't see how such a blatant
+mistake could have survived this long without causing problems or being noticed.
+On top of things checkpatch gives me a warning.
+
+> Reported-by: Terry Lv <terry.lv@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 144c8e9a642e..3c8b64db8823 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -210,7 +210,7 @@ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
+>  	/* QSPI Code - alias */
+>  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
+>  	/* DDR (Code) - alias */
+> -	{ 0x10000000, 0x80000000, 0x0FFE0000, 0 },
+> +	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+
+Without access to HW or the documentation there is no way for me to assess the
+validity of this patch.  Marek, Iuliana and Daniel - please review and test this
+patch.
+
+Thanks,
+Mathieu
+
+>  	/* TCML */
+>  	{ 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  | ATT_IOMEM},
+>  	/* TCMU */
+> 
+> -- 
+> 2.37.1
+> 
