@@ -1,145 +1,147 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9EA19DF53
-	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Jul 2024 15:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2702619E832;
+	Tue, 16 Jul 2024 17:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721145177; cv=none; b=iTPngmXLtay1slOiSk0zG7os/ViM3B3M/rufPRxHWjkYAsFn4JI5N9jiCrMoB75VNxuYZ89AM0lbZl9xBR8s7matOcQVBiraeeEbaEH/8PaPlLbAsXlqhiSx73QtZP/odWnHSh+mJIg2y5ElDYTT4omRvJUTNMHdaZkOBjPxscI=
+	t=1721151552; cv=none; b=sGxQ1DvvGDxgvl+D/ZFts7FEq51QjojL3H/2Fm1rW/nLZcvnovUUW6G3tifGHDl0c5myU9IoKbsIaAUDmL4COEvGGI7RxVqXG7QYLGjSFKDoil29UE4rcjXQ1x0f2CzqgUwDW8fgHZymxHuIrfuFDfLBgXB2+0YvdaK3mDrJeEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721145177; c=relaxed/simple;
-	bh=lIBfZqWcjvbVJBQ9/TDHNqVDKQMTdt2Y1/qmLghrBj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y455rAvKPdTlIbhKWiRYoqC2yNYCm2bQApRpYSJq0WkQTS4yp0nJI6vyKKTiWpfOyVweuZ+M0opI3E+lkLJpn4I0B4BlLp7Atf9FQxaHXOtqGQ9YW+mt6T1mvwP6IbUGuZHmGVVkhYrGoVURocHEeO25941Cew/uWpxaJZhj8qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oDE+5Xuh; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721151552; c=relaxed/simple;
+	bh=BM2YhD4gj8N5/eCJHcATdy2OlkJ1pJDbqXA60k9ftqA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WsrlxPLP5VYYcSgz+Ct7CcWKXNBJjgUQVTYYD0gU+taFqQpRv7izkDgbC92xxLRaT80zGNwCwvBCY6BF3fg1SNO3nATnMZBYnhB1HvWUR2VFSeIW3kMdqQU5sXoIVd4RiK5cg7WSWqmTLSU6QJI2OXxbQES+NcDAt+CZgm5Rmf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bWnta3f0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oDE+5Xuh"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d9dfc7c5f6so2581602b6e.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Jul 2024 08:52:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721145175; x=1721749975; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKBILTe7q/CPySmaWkq9DzQOt5Q1y7jNxqFaGU3vksE=;
-        b=oDE+5XuhREzpjimQTY1SS8gq4pfqk2FMFB66CWJTVbuuVSnEAHrhftrsAglK+DUvQ3
-         /fJVuhztAhXl3yjnLlGif379JEuxCn8qBn8UhRDkyxnmFVEmWUxoUH9qx/rvAatHX/w8
-         5aZmsVkoRJwToOiitTm7tcIeXAQlz7jw27lA5Xf3R4W0ni/ql+PFaUV0WwquiYG1RbI1
-         qJYQPU8ZL9uqMvtiVp1OueyT/awtvUT1k6LunDOBHmzrqBmWtp1+60pJ2OZyq14JXgoA
-         j1z7rjqjiAJ2DqdKX8ynvWSOwniGXbeH7xd7/nZhXgdq1AVArbk2k5/dE5oKy8Qw96v0
-         DqOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721145175; x=1721749975;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JKBILTe7q/CPySmaWkq9DzQOt5Q1y7jNxqFaGU3vksE=;
-        b=WUdx0/zjkUl8mtF5JpLnFIO5RU77BRogBkkF+1UKV9zNaM5yVIFE3su+KjkQxtAjr6
-         Xv29CMD17P16AZlROJS5TRgy/f4Z9rSiXfVbcQ5YLQoT1F8TXafNdzZG9fgjOhbvrMoo
-         voOCIWsLlUFMig9823SUaPvWycCb6HDDy9tE9TqVt3EbVywLImuiCKICTLZxqTfKPnR3
-         44M+a/UuaoL5oFWsphA4LVWPyGbBD4SYddUq7dZptoxZPsp/xKwf6JEpc2kJ5hA3RdWR
-         5dghWIa66sU3rFGjP23lp8dzQTPq70FxWtXXf0gtU7tWNy7IW5LYw9M7of9sasbuALYx
-         I6MA==
-X-Forwarded-Encrypted: i=1; AJvYcCULKs4bS5EWvl697LBj7Q1aK6xKX2PtVRmPRvNbIIgZ849TVS/pQitj+lauKiWYoWsWnn7d68tvFRKh7JZc5CZX0PTXNzOOERVsgxMa14biXw==
-X-Gm-Message-State: AOJu0Yxl9JqQs2EfJ05lbR7CwPnH1v4Q1FHaAGSfhcKSnBw82aKqGceQ
-	iWZGeDyCLKhi6Cc4h0vORmcSpVbRvEreKpwSn9TMWYwL68KyoqAaMiqu/nAh/E8=
-X-Google-Smtp-Source: AGHT+IGH6ZKwNcpITCBiSLzXtugAEPFVOciGhSh9sNS1/35g9a9+BEGmAmqFmL5Y4P5U+f0AZD+88Q==
-X-Received: by 2002:a05:6870:ac0f:b0:25e:26b6:d028 with SMTP id 586e51a60fabf-260bd780fc9mr2192578fac.32.1721145175234;
-        Tue, 16 Jul 2024 08:52:55 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5d01:167d:9cf4:148e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6aacsm6475011b3a.64.2024.07.16.08.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:52:54 -0700 (PDT)
-Date: Tue, 16 Jul 2024 09:52:51 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, marex@denx.de,
-	daniel.baluta@nxp.com, Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
-Subject: Re: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
-Message-ID: <ZpaXU8TJbnE/yrBt@p14s>
-References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
- <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
- <ZpaO4FDEYoA0cpae@p14s>
- <4819651d-b9f7-4fa4-81b9-614b6d4d5a80@nxp.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bWnta3f0"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GD2dD2029609;
+	Tue, 16 Jul 2024 17:39:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HvQI+5EU2Q4PX3llxhhvtIO2fmNDLicwO2fmfHdQ7WM=; b=bWnta3f0cBJrgYdW
+	Uylv95o1LNge22rxBIAlD8c7v/KUIlkOv6kLKRK2wiJ54ElF5G854D+rkK5ftjb1
+	jLXKyAxbyLzWsJ2dEe5vjN3dJwxYVCUGfcY/YFa0ieaGu///H4E2qmb+iGWxFHMe
+	GcKK06vFCUfxUJRQeCdT/EzohisiB2k39PBt5xXsIPtAGKpNPrttKz1lh2pSGqcK
+	N7wxpaY1xz/OFxDwtcEhFHfZQD3AiXcRqtV2V+Og4fib9+Nu05LMiA19uB3pACjO
+	Il52R619PSXIwm+WMqN547tEuGNfYsu6vS4GGxbT2/Z/4rd9HUDLNgkqhuC0ZFOz
+	ptDe0Q==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bexnfyye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 17:39:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GHd4vw022081
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 17:39:04 GMT
+Received: from hu-vishsant-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 16 Jul 2024 10:39:00 -0700
+From: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+To: <quic_bjorande@quicinc.com>, <andersson@kernel.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
+        <quic_deesin@quicinc.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <quic_sudeepgo@quicinc.com>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>
+Subject: [PATCH v4 1/2] soc: qcom: smp2p: Use devname for interrupt descriptions
+Date: Tue, 16 Jul 2024 23:08:33 +0530
+Message-ID: <20240716173835.997259-2-quic_sudeepgo@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240716173835.997259-1-quic_sudeepgo@quicinc.com>
+References: <20240716173835.997259-1-quic_sudeepgo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4819651d-b9f7-4fa4-81b9-614b6d4d5a80@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6ux-ZNGtzg5Olmez9Yvv_esiY9IXL0oK
+X-Proofpoint-GUID: 6ux-ZNGtzg5Olmez9Yvv_esiY9IXL0oK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160128
 
-On Tue, Jul 16, 2024 at 06:49:39PM +0300, Iuliana Prodan wrote:
-> Hi Mathieu,
-> 
-> On 7/16/2024 6:16 PM, Mathieu Poirier wrote:
-> > Good morning,
-> > 
-> > On Fri, Jul 12, 2024 at 04:34:54PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan<peng.fan@nxp.com>
-> > > 
-> > > The DDR Alias address should be 0x40000000 according to RM, so correct
-> > > it.
-> > > 
-> > > Fixes: 4ab8f9607aad ("remoteproc: imx_rproc: support i.MX8MQ/M")
-> > This commit was merged more than 3 years ago...  I don't see how such a blatant
-> > mistake could have survived this long without causing problems or being noticed.
-> 
-> Most probably whoever used imx_rproc and ran into this issue checked NXP
-> tree where this is fixed - see here https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/drivers/remoteproc/imx_rproc.c#L232
-> > On top of things checkpatch gives me a warning.
-> > 
-> > > Reported-by: Terry Lv<terry.lv@nxp.com>
-> > > Signed-off-by: Peng Fan<peng.fan@nxp.com>
-> > > ---
-> > >   drivers/remoteproc/imx_rproc.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > index 144c8e9a642e..3c8b64db8823 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -210,7 +210,7 @@ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
-> > >   	/* QSPI Code - alias */
-> > >   	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> > >   	/* DDR (Code) - alias */
-> > > -	{ 0x10000000, 0x80000000, 0x0FFE0000, 0 },
-> > > +	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> > Without access to HW or the documentation there is no way for me to assess the
-> > validity of this patch.  Marek, Iuliana and Daniel - please review and test this
-> > patch.
-> 
-> HW documentation can be downloaded from
-> https://www.nxp.com/webapp/Download?colCode=IMX8MDQLQRM (one needs to create
-> an account)
-> So,
-> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
->
+From: Chris Lew <quic_clew@quicinc.com>
 
-The very quick reply is much appreciated. I will merge this at the beginning of
-the 6.11 cycle.
+When using /proc/interrupts to collect statistics on smp2p interrupt
+counts, it is hard to distinguish the different instances of smp2p from
+each other. For example to debug a processor boot issue, the ready and
+handover interrupts are checked for sanity to ensure the firmware
+reached a specific initialization stage.
 
-> Thanks,
-> Iulia
-> 
-> > Thanks,
-> > Mathieu
-> > 
-> > >   	/* TCML */
-> > >   	{ 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  | ATT_IOMEM},
-> > >   	/* TCMU */
-> > > 
-> > > -- 
-> > > 2.37.1
-> > > 
+Remove "smp2p" string from the irq request so that the irq will default
+to the device name. Add an .irq_print_chip() callback to print the irq
+chip name as the device name. These two changes allow for a unique name
+to be used in /proc/interrupts as shown below.
+
+/ # cat /proc/interrupts | grep smp2p
+ 18:  ...      ipcc 196610 Edge      smp2p-adsp
+ 20:  ...      ipcc 131074 Edge      smp2p-modem
+170:  ...  smp2p-modem   1 Edge      q6v5 ready
+178:  ...  smp2p-adsp   1 Edge      q6v5 ready
+
+Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+---
+ drivers/soc/qcom/smp2p.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index a21241cbeec7..696c2a8387d0 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -16,6 +16,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_wakeirq.h>
+ #include <linux/regmap.h>
++#include <linux/seq_file.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/spinlock.h>
+@@ -353,11 +354,19 @@ static int smp2p_set_irq_type(struct irq_data *irqd, unsigned int type)
+ 	return 0;
+ }
+ 
++static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
++{
++	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
++
++	seq_printf(p, " %8s", dev_name(entry->smp2p->dev));
++}
++
+ static struct irq_chip smp2p_irq_chip = {
+ 	.name           = "smp2p",
+ 	.irq_mask       = smp2p_mask_irq,
+ 	.irq_unmask     = smp2p_unmask_irq,
+ 	.irq_set_type	= smp2p_set_irq_type,
++	.irq_print_chip = smp2p_irq_print_chip,
+ };
+ 
+ static int smp2p_irq_map(struct irq_domain *d,
+@@ -617,7 +626,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq,
+ 					NULL, qcom_smp2p_intr,
+ 					IRQF_ONESHOT,
+-					"smp2p", (void *)smp2p);
++					NULL, (void *)smp2p);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request interrupt\n");
+ 		goto unwind_interfaces;
+-- 
