@@ -1,67 +1,67 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5856778C76;
-	Fri, 19 Jul 2024 08:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B5380026;
+	Fri, 19 Jul 2024 08:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721378854; cv=none; b=TgrMTRXfFwAYihbmmWt+a9k6xPRtLxQwbT+b9GVwdaT64L6Bi5A108YAy4odkTUY38z7FSM80SZqDeVw//0tRfjzKHqw4xpda63Y1Qbsr11/cbVcrwzdbXquqNsteDyncMsgY3u8QzGrSLSLIBz9DChPYh9aKGA4ndn3U/SKigc=
+	t=1721379125; cv=none; b=id9XGo6ZxQF/5+I1z8MPvAEoCE7dL+fm///rKeir7cpGoX7FoPWr4PDQ5Q9NDFQD7zMXd6+nDppgqq4WXnDoPAW7ao0OtioufbsRDq3rJzAjS5NhH7vox6O1H5gJBuPC93w4MB5g6quSRkJ4JTKGGUTvRZNV0J/I0FcqROjwa2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721378854; c=relaxed/simple;
-	bh=Q6j0m/GV024tPr9HBEbAXHZCqMEuvAz0pcHffhTEQMs=;
+	s=arc-20240116; t=1721379125; c=relaxed/simple;
+	bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bGXQx/QKrcQTBjeqiYECJpMYgwW1Zij2YoAc2sxnLhZIZQTk/K/B++alXZE5H/HCxJta6sCNR0tYZwUb28xEqUaD1Xg3D13Npsv1ygWNA94/Hmf1t1hWoONt6HGHLV51RcwCIJIfGnCxpa294XlBM68SDYKJwMLQOZgPZxt04UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dh9mDPqY; arc=none smtp.client-ip=209.85.167.41
+	 To:Cc:Content-Type; b=KR+F+q7aydMcB5R5epoDqeskbLSYunG2sxtwHJEMa/vwagPDnACCpgrHc2G3ED8feqlbORUYIz3kvmyya7CLEdAazjMiv1Qxw9z3WdYrnZ++bGaaESCqkYrfIgxgjYW/3qBng9GBWn8YzrX6PRNpoxr3pz/ziH59dE8El0cSY40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOTI06hX; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dh9mDPqY"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e9b9fb3dcso1462061e87.1;
-        Fri, 19 Jul 2024 01:47:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOTI06hX"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266eda81c5so11388005e9.0;
+        Fri, 19 Jul 2024 01:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721378849; x=1721983649; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721379121; x=1721983921; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q6j0m/GV024tPr9HBEbAXHZCqMEuvAz0pcHffhTEQMs=;
-        b=dh9mDPqYGvHF0a/mxkI+Hkny6AyqnQbGTrO6QMts488iKKjFK5HHxdGeEIxsrIpE++
-         KTWpS0+MWyIW0XXi344Ysk61E1cSEcgDU5xoG4+JWm2SvU6SbwZsbfXkaZEzgMxMtome
-         A1g71YeAhYGrUIoDup2PJNYpYL5A8st815vYHuJWE4/TvMYZ/z0Ju1gpnmNoutAYksdS
-         IGFNmBkUdM3qd4JxVunV0e7t0EFdhHO85p6mkyVdFW5+yPgoo5+BU+xdIwbS2NG7ArIQ
-         F30jarHMt3Zqz50MKO4SW4j+0gnraPch2LzOSqtce1umqWG9KEGXCxTOUvOUgWI1M7dL
-         qBpg==
+        bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
+        b=BOTI06hXktK1P3/+hIDVk5O6W7s2kxCaAcstIxDfPGHTDYU4efF0zUg0Npf3UVNTIB
+         1tCQRrm2ZMDy0Yin+zq+uOm18LdvMTbwj1TEO8CsfBUEUqnK7mLkhdRvUSzhAMGGNdcb
+         MRzflp7pSkY30TcYtohB+XR8ONHPZCLRUvoUnA8EhNyGlHPjmXYUtjx2cpXyExbBXnNl
+         y77WrFO/dqb0RNzjMxVgwvDVKgfeKe+QYknUB/X6aKl4OYx5Xn+vwSSt0loZR+ilv9FF
+         zmfSAG5UKAK0/jSikQJefrizb9SbMhbLplobd9IGmu90Enz+LSoJJnufAfCbjdjmyQQT
+         2tgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721378849; x=1721983649;
+        d=1e100.net; s=20230601; t=1721379121; x=1721983921;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q6j0m/GV024tPr9HBEbAXHZCqMEuvAz0pcHffhTEQMs=;
-        b=AGtBX5KAtDaRFC7/2de40OH6t7/f8I8mWOHsLnVxHBZBKBvAoOSu2cQWw2qqN2g0wM
-         FTUI62+UyAnh+JAQMUsW9kZs763S2ylvnKD1gsmLMNUNmmjDxH/F3O95ZdsZI3FICXd7
-         VqIHuu5urY1vxyCLs9rAZUDmxdyWtRCubas+2MqNhpg3sTYIC3zIpaP76zG48SXSxIpG
-         9UlrRro/RwZlUwHNCe1sWsPw2uWa1Cndo0BxYcCtbQIOV6UdvIa9iQwO+TNC2CInJoWJ
-         daafk+4Cz4GDPBDytFo3Cw6DllJGHRSzl9rjAXzrR3CQOl1Ccje++Ab6T7S2TRkLKCb7
-         Lm8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiekLr7uoYx0NH5D+XnPXSCFu9kmO2e4AXLjiknWeV7x8OR3Is7AJIe0Q9VOmqJd/q4sEKmtAVmpJ0ggbwGYmi4kn2wmzOo7hh+pl2K8BCrBpW1k51651GzUyQhs8QM9RXUqBNXqRlqjnM3S/zeg==
-X-Gm-Message-State: AOJu0Yx46wd2aphnCQ0RNOazjCa+C5uSNv/rQd0oy6R3v35NY+cB3/84
-	bMaE9ejyE3ZsZdkMxxLbIl+hV/l3Sc6bX8lqg6El8TgbkDzWCbwRkuJlcFGu8skLOcaRSUuBs2q
-	zta6f3jyogBmOa59pR33g2yY2nJ8=
-X-Google-Smtp-Source: AGHT+IF6oxl0sIj4f5dI1xPZ8i0jbh47IA+Yb9zWXLd3oU6mZBA4Dz5cL+FGoB48prP+Tte24qxe1YGA8xMINVBUmKc=
-X-Received: by 2002:a05:6512:b22:b0:52c:e1e1:ae91 with SMTP id
- 2adb3069b0e04-52ee539c92emr5555209e87.11.1721378848854; Fri, 19 Jul 2024
- 01:47:28 -0700 (PDT)
+        bh=r8oFgF9hsmNmGc0Nc9AK6CXg8ie6rgCUDmSyIstaJLA=;
+        b=jYKBySHZWQq2nwTcjrC8dGEQyv7QvfxgULrnweEh6d6Ic39AslCUB7UWQZ92nM92ER
+         JiIcgVAisLO6o7tPWt/GgszeHdzopH0HPUahOeOclxWFTDTKP3xEUaNHiTXYFybfeARo
+         afPknQQjyQgA1NtKVgiBbiUDpG7V+/MbrUUWO3oyIxJ7mPYvW2V/MSNn8Zcr5tpoAbu1
+         bwxCkODN8KnHO26o+4eLGuyyUPzATF5zFIN2KQDMW8OqmCl81tZBpmkMT+nk68Shedlf
+         Rn0XBnk4nKG5J9JwiSGmAVPZFHi6a9BF9lZq8f0sscNmcr1UglpjgRvqmjvljHB7LTV3
+         r8XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV953OrHLH72Q6AGCcX9UWSpf1y+fBfxlysukaz3eshrkjx5I30aYxtV4aAfqn8jcBRAk3GEbrxy7ri1oLvQ1JUqEvrT06YA7f/v4NvXpCmV4UCVRbJGwmbKRkNG1pcLZKZB/ChhrDHVI72Ki0d4Q==
+X-Gm-Message-State: AOJu0YzPONBk5meYMrvewQJcSqWvD8yIN+BkOsVlUsfpChQDXFuqpsmJ
+	cDtGjGZ3AcLAZXQL2NQttZDmjHtLFUaY+jG/hJHGl3BcCXQ6/qP0icqZdKppZTZ3iRlU/o2br1V
+	oQlDoWZfz0841RVErRXiBE0nUuwg=
+X-Google-Smtp-Source: AGHT+IEv3qCK6lAidNklfBcgIVXCYYSmSxxXgW/Dm21GqZIiZZ5HailN4WXo1vsVLga8IxfI0D2fv7nNamOEy/sdeQs=
+X-Received: by 2002:a05:6000:2c8:b0:367:9c46:198 with SMTP id
+ ffacd0b85a97d-368315f1ef5mr6492142f8f.1.1721379120874; Fri, 19 Jul 2024
+ 01:52:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
-In-Reply-To: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
+References: <20240719-imx_rproc-v2-0-10d0268c7eb1@nxp.com>
+In-Reply-To: <20240719-imx_rproc-v2-0-10d0268c7eb1@nxp.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 19 Jul 2024 11:48:12 +0300
-Message-ID: <CAEnQRZDCMDZ=1hXSfGzAkz5kxL_xYo+fZXMmMQ_ytywRKRd0Hw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] remoteproc: imx_rproc: support non-blocking tx for i.MX7ULP
+Date: Fri, 19 Jul 2024 11:52:44 +0300
+Message-ID: <CAEnQRZAh1P0i+Uj1+vrvZM4vVuxuYR9tN9FMm+khSSvwyz7hhA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] remoteproc: imx_rproc: various patches for misc
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
 	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
@@ -69,31 +69,29 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@lin
 	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
 	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
+	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 11:40=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.c=
+On Fri, Jul 19, 2024 at 11:27=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.c=
 om> wrote:
 >
-> The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The i.MX7ULP Linux
-> poweroff and restart rely on rpmsg driver to send a message to Cortex-M4
-> firmware. Then Cortex-A7 could poweroff or restart by Cortex-M4 to
-> configure the i.MX7ULP power controller properly.
+> This patchset is to upstream a few patches that in NXP downstream for
+> quite sometime. For patches directly cherry-picked from NXP downstream,
+> I keep the R-b tags.
 >
-> However the reboot and restart kernel common code use atomic notifier,
-> so with blocking tx mailbox will trigger kernel dump, because of
-> blocking mailbox will use wait_for_completion_timeout. In such case,
-> linux no need to wait for completion.
->
-> patch 1 is to support non-blocking tx mailbox channel
-> patch 2 is to switch to non-blocking tx for system poweroff or restart.
->
-> Based on patchset:
-> https://lore.kernel.org/all/20240719-imx_rproc-v2-0-10d0268c7eb1@nxp.com/
+> Patch 1 is a minor fix to DDR alias.
+> Patch 2 was sent out before,
+> https://patchwork.kernel.org/project/linux-remoteproc/patch/2022011103333=
+3.403448-1-peng.fan@oss.nxp.com/#25144792
+> this is just a resend
+> Patch 3 is to avoid mu interrupt trigger earlier.
+> Patch 4 is merge small area to support elf that has large section
 >
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Series looks good to me.
+Neat and clean.
 
 Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+Thanks Peng!
