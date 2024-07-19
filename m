@@ -1,260 +1,221 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011013.outbound.protection.outlook.com [52.101.70.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A4C1A01C0;
-	Tue, 16 Jul 2024 17:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721151555; cv=none; b=rV8pyCqATP6AnJYIJYEMn1ttLHtjod8cPSZVGqIgYJA8ahlxi7eyC7JF4CDpcxIULrslB4frTVEO/Dy4jiXOBMDjLk0q5cy3P2Y61SAGPCYqz3V15n/W2lTBNPzuWIy2l5KzW8GK7TbP4K6dCGS49qVLnqMll38gT0xFqNlGLL0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721151555; c=relaxed/simple;
-	bh=fSsFJqFnGSFNmEueqlpzN3oQOW/4/+RuTayn9tgyTEc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3OTR8QwN7lVRXopWoLONtvxbcVROCb/lP7XnjRbg3vzNLLrUA0RCnL1QA8wjHMCPZi/BHj69T2fn2Ti6GocN9sV59Up6ss3nIHUFf8NBb/0iSyyqz92ccUtNl8BIi+gTBJakZJWiYxP4Hck8XX2BKLsMIMsagonkdRQQx0ka8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OIQm1EbE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0639A35;
+	Fri, 19 Jul 2024 05:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721368010; cv=fail; b=SUXa24IlS/PmXGpjnU5PCXeGm8aVb1PLjLy5lrPwV/Ahxbag7vcNbjP9ysHU9ztw4/4lLw5dhwv+1JpQZwElrHpCx/BHLjkzmbq3QZSkxQZDSC+oNsrev8TUY3Ch2Ls3ZQKGI7bZ4/FENq1USc6ChVMXlxsuVtlK9Fz6zumhVJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721368010; c=relaxed/simple;
+	bh=i6RBH/QqZqC76oGpJhjUyharXaSYPkf20bf4KLrPN/s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z42L/gAdgiDoE1NTzE7rfXe3A6MoM1Ia4p5+obU5n9ABcVZw8InvvXYw2Tkrptf9AFOOj/55hzB+QmPjdp0wr/R161C7150zxsZBBTuztqtxKVGjQ1ngHSeT4m9ZwXVwCF9IIhgSIKTwDXsknuDjA5tCLg2KFXDJSIaLTrn8Ymc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Wg7M+OXN; arc=fail smtp.client-ip=52.101.70.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OIQm1EbE"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GDVb5C027359;
-	Tue, 16 Jul 2024 17:39:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ur0zweHse1Y6U6m3AM9sfhzUjKO4Fx6AhgfLLWB+EY8=; b=OIQm1EbEoGxfi2S2
-	awLAjsM1fl95P+v0C9zI4h1xTlKw2MssmLvHCxYyVJ845EBiJ1dGH5mbbsoFqVyZ
-	ncE8LSHW2xjS9bDLvRqH2ROmLdqNCns18ZNkZRnJ1HXRBGPnyHr8OBrAYNJN0ive
-	YusmPLHgj1gGUq6khbRQATG+HeHeeYV+8bONiu2GWreEjdxtt38RmNhh4Qxe3I1V
-	/IQ+wWqqbbyMiNzL83eD4y4tdAOndSiYcltaHFhYewu9POJ84X6D8ZzHP8zROItG
-	Os6B/S1zQJ0DM2QwDNwVMglC3NLHPxROpR2fSCNUD5r5SEKmOarY6RASuip/semG
-	xNPuVA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bghrqsj8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 17:39:10 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GHd9OE028280
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 17:39:09 GMT
-Received: from hu-vishsant-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 16 Jul 2024 10:39:06 -0700
-From: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
-To: <quic_bjorande@quicinc.com>, <andersson@kernel.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
-        <quic_deesin@quicinc.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <quic_sudeepgo@quicinc.com>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>
-Subject: [PATCH v4 2/2] soc: qcom: smp2p: Introduce tracepoint support
-Date: Tue, 16 Jul 2024 23:08:34 +0530
-Message-ID: <20240716173835.997259-3-quic_sudeepgo@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240716173835.997259-1-quic_sudeepgo@quicinc.com>
-References: <20240716173835.997259-1-quic_sudeepgo@quicinc.com>
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wg7M+OXN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D4a1qHJzGdT7sCJXhrpMH9vN7043OScJyybEpJ6RHbjPGeDFOYsz9DqgAuD5uiPaIwNjPaQaN3V+ZKTT/wwQAoUHBpQlmL+w1zQwLgLIXxKYbQDWAjVpixSS2Xh5FZpKKz1PkmcAWHkdQX8vG73n4h7TIY/wD4JHbHp8BTpXiJDb+O0vcDlgV3nES/bwlEqEbKPlb4XOLO+s9J8z3pH3vW/XNeXpbLmNj02eXj7cI6BFaqSYy1uMrjItdienhRGsul/1h/L+xHcYyAF0cL/qsKM3KEORblH0Wg/JYARXZ4P5/3fW2AHbnXkIRzqkGXkkVF42AqpYWLjJ7gXh3mzStg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tKKkT2Fq75DdePGSTJaSnccw+Eb6mSBmD3aooq2gASI=;
+ b=JzoTz3+MWoDWd5TwcCp3c6piq/roRkLBlLrvqI3D8Bcca6GV2slZIwND5681i4L59KwX3M/XaEPYyPDKmyw67H9ihuSMfyaJC6TTqWjqctye96d1c1bxVlk/tc67S0Hqg29mUZo3jI/T6MQOymPu1Av175Ra8gQGPQeP2FBY1zhz+hfc+tqZtoQCgBGW8fpZTRMl/M21+W5qV1YqFNaQn+4cCUb4Kv7ZwnZV0nWTu0vnvCEs0mpdWfbIiOLfS6YLKnxahoE0m6qYqmNJhl/9wGcORRRvjaoRLMHK6ApBF9SA9NQdkSklExLwX6aId7nGwmvBW/9rB7DSZD2MB/cwpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tKKkT2Fq75DdePGSTJaSnccw+Eb6mSBmD3aooq2gASI=;
+ b=Wg7M+OXNwz2y+HtXj3esLyQ44MUEfsG99xRJnTUulZj2CWx8vVeZf0fiT1x8p9Iv4zPh5hBDYfSYMlyqin2rkeMbpRTGx/KFINHzEJCfl6zUQdiHjVUKP3Sso8a8IAkCxmuNm+g/+ka8JTKSvBdW6zTV6vTdYF4x5h4WAIX4p/E=
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM7PR04MB7013.eurprd04.prod.outlook.com (2603:10a6:20b:116::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Fri, 19 Jul
+ 2024 05:46:43 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7762.020; Fri, 19 Jul 2024
+ 05:46:42 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>, "marex@denx.de" <marex@denx.de>, Iuliana Prodan
+	<iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Hongxing Zhu
+	<hongxing.zhu@nxp.com>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Terry Lv <terry.lv@nxp.com>
+Subject: RE: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
+Thread-Topic: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
+Thread-Index: AQHa1DUhatlJ5eGpakmi5GfGPdrGEbH5ffAAgAQWBVA=
+Date: Fri, 19 Jul 2024 05:46:42 +0000
+Message-ID:
+ <PAXPR04MB8459EE7C78F54CF5ABD5981C88AD2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
+ <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com> <ZpaO4FDEYoA0cpae@p14s>
+In-Reply-To: <ZpaO4FDEYoA0cpae@p14s>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM7PR04MB7013:EE_
+x-ms-office365-filtering-correlation-id: 7e5f279f-aa22-419b-ca6f-08dca7b62b1a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?7sb3OR8f6Fp/zoVu2ujWVuGh7jtRw84Ui2ylsbAYh3GTpVPVY7gDQMOLUj3w?=
+ =?us-ascii?Q?1Mj3W9GkwSBYXJK0d2NcR57BahTKayEdZTaHJrlojQ2RBjSPJvs3w401Y0WE?=
+ =?us-ascii?Q?Jd7fM9aVxIJsJ8b9lp2tARJnCZ4g5XYVswD3fkU/rmvEHx4NbfWOlH2ePDQX?=
+ =?us-ascii?Q?wwLgbG/CTQx+/h0RQOkrs+ayP4o2v9cynDcnXy4E6g+6ZIwyANQjp+2PpLdQ?=
+ =?us-ascii?Q?f02wVp8dtJ/BI/DUNoVcRzxQY0ywFg637927HeVRGCnHFrKfYxzphI108zL9?=
+ =?us-ascii?Q?8zq5fJw8taQ35X0ML6lgM4FBtG2MPO3w8mu9b7L9AQVmmtBLhSyBMr00SAMA?=
+ =?us-ascii?Q?z0j9LKWJjsZBxkE1DTOMMv4DP2RMQo6Gg6hIBvHOpoxA9rX0902awcaswiRB?=
+ =?us-ascii?Q?I8CWrZH36gTnoswUJo/f/nnP3U5zlTmO3tOmkAZ9PVXKhaApHwIEEIjeQukA?=
+ =?us-ascii?Q?vbnmRwPlBe04jSWFQX06GKtSXN8hQKjvyuQcm7flqqOkHAywgbr0fu3kBeeW?=
+ =?us-ascii?Q?ZaTvSLik2ZgJp5bUZq4aRjLZ/RJuxk4Vl8MKqNUHZin7+j4w2oy7XHm8g8pg?=
+ =?us-ascii?Q?VLs/s0yhEbW+sL1IrvhdfemF2sIeW6vqHTsHarQtXiCuNfb67ZfoCQpLM8el?=
+ =?us-ascii?Q?cOAp0b4YxwlKoI3UTp3gIF3qO8sa8+yerLyjENxNwp9KA2z3NVmbf/f5iKPM?=
+ =?us-ascii?Q?utfS22rmomraNpvJWxiNgi2dt2EnnIJoGGTwFWhAt+fEecpSVdSKNb+pox/T?=
+ =?us-ascii?Q?TTEcycF3++O57u+MHA2wRDmMMEuAk4fARmKx9If8pG9d+RyFzKPghhy22+IJ?=
+ =?us-ascii?Q?t3SEcAs3SsdKTsDdMmkHOfS/niS1znX1Q986/O56MEw6dqaSMnbys6HL8yVI?=
+ =?us-ascii?Q?5hIaglxkTHDC6jmvG53nbcm0urAAXligGr6uCsbVu7U/cvpQTVku+65F0lDb?=
+ =?us-ascii?Q?ptQzExXEX0j/ev1/NVX57EnAm4afdfQFqUaocW9PvLGriE4sPE96cfMpO7jD?=
+ =?us-ascii?Q?czvK1qS3aywgQYxDpem3OFXl2JP0LIITGpATUQMXrgnntA2z2/eNcHM10HCr?=
+ =?us-ascii?Q?+1vCKCeGpaNEUV24badX8vvc1UkIq7xgwdLMFHYmc66FHH94Z/y5fxuI7Xj0?=
+ =?us-ascii?Q?AJYkXQEmN/92MelriKKJInLU/C402RFpLrCjjIJAjS2XNsR/8YnFVtvbJUaN?=
+ =?us-ascii?Q?Sb9eH+KmhAH/NGwlr3eWD/k+qUlgKtnz8K1WEQRJpTrm0f4v2JJAs4wMZIzN?=
+ =?us-ascii?Q?pPM2x5VjZzadep94BmOCZk1SyFoC1MeRXWgD0DkVZHPnrp+MR056oYlUeGJV?=
+ =?us-ascii?Q?kcuoySAEreNyk0PTPXwWTnfl310kP+/hxo8AlMHWCnxF4oP4I2G6DBaLMkFJ?=
+ =?us-ascii?Q?63685Usl13Da1u3SHcU2EgYXWlIL0txD5bVJiv4fELNKZXsK0A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?T7e4sGdZFsre7bR3L5p5aokjK+c+xDkN4Idu4evsSfRbzw3xXrFsmE4JtRpX?=
+ =?us-ascii?Q?lZLtnzOUK2ItcVxbUp5+mzSOXAD7MfzmfHDinvYbxTDWUNL0oEuNB9VBPHvC?=
+ =?us-ascii?Q?IQGN6TP9wqIU4TgvUH0QMUuAcg6OosW7iC75D1dJAVDLIZHbVsB6QwSJfPgh?=
+ =?us-ascii?Q?3hOFz2rzfjVn25saB7hjI/k5BFX/kuTdnrr0RZ1JgNmoX5CJR/TaFAbNNNIn?=
+ =?us-ascii?Q?I3rYwSuV0RzkL6AyIrVhUNbytGDIvWt3KQCcZJpRHrLldJMew17E15ncLwmg?=
+ =?us-ascii?Q?I8EXG4lg0cbT2nDC5vU5tpQQGQ/Twa1ipQ8oIUImBH0f15Kg2vI9tnK4Y2vs?=
+ =?us-ascii?Q?kVfQrcL93CvG+31B7v77Isv9FSwyezx6vAX7ZOLu1s9GAiLPjjzLSDncxsdt?=
+ =?us-ascii?Q?PtexXH/h+zyQrb9w+MKESolxr/b5lxIwS1nUeRfPgsJeFNbE+tDyU20oI1dU?=
+ =?us-ascii?Q?VWs1bO5r5zVHjUWIsQxq7oHJ0n5L7CnYocGp4oOKNeQRx1GbR8j5QesHnmgp?=
+ =?us-ascii?Q?uq8gOG/k8/GTfo35d4WUiuvjm1KK8TXj6TE+XwLzOCWrky9tpkOYxaZDSggW?=
+ =?us-ascii?Q?wctNH3eBnf5+C0398eildee9NGhr9ovfGg8VeB+rgA/F+X0ABXcthP7HEC2v?=
+ =?us-ascii?Q?HExyQKwG3Qn/90IYRNw96HwYPsW+30zwdAYeoLjJXEKpGzuLhXSYnnAwpvPs?=
+ =?us-ascii?Q?ZxNu/QEgwZNXuUW/LeOKU0R+VRSp0D8Uv8HwpUWrztgaXmFhrBQ0cxQgg3zf?=
+ =?us-ascii?Q?4JZviKDypjoIpVqlEV22hwMYsiBEZ4Foe83d5S9mkAJ48xpBI9YLwLEhOyQ/?=
+ =?us-ascii?Q?WJ/BENPfWstYXAu6rbWZReb0UhcpkpUq5CkeLrdeZQ/0Y0LN2RP2t3XGSbVN?=
+ =?us-ascii?Q?b3prRuiB1aeTKO2liZkgkv2rvx6fXq+VNc5lzON6KOVyM8IPH0YuOcXMlc2U?=
+ =?us-ascii?Q?+ctAMV/94Z4K+fZQ/8BHCoduBH3cR2kWmWbYfeHxRWmV4o17B5TTbDQUTwPe?=
+ =?us-ascii?Q?B3Uvok1MC9IkP6a2CYEWPFHuaQ/NBa7tKmvC7h3d0Txh1bKNIW54SQ75quJi?=
+ =?us-ascii?Q?KAe8pghnaomZNYv+3Y8stFlSzPS4lfhcdiYRfwi4BTD4M/82RDsOE5Oafo25?=
+ =?us-ascii?Q?h6KUDg612xwHazUUMk4xB5yt/hQDH1IXYJlE0hZabFw+YvtuwD2V4hNnqVu+?=
+ =?us-ascii?Q?rlzzdNGYHkhKOI2cv9fbDjltvdk30p/O7eJedHGgcattCg2s2auuccmmu/tp?=
+ =?us-ascii?Q?lc6CPk7psxoOQUzVfHjwoltn2MVzsHy9Lv9Qua2kDMzRs2H/rn1rl14oHzJf?=
+ =?us-ascii?Q?pYDtHDW5lhNbFLYwOzoeXfSqYrmVCCwoPRFcZJcOELjeclxcZ6Ru1hZSc+NS?=
+ =?us-ascii?Q?z+koHRaijGDHnPeb6l6LKUsRFGIHIUHCl3v57AFpU6jAjvTPhgiQjPDz/6MY?=
+ =?us-ascii?Q?F4gg2ICrEJdrQcd2xkp6d1CLgEIVRiRkKdbn3V/Irqr+j54o2N9wzPaGxRD1?=
+ =?us-ascii?Q?HF+ZfrWnJmS8UikfPmQwNsqKEa4afgc3NVcM5StjpCFcQWYmxl/x0iFqvbFv?=
+ =?us-ascii?Q?iEoXXhV1OHFTsCFeJAg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XrjhJ4DBZVh6ZbJI5RTl0_NG7V--45mq
-X-Proofpoint-ORIG-GUID: XrjhJ4DBZVh6ZbJI5RTl0_NG7V--45mq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407160129
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e5f279f-aa22-419b-ca6f-08dca7b62b1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2024 05:46:42.8369
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: H9B8VkSsMnU+CgVop3wh5APC1RdhGYbXDiAWvRe16soucCPtHBI9XTo+bCNBKXWX+sQh2/4/PKCCx3H5GCCMAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7013
 
-Introduce tracepoint support for smp2p to enable
-communication logging between local and remote processors.
-Include tracepoints with information about the remote subsystem
-name, negotiation details, supported features, bit change
-notifications, and ssr activity. These logs are useful for
-debugging issues between subsystems.
+> Subject: Re: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for
+> i.MX8M
+>=20
+> Good morning,
+>=20
+> On Fri, Jul 12, 2024 at 04:34:54PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > The DDR Alias address should be 0x40000000 according to RM, so
+> correct
+> > it.
+> >
+> > Fixes: 4ab8f9607aad ("remoteproc: imx_rproc: support i.MX8MQ/M")
+>=20
+> This commit was merged more than 3 years ago...  I don't see how such
+> a blatant mistake could have survived this long without causing
+> problems or being noticed.
 
-Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
----
- drivers/soc/qcom/Makefile      |  1 +
- drivers/soc/qcom/smp2p.c       |  9 ++++
- drivers/soc/qcom/trace-smp2p.h | 98 ++++++++++++++++++++++++++++++++++
- 3 files changed, 108 insertions(+)
- create mode 100644 drivers/soc/qcom/trace-smp2p.h
+I got this reported quite sometime ago inside NXP. For community
+users, not sure people encounter issue or not.
 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index ca0bece0dfff..30c1bf645501 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -23,6 +23,7 @@ qcom_rpmh-y			+= rpmh.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= rpm-proc.o smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
- obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-+CFLAGS_smp2p.o := -I$(src)
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_SOCINFO)	+= socinfo.o
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 696c2a8387d0..4aa61b0f11ad 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -161,6 +161,9 @@ struct qcom_smp2p {
- 	struct list_head outbound;
- };
- 
-+#define CREATE_TRACE_POINTS
-+#include "trace-smp2p.h"
-+
- static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
- {
- 	/* Make sure any updated data is written before the kick */
-@@ -192,6 +195,7 @@ static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
- 	struct smp2p_smem_item *out = smp2p->out;
- 	u32 val;
- 
-+	trace_smp2p_ssr_ack(smp2p->dev);
- 	smp2p->ssr_ack = !smp2p->ssr_ack;
- 
- 	val = out->flags & ~BIT(SMP2P_FLAGS_RESTART_ACK_BIT);
-@@ -214,6 +218,7 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
- 			smp2p->ssr_ack_enabled = true;
- 
- 		smp2p->negotiation_done = true;
-+		trace_smp2p_negotiate(smp2p->dev, out->features);
- 	}
- }
- 
-@@ -252,6 +257,8 @@ static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
- 		status = val ^ entry->last_value;
- 		entry->last_value = val;
- 
-+		trace_smp2p_notify_in(entry, status, val);
-+
- 		/* No changes of this entry? */
- 		if (!status)
- 			continue;
-@@ -415,6 +422,8 @@ static int smp2p_update_bits(void *data, u32 mask, u32 value)
- 	writel(val, entry->value);
- 	spin_unlock_irqrestore(&entry->lock, flags);
- 
-+	trace_smp2p_update_bits(entry, orig, val);
-+
- 	if (val != orig)
- 		qcom_smp2p_kick(entry->smp2p);
- 
-diff --git a/drivers/soc/qcom/trace-smp2p.h b/drivers/soc/qcom/trace-smp2p.h
-new file mode 100644
-index 000000000000..9a6392043f10
---- /dev/null
-+++ b/drivers/soc/qcom/trace-smp2p.h
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM qcom_smp2p
-+
-+#if !defined(__QCOM_SMP2P_TRACE_H__) || defined(TRACE_HEADER_MULTI_READ)
-+#define __QCOM_SMP2P_TRACE_H__
-+
-+#include <linux/device.h>
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(smp2p_ssr_ack,
-+	TP_PROTO(const struct device *dev),
-+	TP_ARGS(dev),
-+	TP_STRUCT__entry(
-+		__string(dev_name, dev_name(dev))
-+	),
-+	TP_fast_assign(
-+		__assign_str(dev_name);
-+	),
-+	TP_printk("%s: SSR detected", __get_str(dev_name))
-+);
-+
-+TRACE_EVENT(smp2p_negotiate,
-+	TP_PROTO(const struct device *dev, unsigned int features),
-+	TP_ARGS(dev, features),
-+	TP_STRUCT__entry(
-+		__string(dev_name, dev_name(dev))
-+		__field(u32, out_features)
-+	),
-+	TP_fast_assign(
-+		__assign_str(dev_name);
-+		__entry->out_features = features;
-+	),
-+	TP_printk("%s: state=open out_features=%s", __get_str(dev_name),
-+		__print_flags(__entry->out_features, "|",
-+			{SMP2P_FEATURE_SSR_ACK, "SMP2P_FEATURE_SSR_ACK"})
-+	)
-+);
-+
-+TRACE_EVENT(smp2p_notify_in,
-+	TP_PROTO(struct smp2p_entry *smp2p_entry, unsigned long status, u32 val),
-+	TP_ARGS(smp2p_entry, status, val),
-+	TP_STRUCT__entry(
-+		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
-+		__string(client_name, smp2p_entry->name)
-+		__field(unsigned long, status)
-+		__field(u32, val)
-+	),
-+	TP_fast_assign(
-+		__assign_str(dev_name);
-+		__assign_str(client_name);
-+		__entry->status = status;
-+		__entry->val = val;
-+	),
-+	TP_printk("%s: %s: status:0x%0lx val:0x%0x",
-+		__get_str(dev_name),
-+		__get_str(client_name),
-+		__entry->status,
-+		__entry->val
-+	)
-+);
-+
-+TRACE_EVENT(smp2p_update_bits,
-+	TP_PROTO(struct smp2p_entry *smp2p_entry, u32 orig, u32 val),
-+	TP_ARGS(smp2p_entry, orig, val),
-+	TP_STRUCT__entry(
-+		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
-+		__string(client_name, smp2p_entry->name)
-+		__field(u32, orig)
-+		__field(u32, val)
-+	),
-+	TP_fast_assign(
-+		__assign_str(dev_name);
-+		__assign_str(client_name);
-+		__entry->orig = orig;
-+		__entry->val = val;
-+	),
-+	TP_printk("%s: %s: orig:0x%0x new:0x%0x",
-+		__get_str(dev_name),
-+		__get_str(client_name),
-+		__entry->orig,
-+		__entry->val
-+	)
-+);
-+
-+#endif /* __QCOM_SMP2P_TRACE_H__ */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace-smp2p
-+
-+#include <trace/define_trace.h>
--- 
+I am trying to upstream downstream patches, so post this out.
+
+> On top of things checkpatch gives me a warning.
+
+The warning could ignored.
+There is no public url for reporting this issue.
+
+>=20
+> > Reported-by: Terry Lv <terry.lv@nxp.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index
+> 144c8e9a642e..3c8b64db8823
+> > 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -210,7 +210,7 @@ static const struct imx_rproc_att
+> imx_rproc_att_imx8mq[] =3D {
+> >  	/* QSPI Code - alias */
+> >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
+> >  	/* DDR (Code) - alias */
+> > -	{ 0x10000000, 0x80000000, 0x0FFE0000, 0 },
+> > +	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+>=20
+> Without access to HW or the documentation there is no way for me to
+> assess the validity of this patch.  Marek, Iuliana and Daniel - please
+> review and test this patch.
+
+I see Iuliana gaves R-b and doc link.
+
+Thanks,
+Peng.
+
+>=20
+> Thanks,
+> Mathieu
+>=20
+> >  	/* TCML */
+> >  	{ 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  |
+> ATT_IOMEM},
+> >  	/* TCMU */
+> >
+> > --
+> > 2.37.1
+> >
