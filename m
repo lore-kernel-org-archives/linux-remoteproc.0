@@ -1,60 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8877514373B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE515143C5B;
 	Tue, 23 Jul 2024 21:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768992; cv=none; b=hMJXc5xcdIA+c4sI++woeoawqS+5Z6sp7SEheLwprghkFfo+FHPd+vztISvddCOsFu+eTARdEPA2rMQUS9wMAXUFGKfBtYxLdJ+ux/E5m8KDS6A/LqRQK6Ej5oXtjaarvS670Rx681x6Zdg3JQ+FPNqQtBk4D18L8XN+fWNUQv8=
+	t=1721768992; cv=none; b=GIvbwU/fvFm7MMo/POSn8911CfL75AfoHByHEOREPHYCMCZ3oo+b4nyuv2A97CEbOTa8ZNZMOW+apIt5Y9LIUiwX1kkHAG1/M26Jmi6qksynhupqX+ol5NFNl1fZvTK8DNdHV4ZvdBrY52SQDW+TuE/2M3++DaYc8upaesRe2Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721768992; c=relaxed/simple;
-	bh=Cc8LKP76yhObZRqtfmkYkGMgmX4ikT1HkVruKfwgwDE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZkSi/r4uytYagyU66+Liwh/IExqO5Cjl7Aplkw/Zl5VE+MCwfh/gHi295ce7fKHO5GFdXouxkH0D1vbar47s7AHSfhVH4W2vPSIeGDxmcbQoAJL5iLphYcJVreQef4SyrbrxrQHNGhwPeiRXCPlRb/jIzATZk44Hyutv1zPCiDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enErlsl1; arc=none smtp.client-ip=10.30.226.201
+	bh=zb7NNn28S/H97ahQEGRkZIokodj/MnPCaCa9yKyPqao=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OCnrmJeW7QFSdmQ1EaufHmOqw1ABHKNVnzzM1M6RKNkv+y1ynFporthFmfj9aYeZbQTxZiSvx9Hi2dlQjuGo2o9xrPEG9WKXVKixh0Wj2bWy3frnTl/e+wCANgI5pp9xxaD4BywiJDtdbckIukzHaUUyuhDJTHDMa4CaQ4l5A1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuslfctL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enErlsl1"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 53257C4AF0F;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuslfctL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 92807C4AF0A;
 	Tue, 23 Jul 2024 21:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721768992;
-	bh=Cc8LKP76yhObZRqtfmkYkGMgmX4ikT1HkVruKfwgwDE=;
+	bh=zb7NNn28S/H97ahQEGRkZIokodj/MnPCaCa9yKyPqao=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=enErlsl1BUDnPOkZ2dZOs+3mzQOggJlEjwYEAaWTkBERwmhcHq+xyuahLE6kpRjJI
-	 pqDI8oRpwI2IDBskm5UjfC0QO7OaV07jOM2UoX4FjF6LM16OrnOGMe2bSoJT9MhicI
-	 rd8nj5TGYS+Y8s+WE38IWuUDoxMkHIIwWPeQV/pVLSXBWKt0a9Ri5yJj6+sskfZM+b
-	 ifFBn1zfansaenhoJTBTmpUrYVSQQbd5RgYa7r2qq2anMLTT4PV9mtx53muUD60x4/
-	 T3MaQE6lM07ejOgkeAaxArCbnNpIC9iggy+FpMZ508ZKpAnBcjiHAQrqPBc+W6bo0z
-	 ckaOOUBXyu4/w==
+	b=CuslfctLqf6nZG4FAIai7eTJrHknYgbwkpHAWXMhX+Jyf+Ur13SEmAU4OFfb7Hz5d
+	 SnKUzFGyTsvWgTwzV9xBwX8Vh2mW6dbUXSuSVRS6lfFhC7KZAKdZ9CYozcJwF7UWA+
+	 gKdlYmMlfbdmYiDb2OxLAUy6o1YAsUQ5+WP42V4J9hPSMv98tW5Boxn3INV6YWBH+M
+	 mSJde28LpOf1zyEtzsLzRYBAOtlicXVI5ff8RlE/G3QUx6WanJgv/PcgHv2Dic4AYX
+	 Pq/ZMkszL1PaeN9aar+lCF0TbhTI+0P9WgrILVKtcwBt28f/tLH0mOVNI/cR0/eqMk
+	 91o5II9KTqI8A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 49623C43443;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 880A4C43443;
 	Tue, 23 Jul 2024 21:09:52 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc updates for v6.11
+Subject: Re: [GIT PULL] rpmsg updates for v6.11
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240723183042.3696037-1-andersson@kernel.org>
-References: <20240723183042.3696037-1-andersson@kernel.org>
+In-Reply-To: <20240723191750.3703388-1-andersson@kernel.org>
+References: <20240723191750.3703388-1-andersson@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240723183042.3696037-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.11
-X-PR-Tracked-Commit-Id: 19cb6058620620e68f1a9aed99393be5c3629db4
+X-PR-Tracked-Message-Id: <20240723191750.3703388-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.11
+X-PR-Tracked-Commit-Id: 36862eab884d997e182aad9163cc6ca953614a68
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 60c6119cadba52bee86b3e88011495483e26eb43
-Message-Id: <172176899229.17734.18155001485901659708.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 643af93f15be901982b2b08f241263934201c99f
+Message-Id: <172176899255.17734.2855603459731171717.pr-tracker-bot@kernel.org>
 Date: Tue, 23 Jul 2024 21:09:52 +0000
 To: Bjorn Andersson <andersson@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrew Davis <afd@ti.com>, Richard Maina <quic_rmaina@quicinc.com>, Aleksandr Mishin <amishin@t-argos.ru>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Lew <quic_clew@quicinc.com>, Frank Li <Frank.Li@nxp.com>, Garrett Giordano <ggiordano@phytec.com>, Hari Nagalla <hnagalla@ti.com>, Jason Chen <Jason-ch.Chen@mediatek.com>, =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>, Richard Genoud <richard.genoud@bootlin.com>, Tanmay Shah <tanmay.shah@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Gwenael Treuveur <gwenael.treuveur@foss.st.com>, Jeff Johnson <quic_jjohnson@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue, 23 Jul 2024 11:30:41 -0700:
+The pull request you sent on Tue, 23 Jul 2024 12:17:49 -0700:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.11
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.11
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/60c6119cadba52bee86b3e88011495483e26eb43
+https://git.kernel.org/torvalds/c/643af93f15be901982b2b08f241263934201c99f
 
 Thank you!
 
