@@ -1,59 +1,61 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8051891A4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD231891C3
 	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jul 2024 19:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282742; cv=none; b=qXyjZLddmNtFQwejkhPmvGwgeQVUzNCwGDJVRe9QukiFVjbTfJUB5l/LGYb7EPLlecxZKiCupeLKd3I9wvLXo1TqwgE7Jkzn+eD0ZNsGNEpVFLeCrcXedCURm7hiPXiDTAIB6tLh4d5e9u2ZmwvsY4LznC238gTkM2OFJSR50qk=
+	t=1722282743; cv=none; b=RcQI5LgUNSTsF13zBpmvak6sFLVsZxXJyRL98XJGRy2rC4s2VSTIZJi3C5bBcBIRCB1YkTubzyQR/r1CIbHhRyCr4pTqjNULeGb72DpLta884O/Ua3uuDZceWmdL4ChHauTpF4Z8bSOBT2EP9OLfXS0U4bRdrFUrR6HSjmIUrxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282742; c=relaxed/simple;
-	bh=ShlF7topp1rVhGyInCAgMDeIPA25eqOxSbLCWQw2i+E=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gJCmdgcct8SSUaFknSs0OiS07GAjq9cHhBrox9/UwbpUR5L0BwfM5f+7nm348Uesl7fVbgv4KTpVkDNTrSOP8cfgWyEiwUFq7IpR93cV/FFzazZRsO5q4u954+Rjr6LGXfhT1h6kCjlui5mhGAc1U1ACsaGMfo+kHzrcPUqELzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fho+fYXS; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1722282743; c=relaxed/simple;
+	bh=eAWrLr7syK4v9OEqvlyX0jICgB4CRiMGpoCpwqQgJpI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MOX1F5c9wfxPE5qCLsNSWGzqTVSMQFzJCX1s3/EaVsURzkFYdNqwaNrMWBaNiOF73NcMbYbnNVwPfcrmkXM8tvS1DLr4p3NoBRIF/h5CNhOghSGqQQeB/E5vxGp2T/BoSGIXBsLyIs4zH+DPJ0esULc4TIsSFiDM+v5JmPIn/U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DYDNzClN; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fho+fYXS"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52fc14d6689so3883717e87.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DYDNzClN"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f04c29588so6930068e87.3
         for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jul 2024 12:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722282738; x=1722887538; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VD5PikJv4K4yv/VPTbjyVvFb/B4dWYe16gK9mJyOoIM=;
-        b=Fho+fYXSWkFmrzQMp62b3lNy7xEnHMtze4/BJ+HaOobuN9qgL7C1z9EhmGN/noC/S6
-         oIxmnvdNqJsQKvOpV0yO9SiWVA24ByKZCzkto1ipiVO54Px05EvIorul9X+wtF/rS5HO
-         QVK43GgbF3r2kLHSB8NoFd0P+uhRRUkNBPHFsa/ug2GbrPlMyuTPhZ9Pdzd9bEES4pyR
-         4RRJhLeFU1Go/rsrYJ1Tafc8Fvu424UNEIE2cRaIzuu+RRVdmeNq3vkINlKStfjz1XIM
-         4W6XB2lSsySnqiY1raxbyFpIqEkjm8U5dw66m33mJ4IQuNgHUevVnG0GmUq/GBbHlQ23
-         KxdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722282738; x=1722887538;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1722282739; x=1722887539; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VD5PikJv4K4yv/VPTbjyVvFb/B4dWYe16gK9mJyOoIM=;
-        b=A9xK8PiEw+r60RxR12oD/Qv5ZOSZ2r/+pQBbxr8trjGGM7gf4/gpKCILSA08vJVoDi
-         /aNNqWvaueLm1WRQrexHNcKyF/QXzvgLtWL46Bx0hbo7mqnhJ1aOegDSq+w0GhofxNSR
-         fg1kKCKRkSD65GlSq6QOpWl8sV9P261tNGYoWdolXocY/BTpuiLvaBG3T7b/HkdV7LUL
-         VRcedKXJ1poLfbNko4rYhA3qrxBhham+o0uwEmOLnSgpGIrU6L77aLT6XqJhS23L4wL8
-         wl29KpZ40mfO6Hd7cEvNn872cgT9rrZ4mHwLMJ3d//LjlX6P/LJnwCMy/ov/dk/UR/cq
-         rMkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK+q0zSdTNrRLmw7IUh96eZuWiEN22iMvdo2fzxNvSHrb6M3zfvteL5/WwSHxervbqzzFGG9eeZApTl0lZgzMzHG/cdlr/SqS+ZXpCeUl9iQ==
-X-Gm-Message-State: AOJu0YzljT1uoHQFOhwzoYWuhuKHNsNVpdQNm2u6UCNHYI1hVAGZoKrL
-	eFa1T2LFgeYPfgtW2J5yO1F1WR9xTtyFZOTFXsJP1qrZp3hpopef7XFHEBfRrsw=
-X-Google-Smtp-Source: AGHT+IFuq/6ZLfwCne+3wXSdDbfRg7SE11vLXq3Fq6vozrWyuvXfBwn22/wxUKTwF8P6KSNFWUkk4g==
-X-Received: by 2002:a05:6512:1143:b0:52e:934c:8e76 with SMTP id 2adb3069b0e04-5309b2bcb7fmr6412687e87.41.1722282738273;
+        bh=Nvigx8ftGFF7H3oC6jrwYCq182+kCMKq67geJyZJwro=;
+        b=DYDNzClN3HjqbPrO9e2tHHpL8Vua6aB0g5eAW6bFL+y0NslgYm1GZs+Z2h33uSrtcP
+         dqqQWBd4t3bHqrpU92YQjuSb111rT5KvHN1Ku2Amuafa20ab28NQdxPUmoZzVCyjV31E
+         eIQ6bx8khWnhMNK4O/Im4JMA+nqyhkJlrBTh9iy/ar8QN78VTmSjgyiUVK8R1EJ6IOif
+         z0BsvwiIb6pjlQFuLJMNEMZo2WUJ8FiST8An5/nNIk4siJOOC/zouJ/swmZB/HzzLrRY
+         bter5rw4aDWzfeh7HrkZ74uk+8SX/fFVHYNCGqE6L84MC/sCoc3hs79cRH1jLeNaN2sQ
+         9DPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722282739; x=1722887539;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nvigx8ftGFF7H3oC6jrwYCq182+kCMKq67geJyZJwro=;
+        b=uemkxo2TvfvPyRINosN34nfYJsr6Qg/aTCZOvV15mrjvKbtpcGt6h8c+jCVMvNP3TK
+         NDah9w/HObuiFnsxUqvpW8+zdi2b63c/4Qjph4RqkKkenOGeddn+Krm+2VGaDdb/AsjC
+         DnR/CtExObMhcj0m5/EiLHg7cxk0bKf1TKf1btX/gPpWiiFVRUMEaibEhGwadzRhBgm7
+         UrUVujqlhPPf5+aKwzy7ApZ7UJK7WapfLhofUgoasLkEydEsQUQ9C9hDspCrtbRXB9ZM
+         Nmb5E1IvI1kkOXg+ahEIaBJY8s4zKgocBO8uOZvtQqlPiHHFvJZ3S7jTjEKB6f7bT2s0
+         mTcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHybev9nw/8m4/VZhDsLy/k7/ncWymV+uIcfmQrUVG0eS57ch3tZOTJUmPhI5AbZsNTZNJIm06SdAT3TcWGRxKUNbvVVIksXcrHNrG+1ZqDA==
+X-Gm-Message-State: AOJu0YwmuvYCWN/4rqsGGPKyf54BXl1H1z/8jWFPdJyu+zmcImefZE2e
+	iCmqFrGHlh72d2DZKbRbPUtpGer+zryyVZlXqoFJ7zw1U+su5RjvXDipZU0WPgo=
+X-Google-Smtp-Source: AGHT+IGZlWDv3cUJamS7yAPDFJ6RuaWt80rzcBym584uDDeV+HSA4wGbfxK7k/Vq0NoejHp/4NZMYA==
+X-Received: by 2002:a05:6512:39c2:b0:52e:9f6b:64 with SMTP id 2adb3069b0e04-5309b280988mr6581712e87.34.1722282738946;
         Mon, 29 Jul 2024 12:52:18 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.17
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:52:17 -0700 (PDT)
+        Mon, 29 Jul 2024 12:52:18 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v2 0/5] soc: qcom: fix rpm_requests module probing
-Date: Mon, 29 Jul 2024 22:52:13 +0300
-Message-Id: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+Date: Mon, 29 Jul 2024 22:52:14 +0300
+Subject: [PATCH v2 1/5] Revert "soc: qcom: smd-rpm: Match rpmsg channel
+ instead of compatible"
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -62,9 +64,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAO3yp2YC/22MQQ6CMBBFr0Jm7Zi2SLGsvIdhUUqFSYSSqWk0p
- He3snb5/s97O0TP5CN01Q7sE0UKawF1qsDNdp080lgYlFAX0SqDD3pjXEbkbUGjG+mvrTXDIKA
- YG/tyH7V7X3im+Ar8OeJJ/tb/nSRRoDHWaFnXzunm9qTVcjgHnqDPOX8BRG1csacAAAA=
+Message-Id: <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
+References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -79,77 +81,93 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, stable@vger.kernel.org
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3021;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2654;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ShlF7topp1rVhGyInCAgMDeIPA25eqOxSbLCWQw2i+E=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/LwfsCZ2h2+bBKIeZlfvZWYbksHgOKEPNGUA
- bWWWI6aAyGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8AAKCRCLPIo+Aiko
- 1ZWeB/9cbXMLT0KtCArVjCvqsIGzUvMsUngRlUMv/AXLYhUpyvejYjbUrUsJLG2kUkRSJeYyk3I
- Cml+sfuuyGUppRU+g7HTDUdgkDiS2I3Rwa0ZQWz8U46J4sN5GiFoGw59RGfN5c/2uZIp5nVnv1Q
- GburKTlsLh22P7S2QNPwl+woQe+0xyVPsaFw+wVG2LoiWLXBIo5UOdXpDAM6mtI5Ny2YL6G4UNo
- 2ZazynPxiPOqvtfmPn2dUZZesi4nyVY2TvCIUurb/7zqBvA4BCN7Gms9vc8mJ4Dspjm+X9OMMx2
- 4++twAOh8WMW22AQvqJyNFvvQ7SMLj8M/44KwZ6yxLreDx1Q
+ bh=eAWrLr7syK4v9OEqvlyX0jICgB4CRiMGpoCpwqQgJpI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/LwCTuCYU/6YSCjas4tG0SVviSh/CHbKxAIY
+ fuevwTc63KJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8AAKCRCLPIo+Aiko
+ 1al3B/sHtT2AVBPTL48APedB46dbqPApKIDMgtlWXbXRRqxinGGdDTVgPF+JEQXY43+bzpO5X9H
+ kP603xOrJ0y9Iq+d5Xnz0sRHcKENQMXbiNV2jmpFwuoe/4SORdHShTmrwIpIC/65GegFokHc3Y9
+ nP9aCSfF1WbV2JSzSRR7QKWoWbHk7o6a51sClz/cBepB3iOKObdLvbPLC5DOqgyjNFTHeN2orME
+ 7lnDmaH7pnIV+5CQ/V7Q2rIHU+0pb9t9RlWC7uzdS05a+5x8UXmSAbHMugoo6OV7KqNRx3WfHGd
+ FabAM4MlzKiRgXvJ4uG7ZXdhfEeONdh6eQ2G5BskecsAX0rw
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The GLINK RPMSG channels get modalias based on the compatible string
-rather than the channel type, however the smd-rpm module uses rpmsg ID
-instead. Thus if the smd-rpm is built as a module, it doesn't get
-automatically loaded. Add generic compatible to such devices and fix
-module's ID table.
+The rpm_requests device nodes have the compatible node. As such the
+rpmsg core uses OF modalias instead of a native rpmsg modalias. Thus if
+smd-rpm is built as a module, it doesn't get autoloaded for the device.
 
-Module loading worked before the commit bcabe1e09135 ("soc: qcom:
-smd-rpm: Match rpmsg channel instead of compatible"), because the driver
-listed all compatible strings, but the mentioned commit changed ID
-table. Revert the offending commit and add generic compatible strings
-instead.
+Revert the commit bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel
+instead of compatible")
 
+Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Changes in v2:
-- Separate fix from the improvements (Krzysztof
-- Split the qcom,glink-smd-rpm compat from the qcom,smd-rpm as they use
-  different channels underneath.
-- Link to v1: https://lore.kernel.org/r/20240729-fix-smd-rpm-v1-0-99a96133cc65@linaro.org
+ drivers/soc/qcom/smd-rpm.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
----
-Dmitry Baryshkov (5):
-      Revert "soc: qcom: smd-rpm: Match rpmsg channel instead of compatible"
-      dt-bindings: soc: qcom: smd-rpm: add generic compatibles
-      soc: qcom: smd-rpm: add qcom,smd-rpm compatible
-      ARM: dts: qcom: add generic compat string to RPM glink channels
-      arm64: dts: qcom: add generic compat string to RPM glink channels
+diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+index b7056aed4c7d..9d64283d2125 100644
+--- a/drivers/soc/qcom/smd-rpm.c
++++ b/drivers/soc/qcom/smd-rpm.c
+@@ -196,9 +196,6 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct qcom_smd_rpm *rpm;
+ 
+-	if (!rpdev->dev.of_node)
+-		return -EINVAL;
+-
+ 	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
+ 	if (!rpm)
+ 		return -ENOMEM;
+@@ -218,18 +215,38 @@ static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
+ 	of_platform_depopulate(&rpdev->dev);
+ }
+ 
+-static const struct rpmsg_device_id qcom_smd_rpm_id_table[] = {
+-	{ .name = "rpm_requests", },
+-	{ /* sentinel */ }
++static const struct of_device_id qcom_smd_rpm_of_match[] = {
++	{ .compatible = "qcom,rpm-apq8084" },
++	{ .compatible = "qcom,rpm-ipq6018" },
++	{ .compatible = "qcom,rpm-ipq9574" },
++	{ .compatible = "qcom,rpm-msm8226" },
++	{ .compatible = "qcom,rpm-msm8909" },
++	{ .compatible = "qcom,rpm-msm8916" },
++	{ .compatible = "qcom,rpm-msm8936" },
++	{ .compatible = "qcom,rpm-msm8953" },
++	{ .compatible = "qcom,rpm-msm8974" },
++	{ .compatible = "qcom,rpm-msm8976" },
++	{ .compatible = "qcom,rpm-msm8994" },
++	{ .compatible = "qcom,rpm-msm8996" },
++	{ .compatible = "qcom,rpm-msm8998" },
++	{ .compatible = "qcom,rpm-sdm660" },
++	{ .compatible = "qcom,rpm-sm6115" },
++	{ .compatible = "qcom,rpm-sm6125" },
++	{ .compatible = "qcom,rpm-sm6375" },
++	{ .compatible = "qcom,rpm-qcm2290" },
++	{ .compatible = "qcom,rpm-qcs404" },
++	{}
+ };
+-MODULE_DEVICE_TABLE(rpmsg, qcom_smd_rpm_id_table);
++MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
+ 
+ static struct rpmsg_driver qcom_smd_rpm_driver = {
+ 	.probe = qcom_smd_rpm_probe,
+ 	.remove = qcom_smd_rpm_remove,
+ 	.callback = qcom_smd_rpm_callback,
+-	.id_table = qcom_smd_rpm_id_table,
+-	.drv.name = "qcom_smd_rpm",
++	.drv  = {
++		.name  = "qcom_smd_rpm",
++		.of_match_table = qcom_smd_rpm_of_match,
++	},
+ };
+ 
+ static int __init qcom_smd_rpm_init(void)
 
- .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  2 +-
- .../bindings/remoteproc/qcom,glink-rpm-edge.yaml   |  2 +-
- .../bindings/remoteproc/qcom,rpm-proc.yaml         |  4 +-
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 74 ++++++++++------------
- .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |  2 +-
- arch/arm/boot/dts/qcom/qcom-apq8084.dtsi           |  2 +-
- arch/arm/boot/dts/qcom/qcom-msm8226.dtsi           |  2 +-
- arch/arm/boot/dts/qcom/qcom-msm8974.dtsi           |  2 +-
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8976.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/qcm2290.dtsi              |  2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi               |  2 +-
- arch/arm64/boot/dts/qcom/sdm630.dtsi               |  2 +-
- arch/arm64/boot/dts/qcom/sm6115.dtsi               |  2 +-
- arch/arm64/boot/dts/qcom/sm6125.dtsi               |  2 +-
- arch/arm64/boot/dts/qcom/sm6375.dtsi               |  2 +-
- drivers/soc/qcom/smd-rpm.c                         | 41 +++++++++---
- 24 files changed, 88 insertions(+), 73 deletions(-)
----
-base-commit: 668d33c9ff922c4590c58754ab064aaf53c387dd
-change-id: 20240729-fix-smd-rpm-9651e87a9bb0
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.2
 
