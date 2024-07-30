@@ -1,317 +1,296 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2082.outbound.protection.outlook.com [40.107.20.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE4718A923
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jul 2024 19:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282746; cv=none; b=qjAP1ubY8i7q3QBhNLhABjGarXVpVTKHl460QyJ53QBlbdEliQmsZzTDx89AvSKiVkP0GAkrIfo4/yi+2FpkG05eej25Dlislf5wU29+z3tlyDjZcyaaqqP0r+S0flxikwaLzrqq65xDuHkNjiIZc4NUQt7kKpaDb53I7AHka1I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282746; c=relaxed/simple;
-	bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvG8WTUaqjcf75wMaf6HAGo+cdkK2T2W+OcxQHcl1VsU0D0EAzR2sQ+gFQnnYDl9UYuEhFfmBBHNCOcENh/3ma1oiv5CNHc0jk4wMUHvzFWBJ/tXX208GGiyuoRyTbHVN5ewxbQzar+vtMwXdmvHyA6ffGz3fNSnjh6SgsB/HjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnOqvt/c; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F918562A;
+	Tue, 30 Jul 2024 08:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722326790; cv=fail; b=QrKCun/sAh0o073WJzd8C9J2z39z/3oM/Wfee3blBMclB07BvnmjDVvrPkoQ9b7OPruRmyw3oXD5anUjbtIIGCGGzC5CJj13LA4z+wPkqHobdRxSigsIkSwgbW6zm/rcRwq/UW0mONpfUicxdicLqWS7jEVkxvAzcsBZ/bQypGU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722326790; c=relaxed/simple;
+	bh=Jzp/7ZbcggecF+p3aM8ytPSwFiGfFlDNIiHID6a8yZ8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aeg9GllHxs9Lyo3WJKlx65Z7PPLNyX/LTdFEKEd+Ec+Ufqhy1V0h4axP2SGX7IgUnsMFV0PKQTKdCsHEiPZLVVbsrr7OYBvWSjVynJiNbVN2sKnB65hIOrw9RgQnYzVaQSPkNMJy/HlVH9MmoXAndKxtnlMMEWDZ9IjQervhnHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=A26/+D5r; arc=fail smtp.client-ip=40.107.20.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnOqvt/c"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so6124152e87.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jul 2024 12:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722282743; x=1722887543; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=RnOqvt/c0e99g1wVhG8Heva0kcftKlRzHhhm++bjtQnuAltn3TSp72xr3PWMV2w13T
-         1nBMHAsJrJf4ThLFL0WwZIHVEr31HMqtDsUbRawj3/FylXarigvrLngUGyQkEYIoCHIS
-         /0ASiK1iD7EQYYDioZqMQet/9O+E2oR0PJU8ZDqd7Jg7P3evzwzG0kIQnzKj6B3o/QD7
-         hiZQ4GlTRR1hOQ1T1vNUF1dN3lKqWoXMtoapJiHIlJJDGeMH4RNs7xUH8ggz1jQ/RdFg
-         edcDGhNOgqboSOnazGYzyGGKrRag7yihi9y0IqLrZGTjqjn5DRNHCalhwO+UiKAh5dWH
-         lMxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722282743; x=1722887543;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=D+Xna+ZMRW+1kH+28buKpDLHuXMLD7rC1BOms1zlzpSj0uTmTaYx9YP+3hbJ5uiZa2
-         mWNolNTmuAz+QPg3BLydX90aq7WKR9FDPKr+CoIf2CAZ0xT5z4AsZGKIwD7lXp8c36bf
-         ugSOaUQ4hFS5ma0F7Z6BYevbuPAf3z7Z/t8j64nIEETjMM6Z3F0O+zP4FviMhSqy3Ee5
-         MLsauVCvHtHF6f8uY4fupXqLjP8J/DaRaMB6TuojM5XOT7xHS4LD7ZlC9YFmKeZ1pOiH
-         VrpjDQHx6yxobUp2in7AOnyVMsb8jqEqXnU0I7X0uohlmmVGJ/Axyadvoej3BExmHv8V
-         9Nfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5J5Ar/q6M9wGqjqItYMHgdDPowuMrPi0BefQt0s++KRL+u1kxpo78w8hLi3c2BGlFc8YvLGXaOXjuZQD0Ab32R+PjgubfVPHtc8gfzL38iA==
-X-Gm-Message-State: AOJu0Ywm0VNKahBIdZBX6guczYp8aZCD5y76NlvBk4pIWGkrS0pyjlXE
-	rK7Fh/GPQUOmJzzVMK5WmMKM9G6leYGEpdXivIpy32NMnExSARGNuJUIa52hRnM=
-X-Google-Smtp-Source: AGHT+IEoUa5Kq4BiEJEbD/pnaPgcbfWAsGmbgkhlgJhiVuF+n53mG9ru8cRtBtnLWxCCpIfBP96BCA==
-X-Received: by 2002:ac2:4f07:0:b0:52e:a60e:3a08 with SMTP id 2adb3069b0e04-5309b25aa12mr7561340e87.11.1722282742634;
-        Mon, 29 Jul 2024 12:52:22 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:52:21 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jul 2024 22:52:18 +0300
-Subject: [PATCH v2 5/5] arm64: dts: qcom: add generic compat string to RPM
- glink channels
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="A26/+D5r"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ChVpztWf5NHemvNbMvAV3f30RKG+7L2IX4AM2TOKSJLkaY/eIdo8qIgNaX4zBMih7QqyhF8kTLU3Jq9GwubNVyPYicD3Oa4KwMydZp+RKkbGQqlyndlXBkOVKkSRvM4NGyMoe6OIxzffEJ8Zv6n/mJ8HKuD4LbB8t7uWDstZiIFV0sfZIG56cBaagE5dEIEjSfg74RkyBRtgd55U15biXkrRLFxfWARgR6R/6OevHrhPrept4krDX5YFLvT/fFoL5jI0RFZgPJ+f1D0h8ozWihb7GomWmMtYvLaUtCqGbuOBhqlX36eqBfiA6Q+5l8Hqy2EuQVn+FpA7vZLovnwt8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dx04NGiohApi6tHPoJ7HGxWcR9mW85G6IFxwGpGLvBI=;
+ b=PgXud5mtVRi0pKqXGRzXgKjHdamDQiRI1OAlnVMV0X3456U7xBPvlOV628HL/o2jD9XsvFRUZl2xpHPFGMXlny8EyirgkvZwMkCjxvyrM4BuCLort326WTIPnCZWAKm+W7bLyRhDjTCsqB0Xb8jNny4rljDnHqdac2P++ieuhhouOMFDxvUyC/MJ/l6HjAgT+Ot1EacufGFTZ7qlPjLG02onEhSnQRWQ22EqCOcewKos9kHw2oSfhm3+jjPu9BL8D/lU8cZhqdbMIR8eeaOrC/sJNzQKi7OkVtpvzHBDcNNcM29Sgw0eMrEY0IGd5Zop363Rc6FJhYMKXH0dSnxh4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dx04NGiohApi6tHPoJ7HGxWcR9mW85G6IFxwGpGLvBI=;
+ b=A26/+D5rq2gRm8/HIA6eG6rOFSl2iwOMO3g46McHg1gRCm44abXcCpMt2ku9Vza4F1bb1gJTIEV9X0Zh67GtGhOaECcgHXkR7UcGUMngoEqIKlJWgxh6pVy6U358VnOEi66ET1ToqLk4M+mhHPxhj2KzGHgMgjphQpYc08YAbFsj3Zh44tcAX9bBtPqPOMwr6DhPgnvRXzvsdWN5uEMDDhHS2Ez9semW3mlHnJ0q8f4TApqtHqGCJDk47jURvwLJKArbomILEiina3IcyJ3gtVWLYqVBjEwI6UVZoD25uijcX7zLDBiosCGUVMI4toauOap9VjKtjQHQRWEGEh4O9A==
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by AM0PR04MB7059.eurprd04.prod.outlook.com (2603:10a6:208:192::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
+ 2024 08:06:24 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%5]) with mapi id 15.20.7762.020; Tue, 30 Jul 2024
+ 08:06:22 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Daniel Baluta
+	<daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, Marek Vasut
+	<marex@denx.de>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
+ i.MX7ULP
+Thread-Topic: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
+ i.MX7ULP
+Thread-Index: AQHa2bdERlEy/iUIMEm8jNjZj1/DHrIN5pMAgAESTTA=
+Date: Tue, 30 Jul 2024 08:06:22 +0000
+Message-ID:
+ <DB9PR04MB84615384294C38EEA5B95F0088B02@DB9PR04MB8461.eurprd04.prod.outlook.com>
+References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
+ <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com> <Zqe23DlboRPSXiQO@p14s>
+In-Reply-To: <Zqe23DlboRPSXiQO@p14s>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR04MB8461:EE_|AM0PR04MB7059:EE_
+x-ms-office365-filtering-correlation-id: a474f3bd-14e0-4098-0795-08dcb06e8075
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?PM15qrOMV8YvruuLpjUABjbj/sp+Ack9lHu7uqXixT1KqsHFVp1S9N43lQrf?=
+ =?us-ascii?Q?XZtlqtwzrmKZ5mgIhtw9uOtsSKv3N+2nPnbbWEIfxe2z1dh3nrFGG1cFbsb5?=
+ =?us-ascii?Q?u+Fg7AkJDG3gUCTG4eeBaPiYEI0UaWWvIqkEHIDheiaJx56uKQ0Fj1GpCKOf?=
+ =?us-ascii?Q?wnKL7nTjRLvpGOkOjrKl2IAEz2NMPhcBXDt/jCz1HAwbnnl5/3Y3wNqLoMLH?=
+ =?us-ascii?Q?mFQkg/g1CpknZj+J5FKuA1Er99i8tzhEJ1WKMCIPurUVXI78B8DSY4+I/nK2?=
+ =?us-ascii?Q?a0o1wHVSjAEVQia3LpieM9yY7NH+ijHL1ZbKg7kgRVxStgOUqBoGIdXkxFR+?=
+ =?us-ascii?Q?Z8NEuvgNpp4qpsx/QQiLVF34eN1Azt7Q1bkFKMib9HQkyaX0e9SDU3+Zsz1m?=
+ =?us-ascii?Q?c1JpkSx4CKt1OB4HViDn2y5PohSY4A35GE/II9HMFlyCLzcKv7xjpihbLV+O?=
+ =?us-ascii?Q?x7i6F0TnBOeyj4rh8Fy4IUsc8ODyk+zG5CaojfWHzb5w2fc3gbxL5eFByL2O?=
+ =?us-ascii?Q?B3OkOEThGRNJ5QQz+moeHx4zvmrDflbf86xwns/KPz06UVOl8JDMKx55fMyo?=
+ =?us-ascii?Q?jPmLnoBbjKn60RiCwuQdEOyA/zqTVTfDy2sjVQt6l3v6xLVMRZ6uK8Gv0qlj?=
+ =?us-ascii?Q?3DuVM1QabRO0YVMpDAx/xKTagoea41ct9pG2XkCRGLZU6OFpq4wOR16U9/yg?=
+ =?us-ascii?Q?wOfIBPk1h2EQzu3ye/epS1FTZUMrT0tAnDksA+1lwCoXYd/iuuiq8jmZc6B/?=
+ =?us-ascii?Q?s16xD445eL8xZpc/RWsyOvvwrGUUtBb+q+prYRmnmVDW6I7iDYvqDDSyHLIo?=
+ =?us-ascii?Q?Kg5J+KRisdLw6SNnLGIWbq+V4kojjwsWpFo/JOHK1cqpr5m1nOIHxwGjagi/?=
+ =?us-ascii?Q?1fL9AMUWItB9v5WdcjQdoTavyyyko2y2AkaITUb+Iqc9i9VH1CT/R7vs94G1?=
+ =?us-ascii?Q?NvZhlT2Yf33foYnGTwT5HgTJpixnpuT2n2phnXjJqNru6M740qorPZffI9dk?=
+ =?us-ascii?Q?WoTqNr3Kb+XC2em20WppK7X6kUa4DeGM37F1M4uKW4VmmnX95xt8O32Uv2bu?=
+ =?us-ascii?Q?q3j3Z6+p7505p7e09D6ROCNsLOHbQUHM84fcz01jlXihnqTctVisQFMwbhMn?=
+ =?us-ascii?Q?iF4SBAJkgo86JEubAkeNZzrfX8bHZKkM3RT+TBr1NTcQ8N5ec3fGW8ED2hkV?=
+ =?us-ascii?Q?wXANRsLTo0z9Zfbg6heWTYK1GmM76IsIAJfbda1a3g+5/A0XTEj6r7GOe1ij?=
+ =?us-ascii?Q?ZO4fYozmhGrcjCwWnyqkU1zVAtSymiFiDZdcxIv4ktAMpl8TavTglL1tJu+s?=
+ =?us-ascii?Q?hyOmHTNxl2Jyw5DOZZU8ZVmwwFqs2QahPHAiIEY2pk/5TOszJ+ExkDUb0mFT?=
+ =?us-ascii?Q?SkwHb+KwX87kSae5MxUg+1RnCoIcAXTG0/+cqePF9ekheG03uA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?5PewB+6jTYMEEolddVup1Tce5WT5W7yajq+wD9QZM1L2dkgomVY7M3ZgrISy?=
+ =?us-ascii?Q?aaMca1j/uQtBn82c2RGMGgPZPzHgDIbpaCdT36L3n5+k4fu4UIK3gF67mC5+?=
+ =?us-ascii?Q?IEpB81iBotK1nUWED2lFecF6kmveOc0FjmZmxqH1DQf1pxOpNeWz/0+lA6vZ?=
+ =?us-ascii?Q?Z/zzHqLnpaBVG7GFFTchJcfwLEFERDv1I4gz54REYYgI52kwyaLbYvA2lAir?=
+ =?us-ascii?Q?uFJhS/2l6szhQM4hW6RfYq0hfHLXqMBI38RWr2LuxML+0svvIgkN7bU7UwiJ?=
+ =?us-ascii?Q?J+Hj7AkdpTXkbQFvf+oXyyADIBj42ZAG5NA+j84mXVuBbVN2y12InAn3Dj0W?=
+ =?us-ascii?Q?9S70ARTATakSDdKNPFQQ9SHYKJsDZpxX5fuVgQ9jN6kzK4BOPEkmD6vH0tSv?=
+ =?us-ascii?Q?5lHiah7eN9L/3CALEVegmw/HAcX4ZwtSw1Go7zNWVlRn0LZkU5fX7c3zapBl?=
+ =?us-ascii?Q?in1iyFXAZX6J7Mwgw0hbbFU4mPQCyxrsriMmv2+uQTMk4ZYJYOOwU02N+GwL?=
+ =?us-ascii?Q?fQUKUULsCPKXzr2riT6g46TLzGIDYm1qNKdB3a9dMqilXhPu0YN/fa8/Qrrd?=
+ =?us-ascii?Q?vFSTJ3YhiOJ7yCOzNA+qFM3MC5LI23Q3NM+kFUeKk8b5iyOBQJjZQcpjiI7m?=
+ =?us-ascii?Q?FH1RIpBemg2sw4olMZWlU8wYi0RfhQkIszKz8i1fAgYkhc5pCHdO5IGH7SWG?=
+ =?us-ascii?Q?zlCg9jU+bDfsQBaYf+/zTtmv8Y9G0K6v7f4KFP+nQ/ZFMtQenxi2iWH1QAL0?=
+ =?us-ascii?Q?DKSe4ECQZNEjSaNA8WrxNjT/Z4s8towcRDwVP8Qx+IJgX7Q0oZgjZk4gMqY9?=
+ =?us-ascii?Q?hPTC8KfUTlIy+ybIO7u1CQwaCSAcbOrGIKuhH7ZHKQK74fob5TMsRO7Qgotv?=
+ =?us-ascii?Q?RwHWWltFnmptIu/XEi0Um0aVs1CckrMR19fDDV2fmFH/sm4qHuMNp/HnJh4D?=
+ =?us-ascii?Q?gIunQnvy1VLR2RHOBc58iXrSkU7pPU3tDy6ItTJw/LNn4ihz50jt+d30xo8J?=
+ =?us-ascii?Q?FZSVWYdL0x7PJOuBJxzhdtoJXjQklTUkT4GkQfjjS+MIu3iz9FjOnpOi3GB6?=
+ =?us-ascii?Q?iGBla6ljNXsFhx19BTlpoTrz+KG1f0aOvY4uNZP/kJaivTcgDLNlKdti8elz?=
+ =?us-ascii?Q?EkVRRkGjkt8tL7p41M3xoc1rMzYmLf1BG7QEkcpTIwvSWpB9l4PvwMPQsNHF?=
+ =?us-ascii?Q?gziRtsjxanymAQWlkMl0a0RTq/ABafTNPWQaIm9cfdc+UqrQT9vmNH4Pf88o?=
+ =?us-ascii?Q?KjM7jQqUJFGbEs3azI0wrx4ogFDSW0WCGXrehZlG3h5vnBTXB69K1LtZFt5b?=
+ =?us-ascii?Q?ISTGwOcTfv9g4eEyBNEufedZfG+tWLi/UnOMYJKcYp4/rZLnlxcMkzrKGqn6?=
+ =?us-ascii?Q?WDzQyBxsTZFqmTungYrJ9WEsXQly2XyhCZC1dVl4n9Jvu3Wth0aBd2r75ci8?=
+ =?us-ascii?Q?fbtiepGZdGqaW5Wk/y5Zm7wkdci1YJ3bpK25ISz9AXU8VlvJR6v9tUiziA9u?=
+ =?us-ascii?Q?+Jr2qFJTeCo3CLqWxn8YybrsOmWc9BiSXw1J5oE0Bm8rqaHm6i+Rp7waszkJ?=
+ =?us-ascii?Q?dpFqxrUl7KffPMvYuoc=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-fix-smd-rpm-v2-5-0776408a94c5@linaro.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8405;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/Lxkkf1Hee0/3zaCdHJ6DntkURb4bZWzrS7n
- pJMqskhXzmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8QAKCRCLPIo+Aiko
- 1UZ+CAClqTh6Y/FVSqyLyzKrVNGkoLtqAbBJkvsHJsoWgv9SgemgVqpfTXKk4lz9RojYo9XEZH7
- WFRiwQiU6VbsPlonYLUSCL6haENBgHtA1hcw65PlowiXM8Ysd+fldhDy2izWDz6ctABM2jOK95Q
- HBFNfeuHUcRPbincq6FErpQPZ9VAyFzMffLoYeJqwk7xwAeP/X/uPsuRDhnz24aF6oIOz5f5FPn
- YPZHOL76TZ+zkv4ag5u77AJERC7YUWjP5OypOXlcqri7qfj/CuckVMtqz0tWq/plyj7FcrdFVku
- N8EJvJoPmrAeTCGsYwALJm7NdgYRflH6gmn91d23ZNCCSJPi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a474f3bd-14e0-4098-0795-08dcb06e8075
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2024 08:06:22.7206
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bjqXP/t26dmbLskQfv//P5XJpG8QnNq3PmMXHExJUcHOAnYLSToGdmJjYySvHw1aJiAWMn+I2D2ECFIe/6iI9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7059
 
-Add the generic qcom,smd-rpm / qcom,glink-smd-rpm compatible to RPM
-nodes to follow the schema.
+> Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off
+> for i.MX7ULP
+>=20
+> On Fri, Jul 19, 2024 at 04:49:04PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The
+> i.MX7ULP
+> > Linux poweroff and restart rely on rpmsg driver to send a message to
+> > Cortex-M4 firmware. Then Cortex-A7 could poweroff or restart by
+> > Cortex-M4 to configure the i.MX7ULP power controller properly.
+> >
+> > However the reboot and restart kernel common code use atomic
+> notifier,
+> > so with blocking tx mailbox will trigger kernel dump, because of
+> > blocking mailbox will use wait_for_completion_timeout. In such case,
+> > linux no need to wait for completion.
+> >
+> > Current patch is to use non-blocking tx mailbox channel when system
+> is
+> > going to poweroff or restart.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 36
+> > ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> >
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index
+> 01cf1dfb2e87..e1abf110abc9
+> > 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/of_reserved_mem.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_domain.h>
+> > +#include <linux/reboot.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/remoteproc.h>
+> >  #include <linux/workqueue.h>
+> > @@ -114,6 +115,7 @@ struct imx_rproc {
+> >  	u32				entry;		/* cpu start
+> address */
+> >  	u32				core_index;
+> >  	struct dev_pm_domain_list	*pd_list;
+> > +	struct sys_off_data		data;
+>=20
+> What is this for?  I don't see it used in this patch.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcm2290.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sdm630.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6115.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6125.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6375.dtsi  | 2 +-
- 15 files changed, 15 insertions(+), 15 deletions(-)
+Oh, it was added when I was developing this feature, but in the end
+this seems not needed.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index e1e45da7f787..8edd535a188f 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -168,7 +168,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq6018";
-+				compatible = "qcom,rpm-ipq6018", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				regulators {
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..08a82a5cf667 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -181,7 +181,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq9574";
-+				compatible = "qcom,rpm-ipq9574", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 7383bcc603ab..0ee44706b70b 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -312,7 +312,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8916";
-+				compatible = "qcom,rpm-msm8916", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index 46d9480cd464..28634789a8a9 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -252,7 +252,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8936";
-+				compatible = "qcom,rpm-msm8936", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index a4bfb624fb8a..d20fd3d7c46e 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -199,7 +199,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8953";
-+				compatible = "qcom,rpm-msm8953", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index d62dcb76fa48..c76cab9174be 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -247,7 +247,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8976";
-+				compatible = "qcom,rpm-msm8976", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-index 917fa246857d..fc2a7f13f690 100644
---- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-@@ -188,7 +188,7 @@ smd-edge {
- 			qcom,remote-pid = <6>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8994";
-+				compatible = "qcom,rpm-msm8994", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 0fd2b1b944a5..e5966724f37c 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -472,7 +472,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8996";
-+				compatible = "qcom,rpm-msm8996", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 7f44807b1b97..2bcfa480509d 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -352,7 +352,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8998";
-+				compatible = "qcom,rpm-msm8998", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-index 8f3be4c75db3..79bc42ffb6a1 100644
---- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-@@ -215,7 +215,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcm2290";
-+				compatible = "qcom,rpm-qcm2290", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index c291bbed6073..cddc16bac0ce 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -177,7 +177,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcs404";
-+				compatible = "qcom,rpm-qcs404", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index c7e3764a8cf3..c8da5cb8d04e 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -372,7 +372,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sdm660";
-+				compatible = "qcom,rpm-sdm660", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-index e374733f3b85..41216cc319d6 100644
---- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-@@ -376,7 +376,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6115";
-+				compatible = "qcom,rpm-sm6115", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-index 777c380c2fa0..133610d14fc4 100644
---- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-@@ -192,7 +192,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6125";
-+				compatible = "qcom,rpm-sm6125", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6375.dtsi b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-index ddea681b536d..4d519dd6e7ef 100644
---- a/arch/arm64/boot/dts/qcom/sm6375.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-@@ -653,7 +653,7 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
- 			mboxes = <&ipcc IPCC_CLIENT_AOP IPCC_MPROC_SIGNAL_GLINK_QMP>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6375";
-+				compatible = "qcom,rpm-sm6375", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
+>=20
+> >  };
+> >
+> >  static const struct imx_rproc_att imx_rproc_att_imx93[] =3D { @@
+> > -1050,6 +1052,22 @@ static int imx_rproc_clk_enable(struct
+> imx_rproc *priv)
+> >  	return 0;
+> >  }
+> >
+> > +static int imx_rproc_sys_off_handler(struct sys_off_data *data) {
+> > +	struct rproc *rproc =3D data->cb_data;
+> > +	int ret;
+> > +
+> > +	imx_rproc_free_mbox(rproc);
+> > +
+> > +	ret =3D imx_rproc_xtr_mbox_init(rproc, false);
+> > +	if (ret) {
+> > +		dev_err(&rproc->dev, "Failed to request non-blocking
+> mbox\n");
+> > +		return NOTIFY_BAD;
+> > +	}
+> > +
+> > +	return NOTIFY_DONE;
+> > +}
+> > +
+> >  static int imx_rproc_probe(struct platform_device *pdev)  {
+> >  	struct device *dev =3D &pdev->dev;
+> > @@ -1104,6 +1122,24 @@ static int imx_rproc_probe(struct
+> platform_device *pdev)
+> >  	if (rproc->state !=3D RPROC_DETACHED)
+> >  		rproc->auto_boot =3D of_property_read_bool(np,
+> "fsl,auto-boot");
+> >
+> > +	if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4"))
+> {
+> > +		ret =3D devm_register_sys_off_handler(dev,
+> SYS_OFF_MODE_POWER_OFF_PREPARE,
+> > +
+> SYS_OFF_PRIO_DEFAULT,
+> > +
+> imx_rproc_sys_off_handler, rproc);
+>=20
+> Why does the mailbox needs to be set up again when the system is
+> going down...
 
--- 
-2.39.2
+As wrote in commit message:
+"i.MX7ULP Linux poweroff and restart rely on rpmsg driver to send a
+message," so need to set up mailbox in non-blocking way to send
+a message to M4 side.
 
+>=20
+> > +		if (ret) {
+> > +			dev_err(dev, "register power off handler
+> failure\n");
+> > +			goto err_put_clk;
+> > +		}
+> > +
+> > +		ret =3D devm_register_sys_off_handler(dev,
+> SYS_OFF_MODE_RESTART_PREPARE,
+> > +
+> SYS_OFF_PRIO_DEFAULT,
+> > +
+> imx_rproc_sys_off_handler, rproc);
+>=20
+> ... and why does it need to be free'd when the system is going up?
+
+
+Sorry, I not get your point. The free is in imx_rproc_sys_off_handler.
+During system booting, the mailbox is not freed.
+
+Thanks,
+Peng.
+
+>=20
+> > +		if (ret) {
+> > +			dev_err(dev, "register restart handler
+> failure\n");
+> > +			goto err_put_clk;
+> > +		}
+> > +	}
+> > +
+> >  	ret =3D rproc_add(rproc);
+> >  	if (ret) {
+> >  		dev_err(dev, "rproc_add failed\n");
+> >
+> > --
+> > 2.37.1
+> >
+> >
