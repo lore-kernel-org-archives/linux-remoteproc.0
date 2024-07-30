@@ -1,69 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD4A187322;
-	Tue, 30 Jul 2024 08:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7648149C41;
+	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722327000; cv=none; b=uRBef/4CEuqmBPRBk6WskYBcqZhR8duq8ipgg5Vn34+gJ2ZwcQKZOcJtG/VqYYgRXuWb89tjo3ojsoQxp1DhLmdjim0LV830qIlhbdakXJimJVIbleJb7Vb5CH3KJ9I5rEahwg7t5VjzY4EF1hUFgtvY1rlTVKLpcbDgf+K/jyI=
+	t=1722368728; cv=none; b=ZklC8vaDkQP/x4EHDEk30rKM3VthYtd2bZRPNMww0l6KDxMA6xsPeRIhrt9hG/q7ZoYFsiRkONN9d2LLtG7+metkFxQcPJvFNwvQlrLVdJSTFIdqTXhe0B/5WRb1F5Lwu2Xtw3cyBZo97U/FE+KjBa/rSfOVcdcgRe7PxOED7ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722327000; c=relaxed/simple;
-	bh=cJVhMzIFD//rJ9+dNgrDb8IM9dN1TwNup6EeJnJFkCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pFKxHPrVNo5liNyhbO3GWvpaL9O/isVQCm2gK+KiO+SJjglKumzP9M3vXKwY2I8VqeqCaoAqRgOOD4VSAqXQo4GR+TZlUC5tgACxl+L9f5k1KutrXP4UyaUf95xkr2uLMX67jjWUgyzeuSTKK8ApUjVVV3Lqaqd1IJwhTrL/M70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ij81QCv0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722368728; c=relaxed/simple;
+	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBB1fsYZOlJHzo1pxWPC6Twk4g/RWSqQccxb4EN2TFFp6p2DIB8XMc/ep7OXneXaIdVlgQZTLnjhi/BMYZbX393oZgv+N80XWqFdN6ovRjhncd0xSvgPJKMfmP5aqbcrpDMM7U3e2HgZtZssnsyNBNsfBGv1iQGBdDysrOC9wNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKM4hSs9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ij81QCv0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EB7C32782;
-	Tue, 30 Jul 2024 08:09:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKM4hSs9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34374C32782;
+	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722326999;
-	bh=cJVhMzIFD//rJ9+dNgrDb8IM9dN1TwNup6EeJnJFkCg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ij81QCv0Cm8UTX+qhSnNb+J1wrQKn3nUALdH9Qw3yW0OlnBOvgxN+oaXX5PklTKc1
-	 c9yb8zIaFQuz/S5Abr50/xBiX96XPbsUkQpZaN4mhCCeup9t2fktrOplJXi5MCUlpz
-	 7ZhIoSg4U6WygXHSLTekqvZAFKm/nQndgsJNWFn0MCWQJR5Li/DPwWHtlYBBwlmgqy
-	 VN73RjljfX+DqQHt8ERO10fd8tpNTftI2flv0R02sUOqAr2tt4RbTUsujcM1RPeajG
-	 wzUvQpQYBtA2IAfKZtH20HR2wkMk2Qi9SUmkItuhNf/zq4vDXH7XgBXx+0afzaRx7T
-	 9ozdcKbTFnxxg==
-Message-ID: <02e23c16-dcdf-4572-affa-e3bfe1f42856@kernel.org>
-Date: Tue, 30 Jul 2024 10:09:52 +0200
+	s=k20201202; t=1722368727;
+	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aKM4hSs94pSbl8XDmbASUr+D13FvPq2tlNPTxpf1huOglb+fLDrpNZigvyNl2YhSM
+	 /PTHADLsxd+sKipAXOlAppKGc4qbA44CDlEY86inE4tB2L/neWdCci6xc3Swsk2CMX
+	 DnpHd5KRcM5Gh4n+G6GbvKbJPiAsq3unNoCQS2/ryvqhK7czQdp9nCw7YXcCx2B77z
+	 NDZODbO2Qo8rsBRMW4LfooAeWKSOoJhV9wIVSvYBa3yGRoXMni5DHdYhbqpLpXkmM8
+	 f3EN5y7N1Y506GilLvp5UOVLMvcZ+S7YZQcIR7HAP2NZ2hxp06u5MwCiZCTI2jINWy
+	 0Cdw4phunBnuA==
+Date: Tue, 30 Jul 2024 13:45:26 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+	Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: soc: qcom: smd-rpm: add generic
+ compatibles
+Message-ID: <172236872511.2035012.2163751854672645367.robh@kernel.org>
+References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+ <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] ARM: dts: qcom: add generic compat string to RPM
- glink channels
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
- <20240729-fix-smd-rpm-v2-4-0776408a94c5@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240729-fix-smd-rpm-v2-4-0776408a94c5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
 
-On 29.07.2024 9:52 PM, Dmitry Baryshkov wrote:
-> Add the generic qcom,smd-rpm compatible to RPM nodes to follow the
-> schema.
+
+On Mon, 29 Jul 2024 22:52:15 +0300, Dmitry Baryshkov wrote:
+> Add two generic compatibles to all smd-rpm devices, they follow the same
+> RPMSG protocol and are either accessed through the smd-edge or through
+> the glink-edge.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  2 +-
+>  .../bindings/remoteproc/qcom,glink-rpm-edge.yaml   |  2 +-
+>  .../bindings/remoteproc/qcom,rpm-proc.yaml         |  4 +-
+>  .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 74 ++++++++++------------
+>  .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |  2 +-
+>  5 files changed, 38 insertions(+), 46 deletions(-)
+> 
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Konrad
