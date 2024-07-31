@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AE31A7F7F;
-	Wed, 31 Jul 2024 13:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944291BC072;
+	Wed, 31 Jul 2024 16:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434055; cv=none; b=pHh2dYkdrP33JIG/d6bBD89sB0xDFx2kpXvfIBxpq11uTrmotCfzh4VAJEuRgLKFCXQj8nweKWb0Y38jWIImCq2wUxZ6vPkepooVYS0lucRTCP2IuVTMYhZ48Sula7SD8FLDQkFM5wqecu/+t0TJbnpmYBBP26Dkde7EuqVCqgs=
+	t=1722444584; cv=none; b=AiQvQreIST5KyDLmcpQQTPLYR1OH1NTsCGFJw/deTybWQ4Fl8ZzKvD+cXGrOZ0332kWyW4boRo86k/DI0XcvYAoHtEQso5DUipkqP8ZPlIXeGwfHRO/j3dFTIAl5OL4zgqW13kk8swhovY4mmEyYOXifuSFLhwnHZag1qr+qOno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434055; c=relaxed/simple;
-	bh=j2+B5vXXeQ5s9OKJrTPY4wFM+7j+hrAV9R8PgeXq0KI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ITS3pUaAnkbleQQ/nE0tW65Zoj+OTrbrrVdIV2Dubqub9KllT3GVCU9woUpHBXNt3NqtnPvJ1HwD+NK4yAqDfDBN8Wrl8W9DE8ghQ5R3kOJd0ZUfbKjmqt57VJCTlh6Jne4S2jLwlHfgf3/qi3RVlqtsxagxBwaNXxzV1YolFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jpij+K8I; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722444584; c=relaxed/simple;
+	bh=GoGpfDsJGUlLUHeMRPIkNHxSgCdvJq6sAO0/AHmn9kc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qAGoYo5Rik23kicUV86+bg3PU7tD7HnzUgp1SyVdlzvP5HgDg7Nfwa5GTWxVokQ/9LH0Hdq5Xssa01lrQ05asrEfrmWjU2cvdFn7kzrsAcSKdV/61z8Ncp88s/wv5pDsU2br9PqmNZu0EhqXxGEuygDXxL8gGTieI1RpvungdcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQhUvlL4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jpij+K8I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847B0C116B1;
-	Wed, 31 Jul 2024 13:54:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQhUvlL4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC70C4AF0B;
+	Wed, 31 Jul 2024 16:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722434054;
-	bh=j2+B5vXXeQ5s9OKJrTPY4wFM+7j+hrAV9R8PgeXq0KI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jpij+K8IdfLMqVGStuHqkE0Mkk7EfWmruiN/MDGeZEfmSxJe7VmYcMz6I4Wcv+qfH
-	 mN1/Cib8xKPZVnUZp54s1wy1DPVx4b4hdNpYTt+GBEjwBHBOpdEV/awkdZYT0IeGgj
-	 wrcLmMNUsAMOSs+e0HD5/bY1i30wHaq/avdNj6/3ThNkRBGG/WR93OEMiXLuJ3AWr1
-	 3H0XiT9gB0zK8lcK+WKYH83CS7Vu51OWOWeuStwjeWD3fUQjfXNRT3CaUbeOoSmCLp
-	 TYl4GvsIkFRsr/Bku+y2c+1XXtzYF/lkkeDppq1mt/X9a9P2tWMPMMgEzGKwb8WxAj
-	 s35c9wHTvoXRQ==
-Message-ID: <428063ec-44a8-4dca-8891-4a35e6d29056@kernel.org>
-Date: Wed, 31 Jul 2024 15:54:05 +0200
+	s=k20201202; t=1722444584;
+	bh=GoGpfDsJGUlLUHeMRPIkNHxSgCdvJq6sAO0/AHmn9kc=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=DQhUvlL4lyKEOyf7PSa65UIn9YtO73CaiIY8uAs+7T8zGVjsjk3L14LeklnKlDwsz
+	 MsZXsUXVOKQmOnKtoyMBajTQ2Lq2qqgAjaxaQEAQ4lL1W5e9TarX9XUMLOsRPwJ7vY
+	 Tqa00LO384iHUPg8CKwhC8i/z7mS5PJoRxkGur8tWrdZ8PX/7bHXj4dE5I1r2n8zPt
+	 gVre/6LdJ/i/O4x02eh580/sHzCN6f+L2FKAqwlW6YQj1RUqEXnsnjq441pL5X+l6y
+	 4eRTek8JnpDrnEHkbsvRmvXChpn+53tULNC4Z8Ia+76+9CXEV5aiONJAewGviuUkrl
+	 ewafshKjc3Bgw==
+Message-ID: <42335d10-50a4-439b-b112-ca27c48aca6d@kernel.org>
+Date: Wed, 31 Jul 2024 18:49:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Support multiple reserved
  memory regions
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: =?UTF-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?= <Shun-Yi.Wang@mediatek.com>,
  "robh@kernel.org" <robh@kernel.org>,
  "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
@@ -62,7 +63,7 @@ References: <20240731121730.1196-1-shun-yi.wang@mediatek.com>
  <20240731121730.1196-2-shun-yi.wang@mediatek.com>
  <daadc099-4c07-4dda-9caa-662583629cde@kernel.org>
  <6163500e4457715e04d520b7287517acf2ab1dc7.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <428063ec-44a8-4dca-8891-4a35e6d29056@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,44 +108,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <6163500e4457715e04d520b7287517acf2ab1dc7.camel@mediatek.com>
+In-Reply-To: <428063ec-44a8-4dca-8891-4a35e6d29056@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 31/07/2024 15:41, Shun-Yi Wang (王順億) wrote:
-> Hi Krzysztof,
-> 
-> Thanks for the reviews.
-> 
-> On Wed, 2024-07-31 at 14:40 +0200, Krzysztof Kozlowski wrote:
->>  	 
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>  On 31/07/2024 14:17, Shun-yi Wang wrote:
->>> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+On 31/07/2024 15:54, Krzysztof Kozlowski wrote:
+> On 31/07/2024 15:41, Shun-Yi Wang (王順億) wrote:
+>> Hi Krzysztof,
+>>
+>> Thanks for the reviews.
+>>
+>> On Wed, 2024-07-31 at 14:40 +0200, Krzysztof Kozlowski wrote:
+>>>  	 
+>>> External email : Please do not click links or open attachments until
+>>> you have verified the sender or the content.
+>>>  On 31/07/2024 14:17, Shun-yi Wang wrote:
+>>>> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+>>>>
+>>>> Remove the maximum number of 1 for memory regions.
 >>>
->>> Remove the maximum number of 1 for memory regions.
+>>> Why?
+>>>
 >>
->> Why?
->>
+>> For future applications, MTK SCP will reserve multiple regions for
+>> specific hardware use.
 > 
-> For future applications, MTK SCP will reserve multiple regions for
-> specific hardware use.
+> That's not a reason to drop constrain on an entry.
 
-That's not a reason to drop constrain on an entry.
+Maybe I was not that clear, so to explain more - entries must be
+constrained, so provide widest constraints in top-level properties place
+and narrow the constrains per variant in allOf:if:then: like:
 
-> 
->>> Instead, add some descriptions to ensure the integrity
->>> of the documentation.
->>
->> What? How is this related?
->>
-> 
-> My original thinking was to keep the memory-region option.
-> But currently, there is no maximum value limitation, so I
-> add some description. Should I just drop the description directly?
-
-Read all comments.
+https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
 
 Best regards,
 Krzysztof
