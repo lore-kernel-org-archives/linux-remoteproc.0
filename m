@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD361C3F22;
-	Thu,  1 Aug 2024 00:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39324148311;
+	Thu,  1 Aug 2024 00:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722471858; cv=none; b=R+epbCgjG+lErZWeuCVCitPs1hlRLdiJG3BntLjhK9cuJl5EzcRSqNxzMhW4+3n3i3VsIc7LO3yLlSA6/EJJ+tau5TR6OMu0LUtbdc/c0EKI4fpXAoA78gCgGNRn2IlSWpUWYJss7sEFh1uD4oynmPkjLdMhelsbP11JunNA2uY=
+	t=1722472217; cv=none; b=XHkdT4WzknwlkspkU58Qlpi91z9cPC81AEJbMwTvrvQbzsvH0XkcOpbZuCXyMcP8HZgr5pBDA4cgEkDQv397MQgYhKEHLnwxmDk+bAOITA19VCLOPugZaWt9xv1K8F6BZqvCiAxgq7M9VLyBh+2mg+r2GGwa8d+8OSUutTjX/uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722471858; c=relaxed/simple;
-	bh=EVPwq1sDcAQhcspKyjX8dbFlGtklH7gDVyYBehEBk90=;
+	s=arc-20240116; t=1722472217; c=relaxed/simple;
+	bh=3dNmDyrVzL/5VJctZY1xc/77qmq5Zday9dQ7WM40AEs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mgmVVtYwja+XdTt6dRUqyHbDlUFFxySNcrrtsQzFZ5JA9b3bcuX9N+UlnNF3rhkSUBUQ3AG6NAh1edXceR9ktRS+n5B4wp6A6/rS47mBJ0EpFyRsVEFYWQG3y/ORfT9p/QjzV3z11nvd6f8C3lqcNf0y/hHD7MR0p9JvBZxYiW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmMGIQOv; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=cy8L9nnVDTiV7v6pfgAhst9Jc702A/aRvaoTfNGH4BP29dysCg+aBajIKyvKh2Yy7zbzPwOLC8FzmgckXj8WPqESCFJirphWV61fXjuBZdKxtuQiUb8oF+sGCNM3caVaKTREZD55+06Yb+elCBMS+y0KQgMS0iI2zzyHuEI3Nmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSgeFqYu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmMGIQOv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C38CC116B1;
-	Thu,  1 Aug 2024 00:24:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSgeFqYu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C31AC32786;
+	Thu,  1 Aug 2024 00:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722471858;
-	bh=EVPwq1sDcAQhcspKyjX8dbFlGtklH7gDVyYBehEBk90=;
+	s=k20201202; t=1722472217;
+	bh=3dNmDyrVzL/5VJctZY1xc/77qmq5Zday9dQ7WM40AEs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QmMGIQOvuk3uO3kNxFBPm+ln8DrFN8GZvvtRpbTmDXooC2CE9p1O4R9xrqAu1gfO3
-	 z1541NS+792g1u9s4XDHCfNPsGswJeoNQUcdGS31ioJQfE/QeJZR5ZZzsNOiVvLzjv
-	 tqZcSmbn/PX2oFQsWzmg3/pc+ZWXWKZFklkYwSEwuobACO5xj20gbKfOi8r7eTL3iV
-	 0KArZ97RFphdV+S3JBbEHrKM3CgYkcbx+jwiCQou8tXcrg+EBLMIH4duXnfrhk1Rck
-	 rDZI18BfCI3bG0lZs7GcatT7NNTZsZ0pzFYm0W1ElptsDzCMvqsIPO/Eg4zncZksEo
-	 0BsgoqnL9R2fw==
+	b=TSgeFqYuKjKrqudB9QcqDppcmKhyZFPf661uXjFBBSNEzBlmnNsVr2r7fRDM5Fw8F
+	 Fs1tLtbC96Ws7xJ9mPWe6VJ6i5jL8iVw2mcqscbaaQNGMRlpYKiQw3Fxxhs55ocDv1
+	 aggMUE3aZFSeZ+uBvZ58JVuSh8MVt1Hwyea9kDlsSYCxlvoEOx1lY6AN0bV20XWn5C
+	 3kKEh4kE3Doto18JX/+X07yDpbckIHYu+bxJrnn+yY4ZSgkLFL2caLhGIlcgZIM1LD
+	 gIf6LnFw2PiVVHthORn1n5p8/pV1mMCwmW31eaUNVyeAg0Hb3Q0zVXBFOceohi9YSV
+	 mXW1C32cGZkGA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Richard Maina <quic_rmaina@quicinc.com>,
 	corbet@lwn.net,
 	linux-remoteproc@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 40/83] hwspinlock: Introduce hwspin_lock_bust()
-Date: Wed, 31 Jul 2024 20:17:55 -0400
-Message-ID: <20240801002107.3934037-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 31/61] hwspinlock: Introduce hwspin_lock_bust()
+Date: Wed, 31 Jul 2024 20:25:49 -0400
+Message-ID: <20240801002803.3935985-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801002107.3934037-1-sashal@kernel.org>
-References: <20240801002107.3934037-1-sashal@kernel.org>
+In-Reply-To: <20240801002803.3935985-1-sashal@kernel.org>
+References: <20240801002803.3935985-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.43
+X-stable-base: Linux 6.1.102
 Content-Transfer-Encoding: 8bit
 
 From: Richard Maina <quic_rmaina@quicinc.com>
@@ -102,7 +102,7 @@ index 6f03713b70039..2ffaa3cbd63f1 100644
  
    int hwspin_lock_timeout(struct hwspinlock *hwlock, unsigned int timeout);
 diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index ada694ba9f958..f279dd010b73e 100644
+index fd5f5c5a5244d..425597151dd3e 100644
 --- a/drivers/hwspinlock/hwspinlock_core.c
 +++ b/drivers/hwspinlock/hwspinlock_core.c
 @@ -302,6 +302,34 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
