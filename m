@@ -1,51 +1,48 @@
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DE184A51
-	for <linux-remoteproc@vger.kernel.org>; Wed,  7 Aug 2024 20:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EA9148FFF;
+	Wed,  7 Aug 2024 23:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723063416; cv=none; b=WwxRd9vgRr5I9B7tt4OkKjd07ayDxrDltdjKvaOr10waxEaIGJvh3gLWCIMvExUgbczhqDFgWjYGHryeB4LIysIellpqC+mGjSadDHnt6kYZCHTVc9eSg5AjXl9pT5SyWvwpmpyirUWYbBIlKrJDGkW9tKTCXvujgpGwK1KEjO8=
+	t=1723074144; cv=none; b=leIlLy8PsBn4mBTG+T1m1jtLz776kx1E7RLr+0zpRuFnY86EGE80MyElW9xh2mGIYC/XI7S/fG5nwNUoc7BjntxJRazcbunRELtd5508XljZZyVUf1Zvz2/BZnSXItYNiZRSqA8XkhOAOjowJLE44m82uM61fXNMtFpyfJPfarQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723063416; c=relaxed/simple;
-	bh=TUdmzF4Dz7pi04rHPVvMU10XnGbfRwdQqk8C4Hwo1mg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wk6UpdMaFFP3GC0e8bEFTmHf3v4GghqskkZYd0wmWcEu1cnl/RQVoTizOBJBcPW7hvVy+lQQKQ27eWVaACHwtXKyfkCpBN48NUGK1zXe8Ncq+KNDnqGoa+Sk/qCvuJ0CUE+3r11Ndoykj4v9fWk53Uu7kDPzUDKkMenU6oUJeqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=xMvaotYz; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	s=arc-20240116; t=1723074144; c=relaxed/simple;
+	bh=SDnooXiMPjveErWtDF5D96JovIXPHI2wmHlDI8V+H4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QukFqri1KpAVH9K1BuajuJqrpj1eJTuqk4JMNBmOog6zQZyyB9c5TM2UkDicsoBU1/rNWxoqdcO1ftlEMvGhkIv5NN9ZScslaMSISAcqQwVkcRPep98t4VTmlINZGhCBY0DhLa6hMO7emO1jSmx/N2nz2CQlke05oIUfbumqflY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AYrj7uNR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="xMvaotYz"
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id bmpIsxC6Rg2lzbnVHsOXr5; Wed, 07 Aug 2024 20:43:27 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id bnVGsauTBAJzkbnVGsk3Ud; Wed, 07 Aug 2024 20:43:26 +0000
-X-Authority-Analysis: v=2.4 cv=RvnDLjmK c=1 sm=1 tr=0 ts=66b3dc6e
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=OgNgpzeeqhBM75w_DO4A:9
- a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8meIjU4p2sBqnFEM+5AxNwgHdl5Y20EE/5kwe2KxHEA=; b=xMvaotYzL+yiEzCGrCWW+wHEAc
-	MXpPO0kieNg0j3f5pkp45kfgOiLw9RjCYMqVg0Ecck2PA7nJbSGlpWSC5XPH0j+ZdJC2tdoTUYLZl
-	yqeobpBM5OyStjnukI5+06cRPv4qRaJWND2oLDK/Tg/t+uGIRUYgXWOvpBgU9DMgWN2oPzy+Ph3MZ
-	vKrVOS3HFZhPxc+66Hx4qNdy7EthAzk7+0nNMQbj4Y52tUi9QLnGVK1PDPa5u8vVNCy79hTuPcVu4
-	OJuXzx7tArnTFqDdmG6s2YzZWSaQXjYBZqKTl6rbaYYu17lsTylyzHjsL204zaR/4sLYbOJX81ueE
-	ShACXJ3Q==;
-Received: from [201.172.173.139] (port=48540 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sbnVF-004IhR-2N;
-	Wed, 07 Aug 2024 15:43:25 -0500
-Message-ID: <41c0cb7a-6fd4-4757-8d1a-7466fa268666@embeddedor.com>
-Date: Wed, 7 Aug 2024 14:43:24 -0600
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AYrj7uNR"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477KQ7ab008155;
+	Wed, 7 Aug 2024 23:42:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jmYhQoRmvdrHL78PtexV6fn9tkT+h6zQBs5+EBNa7+U=; b=AYrj7uNRb91waKLb
+	7soD/rcmPy4ll1iQlYt1u5T1jBwwaM+IqgLK9c7FOlSBvgRlbxvn13h1FV7rWe3t
+	cKEyL4zJKdSTd94IDPdpY2CKDISJ3minxEDiVnfEYf2ENLglHJFV+J3FmeywOmLA
+	Epx3WQu0KmMOBAH8oZw4oyRVr3eYaFtCHLgAMRaQSBoVD6u2Y6NyNQ8AZi+MbjVf
+	MNvZO5j2hSywInKiz7ZNajRm5BYz/yeFdHjLxfMkqEv5L50JrymJDxsKPiWq1Gqw
+	wsoKHBtGTF7t/eKyah9qCCM+DYVG+pwDoXUi1V/ZzfzxEQroqWXC4Gj+RBuz69DM
+	DohRxg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vfy58a9y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 23:42:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477NgIqP014023
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 23:42:18 GMT
+Received: from [10.71.112.173] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 16:42:18 -0700
+Message-ID: <3088a9cf-aad4-4495-8fb1-bc9cad1e0386@quicinc.com>
+Date: Wed, 7 Aug 2024 16:42:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,68 +50,49 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-To: Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <ZgG8bbEzhmX5nGRE@neat> <202404290937.C22567C1@keescook>
+Subject: Re: [PATCH 1/3] rpmsg: glink: Tidy up RX advance handling
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240805-glink-tracepoints-v1-0-a5f3293fb09e@quicinc.com>
+ <20240805-glink-tracepoints-v1-1-a5f3293fb09e@quicinc.com>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202404290937.C22567C1@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240805-glink-tracepoints-v1-1-a5f3293fb09e@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sbnVF-004IhR-2N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:48540
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfARO2AjiKnBPZ4SRMWYLmzcKqZ+RSekQm6Ey6fZu06BKSUps85ytqrFJ0ZF/hcmgS17f3xUYG3n1yiR6vvF3uEdYzKSIVuamLExzBHxC7deaPbmZwNXl
- 7R/TavJcGrnhjw45qc0uuk13+C4mavCUWWjlmAz2BuefwX3RvQb7gHH66WsWVAFtNjcSZXtnEZwSZWZ8d8ByIbl0Z4TTe5SCwxlCHngqgCuYj0Hv8mE4BCRs
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XvRszvJ1CT5JDCj1xYRIjo1RbnU4oZ8M
+X-Proofpoint-ORIG-GUID: XvRszvJ1CT5JDCj1xYRIjo1RbnU4oZ8M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_14,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ adultscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxlogscore=647
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070166
 
 
->> @@ -48,7 +51,7 @@ struct glink_msg {
->>   struct glink_defer_cmd {
->>   	struct list_head node;
->>   
->> -	struct glink_msg msg;
->> +	struct glink_msg_hdr msg;
->>   	u8 data[];
->>   };
+
+On 8/5/2024 8:56 PM, Bjorn Andersson wrote:
+> The operation of advancing the FIFO receive pointer is sprinkled between
+> the interrupt handler itself, and functions being called from this.
 > 
-> Instead of this change (and the container_of() uses below), I think you
-> can just simply drop "data" here. I don't see anything using it except
-> the struct_size()s which can all change their "data" argument to
-> msg.data. e.g.:
-
-Whaa.. I'm sorry, I totally missed this response. I think I was traveling
-a lot back then.
-
+> Push all the RX advancement operations to the individual handlers, to
+> unify the style across the handling of the various messages.
 > 
-> -       dcmd = kzalloc(struct_size(dcmd, data, extra), GFP_ATOMIC);
-> +       dcmd = kzalloc(struct_size(dcmd, msg.data, extra), GFP_ATOMIC);
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>   drivers/rpmsg/qcom_glink_native.c | 22 +++++++++++++++-------
+>   1 file changed, 15 insertions(+), 7 deletions(-)
 > 
-> With those changed, I think this patch becomes more readable.
 
-Yes; I think I can change the code like this. :)
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
-Thanks!
---
-Gustavo
