@@ -1,48 +1,32 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B91633D5;
-	Thu,  8 Aug 2024 00:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EECD1C32
+	for <linux-remoteproc@vger.kernel.org>; Thu,  8 Aug 2024 01:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723076244; cv=none; b=oQQ/U4UkuWsGPdrFC9amXs/k4tx95SdBEHhnxGN5KR0Z1/HwVI7nNDzQarRsmQvcRXeNyMZWQ84cZviwoZr7FFQj0lj1g5skjAXGY+ghBv6LAwr7wJpSsEFsZoGhmPSxspaV5o1OyvpN2bAHabtxXaZ5BpE7OBadpaL5gGgmjd8=
+	t=1723081033; cv=none; b=c7IXU3RfVhibGWIPsqsET1V8D0RCtljlRW9yepsRKdjrdRciEmk1Ahf5fCX1tLdTudIY/UUOY3N6sn48OmYTl+Yna+NiZ5hw/SYhdtXqqpq/uCYrAahrreE7bQSpPBhgzaLjFWMQvkgUjlakp9ODcP+pS0wIS+m18G8QW+RPgMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723076244; c=relaxed/simple;
-	bh=6YbU9hMbNaZvymkd3XCUiSbv+Z7i0Zpk+Fql9bVOppM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aYUJZZmFsHfA6DSXJjyXXOGbDFaIZ4tFGzReu3YLj9YUnuPfyIIG8UcoEDZahKsGOPzdtDvWg5PT5Uvlm9eAMlB0KEfPPAe4osJ2pgBZz3qIsC4VidWbkCXD9TY9qdeASuzvBsU0tAnSdMbWhMCV1I1uGZRbQJKrI7uu6w+1U9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VGW7l2S5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1723081033; c=relaxed/simple;
+	bh=gRLyKoMg0DWhgl0zVaiQaUVB7AEetEMezdLkDa7GMjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJkmVSZpwAgaI2hKrPOonVMiBKvqMgDt4MFYQLiai3+H0SMFbvAiPYmB35D/GQ7LAb2VRgK0FTv7ZXEECuNSuTqyX+yG3X/AJ9iGgQQgw/uBUwMepWwpuDZFXycP27TPhSxJUS7/yilW4oi/fIC7W9Ihd6u1HnK7Ddzns0qaWjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rpPPw2gl; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VGW7l2S5"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477K0WW3018981;
-	Thu, 8 Aug 2024 00:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cr+3Y+YO9Zn/uOS+ypiYeC7bbRLQIrLN3WkyWVWHQo4=; b=VGW7l2S5aZIiDcEd
-	Vm6mh1Q5K2R6iCEPM5vUmuanBlum2F3ju8nn7zq1BRmRy7xLC2B7rk5pLDoLLXm7
-	ye5CUVmQ9IfD6fv8ddDk2zWxf4T1NVgZYWnOFmOodizuoMPtkFqnx3JpnSuFibyD
-	r45UxcHbesu5ZcQlxAVUg7TN3gRCYBzYETU5kJI352r22vO7xSbE8OhPP2+FB5TB
-	BvQIh0eY+fwhJ8V4+8/vAky78mNIkzu542pKJIoMSkGSXWb+BE9gimZjTAiiCaDp
-	TBPBUtzH7aDOTzekbY2VdEk3BUJp+mdBRs4SyIT6qSoA01+QhDJjGjrctWb7sb8W
-	1nXBrA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpq354-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 00:17:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4780HIwu014528
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 00:17:18 GMT
-Received: from [10.71.112.173] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 17:17:17 -0700
-Message-ID: <32f201b8-c0c6-42cd-b9f7-8a8abb33eccc@quicinc.com>
-Date: Wed, 7 Aug 2024 17:17:17 -0700
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rpPPw2gl"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723081022; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=mH8254NBLvcuf4h8WC2ZfPzI9DxBk0rkYDY1AhyBiGQ=;
+	b=rpPPw2glLUAvPFY5y2AOONkMotRIUfCZLGLRBXezbo4nyMOPdWpgyu+NrgmM2vD06vvuHGiZ/FZsYsyDZ/Mv+oyHDWZkdJ1emxyhXVu5qggwuOnzIbmwNK/ik1o8Rw7GEN3cfVWJQYoFw8LZHEdCoGsHbNaUUTYGsTPmnzMlliA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WCKS0YA_1723081020;
+Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCKS0YA_1723081020)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 09:37:01 +0800
+Message-ID: <3b38eee4-1dc3-45b3-85d7-d4923f5e571e@linux.alibaba.com>
+Date: Thu, 8 Aug 2024 09:37:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,55 +34,53 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] rpmsg: glink: Introduce packet tracepoints
-To: Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240805-glink-tracepoints-v1-0-a5f3293fb09e@quicinc.com>
- <20240805-glink-tracepoints-v1-3-a5f3293fb09e@quicinc.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240805-glink-tracepoints-v1-3-a5f3293fb09e@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH -next] hwspinlock: stm32: Add missing
+ clk_disable_unprepare in stm32_hwspinlock_probe
+To: Gaosheng Cui <cuigaosheng1@huawei.com>, andersson@kernel.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
+Cc: linux-remoteproc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20240803061443.287117-1-cuigaosheng1@huawei.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240803061443.287117-1-cuigaosheng1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BuwhCGt_UMI4P4dY7Am2WOOxmidpt7wJ
-X-Proofpoint-GUID: BuwhCGt_UMI4P4dY7Am2WOOxmidpt7wJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_14,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 mlxlogscore=962 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408080000
 
 
 
-On 8/5/2024 8:56 PM, Bjorn Andersson wrote:
-> Introduce tracepoints to allow tracing the GLINK packets being exchanged
-> with other subsystems. This is useful for debugging both interaction
-> with remote processors and client driver issues, as well as tracking
-> latency through the communication stack.
+On 2024/8/3 14:14, Gaosheng Cui wrote:
+> Add the missing clk_disable_unprepare() before return in
+> stm32_hwspinlock_probe().
 > 
-> Channel events are traced with both local and remote channel ids, as
-> well as the textual representation when possible. The channel ids are
-> useful when matching traces with traces from the firmware side logs,
-> while the textual representation is necessary to identify channels when
-> we're starting to trace an already running system.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 > ---
->   drivers/rpmsg/Makefile            |   1 +
->   drivers/rpmsg/qcom_glink_native.c |  96 ++++++++-
->   drivers/rpmsg/qcom_glink_trace.h  | 406 ++++++++++++++++++++++++++++++++++++++
->   3 files changed, 501 insertions(+), 2 deletions(-)
+>   drivers/hwspinlock/stm32_hwspinlock.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+> index bb5c7e5f7a80..a4e3b9a9e29d 100644
+> --- a/drivers/hwspinlock/stm32_hwspinlock.c
+> +++ b/drivers/hwspinlock/stm32_hwspinlock.c
+> @@ -103,6 +103,7 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+>   	ret = devm_add_action_or_reset(dev, stm32_hwspinlock_disable_clk, pdev);
+>   	if (ret) {
+>   		dev_err(dev, "Failed to register action\n");
+> +		clk_disable_unprepare(hw->clk);
+>   		return ret;
+>   	}
+>   
+> @@ -112,8 +113,10 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+>   	ret = devm_hwspin_lock_register(dev, &hw->bank, &stm32_hwspinlock_ops,
+>   					0, STM32_MUTEX_NUM_LOCKS);
+>   
+> -	if (ret)
+> +	if (ret) {
+>   		dev_err(dev, "Failed to register hwspinlock\n");
+> +		clk_disable_unprepare(hw->clk);
+> +	}
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+I don't think this is needed, because if the device initialization 
+fails, stm32_hwspinlock_disable_clk() will be called to disable the 
+clock automatically when the device releases its resources. Please check 
+how devm_add_action_or_reset() work.
