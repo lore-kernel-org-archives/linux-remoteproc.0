@@ -1,120 +1,117 @@
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5013C814;
-	Thu,  8 Aug 2024 05:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5295A187322;
+	Thu,  8 Aug 2024 07:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723094446; cv=none; b=JC0QrElH78THEUXHr+wO/XtgsvWnx4ZtEV7I58Yey00yRyz485J9QF1oQgQadUnuxig3xb8G/eJj5Q/F4kbnbo9QANCKUxdnDT0RIm7LFob6O+Gd/cO427GXYC2mHJWXouXFV9CzFr9adH7Cyp9sy3/8/728RF+X1SAG18Y9e4A=
+	t=1723102897; cv=none; b=AW/qBumrzFJjzQUd81YXjMxLDFlZ05jJgy70SW12TDlU2Pyx4RZ7q7cXRDxVhW2OiSrECcQtTEFX4zEYKR26Ucnl92bv7xMuUmMyjutgPjL2E2tMkMxS6mvXVci55YTq5bjuUl8zql7Tmj4+HXk6LfJsDnWyqpLO/jCkq0MPN7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723094446; c=relaxed/simple;
-	bh=hMPG68e6k3OpSOOimZthJaI9R7KPj52PD1QIznQJBk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q1EtqmNfVPIPR/5N3Tvh1Ecd3b7GzTNZbG3KW9WbE/oSr1KWfsIQeN3kTaoF1CpFzeTbHLq2wU3VmJZOdJMzXXAOMSVWNSlZ5tfcT00pOWwTiV2lkmkdUSiFT2YUHttZj9ozsL4446g/12s4jbmlf4+ve7kUgFzGMVG94GdCg+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rVwfLYpb; arc=none smtp.client-ip=198.47.19.142
+	s=arc-20240116; t=1723102897; c=relaxed/simple;
+	bh=qMhepFYwz1ECVfZUTwMQStPIOCqfrzgPSLuuFOmDH5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J+qX3flStAdI5vr3XoAEu//X1WRFP56HwS2zkSAbinZbpkmqqwBATkJlYalFeKPL4n1IbKRgHVQLl49LFYOQFUpsYqPP4JDB2bJgQG0voKbywcQgEQlpW5vrXvLNya3dAOLAaYTvIsWBoHihN/oZCnD5JQlbwTYZ/MGFhoi4FIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GAxUusqc; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rVwfLYpb"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4785KeVt090430;
-	Thu, 8 Aug 2024 00:20:40 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GAxUusqc"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4787fVDQ127512;
+	Thu, 8 Aug 2024 02:41:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723094440;
-	bh=euq7HWPdWrs6GO5Xe2C3wf9o77aPHduNiu8luvY+WQs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rVwfLYpbazojIYviqR2+dtDLm8V1vpa7DcIXpz0Ma3h//qjESCO8HL5bVMK3KE/R+
-	 BanbQBg1Z0BqJYzVPjmvhCAydp2Q7WGmOGVFPnLDF36+UP3jgqJSlYU0AkZ9ol8bN4
-	 iLxd2oeX5mn94h+ftKO3e3ETZqAo6o31BTP/vHeE=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4785KeRU011666
+	s=ti-com-17Q1; t=1723102891;
+	bh=eicows78LRobN5BEPLvbUgPocoApdpNS0Y/ZlM9iDPU=;
+	h=From:To:CC:Subject:Date;
+	b=GAxUusqc/LlSCKM4iPg4Pr3oirdt64HZQMh5tBtTJqL3m/DBTvNTb14VdbHwikof4
+	 GIQgWsa5LR36jahcUtZizU6ETOV8qxCSLKrWuJNOCuKjbDSsgG133Y7bdrOrmHVT0o
+	 I4gFxxkYUF5LXxal6BXDYRqrBgjVfdDYgoX82nbc=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4787fVxa071124
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 00:20:40 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 8 Aug 2024 02:41:31 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 00:20:39 -0500
+ Aug 2024 02:41:30 -0500
 Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
  (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 00:20:39 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4785KabX072198;
-	Thu, 8 Aug 2024 00:20:37 -0500
-Message-ID: <00311e5c-a8d4-46dd-9f59-f7fea5ae4104@ti.com>
-Date: Thu, 8 Aug 2024 10:50:36 +0530
+ Frontend Transport; Thu, 8 Aug 2024 02:41:30 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4787fRZN020900;
+	Thu, 8 Aug 2024 02:41:28 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] Defer TI's Remoteproc's Probe until Mailbox is Probed
+Date: Thu, 8 Aug 2024 13:11:24 +0530
+Message-ID: <20240808074127.2688131-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] remoteproc: k3-dsp: Acquire mailbox handle during
- probe routine
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240807062256.1721682-1-b-padhi@ti.com>
- <20240807062256.1721682-4-b-padhi@ti.com>
- <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hello All,
 
-On 07/08/24 19:21, Andrew Davis wrote:
-> On 8/7/24 1:22 AM, Beleswar Padhi wrote:
->> Acquire the mailbox handle during device probe and do not release handle
->> in stop/detach routine or error paths. This removes the redundant
->> requests for mbox handle later during rproc start/attach. This also
->> allows to defer remoteproc driver's probe if mailbox is not probed yet.
->>
->> Fixes: b8431920391d ("remoteproc: k3-dsp: Add support for IPC-only 
->> mode for all K3 DSPs")
->
-> Not sure this patch counts as a "fix". There was a bug yes, and this 
-> certainly
-> is an improvment that solves the issue, but I like to reserve "Fixes" 
-> tags
-> for more serious issues. Otherwise this patch will be backported to 
-> "stable"
-> versions where it might cause things to be *less stable* given the 
-> size of
+This series adds deferred probe functionality in the TI's Remoteproc
+drivers. The remoteproc drivers are dependent on the omap-mailbox driver
+for mbox functionalities. Sometimes, the remoteproc driver could be
+probed before the mailbox driver leading to rproc boot failures. Thus,
+defer the probe routine of remoteproc drivers until mailbox driver is
+probed by checking the mbox_request_channel handle in probe. 
 
+Also, use the acquired mbox handle in probe during rproc start/attach
+routine instead of re-requesting. Do not free mbox handle during
+stop/detach routine or error paths. This makes our k3_rproc_attach() &
+k3_rproc_detach() functions NOP.
 
-Understood. Will remove Fixes tag in revision.
+Also, use the devm_rproc_alloc() helper to automatically free created
+rprocs incase of a probe defer.
 
-> the "fix". Also, the commit you selected isn't the source of the issue,
-> it only adds another instance of it, getting the mailbox after probe has
-> been the case since the first version of this driver.
+v4: Changelog:
+* Andrew
+1) Removed "Fixes:" tag in PATCH 01 and PATCH 02 of series as these are
+improvements.
+2) Removed NULL assignment to core->rproc to avoid possible nullptr
+dereference while checking core state at a later stage.
 
+Link to v3:
+https://lore.kernel.org/all/20240807062256.1721682-1-b-padhi@ti.com/
 
-Correct. My idea was, since we are also making k3_attach()/detach() 
-functions NOP, select the later commit because that was where the 
-k3_attach()/detach() functions were introduced as well as the "mailbox 
-after probe" issue was present.
+v3: Changelog:
+1) Added a check in k3_mbox_kick() to prevent sending messages to a
+detached core.
+2) Added "Fixes:" tag in PATCH 01 and PATCH 02 of series.
 
->
-> Rest of the patch LGTM,
->
-> Acked-by: Andrew Davis <afd@ti.com>
->
-> BTW, I've folded this change (getting mbox in probe) into the new
-> K3 M4 driver[0] I just posted, so we should be aligned here accross
-> all K3 rproc drivers.
+Link to v2:
+https://lore.kernel.org/all/20240604051722.3608750-1-b-padhi@ti.com/
 
+v2: Changelog:
+1) Added a check in k3_mbox_callback() to prevent forwarding messages
+from a detached core.
+2) Addressed Andrew's comments in v1 regarding some cleanup (Using
+dev_err_probe, removing unused labels, adding matching mbox_free_channel
+call during device removal).
 
-Thanks for this!
+Link to v1:
+https://lore.kernel.org/all/20240530090737.655054-1-b-padhi@ti.com/
 
->
->
-> Andrew
->
-> [0] 
-> https://lore.kernel.org/linux-arm-kernel/20240802152109.137243-4-afd@ti.com/
-[...]
+Beleswar Padhi (3):
+  remoteproc: k3-r5: Use devm_rproc_alloc() helper
+  remoteproc: k3-r5: Acquire mailbox handle during probe routine
+  remoteproc: k3-dsp: Acquire mailbox handle during probe routine
+
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 80 ++++++++-----------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 94 +++++++++--------------
+ 2 files changed, 65 insertions(+), 109 deletions(-)
+
+-- 
+2.34.1
+
