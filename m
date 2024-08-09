@@ -1,101 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAD113774A;
-	Thu,  8 Aug 2024 18:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4946184;
+	Fri,  9 Aug 2024 06:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723143107; cv=none; b=Vzov3m8McmUZ/NWncpE//THMgvRj5gQ7EX9ScaqMqPDDHn7gwkmIJgyNQZ7F71ZmlqKAVC5ilISyoFET4kUbcsHciRzo7cCrRlYuYww5LQbRkIoiTvHggmvnB/cA5eQBbctpL2CIT7Jj/pfZC+eyxzpox37MkHh/35CmQiPE2pY=
+	t=1723183315; cv=none; b=sGfDSd7EtFou7sy2K72B4ssqH6ewVyur5etGO4cjZxRI7Lbj/GY/NFKKIrJOKB0z/Tb+cLca1MnlDrcBkAtHZeEm1OnEqEe5vInqPTn01u3iARzmegk0ui62IYZqmt0NmgpkZvVc4GRAdQzZ0pf9dRYBi/Yt2MH9aPnjSAQ6TsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723143107; c=relaxed/simple;
-	bh=/Ls9Jjwq1Z4z4+wbQLhMP61UfgonDm8QY0pDPfTvFAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXVa3A88FbP8SYQ8FbWHaGrfa0xC1YErOBcHHVbeZkkMBQ6JqhhNOUMP2yOvpmCtY0oVr44KuWzRbI62glzk6GhSy1Yb+q0epvbEKqWukzoco0MzwjkNeVN7RxrHEy0nc6AheyuXTp3AXv9p7+XnZq/pu4qS8TuAHJ0wiQN11h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioMKZKna; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723183315; c=relaxed/simple;
+	bh=u4M3haMYYhTPIRpC5YY9/hNrGN67fqfpQhhp6BF+mEY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WosKi47A4INvVB+CGZk20ITWCOP9QWGaeIbe1Hv3z+wmCqtSrI9BUH15t3Yhh4I+w5AoHh1lcu1of1/CV3QmRQsOO1Km/7U5vXzS7zGyEt120Aj8Dub5C8i1rt8eMKRgV30xqEQDdxtI66ij4Edy0gO7wlky2hELQj0eNiGa2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gz7REli/; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioMKZKna"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFD4C32782;
-	Thu,  8 Aug 2024 18:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723143107;
-	bh=/Ls9Jjwq1Z4z4+wbQLhMP61UfgonDm8QY0pDPfTvFAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ioMKZKnaG2orrvUI7VSBu/2OsjESDRWtYnirGaZMRF/+TTZ0ULb92RcOHcCdN2TZE
-	 Cd474F/6IPyelODJg6AF+FrEEK7+8blTRTncNO2j1/cJjzDfAIqv8ukrtUSeqJYIyA
-	 SR8MRxar/q7q0RYehcqyt7zEHkL7ws33AnKhw56Q4WvCsSMv6sjqmD9EGnC0V1JWk6
-	 nUlH+tG0MfPdQ9Aoo0lK4jwMJGkOb6mc9nnw3/j394IwGfS4eYl7D8YY6bJxlTzE+l
-	 jbMgdba2vBM+NEcBrCWPL5dpA5aSjOHVPGQXbDWZKVJKvbAZO3cCq+8DfW28eXI+yx
-	 fUicR/yNlqRPQ==
-Date: Thu, 8 Aug 2024 11:51:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <202408081146.09AA68D69@keescook>
-References: <ZrOQa2gew5yadyt3@cute>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gz7REli/"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47961Z9I090003;
+	Fri, 9 Aug 2024 01:01:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723183295;
+	bh=rgHh5WpxI1LAQUjXRTB9RmGXouHqqsuo+iVVEkhZLus=;
+	h=From:To:CC:Subject:Date;
+	b=Gz7REli/XcjJuRJaDGb/wW8DbK7MsNcbueR2l00bJO27jQvLcljR64/bo+7MQkYZ4
+	 KxvK6LdgZ+urnpZVjwliGoJ9jeSYTgoKW+zdJxR/6tunBq7w0hoJbEo8uUx5Jq3SD9
+	 L1RdmgiSZvCdFgsXahCXNB4IYM8zWdQGDGhS3/po=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47961Z7p049069
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 Aug 2024 01:01:35 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ Aug 2024 01:01:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 Aug 2024 01:01:35 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47961WFM102237;
+	Fri, 9 Aug 2024 01:01:33 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] remoteproc: k3-r5: Delay notification of wakeup event
+Date: Fri, 9 Aug 2024 11:31:32 +0530
+Message-ID: <20240809060132.308642-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrOQa2gew5yadyt3@cute>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 07, 2024 at 09:19:07AM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of multiple other structs, we use the `__struct_group()`
-> helper to create a new tagged `struct glink_msg_hdr`. This structure
-> groups together all the members of the flexible `struct glink_msg`
-> except the flexible array.
-> 
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> We then change the type of the middle struct members currently causing
-> trouble from `struct glink_msg` to `struct glink_msg_hdr`.
-> 
-> We also want to ensure that when new members need to be added to the
-> flexible structure, they are always included within the newly created
-> tagged struct. For this, we use `static_assert()`. This ensures that the
-> memory layout for both the flexible structure and the new tagged struct
-> is the same after any changes.
-> 
-> This approach avoids having to implement `struct glink_msg_hdr` as a
-> completely separate structure, thus preventing having to maintain two
-> independent but basically identical structures, closing the door to
-> potential bugs in the future.
-> 
-> We also use `container_of()` whenever we need to retrieve a pointer to
-> the flexible structure, through which we can access the flexible-array
-> member, if necessary.
-> 
-> Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
-> definition of a flexible structure where the size for the flexible-array
-> member is known at compile-time.
-> 
-> So, with these changes, fix the following warnings:
-> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+From: Udit Kumar <u-kumar1@ti.com>
 
-Looks correct to me. As a separate change, I wonder if the strcpy()
-should be replaced with strscpy_pad(), but I think it's all okay as-is,
-since channel->name seems to be set from another fixed-size array that
-is the same size.
+Few times, core1 was scheduled to boot first before core0, which leads
+to error:
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+'k3_r5_rproc_start: can not start core 1 before core 0'.
 
+This was happening due to some scheduling between prepare and start
+callback. The probe function waits for event, which is getting
+triggered by prepare callback. To avoid above condition move event
+trigger to start instead of prepare callback.
+
+Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+[ Applied wakeup event trigger only for Split-Mode booted rprocs ]
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 39a47540c590..f1710a61247f 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -464,8 +464,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 			ret);
+ 		return ret;
+ 	}
+-	core->released_from_reset = true;
+-	wake_up_interruptible(&cluster->core_transition);
+ 
+ 	/*
+ 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+@@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 		ret = k3_r5_core_run(core);
+ 		if (ret)
+ 			goto put_mbox;
++
++		core->released_from_reset = true;
++		wake_up_interruptible(&cluster->core_transition);
+ 	}
+ 
+ 	return 0;
 -- 
-Kees Cook
+2.34.1
+
