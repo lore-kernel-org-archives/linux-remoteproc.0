@@ -1,53 +1,74 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4946184;
-	Fri,  9 Aug 2024 06:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F4822615
+	for <linux-remoteproc@vger.kernel.org>; Sun, 11 Aug 2024 15:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723183315; cv=none; b=sGfDSd7EtFou7sy2K72B4ssqH6ewVyur5etGO4cjZxRI7Lbj/GY/NFKKIrJOKB0z/Tb+cLca1MnlDrcBkAtHZeEm1OnEqEe5vInqPTn01u3iARzmegk0ui62IYZqmt0NmgpkZvVc4GRAdQzZ0pf9dRYBi/Yt2MH9aPnjSAQ6TsU=
+	t=1723390487; cv=none; b=Z60b6wybUmMZIJ29JsHYcI6zDNlEms+sOh7BvwBnDz7kjr1Bg6aps6Zfq7/30/8luEtNpsmjbQOI1Eo+fx2ZdhYTL6SH6O4w88Uv2bYCoJQPK6pHFCiSSsi5XgVAHBZPdgYzKxMIQBnrwup00io84rqW+uJzLwVqFFCpWVX9zvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723183315; c=relaxed/simple;
-	bh=u4M3haMYYhTPIRpC5YY9/hNrGN67fqfpQhhp6BF+mEY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WosKi47A4INvVB+CGZk20ITWCOP9QWGaeIbe1Hv3z+wmCqtSrI9BUH15t3Yhh4I+w5AoHh1lcu1of1/CV3QmRQsOO1Km/7U5vXzS7zGyEt120Aj8Dub5C8i1rt8eMKRgV30xqEQDdxtI66ij4Edy0gO7wlky2hELQj0eNiGa2MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gz7REli/; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1723390487; c=relaxed/simple;
+	bh=/1IErUjrGRfgokTB7myjq49LMHtkALojTPhMnZQ10TQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E2nAF8mpYc4oslfJYvAfUBjUwMuJJ8xfnb4d3abE9LlknScWoiiumh+67pR068S7Mu9X4/y9HgibqU3vuQbQT2O5RzpPgxN+rbF/HaxKmcz6XjQrFIWgpXFdTVxw5BmrlimxNfcABL5ehYlle2W1XMtjWfImwy+3qed440ucf+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T0oQ0+vg; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gz7REli/"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47961Z9I090003;
-	Fri, 9 Aug 2024 01:01:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723183295;
-	bh=rgHh5WpxI1LAQUjXRTB9RmGXouHqqsuo+iVVEkhZLus=;
-	h=From:To:CC:Subject:Date;
-	b=Gz7REli/XcjJuRJaDGb/wW8DbK7MsNcbueR2l00bJO27jQvLcljR64/bo+7MQkYZ4
-	 KxvK6LdgZ+urnpZVjwliGoJ9jeSYTgoKW+zdJxR/6tunBq7w0hoJbEo8uUx5Jq3SD9
-	 L1RdmgiSZvCdFgsXahCXNB4IYM8zWdQGDGhS3/po=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47961Z7p049069
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 9 Aug 2024 01:01:35 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
- Aug 2024 01:01:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 9 Aug 2024 01:01:35 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47961WFM102237;
-	Fri, 9 Aug 2024 01:01:33 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] remoteproc: k3-r5: Delay notification of wakeup event
-Date: Fri, 9 Aug 2024 11:31:32 +0530
-Message-ID: <20240809060132.308642-1-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T0oQ0+vg"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f1798eaee6so34067581fa.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 11 Aug 2024 08:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723390483; x=1723995283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0DtWhSlXUfATpzkMixs1eIp2TMyzpsmPgL1CzoYoK0=;
+        b=T0oQ0+vgEu4RDxzMMs5HH65Syi9wLRfSF2qHeCgTKNI5uH+wHTMklgxGYWAGAcTmvG
+         XGJSdZ85nQU9B17WGv7PS44hEIpN4LXR7Lf8F5GkGebm/tHRkhcleFraf1JO8uleIBQs
+         0dku3RE3OAneKtiNYnPG4EYMR6XVh91PmkJOr1XOpu9xYjwSiSshMvF+mYtlZGiDzz1L
+         BSFzvWa4ZOiuEfetybXT8/CZC/1TWTbT+tdiMQtnQ5ERod++yRmZPVbTn0qffOV+xbAW
+         xmRqus4QPc8vOwQRBwpE/7sia2Qk2Cyoh7UAHJ9riPRHQ8lNzYe5/RehlwAkJuMIASd4
+         6CQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723390483; x=1723995283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l0DtWhSlXUfATpzkMixs1eIp2TMyzpsmPgL1CzoYoK0=;
+        b=GY5hMIG/s/L+JXQ5RFhMIGgZEtmwkTpGiUn2yr9zxBi3ZQNwmzGzaV60Q1TY/ElcbV
+         FcEEtVWPEZ+lmatsdru6qytUbFy1bIVrQcuLCeZfOIYZcVRMQWTvHfLjzWr/2UATWfPK
+         v1F0qgZ6KV9dFqimZzwKoXor6OseO6XXmadLdtYnX7GNKBgYgms+9SOW5LqycouwmfQm
+         h7H/Fvmq5hXDNJQ0cizQ+D0FbDGqIKWl/aRRn13n0KrzzugqHZgwED4unJrzISsyAS/F
+         ZLDuzdN2u3gsMKRHC9LHaY0p8p1KYh/T06cPdKuFAnZo3Pg3giiRalGcyXVStYEad4ce
+         tNHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJUVuy3lPAbeT0d1qryVcuYLGB1/JjuwBe+iiG/UFlgz7YmWLBTxd2NtbkFC4j1oVKr3LEIFBrXTDi62VVqlw3p6bHDhsTkga3DOLpFVtqGA==
+X-Gm-Message-State: AOJu0YyA8nPlkos0QeO3Q+poQGcrvZpgIrykSN74ej2K8tT+b6SZhs2g
+	k00n5mlDergovRW6Tlk62JiTIBrGfHQUK7ftBfXvUu5TEiM+TA9jZeOuB3qfT90=
+X-Google-Smtp-Source: AGHT+IEjtCXJrQfWFLvuJhoOjMVUW23DEOgZIPInR/kK2N8EKDLphE9zK1Mzzh0T+oYV0DVRW3R/ug==
+X-Received: by 2002:a2e:b88b:0:b0:2ef:2c27:6680 with SMTP id 38308e7fff4ca-2f1a6ce8d4amr44289641fa.12.1723390482614;
+        Sun, 11 Aug 2024 08:34:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c9ca1067sm43615145e9.1.2024.08.11.08.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 08:34:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Ben Levinsky <ben.levinsky@amd.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: remoteproc: xlnx,zynqmp-r5fss: add missing "additionalProperties" on child nodes
+Date: Sun, 11 Aug 2024 17:34:38 +0200
+Message-ID: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -55,52 +76,31 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Udit Kumar <u-kumar1@ti.com>
+All nodes need an explicit additionalProperties or unevaluatedProperties
+unless a $ref has one that's false.  Add missing additionalProperties
+to fix dt_binding_check warning:
 
-Few times, core1 was scheduled to boot first before core0, which leads
-to error:
+  xlnx,zynqmp-r5fss.yaml: ^r(.*)@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 
-'k3_r5_rproc_start: can not start core 1 before core 0'.
-
-This was happening due to some scheduling between prepare and start
-callback. The probe function waits for event, which is getting
-triggered by prepare callback. To avoid above condition move event
-trigger to start instead of prepare callback.
-
-Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
-Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-[ Applied wakeup event trigger only for Split-Mode booted rprocs ]
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+Fixes: 9e1b2a0757d0 ("dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml        | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 39a47540c590..f1710a61247f 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -464,8 +464,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- 			ret);
- 		return ret;
- 	}
--	core->released_from_reset = true;
--	wake_up_interruptible(&cluster->core_transition);
- 
- 	/*
- 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
-@@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 		ret = k3_r5_core_run(core);
- 		if (ret)
- 			goto put_mbox;
-+
-+		core->released_from_reset = true;
-+		wake_up_interruptible(&cluster->core_transition);
- 	}
- 
- 	return 0;
+diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+index 6f13da11f593..ee63c03949c9 100644
+--- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+@@ -62,6 +62,7 @@ properties:
+ patternProperties:
+   "^r(.*)@[0-9a-f]+$":
+     type: object
++    additionalProperties: false
+     description: |
+       The RPU is located in the Low Power Domain of the Processor Subsystem.
+       Each processor includes separate L1 instruction and data caches and
 -- 
-2.34.1
+2.43.0
 
