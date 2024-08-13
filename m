@@ -1,72 +1,66 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D861A01CE
-	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Aug 2024 15:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BD82AF0D
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Aug 2024 15:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562961; cv=none; b=sfsyra5/ZoMmUGxUpLLYFEE2JUhRkhCpeOAnjm5zjg2UKxVOCH2AD6KUYazP+l6UbAcfGx9t+ZRBF0XSOOlZs7MZ26M3ZYpOJU/6NySzJPe31btAllD/7p0MkRN2GrjO+zbCitA0hUTa1OlYt0ewwCxd48BF65rwlv47PReUDqY=
+	t=1723564511; cv=none; b=pcBAbcmyRWcLrmWVk5UaWMl2uGJSJIy+0WytVOUcOw665W9YbyQx26zNoJ0HLQvoBP8msucZ+e7720etcwNsbNbkCb0htNR37VuOrtKXDYvd/Kc6+xG9rYYvc5KIu3U91CGVvUR+/BcRrbB9fjtrQN3xiHXWRMmTv/vyobuCmeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562961; c=relaxed/simple;
-	bh=MqJubU5cYz/aptjU9ySH+C98veWxton14FcRM+3KTMQ=;
+	s=arc-20240116; t=1723564511; c=relaxed/simple;
+	bh=ofzzO/MDsGwGtQPGj1xQIn1dKHbuD3rWUlrc0rP5vzg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0Rd4coV3LcdmSD01EibZfaF1/JJkHU2JG312dt4rvpXUagJ0q1XPABRl/T5wgtppYFc8vgTGwqsmeyHneDoY+k6mssTEjoBtbQJH2RveiOiLn+Wpk88hKJD9ajIy550+/wKbJvwN5EaXNYEgtM4Uf/H97NZl4hxeRlGBfCPnEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NGDsSZYW; arc=none smtp.client-ip=209.85.210.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvSmn6tkuAYQ3ky60oYND7Iwmvdm8ynqW3L6zVSoUgZn65eIDeMwpr8SoctGwohTN7YiJjdNFg+bCIj42jyEDJpSBxqJhNqE+ykolBBtOwmx12dAo7eeUwYdGTWHPY2fnTiaDdv76n/c4nZLwOHZH9nbeIv77T1KZWb69pevGGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OlhHEa+Q; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGDsSZYW"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7126498ad4cso301077b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Aug 2024 08:29:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OlhHEa+Q"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201d5af11a4so247275ad.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Aug 2024 08:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723562959; x=1724167759; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723564509; x=1724169309; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XzoifUF7R6BsxePNIhgRi9mSGSqDwAxDEVpqozSqGCQ=;
-        b=NGDsSZYWEaWV7BfHAC6nw87ciEF3k2OCRcUPUQgqj8xsS6/sG2mRLmDhC0lV2jBNz9
-         81N4Jo6zY5LmasrWTubaY/s5/bIHNACojxra7kRZSdkZGRA46/unQjWmotxsZUiyEEgF
-         BHqQzT8NKefAZRsRDe/9pXdD4fMJ59Ql5uBWiv0EYd0RixnxCJrUvcFWj6PzcihjKc6Q
-         bG0xQMt2FKbxEcb4nkJ8+th+pT0qQRIHZ9rPZBM96VZV6zjWZQEV846Svx0xelS2Izz0
-         w5NT06qx8QUzcxRNTZAaL2kOfTJU5Vr9UR2wSGKClH3wGrcdONze4vDYvTQK6FvrF9uY
-         nUsg==
+        bh=XA69NfodEyCttT6a+GrneJTF8uIIfegjqkueNkAJX18=;
+        b=OlhHEa+QUH22Kg0KKji9HZSAHrncprzcurOYQqWDHT9KMKI5Fwg8ryT6g8XrzB7kK0
+         BflecDhnkalJJokAKchgRmC5vYHQ2hUVnmhQTUOxoDQEhNNKZNwxyHi49Kg+tfzeOyZr
+         3tp0UD0Cg7nlAyfpKjIfJnDuBsIiu8bh/qkXJIOqsJ49nzJw7pWuR65GwptsOv5uUrg9
+         ByJ96ORctt0LETNt08zKVgjC/qPkuYU8WS9NYKpAnEMUM0w+GE7YN24/5uOJpweEZ9aw
+         sEMb4Y7oQuSb5tx2XsZwMFnsS45KnUNFAw69K2ocp94nF/qTB2lXEIfk3TDVUl91P3El
+         mShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723562959; x=1724167759;
+        d=1e100.net; s=20230601; t=1723564509; x=1724169309;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XzoifUF7R6BsxePNIhgRi9mSGSqDwAxDEVpqozSqGCQ=;
-        b=i+QcD9dmwMX4mMc2Je8IXCacAUi1KVGr2JUngqYkQZPNVOksUqGQn+2mWi6ivHdYf7
-         SuQlOBtLeoB+AVxs3aqMIFPkC0E9ZcyI7N5oKnRvkWRXh7M6+2mk0Ey3i9XM8mXBKJ67
-         OPXvUxBbyfF9nCszoYTHOF8mEMBpIQwFGHiiEwDLkhlXU/zq3x2wrnhQMqVO2F5wY1mI
-         ZeS4nwDJVoLv6oI1XpNls+60Nuz80yEoyDWn4mjWSdu0wGPP2QfU3Jdivhu6O6PsKmmm
-         Jiqy42wdtN1RwSIubBXud2+3h8DEVBgjk9FfIV3osXXTwtB57q9M2w5/cWox9Y4HFytE
-         f5eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPs6EujtQXIvuHNOxpAvpbYF97qEnEy4lxpl+zdyctG5ZX1al3FIIO6HYjWIrXVbv+90egXgp0zhewZFdwrQuaxTMz+N8uSh3yis7BoUKw/Q==
-X-Gm-Message-State: AOJu0Yy4CNTpQ9REXRHm3umUPlixy+94SHQN6al0V5UcgkbnTiX1klqr
-	R7DFcSrpbU2q0tj2lC7+H7J8ua5Un4MbZv2a3zAfd1tvT4YCHBE9LNxmatSCamQ=
-X-Google-Smtp-Source: AGHT+IGDymo/Enc2VMdHdFMER69N7RN8NQYcz69tqAUf0DoJFV7XImydzeVK44nDDsmMWz2QKoXx7A==
-X-Received: by 2002:a05:6a00:3a26:b0:70d:21d9:e2ae with SMTP id d2e1a72fcca58-71255105c08mr4830870b3a.6.1723562959046;
-        Tue, 13 Aug 2024 08:29:19 -0700 (PDT)
+        bh=XA69NfodEyCttT6a+GrneJTF8uIIfegjqkueNkAJX18=;
+        b=Rrm3QmM3o81WgcQLu29nqoYBV5I4Jh7YREqMV4aev7a4k/Mpu1h6r8MSR7+cAD42/5
+         8QFReoEWpF6Zz11Ya1WI5pEjOTKqzg7GGfRSZP85OsnoBNm1a6nU1kQosQlAnKtsG14K
+         wnCMay6Aeu1+v+4L+e8Hadfesk3xFYrRi6IDDBl+5+3Dtvrf2SGPzZxku1xvMWO4/zky
+         m6EkOfpxF2gXmbuVyINjKxCtQcMeh4PVOQ5DrOMzFuhAWiSkFb5ciBV9skY2Erv9ir7l
+         nLlxYUPZ585sb56VAQ4UNmVypWkxu1+lCIMP2FDoBNv1IsqNsni8xAId3H2mOMqg+HO9
+         lV2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW+RnPV9ZJpl+xw7HA2BKpeTYyalaczTxFxA3AlFk2EyicBl6msXE4xp4jitWsYFju7CZ9fBwqwugs+yHOdRwNnzQAQhCBK0djIXpPlV6G71w==
+X-Gm-Message-State: AOJu0YwxYg1rQiIJYG2j8lAxZSOz895CcdepREG4tXXua+9bKUD4h6tn
+	VwOvHN+8/AW3DNH1naTZ3EpvOxE2dK6qTW3my0ok3DblDj2J6z9peTyomCQAPVI=
+X-Google-Smtp-Source: AGHT+IG9G6M+t+VKPSzwKnxIYBB8RhmRRqGfZJq4Bi9ZrcsR6TvNvFeeyp7dUt+EdE/zkwku9m48sA==
+X-Received: by 2002:a17:903:230a:b0:1fb:a38b:c5a7 with SMTP id d9443c01a7336-201ca185904mr58149375ad.13.1723564509168;
+        Tue, 13 Aug 2024 08:55:09 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d596:d55b:d99d:7ece])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979eda81sm1618944a12.23.2024.08.13.08.29.16
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a93d7sm15220855ad.149.2024.08.13.08.55.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:29:18 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:29:15 -0600
+        Tue, 13 Aug 2024 08:55:08 -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:55:05 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Ben Levinsky <ben.levinsky@amd.com>,
-	Tanmay Shah <tanmay.shah@amd.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: xlnx,zynqmp-r5fss: add missing
- "additionalProperties" on child nodes
-Message-ID: <Zrt7yxTjBNkMGZlI@p14s>
-References: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] remoteproc: keystone: Use devm action to release
+ reserved memory
+Message-ID: <ZruB2VhA78GRWG9X@p14s>
+References: <20240802182300.244055-1-afd@ti.com>
+ <20240802182300.244055-3-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -75,39 +69,76 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240802182300.244055-3-afd@ti.com>
 
-On Sun, Aug 11, 2024 at 05:34:38PM +0200, Krzysztof Kozlowski wrote:
-> All nodes need an explicit additionalProperties or unevaluatedProperties
-> unless a $ref has one that's false.  Add missing additionalProperties
-> to fix dt_binding_check warning:
+On Fri, Aug 02, 2024 at 01:22:56PM -0500, Andrew Davis wrote:
+> This helps prevent mistakes like freeing out of order in cleanup functions
+> and forgetting to free on error paths.
 > 
->   xlnx,zynqmp-r5fss.yaml: ^r(.*)@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-> 
-> Fixes: 9e1b2a0757d0 ("dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Andrew Davis <afd@ti.com>
 > ---
->  .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml        | 1 +
->  1 file changed, 1 insertion(+)
->
+>  drivers/remoteproc/keystone_remoteproc.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index 8f0f7a4cfef26..033e573544fef 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
+> @@ -358,6 +358,13 @@ static int keystone_rproc_of_get_dev_syscon(struct platform_device *pdev,
+>  	return 0;
+>  }
+>  
+> +static void keystone_rproc_mem_release(void *data)
+> +{
+> +	struct device *dev = data;
+> +
+> +	of_reserved_mem_device_release(dev);
+> +}
+> +
+>  static int keystone_rproc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -434,8 +441,14 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>  		goto disable_clk;
+>  	}
+>  
+> -	if (of_reserved_mem_device_init(dev))
+> +	ret = of_reserved_mem_device_init(dev);
+> +	if (ret) {
+>  		dev_warn(dev, "device does not have specific CMA pool\n");
+> +	} else {
+> +		ret = devm_add_action_or_reset(dev, keystone_rproc_mem_release, dev);
+> +		if (ret)
+> +			return ret;
 
-Applied.
+It gets sorted out in the next patches but we still need to "goto disable_clk"
+to avoid git-bisect problems.
+
+I have applied the first two patches of this set so no need to resend them.
 
 Thanks,
 Mathieu
 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> index 6f13da11f593..ee63c03949c9 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> @@ -62,6 +62,7 @@ properties:
->  patternProperties:
->    "^r(.*)@[0-9a-f]+$":
->      type: object
-> +    additionalProperties: false
->      description: |
->        The RPU is located in the Low Power Domain of the Processor Subsystem.
->        Each processor includes separate L1 instruction and data caches and
+> +	}
+>  
+>  	/* ensure the DSP is in reset before loading firmware */
+>  	ret = reset_control_status(ksproc->reset);
+> @@ -459,7 +472,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  release_mem:
+> -	of_reserved_mem_device_release(dev);
+>  	gpiod_put(ksproc->kick_gpio);
+>  disable_clk:
+>  	pm_runtime_put_sync(dev);
+> @@ -476,7 +488,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
+>  	gpiod_put(ksproc->kick_gpio);
+>  	pm_runtime_put_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -	of_reserved_mem_device_release(&pdev->dev);
+>  }
+>  
+>  static const struct of_device_id keystone_rproc_of_match[] = {
 > -- 
-> 2.43.0
+> 2.39.2
 > 
