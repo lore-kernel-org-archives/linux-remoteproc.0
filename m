@@ -1,255 +1,403 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2084.outbound.protection.outlook.com [40.107.241.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6121B5819
-	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Aug 2024 15:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650847; cv=none; b=ZrpvQ9cnOSdKJLG/WD0nbsDYShCmvcCPeaiveauLgFLgw2ls9k92UscsvV3Owg5a6Plwn0bd3Eikbc3AY6KW1cUuGYo0sPgqBeS0LWMv/iJWkVbjv7TjNyLIg+KJPwIrtoH6eHVBxXngbjKA8VezorMZ9RVOFycfUD3dShaqmOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650847; c=relaxed/simple;
-	bh=OKLLoXaGWdTiIePoKItpfGDt4N/SOQW07ycov0HJBSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ub+q1guiNw7kydWb1dijn4/G/t2sulST3tP/LBhVewelLrKu1vS6f4YTruH0pfzCPxnUpm2S7TFT32qguQOm6i89ZlmL22WPO0R4SJ02ibL7v0rkhG8Xn1GXShnQFWpF8Wrg9HhX/DqeYuXSbVo3sCmwuSse7WN9ofpN7W6uasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TXrhVxDZ; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FA2AD5A;
+	Thu, 15 Aug 2024 03:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723692776; cv=fail; b=KCts7mV86PcmIXQKbS0OBJAcvSlVwiW+FRG89GOXdB/KUwhvhpCxNM3GX9rNlMFFh27HDArfx9zsQ3vZlXz3sLRAcpWwm5BUgUR5hgT/uvrozXNFG6S11pZgDDYDWqi9edagN5sEdat8K2/2oM6W3iRqSfIAoNZ3CtbtJGnG2CI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723692776; c=relaxed/simple;
+	bh=AP7f76EFpS4Ya7OLWF02xHfrOtyOgGxs3sjy+p0JAaU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WsRYcP+RiJXYOUCvUzpcvP1x2QORC45b0Bk+0zJ6ZiNbfQuzF2Hiqk+ZNDWx77fDiaAECm5we+CPOoxeQrk1/YKAlF6icaqq0ir6UgVEg20PFmX1g5gateSZnvpk14xuo36E7Ms51P3+tuiI7dUR2n+Dcl2WAMll0J3oFid+z10=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CZNcZc9e; arc=fail smtp.client-ip=40.107.241.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXrhVxDZ"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-656d8b346d2so44578a12.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Aug 2024 08:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723650845; x=1724255645; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y47RbXS2cxNB5+BpZPdXXp9JA6H+++LjJxoIhLy87Bg=;
-        b=TXrhVxDZ18ca+Zr2T3ad4JCxi1+RtU+9EDnF1tFhm2qI6v+kThvBZdTXK6q8xR7G9X
-         ufOEi8JFl3sqJBN5MKcsp/vw6Nj7zegsbv+3XovnhMFlpQrPD+D60DvBBJdx5MlldTxI
-         5Z5TrpGqJVZMCgDeKEBt4UJADUsDZauMdtwc2vWiZO9WDaDkAX994C2dwLiC3JpGiHjX
-         /O//cJBuSXgI+3AcHF+1tQhNTEjdwhtexWLxVHe3559EGHtWXruYdmaBeJm2RjvuZJLF
-         3eonWKbykMuhisDoZti/7pXXk+riL+8x4wH5AgWzd9BbtJVpgzsg/gOCTsm8RxHVU5mz
-         GfDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723650845; x=1724255645;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y47RbXS2cxNB5+BpZPdXXp9JA6H+++LjJxoIhLy87Bg=;
-        b=YM7HygP14nE8t4xeF1+/ZN8rURw3P6smmc6Z9cOLMnNufYchcGp6jfZZI8X2KeqTuo
-         b/hiDNJAVRX8p0Jj/FoiA7XX134VpjbiBKH2Y246J1Z6qVffv+EYVwJ7bJPGvzE6FgSG
-         wIlEDlHpgFSmocAD8Sks7Cd+GWrudSK7V/t6aUX7jmauGaztaV+33zi7ee0LWM37wQbx
-         j+yc90zQ46ohu9kZIIUlzy1qC9Ac6oSe7sLOTyrYTVZ5ec4T1hcnKI6sOCE23nIQxyrk
-         BiGlb3rpdTZW5ssY0/Tf7niISilXAop0MTI/0skAHhCLfEV0vwK/hZoLA5VP5cRym34z
-         HxJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxbFYOU9ZV5r+FWjZ0ZVuPqC0JzOqGyDGlqTZHV71XVn/PRA0l+xVptGEmPwezc2FJcOVc6ZwTgx9imgUt7f6/MrJTxADoj/q/N7mkw5Wdw==
-X-Gm-Message-State: AOJu0YzR24EADILRJnhrcL1e/ip7eaGzydMYUqguwrRMAiYhqBXyk6Pf
-	tQsmN2c+JzcFEeCgtM9nbhOnCFWF198PZ6GAz4fQ6pP0keo2c4UFGQry+s1nsIo=
-X-Google-Smtp-Source: AGHT+IGOnvgZ9Kb603v7ZA4QDyTjY4H8Fqu/f18jmkX7xABasU7co35c7nr2HGXdMzGA1OyGJB5TMw==
-X-Received: by 2002:a05:6a20:c90d:b0:1c3:b267:4261 with SMTP id adf61e73a8af0-1c8eae6ce37mr3765146637.12.1723650845402;
-        Wed, 14 Aug 2024 08:54:05 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:58b0:43ab:ed9f:f0e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7126c9ca119sm1233555b3a.209.2024.08.14.08.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:53:59 -0700 (PDT)
-Date: Wed, 14 Aug 2024 09:53:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
-	s-anna@ti.com, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] remoteproc: k3-dsp: Acquire mailbox handle during
- probe routine
-Message-ID: <ZrzTFZeh7WDPQZJF@p14s>
-References: <20240808074127.2688131-1-b-padhi@ti.com>
- <20240808074127.2688131-4-b-padhi@ti.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CZNcZc9e"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a0+GMVxGOpgRLHQYsK9YGQotiIGa42JljbNYSldi+C76A/lATiMXltDuJiDH3qkOwOChLoiiSu1+jFEnAOIfd9Cs00jPdxcSxnaYFKv2nUo/4natVGfWrGvGDg4C26ruFWIYLoKB2EPVrljksjdHzdOo8Ti9L/4tU0YyxSwx/OunORC9b3chEewS+6rO5q9P9PYM2R/maYevtual0HqoMDw7kjCJtnX5zDv9b08o7/7Hh3K2tvtMVdUa9wg98fZW786pdIMjC+Q2jEosLxs8eY+s1EjeHwxHCELqocbe6kuAEgXedx+flYmiW+Utufd6459kPH+piJ/7QVdHweiyXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gZoQqvoQAMOjy0oAHe8Fk9caiYWCHkgHcZeDFUxBGu4=;
+ b=RYUZhN/CE3qUi3J4q6JSc0Hp6Pss8siTD8fsMux8lizzQLWNXeuhnKmwkpUS4k7itNNowrPqp0HEVZi+cO2ILyZbSOWRQD9vBccH+sh3NPcr7nQ9XRg0o7SejLL6Z9HyfCbkYuthg4Mk4U01NDsrE9ahNH9jniIVra4A9OGdHZbUqFKyqfp1ivWj2ckkmcUaKwmZE5MsYoSLpOa0lRuybFQ3BqIL0bg6sUHskac/4iADt2rnFpQttda4krAKkUd0X6TmqFiPd1OXQUyXmMKPjYrTubSpsqiM5xNv7CO2pGMRJHkMIl3p0NSVpwM1aExIUw7FYFumSaOTV20MzIXtEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gZoQqvoQAMOjy0oAHe8Fk9caiYWCHkgHcZeDFUxBGu4=;
+ b=CZNcZc9eyI+KjOkuZCUYGL20JMpFl1umALvc1qwGQrqmIF4wlGAPMiqAHqghZ+24bD9na13ohgw9+n0dWFtwYIZKIlWvXI8fW8T0j5m+VCZHgZR4rYJioqS/FNEThj8g7ZPGcfQ6YnLht5nGIvp33Lmhc/Thjt+RNGunwXvIvNpVe4VI43YYJgFqb1We+xvMF136USIBQ1H/ZO/yrA51kKXDBG+35UAmgc+LXgwaWHT9WPsXGOfPeDxoGG3r0qOfMfyCLLhDCN7lysY1tL8HSwqDydXTFG0bQNuaO/ddI70YCdB90Yj+SJIjYJxGwF/HK3PVqNpDVnNJ02x5JbmlgQ==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI2PR04MB10834.eurprd04.prod.outlook.com (2603:10a6:800:275::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Thu, 15 Aug
+ 2024 03:32:46 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
+ 03:32:46 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Bjorn Andersson
+	<andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Marek Vasut <marex@denx.de>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
+ i.MX7ULP
+Thread-Topic: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
+ i.MX7ULP
+Thread-Index:
+ AQHa2bdERlEy/iUIMEm8jNjZj1/DHrIN5pMAgAESTTCAA339AIAA+9VggBOPM4CAANFa4A==
+Date: Thu, 15 Aug 2024 03:32:45 +0000
+Message-ID:
+ <PAXPR04MB8459A097816083454908840488802@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
+ <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com> <Zqe23DlboRPSXiQO@p14s>
+ <DB9PR04MB84615384294C38EEA5B95F0088B02@DB9PR04MB8461.eurprd04.prod.outlook.com>
+ <ZquK5CNtRJTTtlkD@p14s>
+ <DB9PR04MB846152D0289467468CE0077588B32@DB9PR04MB8461.eurprd04.prod.outlook.com>
+ <ZrzGfS/7vv90F5C1@p14s>
+In-Reply-To: <ZrzGfS/7vv90F5C1@p14s>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI2PR04MB10834:EE_
+x-ms-office365-filtering-correlation-id: 094e5fcc-daff-4b4c-32b4-08dcbcdaede7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?gC4DfOA4olNk+3bKeiBShXoWr2NaSR8Ed/jRIG7uc2BfGg+WiPwrmTMsHzID?=
+ =?us-ascii?Q?1r+5ouv0M8SsX/Gf/y8FxfU2Doy6Tcd/YRI15MHRH+y6TYJwHG3n9TuhQqy/?=
+ =?us-ascii?Q?EBk6tBzSqTmopToUJEavEOSdHImz8bnsVFnU5O/tCb/QryHCLTPV/w+vy+QK?=
+ =?us-ascii?Q?VbNl5+H7krtN2pB5j4wTN5X8aISHfY1vnF3RpegNoO/JjyKiUMFtrJhbXd87?=
+ =?us-ascii?Q?55JEB5KFndeFehKfgbbXbqPE1yFKPLzSpNfUwHbr1QdFoAJkRxvK4t1kXzaD?=
+ =?us-ascii?Q?GylsWceOyWbAs0gbFFg75BmhDUExweiqw1Ac7N6LgUkuf1dRndToCpWR2jjA?=
+ =?us-ascii?Q?ZwAZe0rqIQlUPUpARfisw0pGgwJH2fk9fGJnZ3l8u8qy0uwHfAC5hDKjtYFE?=
+ =?us-ascii?Q?39hgbI6cXB7VbydQExd9sQfuE0gg59JfwCg6Cb4/m7HRdm8Y0hQaXFT7X8QR?=
+ =?us-ascii?Q?yQmmd8yQMArym9C5RjwfjRFEyM31s34CIISh20D5l0PVDlpYAKJkoGbSOZV0?=
+ =?us-ascii?Q?5s2x0zmuUl5egcahrgEdXj9COY5mQfpzD90/mgtm5GHl4LxhaFD8P/aJxwYz?=
+ =?us-ascii?Q?6TqSdeDFRThwP1Tu6Hy44A5syDnNEbPkm64lrPCvBwI9XnnEKVseln36FnaW?=
+ =?us-ascii?Q?4BWvZh3mCn9qo0y2N9jG/HCHQXCnmhJYBY5ESv4aLDOP6jDwxUjqnlze5AWm?=
+ =?us-ascii?Q?ILHcbYE+pZx8TL/OJ4u6mWObxuijSeAkHzASIkPtHFmRj9HhNc943VqSzoUt?=
+ =?us-ascii?Q?cFhrQdS16lBlANDQNbyvRgLT5RqWWuttqUQKyNZE5adM6lAGIya7nUQhJOHb?=
+ =?us-ascii?Q?K+eP9CljBILKq6wQ3ufUwCvYVccWeMiVU88wrG9hUn90QLMGdlmbrHt9X20V?=
+ =?us-ascii?Q?91tX4sIJs5CIsg7U2zURlIdKcNAWXoWrplpPLL8SvvjWIcj54jhAbuWiYCFs?=
+ =?us-ascii?Q?WSL8wQTT1OqicPezfDJrfTZ/bU1oN75QaSez0bnMqfZStUHpVyf9oVzEnEBv?=
+ =?us-ascii?Q?GiQCbOXkfChKTRFCeFj4mYm+Lbl0C6AJx3PKMFCGhMsLVOW+NkE1cqHFK0fP?=
+ =?us-ascii?Q?RqO2XFYuvLBxo9bzGTCiNQqVlPJXHNwYBba2aelzp2lWGM/GEl8P0glSyz8n?=
+ =?us-ascii?Q?TPuTLKJ53RqW9A+BA+GjQdw993uiqzyvK2cHm+3Oslyh6hKKxNK07T8IjWo3?=
+ =?us-ascii?Q?CCMNeYgYxqfcD6FkzSVSMHCNmf8Bqvb1lR9Yu6pTagWqMGctL6MnAHLI7k0g?=
+ =?us-ascii?Q?0CqzDMQoODnLSr8Urvi+gmryyFc9dNCV1jmsM0Vx4eaH69xYErHzA59ATAog?=
+ =?us-ascii?Q?/55APkEnRBIrwUnUbqIwAlL8RxJi9N0tc6diwiFy8QkYpb2MjW6k9jbgIdWs?=
+ =?us-ascii?Q?pmrcDr0YlU0ZJ6L99iu1hTzWxhx0ELBTnzJummKzyV5d4mQduA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?iSq8k05l1AHV/+YUTYulzS5mOekMnviYaWVkNrrV4oYQcVn2KpZCA2c+mvvs?=
+ =?us-ascii?Q?2rmvCwRLIlylcKVJCdyFzbAO1z4sdiyusKYBvOLozE8VM+8nsiZjmfzG1QbI?=
+ =?us-ascii?Q?NUlXp5L3e7KIXpl5WHR0qXlfvtvuVBNZat6430Gd1RZdysJaKxApVh5t31fC?=
+ =?us-ascii?Q?IoMdUWj+qyN6yT3o5DRIigp/UN5/+1xtXck+gJQqCWXEQSivyPnGzCX28gf/?=
+ =?us-ascii?Q?YEEy0ZDtljM8gKOBtLSyk6lpJs9Asysa/2aqCMj2JbwnZmii/dkkmAZ3bDpZ?=
+ =?us-ascii?Q?TxPZdca90sNWssOZc9Cyb/l7YybrhqifkQxaf21f2LjWHmAwe+G7W6kxKtft?=
+ =?us-ascii?Q?PEHfVjJvgTgvtKb7ea23eLcLUXmb1SJoEyXTvzsaOZlkDK38FWuMMUSvssMI?=
+ =?us-ascii?Q?KVEs8y/A4cbk1GIVoUx+ZON6ui4CeBigYUbf/TaLJHmcxeKM4nqk14Yca06N?=
+ =?us-ascii?Q?Y8xpMNSvGb0xCnBCXSLYaI9NFGOZbX88rDGDPi8l+jBjDZtp/CWqzEsMssKG?=
+ =?us-ascii?Q?SunViYvZUDoFqzIbxHPwj8w4IUWVj/GLo/+FjeZlUxa5mU2xirAhs7jsK+vI?=
+ =?us-ascii?Q?DQGGnAUsHteXrWYF6aMuIAF4PXNsD3yfar4sXk+tFFiicOK4fOLXh5xbhl2U?=
+ =?us-ascii?Q?0XLEwPEPWWfnJEYfE6lz9AYfV3W4bvtptE+P5OO4yDCR6NqTnZrUnrFrLP4j?=
+ =?us-ascii?Q?H2w4rMxba0U1APHNFiNUFn1s5ZfReexhwwJ0w/zJMdmcuTB31Vv7W5W+aKJq?=
+ =?us-ascii?Q?yZbIVoHHdDNM8LFYqm9ihqVgyNBNVnHYMHzhDQ8etDtSs/wzVJsLcxfYQUX/?=
+ =?us-ascii?Q?GW7A+uq1LrZCn70KGBdxcDxfKdK3kE8EsljsHAK2IpIzmCSn+MlPVvj8h0G5?=
+ =?us-ascii?Q?+MfvlFCSHEnuPm7z6LrGfEXD+KmF+NzWjZiRPPMKjI5+f/L+NXgaLvma+3cm?=
+ =?us-ascii?Q?CB4te2vFHdfY9MLc3FORG1pqOPoI5JM00HGO0ucYJOcAJW6g6ZgQ9R5AbLib?=
+ =?us-ascii?Q?5jeY8GpWZcFfyjWp9fuBEAESXYQIPZI9hzWhU8yFopQQiWLDUgMbZtzQSK8V?=
+ =?us-ascii?Q?CjWDdZIoPE7cd4w3ddPnKESd8IBu4Jph3g+WeOkJS/elQViEpOEZnpZaccD4?=
+ =?us-ascii?Q?7xTxKg3vZz0UI6dqBKrkrx2Y7KpiYGbYdKK+4BzMR1JtjPpayBDaF8788PBG?=
+ =?us-ascii?Q?FOg8JcggzgwUkl1qyIHpqqGVKEkP6vGxuaAifiYbMuEtOIP5TsNeekrgOFEe?=
+ =?us-ascii?Q?qpOBoFDMExaXS4ClD+GAM35Cb6DFyzdiQ/3Pyr7dQ5aSr7Zug1DY4WNC653j?=
+ =?us-ascii?Q?tB4D8kaQxeU2IjnTeYOeJtTr/VU82vUE2wguxAZmR+7htSHNO47XyFErHEvW?=
+ =?us-ascii?Q?eeWcy//a+wC0GJObfFxKo1JkAwVHFRkIaYl8Jw+zt7OO/XLDrmCOgTtrtPJU?=
+ =?us-ascii?Q?n6bTwXofgIiTH5F8SOvJClfOiyRiYS3IZSOmHHET2zJsUt9iFfMMUOpWSWlc?=
+ =?us-ascii?Q?oUyakzqCWXCfjxgR/hMtAO4Nlbd96mMagVmBtomvrYNoy74woQFiTmJW7GRM?=
+ =?us-ascii?Q?K8ygfOR85058wLFP5DM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808074127.2688131-4-b-padhi@ti.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 094e5fcc-daff-4b4c-32b4-08dcbcdaede7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2024 03:32:45.9384
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Fem8tx0pvjhYH3L6+IxbhSTHs8UpyJffyTqmVt8Twd0x0rKgIwwGALSyGyuHyrkPv1v7GZmJBZ7cN1WItgNGYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10834
 
-On Thu, Aug 08, 2024 at 01:11:27PM +0530, Beleswar Padhi wrote:
-> Acquire the mailbox handle during device probe and do not release handle
-> in stop/detach routine or error paths. This removes the redundant
-> requests for mbox handle later during rproc start/attach. This also
-> allows to defer remoteproc driver's probe if mailbox is not probed yet.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> Acked-by: Andrew Davis <afd@ti.com>
-> ---
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 80 +++++++++--------------
->  1 file changed, 30 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index a22d41689a7d..9009367e2891 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -115,6 +115,10 @@ static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
->  	const char *name = kproc->rproc->name;
->  	u32 msg = omap_mbox_message(data);
->  
-> +	/* Do not forward messages from a detached core */
-> +	if (kproc->rproc->state == RPROC_DETACHED)
-> +		return;
-> +
->  	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->  
->  	switch (msg) {
-> @@ -155,6 +159,10 @@ static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
->  	mbox_msg_t msg = (mbox_msg_t)vqid;
->  	int ret;
->  
-> +	/* Do not forward messages to a detached core */
-> +	if (kproc->rproc->state == RPROC_DETACHED)
-> +		return;
-> +
->  	/* send the index of the triggered virtqueue in the mailbox payload */
->  	ret = mbox_send_message(kproc->mbox, (void *)msg);
->  	if (ret < 0)
-> @@ -230,12 +238,9 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
->  	client->knows_txdone = false;
->  
->  	kproc->mbox = mbox_request_channel(client, 0);
-> -	if (IS_ERR(kproc->mbox)) {
-> -		ret = -EBUSY;
-> -		dev_err(dev, "mbox_request_channel failed: %ld\n",
-> -			PTR_ERR(kproc->mbox));
-> -		return ret;
-> -	}
-> +	if (IS_ERR(kproc->mbox))
-> +		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> +				     "mbox_request_channel failed\n");
->  
->  	/*
->  	 * Ping the remote processor, this is only for sanity-sake for now;
-> @@ -315,32 +320,23 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
->  	u32 boot_addr;
->  	int ret;
->  
-> -	ret = k3_dsp_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
->  	boot_addr = rproc->bootaddr;
->  	if (boot_addr & (kproc->data->boot_align_addr - 1)) {
->  		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 0x%x boundary\n",
->  			boot_addr, kproc->data->boot_align_addr);
-> -		ret = -EINVAL;
-> -		goto put_mbox;
-> +		return -EINVAL;
->  	}
->  
->  	dev_dbg(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
->  	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
->  	if (ret)
-> -		goto put_mbox;
-> +		return ret;
->  
->  	ret = k3_dsp_rproc_release(kproc);
->  	if (ret)
-> -		goto put_mbox;
-> +		return ret;
->  
->  	return 0;
-> -
-> -put_mbox:
-> -	mbox_free_channel(kproc->mbox);
-> -	return ret;
->  }
->  
->  /*
-> @@ -353,8 +349,6 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
->  {
->  	struct k3_dsp_rproc *kproc = rproc->priv;
->  
-> -	mbox_free_channel(kproc->mbox);
-> -
->  	k3_dsp_rproc_reset(kproc);
->  
->  	return 0;
-> @@ -363,42 +357,22 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
->  /*
->   * Attach to a running DSP remote processor (IPC-only mode)
->   *
-> - * This rproc attach callback only needs to request the mailbox, the remote
-> - * processor is already booted, so there is no need to issue any TI-SCI
-> - * commands to boot the DSP core. This callback is invoked only in IPC-only
-> - * mode.
-> + * This rproc attach callback is a NOP. The remote processor is already booted,
-> + * and all required resources have been acquired during probe routine, so there
-> + * is no need to issue any TI-SCI commands to boot the DSP core. This callback
-> + * is invoked only in IPC-only mode and exists because rproc_validate() checks
-> + * for its existence.
->   */
-> -static int k3_dsp_rproc_attach(struct rproc *rproc)
-> -{
-> -	struct k3_dsp_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -	int ret;
-> -
-> -	ret = k3_dsp_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
-> -	dev_info(dev, "DSP initialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_dsp_rproc_attach(struct rproc *rproc) { return 0; }
->  
->  /*
->   * Detach from a running DSP remote processor (IPC-only mode)
->   *
-> - * This rproc detach callback performs the opposite operation to attach callback
-> - * and only needs to release the mailbox, the DSP core is not stopped and will
-> - * be left to continue to run its booted firmware. This callback is invoked only
-> - * in IPC-only mode.
-> + * This rproc detach callback is a NOP. The DSP core is not stopped and will be
-> + * left to continue to run its booted firmware. This callback is invoked only in
-> + * IPC-only mode and exists for sanity sake.
->   */
-> -static int k3_dsp_rproc_detach(struct rproc *rproc)
-> -{
-> -	struct k3_dsp_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -
-> -	mbox_free_channel(kproc->mbox);
-> -	dev_info(dev, "DSP deinitialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_dsp_rproc_detach(struct rproc *rproc) { return 0; }
+> Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off
+> for i.MX7ULP
+>=20
+> On Fri, Aug 02, 2024 at 04:59:45AM +0000, Peng Fan wrote:
+> > > Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system
+> off
+> > > for i.MX7ULP
+> > >
+> > > On Tue, Jul 30, 2024 at 08:06:22AM +0000, Peng Fan wrote:
+> > > > > Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle
+> system
+> > > off
+> > > > > for i.MX7ULP
+> > > > >
+> > > > > On Fri, Jul 19, 2024 at 04:49:04PM +0800, Peng Fan (OSS)
+> wrote:
+> > > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > > >
+> > > > > > The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The
+> > > > > i.MX7ULP
+> > > > > > Linux poweroff and restart rely on rpmsg driver to send a
+> > > > > > message to
+> > > > > > Cortex-M4 firmware. Then Cortex-A7 could poweroff or restart
+> > > > > > by
+> > > > > > Cortex-M4 to configure the i.MX7ULP power controller
+> properly.
+> > > > > >
+> > > > > > However the reboot and restart kernel common code use
+> atomic
+> > > > > notifier,
+> > > > > > so with blocking tx mailbox will trigger kernel dump, because
+> > > > > > of blocking mailbox will use wait_for_completion_timeout. In
+> > > > > > such case, linux no need to wait for completion.
+> > > > > >
+> > > > > > Current patch is to use non-blocking tx mailbox channel when
+> > > > > > system
+> > > > > is
+> > > > > > going to poweroff or restart.
+> > > > > >
+> > > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > ---
+> > > > > >  drivers/remoteproc/imx_rproc.c | 36
+> > > > > > ++++++++++++++++++++++++++++++++++++
+> > > > > >  1 file changed, 36 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > > > > b/drivers/remoteproc/imx_rproc.c index
+> > > > > 01cf1dfb2e87..e1abf110abc9
+> > > > > > 100644
+> > > > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > > > @@ -18,6 +18,7 @@
+> > > > > >  #include <linux/of_reserved_mem.h>  #include
+> > > > > > <linux/platform_device.h>  #include <linux/pm_domain.h>
+> > > > > > +#include <linux/reboot.h>
+> > > > > >  #include <linux/regmap.h>
+> > > > > >  #include <linux/remoteproc.h>  #include <linux/workqueue.h>
+> > > > > > @@ -114,6 +115,7 @@ struct imx_rproc {
+> > > > > >  	u32				entry;		/*
+> cpu start
+> > > > > address */
+> > > > > >  	u32				core_index;
+> > > > > >  	struct dev_pm_domain_list	*pd_list;
+> > > > > > +	struct sys_off_data		data;
+> > > > >
+> > > > > What is this for?  I don't see it used in this patch.
+> > > >
+> > > > Oh, it was added when I was developing this feature, but in the
+> > > > end this seems not needed.
+> > > >
+> > > > >
+> > > > > >  };
+> > > > > >
+> > > > > >  static const struct imx_rproc_att imx_rproc_att_imx93[] =3D {
+> > > > > > @@
+> > > > > > -1050,6 +1052,22 @@ static int imx_rproc_clk_enable(struct
+> > > > > imx_rproc *priv)
+> > > > > >  	return 0;
+> > > > > >  }
+> > > > > >
+> > > > > > +static int imx_rproc_sys_off_handler(struct sys_off_data
+> *data) {
+> > > > > > +	struct rproc *rproc =3D data->cb_data;
+> > > > > > +	int ret;
+> > > > > > +
+> > > > > > +	imx_rproc_free_mbox(rproc);
+> > > > > > +
+> > > > > > +	ret =3D imx_rproc_xtr_mbox_init(rproc, false);
+> > > > > > +	if (ret) {
+> > > > > > +		dev_err(&rproc->dev, "Failed to request non-
+> blocking
+> > > > > mbox\n");
+> > > > > > +		return NOTIFY_BAD;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	return NOTIFY_DONE;
+> > > > > > +}
+> > > > > > +
+> > > > > >  static int imx_rproc_probe(struct platform_device *pdev)  {
+> > > > > >  	struct device *dev =3D &pdev->dev; @@ -1104,6
+> +1122,24 @@
+> > > static
+> > > > > > int imx_rproc_probe(struct
+> > > > > platform_device *pdev)
+> > > > > >  	if (rproc->state !=3D RPROC_DETACHED)
+> > > > > >  		rproc->auto_boot =3D
+> of_property_read_bool(np,
+> > > > > "fsl,auto-boot");
+> > > > > >
+> > > > > > +	if (of_device_is_compatible(dev->of_node,
+> > > > > > +"fsl,imx7ulp-cm4"))
+> > > > > {
+> > > > > > +		ret =3D devm_register_sys_off_handler(dev,
+> > > > > SYS_OFF_MODE_POWER_OFF_PREPARE,
+> > > > > > +
+> > > > > SYS_OFF_PRIO_DEFAULT,
+> > > > > > +
+> > > > > imx_rproc_sys_off_handler, rproc);
+> > > > >
+> > > > > Why does the mailbox needs to be set up again when the
+> system is
+> > > > > going down...
+> > > >
+> > > > As wrote in commit message:
+> > > > "i.MX7ULP Linux poweroff and restart rely on rpmsg driver to
+> send
+> > > > a message," so need to set up mailbox in non-blocking way to
+> send
+> > > > a message to M4 side.
+> > > >
+> > > > >
+> > > > > > +		if (ret) {
+> > > > > > +			dev_err(dev, "register power off
+> handler
+> > > > > failure\n");
+> > > > > > +			goto err_put_clk;
+> > > > > > +		}
+> > > > > > +
+> > > > > > +		ret =3D devm_register_sys_off_handler(dev,
+> > > > > SYS_OFF_MODE_RESTART_PREPARE,
+> > > > > > +
+> > > > > SYS_OFF_PRIO_DEFAULT,
+> > > > > > +
+> > > > > imx_rproc_sys_off_handler, rproc);
+> > > > >
+> > > > > ... and why does it need to be free'd when the system is going
+> up?
+> > > >
+> > > >
+> > > > Sorry, I not get your point. The free is in
+> imx_rproc_sys_off_handler.
+> > > > During system booting, the mailbox is not freed.
+> > >
+> > > Why is the same operation done at both startup and shutdown -
+> that
+> > > is not clear.
+> >
+> > The below commit shows request/free done in startup and shutdown.
+> > Hope this explains what you ask.
+>=20
+> Unfortunately it doesn't.  I just spent another hour trying to
+> understand why the same operations are carried out for both
+> shutdown and restart without success. =20
 
-Same comment as the previous patch.
+Thanks for your time.
+During system shutdown or system restart, we have other
+drivers that needs send rpmsg message to M7 core, but the
+system shutdown or system restart notifier callback not allow
+sleeping, so we need reset the mailbox as non-blocking.
+
+I am out of time for this patch
+> and have to move on to other patchset waiting to be reviewed.  I
+> suggest you ask Daniel to help clarify the changelog and comments in
+> the code and submit another revision.
+
+ok, I will ask Daniel for help to improve.
 
 Thanks,
-Mathieu
+Peng.
 
->  
->  /*
->   * This function implements the .get_loaded_rsc_table() callback and is used
-> @@ -697,6 +671,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->  	kproc->dev = dev;
->  	kproc->data = data;
->  
-> +	ret = k3_dsp_rproc_request_mbox(rproc);
-> +	if (ret)
-> +		return ret;
-> +
->  	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
->  	if (IS_ERR(kproc->ti_sci))
->  		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
-> @@ -789,6 +767,8 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
->  		if (ret)
->  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
->  	}
-> +
-> +	mbox_free_channel(kproc->mbox);
->  }
->  
->  static const struct k3_dsp_mem_data c66_mems[] = {
-> -- 
-> 2.34.1
-> 
+>=20
+> Thanks,
+> Mathieu
+>=20
+> >
+> > commit 99b142cf7191b08adcd23f700ea0a3d7dffdd0c1
+> > Author: Peng Fan <peng.fan@nxp.com>
+> > Date:   Fri Oct 21 12:15:25 2022 +0800
+> >
+> >     remoteproc: imx_rproc: Request mbox channel later
+> >
+> >     It is possible that when remote processor crash, the
+> communication
+> >     channel will be broken with garbage value in mailbox, such as
+> >     when Linux is issuing a message through mailbox, remote
+> processor
+> >     crashes, we need free & rebuild the mailbox channels to make sure
+> >     no garbage value in mailbox channels.
+> >
+> >     So move the request/free to start/stop for managing remote
+> procesosr in
+> >     Linux, move to attach/detach for remote processor is out of control
+> of
+> >     Linux.
+> >
+> >     Previous, we just request mbox when attach for CM4 boot early
+> before
+> >     Linux, but if mbox defer probe, remoteproc core will do resource
+> cleanup
+> >     and corrupt resource table for later probe.
+> >
+> >     So move request mbox ealier and still keep mbox request when
+> attach
+> >     for self recovery case, but keep a check when request/free mbox.
+> >
+> > >
+> > > I am currently away from the office, returning on August 12th.  As
+> > > such I will not be following up on this thread until then.
+> >
+> > sure. Thanks for letting me know.
+> >
+> > Thanks,
+> > Peng.
+> >
+> > >
+> > > >
+> > > > Thanks,
+> > > > Peng.
+> > > >
+> > > > >
+> > > > > > +		if (ret) {
+> > > > > > +			dev_err(dev, "register restart handler
+> > > > > failure\n");
+> > > > > > +			goto err_put_clk;
+> > > > > > +		}
+> > > > > > +	}
+> > > > > > +
+> > > > > >  	ret =3D rproc_add(rproc);
+> > > > > >  	if (ret) {
+> > > > > >  		dev_err(dev, "rproc_add failed\n");
+> > > > > >
+> > > > > > --
+> > > > > > 2.37.1
+> > > > > >
+> > > > > >
