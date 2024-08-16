@@ -1,290 +1,120 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1703E12C460;
-	Fri, 16 Aug 2024 07:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8413A258
+	for <linux-remoteproc@vger.kernel.org>; Fri, 16 Aug 2024 08:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794860; cv=none; b=VP3ipTQj9HRShOPpC4drDrp4Mdwyha3+HM7z5Ko/P3yLxxrZmQ9pbyN7RdtoyFEFIi7lpB+pAEylgMo+URZNMFRxTxHzq4v9cQCyVUEzTae39ckklb+OCDFGeo9f9Ki06vpX2DzcO4zNJX3Jh2nLOitihExlY6u2Me/E1vH3APY=
+	t=1723798106; cv=none; b=q2qSb1v+08LOOQby5Mj13oDoDUE6JzNTQM4ZEAuqxzkCS8eq+vOnpf6/01IHQt133nEBpOgPx4+DkfTD4Saj5b94QtpAS/kzFaamjhbhI0HWmnxgIk571zZJUMFLwwkh/RIAgIpv6U3Olb/6q+kgNxqR/AIJoTeb7Gbsa4y1m7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794860; c=relaxed/simple;
-	bh=bhryEJoTl5GL1UD0luwSHefebQdolxnc4qJmQ/14J2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZOCXF37cjusnSRY4oM1xkjGzUy7Mt7AEhEGhpHHr4MFBa0IOB6JMf24g52c972SB5wTdtRRyxUAa/fNWLmaGxlxM2Nf+Zp0mjl25GaL0GwIFuHeehqgRqOnirrKKVPBvnRzHsMWqbjNCTiA3DtEvNlz7Ey9t8uWfmHwzJz888wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=v+8L5RTS; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1723798106; c=relaxed/simple;
+	bh=5GDrt8Lzrjd+AR2vAAvvIuyq2HwfCThB1/LZluNapgU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PeW/QiB2g2oRQV0MdkGKEJXBEiGLpQ9yVEgNyuG48svBfliGjCMBu84zFXD0BL8o9cYD6L9VjJA+FaMdKJV5PRb31KEBeK6uBhaE66c/11dKBR9xX1OpSVBGvFhN8tKGrhBXLfdUuqgVrEsniOdboB36pQYrghIBvFp8Zeq+TgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zyNo1u68; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v+8L5RTS"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47G7sDvC052102;
-	Fri, 16 Aug 2024 02:54:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723794853;
-	bh=Ik/ZdRimZKjsbKzIm3/uG54pWJF/rEJY10bDBLHSQc4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=v+8L5RTS5POTalqW46O70vH7fwkYOwzAu0FHOYFeB0lQ1fWgr8FnS9FJjWO3ZUH0Z
-	 5htHbNpWp7xfTSbb2msMr9yyw8KGoD2/LpXXZQEb35oM6MMh38yOoy/DTQJpPJnSGQ
-	 VoMvDs1PjR+2wFVt9NCwo9mvQFas0vY/Figlr8WQ=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47G7sDUp105958
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 16 Aug 2024 02:54:13 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- Aug 2024 02:54:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 16 Aug 2024 02:54:04 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47G7s0hv100175;
-	Fri, 16 Aug 2024 02:54:01 -0500
-Message-ID: <d0fea480-1682-48ec-99dd-73deaff99d7d@ti.com>
-Date: Fri, 16 Aug 2024 13:23:59 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zyNo1u68"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so11774075e9.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Aug 2024 01:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723798103; x=1724402903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gzEKzZjStMCmeFHAsJP/R1JM2+6vJvnRZ4aYO0fFizU=;
+        b=zyNo1u68sOxYFHn7GrarlDV2mRcAnNjLCjG3LV1xFrEO88b817I3d6QYAfTyo4G3GJ
+         Ilx0KV3zj5BsR0RI02IFfNOObn2t//YvxwTNLXfXOtXJ3FHaMziaf7MwEVtXc3clazoh
+         78nKnPsTjKfu+r4csvDfrY4T1J5jx6Zuicj7xwkup3XtNtY0zzXE3xBg8Y+PMNTM96Hb
+         A6oouNkCvtuGrNyFHU3mXA/u8pm2Dpen4l3K9SH5AI9hAcFDjPHkWvvjhWltsS3ZRZup
+         ETKmkiHbMCAZ9J149gVWRSVXeWuz6uc2PUANIywk7fpYkf/BFNj5bPMVaf67xFa2+xA1
+         4cCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723798103; x=1724402903;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gzEKzZjStMCmeFHAsJP/R1JM2+6vJvnRZ4aYO0fFizU=;
+        b=rjE1imc1ZJFG0nhOOxlkBabG/5lXNUwf/d6pqYWwOye9L76xaj683Zdhe5Gvik457o
+         aSOXKdV4d5K3XdoauVUfPEb0HC25yDVDclmKXedtD8k4wOj/sbm8e+mXaAkWvse2lVBA
+         2pcsEPi/U3NwYA0QBtgLlXMFVdWx/l0+daS22qpTYa9Q7SOaX29gyWQ2Iy3UcjSyT4Vj
+         EhChBnz2BjUKu2Z3YltCTZ5IiAxK4mHjeJhW3tgamzIiDnuNgO2GL5JPh8wOgkTIgVot
+         MLWMGkIBy/lN3Dz6Q+axMR/WbpIghZh15kGRcCd8WVZiTqjJOLlRJkf2CK8GGe1jUQLF
+         vWCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVnHiHWJERp2xc8i2k5RzyUbNE4EqfxZw8zh5pkxYmSb4pKnI9MwII7OnticS3eWnbeFAa4w80asx1bUKQ+b2eB1sMI73N0OO3roZqkBDyuA==
+X-Gm-Message-State: AOJu0Ywj+9rjKImuS4EyI26mH+Tsz22s/wGLXhB7mrOdqrjicBK6UzJq
+	C9GMhad3qtAKtCXz4WGGkoApoMZ3vD96mQu8TRot+V0BD2LZTLj1Bwe2YQA4Cgw=
+X-Google-Smtp-Source: AGHT+IFPv0yq6NX6L+cXWVvN2XvKmjQ+KJdc+y+gSJFqzCqOGbEFL3nruXs5RxgfKGmI/6SzaOhwkg==
+X-Received: by 2002:adf:ea8c:0:b0:371:828a:741d with SMTP id ffacd0b85a97d-37194455f9emr1130106f8f.21.1723798102580;
+        Fri, 16 Aug 2024 01:48:22 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189897034sm3160819f8f.67.2024.08.16.01.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 01:48:22 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Amol Maheshwari <amahesh@qti.qualcomm.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Tengfei Fan <quic_tengfan@quicinc.com>, Ling Xu <quic_lxu5@quicinc.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
+References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
+Subject: Re: (subset) [PATCH v4 0/6] arm64: qcom: sa8775p: enable
+ remoteprocs - ADSP, CDSP and GPDSP
+Message-Id: <172379810100.49056.9142213363913093777.b4-ty@linaro.org>
+Date: Fri, 16 Aug 2024 09:48:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe routine
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
-        <s-anna@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240808074127.2688131-1-b-padhi@ti.com>
- <20240808074127.2688131-3-b-padhi@ti.com> <ZrzSxdxt64UkgVS3@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <ZrzSxdxt64UkgVS3@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-
-Hi Mathieu,
-
-On 14-08-2024 21:22, Mathieu Poirier wrote:
-> Hi Beleswar, On Thu, Aug 08, 2024 at 01: 11: 26PM +0530, Beleswar 
-> Padhi wrote: > Acquire the mailbox handle during device probe and do 
-> not release handle > in stop/detach routine or error paths. This 
-> removes the redundant > requests for
-> ZjQcmQRYFpfptBannerStart
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!vldnVV7DH2eSIoaksHjpMPogloWUPfAcp2-dEVbMoE1YA3kGFXdJXGAJUKJm$> 
->
-> ZjQcmQRYFpfptBannerEnd
-> Hi Beleswar,
->
-> On Thu, Aug 08, 2024 at 01:11:26PM +0530, Beleswar Padhi wrote:
-> > Acquire the mailbox handle during device probe and do not release handle
-> > in stop/detach routine or error paths. This removes the redundant
-> > requests for mbox handle later during rproc start/attach. This also
-> > allows to defer remoteproc driver's probe if mailbox is not probed yet.
-> > 
-> > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> > ---
-> >  drivers/remoteproc/ti_k3_r5_remoteproc.c | 78 +++++++++---------------
-> >  1 file changed, 30 insertions(+), 48 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > index 57067308b3c0..8a63a9360c0f 100644
-> > --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
-> >  	const char *name = kproc->rproc->name;
-> >  	u32 msg = omap_mbox_message(data);
-> >  
-> > +	/* Do not forward message from a detached core */
-> > +	if (kproc->rproc->state == RPROC_DETACHED)
-> > +		return;
-> > +
-> >  	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
-> >  
-> >  	switch (msg) {
-> > @@ -229,6 +233,10 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
-> >  	mbox_msg_t msg = (mbox_msg_t)vqid;
-> >  	int ret;
-> >  
-> > +	/* Do not forward message to a detached core */
-> > +	if (kproc->rproc->state == RPROC_DETACHED)
-> > +		return;
-> > +
-> >  	/* send the index of the triggered virtqueue in the mailbox payload */
-> >  	ret = mbox_send_message(kproc->mbox, (void *)msg);
-> >  	if (ret < 0)
-> > @@ -399,12 +407,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
-> >  	client->knows_txdone = false;
-> >  
-> >  	kproc->mbox = mbox_request_channel(client, 0);
-> > -	if (IS_ERR(kproc->mbox)) {
-> > -		ret = -EBUSY;
-> > -		dev_err(dev, "mbox_request_channel failed: %ld\n",
-> > -			PTR_ERR(kproc->mbox));
-> > -		return ret;
-> > -	}
-> > +	if (IS_ERR(kproc->mbox))
-> > +		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> > +				     "mbox_request_channel failed\n");
-> >  
-> >  	/*
-> >  	 * Ping the remote processor, this is only for sanity-sake for now;
-> > @@ -552,10 +557,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> >  	u32 boot_addr;
-> >  	int ret;
-> >  
-> > -	ret = k3_r5_rproc_request_mbox(rproc);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> >  	boot_addr = rproc->bootaddr;
-> >  	/* TODO: add boot_addr sanity checking */
-> >  	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> > @@ -564,7 +565,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> >  	core = kproc->core;
-> >  	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
-> >  	if (ret)
-> > -		goto put_mbox;
-> > +		return ret;
-> >  
-> >  	/* unhalt/run all applicable cores */
-> >  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-> > @@ -580,13 +581,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> >  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
-> >  			dev_err(dev, "%s: can not start core 1 before core 0\n",
-> >  				__func__);
-> > -			ret = -EPERM;
-> > -			goto put_mbox;
-> > +			return -EPERM;
-> >  		}
-> >  
-> >  		ret = k3_r5_core_run(core);
-> >  		if (ret)
-> > -			goto put_mbox;
-> > +			return ret;
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -596,8 +596,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> >  		if (k3_r5_core_halt(core))
-> >  			dev_warn(core->dev, "core halt back failed\n");
-> >  	}
-> > -put_mbox:
-> > -	mbox_free_channel(kproc->mbox);
-> >  	return ret;
-> >  }
-> >  
-> > @@ -658,8 +656,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
-> >  			goto out;
-> >  	}
-> >  
-> > -	mbox_free_channel(kproc->mbox);
-> > -
-> >  	return 0;
-> >  
-> >  unroll_core_halt:
-> > @@ -674,42 +670,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
-> >  /*
-> >   * Attach to a running R5F remote processor (IPC-only mode)
-> >   *
-> > - * The R5F attach callback only needs to request the mailbox, the remote
-> > - * processor is already booted, so there is no need to issue any TI-SCI
-> > - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
-> > - * only in IPC-only mode.
-> > + * The R5F attach callback is a NOP. The remote processor is already booted, and
-> > + * all required resources have been acquired during probe routine, so there is
-> > + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-> > + * This callback is invoked only in IPC-only mode and exists because
-> > + * rproc_validate() checks for its existence.
->
-> Excellent documentation.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
 
-Thanks!
+On Mon, 05 Aug 2024 19:08:01 +0200, Bartosz Golaszewski wrote:
+> Add DT bindings, relevant DT defines, DTS nodes and driver changes
+> required to enable the remoteprocs on sa8775p.
+> 
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Mathieu Poirier <mathieu.poirier@linaro.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> To: Jassi Brar <jassisinghbrar@gmail.com>
+> To: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> [...]
 
->
-> >   */
-> > -static int k3_r5_rproc_attach(struct rproc *rproc)
-> > -{
-> > -	struct k3_r5_rproc *kproc = rproc->priv;
-> > -	struct device *dev = kproc->dev;
-> > -	int ret;
-> > -
-> > -	ret = k3_r5_rproc_request_mbox(rproc);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
-> > -	return 0;
-> > -}
-> > +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
-> >  
-> >  /*
-> >   * Detach from a running R5F remote processor (IPC-only mode)
-> >   *
-> > - * The R5F detach callback performs the opposite operation to attach callback
-> > - * and only needs to release the mailbox, the R5F cores are not stopped and
-> > - * will be left in booted state in IPC-only mode. This callback is invoked
-> > - * only in IPC-only mode.
-> > + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
-> > + * left in booted state in IPC-only mode. This callback is invoked only in
-> > + * IPC-only mode and exists for sanity sake.
->
-> I would add the part about detach() being a NOP to attach() above...
->
-> >   */
-> > -static int k3_r5_rproc_detach(struct rproc *rproc)
-> > -{
-> > -	struct k3_r5_rproc *kproc = rproc->priv;
-> > -	struct device *dev = kproc->dev;
-> > -
-> > -	mbox_free_channel(kproc->mbox);
-> > -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
-> > -	return 0;
-> > -}
-> > +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
->
-> ... and just remove this.
+Applied, thanks!
 
+[1/6] dt-bindings: misc: qcom,fastrpc: increase the max number of iommus
+      commit: 42a21d00aac515fad1f9a10052c6e9710c6f7813
+[4/6] misc: fastrpc: Add support for cdsp1 remoteproc
+      commit: 590c42d9e278f8e6bf6d673f3101ac102369efc7
 
-Thanks for the comments. But dropping k3_r5_rproc_detach() would mean we 
-would get -EINVAL[1] while trying to detach the core from sysfs[0]. Is 
-it expected?
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[0]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_sysfs.c#n202
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_core.c#n1752
-
->
-> Otherwise this patch looks good.
->
-> >  
-> >  /*
-> >   * This function implements the .get_loaded_rsc_table() callback and is used
-> > @@ -1278,6 +1254,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
-> >  		kproc->rproc = rproc;
-> >  		core->rproc = rproc;
-> >  
-> > +		ret = k3_r5_rproc_request_mbox(rproc);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> >  		ret = k3_r5_rproc_configure_mode(kproc);
-> >  		if (ret < 0)
-> >  			goto out;
-> > @@ -1392,6 +1372,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
-> >  			}
-> >  		}
-> >  
-> > +		mbox_free_channel(kproc->mbox);
-> > +
-> >  		rproc_del(rproc);
-> >  
-> >  		k3_r5_reserved_mem_exit(kproc);
-> > -- 
-> > 2.34.1
-> > 
