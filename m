@@ -1,149 +1,111 @@
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5021E673C
-	for <linux-remoteproc@vger.kernel.org>; Mon, 19 Aug 2024 19:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8215A865
+	for <linux-remoteproc@vger.kernel.org>; Mon, 19 Aug 2024 23:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096757; cv=none; b=cFeHysYNaeqpQQQM3KXN0YabGQvTwsAVkNQwsLfHixiloAC7H1FRpLP3uEHwHt9nQYPxft6Fffo2k+FWxQVCti/gQRjI1R5K5QjGvkNVruYNyZoCh4BLU0cLQjSZlsejICmr0w0M6lST7qeoSnmSQXj07RHKRFwkXOZOeVdGmzw=
+	t=1724110826; cv=none; b=gBOqN9ZPNeg3jXJyjJ+wsVZ08mErnYIvUzPDQel8nNGvcOK0sWKSGNMzoMEcKfCJ05HSkFYAO215Stw/BUbZZGyqI4wRFwzHAkgEnMn2svii1JZao4V3+l+5rN+CEQARVe5D1wjcKXmPRnS90nz6J807QDsciy2r9/g6ZB6KYks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096757; c=relaxed/simple;
-	bh=lTecfPNxz/9Cag59+bTURN1jXiWeeVQ2ATKzC2brS7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EZn1PSb30nyIMpzbGrn5VdU+qqtKnZCPxNHoA5ldFjP/NLpzt7i18AGqFdnKrzXT1sliSHoiAR0qjYH9EP9XAAw6af1XovXti/x8cHVr8Yk9k/GQHYd3rjhdXj8UmUSMEpuU/EP3lspmzFfhT5pKtM6bo3vIU+56VS6ebvqLYvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=gePwJZtm; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	s=arc-20240116; t=1724110826; c=relaxed/simple;
+	bh=YPvzOFnH4gwgca48Ur3A8Ax1NuMLReALK95xcXHVHYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lt1VwD46PlGmTcj/Zpqfl4KWv44ZEPIETesor5zH+HrlnIhxwrYG6pKMJflOAVwyZjYE23mlJY+/cakpPWXqafH2LzB3PP2YAZ7pR7Co0VWuD+mEY9lG7atSaffr3oeDKvrMHI0qM7O8jJYEfMImTU9A0OJRl/hKe/z/tz5UB7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ThB3gtsx; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="gePwJZtm"
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id g7YdskHFAg2lzg8K3sqpiu; Mon, 19 Aug 2024 19:45:47 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id g8K2sOJeeO7Crg8K2s5KuM; Mon, 19 Aug 2024 19:45:46 +0000
-X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66c3a0ea
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=YbEntRZnthKDSLyDuXIA:9
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RUlAOFc33w/tmOT1t5JjZy4p+QioE0DcmaHZnwv7Dzo=; b=gePwJZtm8M0knS6ufjRJYEUmWL
-	o5g2yEiytPKJ1AVmtnI/1AUbDseScBzOLSIrvIgi/XQt2jFYc9cY6+rbO2cYQkqkA1dQR2gYQRr/Y
-	DDIEYOVzQYPOmzMf3B3La8aZ7qQSpoW+xJfuEhQn4VYaQTkhdWMx4tBmGZ7Zz+vyhL7vPvffSETvZ
-	xQTsxZoPGsBOLgCBTYx8daTS1AA/0g/AvqlywqNTlKfXmvAi7nsKTItwwwBH4J+/wQ58YLE9/3Buf
-	jnNIayW9C8MSi9wig+DE4KOSuA4Re1DEc+cpYdW83c0QJlrGT35tcwTlyLUbuXkXgOYDwWZ3U1KLZ
-	vJrkWWJQ==;
-Received: from [201.172.173.139] (port=48098 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sg8K1-001FC5-1g;
-	Mon, 19 Aug 2024 14:45:45 -0500
-Message-ID: <574744fe-4df3-405c-b4fc-7209d48c1dff@embeddedor.com>
-Date: Mon, 19 Aug 2024 13:45:43 -0600
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ThB3gtsx"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5b850d969so3073491eaf.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Aug 2024 16:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724110823; x=1724715623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XKnu/Iez1+mbjTx9dSE6EvXmZdzm/o7bv0RI9fycVok=;
+        b=ThB3gtsxYPH9cvOUxdIm2gXbkLF6iq5SzmKGFFt6Xl9isS8SvtHQgsCLnDkWAxvL6h
+         iLaZLobYyG1+Bml2iZF6Loqlp4pX5RhvcakbP9jaSKSQ0qguN3ghzGjY/Zm/5sFTTTOH
+         FPctM7vX1lOVRnJ7TUU2inBpHIqGTSSIFjV3o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724110823; x=1724715623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XKnu/Iez1+mbjTx9dSE6EvXmZdzm/o7bv0RI9fycVok=;
+        b=uAylVNYjXp0mvzYfBGgk0fRXQD9EVGf6K2aGKuNV1Ffa2k//Qi9MJnZy72r4v+cgCz
+         biV8oc7HSUSGIuMKlIDPttOsvtu+wojRbXfJOTbhm0XaJbP6fy7tD/weuuU3/WMyETtf
+         JiSX8CQOR/YZeXm9QDLM/ZGML8iFpqjxLkiJDK07BrwWWcTZZv1/vLGz/qF1bEjSobbk
+         Bug2ew9H380gWh225wl9D8Rsz18Y8qziCXWKNdRImGKeAgFO38wfeHgadleAEO621YFs
+         9/JSxbWWVKqVQLHWrkns/kaWEzZkasQUgGMYkHE1LOIl+eHIabgayDDDcJ9VyUcXjG3r
+         Y7kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhfXARtAnhfs3xKSN/DQzhrKeJUENNbEhfpULVaLO1NT2267ehlgAdtBC2ZsEPbuan+E2bqSww7jHW0dcDAW94HrmSOkEPoVkiYm4R4eubJA==
+X-Gm-Message-State: AOJu0YwaJ361UCMXjwAp7fLH9hXYWBiexpQq3CDbwzTq63/S6et7B4Lb
+	eZtkeCYOuXaLoSGIrM8ZV4hqLghVWfDenx/cu0h+grmQnAL9rkInZqWEexLXwMqi0Oie22QlXGe
+	LwfQr
+X-Google-Smtp-Source: AGHT+IERu6IAhwWx6es5khszoD3YSC1WP9M6PSVwUzoVaTI+8bPpzekDTFMvH75GXLVnN86G44KhsA==
+X-Received: by 2002:a05:6820:602:b0:5c4:7b18:b8eb with SMTP id 006d021491bc7-5da97f5a8f7mr15050072eaf.2.1724110823464;
+        Mon, 19 Aug 2024 16:40:23 -0700 (PDT)
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5dc93b032desm91826eaf.27.2024.08.19.16.40.22
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 16:40:22 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5d5e97b8a22so2935615eaf.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Aug 2024 16:40:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVee1T0GqzqNSfPyANbMkITA5WVpWkO7J1u23xFDbclYRdizdRx6c6elTPY0tVzm3iV8YfLKROzlCbfmtkwJNGqUP3WpYETc0+L2DY9v8QVw==
+X-Received: by 2002:a05:6358:2923:b0:19f:4967:4e8f with SMTP id
+ e5c5f4694b2df-1b39329f298mr1693684755d.22.1724110821953; Mon, 19 Aug 2024
+ 16:40:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <ZrOQa2gew5yadyt3@cute> <202408081146.09AA68D69@keescook>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202408081146.09AA68D69@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sg8K1-001FC5-1g
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:48098
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBVSn387CnwNUVB1she9xV8jTqTe9oDwPslu+q0m3SPjOoWkBjOAPpClngh26TQ+kNea+/BTnWeFA+j2BAbqWKFm0SZy/en1+QFq6f1InLmbQkP9wwZs
- zpEnbt6YJAMcrSJZx3EevRGrYiIO6UFcMQwX7yqVzdHswjOpwFymOggBn23f/wJ+uiCytk+MZzd9Zhlcbs4CdmAJpqgkzWyolOVBx038q84Yos8LRuavohpY
+References: <20240819073020.3291287-1-quic_sibis@quicinc.com>
+In-Reply-To: <20240819073020.3291287-1-quic_sibis@quicinc.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 19 Aug 2024 16:40:07 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
+Message-ID: <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Mon, Aug 19, 2024 at 12:30=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.co=
+m> wrote:
+>
+> Any write access to the IMEM region when the Q6 is setting up XPU
+> protection on it will result in a XPU violation. Fix this by ensuring
+> IMEM writes related to the MBA post-mortem logs happen before the Q6
+> is brought out of reset.
+>
+> Fixes: 318130cc9362 ("remoteproc: qcom_q6v5_mss: Add MBA log extraction s=
+upport")
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-On 08/08/24 12:51, Kees Cook wrote:
-> On Wed, Aug 07, 2024 at 09:19:07AM -0600, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
->>
->> So, in order to avoid ending up with a flexible-array member in the
->> middle of multiple other structs, we use the `__struct_group()`
->> helper to create a new tagged `struct glink_msg_hdr`. This structure
->> groups together all the members of the flexible `struct glink_msg`
->> except the flexible array.
->>
->> As a result, the array is effectively separated from the rest of the
->> members without modifying the memory layout of the flexible structure.
->> We then change the type of the middle struct members currently causing
->> trouble from `struct glink_msg` to `struct glink_msg_hdr`.
->>
->> We also want to ensure that when new members need to be added to the
->> flexible structure, they are always included within the newly created
->> tagged struct. For this, we use `static_assert()`. This ensures that the
->> memory layout for both the flexible structure and the new tagged struct
->> is the same after any changes.
->>
->> This approach avoids having to implement `struct glink_msg_hdr` as a
->> completely separate structure, thus preventing having to maintain two
->> independent but basically identical structures, closing the door to
->> potential bugs in the future.
->>
->> We also use `container_of()` whenever we need to retrieve a pointer to
->> the flexible structure, through which we can access the flexible-array
->> member, if necessary.
->>
->> Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
->> definition of a flexible structure where the size for the flexible-array
->> member is known at compile-time.
->>
->> So, with these changes, fix the following warnings:
->> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> 
-> Looks correct to me. As a separate change, I wonder if the strcpy()
-> should be replaced with strscpy_pad(), but I think it's all okay as-is,
-> since channel->name seems to be set from another fixed-size array that
-> is the same size.
+As discussed offlist, this isn't a perfect fix since writes to this
+IMEM could happen by other drivers and those could still cause things
+to go boom if they run in parallel with this driver. That being said:
+* It seems like a more proper fix needs a coordinated effort between a
+device's built-in firmware and the modem firmware. This is difficult /
+near impossible to get done properly.
+* Even if we do a more proper fix, making this change won't hurt.
+* This change will immediately improve things by avoiding the XPU
+violation in the most common case.
 
-Yes, I noticed the same after sending the patch. :p
+I've confirmed that the test case I had where things were going boom
+is fixed. Thus:
 
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
-
-Thanks!
---
-Gustavo
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
