@@ -1,48 +1,48 @@
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10482190473;
-	Tue, 20 Aug 2024 15:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBC51547CB;
+	Wed, 21 Aug 2024 05:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724166970; cv=none; b=S5Qy5M6P+FTjDrDaTl01Cb09UAIN7LKGtLCUFHhKGt6LFqqV1NGQN2N4Qh7VXOUFYE/rFAhS7yevJsMjln0QE/ko9uQ12A7B11+wTAJBOJWu7fyI6dk3L9TfAHdYfl1kgcK2Aj/cdOJPE5aRAMIF14PAY8pnSO7ZUdZ9odFvdrQ=
+	t=1724218243; cv=none; b=O/jYbaHDkQCJNZobhuwklqy1lTBoLQtibxLyzssi6C9dZx7hfTzqcCFZoYzXL0/rBGiiab75CHdSYZt8wW3PvNI0ozAaUDj7JZkD84l1XGTlvz/9tqE+T6pMePllpIH5CFHiobcZZYSLvmhG1hnVxV/y8Hz6BpdafzhG2pG939A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724166970; c=relaxed/simple;
-	bh=2htDYgQvswGaU/wI5VetYbAFBjE4OAfABWe3crGFcQk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=bzfKgD876yklxMn3eUk7dyB/v7eeZRO9T7UkHQkoe84dS3r5WwgtR9cHxxhmi4qrg8AtSQaZQUQwjvvChsO/VtaVRG30SW4JXBSYDf9OfyhaLKeCtdz7f7OWe12fBnRbKSoi2zR9gwCagsiKI0JERChq4ZnixFpOPKjjAziP7mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y0gU7KF0; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1724218243; c=relaxed/simple;
+	bh=US6uukCr23cJcb5Qk05xvJuPGTtMv0kcae9DXge8M+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uYCj/QZQLMUZl+l6sl0K6TQFJTMC0CjqJhrvPYFeLeaKHsX0O46NthaPbt8Oe8Gb7P5lwGGfYOEVzyYZUXKaJKNOjPReQ2Kz7TErrT01HYbckyHn5thSIO2fHhTqqUXSWo2ZoDUCSD0sa77dRmH3h9mNwNfj8+nOe07rTaNeua8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zFSfCOEY; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y0gU7KF0"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47KFG2Bv012791;
-	Tue, 20 Aug 2024 10:16:02 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zFSfCOEY"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47L5UXGZ082374;
+	Wed, 21 Aug 2024 00:30:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724166962;
-	bh=o0ex5f/T4fe5xibAfgsBjL2cdHLLg0oekkZAeaRrtYw=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=y0gU7KF0O8ubQ8gGeAOeqEbUEMr6J17SCWOSuBXoKbeVV462pZ0yW+mI7szU2fLO3
-	 AX4eQe9yTxJyyad5qiUQ8txtk8XXIjGv1GcNQy4cxrWX9XDPEPS+Ax8NusJh0mLjBA
-	 vw4bQpqISIYjv683zgM4xJX2Kgnyd9qehm1nntBI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47KFG2NR047072
+	s=ti-com-17Q1; t=1724218233;
+	bh=AhzCsHq+PmvPFNsYNTZwHR5yfApUNLRO+eJzp8TqvhY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=zFSfCOEYumAEGNL7iVsJsj376FfpgNNed6sN/9GWTP5y/yjmJ9BOMwI+cToHRiMpz
+	 A99gtnkSbnVTsiwn/hZy0ZNLihpQ3raiPqRqUFqM+cWX1ZqkoG+ZfUAYxbQBEd5AaG
+	 C1Hg1EuENNyyM7WBymy4uSXclu3dS3lEUIEfGC/g=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47L5UWfV004758
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 Aug 2024 10:16:02 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- Aug 2024 10:16:02 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 21 Aug 2024 00:30:33 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ Aug 2024 00:30:32 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 Aug 2024 10:16:02 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47KFFwnx027038;
-	Tue, 20 Aug 2024 10:15:59 -0500
-Message-ID: <3274bdec-e9a3-4c2d-ba8e-58caa033d451@ti.com>
-Date: Tue, 20 Aug 2024 20:45:57 +0530
+ Frontend Transport; Wed, 21 Aug 2024 00:30:32 -0500
+Received: from [172.24.216.148] (ltpw0bk3z4.dhcp.ti.com [172.24.216.148])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47L5UQSV044371;
+	Wed, 21 Aug 2024 00:30:28 -0500
+Message-ID: <cf1783e3-e378-482d-8cc2-e03dedca1271@ti.com>
+Date: Wed, 21 Aug 2024 11:00:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Fix driver shutdown
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix error handling when power-up
+ failed
 To: Jan Kiszka <jan.kiszka@siemens.com>,
         Bjorn Andersson
 	<andersson@kernel.org>,
@@ -62,102 +62,58 @@ CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	<a-nandan@ti.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         Nishanth Menon <nm@ti.com>
-References: <bf2bd3df-902f-4cef-91fc-2e6438539a01@siemens.com>
- <3e6075a6-20a9-42ee-8f10-377ba9b0291b@ti.com>
- <9ce9044c-085f-4eff-b142-ab36d39d90b4@siemens.com>
- <2bdd6000-82b4-4f57-a950-e9378c321154@ti.com>
- <7ffe0f80-d4a2-4d6f-8c45-5a407ac2e584@siemens.com>
- <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
+References: <9f481156-f220-4adf-b3d9-670871351e26@siemens.com>
 Content-Language: en-US
-In-Reply-To: <be50e40e-ece6-4784-83f3-031a750d5e79@ti.com>
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <9f481156-f220-4adf-b3d9-670871351e26@siemens.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-On 20-08-2024 20:29, Beleswar Prasad Padhi wrote:
+On 19-08-2024 20:54, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 >
-> On 20-08-2024 19:50, Jan Kiszka wrote:
->> On 20.08.24 11:48, Beleswar Prasad Padhi wrote:
->>> On 20-08-2024 15:09, Jan Kiszka wrote:
->>>> On 20.08.24 11:30, Beleswar Prasad Padhi wrote:
->>>>> Hi Jan,
->>>>>
->>>>> On 19-08-2024 22:17, Jan Kiszka wrote:
->>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>>>
->>>>>> When k3_r5_cluster_rproc_exit is run, core 1 is shutdown and removed
->>>>>> first. When core 0 should then be stopped before its removal, it 
->>>>>> will
->>>>>> find core1->rproc as NULL already and crashes. Happens on rmmod e.g.
->>>>> Did you check this on top of -next-20240820 tag? There was a 
->>>>> series[0]
->>>>> which was merged recently which fixed this condition. I don't see 
->>>>> this
->>>>> issue when trying on top of -next-20240820 tag.
->>>>> [0]:
->>>>> https://lore.kernel.org/all/20240808074127.2688131-1-b-padhi@ti.com/
->>>>>
->>>> I didn't try those yet, I was on 6.11-rcX. But from reading them
->>>> quickly, I'm not seeing the two issues I found directly addressed 
->>>> there.
->>> Check the comment by Andrew Davis[0], that addresses the above issue.
->>>
->>> [0]:
->>> https://lore.kernel.org/all/0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com/ 
->>>
->>>
->> OK, then someone still needs to update his patch accordingly.
-> That comment was addressed in the v4 series revision[1] and was merged 
-> to linux-next, available with tag -next-20240820. Request you to 
-> please check if the issue persists with -next-20240820 tag. I checked 
-> myself, and was not able to reproduce.
-> [1]: https://lore.kernel.org/all/Zr9nbWnADDB+ZOlg@p14s/
->>
->>>>>> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power
->>>>>> up before core0 via sysfs")
->>>>>> CC: stable@vger.kernel.org
->>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>>>>> ---
->>>>>>
->>>>>> There might be one more because I can still make this driver crash
->>>>>> after an operator error. Were error scenarios tested at all?
->>>>> Can you point out what is this issue more specifically, and I can 
->>>>> take
->>>>> this up then.
->>>> Try starting core1 before core0, and then again - system will hang or
->>> If you are trying to stop and then start the cores from sysfs, that is
->>> not yet supported. The hang is thus expected.
->> What? Then the driver is broken, even more. Why wasn't it fully 
->> implemented?
+> By simply bailing out, the driver was violating its rule and internal
 
 
-Just wanted to point out that this "graceful shutdown" feature is 
-majorly dependent on the Device Manager Firmware(point 3) and minimal 
-changes to the remoteproc driver (point 2 and 4). Thus, as soon as 
-Firmware is capable, we will send out the patches for this feature.
+Using device lifecycle managed functions to register the rproc 
+(devm_rproc_add()), bailing out with an error code will work.
 
-> The driver is capable of starting a core and stopping it all well. The 
-> problem is, when we stop a core from sysfs (without resetting the SoC 
-> itself), the remotecore is powered off, but its resources are not 
-> relinquished. So when we start it back, there could be some memory 
-> corruptions. This feature of "graceful shutdown" of remotecores is 
-> almost implemented and will be posted to this driver soon. Request you 
-> to try out after that.
+> assumptions that either both or no rproc should be initialized. E.g.,
+> this could cause the first core to be available but not the second one,
+> leading to crashes on its shutdown later on while trying to dereference
+> that second instance.
 >
-> With graceful shutdown feature, this will be the flow:
-> 1. We issue a core stop operation from sysfs.
-> 2. The remoteproc driver sends a special "SHUTDOWN" mailbox message to 
-> the remotecore.
-> 3. The remotecore relinquishes all of its acquired resources through 
-> Device Manager Firmware and sends an ACK back.
-> 4. The remotecore enters WFI state and then is resetted through Host 
-> core.
-> 5. Then, if we try to do the core start operation from sysfs, core 
-> should be up as expected.
+> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> Thanks,
-> Beleswar
->>
->> Jan
->>
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 39a47540c590..eb09d2e9b32a 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1332,7 +1332,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>   			dev_err(dev,
+>   				"Timed out waiting for %s core to power up!\n",
+>   				rproc->name);
+> -			return ret;
+> +			goto err_powerup;
+>   		}
+>   	}
+>   
+> @@ -1348,6 +1348,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>   		}
+>   	}
+>   
+> +err_powerup:
+>   	rproc_del(rproc);
+
+
+Please use devm_rproc_add() to avoid having to do rproc_del() manually 
+here.
+
+>   err_add:
+>   	k3_r5_reserved_mem_exit(kproc);
