@@ -1,155 +1,135 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671531AF4E0
-	for <linux-remoteproc@vger.kernel.org>; Wed, 21 Aug 2024 16:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B998F1B2503
+	for <linux-remoteproc@vger.kernel.org>; Wed, 21 Aug 2024 17:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724259506; cv=none; b=LcqQlD0gsZAWOdOAoAscOXMNEYJGPlbRZ6YsGFZ0X9Gcb5i1Yt3yEFLNuDcsY4WsciUnNofTrD+oH1MzRBGYYeQIYy5dRPIEF2vDRBKsf0BDNMXjjESTYw39LyYOg9MI9SWWh2pvh1N11YSIUbtnGx8EPKJoV+NKc5twBxvPXuw=
+	t=1724260353; cv=none; b=uzkRQRDp7myDbNhwpWdbQPfp7MT+jtknnQshhHVuMz4WgXN1tmSNXgSPIKhJEoe1yvsP1hFdu1w3ORA3KRRjxgbzIKhLirRN6CtqehgkiYmhT+IObyVjl3xNJebeIMSv0rhSwrp6EOmA1Dlu002hr6LzgLJ4fiM+TafP35MZhFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724259506; c=relaxed/simple;
-	bh=qTIOmQ2c7OE8BlsXUZPRgkdCOuSnmKWJ+/+jBdLEtwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mPvayB9aHrqm4Q6OsM+Y1mDHQfxh8zJ52MOvg0/kXMEVrm58hXywQQPBw74T5dQ2IJaQrA7X+Skn6Nilf1mpOJMnCJ9ECDvgaEJ7FhDT8LSeFuiCi7GA4ylXYA7m6IadOcpuZkt1baqWeRYZJcaBYD/1u6LgBoKGFsPWWBieB2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sixsm7mD; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1724260353; c=relaxed/simple;
+	bh=8AMj1gQbdOy6mzRKOvisGTOPkhNd65sI4xgr/VwrPjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQ0M43RkL0cBhnMw8PL9KHP7JxbvMQhLluV7meBhK/6o9sSxT5uLi0evYKTUCFQiUu8fGGo8Q2mQn+lPjGOATtM4UcWbOVv4nTLrGLeQVkiGyu+EWLmAbaC8eZz3s5+ABAEDS2RMrzDoI+pYQIrvu4+ct+nw74n4jHI47oR4348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=upk5xP46; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sixsm7mD"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bec87ececeso6164520a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Aug 2024 09:58:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="upk5xP46"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7143185edf2so108833b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Aug 2024 10:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724259503; x=1724864303; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=77mIQqg0l3Qo1gLZN8aEs42X01Sfq+eWXCKq3Yb3JEo=;
-        b=sixsm7mDs8DvSpYWmBe7Tp3IWKunla7od8OAnfW4wQRYw5PtceZKMrnqLlRxLtf6do
-         dXYoUhmMRGEexn2YVM19edUtMs760XQdyu3H1hJKp7Per6xURcDl6COcYSmgPtkE75xF
-         jH/t/bnzZzJU0F024X0ozK+Wqkgp3CG3cSa7vwlTTIDtFuC1T2XRl5mhKrBOlM7R9nDs
-         4otAvfW6yk6RHetd9KyrBG7+JfxrLDFgr2EfLUTUTKI5hrbdOL3S2maBFxUCaoZwiXqH
-         WYz+p+E+uRTxm0ObxW4xY3KJRKE2hjhGj6DCVvgP1NhwKVTu/OC/ejFHPOcWmOol5ON9
-         5SXw==
+        d=linaro.org; s=google; t=1724260351; x=1724865151; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PGuIX73MOWMnEgrAGHe44EShZU2W6VwRhKHeC2K7JU=;
+        b=upk5xP46OfEFNNtH3SH5yhTKqD57K+7FyHr+IV0pyc6BZcvM+A17QmRF5ESdc8eZOy
+         urpf6pmCGrdNB3DtXMbKpl5nyIbmpCEZ5eeqxV60uXWr8SmH8Bkn5/SdbrwHG8v6ZW5U
+         rP8Rm2Z/arH6YmE6zk0+iKCq26QPe5flVcbPh1dmOB5mjK/VxnhSL88EYbdRCna+DMr2
+         G2vdCvMj9154bHR21mnFQAnVgSmSs4HawEpsbR8/4HUy8UOt8Yfks4nAhtAmgFhfB8fQ
+         PYNCCBemPFSc5jDp9mxYSIz0NoQ20p35Hw8CqecRUZG4rJc9tiwy+UfE8YFNrbs7V0Il
+         H7kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724259503; x=1724864303;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=77mIQqg0l3Qo1gLZN8aEs42X01Sfq+eWXCKq3Yb3JEo=;
-        b=NbSX9umoWl0oDZisQDF129H5U49SV9CY/6g74YSI5qq3OZA+WzCeNzk6+3g9SanJkt
-         4e50j2ErPODVaZ4QOvqcwuLpo8RDXPWngsus9TG9ZHzh/KNzAzYr/Ofg+RXDbSwXRrgD
-         1ssMUUcAyoxggbtmnqIIk7MhVQ+28L0+5qhjqHIDLeBwyrhj6wTLvQCk3ERVHyPr92ix
-         sIbWWGAW5g8sUBqm3SeCWTVnPgL14D861FMblGWum820lejDHqVih+cazowp48o0gkSR
-         +7BuoRynNv9ocCFUV9Ir71Oma6/DlEqp1SFZJh4vKUIi5Q0ZGxf7Q+gTU3ycUkStU+Hx
-         b6oA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5LpmEhPi30lH2zrdYynNTEjNHukoHsu6465nBbkKPGWXOvehEPpdkkiKPcTEIl/itFDUOG45MrxKkoJYIk6un@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV6xUPnju1r9/utHlWvnYC2xJPFyOH5QWbEXKf9WypB/glW/pY
-	OCmBTRpTAYXMebgDRl+Bpd+Abnfqc5KqEMfYJcHJNxRref50iv9TX3TQUcdtJJhI6//v430/8tH
-	JrDKRjOsSqAz8WzEen7Fzl95xfbGcZWHdOWRbYw==
-X-Google-Smtp-Source: AGHT+IGB0eggZNl74UG/ixB4CbLG6EFWV4jovviRpJmRSwZVaFz5PVo/i92AKyHfoWxP5OBPCLzaHq6dCRWEUYYV2B0=
-X-Received: by 2002:a05:6402:3484:b0:5be:fc1d:fd38 with SMTP id
- 4fb4d7f45d1cf-5bf1f261d21mr2158359a12.36.1724259502577; Wed, 21 Aug 2024
- 09:58:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724260351; x=1724865151;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2PGuIX73MOWMnEgrAGHe44EShZU2W6VwRhKHeC2K7JU=;
+        b=u+TQ1WdH0vEXkV0afEj+Zirc5tgCSlezJdTwnl+JRSihvRSPpuU5thH/9tRU9lKjf6
+         Bv4rOD9Ssi3XMSE0EHjUPp0nB1MUsBqWvdEdQW4ujOMGytODppCTwVhNYdv6P+3RpJhz
+         NpqNkebIhjatwux5oxMw75DwRnevANueoYNnUypmE4NWS4r48cnwVPp8H+JNqe0JDOXI
+         9bn33JtMN7CkOMWz0nQxMvP0pspbUFaaKW0jALogTVeClbgAlRWx63Yzk1gEG9yAB/+B
+         MyRSNiZkHIYmb1sLhQI5RDVpO3xZNecgh8Oy0D9dx+/GS/Qy/eee5yYfFKCwiikNFPEl
+         ZHYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQYIVgxD9SNXGyoyn3WgWTdTEZ+WPLeVYfqrHIS3UEWQ+MzjrWzl056O9HPB6WOfUySGZuooAdHrAQvzo9qpOL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq6okdZxubujVW/Oki0Yo4RjGZS2EIhkhChTLHEZDsBCfJixUU
+	VDoQfDSgQQaRUZMCeZLTDxQuPxWQL0hNi6YegOcedsywyVrM0Z5i3ZCC1XaM8Io=
+X-Google-Smtp-Source: AGHT+IFahu5nhyR9APNX81eGWYDvWGW2BXzcpC6njxXplKlq16tD6UzEgdsOMomgPVvunvzQIx/1lw==
+X-Received: by 2002:a05:6a20:c916:b0:1c3:b61c:57cb with SMTP id adf61e73a8af0-1cad818adccmr3000160637.53.1724260350919;
+        Wed, 21 Aug 2024 10:12:30 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:167e:272c:2858:d319])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7142e28d8f9sm528460b3a.70.2024.08.21.10.12.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 10:12:30 -0700 (PDT)
+Date: Wed, 21 Aug 2024 11:12:27 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Hari Nagalla <hnagalla@ti.com>, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 3/9] remoteproc: k3-m4: Add a remoteproc driver for
+ M4F subsystem
+Message-ID: <ZsYf+yR/SWfb97Ya@p14s>
+References: <20240802152109.137243-1-afd@ti.com>
+ <20240802152109.137243-4-afd@ti.com>
+ <Zr4w8Vj0mVo5sBsJ@p14s>
+ <Zr9j5HBjRqqRIoaD@p14s>
+ <e5140426-7e69-41b0-858f-16f83eed871a@ti.com>
+ <ZsNlic5EbQP2BdFB@p14s>
+ <f529c5ef-f61c-4c8b-a589-652aca162f07@kernel.org>
+ <98d65c2e-f5a2-4894-b76d-6fa0fb8b6daf@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com> <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com>
- <Zqe23DlboRPSXiQO@p14s> <CAEnQRZC4Oqyks+ok0vdoFxW1v1s5hfbM8EtdP8nUqxTXRZsRLA@mail.gmail.com>
-In-Reply-To: <CAEnQRZC4Oqyks+ok0vdoFxW1v1s5hfbM8EtdP8nUqxTXRZsRLA@mail.gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 21 Aug 2024 10:58:10 -0600
-Message-ID: <CANLsYky_WPo6UXZXAMMLpQ-duf9OxZYvb4PRw4zUgisMcjWOvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for i.MX7ULP
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
-	Marek Vasut <marex@denx.de>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98d65c2e-f5a2-4894-b76d-6fa0fb8b6daf@ti.com>
 
-On Wed, 21 Aug 2024 at 02:32, Daniel Baluta <daniel.baluta@gmail.com> wrote:
->
-> Hello Mathieu,
->
-> I've talked to Peng and if my understanding is correct I think the patch is OK.
-> Maybe we can split the patch in two:
-> * first, adding the power off callback with explanations.
-> * second, adding the restart callback with explanations.
->
-> And also add a more detailed explanation.
->
-> Power off and restart are totally different operations and are not complementary
-> as I thought in the beginning. There are not like suspend/resume for example.
->
-> > >  static int imx_rproc_probe(struct platform_device *pdev)
-> > >  {
-> > >       struct device *dev = &pdev->dev;
-> > > @@ -1104,6 +1122,24 @@ static int imx_rproc_probe(struct platform_device *pdev)
-> > >       if (rproc->state != RPROC_DETACHED)
-> > >               rproc->auto_boot = of_property_read_bool(np, "fsl,auto-boot");
-> > >
-> > > +     if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4")) {
-> > > +             ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_POWER_OFF_PREPARE,
-> > > +                                                 SYS_OFF_PRIO_DEFAULT,
-> > > +                                                 imx_rproc_sys_off_handler, rproc);
-> >
-> > Why does the mailbox needs to be set up again when the system is going down...
->
-> Scenario: We call Linux *shutdown -P * command to power off the machine.
->
-> At this point mailbox TX operation is configured as *blocking*. Power
-> off is done via
-> an atomic notifier call which doesn't allow blocking. If we do so we
-> will endup in a kernel crash.
->
-> So, at this moment we setup again the mailboxes configuring them with
-> *non-blocking* option.
->
-> >
-> > > +             if (ret) {
-> > > +                     dev_err(dev, "register power off handler failure\n");
-> > > +                     goto err_put_clk;
-> > > +             }
-> > > +
-> > > +             ret = devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART_PREPARE,
-> > > +                                                 SYS_OFF_PRIO_DEFAULT,
-> > > +                                                 imx_rproc_sys_off_handler, rproc);
-> >
-> > ... and why does it need to be free'd when the system is going up?
->
-> System is not going up here. System is running and we do a reboot.
+On Mon, Aug 19, 2024 at 10:54:11AM -0500, Andrew Davis wrote:
+> On 8/19/24 10:39 AM, Krzysztof Kozlowski wrote:
+> > On 19/08/2024 17:32, Mathieu Poirier wrote:
+> > 
+> > > > > > Please remove.
+> > > > > Forget this comment since it would cause an error in __rproc_detach().
+> > > > > 
+> > > > > > Other than the above I'm good with this driver.  That said I can't move forward
+> > > > > > without a nod from the DT crew.  I also noticed a fair amount of code
+> > > > > > duplication with the k3_r5 and k3_dsp drivers.  Dealing with that should not be
+> > > > > > part of the current work but will need to be done before another k3 driver can
+> > > > > > be merged.
+> > > > > > 
+> > > > 
+> > > > > The above still apply though.
+> > > > 
+> > > > Me or Nishanth will pick up the SoC DT patches via TI SoC tree, once the
+> > > > driver patches are merged. Feel free to ignore those but queue
+> > > > dt-bindings (already has DT maintainers ack) and driver patches via
+> > > > rproc tree.
+> > > > 
+> > > 
+> > > Can you provide a link where the DT maintainers have acknowledged the bindings?
+> > 
+> > The reviewed-by tag serves as acknowledgment as well and the binding
+> > patch has it. Conor gave it on some earlier version of the patchset. I
+> > did not check if there were any significant changes in the meantime, though.
+> > 
+> 
+> Was reviewed in v8:
+> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240424190612.17349-2-afd@ti.com/#3302840
 >
 
-Ah!  This is still on the downward path - I thought
-"SYS_OFF_MODE_RESTART_PREPARE" was associated with the upward path,
-when the system is restarted after a shutdown or a reboot.  That is
-where the confusion came from.
-
-> Scenario: We call Linux *shutdown -r* command to reboot the machine.
->
-> Similarly, mailboxes are already set and configured as *blocking*. We
-> cannot use the mailboxes
-> as they are because reboot is done via an atomic notifier which if we
-> call a blocking function it will endup in crash.
->
-> So, we need to free the existing mailbox and create new ones with the
-> *non-blocking* options.
->
-> I think this is really fair to me. The one thing, I admit we must work
-> on, create a better commit message.
->
-> What do you say? Does this work for you?
->
-
-Things are clear now and I agree with the implementation.  No need for
-two separate patches, just a re-worked changelog.
+I didn't notice Conor had joined the DT crew and as such was expecting something
+from either Rob or Krzysztof.  I am applying this set.
 
 Thanks,
 Mathieu
 
-> Thanks a lot for your help!
+> If there was any significant changes since I would have dropped the tag.
+> 
+> Andrew
+> 
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
