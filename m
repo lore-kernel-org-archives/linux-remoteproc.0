@@ -1,68 +1,73 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04141CCEC9
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 16:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EBC1CCEC1
+	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 16:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343484; cv=none; b=qzaMdfvYE/Cb/cwI94tYUaNhz+vAJXkYrCMO17bA353CXl4FQg+AuQ4L1FMq0tkzI96lEu51jHPiPuMjqQB4xqsESamLmchwBcEidSv1bMqDh3uNpj38ZF3UsvuS8GEtm7zzsqSzqoKsWZfpJqmJMl96ABB/pCHUAIDKLupKL54=
+	t=1724343869; cv=none; b=HZOrdifChWzfFYOreI13HfFcQPyT04UPFgYsXR0322IKoyiFvWHPiUqEXWKoZBxDJNxrC6TC/W/52nK9aAvqgUmRS4l5BIYYu5t2931wfNgKU7GTJ0fbW5VtjDOeKa44/XM8aCMmtE9yb5AwVcEnNu//fwsLq3NBZYGGLZ3glGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343484; c=relaxed/simple;
-	bh=pzVZClyB/Tio3abHqD3qwB+FNWLpxRxIcAYuvZ9PxoQ=;
+	s=arc-20240116; t=1724343869; c=relaxed/simple;
+	bh=ATxYdoET9i0tpoYEYnSCwulRxYkpITICJ0RdslxkZwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HxDSlZyVXxqU8JLvzZ77veJkm6sCiCFNJJG6OJf3aZNnvKgoI0p1XBHyserVAqj3mbUKhDt6TojLq45ppBaJn+2Oscu/WCZhnjAeKxbLiBcTHwba26RbDLDQqapl0ntlz3Btur+VB46BnR4QpqOcJbZ+j4Me4XWiO7dGQSqPfd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ErMl/PT0; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rrg+YTm78BmEHsFBFDkLWhMfngBlj3i9kmQdJlF+ARTwoRZoiWxCVzyRzBp7809apvl+87Xn8pcrJMUzzkqrYFqWLD/Q1D3/QPMF07P6CNZKTQ5lB1lK5QQn0OKfYaw63+EwhD+rZNexrfMrPuseOhape2WsZnmCigm05pb9qDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Q88/pBy+; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErMl/PT0"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-714263cb074so901483b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 09:18:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Q88/pBy+"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6bf6ea1d34aso4913636d6.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 09:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724343481; x=1724948281; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1724343866; x=1724948666; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fw2jQnFKYplOXyWl2+iotSK1aecdZdvMgRYo2XdZaM4=;
-        b=ErMl/PT0YOutdQu/tK4s0MN0tuyweMWELAxXPTSoD7aiVIDUsMa7Wh0lOGpcttSx7M
-         u22NJPPEQeNUHF0UVTvWzUP5/tQ8lTw8Ul/bjy93D1y3PUbI3HDQNaDuzrHeDC0Sajqj
-         PLfM4+MwDyI2MuWTK7gKdIwgMFvCvqhAbaV9UImWxGpu7lmuQLEGyp+BtWP12JZhjanU
-         JCnh8Uui/d1ohENImurllQ5Xxsd66ogl0R58SGbACt6TTHEKy5kNGl/2d4WVzjJLEaDe
-         qNWMuND1c7adEcOIPvrBmS5XTTp8PYfn8gChhI7subP5ASanjngahamf5mAIgWgfDdsh
-         Pj/g==
+        bh=1+OUWg8fYZllfQV1XDu+F1uxRA+l5JfuQjDnhYEx0Lg=;
+        b=Q88/pBy+oFjyuthA2yF5Ml7S6DtbYJ8ThkR4JsjHq1MW/KFLyyaZGG2YfF2fEi/qWd
+         kACAHxoEtIHJLT7g5aMoR2kDUIW5ApM+A4f0fOewLhEOHWq/YWj9UjZ/fdzxx3pLWx8Q
+         JLuVH0g1CUkkPfIJpXbIBRyUsSTKuCPTZHuU+1hH5vD2AfxIWU/8JuEMl/3tjQ2fP1f+
+         1ghFnYu3w477DgwPqB+BhiXAGZmesaqc3/uoVyXPCIIZG1m1cGsrAQKuGX+bitXYXBjY
+         W67yavv/2QnPaEfzCOZqz2nvRaJkTgdgZgH7zHdeiY49PJT/v2kmm4gCx7VHGjSXWLXJ
+         YGEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724343481; x=1724948281;
+        d=1e100.net; s=20230601; t=1724343866; x=1724948666;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fw2jQnFKYplOXyWl2+iotSK1aecdZdvMgRYo2XdZaM4=;
-        b=dtlF8jCkZWbjFXbyJr3qNkAjKXOFIgv4Zw1IbMr6xbrTZdvpHGO4urEHOitXdyEP6k
-         4fSVVGc8stTaZYVv8QKBS8UENwTvZDxZYiiD4XYPVTKR1sB7GPRhBmwB7wroWMlTVc1Y
-         dzQmeCr2hZZdppeocfOYDZMBNY3wwS/2xo1gJjBwxCF/ewr3ccCb5q+Dn+guSYjuplVr
-         yt2uhZOPDLwPnRHIG8Uyq05QkKuQKdZAEy/TKOAIQqJ/EG9vqkj+cP1/bz2fx+rGzPIi
-         9LpDzdvU+13qh89TfZn2oGTx1JAgi6+KFDabscow62wCVx74z5fpt2I7BCItq/WG6aGJ
-         7F3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXDdQkD/ItkalcZUty+YwcV45er8PV6kJW2/+iTpEZtSz90B7ocNh+GFGlg2OUPlpE/XN7XN3nq+4qUi1mcF9Ie@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2BJwmNz2mPqgZOp4/HWdRDrixb54K5Fh7weuXCGQZ7yGoCZMS
-	L4dOyDODmKzmtyUUF6+364QXsXaUa45S502QUbInyUkQtRZd+E5GLeUGsqAmb0E=
-X-Google-Smtp-Source: AGHT+IGuZxjm5RjDz4gxgtOdv4bxrkYUPOtjFJ+HJu04rbWtzx4ldCQFpMKwqAlGokpUal4t0n5B6w==
-X-Received: by 2002:a05:6a20:9f9b:b0:1c4:9ef6:499b with SMTP id adf61e73a8af0-1caeb21cd5fmr2760744637.29.1724343480886;
-        Thu, 22 Aug 2024 09:18:00 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:778:8246:31d8:e3fd])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdb54asm1563295a12.42.2024.08.22.09.17.58
+        bh=1+OUWg8fYZllfQV1XDu+F1uxRA+l5JfuQjDnhYEx0Lg=;
+        b=UIIuq1yatAc59ggp1rjdsXM0snwBhYrb8T3SSHTGOdAFM9URizRtutNuYHoVvMm/XR
+         3Bb3NGmBxUlR9FFuA3YFcWyZc8qkNBTohjdlvfOoD125Cv43zAt2sQ5Y4h8B1iixRV+7
+         ljOkdiAp8REh4+YKFDpimC9EwM0VGlfaTUaW8cdOOovMecwf+dAUdNi5uByC6/rw+b0i
+         KxvxXCFGdJTebXOCMbbujDYAme+gW7Ox+U0sbkk5kRvNH2xfUycYBw6lUPv5xZxaHg1/
+         BLjXsf/JUlb6rNLjgV8i1YHIcknZN0Bpf0LyRW3s8DeXBYU79IGUjOw3mERuOz0h4Gtj
+         wRGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkVf4B90gC6UpwpNOAAFMfNTvKiZyjTKhGd4noNiNe/TObmvFAUGTccfOBYicS+B6MLgG5ijdWSTLsuQNVcBhJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEGw+HEBO6jJwFeWG5euxbjUmx14hLNZu46J4uhEU7YAG1MFW3
+	rdgIzp07W/ID8M8GAJ6V7oYvDBah5dIbbEE6dbg5w3dUEipN+4aY3QL0HDj279k=
+X-Google-Smtp-Source: AGHT+IHQUMAushC/6F0n743es9SOL7bUKFJqvbyWITaa2Kk/SJ8KSGOK7+3gzFI4+gQRrz7/1kMK7A==
+X-Received: by 2002:a05:6214:2f05:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c156843ef9mr73410596d6.38.1724343866522;
+        Thu, 22 Aug 2024 09:24:26 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d7711asm9043146d6.73.2024.08.22.09.24.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 09:17:59 -0700 (PDT)
-Date: Thu, 22 Aug 2024 10:17:56 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org, afd@ti.com,
-	nm@ti.com, hnagalla@ti.com, b-padhi@ti.com
-Cc: Bjorn Andersson <andersson@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	linux-remoteproc@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+        Thu, 22 Aug 2024 09:24:25 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1shAbp-001IVy-9Y;
+	Thu, 22 Aug 2024 13:24:25 -0300
+Date: Thu, 22 Aug 2024 13:24:25 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org, afd@ti.com,
+	nm@ti.com, hnagalla@ti.com, b-padhi@ti.com,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-Message-ID: <ZsdktJEqR9BOgivK@p14s>
+Message-ID: <20240822162425.GE3468552@ziepe.ca>
 References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,56 +76,20 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+In-Reply-To: <ZsdktJEqR9BOgivK@p14s>
 
-Hi Baolu,
+On Thu, Aug 22, 2024 at 10:17:56AM -0600, Mathieu Poirier wrote:
 
-Sorry for the late reply, this slipped through the cracks.
-
-On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
-> An iommu domain is allocated in rproc_enable_iommu() and is attached to
-> rproc->dev.parent in the same function.
+> > -	domain = iommu_domain_alloc(dev->bus);
+> > -	if (!domain) {
+> > +	domain = iommu_paging_domain_alloc(dev);
 > 
-> Use iommu_paging_domain_alloc() to make it explicit.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
-> ---
->  drivers/remoteproc/remoteproc_core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..eb66f78ec8b7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
->  		return 0;
->  	}
->  
-> -	domain = iommu_domain_alloc(dev->bus);
-> -	if (!domain) {
-> +	domain = iommu_paging_domain_alloc(dev);
+> I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
+> second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
+> provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
+> with the IOMMU subsystem to confidently more forward.
 
-I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
-second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
-provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
-with the IOMMU subsystem to confidently more forward.
+So long as dev is the device that will be initiating DMA this is a
+correct change from the iommu subsystem perspective.
 
-I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, Andrew,
-Nishanth and Hari) to test this patch on their IOMMU devices and get back to me
-with a "Tested-by".
-
-Thanks,
-Mathieu
-
-> +	if (IS_ERR(domain)) {
->  		dev_err(dev, "can't alloc iommu domain\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(domain);
->  	}
->  
->  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
-> -- 
-> 2.34.1
-> 
+Jason
