@@ -1,23 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110E71CDFBC;
-	Thu, 22 Aug 2024 17:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16161CEAAA;
+	Thu, 22 Aug 2024 17:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724346609; cv=none; b=juitUIcwW+I1FdqHQzy3H9SHqKQqsKkFjnJ1C6ODdAxQeSrvUy2PEYSWihur21+/vVPZUgu0oxsPvmgnhRCauPrrMmBHkXMYQD0Rqi4dukOF2u7RGDgqQb16rdvRfl8Cp75jnvtfscNaUnWB/UTcnvsmcnYE0PrrVqnpHqlFKV8=
+	t=1724346612; cv=none; b=LLjCUGfJEaZNUIflK+9yDF0MH/v/WaL5mT0Yob1fyg/DjZBkgJk2/dmIVvq3/jHaTCnZLXxvAjR2wFJHVM5/QBqg8LS9FvJWM3NVdcl1DKpotVOJYgFDHMrSyx4k1xDfVwgtkQIg/cv2MGI9Yi44hcDS/hSMBLx5J1ray9uZjAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724346609; c=relaxed/simple;
-	bh=tjYqHSZ78Vr1VCrbyX6z4ILSFvcR9yZhzm0jR0X3XAs=;
+	s=arc-20240116; t=1724346612; c=relaxed/simple;
+	bh=X0W6f9O8bYoUbFIXpqrbKRr4+wfpl8fCRYJ/t85ZcTw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g/5QgHiQ719L0eQzW0jd8QHT09oA5iD106xlR9X9n8idMfUiBoNfIEkrrfbDSJCmQLb5C3K9p4VpzdjNz8jB2JiapgcUSBlRzQit5sf7DdAg6ZgTAyNFiGXZewiuIjhEQnW7BRw1eNK11d7tpBJc6tfsMLZUCVp0NhWPhhex7sE=
+	 MIME-Version; b=dGNrzz212N9UWjnsVomjqIAQ9JzOSE/fTdfrYbxJ7DnSoYnYefkJzjNCGwZpFpUtt8XX0g2pGr1iccYzXJvh35tDiBk2blU/cgJ3qXK/G2lDvUvDoF4dcepj0PdSgVWSxgGaUpZQ5o27FIJTT12OlCWgR6vUWG6Xy3mzrAdZEtA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19EF9DA7;
-	Thu, 22 Aug 2024 10:10:32 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F17BAFEC;
+	Thu, 22 Aug 2024 10:10:35 -0700 (PDT)
 Received: from e130802.cambridge.arm.com (e130802.arm.com [10.1.37.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD27F3F58B;
-	Thu, 22 Aug 2024 10:10:02 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E98E3F58B;
+	Thu, 22 Aug 2024 10:10:06 -0700 (PDT)
 From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 To: mathieu.poirier@linaro.org
 Cc: Adam.Johnston@arm.com,
@@ -36,12 +36,13 @@ Cc: Adam.Johnston@arm.com,
 	robh@kernel.org,
 	sudeep.holla@arm.com,
 	robin.murphy@arm.com
-Subject: [PATCH v2 0/5] remoteproc: arm64: Introduce remoteproc support for Corstone-1000 External Systems
-Date: Thu, 22 Aug 2024 18:09:46 +0100
-Message-Id: <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+Subject: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External Systems remote processors
+Date: Thu, 22 Aug 2024 18:09:47 +0100
+Message-Id: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+In-Reply-To: <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
 References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,79 +51,118 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Corstone-1000 IoT Reference Design Platform [A] supports up to two External
-Systems processors.
+Add devicetree binding schema for the External Systems remote processors
 
-This patchset allows to control these processors through the remoteproc
-subsystem.
+The External Systems remote processors are provided on the Corstone-1000
+IoT Reference Design Platform via the SSE-710 subsystem.
 
-The Corstone-1000 implements the SSE-710 subsystem [B] which defines the
-MMIO-mapped reset registers (EXT_SYS*) used for controlling the
-External Systems [C].
+For more details about the External Systems, please see Corstone SSE-710
+subsystem features [1].
 
-This patchset provides the following:
+[1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
 
-- Device tree bindings for the SSE-710 subsystem with syscon support
-- Device tree bindings for the SSE-710 External System
-- Corstone-1000 External System, syscon and MHUs device tree nodes
-- Arm MHUv2 Mailbox [F] device tree nodes for Corstone-1000
-- Corstone-1000 remoteproc driver with regmap support
-
-For more details, please see the SSE-710 External System Remote
-Processor bindings [D] and the SSE-710 Host Base System Control bindings [E].
-
-[A]: https://developer.arm.com/Processors/Corstone-1000
-[B]: https://developer.arm.com/documentation/102342/latest/
-[C]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
-[D]: Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-[E]: Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
-[F]: Documentation/devicetree/bindings/mailbox/arm,mhuv2.yaml
-
-Changelog:
-============
-
-v2:
-
-* provide SSE-710 syscon bindings
-* provide SSE-710 External System bindings
-* add Corstone-1000 External System node under syscon
-* add Arm MHUv2 Mailbox device tree nodes for Corstone-1000
-* add regmap support for the driver
-* use devm_rproc_* APIs
-* refactoring
-
-v1: [1]
-
-* introduce the Corstone-1000 remoteproc support
-
-List of previous patches:
-
-[1]: https://lore.kernel.org/all/20240301164227.339208-1-abdellatif.elkhlifi@arm.com/
-
-Cheers,
-Abdellatif
-
-Abdellatif El Khlifi (5):
-  dt-bindings: remoteproc: sse710: Add the External Systems remote
-    processors
-  dt-bindings: arm: sse710: Add Host Base System Control
-  arm64: dts: corstone1000: Add MHU nodes used by the External System
-  arm64: dts: corstone1000: Add External System support
-  remoteproc: arm64: corstone1000: Add the External Systems driver
-
- .../arm/arm,sse710-host-base-sysctrl.yaml     |  56 +++
- .../remoteproc/arm,sse710-extsys.yaml         |  90 +++++
- arch/arm64/boot/dts/arm/corstone1000.dtsi     |  34 +-
- drivers/remoteproc/Kconfig                    |  14 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/corstone1000_rproc.c       | 350 ++++++++++++++++++
- 6 files changed, 544 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
+Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+---
+ .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
+ 1 file changed, 90 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
- create mode 100644 drivers/remoteproc/corstone1000_rproc.c
 
-
-base-commit: 8fa052c29e509f3e47d56d7fc2ca28094d78c60a
+diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+new file mode 100644
+index 000000000000..827ba8d962f1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SSE-710 External System Remote Processor
++
++maintainers:
++  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
++  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
++
++description: |
++  SSE-710 is an heterogeneous subsystem supporting up to two remote
++  processors aka the External Systems.
++
++properties:
++  compatible:
++    enum:
++      - arm,sse710-extsys
++
++  firmware-name:
++    description:
++      The default name of the firmware to load to the remote processor.
++
++  '#extsys-id':
++    description:
++      The External System ID.
++    enum: [0, 1]
++
++  mbox-names:
++    items:
++      - const: txes0
++      - const: rxes0
++
++  mboxes:
++    description:
++      The list of Message Handling Unit (MHU) channels used for bidirectional
++      communication. This property is only required if the virtio-based Rpmsg
++      messaging bus is used. For more details see the Arm MHUv2 Mailbox
++      Controller at devicetree/bindings/mailbox/arm,mhuv2.yaml
++
++    minItems: 2
++    maxItems: 2
++
++  memory-region:
++    description:
++      If present, a phandle for a reserved memory area that used for vdev
++      buffer, resource table, vring region and others used by the remote
++      processor.
++    minItems: 2
++    maxItems: 32
++
++required:
++  - compatible
++  - firmware-name
++  - '#extsys-id'
++
++additionalProperties: false
++
++examples:
++  - |
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        extsys0_vring0: vdev0vring0@82001000 {
++            reg = <0 0x82001000 0 0x8000>;
++            no-map;
++        };
++
++        extsys0_vring1: vdev0vring1@82009000 {
++            reg = <0 0x82009000 0 0x8000>;
++            no-map;
++        };
++    };
++
++    syscon@1a010000 {
++        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
++        reg = <0x1a010000 0x1000>;
++
++        extsys0 {
++            compatible = "arm,sse710-extsys";
++            #extsys-id = <0>;
++            firmware-name = "es_flashfw.elf";
++            mbox-names = "txes0", "rxes0";
++            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
++            memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
++        };
++    };
 -- 
 2.25.1
 
