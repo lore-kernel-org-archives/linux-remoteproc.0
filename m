@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADFC558BB;
-	Thu, 22 Aug 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8CF1C93A6;
+	Thu, 22 Aug 2024 11:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724323658; cv=none; b=aQInq6s7cjqPs1KExfzyODVsKzwEJ+hi791nhda82ucnEw19VYnOdAQvEbopbwk0DSknuxUqGvwdw6ofP6nwkmgpYyuoNXnS5bjZtPQFX26a6+OGJsvWkyxwDB9OkcxMJKxn7XX9ackpYwUr42mul4R1Mn5W22d4s4Rj4o7YLTc=
+	t=1724326132; cv=none; b=OswGFUSAjv126Zhn94gx9vUOa9nEd08Szo9Dmw9IhQXKOLUzTt1hH1Rz5SGEq3GWRcxIS2BEn5VN8Bkk/m+EC1FB7dvYnN0ON7aZ/+Okp6gbXGNBwCYFIuR/UdiBAK2/PwvCVE678Soi7nfFgfMt3rPzdIMW4ii2MDZihQdA/tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724323658; c=relaxed/simple;
-	bh=8FE+Slja7T2opibI3fLh7zUjj7kDj46Q+C35YeibAS8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=tOCh/vRqjrk37sME3jlAOoBXc/n0waUK4R22UrKqnKofEaGACmuK20dq07g5ffotqO5rkzgSihmKKvGLfYuxsFjTExi53HC28SU5ueRDag6vHGBUTGZp+cYgdkEQVcUPHjkwW9i8KcKp6r9ivzIyeq1Qmln1jdWp6yiTbmwkav4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lxnHzB6g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724326132; c=relaxed/simple;
+	bh=5hbZSENnRd7z98/NMEpOsFqrQH6Pepm32EMOy9lVhqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bzdnjWMswkGION09BSSIz9Q+3C6eJZlU59ldBer4aZxS/FtdQRGx0rTHPGmF18t5tSuPMxFVl5CASLthM0NYdLhL3q6CIYbievbknCMnthNtxjJ4b4eRUSELbIf5GLOBh6de2zO2RGezNmoOV6dYFZsA8Xq74pG6mc5uomgVlf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5S7dntk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lxnHzB6g"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MAJ8Yf001040;
-	Thu, 22 Aug 2024 10:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9KwZVggQh6/ZFCFEZQZLa7LN9QDjViyAbeRFxV/gUJY=; b=lxnHzB6g/TfhW7+7
-	eVArbArMRuQKz0Gko29aXOgJtNodIX+7kK014x+q40F/tapCJADPcehxFAmg9eEQ
-	2phidq1YBOzYifEbUCRN3m1Pe3s7YfEHRT2jgUjUoeS2Xz7/cJjtTvAxZmwo3xqg
-	EToUp1+cjjz4YBHwErN40T/e1sSMttRW9t8ZwD9dAJyQxruDNCNeSr9fI1+GSKH3
-	iMn2hE8UdU5pIf+iuMBurF/lVCiOg7cm+yZ6Ft1DrZqIQDif7abIhAGsnWaN8uOk
-	T4xgRjrbYKkREChA7NwKzPbD6FV+lVLk86YdFteoJmRfY/mZOUzY9N8VBcMqQqYk
-	KAWCEA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415nrrt28b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:47:33 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MAlXLO022093
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 10:47:33 GMT
-Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 03:47:29 -0700
-Message-ID: <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
-Date: Thu, 22 Aug 2024 16:17:25 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5S7dntk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC3C32782;
+	Thu, 22 Aug 2024 11:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724326131;
+	bh=5hbZSENnRd7z98/NMEpOsFqrQH6Pepm32EMOy9lVhqo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m5S7dntkbMQAo+QlAfo8AxJJ1mFq1/Y4WygNHaSBUTD/3jD7plytcoT/iQHfr7d44
+	 gu9ySOv16hraDtejVnKehXq6hpWmWz3EcF9/ohf4zVKflqWwdVPWPobG0VuobEKeIU
+	 xBoTaPwa0RObN+GVlTk3nufqXZwOsE27S7LboAKXbEsB02OSJZD/N8zAQ3EZ6uWr1B
+	 QK+xhaSsgRkdpD1mdK3QSbQ5/tN1mo4h9CUgUaaOaRZy/26DlJL1txgyXKnde5OLDf
+	 CEbxotQ+SFBB6G859sviYiYNUxfLorUWoINNts79AJdhqyAsLDl0Iby7P0oNv6h3xX
+	 E9RzH+aVwvCjg==
+Message-ID: <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
+Date: Thu, 22 Aug 2024 13:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,198 +35,84 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
- WCSS secure PIL
-To: Krzysztof Kozlowski <krzk@kernel.org>, <q@krzk-bin>
-CC: <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: Re: [PATCH 0/4] Add new driver for WCSS secure PIL loading
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>, andersson@kernel.org,
+ krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com,
+ quic_varada@quicinc.com, quic_srichara@quicinc.com
 References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <20240820085517.435566-2-quic_gokulsri@quicinc.com>
- <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
+ <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
+ <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: z5L7TtWNtUYYUZB1Jw_vRjI0AjdX2aQN
-X-Proofpoint-GUID: z5L7TtWNtUYYUZB1Jw_vRjI0AjdX2aQN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_03,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- bulkscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408220080
 
+On 22/08/2024 12:43, Gokul Sriram P wrote:
+> 
+> On 8/20/2024 4:42 PM, Krzysztof Kozlowski wrote:
+>> On 20/08/2024 10:55, Gokul Sriram Palanisamy wrote:
+>>> This series depends on q6 clock removal series [1].
+>> How? So this cannot be tested and merged?
+> 
+> Yes. Though TrustZone enables these clocks, since Linux Kernel will 
+> consider these clock as unused.
+> These clock will be disabled so we cannot bring Q6 out of reset. So we 
+> have the dependency set.
+> I posted this as a separate series because [1] 'remove unnecessary q6 
+> clocks' series was already reviewed for some
+> versions.
 
-On 8/20/2024 4:50 PM, Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 02:25:14PM +0530, Gokul Sriram Palanisamy wrote:
->> From: Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->>
->> Add new binding document for hexagon based WCSS secure PIL remoteproc.
->> IPQ5332, IPQ9574 follows secure PIL remoteproc.
->>
->> Signed-off-by: Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
->> ---
->>   .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 ++++++++++++++++++
->>   1 file changed, 125 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->> new file mode 100644
->> index 000000000000..c69401b6cec1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->> @@ -0,0 +1,125 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id:http://devicetree.org/schemas/remoteproc/qcom,wcss-sec-pil.yaml#
->> +$schema:http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm WCSS Secure Peripheral Image Loader
-> ...
->
->> +
->> +maintainers:
->> +  - Manikanta Mylavarapu<quic_mmanikan@quicinc.com>
->> +
->> +description:
->> +  WCSS Secure Peripheral Image Loader loads firmware and power up QDSP6
-> What is WCSS? Don't add random acronyms without any explanation.
+This is not a dependency in the kernel workflow. Nothing gets broken,
+nothing stops this patch from merging. Your remark is confusing and will
+either start questions or prevent applying the patchset.
 
-WCSS/WCNSS - Wireless Connectivity subsystem.
+Best regards,
+Krzysztof
 
-will update.
-
->> +  remoteproc's on the Qualcomm IPQ9574, IPQ5332 SoC.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,ipq5332-wcss-sec-pil
->> +      - qcom,ipq9574-wcss-sec-pil
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  firmware-name:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description: Firmware name for the Hexagon core
-> No, look how other bindings are doing it.
->
-> It looks like you develop patches on some old kernel, so please start
-> from scratch on newest kernel.
-will update.
->> +
->> +  interrupts:
->> +    items:
->> +      - description: Watchdog interrupt
->> +      - description: Fatal interrupt
->> +      - description: Ready interrupt
->> +      - description: Handover interrupt
->> +      - description: Stop acknowledge interrupt
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: wdog
->> +      - const: fatal
->> +      - const: ready
->> +      - const: handover
->> +      - const: stop-ack
->> +
->> +  clocks:
->> +    items:
->> +      - description: IM SLEEP clock
-> What is IM? Explain all acronyms.
->
-> What is SLEEP?
-
-IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
-
-SLEEP is not an acronym here.
-
->> +
->> +  clock-names:
->> +    items:
->> +      - const: im_sleep
-> sleep? Are there different sleep clocks here?
-
-We have different branches of sleep clk each enabled separately.
-
-im_sleep is one of those branches that q6 uses.
-
->> +
->> +  qcom,smem-states:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: States used by the AP to signal the remote processor
->> +    items:
->> +      - description: Shutdown Q6
->> +      - description: Stop Q6
->> +
-> Do not introduce other order. First stop, then shutdown.
-will update
->> +  qcom,smem-state-names:
->> +    description:
->> +      Names of the states used by the AP to signal the remote processor
->> +    items:
->> +      - const: shutdown
->> +      - const: stop
-> The same.
-will update.
->> +
->> +  memory-region:
->> +    items:
->> +      - description: Q6 reserved region
->> +
->> +  glink-edge:
->> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
->> +    description:
->> +      Qualcomm G-Link subnode which represents communication edge, channels
->> +      and devices related to the Modem.
->> +    unevaluatedProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - firmware-name
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +  - qcom,smem-states
->> +  - qcom,smem-state-names
->> +  - memory-region
-> Keep the same order as in properties.
-ok.
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
->> +    q6v5_wcss: remoteproc@d100000 {
-> Drop unused label.
-
-ok.
-
-Regards,
-
-Gokul
-
->> +      compatible = "qcom,ipq5332-wcss-sec-pil";
->> +      reg = <0xd100000 0x4040>;
->> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
->> +      interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
->> +                            <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
->> +                            <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-> Best regards,
-> Krzysztof
->
