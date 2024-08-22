@@ -1,95 +1,128 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EBC1CCEC1
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 16:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110E71CDFBC;
+	Thu, 22 Aug 2024 17:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343869; cv=none; b=HZOrdifChWzfFYOreI13HfFcQPyT04UPFgYsXR0322IKoyiFvWHPiUqEXWKoZBxDJNxrC6TC/W/52nK9aAvqgUmRS4l5BIYYu5t2931wfNgKU7GTJ0fbW5VtjDOeKa44/XM8aCMmtE9yb5AwVcEnNu//fwsLq3NBZYGGLZ3glGM=
+	t=1724346609; cv=none; b=juitUIcwW+I1FdqHQzy3H9SHqKQqsKkFjnJ1C6ODdAxQeSrvUy2PEYSWihur21+/vVPZUgu0oxsPvmgnhRCauPrrMmBHkXMYQD0Rqi4dukOF2u7RGDgqQb16rdvRfl8Cp75jnvtfscNaUnWB/UTcnvsmcnYE0PrrVqnpHqlFKV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343869; c=relaxed/simple;
-	bh=ATxYdoET9i0tpoYEYnSCwulRxYkpITICJ0RdslxkZwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rrg+YTm78BmEHsFBFDkLWhMfngBlj3i9kmQdJlF+ARTwoRZoiWxCVzyRzBp7809apvl+87Xn8pcrJMUzzkqrYFqWLD/Q1D3/QPMF07P6CNZKTQ5lB1lK5QQn0OKfYaw63+EwhD+rZNexrfMrPuseOhape2WsZnmCigm05pb9qDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Q88/pBy+; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Q88/pBy+"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6bf6ea1d34aso4913636d6.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Aug 2024 09:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1724343866; x=1724948666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+OUWg8fYZllfQV1XDu+F1uxRA+l5JfuQjDnhYEx0Lg=;
-        b=Q88/pBy+oFjyuthA2yF5Ml7S6DtbYJ8ThkR4JsjHq1MW/KFLyyaZGG2YfF2fEi/qWd
-         kACAHxoEtIHJLT7g5aMoR2kDUIW5ApM+A4f0fOewLhEOHWq/YWj9UjZ/fdzxx3pLWx8Q
-         JLuVH0g1CUkkPfIJpXbIBRyUsSTKuCPTZHuU+1hH5vD2AfxIWU/8JuEMl/3tjQ2fP1f+
-         1ghFnYu3w477DgwPqB+BhiXAGZmesaqc3/uoVyXPCIIZG1m1cGsrAQKuGX+bitXYXBjY
-         W67yavv/2QnPaEfzCOZqz2nvRaJkTgdgZgH7zHdeiY49PJT/v2kmm4gCx7VHGjSXWLXJ
-         YGEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724343866; x=1724948666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1+OUWg8fYZllfQV1XDu+F1uxRA+l5JfuQjDnhYEx0Lg=;
-        b=UIIuq1yatAc59ggp1rjdsXM0snwBhYrb8T3SSHTGOdAFM9URizRtutNuYHoVvMm/XR
-         3Bb3NGmBxUlR9FFuA3YFcWyZc8qkNBTohjdlvfOoD125Cv43zAt2sQ5Y4h8B1iixRV+7
-         ljOkdiAp8REh4+YKFDpimC9EwM0VGlfaTUaW8cdOOovMecwf+dAUdNi5uByC6/rw+b0i
-         KxvxXCFGdJTebXOCMbbujDYAme+gW7Ox+U0sbkk5kRvNH2xfUycYBw6lUPv5xZxaHg1/
-         BLjXsf/JUlb6rNLjgV8i1YHIcknZN0Bpf0LyRW3s8DeXBYU79IGUjOw3mERuOz0h4Gtj
-         wRGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkVf4B90gC6UpwpNOAAFMfNTvKiZyjTKhGd4noNiNe/TObmvFAUGTccfOBYicS+B6MLgG5ijdWSTLsuQNVcBhJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEGw+HEBO6jJwFeWG5euxbjUmx14hLNZu46J4uhEU7YAG1MFW3
-	rdgIzp07W/ID8M8GAJ6V7oYvDBah5dIbbEE6dbg5w3dUEipN+4aY3QL0HDj279k=
-X-Google-Smtp-Source: AGHT+IHQUMAushC/6F0n743es9SOL7bUKFJqvbyWITaa2Kk/SJ8KSGOK7+3gzFI4+gQRrz7/1kMK7A==
-X-Received: by 2002:a05:6214:2f05:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c156843ef9mr73410596d6.38.1724343866522;
-        Thu, 22 Aug 2024 09:24:26 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d7711asm9043146d6.73.2024.08.22.09.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 09:24:25 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1shAbp-001IVy-9Y;
-	Thu, 22 Aug 2024 13:24:25 -0300
-Date: Thu, 22 Aug 2024 13:24:25 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org, afd@ti.com,
-	nm@ti.com, hnagalla@ti.com, b-padhi@ti.com,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-Message-ID: <20240822162425.GE3468552@ziepe.ca>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
- <ZsdktJEqR9BOgivK@p14s>
+	s=arc-20240116; t=1724346609; c=relaxed/simple;
+	bh=tjYqHSZ78Vr1VCrbyX6z4ILSFvcR9yZhzm0jR0X3XAs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=g/5QgHiQ719L0eQzW0jd8QHT09oA5iD106xlR9X9n8idMfUiBoNfIEkrrfbDSJCmQLb5C3K9p4VpzdjNz8jB2JiapgcUSBlRzQit5sf7DdAg6ZgTAyNFiGXZewiuIjhEQnW7BRw1eNK11d7tpBJc6tfsMLZUCVp0NhWPhhex7sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19EF9DA7;
+	Thu, 22 Aug 2024 10:10:32 -0700 (PDT)
+Received: from e130802.cambridge.arm.com (e130802.arm.com [10.1.37.66])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD27F3F58B;
+	Thu, 22 Aug 2024 10:10:02 -0700 (PDT)
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: mathieu.poirier@linaro.org
+Cc: Adam.Johnston@arm.com,
+	Hugues.KambaMpiana@arm.com,
+	Drew.Reed@arm.com,
+	abdellatif.elkhlifi@arm.com,
+	andersson@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	liviu.dudau@arm.com,
+	lpieralisi@kernel.org,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	robin.murphy@arm.com
+Subject: [PATCH v2 0/5] remoteproc: arm64: Introduce remoteproc support for Corstone-1000 External Systems
+Date: Thu, 22 Aug 2024 18:09:46 +0100
+Message-Id: <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsdktJEqR9BOgivK@p14s>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 10:17:56AM -0600, Mathieu Poirier wrote:
+The Corstone-1000 IoT Reference Design Platform [A] supports up to two External
+Systems processors.
 
-> > -	domain = iommu_domain_alloc(dev->bus);
-> > -	if (!domain) {
-> > +	domain = iommu_paging_domain_alloc(dev);
-> 
-> I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
-> second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
-> provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
-> with the IOMMU subsystem to confidently more forward.
+This patchset allows to control these processors through the remoteproc
+subsystem.
 
-So long as dev is the device that will be initiating DMA this is a
-correct change from the iommu subsystem perspective.
+The Corstone-1000 implements the SSE-710 subsystem [B] which defines the
+MMIO-mapped reset registers (EXT_SYS*) used for controlling the
+External Systems [C].
 
-Jason
+This patchset provides the following:
+
+- Device tree bindings for the SSE-710 subsystem with syscon support
+- Device tree bindings for the SSE-710 External System
+- Corstone-1000 External System, syscon and MHUs device tree nodes
+- Arm MHUv2 Mailbox [F] device tree nodes for Corstone-1000
+- Corstone-1000 remoteproc driver with regmap support
+
+For more details, please see the SSE-710 External System Remote
+Processor bindings [D] and the SSE-710 Host Base System Control bindings [E].
+
+[A]: https://developer.arm.com/Processors/Corstone-1000
+[B]: https://developer.arm.com/documentation/102342/latest/
+[C]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
+[D]: Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+[E]: Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
+[F]: Documentation/devicetree/bindings/mailbox/arm,mhuv2.yaml
+
+Changelog:
+============
+
+v2:
+
+* provide SSE-710 syscon bindings
+* provide SSE-710 External System bindings
+* add Corstone-1000 External System node under syscon
+* add Arm MHUv2 Mailbox device tree nodes for Corstone-1000
+* add regmap support for the driver
+* use devm_rproc_* APIs
+* refactoring
+
+v1: [1]
+
+* introduce the Corstone-1000 remoteproc support
+
+List of previous patches:
+
+[1]: https://lore.kernel.org/all/20240301164227.339208-1-abdellatif.elkhlifi@arm.com/
+
+Cheers,
+Abdellatif
+
+Abdellatif El Khlifi (5):
+  dt-bindings: remoteproc: sse710: Add the External Systems remote
+    processors
+  dt-bindings: arm: sse710: Add Host Base System Control
+  arm64: dts: corstone1000: Add MHU nodes used by the External System
+  arm64: dts: corstone1000: Add External System support
+  remoteproc: arm64: corstone1000: Add the External Systems driver
+
+ .../arm/arm,sse710-host-base-sysctrl.yaml     |  56 +++
+ .../remoteproc/arm,sse710-extsys.yaml         |  90 +++++
+ arch/arm64/boot/dts/arm/corstone1000.dtsi     |  34 +-
+ drivers/remoteproc/Kconfig                    |  14 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/corstone1000_rproc.c       | 350 ++++++++++++++++++
+ 6 files changed, 544 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+ create mode 100644 drivers/remoteproc/corstone1000_rproc.c
+
+
+base-commit: 8fa052c29e509f3e47d56d7fc2ca28094d78c60a
+-- 
+2.25.1
+
