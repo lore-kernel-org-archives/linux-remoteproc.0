@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1E816BE14;
-	Fri, 23 Aug 2024 09:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC81DFE8;
+	Fri, 23 Aug 2024 13:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406576; cv=none; b=jCmcECOHT8YrljWMz06Z1OKzAACFWp+QBoKnKqatafi72+loDlcPTjd6HJaQ3FSlcnG/hTPAxRbNklghAV5eIaXIxRtaq3B8xkoH4nBxUMgrd0RqG+dO1LUFRX91Q+rEp9QsK2SqIlOs2zavSwvxd1I5/aLk/h+ly2/ZSlPe3r8=
+	t=1724420870; cv=none; b=c6s73HY9UsqMXm9/CatlZqLHovfbwfqysOyh5P+FMSa2W+vN06/hYvV3DN3XwCJQ/2XthxAhaObLcNbTbzGxJWVZA1XXRQBWPQ/a14h0vAf4KkZgAMBNlxYMRNuuw3tfaM4cU9lCfWNAcZ1/pfLqLqMibH/1M71Zus6mk0gi/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406576; c=relaxed/simple;
-	bh=BWC2BNE0WdULX0ket+f5Ts7vqbpY9Klk/uO7qZahgCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FGNdDhgNQi2iOc89FbHIKlY28ytBPxpekB3/1ETid+vBjvCrma7XVXxZ48Rw9ZkIo4CV0i5euLkG/lHD2cqGB+4+TggKy3tBZa/XVzxuDpfIT+bTAhPnh0DcKDW7AuKMa92KD9eiuYVQqHzxxpHWEMJLfDBsJaH5tfPFaNeKb7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lSByrbPM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724420870; c=relaxed/simple;
+	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZ9GUQGU2n4FnYtDQ+ceU8PprOnsHAC5xYicXXWIq9ElVdkvAP6QnAuICldZGVIUGpCpin4dhJTmBXc58N6kaZPci8fTv6Aurh0UUxGcGwWZBs6ONWnc3mIymy+B8vPqRkHWiC3g6s9EzbzelH9HllaR2Ys4ZTZ8l4eCSoay8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2XJh4Hp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lSByrbPM"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N2NBsk007469;
-	Fri, 23 Aug 2024 09:49:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A5hD6ZsYUmPkntcLlBxGe4qafZ5/vCau/ZVh9D9Doec=; b=lSByrbPMBnfLkRv9
-	S5rZ88i7VK38bfT08i+ilwyrfuzTk7OUhKyrvpUo8ZTi9E6M7DYSYjn2/UadlOmB
-	k8Myo/1IX6RK3XZKVETc6/TpmQ5Zy4oQztW7CnTsNRZ0BgtRZM6S9/7jhrMIMHgY
-	Kp6EWQy8uHYzOn/HguugRp8qs8/xk/rsQtAfiVafBr6SIhJX2dcxl0/t/VHfE59b
-	+w4DHBqB5dGikTamqIwcnOE/24skgnX8u10RAa+++diosp2wgLPhRdB61RlVMdjM
-	lcxQNqEo4NFkdKjjyYHyj8ATxuN0AcygLY/JlhYo7O5Ksp87ZwhgzMdPUdMvc0WL
-	G3/oXQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415gsd62gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 09:49:30 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N9nThK006273
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 09:49:29 GMT
-Received: from [10.151.37.150] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
- 2024 02:49:26 -0700
-Message-ID: <f0134870-7349-4e9d-80e1-d254873d5035@quicinc.com>
-Date: Fri, 23 Aug 2024 15:19:23 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2XJh4Hp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13697C32786;
+	Fri, 23 Aug 2024 13:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724420870;
+	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G2XJh4HpqiQf/s3AFYsVLG2QaL45QMJuGIL/P5ZUh/yiqXyDPpwzJAMpB6Dy+e1LZ
+	 NSebxt64/XEO6Ns+/7cnWG9M7Lv/M1aHdzmoai0C7JJ+3kzSLzAb+h7Znji+LfefTi
+	 s1eJIO+eWW3EjRxQyuI8Lex0gEXoQQ7FzbyAhLg9bhkZRGq9873oRPhyR76j19IRoI
+	 e7cpj2gfHw9fh3I5JE4S/ATI1ldDARSh1afF8psjoD/M+c17abe2zAkUjsHQ+EJO1b
+	 CnbwaKCcCIrgua+XiBoYq/ZZA47dNFOgd+/AnjISNj++RzckXYHmQkK7PAqXn/QLyr
+	 WwaKDe3GKWNXA==
+Message-ID: <2a8c20ce-0c90-4e59-ab77-7c71de21e502@kernel.org>
+Date: Fri, 23 Aug 2024 15:47:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,59 +35,95 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add new driver for WCSS secure PIL loading
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
+ WCSS secure PIL
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>, q@krzk-bin
+Cc: andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com,
+ quic_mmanikan@quicinc.com, quic_varada@quicinc.com, quic_srichara@quicinc.com
 References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
- <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
- <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
+ <20240820085517.435566-2-quic_gokulsri@quicinc.com>
+ <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
+ <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
+ <7b8f488a-deac-4089-be7a-c0d76afca0fa@kernel.org>
+ <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0N6AiRCZ5mhR_HSI00BqgE4xPZ25DK4M
-X-Proofpoint-ORIG-GUID: 0N6AiRCZ5mhR_HSI00BqgE4xPZ25DK4M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_06,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=860 clxscore=1015 lowpriorityscore=0 impostorscore=0
- mlxscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408230071
 
+On 23/08/2024 11:47, Gokul Sriram P wrote:
+> 
+> On 8/22/2024 5:00 PM, Krzysztof Kozlowski wrote:
+>>> IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
+>>>
+>>> SLEEP is not an acronym here.
+>> Then probably you mean "Internal sleep", although "internal" is also
+>> confusing. Devices do not receive as input something which is internal
+>> to them.
+>>
+>>>>> +
+>>>>> +  clock-names:
+>>>>> +    items:
+>>>>> +      - const: im_sleep
+>>>> sleep? Are there different sleep clocks here?
+>>> We have different branches of sleep clk each enabled separately.
+>>>
+>>> im_sleep is one of those branches that q6 uses.
+>> So this device misses other branches? Then provide them. Otherwise it is
+>> just "sleep".
+> 
+> ok, I shall keep it as simply "sleep" and move on? Other branches of 
+> sleep clk are irrelevant to remoteproc.
 
-On 8/22/2024 4:58 PM, Krzysztof Kozlowski wrote:
-> On 22/08/2024 12:43, Gokul Sriram P wrote:
->> On 8/20/2024 4:42 PM, Krzysztof Kozlowski wrote:
->>> On 20/08/2024 10:55, Gokul Sriram Palanisamy wrote:
->>>> This series depends on q6 clock removal series [1].
->>> How? So this cannot be tested and merged?
->> Yes. Though TrustZone enables these clocks, since Linux Kernel will
->> consider these clock as unused.
->> These clock will be disabled so we cannot bring Q6 out of reset. So we
->> have the dependency set.
->> I posted this as a separate series because [1] 'remove unnecessary q6
->> clocks' series was already reviewed for some
->> versions.
-> This is not a dependency in the kernel workflow. Nothing gets broken,
-> nothing stops this patch from merging. Your remark is confusing and will
-> either start questions or prevent applying the patchset.
->
-Ok, got it. It will not break anything. Will post this series as 
-independent series in v2.
+Then it is "sleep". The name here describes the clock input in this
+device, not the clock in other places.
 
-thanks,
-
-Gokul
+Best regards,
+Krzysztof
 
