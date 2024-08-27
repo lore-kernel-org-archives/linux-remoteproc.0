@@ -1,108 +1,200 @@
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD9199242
-	for <linux-remoteproc@vger.kernel.org>; Mon, 26 Aug 2024 23:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17281B5EBE;
+	Tue, 27 Aug 2024 12:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724715934; cv=none; b=AQzAU+zgXT161qEBlspay25KvWtuiy3fx1von1csO3ye9eJ1FPgEN1yV13iBaxhHfrtLcn/XQNFbYgkx5vDANEhYIBFZUjpvnWxCIl0ESj55fEah7qwQ1eNqDPcuVkOshZYOnZgzu3ktvSCIAHuDDfEX1qcrUuMOZbK8csXlKmQ=
+	t=1724761509; cv=none; b=dVcFigztO5bYrGeOF51HfSTKXBeo91r89bfpyhMXR61iuJKd4WjkShHOVPM/U2QvC5CrqfUw8SxkxqsMfEKcO/RuhxlvQvxogsIpHvLzq6cil5/EGq2kk3JD23XlqwGhMEjIVgz3vrvpjiTdAiR25f+xg+MHgApUCfMPN8nmKZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724715934; c=relaxed/simple;
-	bh=vqZxLyIYwvOL7VofEWqLnPBg2kNsVlrEwKKqyU22uHI=;
+	s=arc-20240116; t=1724761509; c=relaxed/simple;
+	bh=p1mwGYvxLR5MGl2Xb7+ax17YlPahUpnD9DKyKuWMrTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBwh3+w0nlxvbOdfH6jq3b7r5+qr+K2UwhMSco/ZujS8h2tS7DP2D9O7zThH+a3ImuRltMBJVfRKOxkowJyoaAh9Efwd7k141opmoOlLbhnTr67snjapyOB5K1hLuIaKNI8kKvjHMkHkB4qEj4NAGkktNH2zttiuRDbfTMBV3io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HTM0zG1T; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HTM0zG1T"
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6bf6e17cc2bso23736016d6.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Aug 2024 16:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1724715931; x=1725320731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lDuuNQ8/bu29BjzK9PteMZCVxgPOE2AxKbk9lTfYggQ=;
-        b=HTM0zG1TAEakjLOil8Py3eNjoG5c6JNo9FFi5bHkUFS0Z0hApXFCTCuFEM5uv/MOZS
-         BIaUfZZXw8AWpq+//8KMCnI1MDj7efhqimRoVjlO13+jaPZP+RonWK+jjvfsBHHqhWA5
-         0XjztpiB6bZsNPqTB9WmB63Qt1YL51+LR0PD4rg81N9bLoDX+ZhJ92tMs16HxPbUjLmC
-         csIUwLy3ApjmUQ0njAetuC24LGe95I8de8UagiBnRzohoB7uTmF7bVc4Ect+JoArz5gF
-         U658thZh/AIXem3YOLb0PmPrTH2YfYrAYKx2LtuQ/dnoMhB9t6r/xE7pOHnICXIoTyEi
-         sz0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724715931; x=1725320731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lDuuNQ8/bu29BjzK9PteMZCVxgPOE2AxKbk9lTfYggQ=;
-        b=nAfPr0i4LNX2v7c1aIc4fGGlAeGYLnJ6EZJFRBddwedR54ylOBAJOXp6zsRLVAnB3W
-         yE86MHDqJfyA5u5dWVrrzjaIJu5DI8XSZxD14CdgvxV65xTU8zBOKeC1rzVfqbcdZniK
-         vy47Ucv0IMtbWH5FhQBtyDImLMjiwYDqaIpR/TDuilNg1pBin1QDsV0FzeA8WCLXxPpv
-         BXYzbFOwHuzm5x94CqG6gp7AQmBAUharsB0MgRU15mdjuWmAfsR7J6KavnyAqzIFP7PB
-         G0lO6/dpZkZ9IBObSMWnrtFQhLIB9cxePWHC1dFJjkRdTC6ESiVBltxmeYdoOTrzwqGk
-         7lXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbWcpiwFfw6Lo/9/oA6EViHZp/IqKmDoFJ8uf5WX82wDoOz7PY6eA+jSDZ+JUqpc+VHO13Vzz5Koot65QXUFlA@vger.kernel.org
-X-Gm-Message-State: AOJu0YygIZQiBPHFzy9EbaTkPXSmr6J2dL2UI+a9TVuqYGhaITS5Xwjb
-	393b8MqE4EqMuKF6cIi79UjTd7Eutm3DuLRH45nwxWH+WsdEbS3CwEjAz/dvTQE=
-X-Google-Smtp-Source: AGHT+IHzaXl2WmXOTOiigwMW4vAHbvohhbDK0cgaRu+I2GIwQhZXzz+hJUacz877ZzUojnA/oSOOuQ==
-X-Received: by 2002:a05:6214:4381:b0:6c1:6a2e:afc6 with SMTP id 6a1803df08f44-6c16dc36d53mr143333916d6.15.1724715931544;
-        Mon, 26 Aug 2024 16:45:31 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162dcd5bfsm50953946d6.110.2024.08.26.16.45.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 16:45:31 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sijOs-00El7B-CY;
-	Mon, 26 Aug 2024 20:45:30 -0300
-Date: Mon, 26 Aug 2024 20:45:30 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
-Cc: Doug Miller <doug.miller@cornelisnetworks.com>,
-	linux-remoteproc@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1P3y9ggBNj2ZrJbaycWBg/yv1VFAlGPX0CptkRNbMbFgf3qHihz7Qjms9R4uVpZe7AWoSI6HJ5NLMpqNdrYpnvfzFZSiuXJiBVjKooXrpQJW/9D5rdDgsLEH9LSDJCns52ZyVkd7UHeqeC1SBLRVO4Xa/+ryUMRlmXcwHFLauA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E5B9F1C009B; Tue, 27 Aug 2024 14:25:05 +0200 (CEST)
+Date: Tue, 27 Aug 2024 14:25:05 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Richard Maina <quic_rmaina@quicinc.com>,
 	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	OFED mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: Using RPMSG to communicate between host and guest drivers
-Message-ID: <20240826234530.GK3468552@ziepe.ca>
-References: <133c1301-dd19-4cce-82dc-3e8ee145c594@cornelisnetworks.com>
- <842aef7f-d6e1-490a-97b9-163287ddfe2d@cornelisnetworks.com>
+	Chris Lew <quic_clew@quicinc.com>, peterz@infradead.org,
+	mingo@redhat.com, will@kernel.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.10 20/38] hwspinlock: Introduce
+ hwspin_lock_bust()
+Message-ID: <Zs3FoWRIIJtkJ3JL@duo.ucw.cz>
+References: <20240801003643.3938534-1-sashal@kernel.org>
+ <20240801003643.3938534-20-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SbUCcGMKf4utf5NG"
+Content-Disposition: inline
+In-Reply-To: <20240801003643.3938534-20-sashal@kernel.org>
+
+
+--SbUCcGMKf4utf5NG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <842aef7f-d6e1-490a-97b9-163287ddfe2d@cornelisnetworks.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 12:27:02PM -0400, Dennis Dalessandro wrote:
-> On 7/31/24 4:02 PM, Doug Miller wrote:
-> > I am working on SR-IOV support for a new adapter which has shared 
-> > resources between the PF and VFs and requires an out-of-band (outside 
-> > the adapter) communication mechanism to manage those resources. I have 
-> > been looking at RPMSG as a mechanism to communicate between the driver 
-> > on a guest (VM) and the driver on the host OS (which "owns" the 
-> > resources). It appears to me that virtio is intended for communication 
-> > between guests and host, and RPMSG over virtio is what I want to use.
-> > 
-> > Can anyone confirm that RPMSG is capable of doing what we need? If so, 
-> > I'll need some help figuring out how to use that from kernel device 
-> > drivers (I've not been able to find any examples of doing the 
-> > service/device side). If not, is there some other facility that is 
-> > better suited?
-> 
-> Hi Bjorn and Mathieu, any advice here for Doug? Adding linux-rdma folks as that
-> is where this will eventually target.
+Hi!
 
-Typically in cases like this you'd paravirtualize some of the VF
-before sticking it in the VM so that there is a tidy channel between
-the VF driver and the VMM to do whatever this coordination is. There
-are many examples, but it is hard to see if you don't know the device
-architectures in detail.
 
-If you stick it in seperate virtio PCI device you'll have hard
-problems co-ordinating the two drivers.
+> From: Richard Maina <quic_rmaina@quicinc.com>
+>=20
+> [ Upstream commit 7c327d56597d8de1680cf24e956b704270d3d84a ]
+>=20
+> When a remoteproc crashes or goes down unexpectedly this can result in
+> a state where locks held by the remoteproc will remain locked possibly
+> resulting in deadlock. This new API hwspin_lock_bust() allows
+> hwspinlock implementers to define a bust operation for freeing previously
+> acquired hwspinlocks after verifying ownership of the acquired lock.
 
-Jason
+This adds unused infrastructure to -stable. Please drop.
+
+Best regards,
+									Pavel
+
+> +++ b/Documentation/locking/hwspinlock.rst
+> @@ -85,6 +85,17 @@ is already free).
+> =20
+>  Should be called from a process context (might sleep).
+> =20
+> +::
+> +
+> +  int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id);
+> +
+> +After verifying the owner of the hwspinlock, release a previously acquir=
+ed
+> +hwspinlock; returns 0 on success, or an appropriate error code on failure
+> +(e.g. -EOPNOTSUPP if the bust operation is not defined for the specific
+> +hwspinlock).
+> +
+> +Should be called from a process context (might sleep).
+> +
+>  ::
+> =20
+>    int hwspin_lock_timeout(struct hwspinlock *hwlock, unsigned int timeou=
+t);
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hw=
+spinlock_core.c
+> index fd5f5c5a5244d..425597151dd3e 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -302,6 +302,34 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int =
+mode, unsigned long *flags)
+>  }
+>  EXPORT_SYMBOL_GPL(__hwspin_unlock);
+> =20
+> +/**
+> + * hwspin_lock_bust() - bust a specific hwspinlock
+> + * @hwlock: a previously-acquired hwspinlock which we want to bust
+> + * @id: identifier of the remote lock holder, if applicable
+> + *
+> + * This function will bust a hwspinlock that was previously acquired as
+> + * long as the current owner of the lock matches the id given by the cal=
+ler.
+> + *
+> + * Context: Process context.
+> + *
+> + * Returns: 0 on success, or -EINVAL if the hwspinlock does not exist, or
+> + * the bust operation fails, and -EOPNOTSUPP if the bust operation is not
+> + * defined for the hwspinlock.
+> + */
+> +int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id)
+> +{
+> +	if (WARN_ON(!hwlock))
+> +		return -EINVAL;
+> +
+> +	if (!hwlock->bank->ops->bust) {
+> +		pr_err("bust operation not defined\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	return hwlock->bank->ops->bust(hwlock, id);
+> +}
+> +EXPORT_SYMBOL_GPL(hwspin_lock_bust);
+> +
+>  /**
+>   * of_hwspin_lock_simple_xlate - translate hwlock_spec to return a lock =
+id
+>   * @bank: the hwspinlock device bank
+> diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinloc=
+k/hwspinlock_internal.h
+> index 29892767bb7a0..f298fc0ee5adb 100644
+> --- a/drivers/hwspinlock/hwspinlock_internal.h
+> +++ b/drivers/hwspinlock/hwspinlock_internal.h
+> @@ -21,6 +21,8 @@ struct hwspinlock_device;
+>   * @trylock: make a single attempt to take the lock. returns 0 on
+>   *	     failure and true on success. may _not_ sleep.
+>   * @unlock:  release the lock. always succeed. may _not_ sleep.
+> + * @bust:    optional, platform-specific bust handler, called by hwspinl=
+ock
+> + *	     core to bust a specific lock.
+>   * @relax:   optional, platform-specific relax handler, called by hwspin=
+lock
+>   *	     core while spinning on a lock, between two successive
+>   *	     invocations of @trylock. may _not_ sleep.
+> @@ -28,6 +30,7 @@ struct hwspinlock_device;
+>  struct hwspinlock_ops {
+>  	int (*trylock)(struct hwspinlock *lock);
+>  	void (*unlock)(struct hwspinlock *lock);
+> +	int (*bust)(struct hwspinlock *lock, unsigned int id);
+>  	void (*relax)(struct hwspinlock *lock);
+>  };
+> =20
+> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+> index bfe7c1f1ac6d1..f0231dbc47771 100644
+> --- a/include/linux/hwspinlock.h
+> +++ b/include/linux/hwspinlock.h
+> @@ -68,6 +68,7 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned=
+ int, int,
+>  int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
+>  void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
+>  int of_hwspin_lock_get_id_byname(struct device_node *np, const char *nam=
+e);
+> +int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned int id);
+>  int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock);
+>  struct hwspinlock *devm_hwspin_lock_request(struct device *dev);
+>  struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+> @@ -127,6 +128,11 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int =
+mode, unsigned long *flags)
+>  {
+>  }
+> =20
+> +static inline int hwspin_lock_bust(struct hwspinlock *hwlock, unsigned i=
+nt id)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int of_hwspin_lock_get_id(struct device_node *np, int inde=
+x)
+>  {
+>  	return 0;
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--SbUCcGMKf4utf5NG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZs3FoQAKCRAw5/Bqldv6
+8mvxAJ9LkBphkQB5ck5R8qhhbpxWrj5PDgCbB2mauOcjLtAnkXLW+e9PgFbtd5w=
+=qLwo
+-----END PGP SIGNATURE-----
+
+--SbUCcGMKf4utf5NG--
