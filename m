@@ -1,73 +1,66 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C38F1A76CE
-	for <linux-remoteproc@vger.kernel.org>; Wed, 28 Aug 2024 19:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8191AD3FE
+	for <linux-remoteproc@vger.kernel.org>; Wed, 28 Aug 2024 21:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874564; cv=none; b=qywwo68NXjOSxRq+kBJiSC/rHUR8trGRdp7ozDzG3QmBcIzbv0lXmD72y3zuZ0jy/bZOP0Fo5GQ9yE18XctqqHwsKR2FU4Dp4d483WCaPDYS0KST1BaCwvTo/b7rNwKQalWeMgCfJNJ79SOpc4JGMIjhXaTwICvHfGkw+qQm3bU=
+	t=1724879123; cv=none; b=PEcHH11ycgSMJN6m+GDEpYH0steroZDl49VEZgJPeK7koVK9h0ATtBLsvZ7OyOn7+BgNUExXB52KPXBZg0mV2GVJUvRE2cUaVTOB1BGTWHWEzXi6G/wbNh3r5UXz8Z3sRmnB7d63dbDQdftYA/bhb0ukL7O1HarP1XGMGTRHd60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874564; c=relaxed/simple;
-	bh=iCpcqPThAPmZLodK+uZfdz3ZGn7+GEtpWdlwHYhSoSw=;
+	s=arc-20240116; t=1724879123; c=relaxed/simple;
+	bh=xw/CcMz6j7BEBe/0r7XKlnCuk0/U9f4ac4w2v40x8e4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCu/PQcKKQyZvauBEA0oUejrkGvPD65LEHZHRXYoxtoFgpRjSimljJiOR1UL3mL7gsGcQ1Ed42AM022BZvrIZedP+B9XuT2SEL+52kj/oollfFkNoh/DKBsdrGcRm4O1qvqHGhap5/A332kH731JNpjUQkmBdzQNDpJCh9LD2ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCusYVUw; arc=none smtp.client-ip=209.85.167.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPSyLwWz/mFwj6HXK2M+MQCfq0kEOQztZxgNWaaJr5CT4DzAqbDDSY/BBiPayMitzf3PTKWUN/AkeHvT/qVC8P5y1jOPU09Z5eyqGzmLw2XzNwMJ7UoKuK5jVFXLWOOQ9Y+RkLUoUo0hIIxLcAbOBWxt9MqogBBafdqZaX/hcBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wuf1HVnb; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCusYVUw"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5344ab30508so1018771e87.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Aug 2024 12:49:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wuf1HVnb"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so7068711e87.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Aug 2024 14:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724874561; x=1725479361; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724879119; x=1725483919; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
-        b=mCusYVUwhkOoWoZ7j3rRMP0aB6XymUwG3Nm3ngxRb5Kf+WyEQ7vQT2kxWYj7ejOKGQ
-         mXisgKT1Q3Q/tVY6bq7qla00l86iqNZPDbsYpv4eGkRtxDabeALMxyuvSAt/cg9O4gXm
-         CGBG/JWAT9d1Jx27KwioaHCgqdQXBjTsTGsurBwSiqAjGHd4wVJjn/+1UTe4ObDjfnaR
-         xmWHe0l1QYpDt0uUlk5c6Ak65AN4297l4FMZxgBYkYVGKgXHcsG/aEb+7JRs5xoxI+pw
-         Zaa8/9NsRdzr+Xvym1ITN/eLqnvac3QHRysQmZQ2hDmflO9onPZ3OJyEfcV6zHF1vczm
-         Qmrw==
+        bh=J8P1AfMskY/XNd3kwlMg/4oyb4V66AijIk4o7h53BOc=;
+        b=wuf1HVnb5IqraD2dhlHqzVZuOO84yxt6DMQy3p5itgXbYqzhSeo7Alkv3pabW+kfSI
+         F3H79OxO/NkRb6Lm1cYGbsnNO2y7MX9HD9XcOadCyyU/ZTZCRiaiL6KRbNqjxw66x7Yj
+         VSk51mr2jgduB1vHjCYo8o/v/Av2LfuWnC6UrtDyFdmy5OCyVHe76P2Xz5M+zKwx5D+e
+         orCoD9wuTCBub94nY22fGCDScVSFFCI7un/Fixr8eb9dCwKPFfHvCKDEj0unletXFXt+
+         +vQ5M/2gJ9STIws4VGnHvPmvzsxglB8b8vAbqHYV6Xxddln989t50zb7y7k+X1nkRmVK
+         KQ1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724874561; x=1725479361;
+        d=1e100.net; s=20230601; t=1724879119; x=1725483919;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
-        b=JI8srbRa+Fiy29GjppZwOMdQfqRlwTU/baMtHfDT3oZt/wEtCEup8PQG/lNNljP2Oo
-         uB14KLzA2GmfjqsMNDktrsp+CAXep1yCiEDcH5h91DqREqy6oQfkYjK/VS8VhEjpXDUT
-         +PqKv1DxGUAo843+Tgxo6pvi8zaL4URQRO1O4goSWe9VE3fT72k7vx93RYENDfG7lzgR
-         cv+52AadQI6q4swOcB+LGbMwCCaI0qnF47dT4ttWTqfUKZ6Pje4L8ETj3D9IvICIe9ZC
-         GhchbqzONRXoSvOI1JD5aAno4tp+IJFrlctKIRXeyO4RQvfpGpAsq4BCGiaZ8qawOkgC
-         8eVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSJzGAz9KbiTSBzx/y9se8AFDnj0/vyCs/NHmAVU3Z5TXqjsDSR+jIl7WtptkamQ93NesppEPcDJnU11hfEuLS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+E4kqYExZQd9zjwgOKELSXhkfI7mVnVVIMqZXL22Y67eHBUm4
-	7pO267BX3SJab3gch3zTuKf0mCphc9ypGkaxwhgGsMU1op/tJMN1o5s7SKo1OmU=
-X-Google-Smtp-Source: AGHT+IFR6avFKpr2wHph931hDBC2z+rTIPVUVlBNS/Uou013Y8gMhOrlNprLkZ/3P1WLSkHYPJBA7Q==
-X-Received: by 2002:a05:6512:3b97:b0:52f:228:cf91 with SMTP id 2adb3069b0e04-5353eba3ee1mr78077e87.1.1724874560042;
-        Wed, 28 Aug 2024 12:49:20 -0700 (PDT)
+        bh=J8P1AfMskY/XNd3kwlMg/4oyb4V66AijIk4o7h53BOc=;
+        b=fiPNhjrm9zFTbuLOo1CpjKIBDvxV/Trnp/tYFkhc63bVxiMZqYrTyEHjVBA0OrlRUX
+         x8oMGIJpk6UoOgWuw7eBD+s1CEwL9bfi3W1uReYMoq/Oexbq0gfK+SiIENbopeJc6XcU
+         fybEUlmm4bvcj4qv96CCebzUHrkOmzQyOWhxMdgAgwOTqIfysg2IWsag+eYir8sPvY95
+         AOO3J91yYQ/ApbnLMnM8shqHfS8cYqZqTXcb5H1kBnURM/NQJrDILMCE+nyCBaLRXggS
+         mgRXM9vpP+ngeJz853stEx/MtyBdgsmcBI0yclylQC9NvoygKMQHaCmpx+9GRzWVPWdj
+         ywvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU834Ar7Ar38BsnYa+n319I1SGhGb7Tpc9UfGHQ2eA0mvWYg60oCOnAIXYHPUvEm/uqwclpy8NOIM85VG8pKpd1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFJLWPgpSKjekeT9a8VbsvB5JulPWz3zwvrlooZu1tFJieKEla
+	RiZ3Tzz3ZikPyskUYjPxmwRiulRKIpLzFWGPjcBkQqu2sNASWCQYyQHDYRdWNWg=
+X-Google-Smtp-Source: AGHT+IGwy00ojcB+2DLJtwYPQ2cEU/bfftwOA25DuW2BUnyVrQjczSw876qvUyAwWFtEYqRAhYN0BA==
+X-Received: by 2002:a05:6512:acc:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-5353e548762mr303636e87.10.1724879118526;
+        Wed, 28 Aug 2024 14:05:18 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea99933sm2248052e87.309.2024.08.28.12.49.19
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea29321sm2292090e87.25.2024.08.28.14.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 12:49:19 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:49:18 +0300
+        Wed, 28 Aug 2024 14:05:17 -0700 (PDT)
+Date: Thu, 29 Aug 2024 00:05:16 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Tengfei Fan <quic_tengfan@quicinc.com>, 
-	Ling Xu <quic_lxu5@quicinc.com>
-Subject: Re: [PATCH v4 4/6] misc: fastrpc: Add support for cdsp1 remoteproc
-Message-ID: <vuviyau3vbmf4l4mfb47lyh2n2t65fy3j2lxrg5jtyuz34kil2@q5ytlfdcmf7x>
-References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
- <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, quic_varada@quicinc.com, 
+	quic_srichara@quicinc.com, quic_viswanat@quicinc.com, quic_mojha@quicinc.com
+Subject: Re: [PATCH V2 1/1] remoteproc: qcom: Add NOTIFY_FATAL event type to
+ SSR subdevice
+Message-ID: <o2auzct6aoda4hifggxjtsyzskx2edbut2lmpdf33fzvkczpmd@ngen35gjnoh2>
+References: <20240820060943.277260-1-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -76,28 +69,53 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
+In-Reply-To: <20240820060943.277260-1-quic_gokulsri@quicinc.com>
 
-On Mon, Aug 05, 2024 at 07:08:05PM GMT, Bartosz Golaszewski wrote:
-> From: Ling Xu <quic_lxu5@quicinc.com>
+On Tue, Aug 20, 2024 at 11:39:43AM GMT, Gokul Sriram Palanisamy wrote:
+> From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
 > 
-> The fastrpc supports 4 remoteproc. There are some products which
-> support cdsp1 remoteproc. Add changes to support cdsp1 remoteproc.
+> Currently the SSR subdevice notifies the client driver on crash of the
+> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
+> However, the client driver might be interested to know that the device
+> has crashed immediately to pause any further transactions with the
+> rproc. This calls for an event to be sent to the driver in the IRQ
+> context as soon as the rproc crashes.
+> 
+> Add NOTIFY_FATAL event to SSR subdevice to atomically notify rproc has
+> crashed to the client driver. The client driver in this scenario is a
+> ath Wi-Fi driver which is continuously queuing data to the remoteproc and
+> needs to know if remoteproc crashes as soon as possible to stop queuing
+> further data and also dump some debug statistics on the driver side that
+> could potentially help in debug of why the remoteproc crashed.
+> 
+> Validated the event in IPQ9574 and IPQ5332 by forcing the rproc to crash
+> and ensuring the registered notifier function receives the notification
+> in IRQ context.
+> 
+> The client driver in this scenario is a Wi-Fi driver which is continuously
+> queuing data to the remoteproc and needs to know if remoteproc crashes
+> as soon as possible to stop queuing further data and also dump some 
+> debug statistics on the driver side that could potentially help in
+> debug of why the remoteproc crashed.
 
-I'd very much prefer to see this abstracted somehow, but it seems
-impossible with the current driver code.
+Please post the patch together with the user of the API. Right now the
+series has just a single patch in it, so it's impossible to judge
+whether it makes sense or not.
 
 > 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> [Bartosz: ported to mainline]
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+> Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 > ---
->  drivers/misc/fastrpc.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> changes since v1:
+> 	- No changes. Rebased on top of linux-next.
+> 	- We will now have a user for this notifier, ath12k.
 > 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+>  drivers/remoteproc/qcom_common.c      | 60 +++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_core.c  | 12 ++++++
+>  include/linux/remoteproc.h            |  3 ++
+>  include/linux/remoteproc/qcom_rproc.h | 17 ++++++++
+>  4 files changed, 92 insertions(+)
 
 -- 
 With best wishes
