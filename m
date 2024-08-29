@@ -1,138 +1,114 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AE345014;
-	Thu, 29 Aug 2024 06:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839761A707F;
+	Thu, 29 Aug 2024 13:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912277; cv=none; b=YHH/qsDtkoRROwbVjToCaNblCJ8ljjhQkiwXTolBVzAghc3zRPiBCCMVscliUb/G/oSrmueNemEkvOXGNdaE//KQMgHhe2PacDXh816hmgPXaG9GkDkksD8N2LP/BO17vM018ABdke/+4R/fqBDTIq5q2Tm7RIy8YxtLp+f4DXs=
+	t=1724938849; cv=none; b=FWyH/eAsUzsZJOAPyyVqh4qCRFjf5Q9QuFM/Zly/DCJGefKiXib524DL9NW/SdU7IDUBtc1XQfR4GJJlklET+jdT+GHVUp+WotR1nhUmah+nRjmseGdpBheE8zNWkurIdpZNL2dCujk1TUovR9BL/bqjHKLPktQfRb4ex6R1QkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912277; c=relaxed/simple;
-	bh=6RzSrv3nyFuhiKzG5BP3qCVTA/Grb69zizAwthqsJEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CAePkcoDyIjAc4Go8/3uI36QtmpZkeTpzKnWHukekOl57me/6bzLmWTa1DSAzDdJvvfmixT4unV/ayKvu68HvYXqymwsahDpzsl75U7G6EcN7iLZhaFpWCT6fkmN41SYv1DN1g++nsMpzKAHUT6u6y/BMOxvx59FMvSl+HT54dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L3Z4eUpr; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1724938849; c=relaxed/simple;
+	bh=TZX246zT6gQOaJ4+SS0AG+6vRqVsq+2MpIwuMM1Le30=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gb/R/w10cBy5eEqf4HuVZCm5Qq/iTND7nd/a6ckaqVOVWl7+PUHgojZb0X7a/kpFrxgNhiv6SLbgB7cRxVmyWLkg/jAis0MK3i3MVtk88QKkhUsOM4BfdDHUdAqT1pyt/S9GLGva+XZISTcDa7x0hcONlDV/fdO7R6tNsd4bP0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j5uY8mNU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L3Z4eUpr"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HV1q054780;
-	Thu, 29 Aug 2024 01:17:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724912251;
-	bh=fnhuBR25tOtm6jBNJ0bOgimcMKg7qyAIojAku3kruEc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=L3Z4eUprXD7YUdSkcNFy8hxBfzjN8NrY3Q1WgAWllUfzCMM9638lihZyWduviwW77
-	 046oaK3cPf3Cr1AKUQTK3sn/3+yzMC4i71mrXtbxeCnEm4WB+PRESR/NTWZKEfbOzX
-	 sGROUxxO4C6Din3SBKlVCwiZ9ICqD8g8f9FWDuus=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47T6HVnO052987
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 29 Aug 2024 01:17:31 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
- Aug 2024 01:17:31 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 29 Aug 2024 01:17:31 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HQa9007117;
-	Thu, 29 Aug 2024 01:17:27 -0500
-Message-ID: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
-Date: Thu, 29 Aug 2024 11:47:25 +0530
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j5uY8mNU"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8TqVp001073;
+	Thu, 29 Aug 2024 13:40:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=F8N1RrRjxwf5TgZ2pHhEI/
+	ywY+uRyWfuHMwGAA4KM8c=; b=j5uY8mNUfVmJuMLhTy7bbWtbrFD4IlSkkcypb0
+	+ogL92WfQL1SszMDZJLTUSEZaKwONJIhVgbIh3TRLitGzqaH8Gcj1a2D3m/NZej5
+	s3nbqGA3ILKj7L1L/LP/HRYX/HAsPQS+q/haK1FY31TZVT2qMiHCZHhEa9HzAjg4
+	ur1XpdsytfT/SSgz4DvRSiIWS9qXmnGdeeBbz7YirPVqnd39789NptJYDSKHU977
+	hCKtYS03kASvT5xfIgiQcf7IsdDdBpSffEIrx6+g4E0XPmfxfefCSJwVaxRqrP0r
+	cUOsubSpF2S6kQA4nR4BHXknjiKj0mGwA2GV0kAoRsOnzPwA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw5dxw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 13:40:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TDegMZ014528
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 13:40:42 GMT
+Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 Aug 2024 06:40:38 -0700
+From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+To: <andersson@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        <quic_gokulsri@quiconc.com>
+Subject: [PATCH V2 0/4] Add new driver for WCSS secure PIL loading
+Date: Thu, 29 Aug 2024 19:10:17 +0530
+Message-ID: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Lu Baolu
-	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
-        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
-CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Kevin Tian
-	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe
-	<jgg@nvidia.com>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
- <ZsdktJEqR9BOgivK@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <ZsdktJEqR9BOgivK@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fAgGmk-UDqX3Fl24mc1t33id-PG7OWYe
+X-Proofpoint-GUID: fAgGmk-UDqX3Fl24mc1t33id-PG7OWYe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=525 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290094
 
-Hi All,
+- Secure PIL is signed, split firmware images which only TrustZone (TZ) can
+  authenticate and load. Linux kernel will send a request to TZ to
+  authenticate and load the PIL images.
 
-On 22/08/24 21:47, Mathieu Poirier wrote:
-> Hi Baolu,
->
-> Sorry for the late reply, this slipped through the cracks.
->
-> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
-> > An iommu domain is allocated in rproc_enable_iommu() and is attached to
-> > rproc->dev.parent in the same function.
-> > 
-> > Use iommu_paging_domain_alloc() to make it explicit.
-> > 
-> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index f276956f2c5c..eb66f78ec8b7 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
-> >  		return 0;
-> >  	}
-> >  
-> > -	domain = iommu_domain_alloc(dev->bus);
-> > -	if (!domain) {
-> > +	domain = iommu_paging_domain_alloc(dev);
->
-> I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
-> second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
-> provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
-> with the IOMMU subsystem to confidently more forward.
->
-> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, Andrew,
-> Nishanth and Hari) to test this patch on their IOMMU devices and get back to me
-> with a "Tested-by".
+- When secure PIL support was added to the existing wcss PIL driver
+  earlier in [2], Bjorn suggested not to overload the existing WCSS
+  rproc driver [2], instead post a new driver for secure PIL alone.
+  This series adds a new secure PIL driver for the same. 
 
+[1] https://patchwork.kernel.org/project/linux-arm-msm/cover/20240820055618.267554-1-quic_gokulsri@quicinc.com/
 
-Just a heads-up. Currently, I am seeing boot failures while booting 
-remotecores in TI's IOMMU devices with mainline kernel. Working on the 
-the fix, once it is done, will apply the above patch and test it ASAP.
+[2] https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
 
-Thanks,
-Beleswar
+changes since v1:
+	- Removed dependency of this series to q6 clock removal series
+	as recommended by Krzysztof
 
->
-> Thanks,
-> Mathieu
->
-> > +	if (IS_ERR(domain)) {
-> >  		dev_err(dev, "can't alloc iommu domain\n");
-> > -		return -ENOMEM;
-> > +		return PTR_ERR(domain);
-> >  	}
-> >  
-> >  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
-> > -- 
-> > 2.34.1
-> > 
->
+Manikanta Mylavarapu (3):
+  dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
+  arm64: dts: qcom: ipq5332: add nodes to bringup q6
+  arm64: dts: qcom: ipq9574: add nodes to bring up q6
+
+Vignesh Viswanathan (1):
+  remoteproc: qcom: add hexagon based WCSS secure PIL driver
+
+ .../remoteproc/qcom,wcss-sec-pil.yaml         | 125 +++++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  62 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  58 +++
+ drivers/remoteproc/Kconfig                    |  22 ++
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 354 ++++++++++++++++++
+ 6 files changed, 622 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+ create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
+
+-- 
+2.34.1
+
