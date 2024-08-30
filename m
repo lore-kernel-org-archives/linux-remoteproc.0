@@ -1,52 +1,52 @@
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3EB17DE36;
-	Fri, 30 Aug 2024 09:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69C917ADF6;
+	Fri, 30 Aug 2024 09:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725011615; cv=none; b=g+CxHLppXNbUcJW+eKtxAlM2+xCG2j9pzQ4DKQW2tmHTAs7ozl90YHsE61+J4wGm6GC7zGxEPNzDOD9se4W2uvS6iqk4gvAKOfB0t1/QBszYMtabWQEc+TkcJJqtKDkt1unf3HjCo7JUnM8avClsJlMbwYKfktCwk8oolw+ROmk=
+	t=1725011616; cv=none; b=FcQuv1I/BbGAg/UxHcC3lYwaPCCALI2VWVyoVSUt3Am8ZzpNL1yyIO5sZ1v3n/sFn1SxKAP/Inn0QukqXsCQ0Bui52IFUtLlWHXmgSKNW+EPt1FiPGHISfKnt/DgLAMqi7xdAi+ayWCS7m9W325SPn8ZywP3Qu+xxMOeF2S9yP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725011615; c=relaxed/simple;
-	bh=RKYsAEvQRXWIAuP82l+zFeTBW2y8hvA6zPeWxu5FfUQ=;
+	s=arc-20240116; t=1725011616; c=relaxed/simple;
+	bh=699mAr6Yt5PRa2nYw8ifQjNcb/EqfCTTECG68YUlgIg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DmCf2sWeyCAZmqQW+rNXVLFyUKLpaFRUXsIkoxgpGFeAXCxyd1ldID5bESdrmep+EpOLmN8ZbUM5MMwLmRDj3M9hROTzzl6GLzgTG18cAYtqc07zUTZI1UOwZhleBn1NxJeoiw/CpdlZgZh5+sbgzDjcXcXy5vBJXt43kdA4IOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zK540kCM; arc=none smtp.client-ip=185.132.182.106
+	 MIME-Version:Content-Type; b=VOw4PoA5vqCWF0KwQXdatStfXflhcl19zcKrkocJ1uUqHNIfaWd7xDYz7/8YhmxccBgeCoUEKeCer9UlUWcBmUuSkycN4c0RxhLTJmRGvAEDa36ZvT4Zau0yCcrEw0WN0IDqCNdJMmTnYa1TQQwvndVA0F+lLhuFsjztODiYTqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=XHyn1gCe; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zK540kCM"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U9hNej031654;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="XHyn1gCe"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U7T05s005594;
 	Fri, 30 Aug 2024 11:53:10 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	gaYYKQhdt5+WppBYnImCivL9U494+2hjcdM9oi2RwHw=; b=zK540kCMYMcxBUQy
-	PlHGXgGmeHQhePUVArhYesTLCxpg3JaBfhnZbHuxpiOAG4xQT9HqREkrw0TzzKk9
-	Ci5G9ppxhEbLAlSxoh2eHmTyQWt0vgj99lBxAB1nuBvZD70D6c55OCsKvl+/ALrC
-	WajhrFSjWlEVU7XQIvBVkOzs7UCQ4W8Eu0EYOtlU1rXlE027MTc3UmsNoSY5RWBW
-	nQSODpR0bI6m4RYc+qKr5hQRQLsp4z0nbA3yxbfTet4p7SjhsrySddVZBAq//ydN
-	3z14CrQq6pslQvBnRHN7peIBxj4FKBJlGjS5teWu3JO2IVTQHlHZhJwOhdTL+wNa
-	cbMxHg==
+	0DlUTkUaPavTozbvsNzJHph9lUJ8rhMJbIvd+RFIDXU=; b=XHyn1gCeEcu6GMeE
+	Tnfw5YP8LI/TAMks9Mo0CCENu6SyrHuhfgzyLBxIV//EPQFgYmmPMtf9SCE/z28T
+	UJ4eKObCmPrMhmIFs4O45WzbUScfx5AO/Jqd8t9KHdI8lfrin+z/m7Tr0eQRkt2W
+	k23+rrEAWBYWetFRCnd8SwelykdqqLADbf/nLLI0dnnlGouk5tkoZCNPLqrSF32O
+	860j75F1a+tyiqUis9YKDgMk7b887tFT09uTSnfuHwCXUFqIxqzJhi2r6D59dadr
+	DDUmMeAXM4wUkE9gqBjc616inTaPM6/LkhrLIUrOsoB90PITu75Md5dxK/ZOclDQ
+	iJhOUA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 419putm01e-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41b14tabey-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 11:53:09 +0200 (MEST)
+	Fri, 30 Aug 2024 11:53:10 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E6F5840046;
-	Fri, 30 Aug 2024 11:53:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 30F6225651D;
-	Fri, 30 Aug 2024 11:52:19 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5902A4004B;
+	Fri, 30 Aug 2024 11:53:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC31A256519;
+	Fri, 30 Aug 2024 11:52:17 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 30 Aug
- 2024 11:52:19 +0200
+ 2024 11:52:17 +0200
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 30 Aug
- 2024 11:52:18 +0200
+ 2024 11:52:17 +0200
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -61,9 +61,9 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v9 5/7] dt-bindings: remoteproc: Add compatibility for TEE support
-Date: Fri, 30 Aug 2024 11:51:45 +0200
-Message-ID: <20240830095147.3538047-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v9 3/7] remoteproc: core: Refactor resource table cleanup into rproc_release_fw
+Date: Fri, 30 Aug 2024 11:51:43 +0200
+Message-ID: <20240830095147.3538047-4-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
 References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
@@ -81,132 +81,68 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-30_04,2024-08-30_01,2024-05-17_01
 
-The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
-where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
-(TEE).
+This patch centralizing the cleanup of the resource table into a new
+helper function rproc_release_fw().
 
-For instance, this compatible is used in both the Linux and OP-TEE device
-trees:
-- In OP-TEE, a node is defined in the device tree with the
-  "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
-  Based on DT properties, the OP-TEE remoteproc framework is initiated to
-  expose a trusted application service to authenticate and load the remote
-  processor firmware provided by the Linux remoteproc framework, as well
-  as to start and stop the remote processor.
-- In Linux, when the compatibility is set, the Cortex-M resets should not
-  be declared in the device tree. In such a configuration, the reset is
-  managed by the OP-TEE remoteproc driver and is no longer accessible from
-  the Linux kernel.
-
-Associated with this new compatible, add the "st,proc-id" property to
-identify the remote processor. This ID is used to define a unique ID,
-common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
-This ID will be used in requests to the OP-TEE remoteproc Trusted
-Application to specify the remote processor.
-
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/remoteproc/st,stm32-rproc.yaml   | 58 ++++++++++++++++---
- 1 file changed, 50 insertions(+), 8 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index 370af61d8f28..409123cd4667 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -16,7 +16,12 @@ maintainers:
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ace11ea17097..7694817f25d4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1256,6 +1256,13 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+ 	return 0;
+ }
  
- properties:
-   compatible:
--    const: st,stm32mp1-m4
-+    enum:
-+      - st,stm32mp1-m4
-+      - st,stm32mp1-m4-tee
-+    description:
-+      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
-+      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
++static void rproc_release_fw(struct rproc *rproc)
++{
++	/* Free the copy of the resource table */
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
++}
  
-   reg:
-     description:
-@@ -43,6 +48,10 @@ properties:
-           - description: The offset of the hold boot setting register
-           - description: The field mask of the hold boot
+ /**
+  * rproc_resource_cleanup() - clean up and free all acquired resources
+@@ -1485,9 +1492,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
  
-+  st,proc-id:
-+    description: remote processor identifier
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-   st,syscfg-tz:
-     deprecated: true
-     description:
-@@ -142,21 +151,43 @@ properties:
- required:
-   - compatible
-   - reg
--  - resets
+ clean_up_resources:
+ 	rproc_resource_cleanup(rproc);
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ unprepare_rproc:
+ 	/* release HW resources if needed */
+ 	rproc_unprepare_device(rproc);
+@@ -2067,10 +2072,7 @@ int rproc_shutdown(struct rproc *rproc)
  
- allOf:
-   - if:
-       properties:
--        reset-names:
--          not:
--            contains:
--              const: hold_boot
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4
-     then:
-+      if:
-+        properties:
-+          reset-names:
-+            not:
-+              contains:
-+                const: hold_boot
-+      then:
-+        required:
-+          - st,syscfg-holdboot
-+      else:
-+        properties:
-+          st,syscfg-holdboot: false
-+        required:
-+          - reset-names
-       required:
--        - st,syscfg-holdboot
--    else:
-+        - resets
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4-tee
-+    then:
-       properties:
-         st,syscfg-holdboot: false
-+        reset-names: false
-+        resets: false
-+      required:
-+        - st,proc-id
+ 	rproc_disable_iommu(rproc);
  
- additionalProperties: false
+-	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+@@ -2133,10 +2135,7 @@ int rproc_detach(struct rproc *rproc)
  
-@@ -188,5 +219,16 @@ examples:
-       st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-       st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-     };
-+  - |
-+    #include <dt-bindings/reset/stm32mp1-resets.h>
-+    m4@10000000 {
-+      compatible = "st,stm32mp1-m4-tee";
-+      reg = <0x10000000 0x40000>,
-+            <0x30000000 0x40000>,
-+            <0x38000000 0x10000>;
-+      st,proc-id = <0>;
-+      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-+      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-+    };
+ 	rproc_disable_iommu(rproc);
  
- ...
+-	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
 -- 
 2.25.1
 
