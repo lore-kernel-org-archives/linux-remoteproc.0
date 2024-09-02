@@ -1,185 +1,135 @@
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EE51552FD
-	for <linux-remoteproc@vger.kernel.org>; Sun,  1 Sep 2024 13:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95F15DBB3;
+	Mon,  2 Sep 2024 07:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725197713; cv=none; b=nmni0cm6Rss1/PDbbr4EAvuuG5NGwW2MGatEVctwy4e1dHpbXh0mGU5/Gd/V5Poq/GEa1O8i/XMtRPd59Yg1Qw6MoufMzhNvpFmQesxygEYZV9pldvAxtswjqndPSM4Uj2IU6cnKpCanz+8/5MTch5FQMQmoyxJco0wE5HW9DmA=
+	t=1725261652; cv=none; b=b416Gj6ELbrQ5iL5rrrF+5xsrPD+RCuEa6gsDppruBIEKkZGbmTgcV7/xkfOpEos0BOoGCQCZg1Iy4LT7uqIjb+Nt/SSQFWIJv7f/UYyr3Q6UioinTmKQ9kaAnOQ5x/6kdzI57IdGIIvEyb8Bf8GwhIoYDxIlNnZJbd5e+bNOtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725197713; c=relaxed/simple;
-	bh=BZYPIy6R3BUybWWreHcLMoudk2mWh6xWjnAqFXs9n7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=net8xz0AWm1PgAdisdaxMWywuqWG29Zex2lfeTdT2+qSzHouH67BaJj2jI6xDsaywiJJt4tlcZBgDAVHVd/vJN6ZTPqmtFTL76NM2A5gNaF2UhI9S4ZyR2GOSEVYRykXcL/nef+zvqitsbdhU8xdxkOjlFAvptoCCvu0KnvJTxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gfii7p10; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1725261652; c=relaxed/simple;
+	bh=++hGo6b12+vxq83JdLH9ooYDjvTjt3PqY5WgAfKFms4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LR1gXHhZoOFDat+q2FT/oxCOLxmTGrk7FQWSG4gEGKZKpiIgqLAnunLybL17q4M5gBKC0nKIDdWXbHRNiC1FPwlT5z/b3NjBhFEXij4dKxQzILElgJdTTnu6fLbDZBwnGX/Mz+WmDz9k+4y4p50WMvzpnZU7tsEewCB6Rw1RF6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gLjKyA66; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gfii7p10"
-Message-ID: <cb11a5b8-8134-4059-b4f8-96aa0e7f7c2f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725197707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j5DQlTs2nlOPDf+z+agMCeOtbRkbOqIrhRru/M93h/k=;
-	b=Gfii7p105zLmIKicGk19NjCasSNbi4QVxHQV5H2eSe8iMrOO5c+3Me/Y4P2FkMG4gWpxyy
-	s6xmyymvKslgYkgrAAQhZWKklM/GGLmV9mmqnW1G3u4lSYDcwnAgEMjDFn3tYU/FUFQVgo
-	xbSRnA06U2YMZLCYDHjGicaj7qf8w9s=
-Date: Sun, 1 Sep 2024 21:34:37 +0800
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gLjKyA66"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4824snrq008347;
+	Mon, 2 Sep 2024 09:20:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	sLn8YX8O3WDqoWEd6Wy0yt1v1YptlaDbfBdJJeo6sw0=; b=gLjKyA66m6ulkqnY
+	9BvNbbR8zZoLSZ0gmKbPABqYi3hKbtGhMSnD1TT0+eHvXPGh3GgZTz0lFY2mjj6s
+	77ZuiokvGtQknaIbGPcrPOuYt1G7q49VbODXkpqeLVFiEn7ZotFmHXAotDr2FfBC
+	zoyd6A9J3Mrvs5Pq0IoGWcwTqrjCaO2v9AZxwbdVhTZz8KAoiwjzaFETpA7uRcVd
+	+Bf9K7Rge/UcM1FALM/zfaPjjBqYaEgsF4Qf1sb78dwj+qEit+Xc17wZ18/Xz3BP
+	93O+dtiiJyB1BHEJ9xpCCUbPNRoG0b0RJG9pFDfwYzcOh8qTTiW/LfPzkE9ZQxep
+	q0b89w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41ce4j3eb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 09:20:07 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 47CF240058;
+	Mon,  2 Sep 2024 09:19:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B84121D23A;
+	Mon,  2 Sep 2024 09:18:58 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
+ 2024 09:18:57 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
+ 2024 09:18:57 +0200
+Message-ID: <cfc164a7-9cf9-42d8-8b66-b4567d3971ae@foss.st.com>
+Date: Mon, 2 Sep 2024 09:18:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] hwspinlock: improve locking safety by using
- raw_spinlock_t
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Dave Young <dyoung@redhat.com>, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240824143847.5307-1-wen.yang@linux.dev>
- <4qotnhheec3q2beftcnstwws4haibaptyu7wafdkykewlpbg6g@f5k7jue52fl6>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for
+ firmware release
+To: kernel test robot <lkp@intel.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <oe-kbuild-all@lists.linux.dev>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+ <202409010034.Tln3soEY-lkp@intel.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <4qotnhheec3q2beftcnstwws4haibaptyu7wafdkykewlpbg6g@f5k7jue52fl6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <202409010034.Tln3soEY-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-01_06,2024-08-30_01,2024-05-17_01
 
 
 
-On 2024/8/27 00:37, Bjorn Andersson wrote:
-> On Sat, Aug 24, 2024 at 10:38:47PM GMT, Wen Yang wrote:
->> Both __hwspin_trylock and __hwspin_unlock use hwlock->lock, and require
->> running in atomic context, with a special annotation:
->> function will never sleep.
->> However, this requirement is not fulfilled on PREEMPT_RT.
->>
->> To address it, use raw_spinlock_t instead of spin_lock_t.
+On 8/31/24 18:43, kernel test robot wrote:
+> Hi Arnaud,
 > 
-> I think the "will never sleep" comment expresses that the function can
-> be called in atomic or irq context, not necessarily that it must not
-> sleep.
+> kernel test robot noticed the following build warnings:
 > 
-> If this is the case, would it be better to fix the comment or the code?
+> [auto build test WARNING on 5be63fc19fcaa4c236b307420483578a56986a37]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20240830-175609
+> base:   5be63fc19fcaa4c236b307420483578a56986a37
+> patch link:    https://lore.kernel.org/r/20240830095147.3538047-5-arnaud.pouliquen%40foss.st.com
+> patch subject: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for firmware release
+> config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240901/202409010034.Tln3soEY-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409010034.Tln3soEY-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409010034.Tln3soEY-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from drivers/remoteproc/remoteproc_core.c:32:
+>>> include/linux/remoteproc_tee.h:52:12: warning: 'tee_rproc_parse_fw' defined but not used [-Wunused-function]
+>       52 | static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>          |            ^~~~~~~~~~~~~~~~~~
+> 
+> 
+> vim +/tee_rproc_parse_fw +52 include/linux/remoteproc_tee.h
+> 
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  51  
+> 498143a453d14e Arnaud Pouliquen 2024-08-30 @52  static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  53  {
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  54  	/* This shouldn't be possible */
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  55  	WARN_ON(1);
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  56  
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  57  	return 0;
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  58  }
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  59  
 > 
 
-Thank you for your commens.
-Let's try updating the following documents:
-Documentation/locking/hwspinlock.rst
-drivers/hwspinlock/hwspinlock_core.c
-include/linux/hwspinlock.h
+The inline attribute is missing. As it is a minor fix, I'm waiting for more
+reviews before fixing it in the next version.
 
---
-Best wishes,
-Wen
-
-> 
->>
->> Signed-off-by: Wen Yang <wen.yang@linux.dev>
->> Cc: Bjorn Andersson <andersson@kernel.org>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: Dave Young <dyoung@redhat.com>
->> Cc: linux-remoteproc@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   drivers/hwspinlock/hwspinlock_core.c     | 20 ++++++++++----------
->>   drivers/hwspinlock/hwspinlock_internal.h |  2 +-
->>   2 files changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
->> index 6505261e6068..76e5a6c645b1 100644
->> --- a/drivers/hwspinlock/hwspinlock_core.c
->> +++ b/drivers/hwspinlock/hwspinlock_core.c
->> @@ -111,17 +111,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
->>   	 */
->>   	switch (mode) {
->>   	case HWLOCK_IRQSTATE:
->> -		ret = spin_trylock_irqsave(&hwlock->lock, *flags);
->> +		ret = raw_spin_trylock_irqsave(&hwlock->lock, *flags);
->>   		break;
->>   	case HWLOCK_IRQ:
->> -		ret = spin_trylock_irq(&hwlock->lock);
->> +		ret = raw_spin_trylock_irq(&hwlock->lock);
->>   		break;
->>   	case HWLOCK_RAW:
->>   	case HWLOCK_IN_ATOMIC:
->>   		ret = 1;
->>   		break;
->>   	default:
->> -		ret = spin_trylock(&hwlock->lock);
->> +		ret = raw_spin_trylock(&hwlock->lock);
->>   		break;
->>   	}
->>   
->> @@ -136,17 +136,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
->>   	if (!ret) {
->>   		switch (mode) {
->>   		case HWLOCK_IRQSTATE:
->> -			spin_unlock_irqrestore(&hwlock->lock, *flags);
->> +			raw_spin_unlock_irqrestore(&hwlock->lock, *flags);
->>   			break;
->>   		case HWLOCK_IRQ:
->> -			spin_unlock_irq(&hwlock->lock);
->> +			raw_spin_unlock_irq(&hwlock->lock);
->>   			break;
->>   		case HWLOCK_RAW:
->>   		case HWLOCK_IN_ATOMIC:
->>   			/* Nothing to do */
->>   			break;
->>   		default:
->> -			spin_unlock(&hwlock->lock);
->> +			raw_spin_unlock(&hwlock->lock);
->>   			break;
->>   		}
->>   
->> @@ -289,17 +289,17 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
->>   	/* Undo the spin_trylock{_irq, _irqsave} called while locking */
->>   	switch (mode) {
->>   	case HWLOCK_IRQSTATE:
->> -		spin_unlock_irqrestore(&hwlock->lock, *flags);
->> +		raw_spin_unlock_irqrestore(&hwlock->lock, *flags);
->>   		break;
->>   	case HWLOCK_IRQ:
->> -		spin_unlock_irq(&hwlock->lock);
->> +		raw_spin_unlock_irq(&hwlock->lock);
->>   		break;
->>   	case HWLOCK_RAW:
->>   	case HWLOCK_IN_ATOMIC:
->>   		/* Nothing to do */
->>   		break;
->>   	default:
->> -		spin_unlock(&hwlock->lock);
->> +		raw_spin_unlock(&hwlock->lock);
->>   		break;
->>   	}
->>   }
->> @@ -535,7 +535,7 @@ int hwspin_lock_register(struct hwspinlock_device *bank, struct device *dev,
->>   	for (i = 0; i < num_locks; i++) {
->>   		hwlock = &bank->lock[i];
->>   
->> -		spin_lock_init(&hwlock->lock);
->> +		raw_spin_lock_init(&hwlock->lock);
->>   		hwlock->bank = bank;
->>   
->>   		ret = hwspin_lock_register_single(hwlock, base_id + i);
->> diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
->> index f298fc0ee5ad..9fbd66e8a82f 100644
->> --- a/drivers/hwspinlock/hwspinlock_internal.h
->> +++ b/drivers/hwspinlock/hwspinlock_internal.h
->> @@ -42,7 +42,7 @@ struct hwspinlock_ops {
->>    */
->>   struct hwspinlock {
->>   	struct hwspinlock_device *bank;
->> -	spinlock_t lock;
->> +	raw_spinlock_t lock;
->>   	void *priv;
->>   };
->>   
->> -- 
->> 2.25.1
->>
+Regards,
+Arnaud
