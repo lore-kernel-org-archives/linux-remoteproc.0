@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9E018784F;
-	Wed,  4 Sep 2024 09:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC111BD4E9;
+	Wed,  4 Sep 2024 10:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442934; cv=none; b=GrlQ+aFx0x7iYqTpzGdON66uKzun1Ybt3IsXwDw6Idmny1SxZK9nOPFQqgXKHUOulh21NlZEZMv37Q6BQf+vsqLU2UYVRuor8fJJ03LauuJ4RJSjcyzNRdKwJQWram462cFkYp7zzFhWkeWx3i13YkNCrZ557mefjBbPuAehYoA=
+	t=1725444445; cv=none; b=Wo1cz1xZHWFWjkM0iIHLRetr+fTEAZPGBPr+r2LhpGG2SLujDxLyEmXRfL7ncRNXOAB8pkMeICMgVBfZOO7CZhx8Dp4SW4HtI5fyZ3p5AASliF38BGa33U2d30O4IO4drSyAgG9j5Ag3FYibEtitTHyuHndo9VqULoFYSyFL9R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442934; c=relaxed/simple;
-	bh=Oec9l7s17IwaiLXgNR1SWtJBoMzsunOXYZarsJi44os=;
+	s=arc-20240116; t=1725444445; c=relaxed/simple;
+	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRySbpIB/IiRdJQ2CKciW4cbMPpkh2wdE2elxjxgfQQ/iHqgtchC0n2+zNbKyOQu/UpqbGQ24ynTZjRplgJJ5QQOQclg+xbrjrz5aPZdcHzG5lcChzR9EA+osTD1rYvk/RYYyhAhlsIDn2/TdhbmB1iApHkMntoRhE4b0eNVt64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfk2exhR; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lNTvo2a4vnDCuLEWQnPEetNCiSbldXWwKwARNHYfyeIUYPQrpbZ42bgHoGRuWsL2P1tP9TQsp5PvD8ZKZg9ZQa2wXWpjJEAs3WP7pNOJfMh7sRTxVhOBfCzOnu8yCD0GRl8c6i5hK8IDV+Dnjm6VCq+ULDttGaXAl0gyXATePQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z36tg/QI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfk2exhR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E2CC4CEC2;
-	Wed,  4 Sep 2024 09:41:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z36tg/QI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709ADC4CEC6;
+	Wed,  4 Sep 2024 10:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725442933;
-	bh=Oec9l7s17IwaiLXgNR1SWtJBoMzsunOXYZarsJi44os=;
+	s=k20201202; t=1725444444;
+	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qfk2exhRilb/mDb5zkdMxVssIApdDdkN2OtWR1nYcYQ45/z39ErsKaKq8E2tMY7bL
-	 f4Jvq64hJNR3KOOwwhwYEPIjFi5ZPQINEyvpkHkXLNZW2HYMdCaaDL68yxbm7Lqzwq
-	 UyHZQha2LpoNaaCu8UvhhVoKi8Df1XsmtHGA0qXm1xjzExfh8wgzKiRFpqoAVHlAUT
-	 R0lxSPeLDNqHgdVnDN1GPfA0k8HiCUGE6CqGSOWL4XJEH8VVUBZWynki5HbZTY/+tX
-	 2H+rSxdJt7UPMjkedReYhshriapkRBUU5PaY7lQZbGPvfBwRHbpu53wjEWhR5c3c6r
-	 ZvK8u57wDIxxw==
-Message-ID: <be8b573c-db4e-4eec-a9a6-3cd83d04156d@kernel.org>
-Date: Wed, 4 Sep 2024 11:41:56 +0200
+	b=Z36tg/QIYQwgHt5hLJvoCZe76y4qUDqYhof0zxWtITF/s4mEBKeW3UnSXEJgap8YU
+	 RGyQgyXqinVHWTBC1J3bnX4tN0I87Sj3N6Z1JBIMJAGphAg2zqbKLyMBSatnGtUiAH
+	 h7uRaBbbgVyIZ6LbMuN1iT2k8GcZG4CxpTA4JwpkfsyyYjFoNR1qXvzziKXIk3AQbJ
+	 Ok6yXgpwYyy6lm0FxQMz49Tx/eizrJacziY1Mc3Nzij58g7g6gbhtaPUm6wlZ4Y9Wz
+	 o95ttTR8rW/i3nYqgpJR+AJDMOW8NhOT1WQa1DiYDtDZzLBCQKfGzlPtpmvfFhpOtU
+	 97Z2bx5KsPhFw==
+Message-ID: <77a75021-bb84-416b-9eb2-254724e77b86@kernel.org>
+Date: Wed, 4 Sep 2024 12:07:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,34 +35,16 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/19] arm64: dts: qcom: add initial support for QCS8300
- DTSI
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Xin Liu <quic_liuxin@quicinc.com>, Kyle Deng <quic_chunkaid@quicinc.com>,
- Tingguo Cheng <quic_tingguoc@quicinc.com>,
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
- <20240904-qcs8300_initial_dtsi-v1-18-d0ea9afdc007@quicinc.com>
+Subject: Re: [PATCH V2 1/4] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+ andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com,
+ quic_varada@quicinc.com, quic_srichara@quicinc.com, quic_gokulsri@quiconc.com
+References: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
+ <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,102 +90,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-18-d0ea9afdc007@quicinc.com>
+In-Reply-To: <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/09/2024 10:33, Jingyi Wang wrote:
-> Add initial DTSI for QCS8300 SoC.
+On 29/08/2024 15:40, Gokul Sriram Palanisamy wrote:
+> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > 
-> This revision brings support for:
-> - CPUs with cpu idle
-> - interrupt-controller with PDC wakeup support
-> - gcc
-> - TLMM
-> - interconnect
-> - qup with uart
-> - smmu
-> - pmic
-> - ufs
-> - ipcc
-> - sram
-> - remoteprocs including ADSP,CDSP and GPDSP
+> Add new binding document for hexagon based WCSS secure PIL remoteproc.
+> IPQ5332, IPQ9574 follows secure PIL remoteproc.
 > 
-> [Zhenhua: added the smmu node]
-> Co-developed-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> [Xin: added ufs/adsp/gpdsp nodes]
-> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> [Kyle: added the aoss_qmp node]
-> Co-developed-by: Kyle Deng <quic_chunkaid@quicinc.com>
-> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
-> [Tingguo: added the pmic nodes]
-> Co-developed-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> [Raviteja: added interconnect nodes]
-> Co-developed-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 1282 +++++++++++++++++++++++++++++++++
->  1 file changed, 1282 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> new file mode 100644
-> index 000000000000..244fa8bf97d9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -0,0 +1,1282 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/clock/qcom,qcs8300-gcc.h>
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +#include <dt-bindings/interconnect/qcom,icc.h>
-> +#include <dt-bindings/interconnect/qcom,qcs8300-rpmh.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/mailbox/qcom-ipcc.h>
-> +#include <dt-bindings/power/qcom,rpmhpd.h>
-> +#include <dt-bindings/power/qcom-rpmpd.h>
-> +#include <dt-bindings/soc/qcom,rpmh-rsc.h>
-> +
-> +/ {
-> +	interrupt-parent = <&intc>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	clocks {
-> +		sleep_clk: sleep-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <32000>;
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 
-Are you sure that sleep clock is physically part of the SoC?
-
-> +		};
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +
-
-...
-
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0 0 0 0 0x10 0>;
-
-ranges follow compatible, so it is the second property.
-
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
