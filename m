@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC111BD4E9;
-	Wed,  4 Sep 2024 10:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E6D14658C;
+	Wed,  4 Sep 2024 10:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725444445; cv=none; b=Wo1cz1xZHWFWjkM0iIHLRetr+fTEAZPGBPr+r2LhpGG2SLujDxLyEmXRfL7ncRNXOAB8pkMeICMgVBfZOO7CZhx8Dp4SW4HtI5fyZ3p5AASliF38BGa33U2d30O4IO4drSyAgG9j5Ag3FYibEtitTHyuHndo9VqULoFYSyFL9R0=
+	t=1725445176; cv=none; b=lgwNsGX+Mgh/pkExg8n6GuitrhdXxYaH9DLPtnFON8FAqjNoxUEqBcKAhmiOe7yzXUFR2UhviZyqVqLR4gvPvUILac8qjY5Jr+VS0z17Insogz4H4EBbKUWUQoypqElVWanGYuROxdU/7WDK5lUjscvA3s1i92r3b+UaKzqAgi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725444445; c=relaxed/simple;
-	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lNTvo2a4vnDCuLEWQnPEetNCiSbldXWwKwARNHYfyeIUYPQrpbZ42bgHoGRuWsL2P1tP9TQsp5PvD8ZKZg9ZQa2wXWpjJEAs3WP7pNOJfMh7sRTxVhOBfCzOnu8yCD0GRl8c6i5hK8IDV+Dnjm6VCq+ULDttGaXAl0gyXATePQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z36tg/QI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725445176; c=relaxed/simple;
+	bh=zlaZcOaZM0dFAhQZuIhuVd2ZdREG27vDZ8dz/g7nXL4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=L5/utgZ+umU0Cc5LgFPPfKiCuF4VMGkGCAPAbkVILSZTzThCtsL9X1AXQ0kre3bEhOUBg+UOWvTfk7yYSu/jNZdAfLAC6xsF4B/JxM+yDe2qNqjUeCr7h6cLvEBtjVwwijN+GpwH3h2nv6uZCDDMdibntPKs09drR8yvUFKbOvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYVOEWkp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z36tg/QI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709ADC4CEC6;
-	Wed,  4 Sep 2024 10:07:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYVOEWkp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008A9C4CEC2;
+	Wed,  4 Sep 2024 10:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725444444;
-	bh=3j04vpiHxm3qldw/gVkz+eXyx+hMgIY4U95fgEcETvM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z36tg/QIYQwgHt5hLJvoCZe76y4qUDqYhof0zxWtITF/s4mEBKeW3UnSXEJgap8YU
-	 RGyQgyXqinVHWTBC1J3bnX4tN0I87Sj3N6Z1JBIMJAGphAg2zqbKLyMBSatnGtUiAH
-	 h7uRaBbbgVyIZ6LbMuN1iT2k8GcZG4CxpTA4JwpkfsyyYjFoNR1qXvzziKXIk3AQbJ
-	 Ok6yXgpwYyy6lm0FxQMz49Tx/eizrJacziY1Mc3Nzij58g7g6gbhtaPUm6wlZ4Y9Wz
-	 o95ttTR8rW/i3nYqgpJR+AJDMOW8NhOT1WQa1DiYDtDZzLBCQKfGzlPtpmvfFhpOtU
-	 97Z2bx5KsPhFw==
-Message-ID: <77a75021-bb84-416b-9eb2-254724e77b86@kernel.org>
-Date: Wed, 4 Sep 2024 12:07:18 +0200
+	s=k20201202; t=1725445176;
+	bh=zlaZcOaZM0dFAhQZuIhuVd2ZdREG27vDZ8dz/g7nXL4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=uYVOEWkpqETakooK2/HOVDqhaXgvcvfW5LXQB7Eya90zPhhAiP61p0sjkmecSJ9H+
+	 rI8LHkD2POHt8IN3KC2hR7cMqtPEeFU//AL5L1s+oMPQoKYBoCvYsIxq9TnnBXOSB+
+	 Wqgy1e5kq4juehbhYYXpUfYqtwJtzVbTtmvm1IsyDLHnRTZBBk6IIHBZCJbknyoXaz
+	 LndSPQao15U2+i0OT9K2Sancv4wSpgjK0ypos5OdhJ2qIYzN7tv5Eq8VTRrO8diOMQ
+	 dKayNvpbInuOlBeVS33eiwEehui8PpvaQKUQDrX2A+Y6Nod7Un0g6t6hcdSaQnHzVd
+	 MbOyDlWtzA1Uw==
+Message-ID: <3535a897-8708-463d-b931-fa344a967f18@kernel.org>
+Date: Wed, 4 Sep 2024 12:19:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,17 +35,38 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/4] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
- andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: quic_viswanat@quicinc.com, quic_mmanikan@quicinc.com,
- quic_varada@quicinc.com, quic_srichara@quicinc.com, quic_gokulsri@quiconc.com
-References: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
- <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
+Subject: Re: [PATCH 00/19] Add initial support for QCS8300
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Will Deacon <will@kernel.org>,
+ Jingyi Wang <quic_jingyw@quicinc.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Das Srinagesh
+ <quic_gurus@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>,
+ Bart Van Assche <bvanassche@acm.org>, linux-arm-msm@vger.kernel.org,
+ Robert Marko <robimarko@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>, iommu@lists.linux.dev,
+ Xin Liu <quic_liuxin@quicinc.com>, Shazad Hussain
+ <quic_shazhuss@quicinc.com>, Tingguo Cheng <quic_tingguoc@quicinc.com>,
+ Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+ Kyle Deng <quic_chunkaid@quicinc.com>,
+ Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, Lee Jones
+ <lee@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Avri Altman <avri.altman@wdc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <fcfaeed3-8544-4e98-9f95-f43346dc83e8@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -90,20 +111,65 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240829134021.1452711-2-quic_gokulsri@quicinc.com>
+In-Reply-To: <fcfaeed3-8544-4e98-9f95-f43346dc83e8@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 15:40, Gokul Sriram Palanisamy wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+On 04/09/2024 11:34, Krzysztof Kozlowski wrote:
+> On 04/09/2024 10:33, Jingyi Wang wrote:
+>> Add initial support for QCS8300 SoC and QCS8300 RIDE board.
+>>
+>> This revision brings support for:
+>> - CPUs with cpu idle
+>> - interrupt-controller with PDC wakeup support
+>> - gcc
+>> - TLMM
+>> - interconnect
+>> - qup with uart
+>> - smmu
+>> - pmic
+>> - ufs
+>> - ipcc
+>> - sram
+>> - remoteprocs including ADSP,CDSP and GPDSP
+>>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>> patch series organized as:
+>> - 1-2: remoteproc binding and driver
+>> - 3-5: ufs binding and driver
+>> - 6-7: rpmhpd binding and driver
+>> - 8-15: bindings for other components found on the SoC
 > 
-> Add new binding document for hexagon based WCSS secure PIL remoteproc.
-> IPQ5332, IPQ9574 follows secure PIL remoteproc.
+> Limit your CC list. I found like 8 unnecessary addresses for already
+> huge Cc list. Or organize your patches per subsystem, as we usually expect.
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>> - 16-19: changes to support the device tree
+>>
+>> dependencies:
+>> tlmm: https://lore.kernel.org/linux-arm-msm/20240819064933.1778204-1-quic_jingyw@quicinc.com/
+>> gcc: https://lore.kernel.org/all/20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com/
+>> interconnect: https://lore.kernel.org/linux-arm-msm/20240827151622.305-1-quic_rlaggysh@quicinc.com/
+> 
+> Why? UFS cannot depend on pinctrl for example.
+> 
+> This blocks testing and merging.
+> 
+> Please organize properly (so decouple) your patches, so that there is no
+> fake dependency.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Let me also add here one more thought. That's like fourth or fifth
+QCS/SA patchset last two weeks from Qualcomm and they repeat the same
+mistakes. Not correctly organized, huge cc list, same problems with
+bindings or drivers.
+
+I am giving much more comments to fix than review/ack tags.
+
+I am not going to review this. I will also slow down with reviewing
+other Qualcomm patches. Why? Because you post simultaneously, apparently
+you do not learn from other review, so I have to keep repeating the same.
+
+I am overwhelmed with this, so please expect two week review time from me.
 
 Best regards,
 Krzysztof
