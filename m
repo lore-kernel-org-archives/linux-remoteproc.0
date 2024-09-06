@@ -1,343 +1,136 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9065A1A01C8
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Sep 2024 16:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02B63770D
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Sep 2024 03:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553807; cv=none; b=DFN6dbyshkzkcjNI1EyYPnVdRote8s8GN8sdgwpTE1bPcHSMRZXFIlcF0RSh2dpBGDesILu1W2ju4X44PXXZ6lPgdZLmJxXsAJb5ucNz23flaxsqvds9RULZeKLvAmTLI1/RtxtXel1UYHic+XdLGDR2O90Yx5PYdd00vU3EUx4=
+	t=1725592718; cv=none; b=ollfTCpGZ3sJSTLsfPFD4+1pZofiO9IoYEEEHS0xkx58ZPvMTidL8lmIaDzEmtt1MU0VLqcjiY9TPOu8bAk/h/r/ic7p2NN3PO+9eV0Bn2qepG4wE3sveE8N60syZi1mTNy10OnCNqzrEBRkT6a6rGudZrEugTo6dXU5Qi3e/Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553807; c=relaxed/simple;
-	bh=ewW/+HHsrnJnn9N/zylEmn3HSFueMu87odTJ6fPc35s=;
+	s=arc-20240116; t=1725592718; c=relaxed/simple;
+	bh=Ifixl/lUYJadk0T5vvio2ek8q8koCwCnm7N/KSfhcWE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qN3m0OVonoMREsdyKMiReIZQfgcHWaqSrpiG4T4o2JICFEW2JYCmsq1VIKosBF/y+qi10zG+HSalXKas+J3Xtf50Uw0mHgiXhnzDdKfcnYdjBRiPOXMeybt75LfShRQd9pppuG2EzDzzYqfMBonA5vbaR68cJt6X65UWw8Hy6m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d+0zFL0Q; arc=none smtp.client-ip=209.85.216.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3cpsNJ1OApOO8NHm43lAy24qrKsqYMUwcz8G+fmjuDhuqYBly1rwd+roaOYbhVB/LEqrw7KJjSM6nFa/86R6pDAq7Q/lC6k/hCR0ddM0yYK0uN96jvduJGwKwii1EIA0L5M30uHrOeucDh0SVgz9C8ioWM808wto8Vv0CqtkP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P7LN+1Lu; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+0zFL0Q"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so731221a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Sep 2024 09:30:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P7LN+1Lu"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso992131e87.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Sep 2024 20:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725553805; x=1726158605; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fK2tcPvp6z1T0kx7siP1rsu/1SO2djAS6BuLCRKvegs=;
-        b=d+0zFL0QkxB7k1sbYpaY++Y8oNL4hTpQvHVynn4mE/8ojOie5uom54Nc0eGg4PakMt
-         uEP21cZ6uXzdQm935H+aDDYxWgy+dFU714E1IbhNf7+JJKi/oKmEeoU9tocNcLf1ya3a
-         68rK4SI3sDSlmLsah4sJepbYdp2kb9cH75gbiCwE08nh0ZgphxcTnRxQcTA84DXabzQk
-         8eNG2PXHsKPZ28VDLAwWgdeeqHN9N4q54p9p7KXlKTwZFonDbDIPgzo/Soa6RDgVlhNh
-         voWjPeH8W/uw39506jorc2D7Apchf9I7YitD7/y97e/E1z+4GePl9DkdwKJYd9XEHH+l
-         kamw==
+        d=linaro.org; s=google; t=1725592715; x=1726197515; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pDvRjyy1T5DsSdRtv+m8fD20ZSlRWWhrpdZb23KAVTk=;
+        b=P7LN+1LuWxSCizcaLFZBvaqG4CIGEkJ1Z6AyiIHH4h8Nv2ToHYkgKlAp5LSEcggN/h
+         2rglfzlb+fpFiBUkWaDBmvRcV5N5CRj2pjkK6J/zQM3NjqzvDIYSJCkB1VWbH7m9OqkI
+         Bwxsxq9sC0sFvNmcg36ROQaB0fMPbVS9mHWL/La7vQ1ABIbysBppagYhuLULAHwp9Ez5
+         L8sSvgqkfpSGa27AGeTC+mVWK96G1O4uF80cK8O3cOWxYgzo/nRgc7fuqg36ethJvj1S
+         LrHNefRWwDKU6VtQXy6VKDgm9XTeCoGkg5CSUNM57e2l3Xx6JxP4+XtkvgrKqz4dWyDB
+         1a4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725553805; x=1726158605;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fK2tcPvp6z1T0kx7siP1rsu/1SO2djAS6BuLCRKvegs=;
-        b=uBNYfXTzdB/0Ro9tOl1sPpEnREUxVE3mYV1LVbIndkHH83oFDzx2Lofzm3/nuBxeHr
-         bMMARpN54zg0AI9UsWNT193J7FLjpNmuuXvDpvM2Z4MJ7VpNYJ8oapcr+eBgUUPfVShR
-         8TaVLgOO0CUXVrRSaLcMWNU+1TuBgS5fpmSg8l7kfEvFMqPbB9Nf1Z6Oif2SlPkXtyy1
-         RP130SmSjWRHXXVfmKsIov2VRdDZ/ksgSddCwYwZLo1wOKBB2gGEJU3//GTcsYRn7j90
-         q5R8NkgBpc37CSB1R01uyVHSRRV0polGM3i0Hc11pGT4j1xKFagf7udeZa/rSTFG3sj9
-         JGTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDifEFgAm0t5btP5UzULjNIm9BG5YLiFSwik6HDsFYyactpkCw+R+8XRAdKK2xsvY82hVujH3E8SOcF1R5anEw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGDDQGgoTRvs75DYQBxysaBzYR9TY8dzesaOMN5Q8lMZOaOWsd
-	IWC0oIFp9ELl/Psdkz/1Qd9CTpJP5FVp6ER8ZzveQLrwyeE8xCEKJNY8vl6mw02b+VUOUsbJ7qo
-	y
-X-Google-Smtp-Source: AGHT+IGA6vjdBi9Qx+RYP5WPHFmnWYTKVNvEt4HPlXJ8FJcDIitpPw1y27CGeoOVJ9UyruCwyGh4GQ==
-X-Received: by 2002:a17:90a:e2c9:b0:2d8:9253:dffc with SMTP id 98e67ed59e1d1-2d8972c0003mr17070801a91.19.1725553804841;
-        Thu, 05 Sep 2024 09:30:04 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3b5d:f081:c58f:f7e2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8c7f91919sm9481168a91.53.2024.09.05.09.30.03
+        d=1e100.net; s=20230601; t=1725592715; x=1726197515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pDvRjyy1T5DsSdRtv+m8fD20ZSlRWWhrpdZb23KAVTk=;
+        b=YnGPgz4ZSRfsw85JZ0nO4XcqY1IxpeIOBAIf3IVuDxtvRHXvKkJFw+I8UN8h9laYA5
+         cWxUbTCsZ0M8hD+ZbwD/VqLn3XBHprML8aFM/e/6sQd2OLXRy41F6/bvkHb70cGatwul
+         dLA84EEPpFgfM8fBY0QLDi0w4iD/VDwkKEUAx4KyfJhaZ8ll6Hz5wkfH42rfddP9+cXK
+         uBt7Fh2KEL3AlPQiHnLeQ4T1FThU3MbdiAJ2YJQG3Eoevs3ivwnqqbvAx53sAXJEfd/U
+         pLdxlyu8hBw4yuAeX1pEvYpiP8Bx/3snDk1V2STS4XJ65wllMhgwWtMCGn8ZWS6kx0uT
+         y7HA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjXlQDi1Hl9Ps0VKTuj76VxWPR75xAu3C9+hCh82LMVD24zn9e4Ym+91qEoPCIz0gTd8pWniA4oIjxHF2i7SSz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys92LztXFV7lDA5TVTlsH7q6+fJTCmWnfsPmJauHEyik0wV44o
+	TfoCGi1qPPKLHXApeyhuagQjipnsnC2cbYEEiVuzHyZxNo/3haGGvTT65Howevw=
+X-Google-Smtp-Source: AGHT+IGzhFXkem2JdXn1T6zzrKRCxyCynxhuA83gNnU2hU8RzpvNhtruuel61+ka1mwQI60PiIL/5g==
+X-Received: by 2002:a05:6512:3503:b0:530:daeb:c1d4 with SMTP id 2adb3069b0e04-536587a55d3mr510319e87.12.1725592714492;
+        Thu, 05 Sep 2024 20:18:34 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5356a354961sm479217e87.8.2024.09.05.20.18.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 09:30:04 -0700 (PDT)
-Date: Thu, 5 Sep 2024 10:30:01 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Shah, Tanmay" <tanmay.shah@amd.com>
-Cc: "andersson@kernel.org" <andersson@kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5] remoteproc: xlnx: add sram support
-Message-ID: <ZtncieemyQUgXNA+@p14s>
-References: <20240830173735.279432-1-tanmay.shah@amd.com>
- <ZtiI98P/ipMkwMh1@p14s>
- <B725BD31-1A34-42A2-ABFD-02828EFE5131@amd.com>
+        Thu, 05 Sep 2024 20:18:34 -0700 (PDT)
+Date: Fri, 6 Sep 2024 06:18:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 17/19] arm64: defconfig: enable clock controller,
+ interconnect and pinctrl for QCS8300
+Message-ID: <wzjv6xvthoz3z4fimxfc6gzm6ptepkuwlzjm6xy3klmtpr3bvf@k7yxdc7hryju>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-17-d0ea9afdc007@quicinc.com>
+ <851566fe-4802-41c7-bb35-d6d1e9cf9bdf@kernel.org>
+ <d5b13f14-ce66-496c-8182-aad840e0d5cb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B725BD31-1A34-42A2-ABFD-02828EFE5131@amd.com>
+In-Reply-To: <d5b13f14-ce66-496c-8182-aad840e0d5cb@quicinc.com>
 
-On Wed, Sep 04, 2024 at 06:16:47PM +0000, Shah, Tanmay wrote:
-> Hi Mathieu,
+On Thu, Sep 05, 2024 at 12:54:35PM GMT, Jingyi Wang wrote:
 > 
-> I agree with your assessment, and I agree with your proposal.
-> I appreciate you fixing the patch before applying.
->
+> 
+> On 9/4/2024 5:39 PM, Krzysztof Kozlowski wrote:
+> > On 04/09/2024 10:33, Jingyi Wang wrote:
+> >> Enable clock controller, interrconnect and pinctrl for QCS8300.
+> > 
+> > NXP QCS8300? What is QCS8300? Which products use it? That's a defconfig
+> > for entire kernel, not your Qualcomm one.
+> > 
+> Will describe it in more detail.
+> >> It needs to be built-in for UART to provide a console.
+> >>
+> >> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> >> ---
+> >>  arch/arm64/configs/defconfig | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> >> index 81ca46e3ab4b..a9ba6b25a0ed 100644
+> >> --- a/arch/arm64/configs/defconfig
+> >> +++ b/arch/arm64/configs/defconfig
+> >> @@ -606,6 +606,7 @@ CONFIG_PINCTRL_MSM8996=y
+> >>  CONFIG_PINCTRL_MSM8998=y
+> >>  CONFIG_PINCTRL_QCM2290=y
+> >>  CONFIG_PINCTRL_QCS404=y
+> >> +CONFIG_PINCTRL_QCS8300=y
+> >>  CONFIG_PINCTRL_QDF2XXX=y
+> >>  CONFIG_PINCTRL_QDU1000=y
+> >>  CONFIG_PINCTRL_SA8775P=y
+> >> @@ -1317,6 +1318,7 @@ CONFIG_MSM_MMCC_8998=m
+> >>  CONFIG_QCM_GCC_2290=y
+> >>  CONFIG_QCM_DISPCC_2290=m
+> >>  CONFIG_QCS_GCC_404=y
+> >> +CONFIG_QCS_GCC_8300=y
+> >>  CONFIG_QDU_GCC_1000=y
+> >>  CONFIG_SC_CAMCC_8280XP=m
+> >>  CONFIG_SC_DISPCC_7280=m
+> >> @@ -1618,6 +1620,7 @@ CONFIG_INTERCONNECT_QCOM_MSM8996=y
+> >>  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
+> >>  CONFIG_INTERCONNECT_QCOM_QCM2290=y
+> >>  CONFIG_INTERCONNECT_QCOM_QCS404=m
+> >> +CONFIG_INTERCONNECT_QCOM_QCS8300=y
+> > 
+> > Why this cannot be a module?
+> > 
+> > 
+> I think the commit-msg "It needs to be built-in for UART to provide a console." can
+> explain that, could you please help to share your insights on that?
 
-I have applied this patch.
+Unless loading these modules from initramfs doesn't work, please use =m.
+The drivers that are enabled here are going to be enabled for everybody
+using arm64 defconfig, taking up memory on their platforms, etc.
 
-> My email client (Thunderbird) has some issues, hence sending email form different email
-> client and so not formatted as expected. This will be fixed soon (before sending anymore patches).
-> 
-> Thanks,
-> Tanmay
-> 
-> ﻿On 9/4/24, 11:21 AM, "Mathieu Poirier" <mathieu.poirier@linaro.org <mailto:mathieu.poirier@linaro.org>> wrote:
-> 
-> 
-> Good morning,
-> 
-> 
-> On Fri, Aug 30, 2024 at 10:37:36AM -0700, Tanmay Shah wrote:
-> > AMD-Xilinx zynqmp platform contains on-chip sram memory (OCM).
-> > R5 cores can access OCM and access is faster than DDR memory but slower
-> > than TCM memories available. Sram region can have optional multiple
-> > power-domains. Platform management firmware is responsible
-> > to operate these power-domains.
-> > 
-> > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com <mailto:tanmay.shah@amd.com>>
-> > ---
-> > 
-> > Changes in v5:
-> > - remoteproc: xlnx: remove genpool use for OCM sram
-> > 
-> > Changes in v4:
-> > - Free previously allocalted genpool if adding carveouts fail for any
-> > sram.
-> > - add comment about sram size used in creating carveouts.
-> > 
-> > Changes in v3:
-> > - make @sram an array rather than an array of pointers
-> > - fix of_node_put usage to maintain proper refcount of node
-> > - s/proprty/property
-> > - Use gen pool framework for mapping sram address space.
-> > 
-> > Changes in v2:
-> > - Expand commit message with power-domains related information.
-> > 
-> > 
-> > drivers/remoteproc/xlnx_r5_remoteproc.c | 135 ++++++++++++++++++++++++
-> > 1 file changed, 135 insertions(+)
-> > 
-> > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > index 2cea97c746fd..af4e0e53dc9d 100644
-> > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > @@ -56,6 +56,17 @@ struct mem_bank_data {
-> > char *bank_name;
-> > };
-> > 
-> > +/**
-> > + * struct zynqmp_sram_bank - sram bank description
-> > + *
-> > + * @sram_res: sram address region information
-> > + * @da: device address of sram
-> > + */
-> > +struct zynqmp_sram_bank {
-> > + struct resource sram_res;
-> > + u32 da;
-> > +};
-> > +
-> > /**
-> > * struct mbox_info
-> > *
-> > @@ -120,6 +131,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> > * struct zynqmp_r5_core
-> > *
-> > * @rsc_tbl_va: resource table virtual address
-> > + * @sram: Array of sram memories assigned to this core
-> > + * @num_sram: number of sram for this core
-> > * @dev: device of RPU instance
-> > * @np: device node of RPU instance
-> > * @tcm_bank_count: number TCM banks accessible to this RPU
-> > @@ -131,6 +144,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> > */
-> > struct zynqmp_r5_core {
-> > void __iomem *rsc_tbl_va;
-> > + struct zynqmp_sram_bank *sram;
-> > + int num_sram;
-> > struct device *dev;
-> > struct device_node *np;
-> > int tcm_bank_count;
-> > @@ -494,6 +509,45 @@ static int add_mem_regions_carveout(struct rproc *rproc)
-> > return 0;
-> > }
-> > 
-> > +static int add_sram_carveouts(struct rproc *rproc)
-> > +{
-> > + struct zynqmp_r5_core *r5_core = rproc->priv;
-> > + struct rproc_mem_entry *rproc_mem;
-> > + struct zynqmp_sram_bank *sram;
-> > + dma_addr_t dma_addr;
-> > + size_t len;
-> > + int da, i;
-> > +
-> > + for (i = 0; i < r5_core->num_sram; i++) {
-> > + sram = &r5_core->sram[i];
-> > +
-> > + dma_addr = (dma_addr_t)sram->sram_res.start;
-> > +
-> > + len = resource_size(&sram->sram_res);
-> > + da = sram->da;
-> > +
-> > + rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-> > + (dma_addr_t)dma_addr,
-> 
-> 
-> @dma_addr is already declared as a dma_addr_t, which is what
-> rproc_mem_entry_init() is expecting. As such I do not see a reason for the
-> extra casting - do you?
-> 
-> 
-> If you agree with my assessment I am proposing to remove it before applying the
-> patch rather than having to send another revision.
-> 
-> 
-> Let me know what you think.
-> 
-> 
-> Thanks,
-> Mathieu
-> 
-> 
-> > + len, da,
-> > + zynqmp_r5_mem_region_map,
-> > + zynqmp_r5_mem_region_unmap,
-> > + sram->sram_res.name);
-> > + if (!rproc_mem) {
-> > + dev_err(&rproc->dev, "failed to add sram %s da=0x%x, size=0x%lx",
-> > + sram->sram_res.name, da, len);
-> > + return -ENOMEM;
-> > + }
-> > +
-> > + rproc_add_carveout(rproc, rproc_mem);
-> > + rproc_coredump_add_segment(rproc, da, len);
-> > +
-> > + dev_dbg(&rproc->dev, "sram carveout %s addr=%llx, da=0x%x, size=0x%lx",
-> > + sram->sram_res.name, dma_addr, da, len);
-> > + }
-> > +
-> > + return 0;
-> > +}
-> > +
-> > /*
-> > * tcm_mem_unmap()
-> > * @rproc: single R5 core's corresponding rproc instance
-> > @@ -669,6 +723,12 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
-> > return ret;
-> > }
-> > 
-> > + ret = add_sram_carveouts(rproc);
-> > + if (ret) {
-> > + dev_err(&rproc->dev, "failed to get sram carveout %d\n", ret);
-> > + return ret;
-> > + }
-> > +
-> > return 0;
-> > }
-> > 
-> > @@ -881,6 +941,77 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
-> > return ERR_PTR(ret);
-> > }
-> > 
-> > +static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
-> > +{
-> > + struct device_node *np = r5_core->np;
-> > + struct device *dev = r5_core->dev;
-> > + struct zynqmp_sram_bank *sram;
-> > + struct device_node *sram_np;
-> > + int num_sram, i, ret;
-> > + u64 abs_addr, size;
-> > +
-> > + /* "sram" is optional property. Do not fail, if unavailable. */
-> > + if (!of_property_present(r5_core->np, "sram"))
-> > + return 0;
-> > +
-> > + num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
-> > + if (num_sram <= 0) {
-> > + dev_err(dev, "Invalid sram property, ret = %d\n",
-> > + num_sram);
-> > + return -EINVAL;
-> > + }
-> > +
-> > + sram = devm_kcalloc(dev, num_sram,
-> > + sizeof(struct zynqmp_sram_bank), GFP_KERNEL);
-> > + if (!sram)
-> > + return -ENOMEM;
-> > +
-> > + for (i = 0; i < num_sram; i++) {
-> > + sram_np = of_parse_phandle(np, "sram", i);
-> > + if (!sram_np) {
-> > + dev_err(dev, "failed to get sram %d phandle\n", i);
-> > + return -EINVAL;
-> > + }
-> > +
-> > + if (!of_device_is_available(sram_np)) {
-> > + dev_err(dev, "sram device not available\n");
-> > + ret = -EINVAL;
-> > + goto fail_sram_get;
-> > + }
-> > +
-> > + ret = of_address_to_resource(sram_np, 0, &sram[i].sram_res);
-> > + if (ret) {
-> > + dev_err(dev, "addr to res failed\n");
-> > + goto fail_sram_get;
-> > + }
-> > +
-> > + /* Get SRAM device address */
-> > + ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
-> > + if (ret) {
-> > + dev_err(dev, "failed to get reg property\n");
-> > + goto fail_sram_get;
-> > + }
-> > +
-> > + sram[i].da = (u32)abs_addr;
-> > +
-> > + of_node_put(sram_np);
-> > +
-> > + dev_dbg(dev, "sram %d: name=%s, addr=0x%llx, da=0x%x, size=0x%llx\n",
-> > + i, sram[i].sram_res.name, sram[i].sram_res.start,
-> > + sram[i].da, resource_size(&sram[i].sram_res));
-> > + }
-> > +
-> > + r5_core->sram = sram;
-> > + r5_core->num_sram = num_sram;
-> > +
-> > + return 0;
-> > +
-> > +fail_sram_get:
-> > + of_node_put(sram_np);
-> > +
-> > + return ret;
-> > +}
-> > +
-> > static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
-> > {
-> > int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
-> > @@ -1095,6 +1226,10 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
-> > return ret;
-> > }
-> > }
-> > +
-> > + ret = zynqmp_r5_get_sram_banks(r5_core);
-> > + if (ret)
-> > + return ret;
-> > }
-> > 
-> > return 0;
-> > 
-> > base-commit: 057e5c17e29fe67fae4c2786d558c31fd3b106ba
-> > -- 
-> > 2.25.1
-> > 
-> 
-> 
-> 
+-- 
+With best wishes
+Dmitry
