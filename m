@@ -1,110 +1,118 @@
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144F24C79
-	for <linux-remoteproc@vger.kernel.org>; Sat,  7 Sep 2024 03:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752CF537F5;
+	Sat,  7 Sep 2024 06:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725678052; cv=none; b=URIZRuSeIkpnn+gTjoOrqFPu8mGo6QIMak18s0NlpXwpIbMh5mSNm1wpo0ePydqSNtamhLMuRfBzRk844VndAvM6+sXq/EnmXDvCWqreKP4mTYvU2gtGyIB1BQjxMh7EwIqKLeOW+gEYgNkuXZ2XpTelfNqYiTpGslo/x1C+Bbc=
+	t=1725690850; cv=none; b=i1fEdnPyJYkv/1D5nLytlTvZOyz89dcToUGUcCKTFRwN3MgfFBKx27l0FlqG9oClnYXPGrN61PPFH5b6bklHGCC64Fynx05lcIeovu+bU6TTRvuiQhFI/oTwC9Oozf+h2xaegyaFABRL6I2ojwbbxHHWw6qeZszdlHLp6xUSjYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725678052; c=relaxed/simple;
-	bh=ysYcaWnm3vnDUW6zbZAAbjZzesDVOv/2OXP/jpWE+XM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rBIWVQ+U0fGBD+UAPO8PxDCvDBOZlz11UzlTi9P8hYgI0v3Cg20Xq9SXf6c+KWCqVXhOsdOTnXDMLyJBMc5O6ksM6jELTPMjXCO+8Eak9dU9KhPiUs5yp8hq62C2Tz/Gcd5fvnhZPpGkJMsT4CGG4dyHURFeN2k9GtoH2zQjc6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X0yX65yrDz69LM;
-	Sat,  7 Sep 2024 11:00:38 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4921F1402C8;
-	Sat,  7 Sep 2024 11:00:40 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 7 Sep 2024 11:00:39 +0800
-Message-ID: <819d4d8b-d72f-42c4-95c1-f10a1e87c8b6@huawei.com>
-Date: Sat, 7 Sep 2024 11:00:34 +0800
+	s=arc-20240116; t=1725690850; c=relaxed/simple;
+	bh=wKKUhuk4/8nuwN3KHkOpj5C9UBcs9XwomYBbixsGmT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahCPmtyJjp98KYweKjuKSIOtD8Tg4e3ONyded88cmxkStieYKniAwd0mOfjfBhFWEwq2yqUw6d67QNSKlSUN0EeMjajjItm39zn6BEAJSOWPwIh2QXN//MJgAwdh/GYWqXCj4AdoNlsmwcd8H5q8TzsRpIM2Bl23G/2nxOL8EXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Zsg18Ynj; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Zsg18Ynj"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mp15s8krT41DAmp15s0m7E; Sat, 07 Sep 2024 08:34:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725690844;
+	bh=vatYoRMNlrx3CKxeuEKiLmkf8Cu3ogQPLSh6KML7njU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Zsg18YnjvI6bf0nAJC8erjWdsFkxjkuMmvbrXF0DvAu1mjFjcAUMVAH45WxWYjqiw
+	 cEATo6CIJhYkvQtCu3RKpW0ql2esQN5zxdGreUdY/agznIK1M/oo0LeFF7osaYkYC/
+	 /uQ6AdO8QJ1qR8+79rnQxcfXQoPQu71lV8hNVGpydWZTJW2tm2TVG/HwswOtViM1CG
+	 58DSkcqCzErp4UKHKWPF9xXswWxOdvcfRQLTusfZUFp1am7bFP2viC7gbGuX9UFZCu
+	 303rPaMmOfaejsbm+KjUsg5zs9blIoTiaxLHPITzb88dy8lBZXfSkk4xAcLUF1/G1Q
+	 097EQrU1samcg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Sep 2024 08:34:04 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	Andrew Davis <afd@ti.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
+Date: Sat,  7 Sep 2024 08:33:36 +0200
+Message-ID: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] remoteporc: ingenic: Simplify with
- devm_platform_ioremap_resource_byname()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <patrice.chotard@foss.st.com>, <andersson@kernel.org>,
-	<linux-remoteproc@vger.kernel.org>, <chenjun102@huawei.com>
-References: <20240906113405.92782-1-zhangzekun11@huawei.com>
- <20240906113405.92782-4-zhangzekun11@huawei.com> <ZtsnMHHYA9zlFdDH@p14s>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <ZtsnMHHYA9zlFdDH@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf500003.china.huawei.com (7.202.181.241)
 
+If an error occurs after the k3_dsp_rproc_request_mbox() call,
+mbox_free_channel() must be called, as already done in the remove function.
 
+Instead of adding an error handling path in the probe and changing all
+error handling in the function, add a new devm_add_action_or_reset() and
+simplify the .remove() function.
 
-在 2024/9/7 0:00, Mathieu Poirier 写道:
-> 
-> You still have missed several instances.  I am dropping this set.
-> 
-Hi, Mathieu,
+Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andrew Davis <afd@ti.com>
+---
+Compile tested only
 
-I have checked the subsystem again and does not find the missing 
-instances that can make such conversion.
+Change in v2:
+  - fix the subject (cut'n'paste issue)   [Andrew Davis]
+  - add R-b tag
+  
+v1: https://lore.kernel.org/all/9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Instance like this would require storing the resource size or the 
-res->start, so we can not conversion likt that:
-
-------------------------code start---------------------------------
-da8xx_remoteproc.c:
-
-res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-                                    mem_names[i]);
-drproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
-if (IS_ERR(drproc->mem[i].cpu_addr)) {
-         dev_err(dev, "failed to parse and map %s memory\n",
-                 mem_names[i]);
-         return PTR_ERR(drproc->mem[i].cpu_addr);
-}
-drproc->mem[i].bus_addr = res->start;
-drproc->mem[i].dev_addr =
-                 res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
-drproc->mem[i].size = resource_size(res);
-
-------------------------------------------------------------------
-
-I have thought about adding a 
-devm_platform_get_and_ioremap_resource_byname() to make conversion for 
-these instances, but the function name seems to be too long...
-
-
-For other instance like below, we will have code logic broken, because 
-devm_platform_ioremap_resource_byname() will return error if res is NULL:
-
----------------------------code start------------------------------
-mtk_scp.c:
-
-  /* l1tcm is an optional memory region */
-  res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-  if (res) {
-          scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-          if (IS_ERR(scp_cluster->l1tcm_base))
-                  return dev_err_probe(dev, 
-PTR_ERR(scp_cluster->l1tcm_base),
-                                       "Failed to map l1tcm memory\n");
-
-          scp_cluster->l1tcm_size = resource_size(res);
-          scp_cluster->l1tcm_phys = res->start;
-  }
--------------------------------------------------------------------
-
-Best Regards,
-Zekun
-
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 8be3f631c192..f29780de37a5 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -610,6 +610,13 @@ static void k3_dsp_release_tsp(void *data)
+ 	ti_sci_proc_release(tsp);
+ }
+ 
++static void k3_dsp_free_channel(void *data)
++{
++	struct k3_dsp_rproc *kproc = data;
++
++	mbox_free_channel(kproc->mbox);
++}
++
+ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -649,6 +656,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, rproc);
++	if (ret)
++		return ret;
++
+ 	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+ 	if (IS_ERR(kproc->ti_sci))
+ 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
+@@ -741,8 +752,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ 		if (ret)
+ 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+ 	}
+-
+-	mbox_free_channel(kproc->mbox);
+ }
+ 
+ static const struct k3_dsp_mem_data c66_mems[] = {
+-- 
+2.46.0
 
