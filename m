@@ -1,156 +1,135 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C74A55;
-	Sat,  7 Sep 2024 10:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E931684A1;
+	Sat,  7 Sep 2024 23:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703911; cv=none; b=QO/avcMy5U1laoDrgjHkFhNdefJFisPvJopqVTyXt6kAHu4AQzkK0+0nnP5jVEXqQkJTJ+xAWrnx0hMSzXSWhu3HIcUZS69h98CAhTzd45v+lJV7tIYKlFuK3SHX1qaAMrhqBK1gdYBu4bYUZtQy0Jqz6E1xVHKWjsnCtsTNJSo=
+	t=1725751359; cv=none; b=Z5lCYefjpVVssWzoJ2GaPSXHH/ElTU5UOyhvl/9+Joev/9QharKSv+1VIzDnnzZlKIniU5Rxf6vfE5U02nQ3oPNsu5qtVBNtoM5Ha9cRGQ8ERYI/LAfaqtnXa2JN66To+6kUDtSDnmcR17GaKGB4GJVrUfZRM60c4jUWbZe8000=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703911; c=relaxed/simple;
-	bh=WaPMHwU3Rxuwr3bf8WZxqprZwf/RxFr9wYjdc0f4vPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kYy5BpGgwp7L5NCUCOvHQrrMsqVQwT186KeDX+AipNATz2n/LufY4CDSXh1s2SZsgzr2tC6wgJ3NpZjhKaMWT+7jS3PPzvSYzYjfKGciDjg+43QgQcDrbI3XOsVmTyzpp17iixwBRYVp177aEUno0EcQaurKkC9DPWbxj9aS+bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KNJbeW3G; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1725751359; c=relaxed/simple;
+	bh=kPcUBRJYy8VX11c2WAZ63MKA4XepOxYnPs6fcTnrKlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ed4TkWTHCQZQeLEKD/A2z22Ude86KKwLMQYDMSEhMPLlbGtxquK957Sc5HqpsxxF9z3mIOPtdwLZoBKW9JHk4DcUJrwaYfo+J/UEx08W/dhYF20nyzrFFik0HutklDKxaPQwaSqhlBEDsYjN5CfA5nAsGAq1pvbQbzKc0/zymHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QV8aOGOv; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KNJbeW3G"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 487ABiEK124605;
-	Sat, 7 Sep 2024 05:11:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725703904;
-	bh=9R5rjZuv1wB/YbDyuU7BA588rMLZUdVe8ARpHHFtqyE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KNJbeW3GLfs3rZo1mhB6IrSlLslFssKcvZkWAB3T6FMG2C+cdvy7VfAZUh/4zw5nG
-	 rpZEcmEDli39dzcTc1ZMtTDb2Fh9E07n+O/XocZ2D7Ub9gMcM+BQoY7NgPkH2BboyE
-	 dem4WdtUQ1BIPkLHhXN58+7D7G6Ft7d8XSblU0js=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 487ABiHS032856
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 7 Sep 2024 05:11:44 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 7
- Sep 2024 05:11:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 7 Sep 2024 05:11:43 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 487ABdMM052772;
-	Sat, 7 Sep 2024 05:11:40 -0500
-Message-ID: <56b63a39-ea4d-4edf-9295-ca28c83655c8@ti.com>
-Date: Sat, 7 Sep 2024 15:41:38 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QV8aOGOv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725751358; x=1757287358;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kPcUBRJYy8VX11c2WAZ63MKA4XepOxYnPs6fcTnrKlU=;
+  b=QV8aOGOvnCGCZcW9epciKqJqNsMHGhS+XmyoQ2xDv1E57PCzKLoX8MB7
+   ikf+CNc6AR3ecPQNDAHbZw4ywHqLSutBcuQ8LwJcCR5P/CMRWAu+SC6qf
+   UeOZqgiHaBcr3n8X0uwiGO4TSR+LH50TKJIePC1iVZrCzY9fuvaZYae8J
+   rSeN19erGTH5924okO/VAeYE8PaPj9O5J8Bu+R1R9elWYulh2+DZGCSoS
+   YEz/TRNnD6rY41qWkcnOW4iYfQQ4C+OgotP9I6FE4EZoJBJEYimf0d7J/
+   TSYYh0NZQc0Z4XNX0M5OchhN+fA8VCP+slZX/kW8EA5tDzTh9x8lAbb5H
+   g==;
+X-CSE-ConnectionGUID: SlHpN99VRv+LlctWb0ua4g==
+X-CSE-MsgGUID: BZZroeHVQcu95H/TV3ZDWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11188"; a="24353037"
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="24353037"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2024 16:22:37 -0700
+X-CSE-ConnectionGUID: 50IcsTvqRxGv8PcQ4cgH2Q==
+X-CSE-MsgGUID: Gook4d2aQJCjv6AhNR5CFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,211,1719903600"; 
+   d="scan'208";a="66331779"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 07 Sep 2024 16:22:31 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sn4lA-000D6T-34;
+	Sat, 07 Sep 2024 23:22:28 +0000
+Date: Sun, 8 Sep 2024 07:22:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jingyi Wang <quic_jingyw@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Andy Gross <agross@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 19/19] arm64: dts: qcom: add base QCS8300 RIDE dts
+Message-ID: <202409080754.6Zv1y3pX-lkp@intel.com>
+References: <20240904-qcs8300_initial_dtsi-v1-19-d0ea9afdc007@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
- routine
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240906094045.2428977-1-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240906094045.2428977-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-19-d0ea9afdc007@quicinc.com>
+
+Hi Jingyi,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on eb8c5ca373cbb018a84eb4db25c863302c9b6314]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jingyi-Wang/dt-bindings-remoteproc-qcom-sa8775p-pas-Document-QCS8300-remoteproc/20240904-164345
+base:   eb8c5ca373cbb018a84eb4db25c863302c9b6314
+patch link:    https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-19-d0ea9afdc007%40quicinc.com
+patch subject: [PATCH 19/19] arm64: dts: qcom: add base QCS8300 RIDE dts
+config: arm64-randconfig-003-20240908 (https://download.01.org/0day-ci/archive/20240908/202409080754.6Zv1y3pX-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240908/202409080754.6Zv1y3pX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409080754.6Zv1y3pX-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/arm64/boot/dts/qcom/qcs8300-ride.dts:11:
+>> arch/arm64/boot/dts/qcom/qcs8300.dtsi:6:10: fatal error: 'dt-bindings/clock/qcom,qcs8300-gcc.h' file not found
+       6 | #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
 
-On 9/6/2024 3:10 PM, Beleswar Padhi wrote:
-> The current implementation of the waiting mechanism in probe() waits for
-> the 'released_from_reset' flag to be set which is done in
-> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
-> failures in cases where the firmware is unavailable at boot time,
-> resulting in probe failure and removal of the remoteproc handles in the
-> sysfs paths.
+vim +6 arch/arm64/boot/dts/qcom/qcs8300.dtsi
 
-I won't say failure, I will say this is behavior of driver.
+984d43bac8bbd3 Jingyi Wang 2024-09-04  @6  #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04   7  #include <dt-bindings/clock/qcom,rpmh.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04   8  #include <dt-bindings/interconnect/qcom,icc.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04   9  #include <dt-bindings/interconnect/qcom,qcs8300-rpmh.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  10  #include <dt-bindings/interrupt-controller/arm-gic.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  11  #include <dt-bindings/mailbox/qcom-ipcc.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  12  #include <dt-bindings/power/qcom,rpmhpd.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  13  #include <dt-bindings/power/qcom-rpmpd.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  14  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+984d43bac8bbd3 Jingyi Wang 2024-09-04  15  
 
-Driver expect firmware to be available , but I agree driver should be 
-able to execute
-
-with/without firmware availability.
-
-
-> To address this, the waiting mechanism is refactored out of the probe
-> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
-> k3_r5_rproc_start/stop() functions. This allows the probe routine to
-> complete without depending on firmware booting, while still maintaining
-> the required power-synchronization between cores.
->
-> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Posted this as a Fix as this was breaking usecases where we wanted to load a
-> firmware by writing to sysfs handles in userspace.
->
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
->   1 file changed, 118 insertions(+), 52 deletions(-)
->
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> [..]
-> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
-> +	    core0->released_from_reset == false) {
-> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +						       core0->released_from_reset,
-> +						       msecs_to_jiffies(2000));
-only one wait in start should be good enough,
-> +		if (ret <= 0) {
-> +			dev_err(dev, "can not power up core1 before core0");
-> +			return -EPERM;
-> +		}
-> +	}
-> +
->   	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
->   	if (ret < 0)
->   		return ret;
-> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->   		return ret;
->   	}
->   
-> +	/* Notify all threads in the wait queue when core state has changed so
-> +	 * that threads waiting for this condition can be executed.
-> +	 */
-> +	core->released_from_reset = true;
-> +	wake_up_interruptible(&cluster->core_transition);
-> +
->   	/*
->   	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
->   	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
-> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
->   {
->   	struct k3_r5_rproc *kproc = rproc->priv;
->   	struct k3_r5_cluster *cluster = kproc->cluster;
-> -	struct k3_r5_core *core = kproc->core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
-
-
-why you need wait in unprepare/stop,
-
-In case you are failing during firmware load or so then already we are 
-in bad state.
-
-if this is call from user land then, i don't except anyone will auto 
-trigger stopping of core-0
-
-IMO, in unprepare/stop, if action is attempted on core1 with core-0 ON, 
-simply return error.
-
-
-> [..]
-> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->   	struct k3_r5_rproc *kproc = rproc->priv;
->   	struct k3_r5_cluster *cluster = kproc->cluster;
->   	struct device *dev = kproc->dev;
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
