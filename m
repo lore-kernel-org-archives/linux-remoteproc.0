@@ -1,176 +1,136 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5317277F;
-	Mon,  9 Sep 2024 04:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A77B13633B
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Sep 2024 16:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725855383; cv=none; b=DpwD3M/ox1L5GXWuJoYLYrCTN6xjRPLfKVGGKNtN5vJMvnqCEDKhDSuHrW+8OQw8LbbJSgXPjAohZmdcuLQjfKj2r9UHVL/mkbIAOIFhZKyO40ac3CKJXYf2e6ANgSL+ulM1d2PLVBreYq8Pia8nr4lfMkV/lr/zLyaLXE3iEt4=
+	t=1725898042; cv=none; b=KFUTFT9omXTJpXjS1cPdrW/RqumYWaqwGLeU7k3G7POckl9ie8Gn9eKVWPLpMCRCZpHCmox9KYzr5DEN2WPHolRe3l0ycK61BQPfzJk2qBRr8ODw//UO9L10W+OEe8s92o/TSrCGay1dlIundS5BIs/L4tX9ztflId9hSE2ABng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725855383; c=relaxed/simple;
-	bh=RfmNuLGMrm/LDR2kpxvZbK1/wtVAhmMijOwdN2Fmgbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RatyaiFd/V70ngk1hITZ1ouWDq0tgkWU7da2wq+Bg4JxyBx4lcpxu0q9m1q7hTN8gRCuT4e99jodmH4RHucviTRCTGH9e7PUtFsErfzciOAJRs7tud/P29+uNsGG49WlWzFzatdHXHlYocJpAgXI6GnwjEaFoEpYa5Nx/LL/okE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hl3LldBo; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1725898042; c=relaxed/simple;
+	bh=rgWHF1GwoDc5gsIC7qehHHFotpj0UsW9NwaHAWNsJzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sjLvQX1q3mMHB+aYuKAYdiBk79hHao/zw1WekLLxKCAjNFhKiejm2y1f5JxvgiW/pIWiKv7vviUyNSTip3YgqVieaLucziFAVcEBJE10GcMq50WIss7RKiDUp7X9sVXscJKewcLSTdpYvFdxmsKnWl1zGljYlltnbp+/JU+EMQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VBOmkUYH; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hl3LldBo"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4894G4LF113783;
-	Sun, 8 Sep 2024 23:16:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725855364;
-	bh=QKbLF6JAmd+nO1/GFV7JpNRdoagvd7iN0mEVC6ow3J4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Hl3LldBovLzjiR87kdwMPE7TE+RTTP+M8MOQwzGeGF/hvJqbGbRYP9Bawx15U3pFC
-	 gunPRnDx5t/iHA/UmfRtyCChPamOW+Tpq6R9FGMaRgOWciOXM5yahfZL4N3wyFA4BL
-	 Mhc7zTrPJxrLJijCEszAxlZP03E6wFkgdVtX5dTs=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4894G4Vo125316
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 8 Sep 2024 23:16:04 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 8
- Sep 2024 23:16:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 8 Sep 2024 23:16:04 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4894G1P5061094;
-	Sun, 8 Sep 2024 23:16:02 -0500
-Message-ID: <dd2751fd-db17-4493-9f6c-b1b67d772e49@ti.com>
-Date: Mon, 9 Sep 2024 09:46:01 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBOmkUYH"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso10722805a12.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Sep 2024 09:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725898038; x=1726502838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=28S6UrFU43fhJX4Nty5L19JOVvgzmo+llZoOvG8pYkQ=;
+        b=VBOmkUYHEAP7K8PnCXlCoS/9No2o7SF2Caedvkq87jtI5gQsJQCkYaxsUwLY98ygFe
+         C+VEnhVUwV7obkafKzSWbeMeqSYQ5J3bcGAlHgWnO+rhMhFQC9RBuGbMKr4MmxDJEIPy
+         1/OA3xF/cI8ldWG/XXbGV8Pjp93PmpcIzE0B2LC60d4yYwP8mqJDn1iXlOy6nfkdz/wR
+         K7ov+6cPxTwC7UT75BDShdBaosCZMAH4UBEWJAnHQGklHrZvFM9DLNz1aBdgb96rTK0L
+         tzevKE5nxZc6YqHW7ijgBApha/jI6fUUyFWPMIOHj4HbJWWBB9dsJz8bgm9yVneHfDCY
+         /rMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725898038; x=1726502838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=28S6UrFU43fhJX4Nty5L19JOVvgzmo+llZoOvG8pYkQ=;
+        b=Px4L6xAZ94OeQHVr+Fz/K1Ri/PoTB44S4Ud/iChL2+ziLRizxXWVbagYuxTnhnR6vl
+         9N35j7FruIeBopSXKQh1aaENtTpq4pmbCMFclH0V7UkIssjyE6/KK+aPZXj5vWGdziN8
+         ro3Ozw6sMSZw9TMST+SJrPsklN2eVFmugATe4Q8ZjxJaHLSjHnY7gEnQRADBQR4Pw/Wd
+         3fwnPWXCybeAHQGjtYntNLjeEYCuT9S6FyrARzbMq8BH9x5qK01FMOyLfZLW694E/WHe
+         s4b+KOzaV90pRui7eD8r1l3cAV6bKyIzYpZOYvsNzDPn3oZb62IX30KkOncI4kElz7Vf
+         5/Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbqba/NDterq8ueC+HOBfZ6p1k+B4AWKqbT91ZUJ8Tz/rasPSKxkhW9giQ2S9Er+ECW3fUKjaFOBYtVsvGfWnr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNaZAhoZzMuVLYEmBx7wIIXEEVyspX2S2oECY5DH1iT9QsEOI2
+	Ihku6tWeUx5WA5TWV7Jav2CrKqf4bPjt+kkqMQynKdu8Ctk46YHNjGEGMsFhI8USCEePDbvr6pq
+	uKn8UGAyJUKU2/4hd8TYFCAN+PDvERgb3vyR6n2v84ZonwuvV
+X-Google-Smtp-Source: AGHT+IF1PKlT/lhkKRnR9lgc1OJVvfieBiKtd466ImQTH4ob7Pb9877uUUxL0+tOim0yZB1TIE6whfzXPL0ErBTFo6o=
+X-Received: by 2002:a05:6402:2317:b0:5c2:7601:a0c8 with SMTP id
+ 4fb4d7f45d1cf-5c401602356mr159116a12.13.1725898038233; Mon, 09 Sep 2024
+ 09:07:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
- routine
-To: "Kumar, Udit" <u-kumar1@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240906094045.2428977-1-b-padhi@ti.com>
- <56b63a39-ea4d-4edf-9295-ca28c83655c8@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <56b63a39-ea4d-4edf-9295-ca28c83655c8@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240906113405.92782-1-zhangzekun11@huawei.com>
+ <20240906113405.92782-4-zhangzekun11@huawei.com> <ZtsnMHHYA9zlFdDH@p14s> <819d4d8b-d72f-42c4-95c1-f10a1e87c8b6@huawei.com>
+In-Reply-To: <819d4d8b-d72f-42c4-95c1-f10a1e87c8b6@huawei.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 9 Sep 2024 10:07:05 -0600
+Message-ID: <CANLsYkxhR7+9a5stFdsKYK=TMxdwOhQsiyMCL32eSid20m3n0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteporc: ingenic: Simplify with devm_platform_ioremap_resource_byname()
+To: "zhangzekun (A)" <zhangzekun11@huawei.com>
+Cc: patrice.chotard@foss.st.com, andersson@kernel.org, 
+	linux-remoteproc@vger.kernel.org, chenjun102@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, 6 Sept 2024 at 21:00, zhangzekun (A) <zhangzekun11@huawei.com> wrot=
+e:
+>
+>
+>
+> =E5=9C=A8 2024/9/7 0:00, Mathieu Poirier =E5=86=99=E9=81=93:
+> >
+> > You still have missed several instances.  I am dropping this set.
+> >
+> Hi, Mathieu,
+>
+> I have checked the subsystem again and does not find the missing
+> instances that can make such conversion.
+>
+> Instance like this would require storing the resource size or the
+> res->start, so we can not conversion likt that:
+>
+> ------------------------code start---------------------------------
+> da8xx_remoteproc.c:
+>
+> res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>                                     mem_names[i]);
+> drproc->mem[i].cpu_addr =3D devm_ioremap_resource(dev, res);
+> if (IS_ERR(drproc->mem[i].cpu_addr)) {
+>          dev_err(dev, "failed to parse and map %s memory\n",
+>                  mem_names[i]);
+>          return PTR_ERR(drproc->mem[i].cpu_addr);
+> }
+> drproc->mem[i].bus_addr =3D res->start;
+> drproc->mem[i].dev_addr =3D
+>                  res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
+> drproc->mem[i].size =3D resource_size(res);
+>
+> ------------------------------------------------------------------
+>
+> I have thought about adding a
+> devm_platform_get_and_ioremap_resource_byname() to make conversion for
+> these instances, but the function name seems to be too long...
+>
+>
+> For other instance like below, we will have code logic broken, because
+> devm_platform_ioremap_resource_byname() will return error if res is NULL:
+>
+> ---------------------------code start------------------------------
+> mtk_scp.c:
+>
+>   /* l1tcm is an optional memory region */
+>   res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+>   if (res) {
+>           scp_cluster->l1tcm_base =3D devm_ioremap_resource(dev, res);
+>           if (IS_ERR(scp_cluster->l1tcm_base))
+>                   return dev_err_probe(dev,
+> PTR_ERR(scp_cluster->l1tcm_base),
+>                                        "Failed to map l1tcm memory\n");
+>
+>           scp_cluster->l1tcm_size =3D resource_size(res);
+>           scp_cluster->l1tcm_phys =3D res->start;
+>   }
+> -------------------------------------------------------------------
+>
 
-On 07/09/24 15:41, Kumar, Udit wrote:
->
-> On 9/6/2024 3:10 PM, Beleswar Padhi wrote:
->> The current implementation of the waiting mechanism in probe() waits for
->> the 'released_from_reset' flag to be set which is done in
->> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
->> failures in cases where the firmware is unavailable at boot time,
->> resulting in probe failure and removal of the remoteproc handles in the
->> sysfs paths.
->
-> I won't say failure, I will say this is behavior of driver.
->
-> Driver expect firmware to be available , but I agree driver should be 
-> able to execute
->
-> with/without firmware availability.
->
->
->> To address this, the waiting mechanism is refactored out of the probe
->> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
->> k3_r5_rproc_start/stop() functions. This allows the probe routine to
->> complete without depending on firmware booting, while still maintaining
->> the required power-synchronization between cores.
->>
->> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up 
->> before powering up core1")
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->> Posted this as a Fix as this was breaking usecases where we wanted to 
->> load a
->> firmware by writing to sysfs handles in userspace.
->>
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
->>   1 file changed, 118 insertions(+), 52 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> [..]
->> +    core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +    core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +    if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
->> +        core0->released_from_reset == false) {
->> +        ret = 
->> wait_event_interruptible_timeout(cluster->core_transition,
->> +                               core0->released_from_reset,
->> +                               msecs_to_jiffies(2000));
-> only one wait in start should be good enough,
+I see your point and I applied your patches.
 
-
-Won't that cause race conditions, where prepare for core1 can be called 
-before core0?
-
->> +        if (ret <= 0) {
->> +            dev_err(dev, "can not power up core1 before core0");
->> +            return -EPERM;
->> +        }
->> +    }
->> +
->>       ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, 
->> &stat);
->>       if (ret < 0)
->>           return ret;
->> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>           return ret;
->>       }
->>   +    /* Notify all threads in the wait queue when core state has 
->> changed so
->> +     * that threads waiting for this condition can be executed.
->> +     */
->> +    core->released_from_reset = true;
->> +    wake_up_interruptible(&cluster->core_transition);
->> +
->>       /*
->>        * Newer IP revisions like on J7200 SoCs support h/w 
->> auto-initialization
->>        * of TCMs, so there is no need to perform the s/w memzero. 
->> This bit is
->> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc 
->> *rproc)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->>       struct k3_r5_cluster *cluster = kproc->cluster;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core0, *core1, *core = kproc->core;
->
->
-> why you need wait in unprepare/stop,
->
-> In case you are failing during firmware load or so then already we are 
-> in bad state.
->
-> if this is call from user land then, i don't except anyone will auto 
-> trigger stopping of core-0
->
-> IMO, in unprepare/stop, if action is attempted on core1 with core-0 
-> ON, simply return error.
-
-
-Yes, you are correct. Will include this change in revision. Thanks!
-
->
->
->> [..]
->> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>       struct k3_r5_rproc *kproc = rproc->priv;
->>       struct k3_r5_cluster *cluster = kproc->cluster;
->>       struct device *dev = kproc->dev;
->>
+Thanks,
+Mathieu
