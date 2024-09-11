@@ -1,150 +1,186 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F307A1AC42B
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Sep 2024 15:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05812B9A2
+	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Sep 2024 16:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070198; cv=none; b=YKnYqx9AhbIsNLX8wo+v3nYAsPQXvAXgkIt3P7E0G1dzD7M922cnIeZjXwo/hfWnC30UWOSJ3GOHV5P9ZTczg/t3DfUFOmok895O1Fha0T661TWYEHjub1Ov8AeS6zGwB+YIzfKbyFmPUJxZ+q9jD68yvphwJztDPXX7HM7rSRI=
+	t=1726071193; cv=none; b=SrguG3z4kIIYU02JRN2QOxrZUrm+c+T+Q8KImynYNRXDgN1WoyO1zbJJhfrpiuE1jNBwLQ+RzKG3KjYrLv1XFqwUjWEngcs8Qnid7He1WQbr3Ya4DuT9xdaIzovt3EhOuKoDYpHdhJMkq3B4wC2nKnVNH5pcEAy2rB9TAR/DLVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070198; c=relaxed/simple;
-	bh=36KlrzfsV2g215KHFOOz45t4T5Bn2rd6NGxHlDdOsuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzLLixy5HR4d5FGgjSejOCQdqop2pAHy5jP21W2vxUCF5GekUBh3NwnTHJbdF1GUhnnW5uzKjnTJzhe6wSx3JNJhG2EULrFEgh6jKBtzHHDGImXw9xaihDQn0hz1rnxzqRB/JXVr1u10Z3RYkYDPzs6xe8p+y7W9i0Dwc84zCQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eT5ICDWd; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1726071193; c=relaxed/simple;
+	bh=DS52PHaPfdGbq8FbQORvglthepUotuCOZUj5qbJmcyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GxRBkqBuONdnHiZXEd2cr6uOU/IuS2K3b5WM8Hu12OJpMEC43A7j2amgiyDZmkB8YZomOcZsr05MCMC0ZHUhzTPH1XUExUM2L6sWCEEv0AyOWKzVdevge7gqTzPKCrh2L/bVOyTLf9VqMwL4E0o0Ga9+E8uAYhuMoKPja++HXd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gK2pc/HU; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eT5ICDWd"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2053525bd90so412915ad.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Sep 2024 08:56:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gK2pc/HU"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c0aa376e15so3395053a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Sep 2024 09:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726070196; x=1726674996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qyEYdmmCtjL2ZglMclaQOmpZZ8FR1iFPca3qPYCy9w4=;
-        b=eT5ICDWdox3B3cWNDHzc0VhPMARpfWmOpUbkivGYSls4AJ2ep8Z8GAyFdRZVQRXua1
-         PUQ1YQtEAQ1McvpSvRXcBC+qWkiysPnMZt5IVUTfdxpA5PMOD7pQQ2xymudjFk9gnqAz
-         MVET/XUgZ/HDnawZXGFzwgkFw+MCdeYa9i9CvPk77tuZ9JYEAeRmcaesM4uJpacQk7fb
-         wIIMC+h6RHO4nHTffgGR0mIF6PQj0HTDEM8eAMFHuiXyEMFKMVEbjVmgTKYliR7Ek8jh
-         hakzrcAeF9HYQKF08+EqfKH2OCFvThhUDd8pCeESZH4Qbd0hOWrmw0tob+NruXOJJArv
-         Z0Lg==
+        d=linaro.org; s=google; t=1726071190; x=1726675990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+3SFWpbOXAsP+3LWGZZpQzbhpnQaZ0Vnig0HkZ7UnM=;
+        b=gK2pc/HUXfF3AbMr8Y6usC+rSxZegmJNqA4qPv/PcWzY3QnZmovhW1LGHWFb1kJmoZ
+         VI9L1m2mdDu05NMX2OQMT1qRSh+9WKkBvhFv09jqRKRN7VKwihmTV+n7GjwAsSweoQf4
+         5T0pwDVH79Y+W963EIsEY/1gtLTbDWDaE0Y349e1vmP/37F8FqPS6t5GxcsPBsGrj8RN
+         7JMmdpgRU3NjpsbToruSIZ0CH/1zu2tePYDcl08fvjszdEWu37DnjQAb4NGxkDnBiqxH
+         VX7KEFCahXgyBT7nZHZ++g88QjFh/eiYV/hs5T/b19rqdUIgGMhv/UhURyeXmWmoCkPP
+         RbMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726070196; x=1726674996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qyEYdmmCtjL2ZglMclaQOmpZZ8FR1iFPca3qPYCy9w4=;
-        b=rNPfhNhtyA6cOPNXXlFvs+XNRFW20O7l3PHck5xuVQrC2X5uv3qzYccCzlj4lz9z6O
-         iIm7yMJKhxGWBrhCN5WiZWwJ4+Uplsa7eM1S1jdgMDKz5B5A8WcGBkZ0BaWnTwrGlns9
-         unPHzpt6wuyHPZ7Cy2WrPht/HLgvui5OxBY5bwyE5eDbQGc6ReAVct7k7ZlqU0wzXris
-         NoE2zWDJbZ9L0SyO4Au5ldHtMoyzvj3XBIZDOU43PG8/NWd/4z06+a6GOBfbjHwHcf99
-         CqN3LnPBEjGalslrSToG2jPp3VfhjY+pk4fh6kdvRDZAJra+A7OV7V+9apx2Jz3KnI0d
-         FBEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVce+XYO9dnF6mekjsA42Q3ua/MyF8xjSm92TYJHYcK9btiTiLwkg3Z1w+TRXSXn2hI2Pi+u1QrWGM2YsQkMslK@vger.kernel.org
-X-Gm-Message-State: AOJu0YziiwVTBxldkDNTYxwajavLxqRGBmpqiXuE65ds90mLdEkEPYNy
-	IchdG96E/A3YpBsxS8/FF+S3wj8t8jZlWHjgTxLHxvPwp2vWF5lQTVxksoAwu2uKeQFH8IJnxvw
-	K
-X-Google-Smtp-Source: AGHT+IGa4wRKlJxrETW0qCu5ZTTQ3xb8Do/wPK2e8jasfbzAeq1gxfAE2Mk/Fx9F2dJ/V92m0elHfA==
-X-Received: by 2002:a17:902:d4cc:b0:207:3a46:345 with SMTP id d9443c01a7336-2074c761a4dmr58970435ad.51.1726070196194;
-        Wed, 11 Sep 2024 08:56:36 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:cc9a:9892:2799:3634])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe9cb9sm1159555ad.193.2024.09.11.08.56.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 08:56:35 -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:56:32 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for
- firmware release
-Message-ID: <ZuG9sOI+xX93NCQc@p14s>
-References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
- <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+        d=1e100.net; s=20230601; t=1726071190; x=1726675990;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o+3SFWpbOXAsP+3LWGZZpQzbhpnQaZ0Vnig0HkZ7UnM=;
+        b=XI9PoeC69QsMTqXO2piLAyeTi/Tz9y7rI+Fe72RevyyuLz5prXN/jkyQwP5Zad48+4
+         JC/eNVyAl0bZOxV4wYZv195IiM30/ehUUebeMfw6K+cPblc7lEoY+gowh8I3naZB0rbl
+         EZuImv9smuLxeq2mYkJnOd1/bky/b6L/d9b3jf4F90xQF1L2EzaFYoSOujgLAv73Xnun
+         tsV9VyNKMCioJMkx2Lwf0JSyGbzW6CsJIZ2TVwsm/Vt6SUHkNutiDZMkpPaeh+OFW9iK
+         fc3okf2gixFXKsJqgoEWVgGWdvZW7nIuXSLohtjiHExD+IC5I1a0tuOGv0QLZCTLmbPD
+         wGuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvIumKVs0Kz1/htu5lE1380qs9O4p/T65/VDdGO4hEq9Y140DrFM+DPIewxojV47RELyiZmTzTQv62B0CIAHxs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHBjK0Um+KtuomANW0l27ASbPHVoegbIc35iuXdBCT+gtE70iv
+	JnwnzmndvzPoCJFcV5LK9WR5eBfAjTYiXT244SSTIa0f0TKpeSmNViqFCUM+EeLLJWXiH/V9qoU
+	MvnrlMmEMGp7UP25D9QksGPj3gNeE7XNcY3qYfiRNP7CqmYGC
+X-Google-Smtp-Source: AGHT+IEaGUovfpWkQxfKlUwLh3Dn+38bKgABk4jLLf66L+Ivh//ExxES/9ba+wTbxNa0efELJvZwz4lcg2o3sZPCFGg=
+X-Received: by 2002:a05:6402:40cc:b0:5be:9bc5:f6b4 with SMTP id
+ 4fb4d7f45d1cf-5c413e0f631mr29554a12.8.1726071189946; Wed, 11 Sep 2024
+ 09:13:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+References: <cff37523-d400-4a40-8fd1-b041a9b550b5@cornelisnetworks.com>
+ <70cf5f00-c4bf-483a-829e-c34362ba8a70@cornelisnetworks.com>
+ <ZuBiLgxv6Axis3F/@p14s> <aff4e2e3-0cb9-4ca3-84f7-2ae1b62715e4@cornelisnetworks.com>
+In-Reply-To: <aff4e2e3-0cb9-4ca3-84f7-2ae1b62715e4@cornelisnetworks.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 11 Sep 2024 10:12:58 -0600
+Message-ID: <CANLsYkyuB=BsswRmbSbjDNMqz0iGHrviLMGfNJLx-HJ60JeEMA@mail.gmail.com>
+Subject: Re: How to create/use RPMSG-over-VIRTIO devices in Linux
+To: Doug Miller <doug.miller@cornelisnetworks.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	OFED mailing list <linux-rdma@vger.kernel.org>, 
+	"Dalessandro, Dennis" <dennis.dalessandro@cornelisnetworks.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 30, 2024 at 11:51:44AM +0200, Arnaud Pouliquen wrote:
-> Add support for releasing remote processor firmware through
-> the Trusted Execution Environment (TEE) interface.
-> 
-> The tee_rproc_release_fw() function is called in the following cases:
-> 
-> - An error occurs in rproc_start() between the loading of the segments and
->   the start of the remote processor.
-> - When rproc_release_fw is called on error or after stopping the remote
->   processor.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 7694817f25d4..32052dedc149 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -29,6 +29,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/rculist.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/remoteproc_tee.h>
->  #include <linux/iommu.h>
->  #include <linux/idr.h>
->  #include <linux/elf.h>
-> @@ -1258,6 +1259,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
->  
->  static void rproc_release_fw(struct rproc *rproc)
->  {
-> +	if (rproc->state == RPROC_OFFLINE && rproc->tee_interface)
-> +		tee_rproc_release_fw(rproc);
-> +
+On Tue, 10 Sept 2024 at 09:43, Doug Miller
+<doug.miller@cornelisnetworks.com> wrote:
+>
+> On 9/10/2024 10:13 AM, Mathieu Poirier wrote:
+> > On Tue, Sep 10, 2024 at 08:12:07AM -0500, Doug Miller wrote:
+> >> On 9/3/2024 10:52 AM, Doug Miller wrote:
+> >>> I am trying to learn how to create an RPMSG-over-VIRTIO device
+> >>> (service) in order to perform communication between a host driver and
+> >>> a guest driver. The RPMSG-over-VIRTIO driver (client) side is fairly
+> >>> well documented and there is a good example (starting point, at least)
+> >>> in samples/rpmsg/rpmsg_client_sample.c.
+> >>>
+> >>> I see that I can create an endpoint (struct rpmsg_endpoint) using
+> >>> rpmsg_create_ept(), and from there I can use rpmsg_send() et al. and
+> >>> the rpmsg_rx_cb_t cb to perform the communications. However, this
+> >>> requires a struct rpmsg_device and it is not clear just how to get one
+> >>> that is suitable for this purpose.
+> >>>
+> >>> It appears that one or both of rpmsg_create_channel() and
+> >>> rpmsg_register_device() are needed in order to obtain a device for the
+> >>> specific host-guest communications channel. At some point, a "root"
+> >>> device is needed that will use virtio (VIRTIO_ID_RPMSG) such that new
+> >>> subdevices can be created for each host-guest pair.
+> >>>
+> >>> In addition, building a kernel with CONFIG_RPMSG, CONFIG_RPMSG_VIRTIO,
+> >>> and CONFIG_RPMSG_NS set, and doing a modprobe virtio_rpmsg_bus, seems
+> >>> to get things setup but that does not result in creation of any "root"
+> >>> rpmsg-over-virtio device. Presumably, any such device would have to be
+> >>> setup to use a specific range of addresses and also be tied to
+> >>> virtio_rpmsg_bus to ensure that virtio is used.
+> >>>
+> >>> It is also not clear if/how register_rpmsg_driver() will be required
+> >>> on the rpmsg driver side, even though the sample code does not use it.
+> >>>
+> >>> So, first questions are:
+> >>>
+> >>> * Am I looking at the correct interfaces in order to create the host
+> >>> rpmsg device side?
+> >>> * What needs to be done to get a "root" rpmsg-over-virtio device
+> >>> created (if required)?
+> >>> * How is a rpmsg-over-virtio device created for each host-guest driver
+> >>> pair, for use with rpmsg_create_ept()?
+> >>> * Does the guest side (rpmsg driver) require any special handling to
+> >>> plug-in to the host driver (rpmsg device) side? Aside from using the
+> >>> correct addresses to match device side.
+> >> It looks to me as though the virtio_rpmsg_bus module can create a
+> >> "rpmsg_ctl" device, which could be used to create channels from which
+> >> endpoints could be created. However, when I load the virtio_rpmsg_bus,
+> >> rpmsg_ns, and rpmsg_core modules there is no "rpmsg_ctl" device created
+> >> (this is running in the host OS, before any VMs are created/run).
+> >>
+> > At this time the modules stated above are all used when a main processor is
+> > controlling a remote processor, i.e via the remoteproc subsystem.  I do not know
+> > of an implementation where VIRTIO_ID_RPMSG is used in the context of a
+> > host/guest scenario.  As such you will find yourself in uncharted territory.
+> >
+> > At some point there were discussion via the OpenAMP body to standardize the
+> > remoteproc's subsystem establishment of virtqueues to conform to a host/guest
+> > scenario but was abandonned.  That would have been a step in the right direction
+> > for what you are trying to do.
+> I was looking at some existing rpmsg code, at it appeared to me that
+> some adapters, like the "qcom", are creating an rpmsg device that
+> provides specialized methods for talking to the remote processor(s). I
+> have assumed this is because that hardware does not allow for running
+> something remotely that can utilize the virtio queues directly, and so
+> these rpmsg devices provide code to do the communication with their
+> hardware. What's not clear is whether these devices are using
+> rpmsg-over-virtio or if they are creating their own rpmsg facility (and
+> whether they even support guest-host communication).
+>
 
-If I understand correctly, the first condition is there because the
-attach/detach scenario does not yet support management by the TEE.  I would
-simply move the check to tee_rproc_release_fw() with a comment to that effect.
+The QC implementation is different and does not use virtio - there is
+a special HW interface between the main and the remote processors.
+That configuration is valid since RPMSG can be implemented over
+anything.
 
->  	/* Free the copy of the resource table */
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
-> @@ -1348,7 +1352,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	if (ret) {
->  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
->  			rproc->name, ret);
-> -		goto reset_table_ptr;
-> +		goto release_fw;
->  	}
->  
->  	/* power up the remote processor */
-> @@ -1376,7 +1380,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	rproc->ops->stop(rproc);
->  unprepare_subdevices:
->  	rproc_unprepare_subdevices(rproc);
-> -reset_table_ptr:
-> +release_fw:
+> What I'm also wondering is what needs to be done differently for virtio
+> when communicating guest-host vs local CPU to remote processor. I was
 
-I would have kept the old label.
+From a kernel/guest perspective, not much should be needed.  That said
+the VMM will need to be supplemented with extra configuration
+capabilities to instantiate the virtio-rpmsg device.  But that is just
+off the top of my head without seriously looking at the use case.
+From a virtio-bus perspective, there might be an issue if a platform
+is using remote processors _and_ also instantiating VMs that
+configures a virtio-rpmsg device.  Again, that is just off the top of
+my head but needs to be taken into account.
 
-> +	if (rproc->tee_interface)
-> +		tee_rproc_release_fw(rproc);
->  	rproc->table_ptr = rproc->cached_table;
->  
->  	return ret;
-> -- 
-> 2.25.1
-> 
+> hoping that RPMSG-over-VIRTIO would be easily adapted to what we need.
+> If we have to create a new virtio device (that is nearly identical to
+> rpmsg), that is going to push-out SR-IOV support a great deal, plus
+> requiring cloning of a lot of existing code for a new purpose.
+
+Duplication of code would not be a viable way forward.
+Reusing/enhancing/fixing what is currently available is definitely a
+better option.
+
+>
+> Our only other alternative is to do something to allow guest-host
+> communication to use the fabric loopback, which is not at all desirable
+> and has many issues of its own.
+>
+> >
+> >> Is this the correct way to use RPMSG-over-VIRTIO? If so, what actions
+> >> need to be taken to cause a "rpmsg_ctl" device to be created? What
+> >> method would be used (in a kernel driver) to get a pointer to the
+> >> "rpmsg_ctl" device, for use with rpmsg_create_channel()?
+> >>
+> >>> Thanks,
+> >>> Doug
+> >>>
+> >> External recipient
+>
+>
+> External recipient
