@@ -1,176 +1,207 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C044C8F;
-	Thu, 12 Sep 2024 15:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155112; cv=pass; b=ma3+/wEosPeX3zQzKSEnxC68TRihUhOcXmA9SRauuwE6lhtfT8zgm29vPqEGskXWM9mGey6UypiVeUyvorz5zzuDemu0yFJVPeMNlOlOdN3GdxgE5vzHBnn4w5jBBG9ja0e4LTdE1NJmtsp17ZLtyqvLa1Xxv++P7+SA69Gc1os=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155112; c=relaxed/simple;
-	bh=/ayxcgN01zXL94O1IKevl/0D45Irwt/+UChGAHvQ3m0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EfhgyVYK3tEYSxAgQFn483x7LWpabjbDoqoUs5o3xlIg4sid2RK7Gd7WLwH+ym3U6obZA7r2xSpbkKfLO3QzXPMmGyCiadECmuCfnRCmsD1q98QIwmG+3Slbwf75TgdAt/wt+s5LRMbeTpB9eLaSZZgI+KU9Tj66sPeQuH42zLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=K8X2v6ld; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EF01BB6BA
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Sep 2024 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726155689; cv=none; b=LAwWQHQ6hugOVRepE475W8tdH5Uk/P+WAEtWF9T5WYymayJIPvUCJVivbuyIfnAu4zC+FCzfy3YptfH3IEMMLrAB6YqziJV04vkLYWsa9msp7GTQ7MpmzNakpJ3nJTzA7RdXF8XewP8Ysy6JVYgopQGnLoiBrSsrZ3+sVL+nF1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726155689; c=relaxed/simple;
+	bh=MMgC/aqt9wcmvoZXDiJlIZxFtdta8SZFDTKjqp2m56M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbVh+bBmC5JVIbYk02nP1A7R2H3/JjQillyULTOVh1s4WvkNSDFyPiOrZe+2N3BAmaacNrEs7kinBrDS07MsI7nJK7dPe3Ei2S3tQmn88xJe657rTVXGYC8fON5MH7oH8YWYG2RzQmCVH90FC+R+IC/nJm2CL9sJKgr0o6cGkdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBATCGF9; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="K8X2v6ld"
-ARC-Seal: i=1; a=rsa-sha256; t=1726155101; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QtUiDmtRqijCE0ndDFf52cBBR3ZcTFXQvpljq9B4dpqan2FsORJDPaHjSfRwM7mkiP+epUfbm9oCBth0XkUQ6/TnRcwzyS0+FlGoBz85sYaqZQqYJHLK4pnrn6Z6rPoxTh2U0dpWTC+peg2TRsCtKfMcwdznVphEHPMT9HgseUQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726155101; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=; 
-	b=JEGYyfybs0AEWhb2QvivZ6jBJxkoty6Sb6tl1Au5Xd3oAVTFGGZh7I/QWq/9c0HZqC2cYd+sSuVjLbeypaPuxvjx40mX92vM+Dcptb2KTFRkbfY1bktbyeNmztcan/Xr8zTi4f5ncJyN0h3WhrvZVGYB+ZsOBg+7oktPPxp3AO0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726155101;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=;
-	b=K8X2v6ld2tDd8Fiz/uDyO2Rq37IrbfycayZlI4mP+ZqQdd2DKnaL+2h6nulbXUgc
-	fBEcs+t1AoK+dlJ9E6rMsvViFrzKFgu5cStIx9R8dlguTgpMjDr6HJDltLpjzrAwO4V
-	13/DAkNEtB4eXfOl1JPbZGJhubfVV8tPkDGzflSE=
-Received: by mx.zohomail.com with SMTPS id 1726155099067152.57015306927974;
-	Thu, 12 Sep 2024 08:31:39 -0700 (PDT)
-Message-ID: <cfeb02df9a3f34b3509b26c40a90799aecf22fb9.camel@collabora.com>
-Subject: Re: [PATCH] mailbox, remoteproc: omap2+: fix compile testing
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Arnd Bergmann <arnd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Hari Nagalla <hnagalla@ti.com>,  Andrew Davis
-	 <afd@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date: Thu, 12 Sep 2024 16:31:35 +0100
-In-Reply-To: <20240909203825.1666947-1-arnd@kernel.org>
-References: <20240909203825.1666947-1-arnd@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBATCGF9"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20551eeba95so10901105ad.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Sep 2024 08:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726155687; x=1726760487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
+        b=WBATCGF9aV8eYt7r+resZHnANpxsPqlyuzjCm270745ZZErhABeSDdyyYCCVKi2Q1w
+         OP63+9l/EeaBbQjZZtFLrudMg/1QufBvDxmzz4nGzPQZm9+Ss4E6ZQKITHn4/9tfXCP0
+         CoyiJhAdQ8UQQL77Gce20jGRctPQRtL+EtBwGRQc2Bf0cNWahzScJGDZHnS5P128MZsD
+         1ydkVZKj9T31gzVQ0o9st9BCiRen7TEOz02HUjhAR7J38/9fD6OvBlt7ZFRGzPVzw1OK
+         nnDn/aSFLTlxAFXPdet9eTR2tV3EjWCyXSVFOvYpYB4Ip/qwHCI6aojk5hzVrrrheFzH
+         CHRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726155687; x=1726760487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
+        b=wdpb7T+aqinqAY1f76nN9sF8/1F1N3H05oOPXCmTXKiIF0kgx8e1J87P1cI/gxJP07
+         OlnhDNY1GFzuVxa545yJfCi3jHral5dFK74VkLCiL7QVX8eikEYg/klTIh0XgT+/h9oR
+         mZNf2xzSdtqO9dylPXkow+23CScjQb1QDfAqctTGZ/y6dGklNO3C987TOogKPaJv3bAb
+         d97IoVdfas4BzENp00gt+A9VhpzokDoTnInRH4lKhRsxrcAg7wGOMBKU6kEUNQGnyUIj
+         9Mi6c70zQPaPYJwPK1XUyYV/9y6/vVlp1fiRUPcbnvk7A/yzzGjNGN0y6t2Ud9SU0a9N
+         eLEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmmV/RwuzFG2aTH+ZuctsGD4IqigpyVBiXes9VRAxHXQlHipSNupjVybpalCyooVZ0usLM+DtxhTU66q2n4at6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZiIoO7VxiymEHfeDTnK/j/+Snonv0U59qPTm1kIZD4j1odbc1
+	8UF+vmnVl8tvOZ0/NAkLrQ5GRb4cORubKI5m7YFEEFISwluf6FuFerXQY0oNyUQ=
+X-Google-Smtp-Source: AGHT+IFagW7EpGoI8wKxQY38cWVqzvg3XfqIXD61efl4qhGkGiSohPvpLEyd4ziYpx5dvCOQgOsAAQ==
+X-Received: by 2002:a17:903:32c3:b0:206:ca91:1dd6 with SMTP id d9443c01a7336-2076e315569mr46690225ad.9.1726155687450;
+        Thu, 12 Sep 2024 08:41:27 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a82e:e104:d822:3d3c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd672sm15667935ad.156.2024.09.12.08.41.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:41:26 -0700 (PDT)
+Date: Thu, 12 Sep 2024 09:41:23 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 6/7] remoteproc: stm32: Create sub-functions to
+ request shutdown and release
+Message-ID: <ZuMLo2+an1sxdYlt@p14s>
+References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
+ <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
 
-On Mon, 2024-09-09 at 20:38 +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> Selecting CONFIG_OMAP2PLUS_MBOX while compile testing
-> causes a build failure:
->=20
-> WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-> =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
-> =C2=A0 Selected by [m]:
-> =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 ||
-> COMPILE_TEST [=3Dy])
->=20
-> Using 'select' to force-enable another subsystem is generally
-> a mistake and causes problems such as this one, so change the
-> three drivers that link against this driver to use 'depends on'
-> instead, and ensure the driver itself can be compile tested
-> regardless of the platform.
->=20
-> When compile-testing without CONFIG_TI_SCI_PROTOCOL=3Dm, there
-> is a chance for a link failure, so add a careful dependency
-> on that.
->=20
-> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in
-> function `k3_m4_rproc_probe':
-> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined
-> reference to `devm_ti_sci_get_by_phandle'
->=20
-> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for
-> M4F subsystem")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Fri, Aug 30, 2024 at 11:51:46AM +0200, Arnaud Pouliquen wrote:
+> To prepare for the support of TEE remoteproc, create sub-functions
+> that can be used in both cases, with and without remoteproc TEE support.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
-> =C2=A0drivers/mailbox/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 2 +-
-> =C2=A0drivers/mailbox/omap-mailbox.c |=C2=A0 2 +-
-> =C2=A0drivers/remoteproc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++++------
-> =C2=A03 files changed, 6 insertions(+), 8 deletions(-)
->=20
+>  drivers/remoteproc/stm32_rproc.c | 84 +++++++++++++++++++-------------
+>  1 file changed, 51 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 8c7f7950b80e..79c638936163 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -209,6 +209,54 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
+>  	return -EINVAL;
+>  }
+>  
+> +static void stm32_rproc_request_shutdown(struct rproc *rproc)
+> +{
+> +	struct stm32_rproc *ddata = rproc->priv;
+> +	int err, dummy_data, idx;
+> +
+> +	/* Request shutdown of the remote processor */
+> +	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
+> +		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+> +		if (idx >= 0 && ddata->mb[idx].chan) {
+> +			/* A dummy data is sent to allow to block on transmit. */
+> +			err = mbox_send_message(ddata->mb[idx].chan,
+> +						&dummy_data);
 
-Looks good to me:
+When refactoring functions, please do not change the inner code.  Here
+@dummy_data was introduced.  Making changes, even small ones, makes it really
+hard to review your work.  I'm pretty sure we talked about that before.
 
-Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
-
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 4eed97295927..ecaf78beb934 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -73,7 +73,7 @@ config ARMADA_37XX_RWTM_MBOX
-> =C2=A0
-> =C2=A0config OMAP2PLUS_MBOX
-> =C2=A0	tristate "OMAP2+ Mailbox framework support"
-> -	depends on ARCH_OMAP2PLUS || ARCH_K3
-> +	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
-> =C2=A0	help
-> =C2=A0	=C2=A0 Mailbox implementation for OMAP family chips with hardware
-> for
-> =C2=A0	=C2=A0 interprocessor communication involving DSP, IVA1.0 and
-> IVA2 in
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-
-> mailbox.c
-> index 7a87424657a1..6797770474a5 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -603,7 +603,7 @@ static struct platform_driver omap_mbox_driver =3D
-> {
-> =C2=A0	.driver	=3D {
-> =C2=A0		.name =3D "omap-mailbox",
-> =C2=A0		.pm =3D &omap_mbox_pm_ops,
-> -		.of_match_table =3D
-> of_match_ptr(omap_mailbox_of_match),
-> +		.of_match_table =3D omap_mailbox_of_match,
-> =C2=A0	},
-> =C2=A0};
-> =C2=A0module_platform_driver(omap_mbox_driver);
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0f0862e20a93..62f8548fb46a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -330,8 +330,7 @@ config STM32_RPROC
-> =C2=A0config TI_K3_DSP_REMOTEPROC
-> =C2=A0	tristate "TI K3 DSP remoteproc support"
-> =C2=A0	depends on ARCH_K3
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's C66x and C71x DSP remote
-> processor
-> =C2=A0	=C2=A0 subsystems on various TI K3 family of SoCs through the
-> remote
-> @@ -343,8 +342,8 @@ config TI_K3_DSP_REMOTEPROC
-> =C2=A0config TI_K3_M4_REMOTEPROC
-> =C2=A0	tristate "TI K3 M4 remoteproc support"
-> =C2=A0	depends on ARCH_K3 || COMPILE_TEST
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST &&
-> TI_SCI_PROTOCOL=3Dn)
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's M4 remote processor subsystems
-> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
-> processor
-> @@ -356,8 +355,7 @@ config TI_K3_M4_REMOTEPROC
-> =C2=A0config TI_K3_R5_REMOTEPROC
-> =C2=A0	tristate "TI K3 R5 remoteproc support"
-> =C2=A0	depends on ARCH_K3
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's R5F remote processor subsystems
-> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
-> processor
-
+> +			if (err < 0)
+> +				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+> +		}
+> +	}
+> +}
+> +
+> +static int stm32_rproc_release(struct rproc *rproc)
+> +{
+> +	struct stm32_rproc *ddata = rproc->priv;
+> +	unsigned int err = 0;
+> +
+> +	/* To allow platform Standby power mode, set remote proc Deep Sleep. */
+> +	if (ddata->pdds.map) {
+> +		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
+> +					 ddata->pdds.mask, 1);
+> +		if (err) {
+> +			dev_err(&rproc->dev, "failed to set pdds\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	/* Update coprocessor state to OFF if available. */
+> +	if (ddata->m4_state.map) {
+> +		err = regmap_update_bits(ddata->m4_state.map,
+> +					 ddata->m4_state.reg,
+> +					 ddata->m4_state.mask,
+> +					 M4_STATE_OFF);
+> +		if (err) {
+> +			dev_err(&rproc->dev, "failed to set copro state\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int stm32_rproc_prepare(struct rproc *rproc)
+>  {
+>  	struct device *dev = rproc->dev.parent;
+> @@ -519,17 +567,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
+>  static int stm32_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct stm32_rproc *ddata = rproc->priv;
+> -	int err, idx;
+> +	int err;
+>  
+> -	/* request shutdown of the remote processor */
+> -	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
+> -		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+> -		if (idx >= 0 && ddata->mb[idx].chan) {
+> -			err = mbox_send_message(ddata->mb[idx].chan, "detach");
+> -			if (err < 0)
+> -				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+> -		}
+> -	}
+> +	stm32_rproc_request_shutdown(rproc);
+>  
+>  	err = stm32_rproc_set_hold_boot(rproc, true);
+>  	if (err)
+> @@ -541,29 +581,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
+>  		return err;
+>  	}
+>  
+> -	/* to allow platform Standby power mode, set remote proc Deep Sleep */
+> -	if (ddata->pdds.map) {
+> -		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
+> -					 ddata->pdds.mask, 1);
+> -		if (err) {
+> -			dev_err(&rproc->dev, "failed to set pdds\n");
+> -			return err;
+> -		}
+> -	}
+> -
+> -	/* update coprocessor state to OFF if available */
+> -	if (ddata->m4_state.map) {
+> -		err = regmap_update_bits(ddata->m4_state.map,
+> -					 ddata->m4_state.reg,
+> -					 ddata->m4_state.mask,
+> -					 M4_STATE_OFF);
+> -		if (err) {
+> -			dev_err(&rproc->dev, "failed to set copro state\n");
+> -			return err;
+> -		}
+> -	}
+> -
+> -	return 0;
+> +	return stm32_rproc_release(rproc);
+>  }
+>  
+>  static void stm32_rproc_kick(struct rproc *rproc, int vqid)
+> -- 
+> 2.25.1
+> 
