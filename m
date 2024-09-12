@@ -1,48 +1,48 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4332F1BE855;
-	Thu, 12 Sep 2024 16:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31F61BF317;
+	Thu, 12 Sep 2024 16:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159711; cv=none; b=KKtH+6g3FB4DPpOVfaCYtAJHQQeTgwEYWs3fGVyzGX4wNY+CPXaAJSKPLLuOnam6ZeYJ1MAwOR3KVwR26QdMPtfdLJWFT6YMxEDdquUFStngp7tUNe5ggk5OZUHaaxqgHmh1q4tH/EEXINpdfmKaprugLStERuDdQjq+MqvsznM=
+	t=1726159713; cv=none; b=OEhZTqAwjsEN1Ik82PJ8h1xu0ZTLS06G9vKg3WTC7SsImVLSMhoceETg/V6Z1nilMxap2bHWa1qb6mNij2io2g9Lixn5+hqcri4U1LFi0tDF34OXpGpLHrPfX7M4oSPGUX02KAk1NaKce7Wn5AUhA2C6fFRDA6KC9pPL8V5fo3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159711; c=relaxed/simple;
-	bh=yHc15kIf2Gz7/SONfw3EccBE/G/e+grkXB5YmmMGhSw=;
+	s=arc-20240116; t=1726159713; c=relaxed/simple;
+	bh=NJTyCpO+Y77tWGIpphUjAJTNx//eTMs3hE/+Nvi3nlE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZwN2+Hrmc7U9pp6Gr5561iiRPLbuVdz5yr5aBSO3RDFuDfxaK0seERXzOFjaY9QRbSjND2efqPsAF1oDzFCI4ipcqdAkgxPBEQoQf83o5rGb4RBceufOxV9nrzVsz5mHriCM3c5JFUjB1z/z4Ga+e1ByvchcAO0A1CAMb26Gh0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BqY5w+BT; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=flRNVviC1Peu8Kod4lMqOxIPMfR05BbPVLOK3sP/L7JD5EgUXKHBNh99hiDdJ4N6tVAVArlJq5MWIoKAi4DeD51Wn8/6DvW6e8+W5aTIIaB9KJrlnIKQaqb30ywr645aKLEgOMfr5ML0/laGgLsLB3SVWPTjspA0WSUrXPxyYKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=AvFwD23p; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BqY5w+BT"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="AvFwD23p"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726159709; x=1757695709;
+  t=1726159710; x=1757695710;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yHc15kIf2Gz7/SONfw3EccBE/G/e+grkXB5YmmMGhSw=;
-  b=BqY5w+BTz/4LwDlLomO5QFS+3FgOKnfF6ZlCxXWwo07kV72OZDZpchTv
-   v9syYOV8X7PU815bPiWzgNeQvOAIXCU+yA2CtBZI/Qxtm9ovvCIWsbWJG
-   gUjNe92esbIkRMmmJT4XM6xgBXdSBLNim5OMAXuBQ6GO6fwxT9RrXEVM5
-   5YpcqJtf2s/Xl468xKfHkGI/5Dv30OKf5vWx9H4JYfMI1PFXYGLtn4nK7
-   Jjy4X1EJ8NFHPmK0qBewzUzEv3syJPi5zNIt1MUeL6wYAvg/r4GIsDAko
-   9g3s8su1j2TD8EB5AgWT0lwm67wMIP0Du0VCuJiFMuz9Pw7KVDPN1B91f
-   Q==;
-X-CSE-ConnectionGUID: DQLE4LE3SvKX/JE8rC2tCg==
-X-CSE-MsgGUID: kadsTr83Rdq6OpK9bKRn/Q==
+  bh=NJTyCpO+Y77tWGIpphUjAJTNx//eTMs3hE/+Nvi3nlE=;
+  b=AvFwD23pEwtGCJbn9WFReVstkhFs1ZkX9KA+0KMASZEOdKfJpvnlaP3t
+   1u2vEM2XDvewkh8GideipgZKPqhMiCIEu75mbyQrGjzEJZ9+s4Jj8XKol
+   FVhG2LDBmSPadQV1UY0YAvBsedoxFafjhTx8N8aodJx+inIkRFiJif81Q
+   6XxEKTKh6Sb+SbWqZmP3heEo0nLJ2zPeXTN0EAAlhfMNeaFHnPQTDehP8
+   aHlLZWP2WCn3MlZA3ygWaICcQ0MKpU84VGKKkOvw1c+lyATdqMExZe9W1
+   IQM1H+0VsBw2coL3ELExiyKEbSVE389gFdp/GWb5FPlcggtB/OmHHpc7N
+   g==;
+X-CSE-ConnectionGUID: Ac9NytbARZ2zk5pQNIMJbg==
+X-CSE-MsgGUID: 3Apw9UqhQwquUSB58z2Nvw==
 X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="32331230"
+   d="scan'208";a="31712183"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 09:48:25 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 09:48:29 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 09:47:54 -0700
+ 15.1.2507.35; Thu, 12 Sep 2024 09:48:00 -0700
 Received: from valentina.microchip.com (10.10.85.11) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 09:47:51 -0700
+ 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 09:47:57 -0700
 From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
 	<peterlin@andestech.com>, <dminus@andestech.com>,
@@ -52,9 +52,9 @@ To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
 	<valentina.fernandezalanis@microchip.com>
 CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH v1 3/5] mailbox: add Microchip IPC support
-Date: Thu, 12 Sep 2024 18:00:23 +0100
-Message-ID: <20240912170025.455167-4-valentina.fernandezalanis@microchip.com>
+Subject: [PATCH v1 5/5] remoteproc: add support for Microchip IPC remoteproc platform driver
+Date: Thu, 12 Sep 2024 18:00:25 +0100
+Message-ID: <20240912170025.455167-6-valentina.fernandezalanis@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
 References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
@@ -67,646 +67,537 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add a mailbox controller driver for the Microchip Inter-processor
-Communication (IPC), which is used to send and receive data between
-processors.
+The Microchip family of RISC-V SoCs typically has one or more clusters.
+These clusters can be configured to run in Asymmetric Multi-Processing
+(AMP) mode.
 
-The driver uses the RISC-V Supervisor Binary Interface (SBI) to
-communicate with software running in machine mode (M-mode) to access
-the IPC hardware block.
+Add a remoteproc platform driver to be able to load and boot firmware
+to the remote processor(s).
 
-Additional details on the Microchip vendor extension and the IPC
-function IDs described in the driver can be found in the following
-documentation:
+The driver uses SBI (RISC-V Supervisor Binary Interface) ecalls to
+request software running in machine-privileged mode (M-mode) to
+start/stop the remote processor(s).
 
-https://github.com/linux4microchip/microchip-sbi-ecall-extension
+Inter-processor communication is supported through the virtio rpmsg
+stack using shared memory and the Microchip IPC mailbox driver.
 
-This SBI interface in this driver is compatible with the Mi-V Inter-hart
-Communication (IHC) IP.
+Currently, the driver the following features are supported:
+- Start/stop a remote software context
+- Kick function implementation for RPMsg Communication
+- Attach to a remote context loaded by another entity (bootloader)
 
-Transmitting and receiving data through the mailbox framework is done
-through struct mchp_ipc_msg.
+Error Recovery and Power Management features are not currently supported
 
 Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 ---
- drivers/mailbox/Kconfig                |  12 +
- drivers/mailbox/Makefile               |   2 +
- drivers/mailbox/mailbox-mchp-ipc-sbi.c | 539 +++++++++++++++++++++++++
- include/linux/mailbox/mchp-ipc.h       |  23 ++
- 4 files changed, 576 insertions(+)
- create mode 100644 drivers/mailbox/mailbox-mchp-ipc-sbi.c
- create mode 100644 include/linux/mailbox/mchp-ipc.h
+ drivers/remoteproc/Kconfig               |  12 +
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/mchp_ipc_remoteproc.c | 461 +++++++++++++++++++++++
+ 3 files changed, 474 insertions(+)
+ create mode 100644 drivers/remoteproc/mchp_ipc_remoteproc.c
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 4eed97295927..7bb4190d465e 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -176,6 +176,18 @@ config POLARFIRE_SOC_MAILBOX
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index dda2ada215b7..f973ed1d0635 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -54,6 +54,18 @@ config INGENIC_VPU_RPROC
+ 	  This can be either built-in or a loadable module.
+ 	  If unsure say N.
  
- 	  If unsure, say N.
- 
-+config MCHP_SBI_IPC_MBOX
-+	tristate "Microchip Inter-processor Communication (IPC) SBI driver"
++config MCHP_IPC_REMOTEPROC
++	tristate "Microchip IPC remoteproc support"
++	depends on MCHP_SBI_IPC_MBOX || COMPILE_TEST
 +	depends on RISCV_SBI
 +	help
-+	  Mailbox implementation for Microchip devices with an
-+	  Inter-process communication (IPC) controller.
++	  Say y here to support booting and loading firmware to remote
++	  processors on various Microchip family of RISC-V SoCs via the
++	  remote processor framework.
++	  This can be either built-in or a loadable module.
++	  If compiled as module, the module will be called mchp_ipc_remoteproc.
++	  If unsure say N.
 +
-+	  To compile this driver as a module, choose M here. the
-+	  module will be called mailbox-mchp-ipc-sbi.
-+
-+	  If unsure, say N.
-+
- config QCOM_APCS_IPC
- 	tristate "Qualcomm APCS IPC driver"
- 	depends on ARCH_QCOM || COMPILE_TEST
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 3c3c27d54c13..a78d1948e331 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -45,6 +45,8 @@ obj-$(CONFIG_BCM_FLEXRM_MBOX)	+= bcm-flexrm-mailbox.o
- 
- obj-$(CONFIG_POLARFIRE_SOC_MAILBOX)	+= mailbox-mpfs.o
- 
-+obj-$(CONFIG_MCHP_SBI_IPC_MBOX)		+= mailbox-mchp-ipc-sbi.o
-+
- obj-$(CONFIG_QCOM_APCS_IPC)	+= qcom-apcs-ipc-mailbox.o
- 
- obj-$(CONFIG_TEGRA_HSP_MBOX)	+= tegra-hsp.o
-diff --git a/drivers/mailbox/mailbox-mchp-ipc-sbi.c b/drivers/mailbox/mailbox-mchp-ipc-sbi.c
+ config MTK_SCP
+ 	tristate "Mediatek SCP support"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 91314a9b43ce..3e3a27d2e848 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+ obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
++obj-$(CONFIG_MCHP_IPC_REMOTEPROC)	+= mchp_ipc_remoteproc.o
+ obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+diff --git a/drivers/remoteproc/mchp_ipc_remoteproc.c b/drivers/remoteproc/mchp_ipc_remoteproc.c
 new file mode 100644
-index 000000000000..c0cdb55c8a79
+index 000000000000..95446dbc7993
 --- /dev/null
-+++ b/drivers/mailbox/mailbox-mchp-ipc-sbi.c
-@@ -0,0 +1,539 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/remoteproc/mchp_ipc_remoteproc.c
+@@ -0,0 +1,461 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Microchip Inter-Processor communication (IPC) driver
++ * Microchip IPC Remoteproc driver
 + *
 + * Copyright (c) 2021 - 2024 Microchip Technology Inc. All rights reserved.
 + *
 + * Author: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 + *
++ * Derived from the imx_rproc implementation:
++ * Copyright (c) 2017 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
 + */
 +
-+#include <linux/io.h>
 +#include <linux/err.h>
-+#include <linux/smp.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
 +#include <linux/kernel.h>
-+#include <linux/of_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/dma-mapping.h>
++#include <linux/mailbox_client.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/of.h>
 +#include <linux/platform_device.h>
-+#include <linux/mailbox/mchp-ipc.h>
++#include <linux/remoteproc.h>
++#include <linux/workqueue.h>
++
 +#include <asm/sbi.h>
 +#include <asm/vendorid_list.h>
++#include <linux/mailbox/mchp-ipc.h>
 +
-+#define IRQ_STATUS_BITS			12
-+#define NUM_CHANS_PER_CLUSTER		5
-+#define IPC_DMA_BIT_MASK		32
++#include "remoteproc_internal.h"
++
 +#define SBI_EXT_MICROCHIP_TECHNOLOGY	(SBI_EXT_VENDOR_START | \
 +					 MICROCHIP_VENDOR_ID)
 +
++#define MIV_RPROC_MEM_MAX		2
++
 +enum {
-+	SBI_EXT_IPC_PROBE = 0x100,
-+	SBI_EXT_IPC_CH_INIT,
-+	SBI_EXT_IPC_SEND,
-+	SBI_EXT_IPC_RECEIVE,
-+	SBI_EXT_IPC_STATUS,
-+};
-+
-+enum ipc_hw {
-+	MIV_IHC,
-+};
-+
-+enum ipc_irq_type {
-+	IPC_OPS_NOT_SUPPORTED	= 1,
-+	IPC_MP_IRQ		= 2,
-+	IPC_MC_IRQ		= 4,
++	SBI_EXT_RPROC_STATE = 0x3,
++	SBI_EXT_RPROC_START,
++	SBI_EXT_RPROC_STOP,
 +};
 +
 +/**
-+ * struct mchp_ipc_probe - IPC probe message format
++ * enum mchp_ipc_rproc_mbox_messages - predefined mailbox messages
 + *
-+ * @hw_type:		IPC implementation available in the hardware
-+ * @num_channels:	number of IPC channels available in the hardware
++ * @MCHP_IPC_RPROC_MBOX_READY: a ready message response from a remote context indicating
++ * that the remote context is up and running.
 + *
-+ * Used to retrieve information on the IPC implementation
-+ * using the SBI_EXT_IPC_PROBE SBI function id.
++ * @MIV_RP_MBOX_PENDING_MSG: Not currently in use, but reserved for future use
++ * to inform the receiver that there is a message awaiting in its receive-side
++ * vring. At the moment, one can explicitly send the index of the triggered
++ * virtqueue as a payload.
++ *
++ * @MIV_RP_MBOX_STOP: a stop request for the remote context
++ *
++ * @MIV_RP_MBOX_END_MSG: Indicates end of known/defined messages.
++ * This should be the last definition.
++ *
 + */
-+struct mchp_ipc_probe {
-+	enum ipc_hw hw_type;
-+	u8 num_channels;
++enum mchp_ipc_rproc_mbox_messages {
++	MCHP_IPC_RPROC_MBOX_READY = 0xFFFFFF00,
++	MCHP_IPC_RPROC_MBOX_PENDING_MSG = 0xFFFFFF01,
++	MCHP_IPC_RPROC_MBOX_STOP = 0xFFFFFF02,
++	MCHP_IPC_RPROC_MBOX_END_MSG = 0xFFFFFF03,
 +};
 +
-+/**
-+ * struct mchp_ipc_init - IPC channel init message format
-+ *
-+ * @max_msg_size:	maxmimum message size in bytes of a given channel
-+ *
-+ * struct used by the SBI_EXT_IPC_CH_INIT SBI function id to get
-+ * the max message size in bytes of the initialized channel.
-+ */
-+struct mchp_ipc_init {
-+	u16 max_msg_size;
-+};
-+
-+/**
-+ * struct mchp_ipc_status - IPC status message format
-+ *
-+ * @status:	interrupt status for all channels associated to a cluster
-+ * @cluster:	specifies the cluster instance that originated an irq
-+ *
-+ * struct used by the SBI_EXT_IPC_STATUS SBI function id to get
-+ * the message present and message clear interrupt status for all the
-+ * channels associated to a cluster.
-+ */
-+struct mchp_ipc_status {
-+	u32 status;
-+	u8 cluster;
-+};
-+
-+/**
-+ * struct mchp_ipc_sbi_msg - IPC SBI payload message
-+ *
-+ * @buf_addr:	physical address where the received data should be copied to
-+ * @size:	maximum size(in bytes) that can be stored in the buffer pointed to by `buf`
-+ * @irq_type:	mask representing the irq types that triggered an irq
-+ *
-+ * struct used by the SBI_EXT_IPC_SEND/SBI_EXT_IPC_RECEIVE SBI function
-+ * ids to send/receive a message from an associated processor using
-+ * the IPC.
-+ */
-+struct mchp_ipc_sbi_msg {
-+	u64 buf_addr;
-+	u16 size;
-+	u8 irq_type;
-+};
-+
-+struct mchp_ipc_cluster_cfg {
-+	void *buf_base;
-+	dma_addr_t dma_addr;
-+	int irq;
-+};
-+
-+struct ipc_chan_info {
-+	void *buf_base_tx;
-+	void *buf_base_rx;
-+	void *msg_buf_tx;
-+	void *msg_buf_rx;
-+	dma_addr_t dma_addr_tx;
-+	dma_addr_t dma_addr_rx;
-+	dma_addr_t msg_buf_dma_tx;
-+	dma_addr_t msg_buf_dma_rx;
-+	int chan_aggregated_irq;
-+	int mp_irq;
-+	int mc_irq;
-+	u32 id;
-+	u32 max_msg_size;
-+};
-+
-+struct microchip_ipc {
++struct mchp_ipc_rproc {
 +	struct device *dev;
-+	struct mbox_chan *chans;
-+	struct mchp_ipc_cluster_cfg *cluster_cfg;
-+	struct ipc_chan_info *priv;
-+	void *buf_base;
-+	dma_addr_t dma_addr;
-+	struct mbox_controller controller;
-+	u8 num_channels;
-+	enum ipc_hw hw_type;
-+};
-+
-+static int mchp_ipc_sbi_chan_send(u32 command, u32 channel, dma_addr_t address)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, command, channel,
-+			address, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+	else
-+		return ret.value;
-+}
-+
-+static int mchp_ipc_sbi_send(u32 command, dma_addr_t address)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, command, address,
-+			0, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+	else
-+		return ret.value;
-+}
-+
-+static struct microchip_ipc *to_mchp_ipc_mbox(struct mbox_controller *mbox)
-+{
-+	return container_of(mbox, struct microchip_ipc, controller);
-+}
-+
-+u32 mchp_ipc_get_chan_id(struct mbox_chan *chan)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+
-+	return chan_info->id;
-+}
-+EXPORT_SYMBOL(mchp_ipc_get_chan_id);
-+
-+static inline void mchp_ipc_prepare_receive_req(struct mbox_chan *chan)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+	struct mchp_ipc_sbi_msg request;
-+
-+	request.buf_addr = chan_info->msg_buf_dma_rx;
-+	request.size = chan_info->max_msg_size;
-+	memcpy(chan_info->buf_base_rx, &request, sizeof(struct mchp_ipc_sbi_msg));
-+}
-+
-+static inline void mchp_ipc_process_received_data(struct mbox_chan *chan,
-+						  struct mchp_ipc_msg *ipc_msg)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+	struct mchp_ipc_sbi_msg sbi_msg;
-+
-+	memcpy(&sbi_msg, chan_info->buf_base_rx, sizeof(struct mchp_ipc_sbi_msg));
-+	ipc_msg->buf = (u32 *)chan_info->msg_buf_rx;
-+	ipc_msg->size = sbi_msg.size;
-+}
-+
-+static irqreturn_t mchp_ipc_cluster_aggr_isr(int irq, void *data)
-+{
-+	struct mbox_chan *chan;
-+	struct ipc_chan_info *chan_info;
-+	struct microchip_ipc *ipc = (struct microchip_ipc *)data;
-+	struct mchp_ipc_msg ipc_msg;
-+	struct mchp_ipc_status status_msg;
-+	int ret;
-+	unsigned long hartid;
-+	u32 i, chan_index, chan_id;
-+
-+	/* Find out the hart that originated the irq */
-+	for_each_online_cpu(i) {
-+		hartid = cpuid_to_hartid_map(i);
-+		if (irq == ipc->cluster_cfg[hartid].irq)
-+			break;
-+	}
-+
-+	status_msg.cluster = hartid;
-+	memcpy(ipc->cluster_cfg[hartid].buf_base, &status_msg, sizeof(struct mchp_ipc_status));
-+
-+	ret = mchp_ipc_sbi_send(SBI_EXT_IPC_STATUS, ipc->cluster_cfg[hartid].dma_addr);
-+	if (ret < 0) {
-+		dev_err_ratelimited(ipc->dev, "could not get IHC irq status ret=%d\n", ret);
-+		return IRQ_HANDLED;
-+	}
-+
-+	memcpy(&status_msg, ipc->cluster_cfg[hartid].buf_base, sizeof(struct mchp_ipc_status));
-+
-+	/*
-+	 * Iterate over each bit set in the IHC interrupt status register (IRQ_STATUS) to identify
-+	 * the channel(s) that have a message to be processed/acknowledged.
-+	 * The bits are organized in alternating format, where each pair of bits represents
-+	 * the status of the message present and message clear interrupts for each cluster/hart
-+	 * (from hart 0 to hart 5). Each cluster can have up to 5 fixed channels associated.
-+	 */
-+
-+	for_each_set_bit(i, (unsigned long *)&status_msg.status, IRQ_STATUS_BITS) {
-+		/* Find out the destination hart that triggered the interrupt */
-+		chan_index = i / 2;
-+
-+		/*
-+		 * The IP has no loopback channels, so we need to decrement the index when
-+		 * the target hart has a greater index than our own
-+		 */
-+		if (chan_index >= status_msg.cluster)
-+			chan_index--;
-+
-+		/*
-+		 * Calculate the channel id given the hart and channel index. Channel IDs
-+		 * are unique across all clusters of an IPC, and iterate contiguously
-+		 * across all clusters.
-+		 */
-+		chan_id = status_msg.cluster * (NUM_CHANS_PER_CLUSTER + chan_index);
-+
-+		chan = &ipc->chans[chan_id];
-+		chan_info = (struct ipc_chan_info *)chan->con_priv;
-+
-+		if (i % 2 == 0) {
-+			mchp_ipc_prepare_receive_req(chan);
-+			ret = mchp_ipc_sbi_chan_send(SBI_EXT_IPC_RECEIVE, chan_id,
-+						     chan_info->dma_addr_rx);
-+			if (ret < 0)
-+				continue;
-+
-+			mchp_ipc_process_received_data(chan, &ipc_msg);
-+			mbox_chan_received_data(&ipc->chans[chan_id], (void *)&ipc_msg);
-+
-+		} else {
-+			ret = mchp_ipc_sbi_chan_send(SBI_EXT_IPC_RECEIVE, chan_id,
-+						     chan_info->dma_addr_rx);
-+			mbox_chan_txdone(&ipc->chans[chan_id], ret);
-+		}
-+	}
-+	return IRQ_HANDLED;
-+}
-+
-+static int mchp_ipc_get_cluster_aggr_irq(struct microchip_ipc *ipc)
-+{
-+	struct platform_device *pdev = to_platform_device(ipc->dev);
-+	char *irq_name;
-+	int cpuid, ret;
-+	unsigned long hartid;
-+	bool irq_found = false;
-+
-+	for_each_online_cpu(cpuid) {
-+		hartid = cpuid_to_hartid_map(cpuid);
-+		irq_name = devm_kasprintf(ipc->dev, GFP_KERNEL, "hart-%lu", hartid);
-+		ret = platform_get_irq_byname_optional(pdev, irq_name);
-+		if (ret <= 0)
-+			continue;
-+
-+		ipc->cluster_cfg[hartid].irq = ret;
-+		ret = devm_request_irq(ipc->dev, ipc->cluster_cfg[hartid].irq,
-+				       mchp_ipc_cluster_aggr_isr, IRQF_SHARED,
-+				       "miv-ihc-irq", ipc);
-+		if (ret)
-+			return ret;
-+
-+		ipc->cluster_cfg[hartid].buf_base = dmam_alloc_coherent(ipc->dev,
-+									sizeof(struct mchp_ipc_status),
-+									&ipc->cluster_cfg[hartid].dma_addr,
-+									GFP_KERNEL);
-+
-+		if (!ipc->cluster_cfg[hartid].buf_base)
-+			return -ENOMEM;
-+
-+		irq_found = true;
-+	}
-+
-+	return irq_found;
-+}
-+
-+static int mchp_ipc_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+	const struct mchp_ipc_msg *msg = data;
-+	struct mchp_ipc_sbi_msg sbi_payload;
-+
-+	memcpy(chan_info->msg_buf_tx, msg->buf, msg->size);
-+	sbi_payload.buf_addr = chan_info->msg_buf_dma_tx;
-+	sbi_payload.size = msg->size;
-+	memcpy(chan_info->buf_base_tx, &sbi_payload, sizeof(sbi_payload));
-+
-+	return mchp_ipc_sbi_chan_send(SBI_EXT_IPC_SEND, chan_info->id, chan_info->dma_addr_tx);
-+}
-+
-+static int mchp_ipc_startup(struct mbox_chan *chan)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+	struct microchip_ipc *ipc = to_mchp_ipc_mbox(chan->mbox);
-+	struct mchp_ipc_init ch_init_msg;
-+	int ret;
-+
-+	chan_info->buf_base_tx = dma_alloc_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+						    &chan_info->dma_addr_tx, GFP_KERNEL);
-+	if (!chan_info->buf_base_tx) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	chan_info->buf_base_rx = dma_alloc_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+						    &chan_info->dma_addr_rx, GFP_KERNEL);
-+	if (!chan_info->buf_base_rx) {
-+		ret = -ENOMEM;
-+		goto fail_free_buf_base_tx;
-+	}
-+
-+	ret = mchp_ipc_sbi_chan_send(SBI_EXT_IPC_CH_INIT, chan_info->id, chan_info->dma_addr_tx);
-+	if (ret < 0) {
-+		dev_err(ipc->dev, "channel %u init failed\n", chan_info->id);
-+		goto fail_free_buf_base_rx;
-+	}
-+
-+	memcpy(&ch_init_msg, chan_info->buf_base_tx, sizeof(struct mchp_ipc_init));
-+	chan_info->max_msg_size = ch_init_msg.max_msg_size;
-+
-+	chan_info->msg_buf_tx = dma_alloc_coherent(ipc->dev, chan_info->max_msg_size,
-+						   &chan_info->msg_buf_dma_tx, GFP_KERNEL);
-+	if (!chan_info->msg_buf_tx) {
-+		ret = -ENOMEM;
-+		goto fail_free_buf_base_rx;
-+	}
-+
-+	chan_info->msg_buf_rx = dma_alloc_coherent(ipc->dev, chan_info->max_msg_size,
-+						   &chan_info->msg_buf_dma_rx, GFP_KERNEL);
-+	if (!chan_info->msg_buf_rx) {
-+		ret = -ENOMEM;
-+		goto fail_free_buf_msg_tx;
-+	}
-+
-+	switch (ipc->hw_type) {
-+	case MIV_IHC:
-+		return 0;
-+	default:
-+		goto fail_free_buf_msg_rx;
-+	}
-+
-+	if (ret) {
-+		dev_err(ipc->dev, "failed to register interrupt(s)\n");
-+		goto fail_free_buf_msg_rx;
-+	}
-+
-+	return ret;
-+
-+fail_free_buf_msg_rx:
-+	dma_free_coherent(ipc->dev, chan_info->max_msg_size,
-+			  chan_info->msg_buf_rx, chan_info->msg_buf_dma_rx);
-+fail_free_buf_msg_tx:
-+	dma_free_coherent(ipc->dev, chan_info->max_msg_size,
-+			  chan_info->msg_buf_tx, chan_info->msg_buf_dma_tx);
-+fail_free_buf_base_rx:
-+	dma_free_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+			  chan_info->buf_base_rx, chan_info->dma_addr_rx);
-+fail_free_buf_base_tx:
-+	dma_free_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+			  chan_info->buf_base_tx, chan_info->dma_addr_tx);
-+fail:
-+	return ret;
-+}
-+
-+static void mchp_ipc_shutdown(struct mbox_chan *chan)
-+{
-+	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-+	struct microchip_ipc *ipc = to_mchp_ipc_mbox(chan->mbox);
-+
-+	dma_free_coherent(ipc->dev, chan_info->max_msg_size,
-+			  chan_info->msg_buf_tx, chan_info->msg_buf_dma_tx);
-+
-+	dma_free_coherent(ipc->dev, chan_info->max_msg_size,
-+			  chan_info->msg_buf_rx, chan_info->msg_buf_dma_rx);
-+
-+	dma_free_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+			  chan_info->buf_base_tx, chan_info->dma_addr_tx);
-+
-+	dma_free_coherent(ipc->dev, sizeof(struct mchp_ipc_sbi_msg),
-+			  chan_info->buf_base_rx, chan_info->dma_addr_rx);
-+}
-+
-+static const struct mbox_chan_ops mchp_ipc_ops = {
-+	.startup = mchp_ipc_startup,
-+	.send_data = mchp_ipc_send_data,
-+	.shutdown = mchp_ipc_shutdown,
-+};
-+
-+static struct mbox_chan *mchp_ipc_mbox_xlate(struct mbox_controller *controller,
-+					     const struct of_phandle_args *spec)
-+{
-+	struct microchip_ipc *ipc = to_mchp_ipc_mbox(controller);
-+	unsigned int chan_id = spec->args[0];
-+
-+	if (chan_id >= ipc->num_channels) {
-+		dev_err(ipc->dev, "invalid channel id %d\n", chan_id);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return &ipc->chans[chan_id];
-+}
-+
-+static const struct of_device_id mchp_ipc_of_match[] = {
-+	{.compatible = "microchip,sbi-ipc", },
-+	{}
-+};
-+
-+static int mchp_ipc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mchp_ipc_probe ipc_info;
-+	struct microchip_ipc *ipc;
-+	struct ipc_chan_info *priv;
-+	bool irq_avail = false;
-+	int ret;
++	struct rproc *rproc;
++	struct mbox_chan *mbox_channel;
++	struct workqueue_struct *workqueue;
++	struct mbox_client mbox_client;
++	struct completion start_done;
++	struct work_struct rproc_work;
++	struct mchp_ipc_msg message;
++	void __iomem *rsc_table;
++	bool initialized;
 +	u32 chan_id;
++};
 +
-+	ret = sbi_probe_extension(SBI_EXT_MICROCHIP_TECHNOLOGY);
-+	if (ret <= 0)
-+		return dev_err_probe(dev, ret, "Microchip SBI extension not detected\n");
++static int mchp_ipc_rproc_start(struct rproc *rproc)
++{
++	struct mchp_ipc_rproc *priv = rproc->priv;
++	struct device_node *np = priv->dev->of_node;
++	struct sbiret ret;
++	int result;
 +
-+	ipc = devm_kzalloc(dev, sizeof(*ipc), GFP_KERNEL);
-+	if (!ipc)
-+		return -ENOMEM;
++	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_START,
++			priv->chan_id, rproc->bootaddr, 0, 0, 0, 0);
 +
-+	platform_set_drvdata(pdev, ipc);
++	if (ret.error)
++		return sbi_err_map_linux_errno(ret.error);
 +
-+	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(IPC_DMA_BIT_MASK));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "dma_set_mask_and_coherent failed\n");
++	result = wait_for_completion_timeout(&priv->start_done,
++					     msecs_to_jiffies(5000));
 +
-+	ipc->buf_base = dmam_alloc_coherent(dev, sizeof(u32), &ipc->dma_addr, GFP_KERNEL);
-+
-+	if (!ipc->buf_base)
-+		return -ENOMEM;
-+
-+	ret = mchp_ipc_sbi_send(SBI_EXT_IPC_PROBE, ipc->dma_addr);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "could not probe IPC SBI service\n");
-+
-+	memcpy(&ipc_info, ipc->buf_base, sizeof(struct mchp_ipc_probe));
-+	ipc->num_channels = ipc_info.num_channels;
-+	ipc->hw_type = ipc_info.hw_type;
-+
-+	ipc->chans = devm_kcalloc(dev, ipc->num_channels, sizeof(*ipc->chans), GFP_KERNEL);
-+	if (!ipc->chans)
-+		return -ENOMEM;
-+
-+	ipc->dev = dev;
-+	ipc->controller.txdone_irq = true;
-+	ipc->controller.dev = ipc->dev;
-+	ipc->controller.ops = &mchp_ipc_ops;
-+	ipc->controller.chans = ipc->chans;
-+	ipc->controller.num_chans = ipc->num_channels;
-+	ipc->controller.of_xlate = mchp_ipc_mbox_xlate;
-+
-+	for (chan_id = 0; chan_id < ipc->num_channels; chan_id++) {
-+		priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-+		if (!priv)
-+			return -ENOMEM;
-+
-+		ipc->chans[chan_id].con_priv = priv;
-+		priv->id = chan_id;
++	if (!of_property_present(np, "microchip,skip-start-wait") && result == 0) {
++		dev_err(priv->dev, "timeout waiting for ready notification\n");
++		return -ETIMEDOUT;
 +	}
-+
-+	if (ipc->hw_type == MIV_IHC) {
-+		ipc->cluster_cfg = devm_kcalloc(dev, num_online_cpus(),
-+						sizeof(struct mchp_ipc_cluster_cfg),
-+						GFP_KERNEL);
-+		if (!ipc->cluster_cfg)
-+			return -ENOMEM;
-+
-+		if (mchp_ipc_get_cluster_aggr_irq(ipc))
-+			irq_avail = true;
-+	}
-+
-+	if (!irq_avail)
-+		return dev_err_probe(dev, -ENODEV, "missing interrupt property\n");
-+
-+	ret = devm_mbox_controller_register(dev, &ipc->controller);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+					 "Inter-Processor communication (IPC) registration failed\n");
 +
 +	return 0;
 +}
 +
-+MODULE_DEVICE_TABLE(of, mchp_ipc_of_match);
++static int mchp_ipc_rproc_stop(struct rproc *rproc)
++{
++	struct mchp_ipc_rproc *priv = rproc->priv;
++	struct sbiret ret;
 +
-+static struct platform_driver mchp_ipc_driver = {
-+	.driver = {
-+		.name = "microchip_ipc",
-+		.of_match_table = of_match_ptr(mchp_ipc_of_match),
-+	},
-+	.probe = mchp_ipc_probe,
++	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STOP,
++			priv->chan_id, MCHP_IPC_RPROC_MBOX_STOP, 0, 0, 0, 0);
++
++	if (ret.error)
++		return sbi_err_map_linux_errno(ret.error);
++
++	return ret.value;
++}
++
++static int mchp_ipc_rproc_mem_alloc(struct rproc *rproc, struct rproc_mem_entry *mem)
++{
++	struct device *dev = rproc->dev.parent;
++	void *va;
++
++	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
++	va = ioremap_wc(mem->dma, mem->len);
++	if (IS_ERR_OR_NULL(va)) {
++		dev_err(dev, "Unable to map memory region: %p+%zx\n",
++			&mem->dma, mem->len);
++		return -ENOMEM;
++	}
++
++	mem->va = va;
++
++	return 0;
++}
++
++static int mchp_ipc_rproc_mem_release(struct rproc *rproc,
++				      struct rproc_mem_entry *mem)
++{
++	dev_dbg(rproc->dev.parent, "unmap memory: %pad\n", &mem->dma);
++	iounmap(mem->va);
++
++	return 0;
++}
++
++static int mchp_ipc_rproc_prepare(struct rproc *rproc)
++{
++	struct mchp_ipc_rproc *priv = rproc->priv;
++	struct device_node *np = priv->dev->of_node;
++	struct rproc_mem_entry *mem;
++	struct reserved_mem *rmem;
++	struct of_phandle_iterator it;
++	u64 device_address;
++
++	reinit_completion(&priv->start_done);
++
++	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
++	while (of_phandle_iterator_next(&it) == 0) {
++		/*
++		 * Ignore the first memory region which will be used vdev
++		 * buffer. No need to do extra handlings, rproc_add_virtio_dev
++		 * will handle it.
++		 */
++		if (!strcmp(it.node->name, "vdev0buffer"))
++			continue;
++
++		if (!strcmp(it.node->name, "rsc-table"))
++			continue;
++
++		rmem = of_reserved_mem_lookup(it.node);
++		if (!rmem) {
++			of_node_put(it.node);
++			dev_err(priv->dev, "unable to acquire memory-region\n");
++			return -EINVAL;
++		}
++
++		device_address = rmem->base;
++
++		mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)rmem->base,
++					   rmem->size, device_address, mchp_ipc_rproc_mem_alloc,
++					   mchp_ipc_rproc_mem_release, it.node->name);
++
++		if (!mem) {
++			of_node_put(it.node);
++			return -ENOMEM;
++		}
++
++		rproc_add_carveout(rproc, mem);
++	}
++
++	return 0;
++}
++
++static int mchp_ipc_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	int ret;
++
++	ret = rproc_elf_load_rsc_table(rproc, fw);
++	if (ret)
++		dev_info(&rproc->dev, "No resource table in elf\n");
++
++	return 0;
++}
++
++static void mchp_ipc_rproc_kick(struct rproc *rproc, int vqid)
++{
++	struct mchp_ipc_rproc *priv = (struct mchp_ipc_rproc *)rproc->priv;
++	struct mchp_ipc_msg msg;
++	int ret;
++
++	msg.buf = (void *)&vqid;
++	msg.size = sizeof(vqid);
++
++	ret = mbox_send_message(priv->mbox_channel, (void *)&msg);
++	if (ret < 0)
++		dev_err(priv->dev,
++			"failed to send mbox message, status = %d\n", ret);
++}
++
++static int mchp_ipc_rproc_attach(struct rproc *rproc)
++{
++	return 0;
++}
++
++static struct resource_table
++*mchp_ipc_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
++{
++	struct mchp_ipc_rproc *priv = rproc->priv;
++
++	if (!priv->rsc_table)
++		return NULL;
++
++	*table_sz = SZ_1K;
++	return (struct resource_table *)priv->rsc_table;
++}
++
++static const struct rproc_ops mchp_ipc_rproc_ops = {
++	.prepare = mchp_ipc_rproc_prepare,
++	.start = mchp_ipc_rproc_start,
++	.get_loaded_rsc_table = mchp_ipc_rproc_get_loaded_rsc_table,
++	.attach = mchp_ipc_rproc_attach,
++	.stop = mchp_ipc_rproc_stop,
++	.kick = mchp_ipc_rproc_kick,
++	.load = rproc_elf_load_segments,
++	.parse_fw = mchp_ipc_rproc_parse_fw,
++	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
++	.sanity_check = rproc_elf_sanity_check,
++	.get_boot_addr = rproc_elf_get_boot_addr,
 +};
 +
-+module_platform_driver(mchp_ipc_driver);
++static int mchp_ipc_rproc_addr_init(struct mchp_ipc_rproc *priv,
++				    struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	int i, err, rmem_np;
++
++	rmem_np = of_count_phandle_with_args(np, "memory-region", NULL);
++	if (rmem_np <= 0)
++		return 0;
++
++	for (i = 0; i < rmem_np; i++) {
++		struct device_node *node;
++		struct resource res;
++
++		node = of_parse_phandle(np, "memory-region", i);
++		if (!node)
++			continue;
++
++		if (!strncmp(node->name, "vdev", strlen("vdev"))) {
++			of_node_put(node);
++			continue;
++		}
++
++		if (!strcmp(node->name, "rsc-table")) {
++			err = of_address_to_resource(node, 0, &res);
++			if (err) {
++				of_node_put(node);
++				return dev_err_probe(dev, err,
++						     "unable to resolve memory region\n");
++			}
++			priv->rsc_table = devm_ioremap(&pdev->dev,
++						       res.start, resource_size(&res));
++			of_node_put(node);
++		}
++	}
++
++	return 0;
++}
++
++static void mchp_ipc_rproc_vq_work(struct work_struct *work)
++{
++	struct mchp_ipc_rproc *priv = container_of(work, struct mchp_ipc_rproc, rproc_work);
++	struct device *dev = priv->rproc->dev.parent;
++
++	u32 msg = priv->message.buf[0];
++
++	/*
++	 * Currently, we are expected to receive the following messages
++	 * from the remote cluster: a ready message or receive the index
++	 * of the triggered virtqueue as a payload.
++	 * We can silently ignore any other type of mailbox messages since
++	 * they are not meant for us and are meant to be received by the
++	 * remote cluster only.
++	 */
++	switch (msg) {
++	case MCHP_IPC_RPROC_MBOX_READY:
++		complete(&priv->start_done);
++		break;
++	default:
++		if (msg >= MCHP_IPC_RPROC_MBOX_READY && msg < MCHP_IPC_RPROC_MBOX_END_MSG)
++			return;
++		if (msg > priv->rproc->max_notifyid) {
++			dev_info(dev, "dropping unknown message 0x%x", msg);
++			return;
++		}
++		/* msg contains the index of the triggered vring */
++		if (rproc_vq_interrupt(priv->rproc, msg) == IRQ_NONE)
++			dev_dbg(dev, "no message was found in vqid %d\n", msg);
++	}
++}
++
++static void mchp_ipc_rproc_rx_callback(struct mbox_client *mbox_client, void *msg)
++{
++	struct rproc *rproc = dev_get_drvdata(mbox_client->dev);
++	struct mchp_ipc_rproc *priv = rproc->priv;
++
++	priv->message = *(struct mchp_ipc_msg *)msg;
++	queue_work(priv->workqueue, &priv->rproc_work);
++}
++
++static int mchp_ipc_rproc_mbox_init(struct rproc *rproc)
++{
++	struct mchp_ipc_rproc *priv = rproc->priv;
++	struct device *dev = priv->dev;
++	struct mbox_client *mbox_client;
++
++	mbox_client = &priv->mbox_client;
++	mbox_client->dev = dev;
++	mbox_client->tx_block = true;
++	mbox_client->tx_tout = 100;
++	mbox_client->knows_txdone = false;
++	mbox_client->rx_callback = mchp_ipc_rproc_rx_callback;
++
++	priv->mbox_channel = mbox_request_channel(mbox_client, 0);
++	if (IS_ERR(priv->mbox_channel))
++		return dev_err_probe(mbox_client->dev,
++				     PTR_ERR(priv->mbox_channel),
++				     "failed to request mailbox channel\n");
++
++	priv->chan_id = mchp_ipc_get_chan_id(priv->mbox_channel);
++
++	return 0;
++}
++
++static int mchp_ipc_rproc_get_state(u32 chan)
++{
++	struct sbiret ret;
++
++	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STATE,
++			chan, 0, 0, 0, 0, 0);
++
++	if (ret.error)
++		return sbi_err_map_linux_errno(ret.error);
++
++	return ret.value;
++}
++
++static int mchp_ipc_rproc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct mchp_ipc_rproc *priv;
++	struct rproc *rproc;
++	int ret;
++
++	rproc = devm_rproc_alloc(dev, np->name, &mchp_ipc_rproc_ops,
++				 NULL, sizeof(*priv));
++	if (!rproc)
++		return -ENOMEM;
++
++	priv = rproc->priv;
++	priv->rproc = rproc;
++	priv->dev = dev;
++
++	priv->workqueue = create_workqueue(dev_name(dev));
++	if (!priv->workqueue)
++		return dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
++
++	INIT_WORK(&priv->rproc_work, mchp_ipc_rproc_vq_work);
++	init_completion(&priv->start_done);
++
++	ret = mchp_ipc_rproc_mbox_init(rproc);
++	if (ret)
++		goto err_put_wkq;
++
++	ret = mchp_ipc_rproc_addr_init(priv, pdev);
++	if (ret)
++		goto err_put_mbox;
++
++	/*
++	 * Check if the remote cluster has been booted by another entity
++	 * (i.e. bootloader) and set rproc state accordingly
++	 */
++	rproc->state = mchp_ipc_rproc_get_state(priv->chan_id);
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "Couldn't get cluster boot mode\n");
++		goto err_put_mbox;
++	}
++
++	if (rproc->state != RPROC_DETACHED)
++		rproc->auto_boot = of_property_present(np, "microchip,auto-boot");
++
++	/* error recovery is not supported at present */
++	rproc->recovery_disabled = true;
++
++	dev_set_drvdata(dev, rproc);
++
++	ret = devm_rproc_add(dev, rproc);
++	if (ret) {
++		dev_err_probe(dev, ret, "rproc_add failed\n");
++		goto err_put_mbox;
++	}
++
++	return 0;
++
++err_put_mbox:
++	mbox_free_channel(priv->mbox_channel);
++err_put_wkq:
++	destroy_workqueue(priv->workqueue);
++
++	return ret;
++}
++
++static void mchp_ipc_rproc_remove(struct platform_device *pdev)
++{
++	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct mchp_ipc_rproc *priv = rproc->priv;
++
++	mbox_free_channel(priv->mbox_channel);
++	destroy_workqueue(priv->workqueue);
++}
++
++static const struct of_device_id mchp_ipc_rproc_of_match[] __maybe_unused = {
++	{ .compatible = "microchip,ipc-remoteproc", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, mchp_ipc_rproc_of_match);
++
++static struct platform_driver mchp_ipc_rproc_driver = {
++	.probe = mchp_ipc_rproc_probe,
++	.remove_new = mchp_ipc_rproc_remove,
++	.driver = {
++		.name = "microchip-ipc-rproc",
++		.of_match_table = of_match_ptr(mchp_ipc_rproc_of_match),
++	},
++};
++
++module_platform_driver(mchp_ipc_rproc_driver);
 +
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Valentina Fernandez <valentina.fernandezalanis@microchip.com>");
-+MODULE_DESCRIPTION("Microchip Inter-Processor Communication (IPC) driver");
-diff --git a/include/linux/mailbox/mchp-ipc.h b/include/linux/mailbox/mchp-ipc.h
-new file mode 100644
-index 000000000000..69352bcb1402
---- /dev/null
-+++ b/include/linux/mailbox/mchp-ipc.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *Copyright (c) 2024 Microchip Technology Inc. All rights reserved.
-+ */
-+
-+#ifndef _LINUX_MCHP_IPC_H_
-+#define _LINUX_MCHP_IPC_H_
-+
-+#include <linux/mailbox_controller.h>
-+#include <linux/types.h>
-+
-+struct mchp_ipc_msg {
-+	u32 *buf;
-+	u16 size;
-+};
-+
-+#if IS_ENABLED(CONFIG_MCHP_SBI_IPC_MBOX)
-+u32 mchp_ipc_get_chan_id(struct mbox_chan *chan);
-+#else
-+u32 mchp_ipc_get_chan_id(struct mbox_chan *chan) { return 0; }
-+#endif
-+
-+#endif /* _LINUX_MCHP_IPC_H_ */
++MODULE_DESCRIPTION("Microchip IPC Remote Processor control driver");
 -- 
 2.34.1
 
