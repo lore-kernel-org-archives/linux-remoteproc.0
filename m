@@ -1,48 +1,48 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8BB1BE23B;
-	Thu, 12 Sep 2024 16:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D291BE868;
+	Thu, 12 Sep 2024 16:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159710; cv=none; b=S8oaXf0m0ESTBhR0/ThWdypC/P7I6kK3vUaoEIZWCH1km25Hok7lod/YoxhzOycp2JsRgX+fesKkeZiHjcicpwXrHiJUDb53ae+d3oQjgblolJVpG710Xa76+MWqbvd0E9MktmKzQ/rXSqQm/2VjRxKaYbeZTQqOTiAuKtYg7m4=
+	t=1726159711; cv=none; b=LyKHn4FETQ5OphjKLRmHmsrrPO09wCC7M1w6u/z4QNUlyGZY7WNwUfRxrBmTrQO5OoToR6VLbzaOkrUZGTMpTmkYw9GOPtoTM8u3HhawpoMUbRR7YLt05lmWcYo5ZTkUbPUJ8POTrGjti1BFjHL+XTtnQrJV8qrGrBfrQFEP42Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159710; c=relaxed/simple;
-	bh=p6ecNLRCNl8ZScR0QmZtUArOMDDADkweuv7R/dv0qE4=;
+	s=arc-20240116; t=1726159711; c=relaxed/simple;
+	bh=x3u05EVznPAGnkceHj/1/uplFGC0eCJkpbZwedr6SL4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGs3xIP6ufT2DH2fWr1IH8q1sC/w3kPtJnU5ZmEt7C9PiJNiu44gOL/+BIQpuBXyKUUnrmJsv6toB4dUEzYicA5mLjhyZfSrHhUHSt4CYa84SvARU/Bmocv9EHHdh4+pZXUyClZqcGKkaGPuIbElP/VgqQChX5suNjamH8AsxdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XCacdqqK; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=TqVHLZ8Wwe6pwbL1+A+C55pOAHnz0KXXmGRaDZ0D2Jw8D3dVB/j2XE84FstNX+fpfM39DP/hoGWcWCuQZr6sJdGwNpQq17upe4YfrAriY7nwGLVEjVaJtrsLJMv59I8JKtCUJ3LBmDIZvH5fBI/Q9TPeHIP+Vsd/1w9z1JLC2to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bq+k0W97; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XCacdqqK"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bq+k0W97"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726159708; x=1757695708;
+  t=1726159709; x=1757695709;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=p6ecNLRCNl8ZScR0QmZtUArOMDDADkweuv7R/dv0qE4=;
-  b=XCacdqqKhM1aILsbi7Y9s9mW2G0i9l2jLD0UCab6uq9w9JQXYqR4wzyC
-   hT6CN8w9wRStdTt3PIHGcItlmSqCjVtgyIkwPdMDzKrySz0CkpSQzNb17
-   fIadmvqlAbmciX97yzMiHq7wqYp//yOUzRDE4QdcE+sgszotCXj1EDIq6
-   gCOndITyJx7gxd2sGtaFrrol+//HqmGj18yXkClFsM0sJRZ3EB5lZJQy2
-   wKlvHJfW2oorQHzuQYgujL1Kn/R5fq47jBKyVMYNL2h04ZNIck298yx0D
-   oGJB0XRStsbLgJpVgB+Z7DUeyDEqqwjjyAxkNrHdXSGEQ2/pGSr+JGvxI
+  bh=x3u05EVznPAGnkceHj/1/uplFGC0eCJkpbZwedr6SL4=;
+  b=bq+k0W974ddd8+u0W7yozfYmov/c80cRkOH7BNNKczmRebwToj1YnDTb
+   Is6Sf5wilrCoasZfh4xO6QvpCTWN6f00ItVEkwA9EVgrz1t1prmpd+3zt
+   Ln8RV+3DgctLlKjNBktackS0jLd/Cl/K8VkucQ/qRSo0t0bg8YkMSVk7M
+   FEC5iWCnTq2iP/f1S/XPkbtFnKHZE0dG7PxlGFkkQ9ktvyYI1wXWF3O/p
+   9DsmiAfDGPKHi55r9a/moxpMfdxQ76NORxN6W+Co9Q0+AlFEZXBchHnCK
+   DmGlYurgHXjPaV3+nlOWg2QcTbK8qKVsvVgY++Uffdsl2X/H38dAacY7c
    Q==;
 X-CSE-ConnectionGUID: DQLE4LE3SvKX/JE8rC2tCg==
-X-CSE-MsgGUID: 0fRRQu/LQvGxmgv7mbYjtg==
+X-CSE-MsgGUID: nDwqZKPbQEawD14eamXSww==
 X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="32331228"
+   d="scan'208";a="32331231"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 09:48:25 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 09:48:26 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 09:47:50 -0700
+ 15.1.2507.35; Thu, 12 Sep 2024 09:47:57 -0700
 Received: from valentina.microchip.com (10.10.85.11) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 09:47:47 -0700
+ 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 09:47:54 -0700
 From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
 	<peterlin@andestech.com>, <dminus@andestech.com>,
@@ -52,9 +52,9 @@ To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
 	<valentina.fernandezalanis@microchip.com>
 CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH v1 2/5] dt-bindings: mailbox: add binding for Microchip IPC mailbox driver
-Date: Thu, 12 Sep 2024 18:00:22 +0100
-Message-ID: <20240912170025.455167-3-valentina.fernandezalanis@microchip.com>
+Subject: [PATCH v1 4/5] dt-bindings: remoteproc: add binding for Microchip IPC remoteproc
+Date: Thu, 12 Sep 2024 18:00:24 +0100
+Message-ID: <20240912170025.455167-5-valentina.fernandezalanis@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
 References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
@@ -64,139 +64,111 @@ List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Add a dt-binding for the Microchip Inter-Processor Communication (IPC)
-mailbox controller.
+Microchip family of RISC-V SoCs typically has or more clusters. These
+clusters can be configured to run in Asymmetric Multi Processing (AMP)
+mode.
+
+Add a dt-binding for the Microchip IPC Remoteproc platform driver.
 
 Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 ---
- .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+ .../remoteproc/microchip,ipc-remoteproc.yaml  | 84 +++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
 
-diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
 new file mode 100644
-index 000000000000..dc2cbd5eb28f
+index 000000000000..1765c68d22cf
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-@@ -0,0 +1,115 @@
++++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
+@@ -0,0 +1,84 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
++$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-remoteproc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Microchip Inter-processor communication (IPC) mailbox controller
++title: Microchip IPC Remote Processor
++
++description:
++  Microchip family of RISC-V SoCs typically have one or more
++  clusters. These clusters can be configured to run in an Asymmetric
++  Multi Processing (AMP) mode where clusters are split in independent
++  software contexts.
++
++  This document defines the binding for the remoteproc component that
++  loads and boots firmwares on remote clusters.
++
++  This SBI interface is compatible with the Mi-V Inter-hart
++  Communication (IHC) IP.
 +
 +maintainers:
 +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 +
-+description:
-+  The Microchip Inter-processor Communication (IPC) facilitates
-+  message passing between processors using an interrupt signaling
-+  mechanism.
-+  This SBI interface is compatible with the Mi-V Inter-hart
-+  Communication (IHC) IP.
-+  The microchip,sbi-ipc compatible string is inteded for use by software
-+  running in supervisor privileged mode (s-mode). The SoC-specific
-+  compatibles are inteded for use by the SBI implementation in machine
-+  mode (m-mode).
-+
 +properties:
 +  compatible:
-+    enum:
-+      - microchip,sbi-ipc
-+      - microchip,miv-ihc-rtl-v2
++    const: microchip,ipc-remoteproc
 +
-+  reg:
++  mboxes:
++    description:
++      This property is required only if the rpmsg/virtio functionality is used.
++      Microchip IPC mailbox specifier. To be used for communication with a
++      remote cluster. The specifier format is as per the bindings,
++      Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
 +    maxItems: 1
 +
-+  interrupts:
-+    minItems: 1
-+    maxItems: 5
-+
-+  interrupt-names:
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#mbox-cells":
++  microchip,auto-boot:
++    $ref: /schemas/types.yaml#/definitions/flag
 +    description:
-+      For the SBI "device", the cell represents the global "logical" channel IDs.
-+      The meaning of channel IDs are platform firmware dependent. The
-+      SoC-specific compatibles are intended for use by the SBI implementation,
-+      rather than s-mode software. There the cell would represent the physical
-+      channel and do not vary depending on platform firmware.
-+    const: 1
++      If defined, when remoteproc is probed, it loads the default firmware and
++      starts the remote processor.
 +
-+  microchip,ihc-chan-disabled-mask:
++  microchip,skip-ready-wait:
++    $ref: /schemas/types.yaml#/definitions/flag
 +    description:
-+      Represents the enable/disable state of the bi-directional IHC channels
-+      within the MIV-IHC IP configuration. The mask is a 16-bit value, but only
-+      the first 15 bits are utilized.Each of the bits corresponds to
-+      one of the 15 IHC channels.
-+      A bit set to '1' indicates that the corresponding channel is disabled,
-+      and any read or write operations to that channel will return zero.
-+      A bit set to '0' indicates that the corresponding channel is enabled
-+      and will be accessible through its dedicated address range registers.
-+      The remaining bit of the 16-bit mask is reserved and should be ignored.
-+      The actual enable/disable state of each channel is determined by the
-+      IP block’s configuration.
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    default: 0
++      If defined, the master processor will not expect a ready signal from the
++      remote processor indicating it has booted successfully. This allows the
++      master processor to proceed with its operations without waiting for
++      confirmation from the remote processor.
++
++  memory-region:
++    description:
++      If present, a phandle for a reserved memory area that used for vdev buffer,
++      resource table, vring region and others used by remote cluster.
 +
 +required:
 +  - compatible
-+  - interrupts
-+  - interrupt-names
-+  - "#mbox-cells"
 +
 +additionalProperties: false
 +
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: microchip,sbi-ipc
-+    then:
-+      properties:
-+        reg: false
-+    else:
-+      required:
-+        - reg
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: microchip,miv-ihc-rtl-v2
-+    then:
-+      properties:
-+        interrupt-names:
-+          items:
-+            pattern: "^hart-[0-5]+$"
-+
 +examples:
 +  - |
-+    mailbox {
-+      compatible = "microchip,sbi-ipc";
-+      interrupt-parent = <&plic>;
-+      interrupts = <180>, <179>, <178>;
-+      interrupt-names = "hart-1", "hart-2", "hart-3";
-+      #mbox-cells = <1>;
++
++    reserved-memory {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        contextb: contextb_reserved@81000000 {
++          reg = <0x81000000 0x400000>;
++          no-map;
++        };
 +    };
-+  - |
-+    mailbox@50000000 {
-+      compatible = "microchip,miv-ihc-rtl-v2";
-+      microchip,ihc-chan-disabled-mask=  /bits/ 16 <0>;
-+      reg = <0x50000000 0x1C000>;
-+      interrupt-parent = <&plic>;
-+      interrupts = <180>, <179>, <178>;
-+      interrupt-names = "hart-1", "hart-2", "hart-3";
-+      #mbox-cells = <1>;
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      rproc-contextb {
++          compatible = "microchip,ipc-remoteproc";
++          memory-region = <&contextb>;
++          mboxes= <&ihc 8>;
++      };
 +    };
++
++...
 -- 
 2.34.1
 
