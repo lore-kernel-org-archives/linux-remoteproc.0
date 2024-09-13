@@ -1,59 +1,52 @@
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F9714036E
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Sep 2024 21:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C842613D89D
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Sep 2024 08:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726176648; cv=none; b=WmyeF5dkJe5NaFGxy1PucImVpnVAST05J0I9yGC0yUwVM1jusfge6tqM6z8LTJYdxEu9WYeWMz9+ubRCHh8mJWTHi96iKarLJnbmeJ0X+KR4rZPNie1f7XM7DQJnr2k5nM/apM8PLX7nslDDENyy7GRtKBLgjR4gGYDm78k8qoQ=
+	t=1726215047; cv=none; b=PgMwilqjfdoYd6Fe9j3kXJVBxN6DZ2d+vBAmk6DXtt/xpwVYD9xo9f+IuNpxCfKeQkPoiN629FYN+YDySqOMbc73viy01L/Ee00Jeco30aBD/MU1pSv2RsWXXSfk8rMasQCu51eOU0Or8OaX8mOikbIdN4L8jExIRpPVk3sntro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726176648; c=relaxed/simple;
-	bh=NUdUDtfXmxz6bqwrgpk0iyWOFljyOADqSJxLAc8iOxM=;
+	s=arc-20240116; t=1726215047; c=relaxed/simple;
+	bh=bm0JrAOh22eMu3dJ7cStSs9X0hitNAj/hOSXsbUVBd0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGy0uaI7dsDOpgJ4GR9rcFxGbGkMPKjL2bwiqibhQD/2g0wBlqbNkqutjNV94JXfcK8mSrDKjqJ42dUQKhPZbQqqJ5P/Quoej98Zx7CbjI0FFTN/gQkq/zMZrQOdxKK0/Bp+CoqVfbfIiEusfu8lweXhYkwVId3HMyn/AWuQjBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=CYjH+b/B; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	 In-Reply-To:Content-Type; b=YFKk0ULl+8nfd3Jmpc6GB+l0HX8Rtz44CEQPT4csgNAEYi6A/r+1snOdv2NXTBLVXngJoeGTwfRa7GH+zsAAh7xGZAw4YaiuzfzhJZLqRaHUpAMq+ukePbzX5jQsqvcwxXstEIXbYKjZcsOOdFh4H8dearQuDa1xQZHxhg2OlTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=YBSvwQun; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="CYjH+b/B"
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-82d07f32eeaso13209039f.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Sep 2024 14:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1726176646; x=1726781446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UtIMN8hjt+eHm8/8igTe0EDjoiHpYlyPflzpSE1/b8c=;
-        b=CYjH+b/B6JMik1bkkgUTlRIj91ZnhU8kiPpmLS+LwcfsBexBcjhxjGXoXyZL1Q1fka
-         eCJkzB+Iynuaz9+9plIwHiNOAX6BUAeInhfVw7p/j50ZAWi1Wep23+UtYnETNvPKsQ0x
-         DW5FtSSMJGraRXwcyC+v5+dCE4oVtitKnU9EibMcQR6NNhzHUFYMNBQRhMnD3St+nIq5
-         oAk1gZAH7FGthu+rh87icbTRb7F3bqTlMWaMjBopOkyZ6v2o1r+ljKFGZZcs7OyK0D64
-         GIVsgjUml2sI1G3uM8K2u0sF8URSeejvoenXmRdZnWib6Ji9OXzBvP7FQS1bywpJpq5J
-         eiXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726176646; x=1726781446;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UtIMN8hjt+eHm8/8igTe0EDjoiHpYlyPflzpSE1/b8c=;
-        b=F4B647vud0ihbL8KM+0ukvp8r1r8YvZ3bTxoSjFq9VCcLA08gJ5uMqr4WRE+RCycZQ
-         koiSn29kBwkSjuzYXsTD5Tuo988VTLPCEZ9HQukpELoxrOnXXOYnu/JHjvoeaRGZJgEC
-         /GC6ghiAqLa3Xe0qsIQctot3zDKrrFlG6Mn6Yw1UjoG2icAS8A3WyYet6XLmQpznC0LW
-         V5cxCpmmQSY52qqphSEybcvsoLQhKRMJ9kyBUhmek4WimqJ1HqgkXC92Q92lIMsvuIhP
-         f0gJ0DckQuNF/ko9XS3oEh/iL5/Wu58RoqmDbYMOEI90hawidIKFjVZgKc90HUa4CR4A
-         SzUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLB3WMvWcUcE3FTwQs2srYw67uZ9nx7ilnlv400Q0Cq5nnred+1eVPqEGPwt4CDn6Id/50wtfJkQjVjZT1i213@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH6b73KWQWdtCaOQfCsllNcl4393fD8Jvo94HoI2SBV9xeGE60
-	Gjdyw2ec1GSX57/A9DVMxMRTqL0QBmTs5p/XG4cOar/wvVLYaXQHyQoCeY6vtCk=
-X-Google-Smtp-Source: AGHT+IF0Dj116Hozge8v197MDvYjeTxK3MKp0aY5RS13PAtZvlLU8oqWjlPSuwRMds/rwKfYKaJo8g==
-X-Received: by 2002:a05:6602:15ca:b0:82d:d07:daaa with SMTP id ca18e2360f4ac-82d376b01c6mr102431939f.4.1726176646337;
-        Thu, 12 Sep 2024 14:30:46 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f8dac37sm807546173.133.2024.09.12.14.30.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 14:30:45 -0700 (PDT)
-Message-ID: <22dd1d53-9ac5-4672-ad68-e82499038283@sifive.com>
-Date: Thu, 12 Sep 2024 16:30:43 -0500
+	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="YBSvwQun"
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id p1G0sjInTVpzpp1O9s5zd8; Fri, 13 Sep 2024 08:10:45 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id p1O8sIwMFks1Pp1O8sbegj; Fri, 13 Sep 2024 08:10:44 +0000
+X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=66e3f384
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=9OA2k-xDzDUK-BUy8SkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1G59LJMSYivR08X+18CcLBybb5tZQUn1LSKdgrtgB30=; b=YBSvwQunKc8b9LdviI/QHVj+1t
+	X5fVKu0Ox2tyTnevFtmhS0YDWNy1EioVVaJ0mtpfxlhcU7RkOMTKzcB6N/X80qMZxAPLHD5O2vQt7
+	LYs9OB42/E40q0iCdZZeH/g2LBWWDdVYC7p5NC236pfEky/z+v57lQCUa0bjOp6XuFgo6JrWqVams
+	yIyd0GSgHv6Hrtbo4YF/svTpnR8UwrwHavQmRwyiqBS5eH17r7yESkNqLwrHdktpr6cGuFQF2R9PU
+	j/lKJ0HnIFCMoE1TrKpK6BLubY6nHNfTGnL7TbgoqVF7GS0A8R900PMD/bcedfGKCZmCzBmJyw0XC
+	GXlKuCtQ==;
+Received: from [185.44.53.103] (port=32866 helo=[192.168.1.187])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sp1O7-003nYS-2g;
+	Fri, 13 Sep 2024 03:10:44 -0500
+Message-ID: <5a438394-ae88-4d72-a56e-6886d06b0a84@embeddedor.com>
+Date: Fri, 13 Sep 2024 10:10:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -61,117 +54,203 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] mailbox: add Microchip IPC support
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com,
- conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com,
- robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org,
- mathieu.poirier@linaro.org
-References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-4-valentina.fernandezalanis@microchip.com>
-From: Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrOQa2gew5yadyt3@cute>
 Content-Language: en-US
-In-Reply-To: <20240912170025.455167-4-valentina.fernandezalanis@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <ZrOQa2gew5yadyt3@cute>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.44.53.103
+X-Source-L: No
+X-Exim-ID: 1sp1O7-003nYS-2g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:32866
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 32
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfE8+yVWR4iVmrGWYB424jwbTa4JMMf6iPHBiXyCM8OMxWOcJ2fr4cl9SWtcB99N4ykyGaY7fG3B+mBuVqv345PDnwm28avEBbK7xRVtIUqiqqqnURq9U
+ XSwvklFsa9TnB76rcDWerXALNY9ecVlsyTC6S5atoKw9PwOZyAO9Pm5RJw+8ncKFRLUTC9NWi1I44jJEAn33tfhUtUC2c7Mn1yqPgMDPLS6hvascxH24GYBO
 
-Hi Valentina,
+Hi all,
 
-On 2024-09-12 12:00 PM, Valentina Fernandez wrote:
-> +static int mchp_ipc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mchp_ipc_probe ipc_info;
-> +	struct microchip_ipc *ipc;
-> +	struct ipc_chan_info *priv;
-> +	bool irq_avail = false;
-> +	int ret;
-> +	u32 chan_id;
-> +
-> +	ret = sbi_probe_extension(SBI_EXT_MICROCHIP_TECHNOLOGY);
-> +	if (ret <= 0)
-> +		return dev_err_probe(dev, ret, "Microchip SBI extension not detected\n");
-> +
-> +	ipc = devm_kzalloc(dev, sizeof(*ipc), GFP_KERNEL);
-> +	if (!ipc)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, ipc);
-> +
-> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(IPC_DMA_BIT_MASK));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "dma_set_mask_and_coherent failed\n");
-> +
-> +	ipc->buf_base = dmam_alloc_coherent(dev, sizeof(u32), &ipc->dma_addr, GFP_KERNEL);
-> +
-> +	if (!ipc->buf_base)
-> +		return -ENOMEM;
+Friendly ping: who can take this, please? 🙂
 
-One drive-by comment here: you don't need to use the DMA API to get a physical
-address for passing to the SBI interface. You can use __pa() on a kmalloc'd
-buffer, since kmalloc() returns memory from the linear map. This has the
-advantage of 1) using cacheable memory and 2) not rounding up the allocation
-size to a whole page.
+Thanks
+-Gustavo
 
-> +
-> +	ret = mchp_ipc_sbi_send(SBI_EXT_IPC_PROBE, ipc->dma_addr);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "could not probe IPC SBI service\n");
-> +
-> +	memcpy(&ipc_info, ipc->buf_base, sizeof(struct mchp_ipc_probe));
-
-Here sizeof(struct mchp_ipc_probe) > sizeof(u32), so if the DMA API wasn't
-rounding up the allocation size, this would be a buffer overflow.
-
-Regards,
-Samuel
-
-> +	ipc->num_channels = ipc_info.num_channels;
-> +	ipc->hw_type = ipc_info.hw_type;
-> +
-> +	ipc->chans = devm_kcalloc(dev, ipc->num_channels, sizeof(*ipc->chans), GFP_KERNEL);
-> +	if (!ipc->chans)
-> +		return -ENOMEM;
-> +
-> +	ipc->dev = dev;
-> +	ipc->controller.txdone_irq = true;
-> +	ipc->controller.dev = ipc->dev;
-> +	ipc->controller.ops = &mchp_ipc_ops;
-> +	ipc->controller.chans = ipc->chans;
-> +	ipc->controller.num_chans = ipc->num_channels;
-> +	ipc->controller.of_xlate = mchp_ipc_mbox_xlate;
-> +
-> +	for (chan_id = 0; chan_id < ipc->num_channels; chan_id++) {
-> +		priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +		if (!priv)
-> +			return -ENOMEM;
-> +
-> +		ipc->chans[chan_id].con_priv = priv;
-> +		priv->id = chan_id;
-> +	}
-> +
-> +	if (ipc->hw_type == MIV_IHC) {
-> +		ipc->cluster_cfg = devm_kcalloc(dev, num_online_cpus(),
-> +						sizeof(struct mchp_ipc_cluster_cfg),
-> +						GFP_KERNEL);
-> +		if (!ipc->cluster_cfg)
-> +			return -ENOMEM;
-> +
-> +		if (mchp_ipc_get_cluster_aggr_irq(ipc))
-> +			irq_avail = true;
-> +	}
-> +
-> +	if (!irq_avail)
-> +		return dev_err_probe(dev, -ENODEV, "missing interrupt property\n");
-> +
-> +	ret = devm_mbox_controller_register(dev, &ipc->controller);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +					 "Inter-Processor communication (IPC) registration failed\n");
-> +
-> +	return 0;
-> +}
-
+On 07/08/24 17:19, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of multiple other structs, we use the `__struct_group()`
+> helper to create a new tagged `struct glink_msg_hdr`. This structure
+> groups together all the members of the flexible `struct glink_msg`
+> except the flexible array.
+> 
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct glink_msg` to `struct glink_msg_hdr`.
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
+> 
+> This approach avoids having to implement `struct glink_msg_hdr` as a
+> completely separate structure, thus preventing having to maintain two
+> independent but basically identical structures, closing the door to
+> potential bugs in the future.
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure, through which we can access the flexible-array
+> member, if necessary.
+> 
+> Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
+> definition of a flexible structure where the size for the flexible-array
+> member is known at compile-time.
+> 
+> So, with these changes, fix the following warnings:
+> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++--------------
+>   1 file changed, 23 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 82d460ff4777..ed89b810f262 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -30,11 +30,16 @@
+>   #define RPM_GLINK_CID_MAX	65536
+>   
+>   struct glink_msg {
+> -	__le16 cmd;
+> -	__le16 param1;
+> -	__le32 param2;
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(glink_msg_hdr, hdr, __packed,
+> +		__le16 cmd;
+> +		__le16 param1;
+> +		__le32 param2;
+> +	);
+>   	u8 data[];
+>   } __packed;
+> +static_assert(offsetof(struct glink_msg, data) == sizeof(struct glink_msg_hdr),
+> +	      "struct member likely outside of __struct_group()");
+>   
+>   /**
+>    * struct glink_defer_cmd - deferred incoming control message
+> @@ -48,7 +53,7 @@ struct glink_msg {
+>   struct glink_defer_cmd {
+>   	struct list_head node;
+>   
+> -	struct glink_msg msg;
+> +	struct glink_msg_hdr msg;
+>   	u8 data[];
+>   };
+>   
+> @@ -455,12 +460,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
+>   static int qcom_glink_send_open_req(struct qcom_glink *glink,
+>   				    struct glink_channel *channel)
+>   {
+> -	struct {
+> -		struct glink_msg msg;
+> -		u8 name[GLINK_NAME_SIZE];
+> -	} __packed req;
+> +	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
+>   	int name_len = strlen(channel->name) + 1;
+> -	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
+> +	int req_len = ALIGN(sizeof(*req) + name_len, 8);
+>   	int ret;
+>   	unsigned long flags;
+>   
+> @@ -476,12 +478,12 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
+>   
+>   	channel->lcid = ret;
+>   
+> -	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
+> -	req.msg.param1 = cpu_to_le16(channel->lcid);
+> -	req.msg.param2 = cpu_to_le32(name_len);
+> -	strcpy(req.name, channel->name);
+> +	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
+> +	req->param1 = cpu_to_le16(channel->lcid);
+> +	req->param2 = cpu_to_le32(name_len);
+> +	strcpy(req->data, channel->name);
+>   
+> -	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
+> +	ret = qcom_glink_tx(glink, req, req_len, NULL, 0, true);
+>   	if (ret)
+>   		goto remove_idr;
+>   
+> @@ -826,7 +828,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
+>   
+>   	INIT_LIST_HEAD(&dcmd->node);
+>   
+> -	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
+> +	qcom_glink_rx_peek(glink,
+> +			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
+> +			   sizeof(dcmd->msg) + extra);
+>   
+>   	spin_lock(&glink->rx_lock);
+>   	list_add_tail(&dcmd->node, &glink->rx_queue);
+> @@ -843,7 +847,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
+>   	struct glink_core_rx_intent *intent;
+>   	struct glink_channel *channel;
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		__le32 chunk_size;
+>   		__le32 left_size;
+>   	} __packed hdr;
+> @@ -965,7 +969,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
+>   	};
+>   
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		struct intent_pair intents[];
+>   	} __packed * msg;
+>   
+> @@ -1377,7 +1381,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   	struct glink_core_rx_intent *tmp;
+>   	int iid = 0;
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		__le32 chunk_size;
+>   		__le32 left_size;
+>   	} __packed req;
+> @@ -1685,7 +1689,7 @@ static void qcom_glink_work(struct work_struct *work)
+>   		list_del(&dcmd->node);
+>   		spin_unlock_irqrestore(&glink->rx_lock, flags);
+>   
+> -		msg = &dcmd->msg;
+> +		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
+>   		cmd = le16_to_cpu(msg->cmd);
+>   		param1 = le16_to_cpu(msg->param1);
+>   		param2 = le32_to_cpu(msg->param2);
