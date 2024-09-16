@@ -1,138 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE370158D80;
-	Mon, 16 Sep 2024 14:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E19155CBA
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 15:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726498681; cv=none; b=LzuAfd4zvOMXkuF/HRO50VYWJX8f13xpJZE2KFkfVZ1PpOgSixn2bxkBtKub++yuBwwXT6DEDM+3LYZMxkOZMqn0Yja/XuWtN+KkNeg/chXMtwHyB29xMUQKk/r+t1Z805u750iLLoI+FvkDtZ4tSJt/RsvuSqaeRNSKr7uBUJM=
+	t=1726499092; cv=none; b=kYtYyl3tvERwk+aLE6XcO7Uk92DsB2Fkhw+bUzd3I71/r+zKoTfhWk3LVAN33rVvkoNtwD8oV2zo596wI7/fJPsGXWCEJq5Pw6xNH71wZk1UE6WQtU4U4DJIIm6S5YCfSVbt7tAM1XnP+YBIWPKQyg9H/9ArWA4uy9hGNNDule0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726498681; c=relaxed/simple;
-	bh=vWU8owmYJsevDXwsAWui2jhqtUx1i9ymyOXS9Hy3rJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKXnJgSNji/TbMp0cy3cVaRQecdi/vjg0jGCe0Yrdt3k2HJSqhBFgYQfs/dMwn4uHNgaxW7eNfnq/c+DWL6H8ksRrNWXHYdW0JHJiQm2StS/g2s0LDOZsBi6KCJW1fxdAp0g8CJBXrWh/4XXIdyl2reikQLdiQ2fjQ3tw+HOrnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MT+uY3wW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726499092; c=relaxed/simple;
+	bh=nMIpf6/81shZhRa654Ccv4313rWw4dt3bkUqKzsZfwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXduonljs+SfVa95h4U4W+S6f77LWsE+SrfkH+7W/h3UFR7jUsEF3P+4qGj/A7XYErqEAyOE2Qmlrp5K018tj8jN2McFcqF/PPvWB8TrT6lZnMh4Z8S2BO2cewc+O8jKJEVwxmOPYVqq9HfZX2R0rGitHAxV6HFY22saMQz3FsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXZacBpy; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MT+uY3wW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D42C4CECE;
-	Mon, 16 Sep 2024 14:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726498681;
-	bh=vWU8owmYJsevDXwsAWui2jhqtUx1i9ymyOXS9Hy3rJ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MT+uY3wWWjy8ahmVz5vjGLA8GOY0G96XiSDegCRv0g0mq+7X1cWGmN/+uEJepD6ls
-	 B3yKsxoQX5swvFSs3RusazyChSu/lCiJp8y1D4TtsBVo0MQXVWXX4rYHEBwCZSaDSu
-	 lU8B78WlSSSUiR8j5z6qtcyRuBPozz/o9bfepVppTPVeqFhCIrkaNr5ttf9DpFFAuW
-	 07rsJ4nzN4vRd4KLuiMI9hEqYBoXfA2RhiRiFmjSEAA6yBR1YbZvGnsX2elXTXXi/T
-	 hoVxLqw1ikc1U//SVpYD/f79mGLslqvP5dktEOR2GahJv2tFkdIZNk8BqPw4cIdq+V
-	 IkfASTb44COuA==
-Message-ID: <afa070b7-7aae-49ee-a983-24bda96bd6ec@kernel.org>
-Date: Mon, 16 Sep 2024 16:57:55 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXZacBpy"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so2912461a12.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 08:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726499089; x=1727103889; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hdt/C3X2PP3Zg5PnoGqtBdwBBLQg7apsiImcH1HDjNw=;
+        b=oXZacBpycCw7J/UCbx6uQhgxRXv/IoJFplEOLupRneLOw9ByrN67byHjhWpvQHidBP
+         lgXxujKWYIFbp4FmqRXBv/MFNy5dcMJKIAg32mUChhY2lViSPs7QCxntRPvs2+cowEMw
+         b3p1u3CoMN40/L3Rys1uQ7QesykY8f6HS54x7h1uv+B4KZYc1KYC7Yv3apTnzst9UmTR
+         8fLq9UOTHihTqR+MKheDhX82sFTCF34OfOP3hc4EC/5MMQBYnbp0glGJQtWiR15a3OTO
+         2EwXwFaP5l0bXJxna8+RfqmD02hIbhhqbu9SuRHXhE1hI61gUPtzZiuYDXKbj+KpxYjS
+         ypXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726499089; x=1727103889;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hdt/C3X2PP3Zg5PnoGqtBdwBBLQg7apsiImcH1HDjNw=;
+        b=ZFETcAkjFApYQf/PlPj51+kguzllOMM/R8kKMqCOza0VCiOTqd1o5txKBvjPEvwu8x
+         fTw1TzgAe7t64plNH08DSSYVSz1j5biB41xaotAtMHeq8JemLv3w4fK0fy2GC79H6Wnc
+         vvzCawWLgVaPuEkipv/JV5Ueiqm930MhfT8U/DV9hgqZURdwFt1iKbq8u8ilmxdP1zsW
+         leq5956iBZjnOyO1Ig+/BEJscL/PVzxsblCkckfzAugZ4qJrf5q2XwdqGkQcCOmNACDE
+         HQCnS+GQ1Mg6QWfmNlNF4CIOu5yrxogFrSN/9cnTnigOElO64XvZOxGLM8LnSEXzCQFf
+         Shbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzHMQk7k2JET9q3fFWlmu4aQwpPliXg4WIdt+ML4qyrSihwbbLud/2eUcqr0tWA5nQ5g4EY8SV4OPwBIuDf132@vger.kernel.org
+X-Gm-Message-State: AOJu0YzREySAYcwpCRRBYjf3QPqQSQuvG+OC6RS0u69Imijbwz0f7JOl
+	1ybBY5wKNbCPK0+k/v+I0z2ATWFoWPIIpbDVZPI25WHF+ejkoeJaIXiAnKUhsZ8KX9zIUlcjOlO
+	U6UhKKfreSgcbVmTd/alI38FuSIE8mkvK9ul7pw==
+X-Google-Smtp-Source: AGHT+IG953y/v5dl5p5Z3LL49kO5fYc2xRp4hHw8+JoAMYA8z1TeDNMF/zfkoylCATu6XMkcxeBAsRZUu5pz6qqEpaE=
+X-Received: by 2002:a05:6402:2347:b0:5c4:23ad:89b4 with SMTP id
+ 4fb4d7f45d1cf-5c423ad89e8mr9452741a12.26.1726499088917; Mon, 16 Sep 2024
+ 08:04:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xin Liu <quic_liuxin@quicinc.com>
-References: <20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 16 Sep 2024 09:04:37 -0600
+Message-ID: <CANLsYkzGiB+vkjHKkHYhZEK+MK-Uid0VxcqsBUJG0ZbmCQCeqg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Add Microchip IPC mailbox and remoteproc support
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com, 
+	conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com, 
+	robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/09/2024 08:41, Jingyi Wang wrote:
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-adsp-pas
-> +          - const: qcom,sa8775p-adsp-pas
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-cdsp-pas
-> +          - const: qcom,sa8775p-cdsp0-pas
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-gpdsp-pas
-> +          - const: qcom,sa8775p-gpdsp0-pas
-> +      - enum:
-> +          - qcom,sa8775p-adsp-pas
-> +          - qcom,sa8775p-cdsp0-pas
-> +          - qcom,sa8775p-cdsp1-pas
-> +          - qcom,sa8775p-gpdsp0-pas
-> +          - qcom,sa8775p-gpdsp1-pas
->  
->    reg:
->      maxItems: 1
-> @@ -64,6 +77,7 @@ allOf:
->        properties:
->          compatible:
+Hi Valentina,
 
-Instead add here "contains:" and no need for mentioning compatible
-second time. Same in other places.
+On Thu, 12 Sept 2024 at 10:48, Valentina Fernandez
+<valentina.fernandezalanis@microchip.com> wrote:
+>
+> Hello all,
+>
+> This series adds support for the Microchip Inter-Processor Communication
+> (IPC) mailbox controller, as well as an IPC remoteproc platform driver.
+>
+> Microchip's family of RISC-V SoCs typically has one or more clusters
+> that can be configured to run in Asymmetric Multi-Processing (AMP) mode.
+>
+> The Microchip IPC is used to send messages between processors using
+> an interrupt signaling mechanism. The driver uses the RISC-V Supervisor
+> Binary Interface (SBI) to communicate with software running in machine
+> mode (M-mode) to access the IPC hardware block.
+>
+> Additional details on the Microchip vendor extension and the IPC
+> function IDs described in the driver can be found in the following
+> documentation:
+>
+> https://github.com/linux4microchip/microchip-sbi-ecall-extension
+>
+> The IPC remoteproc platform driver allows for starting and stopping
+> firmware on the remote cluster(s) and facilitates RPMsg communication.
+> The remoteproc attach/detach operations are also supported for use cases
+> where the firmware is loaded by the Hart Software Services
+> (zero-stage bootloader) before Linux boots.
+>
+> Error Recovery and Power Management features are not currently
+> supported in the remoteproc platform driver.
+>
+> The PIC64GX MPU has a Mi-V IHC block, this will be added to the PIC64GX
+> dts after the initial upstreaming:
+>
+> https://patchwork.kernel.org/project/linux-riscv/patch/20240725121609.13101-18-pierre-henry.moussay@microchip.com/
+>
+> Thanks,
+> Valentina
+>
+> Valentina Fernandez (5):
+>   riscv: asm: vendorid_list: Add Microchip Technology to the vendor list
+>   dt-bindings: mailbox: add binding for Microchip IPC mailbox driver
+>   mailbox: add Microchip IPC support
+>   dt-bindings: remoteproc: add binding for Microchip IPC remoteproc
+>   remoteproc: add support for Microchip IPC remoteproc platform driver
+>
+>  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++
+>  .../remoteproc/microchip,ipc-remoteproc.yaml  |  84 +++
+>  arch/riscv/include/asm/vendorid_list.h        |   1 +
+>  drivers/mailbox/Kconfig                       |  12 +
+>  drivers/mailbox/Makefile                      |   2 +
+>  drivers/mailbox/mailbox-mchp-ipc-sbi.c        | 539 ++++++++++++++++++
+>  drivers/remoteproc/Kconfig                    |  12 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/mchp_ipc_remoteproc.c      | 461 +++++++++++++++
+>  include/linux/mailbox/mchp-ipc.h              |  23 +
 
-Best regards,
-Krzysztof
+I would advise splitting the two patchsets, i.e one for the mailbox
+driver and another one for the remoteproc.  I would also start with
+the mailbox and then go with the remoteproc.
 
->            enum:
-> +            - qcom,qcs8300-adsp-pas
->              - qcom,sa8775p-adsp-pas
+Thanks,
+Mathieu
 
-
-
-Best regards,
-Krzysztof
-
+>  10 files changed, 1250 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
+>  create mode 100644 drivers/mailbox/mailbox-mchp-ipc-sbi.c
+>  create mode 100644 drivers/remoteproc/mchp_ipc_remoteproc.c
+>  create mode 100644 include/linux/mailbox/mchp-ipc.h
+>
+> --
+> 2.34.1
+>
