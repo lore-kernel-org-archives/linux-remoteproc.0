@@ -1,143 +1,98 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84510158535
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 15:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64D41581F2
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 15:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726500072; cv=none; b=kbh2dRzn05j2BSCM8L2itjIU+tNcmdk92Uo0pAWelK76I10r3fDnDfdWWXGW9sisUnxOuqrAu3rRVtirzONPlo9FvSKGMrhrC2nRea9+oJWZc2TCNP8sOFS8Y2xnQqFEVBOOuquLbXnQKCXFSUJk1twT49poJ+6/y+X/TKLXU0A=
+	t=1726500170; cv=none; b=UXwdts+ZGIP9OMxrZMdHzwqZomhpSNGeN7JXsG4Qn/BeH68ispDz3sk5N2kr9ptojcK8zCrN4/fxFXP4Fdo+/Na+6U+aTFApMqXfzLXVFWBWwL89Rp8JCTLSNqQ/vnBmQWF1N4ZwbuobOD7jo5ggfg7QWzbhsefJsKAW5VfCdmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726500072; c=relaxed/simple;
-	bh=JOpqFyDUOwRzJEm/VhivgKeKpZ15SU0zttR1cvemd5w=;
+	s=arc-20240116; t=1726500170; c=relaxed/simple;
+	bh=tVZWxRmIaPjkwxZjrjPsv3Y2yTvtta+wB5FvXUdecJk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=coZOx5NSo5A8L1smLXlISBiSmS+4ac9O4uq0md9NaPOmJlsFBMHBk9pQFnX/069mw5gWDUTF0BlSjVd/zKHY6p59jl4v7OF32I8RgRJIMPZeYBDowZuV0c6yLu3cloYo3T9HopsayGoH12f32CDvuynRs0SRXfYKgBp7i3Tz3o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UBfObwEv; arc=none smtp.client-ip=209.85.208.179
+	 To:Cc:Content-Type; b=ZyXfTMs3tTSin4yZFZUEFu/HS5bWCBsZZji7Ing0cLACRCxC2l6yGz+8rNi6iiJh0KIk2K+NZawrjLmvb461bmjmlY6gDwcq/w0ujbq4P6QtZSLAiFstDNR0Mi3SWpOfKEA//6r6vsNQDo0NYhgdATYSxjUHszN9lcpVLENpBs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kw0jkG2m; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UBfObwEv"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso57670611fa.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 08:21:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kw0jkG2m"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5356bb55224so4980676e87.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Sep 2024 08:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726500069; x=1727104869; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726500167; x=1727104967; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ElgGpY18GVWl4X9bZv5vQ8vhxO0emOcWoSyqE0DpLTo=;
-        b=UBfObwEvnnjWgN//U/uxRAJYoliiIGkHvrHq5HBBx008w64EaxCZO6Sm/KikgflTit
-         Nfzbn+di5+qROyxCJ+wYeultnCrGIWzyr0lK17cmz3t8jgK1HarvC06KdAcDsJWhEhJn
-         v3ejmhPCGgjPjCkZJNUZGV1aFFhBVsNLfws4t/npAOQtQpuomuWr941GWWD3/IJqEM3k
-         7n2ViKtEVtJ/yHndwhISgjPb67Jb+xPhOq06PPmBOoAaQi7iPN+JewFormsTxv7S5Ysz
-         jPC+jkFsfnE8KW11/Rkh7nj8/F+I2oV9I7DAQktw+5te/o9HW8SFTaME5+aiAX23lSSh
-         bS2g==
+        bh=KJH8q3zUGDvemsqnvmD1EkQ7apsHHqB99DRBXUhb52Y=;
+        b=Kw0jkG2mhFg1nP8h0TfqCNghWj5Ty3x0cNlGKgEJNtgS/sXSlfZx33fwELrr8a43Pe
+         34MK/qoVX4XobX1PazeBaM20qi6gBMFtXsEVqdzwtEusLX5RW7bvpsqdiHTTVTtddRAY
+         N6VkUqQSvNgGQAaaTZ/Lpf/2E2Q9afqJMgW1tlmvarPrldLfceMgRpjiQyNUjcOrVPep
+         wagLbLW6onm4YZRYRftTAVWHgm55duZheNdAV6HCKI3hKYs0EJ9N9GDpiGA9ytI3CD2+
+         ifF7Lg3ncG5Ru32OglV4+Bl4fQXym5KCStSW3Mf4UAX3G3YrOVarJN6f14Crdj1PRY9L
+         i7Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726500069; x=1727104869;
+        d=1e100.net; s=20230601; t=1726500167; x=1727104967;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ElgGpY18GVWl4X9bZv5vQ8vhxO0emOcWoSyqE0DpLTo=;
-        b=vp9Rl6xYdEpx/Km+5gJIRt27Ee9waH09DdVTXONDdaWBWoc752gt0BuGlYeCy059z+
-         QecC9KsXLxBjowf9q4TDm24MBX4qwfp1FcEOQuWlCLlQnBdgpvf6J9ev3LiQdnmDR+na
-         E2xjYbE0kG9x8Lft6WwYFs4X0EsPAjvQSwN1GW8s4JwvsIKojwGOdQ1ZGJc5O0TbXakM
-         2Szj2l54sJCLVAkcqZ43GX/3fLkeBAgyZMBncfFPGWrrE0FzmW8g1yp76wHnZ43p4ixH
-         kml66pwX1Gf5XDTr2TfYWC6Q5NcCcOgpS0jtzKfXkr5LLRo28vzs1Uv+SeBvwuaCP1Za
-         QZeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI8MBMs2+tF3T+lMMeu+Yl12A+N4OGdfK2RP+4pKW4Bw4Dc66GQi18xbIwQqXX+p9CYDSsONMj6wD71RUkMtOo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw+Ee0oIvpSt8Yt1uT5P9YLXpJ/21Bt3NDu0w3I0lCHjOPuyWj
-	U97NSbi4SN7dKyxw75OcEuqWdg5mHaop5gIWv5qiiTMDt8gDyHeWLmTpySH0PiKyytxzqXJ7kdn
-	tcah7x2VjRb0DBBQADYOMCMtOYF/wPG2MCUw5JQ==
-X-Google-Smtp-Source: AGHT+IEtOxse+EgdzvNc2cYaGG0QYGiBpd6nnUpsFGiA3gL+7q0SMkU8KPbjGr8uf7BJjGUM0QILYzAI6Jm57+ZGYeY=
-X-Received: by 2002:a2e:4601:0:b0:2f7:acf5:7ddc with SMTP id
- 38308e7fff4ca-2f7acf57e25mr13132151fa.26.1726500068301; Mon, 16 Sep 2024
- 08:21:08 -0700 (PDT)
+        bh=KJH8q3zUGDvemsqnvmD1EkQ7apsHHqB99DRBXUhb52Y=;
+        b=TDtvJvH9SrkDYG7eCw/TJnES9+WnhyTjzlfrcAopZAqwlv82MqikhNc/h2SrmUVlN+
+         jNly8av9eZMBmkSbW6KuR/XPfUsRtcPYRVbE0og0PyCU3RsQsHxe5hGyRPv/Qx+VAewq
+         3DOzy6agR5W3ravO8qd4uBDq8Yev2+u+m/Ll0mvb3IFC5PF5cj8aROjKYKZRpjd9hFDm
+         s5aX8oFTCr+P0KLtcr9O3YBB0QXD8tHwpGQn7hs5BkeiWgJqQYP5IvRcmYFVCFMUW/Dk
+         cb0JukEkdYAii/R212xotydODsNkja8GOcRbleq/lGV1oAF8rhOXPV8zJEk7YIi/k+Sd
+         Ep+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWK6S4+KTphXCaFDNUcyXUTABn8x9L0+GpB7VKmze444DzSZr+bURv8Xu35z1eI0Fk0hAom9cxscsNSf62qz0Bs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPbjbfBipQUKXSxiOU7r+O9fHCExpsqrVwjFJidpbZ1jI1dwFi
+	pDuVGQnBHHAsaZ3x2bXfrlkfOFzAB3NqxTuf+LkuHdmMJOjXMXv9sO2Vl1K0/U19p1EyEZPf/Im
+	kOC3m7kIgICtNnSKCy/fgs834+wqhgwQ2PDrBYQ==
+X-Google-Smtp-Source: AGHT+IGcEKlFV3pwbfg7CV1kZ+gQRTNQk5/kvcUGWZdfkvvt5fw/iXNqIsTSUF3APv0qV9KKgaOmCjXJOGrBE10LspA=
+X-Received: by 2002:a05:6512:224f:b0:52f:c13f:23d2 with SMTP id
+ 2adb3069b0e04-53678fbf051mr8212934e87.25.1726500166823; Mon, 16 Sep 2024
+ 08:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916083131.2801755-1-s-vadapalli@ti.com>
-In-Reply-To: <20240916083131.2801755-1-s-vadapalli@ti.com>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s> <20240822162425.GE3468552@ziepe.ca> <20240915140929.GA1834200@nvidia.com>
+In-Reply-To: <20240915140929.GA1834200@nvidia.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 16 Sep 2024 09:20:57 -0600
-Message-ID: <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
-Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in k3_r5_rproc_{mbox_callback/kick}
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: andersson@kernel.org, b-padhi@ti.com, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	u-kumar1@ti.com, srk@ti.com
+Date: Mon, 16 Sep 2024 09:22:35 -0600
+Message-ID: <CANLsYkwQ3LbvyUSnJjSTYRPSwaWxwKn3sRFS1iy0=d2F-TyoFg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org, afd@ti.com, nm@ti.com, 
+	hnagalla@ti.com, b-padhi@ti.com, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
+On Sun, 15 Sept 2024 at 08:09, Jason Gunthorpe <jgg@nvidia.com> wrote:
 >
-> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
-> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()" and
-> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote core's
-> state is "RPROC_DETACHED". However, the "__rproc_attach()" function that is
-> responsible for attaching to a remote core, updates the state of the remote
-> core to "RPROC_ATTACHED" only after invoking "rproc_start_subdevices()".
+> On Thu, Aug 22, 2024 at 01:24:25PM -0300, Jason Gunthorpe wrote:
+> > On Thu, Aug 22, 2024 at 10:17:56AM -0600, Mathieu Poirier wrote:
+> >
+> > > > - domain = iommu_domain_alloc(dev->bus);
+> > > > - if (!domain) {
+> > > > + domain = iommu_paging_domain_alloc(dev);
+> > >
+> > > I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
+> > > second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
+> > > provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
+> > > with the IOMMU subsystem to confidently more forward.
+> >
+> > So long as dev is the device that will be initiating DMA this is a
+> > correct change from the iommu subsystem perspective.
 >
-> The "rproc_start_subdevices()" function triggers the probe of the Virtio
-> RPMsg devices associated with the remote core, which require that the
-> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
-> functional. Hence, drop the check in the callbacks.
+> This is the only call site left for iommu_domain_alloc() - we want to
+> remove this API on the next cycle. Please take the patch
+>
 
-Honestly, I am very tempted to just revert f3f11cfe8907 and ea1d6fb5b571.
+And I have no intentions of delaying things further.  I will discuss
+this with Bjorn later this week in Vienna.
 
->
-> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
->
-> Hello,
->
-> Since the commit being fixed is not yet a part of Mainline Linux, this
-> patch is based on linux-next tagged next-20240913.
->
-> An alternative to this patch will be a change to the "__rproc_attach()"
-> function in the "remoteproc_core.c" driver with
-> rproc->state = RPROC_ATTACHED;
-> being set after "rproc_attach_device()" is invoked, but __before__
-> invoking "rproc_start_subdevices()". Since this change will be performed
-> in the common Remoteproc Core, it appeared to me that fixing it in the
-> TI remoteproc driver is the correct approach.
->
-> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
-> required, which I shall post if the current patch is acceptable.
->
-> Kindly review and share your feedback on this patch.
->
-> Regards,
-> Siddharth.
->
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 747ee467da88..4894461aa65f 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->         const char *name = kproc->rproc->name;
->         u32 msg = omap_mbox_message(data);
->
-> -       /* Do not forward message from a detached core */
-> -       if (kproc->rproc->state == RPROC_DETACHED)
-> -               return;
-> -
->         dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->
->         switch (msg) {
-> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
->         mbox_msg_t msg = (mbox_msg_t)vqid;
->         int ret;
->
-> -       /* Do not forward message to a detached core */
-> -       if (kproc->rproc->state == RPROC_DETACHED)
-> -               return;
-> -
->         /* send the index of the triggered virtqueue in the mailbox payload */
->         ret = mbox_send_message(kproc->mbox, (void *)msg);
->         if (ret < 0)
-> --
-> 2.40.1
->
+> Thanks,
+> Jason
