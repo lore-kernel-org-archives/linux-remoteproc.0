@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D61213A89B;
-	Mon, 16 Sep 2024 20:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACB24174A;
+	Mon, 16 Sep 2024 20:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726517665; cv=none; b=MHmtYESKO74EHlPJAGBROYxoVx6IYeiEe/1OCvMonBM90yZ04l/RY3aiRC9NOfK7QG65WyVWLEEbt9LyQybaYsPcPVd2veDKQ7l2bXD6Qk1P97ZA+w86WlcsxwDJ5SwBP30sBPlkAOeZN+kePkmSDEsnDsWfBDkM4FvZbNccmnk=
+	t=1726517907; cv=none; b=VV1P/uQWCVID/kwo6EqZTonLvx8Ct6ZrAXqECsBa7eYnEcmXeINN0VD5RZaHsYawPb+ee4IjmhRjqloo8g797AT7c1TCnxNjnBwQpSixVgbNXavZn269Ixe7sHpC1/7lpMj+Uv+iB5+8JxMAcSNVxx9o0z76br1C1jV++TLK0bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726517665; c=relaxed/simple;
-	bh=QNzJiTjU1Mns30+lM7utuaNjSCWZepqybD5AhL4pGbE=;
+	s=arc-20240116; t=1726517907; c=relaxed/simple;
+	bh=u77P5jo7uS3KP9szkgannbMqAvqt8NPp8EYTzcJOPcw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlQCUGBofwfXHPb9NJFtcKsCuz/ykdgAf2BLTv+2LdAngEWcCtGLmmpnrXrLu4cBJ+gtUIQo8zHXfTt8tRET7GtxdBGaWKxyUFfrnR7xQXBJxGP/bYtiVwjPCVlt2WmYi7MPMCMrFKQriJoHsBZrNuT7tnMG0Bp72o7hso6LXYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkCW0qlv; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=FxKrpFtCkCWQijv5CkJjbQd/zdfdNTPI14x3WVaTL2Tw/gBCgetkyTkujM0sY7TTH7C91sZxRd12/eW7bvC8iWwJGqvVPorQ3MReXt+hNKnDu5Uh8LkdjSMxZ/TiyvGUFMohbsBDjakhhOaBdy6z3NG9VCo0hqLm7kGiOob7P54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aF4VxTbN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkCW0qlv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BC1C4CEC4;
-	Mon, 16 Sep 2024 20:14:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aF4VxTbN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237BFC4CEC4;
+	Mon, 16 Sep 2024 20:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726517665;
-	bh=QNzJiTjU1Mns30+lM7utuaNjSCWZepqybD5AhL4pGbE=;
+	s=k20201202; t=1726517907;
+	bh=u77P5jo7uS3KP9szkgannbMqAvqt8NPp8EYTzcJOPcw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jkCW0qlvon1aTP5nsQ8Jn2wXPWktp7ZaaL5DLAdEO2ynTYnHiDkVNiOfPQ2q+mu/L
-	 QvMD+l+I/Mq2qcZO6kRHxZHV1twdKwoRnmav3W4etqskaaXzuKwkqMXWHgyjvx70SL
-	 3ThfgjpawBgCXnq9+4ctKEQhkV/1clg89IlxDwfgoF28NK1xHSvXV5NvAbMcfxWlfL
-	 1VIgqod5fanMOZR0z2w9bwXaFCQ0gbNPXXad/yz+0SWr5K31kepCXD0vUwzyNzi8ez
-	 772ONMbvb8aAA8vx/47pcBOQx921GOzc8y+srYswYxwxmGfjMzIfCSmw1RjruWdnve
-	 7NvEHdC/kNeUQ==
-Message-ID: <fc541e78-5304-42be-a844-70935d66f151@kernel.org>
-Date: Mon, 16 Sep 2024 22:14:15 +0200
+	b=aF4VxTbNmH0/0wK+fzdswLiNQDB+zYGUmblw38h94Pv9VV8XK89sL+ys7Ux3yFKvo
+	 ag8V+TI8kZSCMCj3Hvh6ZWtTPKkKYx5GOOeaoXpsI7+hCFUdbHI8TlvLLHcovSNOGE
+	 BEsirEtTWp0I1/zaOsnS19RWHdw8kwhN5wYQSAqgKOcJ9FwzGIuHT6a9XNjt8rxI1q
+	 ydqidw8jIRyqFX3bfdzcZ6TcjyG5IFj/z47xaLZtW0PLscPk2LPHTY0lsxpt0r2OOJ
+	 4WZn0EZUJb4f3KzwHxcheYw9FLwP6TaUrBGXrnWivqtgr0ooP9GQk3Q/e7wihOcT5g
+	 K3MXwtAX7BuCQ==
+Message-ID: <6f1fa401-e9ca-466f-990a-52bc37899bf4@kernel.org>
+Date: Mon, 16 Sep 2024 22:18:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] dt-bindings: remoteproc: add binding for Microchip
- IPC remoteproc
+Subject: Re: [PATCH v1 5/5] remoteproc: add support for Microchip IPC
+ remoteproc platform driver
 To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
  peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com,
@@ -46,7 +46,7 @@ To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
 Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-5-valentina.fernandezalanis@microchip.com>
+ <20240912170025.455167-6-valentina.fernandezalanis@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,162 +92,184 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240912170025.455167-5-valentina.fernandezalanis@microchip.com>
+In-Reply-To: <20240912170025.455167-6-valentina.fernandezalanis@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/09/2024 19:00, Valentina Fernandez wrote:
-> Microchip family of RISC-V SoCs typically has or more clusters. These
-> clusters can be configured to run in Asymmetric Multi Processing (AMP)
-> mode
-
-A nit, subject: drop second/last, redundant "binding for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
+> The Microchip family of RISC-V SoCs typically has one or more clusters.
+> These clusters can be configured to run in Asymmetric Multi-Processing
+> (AMP) mode.
 > 
-> Add a dt-binding for the Microchip IPC Remoteproc platform driver.
-> 
+> Add a remoteproc platform driver to be able to load and boot firmware
+> to the remote processor(s).
 
-Binding is for hardware, not driver. Please rephrase it to describe
-hardware.
-
-
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> ---
->  .../remoteproc/microchip,ipc-remoteproc.yaml  | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..1765c68d22cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-remoteproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip IPC Remote Processor
-> +
-> +description:
-> +  Microchip family of RISC-V SoCs typically have one or more
-> +  clusters. These clusters can be configured to run in an Asymmetric
-> +  Multi Processing (AMP) mode where clusters are split in independent
-> +  software contexts.
-> +
-> +  This document defines the binding for the remoteproc component that
-> +  loads and boots firmwares on remote clusters.
-
-Don't say that binding is a binding for. Say what this hardware piece is.
+...
 
 > +
-> +  This SBI interface is compatible with the Mi-V Inter-hart
-> +  Communication (IHC) IP.
+> +static int mchp_ipc_rproc_prepare(struct rproc *rproc)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +	struct device_node *np = priv->dev->of_node;
+> +	struct rproc_mem_entry *mem;
+> +	struct reserved_mem *rmem;
+> +	struct of_phandle_iterator it;
+> +	u64 device_address;
 > +
-> +maintainers:
-> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> +	reinit_completion(&priv->start_done);
 > +
-> +properties:
-> +  compatible:
-> +    const: microchip,ipc-remoteproc
+> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> +	while (of_phandle_iterator_next(&it) == 0) {
+> +		/*
+> +		 * Ignore the first memory region which will be used vdev
+> +		 * buffer. No need to do extra handlings, rproc_add_virtio_dev
+> +		 * will handle it.
+> +		 */
+> +		if (!strcmp(it.node->name, "vdev0buffer"))
 
-That's quite generic. Basically this says it will handle IPC of all
-possible Microchip SoCs, not only RISC-V but also ARM and whatever you
-come up with.
+What? If you ignore the first, then why are you checking names? This
+does not make sense. Especially that your binding did not say anything
+about these phandles being somehow special.
 
-
-
+> +			continue;
 > +
-> +  mboxes:
-> +    description:
-> +      This property is required only if the rpmsg/virtio functionality is used.
-> +      Microchip IPC mailbox specifier. To be used for communication with a
-> +      remote cluster. The specifier format is as per the bindings,
-> +      Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> +    maxItems: 1
+> +		if (!strcmp(it.node->name, "rsc-table"))
+
+Nope.
+
+> +			continue;
 > +
-> +  microchip,auto-boot:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If defined, when remoteproc is probed, it loads the default firmware and
-> +      starts the remote processor.
-
-You described the desired Linux feature or behavior, not the actual
-hardware. The bindings are about the latter, so instead you need to
-rephrase the property and its description to match actual hardware
-capabilities/features/configuration etc.
-
+> +		rmem = of_reserved_mem_lookup(it.node);
+> +		if (!rmem) {
+> +			of_node_put(it.node);
+> +			dev_err(priv->dev, "unable to acquire memory-region\n");
+> +			return -EINVAL;
+> +		}
 > +
-> +  microchip,skip-ready-wait:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If defined, the master processor will not expect a ready signal from the
-> +      remote processor indicating it has booted successfully. This allows the
-> +      master processor to proceed with its operations without waiting for
-> +      confirmation from the remote processor.
-Same problem.
-
-
+> +		device_address = rmem->base;
 > +
-> +  memory-region:
-> +    description:
-> +      If present, a phandle for a reserved memory area that used for vdev buffer,
-> +      resource table, vring region and others used by remote cluster.
-
-missing constraints
-
+> +		mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)rmem->base,
+> +					   rmem->size, device_address, mchp_ipc_rproc_mem_alloc,
+> +					   mchp_ipc_rproc_mem_release, it.node->name);
 > +
-> +required:
-> +  - compatible
+> +		if (!mem) {
+> +			of_node_put(it.node);
+> +			return -ENOMEM;
+> +		}
 > +
-> +additionalProperties: false
+> +		rproc_add_carveout(rproc, mem);
+> +	}
 > +
-> +examples:
-> +  - |
+> +	return 0;
+> +}
 > +
-
-Drop blank line
-
-> +    reserved-memory {
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
+> +static int mchp_ipc_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret;
 > +
-> +        contextb: contextb_reserved@81000000 {
-> +          reg = <0x81000000 0x400000>;
-> +          no-map;
-> +        };
-> +    };
-
-Drop entire reserved-node. Obvious.
-
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret)
+> +		dev_info(&rproc->dev, "No resource table in elf\n");
 > +
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
+> +	return 0;
+> +}
 > +
-> +      rproc-contextb {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-usually remoteproc
-
-> +          compatible = "microchip,ipc-remoteproc";
-> +          memory-region = <&contextb>;
-> +          mboxes= <&ihc 8>;
-
-Make the binding complete. Fix the white-space issues.
-
-> +      };
-> +    };
+> +static void mchp_ipc_rproc_kick(struct rproc *rproc, int vqid)
+> +{
+> +	struct mchp_ipc_rproc *priv = (struct mchp_ipc_rproc *)rproc->priv;
+> +	struct mchp_ipc_msg msg;
+> +	int ret;
 > +
-> +...
+> +	msg.buf = (void *)&vqid;
+> +	msg.size = sizeof(vqid);
+> +
+> +	ret = mbox_send_message(priv->mbox_channel, (void *)&msg);
+> +	if (ret < 0)
+> +		dev_err(priv->dev,
+> +			"failed to send mbox message, status = %d\n", ret);
+> +}
+> +
+> +static int mchp_ipc_rproc_attach(struct rproc *rproc)
+> +{
+> +	return 0;
+> +}
+> +
+> +static struct resource_table
+> +*mchp_ipc_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +
+> +	if (!priv->rsc_table)
+> +		return NULL;
+> +
+> +	*table_sz = SZ_1K;
+> +	return (struct resource_table *)priv->rsc_table;
+> +}
+> +
+> +static const struct rproc_ops mchp_ipc_rproc_ops = {
+> +	.prepare = mchp_ipc_rproc_prepare,
+> +	.start = mchp_ipc_rproc_start,
+> +	.get_loaded_rsc_table = mchp_ipc_rproc_get_loaded_rsc_table,
+> +	.attach = mchp_ipc_rproc_attach,
+> +	.stop = mchp_ipc_rproc_stop,
+> +	.kick = mchp_ipc_rproc_kick,
+> +	.load = rproc_elf_load_segments,
+> +	.parse_fw = mchp_ipc_rproc_parse_fw,
+> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> +	.sanity_check = rproc_elf_sanity_check,
+> +	.get_boot_addr = rproc_elf_get_boot_addr,
+> +};
+> +
+> +static int mchp_ipc_rproc_addr_init(struct mchp_ipc_rproc *priv,
+> +				    struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	int i, err, rmem_np;
+> +
+> +	rmem_np = of_count_phandle_with_args(np, "memory-region", NULL);
+> +	if (rmem_np <= 0)
+> +		return 0;
+> +
+> +	for (i = 0; i < rmem_np; i++) {
+> +		struct device_node *node;
+> +		struct resource res;
+> +
+> +		node = of_parse_phandle(np, "memory-region", i);
+> +		if (!node)
+> +			continue;
+> +
+> +		if (!strncmp(node->name, "vdev", strlen("vdev"))) {
+
+Uh? Why do you look for node names? What if I call the name differently?
+Why would that matter?
+
+> +			of_node_put(node);
+> +			continue;
+> +		}
+> +
+> +		if (!strcmp(node->name, "rsc-table")) {
+
+No, really. Why are you checking for these?
+
+NAK
+
+
+> +			err = of_address_to_resource(node, 0, &res);
+> +			if (err) {
+> +				of_node_put(node);
+> +				return dev_err_probe(dev, err,
+> +						     "unable to resolve memory region\n");
+> +			}
+> +			priv->rsc_table = devm_ioremap(&pdev->dev,
+> +						       res.start, resource_size(&res));
+> +			of_node_put(node);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
 
 Best regards,
 Krzysztof
