@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694B72628C;
-	Mon, 16 Sep 2024 20:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEB25258;
+	Mon, 16 Sep 2024 22:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726518092; cv=none; b=h9H/qqE5N1ZobqfLnYTokIYabsVn1kgiky6WPs+XXKsgZhXVs+D0vZjbQ13jmJN0cQ+bh25SEP02qrHvJFv3IX/gJSUf/bZbCFIEvId2evJF2m/hy+2t7ei6qhsPnV08TZSHGOiHhRXJDcU7eq9ktt9By7XaTfhV8CpifYe9myw=
+	t=1726525659; cv=none; b=G4XKW1BCk4tesaMQ0n4fo9giWoJIc/QJ79sq7CzFwMyZKUUrjWncyVO50+5jad7skmDssKYZC2ikEGBQpQBWSGP5IUZ03EWE78qDCVzvIOBLHrxNIPSKuUPdgEhGIbbrh2CAANjhO0UHzcAiDbhCiIn+p+hVSTm96FU+w4k2o5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726518092; c=relaxed/simple;
-	bh=deePev/5PolISmSihzoi92wFF4nh6uH26O7kF3BOKIE=;
+	s=arc-20240116; t=1726525659; c=relaxed/simple;
+	bh=nIlagFSn66DD4L/tj9LXtTHlW6lnx6yFHMKMSPiIPZs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=noR9D4Fs7qRIbKQ5H7qNp09P/wMd/WEq3nLdN7q1QTnL+3mzG8CahCbKK4YYvxDodFemMAQCr4hHJdzvC5X3MNTUH2rdew8RQP7Ju7+3ugZgHr2pn3D8BUoXA1uCyK+YLmKAwM3dbFcDTi4jhEf55YDehsboFXOcq6p/1oQ4bQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AI6nrhE+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=scDaB2pB+iKnn3At9jSOeLBrJLXJN+jW19cgRwJjAE60uUS8Z2F7rS5CMx2lPWBkSTxYoq51vOH6C3T9RONNVz1O8WxK8gp3MHtsD/9NFDyeje/F5FtSGRatFQ1R4CnuObzB6nKua9upq/JPjukbPI2wdzyBGvguwpMPgnaeENc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WP5VPPXK; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AI6nrhE+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4393AC4CEC4;
-	Mon, 16 Sep 2024 20:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726518091;
-	bh=deePev/5PolISmSihzoi92wFF4nh6uH26O7kF3BOKIE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AI6nrhE+qlOcShePDmLEslKbmQSQ1NecLFiA6QqOcVst0iui8VTKnQ46vtMd9by+c
-	 RV6MapLMdaKiJqsFOdGrjk0BomIxMxhQAewfqWqpg3OdkagGcpI5IWA/0SFgOAjQFZ
-	 IpiW74loDU/bX0EW1W0DZzLKcedy2TgyJY0zV7MnITIp2g0/D/0QBIVaKgax+hedne
-	 OTUDN8XN7GuPTfHP+ZYbJAL2Jo3Hfs+E6n/zGE/uzas0YxjxJzcSFFqGgxcn3YD9X8
-	 dX28BmTdEsuQjQWnPYp4cHORQBV8Q0uUZ2bD240uDToEai3OJFLaHQLvArv3qQ2a/F
-	 99KeXyLOnEbJg==
-Message-ID: <0b855362-d0a7-45da-81d5-10d53bf8d965@kernel.org>
-Date: Mon, 16 Sep 2024 22:21:21 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WP5VPPXK"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so2607911a91.0;
+        Mon, 16 Sep 2024 15:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726525658; x=1727130458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
+        b=WP5VPPXK0lOyfeXPmz0ghYwRKjzRozHHs97BjOsPbDZurbk3Z+YJtLHujwikndS7H0
+         ZR84p0+sIsQvYwWuy3tGC4PaZDaohFtF2EBpHrhs6X3ik4NbegRSUAsGAf5m5zLDgdO2
+         L7dfSdI1R3Q60NFLg7twnKhPlBs3MbxBDAN8S7h/f5KD2NmRu4bLi3XE4KM3lMBDXa2X
+         p3vM9q5n1YMrHiibxLZCrNRDPw1+Ru+0JmguMKwVxLWHC5Z9SaDEIIXGWFbJdQ432W/1
+         dVV9htlYL20nGUmnpVwrj14fNf7Gdkaiu2pcTgZ7Mmuob5zM0/kAyFNIsCiSEXWoz8kx
+         +BiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726525658; x=1727130458;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
+        b=vwyvZd7tM46b6wd5DeIiP5HkW4jsyfyUisndcf6Xd2u1KHnGk4Ur37bz+J5+Z7Kcpx
+         iMpOxDl1iQcOZ5DRSwG2adlEQiC2sqY9E6mECuDYBlCXdaEXFVuAlu7hPQ4v5kNq8mvi
+         RQbafaXjei7MTN3KDrLlGv/EgVKVXBkRMWjG4IWPOHZZO0CmmzDhXG5IuoPduUb8ujHC
+         L0ZlpIlDvSsrNs6ORRnkb3Aef9HujVvFaP0tAzQWjAcshDLGCQ/OVO+2sOPvv4e41F4J
+         kGvOgkJuO3LfXL9qn66i+HXbXvfbdsnxQZ6pacVLJotWP0U7PsQvZW0pqztZQlBy9BYQ
+         gNfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU5ok5sApEGJpTrGA2zRgac4B4Mt+ri2CiRa3slweC7MboziHsNoK2h63eHadt8mC+cbM+ZPuzFNOUhAwr@vger.kernel.org, AJvYcCVjB7spUg4QeiYDd87Ug4tJz0Yms76cgZuiAOqbwbc1r4G4o8vJUggiclM3YYhK/OHj5LHdxBO+De2M@vger.kernel.org, AJvYcCVp++vwDrPV4Je7y63u7Awel4hEcCLSjNiTnsq+jDZCYh374JL1HpwDtnmk2PS8d8hWPM3NRbJYoHM47whZuG2c5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza+v9dfhnGHDDVUqRsjkQuqI3Fo8d3eIB8v+NTdt7HQstx2Rrk
+	6c7sE9gPjgVGTXEG1Sw2+JXV/Y6DrqoMs2REn9gi3krH9ChzXMPN
+X-Google-Smtp-Source: AGHT+IHOIOa4uoJrvmJHVtqFy1kUCeyLXVe0HcxyEv6ClDTP9rAgSTpgUwY80v38ijtmEJ/ROq/SPg==
+X-Received: by 2002:a17:90b:2344:b0:2d8:816a:69c5 with SMTP id 98e67ed59e1d1-2dbb9e1ed42mr16825361a91.23.1726525656975;
+        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
+Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9caafc4sm8017188a91.30.2024.09.16.15.27.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
+Message-ID: <fe87c66d-e5f6-46bd-828a-6fac2b0aa0ac@gmail.com>
+Date: Mon, 16 Sep 2024 15:28:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,208 +61,49 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] mailbox: add Microchip IPC support
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+Subject: Re: [PATCH v1 0/5] Add Microchip IPC mailbox and remoteproc support
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
  peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com,
  conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com,
  robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org,
  mathieu.poirier@linaro.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-4-valentina.fernandezalanis@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240912170025.455167-4-valentina.fernandezalanis@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/09/2024 19:00, Valentina Fernandez wrote:
-> Add a mailbox controller driver for the Microchip Inter-processor
-> Communication (IPC), which is used to send and receive data between
-> processors.
+Hi Valentina,
+
+On 9/12/24 10:00, Valentina Fernandez wrote:
+> Additional details on the Microchip vendor extension and the IPC
+> function IDs described in the driver can be found in the following
+> documentation:
 > 
-> The driver uses the RISC-V Supervisor Binary Interface (SBI) to
-> communicate with software running in machine mode (M-mode) to access
-> the IPC hardware block.
+> https://github.com/linux4microchip/microchip-sbi-ecall-extension
 > 
+> The IPC remoteproc platform driver allows for starting and stopping
+> firmware on the remote cluster(s) and facilitates RPMsg communication.
+> The remoteproc attach/detach operations are also supported for use cases
+> where the firmware is loaded by the Hart Software Services
+> (zero-stage bootloader) before Linux boots.
 
-...
+Would you mind help clarifying the need for SBI_EXT_RPROC_STATE/STOP/...?
+If I'm not mistaken, the HW you are targeting is described in
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU64/ProductDocuments/SupportingCollateral/Asymmetric_Multi-Processing_on_PIC64GX_White_Paper.pdf
+(typo in the page 4, U51 -> E51)
+In SBI, do you put hart1-3 and hart4 into 2 separate domains? If not,
+I don't see why you can't just use HSM extension from SBI to kick rproc.
+Also, how stable is this microchip-sbi-ecall-extension? Is it subject
+to changes down the road? I don't see a probe() like SBI function, so
+the kernel kind of assume it can call those microchip extensions without
+causing unintended effects. This means those extension FIDs must be
+stable and can no longer change once this code is in. Perhaps checking-in
+the microchip SBI extensions to major SBI implementations such as openSBI
+first would be better?
 
-> +
-> +static struct microchip_ipc *to_mchp_ipc_mbox(struct mbox_controller *mbox)
-> +{
-> +	return container_of(mbox, struct microchip_ipc, controller);
-> +}
-> +
-
-You need kerneldoc for exported functions.
-
-> +u32 mchp_ipc_get_chan_id(struct mbox_chan *chan)
-> +{
-> +	struct ipc_chan_info *chan_info = (struct ipc_chan_info *)chan->con_priv;
-> +
-> +	return chan_info->id;
-> +}
-> +EXPORT_SYMBOL(mchp_ipc_get_chan_id);
-
-EXPORT_SYMBOL_GPL
-
-> +
-
-
-...
-
-> +static int mchp_ipc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mchp_ipc_probe ipc_info;
-> +	struct microchip_ipc *ipc;
-> +	struct ipc_chan_info *priv;
-> +	bool irq_avail = false;
-> +	int ret;
-> +	u32 chan_id;
-> +
-> +	ret = sbi_probe_extension(SBI_EXT_MICROCHIP_TECHNOLOGY);
-> +	if (ret <= 0)
-> +		return dev_err_probe(dev, ret, "Microchip SBI extension not detected\n");
-> +
-> +	ipc = devm_kzalloc(dev, sizeof(*ipc), GFP_KERNEL);
-> +	if (!ipc)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, ipc);
-> +
-> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(IPC_DMA_BIT_MASK));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "dma_set_mask_and_coherent failed\n");
-> +
-> +	ipc->buf_base = dmam_alloc_coherent(dev, sizeof(u32), &ipc->dma_addr, GFP_KERNEL);
-> +
-
-Drop blank line.
-
-> +	if (!ipc->buf_base)
-> +		return -ENOMEM;
-> +
-> +	ret = mchp_ipc_sbi_send(SBI_EXT_IPC_PROBE, ipc->dma_addr);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "could not probe IPC SBI service\n");
-> +
-> +	memcpy(&ipc_info, ipc->buf_base, sizeof(struct mchp_ipc_probe));
-> +	ipc->num_channels = ipc_info.num_channels;
-> +	ipc->hw_type = ipc_info.hw_type;
-> +
-> +	ipc->chans = devm_kcalloc(dev, ipc->num_channels, sizeof(*ipc->chans), GFP_KERNEL);
-> +	if (!ipc->chans)
-> +		return -ENOMEM;
-> +
-> +	ipc->dev = dev;
-> +	ipc->controller.txdone_irq = true;
-> +	ipc->controller.dev = ipc->dev;
-> +	ipc->controller.ops = &mchp_ipc_ops;
-> +	ipc->controller.chans = ipc->chans;
-> +	ipc->controller.num_chans = ipc->num_channels;
-> +	ipc->controller.of_xlate = mchp_ipc_mbox_xlate;
-> +
-> +	for (chan_id = 0; chan_id < ipc->num_channels; chan_id++) {
-> +		priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +		if (!priv)
-> +			return -ENOMEM;
-> +
-> +		ipc->chans[chan_id].con_priv = priv;
-> +		priv->id = chan_id;
-> +	}
-> +
-> +	if (ipc->hw_type == MIV_IHC) {
-> +		ipc->cluster_cfg = devm_kcalloc(dev, num_online_cpus(),
-> +						sizeof(struct mchp_ipc_cluster_cfg),
-> +						GFP_KERNEL);
-> +		if (!ipc->cluster_cfg)
-> +			return -ENOMEM;
-> +
-> +		if (mchp_ipc_get_cluster_aggr_irq(ipc))
-> +			irq_avail = true;
-> +	}
-> +
-> +	if (!irq_avail)
-> +		return dev_err_probe(dev, -ENODEV, "missing interrupt property\n");
-> +
-> +	ret = devm_mbox_controller_register(dev, &ipc->controller);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +					 "Inter-Processor communication (IPC) registration failed\n");
-
-Fix alignment.
-
-> +
-> +	return 0;
-> +}
-> +
-> +MODULE_DEVICE_TABLE(of, mchp_ipc_of_match);
-
-This is ALWAYS next to the definition.
-
-> +
-> +static struct platform_driver mchp_ipc_driver = {
-> +	.driver = {
-> +		.name = "microchip_ipc",
-> +		.of_match_table = of_match_ptr(mchp_ipc_of_match),
-
-Drop of_match_ptr. You have warnings here.
-
-> +	},
-> +	.probe = mchp_ipc_probe,
-> +};
-> +
-> +module_platform_driver(mchp_ipc_driver);
-
-
-
-Best regards,
-Krzysztof
-
+Bo
