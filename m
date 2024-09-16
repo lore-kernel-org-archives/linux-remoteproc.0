@@ -1,201 +1,238 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020141.outbound.protection.outlook.com [52.101.193.141])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA71B14B094;
-	Mon, 16 Sep 2024 13:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726493951; cv=fail; b=pOAEwxcBK8/MAXYKFyeKmMY1MRKNZFMi/w5R84nmzIkjyNMC/e/9YyrOecM/ii53xEJ7rTO1sfhTQ9czxf74sh4o7jk+S/pr6GYagBr0/Qiu1P66GP9nHfBVHeDl9ruFT4iiv1bN+lUJjD0RhkU0bOz2vJBb//mhdpPfysDEhwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726493951; c=relaxed/simple;
-	bh=GnaN+fmMbPZt1X7Gpq7xi30lzGQBJyjYPmOeqcXIgkA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lja6rdSDXl17AHjWtYO5oHHyz3+ImLZKqToILrRh6DlMo4n6CLrRm+FvhRnDsyclkRXxXKamH2uvqJgIGNSR+ZCn6ohEmeeKiAFuyo368lxQKvgIuE5Ys5G/8d9WYv7hbSMqNw+Tkj/qQwO4kfLHI9gt4B6uT0EQZ0+0Z1SmYbg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cornelisnetworks.com; spf=pass smtp.mailfrom=cornelisnetworks.com; dkim=pass (2048-bit key) header.d=cornelisnetworks.com header.i=@cornelisnetworks.com header.b=kG7C6CuO; arc=fail smtp.client-ip=52.101.193.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cornelisnetworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cornelisnetworks.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677925258;
+	Mon, 16 Sep 2024 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726495920; cv=none; b=Q8QUxbOrNhyIfF8ObYzjFN4oH5OIQyY1N4FJDWBm+IghmCpiir7O5UZ5HcciiQV4LzGsvg/3p/eoe679XlLOzRGqx3qn62ZJa80/NUXarWpqabO+aRg8YzlPPORfOjKMdpnqCc18AbYou31ifjC5qLp4kvD/OdKbznYgypNDF7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726495920; c=relaxed/simple;
+	bh=jfiFvJL5ZnAzIVubRnSClMYcUCZgnxJ9RWuVjcuFWjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WAI87SlkGKeLd5hOudk6tCEbHtFyTCE+9/7dW/rrA2NJJaSR4F70Bu9ltBi5JJdNpLc47gejP04SXyyFxZEWh+MexlRf8xXUsToBFg7blnoshHiiKDQ/e+Kpm+agOTUs8zEtJx28cquUMX5CviGAfYghOOgj5IpSAmxhykSNOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=iKUdTEdz; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cornelisnetworks.com header.i=@cornelisnetworks.com header.b="kG7C6CuO"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wfHKCtb9I11BbcQ/Ogvs8R5Iy7IAOEzVe4Dy+ZS1Bbki3t9DV/KJy4Hb8JwALTWu4UlbGwGVKKa3CP8w1DGc6FcCIvXhe7b8Z43OauVMkv7GQLKluTWPT4iOVyBXymtcg6rpE8ZrMDlbl9Kw1DVt2HfAhwJQ0X1bokO+RYdGFyrtGKWw17ksWOSugDkkiFbQ6PmlI076TkL5dCaluCdqzM1u7R9saBjmNN5EIpC7hqAqjcRXLG/Ab57Mpr/AB+yJaOOtZmj4k2mRRKB0GexxfLdprtFAfM4tWEqFwODa6uZdAmnQE5lhMz+Vdoz8IucZ4LjyYHGVXS80OWa5sSjiww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WNGwYOpq+UPZzICOYqXKRTFj0hHmE+Kbjj6Iz6xlZN0=;
- b=GjAVQ5l4kwAn1zgIwGFTOgxoiclWG+WUH+GWIXQ5ZXsu5CvtyyT30aoM8tIMWozD4B1znfvjjtjFOCuUlLRoQHDo4+lMF97hM31UG0V5O/lCoVHGnsxOV4Ugaq22R2/ohFOpWSC+V3FaInItJhj0rQ85WsN/zdGVPkOmAJf1iWhhHjtEDLttV4aaRE7l9N4LjrCtKN0CRMbELFWG1ln2xuPWtj9tyZ/U5Gj6u68rglyJK5WeUiAk/2/SZp/Y0M6XOTL2HOxlWNqAtIn+7r3Ir+n+vJIGuQ0XSBLvH56UCmrTqW4afxu1TkQKMAN+UGAIa2nmqs6SyDIzVcx8okhWjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cornelisnetworks.com; dmarc=pass action=none
- header.from=cornelisnetworks.com; dkim=pass header.d=cornelisnetworks.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cornelisnetworks.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WNGwYOpq+UPZzICOYqXKRTFj0hHmE+Kbjj6Iz6xlZN0=;
- b=kG7C6CuOfog4C4icFqOfBv6XYx2setRdcAX/Cy2Ocy3n4J9ib0poRMs3PBFJg23/LVjkpFiwcktY3zqfr9f68a8Y4A7K2uEUt+jmiSJqW+d3+iHtm39/evWH0z1HND9elgdyrNl5+IqhevuvYC1XNdeI+p18uA180Xubto67qWQpiIh3GbpPtIJrPY0muYvsc7ygjCYOO+ejxNNGbaZluZ8UOmgOXmw8lZF+V0+F4eDfAPoUcajeNwr/VBKeXS8cKaHj/CtDLqkaI4P7Bqoz/3Hsis+3zEcIajRNoWC/MmLQJfOMah5e8hWxriSh/y9fNyL1NYV8vVOwzIQ9wBCXMg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cornelisnetworks.com;
-Received: from PH7PR01MB8146.prod.exchangelabs.com (2603:10b6:510:2bd::18) by
- IA0PR01MB8256.prod.exchangelabs.com (2603:10b6:208:48f::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.23; Mon, 16 Sep 2024 13:39:05 +0000
-Received: from PH7PR01MB8146.prod.exchangelabs.com
- ([fe80::2972:642:93d1:e9d4]) by PH7PR01MB8146.prod.exchangelabs.com
- ([fe80::2972:642:93d1:e9d4%5]) with mapi id 15.20.7962.022; Mon, 16 Sep 2024
- 13:39:04 +0000
-Message-ID: <0dda0411-22a3-4805-807b-0471f10c6468@cornelisnetworks.com>
-Date: Mon, 16 Sep 2024 08:38:42 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: How to create/use RPMSG-over-VIRTIO devices in Linux
-To: Jason Gunthorpe <jgg@ziepe.ca>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org,
- OFED mailing list <linux-rdma@vger.kernel.org>,
- "Dalessandro, Dennis" <dennis.dalessandro@cornelisnetworks.com>
-References: <cff37523-d400-4a40-8fd1-b041a9b550b5@cornelisnetworks.com>
- <70cf5f00-c4bf-483a-829e-c34362ba8a70@cornelisnetworks.com>
- <ZuBiLgxv6Axis3F/@p14s>
- <aff4e2e3-0cb9-4ca3-84f7-2ae1b62715e4@cornelisnetworks.com>
- <CANLsYkyuB=BsswRmbSbjDNMqz0iGHrviLMGfNJLx-HJ60JeEMA@mail.gmail.com>
- <591e01eb-a05b-43e6-a00a-8f6007e77930@cornelisnetworks.com>
- <ZuMEW9T2qSTIkqrp@p14s>
- <d8a4001c-d8c7-457a-a926-1d03e4f772fe@cornelisnetworks.com>
- <CANLsYkw-5i_4=UXwtG_SfR7rkjKEz3ieSOP2s4SOCozkWMct7w@mail.gmail.com>
- <20240915165800.GF869260@ziepe.ca>
-Content-Language: en-US
-From: Doug Miller <doug.miller@cornelisnetworks.com>
-In-Reply-To: <20240915165800.GF869260@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH0PR04CA0027.namprd04.prod.outlook.com
- (2603:10b6:610:76::32) To PH7PR01MB8146.prod.exchangelabs.com
- (2603:10b6:510:2bd::18)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="iKUdTEdz"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48GDXKnT001947;
+	Mon, 16 Sep 2024 16:11:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	pzKlTlaaDl0uaMzQRGAamPumS6bIJxxB/Zfn3DyAQMY=; b=iKUdTEdzQ4hsCQum
+	AqWADdayCY5NFPNlCvPknH44LxEHc9xXzQumfRKrEIELuk7tMdsCG+disGQfg+ME
+	yjOfOsBL8sz11Bh5fRE0wGcglK5T8VRVeovY9jA0IQ22MGWqxUHx3N7tCR1T227d
+	pQ+Bzc4fvO09tf/nDGqGBCsKUHS2QQV9Mx5O85w05NHNxBjBZaWnXXrSPMdwGonV
+	+vIixuMR50mAkK2N35HxASWo3VPUj80S/jz27J/OrdqJYHySTvp2YzHjko2FS5tW
+	GY0IH5YZT/H0TS0gJwekum9/r6O4oOT05w4n6+8qTDCD0eDmPNMzFsFsTYv8ns8g
+	VfIq4w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41nnehcv74-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Sep 2024 16:11:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EA9E94004A;
+	Mon, 16 Sep 2024 16:10:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DFAB5278270;
+	Mon, 16 Sep 2024 16:08:12 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Sep
+ 2024 16:08:12 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Sep
+ 2024 16:08:11 +0200
+Message-ID: <28d02c1f-967b-4384-9c0a-e05fc7f237ed@foss.st.com>
+Date: Mon, 16 Sep 2024 16:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR01MB8146:EE_|IA0PR01MB8256:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fd77256-b088-4f1f-bf2a-08dcd654ee36
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V08yL0VaTHRiZXRQNmlZdkZCWmthUS9xcjVrVmFzNW9pbDc0Z21qejVWanhU?=
- =?utf-8?B?SmwyN0Rjd1pheG9hVjhRUUJxQmxWaVZFeDFSMEJJbFp6SXVzV0t1U1NXcURF?=
- =?utf-8?B?TStFNndJSVN6L25kMFFMQkJ4eFhXOTk1VkViLzdNeXVONGpuTnNhODJEV2FL?=
- =?utf-8?B?ejNPVnJvM1pOamVBV1RtUlJ0eWhYazRTUVFmK1dCOGJNK0ZkMWFKMXdtSWkz?=
- =?utf-8?B?di9lek1ZK0d0NkxpUVYzM0FNcGRoZVJDTFZoTzhzZVdHY3Rubm5McjZTMFFH?=
- =?utf-8?B?aXk2MnhXalFrY1VnaUxCR2tnNUEzREEwRTNGaTAxdmpLUlU2T2hsUit0dUZP?=
- =?utf-8?B?WGFvUWNZNjNUc2crTVM5UHJnMk9RTUpxeis5Q0d6MVZvN2FwM3dUNEhFNzZR?=
- =?utf-8?B?MnpIRUZnQVVEYVhCNDRtN0dIR3IvZHZEd05TUnJpV0pzalVoTSs0MnRJeEpx?=
- =?utf-8?B?SGk1d2VYK0t1VFVBYWJNZHZ2Q0N6T2dTaXdFb29aZmFTNmh5ZWN1cmpVUTVr?=
- =?utf-8?B?bWtOc3dJeVZQdEptcUk2UzR6UkZGdFNBM0tOb0drQlMvRFpObjN2V1pZTUN1?=
- =?utf-8?B?K3M0akY5a1NVOTRMbE9tMDhkSE9udGFmRkpQUitBOTRqUkgwU2YwaUZad0Z3?=
- =?utf-8?B?TlNCOTRYbUluekFJa29YNmM5RUFpWXFYbzNYZG5xV01ldkhXazRvb285REpN?=
- =?utf-8?B?UTJXb3B5WkRBeDNwYlB1MmF3b2E0VS9WSmpYNDM3UkRyVEF4bUJ5a284aEpk?=
- =?utf-8?B?SXFkK251S3ZuUUEzRjRSUGFoZ1VNaS9wWFNQN2QxYUt2VDlWZGZiaDVIUzBS?=
- =?utf-8?B?ekFZYWpVV1FEQjh4MHZsazRScGZLREQ1RXZjcnc1cVlTb2FobDFwT0RydHZM?=
- =?utf-8?B?NjZKU2dTdHN5SlBvc0treXpDTjVSM1dSSFdjbnh5STJOZ1owSUZFS3h3VmZL?=
- =?utf-8?B?K2FFN2MrelVLcG5LT0lFQ0RDUUVnVHpKU2NkM0R6RDFaTWtkZTVuQVI5Z25L?=
- =?utf-8?B?UmdMQXl0bTJWRkJqVndpWm0wYzJ4ZXRtbWVWZTdoT3FlZG1ST2dvVlZDWEhP?=
- =?utf-8?B?dVRQOTU4MGhwZVdVbkhtY0hlZG1oSTdYYzhkV0t2aHZtdUsrQTgybFZGM1dO?=
- =?utf-8?B?ZTBZSysyUGVlNjAxbEJaMlB1dHRkNmw1ZFlneGszWWVJbHN6TDRzQm4rK2NB?=
- =?utf-8?B?eks2WTg2ZkpYODZaWkpQRVg5NXk4emJUU1QvbklGMzhoY1hkYlpMd1NUdkpa?=
- =?utf-8?B?WnE1ZDEwTkp0cFYwVDEvUE9QMVRwQlhEMHhSVENlaEFmWTNxRDNBYjhMb2Vk?=
- =?utf-8?B?MVlmanZTQklreHkvd0dwSTRGUzVORG9ORG5TZlVuc1VheDRxR1lZak9xbHg4?=
- =?utf-8?B?M3MrYWJTbmRBSk1jN05MQVh1ZVY3eXhLTVZCY0QxSjg2cS9xNFJNZ1psb0FF?=
- =?utf-8?B?K1ZsUUtVUzR5Z0xuRi9tWnM2dlRxbW14NDFZMzBTbE1uR0FGdllGRWtKeVFC?=
- =?utf-8?B?MlJaTmt4L2s1elFOSjJBbnkxQS9rYUkvcnBJRDBjd2l5d1dxVnhjdmc3R2Jr?=
- =?utf-8?B?N2N3Rjk3dVdwZHZWdFl3TmtmNjJ2TmtzN3FjYnFGd21XNzE1dk0vSDRYeGpo?=
- =?utf-8?B?TmNKWFQrSHpPR1h0ZHFaa0E2TUFyMHZHQkdnamhQaHIzWnRxOVZOMm52aDUx?=
- =?utf-8?B?a2NYdDdNMUZmRFlXLzlJS0RpdTYvVFdaSUNSdjdhdHpJTUZWS0k5K0xyWDFO?=
- =?utf-8?B?WjNibUllTjB6R1pDb01GbUFHSWVxV0RjZk1KaVNQR1NjRnFCdEhGUEdHNmxw?=
- =?utf-8?B?cUVHSDlSNXJhaHJVY0o3QT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR01MB8146.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WUs2dEg3R2FLbmZxdnJVSzcrMlhYMFo5ZVlxSllHdGZuQkJOOGtxeUlOaEdx?=
- =?utf-8?B?WW1NUUlobEFZQU5NN29WQzE1VU9NVHhrc3BsdkZCWmxJVk5qTEVZZWJVQVRZ?=
- =?utf-8?B?clNnUlE5V2ZBcUR4RTgzR3lHbUczQmhTUUdmVzFUckVZdC9TeGkvN095M2Fq?=
- =?utf-8?B?RkR6SytFWHA0TWtuc2ZUbXVLaUVXT3ZERWsrRHJINHoxbWZQNjdYTll4Z1Jp?=
- =?utf-8?B?K0JESCtqNVBSTzFzQkRuZzkrdERGTkdmUVBib29sd2duRmNnc1dXYmxsQkJK?=
- =?utf-8?B?Z1pBbW5zWDZ3UDIzU1VrM05XN0dhS1cyNXFqY3NIRk0rbms3TzFuREJMeHY2?=
- =?utf-8?B?ak9IOWN3dmhHYmJBMkhjUTdUWHdKQllKcHdYVCt6Yjhyb2MrNklPalVHaENt?=
- =?utf-8?B?dkhrc21VVFRTbEVkMlFyLzExMHZpTG9FOFRjRERrN2J2a1hNeHNIK0tCeEZi?=
- =?utf-8?B?ZTBLQUcwR0NtMnliZUFMR2JIYWwzaC8xeUI2bGlEN0Q4TUNSbHd4eFhHQTF4?=
- =?utf-8?B?UUp6Y3F1S0g5cFdsWUtzZDlPdU1mM0VPSzlCdi85ZmdGeTFBTi9qeXptUEJE?=
- =?utf-8?B?clV3SE5ySkxpU1A4UmMvcGQ0SzBNazNxbTkvMm1GejhZV3FGTm9tWC82R3h2?=
- =?utf-8?B?NHphZ1RZWlhFdGRya2x2aTdldExFeUFEaEpiTUxIdGNRUmxobHJIM2d4WEpZ?=
- =?utf-8?B?NHRsT3pzL0k4cy9qQnUySEVmK1RLRTR0UFBuN2oxaTNRaEk5MWZSRXEzL2FG?=
- =?utf-8?B?UFpDWjJOem80RUN1bXFKdnZQM0JWSUl4elV1Q1k3REFyN2hiT3drY0VZZEpQ?=
- =?utf-8?B?cmlQdm5vVTV3SUpWdTlhNUtlb2NyRmE2UnZ2ZjBIeVpublJZTnJtLzFoTWtM?=
- =?utf-8?B?bGt2T1lTaGNZSE91eVRFdUJRTC95YWNlanB1djdRbmZCWVc4T0oyNFFrVnho?=
- =?utf-8?B?cnhDN2hmNEcvckdzWnJYVHk3cTRPWnZqMlFqNmxJRHc0V2pyZlVnTjU4eHJ2?=
- =?utf-8?B?Y25YdGtjNmd4ckY0R2E4Rlg2eVlXaVhWV2RBZ3BwTm5NRFVBd2RKRW1McURW?=
- =?utf-8?B?VlpXWnlKOXlaNmdsK01vRllBSTl2ZE9zd1VWZW1yZFFKMUVYSjJHd2dHQ3Ro?=
- =?utf-8?B?VDBYUkhuMm9OYWlnOXBGVmptMURQcDM3bEEwRnY1MkYzSnRaQkE4Uk1GMHQ5?=
- =?utf-8?B?SkUwMVQ2REliN0I3NWVuejE5azNXR3lENjZXaWlaLzhOL3hTRkdLNDNLL1Iv?=
- =?utf-8?B?QVF3cTd3dVpYeTJ4ajBjSHBtVkpqeGYzSGl0Ym13ZmxGQ0d1N05qdHhISENi?=
- =?utf-8?B?ZmtIbmJoUjlGcU1va0VhM0NOZHJHeW5FZkt1YWpINmwyS09KNndiTmFXSnBQ?=
- =?utf-8?B?Rk4vR3RuOXFGU3lNTXZoZDJiQ05mbDVpbjNDYXhEUXl6UkxycWk1L2dDUzdD?=
- =?utf-8?B?STFYdldtczNmK0NqdmU3R0NrNlhjdXFVcGNyVUM0c1JoOTUwVmZWV2h2Q0Q3?=
- =?utf-8?B?ZEJseFArajNER1UrTzFLclBDRzY2ZU1zTTdNTytjTXc4bHdQMTdqZmhJREN0?=
- =?utf-8?B?SkN1Uk9wWEpxM1dTMzUxYTFVdHhVYXNBZjJ4cjZJL3VoU1JrVWxPMXA0c2hq?=
- =?utf-8?B?Y1NwUzNhNjFpbVd1eURoNnhmK25hVlJ3MENXYmR4UFBhYVRZZlZ4SjUrK081?=
- =?utf-8?B?U1VDTURSZS84R1I4Z1lTT3BZUFc4NkFaSWxDdmZ3cTBpUHRaOGx4ckUzbzhq?=
- =?utf-8?B?MjRmYURNQ1VlelB3L2NZVXNQcVpEZ2dqY1d5dXBkQ3pOT3YzSjBqOU13UEFC?=
- =?utf-8?B?MEJOb2dEOHlMdTc0UURERDRxcmNIZ3RkRTZYUnpCUXo4Ulppbk5jZi9JY0U3?=
- =?utf-8?B?U2FGYW0vcUxIWlZEWm85dGd6UUVYaUVpUG5tM0crekRyWGFXMGwrZTVlTmpj?=
- =?utf-8?B?OGM0WnBtaFFHYXg2STVqSXk0WTJ3MGlvZHNhazNZWkNNTUE5WFl2ejNHNlE4?=
- =?utf-8?B?NzR5YWw5YjZyOE5la3BwRk9RcTRac0NBYzBwM3d6WG53b2ZlbzNudmJHaHdP?=
- =?utf-8?B?Z29WTkZ2clVwSUF0ZHZLNEdkcHEwQzJiSzVrTmlFQlBxbnkvZjhtalpSNmMv?=
- =?utf-8?B?cFVxbmdJWVZKUytWUWVqZ1UrKzdTWjlsR2puSnhCU1l5RFNOVWlybFcycFdk?=
- =?utf-8?Q?o7Fbpwgnn5Z+T67gapRJDMY=3D?=
-X-OriginatorOrg: cornelisnetworks.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fd77256-b088-4f1f-bf2a-08dcd654ee36
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR01MB8146.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 13:39:04.4102
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4dbdb7da-74ee-4b45-8747-ef5ce5ebe68a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1tOFDm6qW6tsQWbD/M0n9VSsIiYAuaJQmGW14qcdYmb0T/qvC1zDgQOhmLPCh6fwV/K9Aku7PYPfyrDRreM9Rd3lls49WADL1dy4v3HbVXpJvBR6/w7RH4rPe4X5dA0C
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR01MB8256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 7/7] remoteproc: stm32: Add support of an OP-TEE TA to
+ load the firmware
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
+ <20240830095147.3538047-8-arnaud.pouliquen@foss.st.com>
+ <ZuRiTxDN7+UO42H+@p14s>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ZuRiTxDN7+UO42H+@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 9/15/2024 11:58 AM, Jason Gunthorpe wrote:
-> On Fri, Sep 13, 2024 at 08:39:26AM -0600, Mathieu Poirier wrote:
->> KVM has nothing to do with this.  The life of a virtio device starts
->> in the VMM (Virtual Machine Manager) where a backend device is created
->> and a virtio MMIO entry for that device is added to the device tree
->> that is fed to the VM kernel.  When the VM kernel boots the virtio
->> MMIO entry in the DT is parsed as part of the normal device discovery
->> process and a virtio-device is instantiated, added to the virtio-bus
->> and a driver is probed.
+Hello Mathieu,
+
+On 9/13/24 18:03, Mathieu Poirier wrote:
+> On Fri, Aug 30, 2024 at 11:51:47AM +0200, Arnaud Pouliquen wrote:
+>> The new TEE remoteproc driver is used to manage remote firmware in a
+>> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+>> introduced to delegate the loading of the firmware to the trusted
+>> execution context. In such cases, the firmware should be signed and
+>> adhere to the image format defined by the TEE.
 >>
->> I suggest you start looking at that process using the kvmtool and a
->> simple virtio device such as virtio-rng.
-> I would repeat again, I think trying to create a companion virtio
-> device to go along with a real vPCI device and then logically
-> associating both of them with a single driver is going to cause so
-> much pain you should not do it.
->
-> Find a way to send your RPCs through your own vPCI device.
->
-> Jason
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/remoteproc/stm32_rproc.c | 63 ++++++++++++++++++++++++++++++--
+>>  1 file changed, 60 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+>> index 79c638936163..400a7a93b1c9 100644
+>> --- a/drivers/remoteproc/stm32_rproc.c
+>> +++ b/drivers/remoteproc/stm32_rproc.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/pm_wakeirq.h>
+>>  #include <linux/regmap.h>
+>>  #include <linux/remoteproc.h>
+>> +#include <linux/remoteproc_tee.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/workqueue.h>
+>> @@ -257,6 +258,19 @@ static int stm32_rproc_release(struct rproc *rproc)
+>>  	return 0;
+>>  }
+>>  
+>> +static int stm32_rproc_tee_stop(struct rproc *rproc)
+>> +{
+>> +	int err;
+>> +
+>> +	stm32_rproc_request_shutdown(rproc);
+>> +
+>> +	err = tee_rproc_stop(rproc);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return stm32_rproc_release(rproc);
+>> +}
+>> +
+>>  static int stm32_rproc_prepare(struct rproc *rproc)
+>>  {
+>>  	struct device *dev = rproc->dev.parent;
+>> @@ -693,8 +707,20 @@ static const struct rproc_ops st_rproc_ops = {
+>>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>>  };
+>>  
+>> +static const struct rproc_ops st_rproc_tee_ops = {
+>> +	.prepare	= stm32_rproc_prepare,
+>> +	.start		= tee_rproc_start,
+>> +	.stop		= stm32_rproc_tee_stop,
+>> +	.kick		= stm32_rproc_kick,
+>> +	.load		= tee_rproc_load_fw,
+>> +	.parse_fw	= tee_rproc_parse_fw,
+>> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
+>> +
+>> +};
+>> +
+>>  static const struct of_device_id stm32_rproc_match[] = {
+>>  	{ .compatible = "st,stm32mp1-m4" },
+>> +	{ .compatible = "st,stm32mp1-m4-tee" },
+>>  	{},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+>> @@ -853,17 +879,42 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  	struct device *dev = &pdev->dev;
+>>  	struct stm32_rproc *ddata;
+>>  	struct device_node *np = dev->of_node;
+>> +	struct tee_rproc *trproc = NULL;
+>>  	struct rproc *rproc;
+>>  	unsigned int state;
+>> +	u32 proc_id;
+>>  	int ret;
+>>  
+>>  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+>> -	if (!rproc)
+>> -		return -ENOMEM;
+>> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+>> +		/*
+>> +		 * Delegate the firmware management to the secure context.
+>> +		 * The firmware loaded has to be signed.
+>> +		 */
+>> +		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
+>> +		if (ret) {
+>> +			dev_err(dev, "failed to read st,rproc-id property\n");
+>> +			return ret;
+>> +		}
+>> +
+>> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
+>> +		if (!rproc)
+>> +			return -ENOMEM;
+>> +
+>> +		trproc = tee_rproc_register(dev, rproc, proc_id);
+>> +		if (IS_ERR(trproc)) {
+>> +			dev_err_probe(dev, PTR_ERR(trproc),
+>> +				      "signed firmware not supported by TEE\n");
+>> +			return PTR_ERR(trproc);
+>> +		}
+>> +	} else {
+>> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+>> +		if (!rproc)
+>> +			return -ENOMEM;
+>> +	}
+>>  
+>>  	ddata = rproc->priv;
+>>  
+>> @@ -915,6 +966,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>>  		dev_pm_clear_wake_irq(dev);
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>> +	if (trproc)
+> 
+>         if (rproc->tee_interface)
+> 
+> I am done reviewing this set.
 
-When you say "your own vPCI device", are you referring to the virtual
-functions that are created by the adapter? Those are defined by the
-hardware specification and we don't have the ability to extend them.
-What we're investigating is using RPMSG-over-VIRTIO, not using virtio
-devices directly. It appeared to me that rpmsg was intended to provide a
-general-purpose "pipe" between two processors that otherwise don't have
-a communication path. That sounds ideal for what we need.
+Thanks for the review, I will sent a V10 ASAP to fix this set.
+Extra information: the OP-TEE that introduces the new
+PTA_REMOTEPROC_RELEASE command has been merged.
 
-- Doug
+Regards,
+Arnaud
 
-External recipient
+> 
+>> +		tee_rproc_unregister(trproc);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> @@ -935,6 +989,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+>>  		dev_pm_clear_wake_irq(dev);
+>>  		device_init_wakeup(dev, false);
+>>  	}
+>> +	if (rproc->tee_interface)
+>> +		tee_rproc_unregister(rproc->tee_interface);
+>> +
+>>  }
+>>  
+>>  static int stm32_rproc_suspend(struct device *dev)
+>> -- 
+>> 2.25.1
+>>
