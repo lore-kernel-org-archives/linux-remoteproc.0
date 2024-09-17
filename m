@@ -1,59 +1,48 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEB25258;
-	Mon, 16 Sep 2024 22:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C5288B1;
+	Tue, 17 Sep 2024 05:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726525659; cv=none; b=G4XKW1BCk4tesaMQ0n4fo9giWoJIc/QJ79sq7CzFwMyZKUUrjWncyVO50+5jad7skmDssKYZC2ikEGBQpQBWSGP5IUZ03EWE78qDCVzvIOBLHrxNIPSKuUPdgEhGIbbrh2CAANjhO0UHzcAiDbhCiIn+p+hVSTm96FU+w4k2o5o=
+	t=1726550423; cv=none; b=XENtrtCez502kpBwx2GOZJcMBpmRDCwL/dtQmX0FwG6TK+VOJL80rax+AOPMEtgPvzhSc7TrPT8TTo077xj/lO4/hBSUaOay6y08ZopJuFGjImGvQoyJKvgviyUxSNm9lyvK0DIz3Zon5OB0E77oSiTzoxOWxSaEfe5iHjOIXP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726525659; c=relaxed/simple;
-	bh=nIlagFSn66DD4L/tj9LXtTHlW6lnx6yFHMKMSPiIPZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=scDaB2pB+iKnn3At9jSOeLBrJLXJN+jW19cgRwJjAE60uUS8Z2F7rS5CMx2lPWBkSTxYoq51vOH6C3T9RONNVz1O8WxK8gp3MHtsD/9NFDyeje/F5FtSGRatFQ1R4CnuObzB6nKua9upq/JPjukbPI2wdzyBGvguwpMPgnaeENc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WP5VPPXK; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726550423; c=relaxed/simple;
+	bh=yYcmQlQZ78r/n5JJeYFb7IMdI48aUYUtAr1H/PKhXwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BLhjGEGr5uSL/JLe2qEKcuRk0a/ZD6u5hmrAb5R66byejrp1BzJkLIkccjSx9ZFiifNBR4RnFX5hfNXNNN1H8kI629Vd6iVb4HKPDL3Mm4/LP76RctzdtQCFH479fqEjYkD+xP9SD9vRftlNHYMjfRBo0XNl19YyQtgX+9Qm3cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kJfgKfvW; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WP5VPPXK"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so2607911a91.0;
-        Mon, 16 Sep 2024 15:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726525658; x=1727130458; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
-        b=WP5VPPXK0lOyfeXPmz0ghYwRKjzRozHHs97BjOsPbDZurbk3Z+YJtLHujwikndS7H0
-         ZR84p0+sIsQvYwWuy3tGC4PaZDaohFtF2EBpHrhs6X3ik4NbegRSUAsGAf5m5zLDgdO2
-         L7dfSdI1R3Q60NFLg7twnKhPlBs3MbxBDAN8S7h/f5KD2NmRu4bLi3XE4KM3lMBDXa2X
-         p3vM9q5n1YMrHiibxLZCrNRDPw1+Ru+0JmguMKwVxLWHC5Z9SaDEIIXGWFbJdQ432W/1
-         dVV9htlYL20nGUmnpVwrj14fNf7Gdkaiu2pcTgZ7Mmuob5zM0/kAyFNIsCiSEXWoz8kx
-         +BiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726525658; x=1727130458;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p871//Fs+/qO7+7cwFPvh1c0mSeuK8ASkkcU0dmqUPs=;
-        b=vwyvZd7tM46b6wd5DeIiP5HkW4jsyfyUisndcf6Xd2u1KHnGk4Ur37bz+J5+Z7Kcpx
-         iMpOxDl1iQcOZ5DRSwG2adlEQiC2sqY9E6mECuDYBlCXdaEXFVuAlu7hPQ4v5kNq8mvi
-         RQbafaXjei7MTN3KDrLlGv/EgVKVXBkRMWjG4IWPOHZZO0CmmzDhXG5IuoPduUb8ujHC
-         L0ZlpIlDvSsrNs6ORRnkb3Aef9HujVvFaP0tAzQWjAcshDLGCQ/OVO+2sOPvv4e41F4J
-         kGvOgkJuO3LfXL9qn66i+HXbXvfbdsnxQZ6pacVLJotWP0U7PsQvZW0pqztZQlBy9BYQ
-         gNfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU5ok5sApEGJpTrGA2zRgac4B4Mt+ri2CiRa3slweC7MboziHsNoK2h63eHadt8mC+cbM+ZPuzFNOUhAwr@vger.kernel.org, AJvYcCVjB7spUg4QeiYDd87Ug4tJz0Yms76cgZuiAOqbwbc1r4G4o8vJUggiclM3YYhK/OHj5LHdxBO+De2M@vger.kernel.org, AJvYcCVp++vwDrPV4Je7y63u7Awel4hEcCLSjNiTnsq+jDZCYh374JL1HpwDtnmk2PS8d8hWPM3NRbJYoHM47whZuG2c5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza+v9dfhnGHDDVUqRsjkQuqI3Fo8d3eIB8v+NTdt7HQstx2Rrk
-	6c7sE9gPjgVGTXEG1Sw2+JXV/Y6DrqoMs2REn9gi3krH9ChzXMPN
-X-Google-Smtp-Source: AGHT+IHOIOa4uoJrvmJHVtqFy1kUCeyLXVe0HcxyEv6ClDTP9rAgSTpgUwY80v38ijtmEJ/ROq/SPg==
-X-Received: by 2002:a17:90b:2344:b0:2d8:816a:69c5 with SMTP id 98e67ed59e1d1-2dbb9e1ed42mr16825361a91.23.1726525656975;
-        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
-Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9caafc4sm8017188a91.30.2024.09.16.15.27.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2024 15:27:36 -0700 (PDT)
-Message-ID: <fe87c66d-e5f6-46bd-828a-6fac2b0aa0ac@gmail.com>
-Date: Mon, 16 Sep 2024 15:28:00 -0700
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kJfgKfvW"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48H5K6Jw051855;
+	Tue, 17 Sep 2024 00:20:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726550406;
+	bh=Nnp33+KXLcWzN5rrn20cPD+EDnVgjdIxGIfjhChI7Ys=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=kJfgKfvWjrtEOtqn+NLEUEH1UF3aZ9VVSKxeUUXZ2ClH+zEdfXJgL9M+SQ83lVaBV
+	 K66HQbI1jvWqWrEfFt5psRFUhK87CKguABOA6KDMpin+MxVoV5zHh1QemxgKjRZxEw
+	 OGHnAPcu27Fzqtcu/VzMLXPiBS1Hp7xtD6jxv0T0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48H5K6pR033430
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 17 Sep 2024 00:20:06 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
+ Sep 2024 00:20:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 17 Sep 2024 00:20:05 -0500
+Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48H5K2uq038382;
+	Tue, 17 Sep 2024 00:20:02 -0500
+Message-ID: <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com>
+Date: Tue, 17 Sep 2024 10:50:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -61,49 +50,117 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] Add Microchip IPC mailbox and remoteproc support
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com,
- conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com,
- robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org,
- mathieu.poirier@linaro.org
-References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in
+ k3_r5_rproc_{mbox_callback/kick}
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Hari Nagalla <hnagalla@ti.com>, Andrew Davis
+	<afd@ti.com>
+CC: <andersson@kernel.org>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+References: <20240916083131.2801755-1-s-vadapalli@ti.com>
+ <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
 Content-Language: en-US
-From: Bo Gan <ganboing@gmail.com>
-In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Valentina,
+On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
+> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
+>> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
+>> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()" and
+>> "k3_r5_rproc_kick()" callbacks, causing them to exit if the remote core's
+>> state is "RPROC_DETACHED". However, the "__rproc_attach()" function that is
+>> responsible for attaching to a remote core, updates the state of the remote
+>> core to "RPROC_ATTACHED" only after invoking "rproc_start_subdevices()".
+>>
+>> The "rproc_start_subdevices()" function triggers the probe of the Virtio
+>> RPMsg devices associated with the remote core, which require that the
+>> "k3_r5_rproc_kick()" and "k3_r5_rproc_mbox_callback()" callbacks are
+>> functional. Hence, drop the check in the callbacks.
+> Honestly, I am very tempted to just revert f3f11cfe8907 and ea1d6fb5b571.
 
-On 9/12/24 10:00, Valentina Fernandez wrote:
-> Additional details on the Microchip vendor extension and the IPC
-> function IDs described in the driver can be found in the following
-> documentation:
-> 
-> https://github.com/linux4microchip/microchip-sbi-ecall-extension
-> 
-> The IPC remoteproc platform driver allows for starting and stopping
-> firmware on the remote cluster(s) and facilitates RPMsg communication.
-> The remoteproc attach/detach operations are also supported for use cases
-> where the firmware is loaded by the Hart Software Services
-> (zero-stage bootloader) before Linux boots.
 
-Would you mind help clarifying the need for SBI_EXT_RPROC_STATE/STOP/...?
-If I'm not mistaken, the HW you are targeting is described in
-https://ww1.microchip.com/downloads/aemDocuments/documents/MPU64/ProductDocuments/SupportingCollateral/Asymmetric_Multi-Processing_on_PIC64GX_White_Paper.pdf
-(typo in the page 4, U51 -> E51)
-In SBI, do you put hart1-3 and hart4 into 2 separate domains? If not,
-I don't see why you can't just use HSM extension from SBI to kick rproc.
-Also, how stable is this microchip-sbi-ecall-extension? Is it subject
-to changes down the road? I don't see a probe() like SBI function, so
-the kernel kind of assume it can call those microchip extensions without
-causing unintended effects. This means those extension FIDs must be
-stable and can no longer change once this code is in. Perhaps checking-in
-the microchip SBI extensions to major SBI implementations such as openSBI
-first would be better?
+Please don't :) , it will break rproc in general for k3 devices.
 
-Bo
+Couple of solutions for this race around condition (in mine preference 
+order)
+
+1) In 
+https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190 
+have a check , if probe in is progress or not
+
+2) 
+https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1205 
+-- correct the state to ON or something else
+
+3) Move condition 
+https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/remoteproc_core.c#L1360 
+before rproc_start_subdevices 
+<https://elixir.bootlin.com/linux/v6.11/C/ident/rproc_start_subdevices> 
+calling
+
+
+
+>
+>> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>> ---
+>>
+>> Hello,
+>>
+>> Since the commit being fixed is not yet a part of Mainline Linux, this
+>> patch is based on linux-next tagged next-20240913.
+>>
+>> An alternative to this patch will be a change to the "__rproc_attach()"
+>> function in the "remoteproc_core.c" driver with
+>> rproc->state = RPROC_ATTACHED;
+>> being set after "rproc_attach_device()" is invoked, but __before__
+>> invoking "rproc_start_subdevices()". Since this change will be performed
+>> in the common Remoteproc Core, it appeared to me that fixing it in the
+>> TI remoteproc driver is the correct approach.
+>>
+>> The equivalent of this patch for ti_k3_dsp_remoteproc.c might also be
+>> required, which I shall post if the current patch is acceptable.
+>>
+>> Kindly review and share your feedback on this patch.
+>>
+>> Regards,
+>> Siddharth.
+>>
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 8 --------
+>>   1 file changed, 8 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 747ee467da88..4894461aa65f 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -194,10 +194,6 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+>>          const char *name = kproc->rproc->name;
+>>          u32 msg = omap_mbox_message(data);
+>>
+>> -       /* Do not forward message from a detached core */
+>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>> -               return;
+>> -
+>>          dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+>>
+>>          switch (msg) {
+>> @@ -233,10 +229,6 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+>>          mbox_msg_t msg = (mbox_msg_t)vqid;
+>>          int ret;
+>>
+>> -       /* Do not forward message to a detached core */
+>> -       if (kproc->rproc->state == RPROC_DETACHED)
+>> -               return;
+>> -
+>>          /* send the index of the triggered virtqueue in the mailbox payload */
+>>          ret = mbox_send_message(kproc->mbox, (void *)msg);
+>>          if (ret < 0)
+>> --
+>> 2.40.1
+>>
