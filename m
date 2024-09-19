@@ -1,54 +1,54 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A676198A33
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Sep 2024 08:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784AD198E91
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Sep 2024 08:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726734410; cv=none; b=K6C8m3SaIafl4yRTr39pGqshQGiPv6PLOvcvl4Uro1PYtsx/IxE/8FaTI72Sv1jkh8pBy1RoVGx4ckw7JkZfKM9m/R47cZ9vx06dIuE7Ji3h3+3FrYSibP+1nhqvwOfqeyzsalCzjw7EJQcaiXUEdPlK7EQC6Wb7Bay6u3yHWhk=
+	t=1726734814; cv=none; b=LL1Mxc1zQawsJKo7FNTySShGgohkVwx3vaedLHKP7uoyH8UFwSjQ+rcnI8aEnuPt5McImfAvF3c6TdLD0ZkGbWF12QYL0/lq0+YpH47DHQDVnIZbIST2uqV9rcrCXD328TVfOQugeSBPCFMdiKphK7MvyAG9kqdbynKxIf2Phtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726734410; c=relaxed/simple;
-	bh=SNnSe4+X9+S1zKkLqSUN/kNM3VzSGxHcNmVz8Sr0O1E=;
+	s=arc-20240116; t=1726734814; c=relaxed/simple;
+	bh=5TqAiRX5QxSZiIA9tmSZyMJHtKKQS2wLgVd84sNypOs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c+0SbY/MpWK4T+ECsb2L+lu83PKpUMsrjxpmsOsRsmtLBgOfd/N7P179CwWPQz+pPUYVgvCgDiQ0hjqGQXB+fVLD/mr299CLeGeuSwNpzWP9UO1tWJZvwDBxl5khu4PLoQln8MSr6LZ7GW52zdpySRVfi/RV2WHuaIBfUlru5yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QuHyWDCI; arc=none smtp.client-ip=209.85.208.47
+	 To:Cc:Content-Type; b=XQYvax8wbrJN4pfARGEj06bgCpichB8CXE2fvzL3TrwgdYKlnYqfqa1cIovz34J5q99u23twnitsAo5XpBiTnAepflU1pNjC0+HiINWUahrX77oBgIu3eOLU0N8+5TKMQN9nhVEs2K+Vi1U8muTjWzidIRAj1WcDORiKewFRb+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RXr0krqp; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QuHyWDCI"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c40942358eso923640a12.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Sep 2024 01:26:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RXr0krqp"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c42bda005eso697675a12.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Sep 2024 01:33:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726734406; x=1727339206; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726734811; x=1727339611; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMnmLpa5yTs94EHMp6Tjgq0ksZyXxBury+om39vf0fg=;
-        b=QuHyWDCIz2gsEhYKSIeFWVH86Kb3RV9Qprt9yN2ABWYOJ4rQY0LRGXL0GMH/X9RUxX
-         npDHWeE/it8VLOjqqKgyLTeA6I08daNMfuO24Dx21vKU4uyHKFhKw/ViCx+mbclFbM2x
-         F0Tj2hDqxTg8DWCkLja/e8xfQlyRbbN2Lb3lB9kRyOMIOtV7Z0BBk6cWTghaeVAvio3v
-         V6h+6F4ABR3VkDmTShVprIyM6QCpnThebH4UiyQGHNF5h0SQ9DfrL+0FC7dcxYbC6NLz
-         OPtEak1rQqrK19jUwEcpflqnDTXLByaPzcWrP3TFW7gYgENPHhwAwfw/LzNTdb6Z0Zlo
-         pHDQ==
+        bh=2tnZCK7YM8bSrHkiRrBzFB1W1hJ1nGVSf+dbrHUhPoQ=;
+        b=RXr0krqpoT4BbZDENZsVfKtz3JqFMI81f0jJohYB9NRxc4wB9IQWGR+OXhJ8rOCCG0
+         s057s+t2VtpeavrJ7elC1NJ8e5goCWrOFfJvT0AcSe6Ee9XlHIFZMgoFVy/T8f5csAE9
+         LjpZwWQZZ8lfIOPfuqxSNf39xdqCXprg3l9TMtTt57kOh6+SswGmk+YmyklwsSWOYqqq
+         uRhP0NJhjqeNgsgN+VJskCtIBQj7C7YsVRPRcULqeIxx2/KHpd8AbmKiZVLggzyo9BNy
+         IQBH+FsojKUbiIaKXRgNcp/oyPkgxBfYasU7qX2WIrSEUqFxnw/8BCZu0zc7tQKupV7Q
+         JnUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726734406; x=1727339206;
+        d=1e100.net; s=20230601; t=1726734811; x=1727339611;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wMnmLpa5yTs94EHMp6Tjgq0ksZyXxBury+om39vf0fg=;
-        b=FZdfgBFO+HR1My/spxl9lUF9VPsgYI3rmYqaXn28sLUcSgY+mjjNTOjD/+DMRjMmPX
-         vkoupfxlEvjzGg1cBBg5Yznd4y7iuUo2fVW9ilfpir6p9Qw3AvzHQpX7gaP1jkUBhcgW
-         sW6CStomsGeV77v0DE+WT/5osfo3tUo+9xbSjGp06Tn9Vi18qlIGZ0Tf1vo3xkeirE86
-         do1DlbSL6d0cbDv7UZJzrw7g3GcwkbuRG5dMp6oZzjxyd3YpA0epLiA50CvycJ44LQMc
-         y4IrZ/G4rCCfNGchAxqOTsKqlF7INgerTdF7uB/btx8WxPMR1LTP6t/gBeK3JF9YQQXM
-         3meA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOJA+VUhhjtrwHYtyj8VX1EknOmNgpIprRXHx7FU3E8kFEBo3jfaoNF4VeMaVUmawsCb520kYMPwZB1IS2YZVt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLR3NMwj5nS8hlmGcDvMyoKPvw75ByLkUgl7Is9OkhQvFip6m/
-	a/FVFSL33dznJtwWjTulQJ8s/6WEXE8+jHL0dtFIjqMwj1ZQjSPCpSbBCpgs+eez3bMofyicTuC
-	87UV+2zc+UIf6wLPMpJFpK8Nvykva/66xTe9BNg==
-X-Google-Smtp-Source: AGHT+IEr9Qngg/re7gFblpHj6r38UjAORdeHgAt3MkjdRpw63qPyVRuVO1/VeRmL1KzoAhdtm+FssF4bjg2tVckZedM=
-X-Received: by 2002:a05:6402:430b:b0:5c3:cc44:570a with SMTP id
- 4fb4d7f45d1cf-5c459205a2emr2214529a12.2.1726734405755; Thu, 19 Sep 2024
- 01:26:45 -0700 (PDT)
+        bh=2tnZCK7YM8bSrHkiRrBzFB1W1hJ1nGVSf+dbrHUhPoQ=;
+        b=MyGP022oJotlvxjAa+k4N8wtTtl/mEliU1eAm56R4eMjGjC3o+MUlTxYSBp49GLrWD
+         QRxEKTK3gYPscbTnUiAj36REEWy35S5zA7VndgHzqdyn3394u6DR9Zs6DU0/afaATvCl
+         7xGXJnG2QjM+1mY0F82N0F7xa5j74efKTFcfMx61veUaVbzsxT0GJ3UhIw6GvMY3uavi
+         IoUsQHKpnxbaowAK8t8xhuzWdJwmc1IysLhFYsZpC8Qm2u4Z23nthP4riti6tP6guSgG
+         Ja4TkLsIz3FWCKFQI0eesinrbbtOJNCNeIsK+GUpIgXbqKrZp9e8vsR9I0m/kFt5eTpG
+         ypCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWskhXTn5+wsTgDlK4dJ+Vy1rNSf6VPWVW34a7hCNqWIBeNTl/luVaHtm5nwHSvD4IS+6LLhzPRkDPfBCsZtZW/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUN0XW4xFztNxdlpx98wlmXdXLQQe78O0vOf27YqtYmSTUTO58
+	ymH41cl5SiNmvOt5plQky/BU8b/d3ahDi0df1P3xrjBq6gq2a5hw3qwB4QAyCGY2uw4uJIDvAYR
+	Tj24opVRdtHU9JlQ9QKcdWaiMu2ofKNld/GogPg==
+X-Google-Smtp-Source: AGHT+IFT0rDzXEzYcZMfSktK8K50rLXkJ7iGrTRgEHDzHf2hLBqkw5JFkKoBBhObwWWTnsUDsb5ymz0P+DOO7ViY1n4=
+X-Received: by 2002:a05:6402:4406:b0:5c3:d8fd:9a49 with SMTP id
+ 4fb4d7f45d1cf-5c413e12224mr19755057a12.10.1726734810467; Thu, 19 Sep 2024
+ 01:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -57,24 +57,26 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240916083131.2801755-1-s-vadapalli@ti.com> <CANLsYkwTYqfAi+OFg3khMs7VD_PnL=CH-k8HXE71QSdqpR1fvA@mail.gmail.com>
  <fda85c12-e73f-44b8-b66b-1241e417a9b7@ti.com> <CANLsYky1Oxu7Fc1-gz53cR+KpO67nDE5LQGj_NV+czOwY2_2CA@mail.gmail.com>
- <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
-In-Reply-To: <3ca4b2d1-5c47-4f85-969d-cd61c7ade2dc@ti.com>
+ <c8b2e851-a247-4a90-acb5-a774d131b561@ti.com>
+In-Reply-To: <c8b2e851-a247-4a90-acb5-a774d131b561@ti.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 19 Sep 2024 02:26:34 -0600
-Message-ID: <CANLsYkyDro+mDe1c-xB5-ABcoZOHa=iyMUZ9kjD+p4hpEZO=fw@mail.gmail.com>
+Date: Thu, 19 Sep 2024 02:33:19 -0600
+Message-ID: <CANLsYkwwoS-Gd+TcgEYj7ZgK8eepxChXfF4u5MU1tYdq0VyCVQ@mail.gmail.com>
 Subject: Re: [RFC PATCH] remoteproc: k3-r5: Fix check performed in k3_r5_rproc_{mbox_callback/kick}
-To: "Kumar, Udit" <u-kumar1@ti.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, 
-	andersson@kernel.org, b-padhi@ti.com, linux-remoteproc@vger.kernel.org, 
+To: Beleswar Prasad Padhi <b-padhi@ti.com>
+Cc: "Kumar, Udit" <u-kumar1@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>, Hari Nagalla <hnagalla@ti.com>, 
+	Andrew Davis <afd@ti.com>, andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	srk@ti.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Sept 2024 at 03:13, Kumar, Udit <u-kumar1@ti.com> wrote:
+s
+
+On Tue, 17 Sept 2024 at 03:40, Beleswar Prasad Padhi <b-padhi@ti.com> wrote:
 >
 > Hi Mathieu,
 >
-> On 9/17/2024 2:07 PM, Mathieu Poirier wrote:
+> On 17/09/24 14:07, Mathieu Poirier wrote:
 > > On Mon, 16 Sept 2024 at 23:20, Kumar, Udit <u-kumar1@ti.com> wrote:
 > >> On 9/16/2024 8:50 PM, Mathieu Poirier wrote:
 > >>> On Mon, 16 Sept 2024 at 02:31, Siddharth Vadapalli <s-vadapalli@ti.com> wrote:
@@ -99,23 +101,10 @@ On Tue, 17 Sept 2024 at 03:13, Kumar, Udit <u-kumar1@ti.com> wrote:
 > > going to merge whack-a-mole patches and hope the right fix comes
 > > along.
 >
-> Now, I am not advocating here to revert or not.
 >
-> But where we stand currently
->
-> 1-  Without this patch, IPC is broken in general.
->
-> 2-  With this patch, IPC is conditionally broken.
->
-> In either case, we need to fix it.
->
-> your call to revert or keep it.
->
-
-I will keep f3f11cfe8907 and ea1d6fb5b571 but will not take this one
-because 1) we are in the merge window and 2) I have no assurance that
-this is the right (and complete) fix.
-
+> Apologies for causing this trouble, Mathieu. I have accumulated various
+> use-cases of the driver, including this, and hereon will keep in mind
+> while posting further patches.
 >
 > >
 > >> Couple of solutions for this race around condition (in mine preference
@@ -126,10 +115,18 @@ this is the right (and complete) fix.
 > > tagged with R-B and T-B tags (collected on the mailing lists) from two
 > > different individuals before I look at them.
 >
-> Sure we will take care of above
 >
-> and fair ask on R-B and T-B tags
+> Understood, that is a fair ask. Hereon, I will also attach my test logs
+> for all the usecases I've tested a patch with, to give more visibility
+> on the testing done.
 >
+
+I am not in a position (nor have the time) to look at test logs and as
+such, there is no point in doing that.  That time should be better
+spent building a CI that goes through all the scenarios and making
+sure that all patches pass the tests before being sent to the mailing
+list.
+
 > >
 > >> 1) In
 > >> https://elixir.bootlin.com/linux/v6.11/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L190
