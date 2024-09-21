@@ -1,299 +1,187 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1FDEBE;
-	Fri, 20 Sep 2024 17:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0A222094;
+	Sat, 21 Sep 2024 18:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726855139; cv=none; b=E1m6WlxaN3DTBMTu7U8f1WfJNkpcZ5yfIQEeMKNEfjmq5XPMOQaWIVEzp1YluHjaMOuIfG/mPEfLluABCDnfZldEpnPz2uyVdIrNKqE0DH3gSNrSaglDHUH9hdBgb8LjIwOo9IrdNMzDPu15auyVx8DnIWuTxq16iZ3s8xDk39s=
+	t=1726942848; cv=none; b=o/qdtnKT7gFrdC8gaJic2v0t4GgIvrB6LIU6T62HIBSw/55EREH9nSG4NmpO9ImUYGt3vbYsLIc0xVm5DZVNesvMV3DjwwTUHjtJKU1i4h/StS0Ago7XoXzABXWAVNn44AjrXjanIHrH6GQwNbT8BAc3LMu2Hw7Wn0iso2CaSPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726855139; c=relaxed/simple;
-	bh=EgzZJ47TSIdqkV4mcxv5gtzJ3Wj3JkzqDsrjv7g373A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p61zmXfEHh77lNvibLxJjhuz5dbMXCpWZAAEVET5Kkx1QmHZV7n7XGrJpZzAPjwZHISAlIJjI2UEVDWwS8CDVwrYD2iaBtaXHxItnTmD1b7DQQyX2qq9QtUYkb1aTjlRYyakE9IYJqrlr/AVULpqqYqVFZHYUvskFXeMu9fCjxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aIKs9Bsr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1726942848; c=relaxed/simple;
+	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TLnqHk1tCSHazyJdgPVIB0eEjQt3UyBgScpXkK5Ev9GFBNQNOiBGHfbmuTivKVEcuoOxWA9eg/AxDtfz3FS7jUd51A7j7703EaPPzFI59oQJol7FcLkND40fJCuFbDf+a8kBs5bfhvTHvukHiwH1BXCeldLJyBaO4+Bnfe1syDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFvpl14q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aIKs9Bsr"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KH9V4a018621;
-	Fri, 20 Sep 2024 17:58:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=cSRhvZr/fyB5veM+2HidkMYMgaeq+nOW+Ry
-	akyBC+io=; b=aIKs9BsrLx17EE4kEaLl4izaU7q8DyR+jCtuvi0wxjQy8vl48D8
-	wtotgt3MGr4IJpW+hvrNRTvFJTQzP2fUXusNftv8oTuH6hKS/YERz7RSFHnQSkUm
-	E2vaYRTVQD5FG3R5IGCUpxxIPC5C2B4PHJXtnTNjHwT6MxgTTf7e4DGjBGyPD1i4
-	mYU14PGhic+MUzic4ec1y+RXXw88ovsbnpR1USKdyoFAoykkMs0KNCnzDNc8dSjF
-	/6rUs+PhPRTr+3xaRVVc9UEd3FJNH5lwuDcQlordawnbcYExMDPFoy33GSm432ZS
-	LjT5Hhw8UKJZDiJEs8DmH/dSMuoQiSYXvtA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4j72adg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:52 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48KHwn1W021951;
-	Fri, 20 Sep 2024 17:58:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41n3jmue7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:49 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48KHwnZn021946;
-	Fri, 20 Sep 2024 17:58:49 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48KHwmQq021945
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:49 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
-	id CFD8C58D; Fri, 20 Sep 2024 23:28:47 +0530 (+0530)
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Shuah Khan <shuah@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Wasim Nazir <quic_wasimn@quicinc.com>
-Subject: [PATCH] selftest: remoteproc: Add basic test for start/stop sequence
-Date: Fri, 20 Sep 2024 23:28:42 +0530
-Message-ID: <20240920175842.388781-1-quic_wasimn@quicinc.com>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFvpl14q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1F1C4CEC2;
+	Sat, 21 Sep 2024 18:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726942847;
+	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BFvpl14qlVw6jIz/O0e8ADaeANBfS1HNPXN6kdZM10f89xnWuEXxykMITjdN1PM9r
+	 dAcvNLYGFndUQipjEdFGGmQz+rH4jhQjx3Un907TbgFyqAMUnq0mZbySsYMoydHVHP
+	 EomM3t1Q2KAjSj6cSGWWPmCNFKZmK1SwApm7+Xj7wFxXs4we4Z1JBrmn4gmv5iWGxU
+	 Tz54aaAjCmNVWgQhshChhYQL6e0E9Cg+7mi7u1s8DqTJvcIjqp1FmmBSQ/S64fU50/
+	 WBJO21Vnij2rYF9CDVlCiDk2b2s4aBRcitoy7arXRVMjLEqUGVatB5+x2n5jvvH/E0
+	 /HZqJZoGv+BOg==
+Message-ID: <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
+Date: Sat, 21 Sep 2024 20:20:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ioa0oQ9z-sCsZtf1HP85eJTZLgChXZ8F
-X-Proofpoint-GUID: ioa0oQ9z-sCsZtf1HP85eJTZLgChXZ8F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409200131
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+ Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
+ sudeep.holla@arm.com, robin.murphy@arm.com
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+ <20240920141958.GA288724@e130802.arm.com>
+ <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
+ <20240920163851.GA385919@e130802.arm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240920163851.GA385919@e130802.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add new basic remoteproc test that check start/stop
-sequence of all subsystems available.
+On 20/09/2024 18:38, Abdellatif El Khlifi wrote:
+> Hi Krzysztof,
+> 
+>>>>>>>>> +  '#extsys-id':
+>>>>>>>>
+>>>>>>>> '#' is not correct for sure, that's not a cell specifier.
+>>>>>>>>
+>>>>>>>> But anyway, we do not accept in general instance IDs.
+>>>>>>>
+>>>>>>> I'm happy to replace the instance ID with  another solution.
+>>>>>>> In our case the remoteproc instance does not have a base address
+>>>>>>> to use. So, we can't put remoteproc@address
+>>>>>>>
+>>>>>>> What do you recommend in this case please ?
+>>>>>>
+>>>>>> Waiting one month to respond is a great way to drop all context from my
+>>>>>> memory. The emails are not even available for me - gone from inbox.
+>>>>>>
+>>>>>> Bus addressing could note it. Or you have different devices, so
+>>>>>> different compatibles. Tricky to say, because you did not describe the
+>>>>>> hardware really and it's one month later...
+>>>>>>
+>>>>>
+>>>>> Sorry for waiting. I was in holidays.
+>>>>>
+>>>>> I'll add more documentation about the external system for more clarity [1].
+>>>>>
+>>>>> Basically, Linux runs on the Cortex-A35. The External system is a
+>>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+>>>>> It can only control Cortex-M core using the reset control and status registers mapped
+>>>>> in the memory space of the Cortex-A35.
+>>>>
+>>>> That's pretty standard.
+>>>>
+>>>> It does not explain me why bus addressing or different compatible are
+>>>> not sufficient here.
+>>>
+>>> Using an instance ID was a design choice.
+>>> I'm happy to replace it with the use of compatible and match data (WIP).
+>>>
+>>> The match data will be pointing to a data structure containing the right offsets
+>>> to be used with regmap APIs.
+>>>
+>>> syscon node is used to represent the Host Base System Control register area [1]
+>>> where the external system reset registers are mapped (EXT_SYS*).
+>>>
+>>> The nodes will look like this:
+>>>
+>>> syscon@1a010000 {
+>>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+>>>         reg = <0x1a010000 0x1000>;
+>>>
+>>>         #address-cells = <1>;
+>>>         #size-cells = <1>;
+>>>
+>>>         remoteproc@310 {
+>>>             compatible = "arm,sse710-extsys0";
+>>>             reg = <0x310 4>;
+>>
+>> Uh, why do you create device nodes for one word? This really suggests it
+>> is part of parent device and your split is artificial.
+> 
+> The external system registers (described by the remoteproc node) are part
+> of the parent device (the Host Base System Control register area) described
+> by syscon.
+> 
+> In case of the external system 0 , its registers are located at offset 0x310
+> (physical address: 0x1a010310)
+> 
+> When instantiating the devices without @address, the DTC compiler
+> detects 2 nodes with the same name (remoteproc).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e062b5328341..aff76edc4242 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18225,6 +18225,7 @@ F:	Documentation/staging/remoteproc.rst
- F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
- F:	include/linux/remoteproc/
-+F:	tools/testing/selftests/remoteproc/
+There should be no children at all. DT is not for instantiating your
+drivers. I claim you have only one device and that's
+arm,sse710-host-base-sysctrl. If you create child node for one word,
+that's not a device.
 
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Bjorn Andersson <andersson@kernel.org>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 697f13bbbc32..31db0311efdc 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -68,6 +68,7 @@ TARGETS += proc
- TARGETS += pstore
- TARGETS += ptrace
- TARGETS += openat2
-+TARGETS += remoteproc
- TARGETS += resctrl
- TARGETS += riscv
- TARGETS += rlimits
-diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-new file mode 100644
-index 000000000000..a84b3934fd36
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+TEST_PROGS := remoteproc_test.sh
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-new file mode 100644
-index 000000000000..a5c237d2f3b4
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/config
-@@ -0,0 +1 @@
-+CONFIG_REMOTEPROC=y
-diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-new file mode 100644
-index 000000000000..88c8f15d8406
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-@@ -0,0 +1,165 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+#
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+
-+KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-+if [ -e "$KTAP_HELPERS" ]; then
-+    source "$KTAP_HELPERS"
-+else
-+    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-+	exit 4
-+fi
-+
-+RPROC_SYS=/sys/class/remoteproc
-+RPROC_SEQ_SLEEP=5
-+rproc_ss_files=
-+num_tests=0
-+test_err=0
-+
-+check_error() {
-+	if [ $? -ne 0 ]; then
-+		test_err=$((test_err+1))
-+		ktap_print_msg "$@"
-+	fi
-+}
-+
-+rproc_seq_test_ss_one() {
-+	ss=$1
-+	rproc=${RPROC_SYS}/$ss
-+	rproc_name=$(cat $rproc/name)
-+	rproc_state=$(cat $rproc/state)
-+	rproc_ssr=$(cat $rproc/recovery)
-+	ktap_print_msg "Testing rproc sequence for $rproc_name"
-+
-+	# Reset test_err value
-+	test_err=0
-+	if [ "$rproc_ssr" != "enabled" ]; then
-+		echo enabled > $rproc/recovery
-+		check_error "$rproc_name SSR-enabled failed"
-+	fi
-+
-+	if [ "$rproc_state" != "running" ]; then
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed"
-+
-+		sleep ${RPROC_SEQ_SLEEP}
-+
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed"
-+	else
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed"
-+
-+		sleep ${RPROC_SEQ_SLEEP}
-+
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed"
-+	fi
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "$rproc_name"
-+	else
-+		ktap_test_pass "$rproc_name"
-+	fi
-+}
-+
-+rproc_seq_test_all_ss() {
-+	# Declare an array to save initial states of each ss
-+	org_ss_to_state=""
-+
-+	# Reset test_err value
-+	test_err=0
-+
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_ssr=$(cat $rproc/recovery)
-+
-+		# Enable SSR-recovery support
-+		if [ "$rproc_ssr" != "enabled" ]; then
-+			echo enabled > $rproc/recovery
-+			check_error "$rproc_name SSR-enabled failed"
-+		fi
-+	done
-+
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		# Save initial states for each ss
-+		org_ss_to_state="$org_ss_to_state $rproc_state"
-+
-+		# Initiate start/stop sequence
-+		if [ "$rproc_state" != "running" ]; then
-+			echo start > "$rproc/state"
-+			check_error "$rproc_name state-start failed"
-+		else
-+			echo stop > "$rproc/state"
-+			check_error "$rproc_name state-stop failed"
-+		fi
-+		sleep ${RPROC_SEQ_SLEEP}
-+	done
-+
-+	index=1
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		ss_state=$(echo $org_ss_to_state | cut -d' ' -f$index)
-+		# Terminate start/stop sequence
-+		if [ "$ss_state" != "running" ]; then
-+			echo stop > "$rproc/state"
-+			check_error "$rproc_name state-stop failed"
-+		else
-+			echo start > "$rproc/state"
-+			check_error "$rproc_name state-start failed"
-+		fi
-+		index=$((index+1))
-+		sleep ${RPROC_SEQ_SLEEP}
-+	done
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "for any of $rproc_ss_files"
-+	else
-+		ktap_test_pass "for all $rproc_ss_files"
-+	fi
-+}
-+
-+ktap_print_header
-+
-+if [[ ! -d "${RPROC_SYS}" ]]; then
-+	ktap_skip_all "${RPROC_SYS} doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+rproc_ss_files=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-+num_tests=$(echo ${rproc_ss_files} | wc -w)
-+if [[ "${num_tests}" -eq 0 ]]; then
-+	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+# Total tests will be:
-+# 1) Seq tests for each subsystem sequencially
-+# 2) Seq tests for all subsystems concurrently
-+num_tests=$((num_tests+1))
-+
-+ktap_set_plan "${num_tests}"
-+
-+# Test 1
-+ktap_print_msg "Testing rproc up/down sequence for each subsystem sequencially"
-+for ss in ${rproc_ss_files}; do
-+	rproc_seq_test_ss_one $ss
-+done
-+
-+# Test 2
-+ktap_print_msg "Testing rproc up/down sequence for all subsystems concurrently"
-+rproc_seq_test_all_ss
-+
-+ktap_finished
---
-2.46.1
+Best regards,
+Krzysztof
 
