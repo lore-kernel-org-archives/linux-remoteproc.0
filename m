@@ -1,33 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0A222094;
-	Sat, 21 Sep 2024 18:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E029193090;
+	Sun, 22 Sep 2024 11:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726942848; cv=none; b=o/qdtnKT7gFrdC8gaJic2v0t4GgIvrB6LIU6T62HIBSw/55EREH9nSG4NmpO9ImUYGt3vbYsLIc0xVm5DZVNesvMV3DjwwTUHjtJKU1i4h/StS0Ago7XoXzABXWAVNn44AjrXjanIHrH6GQwNbT8BAc3LMu2Hw7Wn0iso2CaSPQ=
+	t=1727004463; cv=none; b=kunjL3K2hPZkoyO11bsfac5C+I9QkET/0btkma1BxgnCX7bYAMtTULWeMkuiUGXWx5UTnkpKxKWo9hZuE31HYDglnRgbhgFAtyrzYnheINEDKd/cvEd/N28gIHAEjK5FOC0+suprr3TI8ouPJYjFFelc7Lf0Qkimhq31VaPEAaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726942848; c=relaxed/simple;
-	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLnqHk1tCSHazyJdgPVIB0eEjQt3UyBgScpXkK5Ev9GFBNQNOiBGHfbmuTivKVEcuoOxWA9eg/AxDtfz3FS7jUd51A7j7703EaPPzFI59oQJol7FcLkND40fJCuFbDf+a8kBs5bfhvTHvukHiwH1BXCeldLJyBaO4+Bnfe1syDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFvpl14q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727004463; c=relaxed/simple;
+	bh=Ubr4xKaup2BgtEQmSwvzn5S3OcK/SRHS8d9QmBMPRyo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=pmMvLF/iCbcdZBiF1XPf9IIOlpkBW0t+2Sxhyoy//H4rEmJWXkz23jhbYKFRtmIB75GGYwHAMna40hnwp5idw6oAHrVCPm/A1mzHO86bP8vxv8t+NeNoSTbxS53XmZkaGQTPG60iGHa6rFHEnKohav6qeh+urFoD6vzQ/5a4GaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jB74Jf8M; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFvpl14q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1F1C4CEC2;
-	Sat, 21 Sep 2024 18:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726942847;
-	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BFvpl14qlVw6jIz/O0e8ADaeANBfS1HNPXN6kdZM10f89xnWuEXxykMITjdN1PM9r
-	 dAcvNLYGFndUQipjEdFGGmQz+rH4jhQjx3Un907TbgFyqAMUnq0mZbySsYMoydHVHP
-	 EomM3t1Q2KAjSj6cSGWWPmCNFKZmK1SwApm7+Xj7wFxXs4we4Z1JBrmn4gmv5iWGxU
-	 Tz54aaAjCmNVWgQhshChhYQL6e0E9Cg+7mi7u1s8DqTJvcIjqp1FmmBSQ/S64fU50/
-	 WBJO21Vnij2rYF9CDVlCiDk2b2s4aBRcitoy7arXRVMjLEqUGVatB5+x2n5jvvH/E0
-	 /HZqJZoGv+BOg==
-Message-ID: <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
-Date: Sat, 21 Sep 2024 20:20:39 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jB74Jf8M"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48MBRFGa103698;
+	Sun, 22 Sep 2024 06:27:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727004435;
+	bh=XnxBUT2Dw6S9B2FDDYplj2ilPkQZxh4zWUn9GXdLhak=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=jB74Jf8MwZLGqfp7x/iKwk5hLDDyZBFVTGWWBYgYfMr095Y9tZbYUDOh2jqrexcHf
+	 eTgnpxQY+TwTGX6BAwCvFbq6s9QwC58YGBwUtxXnjJPYmoJQtkbUT7mmT5T+u2b5Hp
+	 7GNUZptp0pnK5wz6AvwA2KhsUTSE9FTiDQnZsPiQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48MBRFLX015637
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 22 Sep 2024 06:27:15 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 22
+ Sep 2024 06:27:15 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 22 Sep 2024 06:27:15 -0500
+Received: from [10.249.130.82] ([10.249.130.82])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48MBR8F3009533;
+	Sun, 22 Sep 2024 06:27:09 -0500
+Message-ID: <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
+Date: Sun, 22 Sep 2024 16:57:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,153 +50,113 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
- <20240919093517.GA43740@e130802.arm.com>
- <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
- <20240919145741.GA7940@e130802.arm.com>
- <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
- <20240920141958.GA288724@e130802.arm.com>
- <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
- <20240920163851.GA385919@e130802.arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lu Baolu
+	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
+        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin
+ Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Kevin Tian
+	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe
+	<jgg@nvidia.com>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s> <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240920163851.GA385919@e130802.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 20/09/2024 18:38, Abdellatif El Khlifi wrote:
-> Hi Krzysztof,
-> 
->>>>>>>>> +  '#extsys-id':
->>>>>>>>
->>>>>>>> '#' is not correct for sure, that's not a cell specifier.
->>>>>>>>
->>>>>>>> But anyway, we do not accept in general instance IDs.
->>>>>>>
->>>>>>> I'm happy to replace the instance ID with  another solution.
->>>>>>> In our case the remoteproc instance does not have a base address
->>>>>>> to use. So, we can't put remoteproc@address
->>>>>>>
->>>>>>> What do you recommend in this case please ?
->>>>>>
->>>>>> Waiting one month to respond is a great way to drop all context from my
->>>>>> memory. The emails are not even available for me - gone from inbox.
->>>>>>
->>>>>> Bus addressing could note it. Or you have different devices, so
->>>>>> different compatibles. Tricky to say, because you did not describe the
->>>>>> hardware really and it's one month later...
->>>>>>
->>>>>
->>>>> Sorry for waiting. I was in holidays.
->>>>>
->>>>> I'll add more documentation about the external system for more clarity [1].
->>>>>
->>>>> Basically, Linux runs on the Cortex-A35. The External system is a
->>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
->>>>> It can only control Cortex-M core using the reset control and status registers mapped
->>>>> in the memory space of the Cortex-A35.
->>>>
->>>> That's pretty standard.
->>>>
->>>> It does not explain me why bus addressing or different compatible are
->>>> not sufficient here.
->>>
->>> Using an instance ID was a design choice.
->>> I'm happy to replace it with the use of compatible and match data (WIP).
->>>
->>> The match data will be pointing to a data structure containing the right offsets
->>> to be used with regmap APIs.
->>>
->>> syscon node is used to represent the Host Base System Control register area [1]
->>> where the external system reset registers are mapped (EXT_SYS*).
->>>
->>> The nodes will look like this:
->>>
->>> syscon@1a010000 {
->>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
->>>         reg = <0x1a010000 0x1000>;
->>>
->>>         #address-cells = <1>;
->>>         #size-cells = <1>;
->>>
->>>         remoteproc@310 {
->>>             compatible = "arm,sse710-extsys0";
->>>             reg = <0x310 4>;
+
+On 29-08-2024 11:47, Beleswar Prasad Padhi wrote:
+> Hi All,
+>
+> On 22/08/24 21:47, Mathieu Poirier wrote:
+>> Hi Baolu,
 >>
->> Uh, why do you create device nodes for one word? This really suggests it
->> is part of parent device and your split is artificial.
-> 
-> The external system registers (described by the remoteproc node) are part
-> of the parent device (the Host Base System Control register area) described
-> by syscon.
-> 
-> In case of the external system 0 , its registers are located at offset 0x310
-> (physical address: 0x1a010310)
-> 
-> When instantiating the devices without @address, the DTC compiler
-> detects 2 nodes with the same name (remoteproc).
+>> Sorry for the late reply, this slipped through the cracks.
+>>
+>> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
+>> > An iommu domain is allocated in rproc_enable_iommu() and is 
+>> attached to
+>> > rproc->dev.parent in the same function.
+>> > > Use iommu_paging_domain_alloc() to make it explicit.
+>> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> > Link: 
+>> https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+>> > ---
+>> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
+>> >  1 file changed, 3 insertions(+), 3 deletions(-)
+>> > > diff --git a/drivers/remoteproc/remoteproc_core.c 
+>> b/drivers/remoteproc/remoteproc_core.c
+>> > index f276956f2c5c..eb66f78ec8b7 100644
+>> > --- a/drivers/remoteproc/remoteproc_core.c
+>> > +++ b/drivers/remoteproc/remoteproc_core.c
+>> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc 
+>> *rproc)
+>> >          return 0;
+>> >      }
+>> >  > -    domain = iommu_domain_alloc(dev->bus);
+>> > -    if (!domain) {
+>> > +    domain = iommu_paging_domain_alloc(dev);
+>>
+>> I'm a little hesitant here.  Function iommu_domain_alloc() passes 
+>> NULL two the
+>> second argument of __iommu_domain_alloc() while 
+>> iommu_paging_domain_alloc()
+>> provides a 'dev'.  I don't have any HW to test on and I am not 
+>> familiar enough
+>> with the IOMMU subsystem to confidently more forward.
+>>
+>> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, 
+>> Andrew,
+>> Nishanth and Hari) to test this patch on their IOMMU devices and get 
+>> back to me
+>> with a "Tested-by".
+>
+>
+> Just a heads-up. Currently, I am seeing boot failures while booting 
+> remotecores in TI's IOMMU devices with mainline kernel. Working on the 
+> the fix, once it is done, will apply the above patch and test it ASAP.
 
-There should be no children at all. DT is not for instantiating your
-drivers. I claim you have only one device and that's
-arm,sse710-host-base-sysctrl. If you create child node for one word,
-that's not a device.
 
-Best regards,
-Krzysztof
+Since commit 17de3f5fdd35, the IOMMU framework has changed how it 
+handles callback ops, moving away from using bus->iommu_ops. The 
+omap-iommu driver has not yet been updated to align with these framework 
+changes. Therefore, omap-iommu, and hence, omap-remoteproc have been 
+broken since 17de3f5fdd35.
 
+This patch is a step in the right direction for adapting the 
+remoteproc_core framework to the newer IOMMU framework by looking for 
+iommu_ops attached to the dev structure instead of dev->bus. Due to time 
+constraints, I was unable to update the omap-iommu driver to accommodate 
+these changes, so, I could not test this patch. However, logically, this 
+patch LGTM. So,
+
+Acked-by: Beleswar Padhi <b-padhi@ti.com>
+
+Thanks,
+Beleswar
+
+>
+> Thanks,
+> Beleswar
+>
+>>
+>> Thanks,
+>> Mathieu
+>>
+>> > +    if (IS_ERR(domain)) {
+>> >          dev_err(dev, "can't alloc iommu domain\n");
+>> > -        return -ENOMEM;
+>> > +        return PTR_ERR(domain);
+>> >      }
+>> >  >      iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+>> > -- > 2.34.1
+>> >
