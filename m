@@ -1,168 +1,237 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8A0440C;
-	Mon, 23 Sep 2024 00:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEF280038;
+	Mon, 23 Sep 2024 11:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727051264; cv=none; b=CvyiQOyaNYiY99zuEeNlfVjtDBJMdwJtypyQ9VF6XVMwsR+WSWscDWxAZTwDKLdjrNHamR7KQ4HNaBg3tYP12qFElhDMp3XyBOtrzP2z2TZ7fAEJLJsoi+Z3J8dza6NMEUW3DQdjy9RrasY8Vqz5p+Fm673qOp7xNPTeTnkdq2A=
+	t=1727092197; cv=none; b=krT8RT3vTbGxO28+pPLX+daHVo0QBT2iZyHoqdbYw4/G7R1ikvPhBmYy82fRZJAH0aT8xFsT6BIEwVr03hIh8HBJt7EPk3z/LPdRxrHE/+twI9muQC9naNCXA/usC3/3+i1NKwUCw+X3t6fmSGFF1c7hJXwEgD7eqVdonTsBrVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727051264; c=relaxed/simple;
-	bh=aL78BZDaoWZUZ1YJgTDX8gjk5xYnKqBAzqLQEEwvJsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tssG0QwVipr9Yvohf8upY1yLdgPvPTDiiRcG/4/R+PWQ4CTWjkMfV7neRZGaajy9dudIJu4skI65ylo//IBlsPq49nMDxZLEgSkb2bUFITWFiOMow3S6UhCKAbwhA2fuCbUhvOqISrLQPybcQ56CzShDHUIxs3JUfDzOCKzGImQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if1ExWLg; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if1ExWLg"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5dc93fa5639so1999266eaf.1;
-        Sun, 22 Sep 2024 17:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727051262; x=1727656062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IdY+MYWRg3TLdJXc8f3o+FqyhQCsEobdYFbNaMpFW1Y=;
-        b=if1ExWLgJ5U4zjaryb4hLk1nY4hjufmy0KRJzUBJ3nzF/ATir79r+Z9+E0I4pyRZ3d
-         J2GIBR4IE34CcsUgBm+jQ7RfPK9hvLtufRc/x1tSTZz5IcakSC2AsiVUQ3/Up3Et0b/X
-         aPeZZ+HLfdUAhndop43GEZkkOkz3OZrq1uUhQJ3bO/ttQ9I+X6B+2GlwnuwULoSetjbU
-         aufEzIXyI6eAsX7l0bV0wo/8NeLy6BGfkaZXB31pcHsbRF1ZegcEaoU3fVsP9oloX6QT
-         wyuMXgHDjd1BGBDcJAG/V0/dOXc6MUItGzAwE0Ap+s4ma2nDLL83dco1XFkavIEUtUsD
-         doYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727051262; x=1727656062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IdY+MYWRg3TLdJXc8f3o+FqyhQCsEobdYFbNaMpFW1Y=;
-        b=HFPWTRzEe6aKRDy0Zqb1/03qG1txYVjqozcVXGu3QMOMgUaxDuBHZPqz3Rat6j02FX
-         Gbg+0Y5gF+UrwQwgRWED2O0KtExyCnArOPzj3i+6Ztsxe96lEcrUUOtEgLJ6fsLY6/0j
-         7t6IDQevxF9SFmGiTpSJ3ZXJBmCDUOooCGjE4VjofZGjHDhc6SbwZ1EnF2QYAeWIxke4
-         Nk7bTNdi7nb/m/KUryBJvqu/qjMASpuoZuaUBuqV+8xnqryQNypajhzcFrXINmSqK6Ed
-         CBYwBDUVN9badklZAnWxeiazhn0yJFxMHy1CYG8ZailNEtZPSsvuWwOnlv5PKIsWJ32Q
-         wW5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXODmnRXbNS5Ms37/aS7M1LL6uLfcxHFKJ1rgGL1oMBJX8cvegvoMwcCfoTL91x84oU9V7OExBS9ZjWKws=@vger.kernel.org, AJvYcCXwOKpZ+3LujHgPqO9eNCmPjG/4PSC2aAUB9m2IgZkS0umy8IimEJxal8intoBpBIuSCok6o7syI2XXVIgBGhBusg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4IlypRJL+8tiZqAM3PheK5mqI7rRJ8SKY4UXnGj9C4EBajHih
-	5GyKkNCXAXno0b8+XXwUCJKRbPK3s3nBb0oiMFCqTI/t5SLo0Accsfstd0tLZZHWD7WeYxsu1ng
-	e5RFbtWljk3o69qbjBOWWWON8/hQ=
-X-Google-Smtp-Source: AGHT+IFhEqbijiM3PRdqqniVjygbihN9L9RupT1BgKcfwC59tyExYqeEJzHeFGNDEPAumd7dCXHUg7V80b3aW3Kr5Z0=
-X-Received: by 2002:a05:6820:606:b0:5e1:e8c4:fb00 with SMTP id
- 006d021491bc7-5e58ba91426mr4868164eaf.7.1727051261789; Sun, 22 Sep 2024
- 17:27:41 -0700 (PDT)
+	s=arc-20240116; t=1727092197; c=relaxed/simple;
+	bh=M6MmUdrGNVqZ7bNIkDKakEbWPtMcakTwhQENeMww/d4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cS19//uxRa4mmsPNBwFuhdeaCyaSAJajfZEM53Mo8JPRq4r6sFXdkw6WYJoNZAPKlaju/PMEKrSg9r//d80pLwFSiAZKiahNObW2cKGN3SYV6iap2nooR/X1hKcBOid9o9B8Sie/B/obewA8HDiNhV8TtUg4Jl8+FCi401EwGNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23BA31007;
+	Mon, 23 Sep 2024 04:50:23 -0700 (PDT)
+Received: from e130802.arm.com (unknown [10.57.53.36])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64DD03F64C;
+	Mon, 23 Sep 2024 04:49:50 -0700 (PDT)
+Date: Mon, 23 Sep 2024 12:49:45 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, liviu.dudau@arm.com,
+	lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com,
+	robin.murphy@arm.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+Message-ID: <20240923114945.GA133670@e130802.arm.com>
+References: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+ <20240920141958.GA288724@e130802.arm.com>
+ <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
+ <20240920163851.GA385919@e130802.arm.com>
+ <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909203825.1666947-1-arnd@kernel.org>
-In-Reply-To: <20240909203825.1666947-1-arnd@kernel.org>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 22 Sep 2024 19:27:29 -0500
-Message-ID: <CABb+yY12GT6GmStDpoghwP4YL+UD+PAhTKTf1vuLjfiSpm65xw@mail.gmail.com>
-Subject: Re: [PATCH] mailbox, remoteproc: omap2+: fix compile testing
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, Martyn Welch <martyn.welch@collabora.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
 
-On Mon, Sep 9, 2024 at 3:38=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Selecting CONFIG_OMAP2PLUS_MBOX while compile testing
-> causes a build failure:
->
-> WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
->   Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
->   Selected by [m]:
->   - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 || COMPIL=
-E_TEST [=3Dy])
->
-> Using 'select' to force-enable another subsystem is generally
-> a mistake and causes problems such as this one, so change the
-> three drivers that link against this driver to use 'depends on'
-> instead, and ensure the driver itself can be compile tested
-> regardless of the platform.
->
-> When compile-testing without CONFIG_TI_SCI_PROTOCOL=3Dm, there
-> is a chance for a link failure, so add a careful dependency
-> on that.
->
-> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in functi=
-on `k3_m4_rproc_probe':
-> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference=
- to `devm_ti_sci_get_by_phandle'
->
-> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F =
-subsystem")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/mailbox/Kconfig        |  2 +-
->  drivers/mailbox/omap-mailbox.c |  2 +-
->  drivers/remoteproc/Kconfig     | 10 ++++------
->  3 files changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 4eed97295927..ecaf78beb934 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -73,7 +73,7 @@ config ARMADA_37XX_RWTM_MBOX
->
->  config OMAP2PLUS_MBOX
->         tristate "OMAP2+ Mailbox framework support"
-> -       depends on ARCH_OMAP2PLUS || ARCH_K3
-> +       depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
->         help
->           Mailbox implementation for OMAP family chips with hardware for
->           interprocessor communication involving DSP, IVA1.0 and IVA2 in
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
-x.c
-> index 7a87424657a1..6797770474a5 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -603,7 +603,7 @@ static struct platform_driver omap_mbox_driver =3D {
->         .driver =3D {
->                 .name =3D "omap-mailbox",
->                 .pm =3D &omap_mbox_pm_ops,
-> -               .of_match_table =3D of_match_ptr(omap_mailbox_of_match),
-> +               .of_match_table =3D omap_mailbox_of_match,
->         },
->  };
->  module_platform_driver(omap_mbox_driver);
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0f0862e20a93..62f8548fb46a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -330,8 +330,7 @@ config STM32_RPROC
->  config TI_K3_DSP_REMOTEPROC
->         tristate "TI K3 DSP remoteproc support"
->         depends on ARCH_K3
-> -       select MAILBOX
-> -       select OMAP2PLUS_MBOX
-> +       depends on OMAP2PLUS_MBOX
->         help
->           Say m here to support TI's C66x and C71x DSP remote processor
->           subsystems on various TI K3 family of SoCs through the remote
-> @@ -343,8 +342,8 @@ config TI_K3_DSP_REMOTEPROC
->  config TI_K3_M4_REMOTEPROC
->         tristate "TI K3 M4 remoteproc support"
->         depends on ARCH_K3 || COMPILE_TEST
-> -       select MAILBOX
-> -       select OMAP2PLUS_MBOX
-> +       depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=3D=
-n)
-> +       depends on OMAP2PLUS_MBOX
->
-TI_K3_M4_REMOTEPROC isn't in the mainline yet so this fragment doesn't
-apply on my tree.
-I can drop just this and apply the rest of the patch, otherwise the
-patch may go via remoteproc.
-Let me know.
-Thanks
--Jassi
+Hi Krzysztof,
+
+> >>>>>>>>> +  '#extsys-id':
+> >>>>>>>>
+> >>>>>>>> '#' is not correct for sure, that's not a cell specifier.
+> >>>>>>>>
+> >>>>>>>> But anyway, we do not accept in general instance IDs.
+> >>>>>>>
+> >>>>>>> I'm happy to replace the instance ID with  another solution.
+> >>>>>>> In our case the remoteproc instance does not have a base address
+> >>>>>>> to use. So, we can't put remoteproc@address
+> >>>>>>>
+> >>>>>>> What do you recommend in this case please ?
+> >>>>>>
+> >>>>>> Waiting one month to respond is a great way to drop all context from my
+> >>>>>> memory. The emails are not even available for me - gone from inbox.
+> >>>>>>
+> >>>>>> Bus addressing could note it. Or you have different devices, so
+> >>>>>> different compatibles. Tricky to say, because you did not describe the
+> >>>>>> hardware really and it's one month later...
+> >>>>>>
+> >>>>>
+> >>>>> Sorry for waiting. I was in holidays.
+> >>>>>
+> >>>>> I'll add more documentation about the external system for more clarity [1].
+> >>>>>
+> >>>>> Basically, Linux runs on the Cortex-A35. The External system is a
+> >>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+> >>>>> It can only control Cortex-M core using the reset control and status registers mapped
+> >>>>> in the memory space of the Cortex-A35.
+> >>>>
+> >>>> That's pretty standard.
+> >>>>
+> >>>> It does not explain me why bus addressing or different compatible are
+> >>>> not sufficient here.
+> >>>
+> >>> Using an instance ID was a design choice.
+> >>> I'm happy to replace it with the use of compatible and match data (WIP).
+> >>>
+> >>> The match data will be pointing to a data structure containing the right offsets
+> >>> to be used with regmap APIs.
+> >>>
+> >>> syscon node is used to represent the Host Base System Control register area [1]
+> >>> where the external system reset registers are mapped (EXT_SYS*).
+> >>>
+> >>> The nodes will look like this:
+> >>>
+> >>> syscon@1a010000 {
+> >>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+> >>>         reg = <0x1a010000 0x1000>;
+> >>>
+> >>>         #address-cells = <1>;
+> >>>         #size-cells = <1>;
+> >>>
+> >>>         remoteproc@310 {
+> >>>             compatible = "arm,sse710-extsys0";
+> >>>             reg = <0x310 4>;
+> >>
+> >> Uh, why do you create device nodes for one word? This really suggests it
+> >> is part of parent device and your split is artificial.
+> > 
+> > The external system registers (described by the remoteproc node) are part
+> > of the parent device (the Host Base System Control register area) described
+> > by syscon.
+> > 
+> > In case of the external system 0 , its registers are located at offset 0x310
+> > (physical address: 0x1a010310)
+> > 
+> > When instantiating the devices without @address, the DTC compiler
+> > detects 2 nodes with the same name (remoteproc).
+> 
+> There should be no children at all. DT is not for instantiating your
+> drivers. I claim you have only one device and that's
+> arm,sse710-host-base-sysctrl. If you create child node for one word,
+> that's not a device.
+
+The Host Base System Control [3] is the big block containing various functionalities (MMIO registers).
+Among the functionalities, the two remote cores registers (aka External system 0 and 1).
+The remote cores have two registers each.
+
+1/ In the v1 patchset, a valid point was made by the community:
+
+   Right now it seems somewhat tenuous to describe two consecutive
+   32-bit registers as separate "reg" entries, but *maybe* it's OK if that's
+   all there ever is. However if it's actually going to end up needing several
+   more additional MMIO and/or memory regions for other functionality, then
+   describing each register and location individually is liable to get
+   unmanageable really fast, and a higher-level functional grouping (e.g. these
+   reset-related registers together as a single 8-byte region) would likely be
+   a better design.
+
+   The Exernal system registers are part of a bigger block with other functionality in place.
+   MFD/syscon might be better way to use these registers. You never know in
+   future you might want to use another set of 2-4 registers with a different
+   functionality in another driver.
+
+   I would see if it makes sense to put together a single binding for
+   this "Host Base System Control" register (not sure what exactly that means).
+   Use MFD/regmap you access parts of this block. The remoteproc driver can
+   then be semi-generic (meaning applicable to group of similar platforms)
+   based on the platform compatible and use this regmap to provide the
+   functionality needed.
+
+2/ There are many examples in the kernel that use syscon as a parent node of
+   child nodes for devices located at an offset from the syscon base address.
+   Please see these two examples [1][2]. I'm trying to follow a similar design if that
+   makes sense.
+
+3/ Since there are two registers for each remote core. I'm suggesting to set the
+   size in the reg property to 8. The driver will read the match data to get the right
+   offset to be used with regmap APIs.
+
+Suggested nodes:
+
+
+    syscon@1a010000 {
+        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+        reg = <0x1a010000 0x1000>;
+
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        remoteproc@310 {
+            compatible = "arm,sse710-extsys0";
+            reg = <0x310 8>;
+            firmware-name = "es_flashfw.elf";
+            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+            mbox-names = "txes0", "rxes0";
+            memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+        };
+
+        remoteproc@318 {
+            compatible = "arm,sse710-extsys1";
+            reg = <0x318 8>;
+            firmware-name = "es_flashfw.elf";
+            mboxes = <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
+            mbox-names = "txes0", "rxes0";
+            memory-region = <&extsys1_vring0>, <&extsys1_vring1>;
+        };
+};
+
+
+[1]: Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+
+    syscon@20e00000 {
+      compatible = "sprd,sc9863a-glbregs", "syscon", "simple-mfd";
+      reg = <0x20e00000 0x4000>;
+      #address-cells = <1>;
+      #size-cells = <1>;
+      ranges = <0 0x20e00000 0x4000>;
+
+      apahb_gate: apahb-gate@0 {
+        compatible = "sprd,sc9863a-apahb-gate";
+        reg = <0x0 0x1020>;
+        #clock-cells = <1>;
+      };
+    };
+
+
+[2]: Documentation/devicetree/bindings/arm/arm,juno-fpga-apb-regs.yaml:
+
+    syscon@10000 {
+        compatible = "arm,juno-fpga-apb-regs", "syscon", "simple-mfd";
+        reg = <0x010000 0x1000>;
+        ranges = <0x0 0x10000 0x1000>;
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        led@8,0 {
+            compatible = "register-bit-led";
+            reg = <0x08 0x04>;
+            offset = <0x08>;
+            mask = <0x01>;
+            label = "vexpress:0";
+            linux,default-trigger = "heartbeat";
+            default-state = "on";
+        };
+    };
+
+[3]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
+
+Cheers,
+Abdellatif
