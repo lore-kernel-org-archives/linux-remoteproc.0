@@ -1,313 +1,161 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2979719E980;
-	Mon, 23 Sep 2024 17:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727112000; cv=none; b=WCM/ErRKn/iJvu/YPLiAtNSL/FZ/lqRRIIoGCRR9emcMLOo/RDVxpDAbMgemwWi7GFcjXMeXQENVyIuIfLPZr9G0HRxxFewEEgIz2CZe4qOkws/xegMhf+KPUAM8YnYRFf1QBZilbZaRi8a3xd6s1aoQXafhhIRNImWr2p5Gnn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727112000; c=relaxed/simple;
-	bh=FwA9k21LqL31ELrrijVwndjSDt/NfS3FHO6UqfN0ClU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifRcG8oxXOlVrsvepX7lTfXvugknJiLD3rIq7HYv32iw4aIK5hyfA0b+cqgPVBkN8j0pHLF7khWzy+aeMo2tjM+/gGYRx2FEqD+PKfnXbs0R2NtPPjDUPwhaPaFP/EVGYZ4+LVZqCQLoxdORSF+IBkrsSLW4GM5ctpSX//EDngY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6E4FDA7;
-	Mon, 23 Sep 2024 10:20:26 -0700 (PDT)
-Received: from e130802.arm.com (unknown [10.57.53.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CB033F528;
-	Mon, 23 Sep 2024 10:19:53 -0700 (PDT)
-Date: Mon, 23 Sep 2024 18:19:48 +0100
-From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
-	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, liviu.dudau@arm.com,
-	lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com,
-	robin.murphy@arm.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-Message-ID: <20240923171948.GA348509@e130802.arm.com>
-References: <20240919093517.GA43740@e130802.arm.com>
- <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
- <20240919145741.GA7940@e130802.arm.com>
- <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
- <20240920141958.GA288724@e130802.arm.com>
- <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
- <20240920163851.GA385919@e130802.arm.com>
- <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
- <20240923114945.GA133670@e130802.arm.com>
- <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E468C1A;
+	Mon, 23 Sep 2024 18:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727115143; cv=fail; b=ppmKOVH/XPnP0TapCZvPqGm5ERgUM+IWp8eyEBkhalYLC9YvIaO7BkxrPuCQ8t/ewxmZ+BmWyWfuxa7UET8qO3E2iIWm1iQg97CoFeUAy8sqPspf7Cl3FcknVAekKiA9K2M9mk8buA3vbC/4oB65+RRBU8PdDkt/7TLr2+cU2xA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727115143; c=relaxed/simple;
+	bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aT2Onv+0wC53eB6yAMaHW8nY+n4fzBJX0ed3NdlJO6AKpxZO27oi/3cqqB4LcAxwkWnh/hHItg+yWXShMjkJwDGBp3CIasMW4n2BqckeIlGNKBXdWIWDviqv8NiDDjg8vnWo6J3i1N/cgxdD+sSAK7+GSW72YrNBZeWTDW9+Oig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MsAQHdPm; arc=fail smtp.client-ip=40.107.244.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MsAQHdPm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DqridgZPkFEOgL3A20t05SBK/ylrNQzxLyNHXDgSPJw5Wxrph5cN78Deo2TA7b0M5rOrTrLMm6m7QpK9UOIJErKxFnqaNbl6uMCZ2Ems8DWFVOhNoNcxDJR/UqdeWj6BIrq4TWVo1hMstk+MddjDdDNCGp99SQ77hp0/fpeHS02XS6uVvFHKNRp/90XzUuKy+IYasfkvdGffy/e55HGSOy9FGcyYqyN8YRogQSL9l/Jq93BS2b4J0JOyLZ9/hSQ/+hrTAHH0s02M/MSR+hnQL0h74jnNXMPVGh9CSXkhb6EO3R0vYCZEmnFCOk6OHk7ctb4XqCXiSCUrBf8eo1d1BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
+ b=bqfkEc0OnYSXE2MSpecQ+V//LQJgcyJ5tj+2FWPZn1VWcl/zlrulTn1clTkw9I5Q31M/kJXuMMdYxVJEZT7FF8K4XCpr9EN6OSHwcRyiC4qW/O6DRG3QffC75g76h0bB1Cg1Ueg80UqOU+K+tQDV5SZSDF9ROu5M99K25qS4ADnlRSYK8j40X+qkSlXWhLWjgHNWh9WTfW1Ah7MZwfuhFLCKCzsf5PVB7DA/tyUwfTAJ9Zi3MCdr7XbDCEgMTkj2yqn56eZtcYXd3cy8FKQyszoVbT5eBMKpK73tDWcV9rnE2+MZMXErsoG4FkJxXVpPVLkXgvUm3UIdiN5C0SV7iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
+ b=MsAQHdPmedpOQFWm4xZ1dean0A2fG1lRpZ5JWsR48G2/PIo3Mg4Ddzp7/yyN/zCJEWmZcgME+Mu0POqBzeDWrOedx1oEapzmIXEGDecvYInlxkPMIowbrcym0EoLosUtOITzFv+6FUTmCZYRsKm89oSPdqzORg72QMJMoKWCu4jJCGY1oZ7q3fWQPJ1mBklw5GAmqiT78DcWDEIMWAkvRfK1hKpUO0bjW+kXdQGkSqP9DzUMZCgx7Ch6ZwjZcUxeW4HNMtjwGDTetjZLYF/7ZBW77VsNPq7Qu2rIq+vuxXJoidf5HYr04yUwyHixjpzr0SlJKToebmCwgl1E2s3iFg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BL3PR12MB6402.namprd12.prod.outlook.com (2603:10b6:208:3b2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26; Mon, 23 Sep
+ 2024 18:12:18 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 18:12:18 +0000
+Date: Mon, 23 Sep 2024 15:12:17 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Beleswar Prasad Padhi <b-padhi@ti.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org,
+	afd@ti.com, nm@ti.com, hnagalla@ti.com,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+Message-ID: <20240923181217.GF9417@nvidia.com>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s>
+ <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
+ <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
+X-ClientProxiedBy: BN0PR07CA0002.namprd07.prod.outlook.com
+ (2603:10b6:408:141::17) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL3PR12MB6402:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6554f771-3e1e-4a29-34b8-08dcdbfb42f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uA0v+xMmW5iMB/LX2jg2lf9QXYxePURxrMlqcT+eqEAKInJUQToqntVq0aDR?=
+ =?us-ascii?Q?kXPkJgH4d1JC5RFmQye1ap++1tDH/EIEhjcnAESUmlnhXsNYE2CO+zHoYT4A?=
+ =?us-ascii?Q?q6O9Eq/yV3J8wWinKY+kPwhZikUi4Cb3B1dGp5zlQ8zKr3WxCE8+OU0RgjiE?=
+ =?us-ascii?Q?fxWtevlczyTkMApPKZh46FqbqmV6oovAayamFfl5Tz39VP+Br/RJjpYHbIv8?=
+ =?us-ascii?Q?Ba3X52dTbGbnJMf+yUaMWvtBVPN9iY9znvQ4dsI1TZEmlYob6/H5RpPLrJ5K?=
+ =?us-ascii?Q?8PvsC2LhlKe+giJ3UfLEKlqDFyavvMrbeqtFAT/c7hSCjc2oqcTkfkZJ2dir?=
+ =?us-ascii?Q?kfUtMZvRF9kWBEqTR+CupU72pf9K8pi1HfVpUOtSuJHzdI7DFsC8DD8SpqSv?=
+ =?us-ascii?Q?SptNMYIdKn8yM4MzJv8Wk/UG+kEgjCMggppemfSsoHateqSe65/YGlwD80oJ?=
+ =?us-ascii?Q?i6H3NTZ5siPFL3ZATtIpxVm/bMTQfLmdlI+9dimbinDdNRm4GPcopuqvUdMT?=
+ =?us-ascii?Q?TuJDIMhw6zdifA7aOIIpcKI+hMYn5rT6RoLupQNuOPCPCI+dGSa1sgYKtzjt?=
+ =?us-ascii?Q?k6nJ+d45D1CaXSiIJmMbaxt5HhYjdqMuT8yViNsWQtilSjFqhoIgNnTKaO45?=
+ =?us-ascii?Q?T5D26aToUEPuGF1AJvQYZaM7rcnwsJFriNXxE6oECTSLgRdLUNq4srguIwmK?=
+ =?us-ascii?Q?Nz0wddfu4hIedbugxvKnRpeisl3fj5PJsfp1IBsVJWzyrQ2MlRtZ0OBSxDRY?=
+ =?us-ascii?Q?tv7aMOXj74/2ht1zbI8GnVMepv5RG7dvlAPDPTq2HMheFUR7nmCjxxtuW2h3?=
+ =?us-ascii?Q?9NP7fXY6RJwOz/lPXpJEMHpDG68vX5ycEUIIkqvaIfC6Mc1ugNqCQEq2X3cr?=
+ =?us-ascii?Q?hLRMrXfYJ3qRJU870JAhhcykv3hm7Goy6sYQxSYoRMLCAtalcKtQUMhJl5XF?=
+ =?us-ascii?Q?faoDQCoMs6/7kWUhgXYbf/NZi0hPAD+iweRqkAqAQgDWy9pP9DxxjX2uSj/S?=
+ =?us-ascii?Q?04QpJd0+Qjmv48TENeMKw6engreG2Va/hUB0L61hVJPQ26ZvmEavBbtA6Wr0?=
+ =?us-ascii?Q?f3xjAFsDK/GenaKb0+z9FUUbUQQR4Kmqf4k395Aro3osNop6o6y0nuAy0Odu?=
+ =?us-ascii?Q?CTutvlPJIN7jmskRvKCxZsiiIqIdGN8qGrvF02xJUrDPRi6YrYy+iMT+jceC?=
+ =?us-ascii?Q?yoN5L4JNrI7mALMtBSK0sYfk1fFrSuDWX8eC/UMmyF/+3Qc3eV6hVjrl5jY5?=
+ =?us-ascii?Q?yDnhyCwQqHGLoHQqaaD5NvPdytTlzCA6y729g86KvA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?X42pV2gxCqbDSox/dmakjcveByb4W//6vITqVCeZuQkh6YJd9y21N0y4XkxN?=
+ =?us-ascii?Q?2FG5A6qct64vZyObXSHsQ0TlWzmKBmqMxLgMzij7Ph9By/yWA02YWRL/jrvN?=
+ =?us-ascii?Q?NedB0cKnzGpiJt+9y89FF/fdme48OK+50m6xbUGZ8YI7cV89o+ecIkeb7CqE?=
+ =?us-ascii?Q?8Tk0jqyZqwwP6c2kW5XI9lQvWJqseaqTLmMrYMiR2OjCHl2nI7VeKAyS43sO?=
+ =?us-ascii?Q?Dxt43UFqx7d20JoLQGaw+9tDSgpi5aENvKeIG1pFInMtGWwzzsJcsIJazvmn?=
+ =?us-ascii?Q?9WxdDhd2oDH9US5Q/64/x59quZ8CRC6+0qhRlQpzf5TKldQMu+t8t8WT272Z?=
+ =?us-ascii?Q?Zm/kuDsfi1bJCJUDPUSP9X8nLfrsFLemclh8j/Wb0c4n/bRhI/8IGEHjG2un?=
+ =?us-ascii?Q?sjf4OlfSeEiNZf3DblibOcRXhNAM3tvzDdKRhVn7PU05msm7UlqLhHmHPO21?=
+ =?us-ascii?Q?yeKay9KkC2GoJu+tUnQfVUry+8S0LHXjfP42sgOIxzPKmHGWn6uSEhiL+xNA?=
+ =?us-ascii?Q?5yh475Ww0zClojwsUTgY6mRZ9r5g1oAAZS9FegpqBTzNaFq80fNUH70e0xxZ?=
+ =?us-ascii?Q?sMP3Cufe4EJuWD2d1iiLayFFt4zqq7fCZyy9q2kkWF2vjPgkWuEamLXpdFo1?=
+ =?us-ascii?Q?E61zBBLZPsrlRK42UffcAk++53UsGwIIVNKcPlP+UIQ1ZMEMCa5LZVHpJ4xB?=
+ =?us-ascii?Q?WkKEWthrP9g2689MJvvD96JkbySvjnZSdzi6wI7QmAoxmqR5sJSWtr8m+WL2?=
+ =?us-ascii?Q?nx8+gifpM615fBcd4nWgOVC5Qocsl0H/BxAz3U5ueJSW7Mg66y8+hXPx4SI4?=
+ =?us-ascii?Q?Y2ycJWakJnCdn99DCKwY0kcQ2BkC5GzyVLHRDqJcoHTwR4TZHsP0CvuDp82K?=
+ =?us-ascii?Q?1IP9/jhKVOnfJDhWZHLItc/Qhiptnv9s/OJ0mUm0CtvVG5dpvVjRB+QTGl1f?=
+ =?us-ascii?Q?UhL19m86BElh3/cgvLU/fOTt9FwYwpIwIi84WLWv4vtD8lUDZKWBJRyAN26g?=
+ =?us-ascii?Q?rJK0TCCBQrjMtgLHogIvsEMICjFAktH2nuPVdzdtCoiELCA1+X91TFGQFM1t?=
+ =?us-ascii?Q?6f8GxYOCyH/1Ps44KAqcgPxOvRm9i20lrggAWKiNKL40GNLdKhW5XXQVSMA7?=
+ =?us-ascii?Q?gKVcLiTMGhdplXonkybQh7cExTzFtKivujnoqdqy7Y6oLfU9f41HjZ88l905?=
+ =?us-ascii?Q?JzqKj/KVBJjdXZBckz3jRGGlKyjsVPaDKAxmiaK8MNFTepPyJKDR4bw4uzSe?=
+ =?us-ascii?Q?VQJk0o/67EWqffyabclw865Qmp1OQ6Ue9Q7XewUmSOQnQmsyTyK6BO2IQKMu?=
+ =?us-ascii?Q?TmrDesBreZaRolNJuibohGyQ++gjeX3zg/6pywEksMCleWUu8lj+blJSUftS?=
+ =?us-ascii?Q?9e3gN776SmklMuDSv3ELRtTq7fZD5dmuaSeTXvj11/k+9ZfK95ZLpPuPfaLx?=
+ =?us-ascii?Q?fuptqE6sXcpex0O8Z7E13uR8hoqli1F5mVqGQl3OU9QFvQMXtJSutgJX8Jl9?=
+ =?us-ascii?Q?SXRDEyUKkX4OR6bUYyC9fsd+O7I6xUW26aCtlLMqcXPAtJ0VXN21byONRX7C?=
+ =?us-ascii?Q?icpS2/7o7geYS41vXfc=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6554f771-3e1e-4a29-34b8-08dcdbfb42f5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 18:12:18.7816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0e32h1BBWlTKf0dunO1a8fx0DdEmT7F75VMmZKT2GfRTU6Jh6ub6mQJb5xpYk9TQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6402
 
-Hi Krzysztof,
+On Sun, Sep 22, 2024 at 04:57:07PM +0530, Beleswar Prasad Padhi wrote:
 
-> >>>>>>>>>>> +  '#extsys-id':
-> >>>>>>>>>>
-> >>>>>>>>>> '#' is not correct for sure, that's not a cell specifier.
-> >>>>>>>>>>
-> >>>>>>>>>> But anyway, we do not accept in general instance IDs.
-> >>>>>>>>>
-> >>>>>>>>> I'm happy to replace the instance ID with  another solution.
-> >>>>>>>>> In our case the remoteproc instance does not have a base address
-> >>>>>>>>> to use. So, we can't put remoteproc@address
-> >>>>>>>>>
-> >>>>>>>>> What do you recommend in this case please ?
-> >>>>>>>>
-> >>>>>>>> Waiting one month to respond is a great way to drop all context from my
-> >>>>>>>> memory. The emails are not even available for me - gone from inbox.
-> >>>>>>>>
-> >>>>>>>> Bus addressing could note it. Or you have different devices, so
-> >>>>>>>> different compatibles. Tricky to say, because you did not describe the
-> >>>>>>>> hardware really and it's one month later...
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Sorry for waiting. I was in holidays.
-> >>>>>>>
-> >>>>>>> I'll add more documentation about the external system for more clarity [1].
-> >>>>>>>
-> >>>>>>> Basically, Linux runs on the Cortex-A35. The External system is a
-> >>>>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
-> >>>>>>> It can only control Cortex-M core using the reset control and status registers mapped
-> >>>>>>> in the memory space of the Cortex-A35.
-> >>>>>>
-> >>>>>> That's pretty standard.
-> >>>>>>
-> >>>>>> It does not explain me why bus addressing or different compatible are
-> >>>>>> not sufficient here.
-> >>>>>
-> >>>>> Using an instance ID was a design choice.
-> >>>>> I'm happy to replace it with the use of compatible and match data (WIP).
-> >>>>>
-> >>>>> The match data will be pointing to a data structure containing the right offsets
-> >>>>> to be used with regmap APIs.
-> >>>>>
-> >>>>> syscon node is used to represent the Host Base System Control register area [1]
-> >>>>> where the external system reset registers are mapped (EXT_SYS*).
-> >>>>>
-> >>>>> The nodes will look like this:
-> >>>>>
-> >>>>> syscon@1a010000 {
-> >>>>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
-> >>>>>         reg = <0x1a010000 0x1000>;
-> >>>>>
-> >>>>>         #address-cells = <1>;
-> >>>>>         #size-cells = <1>;
-> >>>>>
-> >>>>>         remoteproc@310 {
-> >>>>>             compatible = "arm,sse710-extsys0";
-> >>>>>             reg = <0x310 4>;
-> >>>>
-> >>>> Uh, why do you create device nodes for one word? This really suggests it
-> >>>> is part of parent device and your split is artificial.
-> >>>
-> >>> The external system registers (described by the remoteproc node) are part
-> >>> of the parent device (the Host Base System Control register area) described
-> >>> by syscon.
-> >>>
-> >>> In case of the external system 0 , its registers are located at offset 0x310
-> >>> (physical address: 0x1a010310)
-> >>>
-> >>> When instantiating the devices without @address, the DTC compiler
-> >>> detects 2 nodes with the same name (remoteproc).
-> >>
-> >> There should be no children at all. DT is not for instantiating your
-> >> drivers. I claim you have only one device and that's
-> >> arm,sse710-host-base-sysctrl. If you create child node for one word,
-> >> that's not a device.
-> > 
-> > The Host Base System Control [3] is the big block containing various functionalities (MMIO registers).
-> > Among the functionalities, the two remote cores registers (aka External system 0 and 1).
-> > The remote cores have two registers each.
-> > 
-> > 1/ In the v1 patchset, a valid point was made by the community:
-> > 
-> >    Right now it seems somewhat tenuous to describe two consecutive
-> >    32-bit registers as separate "reg" entries, but *maybe* it's OK if that's
-> 
-> ARM is not special, neither this hardware is. Therefore:
-> 1. Each register as reg: nope, for obvious reasons.
-> 2. One device for entire syscon: quite common, why do you think it is
-> somehow odd?
-> 3. If you quote other person, please provide the lore link, so I won't
-> spend useless 5 minutes to find who said that or if it was even said...
+> Since commit 17de3f5fdd35, the IOMMU framework has changed how it handles
+> callback ops, moving away from using bus->iommu_ops. The omap-iommu driver
+> has not yet been updated to align with these framework changes. Therefore,
+> omap-iommu, and hence, omap-remoteproc have been broken since 17de3f5fdd35.
 
-Please have a look at this lore link [1]. The idea is to add syscon
-and regmap support which I did in the v2 patchset.
+That commit is a year old now, if nobody has cared to fix or report
+this can we consider removing some of this old code from upstream?
+Usually a year of being broken without anyone caring is a good enough
+threshold.
 
-[1]: https://lore.kernel.org/all/ZfMVcQsmgQUXXcef@bogus/
+> Acked-by: Beleswar Padhi <b-padhi@ti.com>
 
-> 
-> >    all there ever is. However if it's actually going to end up needing several
-> >    more additional MMIO and/or memory regions for other functionality, then
-> >    describing each register and location individually is liable to get
-> >    unmanageable really fast, and a higher-level functional grouping (e.g. these
-> >    reset-related registers together as a single 8-byte region) would likely be
-> >    a better design.
-> > 
-> >    The Exernal system registers are part of a bigger block with other functionality in place.
-> >    MFD/syscon might be better way to use these registers. You never know in
-> >    future you might want to use another set of 2-4 registers with a different
-> >    functionality in another driver.
-> > 
-> >    I would see if it makes sense to put together a single binding for
-> >    this "Host Base System Control" register (not sure what exactly that means).
-> >    Use MFD/regmap you access parts of this block. The remoteproc driver can
-> >    then be semi-generic (meaning applicable to group of similar platforms)
-> >    based on the platform compatible and use this regmap to provide the
-> >    functionality needed.
-> 
-> I don't understand how this lengthy semi-quote answers my concerns.
-> Please write concise points as arguments to my questions.
-> 
-> For example, I don't care what your remote proc driver does and it
-> should not matter in the terms of this binding.
+Thanks
 
-I just wanted to show why we are using syscon based on the arguments
-of other reviewers.
-
-> 
-> > 
-> > 2/ There are many examples in the kernel that use syscon as a parent node of
-> >    child nodes for devices located at an offset from the syscon base address.
-> >    Please see these two examples [1][2]. I'm trying to follow a similar design if that
-> >    makes sense.
-> 
-> Yeah, for separate devices. If you have two words without any resources,
-> I claim you might not have here any separate devices or "not separate
-> enough", because all this is somehow fluid. Remote core sounds like
-> separate device, but all your arguments about need of extid which cannot
-> be used in reg does not support this case.
-> 
-> The example in the binding is also not complete - missing rest of
-> devices - which does not help.
-
-Here I would like to explain the current suggestion and suggest an alternative solution.
-
-1/ For more clarity, here is a complete example of use of both remote cores
-at the same time:
-
-    syscon@1a010000 {
-        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
-        reg = <0x1a010000 0x1000>;
-
-        #address-cells = <1>;
-        #size-cells = <1>;
-
-        remoteproc@310 {
-            compatible = "arm,sse710-extsys0";
-            reg = <0x310 8>;
-            firmware-name = "es0_flashfw.elf";
-            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
-            mbox-names = "txes0", "rxes0";
-            memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
-        };
-
-        remoteproc@318 {
-            compatible = "arm,sse710-extsys1";
-            reg = <0x318 8>;
-            firmware-name = "es1_flashfw.elf";
-            mboxes = <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
-            mbox-names = "txes0", "rxes0";
-            memory-region = <&extsys1_vring0>, <&extsys1_vring1>;
-        };
-};
-
-Here we have 2 cores, each one have 2 registers mapped respectively
-at 0x1a010310 and 0x1a010318.
-
-Definetly these cores have seperate HW resources associated with them
-which are the MHUs (mailboxes HW). There are 2 pairs of MHUs associated
-with each core. These mailbox peripherals are obviously seperate.
-Furthermore, the vring buffers used for communication are seperate.
-
-Moreover, the remote cores are independent. They are not SMP cores of one processor.
-
-They can have different default firmware to use. In this example es0_flashfw.elf
-and es1_flashfw.elf
-
-The current HW implementation (Corstone-1000) provides one remote core only.
-However, the second core control registers are at 0x1a010318 do exist.
-
-Support for a second core is taken into consideration in this work to help
-end users who want to add a second core to their HW.
-
-2/ Here I'm suggesting an alternative solution by using one remoteproc node for both cores as
-follows:
-
-    syscon@1a010000 {
-        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
-        reg = <0x1a010000 0x1000>;
-
-        remoteproc {
-            compatible = "arm,sse710-extsys";
-            firmware-name = "es0_flashfw.elf";
-            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>, <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
-            mbox-names = "txes0", "rxes0", "txes1", "rxes1";
-            memory-region = <&extsys0_vring0>, <&extsys0_vring1>, <&extsys1_vring0>, <&extsys1_vring1>;
-        };
-};
-
-Does this meet your expectations please ?
-
-> 
-> > 
-> > 3/ Since there are two registers for each remote core. I'm suggesting to set the
-> >    size in the reg property to 8. 
-> 
-> How is this related?
-> 
-> > The driver will read the match data to get the right
-> >    offset to be used with regmap APIs.
-> 
-> Sorry, no talks about driver. Don't care, at least in this context.
-> 
-> You can completely omit address space from children in DT and everything
-> will work fine and look fine from bindings point of view.
-> 
-> > 
-> > Suggested nodes:
-> > 
-> > 
-> >     syscon@1a010000 {
-> >         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
-> >         reg = <0x1a010000 0x1000>;
-> > 
-> >         #address-cells = <1>;
-> >         #size-cells = <1>;
-> > 
-> >         remoteproc@310 {
-> >             compatible = "arm,sse710-extsys0";
-> >             reg = <0x310 8>;
-> >             firmware-name = "es_flashfw.elf";
-> >             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
-> >             mbox-names = "txes0", "rxes0";
-> >             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
-> >         };
-> > 
-> >         remoteproc@318 {
-> >             compatible = "arm,sse710-extsys1";
-> >             reg = <0x318 8>;
-> >             firmware-name = "es_flashfw.elf";
-> 
-> Same firmware? Always or only depends?
-
-The firmware of the second core depends on the end user choice.
-Currently the second core is not implemented in the HW.
-Users who want to tweak Corstone-1000 HW can add
-a second core.
-
-Kind regards
-Abdellatif
+Jason
