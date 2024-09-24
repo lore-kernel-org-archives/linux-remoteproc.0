@@ -1,172 +1,107 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B614168DC;
-	Tue, 24 Sep 2024 15:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00AE137775
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 19:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727191785; cv=none; b=WKEWW0IQMA1yKnxGXAgzgoJI6enI292rgjIAj19wdchFtjmPy5NZHKwyHz3873z5ff2JdB2JbBLy/aWgI3F60MlKumU+fnnyW3RwBtgWVM85juNnmHlj5k4D+8daVKi3H7GDHJKDCkGwzxiYynk6kormyGbDGhapEvl5HwxNYf8=
+	t=1727206306; cv=none; b=DazyLSspOBETkHtQUCXUF2kG+kiKP4A/QmdTbr2s93YnoEpm2PfoDZ8IBYN+yfnx0KeTyPtgwxJoGe2zjJoyfcTL3omAeTmffiD8rsrJ8pL7eMCw8SAJZAjlsuiLXvoS89tLIepf2TRS1kUi6FYZ0ByFYKQHPRnDkhZpDWTOdr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727191785; c=relaxed/simple;
-	bh=rSQWLMADkTsYkav2shQDMziOJCV2io1diO4suwOgapw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nljEiewn9Mu01mXgfzGYeG1JyykVSLnCY4068rLBGMMmD5n4QO5qMfD7DTEeVnGKoMwNNEWtRIAKxrYoOW+j0SNleg+JHA7/CUneADtb/tnZuH7LLoiXpBsC8/DupLSbKIqbeVIdo533/VtHO3sqkxwGNkTBr0VhNMIYRTnDFYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WQbZP7Ai; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1727206306; c=relaxed/simple;
+	bh=mNzFKIMr4tsr5PKoLQ3M5UW7dlN0zeCTDohuqUPWGvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIznSaeAtM9MrvXVtuX/UqZLG5A/VjWr+nbc7brJz6djS4pt4LntMPd/C6LcQF76TRcYUf91l4dTKM/0CpF5vhzqmRfzBYyA19Z2e7R2eB5Hc5BysUzZXsA2GsTyPOp27eEoLLiPZCnUtW+9tmRxXCMpMs7fA5AGkn7vBGQArnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KwTDYUMe; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WQbZP7Ai"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48OFTaaR086338;
-	Tue, 24 Sep 2024 10:29:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727191776;
-	bh=ii1KpWgcniV+/pU5XbRy7vCXwDFZ1a4RJxwybt+XINk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=WQbZP7AiAooCPDp3oVsFGg0MAQ2lCRBB9Oq2YcAxfhKVGcdyQTmw8nsA16JT1tiWj
-	 ZbHtRMQlr1IABQlusn3xlawMdR3j1dxmhPUgsAGMjCaNnUktKxKtk4vQMhSvRnHzoA
-	 HtX3KV65+wdNqH3zfrsn8NKk098MxToqsuNfaIho=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48OFTZEG070693
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 24 Sep 2024 10:29:35 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 24
- Sep 2024 10:29:35 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 24 Sep 2024 10:29:35 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48OFTZDb030827;
-	Tue, 24 Sep 2024 10:29:35 -0500
-Message-ID: <666e3f5a-6b22-4530-b018-c194f33415b8@ti.com>
-Date: Tue, 24 Sep 2024 10:29:35 -0500
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KwTDYUMe"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d4093722bso506163266b.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 12:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727206302; x=1727811102; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dLA+3q+2Raow4F8VzPJxYHtFvWf+R0tKMvdhGOxhyI=;
+        b=KwTDYUMeYqmrVPRVVE+YlYvXJyT1K8lSSn/0iPhhpf35pt4WRU3kKBCZnFF+Dhi0T+
+         qxXuzBPu8oVqGVO4eapjS7fNK/+ApIElTTVoxjs+RaTq3QaZ1bk+8XPAzkOFsNZJ27vi
+         WEH1UOJzt2YF0oyfv2A4AFcljOXlpYD5+KVeo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727206302; x=1727811102;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/dLA+3q+2Raow4F8VzPJxYHtFvWf+R0tKMvdhGOxhyI=;
+        b=lSVESk8TxYjIv2WHYtcXcxLtNBTIUEmVbv05aL956TtXtnbcJVKNJKFquqLUvnJKGi
+         Gc1VCv7ufet/5wSCDO+Nv+jgk6XzeGA7+FP+IS2qGtJbu+Yg7DZ4UTi+Mpdvc7DL2n0A
+         nd6vhYKUeTuvo0oKNfz5cPOLsVxhIWfuycPxpwwhizezlFVj0H2uHQjXx8NcPW1eIp6x
+         WBJX38d/lYtxmMin+f1A959Tf6aDSseD6dRwLG+3FEkHK1t8HUuwvfiX35+U5y40czEW
+         BllSinuOlO9hSIt5XQc3OIPaE6BVpHc2vnWAZyPozIPp5s7qsXLkaLRCdEhW7pM7eEft
+         8CWQ==
+X-Gm-Message-State: AOJu0YxAu//yQI+lhVxpRU5DRSQqmfem/m5DDTeFIflY4EuHHE0raAtA
+	6adQD6TZIM1HCT54RmlI22762xN5tUYUZg6CinzV+0KcAkUjBccV+KigRTHSohkePiRxvVr1uYk
+	x5820Tg==
+X-Google-Smtp-Source: AGHT+IHsWL03UakmXDuC3XkP9bVFDfTXhXnJl9/gk1jhQtI1MteLxyfjIWvixYY9PO5ENgv2NxtL7A==
+X-Received: by 2002:a17:907:724a:b0:a77:cf9d:f495 with SMTP id a640c23a62f3a-a93a061b82cmr26096166b.40.1727206302067;
+        Tue, 24 Sep 2024 12:31:42 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f34076sm122960966b.7.2024.09.24.12.31.40
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 12:31:40 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso564825566b.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 12:31:40 -0700 (PDT)
+X-Received: by 2002:a17:907:7204:b0:a80:d913:be07 with SMTP id
+ a640c23a62f3a-a93a03e08ecmr34079966b.36.1727206300263; Tue, 24 Sep 2024
+ 12:31:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3: Call of_node_put(rmem_np) only once in
- three functions
-To: Markus Elfring <Markus.Elfring@web.de>, <linux-remoteproc@vger.kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>, Wadim Egorov <w.egorov@phytec.de>
-CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20240924044741.3078097-1-andersson@kernel.org>
+In-Reply-To: <20240924044741.3078097-1-andersson@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 24 Sep 2024 12:31:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+Message-ID: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+Subject: Re: [GIT PULL] remoteproc updates for v6.12
+To: Bjorn Andersson <andersson@kernel.org>, Martyn Welch <martyn.welch@collabora.com>, 
+	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>, Zhang Zekun <zhangzekun11@huawei.com>, 
+	Naina Mehta <quic_nainmeht@quicinc.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Tanmay Shah <tanmay.shah@amd.com>, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Udit Kumar <u-kumar1@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/24/24 7:43 AM, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 14:28:35 +0200
-> 
-> An of_node_put(rmem_np) call was immediately used after a pointer check
-> for a of_reserved_mem_lookup() call in three function implementations.
-> Thus call such a function only once instead directly before the checks.
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
+On Mon, 23 Sept 2024 at 21:44, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> remoteproc updates for v6.12
 
-Quick check of all the users of of_reserved_mem_lookup(), they almost
-all do the same thing, get the phandle, mem_lookup, then node_put.
+Grr. I didn't immediately notice this new Kconfig warning, so now it's
+in my tree:
 
-Maybe a helper function like this:
+  WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+    Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
+    Selected by [m]:
+    - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 ||
+COMPILE_TEST [=y])
 
-struct reserved_mem *of_reserved_mem_region_lookup(const struct device_node *node, int index)
-{
-	struct device_node *np;
-	struct reserved_mem *rmem;
+this happens with a regular "make allmodconfig" on x86-64.
 
-	np = of_parse_phandle(node, "memory-region", index);
-	if (!np)
-		return ERR_PTR(-ENODEV);
+This seems to have been introduced in commit ebcf9008a895
+("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem") that
+added the TI K3 M4 remoteproc support, which does
 
-	rmem = of_reserved_mem_lookup(np);
-	of_node_put(np);
-	if (!rmem)
-		return ERR_PTR(-EINVAL);
+        select OMAP2PLUS_MBOX
 
-	return rmem;
-}
+but does not actually contain the proper dependencies that
+OMAP2PLUS_MBOX requires..
 
-Added to of_reserved_mem.c would allow us to clean up these cases in
-this patch, and then several more spots (and also help force standard
-property name usage).
+It's in my tree now, but please fix asap.
 
-Andrew
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 6 ++----
->   drivers/remoteproc/ti_k3_m4_remoteproc.c  | 6 ++----
->   drivers/remoteproc/ti_k3_r5_remoteproc.c  | 3 +--
->   3 files changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index 8be3f631c192..d08a3a98ada1 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -576,11 +576,9 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
->   			return -EINVAL;
-> 
->   		rmem = of_reserved_mem_lookup(rmem_np);
-> -		if (!rmem) {
-> -			of_node_put(rmem_np);
-> -			return -EINVAL;
-> -		}
->   		of_node_put(rmem_np);
-> +		if (!rmem)
-> +			return -EINVAL;
-> 
->   		kproc->rmem[i].bus_addr = rmem->base;
->   		/* 64-bit address regions currently not supported */
-> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> index 09f0484a90e1..a16fb165fced 100644
-> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> @@ -433,11 +433,9 @@ static int k3_m4_reserved_mem_init(struct k3_m4_rproc *kproc)
->   			return -EINVAL;
-> 
->   		rmem = of_reserved_mem_lookup(rmem_np);
-> -		if (!rmem) {
-> -			of_node_put(rmem_np);
-> -			return -EINVAL;
-> -		}
->   		of_node_put(rmem_np);
-> +		if (!rmem)
-> +			return -EINVAL;
-> 
->   		kproc->rmem[i].bus_addr = rmem->base;
->   		/* 64-bit address regions currently not supported */
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 747ee467da88..d0ebdd5cfa70 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1001,12 +1001,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->   		}
-> 
->   		rmem = of_reserved_mem_lookup(rmem_np);
-> +		of_node_put(rmem_np);
->   		if (!rmem) {
-> -			of_node_put(rmem_np);
->   			ret = -EINVAL;
->   			goto unmap_rmem;
->   		}
-> -		of_node_put(rmem_np);
-> 
->   		kproc->rmem[i].bus_addr = rmem->base;
->   		/*
-> --
-> 2.46.1
-> 
+             Linus
