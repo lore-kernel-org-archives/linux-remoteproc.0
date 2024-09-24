@@ -1,39 +1,39 @@
 Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6D31E481;
-	Tue, 24 Sep 2024 12:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038AF1474A4;
+	Tue, 24 Sep 2024 14:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727181850; cv=none; b=be2EjVc/d/tGZKpgJvx5A1gnBdjcPGU1/cnJPgYh1pw0f0/VzIsnOgIlLYwWJ5gg6unReN3E5mdMTbgultaTCdsMCdmMnq3dBFk089i3yiqldwifMZmyn9HmQFN7LsDH/WJi++K3jOoniPKfdgdiEleSL67THt9bTSQc9fFRfRQ=
+	t=1727186925; cv=none; b=UJkGYKL828372r+dZN3iPFagvEjzpgccWxh6M9g8czcEBVCgvisMMdA1gUNu76V3TAoJp3uimL6Ur8tKZFJQiZ+VoUdK78f9Ht0Q9noQgHIbeEAtYmWGROnZk9RsyGhNDN5oVs/owSKYQRuaMBwHkvCoko1wfCcw7XwMEAsA9J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727181850; c=relaxed/simple;
-	bh=g9vt/2w7SEWJxQSVcRxVO46K7DIbg7DksvpeJS7dHIE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=VjU9Dhzv/r6H1/lj9w+JlHyX6Et7g1J4Dfo6xkrzMJTGnVP8w2p7aHBOqaiMD1kt1wsOSPeKFuIh6LLlCMWN9btr1dYvK7vod7QHOymrjFtYCnBvBxkt8qCGuSUBG6LR1uAaetnE1FyvVRogJ2ycYynJDJrWz0pGbP5TctIXdl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=heUhHXzI; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1727186925; c=relaxed/simple;
+	bh=CFJ0SzValMWqmkQ2Qyk0Ijd/4Ig+SpndFjAHdOLUrj0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=RdsmDyCJZmwdV4SCORvVOj4eu6y4msnbxmfj4AuGXEWGD2vXPr56iZms7cd6oxEAvHHrb4xo6bs3rCeXgdnNZlBLuNkXpHjX6S+dB5DCmyBdnUpxw4MlvHRlQ6O6l4DPi8cvz5S4W+ImmwOAKt+M90SOnKFt6wk9EGiaVrBRN54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YfTvv7Ed; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="heUhHXzI"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YfTvv7Ed"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727181822; x=1727786622; i=markus.elfring@web.de;
-	bh=7o6sioFTBBYjzQQBwfjItdoLdM3KgWHd2FeaOBEYDeQ=;
+	s=s29768273; t=1727186895; x=1727791695; i=markus.elfring@web.de;
+	bh=ertJftNYJ3HOaugN5pCIYK1U3M/EPNN8Xkar1UEsejk=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=heUhHXzI6OsmPgArlFVdaqp+iWZxnO3m1nP/OSObCBm5ruQNlKOBhU1voS5S4yfg
-	 YakL3iRK5F5NBntNTzxd3KicrIslqgUFIgYDDJViQE1bASQMKNRm0SscUdtAKWTs9
-	 r3yx+uaWfljzZ/yB/SOs/g6ya6l+DLwDxFaEJyzG8xCigK7nSBksZwR4IqOGk5JdQ
-	 vxh8w4OU6Ab8DjJ7DzgV509fY7dLr0vmOvt4kx8Bjqqrn9A+ecAUWhnj3TAMUhHjZ
-	 9fpUxbwt8yuY7e/Qq4lGTReNS/Rq3j1UvJ1wl7gWo8KpBtLv8jpRcZFKf8HR2uGSe
-	 v2tdtZTo7zCWL3qblw==
+	b=YfTvv7EdhqaQjy/XDHlBVpJysb5xcPwMee5SreMIbyGjcIlJTzYrQfkdzz1tnEiq
+	 yWMVAKvpq8JIWBR1+/Ox6CzAPBtlnm0MVrXJa20lAEm4izmSm5cNopTltD7/nH5c8
+	 3yuPAwGEMJMANBGdCsVi08+FNZnH1hwWRSyhqcOo0/PH7pB9yfepPn+f0QROaaWX9
+	 15Xr0kOgeYvx2ZKUiayxjx1bCRh1438zoPP2sxN3YRPh4T6WYJWeuTquq37+9RUDY
+	 Dr8rbwUjdDO5zbjEEIFB+yTSxs8ZfTHumQHkhSvZEIL1cLn6X3tA0U12rFb/UHF7F
+	 /pTfH3lExcAc2zlmug==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MK56y-1seJ9s0GfW-00Y1gK; Tue, 24
- Sep 2024 14:43:42 +0200
-Message-ID: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
-Date: Tue, 24 Sep 2024 14:43:40 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7epr-1ssIKY2AjV-005Hzo; Tue, 24
+ Sep 2024 16:08:15 +0200
+Message-ID: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+Date: Tue, 24 Sep 2024 16:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -41,114 +41,98 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-remoteproc@vger.kernel.org, Andrew Davis <afd@ti.com>,
- Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
- Martyn Welch <martyn.welch@collabora.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>,
- Wadim Egorov <w.egorov@phytec.de>
+To: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Sibi Sankar <sibis@codeaurora.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Sibi Sankar <quic_sibis@quicinc.com>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] remoteproc: k3: Call of_node_put(rmem_np) only once in three
- functions
+Subject: [PATCH] remoteproc: qcom: q6v5-mss: Use common error handling code in
+ q6v5_mpss_load()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qV1ocPRQpkuZeqkfmXsWGeFETDwEIQUbXwkqd71XqSrIRvuHvWd
- eZreAJ6+eVCuDQdHOt0PDgjBlW+andyOhXg4EY4QNJy3rqiRrhsw//uvi7IjtGbP3pruSJs
- HS9mLvkMGxYGvel/RZRgxRZKHLqrGMQU79hgrwi7DIQNhGqvt1qxeNpnDOpiUxitC0YiEhE
- Mitv+WwqLtEERL3kEe8Pw==
+X-Provags-ID: V03:K1:NzFPSA3JNvH5acVbbsdO8j8kFbvAFISMIz3lYU/hsuPGdlfTAzP
+ 24QB/nSYmME1WEFtUY9cAAr7OEJ9ZTEyIQevthLBcnTUT9t4EUwGYYAxqygH35CpaHfV8iH
+ XGHNsXffExMUOezFTORX9Qumfnkkol1cVynlmCU/mQgy9rIV4rkueJLByp2L6BPwqFaaahu
+ z6V/XW0Fvp2J5UkGNTtZA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RWdOIv54GYo=;0A1LdlsKROlstTZjg3S5hU2RG+d
- q2U1MHZN6fKvXCgpSZrgzUW9QTQXQiB5ke6eAaDxgGdUp094DIdSc9rQymHLcjuC5S12qEZkH
- KbXuWd0k94hFN1LCOMeHnJnfEiY2VXvoewhjzBJH0sEkkaDMvQoBXrrGOe9lgKSw1A6EmCPOS
- blFXmHHsBT+BIj5GyhdzQOzGWbpT0FNe2DI+48WBTS5KjMNPQ2tiIXcsutG5KYZc5jnExrDPs
- DLarnFMjg6yZz6RZGox/1jwHmwJi7O1D36R9iNNb3IfOj2cxHOwJUaZN9v+9sDWrHq9rPuhH8
- QqOc9DLRGtfRPGZ/vvQnoHhx05ltED4lt39PvHn2LuWIOs2ZUsSpuLrvxbdsRQ7WX8EN5Emmy
- hErGiNnDbED2F43+VhWry6H9jhljDlZ/o1/FKgr2JQe8K5S8L7QpdSOA1S7WgfGNSShG4DVR8
- h7LnvzkUQjCyxmareY9VCThZRw5LWcJGTHtq7zgfDYx8BgJ8w1RBSRkJcNRXGmn8hmTYoWJza
- U4O0itUeSJbwP4wnrvxr3/WHNckjXK8JMmKRJnQqVDjswS77ZA2PCtX99OptdQnNzAMdCUCI0
- iHmUJCUNuuGqj1/+p9R8Ta0pouM4aPh4L//4hEKuTGunJsUUod+8umCZGvuVOS8PG56vMR6ic
- /DadwHJPFCuvM+eDKs3KofbnJzDE4JMutYmfw79vgUvM8qe4mkREY9WrMkKOmIUP6i8216yUx
- PLpcaEZJSOoa29LMr5K4Sz+TbO1kxnI6AgEsJV3yTACaPN7AcAlKD8945EpgC63BdGgSJOjKE
- Qbg9AAibxgQtx8fzOcY3cwdw==
+UI-OutboundReport: notjunk:1;M01:P0:eG2Ta63ZHP4=;p74Dz7v959Z40y5XuqY9JbOoZhz
+ b1SQWOwbkGEZr6tz7913OGXs9pj5boUOWlisyAzsCKTFB8eLrpy6jL/g24WPp0ZIfAkugn99b
+ zAsGvPPEpZYQme3I1l1n8w9QkRLafOgIoBfR9f7Z9T3rkiMbZqElsUsDOj4dm2/Z/vcKPn0hn
+ Gkpu1WHhG+F3D3PPUgp1q3mwPk3DaO1P/44qlQJ32WajD9LQ6HRtPbjeYTc7W4od8ZvdskOMO
+ 1ppEkVyOJt79tBE+qIR20vln6j6T7r2Ui3WBg/ThD5W0WgdbNNPYrS1d8EIlsa13WnP3gj+xK
+ U3wYUS3FXrnhcsjBztK4Fdntl8m7+UZb7sQiHrd6ToqioOmuXXJonsJzMFdDcFkI3JYTabboY
+ /EQrOZDTARPKXXHvmQl9+cKcHpkGF5X8jc3Ohf3p4l3ujy1IGG9baiCmvF8AAfp9fsxyC6vag
+ qAdsOO1PQJ4Rx2PZmNUsaqmVUFAdrY0A3t/ht28DHjXAMVv647PkAXi7kOL/hghz7rteZa0Cy
+ xUDllSE4Fj6Ds4/pzOUYatzjvyYXWUZZQ9jocO7GI2FgOfjWd1iHP6woMUnUuBSPMkPiSx2+R
+ m2n2ZhERptYb9a97J26OWS2bImAwc27pch1iy0kRE4q6lP+yu6qHjUawcnH7P4zGdQNmRnub8
+ FYNba/20Te5dIvNTvw0OwcdDdw4iewHO3kx8JeTSOLWhnkMKbUX7Dm8HTHTuKS0bQvI5VoM7B
+ HcdpaaQDPtzP7M01T4eDsOF+CRFR27YQkZ+F9jbwvpeeQG6CSIhNzuSS4mSy/6QFnyCpK++8R
+ 2XM6GjMkZlBR6DpqdkLhSvCQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 14:28:35 +0200
+Date: Tue, 24 Sep 2024 15:55:06 +0200
 
-An of_node_put(rmem_np) call was immediately used after a pointer check
-for a of_reserved_mem_lookup() call in three function implementations.
-Thus call such a function only once instead directly before the checks.
-
-This issue was transformed by using the Coccinelle software.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 6 ++----
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 6 ++----
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 3 +--
- 3 files changed, 5 insertions(+), 10 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remotepro=
-c/ti_k3_dsp_remoteproc.c
-index 8be3f631c192..d08a3a98ada1 100644
-=2D-- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -576,11 +576,9 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rpr=
-oc *kproc)
- 			return -EINVAL;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_=
+q6v5_mss.c
+index 2a42215ce8e0..b398ae3083a1 100644
+=2D-- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1451,9 +1451,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 				dev_err(qproc->dev,
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+-				ret =3D -EINVAL;
+-				memunmap(ptr);
+-				goto release_firmware;
++				goto e_inval_unmap;
+ 			}
 
- 		rmem =3D of_reserved_mem_lookup(rmem_np);
--		if (!rmem) {
--			of_node_put(rmem_np);
--			return -EINVAL;
--		}
- 		of_node_put(rmem_np);
-+		if (!rmem)
-+			return -EINVAL;
+ 			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
+@@ -1464,18 +1462,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 							ptr, phdr->p_filesz);
+ 			if (ret) {
+ 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+-				memunmap(ptr);
+-				goto release_firmware;
++				goto unmap_mem;
+ 			}
 
- 		kproc->rmem[i].bus_addr =3D rmem->base;
- 		/* 64-bit address regions currently not supported */
-diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc=
-/ti_k3_m4_remoteproc.c
-index 09f0484a90e1..a16fb165fced 100644
-=2D-- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -433,11 +433,9 @@ static int k3_m4_reserved_mem_init(struct k3_m4_rproc=
- *kproc)
- 			return -EINVAL;
+ 			if (seg_fw->size !=3D phdr->p_filesz) {
+ 				dev_err(qproc->dev,
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+-				ret =3D -EINVAL;
+ 				release_firmware(seg_fw);
+-				memunmap(ptr);
+-				goto release_firmware;
++				goto e_inval_unmap;
+ 			}
 
- 		rmem =3D of_reserved_mem_lookup(rmem_np);
--		if (!rmem) {
--			of_node_put(rmem_np);
--			return -EINVAL;
--		}
- 		of_node_put(rmem_np);
-+		if (!rmem)
-+			return -EINVAL;
+ 			release_firmware(seg_fw);
+@@ -1528,6 +1523,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	kfree(fw_name);
 
- 		kproc->rmem[i].bus_addr =3D rmem->base;
- 		/* 64-bit address regions currently not supported */
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc=
-/ti_k3_r5_remoteproc.c
-index 747ee467da88..d0ebdd5cfa70 100644
-=2D-- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1001,12 +1001,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rp=
-roc *kproc)
- 		}
+ 	return ret < 0 ? ret : 0;
++
++e_inval_unmap:
++	ret =3D -EINVAL;
++unmap_mem:
++	memunmap(ptr);
++	goto release_firmware;
+ }
 
- 		rmem =3D of_reserved_mem_lookup(rmem_np);
-+		of_node_put(rmem_np);
- 		if (!rmem) {
--			of_node_put(rmem_np);
- 			ret =3D -EINVAL;
- 			goto unmap_rmem;
- 		}
--		of_node_put(rmem_np);
-
- 		kproc->rmem[i].bus_addr =3D rmem->base;
- 		/*
+ static void qcom_q6v5_dump_segment(struct rproc *rproc,
 =2D-
 2.46.1
 
