@@ -1,150 +1,96 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820BA83A17
-	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 19:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5971B282F4
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 19:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727207389; cv=none; b=DCNlKqmyhX7buICrdk7mvcy9jYDvW3KtUcc6/QSXKihSBsMWtcZQmwIAZirLjXQRASUrbb8NIYjpZFbSK2JUwtvkfQBgIVMtN05lY8BaVT1ogDtsZN4weYLt2eoPHCIal31sF+UcH5e5VBJVVXFzu40i6/qHQgmUZAE7W4+LyJo=
+	t=1727207586; cv=none; b=Yid+xvnDmAAGs0iBC+bo8wDlwwxpt1p+tY4aL39l0WWgW9Pi2w6FHgXGDR4n3k8nKzS4fKLzhSKw1ao0gHfdv3kY/s9vPpKU+0TH7ac2AWzxN1Wrb5wEYPrbiymh3tot+o7/aEJHUwpEyBRbOk+ZHXmwEb+ZcgbpYyJl2qqYQTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727207389; c=relaxed/simple;
-	bh=yqpJS+KhJYLxK6OoVvTSrnYnrYtRpSyQL6/IbvXFFHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv4eeCGpHoR2w89ep8+Shkyc050BN3/8lRV0Vr0PEuQznah5vWtnqjcI9tPLrl44Kcci0w8MT3PbX0lgJqVGYB4X17zHktTiW7bQ6N1xhpYg/cxkhQwRzBj1Vejw9yvSpYENZB0luUcSSy9QuFAvqeFBqUt9Ei40e0l/NJ/p+us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtN0fbRT; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727207586; c=relaxed/simple;
+	bh=KT8rvM77L2IbGpejE79KBgEP4qmqCVvvennzSDIi2pI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NE9Ked130DOeFbYw1l+c8dy/DxtG25QsmsDH2VeCn0mvFefvtqyBk2/rXXWuCCLVVXto81L4m6BWvTF+Fm1JtBYY3bpNACL2QYsG3QYTf4Pa16z6AH2MjFzuJrs8Mc7fm0z+FTwrJxk1puAcvLX9cKvC6JYZ0A7p9THneLv9Scg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I9tL5Akg; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtN0fbRT"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f74e468baeso65487181fa.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 12:49:47 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I9tL5Akg"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f753375394so43404121fa.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 12:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727207386; x=1727812186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=UtN0fbRTlH03LIBPrLzsuVvoNkIGyeD3M0//9LwiXNnjSQEMYlSWaEkS0jcwb3ddEO
-         scgysvZSADl7T7zbMcb7dooZV0rP6fRmHwIOQwh2H/dHG9uUVIOAED1dkRS4ecploMd4
-         YORs50IeBGZ/1UWDskwrgFKZL/5TKUjEc2sfECJDGIpWT5Fn19Ur7URc5A1v02rPy3Y6
-         6/2Ys5UPDp5LzISS/bEASz+WoXc+vgKSk92BvGwd4pmXa+mqf/g+frOk7UEXJFxEzaEb
-         AsCozV+gCusEuet0tCqpE8odxYzN2HyGmQHtYmgSdZfCk2D4MTcjKeNF/4Oi5SpfHz3y
-         dB1A==
+        d=linux-foundation.org; s=google; t=1727207582; x=1727812382; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=947KiTDRASLjIeg3socCB022+DS5zCO6A8y2gr+pDQw=;
+        b=I9tL5AkgWWoxq/Y3LL0QUeJRmIWpKBCVfJHLnkyQOogIQHUtQcrJCOM+DKvzsY0Qdr
+         Ukd03jfVpT8/0G+nK20uIn76EIdv0+kXutJpOfVejlvejK9IhOrFkWGTLxPGnUJ7tPCt
+         /zYzP2ilp7fz+YLzajUN9idpRyJ3cRaobSz/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727207386; x=1727812186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=ME5iXdJurm/VR7thYeTE0I0JZ9wlLyVbAInZzYPqObeR9JYeo5dipNMvfIqqL3yJ6+
-         wDgnR1PiHkMSeq4y2mQ9i/rJM6/dsopSyEtbSEWMhv7BqHso69zdkVg1pS4uxDJEdRr1
-         qZzz+tyl7DUDtjRo8LfWPebG+ii+CegpFXL7vqZDTN/tX69w/ghaZB3yTRf2ewRwtKZO
-         gtTXnSOPldTW/G80cdswDyVT3QKr7ewqO80egZkv2sBf/g08Gd4bQFr4C8tc8fdNyXpY
-         +pGOP352UFnBOI1aw3dQ+LQKSF7cdHp2VnLlFl3cEhaTM2/3Vn/Kbg1tC8YnwkXl64EF
-         6Ewg==
-X-Gm-Message-State: AOJu0Yy/85JdPBR1egn8nyAMD13bVLZ7LKoSdtbS5EWateDr2abWyskC
-	3XmTiytdmAcyrFkQjYeVM51qef0ofQGtuPb6M8+jjdoXbfq8eB1r3g1N4jveB9I=
-X-Google-Smtp-Source: AGHT+IF9Vrp5F23MjW0sqPHOc45CN/oE/KimpqLNFA5AlE9guRs5rUgE0mmPmEVD0LZgx4xD8k2FRg==
-X-Received: by 2002:a2e:130a:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f915ff565bmr2545221fa.19.1727207385621;
-        Tue, 24 Sep 2024 12:49:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fcabsm3133401fa.23.2024.09.24.12.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 12:49:44 -0700 (PDT)
-Date: Tue, 24 Sep 2024 22:49:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Sibi Sankar <sibis@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Use common error handling
- code in q6v5_mpss_load()
-Message-ID: <tn4kxsouzpgimregroywzzvi3sjib7pvnpcnkcvccer5b7woxk@yzaqjwjxeyki>
-References: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+        d=1e100.net; s=20230601; t=1727207582; x=1727812382;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=947KiTDRASLjIeg3socCB022+DS5zCO6A8y2gr+pDQw=;
+        b=kJv+MCcy9BqS7w9TpFvrpugLsEfkToBRswX1IneT8aSTk59ND9cYFsoMqeZppsobRA
+         5PWjQta/vVQMs+ZP+HihOvBMzNAhyuZGSSmy1xzpstSOwwi13H4xgjNgqWwsSgA+NHjg
+         jsvzjM7tzJSr9dB56S6WB0QrIkCnQWGrx0+ik7SwV1HhlA5TdTOB4irj++icPHlTC3St
+         cCb3mCPBKSXDi7OGD0m5jCrx+biU6k07rXy8eVeXjQffgADVAxmLuN6Ii/oMH6WY1vYQ
+         x+2qux4Fa0z01gMZipx6TJrkzyynAQaSG/xknS9uxtT4HSfP51uRlpGaXSAr2J1+CzU4
+         UPbA==
+X-Gm-Message-State: AOJu0YwSn8/3tVVGOQ19bjxl83PmGNXGcq+aZwNBZzYhZAM2+lqIX9Je
+	5V11BrMmiJlNMHZPbNXX++8tsHjqsvbpEH/qKBWboeIDH2l73+oHlPJ9VrZzizhyIP8RU2GjnvP
+	ezTQfVg==
+X-Google-Smtp-Source: AGHT+IHKrwCygIN0uc2lg0eHZerOHW1L+YcumaWtHLRrNmIm+BAxGuelkAZMM9TrJNkBqS1Qz9OMRw==
+X-Received: by 2002:a05:651c:2128:b0:2f8:d537:2846 with SMTP id 38308e7fff4ca-2f915fdf844mr3427521fa.13.1727207582165;
+        Tue, 24 Sep 2024 12:53:02 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d289b614sm3006301fa.108.2024.09.24.12.52.59
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 12:53:00 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5356bb55224so8077370e87.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 12:52:59 -0700 (PDT)
+X-Received: by 2002:a05:6512:b92:b0:535:674a:2c18 with SMTP id
+ 2adb3069b0e04-53877530ef6mr121416e87.32.1727207579451; Tue, 24 Sep 2024
+ 12:52:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+References: <20240924044741.3078097-1-andersson@kernel.org> <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+In-Reply-To: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 24 Sep 2024 12:52:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+Message-ID: <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+Subject: Re: [GIT PULL] remoteproc updates for v6.12
+To: Bjorn Andersson <andersson@kernel.org>, Martyn Welch <martyn.welch@collabora.com>, 
+	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>, Zhang Zekun <zhangzekun11@huawei.com>, 
+	Naina Mehta <quic_nainmeht@quicinc.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Tanmay Shah <tanmay.shah@amd.com>, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Udit Kumar <u-kumar1@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 24, 2024 at 04:08:11PM GMT, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 15:55:06 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 2a42215ce8e0..b398ae3083a1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1451,9 +1451,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
+On Tue, 24 Sept 2024 at 12:31, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> It's in my tree now, but please fix asap.
 
-Please keep error assignment where it is. It is much cleaner to read it
-this way, rather than checking the error-handling basement.
+Argh, now that I noticed it, I can no longer unsee it.
 
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
-> 
->  			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
-> @@ -1464,18 +1462,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  							ptr, phdr->p_filesz);
->  			if (ret) {
->  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto unmap_mem;
->  			}
-> 
->  			if (seg_fw->size != phdr->p_filesz) {
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
->  				release_firmware(seg_fw);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
-> 
->  			release_firmware(seg_fw);
-> @@ -1528,6 +1523,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	kfree(fw_name);
-> 
->  	return ret < 0 ? ret : 0;
-> +
-> +e_inval_unmap:
-> +	ret = -EINVAL;
-> +unmap_mem:
-> +	memunmap(ptr);
-> +	goto release_firmware;
+So I did this
 
-Ugh. No. ptr should be a variable that is declared inside the loop.
-Calling memunmap outside of the for loop is incorrect. And goto just
-complicates things by adding non-linearity.
+-       depends on ARCH_K3 || COMPILE_TEST
++       depends on ARCH_OMAP2PLUS || ARCH_K3
 
->  }
-> 
->  static void qcom_q6v5_dump_segment(struct rproc *rproc,
-> --
-> 2.46.1
-> 
+to the TI_K3_M4_REMOTEPROC entry so that it wouldn't try to select
+OMAP2PLUS_MBOX in conditions where it isn't valid.
 
--- 
-With best wishes
-Dmitry
+                Linus
