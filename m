@@ -1,161 +1,167 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E468C1A;
-	Mon, 23 Sep 2024 18:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115143; cv=fail; b=ppmKOVH/XPnP0TapCZvPqGm5ERgUM+IWp8eyEBkhalYLC9YvIaO7BkxrPuCQ8t/ewxmZ+BmWyWfuxa7UET8qO3E2iIWm1iQg97CoFeUAy8sqPspf7Cl3FcknVAekKiA9K2M9mk8buA3vbC/4oB65+RRBU8PdDkt/7TLr2+cU2xA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115143; c=relaxed/simple;
-	bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aT2Onv+0wC53eB6yAMaHW8nY+n4fzBJX0ed3NdlJO6AKpxZO27oi/3cqqB4LcAxwkWnh/hHItg+yWXShMjkJwDGBp3CIasMW4n2BqckeIlGNKBXdWIWDviqv8NiDDjg8vnWo6J3i1N/cgxdD+sSAK7+GSW72YrNBZeWTDW9+Oig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MsAQHdPm; arc=fail smtp.client-ip=40.107.244.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46D41805A;
+	Tue, 24 Sep 2024 04:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727153061; cv=none; b=r19Ro7tsHDqOPyIc6fKNi6EfT3h2OSDAkD3sDm5D1fUATAnQdWE70qbR6ANGfOO4s/fFs1EwM6Enaw16ulJ0rwrWzPKjqxBcyYdGfkapC/Iw1iGnQE88CNOmkFh1GDKcTApqd6+uJKA8xrObrrTDzQcFua2OIUp8vXKU15s3XRE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727153061; c=relaxed/simple;
+	bh=Dk+sxud92c3V59tI0lVfNjPWSYFft4rlNJ7x34uuYaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWT1YF1V6pDs4YH/6XTDmkE815JsespQ2QcFoaUMtWCA85q5wV3x/r3h2qnkYhX4OEarHNkIHttP2CuK6mAcsggKJaMruwPRxBDx/4iiMhFprfCPPVZQZNmAvMyy6iINjuEIIV/5AJzJiJWmwOy6Ubs4YzRoDDaaqam/hgDeg3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/9kk41j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MsAQHdPm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DqridgZPkFEOgL3A20t05SBK/ylrNQzxLyNHXDgSPJw5Wxrph5cN78Deo2TA7b0M5rOrTrLMm6m7QpK9UOIJErKxFnqaNbl6uMCZ2Ems8DWFVOhNoNcxDJR/UqdeWj6BIrq4TWVo1hMstk+MddjDdDNCGp99SQ77hp0/fpeHS02XS6uVvFHKNRp/90XzUuKy+IYasfkvdGffy/e55HGSOy9FGcyYqyN8YRogQSL9l/Jq93BS2b4J0JOyLZ9/hSQ/+hrTAHH0s02M/MSR+hnQL0h74jnNXMPVGh9CSXkhb6EO3R0vYCZEmnFCOk6OHk7ctb4XqCXiSCUrBf8eo1d1BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
- b=bqfkEc0OnYSXE2MSpecQ+V//LQJgcyJ5tj+2FWPZn1VWcl/zlrulTn1clTkw9I5Q31M/kJXuMMdYxVJEZT7FF8K4XCpr9EN6OSHwcRyiC4qW/O6DRG3QffC75g76h0bB1Cg1Ueg80UqOU+K+tQDV5SZSDF9ROu5M99K25qS4ADnlRSYK8j40X+qkSlXWhLWjgHNWh9WTfW1Ah7MZwfuhFLCKCzsf5PVB7DA/tyUwfTAJ9Zi3MCdr7XbDCEgMTkj2yqn56eZtcYXd3cy8FKQyszoVbT5eBMKpK73tDWcV9rnE2+MZMXErsoG4FkJxXVpPVLkXgvUm3UIdiN5C0SV7iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KNuqqDNRds9eFzyoEcmt1VFZbPdRVYvTnTkrHEAWRl0=;
- b=MsAQHdPmedpOQFWm4xZ1dean0A2fG1lRpZ5JWsR48G2/PIo3Mg4Ddzp7/yyN/zCJEWmZcgME+Mu0POqBzeDWrOedx1oEapzmIXEGDecvYInlxkPMIowbrcym0EoLosUtOITzFv+6FUTmCZYRsKm89oSPdqzORg72QMJMoKWCu4jJCGY1oZ7q3fWQPJ1mBklw5GAmqiT78DcWDEIMWAkvRfK1hKpUO0bjW+kXdQGkSqP9DzUMZCgx7Ch6ZwjZcUxeW4HNMtjwGDTetjZLYF/7ZBW77VsNPq7Qu2rIq+vuxXJoidf5HYr04yUwyHixjpzr0SlJKToebmCwgl1E2s3iFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by BL3PR12MB6402.namprd12.prod.outlook.com (2603:10b6:208:3b2::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26; Mon, 23 Sep
- 2024 18:12:18 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 18:12:18 +0000
-Date: Mon, 23 Sep 2024 15:12:17 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, andersson@kernel.org,
-	afd@ti.com, nm@ti.com, hnagalla@ti.com,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-Message-ID: <20240923181217.GF9417@nvidia.com>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
- <ZsdktJEqR9BOgivK@p14s>
- <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
- <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
-X-ClientProxiedBy: BN0PR07CA0002.namprd07.prod.outlook.com
- (2603:10b6:408:141::17) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/9kk41j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296A1C4CEC4;
+	Tue, 24 Sep 2024 04:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727153061;
+	bh=Dk+sxud92c3V59tI0lVfNjPWSYFft4rlNJ7x34uuYaE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V/9kk41jKZ6k8C47KjWpXbegCENPrNrk7+kDNs6/kC1IerjcIOlsjb8JJVuRhUexR
+	 b15ARSMHla1cchoWPIAGsvlS7hXTM/WXBwlYm9uqkHh+mSVJzTZzmK1kQovY717igV
+	 15qlp2fZ75c9HPj2cv2ovqeAezZoOqDppn8/en9J4J3Hn28FKAgHmgI0e5i8zGiegI
+	 ujX2tDnFKz0ekujHaJhuDbyosVW5nAmhYj792XVrLmwbsHvWCb6AMjtFFSMR6Vd1Xh
+	 939wfxq6AP796Ea0pwY62IDHVWSNblXK+SByksgnCJyGTdq1ZNyXE3UQPO5sJ0os2g
+	 nmVZDkCW63Ijw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>,
+	Andrew Davis <afd@ti.com>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	Zhang Zekun <zhangzekun11@huawei.com>,
+	Naina Mehta <quic_nainmeht@quicinc.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Tengfei Fan <quic_tengfan@quicinc.com>,
+	Udit Kumar <u-kumar1@ti.com>
+Subject: [GIT PULL] remoteproc updates for v6.12
+Date: Mon, 23 Sep 2024 21:47:40 -0700
+Message-ID: <20240924044741.3078097-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL3PR12MB6402:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6554f771-3e1e-4a29-34b8-08dcdbfb42f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uA0v+xMmW5iMB/LX2jg2lf9QXYxePURxrMlqcT+eqEAKInJUQToqntVq0aDR?=
- =?us-ascii?Q?kXPkJgH4d1JC5RFmQye1ap++1tDH/EIEhjcnAESUmlnhXsNYE2CO+zHoYT4A?=
- =?us-ascii?Q?q6O9Eq/yV3J8wWinKY+kPwhZikUi4Cb3B1dGp5zlQ8zKr3WxCE8+OU0RgjiE?=
- =?us-ascii?Q?fxWtevlczyTkMApPKZh46FqbqmV6oovAayamFfl5Tz39VP+Br/RJjpYHbIv8?=
- =?us-ascii?Q?Ba3X52dTbGbnJMf+yUaMWvtBVPN9iY9znvQ4dsI1TZEmlYob6/H5RpPLrJ5K?=
- =?us-ascii?Q?8PvsC2LhlKe+giJ3UfLEKlqDFyavvMrbeqtFAT/c7hSCjc2oqcTkfkZJ2dir?=
- =?us-ascii?Q?kfUtMZvRF9kWBEqTR+CupU72pf9K8pi1HfVpUOtSuJHzdI7DFsC8DD8SpqSv?=
- =?us-ascii?Q?SptNMYIdKn8yM4MzJv8Wk/UG+kEgjCMggppemfSsoHateqSe65/YGlwD80oJ?=
- =?us-ascii?Q?i6H3NTZ5siPFL3ZATtIpxVm/bMTQfLmdlI+9dimbinDdNRm4GPcopuqvUdMT?=
- =?us-ascii?Q?TuJDIMhw6zdifA7aOIIpcKI+hMYn5rT6RoLupQNuOPCPCI+dGSa1sgYKtzjt?=
- =?us-ascii?Q?k6nJ+d45D1CaXSiIJmMbaxt5HhYjdqMuT8yViNsWQtilSjFqhoIgNnTKaO45?=
- =?us-ascii?Q?T5D26aToUEPuGF1AJvQYZaM7rcnwsJFriNXxE6oECTSLgRdLUNq4srguIwmK?=
- =?us-ascii?Q?Nz0wddfu4hIedbugxvKnRpeisl3fj5PJsfp1IBsVJWzyrQ2MlRtZ0OBSxDRY?=
- =?us-ascii?Q?tv7aMOXj74/2ht1zbI8GnVMepv5RG7dvlAPDPTq2HMheFUR7nmCjxxtuW2h3?=
- =?us-ascii?Q?9NP7fXY6RJwOz/lPXpJEMHpDG68vX5ycEUIIkqvaIfC6Mc1ugNqCQEq2X3cr?=
- =?us-ascii?Q?hLRMrXfYJ3qRJU870JAhhcykv3hm7Goy6sYQxSYoRMLCAtalcKtQUMhJl5XF?=
- =?us-ascii?Q?faoDQCoMs6/7kWUhgXYbf/NZi0hPAD+iweRqkAqAQgDWy9pP9DxxjX2uSj/S?=
- =?us-ascii?Q?04QpJd0+Qjmv48TENeMKw6engreG2Va/hUB0L61hVJPQ26ZvmEavBbtA6Wr0?=
- =?us-ascii?Q?f3xjAFsDK/GenaKb0+z9FUUbUQQR4Kmqf4k395Aro3osNop6o6y0nuAy0Odu?=
- =?us-ascii?Q?CTutvlPJIN7jmskRvKCxZsiiIqIdGN8qGrvF02xJUrDPRi6YrYy+iMT+jceC?=
- =?us-ascii?Q?yoN5L4JNrI7mALMtBSK0sYfk1fFrSuDWX8eC/UMmyF/+3Qc3eV6hVjrl5jY5?=
- =?us-ascii?Q?yDnhyCwQqHGLoHQqaaD5NvPdytTlzCA6y729g86KvA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X42pV2gxCqbDSox/dmakjcveByb4W//6vITqVCeZuQkh6YJd9y21N0y4XkxN?=
- =?us-ascii?Q?2FG5A6qct64vZyObXSHsQ0TlWzmKBmqMxLgMzij7Ph9By/yWA02YWRL/jrvN?=
- =?us-ascii?Q?NedB0cKnzGpiJt+9y89FF/fdme48OK+50m6xbUGZ8YI7cV89o+ecIkeb7CqE?=
- =?us-ascii?Q?8Tk0jqyZqwwP6c2kW5XI9lQvWJqseaqTLmMrYMiR2OjCHl2nI7VeKAyS43sO?=
- =?us-ascii?Q?Dxt43UFqx7d20JoLQGaw+9tDSgpi5aENvKeIG1pFInMtGWwzzsJcsIJazvmn?=
- =?us-ascii?Q?9WxdDhd2oDH9US5Q/64/x59quZ8CRC6+0qhRlQpzf5TKldQMu+t8t8WT272Z?=
- =?us-ascii?Q?Zm/kuDsfi1bJCJUDPUSP9X8nLfrsFLemclh8j/Wb0c4n/bRhI/8IGEHjG2un?=
- =?us-ascii?Q?sjf4OlfSeEiNZf3DblibOcRXhNAM3tvzDdKRhVn7PU05msm7UlqLhHmHPO21?=
- =?us-ascii?Q?yeKay9KkC2GoJu+tUnQfVUry+8S0LHXjfP42sgOIxzPKmHGWn6uSEhiL+xNA?=
- =?us-ascii?Q?5yh475Ww0zClojwsUTgY6mRZ9r5g1oAAZS9FegpqBTzNaFq80fNUH70e0xxZ?=
- =?us-ascii?Q?sMP3Cufe4EJuWD2d1iiLayFFt4zqq7fCZyy9q2kkWF2vjPgkWuEamLXpdFo1?=
- =?us-ascii?Q?E61zBBLZPsrlRK42UffcAk++53UsGwIIVNKcPlP+UIQ1ZMEMCa5LZVHpJ4xB?=
- =?us-ascii?Q?WkKEWthrP9g2689MJvvD96JkbySvjnZSdzi6wI7QmAoxmqR5sJSWtr8m+WL2?=
- =?us-ascii?Q?nx8+gifpM615fBcd4nWgOVC5Qocsl0H/BxAz3U5ueJSW7Mg66y8+hXPx4SI4?=
- =?us-ascii?Q?Y2ycJWakJnCdn99DCKwY0kcQ2BkC5GzyVLHRDqJcoHTwR4TZHsP0CvuDp82K?=
- =?us-ascii?Q?1IP9/jhKVOnfJDhWZHLItc/Qhiptnv9s/OJ0mUm0CtvVG5dpvVjRB+QTGl1f?=
- =?us-ascii?Q?UhL19m86BElh3/cgvLU/fOTt9FwYwpIwIi84WLWv4vtD8lUDZKWBJRyAN26g?=
- =?us-ascii?Q?rJK0TCCBQrjMtgLHogIvsEMICjFAktH2nuPVdzdtCoiELCA1+X91TFGQFM1t?=
- =?us-ascii?Q?6f8GxYOCyH/1Ps44KAqcgPxOvRm9i20lrggAWKiNKL40GNLdKhW5XXQVSMA7?=
- =?us-ascii?Q?gKVcLiTMGhdplXonkybQh7cExTzFtKivujnoqdqy7Y6oLfU9f41HjZ88l905?=
- =?us-ascii?Q?JzqKj/KVBJjdXZBckz3jRGGlKyjsVPaDKAxmiaK8MNFTepPyJKDR4bw4uzSe?=
- =?us-ascii?Q?VQJk0o/67EWqffyabclw865Qmp1OQ6Ue9Q7XewUmSOQnQmsyTyK6BO2IQKMu?=
- =?us-ascii?Q?TmrDesBreZaRolNJuibohGyQ++gjeX3zg/6pywEksMCleWUu8lj+blJSUftS?=
- =?us-ascii?Q?9e3gN776SmklMuDSv3ELRtTq7fZD5dmuaSeTXvj11/k+9ZfK95ZLpPuPfaLx?=
- =?us-ascii?Q?fuptqE6sXcpex0O8Z7E13uR8hoqli1F5mVqGQl3OU9QFvQMXtJSutgJX8Jl9?=
- =?us-ascii?Q?SXRDEyUKkX4OR6bUYyC9fsd+O7I6xUW26aCtlLMqcXPAtJ0VXN21byONRX7C?=
- =?us-ascii?Q?icpS2/7o7geYS41vXfc=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6554f771-3e1e-4a29-34b8-08dcdbfb42f5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 18:12:18.7816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0e32h1BBWlTKf0dunO1a8fx0DdEmT7F75VMmZKT2GfRTU6Jh6ub6mQJb5xpYk9TQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6402
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 22, 2024 at 04:57:07PM +0530, Beleswar Prasad Padhi wrote:
 
-> Since commit 17de3f5fdd35, the IOMMU framework has changed how it handles
-> callback ops, moving away from using bus->iommu_ops. The omap-iommu driver
-> has not yet been updated to align with these framework changes. Therefore,
-> omap-iommu, and hence, omap-remoteproc have been broken since 17de3f5fdd35.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-That commit is a year old now, if nobody has cared to fix or report
-this can we consider removing some of this old code from upstream?
-Usually a year of being broken without anyone caring is a good enough
-threshold.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-> Acked-by: Beleswar Padhi <b-padhi@ti.com>
+are available in the Git repository at:
 
-Thanks
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.12
 
-Jason
+for you to fetch changes up to 38a0e38b31d3f967525f6414711bed6f14dfa15e:
+
+  remoteporc: ingenic: Use devm_platform_ioremap_resource_byname() (2024-09-09 09:50:54 -0600)
+
+----------------------------------------------------------------
+remoteproc updates for v6.12
+
+This adds remoteproc support for the Cortex M4F found in AM62x and AM64x
+of the TI K3 family, support for the modem remoteproc in the Qualcomm
+SDX75, and audio, compute and general-purpose DSPs of the Qualcomm
+SA8775P.
+
+The i.MX remoteproc driver gains support for blocking and non-blocking
+mailbox transmissions, followed by the implementation of poweroff and
+reboot mechanisms, using the same. This is followed by a few bug fixes
+and minor improvements.
+
+A few cleanups and bug fixes for the TI K3 DSP and R5F drivers are
+introduced.
+
+Support for mapping SRAM regions into the AMD-Xilinx Zynqmp R5 cores is
+added.
+
+The Ingenic, TI DA8xx, TI Keystone, TI K3, ST slim drivers are
+simplified using devres helpers for various allocations.
+
+Uses of of_{find,get}_property() are replaced with of_property_present()
+where possible.
+
+----------------------------------------------------------------
+Andrew Davis (3):
+      remoteproc: keystone: Use devm_kasprintf() to build name string
+      remoteproc: keystone: Use devm_rproc_alloc() helper
+      remoteproc: k3: Factor out TI-SCI processor control OF get function
+
+Beleswar Padhi (3):
+      remoteproc: k3-r5: Use devm_rproc_alloc() helper
+      remoteproc: k3-r5: Acquire mailbox handle during probe routine
+      remoteproc: k3-dsp: Acquire mailbox handle during probe routine
+
+Hari Nagalla (1):
+      dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+
+Jan Kiszka (1):
+      remoteproc: k3-r5: Fix error handling when power-up failed
+
+Krzysztof Kozlowski (1):
+      dt-bindings: remoteproc: xlnx,zynqmp-r5fss: Add missing "additionalProperties" on child nodes
+
+Martyn Welch (1):
+      remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+
+Naina Mehta (2):
+      dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
+      remoteproc: qcom: pas: Add SDX75 remoteproc support
+
+Peng Fan (6):
+      remoteproc: imx_rproc: Correct ddr alias for i.MX8M
+      remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table
+      remoteproc: imx_rproc: Initialize workqueue earlier
+      remoteproc: imx_rproc: Merge TCML/U
+      remoteproc: imx_rproc: Allow setting of the mailbox transmit mode
+      remoteproc: imx_rproc: Add support for poweroff and reboot
+
+Rob Herring (Arm) (1):
+      remoteproc: Use of_property_present()
+
+Tanmay Shah (1):
+      remoteproc: xlnx: Add sram support
+
+Tengfei Fan (1):
+      remoteproc: qcom: pas: Add support for SA8775p ADSP, CDSP and GPDSP
+
+Udit Kumar (1):
+      remoteproc: k3-r5: Delay notification of wakeup event
+
+Zhang Zekun (3):
+      remoteproc: st_slim: Use devm_platform_ioremap_resource_byname()
+      remoteproc: da8xx: Use devm_platform_ioremap_resource_byname()
+      remoteporc: ingenic: Use devm_platform_ioremap_resource_byname()
+
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |   3 +
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml       | 125 ++++
+ .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     |   1 +
+ drivers/remoteproc/Kconfig                         |  13 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/da8xx_remoteproc.c              |  10 +-
+ drivers/remoteproc/imx_dsp_rproc.c                 |   2 +-
+ drivers/remoteproc/imx_rproc.c                     |  93 ++-
+ drivers/remoteproc/imx_rproc.h                     |   4 +
+ drivers/remoteproc/ingenic_rproc.c                 |   3 +-
+ drivers/remoteproc/keystone_remoteproc.c           |  21 +-
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  93 +++
+ drivers/remoteproc/st_slim_rproc.c                 |   6 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c          | 108 +---
+ drivers/remoteproc/ti_k3_m4_remoteproc.c           | 667 +++++++++++++++++++++
+ drivers/remoteproc/ti_k3_r5_remoteproc.c           | 130 ++--
+ drivers/remoteproc/ti_sci_proc.h                   |  26 +
+ drivers/remoteproc/xlnx_r5_remoteproc.c            | 141 ++++-
+ 18 files changed, 1225 insertions(+), 222 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
