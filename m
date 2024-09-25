@@ -1,214 +1,141 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040815AD9B
-	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Sep 2024 09:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744A31304AB;
+	Wed, 25 Sep 2024 10:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727255229; cv=none; b=loF6oC72n+yZUQtcHsV0lfQjYk53DlMT3YSg36gUQ5ZP9v7L9CcEnfjAgjNFbOdfv30E2Bs9TSBaU5LXAz0eMDRjp4hGzXVZoSbcBBSyDMNbN1l8gQIB3qA7IbOAQ0c21NkHkkWMiTwZo5RyXL/i8zG//Tb2aytzx8KajBYyAZ8=
+	t=1727260461; cv=none; b=IdjIEPtv6rJt84lTTeLAwUBTE1dSlLtOIf0LbgptssGlDwTEznEOwOJuQOLCgHl+Dw8Z2KnGvAb+73t1px+95nGL/x5tlGV3JGHVxkLY5f1o5C8crj50cNRpzf8D+wQ7bs9rgZnVoaelwdjWeRyvewblEuCOB8Xi4W5ptduSong=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727255229; c=relaxed/simple;
-	bh=0+5X/NfbYD2dkRK1zy5X4k/dPkx9lpuT3S65Jov3390=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K7J1RkTBhO5h1/omOtPXJZ2q1LJTJsRw2ba0Kxh2RoniZekImzUBiVDktcrSE45A6a0RbZA59BtfLR6mtW7dQ4X/w/OCbY+AS+UM+zw+vKo7d9OU47vHATPbBNjFubKD4JpORNZXtfEvF89oI7VSYcvJ5Qo3FgdxXjjn27PP6XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMeJsReF; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727260461; c=relaxed/simple;
+	bh=Ih0eZVGy2u1bgO5w/cU3c0CaCbAcvFxlPkiN+QUaznM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pv+jtGS9+YU//v0DIkW9VqkV6u3HOEXRejPEeRWLc3OSIIvqmg4SzR9FT+ZMHVatelilHAse13EIPFzCG0a9UJuBUaLK3axF+I0esTxO+B1tPvofxHWnGLvn99yA+GEVIqiNomEplxsHetLzXiWa02KjOYHiKgTjtcf9CUsCiig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VqLgN6br; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMeJsReF"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e214c3d045so12165697b3.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Sep 2024 02:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727255226; x=1727860026; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UlnD+34HrIONho00Da4MJk+qHahTYRxRnGls87oH0N4=;
-        b=mMeJsReFsbd/ZwLf5WoMFbZ3gUouhcYRFMKeGNWbV5Sh0/51TmM9eCRNlZOGynth3o
-         8twXaL1Fo2EkK2GTinEQPTqgN10Iki/hnuQcAxNyQFl2asaBYq4ppSIh2WQKdFDhqs0x
-         qgkeE1yf2M18Y4+dZCJqMClA9CTWJG3Sjev7zQO7qxGj7VWVA26oewWmNWWVYMzJ5BqK
-         ijGn8D5/E23niq7YQ9dCA3NNbskuvDfLXI0mOnkZ2nMh+ldIcIIWGN+IjlNHUr3gaOsk
-         9i5hnBVagTgh3EWPFZXN3Zi/falN7z+g0Zef50eeyEdPeN9CrSp6Bwre2T3FPEc/8ns+
-         yARg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727255226; x=1727860026;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UlnD+34HrIONho00Da4MJk+qHahTYRxRnGls87oH0N4=;
-        b=g3Fs65xxN8jTL0npK08GyiOMt/ZXN1T1hsaPHhOPqbm3Ukk1rRQc1EcC8inVFdTREL
-         qWkeEkgybSMdPyU7J0zo5o12pPmTa82qYvQK6DeXTVsXkzuJfRRSmJ9at2J7gncKqQFt
-         9CCgK6BjVqxUP0ZUew3BmhWUfQ+iuTLZTveutxX4vZFuZBQeyjHRm/e15kNvU8YuMlCZ
-         ST3QOb+BZBGv2BbRx/0T43XhKyWBsGKOBv2kzQg88L/hp1/PAfwBMWnQjN8u1ocJcniB
-         Wc/9MiA0gGxSAVrf/ICc6GCQeyvlbBPpbLUvN5g5SG5hEdHyvERa+MWTqPj7FTvJuB0/
-         TxVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7PM2QrVc7WZTghxfaZJCPkNehETmFWf3IwWL40iaqe/GzdJIopRhgaPMjhhZn+0r4bEK97Ib9xtZWEQbeyM+D@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwzVVJl4Qu/G4i5nLZhLwWEIkgnu8k6u4fhbeI6ofhp/OqG/s
-	3r/neLsKPeGVONlN3Mt8Q5U5UNRE7zpD9zW9KgOWLiH/lkdlW7h8ppF1AhiH6ix5zRKD5Y53pZ+
-	4KgA3ele16H+3zBMXvRWvgS9WKPFvFzLDSZtINw==
-X-Google-Smtp-Source: AGHT+IEackEoo1TjB/e4cAQVTNwDplB4aHvCPwpjjiyPZWQErysw0w+VWgPSUxQpxc+bmK5wVaAi2heln1+aKexMIf8=
-X-Received: by 2002:a05:690c:dd4:b0:65f:a0e5:8324 with SMTP id
- 00721157ae682-6e21d6e4276mr17740177b3.4.1727255226216; Wed, 25 Sep 2024
- 02:07:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VqLgN6br"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P84SAP026808;
+	Wed, 25 Sep 2024 10:34:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6NE1TN9QRZJT4d/UVAfDRd
+	WL9ww6G38R4/OqvHvAJm4=; b=VqLgN6brQ3HlS756W/ONihmSOKg/tZroDBsi4A
+	W+EvjmA0MqqOpsHRK2EEQUIEKWmooVsL8Nrzd7MUpB8nrou+cupZMf0DuZTfT401
+	5OBBw05YEqfFSvPAjHHlsZLQw8rUpqqobVNMP7t+FIgUzriMoHP+EyWZcoljxdxC
+	FnMzdESPXNP59NiZoq4ZgfLr2+Z4RRbPncDdBMVsUaxAGnmGebrVwR1UaKe1FV+A
+	EenodiMxBlKYBpK7Asl0Kd5i3fKskLenPiKbV0sYSipqxufRmfrEQvWXZ+yMmDBm
+	DcizQvjOhSIKAGdZutq0WkEl624mAd21instsl/EIVphzxpA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakkcx4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 10:34:15 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PAYFce014184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 10:34:15 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Sep 2024 03:34:13 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
+Date: Wed, 25 Sep 2024 16:03:51 +0530
+Message-ID: <20240925103351.1628788-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
- <bxkkqezsvvgf7xi6nhxjdpxhr76lrcjp65gtk56x45nhkygdmh@z3lzuz6honcg> <2144d060-7454-46a3-96ed-6173e1ba2523@quicinc.com>
-In-Reply-To: <2144d060-7454-46a3-96ed-6173e1ba2523@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 25 Sep 2024 11:06:57 +0200
-Message-ID: <CAA8EJpoFpiyBC9eTY8tLyaV5Lqr-YjxckK22Twxae0kGYOWz4A@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, quic_tengfan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xin Liu <quic_liuxin@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
+X-Proofpoint-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250072
 
-On Wed, 25 Sept 2024 at 10:35, Jingyi Wang <quic_jingyw@quicinc.com> wrote:
->
->
->
-> On 9/25/2024 4:01 PM, Dmitry Baryshkov wrote:
-> > On Wed, Sep 25, 2024 at 03:21:37PM GMT, Jingyi Wang wrote:
-> >> Document the components used to boot the ADSP, CDSP and GPDSP on the
-> >> Qualcomm QCS8300 SoC. Use fallback to indicate the compatibility of the
-> >> remoteproc on the QCS8300 with that on the SA8775P.
->
-> Hi Dmitry,
->
-> >
-> > Are there any SoC-specific quirks that demand a separate compat string?
-> >
-> > In other similar cases (sm8250 vs qrb5165, sc7280 vs qcm6490 vs qcs6490
-> > we are adding new compatibles only if it is expected that the hardware
-> > (or firmware) is actually different.
-> >
->
-> This case is different from the cases above as qcs8300 and sa8775p are
-> different SoCs.(sm8250 and qrb5165 are different variants for the same
-> SoC). QCS8300 has one cdsp&gpdsp while SA8775P has 2, but they share the
-> same driver data, we used to discuss with Krzysztof how to deal case
-> like this and got the following suggestion to use fallback in yaml:
-> https://lore.kernel.org/all/6652a08e-7143-4214-a864-9f27c10d7571@kernel.org/
+Multiple call to glink_subdev_stop() for the same remoteproc can happen
+if rproc_stop() fails from Process-A that leaves the rproc state to
+RPROC_CRASHED state later a call to recovery_store from user space in
+Process B triggers rproc_trigger_recovery() of the same remoteproc to
+recover it results in NULL pointer dereference issue in
+qcom_glink_smem_unregister().
 
-Ack, excuse me. I got confused by qcs8300 vs qcs9100.
+Fix it by having a NULL check in glink_subdev_stop().
 
->
-> >> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> >> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> >> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> >> ---
-> >> Changes in v3:
-> >> - add "contains" and remove redundant compatible.
-> >> - Link to v2: https://lore.kernel.org/r/20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com
-> >>
-> >> Changes in v2:
-> >> - decoupled from the original series.
-> >> - Use fallback to indicate compatibility with SA8775P.
-> >> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
-> >> ---
-> >>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 44 +++++++++++++++-------
-> >>  1 file changed, 30 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> >> index 7fe401a06805..a66007951d58 100644
-> >> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> >> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> >> @@ -15,12 +15,25 @@ description:
-> >>
-> >>  properties:
-> >>    compatible:
-> >> -    enum:
-> >> -      - qcom,sa8775p-adsp-pas
-> >> -      - qcom,sa8775p-cdsp0-pas
-> >> -      - qcom,sa8775p-cdsp1-pas
-> >> -      - qcom,sa8775p-gpdsp0-pas
-> >> -      - qcom,sa8775p-gpdsp1-pas
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - enum:
-> >> +              - qcom,qcs8300-adsp-pas
-> >> +          - const: qcom,sa8775p-adsp-pas
-> >> +      - items:
-> >> +          - enum:
-> >> +              - qcom,qcs8300-cdsp-pas
-> >> +          - const: qcom,sa8775p-cdsp0-pas
-> >> +      - items:
-> >> +          - enum:
-> >> +              - qcom,qcs8300-gpdsp-pas
-> >> +          - const: qcom,sa8775p-gpdsp0-pas
-> >> +      - enum:
-> >> +          - qcom,sa8775p-adsp-pas
-> >> +          - qcom,sa8775p-cdsp0-pas
-> >> +          - qcom,sa8775p-cdsp1-pas
-> >> +          - qcom,sa8775p-gpdsp0-pas
-> >> +          - qcom,sa8775p-gpdsp1-pas
-> >>
-> >>    reg:
-> >>      maxItems: 1
-> >> @@ -63,8 +76,9 @@ allOf:
-> >>    - if:
-> >>        properties:
-> >>          compatible:
-> >> -          enum:
-> >> -            - qcom,sa8775p-adsp-pas
-> >> +          contains:
-> >> +            enum:
-> >> +              - qcom,sa8775p-adsp-pas
-> >>      then:
-> >>        properties:
-> >>          power-domains:
-> >> @@ -79,9 +93,10 @@ allOf:
-> >>    - if:
-> >>        properties:
-> >>          compatible:
-> >> -          enum:
-> >> -            - qcom,sa8775p-cdsp0-pas
-> >> -            - qcom,sa8775p-cdsp1-pas
-> >> +          contains:
-> >> +            enum:
-> >> +              - qcom,sa8775p-cdsp0-pas
-> >> +              - qcom,sa8775p-cdsp1-pas
-> >>      then:
-> >>        properties:
-> >>          power-domains:
-> >> @@ -98,9 +113,10 @@ allOf:
-> >>    - if:
-> >>        properties:
-> >>          compatible:
-> >> -          enum:
-> >> -            - qcom,sa8775p-gpdsp0-pas
-> >> -            - qcom,sa8775p-gpdsp1-pas
-> >> +          contains:
-> >> +            enum:
-> >> +              - qcom,sa8775p-gpdsp0-pas
-> >> +              - qcom,sa8775p-gpdsp1-pas
-> >>      then:
-> >>        properties:
-> >>          power-domains:
-> >>
-> >> ---
-> >> base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
-> >> change-id: 20240925-qcs8300_remoteproc_binding-a2837bab2150
-> >>
-> >> Best regards,
-> >> --
-> >> Jingyi Wang <quic_jingyw@quicinc.com>
-> >>
-> >
-> Thanks,
-> Jingyi
->
+	Process-A                			Process-B
 
+  fatal error interrupt happens
 
+  rproc_crash_handler_work()
+    mutex_lock_interruptible(&rproc->lock);
+    ...
+
+       rproc->state = RPROC_CRASHED;
+    ...
+    mutex_unlock(&rproc->lock);
+
+    rproc_trigger_recovery()
+     mutex_lock_interruptible(&rproc->lock);
+
+      adsp_stop()
+      qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+      remoteproc remoteproc3: can't stop rproc: -22
+     mutex_unlock(&rproc->lock);
+
+						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+						recovery_store()
+						 rproc_trigger_recovery()
+						  mutex_lock_interruptible(&rproc->lock);
+						   rproc_stop()
+						    glink_subdev_stop()
+						      qcom_glink_smem_unregister() ==|
+                                                                                     |
+                                                                                     V
+						      Unable to handle kernel NULL pointer dereference
+                                                                at virtual address 0000000000000358
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+- We can do this NULL check in qcom_glink_smem_unregister() as it is
+  exported function however, there is only one user of this. So, doing
+  it with current approach should also be fine.
+
+ drivers/remoteproc/qcom_common.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 8c8688f99f0a..52d6c9b99fdb 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -209,6 +209,9 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+ 
++	if (!glink->edge)
++		return;
++
+ 	qcom_glink_smem_unregister(glink->edge);
+ 	glink->edge = NULL;
+ }
 -- 
-With best wishes
-Dmitry
+2.34.1
+
