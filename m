@@ -1,76 +1,41 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AE112D758
-	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 21:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE6130499;
+	Wed, 25 Sep 2024 00:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727212644; cv=none; b=AbgMr6ubLAToJoMaw440xhIvQuWb/6ohSrC3o0d9jSRgYVDI+CA8oidiuN8qI+xNfNlY2DaSE5f+Po5zdcox6sSDXeLT9m2I7PBaQD3h8/O/LgCviQXv0KW8LUvmmQzbx0V2LGVhEViWMwW6sKqkQ8pWgPsLETpDO2I8K5Ub9cU=
+	t=1727225406; cv=none; b=Re8ddgqePCLI1Xs0xNVBTEtxhGJmCHIGkFJFPr7xyqsEluoeT0aPRQaNL9Imv8zTFHsk5UDrMZLWG5t+7CmtXCBEr1kkDOUTy6oWPzD5mJBfRfYnukW6Mg4lT3SpN5IeXXaOedg8pohjlryiqKDnz5t3XTf6XRm2DuHUgEl+UQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727212644; c=relaxed/simple;
-	bh=kY5B1lKQE6VDB0/CjqQ/eBADRPELBS0FbJT42ldOlAo=;
+	s=arc-20240116; t=1727225406; c=relaxed/simple;
+	bh=n9b2CcW3JcflL4xUUDh/blICAcUDGjmnRZHdA6aXMZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7UXDJNCzNJmGBrIm1ZyMXYaLK5SeeA/u7NsI7XGhwEx0a9lGi7PPc8f48deV2kZj38upfXUQen7W60TS641aRUJNOx43uuVk7JmR65Kt8xZYfMf4CemTlXaZF/PLRt3toaBVXXWVyn+SDfeES8QCLM7IAWpk4tz6bzMbGfvmrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sTUdorwk; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChmkqGk4s8+e4ENM/BtNQtJuXfUhh6mZrmOdsdnxzewSnH1TKpU1Cbz4iggib0PpFKcN+A8gKjr8qm7Vy1iFNkrGREkrsbkDdFtIpuqLkC5bzTM8aXX8Bgk+kb+XjvSyCKgETCJ/hguIhR1vI9xYuTuiltci1AvqaebNrk+gGjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LR+V/BUw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sTUdorwk"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db4c1a54easo3466232a12.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Sep 2024 14:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727212642; x=1727817442; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SY8FfHt16U5m6B6pNiUvGeoZtkNdoLUQsMWA2KdXlPs=;
-        b=sTUdorwkqcbtyZb0E2QKyChd7nTOyZnli3VHthjWf3seWuK238CXgIpxb3X9MySfjW
-         KZYEVdMwwNt8f4xoS7+TzFcSQ2BvXPJ9zFJBvEHi9x13DHbUqvEBrLKjcKkJmBjKGnm9
-         QHdg3rM8KAZeLAPZgFvsx4hX1+3nP2Oy7DVQnH5OV6iLEG+lU9MtciPPktP/pVIdAc/x
-         2KICKpT/lD/4tB1BG7T+7I4tHIN3IJNbK8Ibfkdceext7ZELLlMJs76MvVIkVU5VlGAk
-         SsXfvp991T4DaduapyUshGKAsftXfAbkEjjVfelARIo0H1OUMim9Z+U92uH79E38lftw
-         dXSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727212642; x=1727817442;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SY8FfHt16U5m6B6pNiUvGeoZtkNdoLUQsMWA2KdXlPs=;
-        b=iRZWgUODJWS2pWe271pIDq8BPj20GCHHE+8Dzkol5C1hqE8CKVfHlnxneFwklqsVIW
-         plMlXg35SZXj5hc/ct/82z3oLJwHKrOahS0WLSiEZJzhtkUUPuupxlDYdCbT90J7xWR4
-         FJApcqstfWlxamPavczAY2cR97o/rhB6x4jLtI9hu4VYuSJOKKgaDWxx6wyTqd3uS8bh
-         WCrD8jtfhutli6THeT68KlIZionD8QWYeI1vV3sXSd+hBbGrmN/N8sHSfYK3Uf6auvEH
-         rlbEGeOaYvPn2+Xsuj4vOo25RiebL1t7RT7L0Kp9TVzcrOx7NbCD+PFMHdWAHBfub3UW
-         J1XA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBLpyAn7Xy/tjXKV7V6giriyUI8Kf1mDeLar5Bwkuf69siEMpLJMPl1Rr7y6jM5SYS/CpTIbQLQD1cmNYRchf6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzerWrhCU1R/U/xQIOYPlQRALx++cKcd+dWsHe0fJ5EirZ+eFqi
-	sndE9qJ5g+kTDEgw1XM8jORXirdbxaQ0QUO7OuSHJeul70Imuh89shBgS3e9k5o=
-X-Google-Smtp-Source: AGHT+IELxgQZ858P/rlz+GrG0mmGJ5tEs0eoUOeNbDhqhO5P0mDTLtOImdBCwEESWkdyt0obLmKy3g==
-X-Received: by 2002:a05:6a20:2d26:b0:1d4:4a69:a0dc with SMTP id adf61e73a8af0-1d4d4b9ba0cmr670881637.33.1727212642344;
-        Tue, 24 Sep 2024 14:17:22 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3e2a:4015:f497:ecf2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc83465asm1578248b3a.40.2024.09.24.14.17.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 14:17:21 -0700 (PDT)
-Date: Tue, 24 Sep 2024 15:17:18 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Martyn Welch <martyn.welch@collabora.com>,
-	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>,
-	Zhang Zekun <zhangzekun11@huawei.com>,
-	Naina Mehta <quic_nainmeht@quicinc.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>, Tanmay Shah <tanmay.shah@amd.com>,
-	Tengfei Fan <quic_tengfan@quicinc.com>,
-	Udit Kumar <u-kumar1@ti.com>
-Subject: Re: [GIT PULL] remoteproc updates for v6.12
-Message-ID: <ZvMsXv5N3iVTzjKn@p14s>
-References: <20240924044741.3078097-1-andersson@kernel.org>
- <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
- <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LR+V/BUw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA45AC4CEC4;
+	Wed, 25 Sep 2024 00:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727225406;
+	bh=n9b2CcW3JcflL4xUUDh/blICAcUDGjmnRZHdA6aXMZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LR+V/BUwffxK2X8mV7Pu6x1gSzmO5d1+YwaUopuUgjZQQjGV4xF3ff5eGISvr6OA+
+	 ZA5RUiT6oHOwtxpqfKT94uOKh6VVgEqH7/EfWPg8GDU/k726DvcbpjwRJ666LWEAm+
+	 P93PeVXMUFiKRWq2FUsR5YArVAahxeER1e12WeoLWHKGlfCa7GKwWrUaookXDPGeRL
+	 6+WTmUNBG9Vz/lB6PcxWvOMgt/4TmpDithskA7MdHzXtYQQZzqsndMalWoK3uYS2FK
+	 6KkONLkFvnoAJwg0RD6HbuAM1Mg20mz9Bffh5GKenPtpLL6ebVfgcqSpciijPbOatz
+	 FwARod0/wKabw==
+Date: Tue, 24 Sep 2024 17:53:26 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Shuah Khan <shuah@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] selftest: remoteproc: Add basic test for start/stop
+ sequence
+Message-ID: <ad6zsxcmqxavf7uo76ipriqjg7ipijafkaehgs5wthyyf364lv@kg4kzrxgucgl>
+References: <20240920175842.388781-1-quic_wasimn@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -79,27 +44,151 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+In-Reply-To: <20240920175842.388781-1-quic_wasimn@quicinc.com>
 
-On Tue, Sep 24, 2024 at 12:52:42PM -0700, Linus Torvalds wrote:
-> On Tue, 24 Sept 2024 at 12:31, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > It's in my tree now, but please fix asap.
+On Fri, Sep 20, 2024 at 11:28:42PM GMT, Wasim Nazir wrote:
+> Add new basic remoteproc test that check start/stop
+> sequence of all subsystems available.
 > 
-> Argh, now that I noticed it, I can no longer unsee it.
-> 
-> So I did this
-> 
-> -       depends on ARCH_K3 || COMPILE_TEST
-> +       depends on ARCH_OMAP2PLUS || ARCH_K3
->
 
-Thank you for doing this and apologies for the late reply.
+Please describe your test scenario more than just "check start/stop
+sequence".
 
-Mathieu
+Signed-off-by...
 
-> to the TI_K3_M4_REMOTEPROC entry so that it wouldn't try to select
-> OMAP2PLUS_MBOX in conditions where it isn't valid.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e062b5328341..aff76edc4242 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18225,6 +18225,7 @@ F:	Documentation/staging/remoteproc.rst
+>  F:	drivers/remoteproc/
+>  F:	include/linux/remoteproc.h
+>  F:	include/linux/remoteproc/
+> +F:	tools/testing/selftests/remoteproc/
 > 
->                 Linus
+>  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+>  M:	Bjorn Andersson <andersson@kernel.org>
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 697f13bbbc32..31db0311efdc 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -68,6 +68,7 @@ TARGETS += proc
+>  TARGETS += pstore
+>  TARGETS += ptrace
+>  TARGETS += openat2
+> +TARGETS += remoteproc
+>  TARGETS += resctrl
+>  TARGETS += riscv
+>  TARGETS += rlimits
+> diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
+> new file mode 100644
+> index 000000000000..a84b3934fd36
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +TEST_PROGS := remoteproc_test.sh
+> +
+> +include ../lib.mk
+> diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
+> new file mode 100644
+> index 000000000000..a5c237d2f3b4
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/config
+> @@ -0,0 +1 @@
+> +CONFIG_REMOTEPROC=y
+> diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> new file mode 100644
+> index 000000000000..88c8f15d8406
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> @@ -0,0 +1,165 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> +#
+> +
+> +DIR="$(dirname $(readlink -f "$0"))"
+> +
+> +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
+> +if [ -e "$KTAP_HELPERS" ]; then
+> +    source "$KTAP_HELPERS"
+> +else
+> +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
+> +	exit 4
+> +fi
+> +
+> +RPROC_SYS=/sys/class/remoteproc
+> +RPROC_SEQ_SLEEP=5
+> +rproc_ss_files=
+> +num_tests=0
+> +test_err=0
+> +
+> +check_error() {
+> +	if [ $? -ne 0 ]; then
+> +		test_err=$((test_err+1))
+> +		ktap_print_msg "$@"
+> +	fi
+> +}
+> +
+> +rproc_seq_test_ss_one() {
+> +	ss=$1
+
+"ss" or "subsystem" are Qualcomm terms, please use "remoteproc instance"
+instead.
+
+> +	rproc=${RPROC_SYS}/$ss
+> +	rproc_name=$(cat $rproc/name)
+> +	rproc_state=$(cat $rproc/state)
+> +	rproc_ssr=$(cat $rproc/recovery)
+> +	ktap_print_msg "Testing rproc sequence for $rproc_name"
+> +
+> +	# Reset test_err value
+> +	test_err=0
+> +	if [ "$rproc_ssr" != "enabled" ]; then
+> +		echo enabled > $rproc/recovery
+> +		check_error "$rproc_name SSR-enabled failed"
+
+Same with "SSR", you can express this with standard terms.
+
+Why do we need "recovery" enabled in order to perform start/stop or
+stop/start testing? Doesn't recovery only affect the crash code path?
+
+> +	fi
+> +
+> +	if [ "$rproc_state" != "running" ]; then
+
+I'd like to see your arguments in the commit message, or a comment here,
+of why you do either start/stop or stop/start - instead of e.g. make
+sure they are all stopped and then start/stop them in the test.
+
+
+PS. Please use check go/upstream and adopt b4.
+
+Regards,
+Bjorn
+
+> +		echo start > "$rproc/state"
+> +		check_error "$rproc_name state-start failed"
+> +
+> +		sleep ${RPROC_SEQ_SLEEP}
+> +
+> +		echo stop > "$rproc/state"
+> +		check_error "$rproc_name state-stop failed"
+> +	else
+> +		echo stop > "$rproc/state"
+> +		check_error "$rproc_name state-stop failed"
+> +
+> +		sleep ${RPROC_SEQ_SLEEP}
+> +
+> +		echo start > "$rproc/state"
+> +		check_error "$rproc_name state-start failed"
+> +	fi
+> +
+> +	if [ $test_err -ne 0 ]; then
+> +		ktap_test_fail "$rproc_name"
+> +	else
+> +		ktap_test_pass "$rproc_name"
+> +	fi
+> +}
