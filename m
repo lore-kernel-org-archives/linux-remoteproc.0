@@ -1,192 +1,113 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0756B144D0A
-	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Sep 2024 08:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727251285; cv=none; b=d/zsXszJdde1sC05+Hyvt5EQ11KQMDi+WzJYdGY+zr49+TGS/TKZLU7N0oOzcI5l7cv7QOTbEoZKzA3lpBGwO3qSzo0L5Cmyo7njFNWIFIj45/ytwRIn4/LuyW5RW9vcCm7BafJaPFTBxayDBrJHJHub0PpxgVcPBEe3jSUZyvY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727251285; c=relaxed/simple;
-	bh=PG3JV8yX4YagZ/hz4Uwna/92Qvd0TZ+fGkf+EKRw97s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggixjIHjkNHf0IJuOyx89LmwaZTYRUXFL6EgtSi/orVVJh/h3dkAH96g5HnWV94I/woK1jaJ/5wOlXJTIbXUNtbWUrHtfzgNwymRmsgCPeIds7cRvRyW0tsFZd1xZL240DSQ4Wf6F26mglw9AlPQgTkIyvkl0ywjgq0ysB1XFQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TZVwCio4; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342B615747D;
+	Wed, 25 Sep 2024 08:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727253051; cv=pass; b=VoqADXi6UCjnz6pWwwTnYjGLUFd78pi5OeUC79DUaTZu+vvTFdig+veRfxqXM3EI1hJIKAQd3//cmQL4dKf3EBD/nu4eDSo2wZZctnigndZKSzfgbH2EmOt4TQT79hYRO7Q+vfkrzwfdcatvF8WcBg+ig3GtKfhK+H9RkjfC73g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727253051; c=relaxed/simple;
+	bh=CALIBjLLhqi9fJYnDECguRBWcFkZ4OfnWGTV7ZoPXbw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gnWlqluZ1zaoPh7j5j2wgSZ/tUeDqKBecZ0fM2vr35BMBsB1EVUupXkCo3F3zykZDAz1tbZucQ59QMujXkZ6G+wGsp760VhQiqFqOnQZMyN59pDd9Ajq3am17EGafwFG5S0s2uVFv60ju6J8+nOT9rDdOwBW9bf5fFaIIhdcb/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=ThlV66rs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TZVwCio4"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-535be093a43so8002568e87.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Sep 2024 01:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727251282; x=1727856082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gc3Ib7O+i1gpfRlkScdYFdeyRF4I/1t69Ic9Ot48nd8=;
-        b=TZVwCio45E6M0tlTX+MJXasKR+mGyhOrnPTKVK/VrY2KQHbaJ+xEz7J0oOQeZmIVPU
-         aXgfzq+X+sNbSsdduaJ1kPpaWINvohJj5IdB3jTmFQ/LURrBikVfNKxrkH0aEJg7hI6y
-         DOYWiskIVryfp1l/E4BJdM4iN4glyXEm/MN/qA6b8BLyLXAPImvDSO+hys0potrDFhqz
-         ULhOlNarFHf6GSa8ItouDTfyB9jYDx796aVdBc53uyn6KRpi4WPypwsWwZ0ZI3Z7t692
-         qyKSDIz1lQ9HT0B2Ix53WcAx2x+csBfrTtkIhupG2ug7THMllVxYeQ2seRDo+EounjUD
-         uEzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727251282; x=1727856082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gc3Ib7O+i1gpfRlkScdYFdeyRF4I/1t69Ic9Ot48nd8=;
-        b=u5/3TYgaSwAJKUEEy1Pl1vjC0oTvOzdhxjzAfPwWmIyQePmfJfziRoKV5pfM0FKGrO
-         BZi1+T/GOWGD/2wMXY95BPiW+dOYSvI22p+l6zA6YI802CY7hZHPwtlrgg81UDn+MucS
-         E+ubnP/oYio/vCkxaKjfVP+zThDjJTcpVBCJYJnER7mKjdFCryTv7KKx6W8J2XwAwzXo
-         7A2YhZKONLnIiBmZB/ZrHCKSpoIA2g63gfIjSMMePyK70viBWPv3eP/i/J7W7GkHyHYN
-         7wu9JqXfUaUhum0K1Gvo5ciYxDU/WdFt7ZahEcIDtard8ey1f2gHg5H6j229tIa9unPh
-         PkzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXh6vaUTh+jeV2nHprLVc7YRQuqa8OqBzQZ0BM8rxHHVVkXyTIkr6WVN3OXDtYhRyZq7AFiX6Nw6M2ZRpGnmXAV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyll1Pv1JTQi9u4DFbEwTM8YXKqGVvsvjA48Ig3ioWvdx05lvMx
-	xs2TXNLn3BwV70PkMoeIt7iud6JF0WUzevl2F6dwvPo8axTO/Vv72lb63DD5nS8=
-X-Google-Smtp-Source: AGHT+IER1VglvtyOqe1FAvo9WAwzQX12afWdDnqoigXzzi0KF2Y5w853ryAJa3gThMnnd3Zvo211NQ==
-X-Received: by 2002:a05:6512:b8f:b0:533:3fc8:9ac0 with SMTP id 2adb3069b0e04-5387753227dmr999119e87.34.1727251282011;
-        Wed, 25 Sep 2024 01:01:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a8640913sm452717e87.173.2024.09.25.01.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:01:21 -0700 (PDT)
-Date: Wed, 25 Sep 2024 11:01:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xin Liu <quic_liuxin@quicinc.com>
-Subject: Re: [PATCH v3] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-Message-ID: <bxkkqezsvvgf7xi6nhxjdpxhr76lrcjp65gtk56x45nhkygdmh@z3lzuz6honcg>
-References: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="ThlV66rs"
+ARC-Seal: i=1; a=rsa-sha256; t=1727253030; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=M8fE48b+deZ8NtdPRZS1ea5o6I+QgcGPk77MbHjBM3hKNWQU3QWYv3ljfMFiSZmNDgZ0Ea7NmgylW+2SrpGGJhBbiZr69xFmJYDeMjbd0neE7ighvBD3zvxgwSD9RtMq/bsniAWQVVmXkD6CpcVjZQE76hVzNhFc5Vo78jkvIUw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727253030; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CALIBjLLhqi9fJYnDECguRBWcFkZ4OfnWGTV7ZoPXbw=; 
+	b=DfRRQtKBehOi+MJOp4PY9qX7qOptMVzSM13yurZVs8roOCSnRNXXNdfpwQ/ePkhzLsdU/acNrpkPrcO5byWeLg4Vc+GVErFceOJdM6FVDfhPWDqWbiroOaWvIcHTD+zq57+Skd4uj7BMF9826IIXtxgAWbsZpNQgq4uDSwlVpw4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727253030;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=CALIBjLLhqi9fJYnDECguRBWcFkZ4OfnWGTV7ZoPXbw=;
+	b=ThlV66rsRQ84QuEGfXktbL+4bwAq6oKx3BhkZcVZ2OqChfe6OWnGaNMSPR4jkNQC
+	sTmaxAYBwYohXHYR8oDbY842Etugjw/kMGXvcZURHI8az5bzHcP2NTDJoKHXCAY35uJ
+	0SnT9OcPjM4fG/ih5w+O8EMggOdFWn4tOEFpemFo=
+Received: by mx.zohomail.com with SMTPS id 1727253028661252.37179217812093;
+	Wed, 25 Sep 2024 01:30:28 -0700 (PDT)
+Message-ID: <c1b78a60a280d95aa5a9e69c82a8b4d3ce9bd6c9.camel@collabora.com>
+Subject: Re: [GIT PULL] remoteproc updates for v6.12
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Bjorn Andersson	
+ <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>, Andrew Davis
+ <afd@ti.com>,  Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Peng Fan
+	 <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>, Zhang Zekun	
+ <zhangzekun11@huawei.com>, Naina Mehta <quic_nainmeht@quicinc.com>, Jan
+ Kiszka	 <jan.kiszka@siemens.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>,  Rob Herring <robh@kernel.org>, Tanmay
+ Shah <tanmay.shah@amd.com>, Tengfei Fan <quic_tengfan@quicinc.com>,  Udit
+ Kumar <u-kumar1@ti.com>
+Date: Wed, 25 Sep 2024 09:30:24 +0100
+In-Reply-To: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+References: <20240924044741.3078097-1-andersson@kernel.org>
+	 <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
+X-ZohoMailClient: External
 
-On Wed, Sep 25, 2024 at 03:21:37PM GMT, Jingyi Wang wrote:
-> Document the components used to boot the ADSP, CDSP and GPDSP on the
-> Qualcomm QCS8300 SoC. Use fallback to indicate the compatibility of the
-> remoteproc on the QCS8300 with that on the SA8775P.
+On Tue, 2024-09-24 at 12:31 -0700, Linus Torvalds wrote:
+> On Mon, 23 Sept 2024 at 21:44, Bjorn Andersson <andersson@kernel.org>
+> wrote:
+> >=20
+> > remoteproc updates for v6.12
+>=20
+> Grr. I didn't immediately notice this new Kconfig warning, so now
+> it's
+> in my tree:
+>=20
+> =C2=A0 WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+> =C2=A0=C2=A0=C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || A=
+RCH_K3)
+> =C2=A0=C2=A0=C2=A0 Selected by [m]:
+> =C2=A0=C2=A0=C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (=
+ARCH_K3 ||
+> COMPILE_TEST [=3Dy])
+>=20
+> this happens with a regular "make allmodconfig" on x86-64.
+>=20
+> This seems to have been introduced in commit ebcf9008a895
+> ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem") that
+> added the TI K3 M4 remoteproc support, which does
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select OMAP2PLUS_MBOX
+>=20
+> but does not actually contain the proper dependencies that
+> OMAP2PLUS_MBOX requires..
+>=20
+> It's in my tree now, but please fix asap.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+Linus
 
-Are there any SoC-specific quirks that demand a separate compat string?
+Both myself and Arnd have submitted patches to fix this. It seems that
+either have been applied...
 
-In other similar cases (sm8250 vs qrb5165, sc7280 vs qcm6490 vs qcs6490
-we are adding new compatibles only if it is expected that the hardware
-(or firmware) is actually different.
+29 Aug 2024 - [PATCH] mailbox: omap: Enable COMPILE_TEST for OMAP2+
+Mailbox framework support
+https://lore.kernel.org/all/010201919d8b298f-dd1585dd-7c4d-4865-9483-ff6cd7=
+399a90-000000@eu-west-1.amazonses.com/
 
-> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
-> Changes in v3:
-> - add "contains" and remove redundant compatible.
-> - Link to v2: https://lore.kernel.org/r/20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com
-> 
-> Changes in v2:
-> - decoupled from the original series.
-> - Use fallback to indicate compatibility with SA8775P.
-> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
-> ---
->  .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 44 +++++++++++++++-------
->  1 file changed, 30 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> index 7fe401a06805..a66007951d58 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-> @@ -15,12 +15,25 @@ description:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - qcom,sa8775p-adsp-pas
-> -      - qcom,sa8775p-cdsp0-pas
-> -      - qcom,sa8775p-cdsp1-pas
-> -      - qcom,sa8775p-gpdsp0-pas
-> -      - qcom,sa8775p-gpdsp1-pas
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-adsp-pas
-> +          - const: qcom,sa8775p-adsp-pas
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-cdsp-pas
-> +          - const: qcom,sa8775p-cdsp0-pas
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-gpdsp-pas
-> +          - const: qcom,sa8775p-gpdsp0-pas
-> +      - enum:
-> +          - qcom,sa8775p-adsp-pas
-> +          - qcom,sa8775p-cdsp0-pas
-> +          - qcom,sa8775p-cdsp1-pas
-> +          - qcom,sa8775p-gpdsp0-pas
-> +          - qcom,sa8775p-gpdsp1-pas
->  
->    reg:
->      maxItems: 1
-> @@ -63,8 +76,9 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          enum:
-> -            - qcom,sa8775p-adsp-pas
-> +          contains:
-> +            enum:
-> +              - qcom,sa8775p-adsp-pas
->      then:
->        properties:
->          power-domains:
-> @@ -79,9 +93,10 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          enum:
-> -            - qcom,sa8775p-cdsp0-pas
-> -            - qcom,sa8775p-cdsp1-pas
-> +          contains:
-> +            enum:
-> +              - qcom,sa8775p-cdsp0-pas
-> +              - qcom,sa8775p-cdsp1-pas
->      then:
->        properties:
->          power-domains:
-> @@ -98,9 +113,10 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          enum:
-> -            - qcom,sa8775p-gpdsp0-pas
-> -            - qcom,sa8775p-gpdsp1-pas
-> +          contains:
-> +            enum:
-> +              - qcom,sa8775p-gpdsp0-pas
-> +              - qcom,sa8775p-gpdsp1-pas
->      then:
->        properties:
->          power-domains:
-> 
-> ---
-> base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
-> change-id: 20240925-qcs8300_remoteproc_binding-a2837bab2150
-> 
-> Best regards,
-> -- 
-> Jingyi Wang <quic_jingyw@quicinc.com>
-> 
+9 Sep 2024 - [PATCH] mailbox, remoteproc: omap2+: fix compile testing
+https://lore.kernel.org/all/20240909203825.1666947-1-arnd@kernel.org/
 
--- 
-With best wishes
-Dmitry
+Martyn
