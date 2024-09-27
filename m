@@ -1,275 +1,216 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50DB18A6AC;
-	Fri, 27 Sep 2024 11:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099BC19AD85;
+	Fri, 27 Sep 2024 17:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727436108; cv=none; b=BBKgh6k5OQi4+GxOmiVNH17c09ek6pRlkrMkeEQAVvy7v84lr18ODe3KKc8SNiIlkFyDpVj3UcYNdqwGKV09B6ConC/K/DF+6EG097cVfKUTdsBaIaP5oLZnWjTkP9JYVgyynin6EVUCTGEXtDMBBskyzk9FO/4/Fe5MYLvLYuA=
+	t=1727459694; cv=none; b=ZGRTi4SuZQ+vhEXDN4c8D/qd1CPz3RJ+r3h+gu8zZ9AZfoocVVMM7LxYRIdLXxZ6P80RsCdPZaZOI76fHlIs8mwIXRF1BPeWhR55Vybvq9SI5AJJDwj1WiLLKaaOT5zkKwMurTbFjjiyIfuF1ExN3ZUavsQHr8uNleUYZwZe+C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727436108; c=relaxed/simple;
-	bh=7GTlEHcY6dMHDLK3ARwmyC/xIL/A0Tb/M3GwZTS+5Sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtP2+acMcmWIO31HT1Q56Ubl5jmn10b4Jnz16fxSn+H7msL8yc/BxHNcquYI977XxluVVpqPUTHQROnQZ1T5j66SL3PEJ+6ng94nqWjmONWlfYZY1eSb63xOTVP1Y3SLM7yPi4w4ba4eWPx7Vr++7Ac/Zoewp3KFcdSb7xsqsQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U/MWBFsZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U/MWBFsZ"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48R6ujPA000899;
-	Fri, 27 Sep 2024 11:21:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=vxQnzf44rAnoFHft1NRPJGHA77wkfec+/Ol
-	vyjpUv6M=; b=U/MWBFsZLMRUb/5g2SF5GuR2qIMCw5kfTIyZ0Luq9gZvR/JhVeb
-	9/aZ2RSVLzpiJKrfgPJDdiFyYKrMip+F0yp75pdqnnamwperirMDTDYnGiUIlDSw
-	aA+RYxjAS9eIfvi3OmeWyS9dNI6TR1muoP6KbEVGZyhcZFomr6KsyFspLZuovUHg
-	g7PQCgZE2KnxbkpSC7Vf83abHm3JgEh2GyRWrGjk/fMvFAwHyjFnf7ZSvnefyxZG
-	hHdrH1CbPLmUBEVsETLBkfMZRgGTPVZDvLAtsaF1TQZenDgKqZBVV4nQ2It4IYqS
-	tgftFKplFzcm+uwvr78c60H9qefpMB2TNuA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3sjpcy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 11:21:41 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48RBLaaM027877;
-	Fri, 27 Sep 2024 11:21:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41sq7mpp2k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 11:21:36 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48RBLaMG027872;
-	Fri, 27 Sep 2024 11:21:36 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48RBLZkO027871
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 11:21:36 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
-	id EA8B8593; Fri, 27 Sep 2024 16:51:34 +0530 (+0530)
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Shuah Khan <shuah@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Wasim Nazir <quic_wasimn@quicinc.com>
-Subject: [PATCH v2] selftest: remoteproc: Add basic test for start/stop sequence
-Date: Fri, 27 Sep 2024 16:51:32 +0530
-Message-ID: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727459694; c=relaxed/simple;
+	bh=T/yHHLjFuHMeyNnrNGZw88F3h9EBXeADl+aBiBEkQ9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tlrHnfG+PRB3MYXLQaAP/4nFUJy8oyBaLkfUFTOjUYXBoGnjqRZLMBlNDxXPxCj0nXTKxp+uGwH8Mk+WkhMnH39IxA2JvxbgVcVEvw1b7mz+QDtY17xKZ2K/y1+pqvebpHC03A5rRIS4l49y9WYh2rLcpzJJo58oXhWZ7NxD6lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2DB514BF;
+	Fri, 27 Sep 2024 10:55:20 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A9253F6A8;
+	Fri, 27 Sep 2024 10:54:48 -0700 (PDT)
+Message-ID: <ce534365-0110-4aba-b8b5-0a46c5ea81d0@arm.com>
+Date: Fri, 27 Sep 2024 18:54:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Inz7UtNqmv3vF4-dX_EBJdQnqCJlYjvS
-X-Proofpoint-ORIG-GUID: Inz7UtNqmv3vF4-dX_EBJdQnqCJlYjvS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270081
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
+ mathieu.poirier@linaro.org
+Cc: Adam.Johnston@arm.com, Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com,
+ andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
+ sudeep.holla@arm.com
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This test includes:
-    1) Start/stop test for each rproc instance sequencially
-    2) Start/stop test for all rproc instances concurrently
+On 22/08/2024 6:09 pm, Abdellatif El Khlifi wrote:
+> Add devicetree binding schema for the External Systems remote processors
+> 
+> The External Systems remote processors are provided on the Corstone-1000
+> IoT Reference Design Platform via the SSE-710 subsystem.
+> 
+> For more details about the External Systems, please see Corstone SSE-710
+> subsystem features [1].
+> 
+> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
+> 
+> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> ---
+>   .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
+>   1 file changed, 90 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> new file mode 100644
+> index 000000000000..827ba8d962f1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SSE-710 External System Remote Processor
 
-Changes in v2:
-- Update commit message
-- Addressed start/stop flow
+Thing is, this is not describing SSE-710. As far as I can work out, it 
+is describing the firmware and hardware that a particular example 
+implementation of the Corstone-1000 kit has chosen to put in the 
+"external system" hole in the SSE-710 within that kit.
 
-Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+If I license SSE-710 alone or even the Corstone-1000 kit, I can put 
+whatever I want in *my* implementation of those subsystems, so there 
+clearly cannot possibly be a common binding for that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a77770cd96b8..02ebad5ae790 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19596,6 +19596,7 @@ F:	Documentation/staging/remoteproc.rst
- F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
- F:	include/linux/remoteproc/
-+F:	tools/testing/selftests/remoteproc/
+For instance what if I decide to combine a Cortex-M core plus a radio 
+and some other glue as my external subsystem? Do we have dozens of 
+remoteproc bindings and drivers for weird fixed-function remoteprocs 
+whose "firmware-name" implies a Bluetooth protocol stack? No, we treat 
+them as Bluetooth controller devices. Look at 
+devicetree/bindings/sound/fsl,rpmsg.yaml - it's even unashamedly an 
+rpmsg client, but it's still not abusing the remoteproc subsystem 
+because its function to the host OS is as an audio controller, not an 
+arbitrarily configurable processor.
 
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Bjorn Andersson <andersson@kernel.org>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b38199965f99..0c8a0f427d01 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -82,6 +82,7 @@ TARGETS += proc
- TARGETS += pstore
- TARGETS += ptrace
- TARGETS += openat2
-+TARGETS += remoteproc
- TARGETS += resctrl
- TARGETS += riscv
- TARGETS += rlimits
-diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-new file mode 100644
-index 000000000000..a84b3934fd36
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+TEST_PROGS := remoteproc_test.sh
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-new file mode 100644
-index 000000000000..a5c237d2f3b4
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/config
-@@ -0,0 +1 @@
-+CONFIG_REMOTEPROC=y
-diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-new file mode 100644
-index 000000000000..589368285307
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-@@ -0,0 +1,134 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+#
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+
-+KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-+if [ -e "$KTAP_HELPERS" ]; then
-+    . "$KTAP_HELPERS"
-+else
-+    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-+    exit 4
-+fi
-+
-+RPROC_SYS=/sys/class/remoteproc
-+RPROC_SEQ_SLEEP=5
-+rproc_instances=
-+# Declare an array to save initial states of each instance
-+org_instance_to_state=""
-+num_tests=0
-+test_err=0
-+
-+check_error() {
-+	if [ $? -ne 0 ]; then
-+		test_err=$((test_err+1))
-+		ktap_print_msg "$@"
-+	fi
-+}
-+
-+rproc_stop_instances() {
-+	for instance in ${rproc_instances}; do
-+		rproc=${RPROC_SYS}/$instance
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed at state $rproc_state"
-+	done
-+	sleep ${RPROC_SEQ_SLEEP}
-+}
-+
-+rproc_start_instances() {
-+	for instance in ${rproc_instances}; do
-+		rproc=${RPROC_SYS}/$instance
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed at state $rproc_state"
-+	done
-+	sleep ${RPROC_SEQ_SLEEP}
-+}
-+
-+rproc_seq_test_instance_one() {
-+	instance=$1
-+	rproc=${RPROC_SYS}/$instance
-+	rproc_name=$(cat $rproc/name)
-+	rproc_state=$(cat $rproc/state)
-+	ktap_print_msg "Testing rproc sequence for $rproc_name"
-+
-+	# Reset test_err value
-+	test_err=0
-+
-+	# Begin start/stop sequence
-+	echo start > "$rproc/state"
-+	check_error "$rproc_name state-start failed at state $rproc_state"
-+
-+	sleep ${RPROC_SEQ_SLEEP}
-+
-+	echo stop > "$rproc/state"
-+	check_error "$rproc_name state-stop failed at state $rproc_state"
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "$rproc_name"
-+	else
-+		ktap_test_pass "$rproc_name"
-+	fi
-+}
-+
-+rproc_seq_test_instances_concurrently() {
-+	# Reset test_err value
-+	test_err=0
-+
-+	rproc_start_instances
-+
-+	rproc_stop_instances
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "for any of $rproc_instances"
-+	else
-+		ktap_test_pass "for all $rproc_instances"
-+	fi
-+}
-+
-+ktap_print_header
-+
-+if [ ! -d "${RPROC_SYS}" ]; then
-+	ktap_skip_all "${RPROC_SYS} doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-+num_tests=$(echo ${rproc_instances} | wc -w)
-+if [ "${num_tests}" -eq 0 ]; then
-+	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+# Total tests will be:
-+# 1) Seq tests for each instance sequencially
-+# 2) Seq tests for all instances concurrently
-+num_tests=$((num_tests+1))
-+
-+ktap_set_plan "${num_tests}"
-+
-+# Stop all instances
-+rproc_stop_instances
-+
-+# Test 1
-+ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
-+for instance in ${rproc_instances}; do
-+	rproc_seq_test_instance_one $instance
-+done
-+
-+# Test 2
-+ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
-+rproc_seq_test_instances_concurrently
-+
-+# Restore all instances
-+rproc_start_instances
-+
-+ktap_finished
---
-2.46.1
+As I said before, all SSE-710 actually implements is a reset mechanism, 
+so it only seems logical to model it as a reset controller, e.g. 
+something like:
 
+	hbsys: syscon@xyz {
+		compatible = "arm,sse710-host-base-sysctrl", "syscon";
+		reg = <xyz>;
+		#reset-cells = <1>;
+	};
+
+	something {
+		...
+		resets = <&hbsys 0>;
+	};
+
+	something-else {
+		...
+		resets = <&hbsys 1>;
+	};
+
+
+Then if there is actually any meaningful functionality in the default 
+extsys0 firmware preloaded on the FPGA setup then define a binding for 
+"arm,corstone1000-an550-extsys0" to describe whatever that actually 
+does. If a user chooses to create and load their own different firmware, 
+they're going to need their own binding and driver for whatever *that* 
+firmware does.
+
+FWIW, driver-wise the mapping to the reset API seems straightforward - 
+.assert hits RST_REQ, .deassert clears CPUWAIT (.status is possibly a 
+combination of CPUWAIT and RST_ACK?)
+
+Thanks,
+Robin.
+
+> +
+> +maintainers:
+> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
+> +
+> +description: |
+> +  SSE-710 is an heterogeneous subsystem supporting up to two remote
+> +  processors aka the External Systems.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - arm,sse710-extsys
+> +
+> +  firmware-name:
+> +    description:
+> +      The default name of the firmware to load to the remote processor.
+> +
+> +  '#extsys-id':
+> +    description:
+> +      The External System ID.
+> +    enum: [0, 1]
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: txes0
+> +      - const: rxes0
+> +
+> +  mboxes:
+> +    description:
+> +      The list of Message Handling Unit (MHU) channels used for bidirectional
+> +      communication. This property is only required if the virtio-based Rpmsg
+> +      messaging bus is used. For more details see the Arm MHUv2 Mailbox
+> +      Controller at devicetree/bindings/mailbox/arm,mhuv2.yaml
+> +
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  memory-region:
+> +    description:
+> +      If present, a phandle for a reserved memory area that used for vdev
+> +      buffer, resource table, vring region and others used by the remote
+> +      processor.
+> +    minItems: 2
+> +    maxItems: 32
+> +
+> +required:
+> +  - compatible
+> +  - firmware-name
+> +  - '#extsys-id'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    reserved-memory {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        extsys0_vring0: vdev0vring0@82001000 {
+> +            reg = <0 0x82001000 0 0x8000>;
+> +            no-map;
+> +        };
+> +
+> +        extsys0_vring1: vdev0vring1@82009000 {
+> +            reg = <0 0x82009000 0 0x8000>;
+> +            no-map;
+> +        };
+> +    };
+> +
+> +    syscon@1a010000 {
+> +        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+> +        reg = <0x1a010000 0x1000>;
+> +
+> +        extsys0 {
+> +            compatible = "arm,sse710-extsys";
+> +            #extsys-id = <0>;
+> +            firmware-name = "es_flashfw.elf";
+> +            mbox-names = "txes0", "rxes0";
+> +            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+> +            memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+> +        };
+> +    };
