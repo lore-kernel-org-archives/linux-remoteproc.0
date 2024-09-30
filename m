@@ -1,41 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E899383;
-	Mon, 30 Sep 2024 03:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B14619309E
+	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Sep 2024 16:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727665406; cv=none; b=VA3CF8pUWzRzTOOYMHyZbw+9oRAIkFLKJZE37k8oYHmdni7Z1xlks7gkmhZbIyUkp38fw005AythcCVNPO0bleom9AXp4KfpeR+iRo94729qfG/yS2wssDnD63ODPD6Ht/D8JF8ozVMyJcm2w+G8drs8COpmE8cJs44dphdRvK8=
+	t=1727714436; cv=none; b=sA5OgbzQEDm5p7990jCuFWQiIjy1xPbLmBxWsm4HMUrTXbcCM515YXEdNiw46ZA0a141UHAeVeYlxjdc5cOJV7v2toI+oIenw4Dvh4IT+HvhnqlqOEft5bnWHDTZbzdM2xewNdpfO+e6Q+n1f86mpVHGXeDHCT6rCHdgxSko4BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727665406; c=relaxed/simple;
-	bh=ZPLeceSoms1LJsjZuhWfOriodeA4mCGIP5lnp9n3uWM=;
+	s=arc-20240116; t=1727714436; c=relaxed/simple;
+	bh=dSBOhC0bjhbSESR9jo2CyhBJlSFuwF2AEg6p/4dVTQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9tqKBfqR1AGwsiS4c8W/ejrOttgh8U45CnnA7oIXchlGLX+1LTWfOzBEX9Ot2X1R4EsODb7FLpb+qwFC+2Jj8wWCEFCHuijKzviN8/Nf0AQ/pprly/Fz1Ys5KTj2UPQwjGrs0mHNz7A6vkyK5U/7G7wkqX62rPu/cLJu5I+U3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnjTPXwT; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWGYyBFHZzdq6l6f2qGclaHClXu89PHK5PMaZD/PfzVoxwp/rP3SpQz9Ov71ZXDqCYbu3Z2gIxm+vOdI2rEiRK0aDkTLJO7f1C1gb4kNB61qLVHKLj2u8a5lfZnlR3+oGQaerL1jq/bqNulUKr73QgTj78RSdVVXMQIRJU0ZxWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=THob8nCB; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnjTPXwT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246F2C4CEC5;
-	Mon, 30 Sep 2024 03:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727665405;
-	bh=ZPLeceSoms1LJsjZuhWfOriodeA4mCGIP5lnp9n3uWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FnjTPXwTWozYj5fYuGn8DNPKlcBl20zqc6nd6xZx8+xGmowTe+k+NgxbxC76gLGzE
-	 BRU1PnwlRTdBLlJocCgy2wpPKx/PGD5KSmiUGkKQcpoZJSWDfIy1RSJz7cfu8I/Eng
-	 Ac7x7sK4wUW0d6VgsQpitWPB4/wWYHoWac9mI1J2dMyXF0tOo8A6Dy/ud2Zjwwr9iv
-	 B82R9wtJqeE9L+WLaULFhxdpahgotVWRM0+xxRFe5x0k/jQec3Le71eQgpDQoCvE3q
-	 YIr1j9n9cDXVP0B36mqYsEOXzUCKu+4RfFpoIjGsaxSO2rDgPDoaQIMJhf5l3z2b6O
-	 gEuOjYG7v7G7w==
-Date: Sun, 29 Sep 2024 22:03:23 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Shuah Khan <shuah@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2] selftest: remoteproc: Add basic test for start/stop
- sequence
-Message-ID: <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
-References: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="THob8nCB"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b0b2528d8so50612355ad.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Sep 2024 09:40:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727714434; x=1728319234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XrqJ8hHUJyic1Moj+zvtd8DxfNx+7yYXWpXKI0I8z7I=;
+        b=THob8nCByvhB2oPyBxU/r5IgqWd3X8XeUekioHPCbIC2OMzRK5Uqz4RqxIZE7dfn2k
+         kVoSdRmvNyY8cgK2j13dZtiOJI7qF4IY3Mm0jIbMntRqGx2kfgsHBdF6OeVAsHL4Cwgz
+         N5gB6wuZnIRjhF2DwM+e3OvJRRmInW1PrBM0gXSb26EQQPthalNnxzhtsaQBaGlpP+4a
+         48xeuF+jRdQUMohwbdInlgBRGKSgWWOVfFBZz/D91rk0ZyuPBaWaukuhqOyhMXZBxu0G
+         NespLl4YChD+08S8bgtQSHLMHjNj/AqsWj61mDf/8812J5sodRGpuCfdlnuaX93KYxRx
+         PT0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727714434; x=1728319234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XrqJ8hHUJyic1Moj+zvtd8DxfNx+7yYXWpXKI0I8z7I=;
+        b=sjWxVAn8iPKDf33/2cW+BShJhzK48RD56vVO4F65/LBzu8t1sHLgLfMfaZSpy5d+6u
+         AqHLj5b/vK6OMKPjqoPi6ni2T4LK4uhhbo0su90jSRhky1oN2tgLLuA1pyjrCEV4mj7i
+         We5h+/5pnKTZwCoDqHmk4cNjZ2tvtufyl9oBrJXxh3o0urHrV+LVMn8305PnoHKW9Ogo
+         SpffpnTyaBw7B3q3cO3pMlIG3+s+LECCGzRBFJ04Rux+ge+T92v++FGJCzmM2RDzDZYp
+         nZ4W+KnRWgBPvgd4cIjwit7m68Abdxh1+cn8dsDZi/Kzzw2zDSstIFYy16gMqWXQdLQq
+         RHvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrecWUr2nO0+J+jyz8LYF9bdzb9Rfu9YQmnfBKuux2ty+mj+wLhHkna7RaznKZFTGItnfjIxdKADWWvfxkk9wK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHCz1YYqT9N3oz5p3qfpvxgcyrzRygIRXfnT3s7LQ4J96DG3Zk
+	QAAKotNgXxeYnlP4ryxpeUA5QFqy9WjLvb0diroPLamyu8z+7LQsG0Vo9ilVRCY=
+X-Google-Smtp-Source: AGHT+IHsTS8iXYCxVVG4r6awYj1PyZMeOcTmX8+hwB7h5vhx6IxPbluJrOvTMvtp8iHvvANjKW2aAA==
+X-Received: by 2002:a17:902:c40a:b0:202:1bb6:1897 with SMTP id d9443c01a7336-20b367e4b7emr217898405ad.14.1727714434128;
+        Mon, 30 Sep 2024 09:40:34 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6561:7ef:acea:822e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e357e8sm56058175ad.187.2024.09.30.09.40.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 09:40:33 -0700 (PDT)
+Date: Mon, 30 Sep 2024 10:40:30 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	linux-remoteproc@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+Message-ID: <ZvrUfoTM6s/jv9Nv@p14s>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,221 +70,45 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
+In-Reply-To: <20240812072811.9737-1-baolu.lu@linux.intel.com>
 
-On Fri, Sep 27, 2024 at 04:51:32PM GMT, Wasim Nazir wrote:
-> This test includes:
->     1) Start/stop test for each rproc instance sequencially
->     2) Start/stop test for all rproc instances concurrently
+On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
+> An iommu domain is allocated in rproc_enable_iommu() and is attached to
+> rproc->dev.parent in the same function.
 > 
-
-This fails to describe the purpose of the patch. Provide a proper commit
-mesasge.
-
-In particular, I expect an argumentation for your test scheme. Will this
-work across all remoteproc instances? Does it have any dependencies,
-etc...
-
-> Changes in v2:
-> - Update commit message
-> - Addressed start/stop flow
-
-The changelog goes below the '---' line, adjacent to your diffstat -
-which is missing from your patch. I don't know how you're sending these
-patches, but your system is either configured weirdly or you're not
-following my instructions on go/upstream.
-
+> Use iommu_paging_domain_alloc() to make it explicit.
 > 
-> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a77770cd96b8..02ebad5ae790 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19596,6 +19596,7 @@ F:	Documentation/staging/remoteproc.rst
->  F:	drivers/remoteproc/
->  F:	include/linux/remoteproc.h
->  F:	include/linux/remoteproc/
-> +F:	tools/testing/selftests/remoteproc/
-> 
->  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
->  M:	Bjorn Andersson <andersson@kernel.org>
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index b38199965f99..0c8a0f427d01 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -82,6 +82,7 @@ TARGETS += proc
->  TARGETS += pstore
->  TARGETS += ptrace
->  TARGETS += openat2
-> +TARGETS += remoteproc
->  TARGETS += resctrl
->  TARGETS += riscv
->  TARGETS += rlimits
-> diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-> new file mode 100644
-> index 000000000000..a84b3934fd36
-> --- /dev/null
-> +++ b/tools/testing/selftests/remoteproc/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +TEST_PROGS := remoteproc_test.sh
-> +
-> +include ../lib.mk
-> diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-> new file mode 100644
-> index 000000000000..a5c237d2f3b4
-> --- /dev/null
-> +++ b/tools/testing/selftests/remoteproc/config
-> @@ -0,0 +1 @@
-> +CONFIG_REMOTEPROC=y
-> diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-> new file mode 100644
-> index 000000000000..589368285307
-> --- /dev/null
-> +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-> @@ -0,0 +1,134 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> +#
-> +
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +
-> +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-> +if [ -e "$KTAP_HELPERS" ]; then
-> +    . "$KTAP_HELPERS"
-> +else
-> +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-> +    exit 4
-> +fi
-> +
-> +RPROC_SYS=/sys/class/remoteproc
-> +RPROC_SEQ_SLEEP=5
-> +rproc_instances=
-> +# Declare an array to save initial states of each instance
-> +org_instance_to_state=""
-> +num_tests=0
-> +test_err=0
-> +
-> +check_error() {
-> +	if [ $? -ne 0 ]; then
-> +		test_err=$((test_err+1))
-> +		ktap_print_msg "$@"
-> +	fi
-> +}
-> +
-> +rproc_stop_instances() {
-> +	for instance in ${rproc_instances}; do
-> +		rproc=${RPROC_SYS}/$instance
-> +		rproc_name=$(cat $rproc/name)
-> +		rproc_state=$(cat $rproc/state)
-> +
-> +		echo stop > "$rproc/state"
-> +		check_error "$rproc_name state-stop failed at state $rproc_state"
-> +	done
-> +	sleep ${RPROC_SEQ_SLEEP}
-> +}
-> +
-> +rproc_start_instances() {
-> +	for instance in ${rproc_instances}; do
-> +		rproc=${RPROC_SYS}/$instance
-> +		rproc_name=$(cat $rproc/name)
-> +		rproc_state=$(cat $rproc/state)
-> +
-> +		echo start > "$rproc/state"
-> +		check_error "$rproc_name state-start failed at state $rproc_state"
-> +	done
-> +	sleep ${RPROC_SEQ_SLEEP}
-> +}
-> +
-> +rproc_seq_test_instance_one() {
-> +	instance=$1
-> +	rproc=${RPROC_SYS}/$instance
-> +	rproc_name=$(cat $rproc/name)
-> +	rproc_state=$(cat $rproc/state)
-> +	ktap_print_msg "Testing rproc sequence for $rproc_name"
-> +
-> +	# Reset test_err value
-> +	test_err=0
-> +
-> +	# Begin start/stop sequence
-> +	echo start > "$rproc/state"
-> +	check_error "$rproc_name state-start failed at state $rproc_state"
-> +
-> +	sleep ${RPROC_SEQ_SLEEP}
-> +
-> +	echo stop > "$rproc/state"
-> +	check_error "$rproc_name state-stop failed at state $rproc_state"
-> +
-> +	if [ $test_err -ne 0 ]; then
-> +		ktap_test_fail "$rproc_name"
-> +	else
-> +		ktap_test_pass "$rproc_name"
-> +	fi
-> +}
-> +
-> +rproc_seq_test_instances_concurrently() {
-> +	# Reset test_err value
-> +	test_err=0
-> +
-> +	rproc_start_instances
-> +
-> +	rproc_stop_instances
-> +
-> +	if [ $test_err -ne 0 ]; then
-> +		ktap_test_fail "for any of $rproc_instances"
-> +	else
-> +		ktap_test_pass "for all $rproc_instances"
-> +	fi
-> +}
-> +
-> +ktap_print_header
-> +
-> +if [ ! -d "${RPROC_SYS}" ]; then
-> +	ktap_skip_all "${RPROC_SYS} doesn't exist."
-> +	exit "${KSFT_SKIP}"
-> +fi
-> +
-> +rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-> +num_tests=$(echo ${rproc_instances} | wc -w)
-> +if [ "${num_tests}" -eq 0 ]; then
-> +	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-> +	exit "${KSFT_SKIP}"
-> +fi
-> +
-> +# Total tests will be:
-> +# 1) Seq tests for each instance sequencially
-> +# 2) Seq tests for all instances concurrently
-> +num_tests=$((num_tests+1))
-> +
-> +ktap_set_plan "${num_tests}"
-> +
-> +# Stop all instances
-> +rproc_stop_instances
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
 
-Will this not fail for remoteproc instances that aren't started
-automatically?
+I have applied this patch.
 
-Regards,
-Bjorn
+Thanks,
+Mathieu
 
-> +
-> +# Test 1
-> +ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
-> +for instance in ${rproc_instances}; do
-> +	rproc_seq_test_instance_one $instance
-> +done
-> +
-> +# Test 2
-> +ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
-> +rproc_seq_test_instances_concurrently
-> +
-> +# Restore all instances
-> +rproc_start_instances
-> +
-> +ktap_finished
-> --
-> 2.46.1
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f276956f2c5c..eb66f78ec8b7 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
+>  		return 0;
+>  	}
+>  
+> -	domain = iommu_domain_alloc(dev->bus);
+> -	if (!domain) {
+> +	domain = iommu_paging_domain_alloc(dev);
+> +	if (IS_ERR(domain)) {
+>  		dev_err(dev, "can't alloc iommu domain\n");
+> -		return -ENOMEM;
+> +		return PTR_ERR(domain);
+>  	}
+>  
+>  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+> -- 
+> 2.34.1
 > 
