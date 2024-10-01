@@ -1,157 +1,166 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1EB192B69
-	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Sep 2024 16:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E102191F8D;
+	Tue,  1 Oct 2024 06:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714731; cv=none; b=R8REJBdxMVfNxMjS6UAkT8tlrEgtOc8uZT0pqXwHi0GXnSu6S5sZKP1QsHkj4YkyAShEnfPF7DkLUrk5oCwUtfbgpuw28SmSEjtN5tWtcdCqKp2Ezrb49q9VQXJIaOONaV3cElfY+rQdSjyWrvWREHYFYzdHz2K3LBnA1WT7bRg=
+	t=1727764603; cv=none; b=brg9wmrTyue8pIaqZTeBx/jGGw+Pzve1JM/5lHCdhuu7yMWLh1mPuhnd70XxQ563HIDEIA6x0c6bpAkQbg4UpT+u7DJKSvyqM9cKGtYJIcRCsoRF70OYvHaFNGb9+k9TCP3QlSc4rge8cMH4xZ8QYZZqJvuDmDCXtGQJr2J6kTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714731; c=relaxed/simple;
-	bh=As4xlKeH8pzXDzf4olvO/gak593BaigkLPoloN50dV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlIxTeuz1Pmo7Ub2vHzIzFVkLK+sX18SmD6z9mjBEmsyf/rUVpSzTkluxAtdfFvSAe9/nBd/AYbBJ1/xtuao3k6n+g0jPEa2wjfpXKRIeM6eLr7RcZ5lWAUBrn8TSU3iIWkhBW6nPU8GsS3oQCKW7569tocJzzzajfbVl61Npo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o4h7QNFk; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727764603; c=relaxed/simple;
+	bh=FtzVMfOWCtTDfoVWXXTcvZyj59YNTdtJ2JdGOq8fpVc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPOhmeUfgp4PoME4qN0jhU+2KF1k95nVXOS3XRVRvvf2iL2D7eMbN5VYRTQYwFwfwwAilS4i1qBOnkDhAHwDe/BwCvTGxMd+uLltCGIYYoxsr8+KhJpXyoBE3EGKHvjHv1THDVrzn81IRG0MLKflr1zHMFQHNVA9v2jydmKr9+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LXKYNdqc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o4h7QNFk"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso3116178a12.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Sep 2024 09:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727714729; x=1728319529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvcxQTQeQJCxAAgL5ZNrVRQRYKFeNgf1iUtSk1J+SBQ=;
-        b=o4h7QNFkYYbFrYyv0R4IXHYUG/90ykN7mh4lrr1eEeCT70W94WyCqAO1wRZr9wAX2D
-         F9xu9ybZdZs1I5zgvKrPxmKGAsYwzhPEOjOQ5N/lqTa22w6XD6npn1YgrZRN/imTzzUg
-         5ATHy0zX9wq9VDuA1FJ2cy7UyWEOHqhC33mXQi5dUbv0s4+qmY6GpC99lhwzCZO7TPLU
-         vdiwc6HtIy1lOIchzrzj/jhChkCh28kfcON8pMhuqIYEW6lhBsFvl9BkMI2RtBK+yq8M
-         SQbc+7ClStHEQAxbP1QaovXk7AYZS9TjgprxqJClWC2EORMhfvOUNjCiuCfo7h1ewsnv
-         tqaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727714729; x=1728319529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SvcxQTQeQJCxAAgL5ZNrVRQRYKFeNgf1iUtSk1J+SBQ=;
-        b=SY7plTiEdyH69sAkS9TeQNBdqUCZQcj7Rt0bw//bEF4KWnU4TXjoSY4hL4XPCnLJuH
-         PgIUDAdfkXypX5joU83DpaT/r7jFTB4r+QgzKZtqOjWNpslPR0G0EUixJAmi4HEi7+CE
-         L1mbGzEetp/mZ1nP/qJNGKTra2JvNvi2HqxUr8LA5rjAO1z8nVypJd3D0dcgal4p5rxh
-         vn5C4TXgFJS8gal1wUP5B0IPZzxsXGS8G6rl0JCXecP8ec8jVMnF4ek3Nps94WITzoJK
-         MB1TanSRKol2V15CNFf/cK6iZ71Yk89EZXrWpvciY3y9HMvbEia3yanrnfmjo/9nDLnW
-         rq9Q==
-X-Gm-Message-State: AOJu0YxK+/6+vz4re5vShN7PVvZPo0HttUsJbAhy3fJKp61L0P4Uf3FV
-	aegQLny+3GjLPpuWIUPcih5A5jkFh3U/NNzfr6gjx9EbMEcDVQ3hh6EruGjMztk=
-X-Google-Smtp-Source: AGHT+IFZCWfdQrwy49Ce5W9jR5Wa05yMjvNskGuw5IOlhsx0iH8HMju8vYH03I+79lPN0n/TIp3wDQ==
-X-Received: by 2002:a05:6a20:3b19:b0:1cf:53ea:7fbc with SMTP id adf61e73a8af0-1d4fa6a1496mr13517438637.18.1727714729181;
-        Mon, 30 Sep 2024 09:45:29 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:6561:7ef:acea:822e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2649ae1fsm6412216b3a.8.2024.09.30.09.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 09:45:28 -0700 (PDT)
-Date: Mon, 30 Sep 2024 10:45:26 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-remoteproc@vger.kernel.org, Andrew Davis <afd@ti.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hari Nagalla <hnagalla@ti.com>,
-	Martyn Welch <martyn.welch@collabora.com>,
-	Suman Anna <s-anna@ti.com>, Wadim Egorov <w.egorov@phytec.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] remoteproc: k3: Call of_node_put(rmem_np) only once in
- three functions
-Message-ID: <ZvrVppLgBjCB9FK+@p14s>
-References: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LXKYNdqc"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4911CtGk021899;
+	Tue, 1 Oct 2024 06:36:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=OCmotbsX932H7HgXE5rDTYLb
+	LmDmdrO8a4bLvdUEaLk=; b=LXKYNdqcZyY/rs9msYnuuGgn8rQdcJk8rZ74vizd
+	H7SrB5gdKo9jLFCvFcvU+VBccled83F8qKJlywuwEqLPnZOsHdB05j5JZSPDb2vp
+	+2lBU4zaVeb7L7ix3D6fiKG32Ffu5BRPzKjOC0nNPv5LGztHNQtzNPyrWXgrEHZ/
+	QWUnL1hEmDiIqR4EmEYSiaHv1Ws2SP8V2jWwLCWsMBhWjUOrWJ8jnAxZV34etJXE
+	AJ7fg8ejLaDpZx6xiE5FrGA5LH2LM/8PvrCYJxPuX02VN+WOI/8VdtToUjg2R3vT
+	9pmqvyQldrckSUqGoN3hfuvo2cXzF9S4C1BJOtdakCyxAA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9vu76n2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 06:36:24 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4916aN0d030710
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 06:36:23 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 30 Sep 2024 23:36:20 -0700
+Date: Tue, 1 Oct 2024 12:06:17 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
+Message-ID: <ZvuYYbIycFKRBcCi@hu-mojha-hyd.qualcomm.com>
+References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
+ <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
+ <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
+ <ZvcqrbLKqCQyYBsF@hu-bjorande-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
+In-Reply-To: <ZvcqrbLKqCQyYBsF@hu-bjorande-lv.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wAd0XBfEFMb2RlUw2s-ByarSqbzBpelk
+X-Proofpoint-ORIG-GUID: wAd0XBfEFMb2RlUw2s-ByarSqbzBpelk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 spamscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010043
 
-On Tue, Sep 24, 2024 at 02:43:40PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 14:28:35 +0200
+On Fri, Sep 27, 2024 at 02:59:09PM -0700, Bjorn Andersson wrote:
+> On Sat, Sep 28, 2024 at 01:07:43AM +0530, Mukesh Ojha wrote:
+> > On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
+> > > On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
+> > > > Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> > > > if rproc_stop() fails from Process-A that leaves the rproc state to
+> > > > RPROC_CRASHED state later a call to recovery_store from user space in
+> > > > Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> > > > recover it results in NULL pointer dereference issue in
+> > > > qcom_glink_smem_unregister().
+> > > > 
+> > > > Fix it by having a NULL check in glink_subdev_stop().
+> > > > 
+> > > > 	Process-A                			Process-B
+> > > > 
+> > > >   fatal error interrupt happens
+> > > > 
+> > > >   rproc_crash_handler_work()
+> > > >     mutex_lock_interruptible(&rproc->lock);
+> > > >     ...
+> > > > 
+> > > >        rproc->state = RPROC_CRASHED;
+> > > >     ...
+> > > >     mutex_unlock(&rproc->lock);
+> > > > 
+> > > >     rproc_trigger_recovery()
+> > > >      mutex_lock_interruptible(&rproc->lock);
+> > > > 
+> > > >       adsp_stop()
+> > > >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+> > > >       remoteproc remoteproc3: can't stop rproc: -22
+> > > 
+> > > I presume that at this point this remoteproc is in some undefined state
+> > > and the only way to recover is for the user to reboot the machine?
+> > 
+> > Here, 50+ (5s) retry of scm shutdown is failing during decryption of
+> > remote processor memory region, and i don't think, it is anyway to do
+> > with remote processor state here, as a best effort more number of
+> > retries can be tried instead of 50 or wait for some other recovery
+> > command like recovery_store() to let it do the retry again from
+> > beginning.
+> > 
 > 
-> An of_node_put(rmem_np) call was immediately used after a pointer check
-> for a of_reserved_mem_lookup() call in three function implementations.
-> Thus call such a function only once instead directly before the checks.
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 6 ++----
->  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 6 ++----
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 3 +--
->  3 files changed, 5 insertions(+), 10 deletions(-)
->
+> But are you saying that retrying a bit later would allow us to get out
+> of this problem? If we just didn't hit the NULL pointer(s)?
 
-Applied.
+I am not sure whether adding more number of retries will solve the issue
+and initially thinking from perspective that, it is better to retry than
+to leave the remoteproc in some unknown state however, I do get that
+letting it retry could give unnecessary patching every code e.g., ssr
+notifier callbacks, which is not expecting to be called twice as a
+side-effect of remoteproc unknown state.
+> 
+> How long are we talking about here? Is the timeout too short?
 
-Thanks,
-Mathieu
+5sec is very significant amount of time in wait for remote processor to
+get recovered, we should not change this.
+> 
+> > > 
+> > > 
+> > > The check for glink->edge avoids one pitfall following this, but I'd
+> > > prefer to see a solution that avoids issues in this scenario in the
+> > > remoteproc core - rather than working around side effects of this in
+> > > different places.
+> > 
+> > Handling in a remoteproc core means we may need another state something
+> > like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
+> > failure and checking the same during another try return immediately with
+> > some log message.
+> > 
+> 
+> Yes, if we are failing to shut down the remoteproc and there's no way
+> for us to reliably recover from that (e.g. we are not able to reclaim
+> the memory), it seems reasonable that we have to mark it using a new
+> state.
+> 
+> If that is the case, I'd call it RPROC_DEFUNCT (or something like that
+> instead), because while in some "unknown" state, from a remoteproc
+> framework's point of view, it's in a well known (broken) state.
 
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index 8be3f631c192..d08a3a98ada1 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -576,11 +576,9 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
->  			return -EINVAL;
+Ack.
+
+-Mukesh
 > 
->  		rmem = of_reserved_mem_lookup(rmem_np);
-> -		if (!rmem) {
-> -			of_node_put(rmem_np);
-> -			return -EINVAL;
-> -		}
->  		of_node_put(rmem_np);
-> +		if (!rmem)
-> +			return -EINVAL;
-> 
->  		kproc->rmem[i].bus_addr = rmem->base;
->  		/* 64-bit address regions currently not supported */
-> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> index 09f0484a90e1..a16fb165fced 100644
-> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> @@ -433,11 +433,9 @@ static int k3_m4_reserved_mem_init(struct k3_m4_rproc *kproc)
->  			return -EINVAL;
-> 
->  		rmem = of_reserved_mem_lookup(rmem_np);
-> -		if (!rmem) {
-> -			of_node_put(rmem_np);
-> -			return -EINVAL;
-> -		}
->  		of_node_put(rmem_np);
-> +		if (!rmem)
-> +			return -EINVAL;
-> 
->  		kproc->rmem[i].bus_addr = rmem->base;
->  		/* 64-bit address regions currently not supported */
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 747ee467da88..d0ebdd5cfa70 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1001,12 +1001,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->  		}
-> 
->  		rmem = of_reserved_mem_lookup(rmem_np);
-> +		of_node_put(rmem_np);
->  		if (!rmem) {
-> -			of_node_put(rmem_np);
->  			ret = -EINVAL;
->  			goto unmap_rmem;
->  		}
-> -		of_node_put(rmem_np);
-> 
->  		kproc->rmem[i].bus_addr = rmem->base;
->  		/*
-> --
-> 2.46.1
-> 
+> Regards,
+> Bjorn
