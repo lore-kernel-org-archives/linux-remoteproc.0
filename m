@@ -1,314 +1,99 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB52B13CFB8;
-	Thu,  3 Oct 2024 09:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFFF19CC04
+	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Oct 2024 13:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727947252; cv=none; b=u/YzBLsuykkHFvr06xICeb192wGLa9sUJGO0lgzFtNDW36WuXcYmT581DO9mGFawHtpMQdy4UZdD0DXk5q3wx9cBLrMWmCKQ05K3v1L03uUe0V+bAoux31uNmvroPhjbJvirnRpOorEuvHZ1c6FNY6gcSxAF0OKvtYccVIMnMyc=
+	t=1727963928; cv=none; b=cBXH93pfP2UTDMxpXYZKjGdcBD2W7c6QXB1803W96N68Gq/w9StzVqoklcSWzBUSpc3ksy/cOaT4utIn6hZm8Qpsdnb1hzs14tH/BuVr6J1dC2470HiW/fjSlMaYcGd7dr5bVu7lLKS6s3v9Mc+7D40vrpsO+mOJ5/1y4dIDjtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727947252; c=relaxed/simple;
-	bh=NfQncgWPFyaHgbioFiexl7rGbC4z6BCOkL7xL3esQdc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MojxLcWshv/xYsoKWne25ksbTBdrOK4/zORbfg2Q3+DwRzbpdnjIuGvMFow/usHH7rUmA52tWfqR/jRMfj11PNpKxnnwsqMqqSLUkao+AsJ7V19J2Bz9WSkXLr9dJ3w8kZTOcMbB7XPJWpwNDcCV0TTwJar9uvZLLeJM4oAZsf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FigTZQoM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1727963928; c=relaxed/simple;
+	bh=hH98li1flmtmsrcyn5hXWF3rH2qxp5zxvrFxRxvO21U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HDUmYrXarTIV2OBx8J/1nfYP1t3rW7VLWUYx45uT/e5WdzalfQxM2p6BPnfcgIz2udpAUWL1kvNrXfnc69LaK3VDNx9ltxwO1N/WS6xOMLSFJTYksj6/2qvT+/qZvGx7VXbgTCrbk1EpztmZ/3aClr+VZfEsrRlRZLVeZ6Lttw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IZ5XEAIw; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FigTZQoM"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4934WdWd015803;
-	Thu, 3 Oct 2024 09:20:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Iz2rY8jbndLfHvEarCD5o9TP
-	fOlEtCcaQg9CpP6UU2w=; b=FigTZQoMJQYVoDUtUMrGmBTSnKLNmwy1Ue+hBmCf
-	62EdP8G4JlPKqreeQamiGiUEs1L4oSIQeZMsE5qH0rQIaF/U/L3ioRQTVEyk6IEJ
-	Qfs/gu2rv2SntUEPVgnwdlq6kFddATzDUhOe51w8JeYtng/wV4/UbRp5xeaIBrMS
-	6JhaSpmcdbGuJrEMHtIO4kDNuK5FOgHL/QuLW/e6lew+EiCssbgncNTfiJ28c49T
-	88DiyBdHOmr4eXuRuE964DYI8YyoWQxOJi1ff7NUjbYWEgeNFZcdq9ku1miFBP4n
-	97ZFaHF696KSZI963ddxoNUphOzhDSQJRu0c7bnXfyoftw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x94hnx11-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 09:20:46 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4939KdRq028362
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 09:20:39 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 3 Oct 2024 02:20:37 -0700
-Date: Thu, 3 Oct 2024 14:50:22 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Shuah Khan <shuah@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH v2] selftest: remoteproc: Add basic test for start/stop
- sequence
-Message-ID: <Zv5h1hQ/Ji8aJ/GI@hu-wasimn-hyd.qualcomm.com>
-References: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
- <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IZ5XEAIw"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad5024b8dso13036601fa.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Oct 2024 06:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727963925; x=1728568725; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=urLJW6NECL1ucqye5UhOxKoHxkMcZO/OrugWN1Z1yvE=;
+        b=IZ5XEAIwbZKyEf8Vze24G5tZ8hxrBnSnBWjp7ngi2g7QQTB7duYnEK2OEAS3uqpcJY
+         zqWfp7ODWtlfkvIlAOsmUKJpApHMy5AB0MNVyXWyei3CTqeBFROW/yy6M2Ee2JNokMzy
+         /C7J+ROJQ6J+gxkwF0IuKHe+tunPPDx9fbr9B5jYOJvFcLFpVyQbsBmLKMNySMvDpTSO
+         1NXf37SWWGk7jtmx9NzF86FSOwWMgBSjEz1GLP5noXfATv+bpPH4nYKANtExhYvLTnkK
+         dFFYyGTrh6Uff0q4dMc7VPw6pyr8P7unqxgr4BQ7WAtyfkP/bEYZRnJh1nqIZVHxdLEe
+         RMlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727963925; x=1728568725;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=urLJW6NECL1ucqye5UhOxKoHxkMcZO/OrugWN1Z1yvE=;
+        b=c/j1lWQCdyMxvqG/YeV8ASTvIJudiEv6giAt0UsPIb0VKyRdYakp6fi2/FBv91O41v
+         q019APNJKWwqW1GfIS0pCEFKvezb5xrHgrpZsFbhjfUsrDWk9H7xR5/KsYewf7y7r1Nz
+         rKX/NoGsU+0L1r7YH5vnxGcFnwZALnCa0Lb1iBIk80Hq1EinrvV5wtDxSLnjTMaYOQnF
+         mizSLsSXWJtCiayjz193UtzNJtqIh2CZMe/e1sW2KwdPpD+9VziWmuDLd/iGRYmHvNvF
+         XtycnwRFmkezNsV8wQmUuzLM7FjVbu37revXMfbJ9owtcOCikRxiCq92wYKRw6/zFWRN
+         WhSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkHMKTwrXvZUj+GwO2c21GNztyXk7HLCptKLsS3UJJT0ghF98GIRnHXR8nNwPtQRz67T/1sxTg8xMrnhru0H7J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3GKK4qu8S6sXG5lI9DntQ0j7FIjiKaevVPj2TUb0v9wpc4jrb
+	n09RFaAkFuyY7nuLd42/Q6cgtC2CViGdqxwX9UzcOTle65iJ2jcLszsgamCAyKlc1ZVr9cQValc
+	DhfMv/YXEO7oHh83htNTLGLWcBPXfkiKLUx5/mm03ZbznG/+6
+X-Google-Smtp-Source: AGHT+IGblBPy6kBOpO3xGMhQweMvM2XpmVtiWZNUxokmfJKJqKLFp3SSOen5N/4deNadbfpJumzlOeeP0tfYdvrs/WM=
+X-Received: by 2002:a2e:9215:0:b0:2f3:f358:8657 with SMTP id
+ 38308e7fff4ca-2fae10a6b58mr37979671fa.44.1727963925258; Thu, 03 Oct 2024
+ 06:58:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HBJ4d3LoJv0pINwWfAn9YRDuscYOg8G6
-X-Proofpoint-ORIG-GUID: HBJ4d3LoJv0pINwWfAn9YRDuscYOg8G6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030067
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZvrUfoTM6s/jv9Nv@p14s> <20241001133510.GD1365916@nvidia.com>
+In-Reply-To: <20241001133510.GD1365916@nvidia.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 3 Oct 2024 07:58:33 -0600
+Message-ID: <CANLsYkyUMrLmPMaKH8sGHrB1zXCjXbyCje0zrsqFs68JT+NGKg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-remoteproc@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 29, 2024 at 10:03:23PM -0500, Bjorn Andersson wrote:
-> On Fri, Sep 27, 2024 at 04:51:32PM GMT, Wasim Nazir wrote:
-> > This test includes:
-> >     1) Start/stop test for each rproc instance sequencially
-> >     2) Start/stop test for all rproc instances concurrently
-> > 
-> 
-> This fails to describe the purpose of the patch. Provide a proper commit
-> mesasge.
-> 
-> In particular, I expect an argumentation for your test scheme. Will this
-> work across all remoteproc instances? Does it have any dependencies,
-> etc...
-As we are tesing only the core ops based on the availabe sysfs entries,
-it should work accross targets where remoteproc config is enabled & instances
-are available. Otherwise I am skipping the tests.
-Please correct me if I am missing anything here.
+On Tue, 1 Oct 2024 at 07:35, Jason Gunthorpe <jgg@nvidia.com> wrote:
+>
+> On Mon, Sep 30, 2024 at 10:40:30AM -0600, Mathieu Poirier wrote:
+> > On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
+> > > An iommu domain is allocated in rproc_enable_iommu() and is attached to
+> > > rproc->dev.parent in the same function.
+> > >
+> > > Use iommu_paging_domain_alloc() to make it explicit.
+> > >
+> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> >
+> > I have applied this patch.
+>
+> It is a bit late now. Can we run the stragglers through the iommu
+> tree? We want to put dependent patches on top of this.
+>
 
-I will try to elaborate purpose of the tests in next patch.
-> 
-> > Changes in v2:
-> > - Update commit message
-> > - Addressed start/stop flow
-> 
-> The changelog goes below the '---' line, adjacent to your diffstat -
-> which is missing from your patch. I don't know how you're sending these
-> patches, but your system is either configured weirdly or you're not
-> following my instructions on go/upstream.
-> 
-Will do the correction in next patch.
-> > 
-> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index a77770cd96b8..02ebad5ae790 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19596,6 +19596,7 @@ F:	Documentation/staging/remoteproc.rst
-> >  F:	drivers/remoteproc/
-> >  F:	include/linux/remoteproc.h
-> >  F:	include/linux/remoteproc/
-> > +F:	tools/testing/selftests/remoteproc/
-> > 
-> >  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
-> >  M:	Bjorn Andersson <andersson@kernel.org>
-> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> > index b38199965f99..0c8a0f427d01 100644
-> > --- a/tools/testing/selftests/Makefile
-> > +++ b/tools/testing/selftests/Makefile
-> > @@ -82,6 +82,7 @@ TARGETS += proc
-> >  TARGETS += pstore
-> >  TARGETS += ptrace
-> >  TARGETS += openat2
-> > +TARGETS += remoteproc
-> >  TARGETS += resctrl
-> >  TARGETS += riscv
-> >  TARGETS += rlimits
-> > diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-> > new file mode 100644
-> > index 000000000000..a84b3934fd36
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/remoteproc/Makefile
-> > @@ -0,0 +1,4 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +TEST_PROGS := remoteproc_test.sh
-> > +
-> > +include ../lib.mk
-> > diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-> > new file mode 100644
-> > index 000000000000..a5c237d2f3b4
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/remoteproc/config
-> > @@ -0,0 +1 @@
-> > +CONFIG_REMOTEPROC=y
-> > diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-> > new file mode 100644
-> > index 000000000000..589368285307
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-> > @@ -0,0 +1,134 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +#
-> > +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > +#
-> > +
-> > +DIR="$(dirname $(readlink -f "$0"))"
-> > +
-> > +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-> > +if [ -e "$KTAP_HELPERS" ]; then
-> > +    . "$KTAP_HELPERS"
-> > +else
-> > +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-> > +    exit 4
-> > +fi
-> > +
-> > +RPROC_SYS=/sys/class/remoteproc
-> > +RPROC_SEQ_SLEEP=5
-> > +rproc_instances=
-> > +# Declare an array to save initial states of each instance
-> > +org_instance_to_state=""
-> > +num_tests=0
-> > +test_err=0
-> > +
-> > +check_error() {
-> > +	if [ $? -ne 0 ]; then
-> > +		test_err=$((test_err+1))
-> > +		ktap_print_msg "$@"
-> > +	fi
-> > +}
-> > +
-> > +rproc_stop_instances() {
-> > +	for instance in ${rproc_instances}; do
-> > +		rproc=${RPROC_SYS}/$instance
-> > +		rproc_name=$(cat $rproc/name)
-> > +		rproc_state=$(cat $rproc/state)
-> > +
-> > +		echo stop > "$rproc/state"
-> > +		check_error "$rproc_name state-stop failed at state $rproc_state"
-> > +	done
-> > +	sleep ${RPROC_SEQ_SLEEP}
-> > +}
-> > +
-> > +rproc_start_instances() {
-> > +	for instance in ${rproc_instances}; do
-> > +		rproc=${RPROC_SYS}/$instance
-> > +		rproc_name=$(cat $rproc/name)
-> > +		rproc_state=$(cat $rproc/state)
-> > +
-> > +		echo start > "$rproc/state"
-> > +		check_error "$rproc_name state-start failed at state $rproc_state"
-> > +	done
-> > +	sleep ${RPROC_SEQ_SLEEP}
-> > +}
-> > +
-> > +rproc_seq_test_instance_one() {
-> > +	instance=$1
-> > +	rproc=${RPROC_SYS}/$instance
-> > +	rproc_name=$(cat $rproc/name)
-> > +	rproc_state=$(cat $rproc/state)
-> > +	ktap_print_msg "Testing rproc sequence for $rproc_name"
-> > +
-> > +	# Reset test_err value
-> > +	test_err=0
-> > +
-> > +	# Begin start/stop sequence
-> > +	echo start > "$rproc/state"
-> > +	check_error "$rproc_name state-start failed at state $rproc_state"
-> > +
-> > +	sleep ${RPROC_SEQ_SLEEP}
-> > +
-> > +	echo stop > "$rproc/state"
-> > +	check_error "$rproc_name state-stop failed at state $rproc_state"
-> > +
-> > +	if [ $test_err -ne 0 ]; then
-> > +		ktap_test_fail "$rproc_name"
-> > +	else
-> > +		ktap_test_pass "$rproc_name"
-> > +	fi
-> > +}
-> > +
-> > +rproc_seq_test_instances_concurrently() {
-> > +	# Reset test_err value
-> > +	test_err=0
-> > +
-> > +	rproc_start_instances
-> > +
-> > +	rproc_stop_instances
-> > +
-> > +	if [ $test_err -ne 0 ]; then
-> > +		ktap_test_fail "for any of $rproc_instances"
-> > +	else
-> > +		ktap_test_pass "for all $rproc_instances"
-> > +	fi
-> > +}
-> > +
-> > +ktap_print_header
-> > +
-> > +if [ ! -d "${RPROC_SYS}" ]; then
-> > +	ktap_skip_all "${RPROC_SYS} doesn't exist."
-> > +	exit "${KSFT_SKIP}"
-> > +fi
-> > +
-> > +rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-> > +num_tests=$(echo ${rproc_instances} | wc -w)
-> > +if [ "${num_tests}" -eq 0 ]; then
-> > +	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-> > +	exit "${KSFT_SKIP}"
-> > +fi
-> > +
-> > +# Total tests will be:
-> > +# 1) Seq tests for each instance sequencially
-> > +# 2) Seq tests for all instances concurrently
-> > +num_tests=$((num_tests+1))
-> > +
-> > +ktap_set_plan "${num_tests}"
-> > +
-> > +# Stop all instances
-> > +rproc_stop_instances
-> 
-> Will this not fail for remoteproc instances that aren't started
-> automatically?
-This is don't care case where I only intend to stop previous instances
-wherever applicable.
+Sure, we can do that:
 
-After this I am expecting that all instances will be in stop state so
-that I can test start/stop sequence. This is inline to the previous review comments.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-I will add comments in code for further clarification.
-
-Thanks & Regards,
-Wasim
-> 
-> Regards,
-> Bjorn
-> 
-> > +
-> > +# Test 1
-> > +ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
-> > +for instance in ${rproc_instances}; do
-> > +	rproc_seq_test_instance_one $instance
-> > +done
-> > +
-> > +# Test 2
-> > +ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
-> > +rproc_seq_test_instances_concurrently
-> > +
-> > +# Restore all instances
-> > +rproc_start_instances
-> > +
-> > +ktap_finished
-> > --
-> > 2.46.1
-> > 
-> 
+Please send me a pull request so that I can also carry the patch in my tree.
