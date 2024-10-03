@@ -1,238 +1,314 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8C423CE
-	for <linux-remoteproc@vger.kernel.org>; Wed,  2 Oct 2024 15:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB52B13CFB8;
+	Thu,  3 Oct 2024 09:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883409; cv=none; b=bdf1syAQIU6cUOt4tIWN7b0OanWYEWGucG4h9FpkUqJxVcJsRnnLvWllm01H+D+5met16eI5WXjBzFDLgI+47wd0cNXi85+PAmeh2hGMHXFJlCQ78ufScgdo2JrFsT7UrzydPbWFiUv0e+I1XE3MhtRy4B+Bo46AqR3a3NjVVjY=
+	t=1727947252; cv=none; b=u/YzBLsuykkHFvr06xICeb192wGLa9sUJGO0lgzFtNDW36WuXcYmT581DO9mGFawHtpMQdy4UZdD0DXk5q3wx9cBLrMWmCKQ05K3v1L03uUe0V+bAoux31uNmvroPhjbJvirnRpOorEuvHZ1c6FNY6gcSxAF0OKvtYccVIMnMyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883409; c=relaxed/simple;
-	bh=WNDVuJVYRzoATG9Ou+1RPn3y5hF6zGTSgTzDLHMArws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jAZ1cBhDA8a+H7QjbzOIccQLnro9AJqz2iu8VVA9UdrNHpvAxbbiCFciEu4aiBjo+jLkmkQUR2gfPopMKxqWRLCXmIrQ3dy489X+A2utPBu66K0tjakiUl2XjajAKmfZu9lwfc0H3SfF2UM7dB8sUOcGnXoVqxpJJGSvCk4SX/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CSMMpw4m; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727947252; c=relaxed/simple;
+	bh=NfQncgWPFyaHgbioFiexl7rGbC4z6BCOkL7xL3esQdc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MojxLcWshv/xYsoKWne25ksbTBdrOK4/zORbfg2Q3+DwRzbpdnjIuGvMFow/usHH7rUmA52tWfqR/jRMfj11PNpKxnnwsqMqqSLUkao+AsJ7V19J2Bz9WSkXLr9dJ3w8kZTOcMbB7XPJWpwNDcCV0TTwJar9uvZLLeJM4oAZsf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FigTZQoM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CSMMpw4m"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71971d2099cso5609806b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Oct 2024 08:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727883406; x=1728488206; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OTB+PF2DdHacG+b6eao+ymQdh7xOwx1kJuRK+tH/lb0=;
-        b=CSMMpw4mbbBFYit+nO0NdbsABQNOpO6BsUlB4lJE3MXOL9dg4x5jfTwtfZDIGyOWhD
-         03ZWIan4ktPKhXZAqpBeSLrCwH/qMMGHl1+A8ksixCohV08bbhvKc+bwsPjsdHcPrDv6
-         79ssRFcD2pLssU1YIu9fvYtewf/7fK0yFRVERr0iouskQNCSI7PtUoKlPv14vySEmWHV
-         3OP/wyTo1xv+EeFbHpJEK6L0O3xNHnWziAju9B5fkrXw8/+VXpDj+cYTQsmJQ3qTtYS9
-         57G5iGpr22BJCb4aq6W/CznRiwmYjegUZrRdhW6TvLM/VM+qaDA4nEgJcArhM0jgZzIT
-         5rGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727883406; x=1728488206;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTB+PF2DdHacG+b6eao+ymQdh7xOwx1kJuRK+tH/lb0=;
-        b=F4ZjaZLzji9ocJmLKGw70cZS23J/xnDE2WNoDORC3pqiwYyvl6UY2ABB+42ny00Otq
-         6U9NQbjflSqexryTl6pV9okTzvJSqzX95a+IRuuguqIMnqmvHx3x6DIS9ArlNGmJXHJ5
-         siXKo14HaaaSHVae9wUYPH22qfTm85oEW+Zgbq+fnVLQ+yDSX+XhorPx+wYKZw3L6Hr9
-         LVlpVyTKa3n6WSCjDUQKLG8KNeuc6CjRAAtZlH3bYLPhr0LXXPvUWaBSjTwstZ4kw4og
-         tEhUI27BZECkYbjmxfyfu/Q5V1rxAidfx3FpReIb9FjhJAOFNLz7ZidBZID8s1iaMDNj
-         hfOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL/ZHdHHdVWgElPs25t38YCDOxaBdyAotoE4GCKg58QEXcKvc9Vr1VrdC+ojdnSB812+GP7CWhxZ3jomADNWoX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZe+2umACGGfv2TvckYpySh/3chYyXUUegBX39u/lO4NHwQT9q
-	CoKuZoGeYu0E+xWWRwqFe9QH4uBwCO6kqdFlS+/m75sSvxa+wytc7E+LDfSHpEg=
-X-Google-Smtp-Source: AGHT+IH/7GBO+FC7LZe14Gvhx3upKoEFUNAKdET9bmKw2fLWvE3OojbtfIet/HJEf1PECAomvcGvtQ==
-X-Received: by 2002:aa7:9990:0:b0:717:94d2:43c3 with SMTP id d2e1a72fcca58-71dc5d5bf6bmr4257868b3a.18.1727883406513;
-        Wed, 02 Oct 2024 08:36:46 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:80f9:2130:90df:197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518787sm9919544b3a.124.2024.10.02.08.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:36:45 -0700 (PDT)
-Date: Wed, 2 Oct 2024 09:36:43 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Mark-PK Tsai =?utf-8?B?KOiUoeaym+WJmyk=?= <Mark-PK.Tsai@mediatek.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"andersson@kernel.org" <andersson@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	JY Ho =?utf-8?B?KOS9lemnv+W9pSk=?= <JY.Ho@mediatek.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	YJ Chiang =?utf-8?B?KOaxn+iLseadsCk=?= <yj.chiang@mediatek.com>
-Subject: Re: [PATCH] remoteproc: virtio: Add synchronize_cbs to
- remoteproc_virtio
-Message-ID: <Zv1oi2xfBrptNLHB@p14s>
-References: <20240920091659.3933-1-mark-pk.tsai@mediatek.com>
- <109aa022a017648be7b1c583ec21af74d8a23dc7.camel@mediatek.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FigTZQoM"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4934WdWd015803;
+	Thu, 3 Oct 2024 09:20:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Iz2rY8jbndLfHvEarCD5o9TP
+	fOlEtCcaQg9CpP6UU2w=; b=FigTZQoMJQYVoDUtUMrGmBTSnKLNmwy1Ue+hBmCf
+	62EdP8G4JlPKqreeQamiGiUEs1L4oSIQeZMsE5qH0rQIaF/U/L3ioRQTVEyk6IEJ
+	Qfs/gu2rv2SntUEPVgnwdlq6kFddATzDUhOe51w8JeYtng/wV4/UbRp5xeaIBrMS
+	6JhaSpmcdbGuJrEMHtIO4kDNuK5FOgHL/QuLW/e6lew+EiCssbgncNTfiJ28c49T
+	88DiyBdHOmr4eXuRuE964DYI8YyoWQxOJi1ff7NUjbYWEgeNFZcdq9ku1miFBP4n
+	97ZFaHF696KSZI963ddxoNUphOzhDSQJRu0c7bnXfyoftw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x94hnx11-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 09:20:46 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4939KdRq028362
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 3 Oct 2024 09:20:39 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 3 Oct 2024 02:20:37 -0700
+Date: Thu, 3 Oct 2024 14:50:22 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Shuah Khan <shuah@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+Subject: Re: [PATCH v2] selftest: remoteproc: Add basic test for start/stop
+ sequence
+Message-ID: <Zv5h1hQ/Ji8aJ/GI@hu-wasimn-hyd.qualcomm.com>
+References: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
+ <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <109aa022a017648be7b1c583ec21af74d8a23dc7.camel@mediatek.com>
+In-Reply-To: <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HBJ4d3LoJv0pINwWfAn9YRDuscYOg8G6
+X-Proofpoint-ORIG-GUID: HBJ4d3LoJv0pINwWfAn9YRDuscYOg8G6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410030067
 
-On Fri, Sep 27, 2024 at 02:51:38AM +0000, Mark-PK Tsai (蔡沛剛) wrote:
-> Hi,
-> 
-> Could someone help to review it or provide suggestions?
-> Any comments are welcome.
-> 
-> This patch is intended to allow the rproc driver to handle the
-> following use-after-free issue:
-> 
-> 
-> ### UAF log
-
-What does "UAF" means?
-
-> [  337.540275][  T470]  virtqueue_add.llvm.10153462284424984632+0xb48/0
-> xcc4
-> [  337.546969][  T470]  virtqueue_add_inbuf+0x44/0x6c                
-> <--- vqs are freed in vring_del_virtqueue
-> [  337.551755][  T470]  rpmsg_recv_done+0x1fc/0x2c4 [virtio_rpmsg_bus]
-> [  337.558023][  T470]  vring_interrupt+0xa0/0xe0
-> [  337.562462][  T470]  rproc_vq_interrupt+0x34/0x48
-> [  337.567160][  T470]  handle_event+0x28/0x48 [mtk_pqu_rproc]
-> [  337.572742][  T470]  irq_thread_fn+0x4c/0xcc
-> [  337.577009][  T470]  irq_thread+0x1d0/0x360
-> [  337.581189][  T470]  kthread+0x168/0x1cc
-> [  337.585107][  T470]  ret_from_fork+0x10/0x20
-> 
-> ### stack trace of obj free
-> [  339.253063][  T470] die_helper:       <-
-> vring_del_virtqueue+0x16c/0x198
-> [  339.259757][  T470] die_helper:       <- kfree+0x274/0x35c
-> [  339.265236][  T470] die_helper:       <-
-> vring_del_virtqueue+0x16c/0x198
-> [  339.271929][  T470] die_helper:       <-
-> rproc_virtio_del_vqs+0x3c/0x58
-> [  339.278535][  T470] die_helper:       <- rpmsg_remove+0x8c/0x12c
-> [virtio_rpmsg_bus]
-> [  339.286189][  T470] die_helper:       <-
-> virtio_dev_remove+0x64/0x174
-> [  339.292622][  T470] die_helper:       <-
-> device_release_driver_internal+0x1a8/0x32c
-> [  339.300270][  T470] die_helper:       <-
-> bus_remove_device+0x130/0x160
-> [  339.306789][  T470] die_helper:       <- device_del+0x224/0x518
-> [  339.312702][  T470] die_helper:       <- device_unregister+0x20/0x3c
-> [  339.319047][  T470] die_helper:       <-
-> rproc_remove_virtio_dev+0x20/0x44
-> [  339.325913][  T470] die_helper:       <-
-> device_for_each_child+0x84/0x100
-> [  339.332696][  T470] die_helper:       <-
-> rproc_vdev_do_stop+0x30/0x5c
-> [  339.339130][  T470] die_helper:       <- rproc_stop+0xcc/0x200
-> 
-
-None of the above is showing me where this use-after-free happens.
-
-
-> On Fri, 2024-09-20 at 17:16 +0800, Mark-PK Tsai wrote:
-> > Add synchornize_cbs to rproc_virtio_config_ops and a
-> > synchronize_vqs callback to the rproc_ops to ensure vqs'
-> > state changes are visible in vring_interrupts when the vq is
-> > broken or removed.
+On Sun, Sep 29, 2024 at 10:03:23PM -0500, Bjorn Andersson wrote:
+> On Fri, Sep 27, 2024 at 04:51:32PM GMT, Wasim Nazir wrote:
+> > This test includes:
+> >     1) Start/stop test for each rproc instance sequencially
+> >     2) Start/stop test for all rproc instances concurrently
 > > 
-> > And when VIRTIO_HARDEN_NOTIFICATION is not set, call
-> > rproc_virtio_synchronize_cbs directly in __rproc_virtio_del_vqs
-> > before virtqueue is free to ensure that rproc_vq_interrupt is
-> > aware of the virtqueue removal.
+> 
+> This fails to describe the purpose of the patch. Provide a proper commit
+> mesasge.
+> 
+> In particular, I expect an argumentation for your test scheme. Will this
+> work across all remoteproc instances? Does it have any dependencies,
+> etc...
+As we are tesing only the core ops based on the availabe sysfs entries,
+it should work accross targets where remoteproc config is enabled & instances
+are available. Otherwise I am skipping the tests.
+Please correct me if I am missing anything here.
+
+I will try to elaborate purpose of the tests in next patch.
+> 
+> > Changes in v2:
+> > - Update commit message
+> > - Addressed start/stop flow
+> 
+> The changelog goes below the '---' line, adjacent to your diffstat -
+> which is missing from your patch. I don't know how you're sending these
+> patches, but your system is either configured weirdly or you're not
+> following my instructions on go/upstream.
+> 
+Will do the correction in next patch.
 > > 
-> > The synchronized_vqs is expected to be implemented in rproc
-> > driver to ensure that all previous vring_interrupts are handled
-> > before the vqs are marked as broken or removed.
+> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
 > > 
-> > Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_virtio.c | 12 ++++++++++++
-> >  include/linux/remoteproc.h             |  4 ++++
-> >  2 files changed, 16 insertions(+)
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index a77770cd96b8..02ebad5ae790 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19596,6 +19596,7 @@ F:	Documentation/staging/remoteproc.rst
+> >  F:	drivers/remoteproc/
+> >  F:	include/linux/remoteproc.h
+> >  F:	include/linux/remoteproc/
+> > +F:	tools/testing/selftests/remoteproc/
 > > 
-> > diff --git a/drivers/remoteproc/remoteproc_virtio.c
-> > b/drivers/remoteproc/remoteproc_virtio.c
-> > index d3f39009b28e..e18258b69851 100644
-> > --- a/drivers/remoteproc/remoteproc_virtio.c
-> > +++ b/drivers/remoteproc/remoteproc_virtio.c
-> > @@ -74,6 +74,14 @@ static bool rproc_virtio_notify(struct virtqueue
-> > *vq)
-> >  	return true;
-> >  }
-> >  
-> > +static void rproc_virtio_synchronize_cbs(struct virtio_device *vdev)
-> > +{
-> > +	struct rproc *rproc = vdev_to_rproc(vdev);
+> >  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+> >  M:	Bjorn Andersson <andersson@kernel.org>
+> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> > index b38199965f99..0c8a0f427d01 100644
+> > --- a/tools/testing/selftests/Makefile
+> > +++ b/tools/testing/selftests/Makefile
+> > @@ -82,6 +82,7 @@ TARGETS += proc
+> >  TARGETS += pstore
+> >  TARGETS += ptrace
+> >  TARGETS += openat2
+> > +TARGETS += remoteproc
+> >  TARGETS += resctrl
+> >  TARGETS += riscv
+> >  TARGETS += rlimits
+> > diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
+> > new file mode 100644
+> > index 000000000000..a84b3934fd36
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/remoteproc/Makefile
+> > @@ -0,0 +1,4 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +TEST_PROGS := remoteproc_test.sh
 > > +
-> > +	if (rproc->ops->synchronize_vqs)
-> > +		rproc->ops->synchronize_vqs(rproc);
+> > +include ../lib.mk
+> > diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
+> > new file mode 100644
+> > index 000000000000..a5c237d2f3b4
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/remoteproc/config
+> > @@ -0,0 +1 @@
+> > +CONFIG_REMOTEPROC=y
+> > diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> > new file mode 100644
+> > index 000000000000..589368285307
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> > @@ -0,0 +1,134 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +#
+> > +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> > +#
+> > +
+> > +DIR="$(dirname $(readlink -f "$0"))"
+> > +
+> > +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
+> > +if [ -e "$KTAP_HELPERS" ]; then
+> > +    . "$KTAP_HELPERS"
+> > +else
+> > +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
+> > +    exit 4
+> > +fi
+> > +
+> > +RPROC_SYS=/sys/class/remoteproc
+> > +RPROC_SEQ_SLEEP=5
+> > +rproc_instances=
+> > +# Declare an array to save initial states of each instance
+> > +org_instance_to_state=""
+> > +num_tests=0
+> > +test_err=0
+> > +
+> > +check_error() {
+> > +	if [ $? -ne 0 ]; then
+> > +		test_err=$((test_err+1))
+> > +		ktap_print_msg "$@"
+> > +	fi
 > > +}
 > > +
-> >  /**
-> >   * rproc_vq_interrupt() - tell remoteproc that a virtqueue is
-> > interrupted
-> >   * @rproc: handle to the remote processor
-> > @@ -171,6 +179,9 @@ static void __rproc_virtio_del_vqs(struct
-> > virtio_device *vdev)
-> >  	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
-> >  		rvring = vq->priv;
-> >  		rvring->vq = NULL;
-> > +#ifndef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-> > +		rproc_virtio_synchronize_cbs(vdev);
-> > +#endif
-> >  		vring_del_virtqueue(vq);
-> >  	}
-> >  }
-> > @@ -334,6 +345,7 @@ static const struct virtio_config_ops
-> > rproc_virtio_config_ops = {
-> >  	.get_status	= rproc_virtio_get_status,
-> >  	.get		= rproc_virtio_get,
-> >  	.set		= rproc_virtio_set,
-> > +	.synchronize_cbs = rproc_virtio_synchronize_cbs,
+> > +rproc_stop_instances() {
+> > +	for instance in ${rproc_instances}; do
+> > +		rproc=${RPROC_SYS}/$instance
+> > +		rproc_name=$(cat $rproc/name)
+> > +		rproc_state=$(cat $rproc/state)
+> > +
+> > +		echo stop > "$rproc/state"
+> > +		check_error "$rproc_name state-stop failed at state $rproc_state"
+> > +	done
+> > +	sleep ${RPROC_SEQ_SLEEP}
+> > +}
+> > +
+> > +rproc_start_instances() {
+> > +	for instance in ${rproc_instances}; do
+> > +		rproc=${RPROC_SYS}/$instance
+> > +		rproc_name=$(cat $rproc/name)
+> > +		rproc_state=$(cat $rproc/state)
+> > +
+> > +		echo start > "$rproc/state"
+> > +		check_error "$rproc_name state-start failed at state $rproc_state"
+> > +	done
+> > +	sleep ${RPROC_SEQ_SLEEP}
+> > +}
+> > +
+> > +rproc_seq_test_instance_one() {
+> > +	instance=$1
+> > +	rproc=${RPROC_SYS}/$instance
+> > +	rproc_name=$(cat $rproc/name)
+> > +	rproc_state=$(cat $rproc/state)
+> > +	ktap_print_msg "Testing rproc sequence for $rproc_name"
+> > +
+> > +	# Reset test_err value
+> > +	test_err=0
+> > +
+> > +	# Begin start/stop sequence
+> > +	echo start > "$rproc/state"
+> > +	check_error "$rproc_name state-start failed at state $rproc_state"
+> > +
+> > +	sleep ${RPROC_SEQ_SLEEP}
+> > +
+> > +	echo stop > "$rproc/state"
+> > +	check_error "$rproc_name state-stop failed at state $rproc_state"
+> > +
+> > +	if [ $test_err -ne 0 ]; then
+> > +		ktap_test_fail "$rproc_name"
+> > +	else
+> > +		ktap_test_pass "$rproc_name"
+> > +	fi
+> > +}
+> > +
+> > +rproc_seq_test_instances_concurrently() {
+> > +	# Reset test_err value
+> > +	test_err=0
+> > +
+> > +	rproc_start_instances
+> > +
+> > +	rproc_stop_instances
+> > +
+> > +	if [ $test_err -ne 0 ]; then
+> > +		ktap_test_fail "for any of $rproc_instances"
+> > +	else
+> > +		ktap_test_pass "for all $rproc_instances"
+> > +	fi
+> > +}
+> > +
+> > +ktap_print_header
+> > +
+> > +if [ ! -d "${RPROC_SYS}" ]; then
+> > +	ktap_skip_all "${RPROC_SYS} doesn't exist."
+> > +	exit "${KSFT_SKIP}"
+> > +fi
+> > +
+> > +rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
+> > +num_tests=$(echo ${rproc_instances} | wc -w)
+> > +if [ "${num_tests}" -eq 0 ]; then
+> > +	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
+> > +	exit "${KSFT_SKIP}"
+> > +fi
+> > +
+> > +# Total tests will be:
+> > +# 1) Seq tests for each instance sequencially
+> > +# 2) Seq tests for all instances concurrently
+> > +num_tests=$((num_tests+1))
+> > +
+> > +ktap_set_plan "${num_tests}"
+> > +
+> > +# Stop all instances
+> > +rproc_stop_instances
+> 
+> Will this not fail for remoteproc instances that aren't started
+> automatically?
+This is don't care case where I only intend to stop previous instances
+wherever applicable.
 
-Where and when is this called?
+After this I am expecting that all instances will be in stop state so
+that I can test start/stop sequence. This is inline to the previous review comments.
 
-This patch is very confusing and doesn't have a user.  As such it is
-impossible for me to understand what is going on.  
+I will add comments in code for further clarification.
 
-Thanks,
-Mathieu
-
-> >  };
-> >  
-> >  /*
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index b4795698d8c2..73901678ac7d 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -381,6 +381,9 @@ enum rsc_handling_status {
-> >   * @panic:	optional callback to react to system panic, core will
-> > delay
-> >   *		panic at least the returned number of milliseconds
-> >   * @coredump:	  collect firmware dump after the subsystem is
-> > shutdown
-> > + * @synchronize_vqs:	optional callback to guarantee all memory
-> > operations
-> > + *			on the virtqueue before it are visible to the
-> > + *			rproc_vq_interrupt().
-> >   */
-> >  struct rproc_ops {
-> >  	int (*prepare)(struct rproc *rproc);
-> > @@ -403,6 +406,7 @@ struct rproc_ops {
-> >  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware
-> > *fw);
-> >  	unsigned long (*panic)(struct rproc *rproc);
-> >  	void (*coredump)(struct rproc *rproc);
-> > +	void (*synchronize_vqs)(struct rproc *rproc);
-> >  };
-> >  
-> >  /**
+Thanks & Regards,
+Wasim
+> 
+> Regards,
+> Bjorn
+> 
+> > +
+> > +# Test 1
+> > +ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
+> > +for instance in ${rproc_instances}; do
+> > +	rproc_seq_test_instance_one $instance
+> > +done
+> > +
+> > +# Test 2
+> > +ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
+> > +rproc_seq_test_instances_concurrently
+> > +
+> > +# Restore all instances
+> > +rproc_start_instances
+> > +
+> > +ktap_finished
+> > --
+> > 2.46.1
+> > 
 > 
