@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75821213EC8;
-	Fri,  4 Oct 2024 18:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F4D2204D1;
+	Fri,  4 Oct 2024 18:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066487; cv=none; b=oWn6yLXftMHUfBbX2zcvWuD2ivRSM6lPtSpc6peTbfnJ1H0h1D+kWRkEWtwBNBRBXr47h0huOPASVAeOs0giAG0exLepoUlE0U7KsFNwyyZWje/epASXre+yUeW8grWkC3GZw0Qh+7EHPPOwLMte0rlV4zPmzeG+T2bwhUYRIdE=
+	t=1728066574; cv=none; b=h05wKDtwrYgmKY46Xpz6Vay+qWPRRdNv4SdkBFn2tZ1eiLbfIDUyCx7kRBCM03C9kgfS+BH3bCG0/1oR8V7S547gAZ3cBt7gQi+Ed6/lDKVVdBdXw2ztQcY1ZtMgmLVJd0x/hubWIxnL0NFzH0JAlKSwZ6YkpMnA7viDWVVk6Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066487; c=relaxed/simple;
-	bh=JOh76tM1p/updAL5Reemuyb2zpjgUR4jmSjGWvyo70c=;
+	s=arc-20240116; t=1728066574; c=relaxed/simple;
+	bh=Dblni4K5wNZD0UVUM/ESMLDn32H7O/DhASbYm1NOOgE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uADxCFkCxU8nPIiCqMuF4VtWuvphSipr/3TMTZg5mSkbYQ6zUu0ymRkNET5cX12NBVnojSdmGJn9TG3/aVi1laicaajht1vJf+J8OQDX29j6d9lJ7Y4+G9rKNtx2Svg7vTC76lkm03n0iBczPNPTjwBdO5x6gbEZUDoZ3WwKoFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRfdi57b; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=a3hvApPXJrnrtPWy8ALYNBZtBjTD/jqNRESjDbx/MnttgXQUnAmOBHwsYPzFH/dtqqyiISPesrFq83IYZm3CcuYF61PQZNbIEeWrjnTHulkoGCIWn9a0mkry+vB8uCwk9vc7Q6XCI9u2Or/aNZZJ2jExlcEM7+jrv4ogFCNdyOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgFcMXEt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRfdi57b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1663CC4CEC6;
-	Fri,  4 Oct 2024 18:28:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgFcMXEt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1337EC4CECC;
+	Fri,  4 Oct 2024 18:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066487;
-	bh=JOh76tM1p/updAL5Reemuyb2zpjgUR4jmSjGWvyo70c=;
+	s=k20201202; t=1728066574;
+	bh=Dblni4K5wNZD0UVUM/ESMLDn32H7O/DhASbYm1NOOgE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cRfdi57bwry5MHo3sMFwRV3oEnAVd9reDVs4/9fY6SyC2LrUu3nhRR0+vY2zyDLKp
-	 RFlHJt5JLyE7uP9R66zif41qujpFGYVAPLMoa7ip5sY7UvSpoWOaTCw/lTiV8uVIS+
-	 o1totaOy32WrIla0wJbOg6pOZ32XhWMOP6PWTsLBhVQ2xpUuDK7iQTqx3f5xFcU+Ht
-	 E3XpsiFsxg5EVEtSXZjjj5/jj6+73EPbV94IFQcPtTfRaax128y/6e1Ygp6IDLriUG
-	 XMf4xtbP3c6E8hy0WmjEfCYT5DavSgSKLEmq0a4I0koJEY4pIBuEOkkg46CjpmROuv
-	 a39GS6MU1oGJw==
+	b=SgFcMXEtGOUiJFGGL0ZM9WXrtzZNdZ+Qc00ZdqkFRDNgIFrw6vrPlRNE5oDT4DFIx
+	 ma9RKwf4OUfoH1NFjDMn8cZTVw4OnoZqyD5NbdZ0Kv0tMgYKnfc5aG7iJ9kc99xhkb
+	 CUldvnToYkh4cnE3IzVCQ0UM6W/SGj3rgB9M3ufWfAr2/rW7Ymlr0mYnJHAlZ55Lta
+	 GFpB9ODDvc7pDsaht2HW2rVnGK3+q5k7EsoZGN8NFwYl6Qh+lLrWDekf2XUXXJHmjM
+	 hkMsHn81w6s5fVyEJxnFhEH8fhskO2OVXICJamafPx+2DzGO1SvFyRzURgn/Y4mmO0
+	 I5FiXIb7A7r6w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Peng Fan <peng.fan@nxp.com>,
 	linux-remoteproc@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 27/42] remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table
-Date: Fri,  4 Oct 2024 14:26:38 -0400
-Message-ID: <20241004182718.3673735-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 22/31] remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table
+Date: Fri,  4 Oct 2024 14:28:30 -0400
+Message-ID: <20241004182854.3674661-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182718.3673735-1-sashal@kernel.org>
-References: <20241004182718.3673735-1-sashal@kernel.org>
+In-Reply-To: <20241004182854.3674661-1-sashal@kernel.org>
+References: <20241004182854.3674661-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.112
+X-stable-base: Linux 5.15.167
 Content-Transfer-Encoding: 8bit
 
 From: Peng Fan <peng.fan@nxp.com>
@@ -86,10 +86,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index bc26fe5416627..0154846c42667 100644
+index d5ce97e75f027..ae8b64ac12fd9 100644
 --- a/drivers/remoteproc/imx_rproc.c
 +++ b/drivers/remoteproc/imx_rproc.c
-@@ -537,6 +537,17 @@ static struct resource_table *imx_rproc_get_loaded_rsc_table(struct rproc *rproc
+@@ -529,6 +529,17 @@ static struct resource_table *imx_rproc_get_loaded_rsc_table(struct rproc *rproc
  	return (struct resource_table *)priv->rsc_table;
  }
  
@@ -107,7 +107,7 @@ index bc26fe5416627..0154846c42667 100644
  static const struct rproc_ops imx_rproc_ops = {
  	.prepare	= imx_rproc_prepare,
  	.attach		= imx_rproc_attach,
-@@ -546,7 +557,7 @@ static const struct rproc_ops imx_rproc_ops = {
+@@ -538,7 +549,7 @@ static const struct rproc_ops imx_rproc_ops = {
  	.da_to_va       = imx_rproc_da_to_va,
  	.load		= rproc_elf_load_segments,
  	.parse_fw	= imx_rproc_parse_fw,
