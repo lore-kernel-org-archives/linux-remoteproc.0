@@ -1,121 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F4D2204D1;
-	Fri,  4 Oct 2024 18:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841321448C1;
+	Fri,  4 Oct 2024 21:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066574; cv=none; b=h05wKDtwrYgmKY46Xpz6Vay+qWPRRdNv4SdkBFn2tZ1eiLbfIDUyCx7kRBCM03C9kgfS+BH3bCG0/1oR8V7S547gAZ3cBt7gQi+Ed6/lDKVVdBdXw2ztQcY1ZtMgmLVJd0x/hubWIxnL0NFzH0JAlKSwZ6YkpMnA7viDWVVk6Iw=
+	t=1728077062; cv=none; b=DR100NvRXnGDk3Hqnmf8oV7vcv5ij/RKOy6rsHTstqxeRI7lZr6dYvjDObbpcNb4WJEruMbQusAksS1UsYThxL+Y8GLG9ejU0n+x8x4Y1MJhkEOQEWMEwO1Yh51DTyMbZ0CITGMylFoxUL4WzSpcAZZxE4e3j1LNNZKNjmGFVTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066574; c=relaxed/simple;
-	bh=Dblni4K5wNZD0UVUM/ESMLDn32H7O/DhASbYm1NOOgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a3hvApPXJrnrtPWy8ALYNBZtBjTD/jqNRESjDbx/MnttgXQUnAmOBHwsYPzFH/dtqqyiISPesrFq83IYZm3CcuYF61PQZNbIEeWrjnTHulkoGCIWn9a0mkry+vB8uCwk9vc7Q6XCI9u2Or/aNZZJ2jExlcEM7+jrv4ogFCNdyOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgFcMXEt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728077062; c=relaxed/simple;
+	bh=UPMCm5/nObHAr3O0W/7izltX4pJE/zinQhH+qCjfW2s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gXST+FprGsBJRUU6e2Yqac40IV81X3ay9G6Z/8AMlcQ1ctouaApLwSJr2OcIOPtVg48QBcAE7LltL25gCMr2JLpeQsyVLGp49GplkW0pNNyDOlXT/GBjEx9QXba7dFXvO5ARpQpIBL1PnN7F5c/IAThdUpxmb3pJL7dKNy0PAe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I9GFOTkn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgFcMXEt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1337EC4CECC;
-	Fri,  4 Oct 2024 18:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066574;
-	bh=Dblni4K5wNZD0UVUM/ESMLDn32H7O/DhASbYm1NOOgE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SgFcMXEtGOUiJFGGL0ZM9WXrtzZNdZ+Qc00ZdqkFRDNgIFrw6vrPlRNE5oDT4DFIx
-	 ma9RKwf4OUfoH1NFjDMn8cZTVw4OnoZqyD5NbdZ0Kv0tMgYKnfc5aG7iJ9kc99xhkb
-	 CUldvnToYkh4cnE3IzVCQ0UM6W/SGj3rgB9M3ufWfAr2/rW7Ymlr0mYnJHAlZ55Lta
-	 GFpB9ODDvc7pDsaht2HW2rVnGK3+q5k7EsoZGN8NFwYl6Qh+lLrWDekf2XUXXJHmjM
-	 hkMsHn81w6s5fVyEJxnFhEH8fhskO2OVXICJamafPx+2DzGO1SvFyRzURgn/Y4mmO0
-	 I5FiXIb7A7r6w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	andersson@kernel.org,
-	shawnguo@kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 22/31] remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table
-Date: Fri,  4 Oct 2024 14:28:30 -0400
-Message-ID: <20241004182854.3674661-22-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182854.3674661-1-sashal@kernel.org>
-References: <20241004182854.3674661-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I9GFOTkn"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494BHOBu029872;
+	Fri, 4 Oct 2024 21:24:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=2VIyCbs4MZo06o5b0xKA14
+	avwyYYm7KQiJNv/fQaSaw=; b=I9GFOTknZyuMsqbBeY4xxYMdw4gbWts8vOnI74
+	pev1YharhkexVj8brT10zU5M0ktQJWBxBQ3sixX/7Fgg9d7RjmrWXPErQX+DlWvu
+	AAZYmY6YiO0ogs9KbqmPqo6Sk2TYp1TRUK8znlSGOEb8wLNVKhurNycGr9z7Rbx1
+	Uosf3jrASv/d/nr8Vuvn72ZLHHwnZgPsH+Z09PodhNTm5KbTX5jmLcRvrBss1g+1
+	9TMO3EvoHxvL/OL9TNQdnuhViy6x1XgrCVSexPvFjom8A08DXN9s0GDzEe7pmMHk
+	V/PDSGKHcG2B5kqpoH5AhHpbBXHdA8f4XX+DP8cQqI6x76oA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205nk8yp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Oct 2024 21:24:15 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494LOD8N028159
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Oct 2024 21:24:13 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 4 Oct 2024 14:24:09 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mukesh Ojha
+	<quic_mojha@quicinc.com>
+Subject: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
+Date: Sat, 5 Oct 2024 02:53:53 +0530
+Message-ID: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.167
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 77EW0ClZU_1vDkGcOli7ads2nLVa1IT7
+X-Proofpoint-ORIG-GUID: 77EW0ClZU_1vDkGcOli7ads2nLVa1IT7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 clxscore=1011 phishscore=0 adultscore=0
+ spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410040148
 
-From: Peng Fan <peng.fan@nxp.com>
+Qualcomm is looking to enable remote processors on the SA8775p SoC
+running KVM Linux host and is currently trying to figure out an
+upstream-compatible solution for the IOMMU translation scheme problem it
+is facing when SoCs running with KVM. This issue arises due to
+differences in how IOMMU translation is currently handled on SoCs
+running Qualcomm EL2 hypervisor(QHEE) where IOMMU translation for any
+device is completely owned by it and the other issue is that remote
+processors firmware does not contain resource table where these IOMMU
+configuration setting will be present.
 
-[ Upstream commit e954a1bd16102abc800629f9900715d8ec4c3130 ]
+Qualcomm SoCs running with the QHEE(EL2) have been utilizing the
+Peripheral Authentication Service (PAS) from its TrustZone (TZ) firmware
+to securely authenticate and reset via a single SMC call
+_auth_and_reset_.  This call first gets trapped to QHEE, which then
+makes a call to TZ for authentication. Once it is done, the call returns
+to QHEE, which sets up the IOMMU translation scheme for these remote
+processors and later brings them out of reset. The design of the
+Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+is not allowed to set up IOMMU translation for remote processors,
+and only a single stage is being configured for them.
 
-If there is a resource table device tree node, use the address as
-the resource table address, otherwise use the address(where
-.resource_table section loaded) inside the Cortex-M elf file.
+To make the remote processors’ bring-up (PAS) sequence
+hypervisor-independent, the auth_and_reset SMC call is now entirely
+handled by TZ. However, the problem of IOMMU handling still remains with
+the KVM host, which has no knowledge of the remote processors’ IOMMU
+configuration.
 
-And there is an update in NXP SDK that Resource Domain Control(RDC)
-enabled to protect TCM, linux not able to write the TCM space when
-updating resource table status and cause kernel dump. So use the address
-from device tree could avoid kernel dump.
+We have looked up one approach where SoC remoteproc device tree could
+contain resources like iommus for remoteproc carveout and qcom,devmem
+specific binding for device memory needed for remoteproc and these
+properties are optional and will only be overlaid by the firmware if it
+is running with non-QHEE based hypervisor like KVM.
 
-Note: NXP M4 SDK not check resource table update, so it does not matter
-use whether resource table address specified in elf file or in device
-tree. But to reflect the fact that if people specific resource table
-address in device tree, it means people are aware and going to use it,
-not the address specified in elf file.
+- Patch 1/6 adds the iommus and qcom,devmem binding for PAS common yaml.
+- Patch 2/6 and 3/6 add helper function to IOMMU map and unmap carveout
+  and device memory region.
+- Patch 4/6 adds a function to parse individual field of qcom,devmem property.
+- Patch 5/6 add helpers to create/destroy SHM bridge for remoteproc
+  carveout and to get memory from tzmem SHM bridge pool for remoteproc
+  firmware metadata.
+- Patch 6/6 enable all the required support to enable remoteproc for
+  non-QHEE hypervisor based systems like KVM host via parsing the iommus
+  properties and mapping/unmapping carveout and device memory based on
+  it.
 
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/20240719-imx_rproc-v2-2-10d0268c7eb1@nxp.com
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/remoteproc/imx_rproc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Komal Bajaj (1):
+  remoteproc: qcom: Add iommu map_unmap helper function
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index d5ce97e75f027..ae8b64ac12fd9 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -529,6 +529,17 @@ static struct resource_table *imx_rproc_get_loaded_rsc_table(struct rproc *rproc
- 	return (struct resource_table *)priv->rsc_table;
- }
- 
-+static struct resource_table *
-+imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct imx_rproc *priv = rproc->priv;
-+
-+	if (priv->rsc_table)
-+		return (struct resource_table *)priv->rsc_table;
-+
-+	return rproc_elf_find_loaded_rsc_table(rproc, fw);
-+}
-+
- static const struct rproc_ops imx_rproc_ops = {
- 	.prepare	= imx_rproc_prepare,
- 	.attach		= imx_rproc_attach,
-@@ -538,7 +549,7 @@ static const struct rproc_ops imx_rproc_ops = {
- 	.da_to_va       = imx_rproc_da_to_va,
- 	.load		= rproc_elf_load_segments,
- 	.parse_fw	= imx_rproc_parse_fw,
--	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-+	.find_loaded_rsc_table = imx_rproc_elf_find_loaded_rsc_table,
- 	.get_loaded_rsc_table = imx_rproc_get_loaded_rsc_table,
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
+Mukesh Ojha (2):
+  remoteproc: qcom: Add support of SHM bridge to enable memory
+    protection
+  remoteproc: qcom: Enable map/unmap and SHM bridge support
+
+Shiraz Hashim (3):
+  dt-bindings: remoteproc: qcom,pas-common: Introduce iommus and
+    qcom,devmem property
+  remoteproc: qcom: Add helper function to support IOMMU devmem
+    translation
+  remoteproc: qcom: Add support to parse qcom,devmem property
+
+ .../bindings/remoteproc/qcom,pas-common.yaml  |  42 +++++
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml |  20 +++
+ drivers/firmware/qcom/qcom_scm.c              |  29 +++-
+ drivers/firmware/qcom/qcom_tzmem.c            |  14 +-
+ drivers/remoteproc/qcom_common.c              | 148 ++++++++++++++++++
+ drivers/remoteproc/qcom_common.h              |  38 +++++
+ drivers/remoteproc/qcom_q6v5_pas.c            | 140 ++++++++++++++++-
+ include/linux/firmware/qcom/qcom_scm.h        |   1 +
+ include/linux/firmware/qcom/qcom_tzmem.h      |  10 ++
+ 9 files changed, 423 insertions(+), 19 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
