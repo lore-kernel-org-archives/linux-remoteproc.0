@@ -1,91 +1,132 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2686C231CB1;
-	Fri,  4 Oct 2024 21:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC74716C6B7;
+	Sat,  5 Oct 2024 22:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728078019; cv=none; b=nP5R+HnVqcEk16aaBNUBSXFZIzB5rEuqkAVGAMnxH6AKb/WUXY7UMiUPtKgdMsUMC/vHX4JmnwLeKSEaRWaEL7iRZA8GOYOj6vZMaeeN/rtdISUuayWejtJj3saBg5zQOeINZjAjxWX/cm2MtaLFzfkCaedFBFev/keoOPNJyVo=
+	t=1728167194; cv=none; b=QjFrekLkhcQ6YS+naOgplnlY6j+YdQpMH8RZwbdAnUKYFDNqDtCNPb0ArJDo1Odssh1ko9c0VR5aiv26cJb5KUCkUoL/20T3PmjjAacGyD98CODcuaDAIBM/1WMXj4t0WfJ/oykv1ab9a7DtdFk5v9HC5zA/AnoOJDmHWk9dwhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728078019; c=relaxed/simple;
-	bh=JOl/MNmZSJ67n7It5Xw1wfunsJqzofFETO4zf4slRE8=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p5hs0LOp65CCJ8tApAQWSH/5nxi3lJbuKhjdCB+BMbZ3u9grckdUxQ8Z3DyMvdDwe6DujWcuUgcjkmUjRmoWVn5gNwTanYS/xABeUc2z1o8lO+VUcW1Q21hMrcBPYw5gUQfLm6THR4x6aHIptr16LF5AOhwnwKDl+ZzXdbDAuXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JU/awhzY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1728167194; c=relaxed/simple;
+	bh=DHSscCfjou4BLoP5vE9J6eNZoUi4zFrPpOyrgBRmEuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIRKeAzZh4nqzmYiqtJM2CTQEdoPfJxZwntlyV6iwUWWA+o6fb5f9OSlPF5Oy/tv/f/7S6lMsA1a5zelHd7ipm2bpboNqnsMMtTvZUy+ds4OT7oHKmfSHVsJCJ/8JwKq/RAir+GFLMKQUFdv34DTNnCRA7F0ty/LoESDXpT712U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVs4xsl8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JU/awhzY"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 494AXrWb025676;
-	Fri, 4 Oct 2024 21:40:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=JOl/MNmZSJ67n7It5Xw1wfunsJqzofFETO4zf4slRE8=; b=JU
-	/awhzYIU2963RaeQWpT416xSdXR8fTD2TPlmkZBnx6lNtMveAhyevj5jtE5JGft4
-	m6ToYELQuYAE3q+r/oqIeirMpgCvl+tMNmPKep2ZSw7ZND/2vBRIYN8kFs+6Xf/o
-	+snNn8hc5aFuUpY2rilmy4kmu1cZ/oD1egElJeTkAvva73/kG3HkhMA4YNGWWg5e
-	TTOBYK3wAwTCYAMkKTxjnPEl9dmM9j4QzBbhKzMXsANJrmqHh9KmDuzHugEUMTe4
-	oYypIew/tqasXVjN7geDz99kQOKJUN0SqJD+lGYQ0j5TW2iGnFmjm2k/fGQS3UvH
-	mVDmr3vgV29Sj5OBmW3w==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205kkagg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Oct 2024 21:40:14 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 494LeEbO018432
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Oct 2024 21:40:14 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 4 Oct 2024 14:40:10 -0700
-Date: Sat, 5 Oct 2024 03:10:07 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad
- Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
-Message-ID: <ZwBgt+9pAyHGDFOI@hu-mojha-hyd.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVs4xsl8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728167193; x=1759703193;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DHSscCfjou4BLoP5vE9J6eNZoUi4zFrPpOyrgBRmEuE=;
+  b=JVs4xsl8gqLAvF6r0W68bCt0h3oTYpQEKnCj9g5NWvIrPchzbPYgolNy
+   CmEMRgtwzcNAmD8mGOib2lW0bL0hGaBdAHdumet5lKJcz8Bo6bF0bVr6Z
+   RMLjnHpcqf56/hAPaXPFYDNbiciF7nK2ZswuBYMxn3f3h0hmODH+v2lfg
+   cN+SATEs5N3kcRMQZD/4QUiXoWvN6VFtQcI2AbdRNUyxfD6+AwrxdjOkI
+   GfjU0XKqIde0/U8E9RVn13x0NrRfPqCDcstBapX0RSnBsHr6QJgHpfE7f
+   1q2EJSamB9k3zuC4kUZSR40k6+q8sBg2nDpTzs7Vxg5K5NKuQf1KFa8dj
+   w==;
+X-CSE-ConnectionGUID: B/Eup9CTRmeKBTAZj6W4Hw==
+X-CSE-MsgGUID: 3LXfyDz1TPCdojVKnCAijw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27446866"
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="27446866"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 15:26:32 -0700
+X-CSE-ConnectionGUID: TTLS3rceRyyIZ3qh+4ehwQ==
+X-CSE-MsgGUID: 0Pc0HiPvSg+vP+iFAGYCoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
+   d="scan'208";a="80025740"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 05 Oct 2024 15:26:29 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sxDEI-0003PU-30;
+	Sat, 05 Oct 2024 22:26:26 +0000
+Date: Sun, 6 Oct 2024 06:26:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: Re: [PATCH 5/6] remoteproc: qcom: Add support of SHM bridge to
+ enable memory protection
+Message-ID: <202410060641.ZedzhoKd-lkp@intel.com>
+References: <20241004212359.2263502-6-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mGVC_yWuGGvKU5FHqR3gW17wNMJKnDfy
-X-Proofpoint-GUID: mGVC_yWuGGvKU5FHqR3gW17wNMJKnDfy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=533
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410040150
+In-Reply-To: <20241004212359.2263502-6-quic_mojha@quicinc.com>
 
-Subject got wrapped and later part got ignored,
-Quoting it again here for reference.
+Hi Mukesh,
 
-"Peripheral Image Loader support for Qualcomm SoCs on KVM host system"
+kernel test robot noticed the following build errors:
 
--Mukesh
+[auto build test ERROR on remoteproc/rproc-next]
+[also build test ERROR on robh/for-next linus/master v6.12-rc1 next-20241004]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-common-Introduce-iommus-and-qcom-devmem-property/20241005-052733
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20241004212359.2263502-6-quic_mojha%40quicinc.com
+patch subject: [PATCH 5/6] remoteproc: qcom: Add support of SHM bridge to enable memory protection
+config: arc-randconfig-001-20241006 (https://download.01.org/0day-ci/archive/20241006/202410060641.ZedzhoKd-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410060641.ZedzhoKd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410060641.ZedzhoKd-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/firmware/qcom/qcom_tzmem.c:50:12: error: static declaration of 'qcom_tzmem_init_area' follows non-static declaration
+      50 | static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+         |            ^~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/firmware/qcom/qcom_tzmem.c:12:
+   include/linux/firmware/qcom/qcom_tzmem.h:59:5: note: previous declaration of 'qcom_tzmem_init_area' with type 'int(struct qcom_tzmem_area *)'
+      59 | int qcom_tzmem_init_area(struct qcom_tzmem_area *area);
+         |     ^~~~~~~~~~~~~~~~~~~~
+>> drivers/firmware/qcom/qcom_tzmem.c:55:13: error: static declaration of 'qcom_tzmem_cleanup_area' follows non-static declaration
+      55 | static void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/firmware/qcom/qcom_tzmem.h:60:6: note: previous declaration of 'qcom_tzmem_cleanup_area' with type 'void(struct qcom_tzmem_area *)'
+      60 | void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area);
+         |      ^~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/qcom_tzmem_init_area +50 drivers/firmware/qcom/qcom_tzmem.c
+
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  49  
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27 @50  static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  51  {
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  52  	return 0;
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  53  }
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  54  
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27 @55  static void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area)
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  56  {
+84f5a7b67b61bf Bartosz Golaszewski 2024-05-27  57  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
