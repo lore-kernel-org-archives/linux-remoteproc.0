@@ -1,170 +1,161 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9EF250F8;
-	Sun,  6 Oct 2024 04:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F5D189BA0
+	for <linux-remoteproc@vger.kernel.org>; Sun,  6 Oct 2024 19:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728188991; cv=none; b=UQLD/uRNZHA3c6bENsWy7RbdLL/I5SHII7wODMNwP3Thd9KU92OKaR6aFx+eLsQ3c+7GgmyeyTd8dWyUxtXl0KVtDYu4ynTy1Wmqn0ZTRGpXEcql/rVGMK/7sw4XoPR1s2Morz0/gV+bvmJRcTNZYvLq3dfTZAD3GwdJeAvWvN8=
+	t=1728243266; cv=none; b=Xu1sDGTCoIqlpxhTTCXEBcZDjTRsADqk/hogfojuxARJxFmG9j28j5YZNKabmdPqrrXp6mDXSQk/Nid6cL5xBAY0+LDnV3KtLJq7hsQCVqnM1DwcqnVU6qGnkqIhQ5fGB1jwPOKoN2nEXS8qUCST4efa+L+Nbuh3rARNUybFm5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728188991; c=relaxed/simple;
-	bh=RPqJD/C7y0gBMClUK33fxbnxtlFlwArlCPQ7Hdm4OyY=;
+	s=arc-20240116; t=1728243266; c=relaxed/simple;
+	bh=yPzaunxJaneO/099P+GEkSWTX5DT9FS9497uaVPrAtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfiJeBuhOGaJEwaURXw9HdTHtAWRZi4hnCulTEW/cAudJ1MZ79grl90DSKwqxhVToNb2M8RMwBSwmupZ1e+Fdkpdo2mNw/X1uZ9KlmjEhP6TlG8W8kkMm/Zg73jmI5tUoKgh6RKPMc0nJSXYKZMjdKlK8D8gv+y8zFpP5RPJ/FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mu7lKPiA; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ag6ECPTC5/7lHjdvAALogJqUdLywkoDqOOl7pBHOwN4GPSaFTvn5gDqqo6qQmOvpkV4JcoeuZZjk+SBPabx9OU190IMJbVyh8e/zkPOJWf+y4KchaVWkMRelyAKtiw9S1aNIIc6RpzSAMb64QA0CjVFoMVWlxvTRke1YBG38XY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hl20Dg0P; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mu7lKPiA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728188990; x=1759724990;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RPqJD/C7y0gBMClUK33fxbnxtlFlwArlCPQ7Hdm4OyY=;
-  b=Mu7lKPiA7FkX3nHz6Ood5nztJ7Le9vkVwhYYEGon+EkwGVbpYT9G0Ac8
-   JV84oxpDeLy54oqc8H0KcsWyVFv7SLyjHBi7mcHjLN42IMuZh367UcrE5
-   zd6s+GMrCFPxfLeNo2imYpa5hNazFqQ8msKrAImKSkZEvRd3LGgbnJWW7
-   fTUCtjt4xc9e01i+gJa31FSwj+/qakGze537PcEBOZ8JZpnGTZ2xFHhCg
-   btEsx1XeuuR+7hUS0VuUoUpRj3edzb8/0UWO45kJzCAogU+1KglREyusV
-   vZhCYMOcnbCEf/XzoafJqYZB/eRvxy7kNzG3DIfVssbNVEvYA/OoIY9+I
-   A==;
-X-CSE-ConnectionGUID: cT2WKGpcRCCeoLya1BvUMA==
-X-CSE-MsgGUID: NKMHiEqlRBKtUA1kMePKQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11216"; a="27539417"
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="27539417"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2024 21:29:49 -0700
-X-CSE-ConnectionGUID: kPUeUwsyT8iIGdo58i9b1w==
-X-CSE-MsgGUID: VgY47a4iQBaGQv9wsSYbzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,181,1725346800"; 
-   d="scan'208";a="75549317"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 05 Oct 2024 21:29:46 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sxItr-0003b6-1R;
-	Sun, 06 Oct 2024 04:29:43 +0000
-Date: Sun, 6 Oct 2024 12:29:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Komal Bajaj <quic_kbajaj@quicinc.com>,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: Re: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
-Message-ID: <202410061256.KV3EbD7H-lkp@intel.com>
-References: <20241004212359.2263502-3-quic_mojha@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hl20Dg0P"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so4463532e87.3
+        for <linux-remoteproc@vger.kernel.org>; Sun, 06 Oct 2024 12:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728243263; x=1728848063; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R8q3dDlB0727MfbgdMqebUn7s4vTdoYhqoyoWQRyPuQ=;
+        b=hl20Dg0PCCmnBMmkC+uVKHpGe0VrhmXiIMXJ4pBoYejM+4tDCUzPsPs8uCmF8PR/9+
+         Y9TeMWJ4T5JIsiQf+P4gTsv1NfkzgJWL/Jfb4arxf3JkyCrlA3e39qssAB5F+mej/uNj
+         ROlNJm/rXp7i/Z+RJkCqpX/BpcDQHFMuyqG4nrKtcjsk5Mr9B4ThvQrLUJwYjYDXu85U
+         dGhoawpbiHPK+4M8qDe4sZxH09yJviKE0SFmO/thN0qfXJ3IOZlfSHBWZeGb2ysqBkA6
+         UOq2tr8FyFsWAnA5gN39kCVxMSZqVDMx41PMSMIzfkj3Eo56WBCNIfPdEtiYd79iSMNo
+         1vCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728243263; x=1728848063;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R8q3dDlB0727MfbgdMqebUn7s4vTdoYhqoyoWQRyPuQ=;
+        b=Wrt2FYLMd/jQB3Jpdd8DXr4flV8B7nFtagbNJtpTd5Bqn/zq2mpOr7VW25M7ZwG8Ub
+         hyCWLeu+7tQS7RgHuVOjfq6LbbA9U4nZ4d0Q9FumEMNZgkf+QMwQlrWLlmdtaOo0FnXn
+         NL4jxsda30Lr9WtnVu/Y1KumEZQXOQe/s+jGAeMv9MmXCkUUi6anAlc6GlNn0nd1JAnn
+         hDSZ5VMEnSOJT6HbSCNq8BVxhULhSPamzyX0Sx3FhQvC8ny1n7bJ0h47VxMPgxjmeVvc
+         /l24/F7RXVLGB62/Lw/9Mq0F1JfoxOB4qZ9srDBtpTRCyhUIjYZ0W/A0mFvtgdkQeRS0
+         E39A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUWMaZi5wt/wdaNT+arowBDFG/MIk2agHi+NUfAZQUHlVRSSn0qqRz9NYRAD02T4LcEiKU9MXxMjdWv/tQvy0u@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwfyOnm2qZWSUoRYC5HOpcqYVLvKSxaqvHW9ZGHLvxLhSRPnHG
+	jz6cVdVveuk7UjNn7gwqBxfVD1WLQT1xHqmV4Bf/cxduX741d6F3UnALYRWhXZM=
+X-Google-Smtp-Source: AGHT+IFoPrYElR5M4WSqZpXWHN+3fySqpZ3zqAu1PEK8VTNMZekBd0rQ4ZV63xcbV97yoSotb4lYPA==
+X-Received: by 2002:a05:6512:3b21:b0:535:45d2:abf0 with SMTP id 2adb3069b0e04-539ab8adcb6mr4175272e87.39.1728243262892;
+        Sun, 06 Oct 2024 12:34:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff2831fsm607332e87.264.2024.10.06.12.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2024 12:34:21 -0700 (PDT)
+Date: Sun, 6 Oct 2024 22:34:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
+Message-ID: <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241004212359.2263502-3-quic_mojha@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241004212359.2263502-1-quic_mojha@quicinc.com>
 
-Hi Mukesh,
+On Sat, Oct 05, 2024 at 02:53:53AM GMT, Mukesh Ojha wrote:
+> Qualcomm is looking to enable remote processors on the SA8775p SoC
+> running KVM Linux host and is currently trying to figure out an
+> upstream-compatible solution for the IOMMU translation scheme problem it
+> is facing when SoCs running with KVM. This issue arises due to
+> differences in how IOMMU translation is currently handled on SoCs
+> running Qualcomm EL2 hypervisor(QHEE) where IOMMU translation for any
+> device is completely owned by it and the other issue is that remote
+> processors firmware does not contain resource table where these IOMMU
+> configuration setting will be present.
+> 
+> Qualcomm SoCs running with the QHEE(EL2) have been utilizing the
+> Peripheral Authentication Service (PAS) from its TrustZone (TZ) firmware
+> to securely authenticate and reset via a single SMC call
+> _auth_and_reset_.  This call first gets trapped to QHEE, which then
+> makes a call to TZ for authentication. Once it is done, the call returns
+> to QHEE, which sets up the IOMMU translation scheme for these remote
+> processors and later brings them out of reset. The design of the
+> Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> is not allowed to set up IOMMU translation for remote processors,
+> and only a single stage is being configured for them.
+> 
+> To make the remote processors’ bring-up (PAS) sequence
+> hypervisor-independent, the auth_and_reset SMC call is now entirely
+> handled by TZ. However, the problem of IOMMU handling still remains with
+> the KVM host, which has no knowledge of the remote processors’ IOMMU
+> configuration.
+> 
+> We have looked up one approach where SoC remoteproc device tree could
+> contain resources like iommus for remoteproc carveout and qcom,devmem
+> specific binding for device memory needed for remoteproc and these
+> properties are optional and will only be overlaid by the firmware if it
+> is running with non-QHEE based hypervisor like KVM.
 
-kernel test robot noticed the following build warnings:
+Can you follow the approach that has been implemented for existing
+systems (ChromeOS) not using QHEE? See drivers/remoteproc/qcom_q6v5_adsp.c
+If this approach can not be used, please describe why.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on robh/for-next linus/master v6.12-rc1 next-20241004]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-common-Introduce-iommus-and-qcom-devmem-property/20241005-052733
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20241004212359.2263502-3-quic_mojha%40quicinc.com
-patch subject: [PATCH 2/6] remoteproc: qcom: Add iommu map_unmap helper function
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20241006/202410061256.KV3EbD7H-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241006/202410061256.KV3EbD7H-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410061256.KV3EbD7H-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/remoteproc/qcom_common.c: In function 'qcom_map_unmap_carveout':
->> drivers/remoteproc/qcom_common.c:645:38: warning: left shift count >= width of type [-Wshift-count-overflow]
-     645 |                 iova |= (sid_def_val << 32);
-         |                                      ^~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +645 drivers/remoteproc/qcom_common.c
-
-   611	
-   612	/**
-   613	 * qcom_map_unmap_carveout() - iommu map and unmap carveout region
-   614	 *
-   615	 * @rproc:	rproc handle
-   616	 * @mem_phys:	starting physical address of carveout region
-   617	 * @mem_size:	size of carveout region
-   618	 * @map:	if true, map otherwise, unmap
-   619	 * @use_sid:	decision to append sid to iova
-   620	 * @sid:	SID value
-   621	 */
-   622	int qcom_map_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t mem_size,
-   623				    bool map, bool use_sid, unsigned long sid)
-   624	{
-   625		unsigned long iova = mem_phys;
-   626		unsigned long sid_def_val;
-   627		int ret;
-   628	
-   629		if (!rproc->has_iommu)
-   630			return 0;
-   631	
-   632		if (!rproc->domain)
-   633			return -EINVAL;
-   634	
-   635		/*
-   636		 * Remote processor like ADSP supports upto 36 bit device
-   637		 * address space and some of its clients like fastrpc uses
-   638		 * upper 32-35 bits to keep lower 4 bits of its SID to use
-   639		 * larger address space. To keep this consistent across other
-   640		 * use cases add remoteproc SID configuration for firmware
-   641		 * to IOMMU for carveouts.
-   642		 */
-   643		if (use_sid && sid) {
-   644			sid_def_val = sid & SID_MASK_DEFAULT;
- > 645			iova |= (sid_def_val << 32);
-   646		}
-   647	
-   648		if (map)
-   649			ret = iommu_map(rproc->domain, iova, mem_phys, mem_size, IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
-   650		else
-   651			ret = iommu_unmap(rproc->domain, iova, mem_size);
-   652	
-   653		if (ret)
-   654			dev_err(&rproc->dev, "Unable to %s IOVA Memory, ret: %d\n",
-   655				map ? "map" : "unmap", ret);
-   656	
-   657		return ret;
-   658	}
-   659	EXPORT_SYMBOL_GPL(qcom_map_unmap_carveout);
-   660	
+> 
+> - Patch 1/6 adds the iommus and qcom,devmem binding for PAS common yaml.
+> - Patch 2/6 and 3/6 add helper function to IOMMU map and unmap carveout
+>   and device memory region.
+> - Patch 4/6 adds a function to parse individual field of qcom,devmem property.
+> - Patch 5/6 add helpers to create/destroy SHM bridge for remoteproc
+>   carveout and to get memory from tzmem SHM bridge pool for remoteproc
+>   firmware metadata.
+> - Patch 6/6 enable all the required support to enable remoteproc for
+>   non-QHEE hypervisor based systems like KVM host via parsing the iommus
+>   properties and mapping/unmapping carveout and device memory based on
+>   it.
+> 
+> Komal Bajaj (1):
+>   remoteproc: qcom: Add iommu map_unmap helper function
+> 
+> Mukesh Ojha (2):
+>   remoteproc: qcom: Add support of SHM bridge to enable memory
+>     protection
+>   remoteproc: qcom: Enable map/unmap and SHM bridge support
+> 
+> Shiraz Hashim (3):
+>   dt-bindings: remoteproc: qcom,pas-common: Introduce iommus and
+>     qcom,devmem property
+>   remoteproc: qcom: Add helper function to support IOMMU devmem
+>     translation
+>   remoteproc: qcom: Add support to parse qcom,devmem property
+> 
+>  .../bindings/remoteproc/qcom,pas-common.yaml  |  42 +++++
+>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml |  20 +++
+>  drivers/firmware/qcom/qcom_scm.c              |  29 +++-
+>  drivers/firmware/qcom/qcom_tzmem.c            |  14 +-
+>  drivers/remoteproc/qcom_common.c              | 148 ++++++++++++++++++
+>  drivers/remoteproc/qcom_common.h              |  38 +++++
+>  drivers/remoteproc/qcom_q6v5_pas.c            | 140 ++++++++++++++++-
+>  include/linux/firmware/qcom/qcom_scm.h        |   1 +
+>  include/linux/firmware/qcom/qcom_tzmem.h      |  10 ++
+>  9 files changed, 423 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
