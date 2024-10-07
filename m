@@ -1,186 +1,146 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F522098;
-	Mon,  7 Oct 2024 19:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC82C18C930
+	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 22:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728328175; cv=none; b=OoCh4eISXRZ/p/VYfI/C6DtneuTZ/GoOu62zBr1kFlhRAhUjoLc+8O1PXBZOXZm42OtlRfkE+EWsfeU7NtoME22iUlggSAVNtkXFEb/Kkh18yJXb4dSYiVPVPHq48MRXwAwkqIpLMNdwLijXJhaliuze9d4D1hJO/DzvP2zHcH4=
+	t=1728338944; cv=none; b=vAY8lHw1YvwlVS/3OIOt8qOcy0ixcZp6JULIrD18l4aiCMKmbxWek3SIteQjZXLYFWgd8NJbSIAqIln4UaQQCd8jU1JrMAseTGV853arC9uq3VZvvB5nW8wd+BaKdodGTBHGTVU6LIN7aTOk2yBKprB5UsMu8jjZXqeGNIrtCLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728328175; c=relaxed/simple;
-	bh=fEFHXNifSDqcdgC2PtIYIoO64Kj+N+TM9ZorMGL31PM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2wH6T/YHLLrBvimfCEAYPDxh7eXFb00h3J/BIY3MunCj9B6Va9KMgcVCIMj3tjAQIRt9NYI3EEfZ26kHv59Srg5uCh72i/mFCE7spukIot7aoFbnw0qD1SENlPp9vF4jIFnxfT0RTU5hlcmzJfP3Sa5XZvwxce7B+4fnUzkFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eBt3MUGV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1728338944; c=relaxed/simple;
+	bh=CqX9Y0dEmHgiIN61I3/zW08Bfod5n7pFQiGUVIMbBVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u3pVDBddEVysFlv9O4sTeul2Rdh5UWwkfPG4D5SmgwemQbdNrURA8RxQoHbYyOh2FeauYZdeOHNgOrK99NFgLikfjD7RleeKz0Lt4WzzfIYl5/BOTGITx7zbzHAsiwbSQlwDj+dvGhxPWAKDYbLCF2BRW0zbdw8N50Z6lumUdQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f42ekjaj; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eBt3MUGV"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497GaOVx022694;
-	Mon, 7 Oct 2024 19:09:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Bzwvv81UXqjNB2FoSpGguXIM
-	mYyCLc6yZvdrbJ6MPMQ=; b=eBt3MUGVBlqEqyazPgTx62ehWHNcX7PblJVs0v+7
-	L9QfNSE4dtHsgSchmKnISXEGvvWQ/DAUGjg1Xkpkiq+3jMD2TCGz7vk7BVVXKOye
-	WPAGXCSTlTAsxlweYsYEBLJ/x+F7U/V56bhtc//zcfPXRtgrzpbKTFllLcPlSEz4
-	U/tKpvTH2ljhG/cBK8k9Vd4gYk0RxYan+GjF9l5aTVbQNmEV2gxFKScPTxAOMKn3
-	ZXOn9cO7lErOgQtDKW64kvDe01le9JkqTYr8Gqxb1k/nx9U4n1g1ufBpMWyl2QO0
-	4RedQWfxUmABLOB/GAqDf3+TdgwwEmTpcOXRJuMSnpQIGQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaerb40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 19:09:29 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497J9Sih020695
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 19:09:28 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 7 Oct 2024 12:09:25 -0700
-Date: Tue, 8 Oct 2024 00:39:22 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
-Message-ID: <ZwQx4h3gtyX30PMh@hu-mojha-hyd.qualcomm.com>
-References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
- <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
- <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
- <ZvcqrbLKqCQyYBsF@hu-bjorande-lv.qualcomm.com>
- <ZvuYYbIycFKRBcCi@hu-mojha-hyd.qualcomm.com>
- <ZvxmiEnHprF5q4ug@hu-bjorande-lv.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f42ekjaj"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e25d11cc9f0so4024398276.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 15:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728338941; x=1728943741; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CqX9Y0dEmHgiIN61I3/zW08Bfod5n7pFQiGUVIMbBVk=;
+        b=f42ekjajbfDK67ZKARCmr941NjbWO+zYjmvxMyp4Fy4kuKtSrf2iKVgUnqsi4Pq/C8
+         ipLnwDdGgIhMpbV6MbaWihNRjelX2+woJYoIbLTf7wbD0Bhx61DhylVJNKfm5EKD+bxx
+         t76f21S9sdP2+Srx/IKijDY7UfyJgxLwnqWIBzkYi0Sb+DT3hOoxoIAQVRQPbOB/qV3q
+         Adu2DK2XKllz6BnqNBICrcVCCtOrLKrRgH/K3/H9o6de1RgHgyfio5vJeL9oVtyZ5KBH
+         JuVFWDW0N8Y7ot5/Mgf88aiwlINp0hKoeKv2zWBPzzQeNqT2AoyY/oKF9WuxmYryhJzP
+         QjeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728338941; x=1728943741;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CqX9Y0dEmHgiIN61I3/zW08Bfod5n7pFQiGUVIMbBVk=;
+        b=SOwJ8KZPdgqW0esGb5rLci6cU55n3iTPCBzv5ICM7jMvutzauXEBFtCJfOQBR+mSg9
+         fTjKMa1kjyUtJWs2AD/IUysPaM5LcxmVN0K6T/JvKJQfYsGXKJzhW3QivsEG55RbagcU
+         GrSKw9bJYGQKpup3ZeS2hhkE+4hubZt5ZtWc7BzuG1T0qrZqgRzYhf13oflBUQiTWqbM
+         QdhqNWX+pmVZQF5SuHUBKJUc/3FOJCoiMnAXo4ByzMe1JShhzEeVmVYZKhv60KeW0/r5
+         l3IX7rd43kxjzEZROnVCn/38znT6x3wKE1dMZ/BLwUgY6b88EW7R0d0JZZWOUwt2UKzX
+         Fy1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCr1aqM/rOnnkPrAICsKrqY1oGvli4KUYJIFldpbhutprYhasPWCF/661v7YcKIdMLMUpm7npnKR2GiAu6CFkB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTWM6s3Cqzo6wsHO8g5RgLtS04vZj+dKI6hOK6wdAJgaNR+iPz
+	j5PuX4BQfv721lGj5i1RCFdiW2P0GfaKC4R27bJmehE+OmXohFDr40oFhN2p1zaEI8JddP+BStz
+	AlzZ2t37lkBkbVMOOLlyCftbp/mXTQpzNtSaHzg==
+X-Google-Smtp-Source: AGHT+IE2nJVabbXdwibt1H0pVBms5dYTsG8RkBKKAzfdsgMhYsZ8VyWIk7HanuWHiQPQxXFBk2ezA08qlljJFN0QQR4=
+X-Received: by 2002:a05:6902:848:b0:e28:edbd:765f with SMTP id
+ 3f1490d57ef6-e28edbd7f75mr206026276.2.1728338940867; Mon, 07 Oct 2024
+ 15:09:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZvxmiEnHprF5q4ug@hu-bjorande-lv.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LDvqDFHDrclBiLrd5zB7dW11ptHdLJQ9
-X-Proofpoint-GUID: LDvqDFHDrclBiLrd5zB7dW11ptHdLJQ9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070132
+References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
+ <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com> <20241007184924.GH14766@pendragon.ideasonboard.com>
+In-Reply-To: <20241007184924.GH14766@pendragon.ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Oct 2024 00:08:24 +0200
+Message-ID: <CAPDyKFpQVnF7eQv3dup8k-3EijnMjuveCG9sZ=Rpey1Y6MBJEg@mail.gmail.com>
+Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org, 
+	linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
+	iommu@lists.linux.dev, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
+	linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
+	asahi@lists.linux.dev, rafael@kernel.org, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 01, 2024 at 02:15:52PM -0700, Bjorn Andersson wrote:
-> On Tue, Oct 01, 2024 at 12:06:17PM +0530, Mukesh Ojha wrote:
-> > On Fri, Sep 27, 2024 at 02:59:09PM -0700, Bjorn Andersson wrote:
-> > > On Sat, Sep 28, 2024 at 01:07:43AM +0530, Mukesh Ojha wrote:
-> > > > On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
-> > > > > On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
-> > > > > > Multiple call to glink_subdev_stop() for the same remoteproc can happen
-> > > > > > if rproc_stop() fails from Process-A that leaves the rproc state to
-> > > > > > RPROC_CRASHED state later a call to recovery_store from user space in
-> > > > > > Process B triggers rproc_trigger_recovery() of the same remoteproc to
-> > > > > > recover it results in NULL pointer dereference issue in
-> > > > > > qcom_glink_smem_unregister().
-> > > > > > 
-> > > > > > Fix it by having a NULL check in glink_subdev_stop().
-> > > > > > 
-> > > > > > 	Process-A                			Process-B
-> > > > > > 
-> > > > > >   fatal error interrupt happens
-> > > > > > 
-> > > > > >   rproc_crash_handler_work()
-> > > > > >     mutex_lock_interruptible(&rproc->lock);
-> > > > > >     ...
-> > > > > > 
-> > > > > >        rproc->state = RPROC_CRASHED;
-> > > > > >     ...
-> > > > > >     mutex_unlock(&rproc->lock);
-> > > > > > 
-> > > > > >     rproc_trigger_recovery()
-> > > > > >      mutex_lock_interruptible(&rproc->lock);
-> > > > > > 
-> > > > > >       adsp_stop()
-> > > > > >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
-> > > > > >       remoteproc remoteproc3: can't stop rproc: -22
-> > > > > 
-> > > > > I presume that at this point this remoteproc is in some undefined state
-> > > > > and the only way to recover is for the user to reboot the machine?
-> > > > 
-> > > > Here, 50+ (5s) retry of scm shutdown is failing during decryption of
-> > > > remote processor memory region, and i don't think, it is anyway to do
-> > > > with remote processor state here, as a best effort more number of
-> > > > retries can be tried instead of 50 or wait for some other recovery
-> > > > command like recovery_store() to let it do the retry again from
-> > > > beginning.
-> > > > 
-> > > 
-> > > But are you saying that retrying a bit later would allow us to get out
-> > > of this problem? If we just didn't hit the NULL pointer(s)?
-> > 
-> > I am not sure whether adding more number of retries will solve the issue
-> > and initially thinking from perspective that, it is better to retry than
-> > to leave the remoteproc in some unknown state however, I do get that
-> > letting it retry could give unnecessary patching every code e.g., ssr
-> > notifier callbacks, which is not expecting to be called twice as a
-> > side-effect of remoteproc unknown state.
-> 
-> That's not what I'm asking you. When the remote processor fails to stop,
-> can you recover the system by just trying a bit later, or is the
-> remoteproc dead until reboot?
+On Mon, 7 Oct 2024 at 20:49, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Ulf,
+>
+> On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
+> > On Fri, 4 Oct 2024 at 11:41, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> > >
+> > > Hello everyone,
+> > >
+> > > This set will switch the users of pm_runtime_put_autosuspend() to
+> > > __pm_runtime_put_autosuspend() while the former will soon be re-purposed
+> > > to include a call to pm_runtime_mark_last_busy(). The two are almost
+> > > always used together, apart from bugs which are likely common. Going
+> > > forward, most new users should be using pm_runtime_put_autosuspend().
+> > >
+> > > Once this conversion is done and pm_runtime_put_autosuspend() re-purposed,
+> > > I'll post another set to merge the calls to __pm_runtime_put_autosuspend()
+> > > and pm_runtime_mark_last_busy().
+> >
+> > That sounds like it could cause a lot of churns.
+> >
+> > Why not add a new helper function that does the
+> > pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy()
+> > things? Then we can start moving users over to this new interface,
+> > rather than having this intermediate step?
+>
+> I think the API would be nicer if we used the shortest and simplest
+> function names for the most common use cases. Following
+> pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is that
+> most common use case. That's why I like Sakari's approach of repurposing
+> pm_runtime_put_autosuspend(), and introducing
+> __pm_runtime_put_autosuspend() for the odd cases where
+> pm_runtime_mark_last_busy() shouldn't be called.
 
-I cannot say this with certainty. For the current issue, the remoteproc
-fails to stop as it is running out of heap memory.
+Okay, so the reason for this approach is because we couldn't find a
+short and descriptive name that could be used in favor of
+pm_runtime_put_autosuspend(). Let me throw some ideas at it and maybe
+you like it - or not. :-)
 
--Mukesh
-> 
-> > > 
-> > > How long are we talking about here? Is the timeout too short?
-> > 
-> > 5sec is very significant amount of time in wait for remote processor to
-> > get recovered, we should not change this.
-> 
-> Okay, I'm just trying to understand the problem you're trying to solve.
-> 
-> Regards,
-> Bjorn
-> 
-> > > 
-> > > > > 
-> > > > > 
-> > > > > The check for glink->edge avoids one pitfall following this, but I'd
-> > > > > prefer to see a solution that avoids issues in this scenario in the
-> > > > > remoteproc core - rather than working around side effects of this in
-> > > > > different places.
-> > > > 
-> > > > Handling in a remoteproc core means we may need another state something
-> > > > like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
-> > > > failure and checking the same during another try return immediately with
-> > > > some log message.
-> > > > 
-> > > 
-> > > Yes, if we are failing to shut down the remoteproc and there's no way
-> > > for us to reliably recover from that (e.g. we are not able to reclaim
-> > > the memory), it seems reasonable that we have to mark it using a new
-> > > state.
-> > > 
-> > > If that is the case, I'd call it RPROC_DEFUNCT (or something like that
-> > > instead), because while in some "unknown" state, from a remoteproc
-> > > framework's point of view, it's in a well known (broken) state.
-> > 
-> > Ack.
-> > 
-> > -Mukesh
-> > > 
-> > > Regards,
-> > > Bjorn
+I don't know what options you guys discussed, but to me the entire
+"autosuspend"-suffix isn't really that necessary in my opinion. There
+are more ways than calling pm_runtime_put_autosuspend() that triggers
+us to use the RPM_AUTO flag for rpm_suspend(). For example, just
+calling pm_runtime_put() has the similar effect.
+
+Moreover, it's similar for pm_runtime_mark_last_busy(), it's called
+during rpm_resume() too, for example. So why bother about having
+"mark_last_busy" in the new name too.
+
+That said, my suggestion is simply "pm_runtime_put_suspend".
+
+If you don't like it, I will certainly not object to your current
+approach, even if I think it leads to unnecessary churns.
+
+[...]
+
+Kind regards
+Uffe
