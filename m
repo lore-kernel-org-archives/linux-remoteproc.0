@@ -1,92 +1,95 @@
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A951D4320
-	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 13:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA581D2B35;
+	Mon,  7 Oct 2024 13:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307351; cv=none; b=Ig14Wwt15jGC3tnvt4GYdmE98DfNg8EK8fwYcGtuYvnGS9QGnCRrT6HImdlWMvNG87MCnEtt/aXr4OrFb1whlvW3hBEIiW1DqgzcEr4EFzTrxdriXowaesiFtwl6hWTsYoJpITwx+h4BycGjECeKcYS3Hd3OGlQCMD5v/dbDAWY=
+	t=1728307490; cv=none; b=t2G1FTkQpo6+ok+/l6kT4OHjhsiyKqGEZYtGMwOit3DGq4zqx1yBQXEZaKCTywf/Rm/5Jhr83x6bV76qSKD4zFbY/xB52gj5ePpkHad+H9j95pfxxQzuZCNbgcJCTg3zwzV3nMYd404TPfZfeUnTcB+ad+sjNp1HJKp9S/Gr4jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307351; c=relaxed/simple;
-	bh=utVWN3iWLARwJ1w0i0Zp3uRtKoFb2xnAD8O1rUjwFLA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dFKI/MJD2yVOnkX5r5A3KO9Noa2uM3fciQ7c8/vt1Kzh9p/Wj76yx3CsCyvIrvhpogxbrs+DFbCVKp1Kc2kFZHovX0hbndhpOWdJ4DPFGuN3b5fBc185heKO1GFo56VEItEHSGZTpYzpCJMij7hkPARaKYp9NDIZyXc5fhtBWno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=CBlQuJCg; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+	s=arc-20240116; t=1728307490; c=relaxed/simple;
+	bh=kOcohVWj9jo2graehXJSHjJ51Txxdp1oLXu2XXgJ5ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uaT2DCHTp0li37eECw20M+kPYjcEafMw7Ni4LWWOL+Ndj4T788GpIaZ4BfFKFnceKxDY+XL0DEUw8u+ltBNm0pl1RbCd073uBpUaGtaf0RiF4sIbOweD7Ht6OhO8YEX+Z2xl5G4bU8g2PS0o/32rLwgizjE3eupD4MkFAPQYe6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjrLWIKp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="CBlQuJCg"
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-45821eb62daso28814891cf.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 06:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728307348; x=1728912148; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=stNX0CPH5IvIaCsbaIGRjS0lIiZFwjIZE9dikF6mqJU=;
-        b=CBlQuJCgoIqXQwqIE3Q6kHy/rsNpxiwE92FriDw+xmkr0N4vSCRQdh0n6chS4ctSQZ
-         w5S368IT80ohFd3PgPTP2b2VvGEBZGleQ8o4B+a0pGj/qfSMd1qCmGUCxcI4yFeApt34
-         OkdwSP3YAGMLvoVOEgaWB3KJh/W8ABgOFvZHoy+t/upyfwzmtRhKRCM+YHD20/IuT6Sl
-         amxmExr3ynLg8nxw8kXYxx0Px/USvwot1R02OdHfZg50mFcwdREzx5bmDrNoNCpDbgxH
-         YbRRFi2cSHog2uNU5MFdzQljFQnBfFK36DtfGnz2NlPzLFANiMmIcpMI7M0SY7+PbprO
-         ce6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307348; x=1728912148;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=stNX0CPH5IvIaCsbaIGRjS0lIiZFwjIZE9dikF6mqJU=;
-        b=aLW5iS50J4bvz7BJ+5rFtLjmjVtZZH2xzvfB9ItOmye0aMhbVa+KDsUN5bNcrxzMTW
-         JiTSLaDHAJ/Gf5YjXtyrboVpzyn02RTKKm7kn8cdgVfUsddzTOSQsDspXhKE9njXS0jY
-         exXPQDdOl0iSVNT7BgzDF8oINLsqNNJv8fnkT2QovYETWghrAyDrroa46iV+cgPBov9E
-         ROv2ouRhjL8cJQrMHC1jBx8t5krXuUP37Wy00TRiAOQLZRPrUonPnMQEg3NDV64b9uhe
-         vsE5VpZf0tBWQxVscUsOt/nbogXWSY74Z0kKUQ4dD6eOMuWUWiB8zZinBHvmFbaD+Bvs
-         5fcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/bXjbN6gT1BEXgjbmeK1Wkzn4D/IdsVNvhpkTbDgd1fwbtkcKVo0mU9C/SyJKgGYnbxwfjqlzzKdMROmUp5yv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDpEhY23MFStW6GJKz26nGCv5lO19j73QDN/kvKLCqGP+fgik1
-	n3hsOf59e08spJdc+5XYCcZw3JBQRyhOFEOQ1jPqs9m8UyTvaZEWDeFoIEqSTcw=
-X-Google-Smtp-Source: AGHT+IGm5KDXGgiekH3egpesPDNg8awpzbf4iyWtuNkaFmOHJ2mn6HP4vwirEz7pnWjezESexrXL3A==
-X-Received: by 2002:ac8:5715:0:b0:458:401e:c1f2 with SMTP id d75a77b69052e-45d9ba69ca5mr143491341cf.31.1728307348099;
-        Mon, 07 Oct 2024 06:22:28 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da755647asm26379781cf.41.2024.10.07.06.22.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 06:22:27 -0700 (PDT)
-Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
- CMD_OPEN name length
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Sricharan Ramabadhran <quic_srichara@quicinc.com>,
- Arun Kumar Neelakantam <quic_aneela@quicinc.com>,
- "open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM"
- <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20241007044723.25347-1-jonathan@marek.ca>
- <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
-From: Jonathan Marek <jonathan@marek.ca>
-Message-ID: <8b050bcb-640d-4443-ca31-787ec5c02a7d@marek.ca>
-Date: Mon, 7 Oct 2024 09:19:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjrLWIKp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDD0C4CEC6;
+	Mon,  7 Oct 2024 13:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728307490;
+	bh=kOcohVWj9jo2graehXJSHjJ51Txxdp1oLXu2XXgJ5ws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YjrLWIKpoLu5xL5iVGelS5WGWR01oSpsuocA3gv0d44nv3iw30SWVauWJDuGdgWll
+	 92s+0pRfoKcqD/frKb6Si4EbjwhPRbzJu8OepoLDNzYqU+YwY4gKDUGsZeBv8I8lXT
+	 B8J/FOtYrb/qGCmbacKaGUyLwsNbMpjRSBul/1UmUOUThvV7G7exQt8SUFWEW/ecN9
+	 odt+M6fyNls7nU0TJxuJqsxGKGXGA90dS9GCYRn5Fuxe1qiZPvJPT369BaBl9scpc5
+	 YctOIAfa+pxRvlg5a9Ct/Mz/QXmaKOWWWGoRS571XqP+6CUtjj0s8UOZ+2R62sX9BK
+	 NEYQXnhXSuKNQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+Date: Mon,  7 Oct 2024 13:23:57 +0000
+Message-Id: <20241007132441.2732215-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/7/24 9:16 AM, Dmitry Baryshkov wrote:
-> On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
->> The name len field of the CMD_OPEN packet is only 16-bits and the upper
->> 16-bits of "param2" are a different field, which can be nonzero in certain
->> situations, and CMD_OPEN packets can be unexpectedly dropped because of
->> this.
-> 
-> Any idea about the upper 16 bits? Should we care about that data too?
-> 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Its a "prio" value, it should be OK to ignore it.
+The k3-m4 remoteproc driver was merged with incorrect dependencies.
+Despite multiple people trying to fix this, the version 6.12-rc2
+remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+when the driver is built-in.
+
+arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
+
+Fix the dependency again to make it work in all configurations.
+The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+dependencies. The link failure can be avoided with a simple 'depends
+do, so turn that into the same 'depends' to ensure we get no circular
+on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+we use elsehwere. On the other hand, building for OMAP2PLUS makes
+no sense since the hardware only exists on K3.
+
+Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 955e4e38477e..62f8548fb46a 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+ 
+ config TI_K3_M4_REMOTEPROC
+ 	tristate "TI K3 M4 remoteproc support"
+-	depends on ARCH_OMAP2PLUS || ARCH_K3
+-	select MAILBOX
+-	select OMAP2PLUS_MBOX
++	depends on ARCH_K3 || COMPILE_TEST
++	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
++	depends on OMAP2PLUS_MBOX
+ 	help
+ 	  Say m here to support TI's M4 remote processor subsystems
+ 	  on various TI K3 family of SoCs through the remote processor
+-- 
+2.39.2
+
