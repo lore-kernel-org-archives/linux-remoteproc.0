@@ -1,178 +1,100 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E4318C92F
-	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 22:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B325EC4
+	for <linux-remoteproc@vger.kernel.org>; Tue,  8 Oct 2024 00:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728340531; cv=none; b=syLQrxo2qVtxFmwkpD5V9y4/jkMpam8SNvK5puKqlModqMZPu7GpWHanK5axyYNmL4+oHuM3i6uBtivc8kWYypEzJfmCytK9EBqWeiS8NwTbCnwmXzY3pLSuAoli8b6eoqMcm75SJzq3plriwJz/o24lT2A3FbG9Y/i56JIR1gU=
+	t=1728345809; cv=none; b=XPl0+ap5/J0K7j5FAUNsZBfUHclGf8hlddenuhwQqs3EXvhEISz09XHLqwxvfI2miY8uC3ypMJ0WF34mwZgo/PNtAe1woWOOWTuUeEzP0wNYKH4TE7/hSO8HbmivDf3IoyPhxvZIs01quHpQS7a+PUH4rmVp6R34/jhwxHFaeSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728340531; c=relaxed/simple;
-	bh=gesjil9Y0RZgbcjmX5qHd/S97rHztDCcedkOm+1cl0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bu5AdPzC+HFly0hwh3yMhT3CE7IbdOl8/uD/k23dKZcOJl4eZyRStdFppLGy8flHl5xYxJty478Gc0/QL+UQq9ffo5Z1Ybvo/lxyTDurszvSnnGc2znfnnxTNy0ik0B9+v+BD6eF2PjZpTwFGOS1FBx9AOBH50wW9Ng2eJVR47s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e3VL5Ud8; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728345809; c=relaxed/simple;
+	bh=v/cGjRKPEtXmv7RwDeyzOSBu/wmVaWL2ZuBnO42bLf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YimUK8HtcF9lJbauGYJsWGITwCvYokT/yoPoQC7IYIcQers7axPq1WtJzTpr9JPxGdffpEsLTZHNgWi0gfp5IvPtUmIeOyOzwtKKChDpC0Wbn+yNH32PqmWVRhFmsqahMQBHRxc4eNJ4PgCxyG05uWQSnqUml+EkeLdHCaOafVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=AJaihXU3; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e3VL5Ud8"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e25d164854dso4139036276.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 15:35:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="AJaihXU3"
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb2aaf4a73so52352286d6.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 17:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728340526; x=1728945326; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gesjil9Y0RZgbcjmX5qHd/S97rHztDCcedkOm+1cl0k=;
-        b=e3VL5Ud84GLI+E2x3bA8ztpqvuFMv57yd9aYEVQJXCzdGLPTTmXpQqv3Opq72bJmux
-         KBHMo3MVO1HOzdmTO8H+pcTCfVPqaiTDnPTpbQzl0qQR7IL44jHkwS4bzBufrjeR8qhe
-         DDLiaWivcex7UxcVlthWRdgNLBWzi+M8qTeDx57baSkDWFH1agIYPgvRPadbYLCLtjZu
-         06qTHbdte5aRDCOnGRwQe0feCJbqguEWevqetTaa5WoZI91EWlvvh0bLcBUS4nMqHsf9
-         D1KWrNcsh7YIcTiYbXUJhkPijHa5aKTMIfa20aY8luGYazLflzR5ecy/UydbOSAfiQM/
-         3TDg==
+        d=marek.ca; s=google; t=1728345807; x=1728950607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bUhSEJ0yAaeMQ5+BVSRaapV0sFetukkSF95MlT02JR4=;
+        b=AJaihXU3hl1mR+ywM7s4r6oByM0BQgArnjAk3i+CnTU47w0hIYmKtyCD9mlzd0+PF3
+         D/CbI52KSpx2weCNeJ06HWdBLnQid8BYkBnuJJarzo587M5sSfgUT0GegHkHWt7yk29d
+         EnWglgIXffkjmK33zQPqHdsKtfiTtHl3n9Aof0Cw33zMIQJ37YdfLTO0PEgH0zDnYncP
+         dZIehlt92SBzHC4mBzwYrIKrAVfgTziXaIlPgjWJDJ1qABm2aU/KC/bHrER2jP1VhqES
+         MTxpMnnzW1TOTfShcmpd24EWqBc/K0R5r4Z57wIoFnl3Xx08EfrJlIIFtgknRTPBKGKb
+         UafA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728340526; x=1728945326;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728345807; x=1728950607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gesjil9Y0RZgbcjmX5qHd/S97rHztDCcedkOm+1cl0k=;
-        b=IpMMAwVBJZ81oFKm1pSbKqHWqB9UqaorS+Az4q2/AxsgKjYXNqMKUiuqjbcvolUctf
-         MH4Q6FdZv5shILNdok9CNQYpp4b2Uis0U7yjn64sOsphYRtHeV5F3LNMEjfPnjg3Go2p
-         4AwpowH17XBN2amY5tuEhI1BGYZZ+7yTnK/oGcINYNG2R+oIqth3ABKH/Fl+ACWWtmzO
-         Q7Hdusu9p6lGU8azatBYuEzyxqLlO3ncHkMwgU0ah840EfvwIRbozU/0MFdPqVDcop1e
-         8kyTDI7dP2MN8cohQTcvjf8YCsTlwWWyYOvFdiH+jtV28fkXr6aI/g9kQE3UGvFzYDIS
-         JllA==
-X-Forwarded-Encrypted: i=1; AJvYcCVln+/apUQ0pWJWcI6XSy0mCN2Fwl2P8okdzGc/+u1xn+7AgC2P4REqJXOlpAXTvJmFMECoyYrO3IIBMP571eNq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxARt5lNjJQzxO16Y2pAuur2RHzy19QbRlTFRjPIGit9nEvCk/X
-	ztXWQBXyUflbM6dr4edAOooTStNXr0BZeVoOqOvjaO/tAPPsF3uNjorqn5qUHznopSLlQVNOLkQ
-	X+lX4yxHX1gBgkeWki3MFoD/XT7C+Fyhrx3ID/w==
-X-Google-Smtp-Source: AGHT+IGYLLRVc3CeXKReIUVnntYlZ+ULRb29gPUl3UTx4hoqAUGdx6q2aFDzdnacRWqcM/cOYseo4GoEdp7e3a8qLZE=
-X-Received: by 2002:a05:6902:2305:b0:e28:6ec7:4353 with SMTP id
- 3f1490d57ef6-e2893964043mr10612649276.54.1728340526338; Mon, 07 Oct 2024
- 15:35:26 -0700 (PDT)
+        bh=bUhSEJ0yAaeMQ5+BVSRaapV0sFetukkSF95MlT02JR4=;
+        b=l9QOxUALNvGf8WfFlw6Pw1pTa+qvktBDXVYHKPsX4z729kymfL/lnx8/tANo+fA/MC
+         k8n/U+kYfc8sC+N+rCXNuSbRcf7pvMMvV4EVocytGLCJJWuMSla+KqHJeviUX/LKV1Nt
+         IOnRVES1eUBF+ECsi1uqb/pbyTufGunLMFsb0hCFpjn7BA/Fa/3PPzgl5EX0tAoCFjc+
+         PVGs+bJrB4dcgt25Lm8wr8YbrFIImVqolVepJe3twqXDUHXq6/sgSEIxKTh6TPc3ktTg
+         TEagnX6ZtPejjlSvneKynVibXboqEHr0ytf/IvVfaY3YUBE6WTCBWBF7BpSL9OP6zIye
+         JnMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDtxaI0x+/FfSFf1gLAYBwx7x2jhUNvRFH1LxYWRlIdCqNbtxqU/GdnA83OLz/I27nkjpMiuVIBcSg5jFB5HuJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4slcRILESzg2fJ8W+ma+QW9nCO1d4h8WPL+Lm/uaDWpGVr/W/
+	xuktE09MmnqMEeTrnmJGdVNlJSpxIJYSdxkrJ2RvYaaDaLB/iV/sYUzmc3XBD2c=
+X-Google-Smtp-Source: AGHT+IEx3bklsQStYmee6ZmH3DEMApP2qVX1WSbpsnNhNBWyboJaq2oNlhHvvvoCROpV/zglNNL0Ew==
+X-Received: by 2002:a05:6214:3386:b0:6c5:8ab0:60cc with SMTP id 6a1803df08f44-6cb9a472824mr193319236d6.40.1728345806863;
+        Mon, 07 Oct 2024 17:03:26 -0700 (PDT)
+Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cad28sm30487096d6.18.2024.10.07.17.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 17:03:26 -0700 (PDT)
+From: Jonathan Marek <jonathan@marek.ca>
+To: linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] rpmsg: glink: use only lower 16-bits of param2 for CMD_OPEN name length
+Date: Mon,  7 Oct 2024 19:59:35 -0400
+Message-ID: <20241007235935.6216-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
- <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com>
- <20241007184924.GH14766@pendragon.ideasonboard.com> <CAPDyKFpQVnF7eQv3dup8k-3EijnMjuveCG9sZ=Rpey1Y6MBJEg@mail.gmail.com>
- <20241007222502.GG30699@pendragon.ideasonboard.com>
-In-Reply-To: <20241007222502.GG30699@pendragon.ideasonboard.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Oct 2024 00:34:49 +0200
-Message-ID: <CAPDyKFrGNwna6Y2pqSRaBbRYHKRaD2ayqQHLtoqLPOu9Et7qTg@mail.gmail.com>
-Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org, 
-	linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
-	iommu@lists.linux.dev, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
-	asahi@lists.linux.dev, rafael@kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Oct 2024 at 00:25, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Ulf,
->
-> On Tue, Oct 08, 2024 at 12:08:24AM +0200, Ulf Hansson wrote:
-> > On Mon, 7 Oct 2024 at 20:49, Laurent Pinchart wrote:
-> > > On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
-> > > > On Fri, 4 Oct 2024 at 11:41, Sakari Ailus wrote:
-> > > > >
-> > > > > Hello everyone,
-> > > > >
-> > > > > This set will switch the users of pm_runtime_put_autosuspend() to
-> > > > > __pm_runtime_put_autosuspend() while the former will soon be re-purposed
-> > > > > to include a call to pm_runtime_mark_last_busy(). The two are almost
-> > > > > always used together, apart from bugs which are likely common. Going
-> > > > > forward, most new users should be using pm_runtime_put_autosuspend().
-> > > > >
-> > > > > Once this conversion is done and pm_runtime_put_autosuspend() re-purposed,
-> > > > > I'll post another set to merge the calls to __pm_runtime_put_autosuspend()
-> > > > > and pm_runtime_mark_last_busy().
-> > > >
-> > > > That sounds like it could cause a lot of churns.
-> > > >
-> > > > Why not add a new helper function that does the
-> > > > pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy()
-> > > > things? Then we can start moving users over to this new interface,
-> > > > rather than having this intermediate step?
-> > >
-> > > I think the API would be nicer if we used the shortest and simplest
-> > > function names for the most common use cases. Following
-> > > pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is that
-> > > most common use case. That's why I like Sakari's approach of repurposing
-> > > pm_runtime_put_autosuspend(), and introducing
-> > > __pm_runtime_put_autosuspend() for the odd cases where
-> > > pm_runtime_mark_last_busy() shouldn't be called.
-> >
-> > Okay, so the reason for this approach is because we couldn't find a
-> > short and descriptive name that could be used in favor of
-> > pm_runtime_put_autosuspend(). Let me throw some ideas at it and maybe
-> > you like it - or not. :-)
->
-> I like the idea at least :-)
->
-> > I don't know what options you guys discussed, but to me the entire
-> > "autosuspend"-suffix isn't really that necessary in my opinion. There
-> > are more ways than calling pm_runtime_put_autosuspend() that triggers
-> > us to use the RPM_AUTO flag for rpm_suspend(). For example, just
-> > calling pm_runtime_put() has the similar effect.
->
-> To be honest, I'm lost there. pm_runtime_put() calls
-> __pm_runtime_idle(RPM_GET_PUT | RPM_ASYNC), while
-> pm_runtime_put_autosuspend() calls __pm_runtime_suspend(RPM_GET_PUT |
-> RPM_ASYNC | RPM_AUTO).
+The name len field of the CMD_OPEN packet is only 16-bits and the upper
+16-bits of "param2" are a different "prio" field, which can be nonzero in
+certain situations, and CMD_OPEN packets can be unexpectedly dropped
+because of this.
 
-__pm_runtime_idle() ends up calling rpm_idle(), which may call
-rpm_suspend() - if it succeeds to idle the device. In that case, it
-tags on the RPM_AUTO flag in the call to rpm_suspend(). Quite similar
-to what is happening when calling pm_runtime_put_autosuspend().
+Fix this by masking out the upper 16 bits of param2.
 
->
-> >
-> > Moreover, it's similar for pm_runtime_mark_last_busy(), it's called
-> > during rpm_resume() too, for example. So why bother about having
-> > "mark_last_busy" in the new name too.
-> >
-> > That said, my suggestion is simply "pm_runtime_put_suspend".
->
-> Can we do even better, and make pm_runtime_put() to handle autosuspend
-> automatically when autosuspend is enabled ?
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ drivers/rpmsg/qcom_glink_native.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-As stated above, this is already the case.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 0b2f290069080..b534b88db3f8e 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1204,7 +1204,8 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
+ 			ret = qcom_glink_rx_open_ack(glink, param1);
+ 			break;
+ 		case GLINK_CMD_OPEN:
+-			ret = qcom_glink_rx_defer(glink, param2);
++			/* upper 16 bits of param2 are the "prio" field */
++			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
+ 			break;
+ 		case GLINK_CMD_TX_DATA:
+ 		case GLINK_CMD_TX_DATA_CONT:
+-- 
+2.45.1
 
->
-> > If you don't like it, I will certainly not object to your current
-> > approach, even if I think it leads to unnecessary churns.
-> >
-> > [...]
-> >
-> > Kind regards
-> > Uffe
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-Kind regards
-Uffe
