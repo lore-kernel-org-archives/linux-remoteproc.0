@@ -1,119 +1,155 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2301D1757
-	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58F11D2F46;
+	Mon,  7 Oct 2024 13:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307006; cv=none; b=dOINSnXNUu/ltl3i9Ugf5/aWZTPrtyaEy2zYV2Z9NX/Y/3cQDHJF/s8dw9LDKkYXczP4yyJ5xrGx2at0TdbnuWkcxeI5R3VLpghZOViW5m235Ytwbr9KohIir9SZY1OnLth9FZiMpk+/oS2xi0fC8lcGqyxTP7aAXXYF8eodD/Y=
+	t=1728307300; cv=none; b=klK9SSe3WpbqOMkekasMgkS/Ge4TAtIQ99WNVMfMnqISdGJMqa3zgbBydoc0zIqUQrZpXDi++oVLmj3DbyYT5kHQdxeyYtldUdRCAIgqKH3FpQ8nhp1ky/7jr9glmloSDkSFutgUiPgZ+4FxhYNzjdpYjm3VjNMNE/YDzRHX40E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307006; c=relaxed/simple;
-	bh=c5zDZczpwoMhRCZTtD9TIprKTL2qFUSJSp44forXD64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlJl518w4GkFz1ev07itibWpaVKNRnvWnA6A8dNzu9CwhOJrg5c969IPAJgOfWbio34gAoPgceBu7E3dyBXkUlz89cZjZcvE/9KiC6OfoOHMmBE4UU94YYJVHGey7zfEid91XZSnLEg70twtbwm6sZnTWusJwnf+EdRbbEnysmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XsYWyrPL; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728307300; c=relaxed/simple;
+	bh=3Vv3On2cJcwzUZZ9aNlrSbueotMcHLSQp2Hd3JyzBek=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tt/T2FOYvysZ2EK0K3tY7181HgCqXySOQZI8hPntX2yqw61VdBsr33MfVqNxBGCMi3d8he8PrdKh9MnlPc2HhOXSj3bZiDN7wD7E2qlxqd//zURGKGllxDfBGW3s+EittoLgy5MF/4EAf5/K8ZFiZTp+zmXP0cYgjc9FQ8BvCM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VLJMmHnM; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XsYWyrPL"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fac60ab585so45530711fa.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 06:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728307003; x=1728911803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
-        b=XsYWyrPLB/p0aPFooLUEtc502zzKNuzHHLlWwRFYySERoH9B4VacYJFPm2CPi11PYz
-         RAowKOf7d+pQ76NorSvFjMj1qt0BCLntyFWfJWHJKPrEzxax9vSFkFTNlRiCbX9RoXKn
-         emTPYtd6bYsFNb+XpBv7koqh+Y0sa4aqmZrVkT+4zggJJ2YHXXsgf7vUHHoYnRphh5A6
-         rLzgASx0PEBsLk8JRdSCFxNfGKirBp+CObYCMQWSwPYddvGMpmEdgEi+kQoNDyZqwXca
-         5fg7iKCJW9lkY5F3SJr2au21W7HtVU+kUAnzcgUbC+u3EcbA3zHwLn0mBUHZAHugAsXe
-         XG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728307003; x=1728911803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dCkBQA8INoWSpGqbgwA5jt6QuY5LVXtR8ZQ0xgygGF0=;
-        b=Uf2AqGtU68gV6gxheMIyHQC671CxscnVK8rg1sMaekdYZMntQsQpdK5FQPT5d34nTo
-         4tjssk1wKyVW35ZEafS0/+gyLLEO13zjPwBRTofvujzc84/2kUhxjoeLTnP9YacvJcru
-         NYE7HS6p/bRvD/NtJJ2X7uDV+zprinFlI7y1u9amUs8ukfGuqr+3WKaUDS7u+9jRWhPG
-         rG3/pGPMgO7xFCgIf36xEycujrTtJxRR7j9qJdGJN3coB/V0L5ubQcbJhoV5Xq6xZHBd
-         krAmy9s0o69T8EkWEBaVb5dZqe/xOZRVYJQz7sGDPM741MxInV6SOyqLvp+UwyxM4jKn
-         ArmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWc35KPvue6AH3FCmK6udCMv7W8a0wUrcT2BXKWnKPpwYB+vzSSefbmzJ26WYQan7VsNXZzfWL1LqBwT5g4eKXM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1JnhoL0hAZk/7KFOgQpKN/7vPsyNwV+1GrLABX5PG3bEjJSrH
-	sahOcTfsmxyDr2kbgzM4yERZooO86mEoCGdCfEN+LJPdBGUsghj5OFc9vZaBC4I=
-X-Google-Smtp-Source: AGHT+IGZ1mDDEjhcmG+T6pvJMY5EAIlF8UJwKfOkVTjp4MAKBG18DAhtjPcfQoU7T5moxF77LIIMQQ==
-X-Received: by 2002:a05:651c:556:b0:2fa:d58d:dcf3 with SMTP id 38308e7fff4ca-2faf3d9d58emr49272581fa.33.1728307002704;
-        Mon, 07 Oct 2024 06:16:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9b24867sm8453081fa.73.2024.10.07.06.16.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 06:16:41 -0700 (PDT)
-Date: Mon, 7 Oct 2024 16:16:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Arun Kumar Neelakantam <quic_aneela@quicinc.com>, 
-	"open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
- CMD_OPEN name length
-Message-ID: <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
-References: <20241007044723.25347-1-jonathan@marek.ca>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VLJMmHnM"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4979nXvd017178;
+	Mon, 7 Oct 2024 15:21:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	/mE2OLRaqk8Gl6dCN9ELFxqbr+yTJdM1DCJG3QOGXsI=; b=VLJMmHnMJeCBt1p7
+	IM8EeHkWfzx5cIHRgtmoilV5xcHYt/JJ8vw5w7FHCF5quR8mu5vYhWzi2bUfvj1V
+	93ZFU8QrYNfJOU0vHdlIx52KoWKa7QBrOnWSxiJyZ3SSdvcZGg+SiNGNOkWnCivD
+	RSCscVVzjf+r2Kqz5gr97krXfIY8UlAEbmcD2G6W5ZVlsLUtGSWZ3OpBoKKKl7Z2
+	waWxn60WJDufjc6VnQCf4NN3fiT2nx1t21eOeJSZbjfkEMhYOY6sr0e6GmKNEx3r
+	i/nkSymMFK5cC7Gry5/EJK/rBUOQXOYy5cfRJE0Wi3Abm4eKN+NiF2jqlkQGvoJq
+	GEbeVg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 422xv713fv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 15:21:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4EF8740049;
+	Mon,  7 Oct 2024 15:19:40 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7C590269E1F;
+	Mon,  7 Oct 2024 15:16:43 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 15:16:43 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 15:16:43 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v10 3/7] remoteproc: core: Refactor resource table cleanup into rproc_release_fw
+Date: Mon, 7 Oct 2024 15:16:16 +0200
+Message-ID: <20241007131620.2090104-4-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241007131620.2090104-1-arnaud.pouliquen@foss.st.com>
+References: <20241007131620.2090104-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007044723.25347-1-jonathan@marek.ca>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
-> The name len field of the CMD_OPEN packet is only 16-bits and the upper
-> 16-bits of "param2" are a different field, which can be nonzero in certain
-> situations, and CMD_OPEN packets can be unexpectedly dropped because of
-> this.
+This patch centralizing the cleanup of the resource table into a new
+helper function rproc_release_fw().
 
-Any idea about the upper 16 bits? Should we care about that data too?
+More than just factorizing the code into a common function, it is the
+first step to integrate the release of the firmware image loaded by the
+OP-TEE remoteproc framework.
 
-> 
-> Fix this by masking out the upper 16 bits of param2.
-> 
-> (the commit in this Fixes tag is not where the original code was introduced
-> but it should be far back enough not to matter)
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+Update vs previous revision:
+- add justification of the patch in the commit message
+---
+ drivers/remoteproc/remoteproc_core.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-Let's be more precise:
-
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-
-> 
-> Fixes: 835764ddd9af ("rpmsg: glink: Move the common glink protocol implementation to glink_native.c")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 0b2f290069080..e4933b823238c 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1204,7 +1204,7 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
->  			ret = qcom_glink_rx_open_ack(glink, param1);
->  			break;
->  		case GLINK_CMD_OPEN:
-> -			ret = qcom_glink_rx_defer(glink, param2);
-> +			ret = qcom_glink_rx_defer(glink, param2 & 0xffff);
->  			break;
->  		case GLINK_CMD_TX_DATA:
->  		case GLINK_CMD_TX_DATA_CONT:
-> -- 
-> 2.45.1
-> 
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ace11ea17097..7694817f25d4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1256,6 +1256,13 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++static void rproc_release_fw(struct rproc *rproc)
++{
++	/* Free the copy of the resource table */
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
++}
+ 
+ /**
+  * rproc_resource_cleanup() - clean up and free all acquired resources
+@@ -1485,9 +1492,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 
+ clean_up_resources:
+ 	rproc_resource_cleanup(rproc);
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ unprepare_rproc:
+ 	/* release HW resources if needed */
+ 	rproc_unprepare_device(rproc);
+@@ -2067,10 +2072,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 
+ 	rproc_disable_iommu(rproc);
+ 
+-	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+@@ -2133,10 +2135,7 @@ int rproc_detach(struct rproc *rproc)
+ 
+ 	rproc_disable_iommu(rproc);
+ 
+-	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
+-	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
 -- 
-With best wishes
-Dmitry
+2.25.1
+
