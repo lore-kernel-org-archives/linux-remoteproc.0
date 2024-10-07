@@ -1,212 +1,92 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599E1D319B;
-	Mon,  7 Oct 2024 13:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A951D4320
+	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 13:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728307303; cv=none; b=WStAoJcRRlZ8055+RW2sb8sRZECMFGt40bTV+hXAwJrRvwVJPs80RuX7s9p3ilv4XTGSTqpj1SQorQG0fGYvijSOevrAEP7VJFhMxlgszrKWlUJtztQCVBUTb3CDs4LRrZOxvbBw06iPcJ04tUo9kLreZOLkv6sbw8Kw4rMXfpY=
+	t=1728307351; cv=none; b=Ig14Wwt15jGC3tnvt4GYdmE98DfNg8EK8fwYcGtuYvnGS9QGnCRrT6HImdlWMvNG87MCnEtt/aXr4OrFb1whlvW3hBEIiW1DqgzcEr4EFzTrxdriXowaesiFtwl6hWTsYoJpITwx+h4BycGjECeKcYS3Hd3OGlQCMD5v/dbDAWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728307303; c=relaxed/simple;
-	bh=RKYsAEvQRXWIAuP82l+zFeTBW2y8hvA6zPeWxu5FfUQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RayixgnOYmvNWKZ652wqfLfQPZPhiH1R2wbiMO2HGAda4MjlGppFtJqFA8nwNaiZZLIHZ9YEFGA9toK0htB0dSRSBcJp6oI8uUuDMBNXhXgK9fVbl+75bv/ZvCTqP9uqmbK0wp45qDxUG1TXcgTZ0lvqSlrStyEkkKM67s6yqQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hLXxWb+X; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1728307351; c=relaxed/simple;
+	bh=utVWN3iWLARwJ1w0i0Zp3uRtKoFb2xnAD8O1rUjwFLA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dFKI/MJD2yVOnkX5r5A3KO9Noa2uM3fciQ7c8/vt1Kzh9p/Wj76yx3CsCyvIrvhpogxbrs+DFbCVKp1Kc2kFZHovX0hbndhpOWdJ4DPFGuN3b5fBc185heKO1GFo56VEItEHSGZTpYzpCJMij7hkPARaKYp9NDIZyXc5fhtBWno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=CBlQuJCg; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hLXxWb+X"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BxjFW029799;
-	Mon, 7 Oct 2024 15:21:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	gaYYKQhdt5+WppBYnImCivL9U494+2hjcdM9oi2RwHw=; b=hLXxWb+XZfQeSPDF
-	MpyGMTGCC+D99PURw9kNwRMI28rJZkHypk5UycT2hi6oT4KlSiVDhWsoUVS2RN9V
-	HZZGWV2L7GuAG/E8VPUwu2TXRwJEOgry4FHsqX4gD0wPG9YGhqrTsAmltnB0dlIG
-	BHMAOA3aEwh5tWNnkRY/uL7RqaO/+Ar3vM4vqFTNYQBXORqnjoJPH31oLeZ3MLla
-	emlL6HjwT11O3LRGF+JujkSE8E7JkWMFCD7VpSd+hy0GM9BiLhTq0XYL/0oRniKT
-	T0THXVsEuqXIrtC8OGDU2JdLKThCoFV7OrhZusawTOwu3IFTugVmj4UQ0ErJ7zoQ
-	2fLaDg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 422xv713fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 15:21:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1857F40046;
-	Mon,  7 Oct 2024 15:19:40 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F301326C46F;
-	Mon,  7 Oct 2024 15:16:44 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
- 2024 15:16:44 +0200
-Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
- 2024 15:16:44 +0200
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v10 5/7] dt-bindings: remoteproc: Add compatibility for TEE support
-Date: Mon, 7 Oct 2024 15:16:18 +0200
-Message-ID: <20241007131620.2090104-6-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241007131620.2090104-1-arnaud.pouliquen@foss.st.com>
-References: <20241007131620.2090104-1-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="CBlQuJCg"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-45821eb62daso28814891cf.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 06:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728307348; x=1728912148; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=stNX0CPH5IvIaCsbaIGRjS0lIiZFwjIZE9dikF6mqJU=;
+        b=CBlQuJCgoIqXQwqIE3Q6kHy/rsNpxiwE92FriDw+xmkr0N4vSCRQdh0n6chS4ctSQZ
+         w5S368IT80ohFd3PgPTP2b2VvGEBZGleQ8o4B+a0pGj/qfSMd1qCmGUCxcI4yFeApt34
+         OkdwSP3YAGMLvoVOEgaWB3KJh/W8ABgOFvZHoy+t/upyfwzmtRhKRCM+YHD20/IuT6Sl
+         amxmExr3ynLg8nxw8kXYxx0Px/USvwot1R02OdHfZg50mFcwdREzx5bmDrNoNCpDbgxH
+         YbRRFi2cSHog2uNU5MFdzQljFQnBfFK36DtfGnz2NlPzLFANiMmIcpMI7M0SY7+PbprO
+         ce6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728307348; x=1728912148;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=stNX0CPH5IvIaCsbaIGRjS0lIiZFwjIZE9dikF6mqJU=;
+        b=aLW5iS50J4bvz7BJ+5rFtLjmjVtZZH2xzvfB9ItOmye0aMhbVa+KDsUN5bNcrxzMTW
+         JiTSLaDHAJ/Gf5YjXtyrboVpzyn02RTKKm7kn8cdgVfUsddzTOSQsDspXhKE9njXS0jY
+         exXPQDdOl0iSVNT7BgzDF8oINLsqNNJv8fnkT2QovYETWghrAyDrroa46iV+cgPBov9E
+         ROv2ouRhjL8cJQrMHC1jBx8t5krXuUP37Wy00TRiAOQLZRPrUonPnMQEg3NDV64b9uhe
+         vsE5VpZf0tBWQxVscUsOt/nbogXWSY74Z0kKUQ4dD6eOMuWUWiB8zZinBHvmFbaD+Bvs
+         5fcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/bXjbN6gT1BEXgjbmeK1Wkzn4D/IdsVNvhpkTbDgd1fwbtkcKVo0mU9C/SyJKgGYnbxwfjqlzzKdMROmUp5yv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDpEhY23MFStW6GJKz26nGCv5lO19j73QDN/kvKLCqGP+fgik1
+	n3hsOf59e08spJdc+5XYCcZw3JBQRyhOFEOQ1jPqs9m8UyTvaZEWDeFoIEqSTcw=
+X-Google-Smtp-Source: AGHT+IGm5KDXGgiekH3egpesPDNg8awpzbf4iyWtuNkaFmOHJ2mn6HP4vwirEz7pnWjezESexrXL3A==
+X-Received: by 2002:ac8:5715:0:b0:458:401e:c1f2 with SMTP id d75a77b69052e-45d9ba69ca5mr143491341cf.31.1728307348099;
+        Mon, 07 Oct 2024 06:22:28 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45da755647asm26379781cf.41.2024.10.07.06.22.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 06:22:27 -0700 (PDT)
+Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
+ CMD_OPEN name length
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Arun Kumar Neelakantam <quic_aneela@quicinc.com>,
+ "open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM"
+ <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20241007044723.25347-1-jonathan@marek.ca>
+ <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
+From: Jonathan Marek <jonathan@marek.ca>
+Message-ID: <8b050bcb-640d-4443-ca31-787ec5c02a7d@marek.ca>
+Date: Mon, 7 Oct 2024 09:19:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
-where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
-(TEE).
+On 10/7/24 9:16 AM, Dmitry Baryshkov wrote:
+> On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
+>> The name len field of the CMD_OPEN packet is only 16-bits and the upper
+>> 16-bits of "param2" are a different field, which can be nonzero in certain
+>> situations, and CMD_OPEN packets can be unexpectedly dropped because of
+>> this.
+> 
+> Any idea about the upper 16 bits? Should we care about that data too?
+> 
 
-For instance, this compatible is used in both the Linux and OP-TEE device
-trees:
-- In OP-TEE, a node is defined in the device tree with the
-  "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
-  Based on DT properties, the OP-TEE remoteproc framework is initiated to
-  expose a trusted application service to authenticate and load the remote
-  processor firmware provided by the Linux remoteproc framework, as well
-  as to start and stop the remote processor.
-- In Linux, when the compatibility is set, the Cortex-M resets should not
-  be declared in the device tree. In such a configuration, the reset is
-  managed by the OP-TEE remoteproc driver and is no longer accessible from
-  the Linux kernel.
-
-Associated with this new compatible, add the "st,proc-id" property to
-identify the remote processor. This ID is used to define a unique ID,
-common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
-This ID will be used in requests to the OP-TEE remoteproc Trusted
-Application to specify the remote processor.
-
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/remoteproc/st,stm32-rproc.yaml   | 58 ++++++++++++++++---
- 1 file changed, 50 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index 370af61d8f28..409123cd4667 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -16,7 +16,12 @@ maintainers:
- 
- properties:
-   compatible:
--    const: st,stm32mp1-m4
-+    enum:
-+      - st,stm32mp1-m4
-+      - st,stm32mp1-m4-tee
-+    description:
-+      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
-+      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
- 
-   reg:
-     description:
-@@ -43,6 +48,10 @@ properties:
-           - description: The offset of the hold boot setting register
-           - description: The field mask of the hold boot
- 
-+  st,proc-id:
-+    description: remote processor identifier
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-   st,syscfg-tz:
-     deprecated: true
-     description:
-@@ -142,21 +151,43 @@ properties:
- required:
-   - compatible
-   - reg
--  - resets
- 
- allOf:
-   - if:
-       properties:
--        reset-names:
--          not:
--            contains:
--              const: hold_boot
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4
-     then:
-+      if:
-+        properties:
-+          reset-names:
-+            not:
-+              contains:
-+                const: hold_boot
-+      then:
-+        required:
-+          - st,syscfg-holdboot
-+      else:
-+        properties:
-+          st,syscfg-holdboot: false
-+        required:
-+          - reset-names
-       required:
--        - st,syscfg-holdboot
--    else:
-+        - resets
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp1-m4-tee
-+    then:
-       properties:
-         st,syscfg-holdboot: false
-+        reset-names: false
-+        resets: false
-+      required:
-+        - st,proc-id
- 
- additionalProperties: false
- 
-@@ -188,5 +219,16 @@ examples:
-       st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-       st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-     };
-+  - |
-+    #include <dt-bindings/reset/stm32mp1-resets.h>
-+    m4@10000000 {
-+      compatible = "st,stm32mp1-m4-tee";
-+      reg = <0x10000000 0x40000>,
-+            <0x30000000 0x40000>,
-+            <0x38000000 0x10000>;
-+      st,proc-id = <0>;
-+      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
-+      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
-+    };
- 
- ...
--- 
-2.25.1
-
+Its a "prio" value, it should be OK to ignore it.
