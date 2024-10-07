@@ -1,181 +1,187 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779AC1D86DF;
-	Mon,  7 Oct 2024 14:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CC018BBB2;
+	Mon,  7 Oct 2024 15:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312775; cv=none; b=J4wmYjn14bImZqvBcFaPoJ0SHFBzTA/IehSbk9NLIFIp9luZIqcmzzqQz6xVtIl0KkQuUU4DhW5zGtS5VJShYxlHIg0fRwyUayesENtztdVr4OmHyS768xw8g475yx+j2W0+HXWuAxdmLoQDvHN9Lmvis1NQwOnXqfSDEvV14uI=
+	t=1728315330; cv=none; b=K+3Vc8oj4yqllYMPGhHDfv3+kpNSZyaG+qdRWZlhI9TufmKXCyn4/yaOaSizD2KSHtf6zNGW5Yne94Ix8tjhRijv/Sxr+32zl+5PF/zTPXj2quCfmFOpOV/WzMQSGbEUUCu4vMfgg23oX1gq/0PEBnjr9NagKEhdjHntENhZdQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312775; c=relaxed/simple;
-	bh=9hKpqziJxa4+VFx9y7LlHv123VXPkisB4w9bgqeMg3M=;
+	s=arc-20240116; t=1728315330; c=relaxed/simple;
+	bh=vmDcUWR28r4GCm7mjHQRvGrAOByN1ZiGI13saHCCk4E=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHAg/qsSvla9/HxF/ANPeH6QjVsouMcTyJxDOnguOvs2QI5HJkmBNJkZ3tmmJXAuzFtvmCUi3qU0cmaDyM5DH/ir7/z1xIgyaCwuLZx3ySTNDfoIAEWrnBc8NNwpdoeu6eSQL9aB1ebdhZzCjxWc/sjhCCy8u3bW3UQbZErVw6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jbMOo6xN; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=BN6yf5lZ3e05PIYYoEKyLa2p3r30hoSo0A6QgrmV/tdcvUrYGpjCH3eqIjhYNV9D0k6MqRlmjvXeD2D4rqTAykvsDCGnL6vyAzeWKYt5L+ixx0+McvODi2wCvdDvJ4jZ6ah600ToR3Z4e/OXBdkdz8RNGvgENfyvOtr17693+XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gxYaGbRV; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jbMOo6xN"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gxYaGbRV"
 Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497ESDev003776;
-	Mon, 7 Oct 2024 14:52:48 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497F6f9t003930;
+	Mon, 7 Oct 2024 15:35:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=w3RCWRUtIw9sk36ygunIIsCE
-	4n8HIqRfSejgHw5bmik=; b=jbMOo6xN5JyHlRNN2E9f41MD0bry9G6ZSR2LpM4C
-	N0DHKBmxW4W6ac0Wy5M505mGHJE0JZwT0AVh6tXHNCILVWHFkf+QNUQLpv6bujec
-	raETbPNiM/yEeLsVI+32FFfFAbWLeOn06J+z3OuFRpM1yU8HrtMF0dyKBBqUJq1C
-	JkAtu2HiCmVonWOhdr1HLUaNWmHd6VpEdJ0H6HskgdxFvEGObpzyqYS8Bokmhgi4
-	3ohoquymZc4y57gZR8ba3vrH8pornN6sOo3Hm5Ws3efdYVsdpyLtbd3m3K0wb1TR
-	APfcgB1Uz+hflhO5k4rAwl2CtM2Xf4GF5HrEUbYgSSNorA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv6vg5c-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T8D5E2ZeSNmgSSEISntkVqY99/wGIdZ25++9fHbZMf4=; b=gxYaGbRVPGhIgP4C
+	mDcAw4e98KHBNTSC/sD807WG+v4Iy1YHGjYW9bCijZcQP7ehjB2T9uShgn79YIvq
+	/eOwuRxReArKf9AwZBEtt2MN0ac84w6zxtgibC5Eiua2sOGqVnRE0+STWrNJPb25
+	WgpTqTRrEoJ+BOnRww6PdZYApYi/nsk3ivSYSQpoaKYgJILQHjf+opVausS71FQe
+	9GhIr/8LqgdjY2G9B1nDrkjENoBtMQnwcz5Hc9OTaxkLeHRrJpSEH1FoErgAIXrY
+	CipCpo4Cs5mU277nfXIGd3zwULKJohyPCBN5COYoPrO8RSFKuHYgvoveZ+SZwZus
+	kmcavQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv6vn66-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Oct 2024 14:52:48 +0000 (GMT)
+	Mon, 07 Oct 2024 15:35:24 +0000 (GMT)
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497EqlGB022016
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497FZO07024422
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Oct 2024 14:52:47 GMT
+	Mon, 7 Oct 2024 15:35:24 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 7 Oct 2024 07:52:43 -0700
-Date: Mon, 7 Oct 2024 20:22:39 +0530
+ 15.2.1544.9; Mon, 7 Oct 2024 08:35:20 -0700
+Date: Mon, 7 Oct 2024 21:05:16 +0530
 From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <neil.armstrong@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 CC: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
 	<mathieu.poirier@linaro.org>,
         Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Konrad
- Dybcio <konradybcio@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
         Bartosz Golaszewski
 	<bartosz.golaszewski@linaro.org>,
         Manivannan Sadhasivam
 	<manivannan.sadhasivam@linaro.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
- support
-Message-ID: <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Shiraz Hashim <quic_shashim@quicinc.com>
+Subject: Re: [PATCH 1/6] dt-bindings: remoteproc: qcom,pas-common: Introduce
+ iommus and qcom,devmem property
+Message-ID: <ZwP/tA06k6we7uUh@hu-mojha-hyd.qualcomm.com>
 References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <20241004212359.2263502-7-quic_mojha@quicinc.com>
- <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+ <20241004212359.2263502-2-quic_mojha@quicinc.com>
+ <pt5x7miszg3vrqjimhdfesxghnpdsu4zzdr37vcmuze7yccmkn@twjeb5cfdqph>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <pt5x7miszg3vrqjimhdfesxghnpdsu4zzdr37vcmuze7yccmkn@twjeb5cfdqph>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kUnJDXfb6e4K6UzRSZRfCSUHeGXLGqoY
-X-Proofpoint-GUID: kUnJDXfb6e4K6UzRSZRfCSUHeGXLGqoY
+X-Proofpoint-ORIG-GUID: XsO2qa38GjycV4QpXfsqKnxdo7dq3tT4
+X-Proofpoint-GUID: XsO2qa38GjycV4QpXfsqKnxdo7dq3tT4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
  priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=504 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
  spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410070105
+ engine=8.19.0-2409260000 definitions=main-2410070110
 
-On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
-> On 04/10/2024 23:23, Mukesh Ojha wrote:
-> > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
-> > translation for remote processors is managed by QHEE and if the same SoC
-> > run under KVM, remoteproc carveout and devmem region should be IOMMU
-> > mapped from Linux PAS driver before remoteproc is brought up and
-> > unmapped once it is tear down and apart from this, SHM bridge also need
-> > to set up to enable memory protection on both remoteproc meta data
-> > memory as well as for the carveout region.
+On Sun, Oct 06, 2024 at 10:38:01PM +0300, Dmitry Baryshkov wrote:
+> On Sat, Oct 05, 2024 at 02:53:54AM GMT, Mukesh Ojha wrote:
+> > From: Shiraz Hashim <quic_shashim@quicinc.com>
 > > 
-> > Enable the support required to run Qualcomm remoteprocs on non-QHEE
-> > hypervisors.
+> > Qualcomm’s PAS implementation for remote processors only supports a
+> > single stage of IOMMU translation and is presently managed by the
+> > Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > the KVM host. Remoteproc needs carveout memory region and its resource
+> > (device memory) permissions to be set before it comes up, and this
+> > information is presently available statically with QHEE.
 > > 
+> > In the absence of QHEE, the boot firmware needs to overlay this
+> > information based on SoCs running with either QHEE or a KVM hypervisor
+> > (CPUs booted in EL2).
+> > 
+> > The qcom,devmem property provides IOMMU devmem translation information
+> > intended for non-QHEE based systems.
+> > 
+> > Signed-off-by: Shiraz Hashim <quic_shashim@quicinc.com>
+> > Co-Developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > > ---
-> >   drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
-> >   1 file changed, 40 insertions(+), 1 deletion(-)
+> >  .../bindings/remoteproc/qcom,pas-common.yaml  | 42 +++++++++++++++++++
+> >  .../bindings/remoteproc/qcom,sa8775p-pas.yaml | 20 +++++++++
+> >  2 files changed, 62 insertions(+)
 > > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > index ac339145e072..13bd13f1b989 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > @@ -122,6 +122,7 @@ struct qcom_adsp {
-> >   	struct qcom_devmem_table *devmem;
-> >   	struct qcom_tzmem_area *tzmem;
-> > +	unsigned long sid;
-> >   };
-> >   static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-> > @@ -310,9 +311,21 @@ static int adsp_start(struct rproc *rproc)
-> >   	if (ret)
-> >   		return ret;
-> > +	ret = qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, true, true, adsp->sid);
-> > +	if (ret) {
-> > +		dev_err(adsp->dev, "iommu mapping failed, ret: %d\n", ret);
-> > +		goto disable_irqs;
-> > +	}
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > index 63a82e7a8bf8..068e177ad934 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > @@ -52,6 +52,48 @@ properties:
+> >      minItems: 1
+> >      maxItems: 3
+> >  
+> > +  iommus:
+> > +    maxItems: 1
 > > +
-> > +	ret = qcom_map_devmem(rproc, adsp->devmem, true, adsp->sid);
-> > +	if (ret) {
-> > +		dev_err(adsp->dev, "devmem iommu mapping failed, ret: %d\n", ret);
-> > +		goto unmap_carveout;
-> > +	}
+> > +  qcom,devmem:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> > +    description:
+> > +      Qualcomm’s PAS implementation for remote processors only supports a
+> > +      single stage of IOMMU translation and is presently managed by the
+> > +      Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > +      such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > +      the KVM host. Remoteproc might need some device resources and related
+> > +      access permissions to be set before it comes up, and this information is
+> > +      presently available statically with QHEE.
 > > +
-> >   	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-> >   	if (ret < 0)
-> > -		goto disable_irqs;
-> > +		goto unmap_devmem;
-> >   	ret = clk_prepare_enable(adsp->xo);
-> >   	if (ret)
-> > @@ -400,6 +413,10 @@ static int adsp_start(struct rproc *rproc)
-> >   	clk_disable_unprepare(adsp->xo);
-> >   disable_proxy_pds:
-> >   	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-> > +unmap_devmem:
-> > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
-> > +unmap_carveout:
-> > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
-> >   disable_irqs:
-> >   	qcom_q6v5_unprepare(&adsp->q6v5);
-> > @@ -445,6 +462,9 @@ static int adsp_stop(struct rproc *rproc)
-> >   			dev_err(adsp->dev, "failed to shutdown dtb: %d\n", ret);
-> >   	}
-> > +	qcom_unmap_devmem(rproc, adsp->devmem, adsp->sid);
-> > +	qcom_map_unmap_carveout(rproc, adsp->mem_phys, adsp->mem_size, false, true, adsp->sid);
+> > +      In the absence of QHEE, the boot firmware needs to overlay this
+> > +      information based on SoCs running with either QHEE or a KVM hypervisor
+> > +      (CPUs booted in EL2).
 > > +
-> >   	handover = qcom_q6v5_unprepare(&adsp->q6v5);
-> >   	if (handover)
-> >   		qcom_pas_handover(&adsp->q6v5);
-> > @@ -844,6 +864,25 @@ static int adsp_probe(struct platform_device *pdev)
-> >   	}
-> >   	platform_set_drvdata(pdev, adsp);
-> > +	if (of_property_present(pdev->dev.of_node, "iommus")) {
-> > +		struct of_phandle_args args;
-> > +
-> > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		rproc->has_iommu = true;
-> > +		adsp->sid = args.args[0];
-> > +		of_node_put(args.np);
-> > +		ret = adsp_devmem_init(adsp);
-> > +		if (ret)
-> > +			return ret;
+> > +      The qcom,devmem property provides IOMMU devmem translation information
+> > +      intended for non-QHEE based systems. It is an array of u32 values
+> > +      describing the device memory regions for which IOMMU translations need to
+> > +      be set up before bringing up Remoteproc. This array consists of 4-tuples
+> > +      defining the device address, physical address, size, and attribute flags
+> > +      with which it has to be mapped.
 > 
-> Why don't you get this table from the firmware like presumably QHEE does ?
+> I'd expect that this kind of information is hardware-dependent. As such
+> it can go to the driver itself, rather than the device tree. The driver
+> can use compatible string to select the correct table.
+> 
 
-Well, AFAIK, QHEE(EL2) has this information statically present and does
-not get it from anywhere., but will confirm this twice..
+IIUC, are you saying that to move this into driver file and override the
+compatible string via overlay ?
+
+> > +
+> > +      remoteproc@3000000 {
+> > +          ...
+> > +
+> > +          qcom,devmem = <0x82000 0x82000 0x2000 0x3>,
+> > +                        <0x92000 0x92000 0x1000 0x1>;
+> > +      }
+> > +
+> > +    items:
+> > +      items:
+> > +        - description: device address
+> > +        - description: physical address
+> > +        - description: size of mapping
+> > +        - description: |
+> > +            iommu attributes - IOMMU_READ, IOMMU_WRITE, IOMMU_CACHE, IOMMU_NOEXEC, IOMMU_MMIO
+> > +          enum: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+> > +                  25, 26, 27, 28, 29, 30, 31 ]
+> 
+> Attributes should definitely be defined and then the DT should use
+> defines rather than the raw values.
+>
+
+Ack.
 
 -Mukesh
+
