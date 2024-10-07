@@ -1,96 +1,110 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C9F1D363A
-	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Oct 2024 14:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E568C188588;
+	Mon,  7 Oct 2024 14:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728309638; cv=none; b=O1QMzvE1Ts857hMKf5+UuIgFsEu4cqxxxddNg0t0l2aYfG6Wv+kowSBD9C/oT3Un1rq+Q7nGEiNuQyrjd42P1H3gbwb3PbGlZryy3zKWgWm6awLpDiVGGTKVDKtffbepEY7QtsrRydgzQZPyP5sxePHDXlZIbZBMeyoU/zw4enE=
+	t=1728311843; cv=none; b=fIVAPtMuiOd8fYImGIg+aKajF39UW57RKPRMi75ZPbNjZK4kZdAnnMyH5fsw5lT/Cl+pnietEXcLhlHt52lWm4y4iAJtgdQ22H8bq7cD9NiiP02RGJVMZAHPm2udUiYgNViKwHlKP3h4/UgPbG/TNeQQTrNc5alcfcSz/rCtVMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728309638; c=relaxed/simple;
-	bh=tzGpZ1B7fLhxjfs5UNJtIfBOrNHIIXSsKYxOPsRE4oM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AL4DNsF6eaDTLL80vPPLfoHfffUX+wbHBst4KY0Bh2VMIVIpcX6LpyxRF6PDfyUDeQSWkBLquPJU8p2iDZXKGcZuH0hZ0ec2gHnf2F0RMwSUc0ZRGaBjmwUhVsDu5ZIAQQcmv5i9Mm+UJ9BG476erVdn/kPc3BB5VTwv8Hylb48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UdyExYMw; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728311843; c=relaxed/simple;
+	bh=PQBd4ZyJpwY+UYzMQdcq96al0+Oaadfgarg0/2UDdi8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5NLotLvmQK0iOF/nbezq4cbQaBryz5vx3TpDgP0iNlhUJXHJJ+rJy+3WVzo1wy6iTXHdAZ2fzd4f182oMoQYFa3SkOlU5h4MccsS97P3ues7V4VOFuOCm23omm0b10ACbsMrxk0R4o5oj5plaQ43qE55XpzNyPZl64B15UmmyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RahSImvC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UdyExYMw"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53994aadb66so3964978e87.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Oct 2024 07:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728309635; x=1728914435; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zy0Gz3EdQGICzEnD8uO0/8WhRra84BxD7rRmoP1WUZg=;
-        b=UdyExYMweQhf+E6SJEMdDCQkDx0pW2r/swhKNEMNlXEXVIAbclZeI0i+vQ57kDBROk
-         fvFz+ysbn/vtLfJSbK4x6PcSAKRzsuF03iIieQEC0bMdJ4rJNTeznJv7euIdJ0hFsZop
-         yZrZmEt2wZiFQXlr3VT8bIJF7Xyw4SFE67AaX4zUMQcaktB2UCprGs9U7bvoqaq0iITM
-         Emmk4d09oVXso7VSFlXBp6mP3TzvfwUERh3hm1gPN6z0t9VIYEld989NgqKtIRobp1yZ
-         FGGFZVwKkTqRxFpq0dn+uDjDS7r3fM26QXkbGVD1Y0n75w472KhmNkfu17jI+BPImFp/
-         u+SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728309635; x=1728914435;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zy0Gz3EdQGICzEnD8uO0/8WhRra84BxD7rRmoP1WUZg=;
-        b=NeLT2JMxHhtV0vKjbHQlKT9F0SXTyaq7EYxqQnrVCSAdnWpgclPyywTJapKzWCZGHZ
-         NFfIUdM2cIO+3iOr7wiyXapasgpxinPJUyMLi0ZAYWGh0f7Vprmx0knFjBwi9E/ZDgi0
-         zwKgJCRgZgGiREmIfAiHBeDojy992/J/FVd1MQM2Le0JhanN0Bb2Wlg2iQAt51vau0Jn
-         gp6iojbXNIZEN9aDVlyfWj3eCtu/yZzhiAiiSCeF2ZWJao2hg66RBdxMmeZg8TCBGVC1
-         aOXdWr44/L3dbIxOrYW3Ii9BFPxVMh9DgCahQtWXhOoL2Jib4+2xOw990vuihHj9MfSm
-         cRmA==
-X-Forwarded-Encrypted: i=1; AJvYcCX30whn749BpLjQCZy3WQcOCUXiW+GoJhOEPeqINq3M815DxyOKEwf5KrSQ/aCyfTdEKLWnym0LFbyea16Z4vfo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFrcwpJjbh2H/9YoZ2hG+CeuKkrKz2Bj/zQizYJrgxui/0kCu/
-	iSSwrL4j+cpNpJpKa91bzjU02+UHo2UCwLGUehCt9a313rj1trXmS7uhULvXL/+J6r61Dbm0Z/o
-	rKKUlvrF4
-X-Google-Smtp-Source: AGHT+IGW7IqZl9Mpin4nsxqbo6HR3Y3Qib6EmFhulT1fG1XZoxfVQ6sWL1szp7/l8264Leo2fYTojw==
-X-Received: by 2002:a05:6512:104d:b0:539:95f0:a05d with SMTP id 2adb3069b0e04-539ab9c7251mr5074412e87.58.1728309635246;
-        Mon, 07 Oct 2024 07:00:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00-89ea-67f6-92cd-b49.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:89ea:67f6:92cd:b49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff1d2f6sm855423e87.152.2024.10.07.07.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 07:00:34 -0700 (PDT)
-Date: Mon, 7 Oct 2024 17:00:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Arun Kumar Neelakantam <quic_aneela@quicinc.com>, 
-	"open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rpmsg: glink: use only lower 16-bits of param2 for
- CMD_OPEN name length
-Message-ID: <zdpszrr7lhe6bvnq3ullwet3pzfidnhfo3wlvfbljnu7q4j2z6@3romukxqjyvd>
-References: <20241007044723.25347-1-jonathan@marek.ca>
- <rmybaobbmhmynz3or4uwvhdgqjrkahmkwz5ncct6rssnfpq4jh@ulqeqesixyhz>
- <8b050bcb-640d-4443-ca31-787ec5c02a7d@marek.ca>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RahSImvC"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497ESDdO003776;
+	Mon, 7 Oct 2024 14:37:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=nr8ntL29nq83RMnS527uHszP
+	tMzlRgHfx+H0N0jfDd0=; b=RahSImvCPTBDB4CWw0aWbkMGYvCCwj+uZkNLYslm
+	pB9FqeSGsXaWISyNKRmG1XC+NaAwfClQWSp30p3o4MuWotY85yp7Uh5DUg0w2K1l
+	6MskHDWyf9YJ5in3A2b5ECRoS5bd/k3+kO38H0CiybwnFob3TO5oKp855wo8qZcY
+	n4lxJrJyGozq8MMFBf9RLihubcPkviEKz8U8NphnQElM+nnHo4OxgYEO8r94+fnK
+	csBjU7xWWxI/9Lo9+pRYZNDvmFI/cRQ39UQ0r5IuCQS3sMODWsNXoKuKiV0VcgVg
+	XbOcmQSqJh5vv89VxfRvVmEOTcpnV1UAsfmqbKI2c5uTTA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xv6vesd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 14:37:15 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 497EbFOv013613
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Oct 2024 14:37:15 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 7 Oct 2024 07:37:10 -0700
+Date: Mon, 7 Oct 2024 20:07:07 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <neil.armstrong@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Shiraz Hashim <quic_shashim@quicinc.com>
+Subject: Re: [PATCH 3/6] remoteproc: qcom: Add helper function to support
+ IOMMU devmem translation
+Message-ID: <ZwPyE/rQOH181rqz@hu-mojha-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-4-quic_mojha@quicinc.com>
+ <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <8b050bcb-640d-4443-ca31-787ec5c02a7d@marek.ca>
+In-Reply-To: <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xgcwnnmgVE3Tl4Kadex-ZQYuJlMy7sp6
+X-Proofpoint-GUID: xgcwnnmgVE3Tl4Kadex-ZQYuJlMy7sp6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=589 mlxscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410070103
 
-On Mon, Oct 07, 2024 at 09:19:05AM GMT, Jonathan Marek wrote:
-> On 10/7/24 9:16 AM, Dmitry Baryshkov wrote:
-> > On Mon, Oct 07, 2024 at 12:47:22AM GMT, Jonathan Marek wrote:
-> > > The name len field of the CMD_OPEN packet is only 16-bits and the upper
-> > > 16-bits of "param2" are a different field, which can be nonzero in certain
-> > > situations, and CMD_OPEN packets can be unexpectedly dropped because of
-> > > this.
+On Mon, Oct 07, 2024 at 10:08:16AM +0200, neil.armstrong@linaro.org wrote:
+> On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > From: Shiraz Hashim <quic_shashim@quicinc.com>
 > > 
-> > Any idea about the upper 16 bits? Should we care about that data too?
-> > 
+> > Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > translation set up for remote processors is managed by QHEE itself
+> > however, for a case when these remote processors has to run under KVM
 > 
-> Its a "prio" value, it should be OK to ignore it.
+> This is not true, KVM is a Linux hypervisor, remote processors have
+> nothing to do with KVM, please rephrase.
 
-Could you please document it in the commit message and in a comment next
-to the qcom_glink_rx_defer() call?
+Thanks, perhaps something like this,
 
--- 
-With best wishes
-Dmitry
+"However, when same SoC runs with KVM configuration, remoteproc IOMMU
+translation needs to be set from Linux host running remoteproc PAS
+driver"
+
+-Mukesh
+
