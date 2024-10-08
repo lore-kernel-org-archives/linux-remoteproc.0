@@ -1,99 +1,131 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3764B1D9586
-	for <linux-remoteproc@vger.kernel.org>; Tue,  8 Oct 2024 07:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727718C93F;
+	Tue,  8 Oct 2024 09:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728371840; cv=none; b=g/pl5SLdbeFkSiIOwbDMnCPa1pfxQjdMj1ceh+cJljh/cNnjdfXBYDfl8tqWGNIpIwxMf7l8SfSGl9Iw2jXhK2EGfTb23LukTAHVNzXvI4u9M5k7wkdKrcMIQ14yXaMkpFpI3EAS2I+WGzfKrMY7BsnlpV7cF3sz6fLhrEMbD2o=
+	t=1728381354; cv=none; b=SAxS0+CV7cV3ydkadAXqRcO6xyYrxuymH8WOvnrwU+Gpc1owJD5xITgBAqJCRa0REEiBV6JkTI0i6fbf62H2BHu0dRAgsgVQTfPtIOuEEKyqobhN7qb/J9VTedKRCLtERGxRX3s3C3fFakN5EWA7YUVMvlLcyPqtNg2KGBVm07E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728371840; c=relaxed/simple;
-	bh=/IbPserPXJa1bMDNzcpey2MsSiGwUivhhrPZ/JfO9dg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=keCesc0DWd6EH8Sfk3wKDzHuHBE/Q06BqZaEB18i3VrtUQ1uRM2ZviWY0XqAz98QgbqBxAyz+aA7sHz3QfWsvPIQ7VCC/3o9diWeAPxwl8P6Jx/aQmiNxenO31lHeQ5yikEFjswzLVNvblK8qyqSs7hn0ymcPrfBDMntdsMpo40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=SXUz4QNl reason="signature verification failed"; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728381354; c=relaxed/simple;
+	bh=LvfAntT0wXbH5X1IhTvf7CykMVcP9BvX/yjWZiYGSvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLuMONcHUSAjOgHC+gr+ZfPmi1lCFF+2sLDYR/NKjx3p7Qgco+T4psadlwAJ4IxXAJAJ6nEHi0ZlAtwbM4Dmzjl3DVBIc49k9r4Zjenw9A+iEhxVuOm1u5uOi83bXQMH/3rCqTeTxqIfklz92RFzMKydrJ46KKGeakhYjTpXN6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TL4Mg+6O; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="SXUz4QNl"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71dec1cf48fso3104314b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Oct 2024 00:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728371836; x=1728976636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f01doXKW6VFqsZ9MOvvcKDX1KhWLQSKuPO/rCisrRcY=;
-        b=SXUz4QNlRZv35Hg1fCJeppBfUO4GYxuADIRAtbI+p2j89whTCrVZ2qMLSj1+58DtX1
-         9NTNqIt5SWi9i4+oOUlnTHvxg4pPPvKnKGkcHTppFMh6K6tMHauI2FXKvgB9GM+Jz1qp
-         7L8QmwgCIX6UFPCLveMH3BP2rVBcoV1UK1Gg3t5QdzJjF04uPq2XHiEchf1P2yZLOEAg
-         lGtbPQrhFl6zsDPS0d6iBvn0Zm76pOdYQ33hBNJGUaohV89OO18gf20icT6jUQKhoW68
-         gF8HS8Qi49K6RFmuklsdKK7bDYAI0qhmZaCh8lQrNQV/qDAslhUYtx+hVV7MOCsi8Pij
-         K98A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728371836; x=1728976636;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f01doXKW6VFqsZ9MOvvcKDX1KhWLQSKuPO/rCisrRcY=;
-        b=W8KD2yzcV+GmvwZun4h65H+DKEyLecarO2vaSRisw7n9D7s2QIcMmX9IHe2cONRF3d
-         yVcDtpY2vpTjcoOamOhz/fIrKsdtz1nF15qDoaWigHFCX0ot1YfEMgL9Ffw4q/LVF8gK
-         /OKhtbG3FF46wBAm7TlhfJbUWVroMvORNe+qgH8Ds/S5EpuoxEU9D07nQpAu4FQVjHlm
-         I0Gq//Sd+gecI1P/QSJOzew7i+I62aLHQuwj+K9VWHcOX3J0xPoAklbQj+xN62HjsQPy
-         opENKui/Nqtz/M+o2A4g+/M33+BYeL3DGP549TBe//5G5yJVQzb67NuxKZOjIsa9zx7x
-         jbeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU9lVqUGxKA2zyTI2l2jPbrIz4zAlHHg7WZVItT9/99a2M6Slot/3O8vf1sOGW7yXpAYUPxkFREJlkPDUoIEyV@vger.kernel.org
-X-Gm-Message-State: AOJu0YygqoIANXo29brfsfmrow0KvKYyN/5SaJaeP8YQFV5sVQNv6vKx
-	+VLfKcF9cCFDBdg+tbp4I+eKwP5bjICD8JcdPgAr/X6YTWLaGEfHaxHIUWMPrxZRDImsEtosef/
-	HFUZtK2pF
-X-Google-Smtp-Source: AGHT+IEUDv9nt+vKX0Q/pnMHLEKmwOXUvnewz9lr9/wo/hLdaw/xgTmRckwI+bGaNzPWcVxI+fAWWw==
-X-Received: by 2002:a05:6a00:2289:b0:71e:117d:b12e with SMTP id d2e1a72fcca58-71e117db5demr2405190b3a.9.1728371836414;
-        Tue, 08 Oct 2024 00:17:16 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.195])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e9f682d368sm6107758a12.43.2024.10.08.00.17.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 00:17:15 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	corbet@lwn.net
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
-Date: Tue,  8 Oct 2024 01:15:57 -0600
-Message-ID: <20241008071559.18523-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TL4Mg+6O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728381353; x=1759917353;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LvfAntT0wXbH5X1IhTvf7CykMVcP9BvX/yjWZiYGSvg=;
+  b=TL4Mg+6OUYq8LnHqNeOtJ4ly71487k8WiJL0iQRr2e68kZQj204i9ivr
+   TXdOaW8DFATF3yExta+jifaZd6NPDoqAH/dDLygwUE2FnUlm5ezpugMcM
+   jGE8/2IbdrYfAy5MdcCz7LzIY33cdGn1xzQKr5kv52knGXWSkMizPFY/x
+   jSK2heF/duEEqKm+ybe3tG0lj81FGeW1bIzpUDleFJf5L1GW697JexTyG
+   yGwEnR08QLWQ5k4xyDwmsoL9R3LWYccUBT3Z82cIJ0VdkEWgju11+uiYZ
+   rMnPIdrIksW7mAHFxtPSWWekKh26Khnv/D9Iv/Naer5YA2WUs6FZB95vk
+   A==;
+X-CSE-ConnectionGUID: NNPncPgNS+Og83fDvy9ZTA==
+X-CSE-MsgGUID: UiIgue69T6aRKRPqcX164g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="27442860"
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="27442860"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 02:55:52 -0700
+X-CSE-ConnectionGUID: Aq0MOba5SQyEs6fMt25THw==
+X-CSE-MsgGUID: 1A0DACjuQ1yLc+P0ti9lQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,186,1725346800"; 
+   d="scan'208";a="75755815"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 08 Oct 2024 02:55:49 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sy6wU-0006Du-2F;
+	Tue, 08 Oct 2024 09:55:46 +0000
+Date: Tue, 8 Oct 2024 17:55:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA
+ to load the firmware
+Message-ID: <202410081704.Zo2k0SZQ-lkp@intel.com>
+References: <20241007131620.2090104-8-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007131620.2090104-8-arnaud.pouliquen@foss.st.com>
 
-Following spelling error reported by codespell
-was fixed:
-	implementors ==> implementers
+Hi Arnaud,
 
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
- Documentation/staging/remoteproc.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-index 348ee7e508ac..5c226fa076d6 100644
---- a/Documentation/staging/remoteproc.rst
-+++ b/Documentation/staging/remoteproc.rst
-@@ -104,7 +104,7 @@ Typical usage
- 	rproc_shutdown(my_rproc);
-   }
- 
--API for implementors
-+API for implementers
- ====================
- 
- ::
+[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241007-212358
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241007131620.2090104-8-arnaud.pouliquen%40foss.st.com
+patch subject: [PATCH v10 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+config: parisc-randconfig-001-20241008 (https://download.01.org/0day-ci/archive/20241008/202410081704.Zo2k0SZQ-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241008/202410081704.Zo2k0SZQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410081704.Zo2k0SZQ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_load_fw':
+>> (.text+0xa8): undefined reference to `tee_shm_register_kernel_buf'
+>> hppa-linux-ld: (.text+0x160): undefined reference to `tee_client_invoke_func'
+>> hppa-linux-ld: (.text+0x178): undefined reference to `tee_shm_free'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_register':
+>> (.text+0x2f4): undefined reference to `tee_client_open_session'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_unregister':
+>> (.text+0x3d4): undefined reference to `tee_client_close_session'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_probe':
+>> (.text+0x478): undefined reference to `tee_client_open_context'
+>> hppa-linux-ld: (.text+0x4f8): undefined reference to `tee_client_close_context'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_remove':
+   (.text+0x558): undefined reference to `tee_client_close_session'
+   hppa-linux-ld: (.text+0x59c): undefined reference to `tee_client_close_context'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_start':
+>> (.text+0x68c): undefined reference to `tee_client_invoke_func'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_stop':
+   (.text+0x7c8): undefined reference to `tee_client_invoke_func'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_get_loaded_rsc_table':
+   (.text+0x92c): undefined reference to `tee_client_invoke_func'
+   hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o: in function `tee_rproc_release_fw':
+   (.text+0xb18): undefined reference to `tee_client_invoke_func'
+>> hppa-linux-ld: drivers/remoteproc/remoteproc_tee.o:(.data+0x8): undefined reference to `tee_bus_type'
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for REMOTEPROC_TEE
+   Depends on [n]: REMOTEPROC [=y] && OPTEE [=n]
+   Selected by [y]:
+   - STM32_RPROC [=y] && (ARCH_STM32 || COMPILE_TEST [=y]) && REMOTEPROC [=y]
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
