@@ -1,47 +1,47 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326F3192D6E;
-	Wed,  9 Oct 2024 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76199197558;
+	Wed,  9 Oct 2024 14:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481853; cv=none; b=rbzwkVmVPe6hmm7fwWMOfwHJuCWS+ar3P4i3Fi4AIhyOih8Rdv7/fMMnPbXnyBU3JmJ24wJ70rp4fRbDt3pBZVEu7/gvVG9OwmG46uBtE0ySwCjkvylox4O9f9h5IN9WDWPTCP7zTNa7sB+5VBZP4bNpp5TIoB0lzijRMRyDFhM=
+	t=1728482674; cv=none; b=rb2owjwDTWkCi8Zytg3CYfy81tG9Uc1R8Hu+ZfyAeAvpPD54rWh/CiZER5aBtyDvLAhX9dmXMb5nSbz3YrRpgjzvBKnu+y+yiYLlwupbhLVNWcb9trSYuOW4EFDJJawaSB7e45bLQLQ2+7iReNeCJotSdpc1UKCMWOxHX/vYPKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481853; c=relaxed/simple;
-	bh=X4TnJTxurWziK3v3Zy4Trv0kJnJ555qg9MbV8sv+F3k=;
+	s=arc-20240116; t=1728482674; c=relaxed/simple;
+	bh=cn/+7rAN0waeqJO+OoEtoic+ow7ulLW4bNF7zTzwvVo=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jt+D/uDpKm2zqaDiJXYJfo4HhXe99GqnRohcN8wsR2Wavwte23cm4JYOQn5/xz+zRTadoyw5sv/Vlq86EHzqLV3lEezEkiR4pfF4DR0CSPPLrTta/Nan+LW2hgGPIdLYf6djtp+3KGihYt/gYP4rqZmzZznlVr8rJ1IP4jcCE5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLJWPUsl; arc=none smtp.client-ip=205.220.180.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=TriHbNzMHeIoHv61kJAABHz+1l+LuwXTztbcy9mSEMysLQUId202W1Td/MiypYy1ZoioTnEeSOdYZ0HmW5lyUmQFDXIcer+fQdJ/99633KtzyuJpWiibxj9eORnvgp4a2wb5Ge+cpGVuQ0MgPftYigEQMjrO5NfXL+kObILWh9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y789wuzr; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLJWPUsl"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4999eghH018007;
-	Wed, 9 Oct 2024 13:50:47 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y789wuzr"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49985i6Y025745;
+	Wed, 9 Oct 2024 14:04:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ID8IcFr7c2RC5aq4yF6GSz9+xbNb2bvDWiborrw7cI8=; b=eLJWPUslPRQX0alg
-	2A6AYfHcjIaeUM8mhB2yZHA83Dk7yeZC22TrHXxO72m6j/HE+zipxkncNKN4o8Vd
-	UFG429Uvqimn/7LLx2g2EZP7BDcVAEBvbZ/exKgV8+HMRnoKVFFlIkuOjQC89mS+
-	yM1QnFu6awSlU5i0WJCYvmv3znP/TC8pUcVL5GZIPmHP2cFJwU3AWS8TJfWQbyNY
-	nRuHtuapNqzIO5+NxiklJPRPl6pRmRR9QAUQSqomq8txJFoNGsFWgdEixztRVX/R
-	ZDXtMTr2qlbdd12Rg4Disa2+qFm4OnCCIMtG5jYxe/WqiKfDQla+38FqCGB7ZBH+
-	+ZdFGA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qtgsg-1
+	UKcdbQJ2jFrott/aEJlFWBdOxp7YlD/KOtBfPS0ut9E=; b=Y789wuzrYh83XvEX
+	toyCbwFZhfNk3NIR3cfh+tMV+QnOAoNKkK5zxXKJHCxNG7YuV0U9C12sIlXiuEd4
+	OBA7CJv3/5LfMGwMk5jpyh2GbFtPLxCmFXdP/9WRj8Ape2npFC3eNUXNvOBDfLEG
+	CzF1SnW4vQmLGakiEns+CxEefDr1z3SCxGxhAPgCSmhl4N6dC8RDwW0zv3kYn3jq
+	9wolQtx8F8CcqbwUr4w2FxMKdZiclRrmLpwKds65bwwRXXNm2yrbz9FuGJi/So5I
+	iPkdSDWEhsDHD2qiQ+JekrWqAbrsT3qO2cfpL5wi5If8+WP2K+ldEMjsM6hL1P7a
+	hfn05A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4258psu2y5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 13:50:47 +0000 (GMT)
+	Wed, 09 Oct 2024 14:04:28 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499Doj18004436
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499E4RP1002607
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 13:50:45 GMT
+	Wed, 9 Oct 2024 14:04:27 GMT
 Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 06:50:41 -0700
-Date: Wed, 9 Oct 2024 19:20:37 +0530
+ 15.2.1544.9; Wed, 9 Oct 2024 07:04:23 -0700
+Date: Wed, 9 Oct 2024 19:34:19 +0530
 From: Shiraz Hashim <quic_shashim@quicinc.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 CC: Mukesh Ojha <quic_mojha@quicinc.com>,
@@ -59,10 +59,14 @@ CC: Mukesh Ojha <quic_mojha@quicinc.com>,
 	<manivannan.sadhasivam@linaro.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
-Message-ID: <20241009135037.GG1421305@hu-shashim-hyd.qualcomm.com>
+Subject: Re: [PATCH 1/6] dt-bindings: remoteproc: qcom,pas-common: Introduce
+ iommus and qcom,devmem property
+Message-ID: <20241009140419.GH1421305@hu-shashim-hyd.qualcomm.com>
 References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
+ <20241004212359.2263502-2-quic_mojha@quicinc.com>
+ <pt5x7miszg3vrqjimhdfesxghnpdsu4zzdr37vcmuze7yccmkn@twjeb5cfdqph>
+ <ZwP/tA06k6we7uUh@hu-mojha-hyd.qualcomm.com>
+ <CAA8EJpqay7Nryb5HwwHE1+iiMXKUvqi-djmCsYN8fxigt-s-tQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -72,66 +76,101 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+In-Reply-To: <CAA8EJpqay7Nryb5HwwHE1+iiMXKUvqi-djmCsYN8fxigt-s-tQ@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
-X-Proofpoint-ORIG-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
+X-Proofpoint-GUID: u0lbiqUf52cxtVxBbSL0ivwUZBCQqs3E
+X-Proofpoint-ORIG-GUID: u0lbiqUf52cxtVxBbSL0ivwUZBCQqs3E
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1011
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410090086
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 mlxscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=790 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090087
 
-On Sun, Oct 06, 2024 at 10:34:19PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Oct 05, 2024 at 02:53:53AM GMT, Mukesh Ojha wrote:
-> > Qualcomm is looking to enable remote processors on the SA8775p SoC
-> > running KVM Linux host and is currently trying to figure out an
-> > upstream-compatible solution for the IOMMU translation scheme problem it
-> > is facing when SoCs running with KVM. This issue arises due to
-> > differences in how IOMMU translation is currently handled on SoCs
-> > running Qualcomm EL2 hypervisor(QHEE) where IOMMU translation for any
-> > device is completely owned by it and the other issue is that remote
-> > processors firmware does not contain resource table where these IOMMU
-> > configuration setting will be present.
-> > 
-> > Qualcomm SoCs running with the QHEE(EL2) have been utilizing the
-> > Peripheral Authentication Service (PAS) from its TrustZone (TZ) firmware
-> > to securely authenticate and reset via a single SMC call
-> > _auth_and_reset_.  This call first gets trapped to QHEE, which then
-> > makes a call to TZ for authentication. Once it is done, the call returns
-> > to QHEE, which sets up the IOMMU translation scheme for these remote
-> > processors and later brings them out of reset. The design of the
-> > Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
-> > is not allowed to set up IOMMU translation for remote processors,
-> > and only a single stage is being configured for them.
-> > 
-> > To make the remote processors’ bring-up (PAS) sequence
-> > hypervisor-independent, the auth_and_reset SMC call is now entirely
-> > handled by TZ. However, the problem of IOMMU handling still remains with
-> > the KVM host, which has no knowledge of the remote processors’ IOMMU
-> > configuration.
-> > 
-> > We have looked up one approach where SoC remoteproc device tree could
-> > contain resources like iommus for remoteproc carveout and qcom,devmem
-> > specific binding for device memory needed for remoteproc and these
-> > properties are optional and will only be overlaid by the firmware if it
-> > is running with non-QHEE based hypervisor like KVM.
+On Mon, Oct 07, 2024 at 06:25:01PM +0200, Dmitry Baryshkov wrote:
+> On Mon, 7 Oct 2024 at 17:35, Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+> >
+> > On Sun, Oct 06, 2024 at 10:38:01PM +0300, Dmitry Baryshkov wrote:
+> > > On Sat, Oct 05, 2024 at 02:53:54AM GMT, Mukesh Ojha wrote:
+> > > > From: Shiraz Hashim <quic_shashim@quicinc.com>
+> > > >
+> > > > Qualcomm’s PAS implementation for remote processors only supports a
+> > > > single stage of IOMMU translation and is presently managed by the
+> > > > Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > > > such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > > > the KVM host. Remoteproc needs carveout memory region and its resource
+> > > > (device memory) permissions to be set before it comes up, and this
+> > > > information is presently available statically with QHEE.
+> > > >
+> > > > In the absence of QHEE, the boot firmware needs to overlay this
+> > > > information based on SoCs running with either QHEE or a KVM hypervisor
+> > > > (CPUs booted in EL2).
+> > > >
+> > > > The qcom,devmem property provides IOMMU devmem translation information
+> > > > intended for non-QHEE based systems.
+> > > >
+> > > > Signed-off-by: Shiraz Hashim <quic_shashim@quicinc.com>
+> > > > Co-Developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > >  .../bindings/remoteproc/qcom,pas-common.yaml  | 42 +++++++++++++++++++
+> > > >  .../bindings/remoteproc/qcom,sa8775p-pas.yaml | 20 +++++++++
+> > > >  2 files changed, 62 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > index 63a82e7a8bf8..068e177ad934 100644
+> > > > --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > @@ -52,6 +52,48 @@ properties:
+> > > >      minItems: 1
+> > > >      maxItems: 3
+> > > >
+> > > > +  iommus:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  qcom,devmem:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> > > > +    description:
+> > > > +      Qualcomm’s PAS implementation for remote processors only supports a
+> > > > +      single stage of IOMMU translation and is presently managed by the
+> > > > +      Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > > > +      such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > > > +      the KVM host. Remoteproc might need some device resources and related
+> > > > +      access permissions to be set before it comes up, and this information is
+> > > > +      presently available statically with QHEE.
+> > > > +
+> > > > +      In the absence of QHEE, the boot firmware needs to overlay this
+> > > > +      information based on SoCs running with either QHEE or a KVM hypervisor
+> > > > +      (CPUs booted in EL2).
+> > > > +
+> > > > +      The qcom,devmem property provides IOMMU devmem translation information
+> > > > +      intended for non-QHEE based systems. It is an array of u32 values
+> > > > +      describing the device memory regions for which IOMMU translations need to
+> > > > +      be set up before bringing up Remoteproc. This array consists of 4-tuples
+> > > > +      defining the device address, physical address, size, and attribute flags
+> > > > +      with which it has to be mapped.
+> > >
+> > > I'd expect that this kind of information is hardware-dependent. As such
+> > > it can go to the driver itself, rather than the device tree. The driver
+> > > can use compatible string to select the correct table.
+> > >
+> >
+> > IIUC, are you saying that to move this into driver file and override the
+> > compatible string via overlay ?
 > 
-> Can you follow the approach that has been implemented for existing
-> systems (ChromeOS) not using QHEE? See drivers/remoteproc/qcom_q6v5_adsp.c
-> If this approach can not be used, please describe why.
-> 
+> Ideally we should live without compat overrides. On the other hand,
+> sc7180 and sc7280 provide an example of doing exactly that.
 
-The intent is to reuse same PAS based remoteproc implementation
-assisted by TZ with or without QHEE while qcom_q6v5_adsp.c caters to
-independent control at Linux.
-So it better suites to support it from qcom_q6v5_pas.c .
+I am not sure if there can arise a case where updated adsp firmware
+for particular board(s) may require additional access.
+
+Having it in device tree adds a convenience to deal with such
+variance. 
 
 regards
 Shiraz
