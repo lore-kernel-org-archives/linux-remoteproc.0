@@ -1,117 +1,77 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAA81D0E38
-	for <linux-remoteproc@vger.kernel.org>; Wed,  9 Oct 2024 17:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C939C2E0;
+	Wed,  9 Oct 2024 18:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728495002; cv=none; b=OhYP+/yTFel/5PTlVvmc16P/SvpsK7vTxfqGbTcoE99fGgxGXp2D+W0DLCgbx31pchxbvfjo6SISPPccZ1km17qsTgXHZc0dcXeye9Cyue8X4p9PHPCD8V9NsswZC4zcd6VhMUvOe9adgOSGUrrKCjxcYherBJxzraRED66/ReA=
+	t=1728497206; cv=none; b=monhG4LFGycXYJxPaxrMW9xwvaXSqZ7+NlZYaSs0pCXKaWj7QLkQfeDmTNtOtq/I0OAtyv5kZasS+fSIHSRsHhv5flk1fkr+h3SpboXRTLppyjYJLALZITCnmBVDu1n0uWNtZBClSDkEpLKtsAnMdD1C0D0n742UeVlq31C/peU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728495002; c=relaxed/simple;
-	bh=PJVwcXcibgiYriey2g8Mw/pptgW5zUsdumgQFIEbIoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NLOVMaC9EL3CHI1mzIUo1gU0b1MBsz9PfnbtNHzhgqcCol1wwjaFo8Un/YrWq7X6ZrRqRozflZrIIL1IwczD18NE7H9y2ZA1aRaOdrm7HjotCvBNlvv4SJ+EsBNLlh2sdjSxM3I2clv3AwZimjLNcSWv9+EVqr9kIImirkJ8dbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=ezAqI8oR reason="signature verification failed"; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728497206; c=relaxed/simple;
+	bh=YC9P5SNk5GHVvZTnIjiEdFOLrCQZWFvzCDlLBFuc0fM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LJO7//Dtwwesjm6nZs1sKxJODEH4O5eGbAcofkVvaPRYPDyFBKZTViA67fP3l6e7T0lmQgkba17gnExh1G0uZ1dDXGzKVWIlhq8/LlNLmjuZX0wJOlaa7kvX76GBO9CCvZ8Zy+oOvg6HGWEldynAfJ9bxkQx70LR8+lxs5pEtsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Tmn2jzig; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="ezAqI8oR"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c91d0eadbfso1428672a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Oct 2024 10:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728494995; x=1729099795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8cp2ioR05MBhm6TSp5/Wwm/z/I4MQsDlfJob4dXYszs=;
-        b=ezAqI8oRdb10issRjccSZ8y+P+stree8FmeTwUlRgCIbEo4PPbtGkj4mpN9YuObm0a
-         mhP7nLpga4ITmxmVy6tA+Im+P/c58UOosLMID5KTvPkrrolt66q/sGDCBbksAF8ATxtV
-         aZiCaLrCqaR/enADTYQeEOwh5IngUO7EyqQO73twwxrlLMzC6cw7MfRzsRurN0kJEO3Q
-         tvsHkAOsXoFBB7HakAmIUP9kMHa9s5NENSXlIkvIRaa6S9e3q9hI9XHxiQhknRDVELXz
-         xZDog59tpk9aR8JBMntHVr8llKvEDT/iNEu/3wNyTmngMEB+KEKZLEqjJNfcfCCY/jsT
-         /aeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728494995; x=1729099795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8cp2ioR05MBhm6TSp5/Wwm/z/I4MQsDlfJob4dXYszs=;
-        b=MHS4NFiL7XnOy/QffB1SJEev94h86CNtilOI6NsDN6yn4+GLm0DIx6QXnWHFhuAXDb
-         qHye5fQvKt+6T83WXfTwrsDCKwYX4oget4uZIZjUq1KdlTq1FQ5DJOn9wiZNTZjTktn7
-         1mZcUpR6qoeDIPA2ZoyyIH144HKk/Y2cgVmXb6t4KL5KL94nr3wSio/wgOziT4JpNXND
-         yy9tIKFOzN/QuJWEFpWlkLYQH5sB60QD+VSBvZuqMQMYIlY7srq5VQGPen1NBjteXfh5
-         1bjDuVeQHrhRTB8M+KDR9aQ9arf6Ab+NKvMz4BZOxnf6NqjgiOc9rKYGe3dDQRvT+aJr
-         Zmzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQOeXUHrazeSvoepnA856funK+jTZM9dymX5s9CgY0j1KOz0utdZtNK5De9C9B7hy/8FJeG180D5v48VqPoTD/@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr1WlFERWWkQmIPGgFjyO6ANoGoWWlCP7bgVA5uN5UylzrD9fs
-	Z89fZu3AhACj4YAw/pSLe3CFFrbB4zY3rsosHpfnzzgFArn0CYyAPbRAj5GIy1RUQhEZj+XI8ga
-	OklNT7pOJ8y3WrzVIbHAqEywmHYNGntAU2tTz2A==
-X-Google-Smtp-Source: AGHT+IFlkcPGSSt+FkF/AeZ9ren+91PRcuHIGXxky2tQ3SxKjSYHH1M3nNkivi+T62HmOUXRleWu7WPHCEDV1ks1k1M=
-X-Received: by 2002:a17:907:9706:b0:a99:51dd:9792 with SMTP id
- a640c23a62f3a-a998d20b4d3mr292257666b.30.1728494995415; Wed, 09 Oct 2024
- 10:29:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Tmn2jzig"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 19EB642B27
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728497204; bh=oQpofaH96yKry9fYKjw5SE///dq1Nt0vTXGTZgu9LKU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Tmn2jzigdE46bw6J0qKKFI+hQrsqCZW4BI5otj5Xbk4gpHB5YpOIv5Db2WhfGabQT
+	 b5K1c39kEfH9FXGS0SqOBGjGTV3YIb9R0qFA0oMOJFQ6IOsliAop2i3r5q+e8Qu1ls
+	 9Zjnedz/ZIQxyvYIyxmXURqcY1Mi20HQmwE7NB9HRxOF2XeLO8as/EkFUqV5U1MfFL
+	 DnAjT2BNZm+8DanXMdF/U3HoUn0A/jLn7ygMvAHuIgWjq5opEMlH5PrCUpVU0Rktsm
+	 PiphRLzRj5gsU5GK/YgF27WgUjrDb5Nfp6db1euiN63gcXrQuN5OPw+a3/Svijeb5G
+	 0I4E/yGMm7L0Q==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 19EB642B27;
+	Wed,  9 Oct 2024 18:06:44 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: "Everest K.C." <everestkc@everestkc.com.np>, Mathieu Poirier
+ <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, skhan@linuxfoundation.org,
+ linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
+In-Reply-To: <CAEO-vhFFHXeHH961e8KMYrwyUHtGCZmPOP9VC7QrhpabH2wP5A@mail.gmail.com>
+References: <20241008071559.18523-1-everestkc@everestkc.com.np>
+ <ZwanGrWs3PI4X7OZ@p14s>
+ <CAEO-vhFFHXeHH961e8KMYrwyUHtGCZmPOP9VC7QrhpabH2wP5A@mail.gmail.com>
+Date: Wed, 09 Oct 2024 12:06:43 -0600
+Message-ID: <87v7y19mmk.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008071559.18523-1-everestkc@everestkc.com.np> <ZwanGrWs3PI4X7OZ@p14s>
-In-Reply-To: <ZwanGrWs3PI4X7OZ@p14s>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 9 Oct 2024 11:29:43 -0600
-Message-ID: <CAEO-vhFFHXeHH961e8KMYrwyUHtGCZmPOP9VC7QrhpabH2wP5A@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org, 
-	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 9:54=E2=80=AFAM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> Good morning,
->
-> This is a case of old english vs. new english.  Using "implementors" is s=
-till
-> correct.  Moreover, there are 33 instances of the word "implementor" in t=
-he
-> kernel tree.  Unless there is an effor to change all occurences I will no=
-t move
-> forward with this patch.
-I can work on changing all 33 instances of the word "implementor".
-Should I create a patchset for it ?
-> Thanks,
-> Mathieu
->
-> On Tue, Oct 08, 2024 at 01:15:57AM -0600, Everest K.C. wrote:
-> > Following spelling error reported by codespell
-> > was fixed:
-> >       implementors =3D=3D> implementers
-> >
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > ---
-> >  Documentation/staging/remoteproc.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/staging/remoteproc.rst b/Documentation/stagi=
-ng/remoteproc.rst
-> > index 348ee7e508ac..5c226fa076d6 100644
-> > --- a/Documentation/staging/remoteproc.rst
-> > +++ b/Documentation/staging/remoteproc.rst
-> > @@ -104,7 +104,7 @@ Typical usage
-> >       rproc_shutdown(my_rproc);
-> >    }
-> >
-> > -API for implementors
-> > +API for implementers
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> >  ::
-> > --
-> > 2.43.0
-> >
-Thanks,
-Everest K.C.
+"Everest K.C." <everestkc@everestkc.com.np> writes:
+
+> On Wed, Oct 9, 2024 at 9:54=E2=80=AFAM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+>>
+>> Good morning,
+>>
+>> This is a case of old english vs. new english.  Using "implementors" is =
+still
+>> correct.  Moreover, there are 33 instances of the word "implementor" in =
+the
+>> kernel tree.  Unless there is an effor to change all occurences I will n=
+ot move
+>> forward with this patch.
+> I can work on changing all 33 instances of the word "implementor".
+> Should I create a patchset for it ?
+
+Honestly, given that "implementor" is correct, this really doesn't seem
+like it is worth the effort and churn.
+
+jon
