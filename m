@@ -1,51 +1,50 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E71CDFD9;
-	Fri, 11 Oct 2024 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA75FDDA9;
+	Fri, 11 Oct 2024 07:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630562; cv=none; b=J0nqIh+Tb6Qho0UmPHOs9gDEWw4tJRo64ZpGNKOxKu5/FpoKP08LnnBBVZEATeMW+NcnDiir0UF+5FA19JdMattIcFLTJe48kjO19gBDrtzKlnEkvdCw7+C0KsoyhEj6uRqZxHUaD+zt7BvWbUiLCQX/uOETjoVlCkTka07erm8=
+	t=1728630692; cv=none; b=Fi/2hZLX+yRinGfoe9DcPdQwB1q++NHtasT8CzJT3Va2mkZDBVUPgz/Zgml+znwCcrQzwXrR6lHJqxtnQhlS41FS6wE5OKqQ67CVgrIM90o4LGsWLYyHDe+BeVROUSOAHJ20lPQbbFX8nAuJyjQi3cdw3eYlnZEC7r/bWS9zbM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630562; c=relaxed/simple;
-	bh=VrPtVv5FlCUskE9B1vvUk/ASInsexebhl7HGm16yv7o=;
+	s=arc-20240116; t=1728630692; c=relaxed/simple;
+	bh=uk9f9jTWCRm0jq2QsUVbWIJww0NuULS4x3aOHcirLo0=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1uHz/kMKoVh1detgMWHIRQoGSGZWsJvwdwa2StFBrepR8BP7qOQT4N6xBr6uBiqBwx6r8cosAC6BV1EdFKjEkWcNe7qAM68Mk8vGle8Bns/cyy2IZWxSXS8RGfW0BNHTQonKV+qGaTLG8t47gS07J5mh1GF9Q5KeUwUWFH3j9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VgIJNAdZ; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQW8UJdBJGtqsMqkC8Dxf3tbHkldp3FyPwWkj8ABm/Ew9n6odJqs87ffY8j1zeVmetDnOG9zQT0sov4AeVvDwUE/3+g23kbTcOJONPZSHQlxM8atpPVXoUFF2P1Tqh9yKCdgGtiYsaLJW8vO7OvbbV6ZHISIHDTEAJb+InO8fZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CIXX2T/m; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VgIJNAdZ"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B179Yp020093;
-	Fri, 11 Oct 2024 07:09:16 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CIXX2T/m"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AKUhrr013561;
+	Fri, 11 Oct 2024 07:11:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=hv9LlgEFyhdrxyjodnLdh+xm
-	Zed4tH4L1a+qmH7of0A=; b=VgIJNAdZTEs0/Yju4jN+B7ygb3cUzle13pOnZG9d
-	N2oMsn7hY4y0Df2MWfZR/zwa1ZriPEY/hNJnSDCkysnBO4s9p4iev9WYcBJIUm0X
-	BY5EoQUNxR0tnhKB+fVkKbfi0/+7R6ZpyIHfyHuUwlZA6DTNSevVVA3hGkJTef91
-	B4zyxxJmHrESvxudDpHgpeL2/pNdsm/h5BY2ZyXWWwj63lC+LzIIHOHpIXmkJNK0
-	PLjYRDTANSYYF7lb5GWE72ZHE5zwALn5PXC8ng9mxK8XSrPKZdA3fuB2uzJgFbeG
-	7rCz2PGMDYaQTah7T3fqyvJcoaJzjQCqh4Ycvjd9FWu3ig==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7jr73-1
+	:references:subject:to; s=qcppdkim1; bh=HcfeNZ5WgwrvWuf4kINkVI+A
+	uPYz+MXFxlmbSQKaYFU=; b=CIXX2T/mr1I+uCQEyxCOXzpsyvUfJo+Q4wM8Zi2P
+	sI2rivK5BBjTyYib3ECG9UQiy4IoO8nWKdUSF9A6YncN3vuxhDnqSe18qLh11X9+
+	fudN4XdszmiIRvf++1jJMcVD7ECGdfyDzZWAVdYnYBEX43JdaPFL5mBlhNzzAPqp
+	m/FfZEM2VFpl0RQUisQu6xlgte8ToNNtbhV7Vg+J+H7dgt94iW6fbxOJTqUJI1Td
+	Ha8CgTYGmtLktsjvdSer3ciR31yDp4tMZkX6lKRoGIFLeBj4uAaBFrWkFKmfznMJ
+	XnY9sVId2F0GK7+X4Rkd+x0rzvD0PKtq6EbHSPIrDbOIDw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426nc2ha5a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 07:09:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B79FrM032452
+	Fri, 11 Oct 2024 07:11:18 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B7BHgY025315
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 07:09:15 GMT
-Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+	Fri, 11 Oct 2024 07:11:17 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 11 Oct 2024 00:09:10 -0700
-Date: Fri, 11 Oct 2024 12:39:07 +0530
-From: Shiraz Hashim <quic_shashim@quicinc.com>
+ 15.2.1544.9; Fri, 11 Oct 2024 00:11:12 -0700
+Date: Fri, 11 Oct 2024 12:41:09 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <neil.armstrong@linaro.org>, Mukesh Ojha <quic_mojha@quicinc.com>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
+CC: Shiraz Hashim <quic_shashim@quicinc.com>, <neil.armstrong@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
 	<mathieu.poirier@linaro.org>,
         Rob Herring <robh@kernel.org>,
@@ -62,7 +61,7 @@ CC: <neil.armstrong@linaro.org>, Mukesh Ojha <quic_mojha@quicinc.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
  support
-Message-ID: <20241011070907.GK1421305@hu-shashim-hyd.qualcomm.com>
+Message-ID: <ZwjPjeK3rbpS9K6B@hu-mojha-hyd.qualcomm.com>
 References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
  <20241004212359.2263502-7-quic_mojha@quicinc.com>
  <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
@@ -81,19 +80,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <rbek5diyuwhquhbhk6pukzv474xug3pupcqqc2svrceyodvem5@obah2ahgmcox>
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KUgT_JaMbyozpd_MAOuH6ur7Gkg9xQfM
-X-Proofpoint-GUID: KUgT_JaMbyozpd_MAOuH6ur7Gkg9xQfM
+X-Proofpoint-ORIG-GUID: zNDRKWFplBkosuYEtmwa0G2zmKg5L9Y0
+X-Proofpoint-GUID: zNDRKWFplBkosuYEtmwa0G2zmKg5L9Y0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
- malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015 spamscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410110046
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 impostorscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110046
 
 On Fri, Oct 11, 2024 at 09:23:05AM +0300, Dmitry Baryshkov wrote:
 > On Fri, Oct 11, 2024 at 10:35:18AM GMT, Shiraz Hashim wrote:
@@ -166,8 +165,6 @@ On Fri, Oct 11, 2024 at 09:23:05AM +0300, Dmitry Baryshkov wrote:
 > So normally TZ / QHEE have the platform-specific resource table? Isn't
 > it tied to the firmware binary?
 
-Yes this table is with QHEE and not firmware binary. Now with no-qhee
-case, this patch series is proposing to get it from device tree.
+It is not TZ, but QHEE that statically keeps remoteproc resources with it.
 
-regards
-Shiraz
+-Mukesh
