@@ -1,165 +1,126 @@
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF190209662;
-	Fri, 11 Oct 2024 12:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E236215015
+	for <linux-remoteproc@vger.kernel.org>; Fri, 11 Oct 2024 13:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728650389; cv=none; b=GTJIq9n4t68y8fJuWqGG6Z9FXqoPDN3lUEjics4DItrdM+op06QiVsVJ2kJdqq/iYPFCxoqu9zAq5LS0BMJsLZHtgM/iNNYznfjWP5o3MOoSTC3MQFqwaMDV+5e4+NsyvvLI8bOFgJQoTRlyiN/KJBEcR3roQj5nqkiOg6vQVvQ=
+	t=1728652172; cv=none; b=LFEmMLxa4ZP1TEWQ5WT+Bzzo/93vA8ZptBi5A+Eg5mq9cNBAx83I58CQcpIg2OUDG/sWkfM6GxsKLPhaWEej6foFppJcJfYr2vNcS5KKCt/DJyGLBLiqthxJ96vDbxzxUonTefIYBh6YMm1efYgSBLaVIrq+qzG6Tp85OBfMooM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728650389; c=relaxed/simple;
-	bh=h0dzVuie5Dr0zP2qL4RTf6mOZsH7Rlc95+ydTRaQ8WQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G8vR8onWHMGBV11oYNdkUhj+bl5QWqmWRy7tz+TdEdvQTbVY4pY5gICKq9jN/Cjk2HNbCLAgVRZNpaChE5Di6ZZQqxAiYdTpzXcq1KBw9ESrEuP9a2xwiLozcvtMRuMe+/AbOVK4uLvP5jqwlEuSe3CGl5oZBSdUxpaoGOKjwxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C1BC02A87EB;
-	Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id AZcf_8z1_0Hw; Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 062092A881C;
-	Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Qg7UpXgRaTff; Fri, 11 Oct 2024 14:39:35 +0200 (CEST)
-Received: from foxxylove.corp.sigma-star.at (unknown [82.150.214.1])
-	by lithops.sigma-star.at (Postfix) with ESMTPSA id A1DBE2A87EB;
-	Fri, 11 Oct 2024 14:39:35 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	mathieu.poirier@linaro.org,
-	andersson@kernel.org,
-	upstream+rproc@sigma-star.at,
-	Richard Weinberger <richard@nod.at>,
-	ohad@wizery.com,
-	s-anna@ti.com,
-	t-kristo@ti.com
-Subject: [PATCH] rpmsg_ns: Work around TI non-standard message
-Date: Fri, 11 Oct 2024 14:39:22 +0200
-Message-Id: <20241011123922.23135-1-richard@nod.at>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1728652172; c=relaxed/simple;
+	bh=IINtiCQuBnC3ERtaPnZivs6dhELfJlUmCzKFD6pwHmo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E4PRvXu/Domgyz13eUlks1ijm4hxg9aWFkxRsVbLz9hRLBrFdCmq9tAV+LzH2wyCi5lOi8I1DIsKuscczhmclAr496sazqP8M8UhMTbj9lJ/KgEyXveYSdujP17DPNz3+fd+MHIXGAY/HaKnL/QdYNHERd3F79vwHg+Ee+sRNpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pfb9GMRk; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pfb9GMRk"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-430549e65a4so2842465e9.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Oct 2024 06:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728652169; x=1729256969; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cAHc9EyPzwdvt95iOMDTdqxhraCklYE74dENH+cprBc=;
+        b=pfb9GMRkhv+d6NohvRaCrKfbxj86FRUpwW9zab8vVFR6nXrrsPog2udaOv6hzfJOfn
+         rNSAq8/k4XjbFkjCfsUmwaJhndy0Q4C2oHmPlyx6oHLQLrDdqn8vtA4IhYTMqmz3TH+U
+         EnkGiyd5S90RzcOdNNGyztHmcT6vYsOEjHCXc5vBv4x4uFU4lqCgeRU0YKmzq1bCPSjO
+         JbjD+vNu7QS0JM/5L344kZ8F7QS1IBJBMP7E1oX8QaPN2DTgg/aXFti3agNr2zXDMT7l
+         OnINGyEvyiGqyBJTIUJ0EW7LCLqFpFb6OtM6hKXa1XeYWLFOybIeZRUKlMoeSAsqW7n1
+         9stQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728652169; x=1729256969;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cAHc9EyPzwdvt95iOMDTdqxhraCklYE74dENH+cprBc=;
+        b=S/YgK1pnuU6WUTl1HQe2nBKXyrNtV4MxWTHoTicj8zDq/bg95G6BPpdfAgjCcyc/Xf
+         h1mPBUkTgga94GonfwpDy25aWETB51RsAJknil3ztRPSVaECnkWrr+TW70QyRgH+BEr3
+         bO4CUK+AEZpyYsuk1zUF89Xna88n5cL8MIS9Az+hJy4CDu9WnIf/cLvXpzcyaQ1kmRD6
+         CAkPvyCZLo6WgEm/YSVbcNFpikVrdfQGlYYAc80/Ki+L3sELlJ/D7RS1Idm/BjHHjq95
+         Dih9DZoVh7pjgJhniMwa1xIYs6uLspGtwcyEDnNWIhUT+OVbiKtJPCDnCnsjp/0S2tpc
+         W6XQ==
+X-Gm-Message-State: AOJu0YyLyuh4+wNng33T6DuE3PYBFhfCOgt22oSkY+INiJuIZC2tneWG
+	VUHMO8f0NhA2dprQ45VFLJuUe54ODh6OEBYqWPx/xTL8xhturkjMj9YUvnCwAXw=
+X-Google-Smtp-Source: AGHT+IHrBVdm0gi7TtfCYwMdQW2njGEJht7U4s3CcdvIlNx63lzxcJoHlwyt/9pyv9mhx/3bDgyO4g==
+X-Received: by 2002:a05:600c:1c29:b0:42c:bab1:b8cc with SMTP id 5b1f17b1804b1-4311df39d6dmr10731295e9.4.1728652169357;
+        Fri, 11 Oct 2024 06:09:29 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm41621835e9.12.2024.10.11.06.09.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 06:09:28 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/10] remoteproc: few dev_err_probe() and other
+ cleanups/improvements
+Date: Fri, 11 Oct 2024 15:09:08 +0200
+Message-Id: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHQjCWcC/x3MQQqDMBBG4avIrDuQpCLGq5QubPKrs9CESZFC8
+ O5Nu/wW71UqUEGhqaukOKVIOhrsraOwzccKlthMzrjeGmtZsac3OGsKHHEyVH94gYMfhwgPf4+
+ g1mfFIp//+/G8ri//OT+yawAAAA==
+X-Change-ID: 20241011-remote-proc-dev-err-probe-c986de9e93de
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1444;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=IINtiCQuBnC3ERtaPnZivs6dhELfJlUmCzKFD6pwHmo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnCSN7zoHs/RRI9qYt8BiRVsuLmw+KkQ632vSeS
+ F48/rV/F7WJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZwkjewAKCRDBN2bmhouD
+ 11t5EACXQUilzbhXu4xt90q4Dv6kMyp1sX5a0ZW1Fo098s1rqTHOuNPmHRDvTDxtdmvmGuhjPmD
+ aIFwgRZsNXrIQpLFCEa3XM+KiVIEzlkDoKgprgAMOms9yY7u3oie+5bhlMdA59jPHgGWHaPbnVI
+ mRCrs333XbYrSdD7RBFNJvm43huYjkahS3tFuJ/5VzMGNs04emml/BHCvHSa3oFJTIA6QQKOJ54
+ 4s+Kb6SUPspyqhbKDkvprDwvPV6DfNAVQ76MpwGIn9D7Iqjhl4hnPldgB3mCDvbxwhgqyFESNdE
+ wLCsIysn0z0O6Rwi7IgdUiOlKzX0Nh7jZ6wv3OJmH4HSxI0FM30O35KXNGq/u4nyG6uGb3En//H
+ Ywdo2bl2Q6uWcgNR7BGv97tEuUm828XQy7Y9SaR/rcxpFqGk1Mf3cMNfG7ID27FfrqQOuMh6IMc
+ /sW5TYpZE6H2k3jXlN/QNNpimJlWM5hwKir7lQ7a2LkMVhxDft1PXooi21B3qRA5KnziircmT+D
+ TvlBBvkbndlREjn8ZqhDlT+I34jXeDHnTtjhX5BDcDvLv4HOxxZFwmNFHphJV/KjB9B5QChIPBU
+ lNGg0mp5dcLMXPdk1mrt8XnNcFFnDcegpfpsggHO4QF05VCgP8jJpzrghmdxxlZe3XOkcLwTD1K
+ gYPUpjp36jsJFOA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Texas Instruments ships a patch in their vendor kernels,
-which adds a new NS message that includes a description field.
-While TI is free to do whatever they want in their copy of the kernel,
-it becomes a mess when people switch to a mainline kernel and want
-to use their existing DSP programs with it.
+Simplify drivers in few places around probe function.
 
-To make it easier to migrate to a mainline kernel,
-let's make the kernel aware of their non-standard extension but
-briefly ignore the description field.
+Best regards,
+Krzysztof
 
-[0] https://patchwork.kernel.org/project/linux-remoteproc/patch/201908152=
-31448.10100-1-s-anna@ti.com/
-[1] https://stash.phytec.com/projects/PUB/repos/linux-phytec-ti/commits/a=
-eded1f439effc84aa9f4e341a6e92ce1844ab98#drivers/rpmsg/virtio_rpmsg_bus.c
-
-Cc: ohad@wizery.com
-Cc: s-anna@ti.com
-Cc: t-kristo@ti.com
-Signed-off-by: Richard Weinberger <richard@nod.at>
 ---
-FWIW, this is a forward port of a patch I'm using on v6.6.
+Krzysztof Kozlowski (10):
+      remoteproc: da8xx: Handle deferred probe
+      remoteproc: da8xx: Simplify with dev_err_probe()
+      remoteproc: ti_k3_r5: Simplify with dev_err_probe()
+      remoteproc: ti_k3_r5: Simplify with scoped for each OF child loop
+      remoteproc: qcom_q6v5_adsp: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_mss: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_mss: Drop redundant error printks in probe
+      remoteproc: qcom_q6v5_pas: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_wcss: Simplify with dev_err_probe()
+      remoteproc: qcom_wcnss_iris: Simplify with dev_err_probe()
 
-Thanks,
-//richard
+ drivers/remoteproc/da8xx_remoteproc.c    | 29 +++-------
+ drivers/remoteproc/qcom_q6v5_adsp.c      | 17 +++---
+ drivers/remoteproc/qcom_q6v5_mss.c       | 48 +++++------------
+ drivers/remoteproc/qcom_q6v5_pas.c       | 22 +++-----
+ drivers/remoteproc/qcom_q6v5_wcss.c      | 92 +++++++++++---------------------
+ drivers/remoteproc/qcom_wcnss_iris.c     |  5 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 74 +++++++++----------------
+ 7 files changed, 92 insertions(+), 195 deletions(-)
 ---
- drivers/rpmsg/rpmsg_ns.c | 30 ++++++++++++++++++++++--------
- include/linux/rpmsg/ns.h |  8 ++++++++
- 2 files changed, 30 insertions(+), 8 deletions(-)
+base-commit: 0cca97bf23640ff68a6e8a74e9b6659fdc27f48c
+change-id: 20241011-remote-proc-dev-err-probe-c986de9e93de
 
-diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
-index bde8c8d433e0a..2fb3721eb0141 100644
---- a/drivers/rpmsg/rpmsg_ns.c
-+++ b/drivers/rpmsg/rpmsg_ns.c
-@@ -31,10 +31,11 @@ EXPORT_SYMBOL(rpmsg_ns_register_device);
- static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 		       void *priv, u32 src)
- {
--	struct rpmsg_ns_msg *msg =3D data;
- 	struct rpmsg_device *newch;
- 	struct rpmsg_channel_info chinfo;
- 	struct device *dev =3D rpdev->dev.parent;
-+	__rpmsg32 ns_addr, ns_flags;
-+	char *ns_name;
- 	int ret;
-=20
- #if defined(CONFIG_DYNAMIC_DEBUG)
-@@ -42,23 +43,36 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, vo=
-id *data, int len,
- 			 data, len, true);
- #endif
-=20
--	if (len !=3D sizeof(*msg)) {
-+	if (len =3D=3D sizeof(struct rpmsg_ns_msg)) {
-+		struct rpmsg_ns_msg *msg =3D data;
-+
-+		ns_addr =3D msg->addr;
-+		ns_flags =3D msg->flags;
-+		ns_name =3D msg->name;
-+	} else if (len =3D=3D sizeof(struct __rpmsg_ns_msg_ti)) {
-+		struct __rpmsg_ns_msg_ti *msg =3D data;
-+
-+		ns_addr =3D msg->addr;
-+		ns_flags =3D msg->flags;
-+		ns_name =3D msg->name;
-+		dev_warn(dev, "non-standard ns msg found\n");
-+	} else {
- 		dev_err(dev, "malformed ns msg (%d)\n", len);
- 		return -EINVAL;
- 	}
-=20
- 	/* don't trust the remote processor for null terminating the name */
--	msg->name[RPMSG_NAME_SIZE - 1] =3D '\0';
-+	ns_name[RPMSG_NAME_SIZE - 1] =3D '\0';
-=20
--	strscpy_pad(chinfo.name, msg->name, sizeof(chinfo.name));
-+	strscpy_pad(chinfo.name, ns_name, sizeof(chinfo.name));
- 	chinfo.src =3D RPMSG_ADDR_ANY;
--	chinfo.dst =3D rpmsg32_to_cpu(rpdev, msg->addr);
-+	chinfo.dst =3D rpmsg32_to_cpu(rpdev, ns_addr);
-=20
- 	dev_info(dev, "%sing channel %s addr 0x%x\n",
--		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
--		 "destroy" : "creat", msg->name, chinfo.dst);
-+		 rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY ?
-+		 "destroy" : "creat", ns_name, chinfo.dst);
-=20
--	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
-+	if (rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY) {
- 		ret =3D rpmsg_release_channel(rpdev, &chinfo);
- 		if (ret)
- 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
-diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
-index a7804edd6d58f..60fca84ad4cea 100644
---- a/include/linux/rpmsg/ns.h
-+++ b/include/linux/rpmsg/ns.h
-@@ -26,6 +26,14 @@ struct rpmsg_ns_msg {
- 	__rpmsg32 flags;
- } __packed;
-=20
-+/* Non-standard extended ns message by Texas Instruments */
-+struct __rpmsg_ns_msg_ti {
-+	char name[RPMSG_NAME_SIZE];
-+	char desc[RPMSG_NAME_SIZE]; /* ignored */
-+	u32 addr;
-+	u32 flags;
-+} __packed;
-+
- /**
-  * enum rpmsg_ns_flags - dynamic name service announcement flags
-  *
---=20
-2.35.3
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
