@@ -1,149 +1,96 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0CC282F4;
-	Sat, 12 Oct 2024 15:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A12E400;
+	Mon, 14 Oct 2024 05:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728748453; cv=none; b=Eo4dJAg7KO3KMI5d3z1exzYYTT9/+3itPTI9KOtd55aflOJqceS9woriS2Ae0892qBafh03Xl4E6VUVFKrvg7fT7NkG7WInaL9Rp/5kdYEaAVcVaoaGdt4CYG2dYWqabNRNDMCuVTC0BZpuZ6r2SEOxUCGNr0C3Li4+YnitalBk=
+	t=1728884927; cv=none; b=KbEvw22FjpKhBipDjHhfk2i6AiaEIstaRjFFQOTYTDr0uMgE60JCA7KX9VeDKpLqQrq5FUJNUT/xw1edlLrtqDVTE2Xx2gLihFKUYzk1PQAS7bzVxmqoLPY3A1EuitcsMWa21pJDmLaIJRJjq7wbqOxuXbe7Q2t0YbciW1bpI2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728748453; c=relaxed/simple;
-	bh=/xFDZcInBNyx3eprUGQX66jP+aFDV4sLoV0PFfDSzE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2Ck6FkmGjfawSqQXcpK3XYWEuevdQfLZH+GV4VJzYmj599ndeFSFXyUiiPMuI50j5JlKf/cco8axhEs2ZcVYmgnrSh98zdSaUVPXPVPzUe3a0rYZdXjjzhZ885bUvh3k7vsSe+PxiwZ4GZGqwrHDGxKzpkSBvq6/H/UNu84wEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jS+BECPX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1728884927; c=relaxed/simple;
+	bh=XYy8j8teW9WpdukgrSu9H5CamWWIe4Xv1SB//BFbc4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=INFCPcydEtUNHMiSRMxx7o8P697+5s66onLpk1HRVfCAQ698RjFvXWes1jND5Gn4W1yupWYcnLy+8akAHIu0EThXhAT2N3Ul57EjniFg1qZhhGVGLtxktBR2ZZ1CBnmwN+uIw78twvpsOcjAkc/avRO7Oy7PZTMm2tlwgrPtcZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3V6x/ge; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jS+BECPX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728748452; x=1760284452;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/xFDZcInBNyx3eprUGQX66jP+aFDV4sLoV0PFfDSzE8=;
-  b=jS+BECPXjTXcpCLOwNgDm9c6etndAX09bjXCfoVgy0RNr8tEsD9BL177
-   VJnIJTlB4SKVhAlLXeltrGhwARO5SONOT7OzYbQgWhTK7KeVHBFj7pRRD
-   NsnyuaRvFyptPKBnHAJIBMFsXaYOSooLXWiVxFmSn6lMT88K7muk6u5an
-   PmbBjoptnrXyvZkvAHnT5fmjjtwuMCECvA2RxT5qGGlnEaSNIdEuBIMfh
-   c5RRkbTjnQvM3NzRfCVH+323dAq4VUhBbSOg9FHEr6bfdub6dfi++76GL
-   GAA4cwzYXZs+KSaSnH3vQ/HMVjNB2szJGxFbm0MOK2pKqUQnhWmxyfs7H
-   g==;
-X-CSE-ConnectionGUID: CS2Sln/kRySX40SxKyTxsg==
-X-CSE-MsgGUID: y3ySkZGuTdGzyY6ubVA/PQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31016497"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31016497"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 08:54:11 -0700
-X-CSE-ConnectionGUID: XJoT6DYaSx2ZhvHRDDVN2A==
-X-CSE-MsgGUID: hi0fRxUkT9aYvCiN1D5MRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="81997792"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 12 Oct 2024 08:54:08 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1szeRR-000DUV-33;
-	Sat, 12 Oct 2024 15:54:05 +0000
-Date: Sat, 12 Oct 2024 23:53:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Richard Weinberger <richard@nod.at>, linux-remoteproc@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	mathieu.poirier@linaro.org, andersson@kernel.org,
-	upstream+rproc@sigma-star.at, Richard Weinberger <richard@nod.at>,
-	ohad@wizery.com, s-anna@ti.com, t-kristo@ti.com
-Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
-Message-ID: <202410122348.irTWFe4S-lkp@intel.com>
-References: <20241011123922.23135-1-richard@nod.at>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3V6x/ge"
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e5c89b013aso1606232b6e.1;
+        Sun, 13 Oct 2024 22:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728884925; x=1729489725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCv6vU7A6h9RkD/lxoxKaWIWbfMS7uZxf/mwbAu4m6Q=;
+        b=l3V6x/ge+smUMqjMsFn3NatX9tnFIwy6/QzBJ9nqhwqdjrpKsjQUhU47nxpt0SK4L6
+         vhQ+n3v/cTUuCu+RD36epRft+OybhPCZqx3yjfrG2Xen1FBtUOIprAR3f8Do1yB3dRfQ
+         u042mLC9AhJi8gRjI43C/D9AoAI1zItr22WydtGNXGWFjOiJuN+NwBMQQV/7QtOQ+ztj
+         98kVU3Q0t55kaEonLIMFECfDf1mKVF+kvYF7+QlnqOcWqMUudZIs7lz47wc2UvPaecFZ
+         zeTNWXGokn0qt9A8SJ73ZoYjpu2OWcfGOP0UC6ELjzrZBp6z5qDRbVZRBYggtsju+8is
+         A8QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728884925; x=1729489725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mCv6vU7A6h9RkD/lxoxKaWIWbfMS7uZxf/mwbAu4m6Q=;
+        b=lvAy5L1s3Y4G+Z8QqLXDQyjNZCjjf7MxVz7xF55YmrNFWBfOl5s3tioIxbAHgS4cTO
+         aho/4Dlwbkfy8HD7kz5Xj0qecX5AggyLsivDLRlIg4BQPjCNL3gUA+dDgg1QNC3qHrGO
+         3hHDJksmt+SxAjljiLpaC0HUEIx1A51x+TcaK4Czktp+dXUsVieasqYIhoaoVjwdgZub
+         Z7u2uItvDn0WKZfBv5igGZmZ1Ag7bp13ddPINCt6DCunjfqd2AoV2a/cdeEV1Jn+GGOj
+         LblDu1c5vpgqVQjTusrGJ5BxA4nsqDhXSLbh+13Ns9Imej/F1C/ixJR+8KIgZhuKOvlp
+         Ncog==
+X-Forwarded-Encrypted: i=1; AJvYcCWG3QnHdieaKM8SmHJMKkPSofnZvo+jxLcDsLs7Xk3s1CGjygt53nFp+dXkXRAkxmEkHlkKYoWW67TsPo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlr6naAk2JVNlqpFuI107CAlhU7zKpr8aiTsYk0VRv227u3snt
+	/lC14IUcKI7BVpkXrDiHXSLuPUMHG8GUr+1uLyyZW9TaG+XmfLJL
+X-Google-Smtp-Source: AGHT+IGDd28EBdGE/WqcxCl6IE22ZWclFvLAkpBnP4cU7DsaHgPVsCEtwV0nECO1vV4IhqIpj1lLyA==
+X-Received: by 2002:a05:6808:1313:b0:3e5:df4c:c837 with SMTP id 5614622812f47-3e5df4ccb3cmr1602975b6e.22.1728884925154;
+        Sun, 13 Oct 2024 22:48:45 -0700 (PDT)
+Received: from localhost.localdomain ([2600:1700:3bdc:8c10:bc5e:6e5a:6a61:5557])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e5150230fdsm1861555b6e.48.2024.10.13.22.48.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 13 Oct 2024 22:48:43 -0700 (PDT)
+From: anish kumar <yesanishhere@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: [PATCH] remoteproc: elf_loader: redundant check remove
+Date: Sun, 13 Oct 2024 22:48:20 -0700
+Message-Id: <20241014054820.59860-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011123922.23135-1-richard@nod.at>
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
+offset will always be positive number and adding
+and comparing to the same variable 'size' will
+always result in check being false always.
+Remove this superfluous check.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: anish kumar <yesanishhere@gmail.com>
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on remoteproc/rpmsg-next]
-[also build test WARNING on linus/master v6.12-rc2 next-20241011]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Weinberger/rpmsg_ns-Work-around-TI-non-standard-message/20241011-204122
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-next
-patch link:    https://lore.kernel.org/r/20241011123922.23135-1-richard%40nod.at
-patch subject: [PATCH] rpmsg_ns: Work around TI non-standard message
-config: x86_64-randconfig-121-20241012 (https://download.01.org/0day-ci/archive/20241012/202410122348.irTWFe4S-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241012/202410122348.irTWFe4S-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410122348.irTWFe4S-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/rpmsg/rpmsg_ns.c:55:25: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __rpmsg32 [assigned] [usertype] ns_addr @@     got unsigned int [usertype] addr @@
-   drivers/rpmsg/rpmsg_ns.c:55:25: sparse:     expected restricted __rpmsg32 [assigned] [usertype] ns_addr
-   drivers/rpmsg/rpmsg_ns.c:55:25: sparse:     got unsigned int [usertype] addr
->> drivers/rpmsg/rpmsg_ns.c:56:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __rpmsg32 [assigned] [usertype] ns_flags @@     got unsigned int [usertype] flags @@
-   drivers/rpmsg/rpmsg_ns.c:56:26: sparse:     expected restricted __rpmsg32 [assigned] [usertype] ns_flags
-   drivers/rpmsg/rpmsg_ns.c:56:26: sparse:     got unsigned int [usertype] flags
-
-vim +55 drivers/rpmsg/rpmsg_ns.c
-
-    45	
-    46		if (len == sizeof(struct rpmsg_ns_msg)) {
-    47			struct rpmsg_ns_msg *msg = data;
-    48	
-    49			ns_addr = msg->addr;
-    50			ns_flags = msg->flags;
-    51			ns_name = msg->name;
-    52		} else if (len == sizeof(struct __rpmsg_ns_msg_ti)) {
-    53			struct __rpmsg_ns_msg_ti *msg = data;
-    54	
-  > 55			ns_addr = msg->addr;
-  > 56			ns_flags = msg->flags;
-    57			ns_name = msg->name;
-    58			dev_warn(dev, "non-standard ns msg found\n");
-    59		} else {
-    60			dev_err(dev, "malformed ns msg (%d)\n", len);
-    61			return -EINVAL;
-    62		}
-    63	
-    64		/* don't trust the remote processor for null terminating the name */
-    65		ns_name[RPMSG_NAME_SIZE - 1] = '\0';
-    66	
-    67		strscpy_pad(chinfo.name, ns_name, sizeof(chinfo.name));
-    68		chinfo.src = RPMSG_ADDR_ANY;
-    69		chinfo.dst = rpmsg32_to_cpu(rpdev, ns_addr);
-    70	
-    71		dev_info(dev, "%sing channel %s addr 0x%x\n",
-    72			 rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY ?
-    73			 "destroy" : "creat", ns_name, chinfo.dst);
-    74	
-    75		if (rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY) {
-    76			ret = rpmsg_release_channel(rpdev, &chinfo);
-    77			if (ret)
-    78				dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
-    79		} else {
-    80			newch = rpmsg_create_channel(rpdev, &chinfo);
-    81			if (!newch)
-    82				dev_err(dev, "rpmsg_create_channel failed\n");
-    83		}
-    84	
-    85		return 0;
-    86	}
-    87	
-
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index 94177e416047..c6d893e9c15e 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -278,7 +278,7 @@ find_table(struct device *dev, const struct firmware *fw)
+ 		table = (struct resource_table *)(elf_data + offset);
+ 
+ 		/* make sure we have the entire table */
+-		if (offset + size > fw_size || offset + size < size) {
++		if (offset + size > fw_size) {
+ 			dev_err(dev, "resource table truncated\n");
+ 			return NULL;
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3 (Apple Git-146)
+
