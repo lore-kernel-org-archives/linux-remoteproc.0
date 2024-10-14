@@ -1,96 +1,100 @@
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A12E400;
-	Mon, 14 Oct 2024 05:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B8F14A609
+	for <linux-remoteproc@vger.kernel.org>; Mon, 14 Oct 2024 09:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728884927; cv=none; b=KbEvw22FjpKhBipDjHhfk2i6AiaEIstaRjFFQOTYTDr0uMgE60JCA7KX9VeDKpLqQrq5FUJNUT/xw1edlLrtqDVTE2Xx2gLihFKUYzk1PQAS7bzVxmqoLPY3A1EuitcsMWa21pJDmLaIJRJjq7wbqOxuXbe7Q2t0YbciW1bpI2c=
+	t=1728897878; cv=none; b=m943q7JmfXu17qQ4qZLKyHo/3429d4SAlbciG2765dwk3NMO/I4On4m2Q5pMjhd7tK77JWK9CsaK7fOuyQqHq6zm2/EbbB/8DR/NaC/MsFGEM8MgozfoiXosRdBK9RWcAi2/bywVBeI0wdp2I+iTG2m9GjG1iA5CTCL2Xyr0z0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728884927; c=relaxed/simple;
-	bh=XYy8j8teW9WpdukgrSu9H5CamWWIe4Xv1SB//BFbc4A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=INFCPcydEtUNHMiSRMxx7o8P697+5s66onLpk1HRVfCAQ698RjFvXWes1jND5Gn4W1yupWYcnLy+8akAHIu0EThXhAT2N3Ul57EjniFg1qZhhGVGLtxktBR2ZZ1CBnmwN+uIw78twvpsOcjAkc/avRO7Oy7PZTMm2tlwgrPtcZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3V6x/ge; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728897878; c=relaxed/simple;
+	bh=/e4tqHC/p5zxkCMGlUT2/bC91cPkeFYE5WBkqJ1XC3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dNWcLGUQCdE1dVik6bvVEQgmVuUhDHdtAdFO0J5tg640Ds3l/AEWGAtk0JpybU0hdI05M7QLRJOwVUYA/sOxg1SKbBfC4g2TuhgtLaZXXsq/vZ7sfWWdp6QqTWHdm+gQtP+CJ7jWZo1aSiyiNVok8rJ45vClCkweP/joNdPXTDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=t9JuNJ36; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3V6x/ge"
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e5c89b013aso1606232b6e.1;
-        Sun, 13 Oct 2024 22:48:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="t9JuNJ36"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4c1b1455so2944309f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Oct 2024 02:24:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728884925; x=1729489725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mCv6vU7A6h9RkD/lxoxKaWIWbfMS7uZxf/mwbAu4m6Q=;
-        b=l3V6x/ge+smUMqjMsFn3NatX9tnFIwy6/QzBJ9nqhwqdjrpKsjQUhU47nxpt0SK4L6
-         vhQ+n3v/cTUuCu+RD36epRft+OybhPCZqx3yjfrG2Xen1FBtUOIprAR3f8Do1yB3dRfQ
-         u042mLC9AhJi8gRjI43C/D9AoAI1zItr22WydtGNXGWFjOiJuN+NwBMQQV/7QtOQ+ztj
-         98kVU3Q0t55kaEonLIMFECfDf1mKVF+kvYF7+QlnqOcWqMUudZIs7lz47wc2UvPaecFZ
-         zeTNWXGokn0qt9A8SJ73ZoYjpu2OWcfGOP0UC6ELjzrZBp6z5qDRbVZRBYggtsju+8is
-         A8QA==
+        d=sigma-star.at; s=google; t=1728897875; x=1729502675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lPYKRtrxZyyR3q/fRDlqu+geFEYUgeMUrrDvFjYtpas=;
+        b=t9JuNJ36+VGJic9TMQz+0Ue7+OOxLUgwnVAfTGm9CbxYejXc//MT3AoJjcLnFz6QuM
+         fpq3YVyGLY3GcLPZkRdBpMOm/TtswYpxMMjfCG352ja8WxAITNhJ1GsvyC1yKeYDNWow
+         X0XBBmnVJbJTFt0+xOb8BkJcHKVva3YIeJdABq3gywMjydX+n0QlwSYdefmoawczN1Gy
+         5HX03pZ/3muV35QeG5VlI+ln4xjfp9MEt6rwBZgmc37Fado6DI8gxo6hlDuiBgWqxQV4
+         hDXfKoo6bnd26S+1d+dXkNXNlP2IgDs5vsIlVllk/94euZOXHs+JvtN0C3Jt7WpMee5y
+         9MDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728884925; x=1729489725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mCv6vU7A6h9RkD/lxoxKaWIWbfMS7uZxf/mwbAu4m6Q=;
-        b=lvAy5L1s3Y4G+Z8QqLXDQyjNZCjjf7MxVz7xF55YmrNFWBfOl5s3tioIxbAHgS4cTO
-         aho/4Dlwbkfy8HD7kz5Xj0qecX5AggyLsivDLRlIg4BQPjCNL3gUA+dDgg1QNC3qHrGO
-         3hHDJksmt+SxAjljiLpaC0HUEIx1A51x+TcaK4Czktp+dXUsVieasqYIhoaoVjwdgZub
-         Z7u2uItvDn0WKZfBv5igGZmZ1Ag7bp13ddPINCt6DCunjfqd2AoV2a/cdeEV1Jn+GGOj
-         LblDu1c5vpgqVQjTusrGJ5BxA4nsqDhXSLbh+13Ns9Imej/F1C/ixJR+8KIgZhuKOvlp
-         Ncog==
-X-Forwarded-Encrypted: i=1; AJvYcCWG3QnHdieaKM8SmHJMKkPSofnZvo+jxLcDsLs7Xk3s1CGjygt53nFp+dXkXRAkxmEkHlkKYoWW67TsPo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlr6naAk2JVNlqpFuI107CAlhU7zKpr8aiTsYk0VRv227u3snt
-	/lC14IUcKI7BVpkXrDiHXSLuPUMHG8GUr+1uLyyZW9TaG+XmfLJL
-X-Google-Smtp-Source: AGHT+IGDd28EBdGE/WqcxCl6IE22ZWclFvLAkpBnP4cU7DsaHgPVsCEtwV0nECO1vV4IhqIpj1lLyA==
-X-Received: by 2002:a05:6808:1313:b0:3e5:df4c:c837 with SMTP id 5614622812f47-3e5df4ccb3cmr1602975b6e.22.1728884925154;
-        Sun, 13 Oct 2024 22:48:45 -0700 (PDT)
-Received: from localhost.localdomain ([2600:1700:3bdc:8c10:bc5e:6e5a:6a61:5557])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e5150230fdsm1861555b6e.48.2024.10.13.22.48.41
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 13 Oct 2024 22:48:43 -0700 (PDT)
-From: anish kumar <yesanishhere@gmail.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH] remoteproc: elf_loader: redundant check remove
-Date: Sun, 13 Oct 2024 22:48:20 -0700
-Message-Id: <20241014054820.59860-1-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1728897875; x=1729502675;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lPYKRtrxZyyR3q/fRDlqu+geFEYUgeMUrrDvFjYtpas=;
+        b=i+THAqvqtlxfQ6QT4Y0t0NuRD2mWj8H9J3245WduA8r+S+HvfVVNDtkYzlfmC+Fmj+
+         TS0dYHiveqwq2hNRdHpQRHrND3llqXZDDZ/YMKRc2Aw950z2NQYqsK9tTu9T7K/NHRvF
+         29rkCDsl2w/9Btbaqu9OOckrV4io0Fgqw1uu9A8HHKsW1qA40JQprv06GwY30ZdyAByz
+         Dfl5Vo1VlLidZ8pQZltUOxhSYvZlGwMAcv8KpSgTknstMk4qeVuJuUzI+DCaBxXk2vYZ
+         J5Pa/tuFxOtOr0NExGdqZKnvyF3OHcCAPup7o9wzY4sw3l7sLHTKqFI5IkcuPnraz1OJ
+         zW8w==
+X-Forwarded-Encrypted: i=1; AJvYcCULfISWAfFjTseVFY5jIIId6iByR+JAYOUD1LDumP3FZG1xVSPBXVeI/OVVKQJa1NO3SEpcceFttWVh3RCc0YoO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAbA5E/fhmmxoo4qByBNz75W8S8mO5hNSN/UxZtNjFVPmi2JNC
+	wHGvt7lW5WhKQF7aBZMn/kxtGyY4L1FGb3XnyOyng2t1DUcB4FTkM58WCMoMGzY=
+X-Google-Smtp-Source: AGHT+IFHhT7ivLRs+wCzpu3gM4i2ZM3mZebwzlnJSQKdcY986zdcpiLJ0nRbULkMD61QdjgH1Ga36Q==
+X-Received: by 2002:a5d:618a:0:b0:37c:d225:6d33 with SMTP id ffacd0b85a97d-37d5529f9b4mr6484698f8f.55.1728897874663;
+        Mon, 14 Oct 2024 02:24:34 -0700 (PDT)
+Received: from blindfold.localnet ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835d784sm114836605e9.46.2024.10.14.02.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 02:24:34 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: Richard Weinberger <richard@nod.at>, linux-remoteproc@vger.kernel.org, upstream@sigma-star.at
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, andersson@kernel.org, upstream+rproc@sigma-star.at, Richard Weinberger <richard@nod.at>, ohad@wizery.com, s-anna@ti.com, t-kristo@ti.com, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
+Date: Mon, 14 Oct 2024 11:24:33 +0200
+Message-ID: <2480985.jE0xQCEvom@somecomputer>
+In-Reply-To: <202410122348.irTWFe4S-lkp@intel.com>
+References: <20241011123922.23135-1-richard@nod.at> <202410122348.irTWFe4S-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-offset will always be positive number and adding
-and comparing to the same variable 'size' will
-always result in check being false always.
-Remove this superfluous check.
+Am Samstag, 12. Oktober 2024, 17:53:16 CEST schrieb kernel test robot:
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/rpmsg/rpmsg_ns.c:55:25: sparse: sparse: incorrect type in assi=
+gnment (different base types) @@     expected restricted __rpmsg32 [assigne=
+d] [usertype] ns_addr @@     got unsigned int [usertype] addr @@
+>    drivers/rpmsg/rpmsg_ns.c:55:25: sparse:     expected restricted __rpms=
+g32 [assigned] [usertype] ns_addr
+>    drivers/rpmsg/rpmsg_ns.c:55:25: sparse:     got unsigned int [usertype=
+] addr
+> >> drivers/rpmsg/rpmsg_ns.c:56:26: sparse: sparse: incorrect type in assi=
+gnment (different base types) @@     expected restricted __rpmsg32 [assigne=
+d] [usertype] ns_flags @@     got unsigned int [usertype] flags @@
+>    drivers/rpmsg/rpmsg_ns.c:56:26: sparse:     expected restricted __rpms=
+g32 [assigned] [usertype] ns_flags
+>    drivers/rpmsg/rpmsg_ns.c:56:26: sparse:     got unsigned int [usertype=
+] flags
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+sprase is right.
+I missed to replace u32 in the struct by __rpmsg32.
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 94177e416047..c6d893e9c15e 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -278,7 +278,7 @@ find_table(struct device *dev, const struct firmware *fw)
- 		table = (struct resource_table *)(elf_data + offset);
- 
- 		/* make sure we have the entire table */
--		if (offset + size > fw_size || offset + size < size) {
-+		if (offset + size > fw_size) {
- 			dev_err(dev, "resource table truncated\n");
- 			return NULL;
- 		}
--- 
-2.39.3 (Apple Git-146)
+Thanks,
+//richard
+
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT
+UID/VAT Nr: ATU 66964118 | FN: 374287y
+
 
