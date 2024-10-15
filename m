@@ -1,179 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820721FC7C9;
-	Tue, 15 Oct 2024 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EB91FC7CB
+	for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 16:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728999352; cv=none; b=rnFzFbEYZIQgke9LlNMKQ76eRyG/IooF06Nxm3fr/OKHg1tPcsftpW/w7YUb9xmo4q5m6kDfxKfuvwFlTtMFOi7zH747ix8pL6SyGJVHWhoE8W022EDkCTZhslFdKAyXGEvGq2R1DWdlHYbop6v0iAFeifsTxQwrjBMoArDF48g=
+	t=1729010893; cv=none; b=Nuep4hPX+MZEcGYPOb6DgYQTgqobQx2+l9yL7vp+bl31j6Eyq3Z5eQz0Xnja3ErYliVp185AjX3neUPag9fNvA2fwPdiXQXgMr1ZK72lHMcY1DKYiiM41ZmYOavUf765K2He78ji9qz7ym0tLnXslLCNBAEeHo1/QT7dFCTysUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728999352; c=relaxed/simple;
-	bh=iWqukihIetnXFxIMSRJf6mjrnCnlfxnayzBqiz8bRnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IF7J5l2uGfLifNC1u5beGMUDj4dARVCoFY3ZsvEDXBJ/1mWomH3lQon0dyKNszAOY4GautTF+4uAj+V44/m6I5wG29OlsIxYweaVNwKjUMWA+mDUrJTEnphPz5Z+q0b77Xo3IiRA/z8ELI1xsTIGmEbxTV/JjHRezmg5mrm4rcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mtlw3P1b; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729010893; c=relaxed/simple;
+	bh=/Jc8uvLh1yHtx6Qpa7GDZefgH+t5Jvkba6SDmj7fFIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKVo+b2eyS+4L/ggt6D7w3M1XK3+lJLAGzX6b9jEjLnLHY1gC+NUiQNKNwgFfK15DBift64qcM5RMNO2k3alcCEkROd6Ai4vc3EbHE/iIJIx4MFEyPF5M45TPEFhUJIHkrmHiS7JGYbTTZ1PzqiUmwngQRJTTC2giwiLjybmANw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9/D5LIV; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mtlw3P1b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A65FC4CEC6;
-	Tue, 15 Oct 2024 13:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728999352;
-	bh=iWqukihIetnXFxIMSRJf6mjrnCnlfxnayzBqiz8bRnY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Mtlw3P1bWQYcQxdXci7wwOz8Hy1DkvnYOvYplfMHvTejdKnUeG+pS6hmL8bPYpNDN
-	 GAyFx/ZYwZYi82WmEesfcrXljVPTuXcq597/C4Tucja62HoghI26C52oPaRC0F1XVS
-	 IZ7BSGjzXuyIYLy9MeB9n6nSDDboWFD3jjYH0pxkREuZUnY2Gdb8HPfWlj3xqXdQfi
-	 Sy/QScWmSgpezN2rlj7c4nzsMmgALGB1SXyHJCtouCPy8KyCuwwIvnXQHmxw7aK122
-	 Y17hkhyrmE3Ia0zoQxIaPVnlJAcuAA7B/gcu3g7kLqAyTMIxIu18RRijpRedPnZYNd
-	 SDuEzpSjXnTRA==
-Message-ID: <f0da1029-c8df-40e7-8312-a41a87b7b940@kernel.org>
-Date: Tue, 15 Oct 2024 15:35:46 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9/D5LIV"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca1b6a80aso33874825ad.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 09:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729010891; x=1729615691; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihI25Jo95pBvZkJLqX0Jc6fBbS14WZlY5IwIVqf7awk=;
+        b=m9/D5LIV/YbeTllFHf4IBsSZJtfKa3l9yJvD4yYXnKm5hScPLG42JPN33B/l5Zdf0P
+         w7ZB4DifSPnvQ16yY7VkIfBiJ0hWe0OHsg019kUoB8UjR5j9Q/BqmcY+5ZzDn2Kq6wrs
+         Gz27JFYCCHVWnj78bRhuKuc4qpQ8wDinwVvtlOG+psL8Xw3K/Mh30zd0Z32AWRjsSLU2
+         E+UJQTBxA7mHtW6FoUoXM8jasKro9tLuYXENR19yI4fknOfr6H8IanKYQlVpQ5cB45mO
+         advFbchgUwbzEDU6gwWUALW8s+0U7uDNoRVrB88d5ud3YQ0CdruvskxWezSIn8ERlfBh
+         /A/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729010891; x=1729615691;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihI25Jo95pBvZkJLqX0Jc6fBbS14WZlY5IwIVqf7awk=;
+        b=hOKNOjkdSlYHfT9688+13ff/es2WmMUMI3c56DIVIvGz9l+7B55eZbLpIWWTDK7s+P
+         ZymxBL8PteSQcSVuM9mb1eidwJDacPu2K9+nwUEXPi732I9EsBgNRLUG7jyvF7SLYYl1
+         INM2YkO50psOmlvtD6XygwAJcUfTttrlFuwh2HZA7hIELKHfD9gtvMVhoQ4DkPxQcf2W
+         nxJ6FkoM5/VZEtLfP5dUQZ882xgqEgjTUr3i69e3umki+WAiMbIIIavfu11/LK/f8YSf
+         VRi26NKCC5oVdvgZbDD0x7cNilzDeiijPWmLJV7YFsaura6YNICqQbjVugm+ab+ui4EJ
+         zugg==
+X-Gm-Message-State: AOJu0YxMhBPxlCKHXxTqWjGHGVL6GEVgt0JpZ5dauS+PiQLeCYkpXGtY
+	oZ5sVWwIla0JwgVAqGfcCLLrWoBzTages/MpjVGJn0RzmiHnDJ7Xf9PIyigcED4=
+X-Google-Smtp-Source: AGHT+IH7nqrjmNQoECCe3KKhqSZv+vi5izhEjiijtArvlkP/GK5rigzGBG9sRCIvmLdogJuWgQ2ccw==
+X-Received: by 2002:a17:902:d48b:b0:20b:7210:5859 with SMTP id d9443c01a7336-20cbb240b1bmr173955925ad.38.1729010891503;
+        Tue, 15 Oct 2024 09:48:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:3f26:e29e:2634:fca0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805ca55sm14105185ad.261.2024.10.15.09.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 09:48:10 -0700 (PDT)
+Date: Tue, 15 Oct 2024 10:48:08 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andersson@kernel.org, upstream+rproc@sigma-star.at, ohad@wizery.com,
+	s-anna@ti.com, t-kristo@ti.com
+Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
+Message-ID: <Zw6cyFirqQ6Esr+0@p14s>
+References: <20241011123922.23135-1-richard@nod.at>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] dt-bindings: remoteproc: add binding for Microchip
- IPC remoteproc
-To: Valentina.FernandezAlanis@microchip.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, peterlin@andestech.com,
- dminus@andestech.com, Conor.Dooley@microchip.com, conor+dt@kernel.org,
- ycliang@andestech.com, jassisinghbrar@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-5-valentina.fernandezalanis@microchip.com>
- <fc541e78-5304-42be-a844-70935d66f151@kernel.org>
- <82eae461-3cce-4e36-905c-34c147fabcb3@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <82eae461-3cce-4e36-905c-34c147fabcb3@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011123922.23135-1-richard@nod.at>
 
-On 15/10/2024 14:09, Valentina.FernandezAlanis@microchip.com wrote:
-> On 16/09/2024 21:14, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 12/09/2024 19:00, Valentina Fernandez wrote:
->>> Microchip family of RISC-V SoCs typically has or more clusters. These
->>> clusters can be configured to run in Asymmetric Multi Processing (AMP)
->>> mode
->>
->> A nit, subject: drop second/last, redundant "binding for". The
->> "dt-bindings" prefix is already stating that these are bindings.
->> See also:
->> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->>
->>>
->>> Add a dt-binding for the Microchip IPC Remoteproc platform driver.
->>>
->>
->> Binding is for hardware, not driver. Please rephrase it to describe
->> hardware.
->>
->>
->>> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
->>> ---
->>>   .../remoteproc/microchip,ipc-remoteproc.yaml  | 84 +++++++++++++++++++
->>>   1 file changed, 84 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
->>> new file mode 100644
->>> index 000000000000..1765c68d22cf
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
->>> @@ -0,0 +1,84 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-remoteproc.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Microchip IPC Remote Processor
->>> +
->>> +description:
->>> +  Microchip family of RISC-V SoCs typically have one or more
->>> +  clusters. These clusters can be configured to run in an Asymmetric
->>> +  Multi Processing (AMP) mode where clusters are split in independent
->>> +  software contexts.
->>> +
->>> +  This document defines the binding for the remoteproc component that
->>> +  loads and boots firmwares on remote clusters.
->>
->> Don't say that binding is a binding for. Say what this hardware piece is.
->>
->>> +
->>> +  This SBI interface is compatible with the Mi-V Inter-hart
->>> +  Communication (IHC) IP.
->>> +
->>> +maintainers:
->>> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: microchip,ipc-remoteproc
->>
->> That's quite generic. Basically this says it will handle IPC of all
->> possible Microchip SoCs, not only RISC-V but also ARM and whatever you
->> come up with.
-> IPC is the actual name of the hardware block described in this binding. 
-> I'll update the description of the binding in v2 to mention this.
+Good morning Richard,
+
+On Fri, Oct 11, 2024 at 02:39:22PM +0200, Richard Weinberger wrote:
+> Texas Instruments ships a patch in their vendor kernels,
+> which adds a new NS message that includes a description field.
+> While TI is free to do whatever they want in their copy of the kernel,
+> it becomes a mess when people switch to a mainline kernel and want
+> to use their existing DSP programs with it.
+
+I suspect there is a lot more things to change when going from downstream to a
+mainline kernel.  
+
 > 
-> Additionally, I'll rename the compatible to microchip,ipc-sbi-remoteproc 
-> to further clarify that this binding is intended for devices using the 
-> Microchip IPC hardware block and for devices with an SBI interface (RISC-V).
+> To make it easier to migrate to a mainline kernel,
+> let's make the kernel aware of their non-standard extension but
+> briefly ignore the description field.
 
-Well, still generic. Explain why this deserves exception from specific
-SoC compatibles.
+In my opinion the real fix here is to get TI to use the standard message
+announcement structure.  The ->desc field doesn't seem to be that useful since
+it gets discarted.
 
-Best regards,
-Krzysztof
+Thanks,
+Mathieu
 
+> 
+> [0] https://patchwork.kernel.org/project/linux-remoteproc/patch/20190815231448.10100-1-s-anna@ti.com/
+> [1] https://stash.phytec.com/projects/PUB/repos/linux-phytec-ti/commits/aeded1f439effc84aa9f4e341a6e92ce1844ab98#drivers/rpmsg/virtio_rpmsg_bus.c
+> 
+> Cc: ohad@wizery.com
+> Cc: s-anna@ti.com
+> Cc: t-kristo@ti.com
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+> FWIW, this is a forward port of a patch I'm using on v6.6.
+> 
+> Thanks,
+> //richard
+> ---
+>  drivers/rpmsg/rpmsg_ns.c | 30 ++++++++++++++++++++++--------
+>  include/linux/rpmsg/ns.h |  8 ++++++++
+>  2 files changed, 30 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+> index bde8c8d433e0a..2fb3721eb0141 100644
+> --- a/drivers/rpmsg/rpmsg_ns.c
+> +++ b/drivers/rpmsg/rpmsg_ns.c
+> @@ -31,10 +31,11 @@ EXPORT_SYMBOL(rpmsg_ns_register_device);
+>  static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  		       void *priv, u32 src)
+>  {
+> -	struct rpmsg_ns_msg *msg = data;
+>  	struct rpmsg_device *newch;
+>  	struct rpmsg_channel_info chinfo;
+>  	struct device *dev = rpdev->dev.parent;
+> +	__rpmsg32 ns_addr, ns_flags;
+> +	char *ns_name;
+>  	int ret;
+>  
+>  #if defined(CONFIG_DYNAMIC_DEBUG)
+> @@ -42,23 +43,36 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>  			 data, len, true);
+>  #endif
+>  
+> -	if (len != sizeof(*msg)) {
+> +	if (len == sizeof(struct rpmsg_ns_msg)) {
+> +		struct rpmsg_ns_msg *msg = data;
+> +
+> +		ns_addr = msg->addr;
+> +		ns_flags = msg->flags;
+> +		ns_name = msg->name;
+> +	} else if (len == sizeof(struct __rpmsg_ns_msg_ti)) {
+> +		struct __rpmsg_ns_msg_ti *msg = data;
+> +
+> +		ns_addr = msg->addr;
+> +		ns_flags = msg->flags;
+> +		ns_name = msg->name;
+> +		dev_warn(dev, "non-standard ns msg found\n");
+> +	} else {
+>  		dev_err(dev, "malformed ns msg (%d)\n", len);
+>  		return -EINVAL;
+>  	}
+>  
+>  	/* don't trust the remote processor for null terminating the name */
+> -	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+> +	ns_name[RPMSG_NAME_SIZE - 1] = '\0';
+>  
+> -	strscpy_pad(chinfo.name, msg->name, sizeof(chinfo.name));
+> +	strscpy_pad(chinfo.name, ns_name, sizeof(chinfo.name));
+>  	chinfo.src = RPMSG_ADDR_ANY;
+> -	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->addr);
+> +	chinfo.dst = rpmsg32_to_cpu(rpdev, ns_addr);
+>  
+>  	dev_info(dev, "%sing channel %s addr 0x%x\n",
+> -		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
+> -		 "destroy" : "creat", msg->name, chinfo.dst);
+> +		 rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY ?
+> +		 "destroy" : "creat", ns_name, chinfo.dst);
+>  
+> -	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
+> +	if (rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY) {
+>  		ret = rpmsg_release_channel(rpdev, &chinfo);
+>  		if (ret)
+>  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
+> index a7804edd6d58f..60fca84ad4cea 100644
+> --- a/include/linux/rpmsg/ns.h
+> +++ b/include/linux/rpmsg/ns.h
+> @@ -26,6 +26,14 @@ struct rpmsg_ns_msg {
+>  	__rpmsg32 flags;
+>  } __packed;
+>  
+> +/* Non-standard extended ns message by Texas Instruments */
+> +struct __rpmsg_ns_msg_ti {
+> +	char name[RPMSG_NAME_SIZE];
+> +	char desc[RPMSG_NAME_SIZE]; /* ignored */
+> +	u32 addr;
+> +	u32 flags;
+> +} __packed;
+> +
+>  /**
+>   * enum rpmsg_ns_flags - dynamic name service announcement flags
+>   *
+> -- 
+> 2.35.3
+> 
