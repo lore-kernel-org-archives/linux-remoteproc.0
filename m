@@ -1,115 +1,126 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C92816EBE8
-	for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 17:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EFD1FAF0F
+	for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 17:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729014348; cv=none; b=c5D4llnmN4jW9c+k8XT18pwrcDdJzhZuEjAoFmdgwVS4SdoXKB48JL+3fGisxxZrOTfKDQyemxCL+YjgB13oI+Mkd8yxCJ9aFmrYPSTgAWd9q6DSc4aUEkThIjLsN0utMAzCbOS2X0tLOXmOtSt9iGJHZyA4cTvYY5aibfu0BK0=
+	t=1729014974; cv=none; b=IbEnWKjnBARnWXTPbDe7SYHDs82XYBwMmgeLW5YkjNueJgq32zwt+INGIXdIrJEOS4i6CurzkCZ1GvJRCSVPM58LRmB7bxFiJw3aiLmFex+buqgQB/CPljkGHBB5BMqO09LEFrhj2oKiH1OhuMlJ4OI83oxhf9Oskp8uqfzL2jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729014348; c=relaxed/simple;
-	bh=BRwYGtJfD2ZMxkQGQfTMrxkT3kcPBYxzJBdsN1CZfRQ=;
+	s=arc-20240116; t=1729014974; c=relaxed/simple;
+	bh=mUGZm5vcRhELl9M94Au2ltqq+3EPdrRv1VatTxlX5zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2SjS/coM8WyqD2pZXTpVaXfhRmxDDjIjIXRnWbtKR1ycAeb0FH3eW1WC7zowPF8XH7n2mnOxJcGvmrDfYx2lMF2E2sZ7VDvXRWL9k0SLseHaRY6416zsKQawiV8v+eM/3HvnYsfMMpnl5HSPaJdZDgPlI6KevCZc3o4GFhzjc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xxNZH6Rd; arc=none smtp.client-ip=209.85.214.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcKSE2tNAjNLmXzNTZCr1002pe1Y+DGdeiUqrC0gAbdrPdDMqdOw7dmqidxfViSaQnIeibaP5bvf2OGPXMGg//47z1uoe39iZ/2cwT/Uol352Uky3rZn34aw/txFTAd96A9pO4PjQAorgJ2wYEA0KwBk/Pg1q33WiZI0lE7vIZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oa/eAWli; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xxNZH6Rd"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-207115e3056so46722515ad.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 10:45:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oa/eAWli"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e4e481692so3190493b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Oct 2024 10:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729014345; x=1729619145; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2pnrAdC2C0BE3RK2dDE2ExUA2qwhyaMBrQ9ZLRFBKLc=;
-        b=xxNZH6Rd/c5o6Kd9B9tqg9LxdR6xkRXaxGZVzTAMb3Obucl8uNdAYZDiQPLmoakvsL
-         oWhZUEi+niznkx2XjFBVHCe8xbe6yopkkRKS4ocA33EFigxHm4YhzrIP02pr3otqOX33
-         2DoyFccU9m2tklaP804u8n5m7H8z5iAxHIK52n6q1AiXM6korLxfGzYX7ddnygmR5SAq
-         fEK8rZBhebBkgwabn9wlezv7sH6dRPBmJgMQ+QkF15WKTnGAt03U3OPVO7Hl5rq4EEQ8
-         EOZsyTxwQI52rvc63pfvRq2M9gqgCYQ/825bGF2TzqNaNlDwq49kO+rZiWb3x5QG8MYW
-         7T0A==
+        d=linaro.org; s=google; t=1729014971; x=1729619771; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MdM33dUKv08lPEDtPHcESBgrX05DyJmGGOXHjVz/zgg=;
+        b=Oa/eAWlijMpjaQfMhBIJHJINzW08ok3ruCEx9HQWOIh7/noGnWsb+T5VbU+lnLutCz
+         0iGyYmVyeaCGoFSR3/b+fzMR62osUdbrncfuHkB3raFFMRw36bIJBU7++OC5s0vecWeV
+         7Bb+UjUHS+RzDAcFX0Rg30xlElE9KnEXIuMfM1q91WXCLABSav8dRudccAkt85HAIdcH
+         7ai/EyXizdVUrW/aRlkUQ4M36PMbf85maDk1EBv4V28GokHMVSGWxYB8LM1g1JHyMGuu
+         Imd/9KucpOl1a/+odBvD8bL384Mzd5c3qbXQLfIi3wesuLIhEJ632ArYrwufTwJv74Bq
+         xTTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729014345; x=1729619145;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2pnrAdC2C0BE3RK2dDE2ExUA2qwhyaMBrQ9ZLRFBKLc=;
-        b=KQR8Sa8QwyPUuqtZFdxtE+Mtqapt8rr9i3VPgke6kccoBCi2b54IsZ9uPyQvFEbS8i
-         aMNwlyb5qvd4O6838u/6wt14sxz7VY6n7G03DNl/MMgP0570V/9BqJx/TRQ7ayNz5Yni
-         sq5xE/ydHxkETu9Z9nmD/JNfNHlvDpyqj6qrVHzbzi/V/Kli4z67bKx8iDl5sIJKrv+n
-         OJR38EuRpboonVbJRJwLfwsN2uH1gzpSBYsQ2WdF4Df+0f9zyNX/jiseiNeXKdJzEjnZ
-         KwVBI8oxzxmODUuyMG7wRi9tqttL8pG+VptdM3ooGwtrCJAbo3LWtnIRcwbWtd9+2/cd
-         3inA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnXlzuhfI/I9cMkgpT/KJKCnSakPaaum+l6AF0FjguqVBKzGc6JKbE0VlAD2EoIljzdGmmiOSsDoxIzKhdMXKh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh0Raj/XBoFAKMMqX8j0TRig0Uop9GTK48ke0GXt0MtEzgFHOM
-	zKcTrikZUibWLz5ybB5U0t8ljwOdgRirJwU1j7s7sFsZGnIvc1shfHqo4/YDUJOdN3gxw5s9WT9
-	4
-X-Google-Smtp-Source: AGHT+IFhFlnB95Ly37ttoU7wxg7jYWU0jGICSaOt6TVzXP7QvyFQFyJ0aAZUuFEN2D5AjSEVAGmsgg==
-X-Received: by 2002:a17:902:f60c:b0:20c:b0c7:7f0d with SMTP id d9443c01a7336-20d27ecadd6mr11986115ad.25.1729014344626;
-        Tue, 15 Oct 2024 10:45:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729014971; x=1729619771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MdM33dUKv08lPEDtPHcESBgrX05DyJmGGOXHjVz/zgg=;
+        b=FJpJ31+v+7WsegE1UtLjUjmbBnhgRT74Uh5bbGY/6DOwZ5EoeNekQZdAqxz4KZw8Jt
+         lMACvhsTSOitEJw+JXCHYi0IEtRdzbam0BulTOKsV4D5eifnV203jsDCUzrmTOjrWH9a
+         PshOVR0vmcvFQvCtDwE1zsfU/ntkc09lXyfxKv8mLxybVi1WxO1oJ2qQQs2c+/dl7PYN
+         J6nX/Xxm58e+C504ZxxoAwFcEIYmcQNObRSOzFPO4pkiu+Ay46au5dXDSJ3hMRBoaQvq
+         73svyA/N7aE8bv3849xJTlziPFRuKNcnmUlPhCiexyeLQTrRbS6P16dyL8LKlY8iYGvM
+         wBzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmkyJGg3K8qyUMAKvjugVU+dnkI2lfJWN5hBHGRcNRsQWfhFA4sNHSVQhZAJEy5TtI7CdTV/T0TrJk8q7Ig7+x@vger.kernel.org
+X-Gm-Message-State: AOJu0YwszoxFZ/x8GPdXp5xTAVIoAM5rQqxx+4CcoF3XrSzBrGdtntLr
+	//WP6zsC/fl9eSRkp5604IMjVjjLeW40sWJRjmHJVn+supj9EdtI3njRoKgMXPw=
+X-Google-Smtp-Source: AGHT+IE3olMIFM8u5X0bUOwj0ApDJXq1jkLtQNmgjA8AdDpE4+M6Ri68eQ35CDFzQy7sOcCu777myA==
+X-Received: by 2002:a05:6a00:b87:b0:71e:cb5:2219 with SMTP id d2e1a72fcca58-71e4c151804mr19892905b3a.9.1729014971093;
+        Tue, 15 Oct 2024 10:56:11 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:3f26:e29e:2634:fca0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d180367bcsm14592775ad.145.2024.10.15.10.45.43
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e773b1634sm1567433b3a.63.2024.10.15.10.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 10:45:44 -0700 (PDT)
-Date: Tue, 15 Oct 2024 11:45:41 -0600
+        Tue, 15 Oct 2024 10:56:10 -0700 (PDT)
+Date: Tue, 15 Oct 2024 11:56:08 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 00/10] remoteproc: few dev_err_probe() and other
- cleanups/improvements
-Message-ID: <Zw6qRdLSkp1PT0lD@p14s>
-References: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
+	andersson@kernel.org, upstream+rproc@sigma-star.at, ohad@wizery.com,
+	s-anna@ti.com, t-kristo@ti.com
+Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
+Message-ID: <Zw6suCNC62Cn4fE0@p14s>
+References: <20241011123922.23135-1-richard@nod.at>
+ <Zw6cyFirqQ6Esr+0@p14s>
+ <3194112.zE8UqtGg2D@somecomputer>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3194112.zE8UqtGg2D@somecomputer>
 
-On Fri, Oct 11, 2024 at 03:09:08PM +0200, Krzysztof Kozlowski wrote:
-> Simplify drivers in few places around probe function.
+On Tue, Oct 15, 2024 at 06:58:33PM +0200, Richard Weinberger wrote:
+> Mathieu,
 > 
-> Best regards,
-> Krzysztof
+> Am Dienstag, 15. Oktober 2024, 18:48:08 CEST schrieb Mathieu Poirier:
+> > Good morning Richard,
+> > 
+> > On Fri, Oct 11, 2024 at 02:39:22PM +0200, Richard Weinberger wrote:
+> > > Texas Instruments ships a patch in their vendor kernels,
+> > > which adds a new NS message that includes a description field.
+> > > While TI is free to do whatever they want in their copy of the kernel,
+> > > it becomes a mess when people switch to a mainline kernel and want
+> > > to use their existing DSP programs with it.
+> > 
+> > I suspect there is a lot more things to change when going from downstream to a
+> > mainline kernel.
 > 
-> ---
-> Krzysztof Kozlowski (10):
->       remoteproc: da8xx: Handle deferred probe
->       remoteproc: da8xx: Simplify with dev_err_probe()
->       remoteproc: ti_k3_r5: Simplify with dev_err_probe()
->       remoteproc: ti_k3_r5: Simplify with scoped for each OF child loop
+> Not really.
+> I had to revert c6aed238b7a9b ("remoteproc: modify vring allocation to rely on centralized carveout allocator")
+> because the DSP has a sub-optimal resource table, and this workaround.
+> With that the DSP program worked as-is on kernel 6.6.
+> Downstream was 4.19 TI.
+> 
+> > > 
+> > > To make it easier to migrate to a mainline kernel,
+> > > let's make the kernel aware of their non-standard extension but
+> > > briefly ignore the description field.
+> > 
+> > In my opinion the real fix here is to get TI to use the standard message
+> > announcement structure.  The ->desc field doesn't seem to be that useful since
+> > it gets discarted.
+> 
+> This is for the future, the goal of my patch is helping people to
+> get existing DSP programs work with mainline.
+> Not everyone can or want to rebuild theirs DSP programs when moving to a mainline
+> kernel.
 
-I have applied patches 1 to 4.  I will let Bjorn do the QC ones.
+That's an even better argument to adopt the standard structure as soon as
+possible.  Modifying the mainline kernel to adapt to vendors' quirks doesn't
+scale.  
 
-Thanks,
-Mathieu
-
->       remoteproc: qcom_q6v5_adsp: Simplify with dev_err_probe()
->       remoteproc: qcom_q6v5_mss: Simplify with dev_err_probe()
->       remoteproc: qcom_q6v5_mss: Drop redundant error printks in probe
->       remoteproc: qcom_q6v5_pas: Simplify with dev_err_probe()
->       remoteproc: qcom_q6v5_wcss: Simplify with dev_err_probe()
->       remoteproc: qcom_wcnss_iris: Simplify with dev_err_probe()
 > 
->  drivers/remoteproc/da8xx_remoteproc.c    | 29 +++-------
->  drivers/remoteproc/qcom_q6v5_adsp.c      | 17 +++---
->  drivers/remoteproc/qcom_q6v5_mss.c       | 48 +++++------------
->  drivers/remoteproc/qcom_q6v5_pas.c       | 22 +++-----
->  drivers/remoteproc/qcom_q6v5_wcss.c      | 92 +++++++++++---------------------
->  drivers/remoteproc/qcom_wcnss_iris.c     |  5 +-
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 74 +++++++++----------------
->  7 files changed, 92 insertions(+), 195 deletions(-)
-> ---
-> base-commit: 0cca97bf23640ff68a6e8a74e9b6659fdc27f48c
-> change-id: 20241011-remote-proc-dev-err-probe-c986de9e93de
+> Thanks,
+> //richard
 > 
-> Best regards,
 > -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ​​​​​sigma star gmbh | Eduard-Bodem-Gasse 6, 6020 Innsbruck, AUT
+> UID/VAT Nr: ATU 66964118 | FN: 374287y
+> 
 > 
