@@ -1,121 +1,167 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263DD1FDF81
-	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 16:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C64E54F95
+	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 16:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094537; cv=none; b=N2GUdUsWY/QO5DNIj66GrkhWNy1q5ODLdoqMzY1XlCaoc3DAV/TkJWzkgBhGOQxHub38MA1E1zpW+S9DjMjogF7CCpn1aAGShinkPmAJTtp62+u+uujIqK4BiibTzH5e6BsT+nokQwnd9tcU7U587Ir9ZQiThE5631W5HWcEg5g=
+	t=1729094565; cv=none; b=Ordpu1oChOTM6XysabNG+Vd+XCW0V32PakUSSaTQLTfsrVSC1Il227DPjTVM8LVSPFw0c7hH7CGT2ettO2o5pdaeYbWiK8rmR6dEiCTvo2qTTDPv+kKHanxJHo6GiXJrW0q/9muZu3hmOqS8gVhYaj09bWFIUFhiE/sF6O7801U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094537; c=relaxed/simple;
-	bh=izfJPuESLdADVyQIKgA65BaWb+dPd/rXtKW7oYvGde0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RLJhDqoEIXr266whIZ1D/R/Liu8Wlj9n2R5G/hdUh1rQhPjY8hIs+J/1JIRhOXHdrjjF2YVsKqzlkeoUHBjIwXBTQ4xUN6IILEbzJLh/rVqLcqPxCkDxOAKSdQoUzer6jd2lyrqQVs2eur++Tt2E8KjGucK68pvW+BNWgMlGKs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lSBC/NJY; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1729094565; c=relaxed/simple;
+	bh=7METC6jN6G8PZeGWbioMgR4Fp1p2aozF6/VPN8mvWBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVPIkIKaxpLG4OfqZhev6q2eE+qobyR8Rj2tlf6QhnD9QYTT1vroJmGqctHKVBPoNohIUj1ti89iSP2eifcIcgoz7pero4MUfqAtI1AtxjRF/AkxFlazLNfNeqW+jSRIbVLv55JcNxDdqL2Mv7EjdhD9SlmYOa7VVZAHNU16Eiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JjZHqekn; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lSBC/NJY"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539983beb19so7294791e87.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 09:02:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JjZHqekn"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so5505297a12.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 09:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729094533; x=1729699333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cUD59f78GtNOAlqBmjuglWzX0LStg1/+Dw/KZ/SMHA4=;
-        b=lSBC/NJYhu1mXb4EIhJcUgbjb05G4kgqYouNihyL1ERmgjyOYc6woWimGAhi9pbJNt
-         vJL85a2GnlVcLz2Y2hSpwMpjvIkIBkLKtL0LGaB1qzsl47gBNKNnRJfjb2TbubpuxSM+
-         UOAcWXayhK+Pdwtfnpnmh/KRd5Dg2bA+x6i3Q=
+        d=linaro.org; s=google; t=1729094563; x=1729699363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=502Ngocc/Ryi+yCr04OyS0HdJEQRXBupe8eMfPyehwg=;
+        b=JjZHqeknqpIHNQL2qY0scGP6huP2/rM8oMWhAQUfDFbNPzHo7xyb6oC2jvqbHhy2Dz
+         cmcQK4/xc/1EKawE7A4V1ASentdMcrOFE/9CyN9F/Ol0+tmbhLAaPpFnawO+3rT5Onzy
+         RBIUxTvTo2/myh9TXivvUiJv/LuwOr+5D+ygMn3NoTGPfzUBaiWZGvuSFWi7ty70U9sb
+         aGntdIDCCW/QrMDvD1/+nnWhj/RVIptYxD2S7qFEHPB+uc6x5KZj+dqWGDFciQRaLnKu
+         PIh5Lj4eB0ndmcYkIv6wIC41wWHfNs+mc/VliLDt5CQ8LiW8ShEmF7Hi5T39xAAxoTkX
+         +1/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729094533; x=1729699333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cUD59f78GtNOAlqBmjuglWzX0LStg1/+Dw/KZ/SMHA4=;
-        b=qh4AQkFKKYYXh2V/BIUPymCBwugYtxcUtqD6KCZpMmDrxjvk9g1cMW9hBzciykhGZQ
-         KtfeYsVMClWdZxVw9xIVxzmKUH4xrsFpwGY/yKnyfAKzIPujtu+DFCh8Y8g1QuOO+nOg
-         v5hG+T9TGrWX4ILh+rQhmur9LTGK4X8saVy0v5EAEuDghNz9WQKuZ7O0ng++8reQ+Ivr
-         7TQi6Do9TQMP6tfuvnaGXKK+TeQVtNY7OsdRxvzZh/+4GU/rZqNXw+M4Aj2PDMSvMR0c
-         oU8TGbbNIubuOCupMYkvwjnVwoNHK5nvNt4wOLKlLc2gornXNL1F7aLamyNo8KeoSeC1
-         IE1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/NnDa2qnpYN/oORwKizaeutnloTes905J8hPlecIYmLsCuRswBc4Oo/unUwLr2VPmAFT0SRC00Rb3PBZJP57H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGiDMLGF3ILtVCyCdL3T+LFQAipcPGYz37oztbeCeBLrrFoBoK
-	+J+f2T5X9FISyG4bxJP94JIDAiTBLCxkHBR/NiBGj1M42o5baexIK6Uq8tAVZJwhDxLaMCMzG2z
-	3SwjJ
-X-Google-Smtp-Source: AGHT+IE6MaP2b0sPVZpDtgThPjuHv0AW89+CpUUGbr36bGx1qB5GAeyhT/YPFVBD+C9z9TqgLb+VlA==
-X-Received: by 2002:a05:6512:b9c:b0:539:e817:967f with SMTP id 2adb3069b0e04-539e817a374mr7464588e87.19.1729094533106;
-        Wed, 16 Oct 2024 09:02:13 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffa8a1fsm488818e87.54.2024.10.16.09.02.11
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 09:02:11 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbbadf83so4354723e87.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 09:02:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwc2RzgN8mnlC/64sRI41oaeYsq4V5qOvoDZNq+h+aykpRCR1P1rvFgEJCJzhq+H+c9RpxII24ZYg3aEBS49FM@vger.kernel.org
-X-Received: by 2002:a2e:70a:0:b0:2f7:6653:8046 with SMTP id
- 38308e7fff4ca-2fb329c2176mr77403341fa.25.1729094531214; Wed, 16 Oct 2024
- 09:02:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729094563; x=1729699363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=502Ngocc/Ryi+yCr04OyS0HdJEQRXBupe8eMfPyehwg=;
+        b=V/l6FblplL1YkmlaRUPM3LZ1u9O6RGQRyUTKPH73eEI52znaCxkuoBWKOJaxKuMjKX
+         CB5Mnzjg6VYLlErbrRri8v9XE7CoUMiN+Pzw+Qt3z1qLe1BpdcdZOp4eyCnXUWt5/acg
+         H8UkRjtG6qx378iKMZmqkr/Cn4FoNl3JTX6GmANCUxB3JU8whXNyGCslulCow7m3tayA
+         IaYf3M2jxAiQWR/zSco4if5EbqJk+DKfYVHiTBTSyRfpa6s2AiIC7jZC94EghxNc3obd
+         FHoEFfuGYNZZJrAvqVu+IFR46w/SnMNNYMQ5LD3k3JBNYbaZYWZnwPFapaeppFjsVYgb
+         v3QA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+YOK0Y/Xvh5zs4KQIa3QATdRKZ0UoHF1DS+tHyDJI3CkS9yCogaEuHH8L3vz+MgW/dhg9kf5wOo9TRDBdo8jp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdCu9Q1bmH8s10gpKwTZhQ4LvvTsb/cEaixcZFZSWMOLsu9m6I
+	18b+KDCt9i1VnGNdLpU4G51M4lXqsibA4uEVDbc4PfjWrXqnLC14mx6dKKsFN5Y=
+X-Google-Smtp-Source: AGHT+IFX2XjVApVDJfPBlxPEXd5Ohsyfm3+IvbCgmTwH5ZLSs9OXlEEOYLesp3zSocwQaY+SsyQRFg==
+X-Received: by 2002:a05:6a20:2d2a:b0:1d8:aa64:8733 with SMTP id adf61e73a8af0-1d8bcf430edmr26699382637.26.1729094562872;
+        Wed, 16 Oct 2024 09:02:42 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2add:7601:8402:667])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77370a04sm3230082b3a.1.2024.10.16.09.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 09:02:35 -0700 (PDT)
+Date: Wed, 16 Oct 2024 10:02:26 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+Message-ID: <Zw/jkpnGXW6ez56o@p14s>
+References: <20241007132441.2732215-1-arnd@kernel.org>
+ <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
+ <Zw/bIItwk0jeqKoR@p14s>
+ <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819073020.3291287-1-quic_sibis@quicinc.com> <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
-In-Reply-To: <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 16 Oct 2024 09:01:57 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UXm59wL3yX5+8-BKt+h+uBqvYKa-+y2kMo7SHdCqnVcg@mail.gmail.com>
-Message-ID: <CAD=FV=UXm59wL3yX5+8-BKt+h+uBqvYKa-+y2kMo7SHdCqnVcg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com>
 
-Hi,
+On Wed, Oct 16, 2024 at 10:37:35AM -0500, Andrew Davis wrote:
+> On 10/16/24 10:26 AM, Mathieu Poirier wrote:
+> > On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
+> > > On 10/7/24 8:23 AM, Arnd Bergmann wrote:
+> > > > From: Arnd Bergmann <arnd@arndb.de>
+> > > > 
+> > > > The k3-m4 remoteproc driver was merged with incorrect dependencies.
+> > > > Despite multiple people trying to fix this, the version 6.12-rc2
+> > > > remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+> > > > when the driver is built-in.
+> > > > 
+> > > > arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+> > > > ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
+> > > > 
+> > > > Fix the dependency again to make it work in all configurations.
+> > > > The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+> > > > dependencies. The link failure can be avoided with a simple 'depends
+> > > > do, so turn that into the same 'depends' to ensure we get no circular
+> > > > on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+> > > > we use elsehwere. On the other hand, building for OMAP2PLUS makes
+> > > > no sense since the hardware only exists on K3.
+> > > > 
+> > > > Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+> > > > Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+> > > > Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > ---
+> > > >    drivers/remoteproc/Kconfig | 6 +++---
+> > > >    1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > > > index 955e4e38477e..62f8548fb46a 100644
+> > > > --- a/drivers/remoteproc/Kconfig
+> > > > +++ b/drivers/remoteproc/Kconfig
+> > > > @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+> > > >    config TI_K3_M4_REMOTEPROC
+> > > >    	tristate "TI K3 M4 remoteproc support"
+> > > > -	depends on ARCH_OMAP2PLUS || ARCH_K3
+> > > > -	select MAILBOX
+> > > > -	select OMAP2PLUS_MBOX
+> > > > +	depends on ARCH_K3 || COMPILE_TEST
+> > > > +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+> > > 
+> > > This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
+> > > dependencies, as often only one ARCH can be selected which prevents
+> > > compile testing drivers with various multiple architecture deps in
+> > > one compile test.
+> > > 
+> > > Normal dependencies, on the other hand, can simply be enabled if one
+> > > wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
+> > > cannot be enabled as it has a dependency up the chain that doesn't
+> > > allow selecting when not on a TI platform. We can fix that as I posted
+> > > here[0]. With that fix in, this line can be simply become:
+> > > 
+> > > depends on TI_SCI_PROTOCOL
+> > 
+> >  From the above and the follow-on conversation with Nishanth, should I understand
+> > you are working on a patchset to address this issue?  If not I will apply Arnd's
+> > patch.  People are sending different fix [1] - the issue needs to be addressed
+> > well before the end of the cycle.
+> > 
+> 
+> This is a bit complex as it touches multiple subsystems. You should take Arnd's
+> patch. This will fix this for M4, I will then add a follow on patch doing the same
+> for the other two remoteproc drivers (DSP and R5).
+> 
+> When my series here[0] goes in I will then send a final patch removing the depends
+> TI_SCI_PROTOCOL=n oddness from all 3 drivers. This final step does not need to happen
+> this cycle though, only the first two steps are needed to prevent any further compile
+> test issues.
+>
 
-On Mon, Aug 19, 2024 at 4:40=E2=80=AFPM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Mon, Aug 19, 2024 at 12:30=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.=
-com> wrote:
-> >
-> > Any write access to the IMEM region when the Q6 is setting up XPU
-> > protection on it will result in a XPU violation. Fix this by ensuring
-> > IMEM writes related to the MBA post-mortem logs happen before the Q6
-> > is brought out of reset.
-> >
-> > Fixes: 318130cc9362 ("remoteproc: qcom_q6v5_mss: Add MBA log extraction=
- support")
-> > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> > ---
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> As discussed offlist, this isn't a perfect fix since writes to this
-> IMEM could happen by other drivers and those could still cause things
-> to go boom if they run in parallel with this driver. That being said:
-> * It seems like a more proper fix needs a coordinated effort between a
-> device's built-in firmware and the modem firmware. This is difficult /
-> near impossible to get done properly.
-> * Even if we do a more proper fix, making this change won't hurt.
-> * This change will immediately improve things by avoiding the XPU
-> violation in the most common case.
->
-> I've confirmed that the test case I had where things were going boom
-> is fixed. Thus:
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Tested-by: Douglas Anderson <dianders@chromium.org>
+I have applied Arnd's patch.
 
-Just checking in to see if there's anything else needed for this patch
-to land. Thanks! :-)
-
--Doug
+> Andrew
+> 
+> [0] https://lore.kernel.org/lkml/20241015213322.2649011-1-afd@ti.com/
+> 
+> > [1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
+> > 
+> > > 
+> > > Andrew
+> > > 
+> > > [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
+> > > 
+> > > > +	depends on OMAP2PLUS_MBOX
+> > > >    	help
+> > > >    	  Say m here to support TI's M4 remote processor subsystems
+> > > >    	  on various TI K3 family of SoCs through the remote processor
