@@ -1,218 +1,92 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298E720E021;
-	Wed, 16 Oct 2024 16:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F017333A;
+	Wed, 16 Oct 2024 16:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094684; cv=none; b=Mq9HKRyaqx9N9lACIO8StbSOpITIANt4+3AKjel8X8GggppsoTHqx7AlEitq3QuVtl5JH1At/aTj106i9lfdqTu73jQHCRVYodk7NVsX08dca0xmDJI2pUunprcXfUoD+XteC76EpidSEKNfFtnH4daQoiDCH8V9OT8/b/gT8Ys=
+	t=1729096910; cv=none; b=oy2jWShGLRdMjwQD35jfBVq8A+j/v2BiFlXgJH6/X2apY4JyTuJwrEsZm7DVuu3q7VT60PFPK10d+4IDXzHfgZ6WMT0FY9BCs+veo0snWF5td84gTKYYGFpv8KZmDmq7HAjmKcs2SWH7fV//soN3zAdLkB4TmOElvLZeS5/clGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094684; c=relaxed/simple;
-	bh=EKUEzfiN3YmtYYObeTxmHkJxrDJnt9VxyDY0QeTrbWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4iDnQyNi6zj+1MY8giVY0inKPycrzYQLZZPRr0U8A6HEpD7Kk57HoOZ5MllAyyPrWfmt1V4dkN0D3oNgwjB6CalRiDIQ9M69w+s5OS+iIiPVEa6HPfllvMyQ/0y1EfXwT/yzWDZdF28VRgoQ7hJi+h+hp2CwuxOTzdwnECQLzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHLf4DoB; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729096910; c=relaxed/simple;
+	bh=AyZPycljZTSVnfuog5VBbTUyoxo2Q3r8VWdevGLJEP8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rPzk6JMGw48AfnsOZYs71QA7gzpttT9eHlu+ww536S2TnXA6+OQldh0eCD6Zd1TNTGeEtybZynpa/K23cIWB8PvDNmOrSyyVvBrB+JiGsA3ND9wmTgmo/obsiFVXTSZ1aZgB2z25myfwej1MoT2DDqEDy7FXkFEAG6Wg7310NXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o5zD6ueO; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHLf4DoB"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e1543ab8so8683250e87.2;
-        Wed, 16 Oct 2024 09:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729094680; x=1729699480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNQBpV9vPDQPiHMaNRNKdEtYD8Kastgat0oNqI9eUbM=;
-        b=LHLf4DoBRCsgZJv0CC9LbdaT9ziQrgMSEfFHhTmA07ImgbJK6rm8TCxK91koTUvsjT
-         FoKNH90NWpp38vM8GKXKVbWf/DKxUVTh/X7qt1mjHKjxBKoUJaqvEKEEJNjVZ823DUdW
-         3sHT8MGJrz1cxbBbHyQzrFtYGe+yv/SPu1s033W+FkzBq5CVDEqHY0bZZw4o4GaJusA3
-         LuOEPIkI6NSbR6QpmkwM8y7HpGLicUWnsQYKIlSmT+JQ6kDXcVu3Y33KFkHd0pMD7/ed
-         vaIAuL8otDhsvqw+LoiS0mwa24KbsTguY1a4XBZ23FAWy1SbxVJBgj17cOs+7tGvRkvz
-         rbfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729094680; x=1729699480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GNQBpV9vPDQPiHMaNRNKdEtYD8Kastgat0oNqI9eUbM=;
-        b=UYgpzD/w9pK6qyautTNfT7yJYnrWI6vxjUbliZMX5HSrXNace3wmgoqNBqDEUsLRfC
-         7Lq8zUBM2NfEImDZptuBm9se50scHmf3zMLTgR7tjFTFVW8Z5k9gh9C0WBfMVi4UvZrz
-         Bs9q6PKONkIW2kIqQjHTwhd2kkPnX00mZOCA6LUyvFLoqdgMIPuW9iZ7ZMv4NQ8N3o+x
-         K+FZ+p7wfPOcRGMgJG9cd0OfuXNS1xuMfaVMYFAD5f3oZ521dZiAUCJ/N2aUK743TJks
-         PsHw3wvIbIV7pXgcXiVtFdENswmVAlKcQhZNO317w02UR6hX/SaanCWs/QIFIwCC2JFP
-         +pLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4sfmqjDi/uxfEPkRfAnZMJIO6Tnk/9RA+Tzi8yKQV/0SkwNEsJTA4mVgMJ+IVDyGyHcAc3CiUVCG3kzl5+xr2Yg==@vger.kernel.org, AJvYcCXHPJQPipnDpvOxj7Yl+YioUGSS/2jJ+uLhCnfd4YHfMpewzdv/9kPTX9ypCta4L/DWAVculWR4YQjnRNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwslcvI4e7GnmawNdGU81h9hNT9bdClkp8HbWlWT7+LDjVMxj2Y
-	vMTFZ4V8twxo8riFOlZBH4xRZDcOhxE1imgLLtg9pm12AzqWVn1kgAjsicAzdGJR5VbksJ5kiK9
-	QUvY+zpGhN2bbSkv0hSbI8IvvG6g=
-X-Google-Smtp-Source: AGHT+IHTfdOsutRT8m9ec/Y2Ofh5xKP8lNEpD8YNQl32O/trKfsU29BoYw0WuAcEok2Y/C0Rm8PMWo6RhNhJCFzenbI=
-X-Received: by 2002:a05:6512:1598:b0:539:905c:15c5 with SMTP id
- 2adb3069b0e04-539e5521da6mr11438781e87.35.1729094679769; Wed, 16 Oct 2024
- 09:04:39 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o5zD6ueO"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhHw087888;
+	Wed, 16 Oct 2024 11:41:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729096903;
+	bh=oZ25tm78B0m9rjNNl/PmDHLGlO/bUG9O1S7GRxQ0Oc8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=o5zD6ueOtmt6Of0ULmRDEjpMm1O/hkTqCp+YdA+WY9P6Hu4+a3Jnkh9/hK4JDOCtO
+	 1C6obDVYbD7CajtwxNPdkKDq01BVeXv8iEjuHCJmK32BSJh/HoBsNvIWmT5Z3YAg5P
+	 WYVz93JfSTgCbyAW+i6yw2wcpdwo060D/CDdHOfA=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhsZ034189
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 16 Oct 2024 11:41:43 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
+ Oct 2024 11:41:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 16 Oct 2024 11:41:43 -0500
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgat109164;
+	Wed, 16 Oct 2024 11:41:42 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 1/2] remoteproc: k3-dsp: Add compile testing support
+Date: Wed, 16 Oct 2024 11:41:40 -0500
+Message-ID: <20241016164141.93401-2-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241016164141.93401-1-afd@ti.com>
+References: <20241016164141.93401-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016045546.2613436-1-quic_mojha@quicinc.com>
-In-Reply-To: <20241016045546.2613436-1-quic_mojha@quicinc.com>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Wed, 16 Oct 2024 09:04:27 -0700
-Message-ID: <CABCoZhB3NNv0bi=wDvQ9HzYBin6qP522QrMvqw=HSnLn8VgeOg@mail.gmail.com>
-Subject: Re: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 15, 2024 at 9:57=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
-> wrote:
->
-> Multiple call to glink_subdev_stop() for the same remoteproc can happen
-> if rproc_stop() fails from Process-A that leaves the rproc state to
-> RPROC_CRASHED state later a call to recovery_store from user space in
-> Process B triggers rproc_trigger_recovery() of the same remoteproc to
-> recover it results in NULL pointer dereference issue in
-> qcom_glink_smem_unregister().
->
-> There is other side to this issue if we want to fix this via adding a
-> NULL check on glink->edge which does not guarantees that the remoteproc
-> will recover in second call from Process B as it has failed in the first
-> Process A during SMC shutdown call and may again fail at the same call
-> and rproc can not recover for such case.
+This driver can be compile tested on non-K3 architectures as long
+as TI_SCI_PROTOCOL is not compiled as a module. Enable this here
+to improve this driver's build coverage.
 
-What is the guarantee that the second stop also will fail? I feel
-it should be handled in user space, if rproc calls are failing then
-there is a bigger issue and then let userspace decide what to do if it
-is happening continuously. Also, why not add this DEFUNCT_STATE
-in other callbacks, as all callbacks from core to rproc driver can fail?
->
-> Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/remoteproc/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Even if this state is present, ultimately it will be up to user space to
-decide what to do, right?
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 62f8548fb46a5..0ac1c8a6e4581 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -329,7 +329,8 @@ config STM32_RPROC
+ 
+ config TI_K3_DSP_REMOTEPROC
+ 	tristate "TI K3 DSP remoteproc support"
+-	depends on ARCH_K3
++	depends on ARCH_K3 || COMPILE_TEST
++	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+ 	depends on OMAP2PLUS_MBOX
+ 	help
+ 	  Say m here to support TI's C66x and C71x DSP remote processor
+-- 
+2.39.2
 
-> remoteproc and the only way to recover from it via system restart.
->
->         Process-A                                       Process-B
->
->   fatal error interrupt happens
->
->   rproc_crash_handler_work()
->     mutex_lock_interruptible(&rproc->lock);
->     ...
->
->        rproc->state =3D RPROC_CRASHED;
->     ...
->     mutex_unlock(&rproc->lock);
->
->     rproc_trigger_recovery()
->      mutex_lock_interruptible(&rproc->lock);
->
->       adsp_stop()
->       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
->       remoteproc remoteproc3: can't stop rproc: -22
->      mutex_unlock(&rproc->lock);
->
->                                                 echo enabled > /sys/class=
-/remoteproc/remoteprocX/recovery
->                                                 recovery_store()
->                                                  rproc_trigger_recovery()
->                                                   mutex_lock_interruptibl=
-e(&rproc->lock);
->                                                    rproc_stop()
->                                                     glink_subdev_stop()
->                                                       qcom_glink_smem_unr=
-egister() =3D=3D|
->                                                                          =
-            |
->                                                                          =
-            V
->                                                       Unable to handle ke=
-rnel NULL pointer dereference
->                                                                 at virtua=
-l address 0000000000000358
->
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
-> Changes in v3:
->  - Fix kernel test reported error.
->
-> Changes in v2:
->  - Removed NULL pointer check instead added a new state to signify
->    non-recoverable state of remoteproc.
->
->  drivers/remoteproc/remoteproc_core.c  | 3 ++-
->  drivers/remoteproc/remoteproc_sysfs.c | 1 +
->  include/linux/remoteproc.h            | 5 ++++-
->  3 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/re=
-moteproc_core.c
-> index f276956f2c5c..c4e14503b971 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool cra=
-shed)
->         /* power off the remote processor */
->         ret =3D rproc->ops->stop(rproc);
->         if (ret) {
-> +               rproc->state =3D RPROC_DEFUNCT;
->                 dev_err(dev, "can't stop rproc: %d\n", ret);
->                 return ret;
->         }
-> @@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
->                 return ret;
->
->         /* State could have changed before we got the mutex */
-> -       if (rproc->state !=3D RPROC_CRASHED)
-> +       if (rproc->state =3D=3D RPROC_DEFUNCT || rproc->state !=3D RPROC_=
-CRASHED)
->                 goto unlock_mutex;
->
->         dev_err(dev, "recovering %s\n", rproc->name);
-> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/r=
-emoteproc_sysfs.c
-> index 138e752c5e4e..5f722b4576b2 100644
-> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> @@ -171,6 +171,7 @@ static const char * const rproc_state_string[] =3D {
->         [RPROC_DELETED]         =3D "deleted",
->         [RPROC_ATTACHED]        =3D "attached",
->         [RPROC_DETACHED]        =3D "detached",
-> +       [RPROC_DEFUNCT]         =3D "defunct",
->         [RPROC_LAST]            =3D "invalid",
->  };
->
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index b4795698d8c2..3e4ba06c6a9a 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -417,6 +417,8 @@ struct rproc_ops {
->   *                     has attached to it
->   * @RPROC_DETACHED:    device has been booted by another entity and wait=
-ing
->   *                     for the core to attach to it
-> + * @RPROC_DEFUNCT:     device neither crashed nor responding to any of t=
-he
-> + *                     requests and can only recover on system restart.
->   * @RPROC_LAST:                just keep this one at the end
->   *
->   * Please note that the values of these states are used as indices
-> @@ -433,7 +435,8 @@ enum rproc_state {
->         RPROC_DELETED   =3D 4,
->         RPROC_ATTACHED  =3D 5,
->         RPROC_DETACHED  =3D 6,
-> -       RPROC_LAST      =3D 7,
-> +       RPROC_DEFUNCT   =3D 7,
-> +       RPROC_LAST      =3D 8,
->  };
->
->  /**
-> --
-> 2.34.1
->
->
