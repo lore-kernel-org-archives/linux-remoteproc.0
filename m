@@ -1,46 +1,45 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F017333A;
-	Wed, 16 Oct 2024 16:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A24F20FAA6;
+	Wed, 16 Oct 2024 16:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096910; cv=none; b=oy2jWShGLRdMjwQD35jfBVq8A+j/v2BiFlXgJH6/X2apY4JyTuJwrEsZm7DVuu3q7VT60PFPK10d+4IDXzHfgZ6WMT0FY9BCs+veo0snWF5td84gTKYYGFpv8KZmDmq7HAjmKcs2SWH7fV//soN3zAdLkB4TmOElvLZeS5/clGs=
+	t=1729096914; cv=none; b=cAfv+fdPj1sPLU3jTHjaEFvhUn6WYYMuOdKu4OFWKeYlMLDsf+O9+70jL9ie2IMKUK39/MGSqWPNEgfehw1frwhSOKMr2U16sSrtmrGIkWGHlWumnHf2PluwXTKstFqXx3tQ34ib0X5dN8L0bFLmDumra7M8745DvQogoekp3/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096910; c=relaxed/simple;
-	bh=AyZPycljZTSVnfuog5VBbTUyoxo2Q3r8VWdevGLJEP8=;
+	s=arc-20240116; t=1729096914; c=relaxed/simple;
+	bh=vpxmRfe7eX0i2m8GaABlDnFDeb9ilOtpSvePKWS2x3k=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rPzk6JMGw48AfnsOZYs71QA7gzpttT9eHlu+ww536S2TnXA6+OQldh0eCD6Zd1TNTGeEtybZynpa/K23cIWB8PvDNmOrSyyVvBrB+JiGsA3ND9wmTgmo/obsiFVXTSZ1aZgB2z25myfwej1MoT2DDqEDy7FXkFEAG6Wg7310NXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o5zD6ueO; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=fpY8EEuOa2XTv2fwJ6u6hOmFrrIbFx4fdYV+xjCCZocRGIq89gD6bb+BiIRs7/lk7SCsTmbjK2e/B77dFVjleEkG4rSqQJc/BO647+rrSF/Q9W4CjtqSzh1DHnS+lvt+msn9uhzcHfeYIN7L9TZSaIVaiTx14z89VKelt3Uu/UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oa/lRaH6; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o5zD6ueO"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhHw087888;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oa/lRaH6"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhSP050039;
 	Wed, 16 Oct 2024 11:41:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1729096903;
-	bh=oZ25tm78B0m9rjNNl/PmDHLGlO/bUG9O1S7GRxQ0Oc8=;
+	bh=AoBAA8iILvkWEy2WAu3S+EpXX7C0k3MpH/Vj5o7teNk=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=o5zD6ueOtmt6Of0ULmRDEjpMm1O/hkTqCp+YdA+WY9P6Hu4+a3Jnkh9/hK4JDOCtO
-	 1C6obDVYbD7CajtwxNPdkKDq01BVeXv8iEjuHCJmK32BSJh/HoBsNvIWmT5Z3YAg5P
-	 WYVz93JfSTgCbyAW+i6yw2wcpdwo060D/CDdHOfA=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhsZ034189
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	b=oa/lRaH6x5rf32Y5/n0Y3uQJI+5u3EAHfndO+Jainp+eeKagirwu/SoqjzyCXWdfP
+	 0g+lmJNemVaS2KUsvY4JQJUkkMuNSGvqCNcctY4Uzn5bFNkcVJIeXjsD9PUfC/hxzh
+	 tg6TLzYQ64niDki1sYo4vbC/Ox0Ze+2UmgT5nrA4=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhww125462;
 	Wed, 16 Oct 2024 11:41:43 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
  Oct 2024 11:41:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Wed, 16 Oct 2024 11:41:43 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgat109164;
-	Wed, 16 Oct 2024 11:41:42 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgau109164;
+	Wed, 16 Oct 2024 11:41:43 -0500
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -48,9 +47,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 1/2] remoteproc: k3-dsp: Add compile testing support
-Date: Wed, 16 Oct 2024 11:41:40 -0500
-Message-ID: <20241016164141.93401-2-afd@ti.com>
+Subject: [PATCH 2/2] remoteproc: k3-r5: Add compile testing support
+Date: Wed, 16 Oct 2024 11:41:41 -0500
+Message-ID: <20241016164141.93401-3-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241016164141.93401-1-afd@ti.com>
 References: <20241016164141.93401-1-afd@ti.com>
@@ -74,19 +73,19 @@ Signed-off-by: Andrew Davis <afd@ti.com>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 62f8548fb46a5..0ac1c8a6e4581 100644
+index 0ac1c8a6e4581..83962a114dc9f 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
-@@ -329,7 +329,8 @@ config STM32_RPROC
+@@ -355,7 +355,8 @@ config TI_K3_M4_REMOTEPROC
  
- config TI_K3_DSP_REMOTEPROC
- 	tristate "TI K3 DSP remoteproc support"
+ config TI_K3_R5_REMOTEPROC
+ 	tristate "TI K3 R5 remoteproc support"
 -	depends on ARCH_K3
 +	depends on ARCH_K3 || COMPILE_TEST
 +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
  	depends on OMAP2PLUS_MBOX
  	help
- 	  Say m here to support TI's C66x and C71x DSP remote processor
+ 	  Say m here to support TI's R5F remote processor subsystems
 -- 
 2.39.2
 
