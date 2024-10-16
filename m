@@ -1,45 +1,45 @@
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A24F20FAA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F520FAA3;
 	Wed, 16 Oct 2024 16:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096914; cv=none; b=cAfv+fdPj1sPLU3jTHjaEFvhUn6WYYMuOdKu4OFWKeYlMLDsf+O9+70jL9ie2IMKUK39/MGSqWPNEgfehw1frwhSOKMr2U16sSrtmrGIkWGHlWumnHf2PluwXTKstFqXx3tQ34ib0X5dN8L0bFLmDumra7M8745DvQogoekp3/4=
+	t=1729096914; cv=none; b=qdx6SX3/p4c6Q7cA5bG9Q+vLJf5B2pPRxgbjimd5BL7n3Xrn4QNUW2rCEkwAYAUpXfFbl0yuCkE4o0ujzNEjer4+ATFys21cX9Jml4NZyu8hiZo2OLY/sFX1mjyoN6SdBVuo9vxWz8bnXAX0Uk65aRkffbKb4JqKia1eVtIV3a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729096914; c=relaxed/simple;
-	bh=vpxmRfe7eX0i2m8GaABlDnFDeb9ilOtpSvePKWS2x3k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fpY8EEuOa2XTv2fwJ6u6hOmFrrIbFx4fdYV+xjCCZocRGIq89gD6bb+BiIRs7/lk7SCsTmbjK2e/B77dFVjleEkG4rSqQJc/BO647+rrSF/Q9W4CjtqSzh1DHnS+lvt+msn9uhzcHfeYIN7L9TZSaIVaiTx14z89VKelt3Uu/UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oa/lRaH6; arc=none smtp.client-ip=198.47.19.142
+	bh=DpHtPfq04oiPZVx392+SDoWvf1uEXJ38XX3wKwUtOl0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CMqc+AKOIMXXzxR4yjeUAoAMgMRwHQfGcuIytkn8GnSK8OlYzTMR2vbVlySSIpqE2d7ZlYnX8ceyJNQ5ZmCm1DFJKUEOGhDQtir2XDO7st1SSk6atdfxilq8gRdhh9NHiTFwIEhO31LgNquCeX73SbeLAwcJjZKNLtdKQeZT2ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WcV+K+mO; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oa/lRaH6"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhSP050039;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WcV+K+mO"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfh9m050027;
 	Wed, 16 Oct 2024 11:41:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1729096903;
-	bh=AoBAA8iILvkWEy2WAu3S+EpXX7C0k3MpH/Vj5o7teNk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=oa/lRaH6x5rf32Y5/n0Y3uQJI+5u3EAHfndO+Jainp+eeKagirwu/SoqjzyCXWdfP
-	 0g+lmJNemVaS2KUsvY4JQJUkkMuNSGvqCNcctY4Uzn5bFNkcVJIeXjsD9PUfC/hxzh
-	 tg6TLzYQ64niDki1sYo4vbC/Ox0Ze+2UmgT5nrA4=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhww125462;
+	bh=4L8V23/lFtOiQ9FZsGss0DJeQC13lVShPiCHSbWsSl8=;
+	h=From:To:CC:Subject:Date;
+	b=WcV+K+mOnvHTH0JAsaZsBzyNgOOxThNQKO9iSUF+LDMC+ChQDTZJ860facbL0bQMI
+	 xjdyHFGU+jg1qeUhMVrfg9L0HvHSOnFCw2P3vn17BlJa96p5KZGgisFVR3mNumHCXW
+	 8v7+5NRAjTgEUy5dCgNOIxODjo1aqMDRG27I5Opc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhjR011854
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Wed, 16 Oct 2024 11:41:43 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
  Oct 2024 11:41:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Wed, 16 Oct 2024 11:41:43 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgau109164;
-	Wed, 16 Oct 2024 11:41:43 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgas109164;
+	Wed, 16 Oct 2024 11:41:42 -0500
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -47,12 +47,10 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 2/2] remoteproc: k3-r5: Add compile testing support
-Date: Wed, 16 Oct 2024 11:41:41 -0500
-Message-ID: <20241016164141.93401-3-afd@ti.com>
+Subject: [PATCH 0/2] Enable compile testing for K3 RemoteProc drivers
+Date: Wed, 16 Oct 2024 11:41:39 -0500
+Message-ID: <20241016164141.93401-1-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241016164141.93401-1-afd@ti.com>
-References: <20241016164141.93401-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,29 +61,23 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This driver can be compile tested on non-K3 architectures as long
-as TI_SCI_PROTOCOL is not compiled as a module. Enable this here
-to improve this driver's build coverage.
+Hello all,
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/remoteproc/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is a follow up to [0] that adds the same for the other two K3
+RemoteProc drivers. Series is based on rproc-next branch.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 0ac1c8a6e4581..83962a114dc9f 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -355,7 +355,8 @@ config TI_K3_M4_REMOTEPROC
- 
- config TI_K3_R5_REMOTEPROC
- 	tristate "TI K3 R5 remoteproc support"
--	depends on ARCH_K3
-+	depends on ARCH_K3 || COMPILE_TEST
-+	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
- 	depends on OMAP2PLUS_MBOX
- 	help
- 	  Say m here to support TI's R5F remote processor subsystems
+Thanks,
+Andrew
+
+[0] https://lore.kernel.org/lkml/20241007132441.2732215-1-arnd@kernel.org/
+
+Andrew Davis (2):
+  remoteproc: k3-dsp: Add compile testing support
+  remoteproc: k3-r5: Add compile testing support
+
+ drivers/remoteproc/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
 -- 
 2.39.2
 
