@@ -1,145 +1,195 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DE913C908;
-	Wed, 16 Oct 2024 04:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA9721E3BA;
+	Wed, 16 Oct 2024 04:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729052197; cv=none; b=FZrQ7dTeLC0eTuyvWG7jO1x/96hrlTXZAmpFEk5UISrqlsEPH8cnOSmqUWAzqYZDpHmoF1v+lwv9ST/uNebnCM42wqpiM4vniz+E0RKDImXUqb6gC8cnr13oLQJF67ch0XXDOadbxYHmvbfcxzQXbVZzc2joxA5+m6vgj18QCbw=
+	t=1729054613; cv=none; b=fHXMwsCEhLa7S55IoVqIFpDQpIR1ltPsGW0KElgx2mbRA35o3uo55bOGJt5Q2X/DTast6lOxtJMuZi36obRkdDBpZ+eD54yjNnp9Tc07GbDda8GaKcNeHaNqZi/yTmQPrdeKrFn7gyvCzCGx7XFC4cPRz0vPgPrbnjeR3jaeg5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729052197; c=relaxed/simple;
-	bh=yukfN/ZCUI8w67J+9BSDAj02fAIZcK3PJadJXWyhObs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjrR4h3SdutaikW6/wwElEa1MS4kuBl0BA85aukK9D6TLJCWDh1szyxcOrEY6RdguBfpBOaQGRfjgYaY6WbPUH97G87kqfJf7Cyt6iBIxzQKvPcsoVvqc6rE8wQqhcmkLaSOqcZDPc7+qfh3uVxG57JDc8K8aZzQZLCTOlRoZ6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XkbDZS3J; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1729054613; c=relaxed/simple;
+	bh=6ekz6iVzk5XteDYQ0GWs5ZU46+bqXJJrgZgVi7ofYuo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PVwGCX9NYTQPdszqHtMZD1a/UGzL/yCxfGOaBAOJpscpkJEcxNBTcC0oAp3szVT6Wj7qRoo8lS4mq8c6Rro4EUSTFM1Hu1GQqFTGjYHzn1Gc9rAmvLYFa1JaZI1ClbiAH7pJhJg4HziaM6kHXOnutjasDUqzsDcsURSyJmaApvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gmHYkerr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XkbDZS3J"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729052196; x=1760588196;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yukfN/ZCUI8w67J+9BSDAj02fAIZcK3PJadJXWyhObs=;
-  b=XkbDZS3JLGbFe5MNbHOoTZ01tkToJm9VJDPG1dZYxtzLDhf9acGI/Uft
-   7+3/CSF3I7RsZQP1Z+TT53cBUMrs0IRnM5sKeTOha7XY1LiUeeT6eJ7xq
-   rxDdYOCiJLXU9Ly1Ff1/hSGNIzlved55CVDivddIhEYxlsqB6HIMGaZpF
-   tbyJsAWlOch96TdEjTu0DHpbrianXcZLikuPmet+hzk9ai0vL9KF89H3f
-   oLehfYz08c6IaRv5WuO0ixKYHu3EUy/2u32qiOJgV/WeWYCtWY6JNSKGR
-   fwYi2xr8Mvgh2PiKVrgSKz5d+XZYVxJrCEL6xl0S/AHA9EanDpArG+Mke
-   w==;
-X-CSE-ConnectionGUID: TFl9GGsuSI2EvJ4FFVpRzA==
-X-CSE-MsgGUID: Xb2w0BYqRp23jPly1Bfu1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32173955"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32173955"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 21:16:35 -0700
-X-CSE-ConnectionGUID: pa5scYHvRkG216YIchzbWg==
-X-CSE-MsgGUID: z6ePPxEJQfW5OokfjShRdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="83180176"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 15 Oct 2024 21:16:33 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0vSY-000KGs-2I;
-	Wed, 16 Oct 2024 04:16:30 +0000
-Date: Wed, 16 Oct 2024 12:16:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: Re: [PATCH v2] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
-Message-ID: <202410161111.ZSy2XQxP-lkp@intel.com>
-References: <20241014203118.1580024-1-quic_mojha@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gmHYkerr"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49FIsavt019908;
+	Wed, 16 Oct 2024 04:56:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ibjDTB40//wTO9DN3gi529
+	06ZFqiy0Znf0JiRDBGjIs=; b=gmHYkerrghjsSmlUWSNv8QOpjcLPkGmz5pWM92
+	obXxA+DcH0U1R43WdrcMExxPGcKAY4Z+s1fgjSJitgU6/o7+D3KNH75kb8fXTEmM
+	ljj5IOW4iMFCnIWV+agd55Bh79hKKX6RAcjyGSFikCGWTKr4ovGEJnXl3XNbi4T3
+	1pPpXqQ0GdKy7ruxJ1expQm6RIsgiAT5FJqfsusiK3qRyIPVIa8DGaKlxhg/NOfC
+	jJZtPBHnGa3sqQHT2SENTbxMHEklIMdc4SOMsFKLeM6dhgL25ZGW0g/xQ2NSt6h0
+	lXNpI41pX5RyD2ccZRxmkvncovPArxmuvOUzjE1eIdwZ7JmA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429nm3k3sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 04:56:47 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49G4ukAv007590
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 04:56:46 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Oct 2024 21:56:44 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Mukesh Ojha" <quic_mojha@quicinc.com>
+Subject: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
+Date: Wed, 16 Oct 2024 10:25:46 +0530
+Message-ID: <20241016045546.2613436-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014203118.1580024-1-quic_mojha@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 82tyk_eZaIb9xj-Cu2iJ_0PrxmudIgZA
+X-Proofpoint-ORIG-GUID: 82tyk_eZaIb9xj-Cu2iJ_0PrxmudIgZA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160029
 
-Hi Mukesh,
+Multiple call to glink_subdev_stop() for the same remoteproc can happen
+if rproc_stop() fails from Process-A that leaves the rproc state to
+RPROC_CRASHED state later a call to recovery_store from user space in
+Process B triggers rproc_trigger_recovery() of the same remoteproc to
+recover it results in NULL pointer dereference issue in
+qcom_glink_smem_unregister().
 
-kernel test robot noticed the following build warnings:
+There is other side to this issue if we want to fix this via adding a
+NULL check on glink->edge which does not guarantees that the remoteproc
+will recover in second call from Process B as it has failed in the first
+Process A during SMC shutdown call and may again fail at the same call
+and rproc can not recover for such case.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on linus/master v6.12-rc3 next-20241015]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
+remoteproc and the only way to recover from it via system restart.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/remoteproc-Add-a-new-remoteproc-state-RPROC_DEFUNCT/20241015-043318
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20241014203118.1580024-1-quic_mojha%40quicinc.com
-patch subject: [PATCH v2] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
-config: x86_64-buildonly-randconfig-003-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161111.ZSy2XQxP-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161111.ZSy2XQxP-lkp@intel.com/reproduce)
+	Process-A                			Process-B
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410161111.ZSy2XQxP-lkp@intel.com/
+  fatal error interrupt happens
 
-All warnings (new ones prefixed by >>):
+  rproc_crash_handler_work()
+    mutex_lock_interruptible(&rproc->lock);
+    ...
 
->> drivers/remoteproc/remoteproc_core.c:1843:18: warning: comparison between pointer and integer ('int (*)(struct rproc *, const struct firmware *)' and 'int') [-Wpointer-integer-compare]
-    1843 |         if (rproc_start == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
-         |             ~~~~~~~~~~~ ^  ~~~~~~~~~~~~~
-   1 warning generated.
+       rproc->state = RPROC_CRASHED;
+    ...
+    mutex_unlock(&rproc->lock);
 
+    rproc_trigger_recovery()
+     mutex_lock_interruptible(&rproc->lock);
 
-vim +1843 drivers/remoteproc/remoteproc_core.c
+      adsp_stop()
+      qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+      remoteproc remoteproc3: can't stop rproc: -22
+     mutex_unlock(&rproc->lock);
 
-  1820	
-  1821	/**
-  1822	 * rproc_trigger_recovery() - recover a remoteproc
-  1823	 * @rproc: the remote processor
-  1824	 *
-  1825	 * The recovery is done by resetting all the virtio devices, that way all the
-  1826	 * rpmsg drivers will be reseted along with the remote processor making the
-  1827	 * remoteproc functional again.
-  1828	 *
-  1829	 * This function can sleep, so it cannot be called from atomic context.
-  1830	 *
-  1831	 * Return: 0 on success or a negative value upon failure
-  1832	 */
-  1833	int rproc_trigger_recovery(struct rproc *rproc)
-  1834	{
-  1835		struct device *dev = &rproc->dev;
-  1836		int ret;
-  1837	
-  1838		ret = mutex_lock_interruptible(&rproc->lock);
-  1839		if (ret)
-  1840			return ret;
-  1841	
-  1842		/* State could have changed before we got the mutex */
-> 1843		if (rproc_start == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
-  1844			goto unlock_mutex;
-  1845	
-  1846		dev_err(dev, "recovering %s\n", rproc->name);
-  1847	
-  1848		if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-  1849			ret = rproc_attach_recovery(rproc);
-  1850		else
-  1851			ret = rproc_boot_recovery(rproc);
-  1852	
-  1853	unlock_mutex:
-  1854		mutex_unlock(&rproc->lock);
-  1855		return ret;
-  1856	}
-  1857	
+						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+						recovery_store()
+						 rproc_trigger_recovery()
+						  mutex_lock_interruptible(&rproc->lock);
+						   rproc_stop()
+						    glink_subdev_stop()
+						      qcom_glink_smem_unregister() ==|
+                                                                                     |
+                                                                                     V
+						      Unable to handle kernel NULL pointer dereference
+                                                                at virtual address 0000000000000358
 
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v3:
+ - Fix kernel test reported error.
+
+Changes in v2:
+ - Removed NULL pointer check instead added a new state to signify
+   non-recoverable state of remoteproc.
+
+ drivers/remoteproc/remoteproc_core.c  | 3 ++-
+ drivers/remoteproc/remoteproc_sysfs.c | 1 +
+ include/linux/remoteproc.h            | 5 ++++-
+ 3 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..c4e14503b971 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+ 	if (ret) {
++		rproc->state = RPROC_DEFUNCT;
+ 		dev_err(dev, "can't stop rproc: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 		return ret;
+ 
+ 	/* State could have changed before we got the mutex */
+-	if (rproc->state != RPROC_CRASHED)
++	if (rproc->state == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
+ 		goto unlock_mutex;
+ 
+ 	dev_err(dev, "recovering %s\n", rproc->name);
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 138e752c5e4e..5f722b4576b2 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -171,6 +171,7 @@ static const char * const rproc_state_string[] = {
+ 	[RPROC_DELETED]		= "deleted",
+ 	[RPROC_ATTACHED]	= "attached",
+ 	[RPROC_DETACHED]	= "detached",
++	[RPROC_DEFUNCT]		= "defunct",
+ 	[RPROC_LAST]		= "invalid",
+ };
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..3e4ba06c6a9a 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -417,6 +417,8 @@ struct rproc_ops {
+  *			has attached to it
+  * @RPROC_DETACHED:	device has been booted by another entity and waiting
+  *			for the core to attach to it
++ * @RPROC_DEFUNCT:	device neither crashed nor responding to any of the
++ * 			requests and can only recover on system restart.
+  * @RPROC_LAST:		just keep this one at the end
+  *
+  * Please note that the values of these states are used as indices
+@@ -433,7 +435,8 @@ enum rproc_state {
+ 	RPROC_DELETED	= 4,
+ 	RPROC_ATTACHED	= 5,
+ 	RPROC_DETACHED	= 6,
+-	RPROC_LAST	= 7,
++	RPROC_DEFUNCT	= 7,
++	RPROC_LAST	= 8,
+ };
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
