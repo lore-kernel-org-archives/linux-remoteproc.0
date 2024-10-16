@@ -1,108 +1,111 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CB81B218C;
-	Wed, 16 Oct 2024 07:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A024207206;
+	Wed, 16 Oct 2024 13:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063269; cv=none; b=N+dmVqVa6Z3p7qLdLh+86prKInJAUsMXFMaLnK1n5hFgrjEql+ys0Bvvb8F/W1f/pGx4zgGu15KTdhX0iGiW/SJnxtY8eA6/6mSHJQywYhkFCaw+b/HJWuln6fvvt8UXkUpPXG2dB+jkFDrtEHv40x7SNG44+Q3L+K4RugwO0lE=
+	t=1729086899; cv=none; b=rfVKhN20UM0FAA4sG9YKlB3Z+be/B5uDpehT553k1OzeT/qN+Gj+/rnxcB0hPmdDr7+Jp1BKZo65ji0zZvz1lPLGYhGsXXIEA7OH33e75h2hx20elBGCb9hPTW5BMZkE+EXrBdSw7BwSID307yaHzvRax42jGo20ueKc4OoyNsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063269; c=relaxed/simple;
-	bh=tNLN0Hsi06h0KXDRSOvGs8YDS4+LPkihDOXR2+rrwcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W2IU2ve7yIeS3lc5dCM3urQCsI9l7AhSCQDDbAmmf2rrbnuW+ZKC8leLa4HXKpIJBV5PH4Luji9vKNZRLuZLYWxYdeg6t5B8d4ubigHsIG6kEj/BK7CjCnMw1h+zE3Pa7ILnvxHAde5gO83CrDUX73GI6Ix7tfFTpe8a2w+AsZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBMq7vNl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1729086899; c=relaxed/simple;
+	bh=fSUlvJD3BmavIiJtNWJGx1iFShCI1qod/q1MxnZ229o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UxBQRjVobempn6A0tvVWTmrodEi2ig4rZf+a2wFoH8Hz6+h96NmDvV24DXIs4hEiquAC3yhxh6/2+P/9UJbIc+oat4QQOMiZGrPdsxz9CQncAc4773O0B7inrHdRqXt0p7b9pmKMuE3twv6asi16tfzP+RtnXtZXRaBHciifGF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZNz30qwT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBMq7vNl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729063267; x=1760599267;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tNLN0Hsi06h0KXDRSOvGs8YDS4+LPkihDOXR2+rrwcg=;
-  b=gBMq7vNl6qaQxlECDPTslBZ05W5h1xG1jUhen9pxoBKUlAVd/VDj8DK0
-   CmUXyKnNUz8CfMgYfoPRgDXjaHCv//WstiBjQGKVrvrueO7pFjK12zAnz
-   ak2q6L+ETwitAR0g46tVwsdYxuOTGyHekNZHQD3GXjm/+Gwm8OkBIXf5I
-   yMzEo9WY/1tu7A3OekxMCzO/qjS/NP93rresQe/cfIXYMS8vlnJk9fjYa
-   iBPwgWBJ5arlQk3Ce8PxTi1ODoXZeRZcfnS5FFphYsk4hsg4sRTRlJPJp
-   /Wx7BUShz2w2NRqFhhjeabW3XS0F3HyXCTn3VeMdQyIFmbGB81ojZ7vOe
-   w==;
-X-CSE-ConnectionGUID: oXGVVx0cTMijhEA+m8qB3A==
-X-CSE-MsgGUID: 4inUWa8DS+60AF1HPQ/Iog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32414800"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="32414800"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 00:21:06 -0700
-X-CSE-ConnectionGUID: 7CFWPXKZTKKz3VQrwvcvWw==
-X-CSE-MsgGUID: nMIp9oLsROGRICCG5IcKfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="83213005"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Oct 2024 00:21:04 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0yL7-000KUh-1L;
-	Wed, 16 Oct 2024 07:21:01 +0000
-Date: Wed, 16 Oct 2024 15:20:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: anish kumar <yesanishhere@gmail.com>, andersson@kernel.org,
-	mathieu.poirier@linaro.orgi, corbet@lwn.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: Re: [PATCH] remoteproc: Documentation: upgrade from staging.
-Message-ID: <202410161444.jOKMsoGS-lkp@intel.com>
-References: <20241015025831.65232-1-yesanishhere@gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZNz30qwT"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G8Q88m026699;
+	Wed, 16 Oct 2024 13:54:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=3PlT2PvVcsTyb0hBqZtBOw6xm3CoyCRYJqy
+	bxaeJp9o=; b=ZNz30qwTMP6iidvOVN/UrCwPaomfV2zNgz4+EZNh2tGuBPmytYE
+	u3eq3ZWIlZT/X/neJDIqcBhxwxD20co8/bRPtDscx43LwE/LznEQmAGuLuSHLuyp
+	8WFa64HgZ67qsbziQWAs6eVqL/Go048ZsxDAYBBhpVGjP3RlrN+43oCd4R9bJ6JD
+	n/UuiPYAeoilZbWrq7IxF3z+iFpuCx+/mWxb9dtFVi63KjxtPGWaTT0639XdMSCc
+	J6IdyJUFV1z8Mu0FZ1NZCh0pYjQ35p7neWvK07amgWRuWtbvGmu7ngjpot0osKUE
+	nuvuuuMRx8IJI6fzyk3G7Ik/8CZmmUIXc4g==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8w6hb8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:54:50 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GDskmF004651;
+	Wed, 16 Oct 2024 13:54:46 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 427j6m6fag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:54:46 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49GDskcq004645;
+	Wed, 16 Oct 2024 13:54:46 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.93])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 49GDsjfN004643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:54:46 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 460767)
+	id EB40D509; Wed, 16 Oct 2024 19:24:44 +0530 (+0530)
+From: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+To: andersson@kernel.org, mathieu.poirier@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Balaji Pothunoori <quic_bpothuno@quicinc.com>,
+        ath11k@lists.infradead.org, Kalle Valo <kvalo@kernel.org>
+Subject: [PATCH] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+Date: Wed, 16 Oct 2024 19:24:09 +0530
+Message-Id: <20241016135409.2494140-1-quic_bpothuno@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015025831.65232-1-yesanishhere@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Bit6GI6rfTYYby7TsLjDRI24SYbGOIn-
+X-Proofpoint-ORIG-GUID: Bit6GI6rfTYYby7TsLjDRI24SYbGOIn-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160086
 
-Hi anish,
+auto_boot flag ensures to take the firmware and boots it
+up during the wpss remoteproc start.
+wpss host driver would like to control the load and unload
+of the firmware during the load and unload of the driver.
+Hence, disable the "auto boot" for wpss.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+---
+Cc: ath11k@lists.infradead.org
+Cc: Kalle Valo <kvalo@kernel.org>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on remoteproc/rpmsg-next]
-[also build test WARNING on remoteproc/rproc-next lwn/docs-next linus/master v6.12-rc3 next-20241015]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/anish-kumar/remoteproc-Documentation-upgrade-from-staging/20241015-105957
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-next
-patch link:    https://lore.kernel.org/r/20241015025831.65232-1-yesanishhere%40gmail.com
-patch subject: [PATCH] remoteproc: Documentation: upgrade from staging.
-reproduce: (https://download.01.org/0day-ci/archive/20241016/202410161444.jOKMsoGS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../../networking/netlink_spec/rt_link>`
-   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
-   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
->> Warning: Documentation/remoteproc/rproc-kernel-api.rst references a file that doesn't exist: Documentation/remotproc/remoteproc-api.rst
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/staging/remoteproc.rst
-   Using alabaster theme
-
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ef82835e98a4..05963d7924df 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1344,7 +1344,7 @@ static const struct adsp_data sc7280_wpss_resource = {
+ 	.crash_reason_smem = 626,
+ 	.firmware_name = "wpss.mdt",
+ 	.pas_id = 6,
+-	.auto_boot = true,
++	.auto_boot = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mx",
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
