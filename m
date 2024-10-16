@@ -1,153 +1,1123 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D7E2076B3;
-	Wed, 16 Oct 2024 15:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F054F95
+	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 15:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093066; cv=none; b=E1boslCHdAQsrN059OSljVKHlcSBSUrdAvPt/F3Bp8DxS9De3FKQwD/EoKWp+yvldYctcykKzGntuu1f18Vj6tUtptqP6vP1PUXSzrNLYKvijQk3FgK/ihlaSowyaz0o/Lo6GjDxhMHNmmYfXoBmcMYNK0bAxMoyQiPx8d9biv8=
+	t=1729093420; cv=none; b=C4ciX307a1inS9XpbbE6XSxqLLUglPiI9z7Gny20C4Um53oi7+IJ51GFd0GdzzgrC9rPBN0GSL1oAHL623xCvexnaG3CbjQRFkmCLr25wqj829gpzuy2oUKEJNtG1pRuvQFmy0x7UFVvRkt0dK9lt8NrveA0GTc2lO0LYhUoN+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093066; c=relaxed/simple;
-	bh=K6N1yrMQ0yY3qlPPF9f4Bg4MC7Nv1qWm8xs5WpjuER0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qIho5bfUqdoz9WPvoyciHf0wSbdMs8VOjcsotXQQ/0t0WYzr7I1Q1tM8+xWrNx2TkhTg2u2YCeRcGCdyLGB+Al2lYSqbYjSCo/R8FQKXngBXtxw0LWUSzT/IQVHhzJTisHTkPyxu3kSB2fStdMeRROYyYMETXpmeJUyMp5kNkCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FA2JA8rM; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1729093420; c=relaxed/simple;
+	bh=mcAxTfrlxd7Zh4yqfvoT34KtEqpQl50aiDNlg6ItLas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1Qnc+nCcWUuRgSgoxCvB4CBgm79qvEsWwxeDc6Y7NnAbxVSU4Op+MJkzukAco10gy2iGAs8Gbk/NUJarX7zPJeqBOglljkl/RiEhqkY+iD4GKxWR3wblTQYsT9zpy7/VxCRGCLD0XCLWG0u6XZmtwCX2XwVALz6FaOP86T7sFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SRC0uK2y; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FA2JA8rM"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbaOv083771;
-	Wed, 16 Oct 2024 10:37:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729093056;
-	bh=+EesAko5MONtF5725/UbVtJbs9fSMJe9BLA51lWSY7k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FA2JA8rMRJywtcfvE0EHYLE+l4ephFT2OMLFs1txchGe4xGN0gciPcZw6HLrlrGAu
-	 HcRpscqSYHp+FwBat6jhTsUDAKis3w7ZV6CfIj+VCISRBigf8c7g5FhHMTNK69yjDc
-	 UUmxVtw90wwctbFoIXj0MMwcg6ErHAWd400eVj/A=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GFbaLw004695
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 16 Oct 2024 10:37:36 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
- Oct 2024 10:37:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 16 Oct 2024 10:37:35 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbZLO035770;
-	Wed, 16 Oct 2024 10:37:35 -0500
-Message-ID: <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com>
-Date: Wed, 16 Oct 2024 10:37:35 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SRC0uK2y"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e4fa3ea7cso3693234b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Oct 2024 08:43:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729093417; x=1729698217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBPHvzBzcsSSKUWTL/kJjHC39jX3xkmW7aZ/vJM+dJ8=;
+        b=SRC0uK2ymnRbPOWAW3RQ9/SfiZemTCPbJwNSwRbiVkCa7fGsr6U7uIh76ayIrS+jsV
+         pSpnjJliR1zHgj2FFlMme71kuIo+mulc+HaJUdH9h7TQEOqPcS9IYxGwFe+2LANtG5d0
+         Vq6XZB8wdKjhke2U2/rRosKscO4/bZ2jzNswtaGrJqTkqR5R8eB7I9LkLT23Doy25jfi
+         CKvPneUZ+vc7Wrfbyu23as+7+Gh0LY6gpuvYr+Vk6Jd+/AhyhprJe3Vg7erh8Vg860Lm
+         7STvMBU+POQ7m4k2N8VMzhb8xHVgvKOculI8+X++NVEfMa7QdA5fE7ZcLOQMuhaA1VEA
+         EXxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729093417; x=1729698217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBPHvzBzcsSSKUWTL/kJjHC39jX3xkmW7aZ/vJM+dJ8=;
+        b=gD3BQArlieRoJqTgVjAy1uHfJUjH9KsFwpzzqkp5/OfVCo2FlygGM7VChN9LevYlQG
+         r6n5PfF0AIqOWG6m7Z1tE63zuYykJYntuLpuzErNIw/raMwqMPUYbDs9k3aad/nA2FGc
+         qvUSqfbJHu4GxucItW+K2DwBxTYXaVIRDZ2G1eoE6c9sZ+sWaJ1dKhqOqSkCBfClan28
+         kSONJN8JFJChiRXlGVFSvBq30jdyG9fwoHJ3jEXMn1lfSTEG+Y+hcMWkZBpKuYqRHYGk
+         6UE2R3wohrckht2/S5BePh1+b+9rZgK4KLusvVndUMtVJXpBdsUineJgaqxSEG5IgMKn
+         BqVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJSUxG+mziC3+Pe7mo/C3fm6fw5ihuMMl2mm/vVuZw69CTdb6UtlNhtHgO5DPjNcgwK6NUQWOPgmN6AJuYjJJ/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB5EFa6TGXtq8rgjC6qIVEdHC+9r32jda8/8ByDzh54vyFq2a9
+	8ZyBOBH/uKB2VpJMkUFR3eAdGx4CqHYpM08OgfD4AHsbucuHF42Xw9bgHGgcj5o=
+X-Google-Smtp-Source: AGHT+IEoJEO4XaMKmLLa2jQLSpBZrCYOntoxb1SpuxNyWteaGShciHvx+y25BolUuz55ZbqkgIgWBw==
+X-Received: by 2002:a05:6a00:3e03:b0:71e:3eed:95c9 with SMTP id d2e1a72fcca58-71e4c1bfba9mr23786018b3a.22.1729093416312;
+        Wed, 16 Oct 2024 08:43:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2add:7601:8402:667])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77518a76sm3222615b3a.220.2024.10.16.08.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 08:43:35 -0700 (PDT)
+Date: Wed, 16 Oct 2024 09:43:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.orgi, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: Documentation: upgrade from staging.
+Message-ID: <Zw/fJIXscM87I/V0@p14s>
+References: <20241015025831.65232-1-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Hari Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241007132441.2732215-1-arnd@kernel.org>
- <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com> <Zw/bIItwk0jeqKoR@p14s>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <Zw/bIItwk0jeqKoR@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015025831.65232-1-yesanishhere@gmail.com>
 
-On 10/16/24 10:26 AM, Mathieu Poirier wrote:
-> On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
->> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
->>>
->>> The k3-m4 remoteproc driver was merged with incorrect dependencies.
->>> Despite multiple people trying to fix this, the version 6.12-rc2
->>> remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
->>> when the driver is built-in.
->>>
->>> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
->>> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
->>>
->>> Fix the dependency again to make it work in all configurations.
->>> The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
->>> dependencies. The link failure can be avoided with a simple 'depends
->>> do, so turn that into the same 'depends' to ensure we get no circular
->>> on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
->>> we use elsehwere. On the other hand, building for OMAP2PLUS makes
->>> no sense since the hardware only exists on K3.
->>>
->>> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
->>> Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
->>> Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
->>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>> ---
->>>    drivers/remoteproc/Kconfig | 6 +++---
->>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->>> index 955e4e38477e..62f8548fb46a 100644
->>> --- a/drivers/remoteproc/Kconfig
->>> +++ b/drivers/remoteproc/Kconfig
->>> @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
->>>    config TI_K3_M4_REMOTEPROC
->>>    	tristate "TI K3 M4 remoteproc support"
->>> -	depends on ARCH_OMAP2PLUS || ARCH_K3
->>> -	select MAILBOX
->>> -	select OMAP2PLUS_MBOX
->>> +	depends on ARCH_K3 || COMPILE_TEST
->>> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
->>
->> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
->> dependencies, as often only one ARCH can be selected which prevents
->> compile testing drivers with various multiple architecture deps in
->> one compile test.
->>
->> Normal dependencies, on the other hand, can simply be enabled if one
->> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
->> cannot be enabled as it has a dependency up the chain that doesn't
->> allow selecting when not on a TI platform. We can fix that as I posted
->> here[0]. With that fix in, this line can be simply become:
->>
->> depends on TI_SCI_PROTOCOL
+Hi Anish,
+
+First and foremost, there are kernel bot problems to fix.
+
+On Mon, Oct 14, 2024 at 07:58:31PM -0700, anish kumar wrote:
+> Add the documentation in the mainline from
+> staging and add the relvant information from
+> current mainline.
 > 
->  From the above and the follow-on conversation with Nishanth, should I understand
-> you are working on a patchset to address this issue?  If not I will apply Arnd's
-> patch.  People are sending different fix [1] - the issue needs to be addressed
-> well before the end of the cycle.
+> Added:
+> 1. userspace api documentation.
+> 2. kernel api documentation.
+> 3. Driver framework core details added.
+
+You are doing everything in the same patch, making it impossible for me to
+understand what is just a move from staging to core and what is new material.
+First do a patch that does the move and then do the enhancements, one topic at a
+time.
+
+Thanks,
+Mathieu
+
 > 
-
-This is a bit complex as it touches multiple subsystems. You should take Arnd's
-patch. This will fix this for M4, I will then add a follow on patch doing the same
-for the other two remoteproc drivers (DSP and R5).
-
-When my series here[0] goes in I will then send a final patch removing the depends
-TI_SCI_PROTOCOL=n oddness from all 3 drivers. This final step does not need to happen
-this cycle though, only the first two steps are needed to prevent any further compile
-test issues.
-
-Andrew
-
-[0] https://lore.kernel.org/lkml/20241015213322.2649011-1-afd@ti.com/
-
-> [1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/remoteproc/core.rst             | 252 ++++++++++++
+>  Documentation/remoteproc/index.rst            |  27 ++
+>  Documentation/remoteproc/rproc-api.rst        |  75 ++++
+>  Documentation/remoteproc/rproc-kernel-api.rst | 239 ++++++++++++
+>  Documentation/staging/index.rst               |   1 -
+>  Documentation/staging/remoteproc.rst          | 360 ------------------
+>  Documentation/staging/rpmsg.rst               |   2 +-
+>  7 files changed, 594 insertions(+), 362 deletions(-)
+>  create mode 100644 Documentation/remoteproc/core.rst
+>  create mode 100644 Documentation/remoteproc/index.rst
+>  create mode 100644 Documentation/remoteproc/rproc-api.rst
+>  create mode 100644 Documentation/remoteproc/rproc-kernel-api.rst
+>  delete mode 100644 Documentation/staging/remoteproc.rst
 > 
->>
->> Andrew
->>
->> [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
->>
->>> +	depends on OMAP2PLUS_MBOX
->>>    	help
->>>    	  Say m here to support TI's M4 remote processor subsystems
->>>    	  on various TI K3 family of SoCs through the remote processor
+> diff --git a/Documentation/remoteproc/core.rst b/Documentation/remoteproc/core.rst
+> new file mode 100644
+> index 000000000000..a59c2c5bc8e6
+> --- /dev/null
+> +++ b/Documentation/remoteproc/core.rst
+> @@ -0,0 +1,252 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============================================
+> +General description of the remoteproc subsystem
+> +===============================================
+> +
+> +Authors:
+> +	- anish kumar <yesanishhere@gmail.com>
+> +
+> +.. Contents:
+> +
+> +   1.  Introduction
+> +   2.  Remoteproc framework responsibilities
+> +   3.  Remoteproc driver responsibilities
+> +   4.  Virtio and rpmsg
+> +
+> +1. Introduction
+> +======================
+> +
+> +Modern System on Chips (SoCs) typically integrate heterogeneous remote
+> +processor devices in asymmetric multiprocessing (AMP) configurations.
+> +These processors may run different operating systems, such as Linux and
+> +various real-time operating systems (RTOS).
+> +
+> +For example, the OMAP4 platform features dual Cortex-A9 cores, dual
+> +Cortex-M3 cores, and a C64x+ DSP. In a standard setup, the Cortex-A9
+> +cores execute Linux in a symmetric multiprocessing (SMP) configuration,
+> +while the M3 cores and DSP run independent instances of an RTOS.
+> +
+> +The remoteproc framework allows various platforms and architectures to
+> +manage remote processors, including operations such as powering on,
+> +loading firmware, and powering off. This framework abstracts hardware
+> +differences, promoting code reuse and minimizing duplication. It also
+> +supports rpmsg virtio devices for remote processors that utilize this
+> +communication method. Consequently, platform-specific remoteproc drivers
+> +need only implement a few low-level handlers, enabling seamless operation
+> +of all rpmsg drivers. (For more details about the virtio-based rpmsg
+> +bus and its drivers, refer to :doc:`Documentation/staging/rpmsg.rst`.)
+> +
+> +Additionally, the framework allows for the registration of various
+> +virtio devices. Firmware can publish the types of virtio devices it
+> +supports, facilitating their addition to the remoteproc framework. This
+> +flexibility enables the reuse of existing virtio drivers with remote
+> +processor backends at minimal development cost.
+> +
+> +The primary purpose of the remoteproc framework is to download firmware
+> +for remote processors and manage their lifecycle. The framework consists
+> +of several key components:
+> +
+> +- **Character Driver**: Provides userspace access to control the remote
+> +  processor.
+> +- **ELF Utility**: Offers functions for handling ELF files and managing
+> +  resources requested by the remote processor.
+> +- **Remoteproc Core**: Manages firmware downloads and recovery actions
+> +  in case of a remote processor crash.
+> +- **Coredump**: Provides facilities for coredumping and tracing from
+> +  the remote processor in the event of a crash.
+> +- **Userspace Interaction**: Uses sysfs and debugfs to manage the
+> +  lifecycle and status of the remote processor.
+> +- **Virtio Support**: Facilitates interaction with the virtio and
+> +  rpmsg bus.
+> +
+> +From here on, references to "framework" denote the remoteproc
+> +framework, and "driver" refers to the remoteproc driver that utilizes
+> +the framework for managing remote processors.
+> +
+> +2. Remoteproc framework Responsibilities
+> +========================================
+> +
+> +The framework begins by gathering information about the firmware file
+> +to be downloaded through the request_firmware function. It supports
+> +the ELF format and parses the firmware image to identify the physical
+> +addresses that need to be populated from the corresponding ELF sections.
+> +The framework also requires knowledge of the logical or I/O-mapped
+> +addresses in the application processor. Once this information is
+> +obtained from the driver, the framework transfers the data to the
+> +specified addresses and starts the remote, along with
+> +any devices physically or logically connected to it.
+> +
+> +Dependent devices, referred to as `subdevices` within the framework,
+> +are also managed post-registration by their respective drivers.
+> +Subdevices can register themselves using `rproc_(add/remove)_subdev`.
+> +Non-remoteproc drivers can use subdevices as a way to logically connect
+> +to remote and get lifecycle notifications of the remote.
+> +
+> +The framework oversees the lifecycle of the remote and
+> +provides the `rproc_report_crash` function, which the driver invokes
+> +upon receiving a crash notification from the remote. The
+> +notification method can differ based on the design of the remote
+> +processor and its communication with the application processor. For
+> +instance, if the remote is a DSP equipped with a watchdog,
+> +unresponsive behavior triggers the watchdog, generating an interrupt
+> +that routes to the application processor, allowing it to call
+> +`rproc_report_crash` in the driver's interrupt context.
+> +
+> +During crash handling, the framework performs the following actions:
+> +
+> +a. Sends a request to stop the remote and any connected or
+> +   dependent subdevices.
+> +b. Generates a coredump, dumping all `resources` requested by the
+> +   remote alongside relevant debugging information. Resources are
+> +   explained below.
+> +c. Reloads the firmware and restarts the remote.
+> +
+> +If the `RPROC_FEAT_ATTACH_ON_RECOVERY` flag is set, the detach and
+> +attach callbacks of the driver are invoked without reloading the
+> +firmware. This is useful when the remote requires no
+> +assistance for recovery, or when the application processor can restart
+> +independently. After recovery, the application processor can reattach
+> +to the remote.
+> +
+> +The remote can request resources from the framework, which
+> +allocates a ".resource_table" section. During the ELF parsing phase,
+> +the framework identifies this section and calls the appropriate
+> +handler to allocate the requested resources.
+> +
+> +Resource management within the framework can accommodate any type of
+> +`fw_resource_type`.
+> +
+> +.. code-block:: c
+> +
+> +   enum fw_resource_type {
+> +       RSC_CARVEOUT      = 0,
+> +       RSC_DEVMEM        = 1,
+> +       RSC_TRACE         = 2,
+> +       RSC_VDEV          = 3,
+> +       RSC_LAST          = 4,
+> +       RSC_VENDOR_START  = 128,
+> +       RSC_VENDOR_END    = 512,
+> +   };
+> +
+> +   struct resource_table {
+> +       u32 ver;
+> +       u32 num;
+> +       u32 reserved[2];
+> +       u32 offset[];
+> +   } __packed;
+> +
+> +   struct fw_rsc_hdr {
+> +       u32 type;
+> +       u8 data[];
+> +   } __packed;
+> +
+> +For example, if the remote requests both `RSC_TRACE` and
+> +`RSC_CARVEOUT` for memory allocation, the ELF firmware can be structured
+> +as follows:
+> +
+> +.. code-block:: c
+> +
+> +   #define MAX_SHARED_RESOURCE 2
+> +   #define LOG_BUF_SIZE 1000
+> +   #define CARVEOUT_DUMP_PA 0x12345678
+> +   #define CARVEOUT_DUMP_SIZE 2000
+> +
+> +   struct shared_resource_table {
+> +       u32 ver;
+> +       u32 num;
+> +       u32 reserved[2];
+> +       u32 offset[MAX_SHARED_RESOURCE];
+> +       struct fw_rsc_trace log_trace;
+> +       struct fw_rsc_carveout dump_carveout;
+> +   };
+> +
+> +   volatile struct shared_resource_table table = {
+> +       .ver = 1,
+> +       .num = 2,
+> +       .reserved = {0, 0},
+> +       .offset = {
+> +           offsetof(struct resource_table, log_trace),
+> +           offsetof(struct resource_table, dump_carveout),
+> +       },
+> +       .log_trace = {
+> +           RSC_TRACE,
+> +           (u32)log_buf, LOG_BUF_SIZE, 0, "log_trace",
+> +       },
+> +       .dump_carveout = {
+> +           RSC_CARVEOUT,
+> +           (u32)FW_RSC_ADDR_ANY, CARVEOUT_PA, 0, "carveout_dump",
+> +       },
+> +   };
+> +
+> +The framework creates a sysfs file when it encounters the `RSC_TRACE`
+> +type to expose log information to userspace. Other resource types are
+> +handled accordingly. In the example above, `CARVEOUT_DUMP_SIZE` bytes
+> +of DMA memory will be allocated starting from `CARVEOUT_DUMP_PA`.
+> +
+> +
+> +3. Remoteproc driver responsibilities
+> +=====================================
+> +
+> +The driver must provide the following information to the core:
+> +
+> +a. Translate device addresses (physical addresses) found in the ELF
+> +   firmware to virtual addresses in Linux using the `da_to_va`
+> +   callback. This allows the framework to copy ELF firmware from the
+> +   filesystem to the addresses expected by the remote since
+> +   the framework cannot directly access those physical addresses.
+> +b. Prepare/unprepare the remote prior to firmware loading,
+> +   which may involve allocating carveout and reserved memory regions.
+> +c. Implement methods for starting and stopping the remote,
+> +   whether by setting registers or sending explicit interrupts,
+> +   depending on the hardware design.
+> +d. Provide attach and detach callbacks to start the remote
+> +   without loading the firmware. This is beneficial when the remote
+> +   processor is already loaded and running.
+> +e. Implement a load callback for firmware loading, typically using
+> +   the ELF loader provided by the framework; currently, only ELF
+> +   format is supported.
+> +f. Invoke the framework's crash handler API upon detecting a remote
+> +   crash.
+> +
+> +Drivers must fill the `rproc_ops` structure and call `rproc_alloc`
+> +to register themselves with the framework.
+> +
+> +.. code-block:: c
+> +
+> +   struct rproc_ops {
+> +       int (*prepare)(struct rproc *rproc);
+> +       int (*unprepare)(struct rproc *rproc);
+> +       int (*start)(struct rproc *rproc);
+> +       int (*stop)(struct rproc *rproc);
+> +       int (*attach)(struct rproc *rproc);
+> +       int (*detach)(struct rproc *rproc);
+> +       void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len,
+> +                          bool *is_iomem);
+> +       int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+> +       int (*handle_rsc)(struct rproc *rproc, u32 rsc_type,
+> +                         void *rsc, int offset, int avail);
+> +       int (*load)(struct rproc *rproc, const struct firmware *fw);
+> +       //snip
+> +   };
+> +
+> +
+> +4. Virtio and Remoteproc
+> +========================
+> +
+> +The firmware must provide remoteproc with information regarding the
+> +virtio devices it supports and their configurations: an `RSC_VDEV`
+> +resource entry should detail the virtio device ID (as defined in
+> +`virtio_ids.h`), virtio features, virtio config space, vrings
+> +information, etc.
+> +
+> +Upon registration of a new remote, the remoteproc framework
+> +searches for its resource table and registers the supported virtio
+> +devices. A firmware may support multiple virtio devices, of various
+> +types (a single remote can support multiple rpmsg virtio
+> +devices if required).
+> +
+> +Moreover, `RSC_VDEV` resource entries suffice for static allocation
+> +of virtio devices. Dynamic allocations will also be supported using
+> +the rpmsg bus, akin to the handling of dynamic allocations for rpmsg
+> +channels. For more information, refer to `rpmsg.txt`.
+> diff --git a/Documentation/remoteproc/index.rst b/Documentation/remoteproc/index.rst
+> new file mode 100644
+> index 000000000000..631797f49b32
+> --- /dev/null
+> +++ b/Documentation/remoteproc/index.rst
+> @@ -0,0 +1,27 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +========================================================================
+> +remoteproc - remote processor subsystem in Linux(TM) kernel
+> +========================================================================
+> +
+> +Authors:
+> +	- anish kumar  <yesanishhere@gmail.com>
+> +
+> +   remote processor subsystem is a way to manage the lifecycle of
+> +   a subsytem that is external to the Linux. The remoteproc framework
+> +   allows different platforms/architectures to control (power on,
+> +   load firmware, power off) those remote processors while abstracting
+> +   the hardware differences, so the entire driver doesn't need to be
+> +   duplicated.
+> +
+> +.. toctree::
+> +   :maxdepth: 1
+> +
+> +   core
+> +   rproc-api
+> +   rproc-kernel-api
+> +
+> +Mailing List
+> +------------
+> +To post a message, send an email to
+> +linux-remoteproc@vger.kernel.org
+> diff --git a/Documentation/remoteproc/rproc-api.rst b/Documentation/remoteproc/rproc-api.rst
+> new file mode 100644
+> index 000000000000..548d3658fc1c
+> --- /dev/null
+> +++ b/Documentation/remoteproc/rproc-api.rst
+> @@ -0,0 +1,75 @@
+> +==================================
+> +The Linux Remoteproc userspace API
+> +==================================
+> +
+> +Introduction
+> +============
+> +
+> +A Remoteproc (rproc) is a subsystem for managing the lifecycle
+> +of a processor that is connected to Linux.
+> +
+> +At times, userspace may need to check the state of the remote processor to
+> +prevent other processes from using it. For instance, if the remote processor
+> +is a DSP used for playback, there may be situations where the DSP is
+> +undergoing recovery and cannot be used. In such cases, attempts to access the
+> +DSP for playback should be blocked. The rproc framework provides sysfs APIs
+> +to inform userspace of the processor's current status which should be utilised
+> +to achieve the same.
+> +
+> +Additionally, there are scenarios where userspace applications need to explicitly
+> +control the rproc. In these cases, rproc also offers the file descriptors.
+> +
+> +The simplest API
+> +================
+> +
+> +Below set of api's can be used to start and stop the rproc
+> +where 'X' refers to instance of associated remoteproc. There can be systems
+> +where there are more than one rprocs such as multiple DSP's
+> +connected to application processors running Linux.
+> +::
+> +   echo start > /sys/class/remoteproc/remoteprocX/state
+> +   echo stop > /sys/class/remoteproc/remoteprocX/state
+> +
+> +To know the state of rproc:
+> +
+> +.. code-block::
+> +
+> +   cat /sys/class/remoteproc/remoteprocX/state
+> +
+> +
+> +To dynamically replace firmware, execute the following commands:
+> +
+> +.. code-block::
+> +
+> +   echo stop > /sys/class/remoteproc/remoteprocX/state
+> +   echo -n <firmware_name> >
+> +   /sys/class/remoteproc/remoteprocX/firmware
+> +   echo start > /sys/class/remoteproc/remoteprocX/state
+> +
+> +To simulate a remote crash, execute:
+> +
+> +.. code-block::
+> +
+> +   echo 1 > /sys/kernel/debug/remoteproc/remoteprocX/crash
+> +
+> +To get the trace logs, execute
+> +
+> +.. code-block::
+> +
+> +   cat /sys/kernel/debug/remoteproc/remoteprocX/crashX
+> +
+> +where X will be 0 or 1 if there are 2 resources. Also, this
+> +file will only exist if resources are defined in ELF firmware
+> +file.
+> +
+> +The coredump feature can be disabled with the following command:
+> +
+> +.. code-block::
+> +
+> +   echo disabled > /sys/kernel/debug/remoteproc/remoteprocX/coredump
+> +
+> +Userspace can also control start/stop of rproc by using a
+> +remoteproc Character Device, it can open the open a file descriptor
+> +and write `start` to initiate it, and `stop` to terminate it.
+> +
+> +[FIXME -- better explanations]
+> diff --git a/Documentation/remoteproc/rproc-kernel-api.rst b/Documentation/remoteproc/rproc-kernel-api.rst
+> new file mode 100644
+> index 000000000000..8604f2b3e6b1
+> --- /dev/null
+> +++ b/Documentation/remoteproc/rproc-kernel-api.rst
+> @@ -0,0 +1,239 @@
+> +=====================================================
+> +The Linux Remoteproc subsystem Driver Core kernel API
+> +=====================================================
+> +
+> +anish kumar <yesanishhere@gmail.com>
+> +
+> +Introduction
+> +------------
+> +This document does not describe what a Remote processor subsystem
+> +(RPROC) Driver or Device is. It also does not describe the API
+> +which can be used by user space to communicate with a RPROC driver.
+> +If you want to know this then please read the following
+> +file: Documentation/remotproc/remoteproc-api.rst .
+> +
+> +So what does this document describe? It describes the API that can be used by
+> +remote processor Drivers that want to use the remote processor Driver Core
+> +Framework. This framework provides all interfacing towards user space so that
+> +the same code does not have to be reproduced each time. This also means that
+> +a remote processor driver then only needs to provide the different routines
+> +(operations) that control the remote processor.
+> +
+> +The API
+> +-------
+> +Each remote processor driver that wants to use the remote processor Driver Core
+> +must #include <linux/remoteproc.h> (you would have to do this anyway when
+> +writing a rproc device driver). This include file contains following
+> +register routine::
+> +
+> +	int devm_rproc_add(struct device *dev, struct rproc *rproc)
+> +
+> +The devm_rproc_add routine registers a remote processor device.
+> +The parameter of this routine is a pointer to a rproc device structure.
+> +This routine returns zero on success and a negative errno code for failure.
+> +
+> +The rproc device structure looks like this::
+> +
+> +  struct rproc {
+> +	struct list_head node;
+> +	struct iommu_domain *domain;
+> +	const char *name;
+> +	const char *firmware;
+> +	void *priv;
+> +	struct rproc_ops *ops;
+> +	struct device dev;
+> +	atomic_t power;
+> +	unsigned int state;
+> +	enum rproc_dump_mechanism dump_conf;
+> +	struct mutex lock;
+> +	struct dentry *dbg_dir;
+> +	struct list_head traces;
+> +	int num_traces;
+> +	struct list_head carveouts;
+> +	struct list_head mappings;
+> +	u64 bootaddr;
+> +	struct list_head rvdevs;
+> +	struct list_head subdevs;
+> +	struct idr notifyids;
+> +	int index;
+> +	struct work_struct crash_handler;
+> +	unsigned int crash_cnt;
+> +	bool recovery_disabled;
+> +	int max_notifyid;
+> +	struct resource_table *table_ptr;
+> +	struct resource_table *clean_table;
+> +	struct resource_table *cached_table;
+> +	size_t table_sz;
+> +	bool has_iommu;
+> +	bool auto_boot;
+> +	bool sysfs_read_only;
+> +	struct list_head dump_segments;
+> +	int nb_vdev;
+> +	u8 elf_class;
+> +	u16 elf_machine;
+> +	struct cdev cdev;
+> +	bool cdev_put_on_release;
+> +	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+> +  };
+> +
+> +It contains following fields:
+> +
+> +* node: list node of this rproc object
+> +* domain: iommu domain
+> +* name: human readable name of the rproc
+> +* firmware: name of firmware file to be loaded
+> +* priv: private data which belongs to the platform-specific rproc module
+> +* ops: platform-specific start/stop rproc handlers
+> +* dev: virtual device for refcounting and common remoteproc behavior
+> +* power: refcount of users who need this rproc powered up
+> +* state: state of the device
+> +* dump_conf: Currently selected coredump configuration
+> +* lock: lock which protects concurrent manipulations of the rproc
+> +* dbg_dir: debugfs directory of this rproc device
+> +* traces: list of trace buffers
+> +* num_traces: number of trace buffers
+> +* carveouts: list of physically contiguous memory allocations
+> +* mappings: list of iommu mappings we initiated, needed on shutdown
+> +* bootaddr: address of first instruction to boot rproc with (optional)
+> +* rvdevs: list of remote virtio devices
+> +* subdevs: list of subdevices, to following the running state
+> +* notifyids: idr for dynamically assigning rproc-wide unique notify ids
+> +* index: index of this rproc device
+> +* crash_handler: workqueue for handling a crash
+> +* crash_cnt: crash counter
+> +* recovery_disabled: flag that state if recovery was disabled
+> +* max_notifyid: largest allocated notify id.
+> +* table_ptr: pointer to the resource table in effect
+> +* clean_table: copy of the resource table without modifications.  Used
+> +*      	 when a remote processor is attached or detached from the core
+> +* cached_table: copy of the resource table
+> +* table_sz: size of @cached_table
+> +* has_iommu: flag to indicate if remote processor is behind an MMU
+> +* auto_boot: flag to indicate if remote processor should be auto-started
+> +* sysfs_read_only: flag to make remoteproc sysfs files read only
+> +* dump_segments: list of segments in the firmware
+> +* nb_vdev: number of vdev currently handled by rproc
+> +* elf_class: firmware ELF class
+> +* elf_machine: firmware ELF machine
+> +* cdev: character device of the rproc
+> +* cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> +* features: indicate remoteproc features
+> +
+> +The list of rproc operations is defined as::
+> +
+> +  struct rproc_ops {
+> +	int (*prepare)(struct rproc *rproc);
+> +	int (*unprepare)(struct rproc *rproc);
+> +	int (*start)(struct rproc *rproc);
+> +	int (*stop)(struct rproc *rproc);
+> +	int (*attach)(struct rproc *rproc);
+> +	int (*detach)(struct rproc *rproc);
+> +	void (*kick)(struct rproc *rproc, int vqid);
+> +	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
+> +	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+> +	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+> +			  int offset, int avail);
+> +	struct resource_table *(*find_loaded_rsc_table)(
+> +				struct rproc *rproc, const struct firmware *fw);
+> +	struct resource_table *(*get_loaded_rsc_table)(
+> +				struct rproc *rproc, size_t *size);
+> +	int (*load)(struct rproc *rproc, const struct firmware *fw);
+> +	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> +	unsigned long (*panic)(struct rproc *rproc);
+> +	void (*coredump)(struct rproc *rproc);
+> +  };
+> +
+> +Most of the operations are optional. Currently in the implementation
+> +there are no mandatory operations, however from the practical standpoint
+> +minimum ops are:
+> +
+> +* start: this is a pointer to the routine that starts the remote processor
+> +  device.
+> +  The routine needs a pointer to the remote processor device structure as a
+> +  parameter. It returns zero on success or a negative errno code for failure.
+> +
+> +* stop: with this routine the remote processor device is being stopped.
+> +
+> +  The routine needs a pointer to the remote processor device structure as a
+> +  parameter. It returns zero on success or a negative errno code for failure.
+> +
+> +* da_to_va: this is the routine that needs to translate device address to
+> +  application processor virtual address that it can copy code to.
+> +
+> +  The routine needs a pointer to the remote processor device structure as a
+> +  parameter. It returns zero on success or a negative errno code for failure.
+> +
+> +  The routine provides the device address it finds in the ELF firmware and asks
+> +  the driver to convert that to virtual address.
+> +
+> +All other callbacks are optional in case of ELF provided firmware.
+> +
+> +* load: this is to load the firmware on to the remote device.
+> +
+> +  The routine needs firmware file that it needs to load on to the remote processor.
+> +  If the driver overrides this callback then default ELF loader will not get used.
+> +  Otherwise default framework provided loader gets used.
+> +
+> +  load = rproc_elf_load_segments;
+> +  parse_fw = rproc_elf_load_rsc_table;
+> +  find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+> +  sanity_check = rproc_elf_sanity_check;
+> +  get_boot_addr = rproc_elf_get_boot_addr;
+> +
+> +* parse_fw: this routing parses the provided firmware. In case of ELF format,
+> +  framework provided rproc_elf_load_rsc_table function can be used.
+> +
+> +* sanity_check: Check the format of the firmware.
+> +
+> +* coredump: If the driver prefers to manage coredumps independently, it can
+> +  implement its own coredump handling. However, the framework offers a default
+> +  implementation for the ELF format by assigning this callback to
+> +  rproc_coredump, unless the driver has overridden it.
+> +
+> +* get_boot_addr: In case the bootaddr defined in ELF firmware is different, driver
+> +  can use this callback to set a different boot address for remote processor to
+> +  starts its reset vector from.
+> +
+> +* find_loaded_rsc_table: this routine gets the loaded resource table from the firmware.
+> +
+> +  resource table should have a section named (.resource_table) for the framework
+> +  to understand and interpret its content. Resource table is a way for remote
+> +  processor to ask for resources such as memory for dumping and logging. Look
+> +  at core documentation to know how to create the ELF section for the same.
+> +
+> +* get_loaded_rsc_table: Driver can customize passing the resource table by overriding
+> +  this callback. Framework doesn't provide any default implementation for the same.
+> +
+> +
+> +The rproc_report_crash function allows you to report a crash when crash is
+> +detected by the driver.
+> +
+> +::
+> +
+> +  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+> +
+> +To add a subdev corresponding driver can call::
+> +
+> +  void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+> +
+> +To remove a subdev, driver can call.
+> +
+> +::
+> +
+> +  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+> +
+> +To work with ELF coredump below function can be called::
+> +
+> +  void rproc_coredump_cleanup(struct rproc *rproc);
+> +  void rproc_coredump(struct rproc *rproc);
+> +  void rproc_coredump_using_sections(struct rproc *rproc);
+> +  int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
+> +  int rproc_coredump_add_custom_segment(struct rproc *rproc,
+> +                                        dma_addr_t da, size_t size,
+> +                                        void (*dumpfn)(struct rproc *rproc,
+> +                                           struct rproc_dump_segment *segment,
+> +                                           void *dest, size_t offset,
+> +                                           size_t size),
+> +
+> +Remember that coredump functions provided by the framework only works with ELF format.
+> diff --git a/Documentation/staging/index.rst b/Documentation/staging/index.rst
+> index 77bae5e5328b..d2c2b75fade8 100644
+> --- a/Documentation/staging/index.rst
+> +++ b/Documentation/staging/index.rst
+> @@ -9,7 +9,6 @@ Unsorted Documentation
+>     crc32
+>     lzo
+>     magic-number
+> -   remoteproc
+>     rpmsg
+>     speculation
+>     static-keys
+> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+> deleted file mode 100644
+> index 348ee7e508ac..000000000000
+> --- a/Documentation/staging/remoteproc.rst
+> +++ /dev/null
+> @@ -1,360 +0,0 @@
+> -==========================
+> -Remote Processor Framework
+> -==========================
+> -
+> -Introduction
+> -============
+> -
+> -Modern SoCs typically have heterogeneous remote processor devices in asymmetric
+> -multiprocessing (AMP) configurations, which may be running different instances
+> -of operating system, whether it's Linux or any other flavor of real-time OS.
+> -
+> -OMAP4, for example, has dual Cortex-A9, dual Cortex-M3 and a C64x+ DSP.
+> -In a typical configuration, the dual cortex-A9 is running Linux in a SMP
+> -configuration, and each of the other three cores (two M3 cores and a DSP)
+> -is running its own instance of RTOS in an AMP configuration.
+> -
+> -The remoteproc framework allows different platforms/architectures to
+> -control (power on, load firmware, power off) those remote processors while
+> -abstracting the hardware differences, so the entire driver doesn't need to be
+> -duplicated. In addition, this framework also adds rpmsg virtio devices
+> -for remote processors that supports this kind of communication. This way,
+> -platform-specific remoteproc drivers only need to provide a few low-level
+> -handlers, and then all rpmsg drivers will then just work
+> -(for more information about the virtio-based rpmsg bus and its drivers,
+> -please read Documentation/staging/rpmsg.rst).
+> -Registration of other types of virtio devices is now also possible. Firmwares
+> -just need to publish what kind of virtio devices do they support, and then
+> -remoteproc will add those devices. This makes it possible to reuse the
+> -existing virtio drivers with remote processor backends at a minimal development
+> -cost.
+> -
+> -User API
+> -========
+> -
+> -::
+> -
+> -  int rproc_boot(struct rproc *rproc)
+> -
+> -Boot a remote processor (i.e. load its firmware, power it on, ...).
+> -
+> -If the remote processor is already powered on, this function immediately
+> -returns (successfully).
+> -
+> -Returns 0 on success, and an appropriate error value otherwise.
+> -Note: to use this function you should already have a valid rproc
+> -handle. There are several ways to achieve that cleanly (devres, pdata,
+> -the way remoteproc_rpmsg.c does this, or, if this becomes prevalent, we
+> -might also consider using dev_archdata for this).
+> -
+> -::
+> -
+> -  int rproc_shutdown(struct rproc *rproc)
+> -
+> -Power off a remote processor (previously booted with rproc_boot()).
+> -In case @rproc is still being used by an additional user(s), then
+> -this function will just decrement the power refcount and exit,
+> -without really powering off the device.
+> -
+> -Returns 0 on success, and an appropriate error value otherwise.
+> -Every call to rproc_boot() must (eventually) be accompanied by a call
+> -to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
+> -
+> -.. note::
+> -
+> -  we're not decrementing the rproc's refcount, only the power refcount.
+> -  which means that the @rproc handle stays valid even after
+> -  rproc_shutdown() returns, and users can still use it with a subsequent
+> -  rproc_boot(), if needed.
+> -
+> -::
+> -
+> -  struct rproc *rproc_get_by_phandle(phandle phandle)
+> -
+> -Find an rproc handle using a device tree phandle. Returns the rproc
+> -handle on success, and NULL on failure. This function increments
+> -the remote processor's refcount, so always use rproc_put() to
+> -decrement it back once rproc isn't needed anymore.
+> -
+> -Typical usage
+> -=============
+> -
+> -::
+> -
+> -  #include <linux/remoteproc.h>
+> -
+> -  /* in case we were given a valid 'rproc' handle */
+> -  int dummy_rproc_example(struct rproc *my_rproc)
+> -  {
+> -	int ret;
+> -
+> -	/* let's power on and boot our remote processor */
+> -	ret = rproc_boot(my_rproc);
+> -	if (ret) {
+> -		/*
+> -		 * something went wrong. handle it and leave.
+> -		 */
+> -	}
+> -
+> -	/*
+> -	 * our remote processor is now powered on... give it some work
+> -	 */
+> -
+> -	/* let's shut it down now */
+> -	rproc_shutdown(my_rproc);
+> -  }
+> -
+> -API for implementors
+> -====================
+> -
+> -::
+> -
+> -  struct rproc *rproc_alloc(struct device *dev, const char *name,
+> -				const struct rproc_ops *ops,
+> -				const char *firmware, int len)
+> -
+> -Allocate a new remote processor handle, but don't register
+> -it yet. Required parameters are the underlying device, the
+> -name of this remote processor, platform-specific ops handlers,
+> -the name of the firmware to boot this rproc with, and the
+> -length of private data needed by the allocating rproc driver (in bytes).
+> -
+> -This function should be used by rproc implementations during
+> -initialization of the remote processor.
+> -
+> -After creating an rproc handle using this function, and when ready,
+> -implementations should then call rproc_add() to complete
+> -the registration of the remote processor.
+> -
+> -On success, the new rproc is returned, and on failure, NULL.
+> -
+> -.. note::
+> -
+> -  **never** directly deallocate @rproc, even if it was not registered
+> -  yet. Instead, when you need to unroll rproc_alloc(), use rproc_free().
+> -
+> -::
+> -
+> -  void rproc_free(struct rproc *rproc)
+> -
+> -Free an rproc handle that was allocated by rproc_alloc.
+> -
+> -This function essentially unrolls rproc_alloc(), by decrementing the
+> -rproc's refcount. It doesn't directly free rproc; that would happen
+> -only if there are no other references to rproc and its refcount now
+> -dropped to zero.
+> -
+> -::
+> -
+> -  int rproc_add(struct rproc *rproc)
+> -
+> -Register @rproc with the remoteproc framework, after it has been
+> -allocated with rproc_alloc().
+> -
+> -This is called by the platform-specific rproc implementation, whenever
+> -a new remote processor device is probed.
+> -
+> -Returns 0 on success and an appropriate error code otherwise.
+> -Note: this function initiates an asynchronous firmware loading
+> -context, which will look for virtio devices supported by the rproc's
+> -firmware.
+> -
+> -If found, those virtio devices will be created and added, so as a result
+> -of registering this remote processor, additional virtio drivers might get
+> -probed.
+> -
+> -::
+> -
+> -  int rproc_del(struct rproc *rproc)
+> -
+> -Unroll rproc_add().
+> -
+> -This function should be called when the platform specific rproc
+> -implementation decides to remove the rproc device. it should
+> -_only_ be called if a previous invocation of rproc_add()
+> -has completed successfully.
+> -
+> -After rproc_del() returns, @rproc is still valid, and its
+> -last refcount should be decremented by calling rproc_free().
+> -
+> -Returns 0 on success and -EINVAL if @rproc isn't valid.
+> -
+> -::
+> -
+> -  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+> -
+> -Report a crash in a remoteproc
+> -
+> -This function must be called every time a crash is detected by the
+> -platform specific rproc implementation. This should not be called from a
+> -non-remoteproc driver. This function can be called from atomic/interrupt
+> -context.
+> -
+> -Implementation callbacks
+> -========================
+> -
+> -These callbacks should be provided by platform-specific remoteproc
+> -drivers::
+> -
+> -  /**
+> -   * struct rproc_ops - platform-specific device handlers
+> -   * @start:	power on the device and boot it
+> -   * @stop:	power off the device
+> -   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+> -   */
+> -  struct rproc_ops {
+> -	int (*start)(struct rproc *rproc);
+> -	int (*stop)(struct rproc *rproc);
+> -	void (*kick)(struct rproc *rproc, int vqid);
+> -  };
+> -
+> -Every remoteproc implementation should at least provide the ->start and ->stop
+> -handlers. If rpmsg/virtio functionality is also desired, then the ->kick handler
+> -should be provided as well.
+> -
+> -The ->start() handler takes an rproc handle and should then power on the
+> -device and boot it (use rproc->priv to access platform-specific private data).
+> -The boot address, in case needed, can be found in rproc->bootaddr (remoteproc
+> -core puts there the ELF entry point).
+> -On success, 0 should be returned, and on failure, an appropriate error code.
+> -
+> -The ->stop() handler takes an rproc handle and powers the device down.
+> -On success, 0 is returned, and on failure, an appropriate error code.
+> -
+> -The ->kick() handler takes an rproc handle, and an index of a virtqueue
+> -where new message was placed in. Implementations should interrupt the remote
+> -processor and let it know it has pending messages. Notifying remote processors
+> -the exact virtqueue index to look in is optional: it is easy (and not
+> -too expensive) to go through the existing virtqueues and look for new buffers
+> -in the used rings.
+> -
+> -Binary Firmware Structure
+> -=========================
+> -
+> -At this point remoteproc supports ELF32 and ELF64 firmware binaries. However,
+> -it is quite expected that other platforms/devices which we'd want to
+> -support with this framework will be based on different binary formats.
+> -
+> -When those use cases show up, we will have to decouple the binary format
+> -from the framework core, so we can support several binary formats without
+> -duplicating common code.
+> -
+> -When the firmware is parsed, its various segments are loaded to memory
+> -according to the specified device address (might be a physical address
+> -if the remote processor is accessing memory directly).
+> -
+> -In addition to the standard ELF segments, most remote processors would
+> -also include a special section which we call "the resource table".
+> -
+> -The resource table contains system resources that the remote processor
+> -requires before it should be powered on, such as allocation of physically
+> -contiguous memory, or iommu mapping of certain on-chip peripherals.
+> -Remotecore will only power up the device after all the resource table's
+> -requirement are met.
+> -
+> -In addition to system resources, the resource table may also contain
+> -resource entries that publish the existence of supported features
+> -or configurations by the remote processor, such as trace buffers and
+> -supported virtio devices (and their configurations).
+> -
+> -The resource table begins with this header::
+> -
+> -  /**
+> -   * struct resource_table - firmware resource table header
+> -   * @ver: version number
+> -   * @num: number of resource entries
+> -   * @reserved: reserved (must be zero)
+> -   * @offset: array of offsets pointing at the various resource entries
+> -   *
+> -   * The header of the resource table, as expressed by this structure,
+> -   * contains a version number (should we need to change this format in the
+> -   * future), the number of available resource entries, and their offsets
+> -   * in the table.
+> -   */
+> -  struct resource_table {
+> -	u32 ver;
+> -	u32 num;
+> -	u32 reserved[2];
+> -	u32 offset[0];
+> -  } __packed;
+> -
+> -Immediately following this header are the resource entries themselves,
+> -each of which begins with the following resource entry header::
+> -
+> -  /**
+> -   * struct fw_rsc_hdr - firmware resource entry header
+> -   * @type: resource type
+> -   * @data: resource data
+> -   *
+> -   * Every resource entry begins with a 'struct fw_rsc_hdr' header providing
+> -   * its @type. The content of the entry itself will immediately follow
+> -   * this header, and it should be parsed according to the resource type.
+> -   */
+> -  struct fw_rsc_hdr {
+> -	u32 type;
+> -	u8 data[0];
+> -  } __packed;
+> -
+> -Some resources entries are mere announcements, where the host is informed
+> -of specific remoteproc configuration. Other entries require the host to
+> -do something (e.g. allocate a system resource). Sometimes a negotiation
+> -is expected, where the firmware requests a resource, and once allocated,
+> -the host should provide back its details (e.g. address of an allocated
+> -memory region).
+> -
+> -Here are the various resource types that are currently supported::
+> -
+> -  /**
+> -   * enum fw_resource_type - types of resource entries
+> -   *
+> -   * @RSC_CARVEOUT:   request for allocation of a physically contiguous
+> -   *		    memory region.
+> -   * @RSC_DEVMEM:     request to iommu_map a memory-based peripheral.
+> -   * @RSC_TRACE:	    announces the availability of a trace buffer into which
+> -   *		    the remote processor will be writing logs.
+> -   * @RSC_VDEV:       declare support for a virtio device, and serve as its
+> -   *		    virtio header.
+> -   * @RSC_LAST:       just keep this one at the end
+> -   * @RSC_VENDOR_START:	start of the vendor specific resource types range
+> -   * @RSC_VENDOR_END:	end of the vendor specific resource types range
+> -   *
+> -   * Please note that these values are used as indices to the rproc_handle_rsc
+> -   * lookup table, so please keep them sane. Moreover, @RSC_LAST is used to
+> -   * check the validity of an index before the lookup table is accessed, so
+> -   * please update it as needed.
+> -   */
+> -  enum fw_resource_type {
+> -	RSC_CARVEOUT		= 0,
+> -	RSC_DEVMEM		= 1,
+> -	RSC_TRACE		= 2,
+> -	RSC_VDEV		= 3,
+> -	RSC_LAST		= 4,
+> -	RSC_VENDOR_START	= 128,
+> -	RSC_VENDOR_END		= 512,
+> -  };
+> -
+> -For more details regarding a specific resource type, please see its
+> -dedicated structure in include/linux/remoteproc.h.
+> -
+> -We also expect that platform-specific resource entries will show up
+> -at some point. When that happens, we could easily add a new RSC_PLATFORM
+> -type, and hand those resources to the platform-specific rproc driver to handle.
+> -
+> -Virtio and remoteproc
+> -=====================
+> -
+> -The firmware should provide remoteproc information about virtio devices
+> -that it supports, and their configurations: a RSC_VDEV resource entry
+> -should specify the virtio device id (as in virtio_ids.h), virtio features,
+> -virtio config space, vrings information, etc.
+> -
+> -When a new remote processor is registered, the remoteproc framework
+> -will look for its resource table and will register the virtio devices
+> -it supports. A firmware may support any number of virtio devices, and
+> -of any type (a single remote processor can also easily support several
+> -rpmsg virtio devices this way, if desired).
+> -
+> -Of course, RSC_VDEV resource entries are only good enough for static
+> -allocation of virtio devices. Dynamic allocations will also be made possible
+> -using the rpmsg bus (similar to how we already do dynamic allocations of
+> -rpmsg channels; read more about it in rpmsg.txt).
+> diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
+> index 3713adaa1608..c1eb5343bf37 100644
+> --- a/Documentation/staging/rpmsg.rst
+> +++ b/Documentation/staging/rpmsg.rst
+> @@ -5,7 +5,7 @@ Remote Processor Messaging (rpmsg) Framework
+>  .. note::
+>  
+>    This document describes the rpmsg bus and how to write rpmsg drivers.
+> -  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
+> +  To learn how to add rpmsg support for new platforms, check out remoteproc
+>    (also a resident of Documentation/).
+>  
+>  Introduction
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
+> 
