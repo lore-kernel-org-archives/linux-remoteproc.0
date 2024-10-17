@@ -1,137 +1,112 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFCE1D5CD6
-	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 21:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CD618784A
+	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 22:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729200313; cv=none; b=mdr3/xDFjmCZAZTPyoIKKBm9VGlekUTS0/cq0iaoJL6vE13Pl5t/r6z9jjw8dECe96mWjsdQ8FJv++CNX1hDaxhJ4f8MihqnCCidZ55C2Kxz642B65VJRKxsrlvrotl8qsuehDenjVQJzjvoXinsAAnSfg2ifGyl+r1Y9H7CAS8=
+	t=1729204173; cv=none; b=Mmb5edcg7j4tH+mBGzW4orc1VaeFh0eWtDs0FFPvXgEVLhLcMY+viJLMgWq4ftCZtxoUId6gDSvfFq6r8zFW4u//Ilt53HRFgQ6qX9kFUXiXi4lWOL+eBpx6jwMNqkBz3Sq5QOEirmPLTzvu8jNZOi7cPuTJ6PXG6ZdEudmwdoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729200313; c=relaxed/simple;
-	bh=f3XSZjpMW+4pSNSq+5t+nHginY6jLJSrXAO6nlE9cZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t4ovgeBZ5bCMl5Cp69vEVrU8eOJ3MEKUvfP2nTcR3S+zojWAJj5O5cGz1nWagiLV2rMr6UJ9ggZ023G7EEb8fLC/glh4rj3KryddlLN23bq9bVz8eCYuiwGDCjLOHo//tn4yuH4K+jtE7GhXtI0wWPEFovxMStNKHtE91XFuNSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KhRHIMdN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1729204173; c=relaxed/simple;
+	bh=UWbAI5f7NCyJYHnBUnwGT71W6lN34o+CeWH8Q7CnJhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2KOBKV7Y5gMudr9wYCEWeH7jXN4rA+ClN0gGJUHATSlOxENSbU+AtOQMiKYcn3jR6dPchAY/VslMwMNsTn2VEv4KJw/MSofzGfjJYqNpaF85MEXYqpz3kMBcH1hVuhdBpaYULy2Mw1x/AwLrWS7S/jkgwoaaG95Qpi5nXtCMiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iBBUYmBA; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KhRHIMdN"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HHLht1002346
-	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 21:25:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6V0PA1pbHT6De/zvPtGOGGXjIB2qbOpp2xwkNgIwcO4=; b=KhRHIMdNcsvOhkPe
-	uItromkmi1BWhuNFe7ea7rs0UcJV5hPGHqI45i3gDdwAEuyrdpOANU9Ui4pCxzAw
-	Pzu8DgEYp66uiyGoCEqAGfSmMbwr1FyGFXW2hiSeVjoyVcaC/46c7HvcP1PlalZa
-	XbNr+kvKEpVUXQjx2uSv1EDMkOTmSFLOuAlZD8DZKPkB2n9Fyj7X7IR2OmwEid/7
-	dWLJiuFuMONCZ6boU98S7zGV3OtaU1q9Qy7jUsul4FSmfHHZuMumYkGiw3bYaQCe
-	hradrwluD4PgswzGuBn01zFYHFnX/VKc9D4wFy0h8OGvVpF8FujOHAq7yQc78zhG
-	0trcHw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a5xypg8v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 21:25:06 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b1441d231bso35491285a.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 14:25:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iBBUYmBA"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1904585e87.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Oct 2024 15:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729204166; x=1729808966; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Om7JKcGAWZ68u827J2NuJiVucAUsfrDVJWjUlubbu3U=;
+        b=iBBUYmBA9bC8ZgUPGUTKiJklakSlOY4it2/aRzFKY5UT5/prL/u82BSLq8kVYhNSaM
+         9RcNGcb4mz+9DAXuuL1WShGld03UrE2BT4/+EtzH2Ioq6OlpOKh+hYWGRiLhRAjpiHZJ
+         Kvg1ySBtJn6roWVPu3549rpW1Q7zPbpeO0n+azwoV4+FaqT4F9JHHNQ2QnPglbUzW0G5
+         cYI3dZQYK6cHTr2kQVBHvqVi7fLEwDUVsKTNComAMm7k/HxuMSiiCVZcKqAzKKOpQpob
+         aHZDQsrDyoWiuBiiFRnn/8OnHJKPN9WZ4aX6iVqXAg8zseLpq+Lq4z3Z3ryed7XtGAiG
+         BY6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729200305; x=1729805105;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6V0PA1pbHT6De/zvPtGOGGXjIB2qbOpp2xwkNgIwcO4=;
-        b=f1712J73tF+KoeurenhwLezO7Y17Sls6dk2RJG++IrurGukwu55aqzD5g5BQ+Wq0QQ
-         0I1yVGT/34+qVMCb5INclYno1hvRzXlqe3v2SttrFSD/P3NQNVFhylhSptFX0ko6FD9m
-         R7L+RAEKWIpcEzB6jWH32Vveifpbm/vfFJhY72sFnCRhqfmoy4A3zEZxGCMMTDVzJ0E0
-         pvpN00CGNcEW59Y3tbo7VOzeHhSD9qdDXzvhhnnaJ01r/fKZa/SfWGzr163gmnHzQ9/L
-         PQntwzJO01XvkeO7hxzOT8ssLK6+uxP3v5yYGBDThdhu2BWGJFc5F1PgvL5GwEa3souW
-         kqDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNhNeI0FbAnONwb4EhwCZ1p9s1ZFNsRW4x0nFLbAJjUhzTco3tZuzHvwerTFR2p135IJ6ohTVzqJ2nYYXZSVDh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSJvqHMD5dF+CbRzsfjSz+vKq0ekBANLaZxkPRIuKS5hkq6/0h
-	I3rlCxuXkelxpBhpqsfeaMYIx3kVshpgZG2GBTmD8mr8JmC+QTw+332dJmHMKIWGBg9BOGss3kX
-	shhWj4udtTsoGrfv0CGEUTAH/+LkPMiJvtVab/jh5b1YSu+SPj+Kc8M5p4qdkTCpEVOy+
-X-Received: by 2002:a05:622a:1790:b0:460:a584:7b14 with SMTP id d75a77b69052e-460aece96b6mr1406011cf.1.1729200305450;
-        Thu, 17 Oct 2024 14:25:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGk/ZQpFtr4eYXVelF1QQ9saPRD8rq5WepP31nYkQliEgOxyubghQM68LJwB+eWOr/Ye4wNA==
-X-Received: by 2002:a05:622a:1790:b0:460:a584:7b14 with SMTP id d75a77b69052e-460aece96b6mr1405691cf.1.1729200305035;
-        Thu, 17 Oct 2024 14:25:05 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b08bc27sm24203a12.45.2024.10.17.14.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 14:25:03 -0700 (PDT)
-Message-ID: <6787fffa-642a-4099-ba00-445dd2b865ef@oss.qualcomm.com>
-Date: Thu, 17 Oct 2024 23:25:00 +0200
+        d=1e100.net; s=20230601; t=1729204166; x=1729808966;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Om7JKcGAWZ68u827J2NuJiVucAUsfrDVJWjUlubbu3U=;
+        b=iN3NfIABilT55t4izTYM2goajfbgXnFqn6sgO5Q8BDXloTD+8Wljr3nu36RFL3+t2i
+         2PQBIsWB9JxhrSPxxBZQtT+4GmcSDZRPk2XPrKp1DkK2OE0qjmobEO9gM4VCCdXNyXKp
+         1JA4OpzE29O8zlDCFFBeYD5+Cri3rfwVmqIHIsG8HLBXLyAOquSzDNbCBIVUA8hCCM4s
+         Kj093H4VP+romRZrUEOfkQ+6XSWhhh4UMPboX+QZchsGrlK/W+aR4EqrE8t0Iuptc1h7
+         MSvFf7dhWfzPb98Dk0qSGySaEH0/sUsaL+L9LUXCLVTmz3jwONnPWCQXlsNqutR8zHv6
+         XMCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSe0Z7dqhaM5zOaafYS7HyclE8gD+iaVvBtITlVPnrumue/ZFw0pgX/fVWR9zkxW05EzbFjInDcEXfcrj5++Wq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpt0MVbKZCZmMuy8W3j/O3U5hYdugPR71MpbVZf8x4t8CxACzh
+	I4kK3zIgKRZQlHQyd9Y5roUqxnfqEs74IZIeRkIVcr8CUo1L8Vgdl2/HLMDc/rQ=
+X-Google-Smtp-Source: AGHT+IFsxCgdKdVcgcoZD4gFCmbJZFyg3QiNCRkJLlIo3r8WemXMba9iczdeWP260u66TYNvUvXXow==
+X-Received: by 2002:a05:6512:3d20:b0:539:e761:c21a with SMTP id 2adb3069b0e04-53a1544629amr276391e87.48.1729204165954;
+        Thu, 17 Oct 2024 15:29:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b9343sm46886e87.85.2024.10.17.15.29.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 15:29:24 -0700 (PDT)
+Date: Fri, 18 Oct 2024 01:29:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ath11k@lists.infradead.org, Kalle Valo <kvalo@kernel.org>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+Message-ID: <mvzwlbeopenn5hpll3rmkdwcc7r7ir263nwvlh2hiy73qeipl6@nh4angyrt5p2>
+References: <20241016135409.2494140-1-quic_bpothuno@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] remoteproc: qcom: Add helper function to support
- IOMMU devmem translation
-To: neil.armstrong@linaro.org, Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shiraz Hashim <quic_shashim@quicinc.com>
-References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <20241004212359.2263502-4-quic_mojha@quicinc.com>
- <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
- <ZwPyE/rQOH181rqz@hu-mojha-hyd.qualcomm.com>
- <5fc9d581-14a6-45e8-8eda-4df49b81f15d@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <5fc9d581-14a6-45e8-8eda-4df49b81f15d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: LdzxyRSSDUwMfKMXuFA0r0FYbQ9Devps
-X-Proofpoint-ORIG-GUID: LdzxyRSSDUwMfKMXuFA0r0FYbQ9Devps
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=748 lowpriorityscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 priorityscore=1501 phishscore=0 clxscore=1011 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170144
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016135409.2494140-1-quic_bpothuno@quicinc.com>
 
-On 10.10.2024 8:59 AM, neil.armstrong@linaro.org wrote:
-> Hi,
+On Wed, Oct 16, 2024 at 07:24:09PM +0530, Balaji Pothunoori wrote:
+> auto_boot flag ensures to take the firmware and boots it
+> up during the wpss remoteproc start.
+> wpss host driver would like to control the load and unload
+> of the firmware during the load and unload of the driver.
+> Hence, disable the "auto boot" for wpss.
+
+Which driver? What is the reason for manual control?
+The board seems to function properly with the ath11k driver, which
+doesn't seem to require manual control.
+
 > 
-> On 07/10/2024 16:37, Mukesh Ojha wrote:
->> On Mon, Oct 07, 2024 at 10:08:16AM +0200, neil.armstrong@linaro.org wrote:
->>> On 04/10/2024 23:23, Mukesh Ojha wrote:
->>>> From: Shiraz Hashim <quic_shashim@quicinc.com>
->>>>
->>>> Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
->>>> translation set up for remote processors is managed by QHEE itself
->>>> however, for a case when these remote processors has to run under KVM
->>>
->>> This is not true, KVM is a Linux hypervisor, remote processors have
->>> nothing to do with KVM, please rephrase.
->>
->> Thanks, perhaps something like this,
->>
->> "However, when same SoC runs with KVM configuration, remoteproc IOMMU
->> translation needs to be set from Linux host running remoteproc PAS
->> driver"
+> Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+> ---
+> Cc: ath11k@lists.infradead.org
+> Cc: Kalle Valo <kvalo@kernel.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thanks but I still don't see what KVM has to do here, KVM is an an optional
-> Linux kernel feature, Linux can be configured without KVM and still perfectly
-> startup those remoteprocs.
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index ef82835e98a4..05963d7924df 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -1344,7 +1344,7 @@ static const struct adsp_data sc7280_wpss_resource = {
+>  	.crash_reason_smem = 626,
+>  	.firmware_name = "wpss.mdt",
+>  	.pas_id = 6,
+> -	.auto_boot = true,
+> +	.auto_boot = false,
+>  	.proxy_pd_names = (char*[]){
+>  		"cx",
+>  		"mx",
+> -- 
+> 2.34.1
+> 
 
-Mukesh, KVM is a very specific use case. What you're referring to is
-really "no QHEE / Gunyah". We can do s/KVM/Hyper-V (or almost any
-other software running at EL2) and your claims still hold.
-
-Konrad
+-- 
+With best wishes
+Dmitry
