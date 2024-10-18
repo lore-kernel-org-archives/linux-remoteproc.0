@@ -1,65 +1,64 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5592F201020
-	for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 11:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18186202F89
+	for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 16:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249770; cv=none; b=Cw7chUIAtvqE7bQqKoMrWME0cXmteAF8HnLhgHPsOB76Z6MQE8aemh3lJIpKZUcyr9OuhwWgAbAzjQYHF0QpzNfmH1qF6s0SgKm+5kFUURkV3v2c33ZHg/idewylTrq49F4+CxecKcVhb8JGVvMVFfs88gUSBMk69ExLtutXAL0=
+	t=1729267701; cv=none; b=EkJZeOf94Andx/ItfxMCLxdabw0YhJldGi0ffBK3tKVCo5PoL2yztvaqt8jw3p3jIUg2bc0O7UiOLEXIuQH8fzvaiargj+Xe7RVEkgVLa/+WZ298zqdYm3/h7oFvKaNg07JHJ8y7rX2uBQOwsxVyk19b9XSQWw4siUn4tO/J/7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249770; c=relaxed/simple;
-	bh=hIRhsvJSIxKZNH+0yh8CMfYQrQrPteNJdkQamPRSlyk=;
+	s=arc-20240116; t=1729267701; c=relaxed/simple;
+	bh=ZDSCREZ4GeJfN24LLyvFpOCH2GTNNhH1Bc4SQJJVgY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMABSToiSbfJBN6Bxl1vQ9WWJmBrMMvOtO8BLNW/MB/xH+ZblxnGDNb7+H2WLvBHObTdjwOHG5y7mIBUrwDC4UpRWGJ+vXJgG6fs+ksdGgB0saNsf50UtUvJlWtqdKnee0ju+uZmdp/YGJt0R4Gt6iWdweC6q9Sf47rbJUSxpGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FH1LdWY9; arc=none smtp.client-ip=209.85.167.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=sAc06zMKh3KBBWBPuZLSsG/RIQ+wzRq3uFTnV4o+0JM0DKWJtkadubPDubKApkG1r5nE0VoeI/YUikHGrceI/+h6+VfT+tGw3wX4HOZsKwIzAyhhubTRVTHOR6y+bhRZjTMr16d6Ij0k4VRpFZn6oJXmIVlSW8n6cixzklP0gpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KHkS5JbN; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FH1LdWY9"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f7606199so2365355e87.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 04:09:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHkS5JbN"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7eab7622b61so1749184a12.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 09:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729249767; x=1729854567; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729267699; x=1729872499; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XIt2ZgCz6/2u04try8W/s+t9Roe8RkNgbgiZjheFS+w=;
-        b=FH1LdWY9YLpTuXCq7TfzDZZcykgIwMOGrzwa98+sU0/yhfJKlOrqnt9YQZH5OJF2JI
-         m1xVdqAehwL1RS+VwR2rp+0l4F+gUeCPVMtUYKsJxtlqtgLsC8KQnxiOUjP3LHGxZhDe
-         He7Yq8lR0NtrXjbnxQwfyZuLGouxhmb0dtLVQyPDC22vzqtQWD7bKz3cU2C5PWiZ29rL
-         9jZtXM2G2QUlpTsTi68Eyjr9RPpIET9a2TKRLZ6L5x1Ecn8AKd0goNARxBPxGfdA3qo/
-         bgCIUgQ2HFIQwkxHYUsGnFmvGwG7V3cXIhls2X/OAor5u3MTsvXytBoMPTRge+nVYl79
-         8IWQ==
+        bh=pNR0bPGSjLyuFmU7GhxyaSTvabJeE4hQt9n77qexHMY=;
+        b=KHkS5JbNjBE/Kq3qpDqAGZJnDtZ32021whGRGi+NouzVX2YQBeFJRaewBbewLm+ItH
+         f++iC8HUwCnVpsuNWpECJimOYy48NuOZ0BXUvCJKx7mebFG6wwtejqR4AaWvkdWquWuw
+         W714lUlcD5ZDkCZEgqgKMsjsSFfYq0MhdKnBKB+fyqHNn6NAYovN0tZ1tulrSXDGcUlv
+         lMTMjZyTgLgSUZ9wE6nlKpWjhnNDKzAP19npkU1sHly9d5vNEE0yEmCkbskinR6/aZft
+         AQ79rGTwQvfQ6e8yWIn5kYWxMJM4n3dpMYlA0PmPSn+e1lQ1eHW0KIsPNVJbok6xLxxv
+         Malw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729249767; x=1729854567;
+        d=1e100.net; s=20230601; t=1729267699; x=1729872499;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XIt2ZgCz6/2u04try8W/s+t9Roe8RkNgbgiZjheFS+w=;
-        b=hwaFFZpETOFO3W8PPD9POjOP2m6c9vq64oyzjaputDfBeb2tdwT/bM9SMw97ea9TL7
-         sURP6ksrGYhlvD3zW2Ur5HYqa0uBAlJYACxY952UB4WDRT0mqxB8RA5ykCxI4h1Xgo3U
-         cJkDyGvvy4TmeUP+B5m/yee+Nq35PyOhsdYtD4Tjn2f3tGPsw+dCp87TCh0H+PVDtSKQ
-         h4oVR8RHE/adn/1+hPpyN7aXb+vQySF0J5IDnaxoYrFeTPi+yNWM+8InzFuRnoDw2IKv
-         Vi6Xwbnjp6ZOQI31PE7G7EKbCpgdT1jemnoL6REQ91qS4gqsV6F2ke5S2kiN6yi3Fmph
-         S4Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3oPpr4L3iOtg6XJYe03dFy11qbMpbv5F06Pv8yKLtTchZsBOFfm+djYitm6WBQk+V7r5kIxLhAtg7OeO4HtJh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6d5wwBFb2D4lsie1D5UTg+Bz1FBRc7/9T5OMZerUNJgz05tV4
-	dYc9u1IwNuDHq9+MyxndsfHFXGrEApkQ2c+4kAK58md9KsWHiIKHqY2QBw3NDiU=
-X-Google-Smtp-Source: AGHT+IGQcoRjkME8sB/QzR808hEBcFeX1bRQ7Ps+vQJxPs0k7IOBUWWNJ5veYpKKDLhJoGJiAwODNg==
-X-Received: by 2002:ac2:4c48:0:b0:539:f699:4954 with SMTP id 2adb3069b0e04-53a1546ca04mr1270371e87.58.1729249767449;
-        Fri, 18 Oct 2024 04:09:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15214e7esm190571e87.259.2024.10.18.04.09.25
+        bh=pNR0bPGSjLyuFmU7GhxyaSTvabJeE4hQt9n77qexHMY=;
+        b=LH/uzDqUZgt0mjanHuB524cUft9vf3WkW1UmTO6UDi5U4iNqNG/+/YusDZ1CKAYNr1
+         MW2rHmjY55HnTrJfahLTAsdG32wJwtNjOtSR07oqmByu4ToiTkwhK7vYkcoaQRT4nsn0
+         PPM+qoLrJrABK+N99O1dJ4TwH57c+C3Mz08v310/8N20hk98+8H/+Vvm13yAq6/qfa7W
+         hXgvD1EZdTjDK5GPtV0mbEYP393FbewWH6DQiQfpUWMr4x+hRXHpC4MejEkF8IEu11wM
+         3igS00+MTzi5DWAtCaUiZXENbPQfMc08UzSojKoWPdZlDT+sqSIAxcM3fmh9s8k9sYYI
+         rAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUZOmO86EKzDFEkPQrBKpR/+cu2PHsz8NwSpoNMpnzLzv5JYEphJ9TU7+lK9+dKIWZ7+0QJ88D/d9kjy+XUT4L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3CHRJqJ/5OpXfyj5GRfOBKHJApXQuSHS16R1Nqv/EEerfQfnv
+	HsAgJz6X46dCN47/B9n+CY4SQLYjFRLSb+OlMa708EhKQRSis0JfIvZyXssGAX8=
+X-Google-Smtp-Source: AGHT+IF9TqiR2RO3BGwLsSjTV73hbKFyYwD80eadD15JYSLkGQjGHwgW5vg1eOfKD6I7rrg8rjsHOQ==
+X-Received: by 2002:a05:6a21:1698:b0:1d8:a29b:8f6f with SMTP id adf61e73a8af0-1d92c4dfbabmr3916839637.16.1729267699273;
+        Fri, 18 Oct 2024 09:08:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6af4:1971:ad72:1f9f])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc2081f4sm1538199a12.2.2024.10.18.09.08.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 04:09:26 -0700 (PDT)
-Date: Fri, 18 Oct 2024 14:09:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Balaji Pothunoori <quic_bpothuno@quicinc.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ath11k@lists.infradead.org, kvalo@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
-Message-ID: <ho24wc35ssaecs4hqqbyuqizfamr6fffrzp62v6eevprzbjmx5@qx7urvuaptqq>
-References: <20241018105911.165415-1-quic_bpothuno@quicinc.com>
+        Fri, 18 Oct 2024 09:08:18 -0700 (PDT)
+Date: Fri, 18 Oct 2024 10:08:15 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Enable compile testing for K3 RemoteProc drivers
+Message-ID: <ZxKH773hQ+JZ2km3@p14s>
+References: <20241016164141.93401-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -68,31 +67,32 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018105911.165415-1-quic_bpothuno@quicinc.com>
+In-Reply-To: <20241016164141.93401-1-afd@ti.com>
 
-On Fri, Oct 18, 2024 at 04:29:11PM +0530, Balaji Pothunoori wrote:
-> Currently, the rproc "atomic_t power" variable is incremented during:
-> a. WPSS rproc auto boot.
-> b. AHB power on for ath11k.
+On Wed, Oct 16, 2024 at 11:41:39AM -0500, Andrew Davis wrote:
+> Hello all,
 > 
-> During AHB power off (rmmod ath11k_ahb.ko), rproc_shutdown fails
-> to unload the WPSS firmware because the rproc->power value is '2',
-> causing the atomic_dec_and_test(&rproc->power) condition to fail.
+> This is a follow up to [0] that adds the same for the other two K3
+> RemoteProc drivers. Series is based on rproc-next branch.
 > 
-> Consequently, during AHB power on (insmod ath11k_ahb.ko),
-> QMI_WLANFW_HOST_CAP_REQ_V01 fails due to the host and firmware QMI
-> states being out of sync.
+> Thanks,
+> Andrew
 > 
-> Fixes: 300ed425dfa9 ("remoteproc: qcom_q6v5_pas: Add SC7280 ADSP, CDSP & WPSS")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
-> ---
-> v2: updated commit text.
->     added Fixes/cc:stable tags.
+> [0] https://lore.kernel.org/lkml/20241007132441.2732215-1-arnd@kernel.org/
 > 
+> Andrew Davis (2):
+>   remoteproc: k3-dsp: Add compile testing support
+>   remoteproc: k3-r5: Add compile testing support
+>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I have applied this set.
 
--- 
-With best wishes
-Dmitry
+Thanks,
+Mathieu
+
+>  drivers/remoteproc/Kconfig | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 2.39.2
+> 
