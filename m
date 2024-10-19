@@ -1,98 +1,121 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18186202F89
-	for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 16:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A318C34B;
+	Sat, 19 Oct 2024 10:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729267701; cv=none; b=EkJZeOf94Andx/ItfxMCLxdabw0YhJldGi0ffBK3tKVCo5PoL2yztvaqt8jw3p3jIUg2bc0O7UiOLEXIuQH8fzvaiargj+Xe7RVEkgVLa/+WZ298zqdYm3/h7oFvKaNg07JHJ8y7rX2uBQOwsxVyk19b9XSQWw4siUn4tO/J/7Q=
+	t=1729333037; cv=none; b=CuV7K1TUWyur2L41jc3Az5yDOcwRtRpDvYMAlWBvZn41fga/gi/4pJt4WW6hGcEXPrypS1rODffux21FKIukfoynWyL3gLtQb9N+L6X2NsRXG1hXfGcPu/dsDJZs+WMLV8GpbQyQWwXSktEzQGP8dS3sz+gjDwKPU/ifTvZIOdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729267701; c=relaxed/simple;
-	bh=ZDSCREZ4GeJfN24LLyvFpOCH2GTNNhH1Bc4SQJJVgY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAc06zMKh3KBBWBPuZLSsG/RIQ+wzRq3uFTnV4o+0JM0DKWJtkadubPDubKApkG1r5nE0VoeI/YUikHGrceI/+h6+VfT+tGw3wX4HOZsKwIzAyhhubTRVTHOR6y+bhRZjTMr16d6Ij0k4VRpFZn6oJXmIVlSW8n6cixzklP0gpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KHkS5JbN; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729333037; c=relaxed/simple;
+	bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qNcmXbi3/0/Rg2EEZePBaxZXciCqvflpkAXIUR63ZxyGJ9LcLERYIEenbrsC0h2uJcb3gvxrKY2h+2FNrH6tNVbzujL1QbFZ3SOxyjDsFri9E5IdxB+TpaqvjKiGc5XPO7lYklkSWmpW/u0Eg3lTUK0mvCXwaIiYcF4+lbY8HQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=NhMFqeM1; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHkS5JbN"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7eab7622b61so1749184a12.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Oct 2024 09:08:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729267699; x=1729872499; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pNR0bPGSjLyuFmU7GhxyaSTvabJeE4hQt9n77qexHMY=;
-        b=KHkS5JbNjBE/Kq3qpDqAGZJnDtZ32021whGRGi+NouzVX2YQBeFJRaewBbewLm+ItH
-         f++iC8HUwCnVpsuNWpECJimOYy48NuOZ0BXUvCJKx7mebFG6wwtejqR4AaWvkdWquWuw
-         W714lUlcD5ZDkCZEgqgKMsjsSFfYq0MhdKnBKB+fyqHNn6NAYovN0tZ1tulrSXDGcUlv
-         lMTMjZyTgLgSUZ9wE6nlKpWjhnNDKzAP19npkU1sHly9d5vNEE0yEmCkbskinR6/aZft
-         AQ79rGTwQvfQ6e8yWIn5kYWxMJM4n3dpMYlA0PmPSn+e1lQ1eHW0KIsPNVJbok6xLxxv
-         Malw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729267699; x=1729872499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pNR0bPGSjLyuFmU7GhxyaSTvabJeE4hQt9n77qexHMY=;
-        b=LH/uzDqUZgt0mjanHuB524cUft9vf3WkW1UmTO6UDi5U4iNqNG/+/YusDZ1CKAYNr1
-         MW2rHmjY55HnTrJfahLTAsdG32wJwtNjOtSR07oqmByu4ToiTkwhK7vYkcoaQRT4nsn0
-         PPM+qoLrJrABK+N99O1dJ4TwH57c+C3Mz08v310/8N20hk98+8H/+Vvm13yAq6/qfa7W
-         hXgvD1EZdTjDK5GPtV0mbEYP393FbewWH6DQiQfpUWMr4x+hRXHpC4MejEkF8IEu11wM
-         3igS00+MTzi5DWAtCaUiZXENbPQfMc08UzSojKoWPdZlDT+sqSIAxcM3fmh9s8k9sYYI
-         rAJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUZOmO86EKzDFEkPQrBKpR/+cu2PHsz8NwSpoNMpnzLzv5JYEphJ9TU7+lK9+dKIWZ7+0QJ88D/d9kjy+XUT4L@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3CHRJqJ/5OpXfyj5GRfOBKHJApXQuSHS16R1Nqv/EEerfQfnv
-	HsAgJz6X46dCN47/B9n+CY4SQLYjFRLSb+OlMa708EhKQRSis0JfIvZyXssGAX8=
-X-Google-Smtp-Source: AGHT+IF9TqiR2RO3BGwLsSjTV73hbKFyYwD80eadD15JYSLkGQjGHwgW5vg1eOfKD6I7rrg8rjsHOQ==
-X-Received: by 2002:a05:6a21:1698:b0:1d8:a29b:8f6f with SMTP id adf61e73a8af0-1d92c4dfbabmr3916839637.16.1729267699273;
-        Fri, 18 Oct 2024 09:08:19 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:6af4:1971:ad72:1f9f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc2081f4sm1538199a12.2.2024.10.18.09.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 09:08:18 -0700 (PDT)
-Date: Fri, 18 Oct 2024 10:08:15 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Enable compile testing for K3 RemoteProc drivers
-Message-ID: <ZxKH773hQ+JZ2km3@p14s>
-References: <20241016164141.93401-1-afd@ti.com>
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="NhMFqeM1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1729332413; bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=NhMFqeM1xVfZLawOWT92RfW8LTIOJfidwNp7MHnmkEBLJateXf6PVaPck2LUqDeS9
+	 L+wZ2/Vm2kGurlrUdKzeMsmY/dNoppxdhMlYDKiOqgn87zlRQTmxGHO5UHZFJDo3FR
+	 xYuxtG/a5fdw0XwYNfGVAIa2TMrrJSVpLYx0808o=
+From: Luca Weiss <luca@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject:
+ Re: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
+ qcom_smd_parse_edge
+Date: Sat, 19 Oct 2024 12:06:50 +0200
+Message-ID: <2827287.mvXUDI8C0e@g550jk>
+In-Reply-To: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
+References: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016164141.93401-1-afd@ti.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 16, 2024 at 11:41:39AM -0500, Andrew Davis wrote:
-> Hello all,
+On Donnerstag, 6. Juni 2024 21:01:36 MESZ Luca Weiss wrote:
+> When the mailbox driver has not probed yet, the error message "failed to
+> parse smd edge" is just going to confuse users, so improve the error
+> prints a bit.
 > 
-> This is a follow up to [0] that adds the same for the other two K3
-> RemoteProc drivers. Series is based on rproc-next branch.
+> Cover the last remaining exits from qcom_smd_parse_edge with proper
+> error prints, especially the one for the mbox_chan deserved
+> dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
+> also to be complete.
 > 
-> Thanks,
-> Andrew
-> 
-> [0] https://lore.kernel.org/lkml/20241007132441.2732215-1-arnd@kernel.org/
-> 
-> Andrew Davis (2):
->   remoteproc: k3-dsp: Add compile testing support
->   remoteproc: k3-r5: Add compile testing support
->
+> With this done, we can remove the outer print completely.
 
-I have applied this set.
+Ping, looks like this is still pending.
 
-Thanks,
-Mathieu
+Regards
+Luca
 
->  drivers/remoteproc/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> -- 
-> 2.39.2
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+> Changes in v2:
+> - Rebase on qcom for-next, drop dts patches which have been applied
+> - Improve error printing situation (Bjorn)
+> - Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
+> ---
+>  drivers/rpmsg/qcom_smd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 43f601c84b4f..06e6ba653ea1 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
+>  	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+>  	if (IS_ERR(edge->mbox_chan)) {
+>  		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
+> -			ret = PTR_ERR(edge->mbox_chan);
+> +			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
+> +					    "failed to acquire IPC mailbox\n");
+>  			goto put_node;
+>  		}
+>  
+> @@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
+>  		of_node_put(syscon_np);
+>  		if (IS_ERR(edge->ipc_regmap)) {
+>  			ret = PTR_ERR(edge->ipc_regmap);
+> +			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
+>  			goto put_node;
+>  		}
+>  
+> @@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+>  	}
+>  
+>  	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
+> -	if (ret) {
+> -		dev_err(&edge->dev, "failed to parse smd edge\n");
+> +	if (ret)
+>  		goto unregister_dev;
+> -	}
+>  
+>  	ret = qcom_smd_create_chrdev(edge);
+>  	if (ret) {
+> 
+> ---
+> base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
+> change-id: 20240423-apcs-mboxes-12ee6c01a5b3
+> 
+> Best regards,
+> 
+
+
+
+
