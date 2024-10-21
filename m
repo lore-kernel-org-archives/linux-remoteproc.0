@@ -1,121 +1,216 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A318C34B;
-	Sat, 19 Oct 2024 10:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6841EEB3
+	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Oct 2024 15:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729333037; cv=none; b=CuV7K1TUWyur2L41jc3Az5yDOcwRtRpDvYMAlWBvZn41fga/gi/4pJt4WW6hGcEXPrypS1rODffux21FKIukfoynWyL3gLtQb9N+L6X2NsRXG1hXfGcPu/dsDJZs+WMLV8GpbQyQWwXSktEzQGP8dS3sz+gjDwKPU/ifTvZIOdg=
+	t=1729523573; cv=none; b=CCf207jrbJwc3FffXidvXD3NnPTMThihR23aT/2F4Q/qIVOM3srDbFZi3is1EwY2qWI5qmXm9K4zlN2wb2ecX1wmpil7VpeIoRs4nBaEX0yLqtmPgAuW5nucpKgLshWK6mw93+hn1g/7tI1VUkhwjyJxBCL+/ixhV8bv2nf4D3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729333037; c=relaxed/simple;
-	bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNcmXbi3/0/Rg2EEZePBaxZXciCqvflpkAXIUR63ZxyGJ9LcLERYIEenbrsC0h2uJcb3gvxrKY2h+2FNrH6tNVbzujL1QbFZ3SOxyjDsFri9E5IdxB+TpaqvjKiGc5XPO7lYklkSWmpW/u0Eg3lTUK0mvCXwaIiYcF4+lbY8HQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=NhMFqeM1; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+	s=arc-20240116; t=1729523573; c=relaxed/simple;
+	bh=HA0tHinn+bqrD776M0L/2NYbGNmG9TR+YyPv2Lgp40E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx0OAFzdfEw6qdhtnuE2AoGk/tdfIdTjifd69YXpTmpL9y1cwaSUVAmyGaWZT/HUD1tO5wjZkBAJSoZYPvALEXE5rfPzC3vx8e+/mrt70jN3UJQKBdUqrLoBHPnRLdqpwZRiRtligExFn126irnqEts/WaOpmWEjjxr5UHnVam8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lkSWIPAA; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="NhMFqeM1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1729332413; bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NhMFqeM1xVfZLawOWT92RfW8LTIOJfidwNp7MHnmkEBLJateXf6PVaPck2LUqDeS9
-	 L+wZ2/Vm2kGurlrUdKzeMsmY/dNoppxdhMlYDKiOqgn87zlRQTmxGHO5UHZFJDo3FR
-	 xYuxtG/a5fdw0XwYNfGVAIa2TMrrJSVpLYx0808o=
-From: Luca Weiss <luca@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject:
- Re: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
- qcom_smd_parse_edge
-Date: Sat, 19 Oct 2024 12:06:50 +0200
-Message-ID: <2827287.mvXUDI8C0e@g550jk>
-In-Reply-To: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
-References: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lkSWIPAA"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2a999b287so3512688a91.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Oct 2024 08:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729523571; x=1730128371; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=koGPDoEs33GkFYUJ8VvUnAUxrtRA6oGYT3URNqBimfc=;
+        b=lkSWIPAAu8ijP4o7sOnOo34e3V1WLPy7RdjK45CRuv8bce4bJam4lPIGDqVxCZts9H
+         kCu+hntjLYNHiemyCVNqmNtxOw+tkuzoa4W67dQMBRoPKsCE+Kqicb9pbrYWZq0D3udt
+         zh5DPku9vkdNwVfvg8rmSBVCatckvl2KE6oCB7q1vx9NujRF9LsjQ1vLfEEqcTkKC/NJ
+         GS1wORj+Yb0DZ9Psr5FaCdNZ07d7y3/Dn3y8+lStqK0lwm99dpyd2KmNHYQBmGacZrET
+         aEjTIN8UT65ZxMrLu8XEcOH/DT3Mu8SE11bFg6Z+m280OAy2xdjgbQ14fjvOt/e0BL4I
+         47lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729523571; x=1730128371;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=koGPDoEs33GkFYUJ8VvUnAUxrtRA6oGYT3URNqBimfc=;
+        b=tRaKvlvMUk7IvWOpW3QwFmJ6IGEzXkRSe34t4R+4FohBFVz5eB26Xy5r5slLiMgjDV
+         0hqahafQpJ62atxeCt+QndMX7/ssTpOFNLc12VXk2u2glLn9zZSa20qXxy8bVL+xXokA
+         v+tx6yqNODN6ahGrF1sdKkxvLObZRw02VLMikjdrFoRlp6nl/i3D+tUHWy0nVmDdQcsF
+         kbF0/Mm3//iEgJKeC5zbVP5OWhcrMiNgZh855NfmHUOQ6ahxofpOehUkrxtvrLkp5QtQ
+         dtdKbQgfMC2jzACL12KETvqeCXMUp6o0XqhwTwW6V7qAjr8xIQiT5nypkhdjy7HG4CNm
+         Q7JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdxgl57NgorA4RjBtvnSdHpD5ead2DFsSVU/MX4NB8MWjk4Q6dT2frzv40ty9CU2c/qdGhCKDfCP7t7Rtg/xNx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRK0Qjvk13GWgKZm7JJumy/uRrpK/1dvtGIpHluAuMWkZmfwyN
+	XyJcm7r3YRywVqeNiEkMLeapVbset1+yWkhBlQljbzAX8W5M4i8RVS7p4s3wzBU=
+X-Google-Smtp-Source: AGHT+IESfkw+TDgA9sQaThZSYXSbpbhhKDO0hLMQggL9hcnwuUK+4dhR89Sa5+gB5uRw6+z/7OUTxw==
+X-Received: by 2002:a17:90b:4d0f:b0:2e2:cf5c:8ee8 with SMTP id 98e67ed59e1d1-2e561612dcemr13097090a91.12.1729523570841;
+        Mon, 21 Oct 2024 08:12:50 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:fb5e:248e:29ec:7946])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad365d1fsm3997628a91.16.2024.10.21.08.12.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 08:12:50 -0700 (PDT)
+Date: Mon, 21 Oct 2024 09:12:47 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
+Message-ID: <ZxZvbz9C/eHzosFN@p14s>
+References: <20241016045546.2613436-1-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016045546.2613436-1-quic_mojha@quicinc.com>
 
-On Donnerstag, 6. Juni 2024 21:01:36 MESZ Luca Weiss wrote:
-> When the mailbox driver has not probed yet, the error message "failed to
-> parse smd edge" is just going to confuse users, so improve the error
-> prints a bit.
+Hi Mukesh,
+
+On Wed, Oct 16, 2024 at 10:25:46AM +0530, Mukesh Ojha wrote:
+> Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> if rproc_stop() fails from Process-A that leaves the rproc state to
+> RPROC_CRASHED state later a call to recovery_store from user space in
+> Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> recover it results in NULL pointer dereference issue in
+> qcom_glink_smem_unregister().
 > 
-> Cover the last remaining exits from qcom_smd_parse_edge with proper
-> error prints, especially the one for the mbox_chan deserved
-> dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
-> also to be complete.
+> There is other side to this issue if we want to fix this via adding a
+> NULL check on glink->edge which does not guarantees that the remoteproc
+> will recover in second call from Process B as it has failed in the first
+> Process A during SMC shutdown call and may again fail at the same call
+> and rproc can not recover for such case.
 > 
-> With this done, we can remove the outer print completely.
+> Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
+> remoteproc and the only way to recover from it via system restart.
+> 
+> 	Process-A                			Process-B
+> 
+>   fatal error interrupt happens
+> 
+>   rproc_crash_handler_work()
+>     mutex_lock_interruptible(&rproc->lock);
+>     ...
+> 
+>        rproc->state = RPROC_CRASHED;
+>     ...
+>     mutex_unlock(&rproc->lock);
+> 
+>     rproc_trigger_recovery()
+>      mutex_lock_interruptible(&rproc->lock);
+> 
+>       adsp_stop()
+>       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+>       remoteproc remoteproc3: can't stop rproc: -22
+>      mutex_unlock(&rproc->lock);
 
-Ping, looks like this is still pending.
-
-Regards
-Luca
+Ok, that can happen.
 
 > 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> 						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+> 						recovery_store()
+> 						 rproc_trigger_recovery()
+> 						  mutex_lock_interruptible(&rproc->lock);
+> 						   rproc_stop()
+> 						    glink_subdev_stop()
+> 						      qcom_glink_smem_unregister() ==|
+>                                                                                      |
+>                                                                                      V
+
+I am missing some information here but I will _assume_ this is caused by
+glink->edge being set to NULL [1] when glink_subdev_stop() is first called by
+process A.  Instead of adding a new state to the core I think a better idea
+would be to add a check for a NULL value on @smem in
+qcom_glink_smem_unregister().  This is a problem that should be fixed in the
+driver rather than the core.
+
+[1]. https://elixir.bootlin.com/linux/v6.12-rc4/source/drivers/remoteproc/qcom_common.c#L213
+
+> 						      Unable to handle kernel NULL pointer dereference
+>                                                                 at virtual address 0000000000000358
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > ---
+> Changes in v3:
+>  - Fix kernel test reported error.
+> 
 > Changes in v2:
-> - Rebase on qcom for-next, drop dts patches which have been applied
-> - Improve error printing situation (Bjorn)
-> - Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
-> ---
->  drivers/rpmsg/qcom_smd.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  - Removed NULL pointer check instead added a new state to signify
+>    non-recoverable state of remoteproc.
 > 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 43f601c84b4f..06e6ba653ea1 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
->  	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
->  	if (IS_ERR(edge->mbox_chan)) {
->  		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
-> -			ret = PTR_ERR(edge->mbox_chan);
-> +			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
-> +					    "failed to acquire IPC mailbox\n");
->  			goto put_node;
->  		}
->  
-> @@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
->  		of_node_put(syscon_np);
->  		if (IS_ERR(edge->ipc_regmap)) {
->  			ret = PTR_ERR(edge->ipc_regmap);
-> +			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
->  			goto put_node;
->  		}
->  
-> @@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
->  	}
->  
->  	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
-> -	if (ret) {
-> -		dev_err(&edge->dev, "failed to parse smd edge\n");
-> +	if (ret)
->  		goto unregister_dev;
-> -	}
->  
->  	ret = qcom_smd_create_chrdev(edge);
+>  drivers/remoteproc/remoteproc_core.c  | 3 ++-
+>  drivers/remoteproc/remoteproc_sysfs.c | 1 +
+>  include/linux/remoteproc.h            | 5 ++++-
+>  3 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f276956f2c5c..c4e14503b971 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>  	/* power off the remote processor */
+>  	ret = rproc->ops->stop(rproc);
 >  	if (ret) {
+> +		rproc->state = RPROC_DEFUNCT;
+>  		dev_err(dev, "can't stop rproc: %d\n", ret);
+>  		return ret;
+>  	}
+> @@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  		return ret;
+>  
+>  	/* State could have changed before we got the mutex */
+> -	if (rproc->state != RPROC_CRASHED)
+> +	if (rproc->state == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
+>  		goto unlock_mutex;
+
+The problem is that rproc_trigger_recovery() an only be called once for a
+remoteproc, something that modifies the state machine and may introduce backward
+compatibility issues for other remote processor implementations.
+
+Thanks,
+Mathieu
+
+>  
+>  	dev_err(dev, "recovering %s\n", rproc->name);
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 138e752c5e4e..5f722b4576b2 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -171,6 +171,7 @@ static const char * const rproc_state_string[] = {
+>  	[RPROC_DELETED]		= "deleted",
+>  	[RPROC_ATTACHED]	= "attached",
+>  	[RPROC_DETACHED]	= "detached",
+> +	[RPROC_DEFUNCT]		= "defunct",
+>  	[RPROC_LAST]		= "invalid",
+>  };
+>  
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index b4795698d8c2..3e4ba06c6a9a 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -417,6 +417,8 @@ struct rproc_ops {
+>   *			has attached to it
+>   * @RPROC_DETACHED:	device has been booted by another entity and waiting
+>   *			for the core to attach to it
+> + * @RPROC_DEFUNCT:	device neither crashed nor responding to any of the
+> + * 			requests and can only recover on system restart.
+>   * @RPROC_LAST:		just keep this one at the end
+>   *
+>   * Please note that the values of these states are used as indices
+> @@ -433,7 +435,8 @@ enum rproc_state {
+>  	RPROC_DELETED	= 4,
+>  	RPROC_ATTACHED	= 5,
+>  	RPROC_DETACHED	= 6,
+> -	RPROC_LAST	= 7,
+> +	RPROC_DEFUNCT	= 7,
+> +	RPROC_LAST	= 8,
+>  };
+>  
+>  /**
+> -- 
+> 2.34.1
 > 
-> ---
-> base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
-> change-id: 20240423-apcs-mboxes-12ee6c01a5b3
-> 
-> Best regards,
-> 
-
-
-
-
