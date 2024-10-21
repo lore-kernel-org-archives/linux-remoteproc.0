@@ -1,150 +1,104 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858341CCB59
-	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Oct 2024 15:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF03947A73;
+	Mon, 21 Oct 2024 16:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526097; cv=none; b=LaBZ2tPb6jS8ajq5chDRSm8/4s1II9U+RCL8RWAFV2wDDwcTtxmGszT+BuS2eIS4WzX1RJp85cx6XNknq/C7zCbUZMTdHwJSYjpTIvclUwcc/ieEjrLZVOgO+q/qg4cw6hkFQA/1zfytLefecJnZtW2dp9UskoSEJEJiNwBqN7I=
+	t=1729529685; cv=none; b=SfoSd8vhGOsdhM89gkl9/Zw/raZfFfh5/aqSN85qgaAyCyvirKTY9bQAiIGMNLo9gQlF5zfxxIuB5kPuq6oM0eZzeiuBjAg2vYGS/BNoN+Rs6Rz0+KC9pbiDDCofO1IXuvOL6WoQz979iibAZxErrSu15Z/NmMkiOcblcEiZS2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526097; c=relaxed/simple;
-	bh=4nxqVSA7RPobzfnZ2nnUbYiPXxxY+p6MXf6zMR+JMvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sT4YlR4XxwvfTkbO4//7D9RxgQO96qNdyIWdoIwk/kuvvPxZudLNBlP/O+JLuywCcXS2P2nUAZbn6wtBcRwGAjUfcI0D1NSjyd+qhDfQX9dbg+FOe49ZKpseu5PRQZ9yA4gDPLhtcHSPR5HejpvbazcixMjlK1Ti94h8dVLvKl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tPSJQCKG; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729529685; c=relaxed/simple;
+	bh=xVLV19LdlMTEBFTYZcWLoFa2RJ2kafrvx0eUdZTpY6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S84tOM977unALE+YeT7RTPe9VobzNWuYuqRgm0N7D+c7/eH1UWELEZsHTtzQnhlP4EohWRS9GOvs5+sBpr9xDCawIBPz34KkTC49cR5KS4842uunoS1/haCi948K3sfh4FytsIrhdpnTi6c3W0BGmf4LUv32fl5yEE2nD451gIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OgJaCPHM; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tPSJQCKG"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e6cec7227so3650879b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Oct 2024 08:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729526094; x=1730130894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2P/OAPuPPfGZgym/n673Rfg3DHU/GqTqUEFYAFx22E=;
-        b=tPSJQCKGTfLByc3iumxMVXRcDaNXkkm8rPWBypjQ7KcU0xHbv5NUhp7x1IaxwHXl6i
-         fspUcEEfQCEI8cj+gnqCT5eWXg2PLRjXuV5ZmZe1sHWFWXAXg1br5UqVWGhQ5L3HltEc
-         yOZEwcek5mMBnfuvrm4YY+2LixDmwAYFshhkryEmuC91u5E9emo5gG4JkHiW/YjFxdTC
-         bik1MIiKZIP6rOEnzhCjGKhu1hnONhUkCMKQej/gZmmoi8Qxlj5ISr8X4um4IPTU6Kpq
-         9MRHiKt2pH0ClAqdaJr/F0nq7Nq8pYdz0j84CBe5QC6MUXBacBixrqY2Pj84YcwWNvNY
-         z3gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729526094; x=1730130894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2P/OAPuPPfGZgym/n673Rfg3DHU/GqTqUEFYAFx22E=;
-        b=Vl4BYKcOxPI2MiIWzNv/uRWnouNxMnavccJhWVILA7asEVNd2spbx5iAcMYa52AaIj
-         DKDcltcDApbm4op9osDWeyou9Aa7taHKwcFCm7iaBsQF6+Ls5zAxrYeOE752Obb4ZLjH
-         yY7tRol4hX9K1vnsVklQkT0x6z8R/H1iRliznvLCjYQRMTyFNRqYe7fzAtIUkLvOltHy
-         BOHRSDF3P7V8KDOibANHeH+9DR5N+tAfkm5lSHk508jwu7bDzvwnaBrB9caX+xMI10Fy
-         Bzkic6YIP1IC3xbfMIVxyBqbnNzBt+oRin4slyMDi1NTA1/j+WutV7hgThWA0skzW9uM
-         u4GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYGR5xVViu2cWy2TIcTjP/SOJdk2ZmSsXHhHH3AXZIEodKTXMVjkh7grRAs3tOPVbwVXpZhhpQGhGfCY6y4nen@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlYJtop9Jm9hPVgu0nAiIcmWfSpgXYuxyPgoAMy1ljtpiRiIkQ
-	eiotgRRS8uKE3YAZT5ha3K0JBy/Xz+x+UgbSlZ98FYBkzWWtG/1wpr8EvPQW3lY=
-X-Google-Smtp-Source: AGHT+IHXumHx1fJK7C0JJjF2aFxoJi4eyEeDsc9H2M9LdVyaQELXWb/6QAXRzMTU/kCm/w8lInBwkg==
-X-Received: by 2002:a05:6a21:70cb:b0:1cf:6ef0:c6b9 with SMTP id adf61e73a8af0-1d92c56b9bdmr15675587637.32.1729526093768;
-        Mon, 21 Oct 2024 08:54:53 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fb5e:248e:29ec:7946])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1356780sm3137641b3a.90.2024.10.21.08.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 08:54:53 -0700 (PDT)
-Date: Mon, 21 Oct 2024 09:54:49 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v11 4/7] remoteproc: Introduce release_fw optional
- operation
-Message-ID: <ZxZ5SdGmcBlra4zi@p14s>
-References: <20241009080108.4170320-1-arnaud.pouliquen@foss.st.com>
- <20241009080108.4170320-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OgJaCPHM"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49LGsS1s015685;
+	Mon, 21 Oct 2024 11:54:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729529668;
+	bh=BkUiQQbb0Y/+KVsC+QJluVm1qSPbgAKIhXWGfYSCIF0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=OgJaCPHM6sf5ryq0I2x45RORcQ1AKdvc0U+8TfYon+TW3SurtPoXAh299k00xJHie
+	 I9IiEJtIYo+8D6DXRVEa2mSxD6UpHP8LDjji1imk/T5FEXgs3ynCmXCGPTTCJWdkU7
+	 40/O2b+HwPJLSul4fVA/sqLJ6xbjcyBpFDOX9R4k=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49LGsSqb008487
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 21 Oct 2024 11:54:28 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 21
+ Oct 2024 11:54:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 21 Oct 2024 11:54:28 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49LGsRhU034368;
+	Mon, 21 Oct 2024 11:54:28 -0500
+Message-ID: <4954e8a6-06dc-49db-afdb-93260539649a@ti.com>
+Date: Mon, 21 Oct 2024 11:54:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009080108.4170320-5-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: k3-r5: Add compile testing support
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241016164141.93401-1-afd@ti.com>
+ <20241016164141.93401-3-afd@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20241016164141.93401-3-afd@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Oct 09, 2024 at 10:01:05AM +0200, Arnaud Pouliquen wrote:
-> This patch updates the rproc_ops struct to include an optional
-> release_fw function.
+On 10/16/24 11:41 AM, Andrew Davis wrote:
+> This driver can be compile tested on non-K3 architectures as long
+> as TI_SCI_PROTOCOL is not compiled as a module. Enable this here
+> to improve this driver's build coverage.
 > 
-> The release_fw ops is responsible for releasing the remote processor
-> firmware image. The ops is called in the following cases:
-> 
->  - An error occurs in rproc_start() between the loading of the segments and
->       the start of the remote processor.
->  - after stopping the remote processor.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Signed-off-by: Andrew Davis <afd@ti.com>
 > ---
-> Update vs v9 revision:
-> - New commit that preplace previous one to introduce ops->release_fw
-> ---
->  drivers/remoteproc/remoteproc_core.c | 5 +++++
->  include/linux/remoteproc.h           | 3 +++
->  2 files changed, 8 insertions(+)
+>   drivers/remoteproc/Kconfig | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 7694817f25d4..46863e1ca307 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1258,6 +1258,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
->  
->  static void rproc_release_fw(struct rproc *rproc)
->  {
-> +	if (rproc->ops->release_fw)
-> +		rproc->ops->release_fw(rproc);
-> +
->  	/* Free the copy of the resource table */
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
-> @@ -1377,6 +1380,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  unprepare_subdevices:
->  	rproc_unprepare_subdevices(rproc);
->  reset_table_ptr:
-> +	if (rproc->ops->release_fw)
-> +		rproc->ops->release_fw(rproc);
->  	rproc->table_ptr = rproc->cached_table;
->  
->  	return ret;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 73f640dd0fc0..bdf4d94a9e63 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -381,6 +381,8 @@ enum rsc_handling_status {
->   * @panic:	optional callback to react to system panic, core will delay
->   *		panic at least the returned number of milliseconds
->   * @coredump:	  collect firmware dump after the subsystem is shutdown
-> + * @release_fw:	optional function to release the firmware image from ROM memories.
-> + *              This function is called after stopping the process or in case of an error
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 0ac1c8a6e4581..83962a114dc9f 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -355,7 +355,8 @@ config TI_K3_M4_REMOTEPROC
+>   
+>   config TI_K3_R5_REMOTEPROC
+>   	tristate "TI K3 R5 remoteproc support"
+> -	depends on ARCH_K3
+> +	depends on ARCH_K3 || COMPILE_TEST
 
-... after stopping the process?
+kernel test robot is giving some extra warning now around the lines:
 
->   */
->  struct rproc_ops {
->  	int (*prepare)(struct rproc *rproc);
-> @@ -403,6 +405,7 @@ struct rproc_ops {
->  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->  	unsigned long (*panic)(struct rproc *rproc);
->  	void (*coredump)(struct rproc *rproc);
-> +	void (*release_fw)(struct rproc *rproc);
->  };
->  
->  /**
-> -- 
-> 2.25.1
-> 
+memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+
+This was already an issue and threw warnings even on ARM64 builds, but
+now that we can compile test on other archs, all those will start
+complaining too.
+
+Fix is easy, just s/memset()/memset_io() here. I'll give that a test
+run then send a patch.
+
+Andrew
+
+> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+>   	depends on OMAP2PLUS_MBOX
+>   	help
+>   	  Say m here to support TI's R5F remote processor subsystems
