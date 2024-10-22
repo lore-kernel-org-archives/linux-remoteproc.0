@@ -1,101 +1,85 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D82038C9;
-	Tue, 22 Oct 2024 21:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A6015573B;
+	Tue, 22 Oct 2024 21:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729632936; cv=none; b=WFUUe50PN27NiWAqGtH1+XNz3VAKdcjSBMWrQN2kGeu7PClHFOuNmVwuUGjLr2MxsEMyntadz6Q0OOJTiRZ03STfwbrKTxfLDHDWT3ElhJARmB2SdOXVh7nI5eUlfkdg+8WeiEap3WYNWD/WI6hLt/43agwRS/4j7c63RTXX/38=
+	t=1729633634; cv=none; b=K8fjTIz97R7tNPAvLmSB9+EujQNCmyoTJwp9y201a4mapQvL/m/BpFXztL/E2kKe6qWREt9lCjjE0apv9WBGWrJI/QKFi/bpe92xTOF+3Oi1s0aBqJVMSWAX6m7IpTpvElwllhL4I7vlfn9uLoViGjXkhUIX2doBfXPlm75zUgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729632936; c=relaxed/simple;
-	bh=khqAKUaBlTUcj257l5qQoN0wPr87NJmbqzaFVDfK9sQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UCT3JubyHp3vjsTaHHSfso96UTGCWOPvX/4m8cWYp+GLdtZqJ4qNFbaXTHycxtmjsGD3iXxSjNYvcZ608vTDw0ZtWw0vTYwOQSVPcfoStfS7f2Er2QizUd9GRhzsXyVN7TiSLhLbDXu/Nih1ep4SPRDq4QrW7Es8WrqxxV3/RB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLz+mVc/; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729633634; c=relaxed/simple;
+	bh=54lMYI81ZCLCzLazRDgv84RPFEXJ/NhUokeNeo2HYAE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TA1Xwm2QDoOWYJlLHt0wVMsfZFHencjgeFVA9mu2vglpL/t+oojTjcbDLNENC/SQAZPPpaC17srlCe6mOtzba1RonWff9IP5tF0K5Bf8EF0nxFTQvcCXn+fA+wB7PlU/DXl+u8K03nSE49lWjGmU6EPlAzZYMozkwAe2kE9Ik1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=n/wD3nat; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLz+mVc/"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so4463205a91.2;
-        Tue, 22 Oct 2024 14:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729632934; x=1730237734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a5VMbFcY6CEGa8mSQ8SIl+CmW5nmrRXjE9y4EUBsQZI=;
-        b=RLz+mVc/wkmZi7TBEPNSkSCQ8KLoCsgXv5YpB91GMk+dTeDNvNlI2f7923q9kBVaUX
-         ppFgW8bxYtxR+BF4nDcFJc/q/ysO3c/8TBKlhioUtQhILg0eIH/VNRsd21S55AwSoNOu
-         GVjd/Ou6n59cqtp1TYh+anUTqctc3q9cqIuIz/epfTG9uQwHW8wBYaCvkCqlIbFgdrcc
-         rnUEQA0VRqT6QWTA7vE11vV8Cm+qDLNuL9L+ynMM2whiyES1LYAPFoWjux5OIDthgoFl
-         gukS8aivrY9ONGTZLUurl8leBc4ATnb9BmnRrix251AzpgCyjTP2DLw/2Z0Mx5bngjJ9
-         JPjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729632934; x=1730237734;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a5VMbFcY6CEGa8mSQ8SIl+CmW5nmrRXjE9y4EUBsQZI=;
-        b=tBsFUOAgU0l5sVNlNwa4XGmAYhLRj93xUw6hGcWznzbLtk6HBkLkTzJ1u+VeZ2AiLE
-         g1LxFPgGz4hsV7A13cVaeKvy5yApG5bVfnnogeTehRqHn06KjmB3PuUV5Ul+8WQjnXFm
-         PSQyn9f9JR/fAJ+go2IivIirghfG7znW0+MpyNFnng6N3f/GrrHV9LO+VGZdKTp/cUu5
-         ETUvaUsol9K0V/Xt7em1ZFPtqRfjwKdLO2tED6IKcADhcP1FwKlXl4/HJCPnLTRAgKZB
-         57YiHFgMyxfVm7L2Wz7XuuzPkm4jdFCIWgYdQ8f49Hv8OgsuZqyCbbzUYKr7LoFGcX7K
-         U6Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCkVmwjz1C70LaenA8dfYAQcNmZvJpwXL5YM+QL3u4SGYV9O929lm2Wxe7SGQcM2elKtiEe6hZ5to=@vger.kernel.org, AJvYcCWfWuALV6k8uJ8ii4hsHeIstLHUMKFjQbVbmjW1pZlpvSFgkS22awKpFgi/9s/qYk3LPXAZuaGjiBhMXZHO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDr4uQ9jUiiBEA4sMlEaLRAqoy7zFNhl+JTFI2DohrZdOaB2JF
-	72l1bEZfrCLtGtwhyotgFgTL0rHxTLtFmpnqUCoQigBVTuRBL5gy
-X-Google-Smtp-Source: AGHT+IGoyJ44rXCIw1j5svtG4RuoSRt31SniDfJaYujZUOpfUUFYRHCYtHqX/vo+ifoh3XM2xD7Cmg==
-X-Received: by 2002:a17:90a:68c8:b0:2d8:e3f3:fd66 with SMTP id 98e67ed59e1d1-2e76b727d1dmr363309a91.34.1729632934138;
-        Tue, 22 Oct 2024 14:35:34 -0700 (PDT)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad4ed73fsm6726369a91.44.2024.10.22.14.35.32
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 14:35:33 -0700 (PDT)
-From: anish kumar <yesanishhere@gmail.com>
-To: ohad@wizery.com,
-	bjorn.andersson@linaro.org,
-	mathieu.poirier@linaro.org,
-	corbet@lwn.net
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH 7/7] rpmsg: Documentation: update the path
-Date: Tue, 22 Oct 2024 14:35:16 -0700
-Message-Id: <20241022213516.1756-8-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241022213516.1756-1-yesanishhere@gmail.com>
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="n/wD3nat"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5F2B342C02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1729633622; bh=HZXHmiW1HxFL/xAxHiulNuglGOrc0zHRLUQBWbfPl8s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=n/wD3nataBy95toyFKvAAoYsDyPnnyCI6KN+1KXEvNrNxIOsj/4b0W8E12iw6UIZ3
+	 KfEJPXYvcKyp2ZmtSpV+67qpPC3xGOFHlczqjGV5dZqmApwz+V9I3DWVb6dR4L+Mky
+	 nsIjUCufm0n2FD+53DMwwguEe3xFR9RySXRXMwkHIBsP2VxjFG/NsE6SYxVH3/NLRm
+	 w8oGSCkQKyg1LoltsygVWW55spcx/qZ5kuMcQKltxgYDajEz0n7YRpHE5P3ebF5pGO
+	 BQ8Dy1gpblgihw1TBgKFh8QxG0RL6fIxDIvm2NZXOg1YJus5ykB6wDO6e5j+qVnX3t
+	 nJdAImGV2++dw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5F2B342C02;
+	Tue, 22 Oct 2024 21:47:02 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: anish kumar <yesanishhere@gmail.com>, ohad@wizery.com,
+ bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, anish kumar <yesanishhere@gmail.com>
+Subject: Re: [PATCH 3/7] Remoteproc: Documentation: add the main index
+In-Reply-To: <20241022213516.1756-4-yesanishhere@gmail.com>
 References: <20241022213516.1756-1-yesanishhere@gmail.com>
+ <20241022213516.1756-4-yesanishhere@gmail.com>
+Date: Tue, 22 Oct 2024 15:47:01 -0600
+Message-ID: <87h693olnu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Remoteproc documentation is moved from
-text file to reStructuredText file.
+anish kumar <yesanishhere@gmail.com> writes:
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- Documentation/staging/rpmsg.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Add index file so that readthedocs.io pick this file
+> up and properly build the documentation site.
+>
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/remoteproc/index.rst | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/remoteproc/index.rst
 
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 1ce353cb232a..937cd2574584 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -5,7 +5,7 @@ Remote Processor Messaging (rpmsg) Framework
- .. note::
- 
-   This document describes the rpmsg bus and how to write rpmsg drivers.
--  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
-+  To learn how to add rpmsg support for new platforms, check out remoteproc
-   (also a resident of Documentation/).
- 
- Introduction
--- 
-2.39.3 (Apple Git-146)
+readthedocs.io is not particularly relevant here; this change is needed
+simply to make the docs build work right.
 
+Properly, you should have added a version of this file first, since your
+series is not bisectable as organized.  For a docs change, that alone
+does not merit redoing the series, though.  However...
+
+You do need to remove the entry in Documentation/staging/index.rst, or
+you will break the docs build.
+
+Please be sure to do a proper docs build before sending a patch series
+like this.
+
+More to the point, though, why are you creating a new top-level
+directory for this?  That's something I would really like to avoid.  It
+looks like the existing document fits well in the driver-api manual, is
+there a reason why you haven't put it there?
+
+Thanks,
+
+jon
