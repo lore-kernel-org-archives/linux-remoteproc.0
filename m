@@ -1,157 +1,102 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ABA1BF80C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 23 Oct 2024 15:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C401C4605
+	for <linux-remoteproc@vger.kernel.org>; Wed, 23 Oct 2024 15:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729697531; cv=none; b=FR26PJ3QamnBPqhgo/qFI9Mm0jk+eT1ss6P6QIWVo566AKVcXKoybVa753k4LqBjHRsjrkX3OPOpz3ewdzgZTh+IBS1lCxzNsGnPatZRS4Pv81pKzF6kLS2InVc8yzUe5LatWDh0ySMpvef58IrgBZXedWPvnn5U0BUic3w/Gj8=
+	t=1729697738; cv=none; b=Da+HYNaLP+FEfR6drehxYm2ufiqvVepJosNFAOxhCSA+bcmMvGbdobI/62KPvNESWqCpIuvP8Kt2q+YNydkxXS0uxsvyligc6XkJJpg93tIOEr1hHkIXlg4jfkOYhiCvjBRn4dNta3gyw5h61hnbGMSjA8ELbjXyzXA2aJwBdE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729697531; c=relaxed/simple;
-	bh=uJiT7hVx/xahCA0VcyVkbeg7wZqhI1sP4Nlvax/O2s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6ebxRFFfleGrL9HbIdVQiJ/sajbvSrdPQlEYVLr7+uIq4i15D6K1JrpDiz5KGq47+6Ev9sgl8HNe1vNeqWngpEH8YObSd2Z3+jxuQgdm3oOE7dhsl945ifOyXHnmvLeoJBnfXw/FEaGAr9iw4xUVn/QGnpZcL30rJ5RfRfnCkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zBatHdAm; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1729697738; c=relaxed/simple;
+	bh=JEiFqaiHbJ5O9qpGbnATSfozpf1WVA+k3B8AGzEoILs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qL8jjWLa0kTzQExtD+eTKkw8mmm7VeGZKvW61FzAyUvedSUjRaDYzsudjgrVmum/hHwUgi5NDl9uaAQEf4FVGCNlgaJ2PCOcWSHkNclYQiobdtR2scVdUjvpZycFM+BWT1VU2gfuCff0/3kntB1yQRcG6xrEDOSpIgwVwVOaygI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xrphja/X; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zBatHdAm"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71eb1d0e3c2so3382677b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Oct 2024 08:32:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xrphja/X"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso963791a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Oct 2024 08:35:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729697529; x=1730302329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dN8a7fvduKCx2N8X+Fze1sdag/dsDlxBspq41TWyoeg=;
-        b=zBatHdAmcVrl714jPyH8NsfKrLQm+5+jgJFbKOH/ZEj5SYskgqXG++lv7n36hu/gO5
-         eiCrJZq7cGcSwYOw8uyHgJqeyDkYjE0VbPJ/XMUgBeZEOih3tV2+oNMtAA1WznNRBOmm
-         rluRDyLLWJ8rIOYTujaIGgLq283HQrLbLfOvnMowf/JoTjTzmz4eBYU3RAKIYYl6M4mq
-         gtJQMnZQ9FK8V6IwioieJ+wIB/4L/vK3f0N4gJQVSbMi558+Sw2g5tEbUh5jZBmOqfCk
-         /4/uCKc9/7oKaW7+gPs5AsRbrauqQoqYpIfyP/Y8a4M89uy40cirH9TUUbbF/KHKhbdq
-         /Qpw==
+        d=linaro.org; s=google; t=1729697735; x=1730302535; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p28uc21fWFodaB6on+PruEO3BbZIAcbTdzEIX0nHYoE=;
+        b=Xrphja/XXX6pZHmWTcyk8WMkgghBOwvUeQrPKdKBLgFQqpkOcIRkwOzKCVvG+dpnqC
+         0RusUJ+ufScL+S0G2y667I0dxU7efVBOmXlSMxhmBWX7jsNqFLRmzLoUglyA9YgXc0Fq
+         Z5H4+NfZafiP6jiWG76OKkPO7XnaOoH4XsXaXdhaAe0KbiqLNOv4/hxBxi9JP4IJMrt7
+         xmFq90G7cXWDW0PYH9l3MYrzhrR2qn0hVogTteD5PfcnbBUAXPdX2/K2Un8eF+4ee8uc
+         iV2NVEpMe3D9B6nCrlS3d4O3cuKUbPI9Hm1cAvv1z5kw44TJYJEyx1qmVkgdvMulcBOE
+         QacA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729697529; x=1730302329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dN8a7fvduKCx2N8X+Fze1sdag/dsDlxBspq41TWyoeg=;
-        b=OENL48HsTyZLiC7m9wGFZ4c1LY/lfcxSxl35DNps9R14ZEGQxywh2J18I54PEpzp5T
-         gCAsav3vYvEXbt7ogL+QYo/VAfehZDtGQdXezqIyieC9B0TWm6fs1WRNJE5x9MitxgH6
-         gqZqU8VDLNtz77QYpZUEdlhcirkFN2QBVD/FASpbFYMkm5xa3+94CNRj1/b+sIfrHMrL
-         xMlHt+vhzB+/SjAEMFsB28C7sGjDw7epNKGDlw7qtZ87bOp355Wh+u/Yfx4AmH6pfKkH
-         VtB8+XTTdQ9tw73GBhwBYNI/akGKIYT+9qHL8dv907Br7a5UNenhGVs/IGEjrezlxypg
-         XmoA==
-X-Forwarded-Encrypted: i=1; AJvYcCU549ymIlpcz0z0o2gZxp0TvY7Rj8wNbzsw11URGdoD15Sb3GzgGq/Na+ASLuaCLYaK0o/dTO0QxfIYVugBfb8C@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQChmQ8NoKktnYcJ7D7FHMOMmCWaTbloQz4/BtVjFaI8PH7VVo
-	bZ1sRaon+7Oj9T64ObKRgFyPuAXnQW5LGmDzBA5Gl2Jna17R1RzhNrARfMkWlIA=
-X-Google-Smtp-Source: AGHT+IEuMqNTvUaDPURzgubw6rU0RA+n8yh/M6Nh+flur01DK+b9L/ZnZf5Kb+mWgIm3kN/nyflVwg==
-X-Received: by 2002:a05:6a20:c901:b0:1cf:3a52:6ad6 with SMTP id adf61e73a8af0-1d978b3daacmr3402937637.24.1729697528716;
-        Wed, 23 Oct 2024 08:32:08 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:4d51:82be:d1c9:bc03])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407f19sm6456248b3a.190.2024.10.23.08.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 08:32:08 -0700 (PDT)
-Date: Wed, 23 Oct 2024 09:32:05 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	iuliana.prodan@nxp.com, peng.fan@nxp.com,
-	Alexandru Lastur <alexandru.lastur@nxp.com>
-Subject: Re: [RFC PATCH] remoteproc: core: Add support for predefined
- notifyids
-Message-ID: <ZxkW9SUr91PyH9c/@p14s>
-References: <20241018110929.1646410-1-daniel.baluta@nxp.com>
+        d=1e100.net; s=20230601; t=1729697735; x=1730302535;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p28uc21fWFodaB6on+PruEO3BbZIAcbTdzEIX0nHYoE=;
+        b=YU1uqIzJBB1uZITxwZESNBHLlWbP7zXlc6ftwdsarHuVd4JlAgvx4KiNjgxEfBoElI
+         EIEcQ6RpHIKuAhYeXAq1nOMQEjEU7ECdKNRNdQz+WJeqNEkWk2OOYlHEoEyln1GCbgPt
+         TRj8aB9Lk5ECnV3hp/WProODyw73KdQGkmiUuT6E0mOinx7wde1nwtBiohNf75R+K/UP
+         8lHG5NUB9Ug56cxpq/HDCJ8TfmcApEacW291tFsAUmP3PUFiGMEeAxSdpPc2d2bxVf+y
+         TMzfFlgErGUfoLz94cj5fWwgZBBV+gbjoIQ4j+++Bpu7kKalJRTVw93BrERD7PBYjcw1
+         61og==
+X-Forwarded-Encrypted: i=1; AJvYcCUhFKNBVXtdegzc8KW4Cl47FoESLHRzxOM/xWXnTaDmSKUmuCroBgchsVCjbbE1ejGh6vFJDqzSAj9d4/0uMa4f@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAUz0YGC1ns9zkuAQy9ovGBbV6sQeAGZryI2ISQ6lkWeAhN3C
+	t40oO5M+XLbkT8KnVSFxfNVPsHrS2OVt9vxuR0YjKpzr+BpSEv6H8u7v3Vw8CXAiAo0SR1tRlgr
+	lxnnuzBYtyJsjugrEUrLDXSz5ex0wCgwiJ9cTXQ==
+X-Google-Smtp-Source: AGHT+IFDu/ofejso4Js1LrscXtrQ2iS21X03+5ghxi5THGUm+IhbV0H9o95IMf+2KcTs/9Akb+ABfU9jyXps9vBix+Y=
+X-Received: by 2002:a05:6402:270c:b0:5c9:813a:b1c1 with SMTP id
+ 4fb4d7f45d1cf-5cb7944cd65mr8062677a12.1.1729697735452; Wed, 23 Oct 2024
+ 08:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018110929.1646410-1-daniel.baluta@nxp.com>
+References: <20241023053357.5261-1-yesanishhere@gmail.com> <87a5evncxf.fsf@trenco.lwn.net>
+In-Reply-To: <87a5evncxf.fsf@trenco.lwn.net>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 23 Oct 2024 09:35:24 -0600
+Message-ID: <CANLsYkyq7wJHa77ahJBD5kXhhZB74XazU78aDHtUzgRgFdTrNQ@mail.gmail.com>
+Subject: Re: [PATCH 0/1] remoteproc documentation changes
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: anish kumar <yesanishhere@gmail.com>, ohad@wizery.com, bjorn.andersson@linaro.org, 
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Daniel,
+On Wed, 23 Oct 2024 at 07:53, Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> anish kumar <yesanishhere@gmail.com> writes:
+>
+> > This patch series transitions the documentation
+> > for remoteproc from the staging directory to the
+> > mainline kernel. It introduces both kernel and
+> > user-space APIs, enhancing the overall documentation
+> > quality.
+> >
+> > V4:
+> > Fixed compilation errors and moved documentation to
+> > driver-api directory.
+> >
+> > V3:
+> > Seperated out the patches further to make the intention
+> > clear for each patch.
+> >
+> > V2:
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
+>
+> So I think you could make better use of kerneldoc comments for a number
+> of your APIs and structures - a project for the future.  I can't judge
+> the remoteproc aspects of this, but from a documentation mechanics point
+> of view, this looks about ready to me.  In the absence of objections
+> I'll apply it in the near future.
+>
 
-On Fri, Oct 18, 2024 at 02:09:29PM +0300, Daniel Baluta wrote:
-> Currently we generate notifyids in the linux kernel and override
-> those found in rsc_table.
-> 
-> This doesn't play well with users expecting to use the exact ids
-> from rsc_table.
-> 
-> So, use predefined notifyids found in rsc_table if any. Otherwise,
-> let Linux generate the ids as before.
-> 
-> Keypoint is we also define an invalid notifid as 0xFFFFFFFFU. This
-> should be placed as notifids if users want Linux to generate the ids.
-> 
-> Signed-off-by: Alexandru Lastur <alexandru.lastur@nxp.com>
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
->  include/linux/remoteproc.h           |  1 +
->  2 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..9f00fe16da38 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -332,6 +332,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	int ret, notifyid;
->  	struct rproc_mem_entry *mem;
->  	size_t size;
-> +	int start, end;
->  
->  	/* actual size of vring (in bytes) */
->  	size = PAGE_ALIGN(vring_size(rvring->num, rvring->align));
-> @@ -363,9 +364,18 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	/*
->  	 * Assign an rproc-wide unique index for this vring
->  	 * TODO: assign a notifyid for rvdev updates as well
-> -	 * TODO: support predefined notifyids (via resource table)
->  	 */
-> -	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
-> +
-> +	start = 0;
-> +	end = 0;
-> +
-> +	/* use id if specified in rsc table */
-> +	if (rsc->vring[i].notifyid != RSC_INVALID_NOTIFYID) {
-> +		start = rsc->vring[i].notifyid;
-> +		end = start + 1;
-> +	}
+Please hold off before applying, I will review the content in the coming days.
 
-This will likely introduce a backward compatibility issue where anyone that
-has more than one vring and set their notifyids to anything else than 0xFFFFFFFF
-in the resource table will see a boot failure.
-
-A while back the openAMP group started discussions on using the configuration
-space of a virtio device to enhance device discovery, with exactly this kind of
-use case in mind.  I think it is the only way to move forward with this
-feature, though it is a big job that requires a lot of community interactions.
-
-Regards,
+Thanks,
 Mathieu
-
-> +
-> +	ret = idr_alloc(&rproc->notifyids, rvring, start, end, GFP_KERNEL);
->  	if (ret < 0) {
->  		dev_err(dev, "idr_alloc failed: %d\n", ret);
->  		return ret;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index b4795698d8c2..98c3e181086e 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -238,6 +238,7 @@ struct fw_rsc_trace {
->  	u8 name[32];
->  } __packed;
->  
-> +#define RSC_INVALID_NOTIFYID 0xFFFFFFFFU
->  /**
->   * struct fw_rsc_vdev_vring - vring descriptor entry
->   * @da: device address
-> -- 
-> 2.43.0
-> 
