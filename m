@@ -1,57 +1,57 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7553914A09C;
-	Wed, 23 Oct 2024 05:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE87C14A4D4;
+	Wed, 23 Oct 2024 05:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729661654; cv=none; b=iqIH14f6/LlyBFoEtHlynt7Wi9aJc0l0sGR1ROuGySFmtqYhc+TziyTAWk5oD3p+n8Q06+snqeW80JnHa14irUuIwOi3WxWlU+BthKHcbnhqeYQSAUPAdj3ZHzbCbRkHimcOPbN9s195kufgSM6v0B8AEHPwjHTNPoukHApgyvw=
+	t=1729661656; cv=none; b=jisO7tFJAy3sQBJKHeX/dcDt8rNzrD9nmvlBa2j3dN5CRaHbEBIMOz7K4lbgVto37K2Tq1bAHa4pN1ZnyaNnbdlP9Bxlyx0WTGkMdd5H/Yxnna5GzMEXO+9JINkeA/aR8b4mauOyjeYBi1HSehei32ysrCG7ujR0onAZaHqH0lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729661654; c=relaxed/simple;
-	bh=uTAW3pkWYe+GuE2RBQ/1OUtIO/ENd2+9Ewakwcbcsaw=;
+	s=arc-20240116; t=1729661656; c=relaxed/simple;
+	bh=H08U5oWZUJNTY30DSm31TfVn5UwgrqSEj7at2YqMbM4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gFoA8yI5cOsBv8LQMEjoIWk7BySUm6ZDEQppwDWOL+Ns9K0puASEzWrQCyAolD26c9kOSa3Sod5OVNMMHB3yVhtSuP7CwsbDFiS992c8cPBKgm3eKs9KsA2zxH8/jmPDN48extpXohezeONJ0gbBTx58DUV1HmZYTG56pwBcyc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEbCnGJi; arc=none smtp.client-ip=209.85.216.42
+	 MIME-Version; b=tLtsek0Jb0LfPWgu5yopC0f+FuOiqVE3jFjD4q9Tkh9D2egGitKjlJX/OwT/A/29PkoZOKVEGZJ7l37zMWsYDyAqASOuioV90Tr+j3Psg9vXSFESQA7cyoHRH5GDBX5meWfyKJQMvVvuAhyIhTUCtLD2jsi6PUYGKGBvOkU2Ves=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcLoQ8W/; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEbCnGJi"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so4390449a91.1;
-        Tue, 22 Oct 2024 22:34:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcLoQ8W/"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71eb1d0e3c2so2964998b3a.2;
+        Tue, 22 Oct 2024 22:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729661653; x=1730266453; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729661654; x=1730266454; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z4rRoXjGVEerACUHjG3hf4rLkB65lTUBBhdOo3L4OOE=;
-        b=DEbCnGJiJ6guVZI6VF1+AkOmO8yNkGCB11o3lVfHHwzGDVE6ENPABNiqIXwsgyUlRc
-         LROEhB9uG5CiuRtkNFmmT0nkO7cqfwhEF6fvV2/1SyCou6jf595u+uavPoTxjkI3dJXS
-         8Srd5SreqewwvtHAiYVaVcx07EWHewnAwnUg1vkGojrz+7WHKtL09M+1WrdfQVt3WVQq
-         DH+nhqj24m+qTefQ8OzNmzAvJE0Sjus95GewbVupdGYe+qXnAjdAdY1z0FsZTKrwe/Np
-         XSJnK9ywiGW8oHgn2LQgmWSSK+jS2K+55mepUX504yoBa42arODtLvpgRGekvrKDBPW6
-         MpTw==
+        bh=/wVoklxOBqW21xTyhDYcC8JN3gnOiU9+L5vGfbyRiSg=;
+        b=QcLoQ8W/VxYiAWIBXj/DXsPGDQXKmeRY4Nl4yEaIkMFtmP2do0OEQPALTQxv8sq6ce
+         W9HHNDP28C5MuDfzK6i/eTyUrRm1X5ZvL3uQfyfM51WSIDMiGGi1excfEL3P9am9XnV/
+         P+xFkiY6xA5B1fZYXPG1dg9+ihsiRUIWqU/b9RVTMP48kb+kvb61Bfwhy9tEce8rA9qr
+         InTYrmBwz8uDalwz+xguOedr/AXWDjo5g7BTff5PDXPqQNowktzupwA9xzqJcAlCPpxG
+         /5BsYKAf3WaHroyRhawrT9kFPlsLXIw4uqfoFwyJuPWeK5Y9TJhNY1IVjgZSmtBAxSxh
+         VTDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729661653; x=1730266453;
+        d=1e100.net; s=20230601; t=1729661654; x=1730266454;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z4rRoXjGVEerACUHjG3hf4rLkB65lTUBBhdOo3L4OOE=;
-        b=ugiDYanVNF58ZOqVH5nyQfLoH0sOg76nmuhJaz8y3WOSjLemNSiKVRtzY+2n1iNQKA
-         3yykED/bPTvcgNqKmTHejwCdtsQPRCZL+39clxk3gCPqmJCxVyeUPxULJalUxq+YphQj
-         1tZ8rlywBTpuLVFuRXWTmius6sXnzgAQLkm1vhNsNGL2bFIUOWRDCKdyxr8LXoxTaWGg
-         v5/OdpJmAKgwHrODWs1X15rD0VrFmNtLzQpqVQGgYgw2Kc4T2V98Wmrj62D60VrT8VpB
-         RB0kwypWe982vK8BOl7B6WA7hHqtV9aYt85fIPJLXBwAFiWmf8+ez8Zdm9iI0qYCIixh
-         r4lg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Sv+Ei74bhWwjbrLXD0LxpLe5tv+9vZLCL3hlyJoFpRMFhafmgXm1w0Bt1/Pq5D7xbaaTb6xiR7g=@vger.kernel.org, AJvYcCUUDF+KfghOgFMYRaXbqq4KrAyOlt0C5I46l66SQKaCR1Jnfi9BRx37QnJPaZ8uq5/LMLGrkX6nmyEe2vuU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6PBuMlToNuC6owyifQJXhWzaSUqZ+O5TnSP7ZQUwgQH+WUFHT
-	DIYfHdN6nwQ7+1oRpkmTByPo3nkQEL/MOd47E5wgil2siwPSfXPX
-X-Google-Smtp-Source: AGHT+IFFrs4AhOv4uU0T3PYddUDmXOS8TMkOBlzXFG9cQpqCYBKrekzzHBF92EpgQ2XMGN6LuVsxiA==
-X-Received: by 2002:a17:90a:e681:b0:2e2:a6ee:9280 with SMTP id 98e67ed59e1d1-2e76b6ea2e0mr1494906a91.26.1729661652631;
-        Tue, 22 Oct 2024 22:34:12 -0700 (PDT)
+        bh=/wVoklxOBqW21xTyhDYcC8JN3gnOiU9+L5vGfbyRiSg=;
+        b=UQAWEGLoT0ErOYaMo18HUiVDzoEgNHJa3gACZwZ3CdkRbTDvh1GfP2LQjhXaKSS4oN
+         LVZZuFxoJS2Aldkjzabttl+c5HultG5J5H9pGP4cDJyjLulmJBVKYQjf7LwnRRZYrzZD
+         rB0pN7mdoYS4MJNXggFEmyIl4CARJcNz3q0md9SUM4H5oZar/7yTi8tQE25mjV6Yv4mU
+         fJ/Y6Y5ReQzbcKraal9vWzP/BNIJR4qgj5fBe82003kNJ27ICO+rc0r/HT1AZN609cR7
+         qaVQK9AFTUR66S3oes3nVQKdMJot3FfQJghDeKYrXQF72r2GmlqHUemBZd/5w5y+NzVC
+         Jkxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEuBCxD4tyhvEkfnGjaBQKrptM+OpI9zzavIO2sAXuh8bBUz713WPn2gCzC3abMlTRSLjUUXxg2hs=@vger.kernel.org, AJvYcCWJmBYIp5OgvS0gVA4c7HpgvQMXJUap6vNyoC4LynvcmIT126cx2UvNQ4k8rqdFun9cLq/hPa43NSiUAZuK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjlRwMcyH+RU8VtWIJlSPqdllL5elF+/+QB5/aaEqT4B1eH3JA
+	FMgpOLBIytDaw2Mj9rDy9qnGW58oWrhhg2cSLiPNs3Yj3nvla0Bm8lkyBoWI
+X-Google-Smtp-Source: AGHT+IGacROSmH/+O42SAkylik2rWf6UAyq1kifRT6Ue1e3+6d9SLf7AmlXEP58plectNdXSlew63g==
+X-Received: by 2002:a05:6a21:3942:b0:1d9:2bed:c7d8 with SMTP id adf61e73a8af0-1d978bd541cmr1775484637.43.1729661654191;
+        Tue, 22 Oct 2024 22:34:14 -0700 (PDT)
 Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.10
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.12
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 22:34:11 -0700 (PDT)
+        Tue, 22 Oct 2024 22:34:13 -0700 (PDT)
 From: anish kumar <yesanishhere@gmail.com>
 To: ohad@wizery.com,
 	bjorn.andersson@linaro.org,
@@ -61,9 +61,9 @@ Cc: linux-remoteproc@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH V4 5/7] Remoteproc: Documentation: add userspace api
-Date: Tue, 22 Oct 2024 22:33:55 -0700
-Message-Id: <20241023053357.5261-6-yesanishhere@gmail.com>
+Subject: [PATCH V4 6/7] MAINTAINERS: remoteproc documentation path update
+Date: Tue, 22 Oct 2024 22:33:56 -0700
+Message-Id: <20241023053357.5261-7-yesanishhere@gmail.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <20241023053357.5261-1-yesanishhere@gmail.com>
 References: <20241023053357.5261-1-yesanishhere@gmail.com>
@@ -75,112 +75,27 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add information about how userspace
-can control the remoteproc framework
-and different ways to do that.
+As remoteproc documentation moved from staging,
+update the same in this file.
 
 Signed-off-by: anish kumar <yesanishhere@gmail.com>
 ---
- Documentation/driver-api/remoteproc/index.rst |  1 +
- .../driver-api/remoteproc/remoteproc-api.rst  | 77 +++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 Documentation/driver-api/remoteproc/remoteproc-api.rst
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/driver-api/remoteproc/index.rst b/Documentation/driver-api/remoteproc/index.rst
-index 7fa1c5755be8..840b4672352b 100644
---- a/Documentation/driver-api/remoteproc/index.rst
-+++ b/Documentation/driver-api/remoteproc/index.rst
-@@ -20,6 +20,7 @@ Authors:
- 
-    remoteproc
-    remoteproc-kernel-api
-+   remoteproc-api
- 
- Mailing List
- ------------
-diff --git a/Documentation/driver-api/remoteproc/remoteproc-api.rst b/Documentation/driver-api/remoteproc/remoteproc-api.rst
-new file mode 100644
-index 000000000000..0306b331a20e
---- /dev/null
-+++ b/Documentation/driver-api/remoteproc/remoteproc-api.rst
-@@ -0,0 +1,77 @@
-+==================================
-+The Linux Remoteproc userspace API
-+==================================
-+
-+Introduction
-+============
-+
-+A Remoteproc (rproc) is a subsystem for managing the lifecycle
-+of a processor that is connected to Linux.
-+
-+At times, userspace may need to check the state of the remote processor to
-+prevent other processes from using it. For instance, if the remote processor
-+is a DSP used for playback, there may be situations where the DSP is
-+undergoing recovery and cannot be used. In such cases, attempts to access the
-+DSP for playback should be blocked. The rproc framework provides sysfs APIs
-+to inform userspace of the processor's current status which should be utilised
-+to achieve the same.
-+
-+Additionally, there are scenarios where userspace applications need to explicitly
-+control the rproc. In these cases, rproc also offers the file descriptors.
-+
-+The simplest API
-+================
-+
-+Below set of api's can be used to start and stop the rproc
-+where 'X' refers to instance of associated remoteproc. There can be systems
-+where there are more than one rprocs such as multiple DSP's
-+connected to application processors running Linux.
-+
-+.. code-block:: c
-+
-+   echo start > /sys/class/remoteproc/remoteprocX/state
-+   echo stop > /sys/class/remoteproc/remoteprocX/state
-+
-+To know the state of rproc:
-+
-+.. code-block:: c
-+
-+   cat /sys/class/remoteproc/remoteprocX/state
-+
-+
-+To dynamically replace firmware, execute the following commands:
-+
-+.. code-block:: c
-+
-+   echo stop > /sys/class/remoteproc/remoteprocX/state
-+   echo -n <firmware_name> >
-+   /sys/class/remoteproc/remoteprocX/firmware
-+   echo start > /sys/class/remoteproc/remoteprocX/state
-+
-+To simulate a remote crash, execute:
-+
-+.. code-block:: c
-+
-+   echo 1 > /sys/kernel/debug/remoteproc/remoteprocX/crash
-+
-+To get the trace logs, execute
-+
-+.. code-block:: c
-+
-+   cat /sys/kernel/debug/remoteproc/remoteprocX/crashX
-+
-+where X will be 0 or 1 if there are 2 resources. Also, this
-+file will only exist if resources are defined in ELF firmware
-+file.
-+
-+The coredump feature can be disabled with the following command:
-+
-+.. code-block:: c
-+
-+   echo disabled > /sys/kernel/debug/remoteproc/remoteprocX/coredump
-+
-+Userspace can also control start/stop of rproc by using a
-+remoteproc Character Device, it can open the open a file descriptor
-+and write `start` to initiate it, and `stop` to terminate it.
-+
-+[FIXME -- better explanations]
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eeb4c70b3d5b..1fa39bee6ab7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15907,7 +15907,7 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git rproc-next
+ F:	Documentation/ABI/testing/sysfs-class-remoteproc
+ F:	Documentation/devicetree/bindings/remoteproc/
+-F:	Documentation/staging/remoteproc.rst
++F:	Documentation/driver-api/remoteproc/
+ F:	drivers/remoteproc/
+ F:	include/linux/remoteproc.h
+ F:	include/linux/remoteproc/
 -- 
 2.39.3 (Apple Git-146)
 
