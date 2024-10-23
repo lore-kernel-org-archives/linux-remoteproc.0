@@ -1,85 +1,90 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A6015573B;
-	Tue, 22 Oct 2024 21:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E065C603;
+	Wed, 23 Oct 2024 05:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729633634; cv=none; b=K8fjTIz97R7tNPAvLmSB9+EujQNCmyoTJwp9y201a4mapQvL/m/BpFXztL/E2kKe6qWREt9lCjjE0apv9WBGWrJI/QKFi/bpe92xTOF+3Oi1s0aBqJVMSWAX6m7IpTpvElwllhL4I7vlfn9uLoViGjXkhUIX2doBfXPlm75zUgA=
+	t=1729661644; cv=none; b=oeTiWWspMoImy7rLS/j7vSLevRdBQd/dd8lpLczfoTE++TYGvNM/G5hqKc4/4M6g1nh4UzTJiK7HEEruzQAWTsRVMCBY3mrVsdZ73/ATxeh0luPrSOkLOHyt/XvZQ/CEeXoDIjQrzZm70CMOa9i7S+UZPHcVELSDsoimBGFnni4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729633634; c=relaxed/simple;
-	bh=54lMYI81ZCLCzLazRDgv84RPFEXJ/NhUokeNeo2HYAE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TA1Xwm2QDoOWYJlLHt0wVMsfZFHencjgeFVA9mu2vglpL/t+oojTjcbDLNENC/SQAZPPpaC17srlCe6mOtzba1RonWff9IP5tF0K5Bf8EF0nxFTQvcCXn+fA+wB7PlU/DXl+u8K03nSE49lWjGmU6EPlAzZYMozkwAe2kE9Ik1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=n/wD3nat; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1729661644; c=relaxed/simple;
+	bh=2S1bcZodFhvcdZA4mjINP6OKmnA+FrholvpVMWYy6HE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bbcSaSfbC3MTzG4o3XIn7MXvemzWGG4iR4XRVuHUyuYh446DKL/cxjtJexEIPtZcny1Vp85kHtovOBMSkhkgXe77egRf04ZpxaNxGmOL2/wLjuQbA+U1kGgNLbEfjSgqN6zFvlX0ZJoGHEYpHjMHdFbsFcjYQERwRiH3zx2zCLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGvJEo5r; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="n/wD3nat"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5F2B342C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729633622; bh=HZXHmiW1HxFL/xAxHiulNuglGOrc0zHRLUQBWbfPl8s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=n/wD3nataBy95toyFKvAAoYsDyPnnyCI6KN+1KXEvNrNxIOsj/4b0W8E12iw6UIZ3
-	 KfEJPXYvcKyp2ZmtSpV+67qpPC3xGOFHlczqjGV5dZqmApwz+V9I3DWVb6dR4L+Mky
-	 nsIjUCufm0n2FD+53DMwwguEe3xFR9RySXRXMwkHIBsP2VxjFG/NsE6SYxVH3/NLRm
-	 w8oGSCkQKyg1LoltsygVWW55spcx/qZ5kuMcQKltxgYDajEz0n7YRpHE5P3ebF5pGO
-	 BQ8Dy1gpblgihw1TBgKFh8QxG0RL6fIxDIvm2NZXOg1YJus5ykB6wDO6e5j+qVnX3t
-	 nJdAImGV2++dw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 5F2B342C02;
-	Tue, 22 Oct 2024 21:47:02 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: anish kumar <yesanishhere@gmail.com>, ohad@wizery.com,
- bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, anish kumar <yesanishhere@gmail.com>
-Subject: Re: [PATCH 3/7] Remoteproc: Documentation: add the main index
-In-Reply-To: <20241022213516.1756-4-yesanishhere@gmail.com>
-References: <20241022213516.1756-1-yesanishhere@gmail.com>
- <20241022213516.1756-4-yesanishhere@gmail.com>
-Date: Tue, 22 Oct 2024 15:47:01 -0600
-Message-ID: <87h693olnu.fsf@trenco.lwn.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGvJEo5r"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e30116efc9so5221432a91.2;
+        Tue, 22 Oct 2024 22:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729661642; x=1730266442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2S1bcZodFhvcdZA4mjINP6OKmnA+FrholvpVMWYy6HE=;
+        b=TGvJEo5r0bIE/agoE3sxYyX40lYVksq4AxBl53AJu9nMVouTBDVX+IRKft6IEbNnZ+
+         YbVPpLpo1w24d6DDRJEvW91Pjxg1jZps+3YuRUwcFB1VzzBqFh0xbbVVs+doAWHfP17S
+         A96P2WojDTGT1PdKLFBtwyAZCt/Djz358YTV0FjHb7at/0FdDZ1oYzkAGFAyQTFn5Xt9
+         tnkEjUDU1kimDIG40oKGsmQMVFKhuzF9sJ4vMdZIuNCXIzy4epFdssEgcMV3t+Su6MEF
+         DL3U/+/xu8hkXP9vV6D+ouczVcqylGJCuI3hPXs6Nw3Ugjl2QXch8o/Fv3VLhHUvf8y1
+         m14Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729661642; x=1730266442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2S1bcZodFhvcdZA4mjINP6OKmnA+FrholvpVMWYy6HE=;
+        b=iU4KGFer9z6XlLsutfB4QaCGiSbXYkFE7AUgwdZurSW4jMUp/FuIXxKlrZdNTM8htF
+         cT5M6wWrkDRMqcfRHbC1I2Its7KQb0+YYQBA8fv/I7FSFSs11KLLZpQLhMYpceNz9SPn
+         hp9DOcsTGdw7K48QzYLVqGUZfE2j03JBf5PCDWEPyPd/Ckdc+IJybYE9o4r/UyhwYFX2
+         VaNjE6o/eB7aUDvCMSpJWIZZDiYF/ByGU4RrFkt6vBfYV+qT39WPoG3ud1osL0vVBun+
+         TwjTS6/NJDNStkBPr7sQxjLKA+N5NLibm5sn3rWtZFtrSkNwBG+/FWOajBFl4PAUFh1s
+         jWbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMtcNAC2/UysLgPLD0YrgjIT0QL/1LwjyMkJWibogGK48U0rju14YY0rdLl4kwV+4USrKtZq40iIk=@vger.kernel.org, AJvYcCVJOaSO/aIccyjQSZ2Zdi7qn136XitK3+I9kBGMd1Klo2xNXazYm8ljMahbXVLWIRxKUE9HIpPZ1Cpo4uH4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTnC7Wh3wYvNDRbiD87A5jmHkY/M5OhQKmarg3Rqjfa/IaKbTF
+	BcFR/yBYkNg8C7XWm5CQYRazD8dGqdcOtsD3fDvWBuyLxs/a3n50
+X-Google-Smtp-Source: AGHT+IGDMby5/Ac3E1v2ueAS2bGUnivK5zRh9tBKrPFXvPiAxy4eS4qh5NuGdKioc/yOZvxANmrH9g==
+X-Received: by 2002:a17:90a:de8e:b0:2e2:bd68:b8d8 with SMTP id 98e67ed59e1d1-2e76b5b59a9mr1644320a91.8.1729661642502;
+        Tue, 22 Oct 2024 22:34:02 -0700 (PDT)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 22 Oct 2024 22:34:01 -0700 (PDT)
+From: anish kumar <yesanishhere@gmail.com>
+To: ohad@wizery.com,
+	bjorn.andersson@linaro.org,
+	mathieu.poirier@linaro.org,
+	corbet@lwn.net
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 0/1] remoteproc documentation changes 
+Date: Tue, 22 Oct 2024 22:33:50 -0700
+Message-Id: <20241023053357.5261-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-anish kumar <yesanishhere@gmail.com> writes:
+This patch series transitions the documentation
+for remoteproc from the staging directory to the
+mainline kernel. It introduces both kernel and
+user-space APIs, enhancing the overall documentation
+quality.
 
-> Add index file so that readthedocs.io pick this file
-> up and properly build the documentation site.
->
-> Signed-off-by: anish kumar <yesanishhere@gmail.com>
-> ---
->  Documentation/remoteproc/index.rst | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/remoteproc/index.rst
+V4:
+Fixed compilation errors and moved documentation to
+driver-api directory.
 
-readthedocs.io is not particularly relevant here; this change is needed
-simply to make the docs build work right.
+V3:
+Seperated out the patches further to make the intention
+clear for each patch.
 
-Properly, you should have added a version of this file first, since your
-series is not bisectable as organized.  For a docs change, that alone
-does not merit redoing the series, though.  However...
-
-You do need to remove the entry in Documentation/staging/index.rst, or
-you will break the docs build.
-
-Please be sure to do a proper docs build before sending a patch series
-like this.
-
-More to the point, though, why are you creating a new top-level
-directory for this?  That's something I would really like to avoid.  It
-looks like the existing document fits well in the driver-api manual, is
-there a reason why you haven't put it there?
-
-Thanks,
-
-jon
+V2:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
