@@ -1,57 +1,57 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A63A1448DF;
-	Wed, 23 Oct 2024 05:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37301465BA;
+	Wed, 23 Oct 2024 05:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729661646; cv=none; b=GjIjr46Pi7so5/SFZ0+kPoj7zeV/pHkXv8mGJkRdfh18JMcSv7Fg2rdXjVbEob3YzlBHjOTCha61CRBkC1YOsQKBOom3pExeZy7fjXIYBOp5qBbI1ro8ouOwqn70CjBnvVUICHocypL03aNTY7PXqLE2yUxVdNU9cL+JWIKdyLI=
+	t=1729661648; cv=none; b=JMpJFvvHpYleVNIlPaqLgt+/zg+zSHLwNmIbWmh9M7e5ydUBCaybfyzcd3kEzKpwYv3BFXZAlCztED6OJL0n842haXGUTWX3kYq86FCw20Lc+UtvAfWlp+NUqllxnPJVlSUYPRFIhbyTh+QMfaJawV39iwFxhr88qRPqA8FTQSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729661646; c=relaxed/simple;
-	bh=zJEvpa9INE9yXtYQiz3469DzQraDqTRRxFPVZ6a8zxg=;
+	s=arc-20240116; t=1729661648; c=relaxed/simple;
+	bh=F9wyVBaF0oSJbY/ZwpGmuvQ3WfCyLVP5YNotULhlD4w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FkhqBR009DzkW6+Bz72SQ2GM8lWitEPpOi4ARmp7OYgBX76AqIMAu+phBPrak7pel4h2z4qsnBUXw56yS+kqblETD5+UdRWKMskscUwu4Tr1qjV7sdAlr/p5dO3YR9fWXUnc6arFkN30Y1Q+OJQi5olQj06ZlwqDXAieEiiTq60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBORMLOh; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=qjxeZ7Lf3zuFG69xkQKOJs5Cw+DT71eVP9HcFdN2/mhdJE5XRI8dGEGjXy0tPBcef/NGgxcjPK92AY96JBTpyFSPCV5a7BGcTvAMszm0Cq62l7QIAvcYvVxwXus/oiLGdmLjCyKOM7Vv7DsubK0KhrdKsFPAmInniI04Eb6i5zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtWb+2Sq; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBORMLOh"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so4177551a12.3;
-        Tue, 22 Oct 2024 22:34:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtWb+2Sq"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso4184036b3a.3;
+        Tue, 22 Oct 2024 22:34:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729661644; x=1730266444; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729661646; x=1730266446; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=76j18HLREuq6z2ueP2pra56wnYMu3LZ3kaThEHsixtw=;
-        b=PBORMLOhM4b5SiPo2mpASFANR072bTG+MM5yzK32D+DjxItYdK9Jod6jFDI+mtTpQt
-         hDKJmEDbegQaWVapVNEzexzRnTnoTjdmFpPjTbDiEDK7OUlAXIUCRb0tGVfnu7IXEoA7
-         fs2yl/D5f1B8vmOI/c1e6Bd6K8I0YKtV4BK5x8LjBXKfunXYvMF36cAfCg8AMItknqDX
-         SAIyJzgeJdz3KcQ7vdVEcF8DwQFDplM+A61M08z8pHNdhrQ7OI25khN1rawQiT3NVuIf
-         RI4qpqsfqpal29qO0pbmN7TXGYYUzkepkUcaY8EY61rK487zQKw3aZNdhKqoI55jF/MW
-         gD1A==
+        bh=d4H28hFRgfMxE6n6xvKEknwZOvdBzOexKEGHxbARteQ=;
+        b=YtWb+2SqtQA0ZuYLG1tWshZIb+sqv4+E/f8YYw6/VkvOPkkK/cAVCtiwc2b3EjBHqo
+         zQLCa4tVwMi8mBSxxnhLHtFm+9FUwb19Bo13q0MLj940Aho4G8KgJgcZ2GGTGTpbDswT
+         AAlP3L3mzKQzChUD5pqAtXaeO3Dajx9JW09LHYwtU64iFzPr+ZXPd+T9zm9b8LMQ7w8C
+         NWEwOr/dnvh4xsJhQaa/DqIy9C3xZ+HK0OsPx+8rc6/wKWxjW51PZT67les5eQkoGdmV
+         uSxflEgEW4SQ6vzKyrC7yLrn9uyUuNEVpnwWckbzH107R7hGi9ucS4w4j83VyQH5yTly
+         ZmsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729661644; x=1730266444;
+        d=1e100.net; s=20230601; t=1729661646; x=1730266446;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76j18HLREuq6z2ueP2pra56wnYMu3LZ3kaThEHsixtw=;
-        b=cL17SDAEUgAdFhU83tZjKNR40JNwwHPP7fdUoPUHI0b4ytVYJq120eOQ387AaCmAQJ
-         +EEsVC3+p4eVEA/P2B5jPxatYiKz56VRZU0E7HO6p3wut1KHfrsRwa1sNVQkPC0LXJp1
-         TIYKmJ7TL4aPI2UqgeQKCZGUMQO7gzRYyBw6FawW5APwaz/1tU6E8F4gR/pxqtTLBcgx
-         2cyfIytv42srdtZ4KKBq2FQqyb43Pbid5LWdiGsT8HIMAq/TGxGPQZu8FWhRdJU14fVS
-         kjzlrxyQm8IbaCgDvGuKL7fSqUhVKHYhNOvp8IF6PMkFH6k5LgL+9g2GInm7/O9RU6/f
-         Kq6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Ot35jtFxl+VB/npJxVmEYebhmLYSbidQLjwW0DpN9WM7rXNPi8NLjclJRWSvX0Wq48wrs+NUQDs=@vger.kernel.org, AJvYcCVqG1BNpTQkdueo2F6yuMqgn7uTL+EOL0R6cFd1mLaHNuFHoS/QsuaVjTLsj/TUGy758nqyCN5Uw7GCCybE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Z3qke9s7ZeIcqqvECIWFxoa/A0OChc7NkC0nYs8/Aq+u9bXi
-	k+3aBh/HWPSfqNOQ/dpO7gRqxtjmeW0DI8K9iHBB6+N4w0C/21D0
-X-Google-Smtp-Source: AGHT+IGdw4eXSwqHJ23qEQRaHPAi+TZFQJoJ4sh7IaI1ZrE0an07kAb8bFiyDgKdfpXKcq6kyzRB4A==
-X-Received: by 2002:a05:6a21:9208:b0:1d8:a49b:ee71 with SMTP id adf61e73a8af0-1d978b32745mr1696241637.29.1729661644438;
-        Tue, 22 Oct 2024 22:34:04 -0700 (PDT)
+        bh=d4H28hFRgfMxE6n6xvKEknwZOvdBzOexKEGHxbARteQ=;
+        b=g/gWzQ9o9kWKihNUERRUT0pHLsj6gq12yE3aSgAEBjElQsyhKoRFXcXrm0u6ay+J/I
+         WVQb5I9nFKo3sDbvtzY3yrEYLjI+5SjP7q94uhietG1+5BR1vL470joV3Fsvl4ltzgNf
+         4ydErgentwmUsO9KDktFocvYD1FLEDLAwQjHZi/KOM2Tr/W4lPTTPpzghmmgB+G2IazH
+         gHOZE4DuvKTgBDmK1ZfXJ9Vl6DgqmWNPAbl+yLROZ05AbbBeA2klvrzyhJR3sIKiU4YD
+         PavFxBYPVbYqowYI/+xQn+DMiOdxYqWy7thehmFaHRDNlh7J93b1yRFNsIvsIZoj0HZF
+         QF1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUft4+DuozVcJLu1Ub3uEqNoBuRw59P2fNHj+LmU9U7/NkpMlaHB/eI+l1Yw+6elSgr5C/BEZKkKUk=@vger.kernel.org, AJvYcCXhdmzGF9/ucIOpRywBSYwvq2CJ/MDyovKXA6340Ey6toinlD3EOs4NUP4xVGzbo8SG4SvNg89wq8z8cqcV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoHvwjxNvUMWZDCIqbylTAod1jFcX2FqiJ0+P1KWXmARQXnDom
+	3sFpRc/78jPs9MXsKEfCNFT4mv3sWBnuDD00C/Wuap4EE3tWZK6Q2kWjuMKi
+X-Google-Smtp-Source: AGHT+IGmatMTJnxCvEg3igsnFWsQvmr94iHKUL+dS5GXCEpfMtQ9lYjxJVCOrVzjj69MOKf30LWjbw==
+X-Received: by 2002:a05:6a20:43a5:b0:1d9:1783:6a2d with SMTP id adf61e73a8af0-1d978af7c47mr1807757637.13.1729661646206;
+        Tue, 22 Oct 2024 22:34:06 -0700 (PDT)
 Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.04
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 22:34:03 -0700 (PDT)
+        Tue, 22 Oct 2024 22:34:05 -0700 (PDT)
 From: anish kumar <yesanishhere@gmail.com>
 To: ohad@wizery.com,
 	bjorn.andersson@linaro.org,
@@ -61,9 +61,9 @@ Cc: linux-remoteproc@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH V4 1/7] Remoteproc: Documentation: add the main index
-Date: Tue, 22 Oct 2024 22:33:51 -0700
-Message-Id: <20241023053357.5261-2-yesanishhere@gmail.com>
+Subject: [PATCH V4 2/7] Documentation: remoteproc: move from staging
+Date: Tue, 22 Oct 2024 22:33:52 -0700
+Message-Id: <20241023053357.5261-3-yesanishhere@gmail.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <20241023053357.5261-1-yesanishhere@gmail.com>
 References: <20241023053357.5261-1-yesanishhere@gmail.com>
@@ -75,55 +75,53 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In prepration of moving the remoteproc documentation
-from staging to mainline and also for enhancing
-the documentation.
+In preparation for upcoming enhancements, this
+commit relocates the existing documentation
+from the staging area to the mainline Documentation
+directory. Future patches will add further
+documentation to improve clarity and usability.
 
 Signed-off-by: anish kumar <yesanishhere@gmail.com>
 ---
- Documentation/driver-api/index.rst            |  1 +
- Documentation/driver-api/remoteproc/index.rst | 20 +++++++++++++++++++
- 2 files changed, 21 insertions(+)
- create mode 100644 Documentation/driver-api/remoteproc/index.rst
+ Documentation/driver-api/remoteproc/index.rst               | 6 ++++++
+ .../{staging => driver-api/remoteproc}/remoteproc.rst       | 0
+ Documentation/staging/index.rst                             | 1 -
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+ rename Documentation/{staging => driver-api/remoteproc}/remoteproc.rst (100%)
 
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index c57c609ad2eb..ec9d669b92e5 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -30,6 +30,7 @@ available subsections can be seen below.
-    frame-buffer
-    regulator
-    reset
-+   remoteproc/index
-    iio/index
-    input
-    usb/index
 diff --git a/Documentation/driver-api/remoteproc/index.rst b/Documentation/driver-api/remoteproc/index.rst
-new file mode 100644
-index 000000000000..8b8c8f512e2b
---- /dev/null
+index 8b8c8f512e2b..6ac5a082bf4f 100644
+--- a/Documentation/driver-api/remoteproc/index.rst
 +++ b/Documentation/driver-api/remoteproc/index.rst
-@@ -0,0 +1,20 @@
-+.. SPDX-License-Identifier: GPL-2.0
+@@ -14,6 +14,12 @@ Authors:
+    the hardware differences, so the entire driver doesn't need to be
+    duplicated.
+ 
 +
-+========================================================================
-+remoteproc - remote processor subsystem in Linux(TM) kernel
-+========================================================================
++.. toctree::
++   :maxdepth: 1
 +
-+Authors:
-+	- anish kumar  <yesanishhere@gmail.com>
++   remoteproc
 +
-+   remote processor subsystem is a way to manage the lifecycle of
-+   a subsytem that is external to the Linux. The remoteproc framework
-+   allows different platforms/architectures to control (power on,
-+   load firmware, power off) those remote processors while abstracting
-+   the hardware differences, so the entire driver doesn't need to be
-+   duplicated.
-+
-+Mailing List
-+------------
-+To post a message, send an email to
-+linux-remoteproc@vger.kernel.org
+ Mailing List
+ ------------
+ To post a message, send an email to
+diff --git a/Documentation/staging/remoteproc.rst b/Documentation/driver-api/remoteproc/remoteproc.rst
+similarity index 100%
+rename from Documentation/staging/remoteproc.rst
+rename to Documentation/driver-api/remoteproc/remoteproc.rst
+diff --git a/Documentation/staging/index.rst b/Documentation/staging/index.rst
+index abd0d18254d2..8884af4556b4 100644
+--- a/Documentation/staging/index.rst
++++ b/Documentation/staging/index.rst
+@@ -8,7 +8,6 @@ Unsorted Documentation
+ 
+    crc32
+    lzo
+-   remoteproc
+    rpmsg
+    speculation
+    static-keys
 -- 
 2.39.3 (Apple Git-146)
 
