@@ -1,339 +1,133 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C981B983F;
-	Thu, 24 Oct 2024 15:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD944158A31
+	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Oct 2024 15:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782341; cv=none; b=qSgKFpTlzO3TrbJqkJKw1vple6lDeOk0RaaSsie2jJkgZZdBH421M8v4IF8fJNw5qXPp+p+Pm8pjqO+Z8kyfPz2qQeYkQ1SK8jS/PZgDu8lAg8+gjTFb4lCogc8OUKW/WDRm92qrO/1kL0JPAeBgzHYMuQt5kd+xgH+q/1j0N7A=
+	t=1729784540; cv=none; b=FFNEgKf3hsYj0psUNDi0KQF5ZPJ41dwQWfrAt3ha58H/G8LVtmYJeOwhF7zl0ky+WksTuC4Nu0rsY64IJopnsN0w+GJHeY0Yjm+dAsCP2dw7iTPghQStsptiwM7Qkzry+KJ0Aq2MP5fPRBonF3Xq7lM2E5Siw7jqbbi7yUAV+90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782341; c=relaxed/simple;
-	bh=PEQ1QWu3pvku7u4JDiIPHuakSqYqP2l9xHPA6y1y3gk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aO/U2UXJQiQzLDS3ko7w3hxmIFMPgfkGe6jruq9MaLuYOeYHPZBbUG3oyKj32ilGmHVl6g7fk2ZmFw0fIdD0t28aglTBvtdr+yViOlXm7yLlDMidlcov5DCQtQWi7DX0WxuzYAuFN8k3DGE5bziJSdn7WUBRoYBUIFEdZsqyYX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jtM2Kcjn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1729784540; c=relaxed/simple;
+	bh=JA2+P8tJNRooSWGy8dttNYXnIOGobkf1Mu8CVP6xBNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVFgYy3uAgADMbtBrLWWn6866J+tgBFvjsYWygTB5y8mjQpMsru2GDzWmz/ImJtuTR1GZqK5ADrDy6YoLiOjJ/keW/Bi8c0IXUVwGGlnkuHqTnL/ccjjkpFdeuhqmDr7sJ2xiuS/KYkr8Cnb2V3WCB5bzOWHuk+/ejFl3Q1lzTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QX3aUza7; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jtM2Kcjn"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9uElQ032158;
-	Thu, 24 Oct 2024 15:05:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=UD6tTEkLajguDRwaJgV750ggvgiKjGiKpbF
-	kzqOOtzc=; b=jtM2KcjniKCLeI6SlqENneS9MfwOkPs6ZMU/lEvqdM4Lz268OEz
-	C/fDtIE+JIBluKYNx+WqB8+JZj0wWRNQrVvCyfGQ2H7OCEHSHDsge79sidHHX3ki
-	27qSpiJdlNEY6NnwUuFNIbofyjfw/mcIDIbVAeAihd1T7Ozil/NcKBLTya9Gq+yh
-	fA86XIP/K/tEd3zOpCwGx/TyELgxgR7ce2kj8PO2a+IAkR71RJgku20CbSQfT3Hf
-	2zBT4qDufr8kbOG9ImI38EJZRuDpJIOAkrVx/xvTyCV3YotRoD5XWkKSjNd+immr
-	XQVPc1ZYTxfTo1nYVkzMhEJ5BvmHVAU8HZw==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3vx4sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 15:05:33 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49OF5DkQ007765;
-	Thu, 24 Oct 2024 15:05:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 42cq6abpbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 15:05:13 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49OF5Da9007760;
-	Thu, 24 Oct 2024 15:05:13 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 49OF5DvR007744
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 15:05:13 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
-	id 21C3D589; Thu, 24 Oct 2024 20:35:12 +0530 (+0530)
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Shuah Khan <shuah@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Wasim Nazir <quic_wasimn@quicinc.com>
-Subject: [PATCH v3] selftest: remoteproc: Add test for start/stop sequence
-Date: Thu, 24 Oct 2024 20:35:05 +0530
-Message-ID: <20241024150505.988479-1-quic_wasimn@quicinc.com>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QX3aUza7"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so804024a91.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Oct 2024 08:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729784537; x=1730389337; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8DyuvHzb5XjyqaoJeydh5dQ8YB6zbnvlTgF+dM7WRk=;
+        b=QX3aUza778sGgaBvXlYHMNU2/eCriMFlaKP8H9NT356wKk4AgpVK7E9msrXuvWzYqX
+         L852GevA6j7ExqD4faj/ELspE4LY2RriwZIacUq7Qx+6+uTbg08kfJBcZcNXM32q0Gc8
+         5BRgiyTecTWo3ueVYmURQkxKs7C33mVPZglctvVzUdMtxND88Daggylt4mwCaRYX2+NP
+         MlKA8VnNFvG8ogccTSSKrYjKl7KSgNhBlpMC2TGfQdKbpczr0mMWoItjHeqcqG20mE1W
+         7GpjhUuKwxoOE/JQAvWKj1uTP5mol0tvEofRQKo4/wz2kPLAupp/PN2nb5JLMjDMGAyy
+         rYTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729784537; x=1730389337;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8DyuvHzb5XjyqaoJeydh5dQ8YB6zbnvlTgF+dM7WRk=;
+        b=HLjbgukH6QJ7Xh38asF4hJYnHCRrCdNYZbk8bq9WWTOhD5JsXphMEHxiQ9IvW7WiRt
+         M18d/WDYxya3wJ2VTHNMPtLRN8I4G5lKLOf/NVxGDG1tChePwU7Xq+W9IRTw8hojirve
+         pYBHcXSi8TCD1f7cbzMSy7WBMVaOLkyynBHo3GQsFN6WmcFznyd7Sdt5eg6oU94tdJZM
+         NafgP1ZpygBYdBnmRf4DFyLtkPUS/6Kfv6TSas654TRWYJvxStfAC1fHbdVElu1IAWNq
+         ZD1sACqfzE3kwTDQdh1nLO01aBY9d2AW4yC/Wf9UHZYxE1fUMXRWzGwEDJsJnjZt+5es
+         59kg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1L5HET+yHxRp7glENCl7WAZh4DHJN1ITNW8I+8RLiPJfYQrme71u1s1rBZC3D7IvzYrhFnwnQg8jLwFA6L+de@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6tgdfV/+DKOBNvsttHbFoN/vgOUeQZuUtsJZe0RECCat84jjB
+	f9tkc22po9TW/ELi1ay1eLjc6tQMgeM2GcIaqW1PW31GocCAV8KSzLF2ZldQgAE=
+X-Google-Smtp-Source: AGHT+IHJA6h9/dphvA6EaRPdgKXiQXjJSKFpmG3omjCNL1LDYLu7ZLPUnH48dmdvoBjDXaoFRYpMOQ==
+X-Received: by 2002:a17:90a:604c:b0:2e2:e6bf:cd64 with SMTP id 98e67ed59e1d1-2e76b5b6be5mr6956529a91.5.1729784536954;
+        Thu, 24 Oct 2024 08:42:16 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7c96:e131:bee8:c8a4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5bc59bsm1638536a91.56.2024.10.24.08.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 08:42:16 -0700 (PDT)
+Date: Thu, 24 Oct 2024 09:42:13 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/7] Remoteproc: Documentation: add the main index
+Message-ID: <Zxpq1RGltdWiE5sA@p14s>
+References: <20241023053357.5261-1-yesanishhere@gmail.com>
+ <20241023053357.5261-2-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uGtnkimSQIED6QNNHj1MKZq8iPGrbebS
-X-Proofpoint-ORIG-GUID: uGtnkimSQIED6QNNHj1MKZq8iPGrbebS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 spamscore=0 clxscore=1011 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023053357.5261-2-yesanishhere@gmail.com>
 
-Add test to validate end-to-end start/stop sequence for
-each remoteproc instances available on target.
+On Tue, Oct 22, 2024 at 10:33:51PM -0700, anish kumar wrote:
+> In prepration of moving the remoteproc documentation
+> from staging to mainline and also for enhancing
+> the documentation.
+> 
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/driver-api/index.rst            |  1 +
+>  Documentation/driver-api/remoteproc/index.rst | 20 +++++++++++++++++++
+>  2 files changed, 21 insertions(+)
+>  create mode 100644 Documentation/driver-api/remoteproc/index.rst
+> 
+> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+> index c57c609ad2eb..ec9d669b92e5 100644
+> --- a/Documentation/driver-api/index.rst
+> +++ b/Documentation/driver-api/index.rst
+> @@ -30,6 +30,7 @@ available subsections can be seen below.
+>     frame-buffer
+>     regulator
+>     reset
+> +   remoteproc/index
 
-Add first test sequence to validated each instance sequencially
-to identify any issue while booting each instance.
-Add second test sequence to validate all instances concurrently
-to identify any race scenario within instances doing bootup.
+This patch doesn't apply to rproc-next and I'm pretty sure it is the same for
+Jonathan's tree. 
 
-Additional user argument (--seqdelay) is available to add
-delay is seconds, between start/stop sequence. This is added
-as different target might have different threshold to start
-any instance (default is 5 secs).
+>     iio/index
+>     input
+>     usb/index
+> diff --git a/Documentation/driver-api/remoteproc/index.rst b/Documentation/driver-api/remoteproc/index.rst
+> new file mode 100644
+> index 000000000000..8b8c8f512e2b
+> --- /dev/null
+> +++ b/Documentation/driver-api/remoteproc/index.rst
+> @@ -0,0 +1,20 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +========================================================================
+> +remoteproc - remote processor subsystem in Linux(TM) kernel
+> +========================================================================
+> +
+> +Authors:
+> +	- anish kumar  <yesanishhere@gmail.com>
+> +
+> +   remote processor subsystem is a way to manage the lifecycle of
+> +   a subsytem that is external to the Linux. The remoteproc framework
 
-Running tests:
-	./remoteproc_test.sh --seqdelay 10
+... external to the Linux kernel.
 
-Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
----
- MAINTAINERS                                   |   1 +
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/remoteproc/Makefile   |   4 +
- tools/testing/selftests/remoteproc/config     |   1 +
- .../selftests/remoteproc/remoteproc_test.sh   | 157 ++++++++++++++++++
- 5 files changed, 164 insertions(+)
- create mode 100644 tools/testing/selftests/remoteproc/Makefile
- create mode 100644 tools/testing/selftests/remoteproc/config
- create mode 100644 tools/testing/selftests/remoteproc/remoteproc_test.sh
-
-
-Test output with 4 remoteproc instances:
-
-TAP version 13
-1..5
-# Testing rproc start/stop sequence for each instance sequencially
-# Testing rproc sequence for 4080000.remoteproc
-ok 1 4080000.remoteproc
-# Testing rproc sequence for 3700000.remoteproc
-ok 2 3700000.remoteproc
-# Testing rproc sequence for 8a00000.remoteproc
-ok 3 8a00000.remoteproc
-# Testing rproc sequence for a300000.remoteproc
-ok 4 a300000.remoteproc
-# Testing rproc start/stop sequence for all instances concurrently
-ok 5 for all remoteproc0 remoteproc1 remoteproc2 remoteproc3
-# Totals: pass:5 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Changes in v3:
-	- Add user argument for sequence delay (--sedelay).
-	- Update commit & add comments.
-	- v2: https://lore.kernel.org/all/20240927112132.3927298-1-quic_wasimn@quicinc.com/
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e9659a5a7fb3..1f8182473be1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19481,6 +19481,7 @@ F:	Documentation/staging/remoteproc.rst
- F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
- F:	include/linux/remoteproc/
-+F:	tools/testing/selftests/remoteproc/
-
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Bjorn Andersson <andersson@kernel.org>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 363d031a16f7..78669153be90 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -82,6 +82,7 @@ TARGETS += proc
- TARGETS += pstore
- TARGETS += ptrace
- TARGETS += openat2
-+TARGETS += remoteproc
- TARGETS += resctrl
- TARGETS += riscv
- TARGETS += rlimits
-diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-new file mode 100644
-index 000000000000..a84b3934fd36
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+TEST_PROGS := remoteproc_test.sh
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-new file mode 100644
-index 000000000000..a5c237d2f3b4
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/config
-@@ -0,0 +1 @@
-+CONFIG_REMOTEPROC=y
-diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-new file mode 100644
-index 000000000000..d58c1e10005c
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-@@ -0,0 +1,157 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+#
-+
-+DIR="$(dirname $(readlink -f "$0"))"
-+
-+KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-+if [ -e "$KTAP_HELPERS" ]; then
-+    . "$KTAP_HELPERS"
-+else
-+    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-+    exit 4
-+fi
-+
-+RPROC_SYS=/sys/class/remoteproc
-+RPROC_SEQ_SLEEP=5
-+
-+rproc_instances=
-+num_tests=0
-+test_err=0
-+
-+check_error() {
-+	if [ $? -ne 0 ]; then
-+		test_err=$((test_err+1))
-+		ktap_print_msg "$@"
-+	fi
-+}
-+
-+parse_args() {
-+	script=${0##*/}
-+
-+	if [ $# -eq 2 ] && [ "$1" = "--seqdelay" ]; then
-+		shift || true
-+		RPROC_SEQ_SLEEP=$1
-+	else
-+		ktap_print_msg "Usage: ${script} --seqdelay <time in secs>"
-+		ktap_print_msg "Proceed with default sequence delay = $RPROC_SEQ_SLEEP"
-+	fi
-+}
-+
-+rproc_stop_instances() {
-+	for instance in ${rproc_instances}; do
-+		rproc=${RPROC_SYS}/$instance
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed at state $rproc_state"
-+	done
-+	sleep ${RPROC_SEQ_SLEEP}
-+}
-+
-+rproc_start_instances() {
-+	for instance in ${rproc_instances}; do
-+		rproc=${RPROC_SYS}/$instance
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed at state $rproc_state"
-+	done
-+	sleep ${RPROC_SEQ_SLEEP}
-+}
-+
-+rproc_seq_test_instance_one() {
-+	instance=$1
-+	rproc=${RPROC_SYS}/$instance
-+	rproc_name=$(cat $rproc/name)
-+	rproc_state=$(cat $rproc/state)
-+	ktap_print_msg "Testing rproc sequence for $rproc_name"
-+
-+	# Reset test_err value
-+	test_err=0
-+
-+	# Begin start/stop sequence
-+	echo start > "$rproc/state"
-+	check_error "$rproc_name state-start failed at state $rproc_state"
-+
-+	sleep ${RPROC_SEQ_SLEEP}
-+
-+	echo stop > "$rproc/state"
-+	check_error "$rproc_name state-stop failed at state $rproc_state"
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "$rproc_name"
-+	else
-+		ktap_test_pass "$rproc_name"
-+	fi
-+}
-+
-+rproc_seq_test_instances_concurrently() {
-+	# Reset test_err value
-+	test_err=0
-+
-+	rproc_start_instances
-+
-+	rproc_stop_instances
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "for any of $rproc_instances"
-+	else
-+		ktap_test_pass "for all $rproc_instances"
-+	fi
-+}
-+
-+#################################
-+### Test starts here
-+#################################
-+
-+ktap_print_header
-+
-+# Parse user arguments
-+parse_args $@
-+
-+# Check for required sysfs entries
-+if [ ! -d "${RPROC_SYS}" ]; then
-+	ktap_skip_all "${RPROC_SYS} doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-+num_tests=$(echo ${rproc_instances} | wc -w)
-+if [ "${num_tests}" -eq 0 ]; then
-+	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+# Total tests will be:
-+# 1) Seq tests for each instance sequencially
-+# 2) Seq tests for all instances concurrently
-+num_tests=$((num_tests+1))
-+
-+ktap_set_plan "${num_tests}"
-+
-+### Stop all instances
-+#
-+# Intention is to stop all running instances. If any instances are not yet
-+# started it will be don't care case as test_err is not checked.
-+# NOTE: Assuming no instances are in crashed state
-+rproc_stop_instances
-+
-+### Test 1
-+ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
-+for instance in ${rproc_instances}; do
-+	rproc_seq_test_instance_one $instance
-+done
-+
-+### Test 2
-+ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
-+rproc_seq_test_instances_concurrently
-+
-+### Restore all instances
-+rproc_start_instances
-+
-+ktap_finished
---
-2.46.1
-
+> +   allows different platforms/architectures to control (power on,
+> +   load firmware, power off) those remote processors while abstracting
+> +   the hardware differences, so the entire driver doesn't need to be
+> +   duplicated.
+> +
+> +Mailing List
+> +------------
+> +To post a message, send an email to
+> +linux-remoteproc@vger.kernel.org
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
