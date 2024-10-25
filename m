@@ -1,52 +1,52 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF12217F26;
-	Fri, 25 Oct 2024 21:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD991FB8BF;
+	Fri, 25 Oct 2024 21:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890101; cv=none; b=Yv6ZZ8sGVrssqnD+Zk4GDRpi+gZx1bm3QiUuPptrPSjK9WhSe+tnyIaUOdIgPoLo+nUlriQXPYGm4rB0hg7BISIajTF2KrgX4byzeACybWjYo8DgQenk82CaBY5lJv3MaC0DmUypgDigY47IOsq9CG8HajEFsCWXa/oq7A0N+Ks=
+	t=1729890103; cv=none; b=E9UAvwGYijPMqrx+Oq2jd9/kGCo+/6wz0DLgiJnf/+oPNA9akVvQwheTRhFDbv59cj3/Ziwod2BhZC7NSLOWyZLRbMNT50ONNGWoPPkAYa49xlpgP+RPXEkCflB0h7yVeyLJhXgTin4ccmoMIn4eo1PKKVS9A08hKn2pWn4bmz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890101; c=relaxed/simple;
-	bh=cJuK47Izb/yOOkLNmgo4HCInjKy++jMUEPG88YvhDbM=;
+	s=arc-20240116; t=1729890103; c=relaxed/simple;
+	bh=DOMHloKF4UN4qlkttRPn0qxlabsJq5KTXbS9OAb2WUc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r9/cKoTZLo5STVS69ARwL8R9Cdn/cLoP2zdaCIOaeRD0WB6XJOICLEcgsMGUcCuPKRIQs/sOwHE0Nf75QTvmKutZ4e4eERqCyOXFOVAapFfd31k6pIPIAlG9oup3fn4G4Wx9DvnLWTlC1wgvoE859xcL2sSd9LOLobguVMi3fHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YXh9WzDS; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=IGwFdgMMzqa7pGSbb47h5dwvt5dYQBfSqlMApYTwm2Y67El/zKPO36eJe2vEgwYZW4g+c4lITDp3W+uervkWn1pUzMOVU/uqZn1oMehJpaWUBRmHMtW++8dZLLIHQe9uDdyE0IevT+MXg2zq41J7LCN90eiHHWyX02izT/Z5fXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=52vjOvQc; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YXh9WzDS"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PGF1DI020510;
-	Fri, 25 Oct 2024 23:01:27 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="52vjOvQc"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PIalSH031388;
+	Fri, 25 Oct 2024 23:01:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZNLtnXlcsjv6+bG/WiTbNNMC780ssIybEZlto6rwvE4=; b=YXh9WzDSjdnG4nAI
-	W5qwjIDBsYQHa5dHyFdoL0JRb3FKz3xRWyPXHTChYLS8P6OL9nilYGlv5w2FhOsU
-	p7Bkm7vJt/WezC4rwdLMhERyJyJGS2zWKcShttgDVf8ALVFIweB3ZVHnamPjYPiS
-	cNiGoQhSq7TCPzbFM5m9KN1j31AbhH8mcLo2lo1HNTMZBuS2rN7XLfsvFLVd/6le
-	+G1L6B96n+6ncTup3Ca9TmB57MLyhWt5QmnVPnpcrl8J3tp3177VmgDnIttuPvT/
-	FanSob8qg2z5NpwL4F9yv6tibOzwBPJU7KF7oy45r1CiOGLI7ryoqIIJ/V3XnCgy
-	KA5sJQ==
+	GC977nshZkMWBVY/wKvcQDvyN5arEAKIKgjZHxchAjQ=; b=52vjOvQcZVbgAKxx
+	us259yZlva11SWwLuE5UCpJcSwdpU7X9Z1ZHxBS/yHetTaUle6TJ+9mOn15uS/Yo
+	ulEY/L0TvMQ7GKCh+pH6fqYA2+6inZAP8eyZfh9ymGwOq+oQWrkBjOCqhKUyf/A3
+	NVdU4FIDyBo/IvpF1WUMCVyOCOGOIyTfir+NFqJGkRf76cbJA9dZLRV9cCX7mmWB
+	3fI0A311VHiJ9aVLO265kR/761/rXYebMKYgJQOPDI7G0fOrew60XOGweeeWvgrB
+	kiSPj45QcYiyubve5jl31Y2YDb5reV4tO/biC6AGsOJ2dhUk/AvQtbFFakzNNwH8
+	5rLGUw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42g9brt9m8-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42em4dyk0b-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 23:01:27 +0200 (MEST)
+	Fri, 25 Oct 2024 23:01:28 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 08C9840048;
-	Fri, 25 Oct 2024 23:00:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 53FF2231534;
-	Fri, 25 Oct 2024 22:59:36 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F3DDE40044;
+	Fri, 25 Oct 2024 23:00:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CBE3523193D;
+	Fri, 25 Oct 2024 22:59:32 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 25 Oct
- 2024 22:59:36 +0200
+ 2024 22:59:32 +0200
 Received: from localhost (10.252.3.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 25 Oct
- 2024 22:59:35 +0200
+ 2024 22:59:32 +0200
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -61,9 +61,9 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v12 3/7] remoteproc: core: Refactor resource table cleanup into rproc_release_fw
-Date: Fri, 25 Oct 2024 22:59:20 +0200
-Message-ID: <20241025205924.2087768-4-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v12 1/7] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Fri, 25 Oct 2024 22:59:18 +0200
+Message-ID: <20241025205924.2087768-2-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241025205924.2087768-1-arnaud.pouliquen@foss.st.com>
 References: <20241025205924.2087768-1-arnaud.pouliquen@foss.st.com>
@@ -81,72 +81,87 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-This patch centralizing the cleanup of the resource table into a new
-helper function rproc_release_fw().
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, we do not necessarily get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
-More than just factorizing the code into a common function, it is the
-first step to integrate the release of the firmware image loaded by the
-OP-TEE remoteproc framework.
-
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 47 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ace11ea17097..7694817f25d4 100644
+index f276956f2c5c..ace11ea17097 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1256,6 +1256,13 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
- 	return 0;
+@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
  }
+ EXPORT_SYMBOL(rproc_da_to_va);
  
-+static void rproc_release_fw(struct rproc *rproc)
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
++ * addresses instead of device addresses.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
 +{
-+	/* Free the copy of the resource table */
-+	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
-+	rproc->table_ptr = NULL;
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++	return ptr;
 +}
- 
++EXPORT_SYMBOL(rproc_pa_to_va);
++
  /**
-  * rproc_resource_cleanup() - clean up and free all acquired resources
-@@ -1485,9 +1492,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..8fd0d7f63c8e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
  
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
--	kfree(rproc->cached_table);
--	rproc->cached_table = NULL;
--	rproc->table_ptr = NULL;
-+	rproc_release_fw(rproc);
- unprepare_rproc:
- 	/* release HW resources if needed */
- 	rproc_unprepare_device(rproc);
-@@ -2067,10 +2072,7 @@ int rproc_shutdown(struct rproc *rproc)
- 
- 	rproc_disable_iommu(rproc);
- 
--	/* Free the copy of the resource table */
--	kfree(rproc->cached_table);
--	rproc->cached_table = NULL;
--	rproc->table_ptr = NULL;
-+	rproc_release_fw(rproc);
- out:
- 	mutex_unlock(&rproc->lock);
- 	return ret;
-@@ -2133,10 +2135,7 @@ int rproc_detach(struct rproc *rproc)
- 
- 	rproc_disable_iommu(rproc);
- 
--	/* Free the copy of the resource table */
--	kfree(rproc->cached_table);
--	rproc->cached_table = NULL;
--	rproc->table_ptr = NULL;
-+	rproc_release_fw(rproc);
- out:
- 	mutex_unlock(&rproc->lock);
- 	return ret;
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
 -- 
 2.25.1
 
