@@ -1,241 +1,359 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E881CEADB;
-	Fri, 25 Oct 2024 08:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DD82064E8
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Oct 2024 13:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843858; cv=none; b=kAW7Ay9522wvw+8JrAX6UDiH68PyC5JpptOeYmwmm+ZTqdxIfeyPuOXFv1iDQ2bkKuTGljc7xbCwTnRB1cxV5OnahWXJjWGqynX9g9afqgcUdMHqdjds+Y//WV3oxeQiFm+Vh1/0oQD6ymofQgAHeSzOlTxMtS60RZiwFx+fc2g=
+	t=1729862081; cv=none; b=j7U8Y7fznso2LFPSjlwKbWL3IPonVefj+K9gXsn8YGEXUm4DJ5JjIKgqpuMJX0PBwRTWPBPvh5Q+gAxT6qHRUAMac+3cRpxA5zXLG6Y7ve3Ip5GP9s3TBkEoNsiZOiO1RGJ1qmL23EAwC4lJL4ZLnd2FpOiicgTqLrq5thw7Ie8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843858; c=relaxed/simple;
-	bh=GSBpjGG2zmfNm6RvXWCZeMzKDgyAx7W4EYaMcklAa6c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qn7Z31IsYqIdDChnQTMM+j62Z2hgO+ZSjOeUufOagvjTOiHoEMt5+34/unhywglWj9nxyxc0ngcZKwCfzziZKzS9eyxENxg9MtcWR6qX18Z+VyO/BQju3bYEpuQUWme/udICdeOePC7sn4IfvBAfoTJDP5giadkLdJTSVo29vpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pP5pLD6m; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1729862081; c=relaxed/simple;
+	bh=aAuud3rm5cPWkUQUGwv7b95D6zwXwfB/xjhjZJWtfaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bpc/duBRw4esYa8ZcHTtb+QmvtzKAnarXb0G9ZpYsrziuunDUCgHoXKCxyhvqWKA7tNTss1HAGx+M6f8ppXiKZE+7cRo6pSBNx84owRw51LBHjx5idvyR0FPV/hE56uOxgCWS0Og4iPRwxyMwJ6uojzxLNmgU4xBX81NrUgxoNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wsy8ztxb; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pP5pLD6m"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P01lgd009312;
-	Fri, 25 Oct 2024 08:10:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=s6/z4p7apiCEJ0HJX3+dyEnA
-	jStbivBbN34AsLpJu9s=; b=pP5pLD6mYAxLhJGJ4As+Bijkku7VllZ6b+rSt37M
-	7DoHEUNXrj9twFMML2m1YZ/vY1yMkTMlsdaJ0qUK4msz1mhyLn1bRpAHyWQ9CNxC
-	5AAV/Lxw/SdduPO4f8+HKppvAA49ZheptnwTJoqjahUrNHgomB9FTGUbolSbSyvL
-	rXcWqFOJOdNIKIIy1Or9Y7HRnkCcG/FCNMyqwciJGbqjJv6rHI30iQWoYJqQOZEH
-	LkjWP/YH+FluFMQKdnTvqMsWpeqFUEgSTbAOLxwAI34qxC/+sHgYBvI7u1Cg0+cb
-	6wIH9iw7kqCO4xa3R7dlG7kYu6YWi61tI1ymbuh0vha6pQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em43g7h6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:10:51 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P8AoDr013158
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:10:50 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 25 Oct 2024 01:10:49 -0700
-Date: Fri, 25 Oct 2024 13:40:45 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
-Message-ID: <ZxtShfshsuyVzGx3@hu-mojha-hyd.qualcomm.com>
-References: <20241016045546.2613436-1-quic_mojha@quicinc.com>
- <ZxZvbz9C/eHzosFN@p14s>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wsy8ztxb"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d808ae924so1422613f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Oct 2024 06:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729862076; x=1730466876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=++aEk6a+cUFK+JnaxlTBl5FPNZKeKXmhUzi+ROa4bp0=;
+        b=wsy8ztxboxhrx/5gnJ3shRcbeUtOTSfOgAntKpU+qImI6bS11wBJQ23XGwV8G79C3F
+         4RBOYtXgsA9zJRSye/M+a4X9mlXTTgrUtaaKVmsZEwkhqyf0JTDNdsUGYbZ8u2vDxWMf
+         GKE0TiQ99QGS0HiSbMeHsI1xsM5MV73xmPxVD8raMyEtAKP0dcfMyLDUKUv4psnAbrU1
+         qDo7JUBQaF4PYfYn9en0sCGcpu4ejIedkybNdNuYJUCzWH9mYm8yUO73zABHD3xIFjRK
+         4l3Oxtst51GKpirm8Ei3K67o5VqkYhI1qkU/2GkCpBXmljTnZFpbY9MiQvxbJiDSnEMU
+         kASQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729862076; x=1730466876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=++aEk6a+cUFK+JnaxlTBl5FPNZKeKXmhUzi+ROa4bp0=;
+        b=rZs6eIjyPQGI7fb8qlr8W/IxWBfURsbA9XCby6UT3b7mt495zYb4kzFXmmtEfiPas7
+         npg+F8jb9Ca5ytyBB3DVp9bNpixCTAVWWPqDZs9v2l9oMQ5SfzNPcOkrVGbADjB1mrjq
+         QyMPoa+3WTeacM8gbWIwxZ4pq0PpT3lEeFiTLFLGuxGGiaHIW1vzWmnyB0pEmGVozXYb
+         S/XfO5T9GfZsWTTe/2W/pr09f8olkItorTVQykd3e8lsSftEoy1P3NVuN7UW0U7bCONT
+         uG+06Az5KCa5dNdCjrdn31Sfd9b0Z1rnafC63ZCcP0933TuotH7RmP4HhG1pOH67ASiH
+         +Dqg==
+X-Gm-Message-State: AOJu0YzBxYN5zzvDfeQ5z6P4sMhV8nCU1RPbL/+c7geETgNW7i3Zsnk5
+	WC86wARjnm8jeAmRXXuRob3F7eQXetcMDPQ2duThujvfPwDJcTj0eu2fumk8BLo=
+X-Google-Smtp-Source: AGHT+IHvRvMLLZZ2WbmWtACDwlvRZrSstsnnSC5Ts5r50eeUAcLVMWfeHQS82EPWHi6Q7cbj3W6STw==
+X-Received: by 2002:a05:6000:e48:b0:37d:4cf9:e085 with SMTP id ffacd0b85a97d-380458586c5mr4051987f8f.25.1729862075721;
+        Fri, 25 Oct 2024 06:14:35 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:d7d6:ae91:e8c2:f1d6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b4000dsm1504174f8f.45.2024.10.25.06.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 06:14:35 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
+Subject: [PATCH] remoteproc: Switch back to struct platform_driver::remove()
+Date: Fri, 25 Oct 2024 15:13:41 +0200
+Message-ID: <20241025131340.258233-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZxZvbz9C/eHzosFN@p14s>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AmEiLo3TUovApklGnWsalEMkg4DpO8Y2
-X-Proofpoint-ORIG-GUID: AmEiLo3TUovApklGnWsalEMkg4DpO8Y2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 impostorscore=0
- phishscore=0 bulkscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250062
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11595; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=aAuud3rm5cPWkUQUGwv7b95D6zwXwfB/xjhjZJWtfaY=; b=owGbwMvMwMXY3/A7olbonx/jabUkhnTpmS36YoWq1erhyx9zt3/o3uvpvy3J7+L7iONBN14oH RAvuNzfyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsCN3sH+v2TOlYR0m0UX+hbU TOl5r/FSWSd6+if3Fq3afoPEaXVqTMcC4zPtk3MWNpom+3mtvlVh8ZG3Ov6mNkvaq6jcb4WOi34 ulb07ZeZeFTauSGZ+hvLe63ditcTCg0/3Bzz0t2y7ZBlWxc/IyH4kWSRm1VHWvn+L+jp3ixyd9U 1g4eLXvtUcuy6kOSXP1Fl9ZNqOjR15zQ/SD7+c/vv93/Sb938e21oeXKbSsrTw7fYzB264LuFp6 t0+4/6L28bMpQYLTgnNPhv+1btOZYGO1o/sr/0hGy2vrXW5HFedUi3oWj7HQG6WgIbdh4c/mrrm bfa6xiDz1eHgixvlHA/2cKXpaMYZRV6/pPlohYQjy/8SAA==
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024 at 09:12:47AM -0600, Mathieu Poirier wrote:
-> Hi Mukesh,
-> 
-> On Wed, Oct 16, 2024 at 10:25:46AM +0530, Mukesh Ojha wrote:
-> > Multiple call to glink_subdev_stop() for the same remoteproc can happen
-> > if rproc_stop() fails from Process-A that leaves the rproc state to
-> > RPROC_CRASHED state later a call to recovery_store from user space in
-> > Process B triggers rproc_trigger_recovery() of the same remoteproc to
-> > recover it results in NULL pointer dereference issue in
-> > qcom_glink_smem_unregister().
-> > 
-> > There is other side to this issue if we want to fix this via adding a
-> > NULL check on glink->edge which does not guarantees that the remoteproc
-> > will recover in second call from Process B as it has failed in the first
-> > Process A during SMC shutdown call and may again fail at the same call
-> > and rproc can not recover for such case.
-> > 
-> > Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
-> > remoteproc and the only way to recover from it via system restart.
-> > 
-> > 	Process-A                			Process-B
-> > 
-> >   fatal error interrupt happens
-> > 
-> >   rproc_crash_handler_work()
-> >     mutex_lock_interruptible(&rproc->lock);
-> >     ...
-> > 
-> >        rproc->state = RPROC_CRASHED;
-> >     ...
-> >     mutex_unlock(&rproc->lock);
-> > 
-> >     rproc_trigger_recovery()
-> >      mutex_lock_interruptible(&rproc->lock);
-> > 
-> >       adsp_stop()
-> >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
-> >       remoteproc remoteproc3: can't stop rproc: -22
-> >      mutex_unlock(&rproc->lock);
-> 
-> Ok, that can happen.
-> 
-> > 
-> > 						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
-> > 						recovery_store()
-> > 						 rproc_trigger_recovery()
-> > 						  mutex_lock_interruptible(&rproc->lock);
-> > 						   rproc_stop()
-> > 						    glink_subdev_stop()
-> > 						      qcom_glink_smem_unregister() ==|
-> >                                                                                      |
-> >                                                                                      V
-> 
-> I am missing some information here but I will _assume_ this is caused by
-> glink->edge being set to NULL [1] when glink_subdev_stop() is first called by
-> process A.  Instead of adding a new state to the core I think a better idea
-> would be to add a check for a NULL value on @smem in
-> qcom_glink_smem_unregister().  This is a problem that should be fixed in the
-> driver rather than the core.
-> 
-> [1]. https://elixir.bootlin.com/linux/v6.12-rc4/source/drivers/remoteproc/qcom_common.c#L213
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
+Convert all platform drivers below drivers/remoteproc to use .remove(),
+with the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-I did the same here [1] but after discussion with Bjorn, realized that
-remoteproc might not even recover and may fail in the second attempt as
-well and only way is reboot of the machine.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-[1]
-https://lore.kernel.org/lkml/20240925103351.1628788-1-quic_mojha@quicinc.com/
+I did a single patch for all of drivers/remoteproc. While I usually
+prefer to do one logical change per patch, this seems to be
+overengineering here as the individual changes are really trivial and
+shouldn't be much in the way for stable backports. But I'll happily
+split the patch if you prefer it split.
 
-> 
-> > 						      Unable to handle kernel NULL pointer dereference
-> >                                                                 at virtual address 0000000000000358
-> > 
-> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > ---
-> > Changes in v3:
-> >  - Fix kernel test reported error.
-> > 
-> > Changes in v2:
-> >  - Removed NULL pointer check instead added a new state to signify
-> >    non-recoverable state of remoteproc.
-> > 
-> >  drivers/remoteproc/remoteproc_core.c  | 3 ++-
-> >  drivers/remoteproc/remoteproc_sysfs.c | 1 +
-> >  include/linux/remoteproc.h            | 5 ++++-
-> >  3 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index f276956f2c5c..c4e14503b971 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
-> >  	/* power off the remote processor */
-> >  	ret = rproc->ops->stop(rproc);
-> >  	if (ret) {
-> > +		rproc->state = RPROC_DEFUNCT;
-> >  		dev_err(dev, "can't stop rproc: %d\n", ret);
-> >  		return ret;
-> >  	}
-> > @@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
-> >  		return ret;
-> >  
-> >  	/* State could have changed before we got the mutex */
-> > -	if (rproc->state != RPROC_CRASHED)
-> > +	if (rproc->state == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
-> >  		goto unlock_mutex;
-> 
-> The problem is that rproc_trigger_recovery() an only be called once for a
-> remoteproc, something that modifies the state machine and may introduce backward
-> compatibility issues for other remote processor implementations.
-> 
+Note I didn't Cc: the maintainers of each driver as this would hit
+sending limits.
 
-I missed one more point to add here which i tried to highlight in second
-version[2] that setting of RPROC_DEFUNCT should happen for this case
-from vendor remoteproc driver and not at the core and that should take
-care of the backward compatibility.
+This is based on today's next, if conflicts arise when you apply it at
+some later time and don't want to resolve them, feel free to just drop
+the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend.
 
-[2]
-https://lore.kernel.org/lkml/Zw2CAbMozI8vu4SL@hu-mojha-hyd.qualcomm.com/
+Best regards
+Uwe
 
--Mukesh
+ drivers/remoteproc/da8xx_remoteproc.c     | 2 +-
+ drivers/remoteproc/imx_dsp_rproc.c        | 2 +-
+ drivers/remoteproc/imx_rproc.c            | 2 +-
+ drivers/remoteproc/keystone_remoteproc.c  | 2 +-
+ drivers/remoteproc/meson_mx_ao_arc.c      | 2 +-
+ drivers/remoteproc/mtk_scp.c              | 2 +-
+ drivers/remoteproc/pru_rproc.c            | 2 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c       | 2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c        | 2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c        | 2 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c       | 2 +-
+ drivers/remoteproc/qcom_wcnss.c           | 2 +-
+ drivers/remoteproc/rcar_rproc.c           | 2 +-
+ drivers/remoteproc/remoteproc_virtio.c    | 2 +-
+ drivers/remoteproc/st_remoteproc.c        | 2 +-
+ drivers/remoteproc/stm32_rproc.c          | 2 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
+ drivers/remoteproc/wkup_m3_rproc.c        | 2 +-
+ 18 files changed, 18 insertions(+), 18 deletions(-)
 
-> Thanks,
-> Mathieu
-> 
-> >  
-> >  	dev_err(dev, "recovering %s\n", rproc->name);
-> > diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-> > index 138e752c5e4e..5f722b4576b2 100644
-> > --- a/drivers/remoteproc/remoteproc_sysfs.c
-> > +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> > @@ -171,6 +171,7 @@ static const char * const rproc_state_string[] = {
-> >  	[RPROC_DELETED]		= "deleted",
-> >  	[RPROC_ATTACHED]	= "attached",
-> >  	[RPROC_DETACHED]	= "detached",
-> > +	[RPROC_DEFUNCT]		= "defunct",
-> >  	[RPROC_LAST]		= "invalid",
-> >  };
-> >  
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index b4795698d8c2..3e4ba06c6a9a 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -417,6 +417,8 @@ struct rproc_ops {
-> >   *			has attached to it
-> >   * @RPROC_DETACHED:	device has been booted by another entity and waiting
-> >   *			for the core to attach to it
-> > + * @RPROC_DEFUNCT:	device neither crashed nor responding to any of the
-> > + * 			requests and can only recover on system restart.
-> >   * @RPROC_LAST:		just keep this one at the end
-> >   *
-> >   * Please note that the values of these states are used as indices
-> > @@ -433,7 +435,8 @@ enum rproc_state {
-> >  	RPROC_DELETED	= 4,
-> >  	RPROC_ATTACHED	= 5,
-> >  	RPROC_DETACHED	= 6,
-> > -	RPROC_LAST	= 7,
-> > +	RPROC_DEFUNCT	= 7,
-> > +	RPROC_LAST	= 8,
-> >  };
-> >  
-> >  /**
-> > -- 
-> > 2.34.1
-> > 
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 7daaab8124e8..93031f0867d1 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -365,7 +365,7 @@ MODULE_DEVICE_TABLE(of, davinci_rproc_of_match);
+ 
+ static struct platform_driver da8xx_rproc_driver = {
+ 	.probe = da8xx_rproc_probe,
+-	.remove_new = da8xx_rproc_remove,
++	.remove = da8xx_rproc_remove,
+ 	.driver = {
+ 		.name = "davinci-rproc",
+ 		.of_match_table = of_match_ptr(davinci_rproc_of_match),
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index 376187ad5754..ea5024919c2f 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -1258,7 +1258,7 @@ MODULE_DEVICE_TABLE(of, imx_dsp_rproc_of_match);
+ 
+ static struct platform_driver imx_dsp_rproc_driver = {
+ 	.probe = imx_dsp_rproc_probe,
+-	.remove_new = imx_dsp_rproc_remove,
++	.remove = imx_dsp_rproc_remove,
+ 	.driver = {
+ 		.name = "imx-dsp-rproc",
+ 		.of_match_table = imx_dsp_rproc_of_match,
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 800015ff7ff9..74299af1d7f1 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -1198,7 +1198,7 @@ MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
+ 
+ static struct platform_driver imx_rproc_driver = {
+ 	.probe = imx_rproc_probe,
+-	.remove_new = imx_rproc_remove,
++	.remove = imx_rproc_remove,
+ 	.driver = {
+ 		.name = "imx-rproc",
+ 		.of_match_table = imx_rproc_of_match,
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index 8f0f7a4cfef2..6e54093d1732 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -490,7 +490,7 @@ MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
+ 
+ static struct platform_driver keystone_rproc_driver = {
+ 	.probe	= keystone_rproc_probe,
+-	.remove_new = keystone_rproc_remove,
++	.remove = keystone_rproc_remove,
+ 	.driver	= {
+ 		.name = "keystone-rproc",
+ 		.of_match_table = keystone_rproc_of_match,
+diff --git a/drivers/remoteproc/meson_mx_ao_arc.c b/drivers/remoteproc/meson_mx_ao_arc.c
+index f6744b538323..7dfdf11b0036 100644
+--- a/drivers/remoteproc/meson_mx_ao_arc.c
++++ b/drivers/remoteproc/meson_mx_ao_arc.c
+@@ -246,7 +246,7 @@ MODULE_DEVICE_TABLE(of, meson_mx_ao_arc_rproc_match);
+ 
+ static struct platform_driver meson_mx_ao_arc_rproc_driver = {
+ 	.probe = meson_mx_ao_arc_rproc_probe,
+-	.remove_new = meson_mx_ao_arc_rproc_remove,
++	.remove = meson_mx_ao_arc_rproc_remove,
+ 	.driver = {
+ 		.name = "meson-mx-ao-arc-rproc",
+ 		.of_match_table = meson_mx_ao_arc_rproc_match,
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index e744c07507ee..0f4a7065d0bd 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1521,7 +1521,7 @@ MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+ 
+ static struct platform_driver mtk_scp_driver = {
+ 	.probe = scp_probe,
+-	.remove_new = scp_remove,
++	.remove = scp_remove,
+ 	.driver = {
+ 		.name = "mtk-scp",
+ 		.of_match_table = mtk_scp_of_match,
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 327f0c7ee3d6..1656574b7317 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -1132,7 +1132,7 @@ static struct platform_driver pru_rproc_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe  = pru_rproc_probe,
+-	.remove_new = pru_rproc_remove,
++	.remove = pru_rproc_remove,
+ };
+ module_platform_driver(pru_rproc_driver);
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 572dcb0f055b..cbd9a914880b 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -840,7 +840,7 @@ MODULE_DEVICE_TABLE(of, adsp_of_match);
+ 
+ static struct platform_driver adsp_pil_driver = {
+ 	.probe = adsp_probe,
+-	.remove_new = adsp_remove,
++	.remove = adsp_remove,
+ 	.driver = {
+ 		.name = "qcom_q6v5_adsp",
+ 		.of_match_table = adsp_of_match,
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 2a42215ce8e0..103368d11a96 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -2533,7 +2533,7 @@ MODULE_DEVICE_TABLE(of, q6v5_of_match);
+ 
+ static struct platform_driver q6v5_driver = {
+ 	.probe = q6v5_probe,
+-	.remove_new = q6v5_remove,
++	.remove = q6v5_remove,
+ 	.driver = {
+ 		.name = "qcom-q6v5-mss",
+ 		.of_match_table = q6v5_of_match,
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ef82835e98a4..297ef0c69054 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1477,7 +1477,7 @@ MODULE_DEVICE_TABLE(of, adsp_of_match);
+ 
+ static struct platform_driver adsp_driver = {
+ 	.probe = adsp_probe,
+-	.remove_new = adsp_remove,
++	.remove = adsp_remove,
+ 	.driver = {
+ 		.name = "qcom_q6v5_pas",
+ 		.of_match_table = adsp_of_match,
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index e913dabae992..810441f43396 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -1111,7 +1111,7 @@ MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
+ 
+ static struct platform_driver q6v5_wcss_driver = {
+ 	.probe = q6v5_wcss_probe,
+-	.remove_new = q6v5_wcss_remove,
++	.remove = q6v5_wcss_remove,
+ 	.driver = {
+ 		.name = "qcom-q6v5-wcss-pil",
+ 		.of_match_table = q6v5_wcss_of_match,
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index a7bb9da27029..5b5664603eed 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -682,7 +682,7 @@ MODULE_DEVICE_TABLE(of, wcnss_of_match);
+ 
+ static struct platform_driver wcnss_driver = {
+ 	.probe = wcnss_probe,
+-	.remove_new = wcnss_remove,
++	.remove = wcnss_remove,
+ 	.driver = {
+ 		.name = "qcom-wcnss-pil",
+ 		.of_match_table = wcnss_of_match,
+diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
+index cc17e8421f65..921d853594f4 100644
+--- a/drivers/remoteproc/rcar_rproc.c
++++ b/drivers/remoteproc/rcar_rproc.c
+@@ -214,7 +214,7 @@ MODULE_DEVICE_TABLE(of, rcar_rproc_of_match);
+ 
+ static struct platform_driver rcar_rproc_driver = {
+ 	.probe = rcar_rproc_probe,
+-	.remove_new = rcar_rproc_remove,
++	.remove = rcar_rproc_remove,
+ 	.driver = {
+ 		.name = "rcar-rproc",
+ 		.of_match_table = rcar_rproc_of_match,
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index d3f39009b28e..25a655f33ec0 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -593,7 +593,7 @@ static void rproc_virtio_remove(struct platform_device *pdev)
+ /* Platform driver */
+ static struct platform_driver rproc_virtio_driver = {
+ 	.probe		= rproc_virtio_probe,
+-	.remove_new	= rproc_virtio_remove,
++	.remove		= rproc_virtio_remove,
+ 	.driver		= {
+ 		.name	= "rproc-virtio",
+ 	},
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index 1340be9d0110..5df99bae7131 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -457,7 +457,7 @@ static void st_rproc_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver st_rproc_driver = {
+ 	.probe = st_rproc_probe,
+-	.remove_new = st_rproc_remove,
++	.remove = st_rproc_remove,
+ 	.driver = {
+ 		.name = "st-rproc",
+ 		.of_match_table = of_match_ptr(st_rproc_match),
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 8c7f7950b80e..b02b36a3f515 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -946,7 +946,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
+ 
+ static struct platform_driver stm32_rproc_driver = {
+ 	.probe = stm32_rproc_probe,
+-	.remove_new = stm32_rproc_remove,
++	.remove = stm32_rproc_remove,
+ 	.driver = {
+ 		.name = "stm32-rproc",
+ 		.pm = pm_ptr(&stm32_rproc_pm_ops),
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index d08a3a98ada1..aed88a5061cc 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -791,7 +791,7 @@ MODULE_DEVICE_TABLE(of, k3_dsp_of_match);
+ 
+ static struct platform_driver k3_dsp_rproc_driver = {
+ 	.probe	= k3_dsp_rproc_probe,
+-	.remove_new = k3_dsp_rproc_remove,
++	.remove = k3_dsp_rproc_remove,
+ 	.driver	= {
+ 		.name = "k3-dsp-rproc",
+ 		.of_match_table = k3_dsp_of_match,
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index 36a55f7ffa64..d8be21e71721 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -251,7 +251,7 @@ static const struct dev_pm_ops wkup_m3_rproc_pm_ops = {
+ 
+ static struct platform_driver wkup_m3_rproc_driver = {
+ 	.probe = wkup_m3_rproc_probe,
+-	.remove_new = wkup_m3_rproc_remove,
++	.remove = wkup_m3_rproc_remove,
+ 	.driver = {
+ 		.name = "wkup_m3_rproc",
+ 		.of_match_table = wkup_m3_rproc_of_match,
+
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+-- 
+2.45.2
+
