@@ -1,882 +1,134 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1134238DD8
-	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 13:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48E91DE3AC
+	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 15:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730123322; cv=none; b=YMklF6wRP6IYlYizzU3bbZ5YGwG06MCcW4g+HT2j2f/hrLK+GeWexGocc46Fn8nUMqo3JFERqglu810UEf2vSLqEE1tJvtPnpNganUn+Wk1yPngA8Sp1zhWqxZGW1PGYgk3ttDKraPurMD241lsZdAT1ooqmPrbggFfGh1Qab1E=
+	t=1730128643; cv=none; b=SCBaKk6C0Q0zYyNjdJ3JzQXQa6TSP/NmZvmhwd2eEeNA0Ta4kMpQfMFONOnN6QDjC9Z7l2iNVRjxPPldxv6dHEY9Aq5XNc8rLIVMcM43n1OAJ9MfbJVLn39k3dVP9UKoADJ3P9AQylD90v8tqGfmnpGyvzx3Z7aXcJX36yrQTsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730123322; c=relaxed/simple;
-	bh=YrW21edBkjhRXffmq7fqCAfQrZQuwQVPA7CVYicTKl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7tmUZ9rod7+ODmFceOZGbH5frh3KmtOJKYPNDuw5oog2bjGgA3SkiEPeF9hPS8B3VROTZ198U/+WFDgcb2pgt43/l4ZSwrcXJSxNIR3rYz5jFUAaGqSQ97n+XKUqvt4tsOGTTskmMnY+o+mSYtsF6lq8ys9hFyDZLhbDBeMNCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EoU1Gjwo; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1730128643; c=relaxed/simple;
+	bh=Ax87HxxUakfr8YXC5k3BVe8BobiydMDDRcWzLJeofv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hppkcCVEywDptM8SH+AOCbZiDyHA6WqtLzyRQLGizOvSuYulvaKYm69ml2z+ydIsJcC8yWhbzq8TEUfwtmlKzU1Y6KBKdzKUWHqKj4VjSmjpQ9JXDghx7gASaUaB8eNGzupshlPElzmgrcpoHA98mnds461kHDRKMRqZdscBF9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MnluqPf/; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EoU1Gjwo"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso38658731fa.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 06:48:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnluqPf/"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so6947155a12.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 08:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730123316; x=1730728116; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZPCzMOzwZyRIXRnUMu7IH49kqTGW+c27dAQf8GF45A=;
-        b=EoU1Gjwo4+qI3M6aAUwb770BkJlVdrRzWxWodmRq923X72qGfsVoOUXv4JO0Tc/0Zf
-         h3nOuxVkBToPtzYBfNxooDcPAuI0P4L5aHBfFGtELvKf6ySXQ5WfVs8ov/5yuSS96u8o
-         j5PhnxAnUKUPHoF9FPxpOAhU271uAhHk5QyiMTrxW7ahz6/O27bRgj9OoKmeDyDV0p9P
-         ov8xeK/P8G1ZVLm80fCpGXa6tuzy6vrR27SxIXl7zB6CVR/wctC1G1hH4/2RAy9DQInl
-         b0pHX23k1/HYD2bNwQ9yXgcN8BMQ6PakfEk1HRX8fjqcRI0XGYw/t+ywZ7EHi+0cn2gE
-         kjow==
+        d=linaro.org; s=google; t=1730128639; x=1730733439; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=55/ro/7zJvThn66N42PfbJLx9dbqEZPe1RBRRwDigOA=;
+        b=MnluqPf/9Ika48rju6NJL1iIjC2fNddd2+5vBu2NM8F3yDntx56xew/yDRzbTpjMVp
+         O/sQM14wYV/F0pE77FGqhW0g6PheO65YdoVyd8kD/14Sc1K/7b1Pivo5p/LOAM3ck6TT
+         9OwcuD2zk9k06M0TCbtYno4E1vNC7vl1w+NjrqslLNd5gOzRZ28CMIogTUydBMi4/rN+
+         SoPbaokUrSvNDwNS+JKu5GC8EeedgXwkTDohFO8+8v1P64mviBrTJZnAARAdAbaqwN7i
+         J7DBMNOf/+bWpqClC5vb3IiqrHaH0luWu2mVW/kcJDVkcV6Oh2NoH6HC2mpZNQy+3qaQ
+         D7gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730123316; x=1730728116;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NZPCzMOzwZyRIXRnUMu7IH49kqTGW+c27dAQf8GF45A=;
-        b=GdNIfTJIbu0F9pCm6EN2z5oI4JOSYG+dr8xYC8XtOmtKgvoYQoyAPXTzyC/+j6/88Z
-         03prMVd/p94jNevIPFv87JR67c2a2suyfHg694WVzmu9UdVOUAC8qC1909kRdO8vANzx
-         rqyuQEFip5BPGgSNddY9A/sHvKTYTzzRzDmVIYT8FqIgxlF5QgJU8vFpwIGUhIGtdIcJ
-         slaH/xnAtU0yYrj7RtMgPEGCYg43yT1stT/jHMuqHYOiKcEu60znVgZwSCalIz+2fxVE
-         w0NkO2wos8ThOJj/MMb+qADg1DNrKG7DCEma4arJo4ppegEXqv0AwFRDjn4pNPFk+ITo
-         XV3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXo73xyhisRfLi8Rp/ZKIhEJ6Ubcm9JEQD4v1xjrylJI8JYcxeZMXeTOpEhwVALWDERnJYMtsyNsTIZtAafv3N+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxpTwxvYACJ7zVhY6uh/7bQMqNb2tX+8XPF6dt0itAuvtjSbfP
-	yA506Sy/rXDa8drYimrFeVBYk4PKZyZZ2ZcZFdLh0Fykz2WfH4FshskaOSuQYfU=
-X-Google-Smtp-Source: AGHT+IHTM1CHIDCV2UDPDJxvN6ZqApv1ULwq/ThlNzIvUfW5egqsYo64WYifyqbpv7OS67mVupIPkQ==
-X-Received: by 2002:a05:651c:2123:b0:2fb:403c:268b with SMTP id 38308e7fff4ca-2fcbe05091bmr36189401fa.34.1730123315998;
-        Mon, 28 Oct 2024 06:48:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb45d1ad4sm11746181fa.87.2024.10.28.06.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 06:48:34 -0700 (PDT)
-Date: Mon, 28 Oct 2024 15:48:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] remoteproc: Clean rproc-driver-data for each instance
-Message-ID: <qegymrjtlysfu5otr22phsburrsaia2ohf6povpr4q3lya7jo5@ghxwoecqm5cg>
-References: <20241028133216.3711914-1-quic_wasimn@quicinc.com>
+        d=1e100.net; s=20230601; t=1730128639; x=1730733439;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=55/ro/7zJvThn66N42PfbJLx9dbqEZPe1RBRRwDigOA=;
+        b=siBdGAARzqUBty79Led1HuEoRgYcrCJM4wZsyDZVdMQNFElqm0V1GktDVTiu+ocnHY
+         OZuZOf5EQziw8PD5b7F3ffHGjc1aCxCb4BvYkPPdgHHxIVlGR1Gc+h2msVUAIObUinyt
+         h51mpWqMkl+OGGOsCVuO953I6sU4oCoHrN34jODmL4hCqW+TUz1C3YDPdvSlXRw87XYY
+         GWEB6ih5UnsDN5JEwnkkJT8Jpkere5PrzQiAlaD2PW3r0rNy9I1FdBH9g9PXCLAbw35O
+         QR+ouL05e/9mJS6Vj48dksWIUzJ+R9cxVWeH2pDGTwRSf9iAE1DVBbN4HbD+QX6Gaw+p
+         /V8g==
+X-Gm-Message-State: AOJu0YxC+ZyMH6d70d+MYOI16IEjFiURbpj5EzGKyq8XGnqVHlcqbbEr
+	FFk7a/EOwbaO6FyWW5ISxRkeWxdxbsUij9qteUdaFVbzV4TeYHRJSUgKMyRQWIQQrTRFvZ/9o61
+	BH/dGz2N5dc2nrHFG+qNffmLlHA38Eo8sP/faNw==
+X-Google-Smtp-Source: AGHT+IFNHRoMT1azdBbEdqXYLU+6ZEDN58kXAqgF/pFpY/FWiiPNt85IQIsqmlI03mwF2Uu/WESJaRoUUj7qEIuiuPA=
+X-Received: by 2002:a05:6402:40d5:b0:5c9:6623:a11a with SMTP id
+ 4fb4d7f45d1cf-5cbbf94abc2mr7399460a12.25.1730128639232; Mon, 28 Oct 2024
+ 08:17:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028133216.3711914-1-quic_wasimn@quicinc.com>
+References: <ZxzLHcWpjeo9sJGN@fedora>
+In-Reply-To: <ZxzLHcWpjeo9sJGN@fedora>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 28 Oct 2024 09:17:07 -0600
+Message-ID: <CANLsYkyq5Ge4-RZEPDsvMgqtzL10XonVMdHJOGAbcHyXHWV_Cg@mail.gmail.com>
+Subject: Re: Question regarding optimisation of RPMsg round trip times on
+ Xilinx ZynqMP hardware
+To: Felix Kuhlmann <felix-kuhlmann@gmx.de>
+Cc: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 28, 2024 at 07:02:16PM +0530, Wasim Nazir wrote:
-> Currently, all Qualcomm remoteproc client drivers have data structures
-> with many common fields. Clean these data structures to categorize the
-> common fields and create macros to fill rproc-driver-data instances.
-> This will help reduce duplicates and make it easier for developers
-> to fill data using the macros.
+Hi Felix,
 
-NAK, this is unreadable. So far we have been moving from macros to C99
-init sequences. If you want to cleanup the interface, please introduce
-the "base classes" (ADSP / CDSP / WPSS), which describe the data
-specific to this DSP kind, and let platform-specific data use such base
-classes as required.
+On Sat, 26 Oct 2024 at 04:57, Felix Kuhlmann <felix-kuhlmann@gmx.de> wrote:
+>
+> Hello everybody,
+>
+> I need your help concerning an error that was returned while trying to
+> use the AMD Xilinx implementation of remoteproc. I hope that this is
+> the right place to ask for help.
+>
+> I'm currently working on a project that requires Remoteproc and
+> RPMsg. The hardware I am working with is a Trenz SoM containing a
+> AMD Zynq UltraScale+ MPSoC, CG variant, DDR3 external RAM and a few
+> additional components.
+>
+> One of the targets of the project is that the communication between
+> the RPU and the APU should happen under soft realtime conditions. The
+> issue with the communication examples provided by Xilinx is that they
+> use the external RAM for the buffers for RPMsg. This results in highly
+> non-deterministic communication delay jitter, which is most likely due
+> to the fact that DDR RAM is not suited for those applications.
+>
+> Given that the SoC already has an On-Chip Memory that is designed for such
+> applications, I am curious whether changing the shared memory location
+> for RPMsg to reside inside of the OCM of the SoC result in a performance
+> boost. Do you have any experience with such performance benefits?
+>
 
-> Currently, changes have been added for the PAS driver only.
-> 
-> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 737 +++++------------------------
->  1 file changed, 129 insertions(+), 608 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index ef82835e98a4..58311c9ad609 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -819,613 +819,134 @@ static void adsp_remove(struct platform_device *pdev)
->  	device_init_wakeup(adsp->dev, false);
->  }
-> 
-> -static const struct adsp_data adsp_resource_init = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sa8775p_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mbn",
-> -	.pas_id = 1,
-> -	.minidump_id = 5,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sdm845_adsp_resource_init = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sm6350_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sm6375_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.pas_id = 4,
-> -	.minidump_id = 3,
-> -	.auto_boot = false,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -};
-> -
-> -static const struct adsp_data sm8150_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sm8250_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data sm8350_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data msm8996_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.pas_id = 1,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data cdsp_resource_init = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sa8775p_cdsp0_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp0.mbn",
-> -	.pas_id = 18,
-> -	.minidump_id = 7,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sa8775p_cdsp1_resource = {
-> -	.crash_reason_smem = 633,
-> -	.firmware_name = "cdsp1.mbn",
-> -	.pas_id = 30,
-> -	.minidump_id = 20,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.load_state = "nsp",
-> -	.ssr_name = "cdsp1",
-> -	.sysmon_name = "cdsp1",
-> -	.ssctl_id = 0x20,
-> -};
-> -
-> -static const struct adsp_data sdm845_cdsp_resource_init = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sm6350_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mx",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sm8150_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sm8250_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sc8280xp_nsp0_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.ssr_name = "cdsp0",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sc8280xp_nsp1_resource = {
-> -	.crash_reason_smem = 633,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 30,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.ssr_name = "cdsp1",
-> -	.sysmon_name = "cdsp1",
-> -	.ssctl_id = 0x20,
-> -};
-> -
-> -static const struct adsp_data x1e80100_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.dtb_firmware_name = "adsp_dtb.mdt",
-> -	.pas_id = 1,
-> -	.dtb_pas_id = 0x24,
-> -	.lite_pas_id = 0x1f,
-> -	.minidump_id = 5,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -};
-> -
-> -static const struct adsp_data x1e80100_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> -	.pas_id = 18,
-> -	.dtb_pas_id = 0x25,
-> -	.minidump_id = 7,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sm8350_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.pas_id = 18,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -};
-> -
-> -static const struct adsp_data sa8775p_gpdsp0_resource = {
-> -	.crash_reason_smem = 640,
-> -	.firmware_name = "gpdsp0.mbn",
-> -	.pas_id = 39,
-> -	.minidump_id = 21,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		NULL
-> -	},
-> -	.load_state = "gpdsp0",
-> -	.ssr_name = "gpdsp0",
-> -	.sysmon_name = "gpdsp0",
-> -	.ssctl_id = 0x21,
-> -};
-> -
-> -static const struct adsp_data sa8775p_gpdsp1_resource = {
-> -	.crash_reason_smem = 641,
-> -	.firmware_name = "gpdsp1.mbn",
-> -	.pas_id = 40,
-> -	.minidump_id = 22,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		NULL
-> -	},
-> -	.load_state = "gpdsp1",
-> -	.ssr_name = "gpdsp1",
-> -	.sysmon_name = "gpdsp1",
-> -	.ssctl_id = 0x22,
-> -};
-> -
-> -static const struct adsp_data mpss_resource_init = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.pas_id = 4,
-> -	.minidump_id = 3,
-> -	.auto_boot = false,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mss",
-> -		NULL
-> -	},
-> -	.load_state = "modem",
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -};
-> -
-> -static const struct adsp_data sc8180x_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.pas_id = 4,
-> -	.auto_boot = false,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		NULL
-> -	},
-> -	.load_state = "modem",
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -};
-> -
-> -static const struct adsp_data msm8996_slpi_resource_init = {
-> -	.crash_reason_smem = 424,
-> -	.firmware_name = "slpi.mdt",
-> -	.pas_id = 12,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"ssc_cx",
-> -		NULL
-> -	},
-> -	.ssr_name = "dsps",
-> -	.sysmon_name = "slpi",
-> -	.ssctl_id = 0x16,
-> -};
-> -
-> -static const struct adsp_data sdm845_slpi_resource_init = {
-> -	.crash_reason_smem = 424,
-> -	.firmware_name = "slpi.mdt",
-> -	.pas_id = 12,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "slpi",
-> -	.ssr_name = "dsps",
-> -	.sysmon_name = "slpi",
-> -	.ssctl_id = 0x16,
-> -};
-> -
-> -static const struct adsp_data wcss_resource_init = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "wcnss.mdt",
-> -	.pas_id = 6,
-> -	.auto_boot = true,
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "wcnss",
-> -	.ssctl_id = 0x12,
-> -};
-> -
-> -static const struct adsp_data sdx55_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.pas_id = 4,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mss",
-> -		NULL
-> -	},
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x22,
-> -};
-> -
-> -static const struct adsp_data sm8450_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.pas_id = 4,
-> -	.minidump_id = 3,
-> -	.auto_boot = false,
-> -	.decrypt_shutdown = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mss",
-> -		NULL
-> -	},
-> -	.load_state = "modem",
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -};
-> -
-> -static const struct adsp_data sm8550_adsp_resource = {
-> -	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.dtb_firmware_name = "adsp_dtb.mdt",
-> -	.pas_id = 1,
-> -	.dtb_pas_id = 0x24,
-> -	.minidump_id = 5,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"lcx",
-> -		"lmx",
-> -		NULL
-> -	},
-> -	.load_state = "adsp",
-> -	.ssr_name = "lpass",
-> -	.sysmon_name = "adsp",
-> -	.ssctl_id = 0x14,
-> -	.smem_host_id = 2,
-> -};
-> -
-> -static const struct adsp_data sm8550_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> -	.pas_id = 18,
-> -	.dtb_pas_id = 0x25,
-> -	.minidump_id = 7,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -	.smem_host_id = 5,
-> -};
-> -
-> -static const struct adsp_data sm8550_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.dtb_firmware_name = "modem_dtb.mdt",
-> -	.pas_id = 4,
-> -	.dtb_pas_id = 0x26,
-> -	.minidump_id = 3,
-> -	.auto_boot = false,
-> -	.decrypt_shutdown = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mss",
-> -		NULL
-> -	},
-> -	.load_state = "modem",
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -	.smem_host_id = 1,
-> -	.region_assign_idx = 2,
-> -	.region_assign_count = 1,
-> -	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-> -};
-> -
-> -static const struct adsp_data sc7280_wpss_resource = {
-> -	.crash_reason_smem = 626,
-> -	.firmware_name = "wpss.mdt",
-> -	.pas_id = 6,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mx",
-> -		NULL
-> -	},
-> -	.load_state = "wpss",
-> -	.ssr_name = "wpss",
-> -	.sysmon_name = "wpss",
-> -	.ssctl_id = 0x19,
-> -};
-> -
-> -static const struct adsp_data sm8650_cdsp_resource = {
-> -	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> -	.pas_id = 18,
-> -	.dtb_pas_id = 0x25,
-> -	.minidump_id = 7,
-> -	.auto_boot = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mxc",
-> -		"nsp",
-> -		NULL
-> -	},
-> -	.load_state = "cdsp",
-> -	.ssr_name = "cdsp",
-> -	.sysmon_name = "cdsp",
-> -	.ssctl_id = 0x17,
-> -	.smem_host_id = 5,
-> -	.region_assign_idx = 2,
-> -	.region_assign_count = 1,
-> -	.region_assign_shared = true,
-> -	.region_assign_vmid = QCOM_SCM_VMID_CDSP,
-> -};
-> +#define RPROC_DATA_COMMON_adsp                                              \
-> +	.crash_reason_smem = 423, .pas_id = 1, .firmware_name = "adsp.mdt", \
-> +	.ssr_name = "lpass", .sysmon_name = "adsp", .ssctl_id = 0x14
-> +#define RPROC_DATA_COMMON_adsp_mbn                                              \
-> +	.crash_reason_smem = 423, .pas_id = 1, .firmware_name = "adsp.mbn", \
-> +	.ssr_name = "lpass", .sysmon_name = "adsp", .ssctl_id = 0x14
-> +
-> +#define RPROC_DATA_COMMON_mpss                                               \
-> +	.crash_reason_smem = 421, .pas_id = 4, .firmware_name = "modem.mdt", \
-> +	.ssr_name = "mpss", .sysmon_name = "modem", .ssctl_id = 0x12
-> +#define RPROC_DATA_COMMON_mpss1                                              \
-> +	.crash_reason_smem = 421, .pas_id = 4, .firmware_name = "modem.mdt", \
-> +	.ssr_name = "mpss", .sysmon_name = "modem", .ssctl_id = 0x22
-> +
-> +#define RPROC_DATA_COMMON_cdsp                                               \
-> +	.crash_reason_smem = 601, .pas_id = 18, .firmware_name = "cdsp.mdt", \
-> +	.ssr_name = "cdsp", .sysmon_name = "cdsp", .ssctl_id = 0x17
-> +#define RPROC_DATA_COMMON_nsp0                                               \
-> +	.crash_reason_smem = 601, .pas_id = 18, .firmware_name = "cdsp.mdt", \
-> +	.ssr_name = "cdsp0", .sysmon_name = "cdsp", .ssctl_id = 0x17
-> +#define RPROC_DATA_COMMON_cdsp0                                               \
-> +	.crash_reason_smem = 601, .pas_id = 18, .firmware_name = "cdsp0.mbn", \
-> +	.ssr_name = "cdsp", .sysmon_name = "cdsp", .ssctl_id = 0x17
-> +
-> +#define RPROC_DATA_COMMON_nsp1                                               \
-> +	.crash_reason_smem = 633, .pas_id = 30, .firmware_name = "cdsp.mdt", \
-> +	.ssr_name = "cdsp1", .sysmon_name = "cdsp1", .ssctl_id = 0x20
-> +#define RPROC_DATA_COMMON_cdsp1                                               \
-> +	.crash_reason_smem = 633, .pas_id = 30, .firmware_name = "cdsp1.mbn", \
-> +	.ssr_name = "cdsp1", .sysmon_name = "cdsp1", .ssctl_id = 0x20
-> +
-> +#define RPROC_DATA_COMMON_slpi                                               \
-> +	.crash_reason_smem = 424, .pas_id = 12, .firmware_name = "slpi.mdt", \
-> +	.ssr_name = "dsps", .sysmon_name = "slpi", .ssctl_id = 0x16
-> +#define RPROC_DATA_COMMON_wcnss                                              \
-> +	.crash_reason_smem = 421, .pas_id = 6, .firmware_name = "wcnss.mdt", \
-> +	.ssr_name = "mpss", .sysmon_name = "wcnss", .ssctl_id = 0x12
-> +#define RPROC_DATA_COMMON_wpss                                              \
-> +	.crash_reason_smem = 626, .pas_id = 6, .firmware_name = "wpss.mdt", \
-> +	.ssr_name = "wpss", .sysmon_name = "wpss", .ssctl_id = 0x19
-> +
-> +#define RPROC_DATA_COMMON_gpdsp0                                              \
-> +	.crash_reason_smem = 640, .pas_id = 39, .firmware_name = "gpdsp0.mbn", \
-> +	.ssr_name = "gpdsp0", .sysmon_name = "gpdsp0", .ssctl_id = 0x21
-> +#define RPROC_DATA_COMMON_gpdsp1                                              \
-> +	.crash_reason_smem = 641, .pas_id = 40, .firmware_name = "gpdsp1.mbn", \
-> +	.ssr_name = "gpdsp1", .sysmon_name = "gpdsp1", .ssctl_id = 0x22
-> +
-> +#define RPROC_DATA_COMMON_FOR_SS(ss) RPROC_DATA_COMMON_##ss
-> +
-> +#define RPROC_DATA_FILLER(target, ss, dtpid, dtfname, lid, mid, sid, autob,   \
-> +			  decshut, loadstate, regidx, regcnt, regshd, regvmid, \
-> +			  ...)                                                 \
-> +	static const struct adsp_data target##_##ss##_resource = {             \
-> +		RPROC_DATA_COMMON_FOR_SS(ss),                                  \
-> +		.dtb_pas_id = dtpid,                                           \
-> +		.dtb_firmware_name = dtfname,                                  \
-> +		.lite_pas_id = lid,                                            \
-> +		.minidump_id = mid,                                            \
-> +		.smem_host_id = sid,                                            \
-> +		.auto_boot = autob,                                            \
-> +		.decrypt_shutdown = decshut,                                   \
-> +		.proxy_pd_names = (char *[]){ __VA_ARGS__ },                   \
-> +		.load_state = loadstate,                                       \
-> +		.region_assign_idx = regidx,                                   \
-> +		.region_assign_count = regcnt,                                 \
-> +		.region_assign_shared = regshd,                                \
-> +		.region_assign_vmid = regvmid,                                 \
-> +	}
-> 
-> -static const struct adsp_data sm8650_mpss_resource = {
-> -	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.dtb_firmware_name = "modem_dtb.mdt",
-> -	.pas_id = 4,
-> -	.dtb_pas_id = 0x26,
-> -	.minidump_id = 3,
-> -	.auto_boot = false,
-> -	.decrypt_shutdown = true,
-> -	.proxy_pd_names = (char*[]){
-> -		"cx",
-> -		"mss",
-> -		NULL
-> -	},
-> -	.load_state = "modem",
-> -	.ssr_name = "mpss",
-> -	.sysmon_name = "modem",
-> -	.ssctl_id = 0x12,
-> -	.smem_host_id = 1,
-> -	.region_assign_idx = 2,
-> -	.region_assign_count = 3,
-> -	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-> -};
-> +RPROC_DATA_FILLER(common,    adsp,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      NULL);
-> +RPROC_DATA_FILLER(sa8775p,    adsp_mbn,   0,     NULL,             0,     5,  0, true,   false,  "adsp",   0,  0,  false,  0,       "lcx", "lmx", NULL);
-> +RPROC_DATA_FILLER(sdm845,    adsp,   0,     NULL,             0,     0,  0, true,   false,  "adsp",   0,  0,  false,  0,                      NULL);
-> +RPROC_DATA_FILLER(sm6350,    adsp,   0,     NULL,             0,     0,  0, true,   false,  "adsp",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(sm6375,    mpss,   0,     NULL,             0,     3,  0, false,  false,  NULL,     0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(sm8150,    adsp,   0,     NULL,             0,     0,  0, true,   false,  "adsp",   0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(sm8250,    adsp,   0,     NULL,             0,     0,  0, true,   false,  "adsp",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(sm8350,    adsp,   0,     NULL,             0,     0,  0, true,   false,  "adsp",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(msm8996,   adsp,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(common,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      NULL);
-> +RPROC_DATA_FILLER(sa8775p,    cdsp0,   0,     NULL,             0,     7,  0, true,   false,  NULL,     0,  0,  false,  0, "cx", "mxc", "nsp", NULL);
-> +RPROC_DATA_FILLER(sa8775p,    cdsp1,   0,     NULL,             0,     20,  0, true,   false,  NULL,     0,  0,  false,  0, "cx", "mxc", "nsp", NULL);
-> +RPROC_DATA_FILLER(sdm845,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      NULL);
-> +RPROC_DATA_FILLER(sm6350,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      "mx",   NULL);
-> +RPROC_DATA_FILLER(sm8150,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(sm8250,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(sc8280xp,  nsp0,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      "nsp",     NULL);
-> +RPROC_DATA_FILLER(sc8280xp,  nsp1,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      "nsp",     NULL);
-> +RPROC_DATA_FILLER(x1e80100,  adsp,   0x24,  "adsp_dtb.mdt",   0x1f,  5,  0, true,   false,  "adsp",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(x1e80100,  cdsp,   0x25,  "cdsp_dtb.mdt",   0,     7,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      "mxc",  "nsp",  NULL);
-> +RPROC_DATA_FILLER(sm8350,    cdsp,   0,     NULL,             0,     0,  0, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      "mxc",  NULL);
-> +RPROC_DATA_FILLER(sa8775p,    gpdsp0,   0,     NULL,             0,     21,  0, true,   false,  NULL,     0,  0,  false,  0, "cx", "mxc", NULL);
-> +RPROC_DATA_FILLER(sa8775p,    gpdsp1,   0,     NULL,             0,     22,  0, true,   false,  NULL,     0,  0,  false,  0, "cx", "mxc", NULL);
-> +RPROC_DATA_FILLER(common,    mpss,   0,     NULL,             0,     3,  0, false,  false,  "modem",  0,  0,  false,  0,                      "cx",      "mss",  NULL);
-> +RPROC_DATA_FILLER(sc8180x,   mpss,   0,     NULL,             0,     0,  0, false,  false,  "modem",  0,  0,  false,  0,                      "cx",      NULL);
-> +RPROC_DATA_FILLER(msm8996,   slpi,   0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      "ssc_cx",  NULL);
-> +RPROC_DATA_FILLER(sdm845,    slpi,   0,     NULL,             0,     0,  0, true,   false,  "slpi",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(qcs404,    wcnss,  0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      NULL);
-> +RPROC_DATA_FILLER(sdx55,     mpss1,  0,     NULL,             0,     0,  0, true,   false,  NULL,     0,  0,  false,  0,                      "cx",      "mss",  NULL);
-> +RPROC_DATA_FILLER(sm8450,    mpss,   0,     NULL,             0,     3,  0, false,  true,   "modem",  0,  0,  false,  0,                      "cx",      "mss",  NULL);
-> +RPROC_DATA_FILLER(sm8550,    adsp,   0x24,  "adsp_dtb.mdt",   0,     5,  2, true,   false,  "adsp",   0,  0,  false,  0,                      "lcx",     "lmx",  NULL);
-> +RPROC_DATA_FILLER(sm8550,    cdsp,   0x25,  "cdsp_dtb.mdt",   0,     7,  5, true,   false,  "cdsp",   0,  0,  false,  0,                      "cx",      "mxc",  "nsp",  NULL);
-> +RPROC_DATA_FILLER(sm8550,    mpss,   0x26,  "modem_dtb.mdt",  0,     3,  1, false,  true,   "modem",  2,  1,  false,  QCOM_SCM_VMID_MSS_MSA,  "cx",      "mss",  NULL);
-> +RPROC_DATA_FILLER(sc7280,    wpss,   0,     NULL,             0,     0,  0, true,   false,  "wpss",   0,  0,  false,  0,                      "cx",      "mx",   NULL);
-> +RPROC_DATA_FILLER(sm8650,    cdsp,   0x25,  "cdsp_dtb.mdt",   0,     7,  5, true,   false,  "cdsp",   2,  1,  true,   QCOM_SCM_VMID_CDSP,     "cx",      "mxc",  "nsp",  NULL);
-> +RPROC_DATA_FILLER(sm8650,    mpss,   0x26,  "modem_dtb.mdt",  0,     3,  1, false,  true,   "modem",  2,  3,  false,  QCOM_SCM_VMID_MSS_MSA,  "cx",      "mss",  NULL);
-> 
->  static const struct of_device_id adsp_of_match[] = {
-> -	{ .compatible = "qcom,msm8226-adsp-pil", .data = &adsp_resource_init},
-> +	{ .compatible = "qcom,msm8226-adsp-pil", .data = &common_adsp_resource},
->  	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
-> -	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
-> +	{ .compatible = "qcom,msm8974-adsp-pil", .data = &common_adsp_resource},
->  	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
-> -	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm8996_slpi_resource_init},
-> +	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm8996_slpi_resource},
->  	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource},
-> -	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8996_slpi_resource_init},
-> -	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
-> -	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
-> -	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-> -	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
-> +	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8996_slpi_resource},
-> +	{ .compatible = "qcom,qcs404-adsp-pas", .data = &common_adsp_resource },
-> +	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &common_cdsp_resource },
-> +	{ .compatible = "qcom,qcs404-wcss-pas", .data = &qcs404_wcnss_resource },
-> +	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_mbn_resource},
->  	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
->  	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
->  	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
->  	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
->  	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
-> -	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
-> +	{ .compatible = "qcom,sc7180-mpss-pas", .data = &common_mpss_resource},
->  	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
->  	{ .compatible = "qcom,sc7280-cdsp-pas", .data = &sm6350_cdsp_resource},
-> -	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
-> +	{ .compatible = "qcom,sc7280-mpss-pas", .data = &common_mpss_resource},
->  	{ .compatible = "qcom,sc7280-wpss-pas", .data = &sc7280_wpss_resource},
->  	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
->  	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
-> @@ -1433,35 +954,35 @@ static const struct of_device_id adsp_of_match[] = {
->  	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource},
->  	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource},
->  	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource},
-> -	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
-> -	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
-> -	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
-> -	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init},
-> -	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
-> +	{ .compatible = "qcom,sdm660-adsp-pas", .data = &common_adsp_resource},
-> +	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource},
-> +	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource},
-> +	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource},
-> +	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss1_resource},
->  	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource},
-> -	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
-> -	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
-> +	{ .compatible = "qcom,sm6115-adsp-pas", .data = &common_adsp_resource},
-> +	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &common_cdsp_resource},
->  	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource},
->  	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
->  	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
-> -	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
-> +	{ .compatible = "qcom,sm6350-mpss-pas", .data = &common_mpss_resource},
->  	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
->  	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
->  	{ .compatible = "qcom,sm6375-mpss-pas", .data = &sm6375_mpss_resource},
->  	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
->  	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
-> -	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
-> -	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sdm845_slpi_resource_init},
-> +	{ .compatible = "qcom,sm8150-mpss-pas", .data = &common_mpss_resource},
-> +	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sdm845_slpi_resource},
->  	{ .compatible = "qcom,sm8250-adsp-pas", .data = &sm8250_adsp_resource},
->  	{ .compatible = "qcom,sm8250-cdsp-pas", .data = &sm8250_cdsp_resource},
-> -	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sdm845_slpi_resource_init},
-> +	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sdm845_slpi_resource},
->  	{ .compatible = "qcom,sm8350-adsp-pas", .data = &sm8350_adsp_resource},
->  	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
-> -	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sdm845_slpi_resource_init},
-> -	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
-> +	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sdm845_slpi_resource},
-> +	{ .compatible = "qcom,sm8350-mpss-pas", .data = &common_mpss_resource},
->  	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
->  	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
-> -	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sdm845_slpi_resource_init},
-> +	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sdm845_slpi_resource},
->  	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
->  	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource},
->  	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource},
-> --
-> 2.46.1
-> 
+I do not have direct experience with this kind of configuration but I
+would think both vring and vdev buffers would need to be located on
+the OCM.  That said the OCM may not be big enough for that or it may
+not be accessible by the main processor.  Another option could be to
+use non-cached device memory, but there may also be constraints at
+that level as well.  This is really HW specifics and I do not have
+enough details to provide further guidance.
 
--- 
-With best wishes
-Dmitry
+Thanks,
+Mathieu
+
+> I'm currently developing a solution, trying to adopt the examples AMD
+> provides, but when trying to boot the fw image, Remoteproc complains that
+> it is unable to allocate the memory, saying the fw image size doesn't
+> fit the len request. This results in Remoteproc throwing error "-12",
+> which simply indicates that booting of the RPU failed. More information
+> isn't logged.
+>
+> I have tried to read the documentation, but I can't really decide which
+> aspects I need to bear in mind when trying to adopt my code to use a
+> different memory region as a whole.
+>
+> My previous attempts at circumventing this issue failed, resulting in
+> the error above.
+> A few of the things I've tried are:
+> - Changing the shared memory and the vring addresses to be inside of
+> the OCM
+> - Adding the OCM and the remoteproc buffers to the device tree
+> - Attempting to increase the requested carveout for the firmware
+>
+> I hope this provides a sufficient overview of my situation. If you need
+> further information or logs in order to figure out what went wrong,
+> feel free to ask for that.
+>
+> Thank you in advance and best regards,
+>
+> Felix Kuhlmann
+>
+>
