@@ -1,134 +1,82 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48E91DE3AC
-	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960F11D6DB6;
+	Mon, 28 Oct 2024 17:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128643; cv=none; b=SCBaKk6C0Q0zYyNjdJ3JzQXQa6TSP/NmZvmhwd2eEeNA0Ta4kMpQfMFONOnN6QDjC9Z7l2iNVRjxPPldxv6dHEY9Aq5XNc8rLIVMcM43n1OAJ9MfbJVLn39k3dVP9UKoADJ3P9AQylD90v8tqGfmnpGyvzx3Z7aXcJX36yrQTsk=
+	t=1730138335; cv=none; b=nAN/ZWEzYEMe8LcSgHK+djGKZBQSRcULopR7a6EXy+DiS5aHjg0idsZlPffppmiGcOpRnQKEnuV6N3Pp4B8fE/+7Ft17Q2+eE3Fo03EtILA+G5rdds0BNZu/PJZOfeq8Pzg91EBCE5O3DX0xCJhQ39k0z7cjP6sYs2q43XY9GWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128643; c=relaxed/simple;
-	bh=Ax87HxxUakfr8YXC5k3BVe8BobiydMDDRcWzLJeofv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hppkcCVEywDptM8SH+AOCbZiDyHA6WqtLzyRQLGizOvSuYulvaKYm69ml2z+ydIsJcC8yWhbzq8TEUfwtmlKzU1Y6KBKdzKUWHqKj4VjSmjpQ9JXDghx7gASaUaB8eNGzupshlPElzmgrcpoHA98mnds461kHDRKMRqZdscBF9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MnluqPf/; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnluqPf/"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so6947155a12.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 08:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730128639; x=1730733439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=55/ro/7zJvThn66N42PfbJLx9dbqEZPe1RBRRwDigOA=;
-        b=MnluqPf/9Ika48rju6NJL1iIjC2fNddd2+5vBu2NM8F3yDntx56xew/yDRzbTpjMVp
-         O/sQM14wYV/F0pE77FGqhW0g6PheO65YdoVyd8kD/14Sc1K/7b1Pivo5p/LOAM3ck6TT
-         9OwcuD2zk9k06M0TCbtYno4E1vNC7vl1w+NjrqslLNd5gOzRZ28CMIogTUydBMi4/rN+
-         SoPbaokUrSvNDwNS+JKu5GC8EeedgXwkTDohFO8+8v1P64mviBrTJZnAARAdAbaqwN7i
-         J7DBMNOf/+bWpqClC5vb3IiqrHaH0luWu2mVW/kcJDVkcV6Oh2NoH6HC2mpZNQy+3qaQ
-         D7gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730128639; x=1730733439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=55/ro/7zJvThn66N42PfbJLx9dbqEZPe1RBRRwDigOA=;
-        b=siBdGAARzqUBty79Led1HuEoRgYcrCJM4wZsyDZVdMQNFElqm0V1GktDVTiu+ocnHY
-         OZuZOf5EQziw8PD5b7F3ffHGjc1aCxCb4BvYkPPdgHHxIVlGR1Gc+h2msVUAIObUinyt
-         h51mpWqMkl+OGGOsCVuO953I6sU4oCoHrN34jODmL4hCqW+TUz1C3YDPdvSlXRw87XYY
-         GWEB6ih5UnsDN5JEwnkkJT8Jpkere5PrzQiAlaD2PW3r0rNy9I1FdBH9g9PXCLAbw35O
-         QR+ouL05e/9mJS6Vj48dksWIUzJ+R9cxVWeH2pDGTwRSf9iAE1DVBbN4HbD+QX6Gaw+p
-         /V8g==
-X-Gm-Message-State: AOJu0YxC+ZyMH6d70d+MYOI16IEjFiURbpj5EzGKyq8XGnqVHlcqbbEr
-	FFk7a/EOwbaO6FyWW5ISxRkeWxdxbsUij9qteUdaFVbzV4TeYHRJSUgKMyRQWIQQrTRFvZ/9o61
-	BH/dGz2N5dc2nrHFG+qNffmLlHA38Eo8sP/faNw==
-X-Google-Smtp-Source: AGHT+IFNHRoMT1azdBbEdqXYLU+6ZEDN58kXAqgF/pFpY/FWiiPNt85IQIsqmlI03mwF2Uu/WESJaRoUUj7qEIuiuPA=
-X-Received: by 2002:a05:6402:40d5:b0:5c9:6623:a11a with SMTP id
- 4fb4d7f45d1cf-5cbbf94abc2mr7399460a12.25.1730128639232; Mon, 28 Oct 2024
- 08:17:19 -0700 (PDT)
+	s=arc-20240116; t=1730138335; c=relaxed/simple;
+	bh=qQUJIc218FY4jP+zYDYMEfn40JNC6dBOJaSbdOuKCgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fgcFtGqHzXz5TjL+Dzn2q937b5ZZ1gdCNt9LJSLYm3Iyrrv+yImMexw/KCUouqHbXHj5NS3xgXP3kXU/hrx58PZ8lHKnC3eYBMkatsZ8OMCVIfZe0CDKgEg1DZS9nnQj9kCJf0WKf/qoaG744IWKZ7ftx5U9tahTPyRuo1yIl7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1D29497;
+	Mon, 28 Oct 2024 10:59:16 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1A5BB3F66E;
+	Mon, 28 Oct 2024 10:58:44 -0700 (PDT)
+From: Robin Murphy <robin.murphy@arm.com>
+To: joro@8bytes.org,
+	will@kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	mchehab@kernel.org,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: hns@goldelico.com,
+	b-padhi@ti.com,
+	andreas@kemnade.info,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH 0/4] Fix omap-iommu bitrot
+Date: Mon, 28 Oct 2024 17:58:34 +0000
+Message-Id: <cover.1730136799.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZxzLHcWpjeo9sJGN@fedora>
-In-Reply-To: <ZxzLHcWpjeo9sJGN@fedora>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 28 Oct 2024 09:17:07 -0600
-Message-ID: <CANLsYkyq5Ge4-RZEPDsvMgqtzL10XonVMdHJOGAbcHyXHWV_Cg@mail.gmail.com>
-Subject: Re: Question regarding optimisation of RPMsg round trip times on
- Xilinx ZynqMP hardware
-To: Felix Kuhlmann <felix-kuhlmann@gmx.de>
-Cc: linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Felix,
+Hi all,
 
-On Sat, 26 Oct 2024 at 04:57, Felix Kuhlmann <felix-kuhlmann@gmx.de> wrote:
->
-> Hello everybody,
->
-> I need your help concerning an error that was returned while trying to
-> use the AMD Xilinx implementation of remoteproc. I hope that this is
-> the right place to ask for help.
->
-> I'm currently working on a project that requires Remoteproc and
-> RPMsg. The hardware I am working with is a Trenz SoM containing a
-> AMD Zynq UltraScale+ MPSoC, CG variant, DDR3 external RAM and a few
-> additional components.
->
-> One of the targets of the project is that the communication between
-> the RPU and the APU should happen under soft realtime conditions. The
-> issue with the communication examples provided by Xilinx is that they
-> use the external RAM for the buffers for RPMsg. This results in highly
-> non-deterministic communication delay jitter, which is most likely due
-> to the fact that DDR RAM is not suited for those applications.
->
-> Given that the SoC already has an On-Chip Memory that is designed for such
-> applications, I am curious whether changing the shared memory location
-> for RPMsg to reside inside of the OCM of the SoC result in a performance
-> boost. Do you have any experience with such performance benefits?
->
+It seems omap-iommu hasn't had enough mainline users to avoid bitrotting
+through the more recent evolution of the IOMMU API internals. These
+patches attempt to bring it and its consumers sufficiently up-to-date
+to work again, in a manner that's hopefully backportable. This is
+largely all written by inspection, but I have managed to lightly boot
+test patch #3 on an OMAP4 Pandaboard to confirm iommu_probe_device()
+working again.
 
-I do not have direct experience with this kind of configuration but I
-would think both vring and vdev buffers would need to be located on
-the OCM.  That said the OCM may not be big enough for that or it may
-not be accessible by the main processor.  Another option could be to
-use non-cached device memory, but there may also be constraints at
-that level as well.  This is really HW specifics and I do not have
-enough details to provide further guidance.
+This supersedes my previous patch[1]. Patches #1 and #2 are functionally
+independent, and can be applied directly to their respective trees if
+preferred.
 
 Thanks,
-Mathieu
+Robin.
 
-> I'm currently developing a solution, trying to adopt the examples AMD
-> provides, but when trying to boot the fw image, Remoteproc complains that
-> it is unable to allocate the memory, saying the fw image size doesn't
-> fit the len request. This results in Remoteproc throwing error "-12",
-> which simply indicates that booting of the RPU failed. More information
-> isn't logged.
->
-> I have tried to read the documentation, but I can't really decide which
-> aspects I need to bear in mind when trying to adopt my code to use a
-> different memory region as a whole.
->
-> My previous attempts at circumventing this issue failed, resulting in
-> the error above.
-> A few of the things I've tried are:
-> - Changing the shared memory and the vring addresses to be inside of
-> the OCM
-> - Adding the OCM and the remoteproc buffers to the device tree
-> - Attempting to increase the requested carveout for the firmware
->
-> I hope this provides a sufficient overview of my situation. If you need
-> further information or logs in order to figure out what went wrong,
-> feel free to ask for that.
->
-> Thank you in advance and best regards,
->
-> Felix Kuhlmann
->
->
+[1] https://lore.kernel.org/linux-iommu/c44545c6d07c65d89daa297298c27bb0f15c8b84.1728393458.git.robin.murphy@arm.com/
+
+
+Robin Murphy (4):
+  remoteproc/omap: Handle ARM dma_iommu_mapping
+  media: omap3isp: Handle ARM dma_iommu_mapping
+  iommu/omap: Add minimal fwnode support
+  iommu: Make bus_iommu_probe() static
+
+ drivers/iommu/iommu.c                    |  3 ++-
+ drivers/iommu/omap-iommu.c               | 26 +++++++++++++++---------
+ drivers/media/platform/ti/omap3isp/isp.c |  7 +++++++
+ drivers/remoteproc/omap_remoteproc.c     | 17 ++++++++++++++++
+ include/linux/iommu.h                    |  1 -
+ 5 files changed, 42 insertions(+), 12 deletions(-)
+
+-- 
+2.39.2.101.g768bb238c484.dirty
+
