@@ -1,174 +1,153 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4974E1EE010
-	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 22:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE70156C6A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 16:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730156198; cv=none; b=EAXr2XTT9WcnrrI6OThmqPbS2w5w+jCqPK1ehjmGR1nR818wUOx8WCxXLoxxsoeUGYtBXUjS+ZYexV4/66NKR+7d+C26s3+OOphZ4JtT08tT0y8Go8WLcOnIZB++fuJ1VdzTeUNNXeazXy2S2akxDSJeh7ZQQNg+r3Zj7IOJ8t8=
+	t=1730218539; cv=none; b=dnDZ6JF57JGNEIu7mbt1Es7Jvj0MGnwUPFfI3BehZRW8WAU4pfbwrz38nYgRNuY9TWMioUzxTlSP91TE6KSF66itl6t1b9ckB6edBVRi6Y7PkLnfK+sR4UrJcYKY9wCYbaiMll4roYFGgjtbYcL0qQtnO0FOXyoIpMfjYO7TYiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730156198; c=relaxed/simple;
-	bh=o6pZVgQYnL1vcAt6O3B5rF0BAekC75DsbuXyHvigxyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nFvurvqlpxv53FLUOVE+nhVSbRsvzY9JofrGUTkhdu0eqEJfnpii9zd9rb0ath5E0BEtt+q6ytiGb6IPqzTFy/NVeE9pcrnONrxSCQTARVcMk5pOwYRKQuMbDwshRK5fh37mf7ouMPozVRo9jUS/MMpmlT6AtvZVgQs/vd7cdX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZHBOWMfq; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730218539; c=relaxed/simple;
+	bh=VYpimcHZFMaLzg2VWqD+6ZkRv3WNtiId4G9ZeHhFH0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMBXTnZsJ0v3Sd9/f/oWLwFJhNEHDN+4iUJjsftkp6RUSQDYF+1iSo84hb1TwxarHR4MLxGbbLDdreiyJ/d1rjxDqA3P7381z1zTWt8PVQUOlLqvM0xx1fdM8OKKPBK2aYMSeEVUL+1a4w56RvUWAGs2wDpLZXdz9t8J+W1zELI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=fn1cobFI; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZHBOWMfq"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c9428152c0so5585017a12.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Oct 2024 15:56:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="fn1cobFI"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so3979646f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 09:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730156195; x=1730760995; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XVirlTRNThIlw5izD//IoFLz8dbGPSlaVi5YQ6nWJuM=;
-        b=ZHBOWMfqQupQ2UFnOfWSMtzfazp6cYriGJChFtOzxmwqkkEA7Lhw1j42YIkw2i4S89
-         Dj3ZQKedmNTXbARy4X+1q8/GL1no77eROyo55+7Is7KQIf6s3mmSncc8APPwetKs8EST
-         duowwraXLfursCC3xVfwNZ30sDAQYjL8yL4wzA/OIkYf1ddAGgANPEj0XG/MWzNEWWxA
-         Za+wpJpokk5qlII2QweUoznz0QbDl6eLGIVmzYMfTcog3QvbUHBlGgE/Al5aR7X7XY1z
-         +s83OcrmXz6/8MzVJy6sBskCEC2l05vQ92WXQrHJqEcJXZmiH64dMU2QHl78vkvVLxGV
-         gA8w==
+        d=smile.fr; s=google; t=1730218534; x=1730823334; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=POjXesPV4dmzq7DJzXweRhoA+WDgQ1brrcjq689pb38=;
+        b=fn1cobFIjxUpL800bqdTXceL8DK9D94wGFySuSlXY7kzmCBMlq3hGHCpJXLMTyOr6W
+         JfVfrKIRpkkTpoQ6V0BGBtwK/EUuam09pn4sEeEwTi3hsUlNMbGG6YxXbaWfRmnJ27sC
+         U1U3nsQP3qjf9slCgf7YjUHkTtgpahePTdv+Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730156195; x=1730760995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XVirlTRNThIlw5izD//IoFLz8dbGPSlaVi5YQ6nWJuM=;
-        b=skL9+BpsVGW690ijZSzrVQXw9EXMeqwoVnSumlYele0yO5D4iUlNzbXylQZqwesGjB
-         MaVfQLkFD0VPV1l8F87lY+puI0ujxzoG1OS/yvuS3Yrd9X72Llfc98yOMx6XMEidJzzX
-         t/peiwmvb9LhPq9yBxvG57MuiSyn1ZDVOfgvnHPHcDW8BK9j8yTN4LpzKYRxYzaf3Aoq
-         5kxyTiI/pwmdEaQp2CWF6By543VZLIny8P8qAkQ7imKUvEanZC458H3Apv3Advmncdmx
-         s0sDwaSK7ANJnFzgDHrGwsEb68zClQHw5Ym+SOf3JTz9KZSaffYdjNNh7zsrBllr6ior
-         HZ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUs1+VXLVzX0yaO9qurRcvfhwklxV261WSiY8DuNvfXVg+XyPW7H981oc+IDkxtipQ6QACszrJZkmIbId3pZlzn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHPAklqttC0EKtzCRKNZrsSO7ixocQQIoqt6QQ0EBJ00YngBfA
-	GPJzfz0NyxAHkPKFXDZhCILpFQ3hlBuNvRh3LiBaz6joLauPxbjizTbJGjcHlMMSPae6lP2xHX4
-	iTRu+1enO/TOcPPfxmquzBltWwVgi/0JCWsR4Ww==
-X-Google-Smtp-Source: AGHT+IF+nARq3xO0Wchcpvg4D+JUkbPZjSN4wHXbnO04jBNcQohZsJW3DXYyIkia0+QEiSgA8N9blw/TGhiEe8MkXiY=
-X-Received: by 2002:a05:6402:13c7:b0:5c9:547d:99 with SMTP id
- 4fb4d7f45d1cf-5cbbf889742mr8302467a12.2.1730156194611; Mon, 28 Oct 2024
- 15:56:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730218534; x=1730823334;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=POjXesPV4dmzq7DJzXweRhoA+WDgQ1brrcjq689pb38=;
+        b=E5mccXS+wESB0J91b1C5uki410icFAoj4hHB9sknrFzqc22i/or9hRxiUt2DfolVDR
+         bEtWYABpK+8cZD7qddwvUvgTqPzY/un0cTX1Np6/iSN5FinhQ94VTv4OIybjDUG6odcg
+         KnNk+cNpgK3/REf9wbFwlN7sfo6a78z6YlJYmM4jSm6cmaHB310JaYMUI5NHLEgwTUEY
+         HHQRNluyuswj0akS6XCBjeNezNWRGeOkFOx7eSCgjobLQgWdk5GvC6akOdYoUaY3iac0
+         kidMZWSFg0EbtM3dez3dlj5Rxu48WQuZmdSUaVDrLeyNCzGEXhCt7QuN7OcmzYnDPE5+
+         nqsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRMdJEPRgq449R2/+UMVrR5ToYI+OKqzdY3QnXpPNsurq4mk9gw+Yo2RiKYip7qecHXOe2aLGY2BoCIoJ6HC87@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm7OygZX5YD5iNAeyILtI4hLcBds3tzr0zxpQb7/8N2GTvQ+2Q
+	2AlbccrqplE2US63W3RVDEMqxiioJPaDveAq2D7EfCktcKuO14/9Aq1PtraYbWc=
+X-Google-Smtp-Source: AGHT+IEGOZ9Jprg/DrfCLDUPLS8N3hEzj27LDkjD0swuxX4Kc2moMp4pg03lb/3jVZxuAwGfhfgEfA==
+X-Received: by 2002:adf:ec8f:0:b0:374:b35e:ea6c with SMTP id ffacd0b85a97d-381b70ed1c3mr133945f8f.40.1730218533749;
+        Tue, 29 Oct 2024 09:15:33 -0700 (PDT)
+Received: from ?IPV6:2a01:cb05:949d:5800:e3ef:2d7a:4131:71f? (2a01cb05949d5800e3ef2d7a4131071f.ipv6.abo.wanadoo.fr. [2a01:cb05:949d:5800:e3ef:2d7a:4131:71f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47a41sm12966349f8f.52.2024.10.29.09.15.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 09:15:33 -0700 (PDT)
+Message-ID: <89224e37-f97d-4f50-bc4a-95da28407328@smile.fr>
+Date: Tue, 29 Oct 2024 17:15:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730136799.git.robin.murphy@arm.com> <831CC29D-3B89-4091-8145-0E310FF838CB@goldelico.com>
-In-Reply-To: <831CC29D-3B89-4091-8145-0E310FF838CB@goldelico.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 28 Oct 2024 16:56:23 -0600
-Message-ID: <CANLsYkyUCwb5RF378VWwW0axiOU1RT4oTa_sTTL+jSqVF5DawQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, mchehab@kernel.org, 
-	andersson@kernel.org, Beleswar Padhi <b-padhi@ti.com>, 
-	Andreas Kemnade <andreas@kemnade.info>, iommu@lists.linux.dev, 
-	arm-soc <linux-arm-kernel@lists.infradead.org>, 
-	Linux-OMAP <linux-omap@vger.kernel.org>, linux-media@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, 
-	Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rpmsg_ns: Work around TI non-standard message
+To: Richard Weinberger <richard@sigma-star.at>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andersson@kernel.org, upstream+rproc@sigma-star.at, ohad@wizery.com,
+ s-anna@ti.com, t-kristo@ti.com
+References: <20241011123922.23135-1-richard@nod.at>
+ <3194112.zE8UqtGg2D@somecomputer> <Zw6suCNC62Cn4fE0@p14s>
+ <3518312.cLl3JjQhRp@somecomputer>
+Content-Language: fr, en-US
+From: Romain Naour <romain.naour@smile.fr>
+In-Reply-To: <3518312.cLl3JjQhRp@somecomputer>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Oct 2024 at 14:46, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->
-> Hi Robin,
->
-> > Am 28.10.2024 um 18:58 schrieb Robin Murphy <robin.murphy@arm.com>:
-> >
-> > Hi all,
-> >
-> > It seems omap-iommu hasn't had enough mainline users to avoid bitrotting
-> > through the more recent evolution of the IOMMU API internals. These
-> > patches attempt to bring it and its consumers sufficiently up-to-date
-> > to work again, in a manner that's hopefully backportable. This is
-> > largely all written by inspection, but I have managed to lightly boot
-> > test patch #3 on an OMAP4 Pandaboard to confirm iommu_probe_device()
-> > working again.
-> >
-> > This supersedes my previous patch[1]. Patches #1 and #2 are functionally
-> > independent, and can be applied directly to their respective trees if
-> > preferred.
->
-> I can confirm that this series works on omap3 with v6.12-rc5 and
-> Camera is back to the GTA04.
->
-> So you can add:
-> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->
+Hello Richard, All,
 
-Many thanks for taking the time to test this, it is really appreciated.
+Le 15/10/2024 à 20:00, Richard Weinberger a écrit :
+> Am Dienstag, 15. Oktober 2024, 19:56:08 CEST schrieb Mathieu Poirier:
+>>>> In my opinion the real fix here is to get TI to use the standard message
+>>>> announcement structure.  The ->desc field doesn't seem to be that useful since
+>>>> it gets discarted.
+>>>
+>>> This is for the future, the goal of my patch is helping people to
+>>> get existing DSP programs work with mainline.
+>>> Not everyone can or want to rebuild theirs DSP programs when moving to a mainline
+>>> kernel.
+>>
+>> That's an even better argument to adopt the standard structure as soon as
+>> possible.  Modifying the mainline kernel to adapt to vendors' quirks doesn't
+>> scale.  
+> 
+> Well, I can't speak for TI.
+> But I have little hope.
 
-> BR and thanks,
-> Nikolaus
->
-> root@letux:~# dmesg|fgrep iommu
-> [    0.522613] iommu: Default domain type: Translated
-> [    0.522644] iommu: DMA domain TLB invalidation policy: strict mode
-> [    0.525177] omap-iommu 480bd400.mmu: 480bd400.mmu registered
-> [   10.752563] omap3isp 480bc000.isp: Adding to iommu group 0
-> [   10.811218] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-> [   11.039489] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-> root@letux:~# dmesg|fgrep .isp
-> [   10.752563] omap3isp 480bc000.isp: Adding to iommu group 0
-> [   10.841522] omap3isp 480bc000.isp: supply vdd-csiphy1 not found, using dummy regulator
-> [   10.948577] omap3isp 480bc000.isp: supply vdd-csiphy2 not found, using dummy regulator
-> [   10.990814] omap3isp 480bc000.isp: Revision 15.0 found
-> [   11.089324] omap3isp 480bc000.isp: hist: using DMA channel dma0chan15
-> [   11.115905] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP CCP2 was not initialized!
-> [   11.168792] omap3isp 480bc000.isp: isp_xclk_set_rate: cam_xclka set to 24685714 Hz (div 7)
-> [   11.220062] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP CSI2a was not initialized!
-> [   11.291748] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP CCDC was not initialized!
-> [   11.362152] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP preview was not initialized!
-> [   11.404266] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP resizer was not initialized!
-> [   11.485687] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP AEWB was not initialized!
-> [   11.520874] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP AF was not initialized!
-> [   11.574981] omap3isp 480bc000.isp: Entity type for entity OMAP3 ISP histogram was not initialized!
-> [   11.594268] omap3isp 480bc000.isp: parsing parallel interface
-> [  106.102905] omap3isp 480bc000.isp: -------------CCDC Register dump-------------
-> [  106.110595] omap3isp 480bc000.isp: ###CCDC PCR=0x00000000
-> [  106.116973] omap3isp 480bc000.isp: ###CCDC SYN_MODE=0x00031704
-> [  106.123657] omap3isp 480bc000.isp: ###CCDC HD_VD_WID=0x00000000
-> [  106.129974] omap3isp 480bc000.isp: ###CCDC PIX_LINES=0x00000000
-> [  106.136810] omap3isp 480bc000.isp: ###CCDC HORZ_INFO=0x000004ff
-> [  106.143615] omap3isp 480bc000.isp: ###CCDC VERT_START=0x00000000
-> [  106.149932] omap3isp 480bc000.isp: ###CCDC VERT_LINES=0x000003ff
-> [  106.156799] omap3isp 480bc000.isp: ###CCDC CULLING=0xffff00ff
-> [  106.163299] omap3isp 480bc000.isp: ###CCDC HSIZE_OFF=0x00000a00
-> [  106.169616] omap3isp 480bc000.isp: ###CCDC SDOFST=0x00000000
-> [  106.176086] omap3isp 480bc000.isp: ###CCDC SDR_ADDR=0x40000000
-> [  106.182708] omap3isp 480bc000.isp: ###CCDC CLAMP=0x00000010
-> [  106.188598] omap3isp 480bc000.isp: ###CCDC DCSUB=0x00000000
-> [  106.195068] omap3isp 480bc000.isp: ###CCDC COLPTN=0xbb11bb11
-> [  106.201507] omap3isp 480bc000.isp: ###CCDC BLKCMP=0x00000000
-> [  106.207550] omap3isp 480bc000.isp: ###CCDC FPC=0x00000000
-> [  106.213684] omap3isp 480bc000.isp: ###CCDC FPC_ADDR=0x00000000
-> [  106.219909] omap3isp 480bc000.isp: ###CCDC VDINT=0x03fe02aa
-> [  106.226409] omap3isp 480bc000.isp: ###CCDC ALAW=0x00000006
-> [  106.232696] omap3isp 480bc000.isp: ###CCDC REC656IF=0x00000000
-> [  106.238830] omap3isp 480bc000.isp: ###CCDC CFG=0x00008800
-> [  106.244964] omap3isp 480bc000.isp: ###CCDC FMTCFG=0x00000000
-> [  106.251434] omap3isp 480bc000.isp: ###CCDC FMT_HORZ=0x00000000
-> [  106.257568] omap3isp 480bc000.isp: ###CCDC FMT_VERT=0x00000000
-> [  106.264251] omap3isp 480bc000.isp: ###CCDC PRGEVEN0=0x00000000
-> [  106.271606] omap3isp 480bc000.isp: ###CCDC PRGEVEN1=0x00000000
-> [  106.285400] omap3isp 480bc000.isp: ###CCDC PRGODD0=0x00000000
-> [  106.301147] omap3isp 480bc000.isp: ###CCDC PRGODD1=0x00000000
-> [  106.307220] omap3isp 480bc000.isp: ###CCDC VP_OUT=0x00000000
-> [  106.326019] omap3isp 480bc000.isp: ###CCDC LSC_CONFIG=0x00006600
-> [  106.340087] omap3isp 480bc000.isp: ###CCDC LSC_INITIAL=0x00000000
-> [  106.358001] omap3isp 480bc000.isp: ###CCDC LSC_TABLE_BASE=0x00000000
-> [  106.372985] omap3isp 480bc000.isp: ###CCDC LSC_TABLE_OFFSET=0x00000000
-> [  106.379882] omap3isp 480bc000.isp: --------------------------------------------
-> [  118.617980] omap3isp 480bc000.isp: OMAP3 ISP AEWB: user wants to disable module.
-> [  118.626068] omap3isp 480bc000.isp: OMAP3 ISP AEWB: module is being disabled
-> [  118.633392] omap3isp 480bc000.isp: OMAP3 ISP AF: user wants to disable module.
-> [  118.641937] omap3isp 480bc000.isp: OMAP3 ISP AF: module is being disabled
-> [  118.649627] omap3isp 480bc000.isp: OMAP3 ISP histogram: user wants to disable module.
-> [  118.658508] omap3isp 480bc000.isp: OMAP3 ISP histogram: module is being disabled
-> root@letux:~#
->
->
->
+I'm also using an AM57xx SoC with DSP firmware and I had the same issue while
+updating the kernel from 5.10 to a newer version.
+
+remoteproc rpmsg description field changes [1] is required by the DSP firmware
+based on TI-RTOS that is loaded by remoteproc using the new (as of 2013) but
+still experimental RPMSG_NS_2_0 [2].
+
+RPMSG_NS_2_0 broke compatibility with existing rpmsg structs [3] (defined in
+upstream kernel) for all devices except OMAP5 and newer SoC (Newer 64bits SoC
+DRA8 and Jacinto doesn’t need this change thanks to the new IPC-lld implementation).
+
+This rpmsg description field has been added to ipcdev long time ago (14/03/2013)
+and requires this kernel vendor change since then (all DSP firmware generated by
+AM57xx TI SDK need it).
+
+Note:
+RPMSG_NS_2_0 is not the only vendor changes you need to rebase on newer kernels...
+
+DSP firmware generated by TI SDK are using the vendor MessageQ API [4] that
+requires AF_RPMSG socket support [5] in the kernel.
+This driver was never upstreamed since the IPC 3.x is deprecated nowadays and
+replaced by the IPC-lld on newer SoC (IPC-lld uses the upstream generic
+rpmg-char driver).
+
+All theses patches were moved out of ti-linux-kernel (6.1 since) to a meta-tisdk
+yocto layer that is used only for am57xx vendor kernel. See the latest SDK
+release for AM57xx [7].
+
+So, DSP firmwares on AM57xx will requires theses two vendor patches since it's
+how the TI IPC stack was designed more than 10 years ago.
+
+It's nice to see newer TI SoC able to use upstream kernel using the standard
+structure.
+
+[1]
+https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=ti-rt-linux-5.10.y&id=7e3ea0d62a4bf0ca04be9bc320d13f564aab0a92
+[2]
+https://git.ti.com/cgit/ipc/ipcdev/commit/?id=e8a33844cd2faa404e457d13f9d54478ec8129e7
+[3]
+https://git.ti.com/cgit/ipc/ipcdev/commit/?id=1264ed112ef8c0eed6ff30503b14f81b8ff11dd7
+[4]
+http://downloads.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ipc/latest/docs/doxygen/html/_message_q_8h.html
+[5]
+https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=ti-rt-linux-5.10.y&id=f4b978a978c38149f712ddd137f12ed5fb914161
+[6]
+https://git.ti.com/cgit/ti-sdk-linux/meta-tisdk/commit/?h=am57x-9.x&id=25e56a0615fb8e973e516b5a225ee81f655f98db
+[7] https://www.ti.com/tool/download/PROCESSOR-SDK-LINUX-AM57X/09.02.00.133
+
+Best regards,
+Romain
+
+
+> 
+> Thanks,
+> //richard
+> 
+
