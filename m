@@ -1,87 +1,108 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B321D63F1
-	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EAA199947
+	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 17:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730221679; cv=none; b=QccMUHjEMYhn3dIo4l7UstzUNtB5OpqfIq7RtYsRnz/owpQUpP+kT1p3aZdKtHU1hOW1sQ2mMBcSU3IM8HMz0F9F/a4iBlMY/uNv7RIUSgpKRe1TpHiJOzHwy14sLSXc3bt8OpGCRk20NY6AqsxW25MsyppPHwGLbqiocYm0XvE=
+	t=1730222438; cv=none; b=Hom77t33598FqJ6Y5m6Luq3RRY9gY31Min3hN1w20GYthp/ajpxxP2SYs+8phtLNe3kjHQ84ddgDeDQe/YRdt5pP7eXsLx3VR7LoXHE0wxiLzJ5VpiNhUHUtGjUQFrnqEMhyOWC3fWCLt2LMFTpt+DMjiRUMH+mMD1Zmpgkeguw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730221679; c=relaxed/simple;
-	bh=vMlcxqhH9M0oMBn2t50QyORix8uNGB6ufNOx9xzdqRM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ARscnN/Sp7FFyuyCVda9EmvQR+AZkPX1wBJgqFoPZvbjsUrKBMxEggn2+wddMwdc0C2eKXEh1v7XxjZQK6a63cRS9dFUmls1Yy1uQB1VVVj+2pY4KVXWTKOYrrfgRSUgSINRHXiC4mgZCoBJn3PRNyB5XnWFxi4+mwT++XerPJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c693b68f5so61901925ad.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 10:07:57 -0700 (PDT)
+	s=arc-20240116; t=1730222438; c=relaxed/simple;
+	bh=a1G0i/NLLTyCcwzqXP9Sw+DHZFP0plS5ycVSGr3uIgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXvvD+2EcxMtkyMayMH8PlB2UieTLdmUP8t3eYADNcp/J7bXHnpwTR6eIDCUcC1E/yqlYOv8MgmgkegcGzdBP4z4TiEiCxWManIbFa4YbTXcfDMOo/6pjsyHfTNrrr23LCJKhGr8qbfhKbLohWaklv8DZNSsMoIff4OV9ixvuLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uThwPnrp; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uThwPnrp"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso3668157a12.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Oct 2024 10:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730222436; x=1730827236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcPztDRBbO+gnBgnc/GAPOLS8SXyF7AibdYbZdEAVk8=;
+        b=uThwPnrpqcdSGmiHRTk+UzDaSuReIcBsYjSHJrJpVpMwSquVErl1rmMKpKBbxcOtU+
+         nhQ8Tp5TmcLKioEdxe7aDcXClfqxo6iSw2ULyM1w4SgnL391/Swv9QU816xqWJOED06k
+         E+mT0iSpWkhS9QqzT6nahWy6/WLJQUPuQeb0OeLujGxw5pxbolWFuoZE+zYV9jSkveme
+         YcTcchknpqIwP+dtDV8C95/alrpf1YZK8Fv7FrHJMgECIHAM/YqgI/8ZoE+5hrk8Ans3
+         wDptMBOYP2iIC+BcTWBvyl9FmPP3JR6r53IPvUUGhcN6fO0qbQJr66q19dnerztIyrFK
+         hN3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730221677; x=1730826477;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMUpO4GHw4JTvBKu5JvINhynu0MBcZcJA0tvXvTxH3I=;
-        b=fjBhFMm6U2f2MQ0PgWe+PpujY7H28JX3TxGuf9n1J2FURgniQoQynBaCitbIqgec1a
-         IMfZE4CtZz4PP5EK9N/j3brplcbv+aLKmGMFt8rRZY3nLr4AZaNYDpeyrhKByr0vc6jF
-         JkgOSPuuQ0AMBkoUxokfzrRfmRhdocD3rkmxkJBj7ByScSlhPHQ6OgsTqEmPBq5PcBMI
-         q3WK+67Hl1aQBnLFS/U2McO7yKZnax5pefxG4gWtuOv5SOeGpj3S3RMxHc3WQWx13ipD
-         +xsKJ4x9H81EtjSeDlJc1DiCteGu18VDN0r+pG1gT5JXSnFvxllTgRm9kk6C2mTi7SOb
-         iMmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/RjF8Vzdwm1S7FKnTiyV1Ha4aQ4zYQjXKnhL7mALn0efUFYcthmw0mddhhiMYDuVzOUc+BYekokmAj50gZnL1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcTc5t7ZDlgpHWJMTOuHLgnqmom/dK+mM7fcrWq0+1EjDyA6ad
-	TdUjquwbsC7xWdaf+x1EUSntyhNOjO70gZsS6ojQtBXiCXJuqQdOq6KJ6PZna3M=
-X-Google-Smtp-Source: AGHT+IHQ6hqt2GFIDvzxzB6z/d1rlXeJz0yqkXbJH8u2AzK+uLr+X4awDkW0ZAHg6kt+Bt1a+fJPTw==
-X-Received: by 2002:a17:903:22c5:b0:20c:ce1f:13bd with SMTP id d9443c01a7336-210c68ab683mr167590195ad.18.1730221677056;
-        Tue, 29 Oct 2024 10:07:57 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf46cd4sm68256225ad.41.2024.10.29.10.07.56
+        d=1e100.net; s=20230601; t=1730222436; x=1730827236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hcPztDRBbO+gnBgnc/GAPOLS8SXyF7AibdYbZdEAVk8=;
+        b=N+WotoxvpjKnh6JXZ4ClGyQIdCB6oQKOZWBgVP1LIf2wI7LBxjPTytrSvnvWfuJvqz
+         FSJ+GlFBiSMsla6GR71MT0/uIcXnyhXcoI6XJlv5rQMUX9FK6XT1zx8xAy6AOQCk++Sz
+         W+9PRkewbzTlSSqjGqRQUy0dpFpcVPVUgFATQjaD1TrtLVAIT2cxu2ZmnU/oN2g24mPp
+         6o44HXxt+fuc9/4nsx/c1gS7QSWKLHe4d/xcH3t980zDJSxNRRKN5W3E4wL4S0a97njv
+         o6PsT3ZN/6S1pC+ffpRCHQovSM/aLTBXdbvXe3WEdP07WSZs1R57fDssNgaKcNPkIwne
+         nLGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9xZuXEk10S63EXtuXsjpa5lVUd22nHO7aP4ebd7wT7gwRi9wBMpMsfA+RzHGUMkHHdcG4i913WkOQsl6CV5Ls@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC9vN6KEiRxOnzYnFNFtLJYwKWOmK7wvHn2cVUD7bfGMlPfa0M
+	sfuwj0h8RCVQKP+A8k57k2KrGYg2QPBqhVSAznJ7eU0ygZenmFy9jAZaxTBA9Nw=
+X-Google-Smtp-Source: AGHT+IGXgbfzo6Ms367VDY/GcpMQ7HVMkDfOeOP/erT7USrt8i6Y/MNFKDgqCnyTLccduA/bLvdP+A==
+X-Received: by 2002:a05:6a20:e613:b0:1d8:f62d:3585 with SMTP id adf61e73a8af0-1d9a83abbbfmr14336348637.5.1730222435747;
+        Tue, 29 Oct 2024 10:20:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:303f:610b:d879:8715])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a3d0c2sm7728212a12.77.2024.10.29.10.20.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 10:07:56 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
- laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
- andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: hns@goldelico.com, b-padhi@ti.com, andreas@kemnade.info,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-omap@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
-In-Reply-To: <cover.1730136799.git.robin.murphy@arm.com>
-References: <cover.1730136799.git.robin.murphy@arm.com>
-Date: Tue, 29 Oct 2024 10:07:56 -0700
-Message-ID: <7hiktasuqb.fsf@baylibre.com>
+        Tue, 29 Oct 2024 10:20:35 -0700 (PDT)
+Date: Tue, 29 Oct 2024 11:20:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: k3-r5: Use IO memset to clear TCMs
+Message-ID: <ZyEZYRD+o2jPoTkq@p14s>
+References: <20241021204557.929823-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021204557.929823-1-afd@ti.com>
 
-Robin Murphy <robin.murphy@arm.com> writes:
+I have applied all 3 patches in this set.
 
-> It seems omap-iommu hasn't had enough mainline users to avoid bitrotting
-> through the more recent evolution of the IOMMU API internals. These
-> patches attempt to bring it and its consumers sufficiently up-to-date
-> to work again, in a manner that's hopefully backportable. This is
-> largely all written by inspection, but I have managed to lightly boot
-> test patch #3 on an OMAP4 Pandaboard to confirm iommu_probe_device()
-> working again.
->
-> This supersedes my previous patch[1]. Patches #1 and #2 are functionally
-> independent, and can be applied directly to their respective trees if
-> preferred.
+Thanks,
+Mathieu
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-I tested this on am57xx-beagle-x15 where before this series, I was
-seeing various remoteproc drivers fail with
-
-       remoteproc remoteproc0: can't enable iommu: -12
-
-and now with this the remoteproc drivers are successfully loading again.
-
-Thanks Robin for working on bringing this back into modern times!
-
-Kevin
+On Mon, Oct 21, 2024 at 03:45:55PM -0500, Andrew Davis wrote:
+> While it should be safe to use normal memset() on these memories as they
+> are mapped as Normal Non-Cached, using the memset_io() provides stronger
+> guarantees on access alignment and fixes a sparse check warning. Switch
+> to memset_io() here.
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 2f996a962f557..e1fe85e5eba6a 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -487,10 +487,10 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>  	 * can be effective on all TCM addresses.
+>  	 */
+>  	dev_dbg(dev, "zeroing out ATCM memory\n");
+> -	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+> +	memset_io(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+>  
+>  	dev_dbg(dev, "zeroing out BTCM memory\n");
+> -	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+> +	memset_io(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.39.2
+> 
