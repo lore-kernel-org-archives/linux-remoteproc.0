@@ -1,79 +1,57 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4B282899;
-	Wed, 30 Oct 2024 04:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46DE1E573E;
+	Wed, 30 Oct 2024 09:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730264177; cv=none; b=QuejtaPxAmI/j0Yt+4mMn3X+25TgjBTa9gNEsBWRbsqW6xaqXQYf/hU/WJeLfIlEetG1MmwoG/skWTjBCbfuCKhCubCui/T9xvDIS7UoviR+j2w1j4oI1kHfhSEpsAgDwCpedCtdFd/3oXznvdu1VpXl1hupDBi7lq7pxklrGSE=
+	t=1730282145; cv=none; b=f5C1oOKz0UvmJndLcSfjR4cQmGEVaQNDRbEKxp1IbkFVcfMLrziWuq3SvQp55wPZ9vQT8t0oNFiG8jEVsFGaRGI7NQR8sC521eydBnf+nqbiYIRaVp82yUqlkp4oyd1bwlFJOxlAoSZF/c8Wafj4GRKdojA6Zycag7mPxoeGrYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730264177; c=relaxed/simple;
-	bh=zwX2RBzU4tpfWfPhSOVdn6ISdGQ1Qt5sl+TvX2kcWHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k435sKI5+T1Ym//4cb5+l4sZncMMyC1GVQ4zHMMBLTVlGCFYbEERw2upjccJG1Otvt+4yvDrsJZKBoAh78PDtfBFcKYxG+F2nRFcfrWL659khmdwyeA7BFif68L9FmsPK3AV4vVM88X48eko27LROfAZTS71eTkyR5SMyn/Ft78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gWeb7b70; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1730282145; c=relaxed/simple;
+	bh=gMC0AIiI/Y2DVK7hFH5y4phwR672FvvHc69yRw+0m/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9TyRa5rbQLW/IfBEGvOBGnQMmqB7XaT019yhphy2tE4jrXVkhm9PIu673rGFw36JQ++YAPZi+1g15YWsSZWzNReGeOzJ+QnSkQL/LKIOm/Hw7vwFyGBrMpUbwJunpD9gwgQHS0mRmAQhSRLiOxWbAxg0unXpiTEYw8Vn1+p9bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=l9Y8+XJf; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gWeb7b70"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4tiSW033939;
-	Tue, 29 Oct 2024 23:55:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730264144;
-	bh=4EA9CUgTC4Juvta7B91Kq5htCC2uTanYEkMECpDwaTM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=gWeb7b70TvlWYB2Wm+rPIixoPrV0rgfprDynbM6p/P8JaVsyOXyq5+vbguNzr03pQ
-	 FkDJYTUA6IVujGAJn/CSDN4lP+YeCuG4/LdLlPnX7OFfqbSh6M+5iph40OQyc226ZR
-	 o9XxXcPNFFVrd4cCuRm3Dn3tmSAjyadyNgfhvwf4=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49U4thc1119737
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Oct 2024 23:55:44 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Oct 2024 23:55:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Oct 2024 23:55:43 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4tcHH066220;
-	Tue, 29 Oct 2024 23:55:39 -0500
-Message-ID: <25c5c744-2e4d-4df6-a080-8f5705a47884@ti.com>
-Date: Wed, 30 Oct 2024 10:25:37 +0530
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="l9Y8+XJf"
+Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id B402D2A8ABF;
+	Wed, 30 Oct 2024 10:55:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1730282135;
+	bh=gMC0AIiI/Y2DVK7hFH5y4phwR672FvvHc69yRw+0m/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l9Y8+XJfPeU4YrZn/iITWmNXxiGDKQc9qI1YRQlNIxSR9WumxuMkbyjgpbnyMkeNc
+	 ZpvMFMOwCsn1RapHptt06thUPjJFkh44+dXEpEpDR1EkEf0Kl4DwpXawIXfAbmNRts
+	 X63R4zz+B5UrrHYkv5a6NF3OQr+shqw3no07xjIksEN6S1sLX+KlH/PbooL+mR2bi5
+	 mCU3WRDKz9hL+qgpaEX/7fIrDszVtauESl3Fv/cZH6HLx9d7pIgk1bl6c1oGUZK96m
+	 yBkcjkzNUZpDlpxcqfg8cm6Cnu6KcLLwcOuaCo1N3vspd6UsoZzChLL1PdTwreFLvE
+	 u3klQH+uJSSyw==
+Date: Wed, 30 Oct 2024 10:55:34 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will@kernel.org, laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+	andersson@kernel.org, mathieu.poirier@linaro.org, hns@goldelico.com,
+	b-padhi@ti.com, andreas@kemnade.info, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
+Message-ID: <ZyIClriScBy4s6LX@8bytes.org>
+References: <cover.1730136799.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
-To: Robin Murphy <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
-        <laurent.pinchart@ideasonboard.com>, <mchehab@kernel.org>,
-        <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <hns@goldelico.com>, <andreas@kemnade.info>, <iommu@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-        "Nagalla, Hari"
-	<hnagalla@ti.com>
-References: <cover.1730136799.git.robin.murphy@arm.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <cover.1730136799.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Robin,
-
-On 28/10/24 23:28, Robin Murphy wrote:
-> Hi all,
->
+On Mon, Oct 28, 2024 at 05:58:34PM +0000, Robin Murphy wrote:
 > It seems omap-iommu hasn't had enough mainline users to avoid bitrotting
 > through the more recent evolution of the IOMMU API internals. These
 > patches attempt to bring it and its consumers sufficiently up-to-date
@@ -81,41 +59,17 @@ On 28/10/24 23:28, Robin Murphy wrote:
 > largely all written by inspection, but I have managed to lightly boot
 > test patch #3 on an OMAP4 Pandaboard to confirm iommu_probe_device()
 > working again.
->
+
+My initial reflex would have been to just wipe the omap drivers,
+hardware is 10+ years out of production, no? So who is still using this
+hardware with recent kernels for other purposes than kernel testing?
+
 > This supersedes my previous patch[1]. Patches #1 and #2 are functionally
 > independent, and can be applied directly to their respective trees if
 > preferred.
->
-> Thanks,
-> Robin.
->
-> [1] https://lore.kernel.org/linux-iommu/c44545c6d07c65d89daa297298c27bb0f15c8b84.1728393458.git.robin.murphy@arm.com/
->
->
-> Robin Murphy (4):
->    remoteproc/omap: Handle ARM dma_iommu_mapping
->    media: omap3isp: Handle ARM dma_iommu_mapping
->    iommu/omap: Add minimal fwnode support
->    iommu: Make bus_iommu_probe() static
 
+I applied patches 3 and 4 to the ti/omap branch.
 
-Tested this series on omap4 w.r.t. remoteproc subsystem on v6.12-rc5, it 
-works fine; attached logs[2]. Therefore, for series please use:
+Regards,
 
-Tested-by: Beleswar Padhi <b-padhi@ti.com>
-
-Many thanks for working on the fix.
-
-Best,
-Beleswar
-
-[2]: https://gist.github.com/3V3RYONE/f9244a0aa0e3514b7c62f7965cbb0bae
-
->
->   drivers/iommu/iommu.c                    |  3 ++-
->   drivers/iommu/omap-iommu.c               | 26 +++++++++++++++---------
->   drivers/media/platform/ti/omap3isp/isp.c |  7 +++++++
->   drivers/remoteproc/omap_remoteproc.c     | 17 ++++++++++++++++
->   include/linux/iommu.h                    |  1 -
->   5 files changed, 42 insertions(+), 12 deletions(-)
->
+	Joerg
