@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF7CD528;
-	Wed, 30 Oct 2024 00:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4B282899;
+	Wed, 30 Oct 2024 04:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730248349; cv=none; b=F8gmIdg6Jy2/YaYi3EjJC3hmCpv8vrGcFnZW2l1s3B8oX5fS8yzcHhjBrkePK4zCHclBKqrbs534KowupV2eIZ0jmwsJ+nKeRaSf2FvRU4sRrW2ljPnQhTvJQTN42mOuPQoHod8+H1bAFDAHeQrc4qoKcvjoa/haaAZ+2fq1FHE=
+	t=1730264177; cv=none; b=QuejtaPxAmI/j0Yt+4mMn3X+25TgjBTa9gNEsBWRbsqW6xaqXQYf/hU/WJeLfIlEetG1MmwoG/skWTjBCbfuCKhCubCui/T9xvDIS7UoviR+j2w1j4oI1kHfhSEpsAgDwCpedCtdFd/3oXznvdu1VpXl1hupDBi7lq7pxklrGSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730248349; c=relaxed/simple;
-	bh=YpZ2l55qpDmvuz/gK4i9l+zbziSVwmk9ZMzxywuxs/I=;
+	s=arc-20240116; t=1730264177; c=relaxed/simple;
+	bh=zwX2RBzU4tpfWfPhSOVdn6ISdGQ1Qt5sl+TvX2kcWHU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ohcvygaTK770xU28Ys1jbVVgcIAkH2buVqZhP615lfke93h7VNvTaUEd3IV0btmidWWVlf+6fJlNH93RuFfTv3XCWk+sNVWjIys+Z/Zp/IG0PmItiGa8Czg4HXxTJpP+sLBz7tpU7wye4q6A2xtzSoMzy2rCVJ/PtrjI1t53yIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gzw2760t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	 In-Reply-To:Content-Type; b=k435sKI5+T1Ym//4cb5+l4sZncMMyC1GVQ4zHMMBLTVlGCFYbEERw2upjccJG1Otvt+4yvDrsJZKBoAh78PDtfBFcKYxG+F2nRFcfrWL659khmdwyeA7BFif68L9FmsPK3AV4vVM88X48eko27LROfAZTS71eTkyR5SMyn/Ft78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gWeb7b70; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gzw2760t"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TAaNKx013129;
-	Wed, 30 Oct 2024 00:32:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZZ7pdiwsLIsYp6Y59boCI4YznljjqwjdKMC/IJub73o=; b=Gzw2760tYgrbOzXk
-	k4jPXWR+9Yn0rjBHH3B6ip74yAVozAcOIiAWWjn3qgjBjUVJF5eCaVkQfxkLTd90
-	KZOiaOkxJZWeUWlSoYLfSTs2ErWZQgX9bDSn1fe3gNRPRaIkizh+51cegK4ahThq
-	jwVRNyD82GWLZNr6pDtcaIICTMLp+sc87QgGyv8R39ZwneGee7DFD38P29INF6ki
-	/k8Rq8/E/2zWENYYwIZa8zz/RzdO0UKXL9nOTOiPUH7yonLKftRf90yL1bhN2DTq
-	s6cG5NKkMHOi/ct2K6Xws9aWkPOxdhNPGuwElUOpULGFI5E0QLnzn48GryCHxj5q
-	L0mcKg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe621pt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 00:32:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U0WKw0001427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 00:32:20 GMT
-Received: from [10.71.115.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 17:32:20 -0700
-Message-ID: <934ee86c-2d95-47c6-b507-f9aa277ad0ad@quicinc.com>
-Date: Tue, 29 Oct 2024 17:32:19 -0700
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gWeb7b70"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49U4tiSW033939;
+	Tue, 29 Oct 2024 23:55:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730264144;
+	bh=4EA9CUgTC4Juvta7B91Kq5htCC2uTanYEkMECpDwaTM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gWeb7b70TvlWYB2Wm+rPIixoPrV0rgfprDynbM6p/P8JaVsyOXyq5+vbguNzr03pQ
+	 FkDJYTUA6IVujGAJn/CSDN4lP+YeCuG4/LdLlPnX7OFfqbSh6M+5iph40OQyc226ZR
+	 o9XxXcPNFFVrd4cCuRm3Dn3tmSAjyadyNgfhvwf4=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49U4thc1119737
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Oct 2024 23:55:44 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Oct 2024 23:55:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Oct 2024 23:55:43 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49U4tcHH066220;
+	Tue, 29 Oct 2024 23:55:39 -0500
+Message-ID: <25c5c744-2e4d-4df6-a080-8f5705a47884@ti.com>
+Date: Wed, 30 Oct 2024 10:25:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,50 +50,72 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: qcom: pas: Make remoteproc name human
- friendly
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241022-rproc-friendly-name-v1-1-350c82b075cb@oss.qualcomm.com>
+Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
+To: Robin Murphy <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
+        <laurent.pinchart@ideasonboard.com>, <mchehab@kernel.org>,
+        <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <hns@goldelico.com>, <andreas@kemnade.info>, <iommu@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        "Nagalla, Hari"
+	<hnagalla@ti.com>
+References: <cover.1730136799.git.robin.murphy@arm.com>
 Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20241022-rproc-friendly-name-v1-1-350c82b075cb@oss.qualcomm.com>
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <cover.1730136799.git.robin.murphy@arm.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8bycLzQhYgCBS6BL9Pr2si09lF3v6zTB
-X-Proofpoint-ORIG-GUID: 8bycLzQhYgCBS6BL9Pr2si09lF3v6zTB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- phishscore=0 bulkscore=0 mlxlogscore=586 malwarescore=0 adultscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300002
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+
+Hi Robin,
+
+On 28/10/24 23:28, Robin Murphy wrote:
+> Hi all,
+>
+> It seems omap-iommu hasn't had enough mainline users to avoid bitrotting
+> through the more recent evolution of the IOMMU API internals. These
+> patches attempt to bring it and its consumers sufficiently up-to-date
+> to work again, in a manner that's hopefully backportable. This is
+> largely all written by inspection, but I have managed to lightly boot
+> test patch #3 on an OMAP4 Pandaboard to confirm iommu_probe_device()
+> working again.
+>
+> This supersedes my previous patch[1]. Patches #1 and #2 are functionally
+> independent, and can be applied directly to their respective trees if
+> preferred.
+>
+> Thanks,
+> Robin.
+>
+> [1] https://lore.kernel.org/linux-iommu/c44545c6d07c65d89daa297298c27bb0f15c8b84.1728393458.git.robin.murphy@arm.com/
+>
+>
+> Robin Murphy (4):
+>    remoteproc/omap: Handle ARM dma_iommu_mapping
+>    media: omap3isp: Handle ARM dma_iommu_mapping
+>    iommu/omap: Add minimal fwnode support
+>    iommu: Make bus_iommu_probe() static
 
 
+Tested this series on omap4 w.r.t. remoteproc subsystem on v6.12-rc5, it 
+works fine; attached logs[2]. Therefore, for series please use:
 
-On 10/21/2024 9:21 PM, Bjorn Andersson wrote:
-> The remoteproc "name" property is supposed to present the "human
-> readable" name of the remoteproc, while using the device name is
-> readable, it's not "friendly".
-> 
-> Instead, use the "sysmon_name" as the identifier for the remoteproc
-> instance. It matches the typical names used when we speak about each
-> instance, while still being unique.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Tested-by: Beleswar Padhi <b-padhi@ti.com>
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Many thanks for working on the fix.
+
+Best,
+Beleswar
+
+[2]: https://gist.github.com/3V3RYONE/f9244a0aa0e3514b7c62f7965cbb0bae
+
+>
+>   drivers/iommu/iommu.c                    |  3 ++-
+>   drivers/iommu/omap-iommu.c               | 26 +++++++++++++++---------
+>   drivers/media/platform/ti/omap3isp/isp.c |  7 +++++++
+>   drivers/remoteproc/omap_remoteproc.c     | 17 ++++++++++++++++
+>   include/linux/iommu.h                    |  1 -
+>   5 files changed, 42 insertions(+), 12 deletions(-)
+>
