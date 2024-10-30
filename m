@@ -1,64 +1,131 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1A32141BD
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Oct 2024 15:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FF91E570F;
+	Wed, 30 Oct 2024 23:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303888; cv=none; b=Sp/MS1KeplCTC6R7Dc69dnCMu5ClMUmIkfpPA6VnLknp99+6dPDjKM33R4g2FHpdzZrdX3XzzN0QQHftcr3THInSY59T8+XqPWPVwcwM4NHLWV6sc0fiQhXkNbeAk1o42Er5TNvWzW4zy93IlzGVasi+zpsErVkzG/hCKoCpoVQ=
+	t=1730332212; cv=none; b=k5wbpyzEkaX9ttOFNzvUQ2MQoUd/G81Muj7sQc5uX964hFSj5DmOSIEgvub/LCSCY3PZerGbUafp9rylbbEkXYVokqOMHyl3ak4qjFTpFSM2dvHGmD63pPXQM3wPyF6yioukYzF4MmIW6tCzJbwcfJNM/Iw3EPuGcEbmuxAh81A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303888; c=relaxed/simple;
-	bh=BjCJefXuKGolkb4FX1T/zCOEcg/7CTMgZ3cn9qflqzU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pMFOLyhYxccCag4UPWpFL3lmDYLJj4/7ZKa84yX9Q++e0zPZUwcOaNmyNgxpKwa0/YtCGHXViQiJxAYj4/Q1jIXbkRX8gJwppr+ihDZvJ1Duj1BaLMBBt8xZ8hozzYoPBrQ+2qAD3ftUytHmlBrdSrLFBOgzOPENdp3PEdSfHdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dXlTlVd4; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730332212; c=relaxed/simple;
+	bh=g2Gr6BSJI30hLHHrUt4HEWLZS4G2MgGxc9n66A9DdH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYqrgcYD5XtMGHWkPI5ZQ6JmR0r27BNzfIl9kx8ffuHUnBAqcAmGcc7CrHit/ThVXKViymIJoQG7IsIGN/ETyq4ssCEaKzRzvR1vDCwD/VY/fXVIqVM1jt5pVDtOMnVFMRioHHGEtIclBgjdk4wJ/yVxfVH+103WNI0KxVY8W4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhQISddr; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dXlTlVd4"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb49510250so70117461fa.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Oct 2024 08:58:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhQISddr"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so342213a12.1;
+        Wed, 30 Oct 2024 16:50:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730303884; x=1730908684; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BjCJefXuKGolkb4FX1T/zCOEcg/7CTMgZ3cn9qflqzU=;
-        b=dXlTlVd4IAGS6RFU9sKOGkBgCKKUvNcrcznkVkOcaZMTzQLK6HgvxW7hZhYIMbdKAg
-         cRyj/ymcHlQrE4cBr6Y+ujEEsN15P+mwAH6lxAuMkCf1akQ7Byysch8Vslh0sVwhN3te
-         AdT1j/NeDRkcjbKt3JwneP5YCHzL8G9nXUOe/YCy9aofYxE1e19DbgHwVIBa0soFk5vf
-         qXOupO3vvS/io1mcGeukjcAnyIFLbcvILL13CifZwKE1Sgc35z2GFng8iYF79NcQOHbv
-         4Arrii1OTQtMyb0jKTjBqhpeve449/nbpvsQGBib9B4X/o00Jdla7X53j9khlZpfwPd6
-         F0lA==
+        d=gmail.com; s=20230601; t=1730332209; x=1730937009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8xITKeeCQTPMHTwhjLrB4rhB00Y72QJELP5T2ItEbVI=;
+        b=HhQISddr/HQF0FX9a7D59KrZWE0DMWBw/I5nRobvRwqD9zo5ip6bNXIz/w7T8s0QEl
+         GL7/M6vjpmNCogr7jntj5RiP6dwLR5PiYzaxTaOyTx/iAhJVj598S3cHUysQT8a6xcDT
+         Hlyv++EHyLrSlSaKFqg3pikkynxQEBUlPYDl3GSgGdEd12zVQx3WJ1RijpCZ0rnS17Nv
+         k1Fa+cCmb+jjmweH+hJJ6pUkuKJLw4pSexBwd0Wg2iRRSCjGk3bXPzQ3dhL1Ei7sFhaT
+         r/TSYli8daS9R4CCb7MGxiyY12qYgfk2/K/CkLFYj/bvbuhTPwW0V8BGYtteAFgsDyDz
+         tQzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730303884; x=1730908684;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BjCJefXuKGolkb4FX1T/zCOEcg/7CTMgZ3cn9qflqzU=;
-        b=UNwmJKSB6uL8SiTxDzwaq/BhN432nraz7vFxxsPpxJ1rF+CQlBhnigKYKVZlQQWhO1
-         e6csjmBbXLA/QpJKc/eZMOCUIHgPfpQCW6uwk6iJJf7OqGq/szXySH+rBwE6KCAoq8N/
-         OaJaXpWNWmYxox0YxYEqF2CgQ+Z10HU5P7pvM3ZHktpwhf9T9af0g97ujW72zCS+Hk7C
-         p9W21jdE6WEX9rkgehgiJPDVtHLWsUQoxrZIyakkHNq9Vr6ueHkD+AM0ChqWTjKNJ0XL
-         hVv4tEsccYEXZzC8vfiFMEddSYyK3woP9Q+W+rw6EsBd9B45Vfx3vMfmv+JvtiuikkTg
-         VKUA==
-X-Gm-Message-State: AOJu0YzgK5hDhqsPzAlnlB09WH6D/gXdajdJM3V+RVugaJ+fDVJD0dUz
-	oUiLVy1umQhju6kNxtEbzwhSLcib7GRrRS1sUw1vvSDVJ9764dmza5NDIzrThZAUd/jBW1y4LO2
-	+vbcDWjH3kihPRl3PHIcJq7bRkX16rA3Do6rNFqyIWPcg38DLu34=
-X-Google-Smtp-Source: AGHT+IG8Ag9wqbXu/IxZTZPptFweN3PxGQor8buaxjHZMxgQoM8Z592DLfOqRvz4kitk+o87o6EPMBSWBH8MyoKEtB4=
-X-Received: by 2002:a2e:bc0b:0:b0:2fb:5d8a:4cd9 with SMTP id
- 38308e7fff4ca-2fcbe089cedmr82861831fa.39.1730303883561; Wed, 30 Oct 2024
- 08:58:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730332209; x=1730937009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8xITKeeCQTPMHTwhjLrB4rhB00Y72QJELP5T2ItEbVI=;
+        b=FDHnTsP+EfhBPbwOR3bgGwsC46onxx3JnfH91+tP0fmLc1+VJVGuo833G/sta6D9fB
+         OtTgXFx24MwTXdj18kRJwhi8NU/hHt6YnRGi1grhpWfI+5wdRndp60pJD7G6pbse4Kr/
+         YS4eY0r+9TIimGxrB+EdfGUmiutAx8+2g/Z11iq7MAGQCDyYH28MuQEBuNOxs2Ldx+dX
+         DOWR25euQ2lQccThvhvxwlyHLKGYIvSjft8gh6bwMhfR5qi4DKRlbnCPnMGKOXx99Y8n
+         iASKztpvKB+y0KZrI3S6nx0+oulPhWnj788WcPfb+63BS5coc3rlkKZ6YjJ0hc9HMV73
+         YDBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9xzH1doScWX79DXFJpyjOWPL4tRiqUR4LxtaqIOgJ3f3iHzjrCBOHD3VBWgUQvQzUaaaaeHYGLafBVA==@vger.kernel.org, AJvYcCUHaxoCBqlOslcqPkbYgJMElprWjNh1OnkKcjAM9trGqgbxW4lDonJqUbjdTQnmi4jVZJLxJuyeWkEQhA==@vger.kernel.org, AJvYcCV75h9rVMNY82ipyLPdBAZ9P4nuaCWbKECgANprKb53BpSK0xYSWJSuFBL+3MamtPiw/MpjRyC/VKDKyWWmJoDA4w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycX0SSEpPe0gF3u1YWwy1FBFmjVP0UZoGLneUOBmRYteg3k4nd
+	7JyEoegaTYv+vAzyiT71guRw2VSBAJKFQhdMJIrYKyZgF/kY+ADN+eAOYCOFV6FKOsoaONN5Q+6
+	kKWZS+M8OUSMfzyDGlofBbUkVmpI=
+X-Google-Smtp-Source: AGHT+IEGZomZ5kJjb+R1NLfXagX6H4tJArwRpGGFHsIJUp3TX6AYCJgn71SzvrzS+RXVFHlSMLywNa+CNyNDqhllWuo=
+X-Received: by 2002:a05:6a20:c854:b0:1d9:c615:944f with SMTP id
+ adf61e73a8af0-1d9c615a145mr12413848637.11.1730332209274; Wed, 30 Oct 2024
+ 16:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 30 Oct 2024 09:57:52 -0600
-Message-ID: <CANLsYkwLe=d-_3JmefRSjB5wb6fBdM1ox1v0WBKx2pUsMrtXug@mail.gmail.com>
-Subject: Remoteproc/RPMSG patchset review order for October 30th 2024
-To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <cover.1730136799.git.robin.murphy@arm.com> <ZyIClriScBy4s6LX@8bytes.org>
+ <515D7932-3939-4C3E-BA3E-CC3152E64749@goldelico.com> <ZyIos2Gm1nf5rejI@8bytes.org>
+ <ZyI0baBMPHVZ29-k@tp440p.steeds.sam>
+In-Reply-To: <ZyI0baBMPHVZ29-k@tp440p.steeds.sam>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 30 Oct 2024 18:49:58 -0500
+Message-ID: <CAHCN7x+M1tfmJYhp0+qovhedMiMG=fdyaf-CnPz_hUi7abuDCQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix omap-iommu bitrot
+To: Sicelo <absicsz@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>, "H. Nikolaus Schaller" <hns@goldelico.com>, 
+	Robin Murphy <robin.murphy@arm.com>, will@kernel.org, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, mchehab@kernel.org, 
+	andersson@kernel.org, mathieu.poirier@linaro.org, 
+	Beleswar Padhi <b-padhi@ti.com>, Andreas Kemnade <andreas@kemnade.info>, iommu@lists.linux.dev, 
+	arm-soc <linux-arm-kernel@lists.infradead.org>, 
+	Linux-OMAP <linux-omap@vger.kernel.org>, linux-media@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[PATCH v3] selftest: remoteproc: Add test for start/stop sequence
-[PATCH V5] remoteproc: Documentation: update with details
+On Wed, Oct 30, 2024 at 8:28=E2=80=AFAM Sicelo <absicsz@gmail.com> wrote:
+>
+> Hi
+>
+> On Wed, Oct 30, 2024 at 01:38:11PM +0100, Joerg Roedel wrote:
+> > On Wed, Oct 30, 2024 at 12:20:31PM +0100, H. Nikolaus Schaller wrote:
+> > > Why that? There was a discussion and everyone agreed to remove omap2,
+> > > but not omap3 and later.
+> >
+> > I raised this question to make sure the things we maintain are still
+> > relevant. Developer and maintainers time is limited and we should not
+> > spend it on stuff that nobody uses.
+> >
+> > > There are some devices besides the PandaBoard. I am aware of these wh=
+ere
+> > > this is relevant: Epson BT200, Samsung Galaxy Tab 2, Pyra Handheld
+> > > (in production) and we are currently thinking about producing a tiny =
+series
+> > > of the DM3730 based GTA04A5 with spare parts.
+> > >
+> > > And of course we want to participate from the latest and greatest ups=
+tream changes.
+> >
+> > Okay, if there are still real users for latest mainline kernels on this
+> > hardware, then the effort is justified.
+> >
+> > Regards,
+> >
+> >       Joerg
+>
+> There is also the Nokia N900 phone (OMAP3) still seeing mainline
+> activity, as well as the Motorola Droid 4 (OMAP4), to name a few. I will
+> also be testing on the N900 around the weekend.
+
+The Beacon Embedded / LogicPD Torpedo and SOM-LV families (OMA35 and
+DM37) are still being sold and I still run various tests on them
+periodically. There is also an AM3517 that I still periodically test.
+
+Once Micron kills off the RAM and they run out of supply and Beacon
+cannot sell them anymore, I'll submit a patch to remove the
+unsupported / EOL boards.
+
+>
+> Thanks to everyone for the amazing work.
+
+Thank you for all this.  I haven't been as active lately, but I have
+been following this.
+
+adam
+>
+> Sincerely
+> Sicelo
+>
