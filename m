@@ -1,172 +1,111 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3485B1CC166
-	for <linux-remoteproc@vger.kernel.org>; Fri,  1 Nov 2024 17:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAD945016;
+	Fri,  1 Nov 2024 17:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730480599; cv=none; b=Phw/+iRm2dagj8WoganXB6FyDryncbmGUlp31ySxsyMbJCCBumSW31E6HhyECArBVS2VYMiXcMuG5YkcFW2DkCs5Y7SKPHRHMDPPnhaAuCN4SNDHEyCLt3smUI2IVm7Kkhvevug2agRPrhBgBjZ/vR6d9qSkYtqOHxfPXVEIPrk=
+	t=1730483813; cv=none; b=YCd4W3DgITebYwQOEpPeTq+Ph5CzN9fMjKunZoxcpUsLSPoqVLMiy1etU0/peiImuWPeLh9YgqjKGLwIhJDQQ1//INur6aHmTQOVz0FsbFbMTKhM1ve9lNJs4swgd5xkQGyUhCs6aVxxMHteEavBSOUTcBvRifOEyJm2+s7Yw3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730480599; c=relaxed/simple;
-	bh=hMCCbLDioYy+Gyryrg/qDlm9Q8ImU8TUBBfa89jXyLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbFO6o2u5LaUFX9WitjlSXzjZKASUB2YRXX8mNGw20rUAps1IWnA0a6Wq5smu2fR/rQb7bFiY2uT2zZ0GB/KhjrPun0vb3nsfnTQAR0XcpenE2zzPaV0JgNrTsHVbcvSKte9y2YJ0TRv1P+x/AInePqJ5+PJAB2Ux4XHtc21hMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hS5vwtwe; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730483813; c=relaxed/simple;
+	bh=NUJe7FPWye+RO9eA/Pgnrtmac6Ath/ZW0pBVWIQlPMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z0klJoclXSTwINx3r09435V+rxhZyxor7S8ExIqC5kEXYkT217nzgLjjPfc3nu5zhYHdXbNaRQ7MLVgzUFAxKiHdetAmXuYT+f/psQcI0m0zyxdX68azIfNuirT3uL6jDtVHSqJQgsEyf13Q7aTZc7pEystYBeDW5L0zKMb28HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=an/RQhSi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hS5vwtwe"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4ee8d15aso188364f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Nov 2024 10:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730480592; x=1731085392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q3NYpsGTgrceer71ppOAoBgRk89YYUeZ50Pg0gfV+Bk=;
-        b=hS5vwtwemZXn2RA1q8n+A5yKbG/9BhXrrWJEZEY7lizErSQ1SQTyMWi4mK86yF3Vhw
-         6um7XUf/CPCMX6LEOwSp6UKSNMETv2BtkUbJSmFipA5dLW7MNrsrltsPuEko+thPzTAD
-         g7kwrE3CuFrz/uEVHcoHvGJlmksXMUfxex47G9OGFPTVWPHjSC60qKx0h4KjO7YfQ9U9
-         M+X4sfedy9Vd3+hklxLII6mcRUQKdcZBy2zTZgSTm1ZwOSoC1QphMpIxclFmm0dghh0b
-         Gfi4igFFRE46twprPHiXRH0TySIyQY0RjAiNVUT7YbRuU62q6IO9F8QHgFgvzlXQpt5h
-         bKDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730480592; x=1731085392;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q3NYpsGTgrceer71ppOAoBgRk89YYUeZ50Pg0gfV+Bk=;
-        b=X7oOfkokkRUymDT/NnAjZdr+LquyfVQoxXPlbckW7LSB/lXng9F0hcayfuffyte8uV
-         ACQ9sB5h2E3NnILlQ58COsIwBWdORVfEGK4fAt5u5ySvlEKSQ6KiJQHne/KNJ/gxPbaC
-         ryOMON4ijNOCJiHVaQrdOmNl+2cxTwgKl6FMYe4IGzoeW+7QwORdlijIRD1mIayKoCS+
-         VzR6+bgDGO6ewdCIxg1IcQI6QKcG0Y1BQBFIXaCPGivZiBzwV8OcgY7q/gA9U9pcUjPH
-         3azhQskGWpYykd7I4Ek4ytYNcz9Xc8UM5Ckp8RPozR22V1sz5iptQVMEfjGGeUaZPW8j
-         PYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR9gFKWzJluoIgn1QdmFVisaAmmIPokiS+ntvz5xl6M69dtGqft44whV2Rk4Mn6DbknGWRgySL2F+VHBVC3DeE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS9eJt7adKF+ZxtQ+gMQYIpv2Ws1xrKedkC1tpCrGFFHCrk9SL
-	hOuv+/FkaI5FSrBlvty65HCnF6wISK8Q9u0LcJOTvYeFha/XkOcYeF1kwwWUfD8=
-X-Google-Smtp-Source: AGHT+IFCZ23WEBwwcLfQP4WYBJ1WQPAvLjnNpkz+Y58FV/YsX35Y9/WCJ4gXDC+pJP7nEDi262mLrg==
-X-Received: by 2002:a5d:5f46:0:b0:37d:4aa2:5cfe with SMTP id ffacd0b85a97d-38061173287mr8248808f8f.6.1730480592542;
-        Fri, 01 Nov 2024 10:03:12 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116ae82sm5687923f8f.93.2024.11.01.10.03.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 10:03:11 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
-Date: Fri,  1 Nov 2024 18:03:09 +0100
-Message-ID: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="an/RQhSi"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1BtARb005387;
+	Fri, 1 Nov 2024 17:56:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mgSuPV69xF8TLmu/JMEHLnZgzGHjCYi+NRyZ4Danjbo=; b=an/RQhSiL84txMTy
+	fby93GhvvLn2GDJiInKKOS9tRH+ZrVTUimCTGLnnbdL54+2hF/UA1THI9cGUkjJC
+	bwsL6YG75FRXN/4WrXa3QvUXI4yXbLH53BKXpFOZZAEZKLFCpO1pPSyfkoF0R9Yp
+	OnFkb8Oj7l0+rAbOp/plDPgpLO91bP8qybSnnUgV789xPa8+k/wBH3aMl3oMEtVh
+	RdGRGaQbS1O8sjRQ10SMRzK1NhM82zZQM/Ru0/GonoyoL614F463RqtCQaviKc62
+	tmniyAlRhcgIisd9YX70afRt+l2+iXaaKlC3VfhQFiajivKrW8ey5beo6VtbqJFG
+	GuDgtA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42m1xce4f5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 17:56:48 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1Hul9d016441
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Nov 2024 17:56:47 GMT
+Received: from [10.110.33.199] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
+ 10:56:46 -0700
+Message-ID: <bc6f7fb3-58d7-48fc-bf1d-55a242e66c45@quicinc.com>
+Date: Fri, 1 Nov 2024 10:56:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        "Srinivas
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+References: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6VDxS-eWnU8s02BGMnuvw7KwPmWJ16HS
+X-Proofpoint-ORIG-GUID: 6VDxS-eWnU8s02BGMnuvw7KwPmWJ16HS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 mlxlogscore=843 clxscore=1011
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411010129
 
-Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
-compatible with SM8550 variant.  The only difference from bindings point
-of view is one more interrupt ("shutdown-ack").  Marking devices as
-compatible, using SM8550 ADSP PAS fallback, requires changing some of
-the conditionals in "if:then:" to "contains".
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
-
-Cc: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
- 1 file changed, 34 insertions(+), 14 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-index d7fad7b3c2c6..a24cbb61bda7 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-@@ -15,16 +15,20 @@ description:
- 
- properties:
-   compatible:
--    enum:
--      - qcom,sdx75-mpss-pas
--      - qcom,sm8550-adsp-pas
--      - qcom,sm8550-cdsp-pas
--      - qcom,sm8550-mpss-pas
--      - qcom,sm8650-adsp-pas
--      - qcom,sm8650-cdsp-pas
--      - qcom,sm8650-mpss-pas
--      - qcom,x1e80100-adsp-pas
--      - qcom,x1e80100-cdsp-pas
-+    oneOf:
-+      - enum:
-+          - qcom,sdx75-mpss-pas
-+          - qcom,sm8550-adsp-pas
-+          - qcom,sm8550-cdsp-pas
-+          - qcom,sm8550-mpss-pas
-+          - qcom,sm8650-adsp-pas
-+          - qcom,sm8650-cdsp-pas
-+          - qcom,sm8650-mpss-pas
-+          - qcom,x1e80100-adsp-pas
-+          - qcom,x1e80100-cdsp-pas
-+      - items:
-+          - const: qcom,sm8750-adsp-pas
-+          - const: qcom,sm8550-adsp-pas
- 
-   reg:
-     maxItems: 1
-@@ -82,6 +86,20 @@ allOf:
-           maxItems: 5
-         memory-region:
-           maxItems: 2
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,sm8750-adsp-pas
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 6
-+        interrupt-names:
-+          maxItems: 6
-+        memory-region:
-+          maxItems: 2
-   - if:
-       properties:
-         compatible:
-@@ -129,10 +147,12 @@ allOf:
-   - if:
-       properties:
-         compatible:
--          enum:
--            - qcom,sm8550-adsp-pas
--            - qcom,sm8650-adsp-pas
--            - qcom,x1e80100-adsp-pas
-+          contains:
-+            enum:
-+              - qcom,sm8550-adsp-pas
-+              - qcom,sm8650-adsp-pas
-+              - qcom,sm8750-adsp-pas
-+              - qcom,x1e80100-adsp-pas
-     then:
-       properties:
-         power-domains:
--- 
-2.43.0
-
+On 11/1/2024 10:03 AM, Krzysztof Kozlowski wrote:
+> Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
+> compatible with SM8550 variant.  The only difference from bindings point
+> of view is one more interrupt ("shutdown-ack").  Marking devices as
+> compatible, using SM8550 ADSP PAS fallback, requires changing some of
+> the conditionals in "if:then:" to "contains".
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> Cc: Melody Olvera <quic_molvera@quicinc.com>
+> Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
+>   1 file changed, 34 insertions(+), 14 deletions(-)
+>
+Reviewed-by: Melody Olvera <quic_molvera@quicinc.com>
