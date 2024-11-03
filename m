@@ -1,111 +1,110 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAD945016;
-	Fri,  1 Nov 2024 17:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA3528EA;
+	Sun,  3 Nov 2024 04:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483813; cv=none; b=YCd4W3DgITebYwQOEpPeTq+Ph5CzN9fMjKunZoxcpUsLSPoqVLMiy1etU0/peiImuWPeLh9YgqjKGLwIhJDQQ1//INur6aHmTQOVz0FsbFbMTKhM1ve9lNJs4swgd5xkQGyUhCs6aVxxMHteEavBSOUTcBvRifOEyJm2+s7Yw3s=
+	t=1730608440; cv=none; b=TSUVm4K1HY34SsdWDtI6zsyaXwmmGJlEgJMKu9Cq3kAYsU7UFhYmcba/7bXxrZFvoj0Fb8sf5i4hgp/9gNvSmEB9+Q0z92tBPj2RO6aSZpLkfGVi/miBPCjD6OQci8+GkDZWu5A6+FAKR2DVv/xn+lzbo1ivFDwdjnRsH4LW1GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483813; c=relaxed/simple;
-	bh=NUJe7FPWye+RO9eA/Pgnrtmac6Ath/ZW0pBVWIQlPMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z0klJoclXSTwINx3r09435V+rxhZyxor7S8ExIqC5kEXYkT217nzgLjjPfc3nu5zhYHdXbNaRQ7MLVgzUFAxKiHdetAmXuYT+f/psQcI0m0zyxdX68azIfNuirT3uL6jDtVHSqJQgsEyf13Q7aTZc7pEystYBeDW5L0zKMb28HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=an/RQhSi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730608440; c=relaxed/simple;
+	bh=AOXl2fE38g+pYffxexzXwnV1Ljihe717OpCxiasdEjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvAcICS0CH0Qr1rn24d5jNwroOFXH1cHMmIOiV21km7WQD0dV3v4d4F+33as7oFOsS/ztKNAV2fiUWCiJ4tlqOr7OGFw0xxoYEY+9O/6zdqMrt83z2LqCnnHjCam7LiI2scrXCDZg3A2xtp0x5Li7E98No/dOoqh0u4P2ifKPFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3Pn4Nan; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="an/RQhSi"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1BtARb005387;
-	Fri, 1 Nov 2024 17:56:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mgSuPV69xF8TLmu/JMEHLnZgzGHjCYi+NRyZ4Danjbo=; b=an/RQhSiL84txMTy
-	fby93GhvvLn2GDJiInKKOS9tRH+ZrVTUimCTGLnnbdL54+2hF/UA1THI9cGUkjJC
-	bwsL6YG75FRXN/4WrXa3QvUXI4yXbLH53BKXpFOZZAEZKLFCpO1pPSyfkoF0R9Yp
-	OnFkb8Oj7l0+rAbOp/plDPgpLO91bP8qybSnnUgV789xPa8+k/wBH3aMl3oMEtVh
-	RdGRGaQbS1O8sjRQ10SMRzK1NhM82zZQM/Ru0/GonoyoL614F463RqtCQaviKc62
-	tmniyAlRhcgIisd9YX70afRt+l2+iXaaKlC3VfhQFiajivKrW8ey5beo6VtbqJFG
-	GuDgtA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42m1xce4f5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 17:56:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1Hul9d016441
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 17:56:47 GMT
-Received: from [10.110.33.199] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
- 10:56:46 -0700
-Message-ID: <bc6f7fb3-58d7-48fc-bf1d-55a242e66c45@quicinc.com>
-Date: Fri, 1 Nov 2024 10:56:46 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3Pn4Nan"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2734805b3a.2;
+        Sat, 02 Nov 2024 21:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730608438; x=1731213238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZAuhtOauwqrAoTjzUTGUR7IGr2nFokByGMzm/jQiDU=;
+        b=m3Pn4NanY2yn+T1ggGdJK7vHKgDdcZtULR63WkVfwT58oE5lvbBgEt/yiPXmh/fRXM
+         lGuW4gOolGbGdyZLJGNndlFh5aDt7I1PbVL8KvwHs092mNN1ZtmCUHqbBfOu5JUYkO4C
+         jaeznurEotdGLuWJg7ERcv+AIg69tL8CrFFHoKGNhfveiqaWxCoS67vLIFrDhREa08Oc
+         26ig6x/OKvsrPVMDgOgCaMBnYAIa1avSAml4c5sI53oTHitYP53wko2/6dvI1+fx/wXF
+         vdN5YmMY0zKo6Wm50MRLaoluItIQE3dD4TLFDjuyImveZ1ZykaFQSbQayHrxTpfO/XS1
+         53lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730608438; x=1731213238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WZAuhtOauwqrAoTjzUTGUR7IGr2nFokByGMzm/jQiDU=;
+        b=wQi9zeXboxPA1X5FXGtIoFeDVChVNWKDVetuMf2tuMRD+N5INrUmw6k5Tm9yj9DzJI
+         FLbBjho0i4MHkysZeWhq6zDR58jKtw6AHRAq/4cwMXgG35gW8MxgJkOvufVvZLMIt6i2
+         KYSebmzMlEY0LAYtZstp3xg0YG3JWOpZt1ygWoVETdKvbQ3JR9wrbUbfhZ2Yq4ElQZz2
+         KPiGLDz0ZVgYUegyRTijLoQNlVe6MLt0Dj4ZJHwNgXm7MhjE4GKiwqC4b8T10xUsdmrJ
+         tXcG6IvfNeobwygxWMwp4YUSQl9tTTG9YbRUuEv4CA+J0mn9u7EzJb76LSjPCAoYxHI3
+         i1bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnL10XeO0AhWJ874++mXXmeYtJatq5jI52umPi5Qt7EoEXFKpwpkrPdRPFYaTjaMHFLKxXa1HEB80pTvgwVgle5w==@vger.kernel.org, AJvYcCVTbyzrbBO6ap/09KMI6z1bJUa8azj98RZ42SOnWWzLKdl/4U2c3uLBdxvARMiEKaUFFtntPS6F6SS3FL2n@vger.kernel.org, AJvYcCXDqR9NfVoURuMWOozPdsge7T/3c08HMTRZ0XFOoEX4ceh85CBztrKvW1AWOwjx5dcdO4pg4DerjLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkGXCDaXjvBlec+PvHVWEhoSJIKmejbmxR2y0jZLQYxmO2PBe2
+	5+yMS8168Y3n/HehNxPLr50azSOHPsFwRzGY8O8k0BSlQT6aDeov
+X-Google-Smtp-Source: AGHT+IGvpSuZXrPK2QGqFXEaZfWJIaRCCUOqHpDu3T373+UbdA/a75udXVfPIvfOtlJ+UUPUydaRXA==
+X-Received: by 2002:a05:6a20:e605:b0:1d9:1906:a68e with SMTP id adf61e73a8af0-1dba55ac470mr11836622637.34.1730608437868;
+        Sat, 02 Nov 2024 21:33:57 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b90e8sm5000851b3a.25.2024.11.02.21.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 21:33:56 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 194624207D11; Sun, 03 Nov 2024 11:33:52 +0700 (WIB)
+Date: Sun, 3 Nov 2024 11:33:52 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	anish kumar <yesanishhere@gmail.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.orgi, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH V5] remoteproc: Documentation: update with details
+Message-ID: <Zyb9MJ2H0bkRXk3X@archie.me>
+References: <20241026212259.31950-1-yesanishhere@gmail.com>
+ <ZyT2piU27MF28XcN@p14s>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        "Srinivas
- Kandagatla" <srinivas.kandagatla@linaro.org>
-References: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6VDxS-eWnU8s02BGMnuvw7KwPmWJ16HS
-X-Proofpoint-ORIG-GUID: 6VDxS-eWnU8s02BGMnuvw7KwPmWJ16HS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- malwarescore=0 suspectscore=0 phishscore=0 mlxlogscore=843 clxscore=1011
- priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411010129
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="prVtwJ4O92547TcU"
+Content-Disposition: inline
+In-Reply-To: <ZyT2piU27MF28XcN@p14s>
 
 
+--prVtwJ4O92547TcU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/1/2024 10:03 AM, Krzysztof Kozlowski wrote:
-> Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
-> compatible with SM8550 variant.  The only difference from bindings point
-> of view is one more interrupt ("shutdown-ack").  Marking devices as
-> compatible, using SM8550 ADSP PAS fallback, requires changing some of
-> the conditionals in "if:then:" to "contains".
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> ---
->
-> Cc: Melody Olvera <quic_molvera@quicinc.com>
-> Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
->   1 file changed, 34 insertions(+), 14 deletions(-)
->
-Reviewed-by: Melody Olvera <quic_molvera@quicinc.com>
+On Fri, Nov 01, 2024 at 09:41:26AM -0600, Mathieu Poirier wrote:
+> Before spinning off another revision I encourage you to spend time lookin=
+g at
+> existing documentation.  Reading various mailing lists with a special
+> focus on how people split their patches based on topics would also be
+> beneficial.
+
+That's why I'm more focused on formatting and wording to get my feet wet
+on kernel docs...
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--prVtwJ4O92547TcU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyb9MAAKCRD2uYlJVVFO
+o+qSAP9IT/sQsL5VMH7lYSqm/08CIwNCqkaCZsEqkiGZSvYctgD/QEMbrX1r1uTw
+3VWE4hMg+LvMX0mcRbWKCo0S8Acl4wA=
+=CyG2
+-----END PGP SIGNATURE-----
+
+--prVtwJ4O92547TcU--
