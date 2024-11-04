@@ -1,110 +1,167 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA3528EA;
-	Sun,  3 Nov 2024 04:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FC84C62E;
+	Mon,  4 Nov 2024 13:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730608440; cv=none; b=TSUVm4K1HY34SsdWDtI6zsyaXwmmGJlEgJMKu9Cq3kAYsU7UFhYmcba/7bXxrZFvoj0Fb8sf5i4hgp/9gNvSmEB9+Q0z92tBPj2RO6aSZpLkfGVi/miBPCjD6OQci8+GkDZWu5A6+FAKR2DVv/xn+lzbo1ivFDwdjnRsH4LW1GI=
+	t=1730727498; cv=none; b=m/zpUic/21LaUb78WuzghiiKJSWNp1uIwqRI/uDMVI91T2Nvxc3QIR5xukNfiofcXNHsHV3jviqyltYaxjyhHF26O3rIv2qt0W6yVRoe/qle8w3CHLI0ella2TefPt1/7t5G1NOqdftiIm+wXH9TLI1Gu7jvaRpO7sVsoE6Zrd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730608440; c=relaxed/simple;
-	bh=AOXl2fE38g+pYffxexzXwnV1Ljihe717OpCxiasdEjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvAcICS0CH0Qr1rn24d5jNwroOFXH1cHMmIOiV21km7WQD0dV3v4d4F+33as7oFOsS/ztKNAV2fiUWCiJ4tlqOr7OGFw0xxoYEY+9O/6zdqMrt83z2LqCnnHjCam7LiI2scrXCDZg3A2xtp0x5Li7E98No/dOoqh0u4P2ifKPFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3Pn4Nan; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730727498; c=relaxed/simple;
+	bh=DOMHloKF4UN4qlkttRPn0qxlabsJq5KTXbS9OAb2WUc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JPy7IAgA7F85yLJYA00GNSPJO/SOaG6v1+Gl4fdT4i9NE5bRsA02JSskDwNbq84H7Chqvq62bSaPIed9WwuELd852g43o1KItZjkO/495sGshMSf2FIIerObeErqe0oa59IarO+GzAuUZ5dW11KmU2BsKqSDiYYWm0pE91wBGPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tI+JlqZ3; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3Pn4Nan"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2734805b3a.2;
-        Sat, 02 Nov 2024 21:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730608438; x=1731213238; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WZAuhtOauwqrAoTjzUTGUR7IGr2nFokByGMzm/jQiDU=;
-        b=m3Pn4NanY2yn+T1ggGdJK7vHKgDdcZtULR63WkVfwT58oE5lvbBgEt/yiPXmh/fRXM
-         lGuW4gOolGbGdyZLJGNndlFh5aDt7I1PbVL8KvwHs092mNN1ZtmCUHqbBfOu5JUYkO4C
-         jaeznurEotdGLuWJg7ERcv+AIg69tL8CrFFHoKGNhfveiqaWxCoS67vLIFrDhREa08Oc
-         26ig6x/OKvsrPVMDgOgCaMBnYAIa1avSAml4c5sI53oTHitYP53wko2/6dvI1+fx/wXF
-         vdN5YmMY0zKo6Wm50MRLaoluItIQE3dD4TLFDjuyImveZ1ZykaFQSbQayHrxTpfO/XS1
-         53lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730608438; x=1731213238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WZAuhtOauwqrAoTjzUTGUR7IGr2nFokByGMzm/jQiDU=;
-        b=wQi9zeXboxPA1X5FXGtIoFeDVChVNWKDVetuMf2tuMRD+N5INrUmw6k5Tm9yj9DzJI
-         FLbBjho0i4MHkysZeWhq6zDR58jKtw6AHRAq/4cwMXgG35gW8MxgJkOvufVvZLMIt6i2
-         KYSebmzMlEY0LAYtZstp3xg0YG3JWOpZt1ygWoVETdKvbQ3JR9wrbUbfhZ2Yq4ElQZz2
-         KPiGLDz0ZVgYUegyRTijLoQNlVe6MLt0Dj4ZJHwNgXm7MhjE4GKiwqC4b8T10xUsdmrJ
-         tXcG6IvfNeobwygxWMwp4YUSQl9tTTG9YbRUuEv4CA+J0mn9u7EzJb76LSjPCAoYxHI3
-         i1bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnL10XeO0AhWJ874++mXXmeYtJatq5jI52umPi5Qt7EoEXFKpwpkrPdRPFYaTjaMHFLKxXa1HEB80pTvgwVgle5w==@vger.kernel.org, AJvYcCVTbyzrbBO6ap/09KMI6z1bJUa8azj98RZ42SOnWWzLKdl/4U2c3uLBdxvARMiEKaUFFtntPS6F6SS3FL2n@vger.kernel.org, AJvYcCXDqR9NfVoURuMWOozPdsge7T/3c08HMTRZ0XFOoEX4ceh85CBztrKvW1AWOwjx5dcdO4pg4DerjLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkGXCDaXjvBlec+PvHVWEhoSJIKmejbmxR2y0jZLQYxmO2PBe2
-	5+yMS8168Y3n/HehNxPLr50azSOHPsFwRzGY8O8k0BSlQT6aDeov
-X-Google-Smtp-Source: AGHT+IGvpSuZXrPK2QGqFXEaZfWJIaRCCUOqHpDu3T373+UbdA/a75udXVfPIvfOtlJ+UUPUydaRXA==
-X-Received: by 2002:a05:6a20:e605:b0:1d9:1906:a68e with SMTP id adf61e73a8af0-1dba55ac470mr11836622637.34.1730608437868;
-        Sat, 02 Nov 2024 21:33:57 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b90e8sm5000851b3a.25.2024.11.02.21.33.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 21:33:56 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 194624207D11; Sun, 03 Nov 2024 11:33:52 +0700 (WIB)
-Date: Sun, 3 Nov 2024 11:33:52 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	anish kumar <yesanishhere@gmail.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.orgi, corbet@lwn.net,
-	linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH V5] remoteproc: Documentation: update with details
-Message-ID: <Zyb9MJ2H0bkRXk3X@archie.me>
-References: <20241026212259.31950-1-yesanishhere@gmail.com>
- <ZyT2piU27MF28XcN@p14s>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tI+JlqZ3"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4B02Dk001094;
+	Mon, 4 Nov 2024 14:37:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	GC977nshZkMWBVY/wKvcQDvyN5arEAKIKgjZHxchAjQ=; b=tI+JlqZ3R7Lpvn+d
+	ggNSvmsYWIGygwLRUFLaWCG7SW/rRAhDGi8/iEmxy40qI58Ms23/IxXT8fxZRS8t
+	OzKoSJMuzb4V9YPjSPBRYgr7xc5kXRz9micoyScP6v3gyaawazy1Q4j8A5ZNiXuv
+	n0sGjds0Gfi+dMWlj5nQZ5+xLRrFTaZSXlYTX5SQFN0S5mGkEGOwSG4CMTg9c/qs
+	kt4B1/XsSrKGekH2cQPszTG6VSWG03I8xAFf01BKIPunzsWmVd8H5b80e1IUQ9AQ
+	OaX9Wpefpa14RzlRCfMOWAFYZbCvkaSsNtOpHs/nFbXm/UysR+amJnYAe7Igtdp4
+	KW5A8Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ncyyxxru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 14:37:53 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B6D8840044;
+	Mon,  4 Nov 2024 14:36:48 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9A12C28A87F;
+	Mon,  4 Nov 2024 14:35:54 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
+ 2024 14:35:54 +0100
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
+ 2024 14:35:54 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v13 1/7] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Mon, 4 Nov 2024 14:35:09 +0100
+Message-ID: <20241104133515.256497-2-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="prVtwJ4O92547TcU"
-Content-Disposition: inline
-In-Reply-To: <ZyT2piU27MF28XcN@p14s>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, we do not necessarily get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
---prVtwJ4O92547TcU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 47 insertions(+)
 
-On Fri, Nov 01, 2024 at 09:41:26AM -0600, Mathieu Poirier wrote:
-> Before spinning off another revision I encourage you to spend time lookin=
-g at
-> existing documentation.  Reading various mailing lists with a special
-> focus on how people split their patches based on topics would also be
-> beneficial.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..ace11ea17097 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ }
+ EXPORT_SYMBOL(rproc_da_to_va);
+ 
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
++ * addresses instead of device addresses.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
++{
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++	return ptr;
++}
++EXPORT_SYMBOL(rproc_pa_to_va);
++
+ /**
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..8fd0d7f63c8e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
+ 
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
+-- 
+2.25.1
 
-That's why I'm more focused on formatting and wording to get my feet wet
-on kernel docs...
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---prVtwJ4O92547TcU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyb9MAAKCRD2uYlJVVFO
-o+qSAP9IT/sQsL5VMH7lYSqm/08CIwNCqkaCZsEqkiGZSvYctgD/QEMbrX1r1uTw
-3VWE4hMg+LvMX0mcRbWKCo0S8Acl4wA=
-=CyG2
------END PGP SIGNATURE-----
-
---prVtwJ4O92547TcU--
