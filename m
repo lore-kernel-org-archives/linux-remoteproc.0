@@ -1,202 +1,76 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AD31B3928;
-	Mon,  4 Nov 2024 13:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC913D246;
+	Mon,  4 Nov 2024 15:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727509; cv=none; b=S3y4oLeDtSt/QbbbPir+4pjUNAYhOGBraYN8q2KOhDA0TbTQuQ0fNXFFB9PxEseBhUy83jbASaIywx431kKuXdyAYqkjDHTl4mpoQtKPlJBW5SKt7Q9TafgSxW2jALXXgvVCC2PQvaMrLnJczV0zyOXmKEPVMFzH4OoSPDRbNvk=
+	t=1730735256; cv=none; b=AEx2CO9a8MUpeh3bGVLoPhT976MQCjYViPUkC8P/uHU/DlSTGQylqYRXo0LJN/nKOl8JW96QU1WoiEORvkEttycQaqkHBkrzqeWQPGfY4cBipOK7tosuL3fGgaU6de6vuouO9SRScrb9tVol8epWd+/06BUnrB8vG8hfWgBsOx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727509; c=relaxed/simple;
-	bh=jh3Bn2BjYhL3fMoBgibBoHC5d7By4ErkEAJruMg+Qco=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VM8oCfYeHsQTlw2UXv80OJPiKLphfmIM7Lkuzl3E7/Ya/H/zDiDy3QaJhOfSEc7dsHAOcZh6UYmk6+D+Yaeoq4RWxmvgz2WA4Xm2NNp+y6poNTONU0Jg6fCxihpVmRWmI3KYIoesPFL1AgN8EclHj2JbxhBUYlF3xdP5xGm/9yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rAioGdNs; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1730735256; c=relaxed/simple;
+	bh=thCjFnNDPilh94gVyOhCKzVXMSGdfN2FgGarlKfx91U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F34VdVWaD0NbGCU4DS5Y/4WC3G1Vr8GCD1juMaLJjww0GzDOmHvXONozXMxJ1R7878FeNtJa+EP3TriU8r20S/aFFiP/9y1xwhPZK85r09SPHNIbmNI7CqMtHNO3Dc6+PpFjzRSCO2p75yZBbq9FsXmFhXADy+4+PG8dNsd2Al0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVmran2L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rAioGdNs"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4AfqkU029108;
-	Mon, 4 Nov 2024 14:38:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	H/QGMmQQvSdjTzGfb0ViGoe+R9DpAr0GnLMuS6bq550=; b=rAioGdNs3Bw2mBS1
-	5hSK1BCyFr8jJON8jDzir4BjZlGqCyH8lklktg8nBGwXSqboavzF9zYFBrjGZV5C
-	1ni/OHt5wOVI9Q7AmkFHUP9gGodEqR3HLnDwndVOrCSaHvFVfU0niChgJcj0RzjL
-	v0MpA08c19o0aFJBYvuW8CtTXUaW+XcryO3cqV/vdPEcPYG5GqmrzfO3UfYO16EP
-	TaSMkc0ncTjyzS8ZfhaVAQJqY/GwAcKE0giZLrf9bGaqAYMZinAVRn2qM8h8qKMl
-	8YFyV8BytjNbGnw82BZAQMP380O8K6CkeCBf0pNznpkFerBrTxagQmG9Dd4jFIdU
-	4gz7/A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nd0578uf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 14:38:07 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9A5124004A;
-	Mon,  4 Nov 2024 14:36:59 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 51B6C28C11A;
-	Mon,  4 Nov 2024 14:35:58 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
- 2024 14:35:58 +0100
-Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
- 2024 14:35:57 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v13 6/7] remoteproc: stm32: Create sub-functions to request shutdown and release
-Date: Mon, 4 Nov 2024 14:35:14 +0100
-Message-ID: <20241104133515.256497-7-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
-References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVmran2L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13BCC4CECE;
+	Mon,  4 Nov 2024 15:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730735255;
+	bh=thCjFnNDPilh94gVyOhCKzVXMSGdfN2FgGarlKfx91U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hVmran2Lb0MC3j0jbuh7IiZSvCSx2oUjTLOShp9l7mY3Gm3NNPsWVmDxX6bsR9xeh
+	 bnWRB4Yfa9b42e6FwM9qWPmIJbod44dFIn529DW97Y0d0Y6AmMklSwhR270YhPNVpg
+	 G7o7tSjVwvqBIhKPgsIQqGPEOYkdRw9fmt46n4Mf5FoGHY3R7MMR7s1NjmwQEXDcWO
+	 608mNNQrlkBztgNI7160NhdyYVXsRBdA+8qIgn8o1WgZtrkE1c/wOnWhkr0vyC0nF4
+	 I+o0m75a9c9buHv00I9gU/C8qVxK+vC9IfPDYUJ7a3vHPcIfI8nNiYkuvdKyYehjeU
+	 SF6DLNPJTDQ9Q==
+Date: Mon, 4 Nov 2024 09:47:33 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Melody Olvera <quic_molvera@quicinc.com>, linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	devicetree@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
+Message-ID: <173073525333.217463.16399518132776024798.robh@kernel.org>
+References: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
 
-To prepare for the support of TEE remoteproc, create sub-functions
-that can be used in both cases, with and without remoteproc TEE support.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/stm32_rproc.c | 82 +++++++++++++++++++-------------
- 1 file changed, 49 insertions(+), 33 deletions(-)
+On Fri, 01 Nov 2024 18:03:09 +0100, Krzysztof Kozlowski wrote:
+> Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
+> compatible with SM8550 variant.  The only difference from bindings point
+> of view is one more interrupt ("shutdown-ack").  Marking devices as
+> compatible, using SM8550 ADSP PAS fallback, requires changing some of
+> the conditionals in "if:then:" to "contains".
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Cc: Melody Olvera <quic_molvera@quicinc.com>
+> Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
+>  1 file changed, 34 insertions(+), 14 deletions(-)
+> 
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 8c7f7950b80e..288bd70c7861 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -209,6 +209,52 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
- 	return -EINVAL;
- }
- 
-+static void stm32_rproc_request_shutdown(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err, idx;
-+
-+	/* Request shutdown of the remote processor */
-+	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-+		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-+		if (idx >= 0 && ddata->mb[idx].chan) {
-+			err = mbox_send_message(ddata->mb[idx].chan, "detach");
-+			if (err < 0)
-+				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-+		}
-+	}
-+}
-+
-+static int stm32_rproc_release(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	unsigned int err = 0;
-+
-+	/* To allow platform Standby power mode, set remote proc Deep Sleep */
-+	if (ddata->pdds.map) {
-+		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-+					 ddata->pdds.mask, 1);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set pdds\n");
-+			return err;
-+		}
-+	}
-+
-+	/* Update coprocessor state to OFF if available */
-+	if (ddata->m4_state.map) {
-+		err = regmap_update_bits(ddata->m4_state.map,
-+					 ddata->m4_state.reg,
-+					 ddata->m4_state.mask,
-+					 M4_STATE_OFF);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set copro state\n");
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -519,17 +565,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, idx;
-+	int err;
- 
--	/* request shutdown of the remote processor */
--	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
--		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
--		if (idx >= 0 && ddata->mb[idx].chan) {
--			err = mbox_send_message(ddata->mb[idx].chan, "detach");
--			if (err < 0)
--				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
--		}
--	}
-+	stm32_rproc_request_shutdown(rproc);
- 
- 	err = stm32_rproc_set_hold_boot(rproc, true);
- 	if (err)
-@@ -541,29 +579,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
- 		return err;
- 	}
- 
--	/* to allow platform Standby power mode, set remote proc Deep Sleep */
--	if (ddata->pdds.map) {
--		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
--					 ddata->pdds.mask, 1);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set pdds\n");
--			return err;
--		}
--	}
--
--	/* update coprocessor state to OFF if available */
--	if (ddata->m4_state.map) {
--		err = regmap_update_bits(ddata->m4_state.map,
--					 ddata->m4_state.reg,
--					 ddata->m4_state.mask,
--					 M4_STATE_OFF);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set copro state\n");
--			return err;
--		}
--	}
--
--	return 0;
-+	return stm32_rproc_release(rproc);
- }
- 
- static void stm32_rproc_kick(struct rproc *rproc, int vqid)
--- 
-2.25.1
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
