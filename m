@@ -1,106 +1,149 @@
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945E2868B;
-	Tue,  5 Nov 2024 00:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08A3987D;
+	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767689; cv=none; b=KOuFpVZxARSMaEBBcLuWySUhjHpXY0qSZNvGSOWcfiV5x0WjxjCv1JSaLbJ+fmRh599Qd6pQdxRWcz2Z1smZL5lhRv85qyrrcFQdZbIMAk+A+yTbeexOnR6x8xr8hPj3AeD1SbD4Atq8A9EwuL/aLcAe3AjHnfeLC0HzINQahf8=
+	t=1730783285; cv=none; b=qGDeLWvr0+fMEzOE3MoT0Dfk/Oq5PuAfuqxYK8You6FftIIueC/tXrmkl7LEHE5YY0Z0kumRHSF7Qw1BJVcynna3T/cW/NaT+dIRi7Z7/zb0Kno3lIZOIUQvWZdHkek3qITPpLX5JAa1JCSjnxvbJoSvvUzQfPpySVYujA6XyQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767689; c=relaxed/simple;
-	bh=q/I54BCN7FOH7agzrRrVPUjzTgm2RIcPaI9LKCRWP5s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oIoexRzJrjcUFQLWbgGyxzZFOA8cCJQXb5FwThc8r7GyuoIZ30zFrYqMbPwPoo1uXcFGCHFv3wz63vvhJgcb6zx3JanxSQyEXvREG3C+vVRE2H7shMs6x4b7Hmn7sBxdb9xVpsU8HZh2mjRwV5+neti1iT6qe8ABaYwmXldgvKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZ3vKAAD; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730783285; c=relaxed/simple;
+	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1grtJj0b3kRBueslMfacPkJGTah5y1XaeeiIFqSXQ5vCwu7wM/8dlhEuERtMkf4yz107/zbbkHvYCBA5MeWm6OIpbznlr5Nphx2lbHGvkmUl5Eq11y+OiVyk5yqrPbJXFJE2cPgrtk+a851XG/t/Zu3Fd3/3V4NFA/kC+P3VWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK6VuxFZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZ3vKAAD"
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e6105886dfso2877820b6e.0;
-        Mon, 04 Nov 2024 16:48:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730767687; x=1731372487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMFHpngG6qydjgLEjOI9ZIqyN4Q1VIumJ5ShzygmB4U=;
-        b=VZ3vKAAD765AiJ84voIM9I34CoRng2kOuU/a7qA+xdwkoseGa4lQMo5zJH98TpnYRd
-         0YQA1TD4oHjSKCNCM0LWdMy2zPGg+XvMzKcsk6xHM2S0R2aIKhtkkoDrNOabj6Il8Cjw
-         CJ1Qebxt/AHnd3c5V00A++dz/3nKkoHvAHyuED2MtCnhFcILzSS3jRq5Ux+rH7WruDy/
-         4mrBoYC9QzKhLc7chN57doBpUUrb2bBYjaLcbIKLaBsJX1hhqziC6grHXCMGpiiADCGv
-         IEQ5YfFgOVgIS3G4IRd8+6DA3VsHpTCpTuIIqz9PJS/PeJZXaZDhN2B2Gd5two/pNy1C
-         fHEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730767687; x=1731372487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMFHpngG6qydjgLEjOI9ZIqyN4Q1VIumJ5ShzygmB4U=;
-        b=Y0FagJQYd6mLIl1NtR3yNCJ111JkLuOdl1Nn2Q5FqjP7W2IBcpaMflBmKRYS02UyOx
-         wQ7zv8YuVUHB3E1jDBxxtCh2hoI0dcgAL9KOlxiMyAxVhO8PXNKMNUQlbp8OfKvGleKq
-         mYk8AntotNv/n36cqWxfOuXqiMwj8KO4rJUFVZrT7t4ndzNHimBEL/QNC1cNMa5wvCuG
-         Oyaz1Nc1SMa/4HrHH6rHrIoOlnvbV7Bo0Uj7U5ATMai0uyg2p/kFo6WdcqFVMXfv8EDW
-         TEMCQwn9kmwKesTEXEi7UgGRSD/qtDl2okpoLEXI+BiOvHoHFSRieO0YRPAhW0yO/l8A
-         402g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YQ9G0292M3Y5Php7JvpZ5yTK8/lMCKAUUtsnjvMC9dWH3R+Ysi9sT8oGKz/DCxs7w4N3NAuwvab7cuqC3fLwrQ==@vger.kernel.org, AJvYcCXwAuTM3HQXyZUYSGoIztnTHAhqDDkFwgz81Mz89/yxkseOuzxDG6A0RFt0KZ6d+D1C0xUSlI63d8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIEGQM++r3HTaY2BF2Bs+VW8dnHG+bB8bDf+SiIXwavZteTAV9
-	ZIpFhttZxIj19/l9CmdHYX4lENUmof0TFcP0fyNSaU1NItbkeOfT
-X-Google-Smtp-Source: AGHT+IF1k9cPVBQXV2vIuKk4ABDveD4Y3gCJ2K5GjcYjMlhsmx2nEJJBH4u+5VDn0/ag7gkTr223CA==
-X-Received: by 2002:a05:6808:1892:b0:3e6:59b1:8acd with SMTP id 5614622812f47-3e74c3d97f6mr7729940b6e.15.1730767687024;
-        Mon, 04 Nov 2024 16:48:07 -0800 (PST)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:d414:4f86:7740:65e1])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e661190d07sm2317994b6e.11.2024.11.04.16.48.03
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 04 Nov 2024 16:48:05 -0800 (PST)
-From: anish kumar <yesanishhere@gmail.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH 3/3] Documentation: remoteproc: add a note to rproc_add
-Date: Mon,  4 Nov 2024 16:47:49 -0800
-Message-Id: <20241105004749.83424-4-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241105004749.83424-1-yesanishhere@gmail.com>
-References: <20241105004749.83424-1-yesanishhere@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK6VuxFZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14238C4CECF;
+	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730783285;
+	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AK6VuxFZ1qdb1ASJhFnrWnZ+gjqjzhn5itjDiDIbY6oA5hQ/MVC4po0h7T9x4iP+d
+	 ZTy31PQzwIe/YAjF9RT1WtQqVMAeK6En6Glkchdb81Q2pbUuJg/JQPr97aGEp218Rd
+	 S1h0+VwuCtaRmMAUzkWkQ0B5XtN6QSU30D9wOE+Mlj14S59wGMPw64CVqiAl07TwQh
+	 FQoCXxXydhukNne/RoKvirXXRse1ke8F4PM9ckEZDPOmVR31KvQ27NSPYDZFjIblNi
+	 /0KQcuc36UIzD9Joar7eKBo5yMAgB0+hohgNAoFwnjzsACSGwdL9QNvYwvnelBb6eE
+	 /Amp0A3yUXSnA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t8BnO-000000005Bi-3WGR;
+	Tue, 05 Nov 2024 06:08:03 +0100
+Date: Tue, 5 Nov 2024 06:08:02 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+Message-ID: <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
 
-Added a note to the rproc_add description regarding
-the availability of the resource-managed variant of the API.
+On Mon, Nov 04, 2024 at 04:26:15PM -0800, Chris Lew wrote:
+> On 11/1/2024 8:01 AM, Johan Hovold wrote:
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- Documentation/staging/remoteproc.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> > [    8.825593] Unable to handle kernel NULL pointer dereference at virtual
+> > address 0000000000000034
+> > .
 
-diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-index e0bf68ceade8..658ef7a28dd2 100644
---- a/Documentation/staging/remoteproc.rst
-+++ b/Documentation/staging/remoteproc.rst
-@@ -223,6 +223,14 @@ If found, those virtio devices will be created and added, so as a result
- of registering this remote processor, additional virtio drivers might get
- probed.
+> > [    9.002030] CPU: 10 UID: 0 PID: 11 Comm: kworker/u48:0 Not tainted 6.12.0-rc5 #4
+> > [    9.029550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+> > [    9.029552] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
+> > [    9.061350] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> > [    9.061353] pc : mhi_gen_tre+0x44/0x224 [mhi]
+> > [    9.106931] lr : mhi_gen_tre+0x40/0x224 [mhi]
+> > [    9.106934] sp : ffff8000800fb7d0
+> > [    9.106935] x29: ffff8000800fb7d0 x28: ffff6db7852bd000 x27: ffff800082490188
+> > [    9.120382] dwc3 a000000.usb: Adding to iommu group 5
+> > [    9.133750]
+> > [    9.133752] x26: 0000000000000000 x25: ffff6db783e65080 x24: ffff80008248ff88
+> > [    9.133754] x23: 0000000000000000 x22: ffff80008248ff80 x21: ffff8000800fb890
+> > [    9.133756] x20: 0000000000000000 x19: 0000000000000002 x18: 000000000005cf20
+> > [    9.133758] x17: 0000000000000028 x16: 0000000000000000
+> > [    9.172738]  x15: ffffa5834131fbd0
+> > [    9.172741] x14: ffffa5834137caf0 x13: 000000000000ce30 x12: ffff6db7808bc028
+> > [    9.172743] x11: ffffa58341993000 x10: 0000000000000000 x9 : 00000000cf3f2b90
+> > [    9.172745] x8 : 0000000094e5072b x7 : 00000000000404ce x6 : ffffa5834162cfb0
+> > [    9.172747] x5 : 000000000000008b x4 : ffffa583419cddf0 x3 : 0000000000000007
+> > [    9.172750] x2 : 0000000000000000
+> > [    9.192697]  x1 : 000000000000000a x0 : ffff6db7808bb700
+> > [    9.192700] Call trace:
+> > [    9.192701]  mhi_gen_tre+0x44/0x224 [mhi]
+> > [    9.192704]  mhi_queue+0x74/0x194 [mhi]
+> > [    9.192706]  mhi_queue_skb+0x5c/0x8c [mhi]
+> > [    9.210985]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+> > [    9.210989]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+> > [    9.210992]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+> > [    9.225530]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+> > [    9.225532]  sock_sendmsg+0xc0/0xec
+> > [    9.240436]  kernel_sendmsg+0x30/0x40
+> > [    9.240438]  service_announce_new+0xbc/0x1c4 [qrtr]
+> > [    9.240440]  qrtr_ns_worker+0x714/0x794 [qrtr]
+> > [    9.240441]  process_one_work+0x210/0x614
+> > [    9.254527]  worker_thread+0x23c/0x378
+> > [    9.254529]  kthread+0x124/0x128
+> > [    9.254531]  ret_from_fork+0x10/0x20
+> > [    9.254534] Code: aa0003f9 aa1b03e0 94001a4d f9401b14 (3940d280)
+> > [    9.267369] ---[ end trace 0000000000000000 ]---
+> > [    9.267371] Kernel panic - not syncing: Oops: Fatal exception in interrupt
+> 
+> Thanks for reporting this.
+
+Thanks for taking a look, Chris.
+
+> I'm not sure the in-kernel pd-mapper should be affecting this path. I 
+> think this is for WLAN since it is the mhi qrtr and I'm not aware of 
+> WLAN needing to listen to the pd-mapper framework.
+
+This function is called for both the WWAN and WLAN on this machine, and
+it seems like the modem is typically probed first and around the time
+when I saw the NULL-deref.
+
+[    8.802728] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d75000, offsetof(buf_info->used) = 0x34
+...
+[    9.980638] ath12k_pci 0004:01:00.0: mhi_gen_tre - buf_info = ffff800081d35000, offsetof(buf_info->used) = 0x34
  
-+.. note::
-+
-+  there is a resource managed version of this api called devm_rproc_add.
-+  Most of the times, you should use that unless you need to explicitly
-+  control the rproc registration with the core. If you are using devm
-+  variant of this api, then rproc_del will automatically get called when
-+  driver is unloaded.
-+
- ::
- 
-   int rproc_del(struct rproc *rproc)
--- 
-2.39.3 (Apple Git-146)
+> The offset seems to be mapped back to 
+> linux/drivers/bus/mhi/host/main.c:1220, I had some extra debug configs 
+> enabled so not sure the offset is still valid.
+> 
+> 	WARN_ON(buf_info->used);
+> 	buf_info->pre_mapped = info->pre_mapped;
+> 
+> This looks like the null pointer would happen if qrtr tried to send 
+> before mhi_channel_prepare() is called.
 
+I didn't look closely at the code, but I can confirm that the offset of
+buf_info->used is indeed 0x34, which could indicate that it's the
+
+	buf_info = buf_ring->wp;
+
+pointer that was NULL.
+
+> I think we have a patch that might fix this, let me dig it up and send 
+> it out.
+
+Would that patch still help?
+
+	https://lore.kernel.org/lkml/20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com/
+
+I naively tried adding a sleep after registering the endpoint, but that
+is at least not sufficient to trigger the NULL-deref.
+
+Johan
