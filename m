@@ -1,152 +1,118 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D6B11713
-	for <linux-remoteproc@vger.kernel.org>; Thu,  7 Nov 2024 02:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB66216DEB;
+	Thu,  7 Nov 2024 16:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730945285; cv=none; b=niyuz5fuYLnJch2b1862Lsf+w0Fdhy5O7CgNRukDijom/VEBjuBeS9KQeoAZ03Big/qCJj85ULl+kkTaAZGSduySd7cYFLsvb7bC0ahCVqZ8ykGmkbof/f7Zu/xfJfsOhAVC2YiIejYNPorq05yU1azDv4bdnOeIs+dTsjBJZJc=
+	t=1730996358; cv=none; b=V/7mGwSChp3adHfi7nyRWU7VxrnwLqryy/hPFV6SQlqmNqksIkUTwtB6t6RNVZuak5oJmttB+84qYC7XoAyCocick77lqEUiXgvw4FPyr7gbZCNZ4OK2VdpY+pI1V6o1j4Smd8rKL/jflFy9EQCw3pMKPeVjT5PTHM1AGGm9Ge8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730945285; c=relaxed/simple;
-	bh=4hcSiM3HvSnsJkBKVWWHfR+OcrvQ9pBtuHjvrv//mng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hGd9F1HOXIq8T2tSzi1LQsz2LBqxLDLAAePWrtz6C8LeQG4rBeHHVcM74XrT0fmzQUldirM++3PTj2RF4MMUyvd5ZalXo0lxH/SN8002A0kbakW7L3QsNz6zHwQAGQ2HLqI6mN04ky+heFOhB50sN0fM/y6J6+5Lw3a0egFl6ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RptsQbMf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730996358; c=relaxed/simple;
+	bh=KQ7cry36vTkjA4og1SiWDy+ivDsdMILVHBsVe4G2oJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B360a9D9KgLkKazphPK5AdDwKleSWb5Xl3tSi+uNORZaiK6/wbulpNBTilvB1fx99fWimqzRSvfpQmIGg/LVEWlX1rQlyVQI2pc6D8hKrkAvCpab4dBCpNEELTesea0OcwXWsD6wbXis8EPhCLYUIuHlgguxOmAzZI+Hde038RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpPMTerf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RptsQbMf"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6KVP08024626;
-	Thu, 7 Nov 2024 02:07:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tbVX/Lu8/EVai82guWJxRpvI8RvHfw07oPdU9TaF+XU=; b=RptsQbMfzx2MK28S
-	GF2RK5cYJ/u3JkVwXSVNgp7lv454ZMLiNYdjdsbejxEFzB9Ied1BvpUHPldlpqWb
-	IaClMXvLVL6sYe5MectV1WavpvU3YM/FWaUT747lnxebtcRMQPFymS8WFLBepvgY
-	I+iKrJn3jV+d81qdAhWqHiwhaya+MqcokhG+n0iyn0UTvYlVgISdKqbEtGx8VMvb
-	CflH0iU6YYgLSnjhPG/e8HeJKrzRUcnxWBOnpgyK+FxZ568VuNayLHZhDWaxopPk
-	UvkbwcbYUBdoByOBvmgjMjD9jRi4huda6mizhl/hXPv9Gt8CzsOE4dGVfRV9jLit
-	wJYVGg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r3c1atpv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 02:07:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A727vlJ015557
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 02:07:57 GMT
-Received: from [10.71.115.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
- 18:07:56 -0800
-Message-ID: <2eb54159-7e92-42a7-bbb7-1b4848f49a80@quicinc.com>
-Date: Wed, 6 Nov 2024 18:07:56 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpPMTerf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E48C4CECC;
+	Thu,  7 Nov 2024 16:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730996358;
+	bh=KQ7cry36vTkjA4og1SiWDy+ivDsdMILVHBsVe4G2oJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hpPMTerfVbwqa7ZMfS0g7X479PkiRFrWPmEVb90pmoRdxv5GwzzmNQHToidB2U4aP
+	 Xa/8vVBpzApJ/bqDJpbMqWrNiOYRQhwZOdvLlkIucBXIIHAkMycHxwRpAKDJp5qjSa
+	 CU3H3VWFQl4a4n4KNN9cCeSZxlgHet/SYYn6Rc8e5s9BKavlyt4z/DNm9idD/ArgY2
+	 3D5v0TpfedqSM+ISop9cA/uZNZwXTkQGcb+N7IxsdAKSzEL+SaQRxXCCWjXllIqlDo
+	 +z8bHhY97ymlU6GexvcH9CHDxMmdWGIeY3uzBeJPaHhNiXWwtIT4V23+507ZN7QtCV
+	 fd1bWXX9y/mOQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t95E7-0000000035L-3ZL9;
+	Thu, 07 Nov 2024 17:19:19 +0100
+Date: Thu, 7 Nov 2024 17:19:19 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+Message-ID: <Zyzoh0zv1Z7LDfjW@hovoldconsulting.com>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+ <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+ <730a6e17-04f5-41b5-a0d8-7220b8c59b58@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: qcom: pas: Remove subdevs on the error path
- of adsp_probe()
-To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <dmitry.baryshkov@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>
-References: <20241105092055.255127-1-joe@pf.is.s.u-tokyo.ac.jp>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20241105092055.255127-1-joe@pf.is.s.u-tokyo.ac.jp>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iAbQtdF5aWNJUNV_ZUV0pNHb7avr2h_F
-X-Proofpoint-ORIG-GUID: iAbQtdF5aWNJUNV_ZUV0pNHb7avr2h_F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 clxscore=1011
- spamscore=0 phishscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <730a6e17-04f5-41b5-a0d8-7220b8c59b58@quicinc.com>
 
-Hi Joe,
+On Tue, Nov 05, 2024 at 10:26:40AM -0800, Chris Lew wrote:
+> On 11/4/2024 9:08 PM, Johan Hovold wrote:
+> > On Mon, Nov 04, 2024 at 04:26:15PM -0800, Chris Lew wrote:
 
-On 11/5/2024 1:20 AM, Joe Hattori wrote:
-> Current implementation of adsp_probe() does not remove the subdevs of
-> struct qcom_adsp *adsp on the error path. Fix this bug by calling
-> qcom_remove_{ssr,sysmon,pdm,smd,glink}_subdev(), qcom_q6v5_deinit(), and
-> adsp_unassign_memory_region() appropriately.
+> >> This looks like the null pointer would happen if qrtr tried to send
+> >> before mhi_channel_prepare() is called.
+
+> >> I think we have a patch that might fix this, let me dig it up and send
+> >> it out.
+> > 
+> > Would that patch still help?
+> > 
+> > 	https://lore.kernel.org/lkml/20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com/
 > 
-> Fixes: 5b9f51b200dc ("remoteproc: qcom: enable in-kernel PD mapper")
+> Yea this is the exact patch I had in mind, didnt realize the patch was 
+> already sent a while back.
 
-The ssr, sysmon, glink subdevs and qcom_q6v5_init() are the calls that 
-leak resources. I think this issue existed before the in-kernel PD 
-mapper patches so this Fixes tag isn't accurate.
+Heh, that's a bit of an understatement. Apparently the fix was posted
+three years ago, but no one followed up with a v2:
 
-Would this apply to the other remoteproc files like qcom_q6v5_adsp.c?
+	https://lore.kernel.org/lkml/1626831778-31796-1-git-send-email-bbhatt@codeaurora.org/
 
-> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 20 +++++++++++++++-----
->   1 file changed, 15 insertions(+), 5 deletions(-)
+> > I naively tried adding a sleep after registering the endpoint, but that
+> > is at least not sufficient to trigger the NULL-deref.
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index ef82835e98a4..27b23a000c7a 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -759,16 +759,16 @@ static int adsp_probe(struct platform_device *pdev)
->   
->   	ret = adsp_init_clock(adsp);
->   	if (ret)
-> -		goto free_rproc;
-> +		goto unassign_mem;
->   
->   	ret = adsp_init_regulator(adsp);
->   	if (ret)
-> -		goto free_rproc;
-> +		goto unassign_mem;
->   
->   	ret = adsp_pds_attach(&pdev->dev, adsp->proxy_pds,
->   			      desc->proxy_pd_names);
->   	if (ret < 0)
-> -		goto free_rproc;
-> +		goto unassign_mem;
->   	adsp->proxy_pd_count = ret;
->   
->   	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
-> @@ -784,18 +784,28 @@ static int adsp_probe(struct platform_device *pdev)
->   					      desc->ssctl_id);
->   	if (IS_ERR(adsp->sysmon)) {
->   		ret = PTR_ERR(adsp->sysmon);
-> -		goto detach_proxy_pds;
-> +		goto deinit_remove_pdm_smd_glink;
->   	}
->   
->   	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
->   	ret = rproc_add(rproc);
->   	if (ret)
-> -		goto detach_proxy_pds;
-> +		goto remove_ssr_sysmon;
->   
->   	return 0;
->   
-> +remove_ssr_sysmon:
-> +	qcom_remove_ssr_subdev(rproc, &adsp->ssr_subdev);
-> +	qcom_remove_sysmon_subdev(adsp->sysmon);
-> +deinit_remove_pdm_smd_glink: > +	qcom_remove_pdm_subdev(rproc, &adsp->pdm_subdev);
-> +	qcom_remove_smd_subdev(rproc, &adsp->smd_subdev);
-> +	qcom_remove_glink_subdev(rproc, &adsp->glink_subdev);
-> +	qcom_q6v5_deinit(&adsp->q6v5); >   detach_proxy_pds:
->   	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-> +unassign_mem:
-> +	adsp_unassign_memory_region(adsp);
->   free_rproc:
->   	device_init_wakeup(adsp->dev, false);
->   
+> Looking at the callstack, this is broadcasting a NEW_SERVER notification 
+> from qrtr_ns. I think you can force this by starting and stopping some 
+> qmi service with the added sleep. Do you have tqftpserv or diag-router 
+> in your environment? Those will open qmi services, so starting and 
+> stopping those will cause the new_server broadcast in qrtr_ns.
+
+No, neither tqftpserv or diag-router are used here, but after digging
+through the code it seems my hunch about this being related to the
+in-kernel pd-mapper was correct.
+
+The qrtr worker, qrtr_ns_worker(), is called when the in-kernel
+pd-mapper adds the server, and processing the QRTR_TYPE_NEW_SERVER
+command eventually ends up in mhi_gen_tre() for the modem:
+
+[    9.026694] qcom_pdm_start - adding server
+[    9.034684] ctrl_cmd_new_server - service = 0x40, instance = 0x101, node_id = 1, port = 0
+[    9.042155] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d4d038, offset_of(buf_info->used) = 34
+[   10.669996] Call trace:
+[   10.787734]  mhi_gen_tre+0x218/0x270 [mhi]
+[   10.804727]  mhi_queue+0x74/0x194 [mhi]
+[   10.804730]  mhi_queue_skb+0x5c/0x8c [mhi]
+[   10.804732]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+[   10.804734]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+[   10.804736]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+[   10.804737]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+[   10.804739]  sock_sendmsg+0xc0/0xec
+[   10.804742]  kernel_sendmsg+0x30/0x40
+[   10.804743]  service_announce_new+0xbc/0x1c4 [qrtr]
+[   10.804745]  qrtr_ns_worker+0x754/0x7d4 [qrtr]
+
+And I can indeed imagine that leading to the NULL deref in case the
+endpoint is registered before being fully set up.
+
+Johan
