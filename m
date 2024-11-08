@@ -1,65 +1,65 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D0614012
-	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Nov 2024 03:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D118014012
+	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Nov 2024 03:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731037378; cv=none; b=FFrtD9oPIDCqDGiBbkAL2yWDW1ZL79o6E7zAQo2zVM8EKNPXpTE46aIJ6BMb+U/tc+S8QLQLgNX621km6oASaR6pFOSMxkyXUNRS51dBWWyOEF71X6Lq7XDtjc11u94pvPWu0EiTU4bL+nGY+FJ7UpJtNPDy3NzP/rRGOfuTxDU=
+	t=1731037380; cv=none; b=S1CZ1G1qZSrOhm3VG5qwTl7rVlFeUnRwUanfdcsWBF68UaYllMXybju56mYrzDpgDOCPwNL6oTM1McF2rWyq1LUmfm7PKY086DVKI9lj2pVKhj4Uty01hPDm36kOY4zqTSFpG41eQHfmFvm7Dsn3fpe3iRR1W16yP4e7dX9//f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731037378; c=relaxed/simple;
-	bh=kiT/02fO/y8QF6p6cCZDX+NsUrqelIEyFq3E2Ifw6VQ=;
+	s=arc-20240116; t=1731037380; c=relaxed/simple;
+	bh=52vkohNZH/fUTR1TgWtB+26GSgZUmkBIQEyJYX7FmJ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DGezW3LC9vDqpB+1vpskW3zYtYIYGWDbavIsmEDI8fhWMWzz9fnFXJILsVuhIvrDiGH86ePR02jdLwFddjaH/cKjA4kmoaoCOetI7TjsoMhbCtdT6CNatzt4/0B6cjmnEzGRK46TFUNSG7mEDH1gjkyeX7dXCvhtBRzfQof+148=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=OA+pjQXC; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=pE6QcSDjTmxodICSfD+Hr4oySKDC3qD5bvrPOLqtMTjFX8KMyyGZkgi3c/L9AcTdo0zm+7WdGexOuIAEkSVxqswZAI5emTWRS6vxYGyuF5A0ZG2wrjwCerlHwKFrZiu77sW0UwnT5lX3VDQBMyu2dW5ib/ox0QR/GMi7zsjgwJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=P+316e1k; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="OA+pjQXC"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-723f37dd76cso1697653b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Nov 2024 19:42:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="P+316e1k"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e30fb8cb07so1314052a91.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Nov 2024 19:42:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1731037375; x=1731642175; darn=vger.kernel.org;
+        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1731037378; x=1731642178; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bPVATv792foYxRFYTwOl9/mjQWN0tkjHAgn+BUkGmog=;
-        b=OA+pjQXClenQN66PqqDtCD3AedaPytdq7pK/ooIV2e+xeChQ4fS82gfhgUGrzL8wkm
-         ORVLp4kUDQY92Zae4upDq30MfQdB6+LHWV6qTSvNGr+hK90fZcJVv6NSxJYIEx0W+F2x
-         ae2THo+/8HSAqxaWWbnhz8kVdD1ue7e5QdumLks+GeXEU0MZ2GvT8ZKBCNCEh+j1NWB1
-         2AtPhQ3XKVGkHkY/ZT4xtQNcAL3UZhSDI3i6+6vTilWP8vo7tR39VmEJQhZCdrpo4KZ9
-         ODadOobipkTEzRsYkzqd6pY05muG0kJT+FwHueuaM6Ru77bhCIm5sB4Y6RkK6+P/kQER
-         JAcQ==
+        bh=BvJAK1kPdQuIBdNEMaaMSxFXdpiJyiGm4xygS9ksrhI=;
+        b=P+316e1kF+3KBoF1FmUcHz/F0IygsL4jdXWOrhpeu3ncSWOf6Zr982dGXFI0t3FMoI
+         0oVWf5CDKexm79hZraziP7ocyhItdC/5S59K3AYpbYbfvQWG2bvgLVEO8Obe94APuTn+
+         PyNEYM5of80dwh1qNxa7KaMhcl0HJUIMKomw9ckGqCtTUhPAKQ8+V1WvZsdBSiP6LeVt
+         wF06qY6e+2f5l+daLSeZHsC9Z6AL5ZvQ4aPiWkVnZ+TriT/nn2S+Oa8AUY+osgxBFujQ
+         YyzBcV9l/OmDIhXHeERBklo9Z962zNnDHme3KBqn7j4zWVOCPSfr6PLcgMLtkVycHbtN
+         rDzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731037375; x=1731642175;
+        d=1e100.net; s=20230601; t=1731037378; x=1731642178;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bPVATv792foYxRFYTwOl9/mjQWN0tkjHAgn+BUkGmog=;
-        b=Y5Xpf1+Jsz3Lp1tULLMdVIRq2+3iBi9987Qyfodx2VQnIKQSHp9e9ox9NjOox2LhyD
-         P1c9+F+fuSa1PXvAem54BmXyF51bfbS1kfjG+8a7QKtPHCzu6Ksl88lZiDlxMbn1+Si1
-         T+Q1tgCufCgmmIj6bSvKOz7BncB9gh4IQJj51oMZcNS6IhS51FvfgETyjMlHAiVJ/Dy2
-         S5VYopfYhfk+jQYFxHCe4P7Vx3G6ES1MFGeh7d7teSzeoQwinebQy8sAZsUrF84g1KaQ
-         h+bAYt5y8TnfnmDNjTPh+EcjWvLell6CcEq3LHnxCy0q5w9cGKbsRIHj2CI0qjO9FITG
-         56tg==
-X-Gm-Message-State: AOJu0Yyd7e/+BeRfPv4uA9HKBmsAKTHC12XAlY0O8uVLA545iginfXgF
-	S2JAV7s2cLAlVEA3OZ+7K2VzUvuWS/Mp203lDhBlYexNG9ak89fpRX9SlSH7Ny7nPOOrPmii7Sv
-	B
-X-Google-Smtp-Source: AGHT+IFZ1Dxp20Qbb+j9pbcRbOWy35gdRgH6WSTc4hzNyMQYZi8+RUokhb7h0Q4ZaLbDVnqCMdMtZg==
-X-Received: by 2002:a05:6a21:8cca:b0:1db:df7b:471a with SMTP id adf61e73a8af0-1dc22b9162amr1874463637.43.1731037375343;
-        Thu, 07 Nov 2024 19:42:55 -0800 (PST)
+        bh=BvJAK1kPdQuIBdNEMaaMSxFXdpiJyiGm4xygS9ksrhI=;
+        b=CC+kqNxXWEQ3WFrISa8YV6VL8ZeUuacMBUo3qcTp85RKtE5gCs9wcZXz2/O/5nh6Ws
+         rUe6lQ4OQfBF6Ube8p8KPUmTb64ZtvPOJQTJrE49N+XzGwTwn7Sk1BKC8VA5f4uWbxtS
+         4fyM6Pyg6UEEpezfriJO+3qKsHg5mMhFdcel8XloNu2gzv4ckEPu6aa3AQFqzoUuxNui
+         t1QJCBKfcMGI609x+at2UO7FxqA4pl4TYyOzeqPQQ4DQqAiA6shDF8BxoulWkN1alcFg
+         x38l5NwtnKztvm7JUalNAvzHLuiwM/pYgMnvX8ZWL015Ig7nUDGzRRhgrMxTElqsqutY
+         Euog==
+X-Gm-Message-State: AOJu0YyFspdY1SdpP7Ghhp4r9CFWkPGquHTpuDQ7eaZKg/2u47Lr5z0l
+	JVb/Ztafrt+M6qXoqFBPFGSWF2tRZ/BoSWtPSGSF8VRQXE26YC70bjvUXvOsUx0p9vAYatIICPu
+	R
+X-Google-Smtp-Source: AGHT+IH5MbeJ1MEq4V00xjolOf62jVOYgOdaj0DA0uSGpHGlDJz4Ub/yXtcJMnHdcpmFQBttsrgkXQ==
+X-Received: by 2002:a17:90b:4a10:b0:2e0:ab57:51ec with SMTP id 98e67ed59e1d1-2e9b1729f43mr2245903a91.30.1731037378169;
+        Thu, 07 Nov 2024 19:42:58 -0800 (PST)
 Received: from localhost.localdomain ([2001:f70:2520:9500:1163:1c51:917:b853])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f5e57fsm2439821a91.14.2024.11.07.19.42.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f5e57fsm2439821a91.14.2024.11.07.19.42.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 19:42:54 -0800 (PST)
+        Thu, 07 Nov 2024 19:42:57 -0800 (PST)
 From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
 Cc: linux-remoteproc@vger.kernel.org,
 	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-Subject: [PATCH v2 1/2] remoteproc: qcom: pas: Remove subdevs on the error path of adsp_probe()
-Date: Fri,  8 Nov 2024 12:42:41 +0900
-Message-Id: <a1cabc64240022a7f1d5237aa2aa6f72d8fb7052.1731036523.git.joe@pf.is.s.u-tokyo.ac.jp>
+Subject: [PATCH v2 2/2] remoteproc: qcom: adsp: Remove subdevs on the error path of adsp_probe()
+Date: Fri,  8 Nov 2024 12:42:42 +0900
+Message-Id: <fed3df4219543d46b88bacf87990d947f3fac8d7.1731036523.git.joe@pf.is.s.u-tokyo.ac.jp>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1731036523.git.joe@pf.is.s.u-tokyo.ac.jp>
 References: <cover.1731036523.git.joe@pf.is.s.u-tokyo.ac.jp>
@@ -71,71 +71,45 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current implementation of adsp_probe() in qcom_q6v5_pas.c does not
+Current implementation of adsp_probe() in qcom_q6v5_adsp.c and does not
 remove the subdevs of adsp on the error path. Fix this bug by calling
-qcom_remove_{ssr,sysmon,pdm,smd,glink}_subdev(), qcom_q6v5_deinit(), and
-adsp_unassign_memory_region() appropriately.
+qcom_remove_{ssr,sysmon,pdm,smd,glink}_subdev(), and qcom_q6v5_deinit()
+appropriately.
 
-Fixes: 4b48921a8f74 ("remoteproc: qcom: Use common SMD edge handler")
+Fixes: dc160e449122 ("remoteproc: qcom: Introduce Non-PAS ADSP PIL driver")
 Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/remoteproc/qcom_q6v5_adsp.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index ef82835e98a4..27b23a000c7a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -759,16 +759,16 @@ static int adsp_probe(struct platform_device *pdev)
- 
- 	ret = adsp_init_clock(adsp);
- 	if (ret)
--		goto free_rproc;
-+		goto unassign_mem;
- 
- 	ret = adsp_init_regulator(adsp);
- 	if (ret)
--		goto free_rproc;
-+		goto unassign_mem;
- 
- 	ret = adsp_pds_attach(&pdev->dev, adsp->proxy_pds,
- 			      desc->proxy_pd_names);
- 	if (ret < 0)
--		goto free_rproc;
-+		goto unassign_mem;
- 	adsp->proxy_pd_count = ret;
- 
- 	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
-@@ -784,18 +784,28 @@ static int adsp_probe(struct platform_device *pdev)
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 572dcb0f055b..223f6ca0745d 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -734,15 +734,22 @@ static int adsp_probe(struct platform_device *pdev)
  					      desc->ssctl_id);
  	if (IS_ERR(adsp->sysmon)) {
  		ret = PTR_ERR(adsp->sysmon);
--		goto detach_proxy_pds;
-+		goto deinit_remove_pdm_smd_glink;
+-		goto disable_pm;
++		goto deinit_remove_glink_pdm_ssr;
  	}
  
- 	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
  	ret = rproc_add(rproc);
  	if (ret)
--		goto detach_proxy_pds;
-+		goto remove_ssr_sysmon;
+-		goto disable_pm;
++		goto remove_sysmon;
  
  	return 0;
  
-+remove_ssr_sysmon:
-+	qcom_remove_ssr_subdev(rproc, &adsp->ssr_subdev);
++remove_sysmon:
 +	qcom_remove_sysmon_subdev(adsp->sysmon);
-+deinit_remove_pdm_smd_glink:
-+	qcom_remove_pdm_subdev(rproc, &adsp->pdm_subdev);
-+	qcom_remove_smd_subdev(rproc, &adsp->smd_subdev);
-+	qcom_remove_glink_subdev(rproc, &adsp->glink_subdev);
++deinit_remove_glink_pdm_ssr:
 +	qcom_q6v5_deinit(&adsp->q6v5);
- detach_proxy_pds:
- 	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+unassign_mem:
-+	adsp_unassign_memory_region(adsp);
- free_rproc:
- 	device_init_wakeup(adsp->dev, false);
++	qcom_remove_glink_subdev(rproc, &adsp->glink_subdev);
++	qcom_remove_pdm_subdev(rproc, &adsp->pdm_subdev);
++	qcom_remove_ssr_subdev(rproc, &adsp->ssr_subdev);
+ disable_pm:
+ 	qcom_rproc_pds_detach(adsp);
  
 -- 
 2.34.1
