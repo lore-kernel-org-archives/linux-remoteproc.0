@@ -1,125 +1,110 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741731BC09A
-	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Nov 2024 04:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4902E13A27D;
+	Fri,  8 Nov 2024 10:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039254; cv=none; b=SyE4BZgY4JVVpN9d+VYeudbfZpQsNlcurvrfg+ZVtAqoGLfXVZyIIPJ61NXz9NHh6NzBJPMjjUUVq+Wxnaief5Xw8JGtQD00tMhKDgpPjlBcgMtJ+OEDLXwrqlI0Fm5dQqaHfcVIzW36a8veNmkar4eCzB3FSlui5WIuy2UHSL0=
+	t=1731060601; cv=none; b=BhMQa+Xr2P5kPWXLCrUWW01IiXbPMsiePDoRPz2CjIlcnOxom2ZjXyJrJ2lq/ilei4gdPFXx3D+ImwP7/SlmSnrUiOhbgvK9kfnCi08kWfPRZGk3h3flf2etT0fV+njkQgWPX2tK3iM8O92VXo0RFuTlCLzr3Boq2Cm+oXrVDaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039254; c=relaxed/simple;
-	bh=U05aE29ZGNS/A5hteh174GSSsB+Ef6dyJmroxixrz9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BucfevadcXG7h/ajGiq79YaUHH1Tz3HE7vI1UpnlTls0FkkQi2GvduRzdOJj0mJUAC+WSWsU0ag571bLpx4puQMKtccIBu+Tg69GP8/dpdFbrAxpNHt4D1z+eq+bpXgFkvCfjRI6GHfN+nqk5QNy2yCrQqId748beX5Sio/BwcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=V//t45IY; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
+	s=arc-20240116; t=1731060601; c=relaxed/simple;
+	bh=GcaTVnuhZPHI8Rduj8Qe+ffknyFZam6gp7wslPFdY2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiK5AFunfMQkrvuE2yJHdr/cTXkQnXHQzPCiI4R5r40Un1GgeIgyczuKRCfHk4wIwguRYB+zTY5CEzsYrH/NuwhetkZKD8K8bjQJ5vY5U1n0pdQzX4NHuV8zlkrK57EBGS2d0fQPGYbmTm7wDMp2VQRvMhc3IaboArI6KiAKIE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEusAy3P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="V//t45IY"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7f4325168c8so140296a12.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Nov 2024 20:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1731039252; x=1731644052; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0acZ1vxJLPbYnRkgptI9IrKTobxhKP01mtuMRII5lrA=;
-        b=V//t45IYgUXSOWusQJm26lE9ikVooGo7MT4bvx4cMlEODUqTyh99sdJxJTzI040VnG
-         MPKTrAPhiY6U6d7GQ1baBY2kGFsF/BrNXwonqXb5aZ0be+cUHrVuxZJp3DPor4O5Q1b7
-         a8wprQ0SyduvCWBdzdmKAKNC/0ct/E2QZrgb7Lr70UFwafoWg1KLR6eTojhZaHeEW7nE
-         4NzqnFnYP6mAQ0PfLKFma9+/C6ip3KeHHZzYEV8Q3KLyqBWm5OXRMiE3VbLeuicYEngt
-         A4SrP9zgAXeX+dtwk3D9+Zm2D4w1e0ly6mZK5x83+TurJKZxX502U2oytlW2ML/tG8+d
-         E+Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731039252; x=1731644052;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0acZ1vxJLPbYnRkgptI9IrKTobxhKP01mtuMRII5lrA=;
-        b=ZtsKyhTaorDDeiwK8gowf4ZBnVexJggZmzM2jZp0FyxVbOcPBYQkqFMvCuvrVdz+F5
-         eVDi3Y6IHg6+5Dqf4Ijkeh1rloyk4oATbUXpEzjAUP0i7asfzffdwYFXa5vNfPlVBd3g
-         EiYvgVPdOZXlbm/vbkfjRqJdQcKBPc4Jh/VM4v3QUov3cBaKIDdgVc5W0vlfHpy0FBfs
-         zHFCZWTq1HuVQ1UsUjmlMHrQWbLZaM7exhZmz9Gy0vIPTS1hy3wwtlph2RMK39IB7eSV
-         /23vcUjkMQLwbZBs0xInQbKtbgRaPVhrKQogB0PM23aiJDO34Ii04RpobM+tkWSDQous
-         Q3Sw==
-X-Gm-Message-State: AOJu0Yyn8mXmdykVvdPRGv74cV7Fhs40uqUuudjxF1+cEllnkGgSfMsZ
-	cerZg7Bsp2B85gpCsEwr7FXdXZJxADdNf7+dG+yEw2xnMNLEOlhjXemmBgjSXFU=
-X-Google-Smtp-Source: AGHT+IHtudU+pzNmLGD6u9E4l70muCszYHwdWPhSGl5P1NVKaUoSjbAf7nZb5RDPUvwN84qz/G6Vxw==
-X-Received: by 2002:a05:6a20:3d87:b0:1db:9367:d018 with SMTP id adf61e73a8af0-1dc229d6d4dmr2212057637.20.1731039251446;
-        Thu, 07 Nov 2024 20:14:11 -0800 (PST)
-Received: from localhost.localdomain (133-32-133-31.east.xps.vectant.ne.jp. [133.32.133.31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a541c95sm4964898a91.17.2024.11.07.20.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 20:14:10 -0800 (PST)
-From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-Subject: [PATCH 3/3] remoteproc: qcom: wcss: Remove subdevs on the error path of q6v5_wcss_probe()
-Date: Fri,  8 Nov 2024 13:13:55 +0900
-Message-Id: <c4437393bfaeda69351157849b5e0a904586b1c2.1731038950.git.joe@pf.is.s.u-tokyo.ac.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1731038950.git.joe@pf.is.s.u-tokyo.ac.jp>
-References: <cover.1731038950.git.joe@pf.is.s.u-tokyo.ac.jp>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEusAy3P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5132C4CECD;
+	Fri,  8 Nov 2024 10:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731060600;
+	bh=GcaTVnuhZPHI8Rduj8Qe+ffknyFZam6gp7wslPFdY2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IEusAy3PJK3H/26X6rm4R9BqsxpVKaCxmuXEpycNAeCqAS+9ELigYuuAQSwt3ZImt
+	 O6jdqBMbbZIgj/IRuETaARd2OP/bBkgRsswTIJm0GtGyc5TKLvRSHuHJmEM2gNTs3O
+	 RMuzmFRbmoyROUHrYN7PmFbgcKSZVCM4pDoBq7JcqCyPUWUi2qkEzK9YrYHbFmfqyL
+	 yNlOMaSl1se3fpiCtE4x1/ONpNveXcsHwnUfebc6Cb7/qjxOSeHf++PyOfX011C9ZA
+	 d/cnUIv8NmCCPrfuJpYW7aMX9T+N4190GhfKybvq56LDWA9U4zeLAj1e19XMhyEZDH
+	 I1yBKQn5P2DzQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t9LwI-000000007VS-0qHO;
+	Fri, 08 Nov 2024 11:10:02 +0100
+Date: Fri, 8 Nov 2024 11:10:02 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+Message-ID: <Zy3jeixo2uTooRGo@hovoldconsulting.com>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+ <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+ <730a6e17-04f5-41b5-a0d8-7220b8c59b58@quicinc.com>
+ <Zyzoh0zv1Z7LDfjW@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zyzoh0zv1Z7LDfjW@hovoldconsulting.com>
 
-Current implementation of q6v5_wcss_probe() in qcom_q6v5_wcss.c and does
-not remove the subdevs on the error path. Fix this bug by calling
-qcom_remove_{ssr,sysmon,pdm,glink}_subdev(), and qcom_q6v5_deinit()
-appropriately.
+On Thu, Nov 07, 2024 at 05:19:19PM +0100, Johan Hovold wrote:
+> On Tue, Nov 05, 2024 at 10:26:40AM -0800, Chris Lew wrote:
+> > On 11/4/2024 9:08 PM, Johan Hovold wrote:
 
-Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+> > > I naively tried adding a sleep after registering the endpoint, but that
+> > > is at least not sufficient to trigger the NULL-deref.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index e913dabae992..1e85beb8f9f6 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -1056,18 +1056,33 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	qcom_add_pdm_subdev(rproc, &wcss->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, "q6wcss");
- 
--	if (desc->ssctl_id)
-+	if (desc->ssctl_id) {
- 		wcss->sysmon = qcom_add_sysmon_subdev(rproc,
- 						      desc->sysmon_name,
- 						      desc->ssctl_id);
-+		if (IS_ERR(wcss->sysmon)) {
-+			ret = PTR_ERR(wcss->sysmon);
-+			goto deinit_remove_subdevs;
-+		}
-+	}
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		return ret;
-+		goto remove_sysmon_subdev;
- 
- 	platform_set_drvdata(pdev, rproc);
- 
- 	return 0;
-+
-+remove_sysmon_subdev:
-+	if (desc->ssctl_id)
-+		qcom_remove_sysmon_subdev(wcss->sysmon);
-+deinit_remove_subdevs:
-+	qcom_q6v5_deinit(&wcss->q6v5);
-+	qcom_remove_glink_subdev(rproc, &wcss->glink_subdev);
-+	qcom_remove_pdm_subdev(rproc, &wcss->pdm_subdev);
-+	qcom_remove_ssr_subdev(rproc, &wcss->ssr_subdev);
-+	return ret;
- }
- 
- static void q6v5_wcss_remove(struct platform_device *pdev)
--- 
-2.34.1
+> No, neither tqftpserv or diag-router are used here, but after digging
+> through the code it seems my hunch about this being related to the
+> in-kernel pd-mapper was correct.
+> 
+> The qrtr worker, qrtr_ns_worker(), is called when the in-kernel
+> pd-mapper adds the server, and processing the QRTR_TYPE_NEW_SERVER
+> command eventually ends up in mhi_gen_tre() for the modem:
+> 
+> [    9.026694] qcom_pdm_start - adding server
+> [    9.034684] ctrl_cmd_new_server - service = 0x40, instance = 0x101, node_id = 1, port = 0
+> [    9.042155] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d4d038, offset_of(buf_info->used) = 34
 
+> And I can indeed imagine that leading to the NULL deref in case the
+> endpoint is registered before being fully set up.
+
+I've been able to reproduce the issue twice now by instrumenting the
+code to increase the race window. Specifically, I added a sleep in
+mhi_init_chan_ctxt() after allocating the ring buffers but before
+initialising the wp pointers. And when the in-kernel pd-mapper is
+started in that window, we hit the NULL-deref:
+
+        [    8.593582] mhi-pci-generic 0005:01:00.0: mhi_init_chan_ctxt - ring allocated (IPCR:20), buf_ring->base = ffff800080d55000
+        [    8.598902] mhi_net mhi0_IP_SW0: mhi_prepare_channel - channel started (46), dir = 1
+        [    8.612888] mhi_net mhi0_IP_SW0: mhi_prepare_channel - channel started (47), dir = 2
+        [    8.614767] qcom_pdm_start - adding server
+        [    8.615302] ctrl_cmd_new_server - service = 0x40, instance = 0x101, node_id = 1, port = 0
+        [    8.615388] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = 0000000000000000 (IPCR:20)
+        [    8.615402] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000034
+        ...
+        [    8.615541] Call trace:
+        [    8.615542]  mhi_gen_tre+0x68/0x248 [mhi]
+        [    8.615544]  mhi_queue+0x74/0x194 [mhi]
+        [    8.615546]  mhi_queue_skb+0x5c/0x8c [mhi]
+        [    8.615549]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+        [    8.615551]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+        [    8.615553]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+        [    8.615554]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+        [    8.615555]  sock_sendmsg+0xc0/0xec
+        [    8.615560]  kernel_sendmsg+0x30/0x40
+        [    8.615561]  service_announce_new+0xbc/0x1c4 [qrtr]
+        [    8.615563]  qrtr_ns_worker+0x754/0x7d4 [qrtr]
+
+Johan
