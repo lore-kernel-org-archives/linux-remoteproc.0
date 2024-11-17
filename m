@@ -1,225 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18EF28FF;
-	Sat, 16 Nov 2024 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF52D322E
+	for <linux-remoteproc@vger.kernel.org>; Sun, 17 Nov 2024 13:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731757220; cv=none; b=reJcTpHmgnjylQ1IIY59fbfNIrHRrzr94mtOpAJDe0tSnBSQOSo6fIk2uFRd/owCfN+fV9JQOWFRU/Bwyw8bjV/0CItBfK2g092/5+eWrxlBWL8LAdMNLI4j4Fl2HlLp1NdzAbZ/S+CQtSjvkNk1RNATqmYuwVRPlPlswwMQCAM=
+	t=1731848927; cv=none; b=sfu+0vAw/ZqWNZ8emZWRL07y2X3p1BPFxaJOmqN7bB86zm+r9IGqnwKArlMqQtju8T9vaY49WkFXzZfRusZXaEja2Chd4LOJc/JXvNIGSdDUKN5CIw1CfNvPvTBSxTryu70TJETdeoygWQnJH2rKzdljAGlUgIIv2krPKBj2HlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731757220; c=relaxed/simple;
-	bh=60OKvHXhdre1WdESOhl4PN0wFXXZX9ys+VzQSc8Ckvo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Et+VduYsGd6H1D9KOnhfggAoY9GDIInubqyE8woK8acV1pmP9E88Ei/BqBBMS0Exhg6dL0/ikPXj0a/Ofd8oGZqSwWe9f+zsYNaVfOmCPv3uIF8ED5PUlCHQQaFebkUdFW6x1GHq12aEwQLqFcM2wFQzLvOC9lJ5Kehz32PfhfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o89VX3P8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731848927; c=relaxed/simple;
+	bh=GrZ+DyXJhogiFXvtPbLhc0NLu6xmb7Co8Ss70qrimGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSM0U5ToiVLklMzF639BZJcYhcDCDYMTZgXUvYLvRQ4MlCryN07xoZvKRaZp+myi7gm/uLHGFUlDPlB129ygWHdhMZdg8U0wcBNa4fSEyA/2ZZpQKdRr0wkrAGQNCru9XgzzTKoPlIvSVO5lhJ+oOAi6Z9Jh19aghxK50Y0sXh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RbB2plzl; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o89VX3P8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACAEC4CEC3;
-	Sat, 16 Nov 2024 11:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731757218;
-	bh=60OKvHXhdre1WdESOhl4PN0wFXXZX9ys+VzQSc8Ckvo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=o89VX3P8gIX/OLjjFWG7M8lFeQDKC8NDBK02ozvjc3IC8h80unwcsuRp2OT5VaNZy
-	 dzR4byuw5+bBxkSnfP8pbCkA9tSgjdJ8BMTAe9N3W9ViBpXTm4GjPUD9iyaGv7bclq
-	 R8UNZEzB8dm1ZydAHAw8qGP9MqM+Pb62jI6WUg/GEsrhpXV5QgmpqSRWGq6Dhpf9Lk
-	 L3gD8ZXRSpi1pbgdbetLQqA1uqVm5I3wpLt4uGx45LGBTsX0m2p8NFvHD5S6ZQcl6U
-	 LL8SAON+UhKpK+aVRY2i9IwDFlT688nGhQ3dYAYIyAg4iYz+LRs1UMsWRodEdQOK4t
-	 eOtGXwUbLThVg==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 16 Nov 2024 12:40:04 +0100
-Subject: [PATCH] dt-bindings: remoteproc: Consolidate SC8180X and SM8150
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RbB2plzl"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53da4fd084dso3431231e87.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 17 Nov 2024 05:08:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731848924; x=1732453724; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMiqxnachPtnrwIxnjXl0VUgpWUzd3BnOxQS8OflklU=;
+        b=RbB2plzlXkZiuFNGgGOuNzGJk0DqHPeZ5U1wtnc6eN/XmP7RdDFV2UUIQfG0psm71L
+         poX2xvM9+HGQeXkK68inJv0LHcxAgTq91VdbxkI1u5rja5I/qQDul+yXMDKaklirvN7A
+         Za48PwwzFrL9IUJeW6ukBnXDOXMMtvgHDGMxEXmk2UTKF7uEbQtte4Hs657RguxbjGcx
+         LutFe30Oj3pvLhAClT5WGsVWKHALtbhaVZpXX3GtnhNW3roBeDFBNO7IeIwAEwMSEUBg
+         8kL3BkAjVq/ySjICQeeKurTJeZ9UuDHtGbYE7zMHixOgzTiEieK1CzvV/3UCyCuqlsPb
+         5FZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731848924; x=1732453724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lMiqxnachPtnrwIxnjXl0VUgpWUzd3BnOxQS8OflklU=;
+        b=Hh3r0CiNBMo0xG7e3ipvlulP3gFKCKWSFxV2wZTTmrO3SQa7lo2395TjL4d/auHrfz
+         dvvTMrn/gqZ1khFTOudlu3m5FySe+2ZaoOHMIGSFa54ccWVuWWtU6WF5EbBKx1jg5SCz
+         x4SdUDn5LkKrVvFfcjUERgsn4mVnTGC5aEJPN6qh11NaUNWn6Ez8AHsfywsqjnEzVZUH
+         SAgHoxWemX/eeT5g8D3SgAIuFe3A1+Ig3rWAHyvUYmKmZS2EjSGMq0IBHBHCE8T63sYX
+         LVsu61gNZVOmJ6aJJ6k+JwssDhaYpWu7xJw1QjDMMYcWE049P40iZcqSF8kMA9ShctFx
+         BrZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt6LO2u0Gt3y1CqkKxskCA5FYzkv5OwkZclYwGlpLgYfNdm17QuYFU6Ei9S9FJIuSaYGRVJ4E6rRvyeLpL3Jsd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6WrAZRfbFfx9QjGEuPyIsEgn4ws1lF91lGjgHgUKKdVfG3nmr
+	oi5ILJf4xmnfrv9ceItn4rgOpOPG6sn/01HkLkgIAnt4gRy6nduQ6MPCKTefa+w=
+X-Google-Smtp-Source: AGHT+IHfOwPcoxs93PW+NNDxxa8NcE7Qb1fhdry4R+keozA7Ik5cUc+igrNyIsrm9x1rQvOeWYIqnw==
+X-Received: by 2002:a05:6512:304f:b0:53d:a998:51b4 with SMTP id 2adb3069b0e04-53daafdbbd0mr2679853e87.3.1731848923677;
+        Sun, 17 Nov 2024 05:08:43 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53db3733506sm350459e87.189.2024.11.17.05.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 05:08:42 -0800 (PST)
+Date: Sun, 17 Nov 2024 15:08:40 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: Consolidate SC8180X and SM8150
  PAS files
+Message-ID: <whzblscqqyeyltfceik55t5bimvl5jyx2scewefurpv4ye6sa3@cqtij3upryk5>
+References: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAJOEOGcC/x3MwQqDMAwA0F+RnFdonBPZr4whTcxcLm1JxhDEf
- 7d4fJe3g4upODy7HUz+6lpyA9464G/KqwRdmqGP/YCIY/iVqhycJ5ziNlu1wjNpXjSvHsZ7TOl
- BxAMRtKKafHS7+tf7OE7I4nw0bgAAAA==
-X-Change-ID: 20241116-topic-sc8180x_rproc_bindings-630aa5bbc4bb
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731757214; l=4789;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=Ote622R1lsChP50GYMobPReGO2KWFh19mtnf6zeHaqA=;
- b=1AkvhDBUkPfaYdiv0YYNTl8mHDbWivLaoVNs6UgnQxwHzvoLnX19T9ZEnk4BJ+8jaDMVLMmj6
- Oelh11NfvoRCE9e6elTcgBOv0uOFp1XZxdICEjqcAl/vbNAelp5aYsf
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Sat, Nov 16, 2024 at 12:40:04PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> SC8180X PAS bindings are plain wrong, resulting in false-positive
+> dt checker errors. SC8180X's remoteprocs happen to be identical to
+> SM8150's from the kernel point of view, so reuse that binding instead.
+> 
+> Fixes: 4865ed136045 ("dt-bindings: remoteproc: qcom: pas: Add SC8180X adsp, cdsp and mpss")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../bindings/remoteproc/qcom,sc8180x-pas.yaml      | 96 ----------------------
+>  .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  7 ++
+>  2 files changed, 7 insertions(+), 96 deletions(-)
+> 
 
-SC8180X PAS bindings are plain wrong, resulting in false-positive
-dt checker errors. SC8180X's remoteprocs happen to be identical to
-SM8150's from the kernel point of view, so reuse that binding instead.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Fixes: 4865ed136045 ("dt-bindings: remoteproc: qcom: pas: Add SC8180X adsp, cdsp and mpss")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- .../bindings/remoteproc/qcom,sc8180x-pas.yaml      | 96 ----------------------
- .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  7 ++
- 2 files changed, 7 insertions(+), 96 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-deleted file mode 100644
-index 45ee9fbe09664ac93ab697d73d84ea55127a219b..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-+++ /dev/null
-@@ -1,96 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/remoteproc/qcom,sc8180x-pas.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm SC8180X Peripheral Authentication Service
--
--maintainers:
--  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
--
--description:
--  Qualcomm SC8180X SoC Peripheral Authentication Service loads and boots
--  firmware on the Qualcomm DSP Hexagon cores.
--
--properties:
--  compatible:
--    enum:
--      - qcom,sc8180x-adsp-pas
--      - qcom,sc8180x-cdsp-pas
--      - qcom,sc8180x-mpss-pas
--
--  reg:
--    maxItems: 1
--
--  clocks:
--    items:
--      - description: XO clock
--
--  clock-names:
--    items:
--      - const: xo
--
--  qcom,qmp:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: Reference to the AOSS side-channel message RAM.
--
--  smd-edge: false
--
--  memory-region:
--    maxItems: 1
--    description: Reference to the reserved-memory for the Hexagon core
--
--  firmware-name:
--    maxItems: 1
--    description: Firmware name for the Hexagon core
--
--required:
--  - compatible
--  - reg
--  - memory-region
--
--allOf:
--  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
--  - if:
--      properties:
--        compatible:
--          enum:
--            - qcom,sc8180x-adsp-pas
--            - qcom,sc8180x-cdsp-pas
--    then:
--      properties:
--        interrupts:
--          maxItems: 5
--        interrupt-names:
--          maxItems: 5
--    else:
--      properties:
--        interrupts:
--          minItems: 6
--        interrupt-names:
--          minItems: 6
--
--  - if:
--      properties:
--        compatible:
--          enum:
--            - qcom,sc8180x-adsp-pas
--            - qcom,sc8180x-cdsp-pas
--    then:
--      properties:
--        power-domains:
--          items:
--            - description: LCX power domain
--            - description: LMX power domain
--        power-domain-names:
--          items:
--            - const: lcx
--            - const: lmx
--    else:
--      properties:
--        # TODO: incomplete
--        power-domains: false
--        power-domain-names: false
--
--unevaluatedProperties: false
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index d67386c50fa4d6e4f9b844b36e17ffa1db613adb..56ff6386534ddfa76cd42d84569ddfcf847e9178 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -60,6 +60,9 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-adsp-pas
-+            - qcom,sc8180x-cdsp-pas
-+            - qcom,sc8180x-slpi-pas
-             - qcom,sm8150-adsp-pas
-             - qcom,sm8150-cdsp-pas
-             - qcom,sm8150-slpi-pas
-@@ -83,6 +86,8 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-adsp-pas
-+            - qcom,sc8180x-cdsp-pas
-             - qcom,sm8150-adsp-pas
-             - qcom,sm8150-cdsp-pas
-             - qcom,sm8250-cdsp-pas
-@@ -99,6 +104,7 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-mpss-pas
-             - qcom,sm8150-mpss-pas
-     then:
-       properties:
-@@ -115,6 +121,7 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-slpi-pas
-             - qcom,sm8150-slpi-pas
-             - qcom,sm8250-adsp-pas
-             - qcom,sm8250-slpi-pas
-
----
-base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
-change-id: 20241116-topic-sc8180x_rproc_bindings-630aa5bbc4bb
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
+With best wishes
+Dmitry
