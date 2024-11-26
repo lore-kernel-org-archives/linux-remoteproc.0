@@ -1,61 +1,61 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317C18F2DA;
-	Tue, 26 Nov 2024 09:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A721B0F26;
+	Tue, 26 Nov 2024 09:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612411; cv=none; b=K2m/jmrPyJ15xgUCOFh1FUXv5WA5tpD8ZOn+APqS2cSQFP/0gosjMh5hU5XNiA93NBs0kPXdPu5eGbN2v2xukQ7jBZyeb6nxXVcbkw3R0qpwTp1Mf7QefR/5qpNTY32boNX8oU0Yo46FSLk7KfwU17fPVR4yhnOpAX6uBkDUubY=
+	t=1732612411; cv=none; b=PyDPTQOtZj2FSyesXmTaD7MvgH7yHzKZ9+QCQpCARQTE9lrY7OJlgKYHthMm9HOZIVDjQwjKOqfA+LtHrzIvwIVbI3OLuZyZ/EWyXsKmL7Cm72g/E84ltMJ6A+uoHYL8/F9LvHwgmDLnzLjlia4NedACXgLOcDnOHZs0VqnnnHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732612411; c=relaxed/simple;
-	bh=FrzZIV835rOf7d/aGlsTApiEMmkQ+58nU9b2ePF/+e0=;
+	bh=MjLDhva9ihNERJEiYb3ppznzZfLb4Id5y78WoAk1000=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CXlis5H0R+TFbFcrpwVMBS2l3iZMA1BINvL4IVqUonrVbJmKiCZ7E7mKC2R0Ee6geVjz/ZkdWcXqK88yMsZllxGtw5K0QhXIKZlOT4gF1UltBjmnoJI7sxsW/Zx5Qr7pmLE/oXx+hyzxxF4r+9xe5wUK7Gph41NyKCDTeX1ahU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=16A6Kuc8; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=KEvaOHirhSeE4afN6B4/HvAbVx+hKskqibDLAxvL6EckV2ieFOblAATU31oCyFweR7ew8u2YVMGi/P5apABkUAt/G3GINednBGo1cr2i4n8QTgn3FLEhyaQsAj+vUISJtm5utsNJ0jLv2I8NNSnhVttm9WEhUjQL28tA68z0oRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hETJrqhx; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="16A6Kuc8"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ7BODx024315;
-	Tue, 26 Nov 2024 10:13:22 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hETJrqhx"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ3bWpf013828;
+	Tue, 26 Nov 2024 10:13:23 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ReO5YJNo2D7IrdzpVxvNHAheuWRLAx01DYACbeobRrs=; b=16A6Kuc8Ntpo6Rgk
-	4YhhwPSWh4aJ/ZYUYaJgZJDMGMr9EQHICTo4NuSCnIhOlPFbcxf34KiTccgW+ZT4
-	cC35xtMtpn1yZeGm9wrU0zGRJetmYOXsgspGMgONP+ctmRYfzHoOu2l0ZQJkVYqX
-	OIfUCHG03U6UJEnqunLhNU4m4q+zkKf0nIr9uWsDRMPFSWhFal1mwpYDT+EYogUd
-	oW9QqmqbJIZt21Izr6yjHX9mWJbv+Duk4gtRQs0rX4Koim7Zb71ApJFtb0/4FyWe
-	S/cU4OdDlzimp743qq0PIyPsV1DndaGDGB04PzblQmOzSqGJCJIXj9G7bFqY+9Y8
-	ZALGZg==
+	g0lTgg7O/c42Vw2gvzMzOeAzWuUnj5z0drLIk2bZ1dw=; b=hETJrqhxQMtP7445
+	Un2Ghge68SC2/lkN/j1KrXEhG/isWgWV7LtZM9OXKAifMoQStNRdDgRExM7g4JOw
+	6689koWJ18+H8XnoHaYirWFmmFdGP17wYV15gG8kP292ZPNFmWtI11mchs8D0r5L
+	fAyw3Vu3TnfW7zVbOz0NBle/Me8t9TG04/f5MTb1MT/1mfJbfMRinixzJ1/nqiBq
+	4HbJrMD/1z9KFcHlmM5txBp2TA1b14WZTdceVHarLJZ8HTLQHrlm3ctImhX4WSpV
+	MdH0IiNp6ht35hzdWL7k9Nv1UmxhIARdnQJ7s8sTDWvhzPB2i7iURy6iyoUKy8xh
+	3wuWaA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4336tfksts-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 433sg49j7r-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 10:13:21 +0100 (CET)
+	Tue, 26 Nov 2024 10:13:22 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8CC7440072;
-	Tue, 26 Nov 2024 10:12:21 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5DB8926B64F;
-	Tue, 26 Nov 2024 10:11:15 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 68ADC40071;
+	Tue, 26 Nov 2024 10:12:19 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34B5026B64C;
+	Tue, 26 Nov 2024 10:11:11 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
- 2024 10:11:15 +0100
+ 2024 10:11:11 +0100
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
- 2024 10:11:14 +0100
+ 2024 10:11:10 +0100
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
 	<mathieu.poirier@linaro.org>
 CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 5/8] remoteproc: Make load_segments and load_fw ops exclusive and optional
-Date: Tue, 26 Nov 2024 10:10:36 +0100
-Message-ID: <20241126091042.918144-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v14 3/8] remoteproc: Introduce load_fw and release_fw optional operation
+Date: Tue, 26 Nov 2024 10:10:34 +0100
+Message-ID: <20241126091042.918144-4-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
 References: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
@@ -73,75 +73,139 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-The two methods to load the firmware to memory should be exclusive.
+This patch updates the rproc_ops structures to include two new optional
+operations.
 
-- make load_segments optional returning 0 if not set in
-  rproc_load_segments(),
-- ensure that load_segments() and load_fw() are not both set,
-- do not set default rproc::ops fields if load_fw() is set.
+- The load_fw() op is responsible for loading the remote processor
+non-ELF firmware image before starting the boot sequence. This ops will
+be used, for instance, to call OP-TEE to  authenticate an load the firmware
+image before accessing to its resources (a.e the resource table)
+
+- The release_fw op is responsible for releasing the remote processor
+firmware image. For instance to clean memories.
+The ops is called in the following cases:
+ - An error occurs between the loading of the firmware image and the
+   start of the remote processor.
+ - after stopping the remote processor.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/remoteproc_core.c     | 4 ++++
- drivers/remoteproc/remoteproc_internal.h | 2 +-
- include/linux/remoteproc.h               | 7 +++++--
- 3 files changed, 10 insertions(+), 3 deletions(-)
+Update vs previous revision:
+- Rework the commit to introduce load_fw() op.
+- remove rproc_release_fw() call from  rproc_start() as called in
+  rproc_boot() and rproc_boot_recovery() in case of error.
+- create rproc_load_fw() and rproc_release_fw() internal functions.
+---
+ drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
+ drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
+ include/linux/remoteproc.h               |  6 ++++++
+ 3 files changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e4ad024efcda..deadec0f3474 100644
+index ace11ea17097..8df4b2c59bb6 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2477,6 +2477,10 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+@@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ unprepare_rproc:
+ 	/* release HW resources if needed */
+ 	rproc_unprepare_device(rproc);
+@@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
+ 		return ret;
+ 	}
  
- static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
- {
-+	/* A processor with a load_segments() and a load_fw() functions makes no sense. */
-+	if (ops->load_segments && ops->load_fw)
-+		return -EINVAL;
++	ret = rproc_load_fw(rproc, firmware_p);
++	if (ret)
++		return ret;
 +
- 	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
- 	if (!rproc->ops)
- 		return -ENOMEM;
+ 	/* boot the remote processor up again */
+ 	ret = rproc_start(rproc, firmware_p);
++	if (ret)
++		rproc_release_fw(rproc);
+ 
+ 	release_firmware(firmware_p);
+ 
+@@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
+ 			goto downref_rproc;
+ 		}
+ 
++		ret = rproc_load_fw(rproc, firmware_p);
++		if (ret)
++			goto downref_rproc;
++
+ 		ret = rproc_fw_boot(rproc, firmware_p);
++		if (ret)
++			rproc_release_fw(rproc);
+ 
+ 		release_firmware(firmware_p);
+ 	}
+@@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++	rproc_release_fw(rproc);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+@@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+ 	if (!rproc->ops->coredump)
+ 		rproc->ops->coredump = rproc_coredump;
+ 
+-	if (rproc->ops->load)
++	if (rproc->ops->load || rproc->ops->load_fw)
+ 		return 0;
+ 
+ 	/* Default to ELF loader if no load function is specified */
 diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index b898494600cf..3a4161eaf291 100644
+index 0cd09e67ac14..2104ca449178 100644
 --- a/drivers/remoteproc/remoteproc_internal.h
 +++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -170,7 +170,7 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
- 	if (rproc->ops->load_segments)
- 		return rproc->ops->load_segments(rproc, fw);
- 
--	return -EINVAL;
-+	return 0;
+@@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
+ 	return (val <= (size_t) -1);
  }
  
- static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++static inline void rproc_release_fw(struct rproc *rproc)
++{
++	if (rproc->ops->release_fw)
++		rproc->ops->release_fw(rproc);
++}
++
++static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	if (rproc->ops->load_fw)
++		return rproc->ops->load_fw(rproc, fw);
++
++	return 0;
++}
++
+ #endif /* REMOTEPROC_INTERNAL_H */
 diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 55c20424a99f..4f4c65ce74af 100644
+index 2e0ddcb2d792..ba6fd560f7ba 100644
 --- a/include/linux/remoteproc.h
 +++ b/include/linux/remoteproc.h
-@@ -374,8 +374,9 @@ enum rsc_handling_status {
-  * @find_loaded_rsc_table: find the loaded resource table from firmware image
-  * @get_loaded_rsc_table: get resource table installed in memory
-  *			  by external entity
-- * @load_segments:	load firmware ELF segment to memory, where the remote processor
-- *			expects to find it
-+ * @load_segments:	optional load firmware ELF segments to memory, where the remote processor
-+ *			expects to find it.
-+ *			This operation is exclusive with the load_fw()
-  * @sanity_check:	sanity check the fw image
-  * @get_boot_addr:	get boot address to entry point specified in firmware
+@@ -381,6 +381,10 @@ enum rsc_handling_status {
   * @panic:	optional callback to react to system panic, core will delay
-@@ -383,8 +384,10 @@ enum rsc_handling_status {
+  *		panic at least the returned number of milliseconds
   * @coredump:	  collect firmware dump after the subsystem is shutdown
-  * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
-  *		processor expects to find it.
-+ *		This operation is exclusive with the load_segments()
-  * @release_fw:	optional function to release the firmware image from memories.
-  *		This function is called after stopping the remote processor or in case of error
-+ *
++ * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
++ *		processor expects to find it.
++ * @release_fw:	optional function to release the firmware image from memories.
++ *		This function is called after stopping the remote processor or in case of error
   */
  struct rproc_ops {
  	int (*prepare)(struct rproc *rproc);
+@@ -403,6 +407,8 @@ struct rproc_ops {
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+ 	unsigned long (*panic)(struct rproc *rproc);
+ 	void (*coredump)(struct rproc *rproc);
++	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
++	void (*release_fw)(struct rproc *rproc);
+ };
+ 
+ /**
 -- 
 2.25.1
 
