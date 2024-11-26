@@ -1,84 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD251B87ED;
-	Mon, 25 Nov 2024 18:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317C18F2DA;
+	Tue, 26 Nov 2024 09:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560609; cv=none; b=nU1w7dvALtbQfhtkK14qo2TK1xudyMkaZ430t/NMhisCD5QquOPN93enPeerFvQG2fDiKocwrxFc38PDOUGfaEeQXxgQNrjuDaOSh7kbMl+L7hY/6VM/0kk8FVpmSzlMUama1wQpaadi52sJTPNTZQ7lny8pAQCu+Vd8v1oyOlY=
+	t=1732612411; cv=none; b=K2m/jmrPyJ15xgUCOFh1FUXv5WA5tpD8ZOn+APqS2cSQFP/0gosjMh5hU5XNiA93NBs0kPXdPu5eGbN2v2xukQ7jBZyeb6nxXVcbkw3R0qpwTp1Mf7QefR/5qpNTY32boNX8oU0Yo46FSLk7KfwU17fPVR4yhnOpAX6uBkDUubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560609; c=relaxed/simple;
-	bh=hy3kAK8dBc/P3+3R55Y4KPBRh40qNF5lRW24dklHEck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ol/wjQwS2fZAU/vzqKduYx6BVAUNJOJrOwrSxyz90KLyYPiFUcQGeSi/uyPdrg67ddK9VAWuasyl0JW8USmHO+ZrtDRtqirFzrXUZ6SDmwzYPOIklrTt0b7h3XygYknOe/oT99IL8x78Tk6nmbWQ+YPRyxb+quAObJha9bunsFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utwzIvjI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732612411; c=relaxed/simple;
+	bh=FrzZIV835rOf7d/aGlsTApiEMmkQ+58nU9b2ePF/+e0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CXlis5H0R+TFbFcrpwVMBS2l3iZMA1BINvL4IVqUonrVbJmKiCZ7E7mKC2R0Ee6geVjz/ZkdWcXqK88yMsZllxGtw5K0QhXIKZlOT4gF1UltBjmnoJI7sxsW/Zx5Qr7pmLE/oXx+hyzxxF4r+9xe5wUK7Gph41NyKCDTeX1ahU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=16A6Kuc8; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utwzIvjI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E89A1C4CECE;
-	Mon, 25 Nov 2024 18:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732560609;
-	bh=hy3kAK8dBc/P3+3R55Y4KPBRh40qNF5lRW24dklHEck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=utwzIvjIoQOdm92rT9kk+/2iCQSk50Y8rkF7YdlCMdiwTPh43CZuCPmAWXTmFzpqw
-	 fo3h3ctWTbUyO824tEwrbqjlTvuDVFhCbjsH5iHKoZzhDzdMTFDzrYoPYWWWFx7O9j
-	 Nn8dzi2tX1JUyz3pzWwbjlOmzID+WLM71Mt9+i1V5JdpgoC4xi6wPYJmXA065Czd6f
-	 LFxDJDEmyl9kgrj8Gg+gcXIWyX3DXFL5cJQVA1fSYDo+1/1l75Q5E6Yfb53M7DNof2
-	 TlFaU5gDtK4YFtL0M26ZLzODmGb7FGXUOxUGjVIMMBsBx8okouvlMzMBdbB7/EZBgK
-	 ujT8i2hECHunw==
-Date: Mon, 25 Nov 2024 18:50:04 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add SM8750 MPSS and CDSP
-Message-ID: <20241125-culinary-twig-29b2b67af221@spud>
-References: <20241122085623.19988-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="16A6Kuc8"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ7BODx024315;
+	Tue, 26 Nov 2024 10:13:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ReO5YJNo2D7IrdzpVxvNHAheuWRLAx01DYACbeobRrs=; b=16A6Kuc8Ntpo6Rgk
+	4YhhwPSWh4aJ/ZYUYaJgZJDMGMr9EQHICTo4NuSCnIhOlPFbcxf34KiTccgW+ZT4
+	cC35xtMtpn1yZeGm9wrU0zGRJetmYOXsgspGMgONP+ctmRYfzHoOu2l0ZQJkVYqX
+	OIfUCHG03U6UJEnqunLhNU4m4q+zkKf0nIr9uWsDRMPFSWhFal1mwpYDT+EYogUd
+	oW9QqmqbJIZt21Izr6yjHX9mWJbv+Duk4gtRQs0rX4Koim7Zb71ApJFtb0/4FyWe
+	S/cU4OdDlzimp743qq0PIyPsV1DndaGDGB04PzblQmOzSqGJCJIXj9G7bFqY+9Y8
+	ZALGZg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4336tfksts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 10:13:21 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8CC7440072;
+	Tue, 26 Nov 2024 10:12:21 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5DB8926B64F;
+	Tue, 26 Nov 2024 10:11:15 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
+ 2024 10:11:15 +0100
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
+ 2024 10:11:14 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v14 5/8] remoteproc: Make load_segments and load_fw ops exclusive and optional
+Date: Tue, 26 Nov 2024 10:10:36 +0100
+Message-ID: <20241126091042.918144-6-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
+References: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XBqM4UBW3vx0FdUJ"
-Content-Disposition: inline
-In-Reply-To: <20241122085623.19988-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+The two methods to load the firmware to memory should be exclusive.
 
---XBqM4UBW3vx0FdUJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+- make load_segments optional returning 0 if not set in
+  rproc_load_segments(),
+- ensure that load_segments() and load_fw() are not both set,
+- do not set default rproc::ops fields if load_fw() is set.
 
-On Fri, Nov 22, 2024 at 09:56:22AM +0100, Krzysztof Kozlowski wrote:
-> Add remote processor PAS loaders for SM8750 MPSS (modem) and CDSP
-> processors.  Both are compatible with earlier SM8650 with minor
-> differences:
-> 1. SM8750 CDSP has one more sixth shutdown interrupt.
-> 2. SM8750 MPSS lacks fifth memory region for Qlink Logging, according to
->    downstream sources.  There might be other differences, because the
->    modem currently crashes after starting.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c     | 4 ++++
+ drivers/remoteproc/remoteproc_internal.h | 2 +-
+ include/linux/remoteproc.h               | 7 +++++--
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e4ad024efcda..deadec0f3474 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2477,6 +2477,10 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+ 
+ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+ {
++	/* A processor with a load_segments() and a load_fw() functions makes no sense. */
++	if (ops->load_segments && ops->load_fw)
++		return -EINVAL;
++
+ 	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+ 	if (!rproc->ops)
+ 		return -ENOMEM;
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index b898494600cf..3a4161eaf291 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -170,7 +170,7 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 	if (rproc->ops->load_segments)
+ 		return rproc->ops->load_segments(rproc, fw);
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 55c20424a99f..4f4c65ce74af 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -374,8 +374,9 @@ enum rsc_handling_status {
+  * @find_loaded_rsc_table: find the loaded resource table from firmware image
+  * @get_loaded_rsc_table: get resource table installed in memory
+  *			  by external entity
+- * @load_segments:	load firmware ELF segment to memory, where the remote processor
+- *			expects to find it
++ * @load_segments:	optional load firmware ELF segments to memory, where the remote processor
++ *			expects to find it.
++ *			This operation is exclusive with the load_fw()
+  * @sanity_check:	sanity check the fw image
+  * @get_boot_addr:	get boot address to entry point specified in firmware
+  * @panic:	optional callback to react to system panic, core will delay
+@@ -383,8 +384,10 @@ enum rsc_handling_status {
+  * @coredump:	  collect firmware dump after the subsystem is shutdown
+  * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
+  *		processor expects to find it.
++ *		This operation is exclusive with the load_segments()
+  * @release_fw:	optional function to release the firmware image from memories.
+  *		This function is called after stopping the remote processor or in case of error
++ *
+  */
+ struct rproc_ops {
+ 	int (*prepare)(struct rproc *rproc);
+-- 
+2.25.1
 
---XBqM4UBW3vx0FdUJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TG3AAKCRB4tDGHoIJi
-0hjJAP910O0tTk+WuQEq+rvPO367XFc11RrVOfesMzbRZNwk3gD/XUcqjAfrbcaR
-71l/bVl0yE5gGqlBFOtACKDsJuxIqg8=
-=Jps6
------END PGP SIGNATURE-----
-
---XBqM4UBW3vx0FdUJ--
