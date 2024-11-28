@@ -1,224 +1,159 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A914036E;
-	Thu, 28 Nov 2024 05:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8953B14A08E;
+	Thu, 28 Nov 2024 08:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732773575; cv=none; b=HWZTlXdZnMoqpt7+Psd8AyEVZNLL7zRlBB1JivusdcqX03QoBBzUnofwo0qnbAl7Mlsv8fRQaxN8Y5D0SJ9Ux0gU0a9tldj159TpeqrDWoKlrzuyelPRyfisSQro3P02cvLhKyTr0WE+s27Lga86E5wnfkLMFbmuooVEjEmHrrA=
+	t=1732783746; cv=none; b=mbsIPlbIJCwkVsktPj8jTuOqLbajs0rWTNX34/n1J4HP23AiiKcg8G8iK58Pwazex5NCRI34wgsH/X+MFkvKrV11CaVe0bIxCwoGip8QhV2v3Mv4ya2nmSnLPCueB9fHfSHwUesApeiN6bRwg0Ukhgqzk/+smzFLD+ZXZjRhMnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732773575; c=relaxed/simple;
-	bh=c0KVSQsmu1rPPpFE3S5HnK03A6rk+5gg33/ro18oufE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qzmDFfLS8nLJuuC6IwfL34c3GvOn6068RUE4VlPVoEa1ChyYfIweyfy1Jfl0my/n02jYzWBEPJ0U3gRCeGuyC+82ayq8I+eDclvpA3trA+97TY6dfFQ77lZWV93yeHkwbTpcqQn+Mll21sohbX5VMW9ud2bzJZvWDGZvMPaVaek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ANNJ3Fkt; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1732783746; c=relaxed/simple;
+	bh=DOMHloKF4UN4qlkttRPn0qxlabsJq5KTXbS9OAb2WUc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EkDakGN5jfLIVV5z8DY/9p+zQWeVwZpDgX6lcENj3MB3dUjgOek800pc/H2UP81ps9PMuzTsdDB19Am7zTRliHQsx1BQLaJ8sZf1Judsmeaf+dTHembcIyOqvVALmjsbEdn55+X/FId9q0nQwZ5BNKS3jV1obQySEIM9VrZters=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nGtLn1Vh; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ANNJ3Fkt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732773573; x=1764309573;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=c0KVSQsmu1rPPpFE3S5HnK03A6rk+5gg33/ro18oufE=;
-  b=ANNJ3Fktf0C79okrhDW4lYngFcx3IfVpobfLIuwgshqbK+tMeefOxhNC
-   1KFT/OtKfenmQLpZidOpTvtQzzFBDzo9TUR8KWlbi0z9ACa46RZiU6i3x
-   ICt2QIFBvuBpKL14zC2kMDH7pscEmGP+fY80y2uYBUBT7gR5ci7BKPJLQ
-   J0zF2Lr9KZ/CtlxqqOInEXrhADEfQPVHgeD47EnZfZhkFeGZMgUoOAtxa
-   QLqdvhzJ8LWR+teYEEl6ox5mF392w0KLUxBKh3GWB/M16RfOv6/nCqYfv
-   eSGJYZ8VA6o5vu/08O1w3ISI9BBnvhzP36zCeUsJI6bgqUkKJ5ryxUjm3
-   g==;
-X-CSE-ConnectionGUID: b9k1rEShTyuxudCVVYjq+w==
-X-CSE-MsgGUID: 882UXU0DQCed5jZlmGf9sg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43662852"
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="43662852"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 21:59:32 -0800
-X-CSE-ConnectionGUID: kPW4/6JXQPuGryDD7XfTRQ==
-X-CSE-MsgGUID: lmzrxaPdSyinw+0AgZvGbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="91751016"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Nov 2024 21:59:27 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGXYi-00097f-2U;
-	Thu, 28 Nov 2024 05:59:24 +0000
-Date: Thu, 28 Nov 2024 13:58:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v14 4/8] remoteproc: Rename load() operation to
- load_segments() in rproc_ops struct
-Message-ID: <202411281332.Ra70nJAW-lkp@intel.com>
-References: <20241126091042.918144-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nGtLn1Vh"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS20fp3032587;
+	Thu, 28 Nov 2024 09:48:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	GC977nshZkMWBVY/wKvcQDvyN5arEAKIKgjZHxchAjQ=; b=nGtLn1Vhczg0lQLK
+	C4BMfFf5YzVNLYKEepbzUIGGf97lI53MB2G93Wqw2uODZXsOb+qpIN4wePBMiKuH
+	0EdJzUha1TfsgOzDLYYCWG9RoCLMPCMr+wQFEx0S1Km31keKGglXOYzvlJwE+fco
+	LL3Ot4H4nzDHsThvifRaQ65vLwc1dk/nCGn1UozTxoNE7dajp1KolS1C+njkpWLW
+	/KKYz2y1+u1BUlhyt+at/yp/VJhwUcGuHPx9q1UIQNogOeb2JYcNbkHCwQQj5qqI
+	Dy6Ynu5xVZXNdVxcmBM4/PcZ5W3Pi1Xnkz0YP/BeIGg/Ea7qHO2dG6RZPX0vIT1q
+	xY3Q4g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 436713k660-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 09:48:58 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 66FB940074;
+	Thu, 28 Nov 2024 09:47:39 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DA09F268FC7;
+	Thu, 28 Nov 2024 09:42:50 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 28 Nov
+ 2024 09:42:50 +0100
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 28 Nov
+ 2024 09:42:50 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v15 1/8] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Thu, 28 Nov 2024 09:42:08 +0100
+Message-ID: <20241128084219.2159197-2-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126091042.918144-5-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Arnaud,
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, we do not necessarily get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 47 insertions(+)
 
-[auto build test ERROR on adc218676eef25575469234709c2d87185ca223a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241128-094434
-base:   adc218676eef25575469234709c2d87185ca223a
-patch link:    https://lore.kernel.org/r/20241126091042.918144-5-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH v14 4/8] remoteproc: Rename load() operation to load_segments() in rproc_ops struct
-config: i386-buildonly-randconfig-002-20241128 (https://download.01.org/0day-ci/archive/20241128/202411281332.Ra70nJAW-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411281332.Ra70nJAW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411281332.Ra70nJAW-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/remoteproc/pru_rproc.c:24:
-   In file included from include/linux/remoteproc.h:40:
-   In file included from include/linux/virtio.h:7:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/remoteproc/pru_rproc.c:1018:14: error: no member named 'load' in 'struct rproc_ops'
-    1018 |         rproc->ops->load = pru_rproc_load_elf_segments;
-         |         ~~~~~~~~~~  ^
-   1 warning and 1 error generated.
-
-
-vim +1018 drivers/remoteproc/pru_rproc.c
-
-d4ce2de7e4af8b Suman Anna      2020-12-08   987  
-d4ce2de7e4af8b Suman Anna      2020-12-08   988  static int pru_rproc_probe(struct platform_device *pdev)
-d4ce2de7e4af8b Suman Anna      2020-12-08   989  {
-d4ce2de7e4af8b Suman Anna      2020-12-08   990  	struct device *dev = &pdev->dev;
-d4ce2de7e4af8b Suman Anna      2020-12-08   991  	struct device_node *np = dev->of_node;
-d4ce2de7e4af8b Suman Anna      2020-12-08   992  	struct platform_device *ppdev = to_platform_device(dev->parent);
-d4ce2de7e4af8b Suman Anna      2020-12-08   993  	struct pru_rproc *pru;
-d4ce2de7e4af8b Suman Anna      2020-12-08   994  	const char *fw_name;
-d4ce2de7e4af8b Suman Anna      2020-12-08   995  	struct rproc *rproc = NULL;
-d4ce2de7e4af8b Suman Anna      2020-12-08   996  	struct resource *res;
-d4ce2de7e4af8b Suman Anna      2020-12-08   997  	int i, ret;
-1d39f4d199214f Suman Anna      2020-12-08   998  	const struct pru_private_data *data;
-d4ce2de7e4af8b Suman Anna      2020-12-08   999  	const char *mem_names[PRU_IOMEM_MAX] = { "iram", "control", "debug" };
-d4ce2de7e4af8b Suman Anna      2020-12-08  1000  
-1d39f4d199214f Suman Anna      2020-12-08  1001  	data = of_device_get_match_data(&pdev->dev);
-1d39f4d199214f Suman Anna      2020-12-08  1002  	if (!data)
-1d39f4d199214f Suman Anna      2020-12-08  1003  		return -ENODEV;
-1d39f4d199214f Suman Anna      2020-12-08  1004  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1005  	ret = of_property_read_string(np, "firmware-name", &fw_name);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1006  	if (ret) {
-d4ce2de7e4af8b Suman Anna      2020-12-08  1007  		dev_err(dev, "unable to retrieve firmware-name %d\n", ret);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1008  		return ret;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1009  	}
-d4ce2de7e4af8b Suman Anna      2020-12-08  1010  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1011  	rproc = devm_rproc_alloc(dev, pdev->name, &pru_rproc_ops, fw_name,
-d4ce2de7e4af8b Suman Anna      2020-12-08  1012  				 sizeof(*pru));
-d4ce2de7e4af8b Suman Anna      2020-12-08  1013  	if (!rproc) {
-d4ce2de7e4af8b Suman Anna      2020-12-08  1014  		dev_err(dev, "rproc_alloc failed\n");
-d4ce2de7e4af8b Suman Anna      2020-12-08  1015  		return -ENOMEM;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1016  	}
-d4ce2de7e4af8b Suman Anna      2020-12-08  1017  	/* use a custom load function to deal with PRU-specific quirks */
-d4ce2de7e4af8b Suman Anna      2020-12-08 @1018  	rproc->ops->load = pru_rproc_load_elf_segments;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1019  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1020  	/* use a custom parse function to deal with PRU-specific resources */
-d4ce2de7e4af8b Suman Anna      2020-12-08  1021  	rproc->ops->parse_fw = pru_rproc_parse_fw;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1022  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1023  	/* error recovery is not supported for PRUs */
-d4ce2de7e4af8b Suman Anna      2020-12-08  1024  	rproc->recovery_disabled = true;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1025  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1026  	/*
-d4ce2de7e4af8b Suman Anna      2020-12-08  1027  	 * rproc_add will auto-boot the processor normally, but this is not
-d4ce2de7e4af8b Suman Anna      2020-12-08  1028  	 * desired with PRU client driven boot-flow methodology. A PRU
-d4ce2de7e4af8b Suman Anna      2020-12-08  1029  	 * application/client driver will boot the corresponding PRU
-d4ce2de7e4af8b Suman Anna      2020-12-08  1030  	 * remote-processor as part of its state machine either through the
-d4ce2de7e4af8b Suman Anna      2020-12-08  1031  	 * remoteproc sysfs interface or through the equivalent kernel API.
-d4ce2de7e4af8b Suman Anna      2020-12-08  1032  	 */
-d4ce2de7e4af8b Suman Anna      2020-12-08  1033  	rproc->auto_boot = false;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1034  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1035  	pru = rproc->priv;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1036  	pru->dev = dev;
-1d39f4d199214f Suman Anna      2020-12-08  1037  	pru->data = data;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1038  	pru->pruss = platform_get_drvdata(ppdev);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1039  	pru->rproc = rproc;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1040  	pru->fw_name = fw_name;
-919e8942548aa8 MD Danish Anwar 2023-01-06  1041  	pru->client_np = NULL;
-102853400321ba Roger Quadros   2023-01-06  1042  	spin_lock_init(&pru->rmw_lock);
-919e8942548aa8 MD Danish Anwar 2023-01-06  1043  	mutex_init(&pru->lock);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1044  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1045  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
-d4ce2de7e4af8b Suman Anna      2020-12-08  1046  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-d4ce2de7e4af8b Suman Anna      2020-12-08  1047  						   mem_names[i]);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1048  		pru->mem_regions[i].va = devm_ioremap_resource(dev, res);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1049  		if (IS_ERR(pru->mem_regions[i].va)) {
-d4ce2de7e4af8b Suman Anna      2020-12-08  1050  			dev_err(dev, "failed to parse and map memory resource %d %s\n",
-d4ce2de7e4af8b Suman Anna      2020-12-08  1051  				i, mem_names[i]);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1052  			ret = PTR_ERR(pru->mem_regions[i].va);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1053  			return ret;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1054  		}
-d4ce2de7e4af8b Suman Anna      2020-12-08  1055  		pru->mem_regions[i].pa = res->start;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1056  		pru->mem_regions[i].size = resource_size(res);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1057  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1058  		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-d4ce2de7e4af8b Suman Anna      2020-12-08  1059  			mem_names[i], &pru->mem_regions[i].pa,
-d4ce2de7e4af8b Suman Anna      2020-12-08  1060  			pru->mem_regions[i].size, pru->mem_regions[i].va);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1061  	}
-d4ce2de7e4af8b Suman Anna      2020-12-08  1062  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1063  	ret = pru_rproc_set_id(pru);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1064  	if (ret < 0)
-d4ce2de7e4af8b Suman Anna      2020-12-08  1065  		return ret;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1066  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1067  	platform_set_drvdata(pdev, rproc);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1068  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1069  	ret = devm_rproc_add(dev, pru->rproc);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1070  	if (ret) {
-d4ce2de7e4af8b Suman Anna      2020-12-08  1071  		dev_err(dev, "rproc_add failed: %d\n", ret);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1072  		return ret;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1073  	}
-d4ce2de7e4af8b Suman Anna      2020-12-08  1074  
-20ad1de0f14fbd Suman Anna      2020-12-08  1075  	pru_rproc_create_debug_entries(rproc);
-20ad1de0f14fbd Suman Anna      2020-12-08  1076  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1077  	dev_dbg(dev, "PRU rproc node %pOF probed successfully\n", np);
-d4ce2de7e4af8b Suman Anna      2020-12-08  1078  
-d4ce2de7e4af8b Suman Anna      2020-12-08  1079  	return 0;
-d4ce2de7e4af8b Suman Anna      2020-12-08  1080  }
-d4ce2de7e4af8b Suman Anna      2020-12-08  1081  
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..ace11ea17097 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ }
+ EXPORT_SYMBOL(rproc_da_to_va);
+ 
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
++ * addresses instead of device addresses.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
++{
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++	return ptr;
++}
++EXPORT_SYMBOL(rproc_pa_to_va);
++
+ /**
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..8fd0d7f63c8e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
+ 
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
