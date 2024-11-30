@@ -1,91 +1,79 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C14D1514DC;
-	Thu, 28 Nov 2024 08:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBCA14B962
+	for <linux-remoteproc@vger.kernel.org>; Sat, 30 Nov 2024 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783870; cv=none; b=CCuq9miJlZyrM7apWX6ksFZ1c/le9paz87oJ7idq6+iKicx5vCn8BpVcVouzNGAP667Uwa14ZbKON67XTlyM7CZAe5A3yKN2NT1a9rR5L5PiYcXafMZ30uvVqbrOEBP1eJz/s55esU7CXevO6K7gghUqdspg/ciGQbG06/wxLag=
+	t=1732960086; cv=none; b=MJgf7aU5atgcWuGZ9wHKYFNTqvglkjQgFeULXbakS3/l9GvhwdcvQlhl9Q4n+Ad9iz5rFP/zgvxMr/F8RX1pbwS2oET/pRtQZ6RKxm6d2ZcT7Hf06S/xeykvO/Xa9LM3f0ueYUgETSJfW0dJjzpKBs7kry6wDnluUapnXdORIbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783870; c=relaxed/simple;
-	bh=I6cGktlifvU5SqyHCpxWRIIkrk3UI6gKoK3RsROdavw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MTNeumiHYoQv36irxKdMOikjxeT+3eIhlTizpFPdkiET1CkPMCXV6tQUD4xQvI4NhQNkIKN2UOnLuJSr2htAAT5JY6JHoJaQV28J3Y51P5GP6ppnsWA8AHjpqZFMwUR9w1jQTjRES7cjnOlEcBV8xQrivaN0UjHw8KW7m79z6B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Cq2gG0ud; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1732960086; c=relaxed/simple;
+	bh=GlCVO+kLbVQTddt0lqq8TR/JxbNulJ9bzIayK53xUc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZxq9q2ggbpCoRSAYiM6Lw3ZCrvRuvDGjkQ8tVZ2+fDbIhHgJF+ySzIbyCatZLihygjeJXmQupLxjNq9ecV25Xk1JYe4HoI0klt0kHfxPYcfMcxkIee/qCU2iCcCrywsoTiu7iW+O14Kaoxoa0FfzwrBl1OF0QAWAWT7uGR/NA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqEg5BQq; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Cq2gG0ud"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS20mMo014838;
-	Thu, 28 Nov 2024 09:50:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=EYr4h/c0WQP59LjcKOXodU
-	NANQzD9BhOLn9fwkTUXdw=; b=Cq2gG0udCMmyFRXkl+cmmchbQjWFadgBjjPbAx
-	1W4jzoSRgq8pSxF8He9LOfuz6QwwHzsIA8Nedyu/mlRGsWqaUlRX6AcReY7Frsdq
-	Tyv3etwZEnNe0NahQ+dzspPTlP69X1VnvE2Mnauy6z8iI9J+hXCk/sZ+RTy3VSlK
-	QzK9S4YT7f7TdGzXrCu5jeeIgABSC0KC8s4lJVPLTNPK46HOwcePPac/dZrlN8k+
-	jG3zodNPqFljM56OPtXmSXeWPNXfy2tANBrjb9FAKOLKKbQr3zblUJEZcSeYovOl
-	fps5s05Cx5JM08pUjRK9y30alkODhzGiZBvqD2r6skaM74aA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 436719b4kq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 09:50:30 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 249CC4002D;
-	Thu, 28 Nov 2024 09:48:36 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 82CDD266A56;
-	Thu, 28 Nov 2024 09:42:48 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 28 Nov
- 2024 09:42:48 +0100
-Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 28 Nov
- 2024 09:42:47 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Jerome
- Brunet" <jbrunet@baylibre.com>,
-        Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v15 0/8] Introduction of a remoteproc tee to load signed firmware
-Date: Thu, 28 Nov 2024 09:42:07 +0100
-Message-ID: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqEg5BQq"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434975a1fb1so2239695e9.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 30 Nov 2024 01:48:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732960082; x=1733564882; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMZ3vQAZGlKurLBaRPYkpSZkQS2FApMbIvFv0fZWybg=;
+        b=bqEg5BQqu4Y4o0fmHWj921p/yBrisgpZrduOIG6fKdjpVdu9MCEi4d1ElcEbizf8yc
+         XyeOG557hW6TnLjgmppPS0sIHF3fBq2GSvjR/DAXyqeo8DCcljOBBhxM0k8sMAFDxY0g
+         2n5um9Jk4E89OLyVTha0FhkuU6RDPgNOQnysnrst+2UUqg4lNrEqejyvDauvZryr2pk2
+         z75N4+U25MUbjgkuPsCgjWKISV5myC4t5LqNV73MFBaBjvUOreV4hVCKhOtVI76kwr8Z
+         WrODD6XTVIucsPV9CHVnJTUMLLUNvs7yx6nDMujQWPYd/fVXU3Vwzz4/9J7A+Im/dxBC
+         Xx4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732960082; x=1733564882;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QMZ3vQAZGlKurLBaRPYkpSZkQS2FApMbIvFv0fZWybg=;
+        b=HeKpJqe+M17B0hnyktaTMFIeZWPkot09FHXnmdbyjX9uZVbJI63IPT+x8SH0oFViae
+         ekxar/4jxdJk0dSk1KVlx3OqBczHyqWOzL4rd4oVTSP6pMoyU1fwxJ7SJnqI8tlhXaTz
+         DYSU1pP+i3mshpqLXzChed7nP0QjmFeA+N0XHc/WwoPDJdLIbaJdt3zOWoxP/AjfYV6K
+         s6ZR9uz8qvo2UdYBTgRe6hAv3VedwfAh6DaVIV9czJJpiT1LaC/r1WX0VgKtjKx0VQxI
+         smW2fcp4vfQT91z5VWtCEyRf7nOJ/PJo35q1Guj1MfZD2EUSJiLh8G7muOq5g5B6/1dW
+         YNGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKcFhbEPbDSwI/Si8jYR+/7eHQhksVjva/5mfICC5+9h4yEREJol+0XAh6EIWbE0twZ3gev4659AZdAIOW3qcS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp/PDPMHUacPLiV6XiZE8EBiIjjtAHPohLD6SOc2TsepsNYGN5
+	K70WOWtmQ9vLnoLzjMmKwll753QOLx5HYMRaoYkNCcLS0Gt92ry3lT9tAgihQjgzqJFXtLzE2lj
+	8Eu8=
+X-Gm-Gg: ASbGncvYzYJ+B9mhu4d0Uuoi3WyvMIIWtvYXsqJzCTNSR8QvT4Zh5jCpDVK74xDffq9
+	8DOObOSusZv9pWC5Dc4yBpiKala9wNRvhLR5Gk2MR80qNH2A86oIFt67wnwnQVTQ7iHfKgP8rJG
+	0lhkD0VAy9ApcBskm4LkuypgeEBj58a7FCrhUnOV+ExDPUhnd6tVaOY6KHYx4VoPJx8LMpSu6hJ
+	uCCK/MVpzMyCtok7WHmBqw0GO1CFMPZgYQcvdgNq7CK4NoGiBEP3KgpmAHFi04=
+X-Google-Smtp-Source: AGHT+IGAD//hnR/MMYCCnkHt3edWtS0NmQaVqN57BZvJFzV3wr/U7GG9jNuDIxTQAxhDIXQ/JnVhbA==
+X-Received: by 2002:a05:600c:198d:b0:434:a1e4:d32d with SMTP id 5b1f17b1804b1-434a9d4f18cmr53980355e9.0.1732960082560;
+        Sat, 30 Nov 2024 01:48:02 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74fec9sm110637725e9.6.2024.11.30.01.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 01:48:00 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bhupesh Sharma <bhupesh.linux@gmail.com>
+Subject: [PATCH] dt-bindings: Drop Bhupesh Sharma from maintainers
+Date: Sat, 30 Nov 2024 10:47:58 +0100
+Message-ID: <20241130094758.15553-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -93,116 +81,76 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Main updates from version V14[1]:
-Fix Rename missing load() to load_segments() in pru_rproc.c.
+For more than a year all emails to Bhupesh Sharma's Linaro emails bounce
+and there were no updates to mailmap.  No reviews from Bhupesh, either,
+so change the maintainer to Bjorn and Konrad (Qualcomm SoC maintainers).
 
-Main updates from version V13[2]:
-- Introduce new rproc_ops operation: load_fw() and release_fw(),
-- Rename load() operation to load_segments() in rproc_ops structure and
-  drivers.
+Cc: Bhupesh Sharma <bhupesh.linux@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/crypto/qcom-qce.yaml         | 3 ++-
+ Documentation/devicetree/bindings/mmc/sdhci-msm.yaml           | 3 ++-
+ Documentation/devicetree/bindings/net/qcom,ethqos.yaml         | 3 ++-
+ .../devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml        | 3 ++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-More details are available in each patch commit message.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20241126091042.918144-1-arnaud.pouliquen@foss.st.com/T/
-[2] https://lore.kernel.org/linux-arm-kernel/20241104133515.256497-1-arnaud.pouliquen@foss.st.com/T/
-
-Tested-on: commit adc218676eef ("Linux 6.12")
-Description of the feature:
---------------------------
-This series proposes the implementation of a remoteproc tee driver to
-communicate with a TEE trusted application responsible for authenticating
-and loading the remoteproc firmware image in an Arm secure context.
-
-1) Principle:
-
-The remoteproc tee driver provides services to communicate with the OP-TEE
-trusted application running on the Trusted Execution Context (TEE).
-The trusted application in TEE manages the remote processor lifecycle:
-
-- authenticating and loading firmware images,
-- isolating and securing the remote processor memories,
-- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
-- managing the start and stop of the firmware by the TEE.
-
-2) Format of the signed image:
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
-
-3) OP-TEE trusted application API:
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
-
-4) OP-TEE signature script
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
-
-Example of usage:
-sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
-
-
-5) Impact on User space Application
-
-No sysfs impact. The user only needs to provide the signed firmware image
-instead of the ELF image.
-
-
-For more information about the implementation, a presentation is available here
-(note that the format of the signed image has evolved between the presentation
-and the integration in OP-TEE).
-
-https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
-
-Arnaud Pouliquen (8):
-  remoteproc: core: Introduce rproc_pa_to_va helper
-  remoteproc: Add TEE support
-  remoteproc: Introduce load_fw and release_fw optional operation
-  remoteproc: Rename load() operation to load_segments() in rproc_ops
-    struct
-  remoteproc: Make load_segments and load_fw ops exclusive and optional
-  dt-bindings: remoteproc: Add compatibility for TEE support
-  remoteproc: stm32: Create sub-functions to request shutdown and
-    release
-  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-
- .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
- drivers/remoteproc/Kconfig                    |  10 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/imx_dsp_rproc.c            |   2 +-
- drivers/remoteproc/imx_rproc.c                |   2 +-
- drivers/remoteproc/meson_mx_ao_arc.c          |   2 +-
- drivers/remoteproc/mtk_scp.c                  |   2 +-
- drivers/remoteproc/pru_rproc.c                |   2 +-
- drivers/remoteproc/qcom_q6v5_adsp.c           |   2 +-
- drivers/remoteproc/qcom_q6v5_mss.c            |   2 +-
- drivers/remoteproc/qcom_q6v5_pas.c            |   4 +-
- drivers/remoteproc/qcom_q6v5_wcss.c           |   4 +-
- drivers/remoteproc/qcom_wcnss.c               |   2 +-
- drivers/remoteproc/rcar_rproc.c               |   2 +-
- drivers/remoteproc/remoteproc_core.c          |  68 ++-
- drivers/remoteproc/remoteproc_internal.h      |  20 +-
- drivers/remoteproc/remoteproc_tee.c           | 508 ++++++++++++++++++
- drivers/remoteproc/st_remoteproc.c            |   2 +-
- drivers/remoteproc/st_slim_rproc.c            |   2 +-
- drivers/remoteproc/stm32_rproc.c              | 141 +++--
- drivers/remoteproc/xlnx_r5_remoteproc.c       |   2 +-
- include/linux/remoteproc.h                    |  20 +-
- include/linux/remoteproc_tee.h                | 105 ++++
- 23 files changed, 894 insertions(+), 69 deletions(-)
- create mode 100644 drivers/remoteproc/remoteproc_tee.c
- create mode 100644 include/linux/remoteproc_tee.h
-
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
+diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+index c09be97434ac..62310add2e44 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm crypto engine driver
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   This document defines the binding for the QCE crypto
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+index 8b393e26e025..eed9063e9bb3 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm SDHCI controller (sdhci-msm)
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   Secure Digital Host Controller Interface (SDHCI) present on
+diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+index 0bcd593a7bd0..f117471fb06f 100644
+--- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
++++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Ethernet ETHQOS device
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   dwmmac based Qualcomm ethernet devices which support Gigabit
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+index 758adb06c8dd..059cb87b4d6c 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm SM6115 Peripheral Authentication Service
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   Qualcomm SM6115 SoC Peripheral Authentication Service loads and boots
 -- 
-2.25.1
+2.43.0
 
