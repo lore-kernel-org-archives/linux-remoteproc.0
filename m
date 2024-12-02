@@ -1,45 +1,47 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711DD1DF74A;
-	Mon,  2 Dec 2024 21:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41CA1DDC19;
+	Mon,  2 Dec 2024 22:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733176305; cv=none; b=mSOKpV2Vcr8Vy9sEh9piXZH4nCi2LdBUc32GsIo7dJJS6oK0obpgSJKZ0Df5nQdk9iCnjeeex6y053Tei4uZjTBKl/6MJcSSvmYL6ebJdc2pm9//TjF/c8oGXhs0sFggszMBxhMiqQYrWHWN4ENmFi35oDcnyZJQHA75eLErtqc=
+	t=1733177953; cv=none; b=nFhTJFJO5xGAJGONr+c7SMuN6pxkHeqBIXdaOvzVNtzOyKL7lEW6TfqokF5dT/gcsIK5jddw1fLr73BDJcwoJAQHk+wmwQiBO0uihJi2g4jed/JdWq8YGshIlf5Ekj0iBxQgW9RaOqE3B0+mUXBxXhiVzyMX2SZS4isPqi12A94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733176305; c=relaxed/simple;
-	bh=xmVgz577XM7Jxim8cfCOfoYkpW5zmcQrRmdZjr2y5Do=;
+	s=arc-20240116; t=1733177953; c=relaxed/simple;
+	bh=Aozbz3bWXqF7F76Tu8d0hlgtsQZWnJPCD0v39IXAarI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sRRWS90cpLQrv8XguzZ6t5jgS4G7hkziB2S1QiHus61x4pPhFGev2HP/7k60CGdUX90W2EPzxuIq3HRPCvBrIO1Ot4Futxp1Agvzl4Fzom6k9rWjecNJ3/skms7Wxqprw7sPFysvq5ael7+8OdUdjr4atz7JdksXJ14zyWBs5EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G3Pw2J1T; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=gey03d9MkExQy1GLXtceqod4qMD5nPSGQNXp21TT4ZPf/do4jXdIfx+JeIkJuEywIduRGt1eSozSu0Cm688KnlThviiJhXBnDl/0FCNYguR6BKvVXHcMNFABLgbnu54HyiOW94HNuCSpxygRGYO6uI1cFJc4BilbNkXFGKwj0GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qY/s2qkM; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G3Pw2J1T"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LpbbN102316;
-	Mon, 2 Dec 2024 15:51:37 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qY/s2qkM"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ6UE1528301
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 16:19:06 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733176297;
-	bh=bo7/Jkdt0VQZhJV3SJuxRxPMUAMd+zjH0yU88G/NtKM=;
+	s=ti-com-17Q1; t=1733177946;
+	bh=TLtXusRMjrN3yzTWi90NwUk4sR7yTSZj/gKurUQqQ70=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=G3Pw2J1TAjy9vM+1JDLTolnkHcCrbh8Y7K0tWhtXrrkjkqu0HlnwsoiW9zUAQf2gV
-	 BZtCFCrrftiHf2tb9OaJYStmKBRQeYVbWRz0ewMxjZ9pT8lBfLlj9mG7RMM17hb293
-	 wWoNhgQUmbIY1IV9suJJajF5Xi/drABI4B2UGP8Y=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LpbYg009053;
-	Mon, 2 Dec 2024 15:51:37 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+	b=qY/s2qkMjIYecmpeK+7GQ4pjJvReUTGyAo4wvfFnhtRfrVELmUhFOLJHqGOow1zKu
+	 SRNAupsi10HcJansN16zxKt/JxPcFPFQqtJf1cP8s/8uVo6ilLrtfncUcrb5o1hY4p
+	 wfOh84cCy7sL62jgjugBUcb8OAvVO8twIJI3MnUk=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ6GL062221
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 16:19:06 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Dec 2024 15:51:37 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2024 16:19:06 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Dec 2024 15:51:37 -0600
-Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LparL039277;
-	Mon, 2 Dec 2024 15:51:37 -0600
+ Frontend Transport; Mon, 2 Dec 2024 16:19:06 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2MJ5Ut068468;
+	Mon, 2 Dec 2024 16:19:05 -0600
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -47,12 +49,12 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH v2 3/5] remoteproc: keystone: Use devm action to call PM runtime put sync
-Date: Mon, 2 Dec 2024 15:51:33 -0600
-Message-ID: <20241202215135.294829-3-afd@ti.com>
+Subject: [PATCH 2/4] remoteproc: wkup_m3: Use devm action to call PM runtime put sync
+Date: Mon, 2 Dec 2024 16:19:02 -0600
+Message-ID: <20241202221904.319149-2-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241202215135.294829-1-afd@ti.com>
-References: <20241202215135.294829-1-afd@ti.com>
+In-Reply-To: <20241202221904.319149-1-afd@ti.com>
+References: <20241202221904.319149-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -68,94 +70,69 @@ and forgetting to put sync on error paths.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/keystone_remoteproc.c | 36 ++++++++++++------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/remoteproc/wkup_m3_rproc.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index 2af3b64bc239c..1032f440426da 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -365,6 +365,13 @@ static void keystone_rproc_mem_release(void *data)
- 	of_reserved_mem_device_release(dev);
- }
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index 35c2145b12db7..2569f041d9cab 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -125,6 +125,13 @@ static const struct of_device_id wkup_m3_rproc_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, wkup_m3_rproc_of_match);
  
-+static void keystone_rproc_pm_runtime_put(void *data)
++static void wkup_m3_rproc_pm_runtime_put(void *data)
 +{
 +	struct device *dev = data;
 +
 +	pm_runtime_put_sync(dev);
 +}
 +
- static int keystone_rproc_probe(struct platform_device *pdev)
+ static int wkup_m3_rproc_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
-@@ -417,30 +424,26 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 	ret = pm_runtime_resume_and_get(dev);
+@@ -152,17 +159,16 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
  	if (ret < 0)
- 		return dev_err_probe(dev, ret, "failed to enable clock\n");
-+	ret = devm_add_action_or_reset(dev, keystone_rproc_pm_runtime_put, dev);
+ 		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "pm_runtime_get_sync() failed\n");
+-		goto err;
+-	}
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "pm_runtime_get_sync() failed\n");
++	ret = devm_add_action_or_reset(dev, wkup_m3_rproc_pm_runtime_put, dev);
 +	if (ret)
 +		return dev_err_probe(dev, ret, "failed to add disable pm devm action\n");
  
- 	ret = keystone_rproc_of_get_memories(pdev, ksproc);
- 	if (ret)
--		goto disable_clk;
-+		return ret;
- 
- 	ksproc->irq_ring = platform_get_irq_byname(pdev, "vring");
--	if (ksproc->irq_ring < 0) {
--		ret = ksproc->irq_ring;
--		goto disable_clk;
+ 	rproc = rproc_alloc(dev, "wkup_m3", &wkup_m3_rproc_ops,
+ 			    fw_name, sizeof(*wkupm3));
+-	if (!rproc) {
+-		ret = -ENOMEM;
+-		goto err;
 -	}
-+	if (ksproc->irq_ring < 0)
-+		return ksproc->irq_ring;
++	if (!rproc)
++		return -ENOMEM;
  
- 	ksproc->irq_fault = platform_get_irq_byname(pdev, "exception");
--	if (ksproc->irq_fault < 0) {
--		ret = ksproc->irq_fault;
--		goto disable_clk;
--	}
-+	if (ksproc->irq_fault < 0)
-+		return ksproc->irq_fault;
+ 	rproc->auto_boot = false;
+ 	rproc->sysfs_read_only = true;
+@@ -219,8 +225,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
  
- 	ksproc->kick_gpio = gpiod_get(dev, "kick", GPIOD_ASIS);
- 	ret = PTR_ERR_OR_ZERO(ksproc->kick_gpio);
--	if (ret) {
--		dev_err(dev, "failed to get gpio for virtio kicks, status = %d\n",
--			ret);
--		goto disable_clk;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get gpio for virtio kicks\n");
- 
- 	ret = of_reserved_mem_device_init(dev);
- 	if (ret) {
-@@ -448,7 +451,7 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 	} else {
- 		ret = devm_add_action_or_reset(dev, keystone_rproc_mem_release, dev);
- 		if (ret)
--			goto disable_clk;
-+			return ret;
- 	}
- 
- 	/* ensure the DSP is in reset before loading firmware */
-@@ -474,8 +477,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 
- release_mem:
- 	gpiod_put(ksproc->kick_gpio);
--disable_clk:
--	pm_runtime_put_sync(dev);
+ err_put_rproc:
+ 	rproc_free(rproc);
+-err:
+-	pm_runtime_put_noidle(dev);
  	return ret;
  }
  
-@@ -485,7 +486,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
+@@ -230,7 +234,6 @@ static void wkup_m3_rproc_remove(struct platform_device *pdev)
  
- 	rproc_del(ksproc->rproc);
- 	gpiod_put(ksproc->kick_gpio);
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
 -	pm_runtime_put_sync(&pdev->dev);
  }
  
- static const struct of_device_id keystone_rproc_of_match[] = {
+ #ifdef CONFIG_PM
 -- 
 2.39.2
 
