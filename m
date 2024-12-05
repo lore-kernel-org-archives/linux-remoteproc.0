@@ -1,150 +1,255 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460621D588
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Dec 2024 16:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222C921C199;
+	Thu,  5 Dec 2024 18:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733417268; cv=none; b=uUM32IDSFPuy4pEgiBto5TS2AXKBHamLoXt3qebSTKdnTVhgVx/pezQYbSjaq89NHoSPy0uqTlSzfGnMu1hmaERlEVMa85i5P4cmrzn7ICoHMqwlsA4wXQn5/ooT84rD2H8aZn/0EwQNcU5Y7jvzOCVqm9/ztAO9skPYWBaHGf4=
+	t=1733422929; cv=none; b=lEFgflj4/2A6I3pWNVibf8aTZisd+S687dvqhGxokXNLacJofJ+lIWw3rjfkne0pI5P1AcCLxooFZ3AY+uVIjjg2DJFDgaX9WsIevBTZfq+49IGI3naPhWpV2zOemd3RIvTNtArNDQnGa493IF3tUF9Lx827PyaEGGJNttuMHZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733417268; c=relaxed/simple;
-	bh=IQ/HGqC2oOZDUVKenCFCVNfvlZ9uRU2FlW6Axzv+8fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWN/NgiOCDZhBqB5X6nzkdz83VPyXmY7rbjQJAVOul/mG2SVRQh++CDLsY2PfRBhYLcOxmvpNGMtyHNs5BLhBo6sTKrX77eNRWyxXXgvJ5+x7GCmrSNhogtd7KSNxryx/mOkf+UTBbxZhq4xBs7H8juFaPi9C27RgVpSIIVs3IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fcl+UDwF; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733422929; c=relaxed/simple;
+	bh=ukX19/Ajca4hFBTbYCcOWhDG9KYzB+th1Gi6FvWuOvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Irnt5fPgJxHnW3Yp2D0DOePSTpmzOV84BmmyNAurf5indaUuC0YPga8EZdUgBtg8ILgX05MKPW/2DEEd/DXu1M9oJ/4y71VtcfbQ2c0decRWlqis1krMSI6R75gGzVAzkOvK+G6NTQJaxp7TpQ8Cp07dpIjGX++2A+2x6O+wGq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DLaNp24k; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fcl+UDwF"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so1046725a91.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Dec 2024 08:47:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733417266; x=1734022066; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GGowWo0E2U0Rf9eK43iU5kiPqwDu4Y2pVeYyplVhdDQ=;
-        b=Fcl+UDwFlfPaRNg6DgOueZOabHX5Mzj2OrS0QgksiQpp8V1zfn/LMI+xIEXpUnDyHU
-         RsRuBOBAWe5OavhdSrQFkClcduzGKI3QlVbPimsjrz0W72PG5sHzKlXMxQjaDCfXmuZP
-         lpfd3+j3+G8vnImYoJN93BcrcJ9cgc6mpYvc8+RApu0MwUbQz/nQcPc8n2UKE+paUR6L
-         tVNjnQd8WXJ2lYguObG6tgDvM+9+aNFJEXZQgw+RM05OSbPbf8t9KwXgLVcurjcuv1Ce
-         IFSpoyAo/4v6dGswA1jn7FiOv4aWaZYgT41fY5p5KfczxBagxmqurQv1BMLe1V7yrg+H
-         3JVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733417266; x=1734022066;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GGowWo0E2U0Rf9eK43iU5kiPqwDu4Y2pVeYyplVhdDQ=;
-        b=ejePXxV9UJ5JCYVl0i0QrtaRvrkBR0e/UEAqpS+pWm4LQN6jrI2u+EDT3wqoXDkqGr
-         GGhQO8gXawYahTSGdCJdGMxmT11XEd9cTNk/lvml3lAvrrRhOXM9XBaPNoRcab5PVacC
-         T6oJXG0Isv9KN+cajRnCkvXbGiGJ3skYE//tqOzNdROCbIO732TR/XUfw9S56BeDiafU
-         HLlpefJJ79G0XXZGQMZfm9pQoOArol2FrY5gJ4zaR8LJE6YH8iirioJxSds+lxHWMjI+
-         jKEp/3hXEeSynuKB0XLS2pBwA9gQgbKEsDF5S1PAZ9ocrT4mwvXIUVAoAed5EEYD7LQG
-         B7dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO+AaPky0yg3HBH3E7jc6ZmJ7w/ZRgmWDEsRjMBZE/9Ot1HY3zzUeBaTjmK3Kzvw1hFE+zVL+YbcGUUQPZcDTV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuYcZMjlqm7T+22jmtXNRhi+1whwWEFT9kLdmsh0lfUokIfK2h
-	q5dXaoi766vUsORXyjCVhVLSJ3dTbpbCDP7cVGjCLn3SE+S50jgOYtpxU6gFDnE=
-X-Gm-Gg: ASbGncun8f/Hvb0Bppp7RayZZIi8gLEmQwCzoJmr78CNOxnnqC51y4GtjNXGU7beIHy
-	7HxGKVQ1SNL8nKN5qk8rw9C8bSX1jynCKGUP5HKAm+SGxWBMP9bb0RDMYAb78PbEIxh3jDX0MIp
-	jXqqti+7z1jrzc2Hud8mSOAIMrexQkwB7FaoAkY2EMO7HlZtQf2EXtrmH/k4OcM9a8owyAJ2b49
-	QjucODEwLI5E8nTF21ifbKWnSqcwz9EI33K909EWekCaruuZg8nzVEFZg==
-X-Google-Smtp-Source: AGHT+IHfdbN7q7iMS+18SQtbAa3CGAk6K7rAAw0BzwESRhSc460Et6yhn4diWwlO/9cKamVNlnvLvw==
-X-Received: by 2002:a17:90b:1d03:b0:2ee:9e06:7db0 with SMTP id 98e67ed59e1d1-2ef011fbabcmr14575579a91.11.1733417265830;
-        Thu, 05 Dec 2024 08:47:45 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:cdba:9225:289d:fd74])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45ff780bsm1605849a91.42.2024.12.05.08.47.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 08:47:45 -0800 (PST)
-Date: Thu, 5 Dec 2024 09:47:42 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: Re: [PATCH] remoteproc: mtk_scp: Only populate devices SCP cores
-Message-ID: <Z1HZLq4iJQGmKDgM@p14s>
-References: <20241202062826.66619-1-wenst@chromium.org>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DLaNp24k"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5GBVHn026701;
+	Thu, 5 Dec 2024 19:22:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	GrwrNX1cZ6QPNKB2X9oLiCJwNIpS0he1IbpZ0KohnIE=; b=DLaNp24kVB1OGBNe
+	aSM1n6MRKobaDSnWJ2gLn40pKrDs8Ww0lDqmvycwy4uK5L8mfyrSLKm1s9zlHBaF
+	FXizS2r7hvHltYqIh8LqolUJ1ueqIHvyLZ78LU+7mNwN7JJF4ce8GXQF1kxa1/Kh
+	1f8FPcium7ZDZd5CuvERiokHOFKtnCY4CPs7hwH72f+kSmAz4rGrgg8N3WDRNVZ4
+	yxu3BKu0tdlQspB5nQbTctLG6hrYMaPtqhChE4h/6u5l7M85b6I8EsglqOlx8AEH
+	s8onZUpP8/JhXMWA1pk2H8lx+E4T8MwYZ66rbZP5R14UWQojZ8/fJOkRbGH/sqp0
+	npbZYg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 438ehp60mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 19:22:00 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6AEEE40044;
+	Thu,  5 Dec 2024 19:21:15 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1F99626DDBB;
+	Thu,  5 Dec 2024 19:21:00 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 5 Dec
+ 2024 19:20:59 +0100
+Received: from [10.252.23.89] (10.252.23.89) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 5 Dec
+ 2024 19:20:59 +0100
+Message-ID: <1b7c8c21-37bc-4a1a-91bb-1d736d900f00@foss.st.com>
+Date: Thu, 5 Dec 2024 19:20:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202062826.66619-1-wenst@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
+ optional operation
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
+ <Z08+UnATLQQ6kmaD@p14s>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <Z08+UnATLQQ6kmaD@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Good day,
+Hello Mathieu,
 
-On Mon, Dec 02, 2024 at 02:28:25PM +0800, Chen-Yu Tsai wrote:
-> When multi-core SCP support was added, the driver was made to populate
-> platform devices for all the sub-nodes. This ended up adding platform
-> devices for the rpmsg sub-nodes as well, which never actually get used,
-> since rpmsg devices are registered through the rpmsg interface.
+Thanks for the review!
+I just need to clarify a point below before preparing the next revision.
+
+On 12/3/24 18:22, Mathieu Poirier wrote:
+> On Thu, Nov 28, 2024 at 09:42:10AM +0100, Arnaud Pouliquen wrote:
+>> This patch updates the rproc_ops structures to include two new optional
+>> operations.
+>>
+>> - The load_fw() op is responsible for loading the remote processor
+>> non-ELF firmware image before starting the boot sequence. This ops will
+>> be used, for instance, to call OP-TEE to  authenticate an load the firmware
+>> image before accessing to its resources (a.e the resource table)
+>>
+>> - The release_fw op is responsible for releasing the remote processor
+>> firmware image. For instance to clean memories.
+>> The ops is called in the following cases:
+>>  - An error occurs between the loading of the firmware image and the
+>>    start of the remote processor.
+>>  - after stopping the remote processor.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> Update vs version V13:
+>> - Rework the commit to introduce load_fw() op.
+>> - remove rproc_release_fw() call from  rproc_start() as called in
+>>   rproc_boot() and rproc_boot_recovery() in case of error.
+>> - create rproc_load_fw() and rproc_release_fw() internal functions.
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
+>>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
+>>  include/linux/remoteproc.h               |  6 ++++++
+>>  3 files changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index ace11ea17097..8df4b2c59bb6 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>>  	kfree(rproc->cached_table);
+>>  	rproc->cached_table = NULL;
+>>  	rproc->table_ptr = NULL;
+>> +	rproc_release_fw(rproc);
 > 
-> Limit of_platform_populate() to just populating the SCP cores with a
-> compatible string match list.
+> This is not needed since rproc_release_fw() is called in rproc_boot().
 > 
-> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
-> Cc: Tinghan Shen <tinghan.shen@mediatek.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+>>  unprepare_rproc:
+>>  	/* release HW resources if needed */
+>>  	rproc_unprepare_device(rproc);
+>> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
+>>  		return ret;
+>>  	}
+>>  
+>> +	ret = rproc_load_fw(rproc, firmware_p);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	/* boot the remote processor up again */
+>>  	ret = rproc_start(rproc, firmware_p);
+>> +	if (ret)
+>> +		rproc_release_fw(rproc);
+>>  
+>>  	release_firmware(firmware_p);
+>>  
+>> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
+>>  			goto downref_rproc;
+>>  		}
+>>  
+>> +		ret = rproc_load_fw(rproc, firmware_p);
+>> +		if (ret)
+>> +			goto downref_rproc;
 > 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 0f4a7065d0bd..8206a1766481 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
->  	return ret;
->  }
->  
-> +static const struct of_device_id scp_core_match[] = {
-> +	{ .compatible = "mediatek,scp-core" },
-> +	{}
-> +};
-> +
->  static int scp_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
->  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
->  	mutex_init(&scp_cluster->cluster_lock);
->  
-> -	ret = devm_of_platform_populate(dev);
-> +	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
->  
->  	ret = scp_cluster_init(pdev, scp_cluster);
-> -	if (ret)
-> +	if (ret) {
-> +		of_platform_depopulate(dev);
->  		return ret;
-> +	}
->  
->  	return 0;
->  }
-> @@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
->  		rproc_del(scp->rproc);
->  		scp_free(scp);
->  	}
-> +	of_platform_depopulate(&pdev->dev);
+> In case of error the firmware is not released.
 
-This looks like a sensible addition to me but I'll give Angelo some time to
-chime in.
+I considered that if the load fails, the firmware is not loaded
+and therefore does not need to be released.
+In other words, in case of a load error in OP-TEE, OP-TEE should
+perform the cleanup to return to its initial state before the load.
 
-Regards,
-Mathieu
+Do you see a use case where we should force the release in Linux?
+Otherwise, I would propose to implement this behavior later if needed.
 
->  	mutex_destroy(&scp_cluster->cluster_lock);
->  }
->  
-> -- 
-> 2.47.0.338.g60cca15819-goog
+Thanks,
+Arnaud
+
 > 
+>> +
+>>  		ret = rproc_fw_boot(rproc, firmware_p);
+>> +		if (ret)
+>> +			rproc_release_fw(rproc);
+>>  
+>>  		release_firmware(firmware_p);
+>>  	}
+>> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>  	kfree(rproc->cached_table);
+>>  	rproc->cached_table = NULL;
+>>  	rproc->table_ptr = NULL;
+>> +	rproc_release_fw(rproc);
+> 
+> Please move this after rproc_disable_iommu().
+> 
+> 
+>>  out:
+>>  	mutex_unlock(&rproc->lock);
+>>  	return ret;
+>> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>>  	if (!rproc->ops->coredump)
+>>  		rproc->ops->coredump = rproc_coredump;
+>>  
+>> -	if (rproc->ops->load)
+>> +	if (rproc->ops->load || rproc->ops->load_fw)
+>>  		return 0;
+>>  
+>>  	/* Default to ELF loader if no load function is specified */
+>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>> index 0cd09e67ac14..2104ca449178 100644
+>> --- a/drivers/remoteproc/remoteproc_internal.h
+>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
+>>  	return (val <= (size_t) -1);
+>>  }
+>>  
+>> +static inline void rproc_release_fw(struct rproc *rproc)
+>> +{
+>> +	if (rproc->ops->release_fw)
+>> +		rproc->ops->release_fw(rproc);
+>> +}
+>> +
+>> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	if (rproc->ops->load_fw)
+>> +		return rproc->ops->load_fw(rproc, fw);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  #endif /* REMOTEPROC_INTERNAL_H */
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 2e0ddcb2d792..ba6fd560f7ba 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -381,6 +381,10 @@ enum rsc_handling_status {
+>>   * @panic:	optional callback to react to system panic, core will delay
+>>   *		panic at least the returned number of milliseconds
+>>   * @coredump:	  collect firmware dump after the subsystem is shutdown
+>> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
+> 
+> Round this down to 80 characters please.  Here having a longer line doesn't
+> improve readability.
+> 
+>> + *		processor expects to find it.
+>> + * @release_fw:	optional function to release the firmware image from memories.
+>> + *		This function is called after stopping the remote processor or in case of error
+> 
+> Same.
+> 
+> More comments tomorrow or later during the week.
+> 
+> Thanks,
+> Mathieu
+> 
+>>   */
+>>  struct rproc_ops {
+>>  	int (*prepare)(struct rproc *rproc);
+>> @@ -403,6 +407,8 @@ struct rproc_ops {
+>>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+>>  	unsigned long (*panic)(struct rproc *rproc);
+>>  	void (*coredump)(struct rproc *rproc);
+>> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
+>> +	void (*release_fw)(struct rproc *rproc);
+>>  };
+>>  
+>>  /**
+>> -- 
+>> 2.25.1
+>>
