@@ -1,411 +1,171 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pv50p00im-tydg10011801.me.com (pv50p00im-tydg10011801.me.com [17.58.6.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7BC1F03D3
-	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Dec 2024 18:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44CEA47
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Dec 2024 00:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335364; cv=none; b=gNRkaT86K8TVDIlnV3BRcHNhcih/SO3P2KOjqxOZU4eRl39yEsJ+DmHBpaVmkDr5UCxoinxgvfVv9KYwmhtybFs3GINHL77PMg1OLkeUtvQJZlrIrsz639OLKIhu5YzcoA0+NtTsQPvn8jLVEQ5Wqy7BdNvvZ7uz3JgxgPldUp8=
+	t=1733357278; cv=none; b=CgHx3wvnewAcCae13Yth4l8dbGsd7JmP7p0nmhZ3QsFThL5TSwtTgreIDrke5S5vxZkqXlbBKu+S1OGw9jYNA+elz2OFrnDzJiUvvfpNtW1kP+86IQQDW3prKz0tp7LdYi+w9MMfOfDaqS6BQ2ZeAYnfC0BhqksPU40j3tgTZk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335364; c=relaxed/simple;
-	bh=08n36W/CMnCDfr62bUaB+P/NXZKNqgjlOHf6GtLMtoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWgGceQ+W3Iza+tsgV3JJ2sC2Diwsaky29WZUCzVyhqrmlFpZdmESXPdZx1B5pAHUOhoYFNzvEs0Ss6e+Lmu3OiHwmGC/Ek//HtptM8t6vLLhigrRuUORBoq7qUpZGvGoNCEZnMQFTbk9uVrXrQOzUeFPtLx5TavfO0oqYwqEZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rrwb2jTN; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733357278; c=relaxed/simple;
+	bh=jXDu8pWjhuYPdMP7VqE1gBu4NrjerabEKnAlH0ltUtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ka/GDZR5STnUm7xk67NmWWDUU3Lduypw1gYZSicxIwbFd4N2z2W8OfM+zbHnh5K/Wf9s9AYyx7tdt++5OaM6sdnxrmmDwhaNZ+OOecsw7XxDnifoifvFzvi46wFOhfkztZ61pB+R1uzMIvZqBOd49OFrl8Q04ClkM+BqnOvrYQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=viUyMPDu; arc=none smtp.client-ip=17.58.6.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rrwb2jTN"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-723f37dd76cso108995b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Dec 2024 10:02:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733335362; x=1733940162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PeBuKTAzT5t/xg0HOfB6aMdefP/YbNUMgGL/5kx9O2s=;
-        b=Rrwb2jTN1zDfPDslIuMer6x6fUBuRsJWUgY7sOycFdbNaGBm6u1rrBkyOfRVeOv4wZ
-         qimIkIQbtBgOIvhDLqXpbYrhIC4rd5Z9I/1st59GGfG8rn2LrAFjJzMA2F6FRF4GQNma
-         GeULyVACUC5DgaQQPpsu8/d/RNIJZn5ONSIWfso8Wcf3SrDkW0snEeTHgoGjsIDtuVj2
-         RJOspcVMTppQ2jXhU3rGAPxxGTZzE3qUikxTZQjB6v+lTBxbHLIW8jMIG6D9UfODwMAL
-         /yDJXTLvZvYNThD2mmYgdg/TUNwh0TQ9mbC5ggbkOUuz6x0Woy/9X/jJSOXQvxPufRFV
-         EeHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733335362; x=1733940162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PeBuKTAzT5t/xg0HOfB6aMdefP/YbNUMgGL/5kx9O2s=;
-        b=MqI55gR7yvGcOo5qWdHWMxrhNceeh6hyj8MPEjchWkd3HG9Xe42j98eGWpjXxkLPkl
-         Ob/+EQYWen54F26J8JRGyN0Ib2B7cXHS4JBhF5bA3umlZnl9VQvTXj5oIcj/TQcDEMOg
-         rUW0v5FqjLvRka9bcS3r3Gr/3t8UGHu5auW+5acDaYwvdQ9z5JcIXvodzKSFjbriNWay
-         O3gmBI7OEcEan12fQbZ8jds/n1NO27lGcs2lQ3U8kp/LPzyV7BFthSBwT5BBEPt364P8
-         LqdBYXl3+5ezElNpA3U7R8G9zfElmoecSrEuN2DTcIhXRdLRUJGh2UIpqWHwTeLtB7Ns
-         GsQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGr4O5yAw6tX/SrYyO1xN026UUfu/lfn16CRygTbnt27LpBG16bU41ncWYwBxk6YpioQ22WTYrgO/iBN7hm6m@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzoYAI0E0UJjc4upxilJHyudI0Px5fSwww26m00Tfr5y9zQNHq
-	ogwow/wD5g6w1hnuyhdwNO7g7Xb3yO2UHCstObNt8M19EeCPSElsn7FVT3Qy93M=
-X-Gm-Gg: ASbGncttulcxVSNpisCcNqal1qoiG3tm/Gf7mDC6a8BqTwmAjKhKAFmeaSDda5M9k8H
-	O6xP9rKMf9Yg2BUahn6LH77Li/2QmzE5xHziR/lm0ma1/nhXfMSebudq9USdLCw+Ko5st6a4BQq
-	XwpkhP4DiOXGmRrWZsyqUEnwvqORbBipVLZiV7T+J9V4gxGj1Hum+cksASOj8czqp/6d0AoTspZ
-	rwVv3xFfO5WVi03ACiPyXCr5XjQyFu40FEMNscxMK+FPZs35oo0nA==
-X-Google-Smtp-Source: AGHT+IGz/ZtmC4PnERHkalD6CvmzPb7Tp2woBDFzd1PcOy0yfXwbSkND0GchAL+Kghl7UNvinfrk8Q==
-X-Received: by 2002:a05:6a00:180a:b0:725:1d37:ebff with SMTP id d2e1a72fcca58-7257fcd968dmr10230325b3a.22.1733335361978;
-        Wed, 04 Dec 2024 10:02:41 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:cb58:bf7f:6102:4f57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7259470e2c9sm1282202b3a.190.2024.12.04.10.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 10:02:41 -0800 (PST)
-Date: Wed, 4 Dec 2024 11:02:38 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	kernel test robot <lkp@intel.com>, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v15 4/8] remoteproc: Rename load() operation to
- load_segments() in rproc_ops struct
-Message-ID: <Z1CZPhu1T2opd906@p14s>
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-5-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="viUyMPDu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733357275;
+	bh=T0i1UIwZu179fqDDvM1SaMgHe4/s268Ao/wTXHvJFpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=viUyMPDupWXi4CsrMrPO0pTZeZeGxPoM+enltzZDnkb+kI0qdByPZT5LU1xBetse2
+	 NtaWPzW2mnfiL0cDcb5AxsMAlW09DyzC74O6RR3cBb+ZzhEN7re48DHO1hdcod+aXb
+	 zbl3rMYxZGrv7wQqdRJsrWCp9PSwtE6uiLaNWgjCRsBT8D1ZUgFnCeCL+arYkrJDex
+	 wriQVWYopBjYxrWk6ouKFvfzOLXBz2VSyl6NuyevHO9GGv1V4cTmquonLgabfDNxjR
+	 5eSkEUOnbtt2Et4RjPSCmjNRxtqblo8cbQN/o+14zsvC0nuehSg5FcL9uofh/yy5ZC
+	 z6tN/Ugl8ZG4Q==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-tydg10011801.me.com (Postfix) with ESMTPSA id 9CBA68001C9;
+	Thu,  5 Dec 2024 00:07:24 +0000 (UTC)
+Message-ID: <3a4de1bb-3eb2-469a-8ff7-ff706804f5bb@icloud.com>
+Date: Thu, 5 Dec 2024 08:07:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128084219.2159197-5-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>,
+ Manish Rangankar <mrangankar@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
+ linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+ <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+ <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+ <2024120320-manual-jockey-dfd1@gregkh>
+ <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
+ <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
+ <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
+ <f5ea7e17-5550-4658-8f4c-1c51827c7627@icloud.com>
+ <108c63c753f2f637a72c2e105ac138f80d4b0859.camel@HansenPartnership.com>
+ <235ce0a9-1db1-4558-817b-6f92f22be5ab@icloud.com>
+ <5c905df49a332b1136787a524955b46b6153c012.camel@HansenPartnership.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <5c905df49a332b1136787a524955b46b6153c012.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: SnhSPaefh2SqVr4UPg8Q8Npi4W-Py9Af
+X-Proofpoint-ORIG-GUID: SnhSPaefh2SqVr4UPg8Q8Npi4W-Py9Af
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-04_19,2024-12-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412040186
 
-On Thu, Nov 28, 2024 at 09:42:11AM +0100, Arnaud Pouliquen wrote:
-> With the introduction of the load_fw() operation in the rproc_ops
-> structure, we need to clarify the difference in the use of the load()
-> and load_fw() ops.
+On 2024/12/5 00:42, James Bottomley wrote:
+>>>>  introduce extra device_find_child_new() which is constified  ->
+>>>> use *_new() replace ALL device_find_child() instances one by one
+>>>> -> remove device_find_child() -> rename *_new() to
+>>>> device_find_child() once.
+>>> Why bother with the last step, which churns the entire code base
+>>> again?
+>> keep the good API name device_find_child().
+> Well, I think it's a good opportunity to rename the API better, but if
+> that's the goal, you can still do it with _Generic() without churning
+> the code base a second time.  The example is in
+> slab.h:kmem_cache_create
 > 
-> The legacy load() is dedicated to loading the ELF segments into memory.
-> Rename this to a more explicit name: load_segments().
 
-This is introducing more code churn than is worth it.  Please enhance the usage
-comment for ->load() as part of the previous patch and drop this one.
+i understand these solutions _Generic()/_new/squashing.
+every solutions have its advantages and disadvantages.
 
-I am done reviewing this set.
+i decide to use squashing solution for this concrete scenario after some
+considerations since:
 
-Thanks,
-Mathieu
+1) it has the minimal patch count to achieve target.
+2) every patch is valuable, but other solutions needs to undo beginning
+  patch finally.
+3) for the squashing patch, i will only make the least and simplest
+changes for various match functions, that will compensate its
+disadvantages.
 
-> 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Update vs version V14:
-> Fix: Rename missing load() to load_segments() in drivers/remoteproc/pru_rproc.c.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411281332.Ra70nJAW-lkp@intel.com/
-> 
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c       | 2 +-
->  drivers/remoteproc/imx_rproc.c           | 2 +-
->  drivers/remoteproc/meson_mx_ao_arc.c     | 2 +-
->  drivers/remoteproc/mtk_scp.c             | 2 +-
->  drivers/remoteproc/pru_rproc.c           | 2 +-
->  drivers/remoteproc/qcom_q6v5_adsp.c      | 2 +-
->  drivers/remoteproc/qcom_q6v5_mss.c       | 2 +-
->  drivers/remoteproc/qcom_q6v5_pas.c       | 4 ++--
->  drivers/remoteproc/qcom_q6v5_wcss.c      | 4 ++--
->  drivers/remoteproc/qcom_wcnss.c          | 2 +-
->  drivers/remoteproc/rcar_rproc.c          | 2 +-
->  drivers/remoteproc/remoteproc_core.c     | 4 ++--
->  drivers/remoteproc/remoteproc_internal.h | 4 ++--
->  drivers/remoteproc/st_remoteproc.c       | 2 +-
->  drivers/remoteproc/st_slim_rproc.c       | 2 +-
->  drivers/remoteproc/stm32_rproc.c         | 2 +-
->  drivers/remoteproc/xlnx_r5_remoteproc.c  | 2 +-
->  include/linux/remoteproc.h               | 4 ++--
->  18 files changed, 23 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 376187ad5754..a4a85fbce907 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -934,7 +934,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.start		= imx_dsp_rproc_start,
->  	.stop		= imx_dsp_rproc_stop,
->  	.kick		= imx_dsp_rproc_kick,
-> -	.load		= imx_dsp_rproc_elf_load_segments,
-> +	.load_segments	= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 800015ff7ff9..f45b3207f7e9 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -681,7 +681,7 @@ static const struct rproc_ops imx_rproc_ops = {
->  	.stop		= imx_rproc_stop,
->  	.kick		= imx_rproc_kick,
->  	.da_to_va       = imx_rproc_da_to_va,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.parse_fw	= imx_rproc_parse_fw,
->  	.find_loaded_rsc_table = imx_rproc_elf_find_loaded_rsc_table,
->  	.get_loaded_rsc_table = imx_rproc_get_loaded_rsc_table,
-> diff --git a/drivers/remoteproc/meson_mx_ao_arc.c b/drivers/remoteproc/meson_mx_ao_arc.c
-> index f6744b538323..a1c8c0929ce3 100644
-> --- a/drivers/remoteproc/meson_mx_ao_arc.c
-> +++ b/drivers/remoteproc/meson_mx_ao_arc.c
-> @@ -137,7 +137,7 @@ static struct rproc_ops meson_mx_ao_arc_rproc_ops = {
->  	.stop		= meson_mx_ao_arc_rproc_stop,
->  	.da_to_va	= meson_mx_ao_arc_rproc_da_to_va,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.sanity_check	= rproc_elf_sanity_check,
->  };
->  
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index e744c07507ee..4e9a8bf3bc6e 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -924,7 +924,7 @@ static int scp_stop(struct rproc *rproc)
->  static const struct rproc_ops scp_ops = {
->  	.start		= scp_start,
->  	.stop		= scp_stop,
-> -	.load		= scp_load,
-> +	.load_segments	= scp_load,
->  	.da_to_va	= scp_da_to_va,
->  	.parse_fw	= scp_parse_fw,
->  	.sanity_check	= rproc_elf_sanity_check,
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 327f0c7ee3d6..0b2bf2574f74 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -1015,7 +1015,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  	/* use a custom load function to deal with PRU-specific quirks */
-> -	rproc->ops->load = pru_rproc_load_elf_segments;
-> +	rproc->ops->load_segments = pru_rproc_load_elf_segments;
->  
->  	/* use a custom parse function to deal with PRU-specific resources */
->  	rproc->ops->parse_fw = pru_rproc_parse_fw;
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 572dcb0f055b..aa9896930bcf 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -527,7 +527,7 @@ static const struct rproc_ops adsp_ops = {
->  	.stop = adsp_stop,
->  	.da_to_va = adsp_da_to_va,
->  	.parse_fw = adsp_parse_firmware,
-> -	.load = adsp_load,
-> +	.load_segments = adsp_load,
->  	.panic = adsp_panic,
->  };
->  
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 2a42215ce8e0..a8beac1deabe 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1687,7 +1687,7 @@ static const struct rproc_ops q6v5_ops = {
->  	.start = q6v5_start,
->  	.stop = q6v5_stop,
->  	.parse_fw = qcom_q6v5_register_dump_segments,
-> -	.load = q6v5_load,
-> +	.load_segments = q6v5_load,
->  	.panic = q6v5_panic,
->  };
->  
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index ef82835e98a4..9b269ce390c1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -436,7 +436,7 @@ static const struct rproc_ops adsp_ops = {
->  	.stop = adsp_stop,
->  	.da_to_va = adsp_da_to_va,
->  	.parse_fw = qcom_register_dump_segments,
-> -	.load = adsp_load,
-> +	.load_segments = adsp_load,
->  	.panic = adsp_panic,
->  };
->  
-> @@ -446,7 +446,7 @@ static const struct rproc_ops adsp_minidump_ops = {
->  	.stop = adsp_stop,
->  	.da_to_va = adsp_da_to_va,
->  	.parse_fw = qcom_register_dump_segments,
-> -	.load = adsp_load,
-> +	.load_segments = adsp_load,
->  	.panic = adsp_panic,
->  	.coredump = adsp_minidump,
->  };
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index e913dabae992..44b5736dc8b9 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -771,7 +771,7 @@ static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
->  	.start = q6v5_wcss_start,
->  	.stop = q6v5_wcss_stop,
->  	.da_to_va = q6v5_wcss_da_to_va,
-> -	.load = q6v5_wcss_load,
-> +	.load_segments = q6v5_wcss_load,
->  	.get_boot_addr = rproc_elf_get_boot_addr,
->  };
->  
-> @@ -779,7 +779,7 @@ static const struct rproc_ops q6v5_wcss_qcs404_ops = {
->  	.start = q6v5_qcs404_wcss_start,
->  	.stop = q6v5_wcss_stop,
->  	.da_to_va = q6v5_wcss_da_to_va,
-> -	.load = q6v5_wcss_load,
-> +	.load_segments = q6v5_wcss_load,
->  	.get_boot_addr = rproc_elf_get_boot_addr,
->  	.parse_fw = qcom_register_dump_segments,
->  };
-> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-> index a7bb9da27029..42102bc4c458 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -335,7 +335,7 @@ static const struct rproc_ops wcnss_ops = {
->  	.stop = wcnss_stop,
->  	.da_to_va = wcnss_da_to_va,
->  	.parse_fw = qcom_register_dump_segments,
-> -	.load = wcnss_load,
-> +	.load_segments = wcnss_load,
->  };
->  
->  static irqreturn_t wcnss_wdog_interrupt(int irq, void *dev)
-> diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-> index cc17e8421f65..e36778fec072 100644
-> --- a/drivers/remoteproc/rcar_rproc.c
-> +++ b/drivers/remoteproc/rcar_rproc.c
-> @@ -142,7 +142,7 @@ static struct rproc_ops rcar_rproc_ops = {
->  	.prepare	= rcar_rproc_prepare,
->  	.start		= rcar_rproc_start,
->  	.stop		= rcar_rproc_stop,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.parse_fw	= rcar_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 8df4b2c59bb6..e4ad024efcda 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2485,11 +2485,11 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
->  	if (!rproc->ops->coredump)
->  		rproc->ops->coredump = rproc_coredump;
->  
-> -	if (rproc->ops->load || rproc->ops->load_fw)
-> +	if (rproc->ops->load_segments || rproc->ops->load_fw)
->  		return 0;
->  
->  	/* Default to ELF loader if no load function is specified */
-> -	rproc->ops->load = rproc_elf_load_segments;
-> +	rproc->ops->load_segments = rproc_elf_load_segments;
->  	rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->  	rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
->  	rproc->ops->sanity_check = rproc_elf_sanity_check;
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 2104ca449178..b898494600cf 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -167,8 +167,8 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
->  static inline
->  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
->  {
-> -	if (rproc->ops->load)
-> -		return rproc->ops->load(rproc, fw);
-> +	if (rproc->ops->load_segments)
-> +		return rproc->ops->load_segments(rproc, fw);
->  
->  	return -EINVAL;
->  }
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index 1340be9d0110..8d6b75e91531 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
->  	.start			= st_rproc_start,
->  	.stop			= st_rproc_stop,
->  	.parse_fw		= st_rproc_parse_fw,
-> -	.load			= rproc_elf_load_segments,
-> +	.load_segments		= rproc_elf_load_segments,
->  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
->  	.sanity_check		= rproc_elf_sanity_check,
->  	.get_boot_addr		= rproc_elf_get_boot_addr,
-> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-> index 5412beb0a692..0f91d8f1e7c7 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -201,7 +201,7 @@ static const struct rproc_ops slim_rproc_ops = {
->  	.stop		= slim_rproc_stop,
->  	.da_to_va       = slim_rproc_da_to_va,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.sanity_check	= rproc_elf_sanity_check,
->  };
->  
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 8c7f7950b80e..7e8ffd9fcc57 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -667,7 +667,7 @@ static const struct rproc_ops st_rproc_ops = {
->  	.attach		= stm32_rproc_attach,
->  	.detach		= stm32_rproc_detach,
->  	.kick		= stm32_rproc_kick,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.parse_fw	= stm32_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 5aeedeaf3c41..59cfba0a02e7 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -864,7 +864,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.unprepare	= zynqmp_r5_rproc_unprepare,
->  	.start		= zynqmp_r5_rproc_start,
->  	.stop		= zynqmp_r5_rproc_stop,
-> -	.load		= rproc_elf_load_segments,
-> +	.load_segments	= rproc_elf_load_segments,
->  	.parse_fw	= zynqmp_r5_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index ba6fd560f7ba..55c20424a99f 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -374,7 +374,7 @@ enum rsc_handling_status {
->   * @find_loaded_rsc_table: find the loaded resource table from firmware image
->   * @get_loaded_rsc_table: get resource table installed in memory
->   *			  by external entity
-> - * @load:		load firmware to memory, where the remote processor
-> + * @load_segments:	load firmware ELF segment to memory, where the remote processor
->   *			expects to find it
->   * @sanity_check:	sanity check the fw image
->   * @get_boot_addr:	get boot address to entry point specified in firmware
-> @@ -402,7 +402,7 @@ struct rproc_ops {
->  				struct rproc *rproc, const struct firmware *fw);
->  	struct resource_table *(*get_loaded_rsc_table)(
->  				struct rproc *rproc, size_t *size);
-> -	int (*load)(struct rproc *rproc, const struct firmware *fw);
-> +	int (*load_segments)(struct rproc *rproc, const struct firmware *fw);
->  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
->  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->  	unsigned long (*panic)(struct rproc *rproc);
-> -- 
-> 2.25.1
-> 
+>>> Why not call the new function device_find_child_const() and simply
+>>> keep it (it's descriptive of its function).  That way you can have
+>>> a patch series without merging and at the end simply remove the old
+>>> function.
+>> device_find_child is a good name for the API, 'find' already means
+>> const.
+> Not to me it doesn't, but that's actually not what I think is wrong
+> with the API name: it actually only returns the first match, so I'd
+> marginally prefer it to be called device_find_first_child() ... not
+> enough to churn the code to change it, but since you're doing that
+> anyway it might make sense as an update.
+
+name device_find_child appeared 18 years ago, it is good to keep this
+name developers known about.
+
+the API only return one device *, it should be obvious that it is the
+first device which meet matching condition.
+
+Other device finding APIs (bus|class|driver)_find_device() does not have
+concern about 'first'
+
+So, IMO, current name is good.
+
