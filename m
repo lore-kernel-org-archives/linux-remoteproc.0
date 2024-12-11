@@ -1,337 +1,176 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523AE17580;
-	Tue, 10 Dec 2024 10:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81838800
+	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 00:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733826885; cv=none; b=FYdCe1fMZoI/SLoKk2W0mxzPBiBdZpJWekfsDF2rLU1eERZktsb+s9Cc/Y/UbqL+h6M7IWeWSDREDr04jbpvu7A7NHICyEPlY6OW9BIpfEs2d2VMLLJ6PnskJ0nHvqYvMWjtrm5qBNqLKaonsaPtVFqneN/F8hl0IVmjLnrSVDY=
+	t=1733875749; cv=none; b=GwN7k8ysE25mlXZeJoS0WAodO3XCTS33/YI4WVIdRf9NjR4EdGO+XGchBPJR8MKx1OMxmk0aRnrp+L28MPkP15fTUdweayiHHLkmk8DfbeA4B4dmVpyd0ZEj17wcn5shkKrhuOjwWTO9OrSb+MzlwdjU97P2lPVjYTf1e/vz4Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733826885; c=relaxed/simple;
-	bh=Nl130zMyT6lEMjvMOZEO65O3vtrgDaTWFueQpoaFY88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JqvfDBLzMElmWIENKQ4M2E5xxAwc4C+GuKGF27UhlZk42FfIrVsTNIrL/zbkR4PDjER3EaQl7U9zxIBtrjGmlg1viSlgoazivpPY0IV33brnOP5s/4VVLcj47nk/th+XD0QZtQwrH4+3X8/D71fDJ4U4CoRqlqbZOrYcUUz7u8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jtpE2uzq; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1733875749; c=relaxed/simple;
+	bh=GU+BaWTDisXL7emfzpgBZTRnkPnQzCchAn1nV+GvzDA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Zo3rEfgcDeeHbq53tKP5J6l3eX2fJcQq5sA2aTrm/0UHUWCoSej/81vlrx6rEGI7nHrKVTfxluLxtLBWzOTVw4NE9YVOeRN1GEcJ64pXAlj8GXUuxpClSrttzMo0/uRVRGuzrKbO0CmdGv48GHsspkgqJXlnABIzC0bYOeZ97ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=TRrI9jgP; arc=none smtp.client-ip=17.58.6.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jtpE2uzq"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAACtBT022402;
-	Tue, 10 Dec 2024 11:34:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5AUqyoGSkf9r8/Q3Kt2TBiaYLw/48j9YljWQXjn/bHk=; b=jtpE2uzqJDaSPA5p
-	t94mhVifyhQcjbNEjUXtxjShPz5aiZPeKnCL0nB5UCvCzabb/vdoPrZPLjLFzcXC
-	m9AhN5oVP0jjbUDdOiiKMxB/xpvnC+ip4QdVqZ/FRxgx4HTrtRnjnzbt0W0Hl/xr
-	TNsQrYlVmxbQIp/y0NNsBkE1kQodgrcjMFnUWXLeEjh4bDYtThCrgWwJIp4MhA5p
-	8RN1oVlEiPMDgQtGvbfa2ZYKRBybzwChExR+oQcauXILGII91wi7svonERkH5gjp
-	7MMTL3tIpDFGB2Ra9e8nHc0BxbeFtHHWtMvi3PSBHyjNNAXmLOCWtWv8GCgP7it0
-	58iXXA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43d26n9ka3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:34:35 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C306B4004B;
-	Tue, 10 Dec 2024 11:33:49 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B7A56242474;
-	Tue, 10 Dec 2024 11:33:32 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
- 2024 11:33:32 +0100
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Dec
- 2024 11:33:32 +0100
-Message-ID: <a8654e63-ff92-4d11-a3f5-75626e6dc6fe@foss.st.com>
-Date: Tue, 10 Dec 2024 11:33:31 +0100
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="TRrI9jgP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733875747;
+	bh=CjAhm0T8eabtTbWzEl56h8D/MJjBFmQj5LVqz+i6m/0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	 x-icloud-hme;
+	b=TRrI9jgPRZLkzXZqlbksM2a1UEkJXKYRysRTzr18jNqnNAL5LBmjgtrNTVCiQ7zM5
+	 Mr2u8dkC+/+V17h+FyPa5mlKV7wUr6+36AfbXqarAGf4pzonKnBDcjtswVv4N9TzEu
+	 zj5ECcV9nRkzuNfPL/dDBwg/EWD1j7SiDh8rWulypBf/N3+oAHcNlPloUBghQEHJ29
+	 DJ0mavrO6MBTMeMT18Qgv3sJSrvpQYFGODCOv5BBu9X06thbTc4kvlHYnvp8MXSfy0
+	 urWDJFk+fFZ3dsoxPSKspmSbHgZvo6d4uCMfCJ/6XfToj0I3LqrZahZBK2tmyKTGkV
+	 dkYj7xRMjP9uA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id D49D93A03BB;
+	Wed, 11 Dec 2024 00:08:55 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v4 00/11] driver core: Constify API device_find_child()
+Date: Wed, 11 Dec 2024 08:08:02 +0800
+Message-Id: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
- optional operation
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
- <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
+X-B4-Tracking: v=1; b=H4sIAOLXWGcC/2XOzWoDIRQF4FcZXNfgHR2jWfU9Sgn+XJu7GE10O
+ rSEvHvMBAoly3PgfJwra1gJGzsMV1ZxpUYl96DeBhZOLn8hp9gzG8WoYBTAQ8ltOcYUjrFk5M5
+ h2ANK79GxPjpXTPSzgR+fPZ+oLaX+bv4Kj3ajhIEXagUuuI1mQpmsksG/X74pUA67UGb2wFb5B
+ /Qv0wsgOwAaIIEy2k/uP3B73qvY20bL8yPzrmGH5pmWwxBilAK9B2+T1DDZqHUSxngNDnHUCrW
+ yce86drsD+D+VdzsBAAA=
+X-Change-ID: 20241201-const_dfc_done-aaec71e3bbea
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ James Bottomley <James.Bottomley@HansenPartnership.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+ Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ nvdimm@lists.linux.dev, linux-sound@vger.kernel.org, 
+ sparclinux@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-cxl@vger.kernel.org, linux1394-devel@lists.sourceforge.net, 
+ arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, 
+ netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: -alI-XRJ5CvcRnQBKSq5z98wt7DybGq1
+X-Proofpoint-GUID: -alI-XRJ5CvcRnQBKSq5z98wt7DybGq1
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-10_13,2024-12-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412100174
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
+This patch series is to constify the following API:
+struct device *device_find_child(struct device *dev, void *data,
+		int (*match)(struct device *dev, void *data));
+To :
+struct device *device_find_child(struct device *dev, const void *data,
+				 device_match_t match);
+typedef int (*device_match_t)(struct device *dev, const void *data);
 
+Why to constify the API?
 
-On 12/10/24 00:14, Bjorn Andersson wrote:
-> On Thu, Nov 28, 2024 at 09:42:10AM GMT, Arnaud Pouliquen wrote:
->> This patch updates the rproc_ops structures to include two new optional
->> operations.
->>
->> - The load_fw() op is responsible for loading the remote processor
->> non-ELF firmware image before starting the boot sequence. This ops will
->> be used, for instance, to call OP-TEE to  authenticate an load the firmware
->> image before accessing to its resources (a.e the resource table)
->>
->> - The release_fw op is responsible for releasing the remote processor
->> firmware image. For instance to clean memories.
->> The ops is called in the following cases:
->>  - An error occurs between the loading of the firmware image and the
->>    start of the remote processor.
->>  - after stopping the remote processor.
->>
-> 
-> Why does this difference need to be encoded in rproc_ops? I think we
-> should strive for having a single, simple high level flow of operations
-> through the remoteproc core for which the specifics of each remoteproc
-> instance can be encoded in that driver.
-> 
-> 
-> Perhaps there's a good reason for this, but if so please read and follow
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> to make that reasoning clear in the commit message.
-> 
+- Protect caller's match data @*data which is for comparison and lookup
+  and the API does not actually need to modify @*data.
 
-The actual sequence to load a remoteproc firmware is
-- get firmware from file system and store the firmware image in Linux kernel memory
-- get resource table from the firmware image and make a copy(
-- parse the resource table and handle the resources
-- load the firmware
-- start the firmware
+- Make the API's parameters (@match)() and @data have the same type as
+  all of other device finding APIs (bus|class|driver)_find_device().
 
+- All kinds of existing device matching functions can be directly taken
+  as the API's argument, they were exported by driver core.
 
-In OP-TEE we support not only one ELF image but n images (for instance a TF-M +
-a zephyr), the segments can be encrypted the OP-TEE load sequence is
- - copy header and meta data of the signed image in a secure memory
- - verify it
- - copy segments in remote processor memory and authenticate segments in place.
- - optionally decrypt the segments
+What to do?
 
-Only at this step the resource table as been authenticated (and decrypted)
+- Patches [1/11, 3/11] prepare for constifying the API.
 
-So the point is that we need to load the firmware before getting the resource table
+- Patch 4/11 constifies the API and adapt for its various subsystem usages.
 
+- Remaining do cleanup for several usages with benefits brought above.
 
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->> Update vs version V13:
->> - Rework the commit to introduce load_fw() op.
->> - remove rproc_release_fw() call from  rproc_start() as called in
->>   rproc_boot() and rproc_boot_recovery() in case of error.
->> - create rproc_load_fw() and rproc_release_fw() internal functions.
->> ---
->>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
->>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
->>  include/linux/remoteproc.h               |  6 ++++++
->>  3 files changed, 35 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index ace11ea17097..8df4b2c59bb6 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->>  	kfree(rproc->cached_table);
->>  	rproc->cached_table = NULL;
->>  	rproc->table_ptr = NULL;
->> +	rproc_release_fw(rproc);
->>  unprepare_rproc:
->>  	/* release HW resources if needed */
->>  	rproc_unprepare_device(rproc);
->> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
->>  		return ret;
->>  	}
->>  
->> +	ret = rproc_load_fw(rproc, firmware_p);
-> 
-> It is not clear to me why in the case of OP-TEE we need to invoke the
-> "load operation" here, and in the case of "legacy" ELF loading we do it
-> first thing in rproc_start() (i.e. on the very next line of code being
-> executed).
+---
+Changes in v4:
+- Correct title and commit messages according to review comments
+- Link to v3: https://lore.kernel.org/r/20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com
 
-For the OP-TEE, please refer to my comment above.
+Changes in v3:
+- Solve build broken issue by squashing changes of various subsystem.
+- Reduce recipients to try to send out full patch serial.
+- Correct tiles and commit messages.
+- Link to v2: https://lore.kernel.org/all/20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com
 
-The only reason I can see for the legacy ELF is that the resource table could
-contain information to be able to configure some resources to load the firmware.
-In case of OP-TEE this would be managed in OP-TEE.
+Changes in v2:
+- Series v1 have no code review comments and are posted a long time ago, so may ignore differences.
+- Link to v1: https://lore.kernel.org/r/20240811-const_dfc_done-v1-0-9d85e3f943cb@quicinc.com
+- Motivation link: https://lore.kernel.org/lkml/917359cc-a421-41dd-93f4-d28937fe2325@icloud.com
 
-> 
-> 
-> Should we start by renaming rproc_load_segments() rproc_load() and move
-> it out of rproc_start()? (I.e. here?)
-> 
-> Perhaps define that rproc_load() is responsible for "loading firmware"
-> (whatever that means) and establishing rproc->cached_table, and
-> rproc->table_ptr?
-> 
-> (Note that this seems like a good cleanup of the spaghetti regardless)
-> 
+---
+Zijun Hu (11):
+      libnvdimm: Replace namespace_match() with device_find_child_by_name()
+      slimbus: core: Constify slim_eaddr_equal()
+      bus: fsl-mc: Constify fsl_mc_device_match()
+      driver core: Constify API device_find_child() then adapt for various usages
+      driver core: Simplify API device_find_child_by_name() implementation
+      driver core: Remove match_any()
+      slimbus: core: Remove of_slim_match_dev()
+      gpio: sim: Remove gpio_sim_dev_match_fwnode()
+      driver core: Introduce an device matching API device_match_type()
+      cxl/pmem: Replace match_nvdimm_bridge() with API device_match_type()
+      usb: typec: class: Remove both cable_match() and partner_match()
 
-It's something that crossed my mind, but I don't know the legacy well enough to
-guarantee that it will work in all drivers.
+ arch/sparc/kernel/vio.c                |  6 +++---
+ drivers/base/core.c                    | 30 ++++++++++--------------------
+ drivers/block/sunvdc.c                 |  6 +++---
+ drivers/bus/fsl-mc/dprc-driver.c       |  8 ++++----
+ drivers/cxl/core/pci.c                 |  4 ++--
+ drivers/cxl/core/pmem.c                |  9 +++------
+ drivers/cxl/core/region.c              | 21 ++++++++++++---------
+ drivers/firewire/core-device.c         |  4 ++--
+ drivers/firmware/arm_scmi/bus.c        |  4 ++--
+ drivers/firmware/efi/dev-path-parser.c |  4 ++--
+ drivers/gpio/gpio-sim.c                |  7 +------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |  2 +-
+ drivers/hwmon/hwmon.c                  |  2 +-
+ drivers/media/pci/mgb4/mgb4_core.c     |  4 ++--
+ drivers/nvdimm/bus.c                   |  2 +-
+ drivers/nvdimm/claim.c                 |  9 +--------
+ drivers/pwm/core.c                     |  2 +-
+ drivers/rpmsg/rpmsg_core.c             |  4 ++--
+ drivers/scsi/qla4xxx/ql4_os.c          |  3 ++-
+ drivers/scsi/scsi_transport_iscsi.c    | 10 +++++-----
+ drivers/slimbus/core.c                 | 17 +++++------------
+ drivers/thunderbolt/retimer.c          |  2 +-
+ drivers/thunderbolt/xdomain.c          |  2 +-
+ drivers/tty/serial/serial_core.c       |  4 ++--
+ drivers/usb/typec/class.c              | 31 ++++++++++++++-----------------
+ include/linux/device.h                 |  4 ++--
+ include/linux/device/bus.h             |  1 +
+ include/scsi/scsi_transport_iscsi.h    |  4 ++--
+ net/dsa/dsa.c                          |  2 +-
+ tools/testing/cxl/test/cxl.c           |  2 +-
+ 30 files changed, 90 insertions(+), 120 deletions(-)
+---
+base-commit: cdd30ebb1b9f36159d66f088b61aee264e649d7a
+change-id: 20241201-const_dfc_done-aaec71e3bbea
 
-If you want to go in this direction, perhaps this is something that could be
-addressed in a dedicated pull request? In this case, the ops could become
-load_fw and load_fw_new, similar to how it is done for platform_driver::remove.
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
-
->> +	if (ret)
->> +		return ret;
->> +
->>  	/* boot the remote processor up again */
->>  	ret = rproc_start(rproc, firmware_p);
->> +	if (ret)
->> +		rproc_release_fw(rproc);
-> 
-> The fact that you rproc_release_fw() in the error path here, right
-> before we unconditionally release_firmware() the actual firmware means
-> that you have 2 different life cycles with very very similar names.
-> 
-> This will contain bugs, sooner or later.
-
-So we need to find a better way for the ops if we continue in this direction.
-What about introducing rproc_load_new and rproc_release?
-
-> 
->>  
->>  	release_firmware(firmware_p);
->>  
->> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
->>  			goto downref_rproc;
->>  		}
->>  
->> +		ret = rproc_load_fw(rproc, firmware_p);
->> +		if (ret)
->> +			goto downref_rproc;
->> +
->>  		ret = rproc_fw_boot(rproc, firmware_p);
->> +		if (ret)
->> +			rproc_release_fw(rproc);
->>  
->>  		release_firmware(firmware_p);
->>  	}
->> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
->>  	kfree(rproc->cached_table);
->>  	rproc->cached_table = NULL;
->>  	rproc->table_ptr = NULL;
->> +	rproc_release_fw(rproc);
->>  out:
->>  	mutex_unlock(&rproc->lock);
->>  	return ret;
->> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
->>  	if (!rproc->ops->coredump)
->>  		rproc->ops->coredump = rproc_coredump;
->>  
->> -	if (rproc->ops->load)
->> +	if (rproc->ops->load || rproc->ops->load_fw)
->>  		return 0;
->>  
->>  	/* Default to ELF loader if no load function is specified */
->> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->> index 0cd09e67ac14..2104ca449178 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
->>  	return (val <= (size_t) -1);
->>  }
->>  
->> +static inline void rproc_release_fw(struct rproc *rproc)
->> +{
->> +	if (rproc->ops->release_fw)
->> +		rproc->ops->release_fw(rproc);
->> +}
->> +
->> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
->> +{
->> +	if (rproc->ops->load_fw)
->> +		return rproc->ops->load_fw(rproc, fw);
->> +
->> +	return 0;
->> +}
->> +
->>  #endif /* REMOTEPROC_INTERNAL_H */
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index 2e0ddcb2d792..ba6fd560f7ba 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -381,6 +381,10 @@ enum rsc_handling_status {
->>   * @panic:	optional callback to react to system panic, core will delay
->>   *		panic at least the returned number of milliseconds
->>   * @coredump:	  collect firmware dump after the subsystem is shutdown
->> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
->> + *		processor expects to find it.
-> 
-> Why does it matter if it's an ELF or not?
-
-No matter. It was more to differentiate from the legacy one, but it does not
-make sense and adds to the argument that the ops naming is not accurate.
-
-> 
-> In the Qualcomm case, firmware comes in ELF format, Linux loads the
-> LOAD segments and the trusted world then authenticates the content and
-> start the remote processor.
-> 
-> 
-> I think the difference in your case is that you have memory reserved
-> elsewhere, and you want the "load" operation to pass the firmware to the
-> TEE - which means that you need rproc_release_fw() to eventually clean
-> up the state if rproc_start() fails - and upon shutdown.
-
-Yes the OP-TEE is make more stuff:
-- authenticate several firmware images
-- decrypt images if encrypted
-- ensure that the load is done in granted memories
-- manage the memory access rights to enure that the code and data memory
- is never accessible by the Linux.
-
-> 
-> If we improve the definition of rproc_load_segments() to mean
-> "remoteproc (or remoteproc driver) is loading segments", then in your
-> case there's no "loading" operation in Linux. Instead you make that a
-> nop and invoke LOAD_FW and START_FW within your start callback, then you
-> can clean up the remnant state within your driver's start and stop
-> callbacks - without complicating the core framework.
-
-This would not work as I need to load the firmware before calling
-rproc_handle_resources().
-
-I can not use rproc_prepare_device() as it is not called on recovery
-
-Thanks,
-Arnaud
-
-> 
-> Regards,
-> Bjorn
-> 
->> + * @release_fw:	optional function to release the firmware image from memories.
->> + *		This function is called after stopping the remote processor or in case of error
->>   */
->>  struct rproc_ops {
->>  	int (*prepare)(struct rproc *rproc);
->> @@ -403,6 +407,8 @@ struct rproc_ops {
->>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->>  	unsigned long (*panic)(struct rproc *rproc);
->>  	void (*coredump)(struct rproc *rproc);
->> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
->> +	void (*release_fw)(struct rproc *rproc);
->>  };
->>  
->>  /**
->> -- 
->> 2.25.1
->>
