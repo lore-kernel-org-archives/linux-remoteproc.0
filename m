@@ -1,139 +1,99 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433E4179BD
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 07:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586871D7985
+	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 08:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733901615; cv=none; b=iuMlYEPkkHergtPat3NGMjSuO5S/fFsArcXFiA5QWWl8LLeCnywGFKlHxNObXXo0ZnB7ftKIfkur8zrLUQTsxTeJcj3ADDx7jTc7rVzltQOjCS3adlpvMbEaFvfyNypdTjvKDbzEdRYgjdfdAIWjB6yIBCtYuREM49XEApPdUsU=
+	t=1733905112; cv=none; b=J31eOT7yBf3FFJ5vQjr0L5oYR7Meb7KSMlL5C9X9D31y5PxJV7VJv2mj3aIwTs4yR5BJy/3nVm/WY/yQtyxoVEq6JGowe3Wfowz3ut8ks66HwNAm9Xs+RiRwovfUKl8iEZNrb9zP2ZDBYxgY5fzKGJoTbPIdx5barqBqWzmyNX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733901615; c=relaxed/simple;
-	bh=Q9qWU0tUxE9edYJc5FMZlnQo7oDzX1C1W1TOLELsPas=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DMH355W+sIWJvWq4qkQK+hke80ORH6WFe5Zpz2+GbuKfndwBFrQbgWCArn/ImeIm6tm1lgmeEh3ViUhRPIvbj4ZOl4eAW+490maXK/DET7s4tyDPAQUcENkRnhrsq6M9V9/qtne/oxwDYNi1vySDaBSjsWq++8t25Sme5Iz7Htc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hTKEFzxR; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1733905112; c=relaxed/simple;
+	bh=XskHzUQ0wP3xisQAsDVTIVaMiwmap3TuSXWv2UwOOoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dnuEDGWSHWhth9mJAP9OkhfTbHE3PDroMRJXwnUMKaCeYqQkLYtrHNmBWt7J2y04wc9hd98RTkdwkz9uT2nT/E9AV9rLadjnMggcL0xqzXJSIHLDdbphzlVIJ9CWnMDYktF+A/YXWUg97+dNS+pLNRAQv0+LJlRw/r6jjHz3+1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IoekGvcc; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hTKEFzxR"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21631789fcdso2602205ad.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Dec 2024 23:20:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IoekGvcc"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3022484d4e4so28670731fa.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 00:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733901613; x=1734506413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/cb20aQBdVO9cyiblKIOeV0cEljjD8IS2jrvpmrNd1k=;
-        b=hTKEFzxRoBTckS6HFP4E79LyebXVb1SJXHtVrjcxkytHiQDgIDVQxnkiMNrRiC9/K5
-         Mu4/aJVpTMZuOntoBY8qTPQA2k/G3YJ73/rD/CDdyuQI4ALsuCgZu1sBUklnn8i2aYxR
-         3OpL4yllWy1ggCXUpWC4oofvDSVqu03Yk8Igk=
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733905108; x=1734509908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XskHzUQ0wP3xisQAsDVTIVaMiwmap3TuSXWv2UwOOoE=;
+        b=IoekGvccNyR3/8I0UHPuhLZecAyr4HJw3FrGwOlZnUyrpVBWhfdQVmXdzzu49yqvat
+         1uMWuL6AJP5/rHSQRtmBLqHoP4gdsWWeZX0hoU3V3P71fSlzxMZgUpqiIfkxvkR77BeS
+         HB2xqPsWS8TK4jmjivCUlpiXyZ4ZzdD5LuqQ/owoA4WnFLVodhfbCCKM3l9NTxUREITk
+         P+r9yEoGDmBSLyznzXbHDdK8AsE9XAVrjfESe+flsVXPOaEqUoLluDMtFzHk2eSi1PX5
+         CEl5D7XkONCmF1YX4dvA2bh965GgrnYMeJWeZpPCkJLGaqTSacwNZp2FhgKA2BKqQdu2
+         zQeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733901613; x=1734506413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/cb20aQBdVO9cyiblKIOeV0cEljjD8IS2jrvpmrNd1k=;
-        b=SOj4ZouDdAGH9B5Uyh+j7h9gyFkx0qrq31fSdxgD6/l9I6kMLMxpLuBpVnJcuw/zWJ
-         FPG3ylhi72J4eaUPq34J7HMj8Axs7tJcC0Onnrp47+CUEAM1aT315nYHP4635uM8BOrg
-         GLKX0hmyvwOO1PouHSb8E7Nb/UHfEF7f8GU5IxLDNEBPgq/UXlZfs2WmoK1G0wmsZkTn
-         C0RwPXvyHh1ALJH36oBsoFlISJRg+wfgG6kVaF5tUzfHgiRn648vu5z7NIJL9Ah+j53S
-         VUHiJnPhx7fXgC7LsyfdcXHxH/dJjzz6d0dNro1KlN00L/VoTQaxdb9NohLTMhdn4EgA
-         JIXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUx9HEkx+NLeo9AH8f69mfSPuhkrHbobn/CBKotDnVjtNLbR9wRENYqwGaMclQuo+0IKBHbS+Bf7qsIHoBlSowT@vger.kernel.org
-X-Gm-Message-State: AOJu0YztQhPUYE0q3D7ANVvtfNNNk783rt6iqqaYF+uKnGwRorXp0Pjj
-	v25THEsKB9y2MCd2ykl/zvReEbJLlDtXvMJNnhe/DQtzQu+eGUH/OCW8XaqeWQ==
-X-Gm-Gg: ASbGncuWYwc5QHm9qvdJxnKMdfaRpNOfdBBXTuDCgIOm1Dwt+bq5gffi3TPFHVaTMOJ
-	867cG2f65GDRelk9FGSz6D2W6pcVT9datsFce70XV1/vM/A5UXEkFXv0+zh0HJ4TsPaGBi0tnCB
-	6TPrO2kIG0MbqoBRVhW8E3t1YiivtGrr07WlE1CcO8smiepa8pTGAqoHM6anxUHrGkh2GmGGNgu
-	4VdmW+xLVG5Gx9WQTtS85artkV8WGX5DUz8OKPoFHssx6SiuNDhIoW6SS2fS6AAZFLv9fW2
-X-Google-Smtp-Source: AGHT+IFb/j40l8RyXKKBP91IUhP6PaUxTTbrpQWP3pPlzKpxqE854bcUMGQOoZq9SqoelV4WQPakhQ==
-X-Received: by 2002:a17:903:230f:b0:215:b1e3:c051 with SMTP id d9443c01a7336-21779e450e3mr25924325ad.11.1733901613656;
-        Tue, 10 Dec 2024 23:20:13 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:4dfb:c0ae:6c93:d01e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e41e52sm100214925ad.3.2024.12.10.23.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 23:20:13 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH v2] remoteproc: mtk_scp: Only populate devices for SCP cores
-Date: Wed, 11 Dec 2024 15:20:07 +0800
-Message-ID: <20241211072009.120511-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+        d=1e100.net; s=20230601; t=1733905108; x=1734509908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XskHzUQ0wP3xisQAsDVTIVaMiwmap3TuSXWv2UwOOoE=;
+        b=qKVZloOJzQocPC4j3vPkqOWhbfjmTsPTLmjZHlOoW2G1sYTn6DNtKQSXAeWDma4dVr
+         DPAShPKJNFGPfuwxGvfCfh2EcVEDRWObnGR6Y/Dw4AreHg/75j2hSptO5fPjG+Rjec9m
+         brKRVA3NwIJ1IHXtltflDv94aagfGAv/86KVWJLpxAJc56CB3VJo2jz/o3NwtnDK4utg
+         7v+LvhZPZwRPc6D9GIipryMIylmDuEMBLFhXBrjybeLfrRqkacAEqchfEN6+ywMuMW9/
+         NHxLnNwVLIq0wgAiplyiePp6TgVXS6s24b7Wn0YUW4REYEzMMSJSzMb5cC0IEx+K4p86
+         ku6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXC9vilo7NWAoYQW+xNhWTKcEPkBG1i1qvCfZwYXnOS2pbk/TQIeE2GizuO2TUPSEmlgejWDS9RA7uUCzjLzuJZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiPVoUJgbjeULVQPu+Pzn0FtJLHSxFtBWFK3YLz6v1lueTxK/W
+	V7lORQopy/iDIPkkAQHCOtL/+oLhW+NSnuR8QTOLW7nP+nznodEuVqteoZPYZ2gh5PNIkvR/cmM
+	oVPfzFiEeGz2W5VcSu29c/i4i901anfLTvfRbrA==
+X-Gm-Gg: ASbGnctpHa8seFo4xksi0wtgt5LWs2tiEerYrWOgBYAvzA708BQXOT0ZO4xjQthZ5Rt
+	hOzKt0NRWvRtnDijNA92nvpQzQQUoEMY2XizuhJaZ020WBJGMjmrE/KggisshD2fyLuw=
+X-Google-Smtp-Source: AGHT+IEyqSnEBMMtZyEj5jF6bo6/CxMQUAS8l/Vem+Q0Tg0zwJltPimb/BXxYNi4dNa8OIsM4j3xdj7bHzlce3zdJRY=
+X-Received: by 2002:a2e:bcc6:0:b0:2ff:c95a:a067 with SMTP id
+ 38308e7fff4ca-30240d08829mr5734311fa.13.1733905108362; Wed, 11 Dec 2024
+ 00:18:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com> <20241211-const_dfc_done-v4-8-583cc60329df@quicinc.com>
+In-Reply-To: <20241211-const_dfc_done-v4-8-583cc60329df@quicinc.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Dec 2024 09:18:17 +0100
+Message-ID: <CAMRc=MdJuy9ghgLHxbygdHME2EkttZ7zBMJzCis=t94EUMbGiQ@mail.gmail.com>
+Subject: Re: [PATCH v4 08/11] gpio: sim: Remove gpio_sim_dev_match_fwnode()
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-sound@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-serial@vger.kernel.org, netdev@vger.kernel.org, 
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When multi-core SCP support was added, the driver was made to populate
-platform devices for all the sub-nodes. This ended up adding platform
-devices for the rpmsg sub-nodes as well, which never actually get used,
-since rpmsg devices are registered through the rpmsg interface.
+On Wed, Dec 11, 2024 at 1:10=E2=80=AFAM Zijun Hu <zijun_hu@icloud.com> wrot=
+e:
+>
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>
+> gpio_sim_dev_match_fwnode() is a simple wrapper of API
+> device_match_fwnode().
+>
+> Remove the needless wrapper and use the API instead.
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
 
-Limit of_platform_populate() to just populating the SCP cores with a
-compatible string match list.
-
-Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
-Cc: Tinghan Shen <tinghan.shen@mediatek.com>
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v1:
-- Fix commit subject: populate devices *for* SCP cores
----
- drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 0f4a7065d0bd..8206a1766481 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
- 	return ret;
- }
- 
-+static const struct of_device_id scp_core_match[] = {
-+	{ .compatible = "mediatek,scp-core" },
-+	{}
-+};
-+
- static int scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
- 	mutex_init(&scp_cluster->cluster_lock);
- 
--	ret = devm_of_platform_populate(dev);
-+	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
- 
- 	ret = scp_cluster_init(pdev, scp_cluster);
--	if (ret)
-+	if (ret) {
-+		of_platform_depopulate(dev);
- 		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
- 		rproc_del(scp->rproc);
- 		scp_free(scp);
- 	}
-+	of_platform_depopulate(&pdev->dev);
- 	mutex_destroy(&scp_cluster->cluster_lock);
- }
- 
--- 
-2.47.0.338.g60cca15819-goog
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
