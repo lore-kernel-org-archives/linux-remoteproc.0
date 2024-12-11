@@ -1,173 +1,139 @@
-Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737976F06B
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 00:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433E4179BD
+	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Dec 2024 07:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733875876; cv=none; b=r8aUxyQ9tOOgwW39J6rwhYhDUHOgz1VG6mLVRFaizWM7G5s4JioWkrsadWuPoHgxfWis+oHarxqaZ1IAAxiPPK1H7Iu1QtE1ShxM20lHhiTIw16KkAHXewQev4jBhfXWiqtb0vhJNo1uGGE+AjMIuDctX29ADoTrXWTmuVZF1uY=
+	t=1733901615; cv=none; b=iuMlYEPkkHergtPat3NGMjSuO5S/fFsArcXFiA5QWWl8LLeCnywGFKlHxNObXXo0ZnB7ftKIfkur8zrLUQTsxTeJcj3ADDx7jTc7rVzltQOjCS3adlpvMbEaFvfyNypdTjvKDbzEdRYgjdfdAIWjB6yIBCtYuREM49XEApPdUsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733875876; c=relaxed/simple;
-	bh=d3RWbfmtjm10GAZA1NaOSKX3f3hNp1vr+fuyWoNuJcw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q6nqtzHR2ZtSMQP0zmL0Ku5WQHPsToIb8DicxOhKl++MGPlVA+y4+R4FKQB+qC1Xyqn2PsxUj9AhLSlLcsPjaevqj9W2HA404ja/zE2QkdRqocnDmGXmcmoFMbV3XOgUynkp5rh2ml6T1GSF/+YHEK7tMYsQdKYZT+vBUZvUBIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=A2G4Fr6G; arc=none smtp.client-ip=17.58.6.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+	s=arc-20240116; t=1733901615; c=relaxed/simple;
+	bh=Q9qWU0tUxE9edYJc5FMZlnQo7oDzX1C1W1TOLELsPas=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DMH355W+sIWJvWq4qkQK+hke80ORH6WFe5Zpz2+GbuKfndwBFrQbgWCArn/ImeIm6tm1lgmeEh3ViUhRPIvbj4ZOl4eAW+490maXK/DET7s4tyDPAQUcENkRnhrsq6M9V9/qtne/oxwDYNi1vySDaBSjsWq++8t25Sme5Iz7Htc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hTKEFzxR; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="A2G4Fr6G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733875874;
-	bh=+P6kTmCwDbC0RwMmjYjZfzPZ5o9SCTkxH8bGJ/DVcdQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=A2G4Fr6Ga6cVgux12r3mj2O9uL5jIcyFXHdjjqLRUtrEdEAwO7iZHiUi5FF6UPVWo
-	 hkulrf+wv/Im1f51OENPnQuBkzjqse1+qZAWDlM/Ma/ogIYBbBc5z987he4q/Jfl/j
-	 jqoFvMwL1Dxn9aXwXtEZHj1xbx0kYWW9yoj14b+sc93PJCVGG73JrsnCffz2e+UQam
-	 moqZ3JxqtqDb6QrUFF3T4ZHUf07FMnmWcCqxambSLziZyyUYRBLY1FDHbpm8nZRlL4
-	 b1ndYET1hWQUqdrGPGb1qMfeSNR//QUsLeZ1GaVoFEHlo6HuTD5NfJJdJ3tCpxtcTt
-	 akO3dQKO/do/A==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id E9BCD3A0349;
-	Wed, 11 Dec 2024 00:11:03 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 11 Dec 2024 08:08:13 +0800
-Subject: [PATCH v4 11/11] usb: typec: class: Remove both cable_match() and
- partner_match()
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hTKEFzxR"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21631789fcdso2602205ad.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Dec 2024 23:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733901613; x=1734506413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/cb20aQBdVO9cyiblKIOeV0cEljjD8IS2jrvpmrNd1k=;
+        b=hTKEFzxRoBTckS6HFP4E79LyebXVb1SJXHtVrjcxkytHiQDgIDVQxnkiMNrRiC9/K5
+         Mu4/aJVpTMZuOntoBY8qTPQA2k/G3YJ73/rD/CDdyuQI4ALsuCgZu1sBUklnn8i2aYxR
+         3OpL4yllWy1ggCXUpWC4oofvDSVqu03Yk8Igk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733901613; x=1734506413;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/cb20aQBdVO9cyiblKIOeV0cEljjD8IS2jrvpmrNd1k=;
+        b=SOj4ZouDdAGH9B5Uyh+j7h9gyFkx0qrq31fSdxgD6/l9I6kMLMxpLuBpVnJcuw/zWJ
+         FPG3ylhi72J4eaUPq34J7HMj8Axs7tJcC0Onnrp47+CUEAM1aT315nYHP4635uM8BOrg
+         GLKX0hmyvwOO1PouHSb8E7Nb/UHfEF7f8GU5IxLDNEBPgq/UXlZfs2WmoK1G0wmsZkTn
+         C0RwPXvyHh1ALJH36oBsoFlISJRg+wfgG6kVaF5tUzfHgiRn648vu5z7NIJL9Ah+j53S
+         VUHiJnPhx7fXgC7LsyfdcXHxH/dJjzz6d0dNro1KlN00L/VoTQaxdb9NohLTMhdn4EgA
+         JIXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUx9HEkx+NLeo9AH8f69mfSPuhkrHbobn/CBKotDnVjtNLbR9wRENYqwGaMclQuo+0IKBHbS+Bf7qsIHoBlSowT@vger.kernel.org
+X-Gm-Message-State: AOJu0YztQhPUYE0q3D7ANVvtfNNNk783rt6iqqaYF+uKnGwRorXp0Pjj
+	v25THEsKB9y2MCd2ykl/zvReEbJLlDtXvMJNnhe/DQtzQu+eGUH/OCW8XaqeWQ==
+X-Gm-Gg: ASbGncuWYwc5QHm9qvdJxnKMdfaRpNOfdBBXTuDCgIOm1Dwt+bq5gffi3TPFHVaTMOJ
+	867cG2f65GDRelk9FGSz6D2W6pcVT9datsFce70XV1/vM/A5UXEkFXv0+zh0HJ4TsPaGBi0tnCB
+	6TPrO2kIG0MbqoBRVhW8E3t1YiivtGrr07WlE1CcO8smiepa8pTGAqoHM6anxUHrGkh2GmGGNgu
+	4VdmW+xLVG5Gx9WQTtS85artkV8WGX5DUz8OKPoFHssx6SiuNDhIoW6SS2fS6AAZFLv9fW2
+X-Google-Smtp-Source: AGHT+IFb/j40l8RyXKKBP91IUhP6PaUxTTbrpQWP3pPlzKpxqE854bcUMGQOoZq9SqoelV4WQPakhQ==
+X-Received: by 2002:a17:903:230f:b0:215:b1e3:c051 with SMTP id d9443c01a7336-21779e450e3mr25924325ad.11.1733901613656;
+        Tue, 10 Dec 2024 23:20:13 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:4dfb:c0ae:6c93:d01e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e41e52sm100214925ad.3.2024.12.10.23.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 23:20:13 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH v2] remoteproc: mtk_scp: Only populate devices for SCP cores
+Date: Wed, 11 Dec 2024 15:20:07 +0800
+Message-ID: <20241211072009.120511-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241211-const_dfc_done-v4-11-583cc60329df@quicinc.com>
-References: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com>
-In-Reply-To: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- James Bottomley <James.Bottomley@HansenPartnership.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
- Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- nvdimm@lists.linux.dev, linux-sound@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-block@vger.kernel.org, 
- linux-cxl@vger.kernel.org, linux1394-devel@lists.sourceforge.net, 
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-hwmon@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, 
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: qwQLilRFtH8fzUdgAlR9P2gaSWkwiO3A
-X-Proofpoint-GUID: qwQLilRFtH8fzUdgAlR9P2gaSWkwiO3A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-10_13,2024-12-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
- suspectscore=0 mlxscore=0 spamscore=0 mlxlogscore=950 clxscore=1015
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412100174
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+When multi-core SCP support was added, the driver was made to populate
+platform devices for all the sub-nodes. This ended up adding platform
+devices for the rpmsg sub-nodes as well, which never actually get used,
+since rpmsg devices are registered through the rpmsg interface.
 
-cable_match(), as matching function of device_find_child(), matches
-a device with device type @typec_cable_dev_type, and its task can be
-simplified by the recently introduced API device_match_type().
+Limit of_platform_populate() to just populating the SCP cores with a
+compatible string match list.
 
-partner_match() is similar with cable_match() but with a different
-device type @typec_partner_dev_type.
-
-Remove both functions and use the API plus respective device type instead.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+Cc: Tinghan Shen <tinghan.shen@mediatek.com>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/usb/typec/class.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+Changes since v1:
+- Fix commit subject: populate devices *for* SCP cores
+---
+ drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 601a81aa1e1024265f2359393dee531a7779c6ea..3a4e0bd0131774afd0d746d2f0a306190219feec 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1282,11 +1282,6 @@ const struct device_type typec_cable_dev_type = {
- 	.release = typec_cable_release,
- };
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 0f4a7065d0bd..8206a1766481 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
+ 	return ret;
+ }
  
--static int cable_match(struct device *dev, const void *data)
--{
--	return is_typec_cable(dev);
--}
--
- /**
-  * typec_cable_get - Get a reference to the USB Type-C cable
-  * @port: The USB Type-C Port the cable is connected to
-@@ -1298,7 +1293,8 @@ struct typec_cable *typec_cable_get(struct typec_port *port)
++static const struct of_device_id scp_core_match[] = {
++	{ .compatible = "mediatek,scp-core" },
++	{}
++};
++
+ static int scp_probe(struct platform_device *pdev)
  {
- 	struct device *dev;
+ 	struct device *dev = &pdev->dev;
+@@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
+ 	mutex_init(&scp_cluster->cluster_lock);
  
--	dev = device_find_child(&port->dev, NULL, cable_match);
-+	dev = device_find_child(&port->dev, &typec_cable_dev_type,
-+				device_match_type);
- 	if (!dev)
- 		return NULL;
+-	ret = devm_of_platform_populate(dev);
++	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
  
-@@ -2028,16 +2024,12 @@ const struct device_type typec_port_dev_type = {
- /* --------------------------------------- */
- /* Driver callbacks to report role updates */
+ 	ret = scp_cluster_init(pdev, scp_cluster);
+-	if (ret)
++	if (ret) {
++		of_platform_depopulate(dev);
+ 		return ret;
++	}
  
--static int partner_match(struct device *dev, const void *data)
--{
--	return is_typec_partner(dev);
--}
--
- static struct typec_partner *typec_get_partner(struct typec_port *port)
- {
- 	struct device *dev;
+ 	return 0;
+ }
+@@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
+ 		rproc_del(scp->rproc);
+ 		scp_free(scp);
+ 	}
++	of_platform_depopulate(&pdev->dev);
+ 	mutex_destroy(&scp_cluster->cluster_lock);
+ }
  
--	dev = device_find_child(&port->dev, NULL, partner_match);
-+	dev = device_find_child(&port->dev, &typec_partner_dev_type,
-+				device_match_type);
- 	if (!dev)
- 		return NULL;
- 
-@@ -2170,7 +2162,9 @@ void typec_set_pwr_opmode(struct typec_port *port,
- 	sysfs_notify(&port->dev.kobj, NULL, "power_operation_mode");
- 	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
- 
--	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-+	partner_dev = device_find_child(&port->dev,
-+					&typec_partner_dev_type,
-+					device_match_type);
- 	if (partner_dev) {
- 		struct typec_partner *partner = to_typec_partner(partner_dev);
- 
-@@ -2334,7 +2328,9 @@ int typec_get_negotiated_svdm_version(struct typec_port *port)
- 	enum usb_pd_svdm_ver svdm_version;
- 	struct device *partner_dev;
- 
--	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-+	partner_dev = device_find_child(&port->dev,
-+					&typec_partner_dev_type,
-+					device_match_type);
- 	if (!partner_dev)
- 		return -ENODEV;
- 
-@@ -2361,7 +2357,8 @@ int typec_get_cable_svdm_version(struct typec_port *port)
- 	enum usb_pd_svdm_ver svdm_version;
- 	struct device *cable_dev;
- 
--	cable_dev = device_find_child(&port->dev, NULL, cable_match);
-+	cable_dev = device_find_child(&port->dev, &typec_cable_dev_type,
-+				      device_match_type);
- 	if (!cable_dev)
- 		return -ENODEV;
- 
-
 -- 
-2.34.1
+2.47.0.338.g60cca15819-goog
 
