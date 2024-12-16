@@ -1,151 +1,109 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A50205E01
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Dec 2024 16:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2111FF7D4
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Dec 2024 16:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367879; cv=none; b=j1yAxjXXU/Af6Q5xDkp5qYlnD2eZKtCbHrAaa9Vu2qga1RcUXDPq6VXdoT3bphQSKmjjp46SZUQZbU3u7n8U0V0uPzRinb0N8v4gUy+iKgtotLVJ7N+gpU95DsDDlgZye8NsURvZklh8v3O1GS8P2xSms/VHB8k97NiCGgfMD3g=
+	t=1734368140; cv=none; b=tiLvlD44LvGmJJ/QNtqydsgNs0wxsOmSwhr3STjZ6Q/qLKLYmIMno3nV0386yiHBmSrB3+tlHyPNxW3TikLTVSv9LraEYnRvq1GWgCMEaXKtSgXpGBFeZJQnS9uJymz9agJAJOoooYrC7IovYfsz3lLLYwsqhkmPRLTgi26zGOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367879; c=relaxed/simple;
-	bh=qJWpvMvaRyRncie5h9SvPMSV7VD+M79aQruQQoCxMhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGSazZaKZacxYa6G/A0mFJRdriiiQXAQtyV9af/QyAEhapF8IEkJYT7w630qzJKqTBMKxRdmdysWEycgVMAfHeSmbMVAMAqEh4Ysyt4Ff9feLhZuqefSsDxLYhlrS3Sd1ZeEEqTPLm8y22rp0w1OLGXoN8AQOdAasa8vYRSmz2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SUHx6vXo; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1734368140; c=relaxed/simple;
+	bh=exIcYFMr/HRpQfKDSPgzbZF56CjdZYovi5aOzoilGs8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bzh0wPQHxAgq89CSLF+G+1BrC501wTIOSE3iBp81LkYhj3g1Pj+k29i83tZOKFvmBt9AfNubCa18CLsVZVxX9o1upfHEh/+6ML1BIw6NHUIc/QBGZ9r3fKJsPAMeqHXsRckBfsZO4gbftyFdBnM/UWXwFFmxnRIjL8IRFp0paYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U1gZwNXL; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SUHx6vXo"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21661be2c2dso31627965ad.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Dec 2024 08:51:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1gZwNXL"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3ecae02beso5683104a12.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Dec 2024 08:55:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734367877; x=1734972677; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhE+DSypq3SjpYtMHh6sKFtWdmcn5TW3B/Ayo8044zE=;
-        b=SUHx6vXoeJSNzsZ9GfSzXqFOh/aWEPLxD7gtJNhH080rLWxCbwITDydd45Sqthk7CX
-         ijETNMdMUSgInsEag34xlN6slqBfxsX27b9zhRPVa3e9Gr894XKOweBpLpKy9Lonnv9j
-         wLhvh6+nQpnOptHrBQD1ALyZ0GbZs7yz2pSEI6tMIvbIzy3iZjSyk+ZNC340taplG1D4
-         NCzlZBs6kF3gWMzEvldz5BrxfEcaLe56yWjexEPIq1GZk8If6JsdVJXmG4GgA5bpLJ05
-         jRvO98uCxhQFWOH27/L1zRm/HndLzZzVIk3I0K1drHOlqUvRnL/pDezAQa4E6qYyZo1A
-         VC0Q==
+        d=linaro.org; s=google; t=1734368136; x=1734972936; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5F9L8ao2FWg6tQlgvlzr46lLj33BvkE+wjWX2g+pmKY=;
+        b=U1gZwNXL2jr6eJLdZsoBEh7ijUM41yek3w/7aAJzSlNiK/HdBiPb5oYyxuCYYfocZs
+         Kf0CS71ryc1JK4rDOHtGmuzuXa9V/okp8ePDrgY2XNebXMn4El5annZW0uhS0HdM0emh
+         wjduYPkUweQARQAazU7dnUXODkmiOk4SxB8vnf8zbfUqfDw6/9/OeGW5SOllDQtqr5mu
+         Dovd8gAI2CMf5JM20MV3K8fxxOuLgqiqL6OCaU4e2tJ/GkztGaAbXGzO7qCnoKdsPsKa
+         HgrMGqbbdNH2gH8H2WhZDB+LtyJaj6rh1tMt6W3/q9wQlTI5jqLuXQ8cXtl3FsbVqL/v
+         ptmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734367877; x=1734972677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AhE+DSypq3SjpYtMHh6sKFtWdmcn5TW3B/Ayo8044zE=;
-        b=bOsAF3wQhokNMmYP+t5knmZgQTPOXbk06buMifqvnozaCpBAedPKeRA5ZKdT90kbh3
-         1zTYSb0d9HwYR/9s2Lg5Frv7CvRCQLXUUpH+0zdKe7azkU0yL+fD8ZoYcMEY0qReOpnp
-         inSftbbPo/AdtGkIF+HHTzut1AXLeTp5s0rDFL9saPbjU69HUKlWC/Z+MeuYjaUZS89W
-         Wk9z+au78q95DSrukt94ZWz87ty0udkXM81LFCcM1X+C1wE5InvoPudwOS0JosSvAZZE
-         DCI9fV0FwzsFhvrSIWK2KO7lSB9N+Kvo6RGrdp9YXHwmWSL5QjnEhWUWKnO8+UV7Lg66
-         JJlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdOYFH1rsxY1jdmIl+IhvbNEJ4inbvaYCUprfP8JfpWHayWhKbguHlnCucIfZpALM5CQBNiOKj9+s/1K2kQmUW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy19AqN3WtZFmG6zthA+l7HM3sAJgPDSluPby6ZlJeHZEVNmd9U
-	KZa15tgPs2MS1bN64Svat0q53ImReLp4J3E5p7gAJNmlyhfSHufpoX5TEux3XjI=
-X-Gm-Gg: ASbGncso6vLdHo+IENYZTeg9Lr6rZu83iBT3bigbhx7Kf8PbWNVits716HHaGXHLGJ9
-	ycFzlxx6ooLt3lIcW3Mc80cBFDQKFzKJGEun5d9eyOSbkKYoXMkhveIHQYi7AFWqLUGSuPFWNMV
-	VanU5e9RPMIK/TFYkP45QuCWMJtmbD2/Gl8HpM8PvtDbt0/uCePYYEXRVUetfABWRpP6cCgV/2b
-	xQwnjdYXbHxY2Fuh+t8q2BSM4SDOqEjIa14YsurE+V7zpOFeK1h8+hD5zyS
-X-Google-Smtp-Source: AGHT+IFdkBr1xidp7KbBA40XTCMNem9kWeuB09hpRbnYxb2m5xLWJETb06A1ncuzZHM9HfB1Sr5h4g==
-X-Received: by 2002:a17:90b:2e41:b0:2ee:b6c5:1def with SMTP id 98e67ed59e1d1-2f28fa54f64mr20741065a91.8.1734367876736;
-        Mon, 16 Dec 2024 08:51:16 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:13e6:498b:6054:9f90])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e500b8sm43931565ad.123.2024.12.16.08.51.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 08:51:16 -0800 (PST)
-Date: Mon, 16 Dec 2024 09:51:13 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Only populate devices for SCP
- cores
-Message-ID: <Z2Baga9gSFLlmXll@p14s>
-References: <20241211072009.120511-1-wenst@chromium.org>
+        d=1e100.net; s=20230601; t=1734368136; x=1734972936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5F9L8ao2FWg6tQlgvlzr46lLj33BvkE+wjWX2g+pmKY=;
+        b=TuECaleKYNhVdh4HiEuPOGIXl4TliAggFgnlYqIxAGmhIHJVvryUfmoBdm1PWI4gA0
+         Janj6yCCS1bbMmp/4nhCI8wV8Pxl6SbbTYBV+5wxTEUYIUhwGNn7hvAXfxRvImMD2ARP
+         xhESjNImo1Z9oWMcqhna5UihX3IqRYOtwDbj14Dc7MOBh7gDEQYe+EUJ5qoX8M4FRUr7
+         sQrNNWWkegm4wP77FhRI31u2gaywCXXdRAVu3goI0yh29FM0xYldo/lE8VfhuNkxCnGN
+         o2lrh0Q/wmz020eJJPisEaaWtrogmrQnB11tK47+IciT/OXX5KEcXFXCSu7HQIW5lPEN
+         GzPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk0J3+UyphsokJH6/rkRFRZ9WX3w0NiZHGUk3pieGt519kAGOhXwBS7y/o6onNny7PXBSZkCv0SoN+L9WWuQD7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6tTpqp7jOrr1ZJ+upo8yIyEJU4EAUxU2V+LiDLpUk9LFmYiu8
+	QBPPNVo3jFQhMNR9baWCSVzjv/dBc/z/GKnI2HNuW8WyBbdBOonX7XqW5d69PYiV15Ni8L7tmWk
+	ZnskaEyYZ0KDB6Lp6GMCY/VLb2bv0A7S0t0zZGQ==
+X-Gm-Gg: ASbGnctEss7FFvDr3/4Eeu02MI97ELQdvXPRzYnuK/ETu9gqfBW8PW9q91+kKkZnzSI
+	x0+mHC2WFiLWQBDva0L6lkYfLp1OIYQx7Eqb8s89kAtHAOwxMMF7+bOQVeXMRnh0ucHAy8aNP
+X-Google-Smtp-Source: AGHT+IHTRK/qYe6I9n70QN7A90ugOLz4h7UelfHoHHl07NZBTG0IUS3BQKGGrhwGG2+AQ5jg+1boyJI3eh0HXS0ECBI=
+X-Received: by 2002:a05:6402:5207:b0:5d0:bde9:2992 with SMTP id
+ 4fb4d7f45d1cf-5d63c39fac0mr12471441a12.26.1734368136212; Mon, 16 Dec 2024
+ 08:55:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211072009.120511-1-wenst@chromium.org>
+References: <20241204111130.2218497-1-b-padhi@ti.com>
+In-Reply-To: <20241204111130.2218497-1-b-padhi@ti.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 16 Dec 2024 09:55:24 -0700
+Message-ID: <CANLsYkw+-VVgDrpS9n_gTpNPGzgh8QhwqF66Qz0UbyEOL-5p9A@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Use Device Lifecycle managed functions in TI R5 Remoteproc
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com, 
+	jan.kiszka@siemens.com, christophe.jaillet@wanadoo.fr, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 11, 2024 at 03:20:07PM +0800, Chen-Yu Tsai wrote:
-> When multi-core SCP support was added, the driver was made to populate
-> platform devices for all the sub-nodes. This ended up adding platform
-> devices for the rpmsg sub-nodes as well, which never actually get used,
-> since rpmsg devices are registered through the rpmsg interface.
-> 
-> Limit of_platform_populate() to just populating the SCP cores with a
-> compatible string match list.
-> 
-> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
-> Cc: Tinghan Shen <tinghan.shen@mediatek.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> Changes since v1:
-> - Fix commit subject: populate devices *for* SCP cores
-> ---
->  drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+On Wed, 4 Dec 2024 at 04:11, Beleswar Padhi <b-padhi@ti.com> wrote:
+>
+> This series uses various devm_ helpers to simplify device removal path in
+> ti_k3_r5_remoteproc driver. This is the first series in the TI K3
+> Remoteproc refactoring as long planned since [0].
+>
+> Testing Done:
+> 1. Tested boot of R5F remoteprocs in MCU and MAIN voltage domain in both
+> IPC-Only mode and Kernel remoteproc mode in all Jacinto K3 devices.
+> 2. Tested Lockstep, Split and Single-CPU Mode configuration (wherever
+> applicable) of R5F remoteprocs in all Jacinto K3 devices.
+> 3. Tested shutdown of R5F remoteprocs from Linux userspace and also by
+> executing `modprobe -r ti_k3_r5_remoteproc`.
+> 4. Tested that each patch in this series generates no new warnings/errors.
+>
+> [0]: https://lore.kernel.org/all/Zr4w8Vj0mVo5sBsJ@p14s/
+>
+> Beleswar Padhi (5):
+>   remoteproc: k3-r5: Add devm action to release reserved memory
+>   remoteproc: k3-r5: Use devm_kcalloc() helper
+>   remoteproc: k3-r5: Add devm action to release tsp
+>   remoteproc: k3-r5: Use devm_ioremap_wc() helper
+>   remoteproc: k3-r5: Use devm_rproc_add() helper
+>
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 86 ++++++++++--------------
+>  1 file changed, 34 insertions(+), 52 deletions(-)
 >
 
-I have applied this patch.
+Please note that I am looking for an R-B and T-B tag from two
+different people (for now one of each will suffice) before looking at
+patches.
 
 Thanks,
 Mathieu
 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 0f4a7065d0bd..8206a1766481 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
->  	return ret;
->  }
->  
-> +static const struct of_device_id scp_core_match[] = {
-> +	{ .compatible = "mediatek,scp-core" },
-> +	{}
-> +};
-> +
->  static int scp_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
->  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
->  	mutex_init(&scp_cluster->cluster_lock);
->  
-> -	ret = devm_of_platform_populate(dev);
-> +	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
->  
->  	ret = scp_cluster_init(pdev, scp_cluster);
-> -	if (ret)
-> +	if (ret) {
-> +		of_platform_depopulate(dev);
->  		return ret;
-> +	}
->  
->  	return 0;
->  }
-> @@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
->  		rproc_del(scp->rproc);
->  		scp_free(scp);
->  	}
-> +	of_platform_depopulate(&pdev->dev);
->  	mutex_destroy(&scp_cluster->cluster_lock);
->  }
->  
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+> --
+> 2.34.1
+>
