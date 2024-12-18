@@ -1,47 +1,48 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D712C1684A0;
-	Wed, 18 Dec 2024 08:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF2B156F44;
+	Wed, 18 Dec 2024 08:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734510138; cv=none; b=SaN3JGLBR58M/kn0gc6mrb7J8KhStWk5jc3TTNnq3MCDRoMSWsEM2dwLjntfrm2Hf2CY60zwxTpp2/IQ93V9L7v2YNI7k+1uqst+Yz7GV01jWdwua8pgThSJ2XzpdywSwl7UiM7a0mj5kQEKwG5y74NcX2TSKNxlhC6Za3bHu5U=
+	t=1734510207; cv=none; b=hQmlKrXqmQD3TrJh2TTptZM2e7hY5Qsr5KtYA6hFr2c4gE2h9NETnBHDtOuCJwG7gJ5T82LDddAN4eiH3ibZPdCTxIq6tpFSW9uCEOzjpHo0L0L6K9G0HlDggxNOiuNwNnDIbfF0WDEe1vRTrsrKyo9VstZiPRPbOUSH0paOnXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734510138; c=relaxed/simple;
-	bh=hMOLPjzkFmjf53KhdpF7HTD2JUXwH8PwLdbJCz8uvqs=;
+	s=arc-20240116; t=1734510207; c=relaxed/simple;
+	bh=Mtsyf9a54iJiIMxNhS6apyo/4PtNQTzkpjKH++AEDy8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P2D+Ok0uIudZtEHpbES0jKIRdqgZcuDb6AAO0d2zfttw2XJAuaCA/4CovGtvO267u2ci3IwxuoCaDGZwbRzZ0C2+0e4pT+UXqfkTc1lr3iVT986qLcYL0U7HLqdeDp/7/LqU98UpnoUDtHTk349NU3pJ6Kr5Hfydfk2uyN9CjSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s0xU5Wdd; arc=none smtp.client-ip=198.47.19.141
+	 In-Reply-To:Content-Type; b=oSBU63JoR9F9+gxApCp1fX+odCXTcFYU9u/AXUkXbzfOq6/PTl14YicRBBUue7PejnPAtSuO7rRWjrIIK7oVzsw9AkP1QMS3KNjlspQsR0nwdK6x6htXBn5RujCw2mgEQqxiSAAjq6WyMnHZvaj1Zn/UTJyDFvj1bIkGdQBBTUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OPLXXqfI; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s0xU5Wdd"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8M7qI122699;
-	Wed, 18 Dec 2024 02:22:07 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OPLXXqfI"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8NIXi050250;
+	Wed, 18 Dec 2024 02:23:18 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1734510127;
-	bh=GMCvp2rQMRfmb708Od1+CPmM7/o7Cj0/dp2/zO/UWo0=;
+	s=ti-com-17Q1; t=1734510198;
+	bh=AGHqrVzM2yIL1iG2TrOD/3T4wA2HIJbJxWvOjFNCv0s=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=s0xU5WddLm0esZyKT1gJgapOwW6bNOxFcKqPZ6FNvNZ7geeZR6uAe44twuns7864X
-	 TvbsAjOdoy+7mAtfHaqMNvkz9Kzx4qgF7JnBvEcQszoDNPLoJqydeXDX1NSXnrPOL9
-	 lZ9+vY2SWXFgUIhkONQMfpZo5L0t/omO9iKRDHag=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8M7ha021697;
-	Wed, 18 Dec 2024 02:22:07 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+	b=OPLXXqfIBbaJWaRnCOUpa7HYDM4jIwr34OKp2BeQSJBvwEw0ol5dv4INcBfK08lGM
+	 Tr3vRhO/TkIQ5dbTt/VvwZhhJI1/k2Usz5c0aH8bn8ZBkX6iNbPkPr9HshOk2NVW0f
+	 VhRK7jw6L6sP5eJ4xWSzqcSMlG/VYx9Ax76jkxu4=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BI8NIrn011622
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 18 Dec 2024 02:23:18 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 18
- Dec 2024 02:22:07 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2024 02:23:18 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 18 Dec 2024 02:22:07 -0600
+ Frontend Transport; Wed, 18 Dec 2024 02:23:18 -0600
 Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8M4nB108754;
-	Wed, 18 Dec 2024 02:22:04 -0600
-Message-ID: <220b906c-3f16-44d9-b5c3-ad002057e20b@ti.com>
-Date: Wed, 18 Dec 2024 13:52:03 +0530
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8NFlT044429;
+	Wed, 18 Dec 2024 02:23:15 -0600
+Message-ID: <e6962344-906d-44fd-a822-70a5d54f523e@ti.com>
+Date: Wed, 18 Dec 2024 13:53:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -49,93 +50,136 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] remoteproc: k3-r5: Add devm action to release tsp
+Subject: Re: [PATCH 4/5] remoteproc: k3-r5: Use devm_ioremap_wc() helper
 To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
         <mathieu.poirier@linaro.org>
 CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jan.kiszka@siemens.com>,
         <christophe.jaillet@wanadoo.fr>, <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 References: <20241204111130.2218497-1-b-padhi@ti.com>
- <20241204111130.2218497-4-b-padhi@ti.com>
- <85dc5e05-5d54-4d0f-a7e2-24134a5392f5@ti.com>
+ <20241204111130.2218497-5-b-padhi@ti.com>
+ <5c016c4a-b7f2-4e9a-bb99-f56e0bf86e6f@ti.com>
 Content-Language: en-US
 From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <85dc5e05-5d54-4d0f-a7e2-24134a5392f5@ti.com>
+In-Reply-To: <5c016c4a-b7f2-4e9a-bb99-f56e0bf86e6f@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Andrew,
 
-On 17/12/24 21:30, Andrew Davis wrote:
+On 17/12/24 21:33, Andrew Davis wrote:
 > On 12/4/24 5:11 AM, Beleswar Padhi wrote:
->> Use a device lifecycle managed action to release tsp ti_sci_proc handle.
->> This helps prevent mistakes like releasing out of order in cleanup
->> functions and forgetting to release on error paths.
+>> Use a device lifecycle managed ioremap helper function. This helps
+>> prevent mistakes like unmapping out of order in cleanup functions and
+>> forgetting to unmap on all error paths.
 >>
 >> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 >> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 17 +++++++++++------
->>   1 file changed, 11 insertions(+), 6 deletions(-)
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 +++++-------------------
+>>   1 file changed, 8 insertions(+), 32 deletions(-)
 >>
 >> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
 >> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 0753a5c35c7e..2966cb210403 100644
+>> index 2966cb210403..1a7681502f62 100644
 >> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 >> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -1513,6 +1513,13 @@ static int 
->> k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
->>       return 0;
->>   }
->>   +static void k3_r5_release_tsp(void *data)
->> +{
->> +    struct ti_sci_proc *tsp = data;
->> +
->> +    ti_sci_proc_release(tsp);
->> +}
->> +
->>   static int k3_r5_core_of_init(struct platform_device *pdev)
->>   {
->>       struct device *dev = &pdev->dev;
->> @@ -1606,6 +1613,10 @@ static int k3_r5_core_of_init(struct 
->> platform_device *pdev)
->>           goto err;
->>       }
->>   +    ret = devm_add_action_or_reset(dev, k3_r5_release_tsp, 
->> core->tsp);
->> +    if (ret)
->> +        goto err;
->> +
->>       platform_set_drvdata(pdev, core);
->>       devres_close_group(dev, k3_r5_core_of_init);
->>   @@ -1622,13 +1633,7 @@ static int k3_r5_core_of_init(struct 
->> platform_device *pdev)
->>    */
->>   static void k3_r5_core_of_exit(struct platform_device *pdev)
->>   {
->> -    struct k3_r5_core *core = platform_get_drvdata(pdev);
->>       struct device *dev = &pdev->dev;
->> -    int ret;
+>> @@ -1004,17 +1004,13 @@ static int k3_r5_reserved_mem_init(struct 
+>> k3_r5_rproc *kproc)
+>>       /* use remaining reserved memory regions for static carveouts */
+>>       for (i = 0; i < num_rmems; i++) {
+>>           rmem_np = of_parse_phandle(np, "memory-region", i + 1);
+>> -        if (!rmem_np) {
+>> -            ret = -EINVAL;
+>> -            goto unmap_rmem;
+>> -        }
+>> +        if (!rmem_np)
+>> +            return -EINVAL;
+>>             rmem = of_reserved_mem_lookup(rmem_np);
+>>           of_node_put(rmem_np);
+>> -        if (!rmem) {
+>> -            ret = -EINVAL;
+>> -            goto unmap_rmem;
+>> -        }
+>> +        if (!rmem)
+>> +            return -EINVAL;
+>>             kproc->rmem[i].bus_addr = rmem->base;
+>>           /*
+>> @@ -1029,12 +1025,11 @@ static int k3_r5_reserved_mem_init(struct 
+>> k3_r5_rproc *kproc)
+>>            */
+>>           kproc->rmem[i].dev_addr = (u32)rmem->base;
+>>           kproc->rmem[i].size = rmem->size;
+>> -        kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
+>> +        kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, 
+>> rmem->size);
+>>           if (!kproc->rmem[i].cpu_addr) {
+>>               dev_err(dev, "failed to map reserved memory#%d at %pa 
+>> of size %pa\n",
+>>                   i + 1, &rmem->base, &rmem->size);
+>> -            ret = -ENOMEM;
+>> -            goto unmap_rmem;
+>> +            return -ENOMEM;
+>>           }
+>>             dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx 
+>> va %pK da 0x%x\n",
+>> @@ -1045,19 +1040,6 @@ static int k3_r5_reserved_mem_init(struct 
+>> k3_r5_rproc *kproc)
+>>       kproc->num_rmems = num_rmems;
+>>         return 0;
 >> -
->> -    ret = ti_sci_proc_release(core->tsp);
->> -    if (ret)
->> -        dev_err(dev, "failed to release proc, ret = %d\n", ret);
+>> -unmap_rmem:
+>> -    for (i--; i >= 0; i--)
+>> -        iounmap(kproc->rmem[i].cpu_addr);
+>> -    return ret;
+>> -}
+>> -
+>> -static void k3_r5_reserved_mem_exit(struct k3_r5_rproc *kproc)
+>> -{
+>> -    int i;
+>> -
+>> -    for (i = 0; i < kproc->num_rmems; i++)
+>> -        iounmap(kproc->rmem[i].cpu_addr);
+>>   }
+>>     /*
+>> @@ -1285,10 +1267,8 @@ static int k3_r5_cluster_rproc_init(struct 
+>> platform_device *pdev)
+>>           }
+>>             ret = rproc_add(rproc);
+>> -        if (ret) {
+>> -            dev_err(dev, "rproc_add failed, ret = %d\n", ret);
+>> -            goto err_add;
+>> -        }
+>> +        if (ret)
+>> +            dev_err_probe(dev, ret, "rproc_add failed\n");
 >
-> One thing to remember is devm unrolling happens after remove(). So
-> here you are changing the order things happen. ti_sci_proc_release()
-> now will get called after the below functions. This most likely
-> isn't wrong, but to make review easier it helps to start from the
-> last called function in remove() and work backwards so nothing
-> is reordered.
+> Did you mean to return the result of dev_err_probe() here? Without that
 
 
-That's a great insight! Will send out v2 following this order.
+Thanks for catching this. Should return here. Will fix in v2.
 
 Thanks,
 Beleswar
 
+> now anything between here and where err_add used to be will get run.
+> Might be more clear that this is correct by still doing a "goto out;"
 >
 > Andrew
 >
->>       platform_set_drvdata(pdev, NULL);
->>       devres_release_group(dev, k3_r5_core_of_init);
+>>             /* create only one rproc in lockstep, single-cpu or
+>>            * single core mode
+>> @@ -1333,8 +1313,6 @@ static int k3_r5_cluster_rproc_init(struct 
+>> platform_device *pdev)
+>>     err_powerup:
+>>       rproc_del(rproc);
+>> -err_add:
+>> -    k3_r5_reserved_mem_exit(kproc);
+>>   out:
+>>       /* undo core0 upon any failures on core1 in split-mode */
+>>       if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
+>> @@ -1379,8 +1357,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>>           mbox_free_channel(kproc->mbox);
+>>             rproc_del(rproc);
+>> -
+>> -        k3_r5_reserved_mem_exit(kproc);
+>>       }
+>>   }
