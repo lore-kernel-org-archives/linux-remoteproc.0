@@ -1,185 +1,101 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF2B156F44;
-	Wed, 18 Dec 2024 08:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D6A222591;
+	Thu, 19 Dec 2024 11:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734510207; cv=none; b=hQmlKrXqmQD3TrJh2TTptZM2e7hY5Qsr5KtYA6hFr2c4gE2h9NETnBHDtOuCJwG7gJ5T82LDddAN4eiH3ibZPdCTxIq6tpFSW9uCEOzjpHo0L0L6K9G0HlDggxNOiuNwNnDIbfF0WDEe1vRTrsrKyo9VstZiPRPbOUSH0paOnXg=
+	t=1734606362; cv=none; b=ImCevCSs7mCM1ucjo3P0Zq6eCnPqmbrBpti5t86wDRmX2796s+FF3lAr4uYFJ68o5C8KK5/nVmg08pt+mWK2cIGy+xJ/SkQiQm+6e2SnkOxeYx+UEG8n+wUDtmMKc1n8AzGrXnkOJwKWu2KKzVt4gkNr0ieA5yikbW9Q7UTMDJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734510207; c=relaxed/simple;
-	bh=Mtsyf9a54iJiIMxNhS6apyo/4PtNQTzkpjKH++AEDy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oSBU63JoR9F9+gxApCp1fX+odCXTcFYU9u/AXUkXbzfOq6/PTl14YicRBBUue7PejnPAtSuO7rRWjrIIK7oVzsw9AkP1QMS3KNjlspQsR0nwdK6x6htXBn5RujCw2mgEQqxiSAAjq6WyMnHZvaj1Zn/UTJyDFvj1bIkGdQBBTUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OPLXXqfI; arc=none smtp.client-ip=198.47.23.249
+	s=arc-20240116; t=1734606362; c=relaxed/simple;
+	bh=zz3NRvnX5Onb8TZ1AqTTMrRI7WRV9U7mbcJV7E8zMb8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ui51lZlKdfXoV0uvW4CyAoZ3Fu0CU50W+flzPIiOYdnIkx3i2L9/F/nW1u3bxEwzMwmEGeDNeu8eNsdzzfY2nuB1Ba/yZlI5sYqWRj5lSt2byxoqnnqWkA375bo/dR/Fc1xMNaBUnMBR4P/RMC55q5lqqi9PHxsd3gchKmX2z+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VwxWUlq/; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OPLXXqfI"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8NIXi050250;
-	Wed, 18 Dec 2024 02:23:18 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VwxWUlq/"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BJB5nvp083410;
+	Thu, 19 Dec 2024 05:05:49 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1734510198;
-	bh=AGHqrVzM2yIL1iG2TrOD/3T4wA2HIJbJxWvOjFNCv0s=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=OPLXXqfIBbaJWaRnCOUpa7HYDM4jIwr34OKp2BeQSJBvwEw0ol5dv4INcBfK08lGM
-	 Tr3vRhO/TkIQ5dbTt/VvwZhhJI1/k2Usz5c0aH8bn8ZBkX6iNbPkPr9HshOk2NVW0f
-	 VhRK7jw6L6sP5eJ4xWSzqcSMlG/VYx9Ax76jkxu4=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BI8NIrn011622
+	s=ti-com-17Q1; t=1734606349;
+	bh=pxlYcTdWxZkuC3D4XFICXfoye4DPVVbJwZOlrxf45jc=;
+	h=From:To:CC:Subject:Date;
+	b=VwxWUlq/sEbW58ShWuQwcZqUlsOq6daI7S8jz6JsjkcqD03nW5ZX5DM4Mi6+jYzQs
+	 L8yHD2260dK/0rZd9sEDzSIETfqP+IKj0o/XnsAu8zm3VMqtcm/3RFV47Xio1rV+5J
+	 5NiT/OylVlFfXvGrGpdgnhpynCKuGI1KKpgPvaFg=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BJB5nqZ012969
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 18 Dec 2024 02:23:18 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 18
- Dec 2024 02:23:18 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 19 Dec 2024 05:05:49 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 19
+ Dec 2024 05:05:49 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 18 Dec 2024 02:23:18 -0600
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BI8NFlT044429;
-	Wed, 18 Dec 2024 02:23:15 -0600
-Message-ID: <e6962344-906d-44fd-a822-70a5d54f523e@ti.com>
-Date: Wed, 18 Dec 2024 13:53:14 +0530
+ Frontend Transport; Thu, 19 Dec 2024 05:05:49 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BJB5jY8088123;
+	Thu, 19 Dec 2024 05:05:46 -0600
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/5] Use Device Lifecycle managed functions in TI R5 Remoteproc driver
+Date: Thu, 19 Dec 2024 16:35:40 +0530
+Message-ID: <20241219110545.1898883-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] remoteproc: k3-r5: Use devm_ioremap_wc() helper
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jan.kiszka@siemens.com>,
-        <christophe.jaillet@wanadoo.fr>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241204111130.2218497-1-b-padhi@ti.com>
- <20241204111130.2218497-5-b-padhi@ti.com>
- <5c016c4a-b7f2-4e9a-bb99-f56e0bf86e6f@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <5c016c4a-b7f2-4e9a-bb99-f56e0bf86e6f@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This series uses various devm_ helpers to simplify device removal path in
+ti_k3_r5_remoteproc driver. This is the first series in the TI K3
+Remoteproc refactoring as long planned since [0].
 
-On 17/12/24 21:33, Andrew Davis wrote:
-> On 12/4/24 5:11 AM, Beleswar Padhi wrote:
->> Use a device lifecycle managed ioremap helper function. This helps
->> prevent mistakes like unmapping out of order in cleanup functions and
->> forgetting to unmap on all error paths.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 +++++-------------------
->>   1 file changed, 8 insertions(+), 32 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 2966cb210403..1a7681502f62 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -1004,17 +1004,13 @@ static int k3_r5_reserved_mem_init(struct 
->> k3_r5_rproc *kproc)
->>       /* use remaining reserved memory regions for static carveouts */
->>       for (i = 0; i < num_rmems; i++) {
->>           rmem_np = of_parse_phandle(np, "memory-region", i + 1);
->> -        if (!rmem_np) {
->> -            ret = -EINVAL;
->> -            goto unmap_rmem;
->> -        }
->> +        if (!rmem_np)
->> +            return -EINVAL;
->>             rmem = of_reserved_mem_lookup(rmem_np);
->>           of_node_put(rmem_np);
->> -        if (!rmem) {
->> -            ret = -EINVAL;
->> -            goto unmap_rmem;
->> -        }
->> +        if (!rmem)
->> +            return -EINVAL;
->>             kproc->rmem[i].bus_addr = rmem->base;
->>           /*
->> @@ -1029,12 +1025,11 @@ static int k3_r5_reserved_mem_init(struct 
->> k3_r5_rproc *kproc)
->>            */
->>           kproc->rmem[i].dev_addr = (u32)rmem->base;
->>           kproc->rmem[i].size = rmem->size;
->> -        kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
->> +        kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, 
->> rmem->size);
->>           if (!kproc->rmem[i].cpu_addr) {
->>               dev_err(dev, "failed to map reserved memory#%d at %pa 
->> of size %pa\n",
->>                   i + 1, &rmem->base, &rmem->size);
->> -            ret = -ENOMEM;
->> -            goto unmap_rmem;
->> +            return -ENOMEM;
->>           }
->>             dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx 
->> va %pK da 0x%x\n",
->> @@ -1045,19 +1040,6 @@ static int k3_r5_reserved_mem_init(struct 
->> k3_r5_rproc *kproc)
->>       kproc->num_rmems = num_rmems;
->>         return 0;
->> -
->> -unmap_rmem:
->> -    for (i--; i >= 0; i--)
->> -        iounmap(kproc->rmem[i].cpu_addr);
->> -    return ret;
->> -}
->> -
->> -static void k3_r5_reserved_mem_exit(struct k3_r5_rproc *kproc)
->> -{
->> -    int i;
->> -
->> -    for (i = 0; i < kproc->num_rmems; i++)
->> -        iounmap(kproc->rmem[i].cpu_addr);
->>   }
->>     /*
->> @@ -1285,10 +1267,8 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>           }
->>             ret = rproc_add(rproc);
->> -        if (ret) {
->> -            dev_err(dev, "rproc_add failed, ret = %d\n", ret);
->> -            goto err_add;
->> -        }
->> +        if (ret)
->> +            dev_err_probe(dev, ret, "rproc_add failed\n");
->
-> Did you mean to return the result of dev_err_probe() here? Without that
+Testing Done:
+1. Tested boot of R5F remoteprocs in MCU and MAIN voltage domain in both
+IPC-Only mode and Kernel remoteproc mode in all Jacinto K3 devices.
+2. Tested Lockstep, Split and Single-CPU Mode configuration (wherever
+applicable) of R5F remoteprocs in all Jacinto K3 devices.
+3. Tested shutdown of R5F remoteprocs from Linux userspace and also by
+executing `modprobe -r ti_k3_r5_remoteproc`.
+4. Tested that each patch in this series generates no new warnings/errors.
 
+v2: Changelog:
+1. Re-ordered patches in the series to use devm functions starting from
+the last called function in remove(), to ease review. [Andrew]
+2. Fixed a missing return after dev_err_probe() call in [PATCH v2 3/5]
+("remoteproc: k3-r5: Use devm_ioremap_wc() helper"). [Andrew]
+3. Removed redundant rproc_del() call in [PATCH v2 4/5] ("remoteproc:
+k3-r5: Use devm_rproc_add() helper").
 
-Thanks for catching this. Should return here. Will fix in v2.
+Link to v1:
+https://lore.kernel.org/all/20241204111130.2218497-1-b-padhi@ti.com/
 
-Thanks,
-Beleswar
+[0]: https://lore.kernel.org/all/Zr4w8Vj0mVo5sBsJ@p14s/
 
-> now anything between here and where err_add used to be will get run.
-> Might be more clear that this is correct by still doing a "goto out;"
->
-> Andrew
->
->>             /* create only one rproc in lockstep, single-cpu or
->>            * single core mode
->> @@ -1333,8 +1313,6 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>     err_powerup:
->>       rproc_del(rproc);
->> -err_add:
->> -    k3_r5_reserved_mem_exit(kproc);
->>   out:
->>       /* undo core0 upon any failures on core1 in split-mode */
->>       if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
->> @@ -1379,8 +1357,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>           mbox_free_channel(kproc->mbox);
->>             rproc_del(rproc);
->> -
->> -        k3_r5_reserved_mem_exit(kproc);
->>       }
->>   }
+Beleswar Padhi (5):
+  remoteproc: k3-r5: Add devm action to release reserved memory
+  remoteproc: k3-r5: Use devm_kcalloc() helper
+  remoteproc: k3-r5: Use devm_ioremap_wc() helper
+  remoteproc: k3-r5: Use devm_rproc_add() helper
+  remoteproc: k3-r5: Add devm action to release tsp
+
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 88 ++++++++++--------------
+ 1 file changed, 35 insertions(+), 53 deletions(-)
+
+-- 
+2.34.1
+
