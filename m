@@ -1,171 +1,200 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0101AE01E;
-	Mon, 23 Dec 2024 20:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED4C17B502;
+	Tue, 24 Dec 2024 09:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734987180; cv=none; b=L5J18H2qHdkP0W04n/zjahRpWFjtM0YaqIcaGtjCq4SxHKU9IBMZKD66fDgduibXcPz9qEY6R08bUT4Dogt8mLsN5EsyYNU00arbTG/8kqjIzmnAtqXxE2k39I86FDec2YQxiYfuVFz2ZfNn2d6noqV6HPd07V4qMn377tVAORk=
+	t=1735031718; cv=none; b=gcB95PjKR8I2ya16K/5TVL+IML9qVxZ2wReJCR6XdLlna2hc79UGn9FESZ/swa7YbTrcebaxVPVNRkcLkkQ1CToXCSitowV8IKMXF89xFevyadut3c/+qo+X1THmvTOLmkVrwYH9UdUwAKSVqUFe4SQraEQ6yndYpycjjP8+/Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734987180; c=relaxed/simple;
-	bh=rKOBVJ18KO/XxbrIs6wnq7uYvmLiERzT2M7jzyWvEEs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W/G7vkGJfzdeYOK3dfEGpRJjJSbdXfx8tS5ocJpunaDjn5uYiVyiRQgnCDuKJHbEwA/VW5h3BnjrD+oex2MZx4rE8yppAQs7SxViRxfEoEryg9kNCNjtC2RnyObFGGfhvfQVoQ/sZ6h8NhafntrSHxifzOf73sWG7ZfYbDX5kCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YH99X3N2zz6K5Zf;
-	Tue, 24 Dec 2024 04:49:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 78F9C14039E;
-	Tue, 24 Dec 2024 04:52:55 +0800 (CST)
-Received: from localhost (10.47.75.118) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Dec
- 2024 21:52:54 +0100
-Date: Mon, 23 Dec 2024 20:52:52 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij
-	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, James Bottomley
-	<James.Bottomley@HansenPartnership.com>, Thomas =?ISO-8859-1?Q?Wei=DFschu?=
- =?ISO-8859-1?Q?h?= <thomas@t-8ch.de>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-sound@vger.kernel.org>,
-	<sparclinux@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux1394-devel@lists.sourceforge.net>,
-	<arm-scmi@vger.kernel.org>, <linux-efi@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-	<linux-remoteproc@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<netdev@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v4 11/11] usb: typec: class: Remove both cable_match()
- and partner_match()
-Message-ID: <20241223205252.00003d6b@huawei.com>
-In-Reply-To: <20241211-const_dfc_done-v4-11-583cc60329df@quicinc.com>
-References: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com>
-	<20241211-const_dfc_done-v4-11-583cc60329df@quicinc.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1735031718; c=relaxed/simple;
+	bh=Xf2rpMNPHMrDMsqZVvYf1yNrWrUImkrEGU02UX2BKew=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k0w6ydzhqWARny2NLwwiKMMBPOMIjvNL0/mlrY0uG7Ejm71cTMSMOvJ4PWezT1mTY8S2ssBvqtiY0oSeFHv/X+fNxYYy9HwYYEYTLrCHGL69JFz/2Ebbg4UZxistIFJtL23SRHd/nErnd3B4hRJ8gSkHc8/6XsjZx2uz256RGHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wBTtIGNR; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wBTtIGNR"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BO9F6Sx090028;
+	Tue, 24 Dec 2024 03:15:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1735031706;
+	bh=N7dEHIlkPhOXSw55ptrJ18hKjU3yz9AbtMvzYi/ad6A=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=wBTtIGNRdHqETsu0W2ZPbRrHqSzC8DwreyY1yJ9B9XE64ywzQ15WGXIaGYRu6Ta79
+	 mEO4L9TnYqVh7trHMdZgaGY++FIokn2LWT3X2KvsL8RwONTAhZHNVoGFhSGW5tEWQ+
+	 XPJWbJZMp6P0+mkChoYaGaM5VZ5yz8rkfJwINhmU=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BO9F6Rq003275
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 24 Dec 2024 03:15:06 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 24
+ Dec 2024 03:15:06 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 24 Dec 2024 03:15:06 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BO9EwEP123859;
+	Tue, 24 Dec 2024 03:15:02 -0600
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
+        <srk@ti.com>, <jan.kiszka@siemens.com>,
+        <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
+        <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/3] remoteproc: k3-r5: Fix checks in k3_r5_rproc_{mbox_callback/kick}
+Date: Tue, 24 Dec 2024 14:44:55 +0530
+Message-ID: <20241224091457.1050233-2-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241224091457.1050233-1-b-padhi@ti.com>
+References: <20241224091457.1050233-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 11 Dec 2024 08:08:13 +0800
-Zijun Hu <zijun_hu@icloud.com> wrote:
+Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
+probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()"
+and "k3_r5_rproc_kick()" callbacks to exit if the remote core's state
+was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
+the default state of the core is set to "RPROC_DETACHED", and the
+transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
+function has invoked "rproc_start_subdevices()".
 
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> cable_match(), as matching function of device_find_child(), matches
-> a device with device type @typec_cable_dev_type, and its task can be
-> simplified by the recently introduced API device_match_type().
-> 
-> partner_match() is similar with cable_match() but with a different
-> device type @typec_partner_dev_type.
-> 
-> Remove both functions and use the API plus respective device type instead.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Looks good, but there is the same trade off here between internal
-detail of type identification and reducing the use of helpers
-where the generic ones are fine.  Here is less obvious even than
-the CXL one as the helper macros do have other uses in these
-files.
+The "rproc_start_subdevices()" function triggers the probe of Virtio
+RPMsg subdevices, which require the mailbox callbacks to be functional.
+To resolve this, a new variable, "is_attach_ongoing", is introduced to
+distinguish between core states: when a core is actually detached and
+when it is in the process of being attached. The callbacks are updated
+to return early only if the core is actually detached and not during an
+ongoing attach operation in IPC-only mode.
 
-So, it's on for USB folk to decide on and I won't be giving a tag
-as a result.
+Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
+Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+Link to RFC version:
+https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
 
-Jonathan
+Improvements in v1:
+1. Ensured these mbox callbacks are functional when the core is in the proccess
+of getting attached in IPC-Only mode.
+2. Ensured these mbox callbacks are _not_ functional when the core state is
+actually detached.
 
-> ---
->  drivers/usb/typec/class.c | 27 ++++++++++++---------------
->  1 file changed, 12 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 601a81aa1e1024265f2359393dee531a7779c6ea..3a4e0bd0131774afd0d746d2f0a306190219feec 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1282,11 +1282,6 @@ const struct device_type typec_cable_dev_type = {
->  	.release = typec_cable_release,
->  };
->  
-> -static int cable_match(struct device *dev, const void *data)
-> -{
-> -	return is_typec_cable(dev);
-> -}
-> -
->  /**
->   * typec_cable_get - Get a reference to the USB Type-C cable
->   * @port: The USB Type-C Port the cable is connected to
-> @@ -1298,7 +1293,8 @@ struct typec_cable *typec_cable_get(struct typec_port *port)
->  {
->  	struct device *dev;
->  
-> -	dev = device_find_child(&port->dev, NULL, cable_match);
-> +	dev = device_find_child(&port->dev, &typec_cable_dev_type,
-> +				device_match_type);
->  	if (!dev)
->  		return NULL;
->  
-> @@ -2028,16 +2024,12 @@ const struct device_type typec_port_dev_type = {
->  /* --------------------------------------- */
->  /* Driver callbacks to report role updates */
->  
-> -static int partner_match(struct device *dev, const void *data)
-> -{
-> -	return is_typec_partner(dev);
-> -}
-> -
->  static struct typec_partner *typec_get_partner(struct typec_port *port)
->  {
->  	struct device *dev;
->  
-> -	dev = device_find_child(&port->dev, NULL, partner_match);
-> +	dev = device_find_child(&port->dev, &typec_partner_dev_type,
-> +				device_match_type);
->  	if (!dev)
->  		return NULL;
->  
-> @@ -2170,7 +2162,9 @@ void typec_set_pwr_opmode(struct typec_port *port,
->  	sysfs_notify(&port->dev.kobj, NULL, "power_operation_mode");
->  	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
->  
-> -	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-> +	partner_dev = device_find_child(&port->dev,
-> +					&typec_partner_dev_type,
-> +					device_match_type);
->  	if (partner_dev) {
->  		struct typec_partner *partner = to_typec_partner(partner_dev);
->  
-> @@ -2334,7 +2328,9 @@ int typec_get_negotiated_svdm_version(struct typec_port *port)
->  	enum usb_pd_svdm_ver svdm_version;
->  	struct device *partner_dev;
->  
-> -	partner_dev = device_find_child(&port->dev, NULL, partner_match);
-> +	partner_dev = device_find_child(&port->dev,
-> +					&typec_partner_dev_type,
-> +					device_match_type);
->  	if (!partner_dev)
->  		return -ENODEV;
->  
-> @@ -2361,7 +2357,8 @@ int typec_get_cable_svdm_version(struct typec_port *port)
->  	enum usb_pd_svdm_ver svdm_version;
->  	struct device *cable_dev;
->  
-> -	cable_dev = device_find_child(&port->dev, NULL, cable_match);
-> +	cable_dev = device_find_child(&port->dev, &typec_cable_dev_type,
-> +				      device_match_type);
->  	if (!cable_dev)
->  		return -ENODEV;
->  
-> 
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 53 +++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index dbc513c5569c..e218a803fdb5 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -131,6 +131,7 @@ struct k3_r5_cluster {
+  * @btcm_enable: flag to control BTCM enablement
+  * @loczrama: flag to dictate which TCM is at device address 0x0
+  * @released_from_reset: flag to signal when core is out of reset
++ * @is_attach_ongoing: flag to indicate if IPC-only "attach()" is in progress
+  */
+ struct k3_r5_core {
+ 	struct list_head elem;
+@@ -148,6 +149,7 @@ struct k3_r5_core {
+ 	u32 btcm_enable;
+ 	u32 loczrama;
+ 	bool released_from_reset;
++	bool is_attach_ongoing;
+ };
+ 
+ /**
+@@ -194,8 +196,11 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 	const char *name = kproc->rproc->name;
+ 	u32 msg = omap_mbox_message(data);
+ 
+-	/* Do not forward message from a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
++	/*
++	 * Do not forward messages from a detached core, except when the core
++	 * is in the process of being attached in IPC-only mode.
++	 */
++	if (!kproc->core->is_attach_ongoing && kproc->rproc->state == RPROC_DETACHED)
+ 		return;
+ 
+ 	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+@@ -233,8 +238,11 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+ 	mbox_msg_t msg = (mbox_msg_t)vqid;
+ 	int ret;
+ 
+-	/* Do not forward message to a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
++	/*
++	 * Do not forward messages to a detached core, except when the core is
++	 * in the process of being attached in IPC-only mode.
++	 */
++	if (!kproc->core->is_attach_ongoing && kproc->rproc->state == RPROC_DETACHED)
+ 		return;
+ 
+ 	/* send the index of the triggered virtqueue in the mailbox payload */
+@@ -671,22 +679,39 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ /*
+  * Attach to a running R5F remote processor (IPC-only mode)
+  *
+- * The R5F attach callback is a NOP. The remote processor is already booted, and
+- * all required resources have been acquired during probe routine, so there is
+- * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
+- * This callback is invoked only in IPC-only mode and exists because
+- * rproc_validate() checks for its existence.
++ * The R5F attach callback only needs to set the "is_attach_ongoing" flag to
++ * notify k3_r5_rproc_{kick/mbox_callback} functions that the core is in the
++ * process of getting attached in IPC-only mode. The remote processor is
++ * already booted, and all required resources have been acquired during probe
++ * routine, so there is no need to issue any TI-SCI commands to boot the R5F
++ * cores in IPC-only mode. This callback is invoked only in IPC-only mode.
+  */
+-static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
++static int k3_r5_rproc_attach(struct rproc *rproc)
++{
++	struct k3_r5_rproc *kproc = rproc->priv;
++
++	kproc->core->is_attach_ongoing = true;
++
++	return 0;
++}
+ 
+ /*
+  * Detach from a running R5F remote processor (IPC-only mode)
+  *
+- * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
+- * left in booted state in IPC-only mode. This callback is invoked only in
+- * IPC-only mode and exists for sanity sake.
++ * The R5F detach callback performs the opposite operation to attach callback
++ * and only needs to clear the "is_attach_ongoing" flag to ensure no mailbox
++ * messages are sent to or received from a detached core. The R5F cores are
++ * not stopped and will be left in booted state in IPC-only mode. This
++ * callback is invoked only in IPC-only mode.
+  */
+-static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
++static int k3_r5_rproc_detach(struct rproc *rproc)
++{
++	struct k3_r5_rproc *kproc = rproc->priv;
++
++	kproc->core->is_attach_ongoing = false;
++
++	return 0;
++}
+ 
+ /*
+  * This function implements the .get_loaded_rsc_table() callback and is used
+-- 
+2.34.1
 
