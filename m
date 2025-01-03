@@ -1,47 +1,48 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30271B6D0D;
-	Fri,  3 Jan 2025 06:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351BF155C97;
+	Fri,  3 Jan 2025 06:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735884325; cv=none; b=WPQQHrD+77ZlirJGBabY/F0DMX4LWvMkoGt8/4Eas595KCgLgUSjM2ViJCGq1eHXNR3SKUSGDzGUNyhJCVGuuRiHaKe3xJxiaG474ScRvWl+96pHBwno4nqCCo4N7G8BRTKfFgc1R1olvbIhVN49I/QQRAHGM/pMpfPETeI80O4=
+	t=1735884385; cv=none; b=FAcjO2xTrbN7egxGsXvjgTBynoOhdq0wyc1nJ+GTzvmuK+8untGRYW4Qd46Z9oc7M2WUoBLlJJMOu4YJirsD8EulXdeN74G70PH66AA/Mm8uQjaXKfvZ2GI3+tjpIsFFBl5qC6liikNx44DgB3Vz0avMVQppWQ9eTOJUlxBZFhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735884325; c=relaxed/simple;
-	bh=okWX+fjQmXrvk45VEoCZ+Q9oztSmAhEXGYY8o5Sy3Uo=;
+	s=arc-20240116; t=1735884385; c=relaxed/simple;
+	bh=kAxEE2k2Yq6ncb2HwgEiz3rC/oX50q9wGyBZjM8HW3s=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TSK0cDuLoAwJbJN1imTMy4rIEBSko766FSAt+1pH6ze7lsLkJOcEx1Akj6eUuXl8pWdicgcxgTVLQFtlnSnqD3JHQ+evJltouiIWFj2n8/ExtBN4YXTwgMUsxQt4EQL9Y0oOV1/Y8XGBRKENrQPfCfotiI7XDVstMoOr/7MaP7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fa8K1Rta; arc=none smtp.client-ip=198.47.23.249
+	 Content-Type:Content-Disposition:In-Reply-To; b=IB5/3CCCL+X8Lpj4nJEj6IC008zWzkH3PQp+9BCriO/JOl4s4pb4gNAJe32dcZdupDIj474M6ChaesLRXuH255nLYZBR0gJQRnGy+a8Ye68eCYACLR/jp2P4A4LVAt0xNkMeaL68ayTs0biv//OXo0SqpOSGcLg8FY7H9naTCRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZcbYvN7z; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fa8K1Rta"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZcbYvN7z"
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 50365C8J067134;
-	Fri, 3 Jan 2025 00:05:12 -0600
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 50366CVq2049687
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 3 Jan 2025 00:06:13 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1735884312;
-	bh=I8pRNxrkusnevfNHKn1KvGEDCe6LelDeuYB+c27wkys=;
+	s=ti-com-17Q1; t=1735884373;
+	bh=6bA2Zmx73rw2PcbScdjMB9Aq1bvYHJkmb80SRkP3N90=;
 	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Fa8K1Rta0G6Gp9j0EngCnNV76LuVHFLkZDFufi1aeUel4nuXElgVVRb+w83tEsXZm
-	 NtrKhVheVhDJVXhQEbK8PQrtFRtf4O1ZANTQpppzBeRjMO3/ZcxS3tBIpCmvoX9dZg
-	 gJdKwro8mqtPkgrOBa4PYr2wWM19L6M++bRZuNZo=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50365C1f098905
+	b=ZcbYvN7z/ZfezF/UE51BNhgH0OWIkTuovl7+bAMhhteG5UddP1ziYa2BZ28cO9Q7I
+	 jRUzhY/o+gPY9AJmKU3M3DbYbGLqnbFmfZ7ATvOzOCcLkadRDW6jjXqMYMBBZ2NZro
+	 C4CDoPRzpH4U4CdWQnl9t9NzFORdtSBdtFug4ZPI=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50366CrQ099874
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 3 Jan 2025 00:05:12 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 3 Jan 2025 00:06:12 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 3
- Jan 2025 00:05:12 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2025 00:06:12 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 3 Jan 2025 00:05:12 -0600
+ Frontend Transport; Fri, 3 Jan 2025 00:06:12 -0600
 Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.104])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50365Bhj093400;
-	Fri, 3 Jan 2025 00:05:11 -0600
-Date: Fri, 3 Jan 2025 11:35:10 +0530
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50366BO8094805;
+	Fri, 3 Jan 2025 00:06:11 -0600
+Date: Fri, 3 Jan 2025 11:36:10 +0530
 From: Siddharth Vadapalli <s-vadapalli@ti.com>
 To: Beleswar Padhi <b-padhi@ti.com>
 CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>,
@@ -50,11 +51,11 @@ CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>,
         <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
         <eballetbo@redhat.com>, <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] remoteproc: k3-r5: Fix checks in
- k3_r5_rproc_{mbox_callback/kick}
-Message-ID: <66zjmdlfm5ou2ayivndckoz6zi4octnet44rcvdxuz6dmallqq@x3g7lyzicpiv>
+Subject: Re: [PATCH 2/3] remoteproc: k3-dsp: Fix checks in
+ k3_dsp_rproc_{mbox_callback/kick}
+Message-ID: <7itggfhhmtn5nh6hnp35cdwvzbb72ikmrxeqgympccnfmpyzes@ss2lqb6snlo7>
 References: <20241224091457.1050233-1-b-padhi@ti.com>
- <20241224091457.1050233-2-b-padhi@ti.com>
+ <20241224091457.1050233-3-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,13 +64,13 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241224091457.1050233-2-b-padhi@ti.com>
+In-Reply-To: <20241224091457.1050233-3-b-padhi@ti.com>
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Dec 24, 2024 at 02:44:55PM +0530, Beleswar Padhi wrote:
-> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
-> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()"
-> and "k3_r5_rproc_kick()" callbacks to exit if the remote core's state
+On Tue, Dec 24, 2024 at 02:44:56PM +0530, Beleswar Padhi wrote:
+> Commit ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during
+> probe routine") introduced a check in the "k3_dsp_rproc_mbox_callback()"
+> and "k3_dsp_rproc_kick()" callbacks to exit if the remote core's state
 > was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
 > the default state of the core is set to "RPROC_DETACHED", and the
 > transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
@@ -85,7 +86,7 @@ On Tue, Dec 24, 2024 at 02:44:55PM +0530, Beleswar Padhi wrote:
 > 
 > Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 > Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
-> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+> Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
 > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 
 Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
