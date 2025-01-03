@@ -1,46 +1,46 @@
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4013E1FA8E5;
-	Fri,  3 Jan 2025 10:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201831FA8F3;
+	Fri,  3 Jan 2025 10:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735899228; cv=none; b=l7vjo2faMVYulrCtt1fxB2EbxwyjPGfyGM6TTQT00hzJqXp1menqkp/jO6OTBeSkAJdUOf4BgMf+fzqldvzX3KVJgZz1ygPUd5OBW1h5tVApe7wFWg4SNSGfDXtyl+MbwelAjhsPRcHJiBnbzaqfNZoU8BsLRvxVVWO68P5rF6g=
+	t=1735899231; cv=none; b=HIMIw2S4iYJy+811+AdiMldV99UiOmqeoIgVxqPWbYVcx9n23Ti6elm/fzMesBjs7F22jXHR2DDkh43MjsCpmh+HfIsOlEE6L/IGe9aq26rpyMVSHf49Pi80ZbWWsU16K4NUhv5frph5LpTavLD47CtcEIpjcZmYjTGINLAQFB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735899228; c=relaxed/simple;
-	bh=MTBPwjex1C92dfwP9Ce+zqig5cGatiXjEK/S09vKHcI=;
+	s=arc-20240116; t=1735899231; c=relaxed/simple;
+	bh=lJR8PRopkkytVf4ql6728fLxuzuwV+dYL/21ZgUoBGQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pM3QBqPJsheXDTulioLQdETY97TeY+DN7LElwDV67eo8VjIftiYkqsT0P+dxpi59OUWXkd7jDij4gnesDDMt3aFGW7MY2zmTqeNtB2EOm4R+btE6flW6f7tfQLX7PDov3TX4aH/j16fAw9povrLfqqAh9I/fFRyFBlxUrAVeFaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TM8AgAbm; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=uzVhDCGVOZSfpn5ac1wYIxkKDsDXOeTaRqmyN0N+DUrFlOmbsolO8ExX6en36vfZsGQU+Qss0mnd7xcaFsudfTPmyjocT8l1h74p/DU9j0jXLVc4JkyTmHmLR3x7Le3g8Mq8DhPpWoOlWUcLXlnylZ7O/45pzuCW0LNV3ShObos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uTnvLkL3; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TM8AgAbm"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uTnvLkL3"
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 503ADa3l2306967
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 503ADdRR2076701
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 3 Jan 2025 04:13:36 -0600
+	Fri, 3 Jan 2025 04:13:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1735899216;
-	bh=i2aRulhPpfXN3jzGKGrViMTOBHWmKdH6T7LKk1jq8Vo=;
+	s=ti-com-17Q1; t=1735899219;
+	bh=b5RRY0zxO9kvIm/KXLO8fh1D0GD0556wPxucgJlFR/o=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=TM8AgAbmJFz+jkhBzfdoh6srEdeYdc/QxlNvL/GvmqSILdYowzinHKeSIgMcpfSij
-	 YQPXa3/XRMJJs9m43wT4s3UZEVeYR2khn2GJ9EKdWSu7i1w6HNM81vx6ymUm0gGAXn
-	 l8hD+8EeYh8vZXnf//a8GBCyOZzG9c4a3SARsEs8=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ADaL7042144;
-	Fri, 3 Jan 2025 04:13:36 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+	b=uTnvLkL3yC77F2EzIHYqWBinCM9+VkPWTPEMHHny/OMLNWWIC1K/tHkkhYq4wimrc
+	 fh7jXzBo3KoNx13i3jxDEopWi4DnHWXVS++n2Vg729pP0M/6imPkG8jdgCnjeTjKnT
+	 3I31lEt1L45K4AICq3FQYqQdkdr0YjHUt5x/JT3E=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ADdOQ042155;
+	Fri, 3 Jan 2025 04:13:39 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 3
- Jan 2025 04:13:35 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2025 04:13:39 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 3 Jan 2025 04:13:35 -0600
+ Frontend Transport; Fri, 3 Jan 2025 04:13:39 -0600
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVSY126047;
-	Fri, 3 Jan 2025 04:13:32 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVSZ126047;
+	Fri, 3 Jan 2025 04:13:36 -0600
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
@@ -48,9 +48,9 @@ CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
         <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
         <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 16/20] remoteproc: k3: Refactor .da_to_va rproc ops into common driver
-Date: Fri, 3 Jan 2025 15:42:27 +0530
-Message-ID: <20250103101231.1508151-17-b-padhi@ti.com>
+Subject: [PATCH v8 17/20] remoteproc: k3: Refactor of_get_memories() functions into common driver
+Date: Fri, 3 Jan 2025 15:42:28 +0530
+Message-ID: <20250103101231.1508151-18-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250103101231.1508151-1-b-padhi@ti.com>
 References: <20250103101231.1508151-1-b-padhi@ti.com>
@@ -64,273 +64,236 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The .da_to_va rproc ops implementations in ti_k3_dsp_remoteproc.c and
-ti_k3_m4_remoteproc.c drivers return the Kernel virtual address for a
-corresponding rproc device address. Refactor the implementations into
-ti_k3_common.c driver as k3_rproc_da_to_va and align DSP and M4 drivers
-to register this common function as .da_to_va ops.
+The k3_{dsp_/m4_}rproc_of_get_memories() function initializes and
+assigns memory regions used by the remote processor. Refactor these
+implementations into ti_k3_common.c driver as k3_rproc_of_get_memories()
+and align DSP and M4 drivers to use this common function throughout.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- drivers/remoteproc/ti_k3_common.c         | 61 ++++++++++++++++++++++
- drivers/remoteproc/ti_k3_common.h         |  4 ++
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 63 +----------------------
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 58 +--------------------
- 4 files changed, 67 insertions(+), 119 deletions(-)
+ drivers/remoteproc/ti_k3_common.c         | 53 ++++++++++++++++++++++
+ drivers/remoteproc/ti_k3_common.h         |  2 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 54 +----------------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 54 +----------------------
+ 4 files changed, 57 insertions(+), 106 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index f56d2553a669..520f3fa44195 100644
+index 520f3fa44195..c1c6eabb867f 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -382,5 +382,66 @@ struct resource_table *k3_get_loaded_rsc_table(struct rproc *rproc,
+@@ -443,5 +443,58 @@ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
  }
- EXPORT_SYMBOL_GPL(k3_get_loaded_rsc_table);
+ EXPORT_SYMBOL_GPL(k3_rproc_da_to_va);
  
-+/*
-+ * Custom function to translate a remote processor device address (internal
-+ * RAMs only) to a kernel virtual address.  The remote processors can access
-+ * their RAMs at either an internal address visible only from a remote
-+ * processor, or at the SoC-level bus address. Both these addresses need to be
-+ * looked through for translation. The translated addresses can be used either
-+ * by the remoteproc core for loading (when using kernel remoteproc loader), or
-+ * by any rpmsg bus drivers.
-+ */
-+void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
++int k3_rproc_of_get_memories(struct platform_device *pdev,
++			     struct k3_rproc *kproc)
 +{
-+	struct k3_rproc *kproc = rproc->priv;
-+	void __iomem *va = NULL;
-+	phys_addr_t bus_addr;
-+	u32 dev_addr, offset;
-+	size_t size;
++	const struct k3_rproc_dev_data *data = kproc->data;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int num_mems = 0;
 +	int i;
 +
-+	if (len == 0)
-+		return NULL;
++	num_mems = kproc->data->num_mems;
++	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
++				  sizeof(*kproc->mem), GFP_KERNEL);
++	if (!kproc->mem)
++		return -ENOMEM;
 +
-+	for (i = 0; i < kproc->num_mems; i++) {
-+		bus_addr = kproc->mem[i].bus_addr;
-+		dev_addr = kproc->mem[i].dev_addr;
-+		size = kproc->mem[i].size;
-+
-+		if (da < KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) {
-+			/* handle rproc-view addresses */
-+			if (da >= dev_addr &&
-+			    ((da + len) <= (dev_addr + size))) {
-+				offset = da - dev_addr;
-+				va = kproc->mem[i].cpu_addr + offset;
-+				return (__force void *)va;
-+			}
-+		} else {
-+			/* handle SoC-view addresses */
-+			if (da >= bus_addr &&
-+			    (da + len) <= (bus_addr + size)) {
-+				offset = da - bus_addr;
-+				va = kproc->mem[i].cpu_addr + offset;
-+				return (__force void *)va;
-+			}
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   data->mems[i].name);
++		if (!res) {
++			dev_err(dev, "found no memory resource for %s\n",
++				data->mems[i].name);
++			return -EINVAL;
 +		}
-+	}
-+
-+	/* handle static DDR reserved memory regions */
-+	for (i = 0; i < kproc->num_rmems; i++) {
-+		dev_addr = kproc->rmem[i].dev_addr;
-+		size = kproc->rmem[i].size;
-+
-+		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
-+			offset = da - dev_addr;
-+			va = kproc->rmem[i].cpu_addr + offset;
-+			return (__force void *)va;
++		if (!devm_request_mem_region(dev, res->start,
++					     resource_size(res),
++					     dev_name(dev))) {
++			dev_err(dev, "could not request %s region for resource\n",
++				data->mems[i].name);
++			return -EBUSY;
 +		}
-+	}
 +
-+	return NULL;
++		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
++							 resource_size(res));
++		if (!kproc->mem[i].cpu_addr) {
++			dev_err(dev, "failed to map %s memory\n",
++				data->mems[i].name);
++			return -ENOMEM;
++		}
++		kproc->mem[i].bus_addr = res->start;
++		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
++		kproc->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			data->mems[i].name, &kproc->mem[i].bus_addr,
++			kproc->mem[i].size, kproc->mem[i].cpu_addr,
++			kproc->mem[i].dev_addr);
++	}
++	kproc->num_mems = num_mems;
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(k3_rproc_da_to_va);
++EXPORT_SYMBOL_GPL(k3_rproc_of_get_memories);
 +
  MODULE_LICENSE("GPL");
  MODULE_DESCRIPTION("TI K3 common Remoteproc code");
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 663911dc7032..622711951811 100644
+index 622711951811..8801914a7c56 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -16,6 +16,8 @@
- #ifndef REMOTEPROC_TI_K3_COMMON_H
- #define REMOTEPROC_TI_K3_COMMON_H
- 
-+#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
-+
- /**
-  * struct k3_rproc_mem - internal memory structure
-  * @cpu_addr: MPU virtual address of the memory region
-@@ -101,4 +103,6 @@ int k3_rproc_attach(struct rproc *rproc);
- int k3_rproc_detach(struct rproc *rproc);
- struct resource_table *k3_get_loaded_rsc_table(struct rproc *rproc,
+@@ -105,4 +105,6 @@ struct resource_table *k3_get_loaded_rsc_table(struct rproc *rproc,
  					       size_t *rsc_table_sz);
-+void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len,
-+			bool *is_iomem);
+ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len,
+ 			bool *is_iomem);
++int k3_rproc_of_get_memories(struct platform_device *pdev,
++			     struct k3_rproc *kproc);
  #endif /* REMOTEPROC_TI_K3_COMMON_H */
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 0bfa3b730d1f..3d888ab9de6b 100644
+index 3d888ab9de6b..476f53249793 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -22,8 +22,6 @@
- #include "ti_sci_proc.h"
- #include "ti_k3_common.h"
- 
--#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
--
- /*
-  * Power up the DSP remote processor.
-  *
-@@ -58,72 +56,13 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
- 	return 0;
- }
- 
--/*
-- * Custom function to translate a DSP device address (internal RAMs only) to a
-- * kernel virtual address.  The DSPs can access their RAMs at either an internal
-- * address visible only from a DSP, or at the SoC-level bus address. Both these
-- * addresses need to be looked through for translation. The translated addresses
-- * can be used either by the remoteproc core for loading (when using kernel
-- * remoteproc loader), or by any rpmsg bus drivers.
-- */
--static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
--{
--	struct k3_rproc *kproc = rproc->priv;
--	void __iomem *va = NULL;
--	phys_addr_t bus_addr;
--	u32 dev_addr, offset;
--	size_t size;
--	int i;
--
--	if (len == 0)
--		return NULL;
--
--	for (i = 0; i < kproc->num_mems; i++) {
--		bus_addr = kproc->mem[i].bus_addr;
--		dev_addr = kproc->mem[i].dev_addr;
--		size = kproc->mem[i].size;
--
--		if (da < KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) {
--			/* handle DSP-view addresses */
--			if (da >= dev_addr &&
--			    ((da + len) <= (dev_addr + size))) {
--				offset = da - dev_addr;
--				va = kproc->mem[i].cpu_addr + offset;
--				return (__force void *)va;
--			}
--		} else {
--			/* handle SoC-view addresses */
--			if (da >= bus_addr &&
--			    (da + len) <= (bus_addr + size)) {
--				offset = da - bus_addr;
--				va = kproc->mem[i].cpu_addr + offset;
--				return (__force void *)va;
--			}
--		}
--	}
--
--	/* handle static DDR reserved memory regions */
--	for (i = 0; i < kproc->num_rmems; i++) {
--		dev_addr = kproc->rmem[i].dev_addr;
--		size = kproc->rmem[i].size;
--
--		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
--			offset = da - dev_addr;
--			va = kproc->rmem[i].cpu_addr + offset;
--			return (__force void *)va;
--		}
--	}
--
--	return NULL;
--}
--
- static const struct rproc_ops k3_dsp_rproc_ops = {
- 	.start			=	k3_dsp_rproc_start,
- 	.stop			=	k3_rproc_stop,
- 	.attach			=	k3_rproc_attach,
- 	.detach			=	k3_rproc_detach,
- 	.kick			=	k3_rproc_kick,
--	.da_to_va		=	k3_dsp_rproc_da_to_va,
-+	.da_to_va		=	k3_rproc_da_to_va,
+@@ -66,58 +66,6 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
  	.get_loaded_rsc_table	=	k3_get_loaded_rsc_table,
  };
  
+-static int k3_dsp_rproc_of_get_memories(struct platform_device *pdev,
+-					struct k3_rproc *kproc)
+-{
+-	const struct k3_rproc_dev_data *data = kproc->data;
+-	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	int num_mems = 0;
+-	int i;
+-
+-	num_mems = kproc->data->num_mems;
+-	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
+-				  sizeof(*kproc->mem), GFP_KERNEL);
+-	if (!kproc->mem)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_mems; i++) {
+-		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   data->mems[i].name);
+-		if (!res) {
+-			dev_err(dev, "found no memory resource for %s\n",
+-				data->mems[i].name);
+-			return -EINVAL;
+-		}
+-		if (!devm_request_mem_region(dev, res->start,
+-					     resource_size(res),
+-					     dev_name(dev))) {
+-			dev_err(dev, "could not request %s region for resource\n",
+-				data->mems[i].name);
+-			return -EBUSY;
+-		}
+-
+-		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+-							 resource_size(res));
+-		if (!kproc->mem[i].cpu_addr) {
+-			dev_err(dev, "failed to map %s memory\n",
+-				data->mems[i].name);
+-			return -ENOMEM;
+-		}
+-		kproc->mem[i].bus_addr = res->start;
+-		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
+-		kproc->mem[i].size = resource_size(res);
+-
+-		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+-			data->mems[i].name, &kproc->mem[i].bus_addr,
+-			kproc->mem[i].size, kproc->mem[i].cpu_addr,
+-			kproc->mem[i].dev_addr);
+-	}
+-	kproc->num_mems = num_mems;
+-
+-	return 0;
+-}
+-
+ static void k3_dsp_mem_release(void *data)
+ {
+ 	struct device *dev = data;
+@@ -269,7 +217,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = k3_dsp_rproc_of_get_memories(pdev, kproc);
++	ret = k3_rproc_of_get_memories(pdev, kproc);
+ 	if (ret)
+ 		return ret;
+ 
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index e1caa5ee9a0d..a959f361aae2 100644
+index a959f361aae2..a077fe2c06aa 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -21,62 +21,6 @@
+@@ -21,58 +21,6 @@
  #include "ti_sci_proc.h"
  #include "ti_k3_common.h"
  
--/*
-- * Custom function to translate a remote processor device address (internal
-- * RAMs only) to a kernel virtual address.  The remote processors can access
-- * their RAMs at either an internal address visible only from a remote
-- * processor, or at the SoC-level bus address. Both these addresses need to be
-- * looked through for translation. The translated addresses can be used either
-- * by the remoteproc core for loading (when using kernel remoteproc loader), or
-- * by any rpmsg bus drivers.
-- */
--static void *k3_m4_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+-static int k3_m4_rproc_of_get_memories(struct platform_device *pdev,
+-				       struct k3_rproc *kproc)
 -{
--	struct k3_rproc *kproc = rproc->priv;
--	void __iomem *va = NULL;
--	phys_addr_t bus_addr;
--	u32 dev_addr, offset;
--	size_t size;
+-	const struct k3_rproc_dev_data *data = kproc->data;
+-	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	int num_mems;
 -	int i;
 -
--	if (len == 0)
--		return NULL;
+-	num_mems = kproc->data->num_mems;
+-	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
+-				  sizeof(*kproc->mem), GFP_KERNEL);
+-	if (!kproc->mem)
+-		return -ENOMEM;
 -
--	for (i = 0; i < kproc->num_mems; i++) {
--		bus_addr = kproc->mem[i].bus_addr;
--		dev_addr = kproc->mem[i].dev_addr;
--		size = kproc->mem[i].size;
--
--		/* handle M4-view addresses */
--		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
--			offset = da - dev_addr;
--			va = kproc->mem[i].cpu_addr + offset;
--			return (__force void *)va;
+-	for (i = 0; i < num_mems; i++) {
+-		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   data->mems[i].name);
+-		if (!res) {
+-			dev_err(dev, "found no memory resource for %s\n",
+-				data->mems[i].name);
+-			return -EINVAL;
+-		}
+-		if (!devm_request_mem_region(dev, res->start,
+-					     resource_size(res),
+-					     dev_name(dev))) {
+-			dev_err(dev, "could not request %s region for resource\n",
+-				data->mems[i].name);
+-			return -EBUSY;
 -		}
 -
--		/* handle SoC-view addresses */
--		if (da >= bus_addr && ((da + len) <= (bus_addr + size))) {
--			offset = da - bus_addr;
--			va = kproc->mem[i].cpu_addr + offset;
--			return (__force void *)va;
+-		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+-							 resource_size(res));
+-		if (!kproc->mem[i].cpu_addr) {
+-			dev_err(dev, "failed to map %s memory\n",
+-				data->mems[i].name);
+-			return -ENOMEM;
 -		}
+-		kproc->mem[i].bus_addr = res->start;
+-		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
+-		kproc->mem[i].size = resource_size(res);
+-
+-		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+-			data->mems[i].name, &kproc->mem[i].bus_addr,
+-			kproc->mem[i].size, kproc->mem[i].cpu_addr,
+-			kproc->mem[i].dev_addr);
 -	}
+-	kproc->num_mems = num_mems;
 -
--	/* handle static DDR reserved memory regions */
--	for (i = 0; i < kproc->num_rmems; i++) {
--		dev_addr = kproc->rmem[i].dev_addr;
--		size = kproc->rmem[i].size;
--
--		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
--			offset = da - dev_addr;
--			va = kproc->rmem[i].cpu_addr + offset;
--			return (__force void *)va;
--		}
--	}
--
--	return NULL;
+-	return 0;
 -}
 -
- static int k3_m4_rproc_of_get_memories(struct platform_device *pdev,
- 				       struct k3_rproc *kproc)
+ static void k3_m4_rproc_dev_mem_release(void *data)
  {
-@@ -220,7 +164,7 @@ static const struct rproc_ops k3_m4_rproc_ops = {
- 	.attach = k3_rproc_attach,
- 	.detach = k3_rproc_detach,
- 	.kick = k3_rproc_kick,
--	.da_to_va = k3_m4_rproc_da_to_va,
-+	.da_to_va = k3_rproc_da_to_va,
- 	.get_loaded_rsc_table = k3_get_loaded_rsc_table,
- };
+ 	struct device *dev = data;
+@@ -225,7 +173,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = k3_m4_rproc_of_get_memories(pdev, kproc);
++	ret = k3_rproc_of_get_memories(pdev, kproc);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.34.1
