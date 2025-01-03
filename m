@@ -1,110 +1,94 @@
-Received: from mr85p00im-ztdg06011101.me.com (mr85p00im-ztdg06011101.me.com [17.58.23.185])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0171D554
-	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jan 2025 00:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30271B6D0D;
+	Fri,  3 Jan 2025 06:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735864201; cv=none; b=WNL+tWzUFC1mMhBT20wSfY37dkT7aHGPDfepxxxU9UeQ95lzyVQ5d2i5oF3iio+mPmKjVuAJKOjxewpRHgVTs1BGbgeOKh8xn+XPfGUU7+Y6M2C0kUPCHdF6Ydlib47AnCven9/l+pm8v7Z/hZ2tST1D3ifNAvC7Z8lVDUNYMLo=
+	t=1735884325; cv=none; b=WPQQHrD+77ZlirJGBabY/F0DMX4LWvMkoGt8/4Eas595KCgLgUSjM2ViJCGq1eHXNR3SKUSGDzGUNyhJCVGuuRiHaKe3xJxiaG474ScRvWl+96pHBwno4nqCCo4N7G8BRTKfFgc1R1olvbIhVN49I/QQRAHGM/pMpfPETeI80O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735864201; c=relaxed/simple;
-	bh=9OKtjR1OqVgdyYo7PBAJ2n+E+ZuEA9Qci0SNdsRT6zM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZINJElEGUuWMLOnfk9+GX/F6iQAeVfPcE+ajvJfmoJcrmwMK9jX5Lh0joMznQAJcY4pLoQwrg+48CsvbybIyXX4IajhR5Q5D3kEhxEERSgH2slwbCVtOZbXBztZrBk+GU4kno+I3J1rMXiekXj+R3PI6Lv6bgLVvuBxlRHBFhD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mOkTDaQ/; arc=none smtp.client-ip=17.58.23.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+	s=arc-20240116; t=1735884325; c=relaxed/simple;
+	bh=okWX+fjQmXrvk45VEoCZ+Q9oztSmAhEXGYY8o5Sy3Uo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSK0cDuLoAwJbJN1imTMy4rIEBSko766FSAt+1pH6ze7lsLkJOcEx1Akj6eUuXl8pWdicgcxgTVLQFtlnSnqD3JHQ+evJltouiIWFj2n8/ExtBN4YXTwgMUsxQt4EQL9Y0oOV1/Y8XGBRKENrQPfCfotiI7XDVstMoOr/7MaP7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fa8K1Rta; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mOkTDaQ/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1735864198;
-	bh=sX00kjdMMkpbEo7t/2MEjZFR57bisypxfIJ+Q9mKzxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=mOkTDaQ/GuVii6DBvUjnFzJIAdLAeaaL2tmFlRCZ4P+A6TYAVQrRWp9Er4PXba69V
-	 7uSsUCLtOa63r9/3gMumkZmwFIEJtfG9H7DrHOBn8VlVz1XIhdLGUpypXWFkWu6bB8
-	 12Lwz3XHfyn//c8VkfZ/5/nckvSnkCoTO1R/fPwDGARAEbrdQkb/xTRlQjO1qZxC/z
-	 RJBK/KTEi6Bfsh1R4xlfoaQqy05mCIS0oWki+dsxYfz4DoTRws4M1be+zF4Ihp8ZaV
-	 YgKVNniBsmJEp1/jlXOCVacxKat31ZnCxX15TS4W0gpYAvwSUtQIuTLSHGpxBZ/hrZ
-	 LrwcTpexf4FRQ==
-Received: from [192.168.1.25] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011101.me.com (Postfix) with ESMTPSA id 0B02FDA0388;
-	Fri,  3 Jan 2025 00:29:47 +0000 (UTC)
-Message-ID: <2f8abbad-a70c-4ff0-94c7-8a8a37ad0845@icloud.com>
-Date: Fri, 3 Jan 2025 08:29:43 +0800
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fa8K1Rta"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 50365C8J067134;
+	Fri, 3 Jan 2025 00:05:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1735884312;
+	bh=I8pRNxrkusnevfNHKn1KvGEDCe6LelDeuYB+c27wkys=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Fa8K1Rta0G6Gp9j0EngCnNV76LuVHFLkZDFufi1aeUel4nuXElgVVRb+w83tEsXZm
+	 NtrKhVheVhDJVXhQEbK8PQrtFRtf4O1ZANTQpppzBeRjMO3/ZcxS3tBIpCmvoX9dZg
+	 gJdKwro8mqtPkgrOBa4PYr2wWM19L6M++bRZuNZo=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50365C1f098905
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 3 Jan 2025 00:05:12 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 3
+ Jan 2025 00:05:12 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 3 Jan 2025 00:05:12 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.104])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50365Bhj093400;
+	Fri, 3 Jan 2025 00:05:11 -0600
+Date: Fri, 3 Jan 2025 11:35:10 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>,
+        <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
+        <srk@ti.com>, <jan.kiszka@siemens.com>,
+        <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
+        <eballetbo@redhat.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] remoteproc: k3-r5: Fix checks in
+ k3_r5_rproc_{mbox_callback/kick}
+Message-ID: <66zjmdlfm5ou2ayivndckoz6zi4octnet44rcvdxuz6dmallqq@x3g7lyzicpiv>
+References: <20241224091457.1050233-1-b-padhi@ti.com>
+ <20241224091457.1050233-2-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/11] libnvdimm: Replace namespace_match() with
- device_find_child_by_name()
-To: Fan Ni <nifan.cxl@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-serial@vger.kernel.org, netdev@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>,
- Alison Schofield <alison.schofield@intel.com>
-References: <20241211-const_dfc_done-v4-0-583cc60329df@quicinc.com>
- <20241211-const_dfc_done-v4-1-583cc60329df@quicinc.com>
- <Z3bYMiOG0u3Jtv3h@smc-140338-bm01>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <Z3bYMiOG0u3Jtv3h@smc-140338-bm01>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ybkBbilc0XTCT_YEDgTjyLJ9DRFrwcwH
-X-Proofpoint-ORIG-GUID: ybkBbilc0XTCT_YEDgTjyLJ9DRFrwcwH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-02_03,2025-01-02_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=738 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2501030002
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241224091457.1050233-2-b-padhi@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2025/1/3 02:17, Fan Ni wrote:
->> -
->>  static bool is_idle(struct device *dev, struct nd_namespace_common *ndns)
->>  {
->>  	struct nd_region *nd_region = to_nd_region(dev->parent);
->> @@ -168,7 +161,7 @@ ssize_t nd_namespace_store(struct device *dev,
->>  		goto out;
->>  	}
->>  
->> -	found = device_find_child(dev->parent, name, namespace_match);
->> +	found = device_find_child_by_name(dev->parent, name);
-> Looks good to me.
-> Just one general question.
-> The function device_find_child checks parent and parent->p, but
-> device_find_child_by_name only checks parent although they share the
-> code except the match function. Why that?
+On Tue, Dec 24, 2024 at 02:44:55PM +0530, Beleswar Padhi wrote:
+> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
+> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()"
+> and "k3_r5_rproc_kick()" callbacks to exit if the remote core's state
+> was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
+> the default state of the core is set to "RPROC_DETACHED", and the
+> transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
+> function has invoked "rproc_start_subdevices()".
 > 
+> The "rproc_start_subdevices()" function triggers the probe of Virtio
+> RPMsg subdevices, which require the mailbox callbacks to be functional.
+> To resolve this, a new variable, "is_attach_ongoing", is introduced to
+> distinguish between core states: when a core is actually detached and
+> when it is in the process of being attached. The callbacks are updated
+> to return early only if the core is actually detached and not during an
+> ongoing attach operation in IPC-only mode.
+> 
+> Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
+> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 
-Thank you Fan for code review.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-I did not touch device_find_child_by_name() parameter checking at
-that time.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=903c44939abc02e2f3d6f2ad65fa090f7e5df5b6
-
-since
-[PATCH v5 05/12] will come finally.
-https://lore.kernel.org/all/20241224-const_dfc_done-v5-5-6623037414d4@quicinc.com/
-
-
-> Fan
-
+Regards,
+Siddharth.
