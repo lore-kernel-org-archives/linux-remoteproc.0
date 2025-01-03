@@ -1,46 +1,47 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479BB1FA24D;
-	Fri,  3 Jan 2025 10:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159AB1F9ABE;
+	Fri,  3 Jan 2025 10:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735899210; cv=none; b=bG9rqyetMICxa8eLiH3LVF5J9LR/Rq7OujNbmj/uIeumH9UcyXTGpsY0sj5nOdTT6f9RaV1vla/Vanpy7HgR1JAN/X+PQQKq20z4CqGNaZWdmJupTWCHH2JJ1USB9zWbTiQkAPeuPQJXBJ+9Jd8iqh/RJnfsTPH3eX2CuloDoP4=
+	t=1735899212; cv=none; b=KK0aPhHTAOv9x8dL/n6sX8WQV54E/vBK5ouFQCyPAPkc79mjxQuI1m+ycIWp2QjjbIQuDOQm0ZERSTiBJLJO0DzSeyuu5uDQz5OJCG3VkF/coATTTvuiOmmmiF3509lzP8a6DdOnoDjWSVEWmIkCC66V/xuyeuJrq4Px62D4/PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735899210; c=relaxed/simple;
-	bh=jQtXpwcwW7agOm98SEHPAz+qH6vwanUc/xASpzTjjUA=;
+	s=arc-20240116; t=1735899212; c=relaxed/simple;
+	bh=aWiSdpQK7zjWmyyPvOl2065qt+wdx8FE84XxTzz/zTw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hnWLrkEzweiyLoWBXhLhAsxYlndq0CPKlnsIdXCRr3Dy0aFV/5Brf2hXogEDIMNrXRH7v0ctvqLYNIQLltBsc1rv0L4XswEIq5BmiTi4YwRocH9hBkDJhoXo1ZG6QMagbl9tjsqTEJFiL92Pa44qUVjULdrF9ohUAoPtWQVhS34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ctXVuqA9; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=T8x1lfIZifa3RVbucNqdOh83HiXPFJ+KwYCnG1iG0DTK0zwpg+t+xEOVqLYHdBWqWWPvuTmtS1W7QA/MmKJGi+Qg7a/hiG4lkb6+U5ZrBV+Oeqeezp8ieoeOPHpDnD5kZpBSKPdHJ+NyuyqaWLGcCGV3G3S7GD6HT8qbjdDh9DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AYExwbda; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ctXVuqA9"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 503ADHQq033617;
-	Fri, 3 Jan 2025 04:13:17 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AYExwbda"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 503ADKTp2076457
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 3 Jan 2025 04:13:20 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1735899197;
-	bh=eJypcE39LhLmZrmnDZSY8wRBVWXkWGdgWsm/rwuIKKs=;
+	s=ti-com-17Q1; t=1735899200;
+	bh=35hrPhQ5n9mdBVcW2Cv4EXTWVLDWerTPkAv7UtqS630=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ctXVuqA93Fn8/Fc8nnsgCz7Ng1HkTdABGEoDPvMebjhQMOeoZi9B+AMvB4eMicGLZ
-	 Y44lc9tQdOmONMHV5OZ4acpDVF2xAzpDdIwI6TJTD9BJNMBP6g1L/jIPQJjtylqzyx
-	 U8ozuz8OBIFEmQa+bgFsUCaMs/WxJw0wH3Bs/O5g=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 503ADHcp112777
+	b=AYExwbdatvclz40uVjUWXNBa8yW30Q76G1S+7AsziqXCfqy6yVMeojxPXhLs2iJr6
+	 e+q4g43sOU8Ma9zMMpWCdHS2lE43U0HToPwImJCyz/jmmoAkFPL7ElYDJqjHppNDgZ
+	 mTTo8IsyAD+2zn3UhmT+CM5o+ff5bMfcySgX5OMQ=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 503ADK07012436
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 3 Jan 2025 04:13:17 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 3 Jan 2025 04:13:20 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 3
- Jan 2025 04:13:16 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2025 04:13:20 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 3 Jan 2025 04:13:16 -0600
+ Frontend Transport; Fri, 3 Jan 2025 04:13:20 -0600
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVST126047;
-	Fri, 3 Jan 2025 04:13:13 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVSU126047;
+	Fri, 3 Jan 2025 04:13:17 -0600
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
@@ -48,9 +49,9 @@ CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
         <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
         <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 11/20] remoteproc: k3: Refactor .start rproc ops into common driver
-Date: Fri, 3 Jan 2025 15:42:22 +0530
-Message-ID: <20250103101231.1508151-12-b-padhi@ti.com>
+Subject: [PATCH v8 12/20] remoteproc: k3: Refactor .stop rproc ops into common driver
+Date: Fri, 3 Jan 2025 15:42:23 +0530
+Message-ID: <20250103101231.1508151-13-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250103101231.1508151-1-b-padhi@ti.com>
 References: <20250103101231.1508151-1-b-padhi@ti.com>
@@ -64,122 +65,134 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The k3_dsp_rproc_start() function sets the boot address and releases the
-reset on the remote processor. Whereas, the k3_m4_rproc_start() function
-only needs to release the reset. Refactor the k3_m4_rproc_start() into
-ti_k3_common.c as k3_rproc_start() and align the DSP and M4 drivers to
-invoke this common function when releasing the reset on the remote
-processor.
+The .stop rproc ops implementations in ti_k3_dsp_remoteproc.c and
+ti_k3_m4_remoteproc.c drivers put the remote processor into reset.
+Refactor the implementations into ti_k3_common.c driver as
+k3_rproc_stop() and align DSP and M4 drivers to register this common
+function as .stop ops.
 
-Further, do not override the .start ops with NULL when operating in
-IPC-only mode in ti_k3_dsp_remoteproc.c, as .start is never invoked in
-rproc_attach routine.
+Further, do not override the .stop ops with NULL when operating in
+IPC-only mode in ti_k3_dsp_remoteproc.c, as .stop is never invoked in
+rproc_detach routine.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- drivers/remoteproc/ti_k3_common.c         | 15 +++++++++++++++
+ drivers/remoteproc/ti_k3_common.c         | 14 ++++++++++++++
  drivers/remoteproc/ti_k3_common.h         |  1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c |  4 ++--
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 22 +---------------------
- 4 files changed, 19 insertions(+), 23 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 18 +-----------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 15 +--------------
+ 4 files changed, 17 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index 7fd8c8394d95..b1d828dbb334 100644
+index b1d828dbb334..799152d1a736 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -281,5 +281,20 @@ int k3_rproc_unprepare(struct rproc *rproc)
+@@ -296,5 +296,19 @@ int k3_rproc_start(struct rproc *rproc)
  }
- EXPORT_SYMBOL_GPL(k3_rproc_unprepare);
+ EXPORT_SYMBOL_GPL(k3_rproc_start);
  
 +/*
-+ * Power up the remote processor.
++ * Stop the remote processor.
 + *
-+ * This function will be invoked only after the firmware for this rproc
-+ * was loaded, parsed successfully, and all of its resource requirements
-+ * were met. This callback is invoked only in remoteproc mode.
++ * This function puts the remote processor into reset, and finishes processing
++ * of any pending messages. This callback is invoked only in remoteproc mode.
 + */
-+int k3_rproc_start(struct rproc *rproc)
++int k3_rproc_stop(struct rproc *rproc)
 +{
 +	struct k3_rproc *kproc = rproc->priv;
 +
-+	return k3_rproc_release(kproc);
++	return k3_rproc_reset(kproc);
 +}
-+EXPORT_SYMBOL_GPL(k3_rproc_start);
++EXPORT_SYMBOL_GPL(k3_rproc_stop);
 +
  MODULE_LICENSE("GPL");
  MODULE_DESCRIPTION("TI K3 common Remoteproc code");
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index b6b977e16af6..2eb1539b3bb9 100644
+index 2eb1539b3bb9..bfcb5d086cff 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -95,4 +95,5 @@ int k3_rproc_release(struct k3_rproc *kproc);
- int k3_rproc_request_mbox(struct rproc *rproc);
+@@ -96,4 +96,5 @@ int k3_rproc_request_mbox(struct rproc *rproc);
  int k3_rproc_prepare(struct rproc *rproc);
  int k3_rproc_unprepare(struct rproc *rproc);
-+int k3_rproc_start(struct rproc *rproc);
+ int k3_rproc_start(struct rproc *rproc);
++int k3_rproc_stop(struct rproc *rproc);
  #endif /* REMOTEPROC_TI_K3_COMMON_H */
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 7e7aca192d0a..75ab86b4e82a 100644
+index 75ab86b4e82a..a9896ba51399 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -50,7 +50,8 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
- 	if (ret)
- 		return ret;
+@@ -58,21 +58,6 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
+ 	return 0;
+ }
  
--	ret = k3_rproc_release(kproc);
-+	/* Call the K3 common start function after doing DSP specific stuff */
-+	ret = k3_rproc_start(rproc);
- 	if (ret)
- 		return ret;
+-/*
+- * Stop the DSP remote processor.
+- *
+- * This function puts the DSP processor into reset, and finishes processing
+- * of any pending messages. This callback is invoked only in remoteproc mode.
+- */
+-static int k3_dsp_rproc_stop(struct rproc *rproc)
+-{
+-	struct k3_rproc *kproc = rproc->priv;
+-
+-	k3_rproc_reset(kproc);
+-
+-	return 0;
+-}
+-
+ /*
+  * Attach to a running DSP remote processor (IPC-only mode)
+  *
+@@ -203,7 +188,7 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool
  
-@@ -428,7 +429,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ static const struct rproc_ops k3_dsp_rproc_ops = {
+ 	.start		= k3_dsp_rproc_start,
+-	.stop		= k3_dsp_rproc_stop,
++	.stop		= k3_rproc_stop,
+ 	.kick		= k3_rproc_kick,
+ 	.da_to_va	= k3_dsp_rproc_da_to_va,
+ };
+@@ -429,7 +414,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
  		dev_info(dev, "configured DSP for IPC-only mode\n");
  		rproc->state = RPROC_DETACHED;
  		/* override rproc ops with only required IPC-only mode ops */
--		rproc->ops->start = NULL;
- 		rproc->ops->stop = NULL;
+-		rproc->ops->stop = NULL;
  		rproc->ops->attach = k3_dsp_rproc_attach;
  		rproc->ops->detach = k3_dsp_rproc_detach;
+ 		rproc->ops->get_loaded_rsc_table = k3_dsp_get_loaded_rsc_table;
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index 25f013fa7511..0f1237172233 100644
+index 0f1237172233..27bf8ed49f59 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -244,26 +244,6 @@ static void k3_m4_release_tsp(void *data)
+@@ -244,19 +244,6 @@ static void k3_m4_release_tsp(void *data)
  	ti_sci_proc_release(tsp);
  }
  
 -/*
-- * Power up the M4 remote processor.
+- * Stop the M4 remote processor.
 - *
-- * This function will be invoked only after the firmware for this rproc
-- * was loaded, parsed successfully, and all of its resource requirements
-- * were met. This callback is invoked only in remoteproc mode.
+- * This function puts the M4 processor into reset, and finishes processing
+- * of any pending messages. This callback is invoked only in remoteproc mode.
 - */
--static int k3_m4_rproc_start(struct rproc *rproc)
+-static int k3_m4_rproc_stop(struct rproc *rproc)
 -{
 -	struct k3_rproc *kproc = rproc->priv;
--	struct device *dev = kproc->dev;
--	int ret;
 -
--	ret = k3_rproc_release(kproc);
--	if (ret)
--		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
--
--	return ret;
+-	return k3_rproc_reset(kproc);
 -}
 -
  /*
-  * Stop the M4 remote processor.
+  * Attach to a running M4 remote processor (IPC-only mode)
   *
-@@ -316,7 +296,7 @@ static int k3_m4_rproc_detach(struct rproc *rproc)
- static const struct rproc_ops k3_m4_rproc_ops = {
+@@ -297,7 +284,7 @@ static const struct rproc_ops k3_m4_rproc_ops = {
  	.prepare = k3_rproc_prepare,
  	.unprepare = k3_rproc_unprepare,
--	.start = k3_m4_rproc_start,
-+	.start = k3_rproc_start,
- 	.stop = k3_m4_rproc_stop,
+ 	.start = k3_rproc_start,
+-	.stop = k3_m4_rproc_stop,
++	.stop = k3_rproc_stop,
  	.attach = k3_m4_rproc_attach,
  	.detach = k3_m4_rproc_detach,
+ 	.kick = k3_rproc_kick,
 -- 
 2.34.1
 
