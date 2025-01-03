@@ -1,46 +1,46 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9594A1F943F;
-	Fri,  3 Jan 2025 10:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0790D1F8EF9;
+	Fri,  3 Jan 2025 10:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735899199; cv=none; b=XIFtdVblYyS21u4ooLdFIqWICmS/TBVfTcbF112b6E0vHDjHByYSPfoZ9BQ0qMuBZDfbP79/ml7y5ZbcDvO9VRTH3kh7VxRM4p3KLt4Je13mla0RNBKUsc+2bQCDv0EVVQ4hWr4PeZPngE/EPotqs1UqR8mkLmGmZ8KgHX/znF4=
+	t=1735899203; cv=none; b=Pn/mcJckXqyVcEy9k2FwWRlr3Qy3ZrUIMWuaQS0JXtObcUkbNxhyXo8uob3X8RUl5UwFU1p8gjbk5gpF7ZgvmO03lGvaHPY2JrmcfzvRonz8gsaUmOW0kOUrIU1znn7q3swHDBFJF4ncVqZrEoE6OO8p2Tn5YGMVvkK8H18wGC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735899199; c=relaxed/simple;
-	bh=0NQkNgYmoCoPTHF3IqcIRO+FUsrsnggW6J/3BVgMcng=;
+	s=arc-20240116; t=1735899203; c=relaxed/simple;
+	bh=Lltou93Tx6+7HaAaR5g+83Va7G64bRdecPX8m2vRsr0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pl0D/QarordNtsWrACAjVzcSKEuWe1jH38khzuC+VBvgecMvCgSy+dH2G1hapcJ9dYZEfK13m1qpwv7ZqsKvSiMqfsEDGiHezJUD3KyymnvBaZK7qXO5A7xtZCVPxZMTJ+81dprd3vytcL/r75VZixHt7VqZ+ENhdaU1QgxvBt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A0hd0gtz; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=QNYYA1kcgudsJAIkUJhjb+/liRjp/FNVcbDYBpjnSy/AVviW3ISdeTxzDouQmJOktOGLNBnJgAWz6FY7RFnz+QoqxuICWZZzLeuS+pZHmuIsIF3VjMCLT5JBKwaW96M+lgyx4V3fDwML3+DgcQnpUGt8ZjDvSQZ1FIPgZsMweZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YreilqoC; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A0hd0gtz"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 503AD5iW033596;
-	Fri, 3 Jan 2025 04:13:05 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YreilqoC"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 503AD9QG2076419
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 3 Jan 2025 04:13:09 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1735899185;
-	bh=ZcbFZqP8Z4NUAMCntYlwy0RskYls8rWZ0AY3/2eX4Aw=;
+	s=ti-com-17Q1; t=1735899189;
+	bh=JM5GiY79Te21OH84xe04G9U6i4kFv5LmBItYTCoTcdw=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=A0hd0gtzUTV5MNCa8NXZ5r8X15jVqkMDDhpnBNKUC25aEQep8ONbyJXrC+o+8f12O
-	 evS3ollqq6uLquhc/H3TWoOBXP6tV6ZpVpD2uAj5kkl5v2BoRsXBXeRsN07Saf2Sm4
-	 q3e7rCTVdwNzUoeirRxX+Ku/8a5Ov2nuzRDbj3G8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 503AD5fp112707
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 3 Jan 2025 04:13:05 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+	b=YreilqoCEYbw1IOK1NokDMF+VrxlLjXr+HnjZDj4z9mj90Z0F1ZVtOKIprs4gSHCl
+	 LkEfXPNCUQKcRQAkpU9B9LQyncxqVHwO272EHHYjN1PajlLzVqK9pL6MVvAGyMwkOB
+	 HK3wLVN4hNHze+m5hxzuCqxpXu6Hygd0nT/hV3Uo=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503AD9Iq042032;
+	Fri, 3 Jan 2025 04:13:09 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 3
- Jan 2025 04:13:05 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ Jan 2025 04:13:09 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 3 Jan 2025 04:13:05 -0600
+ Frontend Transport; Fri, 3 Jan 2025 04:13:09 -0600
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVSQ126047;
-	Fri, 3 Jan 2025 04:13:02 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 503ACVSR126047;
+	Fri, 3 Jan 2025 04:13:05 -0600
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
@@ -48,9 +48,9 @@ CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
         <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
         <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 08/20] remoteproc: k3: Refactor rproc_request_mbox() implementations into common driver
-Date: Fri, 3 Jan 2025 15:42:19 +0530
-Message-ID: <20250103101231.1508151-9-b-padhi@ti.com>
+Subject: [PATCH v8 09/20] remoteproc: k3: Refactor .prepare rproc ops into common driver
+Date: Fri, 3 Jan 2025 15:42:20 +0530
+Message-ID: <20250103101231.1508151-10-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250103101231.1508151-1-b-padhi@ti.com>
 References: <20250103101231.1508151-1-b-padhi@ti.com>
@@ -64,155 +64,207 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The k3_dsp_rproc_request_mbox() function acquires the mailbox channel
-and sends a message through the acquired channel. The
-ti_k3_m4_remoteproc.c driver acquires the mailbox channel in probe and
-sends the message later in .attach()/.start() callbacks. Refactor the
-k3_dsp_rproc_request_mbox() function into ti_k3_common.c as
-k3_rproc_request_mbox() and align DSP and M4 drivers to use this common
-function during probe routine.
+The ti_k3_dsp_remoteproc.c driver asserts the local reset in probe and
+releases the global reset in .prepare callback. Whereas, the
+ti_k3_m4_remoteproc.c driver does both operations in .prepare callback,
+which is more suitable as it ensures lreset is asserted for subsequent
+core start operations from sysfs. Refactor the k3_m4_rproc_prepare()
+function into the ti_k3_common.c driver as k3_rproc_prepare() and align
+DSP and M4 drivers to register this common function as .prepare ops.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- drivers/remoteproc/ti_k3_common.c         | 36 +++++++++++++++++++
+ drivers/remoteproc/ti_k3_common.c         | 46 +++++++++++++++++++++++
  drivers/remoteproc/ti_k3_common.h         |  1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 36 +------------------
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 42 ++---------------------
- 4 files changed, 41 insertions(+), 74 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 42 +--------------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 45 +---------------------
+ 4 files changed, 49 insertions(+), 85 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index cec664819a1d..a78abecf2756 100644
+index a78abecf2756..699528e4a369 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -169,5 +169,41 @@ int k3_rproc_release(struct k3_rproc *kproc)
+@@ -205,5 +205,51 @@ int k3_rproc_request_mbox(struct rproc *rproc)
  }
- EXPORT_SYMBOL_GPL(k3_rproc_release);
+ EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
  
-+int k3_rproc_request_mbox(struct rproc *rproc)
++/*
++ * The K3 DSP and M4 cores have a local reset that affects only the CPU, and a
++ * generic module reset that powers on the device and allows the internal
++ * memories to be accessed while the local reset is asserted. This function is
++ * used to release the global reset on remote cores to allow loading into the
++ * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
++ * firmware loading, and is followed by the .start() ops after loading to
++ * actually let the remote cores to run.
++ */
++int k3_rproc_prepare(struct rproc *rproc)
 +{
 +	struct k3_rproc *kproc = rproc->priv;
-+	struct mbox_client *client = &kproc->client;
 +	struct device *dev = kproc->dev;
 +	int ret;
 +
-+	client->dev = dev;
-+	client->tx_done = NULL;
-+	client->rx_callback = k3_rproc_mbox_callback;
-+	client->tx_block = false;
-+	client->knows_txdone = false;
-+
-+	kproc->mbox = mbox_request_channel(client, 0);
-+	if (IS_ERR(kproc->mbox))
-+		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-+				     "mbox_request_channel failed\n");
++	/* If the core is running already no need to deassert the module reset */
++	if (rproc->state == RPROC_DETACHED)
++		return 0;
 +
 +	/*
-+	 * Ping the remote processor, this is only for sanity-sake for now;
-+	 * there is no functional effect whatsoever.
-+	 *
-+	 * Note that the reply will _not_ arrive immediately: this message
-+	 * will wait in the mailbox fifo until the remote processor is booted.
++	 * Ensure the local reset is asserted so the core doesn't
++	 * execute bogus code when the module reset is released.
 +	 */
-+	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-+	if (ret < 0) {
-+		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
-+		mbox_free_channel(kproc->mbox);
++	if (kproc->data->uses_lreset) {
++		ret = k3_rproc_reset(kproc);
++		if (ret)
++			return ret;
++
++		ret = reset_control_status(kproc->reset);
++		if (ret <= 0) {
++			dev_err(dev, "local reset still not asserted\n");
++			return ret;
++		}
++	}
++
++	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
++						    kproc->ti_sci_id);
++	if (ret) {
++		dev_err(dev, "could not deassert module-reset for internal RAM loading\n");
 +		return ret;
 +	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
++EXPORT_SYMBOL_GPL(k3_rproc_prepare);
 +
  MODULE_LICENSE("GPL");
  MODULE_DESCRIPTION("TI K3 common Remoteproc code");
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 37516765e505..8e44c0455c39 100644
+index 8e44c0455c39..22dd6e13f47a 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -92,4 +92,5 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data);
- void k3_rproc_kick(struct rproc *rproc, int vqid);
+@@ -93,4 +93,5 @@ void k3_rproc_kick(struct rproc *rproc, int vqid);
  int k3_rproc_reset(struct k3_rproc *kproc);
  int k3_rproc_release(struct k3_rproc *kproc);
-+int k3_rproc_request_mbox(struct rproc *rproc);
+ int k3_rproc_request_mbox(struct rproc *rproc);
++int k3_rproc_prepare(struct rproc *rproc);
  #endif /* REMOTEPROC_TI_K3_COMMON_H */
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 64affbe0ba29..c8bab63a4f4d 100644
+index c8bab63a4f4d..078bfb9aa233 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -24,40 +24,6 @@
+@@ -24,31 +24,6 @@
  
  #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
  
--static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
+-/*
+- * The C66x DSP cores have a local reset that affects only the CPU, and a
+- * generic module reset that powers on the device and allows the DSP internal
+- * memories to be accessed while the local reset is asserted. This function is
+- * used to release the global reset on C66x DSPs to allow loading into the DSP
+- * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
+- * firmware loading, and is followed by the .start() ops after loading to
+- * actually let the C66x DSP cores run. This callback is invoked only in
+- * remoteproc mode.
+- */
+-static int k3_dsp_rproc_prepare(struct rproc *rproc)
 -{
 -	struct k3_rproc *kproc = rproc->priv;
--	struct mbox_client *client = &kproc->client;
 -	struct device *dev = kproc->dev;
 -	int ret;
 -
--	client->dev = dev;
--	client->tx_done = NULL;
--	client->rx_callback = k3_rproc_mbox_callback;
--	client->tx_block = false;
--	client->knows_txdone = false;
+-	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+-						    kproc->ti_sci_id);
+-	if (ret)
+-		dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading (%pe)\n",
+-			ERR_PTR(ret));
 -
--	kproc->mbox = mbox_request_channel(client, 0);
--	if (IS_ERR(kproc->mbox))
--		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
--				     "mbox_request_channel failed\n");
--
--	/*
--	 * Ping the remote processor, this is only for sanity-sake for now;
--	 * there is no functional effect whatsoever.
--	 *
--	 * Note that the reply will _not_ arrive immediately: this message
--	 * will wait in the mailbox fifo until the remote processor is booted.
--	 */
--	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
--	if (ret < 0) {
--		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
--		mbox_free_channel(kproc->mbox);
--		return ret;
--	}
--
--	return 0;
+-	return ret;
 -}
+-
  /*
-  * The C66x DSP cores have a local reset that affects only the CPU, and a
-  * generic module reset that powers on the device and allows the DSP internal
-@@ -460,7 +426,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	kproc->dev = dev;
- 	kproc->data = data;
+  * This function implements the .unprepare() ops and performs the complimentary
+  * operations to that of the .prepare() ops. The function is used to assert the
+@@ -418,7 +393,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	rproc->has_iommu = false;
+ 	rproc->recovery_disabled = true;
+ 	if (data->uses_lreset) {
+-		rproc->ops->prepare = k3_dsp_rproc_prepare;
++		rproc->ops->prepare = k3_rproc_prepare;
+ 		rproc->ops->unprepare = k3_dsp_rproc_unprepare;
+ 	}
+ 	kproc = rproc->priv;
+@@ -476,7 +451,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		dev_info(dev, "configured DSP for IPC-only mode\n");
+ 		rproc->state = RPROC_DETACHED;
+ 		/* override rproc ops with only required IPC-only mode ops */
+-		rproc->ops->prepare = NULL;
+ 		rproc->ops->unprepare = NULL;
+ 		rproc->ops->start = NULL;
+ 		rproc->ops->stop = NULL;
+@@ -485,20 +459,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		rproc->ops->get_loaded_rsc_table = k3_dsp_get_loaded_rsc_table;
+ 	} else {
+ 		dev_info(dev, "configured DSP for remoteproc mode\n");
+-		/*
+-		 * ensure the DSP local reset is asserted to ensure the DSP
+-		 * doesn't execute bogus code in .prepare() when the module
+-		 * reset is released.
+-		 */
+-		if (data->uses_lreset) {
+-			ret = reset_control_status(kproc->reset);
+-			if (ret < 0) {
+-				return dev_err_probe(dev, ret, "failed to get reset status\n");
+-			} else if (ret == 0) {
+-				dev_warn(dev, "local reset is deasserted for device\n");
+-				k3_rproc_reset(kproc);
+-			}
+-		}
+ 	}
  
--	ret = k3_dsp_rproc_request_mbox(rproc);
-+	ret = k3_rproc_request_mbox(rproc);
- 	if (ret)
- 		return ret;
- 
+ 	ret = devm_rproc_add(dev, rproc);
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index c24085411e1c..6dd93c8d0553 100644
+index 6dd93c8d0553..218d4bf941a1 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -21,27 +21,6 @@
+@@ -21,49 +21,6 @@
  #include "ti_sci_proc.h"
  #include "ti_k3_common.h"
  
--static int k3_m4_rproc_ping_mbox(struct k3_rproc *kproc)
+-/*
+- * The M4 cores have a local reset that affects only the CPU, and a
+- * generic module reset that powers on the device and allows the internal
+- * memories to be accessed while the local reset is asserted. This function is
+- * used to release the global reset on remote cores to allow loading into the
+- * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
+- * firmware loading, and is followed by the .start() ops after loading to
+- * actually let the remote cores to run.
+- */
+-static int k3_m4_rproc_prepare(struct rproc *rproc)
 -{
+-	struct k3_rproc *kproc = rproc->priv;
 -	struct device *dev = kproc->dev;
 -	int ret;
 -
+-	/* If the core is running already no need to deassert the module reset */
+-	if (rproc->state == RPROC_DETACHED)
+-		return 0;
+-
 -	/*
--	 * Ping the remote processor, this is only for sanity-sake for now;
--	 * there is no functional effect whatsoever.
--	 *
--	 * Note that the reply will _not_ arrive immediately: this message
--	 * will wait in the mailbox fifo until the remote processor is booted.
+-	 * Ensure the local reset is asserted so the core doesn't
+-	 * execute bogus code when the module reset is released.
 -	 */
--	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
--	if (ret < 0) {
--		dev_err(dev, "mbox_send_message failed: %d\n", ret);
+-	ret = k3_rproc_reset(kproc);
+-	if (ret)
+-		return ret;
+-
+-	ret = reset_control_status(kproc->reset);
+-	if (ret <= 0) {
+-		dev_err(dev, "local reset still not asserted\n");
+-		return ret;
+-	}
+-
+-	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+-						    kproc->ti_sci_id);
+-	if (ret) {
+-		dev_err(dev, "could not deassert module-reset for internal RAM loading\n");
 -		return ret;
 -	}
 -
@@ -220,53 +272,17 @@ index c24085411e1c..6dd93c8d0553 100644
 -}
 -
  /*
-  * The M4 cores have a local reset that affects only the CPU, and a
-  * generic module reset that powers on the device and allows the internal
-@@ -350,10 +329,6 @@ static int k3_m4_rproc_start(struct rproc *rproc)
- 	struct device *dev = kproc->dev;
- 	int ret;
- 
--	ret = k3_m4_rproc_ping_mbox(kproc);
--	if (ret)
--		return ret;
--
- 	ret = k3_rproc_release(kproc);
- 	if (ret)
- 		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
-@@ -386,14 +361,9 @@ static int k3_m4_rproc_stop(struct rproc *rproc)
- static int k3_m4_rproc_attach(struct rproc *rproc)
- {
- 	struct k3_rproc *kproc = rproc->priv;
--	int ret;
- 
- 	kproc->is_attach_ongoing = true;
- 
--	ret = k3_m4_rproc_ping_mbox(kproc);
--	if (ret)
--		return ret;
--
- 	return 0;
+  * This function implements the .unprepare() ops and performs the complimentary
+  * operations to that of the .prepare() ops. The function is used to assert the
+@@ -386,7 +343,7 @@ static int k3_m4_rproc_detach(struct rproc *rproc)
  }
  
-@@ -506,15 +476,9 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
- 		dev_info(dev, "configured M4F for remoteproc mode\n");
- 	}
- 
--	kproc->client.dev = dev;
--	kproc->client.tx_done = NULL;
--	kproc->client.rx_callback = k3_rproc_mbox_callback;
--	kproc->client.tx_block = false;
--	kproc->client.knows_txdone = false;
--	kproc->mbox = mbox_request_channel(&kproc->client, 0);
--	if (IS_ERR(kproc->mbox))
--		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
--				     "mbox_request_channel failed\n");
-+	ret = k3_rproc_request_mbox(rproc);
-+	if (ret)
-+		return ret;
- 
- 	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
+ static const struct rproc_ops k3_m4_rproc_ops = {
+-	.prepare = k3_m4_rproc_prepare,
++	.prepare = k3_rproc_prepare,
+ 	.unprepare = k3_m4_rproc_unprepare,
+ 	.start = k3_m4_rproc_start,
+ 	.stop = k3_m4_rproc_stop,
 -- 
 2.34.1
 
