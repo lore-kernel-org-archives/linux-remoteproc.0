@@ -1,201 +1,110 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F380C1E9B03;
-	Tue,  7 Jan 2025 10:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6F01E0DAF
+	for <linux-remoteproc@vger.kernel.org>; Tue,  7 Jan 2025 12:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736245079; cv=none; b=N4mEmH5DzjQXh3shvwEyskkPVsoR76pEnoE7pNykUjJwbW/VLawbyUvB4YNH+yI4f3YKtbw73WFQ/mm1PC3zF42kLAmsWB77p/rZQXJHdfUM2+hEK1ryhlqDeIHKF3uMFy50RlWrPN6Fq9akvrBVIIkChjZI64f1ZbiWw2kwzvw=
+	t=1736252522; cv=none; b=bPmxITDpscygfcuGziGIyC1inhfY7aXhLLXaMmUslwpLeys36QriEjeORzUXII4wVLli/skQ5j492gOmu6Gs1vEaqD/iSYkvQnYyIuri879Z2BBZ7BztTTN8ZBdSLkWZmlXNrgM+AuK7DqOi4aZcsommHEtsXogKNt6xiuja0ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736245079; c=relaxed/simple;
-	bh=K8VrtSjmbWds87x17SBcYo0o1Afxn9qQjgu2pqzihGc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ou9DhTjlc9X0ngKw6kRcdIBE/UirIwMar/VSSV/mTDHiuF7akP1C356dlImIbVTp0AVQeocEUJ5goj7YheLkc5xjXECegBKpGrfU0yjOdUb5jbC9NuWE2SnXAk40yzk2Hw3IGNoS2essgBoFftFCtnMm4t6NdkphFLDKmqQxe4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S5MFtFRx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1736252522; c=relaxed/simple;
+	bh=1tXML+DqArbNQcM5iHDtMwJQHGdw0eE0Ilz2jJAf2Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1osKuxzce+L2z2Muwf3LzRHmakW+Jo5qH/3vbMP5FbuBolbviIFjWhsQs8+wQ/U/L2PT/6V/EXvqw4XIuLEZTwvINrVK+2th+nAZPFqN4s0GI+MHk7Oc4bnNuyBFw3TsRGTOJjeRgNMZqKKr5EhTeu/WtnOKHbxDY6xLUbzSfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OUsJZvtk; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S5MFtFRx"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5079vTsP020078;
-	Tue, 7 Jan 2025 10:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dAEmoZ1bZABcYRdqrW4sb73XuArMPLvw0fg1tne3E0E=; b=S5MFtFRxL9E1hyZ1
-	pq7NA14eR37QKqYwPK8F+VcYpBMXT7ZsMjGe63q2MCkeNiNXAkIrABkFUm7twbm6
-	2h2paV/vD38pRZ0sfVux1URdxjGAaT+eyKDWHFAq9xIW6zv5mo/gbUU0ZluyeO/d
-	DX1dkgYqiJJ14l6ePiAI2GG+Vt/KyHLByLzOvQlGAhHE36rdTBdvSfAG9yH4u8GS
-	diE57lZg9KRvVT/bpCwmb0oAnQBAa2pj/ao5XNm/vGq9Gyn0keL/HGSSvGFosRJd
-	GtR30N037sk5fMJxHeYPzjdudglGgbOTsgRuzjgsvFJwA46xQrhGLjqj1W1nBHN2
-	SkoMEA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44123hg1h9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 Jan 2025 10:17:51 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 507AHpi7027458
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 Jan 2025 10:17:51 GMT
-Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 7 Jan 2025 02:17:45 -0800
-From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-To: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <konradybcio@kernel.org>,
-        <quic_mmanikan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <dmitry.baryshkov@linaro.org>
-CC: <quic_gokulsri@quicinc.com>, <quic_viswanat@quicinc.com>,
-        <quic_srichara@quicinc.com>
-Subject: [PATCH V3 8/8] arm64: dts: qcom: ipq5424: add nodes to bring up q6
-Date: Tue, 7 Jan 2025 15:46:47 +0530
-Message-ID: <20250107101647.2087358-9-quic_gokulsri@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUsJZvtk"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3022c6155edso96294991fa.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Jan 2025 04:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736252517; x=1736857317; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q7WHqrbNCsXH9lx2ZZlw8KhRZ8OlQCctj3WmpLhtiwM=;
+        b=OUsJZvtkFAQQKJp6NDlvsztDpw86mas56oPQfG8ixV05G+swtYZEXOEyYWv68E5NXV
+         wqIuSC1TBneW0IaW+Pvx+JSM/O8qSOCNJlS/1hIwsVO9QXkkw9W4jIIZ9rcx5UQB4BT+
+         VvIIMRfT/dRveuCqRT5DMA84PEnrXzEdjwTNLOZ0C02sQtaCyVkFuym9CbE3NHr7d6H4
+         C+unNYyk6g9BgOTXwobNpidv6No5Y5Q2daYf7bLrafqYtS9qYfBvjzFkeWcv2YxbQdxi
+         okKICKFRK14QD9nEOnYuCbM3No1TYXkEX3HcZFsBN4FKCqcQoofxZ5MBrmDHy/8KRk/c
+         rweQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736252517; x=1736857317;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q7WHqrbNCsXH9lx2ZZlw8KhRZ8OlQCctj3WmpLhtiwM=;
+        b=gfQJ6wHqKx5ZQQZWmG2++ukLRN8aj7u6yekOnqPIwcl5EuD3rMY4GVLubmXFid5JDf
+         HlKLD/DMYpZIuAiHfttRCuloofFfAILbtZJfKkIiLyGQ6boDzVB6a4R2IFoJvp4N5SUM
+         3lzVCsEEeKfcal/VaugvDAzMUKxnWVppv/EO17sXh4GCXc+XLQtppAv1oRdyB1m9f6Js
+         EIrKxIQzCDXEPQEnG8tyz7D1jUwy24RhITapFCsuj5awA4det9gFoEWkwh/oKM3kUZrb
+         EmAVh4yskD75NcWUbcAtRJwm0ojH2unh58dGaWxCWYbhuFEFxH1IIjJmeesCMjPmyjRr
+         tEpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjL6B+zKpZjwCBQOKSfShiPO1hAa8nxl39SrFAWBCOG+NZE+yyZ9mhg7A/gwI/eUdJQGprW6zsdXS+2BFnQ9li@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI3iAMfG+MjUIn/mv/gJqI8eGFfimomPN/kZV+BHbosUX47mGm
+	c3tDPd/O3PFgc2pttN/8t738DwNcCO26ui63w4u/KGRgjj6Ah51zdGQ35vAuzVo=
+X-Gm-Gg: ASbGncveYKEJRnvn3IKvel1Fae0JOCWkLOPmzNTXOIuS/2GnwIqVbBFGMpxBQQErUUQ
+	HGQ01js1oD5C8LZ3rTf9SbXoaYZSNfQM0FAIGlIVzf2VDqlHYcNG+nChSIYwe86sMSaDzjvDk5U
+	vambJHXQDSpcuHY6qrrBHqAL0ISudcwj4YYgX6mvs6q5q5zpkcv6umqtZc1P8UGic6Iu+D/S2Kx
+	1Elmi8TUTtYKngQAhJjLlGQtHdXeU4cobflXoVh8kDamsfEumncbVId+/6NCb4zb35NOOR4jnXS
+	0gfs8t6sX1g5evxXesaf9ua+ZPWiiYpcX6nt
+X-Google-Smtp-Source: AGHT+IGz2+dh2vxy8nlD1Uzcmc8AaD/p2yo1ruK2qzEoXxjO0xfTBqejpwfhh77FPHjT/ewS7KI7BQ==
+X-Received: by 2002:a2e:b888:0:b0:302:4115:190 with SMTP id 38308e7fff4ca-3046850a29amr188778881fa.6.1736252517203;
+        Tue, 07 Jan 2025 04:21:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3045ad99d29sm57886811fa.36.2025.01.07.04.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2025 04:21:55 -0800 (PST)
+Date: Tue, 7 Jan 2025 14:21:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org, 
+	konradybcio@kernel.org, quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	quic_viswanat@quicinc.com, quic_srichara@quicinc.com
+Subject: Re: [PATCH V3 2/8] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
+Message-ID: <pjm5wrxnfutixopeeqzgb6q75z6cilpgfcd2maigqlu4i34mta@2k6trubvrkp2>
 References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
+ <20250107101647.2087358-3-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: S7TmxALOkC5Cox_mGo5dzeiLoEBHz5Pw
-X-Proofpoint-GUID: S7TmxALOkC5Cox_mGo5dzeiLoEBHz5Pw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- spamscore=0 suspectscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=807
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501070085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250107101647.2087358-3-quic_gokulsri@quicinc.com>
 
-Enable nodes required for q6 remoteproc bring up.
+On Tue, Jan 07, 2025 at 03:46:41PM +0530, Gokul Sriram Palanisamy wrote:
+> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> 
+> Add new binding document for hexagon based WCSS secure PIL remoteproc.
+> IPQ5332, IPQ5424 and IPQ9574 follows secure PIL remoteproc.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../remoteproc/qcom,wcss-sec-pil.yaml         | 131 ++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
 
-Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 80 ++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 1 deletion(-)
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
+> +    remoteproc@d100000 {
+> +      compatible = "qcom,ipq5332-wcss-sec-pil";
+> +      reg = <0xd100000 0x4040>;
+> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 5e219f900412..32c8fa837dcb 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ5424 device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -125,6 +125,11 @@ reserved-memory {
- 		#size-cells = <2>;
- 		ranges;
- 
-+		q6_region: wcnss@8a900000 {
-+			no-map;
-+			reg = <0x0 0x8a900000 0x0 0x2800000>;
-+		};
-+
- 		tz@8a600000 {
- 			reg = <0x0 0x8a600000 0x0 0x200000>;
- 			no-map;
-@@ -233,6 +238,55 @@ intc: interrupt-controller@f200000 {
- 			msi-controller;
- 		};
- 
-+		apcs_glb: mailbox@f400004 {
-+			compatible = "qcom,ipq5424-apcs-apps-global",
-+				     "qcom,ipq6018-apcs-apps-global";
-+			reg = <0 0xf400004 0 0x6000>;
-+			#clock-cells = <1>;
-+			#mbox-cells = <1>;
-+		};
-+
-+		tmel_qmp: qmp@32090000 {
-+			compatible = "qcom,ipq5424-tmel-qmp";
-+			reg = <0 0x32090000 0 0x2000>;
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_EDGE_RISING>;
-+			mboxes = <&apcs_glb 20>;
-+			#mbox-cells = <1>;
-+		};
-+
-+		q6v5_wcss: remoteproc@d100000 {
-+			compatible = "qcom,ipq5424-wcss-sec-pil";
-+			reg = <0 0x0cd00000 0 0x4040>;
-+			firmware-name = "ath12k/IPQ5424/hw1.0/q6_fw0.mdt";
-+			interrupts-extended = <&intc GIC_SPI 508 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcss_smp2p_in 0 0>,
-+					      <&wcss_smp2p_in 1 0>,
-+					      <&wcss_smp2p_in 2 0>,
-+					      <&wcss_smp2p_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			mboxes = <&tmel_qmp 0>;
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
-+
-+			memory-region = <&q6_region>;
-+
-+			status = "okay";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 500 IRQ_TYPE_EDGE_RISING>;
-+				label = "rtr";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+			};
-+		};
-+
- 		timer@f420000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0 0xf420000 0 0x1000>;
-@@ -302,4 +356,28 @@ timer {
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
- 			     <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
- 	};
-+
-+	wcss: wcss-smp2p {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 501 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
- };
+Nit: .mbn
+
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
