@@ -1,122 +1,128 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2500D1A726B;
-	Wed,  8 Jan 2025 06:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33A519EEBF;
+	Wed,  8 Jan 2025 06:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736317777; cv=none; b=ByyfEf/s9meSoZhYFlRIAgfs2lz9Ce/DGz3gWRKsprFkmimEnJ/A0PC8TYBb79crv+jQQ2qY55Y5rtlG0pJ5Dp8ka4M75Nmi9dl0j2RyJFEJ3DjWOM33wbrIb8o6jFVn8vtE7qPo1F7CSkJdSIEE69FUO9scYRpQjjsJWcSk7NE=
+	t=1736318265; cv=none; b=XnE8G0XdFfeUDgz9eb4iBLDdBAAjU4615wvVNdjeDHn4n5jNfMx/9a0ScJJ65yoU9TlsBRC4hpeZoelVSE1QKueIWxQj3TBzGs10eNzZPFaEw2pXWfbExhNG7KlEyi9U3WiiY2CTbFyH4gJPwm8V1ozOeRWQT7mdWjQCRyhf5VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736317777; c=relaxed/simple;
-	bh=1Eu2PEsX3ae/CUSfWu+3pTwDiETUxSrqDWT/7W1/Qvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VhbtseY2WrdjBPwd9IA2u56qq1bGP/enorTg7aCukhQEwZD1xgGZQfHO2os41ApLR5teQTa8SEkyqRRbNm/wDX/lrx11gIfAqiQwmG0W7dY/6+38ubILx3ZisaeIegbKvHjXWSWrhNSRJOAejjEXmpRnMe7W7Nlx09flAIM3cn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IYmcJ/HT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1736318265; c=relaxed/simple;
+	bh=GqX272S/doP/JjvoJ/e4q7yntWOaFNXF/EZZZLlH830=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jO+eYWQEeRTJ8sc691Ao8OVlwy6s5nHWYhMqjl64WIfZz6I3eA7eJyCXeH9vIRU7yWeLs7RRkIR2a+wq4BqkGXFnfjtuAGzK7D3VG49O9GPWbJcWqsJgezxHoYRESi3IlXuB1TvwUjcQVlwOGlb5YErrCQkgWaiHh1JgDPgwgyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E/4hLeOJ; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IYmcJ/HT"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5083wguI010041;
-	Wed, 8 Jan 2025 06:29:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BmWyxdAHRkrWyuaBiPrCNe6aRGpT7xkTybIqsMf1xeE=; b=IYmcJ/HTUGoS0aPS
-	6JYW3olcXI5L1Ezt4ilfo4HX2GfZ18g3ANQ2bbyfbEs3kbYJabEL2UVV9hf9d9S/
-	/WNu6HlpaapGec0UXAkBL6vSHzx93zwKadKZId3Or/S8hqxSQF0ZO6rZG5ZK3mOa
-	FYf6S69mqxkPOvlweGKJqZDtY6MH/bnNRIKT7KAaAse2PxPoPe7Ld+XA4dTnAPgg
-	g93h8CkUO+m1PARpaHq1aYjHFRXWuk9sHLRskDr3fxeJc9ixuvfGAATsB9DLz7jj
-	Ic8Y8BqIhAloRuNMC/F5N3e+rtg+d0Y4yPLB5u3oDBjJ0HCxeQ8Cp5XaGtcjFj6Q
-	Nkzhxw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 441hx8g9yc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jan 2025 06:29:31 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5086TVnY030749
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Jan 2025 06:29:31 GMT
-Received: from [10.50.31.204] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 Jan 2025
- 22:29:26 -0800
-Message-ID: <d07ce5a7-43a3-48d0-90c9-55ff7a34d650@quicinc.com>
-Date: Wed, 8 Jan 2025 11:59:23 +0530
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E/4hLeOJ"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5086bWWk2762732
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Jan 2025 00:37:33 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1736318253;
+	bh=jZUhYCDBAt6xZofwEPAGBnU17+1CzpkkWcPqS5+6Mt0=;
+	h=From:To:CC:Subject:Date;
+	b=E/4hLeOJUSCg43Tx9vRapJt6TB6kOQtp1NVV9UQ6fxmH+XoJSO0kp4XERN/ZlMoXh
+	 CuqsbEzJiiuSpHHPlIo2y6t2XQQB5VbxY6WSn7oFZWOfvL4CJ+7aVfhWuD7j09d/uM
+	 XJOvakiz0cYoIfWWEafRhMm1cAc6C9MXEn5KEiYc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5086bWZL062989
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 8 Jan 2025 00:37:32 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
+ Jan 2025 00:37:32 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 8 Jan 2025 00:37:32 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5086bSPd127347;
+	Wed, 8 Jan 2025 00:37:28 -0600
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
+        <srk@ti.com>, <jan.kiszka@siemens.com>,
+        <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
+        <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] Rework TI K3 R5F remoteproc driver
+Date: Wed, 8 Jan 2025 12:07:24 +0530
+Message-ID: <20250108063727.1416324-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/8] remoteproc: qcom: add hexagon based WCSS secure
- PIL driver
-To: Bjorn Andersson <andersson@kernel.org>,
-        Gokul Sriram Palanisamy
-	<quic_gokulsri@quicinc.com>
-CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mathieu.poirier@linaro.org>,
-        <konradybcio@kernel.org>, <quic_mmanikan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_viswanat@quicinc.com>
-References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
- <20250107101647.2087358-5-quic_gokulsri@quicinc.com>
- <ligcw5ndzuu4kgegxb6f3ttzpmw6iglyzq5kt4l45xyeemsfsr@f2735qq7frhk>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <ligcw5ndzuu4kgegxb6f3ttzpmw6iglyzq5kt4l45xyeemsfsr@f2735qq7frhk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1S8TmIx7A2EvGKILSRCdnNN70249r5sg
-X-Proofpoint-ORIG-GUID: 1S8TmIx7A2EvGKILSRCdnNN70249r5sg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=395 phishscore=0
- spamscore=0 malwarescore=0 bulkscore=0 mlxscore=0 adultscore=0
- suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2501080050
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-[..]
+This series cleans up the TI R5F remoteproc driver by addressing various bugs.
+This is also the second series as part of the refactoring of K3 remoteproc
+drivers[0]. The third and final series for K3 Refactoring is also posted[1]
+which deals with the TI DSP and TI M4 drivers. The R5F driver takes care of
+configuring dual core R5Fs in Lockstep/Split mode and therefore has worked out
+separate data structures & reset logic than the DSP/M4 drivers which deal with
+single core CPUs. Therefore, I have excluded R5F driver from the common
+refactoring in the final series[1].
 
->> +#include <linux/firmware/qcom/qcom_scm.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_device.h>
->> +#include <linux/of_reserved_mem.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset.h>
->> +#include <linux/soc/qcom/mdt_loader.h>
->> +#include <linux/soc/qcom/smem.h>
->> +#include <linux/soc/qcom/smem_state.h>
->> +#include <linux/mailbox_client.h>
->> +#include <linux/mailbox/tmelcom-qmp.h>
-> 
-> This will require mailbox maintainer to first accept the tmelcom mailbox
-> driver, and share a immutable branch with me (or we have to wait until
-> this include file trickles in).
-> 
-> Please ensure that mailbox maintainer is aware of this request.
+NOTE:
+This series is _dependent_ upon the below series which does devm_ cleanup
+[Now merged in rproc-next/linux-next].
+https://lore.kernel.org/all/20241219110545.1898883-1-b-padhi@ti.com/
 
-Hi Bjorn,
-  The plan is, in the next spin of TMEL[V3], tmel driver will take care
-  of routing the request to either SCM(or)TMEL, so that client drivers
-  like rproc/crypto etc which requires those secure services can be
-  abstract (ie) just do a mbox_send_message with a SCM cmd id. That way
-  for adding any future secure services in client drivers, nothing
-  extra needs to be done and this will avoid this header dependency
-  as well. Is that approach fine ?
+Bugs fixed in this series:
+1. Fixed IPC-Only mode attach for R5F cores. PATCH #1
+2. Fixed IPC-Only mode attach for DSP cores. (Included in this series, as this
+was related to point 1 and fix is similar) PATCH #2
+3. Fixed support to load firmware from userspace by refactoring wait mechanism
+logic into prepare()/start() ops. PATCH #3
 
-Regards,
-Sricharan
+Testing Done:
+1. Tested boot of R5F remoteprocs in MCU and MAIN voltage domain in both
+IPC-Only mode and Kernel remoteproc mode in all Jacinto K3 (j7*) devices.
+2. Tested Lockstep, Split and Single-CPU Mode configuration (wherever
+applicable) of R5F remoteprocs in all Jacinto K3 (j7*) devices.
+3. Tested shutdown of R5F remoteprocs from Linux userspace and also by
+executing `modprobe -r ti_k3_r5_remoteproc`.
+4. Tested usecases where firmware not available at Kernel boot time, but later
+in sysfs, able to load firmware into a remotecore and start it.
+5. Tested that each patch in this series generates no new warnings/errors.
+Exception: Using the "wait_event_interruptible_timeout" macro in PATCH #3 raises
+a -Wshadow warning, which is expected as it is called out in the implementation
+of the macro itself[2].
+
+v2: Changelog:
+1. Changed variable name "is_attach_ongoing" to "is_attached" in PATCH #1 and
+PATCH #2. [Udit]
+2. Triggered wakeup event signal only for core0 in .prepare(), and only for
+core1 in .unprepare() in PATCH #3. [Udit]
+3. Carried Reviewed-by tags from v1 of the series.
+
+Link to v1:
+https://lore.kernel.org/all/20241224091457.1050233-1-b-padhi@ti.com/
+
+Thanks,
+Beleswar
+
+[0]: https://lore.kernel.org/all/20241219110545.1898883-1-b-padhi@ti.com/
+[1]: https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/include/linux/wait.h#n289
+
+Beleswar Padhi (3):
+  remoteproc: k3-r5: Fix checks in k3_r5_rproc_{mbox_callback/kick}
+  remoteproc: k3-dsp: Fix checks in k3_dsp_rproc_{mbox_callback/kick}
+  remoteproc: k3-r5: Refactor sequential core power up/down operations
+
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  63 ++++++--
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 179 ++++++++++++++--------
+ 2 files changed, 161 insertions(+), 81 deletions(-)
+
+-- 
+2.34.1
+
