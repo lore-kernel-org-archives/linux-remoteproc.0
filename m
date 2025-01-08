@@ -1,220 +1,130 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8E1A83F8;
-	Wed,  8 Jan 2025 06:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B6F15852E;
+	Wed,  8 Jan 2025 06:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736318277; cv=none; b=GE12fLipaoecLeO6r2wsJPEDrUu6K+/KNC0zzroD2t6fgsUAb8723JnyMJQVVdgTtyedIQSvMiv4EJjay1iB8S4rck++0EGtUJtFVPv0imy5MKpnaofSqUyikYnzf72dppC7VqqgIYYlNHOV8QBQGe+oX1fiECHV8oy3BR5Nyp0=
+	t=1736318549; cv=none; b=C39IAwFqBgl4FAyBOhdsFtEJu/4JorG5muZHKEZh/WcuA3wV0+GnvSlIiqW8GtpIb4lhdYx9ygM45xPyOCis7OylDFCLmgPFirhv7j+f3f/w/p0oFer5TSEroWSnkCi0oMsTMByFzEQ8lTNR3mE01DbAixSv7jWdJpwkxk9TK6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736318277; c=relaxed/simple;
-	bh=/kJLj+zEHFc+Er7tcSHChdrepI8ZQEsQJv95T3c6mmQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DyLb0I4hNDyBzMmgNqVep0/DwjgEIW4GNHgep3HYL60BYJ0EquhGjXvmK0jlUT3w9zws2KKXMbeSwUlUXbpz9jrmZmL/PXT4pqFmbWhaV8XOuKKs1e3F1BJ7lCOOD3EXOxrbPgXX0CsG7jL3Iu/sM8c0jGTlYK8kZO1ZBPKYCa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nahnqmoH; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1736318549; c=relaxed/simple;
+	bh=Frd5d+So7TskOsopHuWut+cQ4qx3mlGTfHkwDm1mZD8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=BlZtL4VpY8s4j1y9+HbDVnYLe4lBNPQ2npbnrHemkkFffr2CvQ7jtDW1LCiRGf5EiB6Va3WiOtbqqELBOxprlByN70VbJXOlK6gKIQ+J/YO0BKaJk/i84sl7YMtT3pbnPf44cuN9GcuaU9kKtTmomUyjtG80zwuzKjYkfl1DQVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=myCwcFpr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nahnqmoH"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5086beG72686708
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Jan 2025 00:37:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1736318260;
-	bh=8IaSlyvOaTrReoYpUIP6cJTPR7qVa76kKOyumvMH8Ac=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=nahnqmoHIlRc13fV3oR9ifVbL/+zxq37rWVr2m3KOCSgzQkl/UcYnzl7ibg84if4A
-	 k32VqIPSts5PoKQf5VgnlgEM9C5Yrmoaq8cRNx5mj8Q29G+g+39pov8KFJHwKt/aqU
-	 UKXwNzfzst9nndp5PeznmUXWvBkCRyHtL3mCi2fE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5086beRf027060
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 8 Jan 2025 00:37:40 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
- Jan 2025 00:37:40 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 8 Jan 2025 00:37:39 -0600
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5086bSPf127347;
-	Wed, 8 Jan 2025 00:37:36 -0600
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
-        <srk@ti.com>, <jan.kiszka@siemens.com>,
-        <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
-        <eballetbo@redhat.com>, <b-padhi@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/3] remoteproc: k3-dsp: Fix checks in k3_dsp_rproc_{mbox_callback/kick}
-Date: Wed, 8 Jan 2025 12:07:26 +0530
-Message-ID: <20250108063727.1416324-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250108063727.1416324-1-b-padhi@ti.com>
-References: <20250108063727.1416324-1-b-padhi@ti.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="myCwcFpr"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5083nvT9007264;
+	Wed, 8 Jan 2025 06:42:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YZ0yIDJ9HFhnAvtpJBGdsr9ieGq4lZ6bLNIGbPcTjKA=; b=myCwcFpr1GkqCWdD
+	U2V0gF6bhPLwTgHnaMn0kqDz4ZczzaHiGPpMd1m8Vluhvxieu2unzq1wmRmZIjVx
+	LAlLUCr60PM3gNiUCOCBdz8WNocWJLG79FC9Q4QLwADSM1XWG1i7m53HYKpDUOcz
+	klqXZI6VsrR9rUmGJgydWPVnL4uj/38vitKW+osrA3BymspRlyKGDrlXvhZV1oZB
+	Plp0M/Kcb2sH/7TbZ0oDgFMlJhcnjNeRrovPVHG1NveQA5c+BDCUR1JYNbwkeNDX
+	vzIgm2MinRfZpSrFwuBwpEXAwDtGr6uwhkMlMCwHJdfRmq62B6Nfzl8ezt9Dlurk
+	LjtD2Q==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 441ht58bbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Jan 2025 06:42:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5086gMjL018827
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 Jan 2025 06:42:22 GMT
+Received: from [10.50.31.204] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 Jan 2025
+ 22:42:17 -0800
+Message-ID: <3ee41b72-774d-4080-9c3b-3dfeb6babba1@quicinc.com>
+Date: Wed, 8 Jan 2025 12:12:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/8] remoteproc: qcom: add hexagon based WCSS secure
+ PIL driver
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Gokul Sriram Palanisamy
+	<quic_gokulsri@quicinc.com>
+CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mathieu.poirier@linaro.org>,
+        <konradybcio@kernel.org>, <quic_mmanikan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <quic_viswanat@quicinc.com>
+References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
+ <20250107101647.2087358-5-quic_gokulsri@quicinc.com>
+ <ligcw5ndzuu4kgegxb6f3ttzpmw6iglyzq5kt4l45xyeemsfsr@f2735qq7frhk>
+ <d07ce5a7-43a3-48d0-90c9-55ff7a34d650@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <d07ce5a7-43a3-48d0-90c9-55ff7a34d650@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aeIP3m7hnfEIqtOOx0VyLWekbY6d4nXv
+X-Proofpoint-GUID: aeIP3m7hnfEIqtOOx0VyLWekbY6d4nXv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ bulkscore=0 mlxlogscore=455 priorityscore=1501 impostorscore=0
+ adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501080052
 
-Commit ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during
-probe routine") introduced a check in the "k3_dsp_rproc_mbox_callback()"
-and "k3_dsp_rproc_kick()" callbacks to exit if the remote core's state
-was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
-the default state of the core is set to "RPROC_DETACHED", and the
-transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
-function has invoked "rproc_start_subdevices()".
 
-The "rproc_start_subdevices()" function triggers the probe of Virtio
-RPMsg subdevices, which require the mailbox callbacks to be functional.
-To resolve this, a new variable, "is_attached", is introduced to
-distinguish between core states: when a core is actually detached and
-when it is in the process of being attached. The callbacks are updated
-to return early only if the core is actually detached and not during an
-ongoing attach operation in IPC-only mode.
 
-Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
-Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-Link to v1:
-https://lore.kernel.org/all/20241224091457.1050233-3-b-padhi@ti.com/
+On 1/8/2025 11:59 AM, Sricharan Ramabadhran wrote:
+> [..]
+> 
+>>> +#include <linux/firmware/qcom/qcom_scm.h>
+>>> +#include <linux/interrupt.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/iopoll.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/of_reserved_mem.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/reset.h>
+>>> +#include <linux/soc/qcom/mdt_loader.h>
+>>> +#include <linux/soc/qcom/smem.h>
+>>> +#include <linux/soc/qcom/smem_state.h>
+>>> +#include <linux/mailbox_client.h>
+>>> +#include <linux/mailbox/tmelcom-qmp.h>
+>>
+>> This will require mailbox maintainer to first accept the tmelcom mailbox
+>> driver, and share a immutable branch with me (or we have to wait until
+>> this include file trickles in).
+>>
+>> Please ensure that mailbox maintainer is aware of this request.
+> 
+> Hi Bjorn,
+>   The plan is, in the next spin of TMEL[V3], tmel driver will take care
+>   of routing the request to either SCM(or)TMEL, so that client drivers
+>   like rproc/crypto etc which requires those secure services can be
+>   abstract (ie) just do a mbox_send_message with a SCM cmd id. That way
+>   for adding any future secure services in client drivers, nothing
+>   extra needs to be done and this will avoid this header dependency
+>   as well. Is that approach fine ?
 
-v2: Changelog:
-1. Changed variable name "is_attached_ongoing" to "is_attached". [Udit]
-2. Improved comments.
-3. Carried R/B tag from V1.
+Ok, with more thought, i guess this approach will not work. Will stick
+to what you are suggesting, just use mbox->chan available in client
+itself to take the decision.
 
-Link to RFC version:
-https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
-
-Improvements in v1:
-1. Ensured these mbox callbacks are functional when the core is in the proccess
-of getting attached in IPC-Only mode.
-2. Ensured these mbox callbacks are _not_ functional when the core state is
-actually detached.
-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 63 ++++++++++++++++++-----
- 1 file changed, 49 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index a695890254ff..718d07f0180e 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -76,6 +76,7 @@ struct k3_dsp_dev_data {
-  * @ti_sci_id: TI-SCI device identifier
-  * @mbox: mailbox channel handle
-  * @client: mailbox client to request the mailbox channel
-+ * @is_attached: Indicates whether core is attached from the k3-dsp driver's POV
-  */
- struct k3_dsp_rproc {
- 	struct device *dev;
-@@ -91,6 +92,7 @@ struct k3_dsp_rproc {
- 	u32 ti_sci_id;
- 	struct mbox_chan *mbox;
- 	struct mbox_client client;
-+	bool is_attached;
- };
- 
- /**
-@@ -115,8 +117,16 @@ static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
- 	const char *name = kproc->rproc->name;
- 	u32 msg = omap_mbox_message(data);
- 
--	/* Do not forward messages from a detached core */
--	if (kproc->rproc->state == RPROC_DETACHED)
-+	/*
-+	 * Do not forward messages from a detached core, except when the core
-+	 * is transitioning to the attached state in IPC-only mode.
-+	 *
-+	 * In IPC-only mode, the default rproc state is "RPROC_DETACHED." To
-+	 * distinguish between an actually detached core and one in transition,
-+	 * use the "is_attached" flag, which is set once the driver's internal
-+	 * attach() operations start.
-+	 */
-+	if (!kproc->is_attached && kproc->rproc->state == RPROC_DETACHED)
- 		return;
- 
- 	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
-@@ -159,8 +169,16 @@ static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
- 	mbox_msg_t msg = (mbox_msg_t)vqid;
- 	int ret;
- 
--	/* Do not forward messages to a detached core */
--	if (kproc->rproc->state == RPROC_DETACHED)
-+	/*
-+	 * Do not forward messages to a detached core, except when the core
-+	 * is transitioning to the attached state in IPC-only mode.
-+	 *
-+	 * In IPC-only mode, the default rproc state is "RPROC_DETACHED." To
-+	 * distinguish between an actually detached core and one in transition,
-+	 * use the "is_attached" flag, which is set once the driver's internal
-+	 * attach() operations start.
-+	 */
-+	if (!kproc->is_attached && kproc->rproc->state == RPROC_DETACHED)
- 		return;
- 
- 	/* send the index of the triggered virtqueue in the mailbox payload */
-@@ -357,22 +375,39 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
- /*
-  * Attach to a running DSP remote processor (IPC-only mode)
-  *
-- * This rproc attach callback is a NOP. The remote processor is already booted,
-- * and all required resources have been acquired during probe routine, so there
-- * is no need to issue any TI-SCI commands to boot the DSP core. This callback
-- * is invoked only in IPC-only mode and exists because rproc_validate() checks
-- * for its existence.
-+ * This rproc attach callback only needs to set the "is_attached" flag to
-+ * notify k3_dsp_rproc_{kick/mbox_callback} functions that the core is attached
-+ * from the k3-dsp driver's POV. The remote processor is already booted, and all
-+ * required resources have been acquired during probe routine, so there is no
-+ * need to issue any TI-SCI commands to boot the DSP core. This callback is
-+ * invoked only in IPC-only mode.
-  */
--static int k3_dsp_rproc_attach(struct rproc *rproc) { return 0; }
-+static int k3_dsp_rproc_attach(struct rproc *rproc)
-+{
-+	struct k3_dsp_rproc *kproc = rproc->priv;
-+
-+	kproc->is_attached = true;
-+
-+	return 0;
-+}
- 
- /*
-  * Detach from a running DSP remote processor (IPC-only mode)
-  *
-- * This rproc detach callback is a NOP. The DSP core is not stopped and will be
-- * left to continue to run its booted firmware. This callback is invoked only in
-- * IPC-only mode and exists for sanity sake.
-+ * This rproc detach callback performs the opposite operation to attach callback
-+ * and only needs to clear the "is_attached" flag to ensure no mailbox
-+ * messages are sent to or received from a detached core. The DSP core is not
-+ * stopped and will be left to continue to run its booted firmware. This callback
-+ * is invoked only in IPC-only mode.
-  */
--static int k3_dsp_rproc_detach(struct rproc *rproc) { return 0; }
-+static int k3_dsp_rproc_detach(struct rproc *rproc)
-+{
-+	struct k3_dsp_rproc *kproc = rproc->priv;
-+
-+	kproc->is_attached = false;
-+
-+	return 0;
-+}
- 
- /*
-  * This function implements the .get_loaded_rsc_table() callback and is used
--- 
-2.34.1
-
+Regards,
+  Sricharan
