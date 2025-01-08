@@ -1,47 +1,47 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7AF1A8401;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8E1A83F8;
 	Wed,  8 Jan 2025 06:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736318276; cv=none; b=D+4Q1aFkAYNpK2zIPnYyuWKqQYo4i6t0Z0lFExN59JAQ4KuEus2fNri/4SoWvX8EHUmBg7Y1JWCSsJcwnax8+mg8wM7fl8EJ+1uQ8IS0IuQbHVmt/Lnx+juxqVPIjR2cF3Y9M9y2QajnjprcNz5a4hAawEz/wHgU5IY11JC5Hpg=
+	t=1736318277; cv=none; b=GE12fLipaoecLeO6r2wsJPEDrUu6K+/KNC0zzroD2t6fgsUAb8723JnyMJQVVdgTtyedIQSvMiv4EJjay1iB8S4rck++0EGtUJtFVPv0imy5MKpnaofSqUyikYnzf72dppC7VqqgIYYlNHOV8QBQGe+oX1fiECHV8oy3BR5Nyp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736318276; c=relaxed/simple;
-	bh=0Y/nwbhMWKx6dHdLKnDRUylKPzgl1NtSYK2XYRbMDbw=;
+	s=arc-20240116; t=1736318277; c=relaxed/simple;
+	bh=/kJLj+zEHFc+Er7tcSHChdrepI8ZQEsQJv95T3c6mmQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hD/rhcrm98nGPxL8fNyKrUpWBYdqKZ+qlJHarxb5WxI2jTINr7bXmr0DL9UVZVnh0e0q92n/tUAAEJAShIQCsHCutgMnhaSsCJASXxG4h8L/vEPa43vJAHzvCZnfCzLa6sH1kTGlo45fCyuSrha9llYkxsjzZkrYpFxXY3A8tgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NE6QpIJf; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=DyLb0I4hNDyBzMmgNqVep0/DwjgEIW4GNHgep3HYL60BYJ0EquhGjXvmK0jlUT3w9zws2KKXMbeSwUlUXbpz9jrmZmL/PXT4pqFmbWhaV8XOuKKs1e3F1BJ7lCOOD3EXOxrbPgXX0CsG7jL3Iu/sM8c0jGTlYK8kZO1ZBPKYCa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nahnqmoH; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NE6QpIJf"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5086bikW2762757
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nahnqmoH"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5086beG72686708
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Jan 2025 00:37:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1736318264;
-	bh=OsYRzxKJ8Rf6lBMDzljJdNbbxpLROiaemnbZC2QFpfs=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=NE6QpIJfl3WQsUgXSDLyxnGoR5+NRx74b4nftOKbpVTLkY0w5x0iILJvxn7EUWKVK
-	 0GACOwEV74z6gVgzBBKeC6TkZp5qY0547WnIvx+4vl3QP7izRY1QqbeIJtvsWabHhI
-	 p349jfk5FJyMlUf4dXCww9R+RpxZCA6184nvgYIk=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5086biUC002966
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 8 Jan 2025 00:37:44 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
- Jan 2025 00:37:44 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 8 Jan 2025 00:37:43 -0600
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5086bSPg127347;
 	Wed, 8 Jan 2025 00:37:40 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1736318260;
+	bh=8IaSlyvOaTrReoYpUIP6cJTPR7qVa76kKOyumvMH8Ac=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=nahnqmoHIlRc13fV3oR9ifVbL/+zxq37rWVr2m3KOCSgzQkl/UcYnzl7ibg84if4A
+	 k32VqIPSts5PoKQf5VgnlgEM9C5Yrmoaq8cRNx5mj8Q29G+g+39pov8KFJHwKt/aqU
+	 UKXwNzfzst9nndp5PeznmUXWvBkCRyHtL3mCi2fE=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5086beRf027060
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 8 Jan 2025 00:37:40 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
+ Jan 2025 00:37:40 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 8 Jan 2025 00:37:39 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5086bSPf127347;
+	Wed, 8 Jan 2025 00:37:36 -0600
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
@@ -49,9 +49,9 @@ CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>,
         <christophe.jaillet@wanadoo.fr>, <jkangas@redhat.com>,
         <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/3] remoteproc: k3-r5: Refactor sequential core power up/down operations
-Date: Wed, 8 Jan 2025 12:07:27 +0530
-Message-ID: <20250108063727.1416324-4-b-padhi@ti.com>
+Subject: [PATCH v2 2/3] remoteproc: k3-dsp: Fix checks in k3_dsp_rproc_{mbox_callback/kick}
+Date: Wed, 8 Jan 2025 12:07:26 +0530
+Message-ID: <20250108063727.1416324-3-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250108063727.1416324-1-b-padhi@ti.com>
 References: <20250108063727.1416324-1-b-padhi@ti.com>
@@ -65,248 +65,156 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The existing implementation of the waiting mechanism in
-"k3_r5_cluster_rproc_init()" waits for the "released_from_reset" flag to
-be set as part of the firmware boot process in "k3_r5_rproc_start()".
-The "k3_r5_cluster_rproc_init()" function is invoked in the probe
-routine which causes unexpected failures in cases where the firmware is
-unavailable at boot time, resulting in probe failure and removal of the
-remoteproc handles in the sysfs paths.
+Commit ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during
+probe routine") introduced a check in the "k3_dsp_rproc_mbox_callback()"
+and "k3_dsp_rproc_kick()" callbacks to exit if the remote core's state
+was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
+the default state of the core is set to "RPROC_DETACHED", and the
+transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
+function has invoked "rproc_start_subdevices()".
 
-To address this, the waiting mechanism is refactored out of the probe
-routine into the appropriate "k3_r5_rproc_{prepare/unprepare}()"
-functions. This allows the probe routine to complete without depending
-on firmware booting, while still maintaining the required
-power-synchronization between cores.
+The "rproc_start_subdevices()" function triggers the probe of Virtio
+RPMsg subdevices, which require the mailbox callbacks to be functional.
+To resolve this, a new variable, "is_attached", is introduced to
+distinguish between core states: when a core is actually detached and
+when it is in the process of being attached. The callbacks are updated
+to return early only if the core is actually detached and not during an
+ongoing attach operation in IPC-only mode.
 
-Further, this wait mechanism is dropped from
-"k3_r5_rproc_{start/stop}()" functions as they deal with Core Run/Halt
-operations, and as such, there is no constraint in Running or Halting
-the cores of a cluster in order.
-
-Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
+Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 ---
-Link to v2:
-https://lore.kernel.org/all/20241224091457.1050233-4-b-padhi@ti.com/
-
-v3: Changelog:
-1. Triggered wakeup event signal only for core0 in .prepare() ops, and for core1
-in .unprepare() ops. [Udit] 
-
 Link to v1:
-https://lore.kernel.org/all/20240906094045.2428977-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20241224091457.1050233-3-b-padhi@ti.com/
 
 v2: Changelog:
-1. Improved commit message to call out functions correctly. [Mathieu]
-2. Removed sequential wait/checks from .start()/.stop() ops as there is no
-constraint for Core Run/Halt operations.
+1. Changed variable name "is_attached_ongoing" to "is_attached". [Udit]
+2. Improved comments.
+3. Carried R/B tag from V1.
 
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 116 ++++++++++++-----------
- 1 file changed, 63 insertions(+), 53 deletions(-)
+Link to RFC version:
+https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index d92c8e4dfcf6..90efa1df8ac7 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -466,13 +466,36 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct k3_r5_core *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core, *core0, *core1;
- 	struct device *dev = kproc->dev;
- 	u32 ctrl = 0, cfg = 0, stat = 0;
- 	u64 boot_vec = 0;
- 	bool mem_init_dis;
- 	int ret;
+Improvements in v1:
+1. Ensured these mbox callbacks are functional when the core is in the proccess
+of getting attached in IPC-Only mode.
+2. Ensured these mbox callbacks are _not_ functional when the core state is
+actually detached.
+
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 63 ++++++++++++++++++-----
+ 1 file changed, 49 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index a695890254ff..718d07f0180e 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -76,6 +76,7 @@ struct k3_dsp_dev_data {
+  * @ti_sci_id: TI-SCI device identifier
+  * @mbox: mailbox channel handle
+  * @client: mailbox client to request the mailbox channel
++ * @is_attached: Indicates whether core is attached from the k3-dsp driver's POV
+  */
+ struct k3_dsp_rproc {
+ 	struct device *dev;
+@@ -91,6 +92,7 @@ struct k3_dsp_rproc {
+ 	u32 ti_sci_id;
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
++	bool is_attached;
+ };
  
+ /**
+@@ -115,8 +117,16 @@ static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 	const char *name = kproc->rproc->name;
+ 	u32 msg = omap_mbox_message(data);
+ 
+-	/* Do not forward messages from a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
 +	/*
-+	 * R5 cores require to be powered on sequentially, core0 should be in
-+	 * higher power state than core1 in a cluster. So, wait for core0 to
-+	 * power up before proceeding to core1 and put timeout of 2sec. This
-+	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
-+	 * core1 can be called before core0 due to thread execution order.
++	 * Do not forward messages from a detached core, except when the core
++	 * is transitioning to the attached state in IPC-only mode.
 +	 *
-+	 * By placing the wait mechanism here in .prepare() ops, this condition
-+	 * is enforced for rproc boot requests from sysfs as well.
++	 * In IPC-only mode, the default rproc state is "RPROC_DETACHED." To
++	 * distinguish between an actually detached core and one in transition,
++	 * use the "is_attached" flag, which is set once the driver's internal
++	 * attach() operations start.
 +	 */
-+	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-+	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-+	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
-+	    !core0->released_from_reset) {
-+		ret = wait_event_interruptible_timeout(cluster->core_transition,
-+						       core0->released_from_reset,
-+						       msecs_to_jiffies(2000));
-+		if (ret <= 0) {
-+			dev_err(dev, "can not power up core1 before core0");
-+			return -EPERM;
-+		}
-+	}
-+
- 	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
- 	if (ret < 0)
- 		return ret;
-@@ -488,6 +511,14 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
++	if (!kproc->is_attached && kproc->rproc->state == RPROC_DETACHED)
+ 		return;
  
-+	/*
-+	 * Notify all threads in the wait queue when core0 state has changed so
-+	 * that threads waiting for this condition can be executed.
-+	 */
-+	core->released_from_reset = true;
-+	if (core == core0)
-+		wake_up_interruptible(&cluster->core_transition);
-+
- 	/*
- 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
- 	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
-@@ -533,10 +564,30 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct k3_r5_core *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core, *core0, *core1;
- 	struct device *dev = kproc->dev;
+ 	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+@@ -159,8 +169,16 @@ static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
+ 	mbox_msg_t msg = (mbox_msg_t)vqid;
  	int ret;
  
+-	/* Do not forward messages to a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
 +	/*
-+	 * Ensure power-down of cores is sequential in split mode. Core1 must
-+	 * power down before Core0 to maintain the expected state. By placing
-+	 * the wait mechanism here in .unprepare() ops, this condition is
-+	 * enforced for rproc stop or shutdown requests from sysfs and device
-+	 * removal as well.
++	 * Do not forward messages to a detached core, except when the core
++	 * is transitioning to the attached state in IPC-only mode.
++	 *
++	 * In IPC-only mode, the default rproc state is "RPROC_DETACHED." To
++	 * distinguish between an actually detached core and one in transition,
++	 * use the "is_attached" flag, which is set once the driver's internal
++	 * attach() operations start.
 +	 */
-+	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-+	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-+	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core0 &&
-+	    core1->released_from_reset) {
-+		ret = wait_event_interruptible_timeout(cluster->core_transition,
-+						       !core1->released_from_reset,
-+						       msecs_to_jiffies(2000));
-+		if (ret <= 0) {
-+			dev_err(dev, "can not power down core0 before core1");
-+			return -EPERM;
-+		}
-+	}
++	if (!kproc->is_attached && kproc->rproc->state == RPROC_DETACHED)
+ 		return;
+ 
+ 	/* send the index of the triggered virtqueue in the mailbox payload */
+@@ -357,22 +375,39 @@ static int k3_dsp_rproc_stop(struct rproc *rproc)
+ /*
+  * Attach to a running DSP remote processor (IPC-only mode)
+  *
+- * This rproc attach callback is a NOP. The remote processor is already booted,
+- * and all required resources have been acquired during probe routine, so there
+- * is no need to issue any TI-SCI commands to boot the DSP core. This callback
+- * is invoked only in IPC-only mode and exists because rproc_validate() checks
+- * for its existence.
++ * This rproc attach callback only needs to set the "is_attached" flag to
++ * notify k3_dsp_rproc_{kick/mbox_callback} functions that the core is attached
++ * from the k3-dsp driver's POV. The remote processor is already booted, and all
++ * required resources have been acquired during probe routine, so there is no
++ * need to issue any TI-SCI commands to boot the DSP core. This callback is
++ * invoked only in IPC-only mode.
+  */
+-static int k3_dsp_rproc_attach(struct rproc *rproc) { return 0; }
++static int k3_dsp_rproc_attach(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
 +
- 	/* Re-use LockStep-mode reset logic for Single-CPU mode */
- 	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
- 	       cluster->mode == CLUSTER_MODE_SINGLECPU) ?
-@@ -544,6 +595,14 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
- 	if (ret)
- 		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
- 
-+	/*
-+	 * Notify all threads in the wait queue when core1 state has changed so
-+	 * that threads waiting for this condition can be executed.
-+	 */
-+	core->released_from_reset = false;
-+	if (core == core1)
-+		wake_up_interruptible(&cluster->core_transition);
++	kproc->is_attached = true;
 +
- 	return ret;
- }
++	return 0;
++}
  
-@@ -569,7 +628,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
- 	struct device *dev = kproc->dev;
--	struct k3_r5_core *core0, *core;
-+	struct k3_r5_core *core;
- 	u32 boot_addr;
- 	int ret;
+ /*
+  * Detach from a running DSP remote processor (IPC-only mode)
+  *
+- * This rproc detach callback is a NOP. The DSP core is not stopped and will be
+- * left to continue to run its booted firmware. This callback is invoked only in
+- * IPC-only mode and exists for sanity sake.
++ * This rproc detach callback performs the opposite operation to attach callback
++ * and only needs to clear the "is_attached" flag to ensure no mailbox
++ * messages are sent to or received from a detached core. The DSP core is not
++ * stopped and will be left to continue to run its booted firmware. This callback
++ * is invoked only in IPC-only mode.
+  */
+-static int k3_dsp_rproc_detach(struct rproc *rproc) { return 0; }
++static int k3_dsp_rproc_detach(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++
++	kproc->is_attached = false;
++
++	return 0;
++}
  
-@@ -591,21 +650,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 				goto unroll_core_run;
- 		}
- 	} else {
--		/* do not allow core 1 to start before core 0 */
--		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
--					 elem);
--		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
--			dev_err(dev, "%s: can not start core 1 before core 0\n",
--				__func__);
--			return -EPERM;
--		}
--
- 		ret = k3_r5_core_run(core);
- 		if (ret)
- 			return ret;
--
--		core->released_from_reset = true;
--		wake_up_interruptible(&cluster->core_transition);
- 	}
- 
- 	return 0;
-@@ -646,8 +693,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct device *dev = kproc->dev;
--	struct k3_r5_core *core1, *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core;
- 	int ret;
- 
- 	/* halt all applicable cores */
-@@ -660,16 +706,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 			}
- 		}
- 	} else {
--		/* do not allow core 0 to stop before core 1 */
--		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
--					elem);
--		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
--			dev_err(dev, "%s: can not stop core 0 before core 1\n",
--				__func__);
--			ret = -EPERM;
--			goto out;
--		}
--
- 		ret = k3_r5_core_halt(core);
- 		if (ret)
- 			goto out;
-@@ -1164,12 +1200,6 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
- 		return reset_ctrl_status;
- 	}
- 
--	/*
--	 * Skip the waiting mechanism for sequential power-on of cores if the
--	 * core has already been booted by another entity.
--	 */
--	core->released_from_reset = c_state;
--
- 	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
- 				     &stat);
- 	if (ret < 0) {
-@@ -1314,26 +1344,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
- 		    cluster->mode == CLUSTER_MODE_SINGLECORE)
- 			break;
--
--		/*
--		 * R5 cores require to be powered on sequentially, core0
--		 * should be in higher power state than core1 in a cluster
--		 * So, wait for current core to power up before proceeding
--		 * to next core and put timeout of 2sec for each core.
--		 *
--		 * This waiting mechanism is necessary because
--		 * rproc_auto_boot_callback() for core1 can be called before
--		 * core0 due to thread execution order.
--		 */
--		ret = wait_event_interruptible_timeout(cluster->core_transition,
--						       core->released_from_reset,
--						       msecs_to_jiffies(2000));
--		if (ret <= 0) {
--			dev_err(dev,
--				"Timed out waiting for %s core to power up!\n",
--				rproc->name);
--			goto out;
--		}
- 	}
- 
- 	return 0;
+ /*
+  * This function implements the .get_loaded_rsc_table() callback and is used
 -- 
 2.34.1
 
