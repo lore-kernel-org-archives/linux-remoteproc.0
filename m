@@ -1,132 +1,141 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39FE1F76D0;
-	Wed,  8 Jan 2025 11:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA51319D8A9;
+	Wed,  8 Jan 2025 11:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736335178; cv=none; b=OMmKOOnAtm6/NG7lIh4NnfTleo9K/GEpCsxEmHpBXkxo1VA+0jw6W1w17GU52YSUUG0exko0dZJQFjyZX638EvQsq6HOOWUe6oo2p8df+l1WPcGZFyPlK61BHYeIF+RtV1gLuSuz0q3u4S4HfLj+V4QEa28dcVh5dQ3VQuCdB4w=
+	t=1736337110; cv=none; b=BYFH2E1Nm0Nbw1PjAB1Mc6LLaaL5S9qbZutgGmtY2VrNl05srnjd162ZMClKc4Ey7w0aplpHfk6nw5v4O9XCxVQma1cn7EvwVEObzWwvrj5OXyqEcH/pzbxgR1fh6/zaCfR+XI2GEcJ6vbvkghClwv+EjjLN51R47Gc+oAwXU9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736335178; c=relaxed/simple;
-	bh=BeXxIz0de9XddAG8TQB5W4B0y7FQJj5fiuTudwx+zXc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lUCY66tCPc2jGhQHj1kqpWYswq0fanJS91kiVU48jttkFuwsYA5svSXacRNsRz/k7/vo/kv9Jw4e/ow2KhOnlzE0axbX90YZ89Y2bCh1Y+VNr5bQOwpnCf8h9yTxzjYd1H6Iwy2EYMcS/DBWabJaLVPZ1rKgY1+iQEcSlZ+GHQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nXjm1dXx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1736337110; c=relaxed/simple;
+	bh=R75k+x8bg6T+D8jdhZ+B2iw5PZ8kRKjd+Ar48dKNkws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzyHzJDMli/vbUvl4D2mnH4mY80oXMdQst8IfFluGtHHzzLCmK0Bi836f3VHt3aj4eKect2rvFH9b5Pm+Y25eREP7qgYGHyFz2ZW5FNBMIZu6N38L/h2p2kJJJRRfhQ3pcv6cJTELRcFOMKf9fPrp1LyDLYUfoxdvtCLzjycr8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDk41m6T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nXjm1dXx"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 508AdZJD012721;
-	Wed, 8 Jan 2025 11:19:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BeXxIz0de9XddAG8TQB5W4B0y7FQJj5fiuTudwx+zXc=; b=nXjm1dXxH4LUNARi
-	Fdo3AwFdcOXYHwKhVSs5ZXJ7zEMlAO7OrDzcwKDo7Eo0sDDlUXY8AeJ+nZ9DYJq2
-	quvzoeuuHjEK/KpUvEYbMK/crGjXg5CTz1QEynCwgGz2abvKOwhoKMey5nDFxOn1
-	HovgR2jv5T0ZyG7Ylz8//kaJS4VbDv14pauthyGZwXm3hxzPBzHdf3VPciODKODJ
-	Kn1X+aIyASkRvUeUYV2Kb/zxbns80Io6Cxl347uZymGKCx3LqjWtvHklDx59o9Z7
-	l2jBHhvKCDUBilXaNjf1+0H9n3ulTajSMYDVpQRez4OArrJmqE28AOuxhwHu0Sek
-	wlPMsg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 441phg8ba9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jan 2025 11:19:32 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 508BJWJA006153
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Jan 2025 11:19:32 GMT
-Received: from nasanex01c.na.qualcomm.com (10.45.79.139) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 8 Jan 2025 03:19:31 -0800
-Received: from nasanex01c.na.qualcomm.com ([fe80::d28b:c308:bf27:8c82]) by
- nasanex01c.na.qualcomm.com ([fe80::d28b:c308:bf27:8c82%13]) with mapi id
- 15.02.1544.009; Wed, 8 Jan 2025 03:19:31 -0800
-From: "Gokul Sriram P (QUIC)" <quic_gokulsri@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        "dmitry.baryshkov@linaro.org"
-	<dmitry.baryshkov@linaro.org>
-CC: "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        "robh@kernel.org"
-	<robh@kernel.org>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "andersson@kernel.org"
-	<andersson@kernel.org>,
-        "mathieu.poirier@linaro.org"
-	<mathieu.poirier@linaro.org>,
-        "konradybcio@kernel.org"
-	<konradybcio@kernel.org>,
-        "Manikanta Mylavarapu (QUIC)"
-	<quic_mmanikan@quicinc.com>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>,
-        "Vignesh Viswanathan (QUIC)"
-	<quic_viswanat@quicinc.com>,
-        "Sricharan Ramabadhran (QUIC)"
-	<quic_srichara@quicinc.com>
-Subject: RE: [PATCH V3 2/8] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-Thread-Topic: [PATCH V3 2/8] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-Thread-Index: AQHbYO1WRi1cDUkl3ket5j1QDVDWGbMLwboAgAC8GJ+AADMVIA==
-Date: Wed, 8 Jan 2025 11:19:31 +0000
-Message-ID: <f9059c312a2948568fef6d4f92c97cae@quicinc.com>
-References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
- <20250107101647.2087358-3-quic_gokulsri@quicinc.com>
- <pjm5wrxnfutixopeeqzgb6q75z6cilpgfcd2maigqlu4i34mta@2k6trubvrkp2>
- <f0eef19b-8497-4e7d-bed1-882cdb8c1ab1@quicinc.com>
- <0bcdbb63-e1a4-4e34-a038-218f843993e0@kernel.org>
-In-Reply-To: <0bcdbb63-e1a4-4e34-a038-218f843993e0@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDk41m6T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6BDC4CEDD;
+	Wed,  8 Jan 2025 11:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736337109;
+	bh=R75k+x8bg6T+D8jdhZ+B2iw5PZ8kRKjd+Ar48dKNkws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UDk41m6Ta8U3jIQVAnBcuvTvgKRa3hIWaqSN69qr5a9mRsGmS0rN/pAV4rRtJk0IP
+	 CkNt1mfbUddRDauhWEREWnTpIaTyEZay9FXhIG6qmi103miLK0g1BQ7Btll0cHYBrK
+	 xRiLs4gEtxeutyTsfTO3gT0gxEOA2JKc6XR74hQLAkDbRUD8CycwIZpMwD13qvAI1u
+	 fbXhpR7dUHz+OmD2QyLUvSV5BPozFOFga3OdXl3dzqUWg2el2aG3SmkfZF9Gg0x8NF
+	 BGPS7BJNxY1jWSFVnwJahhbGGA6hn9KNpVZqkDOvG/E9MZ/XhuOxXeMYM9PCuZp85W
+	 yP7a4qhYiRkzg==
+Message-ID: <7beda1b3-2fb2-490c-80fe-71f320d70ded@kernel.org>
+Date: Wed, 8 Jan 2025 12:51:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5FndvHRvjVlvvg8JrtSSU-_tHL0rvHRw
-X-Proofpoint-ORIG-GUID: 5FndvHRvjVlvvg8JrtSSU-_tHL0rvHRw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 mlxscore=0 phishscore=0 mlxlogscore=995
- priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 adultscore=0
- impostorscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2501080092
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/8] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
+To: "Gokul Sriram P (QUIC)" <quic_gokulsri@quicinc.com>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>
+Cc: "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "andersson@kernel.org" <andersson@kernel.org>,
+ "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+ "konradybcio@kernel.org" <konradybcio@kernel.org>,
+ "Manikanta Mylavarapu (QUIC)" <quic_mmanikan@quicinc.com>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+ "Vignesh Viswanathan (QUIC)" <quic_viswanat@quicinc.com>,
+ "Sricharan Ramabadhran (QUIC)" <quic_srichara@quicinc.com>
+References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
+ <20250107101647.2087358-3-quic_gokulsri@quicinc.com>
+ <pjm5wrxnfutixopeeqzgb6q75z6cilpgfcd2maigqlu4i34mta@2k6trubvrkp2>
+ <f0eef19b-8497-4e7d-bed1-882cdb8c1ab1@quicinc.com>
+ <0bcdbb63-e1a4-4e34-a038-218f843993e0@kernel.org>
+ <f9059c312a2948568fef6d4f92c97cae@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f9059c312a2948568fef6d4f92c97cae@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-T24gMDcvMDEvMjAyNSAxMzo1NiwgR29rdWwgU3JpcmFtIFAgd3JvdGU6DQo+Pj4+ICtleGFtcGxl
-czoNCj4+Pj4gKyAgLSB8DQo+Pj4+ICsgICAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2ludGVycnVw
-dC1jb250cm9sbGVyL2FybS1naWMuaD4NCj4+Pj4gKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3Mv
-Y2xvY2svcWNvbSxpcHE1MzMyLWdjYy5oPg0KPj4+PiArICAgIHJlbW90ZXByb2NAZDEwMDAwMCB7
-DQo+Pj4+ICsgICAgICBjb21wYXRpYmxlID0gInFjb20saXBxNTMzMi13Y3NzLXNlYy1waWwiOw0K
-Pj4+PiArICAgICAgcmVnID0gPDB4ZDEwMDAwMCAweDQwNDA+Ow0KPj4+PiArICAgICAgZmlybXdh
-cmUtbmFtZSA9ICJhdGgxMmsvSVBRNTMzMi9odzEuMC9xNl9mdzAubWR0IjsNCj4+PiBOaXQ6IC5t
-Ym4NCj4+Pg0KPj4gDQo+PiBIaSBEbWl0cnksDQo+PiANCj4+IEl0cyAubWR0IGZvcm1hdCBvbmx5
-IGluIG91ciBjYXNlLg0KPj4gDQo+IFRoZW4gcHJvYmFibHkgeW91IG5lZWQgdG8gZml4IHlvdXIg
-Zm9ybWF0Lg0KDQpIaSBEbWl0cnkvIEtyenlzenRvZiwNCldlIHVzZSBzcGxpdCBmaXJtd2FyZSBp
-bWFnZSB3aGVyZSAgLm1ibiBpbWFnZSBpcyBzcGxpdCBpbnRvIHggIHNlZ21lbnRzIHdpdGggLmIw
-MCB0byAuYnh4IGV4dGVuc2lvbi4gVGhlIG1ibiBoZWFkZXIgYWxvbmcgd2l0aCBzaWduaW5nIG1l
-dGFkYXRhIHdpbGwgYmUgcGFydCBvZiB0aGUgLm1kdC4gVGhlIHNlY3VyZSBhdXRoZW50aWNhdGlv
-ciAoVHJ1c3Rab25lKSB3aWxsIGV4cGVjdCBtZXRhZGF0YSBhcyBwYXJ0IG9mIC5tZHQgYW5kIHdp
-bGwgYXV0aGVudGljYXRlIHRoZSAuYnh4IHNlZ21lbnRzLg0KDQpDZXJ0YWluIG1zbSBwbGF0Zm9y
-bXMgYWxyZWFkeSBzdXBwb3J0IC5tZHQgZm9ybWF0IGFzIGluIGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZW1vdGVwcm9jL3Fjb20sc202MTE1LXBhcy55
-YW1sP2g9djYuMTMtcmM2Lg0KDQpSZWdhcmRzLA0KR29rdWwNCg==
+On 08/01/2025 12:19, Gokul Sriram P (QUIC) wrote:
+> On 07/01/2025 13:56, Gokul Sriram P wrote:
+>>>>> +examples:
+>>>>> +  - |
+>>>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
+>>>>> +    remoteproc@d100000 {
+>>>>> +      compatible = "qcom,ipq5332-wcss-sec-pil";
+>>>>> +      reg = <0xd100000 0x4040>;
+>>>>> +      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt";
+>>>> Nit: .mbn
+>>>>
+>>>
+>>> Hi Dmitry,
+>>>
+>>> Its .mdt format only in our case.
+>>>
+>> Then probably you need to fix your format.
+> 
+> Hi Dmitry/ Krzysztof,
+> We use split firmware image where  .mbn image is split into x  segments with .b00 to .bxx extension. The mbn header along with signing metadata will be part of the .mdt. The secure authenticatior (TrustZone) will expect metadata as part of .mdt and will authenticate the .bxx segments.
+
+NAK, you got feedback which you refuse to implement.
+
+> 
+> Certain msm platforms already support .mdt format as in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml?h=v6.13-rc6.
+
+That's an overlook, not support. Don't use arguments "someone sneaked
+it, so I can as well".
+
+Best regards,
+Krzysztof
