@@ -1,120 +1,110 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079552361DA;
-	Wed, 15 Jan 2025 10:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAA0192D69
+	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jan 2025 17:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736935588; cv=none; b=fnX5S14/3dp16vDQ2ig5XACjURwUl1EhLgV9HxUjoFgT30YwZW8ZmhCVyAuzNx+/Nhjz/Xx/yzAUcaY7tmx/36TG3jzKduVJEFCFp5shh7C3kCrYRgUBCrFZcy9LkNgw/V2uWoXhZsZP4glNvXArKL0cZx43xhjyKKkRJM8x23s=
+	t=1736960873; cv=none; b=JTh0ILYYxV1/APDcEHwdwlz1rAn5GpIOtQEouQYhm/fn6Be8lDS0h5xYpmwwc0Y7BrZQziepe0m3/o+hsiNZDx1hQC3a603xV0YaMmolC6xAhibC160/ZQQi1syA8bC7UTj8iPxZUr26dP2ZgJBNeX7NM+b8cuQylZj4D1lIxl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736935588; c=relaxed/simple;
-	bh=7AS/KitQlguNxF7vSxEkrKlJTDNOIY4kAUsu1PfXNd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ibe0tCT1fT0T4wgXZZZLjo9G9yLYiFvLoCwzhI+IHNN0F5vjKCkyzhpluacsI6VFDa6/EA/VB+kZxqQNq0U/U7N9rRzUxadhgITH4Qc9dN5fMiBJqCL7aTvn/VvT6SZYnuZIAns0760PLV+VJA4jkx0FY+wMg2tzztxcPzf0RFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pVDVvkin; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1736960873; c=relaxed/simple;
+	bh=1JZucjw1sGdnLmyrXNFAM5kNeQ7vMTwxS7tHUwH2XVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MktdIpkIDVYBIBaIhTqyCAoekAKbp85uE7sFNwD+0AxFc47/IHvauAaj3zU3BVG1PPXR0uZ0rzlSnJ8TsW8JH40ZR32MIzyGuoaQpFFTTJI9bCUgJ+C0cLbg5YqDD4VkEvNvnxGkPUgJi/1WdBbU9hZ0FBm3OTdzQvGoAn3BoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZB2eEra2; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pVDVvkin"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50F9KsQe022452;
-	Wed, 15 Jan 2025 10:06:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7AS/KitQlguNxF7vSxEkrKlJTDNOIY4kAUsu1PfXNd4=; b=pVDVvkin6iliRgAn
-	jkp1dszuQc9WpLK1uXiqAKp8PSBl/8InmnNLSSmS8aRDe1sT+cJIpzclBe3fZprQ
-	GoJtfZekr3DpJGekcsdS3xs3PIAPOtve6QkA/hEoXKNwgMYy40u0G0NtPdTvWZ1U
-	Uf2n0gG22sNfTXxaLVmq0LzOjpO6ugbBY3sdpnLtWRtTH5Xmiq3wvaeXERbSpNes
-	+x9rJxKgLazk/ShkVENHRJ0WcICMKtWtI0Bvycw+KXg92A9VcwC3F6PFYIxWdJJd
-	6aGc9XDRZx9oZ8PqLmrroeKbQUqEy3dfDYwInHUNUhkRn9Tto252JhFxZW5bS+ZM
-	BWOEFA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 446aa9g3xh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Jan 2025 10:06:22 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50FA69Bm031718
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Jan 2025 10:06:09 GMT
-Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 15 Jan
- 2025 02:06:04 -0800
-Message-ID: <f0a261ff-e9b1-4c65-8f26-e7ffd86251c0@quicinc.com>
-Date: Wed, 15 Jan 2025 15:35:52 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZB2eEra2"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ef760a1001so94942a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jan 2025 09:07:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736960871; x=1737565671; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0VcY46/lM+qWcYEFMTW7FPs+z3KlTxuhM3tOU/CzhrA=;
+        b=ZB2eEra2s48snwkS3oIhgZ8NSz03gKBT9Rn1bfFPZ3sgCkxiiqpb/tPQkIH3EmzjAP
+         xvmMgY4wBKeGiazN6S22/5JzRfWpHqlcZoHHAKRFBv2fctDddDh20g6F15iMqIiHHzAV
+         gTSRux1lnORrPcepc5pcHSRHA7/i59w50uP9FJh+WdkslE+gDUslq3zG8inSYFie2uxA
+         KjDuC4bKANIlSsUVmIThgMXOyTM32ZssNXJQh6q69GyHqBSsjFohVu9XecoNeVL0GtrR
+         ZjxWOKM090AC31/HoFWiEDrF1fHP3zyaX9xUdknLUGC2uSnWjHyA/8VKHqas/qwamjGI
+         Zu0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736960871; x=1737565671;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0VcY46/lM+qWcYEFMTW7FPs+z3KlTxuhM3tOU/CzhrA=;
+        b=e9S9WYkaInNChkqTPJtaH4tD8quu9eEb5K7lKs6z23GRIhcvJTaCzuFAGGLA+C4cNv
+         Fw0zAK5r2mxtFCXtzQJA2DbAZUxDJv378QCwdRlC630lqn9i/VympjKoOB+Y5glLLL6a
+         ByJ+pf1ilZLhQaFt2PcYtS9jeB4gfW4Qd2wnONMNbqxKszXeF9LaqbiZ2HH/0zoMpEGo
+         uahW8Ugiz5kyACuoatLUTOtexPl/KYvrSKD5PjcbEmHQG1CUsQez0q/Luhh+1FVVxh18
+         pyRyKKKqhmvrvtpOnH5hoS+5ZAXh+fBVpWyXvcFZnNzWCL1HPi4WBjh+2DFdjHBJHUxo
+         1S4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxj6lMfeVWYxlfjufFXUgqFae7wV/VRFFVyD/kMYxBgkUbFSVWelVWeos0zsdqNZqf2KEoU0k8w4wKR6icO92F@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc6peVB3FuomWwpeOb5tGLsIP85RsDdOHiIJ9IQ8nEtYAXJSYB
+	Gf4YquGrmQJfyAW/kRqXaYEovb/wSxETTgpenG4AXIj9pUUpIfLRJ2Uc8Yr/fGM=
+X-Gm-Gg: ASbGncv1CxoscbSWyH1s9rywhCcmoA3qQpBzhrfPfqOtQj6pb4X3JZ1Rv2pOMHD+BhT
+	jupMVLz5wxUK1eOui+dO+mTgOKkONvmamkUprHBtlr65bqkH+Lz9lGJH36rlNS0ezGXaCNFQ+s9
+	AqXYKoQzCKD/cMY3Si50e+/Foee3yi+BRv5zXuV8VlQtPWnS9HWHEqWKtdWgNpCcEbMcQhZKrv6
+	XiX97QZg9WoTZ7uXGqol9WzxvJuwPWKF/6k5M5EwC+ugR2NvIchgr7uQW0=
+X-Google-Smtp-Source: AGHT+IFBYy/MIoFqLhH1iu5kbk/VFg8m2zjUzFPIqHf2bvIqpubLtL+eann7wEvmNhmkk/lcjY6k3w==
+X-Received: by 2002:a17:90b:4a50:b0:2ea:bf1c:1e3a with SMTP id 98e67ed59e1d1-2f548f2a154mr51216371a91.12.1736960871023;
+        Wed, 15 Jan 2025 09:07:51 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:5bd:9b69:c7c6:475a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f72c2c2e71sm1616086a91.35.2025.01.15.09.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 09:07:50 -0800 (PST)
+Date: Wed, 15 Jan 2025 10:07:47 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/5] remoteproc: Simplify few things: omap, keystone, st
+Message-ID: <Z4frY5W0Nfx/iTfR@p14s>
+References: <20250111-b4-syscon-phandle-args-remoteproc-v1-0-73ed6fafa1e3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 7/8] arm64: dts: qcom: ipq9574: add nodes to bring up
- q6
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "konradybcio@kernel.org" <konradybcio@kernel.org>,
-        "Manikanta Mylavarapu
- (QUIC)" <quic_mmanikan@quicinc.com>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>,
-        "dmitry.baryshkov@linaro.org"
-	<dmitry.baryshkov@linaro.org>
-CC: "Vignesh Viswanathan (QUIC)" <quic_viswanat@quicinc.com>,
-        "Sricharan
- Ramabadhran (QUIC)" <quic_srichara@quicinc.com>
-References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
- <20250107101647.2087358-8-quic_gokulsri@quicinc.com>
- <20abe9a9-34dc-4712-8fde-b959eb3e22c6@oss.qualcomm.com>
-Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <20abe9a9-34dc-4712-8fde-b959eb3e22c6@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7ruNp92vKOsCPhN3u-lXEEW12-zBawvo
-X-Proofpoint-ORIG-GUID: 7ruNp92vKOsCPhN3u-lXEEW12-zBawvo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-15_04,2025-01-15_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- phishscore=0 mlxscore=0 bulkscore=0 mlxlogscore=610 malwarescore=0
- impostorscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501150077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250111-b4-syscon-phandle-args-remoteproc-v1-0-73ed6fafa1e3@linaro.org>
 
+On Sat, Jan 11, 2025 at 07:42:48PM +0100, Krzysztof Kozlowski wrote:
+> Few code simplifications without functional impact.  Not tested on
+> hardware.
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (5):
+>       remoteproc: keystone: Simplify returning syscon PTR_ERR
+>       remoteproc: omap: Simplify returning syscon PTR_ERR
+>       remoteproc: st: Simplify with dev_err_probe
+>       remoteproc: keystone: Use syscon_regmap_lookup_by_phandle_args
+>       remoteproc: st: Use syscon_regmap_lookup_by_phandle_args
+> 
+>  drivers/remoteproc/keystone_remoteproc.c | 17 +++-------
+>  drivers/remoteproc/omap_remoteproc.c     |  7 ++---
+>  drivers/remoteproc/st_remoteproc.c       | 54 +++++++++++++-------------------
+>  3 files changed, 28 insertions(+), 50 deletions(-)
 
-On 1/9/2025 6:42 PM, Konrad Dybcio wrote:
-> On 7.01.2025 11:16 AM, Gokul Sriram Palanisamy wrote:
->> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>
->> Enable nodes required for q6 remoteproc bring up.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
->> ---
-> The comments you got on patch 6 apply here and to patch 8 too
+I have applied this set.
 
-sure Konrad. Will address.
+Thanks,
+Mathieu
 
-Regards,
-
-Gokul
-
+> ---
+> base-commit: 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
+> change-id: 20250111-b4-syscon-phandle-args-remoteproc-06dfa873d1d1
+> 
+> Best regards,
+> -- 
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
