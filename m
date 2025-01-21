@@ -1,126 +1,211 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744BC18859B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jan 2025 06:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4551F1527;
+	Tue, 21 Jan 2025 18:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737355175; cv=none; b=cXILg3JPpMMEZ/76IlImU/ZuhT9aXW4+wvH49rZWbvZ/lJUWKncEZrKGT+sgDCWzPquVwR07Xk3BvTTwWaX8r+Jag8parVUPHuynP+Llbqc5yO9CmodfWQWLYQIh/NYLyqmP0M86CHAmMix7y5Z35bJwf+mjkALpB8mHMOXgWpM=
+	t=1737485267; cv=none; b=X1kgjjCt9zaQAsuUnFPkSBwsACXLHVKRyIpAQ+JNHhgYsRRTQbWYf5WFhH3c+enoqjtC9258vMZDmZtSTsQCXr4/3asC0oR5pL+sDt5tdbilXnqpCfFhEobTGdK1PMpRF0qsNELzESjbA2VLXD4o+Xabn0rIUD26TuROLNAUAyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737355175; c=relaxed/simple;
-	bh=Hg0Q7UBjPXxTO4jA9v1+V2EIcNAUhgdVIEsiirNBuY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MtM5py+4n/DFM3Lk2GP4JtbGiVyv7UZjhXIqXLjoA0RTsXKmVDzwCamJEMqY2uAR+WnO/8q0pUTa2O1gnDfuY36rh7DY6zzP/q3lBx8KD3+u85wXmD5GzJKotj/BhwtEvBRGMvZAPfSFI3KT2Aw95lvf8EqPL1AwH/V+gVqkEmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HAZavQnr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1737485267; c=relaxed/simple;
+	bh=ZwNwJ3pWQjedopXIAF0dUMJKjrzBpGk42Y8cdDjiDyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g5KpgAk7j1TPDXz3buTv5INo3e6ADox47zXydhvaKAwww8GaupuAGzAldTvOLCR45mY9YTWmfrD5vBxaWCtf3q8hJj2IXBUlPLi+zJapQNfAZl/X4FwVbAYbowmf6nlVYPYlyzsewgRhVJpmPCxN2u5a8y1Zzg3GtgNg2Sgfdrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Cq9ShGwr; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HAZavQnr"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50K6ZZfa016277
-	for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jan 2025 06:39:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YEp07wamDo/nPW5MMUM0lL0yxceuTlotq5hNkQb7a4I=; b=HAZavQnrThPEK0VP
-	tapwcXgi3KcSpq0xaJppfJCJBfY8LbLd/B6a6GTL7mpP9km30dsmk14yyo6oR/nc
-	nrNft407WWIckvzPRiNiyP7A2C7Ggj/TDr85pPd8dKZ3M4PYCnZTDRIRuFFciCQN
-	E0vMbPD5zhnc52FhW8EZE/oQdOD60sZhVdQp/kMgTZq5AK8WDtnUYmCmgOu0ZTR3
-	iamQ8qjIPSxtYVMF22hdrzvbxHoLu9b2Rp6GAC6yG8xxQmi3wEJojYmrFMwKvE4w
-	HV7n7dJn22xgwtMXVxPAWxAt1J8m2SUsfpMS/99/JyCF8Pwq4z8bM3IPu/pcsUbp
-	pc3DJw==
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 449hbw80ve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jan 2025 06:39:33 +0000 (GMT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-71e2a44bae1so3834247a34.0
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Jan 2025 22:39:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737355172; x=1737959972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YEp07wamDo/nPW5MMUM0lL0yxceuTlotq5hNkQb7a4I=;
-        b=mE4hjlSIPwg6KWAZiLs5De3qlnVX8gQx4hl0iqnfS1tJS5YG5worF3hTAHV2mnRmwT
-         Ckq3B9nHNPw61a5QrdAp9mBpaOQIr6oHEFejmq62dL4fw1x4i1PddIujsdnYazUSf+za
-         oGsKaPD9IPqZINC3KHzd2OmvAUJt7p5V5MLLhFTc+B/6Gf6+hG/J1CZS5s2IAOuQdXC4
-         xKWN8DjVSKthFpsMRjLqv6ivy1/hWXmoADb9s6QJtyF7cD+QVWXa40fyqPF5d6DOMy8E
-         ijzTbfy1T1M26AIYaQtO54FiI445v+A6QtVRk9loj2JWVCJ2OjVH+R7rrqSUJWdSOwms
-         h5Dw==
-X-Gm-Message-State: AOJu0YxqXpgoNPqpewTRZ2PDq+pCMgOyA9RjWOqYNDOpPyTEXLBUEFBg
-	SLSOm4w9DNR24lcKhKfdFpuC9S1nNXNumr6e840rwDfXL0ZTQSPqOxw1NGI+L+8YwH/x9gCvtAq
-	j6RspK/NvhikhqJU3G3M5f+cnD0ntsDTqQweGwMGEmKYGq3a9ya+nyq+CugA8ZjGNEU/HyVryjv
-	Xj2s391Ixh1Op45YdyLx+sQ7jV2jBcA6Sx+ItE9zJYF3IucvRMnIrP6A==
-X-Gm-Gg: ASbGncvygc85NYnrVI+KwpcEcSJQTiMjOqecZUDIV+kj1GiMQQMeGWGSkr8idz7Rgcb
-	rZGq8owES8bjdliD476yTdyaA437hkJp7KjagLPqENrbnreDEjwLZ
-X-Received: by 2002:a05:6871:296:b0:29e:2a06:8405 with SMTP id 586e51a60fabf-2b186ca0224mr11675793fac.19.1737355172072;
-        Sun, 19 Jan 2025 22:39:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEjLeDSrqUjGo2V0Zo5OcxIz5Nb6wzdeKSfVL2AAME/VLS9Yj/QnfpHYbyLVRq7prN4mURgjdctrh6N0StldDM=
-X-Received: by 2002:a05:6871:296:b0:29e:2a06:8405 with SMTP id
- 586e51a60fabf-2b186ca0224mr11675787fac.19.1737355171794; Sun, 19 Jan 2025
- 22:39:31 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cq9ShGwr"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 50LIlSC5854034
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Jan 2025 12:47:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1737485248;
+	bh=a+/KAd3VsVePIW539g/aP3rCEpeQc8fTMCWOAc/TXNM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Cq9ShGwrozgqx5hDKw2itH0i2PbUOErvfgess7kOUvazit22Wh893Hl5G9ZTo9y9w
+	 qsOnwn83vr0eWyQ92yovt4I4asUTVBKwkum1VyH219PXXg3yHeKSG+oHQXKs/yrAW7
+	 wtjC7hROoiHFepucKZxZAtF9pGiw4zOs57woUrWo=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50LIlSEx002737
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 21 Jan 2025 12:47:28 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
+ Jan 2025 12:47:28 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 21 Jan 2025 12:47:28 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50LIlRvH013065;
+	Tue, 21 Jan 2025 12:47:27 -0600
+Message-ID: <545c990c-63f8-4d31-ae80-3454736b1329@ti.com>
+Date: Tue, 21 Jan 2025 12:47:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAN3W6UVqqY1P+0ZV3nwY-vmT3fArGhoF959H_15K3iz1z7shSw@mail.gmail.com>
-In-Reply-To: <CAN3W6UVqqY1P+0ZV3nwY-vmT3fArGhoF959H_15K3iz1z7shSw@mail.gmail.com>
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Date: Mon, 20 Jan 2025 12:09:20 +0530
-X-Gm-Features: AbW1kvYPzjsI53eHumvy_aFT_TAms0DPvzumukYoM6CGCL_O1RJwjnYsgcdtxYg
-Message-ID: <CAN3W6UUs5TpJk7yvAcvnrH+5KgmnTfF9spQ=kCW13P2JL+rxcA@mail.gmail.com>
-Subject: Re: Query: DMA device assigned to remoteproc usage by Linux
-To: linux-remoteproc@vger.kernel.org
-Cc: mathieu.poirier@linaro.org, andersson@kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: mBC-sGr1cFQA2mIsyNhklSk3Vw1JNWc5
-X-Proofpoint-ORIG-GUID: mBC-sGr1cFQA2mIsyNhklSk3Vw1JNWc5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-20_01,2025-01-16_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=862
- lowpriorityscore=0 malwarescore=0 phishscore=0 suspectscore=0 spamscore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501200054
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] remoteproc: k3-r5: Fix checks in
+ k3_r5_rproc_{mbox_callback/kick}
+To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-vadapalli@ti.com>, <srk@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241224091457.1050233-1-b-padhi@ti.com>
+ <20241224091457.1050233-2-b-padhi@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20241224091457.1050233-2-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Dec 23, 2024 at 11:27=E2=80=AFPM Mukesh Ojha
-<mukesh.ojha@oss.qualcomm.com> wrote:
->
-> Hi All,
->
-> Wanted to check if we have encountered remoteproc use case where a device
-> with dma is assigned to a remoteproc with its own streamid and iommu
-> translation context.  This DMA device can have a selective DMA range
-> within the remoteproc carveout memory that needs to be iommu mapped
-> before the remoteproc is up.
->
-> Do we have any example in remoteproc that handles such scenario where
-> device dma (assigned to remoteproc) has its iommu setup by Linux (since
-> the iommu is under its control) ?
->
-> I was exploring some of the remoteproc drivers but did not find anything
-> close to DMA use case and from where remoteproc should get this ddr range=
- ?
->
-> device tree ? or rsc table ? if rsc table then which among the below ?
+On 12/24/24 3:14 AM, Beleswar Padhi wrote:
+> Commit f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during
+> probe routine") introduced a check in the "k3_r5_rproc_mbox_callback()"
+> and "k3_r5_rproc_kick()" callbacks to exit if the remote core's state
+> was "RPROC_DETACHED". However, this caused issues in IPC-only mode, as
+> the default state of the core is set to "RPROC_DETACHED", and the
+> transition to "RPROC_ATTACHED" happens only after the "__rproc_attach()"
+> function has invoked "rproc_start_subdevices()".
+> 
 
-Resurfacing this in case it was missed during the New Year vacation period.
+Sounds like the core issue was making assumptions about the state of a
+variable that is usually only used internally by the rproc core (rproc->state).
 
--Mukesh
->
-> enum fw_resource_type {
->           RSC_CARVEOUT            =3D 0,
->           RSC_DEVMEM              =3D 1,
->           RSC_TRACE               =3D 2,
->           RSC_VDEV                =3D 3,
->           RSC_LAST                =3D 4,
->           RSC_VENDOR_START        =3D 128,
->           RSC_VENDOR_END          =3D 512,
->
->
-> -Mukesh
+Instead, what would be the harm in just dropping the state check?
+Messages coming from a detached core should be processed the same.
+
+Andrew
+
+> The "rproc_start_subdevices()" function triggers the probe of Virtio
+> RPMsg subdevices, which require the mailbox callbacks to be functional.
+> To resolve this, a new variable, "is_attach_ongoing", is introduced to
+> distinguish between core states: when a core is actually detached and
+> when it is in the process of being attached. The callbacks are updated
+> to return early only if the core is actually detached and not during an
+> ongoing attach operation in IPC-only mode.
+> 
+> Reported-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> Closes: https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
+> Fixes: f3f11cfe8907 ("remoteproc: k3-r5: Acquire mailbox handle during probe routine")
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> Link to RFC version:
+> https://lore.kernel.org/all/20240916083131.2801755-1-s-vadapalli@ti.com/
+> 
+> Improvements in v1:
+> 1. Ensured these mbox callbacks are functional when the core is in the proccess
+> of getting attached in IPC-Only mode.
+> 2. Ensured these mbox callbacks are _not_ functional when the core state is
+> actually detached.
+> 
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 53 +++++++++++++++++-------
+>   1 file changed, 39 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index dbc513c5569c..e218a803fdb5 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -131,6 +131,7 @@ struct k3_r5_cluster {
+>    * @btcm_enable: flag to control BTCM enablement
+>    * @loczrama: flag to dictate which TCM is at device address 0x0
+>    * @released_from_reset: flag to signal when core is out of reset
+> + * @is_attach_ongoing: flag to indicate if IPC-only "attach()" is in progress
+>    */
+>   struct k3_r5_core {
+>   	struct list_head elem;
+> @@ -148,6 +149,7 @@ struct k3_r5_core {
+>   	u32 btcm_enable;
+>   	u32 loczrama;
+>   	bool released_from_reset;
+> +	bool is_attach_ongoing;
+>   };
+>   
+>   /**
+> @@ -194,8 +196,11 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+>   	const char *name = kproc->rproc->name;
+>   	u32 msg = omap_mbox_message(data);
+>   
+> -	/* Do not forward message from a detached core */
+> -	if (kproc->rproc->state == RPROC_DETACHED)
+> +	/*
+> +	 * Do not forward messages from a detached core, except when the core
+> +	 * is in the process of being attached in IPC-only mode.
+> +	 */
+> +	if (!kproc->core->is_attach_ongoing && kproc->rproc->state == RPROC_DETACHED)
+>   		return;
+>   
+>   	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+> @@ -233,8 +238,11 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+>   	mbox_msg_t msg = (mbox_msg_t)vqid;
+>   	int ret;
+>   
+> -	/* Do not forward message to a detached core */
+> -	if (kproc->rproc->state == RPROC_DETACHED)
+> +	/*
+> +	 * Do not forward messages to a detached core, except when the core is
+> +	 * in the process of being attached in IPC-only mode.
+> +	 */
+> +	if (!kproc->core->is_attach_ongoing && kproc->rproc->state == RPROC_DETACHED)
+>   		return;
+>   
+>   	/* send the index of the triggered virtqueue in the mailbox payload */
+> @@ -671,22 +679,39 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   /*
+>    * Attach to a running R5F remote processor (IPC-only mode)
+>    *
+> - * The R5F attach callback is a NOP. The remote processor is already booted, and
+> - * all required resources have been acquired during probe routine, so there is
+> - * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
+> - * This callback is invoked only in IPC-only mode and exists because
+> - * rproc_validate() checks for its existence.
+> + * The R5F attach callback only needs to set the "is_attach_ongoing" flag to
+> + * notify k3_r5_rproc_{kick/mbox_callback} functions that the core is in the
+> + * process of getting attached in IPC-only mode. The remote processor is
+> + * already booted, and all required resources have been acquired during probe
+> + * routine, so there is no need to issue any TI-SCI commands to boot the R5F
+> + * cores in IPC-only mode. This callback is invoked only in IPC-only mode.
+>    */
+> -static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
+> +static int k3_r5_rproc_attach(struct rproc *rproc)
+> +{
+> +	struct k3_r5_rproc *kproc = rproc->priv;
+> +
+> +	kproc->core->is_attach_ongoing = true;
+> +
+> +	return 0;
+> +}
+>   
+>   /*
+>    * Detach from a running R5F remote processor (IPC-only mode)
+>    *
+> - * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
+> - * left in booted state in IPC-only mode. This callback is invoked only in
+> - * IPC-only mode and exists for sanity sake.
+> + * The R5F detach callback performs the opposite operation to attach callback
+> + * and only needs to clear the "is_attach_ongoing" flag to ensure no mailbox
+> + * messages are sent to or received from a detached core. The R5F cores are
+> + * not stopped and will be left in booted state in IPC-only mode. This
+> + * callback is invoked only in IPC-only mode.
+>    */
+> -static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
+> +static int k3_r5_rproc_detach(struct rproc *rproc)
+> +{
+> +	struct k3_r5_rproc *kproc = rproc->priv;
+> +
+> +	kproc->core->is_attach_ongoing = false;
+> +
+> +	return 0;
+> +}
+>   
+>   /*
+>    * This function implements the .get_loaded_rsc_table() callback and is used
