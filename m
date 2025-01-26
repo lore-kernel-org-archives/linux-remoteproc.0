@@ -1,63 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABD613E40F;
-	Sun, 26 Jan 2025 01:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62A5152532;
+	Sun, 26 Jan 2025 20:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737853413; cv=none; b=JpIEctTS1oPphUgHBaaQGr5nBd1O54YL5dU3zX7EIyXWFzA1dzN9kkt/w9w49NkA8MQh2AtAFu99nkDpTeuJeQYDAqeVxQZ4HrdKhtQvAIDjzWHTg+lQ2tIhQg/3yASz+r30d0yRmLVP7D/hDWgFGIuOSzje32Xis+AT9QpN/pI=
+	t=1737925064; cv=none; b=FZvBIbScKd8kXGsI+Vk/5PO0JQZdvtwcLp2cGB4o4jRyzdZLNKzI7TLSRk87j2QLqVBOdIv8lguJoSuYWHgba+kvflBPVr6Z5Fo6U+MUGhK6+h6BQOjkUSfOrS3dLnOBhAMM8gXCswAV7/va/HUnHpKnfHi4D50YVEsPzMyvDxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737853413; c=relaxed/simple;
-	bh=/hGfBANG/IL/B116KftthsC+Horg1g63pjeOq+oTiNA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Fu6WjNNPUAaxj5u4VxHnrDiMjM+yS+HHIOy7XRaopyY6tpRiUuYlQq16aWW+IHRpE10uW+luhcV2BDf8LU5i0e+4O4PQKH5/eylHqsxwApTg/YZfzFHQNeesmx7fy45uIY4FKzP/ixUMoWv2jwE8NNsmpAfSN7UUMNt6gdJCQeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tP/cY1K2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737925064; c=relaxed/simple;
+	bh=j7879PuyHYg2Ywl1rW/OqZXKKALM0KAOmN7JVaFFJCo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WPGd4owLFLedz+QvdHAf+Q5wYnBV/H0kpFSPHiWCbNZgVstBr5oKSKv3MVqM6Kx1C+BdirtewOVksorHfSx/x+Gd5oOdQRhRjJZ6Wzh9j7t9WFw5cdQZS4cfrWV0GBMc2JSn1UnF46HhYMNtxJG3k46gAGLiRwargzSaqQOjeGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=1Cl4cwA4; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tP/cY1K2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D0FC4CED6;
-	Sun, 26 Jan 2025 01:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737853413;
-	bh=/hGfBANG/IL/B116KftthsC+Horg1g63pjeOq+oTiNA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tP/cY1K2FrOFygov9kbriMsCPNX8zbSCwThoTqMNdB8PjMklzciAOh318yxb18nVB
-	 1IqbhqSXbTtnW9jHgSn5NYa5v+DfILM8yqj334Qe2kRsAvqQGY8jkq02onciqKRWkv
-	 8LUgKZf3v68s1dQEttIEwyTnGzz7VBGtWX49bVUPwZDoLOeJhG9UAIQbn9fdxeMEvR
-	 6etzmsTmmO0GJkSOlX2XBRKSsFNOpKd6jbSp+XYjMyisO9XGWPr+ieBeH+Wvo/iiR0
-	 l6iB+wi431zXeJP4IHlJ1xf55hDjhI5p2bNoM+BvzXshmLO2l12G0RGZgLEhQzueWS
-	 o/qgU4NgUPSCg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE14380AA79;
-	Sun, 26 Jan 2025 01:03:59 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc updates for v6.14
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250125173905.1150203-1-andersson@kernel.org>
-References: <20250125173905.1150203-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250125173905.1150203-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.14
-X-PR-Tracked-Commit-Id: 3a53ff95b0be9a5d0ef5037e539558d0041f9a89
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: aa22f4da2a46b484a257d167c67a2adc1b7aaf68
-Message-Id: <173785343820.2645989.5111459318996059458.pr-tracker-bot@kernel.org>
-Date: Sun, 26 Jan 2025 01:03:58 +0000
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Beleswar Padhi <b-padhi@ti.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Chen-Yu Tsai <wenst@chromium.org>, Robin Murphy <robin.murphy@arm.com>
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="1Cl4cwA4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1737925054; bh=j7879PuyHYg2Ywl1rW/OqZXKKALM0KAOmN7JVaFFJCo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=1Cl4cwA4FjEjCKO/cCAraXXiau4lX9ClNBrUzOF1eu+YU6E6oVmlGXb74BBe/Nv+b
+	 TKn3ngKwSc20LyALYcuxdBvuXilA/dikCNH6Sg3QuS2yzXjdXT86WeKMYb63IAfKXV
+	 IFT+BJFUvP3MYt4xdmvgR/+kftcmwROqrfhbNHm8=
+From: Luca Weiss <luca@lucaweiss.eu>
+Date: Sun, 26 Jan 2025 21:57:25 +0100
+Subject: [PATCH v2 6/9] ARM: dts: qcom: msm8226: Add smsm node
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250126-msm8226-modem-v2-6-e88d76d6daff@lucaweiss.eu>
+References: <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
+In-Reply-To: <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ =?utf-8?q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1486; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=jTBk8OT0/wnmRBAf2FFY5Bw2UG5DbUKF8KdM2H91kYE=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnlqG5DUq7qDFxTAGFN6Qt3jknUSEE1+2hX2Ofe
+ uJAbYGOYdCJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5ahuQAKCRBy2EO4nU3X
+ VpsoD/9GdtKdRuIZ5w3Wllocx78ejPUM1OBjr2+jSEjhi3UXMV3mB5BTRSnrCpeHPbr+fUOzImT
+ q32FD7OjbK4+ZRDo5/UU30ShH6y+WdVJOAO6YE0V/JuDOAm5w9oMSzEI3+Vs+CYnfPKjr9KjSW0
+ uBpJDgEDER8JHreXqd32XjtNF8UFmk3yrDX594DRsor9PY+m2PMqG1RA902rGy7bhy5mLCpXLsj
+ EsoAU0KKbQm73xktKQ381fTl0kMVbbrZ3oICCBgSlo2NUpWhVjwvL1DdL6/TvgL8dqxNe0dqcjp
+ aFGLUHIQKWuflpYjwqmOjLi1pnRXQkPRrwRoYEfIRKQaKaHybX/gt3E67OBHy1t5ZD6ZXeOn1OF
+ nY+sST+5Gj+xddTvCFUzaWKiHfXhU/rvGOPnAbdPcGczwUmMRd+db6MFWTXnu8HPcp9YCsYkSCc
+ 9HBKgjf6hIWdhmkN/QbnM36R4pHgf96+p1HZbIOVc655pwDJo/9otD7T2Tv7cToTJJFvp9B37Qs
+ vnF04/TfDhrWgGnd/oJ+2Rh7HM84Xtdan8bR+8l+CRiWW2JTpv9HK1TFgltcSDKk46Dbgyq9kmu
+ KRUZQs9HJjRP1vhUy2WNOF+lXAENSWZOBWLmcTppPbNoCbuOTjfIxI/UK08ya4vbBGtnU/10+QH
+ UuF433SXEpoU2SA==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-The pull request you sent on Sat, 25 Jan 2025 09:39:04 -0800:
+From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.14
+Add smsm node for remoteproc cores.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/aa22f4da2a46b484a257d167c67a2adc1b7aaf68
+Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+Co-developed-by: Luca Weiss <luca@lucaweiss.eu>
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+---
+ arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 34 ++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Thank you!
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
+index caaeeadf289f78d29403312738bbb714eaad74d2..7e0838af6c2d0dc26e0082471b70578bc627491d 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
+@@ -253,6 +253,40 @@ adsp_smp2p_in: slave-kernel {
+ 		};
+ 	};
+ 
++	smsm {
++		compatible = "qcom,smsm";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
++
++		apps_smsm: apps@0 {
++			reg = <0>;
++			#qcom,smem-state-cells = <1>;
++		};
++
++		modem_smsm: modem@1 {
++			reg = <1>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		adsp_smsm: adsp@2 {
++			reg = <2>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		wcnss_smsm: wcnss@7 {
++			reg = <7>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
+ 	soc: soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.48.1
+
