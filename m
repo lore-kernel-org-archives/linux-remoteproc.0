@@ -1,139 +1,78 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5961C156F3C;
-	Sun, 26 Jan 2025 21:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF86189B9D;
+	Mon, 27 Jan 2025 07:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737925505; cv=none; b=N0gmuM1lm73rvrAiypuNx2j9rBQDkRkwZCRi2CeaaUaQiU8npCdsSvNYAqpmsfOn91YoJTf+JK0rBR15p838GHOdlcj+zbAgtmYE9Qp6WNnoBU0yXCZtW5yqeceoMz6NW+B8bm8KMitNLxd2J78lLBsceP9AvDOTW4WpKNliIEc=
+	t=1737964102; cv=none; b=GGgdxE4C6h2DedZosfZ74b1w4xef6ogl3/IRKNGrPW0Oav7+zri2f87rSWQ/GWSYSuhymKCxxOCbfzsOEUcW0gMDTJ6OqhN+M2zjE0Y4wv5SwFb5ZV0teAm9Jz+rtIVi0m9VUprEVnz3+94QD5QpST3zLBRf4KcWsAwjKMVVwqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737925505; c=relaxed/simple;
-	bh=35jT1gY9WoG3GTktEbhEhnbkGf1JpRCR4+f5ruZr+ZE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iM+7KZHQXrfU4qlhwWGR4StPLmy6C9+aEHRLui3YHFrr6wZSmGLZlAXW+6qCh+rRaaiLp3QE3v4URaavll8VBkge3uUtIIYEvfD2b58VaiZWtkAqvTZnyenRvwJ3OO5fg7qvoiJE4cW1WhUv/JdW+AtUx1UwJE7SPgAi5dSzA8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ob+qo0WM; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+	s=arc-20240116; t=1737964102; c=relaxed/simple;
+	bh=tdXuqfRrBC8ui0Vd36c31GzT2w+e2Q3ACD1hOw81m98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfJl0wAoFwqMk4SPZ/qsoUGCxUptKHIdWidvrG2K17VDwpAIpXvkH5sf9ZmMLcD13L0JJ8l0J1jBxZLU4qrP6VRb5AAqGOukrMUXJTZgGqFv8YK70HHBEfqIfCOTeZegBjxBozgaQgh3HupCZU3E9ewyskfTa687/L0kYe78x3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcjVdmGd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ob+qo0WM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1737925053; bh=35jT1gY9WoG3GTktEbhEhnbkGf1JpRCR4+f5ruZr+ZE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ob+qo0WMlAkIK7cYNkQz2LVrd2k9shaK8q+p7Tz+P7YeJAvN5G62N24l7dFGNYLDH
-	 LS0BrMlXNY17MRnY4tzTAC+BYCpzkPAWnCXjMwSZh67kY8xVkx+rHxdYGYZ+3U12AX
-	 yzmP144T7PDiDd042IEEqjJGh7hEpvCvwKKTrsXo=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Sun, 26 Jan 2025 21:57:22 +0100
-Subject: [PATCH v2 3/9] remoteproc: qcom_q6v5_mss: Handle platforms with
- one power domain
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcjVdmGd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23860C4CED2;
+	Mon, 27 Jan 2025 07:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737964102;
+	bh=tdXuqfRrBC8ui0Vd36c31GzT2w+e2Q3ACD1hOw81m98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AcjVdmGd8JZH/b3AVWbFqLqZ6EHHwiQVbh5NvCFAFRqTYeH5iN995lPysvs6D5xqD
+	 rHfLR0/mm4Z0MMWbxcGOirsKwNp2ZDlwogw7Jsgc1qBg935WRwww4S+A6QUIa0gMOL
+	 mWcXC4pFSDUHpysN1TI5RLppERKn7Ojj/azsyejKdw59RCkdt/Cd8q5PWPqeCSMBtp
+	 deNwL1CIGh9mYR9ab+Amiq3eZrs3H51dgdEtYRz1MH0bgvUcP2ZxTHtRXqtrRi3l0c
+	 8fSfuk07SttHHgNm4o6VdulbiPa5jA2qBNUnjO/K1QV4kPCF/Q2q7TmzDr8GqZmZOB
+	 znjT4v7cKgcFw==
+Date: Mon, 27 Jan 2025 08:48:18 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Matti =?utf-8?Q?Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: remoteproc: qcom,msm8916-mss-pil:
+ Support platforms with one power domain
+Message-ID: <20250127-bee-of-strongest-cookies-cd1ace@krzk-bin>
+References: <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
+ <20250126-msm8226-modem-v2-1-e88d76d6daff@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250126-msm8226-modem-v2-3-e88d76d6daff@lucaweiss.eu>
-References: <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
-In-Reply-To: <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- =?utf-8?q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2157; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=35jT1gY9WoG3GTktEbhEhnbkGf1JpRCR4+f5ruZr+ZE=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnlqG2FVrNrus763G7T8flNROko4SlkuMnALsaZ
- A2BpkLMP1mJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5ahtgAKCRBy2EO4nU3X
- VtReD/4hHKyEJMF9iZVUkX7FJ4eGjEZmlOVxkFL1kaM2ioh84M3YNA7LsRcAVnfdqjz8/qFNMec
- 7BsJbiJrGG3sVBdVEA31Ld4BFjXkpg+qEaBOJyXSIONfzAsKEUWBi21+/3uAh8dr7XBIi61ySVl
- g2q24BWV8+Nkdo1XsueT86dp9tvb1SuFxRf7aVXRCCEL3TY/rqqMkvaFFkKIfy8qTQgHuwLGn2u
- gbjTmv2IXmYLjc+asDoezv6o+i+ggt0l0sxtD7FM0Ts60AFfkj3+yOVxhakGkequCCymZayaNIZ
- tlTREAg0cifHpDvi9yyBLhG2gsJxTgZWAdiEzVNZ0/OVxAfGOfHPdYDXxohc2iV50wPElHRuJe3
- 1wNte49EFqee7/bKl8z5Vy+zqUEF8oq7Fnay3FBIgroHEN8XCNwAZGq4CsCdmt5VoonW4J931tn
- M/Ki9cbRbFOgkh6pO0OzR9b+CoAYJXDS0ZXkJ9b9ljYeOU/1gyHaRg3M4yHkhhJpocJuNMbS1BM
- 4hpPOwJPmYROF+bcGXDstpKosovKKzykncE+XvtJk8iRw9u3gUYxQ6uILZC1ZJDhsly1gODQW5J
- He7pePt8swRQvnSJSVkc0vB8kViRIRTrHY8DFy3pcQWVBJp7mKdfFpQ3KkdjCoRnGSFgYzG50Ht
- nbAwR+tewY25TpA==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250126-msm8226-modem-v2-1-e88d76d6daff@lucaweiss.eu>
 
-For example MSM8974 has mx voltage rail exposed as regulator and only cx
-voltage rail is exposed as power domain. This power domain (cx) is
-attached internally in power domain and cannot be attached in this driver.
+On Sun, Jan 26, 2025 at 09:57:20PM +0100, Luca Weiss wrote:
+> From: Matti Lehtim=C3=A4ki <matti.lehtimaki@gmail.com>
+>=20
+> Add support for platforms such as MSM8974 which have the mx voltage rail
+> exposed as regulator and only cx voltage rail as power domain.
+>=20
+> Signed-off-by: Matti Lehtim=C3=A4ki <matti.lehtimaki@gmail.com>
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
+> New patch in v2 split from previous first patch
+>   - Improve description of changes
+>   - Add one power domain changes to existing MSM8974
+>   - Add missing minItems to other platforms
+>   - Require mx-supply for MSM8974
+> ---
+>  .../bindings/remoteproc/qcom,msm8916-mss-pil.yaml  | 34 ++++++++++++++++=
++++---
+>  1 file changed, 30 insertions(+), 4 deletions(-)
 
-Fixes: 8750cf392394 ("remoteproc: qcom_q6v5_mss: Allow replacing regulators with power domains")
-Co-developed-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
-Changes in v2:
-  - Move MSM8974 mx-supply from "fallback_proxy_supply" to
-    "proxy_supply" to match updated DT schema
-  - Add fixes tag
----
- drivers/remoteproc/qcom_q6v5_mss.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index e78bd986dc3f256effce4470222c0a5faeea86ec..e2523b01febf393abfe50740a68b85a04011293c 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1828,6 +1828,13 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- 	if (!pd_names)
- 		return 0;
- 
-+	/* Handle single power domain */
-+	if (dev->pm_domain) {
-+		devs[0] = dev;
-+		pm_runtime_enable(dev);
-+		return 1;
-+	}
-+
- 	while (pd_names[num_pds])
- 		num_pds++;
- 
-@@ -1851,8 +1858,15 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
- 			    size_t pd_count)
- {
-+	struct device *dev = qproc->dev;
- 	int i;
- 
-+	/* Handle single power domain */
-+	if (dev->pm_domain && pd_count) {
-+		pm_runtime_disable(dev);
-+		return;
-+	}
-+
- 	for (i = 0; i < pd_count; i++)
- 		dev_pm_domain_detach(pds[i], false);
- }
-@@ -2449,13 +2463,13 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 			.supply = "pll",
- 			.uA = 100000,
- 		},
--		{}
--	},
--	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "mx",
- 			.uV = 1050000,
- 		},
-+		{}
-+	},
-+	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "cx",
- 			.uA = 100000,
-
--- 
-2.48.1
+Best regards,
+Krzysztof
 
