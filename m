@@ -1,100 +1,173 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD997DA62
-	for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jan 2025 16:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BC41D88DB;
+	Mon, 27 Jan 2025 22:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737995268; cv=none; b=pIWCZIT5XeR8yd+iEGOD3r2iJaWX/dnHmAITSkaL4jQp7IkZFIO+r8jSFP7Hw3UBHaa++FTr7MMs0ZsDE21MyOZLUHSH2re6Dyh6bdiQq7rc5wzwShTJYpaSiLhaRZXdVcjBRU2pZAgzGZ/7kaJzUO9veVL/623sudyKH4rYTDE=
+	t=1738016475; cv=none; b=lcqqx4ijASJ726V/DcZoTYNEGtOdIwcBSdOamqkaLTSlHmHbpi5RbmyXuxT4nCMi43ZNVXgQ1jqeGJpZzSa+3WBq+xMmFby2uB4FFOrfGtyka6qkyqKMj3j55ffUAnfsHllxtz3F6osvSG1xe/qQFiSrjsroYUGBmR5LB4B9Tkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737995268; c=relaxed/simple;
-	bh=G80NDwexUckx30TKu0/BYWqvImmXaGich/yIkbRsaKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PeM5NgdjpCIUXLUl18vHcdfdT4KrqFIl67G6W2X135PR+3uwbKRp5xS8e8S+FO8Hm0rxAu1bwtJ39bPAEsiU2NTpH2nzOxpUFujjztkpWTxO7PythJdvZTYSyr0mW1pLpNGwjaaAwZbAw/OnYMf01wkyoxGBqI1xf/35cDuMDPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EUEfvq4h; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1738016475; c=relaxed/simple;
+	bh=w0V5EJfhyJzk1s2kIunL3i/Dw29dcV0O6rKeti3vG2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PmL4R+UK+H1Ie+tiSegXK1sX1wrafXjJSqpzqWW7BclJCnqE4aIPYZqI7ZQIPocKISVWEYdk6s+MYzKnIbaMEER48YvrCPY3k7/YmW+MUb/FtBlGa6ExJSI+ycD6odF6LvdD5io4XpOcST6TdpBXdBUkaS2B/4x10ToimRhXlkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=hJtWEkf0; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EUEfvq4h"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso958745566b.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jan 2025 08:27:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737995265; x=1738600065; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cxRbu7frYGLzwM2+iFNAgQIZ02NmOP5PWZxJTtrk1do=;
-        b=EUEfvq4h63RMv7sZpbKoM6M64PacpxAvPq+W7KZ3f8T5SxqO/Ns1BkJa1XLlGlUrTQ
-         m9hac50DkD6lPaIphtxZ8iZ2xH10nmaF9evRESv4OzBoPtZVJz+I88Mc44j1zQt0LMJk
-         acivl2N6ZrFRJNIuZaJumPjQXt185mcXelKU33q+vhKVatTnuhoOF5/4/F7pE67gOUEE
-         rXMlBk7H2HtZPzrwgjTJ1rJSrOCO+FH0gtB9aEjlL2AfyThqUHpdlYg9vbnewP5LUgaC
-         QOvs28+dbT0M8oQxUd7G4hsqNjvEv5GWD0nH7CggZVoDB7BtjcX3lMXohHSCvuzKZG3N
-         bM1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737995265; x=1738600065;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cxRbu7frYGLzwM2+iFNAgQIZ02NmOP5PWZxJTtrk1do=;
-        b=Xe8hnhs/n0E3iuHLcPLDt9TaCYpsLtotaYQUgH6jdk3CCPMvKk5ybRa3o5bVYVHMsc
-         gyxoFTSByEskKeOkWZcQS49eD79vI4W3x/bjyiJMMBH2F3tisLuda0E7J577fbw3GDTb
-         oPTphEkCaOvt64ZdvZO7iTOAdDisKOHgd27uMS8LJrbM7R4xsjnlJFK5quDrWk/8sonx
-         61BlKZsQTJKontCB9pXWKmN/pngHfUhWMEH0WqytJ8hXNHdd2GRjwl1Zs0yf1IXvyHAr
-         xWUo9fO2TF2MRm1d2YXCMJVigLG9ZuJsDT1qzX2zlPFho1SRV/5HM93JYesUrIWTmWsn
-         AlkA==
-X-Gm-Message-State: AOJu0Yz7pPDgMkXG8cUntvsOeSpa4RLxVl3MI57CxsgImXsswlprOnMI
-	vBNHfWbInhrl9uYyG/iXF+yFu2H4nSVwo051Lc9JPFquN0J6MBpK4j//akUOjHE4ioatmppZApZ
-	FEBt55j90KQiZ4cCBqsLHS4mMLMYY+SD5J65q6s3NSj2jsCtF
-X-Gm-Gg: ASbGnctx/NwtVRy5TRcAKwY4EFwOK1znaa1UZ2pMsyDlQWaSCz/0O/rKUXP+dOVf9v4
-	koSNnHkzyhAwBoGbHsZbgQmbJKahJ0KqsxtbirYtVsyQ3t4VhoVgb8AZkBLWCnVaFvASqyTe6/e
-	9gsoCXgTJxoaE3KaR3iCCi
-X-Google-Smtp-Source: AGHT+IF0RzlztgBpVFbhWlRB73WpvCKmcikdDxM38/ZqG2z8FeKmk3FeFsxnV+09UsxoDhrXq7Xe1C54PTve0rcYiJg=
-X-Received: by 2002:a17:907:3fa5:b0:aae:ef24:888d with SMTP id
- a640c23a62f3a-ab38b48d9dfmr4066944666b.55.1737995264469; Mon, 27 Jan 2025
- 08:27:44 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="hJtWEkf0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1738016465; bh=w0V5EJfhyJzk1s2kIunL3i/Dw29dcV0O6rKeti3vG2s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=hJtWEkf0wy0zBVjSwI9GoVa2i+XB/UHTB+KJmYlyv18OFbmoBv7wZGGoA9M9eTeFC
+	 XQMEOrIuk4Juoy3JSClrfAiGkcnBn+VhGW0Sd/KHfwoKvzxqLobQzSEoqwVQoMM/ve
+	 tC9PohIIclJuE9wqCTMnqbwkYiJpbJ9W3Ig3aQvk=
+From: Luca Weiss <luca@lucaweiss.eu>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Matti =?UTF-8?B?TGVodGltw6RraQ==?= <matti.lehtimaki@gmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 3/9] remoteproc: qcom_q6v5_mss: Handle platforms with one power
+ domain
+Date: Mon, 27 Jan 2025 23:21:04 +0100
+Message-ID: <2764902.mvXUDI8C0e@lucaweiss.eu>
+In-Reply-To: <Z5dKxZ-fri8RaTPo@linaro.org>
+References:
+ <20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu>
+ <20250126-msm8226-modem-v2-3-e88d76d6daff@lucaweiss.eu>
+ <Z5dKxZ-fri8RaTPo@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bc9f1dd8-92b1-4839-86c9-ac9e544648ec@maurer.systems> <1710b217-548c-4eab-a1f1-dd31cd7625e1@maurer.systems>
-In-Reply-To: <1710b217-548c-4eab-a1f1-dd31cd7625e1@maurer.systems>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 27 Jan 2025 09:27:33 -0700
-X-Gm-Features: AWEUYZlhbjy2HwUnXR7GVEXjN0m-oFM4i8YHCzIIGz_fwweY9xXmd0606g4a6ms
-Message-ID: <CANLsYkyERtRf4F8DGK9-1=cztkA6Gz7-gUb5dGdaUO5ufBWg9Q@mail.gmail.com>
-Subject: Re: RemoteProc over PCIe
-To: Simon Maurer <mail@maurer.systems>
-Cc: linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 22 Jan 2025 at 11:53, Simon Maurer <mail@maurer.systems> wrote:
->
-> The last patch would be the first step for RemoteProc over PCIe. I use a
-> Xilinx Zynq 7000 PCIe card as my remote CPU and a x86 PC as the the
-> host. Both vrings and RPMSG-buffer are in the remote (PCIe-Card) SRAM.
-> So the RPMSG-buffer isn't actually DMA memory, but the SRAM on the Zynq
-> is mapped in a PCIe-bar. I'm working now on a patch, that transfers the
-> ownership of the RPMSG-buffer form virtio_rpmsg_bus to
-> remoteproc_virtio. So instead of virtio_rpmsg_bus calling
-> dma_alloc_coherent for buffer allocation, it would call
-> virtio_get_shm_region to get TX/RX buffers and on rpmsg_remove it would
-> call virtio_release_shm_regions (new in virtio_config_ops), analogue to
-> find_vqs/del_vqs.
-> Thoughts?
->
+On maandag 27 januari 2025 09:58:45 Midden-Europese standaardtijd Stephan G=
+erhold wrote:
+> On Sun, Jan 26, 2025 at 09:57:22PM +0100, Luca Weiss wrote:
+> > For example MSM8974 has mx voltage rail exposed as regulator and only cx
+> > voltage rail is exposed as power domain. This power domain (cx) is
+> > attached internally in power domain and cannot be attached in this driv=
+er.
+> >=20
+> > Fixes: 8750cf392394 ("remoteproc: qcom_q6v5_mss: Allow replacing regula=
+tors with power domains")
+> > Co-developed-by: Matti Lehtim=C3=A4ki <matti.lehtimaki@gmail.com>
+> > Signed-off-by: Matti Lehtim=C3=A4ki <matti.lehtimaki@gmail.com>
+> > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> > ---
+> > Changes in v2:
+> >   - Move MSM8974 mx-supply from "fallback_proxy_supply" to
+> >     "proxy_supply" to match updated DT schema
+> >   - Add fixes tag
+> > ---
+> >  drivers/remoteproc/qcom_q6v5_mss.c | 20 +++++++++++++++++---
+> >  1 file changed, 17 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qc=
+om_q6v5_mss.c
+> > index e78bd986dc3f256effce4470222c0a5faeea86ec..e2523b01febf393abfe5074=
+0a68b85a04011293c 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -1828,6 +1828,13 @@ static int q6v5_pds_attach(struct device *dev, s=
+truct device **devs,
+> >  	if (!pd_names)
+> >  		return 0;
+> > =20
+> > +	/* Handle single power domain */
+> > +	if (dev->pm_domain) {
+> > +		devs[0] =3D dev;
+> > +		pm_runtime_enable(dev);
+> > +		return 1;
+> > +	}
+> > +
+> >  	while (pd_names[num_pds])
+> >  		num_pds++;
+>=20
+> Hmm, I think you should put the above if condition below this loop and
+> verify that num_pds =3D=3D 1. Otherwise this would hide the error conditi=
+on
+> if the platform needs multple PDs, but someone only specifies one of
+> them in the DT. i.e.
+>=20
+> 	if (num_pds =3D=3D 1 && dev->pm_domain) {
+> 		// ...
+> 	}
+>=20
+> > =20
+> > @@ -1851,8 +1858,15 @@ static int q6v5_pds_attach(struct device *dev, s=
+truct device **devs,
+> >  static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
+> >  			    size_t pd_count)
+> >  {
+> > +	struct device *dev =3D qproc->dev;
+> >  	int i;
+> > =20
+> > +	/* Handle single power domain */
+> > +	if (dev->pm_domain && pd_count) {
+>=20
+> Maybe if (pd_count =3D=3D 1 && dev->pm_domain) for consistency with the
+> above then.
 
-Hi Simon,
+Good suggestions, thanks!
 
-I don't know anything about the Zynq 7000 but I assume it needs to be
-explicitly told to act as an endpoint rather than a PCI bus master.
-I can't say much about the above without looking at real code so I
-will wait for your patches before spending more time on the design you
-are putting forward.
+>=20
+> > +		pm_runtime_disable(dev);
+>=20
+> I'm guessing it does, but just to make sure: Have you verified that the
+> power domain is indeed voted for off after this call to
+> pm_runtime_disable()? Start the remoteproc and when it's booted inspect
+> /sys/kernel/debug/pm_genpd/pm_genpd_summary to see if the PD/remoteproc
+> dev is suspended.
 
-As for your patch adding a new operation to the rproc_ops structure,
-please include in the submission for the work you presented above.  It
-can't be merged without an actual customer.
+Looks sane I think (modem: remoteproc@fc880000)
 
-Thanks,
-Mathieu
+htc-memul:~$ sudo cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+domain                          status          children        performance
+    /device                         runtime status                  managed=
+ by
+=2D------------------------------------------------------------------------=
+=2D----
+oxili_cx                        off-0                           0
+    fdb00000.gpu                    suspended                   0          =
+ SW
+camss_vfe                       off-0                           0
+camss_jpeg                      off-0                           0
+mdss                            on                              0
+    fd900000.display-subsystem      active                      0          =
+ SW
+venus0                          off-0                           0
+cx_vfc                          off-0                           0
+cx_ao                           off-0                           0
+cx                              on                              0
+    fc880000.remoteproc             suspended                   0          =
+ SW
+    fe200000.remoteproc             unsupported                 0          =
+ SW
+    fb204000.remoteproc             suspended                   0          =
+ SW
+usb_hs_hsic                     off-0                           0
+
+
+Regards
+Luca
+
+>=20
+> Thanks,
+> Stephan
+>=20
+
+
+
+
