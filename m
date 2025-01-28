@@ -1,31 +1,30 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56532199939;
-	Tue, 28 Jan 2025 23:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FE7EAF6;
+	Tue, 28 Jan 2025 23:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738107388; cv=none; b=rEdeUsh7zYPEPvkNiOXso9JZcj1y2AHSFCeGr5BiMRGb2v5f5CmPSx8BNWpRXGc1w/ByDRKBzuGTKuw8c0y1YQ737GD8RWpxWWEGU8rMowzW5mhfnT5ltF/vPXtMLCA7oXvcOKFXur3JZ036hFWUfQeRrCdOXuJd3ybX2y5ZNYw=
+	t=1738107390; cv=none; b=Agn+i6d3TVw47ow7PQmJFSBl1BRj2qNf66qfi3Ww1eEwJ5nw8eFoFwuSLaTFzmPA4x/ZRC8jCeGY2a3rp16+amTqPXP4cgHz/xRVAHfBotD95+immKCn/NR0svyXpJXvGzx/32x07Spb2/Lp22pbpwp0oWR1LA1CiU9zNqyMzEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738107388; c=relaxed/simple;
-	bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F3CaP7pbuOO8yyTuq9SIHzjCGtPIwnnu+uQ7NQsrE0Emm1QJbDeKKe59Vru/8pl5WfrO+4n9A6DvPqEuSsRgHQGSDfkvsb9HsfMlzRNdAOSiK8kzS4VeCQoZUtWpJTIpXk9NLbNxhfaWgF0os9zPsoU7+vKRAvP4zcAXR/g1FE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=rej4FMa9; arc=none smtp.client-ip=128.199.32.197
+	s=arc-20240116; t=1738107390; c=relaxed/simple;
+	bh=x6gQkQ4gVXHmFdfMkn1LTVVuiTDOy4PcZeJYpn2+DLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=u19hDvjSOHBo0dfYNuAs19HevsH21pTU5MMzza0U0V49Lc9ND9S27uAsFhpCAUqK5eb1cB3E2FuecpEGcbnZ2HMCGI/R4rKmJ9mRGD8ip6tqVn0fqylm9Cb9dCFE4SSAAu+zSZMNpZXkToBk3e01rFN182bCcggy0+F1ovr3lt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=x5Q+gJec; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="rej4FMa9"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="x5Q+gJec"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1738107379; bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=rej4FMa90sahffmep5gpMszv9fmw+jSgntm1M+lWhX/OOa/A1R2eqBlyIfKXTn7hn
-	 DczikGXyusOhSstt6xvAzPLOTejT8d26gl/q5J4iE5QeklQguI42vz8TYbZV/bgeBN
-	 Jyncyjtyxdpp+lXYkBz8Q8MB08ZVEs4N44EFJkqs=
+	t=1738107378; bh=x6gQkQ4gVXHmFdfMkn1LTVVuiTDOy4PcZeJYpn2+DLY=;
+	h=From:Subject:Date:To:Cc;
+	b=x5Q+gJecCy5iVMeg3ZmY9StkQcYk5j2LyjR2Nk+nesPg88sc+G+0UbRo6yhlLJSCN
+	 IsRzpCLYlAE/0xv7khGOMNACEHrZKPrDuhBge1jLm/gxstaT289KfYQcDlMGiIMUFc
+	 ooNXSu+W+uwBF8TuLJ2XiuEbgkadZp2BZSORc+TQ=
 From: Luca Weiss <luca@lucaweiss.eu>
-Date: Wed, 29 Jan 2025 00:35:36 +0100
-Subject: [PATCH v4 04/13] remoteproc: qcom_q6v5_mss: Handle platforms with
- one power domain
+Subject: [PATCH v4 00/13] Modem support for MSM8226
+Date: Wed, 29 Jan 2025 00:35:32 +0100
+Message-Id: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -34,9 +33,11 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250129-msm8226-modem-v4-4-2b02ed7b7f1c@lucaweiss.eu>
-References: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
-In-Reply-To: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
+X-B4-Tracking: v=1; b=H4sIAMRpmWcC/13OQQ6CMBCF4auQWVtTCrTVlfcwLho6lSYWTEeqh
+ nB3C3GhLP+XzJeZgDB6JDgWE0RMnvzQ56h3BbSd6a/IvM0NgouGl1yxQEELIVkYLAbmysaUKJ2
+ 2uoZ8c4/o/Gv1zpfcnafHEN8rn8SyfqVF+JOSYJyh1lZJK61x7nQbW/NET7THERYsVb/A9pVUZ
+ UAqPEittELcAvM8fwDgtgm97gAAAA==
+X-Change-ID: 20250107-msm8226-modem-f15a1e6f8d84
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
  Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -47,98 +48,98 @@ To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Luca Weiss <luca@lucaweiss.eu>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Stephan Gerhold <stephan.gerhold@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2347; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnmWno8meIkXHrI7bWQH3wq8YDGZ7PHCACEAYiq
- nbt5AkkYAiJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5lp6AAKCRBy2EO4nU3X
- VmoWEACyQzDbFHqEtM4UkNqR/RsSfj56MEihkhtnvymIPEuAi672On0Q8hye5tzVQEsaZyyrnvJ
- AH69g3ypMamXrZdafbe+KFSMb/YkUsYhcl87IH+40FJzGrzy7X+2Izi30rlRuslV1/FaGb/AfGi
- zHpZgKFvG/WSVtDHydm/mGMS3PHHzD1g42ajCkS6+ycQgThiVSOImK76gpkRJc3vNfmuR7ftu2T
- Zmw3/dNEoB4MZAe0RIjnt6pAFvK5KihluOkTPIBwJlM2nU94XgRLoTxlXdy6otIvK2KikvfG/3f
- 3rgkMeBw9OuH14pXVb0epZ0owvMxXjpQvbewhIAfpN31YqJXu7CUoBoUYQc0cZFiwnP8ZxS13LF
- sRaRJithxRCeE7CbuGBGiTDMCa2LZsUVVTi496KOZz52/IvO4yqWET4z1ZbytlUwkYSHKH4xJxu
- rmfdG0xI+jQ8RYiO/hxv4BFHqsE22RQLIFPTCsUtKeJpxV1gHB5NlpwVGTBhRI3GUM2jNch8AmO
- cN3mWszB4GrKnb68iqlPko1ucNKoJxQtEySfblL/sZDU9wB67IDlDe/4pBVNU6L1Q+u+rTxlmv/
- X/krtMcp/WytpEaRZ+dSMkFRdrfwHJw96QIPVPhYCL6z73ZtWD9nIblQyGAcYSDCicP+5varciZ
- h5Fz8l2239yU3iA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3518; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=x6gQkQ4gVXHmFdfMkn1LTVVuiTDOy4PcZeJYpn2+DLY=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnmWnTIxBi0vijtcDpq4QcN+UZHQRIBOBQk20Qj
+ LyMULlWQqKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5lp0wAKCRBy2EO4nU3X
+ VgJeD/9u4b8tOfdaKFIEnVtU/jLNZWoviNWVJdxLO5cBfePgqde6wLsiUuq3bUZovqoVr97Mj/I
+ TGZUwtNF4HlpgHmXL4E2sFWCuHos2Hw3T85kaP0eVgNKGAzJiKcMvqyK0fYiucnG8d5jaZHHboy
+ oO077l1ju1mu55NqDtjSbJL8sbYNJmryx68DUr1jRLpdkulTeedmeMP9LYFYhGHmCkbYHJo1RAv
+ K3Otw92dppABo6oAXrao5p+r2RikZALHU+jBj3f7n/K1f4459nf3j4Yr6FkswlPmlh99E+GnVv6
+ BqNI3IjjTdXqdVXQaajMRvEbv1s+EkEsfFf7c2FpTES8eQ42FnlNqGV6cklbvJz4TRRRAovo7c/
+ ymxgVFyhkJAuscmS0XsdAn9L/zShGaFbnkUVo5ArPE9hCyHCA8W0pc7rbwpj4+z1/zDSSNvKjni
+ nZWYo7YWvXdjMC8aMOSfe6OvI26tn76u+NYRwsh+9RQ+TUn365EAtlTKDUC1BSM08b0Eavxa4/b
+ f1JbaWtNjwlN6USNJrPeWuqmRRWxDswAJCgmfZYcQtkAfqSFXKonQYBiCIOjZ4xYzCZCunC+0q/
+ NekXvdjge64D9CAoPADMcMyGDL4sD7jIVRYusckJZMNHRNsvxEb4NWuFfwW+t/q2W3gk4KTaWhx
+ mLdT6NuadtRpeMg==
 X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-For example MSM8974 has mx voltage rail exposed as regulator and only cx
-voltage rail is exposed as power domain. This power domain (cx) is
-attached internally in power domain and cannot be attached in this driver.
+This series adds support for modem remoteproc found on MSM8226.
+It also adds needed device tree nodes and enables modem used for
+location service on matisse-wifi.
 
-Fixes: 8750cf392394 ("remoteproc: qcom_q6v5_mss: Allow replacing regulators with power domains")
-Co-developed-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+Also bam-dmux node is added for mobile data which is used on
+3G/4G-enabled devices.
+
 Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+Changes in v4:
+- Drop mx from .proxy_pd_names for msm8974 as it's always a regulator
+  @Stephan: Please check that one also since I still picked up your R-b
+- Move q6v5_external_bhs_enable to just after regulator enable and
+  _disable to just before regulator disable, instead of them being in
+  _probe and _remove (Stephan)
+- Pick up tags
+- Link to v3: https://lore.kernel.org/r/20250127-msm8226-modem-v3-0-67e968787eef@lucaweiss.eu
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index e78bd986dc3f256effce4470222c0a5faeea86ec..2c80d7fe39f8e308eb12e79415a551b5009b3fe4 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1831,6 +1831,13 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- 	while (pd_names[num_pds])
- 		num_pds++;
- 
-+	/* Handle single power domain */
-+	if (num_pds == 1 && dev->pm_domain) {
-+		devs[0] = dev;
-+		pm_runtime_enable(dev);
-+		return 1;
-+	}
-+
- 	for (i = 0; i < num_pds; i++) {
- 		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
- 		if (IS_ERR_OR_NULL(devs[i])) {
-@@ -1851,8 +1858,15 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
- 			    size_t pd_count)
- {
-+	struct device *dev = qproc->dev;
- 	int i;
- 
-+	/* Handle single power domain */
-+	if (pd_count == 1 && dev->pm_domain) {
-+		pm_runtime_disable(dev);
-+		return;
-+	}
-+
- 	for (i = 0; i < pd_count; i++)
- 		dev_pm_domain_detach(pds[i], false);
- }
-@@ -2449,13 +2463,13 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 			.supply = "pll",
- 			.uA = 100000,
- 		},
--		{}
--	},
--	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "mx",
- 			.uV = 1050000,
- 		},
-+		{}
-+	},
-+	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "cx",
- 			.uA = 100000,
-@@ -2481,7 +2495,6 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 		NULL
- 	},
- 	.proxy_pd_names = (char*[]){
--		"mx",
- 		"cx",
- 		NULL
- 	},
+Changes in v3:
+- Include dt-bindings & driver patch for MSM8926 modem which is slightly
+  different
+- Include patch to add msm8926.dtsi with modified modem
+- Include patch to enable modem on MSM8926 HTC memul
+- In single-pd driver patch modify if conditions to only trigger for
+  8226, even for misconfigured dts (Stephan)
+- Don't /delete-node/ & /delete-property/ for no-modem smartwatches,
+  just make mpss_region & mba_region be disabled by default (Stephan)
+- Configure matisselts mss-supply correctly (Stephan)
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20250126-msm8226-modem-v2-0-e88d76d6daff@lucaweiss.eu
 
+---
+Luca Weiss (8):
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8926
+      remoteproc: qcom_q6v5_mss: Handle platforms with one power domain
+      remoteproc: qcom_q6v5_mss: Add modem support on MSM8226
+      remoteproc: qcom_q6v5_mss: Add modem support on MSM8926
+      ARM: dts: qcom: msm8226: Add modem remoteproc node
+      ARM: dts: qcom: msm8226: Add BAM DMUX Ethernet/IP device
+      ARM: dts: qcom: Introduce dtsi for LTE-capable MSM8926
+      ARM: dts: qcom: msm8926-htc-memul: Enable modem
+
+Matti Lehtimäki (5):
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Support platforms with one power domain
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8226
+      ARM: dts: qcom: msm8226: Add node for TCSR halt regs
+      ARM: dts: qcom: msm8226: Add smsm node
+      ARM: dts: qcom: msm8226-samsung-matisse-common: Enable modem
+
+ .../bindings/remoteproc/qcom,msm8916-mss-pil.yaml  |  64 ++++++-
+ arch/arm/boot/dts/qcom/msm8926.dtsi                |  11 ++
+ .../dts/qcom/qcom-apq8026-samsung-matisse-wifi.dts |   1 +
+ .../dts/qcom/qcom-apq8026-samsung-milletwifi.dts   |   2 +
+ .../dts/qcom/qcom-msm8226-microsoft-common.dtsi    |   6 +-
+ .../dts/qcom/qcom-msm8226-microsoft-dempsey.dts    |   1 +
+ .../dts/qcom/qcom-msm8226-microsoft-makepeace.dts  |   1 +
+ .../dts/qcom/qcom-msm8226-microsoft-moneypenny.dts |   1 +
+ .../qcom/qcom-msm8226-samsung-matisse-common.dtsi  |  19 ++-
+ arch/arm/boot/dts/qcom/qcom-msm8226.dtsi           | 147 ++++++++++++++++
+ arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts  |  14 +-
+ .../qcom/qcom-msm8926-microsoft-superman-lte.dts   |   1 +
+ .../boot/dts/qcom/qcom-msm8926-microsoft-tesla.dts |   1 +
+ .../dts/qcom/qcom-msm8926-motorola-peregrine.dts   |   2 +-
+ .../dts/qcom/qcom-msm8926-samsung-matisselte.dts   |   5 +
+ drivers/remoteproc/qcom_q6v5_mss.c                 | 186 ++++++++++++++++++++-
+ 16 files changed, 446 insertions(+), 16 deletions(-)
+---
+base-commit: 15fbefd533c38e72315c25ae3746005fddb4b8e3
+change-id: 20250107-msm8226-modem-f15a1e6f8d84
+
+Best regards,
 -- 
-2.48.1
+Luca Weiss <luca@lucaweiss.eu>
 
