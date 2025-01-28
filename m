@@ -1,30 +1,31 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC291F5429;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81311F541A;
 	Tue, 28 Jan 2025 23:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738107391; cv=none; b=lld3mHzBOZhMK1Y4RgbCKmg9vEBcD3ZsAiOK+v776qmFViKjjY3ora198SxzYtOy2Cp1R/6NvU0Q8YhTK3k1qE27dITsDy59C6eEnJqsBIcapR578WH5p2zdi06HF+SalBgG27r9ZRtN90oKX9IkyPmzwtI85rCrmQ57xOXLkMg=
+	t=1738107391; cv=none; b=oFTpwAquUhaOhTSCpo4rlGZHo3mbPpTZPceYF3pI8PsJB1Ao8lH5wr5db6xhu1UZFg4nOKZu0wWc8POk77o2OdQF3fRvPvCvaZVPPLdK35qLTCeNnyCgNtz65ImDpkUMysg9SNun4enZYr6+yJtGGHaYDFbubgQuTbBEivKzigQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738107391; c=relaxed/simple;
-	bh=c3OdZXsHQl8Hpj942CA3+f4fIQmaWKu9wILF5OxwWc8=;
+	bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qAsYm8DwcIYsVzPIW46ec8KDqMelwcRdmDZQHPYarA3ZVBApbbba+TinSrHnreNexfyMZRT4dGnzYSqnwQ+OCspkOYQVoSDAONLcVSrr01yKl0/zyB9uW2pIBZbL4MmKr43XRb4BwBG8AbsWUt0gtm1rPnJjC/zzeQju3+n2nVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ENEbtBnA; arc=none smtp.client-ip=128.199.32.197
+	 In-Reply-To:To:Cc; b=l6kMgICC36VvVhbO532ZOPzRCqWYJIBjt40ZEnufzyhkzv3TkhmBpFCccz1o+vLke7apS2g6dHxu7ps2Eijsup3P0oXZxvUmcEgugk1C/l128UJ3uJT7/LtqbB14gKv3YLaYt73+7n4aW+SC/zetF6wrl5FgN+m5og4pFUpmQeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=oEISVVXS; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ENEbtBnA"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="oEISVVXS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1738107380; bh=c3OdZXsHQl8Hpj942CA3+f4fIQmaWKu9wILF5OxwWc8=;
+	t=1738107380; bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ENEbtBnApFwOyEZgl/RvRPyJnJNQXdNFJfvuxIrXiaGwCjYze2fEFygb56H3N5yrM
-	 RVUfEm+M0GIq968YR828vBUxhz4HFqxeqspqEjBogtkwfaTZnLksyOuyL/SDYA/S1f
-	 cmf4wIOurJyUMKZC44MuXfDXeAwtMRuUzwI/sbFE=
+	b=oEISVVXSd9QrCmI3n0taQv97dEkubbptoHY4RjrqcFXKQTZSUoZPFGg7c57V3cSEm
+	 d1MmsyFL5cuNgUOB1fcIaGVX8Ng0fbJxOhummi3JGc4d9Vl+WhlcCX4Y/tp0Pr/X4x
+	 TQL/9k8HmZwT/CC4tUWi7LFbEK942+ZWKeHc2L34=
 From: Luca Weiss <luca@lucaweiss.eu>
-Date: Wed, 29 Jan 2025 00:35:40 +0100
-Subject: [PATCH v4 08/13] ARM: dts: qcom: msm8226: Add smsm node
+Date: Wed, 29 Jan 2025 00:35:38 +0100
+Subject: [PATCH v4 06/13] remoteproc: qcom_q6v5_mss: Add modem support on
+ MSM8926
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -32,8 +33,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250129-msm8226-modem-v4-8-2b02ed7b7f1c@lucaweiss.eu>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250129-msm8226-modem-v4-6-2b02ed7b7f1c@lucaweiss.eu>
 References: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
 In-Reply-To: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
@@ -48,80 +49,106 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Luca Weiss <luca@lucaweiss.eu>, 
  Stephan Gerhold <stephan.gerhold@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1545; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=eoHX87/Yfz6a9HStDewruF7nDlvvxRzf55C1aXv2xuE=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnmWnsWVmPlupV2EO7nmpGqAuHGmKlmFEnVar/Z
- niJlh9/DoeJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5lp7AAKCRBy2EO4nU3X
- Vm0oD/4wpnmCr3tOS8kkxeS3mZDg/GSkaXEDtBbe14BnBk8QV6+VJ5joQIg1ysWUd1UkjqnUnfB
- zAOFf78xCD8vJcppbPci4AeMOc7q2duxRyZgEqOCOcsGvTDkjqkixMBZ4XmywJgJnH49T1+N4Vj
- ZbbPd6hrnLUzsG0yz+tnF2fTCpiVCl9k9tIpc1dOlxs5pIqxvU261NyVyIqe+4JiVy5xC9CA4Xn
- 5dzp/+JQqte4nH5W2A+Di59r/TZjRfvHc45Vl+IZ+to9gCq8GsLO0BmVv2fyMSKFatzS5KpjY1S
- +ok2E8BIFSWjfigMlq1LIV9kQiClVObdNKu9hqsK19+FKrNZh3hkgCtLI09ZrNxbUPoQ3L6Efvv
- 2e//tSTPAgrsBp8fXtbTGijXT8cpqKQIKHtdb3s6HjHimwbK/jqla3Mobi+ku6cWWsZUvJGcn++
- 6y0LuU1oXu535dO1n2M2PPZ6EBPOIRwIWutz2l4MKwSGvomTLCstpOLSFc6ULZOlzV8uginogzQ
- +PGtZpTbwkBTesICRpRSlaIjNuJKG42dHylt+rG1tOgRI+7KiOAQFjiUbfW4/35oWMLm/554zFZ
- 0RffCOrGhKybP7RIIvCFY4XIin8Vsuvo39LcO2c2xvE2sBjimd6vqbAarSklq15/AmkkPWlb6Cx
- lrX5zHN6ziVBXEw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2428; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnmWnqT4fjyJmLnfUCYCkv3qoxOJ7ZB68TDvHUB
+ 37GUfr+BymJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ5lp6gAKCRBy2EO4nU3X
+ VqbND/4l1jYBPrAsDl45uxdEYGI81IDPJ9jbUkUkBahmjO8lBHhrj0tVWG0aCIpqPrx+PzUtxp4
+ THj6V54/bzPPDu+FGCCZAAUJNAjHhtczQZrwLLABr29b3RNMq8TBZPibDJgU6CWSJ5edTI3exvL
+ 8PPbi7i/s20/MLO76S/j2+IOnfiQ6RUcBYTfoOBd6ROqLcgIPVt6aKc2OdTEwpRZv5rNXFN0Qsq
+ 17mIUN6NFjrWhj4cgYlQZBrnr8NIMPkiqEcT2IeODFZ/TsghJqyFYh/onbmtalt5QeLM8NPIxVN
+ YS2FRep925E9ZPeBcfhzD8XbmfutYdmHBSPGkbKrIVO1jsJFyEZZaQMvm/rwQ8Ro6hdRO0PgC9P
+ nFBbDlBtcredWxfos7IkEgba5WDY41K1tT8JhuilyOivDsC6pRsUwUl5t7F+w4OPmIf9jlctDWU
+ ekESeKipZvEp0rCStQc8X1obr95a3ZtB/zmJVJoyHIK8dPGXL3p4+zwi0JRDboKxWlwBE2AJISE
+ 3XaQYGaKtviI1UY8xdwdaXUVnCL+Dkop/Yl6Kr2bxWHPdGWXNd39I8TTO5lxze3Fgir8hX1ds3q
+ DMAmoeEnZWrM0WHbvk8Y6WWtR43MnkmA2tqAV7MxHKYKg8b0BqZpYEeMltrGG80jt/5qNpX5tfb
+ P4haD23mwHQeKqw==
 X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+While MSM8926 being 'just' an LTE-capable variant of MSM8226 it appears
+the modem setup has changed significantly, by requiring mss-supply and
+not using the ext-bhs-reg.
 
-Add smsm node for remoteproc cores.
+Add a new compatible and new struct to support that.
 
 Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Co-developed-by: Luca Weiss <luca@lucaweiss.eu>
 Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 34 ++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 48 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-index caaeeadf289f78d29403312738bbb714eaad74d2..7e0838af6c2d0dc26e0082471b70578bc627491d 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-@@ -253,6 +253,40 @@ adsp_smp2p_in: slave-kernel {
- 		};
- 	};
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 6f590f9128409b4aa427ab6bde1a9c4a966b3d15..0c0199fb0e68d6286f1e238d110539554d1d5f14 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -257,6 +257,7 @@ enum {
+ 	MSS_MSM8226,
+ 	MSS_MSM8909,
+ 	MSS_MSM8916,
++	MSS_MSM8926,
+ 	MSS_MSM8953,
+ 	MSS_MSM8974,
+ 	MSS_MSM8996,
+@@ -2622,11 +2623,58 @@ static const struct rproc_hexagon_res msm8226_mss = {
+ 	.version = MSS_MSM8226,
+ };
  
-+	smsm {
-+		compatible = "qcom,smsm";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++static const struct rproc_hexagon_res msm8926_mss = {
++	.hexagon_mba_image = "mba.b00",
++	.proxy_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "pll",
++			.uA = 100000,
++		},
++		{
++			.supply = "mx",
++			.uV = 1050000,
++		},
++		{}
++	},
++	.active_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "mss",
++			.uV = 1050000,
++			.uA = 100000,
++		},
++		{}
++	},
++	.proxy_clk_names = (char*[]){
++		"xo",
++		NULL
++	},
++	.active_clk_names = (char*[]){
++		"iface",
++		"bus",
++		"mem",
++		NULL
++	},
++	.proxy_pd_names = (char*[]){
++		"cx",
++		NULL
++	},
++	.need_mem_protection = false,
++	.has_alt_reset = false,
++	.has_mba_logs = false,
++	.has_spare_reg = false,
++	.has_qaccept_regs = false,
++	.has_ext_bhs_reg = false,
++	.has_ext_cntl_regs = false,
++	.has_vq6 = false,
++	.version = MSS_MSM8926,
++};
 +
-+		mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-+
-+		apps_smsm: apps@0 {
-+			reg = <0>;
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		modem_smsm: modem@1 {
-+			reg = <1>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		adsp_smsm: adsp@2 {
-+			reg = <2>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		wcnss_smsm: wcnss@7 {
-+			reg = <7>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
+ 	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
+ 	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
++	{ .compatible = "qcom,msm8926-mss-pil", .data = &msm8926_mss},
+ 	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
+ 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
 
 -- 
 2.48.1
