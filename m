@@ -1,125 +1,121 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9528919E965
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 10:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30ED19F40A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 11:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738061766; cv=none; b=O412dVwWzpfsrnQsVPAkUJZPDL1jkHNblfiCnq1t9IWcihTfHxJQbYVJnI94zr5iJpb1AwbH93SoSGBef9TGIJ1+jkSbwif9TuGhM/yU2UJsjjygxRml+ib7xaXh9edMTogXLlhsjbpDHqh5vpWGCSRo4OZFjNQPwlEePPsBMMU=
+	t=1738062692; cv=none; b=j9wHUqaHYCPB1PsQi6eCvDR/8J3IC3jfcCc6hkevt6gMPbpoFLbGd9W4vU0/6Xv/qavRRbzND3hlVJFp7f6VWP/cEs9xFULuf0GiE8/sLJwVrJv9e9OZnLFuI7pvZ2Frrn7X3br76CvHXpBKb2KKYITTAKv+kfaxRbEehrbAsfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738061766; c=relaxed/simple;
-	bh=cArZVZaLci+50MPkg01ZYsHm0mt+lKxiUKiDtQqfBEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIffk6YMPXuj27mpJeTkXH4hSXRVLlAzVhwlrc7cLfjFxrILMie5+mLUCvDkDC80D6H31lF9zK1WWy5dB822hYmUcfNoyZxE/YINwNwbYfNiyLDSmacGlnu8OIZN6uj5dRswetfPKkoGLW/vEFR3+zdfFsy+H7gDR4U5D+zhKWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TTogRCKf; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1738062692; c=relaxed/simple;
+	bh=f8z5lD1Ll9QeiJ9iAQzaUWnTc8dLc2dHabZkpoeNQbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HjQiSuslaXXPowPyAEAg4hAEeaYEuE/7Zy7fkyKEy58YBa3GhTKMpVTg4bWgSKk+vQILX9WZlWEhrYnUcR0y3JtUieElgn6GMx++KkVNeXOzLMwT4SYvbgnhNdM8JMU0UMZVATY65ICLywkivvBfkdzRhU9P4RYLGDP62+2YzaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KcN1k2Gh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TTogRCKf"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436249df846so36466075e9.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 02:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738061762; x=1738666562; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Xsh2bdBHY9NmVDqj8pBitppRTEEhQQ7ykuHHJrKgvjM=;
-        b=TTogRCKfC7iUiosD0TVDE0EqQDuGZ+JQKKIUCBgvk3Kb36bqTKi4zVwWuKR6eWVE4L
-         WHXV0L5+gmpBV8r9bAJ8dU5l/AQxghgjtFHXcNWRIKmSncwxKN+DTNACifWF7u0qlldK
-         3pJyl0fSoLatrt+9o7gujzuxbYaFPsKxTicg3reWaEgejoMJt94ERUAWDL1w2JCSApbI
-         GynVYnjIBxpA5qDv2i/rtHoethHPg3+maKuS+8dmFbL67hBCu6b9zRY5wZiXbuj58Zk7
-         ohaPmtXerBYRmK5FhHifkLZ35o0pZgfBmsYyYAxsoqzUpRj6zEwWOaUJLpsWNp+pF34y
-         /kuQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KcN1k2Gh"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50SAaXUd023867
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 11:11:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	t2mzYhjEIoaB0I31ogO/ZX6JuyP1l3+/Aw07npSJlLU=; b=KcN1k2GhJ0bt52Xs
+	+tUY7pTTYY1/pDJ3IOezmliR1B65f/a0WQEYNgfzvWusJvQv/PyX4Fh5+v30qtQP
+	HuanF59ix3IviRuCzps3fBStn63w9P8/7nOV5rio+aqNCJyTFZNFUhS2sbzKOEUD
+	8kYA1EkIQBsDtpcyWzPS9Kf59S7xBdvH/+wYVvhYdyPqrn7ZJF0OTBPYCorO4DQc
+	2VRe1TBCXmGU0aBfm9VxuIkzR7nVpgsGq2WQFJJjfBsLmYoJ+dY3Se0pFkY8F8lr
+	Qg2p9W1tr26H5wFyULCr828jXK5S0TpMDbeITn8jruiZhxYYGFBqekBnN/rKOL8/
+	YRR0TA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44esmw8pjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 11:11:29 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e20cb2ce4bso5158236d6.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 03:11:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738061762; x=1738666562;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1738062689; x=1738667489;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xsh2bdBHY9NmVDqj8pBitppRTEEhQQ7ykuHHJrKgvjM=;
-        b=iGnvYPkYggB2B+zCMRUqxYP4csK+zlUIbbdLzTzxcnljXsx2VlD0iwU9QFOKp8aL4W
-         ntfAAQ2FLKIncqR2Mqf1sOaTFfCc1xFYivcshs++gyrhI+guAhk4Zlvr6ku05aEyHbvF
-         YAZsj0cdEh8uzLkfSWfiX98YgyCzb+OWLDFS28rxmGiezjQNwAAMAOJf+np1/Us+jqg2
-         nCzHziZ1dVfoArSn41jYwb5nfEJXDVud9U0aJ4hJc68GskWi6WUinN9/kOUqiZbbjg/0
-         uFxdBZMhX2GSoervzJOTIb/tZN02GL2vhnpS/mDAbnwjehFsGptgVw2t9chHfq8tOKzr
-         46IA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5nYErNAEiaGZ7wzKjJtEVydkP4wqzGm2Cws3ofZspoi3BjN704LDQYEz8dj5cxw+ADsLQgfcYy6iunKBNjIxh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdYA6fUn1NGtmZ7YLTa5xtawWgIbJYASyncGTJjEEWcCVqLzZH
-	LeGh1aekZJR2NYqSvYZHf5SXT/lg0a4jeVR1IvdrvPEp6p3oYgswCYeot8OZXLA=
-X-Gm-Gg: ASbGnctD2DVU0RTLcSe9WZUx+uQF6hpTCQJ2RxVdaOu1Lg7a8DVCyx9n7lx6S79xrUQ
-	sbtW9JRAqeNiMbpSexN+P1OZv4KVBpX0xk5y3eZVDBR9eZCseFJDwmojrBmgt5S4He/5dutP0y3
-	clwL5T4HiJOZ25HN3YeyKL9IbFRh8dBZkGVfPoYC4SwtfpYV1gGODHqcYDLMLKAjX0MmmIXEVYp
-	Wk0Pl9z7pEQlRH3vTjhFnXasCxXylPTYZqHV8bCI84QXqRW+zmvi574WReCMj27n8DRR8bea3AD
-	n6kX6JwykJgW0QCmysVgGfZcly4=
-X-Google-Smtp-Source: AGHT+IFFfd66YWcV3wlAUFzLoGU3ZbpAAot76mCsg4WzevFEyoKcFSJu+ml7EishK6BP/p1tw+IBNg==
-X-Received: by 2002:a05:600c:348f:b0:430:563a:b20a with SMTP id 5b1f17b1804b1-438913d693bmr486492905e9.11.1738061761800;
-        Tue, 28 Jan 2025 02:56:01 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:3210:3bfd:4b47:59da])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a176538sm13555756f8f.8.2025.01.28.02.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 02:56:01 -0800 (PST)
-Date: Tue, 28 Jan 2025 11:55:56 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Matti =?iso-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] remoteproc: qcom_q6v5_mss: Handle platforms
- with one power domain
-Message-ID: <Z5i3vMYnxBNb31yr@linaro.org>
-References: <20250127-msm8226-modem-v3-0-67e968787eef@lucaweiss.eu>
- <20250127-msm8226-modem-v3-4-67e968787eef@lucaweiss.eu>
- <5b0f9cd4-df65-4963-8d6d-5bdf759ba0c5@oss.qualcomm.com>
+        bh=t2mzYhjEIoaB0I31ogO/ZX6JuyP1l3+/Aw07npSJlLU=;
+        b=Md+AE3c58zcXM4wW4/Mj1uXbEy1RppyokiM3ZjmZzL2agWZ5BmsfTj5LjcX0mzwPS4
+         T0N07r5BFnwGj6vd0RTFd0VYPKfaapljSmpi+9ffdiIFbuUOzww1ikDV2dkIIUdZWBYd
+         dmMZ8LykFlaiFDcKcGHjaVQR7j4WZTDMea5tuIRr94elT3c/cV8TNjqS01RRhpFkumvL
+         aN4ijs4+KV9lm6VS1H2DlauGGgsue5SwrW93v+FX1VjoNBsyY1LYZcFQJt/iM+wSjUEZ
+         ckV+kXntfa8Jv/GTMZ+DkluybHPIkhn7oCEAhJ828rTxeDaEup+TZMZlTEqnP9cmVhXc
+         vcUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/tZ37IpyOCgO4kS6he6gMVkl9bDRw714TMzq1c+7bI0iEfokJnH1gOngMG3q9Ogr1p9BvKFV4Qrl6TYXM5MKk@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr04PK6Sr8g5XrRlAnGn1Adj69zWe+n5ZND26AGkMg+D+tzMt+
+	7eh4Aq4LpJiqba+mx39oGPQ7FIxMRr9xwMaBzo67YYzyoC41lhNKHITd3rE44y7tNKZtp0W5hQ1
+	yxiq9/LZ1UkzMPFLjn2wCK6He33/F9xjSWtcBjQT0+atfCzalLSkYQZzwSZ7HMcCdjn7t
+X-Gm-Gg: ASbGncung+woAuaBV14GMWI58Eibz57aAGf+7hf3Ygqub8IIyRCoeRNnvN0FAR5V9n/
+	TrdN3K5AKyQYmtRLxbNu55jxHztmMxGrZ5Um8KqQ4xXTG08/tUjHXPLUefQ9NC8hmhxEhA+UaO9
+	IZ2sChDS5AwBmQhtqi7yitJBXWmMVVa4hJyHImHMCHUpndNNsPxqfnc8wcmdbix73QIJ+1QsNtZ
+	tueRe0RYjQxlliVQog8sVxZa785luaE3BPWl9+vhxXU880TlXxYuAQ2i7eGTsJBMlOzoRejpHZS
+	o/x13agIlvsyNpxRTUJ2nVyN2uaLaSBdd/WV1FJzhkvThnJ+JfBRXjVrgGg=
+X-Received: by 2002:ac8:5d10:0:b0:462:fb51:7801 with SMTP id d75a77b69052e-46e4e7543b6mr137807041cf.8.1738062688705;
+        Tue, 28 Jan 2025 03:11:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG/rInaNxIZqVXQNRJVgiecnOqaAblzBcHrshnPoO2iCWv5U/ESz0dARplPDSZGKs5AQ95vpA==
+X-Received: by 2002:ac8:5d10:0:b0:462:fb51:7801 with SMTP id d75a77b69052e-46e4e7543b6mr137806851cf.8.1738062688316;
+        Tue, 28 Jan 2025 03:11:28 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6973090d0sm484176666b.18.2025.01.28.03.11.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2025 03:11:27 -0800 (PST)
+Message-ID: <f7896524-0162-4f8d-a115-a88562617799@oss.qualcomm.com>
+Date: Tue, 28 Jan 2025 12:11:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/13] ARM: dts: qcom: msm8226: Add node for TCSR halt
+ regs
+To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250127-msm8226-modem-v3-0-67e968787eef@lucaweiss.eu>
+ <20250127-msm8226-modem-v3-7-67e968787eef@lucaweiss.eu>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250127-msm8226-modem-v3-7-67e968787eef@lucaweiss.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5b0f9cd4-df65-4963-8d6d-5bdf759ba0c5@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: jyfB_OosBYv_2JtZXzOOpmlmJtuI6tRg
+X-Proofpoint-GUID: jyfB_OosBYv_2JtZXzOOpmlmJtuI6tRg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-28_04,2025-01-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 spamscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=850 bulkscore=0 malwarescore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2501280086
 
-On Tue, Jan 28, 2025 at 11:45:51AM +0100, Konrad Dybcio wrote:
-> On 27.01.2025 11:45 PM, Luca Weiss wrote:
-> > For example MSM8974 has mx voltage rail exposed as regulator and only cx
-> > voltage rail is exposed as power domain. This power domain (cx) is
-> > attached internally in power domain and cannot be attached in this driver.
-> > 
-> > Fixes: 8750cf392394 ("remoteproc: qcom_q6v5_mss: Allow replacing regulators with power domains")
-> > Co-developed-by: Matti Lehtim‰ki <matti.lehtimaki@gmail.com>
-> > Signed-off-by: Matti Lehtim‰ki <matti.lehtimaki@gmail.com>
-> > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> > ---
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 20 +++++++++++++++++---
-> >  1 file changed, 17 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index e78bd986dc3f256effce4470222c0a5faeea86ec..0e1b0934ceedd13d5790b798afc95d68a8314c75 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -1831,6 +1831,13 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
-> >  	while (pd_names[num_pds])
-> >  		num_pds++;
-> >  
-> > +	/* Handle single power domain */
-> > +	if (num_pds == 1 && dev->pm_domain) {
-> > +		devs[0] = dev;
-> > +		pm_runtime_enable(dev);
+On 27.01.2025 11:45 PM, Luca Weiss wrote:
+> From: Matti Lehtim√§ki <matti.lehtimaki@gmail.com>
 > 
-> This call can fail
+> Add a syscon device node for the TCSR halt regs needed by
+> modem and other remoteprocs.
 > 
+> Signed-off-by: Matti Lehtim√§ki <matti.lehtimaki@gmail.com>
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
 
-It returns void though? :D
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-void pm_runtime_enable(struct device *dev);
-
-Stephan
+Konrad
