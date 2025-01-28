@@ -1,47 +1,46 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB32B2904;
-	Tue, 28 Jan 2025 16:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E17C19E967;
+	Tue, 28 Jan 2025 16:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738082773; cv=none; b=VsR4RdeCmq5RNXVzsbUnaXnfYGUgTcTeyhiTzBR/3L2eh0WWa3SC3ESyFaRl8PXaAtbH3XI3IwZ/bCFCnbuC1rf6GoU70BfLWLE7gpShxRuWxSxZhljJ5cRoAOxY9ZJ59Mlr29DbmbrPHFRQR8YjgRCukog7WLnXXIM0fmB++mY=
+	t=1738082907; cv=none; b=MkQLLqyWVfwX5rQQ4CGGtAilFYj6Pg1QBiNZeJ51m/9fDIELc7Xnksrj7xdk06sPGn2U3SQXBsgdT4Mb/xVap/Jc2erIl4ewWD/CXmOdAR4j5xPtz/aYiV8e8GvB29rOunsitKMV4+EtIyOYbcNdDqzmZjQddAsYcQqAqPaqwR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738082773; c=relaxed/simple;
-	bh=8iqiBQ5n3/CNlhOEVwt898nMYFFRnFB3NHySPtLcSVc=;
+	s=arc-20240116; t=1738082907; c=relaxed/simple;
+	bh=QUgIaiKIHUoeTNF5idK00mg36DHP/yGOTioSLtL1oqw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U9HB6mFPYR5LfE0xUWXvriKe166SoJuYwx07Y5HBK0uRqk5cNUBfl7b2pscNMwEEVtc7jmoG9c0nNFk3vpWBzOo+vXYMelk/RyAbpQbXK+GI2mSfJ7xi1ngAiuoxvBI3J5L781H4cGDYscqAHK0IgnXJ0qtRDky/JNhTo32GCIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=EvCKDVws; arc=none smtp.client-ip=128.199.32.197
+	 MIME-Version:Content-Type; b=QNpmXtNykbbInrf7k21sl+o264MPS5DJbN3QuOysfkMaeG7CWFW4YO1PiWlqv8uYoo/e9btNYhk470k079GSqo3h3XjvgtjHs8Lo6qi3SF49/b3XJSTGy47gGbmdAfcX3eLrmFMYWEmFLH4EcqgwqMTuLgoERL+l2v2iujjMGUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=0KgFhe5h; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="EvCKDVws"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="0KgFhe5h"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1738082769; bh=8iqiBQ5n3/CNlhOEVwt898nMYFFRnFB3NHySPtLcSVc=;
+	t=1738082903; bh=QUgIaiKIHUoeTNF5idK00mg36DHP/yGOTioSLtL1oqw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=EvCKDVwsnJsi8d0LF6pL0zfXmSbk7O05YoDFvcZHqABkhaK+oHXBqwbz0ZtZTLl3x
-	 annVc3NotUHQhd6QiHrrUcXjaZoywWQoGjW8nIjT7iS7KiDdkU27RLkguDvfCv7drm
-	 i98X95/PA+Mj8nhyxmeHI4uLtj/6Exr8umRCe1Ts=
+	b=0KgFhe5haH86Znix7V682YfUl/b3Y+Lk4EekPJ5K14b3ylA80tXvrKhIA8BqiuVpZ
+	 3W5md8T1hIRVfowalOb79byJp02aw4HKirAgtrv8hOJd9dmWzITCKowkAQykzkyoDQ
+	 XIS+o9TMrMlVt5zUm5Cd34H74A1S9lafq35QrejU=
 From: Luca Weiss <luca@lucaweiss.eu>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Stephan Gerhold <stephan@gerhold.net>,
  Konrad Dybcio <konradybcio@kernel.org>,
  Matti =?UTF-8?B?TGVodGltw6RraQ==?= <matti.lehtimaki@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v3 11/13] ARM: dts: qcom: Introduce dtsi for LTE-capable MSM8926
-Date: Tue, 28 Jan 2025 17:46:09 +0100
-Message-ID: <12596489.O9o76ZdvQC@lucaweiss.eu>
-In-Reply-To: <Z5iQQQRtuUzTDRVW@linaro.org>
+Subject: Re: [PATCH v3 12/13] ARM: dts: qcom: msm8926-htc-memul: Enable modem
+Date: Tue, 28 Jan 2025 17:48:22 +0100
+Message-ID: <4981867.31r3eYUQgx@lucaweiss.eu>
+In-Reply-To: <9badd95d-65d5-4a49-8317-1d09a8844b21@oss.qualcomm.com>
 References:
  <20250127-msm8226-modem-v3-0-67e968787eef@lucaweiss.eu>
- <20250127-msm8226-modem-v3-11-67e968787eef@lucaweiss.eu>
- <Z5iQQQRtuUzTDRVW@linaro.org>
+ <20250127-msm8226-modem-v3-12-67e968787eef@lucaweiss.eu>
+ <9badd95d-65d5-4a49-8317-1d09a8844b21@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,51 +50,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 
-On dinsdag 28 januari 2025 09:07:29 Midden-Europese standaardtijd Stephan 
-Gerhold wrote:
-> On Mon, Jan 27, 2025 at 11:45:43PM +0100, Luca Weiss wrote:
-> > MSM8926, while being 'just' an LTE-capable variant of MSM8226, the dts
-> > needs to slightly change since the modem doesn't use the ext-bhs-reg and
-> > needs mss-supply, therefore it gets a new compatible.
-> > 
-> > Since we already have two -common.dtsi files which are used on both
-> > APQ8026/MSM8226 and MSM8926 devices, change the setup a bit by removing
-> > the SoC include from those and requiring the device dts to pick the
-> > correct one.
+On dinsdag 28 januari 2025 12:14:09 Midden-Europese standaardtijd Konrad 
+Dybcio wrote:
+> On 27.01.2025 11:45 PM, Luca Weiss wrote:
+> > Enable the modem found on the MSM8926 HTC One Mini 2.
 > > 
 > > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 > > ---
-> >  arch/arm/boot/dts/qcom/msm8926.dtsi                           | 11 ++++++
-+++++
-> >  arch/arm/boot/dts/qcom/qcom-apq8026-samsung-matisse-wifi.dts  |  1 +
-> >  arch/arm/boot/dts/qcom/qcom-msm8226-microsoft-common.dtsi     |  6 +++++-
-> >  arch/arm/boot/dts/qcom/qcom-msm8226-microsoft-dempsey.dts     |  1 +
-> >  arch/arm/boot/dts/qcom/qcom-msm8226-microsoft-makepeace.dts   |  1 +
-> >  arch/arm/boot/dts/qcom/qcom-msm8226-microsoft-moneypenny.dts  |  1 +
-> >  .../boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi    |  6 +++++-
-> >  arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts             |  2 +-
-> >  .../arm/boot/dts/qcom/qcom-msm8926-microsoft-superman-lte.dts |  1 +
-> >  arch/arm/boot/dts/qcom/qcom-msm8926-microsoft-tesla.dts       |  1 +
-> >  arch/arm/boot/dts/qcom/qcom-msm8926-motorola-peregrine.dts    |  2 +-
-> >  arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts    |  1 +
-> >  12 files changed, 30 insertions(+), 4 deletions(-)
+> >  arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
 > > 
-> > diff --git a/arch/arm/boot/dts/qcom/msm8926.dtsi b/arch/arm/boot/dts/qcom/
-msm8926.dtsi
+> > diff --git a/arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts b/arch/arm/
+boot/dts/qcom/qcom-msm8926-htc-memul.dts
+> > index 
+d6eaa82cee4daf6a1386902f537f1351811d4a06..cb571aa13c11598182dc020f064fe8268bcc061f 
+100644
+> > --- a/arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts
+> > +++ b/arch/arm/boot/dts/qcom/qcom-msm8926-htc-memul.dts
+> > @@ -195,6 +195,16 @@ &blsp1_i2c6 {
+> >  	/* TPS61310 Flash/Torch @ 33 */
+> >  };
+> >  
+> > +&modem {
+> > +	mx-supply = <&pm8226_l3>;
+> > +	pll-supply = <&pm8226_l8>;
+> > +	mss-supply = <&pm8226_s5>;
+> > +
+> > +	firmware-name = "qcom/msm8926/memul/mba.b00", "qcom/msm8926/memul/
+modem.mdt";
 > 
-> I'm personally not a big fan of mixing the naming with and without qcom-
-> prefix. But anyway:
+> mbn?
 
-Same, but already all PMICs were renamed to get rid of the pmXXXX- prefix, and 
-there's even some new dts files that don't have the qcom- prefix anymore.
+The mba gets loaded with .b00 for some reason, not even the .mdt.
 
-I can also send a patch to rename the .dtsi files to remove the prefix to be 
-at least consistent with the PMICs, and the .dts files we'd need to keep with 
-the original name to not cause any issues with the users of those - even 
-though there have also been plenty of cases where we renamed those.
+And at least on this device the .mbn doesn't work at all either, but this 
+might be due to very weird firmware loading on this board - because also for 
+loading wcnss firmware I needed to add a quite weird hack to make it load.
+
+Modem fortunately loads fine like this.
 
 Regards
 Luca
+
+> 
+> Konrad
+> 
+
 
 
 
