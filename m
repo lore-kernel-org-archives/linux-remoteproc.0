@@ -1,63 +1,62 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F8B1DBB19
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 07:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FEE29CF0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jan 2025 07:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738050656; cv=none; b=ebXGMEn/tiONL62VbIqrn7YCK5DbZ9qu0Gm1DcyHl7zfwtBAQ4G2gYVzIxaRA6HfYRn8HwtydsSwSI5fqXnWiWutjj72R1O/AN2a+HMrUPARYr5ZI4GZ3MPWm7kozufTsqJ2iKRa5rm7mjJMttDOBZ44NvP3slotTBAJmcAjaxk=
+	t=1738050962; cv=none; b=uGD1kfXKYwicR2Qy6dEHkR8aJoA/hrNUsWG6HDDcHpikTocK/Bcfc+wRB0JvJkmeD8ShCUGjwJBBhKw5GNNaLooVOVWFKE9fAe2LztiwU1sg3Afg0Cdj5cJ7l1or+9M4gOcxCtza/KjCc2oLxTmLVoGQBvzIOYBK/gYjo1WyNqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738050656; c=relaxed/simple;
-	bh=MG/KEyTOG0beHjj5mCVZXamfoSVAwhsFi+qnKfCiLuU=;
+	s=arc-20240116; t=1738050962; c=relaxed/simple;
+	bh=dyJMWoTyFqDpIWaShZkM/vjq7+zr/o67BwNI6Pz2B20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FFJgEYnkvQZq2ET4muLrrdTkgHbQL1SqtcLaUrYTZ115/G7/5ETsKq7+GOXdWKRf+Uq7zUtEuXRNDz9NEToye7VmaMoNJ1vl5sEY95jNzyO1a7D30UwfJFz+sPIalM3w8lcIZTG9Ym+mr/2GhC/4c1kKZViS8c1MsgmP6EeoqFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tDZ1cQuv; arc=none smtp.client-ip=209.85.128.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=DspJ40nLHLNHFse0d6BWwXC40SGvyJivo6LZDMwBMJyZ7F1Ij15vgj7XlfyUp75UdGeeh6D0/TQ9BW/BHSGTLXwafd8l7+w+juKBYX6QKKyI5OxyzlVI3gqL/7YOW2UwQnFTYzcgXPBbI3i6YVexrrtt480U2+N8MHB5x4zh10k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zQ6+2S+x; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tDZ1cQuv"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso36852675e9.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jan 2025 23:50:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQ6+2S+x"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38a88ba968aso5196741f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Jan 2025 23:55:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738050652; x=1738655452; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OOFb7y58tFNRPYqhufNh7oHByxu0C+wf9P1ANbJwftE=;
-        b=tDZ1cQuv9BKmXJAVxOdhgQhxiX7Pw5qsFiHwmqdu5q2HOdl7/UDlqZayLjPQ/9JUom
-         hc1ooSXbpOWJ7fnG+AfII8Qb09ecsNarL6XTl1WPn5FfHkq0cXVrghlI95OzSFR0YYYU
-         RH5LhOrb4R7LZTcxyCKhwgZfJbyVC9kKicJ08gQMR1Oxgaa9/aBgITH3bWaAexlfFpq4
-         dpQ+MZevlLN0odI74XeO/mXsxTl/J88lu9KLOJxjzBcK9LEtFJQZn4+/nIIdkKvjlkzA
-         fANbnvoVdaTfYiwyd29UWntAqUtlBb0ZPyY6OcmgAWZzMfBOMxhidPB6Ivo+LVr8BMQ1
-         qhhA==
+        d=linaro.org; s=google; t=1738050958; x=1738655758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SeMt2qiOiq2TY1WkHPRX1449FB8tJAQ1ui2jFxzGFaA=;
+        b=zQ6+2S+xmLqrhQgJIPFz7SSY6iWUngl9Te2n9CzB57z4yXUuEFv2UdFPJTAVFY8UXQ
+         IC1qh91CDFQIJkGNTCvx/ccJ4xVYP+BWZLY8kr1TltMhteTatznUJg/pzp2MiE4C1Fzs
+         zcudldI9fHkYmJFjvn4sS3DhEVJCuH5oR+csslYjqFugpR1v9lwtvx974oAwVN4rl4lE
+         3vn8o8bvgtbKSS8lLZddGO+PTRQaR8R1tm4BHl+/8BWS1RvIpkaZf0f8m4R75KiJAh1t
+         JT6cL9Xarl0Hp5yxZCoN1Bc2QbC+T28hjHRx+Aia6i+zRgGPxJeHRKt/G9Mavovw/oRW
+         DeXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738050652; x=1738655452;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OOFb7y58tFNRPYqhufNh7oHByxu0C+wf9P1ANbJwftE=;
-        b=es4enBw4qS5Gda5ja31AYmxpdmDLgzd74d9AoNG2Za+i6pgMKiMCpLpseiSkzYl5CJ
-         eCP2EKZuXhRYI/gmQ1ZDkk7YsBMbPPa9VbdmQL/TVPxuRAtYMAmIPH+PTAfV51cYrsY4
-         f5nfe+yOi/3X02prGMGW8e5F1YxQZmMpd4gYy977+9nRtS3p9BFyy8iMIuOoaPVdm+jX
-         pYHQ6g4hwRSBIJys6Cuq7cTUr5fj6u1yxTHm1ps1dAdFRQX4fbEuJ1j5qi85RL6TjuKA
-         HnFxUu94UcQHJcxVJTYJ00/2bJL11rvpv8NsDgz6oGu1BnaK+Difvwi6g/3/m0bvMAzC
-         cBUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYYEBqj/O1N82I2b3w3E1/xubF5Uvg5eY/M+3+mGYqy9O7Mkgtm34AyrulLgKSENJyX3ibPK+ikhwIfW6+bKob@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6yH1rJhOoHXJ5sEqIbNJwaF3fiml0UJUfuVT4lmzeavc8vhCe
-	X9uZFlJCGJii7V2w4ohssiXnRcRraPjGW8VxliokR5XQQCC7TIaGGdIEwakk7PY=
-X-Gm-Gg: ASbGnctLTpnv6ij/C7y1T852izmrFBs/BqJppkolaN82U56QvzdPyhs7EQb6dtw9wkn
-	tSMCz/o2c60AWihMVUYUX3HRhNgvN9MUbFlq11oX5szwbWCXjAZaG5hnKLtR3SUjCi4AaflUPvQ
-	JnEU/OK26K5RJFhDg9d03asQ4r4B+b7QRd6IHnnGfIBMwOcxITqj3H9PjrGoXA53shU1nc5e/9c
-	kIWUILg1R0r9vF/XM03ZZ5sRbkztJSqf5L+G9GJsVKlckSP6plkKni8P+PjnDoRn1xVlu1zGZqy
-	GuQecYIF+ev91tQrNKFgnryb0IE=
-X-Google-Smtp-Source: AGHT+IGvcHuonreYl8FJS7BEfENZ3haFJQtN4o/+9tZemilFpHlPJ4n3jAOU8QPoqoIMrygq6Dv8lA==
-X-Received: by 2002:a05:600c:4f16:b0:434:fdf3:2c26 with SMTP id 5b1f17b1804b1-4389143a124mr366293885e9.19.1738050652198;
-        Mon, 27 Jan 2025 23:50:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738050958; x=1738655758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SeMt2qiOiq2TY1WkHPRX1449FB8tJAQ1ui2jFxzGFaA=;
+        b=eC3j3mRo81TK3+wamrMP9l9jR+VRjfeF/R5lJZng7sEaz+bNgTVoKsCpabi0sGC94l
+         GEAJlXH5tPk7FaNYkMoMHqmqlhEiBnYHyxs2Ii1vM0nd6bcVWXK7uGpK4Ykt9FDwM1Xo
+         qVmjR9iX56yprDDcUrR86d+XJKCa+UtjLkLQtqWKjyPMN2XvylwMwRQGXArSZoNrCns2
+         wWNvR9WisIR0QL2MzIW1kpSM2R034Q9BZh5g7rqI/NeJ1fxazRQwnYXGGVWQFmaBDC4A
+         8tVuErEBRpwbmYKDd/p0MnG9pQ6vD7mBjMDI0FCsmwC+8q0o6TXvk81sjiEoZAabgw1P
+         bidw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhaWMqfLquuFUZ1NGt8C8QEVJpFrHY81XiGE6MkfzPOOFKpSd7tuItF9/tXt9h8WmyzTjuy57jmX/VahtuaXtZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFzfodIKBJnnvDQDaeL9atYp0OwdUQC8qgWvGOxrVHIJhgKoTq
+	/T9zHfFsQ3mP7ZvRIAIYD57UkceCD0y0MsjXzD5rUw4/AE3VUnokRoaUe09fBEQ=
+X-Gm-Gg: ASbGnctQq7+5TTtdib/RSJYF+qXz6xCx9yXAejf+FHkLSAlZn40v7LqAT1elk2I7ta9
+	k2PyRLM5KJel0TmZfgx3dMPj+UdNWBC4+KXvfMhuPe6xrRiRM4nYZX1mKHAYgtLPFZ6kyE0KJ2P
+	u72HWqSLDudj74IhjxiL1tfLatSJ5T01dkjqPUBLEzhjaRRU5qV2Z98TBkW3yUKIclrSgKF3Cy8
+	+OI67cyOxo8KwLGIRVExn++GpY8/Si1KfxfC86t4jM+0uUhrlb/8TfcpdTplJDV8eU9eLF1ZsHh
+	F1VpQD+CdimEkJKzZV+1lZNOfK8=
+X-Google-Smtp-Source: AGHT+IH7IH1478hNlcMLuY4hfHgnnoU18EMTRJjWDJe5Od7uVXg3AOxzEDdA3IpCgEWIWW15nNnM9g==
+X-Received: by 2002:a5d:6c61:0:b0:385:fe66:9f32 with SMTP id ffacd0b85a97d-38bf57be5c1mr42327597f8f.52.1738050958263;
+        Mon, 27 Jan 2025 23:55:58 -0800 (PST)
 Received: from linaro.org ([2a02:2454:ff21:ef30:3210:3bfd:4b47:59da])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd50233dsm156321715e9.15.2025.01.27.23.50.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a17d70bsm13703056f8f.33.2025.01.27.23.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2025 23:50:51 -0800 (PST)
-Date: Tue, 28 Jan 2025 08:50:49 +0100
+        Mon, 27 Jan 2025 23:55:57 -0800 (PST)
+Date: Tue, 28 Jan 2025 08:55:56 +0100
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
 To: Luca Weiss <luca@lucaweiss.eu>
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -71,189 +70,112 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
 	Matti =?iso-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>,
 	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] remoteproc: qcom_q6v5_mss: Add modem support on
- MSM8226
-Message-ID: <Z5iMWeiZKFBbHPLF@linaro.org>
+Subject: Re: [PATCH v3 06/13] remoteproc: qcom_q6v5_mss: Add modem support on
+ MSM8926
+Message-ID: <Z5iNjMzKWG4zQkcR@linaro.org>
 References: <20250127-msm8226-modem-v3-0-67e968787eef@lucaweiss.eu>
- <20250127-msm8226-modem-v3-5-67e968787eef@lucaweiss.eu>
+ <20250127-msm8226-modem-v3-6-67e968787eef@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250127-msm8226-modem-v3-5-67e968787eef@lucaweiss.eu>
+In-Reply-To: <20250127-msm8226-modem-v3-6-67e968787eef@lucaweiss.eu>
 
-On Mon, Jan 27, 2025 at 11:45:37PM +0100, Luca Weiss wrote:
-> Add support for the external power block headswitch register needed by
-> MSM8226 and some other qcom platforms.
+On Mon, Jan 27, 2025 at 11:45:38PM +0100, Luca Weiss wrote:
+> While MSM8926 being 'just' an LTE-capable variant of MSM8226 it appears
+> the modem setup has changed significantly, by requiring mss-supply and
+> not using the ext-bhs-reg.
 > 
-> Co-developed-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-> Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+> Add a new compatible and new struct to support that.
+> 
 > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+
+I wonder if you could reuse &msm8974_mss here. Anyway, I suppose it's
+better to not allow the fallback_proxy_supply that MSM8974 has. I think
+it's fine as-is. :-)
+
+Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+
 > ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 113 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 113 insertions(+)
+>  drivers/remoteproc/qcom_q6v5_mss.c | 48 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 > 
 > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 0e1b0934ceedd13d5790b798afc95d68a8314c75..32f35fe89416f167fe49be7ca02a24af842e0073 100644
+> index 32f35fe89416f167fe49be7ca02a24af842e0073..cd7ea7bb345f558636f9414c43460b29b3be6f5c 100644
 > --- a/drivers/remoteproc/qcom_q6v5_mss.c
 > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -134,6 +134,11 @@
->  #define BOOT_FSM_TIMEOUT                10000
->  #define BHS_CHECK_MAX_LOOPS             200
->  
-> +/* External power block headswitch */
-> +#define EXTERNAL_BHS_ON			BIT(0)
-> +#define EXTERNAL_BHS_STATUS		BIT(4)
-> +#define EXTERNAL_BHS_TIMEOUT_US		50
-> +
->  struct reg_info {
->  	struct regulator *reg;
->  	int uV;
-> @@ -161,6 +166,7 @@ struct rproc_hexagon_res {
->  	bool has_mba_logs;
->  	bool has_spare_reg;
->  	bool has_qaccept_regs;
-> +	bool has_ext_bhs_reg;
->  	bool has_ext_cntl_regs;
->  	bool has_vq6;
->  };
-> @@ -180,6 +186,7 @@ struct q6v5 {
->  	u32 halt_nc;
->  	u32 halt_vq6;
->  	u32 conn_box;
-> +	u32 ext_bhs;
->  
->  	u32 qaccept_mdm;
->  	u32 qaccept_cx;
-> @@ -237,6 +244,7 @@ struct q6v5 {
->  	bool has_mba_logs;
->  	bool has_spare_reg;
->  	bool has_qaccept_regs;
-> +	bool has_ext_bhs_reg;
->  	bool has_ext_cntl_regs;
->  	bool has_vq6;
->  	u64 mpss_perm;
-> @@ -246,6 +254,7 @@ struct q6v5 {
->  };
->  
->  enum {
-> +	MSS_MSM8226,
+> @@ -257,6 +257,7 @@ enum {
+>  	MSS_MSM8226,
 >  	MSS_MSM8909,
 >  	MSS_MSM8916,
+> +	MSS_MSM8926,
 >  	MSS_MSM8953,
-> @@ -1750,6 +1759,23 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
->  		qproc->qaccept_axi = args.args[2];
->  	}
+>  	MSS_MSM8974,
+>  	MSS_MSM8996,
+> @@ -2621,11 +2622,58 @@ static const struct rproc_hexagon_res msm8226_mss = {
+>  	.version = MSS_MSM8226,
+>  };
 >  
-> +	if (qproc->has_ext_bhs_reg) {
-> +		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-> +						       "qcom,ext-bhs-reg",
-> +						       1, 0, &args);
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev, "failed to parse ext-bhs-reg index 0\n");
-> +			return -EINVAL;
-> +		}
+> +static const struct rproc_hexagon_res msm8926_mss = {
+> +	.hexagon_mba_image = "mba.b00",
+> +	.proxy_supply = (struct qcom_mss_reg_res[]) {
+> +		{
+> +			.supply = "pll",
+> +			.uA = 100000,
+> +		},
+> +		{
+> +			.supply = "mx",
+> +			.uV = 1050000,
+> +		},
+> +		{}
+> +	},
+> +	.active_supply = (struct qcom_mss_reg_res[]) {
+> +		{
+> +			.supply = "mss",
+> +			.uV = 1050000,
+> +			.uA = 100000,
+> +		},
+> +		{}
+> +	},
+> +	.proxy_clk_names = (char*[]){
+> +		"xo",
+> +		NULL
+> +	},
+> +	.active_clk_names = (char*[]){
+> +		"iface",
+> +		"bus",
+> +		"mem",
+> +		NULL
+> +	},
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		NULL
+> +	},
+> +	.need_mem_protection = false,
+> +	.has_alt_reset = false,
+> +	.has_mba_logs = false,
+> +	.has_spare_reg = false,
+> +	.has_qaccept_regs = false,
+> +	.has_ext_bhs_reg = false,
+> +	.has_ext_cntl_regs = false,
+> +	.has_vq6 = false,
+> +	.version = MSS_MSM8926,
+> +};
 > +
-> +		qproc->conn_map = syscon_node_to_regmap(args.np);
-> +		of_node_put(args.np);
-> +		if (IS_ERR(qproc->conn_map))
-> +			return PTR_ERR(qproc->conn_map);
-> +
-> +		qproc->ext_bhs = args.args[0];
-> +	}
-> +
->  	if (qproc->has_ext_cntl_regs) {
->  		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
->  						       "qcom,ext-regs",
-> @@ -1871,6 +1897,34 @@ static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
->  		dev_pm_domain_detach(pds[i], false);
->  }
->  
-> +static int q6v5_external_bhs_enable(struct q6v5 *qproc)
-> +{
-> +	u32 val;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * Enable external power block headswitch and wait for it to
-> +	 * stabilize
-> +	 */
-> +	regmap_set_bits(qproc->conn_map, qproc->ext_bhs, EXTERNAL_BHS_ON);
-> +
-> +	ret = regmap_read_poll_timeout(qproc->conn_map, qproc->ext_bhs,
-> +				       val, val & EXTERNAL_BHS_STATUS,
-> +				       1, EXTERNAL_BHS_TIMEOUT_US);
-> +
-> +	if (ret) {
-> +		dev_err(qproc->dev, "External BHS timed out\n");
-> +		ret = -ETIMEDOUT;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void q6v5_external_bhs_disable(struct q6v5 *qproc)
-> +{
-> +	regmap_clear_bits(qproc->conn_map, qproc->ext_bhs, EXTERNAL_BHS_ON);
-> +}
-> +
->  static int q6v5_init_reset(struct q6v5 *qproc)
->  {
->  	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
-> @@ -2021,6 +2075,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, qproc);
->  
->  	qproc->has_qaccept_regs = desc->has_qaccept_regs;
-> +	qproc->has_ext_bhs_reg = desc->has_ext_bhs_reg;
->  	qproc->has_ext_cntl_regs = desc->has_ext_cntl_regs;
->  	qproc->has_vq6 = desc->has_vq6;
->  	qproc->has_spare_reg = desc->has_spare_reg;
-> @@ -2079,6 +2134,12 @@ static int q6v5_probe(struct platform_device *pdev)
->  		qproc->proxy_pd_count = ret;
->  	}
->  
-> +	if (qproc->has_ext_bhs_reg) {
-> +		ret = q6v5_external_bhs_enable(qproc);
-> +		if (ret < 0)
-> +			goto detach_proxy_pds;
-> +	}
-> +
->  	qproc->has_alt_reset = desc->has_alt_reset;
->  	ret = q6v5_init_reset(qproc);
->  	if (ret)
-> @@ -2143,6 +2204,9 @@ static void q6v5_remove(struct platform_device *pdev)
->  	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
->  
-> +	if (qproc->has_ext_bhs_reg)
-> +		q6v5_external_bhs_disable(qproc);
-
-Sorry, just seeing this now: I think this is like the "active_supply"
-you just added for MSM8926. It should get enabled when the modem is
-started, and disabled when it gets stopped.
-
-The calls to q6v5_external_bhs_enable() / q6v5_external_bhs_disable()
-should be next to
-
-	ret = q6v5_regulator_enable(qproc, qproc->active_regs,
-				    qproc->active_reg_count);
-
-and
-
-	q6v5_regulator_disable(qproc, qproc->active_regs,
-			       qproc->active_reg_count);
-
-, instead of being called in the driver probe()/remove() function.
-
-Downstream also has this next to the regulator_enable()/disable() [1]
-(drv->vreg = mss-supply).
-
-Thanks,
-Stephan
-
-[1]: https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/blob/LA.BF.1.1.3-02310-8x26.0/arch/arm/mach-msm/pil-msa.c#L71-109
+>  static const struct of_device_id q6v5_of_match[] = {
+>  	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
+>  	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
+>  	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
+>  	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
+> +	{ .compatible = "qcom,msm8926-mss-pil", .data = &msm8926_mss},
+>  	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
+>  	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+>  	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
+> 
+> -- 
+> 2.48.1
+> 
