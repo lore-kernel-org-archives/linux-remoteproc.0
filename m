@@ -1,62 +1,62 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83E7166F1A
-	for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jan 2025 08:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0C819C561
+	for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jan 2025 08:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738138636; cv=none; b=npyDl8UaViHz5Uy4rlLt0hCZqDgtklZni3k2E3RY/7Dz+onI1dy8AcT2vIjYneLHEQHAhR/GJ79daWShbfVQ4faewc0svEkJmREkujnr09J4MCr30VQrvcUB1ZfGrQNr4tVrgUmsZO9YwkyKC37DldEoWL927JIDuZHeOxo3yvs=
+	t=1738138740; cv=none; b=jfmGItdnlRNu36iRm61sy68FoPuMfOj2oqJmimurXzhMAiMBzVdXAW4589ll+VXqH7+Z1cCvtiuQeFINLMr+20dySTIOrgATYJj4LrbFIpsKcy7PdZpPAF0oZIcvFilFh49DtZmcadY3Aryf4rYp5G9WCdkMbb3EH6JRh508pTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738138636; c=relaxed/simple;
-	bh=pr1H+qOgtFwlwxokFPKqAcNjsp+sUyK9zu3FmkZcpp4=;
+	s=arc-20240116; t=1738138740; c=relaxed/simple;
+	bh=q9PcrzMuPfzgLcPzUpwqZmNu5XymU513cnx6sVwWVFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGl18d7ssnS3onfgYD2qLovMIDW/H1veU38X6MsAaVrWwY3SwiuOHJUf5kBZpbVtw07Z3EcJVjah2mNA8lqKGuVweAArnGkNJg6b8VRNkBMb3G1nglFPy1/KtaTEfdyh4o7hbg2GjwD7DHBhmYCDomboI6NLdi5KPClnPar7NTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HBkaxvLB; arc=none smtp.client-ip=209.85.221.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=jROQIDHsPaxmFonGbP9pOKAEQU45Gof9Pxwfg28yamyXgJhyI3wJd/KQmIXSt8qvPqiueF6kmw4jWB4z9vIMw4rfMtPanwyHO92881gJgFqLGBGwOOtEwOwuoHxvyoaM/+ptsNvnT4aIWc+/czJZ0MieBJMAsuuNId19dHMfsb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LVQPQi6s; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HBkaxvLB"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3862d6d5765so3873917f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jan 2025 00:17:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVQPQi6s"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so276040f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jan 2025 00:18:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738138633; x=1738743433; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1738138736; x=1738743536; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w/+D0OekWy0GxppkPj3fPY5hpDHIrRe8OroWwhzjF34=;
-        b=HBkaxvLBJhMmCK3yUgCz3m/QDVXTid8Uy2V8IfwlzGeweJWVgITLHkQONXC6IsGcp1
-         2BwOrb0ECzoqkZoAtcspSuNrDvSMZn/WvE4Kf0K5wXwr52hMdtZnzuIcSfwKa1+F3ywQ
-         a8mgtoW3mrs0mXywpeWVNxnwFV+w0KB9liW6wNXusDw7gqxvY7CZ7fr6rhFw4d0i/5Z1
-         Vo33bz1TVX7FcBBLb95Dd0HUky6tzy6eUU3CDPnmO8Boju/LBrVtO1Z0yilyxSrO7yfx
-         uo8o1NlExBLObaOV6SWt0zRbnDYcehD+UgaWdEwXVm4zzf30GZIpJouYpkp7vIef8Xen
-         iP6w==
+        bh=sBd/IvDhQt1+2TptVTpiJN0NIdUgTEfHIRo89ZFgCVk=;
+        b=LVQPQi6sNCb7mX5kgBxlrNFrqxlYx7PpCL/oZyUHeB0wjRtCv9znVMIJfwREwKQVeL
+         DVBPF6Dogv3MexTgLpO1lP0awAjim5pThUbSWLmp6d5FO/z4zFTOEYIjfbINyuWN9c0G
+         46gvuDSP9vmyOeA0kNvKqltYjkRj+93wKtYX+gs8ebGIYn/q7mbaDtWXSLlySpevrkGC
+         OhMYdfNssrzmuNc1nqIkfzTbYO7f3qB65fZYVctET0phQ8iaLyBA9SgB3ePvXrqzJc6B
+         NbBRX5AIU/UCrHXDBHM2Qrcg5vk1OpaXJ38bASdxtKZGOdnwFcTYjbU1YcLoi92kA7Cd
+         P/yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738138633; x=1738743433;
+        d=1e100.net; s=20230601; t=1738138736; x=1738743536;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w/+D0OekWy0GxppkPj3fPY5hpDHIrRe8OroWwhzjF34=;
-        b=heHT7ECR0RlhUsydSBJSHvAJI43ZKvRQH6WcFANDzdN6qAM8Dapnio+P/hj6RARxtM
-         iynDk4Iq+LEglL2Kg+7LKiEncpNM5R740fE9CZjqJFPkir4VeYpICNqzlHuRgEuzzUtr
-         MMyBeKy27qp6obs6+Bv8PUYccSLOjwRQloEebMCSXX+PkIL0or8KJqJ5JtdzboHkRrjW
-         d4ZVhnOfnA6HjSl7TQ7oOIGUEGJKGrEnElvN2nWkr3jdOLeaogw6mtfJL9xnd+Eh5ZW7
-         CPIM3FUPqylNN3HGqn9vprzGHO/EubMKJEIqZK5rZkWTxDx4rUR0hJY+bvYuNDfhZ8OM
-         iZkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeUWadl1wbh34H2qTVETv68hP8nVvfmMLKhsWJngaqUMVpfT/T+2oZGfY1LHbBQ33xtOV98epgagA+bKgl7IET@vger.kernel.org
-X-Gm-Message-State: AOJu0YztZFR7sAYWmlyq0FY3DxSwAHntTsymrShhqEIHd/pv7wM6/lxD
-	QXW1FAivY39s5QzwVgdz72rOqJtdpO+hIZs9/OopltN/5LD4Frh9cRMWqOFXQD8=
-X-Gm-Gg: ASbGncsuGUh3xpb7Yh/JI8pd3P+oc6S22CLx371Y9ySpg9EzRrwpJejDRiMNbQHJb9T
-	1TEiqClzGvugiKiYC8pzfQrsmHpjxLt4RpK1ikHg9lfMTNoxdyDkdgnscPFH3tI5lQJYvbf2lYU
-	1u8JWsyc5TfaSLuqLryX3i8FFPPL+D9jstcUJa6T4fVlU1uqSy4++oSw1Rm57i5772p0kNfGUYx
-	fKjqcyldGyEWFtsVj1/yywNFZmI0dyDDpa/eqFHjAv8HgKoIkHqM+93Knr7HyElDd8x/xLdene5
-	IuTp+5ifs9WWagyp8lqmuQ==
-X-Google-Smtp-Source: AGHT+IHpJGqcr8Tk2T0wQuKtYNeP2wWRWN3r3xQi/6+WJha95RSeRs0NLgQ4Lr414eJF3CjQLmMLnw==
-X-Received: by 2002:adf:fa8a:0:b0:385:e1eb:a7af with SMTP id ffacd0b85a97d-38c520be00dmr1356231f8f.48.1738138632801;
-        Wed, 29 Jan 2025 00:17:12 -0800 (PST)
+        bh=sBd/IvDhQt1+2TptVTpiJN0NIdUgTEfHIRo89ZFgCVk=;
+        b=naSDcJbj13jn3KV2rM8l2pWxIlWo4+h6y0bDcdGa0kG6tMyEhhw2lKv74fnN3HtV7N
+         hCHFe08OMniTLwZVIAT5frm6fFSa2k7xZEh/y5XKDDVkmbyUSOV/VGocYfbVSGhfJ/i+
+         YAd53ZDdZYFc7yWEtTpkZ1CBeWeIrpIg+ZUVVOf31muTeRxCO6EaAwQOfyEiwOJ9c9r4
+         KTI46kDco8R4XvyziF0WoCmXnHAeCPfO05LAAPzGdLFIt0SWzwQwjGwU+kIgsorCpNxx
+         eNWj39nq/12Q9LX9I8gNs4dtVi+s9XW0Ox0QM689U0AFGJHhQbypKuy1hSxIN0v0a/dr
+         UzqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZHUfCfdrKUcn09JHPE4QSDss8ibKZD9+jwEnROMOGS+eQAMtyya7rzpmxmd4Hw/LL5a/R4TtKreOQ53o3zu/V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx59dbHKIC/HwCAa7fHSBDqdd8cGaKECiZhPsDNusVzvEnxrAex
+	YJ5phx8O5WZixWsrfMsex0NEM4escoEIjEucTR1uUajO4tUn55DEUHdVxSV0tA8=
+X-Gm-Gg: ASbGnctLCDY0vk4laFLgCXWTyZG6GoRqOw1aXsGtXJNiI7ZcbNH0zT1nd6k05CONEv9
+	ZFNm1JQ26TEhEmMoj9gg4g0uoL2nPupGDkLwkY6mOaJreQyN7PtugE2FEszsILinCzmBJKWCUxp
+	/JBoj2XIEQT1xb3Ejiq7VgwkXtgKS2YQw+NPHYKNJOLkTRHyq14hwvUNgALZNUfkbaP7fHPQIpO
+	OEPnkRWr0b5WZpz1gtqBhBpMTEM36trPj6dAFLkbN6Nw1zGkVKP55in9cxGPZ4TDCRcgj+Ff+EO
+	DbKMzL98yDMJvQnY1JfolQ==
+X-Google-Smtp-Source: AGHT+IGmg5YJ8EYXcU1LFQKEauB6McbRp8WqEK3RkkgOQScrIqPuhUbg3IfCBmWCpqf/pdOzRDnMyA==
+X-Received: by 2002:a05:6000:156d:b0:38c:24c6:5bdc with SMTP id ffacd0b85a97d-38c50fdff42mr1517193f8f.4.1738138735865;
+        Wed, 29 Jan 2025 00:18:55 -0800 (PST)
 Received: from linaro.org ([77.64.147.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc24d51sm13637275e9.14.2025.01.29.00.17.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a189283sm16542483f8f.59.2025.01.29.00.18.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 00:17:12 -0800 (PST)
-Date: Wed, 29 Jan 2025 09:17:05 +0100
+        Wed, 29 Jan 2025 00:18:55 -0800 (PST)
+Date: Wed, 29 Jan 2025 09:18:51 +0100
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
 To: Luca Weiss <luca@lucaweiss.eu>
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -64,11 +64,11 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: qcom_q6v5_pas: Use resource with CX PD
- for MSM8226
-Message-ID: <Z5nkARIwmd3tBypA@linaro.org>
+Subject: Re: [PATCH 2/2] remoteproc: qcom_q6v5_pas: Make single-PD handling
+ more robust
+Message-ID: <Z5nka5pi-e3Jcrbg@linaro.org>
 References: <20250128-pas-singlepd-v1-0-85d9ae4b0093@lucaweiss.eu>
- <20250128-pas-singlepd-v1-1-85d9ae4b0093@lucaweiss.eu>
+ <20250128-pas-singlepd-v1-2-85d9ae4b0093@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -77,14 +77,17 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250128-pas-singlepd-v1-1-85d9ae4b0093@lucaweiss.eu>
+In-Reply-To: <20250128-pas-singlepd-v1-2-85d9ae4b0093@lucaweiss.eu>
 
-On Tue, Jan 28, 2025 at 10:53:59PM +0100, Luca Weiss wrote:
-> MSM8226 requires the CX power domain, so use the msm8996_adsp_resource
-> which has cx under proxy_pd_names and is otherwise equivalent.
+On Tue, Jan 28, 2025 at 10:54:00PM +0100, Luca Weiss wrote:
+> Only go into the if condition for single-PD handling when there's
+> actually just one power domain specified there. Otherwise it'll be an
+> issue in the dts and we should fail in the regular code path.
+> 
+> This also mirrors the latest changes in the qcom_q6v5_mss driver.
 > 
 > Suggested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> Fixes: fb4f07cc9399 ("remoteproc: qcom: pas: Add MSM8226 ADSP support")
+> Fixes: 17ee2fb4e856 ("remoteproc: qcom: pas: Vote for active/proxy power domains")
 > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 
 Not sure if Reviewed-by makes sense if I already did Suggested-by, but
@@ -92,23 +95,46 @@ anyway:
 
 Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
+Thanks for making these fixes!
+
 > ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/remoteproc/qcom_q6v5_pas.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 88e7b84f223c0222a01e2a246a848f2889ac00b3..aca44bb6522f00cb525c4b816040445287444434 100644
+> index aca44bb6522f00cb525c4b816040445287444434..c1e9bbae61770ccad3e22d132a411bc6ced7180f 100644
 > --- a/drivers/remoteproc/qcom_q6v5_pas.c
 > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -1319,7 +1319,7 @@ static const struct adsp_data sm8650_mpss_resource = {
->  };
+> @@ -509,16 +509,16 @@ static int adsp_pds_attach(struct device *dev, struct device **devs,
+>  	if (!pd_names)
+>  		return 0;
 >  
->  static const struct of_device_id adsp_of_match[] = {
-> -	{ .compatible = "qcom,msm8226-adsp-pil", .data = &adsp_resource_init},
-> +	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
->  	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
->  	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
->  	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
+> +	while (pd_names[num_pds])
+> +		num_pds++;
+> +
+>  	/* Handle single power domain */
+> -	if (dev->pm_domain) {
+> +	if (num_pds == 1 && dev->pm_domain) {
+>  		devs[0] = dev;
+>  		pm_runtime_enable(dev);
+>  		return 1;
+>  	}
+>  
+> -	while (pd_names[num_pds])
+> -		num_pds++;
+> -
+>  	for (i = 0; i < num_pds; i++) {
+>  		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
+>  		if (IS_ERR_OR_NULL(devs[i])) {
+> @@ -543,7 +543,7 @@ static void adsp_pds_detach(struct qcom_adsp *adsp, struct device **pds,
+>  	int i;
+>  
+>  	/* Handle single power domain */
+> -	if (dev->pm_domain && pd_count) {
+> +	if (pd_count == 1 && dev->pm_domain) {
+>  		pm_runtime_disable(dev);
+>  		return;
+>  	}
 > 
 > -- 
 > 2.48.1
