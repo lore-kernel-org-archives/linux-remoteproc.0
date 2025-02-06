@@ -1,30 +1,31 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1A1D5ACF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DCC1D5AD8;
 	Thu,  6 Feb 2025 20:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738872365; cv=none; b=YM3rRYt/4JAEeKq2/v6NeBzdhvlmoEjZAyQLaflLIh46TpPYCdJPUK83m7SF39l3KmHvtopX4h8NOuxsRMzQMyM34KJ9n4eOMx8PTnVhSz+TLIAUGtJLXWx52P/KwYK5E5i4ULBxH8XJl27rvRgvIN/SYxo0A1EMV/7Ymz+0P6Y=
+	t=1738872365; cv=none; b=txU/yuPK82GVnp5p8JpqwdwE0w2/SjKOxTz3t0yTp25bag3O6lUwGzZvqdXFiDFY02o96cw5ZZ/nNqB/alrQqIyOQcUx8terSYOockf4QA1bNoWZAeDt+rZho4wzU1SdoEnqCKHkcM7XxaI4ULMchXJ3WxfZQY9ytIXCSXevmNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738872365; c=relaxed/simple;
-	bh=vSTIuybZy5DJn49mPWMLVQD4HMxFkEzZ34vFkrDQIXI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QMS80Y+6oC6pmD3Kp+qrD3k6wcHQneExhT3qHP5FCPf9iCZ+ugQMGeJIMLVZe7d2ZSs1CT0iDbx+AJbUC/UXc9MYJTOSQ1FAL1PkKRUIa5CGVr8hk/ckLezDlXJbYmlEHtuzEgRjpBJY/0ADLDc7e4u4RBRhNh1lXpbATJVbUuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=kFyUiykl; arc=none smtp.client-ip=128.199.32.197
+	bh=s5qZPIsWTjLP53Z+ervmP5VF7KNxJznZKE2uskfwYTs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AJ+UPMX35ABkhSUa1qqY63q78jn8O0AoYGBOBl38i6PfUpHu1HNAsO4cJAXLqrBNdj2rTWuNBDHOm3iCZTAYR1U8KyL3PgzMbxIBFC41rf/Gb/wJ/+1j5D+woTMYnsIYUb9cPiBs0eqSZmIkSuDW58mFScihDcb9WufPmzyc6LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=JmMTwe4s; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="kFyUiykl"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="JmMTwe4s"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1738871841; bh=vSTIuybZy5DJn49mPWMLVQD4HMxFkEzZ34vFkrDQIXI=;
-	h=From:Subject:Date:To:Cc;
-	b=kFyUiykl/7z3qQfnICIR0kDom0+Q9kTaQi42YaE2toan6uWvysE1ydkel30a19bOL
-	 I/TQbO6ZDcUkKhlewtqJ/57nAIw0sJ8oASVgdtPDCbiSseXsG2F9/Ln5/icpK06Hmn
-	 RF/OB5rakVo3qjXChmjhG3SDkz9pqvxbceCuirYk=
+	t=1738871842; bh=s5qZPIsWTjLP53Z+ervmP5VF7KNxJznZKE2uskfwYTs=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=JmMTwe4saCPRQjT51G/AshKGU296RWxf7fQMMbCFpzP/hhmJeeoxaCM7WWzaNfb09
+	 nqn197MILPjNYuFCpC7F1dhjPzFIb8G0PGd+OaWWsJGvat7CuLzwXDgnQX/sfYQQBw
+	 qHhrgeHHLiNhif3agoPvvZCmCHrkl0VMsmX3BwFg=
 From: Luca Weiss <luca@lucaweiss.eu>
-Subject: [PATCH v2 0/2] Support single-PD in wcnss driver
-Date: Thu, 06 Feb 2025 20:56:46 +0100
-Message-Id: <20250206-wcnss-singlepd-v2-0-9a53ee953dee@lucaweiss.eu>
+Date: Thu, 06 Feb 2025 20:56:48 +0100
+Subject: [PATCH v2 2/2] remoteproc: qcom_wcnss: Handle platforms with only
+ single power domain
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -33,10 +34,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAP4TpWcC/3XMyw6CMBCF4Vchs7ambSyKK9/DsOhlgElIIR0BD
- em7W9m7/E9yvh0YEyHDvdoh4UpMUyyhTxX4wcYeBYXSoKU2UulGbD4yC6bYjzgH0TVY38xFmys
- GKKc5YUfvA3y2pQfi15Q+h7+q3/qXWpWQwklla2elUy48xsXbDYn5jAu0OecvY2Kr9K8AAAA=
-X-Change-ID: 20250129-wcnss-singlepd-f9e6854257ed
+Message-Id: <20250206-wcnss-singlepd-v2-2-9a53ee953dee@lucaweiss.eu>
+References: <20250206-wcnss-singlepd-v2-0-9a53ee953dee@lucaweiss.eu>
+In-Reply-To: <20250206-wcnss-singlepd-v2-0-9a53ee953dee@lucaweiss.eu>
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
  Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -48,48 +48,117 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Luca Weiss <luca@lucaweiss.eu>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1043; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=vSTIuybZy5DJn49mPWMLVQD4HMxFkEzZ34vFkrDQIXI=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnpRQC3xLAYr6wHYazamtoiaGwWG7Flfqhtv/DI
- V4SI2C8NSSJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ6UUAgAKCRBy2EO4nU3X
- Vk9eEACT936C0NBzS0pMXn60Jg14OnSDFFJOCb0lG2zwS/j7JDzbTkxoo0aZtNqxypFjy3X36yo
- scC57Qyq23tmT9+9XZWyVeBSe9nOvFLeSicq5FZHK7qTHG5D+nPvpTwD4OGt658TfOE+2tBsMji
- Rk0f1Z36yyW67FCN1SzeaG0t1gTRVMcEaz/E0bwpaFeWAl39ShjtYvJrKl9UodGwQsLkRDq5B5g
- ADZQ5As5JJwmC5epkuOuWtpMBFiBZUXPjYaczzxoCd5JZ7JfsNYYBjd07jRiQ4Mf3POFi+Ila5Q
- KjUtxr5JcOwQaQgGatKzboe6HFYBq/X2DRKUaKiwGrYk8AH/0PA50s9+6PyUyCtGZYWEooeU+ET
- tp27kTFBXhgZxebpwZM0kW/F7qr5ITk3vMrhRhwm4Y7gBBcn2vBlFPvj5MKFKA3U5Kl2jOE21x9
- NMx/umvKjoy1j5S+ck0h0RYOy6N7EUi/omWpq9vXeLYSxGZgw2nevMkSAgiBeSpEmBsd7sL2V42
- EcFrUS4haYA0oocu6cEQil8ZZFR+opZ+TNkDfxE2NGd8WYYnEdNQkYB3vstGcoMzD312EPhJDpV
- JGkChCb7bFKyIdf5ZDzOMP+qTW3q2KUiavsLVk3EKyj3z4oLmxvH1RYeuCpGq82pv0sTjziwFh7
- 1rvJRkytTZ7iVeg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3011; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=tnIGOs6S3OyQbm6Y5g+I6xPil/Bz8DZ6vLvYuNzSX3E=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBnpRQgRILFaTTkTU3LTF5cxS5Motyv+/o+Y/hm/
+ ob9ay09UPiJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ6UUIAAKCRBy2EO4nU3X
+ VrL/EACiXl1UPUtsnnN4n/40gYwK/aOD3yLNYXWK09CZ7vF4M6A1pUUnw0tQmNx8nneGaIL940m
+ ZCEq/HUwaOb0igiMZmy5YQROpx/ii25NdHezhkbuOULZHRSjbdDdlef0YZFee5QUz2AuhydN66A
+ 99U6XMLUkFG3Fi6DqpA8YyIbPEvlc49oHlEinf3pZqV6MCCww2sI3Go8pnhLNVMeolZV16Gdbnb
+ Az6LKpdNA9fkToX0tfQ0lC1TrbRVaFnUcDGYird7lre4Yd0RjJFLXsDAVKZmq0CW1IqOChh8iYV
+ eaIaH6J7GNN0ac+fwQ9x3r6q5bGH4NWSNgjbsF9xXuxmzxA0/xO3+kmqy4g1f+vCMe4vjgtDILq
+ YwnfJBTjXQvgRAzfp6LthgA13YGWNEezYYSmkwCFqi6zHhlcHC7t1aafyhzqeOOY2pf8N6k1VG8
+ kmbVAy9GdNXoCG4csRi0FL3X+VRKA9nNfWyn+bGJx/6FPmGxHBifzicA5e4cY/clD7zFdGl8k6c
+ 6PY8uW+qctXCBLJUQCgFgwgHYKB1Mav9s3U1nGpjim4yKN+8z6w4DD5YgZaFscyvoNU4OaRsEHq
+ W81VKhqZFUDx10EjwHYH5hsGZsTvmsieZMzbdA/cgVn2g3CKHDkJdHEiYqeVrVBcb++IXYyaS/B
+ 1HaR1EUmEcAlXTg==
 X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-Both MSM8974 and MSM8226 only model CX as power domain, leaving MX & PX
-as regulators. Add some patches to support this use case.
+From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
 
+Both MSM8974 and MSM8226 have only CX as power domain with MX & PX being
+handled as regulators. Handle this case by reodering pd_names to have CX
+first, and handling that the driver core will already attach a single
+power domain internally.
+
+Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+[luca: minor changes]
 Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
-Changes in v2:
-- Narrow down dt-schema to only allow one of these three options:
-    - cx regulator + mx regulator (still deprecated)
-    - cx pd + mx regulator
-    - cx pd + mx pd
-- Link to v1: https://lore.kernel.org/r/20250129-wcnss-singlepd-v1-0-b01a6ba0b1bd@lucaweiss.eu
+ drivers/remoteproc/qcom_wcnss.c | 32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
----
-Matti Lehtimäki (2):
-      dt-bindings: remoteproc: qcom,wcnss-pil: Add support for single power-domain platforms
-      remoteproc: qcom_wcnss: Handle platforms with only single power domain
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 5b5664603eed293a1086a302564111d6203b17ca..143cc2fa8b65e4cf076cf29b41bb8939de5a74f0 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -117,10 +117,10 @@ static const struct wcnss_data pronto_v1_data = {
+ 	.pmu_offset = 0x1004,
+ 	.spare_offset = 0x1088,
+ 
+-	.pd_names = { "mx", "cx" },
++	.pd_names = { "cx", "mx" },
+ 	.vregs = (struct wcnss_vreg_info[]) {
+-		{ "vddmx", 950000, 1150000, 0 },
+ 		{ "vddcx", .super_turbo = true},
++		{ "vddmx", 950000, 1150000, 0 },
+ 		{ "vddpx", 1800000, 1800000, 0 },
+ 	},
+ 	.num_pd_vregs = 2,
+@@ -131,10 +131,10 @@ static const struct wcnss_data pronto_v2_data = {
+ 	.pmu_offset = 0x1004,
+ 	.spare_offset = 0x1088,
+ 
+-	.pd_names = { "mx", "cx" },
++	.pd_names = { "cx", "mx" },
+ 	.vregs = (struct wcnss_vreg_info[]) {
+-		{ "vddmx", 1287500, 1287500, 0 },
+ 		{ "vddcx", .super_turbo = true },
++		{ "vddmx", 1287500, 1287500, 0 },
+ 		{ "vddpx", 1800000, 1800000, 0 },
+ 	},
+ 	.num_pd_vregs = 2,
+@@ -397,8 +397,17 @@ static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
+ static int wcnss_init_pds(struct qcom_wcnss *wcnss,
+ 			  const char * const pd_names[WCNSS_MAX_PDS])
+ {
++	struct device *dev = wcnss->dev;
+ 	int i, ret;
+ 
++	/* Handle single power domain */
++	if (dev->pm_domain) {
++		wcnss->pds[0] = dev;
++		wcnss->num_pds = 1;
++		pm_runtime_enable(dev);
++		return 0;
++	}
++
+ 	for (i = 0; i < WCNSS_MAX_PDS; i++) {
+ 		if (!pd_names[i])
+ 			break;
+@@ -418,8 +427,15 @@ static int wcnss_init_pds(struct qcom_wcnss *wcnss,
+ 
+ static void wcnss_release_pds(struct qcom_wcnss *wcnss)
+ {
++	struct device *dev = wcnss->dev;
+ 	int i;
+ 
++	/* Handle single power domain */
++	if (wcnss->num_pds == 1 && dev->pm_domain) {
++		pm_runtime_disable(dev);
++		return;
++	}
++
+ 	for (i = 0; i < wcnss->num_pds; i++)
+ 		dev_pm_domain_detach(wcnss->pds[i], false);
+ }
+@@ -437,9 +453,11 @@ static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
+ 	 * the regulators for the power domains. For old device trees we need to
+ 	 * reserve extra space to manage them through the regulator interface.
+ 	 */
+-	if (wcnss->num_pds)
+-		info += num_pd_vregs;
+-	else
++	if (wcnss->num_pds) {
++		info += wcnss->num_pds;
++		/* Handle single power domain case */
++		num_vregs += num_pd_vregs - wcnss->num_pds;
++	} else
+ 		num_vregs += num_pd_vregs;
+ 
+ 	bulk = devm_kcalloc(wcnss->dev,
 
- .../bindings/remoteproc/qcom,wcnss-pil.yaml        | 45 +++++++++++++++++-----
- drivers/remoteproc/qcom_wcnss.c                    | 32 +++++++++++----
- 2 files changed, 61 insertions(+), 16 deletions(-)
----
-base-commit: 808eb958781e4ebb6e9c0962af2e856767e20f45
-change-id: 20250129-wcnss-singlepd-f9e6854257ed
-
-Best regards,
 -- 
-Luca Weiss <luca@lucaweiss.eu>
+2.48.1
 
