@@ -1,152 +1,454 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AD41EF096
-	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Feb 2025 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F731CDA3F;
+	Wed, 12 Feb 2025 03:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739279998; cv=none; b=Oss/C8p/751Kc5HozzAr/iuVy3AjvKCJ/oLA7CO9Dhcs0bOHQF8I7Wb3xndm9M12DUIgtc1Jev0561XPUMhCypAPFUqZRDTsu1qA/fVKeTJ8rrN1t5I0ULRcxJMURDwU5BOfvfcpu7ECkh8pCSyzIa/ApOuiASD2QlKWyMv1VA0=
+	t=1739330337; cv=none; b=ly2uCUiJPW4sP2Jfp1qdCHhR+SaHeFxHcfvqxzuy3miXy3tm+4ORo/ws3HesFLJembYWS6K+ihqn3+4fu0H1qK0tik+0xu9lKx63VbbK5yKKEI0qL9aWv9rMMxdZbocMzeVjIGORSniqfvlqx7/auG9/FTNnm4Lio5EfBVtLaKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739279998; c=relaxed/simple;
-	bh=QKlyKakevPKbZlXRttwq1+XMDUWDv/mp3XwjZkSNztA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nCQL4cAdt0paQ3AogxbUU9OBnCHoxS8umTezc6hVdHXtkaxRr4WEcTARGX8mTfJ9of0ttGJ8ieyeADCvYieLx4vPlt9q1md+ocq/ZLfmt+Ytv3iACAvJi2xk//Zr+dq4jCcsQit4n/YYoLDKhbZOuEoT023oCWj7x6sk0Sv6U9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NR0mJh3N; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1739330337; c=relaxed/simple;
+	bh=6t1kK7Fm6h97ALCw7wqvdVbYtrxROxbh3rQAEm7crsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dk7LoxmvfOdEJmadHINarTGYtIyZndfLGfJJaMuOH6LgTcE9O+nOw0D7sEh99n0CONDFpU0O2drxvUNYzi/PH6+2ak5RpOsdZbESwKYX6Fu0OheBFjQUnLnndNUeR4V3k5LW/0qGRL95AroHfqKK6KHaVwRFya9ZFuyQJYBumrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9zVMoMI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NR0mJh3N"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51B3wwU5008011
-	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Feb 2025 13:19:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JOisIeMKhaMre/mucrOBZcJGPDoiRYiGHCkyjHs764Y=; b=NR0mJh3N8+Ht8A8+
-	XdyS0Xi5qdpQXK7GWY5394wfnNd6Na1LrkNANX3P7QwPgoKaigRJYDDc3wwvAUyx
-	MOofwIt/hrdGUI2fvZF1e++Rgzy131yA8MnZ+iGWw+xV/dNF5zv6KBZmvfMfzoSC
-	kh7ZKCClS7tDrhpyP/54Un9EzPEjIFqgCojYbyR4Oy1RO1Ar6GZ7kXnQvIgj/rJw
-	1016/mWyosrbcnmRBI8xN3FpRe8cjcOhLEtlgFNMVeCFTxmDv+8F4l6461F7kMQg
-	57J4TC2ki1iV+EUnHHvuFgDKnFZCXhxav6dm8QW4acQPARv2HW3NTy+kVDMAQwVo
-	LabPjg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qy4d9evc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Feb 2025 13:19:54 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-471921f2436so2326061cf.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Feb 2025 05:19:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739279993; x=1739884793;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOisIeMKhaMre/mucrOBZcJGPDoiRYiGHCkyjHs764Y=;
-        b=vq9fWqQiOCXCZeRogpoyUgiCIXAU2MkqDeGznwaJ54nU+XQ9YF53KIav81fOBLccOj
-         zMownXfB6Xb28F0UfKMzl9G1GnnN16rfImxmtloj2a6iD+o/YcQmE6USy8SzEJuwoUCU
-         gyrxf40htQsW/DywJvsHjnHOTUzOMmaHHXUyuvmbcYK4PnZtRta3q+HBCA3Ke0Md2BBa
-         pNViR7e/Te+X5lUF1rqn+T2qpzjsyOrtUMbMeBSYyU3tbV5isi7HnCYqq60LgxpMwYBg
-         rhrLnKkgh/zdZiu/z1bB4EO/pxP55eaW/Y13yHTJ+sOLMCoCJqnHpj8zpkUM0dHWiMZu
-         RxEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6hc2PaYqx8s1SYbLyPLmAVnCslPTWYTO2qiNHcZEWTjbR8oKF/JOTPGdTNmv9j/uhAeTgg4ecKBG+z7Juf3hq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3SxZ+7mkjUM/pFOC5JMxfh0YK/p2hMKPKNgiuHeeWCOuROuvp
-	6GwX/x3diM0cU/ZcvQ4cz8zNw1wTW0u+yGNz33kOQd3wT+u2co4rrJlB30nM7IUUxTaSCvrPgcf
-	HjmGfEzeoJdwISGfsDFNxiXtwC8zZ5duCsrMnIGavwSv+pc9QShKRZ2OHHWirz8NaaM7n
-X-Gm-Gg: ASbGnctAIWnrogEA416Q+0JZ8SqkmvtDUA3rBg93P/Qgpre9Jth6GDLmfSHsVCl3HRU
-	SSFUmcJtYs7ugoj5CRPRX1tPJoDoJNiphItv5Lu6m6prB59LArzJnx2MVMoF5Z9qmXB+hhT4w+e
-	HdcbLq1VDfbTpLDipuo5rF3qKFolqz3Iku7Rl6s8Cd0OyYM7kxbrquVHFzRXf8KOR3bxfjuWzUO
-	xc6ODP857q0lJ525O48+HkcEJzLzBaJdin8FhavmhDIFUxsJO8HbB1bXg5H7Bn8+ZnWcJj9Lmht
-	lxDXZb9d6qRlt6USEAhkI/bTf/jQe7FIG+QbfuL19N/f/K8qGlNr3VXaFPA=
-X-Received: by 2002:ac8:5f4d:0:b0:46d:d2d2:390e with SMTP id d75a77b69052e-471a3e19d69mr10640361cf.14.1739279993570;
-        Tue, 11 Feb 2025 05:19:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFZa9b0DBu69beqWOOt3Vvof3AOvSmtwgQsb5mCQEuJ0isnxAdCTxgz9ObigZW0hbSXLqr+Gw==
-X-Received: by 2002:ac8:5f4d:0:b0:46d:d2d2:390e with SMTP id d75a77b69052e-471a3e19d69mr10639881cf.14.1739279992010;
-        Tue, 11 Feb 2025 05:19:52 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de4fe72207sm7666488a12.38.2025.02.11.05.19.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2025 05:19:51 -0800 (PST)
-Message-ID: <e583f295-4629-41dd-83e0-529042700794@oss.qualcomm.com>
-Date: Tue, 11 Feb 2025 14:19:48 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9zVMoMI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFB8C4CEDF;
+	Wed, 12 Feb 2025 03:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739330337;
+	bh=6t1kK7Fm6h97ALCw7wqvdVbYtrxROxbh3rQAEm7crsQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F9zVMoMIE4yCmeI4jpF9jnay/5+5dIYPrrd9zYz65Yg6czvqGXHnyUzIodq2zxMcD
+	 T7+Bw6dLVfsARVNPbfEuBPI3AR9fP8Cw3ELQ4HR6VdD1E8CLPV2D7ErYWxcc4iEszR
+	 JBodwzOzegLDQ7AL2udvT5HQq1IcBx35er7pA1p4CEAdGhZaFYCCoXOln0xxFreuw6
+	 LMF0IsS0ASE+GvPfU+evgncI0RKArmTit4Ep+1uD+nBw/2q5ZbSJXLn9B/qmmtr0MI
+	 SsmxzTNkNHoarqDcgtw/ucESvunQAySSE51BRc8LEK2j1IQH+fhgkFuuju1oW38I7f
+	 9C0g0TTDhHI8g==
+Date: Tue, 11 Feb 2025 21:18:54 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
+Message-ID: <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
+ <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+ <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/13] ARM: dts: qcom: msm8226: Add modem remoteproc
- node
-To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephan Gerhold <stephan.gerhold@linaro.org>
-References: <20250129-msm8226-modem-v4-0-2b02ed7b7f1c@lucaweiss.eu>
- <20250129-msm8226-modem-v4-9-2b02ed7b7f1c@lucaweiss.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250129-msm8226-modem-v4-9-2b02ed7b7f1c@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: fzD9F5v0MFXawyr-o6rfoF7wOZRomGPO
-X-Proofpoint-GUID: fzD9F5v0MFXawyr-o6rfoF7wOZRomGPO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-11_05,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502110088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
 
-On 29.01.2025 12:35 AM, Luca Weiss wrote:
-> Add a node for the modem remoteproc found on MSM8226.
+On Tue, Dec 10, 2024 at 09:57:40AM +0100, Arnaud POULIQUEN wrote:
+> Hello Bjorn,
 > 
-> Co-developed-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-> Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-> Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
+> On 12/6/24 23:07, Bjorn Andersson wrote:
+> > On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
+> >> Add a remoteproc TEE (Trusted Execution Environment) driver
+> >> that will be probed by the TEE bus. If the associated Trusted
+> >> application is supported on secure part this driver offers a client
+> >> interface to load a firmware by the secure part.
+> > 
+> > If...else?
+> > 
+> >> This firmware could be authenticated by the secure trusted application.
+> >>
+> > 
+> > I would like for this to fully describe how this fits with the bus and
+> Are you speaking about the OP-TEE bus?
+> 
+> I assume that your attempt is that I provide more details on the live cycle
+> sequence, right?
+> 
 
-[...]
+Right, there's a tee_client_driver and there's a remoteproc driver.
+Let's document clearly how these interact.
 
-> +		modem: remoteproc@fc880000 {
-> +			compatible = "qcom,msm8226-mss-pil";
-> +			reg = <0xfc880000 0x100>,
+> > how it is expected to be used by a specific remoteproc driver.
+> > 
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> ---
+> >> Updates vs version v13:
+> >> - define REMOTEPROC_TEE as bool instead of tristate,
+> >> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
+> >>   that the firmware is loaded using the load_fw() operation.
+> >> ---
+> >>  drivers/remoteproc/Kconfig          |  10 +
+> >>  drivers/remoteproc/Makefile         |   1 +
+> >>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
+> >>  include/linux/remoteproc.h          |   4 +
+> >>  include/linux/remoteproc_tee.h      | 105 ++++++
+> >>  5 files changed, 628 insertions(+)
+> >>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+> >>  create mode 100644 include/linux/remoteproc_tee.h
+> >>
+> >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> >> index 955e4e38477e..f6335321d540 100644
+> >> --- a/drivers/remoteproc/Kconfig
+> >> +++ b/drivers/remoteproc/Kconfig
+> >> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
+> >>  
+> >>  	  It's safe to say N if you don't want to use this interface.
+> >>  
+> >> +config REMOTEPROC_TEE
+> >> +	bool "Remoteproc support by a TEE application"
+> >> +	depends on OPTEE
+> >> +	help
+> >> +	  Support a remote processor with a TEE application.
+> > 
+> > Does the remote processor run TEE applications? (Rethorical question...)
+> > 
+> >> 	  The Trusted
+> >> +	  Execution Context is responsible for loading the trusted firmware
+> >> +	  image and managing the remote processor's lifecycle.
+> >> +
+> >> +	  It's safe to say N if you don't want to use remoteproc TEE.
+> > 
+> > It's not really about "wanting to use", it's a question whether your
+> > device implements/provides the remoteproc TEE.
+> > 
+> >> +
+> >>  config IMX_REMOTEPROC
+> >>  	tristate "i.MX remoteproc support"
+> >>  	depends on ARCH_MXC
+> >> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> >> index 5ff4e2fee4ab..f77e0abe8349 100644
+> >> --- a/drivers/remoteproc/Makefile
+> >> +++ b/drivers/remoteproc/Makefile
+> >> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+> >>  remoteproc-y				+= remoteproc_virtio.o
+> >>  remoteproc-y				+= remoteproc_elf_loader.o
+> >>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+> >> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+> >>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+> >>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+> >>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+> >> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+> >> new file mode 100644
+> >> index 000000000000..3fe3f31068f2
+> >> --- /dev/null
+> >> +++ b/drivers/remoteproc/remoteproc_tee.c
+> >> @@ -0,0 +1,508 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >> +/*
+> >> + * Copyright (C) STMicroelectronics 2024
+> >> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >> + */
+> >> +
+> >> +#include <linux/firmware.h>
+> >> +#include <linux/io.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/remoteproc.h>
+> >> +#include <linux/remoteproc_tee.h>
+> >> +#include <linux/slab.h>
+> >> +#include <linux/tee_drv.h>
+> >> +
+> >> +#define MAX_TEE_PARAM_ARRAY_MEMBER	4
+> >> +
+> >> +/*
+> >> + * Authentication of the firmware and load in the remote processor memory
+> > 
+> > Exactly what does this imply? Will the content of @memref be copied into
+> > some other memory?
+> 
+> The objective is to authenticate and load in one step. So, yes, the image is
+> loaded into the remoteproc destination memory.
+> 
 
-This one's 0x4040-long
+So, some separate device-memory, or some preallocated carveout which is
+only accessible from secure world?
 
-> +			      <0xfc820000 0x020>;
+Does the OS need to retain @memref past this point?
 
-And this one's 0x10000-long
+> On stm32mp1 we can not store the elf file in a temporary secure memory as
+> the memory is encrypted by software (this would take to much time).
+> 
+> For your information, in OP-TEE, the application code is split into a generic
+> part and a platform adaptation layer. The generic application is mainly
+> responsible for:
+> 
+> - Copying the binary header and metadata into secure memory and authenticating them.
+> - Parsing the ELF images and providing segments to load with associated
+> authenticated hashes to the platform application.
+> In the future, someone can add their own format if needed.
+> 
+> But the generic part could be enhance to authenticate and load a non ELF binary.
+> So I'm trying to be generic as possible here.
+> 
 
-> +			reg-names = "qdsp6", "rmb";
-> +
-> +			interrupts-extended = <&intc GIC_SPI 24 IRQ_TYPE_EDGE_RISING>,
-> +					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
+Generic might be okay, but I'd prefer this to be less vague.
 
-Please make this and clock-names a vertical list
+Also worth noting is the Qualcomm implementation of TZ-backed
+remoteproc, which is already in the tree. There the firmware is loaded
+into carveouts, the certificates and hashes are validated. Lastly
+the operation "authenticate and start" is invoked, which does that, and
+locks the OS out of the given memory region - until "shutdown" is
+invoked.
 
-> +
-> +			clocks = <&gcc GCC_MSS_Q6_BIMC_AXI_CLK>,
-> +				 <&gcc GCC_MSS_CFG_AHB_CLK>,
-> +				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-> +				 <&xo_board>;
+> 
+> > 
+> >> + *
+> >> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> > 
+> > Why not just "remote processor identifier"?
+> > 
+> >> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+> >> + */
+> >> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+> >> +
+> >> +/*
+> >> + * Start the remote processor
+> >> + *
+> >> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >> + */
+> >> +#define TA_RPROC_FW_CMD_START_FW	2
+> > 
+> > Why is there two "FW" in this constant? Why isn't it just
+> > "TA_RPROC_FW_CMD_START"?
+> > 
+> > And why is it not TEE_PROC_FW_CMD_START?
+> > 
+> >> +
+> >> +/*
+> >> + * Stop the remote processor
+> >> + *
+> >> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >> + */
+> >> +#define TA_RPROC_FW_CMD_STOP_FW		3
+> >> +
+> >> +/*
+> >> + * Return the address of the resource table, or 0 if not found
+> >> + * No check is done to verify that the address returned is accessible by
+> >> + * the non secure context. If the resource table is loaded in a protected
+> >> + * memory the access by the non secure context will lead to a data abort.
+> > 
+> > These three lines describe a scenario that doesn't make any sense to me.
+> > But if that's the case, you should be able to describe that the API
+> > might give you a inaccessible pointer, by design.
+> 
+> On STM32MP, we have a kind of firewall in OP-TEE that sets memory access rights
+> from the device tree. So if the firmware image is not linked according to the
+> firewall configuration, the pointer may not be accessible.
+> 
+> I will update the comment as you propose.
+> 
+> > 
+> >> + *
+> >> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+> >> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+> >> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+> >> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+> >> + */
+> >> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+> >> +
+> >> +/*
+> >> + * Return the address of the core dump
+> > 
+> > What does this mean? What will I find at @memref after this call?
+> 
+> I do not have a simple answer here as it depends on the OP-TEE strategy.
+> It could be an obscure core dump with possible encryption.
+> 
+> I will remove this as it is not yet implemented in OP-TEE.
+> 
 
-rpm xo
+Okay. But I would prefer that we define the semantics before it's
+implemented...
 
-> +			clock-names = "iface", "bus", "mem", "xo";
+> https://elixir.bootlin.com/op-tee/4.4.0/source/ta/remoteproc/src/remoteproc_core.c#L1131
+> 
+> > 
+> >> + *
+> >> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >> + * [out] params[1].memref:	address of the core dump image if exist,
+> >> + *				else return Null
+> > 
+> > s/else return Null/or NULL/
+> > 
+> >> + */
+> >> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+> >> +
+> >> +/*
+> >> + * Release remote processor firmware images and associated resources.
+> > 
+> > Exactly what does this mean for the caller?
+> 
+> It is platform dependent. It can consist in cleaning the memory, but
+> can be also something else such as firewall configuration.
+> On stm323mp we clean all the memories region reserved for the remote processor.
+> 
 
-Konrad
+We can't have an ABI which isn't well defined in intent. Your examples
+would easily fall in the realm of a well defined interface, but this
+ties into the question above - what does is actually mean in terms of
+the memory carveouts and such.
+
+> > 
+> >> + * This command should be used in case an error occurs between the loading of
+> >> + * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
+> >> + * processor (TA_RPROC_CMD_START_FW) or after stopping the remote processor
+> >> + * to release associated resources (TA_RPROC_CMD_STOP_FW).
+> > 
+> > This description belongs adjacent to LOAD_FW, and describe it in terms
+> > of what state LOAD_FW leaves the buffers and remote processor in.
+> 
+> Sorry, it is not clear to me what you are expecting here.
+> 
+
+This describes the state LOAD_FW leaves things in and the action you
+expect the caller to take. Right now I need to read all the
+documentation in order to understand how LOAD_FW works.
+
+Document this behavior in relation to LOAD_FW.
+
+> > 
+> >> + *
+> >> + * [in]  params[0].value.a: Unique 32-bit remote processor identifier
+> >> + */
+> >> +#define TA_RPROC_CMD_RELEASE_FW		6
+> >> +
+> >> +struct rproc_tee_context {
+> >> +	struct list_head sessions;
+> >> +	struct tee_context *tee_ctx;
+> >> +	struct device *dev;
+> >> +};
+> >> +
+> >> +static struct rproc_tee_context *rproc_tee_ctx;
+> >> +
+> >> +static void rproc_tee_prepare_args(struct rproc_tee *trproc, int cmd,
+> >> +				   struct tee_ioctl_invoke_arg *arg,
+> >> +				   struct tee_param *param,
+> >> +				   unsigned int num_params)
+> >> +{
+> >> +	memset(arg, 0, sizeof(*arg));
+> >> +	memset(param, 0, MAX_TEE_PARAM_ARRAY_MEMBER * sizeof(*param));
+> >> +
+> >> +	arg->func = cmd;
+> >> +	arg->session = trproc->session_id;
+> >> +	arg->num_params = num_params + 1;
+> >> +
+> >> +	param[0] = (struct tee_param) {
+> >> +		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> >> +		.u.value.a = trproc->rproc_id,
+> >> +	};
+> >> +}
+> >> +
+> > 
+> > Provide kernel-doc for EXPORT_SYMBOL*() functions.
+> 
+> Should it be in the remoteproc kernel doc or in a new doc file that
+> provide an overview of the remoteproc_tee usage?
+> 
+
+I'm referring to
+https://docs.kernel.org/doc-guide/kernel-doc.html#function-documentation,
+i.e. a /** func() ... */ comment above each such function.
+
+This allow the caller to easily reach the documentation by using
+mechanism such as "jump-to-definition" in their IDE.
+
+> 
+> > 
+> >> +void rproc_tee_release_fw(struct rproc *rproc)
+> >> +{
+> >> +	struct tee_param param[MAX_TEE_PARAM_ARRAY_MEMBER];
+> >> +	struct rproc_tee *trproc = rproc->rproc_tee_itf;
+> >> +	struct tee_ioctl_invoke_arg arg;
+> >> +	int ret;
+> >> +
+> >> +	if (!rproc) {
+> > 
+> > How can this happen?
+> > 
+> > This error will happen in two cases:
+> > 
+> > 1) on your desk while you develop the client and you have to hunt
+> > through the kernel log to figure out that the reason you can't start
+> > your remoteproc is because 5 minutes ago there was a error log saying
+> > that we didn't stop it last time.
+> > 
+> > 2) in the customer device because of some obscure bug, where no one will
+> > read the logs and the software will happily continue to execute with a
+> > broken state.
+> > 
+> >> +		ret = -EINVAL;
+> >> +		goto out;
+> >> +	}
+> >> +
+> >> +	/*
+> >> +	 * If the remote processor state is RPROC_DETACHED, just ignore the
+> >> +	 * request, as the remote processor is still running.
+> >> +	 */
+> >> +	if (rproc->state == RPROC_DETACHED)
+> >> +		return;
+> >> +
+> >> +	if (rproc->state != RPROC_OFFLINE) {
+> >> +		ret = -EBUSY;
+> > 
+> > The function is void... Defensive coding is only useful when it saves
+> > you from future mistakes, not when it hides problems from you.
+> > 
+> >> +		goto out;
+> >> +	}
+> >> +
+> >> +	rproc_tee_prepare_args(trproc, TA_RPROC_CMD_RELEASE_FW, &arg, param, 0);
+> >> +
+> >> +	ret = tee_client_invoke_func(rproc_tee_ctx->tee_ctx, &arg, param);
+> >> +	if (ret < 0 || arg.ret != 0) {
+> >> +		dev_err(rproc_tee_ctx->dev,
+> >> +			"TA_RPROC_CMD_RELEASE_FW invoke failed TEE err: %x, ret:%x\n",
+> >> +			arg.ret, ret);
+> > 
+> > At least @ret will be base 10, so don't print that in base 16 without
+> > indication that it's not base 10.
+> > 
+> > 
+> > Also, this will result in two dev_err() prints, printing out two
+> > different error codes.
+> 
+> Here i copy /past error managing from other drivers [1][2].
+
+No, both of these examples has a '#' between '%' and 'x', which will
+make the number be prefixed with 0x - making the base clear to the
+reader.
+
+> Should I make it different and use 2 dev_err?
+> 
+
+What I mean is that here you're telling the user that there was an
+error, with one value of "ret". Then you continue below, will find ret
+with -EIO and then you will print another message saying that it failed
+and this time with -EIO.
+
+Why two prints?
+
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v6.12.1/source/drivers/firmware/arm_scmi/transports/optee.c#L244
+> 
+> [2]
+> https://elixir.bootlin.com/linux/v6.12.1/source/drivers/firmware/arm_scmi/transports/optee.c#L244
+> 
+> > 
+> >> +		ret = -EIO;
+> >> +	}
+> >> +
+> >> +out:
+> >> +	if (ret)
+> >> +		/* Unexpected state without solution to come back in a stable state */
+> >> +		dev_err(rproc_tee_ctx->dev, "Failed to release TEE remoteproc firmware: %d\n", ret);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(rproc_tee_release_fw);
+> >> +
+
+Regards,
+Bjorn
