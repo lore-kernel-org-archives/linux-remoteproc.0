@@ -1,31 +1,31 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59DA1A8402;
-	Mon, 17 Feb 2025 22:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A7F1ADC81;
+	Mon, 17 Feb 2025 22:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739829959; cv=none; b=P08gFfnyN5czKjPdu2q6tDuNVYNaDGL3mQkfiIgdL7B4/RMTprm54+j9XuBgk5T57EiXC3ddx2eUc2SfRaaRltUjy9xEgi+pXOI5FHJ/JQRWZN5pJyFmbPfndnvh117JXoD9WUnRUkfpbXwVxlmCfwrsOv7Nzp4N0zdK8s7v6Jg=
+	t=1739829961; cv=none; b=rbtXu80MF5qN+Oj9U2wCFR7lwKZy6UIozZXt4vFkWHlbLl+0CML8PoumbHAYcHLtnu5UifAzpmMEVnJCl1sKlLe6rk5I6lXHw7X96AR814V/raxnjKMPHKf3fNHDa077yaMi/myouehFKwzmZvvVNlIq3HqosRB6qDyRT1fm9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739829959; c=relaxed/simple;
-	bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
+	s=arc-20240116; t=1739829961; c=relaxed/simple;
+	bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aH31k70+/C61yOjePCqXUk+Qb682FJn8be0kLtQ7hZG/JXKwJ1g/AiaesEQVXN2hvq7ecr8eL1KggoZCKBT901IAV3+P+7mqwL1/CVOzShNPRcObuNPwRZMxxrwt4/2PMkttPYmGqXod2PSYsIVNivLLB/zusqEqqaMdfdVY+HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=OexV+Luz; arc=none smtp.client-ip=128.199.32.197
+	 In-Reply-To:To:Cc; b=htNvTJ0qshIbXVIdD4vLH7W94hWYQi3GNYi6TTzqXRmTV/SBv6zBhL5oZuWVfFlSaiG4KcNcoSomCIwaplI+bXH85jE7MGisTsQrkIH1TWhuHGeuwAMdbJ6V7F7aUZ3MuB9pklf0q5KTPqn4aHst8qq7NFXgR2pPnVaP/PGNXLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=TqXwgJue; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="OexV+Luz"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="TqXwgJue"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1739829949; bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
+	t=1739829949; bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=OexV+Luzlk7RruMPginpkJGSUBjN0fAtJUHZ6fbbsnF9nE5hYzZAiFE4wgnzqcSBe
-	 7tcURiJ+NCXoElOMMLBAccXgPJHt6fpf8iTHWsArZOd07f/AjoyjNMgv6rcu7JLX1X
-	 B1XPYY95umFzSjkJfjyTOoEtITj1IKKdo9N8kil4=
+	b=TqXwgJueOIHTrpX13hunlvBTPqF77xfSggqOk78A7FCCZnmWAmLA4mWXfeanXqSeq
+	 LiCFaeDIkfJtjbGIAzedG3+Lp1KezqhUDApTLIf6IRXgywPTAAI3EV8X1svZdqWs2a
+	 6Lm5C7ji1h+26pkeJBzI6+fiqRWdvRSkVIFVcRTs=
 From: Luca Weiss <luca@lucaweiss.eu>
-Date: Mon, 17 Feb 2025 23:05:18 +0100
-Subject: [PATCH v5 04/13] remoteproc: qcom_q6v5_mss: Handle platforms with
- one power domain
+Date: Mon, 17 Feb 2025 23:05:20 +0100
+Subject: [PATCH v5 06/13] remoteproc: qcom_q6v5_mss: Add modem support on
+ MSM8926
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -33,8 +33,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250217-msm8226-modem-v5-4-2bc74b80e0ae@lucaweiss.eu>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250217-msm8226-modem-v5-6-2bc74b80e0ae@lucaweiss.eu>
 References: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
 In-Reply-To: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
@@ -49,95 +49,106 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Luca Weiss <luca@lucaweiss.eu>, 
  Stephan Gerhold <stephan.gerhold@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2347; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=nD2pzDV8BppoM+IKRng7alJagSMAro8jZUFi3iMEfnc=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBns7KykC+cHZrMdhD5k2PvGPFLk6vqQrVEkG6Hk
- C9F4OCeq4qJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ7OysgAKCRBy2EO4nU3X
- VnuLEACVTQvPW5uzIMpYPU9paimi9NpV2t9a91hoSEbPTogvi17QmsrY7lGqgADT/hwo0O9v960
- /EynDgJl/bgE9PbiBSKlgYQsyERdEkc8T14TD6PG8iqBaeKDJl+VftQ9M6M0exuh86F2NHFWhW9
- 4z030dIsFHypV3iFPCiigc20NB0syUezD8sxNigs0ok4S4jtVvLbx0D0oVJIrBhUUdC44kYe8EZ
- vOqDMVdH0cE/sTOKomkP7ZLbE3eNDOPFhJ6cNkJpXuN6mkTCjqTOsbNJMU4O5GACZ689L6RoLs7
- ChHHq9aCk6ko3SEePzj+yqzX1GoLB/RkhZa2iqsf4FB9YSeb9ho5MtTMAYbpVzpyiZDBcHZUFHk
- EFwRLe79duz2W9z5vFHbKZhEUpSwFSpXAbqY4MPf8zrs+CC8MWV6WQbfbXt/Ahnf/aI8K5uUhae
- DXhs3M2tOvJ+udGxOOeJ6f2HCbIOAkAvpWDXa5p2ND88FKJRMe64/WeLlBZM35D4PZOoBRvEwFR
- Q+bXQDGVv6yHuslNjJ3vyqCodbkksbNFeyQFh+OKRkviVZvcfY81jj3nzwPsJoPZNtDd5fYlHrW
- W/x5V56k/OxxuEB5QiRykVi1FWCmmyJ1Zpaj2YjJeFX9F3vz0TbX58/nIm6fJFOo3E1R6tu2hIe
- 8JosycjAwk5w0Ng==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2428; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=WQpAU91b0ofgV9N95YLIs+rsidLddutzsiejwyRckP8=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBns7K07p0mjJmO0IXoqEbaFZBIXeyKJL7LY7/Ms
+ v13QOsDevWJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ7OytAAKCRBy2EO4nU3X
+ VsrvD/9ezZFVJJyExv4G5IwV7HwJHM0qEhaHL1G2K2r1YhfT2h+v/GAK3pXFdxK7SYTX6bLQkQ/
+ f/EdLbSyfVVJ29fGlg3YVHF2424gQDS20n5gGl5pzEAYhc3SLlpGHK56SHpN0tZfB4mpLYPGHyK
+ 26iNj+DiwTTFe/G3worU44nWxKgF/x3/Zs0J9/8xcaSKN9DUpP6Nc29oRzfDU9fKiy0mclEXcrn
+ Ue2URrS0UctgJzYL+2V/ryFfsOd9E4IUGiPScYI/dmG8ksY2lpPIF4wkTHb123AHMPxLtJ3teD5
+ GjimBXRNBuoSbfdFIH9uWgkmY5DR5i9RUzG79qV+cjuV3K5x8Wmy/07eIRDOOKRm85lcUppaScs
+ JadCPdIXy1J00NGcN5QI0VtO7IAObFfntu/K5k3KRNxNe8jSZN7wcpDFUwNbxmEA9YAoY0073cu
+ 0/dQtSnQqmPC5itwXSClo/79diA7UHfWKLaRpPloErwKekeKBGqd6wiMn+ZyAOeBuNHRRnZ7tgM
+ 4G0SUxYKtYXfGTF4swlqIpIH+BmRh0YfVT9S8OlNICdst6ZXNYbpN+HBFbi+a0ofBz6EGDUjXu/
+ OZzFp99zGrrq8FEjITirJLoPxFeZtgPt9oAc7xnipLKrD7Ar04ZCPD0sSX23T4bHFp1JndwrRmo
+ MsUn7HHvIMOeHng==
 X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-For example MSM8974 has mx voltage rail exposed as regulator and only cx
-voltage rail is exposed as power domain. This power domain (cx) is
-attached internally in power domain and cannot be attached in this driver.
+While MSM8926 being 'just' an LTE-capable variant of MSM8226 it appears
+the modem setup has changed significantly, by requiring mss-supply and
+not using the ext-bhs-reg.
 
-Fixes: 8750cf392394 ("remoteproc: qcom_q6v5_mss: Allow replacing regulators with power domains")
-Co-developed-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
-Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+Add a new compatible and new struct to support that.
+
 Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 48 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index e78bd986dc3f256effce4470222c0a5faeea86ec..2c80d7fe39f8e308eb12e79415a551b5009b3fe4 100644
+index 6f590f9128409b4aa427ab6bde1a9c4a966b3d15..0c0199fb0e68d6286f1e238d110539554d1d5f14 100644
 --- a/drivers/remoteproc/qcom_q6v5_mss.c
 +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1831,6 +1831,13 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- 	while (pd_names[num_pds])
- 		num_pds++;
+@@ -257,6 +257,7 @@ enum {
+ 	MSS_MSM8226,
+ 	MSS_MSM8909,
+ 	MSS_MSM8916,
++	MSS_MSM8926,
+ 	MSS_MSM8953,
+ 	MSS_MSM8974,
+ 	MSS_MSM8996,
+@@ -2622,11 +2623,58 @@ static const struct rproc_hexagon_res msm8226_mss = {
+ 	.version = MSS_MSM8226,
+ };
  
-+	/* Handle single power domain */
-+	if (num_pds == 1 && dev->pm_domain) {
-+		devs[0] = dev;
-+		pm_runtime_enable(dev);
-+		return 1;
-+	}
-+
- 	for (i = 0; i < num_pds; i++) {
- 		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
- 		if (IS_ERR_OR_NULL(devs[i])) {
-@@ -1851,8 +1858,15 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
- static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
- 			    size_t pd_count)
- {
-+	struct device *dev = qproc->dev;
- 	int i;
- 
-+	/* Handle single power domain */
-+	if (pd_count == 1 && dev->pm_domain) {
-+		pm_runtime_disable(dev);
-+		return;
-+	}
-+
- 	for (i = 0; i < pd_count; i++)
- 		dev_pm_domain_detach(pds[i], false);
- }
-@@ -2449,13 +2463,13 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 			.supply = "pll",
- 			.uA = 100000,
- 		},
--		{}
--	},
--	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "mx",
- 			.uV = 1050000,
- 		},
++static const struct rproc_hexagon_res msm8926_mss = {
++	.hexagon_mba_image = "mba.b00",
++	.proxy_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "pll",
++			.uA = 100000,
++		},
++		{
++			.supply = "mx",
++			.uV = 1050000,
++		},
 +		{}
 +	},
-+	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
- 		{
- 			.supply = "cx",
- 			.uA = 100000,
-@@ -2481,7 +2495,6 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 		NULL
- 	},
- 	.proxy_pd_names = (char*[]){
--		"mx",
- 		"cx",
- 		NULL
- 	},
++	.active_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "mss",
++			.uV = 1050000,
++			.uA = 100000,
++		},
++		{}
++	},
++	.proxy_clk_names = (char*[]){
++		"xo",
++		NULL
++	},
++	.active_clk_names = (char*[]){
++		"iface",
++		"bus",
++		"mem",
++		NULL
++	},
++	.proxy_pd_names = (char*[]){
++		"cx",
++		NULL
++	},
++	.need_mem_protection = false,
++	.has_alt_reset = false,
++	.has_mba_logs = false,
++	.has_spare_reg = false,
++	.has_qaccept_regs = false,
++	.has_ext_bhs_reg = false,
++	.has_ext_cntl_regs = false,
++	.has_vq6 = false,
++	.version = MSS_MSM8926,
++};
++
+ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
+ 	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
+ 	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
++	{ .compatible = "qcom,msm8926-mss-pil", .data = &msm8926_mss},
+ 	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
+ 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
 
 -- 
 2.48.1
