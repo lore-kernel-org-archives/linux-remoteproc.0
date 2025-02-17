@@ -1,31 +1,31 @@
 Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFADC1B0103;
-	Mon, 17 Feb 2025 22:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF7C1B0F34;
+	Mon, 17 Feb 2025 22:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739829963; cv=none; b=FiNYIhZBjj4mwzbJjJzkHEU3PxGfLrqm+Q6Afi3U+5krz1IEtXDnHZxbB0Rp2iOngHnWuCbnb/I5eMIos123eFAp+6aHIqaBrxdtGSxaPIxZsxeu6IEUOpSG1ZlbIC6fUl+faTk5qxsUAkf6TFP1OpvvuZG9v5nKqzmqne1JQ9w=
+	t=1739829963; cv=none; b=RqmpYNnRGF+aNe3jdB6zjoCQRoBmQjdXTlAcMwIzDBHrzd/YIM6sja36aOMXBRmxGqdEvzQ20NwY76jgEI9Z3BAZ39OWDWt54MCAswMe/ci5X5UKsiaIowDrkAHGElMQCLDPDsNir5m1FFF0E0inFX8taRsvfTqVyyAk8EFmXZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739829963; c=relaxed/simple;
-	bh=sGfPDtDxBQh/dYA1FcKq943zfL3D9IzXqjda20D20wc=;
+	bh=SS4BWu9ddGsvTH1RzieVss0jVfXjz9CbopGLiQCpdOU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dyu858bsIoxhd3g0uBpD7E/28NXYyKF3FComRJr/ZHDt3wy4O7uAjM/yOEAyyr9yXEs1mEuowIkU0l9/kEM0oYDHzsR6zYRXAkt+5VTu6Rk8FAlBVYsxl+S3RbcTqF3cxZPROTp1lwSSvbL+eJJosnChCtm6i+5KZ9I0/QTRhdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=SOy7HgH1; arc=none smtp.client-ip=128.199.32.197
+	 In-Reply-To:To:Cc; b=L8o0WCqjvY7Un/nbg9CSn0qdgSXbHYRiayXxyEwLSofF+dUeVJ7zsRUlEbiakIrEeqlhWiONpMyCriFqE/iSeRG+hIwYe6kofn4zMmW9q5fHkrdo5+r9f7bP00ykeYRKpUIQYXid/1xemFMOLoLkPXGBLtA/mhmJ6zqe1lBL1JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ClVkGORw; arc=none smtp.client-ip=128.199.32.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="SOy7HgH1"
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ClVkGORw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1739829950; bh=sGfPDtDxBQh/dYA1FcKq943zfL3D9IzXqjda20D20wc=;
+	t=1739829951; bh=SS4BWu9ddGsvTH1RzieVss0jVfXjz9CbopGLiQCpdOU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=SOy7HgH1ny0pgjIkHqbOAZXjBhMcSMJFsD9Dim7cTNPy5S/LPi8MrfUjXpbGgcQ3+
-	 RmmuiDxc0rps/wgQPtoiNb1SJ4Fp1YqrqE8hhVn3bur5xXJAJ4HL8VPDLWRvLvzq+S
-	 YL9YmRqj9uckwdH9+qnhrIix0p66jWVmynksJfcQ=
+	b=ClVkGORwEWoJkvhKoz45oNHDsSy5UpNU1a8ZgF7UTkQ5HpnjF5xV2i5gHC40x0v6R
+	 3Lwt+FrvRnvBZc3SL1BSo0mLYnoTKWTVlqqqbp0qhwDDnJV4MGl+iAh3SNRes43KoM
+	 1LV4EVzsFh5Vte3qaIlLsfEZJ7dKw0MqCPLQYQOE=
 From: Luca Weiss <luca@lucaweiss.eu>
-Date: Mon, 17 Feb 2025 23:05:24 +0100
-Subject: [PATCH v5 10/13] ARM: dts: qcom: msm8226: Add BAM DMUX Ethernet/IP
- device
+Date: Mon, 17 Feb 2025 23:05:27 +0100
+Subject: [PATCH v5 13/13] ARM: dts: qcom: msm8226-samsung-matisse-common:
+ Enable modem
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -33,8 +33,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-msm8226-modem-v5-10-2bc74b80e0ae@lucaweiss.eu>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250217-msm8226-modem-v5-13-2bc74b80e0ae@lucaweiss.eu>
 References: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
 In-Reply-To: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
 To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
@@ -49,75 +49,71 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Luca Weiss <luca@lucaweiss.eu>, 
  Stephan Gerhold <stephan.gerhold@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1652; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=sGfPDtDxBQh/dYA1FcKq943zfL3D9IzXqjda20D20wc=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBns7K453EuxkjQrjxiprXBt1FvJ+Q4boisvnI5m
- yIIpPj4HfeJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ7OyuAAKCRBy2EO4nU3X
- VnYeD/4wxu1xD93+8KLb2SqlX6odehREUQv3mQuBAv0jdLJABt+G5MZtllv1H3m9afQQ+Oo+ZmG
- wuWzkzcFlw1l6XBD/v5qK3PRqewTQUEUoEFzIXmHnAV+osx1qIVUj1Jmz859arITMOw7Aq/u7BF
- JXvMHtAcEWVIBrMZAuj0+yhBg8DoxH94jvp6zPFeUrp8q+Ibghys3dRDaC3MxJU/CK0ZbBzbjl3
- s8OW69bKHiz1EMjkTwEV7br+MnpelI4bGyFLHcSirmts2giLzNFoM7OU6wdelxmyF2JiJg3HhgW
- rkK2kZGzJOSq+DED3VzC4P9cjHLJQWDLn2EYtxkhpLCn+G2GQ+tVdbsYD5KgNzESwOnbDAQLp9H
- J6Gril1y0oEIFdxqv8qXWQea2El3DWRwS80zn+sQm5hRVEARJx60uvgeVKKJZ9R3mSXJPNpwDWU
- A/wyHmWGKh4//s6d5gPzKl9+C7PoDxzTckvRPtKc+XWLCH0+EJb+7VSsEZW91DLfBQEg/vReDIH
- eFU4bvMf4sKoI3ha3gBC0qwyXUje7i9NQK2NS2iHpK9iJaw8WSbWzYRpNDDm3XpajKbt/r7/x0w
- BXWXeLlUHbnShfsPPS43kcBFoOxsGhOfzgqG7SGJLDrrl2xZ8dr0+6aTMmTWcOavTLxfpC1hnPp
- SRxm7bu+JUUffYg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1724; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=W7bAKRt8yj2yIFDoK8M8DwUBnwPfc/tZ4V5bO84GQEk=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBns7K7LIAhgKul/TdrfYZ9rF6wKCXg+b/I7C1WP
+ GRIwYlBNlyJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZ7OyuwAKCRBy2EO4nU3X
+ VtGdD/9wZhOyZ9rqin2j9RUel1qYSGfVJoksozm9qVZfWKaAaD7ZPNajnbtu7G2e6k0GqkEXJra
+ 8OTTchrK56xrWlLUXonpMIx4WYBCfsRGWfGz0mBQGns6ZDz7wt+B6XN1/Dj2+Gq2mWiTV5bryZ2
+ pNCMEgxK49Wg1e91+N2CcTWi417ooi0iCvE2Ja08P3u1X6x9GtYTvL7vOZQTiRyxOb/HGienK1J
+ R1L1vUblNN7ACA9c622zpbjBGXJHBI7KLizuyePTZ9JB5R+CqUhgYrn7a7EoQkmMnov+ef+OOXb
+ UsRthJJvyvRwMiCg+KQCc+qj/SK+GowteJQQj1xt3Ue40f09Rwsp0QfW+wunKZoQo76jVOKgPXc
+ v0S5ht7d6RafWcBZvm4ND+VeU1sZbRhy4uw0NvEpuc4pdlYQ6S1Y+L/HRIVYqLePvx1YAErqz7u
+ pJq7uldLt5on7ydlUxjfkGn4P+9LJhPX0rDv6ueMamISWhfMpuxXussjWTsEYQJR4EGMyTpv1Cm
+ oz8JehNasLUIUdiG31biObEDwg2KhnX2I3vDBQsQYAzESn1IXW9RleW44DSVTUNflu10tVIPqxv
+ VRHqkknRDzbJDeD3IkgSXhuXpq4lhqITbnP7ye/cutjZzweKEDoCVkrX4LFbB3IcQV1fMXbtnmD
+ ID3/idDqhhRDIzg==
 X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-BAM DMUX is used as the network interface to the modem.
+From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
 
+Enable modem remoteproc on samsung,matisse-wifi & matisselte.
+
+The mattisselte - being msm8926 - requires an extra mss-supply, so add
+that as well.
+
+Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
 Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi | 7 +++++++
+ arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts      | 4 ++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-index 662911f4cf163c3a5bdd1a4d5d79713074accc20..32defb08b9094956a04f490015383c263901a907 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-@@ -916,6 +916,18 @@ spmi_bus: spmi@fc4cf000 {
- 			#interrupt-cells = <4>;
- 		};
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi
+index 0a3147656f36ca2616e0e3cc7c1dd808b55f3a88..f1544a7e8369c329360e235c48291a5d4c261fdc 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8226-samsung-matisse-common.dtsi
+@@ -229,6 +229,13 @@ &blsp1_uart3 {
+ 	status = "okay";
+ };
  
-+		bam_dmux_dma: dma-controller@fc834000 {
-+			compatible = "qcom,bam-v1.4.0";
-+			reg = <0xfc834000 0x7000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
++&modem {
++	mx-supply = <&pm8226_l3>;
++	pll-supply = <&pm8226_l8>;
 +
-+			num-channels = <6>;
-+			qcom,num-ees = <1>;
-+			qcom,powered-remotely;
-+		};
++	status = "okay";
++};
 +
- 		modem: remoteproc@fc880000 {
- 			compatible = "qcom,msm8226-mss-pil";
- 			reg = <0xfc880000 0x4040>,
-@@ -959,6 +971,20 @@ modem: remoteproc@fc880000 {
+ &rpm_requests {
+ 	regulators {
+ 		compatible = "qcom,rpm-pm8226-regulators";
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts b/arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts
+index 772827cad972ad4ff032cfb9310568c5d2f0170f..73e19176eb97af569d99580c6b28fb2e0ec7f1b3 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts
++++ b/arch/arm/boot/dts/qcom/qcom-msm8926-samsung-matisselte.dts
+@@ -28,6 +28,10 @@ reg_tsp_3p3v: regulator-tsp-3p3v {
+ 	};
+ };
  
- 			status = "disabled";
- 
-+			bam_dmux: bam-dmux {
-+				compatible = "qcom,bam-dmux";
++&modem {
++	mss-supply = <&pm8226_s5>;
++};
 +
-+				interrupt-parent = <&modem_smsm>;
-+				interrupts = <1 IRQ_TYPE_EDGE_BOTH>, <11 IRQ_TYPE_EDGE_BOTH>;
-+				interrupt-names = "pc", "pc-ack";
-+
-+				qcom,smem-states = <&apps_smsm 1>, <&apps_smsm 11>;
-+				qcom,smem-state-names = "pc", "pc-ack";
-+
-+				dmas = <&bam_dmux_dma 4>, <&bam_dmux_dma 5>;
-+				dma-names = "tx", "rx";
-+			};
-+
- 			smd-edge {
- 				interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
- 
+ &tlmm {
+ 	tsp_en1_default_state: tsp-en1-default-state {
+ 		pins = "gpio32";
 
 -- 
 2.48.1
