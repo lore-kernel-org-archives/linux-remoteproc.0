@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083A22CBF1
-	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Feb 2025 09:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE19A1FF7C0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Feb 2025 09:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739871089; cv=none; b=VfNeP8bxz3jHHul8AYxtq35y+JgZlMyI3eFDaFx0Igro+q5riQ/ADWms+AxdO5YU0wPuOjsv6RUYBdUU8t+hy7G2CrEf4UMHubt7fi9uKPz6zffT5morop6pVVntTjnCfJpZbYHWHFCsPenGz+L+C1CsmfWQyaOYerQhvO4OvB0=
+	t=1739871362; cv=none; b=FUoAyT4h+bZCaEdRTFVb/qajK8fRdQ+qKVYMJ8j/H8a5Nw0cq2+UBO4oSc1pLNBgGGLHgx5eGPrprbetexgzxSiwmLqpH1EOZtGdPbssb/al6h4D4kj24qHgh4rl3iD7/F6wcHNk1fHQ1/QTSVUpC4dyiD1VurmSwaFm6Dggego=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739871089; c=relaxed/simple;
-	bh=2c32N+oKvlS1GlBHzku3NDRUiFaZZFKMS1VaZ7MOy8Y=;
+	s=arc-20240116; t=1739871362; c=relaxed/simple;
+	bh=uroR9tsECRwwrTrCr7ptIn53F42JTiUwXr1bXKvg5jE=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XtdBkT0rTlAfrNd2j+SvHElTQEuAE/ylbphGXVGS8uJbHU6kQQVNk/FDleDgPNlNZW1RLYDku3JA+jtDn1/AbsFwTpFDg5xaMcUKscz3Om0dLod05m6bacjrtDFUwuakogktX2CWXC5og/w5eOBHku904uR9Bnvsu295SyXcFgM=
+	 Content-Type:MIME-Version; b=OZP5zR0HskDA6QM+oQbftBzqm2dLEZyh0uT+gZADhUZOjzRicTwdtJJjCncRGXyT1Rt99E1jAtpVS+9iV83aSQaSxogzeej2eLPm7MFrB/UMztkpHNPiaFdfGpne0+hzsa2jdCyDt38/9DoPC5A80EKG8tzqnsVvbcNkTCmnhvM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,20 +18,20 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkJwo-0002Ll-Ee; Tue, 18 Feb 2025 10:31:22 +0100
+	id 1tkK1C-000388-9r; Tue, 18 Feb 2025 10:35:54 +0100
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkJwo-001YwO-0V;
-	Tue, 18 Feb 2025 10:31:22 +0100
+	id 1tkK1C-001Z42-07;
+	Tue, 18 Feb 2025 10:35:54 +0100
 Received: from pza by lupine with local (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tkJwo-0003RV-0F;
-	Tue, 18 Feb 2025 10:31:22 +0100
-Message-ID: <f8201731e9c5f590e0f60751a6bb31083b77a372.camel@pengutronix.de>
-Subject: Re: [PATCH 4/5] reset: imx8mp-audiomix: Add support for DSP
- run/stall
+	id 1tkK1B-0003co-37;
+	Tue, 18 Feb 2025 10:35:53 +0100
+Message-ID: <50c7055a676fb7f1bf27cb33a914df641c56dd15.camel@pengutronix.de>
+Subject: Re: [PATCH 5/5] imx_dsp_rproc: Use reset controller API to control
+ the DSP
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org, 
 	mathieu.poirier@linaro.org
@@ -41,10 +41,10 @@ Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
 	linux-remoteproc@vger.kernel.org, iuliana.prodan@nxp.com, 
 	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, Frank.Li@nxp.com, 
 	krzk@kernel.org
-Date: Tue, 18 Feb 2025 10:31:21 +0100
-In-Reply-To: <20250218085712.66690-5-daniel.baluta@nxp.com>
+Date: Tue, 18 Feb 2025 10:35:53 +0100
+In-Reply-To: <20250218085712.66690-6-daniel.baluta@nxp.com>
 References: <20250218085712.66690-1-daniel.baluta@nxp.com>
-	 <20250218085712.66690-5-daniel.baluta@nxp.com>
+	 <20250218085712.66690-6-daniel.baluta@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -60,59 +60,95 @@ X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expand
 X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
 
 On Di, 2025-02-18 at 10:57 +0200, Daniel Baluta wrote:
-> We can Run/Stall the DSP via audio block control bits found in audiomix.
-> Implement this functionality using the reset controller and use assert
-> for Stall and deassert for Run.
+> Use the reset controller API to control the DSP on i.MX8MP. This way
+> we can have a better control of the resources and avoid using a syscon
+> to access the audiomix bits.
 >=20
 > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 > ---
->  drivers/reset/reset-imx8mp-audiomix.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+>  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
+>  drivers/remoteproc/imx_rproc.h     |  2 ++
+>  2 files changed, 19 insertions(+), 8 deletions(-)
 >=20
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-=
-imx8mp-audiomix.c
-> index 8cc0a6b58cbc..ee56d52a7278 100644
-> --- a/drivers/reset/reset-imx8mp-audiomix.c
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -15,10 +15,14 @@
->  #define IMX8MP_AUDIOMIX_EARC_RESET_MASK		0x1
->  #define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	0x2
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_=
+dsp_rproc.c
+> index ea5024919c2f..2b97e4d0bb9e 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
 > =20
-> +#define IMX8MP_AUDIOMIX_DSP_OFFSET		0x108
-> +#define IMX8MP_AUDIOMIX_DSP_RUNSTALL_MASK	0x20
-> +
->  #define IMX8MP_AUDIOMIX_EARC		0
->  #define IMX8MP_AUDIOMIX_EARC_PHY	1
-> +#define IMX8MP_AUDIOMIX_DSP		2
+>  #include "imx_rproc.h"
+> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
+>   */
+>  struct imx_dsp_rproc {
+>  	struct regmap				*regmap;
+> +	struct reset_control			*reset;
+>  	struct rproc				*rproc;
+>  	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
+>  	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
+> @@ -192,9 +194,7 @@ static int imx8mp_dsp_reset(struct imx_dsp_rproc *pri=
+v)
+>  	/* Keep reset asserted for 10 cycles */
+>  	usleep_range(1, 2);
 > =20
-> -#define IMX8MP_AUDIOMIX_RESET_NUM	2
-> +#define IMX8MP_AUDIOMIX_RESET_NUM	3
-
-See patch 2, this could be removed.
-
+> -	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL);
+> +	reset_control_assert(priv->reset);
 > =20
->  struct imx8mp_reset_map {
->  	unsigned int offset;
-> @@ -37,7 +41,11 @@ static const struct imx8mp_reset_map reset_map[IMX8MP_=
-AUDIOMIX_RESET_NUM] =3D {
->  		.mask	=3D IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK,
->  		.active_low =3D true,
->  	},
-> -
-
-This belongs in patch 2.
-
-> +	[IMX8MP_AUDIOMIX_DSP] =3D {
-> +		.offset	=3D IMX8MP_AUDIOMIX_DSP_OFFSET,
-> +		.mask	=3D IMX8MP_AUDIOMIX_DSP_RUNSTALL_MASK,
-> +		.active_low =3D false,
-> +	},
+>  	/* Take the DSP out of reset and keep stalled for FW loading */
+>  	pwrctl =3D readl(dap + IMX8M_DAP_PWRCTL);
+> @@ -231,13 +231,9 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *p=
+riv)
+> =20
+>  /* Specific configuration for i.MX8MP */
+>  static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp =3D {
+> -	.src_reg	=3D IMX8M_AudioDSP_REG2,
+> -	.src_mask	=3D IMX8M_AudioDSP_REG2_RUNSTALL,
+> -	.src_start	=3D 0,
+> -	.src_stop	=3D IMX8M_AudioDSP_REG2_RUNSTALL,
+>  	.att		=3D imx_dsp_rproc_att_imx8mp,
+>  	.att_size	=3D ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
+> -	.method		=3D IMX_RPROC_MMIO,
+> +	.method		=3D IMX_RPROC_RESET_CONTROLLER,
 >  };
 > =20
->  struct imx8mp_audiomix_reset {
+>  static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp =3D {
+> @@ -329,6 +325,9 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  					  true,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret =3D reset_control_deassert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -369,6 +368,9 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  					  false,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret =3D reset_control_assert(priv->reset);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -995,6 +997,13 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_=
+rproc *priv)
+> =20
+>  		priv->regmap =3D regmap;
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		priv->reset =3D devm_reset_control_get_optional_exclusive(dev, NULL);
 
-Otherwise,
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Is this optional on purpose? There is no mention of it in the commit
+message. Where is this resets property documented in the dt-bindings?
 
 regards
 Philipp
