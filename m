@@ -1,52 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CB921B9C5;
-	Tue, 18 Feb 2025 19:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC2B2862A2;
+	Tue, 18 Feb 2025 21:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907997; cv=none; b=ZWmOBS7XJNYhAv8i1cVq4v4N8AYnDkIOWqTZiucGTgAsK2CKU8AlRSD+ilTgSTDfEUKY1FpFxooraGKCglOWOoIxLUPQia2yS0ivZmjZOf/NMO8WU7sHPFWtD76iC/zp+aNba+NEF7VEpXG3PZWRfNRmD4lduf+yxhEyBQCFn08=
+	t=1739913122; cv=none; b=WSA3USMjqgtwUGs1Mn638rwTyuKR8gezZyJ+c9Djw5ibDOCvoxYl0qRJzh7eimJCU+hIILMFe9ivSCT5G4vhEFC2f6q/30hAVyLyeU8+skWwrnwAd2pLLWKYb+VNRQFqMaEJBLCie6I39UeY8Tw6U2XWkyA6AT30TL5VVfyt+8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907997; c=relaxed/simple;
-	bh=jROiT39l6CvRlCWMONJGxr/KbtZsIn1idD5gSA66mQg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=asgdTXfOpUN1saTeLTJucSgbEfYCsKzSw6Wl2NrzbWfoezm63RzD175qhvyNJbbVeZUtho/jjyHyOeSufGydWIqwXJdULyhSqw6NdaHx1qW5WVpPhdEoac3gwn3WvK6tDHHXKafD+JM0cWcEr2nzhrgb/ecRJz1k6B+jwRQWeN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmEcx+TV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739913122; c=relaxed/simple;
+	bh=OTxnb6SXacyVo1Q7SBxbvVscuy14TZzGqRxzd1B2ZyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ujc/sSUMdozaFKjQKygNeR9Ak0n+HPkj+X3IG5BkIZJm+txpqM1M0YouKikTAfAnsdyRBOb3yjCl4hV66W+WSmHS7kok2ITUXzuLYkRy9+jdwBQvsI7oPrXKGuE4mpQKzQEHCv4T+ylQ0OEsJ91IWXbCOl9hAdveyQp7GqUSkUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIk1IVgR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmEcx+TV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09D1C4CEE2;
-	Tue, 18 Feb 2025 19:46:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIk1IVgR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5BAC4CEE2;
+	Tue, 18 Feb 2025 21:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739907996;
-	bh=jROiT39l6CvRlCWMONJGxr/KbtZsIn1idD5gSA66mQg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=YmEcx+TVBADM2L0qianN/xIkdVBrmZ+I2+UMLPHJnjmxrfJ8F/DK4z1WJ8Vk6N4bg
-	 Vr26TL/GJLRUCltXI/GM3A1c2rBWeL0aSuPh8geJlQI0lnUNlxoaTuvh20Bfqc93+8
-	 blMti+iEIX19AyOwaFLTlJanEONvl/HKJFGW82qgkR+1AZhqQhOIS0xHpHjFx5e9nI
-	 hCq5zS0ef/Rc8YPRl6pLPNfA8acb+St3Yx2S8Wdfs3/O3S6sM+CAcwPt7ojXtKvY5i
-	 NvdLaJu/QiK1FYz63dzarkv3eAhJWnNhyLb8pJ7/UOgjrBz+HpaaqN19/7T6nM1+3m
-	 wyRvoJoGTx8Qg==
-Date: Tue, 18 Feb 2025 13:46:35 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1739913122;
+	bh=OTxnb6SXacyVo1Q7SBxbvVscuy14TZzGqRxzd1B2ZyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dIk1IVgR4ivS4+m2fiDyB3CHu0Xy5vOwJUmA1Vwr1pWNGaw8EzgUmcx+jYwiLnY72
+	 gf9IKiefw6/EJulqEe1FUS1uVGyrq2OeA8ogCCUGdDIRDqybeP0Edh9gTjYdh+Cmyt
+	 q7++61gHWKamEvNPd0jgtgTiwQNQ+dsD/GVU9+82/4e+Xajg/V4xbqBAyUemY6dA2q
+	 zGt4SpwF59jdpCUP2yj5yhKkzEfBcqHNqhtTZTO5IrdMUR7IxqqyPJrSsuyX4E2fLo
+	 /gRbMTMlm38mqWB0Kc6/HuMoHTZG08ZovOOVKX8BhtLM3+pFE1GqfSI7LFTsqIeCRO
+	 Bd3KXm8iPXQVQ==
+Date: Tue, 18 Feb 2025 15:12:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: devicetree@vger.kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, baolin.wang@linux.alibaba.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: hwlock: Convert to dtschema
+Message-ID: <20250218211200.GA991534-robh@kernel.org>
+References: <20250218161352.269237-1-simeddon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, andersson@kernel.org, conor+dt@kernel.org, 
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com
-To: Siddharth Menon <simeddon@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20250218161352.269237-1-simeddon@gmail.com>
-References: <20250218161352.269237-1-simeddon@gmail.com>
-Message-Id: <173990799563.417538.15695941594741028497.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: hwlock: Convert to dtschema
 
-
-On Tue, 18 Feb 2025 21:39:35 +0530, Siddharth Menon wrote:
+On Tue, Feb 18, 2025 at 09:39:35PM +0530, Siddharth Menon wrote:
 > From: BiscuitBobby <simeddon@gmail.com>
 > 
 > Convert the generic hwspinlock bindings to DT schema.
@@ -58,31 +57,12 @@ On Tue, 18 Feb 2025 21:39:35 +0530, Siddharth Menon wrote:
 >  2 files changed, 65 insertions(+), 59 deletions(-)
 >  delete mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.txt
 >  create mode 100644 Documentation/devicetree/bindings/hwlock/hwlock.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The consumer side lives in dtschema already. Please add the provider 
+side there too. Patches to devicetree-spec@vger.kernel.org or GH PR are 
+fine.
 
-yamllint warnings/errors:
+For the descriptions, you'll need to relicense the text in hwlock.txt to 
+dual GPL/BSD. You will need TI's permission for that.
 
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/hwlock/hwlock.txt
-Documentation/devicetree/bindings/hwlock/ti,omap-hwspinlock.yaml: Documentation/devicetree/bindings/hwlock/hwlock.txt
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250218161352.269237-1-simeddon@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Rob
