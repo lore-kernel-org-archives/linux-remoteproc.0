@@ -1,58 +1,58 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520943A1DB;
-	Tue, 25 Feb 2025 13:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DE25EF8A;
+	Tue, 25 Feb 2025 13:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490414; cv=none; b=GFJ6ipogC3rim5ohfPJCFlp3LUb6/bL8dLU4DnWdBND/GH0dKD/frrb0b5D88vgCFPPrLc0EgRmSsaywyZ9k2bNjv/j9+8HSyg51B1+qLYDtYj9posEo2LaYbIqAm7zALAGR1cWlL2t7sG2NEoW6YRxYw5HmqMc9sfGcQVgudhs=
+	t=1740490824; cv=none; b=OpUnYkcCwYfeiMST7mr0AAwwFKaNKvaF0M+qVHxYJaEWk9d0r041ueGDELbaznRj3U1JYMgKl2wSh9PBaYV1u/MpngLa7goBs1g08lG+ntsa8txhrTsw27K7w8ayxE5wV3TxaBslb4bB89k8r0BOuTbFKebs1YIIy7CCjrQk9do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490414; c=relaxed/simple;
-	bh=53fpyJmRj6Rqqv2hcXrWuNnqYKt92WXS893aUdbh8v4=;
+	s=arc-20240116; t=1740490824; c=relaxed/simple;
+	bh=ZHfwPlIcEqwwyokGZO5UWjLSpzt2Pib8HNJGFAPJi3w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCLBzlc/VynZ1D5qoLODgQ9w7KlQenzZ3GCtkOpkEcWX7RN5hsJ/2KaOua969FPCsSy+AEik1hCvkEZlOr5wCXtKpvnYQ509THP4o5VDb3jQ3/vAvCqWRrGa/1BTTk0QddoVE+oyPfc9tOJGpNHusAUDufK7an1cOrHm8d02Du0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCXVaAsm; arc=none smtp.client-ip=209.85.216.48
+	 To:Cc:Content-Type; b=PJl6hefw3ufbAB7oj5end05MdhcTy0dQENBNUUIZQen9eyOSbKbWCoh5BlIPFzSwe09hxtsdNQEUG6jSjmNrsEhteB4Ea+R+Zg0feAEiRWoZkxIY636gKzfRQkla/C/BQVdBElnmAy/p9WXrVgJbmT7Q7ae7DsJSAcVFiJG2cv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gr2KeRKs; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCXVaAsm"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc291f7ddbso9036613a91.1;
-        Tue, 25 Feb 2025 05:33:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gr2KeRKs"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c92c857aso94659335ad.0;
+        Tue, 25 Feb 2025 05:40:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740490412; x=1741095212; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740490822; x=1741095622; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
-        b=VCXVaAsmFGVzcQfhS5SdnMYy/8K48x7L5EiytKOm3Sy2ZKd8HDE0vxdOajE4deyzYp
-         n6c40w2DbJOj9ZNRQK7uhUy6T9ZbVTNcYNpt5bIwSIft1t9MLBPJ+AIhAFMIgqRStphh
-         7XRQ5PZ4UwC4inkoc7X2puU2OeOzvB3tfgePklGgVRTeOselrEYvcmTinEuquZaq/IN+
-         SwL1rrIbcaIckonB8rjttWDyUi8uYrtsDDS1w/zDRzo2Bu3Gi1UhwHGnbK5Q9yIoQblq
-         lI5oVb9bktwH4B1A5y2zgkndojvblC+UmkvOY78mbXnvCZtnVbrzPEeoS4kUNNfmbvAR
-         K9Xg==
+        bh=btIzpaiXBm39xMpzgFyr6PPx6n79OgifTZ30SVyZSrU=;
+        b=gr2KeRKspfEAm9ZC9v0SaxGrUAibKYMYD4TdjYbIBtZ4h0oIBT3qLvKvbFd+FgY9KQ
+         yaex0aNCSYKV2KE1NHTf/ITW5by8g0ggTY6GbBb3/V2AL6O5+v3TW04TcwRWAb8IAPzN
+         fE9toXEsl6lXarLtpe2slrerEh/OXt9+MK/sIQeFpt+nqEAabmrJDSEvVofEOUVrLwTQ
+         dHfMKqDh1inD+t/l1iUEH95XW+tUgEFKy9t55V2wUgJbzeewvVvHUroFY+GucgzhgxbA
+         Ny/xuiY1oF4cyOH58wPIEXE3xF0GeE+ksKCkwWaoyDM/+kP6RrSx2BNvaGiuqd6l45/C
+         rzBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490412; x=1741095212;
+        d=1e100.net; s=20230601; t=1740490822; x=1741095622;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fyOopy8tN2qVORYzVG5T+W7YiTWMkF64OU8YybIupHw=;
-        b=WNGV0l/hZsTm23Nsw4oe0wnWePUWIUUtJWGq1SHUeUEY5ZW3LAFRhjlhPoTQBHIra/
-         ubvu6GV6CBslOPpz56QfiSiRtbBvi6vsYwXnZz0IxcvDymrLqmiG2F2kEavncEjyXdle
-         ePP+uX3C4w8EA15TEnxHWxJ/7QKdbpMQG09KilB5X4xsEEqHIgoWlA4xRmq4O8LNWaBM
-         BrSoiyjmBM1eyZ1ZbGxBK/hwSxnPiZs86MT72ohWrNOFtG6uHXbwATOtvmxKrBSRTefs
-         lTLWoFRjNc17gcSOzR7hnoyPU+u/oZ64iyM8sW9vAdDDrI+JaIufCiQX9V4yHdMKq3/P
-         6puA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZr7d8wz09y6P6CQ0J1pn0kyh7B8VGX554rd+SEqlJyVZoJTCigo4gFIrgk0USKL5W8tkWIFIxI1rOcG5t@vger.kernel.org, AJvYcCX/+UZpg42nOUmCUakdG03b6R2AaBnUZ3QzO7OEmHsEWaxhJXVeJDX2TWttu75vsuis8zKvwuKqowd4yYq9oG7/Lg==@vger.kernel.org, AJvYcCXuT/SShmhNhA4KWTNScleHwW37cpYe2zHh7xiNF2MfBSY8VFDNd/ZnmPX2p22IVI6F9O84gvEzYPbh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDdzMWMaOnZjVXoLD8Sb09Ab8RFXpJdXKyU4pisB6XE2T+jeKy
-	X5pSH/H+sxRiNvReBduyxaYgDYjqozfES6SjahqjPgZHRU6nl4NdBWnttOLEV/Vbl0S//4G6dtE
-	arm+YpK4uH600FpT6aEjVBq0PldA=
-X-Gm-Gg: ASbGncu4eAGavPJMp1NFo51jcx0yBJJYw4K18p8yWG6bvRu+Qc6aUiS4H5awc3PQZXz
-	/5byk0TXBlE6gdp3Sq8BZJfWuax/DSNhnxJY0m8rGWFkVNHx6jbHLiL8tfd9uZcBSQo0/tGdkd7
-	6Gp2mh
-X-Google-Smtp-Source: AGHT+IFumrADYMZTbshcR/jQQQzsoDviUuD373A59nqtY8JJ4DVQv9+RznKhnhkMPzfDVQnWCYD8iJq2w2f2vqoh2zk=
-X-Received: by 2002:a17:90b:544f:b0:2f9:cf97:56ac with SMTP id
- 98e67ed59e1d1-2fe68a2e72dmr6336504a91.0.1740490412464; Tue, 25 Feb 2025
- 05:33:32 -0800 (PST)
+        bh=btIzpaiXBm39xMpzgFyr6PPx6n79OgifTZ30SVyZSrU=;
+        b=Wp/RnX44uH4Er75gPQnVBIoI8fYuFhDCA2XIHg3nULbTcNPPPpt29TucIILL1jo3oS
+         d8FAQ5Z6UyyW0KGGzoL+FYQKWd3vFG0ZDS0tvNHkFzkYWtQO3hK7avmFb5F8SYT7OLvs
+         emexeJ9ETiHBvNgGLOFtpx15BX4SSrZfhJrSOMIAKCCEd4TNsusK5838wh62PqH/Ew0c
+         7oslPzueX6hONtwXHxzC+pOL6vhVA1OW9WnZBrxk6WEIr/kv/NnDvCV40na2OS1b3T0q
+         LhyXKbyITnEl9Xr3SsEaTeSDnDj53J/82LCXcUgqpn23fhAcrcgyZSIkvEbf911he3/h
+         YB5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUktf77P8IIR+4TS6RhriIwCIMWHTDZ7aJFFtn1WWfWZtG/Q8yGnrofC+WtUIfuR6nprGYGrTSHn+G7@vger.kernel.org, AJvYcCWVoZAQtZHENVVmTRE+oJWhuGPOiiXpHEhNA4EFVUcaE/47d5SIjW3dRYt1mdynrtNSjhFIc4RsIKB/qp4sq3akNA==@vger.kernel.org, AJvYcCWtxSFP6dc+9pjWLrqjLrGFWRgRHz6Y+hJQKNX3lID8Hm0c8RPID4++wBFuL2DzdW7h7GXMQz4mcR7ySobP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTUs9mBqXjn40R+9bCvJGrzlGvPqDIB6aYqr/zOMxzTykMDChD
+	pVbVxSJUu4aFU4geztwQ9mEHU+oHdyi1o/QJ/UBtY3YxO9Q2UCc4PtOA4WGOD3EkdIgpa1er5Qa
+	5ca6egYwiotsIzYo2VO1wJbBxLhU=
+X-Gm-Gg: ASbGnct/KsFrMkHe9Vr+9Le0b/8MZ3oT4WQYQUq63ONic2eWCrnD4017fdUHDC00ufZ
+	zr4CXhc7EWW2TsDNeyKmeENfWjH1VAPobFY55F1fzrZ2wpyMuCXlQ4fXzDkrWO3I3msyDdf0NKs
+	kB/hPx
+X-Google-Smtp-Source: AGHT+IEqvx+vLUoWU+bH7g7MTRR7upTwyq8plc/LIRpW15G1pS1TD1Y8exEPj6fQZzzsjKBHvHSHg/l/PmukuoidDeo=
+X-Received: by 2002:a17:902:d4cf:b0:21f:6546:9adc with SMTP id
+ d9443c01a7336-2218c3f4333mr351935475ad.13.1740490822321; Tue, 25 Feb 2025
+ 05:40:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -60,14 +60,13 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250225102005.408773-1-daniel.baluta@nxp.com>
- <20250225102005.408773-2-daniel.baluta@nxp.com> <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
-In-Reply-To: <f4466c280bfef24be5d998299df450aa02ff2973.camel@pengutronix.de>
+ <20250225102005.408773-3-daniel.baluta@nxp.com> <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
+In-Reply-To: <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 25 Feb 2025 15:35:08 +0200
-X-Gm-Features: AWEUYZkXV-v2aTP1kBRTGqqig6c6PuH1hUgPphPti5oZf8llKAM919qLE-PCQwU
-Message-ID: <CAEnQRZDrC4KEmOBM+LupCRSvNRxpBO0qnPaqG7HBRNeNOzO9sQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: reset: audiomix: Add reset ids for
- EARC and DSP
+Date: Tue, 25 Feb 2025 15:41:58 +0200
+X-Gm-Features: AWEUYZkKeH8Ee9X0dKf1ks0eIJRo2-c4LR6sVRs9-5VD4M6vPScOpUqA3j5lyUI
+Message-ID: <CAEnQRZBL+r2-CRDszK54SD_8E9=1QRKRj3_YDHsM7YetKMcs_w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
 To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org, krzk+dt@kernel.org, 
 	shawnguo@kernel.org, mathieu.poirier@linaro.org, conor+dt@kernel.org, 
@@ -79,44 +78,49 @@ Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 3:18=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
+Hello Philipp,
+
+Thanks for your comments!
+
+> The DAP core reset is mentioned in the commit message. Why is it
+> missing here? After reading the discussion in [1], I'd expect both the
+> stall and the (core) reset signal to be documented, something like:
+
+There is no reset controller driver for DAP area yet. We manipulate
+the bits directly by
+remapping the DAP address space inside remoteproc driver.
+
+See for example: drivers/remoteproc/imx_dsp_rproc.c
+
+/* Reset function for DSP on i.MX8MP */
+static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
+{
+=C2=BB       void __iomem *dap =3D ioremap_wc(IMX8M_DAP_DEBUG,
+IMX8M_DAP_DEBUG_SIZE);
+=C2=BB       int pwrctl;
+
+=C2=BB       /* Put DSP into reset and stall */
+=C2=BB       pwrctl =3D readl(dap + IMX8M_DAP_PWRCTL);
+=C2=BB       pwrctl |=3D IMX8M_PWRCTL_CORERESET;
+=C2=BB       writel(pwrctl, dap + IMX8M_DAP_PWRCTL);
+
+
+If we agree that this is the right way to go, the next step would be
+to create a new reset
+controller driver for DAP area.
+
+I want to keep this as a follow up patch in order to not compilate
+this patch series even more.
+
+<snip>
+
+> >        memory-region =3D <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
+> >                        <&dsp_vdev0vring1>, <&dsp_reserved>;
+> > -      fsl,dsp-ctrl =3D <&audio_blk_ctrl>;
 >
-> On Di, 2025-02-25 at 12:19 +0200, Daniel Baluta wrote:
-> > Add reset ids used for EARC and DSP on i.MX8MP platform.
-> >
-> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  include/dt-bindings/reset/imx8mp-reset-audiomix.h | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >  create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
-> >
-> > diff --git a/include/dt-bindings/reset/imx8mp-reset-audiomix.h b/includ=
-e/dt-bindings/reset/imx8mp-reset-audiomix.h
-> > new file mode 100644
-> > index 000000000000..3349bf311764
-> > --- /dev/null
-> > +++ b/include/dt-bindings/reset/imx8mp-reset-audiomix.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
-> > +/*
-> > + * Copyright 2025 NXP
-> > + */
-> > +
-> > +#ifndef DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
-> > +#define DT_BINDING_RESET_IMX8MP_AUDIOMIX_H
-> > +
-> > +#define IMX8MP_AUDIOMIX_EARC         0
-> > +#define IMX8MP_AUDIOMIX_EARC_PHY     1
-> > +#define IMX8MP_AUDIOMIX_DSP          2
->
-> How about calling these IMX8MP_AUDIOMIX_EARC_RESET,
-> IMX8MP_AUDIOMIX_EARC_PHY_RESET, and IMX8MP_AUDIOMIX_DSP_STALL instead?
+> Is there nothing else in this range that will have to be controlled by
+> the DSP driver in the future, such as the IMPWIRE register or the
+> XOCDMODE[OCDHALTONRESET] bit?
 
-That's fine with me, makes more sense.
-
-Will make the change in v4. Will wait for a while for more comments.
-
-Thanks Philipp!
+We are internally running SOF for couple of years now and we didn't
+need any of these bits.
