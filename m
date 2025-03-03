@@ -1,110 +1,133 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD528EA
-	for <linux-remoteproc@vger.kernel.org>; Sat,  1 Mar 2025 08:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58201F03D7;
+	Mon,  3 Mar 2025 09:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740818944; cv=none; b=cuJP6UUwc5bC30xsOZqBr07HdyZlgrMNJWyHybLKqNy01t0RHRCaP0aJax55zdhuqvVw1+5PElsNPnWGfqTbFaCvc16MPJ9uNR0D9eelJqgPEdA+ltaBW0jGdN/Ph2ncA2LGR3FIBeKojTv03rslxfGJI848ujHttXC1g77SpoA=
+	t=1740992944; cv=none; b=lx7hAGKEiY/WkNi00KgZSBxJJoDEa4XgiLB3xObVHgoRjkT+ojWkAwF/LSfzHPrusKwv18RXUZJF/0tH+wxLAHOXBtPIOmQ4raHIP8pX2i/NqAVo3pbILenEwol2s/GW0rBvEfrdr9SI6yOnQ1bwgnNjo8+dDIkHoCFeeiCmrDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740818944; c=relaxed/simple;
-	bh=tx3NJ3j2ClHrP0zR1G9h5oxfSytvXH75jWztp4n2H5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XNUSFsRVDFu9IyJG3hfyCllc2DWbxMboMz/QlWUYenMkM2LCM6Lc9wlBdPwkwZOv8IJmDl4KMwK/oA1Y62IMh+N4tZW6eng7AfkalieCupurqF+cpq2+r8Is4jQAorQHUwuyOx4mxFPU05SbJRW3GQxxxgjYuyFILnX1GsE0z+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=felix-kuhlmann@gmx.de header.b=Oho3Xs+H; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1740992944; c=relaxed/simple;
+	bh=ZRrV6YVukHwqMpA7xuFqqMELfGYmOq7MQoJMG5pfdZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tMaZspEGNP1X1gwzYPpJPnT1+np3o1E4/Hv1FzWbNgMvq9CZMofXVeOWjqbQxYXsiuZe4Pa81rZ+2feXZr51WVmmgMwmPFLrECG9cDETZTUudQMk/AhQQfu8NQSRN2/xextTK0kNwfyG3if1w0ORuOnt7t4cco6jYFWzLM+X27Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L3nS6aHS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=felix-kuhlmann@gmx.de header.b="Oho3Xs+H"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1740818935; x=1741423735; i=felix-kuhlmann@gmx.de;
-	bh=tx3NJ3j2ClHrP0zR1G9h5oxfSytvXH75jWztp4n2H5I=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Oho3Xs+Hz+EvXvkoVQX6PCM+KBFVkeQUnkRrqYg8Ki6YrupjxDkeGuMphA2cpq9+
-	 U5jYcc0f9x9WLby/ld67dsQTsvEXPjIm/6g/E51hECw9c6+pjorRKNQcMxgbE6RlT
-	 zcHOk6FEe1liUWepeKY8CYKbD2s03JLIMy1KVQvnqhqU/ksmHtR2nbjF64DUzVYQg
-	 jA2VFyGCNiQW3uO7IaZpamZRZfbKAm/evdbkuIH46A+NRBIxiwr5EQ2hsHzT6WzYn
-	 TbkZRVEjIOQDXmUUACuB64Rqd4TV4hJfSQORTeXsKHWwOa/iMUN13JRuo70PSRgVS
-	 RCN8CFV1OvmtwkXo/A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from fedora ([213.172.123.58]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1Mirna-1tKU0x2xiG-00dBtv; Sat, 01
- Mar 2025 09:48:55 +0100
-Date: Sat, 1 Mar 2025 09:49:45 +0100
-From: Felix Kuhlmann <felix-kuhlmann@gmx.de>
-To: felix-kuhlmann@gmx.de, andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org
-Subject: Question regarding AMD Xilinx dt changes
-Message-ID: <Z8LKKXJ1DUwGow-E@fedora>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L3nS6aHS"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522MmU91029520;
+	Mon, 3 Mar 2025 09:08:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1imeeoL46u9Hm/RGGWve8ZtZEslUgdzzc5Q
+	ogPrqr+c=; b=L3nS6aHSaTL3v/MiZBQNDavAS2N8rx5TXjsVIS7nbMYAVjtcx4s
+	yiXvFmOLJUMIulLlRvQh0Z+5ypxdEMOEFf/8l/6v9oJmXpG/rUWN+qgar/DdsbZn
+	i/dgczwB9Ijj+gsdcmq1A7zL0DrzZf6b1JRZ4PaJRVEbvGpIJHSZUfF1b08SQOrj
+	My72yn2xRww/nJwpYjNEc8cY65YXMhgQKKyDJLM4hAEtaFT3nq/GMEEeU/aROfR2
+	raXk5zXz33RR3ejps9jtHhPzKjQ3I8nYrUxrUD3FyS/kPOQwydiXiXY/A9/663SW
+	wwYOpexv16NQ4VkNw19+HkG22JzxaltE6ag==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453tm5mc71-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:58 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52391opR010699;
+	Mon, 3 Mar 2025 09:08:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 453uakvnwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:54 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52395vJk014646;
+	Mon, 3 Mar 2025 09:08:54 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 52398seY017511
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:54 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
+	id C9EC759C; Mon,  3 Mar 2025 14:38:53 +0530 (+0530)
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable <stable@vger.kernel.org>,
+        Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Subject: [PATCH v1] remoteproc: Add device awake calls in rproc boot and shutdown path
+Date: Mon,  3 Mar 2025 14:38:52 +0530
+Message-Id: <20250303090852.301720-1-quic_schowdhu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Provags-ID: V03:K1:LHs7neN3z0SXqzcUvEsn675Fo3dEJQXDGxesvPVeOr26Kb1/s8d
- PFAl2MwnbNUvjgcTg56svhscfU1Av8POtoIis3c7xBQjEqDzbFU+eLI44wU5UigUkXulyzc
- mZ9YUvt0fh1fCRBdU0KjfaShEDKnJx/u4/z/c5mZdWgmShoLP3owopP2cocBZV3m+mvc5Qv
- GtsBKLw9B+gz5WuJcuYiA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5BvWLhe6PTM=;k12SSAxixKvwW3A8ane37C0tcy2
- pL11/xPOJAuDLVVJ5L4wuP1bt+y/QcOMBLoUXLmkRvCj+NvvLyPENCF+Bv9yGsKveoNGbWHOI
- aZVnDSnskuBxDx2y3x+4HpFF6igQAqtlQsbV8cy2r1bqLjSormVIVY5clWmtkdi5jD2hTCq80
- DHtezxc9W1uBuYmi75NDBIfgerlu4BgM93KaEV3Z+As7VWv7Iptgt/t8bi6wzpaPNArpUPkCh
- U7UHh/eYS5zxA2rznuFHtGSjSvejq/PZAGAeqjodTxlY83nS+tjy9bqeZXvbNX0K6wn6BxBbC
- 3cx+3VnhqpNgxLh7sDnk2eF8HEcV87Vw44ga0q1qSUvdmhibCCWjGedML27QuJ3Nct6ZtnLxo
- JfYtyQJkPxAJ1FH7T1h9s1nkfkOntMtO4HfL+yGheuu2INRqLKiXN2WMPsubBjRDL1IJ0MlyK
- 1fph+MKqoq3WWz3zJVdRzUAYmzQyBF7MjS+XbiMCTuBYiBeqsrZPWuVlmljK7cKXJpw7kGjFj
- Yp7q+ztX+cQpczWwM4m4rWHl+NMBPekVkEIaxBllehl0Msg/O8az67qtfRi1cKY5G2VnT2P+I
- P5pGh8XjHnhwW4Zw3lQxo4Kpi8nY2cH5ETWWP9+wU6SZuFuRRedXo8AMF9/sxDCKt58kKSNav
- TYxRLA4vQGKi6dEby138hBSCRsTJccZoFXeK+xDG2PUj8JQzpON9XmNpcQnbZcfiVGHnucFjG
- 81hPc7xOKKnkKZQzcKw/UmHpt41UBPvVTemH0fru02GIXhxj0ZJuNlnjhgMsl8jGQUdXojlwY
- EsDR6uqB/XZFMKgbtX/fbZmXrmYOP/lNK/E03KlF76vgnao6t+N2ZsQLwuBjuKIyELplFtTq0
- EkbyLf2S4CATQlepM0DvniyRfWIQJPOErcZB3vxLnMGly/9Ta+46m5qz/6//fWQrPfLC9GKao
- b7NhHX1KNR+v1KXmREISOTsnd3DHn/swj80GVsYlp/weMjbWAQ8cps1AaDUTKcRmRwq8MFAn8
- x0gKcyu72KZPhxo8ljcAB+Lbmpnjz0HYXog90pFUX38cIJyUbdEsvceSnZa7xTZ4rKdyfOPFj
- R09bemn9PYPMMh1MAMwOxTPb+8HGbLBC1sonVrhzfGCwoSS312trGmw4l6x0WWqFLy8sEU7Uw
- 3k0HSgI6kUBeGoZj2geOgeGd2PCLKXarAxOPOaJyoHFArwpil6wxV56UHNyDdh5h8zzzEk83V
- zAui9z9r8JQUlCJIwLXw86rPdJ9scrG25bTF+JrATFjesLZ0CK0WbRPZaYguRHWyboIzHFeGi
- ZNrKIXu/SIkykFgrGuIwKfX4lPSW4F8ST+NB9KDwHB8Yj26cyzzFDDD4ERkw0KdvEUM971zAl
- cgFh6Xg49KcJqe1OwO6RT5V60hi3jg62Gka6pqzNf9swHkbCk91liWSB4a
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6FUX2QfO2D3oIp_7k9lYsn5K-DoOLYHJ
+X-Proofpoint-GUID: 6FUX2QfO2D3oIp_7k9lYsn5K-DoOLYHJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_03,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 adultscore=0 clxscore=1011 bulkscore=0 mlxscore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030069
 
-Hello everybody,
+Add device awake calls in case of rproc boot and rproc shutdown path.
+Currently, device awake call is only present in the recovery path
+of remoteproc. If a user stops and starts rproc by using the sysfs
+interface, then on pm suspension the firmware loading fails. Keep the
+device awake in such a case just like it is done for the recovery path.
 
-I have a question about the AMD Xilinx remoteproc driver.
-In the past, the remoteproc driver for Xilinx products weren't part of
-mainline. To use them, Xilinx required users to use their own fork,
-linux-xlnx.
+Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-This tree contained the driver necessary for using remoteproc with the
-R5 cores on the Zynq-family of devices. I have managed to configure the
-device tree of my ZynqMP board so that the driver functions correctly.
-
-This is where the problem lies: I have recently updated the kernel
-version to 6.14, using mainline since Xilinx now follows a
-"mainline-only" approach. There, I have discovered that the interfaces
-inside the driver that get information from the device-tree have changed
-significantly. So much in fact, that I have to rewrite the remoteproc
-section of my device-tree.
-
-However, there is no updated documentation provided by Xilinx, and with
-their most recent documentation, it works on linux-xlnx 5.15, but not on
-6.14 with the driver in its current form.
-
-Asking in the AMD help forum rarely yields any usable answer, that's why
-wanted to ask you if there is any information present that I have
-overlooked thus far.
-
-Looking at the entry under the "Documentation" folder also hasn't
-provided me with a satisfying answer, since the driver stopped at random
-parts during initialization.
-
-Thank you in advance and kind regards,
-
-Felix
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..908a7b8f6c7e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+ 		pr_err("invalid rproc handle\n");
+ 		return -EINVAL;
+ 	}
+-
++	
++	pm_stay_awake(rproc->dev.parent);
+ 	dev = &rproc->dev;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+ 		atomic_dec(&rproc->power);
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
+@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret = 0;
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+-- 
+2.34.1
 
