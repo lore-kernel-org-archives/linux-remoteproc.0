@@ -1,409 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2040.outbound.protection.outlook.com [40.107.20.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F84E28D0A2;
-	Tue,  4 Mar 2025 15:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103884; cv=none; b=g5hGhu9w1ogUpgvP6N42vesz7h3hthRHOe3mz8xaCacdS/bJljPeZ/65QJmSaiROZ09QzS0MPOAolW3/CVQjBHrb7BHsYbHpdsqcLObJWrNFSJ0V+b0z7dqI2cxZXOD4XRxD62Yklba2sN5+PhFssJc5zEyaVqpJzCE6zVGS724=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103884; c=relaxed/simple;
-	bh=X+Y0HQR0b88fojhcUUcYL5hdXM9c5QGbIFoh8/9h4oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlDKuJgNN2bNAyp7uRrjF0jG2iFtnSk7dJ3WH/+IoDXvmXBfATh6G24QA6T8xwv5sPdB5/b5AOWEF/d/UMLtcMhzp+rXlZZjLPD4NlM2jkDASTxDKclRZmqroSLqzh7fB83F2OSO7iE4LL5dBOZvyNABmB8YzToPHCKKL9G4xmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwcwLGcG; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91732200115;
+	Wed,  5 Mar 2025 10:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741168866; cv=fail; b=TMu4MMjxVWNZLJooq/C/4TKRqmhGPyfBj0C0Mf/jD7w3HYZKME2IywVouy5/bBuVqfvKCPk4D8DW3KkCWBg/07coGgjsxFbqdfPD00y0W/N6ddtiF4T58cwdChjlIEC28zQfI1wUWYjNxgmriUbqV6xr4lUBBKCH9x1ujbEF5BU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741168866; c=relaxed/simple;
+	bh=pPMHVYS/ZFis6AjWk1u44m2s46bH0W/s5kh6vRP6GH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CDnJunqLhxN5Pw0P4oOuynYHNPgtV3eBjWVSa144yZ2BndKXfLc8ksFZscuc0Uw+l+Ay8PUpvoaHK4FFVu6bVVy+7tscDNMq9ZTEPY5zCfg28FNWhg9E8qMexhhGBKzPfhj0yloPRZhdoICfdfiWhh4ZnbSp2gIXCSrsKKb4QH4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PgA/xUHa; arc=fail smtp.client-ip=40.107.20.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwcwLGcG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66577C4CEE5;
-	Tue,  4 Mar 2025 15:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741103883;
-	bh=X+Y0HQR0b88fojhcUUcYL5hdXM9c5QGbIFoh8/9h4oI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KwcwLGcGgxtGqB5MPJ9o3gLB0nXaYMiG8laTGfoUekgdqpy49cC4ZbR/WC6M+z9eg
-	 K5B+HPlsy6by4MB2RTxSZ3utbhATj3NdoO8060M3m/Ya/zYwzhbP9Ub+aoO0FyU33Q
-	 Ftp3OYCUREgpbMzRSh7ye/k22kYfLX2k7i4BiA9hvp89DZpBICrR4QKG8pEx1RQzUZ
-	 O7h+wVImn325V2aL39yEpWCMOsKSvraMQ3F4FigMFoBa6a6ow5H5yXGx0/3DlsbA3a
-	 VY5rjNccnK6FDaJYeP4uhsJaTigd6BNXMxvLcNf7XPf8h/snl0nYyBRFC2KcFt8kG8
-	 dJqdcOS6cWd9A==
-Date: Tue, 4 Mar 2025 09:58:01 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
-Message-ID: <qxzsz2r7ugiyb7njphmdyupihqmalnmfbbsrtpi7meua37qfqb@bobtx24bwl6r>
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
- <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
- <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
- <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
- <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PgA/xUHa"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H3hGyDARL5HfKceLcNVEitbva1s6mDTwB8DEqbB1W5gtdFFph+0MxbbdAge3sK9clRgbzwOl5ot14GPcp8WNfreVwPhNCIGxc8uBj/xiupLFXokyNuhytGHpfgJ7pnCCRKv71plVNcdzN+XHLIqOu7tlkoSZRQnrlvq0emquxwWQqRbhkW+TCsK4bw6QiZBP3kOrONh471J6ageRfH7+J/dNr20vyHQBDWByb1Z9+uNFHJ7HUPn+ByaZ1+b5mnD7gECBkXmRm2YXGOwMfocRSq5ulLpnosM9SNPqYhLxm0WsbJzmjeAw90zc8bP4PUQOT2ftj0qkuRRrvboAzChvZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EaHdjN3Ftssj5DYtrfw4nijQep+Nx/nZheqe395kiZw=;
+ b=h3u4kGEZmMp/hFpy7ntkWF2FyZMQM6zeJwgJEVe1E6wSBP1zzsbwjIDy1OuQVUJ7h/Z1jIN+vbv3UE/nUB3CbpD8xnO864/wQFuck4ayYj8s4uoDWL2gksXGRwqAD/ViHmMfHt+yxYY3ix7okBad949hEESc1gB5LrWFRVH3q51/aCYEHcjJUA7tLLlkTSh01BGdN89JrcJ3YDq18EQ4CW+krSSqRL3gMLn7kxWGrzIAEkG5td9Q9MQMK1FYPUyaQ1TvXgzWEB0dF3eQR92Ekq660TdXhk3Bxr0abG8VC8kSsX49ETwcfsNYaJf17qbxd/sXMenRZuqNolSpTTDeMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EaHdjN3Ftssj5DYtrfw4nijQep+Nx/nZheqe395kiZw=;
+ b=PgA/xUHaUnt/Ad+N+E6JaiO7xNV1wIHK9mp117fRhv3jjawUnbOk7wfHyCL4y+ohiPFSxtGEOO/SrnEFNjFD9XW0HTF9kuJjPdoiugtET3WK3zx/e1bWvH+okeYYV8MEux1PJGwOwRw6LoGOIsrILpoL35ZY+qicWzqSg5lmpLCk1hGDTAdAGwfBwCsNFhLz8dh950AGPY8/omx09JRGECSwuP1N8yXU/m/1X9Vjt43trrgIYNGsFn+bJJAhYDtkEq4nAO4Fy/y/1IXiwFok6kkPfXu4ntubdcLNwJ0QMi/ydWeBskJirtzTI1x0BsHJAwRtHpTJqXBdcMZwqdCd1g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
+ by VI0PR04MB10541.eurprd04.prod.outlook.com (2603:10a6:800:26a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Wed, 5 Mar
+ 2025 10:00:58 +0000
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6%5]) with mapi id 15.20.8511.015; Wed, 5 Mar 2025
+ 10:00:58 +0000
+From: Daniel Baluta <daniel.baluta@nxp.com>
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	shawnguo@kernel.org,
+	mathieu.poirier@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: conor+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	andersson@kernel.org,
+	Frank.Li@nxp.com,
+	peng.fan@nxp.com,
+	laurentiu.mihalcea@nxp.com,
+	iuliana.prodan@nxp.com,
+	shengjiu.wang@nxp.com,
+	Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH v4 0/8] imx8mp: Add support to Run/Stall DSP via reset API
+Date: Wed,  5 Mar 2025 12:00:28 +0200
+Message-ID: <20250305100037.373782-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: WA2P291CA0031.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::12) To AS8PR04MB8247.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3f2::13)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|VI0PR04MB10541:EE_
+X-MS-Office365-Filtering-Correlation-Id: b69668e4-91e0-4c05-077c-08dd5bcca064
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ExE94XEr4NjlnHj5rhi/o2yby0SzeC5+mlk9hfWsTGJdWHk9SnRA5pbtIRde?=
+ =?us-ascii?Q?Y8UZvatMUOtHe9KROzPIBWX3FBHhGXrP5mD37rvVL8bD9X6myBA5d8U54oj4?=
+ =?us-ascii?Q?S92WZBfvf+u8aIP4CVAbAAfVWY6MD1fCunYD9BbH/tXAJcRebfeVzKPywi7n?=
+ =?us-ascii?Q?hekpoTXnKfpvIImG5++GpSKo95WomD+XiFu+TKB5IZO9pt8d00iNSKhsUTCa?=
+ =?us-ascii?Q?+jrk/CuH0Qrw+caqn5/QsFu+5dZVTfjmtLbmsMY9QrPJqqNzYQxOCGM8i3uU?=
+ =?us-ascii?Q?J8VfitgUUuimdIq52DnaiWdokSPgkLdUrqqYGgYYBRdUpzU3USOtzXQynKx3?=
+ =?us-ascii?Q?6MGxof4VrR1RhSI6gBvOilLe8ybaD9AmJ0dVVIKDMJqDTGZZlGkL3Ovpj8Xd?=
+ =?us-ascii?Q?KMTSRkOSzGNBjgtJ998zXHsKsUUvMQ/G/xHVh3eUGp6BXJXuVJa5U9sLQEd6?=
+ =?us-ascii?Q?/rVc3kJDFTcGv1lQXYv9WGr6lw5u1/57We1J1/bB/t3iFVPDSQlCAvuVlACS?=
+ =?us-ascii?Q?UDvxDu2s/lgR13FbM7GluiF1n7w2ZhK03lU5iuvdxv7dolChZk3h4EODw1Bl?=
+ =?us-ascii?Q?HKA/kEFRFduw9W+e/FtcT69JL6w3MqrR4CxXIYm6byxbAAP6UW0t313RXqrh?=
+ =?us-ascii?Q?NW/b+jVkkY7XtsvxIzUMy0yyOUtZ7vXCkBPzrmTUNXgaQG+KyIz+t7LQ24xk?=
+ =?us-ascii?Q?jEm9Ic9KBuwNk1M7r5ajXgJn0LlAukSoFaqg+EQPrI4vlivLdYIQKIRudjRU?=
+ =?us-ascii?Q?kKAglq82WlHbYs+rEabCs8n8iJNx7KouQI2Wf67aOzELrgak902f65ZoQMho?=
+ =?us-ascii?Q?CxUz8eZi1cKN4hxBn32CYxwnrfRJDKltxSUHdC4dGh6FP9XMxpove7QMWDik?=
+ =?us-ascii?Q?fPKGFAizVqGUHLlxx2XjigfAs8QYzSz+PXvuU73bbPqiPa9fwLM0nIxmEn23?=
+ =?us-ascii?Q?Hykp0/Mux8L6QmRLAgHTmFhxOoPSn1m86cSugjV8BVAMZW9SqFSQ8YnzyYVS?=
+ =?us-ascii?Q?MpP17twOz+vALfa3YvHlRozVaJzHVOtRaOASTP9TSPrmZC5oFWYjbrM3vo9y?=
+ =?us-ascii?Q?zhxlvl7hoEV3RuWWkNfkfEBcyRGJVoMcKJoy5MQtQ8K9OIwprrIlvmmgn5Sw?=
+ =?us-ascii?Q?vMtGgzXiBVOBC8aVhdB31mJVH7J6k9C4aMgthFVhJ/UGx4/cIsaa+3HzfXO9?=
+ =?us-ascii?Q?oePjGn1Pmea/NZVmsjEQ/cQOXLDjgs3AJwtxZvHiArV7nSTlU3tb0f/P+u9K?=
+ =?us-ascii?Q?cBV8ZObB/s0c7iT+yxpWN5cmSMRv16dNkrwbBvrAW6jR7NpX+T8t7WPWkmdu?=
+ =?us-ascii?Q?Zt1hVYdbQtqiGCPvwbIYc9daXwIt6W7nsdpRnSsaMgebzXe+GS/MNOL519Ko?=
+ =?us-ascii?Q?FVdeNWjabEyWH3pf2AYcNQvCqZ8qFMCFCKMjEZASYa7+jtzsOA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uEn23/F/euD8RJnnD9a0vPt73IL8rPEI1AP/vp0xGu3rz3SshGTYDrLZuJHN?=
+ =?us-ascii?Q?7ka7jNWyfCj7AimnXXYzslarEiXTWilqbSJclXiUgrAx/VHVdeCLiPDOKFIU?=
+ =?us-ascii?Q?YTWv/39ksTXcy/SwEsWfspmBlOdxRszp5zl3O/S1qC1b3iTsI0YidJGnQN/Y?=
+ =?us-ascii?Q?/1UZHu7KSU6Ccc5QjW82LR5IRbcWmfqYVJIjNNuI/r6jOOYEMoUyqV1IX6BU?=
+ =?us-ascii?Q?SUwc/RujsU73LGTihII52KTPO6BQlGtF3+osFnd7tqLsv3IHFLicOmS33hCq?=
+ =?us-ascii?Q?GMyquWNdI8NwlVSQJWR0jPH0Ia69s3WZotN8cxET87eeD7lkMnFdjaTAQ0OU?=
+ =?us-ascii?Q?hYX3xnhAJf3hTwrK5M8897mZLRoh8cXSSDvsHGAfcUxp0iMseFVxIwS5qxWU?=
+ =?us-ascii?Q?u4I1BBwFZ3ZndKZ8kia5+Xkup6F1crjZOVH9XKUmPVXC012bSM5AdyWyEYMx?=
+ =?us-ascii?Q?0jg+p8oK7RD86945YQBqzc4Da7UlOlVFrL33MvddoDK2v6Fv/E3lwOwg9zRN?=
+ =?us-ascii?Q?OOD8VHd0a9ngKTcwUTQp9xCHF2Bo4jk6sk7by526UEoZdPHmRSLqlvcZ8Qgy?=
+ =?us-ascii?Q?Tpy0hlmrcK1NysKaHwe4SBDuf8HToTvpBn0LRnW9SHkqlTAEQJq5TLFYDi4d?=
+ =?us-ascii?Q?a3K9JChvNfPQ8rlVWZPll6w+/yWAFeBWQkDBpl3JtkgFrjEU18r9A2AYMyLU?=
+ =?us-ascii?Q?8GxjvEqHjntEt61Mju326cyr1afdv4YqPm8QfANt+g5WekD2tj1S7S7Mw1U3?=
+ =?us-ascii?Q?pd+NI5mutkKlr7ZNeqIhxmhmdrrru6pvdCo5j+DsGZ+nAVYVp2eJjmC7UO95?=
+ =?us-ascii?Q?DPUJKAL6WJJDWl3D22U84hWWTnLKfinPss9zIcPrhic7McvFzhc0iD3gqzt4?=
+ =?us-ascii?Q?7TE+itPezO3aZn0qyDVZpr4X3XpLnkF0y+bFsleb6W1A32vEORpXtEZUeAHE?=
+ =?us-ascii?Q?FS3tSHIVflk6FXz2FC8JPPLylRM2O2L3+VU9JTZXp+X5M8P/PwzBlcFz358q?=
+ =?us-ascii?Q?ZMsUfVD+8aFqrGjp0eTZGSN5nl6mr60m6tWMcuLIlGobFTgZpJ3so54Wp7Qm?=
+ =?us-ascii?Q?JtdntTRjQAJTjXM9KbW87aOoJhx8MfG0uB5Cv14MIhoTq1afDxFzyFy543iS?=
+ =?us-ascii?Q?E2jlNixS+qhz4Up77jtnssWCYuiTrhFjSHWf9ab5hrYSwXEBidwQGjzfrqDK?=
+ =?us-ascii?Q?Pliya+xvyO4YyQQurHqIekK+ypLf7ygtQ19d9WiljGnHihZfeJBhzGsdqVLw?=
+ =?us-ascii?Q?DMeUbGR6vnFdK2WqxdkK8eWYkAl4B5IvsmIu84DWCzR8Fb0E7zPOl2xyE+nY?=
+ =?us-ascii?Q?CWNJMimvGDXKTQzJA/SnHdq+Lswb94H0e+kGL0rcrX7rJiXHm67zOKPI3qpj?=
+ =?us-ascii?Q?Io8855xX4OCPnD43wpSvFI6CZZQYjDqp1hvdgrJ920LJLIwPbCFnOedNJiWo?=
+ =?us-ascii?Q?V5kYv9kz20Lsc1AktFzYJprin4RZP4paitmsMU+414o/MVTrEFlpKMomwzX5?=
+ =?us-ascii?Q?6d5rndSXNiC8WmY/L689/TnQt/o/KwN2u2n1vaX3WaebCG7RC0/KjPX5SQ2P?=
+ =?us-ascii?Q?winGqGDEvPN2SeP8f+si8mvpKQ7r14h9AsaDX4OY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b69668e4-91e0-4c05-077c-08dd5bcca064
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 10:00:58.3152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e7ewER0yuWUzQhvhaqlyvOQAwtWygEhi1aDUppxkyPr6Y+pJiJOkFvfzXJNlOk6XlTLs/uK0IFUMcUEAQn/gEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10541
 
-On Wed, Feb 12, 2025 at 02:42:28PM +0100, Arnaud POULIQUEN wrote:
-> Hello,
-> 
-> On 2/12/25 04:18, Bjorn Andersson wrote:
-> > On Tue, Dec 10, 2024 at 09:57:40AM +0100, Arnaud POULIQUEN wrote:
-> >> Hello Bjorn,
-> >>
-> >> On 12/6/24 23:07, Bjorn Andersson wrote:
-> >>> On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
-> >>>> Add a remoteproc TEE (Trusted Execution Environment) driver
-> >>>> that will be probed by the TEE bus. If the associated Trusted
-> >>>> application is supported on secure part this driver offers a client
-> >>>> interface to load a firmware by the secure part.
-> >>>
-> >>> If...else?
-> >>>
-> >>>> This firmware could be authenticated by the secure trusted application.
-> >>>>
-> >>>
-> >>> I would like for this to fully describe how this fits with the bus and
-> >> Are you speaking about the OP-TEE bus?
-> >>
-> >> I assume that your attempt is that I provide more details on the live cycle
-> >> sequence, right?
-> >>
-> > 
-> > Right, there's a tee_client_driver and there's a remoteproc driver.
-> > Let's document clearly how these interact.
-> > 
-> >>> how it is expected to be used by a specific remoteproc driver.
-> >>>
-> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>> ---
-> >>>> Updates vs version v13:
-> >>>> - define REMOTEPROC_TEE as bool instead of tristate,
-> >>>> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
-> >>>>   that the firmware is loaded using the load_fw() operation.
-> >>>> ---
-> >>>>  drivers/remoteproc/Kconfig          |  10 +
-> >>>>  drivers/remoteproc/Makefile         |   1 +
-> >>>>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
-> >>>>  include/linux/remoteproc.h          |   4 +
-> >>>>  include/linux/remoteproc_tee.h      | 105 ++++++
-> >>>>  5 files changed, 628 insertions(+)
-> >>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
-> >>>>  create mode 100644 include/linux/remoteproc_tee.h
-> >>>>
-> >>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> >>>> index 955e4e38477e..f6335321d540 100644
-> >>>> --- a/drivers/remoteproc/Kconfig
-> >>>> +++ b/drivers/remoteproc/Kconfig
-> >>>> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
-> >>>>  
-> >>>>  	  It's safe to say N if you don't want to use this interface.
-> >>>>  
-> >>>> +config REMOTEPROC_TEE
-> >>>> +	bool "Remoteproc support by a TEE application"
-> >>>> +	depends on OPTEE
-> >>>> +	help
-> >>>> +	  Support a remote processor with a TEE application.
-> >>>
-> >>> Does the remote processor run TEE applications? (Rethorical question...)
-> >>>
-> >>>> 	  The Trusted
-> >>>> +	  Execution Context is responsible for loading the trusted firmware
-> >>>> +	  image and managing the remote processor's lifecycle.
-> >>>> +
-> >>>> +	  It's safe to say N if you don't want to use remoteproc TEE.
-> >>>
-> >>> It's not really about "wanting to use", it's a question whether your
-> >>> device implements/provides the remoteproc TEE.
-> >>>
-> >>>> +
-> >>>>  config IMX_REMOTEPROC
-> >>>>  	tristate "i.MX remoteproc support"
-> >>>>  	depends on ARCH_MXC
-> >>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> >>>> index 5ff4e2fee4ab..f77e0abe8349 100644
-> >>>> --- a/drivers/remoteproc/Makefile
-> >>>> +++ b/drivers/remoteproc/Makefile
-> >>>> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
-> >>>>  remoteproc-y				+= remoteproc_virtio.o
-> >>>>  remoteproc-y				+= remoteproc_elf_loader.o
-> >>>>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
-> >>>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
-> >>>>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-> >>>>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
-> >>>>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
-> >>>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
-> >>>> new file mode 100644
-> >>>> index 000000000000..3fe3f31068f2
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/remoteproc/remoteproc_tee.c
-> >>>> @@ -0,0 +1,508 @@
-> >>>> +// SPDX-License-Identifier: GPL-2.0-or-later
-> >>>> +/*
-> >>>> + * Copyright (C) STMicroelectronics 2024
-> >>>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>> + */
-> >>>> +
-> >>>> +#include <linux/firmware.h>
-> >>>> +#include <linux/io.h>
-> >>>> +#include <linux/module.h>
-> >>>> +#include <linux/remoteproc.h>
-> >>>> +#include <linux/remoteproc_tee.h>
-> >>>> +#include <linux/slab.h>
-> >>>> +#include <linux/tee_drv.h>
-> >>>> +
-> >>>> +#define MAX_TEE_PARAM_ARRAY_MEMBER	4
-> >>>> +
-> >>>> +/*
-> >>>> + * Authentication of the firmware and load in the remote processor memory
-> >>>
-> >>> Exactly what does this imply? Will the content of @memref be copied into
-> >>> some other memory?
-> >>
-> >> The objective is to authenticate and load in one step. So, yes, the image is
-> >> loaded into the remoteproc destination memory.
-> >>
-> > 
-> > So, some separate device-memory, or some preallocated carveout which is
-> > only accessible from secure world?
-> 
-> No sure to understand the difference you do between eparate device-memory and
-> preallocated carveout.
-> 
+This patch series adds support to control the Run/Stall DSP bits found on
+i.MX8MP via the reset controller API instead of using the syscon API.
 
-The main clarification I was looking for was that in your design you
-don't use any resources on the Linux side for when your remoteproc
-instance is running - i.e. no carveouts etc on the Linux side.
+DSP found on i.MX8MP doesn't have a direct reset line so according to hardware
+design team in order to handle assert/deassert/reset functionality we
+need to use a combination of control bits from two modules.
 
-> In OP-TEE, we use the same principle as in Linux. OP-TEE uses memory regions
-> declared in its device tree to list memories usable for the coprocessor (with
-> associated access rights). On load, it checks that the segments to load  are
-> included in these memory regions.
-> 
-> Linux only declares the shared memory-regions in the device tree, for IPC.
-> 
-> > 
-> > Does the OS need to retain @memref past this point?
-> 
-> No need,and as the area contains the reult of request_firmware() that can be
-> corrupted by Linux, OP-TEE considered this as a temporaray unsafe memory. After
-> the load + authentication step this buffer is no more used.
-> For detail, OPTEE make a copy of the header and TLV (metadata) in a secure
-> memory. and load the firmware images in destination memories All these memories
->  are not accessible from the Linux.
-> 
+Audio block control module:
+	- for Run/Stall control bits of the DSP
 
-No concerns with this, but these semantics should be clearly documented
-here.
+Debug Access Port (DAP)
+	- for Software Reset via IMX8M_DAP_PWRCTL register
 
-> > 
-> >> On stm32mp1 we can not store the elf file in a temporary secure memory as
-> >> the memory is encrypted by software (this would take to much time).
-> >>
-> >> For your information, in OP-TEE, the application code is split into a generic
-> >> part and a platform adaptation layer. The generic application is mainly
-> >> responsible for:
-> >>
-> >> - Copying the binary header and metadata into secure memory and authenticating them.
-> >> - Parsing the ELF images and providing segments to load with associated
-> >> authenticated hashes to the platform application.
-> >> In the future, someone can add their own format if needed.
-> >>
-> >> But the generic part could be enhance to authenticate and load a non ELF binary.
-> >> So I'm trying to be generic as possible here.
-> >>
-> > 
-> > Generic might be okay, but I'd prefer this to be less vague.
-> > Also worth noting is the Qualcomm implementation of TZ-backed
-> > remoteproc, which is already in the tree. 
-> 
-> Could you point me the code in Linux and your TEE, please?
-> 
+The current implementation for IMX DSP Remotproc driver and for Sound Open
+Firmware driver (already upstream) uses the following approach:
+	- maps the Audio Block Control address via syscon API through
+          the fsl,dsp-ctrl property of the dsp node.
+	- maps the DAP address space using directly a call to ioremap
+          with IMX8M_DAP_DEBUG macro depicting the DAP base address.
 
-One example is drivers/remoteproc/qcom_q6v5_pas.c where this is captured
-in adsp_start().
+The both approaches are problematic when comes to describing the address
+spaces via the DT:
+	- for Audio Block Control, because it uses the syscon interface
+	- for DAP because it hardcodes de base address instead of using a dt node.
 
-qcom_mdt_pas_init() parses out the ELF header and signature information
-and passes this to the secure world, it then loads the segments of the
-ELF into the carvouts (qcom_mdt_load_no_init()) and finally it jumps to
-secure world with qcom_scm_pas_auth_and_reset(), which will lock down
-Linux's access to the carveouts, then based on previously established
-data will authenticate the loaded firmware and finally start execution
-on the remote processor.
+This patch series aims to fix the Audio Block control usage of the
+syscon interface and replace it with Reset Controller interface.
 
-The difference in this model though is that we don't need the resource
-table for rproc_handle_resources() - so this doesn't meet your needs.
+Main advantages of using the Reset Controller API is that we stop
+abusing the syscon interface, offer a better probe ordering, PM runtime
+support. Main critique of using the Reset Controller API is that
+Run/Stall bits are not reset bits (but according the hardware design
+team they are part of the reset proccess since there is no real reset
+line).
 
-> > There the firmware is loaded
-> > into carveouts, the certificates and hashes are validated. 
-> 
-> Seems to me that there is also a partial Authentication done during the load step.
-> 
+Initial discussion is here:
+https://patchwork.kernel.org/project/imx/patch/20250212085222.107102-6-daniel.baluta@nxp.com/
 
-Given that the ELF header and signature information is vetted before the
-actually copy the segments into carveouts, it's conceivable that the ELF
-header could be sanity checked...
+Note that we can safely remove the fsl,dsp-ctrl property usage from IMX DSP
+remoteproc driver because there is no Device Tree users.
 
-> > Lastly
-> > the operation "authenticate and start" is invoked, which does that, and
-> > locks the OS out of the given memory region - until "shutdown" is
-> > invoked.
-> 
-> The differnce between the 2 implementations is the authentication method done in
-> 2 steps for Qualcomm implementation , in one step for OP-TEE.
-> 
+Changes since v3:
+https://lore.kernel.org/linux-arm-kernel/20250225102005.408773-5-daniel.baluta@nxp.com/T/
+	- renamed resets ids as per Philipp comments
+	- add boths resets (named them runstall and softreset) as per Philipp comments
 
-Yes, but it needs to be pointed out that this is because you want the
-resource table to be authenticated.
+Changes since v2:
+(https://lore.kernel.org/lkml/Z7ZNngd3wtJ5MZgl@lizhi-Precision-Tower-5810/T/)
+        - picked R-b and A-b tags
+        - use run_stall instead of reset to refer to reset controller
+          instance
+        - remove 'resets' description as it is a common property
+        - add correct include in the yaml dts snippet example
+Changes since v1:
+(https://lore.kernel.org/imx/20250219030809.GD6537@nxa18884-linux/T/)
+        - addresed comments received on v1
+        - picked up R-b and A-b tags
 
-> So here if I just remove the term 'authentication' in the command description
-> does it ok for you?
-> 
+Daniel Baluta (8):
+  dt-bindings: reset: audiomix: Add reset ids for EARC and DSP
+  dt-bindings: dsp: fsl,dsp: Add resets property
+  arm64: dts: imx8mp: Use resets property
+  reset: imx8mp-audiomix: Add prefix for internal macro
+  reset: imx8mp-audiomix: Prepare the code for more reset bits
+  reset: imx8mp-audiomix: Introduce active_low configuration option
+  reset: imx8mp-audiomix: Add support for DSP run/stall
+  imx_dsp_rproc: Use reset controller API to control the DSP
 
-No, perhaps I'm misinterpreting you here; but the goal isn't to play
-word games until it's good enough - the goal is to have a clean design
-that will cover the various cases, and for that we need to establish
-what your actual requirements on the host OS side is (typically while
-considering the "other side" to be a black box).
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      | 24 +++++-
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  3 +
+ drivers/remoteproc/imx_dsp_rproc.c            | 25 ++++--
+ drivers/remoteproc/imx_rproc.h                |  2 +
+ drivers/reset/reset-imx8mp-audiomix.c         | 78 +++++++++++++------
+ .../dt-bindings/reset/imx8mp-reset-audiomix.h | 13 ++++
+ 6 files changed, 114 insertions(+), 31 deletions(-)
+ create mode 100644 include/dt-bindings/reset/imx8mp-reset-audiomix.h
 
-> > 
-> >>
-> >>>
-> >>>> + *
-> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
-> >>>
-> >>> Why not just "remote processor identifier"?
-> >>>
-> >>>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
-> >>>> + */
-> >>>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
-> >>>> +
-> >>>> +/*
-> >>>> + * Start the remote processor
-> >>>> + *
-> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
-> >>>> + */
-> >>>> +#define TA_RPROC_FW_CMD_START_FW	2
-> >>>
-> >>> Why is there two "FW" in this constant? Why isn't it just
-> >>> "TA_RPROC_FW_CMD_START"?
-> >>>
-> >>> And why is it not TEE_PROC_FW_CMD_START?
-> >>>
-> >>>> +
-> >>>> +/*
-> >>>> + * Stop the remote processor
-> >>>> + *
-> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
-> >>>> + */
-> >>>> +#define TA_RPROC_FW_CMD_STOP_FW		3
-> >>>> +
-> >>>> +/*
-> >>>> + * Return the address of the resource table, or 0 if not found
-> >>>> + * No check is done to verify that the address returned is accessible by
-> >>>> + * the non secure context. If the resource table is loaded in a protected
-> >>>> + * memory the access by the non secure context will lead to a data abort.
-> >>>
-> >>> These three lines describe a scenario that doesn't make any sense to me.
-> >>> But if that's the case, you should be able to describe that the API
-> >>> might give you a inaccessible pointer, by design.
-> >>
-> >> On STM32MP, we have a kind of firewall in OP-TEE that sets memory access rights
-> >> from the device tree. So if the firmware image is not linked according to the
-> >> firewall configuration, the pointer may not be accessible.
-> >>
-> >> I will update the comment as you propose.
-> >>
-> >>>
-> >>>> + *
-> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
-> >>>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
-> >>>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
-> >>>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
-> >>>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
-> >>>> + */
-> >>>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
-> >>>> +
-> >>>> +/*
-> >>>> + * Return the address of the core dump
-> >>>
-> >>> What does this mean? What will I find at @memref after this call?
-> >>
-> >> I do not have a simple answer here as it depends on the OP-TEE strategy.
-> >> It could be an obscure core dump with possible encryption.
-> >>
-> >> I will remove this as it is not yet implemented in OP-TEE.
-> >>
-> > 
-> > Okay. But I would prefer that we define the semantics before it's
-> > implemented...
-> 
-> that seems fair, I notice that we will have to address this in a separate thread
-> strating with a series in Linux.
-> 
-> 
-> > 
-> >> https://elixir.bootlin.com/op-tee/4.4.0/source/ta/remoteproc/src/remoteproc_core.c#L1131
-> >>
-> >>>
-> >>>> + *
-> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
-> >>>> + * [out] params[1].memref:	address of the core dump image if exist,
-> >>>> + *				else return Null
-> >>>
-> >>> s/else return Null/or NULL/
-> >>>
-> >>>> + */
-> >>>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
-> >>>> +
-> >>>> +/*
-> >>>> + * Release remote processor firmware images and associated resources.
-> >>>
-> >>> Exactly what does this mean for the caller?
-> >>
-> >> It is platform dependent. It can consist in cleaning the memory, but
-> >> can be also something else such as firewall configuration.
-> >> On stm323mp we clean all the memories region reserved for the remote processor.
-> >>
-> > 
-> > We can't have an ABI which isn't well defined in intent. Your examples
-> > would easily fall in the realm of a well defined interface, but this
-> > ties into the question above - what does is actually mean in terms of
-> > the memory carveouts and such.
-> > 
-> 
-> Regarding this comment and the one below, does following description would
-> respond to your expectations? else do you have a suggestion?
-> 
-> /*
->  * This command should be used in case an error occurs between the loading of
->  * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
->  * processor (TA_RPROC_CMD_START_FW),
+-- 
+2.43.0
 
-This is valuable information related to TA_RPROC_CMD_LOAD_FW and
-TA_RPROC_CMD_START_FW, so let's document this there instead.
-
->  * or after stopping the remote processor
->  * (TA_RPROC_CMD_STOP_FW).
->  *
->  * This command is used to inform the TEE (Trusted Execution Environment) that
->  * resources associated with the remote processor can be released. After this
->  * command, the firmware is no longer present in the remote processor's memories
->  * and must be reloaded (TA_RPROC_FW_CMD_LOAD_FW) to restart the remote
->  * processor.
-
-I guess it's fine to define it like this on this level, but in the
-remoteproc core I'd like us to express the related logic as "release
-resources allocated durign rproc_parse_fw(). (And I don't think these
-two interpretations are in conflict).
-
-What's unexpected to me then is that you're not actually reloading your
-firmware across a recovery/restart?
-
-Regards,
-Bjorn
