@@ -1,78 +1,77 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A56825B671
-	for <linux-remoteproc@vger.kernel.org>; Thu,  6 Mar 2025 17:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E5322E403
+	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Mar 2025 15:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283425; cv=none; b=r+HI3DZsPYXnwOaBN0Ta1SkyXcif64M2S1cgJO7D6OLg39+UyzTNihzPpp5wIpHKFd9Jt/pVq6NqjHgs4dR4kOPxyghvBzvyg0NaCkuDPys5DfbtDgD1edkQiUjzpbjbADwmhGxycJC1CD3GChUmTD/SsF3Q1bo1PC1CxyXGlMU=
+	t=1741621365; cv=none; b=r8i3+4z80ZOwKuqqFCWk7RE7e2RUjRzThQF3sT85/Fd1lcOMMAhalPMF32SvYcif0pnSRwjiiO/KvYcGRwMIFsEGH9pNpDC7GjULgNfRBzq87Yqy4mCBfoJx+UfeG/YjWnt/vjGN/LcYPjVXEcAQjWuKx9Z0zbwlLpOoY4lBf/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283425; c=relaxed/simple;
-	bh=OYwPTl37kpqpb1obSyEsyaLgdYEvB2tSrap1fnb6oEg=;
+	s=arc-20240116; t=1741621365; c=relaxed/simple;
+	bh=CiSdzcds41wtt/vO4onxV8kRnf5RNQMUtDCtG2jDKJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uY8wcupz+pU6jMvVw/es0vcnrZ7Cjgr/yFJq3TJZ3DfGVuLecMI5/CiYMq6EwpG9uQf8v6pqQ1lfS3Wjl/9a8PCeJh/3zg/VU1+pOUuMUCEwpL4w9XRZDbu/oAfr7haWsZ4KZiU0elFP9I8PxPG7UUVG7peRPuBJdIu5a9y1DKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCZw7zEr; arc=none smtp.client-ip=209.85.216.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmCyvSRwcYzV+i3Pm36c7PjcfQl8ck5PgRgC0TV2cMb8OfwTUIyg4l2S7nYMKjYQdCwGr27jO2QmTXRYw4XXsI8wLQA4PMXFO3mDSO/rAcBlr4AQoJwa7WepKTGqrAb6K/Ekt7BUBQnhbK/AzsSZcy5DgOMfpdAvEwDSt+cC1hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GuPj1niY; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCZw7zEr"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso1804358a91.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Mar 2025 09:50:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GuPj1niY"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so8692509a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Mar 2025 08:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741283422; x=1741888222; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741621362; x=1742226162; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
-        b=rCZw7zEr7yLvJyd6sTt8XpfyXMROM7xso1Uh94y/jlfaQcnGSRatD4lg6uLKHe+2zK
-         YNmtSDzIU+pJDs/9RMRAla7TYfY8SVYt16tlypexEK1dyRksLYcPaxl5tqmucVtXe/5+
-         Cq8sCN4llmcPmOs73A/2kW6iGM5pQvygFJQKHcb+Wa/j5uTsXEhqScDJYXRhTgy0lxFo
-         hR0tz+viIJRTNHV/UMZ99JmFFFUTh+TrDqODnqFZhZV+25xoZkyQPkMp+7jOCKCguOdz
-         iu1D+VsqSVn2kw38uAxbGRs6IIo0znNELEuhcZ3Nd3JhyCxomykj97tOb3VHH/3lVRdb
-         xDoA==
+        bh=enikGLAVKD32XDQkaI8PyWJI+pkAkZngBKEbealMEZc=;
+        b=GuPj1niYGULGhEvoYv+CzvtbLpj1diN0jBE/zhjs3EI+EtZGEFhyRlGEXb+xGaVOgy
+         aV3D9kaVvJuqy1a5TIr9whGQLSz389hYhDsdOfTQ7OhltjhYYtmnOm7+7o2ZcGXHKrgU
+         Bm6GG5+D0xBHtDxbTZi/DP2ADvg3FOzgw3HUiCv+nqmtKjMotK7isPYHDl4lFcOVL5Z5
+         ScQZKbfZhBU745XaKNYZz4F8R5mf7UWI3Bt33B0CNqBD2xpOdxDTy9WKwELMgk1zCoqE
+         PQ57oUbaJGXcJXRBjdswJc/e1KiMx8jY1MHx5Hj1zlcPFOiK50vYSALazO0sOxkLzZVK
+         n4Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283422; x=1741888222;
+        d=1e100.net; s=20230601; t=1741621362; x=1742226162;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
-        b=OaNSIh2sGxeuT/lUh7B2sM3v4zmk6nITZZhJReqjKKdrvnYUFTeIR9Ly4flerdX3Tz
-         2EH1Yv6OrsjV9FZApqDga5Vdqh0wIN2U3gSnaAG380o24zo3qgHGhvrPaAllgiGAYtW7
-         vRRqSf6psbnyx+w6WU4ETfsspRCW++A0Ty13P0V0K909grNZG4jHeFih7sLR33T4szRo
-         qvCollfpTe2tBKx2U43wKNyrlx/5KVR46gcmCtXJrxu6Wb5yFdLnEug9TIKSCbVPPeKw
-         OzSxWxMT6Tk2Gxjl5NjgMVskicPuzlK3NfLRXLYArcClk8pHgYeZtx1uXTWOQIQgwCI5
-         BwIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWCzl+RRgCHGjgDkD1F3nSmOze9M7FYIqipVTbNskUhmOCBcym9Sja2LMXvSYmEc9UyWFAlFYEjb2N2XYKrQdl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDBoHIM74wosjzlz9p0gEXtQgUtWJN2aOKQOrHj70xJvyNdTd9
-	XjfIgX205VU5HwqSUpdGylCct3LKJu01bsOjjXfV2WmRci/gw14mGNnb6FyQtQo=
-X-Gm-Gg: ASbGnctu9y5Km6ZHnm4TWF0ed6a0dfplAyAyU264vQCG0e4STjvs/RH4fSU9zZxH8h9
-	hQuX05/RpLkoq1mn43TeN9V1J8N9ZV3dGFWdNkTo5lCWiVi8h5tkqQX88J6SmBCu7UXDXSo+7i3
-	N+b8V63x2FHOSc6kqGCqJgUXDFvqNAGMyrkCLFwNRHg73gzwQSXQmcrQl7+ic4fMUg2ylLW6sbE
-	nhkWLgvXONFIFm6j0bI6R+Eis/fyDdDvk3a3iZ5Ylq8qWkOzS+07AHFkZRtScunEk6zqN8h1wkl
-	HQ+UwYQLt57CBjcxqbf7SLaoMN5nYd46XEFnr53neNKXVCE=
-X-Google-Smtp-Source: AGHT+IGEuTXsYktLG7Gbe5A2wqYq14IVrHxmlthLo8VbHdBbTToc9qLW5FvoQCp4OUC59CVSGAIxyg==
-X-Received: by 2002:a17:90b:1d4f:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-2ff6175a47dmr6758129a91.7.1741283422491;
-        Thu, 06 Mar 2025 09:50:22 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:d45:b21a:9b36:7bcc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109fda8esm15294235ad.101.2025.03.06.09.50.20
+        bh=enikGLAVKD32XDQkaI8PyWJI+pkAkZngBKEbealMEZc=;
+        b=xLAYqHUBKAuWSFoRf4BISZjZdF9imq3YJcCHTRnRHzO9GSdQAuiv6hK7sXtz9wpoCC
+         DBMNK7vzi8vRyIe3OG6fkrKTgQdcfTJCga6iB5Che7BGwwRs7vXL7Lw9Aw6FM61ZLp4T
+         ZNJ/aiepMHFA9RMwuEx9dJAjlc2gQApBj11fdAskSXtuvHQkC3meypvC5WEbS9dVu3RG
+         gVs6NXJ5GeG7nINYIE5gE6FJr6Pzl6eDCeG4gtk1VKOVLD4JMjJ4xdecP866hDenuD+N
+         vsa12yUMGYU/qGkdHYrigc8oX/NrjuT5NV83m2PgFNCGMNFBcxXTUzBg3vyLl51+MHtq
+         V6eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsoSnC/kKMHe7mUXkfuOeIeM6WPsi3JHLdD/eherW/dosiV+4Qij6vs4HmTlKr2SmyYGKY8BOlBkua9xFPNS9q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJQL1UAzHGonxF2xaKf7jE7icPm03rooXgY86xT1yLlv9Sr2+D
+	wti8gsYu3XnZ2DV8GhRuWzVgPiId6bTbXgbzfVC16cwuGmQmwCRXAy9+6fb7gOY=
+X-Gm-Gg: ASbGncsCxk0lRHBvXEVYwpW4euPgH29C98OOwlaUofPHKuekVsYNwbw1JJ8l77g5z3i
+	tjd3fGLkq9bIIiQ7eTMYTD2FsEV6BlaUAH5VATAIAolCLop5afhCTbhS3oEAo7h3uy1TbvXTJdu
+	GJOyq6p1M2uh625qfBPANyTDh7CGUw3Gx7RdBJbzcDBhdqmXB/kAKCx0szJkvGrBGLAFpTCbADR
+	uP5mbIq0odhwBX13oMI9ED/a45BXbiQFbyFyObsI7bTcZDVV48xOaBFwuokjcwnLuHFMy8yTDlf
+	2L/RxXt/H124Vqckc+FfeGJLNX0MIgMPJ4TuTCSzuKidV/AK
+X-Google-Smtp-Source: AGHT+IHNf11G7DyVu/twsvugWYwlU9A3A6njxqIwYNnQaUcCkH2JVILiZmtg9HpM2KZSrY/MiuYxRw==
+X-Received: by 2002:a05:6a20:c996:b0:1f5:8903:860f with SMTP id adf61e73a8af0-1f589038757mr2586991637.14.1741621362485;
+        Mon, 10 Mar 2025 08:42:42 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d163:942a:6a37:7631])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af286bb9f26sm7496813a12.25.2025.03.10.08.42.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:50:21 -0800 (PST)
-Date: Thu, 6 Mar 2025 10:50:18 -0700
+        Mon, 10 Mar 2025 08:42:41 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:42:39 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: conditionally wait for
- FW_READY
-Message-ID: <Z8ngWhbkO2770qMq@p14s>
-References: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+	shawnguo@kernel.org, devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, conor+dt@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
+	Frank.Li@nxp.com, peng.fan@nxp.com, laurentiu.mihalcea@nxp.com,
+	iuliana.prodan@nxp.com, shengjiu.wang@nxp.com
+Subject: Re: [PATCH v4 8/8] imx_dsp_rproc: Use reset controller API to
+ control the DSP
+Message-ID: <Z88Ib7HkbRQoiyZp@p14s>
+References: <20250305100037.373782-1-daniel.baluta@nxp.com>
+ <20250305100037.373782-9-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -81,178 +80,138 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <20250305100037.373782-9-daniel.baluta@nxp.com>
 
-Good morning,
+Good day,
 
-On Wed, Mar 05, 2025 at 02:39:23PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+On Wed, Mar 05, 2025 at 12:00:36PM +0200, Daniel Baluta wrote:
+> DSP on i.MX8MP doesn't have a direct reset line so according to hardware
+> design team in order to handle assert/deassert/reset functionality we
+> need to use a combination of control bits from two modules. Audio block
+> control module for Run/Stall control of the DSP and DAP module in order
+> to do software reset.
 > 
-> Some DSP firmware requires a FW_READY signal before proceeding,
-> while others do not.
-> Introduce imx_dsp_rproc_wait_fw_ready() to check the resource table
-> and determine if waiting is needed.
+> Initial design accessed RunStall bits from audio block control using the
+> syscon interface but this got NACKed by community because of abusing the
+> syscon interface [1].
 > 
-> Use the WAIT_FW_READY flag (bit 1) to distinguish cases where
-> waiting is required, as bit 0 is reserved for VIRTIO_RPMSG_F_NS
-> in OpenAMP and mentioned in rpmsg documentation (not used in Linux,
-> so far).
+> So instead we use the reset controller API.
 
-VIRTIO_RPMSG_F_NS is used in [1].
+I am good with this patchset.  The only thing I'd like so see modified is the
+above changelog.  The second paragraph doesn't belong there, i.e it is not
+useful to remark on a design that was not accepted.  Instead please concentrate
+on _why_ we are moving from the current design to using the reset controller
+API.
 
-[1]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1051
-
-> This flag is set by the remote processor in the dfeatures member of
-> struct fw_rsc_vdev, indicating supported virtio device features.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 84 +++++++++++++++++++++++++++---
->  1 file changed, 77 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..8eefaee28061 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright 2021 NXP */
-> +/* Copyright 2021, 2025 NXP */
->  
->  #include <dt-bindings/firmware/imx/rsrc.h>
->  #include <linux/arm-smccc.h>
-> @@ -38,6 +38,15 @@ MODULE_PARM_DESC(no_mailboxes,
->  #define REMOTE_IS_READY				BIT(0)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/*
-> + * This flag is set by the remote processor in the dfeatures member of
-> + * struct fw_rsc_vdev, indicating supported virtio device features
-> + *
-> + * Use bit 1 since bit 0 is used for VIRTIO_RPMSG_F_NS
-> + * in OpenAMP and mentioned in kernel's rpmsg documentation
-> + */
-> +#define WAIT_FW_READY				BIT(1)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -300,13 +309,74 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
->  }
->  
-> +/*
-> + * Determines whether we should wait for a FW_READY reply
-> + * from the remote processor.
-> + *
-> + * This function inspects the resource table associated with the remote
-> + * processor to check if the firmware has indicated that waiting
-> + * for a FW_READY signal is necessary.
-> + * By default, wait for FW_READY unless an RSC_VDEV explicitly
-> + * indicates otherwise.
-> + *
-> + * Return:
-> + *   - true: If we should wait for FW READY
-> + *   - false: If FW_READY wait is not required
-> + */
-> +static bool imx_dsp_rproc_wait_fw_ready(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	struct fw_rsc_hdr *hdr;
-> +	struct fw_rsc_vdev *rsc;
-> +	int i, offset, avail;
-> +
-> +	/*
-> +	 * If there is no resource table, wait for FW_READY
-> +	 * unless no_mailboxes module param is used
-> +	 */
-> +	if (!rproc->table_ptr)
-> +		return true;
-> +
-> +	/* Iterate over each resource entry in the resource table */
-> +	for (i = 0; i < rproc->table_ptr->num; i++) {
-> +		offset = rproc->table_ptr->offset[i];
-> +		hdr = (void *)rproc->table_ptr + offset;
-> +		avail = rproc->table_sz - offset - sizeof(*hdr);
-> +
-> +		/* Ensure the resource table is not truncated */
-> +		if (avail < 0) {
-> +			dev_err(dev, "Resource table is truncated\n");
-> +			return true;
-> +		}
-> +
-> +		/* Check if the resource type is a virtio device */
-> +		if (hdr->type == RSC_VDEV) {
-> +			rsc = (struct fw_rsc_vdev *)((void *)hdr + sizeof(*hdr));
-> +
-> +			/* vdev does not require waiting for FW_READY */
-> +			return !!(rsc->dfeatures & WAIT_FW_READY);
-
-From a virtIO perspective where one virtIO device pertains to one virtIO driver,
-your approach is valid.  From a remoteproc perspecrtive though, we have one
-virtIO driver [2] used by several implementation (NXP, ST, TI, ...).  So far,
-information conveyed by rsc->dfeatures was applicable to all implementation and
-things need to remain that way.  Otherwise, it is a matter of time before custom
-and global features start clashing.
-
-Using rsc->dfeatures in the way you do above means the resource table in the FW
-image needs to be mofidied.  As such, you could take advantage of the vendor
-specific resource table entry already supported by the remoteproc framework [3].
-From there you provide a resource handler specific to the iMX DSP driver and
-things just work.  Moreover, you wouldn't have to parse the whole resource table
-every time imx_dsp_rproc_start() is called.
-
-Hopefully this works for you.
+This can go in the 6.15 merge window if you send me a V5 fast enough.
 
 Thanks,
 Mathieu
 
-[2]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1054
-[3]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/remoteproc/remoteproc_core.c#L1044
-
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * By default, wait for the FW_READY
-> +	 * unless a vdev entry disables it
-> +	 */
-> +	return true;
-> +}
-> +
->  /*
->   * Start function for rproc_ops
->   *
-> - * There is a handshake for start procedure: when DSP starts, it
-> - * will send a doorbell message to this driver, then the
-> - * REMOTE_IS_READY flags is set, then driver will kick
-
-> - * a message to DSP.
-> + * The start procedure involves a handshake: when the DSP starts, it
-> + * sends a doorbell message to this driver, which sets the
-> + * REMOTE_IS_READY flag. The driver then sends a message to the DSP.
-> + *
-> + * Before proceeding, the driver checks if it needs to wait for a
-> + * firmware ready reply using imx_dsp_rproc_wait_fw_ready().
-> + * If waiting is required, it calls imx_dsp_rproc_ready() to complete
-> + * the initialization.
-> + * If waiting is not required, the start function returns.
+> 
+> [1] https://patchwork.kernel.org/project/imx/patch/20250212085222.107102-6-daniel.baluta@nxp.com/
+> 
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 25 +++++++++++++++++--------
+>  drivers/remoteproc/imx_rproc.h     |  2 ++
+>  2 files changed, 19 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index ea5024919c2f..bc60edcdd661 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  
+>  #include "imx_rproc.h"
+> @@ -111,6 +112,7 @@ enum imx_dsp_rp_mbox_messages {
 >   */
->  static int imx_dsp_rproc_start(struct rproc *rproc)
->  {
-> @@ -335,8 +405,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  struct imx_dsp_rproc {
+>  	struct regmap				*regmap;
+> +	struct reset_control			*run_stall;
+>  	struct rproc				*rproc;
+>  	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
+>  	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
+> @@ -192,9 +194,7 @@ static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
+>  	/* Keep reset asserted for 10 cycles */
+>  	usleep_range(1, 2);
 >  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (imx_dsp_rproc_wait_fw_ready(rproc))
-> +		return imx_dsp_rproc_ready(rproc);
+> -	regmap_update_bits(priv->regmap, IMX8M_AudioDSP_REG2,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL,
+> -			   IMX8M_AudioDSP_REG2_RUNSTALL);
+> +	reset_control_assert(priv->run_stall);
 >  
->  	return ret;
->  }
+>  	/* Take the DSP out of reset and keep stalled for FW loading */
+>  	pwrctl = readl(dap + IMX8M_DAP_PWRCTL);
+> @@ -231,13 +231,9 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
+>  
+>  /* Specific configuration for i.MX8MP */
+>  static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
+> -	.src_reg	= IMX8M_AudioDSP_REG2,
+> -	.src_mask	= IMX8M_AudioDSP_REG2_RUNSTALL,
+> -	.src_start	= 0,
+> -	.src_stop	= IMX8M_AudioDSP_REG2_RUNSTALL,
+>  	.att		= imx_dsp_rproc_att_imx8mp,
+>  	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
+> -	.method		= IMX_RPROC_MMIO,
+> +	.method		= IMX_RPROC_RESET_CONTROLLER,
+>  };
+>  
+>  static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
+> @@ -329,6 +325,9 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  					  true,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret = reset_control_deassert(priv->run_stall);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -369,6 +368,9 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  					  false,
+>  					  rproc->bootaddr);
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		ret = reset_control_assert(priv->run_stall);
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -995,6 +997,13 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
+>  
+>  		priv->regmap = regmap;
+>  		break;
+> +	case IMX_RPROC_RESET_CONTROLLER:
+> +		priv->run_stall = devm_reset_control_get_exclusive(dev, "runstall");
+> +		if (IS_ERR(priv->run_stall)) {
+> +			dev_err(dev, "Failed to get DSP runstall reset control\n");
+> +			return PTR_ERR(priv->run_stall);
+> +		}
+> +		break;
+>  	default:
+>  		ret = -EOPNOTSUPP;
+>  		break;
+> diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
+> index 17a7d051c531..cfd38d37e146 100644
+> --- a/drivers/remoteproc/imx_rproc.h
+> +++ b/drivers/remoteproc/imx_rproc.h
+> @@ -24,6 +24,8 @@ enum imx_rproc_method {
+>  	IMX_RPROC_SMC,
+>  	/* Through System Control Unit API */
+>  	IMX_RPROC_SCU_API,
+> +	/* Through Reset Controller API */
+> +	IMX_RPROC_RESET_CONTROLLER,
+>  };
+>  
+>  /* dcfg flags */
 > -- 
-> 2.25.1
+> 2.43.0
 > 
