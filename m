@@ -1,46 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123B717BBF;
-	Sat, 15 Mar 2025 15:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85F018DB37;
+	Mon, 17 Mar 2025 02:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742053101; cv=none; b=EiWeiQispzUmtXXuGozdgL0W9jqYtdtqKklT91FhTjaV8ilrmcOCdBm6L8a4QTz2QDCieHboNlLsY9cVPRHfQt4RStP93wlZJCthLjA1WUO1xKBY+svLwf1ubMfQkeUh/1qr7i0zREAMk0faQdDdA6/cVLCovFxS3kFHjzOfO7c=
+	t=1742180171; cv=none; b=Qsn1BkXemScZhSE3bOetgb5zHhcIGtwdsHjXcPJV1jc2wR/sRItndG8Y907h0KkkUzFbEPH/NaeYzltjy0yv6pmBvJXPn28f7ygRjImQVFtBD/TQ5GtSkA1PW5j9atSmwza1EhRMWgLn1INxN/nRf+uwRY3jQEHaJvaV6djcw1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742053101; c=relaxed/simple;
-	bh=a6Ti/Jz0EnyQzOF6ksSQ3WST73zH9uNCX05F4CFxkZs=;
+	s=arc-20240116; t=1742180171; c=relaxed/simple;
+	bh=jFw7b900ZkEQ8RdW9FvK9cv1tNqStrsgog4XCObz7qM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EfA1Ma+PeaJSBrxxCnOD/pzBdVRP1hsFq11OutccS2ngxdUF4lwUSmIQ1tKvKU8SMmjl1pTK0TCZ0SwBu6EWazz90P9fsIztf6g5jg8rgubMXvKlvXzwawIhnxS1NDY5YEqk7WoUh6/T1XlH4Y8QI3sd4C5AmjqPw3FuzMbY4Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aR8In+pX; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=O2yahsBqhWA8kszfhEWdXqGj1wiKgXvEIIydmxcn+eqgD0ZLlPDiZD6bwkDmvGc6Bms4hBX/ij4ngGaEly14Eq4jlN1MJ1DSRYuuB0OwgBmFCvDBYWn+DzMUz1iS/Cm0RRnhYaFHHnRNmXokMWRbcOH4J3T4v/v3EPbdMLh0XEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/mrTsNl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR8In+pX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06DAC4CEE5;
-	Sat, 15 Mar 2025 15:38:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/mrTsNl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD65C4AF0B;
+	Mon, 17 Mar 2025 02:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742053098;
-	bh=a6Ti/Jz0EnyQzOF6ksSQ3WST73zH9uNCX05F4CFxkZs=;
+	s=k20201202; t=1742180171;
+	bh=jFw7b900ZkEQ8RdW9FvK9cv1tNqStrsgog4XCObz7qM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aR8In+pXG4VTkQG9o+GBSQqCz4x3YyRMhC7kKsgPyktZ4ZyyxOfaJGvXGG1bAQ9a1
-	 feWr82FQ9gZfnYK6HRIxSkPO3+C6wLvbvo3qcJb61zeBS72eSoJaPdwnc69rdj8hcI
-	 79Uwa8OMIuZXVIdVR37OByMYnNzYJo2So+TYbqPHI76bOYn5eu9GtZuvCffjEf5FTQ
-	 AiCV52nfqj/TqIJNl6z3GvkA42xTvk5PSL3nEFkCgJ8VV1a6PMfB9tsQJffuHKoKvE
-	 s0LeQ8oJZjykwuRn4z3nQvtwb+HhPNINxfuih8JpawN/1uFjjqWpeeUIn65eg/gYqv
-	 xcsrZO2QKxCfA==
+	b=R/mrTsNlPu2V6n9PpRsqEn+AApRW479bej6SDx7uZPK420YYbf0AqnApj4HRBkIE/
+	 HO0a6IWoPmnvCIziBGShHZihykRw8y3rAOywQ3S6k2z4D6CMSvt6jXUizA2vibt7fg
+	 t6NZgkCkE0NBNuOfhz8pxhybp3Jo9z5biNFyYs+KzC0iYVkITfdbpzzahon8N1J/3x
+	 aJI884j4HuUgsCiURdn+YugT0AE2d9dok+Ru9GWrGgfFF4Tc5sJfzkU7BusRVHP4Al
+	 lNBN9gZAgdyji5ayABbhfCgYdGt1oL+eSFNowszZ8bNJBDr0vQ/xdwdRYXT91h1l4j
+	 TmFIHxhipwfFQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
+To: ~postmarketos/upstreaming@lists.sr.ht,
 	phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	=?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+	Luca Weiss <luca@lucaweiss.eu>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: pas: add minidump_id to SC7280 WPSS
-Date: Sat, 15 Mar 2025 10:38:14 -0500
-Message-ID: <174205309197.3372517.2896355070369674479.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 00/13] Modem support for MSM8226
+Date: Sun, 16 Mar 2025 21:55:51 -0500
+Message-ID: <174218015900.1913428.14948939748843427587.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314-sc7280-wpss-minidump-v1-1-d869d53fd432@fairphone.com>
-References: <20250314-sc7280-wpss-minidump-v1-1-d869d53fd432@fairphone.com>
+In-Reply-To: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
+References: <20250217-msm8226-modem-v5-0-2bc74b80e0ae@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,15 +60,32 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 14 Mar 2025 09:24:31 +0100, Luca Weiss wrote:
-> Add the minidump ID to the wpss resources, based on msm-5.4 devicetree.
+On Mon, 17 Feb 2025 23:05:14 +0100, Luca Weiss wrote:
+> This series adds support for modem remoteproc found on MSM8226.
+> It also adds needed device tree nodes and enables modem used for
+> location service on matisse-wifi.
 > 
+> Also bam-dmux node is added for mobile data which is used on
+> 3G/4G-enabled devices.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom: pas: add minidump_id to SC7280 WPSS
-      commit: d2909538bff0189d4d038f4e903c70be5f5c2bfc
+[07/13] ARM: dts: qcom: msm8226: Add node for TCSR halt regs
+        commit: 300edf73651b1151b18c0ef4b90cdf71946787f0
+[08/13] ARM: dts: qcom: msm8226: Add smsm node
+        commit: 184cb65984ca164e4adb3abe3ec1549ed358d1bd
+[09/13] ARM: dts: qcom: msm8226: Add modem remoteproc node
+        commit: 075555387244b51d9414a35d3b1d9f58a4df0fe3
+[10/13] ARM: dts: qcom: msm8226: Add BAM DMUX Ethernet/IP device
+        commit: 6b47ce06f22b3ad2921dda442be23abbe93ed251
+[11/13] ARM: dts: qcom: Introduce dtsi for LTE-capable MSM8926
+        commit: fc532eb25c0aeca1d20e7d3c8d8a24b3ff39e3a9
+[12/13] ARM: dts: qcom: msm8926-htc-memul: Enable modem
+        commit: 36663812eeb5e57f1d167c33bcb1dc970333bef1
+[13/13] ARM: dts: qcom: msm8226-samsung-matisse-common: Enable modem
+        commit: 32768db9cfc56554d1570ac71aa204f0751bd12e
 
 Best regards,
 -- 
