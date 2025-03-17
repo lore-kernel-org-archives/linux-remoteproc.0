@@ -1,55 +1,56 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A919239587;
-	Mon, 17 Mar 2025 12:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FF723F267;
+	Mon, 17 Mar 2025 12:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742213242; cv=none; b=u5UYSf8RwClaosZ8a5KsfXuefknmirOdeviEVVCkbj+HQLkl+UMm7VCRprzfoG4jyiq/loFSLj88xaC4Jxu45jNf0HxTceRjjlzHtEJQsD4mgj0WRMSqCEKikueXdQwSIAWMLuxH4cvRgEUgrehL/itsYm+YCVFZb6ulLDiH7yY=
+	t=1742213244; cv=none; b=iNS/TM/b1G+R+kwXyDy3uQo1MoNs8cwLTeFiqB6zh25y9rl+oSnT9S8WrQqxSdTruIGTlUDUTt+AA0C5GZ6uz33z7d9eqTSRqlMmXS7rtzST5zuH+1T8iXIdho0XgKUvRK+TjZUWFtUPOgvz5akpUq37xZv4iRJyHLrcir8LFLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742213242; c=relaxed/simple;
-	bh=eCY+z11y5wZbGzC+NfUTrfMFmYuaTznrPFuX/dcZOIU=;
+	s=arc-20240116; t=1742213244; c=relaxed/simple;
+	bh=6+8nkkIGP/zxXJ54YweBKDvwo9j/bt+Zf9uOcOgYx5o=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hzjwbE8Zyh/VnO/N6jBfni4XJt+cpNDEPIEmYE8BgCTyDUf7mdnXniC7OzSp+UWW/ZZdH7o1F8dfHhjBdIZmLIdikIfgJGPKtbdr9K6PJ05K44gJVqthv+IbkViYbc/tVlwsFPU8LjgzYbymcdE/maNnK47s+RoOoNrL2G7t2h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yI18NWtG; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=hntfHMl5Rot/JHCax4DVkMWQYkWLjtQGle4mcj0VrucqpXEzyKD/QNx1yjtunAsOGXwWDc//fjEABufi13jO082NosD6ypnlugFAGZKIRE9FsnuNTW1jysy5Lyyl/GZZhWti1Vp29Oud52CIcYzlTeSPu8BqwoVVIqMx4FQFSJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cBtQl4Vd; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yI18NWtG"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC794V2266859
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 17 Mar 2025 07:07:09 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cBtQl4Vd"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC71762755497
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 07:07:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742213229;
-	bh=zaf2qOSCeXN9fe99hTcH1tWZp87IoJV8bGnMUVfVTds=;
+	s=ti-com-17Q1; t=1742213221;
+	bh=1EE+ZrQgMh4heXy6zTMEUqhBiUfVWjX7abghlTFwA+k=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yI18NWtGZR/OvIaouPyzZ8VC2vg0yVQT0FV6P75hE/veIJ5JzsS9FHXgxgR3Y7Kvz
-	 +ndSU6R5OdQ0MmYXsHGS+yqtU6fRoN8OFbAOhvf3svuAA+PGI7v0x67G5To40j9lEW
-	 p+xq8XlLcv4zReVPV5LVQPmld/orwMLCT8gakdWA=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC798M005156;
-	Mon, 17 Mar 2025 07:07:09 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+	b=cBtQl4VdptWGpgMHA60gHHWpoSBOcODnAXUuD+JTWNujAb9a76Mu2pFm6fKiFECkZ
+	 WxU4PM6+G1Ku2L14PZe5gmSuBenH4UkrQ24DLTgIzYvxr+GE0dzuMv4oRHqWTOrHH9
+	 th6bNmVV3vQRbkZBwGdONPGDxV05r+3ufLeSjPt4=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC71Gd108376
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Mar 2025 07:07:01 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Mar 2025 07:07:08 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2025 07:07:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Mar 2025 07:07:09 -0500
+ Frontend Transport; Mon, 17 Mar 2025 07:07:01 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MK7060901;
-	Mon, 17 Mar 2025 07:07:05 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MK5060901;
+	Mon, 17 Mar 2025 07:06:58 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 10/26] remoteproc: k3: Refactor mailbox rx_callback functions into common driver
-Date: Mon, 17 Mar 2025 17:36:06 +0530
-Message-ID: <20250317120622.1746415-11-b-padhi@ti.com>
+Subject: [PATCH v9 08/26] remoteproc: k3-r5: Refactor sequential core power up/down operations
+Date: Mon, 17 Mar 2025 17:36:04 +0530
+Message-ID: <20250317120622.1746415-9-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250317120622.1746415-1-b-padhi@ti.com>
 References: <20250317120622.1746415-1-b-padhi@ti.com>
@@ -63,338 +64,226 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The mailbox .rx_callback implementations in TI K3 R5, DSP and M4
-remoteproc drivers handle inbound mailbox messages in the same way.
-Introduce a common driver 'ti_k3_common.c' and refactor the
-implementations into a common function 'k3_rproc_mbox_callback'() in it.
+The existing implementation of the waiting mechanism in
+"k3_r5_cluster_rproc_init()" waits for the "released_from_reset" flag to
+be set as part of the firmware boot process in "k3_r5_rproc_start()".
+The "k3_r5_cluster_rproc_init()" function is invoked in the probe
+routine which causes unexpected failures in cases where the firmware is
+unavailable at boot time, resulting in probe failure and removal of the
+remoteproc handles in the sysfs paths.
 
+To address this, the waiting mechanism is refactored out of the probe
+routine into the appropriate "k3_r5_rproc_{prepare/unprepare}()"
+functions. This allows the probe routine to complete without depending
+on firmware booting, while still maintaining the required
+power-synchronization between cores.
+
+Further, this wait mechanism is dropped from
+"k3_r5_rproc_{start/stop}()" functions as they deal with Core Run/Halt
+operations, and as such, there is no constraint in Running or Halting
+the cores of a cluster in order.
+
+Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- drivers/remoteproc/Makefile               |  4 +-
- drivers/remoteproc/ti_k3_common.c         | 83 +++++++++++++++++++++++
- drivers/remoteproc/ti_k3_common.h         |  1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 50 +-------------
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 49 +------------
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 50 +-------------
- 6 files changed, 89 insertions(+), 148 deletions(-)
- create mode 100644 drivers/remoteproc/ti_k3_common.c
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 114 +++++++++++++----------
+ 1 file changed, 65 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 5ff4e2fee4ab..e30908ca4bfc 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -36,7 +36,7 @@ obj-$(CONFIG_RCAR_REMOTEPROC)		+= rcar_rproc.o
- obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
- obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
- obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
--obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
--obj-$(CONFIG_TI_K3_M4_REMOTEPROC)	+= ti_k3_m4_remoteproc.o
-+obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o ti_k3_common.o
-+obj-$(CONFIG_TI_K3_M4_REMOTEPROC)	+= ti_k3_m4_remoteproc.o ti_k3_common.o
- obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
- obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
-diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-new file mode 100644
-index 000000000000..56caf7a51b59
---- /dev/null
-+++ b/drivers/remoteproc/ti_k3_common.c
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * TI K3 Remote Processor(s) driver common code
-+ *
-+ * Refactored out of ti_k3_dsp_remoteproc.c and ti_k3_m4_remoteproc.c.
-+ *
-+ * ti_k3_dsp_remoteproc.c:
-+ * Copyright (C) 2018-2022 Texas Instruments Incorporated - https://www.ti.com/
-+ *	Suman Anna <s-anna@ti.com>
-+ *
-+ * ti_k3_m4_remoteproc.c:
-+ * Copyright (C) 2021-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ *	Hari Nagalla <hnagalla@ti.com>
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/omap-mailbox.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/reset.h>
-+#include <linux/slab.h>
-+
-+#include "omap_remoteproc.h"
-+#include "remoteproc_internal.h"
-+#include "ti_sci_proc.h"
-+#include "ti_k3_common.h"
-+
-+/**
-+ * k3_rproc_mbox_callback() - inbound mailbox message handler
-+ * @client: mailbox client pointer used for requesting the mailbox channel
-+ * @data: mailbox payload
-+ *
-+ * This handler is invoked by the K3 mailbox driver whenever a mailbox
-+ * message is received. Usually, the mailbox payload simply contains
-+ * the index of the virtqueue that is kicked by the remote processor,
-+ * and we let remoteproc core handle it.
-+ *
-+ * In addition to virtqueue indices, we also have some out-of-band values
-+ * that indicate different events. Those values are deliberately very
-+ * large so they don't coincide with virtqueue indices.
-+ */
-+void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
-+{
-+	struct k3_rproc *kproc = container_of(client, struct k3_rproc, client);
-+	struct device *dev = kproc->rproc->dev.parent;
-+	struct rproc *rproc = kproc->rproc;
-+	u32 msg = (u32)(uintptr_t)(data);
-+
-+	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
-+
-+	switch (msg) {
-+	case RP_MBOX_CRASH:
-+		/*
-+		 * remoteproc detected an exception, but error recovery is not
-+		 * supported. So, just log this for now
-+		 */
-+		dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
-+		break;
-+	case RP_MBOX_ECHO_REPLY:
-+		dev_info(dev, "received echo reply from %s\n", rproc->name);
-+		break;
-+	default:
-+		/* silently handle all other valid messages */
-+		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-+			return;
-+		if (msg > rproc->max_notifyid) {
-+			dev_dbg(dev, "dropping unknown message 0x%x", msg);
-+			return;
-+		}
-+		/* msg contains the index of the triggered vring */
-+		if (rproc_vq_interrupt(rproc, msg) == IRQ_NONE)
-+			dev_dbg(dev, "no message was found in vqid %d\n", msg);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(k3_rproc_mbox_callback);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("TI K3 common Remoteproc code");
-diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 43aedab9f0aa..785bb4b17d02 100644
---- a/drivers/remoteproc/ti_k3_common.h
-+++ b/drivers/remoteproc/ti_k3_common.h
-@@ -88,4 +88,5 @@ struct k3_rproc {
- 	void *priv;
- };
- 
-+void k3_rproc_mbox_callback(struct mbox_client *client, void *data);
- #endif /* REMOTEPROC_TI_K3_COMMON_H */
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index e92fab831670..7bd1d5a790cb 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -24,54 +24,6 @@
- 
- #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
- 
--/**
-- * k3_dsp_rproc_mbox_callback() - inbound mailbox message handler
-- * @client: mailbox client pointer used for requesting the mailbox channel
-- * @data: mailbox payload
-- *
-- * This handler is invoked by the OMAP mailbox driver whenever a mailbox
-- * message is received. Usually, the mailbox payload simply contains
-- * the index of the virtqueue that is kicked by the remote processor,
-- * and we let remoteproc core handle it.
-- *
-- * In addition to virtqueue indices, we also have some out-of-band values
-- * that indicate different events. Those values are deliberately very
-- * large so they don't coincide with virtqueue indices.
-- */
--static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
--{
--	struct k3_rproc *kproc = container_of(client, struct k3_rproc, client);
--	struct device *dev = kproc->rproc->dev.parent;
--	const char *name = kproc->rproc->name;
--	u32 msg = omap_mbox_message(data);
--
--	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
--
--	switch (msg) {
--	case RP_MBOX_CRASH:
--		/*
--		 * remoteproc detected an exception, but error recovery is not
--		 * supported. So, just log this for now
--		 */
--		dev_err(dev, "K3 DSP rproc %s crashed\n", name);
--		break;
--	case RP_MBOX_ECHO_REPLY:
--		dev_info(dev, "received echo reply from %s\n", name);
--		break;
--	default:
--		/* silently handle all other valid messages */
--		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
--			return;
--		if (msg > kproc->rproc->max_notifyid) {
--			dev_dbg(dev, "dropping unknown message 0x%x", msg);
--			return;
--		}
--		/* msg contains the index of the triggered vring */
--		if (rproc_vq_interrupt(kproc->rproc, msg) == IRQ_NONE)
--			dev_dbg(dev, "no message was found in vqid %d\n", msg);
--	}
--}
--
- /*
-  * Kick the remote processor to notify about pending unprocessed messages.
-  * The vqid usage is not used and is inconsequential, as the kick is performed
-@@ -155,7 +107,7 @@ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
- 
- 	client->dev = dev;
- 	client->tx_done = NULL;
--	client->rx_callback = k3_dsp_rproc_mbox_callback;
-+	client->rx_callback = k3_rproc_mbox_callback;
- 	client->tx_block = false;
- 	client->knows_txdone = false;
- 
-diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index 04095407a483..a1bcc4b265df 100644
---- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -21,53 +21,6 @@
- #include "ti_sci_proc.h"
- #include "ti_k3_common.h"
- 
--/**
-- * k3_m4_rproc_mbox_callback() - inbound mailbox message handler
-- * @client: mailbox client pointer used for requesting the mailbox channel
-- * @data: mailbox payload
-- *
-- * This handler is invoked by the K3 mailbox driver whenever a mailbox
-- * message is received. Usually, the mailbox payload simply contains
-- * the index of the virtqueue that is kicked by the remote processor,
-- * and we let remoteproc core handle it.
-- *
-- * In addition to virtqueue indices, we also have some out-of-band values
-- * that indicate different events. Those values are deliberately very
-- * large so they don't coincide with virtqueue indices.
-- */
--static void k3_m4_rproc_mbox_callback(struct mbox_client *client, void *data)
--{
--	struct device *dev = client->dev;
--	struct rproc *rproc = dev_get_drvdata(dev);
--	u32 msg = (u32)(uintptr_t)(data);
--
--	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
--
--	switch (msg) {
--	case RP_MBOX_CRASH:
--		/*
--		 * remoteproc detected an exception, but error recovery is not
--		 * supported. So, just log this for now
--		 */
--		dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
--		break;
--	case RP_MBOX_ECHO_REPLY:
--		dev_info(dev, "received echo reply from %s\n", rproc->name);
--		break;
--	default:
--		/* silently handle all other valid messages */
--		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
--			return;
--		if (msg > rproc->max_notifyid) {
--			dev_dbg(dev, "dropping unknown message 0x%x", msg);
--			return;
--		}
--		/* msg contains the index of the triggered vring */
--		if (rproc_vq_interrupt(rproc, msg) == IRQ_NONE)
--			dev_dbg(dev, "no message was found in vqid %d\n", msg);
--	}
--}
--
- /*
-  * Kick the remote processor to notify about pending unprocessed messages.
-  * The vqid usage is not used and is inconsequential, as the kick is performed
-@@ -581,7 +534,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
- 
- 	kproc->client.dev = dev;
- 	kproc->client.tx_done = NULL;
--	kproc->client.rx_callback = k3_m4_rproc_mbox_callback;
-+	kproc->client.rx_callback = k3_rproc_mbox_callback;
- 	kproc->client.tx_block = false;
- 	kproc->client.knows_txdone = false;
- 	kproc->mbox = mbox_request_channel(&kproc->client, 0);
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index ee833d506c97..c817a4ac54a7 100644
+index c0e4da82775d..30081eafbd36 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -129,54 +129,6 @@ struct k3_r5_core {
- 	bool released_from_reset;
- };
- 
--/**
-- * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
-- * @client: mailbox client pointer used for requesting the mailbox channel
-- * @data: mailbox payload
-- *
-- * This handler is invoked by the OMAP mailbox driver whenever a mailbox
-- * message is received. Usually, the mailbox payload simply contains
-- * the index of the virtqueue that is kicked by the remote processor,
-- * and we let remoteproc core handle it.
-- *
-- * In addition to virtqueue indices, we also have some out-of-band values
-- * that indicate different events. Those values are deliberately very
-- * large so they don't coincide with virtqueue indices.
-- */
--static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
--{
--	struct k3_rproc *kproc = container_of(client, struct k3_rproc, client);
--	struct device *dev = kproc->rproc->dev.parent;
--	const char *name = kproc->rproc->name;
--	u32 msg = omap_mbox_message(data);
--
--	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
--
--	switch (msg) {
--	case RP_MBOX_CRASH:
--		/*
--		 * remoteproc detected an exception, but error recovery is not
--		 * supported. So, just log this for now
--		 */
--		dev_err(dev, "K3 R5F rproc %s crashed\n", name);
--		break;
--	case RP_MBOX_ECHO_REPLY:
--		dev_info(dev, "received echo reply from %s\n", name);
--		break;
--	default:
--		/* silently handle all other valid messages */
--		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
--			return;
--		if (msg > kproc->rproc->max_notifyid) {
--			dev_dbg(dev, "dropping unknown message 0x%x", msg);
--			return;
--		}
--		/* msg contains the index of the triggered vring */
--		if (rproc_vq_interrupt(kproc->rproc, msg) == IRQ_NONE)
--			dev_dbg(dev, "no message was found in vqid %d\n", msg);
--	}
--}
--
- /* kick a virtqueue */
- static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+@@ -475,7 +475,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+ static int k3_r5_rproc_prepare(struct rproc *rproc)
  {
-@@ -356,7 +308,7 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+ 	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_r5_core *core = kproc->priv;
++	struct k3_r5_core *core = kproc->priv, *core0, *core1;
+ 	struct k3_r5_cluster *cluster = core->cluster;
+ 	struct device *dev = kproc->dev;
+ 	u32 ctrl = 0, cfg = 0, stat = 0;
+@@ -483,6 +483,29 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 	bool mem_init_dis;
+ 	int ret;
  
- 	client->dev = dev;
- 	client->tx_done = NULL;
--	client->rx_callback = k3_r5_rproc_mbox_callback;
-+	client->rx_callback = k3_rproc_mbox_callback;
- 	client->tx_block = false;
- 	client->knows_txdone = false;
++	/*
++	 * R5 cores require to be powered on sequentially, core0 should be in
++	 * higher power state than core1 in a cluster. So, wait for core0 to
++	 * power up before proceeding to core1 and put timeout of 2sec. This
++	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
++	 * core1 can be called before core0 due to thread execution order.
++	 *
++	 * By placing the wait mechanism here in .prepare() ops, this condition
++	 * is enforced for rproc boot requests from sysfs as well.
++	 */
++	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
++	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
++	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
++	    !core0->released_from_reset) {
++		ret = wait_event_interruptible_timeout(cluster->core_transition,
++						       core0->released_from_reset,
++						       msecs_to_jiffies(2000));
++		if (ret <= 0) {
++			dev_err(dev, "can not power up core1 before core0");
++			return -EPERM;
++		}
++	}
++
+ 	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
+ 	if (ret < 0)
+ 		return ret;
+@@ -498,6 +521,14 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 		return ret;
+ 	}
  
++	/*
++	 * Notify all threads in the wait queue when core0 state has changed so
++	 * that threads waiting for this condition can be executed.
++	 */
++	core->released_from_reset = true;
++	if (core == core0)
++		wake_up_interruptible(&cluster->core_transition);
++
+ 	/*
+ 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+ 	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
+@@ -542,11 +573,31 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ static int k3_r5_rproc_unprepare(struct rproc *rproc)
+ {
+ 	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_r5_core *core = kproc->priv;
++	struct k3_r5_core *core = kproc->priv, *core0, *core1;
+ 	struct k3_r5_cluster *cluster = core->cluster;
+ 	struct device *dev = kproc->dev;
+ 	int ret;
+ 
++	/*
++	 * Ensure power-down of cores is sequential in split mode. Core1 must
++	 * power down before Core0 to maintain the expected state. By placing
++	 * the wait mechanism here in .unprepare() ops, this condition is
++	 * enforced for rproc stop or shutdown requests from sysfs and device
++	 * removal as well.
++	 */
++	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
++	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
++	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core0 &&
++	    core1->released_from_reset) {
++		ret = wait_event_interruptible_timeout(cluster->core_transition,
++						       !core1->released_from_reset,
++						       msecs_to_jiffies(2000));
++		if (ret <= 0) {
++			dev_err(dev, "can not power down core0 before core1");
++			return -EPERM;
++		}
++	}
++
+ 	/* Re-use LockStep-mode reset logic for Single-CPU mode */
+ 	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+ 	       cluster->mode == CLUSTER_MODE_SINGLECPU) ?
+@@ -554,6 +605,14 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
+ 	if (ret)
+ 		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
+ 
++	/*
++	 * Notify all threads in the wait queue when core1 state has changed so
++	 * that threads waiting for this condition can be executed.
++	 */
++	core->released_from_reset = false;
++	if (core == core1)
++		wake_up_interruptible(&cluster->core_transition);
++
+ 	return ret;
+ }
+ 
+@@ -577,7 +636,7 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
+ static int k3_r5_rproc_start(struct rproc *rproc)
+ {
+ 	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_r5_core *core0, *core = kproc->priv;
++	struct k3_r5_core *core = kproc->priv;
+ 	struct k3_r5_cluster *cluster = core->cluster;
+ 	struct device *dev = kproc->dev;
+ 	u32 boot_addr;
+@@ -600,21 +659,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 				goto unroll_core_run;
+ 		}
+ 	} else {
+-		/* do not allow core 1 to start before core 0 */
+-		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
+-					 elem);
+-		if (core != core0 && core0->kproc->rproc->state == RPROC_OFFLINE) {
+-			dev_err(dev, "%s: can not start core 1 before core 0\n",
+-				__func__);
+-			return -EPERM;
+-		}
+-
+-		ret = k3_r5_core_run(core->kproc);
++		ret = k3_r5_core_run(kproc);
+ 		if (ret)
+ 			return ret;
+-
+-		core->released_from_reset = true;
+-		wake_up_interruptible(&cluster->core_transition);
+ 	}
+ 
+ 	return 0;
+@@ -654,9 +701,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ static int k3_r5_rproc_stop(struct rproc *rproc)
+ {
+ 	struct k3_r5_rproc *kproc = rproc->priv;
+-	struct k3_r5_core *core1, *core = kproc->priv;
++	struct k3_r5_core *core = kproc->priv;
+ 	struct k3_r5_cluster *cluster = core->cluster;
+-	struct device *dev = kproc->dev;
+ 	int ret;
+ 
+ 	/* halt all applicable cores */
+@@ -669,17 +715,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 			}
+ 		}
+ 	} else {
+-		/* do not allow core 0 to stop before core 1 */
+-		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+-					elem);
+-		if (core != core1 && core1->kproc->rproc->state != RPROC_OFFLINE) {
+-			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+-				__func__);
+-			ret = -EPERM;
+-			goto out;
+-		}
+-
+-		ret = k3_r5_core_halt(core->kproc);
++		ret = k3_r5_core_halt(kproc);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -1441,26 +1477,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+ 		    cluster->mode == CLUSTER_MODE_SINGLECORE)
+ 			break;
+-
+-		/*
+-		 * R5 cores require to be powered on sequentially, core0
+-		 * should be in higher power state than core1 in a cluster
+-		 * So, wait for current core to power up before proceeding
+-		 * to next core and put timeout of 2sec for each core.
+-		 *
+-		 * This waiting mechanism is necessary because
+-		 * rproc_auto_boot_callback() for core1 can be called before
+-		 * core0 due to thread execution order.
+-		 */
+-		ret = wait_event_interruptible_timeout(cluster->core_transition,
+-						       core->released_from_reset,
+-						       msecs_to_jiffies(2000));
+-		if (ret <= 0) {
+-			dev_err(cdev,
+-				"Timed out waiting for %s core to power up!\n",
+-				rproc->name);
+-			goto out;
+-		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.34.1
 
