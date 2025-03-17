@@ -1,196 +1,124 @@
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2071.outbound.protection.outlook.com [40.107.247.71])
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984BC245014;
-	Mon, 17 Mar 2025 13:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218328; cv=fail; b=eVr3B6Lz9Du7QUri+PZHQhgwRWIWzy6M++q9r3NKoCQXVyZtTvfmGyxLHrJoJQITl6Mvo7FdshIRe8z5H64ATLMhqwzli12fRSLhRjfq37Og+4iS4mKv6ujGQK2SGMzSMUKJXe/wxtPNI8MSeMGBBBTeCqU+OYchnakvH36H/tM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218328; c=relaxed/simple;
-	bh=I941TbbC7eDjPgwEMT94cc/UbnEXXRUwKO9DiT1veJQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A05246326;
+	Mon, 17 Mar 2025 15:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742225529; cv=none; b=K0PF/OMrJjgvFGNCktatsej12giMYGXLbYvGI1BPO84CnX+BvkhLEtNknjz7KTi4/mKbGtKychFXcxdIQvaKHl6B04kq8y/hy8JJ5HA3f+FwT4gxbcfY1FCUd08+zOZhmGrDERag2qSGxRf2cGszTQignXSxILt71fyeCf7xAz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742225529; c=relaxed/simple;
+	bh=kG3UyNjWkxYSO1d4jwmEOZf0a4luiENZknkUpyNY1Jg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K6pHC8Dz72J2nUiHI/CA6YMk4JOYs/FU7+Nbsf1mvdwSbr7sxjAAZoEsWz3s8tZH9NRUvZutXjWLrvEMI/lS29V0as2TQb2dt+978Nvun4EeevpdUuQXSVVAYtUgqu5PP4GyBaPf8ITj1nYb2f+msBEaskUGareo7ZXTet+US1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lcEGQEhw; arc=fail smtp.client-ip=40.107.247.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	 MIME-Version:Content-Type; b=QjkqCULnf4WnAP0rMtG40lcZvH2Jnn+BfX2GGfCeOkKKePoSja5SYrezExqFIFCPa2xMu1S0VMACvH7TM7By5IQSHi+VHtExbCGZpN0qeKC/YKxx+zk7ooLLk1hJKJbaNLIEOxESLrpKndbjobuiPZyU+d8iuVwwWgqClDfEtq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=LgtyJd8F; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Uq5zOxs0 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lcEGQEhw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VR67WQO6AoLZemxl7jqI49F6Gym+kze+R8wtvG1GHzzHampGXQK+tRQaBmWb2BmxUhpKIPCwJPTTqUpqRz+Ensq7a1lW++y6dw3uzOBdt4ZQhOZktYs7aFM6d4N0bFBqQRYDLl5ryniMd7MLeLuhsKPAsvdIoTqIo2NGlTGLugApqazj7tYjd7muf/mAEJ2k2/FC1F57ORyG1jbemq1fc/ETMy/l6XArKok8HFI1AMHvOqVVUXa5NdmuM8bD5VijXHl/P9Pzkj/Hr0zpeMlskcYdSBH04mKOb25xU7fryqnNrIA1FwgQdItGxjvYR4uXqSJcHrZk1bcfRXxK1yV4pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JCdahfXi/bSLi6xRjZ8LRFSd3u5mGK2m3FPla8DILQY=;
- b=U2k7658R5Iix0nPY3mC/hzQ2Ktq8lDIs+lQSJ/LANsTlTS//rD1lQW973Zy0wVMbs64G1DGTZABB6bD3wioHE0XFdc0FZCFDTcGMy0FkOoWBmytOJR7u9IWEIALabfbtSazj9Dc9kzRb940nxa9W7oqwdpy3/zNgG2MuOYMfXgyEnv22n18FwyEmMiyK08vJoiODeLo7p7U/R0FsY1YsT66TncXaXUhpEnesA9mItr6DmLVkAbCUmCHthm8XOubO240HtXPDmgz5FnbYxWiZq++7YJCezRWWXj0i6NpDlZ/VqQ3ZucEEiac2VvKF0vXYBH8F2eh8swLF3tvhzoOaUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JCdahfXi/bSLi6xRjZ8LRFSd3u5mGK2m3FPla8DILQY=;
- b=lcEGQEhwbczryFZJXUHKGSOkM3xm+TMOl/4YgNpNDDfLooKQRdIGvuvU/DcO5FJrn6YFRB3GzHUwQBfIEN0+xLqVhIE+8/eMSqrfvuAt+MZiH0pcf2jIj3SjHtIECRO+vBHbhgHr473sIIC0D9Yk0YsKbsC8zZmkE+5kzMvsmn5PU5dXb504ls4J6rO38snMsWxDDRqjVjwcCNLXerAM/jzhbKuo1zOCzFZ48O95iR5W5wGr9MVq6jTHjUjL6BXzqs0H6wddAOJXm4w+NQWcCGxxqmsqrOIxPspPCgvdZJVBahCqE/gyXZibUz6GEtZma/CDjOwrZgOzf7+o5V+XvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by GV1PR04MB9513.eurprd04.prod.outlook.com (2603:10a6:150:1e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 13:32:01 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6%5]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 13:32:01 +0000
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: shawnguo@kernel.org,
-	robh@kernel.org
-Cc: s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	festevam@gmail.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	frank.li@nxp.com,
-	aisheng.dong@nxp.com,
-	daniel.baluta@gmail.com,
-	laurentiu.mihalcea@nxp.com,
-	shengjiu.wang@nxp.com,
-	iuliana.prodan@nxp.com,
-	a.fatoum@pengutronix.de,
-	mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v5 5/5] arm64: dts: Add dsp rproc related mem regions
-Date: Mon, 17 Mar 2025 15:33:06 +0200
-Message-ID: <20250317133306.2003909-6-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250317133306.2003909-1-daniel.baluta@nxp.com>
-References: <20250317133306.2003909-1-daniel.baluta@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PAZP264CA0254.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:239::20) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="LgtyJd8F";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Uq5zOxs0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1742225525; x=1773761525;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KipOP6WZevqOmUSTSh474YO5ixrB7kPV1cCaZGSd0cc=;
+  b=LgtyJd8Fzbt5O1cW1nCE1DAcJTavjGwyWr3MtX/ia5SQ5NDJyn2uw7AT
+   mlNomYf0CqzHJ5AxiWzbt6DIYYpHMM9+5YVbZ8It+vf1MEaklCALm96TC
+   CFKYK8XC54kbarbYtl9Lf5TKGz8UtVHJObKN6BvP+aoSPs2WJ/Mj3AyBx
+   GUGAVG7vO0n/44F3CgNMnnAIUstPGci+9cqPSzZhz4ntwpg3EKBVx9/ek
+   FxOm0Vn4pnOmcxkvJcufS0l2VeuEQPY4+uX22syj+uU82OpvpUVevVyv8
+   XjK/zTOPlo5Q/vm2nDVOgZwSq0empJJH4Z/wJ1+xaVcgvU0W/iFhDMHLB
+   A==;
+X-CSE-ConnectionGUID: 8oKGuws+Tk+2dnMvWspdJQ==
+X-CSE-MsgGUID: ZUbpwkqrR8O5ARb/CW7m0g==
+X-IronPort-AV: E=Sophos;i="6.14,254,1736809200"; 
+   d="scan'208";a="43000310"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Mar 2025 16:30:52 +0100
+X-CheckPoint: {67D8402D-3-903EAEAC-E04C76C8}
+X-MAIL-CPID: D69F11ED0F4E03A24B6BC23DFFFEA6EF_5
+X-Control-Analysis: str=0001.0A006397.67D84023.003C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B47A1648CF;
+	Mon, 17 Mar 2025 16:30:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1742225448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KipOP6WZevqOmUSTSh474YO5ixrB7kPV1cCaZGSd0cc=;
+	b=Uq5zOxs0Q2Oh2zzZOxB4inAAzXeHVrTzt2nX709skPbcWUDR9LYBoiUiAYyf52iv2YweG5
+	JkLN6VCZjNG8ALhUIQovwtDil5XYyo96mm4Yxbz1Z/LE9/s1fn6eFgm+MrMDIu+xriBYNn
+	8f6sVJQ3EztaveLY8jMPucGHgQHW8GEmi7SOL/EWp972DQyRggo5MmHRUv/+YE0AEig3Ag
+	BIK+aNKm9A/LxUAabR4O3mapr8jb0kyL3GTWJEgLDYpVURN8x05NjMBX4K72V2duHca+7p
+	a9vaGfhs2e4JvYhdHosyBG4cdHddSLC1Avxty8JerPZw6RCV8C07fcF7zpkZpw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: shawnguo@kernel.org, robh@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, krzk+dt@kernel.org,
+ conor+dt@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, frank.li@nxp.com, aisheng.dong@nxp.com,
+ daniel.baluta@gmail.com, laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com,
+ iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, mathieu.poirier@linaro.org,
+ linux-remoteproc@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+Subject: Re: [PATCH v5 2/5] arm64: dts: imx8mp: Add mu2 root clock
+Date: Mon, 17 Mar 2025 16:30:46 +0100
+Message-ID: <5873285.DvuYhMxLoT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250317133306.2003909-3-daniel.baluta@nxp.com>
+References:
+ <20250317133306.2003909-1-daniel.baluta@nxp.com>
+ <20250317133306.2003909-3-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|GV1PR04MB9513:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5bea0c6c-0cdf-4eea-0a3a-08dd6558192c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3QJGnNBXhkahInjCjFLkXPz3jLmGh6gxN/mamErtebHUUUDPQLfndA5FLGf0?=
- =?us-ascii?Q?qIjKDZXprJD49PRuYzcfv+fT8flMYhHOQetQo0QLLzoO4KEDtUey9IR6Gnnv?=
- =?us-ascii?Q?KzMpdymOsod5OucI5gpSxsOMuyPoNusFk0/nMyyotPiU//ZZy0/kQDyfaz3f?=
- =?us-ascii?Q?wjsF23VXCxsh1Dg56yWWu2CReUCxqtArkKfSpZGfGStM9ep0S74q1+3R7UW9?=
- =?us-ascii?Q?H9clnIqTD0qEhXhJ6hJe48WcF+MPY+3PsdFzOe3nh7oqi6EouKz1Gqw7WEQw?=
- =?us-ascii?Q?TafdP9mU55YLjmVKWc8BPbL/uo2gdiKBFuUqRQyf6tRQaHpKZDaQDUiEp7MM?=
- =?us-ascii?Q?LjeYnZWp7Ucuxul4ELC03YrieYryXEt8/bbvF9y84kkpJB4uM7S//Amf8xbv?=
- =?us-ascii?Q?x5EXR5D53kVitIbe/6Jrind0DZqxggFyX8xreYGLFyfUDpXJs+vWBVjPXSW5?=
- =?us-ascii?Q?RZCfuXlzx+mGE2Ov1t6Oc8qzDlKKzAIzVSw9TkUUqsbqt74QHh/CbNF+PR/K?=
- =?us-ascii?Q?9KL5ictThM10H4PhdJxrdJG+ydjj9qJWOy4IM/sth0eW3VRrUIJEevN3xl+U?=
- =?us-ascii?Q?jwKBqGNlmh9neeqrQNQ9AU+xmI6d2tRxqIWYmAKH6pJIlwHUhQIxGbBjiBbP?=
- =?us-ascii?Q?NcUZKHtdXKeNur4SzwJD3hSiNWRA7eC+RArj+loAaJeIZl6XMy1TcTzL2DuH?=
- =?us-ascii?Q?ciuho1SI38L71CntufhJfHxVpIUMN+Lk6dqOb/iqfFD6alAEBlTrGe1oOXF2?=
- =?us-ascii?Q?OvB6dstRNwEMUy54zdQ/KbXydeOBSYtfUGzXFCPC8ouGvgj4bzCc/MONEq8V?=
- =?us-ascii?Q?1NUrAI9OVu5AjcaCxJr2C2vRrI04kBAXYnbreLPqxwuZPYsW1KGdMB7+2NT3?=
- =?us-ascii?Q?cqGABDBeXXznc0wfwIyxxb8zVeJkrbZM/C0S3kc/4ZSq0y9JXeCy6igaVmP8?=
- =?us-ascii?Q?rv0tVWMUQpPP0kzPLpjN8v8B3TDFvAo45WelAk09hPnKMwVCm2HRS5H4zeA6?=
- =?us-ascii?Q?K9Y+1Gz0KZ+vcoLZ8rAZ59/mZoG4qL/cPipXtsEBuGKjD0nL7wLFIrqD8HaV?=
- =?us-ascii?Q?vy/VFb0/nNtd+q8g/4dvu9TMG1Z8FCuKv1B6IUc3rD9yB+BFkjf52J3JURvP?=
- =?us-ascii?Q?gQMcWgqStWejEivyVa59HWafF1l0K4mcI/z36TVihahh04MDlqupwdXzHSIu?=
- =?us-ascii?Q?p3DQDxI31WScrjHe26wOINTnLdfJoVNNw12ZcA9cNyOj4Paf+R1pYVHwGuJi?=
- =?us-ascii?Q?sdvIysUVlP4gQiqQh03/yBwEwDF8hYmcwibqH4638sluKZJXD+cn7534JsPf?=
- =?us-ascii?Q?rTSpvZL4GAslkduYoWPsqBITn2DKRE0g8QMXAqu4vSJW/9qVMd9DWg/gsyqd?=
- =?us-ascii?Q?lGSYeacOCk26JdaWV7C2GsZhD+d9lE1hQZt/lVUUu63mwMEf2fA9tfztJ539?=
- =?us-ascii?Q?q3dlOcQc1QwZZHxKdmciVWjTebdDVwnd?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XLMZgK9Eg6dNJbxOfV9PqbYhcWYjjud942HsKsNWlaqb+HKaBkovvBZs9fkF?=
- =?us-ascii?Q?AN3zuE6k7n6luWt3k1cf32I4fwLHipoDJuqxm3yVh39E4HnBsKES6DWQ+sWa?=
- =?us-ascii?Q?QgLXVPtmMjGE/hlQ1TrU76qDRfaPPol5abiNDevLCudpnvgXEu6nGaP/h1I5?=
- =?us-ascii?Q?bRQpbApJFzsYGHbXx5L5ojrSnoBSjXhOFs5f/MVoVviQFFndiFZzM723FRLZ?=
- =?us-ascii?Q?IpOO/UquFt6t+Ov+bYZmI3a9mmE36T5JYjL0Sp64S+wo6kRqQBbAD25p2VI5?=
- =?us-ascii?Q?Lm7zwsm7FVuArL8YYH8HYrCKw0k0S6uq6xFCWMGRDMbdttSnz14f05dgjcqo?=
- =?us-ascii?Q?4V+to2C+3HOuM0oXiswpvi48oPp8Enrigzs69fp7h9XR6iy7PHptQO6RWB2Z?=
- =?us-ascii?Q?lQrbRnWBir9zCQjE3H37PsS/NOqnHpA1kF6Y3dQn4F4jaUpSbm5rm/W476P1?=
- =?us-ascii?Q?LJDQbKHEYzx16FXOZZkE0f/asVpJE6071Na04GBAgpnYbAhuIIn8CQkMit1m?=
- =?us-ascii?Q?e0t/8XYpdjy1lpO3Jherf4v9g6hpLghvOL2HEkjx2qZXCY2Igk0e4ACugspz?=
- =?us-ascii?Q?EwWYBj6j/RW9uXUfYk3i6D/6W3xPcYsdyKDb07rAJNOHJ0QTPH2FDCikf9BA?=
- =?us-ascii?Q?ov3ARSyOQ8yNCPw/dhBktY/wQdFoFYVA49cLN5LTuCMhIoO9WWh4RWy07BWZ?=
- =?us-ascii?Q?TURV3Jb3MRTZiSd2mhL9Cp5ccJei43bFOuprBsqu5JDu0yZgi+MtbhjGkIyP?=
- =?us-ascii?Q?B//ZQPooRg6D6ZjcPeVXWoGXUwt1GkrM/sUmgee8ps/yKMzL4QBDTEUqLrdO?=
- =?us-ascii?Q?f5sMMK2MHNVXhgo11kAavLvTx9B09MUQI3RFOHtIszF59JN1cBiQuXT7+CQA?=
- =?us-ascii?Q?NN5YZJRL1HiBwBkJABqnyc/QQDhprdV+WuAJeWYFUXnESvX1uCTpRiw+9gOk?=
- =?us-ascii?Q?Us2WPUZnonbvTkWJU8nH7msMFbSafddApscnNYq+eLgRJoj5TeiQkBGnxe0K?=
- =?us-ascii?Q?zsXLriZB7ABRftesb8g9X76X7263r5tHihRh2SeFEgwnNcQLA4gsizzdulw8?=
- =?us-ascii?Q?WLA1Po/yOjkC7AQpPRvqm7lZWdN/dqaPyDyrXfu+jmP0RYItgVAIOJjVwK38?=
- =?us-ascii?Q?tnAahjF6doIyJKzORzNFecnKq48k/ZL6HgKyTIpGQ/O7D5fmyxvlGxQB+jps?=
- =?us-ascii?Q?nBr+N//rB7KUR1Oz8/tU3n9VDlyKw9xf6g0A+OEJta9PV78AkgybnBL7vzfw?=
- =?us-ascii?Q?a65mJQ1okrr+lSnEhUTDX6zlBb/e2w7ID0cUwbqVBdM7UWF511R4cI4k6nwb?=
- =?us-ascii?Q?0ChJHt97yWAofN9wRPGLqniWF+0lzKBKxUJBfL80hiBILhGXoeQhvtnrBuUE?=
- =?us-ascii?Q?qBmIs3iVI1Fl3s+Xm7Mw4G9yxXFNGYcqo7giMiuxMFCT/nT0SvgDyGwZqP5T?=
- =?us-ascii?Q?HRLX1mD+ERqg/tGyi/aVKV+GLiOhefVzFUHTNssn3rBD82sFtfZ3n8r+dJwn?=
- =?us-ascii?Q?+6fZvFi8GtDGcP1nNVstHc1VRmF/+i3+MpQqayaX+eJ+i9ssWdTQ6WDEMBde?=
- =?us-ascii?Q?FcQOpu8D1dmCGb3TbmqPLobPlO1CtPP7a07BKFwn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bea0c6c-0cdf-4eea-0a3a-08dd6558192c
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 13:32:01.2477
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RQPi1+szN1Ej9U9mrcoW1izrfRdspu72gavjwzA+KiM30HSZTWLw6bDkjSCeVTJQQ6SSbk3wd/MCUM4N1jK6pQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9513
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-With imx8mp-evk board we are now configuring 'dsp' node for rproc usage,
-so add rproc specific memory regions.
+Am Montag, 17. M=E4rz 2025, 14:33:03 CET schrieb Daniel Baluta:
+> Enable MU2 node and add mu2 root clock.
+> MU2 is used to communicate with DSP core.
+>=20
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index 3b725fe442d0..5b443fbeded8 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1253,7 +1253,7 @@ mu2: mailbox@30e60000 {
+>  				reg =3D <0x30e60000 0x10000>;
+>  				interrupts =3D <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+>  				#mbox-cells =3D <2>;
+> -				status =3D "disabled";
 
-Also, enable dsp node because it is ready to be used.
+There is no need to enable MU2 if the DSP is disabled by default, no?
 
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Best regards
+Alexander
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index c26954e5a605..cd7ab74de2b3 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -309,6 +309,16 @@ &aud2htx {
- 	status = "okay";
- };
- 
-+&dsp_reserved {
-+	status = "okay";
-+};
-+
-+&dsp {
-+	memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
-+			<&dsp_vdev0vring1>, <&dsp_reserved>;
-+	status = "okay";
-+};
-+
- &eqos {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_eqos>;
--- 
-2.43.0
+> +				clocks =3D <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_MU2_ROOT>;
+>  			};
+> =20
+>  			i2c5: i2c@30ad0000 {
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
