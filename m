@@ -1,110 +1,130 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A9517A30F;
-	Mon, 17 Mar 2025 15:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCFFDDC1;
+	Mon, 17 Mar 2025 17:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227085; cv=none; b=LAtVdVFj3CDCReVE45Wy2InKo+IiDlsXK/Sl8YDGE4YZ4FCdAq/sLK9bejuElT4meNpo5KSmR5j+QNactNIwZthvtjb7y4ngngnwwE78MEloO8glHV5LqRUik/f9ISiVRy5qv5bs4T+fHIys7/LwiJbcH19fWmw7PNt9xJXTc3M=
+	t=1742231171; cv=none; b=qQ7dwDyarCHRCT4+t8VV0rrOpWJS8JMQuUnfOPrdFLAn6umwEfjjUtvYgCULPqULL07xMRmYtzfAa4AqPNrL54DerrhOF7kCWVUOGYfkhj76yFZbKRapUBOvh1Z4fr7CVIRtbp41T7D1XVZTUiNLxXmz7jPtljjXtdOLrwIGpcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227085; c=relaxed/simple;
-	bh=yMKzmgdAa1GrfN1P1367oG58K7sJ1GR+/2GwB7WGKUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KYsPbjofdtxpjzh1kjY1fqXayKBBvHh2b2dwbLZo3SLxxVEwmttFqES8RI5ZD71kiKDdyPi9c9tt4JCOJSX50WbyFyYl3O0TkMC4+hQHrWsqdZ6AZ2OKi77H7c7ifTkXMaKg3X0dvT5eaqhSu183uASAVn+9MFgcrnT/swG9Vts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMTFTTf7; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742231171; c=relaxed/simple;
+	bh=/xD8O8G6gjRmTJ73yF65jTWKxhEEFN3wTExhtSMFRhI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RNZIfYD0w3u+jLIAmDHGNs31KZyf+X3bHfziG9u18KbDMLmaGxJsB+jC/JvlT6kqMg7rokwVSDpKTcNf1OIRsUthnPzPS1TvGOCq1Aa3qctjQfk1dIL8jDziraGDqEWtd+ufX+sjA/dN54QBIqAbIne88sIZsJ7AUV1jlsUkQvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=mIegrplV; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMTFTTf7"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224019ad9edso35539345ad.1;
-        Mon, 17 Mar 2025 08:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742227083; x=1742831883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06QGEsbiDHTPlITpRCkSEygiFBtZganqjlJySZAtEPM=;
-        b=SMTFTTf723AxXy4OSnMzTmpSgvMaXDGzYPg/1GVw/WNHcyjPGc373IXAAnmnqmM2FI
-         XwRBMM1VT+/mF3NJJAJgwpFj9iaUPJZ9tMqzV4SDZG9OPd4F6EatvKBEJpMi1YY1+sNf
-         M9Fykb0eveZdjggZ9IyGvTxRUO/YyVKpJVx8pQzN1ZBpfQzIDZVdlifEXiMlVPjoCMVG
-         tXcj+iSnXfPCfjAmrNMrcOQ4iSzrQk6s+9lSJ3bH0xIGeK8zN3bnP+AD7MUdEdzu9eLX
-         25fCr4wbZPBmgwUZozhaSF1xK2vBADLMSm4khNKAq9vaqrkDaU36x/VoCd6uR5bichte
-         fArQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742227083; x=1742831883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06QGEsbiDHTPlITpRCkSEygiFBtZganqjlJySZAtEPM=;
-        b=hSgzOS4Ob5Qsh5HLrKtrLplmztmXzXaS94w1GZQ/e2Nv0Lhy06rUKsl/BCjYDxh8Jf
-         tQmiMZCoKUVuZFU8AUMwFryb8lZXVgt7fqxWibf8aBchOR3z6CeXD4q+Yi6H9gn+w58z
-         pcx0H3b4vKFYMXsr4MaLdFz4v/dyRFF9KSPBScSFgy8L+fGtTZFTx8g4Vz7y22CUO1o5
-         zsSlqots35qtDqnZEMBP54CUKDMu9UAS2LIitfQFDCUWzOZkwbvi/hf/+UGtFt3pYQ6/
-         bUHNQeEAzHzyfTTbZOplPzJ2/VNX0Kxj2idHb04WWzbpoTb6AQLndCJSTOCjHrK215qi
-         vAFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ6yolh3/ky9VItXc8ggMgQTEKOXsIPQECdGUOR2dbQ/pLR9dvJ4qF40U/eeH6ldwnF4swHAI0aAuB@vger.kernel.org, AJvYcCWWMLJtMXm8gI9M/XaopvGQX5akCCPBcPi8hxq/q19smihIDWedTL6W3aYwNCO2aMbPMbGvEJQNoK3+6NK/@vger.kernel.org, AJvYcCXRpVjg4tWC1CdhmV9iGBUDl1DhLVife+XEHDT4yIBCDgxfQnlNJLP+DIH0ygrqfLM/lOhpopQzEFIXP5Op4muPlg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLG0cSuCdCMH9sylCwGFk5HGTsjE7jvm48zpUKGzz1tdrf1j/w
-	hMrRiR1KvJXTBITCyXv3UhJArycQYUztOcxyySTImDVIjIpyvXvl2ZtiN+zpu4JFRULA6/IsZhv
-	eXHf3RZovybzOEepGY8bbW3Pip2A=
-X-Gm-Gg: ASbGnctDIuEd6zeN1s/BCTc4X6REfLebFGb4DIBmHS++9U+1jfKenZScAM0Az9LyG5b
-	HwQD2XJpNGAxV8NEtnaGTDGCCJ8m+cXwZitX8gI7NO7Cqr6vRjx1OPrBifPwNWGD0guEI87Mqi3
-	nWU3dC5IGxMrXcA/TQK5G1jWkT5vU=
-X-Google-Smtp-Source: AGHT+IG3Ayo9k0yRtjHNBCfqhmNJz3asFcvcSqQ3hdNGSq7kkzqBge1sZkHTYixEYa/8f6gTrblik9jUofUotL/jY/U=
-X-Received: by 2002:a17:90b:17c5:b0:2fe:b735:87da with SMTP id
- 98e67ed59e1d1-3019e7a3ce7mr409937a91.0.1742227082981; Mon, 17 Mar 2025
- 08:58:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="mIegrplV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1742231167; bh=/xD8O8G6gjRmTJ73yF65jTWKxhEEFN3wTExhtSMFRhI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=mIegrplVdgdHTUn14JxVQOLSq22kkDxrDa4glErt2flUElW4g7RstSMEG/PaFczg4
+	 drx2YhfPMQ+DAr1b1qCcC6zWxFo33mW8OVoXSxM2aTxkldNyIja3M1tv6FJXVM9/F/
+	 /j1Vl9F/jD9k3HfIP/qWOILDeUw55URceDpVCSn0=
+Message-ID: <92efa0ac-cdce-4ea2-ab08-b756dc755432@lucaweiss.eu>
+Date: Mon, 17 Mar 2025 18:06:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317133306.2003909-1-daniel.baluta@nxp.com>
- <20250317133306.2003909-3-daniel.baluta@nxp.com> <5873285.DvuYhMxLoT@steina-w>
-In-Reply-To: <5873285.DvuYhMxLoT@steina-w>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 17 Mar 2025 17:58:07 +0200
-X-Gm-Features: AQ5f1JrRqDM8p6JEGxBqM22DUaeaV1igcAM-i6by99ARfroWOHqb4YOLD6MREdU
-Message-ID: <CAEnQRZCsCYbQU8uxpFeyLmji65VRoO0rckRcoyc3frd2_B_KqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] arm64: dts: imx8mp: Add mu2 root clock
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: shawnguo@kernel.org, robh@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org, frank.li@nxp.com, 
-	aisheng.dong@nxp.com, laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, 
-	iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, mathieu.poirier@linaro.org, 
-	linux-remoteproc@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
+ qcom_smd_parse_edge
+From: Luca Weiss <luca@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
+ <2827287.mvXUDI8C0e@g550jk>
+Content-Language: en-US
+In-Reply-To: <2827287.mvXUDI8C0e@g550jk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 17, 2025 at 5:30=E2=80=AFPM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> Am Montag, 17. M=C3=A4rz 2025, 14:33:03 CET schrieb Daniel Baluta:
-> > Enable MU2 node and add mu2 root clock.
-> > MU2 is used to communicate with DSP core.
-> >
-> > Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boo=
-t/dts/freescale/imx8mp.dtsi
-> > index 3b725fe442d0..5b443fbeded8 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > @@ -1253,7 +1253,7 @@ mu2: mailbox@30e60000 {
-> >                               reg =3D <0x30e60000 0x10000>;
-> >                               interrupts =3D <GIC_SPI 136 IRQ_TYPE_LEVE=
-L_HIGH>;
-> >                               #mbox-cells =3D <2>;
-> > -                             status =3D "disabled";
->
-> There is no need to enable MU2 if the DSP is disabled by default, no?
+On 10/19/24 12:06 PM, Luca Weiss wrote:
+> On Donnerstag, 6. Juni 2024 21:01:36 MESZ Luca Weiss wrote:
+>> When the mailbox driver has not probed yet, the error message "failed to
+>> parse smd edge" is just going to confuse users, so improve the error
+>> prints a bit.
+>>
+>> Cover the last remaining exits from qcom_smd_parse_edge with proper
+>> error prints, especially the one for the mbox_chan deserved
+>> dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
+>> also to be complete.
+>>
+>> With this done, we can remove the outer print completely.
+> 
+> Ping, looks like this is still pending.
 
-True, I can enable it only when needed. Will fix in next version.
+Ping again, still pending.
+
+Regards
+Luca
+
+> 
+> Regards
+> Luca
+> 
+>>
+>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+>> ---
+>> Changes in v2:
+>> - Rebase on qcom for-next, drop dts patches which have been applied
+>> - Improve error printing situation (Bjorn)
+>> - Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
+>> ---
+>>   drivers/rpmsg/qcom_smd.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+>> index 43f601c84b4f..06e6ba653ea1 100644
+>> --- a/drivers/rpmsg/qcom_smd.c
+>> +++ b/drivers/rpmsg/qcom_smd.c
+>> @@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
+>>   	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+>>   	if (IS_ERR(edge->mbox_chan)) {
+>>   		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
+>> -			ret = PTR_ERR(edge->mbox_chan);
+>> +			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
+>> +					    "failed to acquire IPC mailbox\n");
+>>   			goto put_node;
+>>   		}
+>>   
+>> @@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
+>>   		of_node_put(syscon_np);
+>>   		if (IS_ERR(edge->ipc_regmap)) {
+>>   			ret = PTR_ERR(edge->ipc_regmap);
+>> +			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
+>>   			goto put_node;
+>>   		}
+>>   
+>> @@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+>>   	}
+>>   
+>>   	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
+>> -	if (ret) {
+>> -		dev_err(&edge->dev, "failed to parse smd edge\n");
+>> +	if (ret)
+>>   		goto unregister_dev;
+>> -	}
+>>   
+>>   	ret = qcom_smd_create_chrdev(edge);
+>>   	if (ret) {
+>>
+>> ---
+>> base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
+>> change-id: 20240423-apcs-mboxes-12ee6c01a5b3
+>>
+>> Best regards,
+>>
+> 
+> 
+> 
+> 
+
