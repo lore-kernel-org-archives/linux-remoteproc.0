@@ -1,177 +1,142 @@
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5984A06;
-	Mon, 17 Mar 2025 06:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA419E966;
+	Mon, 17 Mar 2025 11:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194002; cv=none; b=hjUTJLv7QhYpj8WHAvHDWqvgqaTOSVqv8jYUlVSEBM0tmJoNNs+iA43uy/XEBxwY3VVr40+mbQ8EhQDehX0q6o4TnYhRD9vDq8craS6XuOF9MYNFPATz5G1OOEZy1JGkXoYJtEn7yjBrfW38IgyfCHwgiRLcJqcwNgtboI0D3RM=
+	t=1742211732; cv=none; b=JKaQ7n0PJiuOhMPH4kK7/SnQVDEHFzQcjZnrWqmHF+M0mS8GpkfUzwnm7ZupTAgQzlJXQr9x94YkH0aJ2xNa8YcNnJa+33oCAfckywdSjrNT3TDQ6/LI4DULWtDln3WHgvW+xK6/EAC1by2X6EehRleAuVoAtpm+R7SVA6KLijs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194002; c=relaxed/simple;
-	bh=cu614ic6ctY/kDmWDcv7HI+zCRTGaue3KlmYxdz8D0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+0eYw4F4S1cs0TJkaVZJaSX2hp6hvkBtqnd/a3N6TxHnZPq7R4JvyYvzCC3ywwEQQK9hUc4+36AdJeKXD+LfKdTXMzjqb0nS3bG2bR2hjEdaGIYt+wf8u12D7fSHrY/sJnwYRcAfeMsN9N+fyvOGDafN6TEEpUwB2g2/LVGuZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=A3NgsL0w; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LgpEWZL2; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1742211732; c=relaxed/simple;
+	bh=aDUIWVNGWKXE5poDnZnwEiUiQ1/dygQU8H1FEa35J8s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ENdsrtJi6NwDZaAYUuSFIb7RF+4r7MLq9wAXeWyZ2AC0rB9jCHjJ448zIC+ORf1Pl4eCnzPO2lSpwnift+1XsSszOUpornvgPR2daKCcqBhUKw02m0n9zkm2CdSD1xUjPHPodmQU3b93ur/Bx4agYj0BbwD7PffSGw7oqLR73DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p4l0vSCv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="A3NgsL0w";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LgpEWZL2"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0F7221382CBA;
-	Mon, 17 Mar 2025 02:46:39 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 17 Mar 2025 02:46:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1742193999; x=1742280399; bh=cJvVtHvGQT
-	aqrITvkYcidpyChiVAHX0MBW0nE1HQiZY=; b=A3NgsL0wXcyqcVWoahwXFU86Ik
-	i5FFMV2dWvVnyxxoax4doo+y4PU9Oc2XcvF8X3sr3o2KJ/jghCFrzTpHJnz1VBfX
-	bQIVWYz/ansYqzc1gy2w7Ei/H7kEkfuQs6JoDpS4demSviSGg4ty+YfpmS0HcOb7
-	XXF8wZo3vdWx1d9LMJTRGcYpRJWtt+JxwG8+MxNKpVHFin5eG1t/yobqswYzMzCD
-	XL0OIyOq/n7HklxQMuYoSb2PM32tAxWRaDR1ot1Qzi3LxhOYX25bgS4Py/chPJsN
-	1vm3poKVeVMciqPrJ+eoJDRe/gdMSb9nSlrNAMQt54fEFCD5qkilXp5G8w2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1742193999; x=1742280399; bh=cJvVtHvGQTaqrITvkYcidpyChiVAHX0MBW0
-	nE1HQiZY=; b=LgpEWZL2OI5hl8HKfDe91iqnZtImX7d6kF+4Q1Feng4q4XiH4Jm
-	d6USFYvpuHutTN7vFSw0Kvx/kosSYHbqybOwfoNK/THXyhirvt5dc+mq1N6oC6yj
-	l9Y96LXrGp3a7yb/b5db03+rDRxHkGTIkD7RxEmBE8SDdENnUZJML1J+XArqT03j
-	KmtmRDMVzJ3+zkcLAtpohR7jOgk7GD1Rr5VyVb2OX5knu1InGZatUmVKbB7ifUZH
-	JsIcrFCy9xTwSoLHYenHBpdzlRxZW+rIbBFX/3eoI0oIFDTOYw5IMJRy7f3Tnegf
-	4LKMipd4QN9s0Zr3XGmUyem8rZbuM4REnkQ==
-X-ME-Sender: <xms:TsXXZ16bBQO7TXqdUPk_FhB6BFzNLPy8flX6jO0aKWzKC0ZF6Ia2kw>
-    <xme:TsXXZy63l1n8XQQ8PtYIlD8mZqxqadFSTZlBOqVGCs_RoLgJvMQGX6Q5AfAd7qYA5
-    S9uIUNlHVi5HA>
-X-ME-Received: <xmr:TsXXZ8eq9C2zooKPSid7DiJl21LT3hwvdQMvwatc5ABWu2lR2ZhaP7lu80Hu>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeekkeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepqhhuihgtpghstghhohifughhuhesqhhuihgtih
-    hntgdrtghomhdprhgtphhtthhopehmrghthhhivghurdhpohhirhhivghrsehlihhnrghr
-    ohdrohhrghdprhgtphhtthhopegrnhguvghrshhsohhnsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhrvghmohhtvghprhhotgesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:TsXXZ-Ls8qilsEKTOpPO2gEeLQrAngxlgvVHCeNc3vBlLvYZKiUxDg>
-    <xmx:TsXXZ5Ks3cgDKB1H5qPpPbAgYnIqcjxRtiiFSN2oFFFiGFiqvB6AMw>
-    <xmx:TsXXZ3xC7OJDwdV8yWC0uDZUr4g-EKmBBXYRzFgJseSndih5BNvVIw>
-    <xmx:TsXXZ1JIQSf0HODoBS8Ym6GlxMA--wigbrqPeO5qsOzwKRMmnhbHYQ>
-    <xmx:T8XXZzAB-KUPfZ6oB_UZGZ6Ff2kYxjJqUg4AHpL3EZOeipp7nMMt0S4->
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Mar 2025 02:46:38 -0400 (EDT)
-Date: Mon, 17 Mar 2025 07:45:18 +0100
-From: Greg KH <greg@kroah.com>
-To: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-Message-ID: <2025031704-awry-subsoil-2e4c@gregkh>
-References: <20250317063803.1361829-1-quic_schowdhu@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p4l0vSCv"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HAJiB3016240;
+	Mon, 17 Mar 2025 11:42:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=69ng99s6TqVcTpaaNvuqbvo1//ZQOTJCMBk
+	C/40shkY=; b=p4l0vSCvplpWVmkzukajbNW60vQjVASvKkhFaKwDvAhZUQwKpZF
+	M0laSWbtE4Npi2SzfkkYaYe5TwG7t0hXlCUKnaupeEWfHkAPtZp5Pu0Z7dGZr0de
+	v+Tl/Rz2CfCXq6SFc11vomLxDmMEL5TwWNPeHRWFsq2LBQCEEmTqEOelwogd+0Rx
+	WOVE+UqimcjJv5aOUXIKwFnMS8CqrSm+vE3kRsMmwZUwBa5iIMFYKBpnng98apqX
+	yJi9Xwmfc7GAYvZXsMUqt+QKmrt/V1isllehee40eG6nICtuaBXytI19CgcdvoMd
+	SqUMrEvnYmZIfpF8N6myZah6JRFmItOnjcA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1tx4gx9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:42:06 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52HBg29n016196;
+	Mon, 17 Mar 2025 11:42:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 45dkdxjj30-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:42:02 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52HBg2ig016190;
+	Mon, 17 Mar 2025 11:42:02 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 52HBg2F2016187
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:42:02 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
+	id 9C341577; Mon, 17 Mar 2025 17:12:01 +0530 (+0530)
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>
+Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Subject: [PATCH v3] remoteproc: Add device awake calls in rproc boot and shutdown path
+Date: Mon, 17 Mar 2025 17:10:57 +0530
+Message-Id: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317063803.1361829-1-quic_schowdhu@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=W/I4VQWk c=1 sm=1 tr=0 ts=67d80a8f cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=d-bqaP4l6ypRa8K_nXgA:9 a=0fcYfjdothPMH0Ll:21
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: S-hec7bQyZn2sirl6qhcqe77n1c8UP5P
+X-Proofpoint-ORIG-GUID: S-hec7bQyZn2sirl6qhcqe77n1c8UP5P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ impostorscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170086
 
-On Mon, Mar 17, 2025 at 12:08:03PM +0530, Souradeep Chowdhury wrote:
-> Add device awake calls in case of rproc boot and rproc shutdown path.
-> Currently, device awake call is only present in the recovery path
-> of remoteproc. If a user stops and starts rproc by using the sysfs
-> interface, then on pm suspension the firmware loading fails. Keep the
-> device awake in such a case just like it is done for the recovery path.
-> 
-> Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
-> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/remoteproc/remoteproc_core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c2cf0d277729..908a7b8f6c7e 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
->  		pr_err("invalid rproc handle\n");
->  		return -EINVAL;
->  	}
-> -
-> +
-> +	pm_stay_awake(rproc->dev.parent);
->  	dev = &rproc->dev;
->  
->  	ret = mutex_lock_interruptible(&rproc->lock);
-> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
->  		atomic_dec(&rproc->power);
->  unlock_mutex:
->  	mutex_unlock(&rproc->lock);
-> +	pm_relax(rproc->dev.parent);
->  	return ret;
->  }
->  EXPORT_SYMBOL(rproc_boot);
-> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	struct device *dev = &rproc->dev;
->  	int ret = 0;
->  
-> +	pm_stay_awake(rproc->dev.parent);
->  	ret = mutex_lock_interruptible(&rproc->lock);
->  	if (ret) {
->  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	rproc->table_ptr = NULL;
->  out:
->  	mutex_unlock(&rproc->lock);
-> +	pm_relax(rproc->dev.parent);
->  	return ret;
->  }
->  EXPORT_SYMBOL(rproc_shutdown);
-> -- 
-> 2.34.1
-> 
-> 
+Add device awake calls in case of rproc boot and rproc shutdown path.
+Currently, device awake call is only present in the recovery path
+of remoteproc. If a user stops and starts rproc by using the sysfs
+interface, then on pm suspension the firmware loading fails. Keep the
+device awake in such a case just like it is done for the recovery path.
 
-Hi,
+Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
+Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Cc: stable@vger.kernel.org
+---
+Changes in v3
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+*Add the stability mailing list in commit message
+ 
+ drivers/remoteproc/remoteproc_core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..908a7b8f6c7e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+ 		pr_err("invalid rproc handle\n");
+ 		return -EINVAL;
+ 	}
+-
++	
++	pm_stay_awake(rproc->dev.parent);
+ 	dev = &rproc->dev;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+ 		atomic_dec(&rproc->power);
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
+@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret = 0;
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+-- 
+2.34.1
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
