@@ -1,62 +1,59 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA419E966;
-	Mon, 17 Mar 2025 11:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A27233728;
+	Mon, 17 Mar 2025 12:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742211732; cv=none; b=JKaQ7n0PJiuOhMPH4kK7/SnQVDEHFzQcjZnrWqmHF+M0mS8GpkfUzwnm7ZupTAgQzlJXQr9x94YkH0aJ2xNa8YcNnJa+33oCAfckywdSjrNT3TDQ6/LI4DULWtDln3WHgvW+xK6/EAC1by2X6EehRleAuVoAtpm+R7SVA6KLijs=
+	t=1742213207; cv=none; b=grS9LpWGXeKIlJN7aIbHJ2/H7oJdGLEhPf+hOb/Jz3iArSVJ4P3PNqF1oTtiEP7jyohpYQ0BBC2/nbt5NiHd5NBIbG3Ntbmzw3z6A866WWfI9dqXxprIuls9qhFNTcE+XUgz6L0e3cHrDbYSh9qtxI5Yh+rrSonLRBeeAMjha1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742211732; c=relaxed/simple;
-	bh=aDUIWVNGWKXE5poDnZnwEiUiQ1/dygQU8H1FEa35J8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ENdsrtJi6NwDZaAYUuSFIb7RF+4r7MLq9wAXeWyZ2AC0rB9jCHjJ448zIC+ORf1Pl4eCnzPO2lSpwnift+1XsSszOUpornvgPR2daKCcqBhUKw02m0n9zkm2CdSD1xUjPHPodmQU3b93ur/Bx4agYj0BbwD7PffSGw7oqLR73DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p4l0vSCv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1742213207; c=relaxed/simple;
+	bh=s+yJxp49VF/mwK0XtZkFZkXqt/DFzILJbKyBePbaHK0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l25WFNurlP2zOWCB6y9aQIxKJf30GDiNgJ430n52jPh7775Z4jo0fuaBmxnnCcpexETMkqSAOLB71UnjixpWKtP7IWcmRCZxW3AM2WzCnZdEwJdf6a3B9fWGyR3y0G4yq6UbPmMUUMifxr6Wy8a8BgyWqjrlGdIDzheL7DOGdzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hVgIajtK; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p4l0vSCv"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HAJiB3016240;
-	Mon, 17 Mar 2025 11:42:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=69ng99s6TqVcTpaaNvuqbvo1//ZQOTJCMBk
-	C/40shkY=; b=p4l0vSCvplpWVmkzukajbNW60vQjVASvKkhFaKwDvAhZUQwKpZF
-	M0laSWbtE4Npi2SzfkkYaYe5TwG7t0hXlCUKnaupeEWfHkAPtZp5Pu0Z7dGZr0de
-	v+Tl/Rz2CfCXq6SFc11vomLxDmMEL5TwWNPeHRWFsq2LBQCEEmTqEOelwogd+0Rx
-	WOVE+UqimcjJv5aOUXIKwFnMS8CqrSm+vE3kRsMmwZUwBa5iIMFYKBpnng98apqX
-	yJi9Xwmfc7GAYvZXsMUqt+QKmrt/V1isllehee40eG6nICtuaBXytI19CgcdvoMd
-	SqUMrEvnYmZIfpF8N6myZah6JRFmItOnjcA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1tx4gx9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:42:06 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52HBg29n016196;
-	Mon, 17 Mar 2025 11:42:02 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 45dkdxjj30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:42:02 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52HBg2ig016190;
-	Mon, 17 Mar 2025 11:42:02 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 52HBg2F2016187
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:42:02 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
-	id 9C341577; Mon, 17 Mar 2025 17:12:01 +0530 (+0530)
-From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable <stable@vger.kernel.org>
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Subject: [PATCH v3] remoteproc: Add device awake calls in rproc boot and shutdown path
-Date: Mon, 17 Mar 2025 17:10:57 +0530
-Message-Id: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hVgIajtK"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC6ZeO2331215
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 07:06:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742213196;
+	bh=RTq9KbVztCwplzBxgIFcygBTDAf+k8lLRX80fGBWqS8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=hVgIajtK1EgzFkP7jQ9wvRSHr6XY+QuMyB6oWjBfEY0QeIoMQ+ea27B/L0sfXGLSw
+	 roZmBqK+S59iEUtIBrR76TcMjXxMYGSODlFpUkbUverOiDCIbS+tS+muCR112AMZln
+	 cxPXFCNRVqxoc/cVQe213OXRmZ+7JVXjR+xG5i2k=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC6Zad032695
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Mar 2025 07:06:35 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Mar 2025 07:06:35 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Mar 2025 07:06:35 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MJw060901;
+	Mon, 17 Mar 2025 07:06:32 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 01/26] remoteproc: k3-r5: Re-order internal memory initialization function
+Date: Mon, 17 Mar 2025 17:35:57 +0530
+Message-ID: <20250317120622.1746415-2-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250317120622.1746415-1-b-padhi@ti.com>
+References: <20250317120622.1746415-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -64,79 +61,206 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=W/I4VQWk c=1 sm=1 tr=0 ts=67d80a8f cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=d-bqaP4l6ypRa8K_nXgA:9 a=0fcYfjdothPMH0Ll:21
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: S-hec7bQyZn2sirl6qhcqe77n1c8UP5P
-X-Proofpoint-ORIG-GUID: S-hec7bQyZn2sirl6qhcqe77n1c8UP5P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170086
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add device awake calls in case of rproc boot and rproc shutdown path.
-Currently, device awake call is only present in the recovery path
-of remoteproc. If a user stops and starts rproc by using the sysfs
-interface, then on pm suspension the firmware loading fails. Keep the
-device awake in such a case just like it is done for the recovery path.
+The core's internal memory data structure will be refactored to be part
+of the k3_r5_rproc structure in a future commit. As a result, internal
+memory initialization will need to be performed inside
+k3_r5_cluster_rproc_init() after rproc_alloc().
 
-Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
-Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Cc: stable@vger.kernel.org
+Therefore, move the internal memory initialization function,
+k3_r5_core_of_get_internal_memories() above k3_r5_rproc_init() so that
+it can be invoked from there.
+
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
-Changes in v3
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 158 +++++++++++------------
+ 1 file changed, 79 insertions(+), 79 deletions(-)
 
-*Add the stability mailing list in commit message
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index dbc513c5569c..b2738b9a1b2d 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -1199,6 +1199,85 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 	return ret;
+ }
  
- drivers/remoteproc/remoteproc_core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c2cf0d277729..908a7b8f6c7e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
- 		pr_err("invalid rproc handle\n");
- 		return -EINVAL;
++static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
++					       struct k3_r5_core *core)
++{
++	static const char * const mem_names[] = {"atcm", "btcm"};
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int num_mems;
++	int i;
++
++	num_mems = ARRAY_SIZE(mem_names);
++	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
++	if (!core->mem)
++		return -ENOMEM;
++
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   mem_names[i]);
++		if (!res) {
++			dev_err(dev, "found no memory resource for %s\n",
++				mem_names[i]);
++			return -EINVAL;
++		}
++		if (!devm_request_mem_region(dev, res->start,
++					     resource_size(res),
++					     dev_name(dev))) {
++			dev_err(dev, "could not request %s region for resource\n",
++				mem_names[i]);
++			return -EBUSY;
++		}
++
++		/*
++		 * TCMs are designed in general to support RAM-like backing
++		 * memories. So, map these as Normal Non-Cached memories. This
++		 * also avoids/fixes any potential alignment faults due to
++		 * unaligned data accesses when using memcpy() or memset()
++		 * functions (normally seen with device type memory).
++		 */
++		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
++							resource_size(res));
++		if (!core->mem[i].cpu_addr) {
++			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
++			return -ENOMEM;
++		}
++		core->mem[i].bus_addr = res->start;
++
++		/*
++		 * TODO:
++		 * The R5F cores can place ATCM & BTCM anywhere in its address
++		 * based on the corresponding Region Registers in the System
++		 * Control coprocessor. For now, place ATCM and BTCM at
++		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
++		 * SoCs) based on loczrama setting
++		 */
++		if (!strcmp(mem_names[i], "atcm")) {
++			core->mem[i].dev_addr = core->loczrama ?
++							0 : K3_R5_TCM_DEV_ADDR;
++		} else {
++			core->mem[i].dev_addr = core->loczrama ?
++							K3_R5_TCM_DEV_ADDR : 0;
++		}
++		core->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			mem_names[i], &core->mem[i].bus_addr,
++			core->mem[i].size, core->mem[i].cpu_addr,
++			core->mem[i].dev_addr);
++	}
++	core->num_mems = num_mems;
++
++	return 0;
++}
++
++static void k3_r5_release_tsp(void *data)
++{
++	struct ti_sci_proc *tsp = data;
++
++	ti_sci_proc_release(tsp);
++}
++
+ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ {
+ 	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+@@ -1358,78 +1437,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
  	}
+ }
+ 
+-static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+-					       struct k3_r5_core *core)
+-{
+-	static const char * const mem_names[] = {"atcm", "btcm"};
+-	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	int num_mems;
+-	int i;
 -
-+	
-+	pm_stay_awake(rproc->dev.parent);
- 	dev = &rproc->dev;
- 
- 	ret = mutex_lock_interruptible(&rproc->lock);
-@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
- 		atomic_dec(&rproc->power);
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
+-	num_mems = ARRAY_SIZE(mem_names);
+-	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
+-	if (!core->mem)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_mems; i++) {
+-		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   mem_names[i]);
+-		if (!res) {
+-			dev_err(dev, "found no memory resource for %s\n",
+-				mem_names[i]);
+-			return -EINVAL;
+-		}
+-		if (!devm_request_mem_region(dev, res->start,
+-					     resource_size(res),
+-					     dev_name(dev))) {
+-			dev_err(dev, "could not request %s region for resource\n",
+-				mem_names[i]);
+-			return -EBUSY;
+-		}
+-
+-		/*
+-		 * TCMs are designed in general to support RAM-like backing
+-		 * memories. So, map these as Normal Non-Cached memories. This
+-		 * also avoids/fixes any potential alignment faults due to
+-		 * unaligned data accesses when using memcpy() or memset()
+-		 * functions (normally seen with device type memory).
+-		 */
+-		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+-							resource_size(res));
+-		if (!core->mem[i].cpu_addr) {
+-			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+-			return -ENOMEM;
+-		}
+-		core->mem[i].bus_addr = res->start;
+-
+-		/*
+-		 * TODO:
+-		 * The R5F cores can place ATCM & BTCM anywhere in its address
+-		 * based on the corresponding Region Registers in the System
+-		 * Control coprocessor. For now, place ATCM and BTCM at
+-		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
+-		 * SoCs) based on loczrama setting
+-		 */
+-		if (!strcmp(mem_names[i], "atcm")) {
+-			core->mem[i].dev_addr = core->loczrama ?
+-							0 : K3_R5_TCM_DEV_ADDR;
+-		} else {
+-			core->mem[i].dev_addr = core->loczrama ?
+-							K3_R5_TCM_DEV_ADDR : 0;
+-		}
+-		core->mem[i].size = resource_size(res);
+-
+-		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+-			mem_names[i], &core->mem[i].bus_addr,
+-			core->mem[i].size, core->mem[i].cpu_addr,
+-			core->mem[i].dev_addr);
+-	}
+-	core->num_mems = num_mems;
+-
+-	return 0;
+-}
+-
+ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+ 					   struct k3_r5_core *core)
+ {
+@@ -1487,13 +1494,6 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+ 	return 0;
  }
- EXPORT_SYMBOL(rproc_boot);
-@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	struct device *dev = &rproc->dev;
- 	int ret = 0;
  
-+	pm_stay_awake(rproc->dev.parent);
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret) {
- 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	rproc->table_ptr = NULL;
- out:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_shutdown);
+-static void k3_r5_release_tsp(void *data)
+-{
+-	struct ti_sci_proc *tsp = data;
+-
+-	ti_sci_proc_release(tsp);
+-}
+-
+ static int k3_r5_core_of_init(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
 -- 
 2.34.1
 
