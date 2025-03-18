@@ -1,71 +1,72 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7F51A3056;
-	Tue, 18 Mar 2025 08:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629F1A3029;
+	Tue, 18 Mar 2025 08:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287957; cv=none; b=FNy/xbAJmi2BVkkgc+Lh3baPTr4vGxHTOZHbXs0BAGbnHMjL/3dVopE3PbSJ/Z2ev7BrnBh5zV4o/EWxu+mdfgFGjNAkx5vcdAeZdnWQEzW368h/aWbrMf3QfoB5xivO+WdyiG2OXKTyTN1Izmn/U2XS9DNruIahxP5LjWcFp84=
+	t=1742288141; cv=none; b=sy0HFKUg3gQ3alImJIBYB8qHXxfbVPTBXH934nMWy6txPrXt8AAJCnexKTaCI7g8oXV80hui+MO7zgpsmWxq2lbGnJT08cf/rR0xPgiLypHdM0T1FsetNVarc19TSvZRQaCf2quI5v0Ar9JrpNq5pVIsBOlKeAJidf6jQkd3c3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287957; c=relaxed/simple;
-	bh=Nekzz6fBfS4uQY6xszVTs6sj5myK1wR2V9j2ijLK7eY=;
+	s=arc-20240116; t=1742288141; c=relaxed/simple;
+	bh=bcaaxFP1F23l0PdiW65JYiPYj/NqcM8962Z2DTxPBxc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oHkLOfhC8/BcAenjy6Kg2cl7gZSBox96t/jna7Enf2CPxHqptNVuxPs9PcfGdlugEQ2a2OJULKxHsuieBlA69OUplRHa5UDZ57QRC/U2+kqt9EcZ18gWwEaEZTU4aI4arMnKbuRdy0C4L5RBYM7K+/dBNO5s0E+A+nxYMnWACZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mX+2bnAV; arc=none smtp.client-ip=209.85.216.48
+	 To:Cc:Content-Type; b=beA2fl31SEMOCiqAZngZ7g3SaUnvCiTsFj0HOB5irY8KVvIzalli98Nbyhx/2E5Fxxj0d+zGtYhNTpjpkPNsEtAN+Dt9zu4wMKAv7HGTYPNbkMkJP72xFTyYQCp10DpuXJD4dKO7HbXyN5Y5TS6ZAK7/fFCcWV87KYJfIbGiMtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiTfdkSh; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mX+2bnAV"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff69365e1dso3551226a91.3;
-        Tue, 18 Mar 2025 01:52:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiTfdkSh"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so5123007a91.1;
+        Tue, 18 Mar 2025 01:55:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742287955; x=1742892755; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742288139; x=1742892939; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nekzz6fBfS4uQY6xszVTs6sj5myK1wR2V9j2ijLK7eY=;
-        b=mX+2bnAVfrb24PXJzlqW7O55Hku7bGKxLp4zplWiI6DugjRUlK/BOqPubPsBBNBZaK
-         wDT0KFD/iNg+FLsErBvPCVgPM2RwTivp6teX7L9ySki5uuHWpdlZbMsIfSLtITZMrUxK
-         eFoe5/NA0BBf16sOSEx832kVgbf4z3IImA7jpIE+Lo5kfFI+dZT2coj/XJufwnkXccZW
-         ahbwG6vWl4SN54Wq8Ys8tH6HLiYEbWyvIAfJlgjn3oTrNU2QdPaQ0/tfSQDuQxjWS87o
-         wuVW/Bo6+X5YcFE3oo767B0vYsvf0i3PlEqRvjeYTXBpb2ZSn5iYEqwkaPVt/CE1BHaH
-         ffFg==
+        bh=bcaaxFP1F23l0PdiW65JYiPYj/NqcM8962Z2DTxPBxc=;
+        b=NiTfdkSh6NPf3f4gTGR/xEUwydhRHLSNuLqOGXOoR8wpeBi9QQc4ZgN/RzaRsO0d3T
+         WpvbJXm1T+GYM8RZoDJPpotPPOEBE2lTjz0Mk53WTEq1nzWpikxp2SPSdqUnFbsMPE35
+         CN0Iob3Z5wH1wZfFNhr9j9LbBSPEeIL0IYHpb+oc+fXY6vQR4jf57hsq5UIvfDSfFBNE
+         4BFjqqrxGwiT/zEkJz1E+gFZg5cDM/Co3nr7qLoq7ufAeQVjlJ26SJAoQlApGVpHrRYx
+         WrcIoSii5CaXwgqhniyMFkYiLTcHZnaxk3q9ig2+fDVl5kS4PBlLf/bglpxSofMfxwbU
+         QQiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742287955; x=1742892755;
+        d=1e100.net; s=20230601; t=1742288139; x=1742892939;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nekzz6fBfS4uQY6xszVTs6sj5myK1wR2V9j2ijLK7eY=;
-        b=bSD9PfGXiLY3Q/WwW10vuOWf50e8akTdKRiuW9kXsWVERELSPuqa1h3miDqeRQFfIP
-         YwtxJdLMkInFkEgEmzDVwhq+HGQA7gfCf1G2XoNR92HTzqWUUGwgz/Tdj3HmVQWC/jzj
-         1Kv2HklBx24wAgqYRk32wvK6yozUlIxl4cYGo+tTkkoSTn4M57h0UvBU/nAh825wxIdb
-         zsD2EV5B4aSVskaacWHEiRhsh3yL9GT2tmG6bMpy7JvmRuL8TNqnIHc5nZ15gRl7OKqJ
-         lF0eYNUxT0oO//y/bl4FxfSJsGgPl5iC81szj6JGO2QkH4TAFU+0sXOiPXY/WK3iOonk
-         75yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/COGkzyhh4ubvOzDoLv/4PjK9TDYQifPSLAXvjHYltxk0jbpeDvlv0+Ot9bObcig0sSP833oSvsopu10X@vger.kernel.org, AJvYcCVhQmGxOKiXLydfkHQ+CD7FWjC/2ESJZZ7jczm+AcZBltwRUwyqzl1gWuNC7BbWaXvkCRYQVXfAuFk52ERvUg==@vger.kernel.org, AJvYcCWx86laTXdxIyagM1e4l5OzAj5su5B8JFShB7VYJfFcEnN8C5/ZCkJIYLz16rPf7Cu6iWqLaq76p5E4TaHoEmYhqQ==@vger.kernel.org, AJvYcCX0DpSzgMUI1lFCwLfA4wXeiKQNCbxGNCCSOLrDwlItcUVkBTKbGv7jn3QVoqCVEpuQ7q6kstv+9dqp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8bwchwrsDI3NDCE3QCMw0Yz7QIujCuUiYF4fUMOUUhMBIeO/J
-	rbHV3/ifuXBGzWNT1ipvcLSiKpux2e6ErZHjdSlHuoKvNzZtlJTtHN4FpFvsidEKpvG9qpzQmOh
-	9z+wkb8NHuGIfJzsJAITPv1HM35lmhMSYx795kQ==
-X-Gm-Gg: ASbGnctClB6QlClEHgj4OWKyZTZHV8iZqUM6NyWc7N6/O9IzfxMoUuQYk7NLSQmmFIx
-	xYKDpYWzRXmAR7sduSdg64O9w5Kl9KyeGmF1L9to4TRqSixD97jY0M6S/hM8ejUlCO744E4rLw2
-	0kNenSkRfkVTGH/nJBnHn9D5zIxvqZaGJIAg==
-X-Google-Smtp-Source: AGHT+IHxBtGTYr3jKDOjfudNcmvMSpsoyb/R4JeFGP2QOzJVyaFM9HhxQUDogb4lJVnRc6RbdFlWwMuZrsbX9LPrL68=
-X-Received: by 2002:a17:90b:1e49:b0:2ee:e518:c1d8 with SMTP id
- 98e67ed59e1d1-301a5bc1823mr1936322a91.30.1742287955176; Tue, 18 Mar 2025
- 01:52:35 -0700 (PDT)
+        bh=bcaaxFP1F23l0PdiW65JYiPYj/NqcM8962Z2DTxPBxc=;
+        b=ftddwvY2b9sxaklMX1Fp3bcGxeh4WDfxx61mr1IoRGxXp5AbVprcBC6NOI94uUw9Q7
+         4EjfmihGe8UP4ZjtX5+n/imjiFZ/QQMJorisOY20h+/4c+ZZW7CU/IpINbZBx9EzKZzW
+         RDcDorxEY4sSZ3syDSpKSawsbEq+B7YRtCFPTGYqHk4SW/jApJ9VLGWhgbNIPaPPlDki
+         ik0t9kiQoHKehwsJGeOsDA8gLETnGC72p5cRB/u+mIbfa8iajlnh2IvC5XfV4OIAyvzY
+         Exq7phYih8eHb+0cpwgYW7LC1K3akgOUYo88THUwGa6nUHSKQEEfz4A5fzmzK6NRsXXu
+         GDMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlBElKyH4szZofpL2mX0iz6cD4eqJMKy1Ox8rxg4zq+8H1rT3xKtLSV2tdn4nnHLhfFB3R2x4/4FOscamo@vger.kernel.org, AJvYcCVZcc3DJ5Za6a1I/6FkKGq9dvE6jKjxS+0zlzIsFjFYS314iUhRX9qdW9BQJvS4A6RhX1nWHj6ZQvYz@vger.kernel.org, AJvYcCVa8IVNygWhkqT9HcwIKmMqJnA/uqKv5TT6b6EWTZGRjjGz0RVLOAhovFrG6yzph9mdb7RBmDHJSfAJgzvTCCHqNw==@vger.kernel.org, AJvYcCWijZnWXqo4m8O02fNuceyXGn98Jv9tPJOpIswit0yM80GBqWDHvM/zFqQje4BSswJNChbbMhordvzXlvHIUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqfbRZPsS0pwmwd9X+W1k8vSSE3oXOnFFm6eJ2IDPmhygrEAy8
+	0mVHemgXTOAip0tzQQkfILNSp0t0CR1/4e36oUUVqE89Z1KsPTOeJ7qyTliXpXQOAmCLQd/iFsQ
+	rFY/dUoda9Z9HgpSicnbXu4Q8JPg=
+X-Gm-Gg: ASbGnctq99Kf6dAh2khFOWzCN4JkWCgD1Qt+GBZnglcp0uq9ZNXpabZDeOcptykihFL
+	aA4NFro8xUwD+yOeUKHmi9x4pV1ulgO+rZ4FanciL/01k2e3dY6fyqZ1ktBywX5F+g1bWTaxP9z
+	vf5Tl0lVCHdfWDX4mxCiycx90=
+X-Google-Smtp-Source: AGHT+IGzUXTMu6+0f6gQ8j7WPO24H14DLLXfhIDYppHhvCBnMdLnrdfvlyQcetDDzARbEXc2mLoN0e/rL5Gkqv0Y5W8=
+X-Received: by 2002:a17:90b:2250:b0:2fa:603e:905c with SMTP id
+ 98e67ed59e1d1-301a5b0441dmr2305847a91.2.1742288138990; Tue, 18 Mar 2025
+ 01:55:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-2-robh@kernel.org>
-In-Reply-To: <20250317232426.952188-2-robh@kernel.org>
+References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-4-robh@kernel.org>
+In-Reply-To: <20250317232426.952188-4-robh@kernel.org>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 18 Mar 2025 10:54:07 +0200
-X-Gm-Features: AQ5f1JqTpuM0NFbEd9b70zQbznVEgiaQyEKWqlPuOjeLEzVp-2Bgl4hMPBt9TEI
-Message-ID: <CAEnQRZAwd-e=j2bfHimx9xjQU-2=Anr7fJ_w98t3TAweZY4J8w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] of: reserved_mem: Add functions to parse "memory-region"
+Date: Tue, 18 Mar 2025 10:57:11 +0200
+X-Gm-Features: AQ5f1JoW0JUop4WUBf11_vConfYpr4BhM02aAcWePKMPfEFMJ9UWB8ZNiBwcNWg
+Message-ID: <CAEnQRZA7jEA0V4T1JSam-vV-GcBAbynP0PCfQsyejScwdgd3pg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] remoteproc: Use of_reserved_mem_region_* functions
+ for "memory-region"
 To: "Rob Herring (Arm)" <robh@kernel.org>
 Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
 	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
@@ -79,16 +80,22 @@ Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.or
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 1:24=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
+On Tue, Mar 18, 2025 at 1:25=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
  wrote:
 >
-> Drivers with "memory-region" properties currently have to do their own
-> parsing of "memory-region" properties. The result is all the drivers
-> have similar patterns of a call to parse "memory-region" and then get
-> the region's address and size. As this is a standard property, it should
-> have common functions for drivers to use. Add new functions to count the
-> number of regions and retrieve the region's address as a resource.
+> Use the newly added of_reserved_mem_region_to_resource() and
+> of_reserved_mem_region_count() functions to handle "memory-region"
+> properties.
+>
+> The error handling is a bit different in some cases. Often
+> "memory-region" is optional, so failed lookup is not an error. But then
+> an error in of_reserved_mem_lookup() is treated as an error. However,
+> that distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
 >
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+For IMX part:
 
 Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
