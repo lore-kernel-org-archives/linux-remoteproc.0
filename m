@@ -1,41 +1,42 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FB1F9DA;
-	Tue, 18 Mar 2025 22:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6155E2063D5;
+	Tue, 18 Mar 2025 22:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336678; cv=none; b=J5syIvMujBt406Mg54UtJuZB4mb+0ecPLvf7yJvb5luE9IH0YS9dxcbyVlr01zW93RNRONmbO7IPuQSsx4Hz+znw08Q151r5UspfZU9u8Du6rfA2JfkmVDDRL+ven1ztDsMn6lksjA8SWEPaGK7tE1Wvce/Zb4p7Xfm9e5jfHbU=
+	t=1742336681; cv=none; b=IMu9iyfmK+m255y3yh2HwMTZWu56LdVok4a1ScBlqvB/Z1d0uoegRH6LSfGK5Wimj/uEsBtcOPeZYD38LF+YsZTzKHW/zdMKuKuYwmgbCMYo3yngybNlDEFscOhsATCrW/LYX5WLPhKRznxNxVEgMU/EhCGAbLzny5ylOjNcfLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336678; c=relaxed/simple;
-	bh=1kIVihgqc8aluSZgJJicYxOEEtfe4zDvBWptMZBFkrw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RLo2VzKJbd7FTRvEVf9epdJ7NuhSMb80D0I/Fw2nfsdreWFv7Sd05fqB0571E4xIQ00gDXOT5kuSV/exmwAHADthMditppYTwni4O1Mo4Q2t2FCUKL6Kjh4WL+NM3muYJQWKhgSEl1ZoQatF7DABZjcDRqZY43iTA3Y0T9+ztZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IJP6drnC; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1742336681; c=relaxed/simple;
+	bh=up+BGxd5yruq1/jjYQr7mm3mJ2LrG2vsIBarOQEem10=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DQAhsZlkIQ9xHSYJsjW1+9/BtfWwn71Vuin7mNtoeJC+TG9VQL5VkFQfLBK2kpcRM/HrQZMCaH9WnNa4Oo1+conhm8M6Dp9uJjuON0CauHSkZYlQ/7X8jwMF0C19RyXK1xjLPi1BBH5Aq5DdF0Kjb/BUzvIRnhc1xGLTwPdi3/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JM0MRf+Y; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IJP6drnC"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JM0MRf+Y"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742336674;
-	bh=1kIVihgqc8aluSZgJJicYxOEEtfe4zDvBWptMZBFkrw=;
-	h=From:Subject:Date:To:Cc:From;
-	b=IJP6drnCoopWboiMcMsU0/pSrwjl5jDWiMPDTwCCSAztV1dm9AZwIUdn+wp3OOC22
-	 kynMnvERfpExm96Z+lsQW8xW2ZuNyhs0Lv1qaEE5oPPaMavV+yrIxJn5iQAx8Qcub4
-	 uvkXIa4mfWTtzaYtUB6wJnhZrLGjDgaEsOHT60gt6DXl5/yxFnQdCI04SEpeVYf38Z
-	 AeKgfQFVDVAgVH4cGTEmmMLBgpMstzUgh1OKiDHx0yQ+ql3jq74ujqDUFLuKsi9UCi
-	 S7ozqFtqHZ305Z+kIBRkRnrPzuO9nrF23hJYSCfpheoNKE+h7AV0H2vSLQznZq7Xj4
-	 o/upThrAyY3kg==
+	s=mail; t=1742336677;
+	bh=up+BGxd5yruq1/jjYQr7mm3mJ2LrG2vsIBarOQEem10=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=JM0MRf+YtlyHEYRk8ImzBThTeuBeYnzaebvRvz490385HzecGv5k1O9LtoooxGR2v
+	 hZcTFmYj0SfCFEkKlPM6jBfOlvpt34NAhPmeklMqkMD912aF22EzouQ+L5kT68q3mZ
+	 MCUSbKYpaFFk0vGgJCLACfBs2OF4vNjHVRAPtzESVKEcE9Te6vfYhVqIQ2pXohLJZ4
+	 cFSWW0te4RVJclYPhddQjPGrPNaXBAjCEl7PYr4Udd82TeCnDDqM/Gt0zjrEOOOloR
+	 rrZEj8LcASGRF/Xo8KvKZjmBn1yNngaLhlCKqFVMLf0dLf1fi0WjMG5ggO4V+okdIr
+	 hOOxg0NQzeQAw==
 Received: from [192.168.1.63] (unknown [70.107.117.78])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5CEA517E0B25;
-	Tue, 18 Mar 2025 23:24:31 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B6A7F17E0FCC;
+	Tue, 18 Mar 2025 23:24:34 +0100 (CET)
 From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Subject: [PATCH 0/4] Describe MT8188's SCP as dual-core
-Date: Tue, 18 Mar 2025 18:22:14 -0400
-Message-Id: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
+Date: Tue, 18 Mar 2025 18:22:15 -0400
+Subject: [PATCH 1/4] dt-bindings: remoteproc: mediatek: Add missing
+ minItems for 8192/8195
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,10 +45,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIABby2WcC/x3MTQqAIBBA4avErBvQkcC6SrQoHWugP7QiiO6et
- PwW7z2QOAonaIoHIl+SZFszdFmAm/p1ZBSfDaSoUkZbTG5Hf/Yzui0yLoc1tULLQQ+KAvmaIKd
- 75CD3v2279/0AsBdsE2YAAAA=
-X-Change-ID: 20250318-scp-dual-core-mt8390-8ef1b02f2d92
+Message-Id: <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
+References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
+In-Reply-To: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -60,37 +60,32 @@ Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Jason Chen <jason-ch.chen@mediatek.corp-partner.google.com>
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
 X-Mailer: b4 0.14.2
 
-This series updates the MT8188 SCP description to dual-core and prepares
-its usage. Patch 3 updates the MT8188 DT to describe the SCP as a dual
-core cluster and patch 4 adds the firmware-name property so the firmware
-can be loaded. Patches 1 and 2 are dt-binding fixes for the SCP.
+Both MT8192 and MT8195 have an L1TCM memory, so it should be described
+in reg, and therefore reg's minItems should be 3, as is already implicit
+by reg-names. Override minItems to 3 for MT8192 and MT8195.
 
-Depends on the "MediaTek MT8188 MDP3 Enablement" series [1].
-
-[1] https://lore.kernel.org/all/20241218105320.38980-1-angelogioacchino.delregno@collabora.com
-
+Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
 Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
-Nícolas F. R. A. Prado (4):
-      dt-bindings: remoteproc: mediatek: Add missing minItems for 8192/8195
-      dt-bindings: remoteproc: mediatek: Remove l1tcm for dual-core MT8188 SCP
-      arm64: dts: mediatek: mt8188: Describe SCP as a cluster with two cores
-      arm64: dts: mediatek: mt8390-genio-common: Add firmware-name for scp0
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../devicetree/bindings/remoteproc/mtk,scp.yaml    | 20 ++++++++++--
- arch/arm64/boot/dts/mediatek/mt8188-evb.dts        |  6 +++-
- arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 36 ++++++++++++++++------
- .../boot/dts/mediatek/mt8390-genio-common.dtsi     |  7 ++++-
- 4 files changed, 55 insertions(+), 14 deletions(-)
----
-base-commit: 04b0d54949f9660384ceefc6f707e40daba6bf3e
-change-id: 20250318-scp-dual-core-mt8390-8ef1b02f2d92
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -185,6 +185,7 @@ allOf:
+     then:
+       properties:
+         reg:
++          minItems: 3
+           maxItems: 3
+         reg-names:
+           items:
 
-Best regards,
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+2.49.0
 
