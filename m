@@ -1,78 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6B6253F0A;
-	Wed, 19 Mar 2025 09:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962E4253356;
+	Wed, 19 Mar 2025 09:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376672; cv=none; b=qBT5PG27z4zJhlMVOa+aYnDIoOe9bta1dsdnV9npbGa/2izhY0d/U6boQS5nfNQGlqlWekldogHQhSePe1kl6dDaG8TdtmhM1bCxiT+kJloSLTj10eIFrOsAMPoHhsWwh03cSvM0MhFuiVAyzaz+uSUDIRjzLRwLKHgZx2S0V5w=
+	t=1742376892; cv=none; b=Dk3nbRxSkMs9kCLA/Qdo2S3bYghp9r/UVjYBooqAn+8L/EFo3Br/5I3LinEeOrBA0R9dtZ1dkNKxqVQrPRWLvEkAuIwBzNSHSeQbe7xatyOEEQLTEj1AAb5awFTTVZH7zZN2pF9yANjqE6ImkKaaqZIYz1hYV4x9gAHbbmKu4MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376672; c=relaxed/simple;
-	bh=g816PyXJcj3PW9KR/oQmBslgPC6PMvYLghvAqSoQ0C8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EkKrq2TV/nUcOERrakenTcUpA1dzHFOk8DM5GXBFUBAFd7qOys30iqiNNREyoj7Rg5FAu2hjH3/1+58UAyrTzuumdj5gn/eSNsF+wss5M8fHF2Dw85Bwfno8tZmhH8Rq8/cXYn+bNSQs90GkepIWd97NaO7nB4Bx+GV1sIY9Bog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzYaUNqw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742376892; c=relaxed/simple;
+	bh=srUPQaoIT1eUxODIcp9G8q+P3AERhlCZzGqJ5NwwctY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PEi1ATL09Kr78uC3byMn3XJ/BI2xDhtEMUYhndNETtoY4APCQAebTtiRTF9Et48+o8YxtAnMXvamOkarZJQrHolMPuNE5WPKwsvrVL6UqMJuEMdoScPNFpeL6nFTqHE/aQSTz53tpV9VQ4CBLrnR1XiYQEohlll2D8BxoUNAAmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ahXaX6zG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzYaUNqw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4FCC4CEEE;
-	Wed, 19 Mar 2025 09:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742376672;
-	bh=g816PyXJcj3PW9KR/oQmBslgPC6PMvYLghvAqSoQ0C8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rzYaUNqw3yDUYu54/JcI1YvA3lI0bmnIH0PMyL3ifUWgBlhy5L5dEzoWuYcScymUx
-	 5TF7j2HxS/3dRaKeu5MJZdYLOaP4AkUZ9a1TGHGvcGWsg/zXsDEffYIDHh/BSzqliD
-	 Gd8TKQrd0WzU8DNgjXaBDfSVslr1L1lHMHw6bIawzMyB6//aMvz1SNxd1oRhXmoPN5
-	 zsJfgJlHRTL8/GiKnYRhc7lkHRYD3iwrmFYZPCZ+zl1GcQBeM6Ztnb064vnfKUkssK
-	 +nAkmQKRH5hYqh1RNaeixTR1t9zOVhcRBhSvWsmUy7Ljk2z80DHod/k5eFXvbl8+HS
-	 wQLNkFeJWWhcQ==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: tglx@linutronix.de
-Cc: maz@kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v2 09/57] irqdomain: remoteproc: Switch to of_fwnode_handle()
-Date: Wed, 19 Mar 2025 10:29:02 +0100
-Message-ID: <20250319092951.37667-10-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
-References: <20250319092951.37667-1-jirislaby@kernel.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ahXaX6zG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742376888;
+	bh=srUPQaoIT1eUxODIcp9G8q+P3AERhlCZzGqJ5NwwctY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ahXaX6zGlXiBq77NwXPNWqOMkalJx7KwK2ftYjFCRCXuLWBM4tanG2A9RImzZN3NE
+	 uuZZSmoE4oLFnjjFCadB1Rc5JTeSvw8ULfA5HYyQdlQj7hzH+ns+iVsOvajakgRk1k
+	 KQmVeSKibWyJdGmso5lG8pcf5D7BrloRFCTF4CGEscMmUogPWIU95ytZvi+VDbk8G+
+	 EuzjomDCoTxKvC0NePvTckMEVEj71k/F0BKjxywVE7bmuKmKmiRJYIXUoL5RZkXPjV
+	 uODrCu8lxMaJWmyUiLk1XsoJIGqEjZ3WsbrIM1xw5aCmMQxuQ2dy5Q/6pc1B49wVYl
+	 bRy61TDStiBPA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 91CF717E0385;
+	Wed, 19 Mar 2025 10:34:47 +0100 (CET)
+Message-ID: <70c10764-121b-43f5-931e-84ffd666c594@collabora.com>
+Date: Wed, 19 Mar 2025 10:34:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: remoteproc: mediatek: Remove l1tcm for
+ dual-core MT8188 SCP
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Tinghan Shen <tinghan.shen@mediatek.com>,
+ Olivia Wen <olivia.wen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>
+Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
+ <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
-defined of_fwnode_handle(). The former is in the process of being
-removed, so use the latter instead.
+Il 18/03/25 23:22, Nícolas F. R. A. Prado ha scritto:
+> The SCP present on MT8188 does not have an L1TCM memory region, but the
+> binding incorrectly requires one for the dual-core description of the
+> MT8188 SCP. Remove that requirement. Also update the minimum number of
+> reg and reg-names to 1, since as this is a multi-core SCP with no
+> L1TCM memory, only the CFG memory region is present in the parent node.
+> 
+> Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
----
- drivers/remoteproc/pru_rproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As far as I know, the L1TCM is present on MT8188, and it's at 0x1070000 len 0x8000
+exactly like MT8195.
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 1656574b7317..4a4eb9c0b133 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -563,7 +563,7 @@ static int pru_handle_intrmap(struct rproc *rproc)
- 		return -ENODEV;
- 	}
- 
--	fwspec.fwnode = of_node_to_fwnode(irq_parent);
-+	fwspec.fwnode = of_fwnode_handle(irq_parent);
- 	fwspec.param_count = 3;
- 	for (i = 0; i < pru->evt_count; i++) {
- 		fwspec.param[0] = rsc->pru_intc_map[i].event;
--- 
-2.49.0
+Moudy, are you able to please confirm or deny that?
+
+Cheers,
+Angelo
+
 
