@@ -1,65 +1,65 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD26320897F
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Mar 2025 07:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8291991CD
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Mar 2025 07:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368603; cv=none; b=GWb3DG3xX7qWESc6qkYuRCt08ZHCoqFRaOYpN0NNfHzT0g0HLdwtxKPhlubSLmuSZRUvWXA0zNcirya38io+HR/QOIIFtEhtyUfntAIsk2YhyuJFaya28oYRT6SlScDAFdaBLn0bHeYi+uPMdk1Kko7mKIAhfZb/prVCOMDbXgs=
+	t=1742368705; cv=none; b=LnRuv+ZtqGycQK70ZL0c/dUG54HOKstpQTAcrfSUhE3pG8DFIhovJ5dWiCKBC9WgajVsHO9QcYASgR6gIoMwl1qKWltqayVk89mPhYS5VH3fSu6yVODCZnfA7eIQ7/xcPBpPDRTMM7hxBATavScwxwWW+OYRpV2zxSZf4DnbixE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368603; c=relaxed/simple;
-	bh=lVO4h/mJkxrAXfVrEjc2UlK7pzL9QxZQba/hD5bTrSs=;
+	s=arc-20240116; t=1742368705; c=relaxed/simple;
+	bh=AurljSFGywwvtLf+Iq1FHd3bwarxSb/wqs/YAobNt1k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z7Vg6+UXJMBk/pKv52Z1NIcElt9KZB22dQcgQGUtGxX7JRI3fIpNr7lA9tCUy5U6SOypVLlM8YoM3lNLnE2NYfkYgzyy7DU2WDP+3w7S44D939e9YQRe5xuPbNFUAKKIQwmLmkVIiVBep2smKtEslFaiqpyg44/i8J/pmQorACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwNrWb1Z; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=Qn4cE8cZe5ZxVCkNmoB34+9weAGCe7FpMfIjwD+4oaUbbtZHcfsw7IP/ytqBW5wkYkvQFQEjkfymliQPTp5lMUjgQ+JBq0LgUthYxJC89CgAX3/QCwS92jUISfdY4nu5pMBuSXnQrCi63H9pn8dsuD1wmnaO9Ulw4H+nX6f3iyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KOmFdm4Y; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwNrWb1Z"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43938828d02so6873185e9.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Mar 2025 00:16:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KOmFdm4Y"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d46491946so65415e9.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Mar 2025 00:18:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742368600; x=1742973400; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742368702; x=1742973502; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
-        b=TwNrWb1ZFmQJqs4SnQlMPPG2IQ0/65a0whI/Ns5TKf/SGUmZcTlRAOjnCsr8XkIVet
-         p6PQkLYgs596elma1reFb29VU6LpZ7GxKTDHa7iXuomM9x2vmjrTgmqhyeaQlqVlyVhm
-         OoZdRWhzqWa6QjQ+9sF9V21vvM9KQoWsaOEG0cPIlVTDRtcRUeenZnfALcMm8zrPIIxX
-         VJQGJvAX0iaCr/bAijghYyHWDRyDXXvg9AkYyDvL/t8n+eZkTtjUmmiHE4xLO+gGrqJB
-         9FbkptXmhOCuViTyAeQxsxS+D/uVc0xvXFmm28593kyE//u9mLRqG2XL8MBW+CJn5bRd
-         L5lg==
+        bh=2t1e8lDHeeC+VhrMMM1rV8xRnNEpcJgqStNn0Vw4SWI=;
+        b=KOmFdm4YNNb+1aluIAzgQ5E/SFQVH7VM8Qhw7xcmGP8KxtbSmtkTo3aqy5DRbg/hNv
+         BdCY4QNlkJyldSUiVZjBY0iFKwH0a8zZI72edAeb7giGH6bOlweKTSFYq9aHqRiTajk3
+         1KZldKte28j9xIUUxHrAA9nRxQ8kDd7+8chGMAuhgrWCku0lBl61JPNyOddmiRi5T0G3
+         n9j7MRoHm4yVs9wW3dAiyMZMoJsm+SfSpo4bzWJj+76anYj4XY6mEH9qIMFZjesCjznv
+         4lNZxVBvtGsu/4h/+Ld9D9KQu7HILwiyw2rYSuOxLh7Mp6SQHGwPQylhA0xMwykyVdXV
+         Q3Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742368600; x=1742973400;
+        d=1e100.net; s=20230601; t=1742368702; x=1742973502;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w2XqsxBfEStQaOCaRcZuCXd94NPuhOER/mwaluYTki4=;
-        b=QzpFW/xbMvtKhK5sXiueVSiejXR81XYeYZhyLMxt3/Rg9llXKE75kgd7PnHDuQPB9z
-         0h4VaPqSo/ovcjWw3vfz5B1oBE9GuIeNMbyvmAa2ofxJxsTjUFIjjpinvjZC0Nc7BKAi
-         oyq1N/hBU/dCIaueytujXt25cKE5yj9hKRC5GDzSaZoSTclYvpczWCAXyaB0jLvAW72x
-         vfDbMpbAnb4jtCn0TFnnLRvZDS7uD78s7frXkDuQrmU3Q5zPHHljXkmdqdouqpUfj5gF
-         /VXzanhdbwdkvS0Y+TVwotrplfx/GBHGZ2D9gK16rY/kakBxuAytTJzBf3svvEmdO3h1
-         ZsTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDQ82KEY2hZNNgAbSBirkJeD8/c/+BzNn+nPajKKr4annq/5GyzzhX5cZzk69BOIEQEPsm5n8Cv5LuGclgVn/p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh/sH0h/6gV87jHXbyOIq3VZKjIIZABO/foI9AO/OYkkY5UZMD
-	G8hkljSK2tLLwnavNanAkyvIuWeuf9LWUWRyh0Of4l9UWd+HWwtVcR98NP4GDIY=
-X-Gm-Gg: ASbGnct60o9Hn1su0PX3EdlO7zLf9hEhQ9Z3gfruLEuVCBt7smvGl0s9whNhNi7yTi/
-	ct15XJOgtmvF/HNxGbjtIH008f+nNPt91Dap5TM8gaUHRjWiVcsXIrVkd//MR0ZrtY4mR9kZsc+
-	RvIGD0B6TA8hfWa135pmGIOIetSdNW5g26Sod0c+TtCir/EHfcljjebsf19aTm6eVcb2fA5QRYK
-	vBciMncySNaKgOqED061w37BmrwF6iUbA1wVkOsJUhVjGPhR6xNrhOcIBMd7cdbpxiKLtdyipoK
-	tBir2thoqrHuTbe5axT0bG9fb1WrWop6paKLqOYDQ473bu/MCvXOdJqQCKmqjKY=
-X-Google-Smtp-Source: AGHT+IFcR8TM0tkwiPvEfeHGXy8syzRhG6/CVprTPhxIrgtzOfrmtiAen0c0L7irAhuDeNCxuXOBYg==
-X-Received: by 2002:a5d:5f82:0:b0:391:42f:7e83 with SMTP id ffacd0b85a97d-39973b2cb14mr527211f8f.13.1742368599911;
-        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
+        bh=2t1e8lDHeeC+VhrMMM1rV8xRnNEpcJgqStNn0Vw4SWI=;
+        b=ewFgl5+D9p/H2hkmS7Du9X8PJN5oDKUPJSBDdbDjuEFaScKuM7IBL5BZqEHBl/ELv1
+         kC6F1Qafwg7+NMAl6Wia1+lw58H+XOIgWm8L6XyuDSvMeN/G5+UhY1rpJ/bWExyYLqES
+         Wd665+ZZSXAyhrSeVKGKhiraEPiNulPOrjGyO3t0fIpks6vQrBhgiT9PTsA3qObyFiYs
+         /FWwxbRpx4a2LEjUGxRERhjrQsCBWGdjFRLdu5U+bZus2+OWxYWSMs+F6HttCJ0gOZ5d
+         1T1vtFk7VW7jLfUtnb/qS2RveL18XWBobfo6tt0JomSOcTgKKzczIqSrkAfIB5XJ+CsQ
+         MJ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW2JjBDxKFKV7Q7+IK5TMcp1uZHmipiaP3C+dA/7Sbg2YELdggPlIGMWlwe15tqfyXI69BNsPWRj5WvFJjcW8EP@vger.kernel.org
+X-Gm-Message-State: AOJu0YySyI1v0tfcQiYe8n6+C+YbwgtO82pBeUkms7uMWWwfJ0QvyJPk
+	auU4GhsyP422hhrSJBcM1Iq4ymYti93/kK4ZIfss81xPRXBXZ2eFJETmrB6CSHI=
+X-Gm-Gg: ASbGncuZg95/uWMUE9AGdQLVzjoEd7qe3MZZVg0IUIZGvYkhaM6jzwgHI7ADyLW8Yz/
+	j9UP68YJQq0M0WG0abXYPs2ziZWq6Zqm3fFOEG7IdmyZeHhkBTj+sipLYo3dElRTdno61Fv1WJq
+	VfVISaLG0IL/XCaGtFsbuBJ+w7H1Pgeeuy1oU8lAPI9VWojYxD8YzIBCNd8hgDmbZzr2bqdf41y
+	f9crszole9NCduhPBrlzRbCFTLMME6e7PXFswqFKc3kpZ33iNjTxSS5u9+74+iL54RmV1uqN+yJ
+	0Fjb9gQg1hG2FFsUghl/wCjL9VYAeZGI6/QUPSskychvOBJ5zBo37+cr0bpS0NQ=
+X-Google-Smtp-Source: AGHT+IE8IxeWFwFlKpP8Jw2vDUuTM92MTiYoo+wRg9VD1zFAykda6SI5zvDb5BcQatEeBZe+hwdHQA==
+X-Received: by 2002:a05:600c:1553:b0:439:9fde:da76 with SMTP id 5b1f17b1804b1-43d44bd7e25mr2942125e9.0.1742368702376;
+        Wed, 19 Mar 2025 00:18:22 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a96sm20469405f8f.69.2025.03.19.00.16.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7eb876sm20048778f8f.83.2025.03.19.00.18.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 00:16:39 -0700 (PDT)
-Message-ID: <3fa1573d-e3b4-434c-867d-38fa69ad3a8e@linaro.org>
-Date: Wed, 19 Mar 2025 08:16:37 +0100
+        Wed, 19 Mar 2025 00:18:21 -0700 (PDT)
+Message-ID: <3f147dbd-c4a7-4cf5-911c-1d9263f5067c@linaro.org>
+Date: Wed, 19 Mar 2025 08:18:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: mediatek: Add missing
- minItems for 8192/8195
+Subject: Re: [PATCH 2/4] dt-bindings: remoteproc: mediatek: Remove l1tcm for
+ dual-core MT8188 SCP
 To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -81,7 +81,7 @@ Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
- <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
+ <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -128,39 +128,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250318-scp-dual-core-mt8390-v1-1-8733e192cc73@collabora.com>
+In-Reply-To: <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 18/03/2025 23:22, Nícolas F. R. A. Prado wrote:
-> Both MT8192 and MT8195 have an L1TCM memory, so it should be described
-> in reg, and therefore reg's minItems should be 3, as is already implicit
-> by reg-names. Override minItems to 3 for MT8192 and MT8195.
-
-I think that was the original intention already, because reg-names are
-expecting min 3 items. Basically you just correct the missing lower
-constraint.
-
+> The SCP present on MT8188 does not have an L1TCM memory region, but the
+> binding incorrectly requires one for the dual-core description of the
+> MT8188 SCP. Remove that requirement. Also update the minimum number of
+> reg and reg-names to 1, since as this is a multi-core SCP with no
+> L1TCM memory, only the CFG memory region is present in the parent node.
 > 
-> Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
+> Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP")
 > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -185,6 +185,7 @@ allOf:
->      then:
->        properties:
->          reg:
-> +          minItems: 3
->            maxItems: 3
 
-maxItems can be dropped.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
