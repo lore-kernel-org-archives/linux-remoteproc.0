@@ -1,204 +1,248 @@
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2075.outbound.protection.outlook.com [40.107.249.75])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBD4222591;
-	Thu, 20 Mar 2025 12:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472539; cv=fail; b=d7J0LL9XwUJhlOK9HxZsYt6Qofez9jpnrmtjH49scxW2uXeRfZqg/KVg7dnpC5kxYSZL/RJkZwQbqR3oKUlhWOI99ekPa0uih4LISr0e2g1hBdMxR0oOtvJx10c0l4M0IAoDjLAhflC93sPUBh5j0d1AAINaeH9gFPWrNkZOu6c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472539; c=relaxed/simple;
-	bh=saYC4r7EXyVBwT7/6uikwlfKw/xl2A/eka2IMS1by1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cv/u6HGULI1YaWMzyE0aBHtOVpEywaFngSr6c2Ik85oILInZ3auQiGPgvWtLojpk1BJBbGDC5g83GpBCue0fu8aaPrFWK3TS2YxN9/pBW/VuDd4Ey/2Uv08er8C3OeAJ6S1x+YiZcHbZokyXS2Zor30Uf6TBRnEykxcMOOThoig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ncPMB0r5; arc=fail smtp.client-ip=40.107.249.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCF14B08A;
+	Thu, 20 Mar 2025 15:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742483937; cv=none; b=OMRJ94PgOp+SNGi6FwFDwH7e0smL2GYZNvHn/GdwtWsM95NdwPtSjzDgMkW7TWf561ejRlZ+EFCq0SfzMPE9SzS4X+xqCXPYUyqXZSnvIJjnjOc8j5Jb85MSk5BPWSZ2BvpoV3yCxVFjOGNW6PB3PLdDsMMdF102CN/dUsUlPTk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742483937; c=relaxed/simple;
+	bh=1Z6H2iLvH3rXMt19HL+9taZFJeo/GqQ1pEgfLHm/VO8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ffiktKpYT0dnPb3VPhH6Sm1TN4G5d03h4CC18XgEdoplTGPtyEJXlXWskCd4aM4oBLny5hi/h9dDFcytLmXEJkgiu1VOJn0kVQPipu07hdvDFxYBTAd3BmVzoZA+CiSNSCKBMxLq796yUehzDn7kYiiW7KkRpEnOx2XOvNpfd0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtAZa04N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ncPMB0r5"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CDXLsV1SUKvq0xGEy2KWLp933riAo6iIAp6niBuG5p3n8aosA7XvBaC2JepreDuSu3prDfECEjPKnsdVow8pA8MMrUU+u9/kD+6SK6BMQ73qdKvoDmBjuX/8yH6KUm1hf1aMaGdBlx5SVuydHogNauvfmg55Hv7goZtiNScNLxram3gMUF/wYe8a07VSEb8trAXQd8k/Dld78LwxCEgICkuAR2ZCQAaL1S4+yO3wUY3ZcGw+MbtP+P+3KJSjxCLP9ZiextMGUCCY5qHeYvRZ8S43s915nbfnPV39Z7eDhybWrEbC4/iolVQVRTJQ6px+MWOyhG7aljTAakScvpLB2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fws57N9Z0gD/z90fGfS6E/HYBDlwl3zjwCtZSYHoTQ4=;
- b=ERMj+w6D7/xAVVggEyOApREJcs/VKh7RXNNIEM4JBQm6EDb+l5Tj9/22zl51WFc1FJY5uEPUPgATJRO8J+PA7aWY2ag2xsNb3edh4MN/g/zmLlLzEEHnSMWRBxcKbCTDoGJwSS96fCgOhXhKYk5Vio/ozHGuM7jfGuL9xLjc4MrcBWpAr1B9ejWpGpQhG2FOSuLPmxeoHa2a+gChscQMfFeMihsf4WniNGf0kFJSqvUaDo2N5k51/JSGDed6BQkYdMUA8ul0X/V9KqreLB4V86Jp8mR68uK6Xb6WcMJpI3Sp39IZwz4LTQBZMcsb/mWmuyEniviE5AtzGARneKvC5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fws57N9Z0gD/z90fGfS6E/HYBDlwl3zjwCtZSYHoTQ4=;
- b=ncPMB0r58OuuP7a8GqNUC2VKbY6W9vCFAmusz/JYBBptnUWryM4ZL+AzsibpMh8tmPSi0Xu6vaYOxBnLvJshwck1v6TSPdj6sVNt3BXFHnTHwE0qvf7rSQuUFLvRnpuKVRcFyfRV2sBqI+AX7EexWTi0tkfaaaPgK4QeiI2O/MRaoqJ2ESwYDeGNJ7xozGfLHQbAqkbHH76+2D/EocnKr91R+Y2coFVcsZe8VPJ/DP4SrYJcxQAXuQr5qeMOl878IfZbAJiOz+QAf3fn4IcfH4sDVcTxiFCu4qrPpkLUfNkYC2LRE7sXvPx3z1ok3XXOfxkKTjR+Tl/nw0ftYvK+Hw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by VE1PR04MB7247.eurprd04.prod.outlook.com (2603:10a6:800:1a2::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
- 2025 12:08:49 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::84f7:e2c3:ceed:c0a6%5]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 12:08:49 +0000
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: shawnguo@kernel.org,
-	robh@kernel.org
-Cc: s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	festevam@gmail.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	frank.li@nxp.com,
-	aisheng.dong@nxp.com,
-	daniel.baluta@gmail.com,
-	laurentiu.mihalcea@nxp.com,
-	shengjiu.wang@nxp.com,
-	iuliana.prodan@nxp.com,
-	a.fatoum@pengutronix.de,
-	mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org,
-	Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH v7 5/5] arm64: dts: Enable DSP node for remoteproc usage
-Date: Thu, 20 Mar 2025 14:09:55 +0200
-Message-ID: <20250320121004.2542314-6-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250320121004.2542314-1-daniel.baluta@nxp.com>
-References: <20250320121004.2542314-1-daniel.baluta@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR06CA0139.eurprd06.prod.outlook.com
- (2603:10a6:208:ab::44) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtAZa04N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A232C4CEDD;
+	Thu, 20 Mar 2025 15:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742483936;
+	bh=1Z6H2iLvH3rXMt19HL+9taZFJeo/GqQ1pEgfLHm/VO8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jtAZa04NkVALEmArILtqhgvGWzNrqybg3hrSGdZZ2VVAFhkXh1nT4jpUcZ4Kc2DDn
+	 0A6i4ERYcuiCeprXqYIMy4u4kiFrkwJYEeYsWv+53EA4mBSJ6BqBYD7yzk5jl0BW7F
+	 3K+uSeS65G8FFh9VmSyWsSaODa9u59R3cNyzrD/bWKcMoby2y3/LjyBnzNkYD+iJSL
+	 9QHQkLG/EQ0PXCuzUmTG72RV9mKDT4ZRjt1NiAC6yuM4pg17khef1prwdyUg+6q41R
+	 XwbECsZNkZ4re5+LVruYEIZ107+IH+Jq6zDSLtPqFFjlA4zbkDNY4cbCQwK98Zoq0c
+	 4mfWfzYas3b3w==
+From: Mark Brown <broonie@kernel.org>
+To: tglx@linutronix.de, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: maz@kernel.org, linux-kernel@vger.kernel.org, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Alexandre Ghiti <alex@ghiti.fr>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, Alex Shi <alexs@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, amd-gfx@lists.freedesktop.org, 
+ Amit Kucheria <amitk@kernel.org>, Anatolij Gustschin <agust@denx.de>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Andreas Kemnade <andreas@kemnade.info>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Antoine Tenart <atenart@kernel.org>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>, 
+ asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Baruch Siach <baruch@tkos.co.il>, 
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+ Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>, 
+ Bjorn Andersson <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Borislav Petkov <bp@alien8.de>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Corentin Chary <corentin.chary@gmail.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Daniel Golle <daniel@makrotopia.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Daniel Mack <daniel@zonque.org>, 
+ Daniel Palmer <daniel@thingy.jp>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ David Airlie <airlied@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+ DENG Qingfang <dqfext@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Dongliang Mu <dzm91@hust.edu.cn>, Doug Berger <opendmb@gmail.com>, 
+ dri-devel@lists.freedesktop.org, Eddie James <eajames@linux.ibm.com>, 
+ Eric Dumazet <edumazet@google.com>, Fabio Estevam <festevam@gmail.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Geoff Levand <geoff@infradead.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Gregory Clement <gregory.clement@bootlin.com>, Guo Ren <guoren@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Herve Codina <herve.codina@bootlin.com>, 
+ Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, 
+ Changhuang Liang <changhuang.liang@starfivetech.com>, 
+ Chen-Yu Tsai <wens@csie.org>, "Chester A. Unal" <chester.a.unal@arinc9.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Chris Zankel <chris@zankel.net>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Imre Kaloz <kaloz@openwrt.org>, Ingo Molnar <mingo@redhat.com>, 
+ Jakub Kicinski <kuba@kernel.org>, James Morse <james.morse@arm.com>, 
+ Janne Grunau <j@jannau.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Jianjun Wang <jianjun.wang@mediatek.com>, 
+ Jiawen Wu <jiawenwu@trustnetic.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Jim Quinlan <jim2101024@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, 
+ Joel Stanley <joel@jms.id.au>, Johannes Berg <johannes@sipsolutions.net>, 
+ John Crispin <john@phrozen.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Jonas Bonn <jonas@southpole.se>, Jonathan Cameron <jic23@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+ Joyce Ooi <joyce.ooi@intel.com>, 
+ Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
+ Keerthy <j-keerthy@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Linus Walleij <linusw@kernel.org>, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, 
+ linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-remoteproc@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+ linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-um@lists.infradead.org, linux-wireless@vger.kernel.org, 
+ loongarch@lists.linux.dev, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, "Luke D. Jones" <luke@ljones.dev>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Mark-PK Tsai <mark-pk.tsai@mediatek.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Max Filippov <jcmvbkbc@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Mengyuan Lou <mengyuanlou@net-swift.com>, Michael Buesch <m@bues.ch>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>, 
+ Miodrag Dinic <miodrag.dinic@mips.com>, Naveen N Rao <naveen@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, netdev@vger.kernel.org, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ Nikhil Agarwal <nikhil.agarwal@amd.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+ Nishanth Menon <nm@ti.com>, =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Peter Rosin <peda@axentia.se>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+ platform-driver-x86@vger.kernel.org, 
+ Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
+ Qiang Zhao <qiang.zhao@nxp.com>, Qin Jian <qinjian@cqplus1.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Randy Dunlap <rdunlap@infradead.org>, Ray Jui <rjui@broadcom.com>, 
+ Rengarajan Sundararajan <Rengarajan.S@microchip.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Richard Weinberger <richard@nod.at>, Rich Felker <dalias@libc.org>, 
+ Rob Clark <robdclark@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+ Robert Richter <rric@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Ryan Chen <ryan_chen@aspeedtech.com>, Ryder Lee <ryder.lee@mediatek.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Scott Branden <sbranden@broadcom.com>, Scott Wood <oss@buserror.net>, 
+ Sean Paul <sean@poorly.run>, Sean Wang <sean.wang@kernel.org>, 
+ Sean Wang <sean.wang@mediatek.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>, Simona Vetter <simona@ffwll.ch>, 
+ Stafford Horne <shorne@gmail.com>, 
+ Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
+ Stephen Boyd <sboyd@kernel.org>, Sven Peter <sven@svenpeter.dev>, 
+ Takashi Iwai <tiwai@suse.com>, Talel Shenhar <talel@amazon.com>, 
+ Tero Kristo <kristo@kernel.org>, 
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Toan Le <toan@os.amperecomputing.com>, Tony Lindgren <tony@atomide.com>, 
+ Tony Luck <tony.luck@intel.com>, UNGLinuxDriver@microchip.com, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Vineet Gupta <vgupta@kernel.org>, 
+ Vladimir Oltean <olteanv@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+ WANG Xuerui <kernel@xen0n.name>, Woojung Huh <woojung.huh@microchip.com>, 
+ x86@kernel.org, Yanteng Si <si.yanteng@linux.dev>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, 
+ Zhang Rui <rui.zhang@intel.com>
+In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+Subject: Re: (subset) [PATCH v2 00/57] irqdomain: Cleanups and
+ Documentation
+Message-Id: <174248389026.68765.4225899402848645156.b4-ty@kernel.org>
+Date: Thu, 20 Mar 2025 15:18:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|VE1PR04MB7247:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6655d36-addb-4b8b-644e-08dd67a7f8fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tkSY13PQdhEXYxGOCrjP4ffd3qJMLAPo67S3milPKDqJP5y/+SX+c1sBDrgG?=
- =?us-ascii?Q?0I7biaCXalIEIMQQ0wLB337NosYIWVEDfPGJBpE4l8VCotJIATrFmmdMLqrX?=
- =?us-ascii?Q?q8GpIbNOD6saiaXegBsdkT6jvQmC144a9isSsfCMLuEq79jtkkL08vDlemmS?=
- =?us-ascii?Q?Dx4Oz2nEPPAVTCbnRwxnNsfa5p9LVo0kfOhhs/EYWGg9pR9o94CvAb9q0jrw?=
- =?us-ascii?Q?UO106QPLykXUeqfB7Bq8U2fLp4RQfEFFImF3SgjD8tQBIAtOBhf2IFcGpB3b?=
- =?us-ascii?Q?xPZXQYn5+QpQiByEGhVJ59+xrmfdI5BDp4bSzJPVURoS2PO5DpA/SqP7Qmmd?=
- =?us-ascii?Q?wFESVIUPQuA5/vLrkEB84YDOEFkFJkKQQn9baCHHOqo1GaEHVmg03oaC14pT?=
- =?us-ascii?Q?iuB8WkTuuVCG2iOzUH33aIkBbSCsQ404yHju4Nq0UcNP1C5cUTKggmay2ayx?=
- =?us-ascii?Q?eLKKYPdLP1iRck83kuWMZ2od7O9MKFRlLwavLaOJ4h9Dfztu75oS8RJ2MprY?=
- =?us-ascii?Q?uhenJ5dflM7CMw0r7X7ixWme6NVjerbqO1KDJOdDiSm0Qpq4ZPLKSKIWJ/yz?=
- =?us-ascii?Q?nt6vuXlxpe+309wnp1CmVBzkxXPLxUIxLwrv3e5WWw2QKe89Hc4U4tTM4QRS?=
- =?us-ascii?Q?uXcVucLvNDAI/l2SGFit8N30lvjTc7pcbDxxg2tAGDi+0QQaXC1MiTweFogn?=
- =?us-ascii?Q?58ESPXmnvDjVXZukm230IMHVDpomHuNBVlPS0MKyaf0d5maXqPGYLXeNWeR1?=
- =?us-ascii?Q?wj2oOp3ibzzGo/+lITVvPe5y6rbow7j7wLf4dD3olNOqRCP/LXYxHE+6wrYW?=
- =?us-ascii?Q?vUJo592s4KVCTLiK45C5ckBKb7iZjU2I/VI0ukKdlyYoj31IVxMjy+zCKU0G?=
- =?us-ascii?Q?y5kClOOgBk2VHqZ3nUXdgMn/hbm//YITARHXerf3eU5h4/VLkQktHyu9FRnC?=
- =?us-ascii?Q?++kC8U+9hB6i4qDMtS/Te20iqkt91IIoPz4IvmLdaetrhj59c23S2OSOsy0n?=
- =?us-ascii?Q?yivTKfE1yDCsbf5cc1jnih/pJA7a5gb1XL19kYeyykftJgPfxuqpuOTCgIsM?=
- =?us-ascii?Q?VznjAfY6aULLZ5YUq/Ww0+jQWVUpgWXaA6GSeG8pI+7VlRXUHX0sJUm2fjpb?=
- =?us-ascii?Q?6Ap2xSO9yB9PPCSv7wzPEMfJSgQjrKxIHrIFL9H/vENidANxu0fu1y0/Sw6x?=
- =?us-ascii?Q?bRnezs+VHzph47ZKwa8FH2PiogLAEbbijiEkqyyJO2gcrCAbE18incUv8+y8?=
- =?us-ascii?Q?zREtYjDx/bxe8xSuIrngW9x0TikmL/ftkLUlY/48IHlE0nXjoBG8pWhLskbb?=
- =?us-ascii?Q?UVg0HFetCC20vAsfefkROagRGE91DX4q1gr+md/2B2dM1rLbixBc0rTs0X35?=
- =?us-ascii?Q?2v8dEKk6ffrccUDygSMEmRp9rQK5ug4zwe5dKi3oNZfhKo+K0G/B21WkYwGN?=
- =?us-ascii?Q?0EmeMswS/1N5Q9qoHQ9112i85NtDKEpT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AB3+CCUsJ/qt4dcECp4AUhNLXkIrqYrHJyS1aCzsf7acvBy7hBOnBuAYYQe1?=
- =?us-ascii?Q?OKUsJM0M7Ev27tlnwezBrePyTHv35/9GbeY5r2wzMnaxSQ1FxQT3pD4A22hW?=
- =?us-ascii?Q?MYJjNJnj6Aq7tp7ZNDY1oPXfKlriLV+J0jzjfTcPHdhRDiTgOeUo3QhkSETe?=
- =?us-ascii?Q?L3Vm3AphbzROg6OLJG8mDWBTSZm25u+j7NTNQNtKJEFQ3pmnE16L1cmLThfP?=
- =?us-ascii?Q?Zb7V7NIgJrXGbdGmwRBasLpOq3n17BZOpghds+X3U9xcTdTfnbmKrsdFeQJW?=
- =?us-ascii?Q?908bbE5mWvtJr4cm5Ztw1GpCXpKnuDVVjpC7QZHWhbkUEDinp6Q2+0GpgXzp?=
- =?us-ascii?Q?ht9znlEbI3H5KlMjQDZSAaifVihjFZHAbP9ZK/oiaKyZA+WXmeXwEaF0ANoe?=
- =?us-ascii?Q?ZycNeXvoZGlgSyf/215ngwcmr4qbB3HnVMoHUTTmuM1ZOMUszplrclN0SNSM?=
- =?us-ascii?Q?YaJiZIdFM9hAwmX2Lk425V98JU0r4sjOtVEZGdREwi7AE71Fjxy//L79PrKy?=
- =?us-ascii?Q?prfb6GWlcRR7uZqgGXhzOaylKeRfASkKBau0IosgnYqynS++O5y2Ogv784RK?=
- =?us-ascii?Q?RBkuw/QHg9zsBfFxhMFgY0Klp16GrPW3CXoT5lwB5gjI0tfwhmGhlW6EMhPJ?=
- =?us-ascii?Q?JACaocleyRKw13cM9USmDnoHjLzTHOw0XJxZzwZ0c7QDJXZ9mveU02e0oKsW?=
- =?us-ascii?Q?60xqI5s3duTXOCZwAFuJBnowxS5T5JujWKdEloa3C0bN2nvLB0TfJMa3fy52?=
- =?us-ascii?Q?qvq9ZxBZlpxuZQN9S4wZEELlESUMYiucHc52lhI8zufbq/IhkxPNgZcoNW50?=
- =?us-ascii?Q?BDmKy6LoiXa+RAjBlRto7ICxE6GP52oGqfvUPCOs2ua0Cu99e7dF8ffJndhW?=
- =?us-ascii?Q?GCx08c7aMBofLwob4hkOG8imSCBxNn/FZdY6MQZTtHzZAjq9zFqNKdStVxrJ?=
- =?us-ascii?Q?z+oSUsG9GDfeU2Yv/SeuP4ir5NjO5sKmPf12qNu4nnhnNPfTFDIMIg6c1/oV?=
- =?us-ascii?Q?zP0DagJy9BaFilG9/nqp+AhDWUvCEf4/otclD00shYCAn3uRQD6d+CgcgWFP?=
- =?us-ascii?Q?jSM8sRv5Oh/K30g57tCGeEMlpYSZyHhNRGPcv2/Zgmt5Sfeh86P7JsL4H4AS?=
- =?us-ascii?Q?EYeqezGzyMlmSNFN/Ak0mg1KlsbFUdbx4AgtxkJQzBAifurxavHPoHn3YfDj?=
- =?us-ascii?Q?G9GY04zPvfHl1KsxHfJOpsrmxsy0cqsquieW0RkoQh+T5+y/Qrc87UO9gJQW?=
- =?us-ascii?Q?EfVOOvpjvTAPXpHEXbo3CAfnjoBaRx+N143yPREU7KNupV2Ikfdlf317Pv1Y?=
- =?us-ascii?Q?qtCCDAHd6qVa/ZIQKewXeDzF88gWHEMsBx386ZJaTwMc2MIDiLT5O9oELdgp?=
- =?us-ascii?Q?mqxfr2ejdzix3K7i+Y+tdP2lPhyK2xMbq3jq1F3kMjZ3w4Wqr0I0E7J+ctY+?=
- =?us-ascii?Q?ggTAxzdjlXaJ+E0Wcqqgv6iLnQX2yU6LI/LjbKu7DRyw0es1QH0Ni6rcdJTL?=
- =?us-ascii?Q?F1VLS9wgtt5g+J+KbKBP0FDOHZg4FoTOhHrWq6lRU97Gi0GRA1rqY+or+noz?=
- =?us-ascii?Q?Ek1Y9dJpcCjgQzQ5e80sQUtZUUk/guyA/mo8Ay57?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6655d36-addb-4b8b-644e-08dd67a7f8fe
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 12:08:49.2930
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6B2Q5t/ftqgNo0oyfRdHIvZK3Y+ElOsZqR2slazM0HBu/hib/2oE8oBiZSp39NC1OEBpJQjdgq62htvYfNxgag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7247
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Enable all relevant nodes to support remoteproc with imx8mp-evk board.
-	- add rproc specific memory regions
-	- enable dsp_reserved node
-	- enable mu2 node
-	- enable dsp node
+On Wed, 19 Mar 2025 10:28:53 +0100, Jiri Slaby (SUSE) wrote:
+> tl;dr if patches are agreed upon, I ask subsys maintainers to take the
+> respective ones via their trees (as they are split per subsys), so that
+> the IRQ tree can take only the rest. That would minimize churn/conflicts
+> during merges.
+> 
+> ===
+> 
+> [...]
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Applied to
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index c26954e5a605..9ab3ee93a35b 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -309,6 +309,16 @@ &aud2htx {
- 	status = "okay";
- };
- 
-+&dsp_reserved {
-+	status = "okay";
-+};
-+
-+&dsp {
-+	memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
-+			<&dsp_vdev0vring1>, <&dsp_reserved>;
-+	status = "okay";
-+};
-+
- &eqos {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_eqos>;
-@@ -690,6 +700,10 @@ dsi_out: endpoint {
- 	};
- };
- 
-+&mu2 {
-+	status = "okay";
-+};
-+
- &pcie_phy {
- 	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_INPUT>;
- 	clocks = <&pcie0_refclk>;
--- 
-2.43.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[35/57] irqdomain: sound: Switch to irq_domain_create_linear()
+        commit: 83eddf0116b09186f909bc643f2093f266f204ea
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
