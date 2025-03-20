@@ -1,248 +1,232 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCF14B08A;
-	Thu, 20 Mar 2025 15:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369F1E5702;
+	Thu, 20 Mar 2025 18:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742483937; cv=none; b=OMRJ94PgOp+SNGi6FwFDwH7e0smL2GYZNvHn/GdwtWsM95NdwPtSjzDgMkW7TWf561ejRlZ+EFCq0SfzMPE9SzS4X+xqCXPYUyqXZSnvIJjnjOc8j5Jb85MSk5BPWSZ2BvpoV3yCxVFjOGNW6PB3PLdDsMMdF102CN/dUsUlPTk=
+	t=1742493744; cv=none; b=O8pIEU/+JYc2AWEi4gKAVz/JqXUPjoXvg9CFNAsxXCgJUmwBQ+u3ztfhZansq3pX13FWunI9sC+xTq72IhAplhMHWfnsJJ5lmiQExGNjAXhF1PFZmj0t2sxmsZipALA9AXxxeWpZpUcLlLEfDx2HDoh+w+e9xnYqszkLkYkBua8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742483937; c=relaxed/simple;
-	bh=1Z6H2iLvH3rXMt19HL+9taZFJeo/GqQ1pEgfLHm/VO8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ffiktKpYT0dnPb3VPhH6Sm1TN4G5d03h4CC18XgEdoplTGPtyEJXlXWskCd4aM4oBLny5hi/h9dDFcytLmXEJkgiu1VOJn0kVQPipu07hdvDFxYBTAd3BmVzoZA+CiSNSCKBMxLq796yUehzDn7kYiiW7KkRpEnOx2XOvNpfd0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtAZa04N; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742493744; c=relaxed/simple;
+	bh=y9R11PCeG0aC7T4yQOMfIHSqYCQ5IC3utAoKlffVDss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fOhUeJIrJT9aR+HMYK2KC94vdPIdwRupXTGWygMtl86eBn7nqW3DI8WjOpfY+FRsHzEbtTmnRjc40EUfYYfbD9RTranfwQA6IqIgpVu7fRApKdDKyB8oESdjcXFr6vCNh5kxfsCljfCt4/p+pqG0GcqaAf1D5681japx93cJEBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FExZuvSg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtAZa04N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A232C4CEDD;
-	Thu, 20 Mar 2025 15:18:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FExZuvSg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA3FC4AF0B;
+	Thu, 20 Mar 2025 18:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742483936;
-	bh=1Z6H2iLvH3rXMt19HL+9taZFJeo/GqQ1pEgfLHm/VO8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jtAZa04NkVALEmArILtqhgvGWzNrqybg3hrSGdZZ2VVAFhkXh1nT4jpUcZ4Kc2DDn
-	 0A6i4ERYcuiCeprXqYIMy4u4kiFrkwJYEeYsWv+53EA4mBSJ6BqBYD7yzk5jl0BW7F
-	 3K+uSeS65G8FFh9VmSyWsSaODa9u59R3cNyzrD/bWKcMoby2y3/LjyBnzNkYD+iJSL
-	 9QHQkLG/EQ0PXCuzUmTG72RV9mKDT4ZRjt1NiAC6yuM4pg17khef1prwdyUg+6q41R
-	 XwbECsZNkZ4re5+LVruYEIZ107+IH+Jq6zDSLtPqFFjlA4zbkDNY4cbCQwK98Zoq0c
-	 4mfWfzYas3b3w==
-From: Mark Brown <broonie@kernel.org>
-To: tglx@linutronix.de, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: maz@kernel.org, linux-kernel@vger.kernel.org, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Alexandre Ghiti <alex@ghiti.fr>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Alex Deucher <alexander.deucher@amd.com>, Alex Shi <alexs@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, amd-gfx@lists.freedesktop.org, 
- Amit Kucheria <amitk@kernel.org>, Anatolij Gustschin <agust@denx.de>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Andreas Kemnade <andreas@kemnade.info>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
- Andy Shevchenko <andy@kernel.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Antoine Tenart <atenart@kernel.org>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>, 
- asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Baruch Siach <baruch@tkos.co.il>, 
- Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
- Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>, 
- Bjorn Andersson <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Borislav Petkov <bp@alien8.de>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Corentin Chary <corentin.chary@gmail.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Daniel Golle <daniel@makrotopia.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Daniel Mack <daniel@zonque.org>, 
- Daniel Palmer <daniel@thingy.jp>, Dave Hansen <dave.hansen@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
- DENG Qingfang <dqfext@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Dongliang Mu <dzm91@hust.edu.cn>, Doug Berger <opendmb@gmail.com>, 
- dri-devel@lists.freedesktop.org, Eddie James <eajames@linux.ibm.com>, 
- Eric Dumazet <edumazet@google.com>, Fabio Estevam <festevam@gmail.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Geoff Levand <geoff@infradead.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Gregory Clement <gregory.clement@bootlin.com>, Guo Ren <guoren@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- Heiko Stuebner <heiko@sntech.de>, Herve Codina <herve.codina@bootlin.com>, 
- Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, "H. Peter Anvin" <hpa@zytor.com>, 
- Huacai Chen <chenhuacai@kernel.org>, 
- Changhuang Liang <changhuang.liang@starfivetech.com>, 
- Chen-Yu Tsai <wens@csie.org>, "Chester A. Unal" <chester.a.unal@arinc9.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Chris Zankel <chris@zankel.net>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Imre Kaloz <kaloz@openwrt.org>, Ingo Molnar <mingo@redhat.com>, 
- Jakub Kicinski <kuba@kernel.org>, James Morse <james.morse@arm.com>, 
- Janne Grunau <j@jannau.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Jianjun Wang <jianjun.wang@mediatek.com>, 
- Jiawen Wu <jiawenwu@trustnetic.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
- Jim Quinlan <jim2101024@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, 
- Joel Stanley <joel@jms.id.au>, Johannes Berg <johannes@sipsolutions.net>, 
- John Crispin <john@phrozen.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Jonas Bonn <jonas@southpole.se>, Jonathan Cameron <jic23@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Jonathan Hunter <jonathanh@nvidia.com>, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
- Joyce Ooi <joyce.ooi@intel.com>, 
- Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
- Keerthy <j-keerthy@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Linus Walleij <linusw@kernel.org>, 
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-i2c@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, 
- linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, linux-remoteproc@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
- linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-um@lists.infradead.org, linux-wireless@vger.kernel.org, 
- loongarch@lists.linux.dev, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Ludovic Desroches <ludovic.desroches@microchip.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, "Luke D. Jones" <luke@ljones.dev>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Mark-PK Tsai <mark-pk.tsai@mediatek.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Max Filippov <jcmvbkbc@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Mengyuan Lou <mengyuanlou@net-swift.com>, Michael Buesch <m@bues.ch>, 
- Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>, 
- Miodrag Dinic <miodrag.dinic@mips.com>, Naveen N Rao <naveen@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, netdev@vger.kernel.org, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Nicolas Saenz Julienne <nsaenz@kernel.org>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Nikhil Agarwal <nikhil.agarwal@amd.com>, Nipun Gupta <nipun.gupta@amd.com>, 
- Nishanth Menon <nm@ti.com>, =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Peter Rosin <peda@axentia.se>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- platform-driver-x86@vger.kernel.org, 
- Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
- Qiang Zhao <qiang.zhao@nxp.com>, Qin Jian <qinjian@cqplus1.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Randy Dunlap <rdunlap@infradead.org>, Ray Jui <rjui@broadcom.com>, 
- Rengarajan Sundararajan <Rengarajan.S@microchip.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Richard Weinberger <richard@nod.at>, Rich Felker <dalias@libc.org>, 
- Rob Clark <robdclark@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
- Robert Richter <rric@kernel.org>, Rob Herring <robh@kernel.org>, 
- Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Ryan Chen <ryan_chen@aspeedtech.com>, Ryder Lee <ryder.lee@mediatek.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Scott Branden <sbranden@broadcom.com>, Scott Wood <oss@buserror.net>, 
- Sean Paul <sean@poorly.run>, Sean Wang <sean.wang@kernel.org>, 
- Sean Wang <sean.wang@mediatek.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
- Siddharth Vadapalli <s-vadapalli@ti.com>, Simona Vetter <simona@ffwll.ch>, 
- Stafford Horne <shorne@gmail.com>, 
- Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
- Stephen Boyd <sboyd@kernel.org>, Sven Peter <sven@svenpeter.dev>, 
- Takashi Iwai <tiwai@suse.com>, Talel Shenhar <talel@amazon.com>, 
- Tero Kristo <kristo@kernel.org>, 
- Thangaraj Samynathan <Thangaraj.S@microchip.com>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Toan Le <toan@os.amperecomputing.com>, Tony Lindgren <tony@atomide.com>, 
- Tony Luck <tony.luck@intel.com>, UNGLinuxDriver@microchip.com, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Vineet Gupta <vgupta@kernel.org>, 
- Vladimir Oltean <olteanv@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
- WANG Xuerui <kernel@xen0n.name>, Woojung Huh <woojung.huh@microchip.com>, 
- x86@kernel.org, Yanteng Si <si.yanteng@linux.dev>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, 
- Zhang Rui <rui.zhang@intel.com>
-In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
-References: <20250319092951.37667-1-jirislaby@kernel.org>
-Subject: Re: (subset) [PATCH v2 00/57] irqdomain: Cleanups and
- Documentation
-Message-Id: <174248389026.68765.4225899402848645156.b4-ty@kernel.org>
-Date: Thu, 20 Mar 2025 15:18:10 +0000
+	s=k20201202; t=1742493744;
+	bh=y9R11PCeG0aC7T4yQOMfIHSqYCQ5IC3utAoKlffVDss=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FExZuvSgG7lQ0nphnU46uCB3BITIfCUTFx/gRRNQECKgcsiWtNME41GgHctBairTj
+	 L2E4xjss89M+TnVQmJP3gNRjnUYvu3j22ltM8HOhpjuVYuimADN8rrVXMdfbsEwg/o
+	 FedshALdXFQlmmCNDqhhTbjSuJm60rHbMJpBjvugGcJ75Z77+vWHqHsj1ileqG8Pb/
+	 WqFwlWO8YJmUHunQSgj7i4OOkw4X//d/uscB7e10Kegh3pry9R0esBPLI1F4sswS9F
+	 qyRVrIrrc1RN+zEOhuXNUCBBuH9upKVbOG96on8DouTIArXT0b80FQXG77FldV3Nth
+	 1Bvi4yL9YGukA==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso1759377a12.1;
+        Thu, 20 Mar 2025 11:02:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVpH5sA2wEbcB13Cto88FlUplJ7M1Ec0dHoaugJ/nM6M5ZzybEDTa+HVnFRRPygOVj1g+vfCeNjgtup5P7M8Thvg==@vger.kernel.org, AJvYcCVvobix/lWW9/zjL0xlteV0CHldEuvm02mz5y6Px4Byj/rcuhkOYjFKYm5bOsmQk4axEhMpaJWeMejj@vger.kernel.org, AJvYcCXDQXBl10fZhdfJhcMFYVWnCI6xyoPGsJGaId2tR8CNbQ4dAcZixfnqcqYc0PovJ9XF+2ZRn11Fu4aF2VyIkw==@vger.kernel.org, AJvYcCXmdJATqwmBCH1z4yipDMsDBOOptEz72S+Ahn4M/VnzJVbFfo+Q/Xn3j0R5MxOdnN1LM70ra2gzcPk+qw2y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+GPyQChxriQT5LAmUgwxq89OVAglPQaPup22TOOqbyxc62DLu
+	yOAoXOy43GoGX2MmM/3nsyRiPdnB8OwY1gKLAWIp4oh4gzbRnIWxp7sAks70cXL8j2m4EWvplBq
+	jbgC47SOgSW6uKysvKbr6ZB2/9A==
+X-Google-Smtp-Source: AGHT+IHQN97QVgyFz09nfrYtWbO3Ru8zTNvSZPoniI5opPgH/pEzb20TQeGjO3i0k0wm7am1Inl8y3sD3mZZgGtCBU4=
+X-Received: by 2002:a05:6402:13d6:b0:5de:aa54:dc30 with SMTP id
+ 4fb4d7f45d1cf-5ebcd40b7d9mr238445a12.5.1742493742665; Thu, 20 Mar 2025
+ 11:02:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-4-robh@kernel.org>
+ <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com> <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
+ <130d61a8-6f03-46dc-94ca-f098bc09babc@foss.st.com>
+In-Reply-To: <130d61a8-6f03-46dc-94ca-f098bc09babc@foss.st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 20 Mar 2025 13:02:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJZkEpx26=ro_y8hHA2x1Zm6z_SFOQHjQ-WzUa-gy+s0w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr2DWg_p_3pOGaFM-d8b9OA-WiVr1l9JRvSP10bkvbhKAdr3MGldt734ck
+Message-ID: <CAL_JsqJZkEpx26=ro_y8hHA2x1Zm6z_SFOQHjQ-WzUa-gy+s0w@mail.gmail.com>
+Subject: Re: [Linux-stm32] [PATCH 3/3] remoteproc: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Mar 2025 10:28:53 +0100, Jiri Slaby (SUSE) wrote:
-> tl;dr if patches are agreed upon, I ask subsys maintainers to take the
-> respective ones via their trees (as they are split per subsys), so that
-> the IRQ tree can take only the rest. That would minimize churn/conflicts
-> during merges.
-> 
-> ===
-> 
-> [...]
+On Thu, Mar 20, 2025 at 4:23=E2=80=AFAM Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+>
+>
+> On 3/20/25 00:04, Rob Herring wrote:
+> > On Wed, Mar 19, 2025 at 10:26=E2=80=AFAM Arnaud POULIQUEN
+> > <arnaud.pouliquen@foss.st.com> wrote:
+> >>
+> >> Hello Rob,
+> >>
+> >> On 3/18/25 00:24, Rob Herring (Arm) wrote:
+> >>> Use the newly added of_reserved_mem_region_to_resource() and
+> >>> of_reserved_mem_region_count() functions to handle "memory-region"
+> >>> properties.
+> >>>
+> >>> The error handling is a bit different in some cases. Often
+> >>> "memory-region" is optional, so failed lookup is not an error. But th=
+en
+> >>> an error in of_reserved_mem_lookup() is treated as an error. However,
+> >>> that distinction is not really important. Either the region is availa=
+ble
+> >>> and usable or it is not. So now, it is just
+> >>> of_reserved_mem_region_to_resource() which is checked for an error.
+> >>>
+> >>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> >>> ---
+> >>> For v6.16
+> >>>
+> >
+> > [...]
+> >
+> >>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/st=
+m32_rproc.c
+> >>> index b02b36a3f515..9d2bd8904c49 100644
+> >>> --- a/drivers/remoteproc/stm32_rproc.c
+> >>> +++ b/drivers/remoteproc/stm32_rproc.c
+> >>> @@ -213,52 +213,46 @@ static int stm32_rproc_prepare(struct rproc *rp=
+roc)
+> >>>  {
+> >>>       struct device *dev =3D rproc->dev.parent;
+> >>>       struct device_node *np =3D dev->of_node;
+> >>> -     struct of_phandle_iterator it;
+> >>>       struct rproc_mem_entry *mem;
+> >>> -     struct reserved_mem *rmem;
+> >>>       u64 da;
+> >>> -     int index =3D 0;
+> >>> +     int index =3D 0, mr =3D 0;
+> >>>
+> >>>       /* Register associated reserved memory regions */
+> >>> -     of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> >>> -     while (of_phandle_iterator_next(&it) =3D=3D 0) {
+> >>> -             rmem =3D of_reserved_mem_lookup(it.node);
+> >>> -             if (!rmem) {
+> >>> -                     of_node_put(it.node);
+> >>> -                     dev_err(dev, "unable to acquire memory-region\n=
+");
+> >>> -                     return -EINVAL;
+> >>> -             }
+> >>> +     while (1) {
+> >>> +             struct resource res;
+> >>> +             int ret;
+> >>> +
+> >>> +             ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
+es);
+> >>> +             if (ret)
+> >>> +                     return 0;
+> >>>
+> >>> -             if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
+> >>> -                     of_node_put(it.node);
+> >>> -                     dev_err(dev, "memory region not valid %pa\n",
+> >>> -                             &rmem->base);
+> >>> +             if (stm32_rproc_pa_to_da(rproc, res.start, &da) < 0) {
+> >>> +                     dev_err(dev, "memory region not valid %pR\n", &=
+res);
+> >>>                       return -EINVAL;
+> >>>               }
+> >>>
+> >>>               /*  No need to map vdev buffer */
+> >>> -             if (strcmp(it.node->name, "vdev0buffer")) {
+> >>> +             if (strcmp(res.name, "vdev0buffer")) {
+> >>
+> >> I tested your patches
+> >
+> > Thank you.
+> >
+> >> The update introduces a regression here. The strcmp function never ret=
+urns 0.
+> >> Indeed, it.node->name stores the memory region label "vdev0buffer," wh=
+ile
+> >> res.name stores the memory region name "vdev0buffer@10042000."
+> >>
+> >> Several remoteproc drivers may face the same issue as they embed simil=
+ar code.
+> >
+> > Indeed. I confused myself because node 'name' is without the
+> > unit-address, but this is using the full name. I've replaced the
+> > strcmp's with strstarts() to address this. I've updated my branch with
+> > the changes.
+>
+> This is not enough as the remoteproc core function rproc_find_carveout_by=
+_name()
+> also compares the memory names. With the following additional fix, it is =
+working
+> on my STM32MP15-DK board.
+>
+> @@ -309,11 +309,11 @@ rproc_find_carveout_by_name(struct rproc *rproc, co=
+nst
+> char *name, ...)
+>         vsnprintf(_name, sizeof(_name), name, args);
+>         va_end(args);
+>
+>         list_for_each_entry(carveout, &rproc->carveouts, node) {
+>                 /* Compare carveout and requested names */
+> -               if (!strcmp(carveout->name, _name)) {
+> +               if (strstarts(carveout->name, _name)) {
+>                         mem =3D carveout;
+>                         break;
+>                 }
+>         }
+>
+> I just wonder if would not be more suitable to address this using the
+> "memory-region-names" field.
 
-Applied to
+That would be better as you shouldn't really care what a provider node
+name is where-as "memory-region-names" is meaningful to the driver.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+>
+> The drawback is that we would break compatibility with legacy boards...
 
-Thanks!
+So not an option.
 
-[35/57] irqdomain: sound: Switch to irq_domain_create_linear()
-        commit: 83eddf0116b09186f909bc643f2093f266f204ea
+I think I'll have to fix this within the reserved mem code storing the
+name or do something like the diff below. I'd like to avoid the
+former. Using the original device_node.name is also problematic
+because I want to get rid of it. We redundantly store the node name
+with and without the unit-address. There's a lot of places like this
+one where we hand out the pointer with no lifetime.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rp=
+roc.c
+index 1e949694d365..cdee87c6ffe0 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -239,7 +239,7 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+                                                   resource_size(&res), da,
+                                                   stm32_rproc_mem_alloc,
+                                                   stm32_rproc_mem_release,
+-                                                  res.name);
++                                                  "%.*s",
+strchrnul(res.name, '@') - res.name, res.name);
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+                        if (mem)
+                                rproc_coredump_add_segment(rproc, da,
+@@ -249,7 +249,7 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+                        mem =3D rproc_of_resm_mem_entry_init(dev, index,
+                                                           resource_size(&r=
+es),
+                                                           res.start,
+-                                                          res.name);
++                                                          "vdev0buffer");
+                }
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+                if (!mem) {
