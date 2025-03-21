@@ -1,81 +1,40 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415091E3DFC
-	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Mar 2025 16:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842D8BEE;
+	Fri, 21 Mar 2025 22:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573803; cv=none; b=enGKdXCcUqzcq4eAXzdYY3sSMFHvf3z+Xuq3FbOQETVYfoCLCsku2Ca1FXM3/V3+KQdaGVIbMIyvA+tTqo+9egjMChF+JAXx8jcVmCSTrGC1tZVGc2s6uRTaxTo7CudkaifH2O2uSj0AmSpJ/UHEkyIvm58xFDpcjeBz4iXc/QU=
+	t=1742595696; cv=none; b=e6wBiNj2W5Dj/MJLqsxiRyuHFWJcXTJZ9VNdAQ0ZZYqtQ/W+c3tMkn3msZQC9F8hpsHMlikHcH4qWsPtAJasR6I4Osl98AoJEQDRZIxzay51303jpXT5x9E8PUP6rmP5r4jubc4NOhOEWLZzEiACMZoGkbp5O94RqAGPOYgsSG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573803; c=relaxed/simple;
-	bh=sX4muvpyzWlipm3+edEVZE9OiBEpH0DByrdbnIKMYr0=;
+	s=arc-20240116; t=1742595696; c=relaxed/simple;
+	bh=HJFvVXl45GjCHB77vkVbfYG2LXCQM1Yu7VkVLSHwgtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxZkkHWrpM+i3G1J4MI5YifyUKxDpdxg7h0SbUUxi4+yO9fv3iyZwE8Tjo8dZVjVsJbuUeJ6YjtowNsaiEDju7cv6t1MNJRxg/bRZYTa1yHgx4Ent3xSPQ9yQQcrkFE/GRubyr6KeHjswYvCJBajY3TprcYpyXEiuF2UCany0kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jtSoBD0t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6rbvUIdAn+BmLlmPGNQMFlCYbOwb1dFgB5H2FE9G+a6zNpNx0Wa+xf+ShmpUKXmvxdPvlDlNrZwugN8RgqJj4E2LCC6kmOvYqgcZU/JqWA1kWgUEls/SgT4YteYk9abdJfQQTKZ4Jl43u3zFgijOMB/OOf7CX36odPLOP62P9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYgPCnOX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jtSoBD0t"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATM0V031899
-	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Mar 2025 16:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KC691n78UfcfnBIMAEEZOgix
-	8UerazMGS6DJH8rBSes=; b=jtSoBD0ttl3RR0OcVWAiU/nuCCHpxHsJRs8T718P
-	mPp0eDBxxTQce9+Dar557Zlf9gKMXJGcgJSLUZZjaCzrI59/MGrbjO+ecn6sR5P4
-	/CkzAuySTJIRr7YNmt92bvIlxVqquRB717Kxu5nbZ+5rvED+3XClwt5jMx6jH5rw
-	vDT25pWCuY07CXEUk2jmFMo98CLkWqP99IDOjgamiXKg1GUO8176ikjn/rnPwrOh
-	6wSDPq5uxAB3qEhypBM9JT0wsNGqq2upSh2fSZVEsrCyUiqpels8zshaow4M/B9D
-	d7/iONRXmp4uXex3oCuC3NI9Vvr6lmCqgGrU9Gu59p1Ghg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gt5kjq93-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Mar 2025 16:16:41 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3b6450ed8so354895485a.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Mar 2025 09:16:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573800; x=1743178600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KC691n78UfcfnBIMAEEZOgix8UerazMGS6DJH8rBSes=;
-        b=o0YCY/1kJD9VEcn/5H4s/9bJ83TTq/E9cTaJGz+CeoZD9wQO/OER67pRErL2388IlR
-         PlsBW6/aIdPiSJbwOnK+jED673NHsbKnnVjQ7Xjc348e1wzXceySpvXPKhRRitnLvgFw
-         C+nTJalvhcK7t+1NeIpZhy+paRNRvhw6Yo3SglUlFhy9qSDSuG4JqQTJTEjZVDJfXdeD
-         Dozsii9Y9oGfFw04H+WBu6jcoUxMfSKPi3md6V4B1lBKOVbmabJHCwLbFblVhitEu/rv
-         QU/A/1UrWaDkeNBOEU01Pwmdy5iuzmjfXOg+s7UVg0F6ugCcW0C6HJ8TCCL8O/fvi7ar
-         63SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpHPbNMapxg61O17CJssVqpu350CTkdqfcCavcuG6zn20Vf6HLpmrBLoDWcl9cUUKfwahkqPIdEjIVCumQLnW0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZRFCn1aRNLcW2rIBNHp3rNN5mS+k913TjgOIw5mzEDtmvC7hM
-	Ne0jhoYa3yEnFdw0feDh7CHdFvwtxMrTSG74qYV9R6lvfc33q9vPIs6UeBsAakjLz8PUf3JKX03
-	S3Cz8+O2gCKEAFQJG+11K4i8w8ZdClKnYEe0e0sr9YZUyjdvpg7CjqLnpYZ/791Y+3D4g
-X-Gm-Gg: ASbGncu61C9Xk/4SkTcDRFR6NYkfXvI8+iDqhfGCLNvutQJYmux7j5Cx/3XzhiWaTl/
-	IZijaUdkhN1U1ke0xaB36cpPxuj99EQH2Mc0OKf0W01XC5ntzZxgXFMhuj02jEWwTCZgrtXHgFq
-	shS/4z6X6qVJJ7ChfyeDwwMF66fi0y7+ly59iOb37GeHy3O5QPjbsEIeOgwkvofXfWBzA05DWdz
-	7NerSCdYdvbJyq+GsP43pe6jlt8quLVEgKKjTEABYlso8dH1DMOJtYuLRklojrJITUTeAVmrepo
-	OUwwsfmq71CdKclxjkwUceBWrO2lL9cyEmnw+S31OPtfWXqT8acfvUpCPS193kou+hSVFKpEU8p
-	8y04=
-X-Received: by 2002:a05:620a:394a:b0:7c5:4a6c:eb8d with SMTP id af79cd13be357-7c5ba200eb2mr484938985a.58.1742573799922;
-        Fri, 21 Mar 2025 09:16:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCnw0RuPGGAcRXmxyrZFcq6Uvyn0JUfRhjB0xBqWfhqbZS/bLEaIZ6/ICcRwJQBMDqvBgROA==
-X-Received: by 2002:a05:620a:394a:b0:7c5:4a6c:eb8d with SMTP id af79cd13be357-7c5ba200eb2mr484933985a.58.1742573799445;
-        Fri, 21 Mar 2025 09:16:39 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647c79dsm212119e87.70.2025.03.21.09.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:16:38 -0700 (PDT)
-Date: Fri, 21 Mar 2025 18:16:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: sysmon: Update qcom_add_sysmon_subdev()
- comment
-Message-ID: <ytbcjcbzwftajmovkun3x44tvmfyljthzcsrml3vbwyvkd7glg@enfp7qfhtzkq>
-References: <77a6b65b-5f3f-4a21-a837-7a4a7e09b099@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYgPCnOX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2BAC4CEE3;
+	Fri, 21 Mar 2025 22:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742595695;
+	bh=HJFvVXl45GjCHB77vkVbfYG2LXCQM1Yu7VkVLSHwgtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RYgPCnOX2/NYKWyQPW6LLib0j+Q3H9+rHSpNI2L2Cb1laNKAJiZhik9jvwjU0dPQ7
+	 pq/4kAmagE0IORsYyhGLuoooKAOMPPiRu98d2vywU/FmIvED6MeRose+GkaS3LUyJT
+	 to/3Kj1w1J1AHdd5z3FfpyS2/UNXHaw0wT1a8IxP1lqTo3WKHLw1oEo+YUdDbpaXil
+	 5LhjUHwzgEalhhpc1RRNs/TdE9DO5wgFbTdPHT3lcd2WthohavgGfkJXUVOJslwSPw
+	 JnmozSN195VoD86b7eMlo6wgF04gbHq7FvJzu//UP1Pkin43h44fNWJqG//dx/cI7R
+	 iP+PQ5DVxZvWA==
+Date: Fri, 21 Mar 2025 17:21:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+Message-ID: <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
+References: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -84,33 +43,95 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77a6b65b-5f3f-4a21-a837-7a4a7e09b099@stanley.mountain>
-X-Proofpoint-GUID: II0m11UmsnowyqiMqUc4AmLKfv6qAiI9
-X-Proofpoint-ORIG-GUID: II0m11UmsnowyqiMqUc4AmLKfv6qAiI9
-X-Authority-Analysis: v=2.4 cv=PsuTbxM3 c=1 sm=1 tr=0 ts=67dd90e9 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=Oz3NjKvTjiMZACM5Y-cA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1011 malwarescore=0 suspectscore=0 impostorscore=0
- mlxlogscore=717 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210119
+In-Reply-To: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
 
-On Fri, Mar 21, 2025 at 05:35:44PM +0300, Dan Carpenter wrote:
-> The comment says the qcom_add_sysmon_subdev() returns NULL on error but
-> it actually returns error pointers.
+On Mon, Mar 17, 2025 at 05:10:57PM +0530, Souradeep Chowdhury wrote:
+> Add device awake calls in case of rproc boot and rproc shutdown path.
+> Currently, device awake call is only present in the recovery path
+> of remoteproc. If a user stops and starts rproc by using the sysfs
+> interface, then on pm suspension the firmware loading fails. Keep the
+> device awake in such a case just like it is done for the recovery path.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Please rewrite this in the form expressed in
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+
+Clearly describe the problem you're solving - not just the change in
+behavior.
+
+What do you mean that "firmware loading fails" if we hit a suspend
+during stop and start through sysfs? At what point does it fail?
+
+> Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
+
+That patch clearly states that it intends to keep the system from
+suspending during recovery. As far as I can tell you're changing the
+start and stop sequences.
+
+As such, I don't think the referred to patch was broken and you're not
+fixing it.
+
+> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+> Cc: stable@vger.kernel.org
+
+It's not clear to me from the commit message why this should be
+backported to stable kernel.
+
 > ---
->  drivers/remoteproc/qcom_sysmon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v3
 > 
+> *Add the stability mailing list in commit message
+>  
+>  drivers/remoteproc/remoteproc_core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c2cf0d277729..908a7b8f6c7e 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+>  		pr_err("invalid rproc handle\n");
+>  		return -EINVAL;
+>  	}
+> -
+> +	
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+You're replacing an empty line with a tab...
 
--- 
-With best wishes
-Dmitry
+
+Other than that, the change looks sensible.
+
+Regards,
+Bjorn
+
+> +	pm_stay_awake(rproc->dev.parent);
+>  	dev = &rproc->dev;
+>  
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>  		atomic_dec(&rproc->power);
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_boot);
+> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	struct device *dev = &rproc->dev;
+>  	int ret = 0;
+>  
+> +	pm_stay_awake(rproc->dev.parent);
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+>  	if (ret) {
+>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	rproc->table_ptr = NULL;
+>  out:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_shutdown);
+> -- 
+> 2.34.1
+> 
