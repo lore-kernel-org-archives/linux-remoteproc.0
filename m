@@ -1,52 +1,52 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB15252914;
-	Tue, 25 Mar 2025 10:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C00253355;
+	Tue, 25 Mar 2025 10:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742896869; cv=none; b=BUSdrxNVuxmZITCNcaOe9X45uBF3b5spHThUX3Om7jIfY/TaHUa9J7vtBtXjrvXprGlQdjNQHbX36qRdMUN/8Er8UPE2G/VUOZE5Y/+Nfs0lzpPUm3zpTGQeqmDnAqLuE+Xt15+JzyBOhAbAOmizCyrlozctjV5rA3hOZvmLurY=
+	t=1742896870; cv=none; b=lGn3AxfWmEaMNH0hDwEgC17cvm4WGU/q5FND2eagDg8aDK5y6PFr5hj/PdMkkIShRmsdHeUiEGFUmMgYzvOtTT/Phx+esK+82k0uqDkH6N7ihSxnnTMnZTcRaosx0sSQxJF0tiVygrLdZE+iH2QgS5YFqHfBPsH4VRBb5wxJatI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742896869; c=relaxed/simple;
-	bh=OltZyztBSRgpkJz4bqabBMqQTLOQrs009sVQqBnHwmw=;
+	s=arc-20240116; t=1742896870; c=relaxed/simple;
+	bh=RyyTuILjYHOBOHO7z429tQ5TNV0D9pANLRCGSQxtQhc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F49Kph6IHObZHtnBlhjPybKFyfmDWOHOTeuKOHNnI3k+RAUC35M6DTkIZHCGryfOo+VHkSwn8jO28mmaEsK7sTKadLEz4p4bf3S93yYQIKMJx8SHs+WYIhiUTcvmGvjVMycv4erNBErzBWXPx8SS7Sapjdu32Inb+YVG5RAkXZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QH5YuRhC; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=iLpRRI2rjD6UFfiBURvQVIR3K7tNDCBzHBnvLNx+K7cKl8QWva8fLtJioJxyqNlsvyonQQXYfySjLtoPmwK/XwFKCr/9qSQHYKGKyCNE3eIo2KYYTCNTswGtnmSI3q3RFwwLxA2mxV9bFzUqJ0qQrAwMTC8/zKqCJ6NAKHLghqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oiobuiIM; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QH5YuRhC"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P8OQvv009133;
-	Tue, 25 Mar 2025 11:00:58 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oiobuiIM"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P7cmeL001618;
+	Tue, 25 Mar 2025 11:00:57 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5LyyyHlu2xNE5YN9qLRXRULhnNdGjIEySPVfos2RCtU=; b=QH5YuRhC7OQ93c2T
-	m5GHl5+0oG0mdKy6zQ8w6GtnbSxOVNrfIqaZOgSYcMSggzfjFe9gAtWGIjHIK4rg
-	A/dAGq72u7mHkF+sJXwsFv/K3z495/mrNM7kv/iWzupAQjFxKCAi5iuB7ddVhR8g
-	BiNFMyi9b4q7C/7mcwYmN/L57hc5RaDZKgd7nQ0QiDHg2sMeB5WXCdPNtvYPGyzc
-	rWC7xbIsEkUm5gD7g5YliejCNclmFnW+EHbc7KVldtjsZtnjzL0xl0Acgw5uy33P
-	1a+Fi77rBBx+chD4pymlUqmnOg42JYKe00M0rU59WMyxY7ouechZgrJrfEmZoC0g
-	04pRpQ==
+	gzYR5cNQ0ecmLOA9GQWS3MuyWMyDZ9dNGuAlrYXRKm0=; b=oiobuiIMnOga2G2b
+	yrt8BwGqvXQPfdoPzTkuvJrh+LvSbS1f813ED7BXHy0eBHqiIRdhc41QbSF/8XcK
+	3QxK2IV07C8xljKfaSU1WDvsL1c4+eF19JcK0mM3bMuNM88MgUlJQNWN/hzF7tr0
+	KI3hKgutR/OkLZ4nqLlsgs2zmhGP7xyxJRrnH02dYv+hOVjUTclJmOZcHUQKCELX
+	FaRa4PHjcVfUexrNko0t1vXd0CqmXR/ISITJZslDPhpM2D8NPY8bmV2fEFwfjFIK
+	LjJ6GZvjG5MBmH8nwK8r/mvyXyMDM5zsVBn/lkGYV6GXJbI/yL0Gsq6ihgNmZMbf
+	QMNy/w==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j91s9ajt-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45hk7d3yhj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 25 Mar 2025 11:00:57 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 48EC540049;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 44DB040047;
 	Tue, 25 Mar 2025 10:59:56 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 478708265DB;
-	Tue, 25 Mar 2025 10:58:49 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8EE818265C6;
+	Tue, 25 Mar 2025 10:58:47 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
- 2025 10:58:49 +0100
+ 2025 10:58:47 +0100
 Received: from localhost (10.252.12.99) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
- 2025 10:58:48 +0100
+ 2025 10:58:47 +0100
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -61,9 +61,9 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v16 5/6] remoteproc: stm32: Create sub-functions to request shutdown and release
-Date: Tue, 25 Mar 2025 10:58:32 +0100
-Message-ID: <20250325095833.3059895-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v16 3/6] remoteproc: Introduce release_fw optional operation
+Date: Tue, 25 Mar 2025 10:58:30 +0100
+Message-ID: <20250325095833.3059895-4-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250325095833.3059895-1-arnaud.pouliquen@foss.st.com>
 References: <20250325095833.3059895-1-arnaud.pouliquen@foss.st.com>
@@ -81,122 +81,100 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-25_04,2025-03-25_01,2024-11-22_01
 
-To prepare for the support of TEE remoteproc, create sub-functions
-that can be used in both cases, with and without remoteproc TEE support.
+The release_fw operation is the inverse operation of the load, responsible
+for releasing the remote processor resources configured from the loading
+of the remoteproc firmware (e.g., memories).
+
+The operation is called in the following cases:
+ - An error occurs on boot of the remote processor.
+ - An error occurs on recovery start of the remote processor.
+ - After stopping the remote processor.
+
+This operation is needed for the remoteproc_tee implementation after stop
+and on error.
+Indeed, as the remoteproc image is loaded when we parse the resource
+table, there are many situations where something can go wrong before
+the start of the remote processor(resource handling, carveout allocation,
+...).
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/stm32_rproc.c | 82 +++++++++++++++++++-------------
- 1 file changed, 49 insertions(+), 33 deletions(-)
+Updates vs previous version:
+- remove the rproc:load_fw() ops introduced in previous version
+- remove duplicate call of rproc_release_fw in rproc_fw_boot and rproc_boot
+---
+ drivers/remoteproc/remoteproc_core.c     | 6 ++++++
+ drivers/remoteproc/remoteproc_internal.h | 6 ++++++
+ include/linux/remoteproc.h               | 3 +++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index b02b36a3f515..b1bda314ca85 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -209,6 +209,52 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
- 	return -EINVAL;
- }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f05122b699b7..79317d148651 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1857,6 +1857,8 @@ static int rproc_boot_recovery(struct rproc *rproc)
  
-+static void stm32_rproc_request_shutdown(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err, idx;
-+
-+	/* Request shutdown of the remote processor */
-+	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-+		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-+		if (idx >= 0 && ddata->mb[idx].chan) {
-+			err = mbox_send_message(ddata->mb[idx].chan, "detach");
-+			if (err < 0)
-+				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-+		}
-+	}
-+}
-+
-+static int stm32_rproc_release(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	unsigned int err = 0;
-+
-+	/* To allow platform Standby power mode, set remote proc Deep Sleep */
-+	if (ddata->pdds.map) {
-+		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-+					 ddata->pdds.mask, 1);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set pdds\n");
-+			return err;
-+		}
-+	}
-+
-+	/* Update coprocessor state to OFF if available */
-+	if (ddata->m4_state.map) {
-+		err = regmap_update_bits(ddata->m4_state.map,
-+					 ddata->m4_state.reg,
-+					 ddata->m4_state.mask,
-+					 M4_STATE_OFF);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set copro state\n");
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -519,17 +565,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, idx;
-+	int err;
+ 	/* boot the remote processor up again */
+ 	ret = rproc_start(rproc, firmware_p);
++	if (ret)
++		rproc_release_fw(rproc);
  
--	/* request shutdown of the remote processor */
--	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
--		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
--		if (idx >= 0 && ddata->mb[idx].chan) {
--			err = mbox_send_message(ddata->mb[idx].chan, "detach");
--			if (err < 0)
--				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
--		}
--	}
-+	stm32_rproc_request_shutdown(rproc);
+ 	release_firmware(firmware_p);
  
- 	err = stm32_rproc_set_hold_boot(rproc, true);
- 	if (err)
-@@ -541,29 +579,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
- 		return err;
+@@ -1998,6 +2000,8 @@ int rproc_boot(struct rproc *rproc)
+ 		}
+ 
+ 		ret = rproc_fw_boot(rproc, firmware_p);
++		if (ret)
++			rproc_release_fw(rproc);
+ 
+ 		release_firmware(firmware_p);
  	}
+@@ -2067,6 +2071,8 @@ int rproc_shutdown(struct rproc *rproc)
  
--	/* to allow platform Standby power mode, set remote proc Deep Sleep */
--	if (ddata->pdds.map) {
--		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
--					 ddata->pdds.mask, 1);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set pdds\n");
--			return err;
--		}
--	}
--
--	/* update coprocessor state to OFF if available */
--	if (ddata->m4_state.map) {
--		err = regmap_update_bits(ddata->m4_state.map,
--					 ddata->m4_state.reg,
--					 ddata->m4_state.mask,
--					 M4_STATE_OFF);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set copro state\n");
--			return err;
--		}
--	}
--
--	return 0;
-+	return stm32_rproc_release(rproc);
+ 	rproc_disable_iommu(rproc);
+ 
++	rproc_release_fw(rproc);
++
+ 	/* Free the copy of the resource table */
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 0cd09e67ac14..c7fb908f8652 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -221,4 +221,10 @@ bool rproc_u64_fit_in_size_t(u64 val)
+ 	return (val <= (size_t) -1);
  }
  
- static void stm32_rproc_kick(struct rproc *rproc, int vqid)
++static inline void rproc_release_fw(struct rproc *rproc)
++{
++	if (rproc->ops->release_fw)
++		rproc->ops->release_fw(rproc);
++}
++
+ #endif /* REMOTEPROC_INTERNAL_H */
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 8fd0d7f63c8e..80128461972b 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -381,6 +381,8 @@ enum rsc_handling_status {
+  * @panic:	optional callback to react to system panic, core will delay
+  *		panic at least the returned number of milliseconds
+  * @coredump:	  collect firmware dump after the subsystem is shutdown
++ * @release_fw:	optional function to release the loaded firmware, called after
++ *              stopping the remote processor or in case of error
+  */
+ struct rproc_ops {
+ 	int (*prepare)(struct rproc *rproc);
+@@ -403,6 +405,7 @@ struct rproc_ops {
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+ 	unsigned long (*panic)(struct rproc *rproc);
+ 	void (*coredump)(struct rproc *rproc);
++	void (*release_fw)(struct rproc *rproc);
+ };
+ 
+ /**
 -- 
 2.25.1
 
