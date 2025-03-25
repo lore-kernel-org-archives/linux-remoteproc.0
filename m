@@ -1,243 +1,178 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB562620C2
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Mar 2025 16:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2A42907;
+	Tue, 25 Mar 2025 05:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832665; cv=none; b=smvojkpxxIZB4SRtONqAe1qseC14KvHDmcojG8tJ6KxhyuP55KHTHBDVIGfPPtl3pLyEtkRmWQ6DqKyK2w8If1ic2KBh64tnM+L/rxR8RynDL4JF9+2HIXUdL4fXzemOFY93w/V07aMNAoQlGfYVRIwbQekrUFtTXYSchECcqvo=
+	t=1742880655; cv=none; b=HT+LdHNzsilNByQ2S+ebzsNjj3FuXYsqmD3i3gjVBNqgWKeXisZQclC6oEbU1opdGqMx+CINPvaFUDhnGIwZ3Up0ffP739jhZYSfTQxb57tOCDgHnCnOGdK3JXWta+lNpN1mXixPIUffutMWKB4f2hOXeleXTT1/8hgbEQwyDsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832665; c=relaxed/simple;
-	bh=RXGsw/IIZ2cQK4vDV2zmSSo3gezBRdYOcUXmqa2QnfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1I4UfHqssQpqwyf8cEFePzsgHALtG+4WvgxpLmEUIGEpcnB5txqDhQAWdRLN4WS5u+6IH4McAXZwxZRq86o2Py2rleIh0wBPKpYDsVIU7yM5zSGUTGbQK/FYLUeG6c510eyD1aIQ2yLtaO/akgdZD063IheEy+dSk7BLCA9v1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9TtKFEb; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742880655; c=relaxed/simple;
+	bh=JArVNnUAwlj2MFnuwHDUQDbi3ZCgkRJVZPFi9PxPWtE=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=sk636F8rjsAGR7AegpGyh1/qi7e/2G+5cD3PMvnnuKw4O8IATPzjkYEkG4rBG/Txx8tmVkvH75y/J13RwzDIR+qaL3wpXlubW1GRMLhW7jKx6Q1U2JBCFSI1KG3KpAhV7cokuN5A4r91FvgEVUkf6QaOAMWt5QjdjbcQhLmejK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kHNifEnJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9TtKFEb"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-225df540edcso109039975ad.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Mar 2025 09:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742832662; x=1743437462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5vgk90XdjvD//xy5cJrxojmSgOgyA8sd6HdwMa8sAQ=;
-        b=E9TtKFEbXstLazJ8CSJKq1faW4g8NTPXEDNcdThUZQ1eAipZd4GGaNjtlOd45uft9t
-         lkPKiKAnI4UMyvdm7zY3pQyHL61MGcp5wltAdTyO7INmZ2Pr7hMZPpn4xvBDGebhIY9I
-         Bw7/SqYusxJJi148ygRY1pJpbpBtw2EISJTlKZPtVriUAX6Qc++wFqBlLkpRauGaKEeR
-         FH/s7nqINEyEOEUnFPg7stdyJR+aM1jJfJ49lgAoudv+0Ep01cBViT7VNnegHnlkXux1
-         FZvCMlHnxuaIAhMtkb4qC1Nsf9gOCQWJX55A7gdvQtMqsOf09elRPokOxuqag/UQh31m
-         vOyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742832662; x=1743437462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5vgk90XdjvD//xy5cJrxojmSgOgyA8sd6HdwMa8sAQ=;
-        b=nJ3MY4P6JzfVL9ofybDFq94h2dbq2HzoVFX2pfeFWqeYzCNsmStLlG1N5w2Wm1T4LA
-         s+oX8ozJqBXswa+fe/Iw2maH5v/Yi08i9/kq9HHx39rPSEFygOedxP4MxH1s0KiOUY+/
-         GF/MBjQu1OZ9ZLxWRnYaXqCMcKFGksg+BqHWNCr5AVo9g3CgfOO19a0jlYTgxaoC3ZqF
-         n/lEZo1dVzPveqOB7kpZJP+6t1GPku0SSVKMBeC5N0kOB117DrSjOTexFhFxefsMXFQP
-         W2eKvNgK+1poXykoU6dielQAe1rVmQ94Tj+6Pf6NJ/DYqROFnXNTZ/JrSsKaaHIqTm2W
-         WZ/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHhO4e25YPKaoNqkbO+1IeyC7HCH+2oAAGvQdF1S9xFmbhis8a/MCszLS1VktJdm11e2UwnISROY6srRnefICi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTQqXKgXPyYZqeae9cTMojHH0HffYZHLVKwPAVccVWhVhceiIr
-	SJwuHmX3CQFv7FfnH8bpXFdUeoVG+P70OKhdNHoTfOkKhl/0UvY9UZWUTvNJYwvAphADYLwn9Ec
-	Z
-X-Gm-Gg: ASbGnctn+/CL4WmRBJtPANKkPHRgjisN2trGRm8+LTXTpotv7Fd2lwTdnfebeKwm5kn
-	cr5IBjk1S7l75BZwyFeJkLG/rUKJI5hX5vB5vGZIr0EMnxg9kx+ZM627R48C+qZTimsJjax/5Z1
-	tDGKfdIpv02F6EkKorjeA5zX26LtFn/oVb64p9jJmhJ8IQz5PbPJWmYY3IaErJBCacGglkAa742
-	cI6eU4nLeb5rsPVW02l1ZMp7etbVQ3z4/5okSEcJgG6FOHmURy6gg+9qyBfwAyAWCY3UmmVn3Y6
-	cJzrXkKmBuCOdm4YLxCuO32CbApma4Slxe2DfhXYN3x4FR+1
-X-Google-Smtp-Source: AGHT+IEUktCIjYcV/UliuBFwLd7ktQyPdWhUBdENSBLSBk2b6FUGTx7qO3Kt+i5xGhua1KlGlHJUIg==
-X-Received: by 2002:a05:6a00:4648:b0:736:491b:5370 with SMTP id d2e1a72fcca58-73905a28b22mr22284141b3a.10.1742832661421;
-        Mon, 24 Mar 2025 09:11:01 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1300:9465:2fd2:e14f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390614afb5sm8086630b3a.121.2025.03.24.09.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 09:11:00 -0700 (PDT)
-Date: Mon, 24 Mar 2025 10:10:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-Message-ID: <Z-GEEVMXUysX1Hhu@p14s>
-References: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kHNifEnJ"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OJc19b007616;
+	Tue, 25 Mar 2025 05:30:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3M0yFOikFeKKZNxfh746QOLOETK1JwkS+594envMNnA=; b=kHNifEnJzeMPsZCg
+	7GuXrMeUk8tcePnk5YBUCzD2WR4z2RXrhsmAaDfEzs0ZRK4zo8enr42BhbOxTqK0
+	QXxmZtPgZfMIU1eR/qxK4wdQByyQwbP8STY/Z5h+l7/zt4eJnQ8/CgXZXlHG1fhT
+	TymwOH+ktqp0IJPoTsnUBWkcsDhjN5ab/iGB8ZVxBvRTlvWT4AsfJ82KsA2r+qOJ
+	rqkLld2YbbZsXWraMvboRThegrki6OYl/ZRMu5EFdgFvpPXf8xGTahfwZBaXT2pi
+	2S4XZNhn8BnbzpnpK8d0ouAt3UEYcQfUIscdFDi3Xd/eqjd5umVSlRpoeJzQAE5o
+	3ljVtg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjeeea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 05:30:48 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P5UmWt020175
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 05:30:48 GMT
+Received: from [10.219.56.132] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 22:30:46 -0700
+Subject: Re: [PATCH v3] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+To: Bjorn Andersson <andersson@kernel.org>
+References: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
+ <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Message-ID: <0a1585ec-5e79-117e-32f9-f9678d362adc@quicinc.com>
+Date: Tue, 25 Mar 2025 11:00:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e23f88 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=N659UExz7-8A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=3bjYy3hnNO--dNZ12UQA:9
+ a=u9uUOCSzve6TOVsG:21 a=pILNOxqGKmIA:10 a=-_B0kFfA75AA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: JXWO9wj0wcWckYK5glXDtkUGHk1KgmAI
+X-Proofpoint-ORIG-GUID: JXWO9wj0wcWckYK5glXDtkUGHk1KgmAI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_02,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250036
 
-Good day Iuliana,
 
-On Tue, Mar 18, 2025 at 11:50:07PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> Some DSP firmware requires a FW_READY signal before proceeding, while
-> others do not.
-> Therefore, add support to handle i.MX DSP-specific features.
-> 
-> Implement handle_rsc callback to handle resource table parsing and to
-> process DSP-specific resource, to determine if waiting is needed.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
-> Changes in v2:
-> - Reviews from Mathieu Poirier:
->   - Use vendor-specific resource table entry.
->   - Implement resource handler specific to the i.MX DSP.
-> - Revise commit message to include recent updates.
-> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
-> 
->  drivers/remoteproc/imx_dsp_rproc.c | 59 +++++++++++++++++++++++++++++-
->  1 file changed, 57 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..1729bfbc602e 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->  MODULE_PARM_DESC(no_mailboxes,
->  		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
->  
-> +/* Flag indicating that the remote is up and running */
->  #define REMOTE_IS_READY				BIT(0)
-> +/* Flag indicating that the host should wait for a firmware-ready response */
-> +#define HOST_WAIT_FW_READY			BIT(1)
 
-Right now the default behavior is to wait for a ready message from the remote
-processor.  We need to keep this implementation in order to remain backward
-compatible with older firwmare images.  As such the above should be:
+On 3/22/2025 3:51 AM, Bjorn Andersson wrote:
+> On Mon, Mar 17, 2025 at 05:10:57PM +0530, Souradeep Chowdhury wrote:
+>> Add device awake calls in case of rproc boot and rproc shutdown path.
+>> Currently, device awake call is only present in the recovery path
+>> of remoteproc. If a user stops and starts rproc by using the sysfs
+>> interface, then on pm suspension the firmware loading fails. Keep the
+>> device awake in such a case just like it is done for the recovery path.
+>>
+> Please rewrite this in the form expressed in
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+>
+> Clearly describe the problem you're solving - not just the change in
+> behavior.
+>
+> What do you mean that "firmware loading fails" if we hit a suspend
+> during stop and start through sysfs? At what point does it fail?
+Ack. It fails under the request_firmware call made in adsp_load under 
+drivers/remoteproc/qcom_q6v5_pas.c
+>
+>> Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
+> That patch clearly states that it intends to keep the system from
+> suspending during recovery. As far as I can tell you're changing the
+> start and stop sequences.
+>
+> As such, I don't think the referred to patch was broken and you're not
+> fixing it.
+Ack
+>
+>> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+>> Cc: stable@vger.kernel.org
+> It's not clear to me from the commit message why this should be
+> backported to stable kernel.
+Ack. Will remove stability from mailing list.
+>
+>> ---
+>> Changes in v3
+>>
+>> *Add the stability mailing list in commit message
+>>   
+>>   drivers/remoteproc/remoteproc_core.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index c2cf0d277729..908a7b8f6c7e 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+>>   		pr_err("invalid rproc handle\n");
+>>   		return -EINVAL;
+>>   	}
+>> -
+>> +	
+> You're replacing an empty line with a tab...
+Ack
+>
+>
+> Other than that, the change looks sensible.
+>
+> Regards,
+> Bjorn
+>
+>> +	pm_stay_awake(rproc->dev.parent);
+>>   	dev = &rproc->dev;
+>>   
+>>   	ret = mutex_lock_interruptible(&rproc->lock);
+>> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>>   		atomic_dec(&rproc->power);
+>>   unlock_mutex:
+>>   	mutex_unlock(&rproc->lock);
+>> +	pm_relax(rproc->dev.parent);
+>>   	return ret;
+>>   }
+>>   EXPORT_SYMBOL(rproc_boot);
+>> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>   	struct device *dev = &rproc->dev;
+>>   	int ret = 0;
+>>   
+>> +	pm_stay_awake(rproc->dev.parent);
+>>   	ret = mutex_lock_interruptible(&rproc->lock);
+>>   	if (ret) {
+>>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>   	rproc->table_ptr = NULL;
+>>   out:
+>>   	mutex_unlock(&rproc->lock);
+>> +	pm_relax(rproc->dev.parent);
+>>   	return ret;
+>>   }
+>>   EXPORT_SYMBOL(rproc_shutdown);
+>> -- 
+>> 2.34.1
+>>
 
-#define HOST_DONT_WAIT_FW_READY			BIT(1)
-
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/* This flag is set in the DSP resource table's features field to indicate
-> + * that the firmware requires the host to wait for a FW_READY response.
-> + */
-> +#define WAIT_FW_READY				BIT(0)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -136,6 +144,19 @@ struct imx_dsp_rproc_dcfg {
->  	int (*reset)(struct imx_dsp_rproc *priv);
->  };
->  
-> +/**
-> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
-> + * @len: length of the resource entry
-> + * @features: feature flags supported by the i.MX DSP firmware
-> + *
-> + * This represents a DSP-specific resource in the firmware's
-> + * resource table, providing information on supported features.
-> + */
-> +struct fw_rsc_imx_dsp {
-> +	uint32_t len;
-> +	uint32_t features;
-> +};
-> +
-
-This needs a version field and magic number.  Have a look at what Xilinx did for
-inspiration [1] (both magic and complement of the magic number).  You will also
-need a "__packed" attribute for the structure.
-
-[1].
-https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/xlnx_r5_remoteproc.c#L103
-
->  static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-> @@ -300,6 +321,39 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
->  }
->  
-> +/**
-> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
-> + * @rproc: remote processor instance
-> + * @rsc_type: resource type identifier
-> + * @rsc: pointer to the resource entry
-> + * @offset: offset of the resource entry
-> + * @avail: available space in the resource table
-> + *
-> + * Parse the DSP-specific resource entry and update flags accordingly.
-> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
-> + * to signal readiness before proceeding with execution.
-> + *
-> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
-> + */
-> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
-> +				    void *rsc, int offset, int avail)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
-> +
-> +	if (!imx_dsp_rsc || imx_dsp_rsc->len != sizeof(imx_dsp_rsc->features)) {
-> +		priv->flags |= HOST_WAIT_FW_READY;
-
-Unless I am missing something, this way of enforcing the default behavior won't
-work because in older images, function imx_dsp_rproc_handle_rsc() will never be
-called.
-
-To fix this I suggest renaming HOST_WAIT_FW_READY to
-HOST_DONT_WAIT_FOR_FW_READY.  That way the host can skip waiting for a FW ready
-message only when it was specifically told to do so.
-
-Thanks,
-Mathieu
-
-> +		return RSC_IGNORED;
-> +	}
-> +
-> +	if (imx_dsp_rsc->features & WAIT_FW_READY)
-> +		priv->flags |= HOST_WAIT_FW_READY;
-> +	else
-> +		priv->flags &= ~HOST_WAIT_FW_READY;
-> +
-> +	return RSC_HANDLED;
-> +}
-> +
->  /*
->   * Start function for rproc_ops
->   *
-> @@ -335,8 +389,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (priv->flags & HOST_WAIT_FW_READY)
-> +		return imx_dsp_rproc_ready(rproc);
->  
->  	return ret;
->  }
-> @@ -936,6 +990,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.kick		= imx_dsp_rproc_kick,
->  	.load		= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
-> +	.handle_rsc	= imx_dsp_rproc_handle_rsc,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -- 
-> 2.25.1
-> 
