@@ -1,178 +1,260 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2A42907;
-	Tue, 25 Mar 2025 05:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F72A20E6F7;
+	Tue, 25 Mar 2025 07:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742880655; cv=none; b=HT+LdHNzsilNByQ2S+ebzsNjj3FuXYsqmD3i3gjVBNqgWKeXisZQclC6oEbU1opdGqMx+CINPvaFUDhnGIwZ3Up0ffP739jhZYSfTQxb57tOCDgHnCnOGdK3JXWta+lNpN1mXixPIUffutMWKB4f2hOXeleXTT1/8hgbEQwyDsk=
+	t=1742887218; cv=none; b=TCDt+GUDqUBxtXlejW5IVxw9IcgkICQKaEgaiDt/fzaOhPQyDodOWmlkmsQ4aWJISN9nkkNA1Pt5IgYktYs29RjJLjOJyAFfvMrCwMcfZi9aUUqsYH0VdYo7rqCuo1+mN6J51JG4hvLpsEtPkoHrz9byDnuqvy5J+aN46Mol1Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742880655; c=relaxed/simple;
-	bh=JArVNnUAwlj2MFnuwHDUQDbi3ZCgkRJVZPFi9PxPWtE=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sk636F8rjsAGR7AegpGyh1/qi7e/2G+5cD3PMvnnuKw4O8IATPzjkYEkG4rBG/Txx8tmVkvH75y/J13RwzDIR+qaL3wpXlubW1GRMLhW7jKx6Q1U2JBCFSI1KG3KpAhV7cokuN5A4r91FvgEVUkf6QaOAMWt5QjdjbcQhLmejK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kHNifEnJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kHNifEnJ"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OJc19b007616;
-	Tue, 25 Mar 2025 05:30:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3M0yFOikFeKKZNxfh746QOLOETK1JwkS+594envMNnA=; b=kHNifEnJzeMPsZCg
-	7GuXrMeUk8tcePnk5YBUCzD2WR4z2RXrhsmAaDfEzs0ZRK4zo8enr42BhbOxTqK0
-	QXxmZtPgZfMIU1eR/qxK4wdQByyQwbP8STY/Z5h+l7/zt4eJnQ8/CgXZXlHG1fhT
-	TymwOH+ktqp0IJPoTsnUBWkcsDhjN5ab/iGB8ZVxBvRTlvWT4AsfJ82KsA2r+qOJ
-	rqkLld2YbbZsXWraMvboRThegrki6OYl/ZRMu5EFdgFvpPXf8xGTahfwZBaXT2pi
-	2S4XZNhn8BnbzpnpK8d0ouAt3UEYcQfUIscdFDi3Xd/eqjd5umVSlRpoeJzQAE5o
-	3ljVtg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjeeea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 05:30:48 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P5UmWt020175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 05:30:48 GMT
-Received: from [10.219.56.132] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 22:30:46 -0700
-Subject: Re: [PATCH v3] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-To: Bjorn Andersson <andersson@kernel.org>
-References: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
- <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
-From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Message-ID: <0a1585ec-5e79-117e-32f9-f9678d362adc@quicinc.com>
-Date: Tue, 25 Mar 2025 11:00:30 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+	s=arc-20240116; t=1742887218; c=relaxed/simple;
+	bh=7yAN5DWEseLPhSuJtJplgqzsW8Fn2NnOCRGJNmY+TWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bJtNdqIm+UZrzoVtz/WLlfsOnT59+cPNPgkgOpG+OY1d0tz6PJscs274wNO6CJZZaOkD63wIwhVaspagEZUGjjOtT7dcLCpROIH3p8Wx2oiRaBT4AdT5qcmMI03ZxwbPQ7+I0/fd2WCRazI/nr3jagIBGer1fNgPQAqBB9YwyJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZMLXZ26Lwz9sSV;
+	Tue, 25 Mar 2025 08:05:18 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id RFFIDcgfzoK7; Tue, 25 Mar 2025 08:05:18 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZMLXY2g73z9sSS;
+	Tue, 25 Mar 2025 08:05:17 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DA00C8B766;
+	Tue, 25 Mar 2025 08:05:16 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id FEOhRsdEs3K2; Tue, 25 Mar 2025 08:05:16 +0100 (CET)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 285238B763;
+	Tue, 25 Mar 2025 08:05:15 +0100 (CET)
+Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 52P756MK009381
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 08:05:07 +0100
+Received: (from chleroy@localhost)
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 52P742SQ009337;
+	Tue, 25 Mar 2025 08:04:02 +0100
+X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: tglx@linutronix.de, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, maz@kernel.org,
+        linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Ghiti <alex@ghiti.fr>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Alex Deucher <alexander.deucher@amd.com>, Alex Shi <alexs@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        amd-gfx@lists.freedesktop.org, Amit Kucheria <amitk@kernel.org>,
+        Anatolij Gustschin <agust@denx.de>, Andi Shyti <andi.shyti@kernel.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Andrew Lunn <andrew@lunn.ch>, Andy Shevchenko <andy@kernel.org>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Borislav Petkov <bp@alien8.de>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Daniel Palmer <daniel@thingy.jp>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        DENG Qingfang <dqfext@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dongliang Mu <dzm91@hust.edu.cn>, Doug Berger <opendmb@gmail.com>,
+        dri-devel@lists.freedesktop.org, Eddie James <eajames@linux.ibm.com>,
+        Eric Dumazet <edumazet@google.com>, Fabio Estevam <festevam@gmail.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Guo Ren <guoren@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Changhuang Liang <changhuang.liang@starfivetech.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Chester A. Unal" <chester.a.unal@arinc9.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Chris Zankel <chris@zankel.net>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Imre Kaloz <kaloz@openwrt.org>, Ingo Molnar <mingo@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>, James Morse <james.morse@arm.com>,
+        Janne Grunau <j@jannau.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Jiawen Wu <jiawenwu@trustnetic.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jim Quinlan <jim2101024@gmail.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Crispin <john@phrozen.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Jonas Bonn <jonas@southpole.se>, Jonathan Cameron <jic23@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+        Keerthy <j-keerthy@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+        Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linus Walleij <linusw@kernel.org>, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-sound@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-um@lists.infradead.org,
+        linux-wireless@vger.kernel.org, loongarch@lists.linux.dev,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Lukasz Luba <lukasz.luba@arm.com>, "Luke D. Jones" <luke@ljones.dev>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>, Michael Buesch <m@bues.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <michal.simek@amd.com>,
+        Miodrag Dinic <miodrag.dinic@mips.com>,
+        Naveen N Rao <naveen@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>, netdev@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Nikhil Agarwal <nikhil.agarwal@amd.com>,
+        Nipun Gupta <nipun.gupta@amd.com>, Nishanth Menon <nm@ti.com>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter Rosin <peda@axentia.se>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+        platform-driver-x86@vger.kernel.org,
+        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Qin Jian <qinjian@cqplus1.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Ray Jui <rjui@broadcom.com>,
+        Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Richard Weinberger <richard@nod.at>, Rich Felker <dalias@libc.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Robert Richter <rric@kernel.org>, Rob Herring <robh@kernel.org>,
+        Roger Quadros <rogerq@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>, Scott Wood <oss@buserror.net>,
+        Sean Paul <sean@poorly.run>, Sean Wang <sean.wang@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Simona Vetter <simona@ffwll.ch>, Stafford Horne <shorne@gmail.com>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stephen Boyd <sboyd@kernel.org>, Sven Peter <sven@svenpeter.dev>,
+        Takashi Iwai <tiwai@suse.com>, Talel Shenhar <talel@amazon.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>,
+        UNGLinuxDriver@microchip.com,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Vineet Gupta <vgupta@kernel.org>, Vladimir Oltean <olteanv@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>, WANG Xuerui <kernel@xen0n.name>,
+        Woojung Huh <woojung.huh@microchip.com>, x86@kernel.org,
+        Yanteng Si <si.yanteng@linux.dev>,
+        Yoshinori Sato <ysato@users.osdn.me>, Zhang Rui <rui.zhang@intel.com>
+Subject: Re: (subset) [PATCH v2 00/57] irqdomain: Cleanups and Documentation
+Date: Tue, 25 Mar 2025 08:03:28 +0100
+Message-ID: <174288553816.2234438.13558299160543301187.b4-ty@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250319092951.37667-1-jirislaby@kernel.org>
+References: <20250319092951.37667-1-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e23f88 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=N659UExz7-8A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=3bjYy3hnNO--dNZ12UQA:9
- a=u9uUOCSzve6TOVsG:21 a=pILNOxqGKmIA:10 a=-_B0kFfA75AA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: JXWO9wj0wcWckYK5glXDtkUGHk1KgmAI
-X-Proofpoint-ORIG-GUID: JXWO9wj0wcWckYK5glXDtkUGHk1KgmAI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_02,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250036
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742886214; l=533; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=EKh0/GewaFERhfnFRfKBg2j5NzMhdBBECdrA+NV/qUk=; b=vA70hw72XKaj1SXthnl6PXh4i9Z2K3Egqlb0PIRXfpHV2vrVCLTo/AG4L7b0hc2x3UCZ6Qx3v FOB4ERwauOeBecqk7A7PBvaW/237URvW4CKvgDK24Wh/OVU59RY4zZO
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
 
+On Wed, 19 Mar 2025 10:28:53 +0100, Jiri Slaby (SUSE) wrote:
+> tl;dr if patches are agreed upon, I ask subsys maintainers to take the
+> respective ones via their trees (as they are split per subsys), so that
+> the IRQ tree can take only the rest. That would minimize churn/conflicts
+> during merges.
+> 
+> ===
+> 
+> [...]
 
-On 3/22/2025 3:51 AM, Bjorn Andersson wrote:
-> On Mon, Mar 17, 2025 at 05:10:57PM +0530, Souradeep Chowdhury wrote:
->> Add device awake calls in case of rproc boot and rproc shutdown path.
->> Currently, device awake call is only present in the recovery path
->> of remoteproc. If a user stops and starts rproc by using the sysfs
->> interface, then on pm suspension the firmware loading fails. Keep the
->> device awake in such a case just like it is done for the recovery path.
->>
-> Please rewrite this in the form expressed in
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
->
-> Clearly describe the problem you're solving - not just the change in
-> behavior.
->
-> What do you mean that "firmware loading fails" if we hit a suspend
-> during stop and start through sysfs? At what point does it fail?
-Ack. It fails under the request_firmware call made in adsp_load under 
-drivers/remoteproc/qcom_q6v5_pas.c
->
->> Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
-> That patch clearly states that it intends to keep the system from
-> suspending during recovery. As far as I can tell you're changing the
-> start and stop sequences.
->
-> As such, I don't think the referred to patch was broken and you're not
-> fixing it.
-Ack
->
->> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
->> Cc: stable@vger.kernel.org
-> It's not clear to me from the commit message why this should be
-> backported to stable kernel.
-Ack. Will remove stability from mailing list.
->
->> ---
->> Changes in v3
->>
->> *Add the stability mailing list in commit message
->>   
->>   drivers/remoteproc/remoteproc_core.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index c2cf0d277729..908a7b8f6c7e 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
->>   		pr_err("invalid rproc handle\n");
->>   		return -EINVAL;
->>   	}
->> -
->> +	
-> You're replacing an empty line with a tab...
-Ack
->
->
-> Other than that, the change looks sensible.
->
-> Regards,
-> Bjorn
->
->> +	pm_stay_awake(rproc->dev.parent);
->>   	dev = &rproc->dev;
->>   
->>   	ret = mutex_lock_interruptible(&rproc->lock);
->> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
->>   		atomic_dec(&rproc->power);
->>   unlock_mutex:
->>   	mutex_unlock(&rproc->lock);
->> +	pm_relax(rproc->dev.parent);
->>   	return ret;
->>   }
->>   EXPORT_SYMBOL(rproc_boot);
->> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
->>   	struct device *dev = &rproc->dev;
->>   	int ret = 0;
->>   
->> +	pm_stay_awake(rproc->dev.parent);
->>   	ret = mutex_lock_interruptible(&rproc->lock);
->>   	if (ret) {
->>   		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
->> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
->>   	rproc->table_ptr = NULL;
->>   out:
->>   	mutex_unlock(&rproc->lock);
->> +	pm_relax(rproc->dev.parent);
->>   	return ret;
->>   }
->>   EXPORT_SYMBOL(rproc_shutdown);
->> -- 
->> 2.34.1
->>
+Applied, thanks!
 
+[48/57] irqdomain: soc: Switch to irq_find_mapping()
+        commit: a70a3a6322131632cc6cf71e9d2fa6409a029fd7
+
+Best regards,
+-- 
+Christophe Leroy <christophe.leroy@csgroup.eu>
