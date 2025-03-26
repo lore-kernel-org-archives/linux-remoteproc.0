@@ -1,52 +1,52 @@
 Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6431547C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5F2383A5;
 	Wed, 26 Mar 2025 08:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742978599; cv=none; b=FJgqaKWlRxJ6LHhEFoOFxd04PMVhHGRc9DmL50dXdg4sf+f4igTd1mw8WOI3qVXIzM5YxRCvW+aMz3WvImDB0mGbqMvCTMe1wU+DYXZAdm3lhOnlKz7WEhZQ8UbHgSkT8qfBEL9a3SJrAgT3LOLEcipIZfCOoxsKxJ+YTTO4le0=
+	t=1742978599; cv=none; b=NuxJD/XLnqMCOR76X0mMrjWW3jq06W77UDLXLcaelNgEqY7Stqs4TeOXnJ+fEpTjR2d3UwPZglU0aWm7ivlf1drIDv6Q9vcOtIzN4StBS+Mi9woceNuoyXFiDgnBgIaWfMNrzvSyc4mkAxJzV3gjdVY+KPZyIuhqnkYd9oqBIbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742978599; c=relaxed/simple;
-	bh=4l7vlhJA3EENd5t9D26zfYMMPZkHcSqBOes9iuJ2l5s=;
+	bh=7aRxn016cduRYWqcqszkwFib9wwX66b4Cxm4UsEQB1g=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/xk8/aj2lUu1bz7kZSEG2FMzWsZ+Lh0nrtpnXk1jWU7oP6PLhDLL2QLGhVicYneaS/7ZDbzpF1Ly28EQW8/GS78l8zsGtEtFNdUwtUToKIaKfPZyhouGl77arv7/b4pO+O3x8HqdXmERuDoH+MjrsCFZ9zvtsENHg173vQMewM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=kZtf6gQt; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=iu/HXd7RiSzc7pNBdl6ypqJ+9txXM5QvGsdIpHedc5gwMz75RfW6Tf6TUCQG4cVGJJ8OdzdEvahyrE/AWBR+dZbvhzicnR4Q9ituE4jSRz+9QPLAp6fK3xRVvwhtwQEw9bHQ7UJ7OAAxDdoZB75T4YvgXAUxaWoPKpkmq0vsSCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qkCXizyo; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="kZtf6gQt"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qkCXizyo"
 Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q7YPIE019497;
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q7DlLo008642;
 	Wed, 26 Mar 2025 09:42:50 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	tjQ6jzp5petaGXfP90uNsQR+cc1MZ23TGQzGVRHgV0E=; b=kZtf6gQth6RK04zU
-	1OQPPLmEdGqZICiwIrbCfRTqLX5vuWf7hLrbXnfQOG9FVTqovq87y3Pe0JuKvqNF
-	kC7DmoL/H5DVauLclCJcplVXEWkNRh5XbsNd/yEkOzgTsQCYhnAej5nDsZ1v+rja
-	kF4XkCSnV0k1q1Dcw3KpHnH1aSScCj6SiYmKt7sZd/qVQfFmwCJvZ9ZQfuUXtD7E
-	6fIIWAkkn9EBjC3rBuGU1Dkrt1YuK/A2AAJi3kPHJ0DHsPZJCwmekp8G5ZfkRZOy
-	KLdTDiEHCHXLGcGJ75oTwrnNIgugBj/TMEoXqflWLgJg405XOGkH6NMK9LixN9iQ
-	+OcihQ==
+	4spI71XBW9TktNPtgUKlhmqprWhHOZmJMEc8QqOQvcI=; b=qkCXizyoHkMe01YE
+	F+Vzk+z1oNCmncd47k45IZZP6kxoQGn5OqYUDc0bxj4K7VSq1TKRgqKPKafPHWQY
+	YbFp6blgCH/I42voM4eu7IgzRjwgznABk4VgQSho+9WJCnc602vIkzfgc4VbyiCE
+	DyhsfMh9ZfyDBBMV3rNPwB3WD818bu3rgYVxLe3ElcjgkqIpQVnphCrJzXQzePK2
+	hExaptP3lETDselbZUv33wotyPfBngteLrrUw9TuLzw2drhNhzF9IFgtgOsdvEVB
+	rCG3YOAEZq8vv2z1CBxmO8SmNm9T2FH/87AS4KFmeuiAwoZCLS/EOO8TAemHt7qz
+	xMKYQA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j91se31e-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j91se31f-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 26 Mar 2025 09:42:50 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A138340053;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A0D524004D;
 	Wed, 26 Mar 2025 09:41:50 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 048BF87F424;
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B73DB87F42B;
 	Wed, 26 Mar 2025 09:40:02 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
- 2025 09:40:01 +0100
+ 2025 09:40:02 +0100
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Mar
- 2025 09:40:01 +0100
+ 2025 09:40:02 +0100
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski
@@ -61,9 +61,9 @@ CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Arnaud Pouliquen
 	<arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 1/2] dt-bindings: remoteproc: stm32-rproc: Add firmware-name property
-Date: Wed, 26 Mar 2025 09:39:11 +0100
-Message-ID: <20250326083912.12714-2-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 2/2] drivers: remoteproc: stm32_rproc: Allow to specify firmware default name
+Date: Wed, 26 Mar 2025 09:39:12 +0100
+Message-ID: <20250326083912.12714-3-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250326083912.12714-1-arnaud.pouliquen@foss.st.com>
 References: <20250326083912.12714-1-arnaud.pouliquen@foss.st.com>
@@ -81,30 +81,42 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-26_02,2025-03-26_02,2024-11-22_01
 
-Add the 'firmware-name' property to the remote processor binding
-to allow specifying the default firmware name in the device tree.
+Enhance the stm32_rproc driver to allow enabling the configuration of the
+firmware name based on the 'firmware-name' property in the device tree,
+offering flexibility compared to using the remote proc device node
+name.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml       | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/remoteproc/stm32_rproc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index 370af61d8f28..a0a16bfe8ef7 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -139,6 +139,11 @@ properties:
-       If defined, when remoteproc is probed, it loads the default firmware and
-       starts the remote processor.
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index b02b36a3f515..431648607d53 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -835,6 +835,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_rproc *ddata;
+ 	struct device_node *np = dev->of_node;
++	const char *fw_name;
+ 	struct rproc *rproc;
+ 	unsigned int state;
+ 	int ret;
+@@ -843,7 +844,12 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    maxItems: 1
-+    description: Default name of the remote processor firmware.
+-	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
++	/* Look for an optional firmware name */
++	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
 +
- required:
-   - compatible
-   - reg
++	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
+ 	if (!rproc)
+ 		return -ENOMEM;
+ 
 -- 
 2.25.1
 
