@@ -1,122 +1,83 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9392C207673;
-	Thu, 27 Mar 2025 08:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24C11586C8;
+	Thu, 27 Mar 2025 16:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743064233; cv=none; b=gqF8bpY0uEKNehwzABe6x7iPtyXd9GYNwsjiWtk+zqSdSZWwbVEZWxugDHbT8RdwmTFWC6jTexrSGiqEgdqVDFzJVwdLsWlkuUuW/tX9f5MrxKA8kGY9wb1q8sz/hSXSEDe5DGXvgFP9ovyvN7RyeTBd4rE1xoTWthh5eP17BcI=
+	t=1743093496; cv=none; b=B0U3pFaTMUZbcTtQuJqlvdvvtddR/ZxU1fWlf8ru+GbxgImEKrsa+UkJCkH5XpCh4uRlQMrx0eqatsMJ77bgoS6alxS47EgkjLOvDW/grntskReNcxOujBjJD15eO8N2eSp47VAi+MQR5cfKdx6Gip2wl/f+lAc9rYHjRKfp43M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743064233; c=relaxed/simple;
-	bh=7aRxn016cduRYWqcqszkwFib9wwX66b4Cxm4UsEQB1g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r0KF7d7mAALPFHgIVNSPsZZLSLXHOXXraI+VWMiY1FirnOqjj9OrMPkir8KRtQ+XlpZ97zvMUcfHPDAUuBlvCAYp+X5IsWx3Be3AYewuCPYt+M9Z73sNSd+Wj5SuK2+TVYAbKxO8qqjybv/aulrCpj/+xc4qmAUA48QHIAykyNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2RpZwxSO; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1743093496; c=relaxed/simple;
+	bh=NvC16u1aqR/2KG04a8f4N6Xoq/iI1HOtNPpUepOa0Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2AJ9EB+13Trywv+FbxUzuZQ14zAe1jmB+z6+F0eeHUCsRXHaKySKVH3yHQ6L7yCq8yjNv/W+NQm1tYpgLosrF9T+Y7TDzZ8Y0l2Q9PZ6u2lyn7os1N5hLlVaGOvcNc8haPis72fYz2LojKaboAnZ8Hlpnt4LZT4YKTTi7Dx/es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3ztZUCE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2RpZwxSO"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R89RxZ028645;
-	Thu, 27 Mar 2025 09:30:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4spI71XBW9TktNPtgUKlhmqprWhHOZmJMEc8QqOQvcI=; b=2RpZwxSO5XM74kUR
-	Xd7QhwnrX0ayzf9nUUJP8QHePjZSkMTl+SZTM3AQCk4kji6BvhVuo5Iuickozzlp
-	dMKeUW0lf/fAL7nyg2nIrhmfcWF11Zrj1o+z5cu2JCkhYCY3xB6qZNHOz6xie9nJ
-	TsS2rZ5qhWEYNzn8wnhONGr8dNeQt/Ya9QJK9cXHw5TSlo9W2JcMcDIVaWDzo57u
-	l+FN3waH2aV3VvdJ2DDqOrmoWUrp91x9SamMgIRohF7owMqjZKNUjjgtT6bVNQUg
-	5HZPO6veSDHT4KyBIHQv5IS1UWfqE0tRuohu7pZfdUcuWnt+qSWfy+WDwSm07CbF
-	oQTMbQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45hkgrtt26-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 09:30:09 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 14E3F400B7;
-	Thu, 27 Mar 2025 09:28:59 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 55E368329E1;
-	Thu, 27 Mar 2025 09:27:34 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
- 2025 09:27:34 +0100
-Received: from localhost (10.252.3.68) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
- 2025 09:27:33 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen
-	<arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2 2/2] drivers: remoteproc: stm32_rproc: Allow to specify firmware default name
-Date: Thu, 27 Mar 2025 09:27:21 +0100
-Message-ID: <20250327082721.641278-3-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250327082721.641278-1-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3ztZUCE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15777C4CEE8;
+	Thu, 27 Mar 2025 16:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743093496;
+	bh=NvC16u1aqR/2KG04a8f4N6Xoq/iI1HOtNPpUepOa0Ms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o3ztZUCEsTgAufZFIr54bxgGmr3liOeSSxSNHer94WsXcmqD6VkiFMJpgxN4qBDpI
+	 BtOIwp8CLI6Ri4PDU0wPxHZv5eCUfsEgY7UXGM0/Ipj1Quhx6WA8bn+cnuw5/RSjpN
+	 bGulEuC72O8WOwISAx5IXkbmdCIw4BWmhGMyjjoQINgPphdojzU37IE9tM1hJf4cHc
+	 O4CLk/OaeYXzHinKCDM+z/NZ/ltVO6XamoCGyi9f6WXu+dYHBuxHbEWcS2uYtUzd9Q
+	 XeWV1DkJRBHxTNFVnGvmccUeI6FFgZYGXMTEfcfvg4P/nF4X5H6d7Hs+9tSjt4MFvc
+	 v8so7ojzrKQSA==
+Date: Thu, 27 Mar 2025 16:38:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: stm32-rproc: Add
+ firmware-name property
+Message-ID: <20250327-defiant-quicksand-83cfdd8cf8d8@spud>
 References: <20250327082721.641278-1-arnaud.pouliquen@foss.st.com>
+ <20250327082721.641278-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ytieV3SLIaVgIcdG"
+Content-Disposition: inline
+In-Reply-To: <20250327082721.641278-2-arnaud.pouliquen@foss.st.com>
 
-Enhance the stm32_rproc driver to allow enabling the configuration of the
-firmware name based on the 'firmware-name' property in the device tree,
-offering flexibility compared to using the remote proc device node
-name.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/stm32_rproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+--ytieV3SLIaVgIcdG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index b02b36a3f515..431648607d53 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -835,6 +835,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct stm32_rproc *ddata;
- 	struct device_node *np = dev->of_node;
-+	const char *fw_name;
- 	struct rproc *rproc;
- 	unsigned int state;
- 	int ret;
-@@ -843,7 +844,12 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-+	/* Look for an optional firmware name */
-+	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
-+
-+	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
- 	if (!rproc)
- 		return -ENOMEM;
- 
--- 
-2.25.1
+On Thu, Mar 27, 2025 at 09:27:20AM +0100, Arnaud Pouliquen wrote:
+> Add the 'firmware-name' property to the remote processor binding
+> to allow specifying the default firmware name in the device tree.
+>=20
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--ytieV3SLIaVgIcdG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+V+8wAKCRB4tDGHoIJi
+0rA7AP9JyUbjLOakoM+hJBNcmQksv1MkDD5pE8noBMWu3qQ68AEAsjA4jPrHo7Co
+a14daJ3eTuSb4JbviHqOsCWo9L2j0As=
+=9SvW
+-----END PGP SIGNATURE-----
+
+--ytieV3SLIaVgIcdG--
