@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898DA215058;
-	Wed, 26 Mar 2025 18:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790341AA1D5;
+	Thu, 27 Mar 2025 04:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743015182; cv=none; b=WZFxFyMHwiw1ExweVc3H5qjGAWR2tDkFwYpp+eQM36RWtb5bGSbm0KZNn4kkjKCFMyFxZuC3YZhlbPfgmF5blK8aKtMMkI8cruGtb1UMdHSCy1aFf7PKnEPg5zIp/w2SpcnDVFiV+ooiKSeYbaNmHCFAG6UfPDw5EZgvHSsr85w=
+	t=1743049959; cv=none; b=btCV4j2tRb4JaH8es33h0hEcDUzK6CUKJ4GtjSdACtd2C36AOdgdH1XEn+UbJcgI9RIxJLWoPxwiR/Dqy1GMGgM//MMP24ShkMvqzG7b9/2PV2c6qEIRx5IEdk00ssu+gRwWw0GOzzm34wBtgcBNbFqqdnxIJWL25DeF51PYHLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743015182; c=relaxed/simple;
-	bh=7tnbCUTKMpPo8aoqQiYW410Hhe5LPNkwVR28/52KUGY=;
+	s=arc-20240116; t=1743049959; c=relaxed/simple;
+	bh=vkEar+Bp4mb9U1ErBYXk0ufSXnmYuVhKsrxGSFbrQIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CR63jnP6nLxtdHeFRa7TEtEaikeVTIesVTzKY4GhAp/L4QsNnTZAjyRmIQAygariWrzHBGXMKELn30Lf4gZkWFtbRf1c4CL513oQiWY4p7nSrFzGUgpcX0yfa2F0Z+ACn/gpMBd8U+8VEKfG9FqH7CgSVqarrXYeNV9/Gzd6h4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snLlwT1B; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=l0ed8hmUBx6B/SKpAvZmG+fMEWDXh8OzhAMG/YrhvpkTXC+qRKmCQAORA3XRGj3N1fs91tG0+iI7ngTsghWMirX/2/MlpcBZzKjdTQNkRjXdN7ir3aS7pHeWDFIwNesjyL4TeZPKrNd8cmxyvyUDRvm/LIeJt6x165Qy3YYbWc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjNLK19U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snLlwT1B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD20C4CEF0;
-	Wed, 26 Mar 2025 18:53:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjNLK19U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0115C4CEE4;
+	Thu, 27 Mar 2025 04:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743015182;
-	bh=7tnbCUTKMpPo8aoqQiYW410Hhe5LPNkwVR28/52KUGY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=snLlwT1ByOOZ8VDdLTGeiVAiEWrHtg3EvWVkctlzQIGFZzDT7XBzN2DIIFpHVRuA4
-	 QWSXjBNoMYxPNGrYI7EhmcSj0AeKKRNkXc7ncCYbP0fslp4P4+jMIkZIAktw92xzl9
-	 f/6pVTEXC4NSXGu4xof5rtvBej+C0GDqtW1wkGhV6Wi2YRwu2jpb0Lyghf8UlzytoG
-	 WwQ6DMNodUQHQk2VpoXa2/y89pLaPCLpwF+ISbR4hp6cRaabZWfTVWMtcr/ZSfSmh8
-	 jwKqvjyFp2FKpKOIs73vDRG4Rw8NplM2rXgHf/zkk7H07J9bPh8EYwSA5OcJVoLYAh
-	 Co5wZxznPQ7aQ==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso2301933a12.0;
-        Wed, 26 Mar 2025 11:53:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULByM3gBBPd93iQ9H5PkPbQbq7kXP4TicXA1aaKhpWmsdmWepvEb/nR3B7VV16xeV0U8PGJHJ71U9hqUh0@vger.kernel.org, AJvYcCV0d2Z38X05xlfAoQnlAoZYMTdejD+bwfDdVf4t6X70lo65Ix3nQfiLBMxWgNglM7M+DaMcWLb4EbLRlJGfbCueqA==@vger.kernel.org, AJvYcCVaZjgj5CxrS201Md3PY0KWIUM4WMPBMgXlS68gXmX22VfTcNNKcFVNXWo7DmkmVQtfSlaoYxgYhpC9Umww2g==@vger.kernel.org, AJvYcCXMybBh7e9IkBvVBDeMDF9I/TjndgEwHovuHdgD3YhIS/H8HejuG/wk5Ih3Kgjbq5p5QyA4ZSWNDsFO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwgTrQephHReQ0rUXSL3XoX0/ynn3bV+dKHD38pxVRGzvA7F8i
-	E8yfNBpgf+FpHTUnpv27E5mPywKuwkadqEsZ6DjrVrBP7R43zceG3JYesxfKEOckx44bmFER8AN
-	kNIKYWD8g6TfjOeM7Koee1qsmbQ==
-X-Google-Smtp-Source: AGHT+IEi/FLkb6+pDXS2OgDct0wDDLVjgAusO19cQUp3SH7xeV/KwpO2rct7/toV7PxXM7MD6oHfl5OWID6sUvuLyTI=
-X-Received: by 2002:a17:907:7295:b0:ac2:26a6:febf with SMTP id
- a640c23a62f3a-ac6e0d3384emr557164766b.20.1743015180452; Wed, 26 Mar 2025
- 11:53:00 -0700 (PDT)
+	s=k20201202; t=1743049958;
+	bh=vkEar+Bp4mb9U1ErBYXk0ufSXnmYuVhKsrxGSFbrQIw=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=RjNLK19Ua83WOdqGeiIkiXP+kkZ6tB9H3gdBqX+f434sWgg8md3d4JywjLxUNK+S/
+	 YNzS+8eiLPRabeg5zQLw1mKp2jm9t2r4A+4zrn2vrweZtSVuIU8MlforeKvegAfg0J
+	 MSixpKgXXITUUiiXkMSeNmKKUNZsjW8e2k6aFadcwj7t2Yq2pCqXI6cSzzeIWxBXoc
+	 /mUgYaPW2dbLJySsKGmTszOYvNNJvcUElMVKdwXyXEtpMG+DlCPbIhK4t1XSgDSH0j
+	 zP0CVsusc1EtWTkUyN67HZlKQx5o5e7steT7i9jDQVISB/tQaWrQEQpUkbsAaHc3KB
+	 QGWSTihjCYYvg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so6307131fa.2;
+        Wed, 26 Mar 2025 21:32:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2NjLDK3IMhbWPFqEUk4I5wZXIGlpLS3O+t10VJdIQwnz9r+MSdxp3+aPA5MfKyVeFZXvsmJ0mftsc@vger.kernel.org, AJvYcCVGRCGH64ckuvCxGN2RAZ99EcPPEm/tFgiDRZTNGv4PGSjR3b8ooJNyq2YYoC6e70AStpkGKlqxDw2ZC1iv0AOZDQ==@vger.kernel.org, AJvYcCVWMBL8+G08Qd7UWrzi939ajWrOEi8xwtsacdT6n7EHyTEOHWRWuRUJf/cMnTkcMJMXXMJCoyKHWLfW3ZqF@vger.kernel.org, AJvYcCXPQaCZqrd6PP9Dn5j+kZZlRSm+QYPZKB1OuV1lKm8w2r2VuS02hpIzQ+BvfHh8YRomJlK9asa7fXNFLlV2sg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Z84P6dnsXWZzDG7vqdXUJSoeZcc85Z0xdtOxEvfazRu5Qth2
+	aqR3C5p0Rk9rKgLsu3TYN4I0ewCNp+uOwlvpUV7ZBndAwaa0zyeEIFV1S9hi4U8yBORjC8wapys
+	AqZ9aeIY4+3TtKwssv0NcaHLUUb0=
+X-Google-Smtp-Source: AGHT+IF6fAB138KxHWy/pT7d/+7sa0DqbsRN8WZ3PB5VKFSTgeIGYi9SJIdz25/4ZRPKiUb58v/Gi3ZiI0Z3sR4FiZc=
+X-Received: by 2002:a05:651c:1a0b:b0:30b:b7c3:ea71 with SMTP id
+ 38308e7fff4ca-30dc5e31b95mr9042391fa.15.1743049957271; Wed, 26 Mar 2025
+ 21:32:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -43,15 +43,16 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-3-robh@kernel.org>
- <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-In-Reply-To: <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 26 Mar 2025 13:52:49 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqmc05lmNw-rFmLFhT71JwYvVm4xio8OJGuHie4RorDqomqBJbJolJsSNo
-Message-ID: <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
+ <CAGb2v65djD5DLQnjQrp9kSHTQYVd9p_vP9WySj2Cx81rHmh5Mw@mail.gmail.com> <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLoJAwPeWjXyQYK1rvVzn6Meapz3iS9gW+QqYpYKuJkBQ@mail.gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 27 Mar 2025 12:32:25 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65nG82vDvTHMW0GQFHed5L4pQFMDggtTpuLqfm=woKm=w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqdFE0VpmnOb9GgVtgJfb7ntGDb2tyu8gNbju_XzgxeziYqnhZQK0zKPKw
+Message-ID: <CAGb2v65nG82vDvTHMW0GQFHed5L4pQFMDggtTpuLqfm=woKm=w@mail.gmail.com>
 Subject: Re: [PATCH 2/3] of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
-To: wens@kernel.org
+To: Rob Herring <robh@kernel.org>
 Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
 	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
 	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
@@ -64,107 +65,123 @@ Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.or
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 1:44=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org> wrot=
-e:
+On Thu, Mar 27, 2025 at 2:53=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> Hi,
+> On Wed, Mar 26, 2025 at 1:44=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org> wr=
+ote:
+> >
+> > Hi,
+> >
+> > On Tue, Mar 18, 2025 at 7:29=E2=80=AFAM Rob Herring (Arm) <robh@kernel.=
+org> wrote:
+> > >
+> > > Simplify of_dma_set_restricted_buffer() by using of_property_present(=
+)
+> > > and of_for_each_phandle() iterator.
+> > >
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > ---
+> > >  drivers/of/device.c | 34 +++++++++++++---------------------
+> > >  1 file changed, 13 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/drivers/of/device.c b/drivers/of/device.c
+> > > index edf3be197265..bb4a47d58249 100644
+> > > --- a/drivers/of/device.c
+> > > +++ b/drivers/of/device.c
+> > > @@ -35,44 +35,36 @@ EXPORT_SYMBOL(of_match_device);
+> > >  static void
+> > >  of_dma_set_restricted_buffer(struct device *dev, struct device_node =
+*np)
+> > >  {
+> > > -       struct device_node *node, *of_node =3D dev->of_node;
+> > > -       int count, i;
+> > > +       struct device_node *of_node =3D dev->of_node;
+> > > +       struct of_phandle_iterator it;
+> > > +       int rc, i =3D 0;
+> > >
+> > >         if (!IS_ENABLED(CONFIG_DMA_RESTRICTED_POOL))
+> > >                 return;
+> > >
+> > > -       count =3D of_property_count_elems_of_size(of_node, "memory-re=
+gion",
+> > > -                                               sizeof(u32));
+> > >         /*
+> > >          * If dev->of_node doesn't exist or doesn't contain memory-re=
+gion, try
+> > >          * the OF node having DMA configuration.
+> > >          */
+> > > -       if (count <=3D 0) {
+> > > +       if (!of_property_present(of_node, "memory-region"))
+> > >                 of_node =3D np;
+> > > -               count =3D of_property_count_elems_of_size(
+> > > -                       of_node, "memory-region", sizeof(u32));
+> > > -       }
+> > >
+> > > -       for (i =3D 0; i < count; i++) {
+> > > -               node =3D of_parse_phandle(of_node, "memory-region", i=
+);
+> > > +       of_for_each_phandle(&it, rc, of_node, "memory-region", NULL, =
+0) {
+> > >                 /*
+> > >                  * There might be multiple memory regions, but only o=
+ne
+> > >                  * restricted-dma-pool region is allowed.
+> > >                  */
+> > > -               if (of_device_is_compatible(node, "restricted-dma-poo=
+l") &&
+> > > -                   of_device_is_available(node)) {
+> > > -                       of_node_put(node);
+> > > -                       break;
+> > > +               if (of_device_is_compatible(it.node, "restricted-dma-=
+pool") &&
+> > > +                   of_device_is_available(it.node)) {
+> > > +                       if (!of_reserved_mem_device_init_by_idx(dev, =
+of_node, i)) {
+> > > +                               of_node_put(it.node);
+> > > +                               return;
+> > > +                       }
+> > >                 }
+> > > -               of_node_put(node);
+> > > +               i++;
+> > >         }
+> > >
+> > > -       /*
+> > > -        * Attempt to initialize a restricted-dma-pool region if one =
+was found.
+> > > -        * Note that count can hold a negative error code.
+> > > -        */
+> > > -       if (i < count && of_reserved_mem_device_init_by_idx(dev, of_n=
+ode, i))
+> > > -               dev_warn(dev, "failed to initialise \"restricted-dma-=
+pool\" memory node\n");
+> > > +       dev_warn(dev, "failed to initialise \"restricted-dma-pool\" m=
+emory node\n");
+> >
+> > This changes the behavior. Before this patch, it was:
+> >
+> >     if a restricted dma pool was found, but initializing it failed, pri=
+nt
+> >     a warning.
+> >
+> > Whereas now it has become:
+> >
+> >      print a warning unless a restricted dma pool was found and success=
+fully
+> >      initialized.
+> >
+> > This change causes the kernel to print out the warning for devices that
+> > don't even do DMA:
 >
-> On Tue, Mar 18, 2025 at 7:29=E2=80=AFAM Rob Herring (Arm) <robh@kernel.or=
-g> wrote:
-> >
-> > Simplify of_dma_set_restricted_buffer() by using of_property_present()
-> > and of_for_each_phandle() iterator.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >  drivers/of/device.c | 34 +++++++++++++---------------------
-> >  1 file changed, 13 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/of/device.c b/drivers/of/device.c
-> > index edf3be197265..bb4a47d58249 100644
-> > --- a/drivers/of/device.c
-> > +++ b/drivers/of/device.c
-> > @@ -35,44 +35,36 @@ EXPORT_SYMBOL(of_match_device);
-> >  static void
-> >  of_dma_set_restricted_buffer(struct device *dev, struct device_node *n=
-p)
-> >  {
-> > -       struct device_node *node, *of_node =3D dev->of_node;
-> > -       int count, i;
-> > +       struct device_node *of_node =3D dev->of_node;
-> > +       struct of_phandle_iterator it;
-> > +       int rc, i =3D 0;
-> >
-> >         if (!IS_ENABLED(CONFIG_DMA_RESTRICTED_POOL))
-> >                 return;
-> >
-> > -       count =3D of_property_count_elems_of_size(of_node, "memory-regi=
-on",
-> > -                                               sizeof(u32));
-> >         /*
-> >          * If dev->of_node doesn't exist or doesn't contain memory-regi=
-on, try
-> >          * the OF node having DMA configuration.
-> >          */
-> > -       if (count <=3D 0) {
-> > +       if (!of_property_present(of_node, "memory-region"))
-> >                 of_node =3D np;
-> > -               count =3D of_property_count_elems_of_size(
-> > -                       of_node, "memory-region", sizeof(u32));
-> > -       }
-> >
-> > -       for (i =3D 0; i < count; i++) {
-> > -               node =3D of_parse_phandle(of_node, "memory-region", i);
-> > +       of_for_each_phandle(&it, rc, of_node, "memory-region", NULL, 0)=
- {
-> >                 /*
-> >                  * There might be multiple memory regions, but only one
-> >                  * restricted-dma-pool region is allowed.
-> >                  */
-> > -               if (of_device_is_compatible(node, "restricted-dma-pool"=
-) &&
-> > -                   of_device_is_available(node)) {
-> > -                       of_node_put(node);
-> > -                       break;
-> > +               if (of_device_is_compatible(it.node, "restricted-dma-po=
-ol") &&
-> > +                   of_device_is_available(it.node)) {
-> > +                       if (!of_reserved_mem_device_init_by_idx(dev, of=
-_node, i)) {
-> > +                               of_node_put(it.node);
-> > +                               return;
-> > +                       }
-> >                 }
-> > -               of_node_put(node);
-> > +               i++;
-> >         }
-> >
-> > -       /*
-> > -        * Attempt to initialize a restricted-dma-pool region if one wa=
-s found.
-> > -        * Note that count can hold a negative error code.
-> > -        */
-> > -       if (i < count && of_reserved_mem_device_init_by_idx(dev, of_nod=
-e, i))
-> > -               dev_warn(dev, "failed to initialise \"restricted-dma-po=
-ol\" memory node\n");
-> > +       dev_warn(dev, "failed to initialise \"restricted-dma-pool\" mem=
-ory node\n");
->
-> This changes the behavior. Before this patch, it was:
->
->     if a restricted dma pool was found, but initializing it failed, print
->     a warning.
->
-> Whereas now it has become:
->
->      print a warning unless a restricted dma pool was found and successfu=
-lly
->      initialized.
->
-> This change causes the kernel to print out the warning for devices that
-> don't even do DMA:
+> Thanks. I fixed it up to only warn if i is non-zero.
 
-Thanks. I fixed it up to only warn if i is non-zero.
+Not sure if that matches the old behavior though? A node could have
+memory-regions for shared dma pools but not restricted dma pools,
+and i would be non-zero.
 
-Rob
+IMO the warning should be in the "else" branch of
+
+    if (!of_reserved_mem_device_init_by_idx(dev, of_node, i))
+
+
+ChenYu
