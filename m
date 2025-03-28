@@ -1,215 +1,210 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC252210F59
-	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Mar 2025 05:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D121A314B
+	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Mar 2025 14:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743139053; cv=none; b=bGCE4ZmFaU4RP+hQLI7R0wcMRd/G1jTeAWdXKIuax8tBqidTRHAouOyQcgB8Xqej04H7mbrAdTYIL6VrdcCXuLpjIlhslat1v4+w69ZqGDioUwVo3HCRJ1gSZ17QQCDJMTP7yLEYv7KdpvMwwu5vkB9rUdXIcacLqcWTA67yOGw=
+	t=1743171287; cv=none; b=cBhKHHZjgNQ+J58e2xHnm5wI288ggUpsvyyDXP/xn/YrXZWauIIgb8o7AjmDQ7ev9pUMMONHRsUBEaLmGPksB6afAbW0BXebVQ72/bHpmRELUx/YjnM9Z/tVu1sVp2DSJThdJvxeBAid7X8OPb9lkXa54LFl4AdtpiigbiCwJx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743139053; c=relaxed/simple;
-	bh=CS5VMMk0LUE5wGq9IgIbXDHaQ2F3DWmXr4+f0/6topA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0walKd8SrbAi1p3NyaSOWCx/iMP65aXV1oxe8eRABM+Qjoix8nEQDlf3mIVsyqzGctC+AulmSaSlEvlXJ32xDdWHkD29Pp50lRTLgPQyf0OS8sjgtwvbD3qgyBIuciIXVxL9BVbIwdvb1XmxvDmFmXUu2fgD80JzId+L40AzA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M+QPkzpt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1743171287; c=relaxed/simple;
+	bh=wK1ehaq6dNRFnlziHcAibzSUwhMDWmID5TaLHziYYos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHIoyMYxG1Z5wI3QLHCfwzEYKZzerda9TG924m4miyIrqw2fiWXNqU8LcdfgM32rNCfTKHs0yOOJXyj+gg2NqtprjQ8sE9JyJhu4k2emlcHopPFayeYvpabIfcvH1Qnf2wmaLtT7bSa3VBcv7rRGmHca5iA89QJvo0QlnMS5Q6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBya6JHU; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M+QPkzpt"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S0GxtY014981
-	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Mar 2025 05:17:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HQgkYP40+p7+yHQUfnTVW3yGM29lJJuQVYPsqQvyoQY=; b=M+QPkzptLgiuhzRe
-	BaqsaoWSuwcjSGk6EjXMN5en4gjxQl7jP2AuzoFMB93ZkDFLG+8Jcz4ahUYliavt
-	DrRbu80T9CYxAsf4qIhgmkWldM39JMYlhV1w4Mw3YDu3BBMEJrU7xuz5VBzmfRg1
-	AqctpupqSwEhNilFjcneL5futNMheZXfXoypfMX6YY/gio734IpobucYDrMyEHzd
-	AGRCQckKH0q0F8ARB6Cd/JvKbS6bvbFcIcJAJ2A90t4mrS5/0k/vZXdKXJ4xm7pb
-	XRPfQzfCHu7NU/2X24mh9MP+Jt8bsD9qaCkwD/0lNdBSBTUyNL8/0zvXpXENCPqx
-	yI33wA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m0xe0d4e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Mar 2025 05:17:25 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-301bbe9e084so4379631a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Mar 2025 22:17:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBya6JHU"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2260c915749so32461995ad.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 28 Mar 2025 07:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743171285; x=1743776085; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n1Dba98BGDtjOM6DFuWR/X88tWcqFq5izur1ZVd2H9o=;
+        b=LBya6JHUMqQiG/uA7qZhsio08qt59TLjRGBuPf7N6qf0m2Z7Z0Fal1B9OVpFnMDDtO
+         OrEBf1lWND7Wshxa/ytnK7gBUfW0SlOtm4670/W7MnqRRczX3XWo21AzN53ABH3+rJQW
+         7+V3d3HIX5IqZKaFdH5dsFiOgW4br7wls+aH4PvA93pnhi5xgRxUhltaNl/Jpe639ce7
+         r4sp+GSHbT+i+sRHf32N5gH4+8bynPkblVm8pn825+ynQ+xu0aXumC+YQ5OnqbOPEHxO
+         dAtUllwX07+x0oMVgDC/DzMwTN4SJARvrm3LBGnbPxl7l9l5NtSKjBAJtzVRF1ABWuQF
+         XFig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743139044; x=1743743844;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQgkYP40+p7+yHQUfnTVW3yGM29lJJuQVYPsqQvyoQY=;
-        b=dcbLSpBDnMTebVQgbq+Az7xP8rdoVcuvGu/JkxIn+aYjR1Ml8GomjLq4eyl5sk0N53
-         l1oBLt9Glo4sGlUGi9lfxJ7tAbPMFIsi+J1Xufea8FMJvnO8qDoHNx1pIgG3y9xdpSiZ
-         pVu5bVgUhdaEWlXNdXzcWyXFLR2s//DUtWINiT20nBJ5mzLGef2n4e/cTgrUcghjWEHw
-         9XrhJFxrG3eh7hkM5nQ0ulvr8w97PcC61HvgcAQgZcrWV+Geeqtjuho1CJhwGcq9E6yK
-         2Mugpha+sWLrrpNr8ONS+M3xpnS0UUna8PeBx3F3wpL0gW3cxjAT2pSyT+C/O3YCrNSp
-         R1kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeQXawHp4z5+EK16WThfVr8tJeIjhPaGGmf3pq+zXVcRgLjQ30FFC1/n2iP+ZEd4X+SCUAdSjAbnmniONSPN53@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTFys/BFgrKoM/lwFrzXh8JPcpJKm7RWXPT0kR/XiJR7WbqE7k
-	w4XKWn8qOYd+kaIFsb9DfiYMwRbteD+/lh+rX0myczg4Dh6Xwj0h0hRbKrPFUlFF7dl9AQbDa/1
-	+uPUYdAZF/lZGwPx7j1HFkSlxbj5SsCS6rLvDmOrVuqKkjqTGmlkptYNsIdfVt/RCoiCX
-X-Gm-Gg: ASbGncsLr6gKg1n40KQHGlmblB0FguHCdB6A6WdcbsUaKegkUkITj2ZZtSML+7E42zX
-	81RpBxW05mDrZQFCbgKcqGdEW7rA6ErJn6+4OM3fPXgN+P4Ix3whL2JsRomTNZYVo6GJl6wkOYk
-	QD+EE2u6TV3xU4y44uoOpjxV6Ny8cGTwlaMWIYhhu4Qor7CxpQqjjM4jwUbHeZVg+hj+HWVTOau
-	8GQe7GR+F6267ZtvESk4PsY+OnUmpNLGOH9NgBhMyfF1Zlig0aviiDcqGZvkJ1UffJDHuS8luge
-	KFGO0bGmUwRBAs89GEuQ8fHkjChNxwkeS95hVnVlUutkd4HBDQ99kA==
-X-Received: by 2002:a05:6a20:7f98:b0:1f5:769a:a4c3 with SMTP id adf61e73a8af0-1fea2f396e8mr10316341637.27.1743139043434;
-        Thu, 27 Mar 2025 22:17:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVTpXZbP8MYkTaSUxvCf6P7tZPuQ3S9l3jbd9DcFaTnK18JUIF8nKYAtQNBzPJZrQEUQnBHg==
-X-Received: by 2002:a05:6a20:7f98:b0:1f5:769a:a4c3 with SMTP id adf61e73a8af0-1fea2f396e8mr10316280637.27.1743139042853;
-        Thu, 27 Mar 2025 22:17:22 -0700 (PDT)
-Received: from [192.168.0.113] ([183.82.177.119])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93b8b1aa6sm792238a12.52.2025.03.27.22.17.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 22:17:22 -0700 (PDT)
-Message-ID: <7ce80ffb-6519-4765-8418-42135ab07a3f@oss.qualcomm.com>
-Date: Fri, 28 Mar 2025 10:47:16 +0530
+        d=1e100.net; s=20230601; t=1743171285; x=1743776085;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1Dba98BGDtjOM6DFuWR/X88tWcqFq5izur1ZVd2H9o=;
+        b=rd334DqDge/ANLGdoFBo7xdWH3O+bTE9uTPL1+rWJAIdAG5hsPKy99nhnEKQbRzDW0
+         6efLcyeF/xrqQFEpgts0Oid8+LYV+GILmBQNkecnzEmJuOxKtdAzo5IqgZi78dqygKYC
+         bqr+DuY5kJpTK7scPjmrAtslmP/l0XnVSosmeCrZo7RDrHJrQi30IXyuK4QfJJQARiqK
+         9CfqSR9HKLxuEQTTEwuoTUhDdXuoJ7FJmlAJ+gJmET4wOCtau2cCAuvrEXdFlED163qW
+         h6qJa9FLM/5ehSIdbUdAxQRbm27ysIcKvCqzbGm8K1IhY0bJyfzSXZy0/9Fsp4X4TfCU
+         COQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtrH7kqFOxwnqypxt9xlCbhGl2ZHjAOD46hb62DVFIQz/JJ/G1zL90MddmgDjAdctYzY7TrAEVTCEkrbt6huj1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0TwJ5KDjpnzuLwsjwqYENSbL3+1E99R1iYhOuW+A8qkGl/MFh
+	ajC/7lOJCy1hBF/MkU+ODobApH6F47hoOerwjDzSPtv5x6f+EKwKQP/cKFQvvAY=
+X-Gm-Gg: ASbGncsk2RCND6L1Hxc+xc10Fp7aNIwYm/OEWtrZRrNuVIyH04Vn9QNybSJ8L6mzgtp
+	ZcJm8MEGGaEI6jFIkg6XP9nBrqTaLBQK1MMDLFJlPH5LrtykjUybYQxLUcjcy1bdfy2WZA+OoRR
+	gxr8mGkOhpTtKZ/c8Y0yjKl887oEW32ew+nrpK/E5i9ni/ynBip4EFl2Nx98M72WM1aR01vHJVy
+	btkQ3haGMHmTAU+XVseNcMjF8ok5PzODk9MqzDCPI4RLEHCW4SCOjseX/s4y6Bg8Cxjta5Rc8FO
+	ctc/9hA/glkcRo6qts9+CgzN62voHb3+RSCT0CHLHcJpxEnZ
+X-Google-Smtp-Source: AGHT+IF17jm/aOy3NYW0QP5xv6XJ1PCIMLt8q2Ltl9RkvCkoD6TGYQloEUiZwe2IUvEbX4ZJHZIvIg==
+X-Received: by 2002:a17:902:d2ce:b0:224:1005:7280 with SMTP id d9443c01a7336-228048edd4bmr130359545ad.38.1743171284780;
+        Fri, 28 Mar 2025 07:14:44 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:5113:c488:efca:b73c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eec52cbsm18344015ad.37.2025.03.28.07.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 07:14:44 -0700 (PDT)
+Date: Fri, 28 Mar 2025 08:14:41 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+	"open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: core: Clear table_sz when rproc_shutdown
+Message-ID: <Z-au0USkvoDYTF7A@p14s>
+References: <20250326020215.3689624-1-peng.fan@oss.nxp.com>
+ <Z-WO-fhDJKyG7hn2@p14s>
+ <20250328045012.GA16723@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 0/8] Add new driver for WCSS secure PIL loading
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-        jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org,
-        konradybcio@kernel.org, quic_mmanikan@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        dmitry.baryshkov@linaro.org
-Cc: quic_viswanat@quicinc.com, quic_srichara@quicinc.com
-References: <20250107101647.2087358-1-quic_gokulsri@quicinc.com>
- <4b624830-00eb-46e8-ae5a-b822e32b2005@quicinc.com>
-Content-Language: en-US
-From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-In-Reply-To: <4b624830-00eb-46e8-ae5a-b822e32b2005@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: OsW6ril9oZo1YYRhAJQ6hfnisTrFCfiE
-X-Proofpoint-GUID: OsW6ril9oZo1YYRhAJQ6hfnisTrFCfiE
-X-Authority-Analysis: v=2.4 cv=Q43S452a c=1 sm=1 tr=0 ts=67e630e5 cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=VrYi6RMOWE5NFa6aqCLEpg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=LpQP-O61AAAA:8 a=atyioMQIshmohzJ9PWcA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=TjNXssC_j7lpFel5tvFf:22 a=pioyyrs4ZptJ924tMmac:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_02,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1011
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503280034
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250328045012.GA16723@nxa18884-linux>
 
-On 1/24/2025 11:30 PM, Jeff Johnson wrote:
-> On 1/7/25 02:16, Gokul Sriram Palanisamy wrote:
->> This series depends on Sricharan's tmel-qmp mailbox driver series v2 [1].
->>
->> - Secure PIL is signed, split firmware images which only TrustZone (TZ)
->>   can authenticate and load. Linux kernel will send a request to TZ to
->>   authenticate and load the PIL images.
->>
->> - When secure PIL support was added to the existing wcss PIL driver
->>   earlier in [2], Bjorn suggested not to overload the existing WCSS
->>   rproc driver, instead post a new driver for PAS based IPQ WCSS driver.
->>   This series adds a new secure PIL driver for the same.
->>
->> - Also adds changes to scm to pass metadata size as required for IPQ5332,
->>   reposted from [3].
->>
->> [1]
->> https://patchwork.kernel.org/project/linux-arm-msm/cover/20241231054900.2144961-1-quic_srichara@quicinc.com/
->>
->> [2]
->> https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
->>
->> [3]
->> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240820055618.267554-6-quic_gokulsri@quicinc.com/
->>
->> changes in v3:
->> 	- fixed copyright years and markings based on Jeff's comments.
->> 	- replaced devm_ioremap_wc() with ioremap_wc() in
->> 	  wcss_sec_copy_segment().
->> 	- replaced rproc_alloc() and rproc_add() with their devres
->> 	  counterparts.
->> 	- added mailbox call to tmelcom for secure image authentication
->> 	  as required for IPQ5424. Added ipq5424 APCS comatible required. 
->> 	- added changes to scm call to pass metadata size as equired for
->> 	  IPQ5332.
->>
->> changes in v2:
->> 	- Removed dependency of this series to q6 clock removal series
->> 	  as recommended by Krzysztof
->>
->> Gokul Sriram Palanisamy (3):
->>   dt-bindings: mailbox: qcom: Add IPQ5424 APCS compatible
->>   mailbox: qcom: Add support for IPQ5424 APCS IPC
->>   arm64: dts: qcom: ipq5424: add nodes to bring up q6
->>
->> Manikanta Mylavarapu (4):
->>   firmware: qcom_scm: ipq5332: add support to pass metadata size
->>   dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
->>   arm64: dts: qcom: ipq5332: add nodes to bringup q6
->>   arm64: dts: qcom: ipq9574: add nodes to bring up q6
->>
->> Vignesh Viswanathan (1):
->>   remoteproc: qcom: add hexagon based WCSS secure PIL driver
->>
->>  .../mailbox/qcom,apcs-kpss-global.yaml        |   1 +
->>  .../remoteproc/qcom,wcss-sec-pil.yaml         | 131 ++++++
->>  arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  64 ++-
->>  arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  80 +++-
->>  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  60 ++-
->>  drivers/firmware/qcom/qcom_scm.c              |  13 +-
->>  drivers/firmware/qcom/qcom_scm.h              |   1 +
->>  drivers/mailbox/qcom-apcs-ipc-mailbox.c       |   1 +
->>  drivers/remoteproc/Kconfig                    |  22 +
->>  drivers/remoteproc/Makefile                   |   1 +
->>  drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 406 ++++++++++++++++++
->>  11 files changed, 775 insertions(+), 5 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->>  create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
->>
+On Fri, Mar 28, 2025 at 12:50:12PM +0800, Peng Fan wrote:
+> On Thu, Mar 27, 2025 at 11:46:33AM -0600, Mathieu Poirier wrote:
+> >Hi,
+> >
+> >On Wed, Mar 26, 2025 at 10:02:14AM +0800, Peng Fan (OSS) wrote:
+> >> From: Peng Fan <peng.fan@nxp.com>
+> >> 
+> >> There is case as below could trigger kernel dump:
+> >> Use U-Boot to start remote processor(rproc) with resource table
+> >> published to a fixed address by rproc. After Kernel boots up,
+> >> stop the rproc, load a new firmware which doesn't have resource table
+> >> ,and start rproc.
+> >>
+> >
+> >If a firwmare image doesn't have a resouce table, rproc_elf_load_rsc_table()
+> >will return an error [1], rproc_fw_boot() will exit prematurely [2] and the
+> >remote processor won't be started.  What am I missing?
 > 
-> This series is listed as a dependency of a WLAN series, and when I pull this
-> series using my automation I see the following kernel-doc warnings. I don't
-> know if these are existing issues, or issues introduced by the series, since
-> the automation runs kernel-doc on all of the patched files.
-> 
-> drivers/firmware/qcom/qcom_scm.c:302: warning: No description found for return value of 'qcom_scm_call'
-> drivers/firmware/qcom/qcom_scm.c:328: warning: No description found for return value of 'qcom_scm_call_atomic'
-> drivers/firmware/qcom/qcom_scm.c:425: warning: No description found for return value of 'qcom_scm_set_warm_boot_addr'
-> drivers/firmware/qcom/qcom_scm.c:438: warning: No description found for return value of 'qcom_scm_set_cold_boot_addr'
-> drivers/firmware/qcom/qcom_scm.c:675: warning: No description found for return value of 'qcom_scm_pas_mem_setup'
-> drivers/firmware/qcom/qcom_scm.c:714: warning: No description found for return value of 'qcom_scm_pas_auth_and_reset'
-> drivers/firmware/qcom/qcom_scm.c:750: warning: No description found for return value of 'qcom_scm_pas_shutdown'
-> drivers/firmware/qcom/qcom_scm.c:787: warning: No description found for return value of 'qcom_scm_pas_supported'
-> drivers/firmware/qcom/qcom_scm.c:892: warning: No description found for return value of 'qcom_scm_restore_sec_cfg_available'
-> drivers/firmware/qcom/qcom_scm.c:1070: warning: No description found for return value of 'qcom_scm_assign_mem'
-> drivers/firmware/qcom/qcom_scm.c:1141: warning: No description found for return value of 'qcom_scm_ocmem_lock_available'
-> drivers/firmware/qcom/qcom_scm.c:1158: warning: No description found for return value of 'qcom_scm_ocmem_lock'
-> drivers/firmware/qcom/qcom_scm.c:1182: warning: No description found for return value of 'qcom_scm_ocmem_unlock'
-> drivers/firmware/qcom/qcom_scm.c:1298: warning: No description found for return value of 'qcom_scm_hdcp_available'
-> drivers/firmware/qcom/qcom_scm.c:1323: warning: No description found for return value of 'qcom_scm_hdcp_req'
-> drivers/firmware/qcom/qcom_scm.c:1879: warning: No description found for return value of 'qcom_scm_is_available'
-> drivers/firmware/qcom/qcom_scm.h:47: warning: missing initial short description on line:
->  * struct qcom_scm_desc
-> drivers/firmware/qcom/qcom_scm.h:57: warning: Function parameter or struct member 'svc' not described in 'qcom_scm_desc'
-> drivers/firmware/qcom/qcom_scm.h:57: warning: Function parameter or struct member 'cmd' not described in 'qcom_scm_desc'
-> drivers/firmware/qcom/qcom_scm.h:57: warning: Function parameter or struct member 'owner' not described in 'qcom_scm_desc'
-> drivers/firmware/qcom/qcom_scm.h:60: warning: missing initial short description on line:
->  * struct qcom_scm_res
-> 21 warnings as Errors
-Hi Jeff,
+> STM32 and i.MX use their own parse_fw implementation which allows no resource
+> table:
+> https://elixir.bootlin.com/linux/v6.13.7/source/drivers/remoteproc/stm32_rproc.c#L272
+> https://elixir.bootlin.com/linux/v6.13.7/source/drivers/remoteproc/imx_rproc.c#L598
 
-These warnings are not introduced as part of this series.
+Ok, that settles rproc_fw_boot() but there is also rproc_find_loaded_rsc_table()
+that will return NULL if a resource table is not found and preventing the
+memcpy() in rproc_start() from happening:
 
-Thanks,
-Vignesh
-> 
-> 
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_core.c#L1288
 
+> 
+> Thanks,
+> Peng
+> 
+> >
+> >[1]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_elf_loader.c#L338
+> >[2]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_core.c#L1411 
+> >
+> >> When starting rproc with a firmware not have resource table,
+> >> `memcpy(loaded_table, rproc->cached_table, rproc->table_sz)` will
+> >> trigger dump, because rproc->cache_table is set to NULL during the last
+> >> stop operation, but rproc->table_sz is still valid.
+> >> 
+> >> This issue is found on i.MX8MP and i.MX9.
+> >> 
+> >> Dump as below:
+> >> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> >> Mem abort info:
+> >>   ESR = 0x0000000096000004
+> >>   EC = 0x25: DABT (current EL), IL = 32 bits
+> >>   SET = 0, FnV = 0
+> >>   EA = 0, S1PTW = 0
+> >>   FSC = 0x04: level 0 translation fault
+> >> Data abort info:
+> >>   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> >>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> >>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> >> user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af63000
+> >> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+> >> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> >> Modules linked in:
+> >> CPU: 2 UID: 0 PID: 1060 Comm: sh Not tainted 6.14.0-rc7-next-20250317-dirty #38
+> >> Hardware name: NXP i.MX8MPlus EVK board (DT)
+> >> pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> >> pc : __pi_memcpy_generic+0x110/0x22c
+> >> lr : rproc_start+0x88/0x1e0
+> >> Call trace:
+> >>  __pi_memcpy_generic+0x110/0x22c (P)
+> >>  rproc_boot+0x198/0x57c
+> >>  state_store+0x40/0x104
+> >>  dev_attr_store+0x18/0x2c
+> >>  sysfs_kf_write+0x7c/0x94
+> >>  kernfs_fop_write_iter+0x120/0x1cc
+> >>  vfs_write+0x240/0x378
+> >>  ksys_write+0x70/0x108
+> >>  __arm64_sys_write+0x1c/0x28
+> >>  invoke_syscall+0x48/0x10c
+> >>  el0_svc_common.constprop.0+0xc0/0xe0
+> >>  do_el0_svc+0x1c/0x28
+> >>  el0_svc+0x30/0xcc
+> >>  el0t_64_sync_handler+0x10c/0x138
+> >>  el0t_64_sync+0x198/0x19c
+> >> 
+> >> Clear rproc->table_sz to address the issue.
+> >> 
+> >> While at here, also clear rproc->table_sz when rproc_fw_boot and
+> >> rproc_detach.
+> >> 
+> >> Fixes: 9dc9507f1880 ("remoteproc: Properly deal with the resource table when detaching")
+> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> >> ---
+> >> 
+> >> V2:
+> >>  Clear table_sz when rproc_fw_boot and rproc_detach per Arnaud
+> >> 
+> >>  drivers/remoteproc/remoteproc_core.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >> 
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index c2cf0d277729..1efa53d4e0c3 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -1442,6 +1442,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> >>  	kfree(rproc->cached_table);
+> >>  	rproc->cached_table = NULL;
+> >>  	rproc->table_ptr = NULL;
+> >> +	rproc->table_sz = 0;
+> >>  unprepare_rproc:
+> >>  	/* release HW resources if needed */
+> >>  	rproc_unprepare_device(rproc);
+> >> @@ -2025,6 +2026,7 @@ int rproc_shutdown(struct rproc *rproc)
+> >>  	kfree(rproc->cached_table);
+> >>  	rproc->cached_table = NULL;
+> >>  	rproc->table_ptr = NULL;
+> >> +	rproc->table_sz = 0;
+> >>  out:
+> >>  	mutex_unlock(&rproc->lock);
+> >>  	return ret;
+> >> @@ -2091,6 +2093,7 @@ int rproc_detach(struct rproc *rproc)
+> >>  	kfree(rproc->cached_table);
+> >>  	rproc->cached_table = NULL;
+> >>  	rproc->table_ptr = NULL;
+> >> +	rproc->table_sz = 0;
+> >>  out:
+> >>  	mutex_unlock(&rproc->lock);
+> >>  	return ret;
+> >> -- 
+> >> 2.37.1
+> >> 
+> >
