@@ -1,103 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26C62376F7;
-	Wed,  2 Apr 2025 12:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2159C1EF38D;
+	Wed,  2 Apr 2025 13:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598528; cv=none; b=E/1PKff598L8O1uA+vNKNpC2LDzaWXPMvvZO8dhgh8sW5ecl4L9PFh1gczLkgwjKxxD4X8jxqJqfJVVvE+BEX9WmKUyzM4dbn7xWqIMyUOmY1Bu1/2wr2sY7I77VZ8c+ttzkp1effRTneGR8LV9whd1OIsniZ8V80JEadyWZSpM=
+	t=1743601741; cv=none; b=ZT9E39AwkSI9CIrkw7Sm8zrVzzosyszB9p8haBsByVi5Ph4ZJpkNMKaB4/Mq4K9Yt2fTdBin5GqwgQjMFfTlaTO3TO+jUYOauksbRqJpWymKG+vrblhtQO8oRGfePiU9XCxHSxn2gAhmClGiuY5UNKxbLcqKJzhDn9wRUYlVK5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598528; c=relaxed/simple;
-	bh=KLUcO4PETxRtJ7bSzZDcl4QzL3KsG5+5Tq3fAEUTpLQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=C/MBhKiXO3h62QCY3BgPMjq2f04Sgqln4eWoUgf6wM7Ll3aUp42/LimVokcKLdrQtmatbl3dyG+Glp38Ia00pGArgyhufPBQCP8Tl3skQWQ6KJ9iYmy3PttvWSjNiFI7mtSo6mwzWG8H8ylVb8/KFH0aqsfKPHA3yrbLSdkeWoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXkHxxk4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743601741; c=relaxed/simple;
+	bh=iF3h5lO8+LkzJaWgRh4/l9CWOxAZGLcBdWVaV+l4EQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2GrDbZ2W+dvXxP2TbAMV5gnEUzdBAYXAHV4+xSD0xE1Zn+WcYg0ztsey2u2ci5j0SKN1NesnAoL05S+opd3nRx2O9ZHIL9OfenIPCHFZNRnBq/OxqcP/9P99MW+yZPQUfz+TVN2raaNSZ4KUnARdIX6FboTo/j3BY30SIMl19Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RytdIJ6l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXkHxxk4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2860C4CEDD;
-	Wed,  2 Apr 2025 12:55:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RytdIJ6l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15056C4CEDD;
+	Wed,  2 Apr 2025 13:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743598527;
-	bh=KLUcO4PETxRtJ7bSzZDcl4QzL3KsG5+5Tq3fAEUTpLQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=IXkHxxk41GO44tK70RVcRfKfgdhBtcyxVbaLKM7n4Z3jxTjVgb3zuO0Sb3Dzzu+22
-	 wdHoqCt+9NhCXNfexVLwZU1cheoCxr6z97bLZF5ZMoGy/p3Kg0kGcKtU0mcka0FdhB
-	 LRJGQD+ODZNaI6ID56uO1l9rR7hjfxaD5is34slsc3l+sRBEt05yah6cGDXNSSr1+o
-	 vVAXjen+z1rwrHTUvB1Rzg+wQ0F9Gs6+O2Fy6nbLmVtfQ2dc03MGPh2pCCddjauqNR
-	 d9rBiHU91AUWGHp2Y3l86l3+Jly/zOTeMBsW7/Fbp7FMRR+g2jWIkcW/QhwNQ+frK7
-	 zlCYyYqqzbigA==
-Date: Wed, 02 Apr 2025 07:55:26 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1743601740;
+	bh=iF3h5lO8+LkzJaWgRh4/l9CWOxAZGLcBdWVaV+l4EQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RytdIJ6lChzNOIvUA1fsYFhtbX/qeIoji3bQ2HvZLUDHKBIgffSN0WJh5O9CzpDdS
+	 aXYiyUxfEeg6xZoTVRPfblVm3hGRU3VZNKj0G5RDcQYZ5aNkznkQx9jL3LgHb9PRoE
+	 Z3Kq+ZQlXxQHEBPrqaWaY2QppW6PCh4HZBNPtbnvDW7Ujh9wsj+540cm5NiRr/6Ctd
+	 hBnJELVkSins6JyeciyE1AHaw6EBME66PhxluwJ++VEaRaLjsxvmNnwlAAlQsc5IKI
+	 MsuXKqRQTqdPvE80NDM+KJS/AHeoH65Jz16+0dbL9f5dn4nVMyn9Z3j9+2uJ0cVHTK
+	 r+zjI92MCafew==
+Date: Wed, 2 Apr 2025 08:48:58 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Arnaud Pouliquen <arnaud.pouliquen@st.com>, 
+	"open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: core: Clear table_sz when rproc_shutdown
+Message-ID: <v5xgigrvpy6shmgdkivmxywkacsubnsimk6vyrue4mmoyufpbk@br7lnyvtnatc>
+References: <20250326020215.3689624-1-peng.fan@oss.nxp.com>
+ <Z-WO-fhDJKyG7hn2@p14s>
+ <20250328045012.GA16723@nxa18884-linux>
+ <Z-au0USkvoDYTF7A@p14s>
+ <20250329125629.GA11929@nxa18884-linux>
+ <Z-q3ebPSjkSPVlgP@p14s>
+ <20250401014124.GB15525@nxa18884-linux>
+ <Z-wOr3eLaX9myqb4@p14s>
+ <20250402014355.GA22575@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-remoteproc@vger.kernel.org, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, hailong.fan@mediatek.com, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>, 
- linux-mediatek@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, jjian.zhou@mediatek.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>
-To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
-In-Reply-To: <20250402092134.12293-2-xiangzhi.tang@mediatek.com>
-References: <20250402092134.12293-1-xiangzhi.tang@mediatek.com>
- <20250402092134.12293-2-xiangzhi.tang@mediatek.com>
-Message-Id: <174359852621.53914.11998352307162389918.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add VCP support for
- mt8196
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402014355.GA22575@nxa18884-linux>
 
-
-On Wed, 02 Apr 2025 17:19:24 +0800, Xiangzhi Tang wrote:
-> Add the new binding document for MediaTek Video Companion
-> Processor(VCP) on MediaTek mt8196.
+On Wed, Apr 02, 2025 at 09:43:55AM +0800, Peng Fan wrote:
+> On Tue, Apr 01, 2025 at 10:05:03AM -0600, Mathieu Poirier wrote:
+> >On Tue, Apr 01, 2025 at 09:41:24AM +0800, Peng Fan wrote:
+...
+> >
+> >The core is already checking if @loaded_table is valid in rproc_start(), why
+> >can't that be used instead of adding yet another check?
 > 
-> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
-> ---
->  .../remoteproc/mediatek,mt8196-vcp.yaml       | 174 ++++++++++++++++++
->  1 file changed, 174 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> Ah. I was thinking clear table_sz in rpoc_shutdown is an easy approach and
+> could benifit others in case other platforms meet similar issue in future.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I like the general idea of keeping things clean and avoid leaving stale
+data behind.
 
-yamllint warnings/errors:
+But clearing table_sz during stop in order to hide the fact that the
+future table_ptr will contain valid data that shouldn't be used, that's
+just a bug waiting to show up again in the future.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dts:26:18: fatal error: dt-bindings/power/mt8196-power.h: No such file or directory
-   26 |         #include <dt-bindings/power/mt8196-power.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1522: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp-mbox.yaml
-Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml: Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp-mbox.yaml
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250402092134.12293-2-xiangzhi.tang@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Regards,
+Bjorn
