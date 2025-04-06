@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC9C20FA86;
-	Sun,  6 Apr 2025 12:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2822119E99E;
+	Sun,  6 Apr 2025 12:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743941424; cv=none; b=VU5CYyGydk/2ksGyd26UINzcqyGXPRQLOQ+/FSioItPKxB4Z5amMqmLuUrTBE8raKr7b1nDVeegi9uNAnWVVjZg0lGtsUGrn9Q4QXNoKfi78zj7YnIeEpP7ki2FFuEi6cUEMBz9k91ayoGdgfEW1E72NQ7U+gjBVdO1QL9zYPN8=
+	t=1743941534; cv=none; b=GQhAGWQ8gQLZ6Sb8jpWz495Y/nyYeqY22PjdSL8X3qwugdi12c5aw+dVYDXazG49ZGDa7qoP3ZhELAbH4lng0J5RnRWXkii4ws6KHhLJASvBADTSHL6PEv7eeu7RwkBeMRNkJBGMedqftPhtvxSj4oWkRGueKjNQN6pRyilir6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743941424; c=relaxed/simple;
-	bh=DsRkNjsY5+T8gT1hnVCbvgLxu+0fbNqwPrZwcAUeAL4=;
+	s=arc-20240116; t=1743941534; c=relaxed/simple;
+	bh=uE1VYnLzHGj3BuKZT/pIN6uW+WdcyM94ww02N9uW2ag=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOMl+MT/H731/Q2UBbF5cHt8TDsjmB2dXyh0aBmF/28GHuQLTipJetmT8vZ5xSqDIh+AVR4+WnixRUDM8jkAJoxJQG9cNbiRqSsmXM8kMQJMEi9DF6IAJ9GcAFQwek/+SpZrGpoTQ9Bf+Mnu/7aZwQl0JAbFzQla6Q5ovxYWsCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uaBGSByI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=eiCPU8OOsj3jjwSFopw7CSTlGkfs78qzGeB2/tNPm5a1gvbU4/eaLqyNjVNIo5HLiwDGYtAaOtDErsB8Zov/KzTXyBEB4TesL2+d2v1iSjvaYaJ0vmIHymvkOpztm6VOCEn/mOXxjR1hUiTQMkNc1wd2UuMd10mIju34awc9XgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRchfmau; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uaBGSByI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17D0C4CEE3;
-	Sun,  6 Apr 2025 12:10:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRchfmau"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E7FC4CEE3;
+	Sun,  6 Apr 2025 12:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743941423;
-	bh=DsRkNjsY5+T8gT1hnVCbvgLxu+0fbNqwPrZwcAUeAL4=;
+	s=k20201202; t=1743941533;
+	bh=uE1VYnLzHGj3BuKZT/pIN6uW+WdcyM94ww02N9uW2ag=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uaBGSByIryyRFIcC3iKrXiRyRVm6V0Ix3pUjA8d9KIv0bDeT6nrOWyPvwAiWcEM4N
-	 LCQtK2/4h2VqpdDctKzSNZqn9aQavIWMx4zsabcSKGtHDiKJ1JZha2a6OOVf+IJkN8
-	 Rv6cZBjybQSNLrH2rhhz3/OGwpJC8AgXigPuJS+U9V94rVdLszIcPyWKi3M/c+QgGs
-	 h8JAfhfiGfgSUsqf03jtPIe0I7sOPUwLIPdRgpvrfYACNnY47Jx4HDP7gEW0TwhjGH
-	 aJjn9zKac7HXcV9qFlwfJFpa+2DcIYMV3Yji1jogQ0tpAPn/9JTbcMj1wgJU/CyhiJ
-	 1pIGkl3U+2r+Q==
-Message-ID: <21095cf1-45b2-4c41-933a-a0a4afc2cabb@kernel.org>
-Date: Sun, 6 Apr 2025 14:10:17 +0200
+	b=aRchfmau1t+IzzeT65S6rxS8P4FBLFRLyDhjB/arzZcxXdnXcRilOnjG1TD2ya6fU
+	 oRq59M7VtnM/K8YkAxc4ew3jnjbfjrCS9QGy5BDqf6zYY7tWLJL95CWdETs2HAAQQL
+	 OKjP0/DSwgAicpVq0OWPlIy6nTwlpGdwJ9nvQYVQtC2BvSUI1/l5SWLI+fefutEZVS
+	 s1QFh07tlnFhvKLSajeruVUq6xLDv/TptM57KpyavT59PjIoRarV+ZrTwgBH69GeWi
+	 I8T7YF6oWGaJZNh77lL1t+yh1CSV6nqrIUEZmbR3IpyXokPcrGmkhBWnGi32C8Pq9+
+	 0hWgPOyn0tI2w==
+Message-ID: <4479a68e-6a8d-4197-b983-90eae8e16c6c@kernel.org>
+Date: Sun, 6 Apr 2025 14:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add VCP support for mt8196
+Subject: Re: [PATCH 2/2] remoterpoc: mediatek: vcp: Add vcp remoteproc driver
 To: =?UTF-8?B?WGlhbmd6aGkgVGFuZyAo5ZSQ55u45b+XKQ==?=
  <Xiangzhi.Tang@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
  "robh@kernel.org" <robh@kernel.org>,
@@ -55,9 +55,9 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>
 References: <20250402092134.12293-1-xiangzhi.tang@mediatek.com>
- <20250402092134.12293-2-xiangzhi.tang@mediatek.com>
- <860ae623-f33f-4cfe-be08-6bb6524ecf94@kernel.org>
- <625410299fd45188759d3b1fe205e6c42af0bbda.camel@mediatek.com>
+ <20250402092134.12293-3-xiangzhi.tang@mediatek.com>
+ <aa757d1f-4c5a-4a66-aa96-9d611a8e6bae@kernel.org>
+ <2aff75e4cf76cd7fe9f2e45ce174e5380363e501.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,30 +103,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <625410299fd45188759d3b1fe205e6c42af0bbda.camel@mediatek.com>
+In-Reply-To: <2aff75e4cf76cd7fe9f2e45ce174e5380363e501.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 06/04/2025 08:46, Xiangzhi Tang (唐相志) wrote:
-> On Wed, 2025-04-02 at 13:11 +0200, Krzysztof Kozlowski wrote:
+On 06/04/2025 09:29, Xiangzhi Tang (唐相志) wrote:
+> On Wed, 2025-04-02 at 13:16 +0200, Krzysztof Kozlowski wrote:
 >> External email : Please do not click links or open attachments until
 >> you have verified the sender or the content.
 >>
->>
->> On 02/04/2025 11:19, Xiangzhi Tang wrote:
->>> +
->>> +description:
->>> +  The MediaTek VCP enables the SoC control the MediaTek Video
->>> Companion Risc-V coprocessor.
->>
->> Wrap at coding style.
->> Thanks comment, I will fix it on v1 version.
->>
+
+
 Please kindly trim the replies from unnecessary context. It makes it
 much easier to find new content.
 
-Anyway, not sure what you are referring to, but this was not fully
-tested and I still expect all my comments to be addressed.
+
+>>> +
+>>> +     for_each_available_child_of_node(np, child) {
+>>> +             if (of_device_is_compatible(child, "mediatek,vcp-
+>>> core")) {
+>>> +                     cpdev = of_find_device_by_node(child);
+>>> +                     if (!cpdev) {
+>>> +                             ret = -ENODEV;
+>>> +                             dev_err(dev, "Not found platform
+>>> device for core\n");
+>>
+>> You leak np, use scoped.
+>> I'm not quite able to understand your meaning, Could you please
+> explain it for me? Thanks very much.
+
+Use proper quoting. Above makes no sense - you put your reply into my quote.
+
+Explanation: You leak 'np'. Don't leak. Either drop reference or use
+scoped loops. Look how every other driver does it. Read the API, read
+the doc.
+
+You ignored all other comments, so I assume you will implement them fully.
 
 Best regards,
 Krzysztof
