@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2822119E99E;
-	Sun,  6 Apr 2025 12:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE5A20E6FD;
+	Sun,  6 Apr 2025 12:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743941534; cv=none; b=GQhAGWQ8gQLZ6Sb8jpWz495Y/nyYeqY22PjdSL8X3qwugdi12c5aw+dVYDXazG49ZGDa7qoP3ZhELAbH4lng0J5RnRWXkii4ws6KHhLJASvBADTSHL6PEv7eeu7RwkBeMRNkJBGMedqftPhtvxSj4oWkRGueKjNQN6pRyilir6w=
+	t=1743941594; cv=none; b=kcgsdJzq23FSPXSX/HkQZ7iYAMJEsGRiudLIUIdQ0G7RB/g/3jURA4gF5kfsirw6TZUplH1r9eCh04I2aj5R1e8M+qDlxAni82yVqrjUcBejATt1JaN/P990kkVqhi1D9KbRS1YQIgrBYF/jbKZ0fkFeu4CXEdnQaFlgnIiSTBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743941534; c=relaxed/simple;
-	bh=uE1VYnLzHGj3BuKZT/pIN6uW+WdcyM94ww02N9uW2ag=;
+	s=arc-20240116; t=1743941594; c=relaxed/simple;
+	bh=xZzrqfASVG7xF2GB9rUYr1LIUP1qsSLaKh0AMWmh1Rw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiCPU8OOsj3jjwSFopw7CSTlGkfs78qzGeB2/tNPm5a1gvbU4/eaLqyNjVNIo5HLiwDGYtAaOtDErsB8Zov/KzTXyBEB4TesL2+d2v1iSjvaYaJ0vmIHymvkOpztm6VOCEn/mOXxjR1hUiTQMkNc1wd2UuMd10mIju34awc9XgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRchfmau; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=B2y0JKj+36ytcdTd1HZgrgrNUuH7AQ6M8F/fuNO8BirwzA/zwWTTwlHVp5ldC2J5v2sDNOrxLo+lhm3bQtCNN3MYn1QnC0nUNqNmiAq0tSsvmLevXznTPrcylMX9t69em2zt0nOMIXAhMac+mzb5row1PXlqZD8jiX2p9bwAAd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaG4Hxsp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRchfmau"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E7FC4CEE3;
-	Sun,  6 Apr 2025 12:12:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaG4Hxsp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E6AC4CEE3;
+	Sun,  6 Apr 2025 12:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743941533;
-	bh=uE1VYnLzHGj3BuKZT/pIN6uW+WdcyM94ww02N9uW2ag=;
+	s=k20201202; t=1743941593;
+	bh=xZzrqfASVG7xF2GB9rUYr1LIUP1qsSLaKh0AMWmh1Rw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aRchfmau1t+IzzeT65S6rxS8P4FBLFRLyDhjB/arzZcxXdnXcRilOnjG1TD2ya6fU
-	 oRq59M7VtnM/K8YkAxc4ew3jnjbfjrCS9QGy5BDqf6zYY7tWLJL95CWdETs2HAAQQL
-	 OKjP0/DSwgAicpVq0OWPlIy6nTwlpGdwJ9nvQYVQtC2BvSUI1/l5SWLI+fefutEZVS
-	 s1QFh07tlnFhvKLSajeruVUq6xLDv/TptM57KpyavT59PjIoRarV+ZrTwgBH69GeWi
-	 I8T7YF6oWGaJZNh77lL1t+yh1CSV6nqrIUEZmbR3IpyXokPcrGmkhBWnGi32C8Pq9+
-	 0hWgPOyn0tI2w==
-Message-ID: <4479a68e-6a8d-4197-b983-90eae8e16c6c@kernel.org>
-Date: Sun, 6 Apr 2025 14:12:08 +0200
+	b=YaG4HxspfHnyCoHLsMiRwfrJcZilrf+WruMMWLzgVRlv23zqUOv+x9or+nGJYrjFl
+	 drWVa5dKuqx+BB6Ms1bL7NtVNrmD5mR7aExmh1VGqaouWw8EzPaReN/FnW+WsN9Owq
+	 +wW1sj6qvnecajg3R5OtnofX3MP3LoYPvU8Jf4VRWB15QpUtReaCk8RNJh6Z6geReE
+	 n8LUmAkVDLecS2IlZUVJfUdry5GojMVYESQvawTUKWGReNuj2ImPWZF/1KlCatMGx8
+	 fqrHYtwBYiFEAaVPqwhyIWaNNTsmr3PY3jUnte8GJGYXOE1I59OtqApRgPPZqjTLfG
+	 uoFQMXMzMv8mg==
+Message-ID: <a162ce6f-bb69-4fa3-a67b-5d38ffb9e2ef@kernel.org>
+Date: Sun, 6 Apr 2025 14:13:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoterpoc: mediatek: vcp: Add vcp remoteproc driver
+Subject: Re: [PATCH 0/2] Add vcp driver
 To: =?UTF-8?B?WGlhbmd6aGkgVGFuZyAo5ZSQ55u45b+XKQ==?=
  <Xiangzhi.Tang@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
  "robh@kernel.org" <robh@kernel.org>,
@@ -55,9 +55,8 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>
 References: <20250402092134.12293-1-xiangzhi.tang@mediatek.com>
- <20250402092134.12293-3-xiangzhi.tang@mediatek.com>
- <aa757d1f-4c5a-4a66-aa96-9d611a8e6bae@kernel.org>
- <2aff75e4cf76cd7fe9f2e45ce174e5380363e501.camel@mediatek.com>
+ <ca8d93e1-ea75-42b3-b7a5-a12cb509890c@kernel.org>
+ <4981f87ea9d86fb8633278ab31f7341ec0a9ad74.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,42 +102,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2aff75e4cf76cd7fe9f2e45ce174e5380363e501.camel@mediatek.com>
+In-Reply-To: <4981f87ea9d86fb8633278ab31f7341ec0a9ad74.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 06/04/2025 09:29, Xiangzhi Tang (唐相志) wrote:
-> On Wed, 2025-04-02 at 13:16 +0200, Krzysztof Kozlowski wrote:
+On 06/04/2025 10:05, Xiangzhi Tang (唐相志) wrote:
+> On Wed, 2025-04-02 at 12:31 +0200, Krzysztof Kozlowski wrote:
 >> External email : Please do not click links or open attachments until
 >> you have verified the sender or the content.
 >>
-
-
-Please kindly trim the replies from unnecessary context. It makes it
-much easier to find new content.
-
-
->>> +
->>> +     for_each_available_child_of_node(np, child) {
->>> +             if (of_device_is_compatible(child, "mediatek,vcp-
->>> core")) {
->>> +                     cpdev = of_find_device_by_node(child);
->>> +                     if (!cpdev) {
->>> +                             ret = -ENODEV;
->>> +                             dev_err(dev, "Not found platform
->>> device for core\n");
 >>
->> You leak np, use scoped.
->> I'm not quite able to understand your meaning, Could you please
-> explain it for me? Thanks very much.
+>> On 02/04/2025 11:19, Xiangzhi Tang wrote:
+>>> Add support MediaTek's Video Companion Processor(VCP) host driver
+>>> to
+>>> control the MediaTek VCP Risc-V coprocessor.
+>>> The VCP host driver using rproc mechanism to load vcm firmware
+>>> from filesystem, and using SMC services to request ATF to setting
+>>> vcp boot sequence, and Host communicated with VCP FW depends on VCP
+>>> IPC interfaces
+>>>
+>>> This series patches dependent on:
+>>> [1]
+>>>
+> https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
+>>
+>> They should not depend. It blocks your patch. I suggest decoupling
+>> from
+>> dependencies.
+>> I run test "make dt_binding_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/remoteproc/mediatek,m
+> t8196-vcp.yaml", And, I have to cherry-pick first "
+> 
 
-Use proper quoting. Above makes no sense - you put your reply into my quote.
+How is this related? Did you read my message? You should not depend and
+you answer "I added dependency". Great, so your patch won't get accepted
+and won't get tested. Lack of testing will result in lack of review.
 
-Explanation: You leak 'np'. Don't leak. Either drop reference or use
-scoped loops. Look how every other driver does it. Read the API, read
-the doc.
-
-You ignored all other comments, so I assume you will implement them fully.
 
 Best regards,
 Krzysztof
