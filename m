@@ -1,407 +1,213 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2062.outbound.protection.outlook.com [40.107.22.62])
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2089.outbound.protection.outlook.com [40.107.21.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1E72063D3;
-	Tue,  8 Apr 2025 14:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD4D1DD526;
+	Tue,  8 Apr 2025 15:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123012; cv=fail; b=SvAhUZGuXbN98mekA3VsgbwFwxVrnIyn4raGpuCybUWEIn5y/hkQ6cv+m5rY/pCK67IO4RsHWuJv2ECyXnSXVj/+dafA6EVXhAK7IQGwN9c+X9O0KJjHVygvtiIeYPuUOZmklbZmcQrsqMAMG8JsFrTUca+m9ZrlK2YdO4u1ZFo=
+	t=1744124552; cv=fail; b=dAVpzNVPKYpna18dCaE40vrnLwDVAJ061ZDpVnNR16lp41iwZYFeBKhkCFFyrYx5JeuzSAAHcdjSlxZitgT7ap0MEV1eSDlMb8D9VAMe3EC4z4jQeZe/7v7LeveK5bAv8fkz6IZQ3K9ohhoGUSqZiWp0kC3pjXO8gJjU0rHTG1I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123012; c=relaxed/simple;
-	bh=wS88OBdXGP9cr7/P1vXMurpqFmKyjYy13FDKMzvFnIk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jvdHlKjSsFFYWmjztB37fHqud1iXWKd9fNNBAToFOissUC51VTGhrMb4uizva+qavGRLQuXNv7JRnAZomxx32La3aUYDm6Uiv72kjtfqbpFBUdKfixwO4DyOfuL9GOBxTlht2XoqL13PE/TkVfB0W/oDfIBYMrtOp/7PwCIOWKY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RxWTYTd3; arc=fail smtp.client-ip=40.107.22.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1744124552; c=relaxed/simple;
+	bh=vDNZJfmmsuz5pQSt9CUv+a1fYcvssb5KF/zAI528w7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Hb1XTvipysDZTuBUzdNVZUgvrVG6nGpWfqW5stCnjNcd1YCobYscbMzeOLP7nghn6ER9NUk6QSZVh5W0Km3TKecewnze+STOmc4FxkXJVCAXsoenasH2w0/5yGjn9cqLiWfuagYbJVO0pldmAAr/aEdvZKv8JqFoeFzGD97Fzk0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=fCKOU+Wc; arc=fail smtp.client-ip=40.107.21.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RxWTYTd3"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="fCKOU+Wc"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e21KoE6YaEGxlZyNg3CZ3+KJfWBdqbVHLQPPPyoYx/zQvPLIJjWZycZIyi6ju1muedEZm6Iy4+btJTVgSVrUL49hYKKYjVQwusICwHKSDh2ye5YEiPZfqjDUT+iswE0El6MLQS00mjbxu2ZGN6CH02XUaTO+sOVIEFEoyjdMxKp7IurnQXFOC2LV+Yvw7FAp0XyTtigDqiW8WPwgrXB1KerK4V44BIwXWk7aubVcv+d9yzmyNzl1bypg7CluVNbLylhMeVtRACBtKy2rNbMNHUSzSZhsADjm10WJKxb14i0llgOdZbiG+VOUFPX4uHHdmWXBvCaggUTFz2ZLkALf0A==
+ b=T25Wjqy/WQZLVceum8kArbvlY94SIOIJYKjGzWcTBTV4iMASscH8baQN+mXj9MBcqrV4Dr1kQ6sTE5u/pZOnKknRXSQnigam2AzFqWbJEIwOV1UlF3/AHtv/CNLBW1PjoIHYMBVOirklxs23wmjasSUtQviMjm0Gvex9NVTYwzEFVmEI3LiQ7Uer0pjgdt+/I/H1Zh2ysfZMUosk8Iyx+yEUpFjXarPITI4W06pAYH/uAfbLpLyx0UM7BBrwY7zKUeSxGJYjj+yRmp0mPUxAwA6Oy2xtso4TRGBI7tTDwxChAFZoJRstKtFKRE3fB9CHVjiJ/cacMc4SysxpGq/sdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bm3czYCtv7nIslB/48sh0AksVzPXQdap5rkOBnOpGHo=;
- b=AUNsLRVZsn6DQTM28WXtvXV5kWlb9M2lxnfvWwvJ7fLV/5g410j49OOn/FcStT1leQTvrHiHzjR7NVFS2fOHvlCKrpnLh+ZO9zdjfR8tDziRXWUTaYInWgm/6CI3OhI3b8K3lJdjf0tWDboydTJAoXRkSS06X4WX8gAqrHoG0GpOV3tIepT+X27gV4luaAVJ2VJ70rLTFKH7HwwrmI1c8tEvw2SDg+Vf9eYMlwWnlgXjT4nyb3giHVSX4m/eX9md+WiTQdzXfLt7+laCmENCCZy7zjg0m1dmr5GDz8y0V2eIrsgklIoVJ4dPXfHeX44N9+bbg3plcw5QX6Vv/hmNLQ==
+ bh=Wc9PwlcQkpyxqKZ99COoYBWXghAzU5tp/WFj8IwKwgA=;
+ b=LREH/ToGg264w/mC0scwvvzb9QVGNSCol/U2ywvIISWF6/m6dDSpXKIftboJtDhyLXjYOisUgrgx1zXoUJRazyQxmLpgMR7CX5sB0SjJjB6X1vOgq0EYYjiJ2p4I6LZ3BkX2/cO4SkaOPG1m8JHa7M6UT39Oi/Xn3eJcBXhtM619lM20FvHebBWJcdTkDjulIujkXVY+V7iKf/kpCd2NUnax7NdpDPm+5tR+9z/oWbzQcV/a2QkaFv0ZWSsYw1sBsrVo7j580+D9R/N/W5B1dFrvQec3I10o4sZy+TWOyzKSKck+8BZsztwd5lbc3o/9ZRPQb1Llo/u6UTy83TMHaA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bm3czYCtv7nIslB/48sh0AksVzPXQdap5rkOBnOpGHo=;
- b=RxWTYTd34p/r5pNJZY1nbft0zdmFiInc003LvyYgLnONweCQFcrfRYez5+g0GXs4Ueu1L6FctH33YumIElZN29XIhEQwm73CxUi+Xlt/xAEEJT0PExDUOGPDKN2derZt+L7EvG4i1MRDy5HZKPDrEQBheqZrKvXhJ4o/34t9QmJcnDonQaZlJ2T0oQe8F9fbnQg4kuhRZcBwNr6jwI6BOWxGVTEe2hENwag+Urdc+nFlMOAoMgGgUXN5cyJoSaBMPpS6XbMF8kUPqGz6twjnQQXUC3Xl0okW63aGL7mbwU3ZtS4aVF6B7/1bPiy1bRudYnKwH3EfMOO1rrejAT6BBQ==
+ bh=Wc9PwlcQkpyxqKZ99COoYBWXghAzU5tp/WFj8IwKwgA=;
+ b=fCKOU+WcDGFYQhdq7ZbIupQpsr6BrIs5P982JsMnXb5o/aH5wjm0zJfZAy0qLLumEYwUqw7hA9DEaypCjRrQyb6XJUfXFe9F3xiVY+gWB/tYQRb9GsyTkWw8rZZ2YYsUqhHlJeB0Y/Q68xBtvLJwyUV3EmyXhk+ZzUWgTWobM/7ZdUPwjJFTuguFa9m+3786ShjIW0ur1BQPyP03yo4fa8yv8CQL6dGrHS6o0YJJrF89pZgj0FLhSnRe21OaUduQSbCzzo/CFxLL5QTv9w9kK5hAmGWg02RizdQuOMV4NTWcQaXFo1IQ/p/DOfj3nx/sb1E77E6o8aUWHOwHcmfmVA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by VI0PR04MB10853.eurprd04.prod.outlook.com (2603:10a6:800:26c::12) with
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GV1PR04MB10479.eurprd04.prod.outlook.com (2603:10a6:150:1cd::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Tue, 8 Apr
- 2025 14:36:45 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1%6]) with mapi id 15.20.8606.029; Tue, 8 Apr 2025
- 14:36:45 +0000
-Message-ID: <5dcd3487-6411-4bbe-ba20-b2e5279e5310@nxp.com>
-Date: Tue, 8 Apr 2025 17:36:43 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, "S.J. Wang" <shengjiu.wang@nxp.com>,
- Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- Mpuaudiosw <Mpuaudiosw@nxp.com>, imx@lists.linux.dev,
- linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Pengutronix Kernel Team
- <kernel@pengutronix.de>, "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-References: <20250403100124.637889-1-iuliana.prodan@oss.nxp.com>
- <Z_P6n5wQfGuSmV2B@p14s> <29a04e57-2b41-4571-8bb9-ab3222105d8c@nxp.com>
- <CANLsYkzNkgNs03oaEeERxuqrxfjcp3cgs346AnTw1aeOqz5+ww@mail.gmail.com>
-Content-Language: en-US
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <CANLsYkzNkgNs03oaEeERxuqrxfjcp3cgs346AnTw1aeOqz5+ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: FR4P281CA0155.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ba::9) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+ 2025 15:02:26 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
+ 15:02:26 +0000
+Date: Wed, 9 Apr 2025 00:10:54 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+	"open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: core: Clear table_sz when rproc_shutdown
+Message-ID: <20250408161054.GC31497@nxa18884-linux>
+References: <Z-WO-fhDJKyG7hn2@p14s>
+ <20250328045012.GA16723@nxa18884-linux>
+ <Z-au0USkvoDYTF7A@p14s>
+ <20250329125629.GA11929@nxa18884-linux>
+ <Z-q3ebPSjkSPVlgP@p14s>
+ <20250401014124.GB15525@nxa18884-linux>
+ <Z-wOr3eLaX9myqb4@p14s>
+ <20250402014355.GA22575@nxa18884-linux>
+ <v5xgigrvpy6shmgdkivmxywkacsubnsimk6vyrue4mmoyufpbk@br7lnyvtnatc>
+ <20250403143239.GA22779@nxa18884-linux>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403143239.GA22779@nxa18884-linux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR01CA0016.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::20) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|VI0PR04MB10853:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d20bc20-6563-48ae-b0a0-08dd76aac99a
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB10479:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a0b850d-e73a-4672-5be9-08dd76ae5fd3
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|13003099007;
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SWlVTGkybTJWTWxVN0hxNlBwTFZMM0tRM3g0M3V5bnJiRWlTUy8ydVRMdGtV?=
- =?utf-8?B?UHJjbDRSOVoxemVKSStXVlo4N05HaGUvdm83c2JGZ0FlYW1ybFlSbmU2VEpF?=
- =?utf-8?B?cTNwVmdTRGhaU2w0V21xaEI4RzFYNE0vNzdzb3Z2MjFPeUxKZmJURzJ2dkxY?=
- =?utf-8?B?UzM2VHRhWVZOYndxeWVEQzNxTU4vTGV1bm1PNjNhd3VOTW84RE5lMG1yZTAv?=
- =?utf-8?B?M1ZCeDFnemhLOTNSeDdvaklUdUFsVUVkN0pEK2M2c1U3azJteGhyTThHNmds?=
- =?utf-8?B?Wk5OUWRjZkg1MGRSc0RpUmYwb3NiRnM1L0xHV1pqY1RmMjVDZVV3Rk4rRW1n?=
- =?utf-8?B?bVdwVmxFT3FobFI2YkNETmV0MG5xclp3TmxHZVlNb2pNUlRjZkFUemFVQkFI?=
- =?utf-8?B?SWhkU1ZCVDVKdkpVQ1ozdEtxTnM3bXlPa0VSS29kTGpWaWdIa1g3ODU5bEdT?=
- =?utf-8?B?TTRTLzlGNnZRcnN3ZldqQVl5eHZ0V05VRlBRcWJUNmE2S1pPMm9UNCtrMDdo?=
- =?utf-8?B?cXl3azVWSVc4MDBzM3RMaS9saUZFUVVMVDA4S1pqOHVCUnpkRTQ2UWZEWlN4?=
- =?utf-8?B?TURvZ2JOSWxWVUxzcG1ISEx0TDdNTDNla25DWGQ2Qytmd3I2QXNVeDcrZ1JH?=
- =?utf-8?B?WmZjYW55dm1iaEFFeklOcDVkNGZCbUZZbjBuVk9oZjdJMGJXVnJhaGpOSjVo?=
- =?utf-8?B?cGxWVGVYNEg0ekFRMnJ2K1dHQmROQkI3Zyt3RExaRXZEYlV3UWZnSy9TQnNa?=
- =?utf-8?B?bUw2b1BxdXQ1Ni9pR3BHV0RFeXhBaWttSjNPRHVZbzdpUjE1OGxCcjJ6ZmhK?=
- =?utf-8?B?OWdEaUMvOUcySHlIcERwMnNwSy8yNndnTUxaV094ajB0WnY2U28vT3BOalZK?=
- =?utf-8?B?RmhIbkxaVllodTE0YzZ1UHFDa3VFYmxFbGlJWjNTK0tKa0RMS05YNU5ibjZn?=
- =?utf-8?B?YkgwOU54MVdvK2t3bGNSOHYzN1lEMjJheitmdCsrNklVcU12ME5uRERGWlJI?=
- =?utf-8?B?cGhJcjU0YW9zaUQ1Qk5yNHdsZ01CU09YdkVWYlc1bC9BSUJuREphbEVaRG84?=
- =?utf-8?B?K1c4U2QySEpYZlVxYVZiRE1pcFpaVldYdVNSMFZMK0Exdk9SZDdpbkxtWmJP?=
- =?utf-8?B?UTBrcVovdm5LaEsvZ25jbEdDbEVtMUZGSldTbzREODlaT0MvUnhoSE5CdzYr?=
- =?utf-8?B?Y1hSNnBxTjk0cWNTWUlCclUxbXVJZ3hwVkxGVXJmV2RIb09pOXN2QjQ3TzNu?=
- =?utf-8?B?S3ZZVkdWVlhqZEloYWRCSEJISzNEaE05ckwvTVpuTlZuN3RWbHQwU3B5RHFQ?=
- =?utf-8?B?TmRVb2ROT204MkIraXZETjZzZkw4cEt3QWZhcVRCU2RGK0ZWVC9USWdqRlJ1?=
- =?utf-8?B?YVorYXRMV3VnRUlraUtrRnBXY0F6VFg3KzFUeGxhZFdkaENjdEhwNG5wUXh4?=
- =?utf-8?B?TTN0RG5xYU9pVkFDSGFqdHB6V0NlUE5HaDRXS0VSMFp5dmVjSU40cWllVndX?=
- =?utf-8?B?T2VrU25nR0l6a05IUmxlWjFpYWVsMUxOR1d2STFmUG0vYjlmNFlCYW8vQ29L?=
- =?utf-8?B?Ykk0LzB0cUZ1aDVoY2p2LzNnYUtUWWVtMWxqNTErb2NlaTkyUms3ekUxUjVB?=
- =?utf-8?B?QWJiQ3pSbE93c3dRRmF4M2p1eWNQcXR2bldHd2pORXJVcS8zMnJ0ZVRBZUJO?=
- =?utf-8?B?L2tqTGxZZWdwTkN1UHI0SWdNM3pSK1czMWlnMWNCY0c4VW55WjliKzN0UnRa?=
- =?utf-8?B?QkwvcGprV1h1ZUJmVDlYVGx5amF3NGJwelk1UFhwVlpsbnAvYTdjM2NWT0tN?=
- =?utf-8?B?bFl0SFgxVE1sOUZIalFCZz09?=
+	=?us-ascii?Q?72/WTLSr7TFTP+aefNfugoJaV6taT4mW7Q6BarEq7ArdAVj7N0jpdH2y+Df9?=
+ =?us-ascii?Q?WKLirfxNHm07+ZuagswPE8yCpAamHTDzHJUzdhgNGyEnyXIhjjB+Wp6MfaCD?=
+ =?us-ascii?Q?kEk1qntfE62PpCfQ4wZ949jlM2VDb95ILZ7hRajipdc+tmSwU073wL9QnAPJ?=
+ =?us-ascii?Q?+t6WeNTV2nVMu/N2Hud6Bq+yuC414tMimOSyU1VJ7qBVylmhjHusIXiu7j3E?=
+ =?us-ascii?Q?QoolHzWGIiGUfvuuOrLTjFsKdueCrVeR5zthpuPz/o/yDD9ZXrv3XpDbHR3t?=
+ =?us-ascii?Q?BDVb3YJD9XCszjg0f3VWHDrB0Om+BzOrzhOoxsZMdBxxRG7tYMkWTTnarVbu?=
+ =?us-ascii?Q?GVLMv7V01gM4yzuqlHpDRWDWA/feI6MmMOJX7ztysIvtRuJ2ywbdHZWJyxCI?=
+ =?us-ascii?Q?n2MgriLTitEFG1rGpUl4t1FC8Vfc42yinUiingkz+R7XgWLceeUoiHsEXGgg?=
+ =?us-ascii?Q?FCsPfuigdsxPYI7Q1ew6LngC1PSKWSuB8ReqNcnCJGohAKkiT9cAbupfRrVd?=
+ =?us-ascii?Q?VgPCwkRPTP4RwH7YK35kqV8prDLrE+8nfw6RbcpJzYwGwhNQqDMh9RmOd/Eq?=
+ =?us-ascii?Q?lAjRePi30oh43ZR7qgSXfHgnpWJA5PyL4kL/T8oBSBfxq9MaYpSdnkT5qlh/?=
+ =?us-ascii?Q?aDpEgKlEdURPVYylCAe5DBNcSprPawz0OMfOBP2f6GGO3PA/iChRJMx8VxKw?=
+ =?us-ascii?Q?3oiSC4Ze8B21Z4DlipY0EdOn4vPsISN83BVLNu4okWwALzyaXo7mw0h6yXVY?=
+ =?us-ascii?Q?lMlpVVqkYRnm64hhBWbObBS1/weC8b6lOWRTBYaPeZMoZP/EKaIRaGGCnVw1?=
+ =?us-ascii?Q?Tp35EDWc0bsZfrsUXZ1ip4yVuuAcWiz5GxQJYM1kTsnCteqHW2OPMcdpCbRJ?=
+ =?us-ascii?Q?wKrUcpGV8gnCn2Tn8hLOv9xwACueusMHMPPIoUNILlH8BrwkNTXDtnu2ZErH?=
+ =?us-ascii?Q?eZNClW4j9s3S4hKiIOLUg6qDyjCYoyvcdXHtErn8HeTFAA/5ElaS2oyNxJXq?=
+ =?us-ascii?Q?3+AJduvAUYSaEf++csV2GRbiaT0irS8fsvAczxiSLvViEGbC2P0rMqlWajp3?=
+ =?us-ascii?Q?Lwbzx7v8jSXcBVQxQ2qqA3ft8f7273991QX1qUSWySaZaaUJTI1FfporaXKG?=
+ =?us-ascii?Q?gD51To85hN0i8C8ZUajkEtI6n/yMP5jAnWpwYG3ifGP5Tgoa1L6L7l2Wn7c+?=
+ =?us-ascii?Q?gpcggNsBWlSXHh1BR5xaYBmfaaHb/J5bC/9et6UDqW887Zd7GwceTvZFNFR0?=
+ =?us-ascii?Q?b+PLBkgesKo/4q7QEpD4MVEtBVl56R34Bpf94b7Wtz2m/Oe4G6YZbp2hj+v/?=
+ =?us-ascii?Q?NH5NbfLQYrkQ+4kseODgKwx10K3nKmmGBIOW4R1fEGFO4a29/m3BWAnHnvAA?=
+ =?us-ascii?Q?8alYcice4qwZFktg+JmscnUrcJnqLGO2EZwIp9r6Zjyo9AZU9odyFaZyv5JP?=
+ =?us-ascii?Q?SzTMlGigl3olJ0I2ZsChXgdVRE2t/3cI?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGcvUDZ2OW5iaFI2dGJZWDBQYkVlUGEzWktwR3pKdWlGRWc3YVg5c1l4QnJw?=
- =?utf-8?B?V0dkVU9IUThEd1YySVJZdDBNZDFDUGtQTDRsbDBDTElkb3EyZGNhd2RTY3ov?=
- =?utf-8?B?a2lCTmswQzlqTDZRN21KWWlrZFlTaFVRZ3NhVDlVOFpmUmpCc1JrbWRld3FB?=
- =?utf-8?B?U1VxV0NVQUc1ODJlVmdoTGtMK2lvT0tFMzZEYzlNT2RCTUM1cjV3RmkyYlY0?=
- =?utf-8?B?MGxIR3NOOURkN0diTXJVMWlrZ3NPb1hiZTFvdSs0MFBlc1lEZmR0L1hybjFY?=
- =?utf-8?B?UlNpYkl3RlpxWTRBV1VzaFlGZGJ4OEg0ei84S2dxNXdjNGxaUFZuSGg4cVQr?=
- =?utf-8?B?aThRaFlscFdvOXkrZ3U1RVkzZkZUeEdIbDhXYmFFcUh4OXN3Rk5mREl4NzRk?=
- =?utf-8?B?Y0lnRE10aFdSZDVsbkUxK2hmdU5mV0tuYjNHSnduQjNvVUE1OWdNbXVaMGJv?=
- =?utf-8?B?QUdPanZRR0YxQUI1RWNxamw2b1cxZ2Jja1ZZYmNRUk8zVk9YYzZCcHRFN3Nz?=
- =?utf-8?B?UTk5aWVSRmFtTHNST3o0YzJkRU5oZ2dOKzNvdmJwem84Y3krZVl0SUNJclBW?=
- =?utf-8?B?RWpFU0JVYTVVR25PYTlHTkxrMFhUc3ljaDhmWFdEUGpOanVwYkI2MktvclBI?=
- =?utf-8?B?SDlERFgyM0NvT285YzFSWVJjWXRDSitXeUR2MGlmR29ib0xBdkl5Wmg5SVk4?=
- =?utf-8?B?NkZzUHhuL3JxUk9qM3hZSGRvUTVlZWcyK0p3cmY5bS9YZzhkS3U4UFNMWXZz?=
- =?utf-8?B?REwwTXpyYk84YWhMeUY4VlFkdWx1YklDczRzTmJubXM4VlRsbUVLa3hTcnNO?=
- =?utf-8?B?TVFRVVRRQ0l1L2d2MGdIU1JlSVd1VU40VzhpUlY1NkZpbU1YTDArUzd5Z0hN?=
- =?utf-8?B?TE8rZ1l5ckJMcTlMaXhnOTY3MEQ4ODR5TjN4aUozQ2NJUkx3MDYwQjV0b3h6?=
- =?utf-8?B?MldLZ3NNaU1scmttRldrNDlWZjJ6cGU4dExRa2dmV2Fyd2Q3OUh4TmlkZkxl?=
- =?utf-8?B?aEp6Qmc3bzhERlMxSU1oS1FWLzhrd3ZuYTcrbEhRUXBtTU5oSFE2dXM1NjE4?=
- =?utf-8?B?N284T2lyVG52Y28zV3pFOFFUMDZrV1NBWVVxMkZRQjRMTU5reUEvMzdwa1ZE?=
- =?utf-8?B?UjcxY3hjL0JCZXl3a081UU9SSmRXUWs3VlI4eno0MTlIUHNvUitwNnFIL3Rz?=
- =?utf-8?B?YmpLcWZUbEcrV1J6ZS9lTjNtRS9HRm0rUzlNek10V25pQU16S3BWeHRsQnJI?=
- =?utf-8?B?SXJTdDNudWdvdW5HOUhhdFBJTUpPVGF0dVJBSDdEWWUwbXhTdEZ1SXBuQUdF?=
- =?utf-8?B?eGJpZE5tQUtaTXdieXBSMTNJVldmQklLNmo1WG5zQWNPcmI2YzMwNHdvenhJ?=
- =?utf-8?B?bnZqVFZvdnNEMEIxb1VtUFJJcGJoTWhJRmJVbHNBSTJLdjczSXVKc04ya211?=
- =?utf-8?B?Vml0LzlsRkRXOU8rT2hQOVUyVXo1THREaURUaUpjVFREMjQvMzlydllCWHNK?=
- =?utf-8?B?eGhHWTJoYVN6NXovOVNWUEVFWHFvSWd0UHRscWR1enNpdnBodUlnU2FlN01q?=
- =?utf-8?B?emdRVVJmUzN2dGdhTlNTQXEvbnVvd1hFZUszeXBrSko5OGJrUW03c09iT0RG?=
- =?utf-8?B?ZTZtdkExS3J6MlZ4MFBWNW5XdXhBRTBpdGtuVVBmTGU5Sjh0TzBESmFvOG1x?=
- =?utf-8?B?RFBxbUZzL1I2SzZYOXlSSnNnazFNZHovTWI2OWtmZFE1K2dEMnJvdEhCdUlT?=
- =?utf-8?B?NEdKRll1ejZjSWVQQTRjekxEODBsdlhYYXlHSGpuZEFrc1k4Vlk5MitINE1a?=
- =?utf-8?B?eWpaYlpPL3UxTUp0SmZPNGN5UWUxVlE1eG0zdzN4MGh3bU8xR0RmZUZBZzF6?=
- =?utf-8?B?bnE4M2xFWEttdkQxNjY5UTREVkRLakFmclExZHVJOThSR3IvQ09sYlErQlZq?=
- =?utf-8?B?N1VyTDliTjhWZnpLWW5KSHd5cEw2Wnl5Z1BVb2V3NjdvK1p3Wm0zeTFzUEZI?=
- =?utf-8?B?bHI4Y21FM3NSc0pYeno0dVdLUHlUcExWZG9mNDZFOUZDV0lpdXo4MEVRNjgz?=
- =?utf-8?B?eXVMMFJHWHNRTmhhMUUxRGhGWXQxbXJ2ajZjQ3E2MGd2YVY4NWpCUlgwNzE4?=
- =?utf-8?Q?PZvDjrNBRE/X7ScBuPAXHZjT6?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d20bc20-6563-48ae-b0a0-08dd76aac99a
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+	=?us-ascii?Q?sG3ImwN3ntFiwGeOqz18hFGhXaXim8mdIi/jhEX2rq8YmoV1/Ru8aycDR3EO?=
+ =?us-ascii?Q?wfOumal2UBE0KUEoQ9lXV2evPuZlo68DeJQ0Os6V8m7hwbHZwpvZ4P3NdyWT?=
+ =?us-ascii?Q?+dkmFgkBqN6pH63hmOQL+m0Z1cFH9WlnHTB0VFrEl3DrRi5a0w+t7dGoOTMF?=
+ =?us-ascii?Q?3M9QwpqEa1vf8oreLCtk60Kw1mltgOwwfoHwS85WpLZHy7Ti3D7F2jskV8ew?=
+ =?us-ascii?Q?Nt8Xc7DuOMW0CBa9NkXL86Bd6iv5kE10Xc/sC1zuIDOiViA1TV56xPI0NJU5?=
+ =?us-ascii?Q?hn6d3bdEduY+yOFN85TYY5m1iN6XN1OUIA1sOEv1hpA66mI+FR3jWZKSlCNK?=
+ =?us-ascii?Q?URNA7FgE6B3NQ5NJ92qrXP8F+yFYWsXe/W52u4UIfgU5w5+9JjdIfa5xroIl?=
+ =?us-ascii?Q?FTbiLMeJk7LK5SI0L8ci4DwXGg9CNuKcpMo5WexkMnaS86H7ndNj7XbcsSov?=
+ =?us-ascii?Q?zS2obm4cNvpK3oJ3n2yLT0R9O/f26uyoXiBokgcFDiXFMA18MkAxQcm2qdGn?=
+ =?us-ascii?Q?B1G6nNL+K8YZZzIohqkztzL4T3eams6b1vI/m6FoMZw2UN4YQ1qRJnhHeAlw?=
+ =?us-ascii?Q?QL388bqiayfQ6SXfIkHKEny0BBWLKRjynhcIHnlF+UHhRAOGmmUw91cj/FB5?=
+ =?us-ascii?Q?WZKgWzhXCSHOeyZqWKB1r78nOA2Rs8Xz3BSs1G7DDFn+dWMPaZEcLD3FrT+i?=
+ =?us-ascii?Q?UAKQh5QkeZfXIo5hFSAS8/bJXWMesXCk/sMv1BVacubuls4Vdu/Gz0KfaqsU?=
+ =?us-ascii?Q?4rnsDxPpYwFJ8z+DNKT2mkD82Cl4wRV8eqYJHNcH5zLDyg0NcAAHMkMHdDC3?=
+ =?us-ascii?Q?Xd0b5W2SRnx3pANWBejpiiqmJy605W2rbXyAWJvb89aiu528n+inkhb2LTQQ?=
+ =?us-ascii?Q?Bj6QMuQ8pD/BCZftk0IT0sYgz4A8szkrM+nt+X+rH/ULB77qsfqfroujbN2y?=
+ =?us-ascii?Q?KR07M3zrXIzn3SApxa5pVXGCVWxicIQdb1X92kkKDRA9ulbEDB7vNrXOgPt8?=
+ =?us-ascii?Q?sXuoHlCiQ+28p7aEuuGradw8xiy+P3t6Sx8c5EkJCDMg02eclVJ0GPs8pqSv?=
+ =?us-ascii?Q?SYAoD6rqG4pPkVW+f0JSBW7fwmOZx22uWRpcvnzyE/s7S0OMpXQ9TGy0S4uy?=
+ =?us-ascii?Q?PwIkj7qOcjD9j2ozapbmk1+wxxomPOJwmbPwU7PPU6oyHw1u0v/lQV1RxrMx?=
+ =?us-ascii?Q?CAwCT1vD8wOYscaQdOaFam9axpeVkx7SxX9azfh+Em0jgoA9Q5+gJlHvo5N6?=
+ =?us-ascii?Q?uwDSwE6mDkFByxFAi/+IQFcZKHJDXFN+Mhxeojj2/vpgGr+fJxIAafOSWXYA?=
+ =?us-ascii?Q?iyR3lcRiECTQhG8dWa/esbEgzGDqHg8luvlS7ncWW3lKY8aasf1wW2cozaFt?=
+ =?us-ascii?Q?i3lmKNXJTmtkk5b5I2dz52UWpEe2x8Wty87l9bvYKKdlShNYG6NmngXMJbr0?=
+ =?us-ascii?Q?OfCHXMvGZ81rI0xKVjOGNAI+zh0RLhpvZzI42Z6wkz0HwmhrnapXrDIn769P?=
+ =?us-ascii?Q?4uX8H0w2FMVpI1NSB6pTZn1Kqq18xXBHCT8XkLU6rfDuYjdd5irxjxGBejMJ?=
+ =?us-ascii?Q?/b5oW1xeFo7Kkeh1o+oyPpUij604jtUHxB8/cTvG?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a0b850d-e73a-4672-5be9-08dd76ae5fd3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 14:36:45.6842
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 15:02:26.2372
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nk2JorW9qr9Pjm02Fd7dlQ8sgt1+O4A/ClGnGZGM3P8kqvej649U9zZzW6PkWfjKCSgGAIDUH7Kr+GlsPsdLOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10853
+X-MS-Exchange-CrossTenant-UserPrincipalName: HI2PSO59Ix5ImtFFysCG9/MzflIUzdelqlaYhq1XOL3h+Ea0t+9mDhGqfwrjuAwLvALVzzGF++LatIihxhkLww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10479
 
-On 4/8/2025 4:46 PM, Mathieu Poirier wrote:
-> On Tue, 8 Apr 2025 at 02:47, Iuliana Prodan <iuliana.prodan@nxp.com> wrote:
->> Hello Mathieu,
->>
->> On 4/7/2025 7:17 PM, Mathieu Poirier wrote:
->>> Good morning,
->>>
->>> On Thu, Apr 03, 2025 at 01:01:24PM +0300, Iuliana Prodan (OSS) wrote:
->>>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->>>>
->>>> Some DSP firmware requires a FW_READY signal before proceeding, while
->>>> others do not.
->>>> Therefore, add support to handle i.MX DSP-specific features.
->>>>
->>>> Implement handle_rsc callback to handle resource table parsing and to
->>>> process DSP-specific resource, to determine if waiting is needed.
->>>>
->>>> Update imx_dsp_rproc_start() to handle this condition accordingly.
->>>>
->>>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
->>>> ---
->>>> Changes in v3:
->>>> - Reviews from Mathieu Poirier:
->>>>     - Added version and magic number to vendor-specific resource table entry.
->>>>     - Updated defines to maintain backward compatibility with a resource table that doesn't have a vendor-specific resource.
->>>>       - By default, wait for `fw_ready`, unless specified otherwise.
->>>> - Link to v2: https://lore.kernel.org/all/20250318215007.2109726-1-iuliana.prodan@oss.nxp.com
->>>>
->>>> Changes in v2:
->>>> - Reviews from Mathieu Poirier:
->>>>     - Use vendor-specific resource table entry.
->>>>     - Implement resource handler specific to the i.MX DSP.
->>>> - Revise commit message to include recent updates.
->>>> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
->>>>
->>>>    drivers/remoteproc/imx_dsp_rproc.c | 102 ++++++++++++++++++++++++++++-
->>>>    1 file changed, 100 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
->>>> index b9bb15970966..80d4470cc731 100644
->>>> --- a/drivers/remoteproc/imx_dsp_rproc.c
->>>> +++ b/drivers/remoteproc/imx_dsp_rproc.c
->>>> @@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->>>>    MODULE_PARM_DESC(no_mailboxes,
->>>>                "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
->>>>
->>>> +/* Flag indicating that the remote is up and running */
->>>>    #define REMOTE_IS_READY                            BIT(0)
->>>> +/* Flag indicating that the host should wait for a firmware-ready response */
->>>> +#define WAIT_FW_READY                               BIT(1)
->>>>    #define REMOTE_READY_WAIT_MAX_RETRIES              500
->>>>
->>>> +/* This flag is set in the DSP resource table's features field to indicate
->>>> + * that the firmware requires the host NOT to wait for a FW_READY response.
->>>> + */
->>>> +#define FEATURE_DONT_WAIT_FW_READY          BIT(0)
->>>> +
->>>>    /* att flags */
->>>>    /* DSP own area */
->>>>    #define ATT_OWN                                    BIT(31)
->>>> @@ -72,6 +80,10 @@ MODULE_PARM_DESC(no_mailboxes,
->>>>
->>>>    #define IMX8ULP_SIP_HIFI_XRDC                      0xc200000e
->>>>
->>>> +#define FW_RSC_NXP_S_MAGIC                  ((uint32_t)'n' << 24 |  \
->>>> +                                             (uint32_t)'x' << 16 |  \
->>>> +                                             (uint32_t)'p' << 8 |   \
->>>> +                                             (uint32_t)'s')
->>>>    /*
->>>>     * enum - Predefined Mailbox Messages
->>>>     *
->>>> @@ -136,6 +148,24 @@ struct imx_dsp_rproc_dcfg {
->>>>       int (*reset)(struct imx_dsp_rproc *priv);
->>>>    };
->>>>
->>>> +/**
->>>> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
->>>> + *
->>>> + * @len: length of the resource entry
->>>> + * @magic_num: 32-bit magic number
->>>> + * @version: version of data structure
->>>> + * @features: feature flags supported by the i.MX DSP firmware
->>>> + *
->>>> + * This represents a DSP-specific resource in the firmware's
->>>> + * resource table, providing information on supported features.
->>>> + */
->>>> +struct fw_rsc_imx_dsp {
->>>> +    uint32_t len;
->>>> +    uint32_t magic_num;
->>>> +    uint32_t version;
->>>> +    uint32_t features;
->>>> +} __packed;
->>>> +
->>>>    static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
->>>>       /* dev addr , sys addr  , size      , flags */
->>>>       { 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
->>>> @@ -300,6 +330,73 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->>>>       return -ETIMEDOUT;
->>>>    }
->>>>
->>>> +/**
->>>> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
->>>> + * @rproc: remote processor instance
->>>> + * @rsc_type: resource type identifier
->>>> + * @rsc: pointer to the resource entry
->>>> + * @offset: offset of the resource entry
->>>> + * @avail: available space in the resource table
->>>> + *
->>>> + * Parse the DSP-specific resource entry and update flags accordingly.
->>>> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
->>>> + * to signal readiness before proceeding with execution.
->>>> + *
->>>> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
->>>> + */
->>>> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
->>>> +                                void *rsc, int offset, int avail)
->>>> +{
->>>> +    struct imx_dsp_rproc *priv = rproc->priv;
->>>> +    struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
->>>> +    struct device *dev = rproc->dev.parent;
->>>> +    size_t expected_size;
->>>> +
->>>> +    if (!imx_dsp_rsc) {
->>>> +            dev_dbg(dev, "Invalid fw_rsc_imx_dsp.\n");
->>>> +            goto ignored;
->>>> +    }
->>>> +
->>>> +    /* Make sure resource isn't truncated */
->>>> +    expected_size = imx_dsp_rsc->len + sizeof(imx_dsp_rsc->len);
->>> Something seems odd with this check... I don't see how adding
->>> imx_dsp_rsc->len with 4 will give us any indication of the expected size.
->> The fw_rsc_imx_dsp structure is based on Zephyr and OpenAMP ([1]).
->>
->> The imx_dsp_rsc->len indicates the available resource size. Adding 4
->> bytes (for uint32_t len member) gives the total structure size. If this
->> does not match sizeof(struct fw_rsc_imx_dsp), the structure is incomplete.
->>
-> Ok, but why is adding 4 to imx_dsp_rsc->len needed?  Why doesn't
-> imx_dsp_rsc->len already contain the right size?
+On Thu, Apr 03, 2025 at 10:32:39PM +0800, Peng Fan wrote:
+>Hi Bjorn,
 >
-> The size of struct fw_rsc_imx_dsp is 16 byte.  From your
-> implementation, it seems like ->len is equal to 12 and 4 needs to be
-> added to make it 16.  To me ->len should be 16... What am I missing?
+>
+>Thanks for replying this thread.
+>
+>On Wed, Apr 02, 2025 at 08:48:58AM -0500, Bjorn Andersson wrote:
+>>On Wed, Apr 02, 2025 at 09:43:55AM +0800, Peng Fan wrote:
+>>> On Tue, Apr 01, 2025 at 10:05:03AM -0600, Mathieu Poirier wrote:
+>>> >On Tue, Apr 01, 2025 at 09:41:24AM +0800, Peng Fan wrote:
+>>...
+>>> >
+>>> >The core is already checking if @loaded_table is valid in rproc_start(), why
+>>> >can't that be used instead of adding yet another check?
+>>> 
+>>> Ah. I was thinking clear table_sz in rpoc_shutdown is an easy approach and
+>>> could benifit others in case other platforms meet similar issue in future.
+>>> 
+>>
+>>I like the general idea of keeping things clean and avoid leaving stale
+>>data behind.
+>>
+>>But clearing table_sz during stop in order to hide the fact that the
+>>future table_ptr will contain valid data that shouldn't be used, that's
+>>just a bug waiting to show up again in the future.
+>
+>Agree.
+>
+>Do you need me to post a fix for
+>commit efdde3d73ab25ce("remoteproc: core: Clear table_sz when rproc_shutdown")
+>by clearing table_sz in rproc_fw_boot and rproc_detach as did in this v2?
+>
+>To i.MX, the above in-tree patch is ok, so all it fine, and this v2 patch
+>could be dropped.
+>
+>But anyway, if you prefer a follow up fix, please let me know, I
+>could post a patch.
 
-You're correct. In my implementation, len is 12, which represents the 
-available
-bytes for writing additional data such as the magic number, version,
-and supported features. This is based on my understanding of the len member
-from the OpenAMP [1] and how I applied it in Zephyr.
+Hi Bjorn, Mathieu,
 
+ I will wait for one more week to see if any concerns or questions.
+ Please raise if you have.
 
-I will update the code to define len as the size of the struct 
-fw_rsc_imx_dsp.
+ If no, I suppose this thread is done and I will start my other work
+ regarding rproc.
 
 Thanks,
-Iulia
-
-[1] 
-https://github.com/OpenAMP/open-amp/blob/main/lib/include/openamp/remoteproc.h#L356
-
+Peng
 
 >
->> I will also verify with avail and send a v4.
+>Thanks,
+>Peng
+>
 >>
->> [1]
->> https://github.com/OpenAMP/open-amp/blob/main/lib/include/openamp/remoteproc.h#L356
+>>Regards,
+>>Bjorn
 >>
->> Thanks,
->> Iulia
->>>    To me
->>> two checks are required here:
->>>
->>> 1) if (sizeof(*rsc) > avail)
->>>
->>> 2) if (sizeof(*rsc) != imx_dsp_rsc->len)
->>>
->>> Otherwise I'm good with this new revision.
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>> +    if (expected_size < sizeof(struct fw_rsc_imx_dsp)) {
->>>> +            dev_dbg(dev, "Resource fw_rsc_imx_dsp is truncated.\n");
->>>> +            goto ignored;
->>>> +    }
->>>> +
->>>> +    /*
->>>> +     * If FW_RSC_NXP_S_MAGIC number is not found then
->>>> +     * wait for fw_ready reply (default work flow)
->>>> +     */
->>>> +    if (imx_dsp_rsc->magic_num != FW_RSC_NXP_S_MAGIC) {
->>>> +            dev_dbg(dev, "Invalid resource table magic number.\n");
->>>> +            goto ignored;
->>>> +    }
->>>> +
->>>> +    /*
->>>> +     * For now, in struct fw_rsc_imx_dsp, version 0,
->>>> +     * only FEATURE_DONT_WAIT_FW_READY is valid.
->>>> +     *
->>>> +     * When adding new features, please upgrade version.
->>>> +     */
->>>> +    if (imx_dsp_rsc->version > 0) {
->>>> +            dev_warn(dev, "Unexpected fw_rsc_imx_dsp version %d.\n",
->>>> +                     imx_dsp_rsc->version);
->>>> +            goto ignored;
->>>> +    }
->>>> +
->>>> +    if (imx_dsp_rsc->features & FEATURE_DONT_WAIT_FW_READY)
->>>> +            priv->flags &= ~WAIT_FW_READY;
->>>> +    else
->>>> +            priv->flags |= WAIT_FW_READY;
->>>> +
->>>> +    return RSC_HANDLED;
->>>> +
->>>> +ignored:
->>>> +    priv->flags |= WAIT_FW_READY;
->>>> +    return RSC_IGNORED;
->>>> +}
->>>> +
->>>>    /*
->>>>     * Start function for rproc_ops
->>>>     *
->>>> @@ -335,8 +432,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->>>>
->>>>       if (ret)
->>>>               dev_err(dev, "Failed to enable remote core!\n");
->>>> -    else
->>>> -            ret = imx_dsp_rproc_ready(rproc);
->>>> +    else if (priv->flags & WAIT_FW_READY)
->>>> +            return imx_dsp_rproc_ready(rproc);
->>>>
->>>>       return ret;
->>>>    }
->>>> @@ -936,6 +1033,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->>>>       .kick           = imx_dsp_rproc_kick,
->>>>       .load           = imx_dsp_rproc_elf_load_segments,
->>>>       .parse_fw       = imx_dsp_rproc_parse_fw,
->>>> +    .handle_rsc     = imx_dsp_rproc_handle_rsc,
->>>>       .find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->>>>       .sanity_check   = rproc_elf_sanity_check,
->>>>       .get_boot_addr  = rproc_elf_get_boot_addr,
->>>> --
->>>> 2.25.1
->>>>
+>
