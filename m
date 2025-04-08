@@ -1,286 +1,294 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AF0206F3A
-	for <linux-remoteproc@vger.kernel.org>; Mon,  7 Apr 2025 16:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6AC21B9C2;
+	Tue,  8 Apr 2025 08:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042661; cv=none; b=FpETi2iM8Kk23sO+aickiArTBdUjNF5YO9OVvL+GK4+XkUVPZC3+J3VcBwlwd2czBYRDGwDlE86t6aMY+nI8JP7+EKTpHsGxVZHkR2GXpnpuJS/JLvP84ZFyBVdRP8pkXST57YnwHfQ7Ofy6sOFjMAu6ZrKUgnEG4P03x4usGVA=
+	t=1744100082; cv=none; b=qlXTGFCdJiCOSAZeeSxo3X+8+J0UUBtofXQ6osSo7Wvg2p+0ZtakSJ+Qopo9e+/GafL8UVzrKH5C4+v3A20iMqbc2T1QX0CN/lRg+Vh05UwnuDNMLuHKS4ObfEw7Y7RkN2h38fmWSBpOMYahlZQiQMg+EkdKfxsnmtGlflgdJp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042661; c=relaxed/simple;
-	bh=kAMMRMeA4ufN79gfLBEkYmpw8A7AKyHNPmaD9D45Zcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1LT6oIdl5+amlPbFoTRPETN0480vYV6S6PqI2nkytLHl9pAj+9Tjcu+HJvRW2yLp2qlHibmRmPAE/bwrJkx4krlaoHlI+o5F8TdcQGAPcNN3TYVy00l7StQmONkZ3BgeXrwzEMrFbxdvi+6s3NCjSl5izCk8IVlOGAOP278llk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5r8hLqw; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744100082; c=relaxed/simple;
+	bh=lcRnD28qaB1kgPmm9ChBRfHRQea8pNDGvVep6wcpjlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oP46N2o1N2i2rrr3G8mx9o8wZdGmaaNOWaY/pXDntXEbjb4ikR8bEcuTSFuCxS9DSsdP8dJmyGpnkQn8kydmahrQ+KNMgM7wcT8iO/w9V/luzQNXhnGz5x6ZbduhvTyLiOwCNA7p3eNU71uh1UC/O6UjHz1rAwyMkJUVrNnAE34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SG6raOFn; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5r8hLqw"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-227b650504fso40565725ad.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 07 Apr 2025 09:17:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744042659; x=1744647459; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YZX8FTm7gnnATlvkEU+CvdZ8Zmrv4/GwdsExPDms+c=;
-        b=L5r8hLqw9pijj1su9Af6nfqoFLFBjNvxhrUoOLsz8Kcg6T0nm5bvnatyrRbJQRqYdK
-         koGAv2sBcBMjfZv2KW+ByQRDd1zym9R6j3nXUHcJu4L2RwejIj3LDGVhuphcjgIqXZgP
-         9Zd9TjzBn/OAXMbDmiTJf1or61cx+4fXZqenv75b6pvNLjCkmyeK1EqmxrBVDIHpOSQk
-         lFlFYyMZ9Bz6x1xHNjtImF2qpkqe5Zace3hMXY9192YsQrirAuFHm/ZqDhuOcDgrDoBH
-         sFOWsvkV0iVVNvOwT88MHGavfN2vvTMKcJH4bW5tVTvBoQ97vUW/mG0+4lRX9Ul9lZbD
-         Yg/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744042659; x=1744647459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2YZX8FTm7gnnATlvkEU+CvdZ8Zmrv4/GwdsExPDms+c=;
-        b=KfTI3IEIGSmorDHGPKmVO0WFO5YhIkMmPE1W+W8HCpqmZeVu4NzEV/A1TlOvfHXulA
-         9U3VWr9U+RUXMuF1WCy3fAHrMZY/6mGVrEg/9FnM/MEqDF1f/syPPuV9omGpTKwqw8yr
-         cb2VJP4IDGHtEqhg1JwNLjcEgG8RCr6Hkwfs2vmFyFg2NJjHpyDHCOew2kKOYi6uTbPL
-         rozYs3biXClOgz1oYKixsS9CA7VisAr1HjqmIaMNBur18smEQPMI8PftLU+aqq057hO4
-         j+iB3kBNqDoOZNGIdcomYFtX/4K04RgpIyID5k2LWjRyqJjg9C6qMsCaD+lb0ThQ/0az
-         mv8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtODn/aRy04pchuKw0NOQ8ZofZ1v6O5yvGn/DAd7KN+KRgZIsjzlb2X+aCgfwwXMl/XO8745tIg5UMfZtsv8Mz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQabwjR0lU75iMO3Il/jtN9p/EDpN1T0IvKqGttavS1EjQEX6D
-	Inz/XXvfu769yu1JVV26YFVIutjp1RtfypZHQiK9HJ9BzUPqP5jdnnW9efewMw4=
-X-Gm-Gg: ASbGnctNEd3B+aZzM3GPnixEm+5IZgkPEadmGfsYnoG+X7huTRWkaF2DOzQGxODIOhP
-	Ry5GtONnianWOUiGhIrgXj4HBOs49Q5f1CfKJNNzZiKZXwM3J7OauOfj2HG0Z4SzsKRU5Kw8n31
-	HugtzFk9+HwWlEyG+FtlT4e0s+i7tktVsEc/Md6zEKMznihoMyrG/gyVJrjDDUKNkBVr1cYCm9L
-	zSSSirxLnnEBkEpHxMTcdoxmf0vcbGUPQ/YU56aJvqYsKBJkijPV/WbirYg8wnBjWmc0tZTfYJO
-	L8PuRFt3yoq2FDv2h4h0O1TvBJPbbqKWugDfMAXubq1w7QA=
-X-Google-Smtp-Source: AGHT+IGV6fnvs4sscSKdOoEFY19/hs9fXnSrUMMOtavJUI+vrIykhaiZctAqp+tkYlgjXDshCo3m3A==
-X-Received: by 2002:a17:902:d501:b0:227:ac2a:1dcf with SMTP id d9443c01a7336-22a8a06b403mr178027265ad.23.1744042659200;
-        Mon, 07 Apr 2025 09:17:39 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8a1d:e713:b97:3a58])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739da0e7be3sm8995261b3a.175.2025.04.07.09.17.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 09:17:38 -0700 (PDT)
-Date: Mon, 7 Apr 2025 10:17:35 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v3] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-Message-ID: <Z_P6n5wQfGuSmV2B@p14s>
-References: <20250403100124.637889-1-iuliana.prodan@oss.nxp.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SG6raOFn"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5388ETws478257
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 03:14:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744100069;
+	bh=wyJANLn/TygeZdeBMDwbcJtQcR8LIaRotZSQWOxdTyg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=SG6raOFn6/2EBZaoCx3B3UeB/NfngjhX5FN65e7LP28iUNW9G9sOahutWVyZ5M/Qj
+	 uPCZr+ipLaMLEVNM/V4sutWV+TVRWoxRkVmRWbX4nwwf5rwH7HeVaUwsLJ4A9HSM8o
+	 fzq/WH9H/v4AAkIs8vgEzpIOkhwpA+H7Nmv/oT7s=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5388ETv0110027
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Apr 2025 03:14:29 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Apr 2025 03:14:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Apr 2025 03:14:28 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5388EP9r087492;
+	Tue, 8 Apr 2025 03:14:25 -0500
+Message-ID: <d9b2607c-fcf1-428a-aa49-2476b2907559@ti.com>
+Date: Tue, 8 Apr 2025 13:44:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403100124.637889-1-iuliana.prodan@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 01/26] remoteproc: k3-r5: Re-order internal memory
+ initialization function
+To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250317120622.1746415-1-b-padhi@ti.com>
+ <20250317120622.1746415-2-b-padhi@ti.com>
+ <4502a296-5380-4339-bfb1-1d741b74cf01@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <4502a296-5380-4339-bfb1-1d741b74cf01@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Good morning,
 
-On Thu, Apr 03, 2025 at 01:01:24PM +0300, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> Some DSP firmware requires a FW_READY signal before proceeding, while
-> others do not.
-> Therefore, add support to handle i.MX DSP-specific features.
-> 
-> Implement handle_rsc callback to handle resource table parsing and to
-> process DSP-specific resource, to determine if waiting is needed.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
-> Changes in v3:
-> - Reviews from Mathieu Poirier:
->   - Added version and magic number to vendor-specific resource table entry.
->   - Updated defines to maintain backward compatibility with a resource table that doesn't have a vendor-specific resource.
->     - By default, wait for `fw_ready`, unless specified otherwise.
-> - Link to v2: https://lore.kernel.org/all/20250318215007.2109726-1-iuliana.prodan@oss.nxp.com
-> 
-> Changes in v2:
-> - Reviews from Mathieu Poirier:
->   - Use vendor-specific resource table entry.
->   - Implement resource handler specific to the i.MX DSP.
-> - Revise commit message to include recent updates.
-> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
-> 
->  drivers/remoteproc/imx_dsp_rproc.c | 102 ++++++++++++++++++++++++++++-
->  1 file changed, 100 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..80d4470cc731 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->  MODULE_PARM_DESC(no_mailboxes,
->  		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
->  
-> +/* Flag indicating that the remote is up and running */
->  #define REMOTE_IS_READY				BIT(0)
-> +/* Flag indicating that the host should wait for a firmware-ready response */
-> +#define WAIT_FW_READY				BIT(1)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/* This flag is set in the DSP resource table's features field to indicate
-> + * that the firmware requires the host NOT to wait for a FW_READY response.
-> + */
-> +#define FEATURE_DONT_WAIT_FW_READY		BIT(0)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -72,6 +80,10 @@ MODULE_PARM_DESC(no_mailboxes,
->  
->  #define IMX8ULP_SIP_HIFI_XRDC			0xc200000e
->  
-> +#define FW_RSC_NXP_S_MAGIC			((uint32_t)'n' << 24 |	\
-> +						 (uint32_t)'x' << 16 |	\
-> +						 (uint32_t)'p' << 8 |	\
-> +						 (uint32_t)'s')
->  /*
->   * enum - Predefined Mailbox Messages
->   *
-> @@ -136,6 +148,24 @@ struct imx_dsp_rproc_dcfg {
->  	int (*reset)(struct imx_dsp_rproc *priv);
->  };
->  
-> +/**
-> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
-> + *
-> + * @len: length of the resource entry
-> + * @magic_num: 32-bit magic number
-> + * @version: version of data structure
-> + * @features: feature flags supported by the i.MX DSP firmware
-> + *
-> + * This represents a DSP-specific resource in the firmware's
-> + * resource table, providing information on supported features.
-> + */
-> +struct fw_rsc_imx_dsp {
-> +	uint32_t len;
-> +	uint32_t magic_num;
-> +	uint32_t version;
-> +	uint32_t features;
-> +} __packed;
-> +
->  static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-> @@ -300,6 +330,73 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
->  }
->  
-> +/**
-> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
-> + * @rproc: remote processor instance
-> + * @rsc_type: resource type identifier
-> + * @rsc: pointer to the resource entry
-> + * @offset: offset of the resource entry
-> + * @avail: available space in the resource table
-> + *
-> + * Parse the DSP-specific resource entry and update flags accordingly.
-> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
-> + * to signal readiness before proceeding with execution.
-> + *
-> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
-> + */
-> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
-> +				    void *rsc, int offset, int avail)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
-> +	struct device *dev = rproc->dev.parent;
-> +	size_t expected_size;
-> +
-> +	if (!imx_dsp_rsc) {
-> +		dev_dbg(dev, "Invalid fw_rsc_imx_dsp.\n");
-> +		goto ignored;
-> +	}
-> +
-> +	/* Make sure resource isn't truncated */
-> +	expected_size = imx_dsp_rsc->len + sizeof(imx_dsp_rsc->len);
+On 07/04/25 18:59, Andrew Davis wrote:
+> On 3/17/25 7:05 AM, Beleswar Padhi wrote:
+>> The core's internal memory data structure will be refactored to be part
+>> of the k3_r5_rproc structure in a future commit. As a result, internal
+>> memory initialization will need to be performed inside
+>> k3_r5_cluster_rproc_init() after rproc_alloc().
+>>
+>> Therefore, move the internal memory initialization function,
+>> k3_r5_core_of_get_internal_memories() above k3_r5_rproc_init() so that
+>> it can be invoked from there.
+>>
+>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> ---
+>
+> Just to keep things organized, does it make sense to also move
+> the other k3_r5_core_of_get_*_memories() up with this?
+>
+> Also, you move k3_r5_release_tsp() up too but don't mention
+> that in the commit message.
 
-Something seems odd with this check... I don't see how adding
-imx_dsp_rsc->len with 4 will give us any indication of the expected size.  To me
-two checks are required here:
 
-1) if (sizeof(*rsc) > avail)
-
-2) if (sizeof(*rsc) != imx_dsp_rsc->len)
-
-Otherwise I'm good with this new revision.
+Sure, I will incorporate these changes in the next revision.
 
 Thanks,
-Mathieu
+Beleswar
 
-> +	if (expected_size < sizeof(struct fw_rsc_imx_dsp)) {
-> +		dev_dbg(dev, "Resource fw_rsc_imx_dsp is truncated.\n");
-> +		goto ignored;
-> +	}
-> +
-> +	/*
-> +	 * If FW_RSC_NXP_S_MAGIC number is not found then
-> +	 * wait for fw_ready reply (default work flow)
-> +	 */
-> +	if (imx_dsp_rsc->magic_num != FW_RSC_NXP_S_MAGIC) {
-> +		dev_dbg(dev, "Invalid resource table magic number.\n");
-> +		goto ignored;
-> +	}
-> +
-> +	/*
-> +	 * For now, in struct fw_rsc_imx_dsp, version 0,
-> +	 * only FEATURE_DONT_WAIT_FW_READY is valid.
-> +	 *
-> +	 * When adding new features, please upgrade version.
-> +	 */
-> +	if (imx_dsp_rsc->version > 0) {
-> +		dev_warn(dev, "Unexpected fw_rsc_imx_dsp version %d.\n",
-> +			 imx_dsp_rsc->version);
-> +		goto ignored;
-> +	}
-> +
-> +	if (imx_dsp_rsc->features & FEATURE_DONT_WAIT_FW_READY)
-> +		priv->flags &= ~WAIT_FW_READY;
-> +	else
-> +		priv->flags |= WAIT_FW_READY;
-> +
-> +	return RSC_HANDLED;
-> +
-> +ignored:
-> +	priv->flags |= WAIT_FW_READY;
-> +	return RSC_IGNORED;
-> +}
-> +
->  /*
->   * Start function for rproc_ops
->   *
-> @@ -335,8 +432,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (priv->flags & WAIT_FW_READY)
-> +		return imx_dsp_rproc_ready(rproc);
->  
->  	return ret;
->  }
-> @@ -936,6 +1033,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.kick		= imx_dsp_rproc_kick,
->  	.load		= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
-> +	.handle_rsc	= imx_dsp_rproc_handle_rsc,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -- 
-> 2.25.1
-> 
+>
+> Andrew
+>
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 158 +++++++++++------------
+>>   1 file changed, 79 insertions(+), 79 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
+>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index dbc513c5569c..b2738b9a1b2d 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -1199,6 +1199,85 @@ static int k3_r5_rproc_configure_mode(struct 
+>> k3_r5_rproc *kproc)
+>>       return ret;
+>>   }
+>>   +static int k3_r5_core_of_get_internal_memories(struct 
+>> platform_device *pdev,
+>> +                           struct k3_r5_core *core)
+>> +{
+>> +    static const char * const mem_names[] = {"atcm", "btcm"};
+>> +    struct device *dev = &pdev->dev;
+>> +    struct resource *res;
+>> +    int num_mems;
+>> +    int i;
+>> +
+>> +    num_mems = ARRAY_SIZE(mem_names);
+>> +    core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), 
+>> GFP_KERNEL);
+>> +    if (!core->mem)
+>> +        return -ENOMEM;
+>> +
+>> +    for (i = 0; i < num_mems; i++) {
+>> +        res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> +                           mem_names[i]);
+>> +        if (!res) {
+>> +            dev_err(dev, "found no memory resource for %s\n",
+>> +                mem_names[i]);
+>> +            return -EINVAL;
+>> +        }
+>> +        if (!devm_request_mem_region(dev, res->start,
+>> +                         resource_size(res),
+>> +                         dev_name(dev))) {
+>> +            dev_err(dev, "could not request %s region for resource\n",
+>> +                mem_names[i]);
+>> +            return -EBUSY;
+>> +        }
+>> +
+>> +        /*
+>> +         * TCMs are designed in general to support RAM-like backing
+>> +         * memories. So, map these as Normal Non-Cached memories. This
+>> +         * also avoids/fixes any potential alignment faults due to
+>> +         * unaligned data accesses when using memcpy() or memset()
+>> +         * functions (normally seen with device type memory).
+>> +         */
+>> +        core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+>> +                            resource_size(res));
+>> +        if (!core->mem[i].cpu_addr) {
+>> +            dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+>> +            return -ENOMEM;
+>> +        }
+>> +        core->mem[i].bus_addr = res->start;
+>> +
+>> +        /*
+>> +         * TODO:
+>> +         * The R5F cores can place ATCM & BTCM anywhere in its address
+>> +         * based on the corresponding Region Registers in the System
+>> +         * Control coprocessor. For now, place ATCM and BTCM at
+>> +         * addresses 0 and 0x41010000 (same as the bus address on AM65x
+>> +         * SoCs) based on loczrama setting
+>> +         */
+>> +        if (!strcmp(mem_names[i], "atcm")) {
+>> +            core->mem[i].dev_addr = core->loczrama ?
+>> +                            0 : K3_R5_TCM_DEV_ADDR;
+>> +        } else {
+>> +            core->mem[i].dev_addr = core->loczrama ?
+>> +                            K3_R5_TCM_DEV_ADDR : 0;
+>> +        }
+>> +        core->mem[i].size = resource_size(res);
+>> +
+>> +        dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 
+>> 0x%x\n",
+>> +            mem_names[i], &core->mem[i].bus_addr,
+>> +            core->mem[i].size, core->mem[i].cpu_addr,
+>> +            core->mem[i].dev_addr);
+>> +    }
+>> +    core->num_mems = num_mems;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static void k3_r5_release_tsp(void *data)
+>> +{
+>> +    struct ti_sci_proc *tsp = data;
+>> +
+>> +    ti_sci_proc_release(tsp);
+>> +}
+>> +
+>>   static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>   {
+>>       struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+>> @@ -1358,78 +1437,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>>       }
+>>   }
+>>   -static int k3_r5_core_of_get_internal_memories(struct 
+>> platform_device *pdev,
+>> -                           struct k3_r5_core *core)
+>> -{
+>> -    static const char * const mem_names[] = {"atcm", "btcm"};
+>> -    struct device *dev = &pdev->dev;
+>> -    struct resource *res;
+>> -    int num_mems;
+>> -    int i;
+>> -
+>> -    num_mems = ARRAY_SIZE(mem_names);
+>> -    core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), 
+>> GFP_KERNEL);
+>> -    if (!core->mem)
+>> -        return -ENOMEM;
+>> -
+>> -    for (i = 0; i < num_mems; i++) {
+>> -        res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> -                           mem_names[i]);
+>> -        if (!res) {
+>> -            dev_err(dev, "found no memory resource for %s\n",
+>> -                mem_names[i]);
+>> -            return -EINVAL;
+>> -        }
+>> -        if (!devm_request_mem_region(dev, res->start,
+>> -                         resource_size(res),
+>> -                         dev_name(dev))) {
+>> -            dev_err(dev, "could not request %s region for resource\n",
+>> -                mem_names[i]);
+>> -            return -EBUSY;
+>> -        }
+>> -
+>> -        /*
+>> -         * TCMs are designed in general to support RAM-like backing
+>> -         * memories. So, map these as Normal Non-Cached memories. This
+>> -         * also avoids/fixes any potential alignment faults due to
+>> -         * unaligned data accesses when using memcpy() or memset()
+>> -         * functions (normally seen with device type memory).
+>> -         */
+>> -        core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+>> -                            resource_size(res));
+>> -        if (!core->mem[i].cpu_addr) {
+>> -            dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+>> -            return -ENOMEM;
+>> -        }
+>> -        core->mem[i].bus_addr = res->start;
+>> -
+>> -        /*
+>> -         * TODO:
+>> -         * The R5F cores can place ATCM & BTCM anywhere in its address
+>> -         * based on the corresponding Region Registers in the System
+>> -         * Control coprocessor. For now, place ATCM and BTCM at
+>> -         * addresses 0 and 0x41010000 (same as the bus address on AM65x
+>> -         * SoCs) based on loczrama setting
+>> -         */
+>> -        if (!strcmp(mem_names[i], "atcm")) {
+>> -            core->mem[i].dev_addr = core->loczrama ?
+>> -                            0 : K3_R5_TCM_DEV_ADDR;
+>> -        } else {
+>> -            core->mem[i].dev_addr = core->loczrama ?
+>> -                            K3_R5_TCM_DEV_ADDR : 0;
+>> -        }
+>> -        core->mem[i].size = resource_size(res);
+>> -
+>> -        dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 
+>> 0x%x\n",
+>> -            mem_names[i], &core->mem[i].bus_addr,
+>> -            core->mem[i].size, core->mem[i].cpu_addr,
+>> -            core->mem[i].dev_addr);
+>> -    }
+>> -    core->num_mems = num_mems;
+>> -
+>> -    return 0;
+>> -}
+>> -
+>>   static int k3_r5_core_of_get_sram_memories(struct platform_device 
+>> *pdev,
+>>                          struct k3_r5_core *core)
+>>   {
+>> @@ -1487,13 +1494,6 @@ static int 
+>> k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+>>       return 0;
+>>   }
+>>   -static void k3_r5_release_tsp(void *data)
+>> -{
+>> -    struct ti_sci_proc *tsp = data;
+>> -
+>> -    ti_sci_proc_release(tsp);
+>> -}
+>> -
+>>   static int k3_r5_core_of_init(struct platform_device *pdev)
+>>   {
+>>       struct device *dev = &pdev->dev;
