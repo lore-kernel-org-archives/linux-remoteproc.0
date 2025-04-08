@@ -1,49 +1,49 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F2205E3E;
-	Tue,  8 Apr 2025 08:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD79E20B7EF;
+	Tue,  8 Apr 2025 08:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100904; cv=none; b=NNXGdR3iyoqpQvwgUug16UAO0Jn0KF5T4886wRppjMpHuq30jS6P57ORBF4bv8jxcH2v+f6EGCn93XdJM5twnv0SmUSl8LI7Q7ecqNTMmQEHOzfbuCpnnkTgSIG3CC2kIJ48X3y+TZ7qeSqWp7pd7z7Mby9yhxJ6bsfJMu7JF7Q=
+	t=1744101535; cv=none; b=TEsDpbu0TddU+8U+/7GgOFIf5R1JGuInFgMznmqq/fUV3YYgaDlkowxSK2XrEso2j/ayrAGmBbHI4k5WYJpXz+lzRC/PQOcpBT5sGkvNs78bbkiUgxCavcvBWDCLWUfiWDD8MJywipdW+NA/dhhaxdBV8tJHrRl6Vhf/OGHruOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100904; c=relaxed/simple;
-	bh=UDlIVI1AG1Zy49FqHXKQmFxi8nQ7hbKrJrZlTbVmDUg=;
+	s=arc-20240116; t=1744101535; c=relaxed/simple;
+	bh=tD4ZkMVt3jVD7U7yMoRCeDLuNYUNM43WUhXIx7cmSVg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ce8w7j6L0Jxrrk9KhClKnwhtRzUrRt+5p83NvAakKm8x7ZAUg4Kc9X5Vc0CnNx2w/0fcAR8iKYZLpoY4RA7MQ4o4bgLJMrUV86tnkkpSfPcBD13ANI0jGGGWV0JZ0Qacadxkg6ECNnxWQeiQICG/XmSPs9bjupr/B1IyRx/nRh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kTry/2QJ; arc=none smtp.client-ip=198.47.19.245
+	 In-Reply-To:Content-Type; b=u/eCM7fHjJKYi3VDwo3v4+ejuEQFcKKyls/2E7WrVurKTW11/4CEGIf4JRvpw3GwYPhs9SJxz9o0VW53bNXaQLZjEzNPseI4qX2Fo678AyNqlQ9tDibjUo70l43B47+cTrT0yfW+/pi4RnPn8re0g77LcC/BhFOoiVjsB7IJnRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HUTumJXr; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kTry/2QJ"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5388SCL0481673
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HUTumJXr"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5388cet41115119
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Apr 2025 03:28:13 -0500
+	Tue, 8 Apr 2025 03:38:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744100893;
-	bh=iM/xft0Gub7/C8ovIYRxY6ENM0fN3QhM2peDPUXbEDU=;
+	s=ti-com-17Q1; t=1744101520;
+	bh=qsaih3Jo6Z1Xo1D/DfJr19vzt9FO3H4iagoufj6pYzQ=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kTry/2QJTz3KKesp/r0bHsc1tp+bDyTei4wjapoTbqhSsLb/BCKMtkiNwNMuU/6sa
-	 nu7y5UKENeHlByPDJnMu89ZqVabl8C/LhyHtDwHNGQ0c5F4TU23T1iDRerViXyFYZV
-	 D/QwVxN2k/gjwDTe9u2DeaSUjTJSdiHHIHZWjg8M=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5388SCrx071038
+	b=HUTumJXrS7JayWUFy5URgF4UrZd/BpJ8Y/ByHx198XIAWCQIsP0tWT0hRn4Zh32wS
+	 CCoWvJ23kEtrCrGjRUbpcCEc7Xw2Y5lXDYiHwhc4OYORfm7eWSyDBfenJOBAmbbWew
+	 Mpc1WkM4D+inqRTm8sKgwHnV0p1PLVFbkcT01o6s=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5388cec5017789
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 8 Apr 2025 03:28:12 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 8 Apr 2025 03:38:40 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
- Apr 2025 03:28:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 03:38:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 8 Apr 2025 03:28:12 -0500
+ Frontend Transport; Tue, 8 Apr 2025 03:38:40 -0500
 Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5388S8FZ104027;
-	Tue, 8 Apr 2025 03:28:09 -0500
-Message-ID: <66739a19-3af8-4276-a101-692116aba70c@ti.com>
-Date: Tue, 8 Apr 2025 13:58:08 +0530
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5388caj6008681;
+	Tue, 8 Apr 2025 03:38:37 -0500
+Message-ID: <7ead4800-3653-49ce-9151-b7a78892bdd6@ti.com>
+Date: Tue, 8 Apr 2025 14:08:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 02/26] remoteproc: k3-r5: Refactor Data Structures to
- Align with DSP and M4
+Subject: Re: [PATCH v9 05/26] remoteproc: k3-m4: Use k3_rproc_mem_data
+ structure for memory info
 To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
         <mathieu.poirier@linaro.org>
 CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
@@ -60,239 +60,219 @@ CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20250317120622.1746415-1-b-padhi@ti.com>
- <20250317120622.1746415-3-b-padhi@ti.com>
- <6fa9b46e-2493-4ded-b5f7-43261d93d60c@ti.com>
+ <20250317120622.1746415-6-b-padhi@ti.com>
+ <0636d6a8-7de9-4887-82eb-3f5fd8a208d5@ti.com>
 Content-Language: en-US
 From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <6fa9b46e-2493-4ded-b5f7-43261d93d60c@ti.com>
+In-Reply-To: <0636d6a8-7de9-4887-82eb-3f5fd8a208d5@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Andrew,
 
-On 07/04/25 19:03, Andrew Davis wrote:
-> On 3/17/25 7:05 AM, Beleswar Padhi wrote:
->> Currently, struct members such as mem, num_mems, reset, tsp, ti_sci and
->> ti_sci_id are part of the k3_r5_core structure. To align the rproc->priv
->> data structure of the R5 remote processor with that of the DSP and M4,
->> move the above members from k3_r5_core to k3_r5_rproc.
->>
->> Additionally, introduce a void *priv pointer in k3_r5_rproc that can be
->> typecasted to point to the k3_r5_core structure. This abstraction is
->> done to ensure common functionalities across R5, DSP and M4 drivers can
->> be refactored at a later stage.
+On 07/04/25 19:13, Andrew Davis wrote:
+> On 3/17/25 7:06 AM, Beleswar Padhi wrote:
+>> The ti_k3_m4_remoteproc.c driver previously hardcoded device memory
+>> region addresses and names. Change this to use the k3_rproc_mem_data
+>> structure to store memory information. This aligns with DSP and R5
+>> drivers, and can be refactored out later.
 >>
 >> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 >> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 381 ++++++++++++-----------
->>   1 file changed, 198 insertions(+), 183 deletions(-)
+>>   drivers/remoteproc/ti_k3_m4_remoteproc.c | 60 ++++++++++++++++++------
+>>   1 file changed, 45 insertions(+), 15 deletions(-)
 >>
-[... snip ...]
->> @@ -1284,6 +1290,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       struct device *dev = &pdev->dev;
->>       struct k3_r5_rproc *kproc;
->>       struct k3_r5_core *core, *core1;
->> +    struct device_node *np;
->>       struct device *cdev;
->>       const char *fw_name;
->>       struct rproc *rproc;
->> @@ -1292,6 +1299,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->>       list_for_each_entry(core, &cluster->cores, elem) {
->>           cdev = core->dev;
->> +        np = dev_of_node(cdev);
->>           ret = rproc_of_parse_firmware(cdev, 0, &fw_name);
->>           if (ret) {
->>               dev_err(dev, "failed to parse firmware-name property, 
->> ret = %d\n",
->> @@ -1312,11 +1320,63 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>           rproc->recovery_disabled = true;
->>             kproc = rproc->priv;
->> -        kproc->cluster = cluster;
->> -        kproc->core = core;
->> +        kproc->priv = core;
->>           kproc->dev = cdev;
->>           kproc->rproc = rproc;
->> -        core->rproc = rproc;
->> +        core->kproc = kproc;
->> +
->> +        kproc->ti_sci = devm_ti_sci_get_by_phandle(cdev, "ti,sci");
->> +        if (IS_ERR(kproc->ti_sci)) {
->> +            ret = dev_err_probe(cdev, PTR_ERR(kproc->ti_sci),
->> +                        "failed to get ti-sci handle\n");
->> +            kproc->ti_sci = NULL;
->> +            goto out;
->> +        }
->> +
->> +        ret = of_property_read_u32(np, "ti,sci-dev-id", 
->> &kproc->ti_sci_id);
->> +        if (ret) {
->> +            dev_err(cdev, "missing 'ti,sci-dev-id' property\n");
->> +            goto out;
->> +        }
->> +
->> +        kproc->reset = devm_reset_control_get_exclusive(cdev, NULL);
->> +        if (IS_ERR_OR_NULL(kproc->reset)) {
->> +            ret = PTR_ERR_OR_ZERO(kproc->reset);
->> +            if (!ret)
->> +                ret = -ENODEV;
->> +            dev_err_probe(cdev, ret, "failed to get reset handle\n");
->> +            goto out;
->> +        }
->> +
->> +        kproc->tsp = ti_sci_proc_of_get_tsp(cdev, kproc->ti_sci);
->> +        if (IS_ERR(kproc->tsp)) {
->> +            ret = dev_err_probe(cdev, PTR_ERR(kproc->tsp),
->> +                        "failed to construct ti-sci proc control\n");
->> +            goto out;
->> +        }
->> +
->> +        ret = 
->> k3_r5_core_of_get_internal_memories(to_platform_device(cdev), kproc);
->> +        if (ret) {
->> +            dev_err(cdev, "failed to get internal memories, ret = 
->> %d\n",
->> +                ret);
->> +            goto out;
->> +        }
->> +
->> +        ret = ti_sci_proc_request(kproc->tsp);
->> +        if (ret < 0) {
->> +            dev_err(cdev, "ti_sci_proc_request failed, ret = %d\n", 
->> ret);
->> +            goto out;
->> +        }
->> +
->> +        ret = devm_add_action_or_reset(cdev, k3_r5_release_tsp, 
->> kproc->tsp);
->> +        if (ret)
->> +            goto out;
->> +    }
->> +
->> +    list_for_each_entry(core, &cluster->cores, elem) {
->> +        cdev = core->dev;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>             ret = k3_r5_rproc_request_mbox(rproc);
->>           if (ret)
->> @@ -1330,7 +1390,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>             ret = k3_r5_rproc_configure(kproc);
->>           if (ret) {
->> -            dev_err(dev, "initial configure failed, ret = %d\n",
->> +            dev_err(cdev, "initial configure failed, ret = %d\n",
->>                   ret);
->>               goto out;
->>           }
->> @@ -1340,14 +1400,14 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>             ret = k3_r5_reserved_mem_init(kproc);
->>           if (ret) {
->> -            dev_err(dev, "reserved memory init failed, ret = %d\n",
->> +            dev_err(cdev, "reserved memory init failed, ret = %d\n",
->>                   ret);
->>               goto out;
->>           }
->>   -        ret = devm_rproc_add(dev, rproc);
->> +        ret = devm_rproc_add(cdev, rproc);
->>           if (ret) {
->> -            dev_err_probe(dev, ret, "rproc_add failed\n");
->> +            dev_err_probe(cdev, ret, "rproc_add failed\n");
->>               goto out;
->>           }
->>   @@ -1373,7 +1433,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>                                  core->released_from_reset,
->>                                  msecs_to_jiffies(2000));
->>           if (ret <= 0) {
->> -            dev_err(dev,
->> +            dev_err(cdev,
->>                   "Timed out waiting for %s core to power up!\n",
->>                   rproc->name);
->>               goto out;
->> @@ -1396,8 +1456,8 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       /* undo core0 upon any failures on core1 in split-mode */
->>       if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
->>           core = list_prev_entry(core, elem);
->> -        rproc = core->rproc;
->> -        kproc = rproc->priv;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>           goto err_split;
->>       }
->>       return ret;
->> @@ -1422,8 +1482,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>           list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->>         list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> -        rproc = core->rproc;
->> -        kproc = rproc->priv;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>             if (rproc->state == RPROC_ATTACHED) {
->>               ret = rproc_detach(rproc);
->> @@ -1539,58 +1599,12 @@ static int k3_r5_core_of_init(struct 
->> platform_device *pdev)
->>           goto err;
->>       }
->>   -    core->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
->> -    if (IS_ERR(core->ti_sci)) {
->> -        ret = dev_err_probe(dev, PTR_ERR(core->ti_sci), "failed to 
->> get ti-sci handle\n");
->> -        core->ti_sci = NULL;
->> -        goto err;
->> -    }
->> -
->> -    ret = of_property_read_u32(np, "ti,sci-dev-id", &core->ti_sci_id);
->> -    if (ret) {
->> -        dev_err(dev, "missing 'ti,sci-dev-id' property\n");
->> -        goto err;
->> -    }
->> -
->> -    core->reset = devm_reset_control_get_exclusive(dev, NULL);
->> -    if (IS_ERR_OR_NULL(core->reset)) {
->> -        ret = PTR_ERR_OR_ZERO(core->reset);
->> -        if (!ret)
->> -            ret = -ENODEV;
->> -        dev_err_probe(dev, ret, "failed to get reset handle\n");
->> -        goto err;
->> -    }
->> -
->> -    core->tsp = ti_sci_proc_of_get_tsp(dev, core->ti_sci);
->> -    if (IS_ERR(core->tsp)) {
->> -        ret = dev_err_probe(dev, PTR_ERR(core->tsp),
->> -                    "failed to construct ti-sci proc control\n");
->> -        goto err;
->> -    }
->> -
->> -    ret = k3_r5_core_of_get_internal_memories(pdev, core);
->> -    if (ret) {
->> -        dev_err(dev, "failed to get internal memories, ret = %d\n",
->> -            ret);
->> -        goto err;
->> -    }
+>> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c 
+>> b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+>> index d0ee7a8d460d..e83bef7cfddf 100644
+>> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+>> @@ -20,9 +20,6 @@
+>>   #include "remoteproc_internal.h"
+>>   #include "ti_sci_proc.h"
+>>   -#define K3_M4_IRAM_DEV_ADDR 0x00000
+>> -#define K3_M4_DRAM_DEV_ADDR 0x30000
 >> -
 >
-> Is there anyway to do this part of the refactor (moving all this up into
-> k3_r5_cluster_rproc_init()) as part of a pre-patch? Might make this patch
-> more readable.
+> So two patches ago when you did this same thing for R5, you kept the
+> K3_R5_TCM_DEV_ADDR define. But here you remove the adress #defines.
+> I don't care if you leave them or keep them, but just do the same
+> either way for both M4 and R5.
 
 
-Unfortunately not. We move the structure members around in this patch, 
-so we should also do the necessary code changes to work with updated 
-structure in the same patch. So this patch has to go around being a 
-lengthier one :(
+Actually the K3_R5_TCM_DEV_ADDR define is used in multiple places in the 
+R5 driver even after migrating to `k3_r5_rproc_mem_data`. Ex - 
+k3_r5_core_of_get_internal_memories() uses this define to override the 
+`kproc->mem[i].dev_addr` initially assigned by 
+k3_rproc_of_get_memories() based on `loczrama`.
+
+The M4 driver does not need these defines after migrating to 
+`k3_m4_rproc_mem_data` as its IRAM/DRAM dev addresses are fixed. R5 
+core's ATCM/BTCM dev addresses are not fixed.
+
+Besides, keeping K3_M4_IRAM_DEV_ADDR will throw unused var warnings.
 
 Thanks,
 Beleswar
 
 >
-> Otherwise this all looks fine to me as it should be very mechanical 
-> renaming
-> and moving variables around.
->
 > Andrew
-[... snip ...]
+>
+>>   /**
+>>    * struct k3_m4_rproc_mem - internal memory structure
+>>    * @cpu_addr: MPU virtual address of the memory region
+>> @@ -38,15 +35,29 @@ struct k3_m4_rproc_mem {
+>>   };
+>>     /**
+>> - * struct k3_m4_rproc_mem_data - memory definitions for a remote 
+>> processor
+>> + * struct k3_m4_mem_data - memory definitions for a remote processor
+>>    * @name: name for this memory entry
+>>    * @dev_addr: device address for the memory entry
+>>    */
+>> -struct k3_m4_rproc_mem_data {
+>> +struct k3_m4_mem_data {
+>>       const char *name;
+>>       const u32 dev_addr;
+>>   };
+>>   +/**
+>> + * struct k3_m4_dev_data - device data structure for a M4 core
+>> + * @mems: pointer to memory definitions for a M4 core
+>> + * @num_mems: number of memory regions in @mems
+>> + * @boot_align_addr: boot vector address alignment granularity
+>> + * @uses_lreset: flag to denote the need for local reset management
+>> + */
+>> +struct k3_m4_dev_data {
+>> +    const struct k3_m4_mem_data *mems;
+>> +    u32 num_mems;
+>> +    u32 boot_align_addr;
+>> +    bool uses_lreset;
+>> +};
+>> +
+>>   /**
+>>    * struct k3_m4_rproc - k3 remote processor driver structure
+>>    * @dev: cached device pointer
+>> @@ -56,6 +67,7 @@ struct k3_m4_rproc_mem_data {
+>>    * @rmem: reserved memory regions data
+>>    * @num_rmems: number of reserved memory regions
+>>    * @reset: reset control handle
+>> + * @data: pointer to M4-specific device data
+>>    * @tsp: TI-SCI processor control handle
+>>    * @ti_sci: TI-SCI handle
+>>    * @ti_sci_id: TI-SCI device identifier
+>> @@ -71,6 +83,7 @@ struct k3_m4_rproc {
+>>       struct k3_m4_rproc_mem *rmem;
+>>       int num_rmems;
+>>       struct reset_control *reset;
+>> +    const struct k3_m4_dev_data *data;
+>>       struct ti_sci_proc *tsp;
+>>       const struct ti_sci_handle *ti_sci;
+>>       u32 ti_sci_id;
+>> @@ -336,14 +349,13 @@ static void *k3_m4_rproc_da_to_va(struct rproc 
+>> *rproc, u64 da, size_t len, bool
+>>   static int k3_m4_rproc_of_get_memories(struct platform_device *pdev,
+>>                          struct k3_m4_rproc *kproc)
+>>   {
+>> -    static const char * const mem_names[] = { "iram", "dram" };
+>> -    static const u32 mem_addrs[] = { K3_M4_IRAM_DEV_ADDR, 
+>> K3_M4_DRAM_DEV_ADDR };
+>> +    const struct k3_m4_dev_data *data = kproc->data;
+>>       struct device *dev = &pdev->dev;
+>>       struct resource *res;
+>>       int num_mems;
+>>       int i;
+>>   -    num_mems = ARRAY_SIZE(mem_names);
+>> +    num_mems = kproc->data->num_mems;
+>>       kproc->mem = devm_kcalloc(kproc->dev, num_mems,
+>>                     sizeof(*kproc->mem), GFP_KERNEL);
+>>       if (!kproc->mem)
+>> @@ -351,17 +363,17 @@ static int k3_m4_rproc_of_get_memories(struct 
+>> platform_device *pdev,
+>>         for (i = 0; i < num_mems; i++) {
+>>           res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> -                           mem_names[i]);
+>> +                           data->mems[i].name);
+>>           if (!res) {
+>>               dev_err(dev, "found no memory resource for %s\n",
+>> -                mem_names[i]);
+>> +                data->mems[i].name);
+>>               return -EINVAL;
+>>           }
+>>           if (!devm_request_mem_region(dev, res->start,
+>>                            resource_size(res),
+>>                            dev_name(dev))) {
+>>               dev_err(dev, "could not request %s region for resource\n",
+>> -                mem_names[i]);
+>> +                data->mems[i].name);
+>>               return -EBUSY;
+>>           }
+>>   @@ -369,15 +381,15 @@ static int k3_m4_rproc_of_get_memories(struct 
+>> platform_device *pdev,
+>>                                resource_size(res));
+>>           if (!kproc->mem[i].cpu_addr) {
+>>               dev_err(dev, "failed to map %s memory\n",
+>> -                mem_names[i]);
+>> +                data->mems[i].name);
+>>               return -ENOMEM;
+>>           }
+>>           kproc->mem[i].bus_addr = res->start;
+>> -        kproc->mem[i].dev_addr = mem_addrs[i];
+>> +        kproc->mem[i].dev_addr = data->mems[i].dev_addr;
+>>           kproc->mem[i].size = resource_size(res);
+>>             dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK 
+>> da 0x%x\n",
+>> -            mem_names[i], &kproc->mem[i].bus_addr,
+>> +            data->mems[i].name, &kproc->mem[i].bus_addr,
+>>               kproc->mem[i].size, kproc->mem[i].cpu_addr,
+>>               kproc->mem[i].dev_addr);
+>>       }
+>> @@ -563,12 +575,17 @@ static int k3_m4_rproc_probe(struct 
+>> platform_device *pdev)
+>>   {
+>>       struct device *dev = &pdev->dev;
+>>       struct k3_m4_rproc *kproc;
+>> +    const struct k3_m4_dev_data *data;
+>>       struct rproc *rproc;
+>>       const char *fw_name;
+>>       bool r_state = false;
+>>       bool p_state = false;
+>>       int ret;
+>>   +    data = of_device_get_match_data(dev);
+>> +    if (!data)
+>> +        return -ENODEV;
+>> +
+>>       ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+>>       if (ret)
+>>           return dev_err_probe(dev, ret, "failed to parse 
+>> firmware-name property\n");
+>> @@ -583,6 +600,7 @@ static int k3_m4_rproc_probe(struct 
+>> platform_device *pdev)
+>>       kproc = rproc->priv;
+>>       kproc->dev = dev;
+>>       kproc->rproc = rproc;
+>> +    kproc->data = data;
+>>       platform_set_drvdata(pdev, rproc);
+>>         kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+>> @@ -650,8 +668,20 @@ static int k3_m4_rproc_probe(struct 
+>> platform_device *pdev)
+>>       return 0;
+>>   }
+>>   +static const struct k3_m4_mem_data am64_m4_mems[] = {
+>> +    { .name = "iram", .dev_addr = 0x0 },
+>> +    { .name = "dram", .dev_addr = 0x30000 },
+>> +};
+>> +
+>> +static const struct k3_m4_dev_data am64_m4_data = {
+>> +    .mems = am64_m4_mems,
+>> +    .num_mems = ARRAY_SIZE(am64_m4_mems),
+>> +    .boot_align_addr = SZ_1K,
+>> +    .uses_lreset = true,
+>> +};
+>> +
+>>   static const struct of_device_id k3_m4_of_match[] = {
+>> -    { .compatible = "ti,am64-m4fss", },
+>> +    { .compatible = "ti,am64-m4fss", .data = &am64_m4_data, },
+>>       { /* sentinel */ },
+>>   };
+>>   MODULE_DEVICE_TABLE(of, k3_m4_of_match);
