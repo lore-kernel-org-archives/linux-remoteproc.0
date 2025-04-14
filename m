@@ -1,72 +1,54 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024F62CCC1
-	for <linux-remoteproc@vger.kernel.org>; Mon, 14 Apr 2025 04:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EAD2820AD;
+	Mon, 14 Apr 2025 14:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744606033; cv=none; b=d8ouJumPOAXR5rcjN8CliW/lnS8B+cq+KMzc8gLUG+ToBnWO1oZjqVSu9/G5nxk6ZQtcCWKYhlz+lVUhzqOak/1x4+GLujiotwKQHyU6Mye5bhbsAYfYIodTTmFqqqzFqZ31/mFXg04doPyxdwb9mkrANBpEN1fJoQ4hts621C0=
+	t=1744639426; cv=none; b=sk7j/K0xYz/2EXn4KfdaMJdoFUHzn7ZYRy3k5ib2mDEpLXxS2Un0xNxSQv9jyI/OgRYlS3A86kzlcLBTgq4/9hAOJsefRimwEYs47unB4wsiEm50UplNFwcxtGucQkzTLqjpaPT+sMVUQEK7aSJP8pqFdU3JQnrfMd+EpSr8lDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744606033; c=relaxed/simple;
-	bh=Lzn3nHg6frC70bwlGUP9NFlYU6/Ims181gO24nFkAeA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L+O5ypriXUjEWj24H9sV3Meq4pDKxcmN/b1RaTPZRKt2BAYp6Fvk7X+C98aXnSzYEjpEEt33BtKxVOCXI8nJPHkveGB2QtPKAxyhPWQaxme1DXMAVF32pk+HpBjMqLYV9XWmw8zzXTLmEAwnVEs6UCIz/RvcjWDPajoS/IXWbOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VanVoaNy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1744639426; c=relaxed/simple;
+	bh=U3FzFjHA6Fkro3jO+W5B2+lHYgcq86DaT9A/iPun6ts=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=Phs7X+Ze0BffwoHy3EKFtARK95XBIs/VFrH8Z8sC7y5jtvjsaRDpz1Jb+W/TlBHZPovWFCxqZyw2P3bDNOqMTZVj/rrYMeLTfTPPszTr82jlIPXYwrxvp1APMtvGdWFCiuO2BSUqsp6lU95KRDeZXqCSJBK96sNb+V4vmtcMkHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OOObsEyz; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VanVoaNy"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53DLf2m5024141
-	for <linux-remoteproc@vger.kernel.org>; Mon, 14 Apr 2025 04:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OOObsEyz"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ECsOaa017111;
+	Mon, 14 Apr 2025 16:03:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d6LHPGzKPTme7TI+asF2UgD5YaL0iWt97fab/CoRnI0=; b=VanVoaNycbpUTBNM
-	dc7qcCbPBr1jrTZCRwy4kjtcwAUVShM2Cfalrhp39gh5DTz2IGv3V565CbsWTqaz
-	1tnOKpeRjPbME5WndUinzXjWLmuRdQ5tr0T+UGGhmz8/sBMJt8qCI7ls/kkZnNM8
-	PSOC8l/OCPUDEmrTpvPkXhWzztvgmZ61DkPiqykCzDi4pWs84oH/PhzlTJfQv5va
-	F9O8ez0rpEaLViiww/mVhaEGM302joHI38LuEdE19gA8MD9BU2gYppgp2ZngTk9f
-	pCfYPVxQPzqanJmxqLqLXJnpHcKqQGHmDmnL4K7V+s9dB60MuC9cwYXRfhMIzT19
-	U0+95w==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjbbcp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 14 Apr 2025 04:47:10 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3032f4ea8cfso4031425a91.3
-        for <linux-remoteproc@vger.kernel.org>; Sun, 13 Apr 2025 21:47:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744606029; x=1745210829;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6LHPGzKPTme7TI+asF2UgD5YaL0iWt97fab/CoRnI0=;
-        b=w2Wo3BiujZpDeTxrCM9hkZBdtovn1rfIGfWrOvp1/rCE/kOtv99fA4mBs3GuczsTmi
-         Q4drGBzNVjEnbw8Gt3py+cpO0j1jvfZ/8Uy4x1SGCOvSGMsa5rWlqs8hsvZsUCoEf4pU
-         IvAZm/H8TCUQrOO/NcwDiwjXCGLXQQ3gtkKuPI40vuphwA5zsqwP8jNjKsl5gg6TGP8R
-         wb/8/8cmVnsHq67KuCCnvTkdDcBteibXpwa5TuQRHMQp7RithOMY31DCf14zhW+L+y3j
-         Cg7Gzgosi1zz7mF4HpVKa83FbWMmuIPy3AYa0uN3vIUbovQHVZowow8Z7SkvccpsdLXH
-         id6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXieQ9ENCajLIOYbMAKnF7jOnhaD+itEIivRXKlVUvGtRidkQI/4cyOccFkJP0O6UGAILWO2Rj1LY6T+jtq5Qcl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVQQxr+5YtUbJy6DE5rsmrYmuJ63zLH1tqn7KcU2E1PDI3SuY1
-	dpGp1SAUhaDT97dWDoYUfmqimKHnj8b+nFWM0ldJMi4AhbzTC6XTz7hFKsR5SXkFXrJodJCBkVa
-	q0pk2PG26udbG/UCIetG9UA8KlY5BMIFHyTQPfPBrg1Preou/5XTEC7B3K+pPb1ywvOhM
-X-Gm-Gg: ASbGncuO/FaEzZrizDrAe7qzVe9ypDMz83oAvMPnhLy/jkZB5b757q8dgbivnUN+cRe
-	OTM0+ePKmTzT6cxLsi7zMApJ1xsVVO2RtySzNWaHDp0I3lnPn46OUmW5topTUu+TwtM/IfpzG8P
-	xnazHtNDq9Dm7a/g/UjfLVNUnHm5pY0HWvA40NfhPrrBnW65rNaePJbLp0rd1wPlKZXqPPizxr/
-	ZQZdoU1NgiNTdoGxY18QQPP4Rqhqp6ncx0q8eDqkNIxaVjH8Tvedr/bCxKbBEGSUmfXJgXFkdhB
-	3T0j02LsBEf9pXxksK4VO+OcahQvEdXqbD2m9bA=
-X-Received: by 2002:a17:90b:5845:b0:2ff:64c3:3bd9 with SMTP id 98e67ed59e1d1-30823672b9bmr13074698a91.23.1744606029145;
-        Sun, 13 Apr 2025 21:47:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENsOydhWzBxYmE9zqg+BUpla0g1wkLIqAB06iaNVVVSJnMKCP1JKLevtKvj7kV9klIR7euew==
-X-Received: by 2002:a17:90b:5845:b0:2ff:64c3:3bd9 with SMTP id 98e67ed59e1d1-30823672b9bmr13074666a91.23.1744606028211;
-        Sun, 13 Apr 2025 21:47:08 -0700 (PDT)
-Received: from [10.152.201.37] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c97a1bsm90866115ad.148.2025.04.13.21.47.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Apr 2025 21:47:07 -0700 (PDT)
-Message-ID: <8451d951-4876-4dbf-9a64-6284f4b194f8@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 10:17:02 +0530
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	AXBT3Gx49OIy8DXLSl7KoI0jOZ+YAa+TLsMsUTA/Dt4=; b=OOObsEyzzjEjvwnu
+	cH7LPVAmKJ3JygUwty9UIFQ/TSuUXnHve4rbZGsgO07BlL7GQ29k/0NFClsHE0Md
+	vJ5vPJ0zeuVHGgmDZL40DY2s/+JFq/U94176Hm1bP8mYaOFml7X5VuOWhfqLRLJk
+	iPBrnq7tIYC3zwDPqJgkrjLaCdpcJSUiyKw4tjUPwEUNlrIu9b0K0W9fln1u+V0q
+	4z/KsPm57RESOEsPoZaTun0UXAStaG/xkeVSzBlNVE4ObKfaMkSbgoLYNx74nK+o
+	iWJqNQRyEXb9k6G+dEJn4g4ljLAa1rMfwe4gFEX/TZaZVimMs5o99VKJ3uC2Bzc3
+	3qTJGw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45yf2gr5j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 16:03:26 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7752440049;
+	Mon, 14 Apr 2025 16:02:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 53C46981A1E;
+	Mon, 14 Apr 2025 15:59:34 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Apr
+ 2025 15:59:34 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Apr
+ 2025 15:59:33 +0200
+Message-ID: <be981c5c-5252-4650-a148-c2f51d83a430@foss.st.com>
+Date: Mon, 14 Apr 2025 15:59:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,65 +56,129 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/8] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-From: Gokul Sriram P <gokul.sriram.p@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, konradybcio@kernel.org, quic_mmanikan@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: quic_srichara@quicinc.com, vignesh.viswanathan@oss.qualcomm.com
-References: <20250403120304.2345677-1-gokul.sriram.p@oss.qualcomm.com>
- <20250403120304.2345677-3-gokul.sriram.p@oss.qualcomm.com>
- <6b33d7ea-4ad5-454f-bd26-0ef961cf7ae3@kernel.org>
- <91bba481-5871-48dc-a7d6-86f3bcb60d0d@oss.qualcomm.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH v16 0/6] Introduction of a remoteproc tee to load signed
+ firmware
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20250325095833.3059895-1-arnaud.pouliquen@foss.st.com>
 Content-Language: en-US
-In-Reply-To: <91bba481-5871-48dc-a7d6-86f3bcb60d0d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Organization: STMicroelectronics
+In-Reply-To: <20250325095833.3059895-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: PYvBTLJLKJjI1-t3zVcxr0RhTTIS3hV5
-X-Proofpoint-ORIG-GUID: PYvBTLJLKJjI1-t3zVcxr0RhTTIS3hV5
-X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fc934e cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=I_bNZBVWta6x9M9XHmAA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=835 mlxscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140033
+ definitions=2025-04-14_04,2025-04-10_01,2024-11-22_01
+
+Hello Bjorn,
+
+Gentle reminder.
+
+For your information, I proposed to Mathieu that he wait for your first review,
+as this revision is intended to address your comments on revision 15."
+
+Thanks,
+Arnaud
 
 
-On 4/4/2025 12:38 PM, Gokul Sriram P wrote:
-> On 4/3/2025 7:51 PM, Krzysztof Kozlowski wrote:
->> On 03/04/2025 14:02, Gokul Sriram Palanisamy wrote:
->>> +    minItems: 1
->>> +    items:
->>> +      - description: Q6 reserved region
->>> +      - description: Q6 dtb reserved region
->>> +
->>> +  qcom,q6-dtb-info:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> NAK, you added new properties which invalidates review. You must drop
->> review after making such significant changes (3 new properties? Several
->> other changed).
->> See submitting patches.
->>
->> Anyway, NAK for the property, you don't get DTB info from DTB.
-> Sorry for the confusion. My bad, this Q6 DTB loading from rproc is a new
-> topic.
-> The HW/FW has not changed, will revert.
-> I will repost V5 with just the comments from V3 addressed and introduce
-> the changes
-> required for Q6 DTB in a separate series. Is that fine ?
-Hi Krzysztof,
-
-while posting v5 with changes to dt-bindings in v4 reverted and retain
-it the same as in v3, can I keep your reviewed-by ?
-
-Regards,
-
-Gokul
-
+On 3/25/25 10:58, Arnaud Pouliquen wrote:
+> Main updates from version V15[1]:
+> - Removed the rproc_ops:load_fw() operation introduced in the previous version.
+> - Returned to managing the remoteproc firmware loading in rproc_tee_parse_fw to
+>   load and authenticate the firmware before getting the resource table.
+> - Added spinlock and dev_link mechanisms in remoteproc TEE to better manage
+>   bind/unbind.
+> 
+> More details are available in each patch commit message.
+> 
+> [1] https://lore.kernel.org/linux-remoteproc/20241128084219.2159197-7-arnaud.pouliquen@foss.st.com/T/
+> 
+> Tested-on: commit 0a0ba9924445 ("Linux 6.14-rc7")
+> 
+> Description of the feature:
+> --------------------------
+> This series proposes the implementation of a remoteproc tee driver to
+> communicate with a TEE trusted application responsible for authenticating
+> and loading the remoteproc firmware image in an Arm secure context.
+> 
+> 1) Principle:
+> 
+> The remoteproc tee driver provides services to communicate with the OP-TEE
+> trusted application running on the Trusted Execution Context (TEE).
+> The trusted application in TEE manages the remote processor lifecycle:
+> 
+> - authenticating and loading firmware images,
+> - isolating and securing the remote processor memories,
+> - supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+> - managing the start and stop of the firmware by the TEE.
+> 
+> 2) Format of the signed image:
+> 
+> Refer to:
+> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+> 
+> 3) OP-TEE trusted application API:
+> 
+> Refer to:
+> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+> 
+> 4) OP-TEE signature script
+> 
+> Refer to:
+> https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+> 
+> Example of usage:
+> sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+> 
+> 
+> 5) Impact on User space Application
+> 
+> No sysfs impact. The user only needs to provide the signed firmware image
+> instead of the ELF image.
+> 
+> 
+> For more information about the implementation, a presentation is available here
+> (note that the format of the signed image has evolved between the presentation
+> and the integration in OP-TEE).
+> 
+> https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+> 
+> 
+> 
+> Arnaud Pouliquen (6):
+>   remoteproc: core: Introduce rproc_pa_to_va helper
+>   remoteproc: Add TEE support
+>   remoteproc: Introduce release_fw optional operation
+>   dt-bindings: remoteproc: Add compatibility for TEE support
+>   remoteproc: stm32: Create sub-functions to request shutdown and
+>     release
+>   remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+> 
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
+>  drivers/remoteproc/Kconfig                    |  10 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/remoteproc_core.c          |  52 ++
+>  drivers/remoteproc/remoteproc_internal.h      |   6 +
+>  drivers/remoteproc/remoteproc_tee.c           | 619 ++++++++++++++++++
+>  drivers/remoteproc/stm32_rproc.c              | 139 +++-
+>  include/linux/remoteproc.h                    |   4 +
+>  include/linux/remoteproc_tee.h                |  90 +++
+>  9 files changed, 935 insertions(+), 44 deletions(-)
+>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+>  create mode 100644 include/linux/remoteproc_tee.h
+> 
+> 
+> base-commit: 0a0ba99244455fea8706c4a53f5f66a45d87905d
