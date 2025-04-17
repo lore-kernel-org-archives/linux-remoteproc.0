@@ -1,56 +1,56 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2228266B77;
-	Thu, 17 Apr 2025 18:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF4D267396;
+	Thu, 17 Apr 2025 18:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744914135; cv=none; b=WAqMc5WXnTrXjNVesrkZFNIav/LmI7hsr4icGxQcpg/1Bx9VvChhQJjrJSO0N7QJjHBa2yEuG4hgWXjIDqDWEMOZHMF604J7FHljkU2se+ICBjSirfBknwu/aEgzQAr7hN2E8vH0HXlIeYI2ZuOteS9IRt6D9XduA5x/UOhlwms=
+	t=1744914141; cv=none; b=PUCMV5J5xUrD479bi/hKT8ai5/PS1dELg1PAawU+Uy6YUdOhtrfSymXTQiH2n3TpqeQrlvsj6BQgltqiQ/S+vF5qtdj02Wpv6AvpkQpQFVT0cyRdNb532w0xhi6dx1RTOUWbpjjnr6/4dcFoJUmmFpjYKxnSV8no3cSGG4MmJpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744914135; c=relaxed/simple;
-	bh=DtgdIQ1uJR/3gEq/vUa5WjpIsZF/a9hFa+NHvnMEn2E=;
+	s=arc-20240116; t=1744914141; c=relaxed/simple;
+	bh=kuti+Dhsm+iHWIbAjiHls7iE8E39lux+D4PqcTRTxzI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L3fuOWjTVl08XWl90b7eqknwGgHggjfhEXhTwhgWxFwseCFAwCAT4VwScNO0KpkUSAwLbF2395NfAuf7nCAwV8dqycG8LmqRl5M6cq7eD2pCENXgUMCyObMsWGQ6Y8PUesPd9Yw9jahzwd9/uEBx2dlB7qbGPts0VwPw/timT6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hgB/joLY; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=rrlP37keOrW1D18+9QxJotB/WYCyEM1QwdMznAuEbNj1mswvpDWTdST9JaXOphzury+VLyTAZ7YDDhyA55kWws45QzAZZzLxH4U/MrGgHHEH3wyV9c+NaLc0s+P6fXqRGy/reIbbw+hmiw9myjHz4yWpxCpwLaj57xjJRn/0yz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qwz063pL; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hgB/joLY"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIM6Sx089543
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qwz063pL"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIM9US776115
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Apr 2025 13:22:06 -0500
+	Thu, 17 Apr 2025 13:22:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744914126;
-	bh=abtB4ZFYtoNnrfBqSy3Ny68XWWmjncHCxCkXb9Qvcug=;
+	s=ti-com-17Q1; t=1744914129;
+	bh=yzM3VXY0WpBGdJKmDbExnid1aO6P13vN8jkfkHbTiDE=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=hgB/joLYHvErCB718xTB0WzBCcAASC1vcl7qU5Zn3FCMn50Tsn/tRlMxbc7Kif4UZ
-	 ceKyFSPxIJUUefbKWHzY+2UVaPtiq+gnqsq5BCfr3asnsyMw+OLejlspg1D4vmmrrN
-	 4fiFGaUmOnhpoa2znBm8qbFyYMyoSpzkunbt/EUo=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIM6wQ068286
+	b=qwz063pLOHRpiCM3JakbrG5+JSXe+9aE8vcHtcP1RAV4MScZvJXqpAGKq7iZ8pTFF
+	 PH6vO7ngBK+r0S/M3Jt6PAmEOmRdDNp7UWSxGDpZWwedBkuaKw1HRtY+0OYZcL67sv
+	 gS7m+xFSEU+HqlSgF0eHuLR4FZA3PXZRujGlj3oo=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIM92X028699
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Apr 2025 13:22:06 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 17 Apr 2025 13:22:09 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Apr 2025 13:22:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 13:22:09 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 17 Apr 2025 13:22:05 -0500
+ Frontend Transport; Thu, 17 Apr 2025 13:22:09 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HIK1IG071102;
-	Thu, 17 Apr 2025 13:22:02 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HIK1IH071102;
+	Thu, 17 Apr 2025 13:22:06 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 32/33] remoteproc: k3: Refactor reserved_mem_init() functions into common driver
-Date: Thu, 17 Apr 2025 23:50:00 +0530
-Message-ID: <20250417182001.3903905-33-b-padhi@ti.com>
+Subject: [PATCH v10 33/33] remoteproc: k3: Refactor release_tsp() functions into common driver
+Date: Thu, 17 Apr 2025 23:50:01 +0530
+Message-ID: <20250417182001.3903905-34-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250417182001.3903905-1-b-padhi@ti.com>
 References: <20250417182001.3903905-1-b-padhi@ti.com>
@@ -64,13 +64,12 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The reserved_mem_init() implementations in the R5, DSP and M4 remoteproc
-drivers initialize the reserved memory regions associated with the
-remote processor.
+The release_tsp() implementations in the TI K3 R5, DSP and M4 remoteproc
+drivers release the TI-SCI processor control of a remote processor,
+which is auto triggered upon device removal.
 
-Refactor these functions into the ti_k3_common.c driver as
-k3_reserved_mem_init() and use this common function throughout in R5,
-DSP and M4 drivers.
+Refactor these functions into ti_k3_common.c driver as k3_release_tsp()
+and use this common function throughout in R5, DSP and M4 drivers.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
@@ -78,384 +77,124 @@ v10: Changelog:
 1. Update commit message to call out changes in a better way.
 
 Link to v9:
-https://lore.kernel.org/all/20250317120622.1746415-26-b-padhi@ti.com/
+https://lore.kernel.org/all/20250317120622.1746415-27-b-padhi@ti.com/
 
- drivers/remoteproc/ti_k3_common.c         | 70 +++++++++++++++++++
- drivers/remoteproc/ti_k3_common.h         |  1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 72 +-------------------
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 71 +-------------------
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 82 +----------------------
- 5 files changed, 74 insertions(+), 222 deletions(-)
+ drivers/remoteproc/ti_k3_common.c         | 8 ++++++++
+ drivers/remoteproc/ti_k3_common.h         | 1 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 9 +--------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 9 +--------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 9 +--------
+ 5 files changed, 12 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index ec7c06f492ec5..f7fa757de04de 100644
+index f7fa757de04de..64edf536f384d 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -471,5 +471,75 @@ void k3_mem_release(void *data)
+@@ -541,5 +541,13 @@ int k3_reserved_mem_init(struct k3_rproc *kproc)
  }
- EXPORT_SYMBOL_GPL(k3_mem_release);
+ EXPORT_SYMBOL_GPL(k3_reserved_mem_init);
  
-+int k3_reserved_mem_init(struct k3_rproc *kproc)
++void k3_release_tsp(void *data)
 +{
-+	struct device *dev = kproc->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *rmem_np;
-+	struct reserved_mem *rmem;
-+	int num_rmems;
-+	int ret, i;
++	struct ti_sci_proc *tsp = data;
 +
-+	num_rmems = of_property_count_elems_of_size(np, "memory-region",
-+						    sizeof(phandle));
-+	if (num_rmems < 0) {
-+		dev_err(dev, "device does not reserved memory regions (%d)\n",
-+			num_rmems);
-+		return -EINVAL;
-+	}
-+	if (num_rmems < 2) {
-+		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
-+			num_rmems);
-+		return -EINVAL;
-+	}
-+
-+	/* use reserved memory region 0 for vring DMA allocations */
-+	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
-+	if (ret) {
-+		dev_err(dev, "device cannot initialize DMA pool (%d)\n", ret);
-+		return ret;
-+	}
-+	ret = devm_add_action_or_reset(dev, k3_mem_release, dev);
-+	if (ret)
-+		return ret;
-+
-+	num_rmems--;
-+	kproc->rmem = devm_kcalloc(dev, num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
-+	if (!kproc->rmem)
-+		return -ENOMEM;
-+
-+	/* use remaining reserved memory regions for static carveouts */
-+	for (i = 0; i < num_rmems; i++) {
-+		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
-+		if (!rmem_np)
-+			return -EINVAL;
-+
-+		rmem = of_reserved_mem_lookup(rmem_np);
-+		of_node_put(rmem_np);
-+		if (!rmem)
-+			return -EINVAL;
-+
-+		kproc->rmem[i].bus_addr = rmem->base;
-+		/* 64-bit address regions currently not supported */
-+		kproc->rmem[i].dev_addr = (u32)rmem->base;
-+		kproc->rmem[i].size = rmem->size;
-+		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
-+		if (!kproc->rmem[i].cpu_addr) {
-+			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
-+				i + 1, &rmem->base, &rmem->size);
-+			return -ENOMEM;
-+		}
-+
-+		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-+			i + 1, &kproc->rmem[i].bus_addr,
-+			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
-+			kproc->rmem[i].dev_addr);
-+	}
-+	kproc->num_rmems = num_rmems;
-+
-+	return 0;
++	ti_sci_proc_release(tsp);
 +}
-+EXPORT_SYMBOL_GPL(k3_reserved_mem_init);
++EXPORT_SYMBOL_GPL(k3_release_tsp);
 +
  MODULE_LICENSE("GPL");
  MODULE_DESCRIPTION("TI K3 common Remoteproc code");
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 70656215c4d72..148717942dfb3 100644
+index 148717942dfb3..a9981303dde83 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -108,4 +108,5 @@ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len,
- int k3_rproc_of_get_memories(struct platform_device *pdev,
+@@ -109,4 +109,5 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
  			     struct k3_rproc *kproc);
  void k3_mem_release(void *data);
-+int k3_reserved_mem_init(struct k3_rproc *kproc);
+ int k3_reserved_mem_init(struct k3_rproc *kproc);
++void k3_release_tsp(void *data);
  #endif /* REMOTEPROC_TI_K3_COMMON_H */
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 6c79b347a610a..45000b68260c1 100644
+index 45000b68260c1..7a72933bd403b 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -66,76 +66,6 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
+@@ -66,13 +66,6 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
  	.get_loaded_rsc_table	= k3_get_loaded_rsc_table,
  };
  
--static int k3_dsp_reserved_mem_init(struct k3_rproc *kproc)
+-static void k3_dsp_release_tsp(void *data)
 -{
--	struct device *dev = kproc->dev;
--	struct device_node *np = dev->of_node;
--	struct device_node *rmem_np;
--	struct reserved_mem *rmem;
--	int num_rmems;
--	int ret, i;
+-	struct ti_sci_proc *tsp = data;
 -
--	num_rmems = of_property_count_elems_of_size(np, "memory-region",
--						    sizeof(phandle));
--	if (num_rmems < 0) {
--		dev_err(dev, "device does not reserved memory regions (%pe)\n",
--			ERR_PTR(num_rmems));
--		return -EINVAL;
--	}
--	if (num_rmems < 2) {
--		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
--			num_rmems);
--		return -EINVAL;
--	}
--
--	/* use reserved memory region 0 for vring DMA allocations */
--	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
--	if (ret) {
--		dev_err(dev, "device cannot initialize DMA pool (%pe)\n",
--			ERR_PTR(ret));
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, k3_mem_release, dev);
--	if (ret)
--		return ret;
--
--	num_rmems--;
--	kproc->rmem = devm_kcalloc(dev, num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
--	if (!kproc->rmem)
--		return -ENOMEM;
--
--	/* use remaining reserved memory regions for static carveouts */
--	for (i = 0; i < num_rmems; i++) {
--		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
--		if (!rmem_np)
--			return -EINVAL;
--
--		rmem = of_reserved_mem_lookup(rmem_np);
--		of_node_put(rmem_np);
--		if (!rmem)
--			return -EINVAL;
--
--		kproc->rmem[i].bus_addr = rmem->base;
--		/* 64-bit address regions currently not supported */
--		kproc->rmem[i].dev_addr = (u32)rmem->base;
--		kproc->rmem[i].size = rmem->size;
--		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
--		if (!kproc->rmem[i].cpu_addr) {
--			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
--				i + 1, &rmem->base, &rmem->size);
--			return -ENOMEM;
--		}
--
--		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
--			i + 1, &kproc->rmem[i].bus_addr,
--			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
--			kproc->rmem[i].dev_addr);
--	}
--	kproc->num_rmems = num_rmems;
--
--	return 0;
+-	ti_sci_proc_release(tsp);
 -}
 -
- static void k3_dsp_release_tsp(void *data)
+ static int k3_dsp_rproc_probe(struct platform_device *pdev)
  {
- 	struct ti_sci_proc *tsp = data;
-@@ -214,7 +144,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+@@ -136,7 +129,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
+ 		return ret;
+ 	}
+-	ret = devm_add_action_or_reset(dev, k3_dsp_release_tsp, kproc->tsp);
++	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
  	if (ret)
  		return ret;
  
--	ret = k3_dsp_reserved_mem_init(kproc);
-+	ret = k3_reserved_mem_init(kproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "reserved memory init failed\n");
- 
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index aeddbf82901f9..d6c9d90184bb4 100644
+index d6c9d90184bb4..6a5ff3b7a82a3 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -21,75 +21,6 @@
+@@ -21,13 +21,6 @@
  #include "ti_sci_proc.h"
  #include "ti_k3_common.h"
  
--static int k3_m4_reserved_mem_init(struct k3_rproc *kproc)
+-static void k3_m4_release_tsp(void *data)
 -{
--	struct device *dev = kproc->dev;
--	struct device_node *np = dev->of_node;
--	struct device_node *rmem_np;
--	struct reserved_mem *rmem;
--	int num_rmems;
--	int ret, i;
+-	struct ti_sci_proc *tsp = data;
 -
--	num_rmems = of_property_count_elems_of_size(np, "memory-region",
--						    sizeof(phandle));
--	if (num_rmems < 0) {
--		dev_err(dev, "device does not reserved memory regions (%d)\n",
--			num_rmems);
--		return -EINVAL;
--	}
--	if (num_rmems < 2) {
--		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
--			num_rmems);
--		return -EINVAL;
--	}
--
--	/* use reserved memory region 0 for vring DMA allocations */
--	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
--	if (ret) {
--		dev_err(dev, "device cannot initialize DMA pool (%d)\n", ret);
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, k3_mem_release, dev);
--	if (ret)
--		return ret;
--
--	num_rmems--;
--	kproc->rmem = devm_kcalloc(dev, num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
--	if (!kproc->rmem)
--		return -ENOMEM;
--
--	/* use remaining reserved memory regions for static carveouts */
--	for (i = 0; i < num_rmems; i++) {
--		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
--		if (!rmem_np)
--			return -EINVAL;
--
--		rmem = of_reserved_mem_lookup(rmem_np);
--		of_node_put(rmem_np);
--		if (!rmem)
--			return -EINVAL;
--
--		kproc->rmem[i].bus_addr = rmem->base;
--		/* 64-bit address regions currently not supported */
--		kproc->rmem[i].dev_addr = (u32)rmem->base;
--		kproc->rmem[i].size = rmem->size;
--		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
--		if (!kproc->rmem[i].cpu_addr) {
--			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
--				i + 1, &rmem->base, &rmem->size);
--			return -ENOMEM;
--		}
--
--		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
--			i + 1, &kproc->rmem[i].bus_addr,
--			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
--			kproc->rmem[i].dev_addr);
--	}
--	kproc->num_rmems = num_rmems;
--
--	return 0;
+-	ti_sci_proc_release(tsp);
 -}
 -
- static void k3_m4_release_tsp(void *data)
- {
- 	struct ti_sci_proc *tsp = data;
-@@ -170,7 +101,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+ static const struct rproc_ops k3_m4_rproc_ops = {
+ 	.prepare = k3_rproc_prepare,
+ 	.unprepare = k3_rproc_unprepare,
+@@ -93,7 +86,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+ 	ret = ti_sci_proc_request(kproc->tsp);
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
+-	ret = devm_add_action_or_reset(dev, k3_m4_release_tsp, kproc->tsp);
++	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
  	if (ret)
  		return ret;
  
--	ret = k3_m4_reserved_mem_init(kproc);
-+	ret = k3_reserved_mem_init(kproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "reserved memory init failed\n");
- 
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 59bd610f2a8c7..77183606b9d4d 100644
+index 77183606b9d4d..aada8a3795357 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -761,86 +761,6 @@ static int k3_r5_rproc_configure(struct k3_rproc *kproc)
- 	return ret;
+@@ -1011,13 +1011,6 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+ 	return 0;
  }
  
--static int k3_r5_reserved_mem_init(struct k3_rproc *kproc)
+-static void k3_r5_release_tsp(void *data)
 -{
--	struct device *dev = kproc->dev;
--	struct device_node *np = dev_of_node(dev);
--	struct device_node *rmem_np;
--	struct reserved_mem *rmem;
--	int num_rmems;
--	int ret, i;
+-	struct ti_sci_proc *tsp = data;
 -
--	num_rmems = of_property_count_elems_of_size(np, "memory-region",
--						    sizeof(phandle));
--	if (num_rmems <= 0) {
--		dev_err(dev, "device does not have reserved memory regions, ret = %d\n",
--			num_rmems);
--		return -EINVAL;
--	}
--	if (num_rmems < 2) {
--		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
--			num_rmems);
--		return -EINVAL;
--	}
--
--	/* use reserved memory region 0 for vring DMA allocations */
--	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
--	if (ret) {
--		dev_err(dev, "device cannot initialize DMA pool, ret = %d\n",
--			ret);
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(dev, k3_mem_release, dev);
--	if (ret)
--		return ret;
--
--	num_rmems--;
--	kproc->rmem = devm_kcalloc(dev, num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
--	if (!kproc->rmem)
--		return -ENOMEM;
--
--	/* use remaining reserved memory regions for static carveouts */
--	for (i = 0; i < num_rmems; i++) {
--		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
--		if (!rmem_np)
--			return -EINVAL;
--
--		rmem = of_reserved_mem_lookup(rmem_np);
--		of_node_put(rmem_np);
--		if (!rmem)
--			return -EINVAL;
--
--		kproc->rmem[i].bus_addr = rmem->base;
--		/*
--		 * R5Fs do not have an MMU, but have a Region Address Translator
--		 * (RAT) module that provides a fixed entry translation between
--		 * the 32-bit processor addresses to 64-bit bus addresses. The
--		 * RAT is programmable only by the R5F cores. Support for RAT
--		 * is currently not supported, so 64-bit address regions are not
--		 * supported. The absence of MMUs implies that the R5F device
--		 * addresses/supported memory regions are restricted to 32-bit
--		 * bus addresses, and are identical
--		 */
--		kproc->rmem[i].dev_addr = (u32)rmem->base;
--		kproc->rmem[i].size = rmem->size;
--		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
--		if (!kproc->rmem[i].cpu_addr) {
--			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
--				i + 1, &rmem->base, &rmem->size);
--			return -ENOMEM;
--		}
--
--		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
--			i + 1, &kproc->rmem[i].bus_addr,
--			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
--			kproc->rmem[i].dev_addr);
--	}
--	kproc->num_rmems = num_rmems;
--
--	return 0;
+-	ti_sci_proc_release(tsp);
 -}
 -
- /*
-  * Each R5F core within a typical R5FSS instance has a total of 64 KB of TCMs,
-  * split equally into two 32 KB banks between ATCM and BTCM. The TCMs from both
-@@ -1213,7 +1133,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- init_rmem:
- 		k3_r5_adjust_tcm_sizes(kproc);
+ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ {
+ 	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+@@ -1103,7 +1096,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 			goto out;
+ 		}
  
--		ret = k3_r5_reserved_mem_init(kproc);
-+		ret = k3_reserved_mem_init(kproc);
- 		if (ret) {
- 			dev_err(cdev, "reserved memory init failed, ret = %d\n",
- 				ret);
+-		ret = devm_add_action_or_reset(cdev, k3_r5_release_tsp, kproc->tsp);
++		ret = devm_add_action_or_reset(cdev, k3_release_tsp, kproc->tsp);
+ 		if (ret)
+ 			goto out;
+ 	}
 -- 
 2.34.1
 
