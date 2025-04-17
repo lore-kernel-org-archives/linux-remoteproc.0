@@ -1,187 +1,185 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6732139DC;
-	Thu, 17 Apr 2025 13:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41772566DB;
+	Thu, 17 Apr 2025 18:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744897862; cv=none; b=B/RZg+VkzPxKAZpxOZqWpfdH5EToRCH6W0RuJSH2ceWJYKM/4IQcHRdN9a7QO48zEk96Clmm7QlMCQX4Vx5/Xb/Lpb861ZRKXiFLwqQX1q2Y5SDMsjVcJLvxNcMtWeWMl65jOaveKPLuH0aPH9dB+79h/zOfEAF/PNcSwdvxHTA=
+	t=1744914024; cv=none; b=lviWOTzLqOOno+wEJRqEZMaNDu8P943NNtYQ0Fh3WxhTwroWIW1PeVfr9fEbA/zeLm5+Zjg62keEAUH9HjrStRyOk2G3IumTO1ybmULQWVetlk2zXlIrTpIRegrxCdjpbwG3CRtmMxivU9C4gKho/6sxKYqkVPcrk8aPBu9tm3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744897862; c=relaxed/simple;
-	bh=sFxKFtm2l7o0U4719U+5robMIUF6Yyewgq4pQya5YHg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=incn+glMwTcq6jE5ywwSQkE8muAaD2CkmgZ6CDpFjJjWk/7AGkeNAzKmb4HfpT6MHvI/nZee0VJDLxEUH3IVVgCxpEkxj/O3YH5uCcGInVo4+t4jvu8kyucmT1ZdHvFeoUMgbsNuABLAFazPkfY39Wozdz8N7S6YENWKiBEk/0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFyqnc1m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744914024; c=relaxed/simple;
+	bh=5fwFy1OAZpNRixDLvgZ0N+JBzQgGsgepUDUA03nK6Ns=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X3/xmrC7cpBUssMlJFw97KbdLNmEMywCZjIPIU+SnxIhjbyFC0uugR4Bl+zhWmCHafEDvwOlh1WtJop/Rz6f44ZXSdTaL+THUKEmyludwj1j60BqDhczxZ9IrLI4SGiXsx1VV6MwoNinYkAeNb4L7uxPW890Is2WGs0iRAUT250=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r3kWMh7Y; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFyqnc1m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6382CC4CEE4;
-	Thu, 17 Apr 2025 13:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744897862;
-	bh=sFxKFtm2l7o0U4719U+5robMIUF6Yyewgq4pQya5YHg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=NFyqnc1m5HIpT7QvL3J8PQtBui0KGNGvz1+d+5P8C/B6UuFqr/ykwmU0FFnn9botR
-	 a7kkmdQV+GIJ0dDycVUqlQZwF5armvAZx1i9XkSIfF8cVRnAduHEKXsXumz/VqmvI9
-	 PB54BHcwJtcFgrw/OWu9sk6SdCBo69u4PJ092Cq7hKW3sW7VMelquqdZPuFsYlB+Ba
-	 Upqj7DYDOvHtovVS8QpeD9yhhDplHPu53epIGPhvhQJF1Qh8iqHQEGM/1oAh54Uvmj
-	 5KjgtKI4ZSKU5BEqRxQ7kT5FP1ZGyu9WFwNFu2bOezS6qWn6zcwRExqNus3QgJ/4Ap
-	 4Mc/IT6vuq4pw==
-Date: Thu, 17 Apr 2025 08:51:00 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r3kWMh7Y"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIK6nx775966
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 13:20:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744914006;
+	bh=oWHK4YuO32VDxglqFOfR6Q4R0LxmujEMDPtkSDsKuD0=;
+	h=From:To:CC:Subject:Date;
+	b=r3kWMh7Yeerf9rW1ADXvL+nGPR+a5wXbUvd3cLH2YPlPxLmVEBnI/M+QcZTBO+oov
+	 TCVaHRLuDQnYM8j/80B5rQ/Y9DDlCIP3lk78nn1Jbn5A+CKQ2i2uaMhvOsvMcZUPgs
+	 +ZZab+S27EhWDDu3jsVFea6NEJGfmrJFAcGKXom4=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53HIK67Z022320
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 17 Apr 2025 13:20:06 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
+ Apr 2025 13:20:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 17 Apr 2025 13:20:05 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53HIK1Hi071102;
+	Thu, 17 Apr 2025 13:20:02 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v10 00/33] Refactor TI K3 R5, DSP and M4 Remoteproc Drivers
+Date: Thu, 17 Apr 2025 23:49:28 +0530
+Message-ID: <20250417182001.3903905-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, mathieu.poirier@linaro.org, 
- vignesh.viswanathan@oss.qualcomm.com, krzk+dt@kernel.org, 
- konradybcio@kernel.org, devicetree@vger.kernel.org, 
- quic_srichara@quicinc.com, andersson@kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- quic_mmanikan@quicinc.com
-To: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
-In-Reply-To: <20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com>
-References: <20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com>
-Message-Id: <174489760501.1657232.1882523053763202826.robh@kernel.org>
-Subject: Re: [PATCH V5 0/6] Add new driver for WCSS secure PIL loading
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This series refactors a lot of functions & callbacks from
+ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+drivers. This is a consolidated and final series as part of the
+refactoring of K3 remoteproc drivers. Below is the breakdown:
+1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
+them into a common driver.
+2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+3. PATCHES #11-#33 does the actual refactoring R5, DSP and M4 drivers into
+ti_k3_common.c driver.
 
-On Thu, 17 Apr 2025 11:42:39 +0530, Gokul Sriram Palanisamy wrote:
-> This series depends on Sricharan's tmel-qmp mailbox driver series v4 [1].
-> 
-> - Secure PIL is signed, split firmware images which only TrustZone (TZ)
->   can authenticate and load. Linux kernel will send a request to TZ to
->   authenticate and load the PIL images.
-> 
-> - When secure PIL support was added to the existing wcss PIL driver
->   earlier in [2], Bjorn suggested not to overload the existing WCSS
->   rproc driver, instead post a new driver for PAS based IPQ WCSS driver.
->   This series adds a new secure PIL driver for the same.
-> 
-> - Also adds changes to scm to pass metadata size as required for IPQ5332,
->   reposted from [3].
-> 
-> [1]
-> https://patchwork.kernel.org/project/linux-arm-msm/cover/20250327181750.3733881-1-quic_srichara@quicinc.com/
-> 
-> [2]
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
-> 
-> [3]
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240820055618.267554-6-quic_gokulsri@quicinc.com/
-> 
-> changes in v5:
-> 	- retained all the patches as in v3 and addressed comments in
-> 	  v3.
-> 	- reverted changes to dt-bindings done in v4 and retained as in
-> 	  v3 and fixed firmware format from .mdt to .mbn and retained
-> 	  reviewed-by.
-> 	- dropped 2 patches in v4 that adds support for q6 dtb loading.
-> 	  Will post them as a new series.
-> 
-> 	Following tests were done:
-> 	- checkpatch
-> 	- dt_binding_check and dtbs_check
-> 
-> changes in v4:
->         - changed q6 firmware image format from .mdt to .mbn
->         - corrected arrangement of variable assignemnts as per comments
->           in qcom_scm.c
->         - added scm call to get board machid
->         - added support for q6 dtb loading with support for additional
->           reserved memory for q6 dtb in .mbn format
->         - updated dt-bindings to include new dts entry qcom,q6-dtb-info
->           and additional item in memory-region for q6 dtb region.
->         - removed unnecessary dependency for QCOM_Q6V5_WCSS_SEC in
->           Kconfig
->         - removed unwanted header files in qcom_q6v5_wcss_sec.c
->         - removed repeated dtb parsing during runtime in qcom_q6v5_wcss_sec.c
->         - added required check for using tmelcom, if available. Enabled
->           fallback to scm based authentication, if tmelcom is unavailable.
->         - added necessary padding for 8digt hex address in dts
-> 
-> 	Following tests were done:
-> 	- checkpatch
-> 	- kernel-doc
-> 	- dt_binding_check and dtbs_check
-> 
-> changes in v3:
->         - fixed copyright years and markings based on Jeff's comments.
->         - replaced devm_ioremap_wc() with ioremap_wc() in
->           wcss_sec_copy_segment().
->         - replaced rproc_alloc() and rproc_add() with their devres
->           counterparts.
->         - added mailbox call to tmelcom for secure image authentication
->           as required for IPQ5424. Added ipq5424 APCS comatible required.
->         - added changes to scm call to pass metadata size as required for
->           IPQ5332.
-> 
-> changes in v2:
->         - Removed dependency of this series to q6 clock removal series
->           as recommended by Krzysztof
-> 
-> Gokul Sriram Palanisamy (1):
->   arm64: dts: qcom: ipq5424: add nodes to bring up q6
-> 
-> Manikanta Mylavarapu (4):
->   firmware: qcom_scm: ipq5332: add support to pass metadata size
->   dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
->   arm64: dts: qcom: ipq5332: add nodes to bringup q6
->   arm64: dts: qcom: ipq9574: add nodes to bring up q6
-> 
-> Vignesh Viswanathan (1):
->   remoteproc: qcom: add hexagon based WCSS secure PIL driver
-> 
->  .../remoteproc/qcom,wcss-sec-pil.yaml         | 131 ++++++
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  64 ++-
->  arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  82 +++-
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  60 ++-
->  drivers/firmware/qcom/qcom_scm.c              |  17 +-
->  drivers/firmware/qcom/qcom_scm.h              |   1 +
->  drivers/remoteproc/Kconfig                    |  19 +
->  drivers/remoteproc/Makefile                   |   1 +
->  drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 399 ++++++++++++++++++
->  include/linux/remoteproc.h                    |   2 +
->  10 files changed, 769 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
->  create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
+NOTE:
+This series supersedes below series:
+https://lore.kernel.org/all/20250219091042.263819-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250317120622.1746415-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250108063727.1416324-1-b-padhi@ti.com/
 
+Testing Done:
+1. Tested boot of R5Fs, C66x DSPs, C71x DSPs across Jacinto J7* devices in
+remoteproc mode and IPC-Only mode.
+2. Tested boot of M4F core _only_ in _AM62xx SK_ board in Remoteproc mode and
+IPC-Only mode.
+3. Tested Core stop and detach operations from sysfs for R5Fs, C66x DSPs, C71x DSPs
+4. Tested device removal paths by executing 'modprobe -r ti_k3_dsp_remoteproc'
+and 'modprobe -r ti_k3_r5_remoteproc'.
+5. Tested usecases where firmware not available at device probe time, but
+later in sysfs, able to load firmware into a remotecore and start it. [R5Fs]
+6. Tested that each patch in this series generates no new warnings/errors.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+v10: Changelog:
+1. Re-ordered Bug Fixes to the start of the series, before starting pre-cleanup
+and finally the actual refactor. [Andrew]
+2. Broken down commits into more atomic changes for ease of review. [Andrew].
+3. Updated commit messages to have uniform flow throughout the series.
+4. Carried R/B tags in applicable patches.
+5. Further patch specific changelog is attached with patches.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Link to v9:
+https://lore.kernel.org/all/20250317120622.1746415-1-b-padhi@ti.com/
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+v9: Changelog:
+1. Added R5 cleanup & refactoring along with existing DSP, M4 refactoring into this series. [Andrew]
+2. Dropped Mailbox level IPC checks across R5, DSP, M4 drivers in IPC-only mode. [Andrew] 
 
-  pip3 install dtschema --upgrade
+Link to v8:
+https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
 
+v8: Changelog:
+1. Broken down refactoring into patches, each patch dealing with one function
+for ease in review. [Andrew]
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250417 (exact match)
+Links to older versions:
+v7: https://lore.kernel.org/all/20240202175538.1705-1-hnagalla@ti.com/
+v6: https://lore.kernel.org/all/20230913111644.29889-1-hnagalla@ti.com/
+v5: https://lore.kernel.org/all/20230808044529.25925-1-hnagalla@ti.com/
+v4: https://lore.kernel.org/all/20230801141117.2559-1-hnagalla@ti.com/
+v3: https://lore.kernel.org/all/20230302171450.1598576-1-martyn.welch@collabora.com/
+v2: https://lore.kernel.org/all/20230301111323.1532479-4-martyn.welch@collabora.com/
+v1: https://lore.kernel.org/all/20220110040650.18186-1-hnagalla@ti.com/
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+Thanks,
+Beleswar
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com:
+Beleswar Padhi (31):
+  remoteproc: k3-r5: Refactor sequential core power up/down operations
+  remoteproc: k3-r5: Re-order internal memory initialization functions
+  remoteproc: k3-r5: Re-order k3_r5_release_tsp() function
+  remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
+  remoteproc: k3-r5: Use k3_r5_rproc_mem_data structure for memory info
+  remoteproc: k3-{m4/dsp}: Add a void ptr member in rproc internal
+    struct
+  remoteproc: k3-m4: Add pointer to rproc struct within k3_m4_rproc
+  remoteproc: k3-m4: Use k3_rproc_mem_data structure for memory info
+  remoteproc: k3: Refactor shared data structures
+  remoteproc: k3: Refactor mailbox rx_callback functions into common
+    driver
+  remoteproc: k3: Refactor .kick rproc ops into common driver
+  remoteproc: k3-dsp: Correct Reset logic for devices without lresets
+  remoteproc: k3: Refactor rproc_reset() implementation into common
+    driver
+  remoteproc: k3-dsp: Correct Reset deassert logic for devices w/o
+    lresets
+  remoteproc: k3: Refactor rproc_release() implementation into common
+    driver
+  remoteproc: k3-m4: Ping the mbox while acquiring the channel
+  remoteproc: k3: Refactor rproc_request_mbox() implementations into
+    common driver
+  remoteproc: k3-dsp: Don't override rproc ops in IPC-only mode
+  remoteproc: k3-dsp: Assert local reset during .prepare callback
+  remoteproc: k3: Refactor .prepare rproc ops into common driver
+  remoteproc: k3: Refactor .unprepare rproc ops into common driver
+  remoteproc: k3: Refactor .start rproc ops into common driver
+  remoteproc: k3: Refactor .stop rproc ops into common driver
+  remoteproc: k3: Refactor .attach rproc ops into common driver
+  remoteproc: k3: Refactor .detach rproc ops into common driver
+  remoteproc: k3: Refactor .get_loaded_rsc_table ops into common driver
+  remoteproc: k3: Refactor .da_to_va rproc ops into common driver
+  remoteproc: k3: Refactor of_get_memories() functions into common
+    driver
+  remoteproc: k3: Refactor mem_release() functions into common driver
+  remoteproc: k3: Refactor reserved_mem_init() functions into common
+    driver
+  remoteproc: k3: Refactor release_tsp() functions into common driver
 
-arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: /soc@0/qmp@32090000: failed to match any schema with compatible: ['qcom,ipq5424-tmel']
+Siddharth Vadapalli (2):
+  remoteproc: k3-r5: Drop check performed in
+    k3_r5_rproc_{mbox_callback/kick}
+  remoteproc: k3-dsp: Drop check performed in
+    k3_dsp_rproc_{mbox_callback/kick}
 
+ drivers/remoteproc/Makefile               |    4 +-
+ drivers/remoteproc/ti_k3_common.c         |  553 +++++++++++
+ drivers/remoteproc/ti_k3_common.h         |  113 +++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  616 +------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  |  581 +-----------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 1012 +++++++--------------
+ 6 files changed, 1075 insertions(+), 1804 deletions(-)
+ create mode 100644 drivers/remoteproc/ti_k3_common.c
+ create mode 100644 drivers/remoteproc/ti_k3_common.h
 
-
-
+-- 
+2.34.1
 
