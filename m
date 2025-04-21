@@ -1,42 +1,42 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AB61F0E49;
-	Mon, 21 Apr 2025 20:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C8F1F130C;
+	Mon, 21 Apr 2025 20:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745268575; cv=none; b=ibhH9EbNI7EAcfUXPVtLv2TupWyGl8Mfv+ipl+RU0eDzPUyozUvhGYbM5PHjHPCYaKYUQa6uHgLJBS+fl9m2b4T575FJqYuehBYYbncwSmU+ftkBrCSco3eRUbv2CyXzcqoi2S64D0KZ4/uI6It+LlMEfR78RGI+OdLvK4ojAa8=
+	t=1745268577; cv=none; b=cTGGCv4vVcqMWm0JGpblzP8LNmRUE81kmguRp8aH/5unUqmmnURh4X53W0RbBQ36VJUdL84uie5ZlE99g7u7tHpeUt4uj4sOew2tJ12lfqHxe+MugAN44lXNTd5H/uZ6xgBNf1Rf5qizrGr1g9DkY77WNYKQtA4eluh9WOi4CaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745268575; c=relaxed/simple;
-	bh=XxnyUlhOLmgJSyUzXhTEsswDEQueWFydV1G3E4gpjvk=;
+	s=arc-20240116; t=1745268577; c=relaxed/simple;
+	bh=1wIDWPEibG09Jj0SDTOitc8WPtvsWbMRGzVMJKc/3OQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YTr36j4acl5TMr0UML75Rm6lkrpgUOHtI93+X/l8hx+KyK93i3SlmJ4TkV723baGINuMKrcDZwLtt3NaA71YFCjfRTGs1GUtUfoJQhmuRwEeHpL/OuHjRWqUygFz8FvvAfVK0iFJizqWSu+eQ4D8QBapBTIidKlJgDD6bdKUHnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RK4LqL/N; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=Zy7OE5SFZE0+ylCU/LZPJ+tdiwPh7O9h/k0kZOiRUOqlMa1aFuARk74NHJNRgSeH3C9tg4FG4ME/MqKppYB4VxPca3aCXGPK47/9iafLX6vwCXXiTUli9udlV9pxNemovoAglLLlYY4eq3jGZ/zYRPmSjjHXpSNNjIYqY3MTp6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M6y2QRed; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RK4LqL/N"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M6y2QRed"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745268570;
-	bh=XxnyUlhOLmgJSyUzXhTEsswDEQueWFydV1G3E4gpjvk=;
+	s=mail; t=1745268573;
+	bh=1wIDWPEibG09Jj0SDTOitc8WPtvsWbMRGzVMJKc/3OQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RK4LqL/NA3r/DD3HMf9ARqzI2tJN36zWf5IKjYlWz7ZG5pB/H/smnyLrV1N+PduEg
-	 BfxWgb+mxsAwgEFL2RWjurcpHjuFREOjOqYqAquOWPNSmueSiCXwRJhxziDwbYaOzF
-	 dAJO+BNzU3w2CBX5XgJoRfmuEuJrKYJO/7sHMn5qwaUVznxdoBiJKyDC3QIZjFx5EP
-	 MWo9K0ZlOG2NPmWUWSmQDrrboJFT5xzjHrsB5EsAGEg9vjv/If6D1m084ms/X+kgiW
-	 0/EmPOvp4t6n9hBcwOGLgYFVQxUB7qC66EaX0juajfOmpvQjDxqhjRacAZQOv31GBM
-	 y6V1Pqfv9I49g==
+	b=M6y2QRed+ZGlksJm+Purl5Bs7WbVSSBr91Kkv6uVY6KTuX0UhtyQEZdXQ5uh2cjbR
+	 6h1t3d0C3jz18vXmy3mgcVRY9NfIkt3fUzzXqPSNxFx6J9l2mXnInj751O39YzyK3E
+	 JAUM3s4sDSMxMvasDo2AajPNUC09CXuQrAFk6Zqgk+A9mYXxBY6ZuyC6nYvJQxYBV2
+	 l05vPUZUS/FYQpy3ysUpPKYlxyRpKA9EpauP116VbjKLXc6ABKZOGh6KcuPdZ9cL3w
+	 8XILwUuABJXYrS/6FtRbbsEKwkdZtS2rOUBUlyObGophE4ewyR9dTyCSdEGmGXNp1b
+	 npJz8Sc/9F4Gw==
 Received: from [192.168.1.63] (unknown [70.107.117.78])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 96AF217E078A;
-	Mon, 21 Apr 2025 22:49:27 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B5A1D17E09B5;
+	Mon, 21 Apr 2025 22:49:30 +0200 (CEST)
 From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 21 Apr 2025 16:49:04 -0400
-Subject: [PATCH v2 1/5] dt-bindings: remoteproc: mediatek: Add missing
- minItems for 8192/8195
+Date: Mon, 21 Apr 2025 16:49:05 -0400
+Subject: [PATCH v2 2/5] dt-bindings: remoteproc: mediatek: Remove l1tcm for
+ dual-core MT8188 SCP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250421-scp-dual-core-mt8390-v2-1-c84117a959a9@collabora.com>
+Message-Id: <20250421-scp-dual-core-mt8390-v2-2-c84117a959a9@collabora.com>
 References: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
 In-Reply-To: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -63,30 +63,76 @@ Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org,
  =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
 X-Mailer: b4 0.14.2
 
-Both MT8192 and MT8195 have an L1TCM memory, so it should be described
-in reg, and therefore reg's minItems should be 3, as is already implicit
-by reg-names being three entries long. However minItems is currently
-unset for mt8192/mt8195, resulting in it being equal to 2, from the base
-schema. Fix reg minItems for MT8192 and MT8195 by setting it to 3.
+The SCP present on MT8188 does not have an L1TCM memory region, but the
+binding incorrectly requires one for the dual-core description of the
+MT8188 SCP. Remove that requirement. Also update the minimum number of
+reg and reg-names to 1, since as this is a multi-core SCP with no
+L1TCM memory, only the CFG memory region is present in the parent node.
 
-Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
+Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP")
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/remoteproc/mtk,scp.yaml       | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
+index ee33c233e44f3d51f0851b35697a24208c87f68a..04348cfcb0424dc78ff1ddd77665285a052925e9 100644
 --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -185,6 +185,7 @@ allOf:
+@@ -28,11 +28,11 @@ properties:
+     description:
+       Should contain the address ranges for memory regions SRAM, CFG, and,
+       on some platforms, L1TCM.
+-    minItems: 2
++    minItems: 1
+     maxItems: 3
+ 
+   reg-names:
+-    minItems: 2
++    minItems: 1
+     maxItems: 3
+ 
+   clocks:
+@@ -171,6 +171,7 @@ allOf:
      then:
        properties:
          reg:
-+          minItems: 3
-           maxItems: 3
++          minItems: 2
+           maxItems: 2
          reg-names:
            items:
+@@ -196,16 +197,28 @@ allOf:
+       properties:
+         compatible:
+           enum:
+-            - mediatek,mt8188-scp-dual
+             - mediatek,mt8195-scp-dual
+     then:
+       properties:
+         reg:
++          minItems: 2
+           maxItems: 2
+         reg-names:
+           items:
+             - const: cfg
+             - const: l1tcm
++  - if:
++      properties:
++        compatible:
++          enum:
++            - mediatek,mt8188-scp-dual
++    then:
++      properties:
++        reg:
++          maxItems: 1
++        reg-names:
++          items:
++            - const: cfg
+ 
+ additionalProperties: false
+ 
 
 -- 
 2.49.0
