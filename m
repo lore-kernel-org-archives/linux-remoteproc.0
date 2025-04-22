@@ -1,90 +1,65 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268A11F180E;
-	Mon, 21 Apr 2025 20:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E0EAFA;
+	Tue, 22 Apr 2025 03:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745268585; cv=none; b=lbZF/Ah62irN/mv1wO4DhXzO62UslhBI2b6n8BWrMOev3SksJFgNBoa36Kl201++ZOCh3FdJdb0atDJ2kc4mCQgKkQFpB9K+LE0ZI3lJ1iciY4AJFctFyC0LoazV8g7PPYhko28uuXQW7EPPpkNAnEVyYlSpTrqBg33NDeubd9M=
+	t=1745291267; cv=none; b=p3jFmXf8uGZdW5fXCQXY9b5GGozP1D6sMe3o1uBxCY1YR/ggq9SQ7bSeomBCvS1ufry5EcPhQOE1IpKzPWZYZP/m2ejEyX5ccHisFkW/ikqKzJwYrAcFJdeeh+KaxoAprpeMhgAvctQp4cBd56WVoy/WwNRUNz0+EY+/HbdEQ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745268585; c=relaxed/simple;
-	bh=ZXE55CQ6tKXOBWcsEApxFOCcB9MJRav1Ft8naFxiU5w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aN3n+E8HHGUvH7wo+az38zUEVh81SckMXN67mXgC9Vub7UiZ5YFutzSHMRQqTyHjsqSvo6z9fnpZZ416F+wqdhQI2kiFmP5mLvJcixfN0XOVaTQNNNXtGkQDs/kPnMiQY2Ji9melIxrI/ZGW1AiSFBegiNHR1nNOzmjjZXJBRPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fjcvlpaS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1745291267; c=relaxed/simple;
+	bh=hDLIaVfCxpkNARq3mDMRwM8hQH3+H+6ffO0Q6/SvR/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvogLW0vTftTbQ5YeleIkJJD9iVzSYcjCsYzzdeUXSP2S5TdDR2rZsJBufjKDd3XXlWEYipcwDp2Bmibwy0G7+tCvNzrz0h2guotTT71YNBUGwaq4Ii2SOkLHrnyK9sYSblKOTMXsWV8E/JodrfXt4abrNtGAAa68AXjQLJnK7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=WWBOz97n; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fjcvlpaS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745268582;
-	bh=ZXE55CQ6tKXOBWcsEApxFOCcB9MJRav1Ft8naFxiU5w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fjcvlpaSsWhC9Q9A1lQLzwCPUsP0oOrjVUMOS50F+K6HAD46EqWL6yxYA+CDZazyK
-	 hp1vUGfyFgmAFKtfoF3zgcXHfREJ+fP5T//ZXfq1T9NJsyGrDheGWw4ylyFcPIfNuj
-	 SBsuYkfbo3kewPFzn6Pj51YL78LcfAJH8MxEy7YBEpAg3S3C+9hNDSLRQw0mUSSSnt
-	 N6yCieGcmYXkdXDrP0pWWLXKQVjVO7LnNIdxMCO0R+swW/ITf80jjzkSokq/lpB2ew
-	 wq6V5xtygHkcxhdXXCqyDSfnJWcGVpIXY9vEUAUxu7WuNXgIDx3N+/DWb1X1ru2rCY
-	 X+z895908TfOA==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4ABC717E078A;
-	Mon, 21 Apr 2025 22:49:40 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 21 Apr 2025 16:49:08 -0400
-Subject: [PATCH v2 5/5] arm64: dts: mediatek: mt8390-genio-common: Add
- firmware-name for scp0
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="WWBOz97n"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=n/JvTCs/sCVXGz6hg3teVfW2as6Q4XHGy/um0GGV72Y=;
+	b=WWBOz97niOMrfuAQf948QNWtsLZb9k2XaXOOyu8avbFG4LiblVDbZQnmyDbBF+
+	TEzEtT4BJdWMlk0tF5t67UTUQFFVM2GrVC3dtXZUMDyi6q1m0ZQBKkE5GZvdC+E4
+	H+R5SViHRoN16UWNs4aptgkEw1WBKo77y+v4OvUtuBwPI=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCXbUbXBwdoi1GrAw--.548S3;
+	Tue, 22 Apr 2025 11:07:05 +0800 (CST)
+Date: Tue, 22 Apr 2025 11:07:03 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: shawnguo@kernel.org, robh@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	frank.li@nxp.com, aisheng.dong@nxp.com, daniel.baluta@gmail.com,
+	laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com,
+	iuliana.prodan@nxp.com, a.fatoum@pengutronix.de,
+	mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v7 0/5] Configure imx8mp dsp node for rproc usage
+Message-ID: <aAcH170yqRMMwVXe@dragon>
+References: <20250320121004.2542314-1-daniel.baluta@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250421-scp-dual-core-mt8390-v2-5-c84117a959a9@collabora.com>
-References: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
-In-Reply-To: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Tinghan Shen <tinghan.shen@mediatek.com>, 
- Olivia Wen <olivia.wen@mediatek.com>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320121004.2542314-1-daniel.baluta@nxp.com>
+X-CM-TRANSID:Mc8vCgCXbUbXBwdoi1GrAw--.548S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUTHGQDUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBB83ZWgG2pu5jgACsT
 
-Add the firmware-name property for SCP core0 so the firmware can be
-loaded from its canonical location in the linux-firmware repository.
+On Thu, Mar 20, 2025 at 02:09:50PM +0200, Daniel Baluta wrote:
+> Daniel Baluta (5):
+>   arm64: dts: imx8mp: Use resets property
+>   arm64: dts: imx8mp: Add mu2 root clock
+>   arm64: dts: imx8mp: Configure dsp node for rproc usage
+>   arm64: dts: imx8mp: Add DSP clocks
+>   arm64: dts: Enable DSP node for remoteproc usage
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+arm64: dts: imx8mp-evk: Enable DSP node for remoteproc usage
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index 805a4bccff33e3ac1a16c5fb2cf13914c8e97746..698054ed5d6d4f7b947db6ab5335d3b202bb84d9 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -1060,6 +1060,7 @@ &scp_cluster {
- };
- 
- &scp_c0 {
-+	firmware-name = "mediatek/mt8188/scp.img";
- 	memory-region = <&scp_mem>;
- 	status = "okay";
- };
-
--- 
-2.49.0
+Changed the subject a bit and applied all, thanks!
 
