@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371E5285401;
-	Wed, 23 Apr 2025 15:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D09028935F;
+	Wed, 23 Apr 2025 15:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745423373; cv=none; b=RpOSaFbYuR9Y/0UtEEaAXkYEgnck3XY+ZOUhCp7PWSYZET6i0VTWlfV21v1ziR4Z2x98dLBlFI7thMgBUKiE2XQGHpd0gWi2hVNISL1Nl8uZISfAnIHG8PTvGoqwvIhLL7CZUQEEqYQN5L5eZZjL481mdXwc3PjjArqOAy7VqlY=
+	t=1745423507; cv=none; b=DrXCEYnE+JAzQqEAsIcD0Sduw099yQO+tjuPIXRxQlc2SyLdqkVWMMJMM6vf5HmU1p1O/uwYNzpgohU3osGGQckFsgTWwD+amSgP8cyTbM/bHY5wyuA5SE5bqLLfHF9uF/6h3nAqgo1nZtwWrnq01ytwefbOATV0az4Vfs9irxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745423373; c=relaxed/simple;
-	bh=Rd6C0AT8kRiDT9Gitf5UOmK5rHvXSI/4LUIbOAcAcWE=;
+	s=arc-20240116; t=1745423507; c=relaxed/simple;
+	bh=Q6PcQ8O3FSmUk2TwPF7gCzpyOKQyy07Lo0eWC7IuJ7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpMB2ZC1Dm/tTnCzgwW09nuVV6IJQAcPf5ScHyC9J1eejuySKQ8+BUlYxJnqtNvAULsu/R7ZfIOXKG2Gqz84UxLJGq+sPNmxW4hG6adgZPC3aQKWiVtgFWalK9W4F+X2wermnbWX9ysfkT0rg5yeWlqrlGiT6AE3RNWOSf9a9ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0PG0OWA; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=avLB2IP1KGGtlePQTqMHxEKqvyjkxOePi4YUILHeNEbHqw1WRiPd4xMEkzkejRYHdmoHO3Nnyxzvsqbz+QkMZARxLAJ0EPRc8lj2jQhUlU16nyfvMY8V4543wM6NdEqlvuPSzyuPy4/Xje5fGBsPgyF0EptVs5yt7l8osWhzUwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmgPy7oN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0PG0OWA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6031FC4CEE2;
-	Wed, 23 Apr 2025 15:49:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmgPy7oN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBFD3C4CEE2;
+	Wed, 23 Apr 2025 15:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745423372;
-	bh=Rd6C0AT8kRiDT9Gitf5UOmK5rHvXSI/4LUIbOAcAcWE=;
+	s=k20201202; t=1745423506;
+	bh=Q6PcQ8O3FSmUk2TwPF7gCzpyOKQyy07Lo0eWC7IuJ7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y0PG0OWAI+2W/ge4r1n+ZVwPbQIzUTMG9Qfvf8bmuuEHZ0COTIPA7+Oyv91NxxUgM
-	 lVM2/9F/ssXzOPY4Xu/DuoJEKfQwxn3vHV0aEgY4VRgx/uqjvuqeSsOZnrjM+11tHm
-	 9+1YkjLtIcWSuqqM1LT3WQaz+KmkuavW/gAySngz7Uqz5SLAPyH7AghzKlclsuZsa6
-	 xlg5r5SzgF2gqi0oer+43A009BlYknBI/xG1/azywsD3pCc+7t8lVSELM/S5v6vKD4
-	 e/hdUXBhfo1mHahkpeyAHd0BjMMZ+VIVwVVAMrQAhG5ZPqT72kGWcQdTRomOFaKt2l
-	 6iOCE4JorUREQ==
-Date: Wed, 23 Apr 2025 10:49:30 -0500
+	b=KmgPy7oNLM0uB7pP3DNkeEMd8gByPbo3asds+AarzLLyrC3Gzj86gGQNq1pVjbJ5N
+	 g7JU98A9UbuJuyqi5Y6icJSXeVltbtdDoNSSSD3NIs/gc8XhO6WMPuR2VlZauZq4du
+	 eB/3iqRuz7qJJLIP0ICaiq6y7u4sXqy807rLeUWT2bxgBphAHgJ3xMF8jzwjdMlgz8
+	 7tPFVgLqnQAVM5l90H6TJirFaT+OExzULT45LJJP4s1qRoriaeZyiUEgK8BQ0QkFH6
+	 Vv0q3Te2Xe4j3ElXN0hJgRQ4eRVm7sNcyMLIRoGCL5dFl22cXQDstZE8m8KRY9WhhL
+	 xIg4IxhWm7z2w==
+Date: Wed, 23 Apr 2025 10:51:44 -0500
 From: Rob Herring <robh@kernel.org>
 To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -41,11 +41,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: mediatek: Add missing
- minItems for 8192/8195
-Message-ID: <20250423154930.GA579807-robh@kernel.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: remoteproc: mediatek: Drop redundant
+ maxItems for mt8192/95
+Message-ID: <20250423155144.GA581441-robh@kernel.org>
 References: <20250421-scp-dual-core-mt8390-v2-0-c84117a959a9@collabora.com>
- <20250421-scp-dual-core-mt8390-v2-1-c84117a959a9@collabora.com>
+ <20250421-scp-dual-core-mt8390-v2-3-c84117a959a9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -55,37 +55,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250421-scp-dual-core-mt8390-v2-1-c84117a959a9@collabora.com>
+In-Reply-To: <20250421-scp-dual-core-mt8390-v2-3-c84117a959a9@collabora.com>
 
-On Mon, Apr 21, 2025 at 04:49:04PM -0400, Nícolas F. R. A. Prado wrote:
-> Both MT8192 and MT8195 have an L1TCM memory, so it should be described
-> in reg, and therefore reg's minItems should be 3, as is already implicit
-> by reg-names being three entries long. However minItems is currently
-> unset for mt8192/mt8195, resulting in it being equal to 2, from the base
-> schema. Fix reg minItems for MT8192 and MT8195 by setting it to 3.
+On Mon, Apr 21, 2025 at 04:49:06PM -0400, Nícolas F. R. A. Prado wrote:
+> reg's maxItems is already defined as 3 in the base schema. Remove the
+> redundant assignment in the if branch for mt8192/mt8195.
 > 
-> Fixes: 6b55b1e2fd7f ("dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP")
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 > ---
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index adc6b3f36fde49eb3fa7ed3f08b0fa9e7f331162..ee33c233e44f3d51f0851b35697a24208c87f68a 100644
+> index 04348cfcb0424dc78ff1ddd77665285a052925e9..82c7edd5a2fbb8610315881a4033a3a43198162e 100644
 > --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
 > +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -185,6 +185,7 @@ allOf:
->      then:
+> @@ -187,7 +187,6 @@ allOf:
 >        properties:
 >          reg:
-> +          minItems: 3
->            maxItems: 3
+>            minItems: 3
+> -          maxItems: 3
 
-As the max is already 3 at the top-level, you should drop maxItems here.
+Sigh. I would squash this as using maxItems was the error in the first 
+place. But either way:
 
->          reg-names:
->            items:
-> 
-> -- 
-> 2.49.0
-> 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
