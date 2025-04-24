@@ -1,109 +1,101 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3013719A;
-	Thu, 24 Apr 2025 03:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1BC199396
+	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Apr 2025 07:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745466533; cv=none; b=cNLHZSkdPpwKx1CxzQyywXd+IYXVyGAzLgWFlc58UcuU5wsL7+/lgxKPAqw1shlKk/bB435Cey2ge1e2IQ4WZi1oxdXqeHi1RGsr34H7PhhsOlIUdnWB6Vj2/udsrxUOwO5GrZW1I06doPDZXMQ0+V40UujESatTivdNU8wXPz0=
+	t=1745478167; cv=none; b=g1nueMP62e5CKmCviekb3GKQRZou+rouQsvy2ZSQa8zPi23BmJlO3q3ePrdeQzM6iWWQ3xHU444TbAhQKXIqu6Pdw/nn/Vrw2ixNyIQ9a5XV6fa7RVQB8bxH9tETVrJqf0R7upNIk+pedx2z9l6wDVhcP6JhKb+jT3t+vrgJ5Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745466533; c=relaxed/simple;
-	bh=pF5/dsssr25wro+N+RnnibDrMqiB5UwQu+cY3hAlMSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dlgCFi+6lkT9/9jqWon/vQJ4PiKyUpPjt3+qJOlnGBvxxLGpTmwyf7sNAJdTQ8izFq9Mo3gzaAkdWV9fsjG749889eJVvGKKoQnmyITpG4UhmP/hNkSUX/5qjuCfr+hNZdAbI/jEJoyswHCSXyFUUjZNULWPU8Q4aBiSVmM3eQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lsQOcDeC; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1745478167; c=relaxed/simple;
+	bh=CsVdIY8q46bTxLPbuwJ8cUP2eUiwXdsgC6RMjJcwonY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9NbXVpuYrpqLhhrMCXE0A4QT6V3UWf7ojFf8KcVKwKVHnk64VL7x9Tyn6ISvolmB7wwlKe0N/93xU9T7HuoMaglJnimBi3fV/CAtayLXu/Su4OXofavr+JV/Qqzh3rrZVVXpVKTIIl2CVfrN844VsyKaAfdlL99wyyGnpZQl2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbFclHgN; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lsQOcDeC"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53O3mYD62496829
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Apr 2025 22:48:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745466514;
-	bh=pF5/dsssr25wro+N+RnnibDrMqiB5UwQu+cY3hAlMSc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lsQOcDeCE1jiXMyK7UO7OCvx8HfEjfKSg6+IOtmmX58M0TSi1bM6jyjpksCjkmL4T
-	 ogLr4ihvkYnAsQYaj4Y3Do/ww6KWcLP9iVNWyMsD5x7e4Vkbkgl4qu2WcQY1zI2CVZ
-	 MwFeUt6ULwDEoRRzj0ox0tpczN/q2frv9ipvUfLo=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53O3mY4g083897
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Apr 2025 22:48:34 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Apr 2025 22:48:33 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Apr 2025 22:48:33 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53O3mT3o107961;
-	Wed, 23 Apr 2025 22:48:30 -0500
-Message-ID: <21af91e3-7804-49c7-b42c-c77613de21f5@ti.com>
-Date: Thu, 24 Apr 2025 09:18:29 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbFclHgN"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so83536666b.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Apr 2025 00:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745478164; x=1746082964; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
+        b=PbFclHgNjB6RXMecnfIP+Z73qquzU3VIwvxcMjTs4FsrIcbOh/LblRF3NUS4LZfc5y
+         ZpCZ8iSj72X1+S7rKtKjYOgzEwam5ASSq7FmFQsu6+NEUUwFI3PDrHuua6eXGQ1eENHH
+         +gUZzwTVtO4p4o8zLhYjoXOqoCTIZjdwq43dKKMkroVaj5O7OTlYMIiWPClNx9icGA/O
+         6M8yEnilRKLdmNngmnbBLtndXiezGTt++7R6Yf9ACl4E41Uq90JqzIU/pNtYPgrLHSUd
+         3DH5g+7z9OR2JE8v1AsfAXbLN5xHzWveov22VvaN38zQrDfdX6aZNyzEC6IK+/wLUwPR
+         s2dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745478164; x=1746082964;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
+        b=MsJwDnbVjBRrjvi4NZAUAEjxE6iMRUDdTKNCHch2MyP3yumxxEoHLXLAy6HUjV64rD
+         4U7R9o1RAEMWYdPWdrA28B3PmWoaJsDh4/FSMwdud3cfO2imv62e+iVfLYyPNpQGQQpP
+         iBXXVvrNiXfnJ7lvz+/OVkUT+vMtPAUcZu3K6qvWxzqHyQVf9VYGgZL8KVGzH+l6PwYY
+         43m9rtUt4g7OKtpRCNCbmsd0CcFVbe7EAEcuJQpr9u/4PrgqsSMxk3MP7CQPi9spid/K
+         k3fKPoQPNwgO5/iTTEbwLqcepfouxl1EdiD88kfcAZwPhFnXHLxXRwJdQeaU71cH2kkh
+         gOmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdEAMLpFwS/Nv9Y+JMsquqrJkGS8YhAKpPe6dy6oEt048vt441+Z+iIMkBYW9jeQ4nShfMsRkBgW0PcaCbtZnQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOxs/atpCAprXv+dkWPbBK3KL713nj4ao72FN4BcOv6u2duw0d
+	f0etGQ7IEkB1YGj1JMBYJkwrIWTYhSh+mTDvaMkxFYj3FodZVimC1eXCpAM9PsA=
+X-Gm-Gg: ASbGncu8Cp7tp2Z+CLnQnouhcF1d0uUnMLzWZOb/f+d78ZPEj7vQz9T+1XRubUh6iMe
+	S77nXQNMWtJ6yP+/8oUXF8f+wgaL+Uy/iBmvbOT2gVPgms6j2uJfXBPTHX+uCG+aCpjwajU6nIA
+	gpGCskrBHiX3249s6gILSLECyczGE/JLhiMWgkGAgx6RHvr4W97UMRglIdilY4CIwbJ7JtPVjDD
+	Wy+0QmmLBjZ0OeEhRY+qiaE9DMVCbeO77QOBxVS//di1kSaH1uuURCJ9dDKGd2J+6g9TD5pjyna
+	EG7cZu+1TTkwQxU2OEdQ/9G5zDuI4T8XXs8JEQ==
+X-Google-Smtp-Source: AGHT+IHRRXGrXUDu3+rG3nESpdOVayw7JgdtjaocMACREgykhsz0BZozqMiy2x1NiHc65DNK79egqw==
+X-Received: by 2002:a17:907:97c1:b0:ac7:95b5:f5d1 with SMTP id a640c23a62f3a-ace57494ecemr146858866b.42.1745478163982;
+        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace598f6b97sm57765866b.75.2025.04.24.00.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
+Date: Thu, 24 Apr 2025 10:02:40 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Marek Vasut <marex@denx.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
+ __qcom_smd_send()
+Message-ID: <aAniEGwKKRUieo5G@linaro.org>
+References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
+ <aAkhvV0nSbrsef1P@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/33] Refactor TI K3 R5, DSP and M4 Remoteproc
- Drivers
-To: Judith Mendez <jm@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250417182001.3903905-1-b-padhi@ti.com>
- <f18c954c-f4b6-46b5-a619-60ba23922e27@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <f18c954c-f4b6-46b5-a619-60ba23922e27@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAkhvV0nSbrsef1P@stanley.mountain>
 
-Hi Judith,
+On 25-04-23 20:22:05, Dan Carpenter wrote:
+> The "ret" variable isn't initialized if we don't enter the loop.  For
+> example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+> 
+> Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On 24/04/25 02:36, Judith Mendez wrote:
-> Hi Beleswar,
->
-> On 4/17/25 1:19 PM, Beleswar Padhi wrote:
->> This series refactors a lot of functions & callbacks from
->> ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
->> drivers. This is a consolidated and final series as part of the
->> refactoring of K3 remoteproc drivers. Below is the breakdown:
->> 1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
->> them into a common driver.
->> 2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
->> 3. PATCHES #11-#33 does the actual refactoring R5, DSP and M4 drivers into
->> ti_k3_common.c driver.
->>
->
-> I noticed that for am62ax DSP, local reset is not enabled, which is an
-> issue, but I see that it was not enabled before your patches so it could
-> be a follow-up patch once these patches are merged.
-
-
-Yes that is planned after current refactoring series is merged.
-
->
-> Also, I have tested basic functionality on am64x EVM: https://gist.github.com/jmenti/9e7fb3cbb7a34fc1800092e8fa6cce87
->
-> so for the series,
->
-> Tested-by: Judith Mendez <jm@ti.com>
-
-
-Thanks a lot for testing.
-Beleswar
-
->
->
->
->
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
