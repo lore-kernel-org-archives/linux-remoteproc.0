@@ -1,34 +1,33 @@
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CA42857DB;
-	Thu, 24 Apr 2025 14:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D97200B99;
+	Thu, 24 Apr 2025 14:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504884; cv=none; b=G2Z8Ct3msgHc2rb7V/I9NRaS/sVIKRJz2nQfGxLC2BOu42FkOkOWiN5YCxScCRA+LmE1+icLZjzB0xRha7aYXCS/zB93SiQKVGCjPYdEWYTuj4GXVe7iqrpmoVtp+PQ9E6AJb/W1eTRLH6BDTZGXIB7vCjt/KEdaVnMr1jGn3L8=
+	t=1745504891; cv=none; b=I9M2T9SG8CbnbBlaaSbnFWsNSMGECJ2eV7b3kc4sP6QT5FgtnSe8tQG0UdWPlovBYx68I8JVu4xCThaGdXR69juzKOuWEVoYWz5lMXtI8r68MQel1vIv3cQMQ9aF6/v/OTZgz+vYQkHxqCOvjpaF9+wfvVlD8M7BxpgEHMN5Mmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504884; c=relaxed/simple;
-	bh=+gIWjZD9sJHtyVMBi7tE+7xasFvolAcGrlgjdqK6qXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iWlflMeQhhgZC+XMDg6qmyoICqno/t1RiLensTTjqf6n7AhSPFmAG1u9H5+h/9slskzIUkGe1J5wCwYyfRKGHMN8LaO2AO6NnJlSUBmZKciA7JpSzdH3/V3LP1jt5HByb6lnpiGjeUTNnldPdp0oBxKNZrOKNm7tbOjV/3x7wpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lBrPRxC8; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1745504891; c=relaxed/simple;
+	bh=bBitGW2xjsasgYN7oIXDiESqi3t5WWL2pmVG3+5pVM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p48oyT4UIMhC6yWImtI6FGgL8SlFWIdRuzl7LjkExZYyezEeGDF+ueP7FvZvAta+OwIyYeTwBAYL5CjftgDJqXDYS0BlfzyaBFxoDjcxvqBqmCGRHSklkHk+NJF/hnasWWQdV+HiYLU3i99zELattTMjtTgRwdyNTsDhVAavNAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HQixySPD; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lBrPRxC8"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HQixySPD"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Bnf1eW7P6Y1LrbVjR7wiabhk+HL71BaGmuDYCGyhh5E=; b=lBrPRxC8afew4Nvh
-	jr3B4Tj1tgWuLdfvotdaEzm0P9tMrxnRuzjHo/puVZ2lOj0nSbdi4JyFt4xW2+64aWSdKw0yoOGRe
-	+oyPV1xpJGg6LH4IhV9vRiGUwVPWxIKLpQAfoVJtROaFXPWwlbBxlX1P6zpU0CP1G6+q+l2meN8pu
-	xJuXPz9pPic47x1EqJxSPjkYLd7hWeHRfEHlJCizpoTXjfLM9HPbv7WbXD8c9nYqe/R2ISvqZeepF
-	hdAIBL8mT4yo1YOHkHjpv6K1pZrRSrS/z99Q2Q2E4hNLHFfOdVmfjM/fNU7Ifwy8cE1pxyh7TA1X6
-	OwFg3DO7vSQzTilPlQ==;
+	:Subject; bh=ETN3qpR4uGVMCaRHzMYIbaELv2dj5lLtmwCH4pVlo5s=; b=HQixySPD+0AuFwEc
+	1/e5XeIwsNyh73iQy+StfHb71Fnxa3IU4PV8DTKQcpabfr3V0jjB5XaOXxFGaQMfzSpIV/TVjkI3C
+	B69jpl28lKGCVwsrBL47vEhlP00oqUGudX1zZuDv6dqmeQv8stTS4KbLWoJ2X8VCfQ7qlUEvwsQyT
+	QZuyslo2NOJC7Tv17/+7yJ8PDQNYpav+zEZwaTD51CKEVkHCiF0xunm/PYm4LwDV4is5NQrst2ksX
+	BwDXdoqkVUMD1D+u9nAk6n34eZZAOS/QpjJIQcoKVVRQsrJjqV0p/XWknJ9FezcvHyBjhjlPEbglA
+	V+U/iJejW3+Ce/s1Cw==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u7xYJ-00DdIX-2l;
-	Thu, 24 Apr 2025 14:27:47 +0000
+	id 1u7xYI-00DdIX-33;
+	Thu, 24 Apr 2025 14:27:46 +0000
 From: linux@treblig.org
 To: arnaud.pouliquen@foss.st.com,
 	andersson@kernel.org,
@@ -38,12 +37,10 @@ Cc: corbet@lwn.net,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2 2/3] rpmsg: virtio: Remove uncallable offchannel functions
-Date: Thu, 24 Apr 2025 15:27:45 +0100
-Message-ID: <20250424142746.79062-3-linux@treblig.org>
+Subject: [PATCH v2 0/3] rpmsg offchannel deadcoding
+Date: Thu, 24 Apr 2025 15:27:43 +0100
+Message-ID: <20250424142746.79062-1-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250424142746.79062-1-linux@treblig.org>
-References: <20250424142746.79062-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -54,78 +51,28 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The virtio_rpmsg_send_offchannel() and virtio_rpmsg_trysend_offchannel()
-are wired up to the send_offchannel and trysend_offchannel members
-of rpmsg_endpoint_ops, the only dereference of those was by
-the unused, and now removed rpmsg_send_offchannel() and
-rpmsg_trysend_offchannel() functions.
+Hi,
+  This removes a couple of unused functions in rpmsg,
+and (v2) after discussions with Arnaud, follows the thread
+and removes code that they would call.
 
-Remove them.
+(Build tested only)
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 89d7a3b8c48b..1474e8000207 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -141,13 +141,9 @@ static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
- static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
- static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
- 			       u32 dst);
--static int virtio_rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					u32 dst, void *data, int len);
- static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
- static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
--static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					   u32 dst, void *data, int len);
- static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
- 						   struct rpmsg_channel_info *chinfo);
-@@ -156,10 +152,8 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
- 	.send = virtio_rpmsg_send,
- 	.sendto = virtio_rpmsg_sendto,
--	.send_offchannel = virtio_rpmsg_send_offchannel,
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
--	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
- 	.get_mtu = virtio_rpmsg_get_mtu,
- };
- 
-@@ -665,14 +659,6 @@ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
- }
- 
--static int virtio_rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					u32 dst, void *data, int len)
--{
--	struct rpmsg_device *rpdev = ept->rpdev;
--
--	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
--}
--
- static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
-@@ -690,14 +676,6 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
--static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
--					   u32 dst, void *data, int len)
--{
--	struct rpmsg_device *rpdev = ept->rpdev;
--
--	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
--}
--
- static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
+
+Dr. David Alan Gilbert (3):
+  rpmsg: core:  Remove deadcode
+  rpmsg: virtio: Remove uncallable offchannel functions
+  rpmsg: Remove unused method pointers *send_offchannel
+
+ Documentation/staging/rpmsg.rst  | 46 -----------------------
+ drivers/rpmsg/rpmsg_core.c       | 63 --------------------------------
+ drivers/rpmsg/rpmsg_internal.h   |  6 ---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 22 -----------
+ include/linux/rpmsg.h            | 22 -----------
+ 5 files changed, 159 deletions(-)
+
 -- 
 2.49.0
 
