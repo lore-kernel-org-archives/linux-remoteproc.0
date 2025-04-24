@@ -1,147 +1,268 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE22973A9
-	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Apr 2025 14:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979561C84DF;
+	Thu, 24 Apr 2025 14:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504076; cv=none; b=u8zAf1J+Ye6Q3a5C838v3NkjaaTcrFJaO7k76W81l53rgkwTBcqB8TRJxRIR5GHlzgfUKvPd7UE3xIiA8wmlGp6WmL0ptBta6ZWsQseHFqYUi2Vuwos+BCNS6LxS47vrcnbT36CEGHEso8oeFV0LiZ3UgYZHikJEiaC4IkVlJFs=
+	t=1745504884; cv=none; b=kgdXrsG2pGIYh8+lv+SbEjqWfQE2UQZmY8TNs56ef5cMmhC7VmJUf2GGjN98/8Hl/tJljBgJbTu949X5/+tZtF6rqbmPO8g3NrkpaFVaHHi26YkyBgtGyVu/bXgcGFMcjugiPGD+cupG2VIMK3pvmfrguFB4IcgBq9odf7VmjVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504076; c=relaxed/simple;
-	bh=hc3NuIx//WjHKdboDZgQCca1SVN0OX6YOp4RVVhyM/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RQQq3hAa+nf557oGUGchTP7qfAfX0TkYuzTZrg8n89L7HgEYwlQBwvqYmInPyfzGTq3RlolMn6PNwjryc5cL5WvWTt8oc1IePPERITr3B9HbS62DTxjiW0eVenRm/ZckijyDJou2IhAFU9c7p6I/7xfPY7kHISV2RWr7Z4/32uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UwUk0Yat; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745504884; c=relaxed/simple;
+	bh=5eneIEPCdB83u8+BEhtmTgT1YL8I248r9AioANb2tNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WqaOe9JjYZRKDlZoJcUY59Hr9mImL7C6yAk2g1Vu1HaWDILODnFNb1fQ+02lO3HB+oe/3/lBprfANUxW6VLdXtSyeZBRm1WUwFg0W67Gjj3O8SHTC+BSvXxA8N0pH5zc2TZcF1LhKWJPb9VOyeqnmctEZaSHfnveDk1DV2dKqws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qqtaRYg6; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UwUk0Yat"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bf5d7d107so9276141fa.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Apr 2025 07:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745504072; x=1746108872; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIIOezRQ1iEeyh6wP7pxRulzkeF5lSrui5rZPEB2VUc=;
-        b=UwUk0YatGqkihCHcRF0WXCpJdbvOfbr19WV0vXckF6HbEABibwa4CVO/OAXrn8LE2K
-         Qtjqr5hysn2lIIyCIbEd5tzTWUcvnhXssACBU8hiMTKhl2J5LLVCZGtbFLxJtiWb+eED
-         Noss6jgFurG+cW6ZtrPOZmAPuVNyz8dStIMOjOVs2YWBcPdCrPnXPZApCqUEhrbkesAt
-         fstmM6LzmJnQRrT/dYOSxgc757S5707GF+imQNkxH+KX9Rtap0GeOZL3ZoyqE2ZSDvYy
-         ui8SWR5ZIkhASTH78Z+6DVD5xKKG6a7Jds3Z3YM+E/Aiq+tnEfHCHgAvk3UBmwW0rjTs
-         gTmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745504072; x=1746108872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DIIOezRQ1iEeyh6wP7pxRulzkeF5lSrui5rZPEB2VUc=;
-        b=B3v27WnVrAR94zH3uxgZgLiCBDzA63TiwJEVJHL5xyO40ERxC/DYHZ2c7br4M1TtbR
-         GjvrKpgZ9UiyO9VuSCOdX8WBPpFIwc/eFuiCVK5/gUuidlibaYTYqzgTAuIO0CEKucaY
-         K2n6YYcwS92KyTFtyNgCDEEmEO2RDQ6+skRIfOnYHLHAlxiOaFuM3aA6vVXzc/A/KvGr
-         /KYwgbIUCT1AFEAyi3T9B7unh3SlmGki2GUyBdPkIOsd0ArGkymC/x8xjmuaTi8vd3pn
-         oPElVKIPkQvdq4Rgji3cLdHvVYmq0SIFlkkrAWixNbHnuK6oMr4k8hdMMCNAWPXs5Qlk
-         mX1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVpECfNM0zvfQJ1I0p25AjmvDW73ZjDOeFaSZ9coQWUBS1WdYT0owW2oXWKfo2dZ1B+Ek2hq9OyJN+jNQ6q7XH@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOVEwIN/RwEOnZaa8o2ee4BhIi3MOv3yKA2E9fjtygLLcPn5ZH
-	NIMgk0NmBss3XIZOGVVckHJDg3yJ0Mw+UD7+WJeoC+IdvqDNji2mA3KdH9qjp0iFzF8TzCOQShd
-	YL8Q8L/hoe+4Od6rPrGfmismxmz3QgH1SBzUUdQ==
-X-Gm-Gg: ASbGncu1+jLOvRlN5r3BZcYYWvk/pjPA4FyaIEytLZj5xqHdqBvi5Hq7TtRjJDyWQsS
-	LOeffnMciJyjOtwQFGzENF3sIMQApqh9zTTEmVRAFkqJp3IrVwKXb74+hReO/oY8ANd0U9dxlcA
-	EtN6Ggo0/3Z9VwGf2Z/Bd2XsMMriPNpr1jQuUT+AaM7LAyGUw48yqhviiD
-X-Google-Smtp-Source: AGHT+IGTSgfmE4C9KUY01cBQCa6U+zujjBr3JQn5JFHu87otSRTtbM+9TibC6Ub/YfaplbG5HQdBpJHJtYPG69/HM40=
-X-Received: by 2002:a05:651c:885:b0:30d:e104:cd56 with SMTP id
- 38308e7fff4ca-3179ffc1202mr10727731fa.39.1745504072212; Thu, 24 Apr 2025
- 07:14:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qqtaRYg6"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=C8ixYIeM5DXpPc0p7oUirQcwqBIWEQe7FnFZNeRD93w=; b=qqtaRYg6apxGJxbQ
+	0JmikwTiOse/PxO+eo5ed7VGM23RDss8bJVE4GbH/Ktz4Fk5gnedQMyVR54fov8UvnxRsIRvBx2T8
+	bPS/23Cdy60HnDe45dvh1eddCd9szF8V2Q/FwHIhl7Dp5W92eeDrcM88EjrLm+CoSWor3EUgWZmvr
+	kdUESpaxFYTxjj0lY6r+9N+e3YJhhGVelDKJOhXWgJURN0lJPys7OAy97steN7gEOMpbuDZot2sF/
+	6k1vXRL8dc7kQsKmf3EIGYFEC2ihpHD6aHoFV1ZfGPpxjDxMvmkWRDGnfT1VgSIfTqU57ncWiWKsq
+	gHJdx5xl4Xw7PoEzsA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1u7xYJ-00DdIX-1G;
+	Thu, 24 Apr 2025 14:27:47 +0000
+From: linux@treblig.org
+To: arnaud.pouliquen@foss.st.com,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2 1/3] rpmsg: core:  Remove deadcode
+Date: Thu, 24 Apr 2025 15:27:44 +0100
+Message-ID: <20250424142746.79062-2-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250424142746.79062-1-linux@treblig.org>
+References: <20250424142746.79062-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
-In-Reply-To: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 24 Apr 2025 08:14:20 -0600
-X-Gm-Features: ATxdqUEG7UgU0b-fYJDsj-X6YeibPATP71Sc8xsrfndaXkHmANCAN6IFo1WtuOI
-Message-ID: <CANLsYkxKHhCHYrbAGzQ48QGpL_DbuLnX3=ppmpyu0vjuuvvODg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
-To: "Rob Herring (Arm)" <robh@kernel.org>, Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
-	"Andrew F. Davis" <afd@ti.com>, "Shah, Tanmay" <tanmay.shah@amd.com>
-Cc: Saravana Kannan <saravanak@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Arnaud, Daniel, Iuliana, Andrew and Tanmay - please test this patchset
-on the platforms you are working on.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Thanks,
-Mathieu
+rpmsg_send_offchannel() and rpmsg_trysend_offchannel() have been
+unused since they were added in 2011's
+commit bcabbccabffe ("rpmsg: add virtio-based remote processor messaging
+bus")
 
-On Wed, 23 Apr 2025 at 13:42, Rob Herring (Arm) <robh@kernel.org> wrote:
->
-> While there's a common function to parse "memory-region" properties for
-> DMA pool regions, there's not anything for driver private regions. As a
-> result, drivers have resorted to parsing "memory-region" properties
-> themselves repeating the same pattern over and over. To fix this, this
-> series adds 2 functions to handle those cases:
-> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
->
-> I've converted the whole tree, but just including remoteproc here as
-> it has the most cases. I intend to apply the first 3 patches for 6.16
-> so the driver conversions can be applied for 6.17.
->
-> A git tree with all the drivers converted is here[1].
->
-> v2:
-> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
-> - Export devm_ioremap_resource_wc()
-> - Rework handling of resource name to drop unit-address from name as it
->   was before.
-> - Link to v1:
->   https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
->
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/memory-region
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Rob Herring (Arm) (4):
->       of: reserved_mem: Add functions to parse "memory-region"
->       of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
->       devres: Export devm_ioremap_resource_wc()
->       remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
->
->  drivers/of/device.c                       | 31 +++++-------
->  drivers/of/of_reserved_mem.c              | 80 +++++++++++++++++++++++++++++++
->  drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
->  drivers/remoteproc/imx_rproc.c            | 68 +++++++++++---------------
->  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
->  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
->  drivers/remoteproc/qcom_q6v5_pas.c        | 69 ++++++++++----------------
->  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
->  drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
->  drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
->  drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
->  drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
->  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
->  include/linux/of_reserved_mem.h           | 26 ++++++++++
->  lib/devres.c                              |  1 +
->  18 files changed, 339 insertions(+), 369 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
->
-> Best regards,
-> --
-> Rob Herring (Arm) <robh@kernel.org>
->
+Remove them and associated docs.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ Documentation/staging/rpmsg.rst | 46 ------------------------
+ drivers/rpmsg/rpmsg_core.c      | 63 ---------------------------------
+ include/linux/rpmsg.h           | 22 ------------
+ 3 files changed, 131 deletions(-)
+
+diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
+index 3713adaa1608..40282cca86ca 100644
+--- a/Documentation/staging/rpmsg.rst
++++ b/Documentation/staging/rpmsg.rst
+@@ -110,31 +110,6 @@ or a timeout of 15 seconds elapses. When the latter happens,
+ The function can only be called from a process context (for now).
+ Returns 0 on success and an appropriate error value on failure.
+ 
+-::
+-
+-  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-							void *data, int len);
+-
+-
+-sends a message across to the remote processor, using the src and dst
+-addresses provided by the user.
+-
+-The caller should specify the endpoint, the data it wants to send,
+-its length (in bytes), and explicit source and destination addresses.
+-The message will then be sent to the remote processor to which the
+-endpoint's channel belongs, but the endpoint's src and channel dst
+-addresses will be ignored (and the user-provided addresses will
+-be used instead).
+-
+-In case there are no TX buffers available, the function will block until
+-one becomes available (i.e. until the remote processor consumes
+-a tx buffer and puts it back on virtio's used descriptor ring),
+-or a timeout of 15 seconds elapses. When the latter happens,
+--ERESTARTSYS is returned.
+-
+-The function can only be called from a process context (for now).
+-Returns 0 on success and an appropriate error value on failure.
+-
+ ::
+ 
+   int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+@@ -173,27 +148,6 @@ return -ENOMEM without waiting until one becomes available.
+ The function can only be called from a process context (for now).
+ Returns 0 on success and an appropriate error value on failure.
+ 
+-::
+-
+-  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-							void *data, int len);
+-
+-
+-sends a message across to the remote processor, using source and
+-destination addresses provided by the user.
+-
+-The user should specify the channel, the data it wants to send,
+-its length (in bytes), and explicit source and destination addresses.
+-The message will then be sent to the remote processor to which the
+-channel belongs, but the channel's src and dst addresses will be
+-ignored (and the user-provided addresses will be used instead).
+-
+-In case there are no TX buffers available, the function will immediately
+-return -ENOMEM without waiting until one becomes available.
+-
+-The function can only be called from a process context (for now).
+-Returns 0 on success and an appropriate error value on failure.
+-
+ ::
+ 
+   struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 207b64c0a2fe..6ee36adcbdba 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -193,38 +193,6 @@ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ }
+ EXPORT_SYMBOL(rpmsg_sendto);
+ 
+-/**
+- * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
+- * @ept: the rpmsg endpoint
+- * @src: source address
+- * @dst: destination address
+- * @data: payload of message
+- * @len: length of payload
+- *
+- * This function sends @data of length @len to the remote @dst address,
+- * and uses @src as the source address.
+- * The message will be sent to the remote processor which the @ept
+- * endpoint belongs to.
+- * In case there are no TX buffers available, the function will block until
+- * one becomes available, or a timeout of 15 seconds elapses. When the latter
+- * happens, -ERESTARTSYS is returned.
+- *
+- * Can only be called from process context (for now).
+- *
+- * Return: 0 on success and an appropriate error value on failure.
+- */
+-int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			  void *data, int len)
+-{
+-	if (WARN_ON(!ept))
+-		return -EINVAL;
+-	if (!ept->ops->send_offchannel)
+-		return -ENXIO;
+-
+-	return ept->ops->send_offchannel(ept, src, dst, data, len);
+-}
+-EXPORT_SYMBOL(rpmsg_send_offchannel);
+-
+ /**
+  * rpmsg_trysend() - send a message across to the remote processor
+  * @ept: the rpmsg endpoint
+@@ -301,37 +269,6 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ }
+ EXPORT_SYMBOL(rpmsg_poll);
+ 
+-/**
+- * rpmsg_trysend_offchannel() - send a message using explicit src/dst addresses
+- * @ept: the rpmsg endpoint
+- * @src: source address
+- * @dst: destination address
+- * @data: payload of message
+- * @len: length of payload
+- *
+- * This function sends @data of length @len to the remote @dst address,
+- * and uses @src as the source address.
+- * The message will be sent to the remote processor which the @ept
+- * endpoint belongs to.
+- * In case there are no TX buffers available, the function will immediately
+- * return -ENOMEM without waiting until one becomes available.
+- *
+- * Can only be called from process context (for now).
+- *
+- * Return: 0 on success and an appropriate error value on failure.
+- */
+-int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			     void *data, int len)
+-{
+-	if (WARN_ON(!ept))
+-		return -EINVAL;
+-	if (!ept->ops->trysend_offchannel)
+-		return -ENXIO;
+-
+-	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
+-}
+-EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+-
+ /**
+  * rpmsg_set_flow_control() - request remote to pause/resume transmission
+  * @ept:	the rpmsg endpoint
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 90d8e4475f80..fb7ab9165645 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -184,13 +184,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+ 
+ int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			  void *data, int len);
+ 
+ int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+ int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			     void *data, int len);
+ 
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+@@ -271,15 +267,6 @@ static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+ 
+ }
+ 
+-static inline int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
+-					u32 dst, void *data, int len)
+-{
+-	/* This shouldn't be possible */
+-	WARN_ON(1);
+-
+-	return -ENXIO;
+-}
+-
+ static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ {
+ 	/* This shouldn't be possible */
+@@ -297,15 +284,6 @@ static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+ 	return -ENXIO;
+ }
+ 
+-static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+-					   u32 dst, void *data, int len)
+-{
+-	/* This shouldn't be possible */
+-	WARN_ON(1);
+-
+-	return -ENXIO;
+-}
+-
+ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 				      struct file *filp, poll_table *wait)
+ {
+-- 
+2.49.0
+
