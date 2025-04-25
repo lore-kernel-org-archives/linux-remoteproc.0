@@ -1,137 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C67822B8C6;
-	Fri, 25 Apr 2025 06:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E2623C38C
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Apr 2025 08:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745562176; cv=none; b=MNsrZv48fMMp8hfUYg1QPgttNWK4vLyb+cr3EhOs2VLw4zFl2bRwop958TYeQ8ZIeq16xC7XEtpTWun+gt6KAGbUZPwKwnm8Soo1uVAJh1F7vljfUC4vxtUl6vMw+hxKRBobNJ2vkNPwcqu9YrxzwhW+a/+d/pRk/0pTj2yLX1k=
+	t=1745569081; cv=none; b=Kw/8H2Eq/zVyktwjGRHN+SD0nT8NtcD0jTNne8f3gM5MdPC86Ftb1/guJQSEJpsFN/uwG4w2ESl5yaC8zbJywqNcbux/aDsIicxKgSAKgDfGhLoCCLJUcYUfC4uE9Z/lC84ZncfepexjVqitudcTYOlFqnsLOsS3P0zDeye7N1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745562176; c=relaxed/simple;
-	bh=YigdO8GocE/WWn8miDjmUpp2Br2/KiCiEE83ZWQWoNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=olTitk0p377+tcsrFsjHnEwbbtDW50OLn4iLVeSccFuOvgPMeevoD4WlPYo8h6UR9KxUBidREnsAZ/gteHl8EpyMrR6o+zrTTtmHXNlMKO/CvsrmXt9XMeqgQrWo610oBz7hNMHzpOVxo6jvoIuFgSlyPxqowRLSU7ZVgyoiT/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVMtItia; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745569081; c=relaxed/simple;
+	bh=ockCoErXJYNNWIE4F1OGfTdTciM14pc2rGFj8KF/fos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZi9iDYFKvJ4LIxL1rbhYHpdH9L2JmeCBS8XXOs/NiT04bPIURNJbhyZ7lXtE/GdSmRNEsF+1rI/b390AGB6H7rKwSNWbaHXhAL0AmHdkVnk9nKKtUEOrtDBNPpnTCwxZMNlv1aSoQIkzKG0Fn34pioQMKUii5DQFIhdth89JuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i8KCNbjb; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVMtItia"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFACC4CEE4;
-	Fri, 25 Apr 2025 06:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745562175;
-	bh=YigdO8GocE/WWn8miDjmUpp2Br2/KiCiEE83ZWQWoNs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RVMtItiaNd5ieuQTHxFUJvENRcjPvyLz83L+Cwfu387fZV/ylOy2cEE0cmzxTsUZ1
-	 45DD5UJfGX0E+fzgoiBEt8SiDSOAHAPHmJb4GGuMpI043fR8ZH04lHxEJbTr6u1epo
-	 Hc77BLfEargAsXnUyd4rQ9Xk7PBpnUFnpwXG1htqU0Vw6+jakYCk0zWXda6evkbUfB
-	 dvvlOVqRedGXQSHATW+G0IdYyyBl4t71cYvWv87WEoPLatKFOcsj4b5BF/WoSqfCVC
-	 PLTBYwH/P5Nv/9tQotNXj7IxnH6oLUyLqMLrSDG/5Kh1WeSCviBooqNPozzZAuc8l4
-	 evCK0Vs60URGg==
-Message-ID: <23f0efae-9d37-45cd-85df-7122843fece0@kernel.org>
-Date: Fri, 25 Apr 2025 08:22:50 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8KCNbjb"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43ede096d73so13908625e9.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Apr 2025 01:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745569077; x=1746173877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=i8KCNbjbmdKc4sIjtJQPP7WgaU8u7kgQvvJRDHolwlBVdzQNI9ZnLo81t6/elcoa2k
+         NUlaEF7k01WJT916nRHvbKnszFcNNlbw4nove37EEIIoXPLw0S1h0mJH8J4phPb1gJWx
+         Zku/gMC7L32R8ibcJfkj+eBWyLn8Pi3MnTJaD8XIOEkBoP/VKl2cA+/9OSwvILIi+mjn
+         fBW9W5Utg7nbmYjM3S2POgZQ9q3w6nsPAsh7LvqS1oNUGJe7cOTruTBSDuzPveswgDoz
+         td+zByLQKPBhOzRw1zB+EAhdDTeJJstKvhOYG8JF0hDcUkSVrjefeA5c1msW6+gwu+w0
+         hZxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745569077; x=1746173877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=uFjKTPWHAT3+o4E9RKhW3w+zTvNH31KXhIGE8NCKZ0vXwV1jv0gqrWeTVFBrKQX52+
+         bS812vDZTeFHSXGMAYeT6/2DlZ100Vk2HvOQ9+uEZ7eelZqMB1+E1zSVSTNi57MjaFVl
+         FZ3Brik0AdzQvLYnCSA+rJ28hPpDMouKFVgYjZ4Wla6wj+LOf6HJftg3k18dbtOv7LIk
+         gWR42ikuW3jbTu8i3ZFVPTdiQDcIWaHv5F639/1sktTFka3zVr0A88OcNj7Bum//DeSK
+         2LtfrlXPLPdXjKjYAu8c0OlleUxUJIb5b00ZECU+gZGjZvHs6jkfXm3cAkm1uOB+kA+O
+         Zpsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQKIr95iSuNe7jLzTw3c/btb8+W199QILuIwAl3AP3c2fjbM7zYPIzP7iut6R6tBPU6RXspeMrXwu+U0sTjE8a@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy2JCuk4MT+DmA7Wvbgjk9mkEBo7Um97G0ajR5UPhNvAPDGBk5
+	rfxQU3TFAWq6p7Cx96UewHgjd04WoFG2POu+TnPfnl1sd00jd/6Q/vCIgXANDpw=
+X-Gm-Gg: ASbGncutpK4HWjEghbjzlZgOf4X05vDSDteiyhfxMnzeWI+yFTRP+fIfb0uHJLgfywQ
+	RZdFjhly2yFl2cABAYzAo/V0g9/vnwfsJcUdHqIx4I258rSMSSAVvoHZrhIDLAWXqsSesMknOxE
+	s5d/Ce9ePY210TFhLYvN+BwVB46SQXyMhB12iWTihg7dS6HFXYU3v7dy5g/uyfzAevN+HHVLEJt
+	hhQLzBucKzsJ0rfgucL1ipCQBGlqrx3HNkWjn38jO8QJ9gcJlh92Ysy+AJ/87D6jHXNkJtgNn5D
+	JkACgeP/xfw2Kyd5d56OivPRftzB2LjiejRdkUFCAvSivw==
+X-Google-Smtp-Source: AGHT+IFtIhw338SCwM97fT8DE36JSktmwAws0V+m2whiTCc2WvjhYcfxYH8N3RZVkd/V19BgPW5uag==
+X-Received: by 2002:a05:600c:3d0b:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-440a6346aabmr12093055e9.0.1745569077572;
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073c8d1a5sm1671072f8f.13.2025.04.25.01.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Date: Fri, 25 Apr 2025 11:17:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Marek Vasut <marex@denx.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
+ __qcom_smd_send()
+Message-ID: <1cb8c180-a93e-4d5d-a17a-6452dd154801@stanley.mountain>
+References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
+ <aAkhvV0nSbrsef1P@stanley.mountain>
+ <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 2/6] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-To: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>,
- andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: quic_srichara@quicinc.com, vignesh.viswanathan@oss.qualcomm.com
-References: <20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com>
- <20250417061245.497803-3-gokul.sriram.p@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250417061245.497803-3-gokul.sriram.p@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 
-On 17/04/2025 08:12, Gokul Sriram Palanisamy wrote:
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +
-> +  clocks:
-> +    items:
-> +      - description: sleep clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sleep
-> +
-> +  mboxes:
-> +    maxItems: 1
-> +    description: A phandle for the TMECom mailbox driver
+On Fri, Apr 25, 2025 at 11:36:24AM +0530, Naresh Kamboju wrote:
+> On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The "ret" variable isn't initialized if we don't enter the loop.  For
+> > example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+> >
+> > Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > Naresh, could you test this patch and see if it fixes the boot
+> > problems you saw?
+> 
+> Dan, This patch fixes the reported problem.
+> 
+> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> 
 
-This is also a new property.
+Thanks Naresh,
 
-Phandles cannot point to drivers. It is just impossible. It is a phandle
-to some device (as in "device node", but we describe here hardware)
+I left off your reported by tag as well.
 
-Anyway, either drop description if obvious or use simpler form:
-  items:
-    - description
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+regards,
+dan carpenter
 
-Best regards,
-Krzysztof
