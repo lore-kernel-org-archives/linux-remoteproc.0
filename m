@@ -1,310 +1,121 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16123481C4;
-	Thu, 24 Apr 2025 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D768222B8BE
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Apr 2025 06:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504976; cv=none; b=HDgP5wh+ESqhckPcFBIYKSS6K4f/4kbwVcyGSvo/pgc1kJ5la04pf/Y4iSzL5vMzI2ywa6h2E+a1nkx8TaL3LBhIa4YY4mQqF6ioxWEmTPM3de6fbdFusPgUOlNWztfVVJb1/hea9fDiYhi8s3pQDj3pwlWOvXackm73grGXLqM=
+	t=1745561198; cv=none; b=qLCzZNf9i95ibSq2JdGdf6Ifh+oFJCPadgyHytAAGXfsQSOKknMYKkztg+SxhR4qvP1onFnEbp0Ih8a/cRUPtk/YCsL4iA0UK+4rF5xUbtPJjyHMELldwORT3eQdT8a5ztq6oj3IBaWLymkY71jfMY8FKcZ0XObuK+pZ1ey2BnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504976; c=relaxed/simple;
-	bh=AaGa2b/kIYDOXhLk2pmLast9z8OAHL6xxNsv6bKJU60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LaKOo+ySZDXF7gJeSd9qXomReVtbP5plBFqzkU3fmeGt/fviGkvG0K1qwjnag5HtJ73StaZBkTi6SWP5i2pkhXieyhzI0fCEMyvfyr2sUUM0Yv9Z+l4OniG9MQt03zZmetemKr/dk7scTCFzGTD5Sjq4m1AdKp+KblO6mQ/2U9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=DptcNXRi; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1745561198; c=relaxed/simple;
+	bh=CpBT/GJTl/qOHB8XXefQW8z5QInEFr8XQOgxoGfmDlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZQfzfYcSQ7J89AZvRWyRxPfPxJQnTQ2ZaIcPKrjZediXk5dDIq2AYJkNQOfpMaOllVHp6Kma0Ef1hxDgH7zcuxLpmlmM1yZTD2qWEO1vvs3RflHbdcqTJ+UWT65RP418HobW3GAA7Enl7Tv05JDHYOhUMQHB1WLRrzW0L3Ynq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFtSTVxY; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="DptcNXRi"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=9KjGj3KS94OtlAiXjq8wdZ7IRHQBz06ZQi2NkwD9hIo=; b=DptcNXRij7bpz8+P
-	NIKIm3M8zT1WVQLI6pET3XzjYBlM0bk3/2M7bXisQO4H8MT/nCOSTTdFJFQ8KW21dawBQbAaWOXF2
-	BRXyjedYoUfpbn4KZUKtKiPGgzeOKeHAHJbJpFYlyiIttPtjLfmrKuEBUM06YlP3yF709AFDk2dB8
-	qGQ+ogGu29LuoVivmMLRGl+D8t5Re72DygUsZJmw6g2XyR9776AGaTdwcHL4UvNd0qxSXD3YEB6Zj
-	qC+un7Keer/sahOar8dN5yt4CyY6bvjSy/I2FMtTanrKTQeFKweYeLXKsSN1heZqBhJJP066FthHK
-	QbX2sDKJL1IeOAdglQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1u7xZw-00DdLx-2t;
-	Thu, 24 Apr 2025 14:29:28 +0000
-Date: Thu, 24 Apr 2025 14:29:28 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, corbet@lwn.net,
-	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: core: Remove deadcode
-Message-ID: <aApKyI9Tt6ckhhK7@gallifrey>
-References: <20250420204146.154807-1-linux@treblig.org>
- <60e77932-9be7-443d-aed9-2b54945fdce6@foss.st.com>
- <aAjL-1rB3YHMnr9F@gallifrey>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFtSTVxY"
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86d3ac0fec0so1797437241.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Apr 2025 23:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745561195; x=1746165995; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajgJc89GPboKToxuB8Pj0D0uNjRPDnR6q+9b48EFZ2E=;
+        b=RFtSTVxYzNOCGv2rnwTHN+3CiPKXQBATPCXeP6dr7gaQRpBhBoalnkY+LbUx0sk0K0
+         uyWj5fDaidv+PnkUuO8tbvCDnuKmBCzQIZWOz1hEBc76bo18OqEBD5Oss8u10URqGgRQ
+         BMs/R/kC1OEknsAsU25OZXJvGLGWnmeq+yhLXDIU5LhKz4jUdWSM0/q/rcBT1Vb5UIYp
+         yibnkVOsVcZ4vQj/iAJ+eQ3TvnlV6RbQDIgst7u5CJ7Rlkd6Q4jQmnIFsYxEr9SWwjN/
+         NmYo42eVBTKO60T5mAo/Q11+g3gVoJLKhg4TExj0Wq0SNGr03vP1PeV/Gv6UA8BHCwAk
+         PWsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745561195; x=1746165995;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ajgJc89GPboKToxuB8Pj0D0uNjRPDnR6q+9b48EFZ2E=;
+        b=CdfzeibMDr0SFIQrDOiUSDeCRxH3ziZVn+LBIGS3u/0bhNHvJBbIxnHJiOUgCXo2yY
+         oXk7tVtbH8t46/q6qBnGFutDvfnwnpEKWkgiofNqQZftBIDZTtWg0oMYlLx5eFhm+s7y
+         i4PgJHs7QDkU+enZKEZVE8tEeXB5RUTGeYfBrsZJ15fc7rL3j6yJGDBr+F/mRanoAJmD
+         ZDMAdJuVM4RGJcl4jw6phaeNvboyf34tFz/JiIAkA1IQJitdc7M6ysCzWu4WcKS7k6Ug
+         fexMsnzUmZrBr3/tGv/l7BPFQh5+kuFRczqVfAEArP+zZ4MYp8I8cyf+qcaRfUD3BKb/
+         2Ulg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhpHKZWvRs+M/uTvZg4Xu09xGYRh/ztRn+qtc6+iZZhWivwNDor3P/ujw/C+adbA5bFOa7DDI8fbQYJn7OnJ5i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzixGkMN/fJFJ52liLGVgDxcltbNkByZKQBC8R8UeS3JhlAAqJj
+	+weM8309588w2OqdDG/ku/47+Oxy2mjPZO9i1tidaJbg+UQS19VMIL1w6LS8D9c2BTx39z0y0Uk
+	uIExgxG3bQkErym93l/swqsyMZAClorsfmHJ0Ew==
+X-Gm-Gg: ASbGncsaDViDu8/ro2BbtCe5y5B+1E1w3MIC/YwCkzuKKrHkzv/cSSo1XEuuDu0lKQ0
+	AVDzVtYAi1Q9FZIOf9sm6Uu1Y5WjnxeVbPeD5E/iUTiFZDlf12krLrp059xI+merC/t2QjnQneN
+	C9iHEXNpTQ7OiZ3SyHI2coAu+lWYRaqbl+iCjU2RTuWZNgE6abWGOIshrP
+X-Google-Smtp-Source: AGHT+IHk3Sh1recRtL0I0FAiNETtYwurKFY0CJ0FDTy8w0bAg/KMEvL/1tmqPiwb61pQkrz7JWUirq46fq8oitTFWfU=
+X-Received: by 2002:a05:6102:3e87:b0:4c1:9526:a636 with SMTP id
+ ada2fe7eead31-4d543fb6341mr362655137.15.1745561195672; Thu, 24 Apr 2025
+ 23:06:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <aAjL-1rB3YHMnr9F@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:29:08 up 351 days,  1:43,  1 user,  load average: 0.00, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
+ <aAkhvV0nSbrsef1P@stanley.mountain>
+In-Reply-To: <aAkhvV0nSbrsef1P@stanley.mountain>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 25 Apr 2025 11:36:24 +0530
+X-Gm-Features: ATxdqUHyh1sPNfszHFCKsjMSGrXxYsTXLBiYXGTypFcI7J1MgDaUy852FfJYen0
+Message-ID: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Frieder Schrempf <frieder.schrempf@kontron.de>, Marek Vasut <marex@denx.de>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * Arnaud POULIQUEN (arnaud.pouliquen@foss.st.com) wrote:
-> > Hello,
-> > 
-> > On 4/20/25 22:41, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > rpmsg_send_offchannel() and rpmsg_trysend_offchannel() have been
-> > > unused since they were added in 2011's
-> > > commit bcabbccabffe ("rpmsg: add virtio-based remote processor messaging
-> > > bus")
-> > > 
-> > > Remove them and associated docs.
-> > > 
-> > > I suspect this means the trysend_offchannel and send_offchannel
-> > > member function pointers and the virtio implementation of them can be
-> > > removed as well, but haven't yet gone that far.
-> > 
-> > It seems to me that this API is not safe as it allows an endpoint to usurp the
-> > identity of another one thanks to the source address.
-> > 
-> > So, +1 to remove it.
-> > 
-> > That said, to complete the remove it would be nice to also remove associated ops
-> > declared in rpmsg_endpoint_ops and implemented in virtio_rpmsg_bus.c.
-> 
-> OK, yes I was thinking that but wasn't sure - I'll cut some follow up patches
+On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The "ret" variable isn't initialized if we don't enter the loop.  For
+> example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+>
+> Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Naresh, could you test this patch and see if it fixes the boot
+> problems you saw?
 
-Sent, see v2 series starting with message 20250424142746.79062-1-linux@treblig.org.
+Dan, This patch fixes the reported problem.
 
-Thanks!
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-Dave
+Links:
+ - https://lkft.validation.linaro.org/scheduler/job/8244118#L2441
 
-> Dave
-> 
-> > Regards,
-> > Arnaud
-> > 
-> > 
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > ---
-> > >  Documentation/staging/rpmsg.rst | 46 ------------------------
-> > >  drivers/rpmsg/rpmsg_core.c      | 63 ---------------------------------
-> > >  include/linux/rpmsg.h           | 22 ------------
-> > >  3 files changed, 131 deletions(-)
-> > > 
-> > > diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-> > > index 3713adaa1608..40282cca86ca 100644
-> > > --- a/Documentation/staging/rpmsg.rst
-> > > +++ b/Documentation/staging/rpmsg.rst
-> > > @@ -110,31 +110,6 @@ or a timeout of 15 seconds elapses. When the latter happens,
-> > >  The function can only be called from a process context (for now).
-> > >  Returns 0 on success and an appropriate error value on failure.
-> > >  
-> > > -::
-> > > -
-> > > -  int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -							void *data, int len);
-> > > -
-> > > -
-> > > -sends a message across to the remote processor, using the src and dst
-> > > -addresses provided by the user.
-> > > -
-> > > -The caller should specify the endpoint, the data it wants to send,
-> > > -its length (in bytes), and explicit source and destination addresses.
-> > > -The message will then be sent to the remote processor to which the
-> > > -endpoint's channel belongs, but the endpoint's src and channel dst
-> > > -addresses will be ignored (and the user-provided addresses will
-> > > -be used instead).
-> > > -
-> > > -In case there are no TX buffers available, the function will block until
-> > > -one becomes available (i.e. until the remote processor consumes
-> > > -a tx buffer and puts it back on virtio's used descriptor ring),
-> > > -or a timeout of 15 seconds elapses. When the latter happens,
-> > > --ERESTARTSYS is returned.
-> > > -
-> > > -The function can only be called from a process context (for now).
-> > > -Returns 0 on success and an appropriate error value on failure.
-> > > -
-> > >  ::
-> > >  
-> > >    int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
-> > > @@ -173,27 +148,6 @@ return -ENOMEM without waiting until one becomes available.
-> > >  The function can only be called from a process context (for now).
-> > >  Returns 0 on success and an appropriate error value on failure.
-> > >  
-> > > -::
-> > > -
-> > > -  int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -							void *data, int len);
-> > > -
-> > > -
-> > > -sends a message across to the remote processor, using source and
-> > > -destination addresses provided by the user.
-> > > -
-> > > -The user should specify the channel, the data it wants to send,
-> > > -its length (in bytes), and explicit source and destination addresses.
-> > > -The message will then be sent to the remote processor to which the
-> > > -channel belongs, but the channel's src and dst addresses will be
-> > > -ignored (and the user-provided addresses will be used instead).
-> > > -
-> > > -In case there are no TX buffers available, the function will immediately
-> > > -return -ENOMEM without waiting until one becomes available.
-> > > -
-> > > -The function can only be called from a process context (for now).
-> > > -Returns 0 on success and an appropriate error value on failure.
-> > > -
-> > >  ::
-> > >  
-> > >    struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
-> > > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> > > index 207b64c0a2fe..6ee36adcbdba 100644
-> > > --- a/drivers/rpmsg/rpmsg_core.c
-> > > +++ b/drivers/rpmsg/rpmsg_core.c
-> > > @@ -193,38 +193,6 @@ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
-> > >  }
-> > >  EXPORT_SYMBOL(rpmsg_sendto);
-> > >  
-> > > -/**
-> > > - * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
-> > > - * @ept: the rpmsg endpoint
-> > > - * @src: source address
-> > > - * @dst: destination address
-> > > - * @data: payload of message
-> > > - * @len: length of payload
-> > > - *
-> > > - * This function sends @data of length @len to the remote @dst address,
-> > > - * and uses @src as the source address.
-> > > - * The message will be sent to the remote processor which the @ept
-> > > - * endpoint belongs to.
-> > > - * In case there are no TX buffers available, the function will block until
-> > > - * one becomes available, or a timeout of 15 seconds elapses. When the latter
-> > > - * happens, -ERESTARTSYS is returned.
-> > > - *
-> > > - * Can only be called from process context (for now).
-> > > - *
-> > > - * Return: 0 on success and an appropriate error value on failure.
-> > > - */
-> > > -int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -			  void *data, int len)
-> > > -{
-> > > -	if (WARN_ON(!ept))
-> > > -		return -EINVAL;
-> > > -	if (!ept->ops->send_offchannel)
-> > > -		return -ENXIO;
-> > > -
-> > > -	return ept->ops->send_offchannel(ept, src, dst, data, len);
-> > > -}
-> > > -EXPORT_SYMBOL(rpmsg_send_offchannel);
-> > > -
-> > >  /**
-> > >   * rpmsg_trysend() - send a message across to the remote processor
-> > >   * @ept: the rpmsg endpoint
-> > > @@ -301,37 +269,6 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> > >  }
-> > >  EXPORT_SYMBOL(rpmsg_poll);
-> > >  
-> > > -/**
-> > > - * rpmsg_trysend_offchannel() - send a message using explicit src/dst addresses
-> > > - * @ept: the rpmsg endpoint
-> > > - * @src: source address
-> > > - * @dst: destination address
-> > > - * @data: payload of message
-> > > - * @len: length of payload
-> > > - *
-> > > - * This function sends @data of length @len to the remote @dst address,
-> > > - * and uses @src as the source address.
-> > > - * The message will be sent to the remote processor which the @ept
-> > > - * endpoint belongs to.
-> > > - * In case there are no TX buffers available, the function will immediately
-> > > - * return -ENOMEM without waiting until one becomes available.
-> > > - *
-> > > - * Can only be called from process context (for now).
-> > > - *
-> > > - * Return: 0 on success and an appropriate error value on failure.
-> > > - */
-> > > -int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -			     void *data, int len)
-> > > -{
-> > > -	if (WARN_ON(!ept))
-> > > -		return -EINVAL;
-> > > -	if (!ept->ops->trysend_offchannel)
-> > > -		return -ENXIO;
-> > > -
-> > > -	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
-> > > -}
-> > > -EXPORT_SYMBOL(rpmsg_trysend_offchannel);
-> > > -
-> > >  /**
-> > >   * rpmsg_set_flow_control() - request remote to pause/resume transmission
-> > >   * @ept:	the rpmsg endpoint
-> > > diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> > > index 90d8e4475f80..fb7ab9165645 100644
-> > > --- a/include/linux/rpmsg.h
-> > > +++ b/include/linux/rpmsg.h
-> > > @@ -184,13 +184,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
-> > >  
-> > >  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
-> > >  int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
-> > > -int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -			  void *data, int len);
-> > >  
-> > >  int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
-> > >  int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
-> > > -int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> > > -			     void *data, int len);
-> > >  
-> > >  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> > >  			poll_table *wait);
-> > > @@ -271,15 +267,6 @@ static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-> > >  
-> > >  }
-> > >  
-> > > -static inline int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
-> > > -					u32 dst, void *data, int len)
-> > > -{
-> > > -	/* This shouldn't be possible */
-> > > -	WARN_ON(1);
-> > > -
-> > > -	return -ENXIO;
-> > > -}
-> > > -
-> > >  static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
-> > >  {
-> > >  	/* This shouldn't be possible */
-> > > @@ -297,15 +284,6 @@ static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
-> > >  	return -ENXIO;
-> > >  }
-> > >  
-> > > -static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
-> > > -					   u32 dst, void *data, int len)
-> > > -{
-> > > -	/* This shouldn't be possible */
-> > > -	WARN_ON(1);
-> > > -
-> > > -	return -ENXIO;
-> > > -}
-> > > -
-> > >  static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
-> > >  				      struct file *filp, poll_table *wait)
-> > >  {
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+>
+>  drivers/rpmsg/qcom_smd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 40d386809d6b..bb161def3175 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -746,7 +746,7 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
+>         __le32 hdr[5] = { cpu_to_le32(len), };
+>         int tlen = sizeof(hdr) + len;
+>         unsigned long flags;
+> -       int ret;
+> +       int ret = 0;
+>
+>         /* Word aligned channels only accept word size aligned data */
+>         if (channel->info_word && len % 4)
+> --
+> 2.47.2
+>
