@@ -1,56 +1,56 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5C523D289;
-	Fri, 25 Apr 2025 10:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2520241668;
+	Fri, 25 Apr 2025 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577728; cv=none; b=BZj8jDwg4fuvkxsWzsB2sdIsQlPdk6g4w/JismLYbC07iTTh1eei6UUF6s3hShqTrOut8OpP5jdeOgWsdcjGXmxmSzxzaKFy/H59ke7mBg7HvgnMXJ0jTJICBRmW20gwcNZuviwv7KDtOIFPW+RBbod6Zp4O4KrgLZhooDhRGKE=
+	t=1745577730; cv=none; b=UrKh2vuOpWQiy4L5201Q3keLD7T5LHasHfsCiBbkyoeOTvY7LuhSMcmLSrdY5XHm7HsxDkGKNDOD11qtB1x3+VKQGUaHzufNkiTZZYJrCQXp7Yd+DczNd1Zpg9YQ7RDyjAE48XhRV20MikxjBOSn6y91keuop1s/IPS0UrKqBxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577728; c=relaxed/simple;
-	bh=K5HZUZXPQCvzo6f+wPFQ3hKg3yMupKFSJg1csU1hCU8=;
+	s=arc-20240116; t=1745577730; c=relaxed/simple;
+	bh=scJoYQYC6D8D1WIvtHdBL7hg3SsJpHO2swHGS7P6KDY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LLeh8mdZKpHgZ2UZ4iCgKERCuviwmaPNyLRQuR+DwR/pOblVu4NiCT2iw81S5qG9WMitS77xB62eV0ZUi4HcHJ8mAluak/52ZMMIFOeomHJMg2YLgK5MCVjCfTg06GcJBYDPLGlgcSaq2gS3I7nh2A6l8AOOBohCysiWGBYcT1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qkKYNet8; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=liN1/RzY9BusX8mu5dPOYUiLHRVOVHvtm9rmr6qFAEf3UFx2WgC20ye10uLyNl/obnIl0hQzqLnEKR6eDxUnjrl9X2yr/u35m2pKATkuvo5lch7YTK3wyB37ePc6vhf2r4tuEAE7451sTdXRG5x0Tbhxx/52j6qknDEHtyuBVWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OZkBdRPt; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qkKYNet8"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfx8V2910664
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OZkBdRPt"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfmLv2152198
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 05:41:59 -0500
+	Fri, 25 Apr 2025 05:41:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745577719;
-	bh=q5ZWD0svyr3V3FpCrF3bUXDERi80WQ6vGR0Jz+hDQnM=;
+	s=ti-com-17Q1; t=1745577708;
+	bh=tZVdg1NEuZIRKFuasNTFa8MgL+XjWDhZtcUUJlBDd4k=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=qkKYNet8bk9KDns2l21C49KsxkQrnmEUb//DK8Pdiy23QvpYl1v6dpr6NL4QJ8YnM
-	 3CyrYveAv+sWzWlLw/6OhIJW8+l8w5nkHHwmH8gKqXeGNpp70RKltwmWug0ofWsceG
-	 B6E+yjwnebQN2QiOaqVL99cAnW3tqWZEN4ZU0+ws=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfx4h129133
+	b=OZkBdRPtNl0rFf92PaRqJV8roxj716ezQ7AgG8hofX7/M0sAgGWHVuG/eKud6qJSh
+	 ciIyL3zqu2CfArhCAqaL3/GP027JH2qwI9OAIBJ28NxTFLL906sB6Ugvmn24XCNkjc
+	 xw74vpF6JFYImo4yj7v68gIeihn5p4C8ihY2NLEI=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PAfm8R027777
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Apr 2025 05:41:59 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 25 Apr 2025 05:41:48 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Apr 2025 05:41:59 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 05:41:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Apr 2025 05:41:58 -0500
+ Frontend Transport; Fri, 25 Apr 2025 05:41:47 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PAfaZQ038329;
-	Fri, 25 Apr 2025 05:41:55 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PAfaZN038329;
+	Fri, 25 Apr 2025 05:41:44 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v11 05/35] remoteproc: k3-r5: Re-order k3_r5_release_tsp() function
-Date: Fri, 25 Apr 2025 16:11:05 +0530
-Message-ID: <20250425104135.830255-6-b-padhi@ti.com>
+Subject: [PATCH v11 02/35] remoteproc: k3-dsp: Drop check performed in k3_dsp_rproc_{mbox_callback/kick}
+Date: Fri, 25 Apr 2025 16:11:02 +0530
+Message-ID: <20250425104135.830255-3-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250425104135.830255-1-b-padhi@ti.com>
 References: <20250425104135.830255-1-b-padhi@ti.com>
@@ -64,14 +64,23 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The TI-SCI processor control handle, 'tsp', will be refactored from
-k3_r5_core struct into k3_r5_rproc struct in a future commit. So, the
-'tsp' pointer will be initialized inside k3_r5_cluster_rproc_init() now.
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Move the k3_r5_release_tsp() function, which releases the tsp handle,
-above k3_r5_cluster_rproc_init(), so that the later can register the
-former as a devm action.
+Commit ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during
+probe routine") introduced a check in the "k3_dsp_rproc_mbox_callback()"
+and "k3_dsp_rproc_kick()" callbacks, causing them to exit if the remote
+core's state is "RPROC_DETACHED". However, the "__rproc_attach()"
+function that is responsible for attaching to a remote core, updates the
+state of the remote core to "RPROC_ATTACHED" only after invoking
+"rproc_start_subdevices()".
 
+The "rproc_start_subdevices()" function triggers the probe of the Virtio
+RPMsg devices associated with the remote core, which require that the
+"k3_dsp_rproc_kick()" and "k3_dsp_rproc_mbox_callback()" callbacks are
+functional. Hence, drop the check in the callbacks.
+
+Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 Tested-by: Judith Mendez <jm@ti.com>
 ---
@@ -79,50 +88,43 @@ v11: Changelog:
 1. Carried T/B tag.
 
 Link to v10:
-https://lore.kernel.org/all/20250417182001.3903905-6-b-padhi@ti.com/
+https://lore.kernel.org/all/20250417182001.3903905-3-b-padhi@ti.com/
 
 v10: Changelog:
-1. Split release_tsp() re-ordering from [v9 01/26] into this patch.
-2. Updated commit message to call out changes in a better way.
+1. Re-ordered this patch from [v9 07/26] to [v10 02/33].
 
 Link to v9:
-https://lore.kernel.org/all/20250317120622.1746415-2-b-padhi@ti.com/
+https://lore.kernel.org/all/20250317120622.1746415-8-b-padhi@ti.com/
 
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 062a654cac0f0..8e2d9fa446662 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1356,6 +1356,13 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
- 	return 0;
- }
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index a695890254ff7..35e8c3cc313c3 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -115,10 +115,6 @@ static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 	const char *name = kproc->rproc->name;
+ 	u32 msg = omap_mbox_message(data);
  
-+static void k3_r5_release_tsp(void *data)
-+{
-+	struct ti_sci_proc *tsp = data;
-+
-+	ti_sci_proc_release(tsp);
-+}
-+
- static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- {
- 	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
-@@ -1495,13 +1502,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
- 	}
- }
+-	/* Do not forward messages from a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
+-		return;
+-
+ 	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
  
--static void k3_r5_release_tsp(void *data)
--{
--	struct ti_sci_proc *tsp = data;
+ 	switch (msg) {
+@@ -159,10 +155,6 @@ static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
+ 	mbox_msg_t msg = (mbox_msg_t)vqid;
+ 	int ret;
+ 
+-	/* Do not forward messages to a detached core */
+-	if (kproc->rproc->state == RPROC_DETACHED)
+-		return;
 -
--	ti_sci_proc_release(tsp);
--}
--
- static int k3_r5_core_of_init(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
+ 	/* send the index of the triggered virtqueue in the mailbox payload */
+ 	ret = mbox_send_message(kproc->mbox, (void *)msg);
+ 	if (ret < 0)
 -- 
 2.34.1
 
