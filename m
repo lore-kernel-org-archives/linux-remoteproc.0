@@ -1,77 +1,65 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2072.outbound.protection.outlook.com [40.107.22.72])
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC129009A;
-	Fri, 25 Apr 2025 23:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3F023BE;
+	Sat, 26 Apr 2025 00:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745624097; cv=fail; b=TXcd3V1kDJUlvnwEor7+AlV7hNd0OLjUVnxRtnM5px5568UViyDz+9iTBa7zvcSRxvdQdxPsHv1oqVcVMOFNaYP6ToDDoYP+zxir1mtJE2ZnL8Ufy8HrDfSc+oRsDrLziIYN9iavnB5s7fIdlvI6HWGYsHr1pbh4bw//VCP2QNQ=
+	t=1745626091; cv=fail; b=R+BfRAs5t6KlMZaWS2qK8FpcW0IFcyMGXOqG+1aD05d04j6wmImjifl8iSl7E7R3iC57q+ngAAZWy5YyQ02jhWIcGyGoaU3zcUtTVtZq5sccWm3s6skR655w/tSEVCPcTGgZtM/uLRc/DDUG0RA7cf9lDwZZNhyapyIl2iITe9w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745624097; c=relaxed/simple;
-	bh=jp5A+Lq0dxNQ470AANcNdgN28pUjVWj/6m9w45yEC+Q=;
+	s=arc-20240116; t=1745626091; c=relaxed/simple;
+	bh=WcwTZxasDCD+lvvmpU2oMKI+hoxi0c4yG1BBSW/9TWw=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jsUsFRrTR/WthHYgAWK0oJKU2eDtvONZPZNkDvkv/m7srkINbth9u2W+EoYwdPvg3FWOEiPCE8YtAcRU2ly4o9qYAebXnw1T1nU8gyrvJQKeKCMuwGcEU6VywSI6abNRvyfFmA7q2AOaG6jK5LPJMxr/kNcASVRldpXzR22FYHM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gwSsehUM; arc=fail smtp.client-ip=40.107.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gwSsehUM"
+	 Content-Type:MIME-Version; b=pzIGwh7lT9xXNVnvqlEH7yMNxfLc5V8Oj3RGSSzcG3H98tsuZfYE9UHfeu5kMgyorkgT9Fa685/bCuegRvFNPcZQQelqlouH+rNZsUnI1STs8DmMZLT6RfBSxM7F3k0HDL/1bkO2nFLE3Kq849jNu7n3eTMjt4L/BYQH7DIYcwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53Q009Uw024817;
+	Sat, 26 Apr 2025 00:07:42 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 466jh649xq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Apr 2025 00:07:42 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XuwHNV1uUmwVXQF5dd35QnJUXxefUAn6971/5y86aufgfDCIHRremjJD2lBQ4+PshkAmqaEFqD7NytcehX2fXx5FvXN8FYSKCgCSUP7AsAgXqKVLsX3HcIoyhdnVvkS+CiPIq/4iF7ywjDKSy6DsZO82Fo88XcmEGjmtBKxjFKK8xD3ieZPBhtSxQMVtNLlSacjNP1Ge4MUmJ7fEh7avHI6kuooOAQC7PNvOOk0ZOdDxrzwW5dEK9foSrHF1JqKhd8wJP2Qh0JIcDGdVE4PniKX9aQqhjCTgFBsMYq8sXILyUk+7DfB18T4sL6P+2+TrUCmV8UErdDkr2Qy1qPkk6Q==
+ b=Lp90PMd/65j0lb9GC2myXDLWubI1VqXyEaPAibe8bA1HwlGTdnz0N69ZalUe0F7sSatEDGaaNk57c/7+wzbYr2s5J/JXI5t31Btrd3idk0WZMu+ETiO09rzYnlAnAbsx5yLsNxuPdzen+Ed19Dd3iuDvrqzRAwPfYRvC1Kx0upfc6bWn4UbqKPDegxn3EJdiCbbrcgM5FG5cEWf/ppPd+dlhcZ2Y9b4ar/JO6csfbKjt1CXkAWgyxrUeFiSdjw8N49Dezo978UhVphy1+O1uMq7/nWlNfXJ6/SHj8csYp0NcffPUp53atGkmGNxt8kFdfKZ16TNmXX3EXxxU+gPqRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MruZsTjdJWCRbMLmMTwHHX2eHcUKLOU3RmfWqq6dggY=;
- b=CEDgITo/1XRxJM0nYqY+WhVVOw5JY9vb14mA9Ey5cCzjpiBdHVt+uLDDz6I3C+dSu776zXSbkr+qCboaCRkGYJhdAR0vFVdwtNqIHo969GJfK16vHxd5rEDAKv6553OhN52ZXW4COjdV5UWMJhcKP8ogaLpdyBcB6hvSMlz6T5lpS9YY6zZLrD941+ih506u2eys4Qf4OGh8rKV2PzAhRduq+EMenXfvKYEhR7dwuJch7jvD3Kyu3PQ3r/fLZ8sWspeM9/HfZFYrKogWYeRWKSxq8I+eJBKf2oR75tMkuK03eHjM4Un8spiOSvIi0EiQPgLw/RXYpQfgg1ddbUUZJg==
+ bh=guHkTBn1qCWP9lTOKYVIBtCMHvNh92sR12ajvRrSa9E=;
+ b=SmUY0Ol9EO+mR4zMJgTR1I/Wen/wH5Ks013bPzYDHtRKOSv5VO6i0uuREC2OMdQ52AXi3D1zX8AZ+uis3Q6lssFRXgLvAOODaZ371dM3UivSnheiKuXzidbuibmhXCxdyHdnH1gfDLmTuCPxzcf2jzJb/DL19JHLcV/A7GyRW3xDRfDsIzkatTBSlakevtgvS2g4cK4cTRAm4eAwFfrzuQ0t3/16rGptGYQUN4YCoJ1ZRd5XmhXeCTAw1RQU/3meypkBE/sgb438R9WOEtJC7gSQ7N9zGwJ62TEa7lTyq51lhPMJMrqykfs4N8fvejeE1RsZOHj4ifW6gFko3adBVg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MruZsTjdJWCRbMLmMTwHHX2eHcUKLOU3RmfWqq6dggY=;
- b=gwSsehUMVygSkPFrcu9vmtES/sWh/nd9o07r8+7DmimZ8x9OWyZMZrVtqF2ma1w4SN34ObZNnQuMFBE9DNGBRBRNQ01IwTOWPW1bpyDi19u4dC+vHIaTxXNQRzsUNPvixRm4AcIVAe2H5WA9LtAdLNG6tISZTb2bXQbk4iCbzNKt4zDyXBz7Zo8Bek7V61TDaDEX1TZHXqOuac02TA/gCiVQ+sSxz5MoLxCC5+/+VdFbFfloWCdLkC31fC0CrIQu6NYNkNR8dTeILevqHGgLfQ4bGpGv2a65aiIwAp3jKesiMCh3PuTJrSmLVdU5bfjgU63c/+N7b2phYAP8xC7uEQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by PA4PR04MB7984.eurprd04.prod.outlook.com (2603:10a6:102:ce::19) with
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by PH7PR11MB5886.namprd11.prod.outlook.com (2603:10b6:510:135::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
- 2025 23:34:52 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::88b8:8584:24dc:e2a1%7]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 23:34:52 +0000
-Message-ID: <322d366c-1564-4b06-9362-28fe451a35e7@nxp.com>
-Date: Sat, 26 Apr 2025 02:34:49 +0300
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Sat, 26 Apr
+ 2025 00:07:37 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%7]) with mapi id 15.20.8678.025; Sat, 26 Apr 2025
+ 00:07:36 +0000
+Message-ID: <2d5d6cc0-4458-427e-8308-7cb6deec57eb@windriver.com>
+Date: Sat, 26 Apr 2025 08:07:30 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, "Andrew F. Davis" <afd@ti.com>,
- "Shah, Tanmay" <tanmay.shah@amd.com>, Saravana Kannan
- <saravanak@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
- <CANLsYkxKHhCHYrbAGzQ48QGpL_DbuLnX3=ppmpyu0vjuuvvODg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] remoteproc: imx_rproc: release carveout under
+ imx_rproc after rproc_attach() fails
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, shawnguo@kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+References: <20250424122252.2777363-1-xiaolei.wang@windriver.com>
+ <aAu8qPl7EpcIU0oe@p14s>
 Content-Language: en-US
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <CANLsYkxKHhCHYrbAGzQ48QGpL_DbuLnX3=ppmpyu0vjuuvvODg@mail.gmail.com>
+From: xiaolei wang <xiaolei.wang@windriver.com>
+In-Reply-To: <aAu8qPl7EpcIU0oe@p14s>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P189CA0065.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:659::8) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYWPR01CA0043.jpnprd01.prod.outlook.com
+ (2603:1096:400:17f::17) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -79,224 +67,200 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|PA4PR04MB7984:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90595e85-58d1-491a-5967-08dd8451c6b7
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|PH7PR11MB5886:EE_
+X-MS-Office365-Filtering-Correlation-Id: c73b72ff-00d2-4cbd-671d-08dd845659b5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|10070799003;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S3VDSXVKM0l1cURXcEFqSFF3UzVhdE1WYzUyTWZhb1pnajc2RXkxQThuamhj?=
- =?utf-8?B?VDJ0ZXZUbnIyWEZWNld0WExqeGVUcEk1K2NNalRYYnhuUmNrcU9sM2tSYW1I?=
- =?utf-8?B?OXB3NlRrSW9pRjFoeGQrcG9WZTd1WUxaRHBUVzA3NkNLd1NOZUwrZE0xTVlX?=
- =?utf-8?B?cmlWZlVwZ3lNYzF5RENzc2tEdnRFWFBpVDVYU0o5MUYraVJLdWtsYk9EWG5n?=
- =?utf-8?B?V2VhU2s5ZElLb2FmZTlYd3ZrRkN1VCtXczUyN2ZIUHl6bTA4YTBCTk4vQmhI?=
- =?utf-8?B?Z2xTdVZvQ0c0bVZybzFYTFZYejVwK2hNVm9MdFpyUVF5TDZQeVI0TTk1cHNT?=
- =?utf-8?B?OHJyWU5mb2g2NFRlRjkzNFdYMmVuTnB6VDFzRzBOdTYxSDBmbEUvWXljdldC?=
- =?utf-8?B?RWpCL3VlelRSU3RhNGVPTjFqcUtEMEhBc1h6aU5RL2oyRUQ0ZkI2dC9pQjQz?=
- =?utf-8?B?c2JacGpSeUczZkhIMk9lZVVxVWt6d0ZpbjBySWdPbUpnTURlSjRHTlFabXBs?=
- =?utf-8?B?YXk2M21CTkRveU1HNzNWdE5nUko4V1M0YTZMenRzV0FhaFp1cWZGUDRqdDdF?=
- =?utf-8?B?em8ydGFtbDJkMXZGUUdOZHZKc3FQanlacjRVRXdPU0xWbGs0TGdsdHg0c2JM?=
- =?utf-8?B?NUJzUm91NUNaOWVZOVhGeCtWMUZzK2NLOTl4L21vY3RwOFNGSkF4bGdJT0FV?=
- =?utf-8?B?bEk4Y0IrUXJ1eEVQbER1NERzS0RsVjBwODdwcExFR2twM0lCdDRQSFZNZWp0?=
- =?utf-8?B?bGFCbUZPRzMvVzRqbk43RUhVZVFFSG9TRkNUdFRNZkIzREpnbmRWMjI2Y0VY?=
- =?utf-8?B?S0svVDE2SXAvdTJqWklNOWJTdnc0Z0gvQVdsTmlxeXpIZzQrblBvUDlOS2k5?=
- =?utf-8?B?N3MyM25WVHJwTjR2UkcwdFkwTS9HbFhJMHpQRThUK0s2Q2UvcXlWWkZSeUdx?=
- =?utf-8?B?eGltMlAzSGYvdzY0eHc0amluVnhMMjdMK1o1TE1mN1FQL05qZjFSVjF5SzhU?=
- =?utf-8?B?QTdSeDJWbS9UWFRxRUsxdjlYSkxPYmQ1K0FXMVRXYTN0ajFRZEZlYU5iNEtU?=
- =?utf-8?B?UlBlWHhlNHJucHJqVjBTM01QTXFzTmdieDlxWWlzWkI2MnVGTWowZW5pZGdY?=
- =?utf-8?B?eEZUNjl0WTVOUnZLalE1UURqcGZnZkdOcm9DOW1CTHBXTU5KZjhUY3hSNDho?=
- =?utf-8?B?NS92YXJLTVNOVlhBTElGNjVrYUI1YzVrUld1Z1VYZzJWa2xzZlRrVCs4Q0tY?=
- =?utf-8?B?VG9IYm5idm5jZ2I0YjhoUzFvZXVBeGF1WFlXQStaTDVnZC9xOWN4WVNraTNl?=
- =?utf-8?B?NUhXY0JHaHIyRjJyQTM0encyS1lrbnFlWTFzMWJ2bEJrb3BUS2tvRnhTNlVm?=
- =?utf-8?B?UVN2N3NCaHBROHhFZzdTSjd4eU9WU1F4NmV4dnJqRlMxRVdmb0I1dDFtVjNK?=
- =?utf-8?B?OFhjZ3F4d0Ixb09aeHcrVlpTY1UzQ0VPNzF2cjgvdlZUR1BobDQwcXRzUHpa?=
- =?utf-8?B?UUg3Nno5SlkzeVorU0RpVVNpeXBLZXZrRlh4OGxIVnJpbmFlc1QxbEE2bmdN?=
- =?utf-8?B?WHBEUjN0Y3E5dndxa1Q1MlEvN3U0MUVBMnhZb2x1d2phaHVudjJ4aGdiUjRa?=
- =?utf-8?B?MFVJVEQzNVJ1R0JVV0FjcUtZb0FSdlJqWUJSYkowZ3hzdVZBc1Fqb2t3Q2hy?=
- =?utf-8?B?aW9JZS9iZHZDRkpFQWpvU0FSZGUzVkEwSDRqWVFXcDZuM3VWVFdrYXd3cjA1?=
- =?utf-8?B?ekpDSXBJL2dXci9GalRiVGordCtmTlFIV3NhZ0xIcHJ3STFqUjlDdkU1eVpt?=
- =?utf-8?Q?oadHW9T8ReTySsMbRYn0siRoHx2/OKlEheebI=3D?=
+	=?utf-8?B?OG9uTnErMHpPb3hlSEgreGl5SWFMeDBGZlJIaUFhbC9nMUl6WHJYeVRMWmR4?=
+ =?utf-8?B?MWtOYmpxVzEvU3haeUNydUhOL05ONm00Z3JsK1Z5bUZlQnZkeTZYanZwcUdp?=
+ =?utf-8?B?QlhVbmNCTUk0RUxSREg0MFQxZlM1M0N5WjZWZWhPRldORTVKK2RZN3pzeWt3?=
+ =?utf-8?B?YkZLYlJRaU5Tb0tOV3Mrb1U0ZnhGOHJOVVRKOHRsU0R2M2xsUExtdENtY25G?=
+ =?utf-8?B?cldydFowMFIydkRSNGhzNWN2TUZuREJheitvb2tzUkNUbVpaV1ExaWNDc1hO?=
+ =?utf-8?B?N0tVRU9JWkhKcU44Z1FQZFdYVUFmN2NEem5GeGRtM2NFR1ZIYTc3ejlBMXho?=
+ =?utf-8?B?c1h3b21nZnpvVlBvamszVFVwdk9MLzNJc0dtUWg1MGUzVlpKMGE1UkZNeGZH?=
+ =?utf-8?B?WncwaXg1eVp3c1BDaUdWUmV2eWVGWFc3Mk96MGh4Qnh0WC9NcU0yVUY5ejNN?=
+ =?utf-8?B?SGgyZndoUExhZTVLSHpKelVQdTVvSWZoZUw3dVZkTm5QeU9YNDFsN0ZvR0tW?=
+ =?utf-8?B?dTd6cHF5cmp2YlcxWDZpQ1c5M3B2K1BFK0pUbXJrZkRjZmlDbkFmV21pRXpu?=
+ =?utf-8?B?ZzJjYlI2ZzU3a1FMNW84Zk5KZzVaRkpqeGljbDBwYVBQQVRDdWUvRGU2TWZT?=
+ =?utf-8?B?NUlVUks1azM3bDdUQjkyZ0xKOGRaWXFiMzhpQ2UrVXEyRDl4T28rOUZOakYv?=
+ =?utf-8?B?MENqcnFmRkNadTV1cVU4Rm1JbDBRbWpxZUM0dVJzeEZzU0U3MU1nUFBLQ0VU?=
+ =?utf-8?B?SlFJOUgyVEJCRHNYV0E5dmtqMVBjb3pTczhpek1oRmNDZlpOZWlsWnhPWmlQ?=
+ =?utf-8?B?K3lIbEFiVXVPRmh1RzdENXZrdmJ4MEZFZXgxbGRFQzNZdEJzYVBlam4xaTBr?=
+ =?utf-8?B?eXR6ZGNyQVlESmhpdVJ4TnU4VHU0NzFnMGNYT280dzNlWHVFU1o1VTE3Undp?=
+ =?utf-8?B?YVE5RGNyTW5GM2JaQTMyTkx3Q3BDeEJWQ3NUaTlISkJRZjRYYTFiOWM5NnI3?=
+ =?utf-8?B?OXBKY29vL2pkUmlJVFNmbVVvT3Q4SEM2UGZqL3ZkR1FpbXY2K0RQWUowRWxH?=
+ =?utf-8?B?eldNREkrc2dVZ2dWMEhYL3BvSzBhcGFuNVBIYzFhUWdvTm9za0NuQlUzaXFp?=
+ =?utf-8?B?S2REdW0yVkFnZmxHUkRzVS9XYXFZTk1jS3NWZFRMM3N6ckZKNFlIMUxyd3Jm?=
+ =?utf-8?B?NzVRS3ZFZUZhRy9UbFVSSGFkZHBzN09rYmJRaEMxV3Y2anhmZnU0TEd3K2w3?=
+ =?utf-8?B?WEF3TVVYQWkwWGlSdDdxR3M4M2pxWUZ6Y25SL01UN0JFbFFwcENaZHJxWWxV?=
+ =?utf-8?B?MzNmZjNEcU5YekJWVXRzZHRpeE01ek9iMk93UlZzZUxUcEtTeklkWkhveCtw?=
+ =?utf-8?B?bkVoSHgrSW9qbWluV1Jic0drT21nVG1LWUMwdDVuMmluYnFBYnNNV01xNmwy?=
+ =?utf-8?B?UzdyeXBPTWdjODNUTkhKVTYrQ3hZdEQxQ0QrMlZXS01qNzd6ZnlCT3NEL05D?=
+ =?utf-8?B?RnJ4TEk4cXc5TjdZa2hCczdsZzRVQTlYVnpiQjBUYlBQYmxHRkhSMjRlMG8v?=
+ =?utf-8?B?cUZXN2hVVGI1aU9nWHhxdFdBb0hJa0dSRUNwaXFHK2Y3QXNtV3ZUWkIzb2Na?=
+ =?utf-8?B?cFNlcXJmcmJkNERtZE5BSGZ0dUhWVHR2Tnc3c24zZUVaT1EyaS83Skx4YjFX?=
+ =?utf-8?B?dktUZ3BCUSsza2hmK3JNNDczcHNsekJSaUtWVGhGUCs3Y1FpZVlKTE5lSUpO?=
+ =?utf-8?B?Si9Ub2FEUmhvMUMyTHBjclA0ZjV2Wkh2WCswT3A2YWFHU01RMUlKblBwalVL?=
+ =?utf-8?B?VUFGb2ZpcWFORXE0WlZXS2F5bjQrdzRZVzVLYVhjYjhuckVjYjFqM2lSTk5T?=
+ =?utf-8?B?QnQrSG1PVXpjck02a2UzVnJDSUlXRHFmYmdMSEYwMnlJVmxxRktNRlV6SnBE?=
+ =?utf-8?Q?EDdRHNBCwNk=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?blhyVC9iV1c0Ulk3NUx3STRrVktzV2xsZ3ZrYTRuOEw3MjU0cWxOUG5td3d4?=
- =?utf-8?B?dHZ5TTBUVnkrTWUzUGdQc2NRbmtEd3J1OExhRFRHVlM3Q0RnN3JVSlRUMGZX?=
- =?utf-8?B?Y25OWXRaZXJkWTYxMGh2WEdMQmhmVENHQzhBRDBVOWRjelNObUJFbHpIUENZ?=
- =?utf-8?B?T0lyVW9tdEgrUnFGR0NmYzVwT0daQzh4TUthWXdNem1YZUVXMzk1SUZqUVdj?=
- =?utf-8?B?RCtGdldqMDlTd3pydnl2SU04b1R1RTRvaS91SkNzbGFxa2EwamptZ1Erdlla?=
- =?utf-8?B?cE5XM3dnN0JOWnVoYjMrNXdORUFYWEk3WUI3V0U3ekQ1WDZjVWxYZDRZRDZq?=
- =?utf-8?B?ODJjRHYzbmp1MEt0K2JEWVZIdlNtSkZzYTFRd3UwTXh5eVJvQnhYclE4VWxs?=
- =?utf-8?B?YUZ4TCtxU2Vnd0p2ZHRLcXBMb0ZZamIxdmg5ZjdkZ1lRckVuVEFjRXo2Y2JU?=
- =?utf-8?B?T3ZVVDkrUnVydXlFUXNseUV3VEhTSDNRQnROZ2FZQVBjSUEyMThJQlBzeXgy?=
- =?utf-8?B?Z2FSOVNoa1ZpaFFkTGNzZzI2YjhlWGtRQUc2cUN5MEdWdUU5aSs4eUZhMmF0?=
- =?utf-8?B?L3dURVAycFdQQjdCTks0TWJKWURxYkNLd3RyVVZyTHFqYnBLTXd3OGhuYmx3?=
- =?utf-8?B?ZXM1TFlLYUFPV1hTcU5ScVdlNHF5eEVjZUNJVkFmbTVnOTBvczRpOU0xVDFw?=
- =?utf-8?B?czd5Nk5hUThkSFAvT1U4QUxZdzBQQjZiZVZyOVFaQXNWQndFNkErWm5GajA3?=
- =?utf-8?B?YkwrLy9ZRXdIVW4zVXozbDdvUWt5cVhVUmkzMGF2ejgxSXBkaEtvcnFTTmV2?=
- =?utf-8?B?QjYwWXZ3ZGJzVXZaTW04VWlsbnRhYngwVG8wVTcrd2Q3Uy9sM2tLaWFGWmIv?=
- =?utf-8?B?TzVFcUxsVTVkT1FvMEhpc3BoV0pxQnJpZ1VPemV2dG9zM0lKY0o5WHpNTUE0?=
- =?utf-8?B?V3NVZnl4NDNXQVdnSm91L2pjaDJ1cjFYRXF3ZENtTW5BZkpuRU1xbE9FL2pP?=
- =?utf-8?B?d1NhU0lkM0g3WjVGYkN3d09RVUxwNnh0aitmY1ltMFN1SVAvcXJvZ1d2QXJU?=
- =?utf-8?B?L3JveFg5UFZXalB0aEhMcmhwUVQ3aUVlTk5kSTVreGxvWnpSTHh3YkxudFV3?=
- =?utf-8?B?eHZPeHBGU1BWang3RHJJOGRGQVFXUUdpVnFrVkl6RnVTMm5oVnNjNjhyazJy?=
- =?utf-8?B?STlEZlVlVjdVM2Nud3I0bFNQY1NsZFl2ekZ6bGV1alNud1RwZjh6OGViN2hN?=
- =?utf-8?B?WTRCUFBOWWlhWTVVeEJJbTlKaG1KT0NWWjk2cHdVcGlHUDRmS2tCMzYwNGhD?=
- =?utf-8?B?N3hsamlFaHJFSnZkUDVOWHgwc20reERMMU9HbWVLSCszL1BwTGMvUSt5dlNn?=
- =?utf-8?B?Ny9NS0ROc2QwL2VCQm9PUlpQSENCWTVHZEVlNzI0Yjl5RklSSjNMYnJqYjM3?=
- =?utf-8?B?MEhlYmJReG1kL29JUlhDQlRxUzhDZ2RzLzBaS0VOcGgxby9zQzhTTHRybEhP?=
- =?utf-8?B?SDE0YjJ0MTlMK3lRN3ZaMTFkaXJQMzlNQVA3U3dSWDExNEZHMGZCTUxJMWV6?=
- =?utf-8?B?ZzZWTDhXak9iaGtHbUFVRHAxdEsrL0dRelVjRlA5SExiamNVNVdtTjcwd08x?=
- =?utf-8?B?Q00rdlBUL0FhUnN2L1V5WWtvK25ER0dzdmpNektIOEp0NTdtYzByU243NDZX?=
- =?utf-8?B?ODFmU3NtelNTNXpCUnBPb3RxR2REMUF0VWxxYjM0cHMyTDljY242YmxNOE5M?=
- =?utf-8?B?QzdERkEwN244R2V1YU5VR0ZtTkxRUkpiU1UyUE0wZjU2QndTZGV4QUVtdFBF?=
- =?utf-8?B?MFpPYTgzeHd3MmJQUlZDK3BJRTJjU01lblF3Z0o0N01YVGVzWjRSOTBCR2VX?=
- =?utf-8?B?b1dDZkE4RzJ6TWpMSGh3NHVQK3JJNUtwdk5YTXc4dnVVWVZOYTlYR251UGhz?=
- =?utf-8?B?Wms0WVJKN3J5ZTBpV3JJNjR1bXltbzZmYkpWWFNPREJzVlZENzc1VmVVWlQ4?=
- =?utf-8?B?NEJ6ZFFvVW5qbFkyK3lpTkJvZGxVbEhmSUFCa0ZFL0lzTWlFNUs3ckxyN2NO?=
- =?utf-8?B?Y3BObEtFbDZxQnZ6Qm9sWi9CREswYzczMjRPK0Q2K1F6TWtOZ25vbFI0RDBy?=
- =?utf-8?Q?jKkld3rtN98hmPRFGhMb+W9Bf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90595e85-58d1-491a-5967-08dd8451c6b7
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+	=?utf-8?B?UFhTd1ZYQmp1ZjJoTmhJbUVsbUhJL2ZIeTJTYlE2WkpTMUo0NlhRcmVKV2pP?=
+ =?utf-8?B?eGxwbGkvU29NVjBpaWFPc2lXTTB6Z2MrQ1ZhaXVRZjZ2S3p5NnpCNWFWYS9w?=
+ =?utf-8?B?a0p4Mm1jclZFZmtRT2ZYNG5LdnBVMkw4dmlONmI5R1paalY3TXg3aUdDd2Yw?=
+ =?utf-8?B?WFdsam1uZWJxNmFISDNuZEplelp2eWxjSWJqTFhQSzBzRTdSTVRqN2E4L3NQ?=
+ =?utf-8?B?enU1QmZJVkJEMmJnZzZuMjRmNE1ISEQxeVRRTGNiZFZqZjhReWZMVDdvVnJx?=
+ =?utf-8?B?RW1YQ0lwRWJDQ2ZpYnJJNGxvM1lDRFRqcS93cGwxeWExZ050WE9GQmdRZFYz?=
+ =?utf-8?B?QkJXbkhMeVd5akVtaEpQMzlEeERuM1dUY291R0h4THNjWVlnY2pOMi9UWkFO?=
+ =?utf-8?B?RmNtNjJma0xWcDdRSmkzeTZPNFkvWnhYYWwyRWUzSHVLN0xnTmx6TERzYkpG?=
+ =?utf-8?B?NTFWTThuaWt5T3VJOHVSTC9Mc1RnVzBkbzZ6LzlGRlhldkxmYTE2Q2VoVEU1?=
+ =?utf-8?B?alh5RytweW5HNmJleStjOVJzUnBTK0ZSdExtNW81NjROd1hsL08wR25nYXlW?=
+ =?utf-8?B?WjdySVU1dmFsMUtPbUFJY0JCVUdiUmh6dG55RVdoTzkzeDF4YkNlN2xQdU52?=
+ =?utf-8?B?dDVQYmIwQ3V4Q0VUaDZUTXp4bDVmZDV2RGRxNktoVHowVlBJS2FkMG5PTzRL?=
+ =?utf-8?B?dW11cjdJL2M1Z1dwZFA3d0R1WGcrZkxSaTN2ZWFoR2xvbk9Gc3NzT0FCUmV4?=
+ =?utf-8?B?cno0UlJ0L3RuZmhOL3lqTmU0TXFQT3ppZUE4K1F1OWhoZUFJeDE1ZHh1dE4w?=
+ =?utf-8?B?SGVhTUtJVm8wQW9WMzRWV25ON0R2YmFSVFFUMWsrdjR2V3NYMUJGMGV3K2dj?=
+ =?utf-8?B?RXBVQTJJM3F5UVdIZW1lT3VRUzg0WWlzM0xzV1dRaStNOVNVeVByRFppUmt0?=
+ =?utf-8?B?b3ZHS1NzV0pNekZrNW00cHRTdUQ2V2FCdDA5dG8vSW1ZRVJkV21ZRGs2aGc3?=
+ =?utf-8?B?a1hmeEZrdU9uS21aZW5BeVFodXBIVmtuQ2RnWks0Z0VRcGY5bVhHa0F5emlx?=
+ =?utf-8?B?dGMyWEJLTEl6eWJnVFJhaGZROW16eXRYbm9OdEF4OGxZRmxkeGlNSXk4VXZa?=
+ =?utf-8?B?Vlh5UHhBWUVJNmpWbEN6SXdrblpaYmY4c2lOWUJGSEoyeDVIZ1lUaWdMSkY5?=
+ =?utf-8?B?aDBKYkZSSGJ4ZWwzL1dNOEdLQ09HS2Y3aXJWQnE2UmpWTlRYVkNGT21NNVB5?=
+ =?utf-8?B?Zk0rTlFleDUxeVgrQW14N1lGVHhnTzhhWUFpelpUdG05eXFjalZ3Y2hoRHU3?=
+ =?utf-8?B?ZFhBZm9adzhUK1pSZHhyMk9QWGdoZHArdWhwREFPT1VXMDZXMnR4Wmk5TjVI?=
+ =?utf-8?B?R2FuOHA4Q1k2Q2t4QlNrUjdhaUEzTkZRaUh2ZE1jTzFhQnVLenRVdWFrbjkx?=
+ =?utf-8?B?QjZ5TzVGTXJWZFdJcVAxUzFFL2xkc2xDZ3RHdkJKQVc3RXFBSjM3clIxMUlM?=
+ =?utf-8?B?Q09PVXc5Q2h0NTU3b0F2UnBJM0FBOXdzbXIvTWxSTW5UbkZ3bVJzZzFNZ3A1?=
+ =?utf-8?B?THFIUHgrK1lOWW5HWGpTWVNPaTYwRDhnQzFWNVRTZnRmdzBxMWxCRVc1aTE1?=
+ =?utf-8?B?MGdQT1NBVmNDcnNHUlcxWWtGOEduamhTNUFmaS9BWWxPeDFtOXgxMkxyZHk0?=
+ =?utf-8?B?RjZZRURrOUdMNW5wWU5ndlpBVHFic3IyL1ZiRkJjZVRtSllyNjRlWXFWUVJq?=
+ =?utf-8?B?Vm5RS2Z1RzB4eUR4Qms4MjRjRnprM0VoRHRBSWoyOFN2cHk0OFRrWnltNDdk?=
+ =?utf-8?B?dC93dkNxaEdhRjErbXJlQjlQQW5HOVl2T0tIdHRDajJjZXkwUU40WVFXS0Q4?=
+ =?utf-8?B?VnkvQStwYTlJWnRjWSt5dEgzcFQ0dW1lMlRKRC9tQzlWRkhBZ2hGMm1EQk56?=
+ =?utf-8?B?NVc3ZHVkZFRWMTZBS1RocVJJRFlMV2xvelFSS3NvQ0EvNkJieWdZWnJnQ0tt?=
+ =?utf-8?B?L2F3UG41ZUk2Q05nWWJqb1Vub25xa1JlcldIYmI4Mll4bWlNck5JOTFkQjFH?=
+ =?utf-8?B?U1ExeDh3RnpSeUNSbC90bWlVNFpjd004YUdRY0lCd2VjK3hLc2ZqNGViRmxK?=
+ =?utf-8?B?R0Y3NkhMb0ZwMXc0ODY4bTYrL3hoRU5NeS93LzZLQ2I5YkU0UzZmR3ovNlJQ?=
+ =?utf-8?B?MnhRcGRYTXZFM3dkcktHNHlaVWh2ZVNqNHVuZ2V3a1dnTnVsb09BNm5reEV3?=
+ =?utf-8?B?UW9KL0g4NFllclR0V2xMV0Z5QlhBPT0=?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c73b72ff-00d2-4cbd-671d-08dd845659b5
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 23:34:51.9729
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2025 00:07:36.6654
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xtF/z/AQ1cpIjtTozMHR+rM0NxbBHZHphaRZ70OEmoNeglf4eLid7zUyDMFQ5iTpeql7N7ix8lok8Xgym1bAvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7984
+X-MS-Exchange-CrossTenant-UserPrincipalName: xhISkTjGDYSFKhpWkOA2/UaP5GPsNVkOsOV2RLbKZ09P+nVEMjz44/qZOQqiFH9d2/6/Rh80/q6bq5MJi8etKnAf6N1tS9hAhvY3E1Pd/xc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5886
+X-Proofpoint-GUID: QsVr2eql9Ixc2v07z5Q7DFpkojjSGdVP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDE3NSBTYWx0ZWRfXwP5zaKHFSotq CaxrSuGt4TyllTITZmqb/P3EJKQlU6uYpQ09XoLxBFMZ6lXkgRnF/SBW6ptK6oua81UXy51I60l XJaZxfU90nre/dyzR05SGe1p/Z4e44LxVZM4hOYhednDkgWTV10ULL0W7ls68Mi87yqROmfymGa
+ AwFskJ5j+r0fmv7s1N5h4+Cr29Qy5PrwM25yFfEPGvxsRibQydzTUtDHsvfKnjCtvxJf03bNwZR lsplYnyc2QRE06SIlyB9OV3oKwVi2oZPPi5UQHd1x34bEMwL3/L2uK5P+CA0V4+b+iatE5tYDqJ hcSBuZwpXphkz2YCjJHlqfAosjd4hanQJBwr20MQyoTpm+RDH0aLiqoT8PLEj2FDtOrmX4mkjIf
+ ioLPnJd4XnDEugMJZ/j6T3oqI1pgcwTb9zSoCQDTuL/U7SscDl4tzahOu5zVLYdM28NRo7H8
+X-Authority-Analysis: v=2.4 cv=Lu+Symdc c=1 sm=1 tr=0 ts=680c23ce cx=c_pps a=2bhcDDF4uZIgm5IDeBgkqw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=XR8D0OoHHMoA:10 a=t7CeM3EgAAAA:8 a=hk3agzs1gYrDLCvP3I4A:9 a=QEXdDO2ut3YA:10 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: QsVr2eql9Ixc2v07z5Q7DFpkojjSGdVP
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_07,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 impostorscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2504250175
 
-Hello Mathieu, Rob,
 
-I've tested imx_dsp_rproc and it fails with:
+On 4/26/25 00:47, Mathieu Poirier wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>
+> On Thu, Apr 24, 2025 at 08:22:51PM +0800, Xiaolei Wang wrote:
+>> Release all carveouts under imx_rproc after rproc_attach() fails to solve
+>> the following kmemleak:
+>>
+> Please provide more details on the steps needed to reproduce this problem and
+> where in rproc_attach() the original failure occured.
 
-[   39.743770] Unable to handle kernel paging request at virtual address 
-ffffffffffffffea
-...
-[   39.805078] Hardware name: NXP i.MX8MPlus EVK board (DT)
-[   39.810390] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS 
-BTYPE=--)
-[   39.817353] pc : __pi_memset_generic+0x50/0x188
-[   39.821892] lr : imx_dsp_rproc_prepare+0x3a4/0xea4 [imx_dsp_rproc]
-[   39.828079] sp : ffff8000853dbb10
-[   39.831396] x29: ffff8000853dbb90 x28: 0000000092400000 x27: 
-ffff80007a36d3d8
-[   39.838540] x26: ffff0000d0a5e410 x25: ffff80007a36d3f0 x24: 
-0000000000000004
-[   39.845685] x23: ffff0000d5414880 x22: ffff0000d5e1dce8 x21: 
-0000000000000000
-[   39.852827] x20: ffff0000d5e1db98 x19: ffff0000d5414b80 x18: 
-00000000ffffffff
-[   39.859970] x17: 202c656c69687720 x16: 3e2074756f657672 x15: 
-ffff800081f8d050
-[   39.867114] x14: ffff0000db584680 x13: 0000000000000003 x12: 
-00007fffa3330000
-[   39.874257] x11: 0000000000000004 x10: 0000000000000ab0 x9 : 
-0000000000000000
-[   39.881400] x8 : ffffffffffffffea x7 : 0000000000000000 x6 : 
-000000000000003f
-[   39.888546] x5 : 0000000000000040 x4 : 0000000000000006 x3 : 
-0000000000000004
-[   39.895689] x2 : 0000000000008000 x1 : 0000000000000000 x0 : 
-ffffffffffffffea
-[   39.902837] Call trace:
-[   39.905284]  __pi_memset_generic+0x50/0x188 (P)
-[   39.909821]  rproc_boot+0x2c0/0x524
-[   39.913317]  state_store+0x40/0x100
-[   39.916812]  dev_attr_store+0x18/0x2c
-[   39.920478]  sysfs_kf_write+0x7c/0x94
-[   39.924146]  kernfs_fop_write_iter+0x120/0x1e8
-[   39.928598]  vfs_write+0x244/0x37c
-[   39.932008]  ksys_write+0x70/0x110
-[   39.935413]  __arm64_sys_write+0x1c/0x28
-[   39.939342]  invoke_syscall+0x48/0x104
-[   39.943094]  el0_svc_common.constprop.0+0xc0/0xe0
-[   39.947805]  do_el0_svc+0x1c/0x28
-[   39.951123]  el0_svc+0x30/0xcc
-[   39.954188]  el0t_64_sync_handler+0x10c/0x138
-[   39.958549]  el0t_64_sync+0x198/0x19c
-[   39.962222] Code: d65f03c0 cb0803e4 f2400c84 54000080 (a9001d07)
-[   39.968317] ---[ end trace 0000000000000000 ]---
+Thanks for your reply, I will add the steps to reproduce and where in
 
-The problem seems to be when computing `cpu_addr = 
-devm_ioremap_resource_wc(dev, &res);`, in patch 4.
-In `__devm_ioremap_resource` (see [1]), it's expecting the resource type 
-to be `IORESOURCE_MEM`, which is not the case here (at least the flags 
-are nowhere set for this).
+rproc_attach() the original failure occurred and send a v2 version
 
-A quick fix would be to let the `cpu_addr` be calculated as before: 
-`cpu_addr = devm_ioremap_wc(dev, res.start, resource_size(&res));`.
+thanks
 
-Thanks,
-Iulia
+xiaolei
 
-[1] https://elixir.bootlin.com/linux/v6.14.3/source/lib/devres.c#L134
-
-On 4/24/2025 5:14 PM, Mathieu Poirier wrote:
-> Arnaud, Daniel, Iuliana, Andrew and Tanmay - please test this patchset
-> on the platforms you are working on.
 >
 > Thanks,
 > Mathieu
 >
-> On Wed, 23 Apr 2025 at 13:42, Rob Herring (Arm) <robh@kernel.org> wrote:
->> While there's a common function to parse "memory-region" properties for
->> DMA pool regions, there's not anything for driver private regions. As a
->> result, drivers have resorted to parsing "memory-region" properties
->> themselves repeating the same pattern over and over. To fix this, this
->> series adds 2 functions to handle those cases:
->> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
+>> unreferenced object 0xffff0000861c5d00 (size 128):
+>> comm "kworker/u12:3", pid 59, jiffies 4294893509 (age 149.220s)
+>> hex dump (first 32 bytes):
+>> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+>> 00 00 02 88 00 00 00 00 00 00 10 00 00 00 00 00 ............
+>> backtrace:
+>>   [<00000000f949fe18>] slab_post_alloc_hook+0x98/0x37c
+>>   [<00000000adbfb3e7>] __kmem_cache_alloc_node+0x138/0x2e0
+>>   [<00000000521c0345>] kmalloc_trace+0x40/0x158
+>>   [<000000004e330a49>] rproc_mem_entry_init+0x60/0xf8
+>>   [<000000002815755e>] imx_rproc_prepare+0xe0/0x180
+>>   [<0000000003f61b4e>] rproc_boot+0x2ec/0x528
+>>   [<00000000e7e994ac>] rproc_add+0x124/0x17c
+>>   [<0000000048594076>] imx_rproc_probe+0x4ec/0x5d4
+>>   [<00000000efc298a1>] platform_probe+0x68/0xd8
+>>   [<00000000110be6fe>] really_probe+0x110/0x27c
+>>   [<00000000e245c0ae>] __driver_probe_device+0x78/0x12c
+>>   [<00000000f61f6f5e>] driver_probe_device+0x3c/0x118
+>>   [<00000000a7874938>] __device_attach_driver+0xb8/0xf8
+>>   [<0000000065319e69>] bus_for_each_drv+0x84/0xe4
+>>   [<00000000db3eb243>] __device_attach+0xfc/0x18c
+>>   [<0000000072e4e1a4>] device_initial_probe+0x14/0x20
 >>
->> I've converted the whole tree, but just including remoteproc here as
->> it has the most cases. I intend to apply the first 3 patches for 6.16
->> so the driver conversions can be applied for 6.17.
->>
->> A git tree with all the drivers converted is here[1].
->>
->> v2:
->> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
->> - Export devm_ioremap_resource_wc()
->> - Rework handling of resource name to drop unit-address from name as it
->>    was before.
->> - Link to v1:
->>    https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
->>
->> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/memory-region
->>
->> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 >> ---
->> Rob Herring (Arm) (4):
->>        of: reserved_mem: Add functions to parse "memory-region"
->>        of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
->>        devres: Export devm_ioremap_resource_wc()
->>        remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+>>   drivers/remoteproc/imx_rproc.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
 >>
->>   drivers/of/device.c                       | 31 +++++-------
->>   drivers/of/of_reserved_mem.c              | 80 +++++++++++++++++++++++++++++++
->>   drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
->>   drivers/remoteproc/imx_rproc.c            | 68 +++++++++++---------------
->>   drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
->>   drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
->>   drivers/remoteproc/qcom_q6v5_pas.c        | 69 ++++++++++----------------
->>   drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
->>   drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
->>   drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
->>   drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
->>   drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
->>   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
->>   drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
->>   drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
->>   include/linux/of_reserved_mem.h           | 26 ++++++++++
->>   lib/devres.c                              |  1 +
->>   18 files changed, 339 insertions(+), 369 deletions(-)
->> ---
->> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
->> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
+>> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+>> index 74299af1d7f1..c489bd15ee91 100644
+>> --- a/drivers/remoteproc/imx_rproc.c
+>> +++ b/drivers/remoteproc/imx_rproc.c
+>> @@ -595,6 +595,19 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>>        return  0;
+>>   }
 >>
->> Best regards,
+>> +static int imx_rproc_unprepare(struct rproc *rproc)
+>> +{
+>> +     struct rproc_mem_entry *entry, *tmp;
+>> +
+>> +     rproc_coredump_cleanup(rproc);
+>> +     /* clean up carveout allocations */
+>> +     list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+>> +             list_del(&entry->node);
+>> +             kfree(entry);
+>> +     }
+>> +     return  0;
+>> +}
+>> +
+>>   static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>>   {
+>>        int ret;
+>> @@ -675,6 +688,7 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
+>>
+>>   static const struct rproc_ops imx_rproc_ops = {
+>>        .prepare        = imx_rproc_prepare,
+>> +     .unprepare      = imx_rproc_unprepare,
+>>        .attach         = imx_rproc_attach,
+>>        .detach         = imx_rproc_detach,
+>>        .start          = imx_rproc_start,
 >> --
->> Rob Herring (Arm) <robh@kernel.org>
+>> 2.25.1
 >>
