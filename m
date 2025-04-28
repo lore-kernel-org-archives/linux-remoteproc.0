@@ -1,169 +1,145 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207725E818;
-	Mon, 28 Apr 2025 08:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B087267B99;
+	Mon, 28 Apr 2025 12:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745828388; cv=none; b=gd2ozXF0WfUkYuTnf3EWw+aqdYJVlRmL8am3hZolYQwoCNSuDH/xjR2SXlN1PL0t4rQHLvhq4UzBiQPcwYuyAFj7l08r67tYGvQvFivMHZ5T6uTSbLdpZQSlwrKW7uiJs0IdN0RkoQbuuD7RG0Wl2mmfIsa4dX3lPZzfsez13Ik=
+	t=1745842994; cv=none; b=IVes3q7qEG3sUVuKBWInih48nO6cmh7Ph1UXAgGajojCNcBbXyzOz+vAmjFOukaQ3fuh80X0Rwv9JprfOMKqN7odrECkkkI/y+Yo/p6xHOTtgL6wtHWYkGm8MjRSCf16AisvtRYMjBrGJIWMe7nRbZbmuKK41/RukENXsDRJTgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745828388; c=relaxed/simple;
-	bh=VK0BrH3ZZDN9Jgn9dD1/pWlMvI7r00jAXZwatq9vcEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JXhkGvI6IwU/ZqUPszi8tAUAiZ0DX8ff/mjfKAYvIJhZVuJxyEx6Ke8UkVXifhoXsenSgqsNRFjwQc1/JWRNdrCkMlSZQJT0oQFtgHQxZFQ1djtTA6+nnw0s9DZpSnz45tdXpb61WhQt9TfEqe0gOh1iG+SxNkh0iO4r8F5Fqag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hdMwjSOR; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1745842994; c=relaxed/simple;
+	bh=HCz8DLodaQbrm+46dctr2oR/E7+SUsbNqLwypXlR7Sg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TrvpckNASzfW0uB3klojiHosuRwu7qbHGaabYWpbuHJsm4BdqINnS2ate+uo1sJRhPuULYRADcVlNvM855wtwMReeV2CyKQ8SGpWUkMEZd1rxukjwC8XW5HWWDtO+CCVQ1GbWqct4mYmQajuRmNNjZ+GF4VQpbvWXpPsXUvOdzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpyCaYsQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hdMwjSOR"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S10w7P021339;
-	Mon, 28 Apr 2025 10:19:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yr7t1olrwsxTtck0/lM3DwdKRKb3Z1gEKVydU7fX9vg=; b=hdMwjSORmCF7wlLm
-	irCx7AnOE8qIJNbjPKSlLflA4pJaS5QX9+kDvKlOKc0Bryt1Z6wnrJJqERnf9NKD
-	c/3SU4ACwMwXZCt1byR8rs0K0MBb6CyEdDssM991Jrcw+OBgUW99LeD0Kml0SgsG
-	MqPhHzQYIEDEYR29tSwc4qAPBZQeG3+IFqbFliIB4E2AfL8rabyB5VxYeySrfx2M
-	6YEP1gmhXIxuN6EedCVN/QmI7Sg+leAeo3WruQudKtDMscZ/wXtdN4TMj0KCzzrt
-	cpWe80Mr2F2LtoOr0yOos5ZaBOWhByW6LWlANsoXQ0AwdHY6scYRQbTpxJMf5l+n
-	MGHDTg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468mm9drpq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:19:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2352040048;
-	Mon, 28 Apr 2025 10:17:43 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81ED0A2D14A;
-	Mon, 28 Apr 2025 10:16:05 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:16:05 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:16:04 +0200
-Message-ID: <698066cd-6fee-4fd8-9caf-0f5fbd19fda6@foss.st.com>
-Date: Mon, 28 Apr 2025 10:16:03 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpyCaYsQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3272C4AF09;
+	Mon, 28 Apr 2025 12:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745842993;
+	bh=HCz8DLodaQbrm+46dctr2oR/E7+SUsbNqLwypXlR7Sg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KpyCaYsQGtAyJOuUAwAEyx7KH4FWEFstaN/zDK8iSr8LyiS43doSjlzBK/wI1iEYm
+	 tgltI8g4gMIx2MAeXNiOdykXknUzjTvpubM6ehz0yaVFKHzQXaQUOyFmCZx3k413BB
+	 tfnURaLUnxKiRIyvL8DGHbkLk+Kx1ohTaHsH8g58pOmgiRdruSwPjKACmsGsVyTiVW
+	 tZWZ/2y+8b0eCTHHogjd5Z0oblaXN4DIFernU+aFGPypp7eCO3ZmIM4EYpcEgN3I4s
+	 4RXQk8u5PJhPyW3gWtw0gAuwQ6m9wsFEWVlC5Ydc945pAAkOLb023byD5wZcww8qzW
+	 zsry93j2gntNw==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so8601938a12.0;
+        Mon, 28 Apr 2025 05:23:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCA9d24UPXc/Jwt0LjwH0uJvlxndBqiyzdPC6XjsaZcE7i+RMPGVjB3QdLYiQBQnJI8EBpGh564tez@vger.kernel.org, AJvYcCUQG2ixjUZ0UcksnGdV0/wm5V45dJtFiw+AlkqX4AvgRJmH4lbgdjmTGrlAt7wC2XWm9DcDcG2qnqrhJa16Bw==@vger.kernel.org, AJvYcCVkkwx4a1UjYY6vRbaBQDuNwGIbeDhPLeS7g/+kF9ykeSfedQE7S/HJFz7vymPF4mCv6cot9/xhK4BKBlqgz6z+Ig==@vger.kernel.org, AJvYcCW18ta18AbuEm8eP6UFIiEqgn3p+72Peq3ivKNaGQCeQnOGZmt88RddMZWcasWgb0B8AZbpSXKyLPIs9Slr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoXv+mdnen9fHUy6eszDetdQQ0YpSfShnmnoj2GGzs9OdFVAWY
+	wCNYyW7BErae+RjgaERt+GStDwJPBCU9kws/aiF/R9CVvpJn4zht/JJYvXt+5zJp4olHlG2wppL
+	fP5O0lOBgC8KfNKhZB3CONk/nnA==
+X-Google-Smtp-Source: AGHT+IG+CACbiiD2abOkp8tXfXmRr505UnyuCRTrkEYyr07DsjIb1ktiKdJ4ARe6OcGznQb9vjFUFmdjHww0FD53lpk=
+X-Received: by 2002:a05:6402:d08:b0:5f4:370d:96c4 with SMTP id
+ 4fb4d7f45d1cf-5f7394d37ccmr7705350a12.0.1745842992502; Mon, 28 Apr 2025
+ 05:23:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
-	<wens@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Daniel Baluta
-	<daniel.baluta@nxp.com>
 References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
+ <CANLsYkxKHhCHYrbAGzQ48QGpL_DbuLnX3=ppmpyu0vjuuvvODg@mail.gmail.com> <322d366c-1564-4b06-9362-28fe451a35e7@nxp.com>
+In-Reply-To: <322d366c-1564-4b06-9362-28fe451a35e7@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 28 Apr 2025 07:23:01 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJemaAzx6v0kj52J=YFRGqLo5=xk8LXXk-8i=mAomTCWQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFE1MZW4VzC8-fvJOOKPGQbbAo554PCqhNSEgkFv0dfgvJlVI74jm4fy4w
+Message-ID: <CAL_JsqJemaAzx6v0kj52J=YFRGqLo5=xk8LXXk-8i=mAomTCWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
+To: Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	"Andrew F. Davis" <afd@ti.com>, "Shah, Tanmay" <tanmay.shah@amd.com>, Saravana Kannan <saravanak@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Apr 25, 2025 at 6:34=E2=80=AFPM Iuliana Prodan <iuliana.prodan@nxp.=
+com> wrote:
+>
+> Hello Mathieu, Rob,
+>
+> I've tested imx_dsp_rproc and it fails with:
+>
+> [   39.743770] Unable to handle kernel paging request at virtual address
+> ffffffffffffffea
+> ...
+> [   39.805078] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> [   39.810390] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS
+> BTYPE=3D--)
+> [   39.817353] pc : __pi_memset_generic+0x50/0x188
+> [   39.821892] lr : imx_dsp_rproc_prepare+0x3a4/0xea4 [imx_dsp_rproc]
+> [   39.828079] sp : ffff8000853dbb10
+> [   39.831396] x29: ffff8000853dbb90 x28: 0000000092400000 x27:
+> ffff80007a36d3d8
+> [   39.838540] x26: ffff0000d0a5e410 x25: ffff80007a36d3f0 x24:
+> 0000000000000004
+> [   39.845685] x23: ffff0000d5414880 x22: ffff0000d5e1dce8 x21:
+> 0000000000000000
+> [   39.852827] x20: ffff0000d5e1db98 x19: ffff0000d5414b80 x18:
+> 00000000ffffffff
+> [   39.859970] x17: 202c656c69687720 x16: 3e2074756f657672 x15:
+> ffff800081f8d050
+> [   39.867114] x14: ffff0000db584680 x13: 0000000000000003 x12:
+> 00007fffa3330000
+> [   39.874257] x11: 0000000000000004 x10: 0000000000000ab0 x9 :
+> 0000000000000000
+> [   39.881400] x8 : ffffffffffffffea x7 : 0000000000000000 x6 :
+> 000000000000003f
+> [   39.888546] x5 : 0000000000000040 x4 : 0000000000000006 x3 :
+> 0000000000000004
+> [   39.895689] x2 : 0000000000008000 x1 : 0000000000000000 x0 :
+> ffffffffffffffea
+> [   39.902837] Call trace:
+> [   39.905284]  __pi_memset_generic+0x50/0x188 (P)
+> [   39.909821]  rproc_boot+0x2c0/0x524
+> [   39.913317]  state_store+0x40/0x100
+> [   39.916812]  dev_attr_store+0x18/0x2c
+> [   39.920478]  sysfs_kf_write+0x7c/0x94
+> [   39.924146]  kernfs_fop_write_iter+0x120/0x1e8
+> [   39.928598]  vfs_write+0x244/0x37c
+> [   39.932008]  ksys_write+0x70/0x110
+> [   39.935413]  __arm64_sys_write+0x1c/0x28
+> [   39.939342]  invoke_syscall+0x48/0x104
+> [   39.943094]  el0_svc_common.constprop.0+0xc0/0xe0
+> [   39.947805]  do_el0_svc+0x1c/0x28
+> [   39.951123]  el0_svc+0x30/0xcc
+> [   39.954188]  el0t_64_sync_handler+0x10c/0x138
+> [   39.958549]  el0t_64_sync+0x198/0x19c
+> [   39.962222] Code: d65f03c0 cb0803e4 f2400c84 54000080 (a9001d07)
+> [   39.968317] ---[ end trace 0000000000000000 ]---
+>
+> The problem seems to be when computing `cpu_addr =3D
+> devm_ioremap_resource_wc(dev, &res);`, in patch 4.
+> In `__devm_ioremap_resource` (see [1]), it's expecting the resource type
+> to be `IORESOURCE_MEM`, which is not the case here (at least the flags
+> are nowhere set for this).
 
+Thanks for testing and diagnosing. IORESOURCE_MEM needs to be set. Can
+you test with this change:
 
-On 4/23/25 21:42, Rob Herring (Arm) wrote:
-> While there's a common function to parse "memory-region" properties for
-> DMA pool regions, there's not anything for driver private regions. As a
-> result, drivers have resorted to parsing "memory-region" properties
-> themselves repeating the same pattern over and over. To fix this, this
-> series adds 2 functions to handle those cases:
-> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
-> 
-> I've converted the whole tree, but just including remoteproc here as
-> it has the most cases. I intend to apply the first 3 patches for 6.16
-> so the driver conversions can be applied for 6.17.
-> 
-> A git tree with all the drivers converted is here[1].
-> 
-> v2:
-> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
-> - Export devm_ioremap_resource_wc()
-> - Rework handling of resource name to drop unit-address from name as it 
->   was before.
-> - Link to v1: 
->   https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
-> 
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/memory-region
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Rob Herring (Arm) (4):
->       of: reserved_mem: Add functions to parse "memory-region"
->       of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
->       devres: Export devm_ioremap_resource_wc()
->       remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-> 
->  drivers/of/device.c                       | 31 +++++-------
->  drivers/of/of_reserved_mem.c              | 80 +++++++++++++++++++++++++++++++
->  drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
->  drivers/remoteproc/imx_rproc.c            | 68 +++++++++++---------------
->  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
->  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
->  drivers/remoteproc/qcom_q6v5_pas.c        | 69 ++++++++++----------------
->  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
->  drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
->  drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
->  drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
->  drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
->  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
->  include/linux/of_reserved_mem.h           | 26 ++++++++++
->  lib/devres.c                              |  1 +
->  18 files changed, 339 insertions(+), 369 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
-> 
+index f87915cce961..00c93585758f 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -771,6 +771,7 @@ int of_reserved_mem_region_to_resource(const
+struct device_node *np,
+                return -EINVAL;
 
-Testing of the series on the STM32MP15 platform has passed.
-
-just one minor comment in patch 1/4.
-
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Thanks,
-Arnaud
-
-
-
-
-> Best regards,
+        resource_set_range(res, rmem->base, rmem->size);
++       res->flags =3D IORESOURCE_MEM;
+        res->name =3D rmem->name;
+        return 0;
+ }
