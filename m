@@ -1,143 +1,167 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5809527D794
-	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 16:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C82CCC0
+	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 16:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745857331; cv=none; b=O9cK3uNRkYQjXdX85xG5IxAC1+dl+I24PZOcZGeVue1xwAsFyrjevmzsnVZAbqVkVikpr9ZAhRj+nWcFH6xT6FO6Pnp2a0iDql0rDR6eTkmYBiHigEeTFOq/iimUPFEmOrYsKCJqF2SUU+5JPdlcyW5nXjOqy3A8GZhWDjg5/m8=
+	t=1745858977; cv=none; b=LYsgBn3mka/upp9Afo5eHi/mlR2MkQLPVL0g1tOXfDyeWGi0uT2ooOEoh8LRqRU1Se+K9NugMZruEBvz6amlJDoqEONz5U0CdO6FrrCWlRKQk9qQNJ0ZU2qXBzg8JdUKLsxlO1R6QKkFdJIQYNjpKrEpJz7K/As9SRgyiY8Bvv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745857331; c=relaxed/simple;
-	bh=Vw4DlImvgesrbSAsVdwb6vTeImKi0Z4LGtqXAOAB+Nk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ux0/RAxd9XaRgsjpAz9OjsAgqzvLHNtX/ZSxAwojzvj4BDqlKlVlu6oLNymDGGwZVVh6Nw0P+ZfJe8x4jSYCFGXNA2Rja89ZDf8G7x4BalQXsLTbLbW0Pc0XGsl0bniUGFQu/7gbZsJ/bFitcbcZ7yu4PjRSbMHHRE9AlYSK8P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VstnMOO9; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1745858977; c=relaxed/simple;
+	bh=OJJ+6bcq7xHuiJnWwZOf89AsHChdipRGp8KVr1g9RHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPExX/ZzSSYCUsEgh7vkJYLxWBJ3NHt0bdG1k6zs3qsOPQWky+jkv8uJSLvhNhb4xvVDAmzkspP2g9KSr0cDnfrM+Uzhimmzb4eLFVLFfeWHYe9KbDDSfzjyPCN8Qv1v02PVecLPk1S+dkLXlF8yq1G7rxyQiYBeIZ9GQwSk+Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlYg/XK/; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VstnMOO9"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70427fb838cso40942877b3.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 09:22:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlYg/XK/"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-301918a4e1bso4204571a91.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 09:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745857326; x=1746462126; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kjtfgNYAyQgaIv+6+gwAi/DXzlNfZQv9vmE2wR+LnUU=;
-        b=VstnMOO9OIpDzRVxGmD9lmKOmGsdXuocbVU9WCF4GNr0cPoaTl+FvxFER6+gxTX01g
-         l0lPgxqzmL4GI0JX2UiIFXcAiIS68xq+DKCjIKxCbmShJ71tf7eFQmLqy1OOwC5ZqDYz
-         zsKcS742SGFGoG5pLeeNUgEUQ28vlxoWIQa7wjfNDKi/ALdT3FLf6nIpQcw1FnW5H55G
-         6L/vMsGOdDkcpUMzmI3uLgqcHkhrY2S8ZeRgkF+AJZBbdJqT77kL0zGKpLFWCm3PHB+a
-         E1qqVEe0tr6wcHtDoZAR8pMkiR4kpbeZqwXtzijE3XqLWKv99PcQujVmOdxowxweiEl2
-         H5XQ==
+        d=linaro.org; s=google; t=1745858975; x=1746463775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgUhPrW3pZPMoUmmVNbIH37mhjHyGadhBg8JhGzQp78=;
+        b=NlYg/XK/n3RJLtWxUxSIFsvvF8YJgdhfb0An61DDbv8REXYnNaLQ3ZXjFXAntE0M16
+         5dteLscL7qn17q0kfcS1TYYICzQCMb8hZTcPQfMCUM+aoKr5OH8uRx+hjru8YKjQTRMI
+         /uDI0MNoLP8eVqnv8/PJqYxR60wLvB3ozowxRzYiqPXI0K5UTX8uPbXrf7ehwosAvwfQ
+         bEIavg5dV1LLpuX3eBeCjRS0P/7Aw2vxDuIu4ngRBDkEMlarIHrN/4ievm7l7p7nD6YO
+         IZCK2uBRnY/8RNqwkCX9l0SOn2j1NuEoQu+pZfIczdzPIKbtdOP1OzwkbqLhz8jp8YhV
+         Jfog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745857326; x=1746462126;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kjtfgNYAyQgaIv+6+gwAi/DXzlNfZQv9vmE2wR+LnUU=;
-        b=IZbXnv7uEZPQC4ZK/qP3Qy9xrkIMXCJW+fjj96dNwX39n0kiMHaW/vWqGNiF/FlCAT
-         jJ0quOG4OvGymvfeypV+/jCpkv53blzB4ypevH9x6SBKg5AGKCC0kkNdcuA80upBZHOR
-         wfLhscQTKrKGNfPWv+vW9eWizP8DeiQtQASoDg5TsgE3opx7qv798r5Ff3mZUM8RYxSZ
-         oraw0mVnqwYPrvwWxiuTl68B8KkRqpn5Q/Fu7hDvCsKIot09+/qGMvduZBzUFkMs5bpy
-         1qjBOF1Gmt8Z2GfzEPsd0xxf0rfcD/+T/yoQC/Ni8S/5VjjRgvkgD/ll4EhQb4nlbuVV
-         Risg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfLcOw5pfCOJvQw4TjUkWEQXkazxot3rBLBrPOVWQm2mD6BwKZjDyJOq5EPpi36HU5vveCQ6iAbs4fqhKwPVVI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlYIozmTjReAQ9RD+Z3nQqCJ0qhSiLGargrK1ypCxviq7MdWnO
-	kvLo602dB0WKQB5VvHAOZowd/iyKQjOVMVFq9liCVH4cnN0ljDbnHp514TVKQapU1gI1IBR0YSx
-	kIUFJnbFHZj346jP2LtsoZ8GOVGeeL+FFGkffWg==
-X-Gm-Gg: ASbGnct56bmQs7IUiZ0t3OEJRK6vKQRZhNrX8RdCGFkzYqpdQrdJeLM8cltSI/Krwu1
-	hpAWJqr4851FgyPtGwAKRlVFz1J2lyBfsvTc4YfX7+i+xLBiRUrub3UoN/XK3h5yPQHSetprY1F
-	YUP0YXyXwA8cOEDU/v+rXAmYGKEH5CWMXKiQ==
-X-Google-Smtp-Source: AGHT+IHJ8fzCsar22nWRrLuqubA/nW5PD6Isexezh6U72gKuIl5N70HEwT9JTNXKPWmpqHrpu7bpAGC2DT3kmga/dpo=
-X-Received: by 2002:a05:690c:67c6:b0:708:3532:ec94 with SMTP id
- 00721157ae682-70853f752e9mr174343137b3.0.1745857326167; Mon, 28 Apr 2025
- 09:22:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745858975; x=1746463775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sgUhPrW3pZPMoUmmVNbIH37mhjHyGadhBg8JhGzQp78=;
+        b=jYCLxCo5dzORTmQZXwU68cw4AwLeQEvX8yFL5jfW8aObEUfHTC6m9xpjEprxpU/Nkb
+         mSR5jllPmTJDkRuUwr7ixyMu4hDxep9JrAz9KK4ceyJVtEL/5pid/8MF4ifwtCK3RIvy
+         VkQTyNeSTZK6UH79oKwaZ2/JYBejzk0GMoZePOGDD887xJ4T9lTuRTaDc0JGAY6JxygK
+         1fZr5P7kXAUsH2KhaagnXb7I/PYx+GmE1GA1lne1L2F1d7RQhRrh02XJPqu6wUcQD9Kh
+         hUhAYZUgfslRhfC13AIELP2E0SDiya/BCFV8xXdXeqpLUMThf739qSOCjTJwwbk+nhGY
+         LBzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBzlZx0WMghMgrIMphXjJ/8DiYUYwxJ1uxyAlpod+RFwcSgkLOnkmx9yHM3LbpGZ61Hf3n/FWno+lER/JgbypK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ZVEoXpbqVuxPl7l920UeeAHN9n/Hkd3bwk07fho1eA0qjIzV
+	T69FWht72zNmG+FENCUw/9pJj4bUnKqXOovae1nlXwzMLsDYg6q6+CIF26a5Jl8=
+X-Gm-Gg: ASbGncuFrqgxFdtS78B+GgXW1weuVuyfgvdnt9/Dd2B5M65RWCShRG7NG0u7ELOhExq
+	QrzqihxUnoYylH1/fE33rYsusqLg709zOpQR2X7rkB/dN8myAlNth52TAcV1yrE1PjG2ZPTo5cI
+	y9WznN6HOdgs9Fuiji+/O8ZvxWkzdxYT418ypA5L13MyqX3zqhUAxYN1o1bhx571rBVpwZXO0bq
+	lDgYrrTyJPYbNG7FQOnfuY5/9qJW/RksIetO3y5Wl4R7dIZgQDdwha2+SCJfBb/MczeL5mX+T0Q
+	nnAOHFp00HdX3HGK9v1jlwMP91/QYxq2MfOSsNpFyloE
+X-Google-Smtp-Source: AGHT+IGzMOhPgDfCKAp04nSjoWIJJPOKZvS99BrJ9oTEUG+UpqUfA4eSpR+xL5SbBU/UdauqUlNn0w==
+X-Received: by 2002:a17:90b:4d08:b0:2f9:c144:9d13 with SMTP id 98e67ed59e1d1-30a2158ed10mr712782a91.24.1745858975414;
+        Mon, 28 Apr 2025 09:49:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:b816:4cd3:148d:1922])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f782d4d6sm7467577a91.38.2025.04.28.09.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 09:49:34 -0700 (PDT)
+Date: Mon, 28 Apr 2025 10:49:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] remoteproc: imx_rproc: release carveout under
+ imx_rproc after rproc_attach() fails
+Message-ID: <aA-xnA_zFn8UlTDQ@p14s>
+References: <20250426065348.1234391-1-xiaolei.wang@windriver.com>
+ <20250426065348.1234391-2-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com> <20250422-sm7150-upstream-v1-11-bf9a9081631d@jiaxyga.com>
-In-Reply-To: <20250422-sm7150-upstream-v1-11-bf9a9081631d@jiaxyga.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 28 Apr 2025 18:21:30 +0200
-X-Gm-Features: ATxdqUFknbhFgOKvNVOI3-s43pP4YH55pKLNf_KwLrUaeaEizalUr2MLUM3sfs8
-Message-ID: <CAPDyKFqPpqDj+DKT=nJrTS8iDUx_8scnLreUQ99byDHEdBeiww@mail.gmail.com>
-Subject: Re: [PATCH 11/33] dt-bindings: mmc: sdhci-msm: Add the SM7150 compatible
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>, Lee Jones <lee@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alex Elder <elder@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Georgi Djakov <djakov@kernel.org>, 
-	Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>, 
-	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-	David Wronek <david@mainlining.org>, Jens Reidel <adrian@mainlining.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
-	linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-hardening@vger.kernel.org, linux@mainlining.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250426065348.1234391-2-xiaolei.wang@windriver.com>
 
-On Tue, 22 Apr 2025 at 22:24, Danila Tikhonov <danila@jiaxyga.com> wrote:
->
-> Add compatible for the SDHCI block found in SM7150.
->
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+Hi Xiaolei,
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
+On Sat, Apr 26, 2025 at 02:53:47PM +0800, Xiaolei Wang wrote:
+> When rproc->state = RPROC_DETACHED and rproc_attach() is used
+> to attach to the remote processor, if rproc_handle_resources()
+> returns a failure, the resources allocated by rproc_prepare_device()
+> should be released, otherwise the following memory leak will occur.
+> 
+> Therefore, add imx_rproc_unprepare() to imx_rproc to release the
+> memory allocated in imx_rproc_prepare().
+> 
+> unreferenced object 0xffff0000861c5d00 (size 128):
+> comm "kworker/u12:3", pid 59, jiffies 4294893509 (age 149.220s)
+> hex dump (first 32 bytes):
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+> 00 00 02 88 00 00 00 00 00 00 10 00 00 00 00 00 ............
+> backtrace:
+>  [<00000000f949fe18>] slab_post_alloc_hook+0x98/0x37c
+>  [<00000000adbfb3e7>] __kmem_cache_alloc_node+0x138/0x2e0
+>  [<00000000521c0345>] kmalloc_trace+0x40/0x158
+>  [<000000004e330a49>] rproc_mem_entry_init+0x60/0xf8
+>  [<000000002815755e>] imx_rproc_prepare+0xe0/0x180
+>  [<0000000003f61b4e>] rproc_boot+0x2ec/0x528
+>  [<00000000e7e994ac>] rproc_add+0x124/0x17c
+>  [<0000000048594076>] imx_rproc_probe+0x4ec/0x5d4
+>  [<00000000efc298a1>] platform_probe+0x68/0xd8
+>  [<00000000110be6fe>] really_probe+0x110/0x27c
+>  [<00000000e245c0ae>] __driver_probe_device+0x78/0x12c
+>  [<00000000f61f6f5e>] driver_probe_device+0x3c/0x118
+>  [<00000000a7874938>] __device_attach_driver+0xb8/0xf8
+>  [<0000000065319e69>] bus_for_each_drv+0x84/0xe4
+>  [<00000000db3eb243>] __device_attach+0xfc/0x18c
+>  [<0000000072e4e1a4>] device_initial_probe+0x14/0x20
+> 
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 > ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> index eed9063e9bb352b5c8dac10ae2d289c5ca17f81b..2b2cbce2458b70b96b98c042109b10ead26e2291 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> @@ -60,6 +60,7 @@ properties:
->                - qcom,sm6125-sdhci
->                - qcom,sm6350-sdhci
->                - qcom,sm6375-sdhci
-> +              - qcom,sm7150-sdhci
->                - qcom,sm8150-sdhci
->                - qcom,sm8250-sdhci
->                - qcom,sm8350-sdhci
->
-> --
-> 2.49.0
->
+>  drivers/remoteproc/imx_rproc.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 74299af1d7f1..c489bd15ee91 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -595,6 +595,19 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>  	return  0;
+>  }
+>  
+> +static int imx_rproc_unprepare(struct rproc *rproc)
+> +{
+> +	struct rproc_mem_entry *entry, *tmp;
+> +
+> +	rproc_coredump_cleanup(rproc);
+> +	/* clean up carveout allocations */
+> +	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+> +		list_del(&entry->node);
+> +		kfree(entry);
+> +	}
+> +	return  0;
+> +}
+> +
+
+I have reflected long and hard on this.  The problem with the above approach is
+that we do almost the same thing in imx_rproc_prepare() and
+rproc_resource_cleanup().  Function rproc_resource_cleanup() is able to deal
+with empty lists so I think it is better to fix the "goto" statements in
+rproc_attach().  More specifically, replace the "unprepare_device" goto
+statement with "clean_up_resources" and get rid of the "unprepare_device" label.  
+
+Please see if that works on your side.  I am good with 2/2 of this series.
+
+Thanks,
+Mathieu
+
+>  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	int ret;
+> @@ -675,6 +688,7 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
+>  
+>  static const struct rproc_ops imx_rproc_ops = {
+>  	.prepare	= imx_rproc_prepare,
+> +	.unprepare	= imx_rproc_unprepare,
+>  	.attach		= imx_rproc_attach,
+>  	.detach		= imx_rproc_detach,
+>  	.start		= imx_rproc_start,
+> -- 
+> 2.25.1
+> 
