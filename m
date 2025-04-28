@@ -1,127 +1,273 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE822CBFD
-	for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 07:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9223211476;
+	Mon, 28 Apr 2025 08:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826773; cv=none; b=rGOs1JGppA3bBPBUBnvD6fVexZpU5C+78fbtDLqDQ6Ij2YUzoSJJzNvhlQE7Zu4QCVk9mdMquySyiTqaApL/vfaSjL8qkiIPVqALEI/rlRRFj+8z7zDXf4WhPG2ddGew4Iu/+f1KwGHvJJHT+GqAgygP7jTBo1A0s0X46cTTyDs=
+	t=1745827891; cv=none; b=FS+W2UMCEtE8wt7lGdnBgTBWSg2AzahvqTUW2mOdcGGyo+xhfCvvyW6HmSOOx08yK612wJETmQida65VsURVF3/4UAU8o33sE4DDvnMukDWbYoOEIWeeIMBbFfBZ1Q0h3Qhvvq3PyTqK9G9Sj+cpG14cWTtQTMvaHVglUU3Ogew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826773; c=relaxed/simple;
-	bh=a2q8227S7IVaFeHAdaSJ94I6tLSiVXiu9D8/iCz3E2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b+nDGhwdMHxFclERDOcBuIAYBXgv+Ua9i46ynxkFT5pe206wsTAUi9nNwTUty2cDhz3Qlk9QmK21D6HkygMpb3e3Xb2VQHj+LTxDY2iQ7bx74ZtP0wCrkaHWACBd5dwSfEHTrLpUveT+y+75GPo2OpWnwifLIKiquVzD0qFdB6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J0/7aSPx; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745827891; c=relaxed/simple;
+	bh=RZNWauRBZ77xwItbGqA7HuXfhu0XZkIoQCM+78qY6HM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eoZ7ZWH1JqWp0JIvYU+0xZ5pO8v++c64NujBhC23DJK0JfPedMKhwFBriv1kFPz/zV9pjgI8mU9S+TAYrt5tmvVdRXAmivrpEB9epC6Brk7QUimpURYO8Dw8V0MwKktYpULTNnfHjKBh0ExYHG0IY9paEwHEfufKgG6t3k2thyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QwoydfmJ; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J0/7aSPx"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f37f45e819so741807a12.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Apr 2025 00:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745826769; x=1746431569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=++CyndwUisWgWH/S4dHSTfV3pOj95NuarysuXxNeUys=;
-        b=J0/7aSPx9Fzar86FtLC5mfXMq41kzabU7D+MbU0K6zdsOJ8knuYQYwBDfWbhG7ayOV
-         POUhBJ6YLuF9rXm2wlsPbTn0Stn+jje0LMnMqVzOJLTcAZjbNkgDyQ113/4Crr18sGBJ
-         hqy9fy7OPLMRU2UQuT+5yXnclw4zK88YvRpKsTWQZUuLnmkKnuFbJ92d/Uoj6ZbBkYXe
-         VROnnxFYWDztkmoEYsmqkeuva8VJIXa8OTPeWdJa2TDp+Z/Hku4i8CFtcKiCSgsfSjTH
-         Fl2C5ltxDiKn7p9wjq8EJIGwtvwmcf6+Tt8fT3w7vfq39Sug73cAWfXiaSVft+kcOeBU
-         GV1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745826769; x=1746431569;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=++CyndwUisWgWH/S4dHSTfV3pOj95NuarysuXxNeUys=;
-        b=D2ZzALxGnHIobWAfq9Y06HCVfkP+BgmcqdMtxkSydzELJB07SR91ewhXBwjAkJngLL
-         HQv2xSEFKMgm6hAwXEuQDW6KJDtkKwFMzLtd4EjDfJLVlXlRwjBJ+ghIrZTWEn/oIc0V
-         Uhd9jqhAoqRjMP0JWVLLK0HvyFMSFBbSLUZIYFasfTjmbh8SGzUI3g57bpqFasJ9f83Y
-         lStFpUa7QUc1+sre5grb5nMy26gfJU/7Z/Dcrh3tWnV7vDMvKz8a2VKL8W40HmT12gqy
-         6EPf/SHU2JircailxVEX05D5kCR0g0urKTTnKM9qF1dzb82PEbDqyYjm9sMBoMy9xs+9
-         3Z3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUkSpgb37w1KF0USjQ2/JAozyXWDRu33To3O5LSXBHArUqILJDvRWKIBjf/uSUL8PM03WA/6CacZgZ3QeByDuoy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKB1i0lt4eiQkGkbU0lo9+iqJLoogSrb9xKwkn6Zuw8QVpG13H
-	SS/UoN1qxEL05HjDyuuSe9nJO0vxsTPRoINP4qpMaySLRyfeFs1BjvU4Kovugv8=
-X-Gm-Gg: ASbGncvZTrxIa3AAS+g3Nw1jZp45BnaU4b9p0AovVYvQtrZ/XUCqSrO0tOymoVtkfW1
-	lJZQ8OVlWuH6LJyXv85kz8eVPKjem73Vr6g8EJrGOyExCY3CO6TxkegbF+dowYiq+5ml9yO7ckh
-	OUrEk6T5Foylz82IEIJDIa1pFAI3JIyJlRHRJtofIEDNChl8fqz5Lu99iGf5c01DgzpCM9YQkVH
-	r9nkD+2POivpWxkhR0h1dopqpv8qKYjX7bcyijJEaaOi4XF+8lb9FZRQFz8FjE/fWY/LGkKKYRu
-	tIdM1gvqBc5rZPovU+CYcrPg1CmbKCkaLl2U06kpHBMSOb3GPw==
-X-Google-Smtp-Source: AGHT+IEGTZVZiJqfJ5HX9QPHWnLpx/E8XElCGd6Od8tueakLMxHqw2Flou9h+m1FaZ7wEavBKyTctw==
-X-Received: by 2002:a17:907:1b10:b0:ac0:b71e:44e0 with SMTP id a640c23a62f3a-ace7110745fmr364254166b.9.1745826768533;
-        Mon, 28 Apr 2025 00:52:48 -0700 (PDT)
-Received: from kuoka.. ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf73a2sm574036866b.114.2025.04.28.00.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 00:52:47 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] dt-bindings: remoteproc: qcom,sm8150-pas: Add missing SC8180X compatible
-Date: Mon, 28 Apr 2025 09:52:44 +0200
-Message-ID: <20250428075243.44256-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QwoydfmJ"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S11XbV010761;
+	Mon, 28 Apr 2025 10:10:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	PQb6/JrtA/eLzoukWftU2fxvtoqJ28zJBaZAc0hVsHY=; b=QwoydfmJnqrIp1Bs
+	q/5op7P9yWgVMKAfoFEU1jyURgEx+qPUDq86ch/CQCNROm4Mxk9HC6YD7MH4Xtmi
+	3rQphDkC1+X5k47wruX25t+hfl48d3DGpsuF3Prb14wiAMj+EsbVHwphl0Fu3qJz
+	SmEK1tY8GUZaWs/i9ClheBgwg8NcYqTGZ+VSKcG1b0C7i2O4SBvWc3y/7E+zvtYc
+	NiEaxlGfyjdSwBnETaBtVc2kCpyyptb1Xq8l0qLOVuwN/IFbtdMo8w9pvWlHIbyO
+	23nxIBPn1Iz2uNbsjaTymfeLeJPQ8YA5tJnyzsDOlcOhxPHwotSdRgbyLDKFfAI7
+	tGWyzA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468pcg5gx0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 10:10:53 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EF3BA4004F;
+	Mon, 28 Apr 2025 10:09:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C8252A342DD;
+	Mon, 28 Apr 2025 10:07:54 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
+ 2025 10:07:54 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
+ 2025 10:07:52 +0200
+Message-ID: <4e6840e5-34a7-4f15-a13a-1ff1ea5eff85@foss.st.com>
+Date: Mon, 28 Apr 2025 10:07:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1205; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=a2q8227S7IVaFeHAdaSJ94I6tLSiVXiu9D8/iCz3E2Q=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoDzPLrwtfBdFg7DRuVbMa3eXN3qGCKlYj2Hb2v
- 5JF0WZv9B+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaA8zywAKCRDBN2bmhouD
- 1xNdEACCfDg4cenrjMEuYZSPid+RtrHlHDfmvB3y6qJw3UkferBfwYrKfsuY/YEXdZLiQpBiH6z
- n+NZ9RmBze3OXQvX/XbAFMzDTWiEfIIafzpBsn9iChkXxCFz+6fPi5fY7Znf7vg4Iz72gHU4VIb
- d7McqqNy52zQSpQyH9Za4zRM9BN9BSpRRQ8uCk1oPj0bHZp3EsIa2zUohIrgdoUiwxVUgS/l+I5
- VXAcNLbe4YQVb5gxn0D9Bm6I6bJ5DTGuRuyaxod2Ek+NS/wZT+marX012rGtF9gVsckzRYC7NqI
- cUepxVvh2Q6umX3hTmbWGlIXRQbqGlk+kqUdTJ5F5xl1UyxfThzCoLX3NthXg3/M+xmN2oAlIdF
- BjC6Zsg/Ik6hRVNNs163S5ikj5muJgxbdmsD6M8wJ0t3IBycjOAVcMl8dqrZWj5spc9+NGiHH9z
- i8Xo6jCSs8c/t78EO1pI8YZLh9KaWvlcc9l95YHNZhxjK8pvx8edVSsyOP7KfbDqw88BnhVu5H3
- yOD5FkDzSeTiHc9eK5keu5d4+ryTML0wpx4OJzwkIKxwX66ZyHI8EYfpS0WgeYmIHOY3pz2IP2M
- b45vbG8Q4hFCdHKmXOXyREDDOXIaIpZDVo5a95TNDTp76bI3Yro7Uvs3CasHWuDJNW1o+Cr8MAq 78ytQgYEaiOOFiQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] of: reserved_mem: Add functions to parse
+ "memory-region"
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Saravana Kannan
+	<saravanak@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai
+	<wens@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Daniel Baluta
+	<daniel.baluta@nxp.com>
+References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
+ <20250423-dt-memory-region-v2-v2-1-2fbd6ebd3c88@kernel.org>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20250423-dt-memory-region-v2-v2-1-2fbd6ebd3c88@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
 
-Commit 4b4ab93ddc5f ("dt-bindings: remoteproc: Consolidate SC8180X and
-SM8150 PAS files") moved SC8180X bindings from separate file into this
-one, but it forgot to add actual compatibles in top-level properties
-section making the entire binding un-selectable (no-op) for SC8180X PAS.
+Hello Rob,
 
-Fixes: 4b4ab93ddc5f ("dt-bindings: remoteproc: Consolidate SC8180X and SM8150 PAS files")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml        | 3 +++
- 1 file changed, 3 insertions(+)
+On 4/23/25 21:42, Rob Herring (Arm) wrote:
+> Drivers with "memory-region" properties currently have to do their own
+> parsing of "memory-region" properties. The result is all the drivers
+> have similar patterns of a call to parse "memory-region" and then get
+> the region's address and size. As this is a standard property, it should
+> have common functions for drivers to use. Add new functions to count the
+> number of regions and retrieve the region's address as a resource.
+> 
+> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v2:
+>  - Wrap function parameters
+> ---
+>  drivers/of/of_reserved_mem.c    | 80 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/of_reserved_mem.h | 26 ++++++++++++++
+>  2 files changed, 106 insertions(+)
+> 
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index ee2e31522d7e..f87915cce961 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -12,6 +12,7 @@
+>  #define pr_fmt(fmt)	"OF: reserved mem: " fmt
+>  
+>  #include <linux/err.h>
+> +#include <linux/ioport.h>
+>  #include <linux/libfdt.h>
+>  #include <linux/of.h>
+>  #include <linux/of_fdt.h>
+> @@ -740,3 +741,82 @@ struct reserved_mem *of_reserved_mem_lookup(struct device_node *np)
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(of_reserved_mem_lookup);
+> +
+> +/**
+> + * of_reserved_mem_region_to_resource() - Get a reserved memory region as a resource
+> + * @np:		node containing 'memory-region' property
+> + * @idx:	index of 'memory-region' property to lookup
+> + * @res:	Pointer to a struct resource to fill in with reserved region
+> + *
+> + * This function allows drivers to lookup a node's 'memory-region' property
+> + * entries by index and return a struct resource for the entry.
+> + *
+> + * Returns 0 on success with @res filled in. Returns -ENODEV if 'memory-region'
+> + * is missing or unavailable, -EINVAL for any other error.
+> + */
+> +int of_reserved_mem_region_to_resource(const struct device_node *np,
+> +				       unsigned int idx, struct resource *res)
+> +{
+> +	struct reserved_mem *rmem;
+> +
+> +	if (!np)
+> +		return -EINVAL;
+> +
+> +	struct device_node __free(device_node) *target = of_parse_phandle(np, "memory-region", idx);
+> +	if (!target || !of_device_is_available(target))
+> +		return -ENODEV;
+> +
+> +	rmem = of_reserved_mem_lookup(target);
+> +	if (!rmem)
+> +		return -EINVAL;
+> +
+> +	resource_set_range(res, rmem->base, rmem->size);
+> +	res->name = rmem->name;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_to_resource);
+> +
+> +/**
+> + * of_reserved_mem_region_to_resource_byname() - Get a reserved memory region as a resource
+> + * @np:		node containing 'memory-region' property
+> + * @name:	name of 'memory-region' property entry to lookup
+> + * @res:	Pointer to a struct resource to fill in with reserved region
+> + *
+> + * This function allows drivers to lookup a node's 'memory-region' property
+> + * entries by name and return a struct resource for the entry.
+> + *
+> + * Returns 0 on success with @res filled in. Returns -ENODEV if 'memory-region'
+> + * is missing or unavailable, -EINVAL for any other error.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index 56ff6386534d..5dcc2a32c080 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -16,6 +16,9 @@ description:
- properties:
-   compatible:
-     enum:
-+      - qcom,sc8180x-adsp-pas
-+      - qcom,sc8180x-cdsp-pas
-+      - qcom,sc8180x-slpi-pas
-       - qcom,sm8150-adsp-pas
-       - qcom,sm8150-cdsp-pas
-       - qcom,sm8150-mpss-pas
--- 
-2.45.2
+of_property_match_string() can return some other error values.
 
+Thanks,
+Arnaud
+
+> + */
+> +int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
+> +					      const char *name,
+> +					      struct resource *res)
+> +{
+> +	int idx;
+> +
+> +	if (!name)
+> +		return -EINVAL;
+> +
+> +	idx = of_property_match_string(np, "memory-region-names", name);
+> +	if (idx < 0)
+> +		return idx;
+> +
+> +	return of_reserved_mem_region_to_resource(np, idx, res);
+> +}
+> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_to_resource_byname);
+> +
+> +/**
+> + * of_reserved_mem_region_count() - Return the number of 'memory-region' entries
+> + * @np:		node containing 'memory-region' property
+> + *
+> + * This function allows drivers to retrieve the number of entries for a node's
+> + * 'memory-region' property.
+> + *
+> + * Returns the number of entries on success, or negative error code on a
+> + * malformed property.
+> + */
+> +int of_reserved_mem_region_count(const struct device_node *np)
+> +{
+> +	return of_count_phandle_with_args(np, "memory-region", NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_count);
+> diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
+> index e338282da652..f573423359f4 100644
+> --- a/include/linux/of_reserved_mem.h
+> +++ b/include/linux/of_reserved_mem.h
+> @@ -7,6 +7,7 @@
+>  
+>  struct of_phandle_args;
+>  struct reserved_mem_ops;
+> +struct resource;
+>  
+>  struct reserved_mem {
+>  	const char			*name;
+> @@ -39,6 +40,12 @@ int of_reserved_mem_device_init_by_name(struct device *dev,
+>  void of_reserved_mem_device_release(struct device *dev);
+>  
+>  struct reserved_mem *of_reserved_mem_lookup(struct device_node *np);
+> +int of_reserved_mem_region_to_resource(const struct device_node *np,
+> +				       unsigned int idx, struct resource *res);
+> +int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
+> +					      const char *name, struct resource *res);
+> +int of_reserved_mem_region_count(const struct device_node *np);
+> +
+>  #else
+>  
+>  #define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
+> @@ -63,6 +70,25 @@ static inline struct reserved_mem *of_reserved_mem_lookup(struct device_node *np
+>  {
+>  	return NULL;
+>  }
+> +
+> +static inline int of_reserved_mem_region_to_resource(const struct device_node *np,
+> +						     unsigned int idx,
+> +						     struct resource *res)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+> +static inline int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
+> +							    const char *name,
+> +							    struct resource *res)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+> +static inline int of_reserved_mem_region_count(const struct device_node *np)
+> +{
+> +	return 0;
+> +}
+>  #endif
+>  
+>  /**
+> 
