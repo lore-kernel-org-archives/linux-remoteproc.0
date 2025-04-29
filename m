@@ -1,33 +1,34 @@
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77108280304;
-	Tue, 29 Apr 2025 23:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721602222A3;
+	Tue, 29 Apr 2025 23:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745970380; cv=none; b=eIP8MLG5Lnt+2V+Yls/7RYpvqE5oh678Vf/yJXUqfGp/683BfQuiDWXI9J953rNnWo8ibxpKgnRYXC8IvseeZlZdpdeHtwKTCj8Lry9yXTJ3jisfIaoRLx6/pTaM+IC6M20VVE729/KIxcgs8YOhN/gcpHyth4MVrzd4SnolPlA=
+	t=1745970385; cv=none; b=EIIXt0BRKys5r76nqDR7s6/xOhAXB2NOnoKWfiLtcRJzEPKhtmfXLmxYGWVXdzg9Exclz7U/AQ11+NnDO27QgTCtty7624Z2meEuZ3dAW7pu8BTX4q/E2drsouzmVsp0N8Xj3uLVmCLGYb/WUHOXxZkYd2CtrNV2A21dxL+aRbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745970380; c=relaxed/simple;
-	bh=luOfWlOlz4PBjfYizL6+DKGSBxstxC4zS7RETqWbWto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZFNRn/Norz2IUmpay7MBS+KP2Wd2PwOF5yCOGXzzvi7QzYTvQyBCYUUb8bed9rQOXr8G7gYyxgxuDOTO3+/JSN32f07UQd5a40+SvW8V/26e/VaSGl5RKsF7os/Mo6UYk+3quJwe2dMC4pSGd+1Wh+ZBImaJ1rTcU0SC7kbDWTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZUuW16N4; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1745970385; c=relaxed/simple;
+	bh=NGaIyrfLvZYm2Bbqj86f7XJVeWE52V6E339DRzSa20w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dMamOO3THuqS57cb3v/RfGgha+owjk7uYfqcwlH+9kpN3rB1P4SaS7U4A5Sj2uD3cZQ2N4jdIrboUJk9xSil5LcKFxmYmiK3Ovqcj/wTkox421TI9ayBdQA+Qpk1L0G4OGHzsk/k9R8Znkg1ueV8vYzVNGT5+KY0r2qumzmcovU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jtfFETES; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZUuW16N4"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jtfFETES"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=TvAamvI5z5ywDPmBeirSnmMoBYPq5JBPW9Fre2ToOAg=; b=ZUuW16N4hq8/SREx
-	S2Kif7w+6IlguwkCVBcn/8CeJZT9nm6L3A7z8zLesgFzidcvwPe1lTwRoMJUCyNrzFFVp0Ryw2h21
-	Aa3tVwZJjKNRPEYviQCe4+izSIMf76MtkuEX/8ANFhD1SCfb1BCXk40PCnH+Mob633171/C5WXlij
-	I83A0DU8O1TEPtcQP76mvcmcfjBe3YXncJjRu4Fz+j08e7nwkZb6nNCGfdYYSzus1EqnFOfLuwNfL
-	hVJ3cSop7yqJEUluFS6FLiHX1TA8SOGBOhVYM5cCaKt1W1dF8C2/Jg7uXVY3/5bVxHeiry/5ZGYFs
-	WNpZ8FEbDNU2gNOSTw==;
+	:Subject; bh=SrpJl8aswLmDlKg/oEU55Eu7Y/A7GY9f/+w2KaZJniM=; b=jtfFETESGjVlJ+3P
+	ztmtGff/8bCt5BaU0drQID5thdVjuAF/Y8r0L1WeeeBB5+h+0xiq8yeI9zAVKszMsmHF23Gy0r2IH
+	sYcJV371+suYiJucgwfrAzf1ioqHIiGnCdd+KcLgkrv/hkKkxRHKcInwamBHB8IpCJiz/J5+jPpWr
+	sZfaOlYPPCJaGjbiEVHHktkFxRnETaOsOvEIPDvFxD3nNjW7fvnrP/uPHfWlYQK/ipaObId7LXYBc
+	J8yA77KRfYjRpuaWe3HH04O+Dk7BZIOo0kR11phwAsucDJZ/k87qCrokLBZLZ13j1I+Rn3iHs40/6
+	QgN+iczIc1EO++J9JQ==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u9ueP-000WFz-0b;
-	Tue, 29 Apr 2025 23:46:09 +0000
+	id 1u9ueQ-000WFz-2H;
+	Tue, 29 Apr 2025 23:46:10 +0000
 From: linux@treblig.org
 To: arnaud.pouliquen@foss.st.com,
 	andersson@kernel.org,
@@ -37,10 +38,12 @@ Cc: corbet@lwn.net,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v3 0/3] rpmsg offchannel deadcoding
-Date: Wed, 30 Apr 2025 00:45:56 +0100
-Message-ID: <20250429234600.301083-1-linux@treblig.org>
+Subject: [PATCH v3 3/3] rpmsg: Remove unused method pointers *send_offchannel
+Date: Wed, 30 Apr 2025 00:45:59 +0100
+Message-ID: <20250429234600.301083-4-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250429234600.301083-1-linux@treblig.org>
+References: <20250429234600.301083-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,32 +54,45 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi,
-  This removes a couple of unused functions in rpmsg,
-and (v2) after discussions with Arnaud, follows the thread
-and removes code that they would call.
+After the previous patch, there are no implementers of the
+send_offchannel() and trysend_offchannel() methods.
 
-(Build tested only)
+Remove them.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/rpmsg/rpmsg_internal.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-V3
-  Fixup comment on rpmsg_send_offchannel_raw(),
-  removing the reference to "_offchannel" - as per Mathieu's
-  review
-
-Dr. David Alan Gilbert (3):
-  rpmsg: core:  Remove deadcode
-  rpmsg: virtio: Remove uncallable offchannel functions
-  rpmsg: Remove unused method pointers *send_offchannel
-
- Documentation/staging/rpmsg.rst  | 46 -----------------------
- drivers/rpmsg/rpmsg_core.c       | 63 --------------------------------
- drivers/rpmsg/rpmsg_internal.h   |  6 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 24 +-----------
- include/linux/rpmsg.h            | 22 -----------
- 5 files changed, 1 insertion(+), 160 deletions(-)
-
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 42c7007be1b5..397e4926bd02 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -50,10 +50,8 @@ struct rpmsg_device_ops {
+  * @destroy_ept:	see @rpmsg_destroy_ept(), required
+  * @send:		see @rpmsg_send(), required
+  * @sendto:		see @rpmsg_sendto(), optional
+- * @send_offchannel:	see @rpmsg_send_offchannel(), optional
+  * @trysend:		see @rpmsg_trysend(), required
+  * @trysendto:		see @rpmsg_trysendto(), optional
+- * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+  * @poll:		see @rpmsg_poll(), optional
+  * @set_flow_control:	see @rpmsg_set_flow_control(), optional
+  * @get_mtu:		see @rpmsg_get_mtu(), optional
+@@ -67,13 +65,9 @@ struct rpmsg_endpoint_ops {
+ 
+ 	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+ 	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-				  void *data, int len);
+ 
+ 	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
+ 	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
+ 	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool pause, u32 dst);
 -- 
 2.49.0
 
