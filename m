@@ -1,145 +1,133 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352FE252284
-	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Apr 2025 17:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3795E254876
+	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Apr 2025 19:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745947824; cv=none; b=Cit3J9r82h4g9ehZ4njNcYbC/tVNseC1AEBl5bZlW2EecBGeol9qeqVpO8OVrRd/Iabb514xyq7tq+bfo6+TXrGtG1KXuXMdWXm3oKO/dkboenzqNMrUiu0DdiG09cIFowbAfkFQYccaJvsE8J/AUrdhFTOYzgNm2mLzw+MfWUA=
+	t=1745953272; cv=none; b=t4yM0nM1WRP11lxZZWYnHS7OPLZxGHboiTkr+9nlJyNrl8ynzNL0kr2PTiBnOVySG7XGemTfXe3NV9FU6dNClic8TCsvLsASxBAFTH6Nu24VXu+eLR6gBLRFDWySWTC6jE/TdQPV9+vNYCij1++BJKjC3VM6j6i5g+M0EobrpJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745947824; c=relaxed/simple;
-	bh=iH6Owlhwo7/obpVoLUxLDGUT633M4A804YexIcc3OFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=geVHgSLvYJi6njSNPIr+Krbxdt36+O6V0JO2PIwAQkrtxWPdPZ5WFD6W65x6DijeqsbUmM9Eymk7/RPachqJzydjpP9uLNpciesAA8mJKI4JKcYweMcCW0DvMpoVO3x98S9yZthhPD+R8uFm0+SLwm/fLnq8P0mde/qvd+58VHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uu7YC8P+; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1745953272; c=relaxed/simple;
+	bh=zlj30lyM4eVyR7FFYAFTYUbQXW6lBnZVNqgK8nT1pbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPE31NamfR2okIxaAO6iG1xy6AvfBORyAF+6Fq4s3QEi1dA7cV3UXxQzU/bmrS2gtYqnB0sTuZT6d90G9uPrb7ZoNd8pC1UJLuN5fG5iJZ7/z5lLrwffo0EDodhO9hP1Y/WL65LhrgApvB8WHNaC26X94Yy4HRI+aZ8QfUcNhI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FPlSiVmX; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uu7YC8P+"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so663953a12.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Apr 2025 10:30:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FPlSiVmX"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b170c99aa49so3830384a12.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Apr 2025 12:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745947820; x=1746552620; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sc4+TzSowcDRl7hLIypowfP7AcQ7Rbov5yPrrWksHAo=;
-        b=Uu7YC8P+lb2fE63Bmvdlhhgdhs0ko22IGHLAaWpEs7TgR5UNJzpdskk9OLB0fPYBVj
-         TobdZV7L6lJr6RvsxG/IFkAxMJjoXbGf+vz1ubH91X56rhT1k0QjUVqxqF6aY+7juxlZ
-         J/58NlcO3LR/xh1emx5LR0i2+7carDPL6DDI0333u9sD466bLDZBmpRm3mG9DzB+z/Fv
-         I33tjEQfitMD1I4sT7QQywHBj8TM2ccgw9Om4MmnClMVdBESL8hsILMmARksva4mHPjy
-         exN6e9j+mEJ3whVJx6Iv+GbWnuDR4xXR+on0HYZYljpyxYO65QsOM2PrfcieCuOUF9gT
-         RC5g==
+        d=linaro.org; s=google; t=1745953270; x=1746558070; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zpGa+bckbuvJP7m5D/Txn2xIA7nwgAhG2SPr14XaYzs=;
+        b=FPlSiVmXV2D2PiJFtjFaNxbF66bpD0hl/jRmRN5eFvPuwRlM/nAl1P3CXRqQuJilt/
+         uW8BE3z+hvXBIbp245h+wBX/mghclEoQubdb+lpOWKgzGesrEteH4gyJUIhSvNpuQF8z
+         hxUOU5sjGYdSUmR+BEHpOPUWwXwGG1sheifd8rqJO7dcyUh4ck7erGCN20g4tHtaXHo8
+         wnSrX1ofzZgO9uNcqbe4/ngfi45UHGimdi599pSNVmhvezpHilmthV8DUyYp2MREb1AH
+         61spxQv4bFNhU4dHgvth1wYTDZ5hvlJg+hO6nc6HLcUayDO8EpIU+9iinTmnmC8OQZjJ
+         rERg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745947820; x=1746552620;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sc4+TzSowcDRl7hLIypowfP7AcQ7Rbov5yPrrWksHAo=;
-        b=oCg2mRMcS5AA35xQgQ+edIyDbMZUwgIISAeud++6tfzbtxH4W33xm+6gCUrLRZbkEo
-         Hl9U+5FNM+F/2Q6EgQbX/twLDOkNSge6Z9NRdzE+GDMSmbSswMkhN5VI6jHaj+jH741q
-         zo3td6x9rCGE/9YcKjIVN2+tIemv5jcXr76x833E5AEvxrInEyTg40X8/rgYeDDkZLS5
-         CdTs3B/rk6X1H8j7O+VSWe80i40WLyuJ2rk7NC89tFoWEX9X1UM5cwT3QP1tV2++ziod
-         Zxass0WW/HnfTugPoEFcwjWz320lOIwW7Mfy6GxCQjo1CMlQUwD7ET5Cp3BMAgOU/Il5
-         I+lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmZ5tHp7KW3Zqyk1wL6rZEBI5XsGgf2h16Ww0sZfqfn600x4ZGICt97yoQvexjrpE6WjuthcjdeDKTGEaRbS9g@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWZtkkxhl7QrSwSnqB+N39sVO5k4Uj1u+IwsyyAe1/t1yDij3
-	FebvvFcyB9VH3qMUIMm9CNgr8Q7zn5ogzRs0IxlNYhE3jJ3QDfRbhdAeuvs97W8xDF9eOB/GI/8
-	P9U7odQ5Kz2UUr9lzLKuk65qQTmTm4ITUvV2HIw==
-X-Gm-Gg: ASbGncttsmRQfqCBjagWdwfc/rWwZsz3oBbFyTnBT8J4EFfotgMwED50BuIokwkBgyE
-	pAAYuYJL47prNPXmK3SUL/F3NxEngJj17QN7pAYuh+rQ/5hRzoSUBfaRcM0JRcrZg8k7pMNJMV8
-	tNdJAs3r9/nBUtcWpmhzw/MpaM7blGV391AQTlckmCHPC8kx6xplK345jH
-X-Google-Smtp-Source: AGHT+IFehYf0d8PpH1R2BJB2r7eFTKl8u51pe/GzhtkLgjZNrelsbpFr//PxWWkACriX1/8jtoRJQERGiEtx1uS0LIQ=
-X-Received: by 2002:a05:6402:40d3:b0:5e5:bdfe:6bfb with SMTP id
- 4fb4d7f45d1cf-5f83885f55bmr4196335a12.16.1745947819729; Tue, 29 Apr 2025
- 10:30:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745953270; x=1746558070;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zpGa+bckbuvJP7m5D/Txn2xIA7nwgAhG2SPr14XaYzs=;
+        b=ZGZKgcZ128Zz/BKUqgsXe5Avy7vlIzBg8fXfkroK8sAs7sIThdSrQRsQZQmvjGmuCn
+         cYnSFtuv6AyjBBaE/Z7GrQ3Gf6i0YV5W5jHzpWZF0wN553tToGvBrqqa2Fuzlb4/dlbj
+         AEwCoU2I2O39+0mpMohTq1dpXV8RbunbndR2+fvuv0mdUa6qQcS+iEN6+cnJEazr3O9r
+         petU8oewvB0dhIX6w6+rHOc0leHeRCfl61JcbsIO633PoYcqqTSbx7uPX+KPp32yd0MN
+         I5V3+MV2eMYEuxJ1yoAYpA+QMix1lOZ5cugeOzKGQGg5pT4vnZZ5H+qOXrs7ZVz07Uu0
+         Ho/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAZaNhw7avAiH3ClyT3CF3NwVqEGbXuzliuBgIormrU82hUyKKKzKgzmYG5MUR9TuTqTqiB7oa/ASq37WzlZFm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWrJFOqfdMEDHjt2Sg7wPr1IL1/buaFEkBtjFlKLcYNVwObBEP
+	GV/VnbB5H4mS8FSVmFDNwZCNm6649jVodRFM9iW1/LBK60rrKzb0XzGQCRQoVwI=
+X-Gm-Gg: ASbGncuhnCDBbH8MPW+4PWmvdDTVTsSZvz79PSMOOs99k2e0/LBK3wpIIwN/dwCkrMn
+	E4wOBNJemZFHRel23OURWKtvnBrjS7J6x6p++c7k1yBwMQi/2zq2t0JFQz5HQ4HmOrLzG8lZOAh
+	RxieweYtLziLYOvOwzvFCgJJVXGZZFeh2w8pZWCKeg6G4DgloOjE7uKOAy8EL59rdX7fIsSZvj0
+	+9F3ZzQJZYpI7Xfm9QLlp9e0n2WIzrEHMCtVTGY06Bd19el2mnm6rJAy2cpgCxl1dT4Q6TqyFK5
+	rxcvliNrhYP0h4rvqc/0KGYZCwrNnA4apDGJsGSzt8Dm
+X-Google-Smtp-Source: AGHT+IEVtr/yC0OCZi67VUcBjFX/DwSpKJBMPsUaSpQ0/mI7DQHTRu+gj3DdEoU3UGNpoATnJz1CiQ==
+X-Received: by 2002:a17:90b:3809:b0:2ff:784b:ffe with SMTP id 98e67ed59e1d1-30a332f6e67mr387455a91.11.1745953270256;
+        Tue, 29 Apr 2025 12:01:10 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:b7e6:7a64:93dc:60a1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4d76edcsm106398905ad.12.2025.04.29.12.01.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 12:01:09 -0700 (PDT)
+Date: Tue, 29 Apr 2025 13:01:07 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: linux@treblig.org
+Cc: arnaud.pouliquen@foss.st.com, andersson@kernel.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] rpmsg: Remove unused method pointers
+ *send_offchannel
+Message-ID: <aBEh85gDlaEywWtX@p14s>
+References: <20250424142746.79062-1-linux@treblig.org>
+ <20250424142746.79062-4-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426065348.1234391-1-xiaolei.wang@windriver.com>
- <20250426065348.1234391-3-xiaolei.wang@windriver.com> <09bab7ab-badd-4a7d-9ba5-5dd7181f6a6f@windriver.com>
-In-Reply-To: <09bab7ab-badd-4a7d-9ba5-5dd7181f6a6f@windriver.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 29 Apr 2025 11:30:08 -0600
-X-Gm-Features: ATxdqUGGH1oEM35wjSVapCU_wc_NAw2TKa6cQrQ2zmSrZZbypcsXceaQ3lXxPSI
-Message-ID: <CANLsYkynk4wogcEAvVQ-MTyCGRF3CyqSjxaKUS4eYCbGsL7+Kg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] remoteproc: core: release rproc->clean_table after
- rproc_attach() fails
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424142746.79062-4-linux@treblig.org>
 
-On Mon, 28 Apr 2025 at 20:20, Xiaolei Wang <xiaolei.wang@windriver.com> wrote:
->
->
-> On 4/26/25 14:53, Xiaolei Wang wrote:
-> > When rproc->state = RPROC_DETACHED is attached to remote processor
-> > through rproc_attach(), if rproc_handle_resources() returns failure,
-> > then the clean table should be released, otherwise the following
-> > memory leak will occur.
-> >
-> > unreferenced object 0xffff000086a99800 (size 1024):
-> > comm "kworker/u12:3", pid 59, jiffies 4294893670 (age 121.140s)
-> > hex dump (first 32 bytes):
-> > 00 00 00 00 00 80 00 00 00 00 00 00 00 00 10 00 ............
-> > 00 00 00 00 00 00 08 00 00 00 00 00 00 00 00 00 ............
-> > backtrace:
-> >   [<000000008bbe4ca8>] slab_post_alloc_hook+0x98/0x3fc
-> >   [<000000003b8a272b>] __kmem_cache_alloc_node+0x13c/0x230
-> >   [<000000007a507c51>] __kmalloc_node_track_caller+0x5c/0x260
-> >   [<0000000037818dae>] kmemdup+0x34/0x60
-> >   [<00000000610f7f57>] rproc_boot+0x35c/0x56c
-> >   [<0000000065f8871a>] rproc_add+0x124/0x17c
-> >   [<00000000497416ee>] imx_rproc_probe+0x4ec/0x5d4
-> >   [<000000003bcaa37d>] platform_probe+0x68/0xd8
-> >   [<00000000771577f9>] really_probe+0x110/0x27c
-> >   [<00000000531fea59>] __driver_probe_device+0x78/0x12c
-> >   [<0000000080036a04>] driver_probe_device+0x3c/0x118
-> >   [<000000007e0bddcb>] __device_attach_driver+0xb8/0xf8
-> >   [<000000000cf1fa33>] bus_for_each_drv+0x84/0xe4
-> >   [<000000001a53b53e>] __device_attach+0xfc/0x18c
-> >   [<00000000d1a2a32c>] device_initial_probe+0x14/0x20
-> >   [<00000000d8f8b7ae>] bus_probe_device+0xb0/0xb4
-> >   unreferenced object 0xffff0000864c9690 (size 16):
-> >
-> > Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-> > ---
-> >   drivers/remoteproc/remoteproc_core.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index b21eedefff87..6226e2d12a97 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1656,6 +1656,7 @@ static int rproc_attach(struct rproc *rproc)
-> >   unprepare_device:
-> >       /* release HW resources if needed */
-> >       rproc_unprepare_device(rproc);
-> > +     kfree(rproc->clean_table);
-> >   disable_iommu:
-> >       rproc_disable_iommu(rproc);
-> >       return ret;
->
-> Hi Mathieu
->
-> For this patch, if I use devm_kmemdup() instead of kmemdup()
+Hi,
 
-I don't think using devm_kmemdup() would work in this case since the
-memory is only free'd when rproc->dev is released.  So if you have
-Attach()->detach()->attach(), we'd only keep accumulating memory that
-is no longer used.
+On Thu, Apr 24, 2025 at 03:27:46PM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> After the previous patch, there are no implementers of the
+> send_offchannel() and trysend_offchannel() methods.
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/rpmsg/rpmsg_internal.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index 42c7007be1b5..397e4926bd02 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -50,10 +50,8 @@ struct rpmsg_device_ops {
+>   * @destroy_ept:	see @rpmsg_destroy_ept(), required
+>   * @send:		see @rpmsg_send(), required
+>   * @sendto:		see @rpmsg_sendto(), optional
+> - * @send_offchannel:	see @rpmsg_send_offchannel(), optional
+>   * @trysend:		see @rpmsg_trysend(), required
+>   * @trysendto:		see @rpmsg_trysendto(), optional
+> - * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+>   * @poll:		see @rpmsg_poll(), optional
+>   * @set_flow_control:	see @rpmsg_set_flow_control(), optional
+>   * @get_mtu:		see @rpmsg_get_mtu(), optional
+> @@ -67,13 +65,9 @@ struct rpmsg_endpoint_ops {
+>  
+>  	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+>  	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+> -	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -				  void *data, int len);
+>  
+>  	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
+>  	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+> -	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> -			     void *data, int len);
+>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>  			     poll_table *wait);
+>  	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool pause, u32 dst);
 
->
-> in rproc_set_rsc_table() function, is it better? Also delete
->
-> kfree(rproc->clean_table) in rproc_set_rsc_table()
->
-> thanks
->
-> xiaolei
->
+I'm good with this patchset.  Can you fix the last paragraph in the comment for
+function rpmsg_send_offchannel_raw() and remove the reference to "_offchannel"?
+
+Thanks,
+Mathieu
+
+> -- 
+> 2.49.0
+> 
