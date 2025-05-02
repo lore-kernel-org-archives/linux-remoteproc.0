@@ -1,272 +1,219 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2078.outbound.protection.outlook.com [40.107.95.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEC933987;
-	Thu,  1 May 2025 23:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746143828; cv=fail; b=qa8SAznpfLTjDhm+5uxOs+iosMhjgWiV0ViY2KVsHXDI8ffIeK+fUeiCQBFR/H2AVO/ci/VSOE7lbOuH26ZUMnpCNKm7zTdPGNOg9GxnNQohZGc/Q7npt9/F37W99bE0qah32wBQUZyID3R2RPeGzj7UxGis8vGdykA3A61UWis=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746143828; c=relaxed/simple;
-	bh=HaazbME43M6tB1iG5pJlYz43hmdwh61OhkFeOTgBnOo=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NXmBNZLf96FR9ZWZ2nOXgxNPXhxAX6m26g+TrATqgncYFHj/pb2XlA6Q9h5YKw7jgwmkRH8nW8f0im8XVsKbvZaQGRGLVwSl6ZoxCAe3Zvs2KerZfdkldeEu+MBvvnNCg6vGeAOSBAzChsABKP2p+URDtEmYhdX5QWbU8fokf00=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1Iz0nfdP; arc=fail smtp.client-ip=40.107.95.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B05A254AF2
+	for <linux-remoteproc@vger.kernel.org>; Fri,  2 May 2025 15:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746199032; cv=none; b=S3SYTqlaH6TZEs6Tz0VZt0tB5EPJ5ncvhkDhUUUbmG9xfjdVCBbtW+KPhcE8pe5Z/Q5fsy3QZz4goxKyGIe775UA+Ba9wdZNP9QP6fMZM0R6QF/Khw84J6fSkMzL5f6v4laEGpm6zOfteHBdMS0Qlml9hBzerA+izbRCvQ9QAfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746199032; c=relaxed/simple;
+	bh=tuiJbKDRUgZ34W4XaPs1dsIKytW2AFQdGFVE0AKrcLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U3Hbe4wd4B7Qk8+qQoBYy3avMyEb+4uJInsStNTKwXW3CgJ5yfVcmi1QlVrlwTnJ+AGJL+aKhjiQ77Yh2jN9bWtCEgd+SP2ucwV1YBlE8xkIf1ki8XOFlscjMd1hO3piRsfnapxxy7uWLqKgbp8+/kQ0SqGr0z4iE2cF16u+p2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y0lt/i59; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1Iz0nfdP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=puq/t9eQsXD5NUE5uc3PxkZK+eoztO/wGwTUl34FCBRXXlEhxVqxRBvgQn/rFxgh2JXKeFn9q4rIwukbPTOCsegdIFSRiG1VcJ25WKjSYlje77gX3nrldXWYy69XllrbsTUyGZkjjniW6VV05qKVGaymTytOlo6uNXBIJjkb+DlIflSgknreln8mm7EiAQckkI1yS8w0Mstbt+eUx+9udLHlPATQ6YxbHhZYSxhSxV0EtDxeURQvtP2DCVGzU5xn8fjVFl6DqM7mCBiWxzq6aKeVkkDB8uRXdGBXo2v/hCe7vGTZPTmTa/sy/stjQZJ2a/Nak5c90EcZyDaGhy8oKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3vWecc5xVBpX6ngVzLO6G4scdsjbC6dmV9eULon0zJg=;
- b=AwfI9+CAisyeyammHrekCGHE0vWQTGf+YOXeUGrzFUokLxAvQWkCnt4Rk81Pt6YTVPoJVE70UeTFZKRDGrLjhfxMXS8FUzSWl8uNTnDVlvg7kgq+yfviNbimFx0HUsgHmcWbgcr1G/HZiAT18pVJVfbbyikmPrtPy8MU+dNmN05MQkiU2CxNot2cYZ5LHFkB3RsnmkAlXIOVoxMetxNKYtouDrTVb2G3okJ7FHkuBOYZJ7lWtCUi3TUMoFaB2nXEcsseSyxhvcw/x9rjfbqiq/v/+VitdqLcJWPqvKnL0dBZfOszZ1GBdwvZPaH9jBjfCOZ+WiGDt5HIWVnDmO9mqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vWecc5xVBpX6ngVzLO6G4scdsjbC6dmV9eULon0zJg=;
- b=1Iz0nfdPhLJNqKZhyfUyPVQ8sYzRGkkOI1jo1U55HDSKSZSegKTt0//QUIZN30NU8DNyuvGfzdL1U6yL0qe3RUR/c08Tkdo+FMr05bE8pLcTea3++xVgKnXPV6E3omnZVAq21ibtEYNLxDI7EiXGwKcr2FMPe21V+H6lvO8F2n4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
- by CH1PPFF5B95D789.namprd12.prod.outlook.com (2603:10b6:61f:fc00::62a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Thu, 1 May
- 2025 23:56:58 +0000
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d]) by CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d%3]) with mapi id 15.20.8699.019; Thu, 1 May 2025
- 23:56:58 +0000
-Message-ID: <ab09cbdb-8e30-4720-8ca5-66488922db33@amd.com>
-Date: Thu, 1 May 2025 18:56:54 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: tanmay.shah@amd.com
-Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
- "Rob Herring (Arm)" <robh@kernel.org>,
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Iuliana Prodan <iuliana.prodan@nxp.com>, "Andrew F. Davis" <afd@ti.com>
-Cc: Saravana Kannan <saravanak@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
- <CANLsYkxKHhCHYrbAGzQ48QGpL_DbuLnX3=ppmpyu0vjuuvvODg@mail.gmail.com>
- <8c8e9362-c116-4a80-bcb7-a44df68e0bfc@amd.com>
-Content-Language: en-US
-In-Reply-To: <8c8e9362-c116-4a80-bcb7-a44df68e0bfc@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7P222CA0018.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:124::27) To CH2PR12MB4956.namprd12.prod.outlook.com
- (2603:10b6:610:69::11)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y0lt/i59"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so3315632a12.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 02 May 2025 08:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746199028; x=1746803828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AXxc3n/MruayJFn3gaeXUe0NNPj0XJHc/kar7NkPI/A=;
+        b=y0lt/i59QJticO/Tr8OYL6URq/CfnZGKpTtvUHG1j4MtYgso8Nl1yzKO+ofO2rPb+O
+         QzbLj9StS+oiKem6gyq/hIgq7RddkwCPGMqLAYuFKqHC6rOkmU5f0jKO4ybgKcw+kpHq
+         1JBx36ZwaBNJelUYTgf4qng3rPelHPP8VM990FEy5yX+HMkRYGc1doVlyfGINbuHAinA
+         TUelbiwsGQEJ2oBbALjRkLT75FeS+aSRt928yMoZCRjHMvY3IbhcTTo0z9l7PrYWlNgW
+         P7dgYZs48F0wpropugFqlqNF1J0b0YWx++uBTpJ7rWZ+/OkFlP1qnml4B8QcZJVGNNH6
+         n8VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746199028; x=1746803828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AXxc3n/MruayJFn3gaeXUe0NNPj0XJHc/kar7NkPI/A=;
+        b=n52Oi9qxe11isPexYFvkjTPt8r+bRutVVzgVr8DqRlNLV5VGSpc4H4zN1/FdytF/UE
+         92i3YLRDWVWIQtyumLaUNlpHw6t0Ie9imNKWYm1Amry2eEBrY81Yf3v3WNRHG3ZdP0s5
+         jeBtpmRIHi0hQC4NVezikBPfd22TWEV/0Ota6gCGG1KHgzVzYKR2mMoWMiSnmXZHbOlY
+         tqb5whtctdbPcVi1zwbyHaIPMTevtDIeMrgjVi/ZHZXSZSVUUoeytlO5uZNr+FPV0/Z2
+         Br85Ilb45GA8koLGHlE5Sldenoe/GInfOUZcXdhvD7QTqr3Od4y4SiXmQO0e36g7h1r5
+         Ugew==
+X-Forwarded-Encrypted: i=1; AJvYcCWVBnhyAyVBmOALIYilmOMrlX6sSSYYSTlGoXpAe87mruCKvnHfeFXX2AX6eGo/klmQdMgQKn/YBhGfNpNCYD1r@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOlwOO6flNX4cO4ZtICJGat4027ldIRQFsmb3hGOQ2eaYaura6
+	FR7vKkBFE3I1VFvT4BKssmlm/44ZL0Kb4jYjwFq0qWPVG8VX0/CG6KwNIhS1ZZbyTsangK8X17n
+	l4mrJKlb9r5tDJ41aed+RRtGTDtQiT1Oz7LVvJg==
+X-Gm-Gg: ASbGncvgL7kMGLeUodIUUwUuL4U0nEvmRjMTl5w8XEluX+CRasCrYD98VaPQAkvZky1
+	plsRAlUGeVo9hBsC4ePJ+W2VmE7gT5zC3qI6KZaue66hpz42JHub4DQLfanJWknzNg8/xk7WwtQ
+	bq8HaeNGEFBYqb/DkarzgF0a38mrMRFBFc3XkVpmzkr6Z7NhZd7WJMuJ+L
+X-Google-Smtp-Source: AGHT+IG+mi9qQfA4kU4M9IL75mLEro4oWGSA/voUz0Wd3xc2bTnIAmyqD/JUse/m0ahL1W2pwTvz3tJceefmkRXoFa4=
+X-Received: by 2002:a05:6402:518b:b0:5ed:c6aa:8c68 with SMTP id
+ 4fb4d7f45d1cf-5fa77fdcefamr2619478a12.5.1746199027537; Fri, 02 May 2025
+ 08:17:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4956:EE_|CH1PPFF5B95D789:EE_
-X-MS-Office365-Filtering-Correlation-Id: f17d7588-4623-42a6-6ac5-08dd890bdb70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b1MzR2VRWUVwNExtdyt6ZjVtUWhYRFhxNzQvY2pPUjlhYm9JS2l0S3RZMmRm?=
- =?utf-8?B?bUhTdGs5Mm5WVUpkRElEWmxHY3ZqUzMyMzlreDBmQ3ptRlNnUU1ncE5udnps?=
- =?utf-8?B?Nk9pekQzNnJzTXhyRldSVGtqM0tEZ3laVXQvdXJuMit5c3RENFIvV3lDRUJE?=
- =?utf-8?B?OVRhMWRaTUcwNWNjL0NLd3IzRVFBL2x2a2lNc1BoWHdpNlZQQTBRejZJR3JR?=
- =?utf-8?B?M2w1ckxCRGw1eU5LclNMWWFsWGlZKzEzaWZZMjNWeTM2NUVhcWt1WHhUTnBU?=
- =?utf-8?B?Nzg5ZERIcnB3Yno3clEwRmYzd0M4enRaanJtVFZpRkNQZ2ZTcitkdkFtNnJn?=
- =?utf-8?B?Sjc4R2xMNUREcXZOUzBrSllUK1VOaSt2Z0pkMVFhcFFSeEh3bDB5N0FySFNJ?=
- =?utf-8?B?RHpFUFZpaVA3aVlJbitWK0ZSdVpvUjVacTIvcEFvMHFOZXR6em1valZUKzVr?=
- =?utf-8?B?SjhJWnpDeXR5bTdiV1IzTnlmTUdDOEdSeEE4ejcwc3FrekZTd05HNktLb2tt?=
- =?utf-8?B?MVRSNmdPeitUY2lnVUxkc3FYbmFiL056dlBieG00RHJTc1IraGZGVE13UldB?=
- =?utf-8?B?dkJIMlBGZVVIYkV5MHhNWVBrZElkcjFPbXNvOS9zY3pWY3pEKzBraG1YSnVu?=
- =?utf-8?B?S3hlTzBJUS90dDdqdXlhM0d4VjlTZTRUYzUwU0ppbnJNRkREUUZYMGJWNFZu?=
- =?utf-8?B?bWVHY21rZHd6a1FDNUpzQ1BqQy9CVjBxMFltc1MyTTJmL0RzVGFjN3M4T3pM?=
- =?utf-8?B?VUhRTXU0dWVUQndGY01FUGxCVVZUaTFGOUM2ZU9UdWlOR2p2QzQyZGtmVU1w?=
- =?utf-8?B?NkRPcHBFNDdYYXNSRTVSV2Y5N3pSRnowNThPcFE4UGlQWWp4dElXV2szK1dP?=
- =?utf-8?B?ZytEY3l5cFhiVmFYQm1hZDZveTNqdG83ZktNUXNmMGFjRWVNOGZ1dTJBTkxs?=
- =?utf-8?B?YmQyRHpUNUpUbzduT1lQL25Ga2RicVpQYjYwRVpRT0RhczdXVk1Nc2l0ZTBj?=
- =?utf-8?B?WnZQTmdEYW5yU3kxY1diOXJMRWo2bnJhTE9IMFZmbFRzc0Z2aGRlcU1kY1Vv?=
- =?utf-8?B?Y0YwY1htVVNONEwyRmNMYTZoUWs5ZEVjdWlUTTBqL1BSWEFEMWwwWDNqSmRh?=
- =?utf-8?B?ZEUzSjNrK1EwSGIyU3RYQ3lWbVJVUzllM1B0ci9ueWdDR3lmaVlEVzNpY2JL?=
- =?utf-8?B?TkZCdUtNbCt3RnZoWWs2UjczV01pUHR1LzFERVFhV2trRW9NTEkzSUhaUlMr?=
- =?utf-8?B?TFpDait2YTAwQ0xMdzVuMjBmMm5MT1E4dTVtWE9qOFI5SzN3eTZwQ3N4YzEv?=
- =?utf-8?B?VXd0Q1FGRGFUaXpEN3BwT3RWbFdZUW5HZDRyRUpNeTdvT2VWNkJId1U2ZTQ1?=
- =?utf-8?B?K1FrZDJLT0h1dUVGbGtTNWNsR3hhcFYxMTRaY3pBK1FqVmp5dHlmNWQ1d0FY?=
- =?utf-8?B?ZmFHQXppdGRuVWxpT1NKMVhhSzF3WG1ZbHROM3BIdXBNUHBuYXVFU2dvMDFF?=
- =?utf-8?B?eEFoTkRnWkpUU0Y1Y1BaV1RNOXFIdzNHaDJpNjJFWXpLdzVRYUFRS2V2RzNH?=
- =?utf-8?B?eFdWQTlXWWY3empvTHlOdGVHUlU1TkQzMUEzSVMvUXMyaHJZbXFUT3pmVVFQ?=
- =?utf-8?B?Q2libm5UamszdzNYSUJLbDZiSEUydExvNGxxQmt1MkhmWGV5enJxakhIMWJH?=
- =?utf-8?B?bWQ1c1RQVEpuT1RlZjZXTzRjOXQxbjdCSzBCME5Tb2lXQU82YzMwai8zZmtu?=
- =?utf-8?B?N3VUdjlHZVNtV2xSSWo5SVZiQ05UMjQ2bFBEMnFCR1NFc0xrazlaR2dwZkR1?=
- =?utf-8?B?Y2o1b04yYXRvLzJzZUxETHA2SDRsWkJpK3hjSVlkNmJyV3h2eFh3ZTQ5QitG?=
- =?utf-8?B?NHNVQ1JQa1h2cW5Xd08zRTF1dG55SHBHOHQ3TWZVc3BOeTdOUGF6R01RdHRX?=
- =?utf-8?Q?TtRCP60T5KQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4956.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUFiYk84cXJTTTVjbXJ0NVRXeDM2aFV0ZjJiVnNtNjZZb2h5TDRuZVRzeTVr?=
- =?utf-8?B?LzNySXUwK2JTam5VNHJLOG9GZmI2VHRkbnROUDZEQ0NpL1JOcE5yMUxueWZs?=
- =?utf-8?B?QUx3WFNMclY0S3RiaGJPWnlOajVrR1JzUDgvdVdJMC8xZGNJd3E5OUZEcjEx?=
- =?utf-8?B?NEdSd1NkRTNXdVpOdWFpSjlyVzlYOEtET04xWnFQcXkwT0U3RlB5TVgyREhJ?=
- =?utf-8?B?TytjL1F4aTNIdCtad1dmemRuWjJtL1gxTFpnbklWZHZIRUp2RFNhTy9aQTNX?=
- =?utf-8?B?cVVleFhNUmtOZmhVVzIwVTNzcCt4ckM1UmlWN2I1OWJEUW51TVZYK2RMamMr?=
- =?utf-8?B?REZDL09tcSt5ZVZMUjBCY1dGNEc1Vm1rTXdCbnJlcEQ3MWd1QUd1ZmdvQ1Zk?=
- =?utf-8?B?L1BKNFExMDkxUkYzOGc1WWk2SFcwbjVQMU5WeU8wZFVkcGFQZDc1aE81bFVw?=
- =?utf-8?B?MkxvTHV0aDh0bk5nL0s5aXZ6ZkNISkNvVDlQT1ViRWJ1cTBpVFJDUlhjQ0dU?=
- =?utf-8?B?ZDFvV2F6ZFdRUE0wVlhIZ0x5em8yV05IaXhYa0xQYndBcWx0cllLYlF5bkcv?=
- =?utf-8?B?MHRQK3J5STRHNytUeEhsUnNaOGFQd29scmhzbkRwS3VWMXFvZk93ODNhSE1a?=
- =?utf-8?B?eXZQbnpqQVpXUmo4UnhyeS8ySVlzbGp6bTNoQ1dqTzJCUkRrdnRzbTZ6NXRF?=
- =?utf-8?B?TmFqZGxhd2dRdUFVRHlMbVJBTFkzbm5wenhyMkNDT0oyME5PcnpadTVuejQ1?=
- =?utf-8?B?ZGw4S2ZxaTIxRWF2dkYrNGZhVGhyMWZDTnpuVllYdW9vcTNrN0drQnpsd29k?=
- =?utf-8?B?SVdMUjA0YXl3Qi9PaktIY0NIcnd2dG5hWUQvbVlycFhDb0VEdGNYUjNETGc2?=
- =?utf-8?B?aFdBUUFVRkFFUkRxY1JXZFRFbG9Gc2dhM2g0Q3BOdnNreUMwemZTcmVTOGNp?=
- =?utf-8?B?ZWNRMEtSRTJKZzZzSUZrTjN6NEtZczFKMUtMdVZQdHZEdXBNdzlYbENjYy9p?=
- =?utf-8?B?aUFJYUhJbGF2Nmo3Snk1dTVoUDRYM215YThJb3BWaXFVRlB5eGIrMHVXTzZF?=
- =?utf-8?B?cHppeUxuQ1Y5Q1V2NE9yTUJyM1owbnc4Skx1cE1OWHVuK0FqWEZwZWwrVkV4?=
- =?utf-8?B?SUVGcFlDZFVaa0FqZUVaNURzcU8rV0xxQVQrakFwNXptcCtTZVFObGFHSENQ?=
- =?utf-8?B?bmw0Y2UzZzRXdUpzV0x6Yk1vc1NxaDY1RnkxaEZ0TzQ2d3hmNHYwVEx6MU5K?=
- =?utf-8?B?eGtWY0IxNUN2cGV1a0Y0TENjTjZsNnJHd3JVVWpaNXdCWGFwampxUVFIUXhm?=
- =?utf-8?B?MnBkTE0vYnpLbWp4ZTd0Mk9BMFZvbS9OVmtJemJVK2wvT2I1cUxVWUNaNmtk?=
- =?utf-8?B?RnF1Rm1JTTY5d243Yi84N3NFYk1HMUd3ZXBsYWxINGlCOVZtRUwrMEpudTFX?=
- =?utf-8?B?azQ1R2R4TmRCc0hPWDRQUXR5MEdyNHFjTVNmNUc0Y1NWYVVhMGErLy9UY1dD?=
- =?utf-8?B?dkNnWjd0anQzRFVVY283bHlhTXM3eEJxVGUrWjFyd3FvdDRKSGhSWDZYUTgx?=
- =?utf-8?B?YkRDeS9LbGUvWlc3eG9iNjZ0bkF3ZCtoemVDazRIbWVJMSs3RTcveWJXZm5E?=
- =?utf-8?B?blhKaVl3b1M5cm1iR1dqN3AwMEFocVpDSGc4MldYYkhINFRQVEF4T3NqQXlM?=
- =?utf-8?B?cTd6WXRjQUZqK0ZBTUc3NHpkQ2tlRWtzN1RWN2FJZkFTS2d3N0V2TGl2TWly?=
- =?utf-8?B?NzZIV0tRQU5XYitSSkpFbFRBcGpQTGY3dWoyUThNRlBseGRPa1A3dXJEdG5p?=
- =?utf-8?B?dVkyZ1JtVWtweFVZYnY5dVlJejdlNjRUOTBNTGJvdlJXck9tMVhDNElwQjBk?=
- =?utf-8?B?b1hCWGxMZXE2bXJqdUhvR2lEeUlWUE55ME11VEtrczlxVVlLd3pwL0RxRmVq?=
- =?utf-8?B?WU5CUjFuU2hWZDQ0QUVuT0Z6QmVwSW1wM1B5VTF6MFhXZFRwMHBwN0FYVHl5?=
- =?utf-8?B?UmQ1dnRuSC8wd09yQVU3M1JOYjNkclBMa3E3TTMwZ0JEM3RnYmVCeE5odmlQ?=
- =?utf-8?B?aVdmOUxSa1A2MTJrUlZleDFKV1ZjVHU3N0NTTnBCdGJUR2ZzcVJzZHJsRlNr?=
- =?utf-8?Q?uURVfDPbSGE3eIA8OYokk5eNc?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f17d7588-4623-42a6-6ac5-08dd890bdb70
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4956.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 23:56:57.8250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uwNpcm27+iXMVbZ1LXLosPFvnJP//CiBZWpmvskof6c6ZFS4sBs4tYxAEk/kclCf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFF5B95D789
+References: <20250425104135.830255-1-b-padhi@ti.com>
+In-Reply-To: <20250425104135.830255-1-b-padhi@ti.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 2 May 2025 09:16:56 -0600
+X-Gm-Features: ATxdqUE6kLTVS-YQ527mOcNrgNuy918Zlmql8BSTLvzJ4DQ4x9L8cC-vdCgval0
+Message-ID: <CANLsYkyBfhmxX5kXUcADsEuNUrOJXP6H27jDrCqsO845fp0Yog@mail.gmail.com>
+Subject: Re: [PATCH v11 00/35] Refactor TI K3 R5, DSP and M4 Remoteproc Drivers
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com, 
+	jm@ti.com, jan.kiszka@siemens.com, christophe.jaillet@wanadoo.fr, 
+	jkangas@redhat.com, eballetbo@redhat.com, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 5/1/25 10:44 AM, Tanmay Shah wrote:
-> Hi Mathieu,
-> 
-> I tested this patchset on top of recent for-next branch. I don't see 
-> issue on AMD-xlnx ZynqMP platform. With this:
-> 
-> Tested-by: Tanmay Shah <tanmay.shah@amd.com>
-> 
-
-Hi Mathieu,
-
-Looks like I said it too soon. Firmware loading works with this series, 
-but RPMsg doesn't work. I am debugging further and will provide inputs 
-once I find bug on xlnx_r5_remoteproc driver.
-
-Please ignore above TB for now.
+I have started reviewing this patchset but due to its size, it will
+take me several days or weeks, depending on workload and other patches
+on this list.  I will advise when I am done.
 
 Thanks,
-Tanmay
+Mathieu
 
-> On 4/24/25 9:14 AM, Mathieu Poirier wrote:
->> Arnaud, Daniel, Iuliana, Andrew and Tanmay - please test this patchset
->> on the platforms you are working on.
->>
->> Thanks,
->> Mathieu
->>
->> On Wed, 23 Apr 2025 at 13:42, Rob Herring (Arm) <robh@kernel.org> wrote:
->>>
->>> While there's a common function to parse "memory-region" properties for
->>> DMA pool regions, there's not anything for driver private regions. As a
->>> result, drivers have resorted to parsing "memory-region" properties
->>> themselves repeating the same pattern over and over. To fix this, this
->>> series adds 2 functions to handle those cases:
->>> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
->>>
->>> I've converted the whole tree, but just including remoteproc here as
->>> it has the most cases. I intend to apply the first 3 patches for 6.16
->>> so the driver conversions can be applied for 6.17.
->>>
->>> A git tree with all the drivers converted is here[1].
->>>
->>> v2:
->>> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
->>> - Export devm_ioremap_resource_wc()
->>> - Rework handling of resource name to drop unit-address from name as it
->>>    was before.
->>> - Link to v1:
->>>    https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
->>>
->>> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/ 
->>> memory-region
->>>
->>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->>> ---
->>> Rob Herring (Arm) (4):
->>>        of: reserved_mem: Add functions to parse "memory-region"
->>>        of: Simplify of_dma_set_restricted_buffer() to use 
->>> of_for_each_phandle()
->>>        devres: Export devm_ioremap_resource_wc()
->>>        remoteproc: Use of_reserved_mem_region_* functions for 
->>> "memory-region"
->>>
->>>   drivers/of/device.c                       | 31 +++++-------
->>>   drivers/of/of_reserved_mem.c              | 80 ++++++++++++++++++++ 
->>> +++++++++++
->>>   drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
->>>   drivers/remoteproc/imx_rproc.c            | 68 ++++++++++ 
->>> +---------------
->>>   drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
->>>   drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
->>>   drivers/remoteproc/qcom_q6v5_pas.c        | 69 +++++++++ 
->>> +----------------
->>>   drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
->>>   drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
->>>   drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
->>>   drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
->>>   drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
->>>   drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
->>>   drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
->>>   drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
->>>   drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
->>>   include/linux/of_reserved_mem.h           | 26 ++++++++++
->>>   lib/devres.c                              |  1 +
->>>   18 files changed, 339 insertions(+), 369 deletions(-)
->>> ---
->>> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
->>> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
->>>
->>> Best regards,
->>> -- 
->>> Rob Herring (Arm) <robh@kernel.org>
->>>
-> 
-
+On Fri, 25 Apr 2025 at 04:41, Beleswar Padhi <b-padhi@ti.com> wrote:
+>
+> This series refactors a lot of functions & callbacks from
+> ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+> drivers. This is a consolidated and final series as part of the
+> refactoring of K3 remoteproc drivers. Below is the breakdown:
+> 1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
+> them into a common driver.
+> 2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+> 3. PATCHES #11-#35 does the actual refactoring R5, DSP and M4 drivers into
+> ti_k3_common.c driver.
+>
+> NOTE:
+> This series supersedes below series:
+> https://lore.kernel.org/all/20250219091042.263819-1-b-padhi@ti.com/
+> https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
+> https://lore.kernel.org/all/20250108063727.1416324-1-b-padhi@ti.com/
+>
+> Testing Done:
+> 1. Tested boot of R5Fs, C66x DSPs, C71x DSPs across Jacinto J7* devices in
+> remoteproc mode and IPC-Only mode.
+> 2. Tested boot of M4F core _only_ in _AM62xx SK_ board in Remoteproc mode and
+> IPC-Only mode.
+> 3. Tested Core stop and detach operations from sysfs for R5Fs, C66x DSPs, C71x DSPs
+> 4. Tested device removal paths by executing 'modprobe -r ti_k3_dsp_remoteproc'
+> and 'modprobe -r ti_k3_r5_remoteproc'.
+> 5. Tested usecases where firmware not available at device probe time, but
+> later in sysfs, able to load firmware into a remotecore and start it. [R5Fs]
+> 6. Tested that each patch in this series generates no new warnings/errors.
+> 7. Tested IPC on AM64x EVM Device. [Thanks to Judith].
+>
+> v11: Changelog:
+> 1. New patches: [v11 15/35] and [v11 18/35].
+> Broken down rproc_reset() and rproc_release() refactoring patches into more
+> atomic changes.
+> 2. Carried T/B on all patches from Judith.
+> 3. Carried A/B on [PATCH v11 13/35] by Andrew.
+>
+> Link to v10:
+> https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
+>
+> v10: Changelog:
+> 1. Re-ordered Bug Fixes to the start of the series, before starting pre-cleanup
+> and finally the actual refactor. [Andrew]
+> 2. Broken down commits into more atomic changes for ease of review. [Andrew].
+> 3. Updated commit messages to have uniform flow throughout the series.
+> 4. Carried R/B tags in applicable patches.
+> 5. Further patch specific changelog is attached with patches.
+>
+> Link to v9:
+> https://lore.kernel.org/all/20250317120622.1746415-1-b-padhi@ti.com/
+>
+> v9: Changelog:
+> 1. Added R5 cleanup & refactoring along with existing DSP, M4 refactoring into this series. [Andrew]
+> 2. Dropped Mailbox level IPC checks across R5, DSP, M4 drivers in IPC-only mode. [Andrew]
+>
+> Link to v8:
+> https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
+>
+> v8: Changelog:
+> 1. Broken down refactoring into patches, each patch dealing with one function
+> for ease in review. [Andrew]
+>
+> Links to older versions:
+> v7: https://lore.kernel.org/all/20240202175538.1705-1-hnagalla@ti.com/
+> v6: https://lore.kernel.org/all/20230913111644.29889-1-hnagalla@ti.com/
+> v5: https://lore.kernel.org/all/20230808044529.25925-1-hnagalla@ti.com/
+> v4: https://lore.kernel.org/all/20230801141117.2559-1-hnagalla@ti.com/
+> v3: https://lore.kernel.org/all/20230302171450.1598576-1-martyn.welch@collabora.com/
+> v2: https://lore.kernel.org/all/20230301111323.1532479-4-martyn.welch@collabora.com/
+> v1: https://lore.kernel.org/all/20220110040650.18186-1-hnagalla@ti.com/
+>
+> Thanks,
+> Beleswar
+>
+> Beleswar Padhi (33):
+>   remoteproc: k3-r5: Refactor sequential core power up/down operations
+>   remoteproc: k3-r5: Re-order internal memory initialization functions
+>   remoteproc: k3-r5: Re-order k3_r5_release_tsp() function
+>   remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
+>   remoteproc: k3-r5: Use k3_r5_rproc_mem_data structure for memory info
+>   remoteproc: k3-{m4/dsp}: Add a void ptr member in rproc internal
+>     struct
+>   remoteproc: k3-m4: Add pointer to rproc struct within k3_m4_rproc
+>   remoteproc: k3-m4: Use k3_rproc_mem_data structure for memory info
+>   remoteproc: k3: Refactor shared data structures
+>   remoteproc: k3: Refactor mailbox rx_callback functions into common
+>     driver
+>   remoteproc: k3: Refactor .kick rproc ops into common driver
+>   remoteproc: k3-dsp: Correct Reset logic for devices without lresets
+>   remoteproc: k3-m4: Introduce central function to put rproc into reset
+>   remoteproc: k3: Refactor rproc_reset() implementation into common
+>     driver
+>   remoteproc: k3-dsp: Correct Reset deassert logic for devices w/o
+>     lresets
+>   remoteproc: k3-m4: Introduce central function to release rproc from
+>     reset
+>   remoteproc: k3: Refactor rproc_release() implementation into common
+>     driver
+>   remoteproc: k3-m4: Ping the mbox while acquiring the channel
+>   remoteproc: k3: Refactor rproc_request_mbox() implementations into
+>     common driver
+>   remoteproc: k3-dsp: Don't override rproc ops in IPC-only mode
+>   remoteproc: k3-dsp: Assert local reset during .prepare callback
+>   remoteproc: k3: Refactor .prepare rproc ops into common driver
+>   remoteproc: k3: Refactor .unprepare rproc ops into common driver
+>   remoteproc: k3: Refactor .start rproc ops into common driver
+>   remoteproc: k3: Refactor .stop rproc ops into common driver
+>   remoteproc: k3: Refactor .attach rproc ops into common driver
+>   remoteproc: k3: Refactor .detach rproc ops into common driver
+>   remoteproc: k3: Refactor .get_loaded_rsc_table ops into common driver
+>   remoteproc: k3: Refactor .da_to_va rproc ops into common driver
+>   remoteproc: k3: Refactor of_get_memories() functions into common
+>     driver
+>   remoteproc: k3: Refactor mem_release() functions into common driver
+>   remoteproc: k3: Refactor reserved_mem_init() functions into common
+>     driver
+>   remoteproc: k3: Refactor release_tsp() functions into common driver
+>
+> Siddharth Vadapalli (2):
+>   remoteproc: k3-r5: Drop check performed in
+>     k3_r5_rproc_{mbox_callback/kick}
+>   remoteproc: k3-dsp: Drop check performed in
+>     k3_dsp_rproc_{mbox_callback/kick}
+>
+>  drivers/remoteproc/Makefile               |    4 +-
+>  drivers/remoteproc/ti_k3_common.c         |  547 +++++++++++
+>  drivers/remoteproc/ti_k3_common.h         |  113 +++
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  616 +------------
+>  drivers/remoteproc/ti_k3_m4_remoteproc.c  |  583 +-----------
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 1012 +++++++--------------
+>  6 files changed, 1072 insertions(+), 1803 deletions(-)
+>  create mode 100644 drivers/remoteproc/ti_k3_common.c
+>  create mode 100644 drivers/remoteproc/ti_k3_common.h
+>
+> --
+> 2.34.1
+>
