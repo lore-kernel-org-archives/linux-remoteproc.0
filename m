@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1A2283FCD;
-	Mon,  5 May 2025 22:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF58029E05D;
+	Mon,  5 May 2025 22:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483837; cv=none; b=hpOx2HbGCOcCryRcQcwmr0J/7lZWEWWkTCezPWkZE4Y2SDgRDrMR+fcJyRCbeJZtPvCsqxuRU/DNJlv2/ptXAGFuvSucxzggPXgaE6AlDbi6oEqmmqAVe/uR66t99CDviqoFZXeS7qL4J4yNyRKxkhuyFkrXNVMfKHafwm0gp6Y=
+	t=1746485166; cv=none; b=GJQ1dBiI8mbImtPZZUY3c5RfIVr/MBVaQcxVA1FOxZ334iglC4xxDNEq8nVbS8tMI453M6lm8J6R7AHh4SycQpt9YO9gRgzfmn2Aot9EG6DA1wOU2qUnw9cXhD/7zl/1wIsjeCciJxrgEQauy50lmg29wQQgj5/0pdfudmcEing=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483837; c=relaxed/simple;
-	bh=c58zCj1Jw5t2SLdzSuRB+h/HS1nTWOPS0tuQejpsig8=;
+	s=arc-20240116; t=1746485166; c=relaxed/simple;
+	bh=QxpcekqUtYwTwV640uLqRRDryOilbC8Yzw+PU5XKtvQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jLJw+mSiPL9OP1qhmUOZ+WX62jzmQSWVAXAN5QAFHqWl9Sgm+a5Ak/4HdjsJp+mm8iDYtX/99sctTQnCgSjfVRBHxp9kqxdUY/TbGIAgY0YyjM3x2EaEg8pdfC1HkcF7b7rmF5rksmde7tJ3aGooSfPaVvRNIGe1OiB45V6+OQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzxB+NUF; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Cx6BzLUx5V4ZOmrWXRQcP59wM6lLuUz2XFZaTfDR5KE1o9DkqyRcFPnp311t8XBZaXFIkNBZz+L3Ex8fOC1b8w6LXI0SXnkkqPOWta4vWlkJ7J7afY1mfkSKzdiOE/F+keyLZ/cjLSdQCi7r7eoTLa+uM2bu8jdKMiU8laoextk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlbP/akc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzxB+NUF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8776C4CEF1;
-	Mon,  5 May 2025 22:23:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlbP/akc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 693D0C4CEF2;
+	Mon,  5 May 2025 22:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483836;
-	bh=c58zCj1Jw5t2SLdzSuRB+h/HS1nTWOPS0tuQejpsig8=;
+	s=k20201202; t=1746485164;
+	bh=QxpcekqUtYwTwV640uLqRRDryOilbC8Yzw+PU5XKtvQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YzxB+NUFvqDNn77WMWqL/w8rQe/WofDJoMzvgkMT7nOba9jF3BtGv9D9v4b9Jm+Bs
-	 cU5b6/BVPXn6DICrMcffOBMSZrSfHsEgTgEjiDO+AsVmu3qvv0Wcx71Cu6sPIp4rSS
-	 Dd4CuNXDOMNk1shQmK3Bq+ijgOj6P2Bf8egJVmeEdWy2PoPS0f0zTgDX57OAUFbBjJ
-	 knJrMM8Kx0pd+cvGiVGge5eSdrBnqHc7q+M8FMbZ9CYey4RFXpVkLwnmFOb+/JCAm0
-	 jblw4o5Otk/oGbwLmau3m3FXRJAKVn5i50+QqJXG+xRcalZl+bwi0IKTfUxm5ZWSfk
-	 vgTvDGq9neItw==
+	b=SlbP/akcRiui1AL4/WDK8EhD3jw1qFC1u2HGXe24tUDwB46eHTS8LCPTosrm0ooGK
+	 0+jBqHrEUEOJWtoO7/IZXXQUQRY7cW8+NbKLKjoC7QAMshFaikr6ihUnGE3Ztykg0E
+	 4cTjnl1D7cvbiLF5PWkde5cqnP2rteA2lgPiIn3Tcd52vnOCQ5yZIAtVj46hYT1+DA
+	 Mm0Sj7P25hO656G6sH6xBdC4uxJpowj8FlKgyGrMJb0q0tfyGPKGuC/+wPfV6jQvI0
+	 PRnP1xzlOwQmIks9ELwpXq6nGqMQ6Ii007O2Jp3ulJ6F2uYEvFAJuBBrdd2C3eVhDE
+	 TfTX9F0uIt2FA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
 	mathieu.poirier@linaro.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 244/642] remoteproc: qcom_wcnss: Handle platforms with only single power domain
-Date: Mon,  5 May 2025 18:07:40 -0400
-Message-Id: <20250505221419.2672473-244-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 195/486] remoteproc: qcom_wcnss: Handle platforms with only single power domain
+Date: Mon,  5 May 2025 18:34:31 -0400
+Message-Id: <20250505223922.2682012-195-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
-References: <20250505221419.2672473-1-sashal@kernel.org>
+In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
+References: <20250505223922.2682012-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,7 +51,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.5
+X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
 From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
@@ -75,7 +75,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 26 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 5b5664603eed2..775b056d795a8 100644
+index a7bb9da27029d..735d373a9f636 100644
 --- a/drivers/remoteproc/qcom_wcnss.c
 +++ b/drivers/remoteproc/qcom_wcnss.c
 @@ -117,10 +117,10 @@ static const struct wcnss_data pronto_v1_data = {
