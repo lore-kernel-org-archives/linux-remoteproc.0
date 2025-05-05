@@ -1,134 +1,237 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBA81FECB0
-	for <linux-remoteproc@vger.kernel.org>; Mon,  5 May 2025 09:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0216FC3
+	for <linux-remoteproc@vger.kernel.org>; Mon,  5 May 2025 12:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746438949; cv=none; b=Q6ZYk0wIafkTQL0vCShYbq7getRhAkFbFD/daPSUUTNcO4CEVBXvbXxtYOQ5DK1tHjek9+RngempLMtl/vYpd3V0PEwgPDY2RlJepndaaRwnrtKBE51fP/D12DuBc/wB4kMVUnLoJ/oDsu7NTA9qtjYO4RXl0e7DLTzgbI+IHDk=
+	t=1746448244; cv=none; b=uX9PX6l+HOJcTYiwH6Az84dod/LBXoEmzxNt6QpQ80/zsj47TJyb+y9q1dXMmacTvGS5yk4YhHza/fccVpEesFwtUZn3qKiC6Z5RDAIqZpkCEqVLmRS2+vB4Xs+KbYxRMByKG2JPqdXCNx8qzKyc9bOKLSO929dSpl3dA3zPSX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746438949; c=relaxed/simple;
-	bh=4fXXGQzfUtKtkKuKQhES1f00tVzlysT3cxFwz6vRIHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFTcBJf3uGoq81T2FZyy9EKWNwGzyZA3Bv4R6UNiKfPyZve0KNUUYQo/aJxZeYExCsmvrdSAI5e0nCNR2JnJ/lvE/e022AmyVhfwpgfqKAKNBCHnjCe20qCE0KOnjY/topZ4s2G4wZChox6tZ3UCH60qeTHO/0Mmz3T8D+0ap5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gEBvWWkD; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1746448244; c=relaxed/simple;
+	bh=KUndq4hJdVEJD5ngNJGBRZeJyb0wTFdvOJGt1kRqK6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O9oO0tQ6kSRaKewHN2oJxst/XlZDl174JiSoEYeKw/1k2LkO2XQZPWjg/BQN5HDN+dwWbQYfG9Fzfk2Fh0iPDDUe4dmlwqrJ5f3An+gA+Qb4DiSOdAq8CSxfEpXP3GvFxbVSCeLHT0xWkAtwOzb9tAqIuAQOXmafCI7ia0IB/iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DnnPOVfG; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gEBvWWkD"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 544MhJCx002441
-	for <linux-remoteproc@vger.kernel.org>; Mon, 5 May 2025 09:55:46 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DnnPOVfG"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54517Bui026344
+	for <linux-remoteproc@vger.kernel.org>; Mon, 5 May 2025 12:30:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2/mHzBkdkIdu/XMlXL1MKLhp
-	gnZzaTuY/YtYOHlKf3k=; b=gEBvWWkDAkH2mH/o/AVZkrUpWTD4uiNsgHtK99c8
-	AvUfzmTcVjreuEAaeGXJ/02eEIQVkGXFDalkYM/5GLCSAn99rML7YNX/pC50nIsS
-	ARbmezpJL6NLNvoI3xhEWcqOXRB44X8Q8sidxWpM8ISrkmYsS9k+rRN9UuHyU3jP
-	A0G+3psf8E207D7s+ToOAFiLPZ63rTuWfnr6jTdTV37lmBzKyhOSU+mogdFjQU0r
-	JWA8PEzy62ISv8yXGXeBuGteAJsCyKuFcoMvKC9GMlth9GJOmbaJ86zYnIXXRJdB
-	ZlY3rRmqSodzYAYI6sr0mGzsxaT7lWLHiiD3/YwD8mPf2g==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46e0xst70h-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	y3G6J7mrlp65EzgO5VLytgkQO3fSgok1k/X2CkcanNg=; b=DnnPOVfGaj3nPpIf
+	PitqrK0HiLJjajI2U8/bck6JhKAqtp5hVEi6zBmiOqVy8L+c9coT5HKFHEbHyBH9
+	oLkKHiLCOTA9w5UqhXdhAzz+IIX+fv5kCDGEG0DBnGtMWGxsoSluXLc6D+SOBo4O
+	ErAl0rpaER1PLt6/cqCb1/8o5JLfX8DLm7Kx2ydLn7yObwuKtJeymMMz/NqoiRzG
+	OFMf5RdMKzDf5bxF0fFE25RjIHdwFowwURPH9FxTP4i/5MW40oVsiFoi/Zl6kesc
+	NYSzqSh9BCifrPaczyrigO0MpTq6jO8VNcn+o4pmsYUJf82CXER6LVMkkqIZw6EN
+	yyQOmA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dafg434d-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 09:55:46 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6f4b72d4ba0so80733216d6.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 02:55:46 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 12:30:40 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-afd3f1adff7so3728096a12.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 05:30:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746438945; x=1747043745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2/mHzBkdkIdu/XMlXL1MKLhpgnZzaTuY/YtYOHlKf3k=;
-        b=k5XMA9O3+ml61U0rCUvo19h2rN8wKGK7gT5gBK5qcTk7aJq5BSnvlr++dAoWAHOYOQ
-         W013Pg+EwNMzFNp7Xg6w8ckLUQZLMRkEJNSFJGtTTXvfxLbouEA9jLqbSGi6XjXSrsM7
-         B3DmT7hafzM71ph2f4M4uwQ8Dn62L7kQcRIxYJG5FQNvuBOz/iZ0fIqFP7Oe1IhKMm+n
-         c6a28/W9Iqs3ocTLZNrcVn56O7cMYT1mhyLLSX5f48H+ncm1elGRZtLrpcJOVuZraCh7
-         A4eI5EZIgmV9FEMc64U0mBzWGC5vMC1AA8K/SU22IJ/KjUqrEhrM1V2+qQg+45XXcPIZ
-         MnOA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3yrSPQN5AiSbe14FY1UNiPA6G5GQ7CshVbr5EDQYo4wfOmDYn1CEkcBsG6FAj/6FE/rf/gG0F/zrXrWTCGf6U@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNU848zY86avYotRFv9mfPV4LNuOIAWON8fIr+d8AcoYJjQ+sp
-	ssY/orriq3q25tUjucThE6B+FieBpIUxrCTR32/022loSufYuylb1FNRtBuep/8MuP+GC56SnmQ
-	Wx+7DSgLwe3FFfwSVkY1haS1WDEXfJyiYNRn2pMMnkMELB78VMbUHLrUVbhv3i164lYkT
-X-Gm-Gg: ASbGncsYcbKp7jjalWXyKCfa0zKGQBYHv00djXyMk0X/HKZO16eSlBjeZRbgaFVDjrt
-	H1RmxsMSJBj5VDGPXM2DlYXm0jPe6dPWwoKY7LDuOFjtXUMjKAYvmLAPHGsJrPbOdVvxtZANQ0L
-	PPezSkzVZt10Md5c0pBll3+OGOMvojslh5VDvOyboWp6nuzacb0uVXjrssotqvYduR0btpUCjW9
-	xuIZjSgpH3S4MhPfK4beg+BrykxJGLNJ7Be4N2m88Ck9v7TDeVClWKSYBzqizKP00AQsYHTG2AK
-	WfpcgDqYpkK8BVlmXuia0JP3a78QJgdxh7eTQWbtnZmUIkXFo5084YDDXwq/AhkN6SpvN8bzA8k
-	=
-X-Received: by 2002:a05:6214:1c0e:b0:6f5:117c:76cf with SMTP id 6a1803df08f44-6f51580c00fmr168424626d6.40.1746438945416;
-        Mon, 05 May 2025 02:55:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGknyWbznndebKntrV92c9APdUuAC3oqeLq7ISMW2xppAZupC/c68JL1jEz5Pc9uS8Y/NJ8Dg==
-X-Received: by 2002:a05:6214:1c0e:b0:6f5:117c:76cf with SMTP id 6a1803df08f44-6f51580c00fmr168424416d6.40.1746438945126;
-        Mon, 05 May 2025 02:55:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6a9fsm1658248e87.234.2025.05.05.02.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 02:55:44 -0700 (PDT)
-Date: Mon, 5 May 2025 12:55:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 0/3] SC8280XP SLPI
-Message-ID: <xwuxekxqqt76xi5vitfwp4juwm7vowkdn7zjniymup6pmcwwef@rkr366xgetxz>
-References: <20250503-topic-8280_slpi-v1-0-9400a35574f7@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1746448239; x=1747053039;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3G6J7mrlp65EzgO5VLytgkQO3fSgok1k/X2CkcanNg=;
+        b=d2JwVXNg1zpF14P/GYULJXudMdmq1zq/8GW33Tc9PRDTG0/+BR/+ZROooxxisiDeyq
+         Xao6HtY7jlzhVY0nQ9KISdgfXA1DH98DzIEyuKQB/Gykjezn/Tw7DbHity4HFq6Tu7FA
+         dpF9jr85FSY2ymIhMdtvlYgv0AZE27hPfZmIYpZZFyNT1JOu1aIxSp2aPqE05IoO9Dhq
+         zh3Jg5tXYhv763/Q6OX6omRcTzgdKTbWgl66FEIwdwnGFmpCOf6gbYALwnZH+WCCt/LV
+         6jTsqShAHOSJ/Wn3fbn4IaNvUaxg1xB+dhpnYxbi9Y34J0aMPOhN+XowWiGZKQ6cr3GD
+         VLEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXy+C8VHd86ssyPtyQSVcUt4y468/V9OaOBxKqg1/3e71eTUyEVAcEg3Fp5gj3i/N2/3lA4voiXx/0IqSPWg6gl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRkdZYfzCOyoRhD6i4ZJsusCYVBZucSglr1aD8fvp6+w+LjRNS
+	g4u7/c5jkh0IjLzcO25mvvD5qXCynRcCmY1JMnNr6Ce5uvSc/ao6gNuMnPcvB1MNjE3PBMtP/PA
+	qGwZQ7VpX6TWKVbz+rVwXLJUcI81F701SnMtRjIbU19j9lW31yKac3BzsnwPEJS27dDvz
+X-Gm-Gg: ASbGncuZrO+GcaRggQVmAVNqs6mf4zdNOJ772bPXNLF0Usx5lg86wnj6HLNKUD8tWzu
+	jqsElNcCphQU8BM9HieQiSrv/juGDU2uXc6UOYJ4VkV3Ajlfdf2hPykkyI88UVt9J7Jua4hhqTZ
+	AG47da6p3wMaE7jM/J7CRADzQceSZgupOd5L4VE5UjK86TymJXNWgjczlk7B/84MBcZchkNmJtn
+	df2fg6HiNKWuH0n832+CmK4kDp0qUCFv3+FfoYvhaWdhSH98g0gqLulG/BgPlfIGCPqR7DzIHpS
+	0Wtm+WwlXroDbWKOI0TqZWiZzRmHuPMyWRIgCUd3
+X-Received: by 2002:a17:90b:35c2:b0:2fa:603e:905c with SMTP id 98e67ed59e1d1-30a42e4ec2bmr24078905a91.2.1746448238747;
+        Mon, 05 May 2025 05:30:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiYHZNbAPD2hX6uotPQt4rYNK5LSmkNVeXzY+HRrfyvbKuerZll0vE/BGL+crksM4WYtDukQ==
+X-Received: by 2002:a17:90b:35c2:b0:2fa:603e:905c with SMTP id 98e67ed59e1d1-30a42e4ec2bmr24078856a91.2.1746448238319;
+        Mon, 05 May 2025 05:30:38 -0700 (PDT)
+Received: from [10.152.201.37] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3471f005sm11506606a91.5.2025.05.05.05.30.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 05:30:38 -0700 (PDT)
+Message-ID: <538b32d1-c7b7-41b5-aa93-d285604d1f05@oss.qualcomm.com>
+Date: Mon, 5 May 2025 18:00:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250503-topic-8280_slpi-v1-0-9400a35574f7@oss.qualcomm.com>
-X-Proofpoint-GUID: Yc12dAuaovhtdgjHOooUQrdlTPS4Ovhz
-X-Proofpoint-ORIG-GUID: Yc12dAuaovhtdgjHOooUQrdlTPS4Ovhz
-X-Authority-Analysis: v=2.4 cv=bdprUPPB c=1 sm=1 tr=0 ts=68188b22 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=x_-MvMI86miFrt3VAdAA:9 a=CjuIK1q_8ugA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA5MyBTYWx0ZWRfX3I+tWZIt8YY2
- tUJbfWAAQGAXy81lZEs5hfB9XdTLH1qKcA2xEOwXYUGhgLj83QI0Ht72MUyAwVoMZ2mwDmijCo9
- ljYLM2HQ5JzffTFqiSIz36xgiWenU3+s0B1mf8PJ+qcimBML4l2exLSVywwz1wf0zu9Ykb1XOjC
- 8Mja3D3xZJBemdVTJSiNtqd6c0nTG8W0QkOBClvG9nN6F5SjtgywNyx3r7QItX29NjAvV0OVCN3
- lJ+08HeygeuY9e6xCj8EkljmMYKJexjaGy/Vl/Q0RKBuOL6YUX4maHG2UTzQ3cn6gQajEdooPjL
- Ifc2XPQ4Q93UO2OhwcIWV/Q2L9Sh9I9pAO7vnAYQ+AAkt0fFi8RtpabtZcuUFo/bqIwPvYneKIO
- fMF0qWrNwJNH3H/TQJ2fukUQeeJKhOOBKMqaAUb4Wki0PIqeJS7hkIrB/A501DXyaT5tVolM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 3/6] remoteproc: qcom: add hexagon based WCSS secure
+ PIL driver
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, konradybcio@kernel.org, quic_mmanikan@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: quic_srichara@quicinc.com, vignesh.viswanathan@oss.qualcomm.com
+References: <20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com>
+ <20250417061245.497803-4-gokul.sriram.p@oss.qualcomm.com>
+ <72f0d4f7-8d8a-4fc5-bac2-8094e971a0e3@oss.qualcomm.com>
+Content-Language: en-US
+From: Gokul Sriram P <gokul.sriram.p@oss.qualcomm.com>
+In-Reply-To: <72f0d4f7-8d8a-4fc5-bac2-8094e971a0e3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: sCdX17lO7BEEN6j7NDI8jJhoYODmUUno
+X-Proofpoint-ORIG-GUID: sCdX17lO7BEEN6j7NDI8jJhoYODmUUno
+X-Authority-Analysis: v=2.4 cv=atqyCTZV c=1 sm=1 tr=0 ts=6818af70 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=iPeUMZ46Q7pfEY4_gPoA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExOSBTYWx0ZWRfX+4etCcq5vYhi
+ 3y8dghS2P2PCOP1BNCPpS6c7q/x8Set5fKaXFaUDb3KvHvD10P+3zl8WnM3XhT5rBCVkf4GVAA0
+ HsQk1FcZDir4tS+7dA1sfVGmlX1hjjN3zR4Ka3lUyaiQ+4TUmbphWLqbTkmOQCK0mL1A4XMRsDF
+ piyzXdQ4hhd7GBV3Z3ICJA9Gp3injKFbumZTbdMSWz7KH7uzq26db8l1XxxqWWprsGFuSOZFWoL
+ NCV28fK/oVG0mRApsaahsCkBkHTcPqdAPvWCD+sKVbtlXpAsMhHB78cQ2qmSYDBZVQKfs+6fGc/
+ Opap1SjeRBDH4fg9y5Ad7/G6kq6IMiUnwne8xqW5UcDrzavhE8mzH1dXeH5AUBDDNiwQz6zTYZk
+ FPDkhu8V8IRhW46SWo/ZD/D39L7o6dYGcj304cH4JzvxYM9yTbdX63HFhh+BRQYEHnDVOOS2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_04,2025-04-30_01,2025-02-21_01
+ definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxlogscore=611 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505050093
+ bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=711 mlxscore=0 impostorscore=0 adultscore=0
+ clxscore=1015 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050119
 
-On Sat, May 03, 2025 at 12:37:58AM +0200, Konrad Dybcio wrote:
-> SC8280XP features a SLPI, much like its distant relative, SM8350.
-> 
-> This series adds the bindings and dt node for it (also cleaning up the
-> DTSI in meantime)
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Konrad Dybcio (3):
->       dt-bindings: remoteproc: qcom,sm8350-pas: Add SC8280XP
->       arm64: dts: qcom: sc8280xp: Fix node order
->       arm64: dts: qcom: sc8280xp: Add SLPI
-> 
 
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> # Lenovo X13s
+On 4/25/2025 5:17 PM, Konrad Dybcio wrote:
+> On 4/17/25 8:12 AM, Gokul Sriram Palanisamy wrote:
+>> From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+>>
+>> Add support to bring up hexagon based WCSS using secure PIL. All IPQxxxx
+>> SoCs support secure Peripheral Image Loading (PIL).
+>>
+>> Secure PIL image is signed firmware image which only trusted software such
+>> as TrustZone (TZ) can authenticate and load. Linux kernel will send a
+>> Peripheral Authentication Service (PAS) request to TZ to authenticate and
+>> load the PIL images. This change also introduces secure firmware
+>> authentication using Trusted Management Engine-Lite (TME-L) which is
+>> supported on IPQ5424 SoC. This driver uses mailbox based PAS request to
+>> TME-L for image authentication if supported, else it will fallback to use
+>> SCM call based PAS request to TZ.
+>>
+>> In order to avoid overloading the existing WCSS driver or PAS driver, we
+>> came up with this new PAS based IPQ WCSS driver.
+>>
+>> Signed-off-by: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+>> ---
+> [...]
+>
+>> +static int wcss_sec_start(struct rproc *rproc)
+>> +{
+>> +	struct wcss_sec *wcss = rproc->priv;
+>> +	struct device *dev = wcss->dev;
+>> +	int ret;
+>> +
+>> +	ret = qcom_q6v5_prepare(&wcss->q6);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (!IS_ERR_OR_NULL(wcss->mbox_chan)) {
+> You abort probe if wcss->mbox_chan returns an errno, please rework
+> this to use if (use_tmelcom) or something
 
--- 
-With best wishes
-Dmitry
+Hi Konrad,
+
+do you mean to use 'use_tmelcom' variable from driver descriptor? If
+yes, what if mbox_request_channel( ) failed?
+
+or based on wcss->mbox_chan, should I set 'use_tmeeiihcckgddglcom' to
+true or false and use it?
+
+
+> [...]
+>
+>> +static void wcss_sec_copy_segment(struct rproc *rproc,
+>> +				  struct rproc_dump_segment *segment,
+>> +				  void *dest, size_t offset, size_t size)
+>> +{
+>> +	struct wcss_sec *wcss = rproc->priv;
+>> +	struct device *dev = wcss->dev;
+>> +
+>> +	if (!segment->io_ptr)
+>> +		segment->io_ptr = ioremap_wc(segment->da, segment->size);
+>> +
+>> +	if (!segment->io_ptr) {
+>> +		dev_err(dev, "Failed to ioremap segment %pad size 0x%zx\n",
+>> +			&segment->da, segment->size);
+>> +		return;
+>> +	}
+>> +
+>> +	if (offset + size <= segment->size) {
+> I believe this allows an off-by-one (remove '=')
+ok, will check and update.
+> [...]
+>
+>> +		memcpy(dest, segment->io_ptr + offset, size);
+>> +	} else {
+>> +		iounmap(segment->io_ptr);
+>> +		segment->io_ptr = NULL;
+>> +	}
+>> +}
+>> +
+>> +static int wcss_sec_dump_segments(struct rproc *rproc,
+>> +				  const struct firmware *fw)
+>> +{
+>> +	struct device *dev = rproc->dev.parent;
+>> +	struct reserved_mem *rmem = NULL;
+>> +	struct device_node *node;
+>> +	int num_segs, index;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * Parse thcitejlvhvdriihtheuvhn
+
+>> hrough additional reserved memory regions for the rproc
+>> +	 * and add them to the coredump segments
+>> +	 */
+>> +	num_segs = of_count_phandle_with_args(dev->of_node,
+>> +					      "memory-region", NULL);
+>> +	for (index = 0; index < num_segs; index++) {
+>> +		node = of_parse_phandle(dev->of_node,
+>> +					"memory-region", index);
+> https://lore.kernel.org/linux-arm-msm/20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org/
+
+ok, will implement of_reserved_mem_region_to_resource() and
+of_reserved_mem_region_count().
+
+>
+> [...]
+>
+>> +static const struct wcss_data wcss_sec_ipq5424_res_init = {
+>> +	.pasid = MPD_WCSS_PAS_ID,
+>> +	.ss_name = "q6wcss",
+>> +	.tmelcom = true,
+> "bool tmelcom" is very non-descriptive.. call it something like
+> use_tmelcom, or maybe flip the condition and call it e.g.
+> tz_managed
+
+oeiihcckgddgcjnfeeuhjfdfbcfcdenvfnjnuceuntbir
+
+eiihcckgddgcgltegldivttfeldnhugbnjvtllkkrujt
+
+eiihcckgddgchbegrjtgfnk, will call it 'use_tmelcom'.
+
