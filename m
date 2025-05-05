@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CE32EE440;
-	Mon,  5 May 2025 23:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810EB3A0141;
+	Mon,  5 May 2025 23:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486559; cv=none; b=dKG+mG2Xu6iBDbZnsBrNqne+5X/fM8zUHRuYcIENStgkaz7dtfCYBW1b+D8NRCbgx27H2fegd7CQQP9/3OgIsQ++0dFql93zI7WPlykIiDBMkaXxj8oXUrvAMQCJXUrOTUvm1m97O3t54HY7VnpPD6KcFOf0MiJCTAOw3bstscg=
+	t=1746486929; cv=none; b=J0+epuliNY5BWVPERfjRxKhhfYE6XSIHQbl8ZcspUHLwFEMOSDIKWFsYvkQNERfxC4f8kgWau6r+SkPtudJtVHnY5NfoWv1YIMMC6TikIzpZkeKCB4GFHfI6ofqftwWtRZM8Zw58IRyzb19RyyLOyaiqBAcZ4H8CFRnMVdJHFIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486559; c=relaxed/simple;
-	bh=vkDdRU4n+OAc9RKppHhVM/OwDNSbhzXZhLSzwQCs6Cs=;
+	s=arc-20240116; t=1746486929; c=relaxed/simple;
+	bh=JVQ4C7aNnSNqtiVKbxODVCKxFr8tbeyKSzvt10+xioo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0nH6NXlrqZgQKFn9cE+mX1xbBUMvPFsZuMGFQ3eJxYK78rKRnFM6NOavkSIf87GCvejPJYaK1kkIDpCk90SgbVMnDCCDYmnXqhuyFJW2Cfiqb4ldu0ePqItsPXtYu7ErShxpI657d8VsZ5nIt1KWVpM9K5QOpgt/2nA7yyRB50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRBITqjf; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Y3lzK7scbnaxl0WVuvGmS6Ft8Mr6Kh1y9syhsmOTA5jwkul5NwmuAUDZp/tvLMt5K3P8WftDPLtRott4Rd+p9ITswDS/JLAxvrKGaeE40tHm6JpFp0KBs81p9Gz3BxBIw9QsRyNHk60g5+VihgL2L21HljA0QsfOnWHKPZBJ/x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBoyY7hU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRBITqjf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5750C4CEE4;
-	Mon,  5 May 2025 23:09:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBoyY7hU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69194C4CEEE;
+	Mon,  5 May 2025 23:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486559;
-	bh=vkDdRU4n+OAc9RKppHhVM/OwDNSbhzXZhLSzwQCs6Cs=;
+	s=k20201202; t=1746486929;
+	bh=JVQ4C7aNnSNqtiVKbxODVCKxFr8tbeyKSzvt10+xioo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XRBITqjf3KzlrE3EFGNxirEIkwfc2lwC4J7fkOxWi9RjI1xJHSdcHmzKmvmOfwHWp
-	 7lHXkF0SHm+nPdYOGNBUxvR8w1c0DnZqzXex937oPB14puJMb513fNf6Bz0ISYsvvm
-	 KcRW/Q056DhdrpWEobbsyhqgbQu7U6Jq/8BYdYVb7P1Dr1li/o/UPzb3g0P6Qy1bbv
-	 8pUx6O3FEs4L6RMcL3387R7x7Wiabl7fhAuIZuABEwllqGenWQVmThJ2uYUBkSM/YL
-	 AYIl3vbnLSMRtGptKBXKe3IWBHirev5LKXyOq2zl755h0tchTVKjGj1krFOYxVHtpm
-	 UZnWt4i4TW5Zg==
+	b=hBoyY7hUaV1UzONCHuSd3Z3RhYP06Ha2OW/I37vXM/AB0qvg3DGOjNYTaF+zRxQmG
+	 L3eqdi7zklIlSOdD7dOwCzOzLFTuYHCgr4nOKJGyK7VvUQqhtUx0p1K3ToFD+ACdWT
+	 JmO3itus+SC0N8jTsraASj3mpUl1lf9ZAcan5GQAgQcDG99I2vgdPd9tBg4HFW962g
+	 JXY3vMWrm4YPfRbNW3TtvTmqCACk07Hn0yha5PMIh/efYCBwDEHMzBElpcUy9LMQch
+	 ayq/jTv7A2ekb7Dfi5EHUiQFKu2D2El/hk9loL0N4mcoFIs43TSIjhc0X8NXAFNzfA
+	 w1zV6/AGfViMQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
 	mathieu.poirier@linaro.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 091/212] remoteproc: qcom_wcnss: Handle platforms with only single power domain
-Date: Mon,  5 May 2025 19:04:23 -0400
-Message-Id: <20250505230624.2692522-91-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 065/153] remoteproc: qcom_wcnss: Handle platforms with only single power domain
+Date: Mon,  5 May 2025 19:11:52 -0400
+Message-Id: <20250505231320.2695319-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
-References: <20250505230624.2692522-1-sashal@kernel.org>
+In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
+References: <20250505231320.2695319-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,7 +51,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.136
+X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
 From: Matti Lehtimäki <matti.lehtimaki@gmail.com>
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 26 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 68f37296b1516..ce61e0e7cbeb8 100644
+index 97a0c0dc4c77a..3e07f5621d0f2 100644
 --- a/drivers/remoteproc/qcom_wcnss.c
 +++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -117,10 +117,10 @@ static const struct wcnss_data pronto_v1_data = {
+@@ -118,10 +118,10 @@ static const struct wcnss_data pronto_v1_data = {
  	.pmu_offset = 0x1004,
  	.spare_offset = 0x1088,
  
@@ -91,7 +91,7 @@ index 68f37296b1516..ce61e0e7cbeb8 100644
  		{ "vddpx", 1800000, 1800000, 0 },
  	},
  	.num_pd_vregs = 2,
-@@ -131,10 +131,10 @@ static const struct wcnss_data pronto_v2_data = {
+@@ -132,10 +132,10 @@ static const struct wcnss_data pronto_v2_data = {
  	.pmu_offset = 0x1004,
  	.spare_offset = 0x1088,
  
@@ -104,7 +104,7 @@ index 68f37296b1516..ce61e0e7cbeb8 100644
  		{ "vddpx", 1800000, 1800000, 0 },
  	},
  	.num_pd_vregs = 2,
-@@ -386,8 +386,17 @@ static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
+@@ -387,8 +387,17 @@ static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
  static int wcnss_init_pds(struct qcom_wcnss *wcnss,
  			  const char * const pd_names[WCNSS_MAX_PDS])
  {
@@ -122,7 +122,7 @@ index 68f37296b1516..ce61e0e7cbeb8 100644
  	for (i = 0; i < WCNSS_MAX_PDS; i++) {
  		if (!pd_names[i])
  			break;
-@@ -407,8 +416,15 @@ static int wcnss_init_pds(struct qcom_wcnss *wcnss,
+@@ -408,8 +417,15 @@ static int wcnss_init_pds(struct qcom_wcnss *wcnss,
  
  static void wcnss_release_pds(struct qcom_wcnss *wcnss)
  {
@@ -138,7 +138,7 @@ index 68f37296b1516..ce61e0e7cbeb8 100644
  	for (i = 0; i < wcnss->num_pds; i++)
  		dev_pm_domain_detach(wcnss->pds[i], false);
  }
-@@ -426,10 +442,13 @@ static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
+@@ -427,10 +443,13 @@ static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
  	 * the regulators for the power domains. For old device trees we need to
  	 * reserve extra space to manage them through the regulator interface.
  	 */
