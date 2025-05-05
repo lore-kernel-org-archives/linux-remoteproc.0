@@ -1,145 +1,125 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA472512F3
-	for <linux-remoteproc@vger.kernel.org>; Mon,  5 May 2025 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF125E464;
+	Mon,  5 May 2025 15:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746453200; cv=none; b=CWa4uFmXmk7TMuM4naJ2Fu38K7ELG1KzZbj7jOonVOREy55VtcZZGJcuX9Wb6WRbV/3rPgSR6jajMosYw2EMBwuyTOC90qxrM8llpom/uGcNhQvJVz3n1z4lj4G+CaIYQj2k0IsBljjxyajfINBVR6F2pwXFu/0jrnwrBha3Hhw=
+	t=1746460191; cv=none; b=qaquadKgHSNy+q+tHdJxt7L9OySmWNN/VDuknx2OWSxFUSMCgsbyU63vbimsF9nV/BuyftrVHL93gtKsUvpsUi1OhOcu3+oxNCDGQyELrZVyNc4aRJdEeuLwVQTSzkttJBIVj4sGrjN0EFFYFau1VS/NXs1yoULexPF2/30Ja7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746453200; c=relaxed/simple;
-	bh=Dk5TrfYsZTaKAGjfadDJlyV2DgI5O/v2XMSv1VA28qc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ke8ZxdGzA4+UFzxDEDc4aNlP9984tQQj1zU8QMYfEPyN9OCS+0YMzyd+nku6R/G9tfjl6wG2AoYoV4nV7oZybZfofjCEJAHRizTqoNJkxm49yrAWsFcy6X13pE27t36YN1jKRJj05h3sldqRApBjAipeuc84bjIW/pxQi+vMDvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T7ZGHnb4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1746460191; c=relaxed/simple;
+	bh=hXB5HIS3f+ZCRt/681Lhw22MgJ3Qq9wuAw99RftnTZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PNugqv82YcSJWve43RAwI8GXJJwwuaZjvHiKnsa3oMcpZsPPK5FEcLYkUDxEOG5kflKdI5/UEgpoz/RWhugljaok54aOk5zvFfCiWq7DEPeevaHoRqfoOeYH9gtIW03qjRB8CI8BjCy0UaQs3+ykizSdhfzRa8XWX/2dU7pd4iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBx9G3Ez; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T7ZGHnb4"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545BSc3S000547
-	for <linux-remoteproc@vger.kernel.org>; Mon, 5 May 2025 13:53:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O6JjaZi4RfYIn6ZpfLVOkLDl9POHRwHaQxHd14ACq6M=; b=T7ZGHnb4mBwSi/v5
-	+VFo069X/W4731ggJ170f1/JF9v2CTXCZywrbSZ/9XaDH8vawwYHVC4xPUCemXUn
-	O36k58baDMpI63dwxkqEiYOOlkcFNFW1tWfEzlR82mtnmCqvsSaEZv4iro8C+0fp
-	62zzmiNI1OvoMC5Gs73qVfexJOUK3AKgP0of5opMYK6gl6S4nSKgYUv56LRs3d58
-	OvruXJMFq0yHelJQlnCQ0l6Q7FMNa8eWHzJLt8smJdR2cq3vZZ/Msb1SJ+1WAZ12
-	e698Yfxbdf/4TR88Ylu/qncIZ0oO2dDIOlkFltzaLW3JfLaSz5JzxCZZmzh/4lbs
-	cfhZtA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dce9c5qk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 13:53:17 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c552802e9fso60794985a.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 May 2025 06:53:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBx9G3Ez"
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-604f0d27c24so1976745eaf.2;
+        Mon, 05 May 2025 08:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746460189; x=1747064989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfSasfyNn2QOSv32qDVaYS8lEHvMrqjWB4CpFRqIp8o=;
+        b=ZBx9G3Ez52HAXm6xtsSA66KRYGrPgwQTXrkA0Iq+3QBhEig8xiy/6paG46whKX7laf
+         nmnCRV6M7b5B7bQ/7jeQ4+JSGUndDAdYvh4sun499DgiWuA3qNU5yrbk5NQ+pWbt0XMT
+         80A2UcOUhD8+0a6XEkQraGAKNIHeh/J2NAuEPajRaVeV17z8j3i39yi5a/7sdI4kG6KF
+         vMnQC5Wxp+NiuCl9DSqruACi7UijIHjdLgvFjEBbia509yylA4aO76WFbT3+z6QXWJdn
+         dUbQM0pTMpKxBxYDSAWlkGG481ZCbfFICleJPRAWSQANfjVaczIspyukk5kYmqK1nXeE
+         foKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746453196; x=1747057996;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6JjaZi4RfYIn6ZpfLVOkLDl9POHRwHaQxHd14ACq6M=;
-        b=FQoI8hK0M3Frl/twOkK7Sw00CwrL9fzQKP157WcZ8EDj+Wb+ai1tGTpPgwjmwpo8FB
-         diAiAXwH7okp2nRf7fd+VFi+EHNgdhaWl9+dCzSdByEVBuSxbNHVff3LokX6UrSBrEUX
-         GDW3Z0BtHOXM8F5fQlgXTEWHPJPlpMvwU6lQo3/nNEgzSkxuwQglr+YxnbAHdSqd3uob
-         4K7a4DG1hAF3U7IUjYPuGVURsoC9hQWv4rCaKgrcJBh6X3O9q7sOFkjAiSKrbQk3kjds
-         HdfkQeZBzYdbINPCJ9OFFh4UyS3Og111VEkjpzHAkzVuIWEUOF0asefNDAlzzdwARnTk
-         lSoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlElroNaGcGDrFk/t/7oLr1OyDTW2ATjb+J9HzED4fAGIHs153g7siqD+v2k7t410n5Onj66YX1qhHJbe+fbD/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOaxd7cDGhQ32gj3GxjafcxDD4R5o58QU4eF4eMS46mcVVheWR
-	VJJ9eHBvy5ul24Z6s0cGme8rKJmodNlnLM3LA/Fpbyx/3QwoQq+GiPYshAY8yBe4JgBQGBL+DdB
-	AGrrb0FS0OMcMRrXGp6/5M6PZ+r8O3/cexD4d8X7XlQXEjur2mjsUiQ46gXngbZxzysqa
-X-Gm-Gg: ASbGncu+Kk6qaWNlEkTaT0tAg9RoeS1dYxiDAQGbUuTztMUjfBKh2Cwks6OhFMXGB+m
-	0iKV+JwyGUk4uIniOTKNRKuMKupbhWHvghzq0aZxUubvpwOP3PbDCL9cQQB5X3zXJZk3jSY1gkJ
-	jwbROwSvK1+F2dp7DclbBIizAYcM5Q9G9KiLRi1KW8+lgsC+wk3oQKclhlxlwkvUVM9EK8b26hb
-	+s1145CoPOCYOMBTBwDPjNvEn7fOjch/K0yLTK4ckf7Q2HaVhmJL9f0fl1OpNKFsf54NN/fy/Hh
-	3/zPTqCZZO/CbLiJc86xI00YPzvECs7o1VlNrW8HPUUrcWIW3ddGqMFHbDfZRVJYRxU=
-X-Received: by 2002:ac8:5815:0:b0:471:ea1a:d9e with SMTP id d75a77b69052e-48c32ac855fmr62114151cf.12.1746453196688;
-        Mon, 05 May 2025 06:53:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7r4e4FpvQ/V6W1AbvbRMkK18p34iEe3+n9QIq+e7sfrj+oYLch1ohMk37fGgJoMdInSkBEw==
-X-Received: by 2002:ac8:5815:0:b0:471:ea1a:d9e with SMTP id d75a77b69052e-48c32ac855fmr62114011cf.12.1746453196200;
-        Mon, 05 May 2025 06:53:16 -0700 (PDT)
-Received: from [192.168.65.169] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1894c032fsm491532666b.123.2025.05.05.06.53.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 06:53:15 -0700 (PDT)
-Message-ID: <7f2c2554-2654-4d10-b264-fb59ed54152c@oss.qualcomm.com>
-Date: Mon, 5 May 2025 15:53:12 +0200
+        d=1e100.net; s=20230601; t=1746460189; x=1747064989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TfSasfyNn2QOSv32qDVaYS8lEHvMrqjWB4CpFRqIp8o=;
+        b=Wyk6fUeBoVcRDyoZISkfBryoCXxfAtucfTycNN7jBLMXPyXB7W4z9BX0wHrWksTAqO
+         2oWYtTx1tGk/4Tcre2ZgF66/OSeXA3R760UvXYfUCzdydBOZmjRQ+90Pd7IQ2F35I2cw
+         uYvLzBVD5xBeAkhhXldiyP/I6Amfyk15LkCipkd0zuH4u4DBz1cZO6cE0w2yO3xreIoM
+         /jimmGYR68yretkTBicZv2EyNMP5aptpIL4/5OKMA6s2NcQ+W8yfMZtSs5XfKLkU8w95
+         PxyR5zb/6H5ZJ4epooEn9LqBhRbOrqYrgi+oiwkCYFrim2c2h/WiQ5N5wMBSjwZZFm/p
+         GRgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU43l7lDM2ysFqZgjJzLjcTEfpMd87cpuJE0HgHJELLPfY42pnRuxSZpP0ZwdA0fu0KrFG2M4p0MLR6kBk=@vger.kernel.org, AJvYcCUoHOlfC1wmzKRg57YeRKWr2umHmTeW31BksQY1qw729HxMxvv86HwbwYxl+DRag+hz3i0wh5AlZFI=@vger.kernel.org, AJvYcCXoXfIDzw71wut8I/U+fYVw7AZOdezMPabnzBHSrchFkyiOYeOOoNmMuAsqLG/dtCPDdDVJULEKJkFa8G7i4JLucg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+7ZnnqYk7XEJmkBusWESaZCZA6Ly73IfOUo3y5VSw3NZvdABg
+	xVFN2Mq9A85qPjQir45bTLWpBkxfr5E45F73cNmNRWHX6Jg5UJdM
+X-Gm-Gg: ASbGncsObCFDfy27cYMzhkcMrenlTKApfkNDem8eiku+D88TArBo4v9eY0/1HkiZF9D
+	GIusHC8wLMWG1qgCQ4ZCjMdB66vzdUTjLjtn8f2WhF9zqpU8unEU3cCPzJMV8v16QDqdrX7THDJ
+	cW/18hwDxVSc7Ji7mVp4BkEUOQziGQPAb/CWbtixrDcci9RSzc+KOyiTHf3IS/Uc3thzR22BAKU
+	4UXrfzOMzLxvW5laRob94WZ4dJLFFGWNTO+7Yeya4BDxR0ZbG5WR06fIy0MdCz61xsxyQTzYOCq
+	K+AdximZc9yg7H/eI8lSUGCiHBKnxruHQfWwRcuYSjFyBZiNUbBMtuKZpyGPFPNGaKrqM4oRyA=
+	=
+X-Google-Smtp-Source: AGHT+IFxZaRAPndA18lDE7ChWtiEoMGY9mLpWkb2iP4H0PkM0TVxr3eZLsRh+qcaLAy4IFe3PQLjgA==
+X-Received: by 2002:a05:6820:c81:b0:606:8bce:32a0 with SMTP id 006d021491bc7-608002f986dmr5907169eaf.7.1746460188788;
+        Mon, 05 May 2025 08:49:48 -0700 (PDT)
+Received: from hiagof-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-607e7fe84a8sm1606217eaf.36.2025.05.05.08.49.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 08:49:48 -0700 (PDT)
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>,
+	daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH 0/3] remoteproc: imx_rproc: allow attaching to running core kicked by the bootloader
+Date: Mon,  5 May 2025 12:48:46 -0300
+Message-Id: <20250505154849.64889-1-hiagofranco@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 5/6] arm64: dts: qcom: ipq5424: add nodes to bring up
- q6
-To: Gokul Sriram P <gokul.sriram.p@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, konradybcio@kernel.org, quic_mmanikan@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: quic_srichara@quicinc.com, vignesh.viswanathan@oss.qualcomm.com
-References: <20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com>
- <20250417061245.497803-6-gokul.sriram.p@oss.qualcomm.com>
- <5a17d866-a459-40c8-9e3f-90bb1cdbd846@oss.qualcomm.com>
- <e6d58532-dcd3-4c12-b70e-f765c01ec286@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <e6d58532-dcd3-4c12-b70e-f765c01ec286@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDEzNCBTYWx0ZWRfX6fKW++GyA7po
- zV7iZEdQicWTayuXXtVXdYoWmMj3H0opwr8pCZ1oCrzNWIhVddiE2vijrgS5iXZNeqV15we44N7
- 4+8ITSlC4H7sSrtrcEkOq0NvEkAg9OkxaAI0bKR8vUEaynOPHTmeeuAmdDp2/rFp7yMZ6Q0gvAB
- jRaaE2piqvayyQsg4Y3fHgGmD6eKIJ+/zsLu6LVh0d/GRTd8Gr+0coXImxfBnY7q6sktFp0XUQk
- r0HCkNHLxBbe8t9xJzm76D0qjv+Awu6MvzdH6eatohGb01rs7kPqtEWmRQt89OB4vQvgZLfnwW+
- 41kwLhLXSLHk7eiAJFjihxKuWpyNybWjvf40BVY1nq3EJjBIl1TJ060DB1XqX3avRJeBk5OHz9L
- 7k8dKtcwwKUx4gMk5Zy9BJJoZboE5N2Qln4MizTiP+pqlcozSXmU+uP4EjaRGNXrWdD2BpCV
-X-Proofpoint-ORIG-GUID: TrkU0Q7JnOergl35Tv7zvt-gjSgQtq7c
-X-Authority-Analysis: v=2.4 cv=Qope3Uyd c=1 sm=1 tr=0 ts=6818c2cd cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=b9x4X1nyoVVrWMxn6-kA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: TrkU0Q7JnOergl35Tv7zvt-gjSgQtq7c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_06,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0 phishscore=0
- mlxlogscore=739 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050134
+Content-Transfer-Encoding: 8bit
 
-On 5/5/25 3:47 PM, Gokul Sriram P wrote:
-> 
-> On 4/26/2025 1:57 AM, Konrad Dybcio wrote:
->> On 4/17/25 8:12 AM, Gokul Sriram Palanisamy wrote:
->>> Enable nodes required for q6 remoteproc bring up.
->>>
->>> Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
->>> ---
->> [...]
->>
->>> +		apcs_glb: mailbox@f400004 {
->>> +			compatible = "qcom,ipq5424-apcs-apps-global",
->>> +				     "qcom,ipq6018-apcs-apps-global";
->>> +			reg = <0 0x0f400004 0 0x6000>;
->> So either the offset in the driver is wrong, or the base here
->> is wrong
->>
->> The IPC register is at 0x0f40000c
->>
->> + length is 0x10_000
-> 
-> with 0x0f400004, In apcs mailbox driver using offset as 8.
-> 
-> Should I use 0x0f400000 with offset as 12 ?
+From: Hiago De Franco <hiago.franco@toradex.com>
 
-Looks like, yes
+For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+started by the bootloader and the M core and A core are in the same
+partition, the driver is not capable to detect the remote core and
+report the correct state of it.
 
-Konrad
+This series of patches implement an API call to the SCU which will
+return the power mode of a given resource (M core in this case) and if
+it is already powered on, the driver will attach to it. This SCU API was
+already being used inside pmdomain/imx/scu-pd.c driver, therefore it has
+been moved to firmware/imx/misc.c so it can be accessed by imx_rproc
+driver.
+
+Finally, the imx_rproc_clk_enable() function was also changed to make it
+return before dev_clk_get() is called, as it currently generates an SCU
+fault reset if the remote core is already running and the kernel tries
+to enable the clock again. These changes are a follow up from a v1 sent
+to imx_rproc [1] and from a reported regression [2].
+
+[1] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+[2] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
+
+Hiago De Franco (3):
+  remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+    SCU
+  firmware: imx: move get power mode function from scu-pd.c to misc.c
+  remoteproc: imx_rproc: add power mode check for remote core attachment
+
+ drivers/firmware/imx/misc.c           | 47 +++++++++++++++++++++++++++
+ drivers/pmdomain/imx/scu-pd.c         | 29 ++++-------------
+ drivers/remoteproc/imx_rproc.c        | 27 +++++++++++++--
+ include/linux/firmware/imx/svc/misc.h |  8 +++++
+ 4 files changed, 87 insertions(+), 24 deletions(-)
+
+-- 
+2.39.5
+
