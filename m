@@ -1,168 +1,202 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4786284695
-	for <linux-remoteproc@vger.kernel.org>; Tue,  6 May 2025 15:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746544900; cv=none; b=X6O27b/Sbwh12EF8k5GtxC9ZyQ9WAs01Jjkxcn/LgEbVSpgL/lZ9qsBXwnfwoXIpwpSPb+H1IO3PtMF8Ovd7/Hix2DgSP9zmVnkW/dYSxjKFwel2n5cvS/8Yh3/p716VrWI+Z1f4qDupwG8T2CEObDNzuDRlMA4QHmIZFv+7dJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746544900; c=relaxed/simple;
-	bh=RrFCrLCDb2vVGDp7qDTtvDgB7VhO8TX1bChwTPYRekQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f34C4pX4oxM/n7jsybnZVJzhzeicfvMR9KEVSg0oow7cReUZ13gq/8+n7iezinV4+PsaUzpAGfYEtFLOM+oOz7Rrue6Ko2n0eIWUDzv4ae9+EYMsU3VRhtoSMjIBEm6KSBU6rLZ+zbExA37XDduta3jUYCVMpRz2NYxjEcN2HrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJ8pQsTh; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861C57261B;
+	Tue,  6 May 2025 16:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746550801; cv=fail; b=PTXCHYkQYsH+6Z/uaK0g+b7Z0vC7kPdVxL8USlBgabAEvGv4g0RbGklpVy6vP+YqrpiZaV11y/bdu0l3bgLQsU6LFTuLyM7CQF/nxTVncWOzzU+Zd4pN67wpjqjSH3RhX+JNBBX1N1m6Lb5yw8HMjq7WAhCv5KSBLPJdf/gr1Q0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746550801; c=relaxed/simple;
+	bh=iGWdPeBYuIDUZqemu03SRVRCP6cP8U45b+aqkcq8CJU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mv6mwkYo8ngXIhpKEDyvKm+vSIyoHeMZj2eN0FdJCW5p/ESTcI5ehgjkxkF/iNPP6Y/V4sUM6rluhRFiM7Ha0q8Wvr8Krf6YQA0j+jN6KtfcaJ2Zkqpo/6NuNu4zUg9eUIvd6oirjCuhFZ25c9zDhIoRy3LYJbkV9prgFBVPKFg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eFn2Jw3i; arc=fail smtp.client-ip=40.107.92.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJ8pQsTh"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22c33e4fdb8so59176785ad.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 May 2025 08:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746544897; x=1747149697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUMMAqzLfeU2BhLtLW4k1zZhIkqrr7YldwnF+3gqRqE=;
-        b=UJ8pQsThEqTqAkNZ7+wvythibhM6QLHad1B5K0qbZotRMUU9Er+gvGohjeMEZN6iq2
-         y/+Pno2UB+mNvg70PK5nSJuN4Dayhcn5eQCoeO7iLIr2PLudktmaY1EF9VTKBJqjmv2H
-         Egh65+L0t2Lomwbu2fJ3S8qqvoB338zUaCGsx/O9eS1kAsC2IYbcn30TQST+A8/jgKrU
-         xkE5WVEYRmGUKDp0VVdciWsANguEYGzqrVnstf3+DXAnt0+tfo9g1lodhWgR4TcstmvV
-         KFGObojl0fiMczJHycmx3HFOzJEQfcZ0QtQHWStSIcO75UFLu/+rUxV86gL1G6YkIFpM
-         v/jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746544897; x=1747149697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LUMMAqzLfeU2BhLtLW4k1zZhIkqrr7YldwnF+3gqRqE=;
-        b=jFZ1P45jleBfKG+jSTQ8YDKI6E502JBMmN7xR2M+4ZCGBArkPxKSAY8BcbLlgsdfKE
-         CDWsBvVqnu/39Otv/82evHa5UqhnC3Q7+nT1ueujvsi9wWiyVraR/WWq1HwSvyQM6SpO
-         4T346jBAFPyGOxrEq/Wlf/Mew1jW2tjcGFYaP92NNnDOELhNX+KG+IjT88821sD3LqPF
-         hExEKsfZMp9o6jUoFXnIYgMuc59uJwtJxPVG1oyLJ3C/3nQ2HBky3nSl2e58gyvehbsd
-         r2CWN4o06hUmb96Ehkh7y0qLeysID3cN5P6NQeKKMyLkm59grrVf50tcgVj3a8Eyk6bQ
-         sPew==
-X-Forwarded-Encrypted: i=1; AJvYcCUHwpKcCGc0ieLansy+7no3grtpWLDWfwJlPJdVmYJNQMAHWB6IXpVW48IiM2RBJHRPC8Nnd4uLuCcIB+S7tYl8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwECYnlrlC8mlMVsO3yv9+SuOtsHLYlNE7ocwp7th/7uODXQZLT
-	nPgikPKCCuzlXTc25n9tDXhkKEW/owpD2SMy1AbdPxPb+z31eEcvz4ZI8XnaGKQ=
-X-Gm-Gg: ASbGnctQUftVlsRDKqDKu9auqgcPzfV6UAoEU9uq4eJC9IXtKWyQcB21Dsgxqj4HUMR
-	Vnnh9SyjoTGrMzr4ayxuD1R56w6L6UTsWmWgjRC1v3JhJ+OJn7FsIdQYKEN5NUWPtUjGG6LsuWu
-	7uB+C/RQ5dRso30hlwhKxs0bEvFwUFo6XD76Yq1FGsrswUlInveCzc6yjRYPbk0L0ydI8WeKFkd
-	4H22h63K0cQE64WC8mi0J4ERx7ENtI3zORmib9jjEDX+Jx5avmwKjUj07Bnd60eQMbQVEcI0DIp
-	IvtDKraRJvT/pW64WFJ36syVlGrlPj6FHwdyuX2X1A==
-X-Google-Smtp-Source: AGHT+IG9qR+Bw2uygv8xQSXKT77iYKR8E4JwPxPN+b6XzkhfQ8z4EFuMOu2q9YdcGCpJtb1y5nY+aw==
-X-Received: by 2002:a17:902:d40b:b0:22e:4a2e:8ae7 with SMTP id d9443c01a7336-22e4a2e9073mr19297995ad.22.1746544897093;
-        Tue, 06 May 2025 08:21:37 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fc7c:b927:d229:c0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e15232224sm75295875ad.253.2025.05.06.08.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 08:21:36 -0700 (PDT)
-Date: Tue, 6 May 2025 09:21:34 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Peng Fan <peng.fan@oss.nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 1/3] remoteproc: imx_rproc: skip clock enable when M-core
- is managed by the SCU
-Message-ID: <aBoo_p1KlmOieJ50@p14s>
-References: <20250505154849.64889-1-hiagofranco@gmail.com>
- <20250505154849.64889-2-hiagofranco@gmail.com>
- <20250506043835.GB24259@nxa18884-linux>
- <20250506123619.egobussm6b74imso@hiago-nb>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eFn2Jw3i"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G+5CisLGw345lx1eBeZIdtJTyQWR0Kn7N6Fx/I1xVn+JnFkM9GKcvhhAMFvMsi/+iTqbL1rDUhKZaqf7PH7u97fq/gRlluJNNJ4jHJJHiwpXPatxDNK/KBM3kXl6IrFrZ0K1LmbXCPvGDOn1htxvueqy3h0t1Z0DwD+s5fSoPqh3K8Jhg9cxt8c+qn/0uyaphYb5qAmsiJmYXEGzKkvf3oqNyuDiGKFK/+LKtsuHcmVJ5IqKWxAOd3H0XR87857vObynrBMa4Sr8vrs/sZf4Z0zpA+WH14J8n6UM2ldvJ3VZo5PQFfGbEA5gA7gWA2r32BgsbRvGhsYSKKiAAvElLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6CDYM+zPO9fGqQYkXmI15mnYFRclMiLIF4QtFK0k1PE=;
+ b=FyGPV/o/Hs0S4cTjqlPDxF4Pb57mF9UQgo3V552fIEHRCwjpoz6uvLMvUaY5wf9eZdyhnM5lu8shsCZwaxJHF/WbnNqxvnyUb3+HGVCgpXrR6LCrd16YSuGxbW1JdtidE9x06X9S0Pjk804+RGrw9FzrfIRg2+cl3ga+lmTQrn8pcRdmR7gfcyULfyHxkaRayr3BHMgV0cPCyGw+gBUkb+Er2+HiLwOY7hc8v7KvKZB+xmoLGZJJIPw3gmf4wQe4BsTPXNRZqVxZ2OzRbX6UaOF5jQr97ocGZohgaoGgs2yw5gkZnKsBKvVuMk1VfQcw0QKvTlNN+oXS5uDx2C2VFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6CDYM+zPO9fGqQYkXmI15mnYFRclMiLIF4QtFK0k1PE=;
+ b=eFn2Jw3iqrZ9PORIhNEOCICnDnFxkaLpxJsFKEk32o84WoiaBOhM8vka8LOQO4/iAXLEhq+OW91O59qzsNX4kytYSaRKKAM+wJeXt0Rx96EVDQdeHIbc379ZvUqs7+u8UaqcnWYNnF/4CfzF+CFvH8vgNnaSwIkRWvBCEnELA/U=
+Received: from SA9P221CA0008.NAMP221.PROD.OUTLOOK.COM (2603:10b6:806:25::13)
+ by DS2PR12MB9709.namprd12.prod.outlook.com (2603:10b6:8:276::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Tue, 6 May
+ 2025 16:59:51 +0000
+Received: from SA2PEPF00003F61.namprd04.prod.outlook.com
+ (2603:10b6:806:25:cafe::1f) by SA9P221CA0008.outlook.office365.com
+ (2603:10b6:806:25::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.26 via Frontend Transport; Tue,
+ 6 May 2025 16:59:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SA2PEPF00003F61.mail.protection.outlook.com (10.167.248.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8722.18 via Frontend Transport; Tue, 6 May 2025 16:59:51 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 May
+ 2025 11:59:51 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 6 May 2025 11:59:50 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH v2] remoteproc: xlnx: avoid RPU force power down
+Date: Tue, 6 May 2025 09:59:44 -0700
+Message-ID: <20250506165944.1109534-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506123619.egobussm6b74imso@hiago-nb>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F61:EE_|DS2PR12MB9709:EE_
+X-MS-Office365-Filtering-Correlation-Id: c061f13a-3966-483e-85a9-08dd8cbf6ad9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lXPqyUMkLXy/UtWrHOxcJuihq4ycrDeWNaMwZJv7X/hUWjjNiugGm3YTsHNa?=
+ =?us-ascii?Q?kY+Qk3V7wbnzJ1smi/2SlOG3l1bgWuWxBikG9jCO3JwY+PdVCBAygMbUMiG1?=
+ =?us-ascii?Q?BplO8sD6H9rDik9eeCWJaDg1Jenkz1NA26cLYEBYREYCkF9qsx2ERjJsqLel?=
+ =?us-ascii?Q?Cbcosun4RERWQ7lxdBFSzbjlfsB1dVAXXaEVlOXfPnc+4cgEc4Ayqwq/OXBl?=
+ =?us-ascii?Q?isaTpRB0i+NGbYaO/BftJTeSA808pun+OlUDEmbMuAUVYA2+ECkjtuzoH7Mf?=
+ =?us-ascii?Q?EstWqwBBaFskum8SyL58415WQMFAVq4F/Wc1kGhYPxRFa2MR4XYkOKbWGIiG?=
+ =?us-ascii?Q?jbulPPKqpIrpq76fU8Th8SkZXWYVtcvC5doizMcLzufjPXOHhsIJwy0ULZzC?=
+ =?us-ascii?Q?2CPObf2z3UAP6NdCOdCfVv0tdNpgmXOpNJ88xrroQkI+LxZ8bNT7NxX0o2xl?=
+ =?us-ascii?Q?+jBCQ50Upr8ZTdzsC5itQAuzFP8WBCSF288nEf/TA+KaQ0MQUvlz3lB4U9yo?=
+ =?us-ascii?Q?eoFHAG2bN4+9tbCh9srDBHY+TTtGhQpyDPHx1eielU+eNwWnHgMfzk4/FstQ?=
+ =?us-ascii?Q?nxF3VtI6IJ5Mu3GDmjr4B5/1inmE8PBnTIym+K0gf2k+nOE60XUj1clyLnrc?=
+ =?us-ascii?Q?1tuukhpg50dEuYguu5uOvHtZmPJttccDsv/IVS1tGfhdCFzycZK+y7AMP8Hu?=
+ =?us-ascii?Q?2+uMlJJcTGdqgF07j6fOoHtNlfXH7Becuhg+tEZEteVmWWwvZ5hR43TSS/pn?=
+ =?us-ascii?Q?yv29GcbPsXJyJ+S0YbrvS4ThgEEnahxKTrXG/qsRYWqI8aMhGZeAgGwVfvrt?=
+ =?us-ascii?Q?6U8z+QAe4vL7j6jD2kWGmtlcE0WjCmfe9ssAuPSBgkFw+TiYGyTl1R2Q8ArN?=
+ =?us-ascii?Q?w3uRnFW7UAOsn1Ct0LXZ/MatfOoq/w75P0A7RO27Y+6kqPY/NME5UBs6wTfe?=
+ =?us-ascii?Q?a+4pkt6E5mTS60zBaJQU4GzS6M0f4WBqhw1wkxCo3tRM2zJzhAUPavd9edJO?=
+ =?us-ascii?Q?8ntBK2kQz4TyPAcKz7C5OdShxLws3LWFLzuwZputdC89FZxfADRJ2Wlm9Kh4?=
+ =?us-ascii?Q?6bg/JE2q/GGceLR876FMSvyXRTlFwBILfh69DzOi0DZ8mZJSwDuukwp8Sekm?=
+ =?us-ascii?Q?d/su4EXJ0OttS+/sUyWVh8tsysxjEW87jAiMXRD8qNKMu/eR+TN2mJ02EnN7?=
+ =?us-ascii?Q?L6M7IZsPSxB65hQHyKQ+0Kap9MR09+/gAbLmyM847nOipriisecz5vOBeOU7?=
+ =?us-ascii?Q?LekUYVN57Q3J3yoNfNeioKU7WwcPH641TuItrxSpcX2/M8yC903TSOic01st?=
+ =?us-ascii?Q?I2iAKBVnjih9+uovOE3uVKj1dlodw3uFr8ftn/srcMGt/inA+VWHIDOyPej3?=
+ =?us-ascii?Q?RnzOY9opQ20FKzfbQbE1iUXUM1JVbPOXE3Qp3rDLS+5eUTMtBQhwp9JBC769?=
+ =?us-ascii?Q?fiD+yrytzm8X2quJrtND0xBXz5oyxphWxw/OB6o/wZMuvG5w3tQlxvum2k1h?=
+ =?us-ascii?Q?MrVgIJsHfIYjyToVvXH8rStm18wmY86hZkB2?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 16:59:51.5121
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c061f13a-3966-483e-85a9-08dd8cbf6ad9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F61.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9709
 
-On Tue, May 06, 2025 at 09:36:19AM -0300, Hiago De Franco wrote:
-> Hi Peng,
-> 
-> On Tue, May 06, 2025 at 12:38:35PM +0800, Peng Fan wrote:
-> > On Mon, May 05, 2025 at 12:48:47PM -0300, Hiago De Franco wrote:
-> > >From: Hiago De Franco <hiago.franco@toradex.com>
-> > >
-> > >For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
-> > >before Linux starts (e.g., by the bootloader) and it is being managed by
-> > >the SCU, the SCFW will not allow the kernel to enable the clock again.
-> > >This currently causes an SCU fault reset when the M-core is up and
-> > >running and the kernel boots, resetting the system.
-> > >
-> > >Therefore, add a check in the clock enable function to not execute it if
-> > >the M-core is being managed by the SCU.
-> > >
-> > >This change affects only the i.MX8X and i.MX8 family SoCs, as this is
-> > >under the IMX_RPROC_SCU_API method.
-> > 
-> > I would rewrite as below: "
-> > 
-> > For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
-> > by the bootloader, M-core and Linux are in same SCFW(System Controller
-> > Firmware) partition, so linux has permission to control M-core.
-> > 
-> > But when M-core is started, the SCFW will automatically enable the clock
-> > and configure the rate, and any users that wanna to enable the clock
-> > will get error 'LOCKED' from SCFW. So current imx_rproc.c probe function
-> > gets failure because clk_prepare_enable returns failure. Then
-> > the power domain of M-core is powered off when M-core is still running,
-> > SCU(System Controller Unit) will get a fault reset, and system restarts.
-> > 
-> > To address the issue, ignore handling the clk for i.MX8X and i.MX8 M-core,
-> > because SCFW automatically enables and configures the clock.
-> > "
-> > 
-> > You may update if you wanna.
-> > 
-> > >
-> > >Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > >Suggested-by: Peng Fan <peng.fan@oss.nxp.com>
-> > 
-> > -> peng.fan@nxp.com
-> 
-> Thanks for the review, I will update the suggestions on a v2. Meanwhile,
-> I will wait a little bit for other feedbacks.
->
+Powering off RPU using force_pwrdwn call results in system failure
+if there are multiple users of that RPU node. Better mechanism is to use
+request_node and release_node EEMI calls. With use of these EEMI calls,
+platform management controller will take-care of powering off RPU
+when there is no user.
 
-I suggest you go ahead with a v2 - I have a fair amount of patches to review and
-my time to do so is currently very limited.
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
 
-> > 
-> > Thanks,
-> > Peng
-> > 
-> > >---
-> > > drivers/remoteproc/imx_rproc.c | 4 ++--
-> > > 1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > >diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > >index 74299af1d7f1..627e57a88db2 100644
-> > >--- a/drivers/remoteproc/imx_rproc.c
-> > >+++ b/drivers/remoteproc/imx_rproc.c
-> > >@@ -1029,8 +1029,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
-> > > 	struct device *dev = priv->dev;
-> > > 	int ret;
-> > > 
-> > >-	/* Remote core is not under control of Linux */
-> > >-	if (dcfg->method == IMX_RPROC_NONE)
-> > >+	/* Remote core is not under control of Linux or it is managed by SCU API */
-> > >+	if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
-> > > 		return 0;
-> > > 
-> > > 	priv->clk = devm_clk_get(dev, NULL);
-> > >-- 
-> > >2.39.5
-> > >
-> 
-> Cheers,
-> Hiago.
+Changes in v2:
+  - Add comment on why version check is needed before calling EEMI call
+    to fw.
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 34 ++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 5aeedeaf3c41..1af89782e116 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -380,6 +380,18 @@ static int zynqmp_r5_rproc_start(struct rproc *rproc)
+ 	dev_dbg(r5_core->dev, "RPU boot addr 0x%llx from %s.", rproc->bootaddr,
+ 		bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
+ 
++	/* Request node before starting RPU core if new version of API is supported */
++	if (zynqmp_pm_feature(PM_REQUEST_NODE) > 1) {
++		ret = zynqmp_pm_request_node(r5_core->pm_domain_id,
++					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
++					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
++		if (ret < 0) {
++			dev_err(r5_core->dev, "failed to request 0x%x",
++				r5_core->pm_domain_id);
++			return ret;
++		}
++	}
++
+ 	ret = zynqmp_pm_request_wake(r5_core->pm_domain_id, 1,
+ 				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
+ 	if (ret)
+@@ -401,10 +413,30 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+ 	struct zynqmp_r5_core *r5_core = rproc->priv;
+ 	int ret;
+ 
++	/* Use release node API to stop core if new version of API is supported */
++	if (zynqmp_pm_feature(PM_RELEASE_NODE) > 1) {
++		ret = zynqmp_pm_release_node(r5_core->pm_domain_id);
++		if (ret)
++			dev_err(r5_core->dev, "failed to stop remoteproc RPU %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * Check expected version of EEMI call before calling it. This avoids
++	 * any error or warning prints from firmware as it is expected that fw
++	 * doesn't support it.
++	 */
++	if (zynqmp_pm_feature(PM_FORCE_POWERDOWN) != 1) {
++		dev_dbg(r5_core->dev, "EEMI interface %d ver 1 not supported\n",
++			PM_FORCE_POWERDOWN);
++		return -EOPNOTSUPP;
++	}
++
++	/* maintain force pwr down for backward compatibility */
+ 	ret = zynqmp_pm_force_pwrdwn(r5_core->pm_domain_id,
+ 				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+ 	if (ret)
+-		dev_err(r5_core->dev, "failed to stop remoteproc RPU %d\n", ret);
++		dev_err(r5_core->dev, "core force power down failed\n");
+ 
+ 	return ret;
+ }
+
+base-commit: afc760ba751c289915fe10c12d836c31d23f6ddd
+-- 
+2.34.1
+
