@@ -1,229 +1,154 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C98420F081;
-	Wed,  7 May 2025 06:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4A748D;
+	Wed,  7 May 2025 10:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599099; cv=none; b=mU7GZqqapR9RIi0zkvAp4EyazSHgoeHt3vHa4dbOOymHYzSQeXUReTVrp2K1j5wB14iGV87x7yegvucxztePEz5tuQw0YrOp6KRSqs2GIps5OdN131OpShhZdI14RwrUVNScd8jUVCs2Ppr+Arl1oBswy3Fc+XtrjmIuBmJzRSg=
+	t=1746613618; cv=none; b=cUN7po5RBr+Q4DGCqg8tKzFDh8t97kgVeSOhfg0hgwvHJsKEfUNp2tvVPproJeGqQmMb0HUQ+tzit1S6RthRC6Q49/SEvAa8vyUAcS3y3LppoA/W/0UOnEV7U0/h5ETTLuwMt0mrnk9gfGWmLEpA2lSqUnZ35jW4HGZpRBimBrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599099; c=relaxed/simple;
-	bh=BFQAilsQfkkW5TKAYbuvAsi9ETojm1QM8aafoWYFGsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MM0WxJyiFy7yrqZLTuoTDOInAhgPDsTlMgrQR/sgfJA77zldSKcYDnqBMIlAd1B4EyZ22dXlnOTWbJwZ/y0/DzhWzdUpybJljf3SI63kCbLVrWeyLCBQj0zseHfACmkqTYkqXAMgxAk7NfeI46jlFa/W+fISq01UTmJjcNcv6/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EZ8QvTp6; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1746613618; c=relaxed/simple;
+	bh=hTf2JFbmwImuDMJsmrnZ6KPM6n8CTgRK0R+nYi85jUs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ldvo22PpSdT/Gk4Kr5PbS9R/PbVbputZz4VCl9EhqbJkqzMon/wIxcwLB2Mcusdm6G5aYF6app6rDrAn4v083CYJrwoDt92cNZgHt0CjQpmVx3OQA7Y6mi6yfKeXDgjz7egzSwEaeeTaegpOgP2olIcMATuXNhplLWRKU3Bny/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ftx4P80e; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EZ8QvTp6"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471GuGB018182;
-	Wed, 7 May 2025 06:24:51 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ftx4P80e"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5479wbIh002585;
+	Wed, 7 May 2025 10:26:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8R/GT/bOHvk4uAN3n3vAvKXvU2kOcAalS8QYNNaCx4E=; b=EZ8QvTp6Z++SqYfM
-	lInNhfcELV/jhqGA+2errvSmksyv3qPEv2v67FXkWDuKDOa28tbCTpLzUGABp6xE
-	96+e/dfWPaRmvdwVBJa8qN7tvY3HEfwZl7fvLpbPIjCrkfCniq1yrj4LvMFRlvon
-	gR5xbzOVO1YTPyXJelPEkzcoy7xF0tONwYWI3FDVpW8vGnffdx3eUhI4ovlCAtJV
-	6GBQyOsXaf49xk1IVlvnTyCt7MAXy+QaT5rNCRIPUG+9KpORFvUS6L+QvPk4CDEb
-	mNc1gawNBed9Wlu31x/fWhCcLSsV5yibrBSzxxTOYzkpMG2KpXpr/KGKKZYh4YgR
-	lHI1Tw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5tbcmrc-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=O5RXwrkPNB3nTDXkrCliLR
+	zUkuPHUxKfsm6kiIgTxZc=; b=ftx4P80e7xciE0g+DBH6y5YVCG/nrjbgtmJJhd
+	DnbRF0ba2gmg+gCeFqo0BI9VZFElGWSvnOKP9ifK5/Wi0Y4uMizUyVAaBbwOtbFG
+	FBg+pzFpKJ1mRiljb12RlXeqb+K5ACVqMorudAyIJV0XLBUJHsHQbsVdYBhy3lwl
+	zOkU6/yYnYBpuzj/gwSLMvcJ0OR6k5tyvvfQbSU4vVY+vJr/tFKevhs6L/nmwwx9
+	/2ySKoRXQonC/dwXzvV9+/1xNKM4OnKui/eKQgxxQxYfEScfCnS3niMbqDEl10Ht
+	U0jiqj3IQTKWkL1MsyqDe50hYgBKeefKNEpHuBASxd+P17gg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fsmt1vw3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 06:24:51 +0000 (GMT)
+	Wed, 07 May 2025 10:26:53 +0000 (GMT)
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5476OorZ018055
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 547AQqDv024069
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 06:24:50 GMT
-Received: from [10.239.132.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 23:24:43 -0700
-Message-ID: <58ea4571-da8e-4c95-9f3b-2fb620b93955@quicinc.com>
-Date: Wed, 7 May 2025 14:24:41 +0800
+	Wed, 7 May 2025 10:26:52 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 7 May 2025 03:26:45 -0700
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH v2 0/6] arm64: dts: qcom: qcs615: enable remoteprocs - ADSP
+ and CDSP
+Date: Wed, 7 May 2025 18:26:10 +0800
+Message-ID: <20250507-add_qcs615_remoteproc_support-v2-0-52ac6cb43a39@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] arm64: dts: qcom: qcs615: Add mproc node for SEMP2P
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEM1G2gC/4XNSw6CMBSF4a2Qjq3pC6GM3IchhLS3cgfQ0gLRE
+ PZuxQU4/M/gOztJEBESaYqdRNgwoZ9yiEtBzNBPT6BocxPBRMlKVtHe2m426cbLLsLoFwjRmy6
+ tIfi4UFMLK5nTSkpLshEiOHyd/qPNPWBafHyfdxv/rj9ZCflH3jhltNfKQV1p7bi6zysanMzV+
+ JG0x3F8AEHTFRbMAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
 CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Kyle Deng <quic_chunkaid@quicinc.com>
-References: <20250423-add_qcs615_remoteproc_support-v1-0-a94fe8799f14@quicinc.com>
- <20250423-add_qcs615_remoteproc_support-v1-3-a94fe8799f14@quicinc.com>
- <c8e36d23-3325-4ad8-91da-94f9f31c3c15@oss.qualcomm.com>
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-In-Reply-To: <c8e36d23-3325-4ad8-91da-94f9f31c3c15@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+        <linux-kernel@vger.kernel.org>, Lijuan Gao <quic_lijuang@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kyle Deng
+	<quic_chunkaid@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746613604; l=1916;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=hTf2JFbmwImuDMJsmrnZ6KPM6n8CTgRK0R+nYi85jUs=;
+ b=jXm531vnKgoiXCj3/fhpq6Ja40GQjwH9fr1MffMergNzsNszXTraiLSDIcy4jR00uvJ9yiZgS
+ iZMDoGhcptQBhK7kAmFsMut7wKusfqpegfbkavqFPzz1leAru5eF9wM
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -VwfRwuHfcXCVGyyfmNbWVQmbt8L5q-m
-X-Proofpoint-GUID: -VwfRwuHfcXCVGyyfmNbWVQmbt8L5q-m
-X-Authority-Analysis: v=2.4 cv=doXbC0g4 c=1 sm=1 tr=0 ts=681afcb3 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=U9KSDfru c=1 sm=1 tr=0 ts=681b356d cx=c_pps
  a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=rdDY_BgHlA3xo_wucG0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=QfQTvixX5dd1oHoNGvgA:9 a=QEXdDO2ut3YA:10
  a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA1OCBTYWx0ZWRfX2IhwYQmajtU5
- tov5KmrXXU/4dMHudxKUwmjkDLjAfHonC2OcuRRwEMNczB77kLajckel1Dg42aQakCx5aP0Uerd
- h+TBCMSBvX3Tmg20dYpXxctBZEoGH1wY8voTyeaOvVXlULszYfpXKalLAAW3pYwNWS+fCBgJfMu
- 0rzqPooI8/V3Ia7pPuWD4vnACEa5/UzRRNwp/SqCdcoRhk4ILr6M7aI+YSShJzzxa5j/YpI0mq5
- oDONz39jaNeBZD1EYqGClRyxwENG4t6NTKLg0a7ciozGjXM1U7Wofe63wIezqQsDdo5FrIwAxeN
- ZqVvFwXDdr2epkYhtLy2fvLF7DVV2dkUsplNRt+YjCTivKrcREjWrNnMQI9aQKum0MGI7PZZZwX
- PbgaKT9GhyxMQrFhx4yAi14gnLC2qX2lx/dmuVAOxzqbfr8rE/o0mWrTj/jhJa0xAq5L4BOG
+X-Proofpoint-GUID: TqZ6Y8a9RejXGxvMt2wXt6OW8AmwBMbW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA5NyBTYWx0ZWRfX79WrfpSp/X0g
+ tP9Az9HepTdRrxTEboI7nFlt9V1+18Pfgh8ZfVsvD6KBhU90jrh7Om7w9aWkpzQpSxpK9lkqVzn
+ zv9IMdePDml1jXWaSyNI4vszU5rNgTO5iUQAi4eMqy7m+2iTrBppzomBbaRNuSRVh0pBm1oOwfa
+ i4zRcP5pWb90kA8UlM6ju3R29S3UuEwV2qYxuvXAp3W0DCdh3PyM8bOgDvoWr3mNO5MfHSJnNac
+ 7WiHjiePJBNyVnYOuToW6L6MqKBRebHd7i6O1WopS9FN9UxQHAaHUizc8dkSq2W0GvE/n9iF7vk
+ 8w+hmAzIyY2iUyEw/PFqGtnnGp56uPc1shhmi2OmegUrquLsMifnlF+TljNlj77Jg7W0i0wEbwm
+ loTAB3nvooB6fTUvyboaXhVj8W/NPoDGnlk4l0+AS+8x6Ggpfbab3o55lP9F2sq9RvrgE1BC
+X-Proofpoint-ORIG-GUID: TqZ6Y8a9RejXGxvMt2wXt6OW8AmwBMbW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
+ definitions=2025-05-07_03,2025-05-06_01,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- mlxlogscore=862 impostorscore=0 clxscore=1015 mlxscore=0 priorityscore=1501
- spamscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070058
+ mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=812 phishscore=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2504070000 definitions=main-2505070097
 
+Enable the remote processor PAS loader for QCS615 ADSP and CDSP
+processors. This allows different platforms/architectures to control
+(power on, load firmware, power off) those remote processors while
+abstracting the hardware differences. Additionally, and add a PIL region
+in IMEM so that post mortem debug tools can collect ramdumps.
 
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+Changes in v2:
+- Remove the qcom prefix from smp2p node name.
+- Remove the unnecessary property qcom,ipc from smp2p node.
+- Remove the unused node apcs: syscon.
+- Remove the unused nodes from smp2p node, such as
+  sleepstate_smp2p_out/in, smp2p_rdbg2_out/in, smp2p_rdbg5_out/in.
+- Update the commit message for IMEM PIL info region.
+- Update the remoteproc node names.
+- Correct the size of register for remoteproc nodes.
+- Add empty line before status properties.
+- Link to v1: https://lore.kernel.org/r/20250423-add_qcs615_remoteproc_support-v1-0-a94fe8799f14@quicinc.com
 
-在 4/23/2025 5:29 PM, Konrad Dybcio 写道:
-> On 4/23/25 11:17 AM, Lijuan Gao wrote:
->> From: Kyle Deng <quic_chunkaid@quicinc.com>
->>
->> The Shared Memory Point to Point (SMP2P) protocol facilitates
->> communication of a single 32-bit value between two processors.
->> Add these two nodes for remoteproc enablement on QCS615 SoC.
->>
->> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
->> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 79 ++++++++++++++++++++++++++++++++++++
->>   1 file changed, 79 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index edfb796d8dd3..ab3c6ba5842b 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -332,6 +332,80 @@ mc_virt: interconnect-2 {
->>   		qcom,bcm-voters = <&apps_bcm_voter>;
->>   	};
->>   
->> +	qcom,smp2p-adsp {
-> 
-> Remove the qcom prefix
+---
+Kyle Deng (1):
+      arm64: dts: qcom: qcs615: Add mproc node for SEMP2P
 
-Understood, it will be updated in the next patch.
-> 
->> +		compatible = "qcom,smp2p";
->> +		qcom,smem = <443>, <429>;
->> +		interrupts = <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>;
->> +		mboxes = <&apss_shared 26>;
->> +		qcom,ipc = <&apcs 0 26>;
->> +		qcom,local-pid = <0>;
->> +		qcom,remote-pid = <2>;
->> +
->> +		adsp_smp2p_out: master-kernel {
->> +			qcom,entry-name = "master-kernel";
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		adsp_smp2p_in: slave-kernel {
->> +			qcom,entry-name = "slave-kernel";
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +
->> +		sleepstate_smp2p_out: sleepstate-out {
->> +			qcom,entry-name = "sleepstate";
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		sleepstate_smp2p_in: qcom,sleepstate-in {
->> +			qcom,entry-name = "sleepstate_see";
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +		smp2p_rdbg2_out: qcom,smp2p-rdbg2-out {
->> +			qcom,entry-name = "rdbg";
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		smp2p_rdbg2_in: qcom,smp2p-rdbg2-in {
->> +			qcom,entry-name = "rdbg";
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->> +	qcom,smp2p-cdsp {
->> +		compatible = "qcom,smp2p";
->> +		qcom,smem = <94>, <432>;
->> +		interrupts = <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>;
->> +		mboxes = <&apss_shared 6>;
->> +		qcom,ipc = <&apcs 0 6>;
->> +		qcom,local-pid = <0>;
->> +		qcom,remote-pid = <5>;
->> +
->> +		cdsp_smp2p_out: master-kernel {
->> +			qcom,entry-name = "master-kernel";
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		cdsp_smp2p_in: slave-kernel {
->> +			qcom,entry-name = "slave-kernel";
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +
->> +		smp2p_rdbg5_out: qcom,smp2p-rdbg5-out {
->> +			qcom,entry-name = "rdbg";
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		smp2p_rdbg5_in: qcom,smp2p-rdbg5-in {
->> +			qcom,entry-name = "rdbg";
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->>   	qup_opp_table: opp-table-qup {
->>   		compatible = "operating-points-v2";
->>   		opp-shared;
->> @@ -3337,6 +3411,11 @@ apss_shared: mailbox@17c00000 {
->>   			#mbox-cells = <1>;
->>   		};
->>   
->> +		apcs: syscon@17c0000c {
->> +			compatible = "syscon";
-> 
-> There is already a description for this block above what you added
-> 
-> qcom,ipc under smp2p is mutually exclusive with `mboxes`, so adding
-> the above isn't necessary at all
-> 
-> Konrad
+Lijuan Gao (5):
+      dt-bindings: remoteproc: qcom,sm8150-pas: Document QCS615 remoteproc
+      dt-bindings: soc: qcom: add qcom,qcs615-imem compatible
+      arm64: dts: qcom: qcs615: Add IMEM and PIL info region
+      arm64: dts: qcom: qcs615: add ADSP and CDSP nodes
+      arm64: dts: qcom: qcs615-ride: enable remoteprocs
 
-Understood, I will remove the qcom,ipc in next patch.
+ .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  59 +++++----
+ .../devicetree/bindings/sram/qcom,imem.yaml        |   1 +
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  12 ++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 143 +++++++++++++++++++++
+ 4 files changed, 191 insertions(+), 24 deletions(-)
+---
+base-commit: 08710e696081d58163c8078e0e096be6d35c5fad
+change-id: 20250507-add_qcs615_remoteproc_support-c82d30f9433d
 
+Best regards,
 -- 
-Thx and BRs
-Lijuan Gao
+Lijuan Gao <quic_lijuang@quicinc.com>
 
