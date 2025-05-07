@@ -1,62 +1,62 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCE61D0F5A
-	for <linux-remoteproc@vger.kernel.org>; Wed,  7 May 2025 16:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB146289835
+	for <linux-remoteproc@vger.kernel.org>; Wed,  7 May 2025 16:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746636494; cv=none; b=on06PF57esaPhXwispMUSwCXXGhk99VsBFC1guhPBEwWHRUIwzjA2ybnPEEkvG//0N26sr1AImHRtW51/PWylGkuD5lc2nSe9Pjq2AduJ6BPrnU8HWcb4UPw+uNq9XDw2i+8wAe+0z3G5gexIhBeUVghWSG0oJh5DRD3PvXqbY0=
+	t=1746637062; cv=none; b=Qqps3ovPYiaxhwWisrW6idAGhe0pbzbtSi35uBW+E3Ialv/gXH5N395JXnVkrEyjWQA4NK7eM3150+Zoqs6u0Zh36P0fmOXhsH64V6Q8h1k5vHp1JZjKsg+MkypfMVQaB9FHIaJQWSjWHHB74XpReCpPXxs5rv3Y2sGqV+cYARY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746636494; c=relaxed/simple;
-	bh=rX9q4ian0XE+ioGL16FjAoU3QFvpU8OSWmFdhiz02sk=;
+	s=arc-20240116; t=1746637062; c=relaxed/simple;
+	bh=czj8zK3iUyV8d5pg2hXGm9XDWCOqd+CVj2BjA34Jx3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=emXaXL6KovXyyJtoMQhZlo+Op9JCr4Xmq7indqMJhTVq3p4nKoa0RHLsKlZP1yIfiDckMXZ114mMrUHtrr6KLgLmvkLWNgN5ap89x+yTfLqkaZVpVyX8kinA08CfCtYSx96b8V/tlUbFMdStiBdb7aDgpS4i8GpDgLJrBURl1/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rm/sBZ5M; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiFxdvYYVyFW5E4f5ey56jOpPZCbYRbwH2fB7iSUHLr9vSWMyVODx6XgJMLemkxvxap27GUx2I4cCDa8gHMtbf8Sr080IhSXGj0WYK0nZBzMak8XBKfY7XXrxjDxUmOj1jFPm00h1340pINe6xxVghTrTqUUQnCU+A6Lsu1ELy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YrLTtI1r; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rm/sBZ5M"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22e15aea506so1228285ad.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 May 2025 09:48:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YrLTtI1r"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30820167b47so162045a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 May 2025 09:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746636491; x=1747241291; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746637059; x=1747241859; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOpt6MepWln1adR2L4V7CRN+810t/NisidQaKnnEXiE=;
-        b=Rm/sBZ5MsNTixNjWvHLAGe4jcurEraugAvHFNvtdrhowjUj1GrABthfQayUsP8qr75
-         kZv/fZtkAJD6TSW11oLCU+KbfIbvkICDUkl+iJg6ezYlet7PD0M4vnIsTFm0tG5xCNGI
-         GYnw+rh7Zt0wJGdiii/H9eoRhkqc6AikRM18FsgQAoJZ6pM9NzGvpVKTeBpQxaV2keKl
-         QYbaivbtR1HptSCHhsFqc61zSl1cZxVCsyOM55HeNJFUMUR/wKuQ9E2v4NxlHKSqzqae
-         ZnmqGIvR9V2qQu51bpbJhD9qwBBvK43gVKnCE7jpKEYFjA1g9Z6Ce9GO9ZZoNtAK8Rrv
-         lQHA==
+        bh=tmbroDZ+juh6uiII9hBcIBA74Uu8yPFGlkERS+BA/nE=;
+        b=YrLTtI1rZmUin/OiTk4Gsv8iYM3Up2sVQ10G0y80gnqpryX94AMnpW0/CZb0ecLVnv
+         88Cs9Fh0y5UCfMu2w13JpczDOrID9DweD1ypPWoPphXK8Zywv6T4uKc36tDyEwXihHaA
+         e8y64fKV09Bc4P93jc33KVfRvaykL1YZqhvfRCNkXFd+aO7LC2VlY5W+y2mTf411Q5jx
+         c8/iQuWGIVPv3JSevz08sKOt7XVdiTGWRHrGFG4+LIIckXIm0B2GYHrq4ljS5pr0LJcD
+         h5ZJsZlVwTj9bH9ZpNjwu2iOO0IAgmW9PX6YfpYDMm4v3N1vtiJyYzM3Ab5wSQBmtSaD
+         VQeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746636491; x=1747241291;
+        d=1e100.net; s=20230601; t=1746637059; x=1747241859;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uOpt6MepWln1adR2L4V7CRN+810t/NisidQaKnnEXiE=;
-        b=puHGmDhQF2cSs9+ctlzPQo6u3NCaPzZRvZlOVWchQbmsP3mBUga34m4x+FWniJUIVg
-         jjPvOBdvEG0rVZsqhW/U7S0IYJ1jauwx2DW2FEVvLc7Gu+8B+yL53TR1Fpn+aPHCLVag
-         PSiYK2jNVGPI4yhKgiG/FJnrzHdNqXHf4ERnuAVW+iyi5/gUSxxf4UHysqV3070akk6L
-         a4JPParrt4uojGTpZnle/R2OhkWMtwz4fuB5t1sYSc125v+dkUOA5kHXDpcvHQyG1gEO
-         HlNzmo5b6ilRVq7YAMyglxn06FcueiBX6nqzRUSgZWo6g69HUt4sitmx3BuQXaLgg1LR
-         g4Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlpqVAIXE5RnyDKIiSRHUnBKDAaDPXLwqGKDSi7tdzWvunCZmWrlM/m4BWIe0wa1I/k/S3hoMvq9Ui9LKv6cuv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGh9ODT3CGF2goDD6UNZuY48kIX1ri3rEMFrWtRiSPlAjSiKjK
-	YI4K3OP3jL5g2agvW/suAW2NIEXmOPVWC30QM8Z6P8yZBFFvK6orMOYA0HIA6QI=
-X-Gm-Gg: ASbGncvsqqabDpqgl7Mj4sTmu/CkbHx5DFM5BxvoSIBZoTXMzXVIHiNksANm+E7UiO1
-	8bjV8SLgPenAgiClrQszUXVZSpsGnWAlJhT4A66IefG4lgB/k+GdplIzT3uPz4tkiLKluYth3K7
-	AQ/ght0dBg+XhyVf4eMi/AWYXz855iFwkjLylzVFEWwqlGhtYNNuMVB27uU6Q5Vpdt64vlrQ0c4
-	8WWQvQpGyfh2/p2D0VbsgZ8GJIf92HkziRrERLtUD4lgalUZkBwsVspRWdhgPKbcIiioXVDCL26
-	lwz82df+lO67mPe+TtWUo6XdDqDifWL+tFc6yMr6pFwC
-X-Google-Smtp-Source: AGHT+IEFeTXf80XDm0jrk6cN4RIo7G3+/lsPL8HQXJq7aLj2VqmrdEAlWFcJTPahi2aFpIJHqE7SIA==
-X-Received: by 2002:a17:903:41c2:b0:22e:4cab:f786 with SMTP id d9443c01a7336-22e863d50b9mr226295ad.18.1746636491411;
-        Wed, 07 May 2025 09:48:11 -0700 (PDT)
+        bh=tmbroDZ+juh6uiII9hBcIBA74Uu8yPFGlkERS+BA/nE=;
+        b=m0RptsHBGnhcI2WwWgSCZ2qbAZFbRTsm4a78S5hVFEcuEoP19fg5Ib5zfUi1h6vaPj
+         Gkc7wlyQTHno+m2P4Hw9u4eMKM/WF2iQBIqkMSVdT+o9+7+ikr39Zcq4f5wyxpZsSjFK
+         xPOA4TPWLNL65Uxk03L/HELdmdhtsek51fDhT1EnoCTP6PY6pC4+uNusA/ryB5uBHF7g
+         s6D95339HjCmVKx06YgRD+5cf29mNhHcXcMgeULfNyZfFeswkW/iCmkPVZyf3/cTSqza
+         WjOEYMPNbUFfuDTGUa0lGwl4nYQXIJvSNPr8P+zHhXxBq/UuplT62Pq/obrwAZGZokun
+         1eRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzEa3K+hWnXdnpAruk82QSd33YKf6dSzAcfCH7pzTxDtnhyHkD94GfDAxOKI1Upm6T2T0rhJ8ylwVfrf+eEPhf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaRwSjuj/a/4CW8vvHGGN3lr0gER4ZhXUXO5+jzXb0spNZt02R
+	zo0HoJblGT0le+jZ8XHix5bH4rROOxsfbmB0dkZXObENusOPrQTP31OvkwnXYik=
+X-Gm-Gg: ASbGncteLhd0YOhXPcdByQVtLYEoZSZLwh8PVX0eO+V2UBibbpMZQgm+y5//wK3wlVY
+	1cPb3cHKxaYsQ1rnORe+N5QXpm0ZQIndGEESsAiuncTilExLVM3wTYVEPiH/sqPq5v888sIjNBH
+	Wdgs5xQZMJpe9aAzqFtKH4REQDUiKOhZ5kt8ZYbLZgYH8gbvo1EMLoh572Evy4mxToRyo74tfAj
+	eriHi6ip7k9VZGQ2kanehuXDcRPkoeEOmge7J0M/tv+YCcXSu7Wn0M8wm81h+jfImk11Lhcl+TP
+	a5Nlp8OzHqQ8DxbAVCjFwv5E6mtMVdWqk+xaWuqfA+Zf
+X-Google-Smtp-Source: AGHT+IGxXUaGxfyyE3GygRPHDO80N6o85rgikZ9Ncx5TB24ADQ0xq3YG8V+CK95O1+HnuuoJgKZlZg==
+X-Received: by 2002:a17:90b:2b4d:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-30adbf1163emr326433a91.7.1746637058949;
+        Wed, 07 May 2025 09:57:38 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d6b9:fb9b:e26b:ab43])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e73111537sm11198565ad.10.2025.05.07.09.48.09
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4b40e4asm445248a91.13.2025.05.07.09.57.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 09:48:10 -0700 (PDT)
-Date: Wed, 7 May 2025 10:48:08 -0600
+        Wed, 07 May 2025 09:57:38 -0700 (PDT)
+Date: Wed, 7 May 2025 10:57:36 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Beleswar Padhi <b-padhi@ti.com>
 Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
@@ -65,7 +65,7 @@ Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v11 10/35] remoteproc: k3-m4: Use k3_rproc_mem_data
  structure for memory info
-Message-ID: <aBuOyKWV-EsFXU3N@p14s>
+Message-ID: <aBuRAOlEvvAuBgOy@p14s>
 References: <20250425104135.830255-1-b-padhi@ti.com>
  <20250425104135.830255-11-b-padhi@ti.com>
 Precedence: bulk
@@ -178,9 +178,6 @@ On Fri, Apr 25, 2025 at 04:11:10PM +0530, Beleswar Padhi wrote:
 >  
 > -	num_mems = ARRAY_SIZE(mem_names);
 > +	num_mems = kproc->data->num_mems;
-
-Same a previous comment.
-
 >  	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
 >  				  sizeof(*kproc->mem), GFP_KERNEL);
 >  	if (!kproc->mem)
@@ -229,6 +226,9 @@ Same a previous comment.
 >  	struct device *dev = &pdev->dev;
 >  	struct k3_m4_rproc *kproc;
 > +	const struct k3_m4_dev_data *data;
+
+Please move to the top of the variable declarations, i.e before struct device.
+
 >  	struct rproc *rproc;
 >  	const char *fw_name;
 >  	bool r_state = false;
