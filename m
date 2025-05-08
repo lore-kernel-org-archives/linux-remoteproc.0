@@ -1,80 +1,62 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F671E1E1D;
-	Thu,  8 May 2025 20:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72CB15624D;
+	Thu,  8 May 2025 23:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746736116; cv=none; b=pLBBJ76oZ2yIwjAPIn8H4L3+a2OfTCZ52n0lOH2g+76wbhXRi3XDdvheKvJRPraScRgKPpv/iOUe6Sa9cRo1RPJ6Kmb+h3PL9NrMmiGs7FKGNOgdI4Lvd4NrmCXVCry9flWOq7dGHFpPCbzxTSkzT7GOOeW9CAlgfO24NrLREkc=
+	t=1746746581; cv=none; b=fRh97fYnfCLSoS30ouMNPmtesXbY5fo56eBq/Pbkp1cXA2pMZProRSpqyA3RQr3/sR2wt2ydlOLtk4PfclKutJSEoH8NwILBLiTmmixg0RqBduA4BF0hEufxdGkgPA9s9riJfXVIp8rTeFoRqsU5Zk4jvxMPh2f8NHetmnqi43w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746736116; c=relaxed/simple;
-	bh=glI2QyA2V4kwUucOfsrEIYTyDYNwfxLg42DzzZgissg=;
+	s=arc-20240116; t=1746746581; c=relaxed/simple;
+	bh=FONvhT1jAfHPxkn8m504XAWgTKv+f5ZT1tzDmrZh2U8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUU8sQ9JWgU10vEHUrjSKhNjUFLejzrsZQ//Qz5cBLiWqRg2jN9RMTfF78DdgcpaOlJINRiNqAlJQPAq2YJuskyhgFhKBViSuGnDzvloTjoHfvgum2A2N0mUkB+mCmXe7ENwtsagclbAdFUvzMaUGJ8jdIEqhasuZibGCzXSAIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d16MN9ga; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rdcu+089aiadNe1lX5y4UJXSBQvR0NCstv1jloUO56Mj9cJCxTvp6acC0yvoFah/Fp4fDhNl2jlY7MnqWcvgIARZ5rT+kQghQyGOPdcsdeNuaatjqJEOx5oIA4/qTxexRNCkRoEAb2sli+3dhjVUt1EZ6m8Kem3Pxspb4N27Ri0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5ogwJZa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d16MN9ga"
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-525b44ec88aso445024e0c.3;
-        Thu, 08 May 2025 13:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746736113; x=1747340913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/pc5D2wBbh6n4AHAVGKAJlI6vZAzUWJsMh1/Yq1dDS0=;
-        b=d16MN9gavssuSj3PnohD0slnV7NEBM1B81vgUy12FUnL0pyEmzz8csoO+SmKf/PLai
-         KM+sCS9pQij8rIf0a+oDq3xUcFgEw6cyCen8LAJ5sqQd+aowAdgJaS4jMRAmwkpX0vb8
-         HrLU7sXY5QhEYHQt7HhUcmHERbqhneO74wYVLOSyqsMoudPx9PLdHWhA0pM82xCe9OZ1
-         f/7jhUBMEn2G8ZHNYjZFgSY0KvklAftlWXlSfdG9Gm1kmqkIXEXhhKDhLSb3BCgB1ykq
-         r9ygBXAhHV8Q960mZmn1abbw+5XneEPqbBw9QCNDvnsjiTQ6/YYaC/0eVciCW0lG+/sP
-         fukg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746736113; x=1747340913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pc5D2wBbh6n4AHAVGKAJlI6vZAzUWJsMh1/Yq1dDS0=;
-        b=OBPuMgS84CFXXrQ04c4IgmPdWB327ZaT2p81wnDz/ucHsI7s+zv4whfRjpXwafnbeH
-         G8MohrSq5EjpJdvVv78T3+aDaefRQqU9IlfAMBWlZhqtcvvTy5DoaoArrCCWLQt12AIm
-         qA4mwvA5g+fferUAJt8gEi06+gI3OWdBHFM2HGig9zjSKyNOGXuJu67npucPa9j4olTb
-         PjYc5+BL35iTcf1/KNHVsdYoO3XJxn/ITGsL2s5jFJ0GzK4jJv38P7qCAFK754K84QNS
-         67y2Qz/W2oHHAqWyGwy9JaWBao9ujcvVd1Y0BNdy8vQreMHYjc5Z53/MfTJlfwy5pcGU
-         n+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeezngOw/nG9ZUOKL1+BvhVXUqxORZoCHeC0vYqSVsawSuLkNTwnBvU9E4ST8uQcmING2nYiMYBcQ=@vger.kernel.org, AJvYcCWgaEIIoW1Bp5CA8n8aQjUCga7BIww/c1ujalR4D+r+wBMR6LV9RqOHWEDwdHOBo/SmF7C7v7MgPZjXl3o=@vger.kernel.org, AJvYcCXiSoM/0PETq9KGEcXPNzOMVzjr7SGNc4aSZ2rwsS8s+S4/1rubvQq1qupgovbqlet9Sj8/0xe4rgzMX0CBE+MnCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwISI3m+AaLz7BzRZSYBVj5PZF824VsE1IraZwfUOOh+bgN71er
-	k84q7ZrvtXtjwuOLaHWmqsQ0SBMye+IJCYSw2umhaJGOtuAm7evh
-X-Gm-Gg: ASbGncsGQwWoGYiaKZXLsUDx5IqetFaQVWgVcwiqRTRjsYiWZ4o17p5oiZT3FiFIXU+
-	HEg1TvPt6o55KiRvHJYjn1ZBox4X125yfKhliiBBQNiP7vn9w3GJtvBINHK2O0TSi/a8B7qA1vm
-	2nfOVBd/zMj23LXdDOHc3G57yAWFPx21b4ex8YS24lnrBNiXZJKz2VkMlDSTRsupKa0Y12g36aO
-	FzD3S301MmwVERzGgjUKFeKShJmyUYAyaUxswQa2FgYXFHrNcWlwK1m5EdwqjB+p/camo8EAlA7
-	Hv9a6BpjMfHS9wCU9P90XiQm4T3Jz73sVNve8UAe
-X-Google-Smtp-Source: AGHT+IHH8Hb44S2pUrzpBoAuMzG/VFUuedek3qnL1aKjilRrz2XuP3PUIZdV2EDPHQ1l0mwZVNw7hQ==
-X-Received: by 2002:a05:6122:828d:b0:523:9ee7:7f8e with SMTP id 71dfb90a1353d-52c53c68f4amr1351138e0c.4.1746736113471;
-        Thu, 08 May 2025 13:28:33 -0700 (PDT)
-Received: from hiago-nb ([2804:1b3:a7c0:6030:ff91:5999:3ab5:5caf])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52c5375bcdcsm217781e0c.25.2025.05.08.13.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 13:28:32 -0700 (PDT)
-Date: Thu, 8 May 2025 17:28:26 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com, Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
- remote core attachment
-Message-ID: <20250508202826.33bke6atcvqdkfa4@hiago-nb>
-References: <20250507160056.11876-1-hiagofranco@gmail.com>
- <20250507160056.11876-4-hiagofranco@gmail.com>
- <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5ogwJZa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746746580; x=1778282580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FONvhT1jAfHPxkn8m504XAWgTKv+f5ZT1tzDmrZh2U8=;
+  b=F5ogwJZaVnCIrooAJRVQxAJX6Jn+z9uJwYPbGrAS6iotr0tUz3XMtlOu
+   UVzuASYcN0IsnzHa1t4+6b61KYRnp5HqOht8oOGmRP0UtvbDUXGKS+ZWZ
+   +GgAEAZA8yQlVWq/xn7OZyK9RKGBNAEn0X2BnOn5XQR3nRS/6vsZbjvBz
+   aYj5B7KRiqCxicc/fwAuuXoQOJpuwLndi4+7lOodoUjIZyu3bXqePdq9G
+   s72Y8Rln6w7entXMA9RVgdXfP2VyA5oCDJaBi6m4i09T+7yvlABmsTUZ3
+   19am0bnSbcImsmnSY4VwVTWe0c6SlHX1K+7MjfoWujMdQT5+v9obLsz/G
+   Q==;
+X-CSE-ConnectionGUID: m/yYdsspSi+4/rzDr0XguQ==
+X-CSE-MsgGUID: bA/i5H51Q1+5Hvh0D+ON1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="36184682"
+X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
+   d="scan'208";a="36184682"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 16:22:59 -0700
+X-CSE-ConnectionGUID: CmASKxS3Rz6bGPgRz2dXFQ==
+X-CSE-MsgGUID: +dg5XxO/SNubZMX0JB+v4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
+   d="scan'208";a="136400983"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 08 May 2025 16:22:57 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDAZr-000BSh-0B;
+	Thu, 08 May 2025 23:22:55 +0000
+Date: Fri, 9 May 2025 07:21:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dawei.li@linux.dev,
+	set_pte_at@outlook.com
+Subject: Re: [PATCH 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Message-ID: <202505090716.iB4qQAf2-lkp@intel.com>
+References: <20250507141712.4276-4-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -83,88 +65,48 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+In-Reply-To: <20250507141712.4276-4-dawei.li@linux.dev>
 
-Hello,
+Hi Dawei,
 
-On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
-> On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
-> >
-> > From: Hiago De Franco <hiago.franco@toradex.com>
-> >
-> > When the remote core is started before Linux boots (e.g., by the
-> > bootloader), the driver currently is not able to attach because it only
-> > checks for cores running in different partitions. If the core was kicked
-> > by the bootloader, it is in the same partition as Linux and it is
-> > already up and running.
-> >
-> > This adds power mode verification through the SCU interface, enabling
-> > the driver to detect when the remote core is already running and
-> > properly attach to it.
-> >
-> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > Suggested-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
-> > suggested.
-> > ---
-> >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > index 627e57a88db2..9b6e9e41b7fc 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
-> >                                 return -EINVAL;
-> >
-> > +                       /*
-> > +                        * If remote core is already running (e.g. kicked by
-> > +                        * the bootloader), attach to it.
-> > +                        */
-> > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
-> > +                                                               priv->rsrc_id);
-> > +                       if (ret < 0)
-> > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
-> > +                                       priv->rsrc_id, ret);
-> > +
-> > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
-> > +                               priv->rproc->state = RPROC_DETACHED;
-> > +
-> >                         return imx_rproc_attach_pd(priv);
-> 
-> Why is it important to potentially set "priv->rproc->state =
-> RPROC_DETACHED" before calling imx_rproc_attach_pd()?
-> 
-> Would it be possible to do it the other way around? First calling
-> imx_rproc_attach_pd() then get the power-mode to know if
-> RPROC_DETACHED should be set or not?
-> 
-> The main reason why I ask, is because of how we handle the single PM
-> domain case. In that case, the PM domain has already been attached
-> (and powered-on) before we reach this point.
+kernel test robot noticed the following build warnings:
 
-I am not sure if I understood correcly, let me know if I missed
-something. From my understanding in this case it does not matter, since
-the RPROC_DETACHED will only be a flag to trigger the attach callback
-from rproc_validate(), when rproc_add() is called inside
-remoteproc_core.c.
+[auto build test WARNING on 92a09c47464d040866cf2b4cd052bc60555185fb]
 
-With that we can correcly attach to the remote core running, which was
-not possible before, where the function returns at "return
-imx_rproc_attach_pd(priv);" with the RPROC_OFFLINE state to
-rproc_validate().
+url:    https://github.com/intel-lab-lkp/linux/commits/Dawei-Li/rpmsg-char-Reuse-eptdev-logic-for-anon-device/20250507-223209
+base:   92a09c47464d040866cf2b4cd052bc60555185fb
+patch link:    https://lore.kernel.org/r/20250507141712.4276-4-dawei.li%40linux.dev
+patch subject: [PATCH 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+config: i386-randconfig-011-20250508 (https://download.01.org/0day-ci/archive/20250509/202505090716.iB4qQAf2-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505090716.iB4qQAf2-lkp@intel.com/reproduce)
 
-> 
-> >                 }
-> >
-> > --
-> > 2.39.5
-> >
-> 
-> Kind regards
-> Uffe
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505090716.iB4qQAf2-lkp@intel.com/
 
-Best Regards,
-Hiago.
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/rpmsg/rpmsg_ctrl.c:28:
+   drivers/rpmsg/rpmsg_char.h:54:1: error: expected identifier or '(' before '{' token
+      54 | {
+         | ^
+>> drivers/rpmsg/rpmsg_char.h:52:19: warning: 'rpmsg_eptdev_create' used but never defined
+      52 | static inline int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+         |                   ^~~~~~~~~~~~~~~~~~~
+
+
+vim +/rpmsg_eptdev_create +52 drivers/rpmsg/rpmsg_char.h
+
+69265bc12b6567 Arnaud Pouliquen 2022-01-24  51  
+73c9f094eaac8b Dawei Li         2025-05-07 @52  static inline int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+73c9f094eaac8b Dawei Li         2025-05-07  53  				      struct rpmsg_channel_info chinfo, int *pfd);
+73c9f094eaac8b Dawei Li         2025-05-07 @54  {
+73c9f094eaac8b Dawei Li         2025-05-07  55  	return -ENXIO;
+73c9f094eaac8b Dawei Li         2025-05-07  56  }
+73c9f094eaac8b Dawei Li         2025-05-07  57  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
