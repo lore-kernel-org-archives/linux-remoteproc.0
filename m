@@ -1,158 +1,190 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255A32741BE
-	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 08:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC9138FA3
+	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 10:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746780849; cv=none; b=N99O/q/qeQbbE6UVPmHWQ0sQNIPxhZeLj8WWtggocqSAPGpKj5wIMaKMQa4iB1KXfOaVsVUMbJ+yAyovZKgyVICr0/EBieHEAECyKa2Jwt7WcFcx4tLX9CEL4qK6Jb7bTI3f5X9PXGXOqLLdtFRtcQtMabf2Firyzlw0CID8dao=
+	t=1746787061; cv=none; b=aEmQ+Q05ZbDv9O+pZxt5kRqOxmAwCTN691viXslSGh5hUr0Sg9ocCRChtNdB0q31dgOerDy8AaDa87k6XnnIUaAZXeokD3zHAHY6Uu9SueAHeyBbPQXlotJJA+pO+ivN7C8q0Ew+yfY93Zkt7l8kyp4gbspkoOmsrkaPsa4qZKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746780849; c=relaxed/simple;
-	bh=OmNQjmyPp6Z636I5uUjUoUqHm3MUQ4+t+kb9qveiRHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJJ3rI0l1Y03xSPG9Qn12JiVtyVr8RO85LM3YvHSXmkXuq7hEhjmmpETqZQnQmi9q3hBUGP6yWtXJNdQsSDRAbxKnSU2tABy7K2czIDMD6n8Hhn9v2w6y76Aj/58tixQczDVJuf+Va5iyW1YHcyX08jimodCQbzqO0V3W93nUXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A2AJc1qN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1746787061; c=relaxed/simple;
+	bh=0fs5ylNaOzunUNujH/KRjBP5JnkjVQPfv0qiTCj0QOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nJkYDf2M5LEI0r/rSTMEj6BDLX+3hDY3Psn7GbVgJ4/X/j31Qd74mddR3kFRWvCZ76cKGxzasIiXSoB8nzElMo4hGrmFHlopqczABQJg0yxOoQhJV0leEFAmbpKdg3bBZgtp/ygsghu3oihjUYC1tRb6o7ma+LpIe31RmUq3h7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NeJruesJ; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A2AJc1qN"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5492cnb5009260
-	for <linux-remoteproc@vger.kernel.org>; Fri, 9 May 2025 08:54:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IV0D8yzLQVRBQnd1oWrr/dIt7LcIbiRjDinSoGOBI8E=; b=A2AJc1qNusIAE7xI
-	qjQA4HRPlAVjmd7TRXJw85IGyhazSu4EnETJcer+0zi3LKrWg2UuBo4JPyGDPJNy
-	BeIRFGsbOGiX6ibkldPHI+HoZvZkT//7QeBanFsNWBxMSIkEWBgRFCUlPcxjkEI4
-	DS2gsuWuFRGrgPBdtMvmA81XwdT7g7o6bkddJy9Y/ahDh5O+m+pKfzqxno2uH+Qk
-	mMkB8aUHsS6CO+pGq12mWJhFSBz2vDUR9MjPjg0/4YGtoO3u7vymrfAR0kcB/Qwe
-	Uyvb4wY7VNW5B+BwMF14Q+W6KjYL6OnvOPOkhT2p3S0hEWwuU9mO6YwfuDbpLdoo
-	Nl4H6A==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46gnp5c0r4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 09 May 2025 08:54:06 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f541067fa4so4352276d6.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 09 May 2025 01:54:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NeJruesJ"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so1981486276.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 May 2025 03:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746787058; x=1747391858; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8HWqsBnOgHqfOkli6JOl9XjSbPGwepeT1L+AmPmiow=;
+        b=NeJruesJzTdilt5Nz8IvRTwygeOse2yABoSUvpGFnFfEaAHtetn4ND+Xkt1dsg9/di
+         B8hbnQA3MF3/ct3GhH9e4V5ilXVcK5AI5VE8+9EjWJl1b3HYXgGL5RGOHZNlK7vE3DpX
+         IFsDxqaUt40D97Bby8KyovKCfBKirNKbOMb1NONyPHHbDaGbnwLGL1tK0waooqX0cq1A
+         GsGzCdBEHOsOrUTOSqh/a8eeWurKO3/k7cIFO/MNO2yn1rxNw6D3jXSr3ioLOwT5SQzx
+         x8HOOksWy6ySYg9SHm9mGg7kolo2q68AwT2QQyIb1O3lPNuW992pLnZ6N1C7yMfQcQXZ
+         cEkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746780846; x=1747385646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IV0D8yzLQVRBQnd1oWrr/dIt7LcIbiRjDinSoGOBI8E=;
-        b=Xl5V/cFmk0HVKaAN6hrMiRdyo+8H64Nh9BrU1oZeMLzCqu95M2RU6N0D6qZtk+UcJp
-         hWd131Oknh/nzN1mPE8nuVkqaSHgek+wshBo6EOJLmKkIO6nP7jW0mtJa/pn/2Qbo3FA
-         7KtVBM/CAYbYsborD9ajRkuvU/lnJ+/9LH5m2hrK8qM+HxLT15+ymIhbFLmFmNviQCQ/
-         pxxyZbS9EeDaa9nLCDewLg8rhINPTPgJiK//Mah6ElBjTlMLzW9tXmUW46k4U6JyqzJ6
-         J3oQRZ3ZqJd2/yYiHljFjU7Pjf90d9YLHItptd1q9LjHxF5fSCdP1hp/g5dkzb5aYVfo
-         gWEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeOoMXV5p/VWkW6+RhXHF91cfPR2Zu0SrtCq6mnNTCYpYtG8VDF93nwdCGq3BRz9EOX+x1woxGnD25ALG85ixL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFSlguFc0pdrWVcL/HF6b/zQzova8oWMIlg+TkoJaJwCdl3CD8
-	mKuQ1zEt+jMmU0CiG5vu2/isu1pPhg0Wiu4BrewLCa5ma/phPuDhtb8VAvuureI+7CofwajOCRY
-	lah+I3TshApX2nnZKWR6QkU7pG+9gqLnJNrnv0I9dQ+QZv8WIcIthVuK6TG7a50Hrearm
-X-Gm-Gg: ASbGncvAdS9jod47Et0eOl9YclYIkOBLwrjLhDVOV3WGOudoNtANMPjt2X2vVWEzJgY
-	k8Pb83JSoG7WdqQ+bdGgNXh9vUXlP2G9hDXIh63pDvybGoNrO/rZ8qhDl0T8K556mlxoOCtp0qF
-	Gt3CXJKvo9abl+foYoaxj79MsE/B9B8l3QY7uiU1GQa3gY+Oc+v90T/LM+SbeJtWgNC3AMnQ+Mb
-	BSWimLPsSg/xC/3T8f85mHO7RKwdxeY6rD1SSWvA9LvjtyggnM7N0fi3q5/AxW2/CtYWMUCUaDi
-	MgE2vD+sSn/rYUaw68e4vSAYkGhswfAkY1Ax1JXnDHmmeroQikweR/Tmz9TeKyVr5Pg=
-X-Received: by 2002:a05:620a:4245:b0:7c3:e399:3289 with SMTP id af79cd13be357-7cd010f666fmr137576185a.4.1746780845771;
-        Fri, 09 May 2025 01:54:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+J/MkT6NQsYDL7XSlUAYiFpI2bUxkR6fZJcPuGNLv0URPMJ0peP3i2w8xGWlPulpMsyQ3OA==
-X-Received: by 2002:a05:620a:4245:b0:7c3:e399:3289 with SMTP id af79cd13be357-7cd010f666fmr137574785a.4.1746780845419;
-        Fri, 09 May 2025 01:54:05 -0700 (PDT)
-Received: from [192.168.65.105] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad219348762sm120339466b.69.2025.05.09.01.54.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 01:54:04 -0700 (PDT)
-Message-ID: <f81b3f81-b14d-41c1-9968-2d473e1f0947@oss.qualcomm.com>
-Date: Fri, 9 May 2025 10:54:02 +0200
+        d=1e100.net; s=20230601; t=1746787058; x=1747391858;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v8HWqsBnOgHqfOkli6JOl9XjSbPGwepeT1L+AmPmiow=;
+        b=nKrQioah2x0U4rtHklul0lsCi275UyynM7KhMRTDJhE2/hRl9wQXsJIdyzWU3RC6Be
+         7L7/mRj7xJZMZZpXwcTqIHWkp90IyB/0cnE0MzcwMs/B44v86q17pXvYllRYBkk9hQLi
+         7Pk6Z16ylWe/RU1oMJl8KSMWJ8mGgSjt7QU0cjiSOWWXLRrimNoT1kThnoPQAdKNO1TK
+         arhLAbG+2bOj635GeGtr78cVBu+vjtlzp6IWVlK6TBjA2642+HZmbpzERJFPFFkYYBa7
+         6Ledpm2oF5xesqm8uzRL4ne0KgJoul90zWTaG/UVuf9zx/srVkbobr74oVRGgdNDbNV0
+         Hqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUS46kBhGPKYUijWzFGh/5zICj7VQEKUVQniZnZNCDykS0mOKm8jQ4gIsNvMNN2QN+QXn3GO14b9RRrqkj1Qy46@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnYrhhc5Ej2q75bELbVztNoL4xGHuQaf1bxURNiPYcqRb4zlBB
+	49fmyPQwc1XQ0/nGy7f6T2XqE+bHXqfxA6/CcHcOJqnaeseQCVLlQ7qYWo+bxgS5AXK9OhH4KXd
+	QORobT6NOTflwrd8a+D3+C5kbL2DQIdDo+5Tgzw==
+X-Gm-Gg: ASbGnctqfH6A039Orn/4SL+lSWLTLRKelowYQALR4pMqBKgF3Xk13ApGSuGU2u4vT0m
+	OqO1W0+ur9AUuxIfKRegFP8hAwqNxyGzvysdOQCsJTzVxFH8+SYMlxvYGa7/v4wSyufQqUUaOEC
+	8V+DrKBmuIBlMbDsx+eo6yX0Y=
+X-Google-Smtp-Source: AGHT+IHGUQjJVdBjTJmRKFe+lI4Dr7Yvcb3JZ9EYjARYtthQZOUUjBw0vFstcVpvdszrsUfiNCJi95xf6kgp4EbzMV4=
+X-Received: by 2002:a05:6902:161c:b0:e73:1b5a:940e with SMTP id
+ 3f1490d57ef6-e78fdc94c29mr3707287276.12.1746787057898; Fri, 09 May 2025
+ 03:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: qcs615: Add IMEM and PIL info
- region
-To: Lijuan Gao <quic_lijuang@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250507-add_qcs615_remoteproc_support-v2-0-52ac6cb43a39@quicinc.com>
- <20250507-add_qcs615_remoteproc_support-v2-4-52ac6cb43a39@quicinc.com>
- <64893588-544f-4cb0-8c0b-7eef588468d5@oss.qualcomm.com>
- <c0ab504c-2b27-45cd-be8f-1176230b8bfd@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <c0ab504c-2b27-45cd-be8f-1176230b8bfd@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Lu2Symdc c=1 sm=1 tr=0 ts=681dc2ae cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=0LysrvarD7n8M2PFuPIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: PmVLSwtxxcYBUGeVz4wix1hbxh4DmAop
-X-Proofpoint-ORIG-GUID: PmVLSwtxxcYBUGeVz4wix1hbxh4DmAop
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA4NSBTYWx0ZWRfX+6hnwnrVINFs
- YJ4qYfDKRAdwWcqViwWMGN8HD30YNKS++wwvhmg2bgdfLtNOEJihCG05/QZbPlZG7lVuBtXJSZq
- c2EIaGFrYbp4cP4v5aaMArbyq+Ilnw/tKM9G5/KqtGjMdyhGaahnNzA2/jcm2tx4ZmwuGRfbFWn
- 83yg0YKzyFehtmSJnJgI9dUOe75aRYmc07I0H87G38RsEuXj0HDWeN1J6IUxdxBsTydzmeT9/gd
- 6jktdUMVYskcuoBSqJFPllL7WVJsONyOsxHcaQVtQQgLOpOlsMl7VsXozDibNl1sP/ZFfJltNZ2
- 2EN11hLhN7MMEHgqYqX4oNEEdHMslKfm1f4ucibO1iA0L0QO+cJeU71/PNCTN5/j1zej5Ij1hq/
- 9zt7H4bDZiLOc2nlEabPQKWX+S9RkKgo+FUrZdRPf6tWELxFIvvRIacM6u7yWi0JiXwMgpKr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_03,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0 malwarescore=0
- spamscore=0 impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505090085
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com> <20250508202826.33bke6atcvqdkfa4@hiago-nb>
+In-Reply-To: <20250508202826.33bke6atcvqdkfa4@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 9 May 2025 12:37:02 +0200
+X-Gm-Features: ATxdqUFDC_Pl3jlEgS_HbLn5g6wqCpqO-dLCHrdHv6je6wX2F4IVnpafFiKhvog
+Message-ID: <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/9/25 9:37 AM, Lijuan Gao wrote:
-> 
-> 
-> 在 5/8/2025 10:41 PM, Konrad Dybcio 写道:
->> On 5/7/25 12:26 PM, Lijuan Gao wrote:
->>> Add a simple-mfd representing IMEM on QCS615 and define the PIL
->>> relocation info region as its child. The PIL region in IMEM is used to
->>> communicate load addresses of remoteproc to post mortem debug tools, so
->>> that these tools can collect ramdumps.
->>>
->>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> index 53661e3a852e..fefdb0fd66f7 100644
->>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> @@ -3266,6 +3266,20 @@ sram@c3f0000 {
->>>               reg = <0x0 0x0c3f0000 0x0 0x400>;
->>>           };
->>>   +        sram@146aa000 {
->>> +            compatible = "qcom,qcs615-imem", "syscon", "simple-mfd";
->>> +            reg = <0x0 0x146aa000 0x0 0x1000>;
->>
->> 0x14680000 0x2c000
-> 
-> I checked the latest datasheet, the Shared IMEM address is 0x146aa000 and its size is 0x1000, 0x14680000 is the start address of IMEM layout. The shared IMEM is used for debugging purposes, while the others parts are dedicated.
+On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> Hello,
+>
+> On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
+> > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > >
+> > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > >
+> > > When the remote core is started before Linux boots (e.g., by the
+> > > bootloader), the driver currently is not able to attach because it only
+> > > checks for cores running in different partitions. If the core was kicked
+> > > by the bootloader, it is in the same partition as Linux and it is
+> > > already up and running.
+> > >
+> > > This adds power mode verification through the SCU interface, enabling
+> > > the driver to detect when the remote core is already running and
+> > > properly attach to it.
+> > >
+> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > Suggested-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > > suggested.
+> > > ---
+> > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > >
+> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > > index 627e57a88db2..9b6e9e41b7fc 100644
+> > > --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> > >                                 return -EINVAL;
+> > >
+> > > +                       /*
+> > > +                        * If remote core is already running (e.g. kicked by
+> > > +                        * the bootloader), attach to it.
+> > > +                        */
+> > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> > > +                                                               priv->rsrc_id);
+> > > +                       if (ret < 0)
+> > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> > > +                                       priv->rsrc_id, ret);
+> > > +
+> > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> > > +                               priv->rproc->state = RPROC_DETACHED;
+> > > +
+> > >                         return imx_rproc_attach_pd(priv);
+> >
+> > Why is it important to potentially set "priv->rproc->state =
+> > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
+> >
+> > Would it be possible to do it the other way around? First calling
+> > imx_rproc_attach_pd() then get the power-mode to know if
+> > RPROC_DETACHED should be set or not?
+> >
+> > The main reason why I ask, is because of how we handle the single PM
+> > domain case. In that case, the PM domain has already been attached
+> > (and powered-on) before we reach this point.
+>
+> I am not sure if I understood correcly, let me know if I missed
+> something. From my understanding in this case it does not matter, since
+> the RPROC_DETACHED will only be a flag to trigger the attach callback
+> from rproc_validate(), when rproc_add() is called inside
+> remoteproc_core.c.
 
-Even if we don't use the entirety of it, it's good to describe
-the whole block
+Okay, I see.
 
-Konrad
+To me, it sounds like we should introduce a new genpd helper function
+instead. Something along the lines of this (drivers/pmdomain/core.c)
+
+bool dev_pm_genpd_is_on(struct device *dev)
+{
+        struct generic_pm_domain *genpd;
+        bool is_on;
+
+        genpd = dev_to_genpd_safe(dev);
+        if (!genpd)
+                return false;
+
+        genpd_lock(genpd);
+        is_on = genpd_status_on(genpd);
+        genpd_unlock(genpd);
+
+        return is_on;
+}
+
+After imx_rproc_attach_pd() has run, we have the devices that
+correspond to the genpd(s). Those can then be passed as in-parameters
+to the above function to get the power-state of their PM domains
+(genpds). Based on that, we can decide if priv->rproc->state should be
+to RPROC_DETACHED or not. Right?
+
+In this way we don't need to export unnecessary firmware functions
+from firmware/imx/misc.c, as patch1/3 does.
+
+If you think it can work, I can help to cook a formal patch for the
+above helper that you can fold into your series. Let me know.
+
+>
+> With that we can correcly attach to the remote core running, which was
+> not possible before, where the function returns at "return
+> imx_rproc_attach_pd(priv);" with the RPROC_OFFLINE state to
+> rproc_validate().
+
+I see, thanks for clarifying!
+
+Kind regards
+Uffe
