@@ -1,71 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5BA24166F;
-	Fri,  9 May 2025 22:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7D261574;
+	Fri,  9 May 2025 22:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746828379; cv=none; b=OquWhTeqc+OSHSD8X/84GlV6K8Ktrpplyx9BEOqcp6In5QJm9f62r2svOEYANotF1vx+iQJmuUnIjI1OrOeTUI7q3CcD94kgB7El47tjoW3R4TtVIJfgdFlnWaQvJ1nDipvxP+R8quW8H/qwDJTmDq3aECGPJ0OM3m5gjND2CeE=
+	t=1746828811; cv=none; b=ICVt8Td/ZsNv3yZBPklDpWORuIsoZ54PZsxYhNv5MIJ3Ark4OvTkUHYxtaQbkIrZnmARUvTpumc7Zh9eLM8tbMwfQLlHsPKGCACNtlOrRLXvkiIaZMy+hgsDSAYztwbJz8oLmFeMlq7c8/eNFVM4i7kiQY+HatdVzHWEoF+2Xxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746828379; c=relaxed/simple;
-	bh=RdaNVjYpV0ujRNO1itlb+RPBeLnd/2lTQku3mW7iF3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRuGsXpMN5hlFDBb+LFdDv8nwXv+2dudhStAYIR7ak09KwwWwsZiJUWcMhwqcLing60ECXwM5NWevUoV0R4ua+D9x0Xrf+Psdh25gObjVF5bmPs+9tEaGYoYXKN8B+uyK3tbn9P7LarnyjhW6jBD1pKSSGck10dvXn2YXdADuX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPT3h0fo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746828811; c=relaxed/simple;
+	bh=YV+KRG/TjnglbjkMeXDUBX/N8s8EIPboNkrM8Rt9aeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RyGFUs5Ug+gtgGiihriZfq2deOUQJ99rN67VXjoMZUVT7nxiaOmpOp5LcIT6OXQrtoLV6/chgl7z3PC7hfd+rMpp/EorZyLpq7mBn7nIOZJEZ4kg2HU6X+y9Q99dFBKj/eK31tTuxo+vt/v5yu8Ju9r92m5J/IyDgd0sDaNjdqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyCb549X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPT3h0fo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0B2C4CEE4;
-	Fri,  9 May 2025 22:06:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyCb549X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83981C4CEE4;
+	Fri,  9 May 2025 22:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746828378;
-	bh=RdaNVjYpV0ujRNO1itlb+RPBeLnd/2lTQku3mW7iF3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YPT3h0fotFbVgjyr7ntlydjvZvR7bCnBuS8m3ic4YEiKKkD2Lna1XBoyLzfzWcryo
-	 fi0wBlK+mQWn3zd0bOM//LqQBychZD3OTfbHBihp96keHtkkWgjHn4xoKV9NhmNLQE
-	 6X44wrMVpyi6dTLw16Lekr6VzmXLG0U3IkPQGjkVBb+CHoJ2glmG3bnQfVte5uE5t/
-	 4/dIWlkLAGj0DjC+PvzpvJpMU6jjDnuToBpOEY+Ifb56hDrdl0uLBVByexNtSrFD5Q
-	 +1jguokgXbQTZPDnFaxhs2MCIgoXLn5HUDD9rHI9+3wScsfsecV9tZk9mvIb35b8SC
-	 Sc2yGCunlSxgw==
-Date: Fri, 9 May 2025 17:06:16 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	s=k20201202; t=1746828810;
+	bh=YV+KRG/TjnglbjkMeXDUBX/N8s8EIPboNkrM8Rt9aeQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LyCb549XovEhF6yFxgtE9C0DZaXSKqMPceBUkE5mF56FzFXFevO5Y424ccJh+ZYZv
+	 lVjRi/1x3NtefhOYw1R9AcuQ2cYfBxbFniooE9AdKanzarKPyvpPcXXfPl1tSfNZ4Z
+	 eizXXIPPNmZZVr6ImioDbAAaG3o8CNWmF4HFda1z5JCpDPojM1gFpjRgZBwTFAMi4s
+	 icc6t3pO359aAblk3jFGzAbB7n6wazXfieTuuCFSsvbioulN7SV3X35hHYixLBfWVP
+	 L+ouavZt0Yaxb312MmPZUflevaMhE+hsBonfG7YklOLjLXf6RiZ7c5blhq4EX74ba/
+	 /gOrN8V7GgdSA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,sm8350-pas: Add
- SC8280XP
-Message-ID: <174682837610.74587.5924726541252709205.robh@kernel.org>
-References: <20250503-topic-8280_slpi-v1-0-9400a35574f7@oss.qualcomm.com>
- <20250503-topic-8280_slpi-v1-1-9400a35574f7@oss.qualcomm.com>
+	linux-kernel@vger.kernel.org,
+	Luca Weiss <luca@lucaweiss.eu>
+Subject: Re: (subset) [PATCH 0/2] Fix fallback qcom,ipc parse
+Date: Fri,  9 May 2025 17:13:22 -0500
+Message-ID: <174682880459.49052.12382717694935503808.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org>
+References: <20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250503-topic-8280_slpi-v1-1-9400a35574f7@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-On Sat, 03 May 2025 00:37:59 +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Mon, 21 Apr 2025 04:04:15 +0200, Barnabás Czémán wrote:
+> mbox_request_channel() returning value was changed in case of error.
+> It uses returning value of of_parse_phandle_with_args().
+> It is returning with -ENOENT instead of -ENODEV when no mboxes property
+> exists.
 > 
-> From the software POV, it matches the SM8350's implementation.
-> Describe it as such, with a fallback.
+> ENODEV was checked before fallback to parse qcom,ipc property.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  .../bindings/remoteproc/qcom,sm8350-pas.yaml       | 54 ++++++++++++----------
->  1 file changed, 30 insertions(+), 24 deletions(-)
-> 
+> [...]
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
 
+[2/2] soc: qcom: smp2p: Fix fallback to qcom,ipc parse
+      commit: 421777a02bbd9cdabe0ae05a69ee06253150589d
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
