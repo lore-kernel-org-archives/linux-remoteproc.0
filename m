@@ -1,30 +1,32 @@
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB8C23507F
-	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 16:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EC923815D
+	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 16:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806414; cv=none; b=IdC8nKRbxz3326bV3640SOKhQNEwVzo3Kir4uUgODcXSoZYe/aVg3FR6PoqwPtZXtdTBzJEGfGldreZ2eJmbH8UGF06ZHjFVIJJGBCHRsUG2FQnUcybqEpsoRz3ITWUhcJXKcuwSBVRiOO+i+VNtVlIcgllwDLbA7O8RpPw2y6A=
+	t=1746806430; cv=none; b=sRXqw/FxrKHSgdj5aPu2e7xYEutvYrYHBgyMcpk9IxLO2X8qU87OwTDFVdfTsOjMzNwkhqKKWyMrpm8Z7yn6UkESZaDr5IMCFd/u0q1mwFcrt0HVuZ/Eptbjw8bMZ47b7UCNC30vCngtfK5jd4wnc6YNhyYDU4Sb8AWosR40fYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806414; c=relaxed/simple;
-	bh=aFTgs5swAI0cahFmMQV07LyAkgLg+EMy9e7W9lBLOJ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nDoeEjzhOBJXG1SrC1voddY8TRtf1zRF0HN3FFIkV1+YFWZ/JvlS3iyTrhH4wLUPS3egwVltnM9Pec05gXLtiM6LR64mZryuQdqDlHObpyOdhNmW9nH3osbTb78kNNbjZFsmoqbm+0WVfAdj/dMrI/eYGN75EI/qTW74mlujuT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UEgZSx/s; arc=none smtp.client-ip=91.218.175.171
+	s=arc-20240116; t=1746806430; c=relaxed/simple;
+	bh=heGBJ3SeFAFWjkC+/u9VZBpvC4hEwAlPEmXlIY/Cze0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TvJC/t8j/q5QmJpKJOS6oLbupaMMuWmBKUH3dDQ0INMN3cwF5hQCF/ztZ/yFWCJA8MSkmsIBUbtfguRw8HJ+0qPm6d5SwS18zPrWuETVKze6rQrt6sr3RO2ERfa6bBZLYPJTiDf7DOJhIb2JcSIHH/7fROP5VXbDsZ2WcQbiBlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=euyjOW7W; arc=none smtp.client-ip=91.218.175.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UEgZSx/s"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="euyjOW7W"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746806409;
+	t=1746806423;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xo8KAOck/nq9vlwlvBnbq73MIxiM/M9AFXx0o6yplGM=;
-	b=UEgZSx/s5HnkFDrWqR1KPYmqjSH0uQvYWGdOBxONH7KARhjsrbdcH60ILn4uvzYc+6rCwF
-	+CwUaC9XTppJYFdhbm0WsQ+VHYYuRIWwWz0UFBAbludiOeAGK+4R7P/HyHZWFqTUzz+OEn
-	X9hMR1893PCS5qw9tyxKql9EM1kXg98=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g9IyEqqXTR0rneb1m3RreWD1KdVSsI1Pzjo/c6NQGY0=;
+	b=euyjOW7W0ASBc42Cp4GNoTRgM/lK6HVDnR8xfPcU+mtIhrLMGfT+Lfd8l5W5hq9pJ9lKXg
+	n7HyDwcD5zrvcQOkZSGxB1HaiJAN0YGl7S0Uqm0cAUKyIyG2p5laTOMKDIdGXQloPIcSgl
+	7FdZHCdLeNIeY+ifBccmRPyWi7PZXq0=
 From: Dawei Li <dawei.li@linux.dev>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
@@ -32,9 +34,11 @@ Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	dawei.li@linux.dev,
 	set_pte_at@outlook.com
-Subject: [PATCH v2 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Date: Fri,  9 May 2025 23:59:24 +0800
-Message-Id: <20250509155927.109258-1-dawei.li@linux.dev>
+Subject: [PATCH v2 1/3] rpmsg: char: Reuse eptdev logic for anon device
+Date: Fri,  9 May 2025 23:59:25 +0800
+Message-Id: <20250509155927.109258-2-dawei.li@linux.dev>
+In-Reply-To: <20250509155927.109258-1-dawei.li@linux.dev>
+References: <20250509155927.109258-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,17 +48,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-This is V2 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
-for rpmsg subsystem.
+Current uAPI implementation for rpmsg ctrl & char device manipulation is
+abstracted in procedures below:
 
 Current uAPI implementation for rpmsg ctrl & char device manipulation is
 abstracted in procedures below:
 - fd = open("/dev/rpmsg_ctrlX")
 - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
   generated.
-- fd_ep = open("/dev/rpmsgY", O_RDWR) 
+- fd_ep = open("/dev/rpmsgY", O_RDWR)
 - operations on fd_ep(write, read, poll ioctl)
 - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
 - close(fd_ep)
@@ -84,196 +86,192 @@ An anon inode based approach is introduced to address the issues above.
 Rather than generating device node and opening it, rpmsg code just make
 a anon inode representing eptdev and return the fd to userspace.
 
-# Performance demo
+The legacy abstraction based on struct dev and struct cdev is honored
+for:
+- Avoid legacy uAPI break(RPMSG_CREATE_EPT_IOCTL)
+- Reuse existing logic:
+  -- dev_err() and friends.
+  -- Life cycle management of struct device.
 
-An simple C application is tested to verify performance of new uAPI.
-
-$ cat test.c
-
-#include <linux/rpmsg.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <sys/time.h>
-
-#define N (1 << 20)
-
-int main(int argc, char *argv[])
-{
-	int ret, fd, ep_fd, loop;
-	struct rpmsg_endpoint_info info; 
-	struct rpmsg_endpoint_fd_info fd_info; 
-	struct timeval start, end;
-	int i = 0;
-	double t1, t2;
-
-	fd = -1;
-	ep_fd = -1;
-	loop = N;
-
-	if (argc == 1) {
-		loop = N;
-	} else if (argc > 1) {
-		loop = atoi(argv[1]);
-	}
-
-	printf("loop[%d]\n", loop);
-
-	strcpy(info.name, "epx");
-	info.src = -1;
-	info.dst = -1;
-
-	strcpy(fd_info.name, "epx");
-	fd_info.src = -1;
-	fd_info.dst = -1;
-	fd_info.fd = -1;
-
-	while (fd < 0) {
-		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
-		if (fd < 0) {
-			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
-		}
-	}
-
-	gettimeofday(&start, NULL);
-
-	while (loop--) {
-		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
-		if (ret < 0) {
-			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
-		}
-
-		ep_fd = -1;
-		i = 0;
-
-		while (ep_fd < 0) {
-			ep_fd = open("/dev/rpmsg0", O_RDWR);
-			if (ep_fd < 0) {
-				i++;
-				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
-			}
-		}
-
-		//printf("Number of open failed[%d]\n", i);
-
-		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
-		if (ret < 0) {
-			printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n",
-				ret, errno);
-		}
-
-		close(ep_fd);
-	}
-	
-	gettimeofday(&end, NULL);
-
-	printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
-	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
-
-	if (argc == 1) {
-		loop = N;
-	} else if (argc > 1) {
-		loop = atoi(argv[1]);
-	}
-
-	printf("loop[%d]\n", loop);
-
-	gettimeofday(&start, NULL);
-
-	while (loop--) {
-		fd_info.fd = -1;
-		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
-		if (ret < 0 || fd_info.fd < 0) {
-			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
-		}
-
-		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
-		if (ret < 0) {
-			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
-		}
-
-		close(fd_info.fd);
-	}
-	
-	gettimeofday(&end, NULL);
-
-	printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
-	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
-
-	printf("t1(old) / t2(new) = %f\n", t1 / t2);
-
-	close(fd);
-}
-
-# Performance benchmark 
-
-- Legacy means benchmark based on old uAPI
-- New means benchmark based on new uAPI(the one this series introduce)
-- Time are in units of us(10^-6 s)
-
-Test	loops	Total time(legacy)	Total time(new)	legacy/new	
-1	1000	203227			2533		80.2	
-2	1000	196501			2384		82.4
-3	1000	213619			2518		84.8
-4	1000	215898			2515		85.8
-5	1000	211340			2417		87.4
-6	1000	217008			2545		85.2
-7	1000	213591			2478		86.1
-8	1000	214618			2351		91.2
-9	1000	208021			2505		83.0
-10	1000	217092			2716		79.9	
-11	10000	2040802			26765		76.2
-12	10000	2027708			26867		75.4
-13	10000	1986117			27151		73.1
-14	10000	1992956			26301		75.7
-15	10000	1980262			25808		76.7
-16	10000	1925883			27926		68.9	
-17	10000	1957518			27100		72.2
-18	10000	1980626			28020		70.6
-19	10000	1990349			27351		72.7
-20	10000	1979087			27563		71.8
-21	100000	20266414		256170		79.1
-22	100000	19732259		259883		75.9
-23	100000	19878399		253710		78.3	
-24	100000	19788886		257199		76.9
-25	100000	19937663		258865		77.0
-26	100000	19602512		256771		76.3
-27	100000	19599214		257088		76.2
-28	100000	19795920		261488		75.7
-29	100000	19719341		263299		74.8
-30	100000	19871390		258465		76.8
-
-# Changelog:
-
-Changes in v2:
-- Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
-- Link to v1: https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
-
-Dawei Li (3):
-  rpmsg: char: Reuse eptdev logic for anon device
-  rpmsg: char: Implement eptdev based on anon inode
-  rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-
- drivers/rpmsg/rpmsg_char.c | 124 ++++++++++++++++++++++++++++++-------
- drivers/rpmsg/rpmsg_char.h |  19 ++++++
- drivers/rpmsg/rpmsg_ctrl.c |  37 ++++++++---
- include/uapi/linux/rpmsg.h |  19 ++++++
- 4 files changed, 167 insertions(+), 32 deletions(-)
-
+Signed-off-by: Dawei Li <dawei.li@linux.dev>
 ---
-base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+ drivers/rpmsg/rpmsg_char.c | 80 ++++++++++++++++++++++++++------------
+ 1 file changed, 56 insertions(+), 24 deletions(-)
 
-Thanks,
-
-	Dawei
-
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index eec7642d2686..5b2a883d6236 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -91,7 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+ 	/* wake up any blocked readers */
+ 	wake_up_interruptible(&eptdev->readq);
+ 
+-	cdev_device_del(&eptdev->cdev, &eptdev->dev);
++	if (eptdev->dev.devt)
++		cdev_device_del(&eptdev->cdev, &eptdev->dev);
+ 	put_device(&eptdev->dev);
+ 
+ 	return 0;
+@@ -132,21 +133,17 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
+ 	return 0;
+ }
+ 
+-static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
++static int __rpmsg_eptdev_open(struct rpmsg_eptdev *eptdev)
+ {
+-	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+ 	struct rpmsg_endpoint *ept;
+ 	struct rpmsg_device *rpdev = eptdev->rpdev;
+ 	struct device *dev = &eptdev->dev;
+ 
+-	mutex_lock(&eptdev->ept_lock);
+ 	if (eptdev->ept) {
+-		mutex_unlock(&eptdev->ept_lock);
+ 		return -EBUSY;
+ 	}
+ 
+ 	if (!eptdev->rpdev) {
+-		mutex_unlock(&eptdev->ept_lock);
+ 		return -ENETRESET;
+ 	}
+ 
+@@ -164,21 +161,32 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 	if (!ept) {
+ 		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+ 		put_device(dev);
+-		mutex_unlock(&eptdev->ept_lock);
+ 		return -EINVAL;
+ 	}
+ 
+ 	ept->flow_cb = rpmsg_ept_flow_cb;
+ 	eptdev->ept = ept;
+-	filp->private_data = eptdev;
+-	mutex_unlock(&eptdev->ept_lock);
+ 
+ 	return 0;
+ }
+ 
+-static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
++static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
++	int ret;
++
++	mutex_lock(&eptdev->ept_lock);
++	ret = __rpmsg_eptdev_open(eptdev);
++	if (!ret)
++		filp->private_data = eptdev;
++	mutex_unlock(&eptdev->ept_lock);
++
++	return ret;
++}
++
++static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
++{
++	struct rpmsg_eptdev *eptdev = filp->private_data;
+ 	struct device *dev = &eptdev->dev;
+ 
+ 	/* Close the endpoint, if it's not already destroyed by the parent */
+@@ -400,12 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+ 	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+ 
+ 	ida_free(&rpmsg_ept_ida, dev->id);
+-	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
++	if (eptdev->dev.devt)
++		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+ 	kfree(eptdev);
+ }
+ 
+-static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
+-						      struct device *parent)
++static struct rpmsg_eptdev *__rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
++							struct device *parent, bool cdev)
+ {
+ 	struct rpmsg_eptdev *eptdev;
+ 	struct device *dev;
+@@ -428,33 +437,50 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
+ 	dev->groups = rpmsg_eptdev_groups;
+ 	dev_set_drvdata(dev, eptdev);
+ 
+-	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
+-	eptdev->cdev.owner = THIS_MODULE;
++	if (cdev) {
++		cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
++		eptdev->cdev.owner = THIS_MODULE;
++	}
+ 
+ 	return eptdev;
+ }
+ 
+-static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
++static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
++						      struct device *parent)
++{
++	return __rpmsg_chrdev_eptdev_alloc(rpdev, parent, true);
++}
++
++static int __rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev,
++				     struct rpmsg_channel_info chinfo, bool cdev)
+ {
+ 	struct device *dev = &eptdev->dev;
+ 	int ret;
+ 
+ 	eptdev->chinfo = chinfo;
+ 
+-	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+-	if (ret < 0)
+-		goto free_eptdev;
+-	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
++	if (cdev) {
++		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
++		if (ret < 0)
++			goto free_eptdev;
+ 
++		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
++	}
++
++	/* Anon inode device still need dev name for dev_err() and friends */
+ 	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto free_minor_ida;
+ 	dev->id = ret;
+ 	dev_set_name(dev, "rpmsg%d", ret);
+ 
+-	ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+-	if (ret)
+-		goto free_ept_ida;
++	ret = 0;
++
++	if (cdev) {
++		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
++		if (ret)
++			goto free_ept_ida;
++	}
+ 
+ 	/* We can now rely on the release function for cleanup */
+ 	dev->release = rpmsg_eptdev_release_device;
+@@ -464,7 +490,8 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+ free_ept_ida:
+ 	ida_free(&rpmsg_ept_ida, dev->id);
+ free_minor_ida:
+-	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
++	if (cdev)
++		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ free_eptdev:
+ 	put_device(dev);
+ 	kfree(eptdev);
+@@ -472,6 +499,11 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+ 	return ret;
+ }
+ 
++static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
++{
++	return __rpmsg_chrdev_eptdev_add(eptdev, chinfo, true);
++}
++
+ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+ 			       struct rpmsg_channel_info chinfo)
+ {
 -- 
 2.25.1
 
