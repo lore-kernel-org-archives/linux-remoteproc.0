@@ -1,160 +1,222 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB40C2367D1
-	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A588800
+	for <linux-remoteproc@vger.kernel.org>; Fri,  9 May 2025 17:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806442; cv=none; b=j7Fn4WYAnY5Ob/3htEYokVAieQGpu4H/2HzEYX5W4oj1T4jOnRK+0iDbdc1i26EAVr5DKixDGvzhlpoV4tFN3tdxXkM01pHITkyITYQQrMqzDvhBVSn1xnAazkkLLzuDGGG9KLDRJzGm3x1fkXyovc+OkvX16n3ipFTJPtrraLA=
+	t=1746810562; cv=none; b=s+ukH9GBR/lawkJhknZmLux+Gy+PA0C0sIQxoOscTjsW1hsc0ff7fVnQpr5N/RvnJ4EVeTKjO9sNsrkuN5cKyUd6B4yG8Sca2VMXo6IYLh/Rtr/f8BLgLIRWlVQrzDwrNe+pEsy25xCtgZYIfYOtVaOmGhT2c7TnXGomgOztK6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806442; c=relaxed/simple;
-	bh=z5pSE65ULIjqvpmH+J9vRAyHolUkWZ/Oap1Uu7HAaSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jl1oD0o2Smfe5AwJoDI5/YaTDLk1hWEdCLEBdOUk82TWSy1kHKXw6v5bZFtWMBzh5fZrrkEUiyqG675638tHkhLJncCZjQz2GdvXNX9zRCCRiVdX+h43qgsb8K/NQu46Xty+TTDu5nQh0x3iRgeWnZyJD1l6/RBV0lJR71vU5zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MkDZt0ZK; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1746810562; c=relaxed/simple;
+	bh=8/DLjgtB1UXxqodmz6qRqj1WIAPFgvTzfIhYvppbtXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHQVX8ORv7m6tKXwOuoFOkOIeWztLcIclPVuaNtqtVP/DCnjUG6bogphbchhYXb3ON5u4Hn72Stz5i528Q/o4rOLl5XlhdvrXC8AMfVoXIHv/1UzR27cpKr8i8978gahJZZH1rEiBR09G1Evp6nxdSjEM0JR36y95CZIzhRVTPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfH0HX79; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MkDZt0ZK"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746806437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/32H+9/41lr99VTZd+rMmdnuXbjt0IaFlsmmN5aVGwc=;
-	b=MkDZt0ZKwnqniuqIINNb5JaTMqYZ1HOcyWul37B7wU4wa4Ewfk41zTsJNC7dwAOW/8F7DT
-	JcV6OhdsQRu9KIJG/18EgZ9BuemtH9SYGYxwM5doHlqstig6VXfkH2fO1DOleU1Cy155yp
-	na4XK8Vb6gWys2Dl3fSLcVogono3vAA=
-From: Dawei Li <dawei.li@linux.dev>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev,
-	set_pte_at@outlook.com
-Subject: [PATCH v2 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Date: Fri,  9 May 2025 23:59:27 +0800
-Message-Id: <20250509155927.109258-4-dawei.li@linux.dev>
-In-Reply-To: <20250509155927.109258-1-dawei.li@linux.dev>
-References: <20250509155927.109258-1-dawei.li@linux.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfH0HX79"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74019695377so1881293b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 May 2025 10:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746810560; x=1747415360; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5bcmHv8UeY0lDIEviX2vMPO5A6Q4ByVsdqO83gELMfU=;
+        b=sfH0HX79Q3h0HXcpQzhJMH+ynJxkBfZerxdP70bvfZQWl0a97wwtlyYlgUvJXTuOFw
+         i7WXuD7xgvUPS3H5njET7a8CcPhnRzil7XfX3s5fl8Uh4AKfom+6a/fosy1u9OI4It2h
+         fsCLve+kHskvVaNbBp3IojJHevtBr4oDLBaS10ruqiT5A0ZumrGR7cwmnDuFS73XLhHV
+         nDTtl/AKAfsMVDAkRQWw2pAw+ETlkqU3m/tFCm30wip/BQ5jUpZda7hEYnvjYRZsOwRL
+         mou/ati+dmt+tg1DF3JqEXk9FDJDmkuDTVtZyk3P9EjNJ/fw8soCwB1XMK79H4ZHFAE0
+         d/AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746810560; x=1747415360;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5bcmHv8UeY0lDIEviX2vMPO5A6Q4ByVsdqO83gELMfU=;
+        b=qaaTJxuB661X/PYAex4Jvry/5nYmp3FktAA9Z4CNBQLTF4y+YHZuvmjgG6wNQ/f4ZS
+         hegZO28XIBOZwl2zX1wQK0cZ5hl+9YV1FZOoq9mC8uV7025RtblXLOjp/zP86DqG7q9h
+         w4XAAIVJi5R0TGJQXb9AGwKq/r7Zh0/YkSY4g/R5OaekwtneBCgQrHDx6rXuxc4bMRC0
+         vTDAdBqkGRtQLZuvn1sDr3uKlaUEpThdbPNWbjdSS82+HEcFt5dYRyInGpPBbnqgNR7A
+         uk3E+WGjOoQFaZtKNEQ2GoRf8WLXBNxInebGCVzxtFESVkh2tMuvt2ro+IO7nxkgJDvS
+         DuOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLGNjKtEbj9VcighZzRisVrYkaV+4VbKObKpLQSVXYFuPP9rWIW6v9YisZaSc6nGqfXjOveGpJTvW6au8y9L9m@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaZDet+i/bc5+7D7iUUA6j0FiSgBsxW7WGK8vzz8nAmVKJUNdy
+	Ye/s2oEgq1BpP6TR4RGqhrfkxA3xeCsJZeRD6HlBPmDn6MzeSrRbVohVBHPtB/o=
+X-Gm-Gg: ASbGncuBJ1nJO99OyuP8Ao/Amc1MzAEP2ss+dKGVpBCVqi26t6cpO7Ey8W2n9Tyl4rw
+	I8a1xwg8uwzaWj26YpiAYtN4I+HkqjY6KwhLQlK449d6GRQsd0R/mxURzmfEhbvZsh3lNeuRNLy
+	F497fedsEjg2aEYic9Cy8OdW6Tqbd+nwAz7GQiYBNNOgCF4eg1NopjASsPHyV53/NxciBhWNUU+
+	maa+dgiQLP/7i/VQ79OujFRnmxFTMK9BokSphGxepreekI9goqKYBCJ9E5XSQbXv4yzNLfHBvpF
+	y/6pDH962SvNeyjqYOIfu3L3Gbd1mS0wCnTo6vWBtRXWcEVUTfzqig==
+X-Google-Smtp-Source: AGHT+IFRPnmnGbQ/2b09nBcZ6dbCbJlG5OB6PdW2GL91c+5hjt+11hwNV0GCAIrYhizbS30bdhbuzA==
+X-Received: by 2002:a05:6a21:32a3:b0:1fd:f8dc:7c0e with SMTP id adf61e73a8af0-215abb03b45mr6245910637.12.1746810559780;
+        Fri, 09 May 2025 10:09:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:1542:d6f4:7fe8:a35])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7423770414dsm1997749b3a.23.2025.05.09.10.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 10:09:19 -0700 (PDT)
+Date: Fri, 9 May 2025 11:09:17 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
+	jm@ti.com, jan.kiszka@siemens.com, christophe.jaillet@wanadoo.fr,
+	jkangas@redhat.com, eballetbo@redhat.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 00/35] Refactor TI K3 R5, DSP and M4 Remoteproc
+ Drivers
+Message-ID: <aB42vd1dmPn0FaJI@p14s>
+References: <20250425104135.830255-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425104135.830255-1-b-padhi@ti.com>
 
-Implement RPMSG_CREATE_EPT_FD_IOCTL, new uAPI for rpmsg ctrl, which
-shares most of operations of RPMSG_CREATE_EPT_IOCTL except that it
-returns fd representing eptdev to userspace directly.
+On Fri, Apr 25, 2025 at 04:11:00PM +0530, Beleswar Padhi wrote:
+> This series refactors a lot of functions & callbacks from
+> ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+> drivers. This is a consolidated and final series as part of the
+> refactoring of K3 remoteproc drivers. Below is the breakdown:
+> 1. PATCHES #1-#3 fixes important bugs in R5 and DSP drivers before refactoring
+> them into a common driver.
+> 2. PATCHES #4-#10 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+> 3. PATCHES #11-#35 does the actual refactoring R5, DSP and M4 drivers into
+> ti_k3_common.c driver.
+> 
+> NOTE:
+> This series supersedes below series:
+> https://lore.kernel.org/all/20250219091042.263819-1-b-padhi@ti.com/
+> https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
+> https://lore.kernel.org/all/20250108063727.1416324-1-b-padhi@ti.com/
+> 
+> Testing Done:
+> 1. Tested boot of R5Fs, C66x DSPs, C71x DSPs across Jacinto J7* devices in
+> remoteproc mode and IPC-Only mode.
+> 2. Tested boot of M4F core _only_ in _AM62xx SK_ board in Remoteproc mode and
+> IPC-Only mode.
+> 3. Tested Core stop and detach operations from sysfs for R5Fs, C66x DSPs, C71x DSPs
+> 4. Tested device removal paths by executing 'modprobe -r ti_k3_dsp_remoteproc'
+> and 'modprobe -r ti_k3_r5_remoteproc'.
+> 5. Tested usecases where firmware not available at device probe time, but
+> later in sysfs, able to load firmware into a remotecore and start it. [R5Fs]
+> 6. Tested that each patch in this series generates no new warnings/errors.
+> 7. Tested IPC on AM64x EVM Device. [Thanks to Judith].
+> 
+> v11: Changelog:
+> 1. New patches: [v11 15/35] and [v11 18/35].
+> Broken down rproc_reset() and rproc_release() refactoring patches into more
+> atomic changes.
+> 2. Carried T/B on all patches from Judith.
+> 3. Carried A/B on [PATCH v11 13/35] by Andrew.
+> 
+> Link to v10:
+> https://lore.kernel.org/all/20250417182001.3903905-1-b-padhi@ti.com/
+> 
+> v10: Changelog:
+> 1. Re-ordered Bug Fixes to the start of the series, before starting pre-cleanup
+> and finally the actual refactor. [Andrew]
+> 2. Broken down commits into more atomic changes for ease of review. [Andrew].
+> 3. Updated commit messages to have uniform flow throughout the series.
+> 4. Carried R/B tags in applicable patches.
+> 5. Further patch specific changelog is attached with patches.
+> 
+> Link to v9:
+> https://lore.kernel.org/all/20250317120622.1746415-1-b-padhi@ti.com/
+> 
+> v9: Changelog:
+> 1. Added R5 cleanup & refactoring along with existing DSP, M4 refactoring into this series. [Andrew]
+> 2. Dropped Mailbox level IPC checks across R5, DSP, M4 drivers in IPC-only mode. [Andrew] 
+> 
+> Link to v8:
+> https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
+> 
+> v8: Changelog:
+> 1. Broken down refactoring into patches, each patch dealing with one function
+> for ease in review. [Andrew]
+> 
+> Links to older versions:
+> v7: https://lore.kernel.org/all/20240202175538.1705-1-hnagalla@ti.com/
+> v6: https://lore.kernel.org/all/20230913111644.29889-1-hnagalla@ti.com/
+> v5: https://lore.kernel.org/all/20230808044529.25925-1-hnagalla@ti.com/
+> v4: https://lore.kernel.org/all/20230801141117.2559-1-hnagalla@ti.com/
+> v3: https://lore.kernel.org/all/20230302171450.1598576-1-martyn.welch@collabora.com/
+> v2: https://lore.kernel.org/all/20230301111323.1532479-4-martyn.welch@collabora.com/
+> v1: https://lore.kernel.org/all/20220110040650.18186-1-hnagalla@ti.com/
+> 
+> Thanks,
+> Beleswar
+> 
+> Beleswar Padhi (33):
+>   remoteproc: k3-r5: Refactor sequential core power up/down operations
+>   remoteproc: k3-r5: Re-order internal memory initialization functions
+>   remoteproc: k3-r5: Re-order k3_r5_release_tsp() function
+>   remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
+>   remoteproc: k3-r5: Use k3_r5_rproc_mem_data structure for memory info
+>   remoteproc: k3-{m4/dsp}: Add a void ptr member in rproc internal
+>     struct
+>   remoteproc: k3-m4: Add pointer to rproc struct within k3_m4_rproc
+>   remoteproc: k3-m4: Use k3_rproc_mem_data structure for memory info
+>   remoteproc: k3: Refactor shared data structures
+>   remoteproc: k3: Refactor mailbox rx_callback functions into common
+>     driver
+>   remoteproc: k3: Refactor .kick rproc ops into common driver
+>   remoteproc: k3-dsp: Correct Reset logic for devices without lresets
+>   remoteproc: k3-m4: Introduce central function to put rproc into reset
+>   remoteproc: k3: Refactor rproc_reset() implementation into common
+>     driver
+>   remoteproc: k3-dsp: Correct Reset deassert logic for devices w/o
+>     lresets
+>   remoteproc: k3-m4: Introduce central function to release rproc from
+>     reset
+>   remoteproc: k3: Refactor rproc_release() implementation into common
+>     driver
+>   remoteproc: k3-m4: Ping the mbox while acquiring the channel
+>   remoteproc: k3: Refactor rproc_request_mbox() implementations into
+>     common driver
+>   remoteproc: k3-dsp: Don't override rproc ops in IPC-only mode
+>   remoteproc: k3-dsp: Assert local reset during .prepare callback
+>   remoteproc: k3: Refactor .prepare rproc ops into common driver
+>   remoteproc: k3: Refactor .unprepare rproc ops into common driver
+>   remoteproc: k3: Refactor .start rproc ops into common driver
+>   remoteproc: k3: Refactor .stop rproc ops into common driver
+>   remoteproc: k3: Refactor .attach rproc ops into common driver
+>   remoteproc: k3: Refactor .detach rproc ops into common driver
+>   remoteproc: k3: Refactor .get_loaded_rsc_table ops into common driver
+>   remoteproc: k3: Refactor .da_to_va rproc ops into common driver
+>   remoteproc: k3: Refactor of_get_memories() functions into common
+>     driver
+>   remoteproc: k3: Refactor mem_release() functions into common driver
+>   remoteproc: k3: Refactor reserved_mem_init() functions into common
+>     driver
+>   remoteproc: k3: Refactor release_tsp() functions into common driver
+> 
+> Siddharth Vadapalli (2):
+>   remoteproc: k3-r5: Drop check performed in
+>     k3_r5_rproc_{mbox_callback/kick}
+>   remoteproc: k3-dsp: Drop check performed in
+>     k3_dsp_rproc_{mbox_callback/kick}
+> 
+>  drivers/remoteproc/Makefile               |    4 +-
+>  drivers/remoteproc/ti_k3_common.c         |  547 +++++++++++
+>  drivers/remoteproc/ti_k3_common.h         |  113 +++
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  616 +------------
+>  drivers/remoteproc/ti_k3_m4_remoteproc.c  |  583 +-----------
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 1012 +++++++--------------
 
-Possible calling procedures for userspace are:
-- fd = open("/dev/rpmsg_ctrlX")
-- ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &info);
-- fd_ep = info.fd
-- operations on fd_ep(write, read, poll ioctl)
-- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-- close(fd_ep)
-- close(fd)
+I am done reviewing this set.  The work done herein is a textbook example on how
+refactoring should be done and I commend you for it.
 
-Signed-off-by: Dawei Li <dawei.li@linux.dev>
----
- drivers/rpmsg/rpmsg_ctrl.c | 37 +++++++++++++++++++++++++++++--------
- include/uapi/linux/rpmsg.h | 19 +++++++++++++++++++
- 2 files changed, 48 insertions(+), 8 deletions(-)
+Mathieu
 
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 28f57945ccd9..c2cfdf46ccc6 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -75,19 +75,32 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				unsigned long arg)
- {
- 	struct rpmsg_ctrldev *ctrldev = fp->private_data;
-+	struct rpmsg_endpoint_fd_info ept_fd_info;
- 	void __user *argp = (void __user *)arg;
- 	struct rpmsg_endpoint_info eptinfo;
- 	struct rpmsg_channel_info chinfo;
- 	struct rpmsg_device *rpdev;
- 	int ret = 0;
--
--	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
--		return -EFAULT;
--
--	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
--	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
--	chinfo.src = eptinfo.src;
--	chinfo.dst = eptinfo.dst;
-+	int fd = -1;
-+
-+	if (cmd == RPMSG_CREATE_EPT_IOCTL || cmd == RPMSG_CREATE_DEV_IOCTL ||
-+	    cmd == RPMSG_RELEASE_DEV_IOCTL) {
-+		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = eptinfo.src;
-+		chinfo.dst = eptinfo.dst;
-+	} else if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
-+		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = ept_fd_info.src;
-+		chinfo.dst = ept_fd_info.dst;
-+	}
- 
- 	mutex_lock(&ctrldev->ctrl_lock);
- 	switch (cmd) {
-@@ -110,6 +123,14 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				chinfo.name, ret);
- 		break;
- 
-+	case RPMSG_CREATE_EPT_FD_IOCTL:
-+		ret = rpmsg_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo, &fd);
-+		if (!ret) {
-+			ept_fd_info.fd = fd;
-+			ret = copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info));
-+		}
-+		break;
-+
- 	default:
- 		ret = -EINVAL;
- 	}
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index f0c8da2b185b..934c0e76bfe3 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -53,4 +53,23 @@ struct rpmsg_endpoint_info {
-  */
- #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
- 
-+/**
-+ * struct rpmsg_endpoint_fd_info - endpoint & fd info representation
-+ * @name: name of service
-+ * @src: local address. To set to RPMSG_ADDR_ANY if not used.
-+ * @dst: destination address. To set to RPMSG_ADDR_ANY if not used.
-+ * @fd: fd returned from driver
-+ */
-+struct rpmsg_endpoint_fd_info {
-+	char name[32];
-+	__u32 src;
-+	__u32 dst;
-+	__s32 fd;
-+};
-+
-+/**
-+ * Instantiate a new rmpsg endpoint which is represented by fd
-+ */
-+#define RPMSG_CREATE_EPT_FD_IOCTL _IOWR(0xb5, 0x7, struct rpmsg_endpoint_fd_info)
-+
- #endif
--- 
-2.25.1
-
+>  6 files changed, 1072 insertions(+), 1803 deletions(-)
+>  create mode 100644 drivers/remoteproc/ti_k3_common.c
+>  create mode 100644 drivers/remoteproc/ti_k3_common.h
+> 
+> -- 
+> 2.34.1
+> 
