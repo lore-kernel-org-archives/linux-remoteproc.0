@@ -1,96 +1,71 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79B0293B7A;
-	Mon, 12 May 2025 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD04297120;
+	Mon, 12 May 2025 19:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747068947; cv=none; b=lrpB5p9IeBgMscT1bhsQGh2x04cnyiYv1OiFq0u/wJXRtE+7qq+uU6qJp2J43Mh/96zK+ewIKUef97B1aUeYB6Puxkls/U22IekcndENwPvNoby6QkqOoKF9KZOzv3I7Zqs/eN8SOBbG3eVwjY0lOA1yXhsKXDu1LtKZPnROScA=
+	t=1747076747; cv=none; b=nbp2kYuzYfr5wqON9tWN8QKLjMUHGWGBuv3Y96Pg/qB7zOSlk93egZRM98589qPeP/kD3prlMe0ZtU8qaI4lzh5fZ54cOpL3KEZpoZ6nfYbH1qeLfX/4ykecnBnyStQDhgHtAFv1oQcfNMJsVuIkNdzcKmCFvF+Mk/9f22/BJe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747068947; c=relaxed/simple;
-	bh=soCwqHddFHtyrm0TZ3nZg7h2P3JMNdQAGnyjVg5inHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Te9DdncF27PS5xXAtdqOwAifFFhY6goAdVlA5qNwCYxkOjvIH8kET2clGl32ras8AZtyEIsN8pNtDFt4+BY1lIb1xvYPDMRFh2uW3mDwohrmvlU/jqd02PMxDaiqPrBCQS6oQ1Vy3uHOvqwbBBdh4iIWLVVMRdmSzwMhwnB7GeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD135C4CEE7;
-	Mon, 12 May 2025 16:55:46 +0000 (UTC)
-Date: Mon, 12 May 2025 18:55:44 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Souradeep Chowdhury <quic_schowdhu@quicinc.com>, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Georgi Djakov <djakov@kernel.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>, 
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>, David Wronek <david@mainlining.org>, 
-	Jens Reidel <adrian@mainlining.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-scsi@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, linux-remoteproc@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org, linux@mainlining.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 25/33] dt-bindings: remoteproc: qcom: sc7180-pas: Add the
- SM7150 compatible
-Message-ID: <20250512-furry-provocative-wasp-da0d8a@kuoka>
-References: <20250422213137.80366-1-danila@jiaxyga.com>
- <20250422213137.80366-9-danila@jiaxyga.com>
+	s=arc-20240116; t=1747076747; c=relaxed/simple;
+	bh=pFVpPTz6lSGVV0l8xYgVNStpIBr1ucdcf8t/1Bf+hqA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tTBCGW0VK85tKD2air+aWVPkod6noDEj9/7xC8rB3Ab31knML7cqsWOsZy3G7AV1QbV4d76vOX5EPFo7VSDCtF389SgGmB/j1n/i8zyEU5NiMoHAxE0Xd23rg/5c/xkw2Hs5/IEUU2oj93eeUmh2/c9y3I4HzE9wrGimeAqJOKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZxtI6ytx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AzqX/2Cx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZxtI6ytx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AzqX/2Cx"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747076744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pFVpPTz6lSGVV0l8xYgVNStpIBr1ucdcf8t/1Bf+hqA=;
+	b=ZxtI6ytxS/zZVj+/K5/V0KMYfYg0ilqSDVk13u6Eu2X2GN5kyAdAgw8zOnjgkuD65P8KHJ
+	2qslRe9eTN1NOUjOMrC+LHrZSwvNhhykxpgOZfrDW9ghg6DNV5zMzjnRv7EQXlIJT3dOX4
+	eXM/nWrZHjEZOkGqSRiR3wZyat5Dyi12O2PpZbY/wldHu1y2cEw21NyGnAztzFvnbX41c+
+	nuHOUctMRAmyT5gPEfAUKkuowV2xhIHoScqWReB+khh5HULoMt3YkjMPix9P+jzi9aayhW
+	6T4l3xCbiusS0sdTFpgRfEIUrHtUZ1rmN/Cc+vvqwhBn3fLMXmGZrD2Dz9aZWg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747076744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pFVpPTz6lSGVV0l8xYgVNStpIBr1ucdcf8t/1Bf+hqA=;
+	b=AzqX/2CxbUKc5tGH3qJ0uCV8nEWURfM4ZS/rUMdqE3PtYqTlZxgvynUc/5kiVR7uykAWJc
+	+j4pqgjspIBJm1DQ==
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-next@vger.kernel.org
+Cc: peterz@infradead.org, neil.armstrong@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ andersson@kernel.org, mathieu.poirier@linaro.org
+Subject: Re: [linux-next regression] remoteproc seems to be broken
+In-Reply-To: <D9SXI3F82EFT.7WY8FQ9P4RHL@linaro.org>
+References: <D9SXI3F82EFT.7WY8FQ9P4RHL@linaro.org>
+Date: Mon, 12 May 2025 21:05:43 +0200
+Message-ID: <87tt5pk5tk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422213137.80366-9-danila@jiaxyga.com>
+Content-Type: text/plain
 
-On Wed, Apr 23, 2025 at 12:31:29AM GMT, Danila Tikhonov wrote:
->  description:
-> -  Qualcomm SC7180/SC7280 SoC Peripheral Authentication Service loads and boots
-> -  firmware on the Qualcomm DSP Hexagon cores.
-> +  Qualcomm SC7180/SC7280/SM7150 SoC Peripheral Authentication Service loads and
-> +  boots firmware on the Qualcomm DSP Hexagon cores.
->  
->  properties:
->    compatible:
-> @@ -22,6 +22,9 @@ properties:
->        - qcom,sc7280-cdsp-pas
->        - qcom,sc7280-mpss-pas
->        - qcom,sc7280-wpss-pas
-> +      - qcom,sm7150-adsp-pas
-> +      - qcom,sm7150-cdsp-pas
-> +      - qcom,sm7150-mpss-pas
+On Sun, May 11 2025 at 02:09, Alexey Klimov wrote:
 
-Shouldn't you just use fallbacks with sc7180? The if:then: clauses below
-look like matching, driver change almost matches if not minidump region.
+> Hi,
+>
+> we started to observe regression on linux-next starting with next-20250508.
+> Neil bisected it and it pointed to:
+> 2ef2e13094c7510c40833951c2ec36cf8574331a
+> genirq/chip: Rework handle_nested_irq()
+> https://lore.kernel.org/all/20250429065420.744042890@linutronix.de
+>
+>>No functional change.
+>
+> Manually reverting that commit resolved the problem for me.
 
-Best regards,
-Krzysztof
-
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=irq/core
