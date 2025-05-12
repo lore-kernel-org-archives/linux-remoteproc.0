@@ -1,127 +1,141 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ADF1E2607
-	for <linux-remoteproc@vger.kernel.org>; Mon, 12 May 2025 14:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7E1798F;
+	Mon, 12 May 2025 14:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747058977; cv=none; b=lu2cQ/ccyZGHqm7D0wKhifal4/DMVJVRRu+gUH44M+IgWMRf3RGkHfKB82EI4v+QKTp+KWbwE/M6vv01gkTcCxLghOgzskZhpcRUNxpOsa0JfezLwDzKKUsRopTh9TBNGEqatk1Kfbr04Xddqjrut15gBwLrJ4Agud5eJxjR4vQ=
+	t=1747059225; cv=none; b=B1AoLtao9U4Y5WW0Y42tnXbwWZR9V94O3aKRxHhoSra5q+g5Aioy2VNWepIVIuyfaksN3rmdbwJ7uY3Q1loU80DqBqn+ZPThYymnj3Nr0rQqFNVjGBzkTWTRmgpxFunLvldfS3cRAgAWAszndO3HnZfKH6pYG7f1QCaVi4oi5FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747058977; c=relaxed/simple;
-	bh=7XK6JgY+Zequf1Eb4RpAPe8+LKRbtcIi0eB/IHQ1drg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=AyQw/5xJSi2HHfRyLFTOgY0wsYHGfC8tigbjAauqYXDk5eh/B1CEhMd9y1TmM9afR5hRRaRCN3dpul3e3wobYYpi3LjHqcnu2n2TswM/KVjlu/BBRnoOWN2K8oeFi0QfDXfQv6Kw+IWrw5zPV4Yj5gojjmRV04C4NsNXf5jfRv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=E5zlS4zM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1747059225; c=relaxed/simple;
+	bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwzRkTqOZXWq+2WiMsFdRuQUahKAaTrgO86sZWhlBkqktlkEgYR67qtKnYS9cpT/jG3TGtX4eII9WNGPR8A/qu2RQVDamfFbUOh1hO9J3lv4RDgpfnXP+WuMiplPM1ye0tU30hoPvZpNuJO/MOpQ/W7jKdOCtN5xQfly4BaoB+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD8xiKaC; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="E5zlS4zM"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ace333d5f7bso836489366b.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 May 2025 07:09:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD8xiKaC"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30aa79ee726so4394291a91.2;
+        Mon, 12 May 2025 07:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1747058973; x=1747663773; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dZ/6iwA8CFKOFslZ2GtB9HB/9Djjjmbe1UGAQxtuVQM=;
-        b=E5zlS4zMguMnX7vsb8aY8y3rUkkCylnbY2uJpBnMn2gSeV869PE2nrRNMWWFqQOTM+
-         sdkQNeoMPxY8BkBhYetZESAIKhCEWiNEswzd4jmYxlFdvt0gh/N1wg+V8TBo/41P/dF4
-         nTaNLl+po51P27BBhUUEYwDOycAqK+tGHOvPFntJnbiHuExUZtWdyjmsdyzBRfN0ppJe
-         3xQagvaRt/VPiRbaidbCF6lIp007xMQXWoA54TKrUqtaWe/luRj10mgSYvCkMmqkF/tp
-         TytK/99TzU3wy4arRDMmuEHk3ogLsb+bskyIhIi9gQMJGVfYbjDmE/F0UNXGExCq5CXq
-         8DcQ==
+        d=gmail.com; s=20230601; t=1747059223; x=1747664023; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
+        b=jD8xiKaCtzYNVKStiTMMB21PZ3ia82nxzZ+eukoX2JQztyPgDHMOrL5OFz1YTN4Hj6
+         v6nH7OMUtuim3cbCrMXtoVREe4GTHrxDZkXPuALfbqidnll+eESOwJ0/x64AZ4AgBkIm
+         Z/a06bTYVvp+4H3qmo5w8sVzuFL4rwH0nDyERChno/CResh1Xts5XT9M8quF47a9Wh2B
+         aY7yOYT65ThQyywBEf8oz4SM2d3aOx7luMcL2Wo8dIl9ztp881PS3lD+GRFuup8vzqCZ
+         nyRM1PbjKkh26G3e0vcbYmUs0jCLnJ4+qBuI29OIUir7RJT4mtIEusDmS7FL1SOn+zDu
+         xVFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747058973; x=1747663773;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dZ/6iwA8CFKOFslZ2GtB9HB/9Djjjmbe1UGAQxtuVQM=;
-        b=Zp44buwonQj2/Cmy0EbdatZOeew4pY11GVON9xOMspEizCRAtlwbV+vsHbHlP8hcYj
-         wYMsrBcXUljIbf6jfmnL52a1L6bKqjqHh/EPZPar6Tz/MAwigQ7SxamlFPMCYqB9fDXY
-         PSffK5Iqb0Mllde88X6TjJQ4HL2MtzGUTYxVTaNI57OM2G0CqiLD78L5X465vdeNzVLB
-         ytzkRB5woW7zKy6WvTXQkH1o9jq2RlqVnJ7m30G4da792l/ZGW9xgoSxvLezH7th+34G
-         JtpnRwTPswSRAXtw70sZAPdfOm/GNWuW7coZi1l3yayCn+w2hcq/027N36ocFFY9wFNs
-         OlTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmgGW8RXfQgYoFGaAWUQq/cCbnevUvyYGTKxxhMlXdIUXOWQxd7IDk2OEYIA/xIY+yfqPUg2rKSa6kSVJp4lGc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJFDKQJHBhYO2tu6qUKu92wmgvH+lMK7TGs6aEsBAKa6CnR41M
-	gNmqzLI6GMTL/ajUHx2p4xQ++tBCdn/J9Ha8AHuuUUJS7NPG4WIOXBzVf+x5Ly4=
-X-Gm-Gg: ASbGncuYCN4AmhizzRxwQhfqobvynFzQd3GIfXgPKH+ZsEqIsN459bdIYTqlk3mPbfF
-	TgPw9T7ZeiPAiPmSf2BFWAlLv4ie0iK1LYLzDTILZgM4UrJazzffVh4dkGX/MBWoSf/jsUMT6Y8
-	6rXYHtCYe7ixV7XS0DttDy3K8K7/yBBue5ZNB5hRBIw3iYUMGOHc7B+iLiEnRTMkuJTP1ZOkvAa
-	4Gu2vt1ZHSenbYSXPz4AoPP0KY0rmbt0F7r/FY/FuXcIKyW0mA61QV/8jkXOxblXtMCeXccV9tL
-	vTxO1Vmlgsv6onIYDtT11IdBmR/IPDAQh6eUYKWTn7OQtJFVidxb
-X-Google-Smtp-Source: AGHT+IGG5FZn2sqQPs5HV5Ni5h1EziV7iYxDUiiwAQm72o77onMUWKhqMQJHb2DHtLorhV7URjJsDw==
-X-Received: by 2002:a17:906:630f:b0:ad2:49df:4446 with SMTP id a640c23a62f3a-ad249df4ac7mr391806966b.60.1747058973286;
-        Mon, 12 May 2025 07:09:33 -0700 (PDT)
-Received: from localhost ([41.66.98.209])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad249c66fdasm278196766b.114.2025.05.12.07.09.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 07:09:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747059223; x=1747664023;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
+        b=GeqyHrVo18cJcowL0XoGgDyUtmOv+qSN687P6yxvGQByluEfWOr3FucPA5+Yrrn2E2
+         rVYGlXl4OGm8V5ebPewHxCg25qFJ3as4QPPKH3vgmxASHRWyj59DSMuI18NRtPv+U0dN
+         8lCfhoURsoe+s3OVcmQT5Iw1ODsLSq+A+84Ln56fjhwimfEoac6hlcayRs1orG6heDwi
+         hnG1XuY4EfWy3z4ABtzrkLQulsh1DhDsQKVDC4a5ATGqwpWRDQbYQ5to2tUwJ5pkX0i1
+         o+IBjJwEKsqAi0FbCUbYACLnhza55+xn2nHTHLOordhbAoGOLm1f0HvtOFQt2WNnoP1y
+         QOhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaU23b7tvA3pvp1zDq1U7BXFTpa1kR0raw+mLwbAAK4otxS10eI1NDni+hmRcqVBmemQ/nRoX8mo0=@vger.kernel.org, AJvYcCWUI+7bOEbcNBZEFgCIND0lGqDl/Qeolaw8WespBC+PMydY5yfvfWmnJdkRCEe+IZbdf0DUf/iFyI2JLsfEk17Agw==@vger.kernel.org, AJvYcCXklkrkIhdJtgx3gvPQhljmUlUWhVeFfwVCYksWJFuLB5BOOZLvSxG680kzlb22JB4XR7ADr+l2ZiUiHQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVnJHaULg1pF4p/l9+IAZR7kOrbAMx96libz7ogTaxK5LjuZKU
+	LQT9wfSFx+mb/R/HhZkJvRbYtGOb6JYCIZUphxCUR0yF+34fNZr2
+X-Gm-Gg: ASbGncsY2GwtHDWgQpEUckJ7ouIlsJ2PQJ7iH35x+fd+6rhSCwxGVBPrVE5/vbK/SDX
+	/IQzSdsBlklcrjFOglW+ZMoEllaKj9EZY1N1e5Fn34xH+nVaAL+4ki5tR6BlVBNvwBBQrv0wPml
+	qkKkODINZ9VhkX9aQk/07EHCelnIUTx1/YghEeHXT28KDmplgBTZhRNOYUS1Yn/hoJIFIcupgaa
+	g1CsML0kdcpGPF10rIEMGkg7o84icHBgU+Sa+vxYQhmkPbGOw3bdXQ17Vc2SetRFPMhqroqZZUE
+	RpThzCD/nbRG26cIj8NhJWT8upXR1Kswp4RZIuVomEmvNWN1bw==
+X-Google-Smtp-Source: AGHT+IH5gUoco7N8sKGHqASp+t6n1KYZvtsdLBTVel5nTdgyJkB/lYXE+HXry+XviOclf5k9LSJ5pA==
+X-Received: by 2002:a17:90b:3e4e:b0:2ee:c2b5:97a0 with SMTP id 98e67ed59e1d1-30c3d62e4c5mr22364395a91.25.1747059223077;
+        Mon, 12 May 2025 07:13:43 -0700 (PDT)
+Received: from hiago-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39df09dbsm6650922a91.26.2025.05.12.07.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 07:13:42 -0700 (PDT)
+Date: Mon, 12 May 2025 11:13:36 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+Message-ID: <20250512141336.b72ga37qtlrvgaut@hiago-nb>
+References: <20250507160056.11876-1-hiagofranco@gmail.com>
+ <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb>
+ <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb>
+ <20250512045613.GB31197@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 12 May 2025 15:09:30 +0100
-Message-Id: <D9U8PV79LTVH.38UZBFZD2VB3R@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- "Bjorn Andersson" <andersson@kernel.org>, "Mathieu Poirier"
- <mathieu.poirier@linaro.org>, "Luca Weiss" <luca@lucaweiss.eu>,
- <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] remoteproc: qcom_wcnss: Fix on platforms without
- fallback regulators
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: =?utf-8?q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
- <linux-arm-msm@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250511234026.94735-1-matti.lehtimaki@gmail.com>
-In-Reply-To: <20250511234026.94735-1-matti.lehtimaki@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512045613.GB31197@nxa18884-linux>
 
-On Mon May 12, 2025 at 12:40 AM WEST, Matti Lehtim=C3=A4ki wrote:
-> Recent change to handle platforms with only single power domain broke
-> pronto-v3 which requires power domains and doesn't have fallback voltage
-> regulators in case power domains are missing. Add a check to verify
-> the number of fallback voltage regulators before using the code which
-> handles single power domain situation.
+Hi Peng,
 
-Thanks!
+On Mon, May 12, 2025 at 12:56:13PM +0800, Peng Fan wrote:
+>
+> Ulf's new API dev_pm_genpd_is_on needs to run after power domain attached.
+>
+> But if run after power domain attached, there is no API to know whether
+> M4 is kicked by bootloader or now.
+>
+> Even imx_rproc_attach_pd has a check for single power domain, but I just
+> give a look again on current i.MX8QM/QX, all are using two power domain
+> entries.
+>
+> >
+> >>
+> >> In this way we don't need to export unnecessary firmware functions
+> >> from firmware/imx/misc.c, as patch1/3 does.
+>
+>
+> I think still need to export firmware API. My idea is
+> 1. introduce a new firmware API and put under firmware/imx/power.c
+> 2. Use this new firmware API in imx_rproc.c
+> 3. Replace scu-pd.c to use this new firmware API.
+>
+> Or
+> 1. Export the API in scu-pd.c
+> 2. Use the API in imx_rproc.c
+>
+> With approach two, you need to handle them in three trees in one patchset:
+> imx/pd/rproc.
+>
+> With approach one, you need to handle two trees in one patchset: imx/rproc tree,
+> then after done, pd tree
 
-I've tested this on MSM8953/SDM632 Fairphone 3 which is broken on
-v6.15-rc5 without this patch! I've also heard of MSM8909 being broken in
-v6.15-rc, and msm8976 also uses qcom,pronto-v3-pil.
+This patch series is already implementing approach one, as I understand,
+right?
 
-Hopefully this can still go into the remaining rc's so v6.15 final works.
-
-Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sdm632-fairphone-fp3
-
-Regards
-Luca
+The difference is I moved this API from drivers/pmdomain/imx/scu-pd.c to
+firmware/imx/misc.c, and exported it there. But you think I should
+create this new file firmware/imx/power.c and move the API from scu-pd.c
+to power.c, is my understanding correct?
 
 >
-> Fixes: 65991ea8a6d1 ("remoteproc: qcom_wcnss: Handle platforms with only =
-single power domain")
-> Signed-off-by: Matti Lehtim=C3=A4ki <matti.lehtimaki@gmail.com>
-> ---
->  drivers/remoteproc/qcom_wcnss.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wc=
-nss.c
-> index 775b056d795a..2c7e519a2254 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -456,7 +456,8 @@ static int wcnss_init_regulators(struct qcom_wcnss *w=
-cnss,
->  	if (wcnss->num_pds) {
->  		info +=3D wcnss->num_pds;
->  		/* Handle single power domain case */
-> -		num_vregs +=3D num_pd_vregs - wcnss->num_pds;
-> +		if (wcnss->num_pds < num_pd_vregs)
-> +			num_vregs +=3D num_pd_vregs - wcnss->num_pds;
->  	} else {
->  		num_vregs +=3D num_pd_vregs;
->  	}
+> Regards,
+> Peng
 
+Best Regards,
+Hiago.
