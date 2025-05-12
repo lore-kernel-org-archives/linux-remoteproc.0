@@ -1,86 +1,69 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7E1798F;
-	Mon, 12 May 2025 14:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5810721A443
+	for <linux-remoteproc@vger.kernel.org>; Mon, 12 May 2025 15:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747059225; cv=none; b=B1AoLtao9U4Y5WW0Y42tnXbwWZR9V94O3aKRxHhoSra5q+g5Aioy2VNWepIVIuyfaksN3rmdbwJ7uY3Q1loU80DqBqn+ZPThYymnj3Nr0rQqFNVjGBzkTWTRmgpxFunLvldfS3cRAgAWAszndO3HnZfKH6pYG7f1QCaVi4oi5FM=
+	t=1747064314; cv=none; b=nb8pKWWQqZcYfrJarHMQmFu50A7kGN37Yemdznzx1f9H711ul3NwSsIK5qMI8akZpppPyv2wd1nlfNSqVwx+O37Hs6DO+6NiZAMPLRlfXgVnmAReKPO0u1nQWPNqBZRpK4EDwPw6yl3gHHQ0g0x1vWl9QFkUFexoUbQresrxVy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747059225; c=relaxed/simple;
-	bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
+	s=arc-20240116; t=1747064314; c=relaxed/simple;
+	bh=c7VadYlSEsuqBTdIq8kkgiDUoIo6e9SXKJfB7bLi/gk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwzRkTqOZXWq+2WiMsFdRuQUahKAaTrgO86sZWhlBkqktlkEgYR67qtKnYS9cpT/jG3TGtX4eII9WNGPR8A/qu2RQVDamfFbUOh1hO9J3lv4RDgpfnXP+WuMiplPM1ye0tU30hoPvZpNuJO/MOpQ/W7jKdOCtN5xQfly4BaoB+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD8xiKaC; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6I11iQHVEQnl3gTOhGJ5SDR/3jtuv9NhG3YbhpyJcabCaEyeDPz9aGMQCBLtttOfhTlUAh8Kq1CcBs9aG2jE+uQ/oQk/bFjUk0x7/JFThpYdOExE1Aw9cs9TzTqi5A9V+cLgxKwMmVO3H1jOMb9IApxS3VvxD+ISSV24ZXcGco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=upJKcuaW; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD8xiKaC"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30aa79ee726so4394291a91.2;
-        Mon, 12 May 2025 07:13:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="upJKcuaW"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso6005318b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 May 2025 08:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747059223; x=1747664023; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747064311; x=1747669111; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
-        b=jD8xiKaCtzYNVKStiTMMB21PZ3ia82nxzZ+eukoX2JQztyPgDHMOrL5OFz1YTN4Hj6
-         v6nH7OMUtuim3cbCrMXtoVREe4GTHrxDZkXPuALfbqidnll+eESOwJ0/x64AZ4AgBkIm
-         Z/a06bTYVvp+4H3qmo5w8sVzuFL4rwH0nDyERChno/CResh1Xts5XT9M8quF47a9Wh2B
-         aY7yOYT65ThQyywBEf8oz4SM2d3aOx7luMcL2Wo8dIl9ztp881PS3lD+GRFuup8vzqCZ
-         nyRM1PbjKkh26G3e0vcbYmUs0jCLnJ4+qBuI29OIUir7RJT4mtIEusDmS7FL1SOn+zDu
-         xVFA==
+        bh=GX/eBcEChE0E34AcneN6L6Wm+rbDwi9Vmr1xiNc+L8g=;
+        b=upJKcuaWWxd/fKgm8lg/Bcs/bJzFa4ZAQ9s7jl1Jm2WuttuF4c7bqT4ECJsePjt4Vq
+         Kf96FfWXwr+oFo9E7PJ2Hjv1oTMulJRRLMMe5Tu3VznzjBdwZwXTt8O4UKR01A5NV6uk
+         6uPc8T4azaLbOtnqpckc2JNku6rMl5DHVtmlM7bAqVDdqluKLoxX5n/PbnH4nWzHmY5+
+         e/brhNvrzW6ja5jLSA6do9+bxOoIDFZdMLsYs9HntwzztJuefPgYWtnZKkTma21KieB7
+         5wQQ3UhffZ6FVQxh9KhRqECQc7ZcqFLitRw5DAddYV3SPnbeJXXcpQVh8wiY7o4HmTu2
+         s94A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747059223; x=1747664023;
+        d=1e100.net; s=20230601; t=1747064311; x=1747669111;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2OJlnvMBtd1Qdxb8D4i8PT0Scjad8idgDm1fH/AmWto=;
-        b=GeqyHrVo18cJcowL0XoGgDyUtmOv+qSN687P6yxvGQByluEfWOr3FucPA5+Yrrn2E2
-         rVYGlXl4OGm8V5ebPewHxCg25qFJ3as4QPPKH3vgmxASHRWyj59DSMuI18NRtPv+U0dN
-         8lCfhoURsoe+s3OVcmQT5Iw1ODsLSq+A+84Ln56fjhwimfEoac6hlcayRs1orG6heDwi
-         hnG1XuY4EfWy3z4ABtzrkLQulsh1DhDsQKVDC4a5ATGqwpWRDQbYQ5to2tUwJ5pkX0i1
-         o+IBjJwEKsqAi0FbCUbYACLnhza55+xn2nHTHLOordhbAoGOLm1f0HvtOFQt2WNnoP1y
-         QOhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaU23b7tvA3pvp1zDq1U7BXFTpa1kR0raw+mLwbAAK4otxS10eI1NDni+hmRcqVBmemQ/nRoX8mo0=@vger.kernel.org, AJvYcCWUI+7bOEbcNBZEFgCIND0lGqDl/Qeolaw8WespBC+PMydY5yfvfWmnJdkRCEe+IZbdf0DUf/iFyI2JLsfEk17Agw==@vger.kernel.org, AJvYcCXklkrkIhdJtgx3gvPQhljmUlUWhVeFfwVCYksWJFuLB5BOOZLvSxG680kzlb22JB4XR7ADr+l2ZiUiHQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVnJHaULg1pF4p/l9+IAZR7kOrbAMx96libz7ogTaxK5LjuZKU
-	LQT9wfSFx+mb/R/HhZkJvRbYtGOb6JYCIZUphxCUR0yF+34fNZr2
-X-Gm-Gg: ASbGncsY2GwtHDWgQpEUckJ7ouIlsJ2PQJ7iH35x+fd+6rhSCwxGVBPrVE5/vbK/SDX
-	/IQzSdsBlklcrjFOglW+ZMoEllaKj9EZY1N1e5Fn34xH+nVaAL+4ki5tR6BlVBNvwBBQrv0wPml
-	qkKkODINZ9VhkX9aQk/07EHCelnIUTx1/YghEeHXT28KDmplgBTZhRNOYUS1Yn/hoJIFIcupgaa
-	g1CsML0kdcpGPF10rIEMGkg7o84icHBgU+Sa+vxYQhmkPbGOw3bdXQ17Vc2SetRFPMhqroqZZUE
-	RpThzCD/nbRG26cIj8NhJWT8upXR1Kswp4RZIuVomEmvNWN1bw==
-X-Google-Smtp-Source: AGHT+IH5gUoco7N8sKGHqASp+t6n1KYZvtsdLBTVel5nTdgyJkB/lYXE+HXry+XviOclf5k9LSJ5pA==
-X-Received: by 2002:a17:90b:3e4e:b0:2ee:c2b5:97a0 with SMTP id 98e67ed59e1d1-30c3d62e4c5mr22364395a91.25.1747059223077;
-        Mon, 12 May 2025 07:13:43 -0700 (PDT)
-Received: from hiago-nb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39df09dbsm6650922a91.26.2025.05.12.07.13.38
+        bh=GX/eBcEChE0E34AcneN6L6Wm+rbDwi9Vmr1xiNc+L8g=;
+        b=Rys3EcYlF89/G36VububmZHlHZI/Xc4oSAdP/I+WiJEpkfgBV9VajIYFXC3wmoiecL
+         FgCJpNzYCt56SGl7gmNQ+qVw1MONJZmG6E4fn6FWPWR0bgqsHfwk2U8ajWza6FryyYjb
+         9YPTC8siVqv0pkge7FycAAOTTFPI6kmt+Koy0ehvdfbL+wb8nHFND2ylEcVCrZNkUe2B
+         l3t0k/JCJDoKiydaSf2ymdui1lbkaSB6lBivZUQpRMIvRZJG+4Xpmdebar4QZ2Zhaon6
+         KOi9m8Fln623LTY+R+u1SSGQkxVz3IWIAUKdIg5LM5aKfZq7HafoupclTMpau1ZrRkNR
+         VMOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdNRDSlu66Thqa8LCV+UbzhdrlSi9Evzo6z+df2faq5fjet4Z9fqLGjl8IWs+DXvRAosouNXkl98zvtAiCdYeI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiKs2ytdGydvoEqf3JzgnLLKv4HBuXbkWu6HLokTQfKFGnoeuj
+	1AmhBmmXE01azCI2laQpJq5AX5cUJOcI3kvX0uBJn+DiIPKQQAB5hI9qKOvSUK8=
+X-Gm-Gg: ASbGncsgCRgf7GfPuXKTFrwavvMNQP+AuPwZHb78GgDZ6GPovChoA4nOPGTyFYaCYxS
+	Qqgt19TON9dagUu/J5I2MSS7iiaMWYKAW44IWG06UtrDGWXrmgVqUS22Z3MgWRl88Rjmsv1zk2Q
+	Zsrlb1KfdcGR2uG26HiBrfyVqdzh24dmqfS7+tkD410XeLikvF3g6tEPTq0fpvWcfDU4Z4YvDVQ
+	mdex8zOgWW6bbsX2pbijftbhjCohRAyBjDrMln9o4XVAqfUVt1t5gNP6NeiTNc1350mSa8SxxEw
+	ehx0e8adJy+hzuOkbxbrOzL3Mp/nwNGucejEyyvuCDxiw/S06rmG+VM=
+X-Google-Smtp-Source: AGHT+IHgmuXfm+4ff1pkZtxwN/V2i999rOI889ddQtZJPLCTUGcGf7+EJOjlZmWF+IGtP6CWuzsvRA==
+X-Received: by 2002:a05:6a00:4148:b0:740:921a:3cb4 with SMTP id d2e1a72fcca58-7423bd57d80mr20337967b3a.13.1747064311520;
+        Mon, 12 May 2025 08:38:31 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:3e0c:79f5:c193:3289])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a0cfc5sm6409040b3a.91.2025.05.12.08.38.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 07:13:42 -0700 (PDT)
-Date: Mon, 12 May 2025 11:13:36 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
- remote core attachment
-Message-ID: <20250512141336.b72ga37qtlrvgaut@hiago-nb>
-References: <20250507160056.11876-1-hiagofranco@gmail.com>
- <20250507160056.11876-4-hiagofranco@gmail.com>
- <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
- <20250508202826.33bke6atcvqdkfa4@hiago-nb>
- <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
- <20250509191308.6i3ydftzork3sv5c@hiago-nb>
- <20250512045613.GB31197@nxa18884-linux>
+        Mon, 12 May 2025 08:38:31 -0700 (PDT)
+Date: Mon, 12 May 2025 09:38:29 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: xlnx: avoid RPU force power down
+Message-ID: <aCIV9UJkxZAdKPE-@p14s>
+References: <20250506165944.1109534-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,53 +72,89 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250512045613.GB31197@nxa18884-linux>
+In-Reply-To: <20250506165944.1109534-1-tanmay.shah@amd.com>
 
-Hi Peng,
+On Tue, May 06, 2025 at 09:59:44AM -0700, Tanmay Shah wrote:
+> Powering off RPU using force_pwrdwn call results in system failure
+> if there are multiple users of that RPU node. Better mechanism is to use
+> request_node and release_node EEMI calls. With use of these EEMI calls,
+> platform management controller will take-care of powering off RPU
+> when there is no user.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Changes in v2:
+>   - Add comment on why version check is needed before calling EEMI call
+>     to fw.
+> 
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 34 ++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
 
-On Mon, May 12, 2025 at 12:56:13PM +0800, Peng Fan wrote:
->
-> Ulf's new API dev_pm_genpd_is_on needs to run after power domain attached.
->
-> But if run after power domain attached, there is no API to know whether
-> M4 is kicked by bootloader or now.
->
-> Even imx_rproc_attach_pd has a check for single power domain, but I just
-> give a look again on current i.MX8QM/QX, all are using two power domain
-> entries.
->
-> >
-> >>
-> >> In this way we don't need to export unnecessary firmware functions
-> >> from firmware/imx/misc.c, as patch1/3 does.
->
->
-> I think still need to export firmware API. My idea is
-> 1. introduce a new firmware API and put under firmware/imx/power.c
-> 2. Use this new firmware API in imx_rproc.c
-> 3. Replace scu-pd.c to use this new firmware API.
->
-> Or
-> 1. Export the API in scu-pd.c
-> 2. Use the API in imx_rproc.c
->
-> With approach two, you need to handle them in three trees in one patchset:
-> imx/pd/rproc.
->
-> With approach one, you need to handle two trees in one patchset: imx/rproc tree,
-> then after done, pd tree
+I have applied this patch.
 
-This patch series is already implementing approach one, as I understand,
-right?
+Thanks,
+Mathieu
 
-The difference is I moved this API from drivers/pmdomain/imx/scu-pd.c to
-firmware/imx/misc.c, and exported it there. But you think I should
-create this new file firmware/imx/power.c and move the API from scu-pd.c
-to power.c, is my understanding correct?
 
->
-> Regards,
-> Peng
-
-Best Regards,
-Hiago.
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 5aeedeaf3c41..1af89782e116 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -380,6 +380,18 @@ static int zynqmp_r5_rproc_start(struct rproc *rproc)
+>  	dev_dbg(r5_core->dev, "RPU boot addr 0x%llx from %s.", rproc->bootaddr,
+>  		bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
+>  
+> +	/* Request node before starting RPU core if new version of API is supported */
+> +	if (zynqmp_pm_feature(PM_REQUEST_NODE) > 1) {
+> +		ret = zynqmp_pm_request_node(r5_core->pm_domain_id,
+> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +		if (ret < 0) {
+> +			dev_err(r5_core->dev, "failed to request 0x%x",
+> +				r5_core->pm_domain_id);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	ret = zynqmp_pm_request_wake(r5_core->pm_domain_id, 1,
+>  				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
+>  	if (ret)
+> @@ -401,10 +413,30 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+>  	struct zynqmp_r5_core *r5_core = rproc->priv;
+>  	int ret;
+>  
+> +	/* Use release node API to stop core if new version of API is supported */
+> +	if (zynqmp_pm_feature(PM_RELEASE_NODE) > 1) {
+> +		ret = zynqmp_pm_release_node(r5_core->pm_domain_id);
+> +		if (ret)
+> +			dev_err(r5_core->dev, "failed to stop remoteproc RPU %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Check expected version of EEMI call before calling it. This avoids
+> +	 * any error or warning prints from firmware as it is expected that fw
+> +	 * doesn't support it.
+> +	 */
+> +	if (zynqmp_pm_feature(PM_FORCE_POWERDOWN) != 1) {
+> +		dev_dbg(r5_core->dev, "EEMI interface %d ver 1 not supported\n",
+> +			PM_FORCE_POWERDOWN);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	/* maintain force pwr down for backward compatibility */
+>  	ret = zynqmp_pm_force_pwrdwn(r5_core->pm_domain_id,
+>  				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+>  	if (ret)
+> -		dev_err(r5_core->dev, "failed to stop remoteproc RPU %d\n", ret);
+> +		dev_err(r5_core->dev, "core force power down failed\n");
+>  
+>  	return ret;
+>  }
+> 
+> base-commit: afc760ba751c289915fe10c12d836c31d23f6ddd
+> -- 
+> 2.34.1
+> 
