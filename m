@@ -1,34 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1BA1C8632;
-	Tue, 13 May 2025 15:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7571BC3F;
+	Tue, 13 May 2025 20:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747151576; cv=none; b=Hsb10Rr1P7sy1QJjPYeYGWrOVyBC4knc6kk+Qu+X20kTG8E4VycdxLEyU9FYMdrlaPqsiUayR6U6C0yVxLxkflyb/fsPKlO6Lfitp8H8wdj+riUNfWfrZ4ReBmBFXxLJyraOPMD66KvX4ZzXtsVpexaIwRHzoVMu5c987k78+Fo=
+	t=1747168942; cv=none; b=M3szJ6NvmDnD4meb8dMiWigopXpFZ9CJjniyYMkBG5fR302u0R6xg3Pi3nvmgWyvUSJkhiMnGa96gEizvU4ChyPpyFVMXHuTXA/x9//CjuImAPnI6f8mXpvBh38fc9V5WKC7ZWXVh0EkHNyGhyKj2qDK18wD0uTLJ12ie0csrTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747151576; c=relaxed/simple;
-	bh=v2B2sJq6WJ3s/RGL6l6vpiYq55R11ku6FNcj8XhDOYs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uG66reE/LeEj86dlnwXVJ/p0xvSG/QabdA4jG0VhqDBdcyWj7qRuQoPQkk2N4CQS9Ugb2sOx+mI6aQh7d96HHYjkx8ThUl8WjZUBz+lvleaV4gZYDVFN7Ujvj5g0VTq87NYVHazaULg8ecPpIJuIF/LpK1WhUS9H0/f8u9YEmfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQDD5Qza; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747168942; c=relaxed/simple;
+	bh=zE2KJI8tD41HF9asN3EFFys1c6UuUWALgh/fM6HZUH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L3kvUeDZ6bT15N8xe+PdkT4am3P/wTnH4E6yzS1OAo02B4GzZO6uRHg21t6pWClpx0W1BrcHbzGEZCWP+b3h0RHcK2CbmOSnoWBg+b8/5M/xqayMPyamsbPK/XQstl4Dc1reNKMz/1rzx0Ujxtmtzoa4kghiDTXxBquqxqEbCGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWbtqrog; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQDD5Qza"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64A6C4CEE4;
-	Tue, 13 May 2025 15:52:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWbtqrog"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7F28C4CEE4;
+	Tue, 13 May 2025 20:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747151573;
-	bh=v2B2sJq6WJ3s/RGL6l6vpiYq55R11ku6FNcj8XhDOYs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uQDD5QzaGwY38/mORsML5hTD7ymUJRSi82cObZr1bNoKvEZxE64MKQ6PLjprwLvqG
-	 W519cOT031KL/YijYCQjQVSP7FtG4rAD4Gi/FDQMYNLfWHBRvkLJjGVJlL5eDn3TjS
-	 tVPocVDgIq177HUzzQjBeGkCMEAWjRVoZAABqxCE7YDxSaIW2+bNp5Defsxfu1nnW3
-	 a5WQzdePTeTEp5S1X5r6NYnLiXDr5Okc/geq9hM871xkUhr6Hw0BOaBfhSLLFqEMTB
-	 6UyBTxagLXo/J+A8tT+k2siXHBjweU7NV2aqhOkKMNbXX+p0Nt3Tg47e5ts4CuoGTO
-	 RyvG4hcVrc1MQ==
+	s=k20201202; t=1747168940;
+	bh=zE2KJI8tD41HF9asN3EFFys1c6UuUWALgh/fM6HZUH8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PWbtqrog/Yal/Bjln8ebeA+JNwKeSKSZDveJM3pe7xEM2OGyVuaohEwUc2lABJ3dW
+	 +TIua8uXgHZ5ygufuDIICH/fTxDAPGveAoxqKwMjCIiEGhr2F9x+iWw4SgIfseC4uQ
+	 hAp9vMil2GYi+fhTnlESsB6AGm9vNJTttAIV0I3hgl4WEWL8Qxeu/3Hi+cNHx65Hzg
+	 l7GxiNwm61sd6pXmGCoGjx9FLbcxMmGWIMbsZhbyZjF8UsRlT28obF9dvKKqt4l9M7
+	 3u40qGZX8HfCpPfnVtJo0V0PGFEds7nxSLMINTCdAMVrc03sTgpg4luD5Y9qJft+3k
+	 lgrV2OKUoBneQ==
 From: Bjorn Andersson <andersson@kernel.org>
-Date: Tue, 13 May 2025 16:52:46 +0100
-Subject: [PATCH] Revert "remoteproc: core: Clear table_sz when
- rproc_shutdown"
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom_wcnss_iris: Add missing put_device() on error in probe
+Date: Tue, 13 May 2025 15:42:09 -0500
+Message-ID: <174716891494.3696994.7405706762307984150.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
+References: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -36,47 +46,20 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250513-revert-rproc-table-sz-v1-1-a8c6b5d6f8a7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAM1qI2gC/x2M0QpAQBQFf0X32S2WpfyKPKx1cEvoriTy7zaPU
- zPzUIAKAjXJQ4pTgmxrhDxNyM9uncAyRCaTGZvZvOAoQQ/WXTfPh+sXcLjZFvCjKWtTOVBsd8U
- o1/9tu/f9ALoYlfxnAAAA
-X-Change-ID: 20250513-revert-rproc-table-sz-53ecf24726ae
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Clearing the table_sz on cleanup seemed reasonable, but further
-discussions concluded that this merely working around the issue
-and that the fix is incomplete.
 
-As such, revert commit efdde3d73ab2 ("remoteproc: core: Clear table_sz
-when rproc_shutdown") to avoid carrying a partial fix.
+On Wed, 02 Apr 2025 13:59:51 +0300, Dan Carpenter wrote:
+> The device_del() call matches with the device_add() but we also need
+> to call put_device() to trigger the qcom_iris_release().
+> 
+> 
 
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
----
- drivers/remoteproc/remoteproc_core.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 48d146e1fa560397c11eeb8f824ae0fb844a022b..81b2ccf988e852ac79cee375c7e3f118c2a4b41a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2025,7 +2025,6 @@ int rproc_shutdown(struct rproc *rproc)
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
--	rproc->table_sz = 0;
- out:
- 	mutex_unlock(&rproc->lock);
- 	return ret;
-
----
-base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
-change-id: 20250513-revert-rproc-table-sz-53ecf24726ae
+[1/1] remoteproc: qcom_wcnss_iris: Add missing put_device() on error in probe
+      commit: 0cb4b1b97041d8a1f773425208ded253c1cb5869
 
 Best regards,
 -- 
 Bjorn Andersson <andersson@kernel.org>
-
