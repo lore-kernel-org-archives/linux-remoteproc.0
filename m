@@ -1,56 +1,56 @@
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988047DA7F;
-	Tue, 13 May 2025 05:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6023F7DA7F;
+	Tue, 13 May 2025 05:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747115138; cv=none; b=aewm4eUD7UqdlcRy8qgoyYhE8e31+gmnxPUZ1hmsw/MqQMYKAACvYXzUxdPPI+siAuy1SOTaoGfcqLbrfkH0db6i905dh9Aej4eyRMxjsQ06kkvGp1sVMMEWxBLKjGo0rULHSgteRJf0eTBSpYvwRP41DH2KgdpW2wn3bSyEyAU=
+	t=1747115146; cv=none; b=ZfzB4D8XyZavXaL2nFDiq75wb0foDu9bBpeAEPpK1WKBFJeMcpwXAgExIaGqt6K6KuuD00I1DMbavCsf2BiG5nhBjRL2AjUJg4h3wGrEm6uIvKqTuf+1AWSRl3SBAlhlDLcqfmkUOm4khGeJ4HH6wIHMPbBZ0ggYQOX2vquJKNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747115138; c=relaxed/simple;
-	bh=0J09EsxHKrk964zQrojEq2bXM5GKL329ixByMUyBP/Q=;
+	s=arc-20240116; t=1747115146; c=relaxed/simple;
+	bh=GO9FfsL09bUmQcVrlG2H2lZfuUcloiASH3s0QosKeCA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qL7ZE0FIB/hC5LwzTRB9NE+7ut0e2iPjBCk5+jvJ+ifCurTsfOjgDFwe291yRq6blLF4dJ02dN6M257s2E+qSJTNn0NEv3JmLJV2C8E8TMd9ptbZAtI7CsvwaT5vpfJwdFSncxMSx5HTihWVRg23LFioxM7vqYm/0uHANB6OBbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uo4p5X2f; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=pc1kRzeQKk8iDXmokRck908bzpkg0aBcyWez++SHUv/tiF/XVSJgBUr9tca3T/Og2NKf7XPFgP3U7SIxndFptk2Y7a2znyHd7tZCgcIj4EFtYp0Zscur3gkRP0dgg2a63WzGMtns/c/yOaCFYOaSqxi5M5PDzEVIyXLBV4jVwFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lbbVOWFK; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uo4p5X2f"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5jSJA2764224
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lbbVOWFK"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5jaZX2226317
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 00:45:28 -0500
+	Tue, 13 May 2025 00:45:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747115128;
-	bh=ZhvFCfBAy7aVEJqwbeVRNOdju6nJ1u+171Ob+t10kBw=;
+	s=ti-com-17Q1; t=1747115136;
+	bh=zhAcpJlYU4/0MR5n21lEvZAva+QCUEB0sleYKRGULAo=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uo4p5X2fdlgb1IOuVqiM6dLpSJqGO/+N4Xgs4CdxWSuoQ9N4XTv+n1NrjBbfKcOhI
-	 fznb1el55wj9C9pvFh9RCDgLu8YoNRe6BvJxE4+Agvz1gCpmpraGE4g5XWXJEp/Ows
-	 W4rDJz4yXs6w76zdDlC8tqYlNcc/5nBMEajI6Pwg=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5jSL3088455
+	b=lbbVOWFKR++8Kuw8L0P4ZeXM4uwd/047617kOeiTMWU8yvQqiMjd/iIh4usDZITlD
+	 C29IR+2/L9ysqCGawWLtg2PhuANKk5gBVceNvLLwWQcXS7kGx1gV5s2LNqM+iQZRT8
+	 9CvIZmu1meHp9JJI7VHsR/HELpG3qsKZoaIpmEe0=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5ja5D062993
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 13 May 2025 00:45:28 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 13 May 2025 00:45:36 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
- May 2025 00:45:28 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ May 2025 00:45:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 13 May 2025 00:45:27 -0500
+ Frontend Transport; Tue, 13 May 2025 00:45:36 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54D5jAqC131001;
-	Tue, 13 May 2025 00:45:24 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54D5jAqE131001;
+	Tue, 13 May 2025 00:45:32 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v12 03/36] remoteproc: k3-r5: Refactor sequential core power up/down operations
-Date: Tue, 13 May 2025 11:14:37 +0530
-Message-ID: <20250513054510.3439842-4-b-padhi@ti.com>
+Subject: [PATCH v12 05/36] remoteproc: k3-r5: Re-order internal memory initialization functions
+Date: Tue, 13 May 2025 11:14:39 +0530
+Message-ID: <20250513054510.3439842-6-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250513054510.3439842-1-b-padhi@ti.com>
 References: <20250513054510.3439842-1-b-padhi@ti.com>
@@ -64,26 +64,16 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The existing implementation of the waiting mechanism in
-"k3_r5_cluster_rproc_init()" waits for the "released_from_reset" flag to
-be set as part of the firmware boot process in "k3_r5_rproc_start()".
-The "k3_r5_cluster_rproc_init()" function is invoked in the probe
-routine which causes unexpected failures in cases where the firmware is
-unavailable at boot time, resulting in probe failure and removal of the
-remoteproc handles in the sysfs paths.
+The internal memory struct pointer, 'mem', will be refactored from
+k3_r5_core struct into k3_r5_rproc struct in a future commit.
 
-To address this, the waiting mechanism is refactored out of the probe
-routine into the appropriate "k3_r5_rproc_{prepare/unprepare}()"
-functions. This allows the probe routine to complete without depending
-on firmware booting, while still maintaining the required
-power-synchronization between cores.
+Therefore, move the internal memory initialization function,
+k3_r5_core_of_get_internal_memories() above k3_r5_cluster_rproc_init()
+so that the former can be invoked by the later.
 
-Further, this wait mechanism is dropped from
-"k3_r5_rproc_{start/stop}()" functions as they deal with Core Run/Halt
-operations, and as such, there is no constraint in Running or Halting
-the cores of a cluster in order.
+While at it, also re-order the k3_r5_core_of_get_sram_memories() to keep
+all the internal memory initialization functions at one place.
 
-Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 Tested-by: Judith Mendez <jm@ti.com>
 Reviewed-by: Andrew Davis <afd@ti.com>
@@ -92,212 +82,301 @@ v12: Changelog:
 1. Carried R/B tag.
 
 Link to v11:
-https://lore.kernel.org/all/20250425104135.830255-4-b-padhi@ti.com/
+https://lore.kernel.org/all/20250425104135.830255-5-b-padhi@ti.com/
 
 v11: Changelog:
 1. Carried T/B tag.
 
 Link to v10:
-https://lore.kernel.org/all/20250417182001.3903905-4-b-padhi@ti.com/
+https://lore.kernel.org/all/20250417182001.3903905-5-b-padhi@ti.com/
 
 v10: Changelog:
-1. Re-ordered this patch from [v9 08/26] to [v10 03/33].
+1. Re-ordered both core_of_get_{internal/sram}_memories() together.
+2. Moved release_tsp() re-ordering into a separate future commit.
+3. Updated commit message to call out changes in a better way.
 
 Link to v9:
-https://lore.kernel.org/all/20250317120622.1746415-9-b-padhi@ti.com/
+https://lore.kernel.org/all/20250317120622.1746415-2-b-padhi@ti.com/
 
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 110 +++++++++++++----------
- 1 file changed, 63 insertions(+), 47 deletions(-)
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 258 +++++++++++------------
+ 1 file changed, 129 insertions(+), 129 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 3fc0b97dec600..ba082ca13e750 100644
+index ba082ca13e750..062a654cac0f0 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -440,13 +440,36 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct k3_r5_core *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core, *core0, *core1;
- 	struct device *dev = kproc->dev;
- 	u32 ctrl = 0, cfg = 0, stat = 0;
- 	u64 boot_vec = 0;
- 	bool mem_init_dis;
- 	int ret;
- 
-+	/*
-+	 * R5 cores require to be powered on sequentially, core0 should be in
-+	 * higher power state than core1 in a cluster. So, wait for core0 to
-+	 * power up before proceeding to core1 and put timeout of 2sec. This
-+	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
-+	 * core1 can be called before core0 due to thread execution order.
-+	 *
-+	 * By placing the wait mechanism here in .prepare() ops, this condition
-+	 * is enforced for rproc boot requests from sysfs as well.
-+	 */
-+	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-+	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-+	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
-+	    !core0->released_from_reset) {
-+		ret = wait_event_interruptible_timeout(cluster->core_transition,
-+						       core0->released_from_reset,
-+						       msecs_to_jiffies(2000));
-+		if (ret <= 0) {
-+			dev_err(dev, "can not power up core1 before core0");
-+			return -EPERM;
-+		}
-+	}
-+
- 	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
- 	if (ret < 0)
- 		return ret;
-@@ -462,6 +485,14 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
- 
-+	/*
-+	 * Notify all threads in the wait queue when core0 state has changed so
-+	 * that threads waiting for this condition can be executed.
-+	 */
-+	core->released_from_reset = true;
-+	if (core == core0)
-+		wake_up_interruptible(&cluster->core_transition);
-+
- 	/*
- 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
- 	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
-@@ -507,10 +538,30 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
- {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct k3_r5_core *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core, *core0, *core1;
- 	struct device *dev = kproc->dev;
- 	int ret;
- 
-+	/*
-+	 * Ensure power-down of cores is sequential in split mode. Core1 must
-+	 * power down before Core0 to maintain the expected state. By placing
-+	 * the wait mechanism here in .unprepare() ops, this condition is
-+	 * enforced for rproc stop or shutdown requests from sysfs and device
-+	 * removal as well.
-+	 */
-+	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-+	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-+	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core0 &&
-+	    core1->released_from_reset) {
-+		ret = wait_event_interruptible_timeout(cluster->core_transition,
-+						       !core1->released_from_reset,
-+						       msecs_to_jiffies(2000));
-+		if (ret <= 0) {
-+			dev_err(dev, "can not power down core0 before core1");
-+			return -EPERM;
-+		}
-+	}
-+
- 	/* Re-use LockStep-mode reset logic for Single-CPU mode */
- 	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
- 	       cluster->mode == CLUSTER_MODE_SINGLECPU) ?
-@@ -518,6 +569,14 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
- 	if (ret)
- 		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
- 
-+	/*
-+	 * Notify all threads in the wait queue when core1 state has changed so
-+	 * that threads waiting for this condition can be executed.
-+	 */
-+	core->released_from_reset = false;
-+	if (core == core1)
-+		wake_up_interruptible(&cluster->core_transition);
-+
+@@ -1227,6 +1227,135 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
  	return ret;
  }
  
-@@ -543,7 +602,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
- 	struct device *dev = kproc->dev;
--	struct k3_r5_core *core0, *core;
-+	struct k3_r5_core *core;
- 	u32 boot_addr;
- 	int ret;
- 
-@@ -565,21 +624,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
- 				goto unroll_core_run;
- 		}
- 	} else {
--		/* do not allow core 1 to start before core 0 */
--		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
--					 elem);
--		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
--			dev_err(dev, "%s: can not start core 1 before core 0\n",
--				__func__);
--			return -EPERM;
--		}
--
- 		ret = k3_r5_core_run(core);
- 		if (ret)
- 			return ret;
--
--		core->released_from_reset = true;
--		wake_up_interruptible(&cluster->core_transition);
- 	}
- 
- 	return 0;
-@@ -620,8 +667,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
++static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
++					       struct k3_r5_core *core)
++{
++	static const char * const mem_names[] = {"atcm", "btcm"};
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int num_mems;
++	int i;
++
++	num_mems = ARRAY_SIZE(mem_names);
++	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
++	if (!core->mem)
++		return -ENOMEM;
++
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   mem_names[i]);
++		if (!res) {
++			dev_err(dev, "found no memory resource for %s\n",
++				mem_names[i]);
++			return -EINVAL;
++		}
++		if (!devm_request_mem_region(dev, res->start,
++					     resource_size(res),
++					     dev_name(dev))) {
++			dev_err(dev, "could not request %s region for resource\n",
++				mem_names[i]);
++			return -EBUSY;
++		}
++
++		/*
++		 * TCMs are designed in general to support RAM-like backing
++		 * memories. So, map these as Normal Non-Cached memories. This
++		 * also avoids/fixes any potential alignment faults due to
++		 * unaligned data accesses when using memcpy() or memset()
++		 * functions (normally seen with device type memory).
++		 */
++		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
++							resource_size(res));
++		if (!core->mem[i].cpu_addr) {
++			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
++			return -ENOMEM;
++		}
++		core->mem[i].bus_addr = res->start;
++
++		/*
++		 * TODO:
++		 * The R5F cores can place ATCM & BTCM anywhere in its address
++		 * based on the corresponding Region Registers in the System
++		 * Control coprocessor. For now, place ATCM and BTCM at
++		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
++		 * SoCs) based on loczrama setting
++		 */
++		if (!strcmp(mem_names[i], "atcm")) {
++			core->mem[i].dev_addr = core->loczrama ?
++							0 : K3_R5_TCM_DEV_ADDR;
++		} else {
++			core->mem[i].dev_addr = core->loczrama ?
++							K3_R5_TCM_DEV_ADDR : 0;
++		}
++		core->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			mem_names[i], &core->mem[i].bus_addr,
++			core->mem[i].size, core->mem[i].cpu_addr,
++			core->mem[i].dev_addr);
++	}
++	core->num_mems = num_mems;
++
++	return 0;
++}
++
++static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
++					   struct k3_r5_core *core)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct device_node *sram_np;
++	struct resource res;
++	int num_sram;
++	int i, ret;
++
++	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
++	if (num_sram <= 0) {
++		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
++			num_sram);
++		return 0;
++	}
++
++	core->sram = devm_kcalloc(dev, num_sram, sizeof(*core->sram), GFP_KERNEL);
++	if (!core->sram)
++		return -ENOMEM;
++
++	for (i = 0; i < num_sram; i++) {
++		sram_np = of_parse_phandle(np, "sram", i);
++		if (!sram_np)
++			return -EINVAL;
++
++		if (!of_device_is_available(sram_np)) {
++			of_node_put(sram_np);
++			return -EINVAL;
++		}
++
++		ret = of_address_to_resource(sram_np, 0, &res);
++		of_node_put(sram_np);
++		if (ret)
++			return -EINVAL;
++
++		core->sram[i].bus_addr = res.start;
++		core->sram[i].dev_addr = res.start;
++		core->sram[i].size = resource_size(&res);
++		core->sram[i].cpu_addr = devm_ioremap_wc(dev, res.start,
++							 resource_size(&res));
++		if (!core->sram[i].cpu_addr) {
++			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
++				i, &res.start);
++			return -ENOMEM;
++		}
++
++		dev_dbg(dev, "memory sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			i, &core->sram[i].bus_addr,
++			core->sram[i].size, core->sram[i].cpu_addr,
++			core->sram[i].dev_addr);
++	}
++	core->num_sram = num_sram;
++
++	return 0;
++}
++
+ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
  {
- 	struct k3_r5_rproc *kproc = rproc->priv;
- 	struct k3_r5_cluster *cluster = kproc->cluster;
--	struct device *dev = kproc->dev;
--	struct k3_r5_core *core1, *core = kproc->core;
-+	struct k3_r5_core *core = kproc->core;
- 	int ret;
+ 	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+@@ -1366,135 +1495,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+ 	}
+ }
  
- 	/* halt all applicable cores */
-@@ -634,16 +680,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 			}
- 		}
- 	} else {
--		/* do not allow core 0 to stop before core 1 */
--		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
--					elem);
--		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
--			dev_err(dev, "%s: can not stop core 0 before core 1\n",
--				__func__);
--			ret = -EPERM;
--			goto out;
--		}
+-static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+-					       struct k3_r5_core *core)
+-{
+-	static const char * const mem_names[] = {"atcm", "btcm"};
+-	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	int num_mems;
+-	int i;
 -
- 		ret = k3_r5_core_halt(core);
- 		if (ret)
- 			goto out;
-@@ -1271,26 +1307,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
- 		    cluster->mode == CLUSTER_MODE_SINGLECORE)
- 			break;
+-	num_mems = ARRAY_SIZE(mem_names);
+-	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
+-	if (!core->mem)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_mems; i++) {
+-		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   mem_names[i]);
+-		if (!res) {
+-			dev_err(dev, "found no memory resource for %s\n",
+-				mem_names[i]);
+-			return -EINVAL;
+-		}
+-		if (!devm_request_mem_region(dev, res->start,
+-					     resource_size(res),
+-					     dev_name(dev))) {
+-			dev_err(dev, "could not request %s region for resource\n",
+-				mem_names[i]);
+-			return -EBUSY;
+-		}
 -
 -		/*
--		 * R5 cores require to be powered on sequentially, core0
--		 * should be in higher power state than core1 in a cluster
--		 * So, wait for current core to power up before proceeding
--		 * to next core and put timeout of 2sec for each core.
--		 *
--		 * This waiting mechanism is necessary because
--		 * rproc_auto_boot_callback() for core1 can be called before
--		 * core0 due to thread execution order.
+-		 * TCMs are designed in general to support RAM-like backing
+-		 * memories. So, map these as Normal Non-Cached memories. This
+-		 * also avoids/fixes any potential alignment faults due to
+-		 * unaligned data accesses when using memcpy() or memset()
+-		 * functions (normally seen with device type memory).
 -		 */
--		ret = wait_event_interruptible_timeout(cluster->core_transition,
--						       core->released_from_reset,
--						       msecs_to_jiffies(2000));
--		if (ret <= 0) {
--			dev_err(dev,
--				"Timed out waiting for %s core to power up!\n",
--				rproc->name);
--			goto out;
+-		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+-							resource_size(res));
+-		if (!core->mem[i].cpu_addr) {
+-			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+-			return -ENOMEM;
 -		}
- 	}
- 
- 	return 0;
+-		core->mem[i].bus_addr = res->start;
+-
+-		/*
+-		 * TODO:
+-		 * The R5F cores can place ATCM & BTCM anywhere in its address
+-		 * based on the corresponding Region Registers in the System
+-		 * Control coprocessor. For now, place ATCM and BTCM at
+-		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
+-		 * SoCs) based on loczrama setting
+-		 */
+-		if (!strcmp(mem_names[i], "atcm")) {
+-			core->mem[i].dev_addr = core->loczrama ?
+-							0 : K3_R5_TCM_DEV_ADDR;
+-		} else {
+-			core->mem[i].dev_addr = core->loczrama ?
+-							K3_R5_TCM_DEV_ADDR : 0;
+-		}
+-		core->mem[i].size = resource_size(res);
+-
+-		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+-			mem_names[i], &core->mem[i].bus_addr,
+-			core->mem[i].size, core->mem[i].cpu_addr,
+-			core->mem[i].dev_addr);
+-	}
+-	core->num_mems = num_mems;
+-
+-	return 0;
+-}
+-
+-static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+-					   struct k3_r5_core *core)
+-{
+-	struct device_node *np = pdev->dev.of_node;
+-	struct device *dev = &pdev->dev;
+-	struct device_node *sram_np;
+-	struct resource res;
+-	int num_sram;
+-	int i, ret;
+-
+-	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
+-	if (num_sram <= 0) {
+-		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
+-			num_sram);
+-		return 0;
+-	}
+-
+-	core->sram = devm_kcalloc(dev, num_sram, sizeof(*core->sram), GFP_KERNEL);
+-	if (!core->sram)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < num_sram; i++) {
+-		sram_np = of_parse_phandle(np, "sram", i);
+-		if (!sram_np)
+-			return -EINVAL;
+-
+-		if (!of_device_is_available(sram_np)) {
+-			of_node_put(sram_np);
+-			return -EINVAL;
+-		}
+-
+-		ret = of_address_to_resource(sram_np, 0, &res);
+-		of_node_put(sram_np);
+-		if (ret)
+-			return -EINVAL;
+-
+-		core->sram[i].bus_addr = res.start;
+-		core->sram[i].dev_addr = res.start;
+-		core->sram[i].size = resource_size(&res);
+-		core->sram[i].cpu_addr = devm_ioremap_wc(dev, res.start,
+-							 resource_size(&res));
+-		if (!core->sram[i].cpu_addr) {
+-			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
+-				i, &res.start);
+-			return -ENOMEM;
+-		}
+-
+-		dev_dbg(dev, "memory sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+-			i, &core->sram[i].bus_addr,
+-			core->sram[i].size, core->sram[i].cpu_addr,
+-			core->sram[i].dev_addr);
+-	}
+-	core->num_sram = num_sram;
+-
+-	return 0;
+-}
+-
+ static void k3_r5_release_tsp(void *data)
+ {
+ 	struct ti_sci_proc *tsp = data;
 -- 
 2.34.1
 
