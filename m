@@ -1,56 +1,55 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED14D1EE00C;
-	Tue, 13 May 2025 05:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E909C7DA7F;
+	Tue, 13 May 2025 05:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747115247; cv=none; b=G6/hc9PJ0spT22ZMv87PFCCdI7WMqWB4mdp8J2Jy2cqZFFPO0y7ll45QewG6u10AYzXXV9lUJAgbr23xqxz0YKUNQGIa1l8x8vxNKuUjlIe320wZ3BS7SiQ6lPd4Q6qoSYeD6YxPhPOjzZHDUYY8gc5piI7+/ivexygDoC7suJ4=
+	t=1747115248; cv=none; b=rkBIoOCSB/3Cr5n1qpDUWBmzcpTBRrFSu915FI+qfSSOGiyWeosHZSNWt+lUZ2PwY1ofphtpMH1wEfSLQ4jEls9/wGoO+nTRJIdDgNKM9hWmM+twpLCnlHmmb0TXcKNIdkg4TGOjEgm/TZegYLz3HRTDSNbrrjNn5TDWjbjE8kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747115247; c=relaxed/simple;
-	bh=0sX7hkk+45vXuLRsZuBgacGY8u3BEg93KCbAY0/nBDs=;
+	s=arc-20240116; t=1747115248; c=relaxed/simple;
+	bh=84H6ry/WNdWRYFlV/fBZbjfw3FR/6vaGgy2WNwMmqjQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LW+rIPhC/NOkhBVdsSxeS6bv1VJyV+JVtsRnCICoUDxNR4MrFcVavgzpfbWpECrkjXtw4Wazsho7W0NUd25EQqyz04QNgP4gQn4+qkGzqGckjxTNdxs5tw7Y0uqST1KeWtQLGuB5RknlhNgsrdtpkgOnThCVEBSnCV1lXiFAe4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nn6B50qI; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=FAt88TbDYFv4FU4UDrD2KwU+7qT2HfVtk9esvcdHgOtXY5Pp05lSMxY7n9WqAfeDfkvBXCV0U3MJppYA0vXZZNrp+FPcWm301TF3unvEP+Oovim3z2MMhZDLWNbRXsukyLz2751huECqNVXWXUWCX0o2QHDLG3YplMgwcg/7toQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bZzQ7Wcz; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nn6B50qI"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5lFPO2210914
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 May 2025 00:47:15 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bZzQ7Wcz"
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54D5lJAv2764585;
+	Tue, 13 May 2025 00:47:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747115236;
-	bh=0yHdHRDw7EPMsqkBKDcoOGCY5hfHrve2aNyW9vJkT2k=;
+	s=ti-com-17Q1; t=1747115240;
+	bh=UWYzz22DYwLubR/JbG6VUMqRPCfwDnwidK3OoxAqaXk=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=nn6B50qIiCTCkvp6riecMdV/EHty1PgqrAxOWxpgKeyf06epf+f6LAH/kguT18VPH
-	 Te2Gd6u8Coo6teAseHeFG931RKEkuhBnNxQoO9J0/n03PMcv6A/WhnyrV9ftRtnFXT
-	 tsp4QfRPdszrOLNoiGNuWoiBYJoKaCiDbqtL+j8E=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54D5lFIA028367
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 13 May 2025 00:47:15 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
- May 2025 00:47:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+	b=bZzQ7WczGI8fZumUvp35SfSLP4Z1DQ8q/rc+BJFSx86z7z6PhgKCs7V9gfVxs/pGv
+	 QDtX8xfXuiY3TQ1Rmin1rkKwOlVZaBHwGhqeWAICYGVDk091rIu0t/DEE/YVhe+gK4
+	 X32vlYfFlfBLAEu8Q8LTTxtfHpXYHO8Z+Q6AzBb0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54D5lJGO652456
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 13 May 2025 00:47:19 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE110.ent.ti.com
  (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
+ May 2025 00:47:19 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 13 May 2025 00:47:15 -0500
+ Frontend Transport; Tue, 13 May 2025 00:47:19 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54D5jAqc131001;
-	Tue, 13 May 2025 00:47:11 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54D5jAqd131001;
+	Tue, 13 May 2025 00:47:15 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
         <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
         <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v12 29/36] remoteproc: k3: Refactor .attach rproc ops into common driver
-Date: Tue, 13 May 2025 11:15:03 +0530
-Message-ID: <20250513054510.3439842-30-b-padhi@ti.com>
+Subject: [PATCH v12 30/36] remoteproc: k3: Refactor .detach rproc ops into common driver
+Date: Tue, 13 May 2025 11:15:04 +0530
+Message-ID: <20250513054510.3439842-31-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250513054510.3439842-1-b-padhi@ti.com>
 References: <20250513054510.3439842-1-b-padhi@ti.com>
@@ -64,10 +63,10 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The .attach rproc ops implementations in TI K3 R5, DSP and M4 drivers
-are NOPs. Refactor the implementations into ti_k3_common.c driver
-as k3_rproc_attach() and register this common function as .attach ops in
-R5, DSP and M4 drivers.
+The .detach rproc ops implementations in TI K3 R5, DSP and M4
+remoteproc drivers are NOPs. Refactor the implementations into
+ti_k3_common.c driver as k3_rproc_detach() and register this common
+function as .detach ops in R5, DSP and M4 drivers.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 Tested-by: Judith Mendez <jm@ti.com>
@@ -77,153 +76,146 @@ v12: Changelog:
 1. Carried R/B tag.
 
 Link to v11:
-https://lore.kernel.org/all/20250425104135.830255-29-b-padhi@ti.com/
+https://lore.kernel.org/all/20250425104135.830255-30-b-padhi@ti.com/
 
 v11: Changelog:
 1. Carried T/B tag.
 
 Link to v10:
-https://lore.kernel.org/all/20250417182001.3903905-27-b-padhi@ti.com/
+https://lore.kernel.org/all/20250417182001.3903905-28-b-padhi@ti.com/
 
 v10: Changelog:
 1. Don't remove dsp func override. Already done by [v10 20/33] patch.
 
 Link to v9:
-https://lore.kernel.org/all/20250317120622.1746415-20-b-padhi@ti.com/
+https://lore.kernel.org/all/20250317120622.1746415-21-b-padhi@ti.com/
 
- drivers/remoteproc/ti_k3_common.c         | 12 ++++++++++++
+ drivers/remoteproc/ti_k3_common.c         | 10 ++++++++++
  drivers/remoteproc/ti_k3_common.h         |  1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +------------
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 11 +----------
  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 14 +-------------
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 13 +------------
- 5 files changed, 16 insertions(+), 37 deletions(-)
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 11 +----------
+ 5 files changed, 14 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index 50df7164b0caf..ffd6639e6d63c 100644
+index ffd6639e6d63c..5c976fb570d0f 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -296,5 +296,17 @@ int k3_rproc_stop(struct rproc *rproc)
- }
- EXPORT_SYMBOL_GPL(k3_rproc_stop);
+@@ -308,5 +308,15 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+ int k3_rproc_attach(struct rproc *rproc) { return 0; }
+ EXPORT_SYMBOL_GPL(k3_rproc_attach);
  
 +/*
-+ * Attach to a running remote processor (IPC-only mode)
++ * Detach from a running remote processor (IPC-only mode)
 + *
-+ * The rproc attach callback is a NOP. The remote processor is already booted,
-+ * and all required resources have been acquired during probe routine, so there
-+ * is no need to issue any TI-SCI commands to boot the remote cores in IPC-only
-+ * mode. This callback is invoked only in IPC-only mode and exists because
-+ * rproc_validate() checks for its existence.
++ * The rproc detach callback is a NOP. The remote processor is not stopped and
++ * will be left in booted state in IPC-only mode. This callback is invoked only
++ * in IPC-only mode and exists for sanity sake
 + */
-+int k3_rproc_attach(struct rproc *rproc) { return 0; }
-+EXPORT_SYMBOL_GPL(k3_rproc_attach);
++int k3_rproc_detach(struct rproc *rproc) { return 0; }
++EXPORT_SYMBOL_GPL(k3_rproc_detach);
 +
  MODULE_LICENSE("GPL");
  MODULE_DESCRIPTION("TI K3 common Remoteproc code");
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 98e57a298e73a..c369715b2d768 100644
+index c369715b2d768..42358bf5aae94 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -102,4 +102,5 @@ int k3_rproc_prepare(struct rproc *rproc);
- int k3_rproc_unprepare(struct rproc *rproc);
+@@ -103,4 +103,5 @@ int k3_rproc_unprepare(struct rproc *rproc);
  int k3_rproc_start(struct rproc *rproc);
  int k3_rproc_stop(struct rproc *rproc);
-+int k3_rproc_attach(struct rproc *rproc);
+ int k3_rproc_attach(struct rproc *rproc);
++int k3_rproc_detach(struct rproc *rproc);
  #endif /* REMOTEPROC_TI_K3_COMMON_H */
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index f506a9360879a..12858c7f1958d 100644
+index 12858c7f1958d..a62a69d9f80ed 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -58,17 +58,6 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
+@@ -58,15 +58,6 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
  	return 0;
  }
  
 -/*
-- * Attach to a running DSP remote processor (IPC-only mode)
+- * Detach from a running DSP remote processor (IPC-only mode)
 - *
-- * This rproc attach callback is a NOP. The remote processor is already booted,
-- * and all required resources have been acquired during probe routine, so there
-- * is no need to issue any TI-SCI commands to boot the DSP core. This callback
-- * is invoked only in IPC-only mode and exists because rproc_validate() checks
-- * for its existence.
+- * This rproc detach callback is a NOP. The DSP core is not stopped and will be
+- * left to continue to run its booted firmware. This callback is invoked only in
+- * IPC-only mode and exists for sanity sake.
 - */
--static int k3_dsp_rproc_attach(struct rproc *rproc) { return 0; }
+-static int k3_dsp_rproc_detach(struct rproc *rproc) { return 0; }
 -
  /*
-  * Detach from a running DSP remote processor (IPC-only mode)
-  *
-@@ -172,7 +161,7 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool
- static const struct rproc_ops k3_dsp_rproc_ops = {
+  * This function implements the .get_loaded_rsc_table() callback and is used
+  * to provide the resource table for a booted DSP in IPC-only mode. The K3 DSP
+@@ -162,7 +153,7 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
  	.start			= k3_dsp_rproc_start,
  	.stop			= k3_rproc_stop,
--	.attach			= k3_dsp_rproc_attach,
-+	.attach			= k3_rproc_attach,
- 	.detach			= k3_dsp_rproc_detach,
+ 	.attach			= k3_rproc_attach,
+-	.detach			= k3_dsp_rproc_detach,
++	.detach			= k3_rproc_detach,
  	.kick			= k3_rproc_kick,
  	.da_to_va		= k3_dsp_rproc_da_to_va,
+ 	.get_loaded_rsc_table	= k3_dsp_get_loaded_rsc_table,
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index de8809cc95fe8..7f3c8d3d1398b 100644
+index 7f3c8d3d1398b..d75362717155d 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -244,18 +244,6 @@ static void k3_m4_release_tsp(void *data)
+@@ -244,25 +244,13 @@ static void k3_m4_release_tsp(void *data)
  	ti_sci_proc_release(tsp);
  }
  
 -/*
-- * Attach to a running M4 remote processor (IPC-only mode)
+- * Detach from a running M4 remote processor (IPC-only mode)
 - *
-- * The remote processor is already booted, so there is no need to issue any
-- * TI-SCI commands to boot the M4 core. This callback is used only in IPC-only
-- * mode.
+- * This rproc detach callback performs the opposite operation to attach
+- * callback, the M4 core is not stopped and will be left to continue to
+- * run its booted firmware. This callback is invoked only in IPC-only mode.
 - */
--static int k3_m4_rproc_attach(struct rproc *rproc)
+-static int k3_m4_rproc_detach(struct rproc *rproc)
 -{
 -	return 0;
 -}
 -
- /*
-  * Detach from a running M4 remote processor (IPC-only mode)
-  *
-@@ -273,7 +261,7 @@ static const struct rproc_ops k3_m4_rproc_ops = {
+ static const struct rproc_ops k3_m4_rproc_ops = {
+ 	.prepare = k3_rproc_prepare,
  	.unprepare = k3_rproc_unprepare,
  	.start = k3_rproc_start,
  	.stop = k3_rproc_stop,
--	.attach = k3_m4_rproc_attach,
-+	.attach = k3_rproc_attach,
- 	.detach = k3_m4_rproc_detach,
+ 	.attach = k3_rproc_attach,
+-	.detach = k3_m4_rproc_detach,
++	.detach = k3_rproc_detach,
  	.kick = k3_rproc_kick,
  	.da_to_va = k3_m4_rproc_da_to_va,
+ 	.get_loaded_rsc_table = k3_m4_get_loaded_rsc_table,
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 4082cc61a41af..7c0434093ca50 100644
+index 7c0434093ca50..ecd6e6b15d608 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -559,17 +559,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+@@ -559,15 +559,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
  	return ret;
  }
  
 -/*
-- * Attach to a running R5F remote processor (IPC-only mode)
+- * Detach from a running R5F remote processor (IPC-only mode)
 - *
-- * The R5F attach callback is a NOP. The remote processor is already booted, and
-- * all required resources have been acquired during probe routine, so there is
-- * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-- * This callback is invoked only in IPC-only mode and exists because
-- * rproc_validate() checks for its existence.
+- * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
+- * left in booted state in IPC-only mode. This callback is invoked only in
+- * IPC-only mode and exists for sanity sake.
 - */
--static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
+-static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
 -
  /*
-  * Detach from a running R5F remote processor (IPC-only mode)
-  *
-@@ -1059,7 +1048,7 @@ static int k3_r5_rproc_configure_mode(struct k3_rproc *kproc)
- 		kproc->rproc->ops->unprepare = NULL;
+  * This function implements the .get_loaded_rsc_table() callback and is used
+  * to provide the resource table for the booted R5F in IPC-only mode. The K3 R5F
+@@ -1049,7 +1040,7 @@ static int k3_r5_rproc_configure_mode(struct k3_rproc *kproc)
  		kproc->rproc->ops->start = NULL;
  		kproc->rproc->ops->stop = NULL;
--		kproc->rproc->ops->attach = k3_r5_rproc_attach;
-+		kproc->rproc->ops->attach = k3_rproc_attach;
- 		kproc->rproc->ops->detach = k3_r5_rproc_detach;
+ 		kproc->rproc->ops->attach = k3_rproc_attach;
+-		kproc->rproc->ops->detach = k3_r5_rproc_detach;
++		kproc->rproc->ops->detach = k3_rproc_detach;
  		kproc->rproc->ops->get_loaded_rsc_table =
  						k3_r5_get_loaded_rsc_table;
+ 	} else if (!c_state) {
 -- 
 2.34.1
 
