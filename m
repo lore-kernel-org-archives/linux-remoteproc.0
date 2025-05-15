@@ -1,71 +1,70 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD4825B68A
-	for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 17:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1914690
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 19:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747331832; cv=none; b=UIPf8NqwpJBZpWGBQc1a1pr0nFySQZoIya+Z3YEUuQQB0GEM1E4LHy8cNyLnP++31GpasXoZkGUaVJuApRSDodN9XcCZeuH5uL0ZbUyh/srBdMKYA0EvBfvWgI++ukspJrT7IElUiCYX8mcKrTAPH3p21Bjsw0qgMZKJo54+zyY=
+	t=1747336592; cv=none; b=JNfj9WZTagfnwi0UPB4BO9eLZwre7Q0J+GvoCy5ojatIaB74WuJ0uTXgf84GWEylCkaI+HaXb9p/j5L7GDg/vOwg828uVIMO2ziTMw1l1V+zYDBvPeoGRgSjP9hf2Jgb7ca15bYwScbU+yl9hEUTHn8qGb2xUARtyQhGUEGAyJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747331832; c=relaxed/simple;
-	bh=9BcbDc+wMcjBAP8s9znmdve14URMaxqqhbuS6bJ9rzw=;
+	s=arc-20240116; t=1747336592; c=relaxed/simple;
+	bh=6gx4VxiCZp/8s5LdcEThfA6AUSuIOJ+dOXNvZScqpZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CE0Lmq6zwGqa/QkyW1LYVFlHLi8fUs1SanuiIn0c1imyVAka3upUiTij33fpX31BpbMEH8UMzznWxug6E8eSphA+JNt9G51tRP6IAmgsoSmGNVKsSjQZqdTHZSByYmM06QIpWwmXMC8XX5Vjh5ZZM1YWc8/xU5jj1wPfx54wNIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w8JVAlZW; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yh2VYL7PpEbJbaBX3YezxexkK2FvyYhp/ecR9mT/AG8kwJjo3zFF528v5vrjRF6WN5zMLZuQDyPSYn92WYhYSiwXmUpEYh8+ao1yTN9hNrHNuWFiHErFSYcFD/plJhEjT1lBJfj/vvrbgEIUnDR+fDSfJvQ/ldEWc2triQ0ns8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EeapQvRr; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w8JVAlZW"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22c336fcdaaso11646985ad.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 10:57:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeapQvRr"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7411f65811cso1589647b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 12:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747331830; x=1747936630; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747336590; x=1747941390; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPjC+F7Z8nPKiSwHWeFJrWQCprMTfRI349pBIPdGTYU=;
-        b=w8JVAlZWn+GI5KIssYxEaRJirnUDINL0vltTUDhgsNWpxQhdFL4xtOD1yw26upDER2
-         d14yJ3WPgBr0CbtEVHi6zX3uN64DygU35BOBbf7Kp/sGfGlRqE+LBRoTUsFgjwDT2Up5
-         gAkZVCOAjtcEnTpOMFjRVt+OFdkfc/3LFC4f+/nfxaiQOxUZcg6cgf/knc0z+y8bnNFw
-         SwWq6z2pNiCW+qFEFJqNHaB1M7GYTQFLJP0v9L6uzQ1sNn0aizvIqBGTFO4JO63Z7Ihz
-         zIM7BpjV1Ngz1nrWs22NPapY1Z3UOZpPBBJ0uuYKot0yQ7rj4a+TfjTalvh5+/BF8k33
-         aQUA==
+        bh=xpGvtrdgAlWK1GS1LjsTZA3K4q6PeKTyfdS4buJzP1w=;
+        b=EeapQvRremYQ7UatWetsKT12fYVKmEs9OZfquc4AGhJbcOVDtl+o0d+VCHt9hb0QlS
+         V1WbKTPTjiOGHW6soum5Cy+uX+/sNVy0SJVXrkBXfkrbG+kKlOmAbUNR+Fmgf5xCNqo8
+         f0Qe4DzxkKqLTonOPqprY+KKdBbl4OWqV/a8JHnzjH1eH81BvnN8jlZhZmdV/+hxbExp
+         XgUrfhFuV3yBijdWwLVdGkwqdGIcxNAfyjVjCKuC8Gv2Zk+RXSi2odeiW5EXwdMF38FW
+         5+Ohy2Js4CQtwwVDzFVXp3NKlrqUPO921ukM8Z25cei5Ff/bobiQyLZ69gnZaNj4cuXp
+         cbpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747331830; x=1747936630;
+        d=1e100.net; s=20230601; t=1747336590; x=1747941390;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IPjC+F7Z8nPKiSwHWeFJrWQCprMTfRI349pBIPdGTYU=;
-        b=Rfy0EW7GA8rkXFlNQ7FoasWYZiFn4Qein5rUpDthxr2ssxRPbt0CWKHAsrxVhGb1ZL
-         hDRm5zZ1VGxoT1cUDTtkEF/QWGIGE4g+wET6cT65RiHktmYTdmllYHRm1MxUB5CDeFOI
-         d6b2buoQmX+eynFNHysYuJyFo8rc+/JXJqPC+g6nX4Td4eXYpqnXgwsf2f62FMCfzkbL
-         xK0MDFPqj0+UgQsIax56PtU4mtD53qBsL9NowiBoxF8Nh/gcuyraMD+aMobrSkl1Hja8
-         XYHxEpCfy0ytwNsTSeweYTubZSqGr0z2gz1SAhWxB7snvvdDp5Pji1eaTrmTRdGaOt59
-         gM3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVlEKPnj3dRaWU1d+UtAVOv3t079DyG/aM6CleFr8Zl7G2W5vNim/sjIQwUAly7DeBZDBUENDsXGQcsw56MC0vE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHr6miLvSVRTB6VhJQZdiTo37mG8bPNidbFkPHXADj9XXyILk2
-	eVh7Yb+qgWu3uQzwzFoEEJvxh4l+Mk4CFMaaj5Y5Ea97tw2qFLjxHG3aPNjuquWqUBg=
-X-Gm-Gg: ASbGncv4ehTVozGMkBLYGqaJVKVtwuuqzZv8eITWcUrFwICD4rfIz0Jf5Z72tVMecAM
-	gjeYHSFhCN5EoSs3QZcYlGiipRa/LhYEi1eRtJxsf/qk0ov1ymQckxWgKAVuap8AlamKs1qVf9z
-	/OfUDEONrgaXNQJiZw4AjeHgpHHHLnM34wpgwPbfTAJq96+OP2UOyUYcn5vms/wrvKIsib20gCw
-	YuHaA0h42mP/B0JyVMPcisqSKxdmcjlYAId5IT1YaBn2UFUgdq3prAGVdpo0i0kRhxrV/+9PFPC
-	gR/uEYBB5z5D/L6fpG852r+eZgyThUFbqUliCC879MH8ocndwN3SwRw=
-X-Google-Smtp-Source: AGHT+IF2ygCYFiNlQZ0QPfX5LxxiHLtfqUThk5JO/nc004InEVJCxglEaTN98IxZFKcVTGHlL7qmHw==
-X-Received: by 2002:a17:903:1ace:b0:231:b405:c4cc with SMTP id d9443c01a7336-231d45a9b21mr5158125ad.41.1747331830399;
-        Thu, 15 May 2025 10:57:10 -0700 (PDT)
+        bh=xpGvtrdgAlWK1GS1LjsTZA3K4q6PeKTyfdS4buJzP1w=;
+        b=USz6dPsbX1HVkjlh0gzaexSlB0oGzRz21Bfw/2+RY4UMKR3Y8QvodQp/FdMzmUlUk3
+         VV2s6uShr/IRxb13x09fmR6AjBmzv2Afm2FdOSt9Qk9Rbck6AUEeOdpMsfVUEi70qQ9Z
+         4xjTlCEry2k/3KDITnzxIWD5IY4R4y9sVF7pYQirj0/DxYdKv/8hjACVyVQgvxz7V1EJ
+         qsFlz1AhXdvjYyIzY3xC9Vy2Fx/Plt+BjKayQOfHaup/EV/rGi+3MAjrpzvoEzt7px55
+         goChLOWzLe9lILliVpNW0wjzf0XrmHMIIsJkVWgRqTFAmEumyg9ShjeAoAhuDdtp02+Z
+         eerQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkk7W270TIuA4s2xnsanurQHvsdu1nV54N2z6v3R1kt0FPL5DeOuRF8FfW7FijYUa0nEkGdSyEYh/HUJsxcoqd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxXtnoK1IntdF6GhcIxgfyDFbawPYvfLHhCInGieBEL9ZyBCbp
+	bZhN2kArtq2pjMnXQmgqeK6YC38xmIPuq2fy1qpTUGreTbr/T3b1XCBO6PCtkXWiFxQ=
+X-Gm-Gg: ASbGncsiui6tqGTsrOIjrLd47DmYYYYGHKeLMNloFY/pbVSH7NXf5t/ZcNBhNONZBsz
+	MIbf1zJdVB04IpvRG2IqETb0AlV7XhD12voWRVchVtlriRYTm+yDsToYSA0mpy4kAVUlrBtsgof
+	yh10PDg3Bb7Pmcu4djzQudj1JgQehUYwIUhlCJ20FY9XFCs5eO25KdWMzo1TTQWFzp6VtfUlNE8
+	9kmryFMt2nzBfqgE4tAlqZYR+7bpJISxjYHNKVg5+nPEW1XIU6GIoeM9/h9rJD5fMNWGBs8C2S0
+	XPP+jULXNii1sYqVjN253nQ2Ro6g7dhxfUdB823WNeeEBoch+MOD7x0=
+X-Google-Smtp-Source: AGHT+IGZupUWMej+hx+Dw+EEdAD/oqenAqiibpJbxASZMfi6QIT8v+zU2mA4H5vMiCO29lJkfqgdEQ==
+X-Received: by 2002:a05:6a20:6f90:b0:204:695f:47e1 with SMTP id adf61e73a8af0-21621909218mr943369637.23.1747336590376;
+        Thu, 15 May 2025 12:16:30 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:1d7a:b4f2:fe56:fa4e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4edb063sm577495ad.255.2025.05.15.10.57.09
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a982b853sm163131b3a.98.2025.05.15.12.16.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 10:57:09 -0700 (PDT)
-Date: Thu, 15 May 2025 11:57:07 -0600
+        Thu, 15 May 2025 12:16:29 -0700 (PDT)
+Date: Thu, 15 May 2025 13:16:27 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] Revert "remoteproc: core: Clear table_sz when
  rproc_shutdown"
-Message-ID: <aCYq8xAC7NAKhffK@p14s>
+Message-ID: <aCY9i0iwB9msN-iR@p14s>
 References: <20250513-revert-rproc-table-sz-v1-1-a8c6b5d6f8a7@kernel.org>
- <e178418b-4ca3-4b43-82ce-32622ff19477@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,54 +73,45 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e178418b-4ca3-4b43-82ce-32622ff19477@ti.com>
+In-Reply-To: <20250513-revert-rproc-table-sz-v1-1-a8c6b5d6f8a7@kernel.org>
 
-On Thu, May 15, 2025 at 12:21:14PM -0500, Andrew Davis wrote:
-> On 5/13/25 10:52 AM, Bjorn Andersson wrote:
-> > Clearing the table_sz on cleanup seemed reasonable, but further
-> > discussions concluded that this merely working around the issue
-> > and that the fix is incomplete.
-> > 
-> > As such, revert commit efdde3d73ab2 ("remoteproc: core: Clear table_sz
-> > when rproc_shutdown") to avoid carrying a partial fix.
-> > 
+On Tue, May 13, 2025 at 04:52:46PM +0100, Bjorn Andersson wrote:
+> Clearing the table_sz on cleanup seemed reasonable, but further
+> discussions concluded that this merely working around the issue
+> and that the fix is incomplete.
 > 
-> Setting table_sz to 0 still seems like a good idea from a defensive
-> programming perspective. Both table_ptr and table_sz should be set
-> and cleared together in all spots.
+> As such, revert commit efdde3d73ab2 ("remoteproc: core: Clear table_sz
+> when rproc_shutdown") to avoid carrying a partial fix.
 > 
-> In addition to this, another fix would be to also update
-> both table_ptr and table_sz to 0 when loading firmware without
-> a resource table. Both should be done, no need to revert this.
+> Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
 
-As mentioned by Bjorn, this is a partial fix.  I'm all good with setting
-table_sz to 0, but as long as the real solution to the problem is part of the
-same work.  Once the patch is reverted, which I'm about to apply, work can
-continue.
+I have applied this patch.
 
-> Andrew
+Thanks,
+Mathieu
+
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 48d146e1fa560397c11eeb8f824ae0fb844a022b..81b2ccf988e852ac79cee375c7e3f118c2a4b41a 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2025,7 +2025,6 @@ int rproc_shutdown(struct rproc *rproc)
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+>  	rproc->table_ptr = NULL;
+> -	rproc->table_sz = 0;
+>  out:
+>  	mutex_unlock(&rproc->lock);
+>  	return ret;
 > 
-> > Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-> > ---
-> >   drivers/remoteproc/remoteproc_core.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 48d146e1fa560397c11eeb8f824ae0fb844a022b..81b2ccf988e852ac79cee375c7e3f118c2a4b41a 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -2025,7 +2025,6 @@ int rproc_shutdown(struct rproc *rproc)
-> >   	kfree(rproc->cached_table);
-> >   	rproc->cached_table = NULL;
-> >   	rproc->table_ptr = NULL;
-> > -	rproc->table_sz = 0;
-> >   out:
-> >   	mutex_unlock(&rproc->lock);
-> >   	return ret;
-> > 
-> > ---
-> > base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
-> > change-id: 20250513-revert-rproc-table-sz-53ecf24726ae
-> > 
-> > Best regards,
+> ---
+> base-commit: aa94665adc28f3fdc3de2979ac1e98bae961d6ca
+> change-id: 20250513-revert-rproc-table-sz-53ecf24726ae
+> 
+> Best regards,
+> -- 
+> Bjorn Andersson <andersson@kernel.org>
+> 
