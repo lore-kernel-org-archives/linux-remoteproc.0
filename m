@@ -1,195 +1,163 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19BB28A408
-	for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 20:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2777187332;
+	Fri, 16 May 2025 03:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747340718; cv=none; b=OJP6vBZVwAci1uCifRSsD7JFyqSZL6WiQglU0MP/O+0OPGLz7qlELS6XJDqEUdmbqxIZUTDuebfuZh9t0HlnkkcVkjFeF/8DagEpYI9RzXVO7YlK6wbEhwhBhmp4Eg0kkENaZeagwFoY3e1pGX5gNWEiR8r9mvvAGV61PCMFMrk=
+	t=1747366074; cv=none; b=JsBGuCBpvSiSXmXhP8Aw0Wm9mm2SJsTr0k/MiOqRdlDS21XEVtf0RAl+bcnFOAej6BGY56VvzQm6h+YGqWmuOVXwXuUCEQr22EBH12kDbnHhKC2+v5tc6QBGWBR4c2KYZDj1pGNXtp02XyNlsLRsG7znDr+P+G4Im5JR84TSNDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747340718; c=relaxed/simple;
-	bh=cEMlm+36YbPPJ9hANH6fcWzYz4CWIwOAXvDkXtiIIpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBh5eLGh4/WjbcDRZsaSc6J7UWj/RLQabWTaE96+LiCciTp1v0TTb8CK1CqOfGxLq5PL8bpVwIjttxK058ZjYtkca6GF742be9bEdkCTlPb245SXzgtGJieh+yKXA6U0XUdbRjtZOnk5hlXwXc3BRySwrBJRqNtEaqFMQViAgF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oyfdx/tg; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747366074; c=relaxed/simple;
+	bh=JyZW1Cxzaw1r7YuxagGQU7MxHIA9QmEfNg9oJ//91wg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rhoDC7eKpQe41HhtCqNH/fO6dhkTlEHMKhECW5rONUvEBj9BWBzKO4yhNyGq/dou2dEzNjn1K2fMya6q5hoM/2j76+5BTtpZvveZzCwZ5zSSYzJTAPEY86jljIZnN6uQMaif69+AaIJ3w4g+u6Wxvx2Sgpg91+dpeUWQ3A2M6Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TSvm+F0O; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyfdx/tg"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b26d7ddbfd7so1240527a12.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 15 May 2025 13:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747340716; x=1747945516; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zUTfWForHlbZrJBv1cAxwqbk62WlolptWTpwwDZry+A=;
-        b=oyfdx/tgvwOZSqHmy5qDSJcJBFsEiCgGTLd8hbPsSUHX28Q5m1c5+HdYVrU9NVU3hz
-         YJdCPaZYTAMoPCaMwumWKfbJaeOYbphJ3hrYk/kZo3t5zWT+rc7DHtELfm3Cc+GKHn7l
-         YPfHurVH/m5DvN8CYpib/ujWUlW+1ipNQvJTQlleg4qroWn78zOsYCtno89y/oDPH1K9
-         U11/hUdFnZozOJ2roq5vOdZCipRPR46SuWaru51XIn7V4yJPPDx/ibQOe6bSVa4/gkvu
-         j8lOuOUWv2nHZva3bpe5qcS4CxsKYuvCzvVbUWIEzT+WMqSeyhXKRyLND9IcL60sghdn
-         Rizw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747340716; x=1747945516;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUTfWForHlbZrJBv1cAxwqbk62WlolptWTpwwDZry+A=;
-        b=XVrJ17CIZTG2vsquJu/EgitI87sU3N1jcgR5211I0WcwlgLpTtntK9Vt7Gwnhk6yh5
-         pZETML+FANer1LGreDrgbQrkJDdv0+L7suMqOyPPDysgGyusYQkCLdGiTjmtccv3uqdi
-         UQdvRrpUHsQySpyjpQLgfbNg0yLcvgXC4Zzq4mlE6yV3+GjmoOHcGCvG+l/1TEIak6pB
-         MAoethQQ28NrjqAixskwP09hRl1A/+Oq9YCxXICyWIfWpFTEC9zbFNCbC+ipGe8kDh7K
-         WJeNupYiO0O7wr88xS6gv7qJBu9cHaScxJzNDE8sDWYkb3hq29PEJf1titBJcF0TlZIg
-         8mSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTUCAnnnBrwDPG+j2cuNmaemNgT+mKSv7dRa1nfZdJyLg5qAI3RX5x2Gkt17MhXmpD+l3sPQaqzhPDUALhsxU8@vger.kernel.org
-X-Gm-Message-State: AOJu0YydZ0IpyVoklFFQZcUpRq3yTwKcw9eG3TPbZW5sj6oh55YN8TRH
-	PS8u39k4eq17fxBs14LaQbPlWk1FAkZvwxYNIuSw4SlES3bMjnKZVbCq4YLDx8pqnAw=
-X-Gm-Gg: ASbGncsjFReMrjyAlDT1g59gXSPVAk0fxv01GpiyMLhxOAmG2W6YAkMMKH3RrR2Fq6f
-	pDarXr3aNNyAhfPlOxyAU7wjsgYkTthArmFOI/Z/xO4ECV35nOFux7T/F6y+aYnLDLfErEE8Zgh
-	ix2omoeAqsAOcxG66M1CAzOjb2Se0dYRVqDwxvaMUSsSjTsZlkXouzu8mdp2Bm9aKU1EuuNfzB/
-	BAgllAevOQ3KjcDkKzNkEp/wxmooqDzC/5gCTok7I5jQH28DWA88EUsHNwplaROfHsmZhhCpEqT
-	ukbWjDZ1fXrclP3GuyJ5VRjN4PBwOA0+AdLiHS//B4dKqja9JwUrnWo=
-X-Google-Smtp-Source: AGHT+IH7u31BXIHf5hNai5YAN/j8hWa4qZF2kgL+u1GNmBbTs/yeUNpckzK4SUgqojO2Yx9Bj5NmpQ==
-X-Received: by 2002:a17:903:b8f:b0:224:c76:5e57 with SMTP id d9443c01a7336-231d459bee3mr8271575ad.39.1747340715957;
-        Thu, 15 May 2025 13:25:15 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1d7a:b4f2:fe56:fa4e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4b017b0sm1879275ad.95.2025.05.15.13.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 13:25:15 -0700 (PDT)
-Date: Thu, 15 May 2025 14:25:13 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
-Subject: Re: [PATCH v2 2/3] rpmsg: char: Implement eptdev based on anon inode
-Message-ID: <aCZNqVbGKa_EaCBT@p14s>
-References: <20250509155927.109258-1-dawei.li@linux.dev>
- <20250509155927.109258-3-dawei.li@linux.dev>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TSvm+F0O"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54FLURHT025636;
+	Fri, 16 May 2025 03:27:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=a/drtQ/nJYpUA5OfXfYqwm
+	u4bq2l/AVDnsaBMZDy4oY=; b=TSvm+F0ONd+qjsAuTH/byrJdQOKwURCj7hnZRI
+	3/9+hZU91Uf9FipOOcTo9Zjg6tYO2a8vvVuKPPdqQHUrtZ1HoGpDSaaxMt4kjNL7
+	rDQsXZW2vR472gS/o0qLRNR8Hlcc5/OKVEtHz9dCc+ydooldtx5dxCZvm4yC7k/R
+	JjkiJU2Ut4m7P8NTNU9n7uTMKdTgKQljvdde7yOrvpWSj3dFdOmgzr73twvT5nrk
+	w5HqMmEc+G0xCKvTNl03yatG68xc0GoxWKi5aU/Ab43rS+N6DiSMZit8IhhjqjnP
+	OktMNKwNFfcug/LD4OmY8aKY4MWhd6oTycYD26g3GbSCDyOw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcq0d4u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 03:27:48 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54G3RkME018484
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 May 2025 03:27:47 GMT
+Received: from lijuang3-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 15 May 2025 20:27:39 -0700
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH v3 0/6] arm64: dts: qcom: qcs615: enable remoteprocs - ADSP
+ and CDSP
+Date: Fri, 16 May 2025 11:27:01 +0800
+Message-ID: <20250516-add_qcs615_remoteproc_support-v3-0-ad12ceeafdd0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250509155927.109258-3-dawei.li@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIawJmgC/x3MSwqDMBAA0KvIrBuIn4TQq5QSYjK2s6hJZ1QE8
+ e4Gl2/zDhBkQoFncwDjRkJ5rugfDcRvmD+oKFVDpzujTWtVSMn/o9jWeMZfXrBwjl7WUjIvanQ
+ mBqtxcMFBPQrjRPv9v97neQHxlJ1tbwAAAA==
+X-Change-ID: 20250516-add_qcs615_remoteproc_support-b85ca60e48a8
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Lijuan Gao <quic_lijuang@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kyle Deng
+	<quic_chunkaid@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747366059; l=2297;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=JyZW1Cxzaw1r7YuxagGQU7MxHIA9QmEfNg9oJ//91wg=;
+ b=uTXg2MhxtRZNolzc+UcknoaEhax+2YN+IAgZaKw/QlNBoIIgoCiI6/kqGQOzd8XBnsxRiU2e7
+ d6a0jTU7MF2AvynI99/kYOt18psLnc+mk6ubaOp1wMwNgJLFr0MduE9
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PsXAk9mtwXWMpSwbbsnsmuE1JUTflhsw
+X-Proofpoint-ORIG-GUID: PsXAk9mtwXWMpSwbbsnsmuE1JUTflhsw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDAzMSBTYWx0ZWRfX3TzZO79QNpnO
+ yczeJC29xI7mtSb3namggz29HByW43tY4+CwlY3kz7+m6Gy7YD6gun7aP9V8AeMz5C2h8SRfrg0
+ PVvM8hYOgyUbdxVY4DpOOvjX2brvVEZpfBKRgHck6Heby4B6f+FXa6C4jO1Wn4uSJPo9g7xB4EW
+ bT5ib3m5xhPH9HVOwsc/nqIOzSk3z43O/rYuwot5MK+hw+LhKUgTWhmkh+uEA1NoSuW2izborof
+ Kmq4ngz4wujmGRFwC85pcUryIjW2bB68z23iB4XldqITfNG+5qLP1D2jEWLkVSJKt0bag6wleIu
+ 506P1G9JZ6p/GGfktDoMhm105VGAKp87/n8OY2Kj/v39cgc8fBilEFPk5krhIvMbqKQpnxv0dKt
+ KzZ74BVWqSiV/4cj9x4+VaKH9PuMJrimJYKBe3ar9RtJDU9EZ19G4itk1h1URVlKe0PugpO4
+X-Authority-Analysis: v=2.4 cv=KcvSsRYD c=1 sm=1 tr=0 ts=6826b0b4 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=rOYcFei1Rj9JNN2iA38A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_01,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=869 spamscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505160031
 
-On Fri, May 09, 2025 at 11:59:26PM +0800, Dawei Li wrote:
-> Introduce new eptdev abstraction based on anon inode. The new API is
-> exactly same with legacy one except:
-> 
-> - It's anonymous and devnode/path free.
-> - Its fops->open() is empty.
-> 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 44 ++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_char.h | 19 ++++++++++++++++
->  2 files changed, 63 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 5b2a883d6236..b0ec05f88013 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -13,6 +13,7 @@
->  
->  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
->  
-> +#include <linux/anon_inodes.h>
->  #include <linux/cdev.h>
->  #include <linux/device.h>
->  #include <linux/fs.h>
-> @@ -517,6 +518,49 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->  }
->  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->  
-> +static const struct file_operations rpmsg_eptdev_anon_fops = {
-> +	.owner = THIS_MODULE,
-> +	.release = rpmsg_eptdev_release,
-> +	.read_iter = rpmsg_eptdev_read_iter,
-> +	.write_iter = rpmsg_eptdev_write_iter,
-> +	.poll = rpmsg_eptdev_poll,
-> +	.unlocked_ioctl = rpmsg_eptdev_ioctl,
-> +	.compat_ioctl = compat_ptr_ioctl,
-> +};
-> +
-> +int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +			struct rpmsg_channel_info chinfo, int *pfd)
+Enable the remote processor PAS loader for QCS615 ADSP and CDSP
+processors. This allows different platforms/architectures to control
+(power on, load firmware, power off) those remote processors while
+abstracting the hardware differences. Additionally, and add a PIL region
+in IMEM so that post mortem debug tools can collect ramdumps.
 
-rpmsg_anonymous_eptdev_create()
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+Changes in v3:
+- Update base-commit to tag: next-20250515.
+- Collected Reviewed-by: tag.
+- Add a comment for SLPI 26 in the smp2p-adsp node.
+- Update the IMEM address to the starting address of the IMEM layout,
+  and also update the offset address of pil-reloc.
+- Link to v1: https://lore.kernel.org/r/20250507-add_qcs615_remoteproc_support-v2-0-52ac6cb43a39@quicinc.com
 
-> +{
-> +	struct rpmsg_eptdev *eptdev;
-> +	int ret, fd;
-> +
-> +	eptdev = __rpmsg_chrdev_eptdev_alloc(rpdev, parent, false);
-> +	if (IS_ERR(eptdev))
-> +		return PTR_ERR(eptdev);
-> +
-> +	ret =  __rpmsg_chrdev_eptdev_add(eptdev, chinfo, false);
-> +	if (ret) {
-> +		dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> +		return ret;
-> +	}
-> +
-> +	fd = anon_inode_getfd("rpmsg-eptdev", &rpmsg_eptdev_anon_fops, eptdev, O_RDWR | O_CLOEXEC);
-> +	if (fd < 0) {
-> +		put_device(&eptdev->dev);
-> +		return fd;
-> +	}
-> +
-> +	mutex_lock(&eptdev->ept_lock);
-> +	ret = __rpmsg_eptdev_open(eptdev);
-> +	mutex_unlock(&eptdev->ept_lock);
-> +
-> +	if (!ret)
-> +		*pfd = fd;
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(rpmsg_eptdev_create);
-> +
->  static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  {
->  	struct rpmsg_channel_info chinfo;
-> diff --git a/drivers/rpmsg/rpmsg_char.h b/drivers/rpmsg/rpmsg_char.h
-> index 117d9cbc52f0..8cc2c14537da 100644
-> --- a/drivers/rpmsg/rpmsg_char.h
-> +++ b/drivers/rpmsg/rpmsg_char.h
-> @@ -19,6 +19,19 @@
->  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
->  			       struct rpmsg_channel_info chinfo);
->  
-> +/**
-> + * rpmsg_eptdev_create() - register ep device and its associated fd based on an endpoint
-> + * @rpdev:  prepared rpdev to be used for creating endpoints
-> + * @parent: parent device
-> + * @chinfo: associated endpoint channel information.
-> + * @pfd: fd in represent of endpoint device
-> + *
-> + * This function create a new rpmsg endpoint device and its associated fd to instantiate a new
-> + * endpoint based on chinfo information.
-> + */
-> +int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +			struct rpmsg_channel_info chinfo, int *pfd);
-> +
->  /**
->   * rpmsg_chrdev_eptdev_destroy() - destroy created char device endpoint.
->   * @data: private data associated to the endpoint device
-> @@ -36,6 +49,12 @@ static inline int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct
->  	return -ENXIO;
->  }
->  
-> +static inline int rpmsg_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
-> +				      struct rpmsg_channel_info chinfo, int *pfd)
-> +{
-> +	return -ENXIO;
-> +}
-> +
->  static inline int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  {
->  	return -ENXIO;
-> -- 
-> 2.25.1
-> 
+Changes in v2:
+- Remove the qcom prefix from smp2p node name.
+- Remove the unnecessary property qcom,ipc from smp2p node.
+- Remove the unused node apcs: syscon.
+- Remove the unused nodes from smp2p node, such as
+  sleepstate_smp2p_out/in, smp2p_rdbg2_out/in, smp2p_rdbg5_out/in.
+- Update the commit message for IMEM PIL info region.
+- Update the remoteproc node names.
+- Correct the size of register for remoteproc nodes.
+- Add empty line before status properties.
+- Link to v1: https://lore.kernel.org/r/20250423-add_qcs615_remoteproc_support-v1-0-a94fe8799f14@quicinc.com
+
+---
+Kyle Deng (1):
+      arm64: dts: qcom: qcs615: Add mproc node for SEMP2P
+
+Lijuan Gao (5):
+      dt-bindings: remoteproc: qcom,sm8150-pas: Document QCS615 remoteproc
+      dt-bindings: soc: qcom: add qcom,qcs615-imem compatible
+      arm64: dts: qcom: qcs615: Add IMEM and PIL info region
+      arm64: dts: qcom: qcs615: add ADSP and CDSP nodes
+      arm64: dts: qcom: qcs615-ride: enable remoteprocs
+
+ .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  65 ++++++----
+ .../devicetree/bindings/sram/qcom,imem.yaml        |   1 +
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  12 ++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 144 +++++++++++++++++++++
+ 4 files changed, 195 insertions(+), 27 deletions(-)
+---
+base-commit: 484803582c77061b470ac64a634f25f89715be3f
+change-id: 20250516-add_qcs615_remoteproc_support-b85ca60e48a8
+
+Best regards,
+-- 
+Lijuan Gao <quic_lijuang@quicinc.com>
+
