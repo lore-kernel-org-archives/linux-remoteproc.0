@@ -1,49 +1,72 @@
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6BD1EE03D;
-	Sat, 17 May 2025 13:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFD6205AB2
+	for <linux-remoteproc@vger.kernel.org>; Sat, 17 May 2025 16:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747488229; cv=none; b=KK+x+SiG7rnG81pRL6vds/q6Eg3FIgjRs5vT+KJzU2MloQReE9aPJMzihEsVkQqW9Eq2mBpEkjSvVSGlP4s3/qqrA0yi9Yjb/O14X5JF4kv3F/WbxXjGonMZ26giwfoDJZZUKLIwS2+SKATVK7fSXW0c5HXyogDz6r2pYiO+LcY=
+	t=1747501165; cv=none; b=MfwXVyKZrJZsG1jjns83cInCiXRC24NPkK+cPBhFOXooVF0dAK0AOYWOtCnm8JDwFTDNPTwY9tlT4LS/t15aIOeEToI/tefAgfIoyvtoUFUmEZ8+tmGfgy6Mzr5RTJ22P2tymUT3YZehS/LOTzNMc4aGqFSd5C1MNjm8Egg52ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747488229; c=relaxed/simple;
-	bh=jGJhzODgUufFsBnvzcwQCkz3TcC71icxX7lRAHEn4WE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=diDBTT30Ro4AHDyQTxhnk1vJ22Yr8ZK7mgZrpOJJK2XoxqicnDVPOhPq7PbVB50IrwRa1vVP/Zll/j0SocPIadHfCUQgN+PJw4r0VoXGFYjkt3doWXkATfMkks4WKm14TR3zJYSaTP/IS5Z9ghzPPwFwoevnC6TE83ClWQSM6fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B+WZkxko; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1747501165; c=relaxed/simple;
+	bh=Y+98pIFoWWHfZVf0d45cDKgsJGJTFlxxmrg3hMKxyZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uClkT76z7+mv3z3BI3RZVfBVqpYC/VgvHS9B4O3/DN2uySlVsXN/vFtpAWxPE3XRkgO7C96cqRm3waw6rae8H8qaiF+MxQ3RVhlY3hYNzPLq5Ngr0IaH8fyPWTJNX4SunPvZ2/okxOEqDGWhAAbOuBoCwgJK4e1jJMNDdGQjZQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lfJR1aAV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B+WZkxko"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54HDNaRW3949688
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 17 May 2025 08:23:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747488217;
-	bh=Ux3oJ5++ua4t3XqHwoU1Gcfy1rH9qJMeXoTZK+evlHs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=B+WZkxkoqfhqZK+UpN+Xd+1+U0i/lWHwEJ27ZArBo7Pvj8GQ+YVLLwKwkikQhrMRh
-	 Eo3q/35+ZfWIZwWivkwFQgZ73fsQKjGwoGikscmOAwFe6z9jHCxSVlYE8pkG1N03Ed
-	 dTw8/W86dKlSgnhzc+zI2Ahxa/fx7LR8iMJMibaw=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54HDNan8126679
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 17 May 2025 08:23:36 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 17
- May 2025 08:23:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 17 May 2025 08:23:36 -0500
-Received: from [10.249.140.90] ([10.249.140.90])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54HDNUnI038038;
-	Sat, 17 May 2025 08:23:31 -0500
-Message-ID: <057cffb6-3ff6-4795-8501-7695d7ebc6fa@ti.com>
-Date: Sat, 17 May 2025 18:53:29 +0530
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lfJR1aAV"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54HFLgcd005354
+	for <linux-remoteproc@vger.kernel.org>; Sat, 17 May 2025 16:59:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VduflDMyjCo/QhGhOWqCOg92D4iNKsmXtMKiBxwuk+4=; b=lfJR1aAV1p1ip7Cb
+	3TV0zaa2OkhlifkTqk1SlY1KOpl9KwREiBO88OfXhy/cmjdabuEzbV1+BDcVGK0e
+	VrlRdE//2rnj2G9f917h5EKGNJ4jhNHNqXhDV1vbRDnweeCLHXEueCxzi9OIzZbb
+	x4QLPVbY+JAasWAbfydKetxNzHdjZGGuroEnDj8aZ6kRIn9bWjD/B6w9OxD7tN2i
+	JTJ8sd7J6jUKPJYLmekIPemQy8WkKNJBfzmb9ayHIhMOqw8p+fZnV50tM9iSP7cr
+	lW99ED/1odFosIx9KJDfA7qgg/XpTKNW3e/S8r/8bqIbKTeEUXPLCQN63IECA1+B
+	JilCIg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjnygwen-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sat, 17 May 2025 16:59:22 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8b297c78aso5299686d6.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 17 May 2025 09:59:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747501162; x=1748105962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VduflDMyjCo/QhGhOWqCOg92D4iNKsmXtMKiBxwuk+4=;
+        b=tzV4AdQUtfJHsFcZsWhF5TAsEkHxSGjWCzoseN/UKT32U7UzAh15mLtQ2WR5rn7aYw
+         hc/oE8+6gvOuB/0p0vZl4SwK0QAviCT7J0Te3aiSZ3lrF0SnKd3kjq09k3hRYNkD/4zR
+         uJWBWMD4+TygTb6pgcZm/Kyjaw97pUIVzVwzxyosDt1dzglemiU6KaSk4G45DdpCWtG4
+         NABdS/foTokjOfWOym/zz839TQDEBNkVwIsmfmaBld+bHQyg3rl+mN/GFuBegjyjqMiC
+         +Qng+TgIJwo8o0EmvgZ7kcd2jPEajOUHEwMbe9CDwuXDJHgW6e0oIkMHEIk/+g5g5mI2
+         NRrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrBOZb+jjLZHesOtluBbI5iqtupoYzEGAO1C4ftF7cgJvMAENklHECDUGd3ZsLBLL3vHNpyomF/3wnpTz45YUL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnNw9zcu09L5bbuWwmN9nYct2sXCJn5O8Fg5E5r+xrptSP3vcm
+	uiiRVzcCOJRo+leCYRobsxNeoVezrsPS4oiZnN2Iby7XvKyeupjuv7yi7dgF17GR0zt3wRmjw9W
+	aQDHVkr5+qFMmequ/ytka5NPG68NaGA663M08IUTGa2QTV6ZePJOtzADQbYGgQs1Gv+JdXGKk
+X-Gm-Gg: ASbGncvLNB0LZ6YulL+vT3D3Wd1UfM6SEWBab8aAuEQGiEAbUv2lzZL0cVttVT2FQnD
+	BrpxMMhKEfwLQ10/6DwxLDYvYslj7au0GgD4EnUzI5RA25P6e32AvOvbhZJ+AAibSw0sGGQfhlX
+	lIBpqr2Otnt6ZkyghCr/ktQ2U8g9h5y20QHyQj/cm414M2JU/Fb1o1P6OYRfQtaUxPMfLlJGAiT
+	6jpPDas/sLmf3yTiASPGPhudrseIoMnzAaT213CpgfAO3yHER4TwhRxLazZ8ko4Xm6M9NLFv6Ps
+	u6STR8M4/BYteBTlah5qSZc/wlXpICn9kpatcevJFtz85ex18kMNd/NjaZ0AcYFkKQ==
+X-Received: by 2002:ac8:5359:0:b0:494:b641:486d with SMTP id d75a77b69052e-494b6414bc9mr24099761cf.12.1747501161658;
+        Sat, 17 May 2025 09:59:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcjyJ4llDUii39E2slq+4BGvQ/rSC1M/Cdxte2Ejxnl9qc2kSJxoEbQNaWLKhx22SyiFqVfg==
+X-Received: by 2002:ac8:5359:0:b0:494:b641:486d with SMTP id d75a77b69052e-494b6414bc9mr24099611cf.12.1747501161253;
+        Sat, 17 May 2025 09:59:21 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d271916sm321997666b.69.2025.05.17.09.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 May 2025 09:59:20 -0700 (PDT)
+Message-ID: <73a689a1-e8a3-4417-b0e6-374ec9b091d5@oss.qualcomm.com>
+Date: Sat, 17 May 2025 18:59:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,89 +74,73 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 04/36] remoteproc: k3-m4: Don't assert reset in detach
- routine
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
-        <jm@ti.com>, <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <martyn.welch@collabora.com>
-References: <20250513054510.3439842-1-b-padhi@ti.com>
- <20250513054510.3439842-5-b-padhi@ti.com> <aCddoCUIpIV1ZxEW@p14s>
+Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: qcs615: add ADSP and CDSP nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250516-add_qcs615_remoteproc_support-v3-0-ad12ceeafdd0@quicinc.com>
+ <20250516-add_qcs615_remoteproc_support-v3-5-ad12ceeafdd0@quicinc.com>
+ <thtk5vv2hpbnoapmt6j7nlgrcyedjzjbi3ntlyb3ll7atks46n@bp4isaoert67>
 Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <aCddoCUIpIV1ZxEW@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <thtk5vv2hpbnoapmt6j7nlgrcyedjzjbi3ntlyb3ll7atks46n@bp4isaoert67>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE3MDE2NiBTYWx0ZWRfX/oD53Hah+pj7
+ KJi9X8ar1B/m/e6xqjYkioNmywZ6ZukMSgWcd/uko87pQN7ssO+TUax7Jje9rvxwpa4TeFkfZOP
+ T0PwISoduSGot3Mm+Hz3GV6INmGxeceKjp5YYR5WHch5mOsPVhyJgJs5/MctASPa4CeHOIZBfYT
+ 0gNuDOs6UgUHNyUrWvphwzOf2V+cHJrC1mv2Zsh48decmAICi4CzJ1KN3GWQc38eQz7RFhi7ISa
+ CZ5VuJSWN6Eho02f0JRQASDFNNEGrryz+B3MI5kXT7ZFahQZd9QkFPs7jvyp4xev4BUBTgTtvKx
+ 6MOcA1ms9FCV+V6whfpvYUUnJdspZ5PvATYQ/raputyVJAcsqd37c/jXoxyuKhu/GipdaoJJk4r
+ soMJnafi2C32nGeU5VxYNWEkQt/IEnTk6fsRJtXnihUmhJmMdTaGILGojGdb0ivQi14Dnl08
+X-Authority-Analysis: v=2.4 cv=Z9XsHGRA c=1 sm=1 tr=0 ts=6828c06a cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=ikgdCv_TlNYNit3QsnwA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: jg51ooLZ1qgdazThwmZ0Es5EZabn8AwF
+X-Proofpoint-ORIG-GUID: jg51ooLZ1qgdazThwmZ0Es5EZabn8AwF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-17_08,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 mlxlogscore=753 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505170166
 
-
-On 5/16/2025 9:15 PM, Mathieu Poirier wrote:
-> On Tue, May 13, 2025 at 11:14:38AM +0530, Beleswar Padhi wrote:
->> The rproc_detach() function invokes __rproc_detach() before
->> rproc_unprepare_device(). The __rproc_detach() function sets the
->> rproc->state to "RPROC_DETACHED".
+On 5/17/25 12:11 AM, Dmitry Baryshkov wrote:
+> On Fri, May 16, 2025 at 11:27:06AM +0800, Lijuan Gao wrote:
+>> Add nodes for remoteprocs: ADSP and CDSP for QCS615 SoC to enable proper
+>> remoteproc functionality.
 >>
->> However, the TI K3 M4 driver erroneously looks for "RPROC_ATTACHED"
->> state in its .unprepare ops to identify IPC-only mode; which leads to
->> resetting the rproc in detach routine.
->>
->> Therefore, correct the IPC-only mode detection logic to look for
->> "RPROC_DETACHED" in k3_m4_rproc_unprepare() function.
->>
-> This driver has been upstream for 9 whole months, it is hard for me to believe
-> this but was just noticed.  Martyn from Collabora should be CC'ed on this, and I
-> will also need the required R-b/T-b tags.
-
-
-Cc: Martyn Welch martyn.welch@collabora.com
-
-Requesting Andrew/Judith for review and test too.
-
->
-> Typically bug fixes are not part of refactoring exercises.
-
-
-Typically, yes. But the refactor depends on this fix. This 
-k3_m4_rproc_unprepare() function is entirely refactored to common driver 
-in [PATCH v12 26/36].
-
-So, If the refactor is picked without this patch fix, the mainline M4 
-driver would be fixed, but the older stable kernels would always have 
-this bug. Let me know what you think.
-
-Thanks,
-Beleswar
-
->   I suggest to apply
-> this set without this patch - you can then work on fixing this bug.
->
-> Thanks,
-> Mathieu
->
->> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
 >> ---
->> v12: Changelog:
->> 1. New patch. Fixup a state detection logic.
->>
->>   drivers/remoteproc/ti_k3_m4_remoteproc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->> index a16fb165fcedd..6cd50b16a8e82 100644
->> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->> @@ -228,7 +228,7 @@ static int k3_m4_rproc_unprepare(struct rproc *rproc)
->>   	int ret;
->>   
->>   	/* If the core is going to be detached do not assert the module reset */
->> -	if (rproc->state == RPROC_ATTACHED)
->> +	if (rproc->state == RPROC_DETACHED)
->>   		return 0;
->>   
->>   	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> -- 
->> 2.34.1
->>
+>>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 86 ++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 86 insertions(+)
+> 
+> Is the MPSS not present on the QCS615? It was a part of the SM6150
+> design.
+
+Hmm.. good point..
+
+It's surely not there on QC*S*
+
+it is there on SM6150 though, quite obviously
+
+downstream ref:
+
+https://github.com/ianmacd/gts6lwifi/blob/master/arch/arm64/boot/dts/qcom/sm6150.dtsi
+
+Konrad
