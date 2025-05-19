@@ -1,138 +1,162 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CE411185;
-	Mon, 19 May 2025 03:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3AC1CF96;
+	Mon, 19 May 2025 05:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747624745; cv=none; b=pW9aOe9Tq4bmtHZzTGdxPS3RtI1cAk4axZJqrNyPgJIcEhZWu7fHX+oJUAsKd/Rm90gL1SFHul/BngaGMpnhZZBkEWEfj3s+QzdPQ+PU/RnSb1ZwDNlYG82AGrekp8njHX8WvdgDukydUzvMMDqV4oz7yFwx6N4CEfmsMaeHz7E=
+	t=1747632302; cv=none; b=aCM9PLb8s6DAlPOwsm3hjH5YktSxGHZcUc4T6IQKNs6NwV82uJZ1QAId2/7H7oMvf3P2qCc0VKis7KwW/19hzVi/oUvNXsOlB3O9/0Yck41WE/vWPlhfnEr8anZv4hxWNnbHZZubx69xH5jTVahwtGnVeiK5UDLFKJdC+2VrLvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747624745; c=relaxed/simple;
-	bh=YO86jE4zmm6TjeaXwEwCHBGRwdoY3h0C5zYeXxpoTFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FRBtz5wg8aUvjg+2N145Hd24L1NxlQoWVeMT7ehy0hlPctfjng5b9VpUdR3M4+x6jcjNRyPZ6MuPkCJJi+Lu9jOAIz35Cy1RRm0cAq/jnqriCIArJBOBfJBOr7PQ+HmOA2qRPlLqrGJtxF7iT+VV9uf5Wgt02OygcwBnqTpk9Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NsuRWG9M; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1747632302; c=relaxed/simple;
+	bh=DcNtTSjJRfPh0JXirryZ/pFXiyFUVCYRXBOF0XJ2lZg=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DvJ1GGvuZ5m/mK1MHgRd0hhgcfuLJ0zU/d8zQXvROsLKN/xNKXgzalc0sPWm729gaHmeXEDtb2DKybc1eI9LmuNrXLs1vCEUK4wBJwtIZx/aYA1AY1tEE8BUVVn2RdQIhjTdXUGvyt0Xq3VpeTVxWRqPeHP0JjbyHSeDITB9jNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eIgyNFfb; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NsuRWG9M"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54INtGt1014157;
-	Mon, 19 May 2025 03:18:59 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eIgyNFfb"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54ILb0og017287;
+	Mon, 19 May 2025 05:24:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6pm19lgWPDi0vi0ZE8xqYMAGPaSCwnY2sRj2Je6EJGQ=; b=NsuRWG9MEM7tCP6E
-	F/zSrAlCefJ/RppMnGB/UzKUvPozuXqLxgyBOCOmoo8Xf3fmO4zAfRdi6oWGkpZU
-	R0F34+nESi3jTL+6Y46heRkWdIFsuO4N0r8t5kgsKfY1ZyueO6mGdBqtODr5YmNv
-	4EsLDUg2FfXzQ1tN1ZBuBAWTJvVyKcHSI9wx/vAiv31RlXe/1KUA50Tx6GwOsUo/
-	TqaQvpLQFKI6R+fZHpzCVrug8tiPZgT3HZsEjPRxd6BI2GtJ4fC+N/jLwWsh0ft8
-	LnOODqJ8oaUwM6EhHstAalRPm9Awc9iWXY/1xLeeV0f3/oVm4RUKq3l/muo1ObKe
-	0i8ECw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjm4twdf-1
+	hmZZzjSy/eT0NOji6i3HAopjzSWwfq+/gwsuSksAV3w=; b=eIgyNFfbG9ynjRLg
+	Uxv0PFO7QsMyTuHr4GO1dYH8sWynOJoThWFr7SFXR7gpfvxfqgnDpw2Wkeri+fZR
+	SZLWQfqkmC9eFVNtYi3ty3fjvpGUIf2oIHRRa8GUZhgachENHq8TBMnYnIZoSbnO
+	SHx+3PsO7t8JGXnKUCPjHWy17MpThe3Sqlt6LY3GAotsCXce2hQ9AJAn6v0hH/zz
+	uCbQWIJwRC8Mah25OADqhBtFqdILymvq/NWtFiQHJhFsVcIhTMSfVoOEv3OGXQHr
+	TLSofz0ciRSN/HKeQbaIjlg1g9FtvtpFpLYe7MDPB42rIs7LChEMnRLlMZbBlDVI
+	NJBRNQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjnyk4rn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 May 2025 03:18:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54J3Iwf3011035
+	Mon, 19 May 2025 05:24:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54J5OtC3026903
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 May 2025 03:18:58 GMT
-Received: from [10.239.132.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 19 May 2025 05:24:55 GMT
+Received: from [10.219.56.16] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 18 May
- 2025 20:18:51 -0700
-Message-ID: <774485c3-2046-40dd-a15e-978f781c134a@quicinc.com>
-Date: Mon, 19 May 2025 11:18:49 +0800
+ 2025 22:24:53 -0700
+Subject: Re: [PATCH v5] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250408104317.926833-1-quic_schowdhu@quicinc.com>
+ <91d8efa0-c61c-eb17-b6f4-cb9804e5fff9@quicinc.com>
+CC: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Message-ID: <cf3fffda-8d88-b962-398d-d038cd10b981@quicinc.com>
+Date: Mon, 19 May 2025 10:54:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: qcs615: add ADSP and CDSP nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250516-add_qcs615_remoteproc_support-v3-0-ad12ceeafdd0@quicinc.com>
- <20250516-add_qcs615_remoteproc_support-v3-5-ad12ceeafdd0@quicinc.com>
- <thtk5vv2hpbnoapmt6j7nlgrcyedjzjbi3ntlyb3ll7atks46n@bp4isaoert67>
- <73a689a1-e8a3-4417-b0e6-374ec9b091d5@oss.qualcomm.com>
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-In-Reply-To: <73a689a1-e8a3-4417-b0e6-374ec9b091d5@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
+In-Reply-To: <91d8efa0-c61c-eb17-b6f4-cb9804e5fff9@quicinc.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=dIimmPZb c=1 sm=1 tr=0 ts=682aa323 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=NEAV23lmAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=TnUyPrpFTRFRPAhg5l4A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ET3mMl51iU2PetUKeuEthcgJ2HbD0VP7
-X-Proofpoint-GUID: ET3mMl51iU2PetUKeuEthcgJ2HbD0VP7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDAyOSBTYWx0ZWRfX1F8OvWN4kjq2
- 3hDFK9v2khmJN3kbj5q3xEeQSwujUnDLAuxJIVjnpDiEgA9hv72l4uG4Q/Zzgp4VaDnwR7zzx8p
- 3iFwrnIEb+wLVWakZx+yWVBU9C/DwrRx2QAYU+BPjqK4OVCo3ipJL/LGo2ACdxK8rWpdnLtzxLq
- tN7ymYCSo0Mha8IeNFZgdIq09GyeGDp6a+5xlOwjRNpRf1J8SXHVPPnn9VDXv01jgOFRuP1RVpX
- qUPN5atlNPAVUAxcn3tPWDCRUY7x2QhUymd2IinijCyq/LSjf5iqGvy6QdHXd7hZ7105Zyxx/sz
- h9/pNOTilBYe0yWClTRbut8/v3HHKO2JGlq64h9/OiYuZ5zMK416go0MSZ6mOA/Ddpc8Q3HOPXy
- C6mIEO8kUcqM5Txc8xfxudaDKiB/6UeJyeAYZP3lH+wtNdfsNCL/R1u/eHSjlrhg457cyRiD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDA0OSBTYWx0ZWRfX8VmkWuwDPg1i
+ vy4LX1NFeI7wUs5UzmaWVTEWcsgEwgsdZ8N0IiOorggeXco+JZ6MVCR8+eg5X0RsDuoe412RiNx
+ +Tx66Mq0b1dggRU7fLJ8u2acPB2nqwSu+h6PBZb/WNA0gRg5T6+HRsIueiuzQTNwamH1nSpZTuU
+ PQ74Y3H1H4ToIxKFVMWwKSy216Xwl/3uNClblqdw2VAHnmdQsPvkKogHcDZIQmzlaTz/YyRRgdl
+ 14n29L+K+pxxKS3Nc4H9EtvDWulTOPQf3dDVbZZlXlyKWrJQJPT1mzqyA1egkge5ZK/sB5WVdFG
+ Vw2/OfhoBlb9UvOUJuq5igFDdXukrN24VjzFhYEAD99vJwSETlgWSX6tyzWyc2Lsz8Odzn/Ixnk
+ tVt8CqQ3xM7XiEcrJ3wfn7oxKcUOLKygQq+rknpW4Baww+7p+PNOK+zKH3tweX3LS6GZC2AQ
+X-Authority-Analysis: v=2.4 cv=Z9XsHGRA c=1 sm=1 tr=0 ts=682ac0a8 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=N659UExz7-8A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=T9jlel3K9Aby5IBUjGQA:9 a=pILNOxqGKmIA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: IczBKUOMeQbkjJWOWgIvyHlYuFNNBJ2w
+X-Proofpoint-ORIG-GUID: IczBKUOMeQbkjJWOWgIvyHlYuFNNBJ2w
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_01,2025-05-16_03,2025-03-28_01
+ definitions=2025-05-19_02,2025-05-16_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=694 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ phishscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505190029
+ definitions=main-2505190049
+
+Gentle Reminder
 
 
-
-在 5/18/2025 12:59 AM, Konrad Dybcio 写道:
-> On 5/17/25 12:11 AM, Dmitry Baryshkov wrote:
->> On Fri, May 16, 2025 at 11:27:06AM +0800, Lijuan Gao wrote:
->>> Add nodes for remoteprocs: ADSP and CDSP for QCS615 SoC to enable proper
->>> remoteproc functionality.
->>>
->>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 86 ++++++++++++++++++++++++++++++++++++
->>>   1 file changed, 86 insertions(+)
+On 5/14/2025 1:03 PM, Souradeep Chowdhury wrote:
+> Gentle Reminder
+>
+>
+> On 4/8/2025 4:13 PM, Souradeep Chowdhury wrote:
+>> Add device awake calls in case of rproc boot and rproc shutdown path.
+>> Currently, device awake call is only present in the recovery path
+>> of remoteproc. If an user stops and starts rproc by using the sysfs
+>> interface, then on pm suspension the firmware fails to load as the
+>> request_firmware call under adsp_load relies on usermodehelper
+>> process which gets freezed on pm suspension. Add device awake calls
+>> to fix this.
 >>
->> Is the MPSS not present on the QCS615? It was a part of the SM6150
->> design.
-> 
-> Hmm.. good point..
-> 
-> It's surely not there on QC*S*
-> 
-> it is there on SM6150 though, quite obviously
-> 
-> downstream ref:
-> 
-> https://github.com/ianmacd/gts6lwifi/blob/master/arch/arm64/boot/dts/qcom/sm6150.dtsi
-> 
-> Konrad
-
-Thanks Konrad and Dmitry, I will add MPSS in next patch.
--- 
-Thx and BRs
-Lijuan Gao
+>> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+>> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+>> ---
+>> Changes in v5
+>>
+>> *Added more details to commit description
+>>
+>> Changes in v4
+>>
+>> *Remove stability from mailing list
+>> *Remove the extra tab in v3
+>> *Change the commit description
+>>
+>>   drivers/remoteproc/remoteproc_core.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c 
+>> b/drivers/remoteproc/remoteproc_core.c
+>> index c2cf0d277729..5d6c4e694b4c 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
+>>           return -EINVAL;
+>>       }
+>>   +    pm_stay_awake(rproc->dev.parent);
+>>       dev = &rproc->dev;
+>>         ret = mutex_lock_interruptible(&rproc->lock);
+>> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>>           atomic_dec(&rproc->power);
+>>   unlock_mutex:
+>>       mutex_unlock(&rproc->lock);
+>> +    pm_relax(rproc->dev.parent);
+>>       return ret;
+>>   }
+>>   EXPORT_SYMBOL(rproc_boot);
+>> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>       struct device *dev = &rproc->dev;
+>>       int ret = 0;
+>>   +    pm_stay_awake(rproc->dev.parent);
+>>       ret = mutex_lock_interruptible(&rproc->lock);
+>>       if (ret) {
+>>           dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>       rproc->table_ptr = NULL;
+>>   out:
+>>       mutex_unlock(&rproc->lock);
+>> +    pm_relax(rproc->dev.parent);
+>>       return ret;
+>>   }
+>>   EXPORT_SYMBOL(rproc_shutdown);
+>
 
