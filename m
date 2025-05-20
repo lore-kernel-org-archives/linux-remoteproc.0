@@ -1,224 +1,168 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4A91172A
-	for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 12:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0981EA7C9
+	for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 14:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747743748; cv=none; b=VqKyWYCRJyosjjkfh8vRfSVmvbS4Wl0DsBHuNvI169L6E4g8j+dEAb+W9jbfICDNp3hXZ1UMdWnM7XLKa+okutrBqris4CDzQxkNFG5L24JFDTcEelJ0hr9vh+QyaMFNY3KdpL1Zs1WI2pd74SzZyduWyrOsXfbTtwvC9BsvFtw=
+	t=1747751367; cv=none; b=GM+7dyfisRAzym8hjYtqCTb+uEzO7uxqQqx/qrXbNxVdAli5oa3GjhwAsPv+WdAQ2vo2SQq0UwOWmQrrCuTswV3xflJ1GDgPh0CRTF5Yid21NHb4IjWxxHiW4brb/yqBN581p4wJhQdad1T93ZfGyHRXHHuSelBZYUEpWNgH36s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747743748; c=relaxed/simple;
-	bh=QouWssyxn4NBMq4oguRadbPcsKGXlZJW7CbUFKqwr9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rlDll+Jzzv3fc7Xod8kn0k5PcQcI4sLHGWO9STHoIyn0a8a02pUGtFkvR/Y/3bgqbNYfTzzgHV4yrs1n7iCmPwvSgIzPAiOnfGIdpN7bNQA/pDa8IwqsCBS381dVQSM9uaJjCPy6oZpoTd958y2u7BoHX/fkL9QRe0q6EciUZ94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UaFaWBJ8; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747751367; c=relaxed/simple;
+	bh=ejS6ovgsQrYlFQ3gRomd+Ji1tifZg7j6PQr7o/pIqA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pAIs+uee/8tCX3zLYxXXqAPrxAk1RIKy0B/wcabQce4ba2AHhSEuH+2Rx0S+h6jVjW/sQznvXqRyvoKX+7VbpMbnZfz5fPkIqYY7oJih9ilxjI5Hy2knvCfff+5NBY0SsRY5RBLpO2jOBJNJwh2fSoxe/YwSFaungtA2toSyW7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dVFm7eyd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UaFaWBJ8"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70dec158cc1so1684787b3.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 05:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747743746; x=1748348546; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MEOAQ4+huP5P2UxwDkmIJwHky2Zn8+jD9WJaoKTnTcI=;
-        b=UaFaWBJ8y+eJQxKeIswymC92n2WfUGPupp/aGhvEMcMQh/JOphG/zZkiZrs5A4O4zz
-         4/1Pt/9phf7nyGPbun3U2rWOKtr2ioOJ1U7cer3Eyd9WiOz1UDHsPEgqA6gqAySgHrUW
-         3jHTHXpSNEbgd1fhlpx78M3HIfVOMFIpRHqMe2OiIq7QqYfF+Eyhg2BwgkHNf0H69zXJ
-         nTIh+m1Hid5NxG7mb8Q3lxAkxSaGE9WZkYyz054kkPl9wNMZ0SiotmQ2uBAblMCjD6eY
-         f3MThIbTWluydT/U03DcmuRXz87UpWgpnpiMip1iZQfDwRY69xdvPolnB6Dwd6w9EgDa
-         H1Kg==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dVFm7eyd"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K7P61S019020
+	for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 14:29:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eTvWyp6sTsoPovqd27mbVAax9KqDto0mtErtu24hwf8=; b=dVFm7eydEyKaxevI
+	vfIkMyHij2+KG8/TJdppUEn6/PAJrcB0JRS2Q55gC3y45jHO2eyObmQMmo/2retX
+	i2BbeUhagfrA+Dmuj597YjzMVP78MXaDgfl+yIZmd2J2558VgIY0nPg5O2X5xMPp
+	xs6pcB35a29K+qIsG9R4fXd+yt6nT0oCMrxZ8TNzxKysb1SCB7TB7kXtbAqH3Ulo
+	GQYBfbaD4KPzOiP14qMKeGF7xA4NON4vQg6fZ24Fur76iVEybMXt/GfdFmUnUS+Z
+	6z6RZxuqhr8y+M6qAK+LzbKNdxvkxmaplJiFuKiL8qAby26gXS/0su5A6+4PLOa2
+	ysvvjQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjm50335-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 14:29:23 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c547ab8273so95919385a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 07:29:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747743746; x=1748348546;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MEOAQ4+huP5P2UxwDkmIJwHky2Zn8+jD9WJaoKTnTcI=;
-        b=HhGVHN/mefT6LhQSywj2MunVp/sM9y8yFME332oWJ1iNM53SK69lzh6h3lZxZ1+V8V
-         4rK5KQ4p7MHGXQZMK0gB/PA2myZ2SHk6hvscSqxqhC5tqygA+DyWQ2eLPZVQf5cCFKU3
-         MMd2iJwSVqEQpXZFkh45vtTe59Fn+R7krMV9o+fMH4B4HRr7HvJDfkj/kvcfIi1YygIA
-         MSbxu7THNC31awZScGYlmd1L8Vz0WWCy3CEU/DOF3gxOWzjEAW4i2Obn3cclqyl6M4mY
-         r18wjUHKao0rGNJGfA5y7ghYnHiHgxrhMZ1A59KnKe/KAKMdqeqjz5rUXWiZZN9p1Uat
-         zgpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWhHXrk9D/lHdhxblHIHIdYez821C236jUIg9cJZDcO1tJicLYhyCoSlBaP5TqgcIEQX8ATVyLED7jnhxvjDtW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI4cAv1u6nCjh5GgitsLy+sNt8/8LXpPc2DMk6AzfdFFs3Ft0h
-	5ic/DmbrvzVOyZh7gpNPIkuK6VNajZo0wMQmpPZaWMR5XeIYF2ocl7kTGkSUUXDX/bWvkfXGCmX
-	GajNhW/7cZqWxdQ7HYxfbg6fKEbVXYm4li5veScMgOA==
-X-Gm-Gg: ASbGncsiDJC8ghQl/+49lzgRFHregHlXGKWhr1SppKKSYIHg3xlqu5l9mcjDWGgDl/C
-	ygkz2uksnsF7qeFbKrVy3xwhmw/fsWU4yFvSWE5uTSq+qBkRuLB2ki1IQHaalueou7cJBmKCxDo
-	kRASUWK9XmSh+CjuhPFcSjlnG1H80G/mL6hw==
-X-Google-Smtp-Source: AGHT+IEoqQjb+R4v4FqIJ9NsaAJz8P+torT+l2h/KrsSDMTfNo1fSuoB13kxgbLiWRiK4DxnCXAbwKmJB14az3T0qSA=
-X-Received: by 2002:a05:690c:ed1:b0:70d:d1a6:fcfc with SMTP id
- 00721157ae682-70dd1a6ffb1mr74617027b3.13.1747743745677; Tue, 20 May 2025
- 05:22:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747751362; x=1748356162;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTvWyp6sTsoPovqd27mbVAax9KqDto0mtErtu24hwf8=;
+        b=W7mtsRCIoP5SP0Q5vpApvgLU16xLTTBywgScWBmmfGcPROED5glgQUPWN/8OABD5oC
+         9Uk01wQD2VJretg73DlCxC0XLUrfbSLFY+PhdCJHtxzEaQ36a6SX6cQt79gdbApaw5FF
+         hS4ZGbq0jK8D5EsZY6q4+Yb4LrdvjHX/Q8PfqV67R9ChNFTvqUcj7M9DYBgMgZbK55XT
+         1wJt7s7MgkSZ3oJwNOTtEgOCuGmn6XgUAiSmDjLwEit6PVJyQ27688dQSImU4ASVfxjf
+         cZ6k4u8uq9pI3obQl0/A0Hj643CECSyZCJmpbi7n9Z1/RLDsPwURGg+uJ9sc0HX3uWr0
+         ae/A==
+X-Forwarded-Encrypted: i=1; AJvYcCX5HvR5/KzqN37LAq6MU719J4tVtc1zki9x4NxA7ns8jkgDvbuvDXP1yIEw1FkAeRliICiJ8kxV8+MTlSe3468J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsIo0C+1QOjYqpbPTRRImXELZuXdLzuGfB697aJWBkkXGxrtqI
+	r2jg0oZsNUdsF6vDcXCZM2COxqTacNz/WTYrgQYh4tA5AqnigjixZWuhshag9KWA+Lsuo2Z9vWZ
+	O92/7w9M1gIGRd+1NWbO7VrrKMF3AUSGWlR4TJFxGPqzEtebEuaBc1vWjDroYDuGzK1+QNOWJ
+X-Gm-Gg: ASbGncumHTT8G5EwBjhPt8pk6s19TIb0X708Ykf3uG0ezYY1QTFWblghBtFjcT1rQLE
+	2dC13aazLrwP9gjPm+9Gg4I86GAfnZxYCJTq8ZUsFxhWvnKKempDgFKREHhJ1Xh6BNj8JNtbtGO
+	VZoxYsKaqXTXlDcDzUDdViD/w4ATULZq3NyYMXhGpQ+F1icMl/RyEMqO/OXIgtQ95IDC9gowcdC
+	AUddjSNA2BMv09yyx4vzUmtAaGKVk01KOdqqB4+RvXS5JRWZO73jdm/tqD1H+Ueqs5cXIDXqCxl
+	Rh2m+j9UWBA6oq1yh8Sdf5dTx39bAUqCqnopTMDhmv6riLUqMWnaeFWdMT/k7LOFGw==
+X-Received: by 2002:a05:620a:4895:b0:7cd:14b:554b with SMTP id af79cd13be357-7cd467c0835mr1061654385a.10.1747751362236;
+        Tue, 20 May 2025 07:29:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4MIcwFME3fzluDpcCr0w4MNNLPjzHGz+1z4WA1cnE5MqMZfKL4v0eGPZNm07L4mDAE11zzg==
+X-Received: by 2002:a05:620a:4895:b0:7cd:14b:554b with SMTP id af79cd13be357-7cd467c0835mr1061651285a.10.1747751361733;
+        Tue, 20 May 2025 07:29:21 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04e674sm733754866b.24.2025.05.20.07.29.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 07:29:21 -0700 (PDT)
+Message-ID: <a49df292-dcc6-457c-a565-984887687341@oss.qualcomm.com>
+Date: Tue, 20 May 2025 16:29:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
- <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
- <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
- <20250509191308.6i3ydftzork3sv5c@hiago-nb> <CAPDyKFpnLzk5YR3piksGhdB8ZoGNCzmweBTxm_rDX5=vjLFxqQ@mail.gmail.com>
- <20250519172357.vfnwehrbkk24vkge@hiago-nb>
-In-Reply-To: <20250519172357.vfnwehrbkk24vkge@hiago-nb>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 20 May 2025 14:21:49 +0200
-X-Gm-Features: AX0GCFvecIGQgQvYviOe7hMAhu1Tk0oNxkZ2kd0dxrSn8Ur7tJ7dhdnhpp02IIc
-Message-ID: <CAPDyKFpGcgMzOUHf-JTRTLBviFdLdbjZKrMm8yd37ZqJ1nfkHw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
- remote core attachment
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
-	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] SC8280XP SLPI
+To: Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250517-topic-8280_slpi-v2-0-1f96f86ac3ae@oss.qualcomm.com>
+ <aCr7UzmK7XCjpsOx@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <aCr7UzmK7XCjpsOx@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dIimmPZb c=1 sm=1 tr=0 ts=682c91c3 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=IX2s_8XrF8Sh1HtkrDgA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: bXsHhqJPKwWfIjY4h0nLSwsdWJAbJbt6
+X-Proofpoint-GUID: bXsHhqJPKwWfIjY4h0nLSwsdWJAbJbt6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDExNiBTYWx0ZWRfX8naLwr5UeNDt
+ 2GcwJUIr04OyqiH3+jNphGh+wsfLbxakwmL2Yc5dCIAC0wcR7leX1Hw1tyeA0nucsO7YRGGPcMe
+ MzdsMc4i1oBNzdIB5IlEZ+ZPjoah0rGvVAqkmI5lECoxEsvjqn6h7456mCRuT3HN+deRno1VHD/
+ hgTpIbuDkDpImbAXKzLbpvWlbBvE+/oap9qlhIUQCsk1JHceg7H76LSterZdU19Mwbp33hpBw8+
+ 4mBjUczwDkGKUyM0h0KoQXHYd6jiUYg6r0OjXNLbkFdvZxHsR+0KHdFZXvtCTQ8E1jMqIu8g4+p
+ 4HXG0fRA0/G5asktifcEOLNIkTTl6KyBSS2BMJDWREcWOVq96ZHQGvu0pjxdYxvQWAWLOGGJZub
+ uhywv524A717KLJ8q7LQH6kbS1bOtfbGa3yl+eW9TgZdub+snaZlA0NQz4y8n9xTjKuCSYQf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=804 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200116
 
-On Mon, 19 May 2025 at 19:24, Hiago De Franco <hiagofranco@gmail.com> wrote:
->
-> Hi Ulf,
->
-> On Mon, May 19, 2025 at 04:33:30PM +0200, Ulf Hansson wrote:
-> > On Fri, 9 May 2025 at 21:13, Hiago De Franco <hiagofranco@gmail.com> wrote:
-> > >
-> > > On Fri, May 09, 2025 at 12:37:02PM +0200, Ulf Hansson wrote:
-> > > > On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
-> > > > >
-> > > > > Hello,
-> > > > >
-> > > > > On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
-> > > > > > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
-> > > > > > >
-> > > > > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > > > > >
-> > > > > > > When the remote core is started before Linux boots (e.g., by the
-> > > > > > > bootloader), the driver currently is not able to attach because it only
-> > > > > > > checks for cores running in different partitions. If the core was kicked
-> > > > > > > by the bootloader, it is in the same partition as Linux and it is
-> > > > > > > already up and running.
-> > > > > > >
-> > > > > > > This adds power mode verification through the SCU interface, enabling
-> > > > > > > the driver to detect when the remote core is already running and
-> > > > > > > properly attach to it.
-> > > > > > >
-> > > > > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > > > > > Suggested-by: Peng Fan <peng.fan@nxp.com>
-> > > > > > > ---
-> > > > > > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
-> > > > > > > suggested.
-> > > > > > > ---
-> > > > > > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
-> > > > > > >  1 file changed, 13 insertions(+)
-> > > > > > >
-> > > > > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > > > > > index 627e57a88db2..9b6e9e41b7fc 100644
-> > > > > > > --- a/drivers/remoteproc/imx_rproc.c
-> > > > > > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > > > > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> > > > > > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
-> > > > > > >                                 return -EINVAL;
-> > > > > > >
-> > > > > > > +                       /*
-> > > > > > > +                        * If remote core is already running (e.g. kicked by
-> > > > > > > +                        * the bootloader), attach to it.
-> > > > > > > +                        */
-> > > > > > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
-> > > > > > > +                                                               priv->rsrc_id);
-> > > > > > > +                       if (ret < 0)
-> > > > > > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
-> > > > > > > +                                       priv->rsrc_id, ret);
-> > > > > > > +
-> > > > > > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
-> > > > > > > +                               priv->rproc->state = RPROC_DETACHED;
-> > > > > > > +
-> > > > > > >                         return imx_rproc_attach_pd(priv);
-> > > > > >
-> > > > > > Why is it important to potentially set "priv->rproc->state =
-> > > > > > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
-> > > > > >
-> > > > > > Would it be possible to do it the other way around? First calling
-> > > > > > imx_rproc_attach_pd() then get the power-mode to know if
-> > > > > > RPROC_DETACHED should be set or not?
-> > > > > >
-> > > > > > The main reason why I ask, is because of how we handle the single PM
-> > > > > > domain case. In that case, the PM domain has already been attached
-> > > > > > (and powered-on) before we reach this point.
-> > > > >
-> > > > > I am not sure if I understood correcly, let me know if I missed
-> > > > > something. From my understanding in this case it does not matter, since
-> > > > > the RPROC_DETACHED will only be a flag to trigger the attach callback
-> > > > > from rproc_validate(), when rproc_add() is called inside
-> > > > > remoteproc_core.c.
-> > > >
-> > > > Okay, I see.
-> > > >
-> > > > To me, it sounds like we should introduce a new genpd helper function
-> > > > instead. Something along the lines of this (drivers/pmdomain/core.c)
-> > > >
-> > > > bool dev_pm_genpd_is_on(struct device *dev)
-> > > > {
-> > > >         struct generic_pm_domain *genpd;
-> > > >         bool is_on;
-> > > >
-> > > >         genpd = dev_to_genpd_safe(dev);
-> > > >         if (!genpd)
-> > > >                 return false;
-> > > >
-> > > >         genpd_lock(genpd);
-> > > >         is_on = genpd_status_on(genpd);
-> > > >         genpd_unlock(genpd);
-> > > >
-> > > >         return is_on;
-> > > > }
-> > > >
-> > > > After imx_rproc_attach_pd() has run, we have the devices that
-> > > > correspond to the genpd(s). Those can then be passed as in-parameters
-> > > > to the above function to get the power-state of their PM domains
-> > > > (genpds). Based on that, we can decide if priv->rproc->state should be
-> > > > to RPROC_DETACHED or not. Right?
-> > >
-> > > Got your idea, I think it should work yes, I am not so sure how. From
-> > > what I can see these power domains are managed by
-> > > drivers/pmdomain/imx/scu-pd.c and by enabling the debug messages I can
-> > > see the power mode is correct when the remote core is powered on:
-> > >
-> > > [    0.317369] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_ON
-> > >
-> > > and powered off:
-> > >
-> > > [    0.314953] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_OFF
-> > >
-> > > But I cannot see how to integrate this into the dev_pm_genpd_is_on() you
-> > > proposed. For a quick check, I added this function and it always return
-> > > NULL at dev_to_genpd_safe(). Can you help me to understand this part?
-> >
-> > As your device has multiple PM domains and those gets attached with
-> > dev_pm_domain_attach_list(), the device(s) that you should use with
-> > dev_pm_genpd_is_on() are in imx_rproc->pd_list->pd_devs[n].
->
-> Ok got it, thanks for sharing.
->
-> I just send the v3 with the changes Peng proposed (here
-> https://lore.kernel.org/lkml/20250519171514.61974-1-hiagofranco@gmail.com/T/#t),
-> but I am a bit confused which path we should take, the initial approach
-> proposed or using these PD functions. Maybe we can discuss this in the
-> new v3 patch series?
+On 5/19/25 11:35 AM, Johan Hovold wrote:
+> On Sat, May 17, 2025 at 07:27:49PM +0200, Konrad Dybcio wrote:
+>> SC8280XP features a SLPI, much like its distant relative, SM8350.
+> 
+> Please get into the habit of spelling out *and* explaining internal
+> Qualcomm acronyms like "SLPI" so that your cover letter and commit
+> messages makes sense to people outside of Qualcomm.
 
-I think it would be better if we can avoid sharing low-level firmware
-functions for PM domains. I am worried that they may become abused for
-other future use-cases.
+It's difficult to judge which acronyms are known when half the words I
+type on my other computer are TLAs..
 
-So, if possible, I would rather make us try to use
-dev_pm_genpd_is_on() (or something along those lines), but let's see
-what Peng thinks about it before we make the decision.
+> 
+> Also say something about whether and how this is useful for anyone
+> currently or if it, for example, depends on Qualcomm proprietary user
+> space bits.
+> 
+>> Dmitry Baryshkov (1):
+>>       arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13s: enable sensors DSP
+> 
+> At first I was worried that missing firmware could cause issues here
+> (e.g. drivers not reaching sync state as with venus), but Lenovo has
+> indeed released the SLPI firmware already.
+> 
+> Are there any other potential downsides to enabling this (e.g. before
+> anyone can actually use the sensors)?
 
-[...]
+It's probably only upsides resulting from keeping the rproc in a known state
 
-Kind regards
-Uffe
+> 
+>> Konrad Dybcio (4):
+>>       dt-bindings: remoteproc: qcom,sm8350-pas: Add SC8280XP
+>>       arm64: dts: qcom: sc8280xp: Fix node order
+>>       arm64: dts: qcom: sc8280xp: Add SLPI
+> 
+>>       arm64: dts: qcom: sc8280xp-crd: Enable SLPI
+> 
+> Without firmware this results in errors like:
+> 
+> 	remoteproc remoteproc0: slpi is available
+> 	remoteproc remoteproc0: Direct firmware load for qcom/sc8280xp/qcslpi8280.mbn failed with error -2
+> 	remoteproc remoteproc0: powering up slpi
+> 	remoteproc remoteproc0: Direct firmware load for qcom/sc8280xp/qcslpi8280.mbn failed with error -2
+> 	remoteproc remoteproc0: request_firmware failed: -2
+> 
+> but enabling for the CRD reference design and requiring users (read:
+> developers) to copy it from Windows should be OK.
+
+We shouldn't expect non-developers to have the CRD on hand, right? ;)
