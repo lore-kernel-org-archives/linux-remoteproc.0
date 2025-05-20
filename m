@@ -1,156 +1,224 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C5E747F;
-	Tue, 20 May 2025 12:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4A91172A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 12:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747743487; cv=none; b=DFMF5XbMXpijiPrtfhrqLKpxGqoVU49CAO4y4j5X42CTcDhlyv/662KcoLVOv7TfumsrAlV0gK01m4rz+t1ozxzSeNWv6g5MX6u3OlRttWTAonOdVQxT49M0oFuBclRqtzyJ7eBMiB9Zz9I2UQnBKbtIAi7DERGC5N/yX/Xa37g=
+	t=1747743748; cv=none; b=VqKyWYCRJyosjjkfh8vRfSVmvbS4Wl0DsBHuNvI169L6E4g8j+dEAb+W9jbfICDNp3hXZ1UMdWnM7XLKa+okutrBqris4CDzQxkNFG5L24JFDTcEelJ0hr9vh+QyaMFNY3KdpL1Zs1WI2pd74SzZyduWyrOsXfbTtwvC9BsvFtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747743487; c=relaxed/simple;
-	bh=uVxldG9OPVd84HQjya122tQ1Rkexc5kkav/s+xo6zd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JkWk6AUEqZpURd3xRfJbUrYLD5ACL2qyWVWlOCtZaDS9mMp03g5WaujQr0C/GFPEk6pQloUM+D8S7nHaomKoGdOeuChyhUz5CiYWfOJ7mNJJvoV2EaTB9xw6WQgXvV8Vm8VR0kb3jL8KYlZvUa2xMxtiU5wOqDeOfrT+bzNSu/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RgdIkFrn; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1747743748; c=relaxed/simple;
+	bh=QouWssyxn4NBMq4oguRadbPcsKGXlZJW7CbUFKqwr9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rlDll+Jzzv3fc7Xod8kn0k5PcQcI4sLHGWO9STHoIyn0a8a02pUGtFkvR/Y/3bgqbNYfTzzgHV4yrs1n7iCmPwvSgIzPAiOnfGIdpN7bNQA/pDa8IwqsCBS381dVQSM9uaJjCPy6oZpoTd958y2u7BoHX/fkL9QRe0q6EciUZ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UaFaWBJ8; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RgdIkFrn"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 54KCHf0E801340
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 May 2025 07:17:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747743462;
-	bh=v/HR03qjcCV/m67Su6/Fy1LtZqxTVoT+wx6cgo/l9Xk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RgdIkFrn+9oWD4KB7PRQpIafbBXyXBhiwEcLARSMptCsi8nH+Uqop9TIqN06XAhvN
-	 LM4kBGZhyFi89GIF4mtEZgcGDucZ9AK35xebIaQXnB/AM24hzUEnT+JkIE3Vknpxn0
-	 XbAOCnhe2EtYRwnL9r/poS1L31/R3dDs0S9GADoI=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 54KCHfKQ042331
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 20 May 2025 07:17:41 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 20
- May 2025 07:17:41 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 20 May 2025 07:17:41 -0500
-Received: from [10.249.48.175] ([10.249.48.175])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54KCHe2Y091414;
-	Tue, 20 May 2025 07:17:41 -0500
-Message-ID: <d8837685-5262-a66a-4b0c-2a4ed73f6c76@ti.com>
-Date: Tue, 20 May 2025 07:17:40 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UaFaWBJ8"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70dec158cc1so1684787b3.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 May 2025 05:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747743746; x=1748348546; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MEOAQ4+huP5P2UxwDkmIJwHky2Zn8+jD9WJaoKTnTcI=;
+        b=UaFaWBJ8y+eJQxKeIswymC92n2WfUGPupp/aGhvEMcMQh/JOphG/zZkiZrs5A4O4zz
+         4/1Pt/9phf7nyGPbun3U2rWOKtr2ioOJ1U7cer3Eyd9WiOz1UDHsPEgqA6gqAySgHrUW
+         3jHTHXpSNEbgd1fhlpx78M3HIfVOMFIpRHqMe2OiIq7QqYfF+Eyhg2BwgkHNf0H69zXJ
+         nTIh+m1Hid5NxG7mb8Q3lxAkxSaGE9WZkYyz054kkPl9wNMZ0SiotmQ2uBAblMCjD6eY
+         f3MThIbTWluydT/U03DcmuRXz87UpWgpnpiMip1iZQfDwRY69xdvPolnB6Dwd6w9EgDa
+         H1Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747743746; x=1748348546;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MEOAQ4+huP5P2UxwDkmIJwHky2Zn8+jD9WJaoKTnTcI=;
+        b=HhGVHN/mefT6LhQSywj2MunVp/sM9y8yFME332oWJ1iNM53SK69lzh6h3lZxZ1+V8V
+         4rK5KQ4p7MHGXQZMK0gB/PA2myZ2SHk6hvscSqxqhC5tqygA+DyWQ2eLPZVQf5cCFKU3
+         MMd2iJwSVqEQpXZFkh45vtTe59Fn+R7krMV9o+fMH4B4HRr7HvJDfkj/kvcfIi1YygIA
+         MSbxu7THNC31awZScGYlmd1L8Vz0WWCy3CEU/DOF3gxOWzjEAW4i2Obn3cclqyl6M4mY
+         r18wjUHKao0rGNJGfA5y7ghYnHiHgxrhMZ1A59KnKe/KAKMdqeqjz5rUXWiZZN9p1Uat
+         zgpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWhHXrk9D/lHdhxblHIHIdYez821C236jUIg9cJZDcO1tJicLYhyCoSlBaP5TqgcIEQX8ATVyLED7jnhxvjDtW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI4cAv1u6nCjh5GgitsLy+sNt8/8LXpPc2DMk6AzfdFFs3Ft0h
+	5ic/DmbrvzVOyZh7gpNPIkuK6VNajZo0wMQmpPZaWMR5XeIYF2ocl7kTGkSUUXDX/bWvkfXGCmX
+	GajNhW/7cZqWxdQ7HYxfbg6fKEbVXYm4li5veScMgOA==
+X-Gm-Gg: ASbGncsiDJC8ghQl/+49lzgRFHregHlXGKWhr1SppKKSYIHg3xlqu5l9mcjDWGgDl/C
+	ygkz2uksnsF7qeFbKrVy3xwhmw/fsWU4yFvSWE5uTSq+qBkRuLB2ki1IQHaalueou7cJBmKCxDo
+	kRASUWK9XmSh+CjuhPFcSjlnG1H80G/mL6hw==
+X-Google-Smtp-Source: AGHT+IEoqQjb+R4v4FqIJ9NsaAJz8P+torT+l2h/KrsSDMTfNo1fSuoB13kxgbLiWRiK4DxnCXAbwKmJB14az3T0qSA=
+X-Received: by 2002:a05:690c:ed1:b0:70d:d1a6:fcfc with SMTP id
+ 00721157ae682-70dd1a6ffb1mr74617027b3.13.1747743745677; Tue, 20 May 2025
+ 05:22:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v12 04/36] remoteproc: k3-m4: Don't assert reset in detach
- routine
-Content-Language: en-US
-To: Beleswar Prasad Padhi <b-padhi@ti.com>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <afd@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <martyn.welch@collabora.com>
-References: <20250513054510.3439842-1-b-padhi@ti.com>
- <20250513054510.3439842-5-b-padhi@ti.com> <aCddoCUIpIV1ZxEW@p14s>
- <057cffb6-3ff6-4795-8501-7695d7ebc6fa@ti.com> <aCtCEvGlqIIDYtcn@p14s>
- <f480253a-225d-4941-af81-32e1a02bf793@ti.com>
-From: Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <f480253a-225d-4941-af81-32e1a02bf793@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb> <CAPDyKFpnLzk5YR3piksGhdB8ZoGNCzmweBTxm_rDX5=vjLFxqQ@mail.gmail.com>
+ <20250519172357.vfnwehrbkk24vkge@hiago-nb>
+In-Reply-To: <20250519172357.vfnwehrbkk24vkge@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 20 May 2025 14:21:49 +0200
+X-Gm-Features: AX0GCFvecIGQgQvYviOe7hMAhu1Tk0oNxkZ2kd0dxrSn8Ur7tJ7dhdnhpp02IIc
+Message-ID: <CAPDyKFpGcgMzOUHf-JTRTLBviFdLdbjZKrMm8yd37ZqJ1nfkHw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/20/25 00:06, Beleswar Prasad Padhi wrote:
-> Hi Mathieu,
-> 
-> On 19/05/25 20:07, Mathieu Poirier wrote:
->> On Sat, May 17, 2025 at 06:53:29PM +0530, Beleswar Prasad Padhi wrote:
->>> On 5/16/2025 9:15 PM, Mathieu Poirier wrote:
->>>> On Tue, May 13, 2025 at 11:14:38AM +0530, Beleswar Padhi wrote:
->>>>> The rproc_detach() function invokes __rproc_detach() before
->>>>> rproc_unprepare_device(). The __rproc_detach() function sets the
->>>>> rproc->state to "RPROC_DETACHED".
->>>>>
->>>>> However, the TI K3 M4 driver erroneously looks for "RPROC_ATTACHED"
->>>>> state in its .unprepare ops to identify IPC-only mode; which leads to
->>>>> resetting the rproc in detach routine.
->>>>>
->>>>> Therefore, correct the IPC-only mode detection logic to look for
->>>>> "RPROC_DETACHED" in k3_m4_rproc_unprepare() function.
->>>>>
->>>> This driver has been upstream for 9 whole months, it is hard for me to believe
->>>> this but was just noticed.  Martyn from Collabora should be CC'ed on this, and I
->>>> will also need the required R-b/T-b tags.
->>>
->>> Cc: Martyn Welch martyn.welch@collabora.com
->>>
->>> Requesting Andrew/Judith for review and test too.
->>>
->>>> Typically bug fixes are not part of refactoring exercises.
->>>
->>> Typically, yes. But the refactor depends on this fix. This
->>> k3_m4_rproc_unprepare() function is entirely refactored to common driver in
->>> [PATCH v12 26/36].
->>>
->>> So, If the refactor is picked without this patch fix, the mainline M4 driver
->>> would be fixed, but the older stable kernels would always have this bug. Let
->>> me know what you think.
->>>
->> I suggest you send this patch on its own and then the series (without this
->> patch) with a note in the cover letter that it depends on the fix.  That way we
->> get the best of both worlds.
-> 
-> 
-> Sure. If I get any comments/reviews on this version, I will re-spin this patch separately than the series.
-> 
-> Thanks,
-> Beleswar
-> 
-Reviewed-by: Hari Nagalla <hnagalla@ti.com>
->>
->>> Thanks,
->>> Beleswar
->>>
->>>>    I suggest to apply
->>>> this set without this patch - you can then work on fixing this bug.
->>>>
->>>> Thanks,
->>>> Mathieu
->>>>
->>>>> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
->>>>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->>>>> ---
->>>>> v12: Changelog:
->>>>> 1. New patch. Fixup a state detection logic.
->>>>>
->>>>>    drivers/remoteproc/ti_k3_m4_remoteproc.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->>>>> index a16fb165fcedd..6cd50b16a8e82 100644
->>>>> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
->>>>> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
->>>>> @@ -228,7 +228,7 @@ static int k3_m4_rproc_unprepare(struct rproc *rproc)
->>>>>    	int ret;
->>>>>    	/* If the core is going to be detached do not assert the module reset */
->>>>> -	if (rproc->state == RPROC_ATTACHED)
->>>>> +	if (rproc->state == RPROC_DETACHED)
->>>>>    		return 0;
->>>>>    	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->>>>> -- 
->>>>> 2.34.1
->>>>>
+On Mon, 19 May 2025 at 19:24, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> Hi Ulf,
+>
+> On Mon, May 19, 2025 at 04:33:30PM +0200, Ulf Hansson wrote:
+> > On Fri, 9 May 2025 at 21:13, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > >
+> > > On Fri, May 09, 2025 at 12:37:02PM +0200, Ulf Hansson wrote:
+> > > > On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
+> > > > > > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> > > > > > >
+> > > > > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > > > > > >
+> > > > > > > When the remote core is started before Linux boots (e.g., by the
+> > > > > > > bootloader), the driver currently is not able to attach because it only
+> > > > > > > checks for cores running in different partitions. If the core was kicked
+> > > > > > > by the bootloader, it is in the same partition as Linux and it is
+> > > > > > > already up and running.
+> > > > > > >
+> > > > > > > This adds power mode verification through the SCU interface, enabling
+> > > > > > > the driver to detect when the remote core is already running and
+> > > > > > > properly attach to it.
+> > > > > > >
+> > > > > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > > > > > Suggested-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > > ---
+> > > > > > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > > > > > > suggested.
+> > > > > > > ---
+> > > > > > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+> > > > > > >  1 file changed, 13 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > > > > > > index 627e57a88db2..9b6e9e41b7fc 100644
+> > > > > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > > > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> > > > > > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> > > > > > >                                 return -EINVAL;
+> > > > > > >
+> > > > > > > +                       /*
+> > > > > > > +                        * If remote core is already running (e.g. kicked by
+> > > > > > > +                        * the bootloader), attach to it.
+> > > > > > > +                        */
+> > > > > > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> > > > > > > +                                                               priv->rsrc_id);
+> > > > > > > +                       if (ret < 0)
+> > > > > > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> > > > > > > +                                       priv->rsrc_id, ret);
+> > > > > > > +
+> > > > > > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> > > > > > > +                               priv->rproc->state = RPROC_DETACHED;
+> > > > > > > +
+> > > > > > >                         return imx_rproc_attach_pd(priv);
+> > > > > >
+> > > > > > Why is it important to potentially set "priv->rproc->state =
+> > > > > > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
+> > > > > >
+> > > > > > Would it be possible to do it the other way around? First calling
+> > > > > > imx_rproc_attach_pd() then get the power-mode to know if
+> > > > > > RPROC_DETACHED should be set or not?
+> > > > > >
+> > > > > > The main reason why I ask, is because of how we handle the single PM
+> > > > > > domain case. In that case, the PM domain has already been attached
+> > > > > > (and powered-on) before we reach this point.
+> > > > >
+> > > > > I am not sure if I understood correcly, let me know if I missed
+> > > > > something. From my understanding in this case it does not matter, since
+> > > > > the RPROC_DETACHED will only be a flag to trigger the attach callback
+> > > > > from rproc_validate(), when rproc_add() is called inside
+> > > > > remoteproc_core.c.
+> > > >
+> > > > Okay, I see.
+> > > >
+> > > > To me, it sounds like we should introduce a new genpd helper function
+> > > > instead. Something along the lines of this (drivers/pmdomain/core.c)
+> > > >
+> > > > bool dev_pm_genpd_is_on(struct device *dev)
+> > > > {
+> > > >         struct generic_pm_domain *genpd;
+> > > >         bool is_on;
+> > > >
+> > > >         genpd = dev_to_genpd_safe(dev);
+> > > >         if (!genpd)
+> > > >                 return false;
+> > > >
+> > > >         genpd_lock(genpd);
+> > > >         is_on = genpd_status_on(genpd);
+> > > >         genpd_unlock(genpd);
+> > > >
+> > > >         return is_on;
+> > > > }
+> > > >
+> > > > After imx_rproc_attach_pd() has run, we have the devices that
+> > > > correspond to the genpd(s). Those can then be passed as in-parameters
+> > > > to the above function to get the power-state of their PM domains
+> > > > (genpds). Based on that, we can decide if priv->rproc->state should be
+> > > > to RPROC_DETACHED or not. Right?
+> > >
+> > > Got your idea, I think it should work yes, I am not so sure how. From
+> > > what I can see these power domains are managed by
+> > > drivers/pmdomain/imx/scu-pd.c and by enabling the debug messages I can
+> > > see the power mode is correct when the remote core is powered on:
+> > >
+> > > [    0.317369] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_ON
+> > >
+> > > and powered off:
+> > >
+> > > [    0.314953] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_OFF
+> > >
+> > > But I cannot see how to integrate this into the dev_pm_genpd_is_on() you
+> > > proposed. For a quick check, I added this function and it always return
+> > > NULL at dev_to_genpd_safe(). Can you help me to understand this part?
+> >
+> > As your device has multiple PM domains and those gets attached with
+> > dev_pm_domain_attach_list(), the device(s) that you should use with
+> > dev_pm_genpd_is_on() are in imx_rproc->pd_list->pd_devs[n].
+>
+> Ok got it, thanks for sharing.
+>
+> I just send the v3 with the changes Peng proposed (here
+> https://lore.kernel.org/lkml/20250519171514.61974-1-hiagofranco@gmail.com/T/#t),
+> but I am a bit confused which path we should take, the initial approach
+> proposed or using these PD functions. Maybe we can discuss this in the
+> new v3 patch series?
 
+I think it would be better if we can avoid sharing low-level firmware
+functions for PM domains. I am worried that they may become abused for
+other future use-cases.
+
+So, if possible, I would rather make us try to use
+dev_pm_genpd_is_on() (or something along those lines), but let's see
+what Peng thinks about it before we make the decision.
+
+[...]
+
+Kind regards
+Uffe
