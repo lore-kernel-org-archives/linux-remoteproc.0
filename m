@@ -1,91 +1,124 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C3628682;
-	Wed, 21 May 2025 14:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17B91DB92C;
+	Wed, 21 May 2025 16:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747837471; cv=none; b=T60WB2/ruCKOj6Twtsrq7twDsV4x3yee5+u+ZWNfvSyK2CTPovZXy6OEVctVwKLJaTmHzhm7cqCqyTo/A5fI5cMnjavE96k6dtbHvcdSrWCS2U+ENs91LehcEMsKsKYLz42hPuMxJFrzXHjevf2YMpI5QFkM+vqz/8MOA4THbjw=
+	t=1747846126; cv=none; b=QdFlVvpsJSepMj+NpM7d39paZWbaK6SuRPiScJlM3QU8lQ3M161sVZKSq1IqC+DE+lgKxSBBW8TYvABJVy2lnuneYJ57L1sskhchptmQGaRwjNecoFfvQbzSA+C1zJkUErHBk/dJ5fBdog4rzUpdopLt4MInqU2E7QHSWGgOKJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747837471; c=relaxed/simple;
-	bh=Ourow4OK6/2Cln7586tL43/CJb5AAk27N8xfphvkees=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dDGkD6m+0D1gY+PYAdjIuV4xhcanH+2/PCri8hNXNqBI0IH40AbLaVPbcxh02gU3YVtNATEQWBy5VKJB3z7EVcztkfAhBOKFktg3L77sxx/B0+9o8+hejypGlkNjb4i1kxYFMhX5Xy4EHmXF8F3qxnR60/EkB0jLkawfOOqxwvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowABHtcQT4i1oHRX6AQ--.16951S2;
-	Wed, 21 May 2025 22:24:20 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] remoteproc: mediatek: Add SCP watchdog handler in IRQ processing
-Date: Wed, 21 May 2025 22:24:03 +0800
-Message-ID: <20250521142404.1077-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747846126; c=relaxed/simple;
+	bh=jg8VCJ/HO8LDROQDP6sTVvwCnSc+47Saf5Fnwnl1m3s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ORGN3m9QlijHcsAAA6vtIuGKsw2qduH9tlq2UIycSYMGeKh0SZamTaXT/9Bqj5/SeOJcilbN/Sm/fjnCTJNey68K+1F5XhkxGIWDccW2JLcpQh3cd4PK3tJkuGA4zQ01TJXqXtSwgp4JnsCHGcp4jlzKFX85FmMZOR/4U90fubA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R9qkp0UQ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R9qkp0UQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1747846116; x=1748450916; i=markus.elfring@web.de;
+	bh=mMmRvxKHUiZ4bzlqiGpD/VkaqONMq2EdgL1Fk7DWEAs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=R9qkp0UQLMU4PS8aLGNnM5h9K0LZcxpWp5mQgC7/MZZl4bntVAcJKlRtfX+K+7Nw
+	 4Mwuj1MrF+OPYYVgK8wGwQSF+6mL1ik53T5NWdrqiPNfY4otvzjtxvFBOgC3DrGiy
+	 qdvJGp3gEW9RagYyq0qwliS8MNeCBWOm0evE6ahV/a3g7ryv4f4TY1D5KKJ9TjO1+
+	 XxkrE38w4Q7vs7QB7kRwULrG5cnletAHS+065W+MBe8FsLAVhGVnJxQjTRP0aG8Do
+	 YxA7+ZAnAHMVKsy1po7HrWguNDtHKKGnshZBWblNnsJQ2PmBm809PomU25NRANE3i
+	 ZvtSYxDXZGFlJuQb/Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.179]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4N98-1uyN8v3ZQc-016xzv; Wed, 21
+ May 2025 18:48:35 +0200
+Message-ID: <cc69eb17-d55c-4843-8d90-fd49191c69e2@web.de>
+Date: Wed, 21 May 2025 18:48:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHtcQT4i1oHRX6AQ--.16951S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFWkXr4xCr4DGFWrXry5Arb_yoWkZrX_ua
-	s0gFZrWF1vga1Yy34IyrsavFZa9ry8Wry8KFySqas8t39xXa47try0vF4kuw1DXF15uFy5
-	Zr4v9F4fuF4xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW5XwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUSdgAUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUJA2gtsvlq+gACsf
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-remoteproc@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+References: <20250521142404.1077-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] remoteproc: mediatek: Add SCP watchdog handler in IRQ
+ processing
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250521142404.1077-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wLDt5/h2QRTkZczjRvRZMrVMnlTt2L1E/AybcnSxYGSgeOhxHsx
+ pY0dW2RuIKkKw50MOqmzkYU1gmfRgzf0KeCVJ9tRcIB/a46zQy6/1xqtwscqu4IDSruVwqw
+ invgNyZJbcNmqhbEWWGNag6SyqUMwPP4NL2X5wol8nvTr5m4aWu9vh2NxHiY+sEPX8EHPli
+ K/yIzGNo46xfQDrIvJCkQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7AM6bwFPyJI=;et9l+tuDsrsw4nQb40EaimU/7/O
+ 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
+ NvI9vJhgOf7wasUIpriVeownWfw9OarXeb
 
-In mt8195_scp_c1_irq_handler(), only the IPC interrupt bit
-(MT8192_SCP_IPC_INT_BIT) was checked., but does not handle
-when this bit is not set. This could lead to unhandled watchdog
-events. This could lead to unhandled watchdog events. A proper
-implementation can be found in mt8183_scp_irq_handler().
+> In mt8195_scp_c1_irq_handler(), only the IPC interrupt bit
+> (MT8192_SCP_IPC_INT_BIT) was checked., but does not handle
+> when this bit is not set. This could lead to unhandled watchdog
+> events. This could lead to unhandled watchdog events. A proper
+=E2=80=A6
 
-Add a new branch to handle SCP watchdog events when the IPC
-interrupt bit is not set.
+* You may occasionally put more than 63 characters into text lines
+  of such a change description.
 
-Fixes: 6a1c9aaf04eb ("remoteproc: mediatek: Add MT8195 SCP core 1 operations")
-Cc: stable@vger.kernel.org # v6.7
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/remoteproc/mtk_scp.c | 2 ++
- 1 file changed, 2 insertions(+)
+* Please avoid a duplicate sentence here.
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 0f4a7065d0bd..316e8c98a503 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -273,6 +273,8 @@ static void mt8195_scp_c1_irq_handler(struct mtk_scp *scp)
- 
- 	if (scp_to_host & MT8192_SCP_IPC_INT_BIT)
- 		scp_ipi_handler(scp);
-+	else
-+		scp_wdt_handler(scp, scp_to_host);
- 
- 	writel(scp_to_host, scp->cluster->reg_base + MT8195_SSHUB2APMCU_IPC_CLR);
- }
--- 
-2.42.0.windows.2
 
+Regards,
+Markus
