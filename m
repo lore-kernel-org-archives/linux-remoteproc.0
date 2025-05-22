@@ -1,168 +1,128 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B4C12F5A5;
-	Thu, 22 May 2025 06:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DCE23A57F
+	for <linux-remoteproc@vger.kernel.org>; Thu, 22 May 2025 14:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747896415; cv=none; b=MGEgzyJyFj+doHHVFHrdmBPWo/wAWhHAFraripTHeDcc1EUD69uWJ1ocZMGqyN8+7/ICKhdeWoVeKcLaA9vglMYWZ3IekL4Omjp4B6sEsBh+VIsxTwTkhS8ppsTrQmc7BOPozNKvM2ovU39FXWG9/suK8F9s2ZHV3ZOroP7Q4XQ=
+	t=1747925278; cv=none; b=kqqESu+KK6WdtN/HSkHPDvcl7tM2/iZYwTxsA9eO6aWBKptqrk10CAqY3xvHCvL5J+U36xa3Pw7QjWlUkivTFB4IHzT59Zb9iBx36ltrTX6kn6jaJeXcU2DLbG/qS1jXhBSfpkhiHFYXosVEhmsoeEd36pIG9QBPLCSferU+Bbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747896415; c=relaxed/simple;
-	bh=GntJ46Pe7OL9GI/++GGxztMdl1ZF1FnVhVklUpvl2HI=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bT1Ql+amdqV99jbx0qH1wAdnNW2lnvCHaecLO1mA6+ODiSbnty6Ui8hBcAddDuNBm6bXf6q2BZZUOvRJqUM08d6OoFP6RweRmDG/sAiWkVGuGD2nUi2dFnja0wKqOscy2wdfa3fo97r42NIQWMTWEWAnZr/2Zv/dvWSZmDEPZFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fZ9CViOj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1747925278; c=relaxed/simple;
+	bh=CSsSHfl39dvzw3cAIhZcsGAqNS/b3pZ0v69mn2DAeOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvMBDi/1xsl6+dAAkWuAl+KyxZnJSPyK+2lxZbpQyNtVFgJ7j9caiHx6jBCF1OM+A73GHQW231xdp934thsNlShhAnIanvBnCGHnqTBmWjFdeTq5hF6ViiKSRv5LmagKVSDUf2TpoCiFMmMcV7HCI7NC9rdj3bwBCMMuXbvrc00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wBCU4rzY; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fZ9CViOj"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LIUrH9029931;
-	Thu, 22 May 2025 06:46:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DYC0rzIdZxlJJeGf6OrdPUKmgETi+Xr2+QL01aSGH5k=; b=fZ9CViOjuH82jasi
-	Qi4jh6zpb8Xg0dIvHlLpXAiL2zDTWOD1L4vDVe1JHpxaG7Qmr2etVfuvxHxJwBsH
-	ZNebRTYt71YcXqjKCbqH7ikAnWJNo7n/WHZXXxs5AP3kvWQ+t/QRkqQzgho4A5IR
-	qpd80hSjHsl7JHXMJIYYGa4cSviiF92PO5TUYWcivXT2fmiqTviY15L89xWmfF9x
-	+MyH0QCRTsTwe/6Q5D+DvxB/oHTGB6YamMs2oN23VMqt0sTTG2Me6N06Vm2K6n09
-	4jSSh10lPpn47DMbPWMSaXSIpZG7QYwvbebP0umx+ju+oQBcHiRMJtdyVwE7a+mJ
-	3O8LCA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf45c2e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 06:46:50 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54M6knnK016781
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 06:46:49 GMT
-Received: from [10.218.49.64] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 May
- 2025 23:46:47 -0700
-Subject: Re: [PATCH v5] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250408104317.926833-1-quic_schowdhu@quicinc.com>
- <91d8efa0-c61c-eb17-b6f4-cb9804e5fff9@quicinc.com>
- <cf3fffda-8d88-b962-398d-d038cd10b981@quicinc.com>
-CC: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Message-ID: <fde458da-5f44-7947-f746-270b9ecf2991@quicinc.com>
-Date: Thu, 22 May 2025 12:16:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wBCU4rzY"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30e8f4dbb72so6803098a91.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 May 2025 07:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747925275; x=1748530075; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Z1fJZAnO5gbEdE9pm7QO/Ig7e59PsYGFh5eZL9ezsU=;
+        b=wBCU4rzY8FAyQcxLPAi+lZkNEPsfzQAEdI6CXToqa5fMegOxAI70MMHULs4H9p1YGR
+         746qSOuJejwR1suwG3gph9THZ2KWGr14xnzt9zFEk6cOTEuyChnFY1TqeKRYerfqEzcH
+         2TdlcB3rLGkPgeWmMyeDofdw0CUvA9lYsSoXmvZ7flFaTBTtQ73VAJN+gbfiJZB5MbW0
+         vGcc2m1rYrmM8gLcyoXm4eNf2l7Ftu3uuScKOx6cC+GEpW5GWsfQxByH3tyFKa2rEEK0
+         8AVxKcFOIO4zU5qoT7QtA3TqHjwjDp28tBmEtmezm+FcD0chVKVxHsC4U5hXSwGI8UYx
+         6Spw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747925275; x=1748530075;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Z1fJZAnO5gbEdE9pm7QO/Ig7e59PsYGFh5eZL9ezsU=;
+        b=AL3pA2u5mnlfHlFNOVWVFZC12hifiHfQEGPBlh6gdax0y3A4coO8a4oaFt1BIOGTjZ
+         jKP2mggPWneWGDWi0Iq0kU4F+yt6gFh3iFsejh0eeHGeCip32iNBQ1meJF6UWHiIyuIA
+         eT5ozOJyjy14PvICzl1fDpgpOPjU6c/16ecGOkYSs3KmvoFAx09IMEwF0v/zNBUBU2Fv
+         kVr5g5rB1p4vbW5Y7Cr1BH3+hmqp+FiQdxbqc9Yb6zVqmU5KoaflYHk5HxAVtL4UqB7R
+         YU+z/rbKGFDela2apDCKOIJSOCw0u1z1GUKte3i/4Xif24gcx0v7yR5qbNNuvH9T42NT
+         FtcA==
+X-Forwarded-Encrypted: i=1; AJvYcCURvop4Te7AKUWt2ZABRRXXUuXWIiMIa0cKkKM4pds+0yPdFn1VoPOkmWzpPyzShmYl+HDHi1pUNULLMcEKlYFO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5icOLe6GgYBablUPB1XokfAMpIcYxGmavy7gBUQqDs/q4ZHvT
+	A9LcrYkotQOwO3Z/c8/EDypN8a/TiHbc+xSP2YGKf0NedEY3lBnKyJY41TPS/89zlvoysTocfMw
+	RX6XN
+X-Gm-Gg: ASbGncuv/trBj34ZySk3MLOQBRC3AJ/RP8Pgxr9ZLKco/KzgjT1YDlG5cpLiQe9amIY
+	VT1LNgSQn/EZnKu079r4M1PHrpYjQSD70TqGN+W/1TURWt/2pbwtX9tFTv7qD459AwarvMVDlDl
+	PO+HN+yMbZ1CcZSnq8anIR74TZEJWOO7DtqI7BtRlu17q/iQEFLYdCwe8nMEYclC5lBZzXTPJhz
+	VzHfi68lAXeRRB0CtJ8aI53tJVCEU7bhVXcde9v9Fm3YhszJGzX31JZ2apJw71bIe2t81krIaFz
+	LFP/WWWVLhOJZMC3MSzqRIoXZlDeq218z7MWupVjFhRtSMdDrHGVdR0=
+X-Google-Smtp-Source: AGHT+IG5YDZqJMGCNUR1bl3lh55nwJynldcZarNJfaMbRBZQnBUy0qDHzLUmT4VJ7H8G0EhPmNRC+w==
+X-Received: by 2002:a17:90b:33c2:b0:2ff:58b8:5c46 with SMTP id 98e67ed59e1d1-30e830f7b18mr38271134a91.8.1747925273816;
+        Thu, 22 May 2025 07:47:53 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:adb8:3fc6:e0a3:9f52])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f36365d9esm5641713a91.7.2025.05.22.07.47.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 07:47:53 -0700 (PDT)
+Date: Thu, 22 May 2025 08:47:51 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: andersson@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: mediatek: Add SCP watchdog handler in IRQ
+ processing
+Message-ID: <aC85F1Rua2dn_qTY@p14s>
+References: <20250521142404.1077-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cf3fffda-8d88-b962-398d-d038cd10b981@quicinc.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA2NiBTYWx0ZWRfX8zewmwTo5zBy
- 3McAB7WnZg6WNjjoBvctL4hHXvguDA0VBwyE4ysMb+/426u1eQhflwSzUX6Ldc8S7n/2xTOK16M
- vGaqgCjny/0I36vAWsR7L2JVCbs5woKbnWMx9pUT6W6rL5Pfmvnoh4nDog0PKBPhXegDFdnmNIT
- Dw5dyH2eZn686cM+/CeziThJtUyfSKoivJLtsjKyFEbZr/Us5+J+cysFn5c6SmvcmMtjN/buhHW
- rFWxMwJ5hHuesrATjaXfIKkqiWjkYYny3CjRx7MshnIZUMHRbqo3rh1/qnZNkkw7SitiqZQGH3p
- cYIjCDO1WU9LnHZZZ2nmxeinRVjvpMV5IjlVEGAXr7C3mF5m29q7Hen/EqO9EnjI3E9Y7sREAr0
- yejpyHRqt4MC+vgC9O003IPb6KQUlJMnpUx8xxawhgFLHT7wTMO+6NgSblANWKa8az2vRtEQ
-X-Proofpoint-GUID: UPjDAgniazdh4w5HozastPh2DpawPt81
-X-Authority-Analysis: v=2.4 cv=Ws8rMcfv c=1 sm=1 tr=0 ts=682ec85a cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=N659UExz7-8A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=Q4YDo1DU0dsJeT-W-eMA:9 a=pILNOxqGKmIA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: UPjDAgniazdh4w5HozastPh2DpawPt81
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_03,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 mlxscore=0
- bulkscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505220066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521142404.1077-1-vulab@iscas.ac.cn>
 
-Gentle Reminder
+Good day,
 
-
-On 5/19/2025 10:54 AM, Souradeep Chowdhury wrote:
-> Gentle Reminder
->
->
-> On 5/14/2025 1:03 PM, Souradeep Chowdhury wrote:
->> Gentle Reminder
->>
->>
->> On 4/8/2025 4:13 PM, Souradeep Chowdhury wrote:
->>> Add device awake calls in case of rproc boot and rproc shutdown path.
->>> Currently, device awake call is only present in the recovery path
->>> of remoteproc. If an user stops and starts rproc by using the sysfs
->>> interface, then on pm suspension the firmware fails to load as the
->>> request_firmware call under adsp_load relies on usermodehelper
->>> process which gets freezed on pm suspension. Add device awake calls
->>> to fix this.
->>>
->>> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
->>> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
->>> ---
->>> Changes in v5
->>>
->>> *Added more details to commit description
->>>
->>> Changes in v4
->>>
->>> *Remove stability from mailing list
->>> *Remove the extra tab in v3
->>> *Change the commit description
->>>
->>>   drivers/remoteproc/remoteproc_core.c | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c 
->>> b/drivers/remoteproc/remoteproc_core.c
->>> index c2cf0d277729..5d6c4e694b4c 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
->>>           return -EINVAL;
->>>       }
->>>   +    pm_stay_awake(rproc->dev.parent);
->>>       dev = &rproc->dev;
->>>         ret = mutex_lock_interruptible(&rproc->lock);
->>> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
->>>           atomic_dec(&rproc->power);
->>>   unlock_mutex:
->>>       mutex_unlock(&rproc->lock);
->>> +    pm_relax(rproc->dev.parent);
->>>       return ret;
->>>   }
->>>   EXPORT_SYMBOL(rproc_boot);
->>> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
->>>       struct device *dev = &rproc->dev;
->>>       int ret = 0;
->>>   +    pm_stay_awake(rproc->dev.parent);
->>>       ret = mutex_lock_interruptible(&rproc->lock);
->>>       if (ret) {
->>>           dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
->>> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
->>>       rproc->table_ptr = NULL;
->>>   out:
->>>       mutex_unlock(&rproc->lock);
->>> +    pm_relax(rproc->dev.parent);
->>>       return ret;
->>>   }
->>>   EXPORT_SYMBOL(rproc_shutdown);
->>
+On Wed, May 21, 2025 at 10:24:03PM +0800, Wentao Liang wrote:
+> In mt8195_scp_c1_irq_handler(), only the IPC interrupt bit
+> (MT8192_SCP_IPC_INT_BIT) was checked., but does not handle
+> when this bit is not set. This could lead to unhandled watchdog
+> events. This could lead to unhandled watchdog events. A proper
+> implementation can be found in mt8183_scp_irq_handler().
 >
 
+As pointed out by Markus, this changelog needs work.
+
+> Add a new branch to handle SCP watchdog events when the IPC
+> interrupt bit is not set.
+> 
+> Fixes: 6a1c9aaf04eb ("remoteproc: mediatek: Add MT8195 SCP core 1 operations")
+> Cc: stable@vger.kernel.org # v6.7
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 0f4a7065d0bd..316e8c98a503 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -273,6 +273,8 @@ static void mt8195_scp_c1_irq_handler(struct mtk_scp *scp)
+>  
+>  	if (scp_to_host & MT8192_SCP_IPC_INT_BIT)
+>  		scp_ipi_handler(scp);
+> +	else
+> +		scp_wdt_handler(scp, scp_to_host);
+
+I would much rather see a test for the watchdog bit than just assuming it is
+a watchdog interrupt.  And while at it, please refactor the bit definition to be
+platform agnostic rather than reusing 8192 definitions on an 8195 platform.
+
+Thanks,
+Mathieu
+
+>  
+>  	writel(scp_to_host, scp->cluster->reg_base + MT8195_SSHUB2APMCU_IPC_CLR);
+>  }
+> -- 
+> 2.42.0.windows.2
+> 
