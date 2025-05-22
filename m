@@ -1,124 +1,168 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17B91DB92C;
-	Wed, 21 May 2025 16:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B4C12F5A5;
+	Thu, 22 May 2025 06:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747846126; cv=none; b=QdFlVvpsJSepMj+NpM7d39paZWbaK6SuRPiScJlM3QU8lQ3M161sVZKSq1IqC+DE+lgKxSBBW8TYvABJVy2lnuneYJ57L1sskhchptmQGaRwjNecoFfvQbzSA+C1zJkUErHBk/dJ5fBdog4rzUpdopLt4MInqU2E7QHSWGgOKJQ=
+	t=1747896415; cv=none; b=MGEgzyJyFj+doHHVFHrdmBPWo/wAWhHAFraripTHeDcc1EUD69uWJ1ocZMGqyN8+7/ICKhdeWoVeKcLaA9vglMYWZ3IekL4Omjp4B6sEsBh+VIsxTwTkhS8ppsTrQmc7BOPozNKvM2ovU39FXWG9/suK8F9s2ZHV3ZOroP7Q4XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747846126; c=relaxed/simple;
-	bh=jg8VCJ/HO8LDROQDP6sTVvwCnSc+47Saf5Fnwnl1m3s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ORGN3m9QlijHcsAAA6vtIuGKsw2qduH9tlq2UIycSYMGeKh0SZamTaXT/9Bqj5/SeOJcilbN/Sm/fjnCTJNey68K+1F5XhkxGIWDccW2JLcpQh3cd4PK3tJkuGA4zQ01TJXqXtSwgp4JnsCHGcp4jlzKFX85FmMZOR/4U90fubA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R9qkp0UQ; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1747896415; c=relaxed/simple;
+	bh=GntJ46Pe7OL9GI/++GGxztMdl1ZF1FnVhVklUpvl2HI=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bT1Ql+amdqV99jbx0qH1wAdnNW2lnvCHaecLO1mA6+ODiSbnty6Ui8hBcAddDuNBm6bXf6q2BZZUOvRJqUM08d6OoFP6RweRmDG/sAiWkVGuGD2nUi2dFnja0wKqOscy2wdfa3fo97r42NIQWMTWEWAnZr/2Zv/dvWSZmDEPZFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fZ9CViOj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R9qkp0UQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1747846116; x=1748450916; i=markus.elfring@web.de;
-	bh=mMmRvxKHUiZ4bzlqiGpD/VkaqONMq2EdgL1Fk7DWEAs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=R9qkp0UQLMU4PS8aLGNnM5h9K0LZcxpWp5mQgC7/MZZl4bntVAcJKlRtfX+K+7Nw
-	 4Mwuj1MrF+OPYYVgK8wGwQSF+6mL1ik53T5NWdrqiPNfY4otvzjtxvFBOgC3DrGiy
-	 qdvJGp3gEW9RagYyq0qwliS8MNeCBWOm0evE6ahV/a3g7ryv4f4TY1D5KKJ9TjO1+
-	 XxkrE38w4Q7vs7QB7kRwULrG5cnletAHS+065W+MBe8FsLAVhGVnJxQjTRP0aG8Do
-	 YxA7+ZAnAHMVKsy1po7HrWguNDtHKKGnshZBWblNnsJQ2PmBm809PomU25NRANE3i
-	 ZvtSYxDXZGFlJuQb/Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.179]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4N98-1uyN8v3ZQc-016xzv; Wed, 21
- May 2025 18:48:35 +0200
-Message-ID: <cc69eb17-d55c-4843-8d90-fd49191c69e2@web.de>
-Date: Wed, 21 May 2025 18:48:25 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fZ9CViOj"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LIUrH9029931;
+	Thu, 22 May 2025 06:46:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DYC0rzIdZxlJJeGf6OrdPUKmgETi+Xr2+QL01aSGH5k=; b=fZ9CViOjuH82jasi
+	Qi4jh6zpb8Xg0dIvHlLpXAiL2zDTWOD1L4vDVe1JHpxaG7Qmr2etVfuvxHxJwBsH
+	ZNebRTYt71YcXqjKCbqH7ikAnWJNo7n/WHZXXxs5AP3kvWQ+t/QRkqQzgho4A5IR
+	qpd80hSjHsl7JHXMJIYYGa4cSviiF92PO5TUYWcivXT2fmiqTviY15L89xWmfF9x
+	+MyH0QCRTsTwe/6Q5D+DvxB/oHTGB6YamMs2oN23VMqt0sTTG2Me6N06Vm2K6n09
+	4jSSh10lPpn47DMbPWMSaXSIpZG7QYwvbebP0umx+ju+oQBcHiRMJtdyVwE7a+mJ
+	3O8LCA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf45c2e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 06:46:50 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54M6knnK016781
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 06:46:49 GMT
+Received: from [10.218.49.64] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 May
+ 2025 23:46:47 -0700
+Subject: Re: [PATCH v5] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250408104317.926833-1-quic_schowdhu@quicinc.com>
+ <91d8efa0-c61c-eb17-b6f4-cb9804e5fff9@quicinc.com>
+ <cf3fffda-8d88-b962-398d-d038cd10b981@quicinc.com>
+CC: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Message-ID: <fde458da-5f44-7947-f746-270b9ecf2991@quicinc.com>
+Date: Thu, 22 May 2025 12:16:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-remoteproc@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-References: <20250521142404.1077-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] remoteproc: mediatek: Add SCP watchdog handler in IRQ
- processing
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250521142404.1077-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wLDt5/h2QRTkZczjRvRZMrVMnlTt2L1E/AybcnSxYGSgeOhxHsx
- pY0dW2RuIKkKw50MOqmzkYU1gmfRgzf0KeCVJ9tRcIB/a46zQy6/1xqtwscqu4IDSruVwqw
- invgNyZJbcNmqhbEWWGNag6SyqUMwPP4NL2X5wol8nvTr5m4aWu9vh2NxHiY+sEPX8EHPli
- K/yIzGNo46xfQDrIvJCkQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7AM6bwFPyJI=;et9l+tuDsrsw4nQb40EaimU/7/O
- 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
- NvI9vJhgOf7wasUIpriVeownWfw9OarXeb
+In-Reply-To: <cf3fffda-8d88-b962-398d-d038cd10b981@quicinc.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA2NiBTYWx0ZWRfX8zewmwTo5zBy
+ 3McAB7WnZg6WNjjoBvctL4hHXvguDA0VBwyE4ysMb+/426u1eQhflwSzUX6Ldc8S7n/2xTOK16M
+ vGaqgCjny/0I36vAWsR7L2JVCbs5woKbnWMx9pUT6W6rL5Pfmvnoh4nDog0PKBPhXegDFdnmNIT
+ Dw5dyH2eZn686cM+/CeziThJtUyfSKoivJLtsjKyFEbZr/Us5+J+cysFn5c6SmvcmMtjN/buhHW
+ rFWxMwJ5hHuesrATjaXfIKkqiWjkYYny3CjRx7MshnIZUMHRbqo3rh1/qnZNkkw7SitiqZQGH3p
+ cYIjCDO1WU9LnHZZZ2nmxeinRVjvpMV5IjlVEGAXr7C3mF5m29q7Hen/EqO9EnjI3E9Y7sREAr0
+ yejpyHRqt4MC+vgC9O003IPb6KQUlJMnpUx8xxawhgFLHT7wTMO+6NgSblANWKa8az2vRtEQ
+X-Proofpoint-GUID: UPjDAgniazdh4w5HozastPh2DpawPt81
+X-Authority-Analysis: v=2.4 cv=Ws8rMcfv c=1 sm=1 tr=0 ts=682ec85a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=N659UExz7-8A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=Q4YDo1DU0dsJeT-W-eMA:9 a=pILNOxqGKmIA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: UPjDAgniazdh4w5HozastPh2DpawPt81
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_03,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505220066
 
-> In mt8195_scp_c1_irq_handler(), only the IPC interrupt bit
-> (MT8192_SCP_IPC_INT_BIT) was checked., but does not handle
-> when this bit is not set. This could lead to unhandled watchdog
-> events. This could lead to unhandled watchdog events. A proper
-=E2=80=A6
-
-* You may occasionally put more than 63 characters into text lines
-  of such a change description.
-
-* Please avoid a duplicate sentence here.
+Gentle Reminder
 
 
-Regards,
-Markus
+On 5/19/2025 10:54 AM, Souradeep Chowdhury wrote:
+> Gentle Reminder
+>
+>
+> On 5/14/2025 1:03 PM, Souradeep Chowdhury wrote:
+>> Gentle Reminder
+>>
+>>
+>> On 4/8/2025 4:13 PM, Souradeep Chowdhury wrote:
+>>> Add device awake calls in case of rproc boot and rproc shutdown path.
+>>> Currently, device awake call is only present in the recovery path
+>>> of remoteproc. If an user stops and starts rproc by using the sysfs
+>>> interface, then on pm suspension the firmware fails to load as the
+>>> request_firmware call under adsp_load relies on usermodehelper
+>>> process which gets freezed on pm suspension. Add device awake calls
+>>> to fix this.
+>>>
+>>> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+>>> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+>>> ---
+>>> Changes in v5
+>>>
+>>> *Added more details to commit description
+>>>
+>>> Changes in v4
+>>>
+>>> *Remove stability from mailing list
+>>> *Remove the extra tab in v3
+>>> *Change the commit description
+>>>
+>>>   drivers/remoteproc/remoteproc_core.c | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_core.c 
+>>> b/drivers/remoteproc/remoteproc_core.c
+>>> index c2cf0d277729..5d6c4e694b4c 100644
+>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>> @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
+>>>           return -EINVAL;
+>>>       }
+>>>   +    pm_stay_awake(rproc->dev.parent);
+>>>       dev = &rproc->dev;
+>>>         ret = mutex_lock_interruptible(&rproc->lock);
+>>> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>>>           atomic_dec(&rproc->power);
+>>>   unlock_mutex:
+>>>       mutex_unlock(&rproc->lock);
+>>> +    pm_relax(rproc->dev.parent);
+>>>       return ret;
+>>>   }
+>>>   EXPORT_SYMBOL(rproc_boot);
+>>> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>>       struct device *dev = &rproc->dev;
+>>>       int ret = 0;
+>>>   +    pm_stay_awake(rproc->dev.parent);
+>>>       ret = mutex_lock_interruptible(&rproc->lock);
+>>>       if (ret) {
+>>>           dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>>> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>>>       rproc->table_ptr = NULL;
+>>>   out:
+>>>       mutex_unlock(&rproc->lock);
+>>> +    pm_relax(rproc->dev.parent);
+>>>       return ret;
+>>>   }
+>>>   EXPORT_SYMBOL(rproc_shutdown);
+>>
+>
+
