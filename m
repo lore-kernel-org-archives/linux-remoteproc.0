@@ -1,71 +1,89 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520761C8633
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 May 2025 10:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2A21A23B7;
+	Fri, 23 May 2025 19:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747994598; cv=none; b=p8wzNXDPqFsIiPzhpJeyqHrkdygWqYICvmaPWpLipfjEDLB+P9MzMyBnC3g+rbgb4ws5c8Rq6/9hh7rcF37UCCf8NlQ9rwd1B4biqWBRe3arf3rUS6jCRPbP3uu1Q/kOBhW03ouLcERu2SwfWXxaHQBDd0AEtWZlQtrzKBqUUVU=
+	t=1748027843; cv=none; b=CX6ZevUOOoXL3hUnfvzkjBNmc3h8Htub069gwdO9LjB6mk0VRK+Oy6H9vEjlnM+Z98xrzsyrGdElp8mWW+7jzg4pvgAywMSfr0Uplcq8orFdBe1oqfWp+9+y2MwqzbCI47wsevOoZcJNBT8KKyNn/1jtDgLSJOIjv6uGK6hCk2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747994598; c=relaxed/simple;
-	bh=ujiOe3bOmZs9X41VUnMNWR4wflTRGuLIY5D/eQTzs5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GPBRg8CrkIJ8NQl1Rh4K0dcvV9fq6sNt2BScrTbn9jYus5T2KxnOsnVKdQtXfBPOae2Wp5+2FFU52O+SV9QXDCw2Yyo61mH5bNqKxsCQ2TrW/mtTzKa3xbINADtmoovMGHzOnLqcS2v9HCh+ErHktiUD9K3looMS1JAejGt0Ux8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PzAog4qi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748027843; c=relaxed/simple;
+	bh=bFMZT6KPHyJo8o682Akz5XInGdRA7eFxGiUjifeK0QA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofMdzHh1AUfOrCclGHsXGMvnYIsLNUdbN0SX/XJ4Oc6dVsuLSnnxJPLkIzFOEjVl/03M0N0GDmzlrcW0nrVON8CpuS3x3FVg3H2+VfiIaJ5LtaE4BXHMnxUGaOllNh1sfqmYScTdkZ8hpoXWw9pi0EmnPnYNyt3hIizQltvgSPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kskqep9J; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzAog4qi"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442ea341570so62748695e9.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 May 2025 03:03:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kskqep9J"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso277508b3a.2;
+        Fri, 23 May 2025 12:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747994593; x=1748599393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/Gce1NColnWtg6ZWbw4/vDJFXeyJ5MZqm0V5eF1bt4=;
-        b=PzAog4qi9mZtaoe/Za3f6YMnKqFHBp9IsGnnv37+efBn5w3dl2zdiHF6J/OCk9Pa2i
-         fESEG4maqZlQqqUbjyhn7q3WWHPA8ZlYkL1FZde/6UWJ/Rh3Kc+abn+DFBl8Lx9jkdR5
-         DeV5JkKVoKMFmR3hGCEeyYfvn1LYk+pgZEt/eg1RukVzl92Q5F2HtzS5yYAWe7mxnceX
-         N42C6aXtitL7CAU4zCGfg0ohuOPS3mEvnjR1JTQO32XMlFUaYwDfar6k1KSUbWndUGvf
-         gdFHeN0XiE4hIAaSJNuQbz74VAIId9uBI8lu/ICKeyx/5OPqFXXs362gqMSIJoBqkuMs
-         ppgw==
+        d=gmail.com; s=20230601; t=1748027840; x=1748632640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhEtoDJFgqNSJbdEuU9qcTn/W9vRw2JPWBizPEbsfUA=;
+        b=Kskqep9JHl6u603gUdRv+AXkcM5Odwpd/TafzuX7AqkHO62G9c5C5CtcV23FaP/K+Z
+         xLzEHWGjOtI8kENaRD9HCbTuPTnZlYFR1BV9NUNYngXG9xahtFEn8+oWSyOdv+eRA/HU
+         Brb+X/jjrr40gy3D3sJgmckplrWbpRcVlle4sC0/TedIitZkKMasw9ysna4dGJdylW3c
+         O6wZZovCDM5yScAPos8USc24Rw9mkF9vvQoBpZYHPtwBDJrZzVGBc4PrjI7KWBV5lU3g
+         O8YKwz3//kSFvNqKcazfkQ84si5eGoV+99HSoTOhNeP2g4dZBW0LhVwaW+eC8o9TlVWe
+         rB+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747994593; x=1748599393;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H/Gce1NColnWtg6ZWbw4/vDJFXeyJ5MZqm0V5eF1bt4=;
-        b=sggs1J8txT5xXb0fMEoVm22FwewxlrEmJLiofZGv3itGGqtg2L09laVhxIP8Igpn7Y
-         44hnSq5y5aODGpydDhV6ZSYPkMBpPjBtlMbZJAhX67NTzgIrH8pvw+NQdW56wbYFd9+J
-         ACJEOJEKOt9nSxeQgtf8EwPG/DFWFiclfFVP8SHcPTvyFF2WWucB2giHEW1VnwE1KMPk
-         6ZbkHlcNZXqIQHkbOEkAJiaBnVjYTLHbNb9+2MTRiEOstuvNR1m7SWDhEeVFUvgtZJ78
-         DfZhsMTmO5HE47B9sz0S00eVPf1fjR7cXr0PXCU3qs9JUeVGVj1P/EmX0nSsJt18uUuN
-         +Tgg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6ARn9MQvWhh3GUHkhzaT2s6XOm9aSyU07064fyQEICVBysU0ww+lOo2eS8AovbAyjA9/qGUhxa9Yk44CwLi7f@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcHW4rgk5qQzsML3xRjakJGxUtQZeQOGtB5O7xZ3obCZhAlw9+
-	/XVXv7tvbmX5l8TZa0i08fuHuvIrWrwXFNLcd1VnNWHgN6GrbKkHZH8UAkCwiPM1avI=
-X-Gm-Gg: ASbGncsDpfwJvIAWqK7HC1aQgIeNJ9u8N79zxyYAsKucBB52dnQJHEwd44pUNyg0k5E
-	1lDCWlHJG4knRW/d0TYOH95stUb05GCzCtiRRj0rxxg0V60OunpWBjkWcQEJXTRt4jbjtO5SY26
-	OOKWt75XCGP7sqFJfR6cLBSSpq8gadu+uaXYWaC4Djm5lQBiwcRtOWetCelXvEKWunGu4f9JFs3
-	SSFudpgbkYbQ22I84VLHVd7KKZ2VsHTzeESDfAqNYQvOAGEz9ACEGmBIesUpYOtsZuPc009dVOA
-	GkixlMFR6NO5luopHV7sqXa1q3RaU8LtS11uOtjSMqooI/JtOhDrd85jVS1grISv3cI=
-X-Google-Smtp-Source: AGHT+IGXYYf0TFhQ1O+wON7w7Ui0TdCCwX28S/0fiqjwsGck85D7SHKGiXnA9KbBhPMZpeej6AwM4w==
-X-Received: by 2002:a05:6000:2008:b0:3a4:79e8:cdfc with SMTP id ffacd0b85a97d-3a479e8cf38mr9971757f8f.30.1747994593532;
-        Fri, 23 May 2025 03:03:13 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca8894csm26040832f8f.76.2025.05.23.03.03.12
+        d=1e100.net; s=20230601; t=1748027840; x=1748632640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhEtoDJFgqNSJbdEuU9qcTn/W9vRw2JPWBizPEbsfUA=;
+        b=ByRVCAh8PhpUkNfvH5TLFIZbqiBxLNMm4tvfJtfNq1ssCiylwWxoOMRGsLWEtFn4UC
+         PLs6hiRNuAVY5qtMPyQXwiVXtAI96NrRnRqgY48vGpusL8lD9QK520Ch2N4N+Y7Q8PC6
+         cL/UjNoWk/VMg2smGmr9PFWoArdxK+PBHOtbVMcf5Z0VdZUyWt/A+eWCGfYlrT3vfnxL
+         9xBY0yDRxbIraawe+S36746YOmsxuMI6RhJ9MzhfKej0V9mdSIQ5Nk5PKON1Nx33dUch
+         WgsdQwa7AOtqRRwt/PN5IrVlyWxDGgD+btWf6WwBbcbDgMP1VZhXSa2nytSXiv7gT7bf
+         Pu8A==
+X-Forwarded-Encrypted: i=1; AJvYcCULHSLJD0q8ETflLBku7fW59xiguk4ZvXLAlt/WTWmJD0ydEDtNMNuDNrliG7qDrsL2oapPskssTriQBsDovNgNKA==@vger.kernel.org, AJvYcCVCPVqAaE/fbNrNMjYPmxCHrBJjof/AJPssgYLI0set/Y/xWIhARJfjsKKgJX4XRsY9Gc2hH2uwKjvx3wA=@vger.kernel.org, AJvYcCVcDKU+fLob/x1Hg6NxixoQKf/KjgMmWz1uEfjvazaVT11jSbyPV6HXH+tUENOQYmle/OrTu+c/wG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLstBS2dLGXpbtVftKuHe8T2kG8NbA63kgUNVQ2glcKYN253fU
+	K0FRByet1F2am5cI4v5lN8IF/dMdsulbeRo7AAa0UJbsw7uEM3kAjGUE
+X-Gm-Gg: ASbGncvTXj3u+uQWKiRnN/1TbMGPLoeOWrEnryq8qVs3yV0Fw9//gso5gva/jdW6s4n
+	RQIX96Yed1JShWePmv6YKHuDKuGtGwF+3ECRpHace3Tpw3agNfThf4f9f2WAVGQ3QDgvjLEOEDh
+	dKjY2RWviy7tNOyTGCAtDO6558cfG0Dbzuj7fcWDPZQjj9yphrWxw1K2dCCG6vf80BYP9nnl3J1
+	3pdQ8VByhGfE/N683RX8G18gSNxtz7++K9Zf9fkMNiEqwbVXjqJCrroqzm41Z2Wdz9n9TxOlygG
+	XkISBjrw2kbyTP0IKYbeWbczMM26GB1c9RMMcUe+pKRTzQrQAA==
+X-Google-Smtp-Source: AGHT+IEy3i3+lFOy6NK8IpvlSKcpSA+dK81IKK+t2Fb56IqXUml/sv8htV/OjA+M+GMx2IQe7GLtuQ==
+X-Received: by 2002:a05:6a21:7702:b0:218:bbb:c13d with SMTP id adf61e73a8af0-2188c2678b1mr659033637.13.1748027839737;
+        Fri, 23 May 2025 12:17:19 -0700 (PDT)
+Received: from hiago-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96e5867sm13118261b3a.1.2025.05.23.12.17.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 03:03:13 -0700 (PDT)
-Date: Fri, 23 May 2025 13:03:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Dawei Li <dawei.li@linux.dev>,
-	andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev, set_pte_at@outlook.com
-Subject: Re: [PATCH v3 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL
- uAPI
-Message-ID: <202505211038.sqqVX8kO-lkp@intel.com>
+        Fri, 23 May 2025 12:17:18 -0700 (PDT)
+Date: Fri, 23 May 2025 16:17:13 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peng Fan <peng.fan@oss.nxp.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+Message-ID: <20250523191713.nylhi74jq6z4hqmr@hiago-nb>
+References: <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb>
+ <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb>
+ <CAPDyKFpnLzk5YR3piksGhdB8ZoGNCzmweBTxm_rDX5=vjLFxqQ@mail.gmail.com>
+ <20250519172357.vfnwehrbkk24vkge@hiago-nb>
+ <CAPDyKFpGcgMzOUHf-JTRTLBviFdLdbjZKrMm8yd37ZqJ1nfkHw@mail.gmail.com>
+ <20250521041306.GA28017@nxa18884-linux>
+ <20250521041840.GB28017@nxa18884-linux>
+ <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,111 +92,80 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250519150823.62350-4-dawei.li@linux.dev>
+In-Reply-To: <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com>
 
-Hi Dawei,
+Hi Ulf,
 
-kernel test robot noticed the following build warnings:
+On Wed, May 21, 2025 at 02:11:02PM +0200, Ulf Hansson wrote:
+> You should not provide any flag (or attach_data to
+> dev_pm_domain_attach_list()) at all. In other words just call
+> dev_pm_domain_attach_list(dev, NULL, &priv->pd_list), similar to how
+> drivers/remoteproc/imx_dsp_rproc.c does it.
+> 
+> In this way, the device_link is created by making the platform->dev
+> the consumer and by keeping the supplier-devices (corresponding to the
+> genpds) in RPM_SUSPENDED state.
+> 
+> The PM domains (genpds) are then left in their current state, which
+> should allow us to call dev_pm_genpd_is_on() for the corresponding
+> supplier-devices, to figure out whether the bootloader turned them on
+> or not, I think.
+> 
+> Moreover, to make sure the genpds are turned on when needed, we also
+> need to call pm_runtime_enable(platform->dev) and
+> pm_runtime_get_sync(platform->dev). The easiest approach is probably
+> to do that during ->probe() - and then as an improvement on top you
+> may want to implement more fine-grained support for runtime PM.
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dawei-Li/rpmsg-char-Reuse-eptdev-logic-for-anonymous-device/20250519-231006
-base:   92a09c47464d040866cf2b4cd052bc60555185fb
-patch link:    https://lore.kernel.org/r/20250519150823.62350-4-dawei.li%40linux.dev
-patch subject: [PATCH v3 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-config: powerpc64-randconfig-r072-20250521 (https://download.01.org/0day-ci/archive/20250521/202505211038.sqqVX8kO-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+I did some tests here and I might be missing something. I used the
+dev_pm_genpd_is_on() inside imx_rproc.c with the following changes:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202505211038.sqqVX8kO-lkp@intel.com/
+@@ -902,7 +902,12 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+        if (dev->pm_domain)
+                return 0;
 
-smatch warnings:
-drivers/rpmsg/rpmsg_ctrl.c:140 rpmsg_ctrldev_ioctl() warn: maybe return -EFAULT instead of the bytes remaining?
+        ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
++       printk("hfranco: returned pd devs is %d", ret);
++       for (int i = 0; i < ret; i++) {
++               test = dev_pm_genpd_is_on(priv->pd_list->pd_devs[i]);
++               printk("hfranco: returned value is %d", test);
++       }
+        return ret < 0 ? ret : 0;
+ }
 
-vim +140 drivers/rpmsg/rpmsg_ctrl.c
+This was a quick test to check the returned value, and it always return
+1 for both pds, even if I did not boot the remote core.
 
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   74  static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   75  				unsigned long arg)
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   76  {
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   77  	struct rpmsg_ctrldev *ctrldev = fp->private_data;
-74317ea5240801 Dawei Li         2025-05-19   78  	struct rpmsg_endpoint_fd_info ept_fd_info;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   79  	void __user *argp = (void __user *)arg;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   80  	struct rpmsg_endpoint_info eptinfo;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   81  	struct rpmsg_channel_info chinfo;
-8109517b394e6d Arnaud Pouliquen 2022-01-24   82  	struct rpmsg_device *rpdev;
-8109517b394e6d Arnaud Pouliquen 2022-01-24   83  	int ret = 0;
-74317ea5240801 Dawei Li         2025-05-19   84  	int fd = -1;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   85  
-74317ea5240801 Dawei Li         2025-05-19   86  	if (cmd == RPMSG_CREATE_EPT_IOCTL || cmd == RPMSG_CREATE_DEV_IOCTL ||
-74317ea5240801 Dawei Li         2025-05-19   87  	    cmd == RPMSG_RELEASE_DEV_IOCTL) {
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   88  		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   89  			return -EFAULT;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   90  
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   91  		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   92  		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   93  		chinfo.src = eptinfo.src;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24   94  		chinfo.dst = eptinfo.dst;
-74317ea5240801 Dawei Li         2025-05-19   95  	} else if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
-74317ea5240801 Dawei Li         2025-05-19   96  		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
-74317ea5240801 Dawei Li         2025-05-19   97  			return -EFAULT;
-74317ea5240801 Dawei Li         2025-05-19   98  
-74317ea5240801 Dawei Li         2025-05-19   99  		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
-74317ea5240801 Dawei Li         2025-05-19  100  		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-74317ea5240801 Dawei Li         2025-05-19  101  		chinfo.src = ept_fd_info.src;
-74317ea5240801 Dawei Li         2025-05-19  102  		chinfo.dst = ept_fd_info.dst;
-74317ea5240801 Dawei Li         2025-05-19  103  	}
-617d32938d1be0 Arnaud Pouliquen 2022-01-24  104  
-8109517b394e6d Arnaud Pouliquen 2022-01-24  105  	mutex_lock(&ctrldev->ctrl_lock);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  106  	switch (cmd) {
-8109517b394e6d Arnaud Pouliquen 2022-01-24  107  	case RPMSG_CREATE_EPT_IOCTL:
-8109517b394e6d Arnaud Pouliquen 2022-01-24  108  		ret = rpmsg_chrdev_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  109  		break;
-8109517b394e6d Arnaud Pouliquen 2022-01-24  110  
-8109517b394e6d Arnaud Pouliquen 2022-01-24  111  	case RPMSG_CREATE_DEV_IOCTL:
-8109517b394e6d Arnaud Pouliquen 2022-01-24  112  		rpdev = rpmsg_create_channel(ctrldev->rpdev, &chinfo);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  113  		if (!rpdev) {
-8109517b394e6d Arnaud Pouliquen 2022-01-24  114  			dev_err(&ctrldev->dev, "failed to create %s channel\n", chinfo.name);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  115  			ret = -ENXIO;
-8109517b394e6d Arnaud Pouliquen 2022-01-24  116  		}
-8109517b394e6d Arnaud Pouliquen 2022-01-24  117  		break;
-8109517b394e6d Arnaud Pouliquen 2022-01-24  118  
-8109517b394e6d Arnaud Pouliquen 2022-01-24  119  	case RPMSG_RELEASE_DEV_IOCTL:
-8109517b394e6d Arnaud Pouliquen 2022-01-24  120  		ret = rpmsg_release_channel(ctrldev->rpdev, &chinfo);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  121  		if (ret)
-8109517b394e6d Arnaud Pouliquen 2022-01-24  122  			dev_err(&ctrldev->dev, "failed to release %s channel (%d)\n",
-8109517b394e6d Arnaud Pouliquen 2022-01-24  123  				chinfo.name, ret);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  124  		break;
-8109517b394e6d Arnaud Pouliquen 2022-01-24  125  
-74317ea5240801 Dawei Li         2025-05-19  126  	case RPMSG_CREATE_EPT_FD_IOCTL:
-74317ea5240801 Dawei Li         2025-05-19  127  		ret = rpmsg_anonymous_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo,
-74317ea5240801 Dawei Li         2025-05-19  128  						    ept_fd_info.flags, &fd);
-74317ea5240801 Dawei Li         2025-05-19  129  		if (!ret) {
+So I was wondering if it was because of PD_FLAG_DEV_LINK_ON, I removed
+it and passed NULL to dev_pm_domain_attach_list(). Booting the kernel
+now it correctly reports 0 for both pds, however when I start the
+remote core with a hello world firmware and boot the kernel, the CPU
+resets with a fault reset ("Reset cause: SCFW fault reset").
 
-You should flip this around.  if (ret)
-					break;
+I added both pm functions to probe, just to test:
 
-74317ea5240801 Dawei Li         2025-05-19  130  			ept_fd_info.fd = fd;
-74317ea5240801 Dawei Li         2025-05-19  131  			ret = copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info));
+@@ -1152,6 +1158,9 @@ static int imx_rproc_probe(struct platform_device *pdev)
+                goto err_put_clk;
+        }
 
-This should be:
++       pm_runtime_enable(dev);
++       pm_runtime_get_sync(dev);
++
+        return 0
 
-	if (copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info)))
-		ret = -EFAULT;
+Now the kernel boot with the remote core running, but it still returns
+0 from dev_pm_genpd_is_on(). So basically now it always returns 0, with
+or without the remote core running.
 
+I tried to move pm_runtime_get_sync() to .prepare function but it make
+the kernel not boot anymore (with the SCU fault reset).
 
-74317ea5240801 Dawei Li         2025-05-19  132  		}
-74317ea5240801 Dawei Li         2025-05-19  133  		break;
-74317ea5240801 Dawei Li         2025-05-19  134  
-8109517b394e6d Arnaud Pouliquen 2022-01-24  135  	default:
-8109517b394e6d Arnaud Pouliquen 2022-01-24  136  		ret = -EINVAL;
-8109517b394e6d Arnaud Pouliquen 2022-01-24  137  	}
-8109517b394e6d Arnaud Pouliquen 2022-01-24  138  	mutex_unlock(&ctrldev->ctrl_lock);
-8109517b394e6d Arnaud Pouliquen 2022-01-24  139  
-8109517b394e6d Arnaud Pouliquen 2022-01-24 @140  	return ret;
-617d32938d1be0 Arnaud Pouliquen 2022-01-24  141  };
+Do you have any suggestions? Am I doing something wrong with these PDs?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Best regards,
+Hiago.
