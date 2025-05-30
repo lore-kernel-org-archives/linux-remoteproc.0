@@ -1,204 +1,325 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74A51DA5F;
-	Fri, 30 May 2025 09:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9DB204866
+	for <linux-remoteproc@vger.kernel.org>; Fri, 30 May 2025 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598362; cv=none; b=bsm2wedy/nlBbRZUZVcxym9jf8FZ5TjwR5WL0prkUelTH6LyIioRqLbokX5MoyiVQyDcXKfwGm80eoPhrlR435L7hm9u4uJhq7Tcf94sm/2NO2wD9EqbPcoP1I429N3GpKek5JGhmndLurMSvxmgyCcPGRpojJuojIki2SyQKjE=
+	t=1748598388; cv=none; b=Wo6yj9BaCERHXo7GKvKPEcEtFyA66ABVwEFz5cFDL04iONN2taV+hV853q8/PYiHoPQzhFhr/w5UCZ9Qdpnx9BUwYfnHDY6g0hgWyOYASkNvzEozGubeoZqFAfrnUjfNNw6YQSuXWJRBPExiDjrx9YFG/EboXccVEsI+FzhUCxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598362; c=relaxed/simple;
-	bh=NLRCiIN5IbcBPzR6AKoY5aN2dWKPrEqtbIk0FkVvJoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BsUm/GGgRIqPR+6lqEPVPwPakV4Uz4eGDLmvO08nNgDQAU75A93d8pOLUqbOUBwL02INkyGKalgJzNqoSkMYHwIbg+vW9Q9oD/WAPZTDxhfVGt+pRTwUPCQD/OK8z2/w5OY8GKE+cLELRMgTzDukTOuqR61OCOtK8cZOcE42oIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KxD7v9cb; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1748598388; c=relaxed/simple;
+	bh=1JxPp94yu8DXGtTX7nsw/Vy6yoxIUfLieXiixTYycic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VJO03Q8mhJedFv0vbmspVzjS4u5YUW150WmJhkyw5lJSt8Oy6LdJMHcfuf6cr+A6G/KLzQxlQE+snB+4MdhZreoX3/z3HoovoNUAcTAyhXhxeCfX/Tee41osmePrahGKg9gA9XoZnzVHXvW7KmSCD8CmF2HP4QX4xp5+LzmoDrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LuIOSvSg; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KxD7v9cb"
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54U9jVIZ3754128;
-	Fri, 30 May 2025 04:45:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748598331;
-	bh=drHOb8GqnSqwcePNWyNck3XqQQY6k98cOLP6xg6zbmM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KxD7v9cborC2a02gEUqHxK5p5zl+fyWru2r1g1Lcn5LnCWQVgel8WKOCxkofT957o
-	 A2gh2uNZJ3wkUlJZPEeDCSqkjQ4RS+7fsPKyVCSfIIYtSFybSV6yWW3kK4zq4/HBgP
-	 zDRs1Ldkf273xDMMSqarQMc6oc1w6MZzIhUYjRZg=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54U9jVWw738175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 30 May 2025 04:45:31 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- May 2025 04:45:31 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 May 2025 04:45:31 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54U9jSSF2879750;
-	Fri, 30 May 2025 04:45:29 -0500
-Message-ID: <7e983702-6662-465d-86ac-d515849d731d@ti.com>
-Date: Fri, 30 May 2025 15:15:28 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuIOSvSg"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso1572844276.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 30 May 2025 02:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748598384; x=1749203184; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6UY2y9MOEwZlIGv1rKrrngNk7HNQITxylPxlIC9Qrk=;
+        b=LuIOSvSgSrzcYXmVBpZoE713lYH4TpVCBGMAj7n2HzDWReiBZupqLBpB9PKFgPG+Wc
+         rQ7xQP0V71ITrA4sPuaZiNC1ScK0qMKs8U9C7BUwysULfbRqwR2XutU9U1GeUr9C867J
+         B5f3YchoYLI9cDe6yscmiNzrUEOJ4BpCr1AU5uKYk5fYTHlGCTZj+v6/WSXTfBfVK2v8
+         XP3i7GNn1+RKOgtZZIdITAvPD9/ijv2nSqXneQvbsq27Z8FHMgfD9Ij0fw0GQNxb0T+a
+         OMJfwRzAaWNR8w6sTC9A2O2mcvM0nqpWxuAAaaiYHXr7RdC0ewJAT5lWNp21ulp1uP51
+         ikFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748598384; x=1749203184;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N6UY2y9MOEwZlIGv1rKrrngNk7HNQITxylPxlIC9Qrk=;
+        b=L4FBtl1Pfv1v724Sspva8PM9FyHEEd2b0YhCRGypod5BYvt9D63/GcFbiKAjvLP9k9
+         6eWnkpyxXUOVxq2sgCCK1nYCJRNyazujaYkdnD3VAt4nTRB4VDlbVNTT2i9kYE71B/Qy
+         QcMUhm2FMWSbMXhzkFr6Ts3Wr+1SKz3JVUPaqD6UGcr7AuyX8auCPSPWXk7thS6bWI1Z
+         jdJ14S4S20rxc13/mpvJ5CJV+OmxTnQPSgnpXt/pH6ZurKOOwcI9huBk+mMSXtBsvKp5
+         QbTxx6NGMSgYtLipjzMDuXOYO3R8Lxwfcqe+BPSiOUEGhpK6mqYZFSlS1E8uZT6Loajp
+         cVTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVM0BEz5X749MQYHn2jbLn3DOrdIc3R8SkW2SLSmAH49JyPAxwOC0Ayst4Eo/YdlE5ZTHdQ8G5YQ/RwBWXrx99@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd/G9FJ2Zxb95dc0784ujgSNXq+cbxlI5YbzJQhUxxTDSab8zk
+	tKUwN7KQhIFLY7g4ZNPcLf8nwwzhvD+GfD+yKHJVpHbvBWcdBLl6KeQG2/rEWFC+Ppxgc4P7SVR
+	d542UgIEOOq77YdEshcY0mkg0pCnFuRsWKc8JycLSsw==
+X-Gm-Gg: ASbGnct3RnsY7EUuUlc0Zu6M6qIpPse5mqypjeQQCM/VM8G0avNps8uggMvgi2DBitF
+	b/mFS4wZqhHyilO8Ds86M6aCOcBcM2oMpavFvax/WAHH2zyz2SDMvHqLwJ2++3UyPndTN/UXDmd
+	+2DB6D+nz8uhl2h8YPoPVr88i1IEUZIFLbWQ==
+X-Google-Smtp-Source: AGHT+IHDOOob+rYy5PewBfFSnwrXwwsdqV4NLiR/14XgYNCnd/4FiuYQbhODXW8eT2YWicTg9hQl3xI77mVLBp8m+Dw=
+X-Received: by 2002:a05:6902:26c3:b0:e7d:8875:bfe2 with SMTP id
+ 3f1490d57ef6-e7f81f15dedmr3191276276.43.1748598384251; Fri, 30 May 2025
+ 02:46:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL
- uAPI
-To: Dawei Li <dawei.li@linux.dev>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <set_pte_at@outlook.com>
-References: <20250519150823.62350-1-dawei.li@linux.dev>
- <20250519150823.62350-4-dawei.li@linux.dev>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <20250519150823.62350-4-dawei.li@linux.dev>
+References: <20250521041840.GB28017@nxa18884-linux> <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com>
+ <20250523191713.nylhi74jq6z4hqmr@hiago-nb> <CAPDyKFq6HG6iTZRnBSN25vhCU8Zj1c+r_ufGbiBsJ16N+1bJVg@mail.gmail.com>
+ <20250527000510.fofehmsdhifcwlys@hiago-nb> <20250527023921.GA14252@nxa18884-linux>
+ <CAPDyKFqZkcaGfss=Oi+H9UERFU29jY2t5uTPnGVGQgSAJSeCoA@mail.gmail.com>
+ <20250527134525.f7yzs4ww64xxmjmr@hiago-nb> <20250528173813.rxqu6pzqgu4m5joo@hiago-nb>
+ <PAXPR04MB845941FFF347274012A0ECA88866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250529201544.azoqdrgnlqfxi6mb@hiago-nb>
+In-Reply-To: <20250529201544.azoqdrgnlqfxi6mb@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 30 May 2025 11:45:48 +0200
+X-Gm-Features: AX0GCFsQvcDOUqaNaQ5cjuiIbQU68DMjg5d50KglTL5dTEGM-jQJUgFg_7R2SME
+Message-ID: <CAPDyKFrDvxpFeBU5noRDBZCA1N96iPNYYjM0kqd1R4z_4CUV3w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	"Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Dawei,
-
-On 19/05/25 20:38, Dawei Li wrote:
-> Implement RPMSG_CREATE_EPT_FD_IOCTL, new uAPI for rpmsg ctrl, which
-> shares most of operations of RPMSG_CREATE_EPT_IOCTL except that it
-> returns fd representing eptdev to userspace directly.
+On Thu, 29 May 2025 at 22:15, Hiago De Franco <hiagofranco@gmail.com> wrote:
 >
-> Possible calling procedures for userspace are:
-> - fd = open("/dev/rpmsg_ctrlX")
-> - ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &info);
-> - fd_ep = info.fd
-
-
-We are returning a new fd to userspace from inside an IOCTL itself. Is this a
-standard way of doing things in Kernel space? (see below related comment)
-
-> - operations on fd_ep(write, read, poll ioctl)
-> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> - close(fd_ep)
-
-
-Can we rely on the userspace to close() the fd_ep? (if not done, could be a
-memory leak..).. Opposed to fd, which we can rely on the userspace to
-close() since they initiated the open() call. I am just trying to understand if
-this is a standard way of doing things...
-
-> - close(fd)
+> On Thu, May 29, 2025 at 03:54:47AM +0000, Peng Fan wrote:
 >
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_ctrl.c | 38 ++++++++++++++++++++++++++++++--------
->  include/uapi/linux/rpmsg.h | 24 ++++++++++++++++++++++++
->  2 files changed, 54 insertions(+), 8 deletions(-)
+> [...]
 >
-> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-> index 28f57945ccd9..9f2f118ceb7b 100644
-> --- a/drivers/rpmsg/rpmsg_ctrl.c
-> +++ b/drivers/rpmsg/rpmsg_ctrl.c
-> @@ -75,19 +75,32 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->  				unsigned long arg)
+> > > We are making progress ;-)
+> > >
+> > > With the patches you shared Ulf (I added them on top of the current
+> > > master branch), it works as expected, dev_pm_genpd_is_on() returns 0
+> > > when I boot the kernel without M4 running and it returns 1 when I
+> > > boot the kernel with M4 running with a hello-world demo.
+> > >
+> > > However now I tried to, if dev_pm_genpd_is_on() returns 1, put the
+> > > DETACHED state, something as
+> > >
+> > > if (dev_pm_genpd_is_on(priv->pd_list->pd_devs[0]))
+> > >     priv->rproc->state = RPROC_DETACHED;
+> > >
+> > > In this case I used 0 because I understand this is the
+> > > IMX_SC_R_M4_0_PID0 defined in my device tree overlay:
+> > >
+> > >             power-domains = <&pd IMX_SC_R_M4_0_PID0>,
+> > >                             <&pd IMX_SC_R_M4_0_MU_1A>;
+> > >
+> > > But in this case, the kernel does not boot anymore, I see the "Starting
+> > > kernel..." and nothing else.
+> >
+> > Please add "earlycon" in bootargs to see where it hangs.
+>
+> Thanks Peng! I was able to catch the kernel panic yesterday, however I
+> must say that today I was doing the tests again and the issue is gone.
+> Sorry, I might have done something wrong yesterday with the tests.
+> Anyway, here is the log:
+>
+> [    1.271163] remoteproc remoteproc0: imx-rproc is available
+> [    1.280296] remoteproc remoteproc0: attaching to imx-rproc
+> [    1.285756] Unable to handle kernel paging request at virtual address ffff80005ae3dd79
+> [    1.293624] Mem abort info:
+> [    1.294655] mmc0: SDHCI controller on 5b010000.mmc [5b010000.mmc] using ADMA
+> [    1.296386]   ESR = 0x0000000096000005
+> [    1.307194]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    1.312473]   SET = 0, FnV = 0
+> [    1.315566]   EA = 0, S1PTW = 0
+> [    1.318649]   FSC = 0x05: level 1 translation fault
+> [    1.323510] Data abort info:
+> [    1.326370]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+> [    1.331846]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    1.336882]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    1.342182] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000096bc1000
+> [    1.348870] [ffff80005ae3dd79] pgd=0000000000000000, p4d=1000000097054003, pud=0000000000000000
+> [    1.357565] Internal error: Oops: 0000000096000005 [#1]  SMP
+> [    1.363198] Modules linked in:
+> [    1.366236] CPU: 2 UID: 0 PID: 47 Comm: kworker/u16:3 Not tainted 6.15.0-03667-g3f5f09105c40-dirty #826 PREEMPT
+> [    1.376405] Hardware name: Toradex Colibri iMX8QXP on Colibri Evaluation Board V3 (DT)
+> [    1.384313] Workqueue: events_unbound deferred_probe_work_func
+> [    1.390128] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    1.397076] pc : rproc_handle_resources.constprop.0+0x78/0x1d0
+> [    1.402896] lr : rproc_boot+0x368/0x56c
+> [    1.406717] sp : ffff8000819c3990
+> [    1.410017] x29: ffff8000819c3990 x28: ffff80005ae3dd7d x27: 0000000000000000
+> [    1.417145] x26: 0000000000000000 x25: ffff0000015ec038 x24: ffff800080f0c0a8
+> [    1.424268] x23: ffff8000813a6110 x22: 00000000d999ad79 x21: ffff0000015ec000
+> [    1.431392] x20: 0000000026665683 x19: ffff80005ae3dd79 x18: 0000000000000006
+> [    1.438516] x17: ffff000001799400 x16: ffff000001798e00 x15: 4addd15cca11c529
+> [    1.445639] x14: 53ebce6d5564d787 x13: 4addd15cca11c529 x12: 53ebce6d5564d787
+> [    1.452763] x11: 95a1e33b6b190674 x10: 9e3c9abdb41ca345 x9 : ab17b4eaffd6fd1c
+> [    1.459887] x8 : d5da055de4cfbb87 x7 : dfd7fa31596acbbc x6 : 9946d97107d0dcca
+> [    1.467011] x5 : ffff0000010c7800 x4 : 00000000000003fc x3 : ffff0000010c7780
+> [    1.474134] x2 : fffffffffffffff0 x1 : ffff8000814a3000 x0 : ffff8000814a3000
+> [    1.481261] Call trace:
+> [    1.483690]  rproc_handle_resources.constprop.0+0x78/0x1d0 (P)
+> [    1.487705] mmc0: new HS400 MMC card at address 0001
+> [    1.489502]  rproc_boot+0x368/0x56c
+> [    1.495349] mmcblk0: mmc0:0001 Q2J55L 7.09 GiB
+> [    1.497929]  rproc_add+0x184/0x190
+> [    1.504356]  mmcblk0: p1 p2
+> [    1.505747]  imx_rproc_probe+0x458/0x528
+> [    1.509238] mmcblk0boot0: mmc0:0001 Q2J55L 16.0 MiB
+> [    1.512437]  platform_probe+0x68/0xc0
+> [    1.512452]  really_probe+0xc0/0x38c
+> [    1.520584] mmcblk0boot1: mmc0:0001 Q2J55L 16.0 MiB
+> [    1.520951]  __driver_probe_device+0x7c/0x15c
+> [    1.527522] mmcblk0rpmb: mmc0:0001 Q2J55L 4.00 MiB, chardev (242:0)
+> [    1.529377]  driver_probe_device+0x3c/0x10c
+> [    1.544263]  __device_attach_driver+0xbc/0x158
+> [    1.548586]  bus_for_each_drv+0x84/0xe0
+> [    1.552407]  __device_attach+0x9c/0x1ac
+> [    1.556231]  device_initial_probe+0x14/0x20
+> [    1.560401]  bus_probe_device+0xac/0xb0
+> [    1.564221]  deferred_probe_work_func+0x9c/0xec
+> [    1.568741]  process_one_work+0x14c/0x28c
+> [    1.572735]  worker_thread+0x2cc/0x3d4
+> [    1.576473]  kthread+0x12c/0x208
+> [    1.579687]  ret_from_fork+0x10/0x20
+> [    1.583253] Code: 8b36c033 9100127c 54000924 d503201f (b9400261)
+> [    1.589337] ---[ end trace 0000000000000000 ]---
+>
+> But again, the issue is not happening anymore ;-) I will keep testing to
+> see if the issue happens again, but for now is working fine, I can now
+> attach to the remote processor.
+>
+> This is the git diff on top of Ulf patches I have been testing:
+>
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 6da25e2c81d2..661a6aad40a8 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -599,6 +599,23 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_genpd_set_performance_state);
+>
+> +bool dev_pm_genpd_is_on(struct device *dev)
+> +{
+> +        struct generic_pm_domain *genpd;
+> +        bool is_on;
+> +
+> +        genpd = dev_to_genpd_safe(dev);
+> +        if (!genpd)
+> +                return false;
+> +
+> +        genpd_lock(genpd);
+> +        is_on = genpd_status_on(genpd);
+> +        genpd_unlock(genpd);
+> +
+> +        return is_on;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_genpd_is_on);
+> +
+>  /**
+>   * dev_pm_genpd_set_next_wakeup - Notify PM framework of an impending wakeup.
+>   *
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 627e57a88db2..9688370f9bb5 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> @@ -891,9 +892,7 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
 >  {
->  	struct rpmsg_ctrldev *ctrldev = fp->private_data;
-> +	struct rpmsg_endpoint_fd_info ept_fd_info;
->  	void __user *argp = (void __user *)arg;
->  	struct rpmsg_endpoint_info eptinfo;
->  	struct rpmsg_channel_info chinfo;
->  	struct rpmsg_device *rpdev;
->  	int ret = 0;
-> -
-> -	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-> -		return -EFAULT;
-> -
-> -	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-> -	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-> -	chinfo.src = eptinfo.src;
-> -	chinfo.dst = eptinfo.dst;
-> +	int fd = -1;
+>         struct device *dev = priv->dev;
+>         int ret;
+> -       struct dev_pm_domain_attach_data pd_data = {
+> -               .pd_flags = PD_FLAG_DEV_LINK_ON,
+> -       };
+> +       bool test;
+>
+>         /*
+>          * If there is only one power-domain entry, the platform driver framework
+> @@ -902,7 +901,16 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>         if (dev->pm_domain)
+>                 return 0;
+>
+> -       ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> +       ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> +       printk("hfranco: returned pd devs is %d", ret);
+> +       for (int i = 0; i < ret; i++) {
+> +               test = dev_pm_genpd_is_on(priv->pd_list->pd_devs[i]);
+> +               printk("hfranco: returned value is %d", test);
+> +               if (test) {
+> +                       priv->rproc->state = RPROC_DETACHED;
+> +                       break;
+> +               }
+> +       }
+>         return ret < 0 ? ret : 0;
+>  }
+>
+> @@ -1146,6 +1154,9 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +       pm_runtime_enable(dev);
+> +       pm_runtime_get_sync(dev);
 > +
-> +	if (cmd == RPMSG_CREATE_EPT_IOCTL || cmd == RPMSG_CREATE_DEV_IOCTL ||
-> +	    cmd == RPMSG_RELEASE_DEV_IOCTL) {
-> +		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-> +			return -EFAULT;
-> +
-> +		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-> +		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-> +		chinfo.src = eptinfo.src;
-> +		chinfo.dst = eptinfo.dst;
-> +	} else if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
+>         ret = rproc_add(rproc);
+>         if (ret) {
+>                 dev_err(dev, "rproc_add failed\n");
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index 756b842dcd30..16d1fca2a8c5 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -95,6 +95,7 @@ extern void pm_runtime_put_suppliers(struct device *dev);
+>  extern void pm_runtime_new_link(struct device *dev);
+>  extern void pm_runtime_drop_link(struct device_link *link);
+>  extern void pm_runtime_release_supplier(struct device_link *link);
+> +bool dev_pm_genpd_is_on(struct device *dev);
+>
+>  int devm_pm_runtime_set_active_enabled(struct device *dev);
+>  extern int devm_pm_runtime_enable(struct device *dev);
+>
+> This is the rproc output when bootaux is used:
+>
+> root@colibri-imx8x-07308754:~# dmesg | grep hfranco
+> [    0.478475] hfranco: returned pd devs is 2
+> [    0.478496] hfranco: returned value is 1
+> root@colibri-imx8x-07308754:~# dmesg | grep rproc
+> [    0.478797] remoteproc remoteproc0: imx-rproc is available
+> [    0.478878] remoteproc remoteproc0: attaching to imx-rproc
+> [    0.478961] remoteproc remoteproc0: remote processor imx-rproc is now attached
+>
+> I will cleanup everything and try to come up with a patch. Ulf, in this
+> case, as your patches have not yet been merged, should I wait for them?
 
+I think you can state in the cover-letter that your series depends on
+mine, so please go ahead and submit them.
 
-Maybe we can put this 'else if condition' in the first 'if' and treat other
-conditions under 'else', as 'RPMSG_CREATE_EPT_FD_IOCTL' is the only
-ioctl with a different struct type.
+>
+> Thanks for all the help guys.
+>
+> >
+> > >
+> > > I am using the pm_runtime functions before rproc_add():
+> > >
+> > > @@ -1146,6 +1154,9 @@ static int imx_rproc_probe(struct
+> > > platform_device *pdev)
+> > >                 }
+> > >         }
+> > >
+> > > +       pm_runtime_enable(dev);
+> > > +       pm_runtime_get_sync(dev);
+> >
+> > I think only make this apply for i.MX8QX/8QM/DX, then no
+> > impact to other patforms.
 
-Thanks,
-Beleswar
+In general I think we should avoid such quirks in drivers, unless it's
+really needed. Just wanted to share my opinion, but it's totally up to
+you.
 
-> +		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
-> +			return -EFAULT;
-> +
-> +		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
-> +		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-> +		chinfo.src = ept_fd_info.src;
-> +		chinfo.dst = ept_fd_info.dst;
-> +	}
->  
->  	mutex_lock(&ctrldev->ctrl_lock);
->  	switch (cmd) {
-> @@ -110,6 +123,15 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
->  				chinfo.name, ret);
->  		break;
->  
-> +	case RPMSG_CREATE_EPT_FD_IOCTL:
-> +		ret = rpmsg_anonymous_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo,
-> +						    ept_fd_info.flags, &fd);
-> +		if (!ret) {
-> +			ept_fd_info.fd = fd;
-> +			ret = copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info));
-> +		}
-> +		break;
-> +
->  	default:
->  		ret = -EINVAL;
->  	}
-> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-> index f0c8da2b185b..e7057bd23577 100644
-> --- a/include/uapi/linux/rpmsg.h
-> +++ b/include/uapi/linux/rpmsg.h
-> @@ -53,4 +53,28 @@ struct rpmsg_endpoint_info {
->   */
->  #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
->  
-> +/**
-> + * struct rpmsg_endpoint_fd_info - endpoint & fd info representation
-> + * @name: name of service
-> + * @src: local address. To set to RPMSG_ADDR_ANY if not used.
-> + * @dst: destination address. To set to RPMSG_ADDR_ANY if not used.
-> + * @flags: file flags of endpoint device, valid flags:
-> + *         O_RDONLY/O_WRONLY/O_RDWR
-> + *         O_NONBLOCK
-> + *         O_CLOEXEC
-> + * @fd: fd returned from driver
-> + */
-> +struct rpmsg_endpoint_fd_info {
-> +	char name[32];
-> +	__u32 src;
-> +	__u32 dst;
-> +	__u32 flags;
-> +	__s32 fd;
-> +};
-> +
-> +/**
-> + * Instantiate a new rmpsg endpoint which is represented by fd
-> + */
-> +#define RPMSG_CREATE_EPT_FD_IOCTL _IOWR(0xb5, 0x7, struct rpmsg_endpoint_fd_info)
-> +
->  #endif
+[...]
+
+Kind regards
+Uffe
