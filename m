@@ -1,85 +1,41 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223B522068E;
-	Mon,  2 Jun 2025 13:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A07231828;
+	Mon,  2 Jun 2025 14:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748870404; cv=none; b=u0/c6EvkYu00sOj1qbsmzVaciAvhDtdEcS6ZIlU52e8+FG4qRrGe3knxeQ2uNjroYgCisoZUW24m7ZUXbzq9Naw7GL9ZLU55JWDvHuzB5y/HDLj+uFkrfBeCp3a3kV+5PQUNbpWo0x+KXkHdk2KGCtzub7/B0eVYxnztsDDhpZg=
+	t=1748873358; cv=none; b=jX0GxHGZRQr+guG562iTw+sFaV5bjxQj+/LvpoT/P3RkhJJ2SvHM2EScojN5H9c3qNpdYGybwNlewBPCK0RW99ggma5+I+02XEQLm8MJkNwjp146QZFgOUR7a4fe3aM5ZYD8K05Lce5uPunXRSRi0syZsF819veozFVWkPNAOU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748870404; c=relaxed/simple;
-	bh=kWoyBBVAR9Ha1I3eVXr883D+sm5esK1y5bluwlJLzPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f7Tvr/VPZMVh8jY/ZkWQ8dJBRv4H1TAEQ6MT2U8I8SZFFCbNmeOyzn4sx+NRT/1DdVINMm1uASJwaeNmqM8QFnZN/xDJ9jWxsLA5xXEthyvtndZHGy40dE8yY9dRRgsK1IpimyqMfSU8uQmsmFYJFV3K08EcPMRfH1M8QWt8CVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLEKDtlr; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1748873358; c=relaxed/simple;
+	bh=y8w/66BIL9zmkxAHPtrQCTX2H2tnoXUIU+AQZjQdQcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AB0oZMJid0yuL32WgoTlz4uSZ5sBiOLtyiMW/G7bboHbcfCrKCTYZ8GDDVoRVT9sTPdb/HyldimrPFeBP5rjRdPjQxzGZJjQlnt6Hd4dmLRbqIaa4M9leKbarQ3Wxr/oiGDqFt4seIDzKZ0Dez5U40N9PuDQgXXnLOVWo9tg7HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8DYVgqZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLEKDtlr"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so3129033a91.1;
-        Mon, 02 Jun 2025 06:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748870402; x=1749475202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GhKP5iYORRYNLEnbf33EP9epGoMRKymXdxcO+qLp2CY=;
-        b=LLEKDtlrBqfa+3v6+COKWMroTzEVNCzNF9mAGBKQhjgP912z9I2GVgijbKYPM8VErF
-         5y0W0L8U0yoGyikwp/mJ2zCZ+OLSAmezILaIeITLoyBz9Igyd6uZsNwnXAf1Xt05JG2j
-         gWJXux2JYDcXbOQNqK24UeS3stIzANx8yffbfdf/LwBLZjLTMl/YqHBOiUD2HXLT4Ehp
-         zwCThO7q8cODxr7a8IpwW4w0ZO2os7QGgAvrNg0ab5Y9bq5z7AM8eKS9MLgQWyuv9bBN
-         3HuqYiPBcG2Wes9FSTfsXqqjHDZ4QP5KgXTt4OlNQD6kwXIJx/1Ny8ZOUHXVGhMx0ADK
-         L0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748870402; x=1749475202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GhKP5iYORRYNLEnbf33EP9epGoMRKymXdxcO+qLp2CY=;
-        b=eCDrGdDuqEYnkc/dRdopYm/Pp9A1bB0oKjGgqJPNAn0kegDpe/ksRNl3xocDGohHuq
-         9Oe8zp2mAaxZgzZ+ICmK0sin476NVJozzo/Tb4xjX2Ab0akks2x0Y6rzDgycKn5dp+Jq
-         q9CnHO0//FpCnciGsCZfRZfm+l0nlnJnr2Siurwvri3izHYhk0uQumpyjuNANN+VjJEw
-         t3YoLT5IHCJsrRV/YGfDnWblUIx1sBDo+1hwrR1i0BVGOynb5dd1FgrbYnrlu4507nq4
-         f6r5P2NgcsDq/9DywOZ5oHmPoYMawSp9UxAh14M7KvvuHpwsrwugPDz2l7+ntO8O7kXa
-         F8Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeiYaGZUdZ7g+DGOZ+czK2IjHhXhZJYrqZ8fygztSdOSYXT6xslny2XZ4mMEzuHu8fMwNEw1xKtXCM3MY=@vger.kernel.org, AJvYcCVjgGvD9yo+sHm7ZO0Ins17Byw8nByYBiEMA9lDQpy/P68g4o6auyERdWdJT+XlbVVAR7nCMLgZXG8=@vger.kernel.org, AJvYcCVyK4Nhp5ooJg9FfcVTuPRnEJvZiIlHoEmfPZZ8rRGUMe+/FBprtKiG1XhB2Bao54511fKlkccvBma58rb7DEdy2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7vIJYHuwSlI9vAo5X6TJ+8dxQG53FApD7JyjCpJBklHBq1Z9P
-	Ira2EN+MTa+ADDLShswJtvl0PhYM6fRhK5IqfwNeLSwgQO5aq3roWJPi
-X-Gm-Gg: ASbGncviFJqpaqBGjIRpbPQQJlXXIdTB2Fii7po5RxpVif4xoSeSNcLt2VArjrKNEEr
-	aZTZDqBo2SbtD7nHDK9vb1dU6MBMYGFIOt4rsJ6koHJ1NWiPGdzV0aGKNSEb8ykOyZmZJ9zhzJ1
-	EaEtT0ZYF018yTPR7fgarIKYyvhGFC7mLtjqDSMWmzyj4nIb5H6Abk+ciLeLyChYdWnz20jiTdG
-	WR6KCWpIoPeUTN1+2PKcSeX54dGxbH55UmvqSL1da84p5BBqHTIEOH99ESBhtluqa+USvTRGziJ
-	+pd44jQaObyYQW9NYi6LfDm6N9O9VLBKCexNLnJPzykxsKMUU8Cfbm2ha/a1tKKMJTxoyj0YQw=
-	=
-X-Google-Smtp-Source: AGHT+IGpk0MW40KUnLGhZi6aTcs7hziCgisIwOKdVotPNVMy0bYaTAXay/v52EDp38MmY2gyBOvaiQ==
-X-Received: by 2002:a17:90b:5344:b0:301:9f62:a944 with SMTP id 98e67ed59e1d1-31241e9846dmr20882041a91.33.1748870402169;
-        Mon, 02 Jun 2025 06:20:02 -0700 (PDT)
-Received: from hiagof-nb.corp.toradex.com ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e2b67bcsm6130983a91.8.2025.06.02.06.19.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 06:20:00 -0700 (PDT)
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8DYVgqZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D723C4CEF2;
+	Mon,  2 Jun 2025 14:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748873357;
+	bh=y8w/66BIL9zmkxAHPtrQCTX2H2tnoXUIU+AQZjQdQcA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=i8DYVgqZK4sRljYzaiZX2DqEBQYEsVVOizInbwCAIbcSDVya7kXDKya9qKfaeo2vY
+	 FFmXyn9aHnfcsfbbYmT44a0/G/VFzx3vBLunWcUOUM6YQusOgTorm9eXNXBzhF/rfw
+	 Asv0iFxZr/Di2rux3uh1VtO6RCzeMOqQ3GUj+X8udnIGJoNUV0mzlPk+81rd5nIWMB
+	 eq0aoV5UCbW1tsxisscq23tOTFuJ/TFazEYt5BJj11yNjyjN3awtCQN5gEIVuudtNO
+	 xquWvB8nq2AbXiB5+xmd1eSyEkHhBrN7SMWhfwpQFRBptYmO6Y6T1SBqTfStlEBEWk
+	 qlKOKtCpNs4LA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>,
-	daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Subject: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to pre-booted remote cores
-Date: Mon,  2 Jun 2025 10:19:05 -0300
-Message-Id: <20250602131906.25751-4-hiagofranco@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250602131906.25751-1-hiagofranco@gmail.com>
-References: <20250602131906.25751-1-hiagofranco@gmail.com>
+	"Dr . David Alan Gilbert" <linux@treblig.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Luca Weiss <luca@lucaweiss.eu>
+Subject: [GIT PULL] rpmsg updates for v6.16
+Date: Mon,  2 Jun 2025 09:09:12 -0500
+Message-ID: <20250602140914.2086-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -88,105 +44,42 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Hiago De Franco <hiago.franco@toradex.com>
 
-When the remote core is started before Linux boots (e.g., by the
-bootloader), the driver currently is not able to attach because it only
-checks for cores running in different partitions. If the core was kicked
-by the bootloader, it is in the same partition as Linux and it is
-already up and running.
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-This adds power mode verification through dev_pm_genpd_is_on(), enabling
-the driver to detect when the remote core is already running and
-properly attach to it if all the power domain devices are on.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-To accomplish this, we need to avoid passing any attach_data or flags to
-dev_pm_domain_attach_list(), letting the platform device become a
-consumer of the power domain provider. With that the current power state
-of the genpds will not change, allowing the detection of the remote core
-power state.
+are available in the Git repository at:
 
-We enable and sync the device runtime PM during probe to make sure the
-power domains are correctly managed when the core is controlled by the
-kernel.
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.16
 
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
----
-v4: Changed to use the new dev_pm_genpd_is_on() function instead, as
-suggested by Ulf. This will now get the power status of the two remote
-cores power domains to decided if imx_rpoc needs to attach or not. In
-order to do that, pm_runtime_enable() and pm_runtime_get_sync() were
-introduced and pd_data was removed.
-v3: Unchanged.
-v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
-suggested.
-v1: https://lore.kernel.org/lkml/20250505154849.64889-4-hiagofranco@gmail.com/
----
- drivers/remoteproc/imx_rproc.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+for you to fetch changes up to 5de775df3362090a6e90046d1f2d83fe62489aa0:
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 627e57a88db2..6f9680142704 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -18,6 +18,7 @@
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reboot.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
- static int imx_rproc_attach_pd(struct imx_rproc *priv)
- {
- 	struct device *dev = priv->dev;
--	int ret;
--	struct dev_pm_domain_attach_data pd_data = {
--		.pd_flags = PD_FLAG_DEV_LINK_ON,
--	};
-+	int ret, i;
-+	bool detached = true;
- 
- 	/*
- 	 * If there is only one power-domain entry, the platform driver framework
-@@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
- 	if (dev->pm_domain)
- 		return 0;
- 
--	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-+	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-+	/*
-+	 * If all the power domain devices are already turned on, the remote
-+	 * core is already up when the kernel booted (e.g. kicked by the
-+	 * bootloader). In this case attach to it.
-+	 */
-+	for (i = 0; i < ret; i++) {
-+		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-+			detached = false;
-+			break;
-+		}
-+	}
-+
-+	if (detached)
-+		priv->rproc->state = RPROC_DETACHED;
-+
- 	return ret < 0 ? ret : 0;
- }
- 
-@@ -1146,6 +1160,11 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (dcfg->method == IMX_RPROC_SCU_API) {
-+		pm_runtime_enable(dev);
-+		pm_runtime_get_sync(dev);
-+	}
-+
- 	ret = rproc_add(rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed\n");
--- 
-2.39.5
+  rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send() (2025-05-20 21:46:10 -0500)
 
+----------------------------------------------------------------
+rpmsg updates for v6.16
+
+Remove some dead and unused code from core and virtio modules.
+Improve the error messages from the Qualcomm SMD driver and initialize
+an uninitialized variable in the send path.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send()
+
+Dr. David Alan Gilbert (3):
+      rpmsg: core: Remove deadcode
+      rpmsg: virtio: Remove uncallable offchannel functions
+      rpmsg: Remove unused method pointers *send_offchannel
+
+Luca Weiss (1):
+      rpmsg: qcom_smd: Improve error handling for qcom_smd_parse_edge
+
+ Documentation/staging/rpmsg.rst  | 46 -----------------------------
+ drivers/rpmsg/qcom_smd.c         | 10 +++----
+ drivers/rpmsg/rpmsg_core.c       | 63 ----------------------------------------
+ drivers/rpmsg/rpmsg_internal.h   |  6 ----
+ drivers/rpmsg/virtio_rpmsg_bus.c | 24 +--------------
+ include/linux/rpmsg.h            | 22 --------------
+ 6 files changed, 6 insertions(+), 165 deletions(-)
