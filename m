@@ -1,89 +1,91 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B60D1E5B97
-	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Jun 2025 09:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC928EA4F;
+	Wed,  4 Jun 2025 11:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749030508; cv=none; b=cRdNOh1Jt0zRnflMDcma2ZFU1+caNbvqY0pFaBdklRABPFieB5rvx0b3V4yqFhnU9yYX0L2GGJrinOPQcvDDaIg5MSwAqEi1d2tiaFolZiVKRadYd6mGmYKwnXVx7hP9Wpik4cuoUkXA/UmOdslDGnYKOyMGXTyFRckoVCYxwPs=
+	t=1749036910; cv=none; b=l1iYbZegW8mzxUYBWm1NiH8uNfr4moKxSc9Q2cMfnbP4s7prmRjRPKzvKdvykNfw3G09/dpXjq0lgUuPWL5TtxhbUiSneJEuSKdFU84Oyw9sV/CzL2JuuPVF91LQDVqt5yVX7Vu6kuRvDxoAVi8Vj9VtvhsNh7vBG5EbBGb64WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749030508; c=relaxed/simple;
-	bh=iLnMdb/WLlno+BuWKEZhtcmmhhNebfNskSC8zHDbLdQ=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=kJR09d0kN+8koQwNG7izWsDq49oKK+iXzm7173WDWV3QClnRQC4RD7iN07GBrD04EDxFopLUzcetxDAI+NsnVyHujGm7mLpRdjia+QXHtk+/x3oPn92JGbcRV7emFtwkDT8xqBfil2IBgSuRzOv50Js9yOZ/hfKVNAB0UmAhCmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0ab7a186412911f0b29709d653e92f7d-20250604
-X-CTIC-Tags:
-	HR_CTE_8B, HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE
-	HR_FROM_DIGIT_LEN, HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
-	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:4be7727e-692b-4fc1-af64-038e6ed32535,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:-30,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-40
-X-CID-INFO: VERSION:1.1.45,REQID:4be7727e-692b-4fc1-af64-038e6ed32535,IP:0,URL
-	:0,TC:0,Content:-5,EDM:-30,RT:0,SF:-5,FILE:0,BULK:0,RULE:EDM_GN8D19FE,ACTI
-	ON:release,TS:-40
-X-CID-META: VersionHash:6493067,CLOUDID:2b9fbb97dbeaaad93a404f80336a1629,BulkI
-	D:2506041748196YA7L6OL,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|102,TC:n
-	il,Content:0|50,EDM:2,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-UUID: 0ab7a186412911f0b29709d653e92f7d-20250604
-X-User: lijun01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <lijun01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1595985089; Wed, 04 Jun 2025 17:48:17 +0800
-From: Li Jun <lijun01@kylinos.cn>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org,
-	lijun01@kylinos.cn
-Subject: [PATCH] remoteproc: Cancel init error to zero
-Date: Wed,  4 Jun 2025 17:48:02 +0800
-Message-Id: <20250604094802.127472-1-lijun01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749036910; c=relaxed/simple;
+	bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=REzUZ3p4Z1I+TJ6U//25S21s0Wi08z2xX3AhZZ01Bh9jv9ExSGJP7aFN2WDcefIq1bc0+CvjE7mn16KU+HsQ5nYjtr7DVp5ZuscpLTKHxk1Hj6gix34ryhaJfanJvbr/NOgS7FDG/oPl3b/X1VUG2wsmAdA6t41a44Zf7Uk9LIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kyS8n5/l; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyS8n5/l"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso5075431a91.3;
+        Wed, 04 Jun 2025 04:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749036908; x=1749641708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
+        b=kyS8n5/lFtYIhTAfZj8SKO86ZbmOe1vveEClx6G79N+BpGpfx4T/v9MclbaJfNIitZ
+         m5J/7rXMH3pHbn8ZPVunvsxi/o69ArBrlyQWgvl/trAqwmHjkkUzmWJ9KTXElG9iKHEz
+         mD96tQCQLtUbZRRMTZ4+xhMuFj4pz6Dpdi/o/z3JhbDiftt2nd9riQTiKveMYq1jPTSc
+         jgQtf6/jKhfJPx4Dvu1M/y6st/nsczNpqaWWWJC3qYGciCATdq2N1xsQe+Br86x7A7ob
+         eW5zv44y1FAn4RNIR8eT/8Cdp1tdP7vKWq1xok1Q1lEgxSxLcRJYTX+awNJ2qCZ6Y6H7
+         biCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749036908; x=1749641708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
+        b=MTTMsdi/0hEISF1/HvQCS8j2UyVoLXJO/jT1x0Lr0orrNQDt9NAwb1rUPvOvH1Qjwo
+         zkfttrQoQEujCU+ip3XF+lECfDb7q7i5U3AKWNexcVd4xyy7e1xd03qajnl2IwXafQgy
+         bXA1UP0EZXUPRpG2AHhzsEYVDawsY5iFyvqq/LB18V9H4mBcH4WaUlR+UyQqzP7fgROW
+         7dMzlgmfCrvQaGD9+oFw7CsN9e4oBut+fAMbN4it+km4ExFFZkOaVTgwXxUGKf+ma4oV
+         +RcXM4E141DUsrmy+K7AJkZsffgEytrzln5SIjgiu3P+UdEnjHkvAChr/5izLMa6EHi0
+         RINw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4uVmfyIZ7I9MWw9we7mqGZUTbEDXPF1al8voOiD/a7un9yR5Rhqy950NfyriNx8gOl9wmu1jf74aNg/nVmowVTg==@vger.kernel.org, AJvYcCWq4VLa03IIpLujgkyOPVZxYwDC66qUcKhLWzU+leUgAtk3UfSZNpeIemwWrLqPm9n6CXyPYOYdZ6vv@vger.kernel.org, AJvYcCXGKqfWC7o9qVBsM44WS5cZCzCjJISS9pb4S1as2vH6cN5U4ZxzoJgF9nozxgfF8BUGmVQxNLIisENP9EB7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw67XfbOJhwMbtWlXsbssjOdAOHc9xXGmm3LUitC1t/773xTXzB
+	uHo3rYURUyTfmXdWrUaDmO3VjzuyAUVFUqLrnYqtFAzb6KyRu4UXRuN+xLMHQfZ+tvkDsRMs+be
+	BNHjyjmuR5TgHVwKDx6BRzxsAB1mYDFE=
+X-Gm-Gg: ASbGncu00tRfkOo2SYyA5bNoT1tRMAUn7joYpgSRLBbwXapO+RIOtbI/Jm60h8UJLlK
+	6MPrShH8kr9kd4z2EARjkL9jftDzQnEuaYigNezJj5LqGhbT3XoDe0Ebq8SM7YCpBYo1e2KNeUK
+	PAnLMXrUlWaONGeJcvpp5gTuMURRxmZA==
+X-Google-Smtp-Source: AGHT+IGwIGTmxieNXznAoBW8LEiVl/ryKLqB13xhYIunkErEyJpECY1o6OzL5PMiS9fUTOhNK6TrQ2RtqRozCxKlADg=
+X-Received: by 2002:a17:90b:390c:b0:311:a561:86f3 with SMTP id
+ 98e67ed59e1d1-3130ccf65dcmr3679787a91.6.1749036908156; Wed, 04 Jun 2025
+ 04:35:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250604-imx95-rproc-1-v1-0-a6e5f512731c@nxp.com> <20250604-imx95-rproc-1-v1-3-a6e5f512731c@nxp.com>
+In-Reply-To: <20250604-imx95-rproc-1-v1-3-a6e5f512731c@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 4 Jun 2025 14:37:04 +0300
+X-Gm-Features: AX0GCFuTyob7yQ_CjnB1akDwMMdIK7thx9Xx1AgvnXPVg4AWe6fnJ67XkMM0Idc
+Message-ID: <CAEnQRZAm_-zr6W4KffXCjzWqBZ2G8TYmMvgF_ABPWhTZNNZGbQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] remoteproc: imx_rproc: Add support for i.MX95
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The init action consume additional CPU cycles. the
-reset_control_assert(wkupm3->rsts) should assign a value
-to 'error' before it is return.so the var don't need init
-to 0.
+On Wed, Jun 4, 2025 at 5:37=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping
+> Add i.MX95 of_device_id entry
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Li Jun <lijun01@kylinos.cn>
----
- drivers/remoteproc/wkup_m3_rproc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index d8be21e71721..24d72fcc26f9 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -77,9 +77,7 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
- 	struct platform_device *pdev = wkupm3->pdev;
- 	struct device *dev = &pdev->dev;
- 	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
--	int error = 0;
--
--	error = reset_control_assert(wkupm3->rsts);
-+	int error = reset_control_assert(wkupm3->rsts);
- 
- 	if (!wkupm3->rsts && pdata->assert_reset(pdev, pdata->reset_name)) {
- 		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
--- 
-2.25.1
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
