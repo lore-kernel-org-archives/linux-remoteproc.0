@@ -1,224 +1,227 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7F8237164;
-	Thu,  5 Jun 2025 13:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F160725C813
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Jun 2025 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749129915; cv=none; b=Jhzkzkob+bplhVRj1liEGicq6FwSJ/nV9Pu2++VShfB5P3VFIXqjIEKRlu2BuNW1IG3DB6/NQy1pQjZnJzr5ATaWtpBS8AEJSWzQcwHD72vOwd0HZLIqNdgcljZsx1wJMD7ITqZStnRTmBoyg4AqkJqNEA2BMBDHG0wtfsAqctg=
+	t=1749130998; cv=none; b=VipywxZP+pYb07jt5o1xVeM5GfbhDjPQ1Wh/Sj6fXQyJTWeZJhXLLyaLZ8CQTtb8/aERviDYmsGL+3Flsxf3mhOyaX5C+/SDf+StnCjkk9coDqWGBJxGqV7jwgdlYRfrr9QvDKBhdk7ltGaCxVH1+ciGMtTmGKoNQvlKwZxM9q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749129915; c=relaxed/simple;
-	bh=XCqCr87fMiryN8wBVJwOIxfP6gD+dhX1Z/cb7SASagk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udeuAyWMwkOf3zCX0ZIztSwbJlGRt52/m3mNT6JXIkBDI4vy48c/OxGItPw9JM/wyqWT0v9E8J0g6AobbkTGyuNvoZgOHufvwvCAswUbyVOEqBwYfBM2WHXnFnbjRS55Rt1m3ztlmGhzbUdsTFXot0gtBFXtuW8IM0vJYUCjTIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqfZibq2; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1749130998; c=relaxed/simple;
+	bh=VAZvVY4YvO4yZJam3Pqn64RyEqzAe5U0pqKB9Nl1xSw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=op8ScG2QuzzMRpSKLUtAf5CHcoUnT/4KvW+GSm06mXs1m6MXztWUIJihpccCe9CEArzf5rPE0Va/5jziZw9+61g8x+rDf2oc1gPVYEjpFcrd8++kPqD8MzzVtrUg8ySz5xZ7HeglRtJwdXBbTcAeg7MEAYsQIXBwXoVsa8+4Jac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MIUsm2k1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqfZibq2"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so850833b3a.1;
-        Thu, 05 Jun 2025 06:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749129913; x=1749734713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfxhwSOG/RM0gPvUyXeyOo3ZKbVYGqvyCyXESojdWoQ=;
-        b=YqfZibq2LHHdvtdoeA7JVN+oxvnJ2hRJR6lK5VflOZOiSdNpZRwUyJ1foqOfoEBGR/
-         VShMb6A7k5rz31zVlIzSRsmzIDmiF2OwUzwfV1HGdu74tn9OdpGNAhV5+a1Li/mc5mqn
-         z+DEoZJ31U74Bs5rAcXYQiyYpxfD5ikvurw1282fdF8SGKIB4VrJx+rX9qPnq9EC27kj
-         gRPVkVFPo9NS19f+tdG79xSSvMCGpQa+XFgvyUAEQJDyEj+v72bjlw3lwFJr6x/jDrLu
-         uLkbt1zaEvOg7jCH4SwTMkQsoz3HX5AC1B0w+nGhRiqV3Eqz4EwpNsWiPzeZlxmQR1WQ
-         KmXA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MIUsm2k1"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5559qr8o023348
+	for <linux-remoteproc@vger.kernel.org>; Thu, 5 Jun 2025 13:43:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4K1V7X0mjkkzCtjA8wOdUTAbcAITWxzAG6tod7BBZUY=; b=MIUsm2k1HDuWbw6f
+	sj7bv4aDOBMkQ+Ez3x/M/tTYYfBEEbAT5bBFMO21tSQ7JhyhZ6iC5ecIW0AtissW
+	z8JUiwtDgZmpbToEpPDpfLZ41NNNSWgwiUG4YJWWbaV1N0Ijp6nhoFpOuiuPMgDc
+	KZpxTwiDSK9X2COW4bxzvpJiQU/B2n4LlhQjvFowmaWbORSkOds971IgwlsEwJw+
+	wPJPINsuUCR204WNVntf+euhpOLjrOzZQS5+/eRAqOjgReQRbdSna9y1ZwEzEFAn
+	1xexUOBZcISpREreDCUlu6KYY92MSzT83b72lxir0qeRL9KI03K6zWV4SPIyM+Gh
+	oU/y/w==
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472mn03qe0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 05 Jun 2025 13:43:15 +0000 (GMT)
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-60beffc65e2so1283782eaf.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Jun 2025 06:43:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749129913; x=1749734713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FfxhwSOG/RM0gPvUyXeyOo3ZKbVYGqvyCyXESojdWoQ=;
-        b=cvocYWCivDMmPwKVwsO+Xup+wZZoIf/+5Yizf2PLYm0LkZlA4FHRBeLU3GOY0VqLzv
-         4Ha3ffk46AzDicWBR6rn2aXSLmnhsNK3BLPpBD9d+fe7gp0B8rjWRhkREldycsRVXOQf
-         stR7GtxImyQgbj36PHoZeAm9js0ksOBEZ7OHw9KoaYKdyiqFcUmKUX32NMSC+pgIPbKV
-         fUE7nBnAGmxJKHoMPFGou0jfqyqgBVDxGdffyGbKZR0amZ2zXtERRg/BwBlSmoq8TrG9
-         eAmhE00jEm1gJ9ipzqR/RGXplaQvqDQS8Y7hqXC8lChJdeoWmqU2CjhE+Ih/wJnq7Ow9
-         VVMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfuiBMkRsUysY1vMneCVXGFv2eGUtRwfUUjmzMH557Cnzq77B7aAD4JA8JVjmiYpfsG6lxCvuwtsddzK9znTKrHA==@vger.kernel.org, AJvYcCXC0l9UeXN0gWaT4lxfcMbIdFGEfxtCE27gzI//Qbx0uWvMltDGTeWsfpEC8rpqxfnu8P5Qe0Q6NLw=@vger.kernel.org, AJvYcCXjnOQTBRkU/T9HQGD0V4I3+9bxbTxJY1eXUNr1cxZmBQeqMlwtw5ahmR9tz8QB5JCXL2NLM9I+YZ3j+co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypJApCEOc6ezpRPHzWfuqC6Egd3/bHFKezBSMUb9S11kYFTWYk
-	E3zbNyzS1QkdaddRlQhSPylIhLyL0kkhk3cdOWPETPkAsfVBjTt2mF7PBpHBKmnA
-X-Gm-Gg: ASbGncsOM5ozZlVc+K8Kh0dTBlsGtNeku0VqG8mcXpS0zxsJqvYVAhyO8jcG94o0uNs
-	zQKcdKdrZvd42HLPmYgXr3UEmrQkrayVi3bHKVoyPgq7qqtMdHSp/X7FG00QOVnEI0AYOJoOVEw
-	EJLhn0wR1+xf2anLUYf8XNuFeihZX59YLcuI4p9/ilAvd+uucPzhjc6sZKeD2/bFgpyQubd+fVN
-	0nGeKamlZtOrMJACVejhG9lwRqUZEzUtYRrkrCMzmjcdI4hByt0QdEEsg+lV03wAfDRDn3buHAK
-	jtU1Z43BoP9U+AYOHLbx4H4+ekdQNRQZ1rcYZQvEXyg+MpZt1g==
-X-Google-Smtp-Source: AGHT+IHQGzKHWpB4RSPbdx58AntCVZ2keB8gOeLail6WPggKiKp/eXtko5QLgS4IoilLjWPFK9AAoA==
-X-Received: by 2002:a05:6a00:c83:b0:746:2ae9:fc49 with SMTP id d2e1a72fcca58-748184ab829mr4203417b3a.9.1749129913242;
-        Thu, 05 Jun 2025 06:25:13 -0700 (PDT)
-Received: from hiago-nb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeab79bsm13234842b3a.50.2025.06.05.06.25.09
+        d=1e100.net; s=20230601; t=1749130994; x=1749735794;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4K1V7X0mjkkzCtjA8wOdUTAbcAITWxzAG6tod7BBZUY=;
+        b=qVFnJahfnv7BtvFnY6nx1Xy9aq+QXSOoYidhfUktbNOiRtVcsY+lRPwjKGDXZYPTMM
+         KL/MvYwKZBhkcvixhwLewd5ImzR+9QkCZiKBAiNIIDjPcPlNJXUV5AH3ejLmgbq3z8tz
+         pcbaVgGTPEynXhZOF7FbYC7xFhjgCHPNMD6hr6JXIFQhzXKDCIGW/DHFX0p75dtIRwN0
+         BqbOI3EXkhfRgT48oA4UtC4zdS14t/F8nQ1WtiTA1/LUgXnevLqt/bj3wn52naHf5YbA
+         1HuGuW6Vo1POY708VWUWkevNdeHgesgDXuCa+uCuvz1Ii4EMK4q1P3jkxhal5cVCRs7W
+         SfTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHo55wS0yhGEoa88VCf0YKBW027OPuMUHROQHrZ/q7mtsHxskafz/JmRpMguhpasYgQgBI9iDqL+gAybAEiiQ8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXFlVmlFkVobM7xZBn9YigF2SnRuAu/Ejg4huWowShFwl/y6jD
+	lc1uHvgO691c/TT/elFGX7Tq7+yxmml+xz7fmcTYbQ/i0bCtmkyNG8SiFfCwAwg6q5mNiMpNSr1
+	idDHGXpydTyhqttsMnlUeFIqCzi+5PzUS62KNBz6TyRNg7ANINtbT4ya67KfOIO0+Z95Vvt3/
+X-Gm-Gg: ASbGncuLdWSHA34yJCwCLQfHKHaCi6EvnbDW6RgaUvdaZm84Ck9r+ZrNmVWLlxdnxBb
+	Y7nxn+KjLo3AyWt3ZrfAYrLPaWxCO0r/hKenXimAgsQf2WJYPvpqT0ctav8Y3k2Wrhfxvd2hu08
+	A60zi40NCIUrL451CNEhWCi/pyCkCo4prsB0K9omKsw5d01Uj/+XHDv8NF2CijPIURLBnbWnCBm
+	hKD3Olu1MLK1DWWtPPyQ8EN9OcimxZyj28JXL3f3w7IcIcbRh/5/TW4h3FyrS4cr2YZQTQQGnvh
+	PF9qufKPvTtJbaDjmAX3rnZZyRl2XgxrMaCSyaKOOtr4qrTwcczaUTMw1SzNmRi/VkFXN61HLYj
+	WUVdiU0Xhq/Q=
+X-Received: by 2002:a05:6808:398c:b0:406:6875:3f0b with SMTP id 5614622812f47-408fab8b28cmr2811700b6e.7.1749130994486;
+        Thu, 05 Jun 2025 06:43:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVO4JnGuwbYTanrmVGFuPGT0vXXaE6+r6I65XBXdCTONC7vN0Ig72qhyjwBB4WTSWBBcIaYw==
+X-Received: by 2002:a05:6808:398c:b0:406:6875:3f0b with SMTP id 5614622812f47-408fab8b28cmr2811682b6e.7.1749130994131;
+        Thu, 05 Jun 2025 06:43:14 -0700 (PDT)
+Received: from [192.168.86.65] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60c1eb719f8sm2691359eaf.28.2025.06.05.06.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 06:25:12 -0700 (PDT)
-Date: Thu, 5 Jun 2025 10:25:07 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	"Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to
- pre-booted remote cores
-Message-ID: <20250605132507.2td5zlnlapraoggn@hiago-nb>
-References: <20250602131906.25751-1-hiagofranco@gmail.com>
- <20250602131906.25751-4-hiagofranco@gmail.com>
- <PAXPR04MB84594F9ABDF0728D9A71FAFE886CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+        Thu, 05 Jun 2025 06:43:13 -0700 (PDT)
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Date: Thu, 05 Jun 2025 08:43:00 -0500
+Subject: [PATCH 1/3] soc: qcom: mdt_loader: Ensure we don't read past the
+ ELF header
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB84594F9ABDF0728D9A71FAFE886CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250605-mdt-loader-validation-and-fixes-v1-1-29e22e7a82f4@oss.qualcomm.com>
+References: <20250605-mdt-loader-validation-and-fixes-v1-0-29e22e7a82f4@oss.qualcomm.com>
+In-Reply-To: <20250605-mdt-loader-validation-and-fixes-v1-0-29e22e7a82f4@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2788;
+ i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
+ bh=VAZvVY4YvO4yZJam3Pqn64RyEqzAe5U0pqKB9Nl1xSw=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBoQZ7wAqUKHWx5c58KFtrNhi1WL9mDfy3fQItYg
+ wVrzRnDtYiJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCaEGe8BUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcUXbBAAwnO6nb6pVq3Y8z20lFrjxXplNhoWbkPBK4mPuxS
+ mBiFeoCsC1o5w0QkoFilM1m9PwsF7Q1rHWiuj8NtiGaCTMuCr2fCtjvbpBLKHOXmJFbkAMVCD7D
+ nC3e12G080tmK1ytZ6YaUxLJ7KxSar5HOWZpgKwvl3etBpKuxBo9RE6fSnxDC9kCRSdPeFbfEVD
+ NwUv3K2MLTNj2+GjpGlLR1CG/LMaPYvpS0D4l/AnpT1HDbk3HKHBN7aZ6iK4Iu/jZA+jSToqhe9
+ pblCaTdLCAC8X055d7cOp1nLU9pNm/8TFwTi1LmudeICp5pGKYH4zJo6QEN2qf+8gNzfcOq+hL/
+ wZamX32BWdgI02HDBboUgOkcZFbbI/2yN+wm5Lv2ruvxjVJPE6/56RoWTfrx+oMHwquibpuxI6k
+ Zt4vH0tw3Bho12O71POPh8ct8pDn0pq2vIPMzWNpVQMt4/aM2oooRbi6JSDms5eHqwo1nSTLax8
+ osnCuqfNfHfG0KOUTrOv2bV+89GjTV9jdAheC71M1OeyAwhm6qDHCw0bOICYD/EabT5k54HetG+
+ 22sQk1GgsfLmMWLtrhc+PDgBIEPQQo52IhFMZMtHUubaAVWlZWuhHcyFK8e4Pkyj6+LUl2lysav
+ PCmHVzW0xXo2WLVV1FahABDuZnci9AEW5FbBxEhHY3qY=
+X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+X-Proofpoint-ORIG-GUID: mSohmZxjJ3gP878pHQqaLcT9uvmrMXV4
+X-Proofpoint-GUID: mSohmZxjJ3gP878pHQqaLcT9uvmrMXV4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDExNyBTYWx0ZWRfX8BvPAVoJjLvc
+ bh6Pi2rbDPOKxQNw41BVUgY/2sy/tLodCRne/S0wtUSqMs6IMJrZByAMQhZ2S04uj4XiIGxuknT
+ uhN17EOkR044X1UR4RHONDg0yACbVoIooJlCYzkXHHsU30A1y8IujUTJIntMKQlafsor9zWW0BV
+ oQpsIyM4N6cjRDg4ePSJZJgOUio7tCd0/E7KKD9Bl+5Mx8oAyLUoZHSuYEKzfMPonPepzXCOdQn
+ L5lHkQOnfuVEqQbfqXxUxuqderFdwnSzD1wam4mOtwPtok+AE1vupWlUhjk8S6qffMUORsvKntG
+ XSqK+q6zMMoCfWuwDGAoPQIix7/lePnNtOQuRg0RTyvOo2jaztFyazu+EVO15DCQK3KZflyB+xh
+ /8h+ymryde7s8pZTp6hfOZSA0SjVGpETQ/u9uSaMXR2l41HJhVbpTiQJYfqRYaiha1pFUcOe
+X-Authority-Analysis: v=2.4 cv=Y8/4sgeN c=1 sm=1 tr=0 ts=68419ef3 cx=c_pps
+ a=lVi5GcDxkcJcfCmEjVJoaw==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8
+ a=EUspDBNiAAAA:8 a=R2NP8FmM25b3pXeoK7YA:9 a=QEXdDO2ut3YA:10
+ a=rBiNkAWo9uy_4UTK5NWh:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_02,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506050117
 
-Hi Peng,
+When the MDT loader is used in remoteproc, the ELF header is sanitized
+beforehand, but that's not necessary the case for other clients.
 
-On Wed, Jun 04, 2025 at 03:19:52AM +0000, Peng Fan wrote:
-> > Subject: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to
-> > pre-booted remote cores
-> > 
-> > From: Hiago De Franco <hiago.franco@toradex.com>
-> > 
-> > When the remote core is started before Linux boots (e.g., by the
-> > bootloader), the driver currently is not able to attach because it only
-> > checks for cores running in different partitions. If the core was kicked
-> > by the bootloader, it is in the same partition as Linux and it is already
-> > up and running.
-> > 
-> > This adds power mode verification through dev_pm_genpd_is_on(),
-> > enabling the driver to detect when the remote core is already running
-> > and properly attach to it if all the power domain devices are on.
-> > 
-> > To accomplish this, we need to avoid passing any attach_data or flags
-> > to dev_pm_domain_attach_list(), letting the platform device become a
-> > consumer of the power domain provider. With that the current power
-> > state of the genpds will not change, allowing the detection of the
-> > remote core power state.
-> > 
-> > We enable and sync the device runtime PM during probe to make sure
-> > the power domains are correctly managed when the core is controlled
-> > by the kernel.
-> > 
-> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > ---
-> > v4: Changed to use the new dev_pm_genpd_is_on() function instead,
-> > as suggested by Ulf. This will now get the power status of the two
-> > remote cores power domains to decided if imx_rpoc needs to attach or
-> > not. In order to do that, pm_runtime_enable() and
-> > pm_runtime_get_sync() were introduced and pd_data was removed.
-> > v3: Unchanged.
-> > v2: Dropped unecessary include. Removed the imx_rproc_is_on
-> > function, as suggested.
-> > v1:
-> > ---
-> >  drivers/remoteproc/imx_rproc.c | 29 ++++++++++++++++++++++++-----
-> >  1 file changed, 24 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index
-> > 627e57a88db2..6f9680142704 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -18,6 +18,7 @@
-> >  #include <linux/of_reserved_mem.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_domain.h>
-> > +#include <linux/pm_runtime.h>
-> >  #include <linux/reboot.h>
-> >  #include <linux/regmap.h>
-> >  #include <linux/remoteproc.h>
-> > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct
-> > notifier_block *nb,  static int imx_rproc_attach_pd(struct imx_rproc
-> > *priv)  {
-> >  	struct device *dev = priv->dev;
-> > -	int ret;
-> > -	struct dev_pm_domain_attach_data pd_data = {
-> > -		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> > -	};
-> > +	int ret, i;
-> > +	bool detached = true;
-> > 
-> >  	/*
-> >  	 * If there is only one power-domain entry, the platform driver
-> > framework @@ -902,7 +901,22 @@ static int
-> > imx_rproc_attach_pd(struct imx_rproc *priv)
-> >  	if (dev->pm_domain)
-> >  		return 0;
-> > 
-> > -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv-
-> > >pd_list);
-> > +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> > +	/*
-> > +	 * If all the power domain devices are already turned on, the
-> > remote
-> > +	 * core is already up when the kernel booted (e.g. kicked by
-> > the
-> > +	 * bootloader). In this case attach to it.
-> > +	 */
-> > +	for (i = 0; i < ret; i++) {
-> > +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> > +			detached = false;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	if (detached)
-> > +		priv->rproc->state = RPROC_DETACHED;
-> > +
-> >  	return ret < 0 ? ret : 0;
-> >  }
-> > 
-> > @@ -1146,6 +1160,11 @@ static int imx_rproc_probe(struct
-> > platform_device *pdev)
-> >  		}
-> >  	}
-> > 
-> > +	if (dcfg->method == IMX_RPROC_SCU_API) {
-> > +		pm_runtime_enable(dev);
-> > +		pm_runtime_get_sync(dev);
-> 
-> Need put and disable in imx_rproc_remove.
+Validate the size of the firmware buffer to ensure that we don't read
+past the end as we iterate over the header.
 
-I will add it in a v5, thanks.
+Fixes: 2aad40d911ee ("remoteproc: Move qcom_mdt_loader into drivers/soc/qcom")
+Cc: <stable@vger.kernel.org>
+Reported-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+---
+ drivers/soc/qcom/mdt_loader.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-> 
-> BTW: Has this patchset tested with M4 in a separate partition,
-> saying M4 image packed in flash.bin?
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index b2c0fb55d4ae678ee333f0d6b8b586de319f53b1..1da22b23d19d28678ec78cccdf8c328b50d3ffda 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -18,6 +18,31 @@
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+ 
++static bool mdt_header_valid(const struct firmware *fw)
++{
++	const struct elf32_hdr *ehdr;
++	size_t phend;
++	size_t shend;
++
++	if (fw->size < sizeof(*ehdr))
++		return false;
++
++	ehdr = (struct elf32_hdr *)fw->data;
++
++	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
++		return false;
++
++	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
++	if (phend > fw->size)
++		return false;
++
++	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
++	if (shend > fw->size)
++		return false;
++
++	return true;
++}
++
+ static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
+ {
+ 	if (phdr->p_type != PT_LOAD)
+@@ -82,6 +107,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+ 	phys_addr_t max_addr = 0;
+ 	int i;
+ 
++	if (!mdt_header_valid(fw))
++		return -EINVAL;
++
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 	phdrs = (struct elf32_phdr *)(ehdr + 1);
+ 
+@@ -134,6 +162,9 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len,
+ 	ssize_t ret;
+ 	void *data;
+ 
++	if (!mdt_header_valid(fw))
++		return ERR_PTR(-EINVAL);
++
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 	phdrs = (struct elf32_phdr *)(ehdr + 1);
+ 
+@@ -214,6 +245,9 @@ int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
+ 	int ret;
+ 	int i;
+ 
++	if (!mdt_header_valid(fw))
++		return -EINVAL;
++
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 	phdrs = (struct elf32_phdr *)(ehdr + 1);
+ 
+@@ -310,6 +344,9 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw || !mem_region || !mem_phys || !mem_size)
+ 		return -EINVAL;
+ 
++	if (!mdt_header_valid(fw))
++		return -EINVAL;
++
+ 	is_split = qcom_mdt_bins_are_split(fw, fw_name);
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 	phdrs = (struct elf32_phdr *)(ehdr + 1);
 
-Not yet, I will prepare this test today and let you know.
+-- 
+2.49.0
 
-> 
-> Regards,
-> Peng
-> > +	}
-> > +
-> >  	ret = rproc_add(rproc);
-> >  	if (ret) {
-> >  		dev_err(dev, "rproc_add failed\n");
-> > --
-> > 2.39.5
-> > 
-> 
-
-Best Regards,
-Hiago.
