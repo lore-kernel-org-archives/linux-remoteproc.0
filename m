@@ -1,74 +1,73 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9440D1DE3DF
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Jun 2025 15:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FBC15A858
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Jun 2025 15:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749139067; cv=none; b=hQ5JeRdp+g8OCvsZE/JYx0XSN+5X3kPbyApi6vOn0koE6IVWniUx0jWXSSfAP4nUC3IpDMJBIT4f9RNoNl3JvnKts7GQTX+zzYs6HEHH+SvCbzfDRQ3ztaslJeTSpvBtbUL6ulMLX7hMAS0jFfl6XBNmAtw/5i6dOhJLtpShJfw=
+	t=1749139091; cv=none; b=CwuNntnIjC0lJOZtV4F6q7/rkZGsqalbRVqtj5UT0W5YlvNymM4Os/YYRVNrtCsjygow8IuMatZ9KhhuergZzXug1yg8dAz/kOd1BCzCLPhdXbAfNL3e6syWs2Xdu9AwL28+ccqXJXSKMZU/t8TwCmXeGfHbNoGNg6skM5n9w1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749139067; c=relaxed/simple;
-	bh=WgMGgdMd38oyIPbik/hGQ40Tix6e4NF6Yzsh7po2Fqw=;
+	s=arc-20240116; t=1749139091; c=relaxed/simple;
+	bh=vvxsdQUfbACEHt/eKBX1FbZkUxMW64PwCAQm1kKd1aQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIpZYjyTx6Ut6cWWkBMSb5kXJqku7RvsgEeausYAQSP7U0Fy+79kOLcoDLi5m5yLk4qzec//+dEYIE2Yiz+AOeBR+PyaO7voci8CJYWrBLOuX/pQjy9LiM+42BcuSuPtPkyaFqvmkpMjvY3VXjN48kzw0fahPFq3vvG4rPJSi5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=foundries.io; spf=pass smtp.mailfrom=foundries.io; dkim=pass (2048-bit key) header.d=foundries.io header.i=@foundries.io header.b=apTrcIVq; arc=none smtp.client-ip=209.85.167.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVYcvD7pOLHvk9Zzwnt8T+GD7XcWJY1I+MRiEDbfJm7Fj6edHzP+hfRyS4Fk4GB7esZFIIOnbKeEeTwjC0eAjmtAWwDUglgOvWd9vTZAyBRx/zdZvFpeZJT14cf7iH9xwy8yjzHcWzQKMNkNteujtoW5WBlRowJpbjFLmYis7Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=foundries.io; spf=pass smtp.mailfrom=foundries.io; dkim=pass (2048-bit key) header.d=foundries.io header.i=@foundries.io header.b=Yogg4UR9; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=foundries.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foundries.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foundries.io header.i=@foundries.io header.b="apTrcIVq"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55324062ea8so1514300e87.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Jun 2025 08:57:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=foundries.io header.i=@foundries.io header.b="Yogg4UR9"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55351af2fc6so1488378e87.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Jun 2025 08:58:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=foundries.io; s=google; t=1749139064; x=1749743864; darn=vger.kernel.org;
+        d=foundries.io; s=google; t=1749139087; x=1749743887; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IL2rqOYu8VKVkpdUoK8lFHqW1MNjlNlFCTBMUdbtw5I=;
-        b=apTrcIVq+XRT0VliWIz7SMUMW2qyhhk+nRIOtZCUdAyTbY3Hd0o14nIjAy529f1DwZ
-         JKqMfdXUcr5L7Odf0Qqs4dq44baXJd4OsS8V8eX2jVj2IZRmAkQxcRZviLsLa3FpbaRy
-         //YNr2+yW1U8RLlFeN5pS9R+Ctlqng3NSMpUMCI6IyuIdysXr1sJrkITFIw1f5auTOpD
-         5Xl+GgYKs9uy8J/i1JLX2dtDyObYNSb9nZP5pp9TjgMQdR11ABUZBW7Yd5rZg02sW1qO
-         we5hNTBCtaKBADrqF3BE9n24DZYB+03L6WDKf5IttMgjRLx0vuD3ElQkLEOWGdvyt/vr
-         ucXg==
+        bh=kJR4Y8tAlCR5oc9EbaKSTjEuRByyyWL0IrWS9MKBoMo=;
+        b=Yogg4UR9qXNQnQXykkygTXAAwxWobGNHOHPlm0CcF1Y5PaewbzNNS1uOyM4Wr9pSLt
+         noRL59WF148p0TeScTzDsmcx3ngys2nVfUyj+l5bIaOFrCQ9sdhsY39hUslxFWw3K3iF
+         oc4oeA4RDciQ5RwDti9H26qL4aWWdzZaWh+VAmz74CEPu78dsw7CjZllDhP3tBtfJrkX
+         88XLTUUUJOKprfCN+DXy/gfvB5eDOGnPKL1k8sPu76o6s9Ne0Qo39GexQi1TLJjyExe3
+         AXHT+iR1zid0Qg5RrP/q45hNi0NdaBc2jUifChK9BDSfJ6Nb6NlYLSjmsexNsAELRgHz
+         4D+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749139064; x=1749743864;
+        d=1e100.net; s=20230601; t=1749139087; x=1749743887;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IL2rqOYu8VKVkpdUoK8lFHqW1MNjlNlFCTBMUdbtw5I=;
-        b=MdGlJyB4Bjn+tKjS0Px2eqC60e/oIEqUdXNSWAJih79gg/3Cpi6+vW8jzX6T4eO5oF
-         MHj4QCKg+z+RFUTLM845nXQwfnnxJy4XjxkDEI6gElhJxibbsdGRyw9T9pyJbnzM0k1X
-         32doT2qdHyEYSh/fpAS4ELb7fUegn8nGLHpkCLJmPrl0lWNNhdKot5S3fWjByUPVeHPH
-         XkoaJ/W3ZsDapUurX5iDEQHEDIfhiUqTMLTEW4eA1Eti3IcUnj4L55+5lrBhGFcaebMa
-         edWJKNMy860PZ5BSX9E/ewCh5WpPS6b7GrE1u4KBZdk6NTTQ+iGr5Rv3/JHPe2zMDr9M
-         1wAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCz6VQNHtfAmqv3bqV9N/KU0mJAduRPLRKh55gdMXdSjX+yJx+jJMDXQ6xBnXyFmAbFRxMZRSlBfUjloL0HHFy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBsabD074pFF/YXTPsXquQMAQ+bNg3kywjyvUYg2uCD2N4u/sW
-	8fRaisIFoix4uK19fRYVOFLfI6ZL4JMj9t+V0xYDe13jgO2j6glE9BOUGl4uXuT3Eu0=
-X-Gm-Gg: ASbGncvpgSj6tCTtYXYNaOmWkvPnEQb7fifq+ceyRIB2Ucac8ZcEJhUJcJiNjCzIr7P
-	opWcsdR1wv/i/CTRLx9bGfuJIwdQdXWc1gkwAsvx7Bm0o6Rmc6NERXxS/u9kPYblZ6VJeskYw87
-	JakFIMYq15k6cr29PMMgovFFn4Ixo7uhl+Y4fcDOvAQiZrwiGIypoptwfg42So9hbOsyJVSZIFZ
-	d/VwS4wULczlN8nL9kLaJsjXGGlzXi8n5yUZ5/Gru+CfBP6cHfsFJWEImvUuDey53LZhI89eVuu
-	U3ObxfCzcJmFMPxNbwQlP5BYnT3P8R5hY7rNhATA2xZNE+EEvlfVKzrkfF7gVeGZl1m2grL5cjZ
-	9pBV3OSlogSyUYv5UEBEuGWfJ5aUBnwwC7A1dUghhTgC5hbLAoqyrsW8=
-X-Google-Smtp-Source: AGHT+IEB3YEeO6zjpPzz4GmREpxraxHTzP68+ARHxZnojSSC5uKraBhg6PJus5tZV4YR+AghTaJ4SQ==
-X-Received: by 2002:ac2:4c45:0:b0:553:510d:f46b with SMTP id 2adb3069b0e04-55356df49e0mr2781393e87.32.1749139063513;
-        Thu, 05 Jun 2025 08:57:43 -0700 (PDT)
+        bh=kJR4Y8tAlCR5oc9EbaKSTjEuRByyyWL0IrWS9MKBoMo=;
+        b=OAX/BWCu8rnSALLhOA5YuPtLlmqOt3dGwpjlzh235SmHEqVzyRclb7jLKqnDrqanBo
+         Ur6mYOp1uPvmC5PMhTgQrJXUPeXURwcJL/VJoc38S1eK/+jkpVc9Y8sKvwHuNhWRwNiJ
+         AlVFqR1mbZ/cgYYGS8A3eRFB05R+KuzigT2M1TI8cdLAz3yZXrlmJabTOiO/iU4lxwQ3
+         UyZTduP7vZ3QDIyrW8QDmO1nUU6AB313dNj6pb/G8RvpjP3wLALBgYP0H0/3j14lsLEP
+         1yaKMdDwjIjDmjfuNdR2/6EILiWecJzB7tvCVxEZcE0yJc2MRu1dZR2LdRmIyTOfrTe8
+         hU+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQN2pgGjZW3tU9CsoGUuPX/9jqEJgkuaTXD0cURTFPKu9G0QqVl1UdcBEkZ8p4tsD4TSg739pOGPdTAn4vM/kZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTfzmjCrbZbo0wMYrQIpRd5CVqrACkz0sl//60MxO2ocZ761Ig
+	JovLPPr08WQRcvLWKPra1aJbUmbhx80GEfs5bsPSWw/1VrccoZh5Dmv7EgtfZhByMFI=
+X-Gm-Gg: ASbGncuk/6XzRweyx0f6C4UwDGmx8fuGQtO7+RD0qzxgTKVJ7iq3wn1KLYNEUgF7UPa
+	aYvKKFiQ9HQvIfG3GyHkuHpOJp/Hl/8XIFRik51l8e2SDsGrAxDCrKWAcqDpSh0LSKQQ4xESkIG
+	F3oSxAQyyo+v3UqF90U1a4iVVQQIxF7THB0+5dC/foYg2x9tWb1wqtb2WpRC9fv9X+9iYpehJxp
+	YB1Ei4nSCYTNYnXF2CufllzMn4qMBRJECJPJOOIYeciJrkyAgB6DKFECitQHswjJyhoLfnMS8we
+	ycR6fw7ITX/0S5pPSoKP4xpXhe4JQvn4Dg878NhZA6puA+Jccdw07dnTzXilpPpXXKOERwd8DuM
+	3E9fWDpytpqR8DmDggHvm2+7Ac2t7DBipi8F1Yprmc9gS
+X-Google-Smtp-Source: AGHT+IHjllPDbBesbytdFFuw49H9HPzHUpGX6GEe0oIbdOiIF9gTADeGFDpUFlmOhHLdYd5ybMcj7Q==
+X-Received: by 2002:a05:6512:1195:b0:553:2633:8a63 with SMTP id 2adb3069b0e04-55356bf0810mr2501601e87.17.1749139087260;
+        Thu, 05 Jun 2025 08:58:07 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553379374ffsm2647976e87.216.2025.06.05.08.57.42
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55365174a43sm69173e87.6.2025.06.05.08.58.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 08:57:43 -0700 (PDT)
-Date: Thu, 5 Jun 2025 18:57:41 +0300
+        Thu, 05 Jun 2025 08:58:06 -0700 (PDT)
+Date: Thu, 5 Jun 2025 18:58:05 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@foundries.io>
 To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
 	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-remoteproc@vger.kernel.org, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
-	Doug Anderson <dianders@chromium.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] soc: qcom: mdt_loader: Ensure we don't read past the
- ELF header
-Message-ID: <bsnn6xpkubifuwxz4kccvves3ifq4ocp53qmbobv6ilmnfuh7x@eejawp7thorm>
+	Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Rename mdt_phdr_valid()
+Message-ID: <uomne25xskd3iswn7htoqbwvyws4fivogfkhhl5tz4t3uydsrv@sfiivkwxmfsd>
 References: <20250605-mdt-loader-validation-and-fixes-v1-0-29e22e7a82f4@oss.qualcomm.com>
- <20250605-mdt-loader-validation-and-fixes-v1-1-29e22e7a82f4@oss.qualcomm.com>
+ <20250605-mdt-loader-validation-and-fixes-v1-2-29e22e7a82f4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -77,109 +76,23 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250605-mdt-loader-validation-and-fixes-v1-1-29e22e7a82f4@oss.qualcomm.com>
+In-Reply-To: <20250605-mdt-loader-validation-and-fixes-v1-2-29e22e7a82f4@oss.qualcomm.com>
 
-On Thu, Jun 05, 2025 at 08:43:00AM -0500, Bjorn Andersson wrote:
-> When the MDT loader is used in remoteproc, the ELF header is sanitized
-> beforehand, but that's not necessary the case for other clients.
+On Thu, Jun 05, 2025 at 08:43:01AM -0500, Bjorn Andersson wrote:
+> The function checks if a program header refers to a PT_LOAD segment,
+> that isn't a hash segment (which should be PT_LOAD in the first place),
+> andwith non-zero size. That's not the definition of "valid", but rather
+> if it's "loadable".
 > 
-> Validate the size of the firmware buffer to ensure that we don't read
-> past the end as we iterate over the header.
+> Rename the function to reflect what it does.
 > 
-> Fixes: 2aad40d911ee ("remoteproc: Move qcom_mdt_loader into drivers/soc/qcom")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Doug Anderson <dianders@chromium.org>
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > ---
->  drivers/soc/qcom/mdt_loader.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
+>  drivers/soc/qcom/mdt_loader.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> index b2c0fb55d4ae678ee333f0d6b8b586de319f53b1..1da22b23d19d28678ec78cccdf8c328b50d3ffda 100644
-> --- a/drivers/soc/qcom/mdt_loader.c
-> +++ b/drivers/soc/qcom/mdt_loader.c
-> @@ -18,6 +18,31 @@
->  #include <linux/slab.h>
->  #include <linux/soc/qcom/mdt_loader.h>
->  
-> +static bool mdt_header_valid(const struct firmware *fw)
-> +{
-> +	const struct elf32_hdr *ehdr;
-> +	size_t phend;
-> +	size_t shend;
-> +
-> +	if (fw->size < sizeof(*ehdr))
-> +		return false;
-> +
-> +	ehdr = (struct elf32_hdr *)fw->data;
-> +
-> +	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
-> +		return false;
-> +
-> +	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
 
-Nit, this should be a max(sizeof() and ehdr->e_phentsize.
-
-> +	if (phend > fw->size)
-> +		return false;
-> +
-> +	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
-> +	if (shend > fw->size)
-
-Same for e_shentsize
-
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
->  static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
->  {
->  	if (phdr->p_type != PT_LOAD)
-> @@ -82,6 +107,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
->  	phys_addr_t max_addr = 0;
->  	int i;
->  
-> +	if (!mdt_header_valid(fw))
-> +		return -EINVAL;
-> +
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
->  
-> @@ -134,6 +162,9 @@ void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len,
->  	ssize_t ret;
->  	void *data;
->  
-> +	if (!mdt_header_valid(fw))
-> +		return ERR_PTR(-EINVAL);
-> +
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
->  
-> @@ -214,6 +245,9 @@ int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->  	int ret;
->  	int i;
->  
-> +	if (!mdt_header_valid(fw))
-> +		return -EINVAL;
-> +
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
->  
-> @@ -310,6 +344,9 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
->  	if (!fw || !mem_region || !mem_phys || !mem_size)
->  		return -EINVAL;
->  
-> +	if (!mdt_header_valid(fw))
-> +		return -EINVAL;
-> +
->  	is_split = qcom_mdt_bins_are_split(fw, fw_name);
->  	ehdr = (struct elf32_hdr *)fw->data;
->  	phdrs = (struct elf32_phdr *)(ehdr + 1);
-> 
-> -- 
-> 2.49.0
-> 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 -- 
 With best wishes
