@@ -1,44 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A9827CCCD;
-	Thu,  5 Jun 2025 19:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74851A5B8A;
+	Thu,  5 Jun 2025 20:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749151796; cv=none; b=Rnyt8cEIfE3jAMwEX2n91wIcwUzAixYfLUEWqCh1xy8EU+/18blJD2ptStaa+nY9Xq9NvDM5jcIbKGcbOAeeB71Otx+3l5qL/zJGQGr5JNKm6vXl1SvUDAlnFVRQ/mkqjDx7vXyQWz54+JOja/2/WRjPr8zz6waQwpfHqMgbW0I=
+	t=1749155242; cv=none; b=QtnWjvKESi6rDc6XUAkJ1WO4M61zOOaveYleGR0/qEaxPxsEjJ6qIO6gIdhb6fkPZ2MXOCK1mb4dK9GozbW5lFKPdm0ZPpYHE0EhJD0Ap0Ik3Cpet7XfWiKGSa+P/BDjyIJzOJtsBRJbK7iBc1x9uFaNeZY6kBskNoAwzbyi6OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749151796; c=relaxed/simple;
-	bh=KXHyUh+OtRsl2pelaAJoE/6mIIAsOHMnaVL2nVOHDwc=;
+	s=arc-20240116; t=1749155242; c=relaxed/simple;
+	bh=UD0f2aiYkLmpekoEpWZj548Tflm0OEq08J6LaazoEuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pe4s8u5CutbTK2MJecWdISAW6P8yNoZWEf9aL4041GlErlR7nNMiP6M/1D95eWBXgoH35dPiShcHIJnmoCnF8i7jlq8AnPq6GVZflhi0gq4wEUwKy8NQrxT1VrOHIUoe7mq4pgUDcEUu5CGlr2hbSr5SvDxgQANW7pvGoRlkHVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0By54sI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRSO+Ef4HqaedpDevOL7uAKB9TkG73pvJokT8pCI7Nv6h8PpCiG9UzmXfCj0mTmii+9nN9iv8FxYAFJKf3Wy5/vttPJIclGW5ZYnRD3eWH1H9xmok+YonRvjvA6Q7/rijsStH9c8wA1sekFdE6PoaPnzH647sWJBInYZZu1sItU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFOyFEi8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0By54sI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBDCC4CEE7;
-	Thu,  5 Jun 2025 19:29:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFOyFEi8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C84EAC4CEE7;
+	Thu,  5 Jun 2025 20:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749151796;
-	bh=KXHyUh+OtRsl2pelaAJoE/6mIIAsOHMnaVL2nVOHDwc=;
+	s=k20201202; t=1749155241;
+	bh=UD0f2aiYkLmpekoEpWZj548Tflm0OEq08J6LaazoEuY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U0By54sIwEk2LjzqgjimW1UX3NrTsZhnPrhqgr01hNZDIuTeq0Aon61FK9FBZyUE6
-	 fgfi5zwRkms+MsvEtKLTJ80poWuOCg6kHKvBnu0EVIYx9MzQZIT73ir5gI/MNKoda8
-	 s0ZeYqNN2l3oQQnHd9yv3GyeN/FL0XBrEDcxX8jM0im2DyDKardPTXHuQQDE4XjWIw
-	 blmDxRLmFy0dVZMnF5j4o0tCMURfHhVgWTxOdySfYdRaLOqOkNgce8qQ0UrePD7sVn
-	 WGscio8Yn10xwdVY4nNggx/jW65L5qJayHK5BPNfocWIThynJrhpuUXH9qydFxSi+g
-	 0po1MX+htDcIg==
-Date: Thu, 5 Jun 2025 14:29:53 -0500
+	b=UFOyFEi8RUmDkPJ26jNDEhgwb1NHCWc7X7Vk0NG19/CZA9aMfp0RRGY6rhrQ7PCWO
+	 9Cb8+sPNf1kqrod3Yhvidyx/mslDAeEbGt7U5ffWQ9zMut1oqdB2FFUJM0K7Q+wfSa
+	 BXlRvmYcTzcLx26o1Am275U24L4PW1gSR1dojNSHa5HsY25oyWxSo2w/6efJXfIOOf
+	 K440hYuT1iGLOPBYwR1+fc7TvtW1Ebm3gkWh9JVb+dbZKU91DQflbfRq3xUITP3gpP
+	 NZ/JMWv6X73GSKwCW1E5Elqxg0iAZoDnkjIe3RTyg4QMa1r38P2uCvbaFWYKkpS/5i
+	 G0lLUQVrvRHEw==
+Date: Thu, 5 Jun 2025 15:27:19 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@foundries.io>
+To: Luca Weiss <luca@lucaweiss.eu>
 Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
-	Doug Anderson <dianders@chromium.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] soc: qcom: mdt_loader: Ensure we don't read past the
- ELF header
-Message-ID: <4ruhapzeti5hiufdkws27w2q3h4psfcpmcfsqrhsnyr2u4sktp@5itmiqxydwrj>
-References: <20250605-mdt-loader-validation-and-fixes-v1-0-29e22e7a82f4@oss.qualcomm.com>
- <20250605-mdt-loader-validation-and-fixes-v1-1-29e22e7a82f4@oss.qualcomm.com>
- <bsnn6xpkubifuwxz4kccvves3ifq4ocp53qmbobv6ilmnfuh7x@eejawp7thorm>
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: pas: Conclude the rename from adsp
+Message-ID: <v765tixx2jqqx5rxylqmtulhotxbld5xvjrvo376hyzelmgrop@mqr4fcqdcrfj>
+References: <20250605-pas-rename-v1-1-900b770d666c@oss.qualcomm.com>
+ <9f6652c9-d0c2-405c-bdf0-fc4daa017a4d@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -47,62 +44,97 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bsnn6xpkubifuwxz4kccvves3ifq4ocp53qmbobv6ilmnfuh7x@eejawp7thorm>
+In-Reply-To: <9f6652c9-d0c2-405c-bdf0-fc4daa017a4d@lucaweiss.eu>
 
-On Thu, Jun 05, 2025 at 06:57:41PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Jun 05, 2025 at 08:43:00AM -0500, Bjorn Andersson wrote:
-> > When the MDT loader is used in remoteproc, the ELF header is sanitized
-> > beforehand, but that's not necessary the case for other clients.
+On Thu, Jun 05, 2025 at 06:01:07PM +0200, Luca Weiss wrote:
+> Hi Bjorn,
+> 
+> Awesome to see this being cleaned up!
+> 
+> On 05-06-2025 5:23 p.m., Bjorn Andersson wrote:
+> > The change that renamed the driver from "adsp" to "pas" didn't change
+> > any of the implementation. The result is an aesthetic eyesore, and
+> > confusing to many.
 > > 
-> > Validate the size of the firmware buffer to ensure that we don't read
-> > past the end as we iterate over the header.
+> > Conclude the rename of the driver, by updating function, structures and
+> > variable names to match what the driver actually is. The "Hexagon v5" is
+> > also dropped from the name and Kconfig, as this isn't correct either.
 > > 
-> > Fixes: 2aad40d911ee ("remoteproc: Move qcom_mdt_loader into drivers/soc/qcom")
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: Doug Anderson <dianders@chromium.org>
+> > No functional change.
+> > 
+> > Fixes: 9e004f97161d ("remoteproc: qcom: Rename Hexagon v5 PAS driver")
 > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > > ---
-> >  drivers/soc/qcom/mdt_loader.c | 37 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> > 
-> > diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> > index b2c0fb55d4ae678ee333f0d6b8b586de319f53b1..1da22b23d19d28678ec78cccdf8c328b50d3ffda 100644
-> > --- a/drivers/soc/qcom/mdt_loader.c
-> > +++ b/drivers/soc/qcom/mdt_loader.c
-> > @@ -18,6 +18,31 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/soc/qcom/mdt_loader.h>
-> >  
-> > +static bool mdt_header_valid(const struct firmware *fw)
-> > +{
-> > +	const struct elf32_hdr *ehdr;
-> > +	size_t phend;
-> > +	size_t shend;
-> > +
-> > +	if (fw->size < sizeof(*ehdr))
-> > +		return false;
-> > +
-> > +	ehdr = (struct elf32_hdr *)fw->data;
-> > +
-> > +	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
-> > +		return false;
-> > +
-> > +	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
+> >   drivers/remoteproc/Kconfig          |  11 +-
+> >   drivers/remoteproc/qcom_q6v5_adsp.c |  46 +--
 > 
-> Nit, this should be a max(sizeof() and ehdr->e_phentsize.
+> Actually looking through that driver, it's not just adsp-pil but also
+> supports cdsp-pil and wpss-pil, so long-term that should probably be renamed
+> to qcom_q6v5_pil.c? Not for this patch though obviously.
 > 
 
-Hmm, I forgot about e_phentsize.
+There's another "convention" at play here, the "pas" refers to the
+secure service doing authentication. The alternative to this is to do
+everything in Linux, which we conveniently refer to (here) as "pil".
 
-But the fact is that the check matches what we do below and validates
-that we won't reach outside the provided buffer.
-If e_phentsize != sizeof(struct elf32_phdr) we're not going to be able
-to parse the header.
+Also, per the commit text the "q6v5" isn't accurate anymore, so perhaps
+this should just be the qcom_pas driver - or the qcom_pil driver.
 
-Not sure if it's worth it, but that would make sense to change
-separately. In which case ehdr->e_phentsize * ehdr->e_phnum would be the
-correct thing to check (no max()). Or perhaps just a check to ensure
-that e_phentsize == sizeof(struct elf32_phdr)?
+I think the change as proposed is a good middle ground, we get things
+cleaned up and aligned without affecting anything outside the
+implementation.
 
-Regards,
+> >   drivers/remoteproc/qcom_q6v5_pas.c  | 617 ++++++++++++++++++------------------
+> >   3 files changed, 334 insertions(+), 340 deletions(-)
+> 
+> <snip>
+> 
+> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > index b306f223127c452f8f2d85aa0fc98db2d684feae..b0fc372ff0a9e032d784b1a4403ffeea5d0f9a00 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > @@ -1,6 +1,6 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >   /*
+> > - * Qualcomm ADSP/SLPI Peripheral Image Loader for MSM8974 and MSM8996
+> > + * Qualcomm Peripahal Authentication Service remoteproc driver
+> 
+> typo Peripahal
+> 
+
+Thank you
+
+> >    *
+> >    * Copyright (C) 2016 Linaro Ltd
+> >    * Copyright (C) 2014 Sony Mobile Communications AB
+[..]
+> > -static int adsp_unprepare(struct rproc *rproc)
+> > +static int qcom_pas_unprepare(struct rproc *rproc)
+> >   {
+> > -	struct qcom_adsp *adsp = rproc->priv;
+> > +	struct qcom_pas *pas = rproc->priv;
+> >   	/*
+> > -	 * adsp_load() did pass pas_metadata to the SCM driver for storing
+> > +	 * pas_load() did pass pas_metadata to the SCM driver for storing
+> 
+> qcom_pas_load?
+> 
+
+Of course, thanks for spotting those.
+
+[..]
+> > -static const struct of_device_id adsp_of_match[] = {
+> > +static const struct of_device_id qcom_pas_of_match[] = {
+> >   	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
+> >   	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
+> >   	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+> 
+> Not really for this patch but shouldn't those compatibles also be -pas?
+> 
+
+Per the naming convention later adopted, they should have been "-pas".
+But changing that would break backwards compatibility with exiting DT,
+so we'll leave that as is.
+
+Thanks,
 Bjorn
