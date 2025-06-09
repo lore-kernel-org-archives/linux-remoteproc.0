@@ -1,220 +1,229 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950343A1B6;
-	Mon,  9 Jun 2025 16:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9500C3597B;
+	Mon,  9 Jun 2025 17:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749486843; cv=none; b=lWblVKsrzm9C+NNOG1dXkBIuh5lA1jn/PBmbjMuCRVzw/NmQbJM+UxlmTqPAOAplqBHIH8F5fRLqsPo7ErbqnRbHzeMTgKYNnguo9UmhJINyyGLF8oiLC/c4NJIdy050VFKmiqn9zDGWJDd2VGEtZt5JQmVKBeQEO8F38CZg5kY=
+	t=1749490286; cv=none; b=dhcK/nqs8d21I6O5bI9mpK31IvDyUeVWraBuo0CuaugsVOlZ2tdF2gj5osk8w+tPMP3HHotMqiWtl6dV4n2OqsIhCIZrbkzFb30xFM+YkLzoxxtnKp+D9Z0jrB0bK3BylVkhodBb038d04olUYUIjMsCuDsuK45cvv0Qhzca9C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749486843; c=relaxed/simple;
-	bh=GTnFfGyaol0WHB79nJS8vHJ5V67NBcsQeSu7yPvQUIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LuKRHxbqzHI9v31neKUtX3euiausaFgPBNCPa/uCct3B44LPJNAh3L6IX99VvInQLwtUND6PbuT0UVFC7DZYQwLIYnNtVl7+wXIptTaM2g/lsZ5jQ677AKgXWWDnOjqxbx/uiaO42IEjvDsqS5Ye/N4BCTlOGODuxLdSIU/+Uc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l5x8CTLt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1749490286; c=relaxed/simple;
+	bh=8LBJLyj0kgr4c05PRceO/pKC3cvZqpYuU4UKLWl6TZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kPkX9lp0PBDRv0isXnwsBibJ0WRw9ojgcDG4LbiGv9QcXE69hKmdgMK+HqaNjYnoKXvZhA1Atz3DnR/9YK38qJn9G0bgVXwUEq6X/q5XoV7PMerTSWpLt9WTjxZU+IEo23IG+9E8NstXHGUsoRO4FlEQCG0I220My1NqD+5VQY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgvxpeAp; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l5x8CTLt"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559Fxc8D010757;
-	Mon, 9 Jun 2025 18:33:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	XdsCmzlviAN7D8zW7RN1bkzetwH59L+fJQ05vlqmlxk=; b=l5x8CTLtU5RADRo6
-	SxU13ZIwSRejlojuW9TaZ6uGJVu49k/9cAUsTCzU6JM1hW+eEUkHZOmqDCmbDvW/
-	Rlgk3Q1Qw0Ec6ZUMpHN3ajvuStAjAiSDldeDTaB80zeSD8ZjKgXncHounqKYRxlq
-	KYsC5TyOe6AsBUlnqsXBz8lAdCYM3qZbLL99yUJrs1vEkXngi73WG39pYvYnWVSC
-	O1sUpZeXV3Q2exKZD7j1bWn2VF37XEfHzvFOqHeo7H0zl8vcv1KHTks1Z7m61pn7
-	pQTUsZLgeyVgnJLFNYeuKhcmQs37PTvi932ECEProqA/gJ1Oc0yytWrPqRNHkIdS
-	61sKNQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cahfx2q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Jun 2025 18:33:40 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 26A7D400CF;
-	Mon,  9 Jun 2025 18:32:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 70948BF25F3;
-	Mon,  9 Jun 2025 18:30:09 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 18:30:09 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 18:30:08 +0200
-Message-ID: <7850c6f4-6a6f-4934-895d-9ec0688cda2a@foss.st.com>
-Date: Mon, 9 Jun 2025 18:30:07 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgvxpeAp"
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-53082f1ac34so1348428e0c.3;
+        Mon, 09 Jun 2025 10:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749490283; x=1750095083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v0Qu66z7kDW3js03KQPZ0HZb8QpcE1+x1gXTQ8PQnaU=;
+        b=PgvxpeApqp67C7bN8eeiv94rxHScde6hMQvz2XZYeFIacPXfNtOVFGCLuZ5XjebKUa
+         M52u4JkMTyY9uRlZlJjmAac0RgYLxxF3JO4UxlGipguvcSlmucYLW/iE5zGthQVBz/bZ
+         F6U/td8CXYbHW2bsBhEO1pHHEDngcJUMANKCrl8wjuCGoxfw0Q3Hirwcce09siI8wBHm
+         WtEDxAQarK5Fg45wcQ5ARI6aYqULgQI72dN0hlAM2HaZ0Wkl1WLVAhmJezjj+4pzvoB6
+         1KJ31ZoFxRSiklelF40rR6mFG0gyJSPUrysDy8b92CATCgNRFjxMHNHVyBOl5mAZQlEf
+         z0Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749490283; x=1750095083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v0Qu66z7kDW3js03KQPZ0HZb8QpcE1+x1gXTQ8PQnaU=;
+        b=SY9sPR206OFCQVeNhOA9ytiZhWNpgeCCf4hazBE97umfWYlIEZorSQVuibwY2/wy99
+         GjlTKrUtQS0Qajhaa4K4aHqOC3EV1iu4J37dXCfaLBq6lfDmGN4Ih1gsmf1KDZNV2F0G
+         I3xoNgOZzhyXcnNFZ3ZZW4sqQDhxsluzx514x/dJb4kULNS+0aH0cNHzdr7sz7APKkNJ
+         e/izk8lbEJoyabCOTa6qQq7mkSNKoGrB91kbq7h0UuzP3lh5Qyc5c57rNElGLBKn7klN
+         fxw+/o45KByx1j7oqpERItRhH7dSWaI31hPZQEaAw8f63vjyoPSSdJhFLaMC+osxHhux
+         BM5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPu0EeGPrgJ4b0Mc+BWLoJDvLiiDDtf7omj9CDJ4HwHxQbRuurVQ/6Ih0IVXrwd3AAd+urjEGq8JU=@vger.kernel.org, AJvYcCVlv+Se5w+1AQpyiqvsz2c91rEh9BqARbd1B6hJTyE9lyLZjKpaPV5ZTIDbLynmEFCv+sn3sXJTZjLLLZc=@vger.kernel.org, AJvYcCX/uTjYHuM91aegToey7JgsripJCJiqG14BZX/vi1la56ozMq9rKTrAQBSKKN6akxhAyhCPeoaEYw4Ea0Zkln4OGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKD5ljoIQnrnHj0EeA7Bk5MSVI7h3cqX/VLZuyF5aRPkvl7Dge
+	0X892W/ya8eQTu6DvdNwWlXaIZVlFFf+0TTQFzfIvJQ0D/sNYqTA+zan
+X-Gm-Gg: ASbGncsuGDX+t8yLYGcngynCVa1GFiOOPahL7vXwDw/iBjQIoG6wp728JxgbvrpCliQ
+	c8iTSaYTOuxR6RzeX0kL1F+FMOLW+FXdFrZ9VlseTmbjjxhW/hNDjNpusK1adaKCN3/dl5fbqr+
+	5D+pwHwPu7M+BgtTSBpppNM1eJh7ak5bMwx1AFyY+Y6SEx1ZiVKQRUFh3dh5d4WSoC+c1N13mZL
+	MXTbxzID7n40nT6sdIvOsjEQ+U1/BWZANX1bVwEkSE+tI294Xs95oea1LoEl/D7X/uRTkhQZ98c
+	A2SD/v8cm7bOA9jZFx9lMRTyp4atHRQzlsvCVaKuGz/pvug8QQ==
+X-Google-Smtp-Source: AGHT+IGzoebj1QMPet5l8I9qWvt9vrbw2pGLKm4WGcWKCZt5wa18t6jdZYC5Lc1lX0z+RxP/znejvw==
+X-Received: by 2002:a05:6122:8d1:b0:52b:789:2d0 with SMTP id 71dfb90a1353d-530e47ed0a2mr11738050e0c.5.1749490282233;
+        Mon, 09 Jun 2025 10:31:22 -0700 (PDT)
+Received: from hiago-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53113abd74bsm32564e0c.17.2025.06.09.10.31.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 10:31:21 -0700 (PDT)
+Date: Mon, 9 Jun 2025 14:31:15 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	"Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to
+ pre-booted remote cores
+Message-ID: <20250609173115.qecc2noswkcgr3hm@hiago-nb>
+References: <20250602131906.25751-1-hiagofranco@gmail.com>
+ <20250602131906.25751-4-hiagofranco@gmail.com>
+ <PAXPR04MB84594F9ABDF0728D9A71FAFE886CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v16 0/6] Introduction of a remoteproc tee to load
- signed firmware
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20250603100808.1074812-1-arnaud.pouliquen@foss.st.com>
- <aEb8XbhY5dR__GM-@p14s>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <aEb8XbhY5dR__GM-@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_06,2025-06-09_02,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB84594F9ABDF0728D9A71FAFE886CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-Hello Mathieu,
-
-On 6/9/25 17:23, Mathieu Poirier wrote:
-> On Tue, Jun 03, 2025 at 12:08:02PM +0200, Arnaud Pouliquen wrote:
->> Hello Bjorn and Mathieu,
->>
->> I am resending this series after waiting for over two months for Bjorn's
->> feedback, despite a prior reminder.
->>
->> Please could you coordinate between yourselves to determine who will continue
->> reviewing this series? It would be greatly appreciated if the review could
->> proceed within a more reasonable timeframe.
->>
->> Thanks in advance and best regards,
->> Arnaud
->>
->>
->> Main updates from version V15[1]:
->> - Removed the rproc_ops:load_fw() operation introduced in the previous version.
->> - Returned to managing the remoteproc firmware loading in rproc_tee_parse_fw to
->>   load and authenticate the firmware before getting the resource table.
->> - Added spinlock and dev_link mechanisms in remoteproc TEE to better manage
->>   bind/unbind.
->>
+On Wed, Jun 04, 2025 at 03:19:52AM +0000, Peng Fan wrote:
+> > Subject: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to
+> > pre-booted remote cores
+> > 
+> > From: Hiago De Franco <hiago.franco@toradex.com>
+> > 
+> > When the remote core is started before Linux boots (e.g., by the
+> > bootloader), the driver currently is not able to attach because it only
+> > checks for cores running in different partitions. If the core was kicked
+> > by the bootloader, it is in the same partition as Linux and it is already
+> > up and running.
+> > 
+> > This adds power mode verification through dev_pm_genpd_is_on(),
+> > enabling the driver to detect when the remote core is already running
+> > and properly attach to it if all the power domain devices are on.
+> > 
+> > To accomplish this, we need to avoid passing any attach_data or flags
+> > to dev_pm_domain_attach_list(), letting the platform device become a
+> > consumer of the power domain provider. With that the current power
+> > state of the genpds will not change, allowing the detection of the
+> > remote core power state.
+> > 
+> > We enable and sync the device runtime PM during probe to make sure
+> > the power domains are correctly managed when the core is controlled
+> > by the kernel.
+> > 
+> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > ---
+> > v4: Changed to use the new dev_pm_genpd_is_on() function instead,
+> > as suggested by Ulf. This will now get the power status of the two
+> > remote cores power domains to decided if imx_rpoc needs to attach or
+> > not. In order to do that, pm_runtime_enable() and
+> > pm_runtime_get_sync() were introduced and pd_data was removed.
+> > v3: Unchanged.
+> > v2: Dropped unecessary include. Removed the imx_rproc_is_on
+> > function, as suggested.
+> > v1:
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 29 ++++++++++++++++++++++++-----
+> >  1 file changed, 24 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index
+> > 627e57a88db2..6f9680142704 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/of_reserved_mem.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_domain.h>
+> > +#include <linux/pm_runtime.h>
+> >  #include <linux/reboot.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/remoteproc.h>
+> > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct
+> > notifier_block *nb,  static int imx_rproc_attach_pd(struct imx_rproc
+> > *priv)  {
+> >  	struct device *dev = priv->dev;
+> > -	int ret;
+> > -	struct dev_pm_domain_attach_data pd_data = {
+> > -		.pd_flags = PD_FLAG_DEV_LINK_ON,
+> > -	};
+> > +	int ret, i;
+> > +	bool detached = true;
+> > 
+> >  	/*
+> >  	 * If there is only one power-domain entry, the platform driver
+> > framework @@ -902,7 +901,22 @@ static int
+> > imx_rproc_attach_pd(struct imx_rproc *priv)
+> >  	if (dev->pm_domain)
+> >  		return 0;
+> > 
+> > -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv-
+> > >pd_list);
+> > +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> > +	/*
+> > +	 * If all the power domain devices are already turned on, the
+> > remote
+> > +	 * core is already up when the kernel booted (e.g. kicked by
+> > the
+> > +	 * bootloader). In this case attach to it.
+> > +	 */
+> > +	for (i = 0; i < ret; i++) {
+> > +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> > +			detached = false;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (detached)
+> > +		priv->rproc->state = RPROC_DETACHED;
+> > +
+> >  	return ret < 0 ? ret : 0;
+> >  }
+> > 
+> > @@ -1146,6 +1160,11 @@ static int imx_rproc_probe(struct
+> > platform_device *pdev)
+> >  		}
+> >  	}
+> > 
+> > +	if (dcfg->method == IMX_RPROC_SCU_API) {
+> > +		pm_runtime_enable(dev);
+> > +		pm_runtime_get_sync(dev);
 > 
-> Have all pending issues been resolved or is there still questions about some
-> aspects of the design?
->  
+> Need put and disable in imx_rproc_remove.
+> 
+> BTW: Has this patchset tested with M4 in a separate partition,
+> saying M4 image packed in flash.bin?
 
-No pending issues on my side.
+Sorry for the delay.
 
-In terms of design, I resend an equivalent of the V13 design incorporating
-Bjorn's comments on V15.
-The pending questions are:
-- is that V13/V16 is aligned with Bjorn's expectations[1].
-- are you also aligned on this design even if you proposed an alternative that
-  implemented in V14 and V15
-Few details on the V13/V16 design:
+I tested it now and there must be something missing on my U-Boot:
 
-The main point of discussion is the rproc_tee_parse_fw() implementation.
-In V13, this function loaded the firmware and then parses the resource table.
+Disable imx8x-cm4 rsrc 278 not owned
+Disable imx8x-cm4 rsrc 297 not owned
 
-You proposed an alternative, to add a new rproc->load ops
-in the remoteproc core instead (implemented in V14 and V15).
-Bjorn expressed concerns about this and proposed a solution that, from my
-understanding, is equivalent to the V13 implementation.
+It removes my nodes from the DT before starting the kernel, so I cannot
+attach. Do you know what should I do in this case?
 
-Thanks,
-Arnaud
+But apart from that, at least the imx-rproc does not crash or anything.
 
+> 
+> Regards,
+> Peng
+> > +	}
+> > +
+> >  	ret = rproc_add(rproc);
+> >  	if (ret) {
+> >  		dev_err(dev, "rproc_add failed\n");
+> > --
+> > 2.39.5
+> > 
+> 
 
-[1] https://lkml.org/lkml/2025/3/5/906
-
->> More details are available in each patch commit message.
->>
->> [1] https://lore.kernel.org/linux-remoteproc/20241128084219.2159197-7-arnaud.pouliquen@foss.st.com/T/
->>
->> Tested-on: commit 0ff41df1cb26 ("Linux 6.15")
->>
->> Description of the feature:
->> --------------------------
->> This series proposes the implementation of a remoteproc tee driver to
->> communicate with a TEE trusted application responsible for authenticating
->> and loading the remoteproc firmware image in an Arm secure context.
->>
->> 1) Principle:
->>
->> The remoteproc tee driver provides services to communicate with the OP-TEE
->> trusted application running on the Trusted Execution Context (TEE).
->> The trusted application in TEE manages the remote processor lifecycle:
->>
->> - authenticating and loading firmware images,
->> - isolating and securing the remote processor memories,
->> - supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
->> - managing the start and stop of the firmware by the TEE.
->>
->> 2) Format of the signed image:
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
->>
->> 3) OP-TEE trusted application API:
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
->>
->> 4) OP-TEE signature script
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
->>
->> Example of usage:
->> sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
->>
->>
->> 5) Impact on User space Application
->>
->> No sysfs impact. The user only needs to provide the signed firmware image
->> instead of the ELF image.
->>
->>
->> For more information about the implementation, a presentation is available here
->> (note that the format of the signed image has evolved between the presentation
->> and the integration in OP-TEE).
->>
->> https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
->>
->> Arnaud Pouliquen (6):
->>   remoteproc: core: Introduce rproc_pa_to_va helper
->>   remoteproc: Add TEE support
->>   remoteproc: Introduce release_fw optional operation
->>   dt-bindings: remoteproc: Add compatibility for TEE support
->>   remoteproc: stm32: Create sub-functions to request shutdown and
->>     release
->>   remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
->>
->>  .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
->>  drivers/remoteproc/Kconfig                    |  10 +
->>  drivers/remoteproc/Makefile                   |   1 +
->>  drivers/remoteproc/remoteproc_core.c          |  52 ++
->>  drivers/remoteproc/remoteproc_internal.h      |   6 +
->>  drivers/remoteproc/remoteproc_tee.c           | 619 ++++++++++++++++++
->>  drivers/remoteproc/stm32_rproc.c              | 139 +++-
->>  include/linux/remoteproc.h                    |   4 +
->>  include/linux/remoteproc_tee.h                |  90 +++
->>  9 files changed, 935 insertions(+), 44 deletions(-)
->>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
->>  create mode 100644 include/linux/remoteproc_tee.h
->>
->>
->> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
->> -- 
->> 2.25.1
->>
+Best Regards,
+Hiago.
