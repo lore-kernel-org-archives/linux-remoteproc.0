@@ -1,190 +1,391 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013056.outbound.protection.outlook.com [40.107.162.56])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18232B9BF;
-	Tue, 10 Jun 2025 01:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058E2AF1B;
+	Tue, 10 Jun 2025 03:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749517845; cv=fail; b=oCyCJXJ1PoRz2YUKXS40ueE/XWJshxnjX1GCv7ir+Ima+RxW+7jH8jGl5kzXOb++JQ5iUqdbREKRO9M/kMAX5ABa1twQZHfLXMZtz7ZRtmi1dxiLzpnRttlIpkwkLJo9UEXb0aG5KcGLJKWe4+NzWDMrzFYK2sGErv6UnDm8jEg=
+	t=1749527034; cv=pass; b=FFjXj9gGNuJT5KJa+x68FE49TbvOHytJmKpGnI/YrhiWuxBm/6Jpzrf8T5cLFmAaFSH+OeSDMHWc4Co4/syQ7u/ronPxQxgzEemqgMVBjpsEUac1otgllS5psJebCpRRYSgNcOWYXQjoDcFmdmdBYQX97BIDXoDcmddY6puNNZM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749517845; c=relaxed/simple;
-	bh=e3RYNvw96crCj8GTpMy4nC4PnJXXILZjjKvNMUygQ6c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YNHhNaCKVmmVp12ulnxxT0e5+OOsME4AnBtmVZTv0Tc8P2F/e7wKM4wnRfSkaPkwnb+V+gOA0TcalOtQPAkh/BOzSWkuaoWOK+KYnDT3m3z8pz/0DceT70+mRhxTQhCHHSaJdhrOU0SonNOoGD6feWe8bQy60Vv8hU80J9jES24=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nmJcYIPU; arc=fail smtp.client-ip=40.107.162.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1749527034; c=relaxed/simple;
+	bh=eTkY3IkCNA3kGovKmUnSPEDBKqEDtvA31Wvs+Dt/Ods=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=jp+NqMuxKHanyAVr8inYAzbihrocW9lQtEWjQXEyYhq38jipGHUva0b0jBPQ7+SqvjXx4fDdTprNh8DT4XLhTRMrDpBEHcgHUWTsez+ae+gN3Ct44aRJiYyBPES94rDboryN+MzgOfoD90nP9Bx3CVc/VCBtwQw5Ujq748GNoFE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=Qzd2F1kv; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nmJcYIPU"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tLXo5e7kLnGGOTpdc4A88AyIqGmgRK5V6+08eR/0oRpHFZ3y+T48c2Z6IH19+6+/Ha3WBzpt7hcMw1coYbopuAhVqIvAvTT1x4vLASotmbRUO3K4CNCH3khpvSiU9v6C1SBpgLjusKCWQCTICnbkT1iwoD5qtQaFgxPqs96bd2DU4JwT8ihpC1sZqf7A04JjtszJAt+7xxe3Zq/NnfCUfzDk3Fjzm3kUPa6FwLbTrGE22a/bdgbgMSAg/XpMNI3ZVM0gsHE0xL78BwpL1wmvFep4oN3NekXQ5nd4WEBQtxrTl52ztmYISSI+GcqDFBocOdS7LoWwDvN1Fe1ICWn31A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XJTV1ggYB/WK4hcYeB+vyW2FGjXnNh+160oOcelNLI0=;
- b=WlC2bqEiu64HYG20j+61eO5/Rhxjyl5jrh9eM9vMX1j1Y9e9XmsqJR8RIo+1z6TgBR/a23o8Et7lhSEHnFSCm7OjggZcW2mjGi0ScjbYLMz8mj0Fj4VktOwdayW9H6C26o9hakktVzPl0+/gBmnm/4bFSEYqWrKiW2P1RHcgFs6N06egcmraMvuL+7d10dt3FHgbrWu7zaK7O4828y2U4qP+6v0qGv+cdXBxJ/UzZ+734KgnF9LOx7Ad9LpMaBCyrD/xBM5MX3xBwzJoYpwvQ/KTFmxhcPdFZkRwOjxaMgyKGTUwZ4mRtM/mvpaO+qzCLtpwleDNVFfMm/6Zdh4JqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XJTV1ggYB/WK4hcYeB+vyW2FGjXnNh+160oOcelNLI0=;
- b=nmJcYIPUvjZYK307icQ2ZSvB6FCBmqDbW9vPNuBmsfyvVsQFgmeKs+Y1KAEgFyrKmTmgHSU0l9swp6mEGPFu8sFxFRUr1YdfiIoYM3cvbAIP6LJ5l3qUgTbsZFzDpFC/6uGBkxcV1HiX3G8ziEK3OF9Xm6r9iMV+4hWBDDmGECYTEQNftbUFRT5W3vCUoWex/7Z4xNL6ILHJ6RoYAxVBz3uggdinAO0livHTipIMTfm+Xhqj8KoTY4cIHd/1C8TlIpio6v3aOXgSSoJHHuDve7uV6FWV7oc2fkk836rnxh/Z0/3DURqSWpGz+DZu/5KOCswgq4Z3WndowlagsP8OTg==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM9PR04MB8273.eurprd04.prod.outlook.com (2603:10a6:20b:3e5::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.31; Tue, 10 Jun
- 2025 01:10:40 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
- 01:10:39 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Tanmay Shah <tanmay.shah@amd.com>, "andersson@kernel.org"
-	<andersson@kernel.org>, "mathieu.poirier@linaro.org"
-	<mathieu.poirier@linaro.org>
-CC: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] remoteproc: xlnx: allow single core use in split mode
-Thread-Topic: [PATCH] remoteproc: xlnx: allow single core use in split mode
-Thread-Index: AQHb2ZBVV1Xzcjo/kkemQE9g2IN9hrP7lO8w
-Date: Tue, 10 Jun 2025 01:10:39 +0000
-Message-ID:
- <PAXPR04MB8459348088DB7A4FF4253DDA886AA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20250609224612.2428151-1-tanmay.shah@amd.com>
-In-Reply-To: <20250609224612.2428151-1-tanmay.shah@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM9PR04MB8273:EE_
-x-ms-office365-filtering-correlation-id: d062a2dd-4269-4f40-663c-08dda7bb9d33
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?FM/k/27o3hlxTX02L71NVxsoCZOeckEEbTHdDpyEs8uOPbgTcsid2giXypHZ?=
- =?us-ascii?Q?QnMiyxNnzcYf7dzslujEF+gf4U3aSrJaf0VgJSkhIWi+tIXjO3mx0cbpbyvR?=
- =?us-ascii?Q?cgW4HWWaICpg1rCB0YDEWFaHRhNl8tTgyro3Qtmom+0cDqY4/Vrb01BOsAWf?=
- =?us-ascii?Q?LtT3XMD8o+2MjSxyKA6LS3qe06F3+9mzGTzrYQ9CPjFr6pUR6gFRRZ9GtcB4?=
- =?us-ascii?Q?98s1cSQbTIEF4zkyP/ee+DFl5umxVaOC1LiGvMk14pQzn9WgOgEmEdVAbke7?=
- =?us-ascii?Q?1Jzz2kAeG665sbV7ikkHyc0g6IjF+Jp/TEiV9Q2NwjuNxDlK8LEgBOZTk4UP?=
- =?us-ascii?Q?SajaOMqzOEEZgkONdN72kWwRqHYfddRPez8iBF5Sn2ygXG1LghawSFZHMEZN?=
- =?us-ascii?Q?stosKDJAxmCrDoF0mr+QOw60pOTO2het/Cp/Rg2oJ1ZL6MJFaQELr1lSi6GP?=
- =?us-ascii?Q?2M1MGhXJdr0w7lbqXADoMUQLlvtynpVnEYbdQDX2oGihwaTb2VDdWwazwDhE?=
- =?us-ascii?Q?3irreTY55FhK4avnNakpehEnopMCNb3jVy3pmDtSBQfcBGMGA0G9rwKwuwDw?=
- =?us-ascii?Q?2YIHnRWL3EJyvmvP2TyZGdtQj6KCZGL1GMmXLjfGSG7sOt1U3htnT5qBCfMl?=
- =?us-ascii?Q?uAHnrhro4tzgrCoSOahJ2aIgqHmQoZDSQd0ocU87++sOKg53LS4PFv2WOBTQ?=
- =?us-ascii?Q?vRx5sH8EvhIwUPlCOnjX97KxhCmdVJiNJiBzbIZBgWAl8Etui+h9jhh++B02?=
- =?us-ascii?Q?4GldrnRWl61vGRxpnhWMU7eywA3k8v82T6RVB01yV55mEGgp/2leMiUoHO0Y?=
- =?us-ascii?Q?4X2911sguMl8cbCT3Va2fMz/v+SYS6mro2uPd5XtDR1sM6oN3VfuQqx6zIFl?=
- =?us-ascii?Q?phILhQHIA7HzoBQ1Iv+ObcjXbJUyZSJMdb3tFxWSX7ybIDdO5/prvtnOwog4?=
- =?us-ascii?Q?NCGgl4xH7N0q+9S/UlJiZKiX1/NEm6GP4J3VQUjms5lTpYJHyFkQTMhnPU3n?=
- =?us-ascii?Q?OSJ9TDkNWqBuYIYk9kF41Xa5tzXloymXKQlqj8xPmBzIUrceVRj+DuHGMcMn?=
- =?us-ascii?Q?rFD9RLIlC7jEM+WI1mwlJch6bN82p0SC4edSgk9SSO8+B8kRG1/ZuNCt7Ml9?=
- =?us-ascii?Q?jsbLyUFB0Da8MshBaoI+i/iUXxOmCMYsiYYDpRn7TajV62Ah7BjnkbpRrW43?=
- =?us-ascii?Q?0Y5pCj5DO5T+vEUTCvC0fU/fdhOdjaKs6PE8hWrzqxTfoI0UG9/Rl+YpNApJ?=
- =?us-ascii?Q?jwfhoZxhCHcT1WMmwHnYo8jno0SjseZulGkvW84akad96svJMDx+CiT3wgjj?=
- =?us-ascii?Q?T73jaQl6X3Knyv04VVK87KDAC0l3BB/oCgPUTgrHw3ZCApf5M5CsITy9IPhc?=
- =?us-ascii?Q?/QR3LAUrU9Rcu/WcWFoNWnTQ6kgPvVbe7yA8FuhLMTC407PsfDEDlFRMl2tB?=
- =?us-ascii?Q?nvG55k+ryZirnLkM//EmOyX8/SgtsKn3dacmrQPjhyMSJfaX8MKvWQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?jUGW0xGqtWRP3n6N3UJo+wk29YFjSSrDT7LqzQShJRO4L30PE9kJuaC9APkO?=
- =?us-ascii?Q?vZ2OfnIjdYs3Ysz9wcG7/xcm/jdeg0jGshqAdb6dW3wFO7L32y4QQ7WJ+Vhm?=
- =?us-ascii?Q?YSejDSHrSNIAiItt4iFvnWrjvlzPuKI9GNQAr4McNDPlrtdYxLsB6lF5ICpp?=
- =?us-ascii?Q?1jvTg39vHx7tgFcWaf4GEM/gLsw0pgPuZIxZONFeK/x5L6MiUJEFKNWdRaFD?=
- =?us-ascii?Q?LSiGPql93R0m/W4PlhY5jAN0q7mGfr7G6MgE3z9Re6X4tDGvefKZhYMqIWCg?=
- =?us-ascii?Q?Yu6nXSJqP3fnuScAQRxw981Qx7ukaB/+TTxmV78uIgSHEykfykgS0r0D3e6n?=
- =?us-ascii?Q?QDNjLxTh62KoBohH7c3dBLtYXvNBLdrljVSwEcfKGutCpUQW4l6kZRj53HbW?=
- =?us-ascii?Q?Xu4OZ5uTjZOSkMpLipU0EISK45J07UgqtU5abqbytAAjRnkVUMIDCkyNpidU?=
- =?us-ascii?Q?reHshiamHZ/6AvxSVbcvYRd9lIJQr+8PnlnmLk9TTnzBZHvtPwYdtHA8EadS?=
- =?us-ascii?Q?OdhKW/bmWC13+msghdev8JLcKhh4yY3aLNxMAvBmFv5/vdVoFawcuAF5C6JK?=
- =?us-ascii?Q?K0XGu/NvIk8gxfbb02WMsuo2gXjVBuRWMocrMHrAizqIOspc1juNwXqdTHm7?=
- =?us-ascii?Q?pLmQt+F8i3wy2I65viAUhzkgVQCrBknT66/TcM8nHyflMPa6vgVN4oTMcMhb?=
- =?us-ascii?Q?AZePJhsA0By1ymAstM2AdCk7Pp3apveEiJeIN0mTsLAGWmi8dWaM7BaFU5Yo?=
- =?us-ascii?Q?X/hQLisKeYX3+BDJIq68VX1thsxjkg6UEdXsjyHkoKyHfVlFbO8lXuNsBeM1?=
- =?us-ascii?Q?MsxcGB5rA9+tMpAeqrI58yRi0wZL4wMDxpNN12ubmQ6e4vmVwVywWKB5jNrj?=
- =?us-ascii?Q?O/ihFj2/5WSuWV2OHGno2/iqZ/LF6EmrvqX0GZoL8+qcZ8Aze7dHIRcnMU8L?=
- =?us-ascii?Q?DQ9pSC4+l/XptgLv1O7s9Ve8KYIfkLoXF6OlW8+Bbcq44sIedcCqWTuUx2lg?=
- =?us-ascii?Q?7An6GWtFM0BNHa6CPyUDSFkE3gnMrOZo/V9D98zeTb9JTgIcLfk2FOYnLzpv?=
- =?us-ascii?Q?FcsQds0HDZSoxYWS2DahMe+bgjnlPFQKdT+EhK12Zx1SMTvmDheG46EmhA6e?=
- =?us-ascii?Q?LxyJ87hYuW0MAHNpISSxqpoECnWPaAzXqSu5+nGGhQLUI0ZgjB9fq9SmoRYV?=
- =?us-ascii?Q?3+qPwZKa3b2p99I5+mxzGhwX1KieIRekFNvlC0wOvyDvlJ/Rs6vq77OdIsjz?=
- =?us-ascii?Q?XjCvK2LTUwKvtgKDFVCcZJdNFFjPxPjv/GlyfZ/PO8MiAVGtpSt8Q6p107iR?=
- =?us-ascii?Q?XVaDYLkADw6gGKWNT0hZjTMa8QWQuTLTJ/ne/mBS/a096hHoEg1XlGFMF2y6?=
- =?us-ascii?Q?RhL4HE47zX72kl9qBTuAB8GwG5pCxeK5RANgzcflBiPgywaQdtqBACn+J+QO?=
- =?us-ascii?Q?1keJM/5YNGnMUYLalj1f/ENmOeJSF/AURI5BTVYPlb6zkomW6AP/JwHrHCyl?=
- =?us-ascii?Q?RjSLdYOk9698aMtv2eNSkY+GNNDZdz848UFK78wo/Soz1Crz51HnN/9v5lFY?=
- =?us-ascii?Q?R0zC1UnUOZnh+YstA4A=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="Qzd2F1kv"
+ARC-Seal: i=1; a=rsa-sha256; t=1749526988; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AyE2uKouUp9jGovrP/v4olUh5qGOQLFEOHst/d1DgaroTKMCz9tsVEm9xS8SvEjRhL4buv1Z8JIKyZinoaL66kuf/1MlycTkZYQ9nErlC44GVtNACqUih0E/O6WOhkh542tU68ScOfHuffRVSwyzE3ww5NyCZ0KVinuQDjsg9ms=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749526988; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=u3oAQahbNx1vgahx0ICj2xmfgptN5IERWf/QVVGuikI=; 
+	b=AAyJ/Q0Mf9YjG05m0yJAz0qxGZHCJhal5NLFI4zVOOE3pFqyF5eGF+MFxR3S4Jlicu4cckWhYs2uoh0Wvi5aAtxpVszHK2qfzxX2LW0XsV/kdhjMz4q6BFMLY19N1Mu4GsAUazoK7Kz+bulH/5hFB8gb8nCNmXIXR7pmTRfzgkM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749526988;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=u3oAQahbNx1vgahx0ICj2xmfgptN5IERWf/QVVGuikI=;
+	b=Qzd2F1kvmYbIvFosIvjXsyRltp0I1Aw6m7kVCql0t8GWsO54VhFnPcjN4bKDBSzZ
+	p2/7KEcgbB0VuAlkeMk6kg8OSOwsb/LHDsIcLLcV4DHYbZX6G1hN67UlGJAjcUKcYwY
+	L0cutUiYMlQZdmDUUmSBNy5SfOIiyA3F0RfPj5UQ=
+Received: by mx.zohomail.com with SMTPS id 1749526986447678.170425674402;
+	Mon, 9 Jun 2025 20:43:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d062a2dd-4269-4f40-663c-08dda7bb9d33
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2025 01:10:39.4157
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1hQdIUHe2s0LREmKI018o1IuQ8AbkrrBddDcA7/bljTh0B3+flkMOXTgolORejbBd996xPxcrJINwcwZF+qAxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8273
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Peng Fan" <peng.fan@oss.nxp.com>
+In-Reply-To: <20250609083803.GA13113@nxa18884-linux>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, 
+	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
+	"Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Chen Wang" <unicorn_wang@outlook.com>, 
+	"Inochi Amaoto" <inochiama@gmail.com>, 
+	"Philipp Zabel" <p.zabel@pengutronix.de>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, <linux-remoteproc@vger.kernel.org>, 
+	<devicetree@vger.kernel.org>, <sophgo@lists.linux.dev>, 
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 2/2] drivers: remoteproc: Add C906L controller for Sophgo
+	 CV1800B SoC
+Message-ID: <184791843e98e0a0.ed7541b3db6a6586.57e5fabaf9bf62ee@Jude-Air.local>
+Date: Tue, 10 Jun 2025 03:42:57 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-> Subject: [PATCH] remoteproc: xlnx: allow single core use in split mode
+Hi Peng,
+Thanks for your review.
+
+On 09/06/2025 16:43, Peng Fan wrote:
+> On Sun, Jun 08, 2025 at 10:37:40AM +0800, Junhui Liu wrote:
+>>Add initial support for the C906L remote processor found in the Sophgo
+>>CV1800B SoC. The C906L is an asymmetric core typically used to run an
+>>RTOS. This driver enables firmware loading and start/stop control of the
+>>C906L processor via the remoteproc framework.
+>>
+>>The C906L and the main application processor can communicate through
+>>mailboxes [1]. Support for mailbox-based functionality will be added in
+>>a separate patch.
+>>
+>>Link: https://lore.kernel.org/linux-riscv/20250520-cv18xx-mbox-v4-0-fd4f1c=
+676d6e@pigmoral.tech/ [1]
+>>Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>>---
+>> drivers/remoteproc/Kconfig                |   9 ++
+>> drivers/remoteproc/Makefile               |   1 +
+>> drivers/remoteproc/sophgo_cv1800b_c906l.c | 233 +++++++++++++++++++++++++=
++++++
+>> 3 files changed, 243 insertions(+)
+>>
+>>diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>index 83962a114dc9fdb3260e6e922602f2da53106265..7b09a8f00332605ee528ff7c21=
+c31091c10c2bf5 100644
+>>--- a/drivers/remoteproc/Kconfig
+>>+++ b/drivers/remoteproc/Kconfig
+>>@@ -299,6 +299,15 @@ config RCAR_REMOTEPROC
+>> 	  This can be either built-in or a loadable module.
+>> 	  If compiled as module (M), the module name is rcar_rproc.
+>>=20
+>>+config SOPHGO_CV1800B_C906L
+>>+	tristate "Sophgo CV1800B C906L remoteproc support"
+>>+	depends on ARCH_SOPHGO || COMPILE_TEST
+>>+	help
+>>+	  Say y here to support CV1800B C906L remote processor via the remote
+>>+	  processor framework.
+>>+
+>>+	  It's safe to say N here.
+>>+
+>> config ST_REMOTEPROC
+>> 	tristate "ST remoteproc support"
+>> 	depends on ARCH_STI
+>>diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>index 1c7598b8475d6057a3e044b41e3515103b7aa9f1..3c1e9387491cedc9dda8219f1e=
+9130a84538156f 100644
+>>--- a/drivers/remoteproc/Makefile
+>>+++ b/drivers/remoteproc/Makefile
+>>@@ -33,6 +33,7 @@ obj-$(CONFIG_QCOM_WCNSS_PIL)		+=3D qcom_wcnss_pil.o
+>> qcom_wcnss_pil-y			+=3D qcom_wcnss.o
+>> qcom_wcnss_pil-y			+=3D qcom_wcnss_iris.o
+>> obj-$(CONFIG_RCAR_REMOTEPROC)		+=3D rcar_rproc.o
+>>+obj-$(CONFIG_SOPHGO_CV1800B_C906L)	+=3D sophgo_cv1800b_c906l.o
+>> obj-$(CONFIG_ST_REMOTEPROC)		+=3D st_remoteproc.o
+>> obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+=3D st_slim_rproc.o
+>> obj-$(CONFIG_STM32_RPROC)		+=3D stm32_rproc.o
+>>diff --git a/drivers/remoteproc/sophgo_cv1800b_c906l.c b/drivers/remotepro=
+c/sophgo_cv1800b_c906l.c
+>>new file mode 100644
+>>index 0000000000000000000000000000000000000000..f3c8d8fd4f796d0cf64f8ab0dd=
+797e017b8e8be7
+>>--- /dev/null
+>>+++ b/drivers/remoteproc/sophgo_cv1800b_c906l.c
+>>@@ -0,0 +1,233 @@
+>>+// SPDX-License-Identifier: GPL-2.0-or-later
+>>+/*
+>>+ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
+>>+ */
+>>+
+>>+#include <linux/mfd/syscon.h>
+>>+#include <linux/module.h>
+>>+#include <linux/of_device.h>
+>>+#include <linux/of_reserved_mem.h>
+>>+#include <linux/platform_device.h>
+>>+#include <linux/remoteproc.h>
+>>+#include <linux/reset.h>
+>>+#include <linux/regmap.h>
+>>+
+>>+#include "remoteproc_internal.h"
+>>+
+>>+#define CV1800B_SYS_C906L_CTRL_REG	0x04
+>>+#define   CV1800B_SYS_C906L_CTRL_EN	BIT(13)
 >=20
-> It's a valid use case to have only one core enabled in cluster in split
-> mode. Remove exact core count expecatation from the driver.
+> Align the format.
 >=20
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 1af89782e116..f314dd5bdb26 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -1339,9 +1339,6 @@ static int zynqmp_r5_cluster_init(struct
-> zynqmp_r5_cluster *cluster)
->  	if (core_count =3D=3D 0) {
-
-"if ((count =3D=3D 0 || (count > 2))"
-should be used to here.=20
-
->  		dev_err(dev, "Invalid number of r5 cores %d",
-> core_count);
->  		return -EINVAL;
-> -	} else if (cluster_mode =3D=3D SPLIT_MODE && core_count !=3D 2) {
-> -		dev_err(dev, "Invalid number of r5 cores for split
-> mode\n");
-> -		return -EINVAL;
-
-
-Then it is safe to drop this code piece, otherwise if hacked devicetree
-being used with 3 r5 cores included, things will go wrong.
-
-Regards,
-Peng
->  	} else if (cluster_mode =3D=3D LOCKSTEP_MODE && core_count =3D=3D
-> 2) {
->  		dev_warn(dev, "Only r5 core0 will be used\n");
->  		core_count =3D 1;
->=20
-> base-commit: dc8417021bcd01914a416bf8bab811a6c5e7d99a
-> --
-> 2.34.1
+> '#include <linux/bits.h>' should be added for BIT
 >=20
 
+Will do in v2.
+
+>>+
+>>+#define CV1800B_SYS_C906L_BOOTADDR_REG	0x20
+>>+
+>>+/**
+>>+ * struct cv1800b_c906l - C906L remoteproc structure
+>>+ * @dev: private pointer to the device
+>>+ * @reset: reset control handle
+>>+ * @rproc: the remote processor handle
+>>+ * @syscon: regmap for accessing security system registers
+>>+ */
+>>+struct cv1800b_c906l {
+>>+	struct device *dev;
+>>+	struct reset_control *reset;
+>>+	struct rproc *rproc;
+>>+	struct regmap *syscon;
+>>+};
+>>+
+>>+static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
+>>+				   struct rproc_mem_entry *mem)
+>>+{
+>>+	void *va;
+>>+
+>>+	va =3D ioremap_wc(mem->dma, mem->len);
+>>+	if (IS_ERR_OR_NULL(va))
+>=20
+> Use "if (!va)"?
+
+Will do in v2.
+
+>=20
+>>+		return -ENOMEM;
+>>+
+>>+	/* Update memory entry va */
+>>+	mem->va =3D va;
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+static int cv1800b_c906l_mem_release(struct rproc *rproc,
+>>+				     struct rproc_mem_entry *mem)
+>>+{
+>>+	iounmap(mem->va);
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+static int cv1800b_c906l_add_carveout(struct rproc *rproc)
+>>+{
+>>+	struct device *dev =3D rproc->dev.parent;
+>>+	struct device_node *np =3D dev->of_node;
+>>+	struct of_phandle_iterator it;
+>>+	struct rproc_mem_entry *mem;
+>>+	struct reserved_mem *rmem;
+>>+
+>>+	/* Register associated reserved memory regions */
+>>+	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+>>+	while (of_phandle_iterator_next(&it) =3D=3D 0) {
+>>+		rmem =3D of_reserved_mem_lookup(it.node);
+>>+		if (!rmem) {
+>>+			of_node_put(it.node);
+>>+			return -EINVAL;
+>>+		}
+>=20
+> Is there a need to handle vdev0buffer?
+
+I'll exclude it.
+
+>=20
+>>+
+>>+		mem =3D rproc_mem_entry_init(dev, NULL, (dma_addr_t)rmem->base,
+>>+					   rmem->size, rmem->base,
+>>+					   cv1800b_c906l_mem_alloc,
+>>+					   cv1800b_c906l_mem_release,
+>>+					   it.node->name);
+>>+
+>>+		if (!mem) {
+>>+			of_node_put(it.node);
+>>+			return -ENOMEM;
+>>+		}
+>>+
+>>+		rproc_add_carveout(rproc, mem);
+>>+	}
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+static int cv1800b_c906l_prepare(struct rproc *rproc)
+>>+{
+>>+	struct cv1800b_c906l *priv =3D rproc->priv;
+>>+	int ret;
+>>+
+>>+	ret =3D cv1800b_c906l_add_carveout(rproc);
+>>+	if (ret)
+>>+		return ret;
+>>+
+>>+	/*
+>>+	 * This control bit must be set to enable the C906L remote processor.
+>>+	 * Note that once the remote processor is running, merely clearing
+>>+	 * this bit will not stop its execution.
+>>+	 */
+>>+	return regmap_update_bits(priv->syscon, CV1800B_SYS_C906L_CTRL_REG,
+>>+				  CV1800B_SYS_C906L_CTRL_EN,
+>>+				  CV1800B_SYS_C906L_CTRL_EN);
+>>+}
+>>+
+>>+static int cv1800b_c906l_start(struct rproc *rproc)
+>>+{
+>>+	struct cv1800b_c906l *priv =3D rproc->priv;
+>>+	u32 bootaddr[2];
+>>+	int ret;
+>>+
+>>+	bootaddr[0] =3D lower_32_bits(rproc->bootaddr);
+>>+	bootaddr[1] =3D upper_32_bits(rproc->bootaddr);
+>>+
+>>+	ret =3D regmap_bulk_write(priv->syscon, CV1800B_SYS_C906L_BOOTADDR_REG,
+>>+				bootaddr, ARRAY_SIZE(bootaddr));
+>>+	if (ret)
+>>+		return ret;
+>>+
+>>+	return reset_control_deassert(priv->reset);
+>>+}
+>>+
+>>+static int cv1800b_c906l_stop(struct rproc *rproc)
+>>+{
+>>+	struct cv1800b_c906l *priv =3D rproc->priv;
+>>+
+>>+	return reset_control_assert(priv->reset);
+>>+}
+>>+
+>>+static int cv1800b_c906l_parse_fw(struct rproc *rproc,
+>>+				  const struct firmware *fw)
+>>+{
+>>+	int ret;
+>>+
+>>+	ret =3D rproc_elf_load_rsc_table(rproc, fw);
+>>+	if (ret =3D=3D -EINVAL) {
+>>+		dev_info(&rproc->dev, "No resource table in elf\n");
+>>+		ret =3D 0;
+>>+	}
+>>+
+>>+	return ret;
+>>+}
+>>+
+>>+static const struct rproc_ops cv1800b_c906l_ops =3D {
+>>+	.prepare =3D cv1800b_c906l_prepare,
+>>+	.start =3D cv1800b_c906l_start,
+>>+	.stop =3D cv1800b_c906l_stop,
+>>+	.load =3D rproc_elf_load_segments,
+>>+	.parse_fw =3D cv1800b_c906l_parse_fw,
+>>+	.find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
+>>+	.sanity_check =3D rproc_elf_sanity_check,
+>>+	.get_boot_addr =3D rproc_elf_get_boot_addr,
+>=20
+> Seems your setup does not support attach mode, so better add
+> attach hook and return -ENOTSUPP?
+
+I checked the remoteproc framework code and found that the attach
+function will only be called when 'rproc->state =3D=3D RPROC_DETACHED', and
+it seems that rproc->state will not be set to RPROC_DETACHED unless I do
+so explicitly in the driver or an implemented detach function is called,
+neither of which happens in this driver.
+
+Given this, do we still need to add an attach hook even though it will
+not be called in practice?
+
+>=20
+>>+};
+>>+
+>>+static int cv1800b_c906l_probe(struct platform_device *pdev)
+>>+{
+>>+	struct device *dev =3D &pdev->dev;
+>>+	struct device_node *np =3D dev->of_node;
+>>+	struct cv1800b_c906l *priv;
+>>+	struct rproc *rproc;
+>>+	const char *fw_name;
+>>+	int ret;
+>>+
+>>+	ret =3D rproc_of_parse_firmware(dev, 0, &fw_name);
+>>+	if (ret)
+>>+		return dev_err_probe(dev, ret, "No firmware filename given\n");
+>>+
+>>+	rproc =3D devm_rproc_alloc(dev, dev_name(dev), &cv1800b_c906l_ops,
+>>+				 fw_name, sizeof(*priv));
+>>+	if (!rproc)
+>>+		return dev_err_probe(dev, -ENOMEM,
+>>+				     "unable to allocate remoteproc\n");
+>>+
+>>+	rproc->has_iommu =3D false;
+>>+
+>>+	priv =3D rproc->priv;
+>>+	priv->dev =3D dev;
+>>+	priv->rproc =3D rproc;
+>>+
+>>+	priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "sophgo,syscon");
+>>+	if (IS_ERR(priv->syscon))
+>>+		return PTR_ERR(priv->syscon);
+>>+
+>>+	priv->reset =3D devm_reset_control_get_exclusive(dev, NULL);
+>>+	if (IS_ERR(priv->reset))
+>>+		return dev_err_probe(dev, PTR_ERR(priv->reset),
+>>+				     "failed to get reset control handle\n");
+>>+
+>>+	platform_set_drvdata(pdev, rproc);
+>>+
+>>+	ret =3D devm_rproc_add(dev, rproc);
+>>+	if (ret)
+>>+		return dev_err_probe(dev, ret, "rproc_add failed\n");
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+static void cv1800b_c906l_remove(struct platform_device *pdev)
+>>+{
+>>+	struct rproc *rproc =3D platform_get_drvdata(pdev);
+>>+
+>>+	if (atomic_read(&rproc->power) > 0)
+>>+		rproc_shutdown(rproc);
+>=20
+> I think the remoteproc framework should block remove to be executed
+> if 'power > 0'.  If not, the framework should be enhanced.
+
+Okay. I realized that rproc_shutdown() will be called in rproc_del(), I
+will remove rproc_shutdown() and only keep rproc_del()
+
+>=20
+> Regards,
+> Peng
+
+--=20
+Best regards,
+Junhui Liu
