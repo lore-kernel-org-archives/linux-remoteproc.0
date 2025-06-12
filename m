@@ -1,75 +1,75 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA831C8631
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164211E5711
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749695990; cv=none; b=M0i8ZZ1SENROI4BN2GkfJ1Jb7CfbmXcMSkSP7wEDmIBOS5q9FOHPc0Oz0Z5yzQ0feBJZ0QeBbVo4IMc8PHcud2zjGuQ0HWZmeUX3Rv4d11lp9qElZKoqrsIphZBnttGse85CebZoKtV68J/ZTwjidoYMNjPrG1/FwDoQaO8/GMY=
+	t=1749695995; cv=none; b=jAF1P1CfbcFXIlkpvAqgaJcOIOootRKTg4huUkeRBfGr8gIMgyBnFPqHCH4H9Vf2AdOpIXBhIrdAZ94JUR2HLYL9fAXYbcZ3DQ5WsYkWY8gmF78lEFdSGwJHn/f28MnNIjFeyx4b3qFeLcQpxJUXQAoy7AD6gHkyujX5MEP6xcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749695990; c=relaxed/simple;
-	bh=dByEkHGajdUcbKdTNOwI7Vs1IWsLJrj3edmNfpIA0Zw=;
+	s=arc-20240116; t=1749695995; c=relaxed/simple;
+	bh=Z5wSDmQoCBD3WcBmNgudpYHLdgNfVwXXM2z01IliBJM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K1NPU0yLvrLekrQVYkuiy0B0S9LwCIKyyKQTaAjmSBluyC7U9U8crv60zMhDBSFBn7UNPDdFzUQoYj7u3mIuaoDgLvAZXZB72RzR7I5b2z2Ve8QkelZfFqeGOQ9wCWBAyMvk3vHdWzm4cX7Wvc3kCFAIsHQAlsIvLhdx13sgrXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e8l51T8n; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=eqFRuUmMy2F336qffWbD7+mhxL8b3CNvemNiKaEnBLuHQuhmcGmx6A5Ei3LfSG6MMIgdE/vue94fmlbst/4kk+98I8iZCj+BWsZ0YVBiv9zSkeOKdyuVLyxyigGqDiTQhLU7d0fBqoQQmpt9dEripTW+8Nfms/zWL/D7mzxfuhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BuE3CMUZ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e8l51T8n"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BM9eik002515
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:48 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BuE3CMUZ"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55BK4tw1029720
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G9QEMYi5BpWOFmaeRanYjIMY/vMap1wBOvtfthOtg+k=; b=e8l51T8nFVUgDwyI
-	VbPY4RcdyiCYhOk3qeyg3c0GebVWhJ1IsRuXHCktqtsw9a6tJKkWR7M6mM/AgZJs
-	IgiAB5HJgenJFqPYzWOQw6+IADSh+qtn/u02dI2+gZxEN4zl+FwA7Tw0xImrFN+H
-	NkI4DfvV+9liMAzX1ehGukLstZ9UflIoW9s6dv9nU0e8w4sIxi8H9VjeSy5SackM
-	iQu0iuyLSrYzYuKtPIBlkU228yWeUs2JzV1iEjuK9zItiZ+MQhzBubjikGbW3uop
-	PIvdTDGXT4gjZtS/z7kQgdJx6knGuj4BYgi5VOzAWz0C0uMTV7Q2BkoSRM8JQ2lX
-	5vcTDg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 477jbpgg69-1
+	rYh63pIwgN1Qe38nJQ4bBDn6pEshNWErTOkiIb/hpC4=; b=BuE3CMUZZbvG+IGz
+	CNI7zggivktsgmtC/SWQFLskruIpNXtTozS/RHxnBtI7iUB7n0G8OxgoBQ7H+ypp
+	kYR29MuwUgAuNKvf4zs4w68+yd9jkAOXdig01IqnSFcybfY+HLqMKZv/eoPoHYDu
+	JcwJEXOORtsjXmAAGXTLV0/KhHL3lv8KmBe1SihC8ln57UC0G4xZj73NqRey//GB
+	wUQOsW8P7nLMafjYi/v4kZxARYFWJ2bl4CohCcXFRgwfpqktdO0heW0GSqU+rF6i
+	jDXz7KPKKZthrTeOq48dJxu+7CP/SmgeaEJVZWj8e+Ac7vLh3fe9NLn9fGhK6lIK
+	mPf5QQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d1270ns-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:48 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7462aff55bfso376573b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Jun 2025 19:39:47 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 02:39:53 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2ede156ec4so466435a12.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Jun 2025 19:39:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749695987; x=1750300787;
+        d=1e100.net; s=20230601; t=1749695991; x=1750300791;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G9QEMYi5BpWOFmaeRanYjIMY/vMap1wBOvtfthOtg+k=;
-        b=dyB6HxHNpuO+KSmP9ct7le5qafwFx471qPYyCHRn/9GGonszgAAD3cvjqGJ7GtmA1N
-         AmT2Bb7WBLZxxRikbEP/cTSB9LluMDU7RBglEZWdhmdU8xkTCX8f2qLjVdDpJGnOGoAz
-         9sbylaiQfpQG6D4nK/490e70MGQJG5sTPGy40Cpp/qOEZh5ZdrC2F/6pX8cVdjdP2cQ6
-         f5+cFwJ18kB0R60J2cGQ5OVY64OoircQpoexkkipgNpENwQhX3Ay1tAJ44vYRWl5YoJ9
-         3oo1A+JgM+5cTLBdeQKlXxdWdMTMKdZbkf5a6tXB5VWx0mtauaRUNrLB1Q2qVAgPR5Vz
-         UL0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5n7DVX6W4jtJClh7FxH/1VX+idgkmdPGxmPP2/407lAHd7+g2KAQlHO+bHxFP5mAW7J7HFrrFYi1elTNyC4/@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh6lz/JAVqIDyc19CwVm6KDXUxr3/NeLyxqlnBwpu4HrvVBjdx
-	Qa846O2tpa939lXg/kYqjh3ZvI18t5HLjEJjZmD8a4JYjg+jGR1P2NhckrdhEM0DibngCkZTc0j
-	ZLGfl6aeUnvVfYwVqDqin1b63fvvljtXopcwoGeT/sjFM1g4rhGLzBmOTaYEKkbFu1p0VYjah
-X-Gm-Gg: ASbGncuFlpnK8mLlcmf4VVIVmewmVe6FblQFr9pXfgbAqhsi26JxR2bZm8BsGm6TG9n
-	xkD7zGeAPtRDhX1zslcN9G2q/5fCTz2tBRxjNjpF5cVV9LcLklwheYUyy3xEWng0hnOzT7vkdbs
-	ziKZN4lOroSJ8JHJcCxIYl4lD6jRSGLBSOLTDaJwr6EISAROIWzSnbbEUPCJV0LQFSkR0swKKnR
-	JEYXjiio/lvn3f6w487XPodqKLV4otQfrwSDyS0W6b1SUm4KpB6cf7ekfI8k2KyTh+Uu8Cxghig
-	z9+SC1lPGokm2EDOxI9uQ79dgiYsFKhLitc42CXcQWmuyuiF3q6TOZD9pSq+T0do1BmkeGMB+g1
-	fu54EFKWCXY46IgyH
-X-Received: by 2002:a05:6a00:1a89:b0:736:4e67:d631 with SMTP id d2e1a72fcca58-7486cde2e55mr7371999b3a.23.1749695986871;
-        Wed, 11 Jun 2025 19:39:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEIORMTgQpFNyATMstarik3rAFLud2CcNi+Ex+oVPhUl83e8l/uNxKyxbUfmpT4TIbH6vbOg==
-X-Received: by 2002:a05:6a00:1a89:b0:736:4e67:d631 with SMTP id d2e1a72fcca58-7486cde2e55mr7371960b3a.23.1749695986351;
-        Wed, 11 Jun 2025 19:39:46 -0700 (PDT)
+        bh=rYh63pIwgN1Qe38nJQ4bBDn6pEshNWErTOkiIb/hpC4=;
+        b=tHD/zo3stm/moBFup5mxdFVQxH1GZE7ByYoMOGxHMTkfl3+94qEsps37gY2o5OfUQC
+         l0LWepSK4dIaxYnBFwHMpD9P3GFFADypk0mkDpeiMr4Iat6z2gGq2Q7hvzFcXTSJAWzy
+         AwT6gaowe3w2l82nVb110IvKVUqFdnCD0dz18O8Ff4OlVKfTe5eNDYu2c/u+wRxEp85n
+         maIUBA2youbCBr6dEbmymF7CmfNYxm5rLkKvWzfguAOSNLjfwQeOxZGKuF7vhJUo1798
+         T3p8AVGeQ8B9/0eV0q5NrXVljMrxMBZMUGpwiFhhTzJF83YPG9Q2U77c4eY5ci74dWLn
+         oBpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkGr3qLe7y20nti6lfWvHX1wL0+FG2AhJ11VF5Rq77ewSvuNuxv7Uxcf8iAZEGXh9/BelqQb1IsDwKyqO2FuP1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhwnaifvP/klmv9nKWbnR/xTvkQ7uxTqSzlWl4R5b9U356Cwga
+	mUNhWb0GKbik5AZHQe3VQ1VrWglPer5vpKNLIDNUSf+b8Va5MvIE7lCTukZvtp7Nu8XihQ3VkAB
+	xJBn66VJb37HLoutUcf2NBaoq3DEoiy1omSCzCpQ0RZ5sE548mHnyHaTkauJxr7dDMnYBwGCm
+X-Gm-Gg: ASbGncu2sMNpCOh5WqzW4mG/xo7chGVjMIxyBpFHUoXcmjfDqRCrYR1c8gs6gbfzFjC
+	czVxx5AruWu60znyPatWfQJqc6innxG9j/G0Jz7WGkfBfCpMpv8CaQ1EGt7gykxLlm0DhZQNMKK
+	WhuOZZpn3xCaBIy59RwPy+Lx8SY+9GIzCv/s1JwGHWIGYMAekokdyuoMGyJTI2lF3AKpmukGH2D
+	tN12pT6X44OHWTjWgbd8+X3gbm3QE7s9biN/JsqYoeVhlApO9IeKddDy6i0iEUaLfTkWAfQxn9l
+	XdJLwfAfzUas24lA8Tv12VkN4YDG/fdO3kHYmnl4nBQlBSpsC/iLf+9/H/P6c1Wn/K8xd1ubbGb
+	UJcTzHefrbOf1kLJ3
+X-Received: by 2002:a05:6a21:3944:b0:21a:de8e:5cbb with SMTP id adf61e73a8af0-21f9786f977mr3588419637.25.1749695990919;
+        Wed, 11 Jun 2025 19:39:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXNaEP9bL3w2Ql6gpal9btVWdSF//oT5Sp3FvCTFrPrXXBjxhVGcRIf4j3FXfRSu/1/fs/tQ==
+X-Received: by 2002:a05:6a21:3944:b0:21a:de8e:5cbb with SMTP id adf61e73a8af0-21f9786f977mr3588364637.25.1749695990450;
+        Wed, 11 Jun 2025 19:39:50 -0700 (PDT)
 Received: from lijuang3-gv.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488087e640sm315835b3a.4.2025.06.11.19.39.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488087e640sm315835b3a.4.2025.06.11.19.39.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 19:39:46 -0700 (PDT)
+        Wed, 11 Jun 2025 19:39:50 -0700 (PDT)
 From: Lijuan Gao <lijuan.gao@oss.qualcomm.com>
-Date: Thu, 12 Jun 2025 10:39:32 +0800
-Subject: [PATCH 1/2] dt-bindings: remoteproc: qcom,sa8775p-pas: Correct the
- interrupt number
+Date: Thu, 12 Jun 2025 10:39:33 +0800
+Subject: [PATCH 2/2] arm64: dts: qcom: sa8775p: Correct the interrupt for
+ remoteproc
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250612-correct_interrupt_for_remoteproc-v1-1-490ee6d92a1b@oss.qualcomm.com>
+Message-Id: <20250612-correct_interrupt_for_remoteproc-v1-2-490ee6d92a1b@oss.qualcomm.com>
 References: <20250612-correct_interrupt_for_remoteproc-v1-0-490ee6d92a1b@oss.qualcomm.com>
 In-Reply-To: <20250612-correct_interrupt_for_remoteproc-v1-0-490ee6d92a1b@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -98,58 +98,104 @@ Cc: kernel@oss.qualcomm.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lijuan Gao <lijuan.gao@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749695977; l=1325;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749695977; l=3017;
  i=lijuan.gao@oss.qualcomm.com; s=20240827; h=from:subject:message-id;
- bh=dByEkHGajdUcbKdTNOwI7Vs1IWsLJrj3edmNfpIA0Zw=;
- b=UK4xSyEL0fKt0hzvsLd2wFW4f3kUfFykLTqXq4KX8ugUvR8LA7Na+wiN8Ff1CC3BPjItTcfB+
- 9KtzLL+aYzMDul8pifFbAhhalW6PqaT62dY8J9XNpv1AErwvXuGNdub
+ bh=Z5wSDmQoCBD3WcBmNgudpYHLdgNfVwXXM2z01IliBJM=;
+ b=szuvl+dx2J1Lnz4k7Ejj/lmOzre/XMgBjEQVK8QXryFdI2Bw9GQjvtroIRV2v6gmzbkLzMrMZ
+ MY64GcEmla2Az5LTlmhCFY7Aap0J4Nu56dEnjDPkZPphjcM00RqeJHY
 X-Developer-Key: i=lijuan.gao@oss.qualcomm.com; a=ed25519;
  pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
-X-Proofpoint-GUID: -wtTMugUg3fPThKcCUAalFSDuDJrwP72
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDAyMCBTYWx0ZWRfX0xBpn4OQ4d3S
- bbzHX8rBXIUi6Z9W6sQtQOny/A+bqIcnwmSe35v77T54SoCb04rI1G/P2jkMoYjPRz5ed/FG19t
- UORLcwpqvgZD4qVKAM/gWyVtVMCR75/V2Ex0F1gENJgLHR8zcIxOU+hUkLe5O1HlldRgXa5HZRH
- D3nbMmpONcI7S3Qt09wBBGSiASZO6R9paF8LdQQnIV8xTYKKY8Eq+PmnCLSg7YPrWBgDRP7tVQF
- UkT+AI/HaY3sSZQr4OlGl9NJm0wwlGN11BB06YRLbhAWEAGUvQTxi/kQu4IvXepkewCy3E9F2VG
- tH5T48il/DXngZTp4j8WEc81pJf3oJXSazBs6AW/F1yU+OoQNZ5lxUxKNJ0fDWaRCkFeeK5B60m
- K82eDD30Y1Dly3tLM/b6RPr4J3R1EooJpPKH7z0w7066eYLarKvnr04iH1A35IWhjkUbLJcV
-X-Proofpoint-ORIG-GUID: -wtTMugUg3fPThKcCUAalFSDuDJrwP72
-X-Authority-Analysis: v=2.4 cv=OLgn3TaB c=1 sm=1 tr=0 ts=684a3df4 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=hqTgazAR9qFGF6WK--cA:9
- a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: 11gG4_Rbeh1RG-w-FXRs0USRKO17_VXk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDAyMCBTYWx0ZWRfXxkQGeYfoQQyV
+ 4ISTroV8Dq/2dC3UbQa10TQqMukZp/QOWAgPWLeEOLp76O5xO6uaUvr72v65MVELzyPrhgJSsHn
+ tQESM/X62XG0ejwZgY07yo7yRTyTEqh5lj2P11D3i9knV3Yu+fzYn1ccaq+OcIcXblb/9/pI5On
+ 0e/VqrgJ0ISza/PGiltYYB468TxCip71yN6tvheeoZZ2dhTlyJXxDHD6fEtTOurIn5/udG/yHXS
+ I+swuMK14m6oOGWqMSffpvdXSJR4XRbmZaV41tf+BzLMf+AslgT9Fs7+GBh5DwTJhGZoP6hrYao
+ nDMl0rJ599UyaZJ9pPoEbd0LTvBadEy5p8LZ0LpciqaKzUr5yTYIRhTn814/iqiAqP8e3TNSVca
+ ThwuwoNg+uKnIyxMWNEG2zePI21MORcNOJRvP1phwOLzVFjzcH42otteMsk33Dwna5FwbSZa
+X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=684a3df9 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=4RsagAfGKZGQ4IWNqzAA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: 11gG4_Rbeh1RG-w-FXRs0USRKO17_VXk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-12_02,2025-06-10_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 mlxlogscore=787 suspectscore=0 adultscore=0
- malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506120020
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=692 bulkscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506120020
 
-Correct the interrupt number of ready and handover in the DTS example.
+Fix the incorrect IRQ numbers for ready and handover on sa8775p.
+The correct values are as follows:
 
-Fixes: af5da7b0944c ("dt-bindings: remoteproc: qcom,sa8775p-pas: Document the SA8775p ADSP, CDSP and GPDSP")
+Fatal interrupt - 0
+Ready interrupt - 1
+Handover interrupt - 2
+Stop acknowledge interrupt - 3
+
+Fixes: df54dcb34ff2e ("arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP nodes")
 Signed-off-by: Lijuan Gao <lijuan.gao@oss.qualcomm.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-index a66007951d585b779a9de593851cf2317d3da79b..188a251940001b8535ee7005f1595f42f6ab9b34 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-@@ -144,8 +144,8 @@ examples:
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 45f536633f6449e6ce6bb0109b5446968921f684..f682a53e83e5be2899922f177837c21ea09096f8 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -5571,8 +5571,8 @@ remoteproc_gpdsp0: remoteproc@20c00000 {
  
-         interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-                               <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
--                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-                               <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-                               <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
-         interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
+ 			interrupts-extended = <&intc GIC_SPI 768 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_gpdsp0_in 0 0>,
+-					      <&smp2p_gpdsp0_in 2 0>,
+ 					      <&smp2p_gpdsp0_in 1 0>,
++					      <&smp2p_gpdsp0_in 2 0>,
+ 					      <&smp2p_gpdsp0_in 3 0>;
+ 			interrupt-names = "wdog", "fatal", "ready",
+ 					  "handover", "stop-ack";
+@@ -5614,8 +5614,8 @@ remoteproc_gpdsp1: remoteproc@21c00000 {
  
+ 			interrupts-extended = <&intc GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_gpdsp1_in 0 0>,
+-					      <&smp2p_gpdsp1_in 2 0>,
+ 					      <&smp2p_gpdsp1_in 1 0>,
++					      <&smp2p_gpdsp1_in 2 0>,
+ 					      <&smp2p_gpdsp1_in 3 0>;
+ 			interrupt-names = "wdog", "fatal", "ready",
+ 					  "handover", "stop-ack";
+@@ -5755,8 +5755,8 @@ remoteproc_cdsp0: remoteproc@26300000 {
+ 
+ 			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp0_in 0 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp0_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp0_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp0_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp0_in 3 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "wdog", "fatal", "ready",
+ 					  "handover", "stop-ack";
+@@ -5887,8 +5887,8 @@ remoteproc_cdsp1: remoteproc@2a300000 {
+ 
+ 			interrupts-extended = <&intc GIC_SPI 798 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp1_in 0 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_cdsp1_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp1_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_cdsp1_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_cdsp1_in 3 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "wdog", "fatal", "ready",
+ 					  "handover", "stop-ack";
+@@ -6043,8 +6043,8 @@ remoteproc_adsp: remoteproc@30000000 {
+ 
+ 			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
+-					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "wdog", "fatal", "ready", "handover",
+ 					  "stop-ack";
 
 -- 
 2.34.1
