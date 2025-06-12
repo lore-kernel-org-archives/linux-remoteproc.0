@@ -1,143 +1,207 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDD923E320
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 17:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDBD19CC39;
+	Thu, 12 Jun 2025 17:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749748082; cv=none; b=ou0Dy8loqtSGr8gnp44sj+n3cs1/fiN/Bo7UtmbLa1SnLdemFHm5ogHho3wJD7xmBHeS7mIWM6hRU1gmPFuQhb9GAIno4c1ufMjikcVCZk7d4oG2kilfE+7tD13uRs/m1E1FpTsvYPMkHr4IOQE6aqjVY8Hl3QOUzn+3hPd2rjc=
+	t=1749749501; cv=none; b=CS3163v1CG3zzg/AZTqWubZalX9Rg9GOS0Td+pGJ+KaNxViivTQ+qqhmIRHqsC4YR7WyTJiCkJtY33t3OZTYBEpPmnLKZawVcmyPF2kEg9UEKir/O77W/vja0hTdjUpUolagrJKJUOGVoYvsBfsFHsGYAUAvDOCHhujqzD6ymzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749748082; c=relaxed/simple;
-	bh=Q7GXlm2e5RgBPG1dGi7/YTqBRYy7c5r++waPcXzg61I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNM02T0T2Ik+9omxiiDe+K7xE6JK11DetcLlJgfKa8rNv/ecYb2elexpQ0BweRjPfCEIaBESgb/kgUeuIi3xBg/k9ZtbhspUvvea0qRnHkII/5lxo1c4BkvbjfZH6K2UOg06+1Rdz/JhmzP0akhy+kkxDZ09EcIvDMo5anOCaTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LVY+zO5/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1749749501; c=relaxed/simple;
+	bh=otcnDpD+CwvfxCXPQGJv0FOTQyY9TfauzzsfyruyWCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RNnYA73w0JVM2DBuQ19yiUFQNDuCAngPzl2yKXBvBB8q8thTNJOaweHbijbyjKZXvkI0enjWDOog463dMg4Xh1mglC/RM/QEQ3ZukX3Xw3NANg/Nw9UwNonMu/1KgnjcYdIhbbmRX7s3LQWHarixRTjGjV1xBnvvvghybjqySAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBVXjfr1; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LVY+zO5/"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55CG9G9J029304
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 17:08:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oCUX6pLJ4eKKsw/Jg+nykN8d2JIazB3083QqZVfXDF0=; b=LVY+zO5/secelIHb
-	cer/cuJ45Y8xJDHx1dnTtwsMKfXGVTwoZ2KoB5BwDtpAWIJiU5FH6Ny5R5XaxvfB
-	CsAIVj33VSTIuCcMDB13C0O2nwTALvSkNjpWTG3jrQcnKXNGT8c2Fk++pVmZF1Dn
-	BjGL05gEzDosd+HBbUBHNyFaDFAtUdH30c90em60vvj6X11kagxa1BqGk6Vc5vDy
-	HR8D6SnmXoNQ95r8G96FIvhDHID5nGUceYB96ePp840jKkmo5k5128w5mns/ejMW
-	e6qDp4a3vWXQ9TmTenmZOwfX3r00vgkcDomWoaXv1yfAboZ0fStLxVY6sx+PjRTn
-	Z/evlg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn6ha2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 17:08:00 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8aa327049so2986026d6.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jun 2025 10:08:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBVXjfr1"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-747fba9f962so1130635b3a.0;
+        Thu, 12 Jun 2025 10:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749749499; x=1750354299; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xv8y1hwAZ1ADO72IiD5Mm9fc1qZ34wninqrfu7oXtRo=;
+        b=VBVXjfr1VlxRdxbsC0DrI97o5pJ9NvRFcUGeWn58LeZSf0KgvTRke5VvO1D6D7aATl
+         S9FCSC5x5kcRkFjbl/9sln+mVF3wluSw7vqEHpNmWlDcNsVPiNuiE+4osoF15qwC7XhW
+         2gUw3Y5kN4HwAP85agdwgMOUXCGNy/aILK/qxTCw7ve7mJc2TMiN3BuZxmgVhkNWlLxK
+         Y4H+gv19dgV/HFMG6ORmtwsqZLYKm7lSiHft8l/Af79Ty8XltCErvjxRpLo3T+m8DrKT
+         RwdJ+WIgE9grrenkD0Tc3QOlCNYJ/ONi+3VLiPZWgkurbL1kVZyq/AaU1V8fu4sZAWMS
+         +uqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749748079; x=1750352879;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oCUX6pLJ4eKKsw/Jg+nykN8d2JIazB3083QqZVfXDF0=;
-        b=XGRqu+b1QsJ4bu4fAF7vly75JTO26761iaeF01HgetssDhbuiYk4Py5+8QqqvLwq6f
-         fKvW0Y3XAzO7i0A1jgG28kzyyPcx8oNykqABOWSGafu8qtY9GzoQKlfZGpHzF1AwkJQY
-         jTAqoX0QarFW7xw8PIELB3tNFF46tliqgbhncmCWOCvaVT4BPH29P38wAVKFK23EodR7
-         pgirW1LZFRa2kzeBnHVME3SLyda7iJ0s9AtVmyMZc30k6olj/31z2H8vEGDo741gHJt+
-         SfqjCF9nGvcVbKsYXjAJzcwWL+GEbEr300MpcoSIq54PvN722RWRL3svciw01Gd4z9LM
-         O2kA==
-X-Forwarded-Encrypted: i=1; AJvYcCURRHuIyPYlq/EtglwxJFMTVvbQTwwxmRcmMO2zjFDLaPbUEEI0x51PEb/E2oUnyrOPwa2MaFTg87v4tYGAnO3G@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpGNRhj9MJpacgVdCmgbsIyrmjlJPMt+hQsOPxa3Ga3yrwH7dr
-	r/fk3k7VnWaBSK4XTzQOUiJyvOExhBQJ/aq18XjU6pO4wadpgO83RCQm3ECKBDQKig0YqN2ZS6m
-	YJuO3pwRgYlULZ0gWRtrboUomB5rIcxMCw7AnIStEA9BBcUfNKp3x3Nj9WUWz38Zwet3fPIot
-X-Gm-Gg: ASbGncs+8fHE9aEJIWR4X6YZzIiVjt1wbCfRz9eWFUaw+qhD/cu1Kj+wGMwjLNmB8iq
-	ypCsgaaDmTS/yXG9dK8NawZI01bqoMyzjxjvpjyyzOGjWPGVLAPaM/MPe0Rf3GA6zJvJHa3SOe6
-	OFBuOp2CeWvrmZl8RCxrkx816jnb0prAOTyLRjcJgr2IBlFCvg0LzQoIiyRyFWrl0dcncRzRBrj
-	mEm9wrwCH9VRQra+wExB4kNk8OQaIcaTHl1VUh50YCKQ3sc7C11G9dUZ4RoSWztyx3aA8k16Cre
-	roVsADxR0lP8NE4onTLmdY7U3sKH1ogz7sy9ibSAzw8Q83PPd90e50EFIl1GZ6lxEpmAokRrRQ4
-	h5TE=
-X-Received: by 2002:a05:6214:5017:b0:6fa:ba15:e86 with SMTP id 6a1803df08f44-6fb2c25783cmr50670886d6.0.1749748078756;
-        Thu, 12 Jun 2025 10:07:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUVxUe6jZC7/MV4tS+FVdBiQl+jx9Qa8OGDtsq1v0I0wDt4u6bV0IdkUSIiWHVGe4VFxRwVg==
-X-Received: by 2002:a05:6214:5017:b0:6fa:ba15:e86 with SMTP id 6a1803df08f44-6fb2c25783cmr50670686d6.0.1749748078261;
-        Thu, 12 Jun 2025 10:07:58 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6086a58eefdsm1474265a12.23.2025.06.12.10.07.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 10:07:57 -0700 (PDT)
-Message-ID: <2d768e39-428a-42fd-8e31-a36fd11ea776@oss.qualcomm.com>
-Date: Thu, 12 Jun 2025 19:07:54 +0200
+        d=1e100.net; s=20230601; t=1749749499; x=1750354299;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xv8y1hwAZ1ADO72IiD5Mm9fc1qZ34wninqrfu7oXtRo=;
+        b=pI7X85RD0N9GXaZfvaokBMMbQ0xIpbsCivkeZW1y9eX59DxJAMIgeGISUEvIJ13eOj
+         p0+qyu58j2KWe+agbpYaP6+DURP9oTWO66Dwe5WSVoUb3pZ9Hi44JGMZpFggmYvwqiFq
+         OzKO55afCVEPvfb4E3bcao2SKuDhBlooLTUi5UvRqsNqVEqnSP1NW9AtVE1EErVMtlRF
+         bg5K9qyd0Eua1seh+t2x0Lx9Ac+vVVH1BbhuzgiT5cNHq4VtoRwbVR6IhNsyWz9FwQs2
+         3GK8NH658oujG/B/0TzOFo87geIPyXgMHUppJOv2+LFkcjgYDvBOTZdyZK2/iwUo5qS6
+         QuqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYpHgvVWv9P4YZlLXs3fxQlif7xxE13fAJirJG0C9TZ5hdOxo+fbIY5To9zg0y8ZuvPJSKxThvw7Nl/vNVbCJfKg==@vger.kernel.org, AJvYcCVz5ut4knaJ5Agar1eOh5eIHvrFwLSPMhRfZm4ALqDieOUmKz5JDn/yBt33HTwugbxIrknFGnPaPg4t4Fk=@vger.kernel.org, AJvYcCWC8e5RJRkWpr+gbaQ7HgQ33Gsn/HZua+WibVX7+KcPVUhANLZjeGF7escWdBxDnriBTKpGtWM1vNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV2jv3PrbEAy0OF0WxHYcxcDtOEZygzD7B+jPvPrqWMfMedPvy
+	FvJt/y9hfGU2k1a0Pby4Uh3Sd3ZOpyiEVb6040kGTjXy0CAAvJpwlU9e
+X-Gm-Gg: ASbGncsOjvBQw5WrSWdYS39G60wK/TaqsBuiz36TPqhtgk6YepcF4UpEKUHLuk8zes7
+	TyfmqsZJI34CshFbOE7ttL7LMN8PAC/98tsI//oG9TL+g5hLMSJAYKrKhFqIlhutnrM65joh3S8
+	ujEVo5+W1DtT+Fh5Av3eqj0ZVoKZr2924pvmDItt641x3HJelAjq0SWJIFcH8noFifXb7l43wee
+	bnXC/W2USk2CxNuXFNf6D0vVYs6qfwo8ObY0mG4bb4ZJ0kHACht+krHSyC5sEgVloXONu7UObtW
+	KXjrzQ0L9YB91ULAc+r6llelyuFNB6DUBX3vP4gqaHNIZ4jnAgrEmUXbhbo/
+X-Google-Smtp-Source: AGHT+IF6JO6zv2ZxYGrMpFyX5qpBH+K4yTR69s1GLbL1n6QCFkSYxYZgE78yuUZ7Dqsii20VloyovQ==
+X-Received: by 2002:a05:6a00:cc:b0:742:a24d:aede with SMTP id d2e1a72fcca58-7487ceecdc6mr3909973b3a.8.1749749498580;
+        Thu, 12 Jun 2025 10:31:38 -0700 (PDT)
+Received: from hiago-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74880a0bcd4sm1800344b3a.149.2025.06.12.10.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Jun 2025 10:31:37 -0700 (PDT)
+Date: Thu, 12 Jun 2025 14:31:32 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 1/3] pmdomain: core: introduce dev_pm_genpd_is_on
+Message-ID: <20250612173132.ixgctqijtd33vnmb@hiago-nb>
+References: <20250602131906.25751-1-hiagofranco@gmail.com>
+ <20250602131906.25751-2-hiagofranco@gmail.com>
+ <iuotfsnaft3623lchzop6sbu5ox56scdr57uia56qm6ummcvzt@yisczcdzbc3b>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p: Correct the interrupt for
- remoteproc
-To: Lijuan Gao <lijuan.gao@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Konrad Dybcio
- <konradybcio@kernel.org>,
-        Ling Xu <quic_lxu5@quicinc.com>,
-        Tengfei Fan <quic_tengfan@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: kernel@oss.qualcomm.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250612-correct_interrupt_for_remoteproc-v1-0-490ee6d92a1b@oss.qualcomm.com>
- <20250612-correct_interrupt_for_remoteproc-v1-2-490ee6d92a1b@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250612-correct_interrupt_for_remoteproc-v1-2-490ee6d92a1b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMCBTYWx0ZWRfXxWR4Y/vlxKyy
- p7Rpw5DKXD1hKwkgj1SPSQnmk2GysQShBHQU0XbkZoi2XR7Ly2+8BdUjFSZE4SRFiLX5SxO5bCG
- NtINvUvoB56+Ktsp4IUKsWJtiI6NIielTIyQUwlXT4tqmy6XZOuTOtRC7Tz6N0KdG+hFPuMM1BQ
- rmGv1mFP4NcxE5fxmnopizdW3HJr/otloR/6Xsl+UYARC9Vut746AfJgjK2AlUdbn0BmjSChcxZ
- gWWbGKuUKdqpFO/H1A2GtJ7qDWZe0s60/0Wt7hvIWg4Y+5gYfIMcx880QpyLeUyzxu8/yktUwVq
- kEJ1kYYJza0u78XngzlTpzsUsofXGD0P/IF778GH5i30WHTNLRHn9+DlsyL472Zn67ovcPNwjFI
- XSpdZRn+gaUGp3Js1yQNeQIAILa+48lXpZ/PytX1zYS/wEyOAqtDPCtiJ24zJWttdcrIZPGb
-X-Proofpoint-GUID: QAvyu4nSpix7KtB8pKSuXQ69CjduDWvo
-X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=684b0970 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=wrLjHZacoFgeWOAOTdYA:9
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-ORIG-GUID: QAvyu4nSpix7KtB8pKSuXQ69CjduDWvo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_09,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
- mlxlogscore=704 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506120130
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <iuotfsnaft3623lchzop6sbu5ox56scdr57uia56qm6ummcvzt@yisczcdzbc3b>
 
-On 6/12/25 4:39 AM, Lijuan Gao wrote:
-> Fix the incorrect IRQ numbers for ready and handover on sa8775p.
-> The correct values are as follows:
+On Wed, Jun 11, 2025 at 10:32:28AM -0500, Bjorn Andersson wrote:
+> On Mon, Jun 02, 2025 at 10:19:03AM -0300, Hiago De Franco wrote:
+> > From: Hiago De Franco <hiago.franco@toradex.com>
+> > 
+> > This helper function returns the current power status of a given generic
+> > power domain.
+> > 
 > 
-> Fatal interrupt - 0
-> Ready interrupt - 1
-> Handover interrupt - 2
-> Stop acknowledge interrupt - 3
+> Please correct me if I'm wrong, but this returns the momentary status of
+> the device's associated genpd, and as genpds can be shared among devices
+> wouldn't there be a risk that you think the genpd is on but then that
+> other device powers it off?
+
+I am not fully familiar with the genpd's, so my knowledge might be
+limited, but I think this is correct, if the genpd is shared.
+
 > 
-> Fixes: df54dcb34ff2e ("arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP nodes")
-> Signed-off-by: Lijuan Gao <lijuan.gao@oss.qualcomm.com>
-> ---
+> > As example, remoteproc/imx_rproc.c can now use this function to check
+> > the power status of the remote core to properly set "attached" or
+> > "offline" modes.
+> 
+> I presume this example works because there is a dedicated, single usage,
+> genpd for the remoteproc instance?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Peng might correct if I am wrong, but yes, I believe this is correct.
 
-Konrad
+> 
+> > 
+> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > ---
+> > v4: New patch.
+> > ---
+> >  drivers/pmdomain/core.c   | 27 +++++++++++++++++++++++++++
+> >  include/linux/pm_domain.h |  6 ++++++
+> >  2 files changed, 33 insertions(+)
+> > 
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index ff5c7f2b69ce..bcb74d10960c 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -758,6 +758,33 @@ int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
+> >  }
+> >  EXPORT_SYMBOL_GPL(dev_pm_genpd_rpm_always_on);
+> >  
+> > +/**
+> > + * dev_pm_genpd_is_on - Get device's power status
+> 
+> Functions in kernel-doc should have () prefix
+
+Thanks, I will correct this is next patch version.
+
+> 
+> > + *
+> > + * @dev: Device to get the current power status
+> > + *
+> > + * This function checks whether the generic power domain is on or not by
+> > + * verifying if genpd_status_on equals GENPD_STATE_ON.
+> > + *
+> 
+> If my understanding is correct, I'd like a warning here saying that this
+> is dangerous if the underlying genpd is shared.
+
+I believe this is correct, maybe Peng or Ulf can also comment here, but
+if that is the case then I can update the comment.
+
+> 
+> Regards,
+> Bjorn
+> 
+> > + * Return: 'true' if the device's power domain is on, 'false' otherwise.
+> > + */
+> > +bool dev_pm_genpd_is_on(struct device *dev)
+> > +{
+> > +	struct generic_pm_domain *genpd;
+> > +	bool is_on;
+> > +
+> > +	genpd = dev_to_genpd_safe(dev);
+> > +	if (!genpd)
+> > +		return false;
+> > +
+> > +	genpd_lock(genpd);
+> > +	is_on = genpd_status_on(genpd);
+> > +	genpd_unlock(genpd);
+> > +
+> > +	return is_on;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dev_pm_genpd_is_on);
+> > +
+> >  /**
+> >   * pm_genpd_inc_rejected() - Adjust the rejected/usage counts for an idle-state.
+> >   *
+> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> > index 0b18160901a2..c12580b6579b 100644
+> > --- a/include/linux/pm_domain.h
+> > +++ b/include/linux/pm_domain.h
+> > @@ -301,6 +301,7 @@ void dev_pm_genpd_synced_poweroff(struct device *dev);
+> >  int dev_pm_genpd_set_hwmode(struct device *dev, bool enable);
+> >  bool dev_pm_genpd_get_hwmode(struct device *dev);
+> >  int dev_pm_genpd_rpm_always_on(struct device *dev, bool on);
+> > +bool dev_pm_genpd_is_on(struct device *dev);
+> >  
+> >  extern struct dev_power_governor simple_qos_governor;
+> >  extern struct dev_power_governor pm_domain_always_on_gov;
+> > @@ -393,6 +394,11 @@ static inline int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
+> >  	return -EOPNOTSUPP;
+> >  }
+> >  
+> > +static inline bool dev_pm_genpd_is_on(struct device *dev)
+> > +{
+> > +	return false;
+> > +}
+> > +
+> >  #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
+> >  #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
+> >  #endif
+> > -- 
+> > 2.39.5
+> >
+
+Best Regards,
+Hiago.
