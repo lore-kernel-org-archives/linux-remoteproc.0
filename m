@@ -1,52 +1,52 @@
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE482C158B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDB2291C34;
 	Fri, 13 Jun 2025 09:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749806388; cv=none; b=LDLNbOWlS9CGWtKu2+QJ8M0yn5FMVb2LUsAeHD4ePAGzK8kV8bE8koCx5BmbA1EhVgd2DwhdazRAUr/MagLla41HwQ9s6ywk1hPkaQT5UVdE1RzrVfu9+T2t8IbR7o1QI/IlqA7KWqXrKBRW8RZ2e0S0BXKJAguyVAuWCqLCnbE=
+	t=1749806388; cv=none; b=UJMxQmCgzfIgeiPziqcY8NriRBOoN9BT8mChfPHAEPvep0g0fpJ/JSK8e0v5R+p4yBpn7eCilAGD1T4MstKRu4cHg9rauqIEkSx1AsDaq0qb/WVjOWYGy/rxry+MGQ3x9ZuUuHmnubb604HR/wt/0CevX+BfXl8WRbbepBVNXzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749806388; c=relaxed/simple;
-	bh=jCWWkrmEJfZ25so82ytPFoQiKJzvNYkyN981ikbuWHI=;
+	bh=54OTCCe6IxOayzste09DjRx7T70J4NR2amXWUqkCM6k=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YrsfAcrIqmich5yKoNcuRl2fqHff9vMph9REnFQmd7cBHjmlco2SEUzpwJ+seDleawWuz9SyvFKRr/pCOIQyXfCjmTMNDmxBa/7rhmI8PU0zz01qjSb09sLLn9JOxQjeLQn3hBwfx/FKDq0/TgdQbEQcjzxVcjU4x20snrFcStQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xmCVzlKQ; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=Db+Cz5Km4/WPTsN0Nd8f7fw0zIw/LS0CJBax5aQcb7k/f9JxSeb60YiChPVc2IOKkn28jNY7TjSD25Y3zg6pFrdvdZNLiQMRuyDXOes1XcddpjQOAdOXGcyVLtRu821y0kA8OWVCD9k4415oZ0N84S6K/yVyBSrfWJOoYNeDA1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=fBQLsIVI; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xmCVzlKQ"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D8wHNm020220;
-	Fri, 13 Jun 2025 11:19:28 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="fBQLsIVI"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D9CFWB014198;
+	Fri, 13 Jun 2025 11:19:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Qukd4stYOCYEBe2KGcf2tpYpRWJZmwskg2vfqUfUsKY=; b=xmCVzlKQCtuGgHtz
-	pUXCmVGQ3ONSiquNM8AvJbe2b/bd2r1R7FQVmDfjwI6Ztf/N52gp85Y3iOSOAnYc
-	t+4L78ug3jzrEG0441Cs8UX4zGFErHHGupHayHwXXjmacQCRLOzX0OYroE6ImLUv
-	WOdeCRhWKnajWFJasN7CCOYOu4nLybchNgNt8DnWqPWWxspQ61ErvQ4/j8V/7Gcr
-	c7eZEkL7meNLk1I7QE7nGYAsdhpig1zoHCZiJJDfWzdy516k/04MfKmGcIcMs+Nv
-	bQgcwFa1QXBntuBa+UI484nKk78R/Kd+yCqish+Gu/u8sBLN4xWYnQXsVoLqCvK0
-	uLj8lg==
+	94VnVbpWMosowgrfHe7Clhz40y17D7U8VhRGXHli9wg=; b=fBQLsIVIwW3eu/3B
+	klnkVs56QZNS0P79dpBf2TVRXdryzzIrl6MR2yoEN09dT1Rp1fAx7hHnzX1Y02x9
+	G/P0Z+zFzLSbKIg2QzyiZ+KU/qwRzPVAYhyaEA4RHtxuqACr06kgvaisTXryhKf4
+	4eL5QPO/ct7kdl+ovSdyQRIlqv75p8s5YxiSiUdeUTIz+Be16gqznKeiOA1oXqgB
+	aAGj2u+TH48U6zsatus/+YzLAzfxA9bZbpkhT7SOJZLZKAFVh9EitcWJylt6xpL2
+	asYAr5kwrshbAPoNjWEN4AdU1wR94uYTTBt+kg5lTObCZoWO2Vb5AkeiMhvglbDL
+	+DmwTA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474ajakwn4-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474caj3pwv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Jun 2025 11:19:27 +0200 (MEST)
+	Fri, 13 Jun 2025 11:19:12 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 38AE340056;
-	Fri, 13 Jun 2025 11:18:08 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7B050BAD4D4;
-	Fri, 13 Jun 2025 11:17:19 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 84C274005A;
+	Fri, 13 Jun 2025 11:18:11 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 24993BAD734;
+	Fri, 13 Jun 2025 11:17:23 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
- 2025 11:17:19 +0200
+ 2025 11:17:22 +0200
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
- 2025 11:17:19 +0200
+ 2025 11:17:22 +0200
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -60,9 +60,9 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v17 1/6] remoteproc: core: Introduce rproc_pa_to_va helper
-Date: Fri, 13 Jun 2025 11:16:45 +0200
-Message-ID: <20250613091650.2337411-2-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v17 6/6] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+Date: Fri, 13 Jun 2025 11:16:50 +0200
+Message-ID: <20250613091650.2337411-7-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250613091650.2337411-1-arnaud.pouliquen@foss.st.com>
 References: <20250613091650.2337411-1-arnaud.pouliquen@foss.st.com>
@@ -80,87 +80,133 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
 
-When a resource table is loaded by an external entity such as U-boot or
-OP-TEE, we do not necessarily get the device address(da) but the physical
-address(pa).
-This helper performs similar translation than the rproc_da_to_va()
-but based on a physical address.
+The new TEE remoteproc driver is used to manage remote firmware in a
+secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
+introduced to delegate the loading of the firmware to the trusted
+execution context. In such cases, the firmware should be signed and
+adhere to the image format defined by the TEE.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 47 insertions(+)
+updates vs previous version
+- rebase on V6.16-rc1
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 81b2ccf988e8..d06eef1fa424 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+---
+ drivers/remoteproc/stm32_rproc.c | 57 ++++++++++++++++++++++++++++++--
+ 1 file changed, 54 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index db82d4308376..a3613c337264 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -18,6 +18,7 @@
+ #include <linux/pm_wakeirq.h>
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
++#include <linux/remoteproc_tee.h>
+ #include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+@@ -255,6 +256,19 @@ static int stm32_rproc_release(struct rproc *rproc)
+ 	return 0;
  }
- EXPORT_SYMBOL(rproc_da_to_va);
  
-+/**
-+ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
-+ * memory
-+ *
-+ * @rproc: handle of a remote processor
-+ * @pa: remoteproc physical address
-+ * @len: length of the memory region @pa is pointing to
-+ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
-+ *
-+ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
-+ * addresses instead of device addresses.
-+ *
-+ * Return: a valid kernel address on success or NULL on failure
-+ */
-+void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
++static int stm32_rproc_tee_stop(struct rproc *rproc)
 +{
-+	struct rproc_mem_entry *carveout;
-+	void *ptr = NULL;
++	int err;
 +
-+	list_for_each_entry(carveout, &rproc->carveouts, node) {
-+		int offset = pa - carveout->dma;
++	stm32_rproc_request_shutdown(rproc);
 +
-+		/*  Verify that carveout is allocated */
-+		if (!carveout->va)
-+			continue;
++	err = rproc_tee_stop(rproc);
++	if (err)
++		return err;
 +
-+		/* try next carveout if da is too small */
-+		if (offset < 0)
-+			continue;
-+
-+		/* try next carveout if da is too large */
-+		if (offset + len > carveout->len)
-+			continue;
-+
-+		ptr = carveout->va + offset;
-+
-+		if (is_iomem)
-+			*is_iomem = carveout->is_iomem;
-+
-+		break;
-+	}
-+
-+	return ptr;
++	return stm32_rproc_release(rproc);
 +}
-+EXPORT_SYMBOL(rproc_pa_to_va);
 +
- /**
-  * rproc_find_carveout_by_name() - lookup the carveout region by a name
-  * @rproc: handle of a remote processor
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index b4795698d8c2..8fd0d7f63c8e 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
- int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
-+void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
+ static int stm32_rproc_prepare(struct rproc *rproc)
+ {
+ 	struct device *dev = rproc->dev.parent;
+@@ -691,8 +705,20 @@ static const struct rproc_ops st_rproc_ops = {
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ };
  
- /* from remoteproc_coredump.c */
- void rproc_coredump_cleanup(struct rproc *rproc);
++static const struct rproc_ops st_rproc_tee_ops = {
++	.prepare	= stm32_rproc_prepare,
++	.start		= rproc_tee_start,
++	.stop		= stm32_rproc_tee_stop,
++	.kick		= stm32_rproc_kick,
++	.load		= rproc_tee_load_fw,
++	.parse_fw	= rproc_tee_parse_fw,
++	.find_loaded_rsc_table = rproc_tee_find_loaded_rsc_table,
++	.release_fw	= rproc_tee_release_fw,
++};
++
+ static const struct of_device_id stm32_rproc_match[] = {
+ 	{ .compatible = "st,stm32mp1-m4" },
++	{ .compatible = "st,stm32mp1-m4-tee" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, stm32_rproc_match);
+@@ -854,6 +880,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 	const char *fw_name;
+ 	struct rproc *rproc;
+ 	unsigned int state;
++	u32 proc_id;
+ 	int ret;
+ 
+ 	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+@@ -865,9 +892,29 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 	if (ret < 0 && ret != -EINVAL)
+ 		return ret;
+ 
+-	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
+-	if (!rproc)
+-		return -ENOMEM;
++	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
++		/*
++		 * Delegate the firmware management to the secure context.
++		 * The firmware loaded has to be signed.
++		 */
++		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
++		if (ret) {
++			dev_err(dev, "failed to read st,rproc-id property\n");
++			return ret;
++		}
++
++		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, fw_name, sizeof(*ddata));
++		if (!rproc)
++			return -ENOMEM;
++
++		ret = rproc_tee_register(dev, rproc, proc_id);
++		if (ret)
++			return dev_err_probe(dev, ret,  "signed firmware not supported by TEE\n");
++	} else {
++		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, fw_name, sizeof(*ddata));
++		if (!rproc)
++			return -ENOMEM;
++	}
+ 
+ 	ddata = rproc->priv;
+ 
+@@ -919,6 +966,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+ 		dev_pm_clear_wake_irq(dev);
+ 		device_init_wakeup(dev, false);
+ 	}
++	rproc_tee_unregister(dev, rproc);
++
+ 	return ret;
+ }
+ 
+@@ -939,6 +988,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+ 		dev_pm_clear_wake_irq(dev);
+ 		device_init_wakeup(dev, false);
+ 	}
++
++	rproc_tee_unregister(dev, rproc);
+ }
+ 
+ static int stm32_rproc_suspend(struct device *dev)
 -- 
 2.25.1
 
