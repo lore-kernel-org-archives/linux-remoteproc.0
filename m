@@ -1,302 +1,166 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8295979D0;
-	Sat, 14 Jun 2025 01:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38491E493C;
+	Mon, 16 Jun 2025 07:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749866268; cv=none; b=RFZbVLVEjMxL69eimSefiaaNAyLvwZXGwEiBUEQybRXSG/NDIB+AomTr828FDTSz1j5Shmkp01NrH6VvsLNFRsqOcbX5bV9lfadM9rkkKg0XzGIX/n5/igc/Bg4sY4w8A8WuJFRJW1EQOZU1Qqvci886X/zL2KVJcpZOEeGjleY=
+	t=1750060723; cv=none; b=PDXKY0ARpr2QVUcYSpmSvoOdJe/+DFsymp1QxLM1yttgNnV5wuMcHmRieMyjsPiU8H4Ic/Oi4Z0a91Q53B6mzgjAoAADhw2kDvRjiDAm9uUQ6CIXsCPtnK+1fQD1pDBnYEB7Hd21bK8mSkhHutXq+oTtEEaOod44eOO79hkMq4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749866268; c=relaxed/simple;
-	bh=mO3W2NrTpePz2f5jjCKTmlMxf7yt84jHJqEni8pvzzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAH3nXaek6hpXJ36/CUVplY0fr0sj3ANwUmGWn+cplIDFxLFJ+/g9h6a89DZmrt/uMD0EVM4OMt9aXY+2IsfZCkq8arJDp2X+1qVWH3JugEF5XSQ0OnkABiT1xEdZ8QTqAQrnQ5K1MawxWSHMey4qVaG05o/NPMjXryrTxmAH3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pq1DapCU; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1750060723; c=relaxed/simple;
+	bh=jCWWkrmEJfZ25so82ytPFoQiKJzvNYkyN981ikbuWHI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f8qGedEdWBmcYLz+IjUg7nClEFRsdhjg50j61R/lSck8hB2FvdHX1rxtZTTns0h4H7AliOY4wd/De/kEsUpn5flIjoERHCeJz9w0+yfuKPu4mkpN8QsD/oXhBP2y+Wnq03cE+66S7e12Rc7m+mCbAvDGMTxR4SckZyZpvizSI1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qcNBDwSC; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pq1DapCU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749866266; x=1781402266;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mO3W2NrTpePz2f5jjCKTmlMxf7yt84jHJqEni8pvzzY=;
-  b=Pq1DapCUW23eHvUpUmONbtUJRFX9iKDqrBMBXz0leVY5jsQ39INOjn5o
-   ZiBRSDj+oH0W6DQXvzvGCzaVOd1Ksu4deH0jpZ2jTEGzWaaR+jBotXb3u
-   mZZUlfqhp5usGdy6jjPHpMU6xEctXX4Hz45eI6mqyrJZfvZbNscKtDOM4
-   mtp2HUA9NosF1+2eX8rdufgmXjRFM3OJKyhoaB27EE41vPV0qqgpMgX7n
-   2S6G4edx9ediRZ54QTMC9VB8adleoqeyM2tVYH44oCEwvXWiNRfgOVhzb
-   EW27/v0Sw0LGTZnkY9eCP+iCki7DqQySuf79LM5MZLvYqL8Rf7E+q3yLi
-   w==;
-X-CSE-ConnectionGUID: NOWtrRZzTNeJ6WQUxfNNKA==
-X-CSE-MsgGUID: 3uv9C7xsTmOysBO+FvhKWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11463"; a="63124129"
-X-IronPort-AV: E=Sophos;i="6.16,235,1744095600"; 
-   d="scan'208";a="63124129"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 18:57:45 -0700
-X-CSE-ConnectionGUID: 9ihp73UQQ0q/ckjGhmNYaQ==
-X-CSE-MsgGUID: k8UR7c6SQAiqWEGGbRhoPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,235,1744095600"; 
-   d="scan'208";a="178969259"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Jun 2025 18:57:42 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uQG9K-000DA2-39;
-	Sat, 14 Jun 2025 01:57:38 +0000
-Date: Sat, 14 Jun 2025 09:57:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH v17 2/6] remoteproc: Add TEE support
-Message-ID: <202506140913.N5KmGXj7-lkp@intel.com>
-References: <20250613091650.2337411-3-arnaud.pouliquen@foss.st.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qcNBDwSC"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G3RlrK001745;
+	Mon, 16 Jun 2025 09:58:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Qukd4stYOCYEBe2KGcf2tpYpRWJZmwskg2vfqUfUsKY=; b=qcNBDwSCZyTIGiuz
+	9lawJymhFNS80QgpYOdmnVRptUI+anTbvbIUSzrujY0OhOswOz0lgbul6MJOMhj8
+	P+Qwo3+frh2swX2f2xjuHmG4CDuUbbebpGIsbpFo59aS9iD5uTI5DNq40xqWBZqE
+	xaMlunIJ8DqMGbyFX0ffKJMdvTkgaKJnVfZJBO3oW1d5cElIRt7Wuvy7169ljX5e
+	TrGC5bb/CD1n7P2VydM9E1RN88uJu3eo1CD5gFRACZQyOk2U/Xojfgs4Ax/Y1a4s
+	q5TmSBxplOayoc1wxc/8mWn2RSqI4YeotXzAxXXxXPNWN6jvSbhXv7L+l2mAH5Af
+	jicFpA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4790e1yc76-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 09:58:17 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9DE8F4006F;
+	Mon, 16 Jun 2025 09:57:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6E43F4CB02D;
+	Mon, 16 Jun 2025 09:56:20 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Jun
+ 2025 09:56:20 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Jun
+ 2025 09:56:19 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v18 1/6] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Mon, 16 Jun 2025 09:55:25 +0200
+Message-ID: <20250616075530.4106090-2-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250616075530.4106090-1-arnaud.pouliquen@foss.st.com>
+References: <20250616075530.4106090-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613091650.2337411-3-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_03,2025-06-13_01,2025-03-28_01
 
-Hi Arnaud,
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, we do not necessarily get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 47 insertions(+)
 
-[auto build test WARNING on 19272b37aa4f83ca52bdf9c16d5d81bdd1354494]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20250613-172251
-base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-patch link:    https://lore.kernel.org/r/20250613091650.2337411-3-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH v17 2/6] remoteproc: Add TEE support
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250614/202506140913.N5KmGXj7-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250614/202506140913.N5KmGXj7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506140913.N5KmGXj7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/platform/chrome/cros_ec_proto.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/chrome/cros_ec_sensorhub_ring.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/chrome/cros_usbpd_notify.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/chrome/wilco_ec/mailbox.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/cznic/turris-omnia-mcu-base.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/cznic/turris-signing-key.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/olpc/olpc-ec.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/surface/aggregator/bus.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/surface/aggregator/controller.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/surface/aggregator/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/surface/aggregator/ssh_packet_layer.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/surface/surface_acpi_notify.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/amd/hsmp/hsmp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/amd/hsmp/hwmon.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/amd/wbrf.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/asus-wmi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/dell/dcdbas.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/dell/dell-rbtn.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/dell/dell-smbios-base.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/dell/dell-wmi-descriptor.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/dell/dell-wmi-privacy.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/firmware_attributes_class.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/ideapad-laptop.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/int3472/common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/int3472/discrete.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/pmc/ssram_telemetry.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/pmt/class.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/pmt/telemetry.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/punit_ipc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/speed_select_if/isst_if_common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/telemetry/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/vsec.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel/vsec_tpmi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel_ips.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/intel_scu_ipc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/mxm-wmi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/siemens/simatic-ipc-batt.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/platform/x86/wmi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pmdomain/actions/owl-sps-helper.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pmdomain/rockchip/pm-domains.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/card.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/driver.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/isapnp/compat.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/isapnp/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/manager.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/pnpbios/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/resource.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pnp/support.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/power/reset/reboot-mode.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/power/supply/bq27xxx_battery.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/power/supply/power_supply_core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/power/supply/power_supply_sysfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/power/supply/samsung-sdi-battery.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/powercap/dtpm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/powercap/idle_inject.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/powercap/intel_rapl_common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/powercap/powercap_sys.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pps/generators/pps_gen.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pps/kapi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pps/pps.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3-lpm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3-sys-manager.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3-vuart.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3av.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3av_cmd.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ps3/ps3stor_lib.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ptp/ptp_clock.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ptp/ptp_mock.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ptp/ptp_pch.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ptp/ptp_qoriq.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ptp/ptp_vclock.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pwm/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/pwm/pwm-lpss.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rapidio/rio-access.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rapidio/rio-driver.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rapidio/rio.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ras/amd/atl/umc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ras/debugfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/ras/ras.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/devres.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/irq_helpers.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/mc13xxx-regulator-core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/of_regulator.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/rohm-regulator.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/wm8350-regulator.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/regulator/wm8400-regulator.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/mtk_scp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/mtk_scp_ipi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/pru_rproc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/qcom_common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/qcom_pil_info.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/qcom_q6v5.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/qcom_sysmon.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/remoteproc_core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/remoteproc_coredump.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/remoteproc_elf_loader.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
->> drivers/remoteproc/remoteproc_tee.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/st_slim_rproc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/remoteproc/ti_k3_common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/reset/amlogic/reset-meson-common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/reset/reset-mpfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/reset/reset-simple.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/reset/starfive/reset-starfive-jh71x0.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/mtk_rpmsg.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/qcom_glink_native.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/qcom_glink_smem.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/qcom_glink_ssr.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/qcom_smd.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/rpmsg_char.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/rpmsg_core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rpmsg/rpmsg_ns.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/class.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/dev.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/interface.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/nvmem.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/rtc-ds1685.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/rtc-omap.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/rtc-sa1100.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/rtc/sysfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/block/dasd.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/block/dasd_devmap.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/block/dasd_eer.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/block/dasd_erp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/block/dasd_ioctl.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/keyboard.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/raw3270.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/sclp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/sclp_early.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/sclp_ocf.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/tape_34xx.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/tape_3590.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/tape_class.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/tape_core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/char/tape_std.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/airq.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/ccwgroup.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/chsc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/cio.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/device_fsm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/eadm_sch.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/fcx.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/isc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/itcw.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/qdio_main.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/cio/scm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/ap_bus.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/ap_queue.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/pkey_api.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/pkey_base.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/zcrypt_api.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/zcrypt_card.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/zcrypt_ccamisc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/zcrypt_ep11misc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/crypto/zcrypt_queue.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/ctcm_mpc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/fsm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/ism_drv.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/qeth_core_main.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/qeth_l2_main.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/qeth_l3_main.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/s390/net/smsgiucv.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/sbus/char/bbc_i2c.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/53c700.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/arm/fas216.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/arm/msgqueue.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/arm/queue.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/constants.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/cxgbi/libcxgbi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/esp_scsi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/fcoe/fcoe_ctlr.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/fcoe/fcoe_sysfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/fcoe/fcoe_transport.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/fdomain.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/hisi_sas/hisi_sas_main.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/hosts.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/iscsi_boot_sysfs.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libfc/fc_fcp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libfc/fc_frame.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libfc/fc_libfc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libfc/fc_lport.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libiscsi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libiscsi_tcp.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libsas/sas_expander.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/libsas/sas_init.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/megaraid/megaraid_mm.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/mpt3sas/mpt3sas_ctl.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/qla2xxx/qla_target.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/qlogicfas408.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/raid_class.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_common.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_devinfo.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_dh.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_error.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_ioctl.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_logging.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-   drivers/scsi/scsi_proc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 81b2ccf988e8..d06eef1fa424 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ }
+ EXPORT_SYMBOL(rproc_da_to_va);
+ 
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
++ * addresses instead of device addresses.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
++{
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++	return ptr;
++}
++EXPORT_SYMBOL(rproc_pa_to_va);
++
+ /**
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..8fd0d7f63c8e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
+ 
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
