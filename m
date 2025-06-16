@@ -1,170 +1,158 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8152E427E;
-	Mon, 16 Jun 2025 13:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0344F2DBF47
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750079105; cv=none; b=sqviGhnSVziTg8GJEkA0sMYVzIqqZi7WvklB3zAz5m0mAzHvAzUiV/PyZ6gfLBcBI7hfUGyQFldQ6haXvoWdCUWaGvYvXuFkhT+VK/R7p5RcQyb0jteSh6q7ROA4emr8I9fJmiOQ/HieOvjzRYUko5fhcnzB2FqrETZNm2Pxvkc=
+	t=1750079645; cv=none; b=gqa5c7DvJETBjd4Zv5petfmZjlPnOZQwsVz4e4JtJ5Eof2X1BR0oXNm2EoE9JQoSlb8QSURxvf8qeSzIjC/0/1iK/aU3kbLe/RkYIpOJaMpZF79gJFyB64i96dDKsv8e8BNx5sSuvIYuPY79LBb6dfNdR1PCsA664ZUw98oAhrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750079105; c=relaxed/simple;
-	bh=siv3Ien97FCkgAjG2Q1suDpHQa4tobCL+W3T5TCoEj8=;
+	s=arc-20240116; t=1750079645; c=relaxed/simple;
+	bh=bEkIwJKNMLdtIH3qoD09umnOzSE4UEjxHiK/ZI7dhJU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AHdpWQOIGO8O8AU+Vh9IDZ4QfPfoMiPY0cvR06/Rrh3ED7jvQwL3zzWbaumdsOK2tfnbuwkI3fO6kl4/cocOa3ugImcPKH08o3stp5LIdTvteYF+VSRi09BZYmi4yzq+COzG0OK25w3uzYFgW73jlus64yTA6IsGXN7egYgCFqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOVoHjGu; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=Py8NZeZxvXGLz+X1r4xwOxeG0uvCGtvgof5ZglhsZylzyX7Nftig1yNu48c13AJJ5yGT3p7MvBd+KZP+t6o9x/fFSpPwIaFeWfjL7tNDH9C8qz8rKrEYMZZxS0ExX6MgHSdQvS9iUaLsPfrLwdvMims+eyBrJM44hS/A9g+LC9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXueeXiX; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOVoHjGu"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23602481460so40202995ad.0;
-        Mon, 16 Jun 2025 06:05:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXueeXiX"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e82314f9a51so1202862276.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 06:14:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750079103; x=1750683903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUTXDzJTms5RZMMJbgvvc42mrXG+pZ1XuTEHVE/rMMo=;
-        b=WOVoHjGu8O8duegrNKas8XFo8SpB9kFi1Yp4O5T7e1jGuMWKoS8SKOvIMFB7gDqV8i
-         l45khUvkjVDKp4OsHETIgNqzD5Bb0RCKuFRoTaC3aMtrPZ+q1f9xPBnOp4TVG384I+Vt
-         R4+Phd39IqtL3s9KK2164crpaqtRsXbPS4hAIhbX4zWLfH3Win/nNpvgqDCg1SIzLQbn
-         /I/9oHVXHAfJGPLFOFWPdGHCgm4MlxOfg5ZvaPfDN4p3FjhL01UzuIu7ovtI/xnEFCdc
-         GGZWdSNIf3WHUj6DYG0sDRKDSP5PPQ3NFtftnkeQ0xhkCEBbv+q+FHfJ3H/5ksaoCeWy
-         Geog==
+        d=linaro.org; s=google; t=1750079643; x=1750684443; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRYkbvCVxvcI/mg8yKgS8W1N0iZ7JRBV2UIynjIs8JQ=;
+        b=kXueeXiXDOnLyphxh64NM1Nkew0a6yBveieNTwSqw/YCZHZuRHKe4N0OYd6EKn4R06
+         87u9Yt53Lpb8g+AeEQcnrIkkDwd14K7ocAIOvgp9qlPqoYcufwbpYS/D9iqE7a2VmP8P
+         hhsi+VFLONtsA8xf5e6vOHDSyGpeviPVAjRVWuKoDQUBYI9e3MHvvUGaoWTSDEE4WFkH
+         k/srN1hoauo46MLjdmDQYVAZO+lT1g+1ypzUcnSPa9EK+QjKrk5b6uz7AhRdWOAuFWbc
+         RID/da0s1R0sH6neIXUas5q/1Por/QRGBg6djdcdBIPJf2RKfZiLOjcQk7vE/2njHAjP
+         ZeIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750079103; x=1750683903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GUTXDzJTms5RZMMJbgvvc42mrXG+pZ1XuTEHVE/rMMo=;
-        b=gQ+ZMRPq+R0jWwA26KNMUx1+m6WGsPhQ+Xk5ULQo6Puyu9Rg5fLtm+z+Ny0/l9YrrT
-         Uq7KHqpVJPe7gPCDBnrw3ZwfKLRccF30DK0XTjfgVqlStg9lRiI6WGGA6PH3mYVDF08i
-         +IN8/dVST93cM7ZvWmsgbayrKKz0VeLivnzRBe3U2Egt7a5ax0Dhrp6fyBBGmA+hDLo2
-         utI0RzqK7QAjZZx1PN4otfC9rXSwiudZRP0IVWsYrnOdCRfsfYqT/JI/21oRnp3VsGqB
-         TNeiKvpNc/7zgVAf29xORSpJFt3sORtGO7y4Xa39cYwJ8Ccg1jpELh6UZa01y6RfKN/6
-         jxog==
-X-Forwarded-Encrypted: i=1; AJvYcCURz2yv3AyIfaS2iqgB5OAg5v7Z1/20aID48BFlG2z4p004rmLSkHTmufwHKltkvgIkSQ9BQqerW+ac@vger.kernel.org, AJvYcCXHnLopgPiM7UJpy+RQ6DYB5U/re922TDn3UZC8IfxxNqFp5fd9MYbg/jg8kEsB+llPGlh5T48dqFIV324gp53+Og==@vger.kernel.org, AJvYcCXONbM1x68MoYntZyKoxctqbEqZSANooLuSbSiLCPuxsqRpPYnd1oSr8U9qxY5uQ2RYjUVPmn6+aPK2O2KS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOCu/hYwXjRex9eF92gfsEY1xkKA1bYo0UAP930RJ4h5z6GGvB
-	XdQ1i9AjIcWUusQyhjDNqnvIYCd9ZW2vACxHGZ9uHV1kD9qN9jpt/hM3kadAEZbm7X2YWUMfHO5
-	Whinu1RAnMWG9W9WLfRgP9qLSgDT18fw=
-X-Gm-Gg: ASbGnctGLQ2jkfljyZtJZzvs3ATY3qq4zNgV1z9LXypjoZ0jShU53sUSuntzEA9cWpq
-	d9mpVjO5QjZsMpu3yAz647qpjRQxfVCQKtXM5IbOr6eBTvV/rXglIRvEdADNP6T3BD45srKBhKy
-	nJFAof6bE3mXfbjolaY6zksixTxtVvdiLNhrNrqP13
-X-Google-Smtp-Source: AGHT+IGIA/B2yzj9kVtPTV819XunUr+pzfOmCuEtfwePf361QYYolQtgx4s3tdeFt0KKKXYZVrT1BQRfBwQae0le85A=
-X-Received: by 2002:a17:902:ce91:b0:224:76f:9e4a with SMTP id
- d9443c01a7336-2366afe7bfdmr139261545ad.14.1750079103282; Mon, 16 Jun 2025
- 06:05:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750079643; x=1750684443;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BRYkbvCVxvcI/mg8yKgS8W1N0iZ7JRBV2UIynjIs8JQ=;
+        b=U7Buqzn2E5niC/3YUqPRCATqYU+884iDEd35R0oJ1p0VmvPg+2hpyw0qXK86z7J3Zg
+         lH/CqtuQGZDtuMhUlM2mwenib/iOQx+oYdE3O8ZArDI1SH6gKp0MX2iWYKzTdhr0RvSe
+         AaPPSf+dooTonResjk17EJemmSo4zOWTa70VQChLJ9cM4eCwxlR1tgrlLcSEtyg8Yujc
+         WUYjt+mtDpTqTxh9IAV8hAxp0K2qNMj5tCmTUMuW4IRot0iIax3Vf5F66x4xorbQP5KE
+         kHaR6if/Ln1hqMXgoxXT3RcU7kHdxty1BvjNcJMMeLFpw32J0P0+Iw81J0pQaKTefeKO
+         8Yfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS1puMp0M0GJ+OeQe2PmKPFs7qhpLylfslR1rPFyKKuqjl7/EV6sB1wAn/ut+c0M4OOo+WqnQQfTBqNg1Kfqoh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEmNjnBQzrbNinResE0yNzEsOspmLg6YStWIRmvH212MOVaH+O
+	judMUNOVpGhC1bKEayB0GADaxkH9mnbPcfir/yKl6Mpi1BXNaiIHGQuZkjIu6Sh6Cx1vQKMRoyx
+	lnIM05nHu+LRn/PnBH2JEwFfYR8JN1juXv/+5w5jLzg==
+X-Gm-Gg: ASbGncslnhHv8ygv7VmIztnw8W4iENJMO/ZNGIprwKCKOh2kGF7TsQ62V+yvAT1ME2C
+	RzpgV2tx8V8p7bbL6NHZAzK9MJEEuBi7dE8ejQcjXi0F56BpXWyHP9Kzc9xzwqiZkmJIEnQmcdE
+	46jKvmHm8Ek0r4mSmC0zzz+PhIEUOSLKy0DSTJb9FUmcJY
+X-Google-Smtp-Source: AGHT+IGi/aEqL6Rh0/QFbFi5llqcB5Z+A4DQiJChk6fNONAKpDZLCVOKHVzGhfBOvJ/fA1gHl6Xt6hW+mpx8lzQMNck=
+X-Received: by 2002:a05:6902:150d:b0:e7f:682f:9536 with SMTP id
+ 3f1490d57ef6-e822acb5383mr11988415276.46.1750079642672; Mon, 16 Jun 2025
+ 06:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606-imx95-rproc-1-v2-0-a2bd64438be9@nxp.com> <20250606-imx95-rproc-1-v2-1-a2bd64438be9@nxp.com>
-In-Reply-To: <20250606-imx95-rproc-1-v2-1-a2bd64438be9@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 16 Jun 2025 16:07:02 +0300
-X-Gm-Features: AX0GCFsHX-yp69BTpUbkYuCgM8eD072u2RLLllJxgon-4nc2mIU3mnAX1gZC5_Q
-Message-ID: <CAEnQRZCQj5b9GSb=i2cTn4YKtAsQPTwJ6DkiqaZjmrmboim-8A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: fsl,imx-rproc: Add
- support for i.MX95
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+References: <20250602131906.25751-1-hiagofranco@gmail.com> <20250602131906.25751-2-hiagofranco@gmail.com>
+ <iuotfsnaft3623lchzop6sbu5ox56scdr57uia56qm6ummcvzt@yisczcdzbc3b> <20250612173132.ixgctqijtd33vnmb@hiago-nb>
+In-Reply-To: <20250612173132.ixgctqijtd33vnmb@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 16 Jun 2025 15:13:26 +0200
+X-Gm-Features: AX0GCFuvpjxjHJP5wI9sLNmiJuYGa1YHq-TFuFSLYi0hAhYmQqrk1asShtl7yPE
+Message-ID: <CAPDyKFoHHMv1MUnT-ZUTDiwZdMChq1KooQxnNDx=eettpoTAGA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] pmdomain: core: introduce dev_pm_genpd_is_on
+To: Hiago De Franco <hiagofranco@gmail.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
 	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 6, 2025 at 4:57=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
-> wrote:
+On Thu, 12 Jun 2025 at 19:31, Hiago De Franco <hiagofranco@gmail.com> wrote:
 >
-> From: Peng Fan <peng.fan@nxp.com>
+> On Wed, Jun 11, 2025 at 10:32:28AM -0500, Bjorn Andersson wrote:
+> > On Mon, Jun 02, 2025 at 10:19:03AM -0300, Hiago De Franco wrote:
+> > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > >
+> > > This helper function returns the current power status of a given generic
+> > > power domain.
+> > >
+> >
+> > Please correct me if I'm wrong, but this returns the momentary status of
+> > the device's associated genpd, and as genpds can be shared among devices
+> > wouldn't there be a risk that you think the genpd is on but then that
+> > other device powers it off?
 >
-> i.MX95 has a System Manager(SM) core runs the System Control Management
-> Interface(SCMI) firmware. Vendor extenions are implemented in the
-> firmware, Logical Machine Management(LMM) protocol to manage
-> Logical Machines and CPU protocol to manage cores. The documentation
-> could be found in file drivers/firmware/arm_scmi/vendors/imx/imx95.rst.
+> I am not fully familiar with the genpd's, so my knowledge might be
+> limited, but I think this is correct, if the genpd is shared.
 >
-> Add below to support i.MX95
->  - compatible string for i.MX95 M7
->  - fsl,lmm-id to indicate the LMM ID of M7 LM
->  - fsl,cpu-id to indicate the CPU ID of M7
+> >
+> > > As example, remoteproc/imx_rproc.c can now use this function to check
+> > > the power status of the remote core to properly set "attached" or
+> > > "offline" modes.
+> >
+> > I presume this example works because there is a dedicated, single usage,
+> > genpd for the remoteproc instance?
 >
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 27 ++++++++++++++++=
-++++++
->  1 file changed, 27 insertions(+)
+> Peng might correct if I am wrong, but yes, I believe this is correct.
 >
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.y=
-aml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index 57d75acb0b5e52ca49d1361176fdebc18a0bf7a2..a3ffab60df52be6f1d7cf4846=
-ca5ba1c40f03bde 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -28,6 +28,7 @@ properties:
->        - fsl,imx8qxp-cm4
->        - fsl,imx8ulp-cm33
->        - fsl,imx93-cm33
-> +      - fsl,imx95-cm7
+> >
+> > >
+> > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > ---
+> > > v4: New patch.
+> > > ---
+> > >  drivers/pmdomain/core.c   | 27 +++++++++++++++++++++++++++
+> > >  include/linux/pm_domain.h |  6 ++++++
+> > >  2 files changed, 33 insertions(+)
+> > >
+> > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > > index ff5c7f2b69ce..bcb74d10960c 100644
+> > > --- a/drivers/pmdomain/core.c
+> > > +++ b/drivers/pmdomain/core.c
+> > > @@ -758,6 +758,33 @@ int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dev_pm_genpd_rpm_always_on);
+> > >
+> > > +/**
+> > > + * dev_pm_genpd_is_on - Get device's power status
+> >
+> > Functions in kernel-doc should have () prefix
 >
->    clocks:
->      maxItems: 1
-> @@ -68,6 +69,12 @@ properties:
->        Indicate whether need to load the default firmware and start the r=
-emote
->        processor automatically.
+> Thanks, I will correct this is next patch version.
 >
-> +  fsl,cpu-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      This property is to specify the CPU ID of the remote processor
-> +      in SoC which supports System Manager
-> +
->    fsl,entry-address:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> @@ -78,6 +85,12 @@ properties:
->      description:
->        Phandle to IOMUXC GPR block which provide access to CM7 CPUWAIT bi=
-t.
+> >
+> > > + *
+> > > + * @dev: Device to get the current power status
+> > > + *
+> > > + * This function checks whether the generic power domain is on or not by
+> > > + * verifying if genpd_status_on equals GENPD_STATE_ON.
+> > > + *
+> >
+> > If my understanding is correct, I'd like a warning here saying that this
+> > is dangerous if the underlying genpd is shared.
 >
-> +  fsl,lmm-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      This property is to specify the Logical Machine ID of the remote p=
-rocessor
-> +      in SoC which supports System Manager
-> +
->    fsl,resource-id:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> @@ -114,6 +127,20 @@ allOf:
->        properties:
->          power-domains: false
->
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,imx95-cm7
-> +    then:
-> +      required:
-> +        - fsl,lmm-id
-> +        - fsl,cpu-id
-> +    else:
-> +      properties:
-> +        fsl,lmm-id: false
-> +        fsl,cpu-id: false
+> I believe this is correct, maybe Peng or Ulf can also comment here, but
+> if that is the case then I can update the comment.
 
-Hi Peng,
+Good point!
 
-Can you remind me why do we need the else branch here?
+I would not say that it's "dangerous", while I agree that we need to
+extend the comment to make it really clear that it returns the current
+power status of the genpd, which potentially may change beyond
+returning from the function and especially if the genpd has multiple
+consumers.
 
-I mean if the compatible is not fsl,imx95-cm7 then the properties
-fsl,lmm-id and fsl,cpu-id are not required and I think that's fine.
+[...]
+
+Kind regards
+Uffe
