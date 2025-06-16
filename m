@@ -1,83 +1,88 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839231E834F
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 14:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8912283CBD;
+	Mon, 16 Jun 2025 16:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750082779; cv=none; b=LadGH7aniDtB6sTQbXfwakhmjtIzQ+M/xby/2x/CU5IehMV0iOpQ4roksib+w4rOibkJWudSbKrV3evkg7+ndRuLSIeuM9EGLmHiWNKTdHxxLCGrHVRwP94VRkntqdnzNQJ28W9vdpH/ULpoW4Qgav595217wefDHyMERG/DpUA=
+	t=1750089919; cv=none; b=ML4t6HhyN+SVqK278djJNQ40Rv0ZjDDF+y77iC6SCdxYwbKzaqjKeAhf4hqN/P1ZhFjv5xVLRK1MQ8xy1qHkBbkw0ppbCfo0kq5jbshlYuQF6L2tUZ2ZUdd0NDvDHm98Up3uuzD1xfLKmrCaUl9Mev1SwMpakL8VEYkoWBerbjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750082779; c=relaxed/simple;
-	bh=xLc9ItWh5tpODOaZ69PPZ9EYd++GnaUzUK7aTCACc2g=;
+	s=arc-20240116; t=1750089919; c=relaxed/simple;
+	bh=kmq3p5W505xyNx/+aDoYZ3uon9HLxrXo9zuNaMA9K0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlzoqhJazhni2pSdcJcKdRzqoxZiqqY8VxlN3MCJIfONfQqFoHpZsHrV77A/nnM595wrUwiDWZp3kcR/rCLo6pwdc9/QOJ7qklfGAiuJbF1ohz+oQyojlqqbB6oiu1x6uC/eIwAJVqmDPbL0rQynROcfpMWFhibpg4THlkT26No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lI40D6PB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbAahDN3FCzajitR3mF4iuuhez2TepbEd+v7VgUppUX+4/NQyCow18yD0QE1izIriv2l5IJFjXp36eTdk44iq6cV51J4YACSxo+Vqztwe2mNV/2r3L7Di+9i671XJGTew2zQalZ97ZPEsS7gbX4lXryVK/Wi8r2yNtZgdRyXgo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6Nv+BBe; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lI40D6PB"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G92RoA013919
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 14:06:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vh4hjv26x4W/Itf7e2ntHRGf
-	CMDWqmAVMqTQ3fn4agY=; b=lI40D6PBuR/dA9dRvhU0KaCtNGb5cKaTtRJsWh/u
-	QOCUul2h2ihPSphz1uWTsDL4tP/hP6vSOlhllZyo1WIeOgTTxm7N3P5yEaEjarJv
-	//Ja0t10utkJQj5u1/YGdT7WT/g2KhDK/+MLs7Gx+t+mXO0JPpJHYM0aphm6hsDt
-	8nPkuGUI25pOBgeVAkXOmie7PU6ZcBt7hx0acp6XQVtbbjvpuKV8Ggbz7pFqcu1N
-	9l0zAzVw8sZxEsr/9sN1WeIE2RFlbbF45TwYxufz5Dir+jmg1B+jWbqSJcvKX5VP
-	MMfsyqPdAYPsKxaldL7l5AvEMqD/QBvkpqtMb0OzWUEWTA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47928mcq9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 14:06:15 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c53e316734so863542785a.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jun 2025 07:06:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6Nv+BBe"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b2c3c689d20so3173559a12.3;
+        Mon, 16 Jun 2025 09:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750089917; x=1750694717; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DCfgFr2kf9r7h7JVRAfol2Jm2SHhgBwkNBP3fBqtdVg=;
+        b=i6Nv+BBe7fLty0JXaQgXb4h56xT+khZHyydMDtM4UTNeKSuZk2VufRSwWjlHsHSYik
+         FOM8hxxldim6y4pIw/jFJh/BzKNQ0bZYATeLcHA+1Ya/jcp2Mw+aEB/WEAN4lsr9Voya
+         WikqrQhmrn/UpoDoxtNBgBw4dhjHQZTCA/WS0O/vKU/kZJsYxPo5XA1W97nmWH2i+reC
+         XvZ9gPVVsb4U9GBeTCDFSj09MNcvI8jryZja7eXDRTCeaT4xwV1iFCdxdlvOn5rhsPiy
+         HJDT/53ih4IIMHUkjGbueaFDeCe9mmrKHBIKRorTi3Mot6PR5CEe7gkoI7wDX/+idx3A
+         PLOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750082774; x=1750687574;
+        d=1e100.net; s=20230601; t=1750089917; x=1750694717;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vh4hjv26x4W/Itf7e2ntHRGfCMDWqmAVMqTQ3fn4agY=;
-        b=pCQJcMXPHv2GqqlsOEeWsnHLWtNxAfZFQW7TyWWDSdkpfcMB0d7nI7FL6B4zsmGMZN
-         +lA9dByfXVrZYf7/r7XmYUyU8Mv+pQcV6aXWmOl57Sg0KnM/nSdgULZWDtck2IJaPEkZ
-         IPvyvQIuP0ilblhoYxrFMyRKiMr1Mi3cdZgn+LbfDMUu3VRx883h3big1dPG443lt2Ld
-         YZcSbT7Pyk5n9aQfyZz+w+s+pxAiehIIEhE3CMwf5V/V31okF8i1k1XDhIoVQ07CJGKI
-         YAJWW1lphkm2HJAR0ilt+UUornR66ORxnYssa21rbcNxf5jyIxol8nvHJmKFByNjjeLJ
-         yaMw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5o9HMuZnx0qljWQP0tXdVPceRSLRKbDT4Zv3h1Lzj1SeLOCA3M7EXJellKOUq2nhe9O8et7g3rE1KWfw1XtNy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ1jFz2qCsn8xFaNVqeHqmAxIIBSelRS9HM6sXOsXzrtOSEZT8
-	8I9gEFcmGy7hp4krij0QBIebM3l0CDWNzzr6v9wEyekcbNc0nGNWa+Xn8Z+s+Lb0UPAOgsR41AJ
-	EYyJ1hx0FbOXtc+3c+Y0dvN/5RCerSuytPG3PSeCyUepJofDGkyfZOLSn/9NmWO4pNw0TMjI7
-X-Gm-Gg: ASbGnctR+AQA84FzsHH6Plt0vH22gs0n5Yef5lXAMfJt/hniHBOdFNEdZhHv58P7w9S
-	gRbvpW+DKJEgHo72yiQxU7Ja3sJ18J8NtlICKWqZuPzZRaFATac3iGKdX472LzpxleJyJqh2pMP
-	vbjTGIcAE2VrlhRAPLeFp6xeuvImOdj++wtlJay3KGVN9lFRQsnbPVt8Xv2QSOJbgvv5wZ+k1Zg
-	EkSHhGBkgErdT286EbqxyvC924Ky7TKLnW86xagl1IeHrZ0yabUDI1gNnncxP95RTbpjUFTXGRt
-	nbHUMXkKWfyct9MfYqEM7IVIW8McEthJYQ2tACg9qRGS8KRO9YWxWr3PjGza9LfRR+3jX7c6mwy
-	K/OsFNzdZYTva3her/29ceAfAnUxOnb/npa8=
-X-Received: by 2002:a05:620a:1a0c:b0:7d3:b8d7:a9a3 with SMTP id af79cd13be357-7d3c6cd8471mr1278004185a.29.1750082774032;
-        Mon, 16 Jun 2025 07:06:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErsy0AzGP7wZvoQHWt0vDtH88N24PAi2+rnq1/4b7VJfb7Qwiz2c7LeWxv+Fli4AzjyHe3og==
-X-Received: by 2002:a05:620a:1a0c:b0:7d3:b8d7:a9a3 with SMTP id af79cd13be357-7d3c6cd8471mr1278000885a.29.1750082773641;
-        Mon, 16 Jun 2025 07:06:13 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac135d8bsm1570805e87.70.2025.06.16.07.06.12
+        bh=DCfgFr2kf9r7h7JVRAfol2Jm2SHhgBwkNBP3fBqtdVg=;
+        b=wqTCF4ZE3wUGbAG7+8gRSRMtt9JhaqOEmESEojsF7IFkh6RMFGZXL/pGJvYF/5a42F
+         +aCOoCFwdRISruNgooKIrDx0xLiLWx8CZNHwsp4VJVWLAftt+VtQWGO9f2wYv8MEifdz
+         63LMcHp27E+pYMSRHEKaRCaCRWGzgGwKzvatM8IEq6kss3laWb9Nh2egFZKIf2xICHpq
+         aBqvsb6FgAEPga72KmmX9SJjq40QdqUVTFc6XpCIiVJSwl8toksCxixb6k3m4xNj7XFh
+         KnQPVd9G5mshtebl2rwOSr1cEaQuGSgnIR70bjDX0cCF2d8Y8ozM0SRQ5YZvXICOqJr5
+         YaOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX1R2132Tc6/TyEJb0IU3gim8NXl+3/82GAT/LBBQIu20oZv8Mbw8bqH62jM9LEpz/FFrm4d+iWwo=@vger.kernel.org, AJvYcCXr+d5z0grkqveLy+SKvFcy3ByTI9zy9tILj5wLj6FI6X2lt8MfgmiSTKVlCpntFdLlmXDyxatFy3DBLVc=@vger.kernel.org, AJvYcCXwld6xBs92JCCkQlcz0x6hIYL8wlm1VqgXAriefCYI/pk7QUvVeTZJoIfYn0MTekXrcwhbc1xl7+og/WoRavtfTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfmqj1jGW3Ob4rX83XRIPeZO1d79YTAYVvUn7RrZt8Jx1gXjh2
+	F0xMa4aUvcVEZNyZvEzp/26QqpLg6pS5E6BM0lK4kvp/BXcDlqBUxvCfmSH6nD3Z
+X-Gm-Gg: ASbGncvxyoZcK7r56GCElcZ2tLk+TsMcCJ30dDElnvQ4eEthqhrYpUcGeTaSydyufKI
+	Gc2ZqjKVbozCa8edhOphK3cRe1RvyR+uYNgk5Jszhzsm4Ypd/5NWU6z3ZqXN5UcT55uBZaa/W7t
+	f4mI1infEbYW2P1JENpUIHcS/oSEn2wXqn232JP4ufIgOhmFuRibeGmNASPoz+ldwNd3QY08xON
+	uGWK9Sx29ZwyABH3y0bJIdOCo+0L4TRccQkeSAb6j5mh2e3wpnv4qxCe6MT4x6GBsMTxOjiV/HQ
+	Gk39Z57fHPPZElG77UuhOwC607ySkVI1LtJILecI7tkXZbgoDuVzPOzNnoZ60AiO/6Qv5vY=
+X-Google-Smtp-Source: AGHT+IEBQXhMNhksw0Q8L1zld8OfuDf7GjCQHVbQ8LvJ/iTuW6L+QxChXy/bkOqnwi7dV7sx8AN2eg==
+X-Received: by 2002:a05:6a21:998a:b0:218:bbb:c13c with SMTP id adf61e73a8af0-21fbd5dc862mr3713885637.38.1750089916953;
+        Mon, 16 Jun 2025 09:05:16 -0700 (PDT)
+Received: from hiago-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe168c8f7sm5906749a12.65.2025.06.16.09.05.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 07:06:12 -0700 (PDT)
-Date: Mon, 16 Jun 2025 17:06:11 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Doug Anderson <dianders@chromium.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] soc: qcom: mdt_loader: Ensure we don't read past
- the ELF header
-Message-ID: <5u4vb4wjqvc7zlcwtyeixfhb6qnx5vppgnscvt3ypft5olcnig@rmbscleivq3u>
-References: <20250610-mdt-loader-validation-and-fixes-v2-0-f7073e9ab899@oss.qualcomm.com>
- <20250610-mdt-loader-validation-and-fixes-v2-1-f7073e9ab899@oss.qualcomm.com>
+        Mon, 16 Jun 2025 09:05:16 -0700 (PDT)
+Date: Mon, 16 Jun 2025 13:05:11 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	"Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 3/3] remoteproc: imx_rproc: detect and attach to
+ pre-booted remote cores
+Message-ID: <20250616160511.wynya4ezbj6nafkd@hiago-nb>
+References: <20250602131906.25751-1-hiagofranco@gmail.com>
+ <20250602131906.25751-4-hiagofranco@gmail.com>
+ <PAXPR04MB84594F9ABDF0728D9A71FAFE886CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250609173115.qecc2noswkcgr3hm@hiago-nb>
+ <PAXPR04MB8459F651D1D0AC8C51F292A48875A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250612170317.k3cok3utmiy5ptq3@hiago-nb>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,54 +91,144 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610-mdt-loader-validation-and-fixes-v2-1-f7073e9ab899@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA4OSBTYWx0ZWRfXxk1wBNX3K9/H
- 5C7zXLod+iodYi2ZnBLFkefqfk2+2pDA+eHLlhnzQudYoz1Re04xdC7jQq8+gyMJ7dT3Kiy96ar
- MZfUwoKjl87jjjsBVEJFQ1CAsdZnB3+YkCZy1kMTn07Y7seEoiwFZGithOdpzOPrWQLacwzj+W2
- lurVu2cJxnsgH/OYYXWYtuEHSC4Uk2aO2fDk9tgphNT5K93sQFYCsmG6RaWoMN+PnLuS6UBIVYk
- 9thoN4cNmTN+I5YQ9U6XcePkgV1OGoM/b0y5ApqPKfxqSDoJonHhIWzMtrtLMiifeuUg8cP1Nb2
- kWfOi1Gi4kUr6cnltaao3e05ekhtx5DeKMP58TrMTWq+2JFdJ08yolGbqLgTWvMRlLCM3k2NZC5
- 3QU6uq7Ox0DCsy8QC9PavbdXA0tB/cJtO70VhPI6EHfteVE5nCeJT/jq+HhzXM9t3CNjS0k6
-X-Authority-Analysis: v=2.4 cv=fvbcZE4f c=1 sm=1 tr=0 ts=685024d7 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8
- a=_mC99nTGYcsxCmVRH_sA:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: lS_jKSODnoMmSX1A1FFkU1O5vbsUkR1r
-X-Proofpoint-ORIG-GUID: lS_jKSODnoMmSX1A1FFkU1O5vbsUkR1r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_06,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 clxscore=1015 mlxscore=0 impostorscore=0
- adultscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506160089
+In-Reply-To: <20250612170317.k3cok3utmiy5ptq3@hiago-nb>
 
-On Tue, Jun 10, 2025 at 09:58:28PM -0500, Bjorn Andersson wrote:
-> When the MDT loader is used in remoteproc, the ELF header is sanitized
-> beforehand, but that's not necessary the case for other clients.
+Hi Peng,
+
+On Thu, Jun 12, 2025 at 02:03:17PM -0300, Hiago De Franco wrote:
+> Hi Peng,
 > 
-> Validate the size of the firmware buffer to ensure that we don't read
-> past the end as we iterate over the header. e_phentsize and e_shentsize
-> are validated as well, to ensure that the assumptions about step size in
-> the traversal are valid.
+> On Wed, Jun 11, 2025 at 03:27:09AM +0000, Peng Fan wrote:
+> > > 
+> > > Sorry for the delay.
+> > > 
+> > > I tested it now and there must be something missing on my U-Boot:
+> > > 
+> > > Disable imx8x-cm4 rsrc 278 not owned
+> > > Disable imx8x-cm4 rsrc 297 not owned
+> > > 
+> > > It removes my nodes from the DT before starting the kernel, so I cannot
+> > > attach. Do you know what should I do in this case?
+> > 
+> > In separate partition case, UBoot will check the permission
+> > by checking the rsrc-id, saying power domain id.
+> > 
+> > You may need to remove the power-domains property
+> > from M4 node.
 > 
-> Fixes: 2aad40d911ee ("remoteproc: Move qcom_mdt_loader into drivers/soc/qcom")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/mdt_loader.c | 43 +++++++++++++++++++++++++++++++++++++++++++
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-Nit: in theory we don't need to validate section headers since we don't
-use them in the loader. However it's better be safe than sorry.
-
->  1 file changed, 43 insertions(+)
+> Without the power-domains property, rproc gives me a kernel panic:
 > 
+> [    1.253234] remoteproc remoteproc0: imx-rproc is available
+> [    1.258501] remoteproc remoteproc0: attaching to imx-rproc
+> [    1.263950] Unable to handle kernel paging request at virtual address ffff80005ae57d39
+> [    1.271812] Mem abort info:
+> [    1.274575]   ESR = 0x0000000096000005
+> [    1.278299]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    1.282581] mmc0: SDHCI controller on 5b010000.mmc [5b010000.mmc] using ADMA
+> [    1.283607]   SET = 0, FnV = 0
+> [    1.293701]   EA = 0, S1PTW = 0
+> [    1.296815]   FSC = 0x05: level 1 translation fault
+> [    1.301699] Data abort info:
+> [    1.304545]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+> [    1.310079]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    1.315073]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    1.320367] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000096bf3000
+> [    1.327061] [ffff80005ae57d39] pgd=0000000000000000, p4d=1000000097085003, pud=0000000000000000
+> [    1.335750] Internal error: Oops: 0000000096000005 [#1]  SMP
+> [    1.341373] Modules linked in:
+> [    1.344414] CPU: 3 UID: 0 PID: 47 Comm: kworker/u16:3 Not tainted 6.16.0-rc1-00024-gfe5d6ab20714-dirty
+>  #857 PREEMPT
+> [    1.354932] Hardware name: Toradex Colibri iMX8QXP on Colibri Evaluation Board V3 (DT)
+> [    1.362837] Workqueue: events_unbound deferred_probe_work_func
+> [    1.368651] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    1.375601] pc : rproc_handle_resources.constprop.0+0x78/0x1d0
+> [    1.381421] lr : rproc_boot+0x368/0x578
+> [    1.385242] sp : ffff8000819f3990
+> [    1.388542] x29: ffff8000819f3990 x28: ffff80005ae57d3d x27: 0000000000000000
+> [    1.395671] x26: 0000000000000000 x25: ffff0000016ee038 x24: ffff800080f3c680
+> [    1.402793] x23: ffff8000813d6da8 x22: 00000000d999ad39 x21: ffff0000016ee000
+> [    1.409917] x20: 00000000266656c3 x19: ffff80005ae57d39 x18: 0000000000000006
+> [    1.417040] x17: ffff000002020600 x16: ffff000002020000 x15: 4addd15cca11c529
+> [    1.424164] x14: 73ebceed5d6cd787 x13: 4addd15cca11c529 x12: 73ebceed5d6cd787
+> [    1.431288] x11: 95a4e33b6b190664 x10: 9e3cdabdb09ca345 x9 : ab3734eafdd6fd1c
+> [    1.438412] x8 : d58a055de4cfb385 x7 : de97fab1791acbbe x6 : 9946d97107d0dcda
+> [    1.445535] x5 : ffff0000032b2c00 x4 : 00000000000003fc x3 : ffff0000032b2b80
+> [    1.452659] x2 : fffffffffffffff0 x1 : ffff8000814bd000 x0 : ffff8000814bd000
+> [    1.459786] Call trace:
+> [    1.462215]  rproc_handle_resources.constprop.0+0x78/0x1d0 (P)
+> [    1.468036]  rproc_boot+0x368/0x578
+> [    1.471510]  rproc_add+0x180/0x18c
+> [    1.474898]  imx_rproc_probe+0x3e4/0x540
+> [    1.475274] mmc0: new HS400 MMC card at address 0001
+> [    1.478799]  platform_probe+0x68/0xc0
+> [    1.484628] mmcblk0: mmc0:0001 Q2J55L 7.09 GiB
+> [    1.487400]  really_probe+0xc0/0x38c
+> [    1.487412]  __driver_probe_device+0x7c/0x15c
+> [    1.487424]  driver_probe_device+0x3c/0x10c
+> [    1.493941]  mmcblk0: p1 p2
+> [    1.495392]  __device_attach_driver+0xbc/0x158
+> [    1.495405]  bus_for_each_drv+0x84/0xe0
+> [    1.495417]  __device_attach+0x9c/0x1ac
+> [    1.500468] mmcblk0boot0: mmc0:0001 Q2J55L 16.0 MiB
+> [    1.503906]  device_initial_probe+0x14/0x20
+> [    1.503918]  bus_probe_device+0xac/0xb0
+> [    1.503929]  deferred_probe_work_func+0x9c/0xec
+> [    1.509863] mmcblk0boot1: mmc0:0001 Q2J55L 16.0 MiB
+> [    1.511117]  process_one_work+0x14c/0x28c
+> [    1.511132]  worker_thread+0x2cc/0x3d4
+> [    1.511142]  kthread+0x12c/0x208
+> [    1.511157]  ret_from_fork+0x10/0x20
+> [    1.517964] mmcblk0rpmb: mmc0:0001 Q2J55L 4.00 MiB, chardev (241:0)
+> [    1.518770] Code: 8b36c033 9100127c 54000924 d503201f (b9400261)
+> [    1.518777] ---[ end trace 0000000000000000 ]---
+> 
+> Currently I have the M4 partiton defined into the SCU code:
+> 
+>             /* Create partition */
+>             BRD_ERR(rm_partition_create(pt_boot, &pt_m4_0, SC_FALSE,
+>                 SC_TRUE, SC_FALSE, SC_TRUE, SC_FALSE, SC_R_M4_0_PID0,
+>                 rsrc_list, ARRAY_SIZE(rsrc_list),
+>                 pad_list, ARRAY_SIZE(pad_list),
+>                 NULL, 0));
+> 
+>             /* Name partition for debug */
+>             PARTITION_NAME(pt_m4_0, "MCU0");
+>             
+>             /* Allow AP to use SYSTEM (not production!) */
+>             BRD_ERR(rm_set_peripheral_permissions(SC_PT, SC_R_SYSTEM,
+>                 pt_boot, SC_RM_PERM_SEC_RW));
+> 
+>             /* Move M4 0 TCM */
+>             BRD_ERR(rm_find_memreg(pt_boot, &mr, 0x034FE0000ULL,
+>                 0x034FE0000ULL));
+>             BRD_ERR(rm_assign_memreg(pt_boot, pt_m4_0, mr));
+> 
+>             /* Move partition to be owned by SC */
+>             BRD_ERR(rm_set_parent(pt_boot, pt_m4_0, SC_PT));
+> 
+>             /* Check if booting with the no_ap flag set */
+>             if (no_ap != SC_FALSE)
+>             {
+>                 /* Move boot to be owned by M4 0 for Android Automotive */
+>                 BRD_ERR(rm_set_parent(SC_PT, pt_boot, pt_m4_0));
+>             }
+>         }
+> 
+>         /* Allow all to access the SEMA42s */
+>         BRD_ERR(rm_set_peripheral_permissions(SC_PT, SC_R_M4_0_SEMA42,
+>             SC_RM_PT_ALL, SC_RM_PERM_FULL));
+> 
+> I believe this SCU code is correct, at least this is more or less what
+> NXP provides as example, right?
 
--- 
-With best wishes
-Dmitry
+I tested the same SCU code and DTS overlay (removing the power-domains)
+with the current master branch of Linux and I got the same kernel panic.
+Maybe this part is already broken? Can you also test this on your side
+to check if this is currently working?
+
+> 
+> Best Regards,
+> Hiago.
+
+Best Regards,
+Hiago.
