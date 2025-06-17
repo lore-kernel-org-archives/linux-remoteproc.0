@@ -1,43 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A6D1898E8;
-	Tue, 17 Jun 2025 21:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D472F30CC;
+	Tue, 17 Jun 2025 21:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750195860; cv=none; b=K7Xr+ZYltJ3Dhg+XHcLfFyqnUHRAswgGBDe+kVlWnEly3hI9t+flkDpADJ1bj2aj73e8zkMZJhd3cx+zYc3yTRGXnPBTzdwsdqOCgp/2WEhAbtNQ5NVmi0ANMbgoexqpJ5FIXtYQD9OFVEBBlJxOD+NjglEUc1UseOSdepHMLpg=
+	t=1750195897; cv=none; b=gn3pdVAKHDmwTDMRBa2SXKpPd0kHAOcgn/5EocMur54q27J30blek13/ZweiHCHELRukOK97qWRSgH5J+CwLJkbfHEt0pcIkYWSoHnmBmPOokSvwPvuQ9Kp8l9jc7w71+5RmpvkGKIYZpNwB6hr6QgivzVuktTU1qL9emN+vgBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750195860; c=relaxed/simple;
-	bh=HLdj1RAJaIGD84HxtDU2IWkE9JCDgRDgJcFGNUfCqH4=;
+	s=arc-20240116; t=1750195897; c=relaxed/simple;
+	bh=hqHDQUHx7j1ctacGNasuQxJppiraPtGcwTLkCsHBJrs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UlWWbMAVRcanrk3GH6EOa0PoSM8aM3ezl/hwMsqVpt2cofLNW9BCVycyHec4Z5Y/gEJgNEhTBgpyubJk/aOaWqf44EZyye3ZI3mFFkeKMoxvnuTXAaC9zhobLAILvpT1hfGieiO3F6nn+AcFxT9WX7vkWsHrSQ1CZ36XfvEGQ7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGhOi+vp; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=d6SrPM/d4ofZYWEjeq/UVbA/PDpzEvDiDYgBhloejk8PPJCxgL8MvqAdhtlABAc9jek2EPoAJks4iyMedACBPEiTEjNFKw9HW6AoORinaB7q2YzA7cHXR1BDMsoE9dZhNTlo7VqJj3O7YRTVO4daFyGpMFqameA9COSTnfJNa9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyvd1JPQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGhOi+vp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86C16C4CEF0;
-	Tue, 17 Jun 2025 21:30:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyvd1JPQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2961C4CEF0;
+	Tue, 17 Jun 2025 21:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750195860;
-	bh=HLdj1RAJaIGD84HxtDU2IWkE9JCDgRDgJcFGNUfCqH4=;
+	s=k20201202; t=1750195896;
+	bh=hqHDQUHx7j1ctacGNasuQxJppiraPtGcwTLkCsHBJrs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QGhOi+vpR9TlQ2Ti2FHJfG2ck6o8vb630b1z3j/RfBIaCpw/rLAMy7kazloYLDmiy
-	 GDUP5reHo9d/pOIXTr3iaV6cA14HlSvpB4zCD8mQ9TLIuBsls6dX81sn6LDhayejof
-	 ujskiXK1cOlkILEjuveS7eZM8QsEeab1F54E9bDJS1gqUsgesArNQZaKr/87sBWZ1g
-	 Ta093XNYkDl3G17K/B6SAR3nmxxUrrmogfnCCp2AJm4A9eQz6+vONAqaFDhEHeVx6A
-	 Z6GhaVF8FHKfl5ypyFWdrZCX2cpnZnjiAnIdtpZ6OjlcXdBw8FlWVPwmr8QG4SkpRs
-	 PONVr5I76JMCw==
+	b=iyvd1JPQunX5jgKZwAjI+HfOgz/+zvjif94avLrfnpmYW+way9ZPkcjohwvuVyhib
+	 f4KTE3KF4UJ+hqQHcgB+kyq4SEZ3Hp9HXCGpSzlWUiKmJDhkXWbc30WrJGvWJ3qZCB
+	 LrzDrgWsUZ15YIGiOWKaXBs3g1qusfFZvVC8HSZLreLbb6McqZDZzzPYM9/+RyvRsO
+	 fUKcGtpZLVgFtMOYR56I/ygYF4m0JpKWcN99YF/9KMBCZBg0nEigE1MrlDDgK7N/UO
+	 nyLfKR/HsAkfAMII1K3aTGEaXJq5aM3lavx8kC/ZnTseIW6d3Qd+5NogmJ5r1+yor1
+	 DPLO40mKTHQDA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] rpmsg: Use strscpy() instead of strscpy_pad()
-Date: Tue, 17 Jun 2025 16:30:53 -0500
-Message-ID: <175019584843.714789.14726473013728304074.b4-ty@kernel.org>
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Doug Anderson <dianders@chromium.org>,
+	stable@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/3] soc: qcom: mdt_loader: Validation and cleanup fixes
+Date: Tue, 17 Jun 2025 16:31:25 -0500
+Message-ID: <175019588857.714929.4560979483965120623.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429104543.66927-2-thorsten.blum@linux.dev>
-References: <20250429104543.66927-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250610-mdt-loader-validation-and-fixes-v2-0-f7073e9ab899@oss.qualcomm.com>
+References: <20250610-mdt-loader-validation-and-fixes-v2-0-f7073e9ab899@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,22 +52,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 29 Apr 2025 12:45:43 +0200, Thorsten Blum wrote:
-> kzalloc() already zero-initializes the destination buffer, making
-> strscpy() sufficient for safely copying the name. The additional NUL-
-> padding performed by strscpy_pad() is unnecessary.
+On Tue, 10 Jun 2025 21:58:27 -0500, Bjorn Andersson wrote:
 > 
-> The size parameter is optional, and strscpy() automatically determines
-> the size of the destination buffer using sizeof() when the argument is
-> omitted. RPMSG_NAME_SIZE is equal to sizeof(rpdev->id.name) and can be
-> removed - remove it.
-> 
-> [...]
+
 
 Applied, thanks!
 
-[1/1] rpmsg: Use strscpy() instead of strscpy_pad()
-      commit: 28b825975b8feb352e996d77f679e790b4d84913
+[1/3] soc: qcom: mdt_loader: Ensure we don't read past the ELF header
+      commit: 9f9967fed9d066ed3dae9372b45ffa4f6fccfeef
+[2/3] soc: qcom: mdt_loader: Rename mdt_phdr_valid()
+      commit: cd840362b0a7b3da59740c1380b18ce0ccf8c264
+[3/3] soc: qcom: mdt_loader: Actually use the e_phoff
+      commit: 47e339cac89143709e84a3b71ba8bd9b2fdd2368
 
 Best regards,
 -- 
