@@ -1,159 +1,211 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE77ABA27;
-	Wed, 18 Jun 2025 09:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF6A296153
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jun 2025 12:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239893; cv=none; b=U9BCC5lpf8VE8AoAFo9XLqB12fB1qvgEkMztMV1AA0CEbFKGDgflbUvZX1pfeDzVj5mKwFirJQoRupeJXPCIs50Ha5IIY21ABiaVwN5vqMejoCHxQqxU7LEjGSj7APWmYimTqJbjTKRMGBR85Q2CBXKCTPojCjQ7ZaECKAlMoWw=
+	t=1750248794; cv=none; b=TMA4TJ++K6RhxKXyt/N9ClgNCM5ZShcM4tUPjJNfpgQWlIVF2ZUQERebwYAKlEB8MbzKcfARFCO0UtJDVtfxDhTxQqKl13IlFExxMBp+nSQMFpMOCKYY3uW8mh92Uvv9TOTa4nBqHg17j3kM6Lfq8HRX9Hrjvx2KvMUrBZgf+oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239893; c=relaxed/simple;
-	bh=sFpOWYXshkQpPlzSxedcoc/wnEsD43hfCXIO/sJKvrQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e7GTIB4thLkn9lyLbB1buKtSAf6eRl/KBKRaFQfpzOm4WHdic9JEccvzA7gp08zBSo7iy614ctRJlky+clcaXG+YFwgLayVDYBeMb6YIT0C9HetBoijp9xr4Qx5WTW3gZ4Nln6MIalmvinflO9TD5odcJ6jGPJm9wa4YERmWrpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XpDDpXPn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1750248794; c=relaxed/simple;
+	bh=S+Z1yIM9Z7AMg6puDBieh0UvRmQ1svKpeSk5WrhTYRI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZO5TjyRcsDhY0WWKCdeT2De8pJztf2BpT85ckZbUW7OE0xqB0H0MOquPnOGvndU+0XqX2NELU0pbp9wRIzhpm2Wu7OqctBlUUeich163FFcewNFLbFK/+ILicqneZR8q/8Um2ci9zfz+mKBn8PuWzO7MX3g1ztQUtF5DS17kwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PS7QpX9j; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XpDDpXPn"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I8CvgP031861;
-	Wed, 18 Jun 2025 09:44:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=dGHxe/4dO5PqPpeX1XcV1iTak41bwpepmqG
-	4zojzuHo=; b=XpDDpXPnhbzlBJ69q1kzeybNKo4if+pf2WDJHl42YjpAu82oSYW
-	Qn1fXo8zzqbhGzg5VXpVBsQVCRs26+OnPLtGM+aNiMFBM6Zjk6EiMKYZrlqO8m8S
-	3BeX8e2mgjrXlxadYlRHGk1RskeahuT0avbKVjbPJdK++hlhT+XcTnfzq4HZnS5I
-	MNpokneOGTi0sW7RmmZ/CsJOwy3/NIaRsnpSR/gWYMj3SC6t2d9qr5ykna5TO7cI
-	5NM2Wh/rHREBgGjpHIM7k8S2rM0I7JTr90/CogHh3wSOPCYiC7o+zNpQYoMNGX0Y
-	dcLgIkNtJ2w1+YVpzaL2AdAwxj3BNm9rRbg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791enkhn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:47 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55I9ihUd001024;
-	Wed, 18 Jun 2025 09:44:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 479jy55q4r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:43 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55I9ihIU001016;
-	Wed, 18 Jun 2025 09:44:43 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 55I9ihuS001013
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:43 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
-	id 99D655A8; Wed, 18 Jun 2025 15:14:42 +0530 (+0530)
-From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH v6] remoteproc: Add device awake calls in rproc boot and shutdown path
-Date: Wed, 18 Jun 2025 15:14:41 +0530
-Message-Id: <20250618094441.1994965-1-quic_schowdhu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PS7QpX9j"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad891bb0957so1242529766b.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jun 2025 05:13:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750248789; x=1750853589; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKGxDPrsrGFp0Bze86vZksL2+DNrY5eWcc4p55uZfLg=;
+        b=PS7QpX9jMPQvzX6sjDOFk1szG0lEk5c7rjgLVAuJwXtzlY6vEyyRUzXguADzoyQ4SB
+         m6/bF3TJYKJoOmWygsQxIvHxXdUfS5B6tmZXK2V6Us5YU+fVDUXsgmOPFVoYgGhfOP0M
+         n3QJTx0Y0LiGBjXOpcJTfM4ISpnPspoPeBqm1YCzPP8Vk7FHqrNir2jbzQsN9GiijjqC
+         j4h3tnLRGeJFnL74BniE57h4mB4Z1CoN9t0YcCu8y7MGxXqRGmQQVcltuPiaXXaWo6vY
+         d0+y44N0lUfMCItGFvsbkGYezUAkQdbNCBZ9qGliEUmk/pFoiFXkwz+d6+knE8pFXj50
+         B2pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750248789; x=1750853589;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bKGxDPrsrGFp0Bze86vZksL2+DNrY5eWcc4p55uZfLg=;
+        b=Y6zwVHdbH2xgxBEOR+RRU/CUFxIPLp+tCRkrnLW4D/BJ6XhlZPreqx1+9FK9bNyTih
+         N1/h7EZ+v5y4yOOFMqJmKNExLAjzpl3xSKYrdCrIHBKuM/GbEZH7wHJblnax0FAtaPG2
+         DiuJloHRf+kLaICJ0XTfTT6hH08yyntG/FQb5Ar9VGenwagABxvOz26MTj1FuWoMhcCV
+         hCHvU6Sqy8GDN3QmgI4Q3zDDga89mZKMC2lxNDmwhzisRaVgwM9YF58R2zCGSDF9kfuD
+         5ZIPlroS50r9PlX2QuWdZaKz2P9Rx5WLvUg+lEOnbaSAM5eaqlJmwMrBkqgTa4ADi+zS
+         XhOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5uH2N8Z9fDvQTBLPL9DK3YgVwE5h1Zfe8TwG6xfC+mPKxRkDDCsfmRdGx0GIXxAy2bnJQxzP27fd/hlS0oggw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxAQppcsJn4fAAthQw8S2/ei/Q1brzV1xbh3+Sd0rMc+Baj4BX
+	xUWVGXV3YlN8w7p/nAca0bYCT/xgUrjK+5lcYPsPw0yQLkwzWMDgeZ7DXMPZCWPGFqX6egX4FWI
+	m1hToytE4ZCohzxZCP8ea5XrWVtUg93t6FR9l7max2w==
+X-Gm-Gg: ASbGnctqcpW48XBTTUZGG+ZLLklr3RKvU0L8L+YHOznqXnn69+jx1mN6mpDklNkcuAV
+	Xn73Nd3s8QGd3hKrW00ANGI45SfbXAhIMDhyUNCKVvU4s38YwN3teF0nRnl1N5Mq2pesZEd3Gdr
+	rU4ckjUVDOct1KWTpM6qnhnz8H+qUt4iJUW79lrv0wLCs=
+X-Google-Smtp-Source: AGHT+IGTSzjogHCi/geFRfkS1k64vxCFzHGvVMOvmRTwVeChVfJIOBt9QznhX1/YRhdAVy4BHCTh3ig3roxkOz/SlaA=
+X-Received: by 2002:a17:907:fd18:b0:add:fa4e:8a7e with SMTP id
+ a640c23a62f3a-adfad4104cemr1503686066b.32.1750248789286; Wed, 18 Jun 2025
+ 05:13:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: N38TyoJN50llmAZPtTHIt4KhnsxuMaKi
-X-Authority-Analysis: v=2.4 cv=D6RHKuRj c=1 sm=1 tr=0 ts=68528a8f cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=XxzzxGOHeBMF7Ba7Dy4A:9
- a=Lht6sO32AvJXS5sg:21 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: N38TyoJN50llmAZPtTHIt4KhnsxuMaKi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA4NCBTYWx0ZWRfX4zkBQR5OJMYT
- J5U5/ifb0TL+84cXOihf975b3MuJ1ItPPWuwnV6FDdu79ROmslKXKcvek3eac4Eu9unoSTR+TFZ
- ybQ/GzWY1yR0MWxnbokxudkvXBqoyTZU3J2MFx77Das7litmmriLLWcP//lZdErLBqSreQNRvOV
- CTOaMCBxj4qkBQClsitWFiC6ccS8Dw4j+mGnQ0TEjRZnJxD7bBkOOnvN6w0s/r2MhVYz4xi08+O
- CDEeAaeMqEpEpP8B6Z/+xyea3px1/ab7iFdBew9c9iFZpBeDs0I4CBFa0SSvjbKeN3iI4E6kmXz
- eX17mAN1QGsqdS5vdiDDu06zcJ1MrFfwvaXd5YzBO71RSA9OcD7AyYhpkSFNou0lSCkG7XSXkZL
- Izw4fNNr2BftIm4dhiuCe9VWJn9idLUDMwo9ECXp5YTu2cAOGrJ7AffSlje6wFVprzgPS9WQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-18_03,2025-06-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506180084
+References: <20250617193450.183889-1-hiagofranco@gmail.com> <20250617193450.183889-4-hiagofranco@gmail.com>
+In-Reply-To: <20250617193450.183889-4-hiagofranco@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 18 Jun 2025 14:12:31 +0200
+X-Gm-Features: AX0GCFv-WhPn_WVjSMi4ptgdlE0BOC7_hZaPLP8zfqr856nDVAxKNS58yS5OlAM
+Message-ID: <CAPDyKFq0EswFPF2nabJfQQ52D3Usy8AOUEH1WJWKsEhvOhO60w@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] remoteproc: imx_rproc: detect and attach to
+ pre-booted remote cores
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Device awake calls are only present in the recovery path of remoteproc.
-If an user stops and starts rproc by using the sysfs interface, then on
-pm suspension the firmware fails to load as the request_firmware call
-under adsp_load relies on usermodehelper process which gets freezed on
-pm suspension. Add device awake calls in the rproc boot and shutdown path
-to fix this.
+On Tue, 17 Jun 2025 at 21:36, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> From: Hiago De Franco <hiago.franco@toradex.com>
+>
+> When the remote core is started before Linux boots (e.g., by the
+> bootloader), the driver currently is not able to attach because it only
+> checks for cores running in different partitions. If the core was kicked
+> by the bootloader, it is in the same partition as Linux and it is
+> already up and running.
+>
+> This adds power mode verification through dev_pm_genpd_is_on(), enabling
+> the driver to detect when the remote core is already running and
+> properly attach to it if all the power domain devices are on.
+>
+> To accomplish this, we need to avoid passing any attach_data or flags to
+> dev_pm_domain_attach_list(), letting the platform device become a
+> consumer of the power domain provider. With that the current power state
+> of the genpds will not change, allowing the detection of the remote core
+> power state.
+>
+> We enable and sync the device runtime PM during probe to make sure the
+> power domains are correctly managed when the core is controlled by the
+> kernel.
+>
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 
-Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
----
-Changes in v6
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-*Add some correction to commit message
+Kind regards
+Uffe
 
-Changes in v5
-
-*Added more details to commit description
-
-Changes in v4
-
-*Remove stability from mailing list
-*Remove the extra tab in v3
-*Change the commit description
-
- drivers/remoteproc/remoteproc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c2cf0d277729..5d6c4e694b4c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
- 		return -EINVAL;
- 	}
- 
-+	pm_stay_awake(rproc->dev.parent);
- 	dev = &rproc->dev;
- 
- 	ret = mutex_lock_interruptible(&rproc->lock);
-@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
- 		atomic_dec(&rproc->power);
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_boot);
-@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	struct device *dev = &rproc->dev;
- 	int ret = 0;
- 
-+	pm_stay_awake(rproc->dev.parent);
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret) {
- 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	rproc->table_ptr = NULL;
- out:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_shutdown);
--- 
-2.34.1
-
+> ---
+> v4 -> v5:
+>  - pm_runtime_get_sync() removed in favor of
+>    pm_runtime_resume_and_get(). Now it also checks the return value of
+>    this function.
+>  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+>    function.
+> v3 -> v4:
+>  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+>    suggested by Ulf. This will now get the power status of the two
+>    remote cores power domains to decided if imx_rpoc needs to attach or
+>    not. In order to do that, pm_runtime_enable() and
+>    pm_runtime_get_sync() were introduced and pd_data was removed.
+> v2 -> v3:
+>  - Unchanged.
+> v1 -> v2:
+>  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+>    suggested.
+> ---
+>  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
+>  1 file changed, 32 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 627e57a88db2..b53083f2553e 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+>  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>  {
+>         struct device *dev = priv->dev;
+> -       int ret;
+> -       struct dev_pm_domain_attach_data pd_data = {
+> -               .pd_flags = PD_FLAG_DEV_LINK_ON,
+> -       };
+> +       int ret, i;
+> +       bool detached = true;
+>
+>         /*
+>          * If there is only one power-domain entry, the platform driver framework
+> @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>         if (dev->pm_domain)
+>                 return 0;
+>
+> -       ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> +       ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> +       /*
+> +        * If all the power domain devices are already turned on, the remote
+> +        * core is already up when the kernel booted (e.g. kicked by the
+> +        * bootloader). In this case attach to it.
+> +        */
+> +       for (i = 0; i < ret; i++) {
+> +               if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> +                       detached = false;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (detached)
+> +               priv->rproc->state = RPROC_DETACHED;
+> +
+>         return ret < 0 ? ret : 0;
+>  }
+>
+> @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +       if (dcfg->method == IMX_RPROC_SCU_API) {
+> +               pm_runtime_enable(dev);
+> +               ret = pm_runtime_resume_and_get(dev);
+> +               if (ret) {
+> +                       dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> +                       goto err_put_clk;
+> +               }
+> +       }
+> +
+>         ret = rproc_add(rproc);
+>         if (ret) {
+>                 dev_err(dev, "rproc_add failed\n");
+> @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+>         struct rproc *rproc = platform_get_drvdata(pdev);
+>         struct imx_rproc *priv = rproc->priv;
+>
+> +       if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> +               pm_runtime_disable(priv->dev);
+> +               pm_runtime_put(priv->dev);
+> +       }
+>         clk_disable_unprepare(priv->clk);
+>         rproc_del(rproc);
+>         imx_rproc_put_scu(rproc);
+> --
+> 2.39.5
+>
