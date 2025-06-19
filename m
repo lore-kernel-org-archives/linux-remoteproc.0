@@ -1,124 +1,116 @@
-Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899C617A30F;
-	Thu, 19 Jun 2025 19:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF28921A443;
+	Thu, 19 Jun 2025 20:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750361350; cv=none; b=GKPB1du8fEYzw6Ry0v7rm4GjGZdQnDF34GAizYDz++Q9x/sypYE9AtCWRU324WPX27YSxudziSoOKO3BrCsBrY4pLEmd4roGFswm6Pal008rFK9zzxZtqirEidEswZsNHdB4VN+GFNDjp4M2Kh+5rih6C6ax/iIICix5NFm7WDk=
+	t=1750366659; cv=none; b=oaVQNpAdzu0XrTLu31hC3bhPR54fmtERADvndKyry3Sl/6Gu+jDeYgbwHPaqvbBRUhLmZoRAG7FI7KRDXoMFDICfpGTBf/gCGiyV5ew3/QPxhZ+nOFZHDCtCffPy8LN5MhLEL4S4ud83G9mkLGLU5GNLUOJ151C3WJMDGfC+MrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750361350; c=relaxed/simple;
-	bh=oKYsIEPG/F2H84UChfpTayAFWAj1v/PKfPopIxoKvoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=msxV9XAnRJ0M/059B7+RtB91EQx+VUWerpv6SmA0RSh4YPLkRi0XJvNpynKjZUNSIDi5pcm8sFdmqewA0F4d4Fo986kPOR+Q5Ftug6aGxNHJ4EzLmE/Nxhyj7MXqr2iogV7QjdfYEo/3vuOgFaJtG+w5p3L4IyuDK2Xo88XEIvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HLEIdVQG; arc=none smtp.client-ip=80.12.242.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1750366659; c=relaxed/simple;
+	bh=0BFimbMMDJvY2g6w9pYsfZD1jxHTqDMRAq4TRd5ejvU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bApVo8NyPZHcolv8poVBzBz0a5PVPea6o/LYa1roJOXFyev61ptWiwjnAQCX8znLSH83aT0HFDXpYApFvjMrwoCl4jM9Z82PL/5eb3XQ6xZjkjr2n62gmibETpQz8eQSmbGikGV2LbwTEWid35aZnIMpMIukAoYwHG0bwWcHmg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=reQIprtD; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HLEIdVQG"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id SKnRunekJCQ8aSKnSuMc8T; Thu, 19 Jun 2025 21:19:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1750360779;
-	bh=tZGcukGSWJ9DLQSqx6SZ6egIb4DHuhct088IYf2fAyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=HLEIdVQGIi3iJtNlEFf3e5KuOsh9G10TnuIT/W6MQeWxWkBRIIRCBYmoAyLceN56z
-	 +sWRwOZkrDe1DxYTSTxkNg+m29dzNpD7/4tJ95nEtAKCJLTAHXzUstmOWjuqA+CznM
-	 bKSUdonQ97wweiFAqxJ0HpZYZOj1Jiw1FzXCTFaxAjQRYbSjQOqkQaBabKcmYiMPVH
-	 OwSIuxFgyKV+ogUovpD+w8SSCsPuF1tXNCUHBRSzjMkJktL7/hLWA5iSF3H4f4nbSH
-	 Uu9pC8V9n2em+U26CgZDrHwtNqCKjytGvZNTHA99PDaP5zpCd+i1DB3G+69kyvexLz
-	 N0NXYbYu8QGGQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 19 Jun 2025 21:19:39 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <4138321d-6019-4bf7-a9a1-43340e1757ac@wanadoo.fr>
-Date: Thu, 19 Jun 2025 21:19:37 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="reQIprtD"
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55JKvO7P099203;
+	Thu, 19 Jun 2025 15:57:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750366644;
+	bh=ADDL0MeLF8mi6hAhuAqCbt/HWwTj1AjiLbF24jELZm8=;
+	h=From:To:CC:Subject:Date;
+	b=reQIprtDXI/GemtlwzbAK+CeGCETNrXPAMv6GZiFwyxqlAiwIWRwt4LkykE+Ewg6D
+	 C/GB/+uoNVwcFr6LYaLK1Bq3Fi8gnt9xpwgE4gNdGCPFacYoTKbLz55jK8HZBAL+I+
+	 VqVjcEl3xfC5TR97fZDfCjIX5FsHSaS6R8KO5itY=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55JKvNkk029280
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 19 Jun 2025 15:57:24 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 19
+ Jun 2025 15:57:23 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 19 Jun 2025 15:57:23 -0500
+Received: from fllvem-mr08.itg.ti.com ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55JKvNiJ2023935;
+	Thu, 19 Jun 2025 15:57:23 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Hari Nagalla <hnagalla@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH v2] rpmsg: char: Export alias for RPMSG ID rpmsg-raw from table
+Date: Thu, 19 Jun 2025 15:57:22 -0500
+Message-ID: <20250619205722.133827-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: debugfs: Replace scnprintf() with
- sysfs_emit()
-To: Abhinav Ananthu <abhinav.ogl@gmail.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250619190410.5852-1-abhinav.ogl@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250619190410.5852-1-abhinav.ogl@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Le 19/06/2025 à 21:04, Abhinav Ananthu a écrit :
-> I apologize for the mistake in the signed-off email address in the previous patch.
-> 
-> Convert the debugfs show() functions in remoteproc_debugfs.c to use
-> sysfs_emit() instead of scnprintf(). The sysfs_emit() helper is the
-> preferred way to format sysfs output as it ensures the output is
-> properly bounded to PAGE_SIZE and simplifies the code.
-> 
-> This patch addresses three instances of scnprintf() usage in the file.
+Module aliases are used by userspace to identify the correct module to
+load for a detected hardware. The currently supported RPMSG device IDs for
+this module include "rpmsg-raw", but the module alias is "rpmsg_chrdev".
 
-I think that this patch is just wrong.
+Use the helper macro MODULE_DEVICE_TABLE(rpmsg) to export the correct
+supported IDs. And while here, to keep backwards compatibility we also add
+the other ID "rpmsg_chrdev" so that it is also still exported as an alias.
 
-The 3 functions below are not related to debugfs show function.
+This has the side benefit of adding support for some legacy firmware
+which still uses the original "rpmsg_chrdev" ID. This was the ID used for
+this driver before it was upstreamed (as reflected by the module alias).
 
-sysfs_emit() expect the buffer to be pages aligned (See [1]).
-In the cases below, the buffers that are used are defined on the stack 
-just a few lines above.
+Signed-off-by: Andrew Davis <afd@ti.com>
+Acked-by: Hari Nagalla <hnagalla@ti.com>
+Tested-by: Hari Nagalla <hnagalla@ti.com>
+---
 
-It is really unlikely that this condition will be met.
+Changes for v2:
+ - Rebased on v6.16-rc1
+ - Added Acked/Tested-by
 
+[v1] https://www.spinics.net/lists/linux-remoteproc/msg18959.html
 
-CJ
+ drivers/rpmsg/rpmsg_char.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[1]: https://elixir.bootlin.com/linux/v6.15.2/source/fs/sysfs/file.c#L767
-
-
-> 
-> Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
-> ---
->   drivers/remoteproc/remoteproc_debugfs.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index b86c1d09c70c..691fd523e0b5 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -46,8 +46,9 @@ static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
->   	char buf[20];
->   	int len;
->   
-> -	len = scnprintf(buf, sizeof(buf), "%s\n",
-> -			rproc_coredump_str[rproc->dump_conf]);
-> +	len = sysfs_emit(buf, "%s\n",
-> +		rproc_coredump_str[rproc->dump_conf]);
-> +
->   
->   	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
->   }
-> @@ -135,7 +136,7 @@ static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
->   	va = rproc_da_to_va(data->rproc, trace->da, trace->len, NULL);
->   
->   	if (!va) {
-> -		len = scnprintf(buf, sizeof(buf), "Trace %s not available\n",
-> +		len = sysfs_emit(buf, "Trace %s not available\n",
->   				trace->name);
->   		va = buf;
->   	} else {
-> @@ -160,7 +161,7 @@ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
->   	char buf[100];
->   	int i;
->   
-> -	i = scnprintf(buf, sizeof(buf), "%.98s\n", rproc->name);
-> +	i = sysfs_emit(buf, "%.98s\n", rproc->name);
->   
->   	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
->   }
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index eec7642d26863..96fcdd2d7093c 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -522,8 +522,10 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+ 
+ static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+ 	{ .name	= "rpmsg-raw" },
++	{ .name	= "rpmsg_chrdev" },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(rpmsg, rpmsg_chrdev_id_table);
+ 
+ static struct rpmsg_driver rpmsg_chrdev_driver = {
+ 	.probe = rpmsg_chrdev_probe,
+@@ -565,6 +567,5 @@ static void rpmsg_chrdev_exit(void)
+ }
+ module_exit(rpmsg_chrdev_exit);
+ 
+-MODULE_ALIAS("rpmsg:rpmsg_chrdev");
+ MODULE_DESCRIPTION("RPMSG device interface");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.39.2
 
