@@ -1,73 +1,79 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FAA13B590
-	for <linux-remoteproc@vger.kernel.org>; Mon, 23 Jun 2025 15:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B7299AAE
+	for <linux-remoteproc@vger.kernel.org>; Mon, 23 Jun 2025 15:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691085; cv=none; b=jsmPUIzHEAD/TlSwvhBalG8cHHF1aEfQKr81bkY9BVOFoMH3OgwjBC3Iat7iDSItk3IbXaoGuGrqJ2VBAEl8Uzg/0rpUY3yicYML6/iHf+/TVKb1KasOU0t+wxWxtOuERsEwaD18IhiTI8QcVKM2j0mnKZr0YdGCAcXG+N/YYBg=
+	t=1750691757; cv=none; b=bkUkwDk0J7I62IO3gQgCN7TbwKEp72LFuLZAhwwyvpxSmyRFBjm+4G+oN2U8pZ+BACK22E5xxoeKZjFtGXNS43RHnXZ9sjxG2OWoXQUx44u/oe8ZvoB4YGvLMkDO8PYb7up9Oz+9zUFKX/RL2DksPvaAOhnUTxzSXL+yBcmkMNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691085; c=relaxed/simple;
-	bh=3OjQ9xf5sOW1ROvRh8iIveSikutNoP7f8cL3axNY/rQ=;
+	s=arc-20240116; t=1750691757; c=relaxed/simple;
+	bh=hY1AO9wd7FYeyL43dCiTnguCwp/cs4kPIauJ1coyPFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fKHstSDPGo4GDGdoBz2c000Noh0eAestk0onEPAvxOTKrtRJfWXHK6symlQSOPm1nhl6FeT2/wRqIHKPPTk0IfdJPvjJ1/BAOI1jb7kTDVa8h3aHEmR7x+8yUE+nZwXbWl3zIMpo+nCDiRnGyJq/kvFGZw82ZcdWfduXCePJuW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NxJ9C8R1; arc=none smtp.client-ip=209.85.216.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzubkmtYvWLKoQvJ2ptowAMf8QRIZd6flbZ+5lSMD8hwUAPz6LaazOJHBIOyHRchW6KYR6kivIZufrllBTv4xqwh0oaqvtsdOyz17z6/Uza+dGq/UD0nsmBW6XBgBJme9p9OuiC9ArZwntdiBQpLSBErB1NfADBMpqJgKobJ8Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ecvmKvQV; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxJ9C8R1"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3122368d7cfso2778560a91.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Jun 2025 08:04:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ecvmKvQV"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-236377f00a1so39406065ad.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Jun 2025 08:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750691083; x=1751295883; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750691755; x=1751296555; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B76lja0U3ricMA/lF4InrpybN1h1UBAY2Q/OqGGhKjs=;
-        b=NxJ9C8R1oleiG1Z2XB44hJs0XewvWj9pdkCdnMVWimBETQzHFPFg2gsYZtapS8OkIq
-         /zca1wp7fYspG6u2/6IN7NK4Rgdf0pEKdoFz44ybsyF+DQgdGT9cSk71L0BPjghYvgXE
-         FhBngkYEsc+XipkPxXOQJycs2ptYmKBhDb1PTdLZqz/9BeeXfLHecnN4FJ7UAXoMWHHc
-         9z7vuFy2RjUpMuT2ri/p0AcFyE+wuuTsXlwcUysws8qtP9JE0+KJv1+MW9p2LeApA1kb
-         CKb2t17YsBtUfD8s+l/w0flSbwW7coP7an7Z0609YC6u7dJ+FRFL3pUlnUgvqpUnz5aN
-         OxEg==
+        bh=T27t2nmr6ecFVKTwe7GdRGC1UuMYhsoPFZxzjgMw7XA=;
+        b=ecvmKvQVSsFDCL4gILMJcuuv0vsvKhtdS2iS3QwgZ8v9BVO4m0kn1XewyZ3vFdbZzd
+         INqAk62Zz+oZe0dCKX4nX9F7kv7UOYC8g2G/8zGpUJPb+XKopYIijISRxe3VQYoiy7Pp
+         8bxm/gxc/5mUoTQN+bh6YAROdbYEuwQFc56v11MVmOJcrn4u4AN1DXQsCuVJDWqF9TYe
+         SdGIgJHBIP231dk8objzems6Z53hsBXyd9dkpb0DsphGKHCOOoCD0zFra04BXH6YCJgv
+         EGACSMZL9cnQQcZJvdTKVuMi8350JkcF6R16DL+DCcb84v+IJAV+/tGPvWcQt7iYKrKS
+         N3GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750691083; x=1751295883;
+        d=1e100.net; s=20230601; t=1750691755; x=1751296555;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B76lja0U3ricMA/lF4InrpybN1h1UBAY2Q/OqGGhKjs=;
-        b=CHHd25FuywyB5F/RH2DfpkcVl7ove7jPaIymHUQSbz7B6p+jTsSmsc1hCmSay11Abc
-         8fduaMnR5cDoN5n5SUkbnqEgqxkGkD+xVA0+kU132TMjolOdo72fKBrt08FpEnJuLIjy
-         kPPPvLupxMq9OYU8FtI9LCNm1dSuYvkQccMg9lPVO39uYQZlpfV30/gLnLTK9MbzLmsP
-         ixxO5oiQ+4vXIW7dEMOiJbwZkENppdaHfzaAdKXVDa+KxE9/W8ma0WmSbUeZDup7RTM1
-         o0dX2UW8gZVGYU3umqgJAe/SfiLRzJueWHKPmJ6BJ+AlmYt0gTrpxYEUQZz1Vxv+1BSt
-         dymg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFJLhiMxPi+PhSDi8U+PtgpnzyR0XRbVYDOQSAT3QG2S8PIDDxrPuqLu6D0tlw33iJ/Usc5Tn9HTrWtLFzQAmV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVnOYnOb0YDxPvv9HYO0nJrIEaPysRhPD2ucVSTUCKKWsj47az
-	DgHhZMKsjiD5kU1TQk/q6BM7SV8A8RVJelB+Vvj/o9ZxUkVysqmDwlCJpTEU/o2PuWw=
-X-Gm-Gg: ASbGncs7zbDYQr60LO+SLKVCBgB5cVoHUwBEJ0detC08Afqy8sjDIh4Iep8QrAU3nWZ
-	TUqv3F5JJUdC4xV3WSk1h0qTgHDtupm/zTl91dV2vSQWzxytTLOckT5Hz8fsNeYaj/mGFzj/Maq
-	EoVivC0BsLPKS7h2jr2pIO1Tyo1L3NzDTM3JgIGRASvfCAhLForlgr/AJth83iSziQM1kkWJjE2
-	FjZ9FiR6+Kku5DLOZjke2cYvoqkoJ3HG3jqAGlEacEHTKZHuhZKNHcNFztXh5I5+tfBucwgmXGH
-	UNXze01OBBX2oPEt6Q+E8lEv0tIsM4bkAYYb7cCi9p8gCunthY5Bttm366kz4ANb
-X-Google-Smtp-Source: AGHT+IHu9l7433gn0EAnhgFKQwsCXxEvdTHaeQKvMja0m0uBJNnzDbAjryY/LtbMGvfQPZ0rPzoLLg==
-X-Received: by 2002:a17:90b:3802:b0:312:e8ed:758 with SMTP id 98e67ed59e1d1-3159d64cb4cmr21178261a91.13.1750691083145;
-        Mon, 23 Jun 2025 08:04:43 -0700 (PDT)
+        bh=T27t2nmr6ecFVKTwe7GdRGC1UuMYhsoPFZxzjgMw7XA=;
+        b=r6KYPJ04py4AlMfbzndRZOORBMwFLhyvQLsPEfsXKs+FLJJUbP0JVsf7YRyXYEsv8o
+         fM+Lhtyhx4davkBWhbsSeRQ7YjWLIZZU7uUU5wSBdZ0mqdlxMofTWZKpUnLeYdFnigFC
+         MSS5bwqO0s7u11oN895FzX6TNuVEBrn0fEYE42tMpCCJvrzhBpLstYFK+ca/ngqUiyxM
+         rmiAbv0d6ckqMjFTYMsItDUUeBWkR8C4OLe11pYTsAVwjWhiDv1AWtaMLSVer/u3iAef
+         xQvHMu+nhl6QBo1kowWkC8bXiQzgcP3xMDgS/CQcXh+nNCDG95OUs4MiXNwepR28EG2p
+         mipA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh2WlcSUsbXh09qtUy8QCxA5VYpsWcqm3Xo4NuvHBExaTGPonqaYho7lrZwMP8qu4jJ15G3HTbqIjQYQZXJ6zh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYsgaPL2Qu3nzP1ujdvgn2BI2eEbEfOjUpGlVnq2xOeejwAfCK
+	RZPzMe36V85oJb2swtWz33FLT++tMxZrJupEh1TA9OBirfnSX+VFHwOBTHkyja8/VvI=
+X-Gm-Gg: ASbGncsHIe/5eKrqkP+Eb3w6MojMfBruu4Z1O40DBSOcHey3gmfTkVaB6KmGDs5l1v3
+	Wm/FVO6lJLiagD2p6FaWmO2J+djvEl+aO2kAz8xD0dzJrRcZB2ZemhbtcmyouZWVvf2ve87QKF2
+	yEL/HVBueZyfKs0ff40L10NAJMRDrUdf/B0Br96HGYtG+dBbm6UTtiGjBZzomtMBbHWcDNW63ti
+	QF03EXv4Gka4sCFsrXjdj2vSDVtROZVN99DnosY4pMnAbGGFt+CxnQ/JZ1ys/jtLjXmRipcZCXY
+	uO/Cjlbx58rMqj9J7rA5/EEviB79HGPuBD8gTmTccyMCdb1lOYObTIqF09H+Iliz
+X-Google-Smtp-Source: AGHT+IGEfd7ew/DbegL4/ehEu6z8rdU2NqGKWQUxfqGQJFlSmPlquHaa0QFJscSdtTcWRu86BS4OCA==
+X-Received: by 2002:a17:903:1b66:b0:234:d2fb:2d0e with SMTP id d9443c01a7336-237d96dfe41mr236501275ad.10.1750691755197;
+        Mon, 23 Jun 2025 08:15:55 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d145:b99:ea4b:a65f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159e07d027sm8343474a91.43.2025.06.23.08.04.40
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d866488csm85961605ad.158.2025.06.23.08.15.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:04:42 -0700 (PDT)
-Date: Mon, 23 Jun 2025 09:04:38 -0600
+        Mon, 23 Jun 2025 08:15:54 -0700 (PDT)
+Date: Mon, 23 Jun 2025 09:15:52 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: Add support of recovery
- process
-Message-ID: <aFltBpXuEXVZ5gKn@p14s>
-References: <20250618062644.3895785-1-shengjiu.wang@nxp.com>
- <20250618062644.3895785-2-shengjiu.wang@nxp.com>
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v5 2/3] remoteproc: imx_rproc: skip clock enable when
+ M-core is managed by the SCU
+Message-ID: <aFlvqK6SHvWHIpMn@p14s>
+References: <20250617193450.183889-1-hiagofranco@gmail.com>
+ <20250617193450.183889-3-hiagofranco@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -76,167 +82,67 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618062644.3895785-2-shengjiu.wang@nxp.com>
+In-Reply-To: <20250617193450.183889-3-hiagofranco@gmail.com>
 
-Good day,
+Hi Hiago,
 
-On Wed, Jun 18, 2025 at 02:26:43PM +0800, Shengjiu Wang wrote:
-> when recovery is triggered, rproc_stop() is called first then
-> rproc_start(), but there is no rproc_unprepare_device() and
-> rproc_prepare_device() in the flow.
+On Tue, Jun 17, 2025 at 04:34:49PM -0300, Hiago De Franco wrote:
+> From: Hiago De Franco <hiago.franco@toradex.com>
 > 
-> So power enablement needs to be moved from prepare callback to start
-> callback, power disablement needs to be moved from unprepare callback
-> to stop callback, loading elf function also needs to be moved to start
-> callback, the load callback only store the firmware handler.
+> For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
+> by the bootloader, M-core and Linux are in same SCFW (System Controller
+> Firmware) partition, so linux has permission to control M-core.
+
+Ok
+
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> But when M-core is started, the SCFW will automatically enable the clock
+
+I find the "But when M-core is started" part confusing.  Started by who?  And
+are you making a distinction between "powered up" and "started"?  It is not
+possible for someone that doesn't have HW documentation to understand what is
+going on. 
+
+> and configure the rate, and any users that want to enable the clock will
+> get error 'LOCKED' from SCFW. So current imx_rproc.c probe function
+> fails because clk_prepare_enable also fails. With that, the M-core power
+> domain is powered off when it is still running, causing a SCU (System
+> Controller Unit) fault reset, and the system restarts.
+> 
+> To address the issue, ignore handling the clk for i.MX8X and i.MX8 M-core,
+> because SCFW will automatically enable and configure the clock.
+> 
+> Suggested-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 > ---
->  drivers/remoteproc/imx_dsp_rproc.c | 58 ++++++++++++++++++------------
->  1 file changed, 36 insertions(+), 22 deletions(-)
+> v4 -> v5:
+>  - Unchanged.
+> v3 -> v4:
+>  - Unchanged.
+> v2 -> v3:
+>  - Unchanged.
+> v1 -> v2:
+>  - Commit description updated, as suggested. Fixed Peng Fan email.
+> ---
+>  drivers/remoteproc/imx_rproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 5ee622bf5352..9b9cddb224b0 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -122,6 +122,7 @@ enum imx_dsp_rp_mbox_messages {
->   * @ipc_handle: System Control Unit ipc handle
->   * @rproc_work: work for processing virtio interrupts
->   * @pm_comp: completion primitive to sync for suspend response
-> + * @firmware: firmware handler
->   * @flags: control flags
->   */
->  struct imx_dsp_rproc {
-> @@ -139,6 +140,7 @@ struct imx_dsp_rproc {
->  	struct imx_sc_ipc			*ipc_handle;
->  	struct work_struct			rproc_work;
->  	struct completion			pm_comp;
-> +	const struct firmware			*firmware;
->  	u32					flags;
->  };
->  
-> @@ -211,6 +213,7 @@ static const struct imx_rproc_att imx_dsp_rproc_att_imx8ulp[] = {
->  
->  /* Initialize the mailboxes between cores, if exists */
->  static int (*imx_dsp_rproc_mbox_init)(struct imx_dsp_rproc *priv);
-> +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
->  
->  /* Reset function for DSP on i.MX8MP */
->  static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
-> @@ -402,8 +405,24 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
->  	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
->  	struct device *dev = rproc->dev.parent;
-> +	struct rproc_mem_entry *carveout;
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 74299af1d7f1..627e57a88db2 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -1029,8 +1029,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
+>  	struct device *dev = priv->dev;
 >  	int ret;
 >  
-> +	pm_runtime_get_sync(dev);
-> +
-> +	/*
-> +	 * Clear buffers after pm rumtime for internal ocram is not
-> +	 * accessible if power and clock are not enabled.
-> +	 */
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		if (carveout->va)
-> +			memset(carveout->va, 0, carveout->len);
-> +	}
-> +
-> +	ret = imx_dsp_rproc_elf_load_segments(rproc, priv->firmware);
-> +	if (ret)
-> +		return ret;
-> +
->  	switch (dcfg->method) {
->  	case IMX_RPROC_MMIO:
->  		ret = regmap_update_bits(priv->regmap,
-> @@ -446,6 +465,7 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  
->  	if (rproc->state == RPROC_CRASHED) {
->  		priv->flags &= ~REMOTE_IS_READY;
-> +		pm_runtime_put_sync(dev);
-
-From this patch I understand that for a recovery to be successful, the
-remote processor _has_ to go through a hard reset.  But here the PM runtime API
-is used, meaning the remote processor won't be switched off if another device in
-the same power domain still neeeds power.  If that is the case, the solution in
-tihs patch won't work.
-
-Thanks,
-Mathieu
-
+> -	/* Remote core is not under control of Linux */
+> -	if (dcfg->method == IMX_RPROC_NONE)
+> +	/* Remote core is not under control of Linux or it is managed by SCU API */
+> +	if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
 >  		return 0;
->  	}
 >  
-> @@ -472,6 +492,8 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  	else
->  		priv->flags &= ~REMOTE_IS_READY;
->  
-> +	pm_runtime_put_sync(dev);
-> +
->  	return ret;
->  }
->  
-> @@ -774,7 +796,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc)
->  {
->  	struct imx_dsp_rproc *priv = rproc->priv;
->  	struct device *dev = rproc->dev.parent;
-> -	struct rproc_mem_entry *carveout;
->  	int ret;
->  
->  	ret = imx_dsp_rproc_add_carveout(priv);
-> @@ -783,25 +804,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc)
->  		return ret;
->  	}
->  
-> -	pm_runtime_get_sync(dev);
-> -
-> -	/*
-> -	 * Clear buffers after pm rumtime for internal ocram is not
-> -	 * accessible if power and clock are not enabled.
-> -	 */
-> -	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> -		if (carveout->va)
-> -			memset(carveout->va, 0, carveout->len);
-> -	}
-> -
-> -	return  0;
-> -}
-> -
-> -/* Unprepare function for rproc_ops */
-> -static int imx_dsp_rproc_unprepare(struct rproc *rproc)
-> -{
-> -	pm_runtime_put_sync(rproc->dev.parent);
-> -
->  	return  0;
->  }
->  
-> @@ -1022,13 +1024,25 @@ static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw
->  	return 0;
->  }
->  
-> +static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +
-> +	/*
-> +	 * Just save the fw handler, the firmware loading will be after
-> +	 * power enabled
-> +	 */
-> +	priv->firmware = fw;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.prepare	= imx_dsp_rproc_prepare,
-> -	.unprepare	= imx_dsp_rproc_unprepare,
->  	.start		= imx_dsp_rproc_start,
->  	.stop		= imx_dsp_rproc_stop,
->  	.kick		= imx_dsp_rproc_kick,
-> -	.load		= imx_dsp_rproc_elf_load_segments,
-> +	.load		= imx_dsp_rproc_load,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
->  	.handle_rsc	= imx_dsp_rproc_handle_rsc,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+>  	priv->clk = devm_clk_get(dev, NULL);
 > -- 
-> 2.34.1
+> 2.39.5
 > 
