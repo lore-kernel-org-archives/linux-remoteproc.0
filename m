@@ -1,262 +1,172 @@
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC219E96A;
-	Wed, 25 Jun 2025 03:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B8128136E
+	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Jun 2025 09:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750821943; cv=none; b=tHAk9bsAoEQOLi280QWQUxGbgK9JPZzdhV22r78CBfQXoncUPQCjCfyg6Zt/2HkpwF16pGb8I3hgyE7gLPlnrl9JrzCyjFMMcBNMX9z9aaqtkpNXHq1Xkeh4SQrK4Ida0xREVp7FkmXmFI9bzwv+1ITz4/wf3FHoAHyuepMdaiQ=
+	t=1750842939; cv=none; b=L6zHliODschadrR4WRzirSH3SJZ/J9fSM702YzYdb69X8uGUEwf9VBLvIJdpBvtUzOHwJez18o+eRUXB3R4YTm/y7ky6L1BBVFpljc6iVHfcYamIYJEFx4jP2ueOHiDpn1+rXa4ETomZjxlqslEjOtAC7baviN/FeK9rpuIuUwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750821943; c=relaxed/simple;
-	bh=4NMFst5bZwlMKW8tHUP/911zQnFY6nUDVvYvEJtmNmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UoystGgPIAnpguSFS6IUzg7vdkGCN7PVBEg3/vClcySSlnQTSOjTZVeFx+mf/b17SM47147b3YFWI/gTr1T8/9dOtLZ/xUsclZFzBJa3k/uwLrTenpafhU8vdlv6gIVdBzq/0mpTOFzOKU74hL6MLo8D+p+XC5FnuUimo7KNR0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALLiYJNR; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1750842939; c=relaxed/simple;
+	bh=DDoOiVWP7KZImpai6u0PVHDpzkeoi2DbnaMeS2WpWmY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=asDQ4XRmI0KSso1MXM16qw5rSZaD9cdrDOM2iGeL/YI3e7c2pkx0eYwsg8UjhvUtuDMiT4hW4tDslMXjptUXB8gE3/4RcDiKHBn9vPxElpQCa2AUrOSzqZj6kYMFeUSmn2P0pojmrR/K/QlGyuapo/OHgczEpUMUUY5jLsWJpIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=PCzeICXX; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALLiYJNR"
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3df2ccbb895so9553715ab.3;
-        Tue, 24 Jun 2025 20:25:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="PCzeICXX"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade58ef47c0so145199266b.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Jun 2025 02:15:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750821941; x=1751426741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P5Idd7bAuzOnb9JUX43u5xXxkP4Sj/WJFUVcPFMjRpA=;
-        b=ALLiYJNRTj9ix71ma9TNnzxfyPLdRXjggRpbQ2aBwhlyJIbjYtJnsF+Mk96NIIKMKV
-         jnoovPInGrf8kKXeymu8co5/BBftaU2xzjw+nkBhs7sLmiXV76VL3QYIubLd9PDPgQzo
-         XZFkl05Ng/ImwVzT5RLxGG2ZlFB0EoyIJHqW0FNOd5XXeo7A+7b7y7X0QAMLCGBz8b07
-         pO1PLwraR69E/t6p3ZXTnoBE2aDxulp44l+LLmdFUuOqe3GKy5jxj5nLpQlsUFiY+lwC
-         P2lUDPpIYoBHVVHJ/Kmka63B21EFay6QCEudHHqk2+CoDdwPCOE78LtBf/i8JSmtHwvn
-         Mzug==
+        d=fairphone.com; s=fair; t=1750842936; x=1751447736; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o/MltAVAkbR8k6TCTW4CyO6wlIYS6CBRLi/IFlrjf90=;
+        b=PCzeICXX4Gs/5BHvtz853AISO9hYli06DkGKHq2QqKOv61QpTVnwShME/2lGgyvh8k
+         8DBl7nJKzSY+DiwZbtfpnqCuF8+vmJUYoc+Tk68UKFoZXBIDJD0TA7jQCP3j+cTJ0iIX
+         0PnI1NDo/C+Lzmnm6IpHOZk/pusqYOZ8PJs400CZuTRjHgT337BHlETLINv7AY803XuV
+         lG5PYfILPGVcgwZv8rScdT86MR3+ah8YDbiKr+Szz8u9Urx9891Q1HJ0Jwye35rXZkuU
+         m21AuF16AnIsCLeVF4X0lbsCr2dA4wraca0hemwkUPzETyRqY0oQNHtWt0dVTXzQufhu
+         7s5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750821941; x=1751426741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750842936; x=1751447736;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P5Idd7bAuzOnb9JUX43u5xXxkP4Sj/WJFUVcPFMjRpA=;
-        b=tKhdOnl2UJqFm0RU/HnZGzzXGH2OItD8hxgib9OGu9nK9EEqBWsDumLQTdiBgoK8sj
-         pWh+cI5CCDedrvbXbStrDFPlpvtZl7zCS2kE3YgwVWpAXHlq53NkItdK0CRm04MwZ1Nh
-         ocEYZeNKY+J9NrzMWpHlmTogpcu1wobVsAff3kcEYB4rYltaNAIVKFGJGdjKb7hz/Gw1
-         sweZqEoJ6cwD+ep87STes7LvEF5Ilao5Gvyas3RbvQxrAf1Vgd5TKlFOf426at/Qx3vq
-         ecLOe5+oU0nFfzuKgCn+I3iKU5qj/Tdur3cER4weqo4kYr5zAQB7dNQUI+6K891s56Xf
-         VB8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrLtJMaNQVLY0uArGbLS3+rn3mEVcQTGHFMYLK8lHlnxS+vvvQroPke+xoDUSr43aqdYXolTASmxmyIcc=@vger.kernel.org, AJvYcCWF4pw7MFTeqL3pe3kKKOedaNZdKfCte2lIv91vU9BvdnnS6NOZr8DfOOyEzFZGfKtd8sTGTIjIAugNzjHZ+sMDDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqIeo+PWF7LSmvjE94aCIbFbwW0mjUYJMifDuOyRRmoeZXXTD8
-	aja1pEcJl1wnZPDGW/SaX/oGAfn+smOo2+lNBo05FlvwNac0a7Bf9Dr4xec/4T+JhNEc4BQ8Z43
-	z+8tKBeluAkWQZ8cKtMlxGRswfhsjhiQ=
-X-Gm-Gg: ASbGnctltp38+kx1AVW2lIj0OC2s5U1jTBnQfHkOjzcqiA57faSJtgkCkf8sXCVbXy7
-	7QPCwUDfhBzPUCd5A6XdnlrcpE5x5re/0P5h5qupQzmQATXSduOuJa1W8WUm6NZw4qmNvw41ANs
-	z+Y2snVxY2vx3Tt90uuZ8hNhvogIn92N//IYOr89fIDNNpXWAm8V0N1g==
-X-Google-Smtp-Source: AGHT+IGTb/5LGPPf3L0DL//MOyob2CFyZfg/IHtK/wNWTQnMHIKm1ENWEeAPJPDEIqD049xw5eck28OJqJkG6TTW8sI=
-X-Received: by 2002:a05:6e02:1c09:b0:3dc:8075:ccd3 with SMTP id
- e9e14a558f8ab-3df3294954dmr17771145ab.9.1750821941152; Tue, 24 Jun 2025
- 20:25:41 -0700 (PDT)
+        bh=o/MltAVAkbR8k6TCTW4CyO6wlIYS6CBRLi/IFlrjf90=;
+        b=w7ONCeqfQpkfsi29ox9DyOO6O0y2JgaQoVe4Mgf2I72e8Tp45SKi82+ICm39PQYB3R
+         3a22+7e/rfjrwMMGN58jZVQ08lInJlEZE1ItVeA9+Sm+lv0tIBbzFGC+ckV1eizKkv+G
+         J00WoCg5MsDvkKVaIiHItNW5dgdaxWiiF5XF1GKHCW+SuTF5mxWQgkpk+DJJxGJyZXWG
+         YEkcV4xrbbvc+Gk1+RJh9FTr5v3DfbfEY6VIvq4gHz9ZYgwOrD0R1xFCPcwDJutPHEAd
+         wpZk/7YxdiQWh9Ukn0GiZTOeJmqDltccdE4i7VSu5xn8k5cjwvp4BkTbbu1UjLZKlKxH
+         SHOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6r7qjaek8E6sx9lpoJ2U5IOf6rsFAT5i5BXjxtaiTeAkmQV8hoexjyVJ691XOHpW6jj/us5zIWgpybl3iNtEl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrZb+DlcsFcTB1JHkKYSqPr3VuMODUv5VcStqmaJcTSHfqs5F+
+	2tfQPJW3uKRqyedoV+2R2JUar/J+tmjinzFZSiy/0SEXVWJNtmke9EDpc1+p7fYozxI=
+X-Gm-Gg: ASbGncsnLh2L42nJf4pT5m2qh9xMbB2vYK/8gMmBE/LUTg+FFzWtGbaNsJ2CiYdNFLj
+	NhLby4AqAKir2kxtMlnLEmacc2ur8kcZ8B0l5J0/OV4d8jjiUbbCiMvLL6U8mGFOpLY+zAxY9xz
+	fP4Okm9IxWhWnbGa05QvmQXoJyXTXTgnFdT3Q6fbcObjMTD7x66P/4X/qTmtBB5V/121dKWFxbz
+	qi9NQ3s5H3rBGn174f14l3eeEmawL5KOA/BsCl70QAP4T8OS7AbBwj3KzThv7hkpDBq/d+o5agf
+	nyadh4Da4tBwhQMltIb6uHkUlSCbux6IbG4IPWJLHDFs7mBq+zhcxoRgmXXId/SyF6DcXT2ripu
+	A/1aDya2UuahtWCOL/zD5dZjYD8zJnS1qhEJzEN12CxM=
+X-Google-Smtp-Source: AGHT+IF9u++G4l0yqsJLtsvs+w8gPMs4RjEP+Iv/tXabdEWFnaRqckW+YPQ4QXJZhjqWJkxHUjBkjg==
+X-Received: by 2002:a17:907:6d1f:b0:ae0:7dbf:6e19 with SMTP id a640c23a62f3a-ae0c0622b58mr174950066b.1.1750842935810;
+        Wed, 25 Jun 2025 02:15:35 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0542035ddsm1029713266b.147.2025.06.25.02.15.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 02:15:35 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Wed, 25 Jun 2025 11:15:25 +0200
+Subject: [PATCH 2/3] dt-bindings: remoteproc: qcom,sm8550-pas: document
+ SM7635 ADSP & CDSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618062644.3895785-1-shengjiu.wang@nxp.com>
- <20250618062644.3895785-2-shengjiu.wang@nxp.com> <aFltBpXuEXVZ5gKn@p14s>
-In-Reply-To: <aFltBpXuEXVZ5gKn@p14s>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Wed, 25 Jun 2025 11:25:29 +0800
-X-Gm-Features: Ac12FXzRQJouDdZDx5KrobO9xlf8zpg91IyZbOOnLAWOvOD5rocTnkVsx4AQ2xM
-Message-ID: <CAA+D8AP47xyftzPZki8MXEeWEfbocug6e134uaJgFH+tx7mH2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: Add support of recovery process
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andersson@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-sm7635-remoteprocs-v1-2-730d6b5171ee@fairphone.com>
+References: <20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com>
+In-Reply-To: <20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842933; l=2202;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=DDoOiVWP7KZImpai6u0PVHDpzkeoi2DbnaMeS2WpWmY=;
+ b=xibYVZUWgwzKFSJe7A8AxltVP+8sJT1sYP1WmkuirM6sT1wSbkM5vTqbfSkopSM2X0o/hXZ6h
+ SqItXDUK2LqCH2r60UbaTUmdvE74DOCCLEBSTypGeO3h+Yffy2uVxNY
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On Mon, Jun 23, 2025 at 11:11=E2=80=AFPM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> Good day,
->
-> On Wed, Jun 18, 2025 at 02:26:43PM +0800, Shengjiu Wang wrote:
-> > when recovery is triggered, rproc_stop() is called first then
-> > rproc_start(), but there is no rproc_unprepare_device() and
-> > rproc_prepare_device() in the flow.
-> >
-> > So power enablement needs to be moved from prepare callback to start
-> > callback, power disablement needs to be moved from unprepare callback
-> > to stop callback, loading elf function also needs to be moved to start
-> > callback, the load callback only store the firmware handler.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  drivers/remoteproc/imx_dsp_rproc.c | 58 ++++++++++++++++++------------
-> >  1 file changed, 36 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/im=
-x_dsp_rproc.c
-> > index 5ee622bf5352..9b9cddb224b0 100644
-> > --- a/drivers/remoteproc/imx_dsp_rproc.c
-> > +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> > @@ -122,6 +122,7 @@ enum imx_dsp_rp_mbox_messages {
-> >   * @ipc_handle: System Control Unit ipc handle
-> >   * @rproc_work: work for processing virtio interrupts
-> >   * @pm_comp: completion primitive to sync for suspend response
-> > + * @firmware: firmware handler
-> >   * @flags: control flags
-> >   */
-> >  struct imx_dsp_rproc {
-> > @@ -139,6 +140,7 @@ struct imx_dsp_rproc {
-> >       struct imx_sc_ipc                       *ipc_handle;
-> >       struct work_struct                      rproc_work;
-> >       struct completion                       pm_comp;
-> > +     const struct firmware                   *firmware;
-> >       u32                                     flags;
-> >  };
-> >
-> > @@ -211,6 +213,7 @@ static const struct imx_rproc_att imx_dsp_rproc_att=
-_imx8ulp[] =3D {
-> >
-> >  /* Initialize the mailboxes between cores, if exists */
-> >  static int (*imx_dsp_rproc_mbox_init)(struct imx_dsp_rproc *priv);
-> > +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const =
-struct firmware *fw);
-> >
-> >  /* Reset function for DSP on i.MX8MP */
-> >  static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
-> > @@ -402,8 +405,24 @@ static int imx_dsp_rproc_start(struct rproc *rproc=
-)
-> >       const struct imx_dsp_rproc_dcfg *dsp_dcfg =3D priv->dsp_dcfg;
-> >       const struct imx_rproc_dcfg *dcfg =3D dsp_dcfg->dcfg;
-> >       struct device *dev =3D rproc->dev.parent;
-> > +     struct rproc_mem_entry *carveout;
-> >       int ret;
-> >
-> > +     pm_runtime_get_sync(dev);
-> > +
-> > +     /*
-> > +      * Clear buffers after pm rumtime for internal ocram is not
-> > +      * accessible if power and clock are not enabled.
-> > +      */
-> > +     list_for_each_entry(carveout, &rproc->carveouts, node) {
-> > +             if (carveout->va)
-> > +                     memset(carveout->va, 0, carveout->len);
-> > +     }
-> > +
-> > +     ret =3D imx_dsp_rproc_elf_load_segments(rproc, priv->firmware);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> >       switch (dcfg->method) {
-> >       case IMX_RPROC_MMIO:
-> >               ret =3D regmap_update_bits(priv->regmap,
-> > @@ -446,6 +465,7 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
-> >
-> >       if (rproc->state =3D=3D RPROC_CRASHED) {
-> >               priv->flags &=3D ~REMOTE_IS_READY;
-> > +             pm_runtime_put_sync(dev);
->
-> From this patch I understand that for a recovery to be successful, the
-> remote processor _has_ to go through a hard reset.  But here the PM runti=
-me API
-> is used, meaning the remote processor won't be switched off if another de=
-vice in
-> the same power domain still neeeds power.  If that is the case, the solut=
-ion in
-> tihs patch won't work.
+Document the ADSP & CDSP remoteprocs on the SM7635 Platform.
 
-Thanks for reviewing.
-With the case you mentioned, there is software reset to make the
-recovery process work.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-best regards
-Shengjiu Wang
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+index 2dd479cf48217a0799ab4e4318026d8b93c3c995..44cc329be5067ab6cbaa0a467669cb3f55c7e714 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+@@ -18,6 +18,8 @@ properties:
+     oneOf:
+       - enum:
+           - qcom,sdx75-mpss-pas
++          - qcom,sm7635-adsp-pas
++          - qcom,sm7635-cdsp-pas
+           - qcom,sm8550-adsp-pas
+           - qcom,sm8550-cdsp-pas
+           - qcom,sm8550-mpss-pas
+@@ -165,6 +167,24 @@ allOf:
+           minItems: 5
+           maxItems: 5
+ 
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm7635-adsp-pas
++            - qcom,sm7635-cdsp-pas
++    then:
++      properties:
++        interrupts:
++          minItems: 6
++          maxItems: 6
++        interrupt-names:
++          minItems: 6
++          maxItems: 6
++        memory-region:
++          minItems: 2
++          maxItems: 2
++
+   - if:
+       properties:
+         compatible:
+@@ -185,6 +205,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,sm7635-adsp-pas
+               - qcom,sm8550-adsp-pas
+               - qcom,sm8650-adsp-pas
+               - qcom,sm8750-adsp-pas
+@@ -239,6 +260,22 @@ allOf:
+             - const: mxc
+             - const: nsp
+ 
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm7635-cdsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MX power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mx
++
+ unevaluatedProperties: false
+ 
+ examples:
 
->
-> Thanks,
-> Mathieu
->
-> >               return 0;
-> >       }
-> >
-> > @@ -472,6 +492,8 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
-> >       else
-> >               priv->flags &=3D ~REMOTE_IS_READY;
-> >
-> > +     pm_runtime_put_sync(dev);
-> > +
-> >       return ret;
-> >  }
-> >
-> > @@ -774,7 +796,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rpro=
-c)
-> >  {
-> >       struct imx_dsp_rproc *priv =3D rproc->priv;
-> >       struct device *dev =3D rproc->dev.parent;
-> > -     struct rproc_mem_entry *carveout;
-> >       int ret;
-> >
-> >       ret =3D imx_dsp_rproc_add_carveout(priv);
-> > @@ -783,25 +804,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rpr=
-oc)
-> >               return ret;
-> >       }
-> >
-> > -     pm_runtime_get_sync(dev);
-> > -
-> > -     /*
-> > -      * Clear buffers after pm rumtime for internal ocram is not
-> > -      * accessible if power and clock are not enabled.
-> > -      */
-> > -     list_for_each_entry(carveout, &rproc->carveouts, node) {
-> > -             if (carveout->va)
-> > -                     memset(carveout->va, 0, carveout->len);
-> > -     }
-> > -
-> > -     return  0;
-> > -}
-> > -
-> > -/* Unprepare function for rproc_ops */
-> > -static int imx_dsp_rproc_unprepare(struct rproc *rproc)
-> > -{
-> > -     pm_runtime_put_sync(rproc->dev.parent);
-> > -
-> >       return  0;
-> >  }
-> >
-> > @@ -1022,13 +1024,25 @@ static int imx_dsp_rproc_parse_fw(struct rproc =
-*rproc, const struct firmware *fw
-> >       return 0;
-> >  }
-> >
-> > +static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmwa=
-re *fw)
-> > +{
-> > +     struct imx_dsp_rproc *priv =3D rproc->priv;
-> > +
-> > +     /*
-> > +      * Just save the fw handler, the firmware loading will be after
-> > +      * power enabled
-> > +      */
-> > +     priv->firmware =3D fw;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static const struct rproc_ops imx_dsp_rproc_ops =3D {
-> >       .prepare        =3D imx_dsp_rproc_prepare,
-> > -     .unprepare      =3D imx_dsp_rproc_unprepare,
-> >       .start          =3D imx_dsp_rproc_start,
-> >       .stop           =3D imx_dsp_rproc_stop,
-> >       .kick           =3D imx_dsp_rproc_kick,
-> > -     .load           =3D imx_dsp_rproc_elf_load_segments,
-> > +     .load           =3D imx_dsp_rproc_load,
-> >       .parse_fw       =3D imx_dsp_rproc_parse_fw,
-> >       .handle_rsc     =3D imx_dsp_rproc_handle_rsc,
-> >       .find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
-> > --
-> > 2.34.1
-> >
->
+-- 
+2.50.0
+
