@@ -1,52 +1,50 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2EE1917D6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C101EF0A6;
 	Wed, 25 Jun 2025 09:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844542; cv=none; b=jqD69OHn5O6pkE858Vrijk9lhQbfX9yOBiqqPjliBGsGILxCKeZuBHGSSsYrktKcf1c2uQ2Ul1zuGUmll+FVGCCXxjI53DrCjut81pCUBH4LEaUHsPHrr547epKC8wQS2tE/Q5jZdRe1+UQlb3qanpMFJUqgjX4Lb9vMfpsUsQU=
+	t=1750844543; cv=none; b=AdBT6mw3X+eNr6UtfVl1SvH7m4n2l4nClpQuyod/eY0fGXJes/KJPutwKHf18SKOn09FPIq+yfeRuHpzrrRaP/o5dkfbUL/3YodRQXhhn30WvBphey3fcVnJhL5CneqMzbXDOx4VWpRDYUjo1KdXx77rSqkstxtw7tEgQ6SbtKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844542; c=relaxed/simple;
-	bh=/UaD7L2Vb27H17GtHN5VEE3MuD/tl/8GVoHJYXhqnsI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ViRSUbAc8B9uKQ3e7tZwwdjCsYQXMAZ71VoM37EcHo3meUjYWcaXgjrRrsQ8beeKoltAL+sIUP0oxJB3sb8Jhb1BN5KIMLxKvLb2lBrCAQk/H8kEeFEl7cYS3tomezIGNnHIdSD8HQEJOEfmCmHpZLC0rDR8UaBAx2EzKMizTek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LoMOtRIf; arc=none smtp.client-ip=91.207.212.93
+	s=arc-20240116; t=1750844543; c=relaxed/simple;
+	bh=IoUf917CXn1rY3sfDCmBi9UNym+tGdSpsxRSrSvZuxk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7jd07JbUHH0AWTXjSbKrAXRm2xd/M5ojKjMS12eytF8MhmMzGlVxEP6mWi4FRTHrkvN8FyQIadvDQW8eCaJ6PB28qeTXWFfOOO5xjNXnrom0ewJh3bcl+EDd7I7wcSV0kucdyYg6OLYyzQHFlYPClpBHorYlHasZT9gqDyCBIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TjYA1M/i; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LoMOtRIf"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9d66Z002508;
-	Wed, 25 Jun 2025 11:42:06 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TjYA1M/i"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6TNdK008602;
+	Wed, 25 Jun 2025 11:42:05 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	oRoK+To3ECSWyMsKvQou69OpviNdWWWWDeXdSq5d7yw=; b=LoMOtRIfzKqfAGW5
-	lZH5rI4kT3gQJH4RP3zmHCqR7JvXRjJDEPDLq2RtVXOZTrCYimFIs1FBAe0wz4Q0
-	mRNSw2bUJIofhw/uDY8SxSWUfDBvpf2qzcDyq87aZ0GZxwRCeRPXufcD55vknxPj
-	LgBAxqd00U9x87e0toXc5gZRrKtQkvZut1dbbIrcQh0z5AVN0mNsHgyLnjeNEdcB
-	hDfCdJbRjVen8r3cgdUUbXBhODADRTTsuZ73S15FFt2Wx84Y5XSbInh7KZx9L6QG
-	BHW6bmSYo0ZwhLBrwSr0uabMwoJP1MXj2YbSaVY4O+4rAZDrzY0mhkMsUfFk6qnl
-	YTrRHA==
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=dWT/lq3ezUgwjJtZ7iXKMD
+	5/gM55U+METxpHEphd3xI=; b=TjYA1M/i9kiwj0xW7K69CkB715jG9Tc1/NBvhN
+	13rdzv3F59kAvAv7F57DPvkyhTUGm9i/ecoUFus0YFUhx0LDKiBdplSAYpzM6ejd
+	DCdDg/I2D6GsUR0IHaSS7wvbk5MxFfLGxkHCD2EYQbS56TjMNZ5R8sKlfEvVNebc
+	YX4leCmbCJeLrn2l+DpK4HKpHsD2By7MTdMVMvjZpR3XiRZiW1lT7XiIzMC7xry7
+	NNdNzit9ccjjjrFo/VDHuVKsqwM+qaEfUrRLXSyh/Rg9qL/5cv+0uuZG3ro4NuUT
+	nVfoTzVqpwGFnepelzieT4jaLh27s0DvdsNXBKy4HtGmX87w==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e7pped38-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e6a6q3m1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 11:42:06 +0200 (MEST)
+	Wed, 25 Jun 2025 11:42:05 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C0C8B4004A;
-	Wed, 25 Jun 2025 11:41:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D4DB472035;
-	Wed, 25 Jun 2025 11:40:45 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3968740047;
+	Wed, 25 Jun 2025 11:40:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8270364326D;
+	Wed, 25 Jun 2025 11:40:41 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 11:40:44 +0200
+ 2025 11:40:41 +0200
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 11:40:44 +0200
+ 2025 11:40:41 +0200
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -60,12 +58,10 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v19 5/6] remoteproc: stm32: Create sub-functions to request shutdown and release
-Date: Wed, 25 Jun 2025 11:40:27 +0200
-Message-ID: <20250625094028.758016-6-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v19 0/6] Introduction of a remoteproc tee to load signed firmware
+Date: Wed, 25 Jun 2025 11:40:22 +0200
+Message-ID: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
-References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -80,122 +76,95 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
 
-To prepare for the support of TEE remoteproc, create sub-functions
-that can be used in both cases, with and without remoteproc TEE support.
+Main updates from version V18[2]:
+- rework documentation for the release_fw ops 
+- rework function documentation in remoteproc_tee.c
+- replace spinlock by mutex and generalize usage in remoteproc_tee.c
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/stm32_rproc.c | 82 +++++++++++++++++++-------------
- 1 file changed, 49 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 431648607d53..db82d4308376 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -209,6 +209,52 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
- 	return -EINVAL;
- }
- 
-+static void stm32_rproc_request_shutdown(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err, idx;
-+
-+	/* Request shutdown of the remote processor */
-+	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-+		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-+		if (idx >= 0 && ddata->mb[idx].chan) {
-+			err = mbox_send_message(ddata->mb[idx].chan, "detach");
-+			if (err < 0)
-+				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-+		}
-+	}
-+}
-+
-+static int stm32_rproc_release(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	unsigned int err = 0;
-+
-+	/* To allow platform Standby power mode, set remote proc Deep Sleep */
-+	if (ddata->pdds.map) {
-+		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-+					 ddata->pdds.mask, 1);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set pdds\n");
-+			return err;
-+		}
-+	}
-+
-+	/* Update coprocessor state to OFF if available */
-+	if (ddata->m4_state.map) {
-+		err = regmap_update_bits(ddata->m4_state.map,
-+					 ddata->m4_state.reg,
-+					 ddata->m4_state.mask,
-+					 M4_STATE_OFF);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to set copro state\n");
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -519,17 +565,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
- static int stm32_rproc_stop(struct rproc *rproc)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
--	int err, idx;
-+	int err;
- 
--	/* request shutdown of the remote processor */
--	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
--		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
--		if (idx >= 0 && ddata->mb[idx].chan) {
--			err = mbox_send_message(ddata->mb[idx].chan, "detach");
--			if (err < 0)
--				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
--		}
--	}
-+	stm32_rproc_request_shutdown(rproc);
- 
- 	err = stm32_rproc_set_hold_boot(rproc, true);
- 	if (err)
-@@ -541,29 +579,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
- 		return err;
- 	}
- 
--	/* to allow platform Standby power mode, set remote proc Deep Sleep */
--	if (ddata->pdds.map) {
--		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
--					 ddata->pdds.mask, 1);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set pdds\n");
--			return err;
--		}
--	}
--
--	/* update coprocessor state to OFF if available */
--	if (ddata->m4_state.map) {
--		err = regmap_update_bits(ddata->m4_state.map,
--					 ddata->m4_state.reg,
--					 ddata->m4_state.mask,
--					 M4_STATE_OFF);
--		if (err) {
--			dev_err(&rproc->dev, "failed to set copro state\n");
--			return err;
--		}
--	}
--
--	return 0;
-+	return stm32_rproc_release(rproc);
- }
- 
- static void stm32_rproc_kick(struct rproc *rproc, int vqid)
+Main updates from version V17[1]:
+- Fix:  warning: EXPORT_SYMBOL() is used, but #include <linux/export.h>
+  is missing
+
+More details are available in each patch commit message.
+
+[1] https://lore.kernel.org/linux-remoteproc/20250613091650.2337411-1-arnaud.pouliquen@foss.st.com/
+[2] https://lore.kernel.org/linux-remoteproc/20250616075530.4106090-1-arnaud.pouliquen@foss.st.com/
+
+Tested-on: commit 19272b37aa4f ("Linux 6.16-rc1")
+
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
+
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact. The user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (6):
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Add TEE support
+  remoteproc: Introduce optional release_fw operation
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  52 ++
+ drivers/remoteproc/remoteproc_internal.h      |   6 +
+ drivers/remoteproc/remoteproc_tee.c           | 708 ++++++++++++++++++
+ drivers/remoteproc/stm32_rproc.c              | 139 +++-
+ include/linux/remoteproc.h                    |   6 +
+ include/linux/remoteproc_tee.h                |  87 +++
+ 9 files changed, 1023 insertions(+), 44 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_tee.c
+ create mode 100644 include/linux/remoteproc_tee.h
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
 2.25.1
 
