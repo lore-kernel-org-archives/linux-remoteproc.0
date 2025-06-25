@@ -1,145 +1,201 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E47D2BD5BC
-	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Jun 2025 09:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2EE1917D6;
+	Wed, 25 Jun 2025 09:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842940; cv=none; b=Pv2Ud4W2bypdhEE/zxq6aoF6VquxoVHAj1XX1Aa5Lb4OKMgTSMmGIGWTVEEddb5z0XolBycgIxWIoC+zDGftd0o8/xk3wqv0R7iYX0dKyCFxGny2kkx0euwLfyRwc9VhNv8sxTKbpH3fr7tSTSTvsglhsBWJPlp0FqObyNWTU/U=
+	t=1750844542; cv=none; b=jqD69OHn5O6pkE858Vrijk9lhQbfX9yOBiqqPjliBGsGILxCKeZuBHGSSsYrktKcf1c2uQ2Ul1zuGUmll+FVGCCXxjI53DrCjut81pCUBH4LEaUHsPHrr547epKC8wQS2tE/Q5jZdRe1+UQlb3qanpMFJUqgjX4Lb9vMfpsUsQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842940; c=relaxed/simple;
-	bh=vCp//gPYQcR3DNj7zr7SuBIjoFrxsV54Ke1YSaCx7AM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y7Tp5NODkBp+q4ZWWuyQjySgL2S52jM6ELDKFVIEtt1CjxFqB7dOaxrx6rEWo55fdyVk+o/czkPmgL7WRfYUHDGBIZHB9ShQNBH36DUbG7MFkWSpre0drMK9CWTrWdcuIFRlV40v2qNYmqKBMyLaGAPgrpVFXspN48qPQ2uP1bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=SM3O5nFR; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1750844542; c=relaxed/simple;
+	bh=/UaD7L2Vb27H17GtHN5VEE3MuD/tl/8GVoHJYXhqnsI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ViRSUbAc8B9uKQ3e7tZwwdjCsYQXMAZ71VoM37EcHo3meUjYWcaXgjrRrsQ8beeKoltAL+sIUP0oxJB3sb8Jhb1BN5KIMLxKvLb2lBrCAQk/H8kEeFEl7cYS3tomezIGNnHIdSD8HQEJOEfmCmHpZLC0rDR8UaBAx2EzKMizTek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LoMOtRIf; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="SM3O5nFR"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso972819666b.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Jun 2025 02:15:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1750842937; x=1751447737; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k+LGnTNcVQ28XMxEvYu54IUxPobup7v+2rWujowv9BA=;
-        b=SM3O5nFRQHEsv8VN0Cmmh9NTOVterKyDltoX7QgHtBeQ00m5a5L1+BgTIr6r0huxp6
-         Xr6VS73kc9bTFrNyX9cHB08T/7aTRxdvnIce6wl5K0bnK1XYOdTgoGDnsrUcGQqWIwMZ
-         MysajJGPnFaH/GMbw3lOIhZGCFzOXgiPS4IST+n7qJACcsy3cDVN3UTw+Uimad8Ouqus
-         +reNjDhOqyqrvEY4BYi7bkIPYpM6sw3/89+O9C4O0xJUoyJtDd+asMtJDiapz/yciLPU
-         Svc9tWHO3FlhHL4wfqJ/DBd18kS2D5pg6d+gGmOEi59CQ72BL3bX2adln7dbfML+S913
-         tw1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750842937; x=1751447737;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+LGnTNcVQ28XMxEvYu54IUxPobup7v+2rWujowv9BA=;
-        b=QuHeWA8WHF2VR2e7bMaDNS5RfYiIQgzV31A6Or/UgcmCKMd941Saxd8sRI2qbO5s9l
-         6/Eqs4xez4oDR5BWVbVnafLwbW0PLpKMMnEtH9RN4nSZGFfDLiXEiwvWdK9UTmiwW5RU
-         61h93hL/N1UZL6kzjRtb6RXVBKNKZ1MAy4/U1MVrcSloH+EU4WmC2ZzWelL+nWAc3vX1
-         0d0CXP971xy4/Tfb5hf1uYmi+3ww5XM7C4VGw8a46XT9QV4I63W6klE/2iIVgmFwiEDF
-         xZsxkxaLerdtQKv4gPMSpHRcUVNhP0Muj03A86x5AtHdfvAoQt9tqjevbg0GsvbPuYgq
-         CSJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYdGuZMGyqRsGTwft5pCVrx2yHgD5hctx4+vBXCdrR+eh02t9dQJPBcoUWNCMbJ3wcS27T8MoEbGpKCaR0sgsl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhWv3XRvppwPKzR6B32LGMHEi2HFDZ6ROCyk1rpMhckN0m32tH
-	1Nvx97lJ19NU69Ini8OnaI/4G/laN8SFx6JnV+6snszMwczBUO9vVnm5LhP6y2RYB8c=
-X-Gm-Gg: ASbGnctp+0iV6U7WSkz/uh2yVzc6lgrAtQnlJ+561RTlSjyKWTOc5ORaBaBqhbpi8CI
-	NLNdxpbHBJH/EfvArB4wbtJcX0KU8rmKPXqbQTpLzFd7k8Y4Mf4KTAyfmzgCGRObf5Gh0ojyVyt
-	71WAu/NNXSZFiI1SDWcpDyeee93YOAJLziorPEmaCRoO+r0NkL57jM5c/NZiZ5LB0IMPnyt9TJz
-	zSbejtfNOp20RH3LLE+Mqfk+6gGFjL1aCIWTcwDxcFZbfMAvkYgL68FiYSbzu5hFjstCF1cADOF
-	6KQi+GXY+fDoMpHMR4hx1reAewRohApQhck5qTigFUUTAGl8QQigfqQLkWrZGU9fkA9YgIGGQ3I
-	ssdLX/jnpH+v/Tw4dStbAj+6ok7qddOIL
-X-Google-Smtp-Source: AGHT+IGSQHONXHhGs7cWOB0/NTlFhiN2ogHvgUjj0VhDky9sGi/Ee+gtbAm+6l/Fi03lgPKfdTnIGA==
-X-Received: by 2002:a17:907:3e0e:b0:ae0:c7b4:b797 with SMTP id a640c23a62f3a-ae0c7b4b8e3mr100993766b.45.1750842936691;
-        Wed, 25 Jun 2025 02:15:36 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0542035ddsm1029713266b.147.2025.06.25.02.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 02:15:36 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 25 Jun 2025 11:15:26 +0200
-Subject: [PATCH 3/3] remoteproc: qcom: pas: Add SM7635 remoteproc support
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LoMOtRIf"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9d66Z002508;
+	Wed, 25 Jun 2025 11:42:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	oRoK+To3ECSWyMsKvQou69OpviNdWWWWDeXdSq5d7yw=; b=LoMOtRIfzKqfAGW5
+	lZH5rI4kT3gQJH4RP3zmHCqR7JvXRjJDEPDLq2RtVXOZTrCYimFIs1FBAe0wz4Q0
+	mRNSw2bUJIofhw/uDY8SxSWUfDBvpf2qzcDyq87aZ0GZxwRCeRPXufcD55vknxPj
+	LgBAxqd00U9x87e0toXc5gZRrKtQkvZut1dbbIrcQh0z5AVN0mNsHgyLnjeNEdcB
+	hDfCdJbRjVen8r3cgdUUbXBhODADRTTsuZ73S15FFt2Wx84Y5XSbInh7KZx9L6QG
+	BHW6bmSYo0ZwhLBrwSr0uabMwoJP1MXj2YbSaVY4O+4rAZDrzY0mhkMsUfFk6qnl
+	YTrRHA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e7pped38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 11:42:06 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C0C8B4004A;
+	Wed, 25 Jun 2025 11:41:01 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D4DB472035;
+	Wed, 25 Jun 2025 11:40:45 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 11:40:44 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 11:40:44 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v19 5/6] remoteproc: stm32: Create sub-functions to request shutdown and release
+Date: Wed, 25 Jun 2025 11:40:27 +0200
+Message-ID: <20250625094028.758016-6-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-sm7635-remoteprocs-v1-3-730d6b5171ee@fairphone.com>
-References: <20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com>
-In-Reply-To: <20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842933; l=2007;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=vCp//gPYQcR3DNj7zr7SuBIjoFrxsV54Ke1YSaCx7AM=;
- b=f5gSZiEPc0KYORoD9MIxojR436BImQVvwqEP0M+uXcgT4W6dNEvF51An0CzYkuee1ijtEq4Co
- CF7+pN7zZ/aA3gtmkblm7pFHD1iPm+Aw0sp4Z5flwM76VydGzDVk5Ke
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
 
-Add the different remoteprocs found on SM7635: ADSP, CDSP, MPSS and
-WPSS.
+To prepare for the support of TEE remoteproc, create sub-functions
+that can be used in both cases, with and without remoteproc TEE support.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/remoteproc/stm32_rproc.c | 82 +++++++++++++++++++-------------
+ 1 file changed, 49 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b306f223127c452f8f2d85aa0fc98db2d684feae..6aae61dea8d0dbb9cf3ce84b9dbebb77b5aa1d52 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1261,6 +1261,26 @@ static const struct adsp_data sdx55_mpss_resource = {
- 	.ssctl_id = 0x22,
- };
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 431648607d53..db82d4308376 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -209,6 +209,52 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
+ 	return -EINVAL;
+ }
  
-+static const struct adsp_data sm7635_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.dtb_firmware_name = "cdsp_dtb.mdt",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mx",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
-+};
++static void stm32_rproc_request_shutdown(struct rproc *rproc)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	int err, idx;
 +
- static const struct adsp_data sm8450_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1478,6 +1498,10 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
- 	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sm6375-mpss-pas", .data = &sm6375_mpss_resource},
-+	{ .compatible = "qcom,sm7635-adsp-pas", .data = &sm8550_adsp_resource},
-+	{ .compatible = "qcom,sm7635-cdsp-pas", .data = &sm7635_cdsp_resource},
-+	{ .compatible = "qcom,sm7635-mpss-pas", .data = &sm8450_mpss_resource},
-+	{ .compatible = "qcom,sm7635-wpss-pas", .data = &sc7280_wpss_resource},
- 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
- 	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
-
++	/* Request shutdown of the remote processor */
++	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
++		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
++		if (idx >= 0 && ddata->mb[idx].chan) {
++			err = mbox_send_message(ddata->mb[idx].chan, "detach");
++			if (err < 0)
++				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
++		}
++	}
++}
++
++static int stm32_rproc_release(struct rproc *rproc)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	unsigned int err = 0;
++
++	/* To allow platform Standby power mode, set remote proc Deep Sleep */
++	if (ddata->pdds.map) {
++		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
++					 ddata->pdds.mask, 1);
++		if (err) {
++			dev_err(&rproc->dev, "failed to set pdds\n");
++			return err;
++		}
++	}
++
++	/* Update coprocessor state to OFF if available */
++	if (ddata->m4_state.map) {
++		err = regmap_update_bits(ddata->m4_state.map,
++					 ddata->m4_state.reg,
++					 ddata->m4_state.mask,
++					 M4_STATE_OFF);
++		if (err) {
++			dev_err(&rproc->dev, "failed to set copro state\n");
++			return err;
++		}
++	}
++
++	return 0;
++}
++
+ static int stm32_rproc_prepare(struct rproc *rproc)
+ {
+ 	struct device *dev = rproc->dev.parent;
+@@ -519,17 +565,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
+ static int stm32_rproc_stop(struct rproc *rproc)
+ {
+ 	struct stm32_rproc *ddata = rproc->priv;
+-	int err, idx;
++	int err;
+ 
+-	/* request shutdown of the remote processor */
+-	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
+-		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+-		if (idx >= 0 && ddata->mb[idx].chan) {
+-			err = mbox_send_message(ddata->mb[idx].chan, "detach");
+-			if (err < 0)
+-				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+-		}
+-	}
++	stm32_rproc_request_shutdown(rproc);
+ 
+ 	err = stm32_rproc_set_hold_boot(rproc, true);
+ 	if (err)
+@@ -541,29 +579,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
+ 		return err;
+ 	}
+ 
+-	/* to allow platform Standby power mode, set remote proc Deep Sleep */
+-	if (ddata->pdds.map) {
+-		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
+-					 ddata->pdds.mask, 1);
+-		if (err) {
+-			dev_err(&rproc->dev, "failed to set pdds\n");
+-			return err;
+-		}
+-	}
+-
+-	/* update coprocessor state to OFF if available */
+-	if (ddata->m4_state.map) {
+-		err = regmap_update_bits(ddata->m4_state.map,
+-					 ddata->m4_state.reg,
+-					 ddata->m4_state.mask,
+-					 M4_STATE_OFF);
+-		if (err) {
+-			dev_err(&rproc->dev, "failed to set copro state\n");
+-			return err;
+-		}
+-	}
+-
+-	return 0;
++	return stm32_rproc_release(rproc);
+ }
+ 
+ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
 -- 
-2.50.0
+2.25.1
 
