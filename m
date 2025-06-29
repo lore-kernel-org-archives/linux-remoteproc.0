@@ -1,148 +1,201 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F7725CC69;
-	Fri, 27 Jun 2025 21:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751061099; cv=none; b=avFnxH/8ZXOgFUfaFfRX+1LtKwJl0c0Ujvz4/s6OcxnG6HnJQDf//xJXTjMsswxhRlUsybMxXCJ2c7rVF6oRc//H2sYrIHl5WM2rc0jcFSdx/H3RFBTNjC9sGlAkcL13Rauem5fVspJzhjO4MQow/ikpR9uCZItOaPqp8aNoWu0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751061099; c=relaxed/simple;
-	bh=p84SUZOBh2KwgfNP4tsjy/n+Aua2QB4VpTm9s4Z9284=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ra6D0ovk7NjSDi/QLkWbIBp0LAq5bESTAciik6V37TNffi5KJGmlqmuFEEcgVjSix5FzUeCl1FcHdlJxH0iRQFq7YdaogrFdpFxYj3NxZVWkzq/Tdb78ZO+Xy+qOvyMGRGyp5APpt6FV8/di4wrxr4mZcFKp+Qnvu/oIEY9Khwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E384+2Q6; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FFC1F92A;
+	Sun, 29 Jun 2025 03:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751167190; cv=pass; b=sHOERtssWghjAO/F3UUeU3epe6vX5nUn/t++zIAHxw70Tjdsrxm32PqnVuaQAkmH6BeolZyBypBmoo0uHrqWrK+PYjzT+8zfJXRMjQ2Im+8rZNqk8pP52NU7rMX0Rz5lg5+25DEA/VFJidDMZHEaA27PSJbNlsl7ihZvA4BBhPM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751167190; c=relaxed/simple;
+	bh=IXzCyj1WhE1qAkg+a+KMkiT95cDVLugJv1Bi8PBIbXc=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=aKR6ZXyVVzt7ZCYkrjdJruySXC3o8VM6cB9eTZEZh9tMf8sgWrrstgNGGdSD5Mfi7/3rkr79NDzwU4TT+xsQCVFlNWG0MU/exkZ7UAuBDRh4fdotZcR7aY1mlUP4pv3CRIqMwBmdHZiF/VspVdbffpHE4KppGgt8r+ul4HXzOuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=TdOoCWJv; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E384+2Q6"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id VGqQuIpApqtV6VGqQuQjHe; Fri, 27 Jun 2025 23:42:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751060571;
-	bh=3azxurnCZ0xuClFPmibEzr67iBGJnUksM41hokFlhrI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=E384+2Q6HHMTaPcuK4pWvjusqmBr8WAx1n37ONcbDKH6u1oNuwvSiyaPu+37BsBjK
-	 wjaJBJ7ow9AMOdzrwgTZIryCpwgeU44qy6UH+QNARAy/Tyr2/xMaNlyWG6WbWC/21f
-	 JIn6GfLuulRvo7SDJDegj0wqGjiQecSeaJOCdHMGjEzoX5fMEjeXZQ9lercUeiw5DB
-	 9zYb57NCey5cHygHy3qRF/vgR0obPX14pnd1T1XArfCwGXl+so+HbB3Qr2rar4tJoX
-	 gJ0Uea8Gl/DzkiMo4L7O+TGMeKgUeSnGexgZWaTWpoBts7M1qe6JD9yY1mMQjD8yQF
-	 zqB4T6B8+G9Ww==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 27 Jun 2025 23:42:51 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
-Date: Fri, 27 Jun 2025 23:42:33 +0200
-Message-ID: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="TdOoCWJv"
+ARC-Seal: i=1; a=rsa-sha256; t=1751167152; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c4yg0VkzAxe6/1DNdK0m7HWg28vbCWKpN7647AxuXUIs4+J+5rDNErGq8UbeMNljwV/xVuI/0sxAnPN7hOYsdsuGCr9ok4v3rFqsU8ut8THmnixP2qtIcYIwownOETkyZK21I659cvXMH0P54yFoVCjV/2+3vPt16j8omvc7sOc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751167152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5sZgel47h61IZI/xBdVfE3mfXZ87n6o+GU/uHbeZ/ug=; 
+	b=bRmxTnwIvSybezz3VhAoC9vuoZms4A9yUx0TMg/I9rDiESy6Skst7f1kaMkuWY7N/rlEgzYr7J2QRJ1IxoMXE9URKuFbd+/Wt/knayGd18AwcGmKjo/wbYnUSNz2rmC13BLp5aQKdxVUph3g5lY3l5q3hvmkV0dK86OvfFhI8so=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751167152;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=5sZgel47h61IZI/xBdVfE3mfXZ87n6o+GU/uHbeZ/ug=;
+	b=TdOoCWJvcKB2dULI/kgdt/2VVSmAs1dfEHjGWJVNfGP+9cviyJ7RvFhpNbPy2bHl
+	eooGQ/vp9QZr9rK1RAdOJczhfeWcZLyO27ADykvZBtpUGvZnZr68wbWu1HxriJwwTUR
+	W1OtdfKk4iwVBA3zNf1u8vybSyaNxCmsHGTOA3SM=
+Received: by mx.zohomail.com with SMTPS id 1751167149312644.3787975589289;
+	Sat, 28 Jun 2025 20:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Rob Herring" <robh@kernel.org>
+In-Reply-To: <20250625191613.GA2059062-robh@kernel.org>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, 
+	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Chen Wang" <unicorn_wang@outlook.com>, 
+	"Inochi Amaoto" <inochiama@gmail.com>, 
+	"Philipp Zabel" <p.zabel@pengutronix.de>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, <linux-remoteproc@vger.kernel.org>, 
+	<devicetree@vger.kernel.org>, <sophgo@lists.linux.dev>, 
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
+	 CV1800B SoC
+Message-ID: <184d653d449ed7b0.6a3574329a6ead7.ebc417e4db758a3b@Mac>
+Date: Sun, 29 Jun 2025 03:19:03 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-IF an error occurs after a successful k3_rproc_request_mbox() call,
-mbox_free_channel() should be called to avoid a leak.
+Hi Rob,
+Thanks for your review.
 
-Such a call is missing in the error handing path of k3_dsp_rproc_probe().
-It is also missing both in the error handling path of k3_m4_rproc_probe()
-and in (in-existent) corresponding remove function.
+On 25/06/2025 14:16, Rob Herring wrote:
+> On Sun, Jun 08, 2025 at 10:37:39AM +0800, Junhui Liu wrote:
+>> Add C906L remote processor for CV1800B SoC, which is an asymmetric
+>> processor typically running RTOS.
+>>=20
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  | 68 ++++++++++++++++=
+++++++
+>>  1 file changed, 68 insertions(+)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-=
+c906l.yaml b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c90=
+6l.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..455e957dec01c16424c49ebe5=
+ef451883b0c3d4a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.y=
+aml
+>> @@ -0,0 +1,68 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo C906L remote processor controller for CV1800B SoC
+>> +
+>> +maintainers:
+>> +  - Junhui Liu <junhui.liu@pigmoral.tech>
+>> +
+>> +description:
+>> +  Document the bindings for the C906L remoteproc component that loads an=
+d boots
+>> +  firmwares on the CV1800B SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,cv1800b-c906l
+>> +
+>> +  firmware-name:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>=20
+> Already has a type. You just need 'maxItems: 1'.
 
-Switch to managed resources to avoid these leaks and simplify the code.
+Will do.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+>=20
+>> +    description:
+>> +      The name of the firmware file to load for this remote processor, r=
+elative
+>> +      to the firmware search path (typically /lib/firmware/).
+>=20
+> That's the same for every 'firmware-name' instance. So drop.
+>=20
+> Is there a default name?
 
-This is an update of [1].
-The code has been heavily refactored recently with things moved to
-ti_k3_common.c
+The firmware name would be specified in the board device tree, and
+there is no default value. For reference, an example value is provided
+in the example DT.
 
-This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
-mbox_free_channel() was missing.
+>=20
+>> +
+>> +  memory-region:
+>=20
+>        maxItems: 1
 
-Being very different from the v3, I've removed the previous review tags.
+I plan to add a description for the rpmsg-related regions in the next
+version. Since the number of these regions may be flexible, I think I
+will only add a minItems property to ensure the execution memory
+region is specified.
 
-[1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
----
- drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
- drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
- 3 files changed, 11 insertions(+), 5 deletions(-)
+>=20
+>> +    description:
+>> +      Phandle to a reserved memory region that is used to load the firmw=
+are for
+>> +      this remote processor. The remote processor will use this memory r=
+egion
+>> +      as its execution memory.
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  sophgo,syscon:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      A phandle to the SEC_SYS region, used for configuration of the rem=
+ote processor.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - firmware-name
+>> +  - memory-region
+>> +  - resets
+>> +  - sophgo,syscon
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    reserved-memory {
+>> +        #address-cells =3D <1>;
+>> +        #size-cells =3D <1>;
+>> +        ranges;
+>> +
+>> +        c906l_mem: region@83f40000 {
+>> +            reg =3D <0x83f40000 0xc0000>;
+>> +            no-map;
+>> +        };
+>> +    };
+>=20
+> Drop. No need to show how /reserved-memory works here.
 
-diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index d4f20900f33b..7a9c3fb80fec 100644
---- a/drivers/remoteproc/ti_k3_common.c
-+++ b/drivers/remoteproc/ti_k3_common.c
-@@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
- }
- EXPORT_SYMBOL_GPL(k3_rproc_release);
- 
-+static void k3_rproc_free_channel(void *data)
-+{
-+	struct k3_rproc *kproc = data;
-+
-+	mbox_free_channel(kproc->mbox);
-+}
-+
- int k3_rproc_request_mbox(struct rproc *rproc)
- {
- 	struct k3_rproc *kproc = rproc->priv;
-@@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
- 		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
- 				     "mbox_request_channel failed\n");
- 
-+	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Ping the remote processor, this is only for sanity-sake for now;
- 	 * there is no functional effect whatsoever.
-@@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
- 	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
- 	if (ret < 0) {
- 		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
--		mbox_free_channel(kproc->mbox);
- 		return ret;
- 	}
- 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 7a72933bd403..d6ceea6dc920 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
- 		if (ret)
- 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
- 	}
--
--	mbox_free_channel(kproc->mbox);
- }
- 
- static const struct k3_rproc_mem_data c66_mems[] = {
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index ca5ff280d2dc..04f23295ffc1 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
- 				return;
- 			}
- 		}
--
--		mbox_free_channel(kproc->mbox);
- 	}
- }
- 
--- 
-2.50.0
+Will do.
 
+>=20
+>> +
+>> +    c906l-rproc {
+>> +        compatible =3D "sophgo,cv1800b-c906l";
+>> +        firmware-name =3D "c906l-firmware.elf";
+>> +        memory-region =3D <&c906l_mem>;
+>> +        resets =3D <&rst 294>;
+>> +        sophgo,syscon =3D <&sec_sys>;
+>> +    };
+>>=20
+>>
+
+--=20
+Best regards,
+Junhui Liu
