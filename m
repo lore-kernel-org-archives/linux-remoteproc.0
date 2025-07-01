@@ -1,386 +1,355 @@
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3F275B1E
-	for <linux-remoteproc@vger.kernel.org>; Tue,  1 Jul 2025 14:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45B8275869
+	for <linux-remoteproc@vger.kernel.org>; Tue,  1 Jul 2025 14:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379379; cv=none; b=ToQ7mmhcLIOJbFUDr1VfRsABCw+nj9OF590hpRbfuioxZ90+nyRxjYBDPqxPOcXr3W8VylzD44G/xFcQ19AnBKq4LPg/yz2V9AWkNjBmhs479xiCOY1Z5+WiJ9hiMkLmMKOEpkEd+MK5TIWniy+Hhjrvi5EBzqF26fuIWqMzuGs=
+	t=1751380035; cv=none; b=CyhjCgequsTqKDC5JxWBi6LYmKKOA6YHaI77PuFdAmEKSJskl25emR0wXWiqknb8bLTy9D2as/9rsLupr7J3i/TjBeykTtJG7LCqvIkxB/8DmtZuBM361a4KS5f4phuIYyZLFTRQJj3SUP6gSUExQSE5UAK/4kNXLrT1Vh74VcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379379; c=relaxed/simple;
-	bh=arjDcOQPz+bLzO+2hqy2LFu/NPPj2XN5yiww8a1Sen0=;
+	s=arc-20240116; t=1751380035; c=relaxed/simple;
+	bh=9XcgClbbwQjBFqj9Pb6TKTEF7hl9jxfi0SkLdentSys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9PGapL8DW7tSMiwKC5rsp6mMT2JMp0DLal0Ot4JVI3RJi2CagjKXuxt9KLhWU7gfW6M+6QVkabWTW50KI/P8X3VPFv1JivC/I26LZYPAGuCa65EcTL2FOtJq16i9JZaiaPdO7pbTSWBfpLZgF8nsrWdoPU0eZirPCfIkl9ten8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BOwJeMUl; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkzOYbb2p1dIlQQr03W8UAWhnyPfdEIbou1dq22Duocw9U8l4oy7BnsVBpSQgkvOL1SXW+jK664cO+ReM4xcyT+JCvLHL6kopfs/SA0GYzC2mvin2uJMrOoAkhkBQ7giTJUrT4h79nT+OWxOpjVAdglR1xDSWBEH+I+O1P+1gkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qvj7kjYz; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BOwJeMUl"
-Date: Tue, 1 Jul 2025 22:16:07 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751379374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RKB58BmoOcqdr4LM8jONymTwMS8ilusPwGSmvHxdSQo=;
-	b=BOwJeMUlh3rKN+71IouHQOsO2Vv5oZexwCtI4pCVAHVBeicJbvlWDIYpjSnUSdUMwYLxCr
-	RVagIyX8s2bLmnACaX3eiA4BSaGiYtMk73BJp6FXdomLxVbXKOTV7eCsS/SyistckHlTQp
-	fmws7Niidpq4C0HEUjO8t2j33Dx5Bw4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dawei Li <dawei.li@linux.dev>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	set_pte_at@outlook.com, dawei.li@linux.dev
-Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Message-ID: <20250701141607.GA5219@wendao-VirtualBox>
-References: <20250609151531.22621-1-dawei.li@linux.dev>
- <f3b99a3d-5d20-4e82-ae5d-75c2c866e118@foss.st.com>
- <20250619144301.GA9575@wendao-VirtualBox>
- <db2d2296-3893-427d-85ec-f64e6c0e1d1d@foss.st.com>
- <20250622041200.GA3703@wendao-VirtualBox>
- <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvj7kjYz"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7490702fc7cso4154689b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 01 Jul 2025 07:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751380033; x=1751984833; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D/LzDFUd08uVqn1UnqBLix0fV11YVLJxk07IbCif910=;
+        b=qvj7kjYziKr3bm4UaVXxHTwoXwEC/Lw6sBbzmjEywp8iXF2bUwP40Ol26fO13ftPAV
+         ltAOei6RoNYKd5N1r5wdRw6X4+IZc9X6IjNlEpKUaXz4Nz5eYkL/p+hsUJn9kvMFkyNI
+         l+o5CMbA4QCjrpwBQWpcSlWZ6JdvS/wBkxhkPV3gdQm0nKoIXxRKRxurC9hpEZVibQip
+         NWDiHKJFxmS/dXhQq4U3Pj5A3gM+CkXiVZB2WuCwJA0SYO8XbiJv5jQOHKzowpYuvVTH
+         TwyTE5/e9EBV6qTztvJYITQPzP5fJ/4XjTHi8AguDLPEdMs2gqVidpIwGVT/TQYg+xx2
+         qJQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751380033; x=1751984833;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/LzDFUd08uVqn1UnqBLix0fV11YVLJxk07IbCif910=;
+        b=Shgb196RTlAv6GPqdd2OlcP+0Cz+mJK1ZTaZoNUVufcwTfTF/0fyCFPF0X+zJqfJEB
+         6fIWwHfJsx9iVF9O7Ovpck3a8VE7djtuCTadJZ+PBI1mqYfiePy1gON9b6yzgX6qLQR8
+         qWNAp4Xj3jMqMycnrHMbB3qfZgXhZyW0/IcZWzk12Y0S66OuXuJ/T085S//h8oa6Khan
+         I6SrZw5JJ4B2xGw77sNulpVqW0JxNc++YGP54qIhPMWF1j+kmZB5lTHqu8gbvaelISK2
+         tj9kUs/vRV4ry2h3t7YQsHoQriZNOkbMQXrsVobrHMrcFH309cRSedwzzqX/lyVSFalT
+         ibDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJDRQm5wN4klssQsqfGj9zPNS8pp2hXCDgDvdRp2pzO1yg/OGsgvm0cZzulzwdpiJqOsqt2I02iNN7Tra8ZpAB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD7yuqKwAffdEEGezhya1GNlR5JgAGp8M+YhJqP33wtjPj+k7+
+	gE/jVh46KmfQ30C1TP2EVhEMO/zklEQo+eEQ7hgqACxeIPf+NzPwaKAanTf4WdZXse8=
+X-Gm-Gg: ASbGncv5tPEEXUS3PYDzVm6v7GEWVxaqT8BP6xhVDV2PSt4z4w2LgE2Ba3GFbberI95
+	N5Gg1VSXhJw21xE1haaAs64LLgS/DxiyI5kUlgRrKVnLzmEs2DaHhPkDeMjNcMrLxJko4vxGhym
+	fLOFNVyLIrJPvwXEjKjy6uigivFtGj6zlWG7xz0hWHBRq9XMaoq91FfiGNr8DWcLZpE4KQinVDI
+	8qyG5Uk84WwE73SR+n1i+HCWafWeAkQmeFIjbnnlk+T7iJsFX6peV4VS79dHsSBirvZGWyBP1JV
+	vLyjRYsqpGEZjhZL7AjPerkDmY2xdiDppuZpMSJ37gcuPdArQRGPoDRpg0iEb/ok3lQLYKM5FMO
+	V
+X-Google-Smtp-Source: AGHT+IHWDplP+mSvwBbgNyXECwNqolDcVKxeCipzxq0AEnaLJRzr3NaK42vQj7ZRYIVHVNCBCyQvdA==
+X-Received: by 2002:a05:6a00:3a0f:b0:748:f3b0:4db6 with SMTP id d2e1a72fcca58-74af6f4a507mr24062703b3a.11.1751380032554;
+        Tue, 01 Jul 2025 07:27:12 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:94b9:2bc2:7ead:7a72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5580fb6sm11294397b3a.89.2025.07.01.07.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 07:27:12 -0700 (PDT)
+Date: Tue, 1 Jul 2025 08:27:09 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andersson@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: Add support of recovery
+ process
+Message-ID: <aGPwPW_f1qAZGmzd@p14s>
+References: <20250618062644.3895785-1-shengjiu.wang@nxp.com>
+ <20250618062644.3895785-2-shengjiu.wang@nxp.com>
+ <aFltBpXuEXVZ5gKn@p14s>
+ <CAA+D8AP47xyftzPZki8MXEeWEfbocug6e134uaJgFH+tx7mH2Q@mail.gmail.com>
+ <CANLsYkz2JMMMhBAXjt9YSzU4n-0Ld6EvJHC=7Ospsefoxc6BGA@mail.gmail.com>
+ <CAA+D8AM47P7xw2Ppgcr9d=DB2eSkQg6uQ_F22Te_=HFuMCNXxw@mail.gmail.com>
+ <aGLAEvhyjrCbZoIf@p14s>
+ <CAA+D8ANLOxnfj9cWhbTUWHuFGt5Qb-upTmKfCyNxEb1ChJKjbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8ANLOxnfj9cWhbTUWHuFGt5Qb-upTmKfCyNxEb1ChJKjbg@mail.gmail.com>
 
-Hi Arnaud,
-
-Thanks for the reply.
-
-On Mon, Jun 30, 2025 at 09:54:40AM +0200, Arnaud POULIQUEN wrote:
-> Hello Dawei,
+On Tue, Jul 01, 2025 at 10:16:21AM +0800, Shengjiu Wang wrote:
+> On Tue, Jul 1, 2025 at 12:49 AM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> >
+> > On Thu, Jun 26, 2025 at 09:32:06AM +0800, Shengjiu Wang wrote:
+> > > On Wed, Jun 25, 2025 at 10:39 PM Mathieu Poirier
+> > > <mathieu.poirier@linaro.org> wrote:
+> > > >
+> > > > On Tue, 24 Jun 2025 at 21:25, Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
+> > > > >
+> > > > > On Mon, Jun 23, 2025 at 11:11 PM Mathieu Poirier
+> > > > > <mathieu.poirier@linaro.org> wrote:
+> > > > > >
+> > > > > > Good day,
+> > > > > >
+> > > > > > On Wed, Jun 18, 2025 at 02:26:43PM +0800, Shengjiu Wang wrote:
+> > > > > > > when recovery is triggered, rproc_stop() is called first then
+> > > > > > > rproc_start(), but there is no rproc_unprepare_device() and
+> > > > > > > rproc_prepare_device() in the flow.
+> > > > > > >
+> > > > > > > So power enablement needs to be moved from prepare callback to start
+> > > > > > > callback, power disablement needs to be moved from unprepare callback
+> > > > > > > to stop callback, loading elf function also needs to be moved to start
+> > > > > > > callback, the load callback only store the firmware handler.
+> > > > > > >
+> > > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > > > > ---
+> > > > > > >  drivers/remoteproc/imx_dsp_rproc.c | 58 ++++++++++++++++++------------
+> > > > > > >  1 file changed, 36 insertions(+), 22 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > > > index 5ee622bf5352..9b9cddb224b0 100644
+> > > > > > > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > > > @@ -122,6 +122,7 @@ enum imx_dsp_rp_mbox_messages {
+> > > > > > >   * @ipc_handle: System Control Unit ipc handle
+> > > > > > >   * @rproc_work: work for processing virtio interrupts
+> > > > > > >   * @pm_comp: completion primitive to sync for suspend response
+> > > > > > > + * @firmware: firmware handler
+> > > > > > >   * @flags: control flags
+> > > > > > >   */
+> > > > > > >  struct imx_dsp_rproc {
+> > > > > > > @@ -139,6 +140,7 @@ struct imx_dsp_rproc {
+> > > > > > >       struct imx_sc_ipc                       *ipc_handle;
+> > > > > > >       struct work_struct                      rproc_work;
+> > > > > > >       struct completion                       pm_comp;
+> > > > > > > +     const struct firmware                   *firmware;
+> > > > > > >       u32                                     flags;
+> > > > > > >  };
+> > > > > > >
+> > > > > > > @@ -211,6 +213,7 @@ static const struct imx_rproc_att imx_dsp_rproc_att_imx8ulp[] = {
+> > > > > > >
+> > > > > > >  /* Initialize the mailboxes between cores, if exists */
+> > > > > > >  static int (*imx_dsp_rproc_mbox_init)(struct imx_dsp_rproc *priv);
+> > > > > > > +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+> > > > > > >
+> > > > > > >  /* Reset function for DSP on i.MX8MP */
+> > > > > > >  static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
+> > > > > > > @@ -402,8 +405,24 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+> > > > > > >       const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
+> > > > > > >       const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
+> > > > > > >       struct device *dev = rproc->dev.parent;
+> > > > > > > +     struct rproc_mem_entry *carveout;
+> > > > > > >       int ret;
+> > > > > > >
+> > > > > > > +     pm_runtime_get_sync(dev);
+> > > > > > > +
+> > > > > > > +     /*
+> > > > > > > +      * Clear buffers after pm rumtime for internal ocram is not
+> > > > > > > +      * accessible if power and clock are not enabled.
+> > > > > > > +      */
+> > > > > > > +     list_for_each_entry(carveout, &rproc->carveouts, node) {
+> > > > > > > +             if (carveout->va)
+> > > > > > > +                     memset(carveout->va, 0, carveout->len);
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > > +     ret = imx_dsp_rproc_elf_load_segments(rproc, priv->firmware);
+> > > > > > > +     if (ret)
+> > > > > > > +             return ret;
+> > > > > > > +
+> > > > > > >       switch (dcfg->method) {
+> > > > > > >       case IMX_RPROC_MMIO:
+> > > > > > >               ret = regmap_update_bits(priv->regmap,
+> > > > > > > @@ -446,6 +465,7 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+> > > > > > >
+> > > > > > >       if (rproc->state == RPROC_CRASHED) {
+> > > > > > >               priv->flags &= ~REMOTE_IS_READY;
+> > > > > > > +             pm_runtime_put_sync(dev);
+> > > > > >
+> > > > > > From this patch I understand that for a recovery to be successful, the
+> > > > > > remote processor _has_ to go through a hard reset.  But here the PM runtime API
+> > > > > > is used, meaning the remote processor won't be switched off if another device in
+> > > > > > the same power domain still neeeds power.  If that is the case, the solution in
+> > > > > > tihs patch won't work.
+> > > > >
+> > > > > Thanks for reviewing.
+> > > > > With the case you mentioned, there is software reset to make the
+> > > > > recovery process work.
+> > > >
+> > > >
+> > > > Are you talking about a manual software reset of some other mechanism?
+> > > >
+> > > > If manual software reset, the recovery may or may not work and we
+> > > > simply don't know when that might be.  If it's another mechanism, then
+> > > > that mechanism should be used in all cases.  Either way, I don't see
+> > > > how we can move forward with this patch.
+> > >
+> > > Not manual software reset,  in this driver we registered .reset() function.
+> > > it has been called at imx_dsp_runtime_resume(),  I paste the function below.
+> > >
+> > > And I have tested the case you mentioned, the recovery works.
+> > >
+> > > /* pm runtime functions */
+> > > static int imx_dsp_runtime_resume(struct device *dev)
+> > > {
+> > >         struct rproc *rproc = dev_get_drvdata(dev);
+> > >         struct imx_dsp_rproc *priv = rproc->priv;
+> > >         const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
+> > >         int ret;
+> > >
+> > >         /*
+> > >          * There is power domain attached with mailbox, if setup mailbox
+> > >          * in probe(), then the power of mailbox is always enabled,
+> > >          * the power can't be saved.
+> > >          * So move setup of mailbox to runtime resume.
+> > >          */
+> > >         ret = imx_dsp_rproc_mbox_init(priv);
+> > >         if (ret) {
+> > >                 dev_err(dev, "failed on imx_dsp_rproc_mbox_init\n");
+> > >                 return ret;
+> > >         }
+> > >
+> > >         ret = clk_bulk_prepare_enable(DSP_RPROC_CLK_MAX, priv->clks);
+> > >         if (ret) {
+> > >                 dev_err(dev, "failed on clk_bulk_prepare_enable\n");
+> > >                 return ret;
+> > >         }
+> > >
+> > >         /* Reset DSP if needed */
+> > >         if (dsp_dcfg->reset)
+> > >                 dsp_dcfg->reset(priv);
+> > >
+> > >         return 0;
+> > > }
+> > >
+> >
+> > Thanks for the clarification.  I would have been nice to have that kind of
+> > explanation (not the copy paste of the imx_dsp_runtime_resume() function) in the
+> > changelog.
 > 
-> Sorry for the late answer.
+> Ok, will add it.
 > 
-> On 6/22/25 06:12, Dawei Li wrote:
-> > Hi Arnaud,
-> > 
-> > Thanks for the reply.
-> > 
-> > On Fri, Jun 20, 2025 at 09:52:03AM +0200, Arnaud POULIQUEN wrote:
-> >>
-> >>
-> >> On 6/19/25 16:43, Dawei Li wrote:
-> >>> Hi Arnaud, 
-> >>> Thanks for review.
-> >>>
-> >>> On Wed, Jun 18, 2025 at 03:07:36PM +0200, Arnaud POULIQUEN wrote:
-> >>>> Hello Dawei,
-> >>>>
-> >>>>
-> >>>> Please find a few comments below. It is not clear to me which parts of your
-> >>>> implementation are mandatory and which are optional "nice-to-have" optimizations.
-> >>>
-> >>> It's more like an improvement.
-> >>>
-> >>>>
-> >>>> Based on (potentially erroneous) hypothesis, you will find a suggestion for an
-> >>>> alternative to the anonymous inode approach, which does not seem to be a common
-> >>>> interface.
-> >>>
-> >>> AFAIC, annoymous inode is a common interface and used extensivly in kernel development.
-> >>> Some examples below.
-> >>>
-> >>>>
-> >>>>
-> >>>> On 6/9/25 17:15, Dawei Li wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
-> >>>>> for rpmsg subsystem.
-> >>>>>
-> >>>>> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> >>>>> abstracted in procedures below:
-> >>>>> - fd = open("/dev/rpmsg_ctrlX")
-> >>>>> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
-> >>>>>   generated.
-> >>>>> - fd_ep = open("/dev/rpmsgY", O_RDWR) 
-> >>>>> - operations on fd_ep(write, read, poll ioctl)
-> >>>>> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> >>>>> - close(fd_ep)
-> >>>>> - close(fd)
-> >>>>>
-> >>>>> This /dev/rpmsgY abstraction is less favorable for:
-> >>>>> - Performance issue: It's time consuming for some operations are
-> >>>>> invovled:
-> >>>>>   - Device node creation.
-> >>>>>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
-> >>>>>     overhead is based on coordination between DEVTMPFS and userspace
-> >>>>>     tools such as udev and mdev.
-> >>>>>
-> >>>>>   - Extra kernel-space switch cost.
-> >>>>>
-> >>>>>   - Other major costs brought by heavy-weight logic like device_add().
-> >>>>
-> >>>> Is this a blocker of just optimization?
-> >>>
-> >>> Yep, performance is one of motivations of this change.
-> >>>
-> >>>>
-> >>>>>
-> >>>>> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
-> >>>>>     that a dynamically created device node can be opened only once.
-> >>>>
-> >>>>
-> >>>> I assume this is blocker with the fact that you need to open the /dev/rpmsg<x>
-> >>>> to create the endpoint.
-> >>>
-> >>> Yes. You have to open /dev/rpmsgX which is generated by legacy ioctl to
-> >>> instantiate a new endpoint.
-> >>>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>> - For some container application such as docker, a client can't access
-> >>>>>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
-> >>>>>   is generated dynamically and whose existence is unknown for clients in
-> >>>>>   advance, this uAPI based on device node doesn't fit well.
-> >>>>
-> >>>> does this could be solve in userspace parsing /sys/class/rpmsg/ directory to
-> >>>> retreive the device?
-> >>>
-> >>> Hardly, because client still can't access /dev/rpmsgX which is generated
-> >>> by host _after_ client is launched.
-> >>
-> >>
-> >> This part is not clear to me; could you provide more details?
-> >> I cannot figure out why a client can access /dev/rpmsg_ctrlX but not /dev/rpmsgX.
-> > 
-> > Well, let's take docker as example:
+> >
+> > That said, that is just one aspect of the things I find bizarre with this
+> > patchset - see below.
+> >
+> > > >
+> > > > >
+> > > > >
+> > > > > best regards
+> > > > > Shengjiu Wang
+> > > > >
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Mathieu
+> > > > > >
+> > > > > > >               return 0;
+> > > > > > >       }
+> > > > > > >
+> > > > > > > @@ -472,6 +492,8 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+> > > > > > >       else
+> > > > > > >               priv->flags &= ~REMOTE_IS_READY;
+> > > > > > >
+> > > > > > > +     pm_runtime_put_sync(dev);
+> > > > > > > +
+> > > > > > >       return ret;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > @@ -774,7 +796,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc)
+> > > > > > >  {
+> > > > > > >       struct imx_dsp_rproc *priv = rproc->priv;
+> > > > > > >       struct device *dev = rproc->dev.parent;
+> > > > > > > -     struct rproc_mem_entry *carveout;
+> > > > > > >       int ret;
+> > > > > > >
+> > > > > > >       ret = imx_dsp_rproc_add_carveout(priv);
+> > > > > > > @@ -783,25 +804,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rproc)
+> > > > > > >               return ret;
+> > > > > > >       }
+> > > > > > >
+> > > > > > > -     pm_runtime_get_sync(dev);
+> > > > > > > -
+> > > > > > > -     /*
+> > > > > > > -      * Clear buffers after pm rumtime for internal ocram is not
+> > > > > > > -      * accessible if power and clock are not enabled.
+> > > > > > > -      */
+> > > > > > > -     list_for_each_entry(carveout, &rproc->carveouts, node) {
+> > > > > > > -             if (carveout->va)
+> > > > > > > -                     memset(carveout->va, 0, carveout->len);
+> > > > > > > -     }
+> > > > > > > -
+> > > > > > > -     return  0;
+> > > > > > > -}
+> > > > > > > -
+> > > > > > > -/* Unprepare function for rproc_ops */
+> > > > > > > -static int imx_dsp_rproc_unprepare(struct rproc *rproc)
+> > > > > > > -{
+> > > > > > > -     pm_runtime_put_sync(rproc->dev.parent);
+> > > > > > > -
+> > > > > > >       return  0;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > @@ -1022,13 +1024,25 @@ static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw
+> > > > > > >       return 0;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > +static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+> > > > > > > +{
+> > > > > > > +     struct imx_dsp_rproc *priv = rproc->priv;
+> > > > > > > +
+> > > > > > > +     /*
+> > > > > > > +      * Just save the fw handler, the firmware loading will be after
+> > > > > > > +      * power enabled
+> > > > > > > +      */
+> > > > > > > +     priv->firmware = fw;
+> > > > > > > +
+> >
+> > Why is a new firwmare variable needed?  Why can't you just use rproc->firmware?
 > 
-> > 
-> > For docker, when a client is launched and it wants to access host's
-> > device, it must make explicit request when it's launched:
-> > 
-> > docker run --device=/dev/xxx
-> > 
-> > Let's presume that xxx is /dev/rpmsgX generated dynamically by _host_.
-> > Docker command above knows nothing about these rpmsg nodes which are
-> > generated by host _after_ client is launched. And yes, parsing> /sys/class/rpmsg may acquire info about rpmsg devices, but client still
-> > can't access /dev/rpmsgX.
+>  The "firmware" in "rproc->firmware" is "const char *firmware;"
+> * @firmware: name of firmware file to be loaded
 > 
-> One extra question:Are you using RPMsg over virtio?
-> 
-> If yes, do you test the RPMsg name service (NS) announcement, that might also
-> address your needs.
-> 
-> The principle is that the remote processor sends a name service announcement to
-> Linux, which probes the rpmsg character device and creates the /dev/rpmsgX
-> device in a predefined order known by the remote processor.
-> In such a case, the /dev/rpmsgX usage would be determined by the remote
-> processor itself.
-> 
-> Another advantage is that the RPMsg channel creation is not driven by either the
-> host or the client. In such case host does no need to define/kwnow RPMSg
-> endpoint addresses.
-> 
-> You still need to call the open() file system operation, but this should be done
-> one time during Docker client initialization.
+> But "const struct firmware *fw" is the result after request_firmware()
+> ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> "firmware_p" is the "fw".
 
-NS is nice, but perhaps it's not the approach for some cases.
-
-For offloading/accelerator scenarios, ACPU is responsible for making all
-the important decisions, including creations of endpoints. Because all
-the user-awared software stack is running on ACPU, and if you want to
-create a endpoint _dynamically_, it must be from user's command which is
-from ACPU.
-
-And this series is more about how rpmsg_char and rpmsg_ctrl coordinate
-themselves about creating dynamic rpmsg endpoints in a more simple
-and efficient way.
-
-And the whole point of series is "When you want to return a fd to
-userspace which represents an instance of data structure in kernel, you
-don't implement it as character device". Maybe some quotes from Christian[1]
-can describe it better[1]:
-
-"I'm not sure why people are so in love with character device based apis.
-It's terrible. It glues everything to devtmpfs which isn't namespacable
-in any way. It's terrible to delegate and extremely restrictive in terms
-of extensiblity if you need additional device entries (aka the loop
-driver folly)."
-
-[1] https://lkml.org/lkml/2025/6/24/639
-
-Thanks,
-
-	Dawei
+Ah yes, of course.
 
 > 
-> Regards
-> Arnaud
+> As the remoteproc_core.c has called request_firmware(), so we don't need to call
+> the request_firmware() again.  so use the new "const struct firmware
+> *firmware;" for
+> saving the "fw".
 > 
-> 
-> > 
-> >>
-> >>
-> >>>
-> >>>>
-> >>>> You could face same kind of random instantiation for serial peripherals ( UART;
-> >>>> USb, I2C,...) based on a device tree enumeration. I suppose that user space
-> >>>> use to solve this.
-> >>>>
-> >>>>>
-> >>>>> An anonymous inode based approach is introduced to address the issues above.
-> >>>>> Rather than generating device node and opening it, rpmsg code just creates
-> >>>>> an anonymous inode representing eptdev and return the fd to userspace.
-> >>>>
-> >>>> A drawback is that you need to share fb passed between processes.
-> >>>
-> >>> Fd is the abstraction of an unique endpoint device, it holds true for
-> >>> both legacy and new approach.
-> >>>
-> >>> So I guess what you mean is that /dev/rpmsgX is global to all so other process
-> >>> can access it?
-> >>>
-> >>> But /dev/rpmsgX is designed to be opened only once, it's implemented as
-> >>> singleton pattern.
-> >>>
-> >>> static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> >>> {
-> >>> ...
-> >>>         if (eptdev->ept) {
-> >>>                 mutex_unlock(&eptdev->ept_lock);
-> >>>                 return -EBUSY;
-> >>>         }
-> >>> ...
-> >>>         eptdev->ept = ept;
-> >>> ...
-> >>> }
-> >>>
-> >>> [...]
-> >>>  
-> >>>>> 	printf("loop[%d]\n", loop);
-> >>>>>
-> >>>>> 	gettimeofday(&start, NULL);
-> >>>>>
-> >>>>> 	while (loop--) {
-> >>>>
-> >>>> Do you need to create /close Endpoint sevral times in your real use case with
-> >>>> high timing
-> >>>> constraint?
-> >>>
-> >>> No, it's just a silly benchmark demo, large sample reduces noise statistically.
-> >>>
-> >>>>
-> >>>>> 		fd_info.fd = -1;
-> >>>>> 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
-> >>>>> 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
-> >>>>> 		if (ret < 0 || fd_info.fd < 0) {
-> >>>>> 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
-> >>>>> 		}
-> >>>>>
-> >>>>
-> >>>>
-> >>>>> 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
-> >>>>> 		if (ret < 0) {
-> >>>>> 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
-> >>>>> 		}
-> >>>>>
-> >>>>> 		close(fd_info.fd);
-> >>>>
-> >>>> It seems strange to me to use ioctl() for opening and close() for closing, from
-> >>>> a symmetry point of view.
-> >>>
-> >>> Sorry to hear that. But no, it's a pretty normal skill in kernel codebase
-> >>> , I had to copy some examples from reply to other reviewer[1].
-> >>
-> >> I missed this one, apologize for the duplication.
-> >>
-> >>>
-> >>> anon_inode_get_{fd,file} are used extensively in kernel for returning a new
-> >>> fd to userspace which is associated with an unique data structure in kernel
-> >>> space, in different ways:
-> >>>
-> >>> - via ioctl(), some examples are:
-> >>>
-> >>>  - KVM ioctl(s)
-> >>>    - KVM_CREATE_VCPU -> kvm_vm_ioctl_create_vcpu
-> >>>    - KVM_GET_STATS_FD -> kvm_vcpu_ioctl_get_stats_fd
-> >>>    - KVM_CREATE_DEVICE -> kvm_ioctl_create_device
-> >>>    - KVM_CREATE_VM -> kvm_dev_ioctl_create_vm
-> >>>
-> >>>  - DMA buf/fence/sync ioctls
-> >>>    - DMA_BUF_IOCTL_EXPORT_SYNC_FILE -> dma_buf_export_sync_file
-> >>>    - SW_SYNC_IOC_CREATE_FENCE -> sw_sync_ioctl_create_fence
-> >>>    - Couples of driver implement DMA buf by using anon file _implicitly_:
-> >>>      - UDMABUF_CREATE -> udmabuf_ioctl_create
-> >>>      - DMA_HEAP_IOCTL_ALLOC -> dma_heap_ioctl_allocate
-> >>>
-> >>>  - gpiolib ioctls:
-> >>>    - GPIO_GET_LINEHANDLE_IOCTL -> linehandle_create
-> >>>    - GPIO_V2_GET_LINE_IOCTL
-> >>>
-> >>>  -  IOMMUFD ioctls:
-> >>>
-> >>>  -  VFIO Ioctls:
-> >>>
-> >>>  - ....
-> >>>
-> >>>
-> >>> - via other specific syscalls:
-> >>>  - epoll_create1
-> >>>  - bpf
-> >>>  - perf_event_open
-> >>>  - inotify_init
-> >>>  - ...
-> >>
-> >> If we put the optimization aspect aside, what seems strange to me is that the
-> >> purpose of rpmsg_char was to expose a FS character device to user space. If we
-> >> need tobypass the use of /dev/rpmsgX, does it make sense to support an anonymous
-> >> inode in this driver?  I am clearly not legitimate to answer this question...
-> > 
-> > You have every right to do so, after all, it's purely a technical
-> > discussion :).
-> > 
-> > I admit it's bit confusing to add annoymous inode logic to a file named
-> > rpmsg_char.c which implies 'character' device. That's why I rename API
-> > following Mathieu's comment:
-> >   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
-> >   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
-> > 
-> > As to topic how these two uAPI(s) co-exist and affect each other. This
-> > change is based on rules:
-> > 
-> > 1. Never break existing uAPI.
-> > 2. Try best to reuse existing codebase.
-> > 3. Userspace can choose whatever approach they want to.
-> > 
-> > Thanks,
-> > 
-> > 	Dawei
-> >>
-> >>
-> >> Thanks,
-> >> Arnaud
-> >>
-> >>>
-> >>> [1] https://lore.kernel.org/all/20250530125008.GA5355@wendao-VirtualBox/
-> >>>
-> >>>>
-> >>>> Regarding your implementation, I wonder if we could keep the /dev/rpmsg<x>
-> >>>> device with specific open() and close() file operations associated with your new
-> >>>> ioctl.
-> >>>>
-> >>>> - The ioctl would create the endpoint.
-> >>>> - The open() and close() operations would simply manage the file descriptor and
-> >>>> increment/decrement a counter to prevent premature endpoint destruction.
-> >>>>
-> >>>>
-> >>>> Regards,
-> >>>> Arnaud
-> >>>>
-> >>>
-> >>> [...]
-> >>>
-> >>> Thanks,
-> >>>
-> >>> 	Dawei
+> Best regards
+> Shengjiu Wang
+> >
+> > > > > > > +     return 0;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >  static const struct rproc_ops imx_dsp_rproc_ops = {
+> > > > > > >       .prepare        = imx_dsp_rproc_prepare,
+> > > > > > > -     .unprepare      = imx_dsp_rproc_unprepare,
+> > > > > > >       .start          = imx_dsp_rproc_start,
+> > > > > > >       .stop           = imx_dsp_rproc_stop,
+> > > > > > >       .kick           = imx_dsp_rproc_kick,
+> > > > > > > -     .load           = imx_dsp_rproc_elf_load_segments,
+> > > > > > > +     .load           = imx_dsp_rproc_load,
+> > > > > > >       .parse_fw       = imx_dsp_rproc_parse_fw,
+> > > > > > >       .handle_rsc     = imx_dsp_rproc_handle_rsc,
+> > > > > > >       .find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> > > > > > > --
+> > > > > > > 2.34.1
+> > > > > > >
+> > > > > >
