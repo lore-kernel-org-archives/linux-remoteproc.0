@@ -1,159 +1,139 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3A28B41A
-	for <linux-remoteproc@vger.kernel.org>; Wed,  2 Jul 2025 14:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99732DE717;
+	Wed,  2 Jul 2025 20:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751466354; cv=none; b=blsYtOQ+UE7PwioyqgocbFCiN+56O/9dqi6wn5OYmDWHPmOGLWYymuFXlaJR2XcSjnsTmXSjwSfb/tdXv3YeCxyGrpmky9+GLQLSZy3O9dNNpcIqCVvMdw7e6UsxJ8wCiNC3lSJ6TIQ9hRFuhJedrBEX107gQ7HSMLYrFj+IsOI=
+	t=1751488348; cv=none; b=Ux2r5MfgzI8uI1NVc7ofEde+1dPiWR+LYX7qse8ClqdEJ4eYzd1fu9AAlg5P83MSZ/SnzAwBV4W8qMzHjHaSsHlWvhjiWSAAGoM4aSImC2Zypt8CRrMZV0+25YeMCc/+paQJEScF9E1Tp0jcRirMCT76SrIFytqlQfdCE4tTsT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751466354; c=relaxed/simple;
-	bh=XI2aabHxDjSDZsjSbjqRlue+1AmCMU13tnFObRNUcYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNbp7oEIO/OXt5jNHLb3Ttpv4GqBh/eJUU/pGEqGX7TH6EuO5twTo2LbWSEEeH63cjXQrpjUv6AvSmvGno7NOCUxO0Qm6K12ySuHuECOIeX8BdkI+gciwLEWrclEh7hY66miOVK2eo8+dSIe8kDn5L5H3gIoVdVm9MemtIaNSgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+JNuQkj; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751488348; c=relaxed/simple;
+	bh=AQj1KqNi6O1MblNaJlJZf+D7Hyvwx661fg4rUbzcPEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGqtu9WXB9qPxDUdSsrExsPrTsH0069wu478dQuWDxPdwHcMwIafZuE4V1lYn60r7IeFNsxM/qEeyVm4VucX31RA4IC4nukSYx/1H55g/YjhIPfysZ9L26pda8uBoXljDgvVzFwZ7mlgouFkgJ8r1NwFBXl2BCuRtbmB3cf88WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5aVrgxJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+JNuQkj"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234bfe37cccso83393395ad.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Jul 2025 07:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751466351; x=1752071151; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E1kr9u8m8E4TPdeiQ7uwSuSGKdX9x6J9xyjPynOJkDg=;
-        b=a+JNuQkj35N0lPgIX+2ayY7f3pVANPHKaMqsIHTp57eIp3LHVucrOuoB4r3EDqmvJN
-         8sG+6EyrM/2dYnf+HRuz7qtZeiDCIzdPuiWdsnH6g4N7gpbwJj4pnbigq8mUrO+ZzRYX
-         vqcX8S1fq+CaQGk+cEAM+t+XNx8GaF1fWSS6Xua7uxcYG+Z5FvEhxwCg3POyHyRamV9a
-         14gSq0F0sLVIO6OF8tMXayMWzr6KiAieYOWclDIutrxfJzDr2fSHoS4XXXItVTAMBMtR
-         7ONjDDQ+m5IjFWQTcaQKVWg/Zu8G02Mo6X+vZU2DWiSCepJQPG5MjznAeIiyzVHava1m
-         zBeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751466351; x=1752071151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E1kr9u8m8E4TPdeiQ7uwSuSGKdX9x6J9xyjPynOJkDg=;
-        b=raDsCa0kwHWCspAWQVfflpW5o5+CRXAyOAXePRrOx5aFCtkXIxK6S/bxugVVOhto8t
-         X4LU5Dytd3OHDjyxyxBKQI7UExNYKpv3uyE3SkTrEk0T58cwxKOX2ngYv6yy7ThyhACm
-         jNegbrWs2PIV2efYxAkLfuJVxDBmiF67cAPzqnX/N5Az8rRau2sK13gCk40d8/c7Z/iW
-         TDrcx7m/wAclhlA6rEinl802zr6a3rc1gigU3quKC/d5WW9WVrJ9G7xijdu5NC9XK0Eb
-         3Hr2p71bRRHP1IwYUFNWXurjPf/9NVXssR4B2b49TsGA7wnyTlnWAWPCgvsw2B8VYGmx
-         7mFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC7zo3tPL3NW5osletqRuU5iZBY5y5O/V3rcZlsP+fC8b8swsff3mqxqEbTe3OrugC4CtRPXLzA+/+TiQxhyvl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb48kRlaqwauGfesJYogv2GPx8PefQrfNKPY+2zn44gbbI8eqf
-	NqnaXT5zVDMXMJor34Bp/Nefnn31E4KyAF9Tdya5aiwtdGvXhWBlju+V+NGmU8k3fy0UYgixts7
-	pRyWPeSA=
-X-Gm-Gg: ASbGncvIKPwya+R8F9rx5/feX9etR8vhU3Ykn7DItZA01wpxAD7F+EIpwTZxYKw+9vI
-	cC0cYBoK+Irk3+6FkHw6PdPtb0pMeMReFQGSaJi7lL38gQQT/cl29CT984gDCMRSLMXYjj9B9PF
-	vGDkxID9+67Rpcqzr8E5wVU1uYdCzkBRa1hmnENMjKtG3+7Un7dzbX5xEJypegDolj9MWzvpGKL
-	WERkRcHo1xMtjqyi0BNov4sUARyyBICLX+ch8xXWihfLfbvCBkxYIJpDt+iePiUrIDJ3Pxv/zvy
-	N4BgXy1ZiNl5HMPDDVzzG0Luy3sgEZDJ5EbUWJ3CEuh+g6b5XW3ADrn9UN9hG0M9YA==
-X-Google-Smtp-Source: AGHT+IGACXNzORcOLr63yAnV+v1XsFnEOTBrD3FtNZjqSYPdOEFrg73DioscuFNcU4UYVROnpOULxg==
-X-Received: by 2002:a17:902:cccc:b0:234:c22:c612 with SMTP id d9443c01a7336-23c6e61daf1mr43537575ad.43.1751466351325;
-        Wed, 02 Jul 2025 07:25:51 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8b86:98d8:fd22:2368])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3ad16fsm140424455ad.141.2025.07.02.07.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:25:50 -0700 (PDT)
-Date: Wed, 2 Jul 2025 08:25:48 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: xlnx: add shutdown callback
-Message-ID: <aGVBbPO28LlLlZmT@p14s>
-References: <20250620195728.3216935-1-tanmay.shah@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5aVrgxJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F416C4CEE7;
+	Wed,  2 Jul 2025 20:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751488348;
+	bh=AQj1KqNi6O1MblNaJlJZf+D7Hyvwx661fg4rUbzcPEk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c5aVrgxJxGKr2xUu8ziy+Fu/mIwCiitmsaT49GiTEp9dplVruZg6qmei9buZYRV3U
+	 2nALn0ygDJzbPeys5SGyqZgd9dv0gxXR3VkMXOKJqR8q15KrtlAKfy2RkTnGbJ/Ly5
+	 F5IlpSzI7Ao2yJ/Kfb0F0HWGpdAbihlW7ZoxF20pt8yxWAbgNOngLk5lDyZqLB2ixf
+	 UPVtOborvWksg7N3GZx8jtXyIbJiwBUd87e4Aso9CHZd5GblksYAoZLEDKhy+NvTfi
+	 rTyoUfQ/0vdeklGPJEs67Nn/R7zr7YX/uLx1j15mDfSR4ovbblwUXzUdihLpjAVY3X
+	 EYPJrqvVE/UXA==
+Message-ID: <cf34d7dd-4425-49ec-b430-927c70d1fbc8@kernel.org>
+Date: Wed, 2 Jul 2025 22:32:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620195728.3216935-1-tanmay.shah@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: qcom,sm8350-pas: document
+ SM7635 MPSS & WPSS
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250627-sm7635-remoteprocs-v2-0-0fa518f8bf6d@fairphone.com>
+ <20250627-sm7635-remoteprocs-v2-1-0fa518f8bf6d@fairphone.com>
+ <20250701-melodic-courageous-mussel-0bed22@krzk-bin>
+ <DB0MZCUM41RA.7Z6461I531VD@fairphone.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DB0MZCUM41RA.7Z6461I531VD@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 20, 2025 at 12:57:28PM -0700, Tanmay Shah wrote:
-> In case of kexec call, each driver's shutdown callback is called. Handle
-> this call for rproc driver and shutdown/detach each core that was powered
-> on before. This is needed for proper Life Cycle Management of remote
-> processor. Otherwise on next linux boot, remote processor can't be
-> started due to bad refcount of power-domain managed by platform
-> management controller.
+On 01/07/2025 12:12, Luca Weiss wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 40 +++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->
+> On Tue Jul 1, 2025 at 10:12 AM CEST, Krzysztof Kozlowski wrote:
+>> On Fri, Jun 27, 2025 at 08:55:42AM +0200, Luca Weiss wrote:
+>>> @@ -91,6 +93,7 @@ allOf:
+>>>        properties:
+>>>          compatible:
+>>>            enum:
+>>> +            - qcom,sm7635-mpss-pas
+>>>              - qcom,sm8350-mpss-pas
+>>>              - qcom,sm8450-mpss-pas
+>>>      then:
+>>> @@ -142,6 +145,22 @@ allOf:
+>>>              - const: cx
+>>>              - const: mxc
+>>>  
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          enum:
+>>> +            - qcom,sm7635-wpss-pas
+>>
+>> Everything fits better sm6350 and no need for new if:then: entry, at
+>> least it looks like.
+> 
+> True, that seems to work fine as well. I can add it to the
+> qcom,sm6350-pas.yaml bindings instead of sm8350 in the next version.
+> 
+> To be honest, I don't quite understand what the concept behind the
+> different PAS bindings are, when an SoC should get a new .yaml file, and
+> when to add to an existing one.
 
-I have applied your patch.  
+It is purely arbitrary way of organizing things, to reduce amount of
+ifs:then: and make things easier to read. Adding ifs: does not make it
+simple. Adding same SoC to multiple bindings does not make it simple.
 
-Thanks,
-Mathieu
- 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 1af89782e116..30294e7fbc79 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -1463,6 +1463,45 @@ static void zynqmp_r5_cluster_exit(void *data)
->  	platform_set_drvdata(pdev, NULL);
->  }
->  
-> +/*
-> + * zynqmp_r5_remoteproc_shutdown()
-> + * Follow shutdown sequence in case of kexec call.
-> + *
-> + * @pdev: domain platform device for cluster
-> + *
-> + * Return: None.
-> + */
-> +static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
-> +{
-> +	const char *rproc_state_str = NULL;
-> +	struct zynqmp_r5_cluster *cluster;
-> +	struct zynqmp_r5_core *r5_core;
-> +	struct rproc *rproc;
-> +	int i, ret = 0;
-> +
-> +	cluster = platform_get_drvdata(pdev);
-> +
-> +	for (i = 0; i < cluster->core_count; i++) {
-> +		r5_core = cluster->r5_cores[i];
-> +		rproc = r5_core->rproc;
-> +
-> +		if (rproc->state == RPROC_RUNNING) {
-> +			ret = rproc_shutdown(rproc);
-> +			rproc_state_str = "shutdown";
-> +		} else if (rproc->state == RPROC_ATTACHED) {
-> +			ret = rproc_detach(rproc);
-> +			rproc_state_str = "detach";
-> +		} else {
-> +			ret = 0;
-> +		}
-> +
-> +		if (ret) {
-> +			dev_err(cluster->dev, "failed to %s rproc %d\n",
-> +				rproc_state_str, rproc->index);
-> +		}
-> +	}
-> +}
-> +
->  /*
->   * zynqmp_r5_remoteproc_probe()
->   * parse device-tree, initialize hardware and allocate required resources
-> @@ -1524,6 +1563,7 @@ static struct platform_driver zynqmp_r5_remoteproc_driver = {
->  		.name = "zynqmp_r5_remoteproc",
->  		.of_match_table = zynqmp_r5_remoteproc_match,
->  	},
-> +	.shutdown = zynqmp_r5_remoteproc_shutdown,
->  };
->  module_platform_driver(zynqmp_r5_remoteproc_driver);
->  
-> 
-> base-commit: d293da1e4dbebb40560e4c6a417b29ce3393659a
-> -- 
-> 2.34.1
-> 
+Best regards,
+Krzysztof
