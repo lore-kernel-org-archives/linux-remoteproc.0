@@ -1,187 +1,218 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010023.outbound.protection.outlook.com [52.101.69.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242A2190679;
-	Thu,  3 Jul 2025 03:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751514629; cv=fail; b=GruKuShfrsnAlOqDEYYcEoH2bOMCmRnanSfX/nLzMsckauG0EIB+ZUBmuezdGwECCvjlBepWp0etqSBRU9lLTy9zERowVRVMd7zCynhtoFwhsOlIi/vHU9VU1bU8x0SqzDZvqlBepHip7cI7sCWMEUumwah+//2Jz9p2mLoev/I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751514629; c=relaxed/simple;
-	bh=d3Uar5rwpjvVY3T1D45lphWyDb0QfrBdcqvi3djNmD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aT1S1Gex+519UYWI9NTK6HJ1jpKCbIiUU7rR0L6IArtkkUazeiAnBC4bQ1n6M6ZdqXT32OOcnOr8BUPLbmqmfhLF7rF3XtxoXFdgk/j7Qbqzib2Hi756jXat7mob23fHu5mhe2KOYD5o6+NYiiZJTFFjHrgXy+JLpsKMYJCk7zU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=u18wIpQz; arc=fail smtp.client-ip=52.101.69.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBCC2D63F1;
+	Thu,  3 Jul 2025 09:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751534722; cv=none; b=pigAitL8/Pp5hYX/58PQEkI+5bspuTbrK97rM6mmr2Tr00keMrLcd87EDwVuMBjVtdsY0wOJb0YShy0tzN1UUtIrkLVaC3nQn1LB5zbSBkonjrqukplEBze8Y6WVSREYwBUBUO95+3IRVspzpV0BBmOUd9aiYHF77E/jYu98De4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751534722; c=relaxed/simple;
+	bh=v4IoJlg76CmSJ2VtEhP56ipvSCV4NseNd45qWFEYnJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uq5HTKHsU/by26RorqIpb5sQB22O/9pY+ItCLy6ekuG+sl7mbCV0wQFcE2DSxIi4YZHcr0RwfK4yeoXXP26+K0hZlf/e1Sw43LcTUnkXJP2Dj8oLGtRbxWktR5ksLEMmBFK5kscxyJGUDB6P2S7esGnk6J4Rs7wmq1zNlqyIDII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJaPsRMT; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="u18wIpQz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W7BzgCyI2CLfsE/U9erLkjg3r+FdzHHiFxUJe4xqK8f7fspuW4UavoenVFq1LrSsErj+dyD/B9cN8d+0C4Ax/lnET8VahVzsX/E3Nn6SkgMcqT2W3YTqBEn+4ZG3CZTKtV4w7Z2SEUkOisNco6xzseGiiPAusjutnTPuc2pfmrljAQqR0/fZUcDH5OG5vDNoi4VK9G9m5h2UA5Owenm6KlNPKp39IOU7uD0KccrU3PBoEurr6uJ1Wsyy/16Ufon2HEwZrNZ8ehtTp5/LPYy2wsHGsGkFT4u/LLRSYYbBc4Iso8nNG4hffmHxcMqjF0+qx5ZsJ/hn1LbuUzN2V1vjHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tJWXmvXquMGFQE2Q6fUTgSs/lH/RQDu/uep1DvLrt2I=;
- b=ffkRfL8cYs+vMbDAI843EHRlfv3Fj3/OKqA0i/imfqebTgb2t4Bg413BUlm08yXpcAm2q6vVPvyRJmg9+CDPsB5ixNMV6rBORUDTi7UMrpBGfI6U0ZsPaEWldlFjvpVQHjgKXf2aWvF5fScSE4jMVP6DwfY5vVRTfWSCDpi/Pt634jSXU2eg/KHJ8e/TyBV7+RjobNIg14kBUezaN0iEuKIKpNlPFGpS1bL5vXBd+MOpHSIWD7/btUO8V4nUvqYA0UR9/eowR7yJhiJBynkNjcme7qXNwIYx8o/bFrADZT6X9xSHpZp8Reo7iZgD8w22TfeyCOEmluBc7iAElEiE5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tJWXmvXquMGFQE2Q6fUTgSs/lH/RQDu/uep1DvLrt2I=;
- b=u18wIpQzq2ALKw4lXRW3rLhoGR4jgUo5SVA8bE/w+2rwW9L7Uh8pc9WNtqwTut8lQiciP6hJ0uK0aamgx4jgQo7CBXu5Jm19eembcWeUjju2UJZjbLR0qJE6LQeydY7cUymx8BNuGo6XgXwULrfMiT4H7vw4Ar+87hQc/wjLL23Z4Flw44DnWboCNutSNV8JqHElbXuLWh0yI8fbESJuNNwgsh30eqall8qcnqjRDELdLIZHiHqE99f3IYHC8b8MkWCJU+3bv0GMNJFMqxexKeDa4xcJyO2oSb4GCpXINafFPC8rDJ3LIxh8W6bZvjd5ik4nRhRPlMSB86qGFryAHw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DU7PR04MB11188.eurprd04.prod.outlook.com (2603:10a6:10:5b0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Thu, 3 Jul
- 2025 03:50:23 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8901.018; Thu, 3 Jul 2025
- 03:50:23 +0000
-Date: Thu, 3 Jul 2025 13:01:03 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 0/5] remoteproc: imx_rproc: Support i.MX95
-Message-ID: <20250703050103.GC18168@nxa18884-linux>
-References: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA1PR01CA0170.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:d::20) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJaPsRMT"
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3de18fde9cfso29868315ab.3;
+        Thu, 03 Jul 2025 02:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751534720; x=1752139520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQxlXjimiWOLNlkmt82ETYNH1B4xm8nZuHa4F1eDm+Q=;
+        b=eJaPsRMT0uTq8esNVgrKEFZZoE9PPYN4LsYcvdHEbxsY1UKC+zD6Gm27+16YGzJyRI
+         t51RLhbr4R8tlXcFg74o1FyABxgC8caIMir4hOF/IdqRmRRJi88TPkXctDUpMiteDp98
+         h1PFmRq6vWEMPyCZrqhwXLF9FhFHy98et+KuzNAbiQBKKcz+jWthKYgXv2Tat2tS5unp
+         MxSRhj4ascUGepXAWemmXr0nGAFo+CxN6/QszrWIFdHzDZJ0TU4JDByTBK+acO9QHmHc
+         5SU0n6KM576nIw+0dR/LLmNftOf4IjwHdwI7ZrmKYiFtek3b6Uvf1BxkQgK9rGZT9kKF
+         t3VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751534720; x=1752139520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RQxlXjimiWOLNlkmt82ETYNH1B4xm8nZuHa4F1eDm+Q=;
+        b=QSJ4huXyTIs+gM5WTMJVM/LitVSao/BezJd4eagJlFQvF4ckqq5rHZtaXcecNEi5vF
+         y7YkzRYH7R/ybOJt2RY+uLRiZMShDJniSmGEeNzRdUUGwiiq88K3R7grMtFChfs3cZPL
+         u4wmuqkRY5khAhyDz9Pgxi3Rn2s38ucqXIpem7r1oeRxSdBAm1MSzKcRqv6FjGQn40kV
+         PYWrPjzddDQrnaaeej0MLFnDdvB52qdCFg1/6no5Ac3rbbFrEOmdA8WRXDs/xbElDYvj
+         05CzHZsGIRFTwesfS1cAJzyNyvfGR7vvKO+hMNgv+0iV7UU9TH3qvYmkmFHYJRKecCxw
+         xvfw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4VlaVQ7DpwuXUvgHIvGsZRa8ZP2O0CaHb5aI9jUKkXCAlyb5OBRvDh7k9eqrU412iS1+f+x3nMxGr+Z8LhKZseA==@vger.kernel.org, AJvYcCVuQM3p5jvTjYQze5Q/07sZzovVhllipdi2UIsIAAObR5BfzybzaQ7uCm9lcwovegdFRyhDFYxqYVwfDLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq5S0KxrcGlyKmURYqXgaVAkXnWqBDPuKj+6I1gAKvwNVYVR0n
+	dvtP6hjrLpLFrHSsUCkDtOSp2L3S36FnODhSI/J0z8kPuZDZ2Yuli7plW4rakUVnsQ3TDnH6IZ4
+	0AgXFQSBTvVVLoWmdJk8SLO2V2Y9Fmaz4GA==
+X-Gm-Gg: ASbGncvwMm+fjXr/OW3G5NNE2IvvTyIb7+13cDOTgDpw3wn14GF3XyK+s8cHSpv92XL
+	Auf++QPCyf9FKh8ZBG/ghYbLiUeimiOGpyqcPidDCbDd2yx1gXVi9HOJ0yMA4y53dH8r/emWqdY
+	8EWwDnw/kaeTzvB/p6DEuX9Q4y85BVEOzGwEhAs+FnGqM=
+X-Google-Smtp-Source: AGHT+IExz9aStPQQU5jTE1Po0AQPZakEiqsbSsJKe7wO8kX4S2jJmJUZEYtD2nu7s7tlGuCMRGGTZawMXfUO2V+vIVY=
+X-Received: by 2002:a05:6e02:2183:b0:3df:4024:9402 with SMTP id
+ e9e14a558f8ab-3e05494a935mr73959465ab.8.1751534720124; Thu, 03 Jul 2025
+ 02:25:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DU7PR04MB11188:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92150d6b-b969-4845-5f42-08ddb9e4bd16
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|376014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tyhk4hEDfTcMv6hFeWKWX6r/0/nvvDIJTPicNyh46GwzFoMPAy0DT/aIMmZ4?=
- =?us-ascii?Q?f0K/sxd17DQzzzx5gqiq23A9Q377IP0EYe9dWyuKwf12gNcWN1Ac9kNdoZsb?=
- =?us-ascii?Q?zLxp0Dzrz7i4/A5A/lqYMgJI3wjWr9HXn5lqcVcBgVNSmmIMTy1WwL9EOTVu?=
- =?us-ascii?Q?dFhuxDnFoDHkQDt3Hj0gB+lg7IVT/2y8P7lJ1YlyFUZp2jPDhs4CUOljs5FO?=
- =?us-ascii?Q?POK71sXKrN51RbPJXnGVqe5NcsmYyVAlcpWfQT/eRbo0i7qjj6UjPEiGzbTj?=
- =?us-ascii?Q?DLUwj4cHKTAW2GDZY2OeBh9OBlsbq9wOMfF/C4PjwekXoFcgPmSJCGtlm22g?=
- =?us-ascii?Q?IErIOQV+m6DQebcKKm9j9NBfBVLBtMH1kYUpMPMGABPa1w0jfnCY6O6mKXtO?=
- =?us-ascii?Q?aJhws8VmZ1cAbn8CwyjGMVhHuxDi0898Ey5FtirHjloDJ5+1GgtLxnIpJIFh?=
- =?us-ascii?Q?GKrAVx0k+TY3tXNz6fioKdGZoVH2lH7UG0ZQqH0cZ4j7Q7O+OcJpzLb8D61t?=
- =?us-ascii?Q?Rs1oyATdJxYdfX+id0dFIcZkAU9IOELYpZtci89Azij/AoZYD5Oqr93qPtaY?=
- =?us-ascii?Q?yi53toxIFXgwkL5fojdK6n0A8b2OGewTeN0XpeuEaH6YOCk5mMrksuPpQo6N?=
- =?us-ascii?Q?gNFzMn4E6DMX9c90Pdba/f9GWIxKihsrDewhBrVzZR0RVsufa7vbWvr0y+I3?=
- =?us-ascii?Q?UVEOx/gFa/gRef+OYsKrpeDMTpu+xnK6cv1AiN5J0SNeUJJVayGFnPNIYDzR?=
- =?us-ascii?Q?mqu8uBxuShv6IlqZcSdjzdbdRfh30kfQtp7aEpEH7gA92eOGtEsTinBplhqS?=
- =?us-ascii?Q?AVe3cKGOyLqVuobyc8JB2btRY4SNWgm8yFqeMsKDJ/lfgnkYAO7Ei4dY2Wac?=
- =?us-ascii?Q?TKqzV+Veg3NMMadgNvDQX+XEQviIlPhtcjUMNiHnI8azQckoKTSvn7dUCN/q?=
- =?us-ascii?Q?mCjbpmxCeSzDX8UdOvhrkgONGCGH/xgLuGdonrcD33pKk92YL3qaeAOvt3JI?=
- =?us-ascii?Q?DQf5WwVSaXDutzRvj6E50cr3CU5hULdHmvDXcZOJgrLZLKay1pJO5kuLjGQo?=
- =?us-ascii?Q?OCADGtQe6QGe7/y4jpv+UrrkSO8wqw8Fo2PRblGlFDvkAT6xWa9PiWMEPUNh?=
- =?us-ascii?Q?KtBsLjU7a4e+U+JTqm00GWwVpD4DCs/gIuu5QPA8+JjMgTpMhKo2bcn9DUoC?=
- =?us-ascii?Q?5MlPh/RnZQxYYkzeKC+t7cDQHtKPCEPKhWFjnNr1IffWiYEv6UkNP9fytJrv?=
- =?us-ascii?Q?O47KP/qqaWe7Y18LcG3f/yVTaSQlJaeTTBsf2cE75VhrfDjCzJa+mpQvVDtV?=
- =?us-ascii?Q?djYhjuM1TLsW++3fgNNvcf8WnqpCO4ceUvnuB8bObVbQsCbsQXSbBPTEUqo4?=
- =?us-ascii?Q?CW6TMMbqdEnvdEFN/CUXnyexJDclrpK7MyaWiiOF64nGy+MJaPfqPXQgjvwY?=
- =?us-ascii?Q?esKYjwqvi1LRCf4ZR1hpdvPLoDhHLubgBnqjHJFfWsm6ZJAET8TBVs4KQWxt?=
- =?us-ascii?Q?5VY+YetcbBohdqg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(376014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?InQpkGi8ls3NV80FFzkhMomEOkn4jXJErbwka7j3do7zokEO272WVqmIf+Ee?=
- =?us-ascii?Q?vqIm54o6J6bq/AaHQ8J32Sv6uQX5FgtsgO/TKb72uq0D9iEtooqWBYa2OR8c?=
- =?us-ascii?Q?uF+BCRpQLfbxFcQTHBTyW2u4oIgZI6swa+M9Vly490S7NiHsR3TN8tC5vIXh?=
- =?us-ascii?Q?Jffl03Q1TIkRvJmcFUX6DJKyiU6A96HR6QvuiillztoxWX27cCNTSBvIZXdn?=
- =?us-ascii?Q?DEnmbeY59dd4OkTrTAQ0bg5hUMFI2k1ekGC9cn3rpY0COOlz5R4hpehFEaZ4?=
- =?us-ascii?Q?pCbWUrNdrH/SY/6/8fCrl3OWSADF0bHv8/doTtI4xLLLnkIzSKPvhS2b3Gua?=
- =?us-ascii?Q?tvRG8Appki6Dps4Ild98QEj8fkhvUDtI8xJJRqm16JgcluouTZSbYfxeH36X?=
- =?us-ascii?Q?X+qNZ4iZ/XE6AgyDLzMrreTvWsYbuvw0wf9G/MUA5WOFXH+L2RNJ0cajKo3Z?=
- =?us-ascii?Q?eo6O3201H5Hj06Igmi5XrRfNjHJ/NdQB2xst16LgTumvS5UKoxjKIerqQ5Bb?=
- =?us-ascii?Q?XhHCeKGXHWrjCgDg7eY2YYkpx8VJ74TQATImdMhrl3W94mpNMCB0Chu36Flk?=
- =?us-ascii?Q?vrLOeZ9eBijMNv1OhdAjl9nvNQ2+X1OjxnzwRcLRqqRmo4eB+huJ12GoqSgK?=
- =?us-ascii?Q?xu3jTfw5c+cK90DYWz+lbaErgIkEJkOON1fol9MmP4tihom4Bs/Mt82+kU0n?=
- =?us-ascii?Q?WgCGBVZ7ZDS8rKslx81fDFaRQzXzRsrnhBXulsCt5grQgyYdwsXui5ZYVjda?=
- =?us-ascii?Q?JbnuRBtz1Z8qnd/S3TMkXrYavdlu6Q603kg4kZXu1iW0tOG6Y+qi5/ZUMQE7?=
- =?us-ascii?Q?iWGVH2TKspU9bgwGMfsX1BqKw5bItzJtK9VDzlTnR8/S/wyda8Bq3lYq2bOt?=
- =?us-ascii?Q?ggfGleej4X/PVcf96I2mYtU7cktgs2IQBnVg3q7A+iGEoBSENdWIp9I0H9Zn?=
- =?us-ascii?Q?l+qgvaVNX1zv748kKOy7Jp/aC3X7PqDR2HPGRGTVcqOWyfOkW1m1aR0efS2E?=
- =?us-ascii?Q?rXoebP9hMFR7lCLWs6owP/o2pX47JylPD0oTZwFhlErW92g9Q18heboUa6Sf?=
- =?us-ascii?Q?xwcupD/mPPKmWllUACJtrDVu/dzKJ9EyWmmjqqOxNbv/5xvkuO8aaahK8Wq+?=
- =?us-ascii?Q?Go89fA7hnKCx4kvlU58T3ZPLzMHetolnB+pvXyF0TilIgG2vM0HEw7x1V8Vh?=
- =?us-ascii?Q?FVkXHETzKD6+6qwiawMrktOHYcToU2CHEbeU/BdWYtR/HPUQI6aZSSFi3jHI?=
- =?us-ascii?Q?Jd8MmUp+CR42bSC7Xw0H8wOeSd/PILmYHUCwVmlg1n1oIZP1VoOk0n6njMuo?=
- =?us-ascii?Q?dqI0nmtulX1wsVyncyuv8IssI3e/Yk0B3moB9XTsjZcWoHHcYOoc5I3fOzlG?=
- =?us-ascii?Q?9TM9VXKENRgnzDBCu2VRydjVaFx5v/KM1rJir5qZORvfvTgExMFgRMZwai8d?=
- =?us-ascii?Q?dIgjTUQg2wGJbALeSiW2bz0lsrb4r4UigJ3f9521v7QL7V83lfPEXMk82xKC?=
- =?us-ascii?Q?+lAHMsdNUDzEeukaWg0YMXlC6D+J8mgcISdTgwbfi0M4+NFlJ/82JAZp2YLW?=
- =?us-ascii?Q?e7pBi/29kxmkwC2WEPVnWuzl9+nKvT75o4PwYJp7?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92150d6b-b969-4845-5f42-08ddb9e4bd16
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 03:50:23.4567
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b4ywpV1o1ZcFSwb7XEo6k33mqgv/u9vhTM7t+WEZbphjZrQKd75ICd4fF8zyshs81FDVj8dck4CjhYNFcaTzMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU7PR04MB11188
+References: <20250618062644.3895785-1-shengjiu.wang@nxp.com>
+ <20250618062644.3895785-3-shengjiu.wang@nxp.com> <aGLBvXtSRlaKujqM@p14s>
+ <CAA+D8AO4o7dqTyL4aZ+H5VnroTQUNAHM-io5rvJ2r_sasPYs9g@mail.gmail.com>
+ <aGP-ZVuhBdd1GPLe@p14s> <CAA+D8ANtw1xTg7OQOFoDeQcdp05Eo9Uo1t=MKcGjtkSYfJqBVw@mail.gmail.com>
+ <CAA+D8AP+RPJpY_=8WjSXoV_VB=9hP0NnFGjjUQHXcoDoz3fgfA@mail.gmail.com>
+In-Reply-To: <CAA+D8AP+RPJpY_=8WjSXoV_VB=9hP0NnFGjjUQHXcoDoz3fgfA@mail.gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 3 Jul 2025 17:24:57 +0800
+X-Gm-Features: Ac12FXwGsyCT-FrKcuI-KzJt0SyzwBQ-E9tIqBn9TSAoTP3Lnf3fS8E6YzQ5JhE
+Message-ID: <CAA+D8ANdfOr=iyJQqE9_k+JUCRin2KXOVf9zL6BVxRrV0REvqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: Add support of coredump
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andersson@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	iuliana.prodan@nxp.com, daniel.baluta@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mathieu,
+On Wed, Jul 2, 2025 at 7:48=E2=80=AFPM Shengjiu Wang <shengjiu.wang@gmail.c=
+om> wrote:
+>
+> On Wed, Jul 2, 2025 at 3:20=E2=80=AFPM Shengjiu Wang <shengjiu.wang@gmail=
+.com> wrote:
+> >
+> > On Tue, Jul 1, 2025 at 11:27=E2=80=AFPM Mathieu Poirier
+> > <mathieu.poirier@linaro.org> wrote:
+> > >
+> > > On Tue, Jul 01, 2025 at 10:28:33AM +0800, Shengjiu Wang wrote:
+> > > > On Tue, Jul 1, 2025 at 1:05=E2=80=AFAM Mathieu Poirier
+> > > > <mathieu.poirier@linaro.org> wrote:
+> > > > >
+> > > > > On Wed, Jun 18, 2025 at 02:26:44PM +0800, Shengjiu Wang wrote:
+> > > > > > Add call rproc_coredump_set_elf_info() to initialize the elf in=
+fo for
+> > > > > > coredump, otherwise coredump will report an error "ELF class is=
+ not set".
+> > > > > >
+> > > > > > Remove the DSP IRAM and DRAM segment in coredump list, because =
+after
+> > > > > > stop, DSP power is disabled, the IRAM and DRAM can't be accesse=
+d.
+> > > > > >
+> > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > > > ---
+> > > > > >  drivers/remoteproc/imx_dsp_rproc.c | 6 +++---
+> > > > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remot=
+eproc/imx_dsp_rproc.c
+> > > > > > index 9b9cddb224b0..9e7efb77b6e5 100644
+> > > > > > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > > > > > @@ -738,9 +738,7 @@ static int imx_dsp_rproc_add_carveout(struc=
+t imx_dsp_rproc *priv)
+> > > > > >               mem =3D rproc_mem_entry_init(dev, (void __force *=
+)cpu_addr, (dma_addr_t)att->sa,
+> > > > > >                                          att->size, da, NULL, N=
+ULL, "dsp_mem");
+> > > > > >
+> > > > > > -             if (mem)
+> > > > > > -                     rproc_coredump_add_segment(rproc, da, att=
+->size);
+> > > > > > -             else
+> > > > > > +             if (!mem)
+> > > > >
+> > > > > Flag rproc->recovery_disabled is never set to true, meaning that =
+since this
+> > > > > driver was introduced, some kind of recovery was available.
+> > > >
+> > > > Actually since this driver was introduced, the recovery can't work.
+> > > > We didn't test the recovery function before. sorry for the mistake.
+> > >
+> > > Let me see if I get this right:
+> > >
+> > > (1) Almost 5 years ago you sent me a driver with code you did not tes=
+t.
+> >
+> > Driver was tested but missed the recovery/coredump function.
+> >
+> > > (2) It took all this time to realize and fix the problem.
+> >
+> > I just realized that the recovery/coredump is one of the functions supp=
+orted
+> > by remoteproc.
+> >
+> > > (3) I should trust that, this time, you have tested your code.
+> >
+> > recovery/coredump has been tested.
+>
+> I am not sure if we must power off dsp in .stop() and power on dsp in .st=
+art().
+> because I see such comments in remoteproc_core.c
+>         /* power up the remote processor */
+>         ret =3D rproc->ops->start(rproc);
+>
+>         /* power off the remote processor */
+>         ret =3D rproc->ops->stop(rproc);
+>
+> So I moved pm_runtime_get_sync() to .start() and pm_runtime_put_sync()
+> to .stop()
+> in this patchset.
+>
+> previously we called pm_runtime_get_sync() in .prepare(),
+> pm_runtime_put_sync() in
+> .unprepare().
+> If we can keep the power on/off in .prepare()/.unprepare.  maybe we
+> can refine the
+> .load function which is to move .reset to .load(),  then we can reduce
+> the code change
+> and not need to change the coredump scope.
+>
+> Before I test this idea I'd like to have your opinion about this.
+> Thanks.
 
-On Wed, Jun 25, 2025 at 10:23:26AM +0800, Peng Fan (OSS) wrote:
->i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
->---
->Peng Fan (5):
->      dt-bindings: remoteproc: fsl,imx-rproc: Add support for i.MX95
->      remoteproc: imx_rproc: Add support for System Manager API
->      remoteproc: imx_rproc: Add support for i.MX95
->      arm64: dts: imx95: Add SCMI LMM/CPU nodes
->      arm64: dts: imx95-19x19-evk: Add CM7 nodes and vdev related memory regions
-
-Except patch 5 with a small comment, other patches have got R-b.
-Would you give a look on the patch 1-3?
-
-Thanks,
-Peng
+Today I tested this method, it looks good, the code change is smaller.
+I will send v2 for reviewing.
+Thanks.
 
 >
-> .../bindings/remoteproc/fsl,imx-rproc.yaml         |   1 +
-> arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts  |  45 +++++++
-> arch/arm64/boot/dts/freescale/imx95.dtsi           |   8 ++
-> drivers/remoteproc/imx_rproc.c                     | 138 ++++++++++++++++++++-
-> drivers/remoteproc/imx_rproc.h                     |   5 +
-> 5 files changed, 195 insertions(+), 2 deletions(-)
->---
->base-commit: fda740558acb4303fcf377e5cf9139f795b1d85b
->change-id: 20250525-imx95-rproc-1-20bb74ddc8af
->
->Best regards,
->-- 
->Peng Fan <peng.fan@nxp.com>
->
+> Best regards
+> Shengjiu Wang
+> >
+> > Best regards
+> > Shengjiu Wang
+> >
+> > >
+> > > Did I understand all that correctly?
+> > >
+> > > >
+> > > > >
+> > > > > I worry that your work will introduce regression for other users.=
+  Daniel and
+> > > > > Iuliana, once again have to ask you to look at this patchset.
+> > > > >
+> > > > > Thanks,
+> > > > > Mathieu
+> > > > >
+> > > > > >                       return -ENOMEM;
+> > > > > >
+> > > > > >               rproc_add_carveout(rproc, mem);
+> > > > > > @@ -1203,6 +1201,8 @@ static int imx_dsp_rproc_probe(struct pla=
+tform_device *pdev)
+> > > > > >               goto err_detach_domains;
+> > > > > >       }
+> > > > > >
+> > > > > > +     rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_XTENSA)=
+;
+> > > > > > +
+> > > > > >       pm_runtime_enable(dev);
+> > > > > >
+> > > > > >       return 0;
+> > > > > > --
+> > > > > > 2.34.1
+> > > > > >
+> > > > >
