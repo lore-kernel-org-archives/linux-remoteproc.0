@@ -1,117 +1,79 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299452E610A
-	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Jul 2025 11:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F242D3A72;
+	Thu,  3 Jul 2025 13:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751542077; cv=none; b=bKB5kD8HAP7aq9i41s9RR590KSuGWZqp31i3quNYfBG0kLj/+kkcFAZIbBA6MW/gwDjs0UVpQMMksBsrqsab/Q+xFLbvGR3CXMoM39GZ4QFx5qLIiUj1iZr2qkkPXcVuu5wiKMXngNasUGub/pmhHBNa31WxeguSAgsNI8AfySk=
+	t=1751548138; cv=none; b=gpCqJ3TuckDxbkSmq2NJT0prOTNGfY8bTv+m/CaJxR0SzP6593rUeAFRSmI0lTMkLI0jcobLCTxwWjyZj+cFbl2+w3dj0RYAUUwpnd3oghwn2wHzjCGbwxRVDYgi19ieUwrEYq4d9jZbK+YyCA/t9E+L9AMLHQA85h9Ni3gDG08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751542077; c=relaxed/simple;
-	bh=dKp9sNBVKhCMWq2ozbMkBemUSa+iPERmFu+4dZggoQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O5DYmvDtZ2zMggSDTK223l7MmTU9Mfvbni8S5zNw7/tIeSSlrqJcGfx0jaQ0NnYZUcuH1IAWVFK1i9sZh55Lc3cCPjXt+oEBWbNRWZ1gdWfH7hlKmEAWEVczUEEvXaoxsLMjXBtMiqcS8HdJaa5wCMGY6Nmh+eCHTBrB6FYfaU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cxqeRkAm; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1751548138; c=relaxed/simple;
+	bh=pZbI5ym7TtzcRfecHeI0uDxdfaVbnqScARauxiC1Sd0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=imOwKLFqt7k2JYiZhIMsSQkActsyPjf9BUJ1Bch5mCHBxLe2MJk1VLPghejL+OX2gBrnUBUh6E+h8R+ad6prihYRMtvFkf9UF8bnABwWK28tVyzyaLC2ZVc05HQh3syGP/+nuk3AvH9xNN3mtmwTkPdHd9mbBoENxLWAo/JrjhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zp62OkkM; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cxqeRkAm"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-addda47ebeaso1646134066b.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Jul 2025 04:27:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zp62OkkM"
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a823b532a4so39460601cf.2;
+        Thu, 03 Jul 2025 06:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751542072; x=1752146872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=amy1aSEWJFLjdFKle4TRafGT1dI6FK2dRgoWrJhpEoE=;
-        b=cxqeRkAmo+uhAkoMMQwvBP/akaaA+fW/9V9vZNVm2+J3NsvGJPkfzEQDkhNz6BvmOh
-         3sy7SDwTPiykFPgHxFKqPDV70lgxb9VitxB2zID8UhJEFqbjSr6/beF1A+paHxzJLbV2
-         fCsPFX0X2dXVHFISOIdTo8bHJzzw2i/2PWJU1fYLb+tV1f0mIKR8nnHFEOgX2m69aacR
-         NgtAX6hIBrFtiKatkSlnHgVieJORSNq7h/WbY5fRfJUzCPYMt6OG0G9qmrBkr2OuIoFH
-         BjAsSdZRFHbIo+yxKwu60qLSEiRdqqKoSmqYbWC/MXA7Fwv6q3tItqmJmsLAJS2Nzb1K
-         iL3w==
+        d=gmail.com; s=20230601; t=1751548135; x=1752152935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSWkEMF2WVElgQiqk1mWdTcpv8AKmbdHRCi0k3irPWQ=;
+        b=Zp62OkkMSnOm7TpGUhYVWrcHnPURZFDCedQKpGOCJkYZNSkgBfoXCmKWr+MHUwGZFW
+         EjlqlSpjWyydIN5yjaLMHwB/55A8+uK7YD083A3LSh8gHyDj9zYxh5HAl6OF8gwYaE0w
+         fQnt/u3YbVeA3+eyc1kfzX+cgSTbP5/j4nXGsYUwWrod3MBAaVcQg2xal9RkxW0obkrF
+         Eiv1PTwXIP8Ys71Fj8psHHSwwcs7y8xDo9hjIie1aCMNH0zh1+ul5krQ7TgiYlud1A7O
+         yt5eflfZlrQkhEtB9lDKa4bedcMsVpLo1ng33BobD6wYpD1liqy96Sb42IzgMW79Ffqt
+         E2XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751542072; x=1752146872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=amy1aSEWJFLjdFKle4TRafGT1dI6FK2dRgoWrJhpEoE=;
-        b=h05I6qSHn7iA2F1+Hcxct+AjK3JUC6mCVHiTxfq/659rUdCU1P3e9ogQxgLOQrS5OX
-         UkJMl+LOZUDztMG6/VmX+PWXBmzRAAhRu9yiHzQLjlCEwjqQbL3d/YPTxr2DUH/YfXwG
-         ObJa5HQgDjwu2PlOB8TWo7AIiQODiS44eE0U5R7PnOa5QVUid4AVBG3MkMEFiQ7Qy38u
-         9CXms6yCpvdmTRGrqIbLooabJMl4pexLHeQRsD2vGJe+zTOQajz5UnMxH/pXZvZ7AfBQ
-         ew5LnnDeQj7A17063ZtERrZMGgGVMv+ONNlKeFZwZIlqNSFzfNnpaMMXt9BkmrlFCKti
-         pumQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrQHDSwkjLMQzuuRmc3bXUOg5gtuplsRRFbz6KH80MMfYyQ8amaD4y7wl0PWnj5NUJLQhLrJgvP3Rn0QjMsjaZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE7OnqBtzEWIRvT2IuX/D5KDAnlvfntU+1dY1OkmRp8/ywseMX
-	dgTJY5hm1a9ywLnZ5iE3fXUqcSGOZvVcjd4xkAR3OCYV68H7l4DtD8l4kXJU9RgIAYc=
-X-Gm-Gg: ASbGncsRxWJFKm9iJAeQtStVDV7IyBlm+3comJCzbjUS9N42wm1/xxq7tjxs+QHf93c
-	ZobsisO8BHJlNFgYvfn6T9JZ9fT64ZmGDoI8qB7Imn+ZD7jxWzx/1GjmWnrr0EMtdsHC2DX2D8T
-	3bhclv9UPTHyN5l50iwK5adtdQP0paLkqK0v5uIgiDgFK+2y4pBmUz0INAUIjPdJz0QW8tLci7T
-	xbP8j6x+O5S5vOJiMFAIDKZQkgWo53o+TL0VtmM/SfN2M9Sx8YC14k745GnRMXDPl9+9BpDSvPj
-	EF12Mr+skKntbDl9HFBsK56UfA6jbYXjK7dNysy7BMTn6KukJhrV30HwgveUCgdYJu/UnWYH6Vq
-	yubR3lOgaAvRnDNU=
-X-Google-Smtp-Source: AGHT+IGtvsJyDMQsLfUDl9utWzUCxFT2n50ILIV0XhgAq1dND93ylmRMS+yE9TxwtIdCeTyEpsNdFg==
-X-Received: by 2002:a17:907:d644:b0:ae3:cd73:efde with SMTP id a640c23a62f3a-ae3d8b1b1d4mr273821366b.44.1751542072208;
-        Thu, 03 Jul 2025 04:27:52 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a75fsm1247016966b.67.2025.07.03.04.27.49
+        d=1e100.net; s=20230601; t=1751548135; x=1752152935;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MSWkEMF2WVElgQiqk1mWdTcpv8AKmbdHRCi0k3irPWQ=;
+        b=bY9dfdDeSre2mu79gsvbgZjVGLWU1HLkQwNe/MmKyfH8IxWsjGBexqjd6jgEhtpg7a
+         TXOn1/o+bOOcIJiuOOsTZOfOBovqted3tUQ8K8ODmY0zQO2WUAXfq2nNH5JMQgmKGC5D
+         e0m6PGpyI3Ol/jL03pwWT9ewJxcnT2z5gmFaBc+H1CU/OO3EchJXm8Pm7LAJ9MmpRkd7
+         xpRZQ213MJvcjk9UD1rRAwiFcpztneDbon36cKqYB6OiC4mat8l0sxOW6MvpTcmjRP4I
+         H+S5bibevVccW34r9sYHuQKIlDIKYHGGBofoJpjkKzx3BDhMOXZpgondUGNlbQD4WG3N
+         MCKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ8D26/GYjl+XSPCpawWhzIJyu1o1j4YG4fzgbPU1bFqVuHYVGLtVzXhd8zZaMYHzJhBBmx1eR2/zh6xHa2d7IHg==@vger.kernel.org, AJvYcCXpdTw3m6/gRIGCUtn0+ZWgYYbsbwC2wasNPWAvDMK2hM5MgxTwd/s1oRKKvCb9sSuyWFjLK8MkvsYBtFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPb/rsYrsmcE3FNor2ujDsCCvFXSoKPs/8P1MvVl4DcEPttjQm
+	vjEwEqv6mDm+jIleXK5pJHW+l8nykn1q96/xMjQ4apTl+ZcIWyihf02+
+X-Gm-Gg: ASbGncvTOMonCJRKFlGJEylorGzBinXlQvfW72EHNdwUw4GdSTCNOXleTQMmHTbIy/q
+	1kPFyftYXyZbm9Szqv0jWAI5f/6G+oZxxiT0pjcmupPD/71kH/ygg6YvIumM9M5TjnG1YE52iEI
+	50j0DadeQrNLl170nn5bSzWIiom9DaGZxQBUcIPJX7LVsEZdUhXmqmlVINKm1dx9mV8Zvg6hHQc
+	P8+gGMoPO1SoYn0yVdJJr2y0Y88FDa3zwlq1yfPqsHkKUsCC8jfvCNwqJNHtVo8tY+XuQGKhrqb
+	j2xz1pUw1LZ+f2RSUjN551m5XWGg8ay5RoZ8UFPE+yHVqZagNzjEnderj50VGUyltyDP1zDtXtz
+	PeHk=
+X-Google-Smtp-Source: AGHT+IGroe8sSDGARASmREqDinTKJNPHDZfD5QFZoPsxPWLxadIu9TXjl+Rxu7ZcO3g4suDjXSuCiA==
+X-Received: by 2002:a05:622a:153:b0:4a7:ff6d:e94c with SMTP id d75a77b69052e-4a9879c6e11mr49451301cf.22.1751548135066;
+        Thu, 03 Jul 2025 06:08:55 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a7c0:b293:bc62:f957:108d:1060])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc57d7dcsm107314561cf.60.2025.07.03.06.08.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 04:27:51 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: linux@armlinux.org.uk,
-	gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	leon@kernel.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org,
-	andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	wsa+renesas@sang-engineering.com,
-	ulf.hansson@linaro.org,
-	mathieu.poirier@linaro.org,
-	vkoul@kernel.org,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org,
-	robh@kernel.org,
-	jirislaby@kernel.org,
-	saravanak@google.com,
-	jic23@kernel.org,
-	dmitry.torokhov@gmail.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
+        Thu, 03 Jul 2025 06:08:54 -0700 (PDT)
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
 	linux-remoteproc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	bhelgaas@google.com,
-	geert@linux-m68k.org,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	fabrizio.castro.jz@renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v5 3/3] driver core: platform: Drop dev_pm_domain_detach() call
-Date: Thu,  3 Jul 2025 14:27:08 +0300
-Message-ID: <20250703112708.1621607-4-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Ritesh Kumar <ritesh.kumar@toradex.com>
+Subject: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
+Date: Thu,  3 Jul 2025 10:08:31 -0300
+Message-Id: <20250703130831.18830-1-hiagofranco@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -120,133 +82,65 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Hiago De Franco <hiago.franco@toradex.com>
 
-On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
-clocks are managed through PM domains. These PM domains, registered on
-behalf of the clock controller driver, are configured with
-GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
-clocks are enabled/disabled using runtime PM APIs. The power domains may
-also have power_on/power_off support implemented. After the device PM
-domain is powered off any CPU accesses to these domains leads to system
-aborts.
+Merge the contiguous ITCM and DTCM regions into a single region to
+prevent failures when loading ELF files with large sections:
 
-During probe, devices are attached to the PM domain controlling their
-clocks and power. Similarly, during removal, devices are detached from the
-PM domain.
+remoteproc remoteproc0: powering up imx-rproc
+remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
+imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
+remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
+remoteproc remoteproc0: Failed to load program segments: -22
+remoteproc remoteproc0: Boot failed: -22
 
-The detachment call stack is as follows:
+This approach is the same as commit 8749919defb8 ("remoteproc:
+imx_rproc: Merge TCML/U").
 
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    __device_release_driver() ->
-      device_remove() ->
-        platform_remove() ->
-          dev_pm_domain_detach()
-
-During driver unbind, after the device is detached from its PM domain,
-the device_unbind_cleanup() function is called, which subsequently invokes
-devres_release_all(). This function handles devres resource cleanup.
-
-If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
-cleanup process triggers the action or reset function for disabling runtime
-PM. This function is pm_runtime_disable_action(), which leads to the
-following call stack of interest when called:
-
-pm_runtime_disable_action() ->
-  pm_runtime_dont_use_autosuspend() ->
-    __pm_runtime_use_autosuspend() ->
-      update_autosuspend() ->
-        rpm_idle()
-
-The rpm_idle() function attempts to resume the device at runtime. However,
-at the point it is called, the device is no longer part of a PM domain
-(which manages clocks and power states). If the driver implements its own
-runtime PM APIs for specific functionalities - such as the rzg2l_adc
-driver - while also relying on the power domain subsystem for power
-management, rpm_idle() will invoke the driver's runtime PM API. However,
-since the device is no longer part of a PM domain at this point, the PM
-domain's runtime PM APIs will not be called. This leads to system aborts on
-Renesas SoCs.
-
-Another identified case is when a subsystem performs various cleanups
-using device_unbind_cleanup(), calling driver-specific APIs in the process.
-A known example is the thermal subsystem, which may call driver-specific
-APIs to disable the thermal device. The relevant call stack in this case
-is:
-
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    device_unbind_cleanup() ->
-      devres_release_all() ->
-        devm_thermal_of_zone_release() ->
-          thermal_zone_device_disable() ->
-            thermal_zone_device_set_mode() ->
-              struct thermal_zone_device_ops::change_mode()
-
-At the moment the driver-specific change_mode() API is called, the device
-is no longer part of its PM domain. Accessing its registers without proper
-power management leads to system aborts.
-
-Drop the call to dev_pm_domain_detach() from the platform bus remove
-function and rely on the newly introduced call in device_unbind_cleanup().
-This ensures the same effect, but the call now occurs after all
-driver-specific devres resources have been freed.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
+Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 ---
+Hi,
 
-Changes in v5:
-- dropped tab in the call traces from patch description
-- used PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF
+The ELF I tested had the following data section:
 
-Changes in v4:
-- dropped devm_pm_domain_attach() approach
-- adjusted patch description to reflect this
+Memory region         Used Size  Region Size  %age Used
+    m_interrupts:         680 B         1 KB     66.41%
+          m_text:        6984 B       127 KB      5.37%
+          m_data:      130224 B       128 KB     99.35%
+         m_data2:          0 GB        16 MB      0.00%
+[100%] Built target hello_world_cm7.elf
 
-Changes in v3:
-- adjusted the call to devm_pm_domain_attach() as it now gets
-  2 parameters
+Which triggered the error. After this patch, remoteproc was able to boot
+and work fine. Thanks!
+---
+ drivers/remoteproc/imx_rproc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- dropped the devres group open/close approach and use
-  devm_pm_domain_attach()
-- adjusted patch description to reflect the new approach
-
- drivers/base/platform.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index df1ec34fdf56..09450349cf32 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1396,15 +1396,13 @@ static int platform_probe(struct device *_dev)
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 74299af1d7f1..bbf089ef48ee 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
  
--	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON |
-+					 PD_FLAG_DETACH_POWER_OFF);
- 	if (ret)
- 		goto out;
- 
--	if (drv->probe) {
-+	if (drv->probe)
- 		ret = drv->probe(dev);
--		if (ret)
--			dev_pm_domain_detach(_dev, true);
--	}
- 
- out:
- 	if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
-@@ -1422,7 +1420,6 @@ static void platform_remove(struct device *_dev)
- 
- 	if (drv->remove)
- 		drv->remove(dev);
--	dev_pm_domain_detach(_dev, true);
- }
- 
- static void platform_shutdown(struct device *_dev)
+ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+ 	/* dev addr , sys addr  , size	    , flags */
+-	/* ITCM   */
+-	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
++	/* D/ITCM */
++	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+ 	/* OCRAM_S */
+ 	{ 0x00180000, 0x00180000, 0x00009000, 0 },
+ 	/* OCRAM */
+@@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+ 	{ 0x08000000, 0x08000000, 0x08000000, 0 },
+ 	/* DDR (Code) - alias */
+ 	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+-	/* DTCM */
+-	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
+ 	/* OCRAM_S - alias */
+ 	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
+ 	/* OCRAM */
 -- 
-2.43.0
+2.39.5
 
