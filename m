@@ -1,47 +1,71 @@
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35C32222B4;
-	Thu,  3 Jul 2025 13:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED8224DCEC
+	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Jul 2025 16:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751549736; cv=none; b=slsemgPlbxlGbzal8pn5HmhEQ5xF/Gm8nNHpEaKRdYNvIPiq9gua0Woumbc7yl/yaiK81X9U8YxrhqWF838Lq5zGWmeVavDjFoBvd32wdMmA5nyWb+B+FSthBkOR4ZcHAk75naT6LdRpQXCuKccnRc/LnPs1lT86NYRNI9Ee9NA=
+	t=1751560047; cv=none; b=q8ia6OR/SVeh+AK8sSuzP6bc7aS4AQ411ekEFjvscBIFBJXdR4ntqAhGiJ9I/rzUBzWz5YQ6zcgjbJ1RYYrjJb75YXGYO5Z9raRMt8e53UjJZr6GX3ULl8c7Ky3ccEAbpgEZ4YFuyN0wU6+60Q/mww/ZAE/5F2AuBwAGhJuDp04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751549736; c=relaxed/simple;
-	bh=A4Di6dUWD6TvvTCe+Iy9uE2CpYC7JYSMz0SZDYgvzLg=;
+	s=arc-20240116; t=1751560047; c=relaxed/simple;
+	bh=+t/wAOncNpuxr9FEwXK71z09xEBZNujuFzMPJXnnvlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSPoTb1YfcwIsAtjMYd+4WfzdLF0T3L/O7xk1A9PNPywdXQbitAEh7Gds8TyiN5Hld+qonPc3i2D5qh0f2yJsFTFABQZ30Yz2lRgcJ2nLib34HdXHrSZMuywyXZTcSqQEmCF7VUe2kyNOCKlj/NgpDyErVe0QVeYROfYTKWeG3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QBaeuqt5; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=gVyxDJKCdU2jszqOnHlNwhmlGyD2SQmZ+32jI/M8HUBLmoLuKDIpbAvokhKvcSwsSEshR4BX3cUx8rNz7yg51bMq0OMPfLgvLJrh5gT6NlBU/yMk1hOJ8iLEfo22QlcBme6HiUYX+2QK4gMT5rr3o3v1Tf56Bg0dDzJiTEtRavE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=buhNXt6G; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QBaeuqt5"
-Date: Thu, 3 Jul 2025 21:35:24 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751549730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=spHmo1mC6rYR9iWzPq+I5J3vxcldtFh96+8qR+yLfE0=;
-	b=QBaeuqt5HQ/BIAOidzdE2BvLsZxxBlpTqrjEwu/NctfD3+k+1N2VbiJ4oTnYPT7bI0yADu
-	gbLfXjGoFmOPzXxEZfj/Rwa1r2TxeUh29wts9Z0hxZrQvDZDrvb2xlDEjaoyjB0Trx287B
-	hWQqGv4wUxJcgCKdxUwT3wLA/yrwpeU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dawei Li <dawei.li@linux.dev>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	set_pte_at@outlook.com, dawei.li@linux.dev
-Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Message-ID: <20250703133524.GA9099@wendao-VirtualBox>
-References: <20250609151531.22621-1-dawei.li@linux.dev>
- <f3b99a3d-5d20-4e82-ae5d-75c2c866e118@foss.st.com>
- <20250619144301.GA9575@wendao-VirtualBox>
- <db2d2296-3893-427d-85ec-f64e6c0e1d1d@foss.st.com>
- <20250622041200.GA3703@wendao-VirtualBox>
- <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
- <20250701141607.GA5219@wendao-VirtualBox>
- <685641cb-d5e0-4f28-87a1-98d2fd84e920@foss.st.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="buhNXt6G"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74264d1832eso289925b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Jul 2025 09:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751560045; x=1752164845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9DG4rBv1FPLSozhVTa/r0rwIxRT4k59IacJ14rLRAE4=;
+        b=buhNXt6GbucFvP7mQAB7AzKQh4OJRTWfg5Glk6lw49HKyTspW8jhAP0pgTUKwd54ot
+         zAYluvw6dJ1n6q2ivOIgWnmY0Gu1sSzatfkYtXu/mpdKqpLfMZyn/TTX9D/kvdCGmhR3
+         LkZYNP0KqxPrxCxBzmTG8QCw8ljJVpWimue48zkXKjk547xW3Ux+72uasli5yJQBxhuD
+         OL17871tpwfuezg7zzRCPS0VcRq8cqCvmlRuEurCHuPhCaYWCpfB6URT95bjTdWpcVFL
+         s6YZGiBSCglv0lflA8sc/GkVMy6CUxZx6J3Z7c3/r5F39mU2QRkUtjiz9ZKgLxLHv7QG
+         ZUdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751560045; x=1752164845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9DG4rBv1FPLSozhVTa/r0rwIxRT4k59IacJ14rLRAE4=;
+        b=uZt44DCjKZSMkZPZChf44WuQz/0tqdB/d60EN+ilQZ77vLey6V5AIoIqFMj0WfLvgc
+         EAbGK//aA5zEf2Xvb0B9+P2Qao28p2fQw7u+SwnNC4iCePWMNpa15ZOgrb7bei4PCkbk
+         87BCZeoDLRTNWhkDBvlxwoKfDm40TbatGCBOep5Bj1WMUkvBCH9r0hj+veKgPKcDG2ju
+         R/rbpKylpuX8zeE6rpHWl0xR53eiKuKMRhhPsIEL9dG6BT+CIQnPFsC0POBBYXJ8oyf6
+         1o56KXnsgGSQ7wbPLYFMWAApa9hWKBWwe5Sg62dWYpaXLDHHy4MHNS5oxeLRZkGxvX97
+         bZrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq5rXbX0gFo69faHQDmXu0ULVnYbCyE4Jrk22G04PN2vNrM1o/w34ogmOb49b8NJIpRz8PRfz9ZIJHYrZOgNdk@vger.kernel.org
+X-Gm-Message-State: AOJu0YypIa//yhi2nqr/TcpLaXl7UDDKbU6y1KvGClKqRl1kdlbYrBp0
+	t64XLnrC162rDLfcb8cUxKttENJZ2flAkR0lEsciA2+OTjwua31HYZ0zRn/EEiiAFE8=
+X-Gm-Gg: ASbGncsnfSPkcphkUeLx9lYYzMvuUobdyjIIDDIwHJ/PdfIaj73gmJDoAXc9FqHLbw/
+	Msk+W4Mo9L3UZEt1kmxtQK7zuJ7vkCXxfBDxEk0iG4SnEEWKT6iNzaixle61dif7pwE8yoxMULI
+	s00m3Tgt6P+mBoaIsB8bjaV1mFuGfU8N9H+4OFtHM1BSpeJVPU+ICDwQNek+xeNk60qkH0zeyDr
+	CFL/cpmiExr/Aa7Cr9+3SFph1uRqrUyzftYTyg+JJs/QEMdT/hvMqdlp9IjD1LJL5mMAIjGDKUB
+	2wHjEiE7Nfxj9Mx+d4XdSfCEnfQ2XIM+6s/AG0N1C5l5wUm8g+QHjlYja/ryUi4e
+X-Google-Smtp-Source: AGHT+IHv3gQqi2KGrLMmY+muHOUSeUdjpAlchGCrijYrOZyC7xkIM5MxnnZbED2gjCBOAf36PHITfg==
+X-Received: by 2002:a05:6a00:3cce:b0:748:f365:bedd with SMTP id d2e1a72fcca58-74b514c3e92mr8739518b3a.17.1751560045389;
+        Thu, 03 Jul 2025 09:27:25 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:5ee3:4bef:2dc:d1f7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce4183509sm12029b3a.99.2025.07.03.09.27.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 09:27:24 -0700 (PDT)
+Date: Thu, 3 Jul 2025 10:27:22 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, afd@ti.com,
+	hnagalla@ti.com, b-padhi@ti.com
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in
+ k3_dsp_rproc_probe()
+Message-ID: <aGavap5k0qir9x0f@p14s>
+References: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,378 +74,107 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <685641cb-d5e0-4f28-87a1-98d2fd84e920@foss.st.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
 
-Hi Arnaud,
-
-On Wed, Jul 02, 2025 at 09:48:59AM +0200, Arnaud POULIQUEN wrote:
-> hello Dawei
-> 
-> On 7/1/25 16:16, Dawei Li wrote:
-> > Hi Arnaud,
-> > 
-> > Thanks for the reply.
-> > 
-> > On Mon, Jun 30, 2025 at 09:54:40AM +0200, Arnaud POULIQUEN wrote:
-> >> Hello Dawei,
-> >>
-> >> Sorry for the late answer.
-> >>
-> >> On 6/22/25 06:12, Dawei Li wrote:
-> >>> Hi Arnaud,
-> >>>
-> >>> Thanks for the reply.
-> >>>
-> >>> On Fri, Jun 20, 2025 at 09:52:03AM +0200, Arnaud POULIQUEN wrote:
-> >>>>
-> >>>>
-> >>>> On 6/19/25 16:43, Dawei Li wrote:
-> >>>>> Hi Arnaud, 
-> >>>>> Thanks for review.
-> >>>>>
-> >>>>> On Wed, Jun 18, 2025 at 03:07:36PM +0200, Arnaud POULIQUEN wrote:
-> >>>>>> Hello Dawei,
-> >>>>>>
-> >>>>>>
-> >>>>>> Please find a few comments below. It is not clear to me which parts of your
-> >>>>>> implementation are mandatory and which are optional "nice-to-have" optimizations.
-> >>>>>
-> >>>>> It's more like an improvement.
-> >>>>>
-> >>>>>>
-> >>>>>> Based on (potentially erroneous) hypothesis, you will find a suggestion for an
-> >>>>>> alternative to the anonymous inode approach, which does not seem to be a common
-> >>>>>> interface.
-> >>>>>
-> >>>>> AFAIC, annoymous inode is a common interface and used extensivly in kernel development.
-> >>>>> Some examples below.
-> >>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> On 6/9/25 17:15, Dawei Li wrote:
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
-> >>>>>>> for rpmsg subsystem.
-> >>>>>>>
-> >>>>>>> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> >>>>>>> abstracted in procedures below:
-> >>>>>>> - fd = open("/dev/rpmsg_ctrlX")
-> >>>>>>> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
-> >>>>>>>   generated.
-> >>>>>>> - fd_ep = open("/dev/rpmsgY", O_RDWR) 
-> >>>>>>> - operations on fd_ep(write, read, poll ioctl)
-> >>>>>>> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> >>>>>>> - close(fd_ep)
-> >>>>>>> - close(fd)
-> >>>>>>>
-> >>>>>>> This /dev/rpmsgY abstraction is less favorable for:
-> >>>>>>> - Performance issue: It's time consuming for some operations are
-> >>>>>>> invovled:
-> >>>>>>>   - Device node creation.
-> >>>>>>>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
-> >>>>>>>     overhead is based on coordination between DEVTMPFS and userspace
-> >>>>>>>     tools such as udev and mdev.
-> >>>>>>>
-> >>>>>>>   - Extra kernel-space switch cost.
-> >>>>>>>
-> >>>>>>>   - Other major costs brought by heavy-weight logic like device_add().
-> >>>>>>
-> >>>>>> Is this a blocker of just optimization?
-> >>>>>
-> >>>>> Yep, performance is one of motivations of this change.
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
-> >>>>>>>     that a dynamically created device node can be opened only once.
-> >>>>>>
-> >>>>>>
-> >>>>>> I assume this is blocker with the fact that you need to open the /dev/rpmsg<x>
-> >>>>>> to create the endpoint.
-> >>>>>
-> >>>>> Yes. You have to open /dev/rpmsgX which is generated by legacy ioctl to
-> >>>>> instantiate a new endpoint.
-> >>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> - For some container application such as docker, a client can't access
-> >>>>>>>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
-> >>>>>>>   is generated dynamically and whose existence is unknown for clients in
-> >>>>>>>   advance, this uAPI based on device node doesn't fit well.
-> >>>>>>
-> >>>>>> does this could be solve in userspace parsing /sys/class/rpmsg/ directory to
-> >>>>>> retreive the device?
-> >>>>>
-> >>>>> Hardly, because client still can't access /dev/rpmsgX which is generated
-> >>>>> by host _after_ client is launched.
-> >>>>
-> >>>>
-> >>>> This part is not clear to me; could you provide more details?
-> >>>> I cannot figure out why a client can access /dev/rpmsg_ctrlX but not /dev/rpmsgX.
-> >>>
-> >>> Well, let's take docker as example:
-> >>
-> >>>
-> >>> For docker, when a client is launched and it wants to access host's
-> >>> device, it must make explicit request when it's launched:
-> >>>
-> >>> docker run --device=/dev/xxx
-> >>>
-> >>> Let's presume that xxx is /dev/rpmsgX generated dynamically by _host_.
-> >>> Docker command above knows nothing about these rpmsg nodes which are
-> >>> generated by host _after_ client is launched. And yes, parsing> /sys/class/rpmsg may acquire info about rpmsg devices, but client still
-> >>> can't access /dev/rpmsgX.
-> >>
-> >> One extra question:Are you using RPMsg over virtio?
-> >>
-> >> If yes, do you test the RPMsg name service (NS) announcement, that might also
-> >> address your needs.
-> >>
-> >> The principle is that the remote processor sends a name service announcement to
-> >> Linux, which probes the rpmsg character device and creates the /dev/rpmsgX
-> >> device in a predefined order known by the remote processor.
-> >> In such a case, the /dev/rpmsgX usage would be determined by the remote
-> >> processor itself.
-> >>
-> >> Another advantage is that the RPMsg channel creation is not driven by either the
-> >> host or the client. In such case host does no need to define/kwnow RPMSg
-> >> endpoint addresses.
-> >>
-> >> You still need to call the open() file system operation, but this should be done
-> >> one time during Docker client initialization.
-> > 
-> > NS is nice, but perhaps it's not the approach for some cases.
-> > 
-> > For offloading/accelerator scenarios, ACPU is responsible for making all
-> > the important decisions, including creations of endpoints. Because all
-> > the user-awared software stack is running on ACPU, and if you want to
-> > create a endpoint _dynamically_, it must be from user's command which is
-> > from ACPU.
-> > 
-> > And this series is more about how rpmsg_char and rpmsg_ctrl coordinate
-> > themselves about creating dynamic rpmsg endpoints in a more simple
-> > and efficient way.
-> > 
-> > And the whole point of series is "When you want to return a fd to
-> > userspace which represents an instance of data structure in kernel, you
-> > don't implement it as character device". Maybe some quotes from Christian[1]
-> > can describe it better[1]:
-> > 
-> > "I'm not sure why people are so in love with character device based apis.
-> > It's terrible. It glues everything to devtmpfs which isn't namespacable
-> > in any way. It's terrible to delegate and extremely restrictive in terms
-> > of extensiblity if you need additional device entries (aka the loop
-> > driver folly)."
-> > 
-> > [1] https://lkml.org/lkml/2025/6/24/639
-> 
-> Thank you for all your explanations! It is always very interesting to understand
-> the different ways to use RPMsg.
-> 
-> In the end, I don't see any problem with your series. The possibility of using
-> an anonymous inode seems valid to me.
-
-Thanks for the review!
-
-> 
-> I am just wondering whether this should be implemented in the rpmsg_char driver
-> or in a new driver, addressing this question to Mathieu and Bjorn.
-
-Well, I think we are kinda in a dilemma:
-
-- It's bit odd to add anonymous inode code in a file named rpmsg_char.c.
-
-- On the other hand, the new anonymous code path do share couples of
-  codes and abstractions of rpmsg_char.c, rpmsg_eptdev, all methods
-  excluding open() in fops... . If new code is built into a standalone
-  driver, how are we supposed to take care of these shared codes?
-
-Yep, leave it to the maintainers.
+Andrew, Hari and Beleswar - please test this on your side and get back to me
+with the results.
 
 Thanks,
+Mathieu
 
-	Dawei
-
+On Fri, Jun 27, 2025 at 11:42:33PM +0200, Christophe JAILLET wrote:
+> IF an error occurs after a successful k3_rproc_request_mbox() call,
+> mbox_free_channel() should be called to avoid a leak.
 > 
+> Such a call is missing in the error handing path of k3_dsp_rproc_probe().
+> It is also missing both in the error handling path of k3_m4_rproc_probe()
+> and in (in-existent) corresponding remove function.
 > 
-> Regards,
-> Arnaud
+> Switch to managed resources to avoid these leaks and simplify the code.
 > 
-> > 
-> > Thanks,
-> > 
-> > 	Dawei
-> > 
-> >>
-> >> Regards
-> >> Arnaud
-> >>
-> >>
-> >>>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> You could face same kind of random instantiation for serial peripherals ( UART;
-> >>>>>> USb, I2C,...) based on a device tree enumeration. I suppose that user space
-> >>>>>> use to solve this.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> An anonymous inode based approach is introduced to address the issues above.
-> >>>>>>> Rather than generating device node and opening it, rpmsg code just creates
-> >>>>>>> an anonymous inode representing eptdev and return the fd to userspace.
-> >>>>>>
-> >>>>>> A drawback is that you need to share fb passed between processes.
-> >>>>>
-> >>>>> Fd is the abstraction of an unique endpoint device, it holds true for
-> >>>>> both legacy and new approach.
-> >>>>>
-> >>>>> So I guess what you mean is that /dev/rpmsgX is global to all so other process
-> >>>>> can access it?
-> >>>>>
-> >>>>> But /dev/rpmsgX is designed to be opened only once, it's implemented as
-> >>>>> singleton pattern.
-> >>>>>
-> >>>>> static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> >>>>> {
-> >>>>> ...
-> >>>>>         if (eptdev->ept) {
-> >>>>>                 mutex_unlock(&eptdev->ept_lock);
-> >>>>>                 return -EBUSY;
-> >>>>>         }
-> >>>>> ...
-> >>>>>         eptdev->ept = ept;
-> >>>>> ...
-> >>>>> }
-> >>>>>
-> >>>>> [...]
-> >>>>>  
-> >>>>>>> 	printf("loop[%d]\n", loop);
-> >>>>>>>
-> >>>>>>> 	gettimeofday(&start, NULL);
-> >>>>>>>
-> >>>>>>> 	while (loop--) {
-> >>>>>>
-> >>>>>> Do you need to create /close Endpoint sevral times in your real use case with
-> >>>>>> high timing
-> >>>>>> constraint?
-> >>>>>
-> >>>>> No, it's just a silly benchmark demo, large sample reduces noise statistically.
-> >>>>>
-> >>>>>>
-> >>>>>>> 		fd_info.fd = -1;
-> >>>>>>> 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
-> >>>>>>> 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
-> >>>>>>> 		if (ret < 0 || fd_info.fd < 0) {
-> >>>>>>> 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
-> >>>>>>> 		}
-> >>>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>>> 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
-> >>>>>>> 		if (ret < 0) {
-> >>>>>>> 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
-> >>>>>>> 		}
-> >>>>>>>
-> >>>>>>> 		close(fd_info.fd);
-> >>>>>>
-> >>>>>> It seems strange to me to use ioctl() for opening and close() for closing, from
-> >>>>>> a symmetry point of view.
-> >>>>>
-> >>>>> Sorry to hear that. But no, it's a pretty normal skill in kernel codebase
-> >>>>> , I had to copy some examples from reply to other reviewer[1].
-> >>>>
-> >>>> I missed this one, apologize for the duplication.
-> >>>>
-> >>>>>
-> >>>>> anon_inode_get_{fd,file} are used extensively in kernel for returning a new
-> >>>>> fd to userspace which is associated with an unique data structure in kernel
-> >>>>> space, in different ways:
-> >>>>>
-> >>>>> - via ioctl(), some examples are:
-> >>>>>
-> >>>>>  - KVM ioctl(s)
-> >>>>>    - KVM_CREATE_VCPU -> kvm_vm_ioctl_create_vcpu
-> >>>>>    - KVM_GET_STATS_FD -> kvm_vcpu_ioctl_get_stats_fd
-> >>>>>    - KVM_CREATE_DEVICE -> kvm_ioctl_create_device
-> >>>>>    - KVM_CREATE_VM -> kvm_dev_ioctl_create_vm
-> >>>>>
-> >>>>>  - DMA buf/fence/sync ioctls
-> >>>>>    - DMA_BUF_IOCTL_EXPORT_SYNC_FILE -> dma_buf_export_sync_file
-> >>>>>    - SW_SYNC_IOC_CREATE_FENCE -> sw_sync_ioctl_create_fence
-> >>>>>    - Couples of driver implement DMA buf by using anon file _implicitly_:
-> >>>>>      - UDMABUF_CREATE -> udmabuf_ioctl_create
-> >>>>>      - DMA_HEAP_IOCTL_ALLOC -> dma_heap_ioctl_allocate
-> >>>>>
-> >>>>>  - gpiolib ioctls:
-> >>>>>    - GPIO_GET_LINEHANDLE_IOCTL -> linehandle_create
-> >>>>>    - GPIO_V2_GET_LINE_IOCTL
-> >>>>>
-> >>>>>  -  IOMMUFD ioctls:
-> >>>>>
-> >>>>>  -  VFIO Ioctls:
-> >>>>>
-> >>>>>  - ....
-> >>>>>
-> >>>>>
-> >>>>> - via other specific syscalls:
-> >>>>>  - epoll_create1
-> >>>>>  - bpf
-> >>>>>  - perf_event_open
-> >>>>>  - inotify_init
-> >>>>>  - ...
-> >>>>
-> >>>> If we put the optimization aspect aside, what seems strange to me is that the
-> >>>> purpose of rpmsg_char was to expose a FS character device to user space. If we
-> >>>> need tobypass the use of /dev/rpmsgX, does it make sense to support an anonymous
-> >>>> inode in this driver?  I am clearly not legitimate to answer this question...
-> >>>
-> >>> You have every right to do so, after all, it's purely a technical
-> >>> discussion :).
-> >>>
-> >>> I admit it's bit confusing to add annoymous inode logic to a file named
-> >>> rpmsg_char.c which implies 'character' device. That's why I rename API
-> >>> following Mathieu's comment:
-> >>>   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
-> >>>   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
-> >>>
-> >>> As to topic how these two uAPI(s) co-exist and affect each other. This
-> >>> change is based on rules:
-> >>>
-> >>> 1. Never break existing uAPI.
-> >>> 2. Try best to reuse existing codebase.
-> >>> 3. Userspace can choose whatever approach they want to.
-> >>>
-> >>> Thanks,
-> >>>
-> >>> 	Dawei
-> >>>>
-> >>>>
-> >>>> Thanks,
-> >>>> Arnaud
-> >>>>
-> >>>>>
-> >>>>> [1] https://lore.kernel.org/all/20250530125008.GA5355@wendao-VirtualBox/
-> >>>>>
-> >>>>>>
-> >>>>>> Regarding your implementation, I wonder if we could keep the /dev/rpmsg<x>
-> >>>>>> device with specific open() and close() file operations associated with your new
-> >>>>>> ioctl.
-> >>>>>>
-> >>>>>> - The ioctl would create the endpoint.
-> >>>>>> - The open() and close() operations would simply manage the file descriptor and
-> >>>>>> increment/decrement a counter to prevent premature endpoint destruction.
-> >>>>>>
-> >>>>>>
-> >>>>>> Regards,
-> >>>>>> Arnaud
-> >>>>>>
-> >>>>>
-> >>>>> [...]
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>> 	Dawei
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> This is an update of [1].
+> The code has been heavily refactored recently with things moved to
+> ti_k3_common.c
+> 
+> This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
+> mbox_free_channel() was missing.
+> 
+> Being very different from the v3, I've removed the previous review tags.
+> 
+> [1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
+>  3 files changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> index d4f20900f33b..7a9c3fb80fec 100644
+> --- a/drivers/remoteproc/ti_k3_common.c
+> +++ b/drivers/remoteproc/ti_k3_common.c
+> @@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_release);
+>  
+> +static void k3_rproc_free_channel(void *data)
+> +{
+> +	struct k3_rproc *kproc = data;
+> +
+> +	mbox_free_channel(kproc->mbox);
+> +}
+> +
+>  int k3_rproc_request_mbox(struct rproc *rproc)
+>  {
+>  	struct k3_rproc *kproc = rproc->priv;
+> @@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>  				     "mbox_request_channel failed\n");
+>  
+> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/*
+>  	 * Ping the remote processor, this is only for sanity-sake for now;
+>  	 * there is no functional effect whatsoever.
+> @@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+>  	if (ret < 0) {
+>  		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> -		mbox_free_channel(kproc->mbox);
+>  		return ret;
+>  	}
+>  
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index 7a72933bd403..d6ceea6dc920 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+>  		if (ret)
+>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+>  	}
+> -
+> -	mbox_free_channel(kproc->mbox);
+>  }
+>  
+>  static const struct k3_rproc_mem_data c66_mems[] = {
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index ca5ff280d2dc..04f23295ffc1 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>  				return;
+>  			}
+>  		}
+> -
+> -		mbox_free_channel(kproc->mbox);
+>  	}
+>  }
+>  
+> -- 
+> 2.50.0
+> 
