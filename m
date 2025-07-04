@@ -1,159 +1,178 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCE0239E87
-	for <linux-remoteproc@vger.kernel.org>; Fri,  4 Jul 2025 11:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07DB30AAAD
+	for <linux-remoteproc@vger.kernel.org>; Fri,  4 Jul 2025 13:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751627770; cv=none; b=G7eE5cu9zEflXoAd7ljUKltzn+n9fjCuswgPJgobJxy16cro7UQx+1X8hv6th0InwatW/GFJrYWmBuCIXHkfZLhDgpe9prKQnIlp0A+UidRkpxlLvKF4/VTaivdRVoC+1bN04iODG80v58cpenSYSAuiNFjEdqH9gP29gdlwnO0=
+	t=1751637075; cv=none; b=XLnxrfGKNQGZBInnI18c9f6C0l9sQo9vQ6OKRBnzc6wFrL/Yp8eJwZrDjyGa88DKoUBvlrTXCe7+Mx8AvMO9/CeT7MdzpP9Y0+kBaVpgiKbu8CJS6jlOJfzJ6k0hFOMINbUXi917Zx2Fy8DkGeFgM6lILlYPsqNuehZHlTWJU2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751627770; c=relaxed/simple;
-	bh=b9rtoKDrBAYC3BaF1M9Ck1YA+omLHf3ebvKNPvZnx2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jaa5slROf7KDSz1OqQbNPjnu8Ey8R2VG+YF5x1fDmkERDLy/cViTr8mEOvfMC4kjEYJxiPpDjbLhJG9JgCrkn6x4UDakkAdlu2JwHXgz90rBDY1zsmwy84BBGZrKjuIKkF3vko0nLvuimjQyx9LwKb9VMsYkVADDGekPAFfjdfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tQyS3S4B; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751637075; c=relaxed/simple;
+	bh=miC47NO9VePQREntYQ2C1ptH1JHrH445C2mxs1mptSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CMQnuctddJVUcPuyDYxMGkvsTazycXygAaY+uQnsAnWsbYiPPr/UjgRAHbTHCt+d3B9U4zyEpsS4puol0DqkfzK8FLG3pjbDuf2xySByr8TFKEC4gN33B40JRVk7nsx1GOHWz/VT+94VfriWOuQhRzmxYHwDoNAbV0DhCpvveKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qRfmkpVD; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tQyS3S4B"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e8275f110c6so565757276.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Jul 2025 04:16:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qRfmkpVD"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso1564541a12.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Jul 2025 06:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751627767; x=1752232567; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
-        b=tQyS3S4B2wbGP1Dqsu7JNrBtVdj91LQh2w8veoQ7h0MrGDi1p7vqMTB2KnEfYSxOYT
-         nCeOIdg0bzfoUS9fknPL6U/uxlkZoBZmwNkMV4zBDt1GmAfbMkwVeKutU2q2RNlrQDpR
-         6prf8vynMeEeFXAOcHn0YsENBARqw9mHcSL6Sq/8ElrEo3wIGrX7fqJWQ1wie3U8xryT
-         7IezF6IwbQ86ZUR+nRM3Q2oweyf2+uWHTZWLmUmL7uDSz65WecELfxdVUzs3c92fAZIL
-         AGmaOLE0mGwpaUqqqNHdyNAHU9oKyisiMgEfGXhUHqOvRVJrQrtdTvhr+8krET00XqJ5
-         CoMA==
+        d=tuxon.dev; s=google; t=1751637071; x=1752241871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U+4pnbmOXAdM0mHM7kF6SCf+HmJcVo3mHL3EXrsTmvo=;
+        b=qRfmkpVD+xI+Npzbq1OPbfQdUTJO8vOQ9eX5GxigJa2Tqop1BOwVlQj/S9qRHzx5ty
+         viijJo0m9xgO15vGt3QzdtbbE6rX+kxUIf0SNjmKTWN7qsD9gzGXGHe8h/CxP8CoVAsJ
+         00dZtJsEQcSkR1yUpcFoxzwhyoSBPCtnHkiH7pz1pJKL4qKLN2dO55QZKACEisQXU1Gs
+         8cD0wWE1yYcbGiZRGvbY8OXL+JEzvXr/u3E7dDPab3pA1b6ir403KnL3zfp0tKgftnVm
+         C+18Q4E3kv2QP2/PxCrpcfMR1vC5fKkh00Rw/74AUPiotlD/MJ8bM0BoV7i5Hepz2DNo
+         icuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751627767; x=1752232567;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
-        b=hV5TCjFVTkKEwV91UXLbOUkA7CQeW4cPEt/buJObREwSs4LouM6Zlenn+aLK8Svrea
-         li+96XTtg4rVL1rKfxNhwoAGrFvL2tEAYDYQDV8UZLyPW+rxndsM6nGNqZS0gKRxhsr2
-         qNB+bMIyN0+/8AM7Z2CwAGN3WwZ10FMY1+UZFei2AbVmMzafYuShao5tjYQtKfM/ZBmV
-         +4m8VaeuksJ97S7RVmyO8SpU387PdbOede6252DCaDD19CrH/W9Ac7x0dE8oJi6XQQuB
-         b3uUjKBpsbhgrWRktdotT/75nGHHOdCofI/boLM0YIbw9E8dQwHaSrde3gS29P3HO8hl
-         sx7A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+mQNGdju6eBizBiKuno9XQYJaBNF5TUp+m1Fi4c1qdVnN67N3CIBr130WySW1AY2pjmrcfcYG3wAT9WsSTpRR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaA5iKatMLxyGmJ5CZOsIe5R33wFwJZk5epm9tahIoKWZ0/Nco
-	omFHv21s5kMBV8o4TZXxyPHrQaYsZDBxRNAZj8xCd5ysRqS9IJsHleD/NSG1KRs30EMs+apJKPG
-	uTVTGD36Aa7zfscFA5WlUO5LCWfoqwxnoyICGjn3KFw==
-X-Gm-Gg: ASbGncupdeIGVWa2TQTaQta2Yu1Ir3Fmc7jLy9sMYF9786ZDfw3IQvdHBtucfJGYg6U
-	eBqhpfwopcHx4DF+vSTmxIEpH3kHWZ7FnW6h8fV7JIkaT7W3i7KijacQTQH5/2Z0V+dJyJgnATx
-	kaju59mdEru55mywrMG97TXuDg+wbfBpw1u9o7zwhO935O
-X-Google-Smtp-Source: AGHT+IHAW8UyCQ9W+pvHvcTvef9aFULLZGbhQe98R4X9+6EEdiQxhHHKyUMUuOYP0+BDeQPC3PK4UvgN4CdOsI4nxiQ=
-X-Received: by 2002:a05:690c:9c09:b0:70f:9fcd:2075 with SMTP id
- 00721157ae682-71668c0e0ddmr26398687b3.3.1751627767124; Fri, 04 Jul 2025
- 04:16:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751637071; x=1752241871;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+4pnbmOXAdM0mHM7kF6SCf+HmJcVo3mHL3EXrsTmvo=;
+        b=tyJYZX5WHkya2iyFHsG/N5bxT0O0m/LKZ1jXY/3u2O4as5FvtQ0LIb/JIkk7ShdTlK
+         dAH26rbfVa3KB5k/KsWbPSBoYU6ujNo5opufaHxSegB58ThObM/HdJVp/OaOpxTBvkyY
+         NFTo4HJQvyMLHlf5DSnyQRdHhondvMzAAh1NgzIV9G3mVMqt70E2dedjGFrAUsqloGG+
+         txMbs5UDsh8avYMdTG1VyG4G1RzmizU5oaldROr4Ey8xiF4YouKcyBDgSTPRKIBDGXeX
+         zbXXjKXDql+kGhQBvLhLd5iShutzpz/roevNmsllHwZpitAJTN9+YRMXq1/5yMvxSezk
+         kjAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEixqcu2lMnxxGBTpL0Gj5+8QSFcFIU7FHF3sYBxHvlcbtWOVJQ9bspTLlKb0PVgGW3ZlZTp84Z84NniUmnQFD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMBNEX5Ag4MhvIcjYSlT/iGt0xOmXYJO3HQTQv6Psd7GYQqYC2
+	iKWBOhdmdB+dluFTfVghBdjVcjtaw5nitN7vQOT1k6PAy+f4xp0nOntps2Y1e4B4KwQ=
+X-Gm-Gg: ASbGncvvgqZIjXsi2hYrjiZD00DXifiysV/lba1AGyHjNLh759U0tFaTLFlexyqudIF
+	XG7G6wSoaXDkw9XR6BXD64ArR9aDGlfEqD2Gn9Czagi8YWlNXSsvRJuv5PP3qwThn94RbJcxCFd
+	Y/hHJadtMUrJU/fisQkR9Bpg5Yk/KftDqXvwmTRfjvthL+11kKOUKICnyo93/UyZSuigwByyCQk
+	gl+1zQAbr5v6Uguy9OacO62i1MM+90mtVuNbUdkRlZtFP03gVYukxbSR/LV4S7is9YWdji03HkP
+	yY3c/58AHcQcn/7l8SqZOrXmgGJH9ulBio0Glebok0nFENHJZjS+G9Jc4l/boMmJYhnSkA==
+X-Google-Smtp-Source: AGHT+IEKaHL8J9Su0mB3XI0LmZS3jYa1Tv+ttRwStxrwJ7gZXvWH4fgHU4a56M1/TXoMiu+j5EZrtA==
+X-Received: by 2002:a17:907:6d26:b0:ae3:6cc8:e426 with SMTP id a640c23a62f3a-ae3fbc336f7mr270116966b.9.1751637071005;
+        Fri, 04 Jul 2025 06:51:11 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.83])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f692ecacsm179199366b.57.2025.07.04.06.51.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 06:51:10 -0700 (PDT)
+Message-ID: <930cf8e2-5716-4a36-8238-e573876db869@tuxon.dev>
+Date: Fri, 4 Jul 2025 16:51:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 4 Jul 2025 13:15:31 +0200
-X-Gm-Features: Ac12FXwfheYVCqCiLAFVR27m9ptp6dfE-AwljIFg4O16ch_FdabejHZIDOFh5ww
-Message-ID: <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
-To: Claudiu <claudiu.beznea@tuxon.dev>, rafael@kernel.org
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, 
-	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org, 
-	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, andersson@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	wsa+renesas@sang-engineering.com, mathieu.poirier@linaro.org, 
-	vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
-	pierre-louis.bossart@linux.dev, broonie@kernel.org, robh@kernel.org, 
-	jirislaby@kernel.org, saravanak@google.com, jic23@kernel.org, 
-	dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
-	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	fabrizio.castro.jz@renesas.com, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Ulf Hansson <ulf.hansson@linaro.org>, rafael@kernel.org
+Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org,
+ david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
+ dakr@kernel.org, len.brown@intel.com, pavel@kernel.org,
+ andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, wsa+renesas@sang-engineering.com,
+ mathieu.poirier@linaro.org, vkoul@kernel.org,
+ yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+ broonie@kernel.org, robh@kernel.org, jirislaby@kernel.org,
+ saravanak@google.com, jic23@kernel.org, dmitry.torokhov@gmail.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+ bhelgaas@google.com, geert@linux-m68k.org, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, fabrizio.castro.jz@renesas.com,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Hi,
->
-> Series drops the dev_pm_domain_detach() from platform bus remove and
-> adds it in device_unbind_cleanup() to avoid runtime resumming the device
-> after it was detached from its PM domain.
->
-> Please provide your feedback.
->
-> Thank you,
-> Claudiu
->
-> Changes in v5:
-> - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
->   due to this a new patch was introduced
->   "PM: domains: Add flags to specify power on attach/detach"
->
-> Changes in v4:
-> - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
->   and used in device_unbind_cleanup()
->
-> Changes in v3:
-> - add devm_pm_domain_attach()
->
-> Changes in v2:
-> - dropped the devres group open/close approach and use
->   devm_pm_domain_attach()
-> - adjusted patch description to reflect the new approach
->
->
-> Claudiu Beznea (3):
->   PM: domains: Add flags to specify power on attach/detach
->   PM: domains: Detach on device_unbind_cleanup()
->   driver core: platform: Drop dev_pm_domain_detach() call
->
->  drivers/amba/bus.c                       |  4 ++--
->  drivers/base/auxiliary.c                 |  2 +-
->  drivers/base/dd.c                        |  2 ++
->  drivers/base/platform.c                  |  9 +++------
->  drivers/base/power/common.c              |  9 ++++++---
->  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
->  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
->  drivers/i2c/i2c-core-base.c              |  2 +-
->  drivers/mmc/core/sdio_bus.c              |  2 +-
->  drivers/rpmsg/rpmsg_core.c               |  2 +-
->  drivers/soundwire/bus_type.c             |  2 +-
->  drivers/spi/spi.c                        |  2 +-
->  drivers/tty/serdev/core.c                |  2 +-
->  include/linux/pm.h                       |  1 +
->  include/linux/pm_domain.h                | 10 ++++++++--
->  15 files changed, 31 insertions(+), 22 deletions(-)
->
-> --
-> 2.43.0
->
+Hi, Ulf,
 
-The series looks good to me, please add:
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+On 04.07.2025 14:15, Ulf Hansson wrote:
+> On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Hi,
+>>
+>> Series drops the dev_pm_domain_detach() from platform bus remove and
+>> adds it in device_unbind_cleanup() to avoid runtime resumming the device
+>> after it was detached from its PM domain.
+>>
+>> Please provide your feedback.
+>>
+>> Thank you,
+>> Claudiu
+>>
+>> Changes in v5:
+>> - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
+>>   due to this a new patch was introduced
+>>   "PM: domains: Add flags to specify power on attach/detach"
+>>
+>> Changes in v4:
+>> - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
+>>   and used in device_unbind_cleanup()
+>>
+>> Changes in v3:
+>> - add devm_pm_domain_attach()
+>>
+>> Changes in v2:
+>> - dropped the devres group open/close approach and use
+>>   devm_pm_domain_attach()
+>> - adjusted patch description to reflect the new approach
+>>
+>>
+>> Claudiu Beznea (3):
+>>   PM: domains: Add flags to specify power on attach/detach
+>>   PM: domains: Detach on device_unbind_cleanup()
+>>   driver core: platform: Drop dev_pm_domain_detach() call
+>>
+>>  drivers/amba/bus.c                       |  4 ++--
+>>  drivers/base/auxiliary.c                 |  2 +-
+>>  drivers/base/dd.c                        |  2 ++
+>>  drivers/base/platform.c                  |  9 +++------
+>>  drivers/base/power/common.c              |  9 ++++++---
+>>  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
+>>  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
+>>  drivers/i2c/i2c-core-base.c              |  2 +-
+>>  drivers/mmc/core/sdio_bus.c              |  2 +-
+>>  drivers/rpmsg/rpmsg_core.c               |  2 +-
+>>  drivers/soundwire/bus_type.c             |  2 +-
+>>  drivers/spi/spi.c                        |  2 +-
+>>  drivers/tty/serdev/core.c                |  2 +-
+>>  include/linux/pm.h                       |  1 +
+>>  include/linux/pm_domain.h                | 10 ++++++++--
+>>  15 files changed, 31 insertions(+), 22 deletions(-)
+>>
+>> --
+>> 2.43.0
+>>
+> 
+> The series looks good to me, please add:
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Rafael, do you intend to pick this via your tree?
+> 
+> Another note, the similar thing that is being done in patch3 from the
+> platform bus, is needed for other buses too (at least the amba bus for
+> sure). Claudiu, are you planning to do that as a step on top - or are
+> you expecting others to help out?
 
-Rafael, do you intend to pick this via your tree?
+My plan was to take care of it once the approach here (or something
+similar, if any) will end up in a release.
 
-Another note, the similar thing that is being done in patch3 from the
-platform bus, is needed for other buses too (at least the amba bus for
-sure). Claudiu, are you planning to do that as a step on top - or are
-you expecting others to help out?
+Thank you,
+Claudiu
 
-Kind regards
-Uffe
+> 
+> Kind regards
+> Uffe
+
