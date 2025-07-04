@@ -1,119 +1,159 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE75A2F0C6A;
-	Fri,  4 Jul 2025 07:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCE0239E87
+	for <linux-remoteproc@vger.kernel.org>; Fri,  4 Jul 2025 11:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615700; cv=none; b=WnfqhJlflh++e21QPQl4N5iFzrId69CEHZiecEbYf6+GfkzSEip6yD7IOXK04FZnbgyty0yXWpx2nul0ukoud15eGMAOEn5OC7b1Cup9OH+xGUr9ohLyUCsFHHtOZRiHF849IuWEoN8MKAxYaPel8xr+T5PJvqUpoJngXipKArI=
+	t=1751627770; cv=none; b=G7eE5cu9zEflXoAd7ljUKltzn+n9fjCuswgPJgobJxy16cro7UQx+1X8hv6th0InwatW/GFJrYWmBuCIXHkfZLhDgpe9prKQnIlp0A+UidRkpxlLvKF4/VTaivdRVoC+1bN04iODG80v58cpenSYSAuiNFjEdqH9gP29gdlwnO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615700; c=relaxed/simple;
-	bh=sfK9WpzhPRbPFgvJ0XGyiFlzwl0+Go4GT4lb4zAknlI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CN4yKoSMxrZO1sRvFGyiLwqtsKV8cCxB1EEjfPzNmgG6qahxhuKYf0o3zDI1RyxLplPH/SkhlT6Ve5cpf4JNE8OXdklxJYyMXhE2xaOoGqNWovftIKf7BiaNjuk1gy9SJhpWgkocXY7DdxEdvgU62IQIFnm4GvtwvaRk6KlmNN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FlN70D5h; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1751627770; c=relaxed/simple;
+	bh=b9rtoKDrBAYC3BaF1M9Ck1YA+omLHf3ebvKNPvZnx2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jaa5slROf7KDSz1OqQbNPjnu8Ey8R2VG+YF5x1fDmkERDLy/cViTr8mEOvfMC4kjEYJxiPpDjbLhJG9JgCrkn6x4UDakkAdlu2JwHXgz90rBDY1zsmwy84BBGZrKjuIKkF3vko0nLvuimjQyx9LwKb9VMsYkVADDGekPAFfjdfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tQyS3S4B; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FlN70D5h"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615697; x=1783151697;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sfK9WpzhPRbPFgvJ0XGyiFlzwl0+Go4GT4lb4zAknlI=;
-  b=FlN70D5hE68HTNl2sD+7JrwIEjPgm1grZ3bTu3XEItRg30pDyvbuWrdD
-   pNfdDncjuOBi7fQOPmAk6ltW0ujAHuS0589d4MBYwG+PQGo7HgHfGbvu8
-   bonnNsE7XCoYd3j1q5BFmVwxDIiaFpYdfkZwE1q0EIkq9FNVBxq21Mgwm
-   nLm2S6V6yt+FlGaEtim8nbBzbdU9PrJ00xGGSQnF0G7PRqoYA4HT5k5mE
-   zwHOZ84XDlHuBOXOUHhZKukRnlFADvqXtU3naFLU2ACzAfWAfamHID2d/
-   LLpkXZsVhvRNWP/qslU9eRtcnDumRsADTMgRjCVkfvGX7vX8seVjc4RsJ
-   w==;
-X-CSE-ConnectionGUID: x9uO1LShSimJf9Ra3wOUJw==
-X-CSE-MsgGUID: wy+3eaNST6CScU6Iqix1Sg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194235"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194235"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:49 -0700
-X-CSE-ConnectionGUID: e3O9hWJCT9i44Ftg8XOlgg==
-X-CSE-MsgGUID: GHWntWe8QAyofpx7RTUv9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616627"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:47 -0700
-Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 77FD044433;
-	Fri,  4 Jul 2025 10:54:45 +0300 (EEST)
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 58/80] remoteproc: omap: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:45 +0300
-Message-Id: <20250704075445.3221481-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tQyS3S4B"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e8275f110c6so565757276.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Jul 2025 04:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751627767; x=1752232567; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
+        b=tQyS3S4B2wbGP1Dqsu7JNrBtVdj91LQh2w8veoQ7h0MrGDi1p7vqMTB2KnEfYSxOYT
+         nCeOIdg0bzfoUS9fknPL6U/uxlkZoBZmwNkMV4zBDt1GmAfbMkwVeKutU2q2RNlrQDpR
+         6prf8vynMeEeFXAOcHn0YsENBARqw9mHcSL6Sq/8ElrEo3wIGrX7fqJWQ1wie3U8xryT
+         7IezF6IwbQ86ZUR+nRM3Q2oweyf2+uWHTZWLmUmL7uDSz65WecELfxdVUzs3c92fAZIL
+         AGmaOLE0mGwpaUqqqNHdyNAHU9oKyisiMgEfGXhUHqOvRVJrQrtdTvhr+8krET00XqJ5
+         CoMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751627767; x=1752232567;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
+        b=hV5TCjFVTkKEwV91UXLbOUkA7CQeW4cPEt/buJObREwSs4LouM6Zlenn+aLK8Svrea
+         li+96XTtg4rVL1rKfxNhwoAGrFvL2tEAYDYQDV8UZLyPW+rxndsM6nGNqZS0gKRxhsr2
+         qNB+bMIyN0+/8AM7Z2CwAGN3WwZ10FMY1+UZFei2AbVmMzafYuShao5tjYQtKfM/ZBmV
+         +4m8VaeuksJ97S7RVmyO8SpU387PdbOede6252DCaDD19CrH/W9Ac7x0dE8oJi6XQQuB
+         b3uUjKBpsbhgrWRktdotT/75nGHHOdCofI/boLM0YIbw9E8dQwHaSrde3gS29P3HO8hl
+         sx7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+mQNGdju6eBizBiKuno9XQYJaBNF5TUp+m1Fi4c1qdVnN67N3CIBr130WySW1AY2pjmrcfcYG3wAT9WsSTpRR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaA5iKatMLxyGmJ5CZOsIe5R33wFwJZk5epm9tahIoKWZ0/Nco
+	omFHv21s5kMBV8o4TZXxyPHrQaYsZDBxRNAZj8xCd5ysRqS9IJsHleD/NSG1KRs30EMs+apJKPG
+	uTVTGD36Aa7zfscFA5WlUO5LCWfoqwxnoyICGjn3KFw==
+X-Gm-Gg: ASbGncupdeIGVWa2TQTaQta2Yu1Ir3Fmc7jLy9sMYF9786ZDfw3IQvdHBtucfJGYg6U
+	eBqhpfwopcHx4DF+vSTmxIEpH3kHWZ7FnW6h8fV7JIkaT7W3i7KijacQTQH5/2Z0V+dJyJgnATx
+	kaju59mdEru55mywrMG97TXuDg+wbfBpw1u9o7zwhO935O
+X-Google-Smtp-Source: AGHT+IHAW8UyCQ9W+pvHvcTvef9aFULLZGbhQe98R4X9+6EEdiQxhHHKyUMUuOYP0+BDeQPC3PK4UvgN4CdOsI4nxiQ=
+X-Received: by 2002:a05:690c:9c09:b0:70f:9fcd:2075 with SMTP id
+ 00721157ae682-71668c0e0ddmr26398687b3.3.1751627767124; Fri, 04 Jul 2025
+ 04:16:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 4 Jul 2025 13:15:31 +0200
+X-Gm-Features: Ac12FXwfheYVCqCiLAFVR27m9ptp6dfE-AwljIFg4O16ch_FdabejHZIDOFh5ww
+Message-ID: <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
+To: Claudiu <claudiu.beznea@tuxon.dev>, rafael@kernel.org
+Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, 
+	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org, 
+	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, andersson@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	wsa+renesas@sang-engineering.com, mathieu.poirier@linaro.org, 
+	vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
+	pierre-louis.bossart@linux.dev, broonie@kernel.org, robh@kernel.org, 
+	jirislaby@kernel.org, saravanak@google.com, jic23@kernel.org, 
+	dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-serial@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	fabrizio.castro.jz@renesas.com, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Hi,
+>
+> Series drops the dev_pm_domain_detach() from platform bus remove and
+> adds it in device_unbind_cleanup() to avoid runtime resumming the device
+> after it was detached from its PM domain.
+>
+> Please provide your feedback.
+>
+> Thank you,
+> Claudiu
+>
+> Changes in v5:
+> - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
+>   due to this a new patch was introduced
+>   "PM: domains: Add flags to specify power on attach/detach"
+>
+> Changes in v4:
+> - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
+>   and used in device_unbind_cleanup()
+>
+> Changes in v3:
+> - add devm_pm_domain_attach()
+>
+> Changes in v2:
+> - dropped the devres group open/close approach and use
+>   devm_pm_domain_attach()
+> - adjusted patch description to reflect the new approach
+>
+>
+> Claudiu Beznea (3):
+>   PM: domains: Add flags to specify power on attach/detach
+>   PM: domains: Detach on device_unbind_cleanup()
+>   driver core: platform: Drop dev_pm_domain_detach() call
+>
+>  drivers/amba/bus.c                       |  4 ++--
+>  drivers/base/auxiliary.c                 |  2 +-
+>  drivers/base/dd.c                        |  2 ++
+>  drivers/base/platform.c                  |  9 +++------
+>  drivers/base/power/common.c              |  9 ++++++---
+>  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
+>  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
+>  drivers/i2c/i2c-core-base.c              |  2 +-
+>  drivers/mmc/core/sdio_bus.c              |  2 +-
+>  drivers/rpmsg/rpmsg_core.c               |  2 +-
+>  drivers/soundwire/bus_type.c             |  2 +-
+>  drivers/spi/spi.c                        |  2 +-
+>  drivers/tty/serdev/core.c                |  2 +-
+>  include/linux/pm.h                       |  1 +
+>  include/linux/pm_domain.h                | 10 ++++++++--
+>  15 files changed, 31 insertions(+), 22 deletions(-)
+>
+> --
+> 2.43.0
+>
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-The cover letter of the set can be found here
-<URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
+The series looks good to me, please add:
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-In brief, this patch depends on PM runtime patches adding marking the last
-busy timestamp in autosuspend related functions. The patches are here, on
-rc2:
+Rafael, do you intend to pick this via your tree?
 
-        git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-                pm-runtime-6.17-rc1
+Another note, the similar thing that is being done in patch3 from the
+platform bus, is needed for other buses too (at least the amba bus for
+sure). Claudiu, are you planning to do that as a step on top - or are
+you expecting others to help out?
 
- drivers/remoteproc/omap_remoteproc.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 9c9e9c3cf378..cb01354248af 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -555,7 +555,6 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "failed to send mailbox message, status = %d\n",
- 			ret);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- }
- 
-@@ -656,7 +655,6 @@ static int omap_rproc_start(struct rproc *rproc)
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_get_noresume(dev);
- 	pm_runtime_enable(dev);
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
-@@ -714,7 +712,6 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	reset_control_deassert(oproc->reset);
- out:
- 	/* schedule the next auto-suspend */
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 	return ret;
- }
--- 
-2.39.5
-
+Kind regards
+Uffe
