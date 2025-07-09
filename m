@@ -1,190 +1,124 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5959628FFE2;
-	Wed,  9 Jul 2025 11:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B782F28DEE4
+	for <linux-remoteproc@vger.kernel.org>; Wed,  9 Jul 2025 11:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059554; cv=none; b=KUVRbIMIon6dJdBW98gWb4paNy80M8ouPc+aT9Rd37YxdopXSOkEUMdpC3CQ++mqfHTtU0vL1X/3QKVhfe7MG9pl1kxEFhaKvkd1HsozmMdowaxJPoPLKaWXtoaEeMTrR4eno+2YUkZmCnjCPhfhyJji7BeWsXO8NYUZPnqKms8=
+	t=1752059602; cv=none; b=SHyk/Ejk+PBTkutJn6RY817MVTJpCaH+P1mZnN2979C1OQKvpTxALqZPjpH4jRaC3KMiz5ZfgWK/Wscs5mSsVQpoyM4XC0XDRraGPmDi2VjqNUaPc6fiCGvhNtUyETJNgmBG9+gjchTeVlhbsiJc7UEAuJ6yrFAt9a1cCEafM90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059554; c=relaxed/simple;
-	bh=FpyirzTdaLgtCuAJF9iScqlLK+AL6PktYVBjK68z4E0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OVg7ouopfjpL8b5ZqHOCnBioSmFh1OkkTH9+spzgfCt4vQt8JfJgGr+5zPiEq5ri8TuoY8pa9qGwsBEYP3N8iTXIaKGy7kOG1tdwIl/C1eMghChPGU4Y9GDcbfJlCpNLR51Udg6v9MF/GuUySuME0uYmCi7f/rc6b9WdMmvedTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LTnspz95; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1752059602; c=relaxed/simple;
+	bh=KmmXb3IGW58F4EYW7Gl3SaLFXPNaUzU3JQDJ5hBWE8I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X8/TfF2vJmEIamGxi0rys0sPt5/cBg9xcLiJShmoHli/US92YLprIyG3pGj92UiLA4gk6Zk/vcV58jLNFd01I035g55ilcs+RDSecQSrS9DFneH5cWqQKWBDHzsZYyh2WnZnezPArCoaWwdfMBddHMlaKqHbjaBvXgSSAZ1pbKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=p4vwdbNm; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LTnspz95"
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569BCSE51457937;
-	Wed, 9 Jul 2025 06:12:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752059548;
-	bh=EMf7dV5tYQz1nYxC1/9jcvjOLej6ZUrwzT/jNq3/gUg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LTnspz95Ntn8ZzJsgBFxx2bzj2BXZu2fPOEBvNVN9YIkY7qdlsEvxZdOWwpEKJOQr
-	 fq4aWxN6nXDXYHmedkN+P/l86UOoWPjC6z+ffd6UfFp3ut5a4NCoUwPRimoyGKUFkl
-	 LcdBKU3omBzqSAFr4jailWiVo+Or8APYkqhpgPtc=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569BCSxr3293994
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 06:12:28 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 06:12:27 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 06:12:27 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569BCOEp3833403;
-	Wed, 9 Jul 2025 06:12:25 -0500
-Message-ID: <d8847732-2254-4719-8941-fdfd896b265b@ti.com>
-Date: Wed, 9 Jul 2025 16:42:24 +0530
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="p4vwdbNm"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so9081151a12.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Jul 2025 04:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1752059599; x=1752664399; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGK37SR9qg+mqCt4whATIIAp/+XzlTiBnwS50eY+IBo=;
+        b=p4vwdbNmRBhhCsmK06v1IGoZd8oWiALu0lzzJj0FPOe6/XkinSkaTiyfOP7o0d6QSz
+         izYggpYwtGT9l3Ox9fXOks35M/QP09liEiwb7xtfP0E+cZcoDXmQwpLhKn4CBG6gbTsX
+         NUkfvAKwrmd4rw1yaSt+d9Dks7NbersurvO+rFtPRHgK0UlIQDZAHm+clZ+U+Rc3Av/v
+         ZsjYa+hkoAQjpE6Nc6jjL8rv1HslxIP4LNJMxO8bsADjgAlkNGmj4RdyUyChIwdAec/J
+         RBJ9loZgvsKk1GQPRA4nfEZMxKrRZKPnRLSc/DqtDfd3wHW1EPyEPp6lDjdzsT6b1IqA
+         4SNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752059599; x=1752664399;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kGK37SR9qg+mqCt4whATIIAp/+XzlTiBnwS50eY+IBo=;
+        b=K3+NvSkkVpE0Q3Qx8je/dP10bG6cC9CV8S80kcxXQqM0gqa9eD/MWsIzheMJf8VD40
+         GkPpBOma+cUGewbywibpW763AxvXoWp2Pf0DNrzzS+lLQdLesIlHW9Heitv2AN8Ux/2T
+         Eor2RwAnn+ekbZfsstze/oGzkY/H+slbkGnwGqgTv30+xeaMqkjVG9BDJLckpJjKgjNh
+         r+NCNv6GAf/sRPeaBZd2mvrod4+dUH/2AYGdDwWzpYJ8LVw57as6pYPoVoA5RLi/DQgf
+         N7xNJHoRcNBPlIyC5LSzPJZpw9JhsTqcuGah0xTCzQEMrdyzpYC7qK/bub/QBFqsysW9
+         EiLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3m8PcIuCWFe0u2JabVxwVFdlEJan8BpULos952AgThUSMkKAfo/+gaTKeA9CxMFEqGLfkKnJZ9lsaIM+qParA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxKJl1/9Mw+COpLHL45BdjirmGmx4zpkeG2YsC3y7W6+8O/LY6
+	Kb0tTm7F5+Mc42nIJBjuTmzqxcRlc2o8g/3W6/nYKonDgOZC8ZF/7Lxs5mPni6UBixQ=
+X-Gm-Gg: ASbGnctmpcaM8gAaS2PpdcHfN4vwoVdUce8ajqwrMp8yipGiIOlItq00opUP07ZN76e
+	RqU75h/yyj8qOMMi+Hx8wiAtmsYQMYZMIGkmCLwc2DPQltEUoipIvaFY3GUqdli+Iwz9+aqZVNu
+	5u1VQlt9uX3+AbYfoiAVLw9fL0hN7D9OW47Aa+Zc1M0df9HwQmpeTpLbUvdQgwa8eOYZNjByYrM
+	iWZx5ZVTj3kU1xklZVQjCdbgwZWLnMkf7PdJyWrv4t6gBzr2+MO8EAQCCxpvKinRy11cykn7lkv
+	ziO6eMYxm1gYCLGN3KMORsDgL0jYo+LPxuIfVRg8bf38/+PuL3i2OY0HwG9cDGFUmN1Mg/meUl/
+	8O3GljjhMOett8zEWcpqZdX0K2EvgUx5d
+X-Google-Smtp-Source: AGHT+IHp9TcPLQmc20T7xVbbGWJIvpTGAkt0LP5/ytEl/Z6MxQQcC47ryedmByXsGf3LPA9gfi8oRQ==
+X-Received: by 2002:a17:907:12d0:b0:ae0:d4f2:dffa with SMTP id a640c23a62f3a-ae6cf591593mr163224866b.3.1752059598963;
+        Wed, 09 Jul 2025 04:13:18 -0700 (PDT)
+Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6daed7d49sm27191566b.114.2025.07.09.04.13.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 04:13:18 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH v3 0/2] Add support for remoteprocs on Milos SoC
+Date: Wed, 09 Jul 2025 13:13:06 +0200
+Message-Id: <20250709-sm7635-remoteprocs-v3-0-c943be976180@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in
- k3_dsp_rproc_probe()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, <afd@ti.com>,
-        <hnagalla@ti.com>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
- <aGavap5k0qir9x0f@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <aGavap5k0qir9x0f@p14s>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-B4-Tracking: v=1; b=H4sIAMJObmgC/23NTQqDMBCG4atI1k1JovlpV71H6SKaSc1CIxMJL
+ eLdG4VCKS7fD+aZhSTAAIlcq4Ug5JBCHEvUp4p0vR2fQIMrTQQTkinBaBq0qiVFGOIME8YuUd5
+ cnFUNM01rSDmcEHx47ej9UboPaY743n9kvq1fTh5xmVNGdc2caiXXHODmbcCpjyOcuziQjczil
+ 9GHjCgM81Zy403rlftn1nX9AABrd+H/AAAA
+X-Change-ID: 20250620-sm7635-remoteprocs-149da64084b8
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752059598; l=1151;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=KmmXb3IGW58F4EYW7Gl3SaLFXPNaUzU3JQDJ5hBWE8I=;
+ b=BFlJHfIFdwZNkCcQInWTPJFGa8OC9zQO/qCl4TGtDIRqZEYzwxhUdEUp68M0bVd5J0M9KrAmw
+ wgEjAlwrq7/DlUOVrPHF0LNqzEMtwYR4oUrLlURJDy6FcrkD+HRcNC+
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
+Add the bindings and driver for the ADSP, CDSP, MPSS and WPSS on the
+Milos SoC.
 
-On 03/07/25 21:57, Mathieu Poirier wrote:
-> Andrew, Hari and Beleswar - please test this on your side and get back to me
-> with the results.
->
-> Thanks,
-> Mathieu
->
-> On Fri, Jun 27, 2025 at 11:42:33PM +0200, Christophe JAILLET wrote:
->> IF an error occurs after a successful k3_rproc_request_mbox() call,
->> mbox_free_channel() should be called to avoid a leak.
->>
->> Such a call is missing in the error handing path of k3_dsp_rproc_probe().
->> It is also missing both in the error handling path of k3_m4_rproc_probe()
->> and in (in-existent) corresponding remove function.
->>
->> Switch to managed resources to avoid these leaks and simplify the code.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Changes in v3:
+- Rebrand SM7635 to Milos as requested: https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
+- Replace additions to two different bindings by one new binding yaml
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20250627-sm7635-remoteprocs-v2-0-0fa518f8bf6d@fairphone.com
 
+Changes in v2:
+- Update default firmware names from .mdt to .mbn
+- Link to v1: https://lore.kernel.org/r/20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com
 
-The subject line seems to be calling out changes only in dsp driver,
-however patch takes care of all DSP/M4/R5 drivers. Maybe
-something to update.
+---
+Luca Weiss (2):
+      dt-bindings: remoteproc: qcom,milos-pas: Document remoteprocs
+      remoteproc: qcom: pas: Add Milos remoteproc support
 
-With above addressed,
+ .../bindings/remoteproc/qcom,milos-pas.yaml        | 201 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  24 +++
+ 2 files changed, 225 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250620-sm7635-remoteprocs-149da64084b8
 
-Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-Tested-by: Beleswar Padhi <b-padhi@ti.com>
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
-Tested IPC with Normal boot/Late Attach and in various core
-configurations: Lockstep/Split/Single CPU etc.
-
-Thanks,
-Beleswar
-
->> ---
->> Compile tested only.
->>
->> This is an update of [1].
->> The code has been heavily refactored recently with things moved to
->> ti_k3_common.c
->>
->> This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
->> mbox_free_channel() was missing.
->>
->> Being very different from the v3, I've removed the previous review tags.
->>
->> [1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
->> ---
->>  drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
->>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
->>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
->>  3 files changed, 11 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
->> index d4f20900f33b..7a9c3fb80fec 100644
->> --- a/drivers/remoteproc/ti_k3_common.c
->> +++ b/drivers/remoteproc/ti_k3_common.c
->> @@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
->>  }
->>  EXPORT_SYMBOL_GPL(k3_rproc_release);
->>  
->> +static void k3_rproc_free_channel(void *data)
->> +{
->> +	struct k3_rproc *kproc = data;
->> +
->> +	mbox_free_channel(kproc->mbox);
->> +}
->> +
->>  int k3_rproc_request_mbox(struct rproc *rproc)
->>  {
->>  	struct k3_rproc *kproc = rproc->priv;
->> @@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->>  				     "mbox_request_channel failed\n");
->>  
->> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
->> +	if (ret)
->> +		return ret;
->> +
->>  	/*
->>  	 * Ping the remote processor, this is only for sanity-sake for now;
->>  	 * there is no functional effect whatsoever.
->> @@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->>  	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
->>  	if (ret < 0) {
->>  		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
->> -		mbox_free_channel(kproc->mbox);
->>  		return ret;
->>  	}
->>  
->> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> index 7a72933bd403..d6ceea6dc920 100644
->> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
->>  		if (ret)
->>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
->>  	}
->> -
->> -	mbox_free_channel(kproc->mbox);
->>  }
->>  
->>  static const struct k3_rproc_mem_data c66_mems[] = {
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index ca5ff280d2dc..04f23295ffc1 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>  				return;
->>  			}
->>  		}
->> -
->> -		mbox_free_channel(kproc->mbox);
->>  	}
->>  }
->>  
->> -- 
->> 2.50.0
->>
