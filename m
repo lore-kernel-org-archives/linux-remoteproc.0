@@ -1,208 +1,208 @@
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011017.outbound.protection.outlook.com [40.107.130.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406FA217705;
-	Tue,  8 Jul 2025 17:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995805; cv=none; b=TRl/NQUYsCkeDvqmpWk3CudGfKKTZksnke+bouKD5l4xgmx6fGteE+l8N12ULYpfeScyZMODItPXLskt18yN6LvQoNtR9F+jeGDwMR/gBuKMSeiv7qGR9/URv0mEagbBH90anYHQVWCjY7v1N7k5n62Dk/IKt+FK1crWiTTEfc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995805; c=relaxed/simple;
-	bh=vlMsyk8PePj05/Qp9smxa7jsagrQmzRpKk6M8DQUZX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyNPGf2aTIR6afVdRnLjKl4DXU1/jBuAmPvmHk0xZxB3Gi9NSYIlySUHlYAYKtEKTR9YBXhMvHsKkUbYIqo0HqgSgcsfQJXTrALwH/kcsUKtxIZgRmgkBSqUZVBIlC/VukjVYrCQLEADHQJinJlpEQKO0DG1rM01QJlHp3ZhBAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOciArRV; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F30526B747;
+	Wed,  9 Jul 2025 06:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752043180; cv=fail; b=S1uk+6cD9flH3nmxhL3gdO2OauEWmXoo/Ddq6yRDSQWxnVDhUlmldZS9RwsQ4wdhdI9zi62EFBkUPpesb+3MGLO7eIX/O45RVf3jrb5eoym4Qp9cQLkaamKzhhz+fwke9o1QHD0Pb6nnNSywUMRSCOIVqNM1AYPa9nnJh4bR7zc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752043180; c=relaxed/simple;
+	bh=rRqHoD4+jWn/weHGl7+eVHD1YdVT8Pikrhq//JPEwx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=il9znrwgnvk8YCleTPADU1I8PMRFjiA2R5XL+zI+c0jZJ1OAlQiHCUV+FQVv4HqZXswO1B6ef8LTR9qQOnsNJQgaA94o7SSKmksImjsYxdjIf2Fzwl5ZDXtkX8qkHi5d0JnD9gb5QPvnNZGVA9dIFvWxscGGUllOiYAqHMTu2lA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=FfQ4jwzZ; arc=fail smtp.client-ip=40.107.130.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOciArRV"
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d5d0ea6c8dso347976585a.1;
-        Tue, 08 Jul 2025 10:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751995803; x=1752600603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDWmvBi+xrTnEZOGiVtOCiEcPvDY+R/VmkacimBElWU=;
-        b=LOciArRVWcni1ULkFZ484L/P9YFPVAEiqDmpJJEg0yM8u7s0WF7AkabF3jPzgQyped
-         jsJY5xbgCrHalb06vYFjlt9QQsPyjlgQPeHaHsGgH/DDdOn7VtoMOwBvWJanH94jOb3w
-         5hVfjByvhlZxWWEWm019o/DnCkpTbNNbWOAxxFnf8tacrYIbF3IPy9NYpbYzfJRHPL35
-         Ojob1YSqzO/i0TVst1CktA6EJIamBgtNXL+o5dlyfmux36l7MSVL2A6B3CE3tQb34cw/
-         5PST312z8lOcfdBRREq2mur3a6sMUnHE49CqoR1yvkhhb/R5EOmf8VMgkKG03v9cWQEv
-         j1Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751995803; x=1752600603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDWmvBi+xrTnEZOGiVtOCiEcPvDY+R/VmkacimBElWU=;
-        b=Jml+SSQWofglYXttcjfYIuRA7lJO9ZPVbBOA1XnfRTs2mE+a9daCBVQNCazo6czLq6
-         5yVNRqIS3V6qgcXxHH7aWW0pagp2yXeC95HFzAYlMh7EAEJefd/gHCoKZ/zZJ2yQxWSt
-         IwysmxfIcnnTyzw/g4tyWy4EhPLRoftwm1uKD/iGkkVbx5nLAc8LqC/OtSe3bnbUE9uH
-         Sgb5PmBck//ZiP0ldVWFkBVrB9f895Kx7L9WqKCbLhgRlfhnpl5CVWrrZmwm1eNTA6vg
-         9YP9pHiDNI9EohdQb81WX+g3j8PZJhM4q+UkOggvhUD1SHa2vGB7yJ8449fk1mliZenP
-         oOuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVYBII5FoUbbw22s3hxHp8E0EdPQdxweinr3vAmCDdw4D67/A6w4hZz6xdH4nKbfr/TFbzJAIEdfaxlfY=@vger.kernel.org, AJvYcCXbdQMPBLj5crq+OJvQrP8M4XELOnTdtZyxMwrcB/lQLw2a3eZGDJ9u31KldMmRT8xpAPM3Sum0I3q8TWKG6Y9tfg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo7FA2h5j84gglnFA3y9ofQmlWYKlJY/hDGZug21wgmBhQa2o0
-	h3q8d+F5eG1pqxGmt7GpJIIP+LR50uQfyyldEgfmvatS8T3Cy8bv2Woo
-X-Gm-Gg: ASbGncvydNTeRNVhDsft8mxlm37g3+CCXrAlPLbwmkXFlOcgxWuDCg8kYAUANw13YW6
-	jfqFTnQWBDnEEYYHcCWJmAQUOLifPW9UqMMxRud/bVnVjqKJ9TIZs+t0VqLm0xsF+4NuhTpEC0K
-	vSkiDad55Ug1Y4dfBAnPTzU8KpnetU/pmcI7Ynt/llUcuFUq7vmC+BLVhBLZYQzuQBMMQSkMvdp
-	kP9CcB68LHKz3T+5uEpe+4CHCOmOzudXSLNWuz4FBBNb6iVDhVzsQhmi8OXZRgqYhdYRZ2d5MN9
-	htoofVkSpUlFGhLyeqNOD92sewkyxCKGBJUsU4Yhvn542SK0LKMehsrPqsE=
-X-Google-Smtp-Source: AGHT+IHpicuys1It3Yx8+rY+BPbIsN6Cyx0b4XZQ3+D2q9CPqUCHLJrwgcMoTXm4g+kFQQ5etcBEyA==
-X-Received: by 2002:a05:620a:4304:b0:7c5:a463:397b with SMTP id af79cd13be357-7d5df11dcbamr2094173085a.20.1751995802972;
-        Tue, 08 Jul 2025 10:30:02 -0700 (PDT)
-Received: from hiagonb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbe7baedsm809718785a.57.2025.07.08.10.29.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 10:29:59 -0700 (PDT)
-Date: Tue, 8 Jul 2025 14:29:53 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="FfQ4jwzZ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gNm68ofDpMkTzJ2jLRoL3a+ItFIsrA9aYXVe59Vy6S4FskmTHYSeJDE9kOJ2lSb5pDMj+Bw7Jsj5foGDUJO93BafZaILuz4JEEyID16VKHSMhUTk35Td89KK8oz/SZ86eTod/8nsF6ytzGO4yybgnPAXDnpgeEZTDvPyAijofA3pSqjaZIMg+pgyVH8BxEplUq09wULaKIpLKMMMzWe2DeMpfgN7cpdmTSoiPnVFMjeMdrRFDrsjtjNcthKKPoDW6BK24kSUadKJ1xvUPT26qFrQqUdqmGvHl/TmiJnXVKDR9kLASeSyWxDQBWamOhqE88529wFMBOgRZibSP9jAWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8d8g0SYKmOr4v166dBx5Whp4pPSDxdmFAdP9l6JJIss=;
+ b=mUyVxoovKJdUunDdfGiGqx6qgr9buKMTgcHUjJ33IogG/w2E1sOIiFlqQJkxv0yTDQNHxmPnraQVtdXlHOzX57gbhlCsVRKrS0/a2k0q43BG6CJvoZPHDZg9IDd3Fho+ahdpATHRGp+J551qZKwa0bB3Pk2DH7kFVZK5FqgLo+JzGgn8G83DmZvLe9wna3uigXSEH4p43MiZrJLxPLAq06S0r2R/Y9hrMgKRMwN45zuMF4ZrD/A1xRDMpPOrYK16KQW1W5atpkKyIa1Sa0PEoL4Ba3FR09voVvBIdQXp9qA0NkKA/q9Ag9WzicGu+xl5WU/3pC/KuQiqViokFs7/zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8d8g0SYKmOr4v166dBx5Whp4pPSDxdmFAdP9l6JJIss=;
+ b=FfQ4jwzZbLI8w/3uu0UYk8h87GmGeWnjz9oKs5HavTz8DTW1yVbx5q2W/daFvqucP8SBY25d87JDgc36G3h8kgz6eb3XdiRjSegIqm9UGN37N3E3PRttZjQa/pl5PPEY1F3xXtMahsCzHwiJO8UtfmZqytimpwEm+cMSbXtlHACLt0jCeoEFrLy/Qjgq1aoDniXsZd9HfFobnBYWDH/jt4IY9uk9YBh/erSz+WjVJTx+mN0IJ0FuUlL19W3gxjAcHrAFV6gf+yJIDXjhB/PatUw1xsiYg3tKXqvYZr69l5VYNL5cDeRX+tkGhv83tVglFc6FK/ZasvsBRin1VQv68g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by GVXPR04MB9736.eurprd04.prod.outlook.com (2603:10a6:150:11c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 9 Jul
+ 2025 06:39:34 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%5]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 06:39:34 +0000
+Date: Wed, 9 Jul 2025 15:49:40 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
 	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Ritesh Kumar <ritesh.kumar@toradex.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
-Message-ID: <20250708172953.rbsvk6gy4xuxo42l@hiagonb>
-References: <20250703130831.18830-1-hiagofranco@gmail.com>
- <aGgAbwToGhsc5VV9@p14s>
- <20250704190816.kth7bdf34ufc2ht6@hiagonb>
- <aGvyDp36iWv5UQ19@p14s>
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 3/5] remoteproc: imx_rproc: Add support for i.MX95
+Message-ID: <20250709074940.GA14535@nxa18884-linux>
+References: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
+ <20250625-imx95-rproc-1-v3-3-699031f5926d@nxp.com>
+ <aG1J2_nK-LkLQVRj@p14s>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG1J2_nK-LkLQVRj@p14s>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA0PR01CA0018.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:80::18) To DB9PR04MB8461.eurprd04.prod.outlook.com
+ (2603:10a6:10:2cf::20)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGvyDp36iWv5UQ19@p14s>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|GVXPR04MB9736:EE_
+X-MS-Office365-Filtering-Correlation-Id: de55fc6c-45e4-4a03-9eae-08ddbeb35e04
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|19092799006|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bkTqu2QBkCCY+shdRyeWCFv/uWa0hDsjZqB2zi1335hGxXGxYaEgJOQVrub9?=
+ =?us-ascii?Q?Xi6qqi4459Mot2NXTgo4FgEj8faAHc3MpPRc8I+VvT/ey14szl/NHV/kQgIu?=
+ =?us-ascii?Q?3iCsfKDcrPE4A7WEbu5ifG4qulo0umNLQ5s2S1iIjoyDw66X3q11tInZ/W3K?=
+ =?us-ascii?Q?50t+3RCtv/AiVpxgO8MBsyH9SfD0x66LRrkQQvWgEnQVu1jFHVRSFfD3D8kY?=
+ =?us-ascii?Q?CJqgaofCOKv3xC11SPsxTpz1GzzZAjqFpFoVjiW6K/Z2It4J+H1bjlD8N/CV?=
+ =?us-ascii?Q?5tT8DZSAuVCZiYej9MKCrS1UupZ6WOleUWaKmZd+Hu64WKdG/GAhdjnQLNm5?=
+ =?us-ascii?Q?JJCtLzKFIUg6Lv0RhILWU/SDmMdI8MddtLpk+hbrHFwDYGl6ApfqmkY8pBKf?=
+ =?us-ascii?Q?5O39r9OICY020MKgfR8uDaUyxcyLdIp4+lt1COmdEjGvjNLqsxvFFULUg37F?=
+ =?us-ascii?Q?9DnSaCOu6l5wcWlzf2Cw+Zui+C0KGyrp/sdFCcZvvCdx9PjeKHSkSelYEl41?=
+ =?us-ascii?Q?JzMQWyCbd7zpECmZIdTioM7WEhRU+OEQGyfX+gscUXEF+Isku07mtKB32G7T?=
+ =?us-ascii?Q?LrQ9gewPX/xHhFGd/In1IQG4uqip8fpnNIrGGJwcq4kBBN4MiQc3ocz3TqjW?=
+ =?us-ascii?Q?pzld2Qo7sBAfGyooZPIYk9bB/70ORKXCt2fsQFtmlCj2KjmRjhltnvhfhjSu?=
+ =?us-ascii?Q?MUdy1ypIAzjjg6K+zWj9+TCVyTIYiIJLeVhCqLr5N3scNnbiu8qYNGRrSCyW?=
+ =?us-ascii?Q?9K/fyK331zSgevAhV3WLtnVYIvpkoymABviKUdp1tStUZz3vDngjtvsm9ntl?=
+ =?us-ascii?Q?ZdoxOQwsYynz+W59A4iCuqwiDQe2aKxtdGHt5Chl0WAonfowZwfUDaAOtxH1?=
+ =?us-ascii?Q?H8748IVx5gNg3KKURgjqpShBTcP8zKcFjXP4aCH6cOW6JdxQQcqEbuWnFNlK?=
+ =?us-ascii?Q?8emEIaSFS5rxhd9R/BwesCv28Fr17vrulMaxbFe1Dcg20wX28v7sT1hXVwVF?=
+ =?us-ascii?Q?fFIUtBgNuKpWVUHT2/nI6/HDzcyCeHd/jbUbxIsdCVubCa4iFYAWtEZl2+Hp?=
+ =?us-ascii?Q?wLdZ/bj4vCNX6oaL068aAElX/zc0rRvnk5XVP2Lm3C3QF18uFjnB8ulMIKhm?=
+ =?us-ascii?Q?744jZd+V+9sc5uq9+9uTWle/BxhWCNGJJE1T6R3oRvfox63cnY6n7QTr9MVx?=
+ =?us-ascii?Q?FKke1LaLPX+MOBIORyMF54ooPNXTp1XC0CjXbfRa/qzB8LcqPcnHrZiS/gHB?=
+ =?us-ascii?Q?wcb3IyLAgAvKS4fA+YuQ084cOuOAnQTynCFJHkogQLrDXu+gjhmVxON22BQ0?=
+ =?us-ascii?Q?8WmS8/7YoSQcW+3/U6t95PKIdaXUsYDqeQ2JgQ+xW8acQAkO4A/S2ByQc0Dw?=
+ =?us-ascii?Q?8R1qP9hQdURLWAhUCuUsDeNfp7dzdrPa4PovKEA3dd3WI2nbQmLsJy7VIrsD?=
+ =?us-ascii?Q?r8Sp0Xdo/1Imp8FdfcoeXZF1P1ZKfB1Qi2DHA5zUaynmQijtG8uOsA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(19092799006)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eVUyc3G8p8hGUoHpJV5Xw1xE5lAj6NYpzZpJ88hzgaqfpeAoiRALa/XcR6UP?=
+ =?us-ascii?Q?oZfLem/Coxvaqh3eACUcw1agJxg6VlhugqrD6wAECZl1CgEEo3WLOOl1e/VB?=
+ =?us-ascii?Q?THllu0FTsl3wZWa1QnY75sRNSM86aTkbcCxjL2DBVTdI07ks4ImjhiAK8fmd?=
+ =?us-ascii?Q?Tck2/JniFoKu9UJmoec9QAaHKBokgfXLMaM8SjZ0BS4WNxl5fY80FCCxcufL?=
+ =?us-ascii?Q?4oEoKenaEnCk+UKrSHtDtUcbCAaj8w3rc/oK4CggGcy1VPRyJ92Q6zCr+emC?=
+ =?us-ascii?Q?yB3NkxJQRAeInPayU9TquE3L2/eCdAKBFMGCbk8fktgbyB/gC1aavT72WfA9?=
+ =?us-ascii?Q?90IFy/9daBEuvmOIrMbj5BN6m1fUAolWexo1i4AMcP6Elr7hEOFX/XC32LQ8?=
+ =?us-ascii?Q?ISinZw7tqTUw1/2KcWgKJ7H3tvpvKDo+gkZy2YT3z4eSErKJ9Ws7FcgDwYK2?=
+ =?us-ascii?Q?j0J83QjhFky3hkh1kziHwbhPzJsXJGE1QO17uKSYl/lRue5yi1ivG1QyGbx3?=
+ =?us-ascii?Q?3djarnb9LoFuNJMo29NwF0z5RTg+N2kDnerjgiPEiCTa1e9BSeYF2BPyFwSB?=
+ =?us-ascii?Q?84rqXx7OnwnhTZ10FLeWYUHbWJJt+BHY3D43qRkBkOIh/EXo1/rJvO3akPMk?=
+ =?us-ascii?Q?7ibOAPlzXB+IRDJahmWV911HAS61GBKtFTceAq84LpRQKQoR9rLDuVO7zWcn?=
+ =?us-ascii?Q?j47+GC8NVetJQOxkqcBCjQrKNW50S2DajbkD9qVdZGrOUwayIAjsXKQJDQk+?=
+ =?us-ascii?Q?+5M7Xbfs7m82pOqrKmvbWL1uh+Q3FNa1TVrJ6l6UpHd4JyrDHyAC5fXqhr6m?=
+ =?us-ascii?Q?aPBNTgiVSckKkOmwE6vn2qZVFLmb6I6D4ppfb6b9cI6v9jRtuuFhLg+rM6mX?=
+ =?us-ascii?Q?O3Mv/KiGCmS6qncZZE/kO7ThYEJ9HpB78Xr1hIg3tSHw368kNST9xdJwG8zi?=
+ =?us-ascii?Q?C5ghVmIYz+8Ympfe+JMhG9emactwQsNYpZv+9mDGxik7HWQeqI48/8gEbnYp?=
+ =?us-ascii?Q?DeXXJLGdSA2/CxUi9yGOa/4FRuSOwviCU92NC+V+Hs1ZoVsOgoHKoouCBIWk?=
+ =?us-ascii?Q?UIIuz0dH2lxJ7yWKDyQf9JZf8If78d7pR/x4YLNPhSRgxZdhtV9kwWEGp93p?=
+ =?us-ascii?Q?WcFk0Ok+o7gLxlKtnxs4MXxm3byGBXU8ex45J1t/3vFZL6uOd720P1pR2CU+?=
+ =?us-ascii?Q?U+7H22FHUi4Va/3mSYiQRfJAIOnCVRzgfk6Vs8pH01z7lHomVfmj1UfoEX8k?=
+ =?us-ascii?Q?ljH7ji74AcwsfBzhVDQrN3iH5PQY19iyKLaGWuk/DWvgFr+ANU8KYIv2tCY4?=
+ =?us-ascii?Q?2H922rBKizEcmOLmQmtXEmyQa0VX0ChT03D2ice0gCEpUorxbpZGaxuQdXW7?=
+ =?us-ascii?Q?zoJkxjrgRWKS0t3UUmVi2I/vuDxVdLFXu1kKyqATAess8b3pvCALwaq0lNT7?=
+ =?us-ascii?Q?40wBBdLMLqNGHubVGhgHe2vs/6PT8rXb46eAZ8Sack4ThTVazCNRNyjawEtg?=
+ =?us-ascii?Q?q8asmkz1POBYT2M5a0/XzTnFDvQNSMXxOZq9RHTFQGfbkarIFL59qe5pZ/Lg?=
+ =?us-ascii?Q?f9DDq4nSYgJPcaZzb7y9zzfvvF4P/wi4LqSfNyAI?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de55fc6c-45e4-4a03-9eae-08ddbeb35e04
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 06:39:34.5709
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gqk4Gzk54ZCgyoC5rGMnFg0EY4dDSfi9qfDtyDMU79sfLIIRIln9bujWkkcWXGSInzjPAQlepE9QcbFFnY379A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9736
 
-Hi Peng, Mathieu,
+Hi Mathieu,
 
-On Mon, Jul 07, 2025 at 10:13:02AM -0600, Mathieu Poirier wrote:
-> On Fri, Jul 04, 2025 at 04:08:16PM -0300, Hiago De Franco wrote:
-> > Hi Mathieu,
-> > 
-> > On Fri, Jul 04, 2025 at 10:25:19AM -0600, Mathieu Poirier wrote:
-> > > Good morning,
-> > > 
-> > > On Thu, Jul 03, 2025 at 10:08:31AM -0300, Hiago De Franco wrote:
-> > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > > 
-> > > > Merge the contiguous ITCM and DTCM regions into a single region to
-> > > > prevent failures when loading ELF files with large sections:
-> > > > 
-> > > > remoteproc remoteproc0: powering up imx-rproc
-> > > > remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
-> > > > imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
-> > > > remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
-> > > > remoteproc remoteproc0: Failed to load program segments: -22
-> > > > remoteproc remoteproc0: Boot failed: -22
-> > > > 
-> > > > This approach is the same as commit 8749919defb8 ("remoteproc:
-> > > > imx_rproc: Merge TCML/U").
-> > > > 
-> > > > Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
-> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > > ---
-> > > > Hi,
-> > > > 
-> > > > The ELF I tested had the following data section:
-> > > > 
-> > > > Memory region         Used Size  Region Size  %age Used
-> > > >     m_interrupts:         680 B         1 KB     66.41%
-> > > >           m_text:        6984 B       127 KB      5.37%
-> > > >           m_data:      130224 B       128 KB     99.35%
-> > > >          m_data2:          0 GB        16 MB      0.00%
-> > > > [100%] Built target hello_world_cm7.elf
-> > > > 
-> > > > Which triggered the error. After this patch, remoteproc was able to boot
-> > > > and work fine. Thanks!
-> > > > ---
-> > > >  drivers/remoteproc/imx_rproc.c | 6 ++----
-> > > >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > > index 74299af1d7f1..bbf089ef48ee 100644
-> > > > --- a/drivers/remoteproc/imx_rproc.c
-> > > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > > @@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
-> > > >  
-> > > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > > >  	/* dev addr , sys addr  , size	    , flags */
-> > > > -	/* ITCM   */
-> > > > -	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > > > +	/* D/ITCM */
-> > > > +	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
-> > > >  	/* OCRAM_S */
-> > > >  	{ 0x00180000, 0x00180000, 0x00009000, 0 },
-> > > >  	/* OCRAM */
-> > > > @@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > > >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> > > >  	/* DDR (Code) - alias */
-> > > >  	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> > > > -	/* DTCM */
-> > > > -	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > > 
-> > > In commit 8749919defb8 "dev addr" and "sys addr" were both contiguous, but in
-> > > this patch "dev addr" is not.  How will this work with new kernel that use old
-> > > FW images?  Am I missing something?
-> > 
-> > No, you are correct, I think the use case I tested was not good enough.
-> > 
-> > If I understand correctly, this will break older firmware expecting
-> > .data at 0x20000000 because dev_addr is no longer mapped for DTCM entry.
-> > 
-> 
-> Correct.  Older firmware would still expect DTCM at 0x20000000.
-> 
-> 
-> > Do you think it is possible (or reccomend) another approach to fix this
-> > issue? In this case to keep using the TCM, instead of going to OCRAM or
-> > DDR.
-> >
-> 
-> To me the best way to proceed is understand why using the current mapping is a
-> problem.  The changelog describes a failure condition when dealing with large
-> sections but does not indicate _why_ that is happening.  I think that's what
-> needs to be fixed rather than trying to move mappings around.
+On Tue, Jul 08, 2025 at 10:39:55AM -0600, Mathieu Poirier wrote:
+>On Wed, Jun 25, 2025 at 10:23:29AM +0800, Peng Fan (OSS) wrote:
+>> From: Peng Fan <peng.fan@nxp.com>
+>> 
+>> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping.
+>> Add i.MX95 of_device_id entry.
+>> 
+>> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>> ---
+>>  drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>> 
+>> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+>> index b1a117ca5e5795554b67eb7092db2a25fc7de13b..c226f78c84ad180c69804116d6cfcab19db6aaa5 100644
+>> --- a/drivers/remoteproc/imx_rproc.c
+>> +++ b/drivers/remoteproc/imx_rproc.c
+>> @@ -73,6 +73,10 @@
+>>  
+>>  #define IMX_SC_IRQ_GROUP_REBOOTED	5
+>>  
+>> +/* Must align with System Manager Firmware */
+>> +#define IMX95_M7_CPUID			1
+>> +#define IMX95_M7_LMID			1
+>
+>Any reason those aren't set in the device tree?
 
-Thanks for the information you both provided, sorry for the noise, so
-please Mathieu ignore this patch. I will work around this in a different
-way.
+Krzysztof rejected to introduce the IDs to devicetree.
 
-By the way, Peng, I noticed the DDR linker from MCUXpresso does not work
-if the firmware is larger than 128KB, since the .data is placed right
-after .text and loaded later to DDR. The imx_rproc driver should instead
-have a way to do the other way around: starting from the firwmare inside
-DDR, we could set PC and stack from M7 to point to DDR and start the
-execution. Probably will be slower, but it would make the DDR case
-possible.
+From IRC:
+"To me this makes no sense in current explanayton - you have 8 cores, but only
+one can be put there, so what happens with the rest?
+And I don't think we care about something like remote and local ID - it is
+the same. CPUs have single number. So this looks like copy paste downstream
+and thus solve it internally first"
 
-Correct me if I am wrong, but as my current understanding the DDR linker
-is broken without this change to the driver. Anyway, maybe something for
-a future patch.
+
+In System Manager Firmware, CPUID is fixed and will not change.
+LMID is also fixed as of now, we not expect customer to change LMID.
+
+So with "fsl,imx95-m7", we could know the CPUID and LMID for M7, so 
+it does not make sense to introduce new property saying "fsl,imx95-lmid"
+and "fsl,imx95-cpuid". This should be the main concern that DT maintainers
+reject to add properties for the IDs.
 
 Thanks,
-Hiago.
+Peng
 
->  
-> > Thanks,
-> > Hiago.
-> > 
-> > > 
-> > > Thanks,
-> > > Mathieu
-> > > 
-> > > >  	/* OCRAM_S - alias */
-> > > >  	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
-> > > >  	/* OCRAM */
-> > > > -- 
-> > > > 2.39.5
-> > > > 
+>
+>Thanks,
+>Mathieu
+>
