@@ -1,249 +1,193 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010005.outbound.protection.outlook.com [52.101.84.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2306D1DDA24
-	for <linux-remoteproc@vger.kernel.org>; Wed,  9 Jul 2025 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071586; cv=none; b=NgFBi7RIX6fkTt7PE4tG+J0BrTNINS3WhLKMAgcpINnksC7GzAxgMV98vxlhWQz/VHSs6JxREWoV7GaMvwFXKuTSHhJlNQaHgCSSZkSJ1b2rwGAx/06TwrZ5y6W/LgTW5eE0uOcrc5zKVRaZqtQfRPtZIyMnVONx0Oo6n7tseHQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071586; c=relaxed/simple;
-	bh=C2wCAxa5FvH06O82029Gnip2a4XtLbwPFts3mlei39U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYsmq8ijnzlQvpSIfTqwO/FTFe1OpVKtmg++fjakdAtyMjMqVQ08CHkudAAu97rUeVSUE2GNiIefpM3hg+ulRjmWfeXR09b/3ge/T6+ca4oD8SRnzrF36vJc0qtF9vW/YGbyoGs0ZDzWhfsf/Shs4ehwWz002aGLOliqxWFo7m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ci6I0K0x; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601C147C9B;
+	Wed,  9 Jul 2025 15:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752073284; cv=fail; b=m9eJkJ2owhzsuQDx4Vh4u5Vu0Gj/Fu5/5M51t+Lat892QD17Smxkdkh40lUSBNoicHGq4zgKqb9JP64DACKUF7RcBbQYbK8k1YKbT6A+BgJ0eUiIkREoKTfwAgn1stfIYdfq3acL+nsG3nS6MTFr//i8b8BmwlKW5OTPA3sRwbc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752073284; c=relaxed/simple;
+	bh=lK0XYQ6jvZ0z1I7LMCEQqUJd8PSf3fvdJRjw210vfuo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ViZZBUCRBBojxClwA+vydmlsabk8ZzrLq5TQwFi/2x1qFnOo516npQxuVBpQNh+A1+qP3Bo/iVQnRoog9zLzjWoJ8w/Ia+yLl4+Foii6pXopue3iS1LhbaJW51o7MgVrC72ERlPfiXQGPlAM7p8MavF2uGPTfskUQxPef5EWKZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=X9dPx7k6; arc=fail smtp.client-ip=52.101.84.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci6I0K0x"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748feca4a61so3063029b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Jul 2025 07:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752071583; x=1752676383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w6DigU3ijEN37mFImpuvJY0cN+hiwAZNGwYyYKGr+K0=;
-        b=ci6I0K0xlzHnLgCmM2lucZQsrT3X2di9CmiKOVfKWsv7VNHJWGref/hiON3S2Im/bJ
-         zcbJz069MpxtuZ+sAPf6i9yBB6iGiqnmoevHB1BYe2lJu/phdTqmLZovMXvx+KDhdhmk
-         ZZ07sNT2/0hNnsDIn2UMahoyEmOS8zgXydhasUtbT7HK47q4bvuibw/V1g0YX1WMvIcU
-         3g1R/RpGi7ob6h8IrVk9kvSCI42UtfhIOYR4WOzjZziApZnevFNQiDB1zEny3X7oPauX
-         xqIlu9Cy7oLTtO4QWInw7vn8Dwzdr7x7EUKIOpMFOfQEGUrpz1B3XzT2n6Wn48vaF8Hm
-         KoOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752071583; x=1752676383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w6DigU3ijEN37mFImpuvJY0cN+hiwAZNGwYyYKGr+K0=;
-        b=c+3pCTSypsKPbxGly+n/AbGM8PvfQjsU2PxWbV5WBFwQV1pzG1JJ3L5gwIuDn0wQQY
-         RMZz2QE7RbrDNPxTCFjpOOqMOlJGrl4vRozNJSEbULB1dpnM/2QJMhMxRIXd9Imifz3y
-         I5pT9yihRMd9bd8eQMlve3NWxnZaOZhp5jEQ25etBTTTZS+Xk0S6sU6l3WzOV3bKFqMh
-         qrb7tZ1hIiWj9f5PIhniXNMMJS6nZwnoO6g9J2lEjc4VQPdvaHnJcT8/nE9hh9HMMD0K
-         eU1D2vxh+oXxbxBvxeY2MjR6BtFW1c9gg5ivjqA+eCY77x89DU6CANxKE27GnLwvGlaa
-         nNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZJaZ8Unv9MbmB0ZZyHLqVtglgw2ZJ7mg71xktL5sKPRomu8HUUdf8nCkbyc+5+wwXDluesvDYs1CneMm0HfM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWF5Nns5Hmyc5UzTulHAVIp26grIDCHWsLMm5b4pedrrfEYbB1
-	MwCYxihZcigOYcdXyI9Y2M1SrdeXu9HjKH6J/xhDvK13xsmwriq5KSUTdRdipKpPh00=
-X-Gm-Gg: ASbGnctk6E/AmNKVz+fFaMIsEnTPUICOuEDs31d0rIYSWFHlSHmn5TIYDRsg/XumzK1
-	vgVdpUztYWwPIYx1zn9OfiPuYZd4dNsSzXhiYD/IjnsHKoar7ajFGhlOS0dL1qXPXFbEbpAyOIT
-	RW5Xyb2ZxjA1sbhliWRhUej5GGIN8NYcG3VEknrUcvOSJ3L2DFma0p80cEDUx1s3du6NPIGartu
-	+zmqhg4V0o4OaUP8M7x8gnWPCnD1qU/O5OGw+lVFDX47u7VtoGUvjMdvx0ZmeUYaD7MlsSKOQ0d
-	p+69jAuVK/a2bXx+8CiT4Dgxg4cpHTgN5X/ya3sdbqO3BvfVukJaMqsOX66yzcI9
-X-Google-Smtp-Source: AGHT+IHb9rJ94x6uyCZzHp4gJ6jJr9aNTPeUN/jkP+tdN5uFfkn31SfgFUorIkoUWVXUVDc9nNaEcg==
-X-Received: by 2002:a05:6a00:1742:b0:74e:a560:dd23 with SMTP id d2e1a72fcca58-74ea669d187mr4911450b3a.21.1752071583252;
-        Wed, 09 Jul 2025 07:33:03 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:433:ec07:c2cb:e3e8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38f879d040sm13455576a12.44.2025.07.09.07.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 07:33:02 -0700 (PDT)
-Date: Wed, 9 Jul 2025 08:33:00 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 2/5] remoteproc: imx_rproc: Add support for System
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="X9dPx7k6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oxAaQhXxDDbgbo8Qldxv7uyHxRbxm0HAcyaqNr7ajSeXiOEwn9Qy23Ec6jI4A9JoO8Lpz0Tmy7MaqvxtQ4TrIX14VaA5M8oQVu+iUbOTpeRROv6X10mSZOD9jxxBhrO5HEtV9JuouelOiaFkvdjSlJuPWz8xhXNdyJQUjq8TiJVUPJAzXGF28Bhsa0kjio7/TmyoZJiN3kxcqe2mL7/AcrnbS09g/tF2gZncLIVVbURlS4OHjLrG3vQueZ36KBf4V7UbmIKhJ1EZMPku63ONi+VL6xjekV48uyi/sftaPYhyumQY4CmmvBLsYeSfG7pGGBkFBnIKcUSsj8+kVFthQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lK0XYQ6jvZ0z1I7LMCEQqUJd8PSf3fvdJRjw210vfuo=;
+ b=YARnqA4KwbFPSqOZOh9CLGmEcZ/pRYeBhTCszOdSIE+FzXsnrOULtBVaJhTTDqHIg3oj5K8WegFnS4qeg9yLHLXa+6+2z1TKgiWkRm6Sx3hbHkRUiyEqTh83DEyhKOJ8JMy+Zls/OBF5JqwrRGZKJUWQGYAH3SUXFTSO8UxQbmW11GgETR3FumRcoubr7tAONquDIDud9oLMR4IqbekxMmRhj2yQ3DDmu5fd6XVn+Ck+UbDm60cbqmiYC8AvxihZZ9S1ESOJ1sQegpZQrljBWl5mleLZ4sRGGXfN8XtaDqCammREAIQbaoqdeFv65PI7p99eFk+w3AY7guT3+4SXmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lK0XYQ6jvZ0z1I7LMCEQqUJd8PSf3fvdJRjw210vfuo=;
+ b=X9dPx7k6ZYk9QswgtFBhKXLgZ70rjwvNPttTtRK02UEE2ftDl21W6CzXgEcAasYIOBCG3Kbk0EooEmp0ZEikjorDq+So4W4V1b5UCqPR7sLMZJctKHZnp5y+ZKLxTEyXeTuEKA8TfSitMAOjcq5L/L7L4KVs2a2oD74ZhwWIsaLOICfBJDAf5x9XemBS+RzjHick93AETf5hCWbZ7xO3Lc8zCVlPLCvRnCaVYM4B2hAr39xP53BLuAXsFuo2IICTg0CjVSH9OwTXMNs0IX++j+SVX/pGBzm6rsgoVaR7OWmqQa/XOR3Z3s/ftreWe4gFKDaKo3hjWbe5PW80By2C/w==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS8PR04MB8577.eurprd04.prod.outlook.com (2603:10a6:20b:424::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Wed, 9 Jul
+ 2025 15:01:18 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 15:01:18 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Frank Li <frank.li@nxp.com>, Daniel Baluta
+	<daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/5] remoteproc: imx_rproc: Add support for System
  Manager API
-Message-ID: <aG59nOSfMuFbJvoK@p14s>
+Thread-Topic: [PATCH v3 2/5] remoteproc: imx_rproc: Add support for System
+ Manager API
+Thread-Index: AQHb5XhqrU2uErlDjUCS0UsOxf6UCbQogN8AgAEUl4CAAFxWAIAABj0g
+Date: Wed, 9 Jul 2025 15:01:18 +0000
+Message-ID:
+ <PAXPR04MB8459C04A38CAB6A50C11CB198849A@PAXPR04MB8459.eurprd04.prod.outlook.com>
 References: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
- <20250625-imx95-rproc-1-v3-2-699031f5926d@nxp.com>
- <aG1IIk42q8OmGsQH@p14s>
- <20250709090231.GB14535@nxa18884-linux>
+ <20250625-imx95-rproc-1-v3-2-699031f5926d@nxp.com> <aG1IIk42q8OmGsQH@p14s>
+ <20250709090231.GB14535@nxa18884-linux> <aG59nOSfMuFbJvoK@p14s>
+In-Reply-To: <aG59nOSfMuFbJvoK@p14s>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS8PR04MB8577:EE_
+x-ms-office365-filtering-correlation-id: 2585af7b-6c46-4d12-37ab-08ddbef9759d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?nt118zwGfWfXRICs1z7vlstQi8zZcXQWqBYPXKF+OzIYeEOrAm+EnYG4ELfG?=
+ =?us-ascii?Q?m3kZfuFWw6Ppp+J2AbcXcCs7UCvNWUOZ8dq/VniF8H03VT8WVS90kHeBfbhY?=
+ =?us-ascii?Q?5op5HHLaLaPlrHZ1+I6oOMw+Dc7ccWMVIL5/ot/Vr+qZ8s/H9zi1azE/7NlJ?=
+ =?us-ascii?Q?aqp4+IVXngnj/a+z3jyjfKt/gEiIdfCQlkDWib8L+/EytmX5BTkWRTaA5ifO?=
+ =?us-ascii?Q?xTnJyBE52ZbYGyay2xhWUhbGESL9UnH4+Y4ksRRjl5mOZ7iVT60YVAJBR3rL?=
+ =?us-ascii?Q?xg4SRLwgfKrr6+/mYg7vC9MTxNdEVmCoPgdtW7B968KLYgc8FSZqYPsUMCa1?=
+ =?us-ascii?Q?AT1ISZBOq0hlZwwU3qagyy4MlJJtBe4Dak9YpOZKBOtf/ioUl1emTr/fCrVM?=
+ =?us-ascii?Q?y3F29iLd0pcc8JO8+Qjne1C0IIw5MCOZwKMXpFnr0JHh119KB9BV2IahKHBb?=
+ =?us-ascii?Q?Sfxw8ijldXcI+763PfbGMG+FSGzG110L0PTM0kBimBIDn2Me5h8395tI4mUq?=
+ =?us-ascii?Q?H9LXD4G9NyvqBShYGU0mcglJtvGhKxT5idBKzuFwnKAxvcdO0gsO9EUyCd5F?=
+ =?us-ascii?Q?h9k89Z35emzltygFRB0K+CVAj+LEuItfNu1gdc5Ml2oJ3Zu8WWJasxDGqLcN?=
+ =?us-ascii?Q?H062symvvrUhdH+/9FUG3HtP6nRZBks2pCdEBDNIFsrK6ZB8dfyx2+pr4dXU?=
+ =?us-ascii?Q?924VfXmZsn2QJCBtFgoZ1Vu3Jk3OEAq9CSN9ayg8WqiZkFInUTNhD42vah1u?=
+ =?us-ascii?Q?YwfpRddv/npUU5VHTV5gSG6jXtlB++dR0iviQZnE+0y/B97fsaqey36D4/uH?=
+ =?us-ascii?Q?KCS7LZbBf+a7nX5an5uqICA0nDOkYFPwCSn4OcQEvYKpspjxOmlVoZ8shls8?=
+ =?us-ascii?Q?7H79UEnecZUbAbiR7j8gfXjgmT9cBe3szH6bjLnJjIK95pwKG5PWXOO8yXVU?=
+ =?us-ascii?Q?jT6ZB/LwH60ApqYVrtye8RxSOHUhUwFs2gmFhdXLVvySf/uRMut76PIjlA0j?=
+ =?us-ascii?Q?/hJqZeeP+WdyQuJXCk8R9OUZYz/Pfea2E3yPxrg4Eg64dlVVL3DCBPpXp7Z+?=
+ =?us-ascii?Q?3PmW/R/M3/hLn+A1QtLIpm0H1SZTSI4dj3qKT+BcBbRkKvyBhn4kwBjotCd6?=
+ =?us-ascii?Q?Xx3wikt8wKprdH79Lm3+zOTgbIe4A5aaSr7r22K4IglYkRxgTegNhNj52VIk?=
+ =?us-ascii?Q?5lvvg86hMQv3TUlSxuza7h0D/P1m8CsBNLANbhb7Om1KB+WDmVMA218+bi0D?=
+ =?us-ascii?Q?n1Z/7rwQUYAEo3wOkR2UgjSV0pYUNP+S4/a0XzcYO9+iLt1sfJJz6vGcUOQm?=
+ =?us-ascii?Q?CKgiwCRs80cLYoMVJGzx1gINQ3FFVDjWh/Sg8rph04+PZPWcS74reAXJMW8g?=
+ =?us-ascii?Q?p2NzZO5gvEgTywejSlHhXuAezqB1VJm2aq2G5AV6l6ZgyP/7Mg10s0uzruzM?=
+ =?us-ascii?Q?vmUTBiP0bKLLt7nKrU+RHJn8npOGXjnLctRaCIACwmu/mXnsjMvyjw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?zFfL9kOTVAfxChYH8snHn6qU+qMFpkF+lKqbISTzH2iDnSYOfH2vC4PuShIg?=
+ =?us-ascii?Q?1gDcuJdUIt9I0cuBmYHIf+ukrSmCdv8Xj1aQbzUoNcBISQW4JTXtp5xtRNcF?=
+ =?us-ascii?Q?ml+04ARlKmpYnSgj6l/LizqbOYknVE6qZ62sVNksrYHPszaDgpL6ZtAstcpW?=
+ =?us-ascii?Q?0/8E1xaP7ePeltdVchksMnUWTEt+aC8l6OzppQ72uW0DburgXdJVIKh+uhGA?=
+ =?us-ascii?Q?1uBer/MiGmRcEF+dCaVV5MyNSOJ0XOlX/g3yCczWL0zi19IXQ3cjXDSyrK3O?=
+ =?us-ascii?Q?LJ8p4r+xqRKtn9e8iJFAUUYFd82TMgbhbDSePiRxg9ldmb3wHUQw/zkzjhPv?=
+ =?us-ascii?Q?o3jypim/Utf5DhODMG/z+BtPrHGPRQymJP4f5X0C33TgnKqgbAHrphhp5XgQ?=
+ =?us-ascii?Q?gV8+XOIRYzDVfUyfVcZ2Avmtn36btJXN0O9sIjfvUK2+Vb9Ld2QNu19r+QJJ?=
+ =?us-ascii?Q?C+mIDHwdsm9G1mX48QetEUFT+KFfY+g1OA8K0+YiOqR4KBHn1qMR6wZgLyHi?=
+ =?us-ascii?Q?UoYpC2teYGYFunYB/rfHgEy9tlBbaMPSSHUkBHHqJ2YBNzmIIQQVl8iKlnF3?=
+ =?us-ascii?Q?YNJuxdMOJ8Jpx3cp+gVo6Umk8m0lTs0ntnZVySSN1q5MNtzH0UFAh7V+dNBb?=
+ =?us-ascii?Q?Zf5z67f/jw5SSU6ogYPzrsyrzTuRaqn0Ri1j0VBmS0M+rHFoUsXEXOthtU+W?=
+ =?us-ascii?Q?HGAhGTBOUJ+5l2iZZznxFJ13xtxerVVmcfj+6wjO/zcxsLiIW6lrPrsHA5hq?=
+ =?us-ascii?Q?Z1m2c+H2lpREIflLVQiYQaSwY2CYeURtMoX4K+Xm/2RKl8/GIfTzs8lUMcdV?=
+ =?us-ascii?Q?wosD6bxI2sCiqGyBioELU4Kvx177BZdUid1LD8dLtl4J/tgBJkVPKBC0hpx0?=
+ =?us-ascii?Q?LH1eIXsy/Kzu69OBylqsk8i2/v0KJofXNt4IDlPwfip5Wd7OQZPAGO3muoXT?=
+ =?us-ascii?Q?U+ZC+UAE8gAzRbzingnF/BMFklo/xcIcvvjWYTLoYSn4uYntpGQnRrrdMcA4?=
+ =?us-ascii?Q?q3ofvftDoNii+hof0xTH1rMWxbFTJlpJc5wuvc8ShL2F9NfNB0GkzWqZaspa?=
+ =?us-ascii?Q?/adCAKjIbek9Y1U4Y3VzEy9QBzkrorRaNzRwbhU2C875kkbdNAAAktr3UWQN?=
+ =?us-ascii?Q?QDz8nztfDLu+ctEFxM/YkjuBYa+4FD0CtRhLd1fe2mnh8G9KXBbz1SR8MoS0?=
+ =?us-ascii?Q?kp2CoVEZCQA/V+mr7jRdP3EGPr2H4PRhvU9jSbbG5hi6uDgAYw/VQuPwmdBy?=
+ =?us-ascii?Q?f7IdeMYtG5f0bg7a828DObsGpAiMfYD3ilqpkNG7qHG7Cdjp9vAtWAGG6oGR?=
+ =?us-ascii?Q?p+Q9P2VsvTD/9Ut7xLxesNyAPC7yjku11bos0MR6GsO4lpsJWg04IFnqDo+X?=
+ =?us-ascii?Q?a/d5U9RBlSPZkCvjNTc0XPSFkInHJdxXabZTAypdwWTCsEAJVhgJLraaBt9B?=
+ =?us-ascii?Q?iWLeAhM/YfG7ThM4L+LBnRzmn+a1KmrTcUxSHr7b5Eex1YAkBahq4l9Ix1Ra?=
+ =?us-ascii?Q?EMZyeTpJABlitYGq+e6XFOyZ2S96xBuFAz3QAZYiuFJ1Ce3q/6AHdKEUCy8F?=
+ =?us-ascii?Q?RnMw5Phcb7OF6gQCGLA=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709090231.GB14535@nxa18884-linux>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2585af7b-6c46-4d12-37ab-08ddbef9759d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2025 15:01:18.5558
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /i7BYbfgvgh/1tS0+NLAvio+FPRNCKPT81KgUqLvroDVvFEnE/yE6O2vusIh/kR4cXwwSetp3rtLrT53Y3eiVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8577
 
-On Wed, Jul 09, 2025 at 05:02:31PM +0800, Peng Fan wrote:
-> Hi Mathieu,
-> 
-> On Tue, Jul 08, 2025 at 10:32:34AM -0600, Mathieu Poirier wrote:
-> >Good day,
-> 
-> Thanks, good day.
-> 
+> Subject: Re: [PATCH v3 2/5] remoteproc: imx_rproc: Add support for
+> System Manager API
+>=20
+...
+> > >
+> > >This is set all the time imx_rproc_prepare() is called - isn't there
+> > >a way to set it once at initialisation time?
 > >
-> >On Wed, Jun 25, 2025 at 10:23:28AM +0800, Peng Fan (OSS) wrote:
-> >> From: Peng Fan <peng.fan@nxp.com>
-> >> 
-> >> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
-> >> one Cortex-M7 core. The System Control Management Interface(SCMI)
-> >> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
-> >> Manager(SM) includes vendor extension protocols, Logical Machine
-> >> Management(LMM) protocol and CPU protocol and etc.
-> >> 
-> >> There are three cases for M7:
-> >>  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
-> >>  (2) M7 in a separate Logical Machine that Linux can control it using
-> >>      LMM protocol
-> >>  (3) M7 runs in same Logical Machine as A55, so Linux can control it
-> >>      using CPU protocol
-> >> 
-> >> So extend the driver to using LMM and CPU protocol to manage the M7 core.
-> >>  - Add IMX_RPROC_SM to indicate the remote core runs on a SoC that
-> >>    has System Manager.
-> >>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(the ID
-> >>    is fixed as 1 in SM firmware if M7 is in a seprate LM),
-> >>    if Linux LM ID equals M7 LM ID(linux and M7 in same LM), use CPU
-> >>    protocol to start/stop. Otherwise, use LMM protocol to start/stop.
-> >>    Whether using CPU or LMM protocol to start/stop, the M7 status
-> >>    detection could use CPU protocol to detect started or not. So
-> >>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
-> >>    status of M7.
-> >>  - For above case 1 and 2, Use SCMI_IMX_LMM_POWER_ON to detect whether
-> >>    the M7 LM is under control of A55 LM.
-> >>
+> > Yeah. Moving this to probe path should be ok, such as in
+> imx_rproc_detect_mode.
+> > The drawback is M7 logical machine will be left in powered up state if
+> > moving to probe path before user starts M7 LM. Leaving in here
+> means
+> > M7 logcal machine will be only powered up when user does "echo
+> start >
+> > /xx/remoteproc-y/state", but needs to set
+> IMX_RPROC_FLAGS_SM_LMM_AVAIL
+> > flags each time do preparing.
 > >
-> >Thanks for the context, it really helps.
-> 
-> Glad that helps.
-> 
+> > If you prefer moving this logic to probe, I could give a try to move
+> > to imx_rproc_detect_mode which is probe path.
 > >
-> 
-> [....]
-> 
-> >> @@ -592,6 +637,38 @@ static int imx_rproc_prepare(struct rproc *rproc)
-> >>  		rproc_add_carveout(rproc, mem);
-> >>  	}
-> >>  
-> >> +	switch (dcfg->method) {
-> >> +	case IMX_RPROC_SM:
-> >> +		if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP))
-> >> +			break;
-> >> +		/*
-> >> +		 * Power on the Logical Machine to make sure TCM is available.
-> >> +		 * Also serve as permission check. If in different Logical
-> >> +		 * Machine, and linux has permission to handle the Logical
-> >> +		 * Machine, set IMX_RPROC_FLAGS_SM_LMM_AVAIL.
-> >> +		 */
-> >> +		ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_POWER_ON, 0);
-> >> +		if (ret == 0) {
-> >> +			dev_info(priv->dev, "lmm(%d) powered on\n", dcfg->lmid);
-> >> +			priv->flags |= IMX_RPROC_FLAGS_SM_LMM_AVAIL;
-> >
-> >This is set all the time imx_rproc_prepare() is called - isn't there a way to
-> >set it once at initialisation time?
-> 
-> Yeah. Moving this to probe path should be ok, such as in imx_rproc_detect_mode.
-> The drawback is M7 logical machine will be left in powered up state if
-> moving to probe path before user starts M7 LM. Leaving in here means M7 logcal
-> machine will be only powered up when user does
-> "echo start > /xx/remoteproc-y/state", but needs to set
-> IMX_RPROC_FLAGS_SM_LMM_AVAIL flags each time do preparing.
-> 
-> If you prefer moving this logic to probe, I could give a try to move
-> to imx_rproc_detect_mode which is probe path.
-> 
-> How do you think?
+> > How do you think?
+>=20
+> Just leave it where it is.
 
-Just leave it where it is.
+ok. I will just put this piece code in a separate function as you
+commented in last reply and leave the function being invoked
+in imx_rproc_prepare.
 
-Mathieu
+I will send out v4 with above change after test. It should
+tomorrow.
 
-> 
-> >
-> >> +		} else if (ret == -EACCES) {
-> >> +			dev_info(priv->dev, "lmm(%d) not under Linux Control\n", dcfg->lmid);
-> >> +			/*
-> >> +			 * If remote cores boots up in detached mode, continue;
-> >> +			 * else linux has no permission, return -EACCES.
-> >> +			 */
-> >> +			if (priv->rproc->state != RPROC_DETACHED)
-> >> +				return -EACCES;
-> >> +		} else if (ret) {
-> >> +			dev_err(priv->dev, "Failed to power on lmm(%d): %d\n", ret, dcfg->lmid);
-> >> +			return ret;
-> >> +		}
-> >> +
-> >> +		break;
-> >> +	default:
-> >> +		break;
-> >> +	};
-> >> +
-> >
-> >Please put this in a function and get rid of the switch{}.
-> 
-> ok. Fix in v4
-> 
-> >
-> >>  	return  0;
-> >>  }
-> >>  
-> >> @@ -911,13 +988,41 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> >>  	struct regmap_config config = { .name = "imx-rproc" };
-> >>  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> >>  	struct device *dev = priv->dev;
-> >> +	struct scmi_imx_lmm_info info;
-> >>  	struct regmap *regmap;
-> >>  	struct arm_smccc_res res;
-> >> +	bool started = false;
-> >>  	int ret;
-> >>  	u32 val;
-> >>  	u8 pt;
-> >>  
-> >>  	switch (dcfg->method) {
-> >> +	case IMX_RPROC_SM:
-> >> +		/* Get current Linux Logical Machine ID */
-> >> +		ret = scmi_imx_lmm_info(LMM_ID_DISCOVER, &info);
-> >> +		if (ret) {
-> >> +			dev_err(dev, "Failed to get current LMM ID err: %d\n", ret);
-> >> +			return ret;
-> >> +		}
-> >> +
-> >> +		/*
-> >> +		 * Check whether remote processor is in same Logical Machine as Linux.
-> >> +		 * If no, need use Logical Machine API to manage remote processor, and
-> >> +		 * set IMX_RPROC_FLAGS_SM_LMM_OP.
-> >> +		 * If yes, use CPU protocol API to manage remote processor.
-> >> +		 */
-> >> +		if (dcfg->lmid != info.lmid) {
-> >> +			priv->flags |= IMX_RPROC_FLAGS_SM_LMM_OP;
-> >> +			dev_info(dev, "Using LMM Protocol OPS\n");
-> >> +		} else {
-> >> +			dev_info(dev, "Using CPU Protocol OPS\n");
-> >> +		}
-> >> +
-> >> +		scmi_imx_cpu_started(dcfg->cpuid, &started);
-> >
-> >Function scmi_imx_cpu_started() returns a value that is not taken into account.
-> >
-> >> +		if (started)
-> 
-> I will update to "if (started || ret)" in v4, with ret assigned the return
-> value of scmi_imx_cpu_started.
-> 
-> Thanks,
-> Peng
+Thanks,
+Peng.
