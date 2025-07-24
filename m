@@ -1,129 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E69277C9E;
-	Thu, 24 Jul 2025 11:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EC12D878C;
+	Thu, 24 Jul 2025 13:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355975; cv=none; b=iiQsajiZJ8+OX/v8E9et1SwObRQ8IsvUC8QcWotyadFT1Ch2IWbdaDmv+aiUt+EdOoO/XStaq9lnNoQixB6+FHp4I/QifV7q9s4GP08kSmH6tVi+9q2Cw9O9H5UNI2abU9gIp+ecoN92XEdPuTR0R1g6y9Xo6oXvO+BH/R3ZR9Y=
+	t=1753363918; cv=none; b=hdayCaJjKflfriZwcGMwFJ1oBrHlN9R5cyuBtupOLALOgqj2Yds0qFAS7sOwW7ckDafLEFeGTYwN7Wt9zh1Ro0deEXX5rL1wdCQWDsGZ1JEQsPYpyaX4UVdDIchEzRpDZ//MJs0ryMiAqoQDij1hIeGPZKPX+av7wigzw7L1kg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355975; c=relaxed/simple;
-	bh=xr9UfPrtsc/ykSfE3EhQN0BAiqLo6Aci+RNDYoh3hig=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=o+grxBAc9bXpzI0VDXjayK2ICY0AuSJskmhHUVy7zxyVdPZ5cSZXVO6G8mwTc2oDooV4PoZiUdAo+kCHuUKxGsMK+7zBUISDZ6ril3M3aMgHpH18bQ5xIJLowpoKIv7Dq2V8RcOjuUsZB20/MN+f3w7080VsJ1tmiYdav10OX/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtcIHEg+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753363918; c=relaxed/simple;
+	bh=3zzn1ea8CK30bhCRlV4cWE5qDuesQ+mvFiNJSnmbAoM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XeuAqF1YmQjnRTMoHMd44I6PoBnJTfOLCrMWIpA6pzUJxJqgsNMSsttVZ4Jcwo4ThT208zizn6o5E10GAwrCP5/Q7muZjTu+l1IZMEtS+WQkisfAyY4e5Az1dHBbChb99mol43nXqx4kJ0+layFh5ntpptJymvo50IFVxHYIeUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GnLWkaYS; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtcIHEg+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBABC4AF0B;
-	Thu, 24 Jul 2025 11:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753355974;
-	bh=xr9UfPrtsc/ykSfE3EhQN0BAiqLo6Aci+RNDYoh3hig=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=gtcIHEg+ph2IJp1WJwEVEk3R4hb7SfpYBo9kg5zwfeF9fN/WnQ/3g4N5KdsEraUxJ
-	 a4kPxnUb6bid5gAmKGKCF0eNsTLWvajd+kYVB4502wn7qiMsf11sjF4R9lpE6mCSR+
-	 P67vfBvqBl1xbYZsCu2vX1bxZGrZ52K4QMWbuo9F9vjdiw2jK+i6++M5BfJ5MP73Hc
-	 6kOllnuqTh9sjsC7d3K1OIsNLehSe8QcLzIASlA5D65JUPFShxhMhZJ0esq5Y2XylZ
-	 Kw+y5W5Hc6gxWxuEybtqyQNpcVHYHK+xTxB5pnUfeY2DDLHt8hF0/MdFi4v5IQxVVo
-	 BR6VL794/V8cg==
-Date: Thu, 24 Jul 2025 06:19:34 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GnLWkaYS"
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56ODVmo81978144;
+	Thu, 24 Jul 2025 08:31:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753363908;
+	bh=Yb1NoViRB7nkpp60Mxw37GtwJN6/hW6ZuaO1A5RaCSc=;
+	h=From:To:CC:Subject:Date;
+	b=GnLWkaYSrOCY6WXNpziMc2ox9LSAyEpfmU2C51aicHGExXnAaQKYrd9onhC60wy39
+	 4jqc/2U0mNL9Ivci8HWQo4OrRTXOjc4cslYhk/iX6sQ8Be4uP9GGZVPU/Ra13upA59
+	 7bJdf8GCjM9N9FTYZZI48MBFiRd3nyZ5OLQUu7wU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56ODVmgP3136318
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 24 Jul 2025 08:31:48 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 24
+ Jul 2025 08:31:47 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 24 Jul 2025 08:31:47 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56ODViRr504944;
+	Thu, 24 Jul 2025 08:31:45 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <jan.kiszka@siemens.com>,
+        <christophe.jaillet@wanadoo.fr>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] remoteproc: core: Do not process carveout and devmem rsc in attach mode
+Date: Thu, 24 Jul 2025 19:01:44 +0530
+Message-ID: <20250724133144.3776839-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org, 
- olivia.wen@mediatek.com, devicetree@vger.kernel.org, 
- linux-sound@vger.kernel.org, andy.teng@mediatek.com, 
- eugen.hristev@linaro.org, matthias.bgg@gmail.com, 
- linux-mediatek@lists.infradead.org, frank-w@public-files.de, 
- linux-phy@lists.infradead.org, mripard@kernel.org, atenart@kernel.org, 
- sean.wang@kernel.org, ck.hu@mediatek.com, fparent@baylibre.com, 
- granquet@baylibre.com, p.zabel@pengutronix.de, simona@ffwll.ch, 
- tglx@linutronix.de, dri-devel@lists.freedesktop.org, 
- linux-gpio@vger.kernel.org, chunkuang.hu@kernel.org, 
- linux-crypto@vger.kernel.org, vkoul@kernel.org, 
- maarten.lankhorst@linux.intel.com, andersson@kernel.org, 
- linux-arm-kernel@lists.infradead.org, shane.chien@mediatek.com, 
- davem@davemloft.net, herbert@gondor.apana.org.au, broonie@kernel.org, 
- houlong.wei@mediatek.com, mathieu.poirier@linaro.org, 
- linus.walleij@linaro.org, conor+dt@kernel.org, 
- kyrie.wu@mediatek.corp-partner.google.com, daniel.lezcano@linaro.org, 
- mchehab@kernel.org, tzimmermann@suse.de, chunfeng.yun@mediatek.com, 
- mwalle@kernel.org, jiaxin.yu@mediatek.com, airlied@gmail.com, 
- jassisinghbrar@gmail.com, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
- kishon@kernel.org, arnd@arndb.de, linux-media@vger.kernel.org, 
- jieyy.yang@mediatek.com, lgirdwood@gmail.com, sam.shih@mediatek.com, 
- jitao.shi@mediatek.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250724083914.61351-14-angelogioacchino.delregno@collabora.com>
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-14-angelogioacchino.delregno@collabora.com>
-Message-Id: <175335597061.1587930.6517956701582557579.robh@kernel.org>
-Subject: Re: [PATCH 13/38] dt-bindings: remoteproc: mediatek: Remove l1tcm
- MMIO from MT8188 dual
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+When attaching to a remote processor, it is implied that the rproc was
+booted by an external entity. Thus, it's carveout and devmem resources
+would already have been processed by the external entity during boot.
 
-On Thu, 24 Jul 2025 10:38:49 +0200, AngeloGioacchino Del Regno wrote:
-> Even though the MT8188 SoC's Dual-Core SCP IP is practically the
-> same as the one found on MT8195, it doesn't have a dedicated L1
-> TCM and relies only on SRAM.
-> 
-> Set reg/reg-names minItems to 1 globally and override it in all of
-> the conditionals for the SoCs that require more, and then split
-> the mt8195/8188 conditionals to allow specifying only the cfg MMIO
-> on MT8188.
-> 
-> Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../bindings/remoteproc/mtk,scp.yaml          | 23 ++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
-> 
+Re-allocating the carveouts in Linux (without proper flags) would zero
+out the memory regions used by the firmware and can lead to undefined
+behaviour. And there is no need to re-map the memory regions for devmem
+resources as well.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Therefore, do not process the carveout and devmem resources in attach
+mode by not appending them to the rproc->carveouts and rproc->mappings
+lists respectively.
 
-yamllint warnings/errors:
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+Testing:
+1. Tested IPC with remoteprocs in attach mode in TI platforms.
+[However, TI K3 platforms do not use resource table for carveouts,
+all the memory regions are reserved statically in Device Tree.]
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml: allOf:1:then:properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'sram'}, {'const': 'cfg'}] is too long
-	[{'const': 'sram'}, {'const': 'cfg'}] is too short
-	False schema does not allow 2
-	1 was expected
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml: allOf:3:then:properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'cfg'}] is too short
-	False schema does not allow 1
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml: allOf:4:then:properties:reg-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'cfg'}, {'const': 'l1tcm'}] is too long
-	[{'const': 'cfg'}, {'const': 'l1tcm'}] is too short
-	False schema does not allow 2
-	1 was expected
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+ drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250724083914.61351-14-angelogioacchino.delregno@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 825672100528..ef709a5fa73c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -640,6 +640,20 @@ static int rproc_handle_devmem(struct rproc *rproc, void *ptr,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * When attaching to a remote processor, it is implied that the rproc
++	 * was booted by an external entity. Thus, it's devmem resources would
++	 * already have been mapped by the external entity during boot. There is
++	 * no need to re-map the memory regions here.
++	 *
++	 * Skip adding the devmem rsc to the mapping list and return without
++	 * complaining.
++	 */
++	if (rproc->state == RPROC_DETACHED) {
++		dev_info(dev, "skipping devmem rsc in attach mode\n");
++		return 0;
++	}
++
+ 	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+ 	if (!mapping)
+ 		return -ENOMEM;
+@@ -839,6 +853,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * When attaching to a remote processor, it is implied that the rproc
++	 * was booted by an external entity. Thus, it's carveout resources would
++	 * already have been allocated by the external entity during boot.
++	 * Re-allocating the carveouts here (without proper flags) would zero
++	 * out the memory regions used by the firmware and can lead to undefined
++	 * behaviour.
++	 *
++	 * Skip adding the carveouts to the alloc list and return without
++	 * complaining.
++	 */
++	if (rproc->state == RPROC_DETACHED) {
++		dev_info(dev, "skipping carveout allocation in attach mode\n");
++		return 0;
++	}
++
+ 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+ 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+ 
+-- 
+2.34.1
 
