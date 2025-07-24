@@ -1,139 +1,213 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EDD248896
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jul 2025 15:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B74274B46;
+	Thu, 24 Jul 2025 08:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197422; cv=none; b=rPuI+eziZQ3DX7c68WDJPlGNW+t+fJE/LAYDDxoYVSNXx5Jswyw4hbgLn+2gDDR8x1y8PI6l4uVk2AAM297M+JaU5O7z9t4I1+s5bl3BIjkasHhH4Vj91UzDbkUCUkIYEqLJhduwFnDkc4DhYf0Wh/M/vjv+v9P2VQAwXST/eZ0=
+	t=1753346369; cv=none; b=grUP/HrZ0h5Igs4NpkAMYSo9WrOsPD4dUd9faxE8zOLqOqCX/flK/Cd+lJN+7qPp1Qh2YVL0a2JAOLqoSNfpWdhw/OpONfPXTLp6AcfED4B0foQOu+16Cfu8sjN9H8KlEfVYqVhjPkITQrX5gvE8Gb1Ahx/w+EWdL7oSoOQRsI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197422; c=relaxed/simple;
-	bh=PdMBMBDbTmgkREq8Szn7ylbIItPWbL2sfvCT+Ci/LFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoIgqwfYk6UqBsqv2iGj0ewPEOLSeArszOs8A+oQZf+eiGJRaJFgOqxJRR8g2RA/mDpJ4CZysLdJZhhBP23xCF5ZoM67pl6+F0qVFb0ADBQLGZCtdT630qAksA4nzzyPhRCbu1Ptkxxtak+3gmZjnCa0tZGYiyoLD0Uk56y6ABQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LWewC+kF; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753346369; c=relaxed/simple;
+	bh=4NBMeskJJYDnenHlSqSeWLJKYF+YSmg93IfAieUBW9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FR6p4leeOGnGY4soGXHJzOI5gsf1kwmGHeijHArQw3/dhkZCzLsQvfgjvGi8QxWgfSRRYmM9jF0CK4j/JheT/XX6IwDuw+LbpM/IMHb5jOOn/16r5c3Fi7pMNDe7fqHZFGYOav/u/bckj3zRIOubye1rfGPCZPCDZ5JrLAcAVR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SFfgW1X8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LWewC+kF"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74264d1832eso7113941b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Jul 2025 08:17:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753197420; x=1753802220; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngGHnN+wVTePIbSvvDu8hrTxMCBEaKhAX0lcY1Jf1Tg=;
-        b=LWewC+kF7b/cC1HTK25mQjAlCAlZKQhBmcKVZrOo5a7xZYYfYTF817JHONc9By32L/
-         wghxhinZpL92juW35Rwsjh3SbJGpbAprbPFl9rqy82zB9LO63BywbUOGtJO8FpJx3JJK
-         edNickmvWBMUpFc2gF8I9orzMOgcO0HGF8u5cZGLX+XYnA3RjU1nXTzu4Lq8iQVIkaLK
-         3vilprfDzjfORSwPs3fL93oPJMZLQJh45bcLW/ZhXAA/KRjLOuiIlesGKVZMopMsP2Fk
-         3kFTNxDcJh9U4cz6f3VC9VQdWRYFslmsvCMuuKw1AcUAtcCzj/HNsAwYh6mnndk3v2ti
-         77lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197420; x=1753802220;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngGHnN+wVTePIbSvvDu8hrTxMCBEaKhAX0lcY1Jf1Tg=;
-        b=EOhxi1k+6SuAxDxwuYAYCT21ru6wNKCTTyvu6Y4eGt0FGOVEjvbd3X+4Shjtt8V1hh
-         ux0BGXn37MQs17leKVruklNMt5QI9b46IsFerW9ojHhmSUtmrKkTe0ifN556NftArEnL
-         lfChT3rMZoYILEpSVeT6WBoedPYFw2VZ42gmACkPOimI9RtjHQgd8f1Px07xq80aiZhd
-         /bvllj0TEQXMYzU16pgkiFYdAmflnuqqzQvjRYtGazxQVZcR+uYIQcuuRBdENc3F/zdg
-         7MfKSdNTO0+jcu0FZUcqTHjLryWtTPCSfJf51Qt+O0y/6dgP2FxCLfLRKrpWP211sZ9d
-         kQbA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4eruqUZa0z3/1tJ9AaFCjWctUNV+f7HLfiGAGoTXdY9IFTi01Fm3zvbs9iQI3UB9oRAf8mS+nROr89OKBOH6O@vger.kernel.org
-X-Gm-Message-State: AOJu0YywLL5g7X2kGQ5XUKUSaJToFEpPovl+2UMq/EXtzvH9dAvHhFUo
-	q2QSGGg3gtXIENDvh1gTmaHEre1Tja56DHwV6vHV8gk4vjP9JTSgpvfhGgPvL8m2NRjop5PjwFq
-	FarOfsLo=
-X-Gm-Gg: ASbGncsCVh2Cu/LwSiAcK9Vb4b+n/C2Fn4KbWiDHqJVSBK8I4D8tCcwOinyQYxdif0g
-	twzEQ+7HZains+wPdlpIogwbaa/fSTXNGsNA0zUVKVy9HLfK8RPXmqGi6j6qZa3MsOctZtfQijo
-	UP45mLpoMWo//QUi2s9wyVtX/UEb3jA54NhjPZLiljktlqsASzw2v8YjqzRISijdX7sBe6jI2QB
-	+IK8GrybHiwbRIDGoiEnm25L8WsLDkEVB6qjbq+mT175EORnSNJxU3Wjj3lj5t3G2oTtzaI948W
-	nQw0HzSfwApZUtr35u3G2fRL/Pg3qYK9MYOUIbm+mo0tH5Lk1eTfPQrRn/gOqNRHA+DHq6avivg
-	RxMPtYAWXuGhZ1uERJxF2OlFlug==
-X-Google-Smtp-Source: AGHT+IERDsmZrSb6T3xrKFJ5eyMKVGje4EKWy128gDJPtvFbEZ2lIVjD/hPVUzYvwIvIMuIoNCXtWA==
-X-Received: by 2002:a05:6a20:a109:b0:232:1668:849f with SMTP id adf61e73a8af0-2381376841bmr39703159637.38.1753197420257;
-        Tue, 22 Jul 2025 08:17:00 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:20c2:197e:4b2b:9e1d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe67facsm7329696a12.9.2025.07.22.08.16.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 08:16:59 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:16:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: xlnx: disable unsupported features
-Message-ID: <aH-raYufMNNipI7u@p14s>
-References: <20250716213048.2316424-1-tanmay.shah@amd.com>
- <20250716213048.2316424-2-tanmay.shah@amd.com>
- <aH5bynQwaHbCJR3f@p14s>
- <ada00b1e-b717-4051-9b33-3f43b5c08097@amd.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SFfgW1X8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753346365;
+	bh=4NBMeskJJYDnenHlSqSeWLJKYF+YSmg93IfAieUBW9w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SFfgW1X8GoYI4sLbMqsbPp0GVsh2Cpeh5In9VC6Zz3n05nZQDpl6q6RkZlvlfyq64
+	 NdLQadh6AdBs0l+SzJZIr5lnSg5ndZjvvPA3eAheT+9xiSWOuxTYvphf4jpzQJpfwv
+	 SVNm6JaH5Xn+0PRwm/w3sGIrNgy7R/LDuBsE/WPf+vfYprQuEhjvP30VnFa3bTrXmW
+	 gyB30ejOXqbTeR4IIjC7vY4L5DzCNjWyUI41+lY3MnyBTIcJYHy00hNx3A2QAPOV/W
+	 +mGT71Oa1FEHEbaDpdvGDbR+iHqM/ezow8Mj56sUt84sQepXREM13OFjolgFO0tYym
+	 oa6SoAoo78OUw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0509D17E0FC2;
+	Thu, 24 Jul 2025 10:39:22 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org,
+	robh@kernel.org
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	jassisinghbrar@gmail.com,
+	mchehab@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	chunfeng.yun@mediatek.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	sean.wang@kernel.org,
+	linus.walleij@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	daniel.lezcano@linaro.org,
+	tglx@linutronix.de,
+	atenart@kernel.org,
+	jitao.shi@mediatek.com,
+	ck.hu@mediatek.com,
+	houlong.wei@mediatek.com,
+	kyrie.wu@mediatek.corp-partner.google.com,
+	andy.teng@mediatek.com,
+	tinghan.shen@mediatek.com,
+	jiaxin.yu@mediatek.com,
+	shane.chien@mediatek.com,
+	olivia.wen@mediatek.com,
+	granquet@baylibre.com,
+	eugen.hristev@linaro.org,
+	arnd@arndb.de,
+	sam.shih@mediatek.com,
+	jieyy.yang@mediatek.com,
+	frank-w@public-files.de,
+	mwalle@kernel.org,
+	fparent@baylibre.com,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 00/38] MediaTek devicetree/bindings warnings sanitization
+Date: Thu, 24 Jul 2025 10:38:36 +0200
+Message-ID: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ada00b1e-b717-4051-9b33-3f43b5c08097@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 11:37:23AM -0500, Tanmay Shah wrote:
-> 
-> 
-> On 7/21/25 10:24 AM, Mathieu Poirier wrote:
-> > Good morning,
-> > 
-> > On Wed, Jul 16, 2025 at 02:30:47PM -0700, Tanmay Shah wrote:
-> > > AMD-Xilinx platform driver does not support iommu or recovery mechanism
-> > > yet. Disable both features in platform driver.
-> > > 
-> > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > ---
-> > >   drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > index a51523456c6e..0ffd26a47685 100644
-> > > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> > > @@ -938,6 +938,8 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
-> > >   	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
-> > > +	r5_rproc->recovery_disabled = true;
-> > 
-> > If recovery is not supported, and it is set explicitly here, does it mean the
-> > present upstream code is broken?  And if it is broken, how was this tested in
-> > the first place?
-> 
-> I think upstream code can be improved to change "recovery_disabled" to
-> "recovery_enabled" and set it in each platform driver if feature is
-> supported and keep it disabled by default.
-> 
-> When upstreaming base driver I wasn't aware that there is recovery feature
-> in remoteproc until recently when I started working on it. I guess too
-> focused on fixing base driver features. That is how I missed to add
-> recovery_disabled and test it as well.
-> 
-> That is why it's better idea to replace "recovery_disabled" with
-> "recovery_enabled" and keep recovery feature disabled by default. Same as
-> "has_iommu". So platform drivers enable it if they actually support it.
-> 
-> I will add recovery feature for xlnx platform later, but until then it's
-> better to disable it in the platform driver.
->
+As Rob pointed out, MediaTek devicetrees are *poor* in the dtbs_check
+tests, and got an infinite load of warnings.
 
-I have applied this set.
- 
-> Thanks,
-> Tanmay
-> 
-> > 
-> > > +	r5_rproc->has_iommu = false;
-> > >   	r5_rproc->auto_boot = false;
-> > >   	r5_core = r5_rproc->priv;
-> > >   	r5_core->dev = cdev;
-> > > -- 
-> > > 2.34.1
-> > > 
-> 
+This series starts attacking this situation.
+
+I didn't really count how many warnings I have resolved - it's a lot
+of them anyway - and I think that this is a good start in any case.
+
+More will come, but I'll be on a long holiday soon, so not from me
+(or anyway not before I come back anyway), but most probably from
+someone else (in August...!).
+
+Cheers!
+Angelo
+
+AngeloGioacchino Del Regno (38):
+  dt-bindings: display: mediatek: dpi: Allow specifying resets
+  dt-bindings: display: mediatek,dp: Allow DisplayPort AUX bus
+  dt-bindings: mailbox: mediatek,gce-mailbox: Make clock-names optional
+  ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks and clock-names
+  dt-bindings: crypto: inside-secure,safexcel: Mandate only ring IRQs
+  dt-bindings: timer: mediatek: Add compatible for MT6795 GP Timer
+  dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing pwm_ch7_2
+  dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing base reg
+  dt-bindings: pinctrl: mt6779: Allow common MediaTek pinctrl node names
+  dt-bindings: regulator: mediatek,mt6332-regulator: Add missing
+    compatible
+  dt-bindings: regulator: mediatek,mt6331: Fix various regulator names
+  dt-bindings: regulator: mediatek,mt6331: Add missing compatible
+  dt-bindings: remoteproc: mediatek: Remove l1tcm MMIO from MT8188 dual
+  dt-bindings: media: mediatek,mt8195-jpeg: Allow range number in node
+    address
+  dt-bindings: phy: mediatek,hdmi-phy: Fix clock output names for MT8195
+  arm64: dts: mediatek: mt6331: Fix pmic, regulators, rtc, keys node
+    names
+  arm64: dts: mediatek: mt6797: Fix pinctrl node names
+  arm64: dts: mediatek: mt6797: Remove bogus id property in i2c nodes
+  arm64: dts: mediatek: mt6795: Add mediatek,infracfg to iommu node
+  arm64: dts: mediatek: mt6795-xperia-m5: Fix mmc0 latch-ck value
+  arm64: dts: mediatek: mt6795-sony-xperia-m5: Add pinctrl for mmc1/mmc2
+  arm64: dts: mediatek: Fix node name for SYSIRQ controller on all SoCs
+  arm64: dts: mediatek: mt7986a: Fix PCI-Express T-PHY node address
+  arm64: dts: mediatek: mt7986a-bpi-r3: Fix SFP I2C node names
+  arm64: dts: mediatek: mt7986a-bpi-r3: Set interrupt-parent to mdio
+    switch
+  arm64: dts: mediatek: acelink-ew-7886cax: Remove unnecessary cells in
+    spi-nand
+  arm64: dts: mediatek: mt7988a: Fix PCI-Express T-PHY node address
+  arm64: dts: mediatek: mt8173: Fix pinctrl node names and cleanup
+  arm64: dts: mediatek: mt8183: Fix pinctrl node names
+  arm64: dts: mediatek: pumpkin-common: Fix pinctrl node names
+  arm64: dts: mediatek: mt8183-pumpkin: Add power supply for CCI
+  arm64: dts: mediatek: mt8183: Migrate to display controller OF graph
+  arm64: dts: mediatek: mt8183-kukui: Move DSI panel node to machine
+    dtsis
+  arm64: dts: mediatek: mt8195: Fix ranges for jpeg enc/decoder nodes
+  arm64: dts: mediatek: mt8195-cherry: Move VBAT-supply to Tomato R1/R2
+  arm64: dts: mediatek: mt8195-cherry: Add missing regulators to rt5682
+  arm64: dts: mediatek: mt8395-kontron-i1200: Fix MT6360 regulator nodes
+  arm64: dts: mediatek: mt8516-pumpkin: Fix machine compatible
+
+ .../crypto/inside-secure,safexcel.yaml        |   2 +
+ .../display/mediatek/mediatek,dp.yaml         |   3 +
+ .../display/mediatek/mediatek,dpi.yaml        |   7 +
+ .../mailbox/mediatek,gce-mailbox.yaml         |  11 -
+ .../media/mediatek,mt8195-jpegdec.yaml        |   2 +-
+ .../media/mediatek,mt8195-jpegenc.yaml        |   2 +-
+ .../bindings/phy/mediatek,hdmi-phy.yaml       |  25 +-
+ .../pinctrl/mediatek,mt6779-pinctrl.yaml      |   4 +-
+ .../pinctrl/mediatek,mt7622-pinctrl.yaml      |   5 +-
+ .../regulator/mediatek,mt6331-regulator.yaml  |  19 +-
+ .../regulator/mediatek,mt6332-regulator.yaml  |   7 +
+ .../bindings/remoteproc/mtk,scp.yaml          |  23 +-
+ .../bindings/sound/mt8192-afe-pcm.yaml        | 106 +++++++-
+ .../bindings/timer/mediatek,timer.yaml        |   1 +
+ arch/arm64/boot/dts/mediatek/mt6331.dtsi      |  10 +-
+ arch/arm64/boot/dts/mediatek/mt6755.dtsi      |   2 +-
+ arch/arm64/boot/dts/mediatek/mt6779.dtsi      |   2 +-
+ .../dts/mediatek/mt6795-sony-xperia-m5.dts    |  40 ++-
+ arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   3 +-
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |  52 ++--
+ .../mediatek/mt7986a-acelink-ew-7886cax.dts   |   2 -
+ .../dts/mediatek/mt7986a-bananapi-bpi-r3.dts  |  11 +-
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi     |  12 +-
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |  28 +-
+ .../boot/dts/mediatek/mt8173-elm-hana.dtsi    |  34 ++-
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  | 138 +++++-----
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts   |  60 +++--
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi      |  28 +-
+ .../mediatek/mt8183-kukui-audio-da7219.dtsi   |   4 +-
+ .../mediatek/mt8183-kukui-audio-ts3a227e.dtsi |   2 +-
+ .../dts/mediatek/mt8183-kukui-jacuzzi.dtsi    |  27 +-
+ .../dts/mediatek/mt8183-kukui-kakadu.dtsi     |  43 +++-
+ .../dts/mediatek/mt8183-kukui-kodama.dtsi     |  40 ++-
+ .../boot/dts/mediatek/mt8183-kukui-krane.dtsi |  40 ++-
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 101 +++-----
+ .../boot/dts/mediatek/mt8183-pumpkin.dts      |  12 +-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 239 +++++++++++++++++-
+ .../dts/mediatek/mt8195-cherry-tomato-r1.dts  |   1 +
+ .../dts/mediatek/mt8195-cherry-tomato-r2.dts  |   1 +
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |   3 +-
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  30 ++-
+ .../mediatek/mt8395-kontron-3-5-sbc-i1200.dts |  16 +-
+ .../boot/dts/mediatek/mt8516-pumpkin.dts      |   2 +-
+ .../boot/dts/mediatek/pumpkin-common.dtsi     |  18 +-
+ 44 files changed, 843 insertions(+), 375 deletions(-)
+
+-- 
+2.50.1
+
