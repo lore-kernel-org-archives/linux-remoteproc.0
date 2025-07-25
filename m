@@ -1,112 +1,115 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557082528E1;
-	Fri, 25 Jul 2025 20:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9195D4501A;
+	Fri, 25 Jul 2025 20:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753473931; cv=none; b=pToxbYLiF5Drx382hQDdY0gq0vCQ9YfNfxrsDaaANb8K1fPUg1UlQScgHZJtlGsisdwlD2H5PPo1LlqVUsw4u3WzBMzSr0/+XRwtSSPdHlWiG023VpJKqpp4ueqGYxyvnfHCtsvpB80+gJKnUjFDp+hgQeKZv09gRM/3tFZD5HU=
+	t=1753475217; cv=none; b=RG/j6L8dnYMkfmasQ3/N0vms589nXBDwrW6HshP1IYHR8rmWzAz2zcWvC9p29ZC1wuLAp8p5yZpDoM8Qe8xYIQ6SQcoh6HT91uUBBxiF343uuGsOh5dwKC9l65d5YS61Afn4HFwl5Ry3cmZcrepSGiG29LONj3P9/Pil/e4keXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753473931; c=relaxed/simple;
-	bh=G7TSS4tuTL72Ricam6/+6Z2OHzlqs4AUasqDmHt40f0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Opd4iFn/qKFjaNth5sZ1R2Z6mmr4s26gkwcygons3dPcLy+URWj0S/gLIlqSrNv56qHeKJIUvSpCjKfI7tpRhbG3y53KmaadDkZBDmLmMaO4WMcEqT50CqjmxvO+piHo1A2tS2Uy8REaDd62DPNHtsuH2VGTWtwuMYvP7nTKbiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qhh9f+mL; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=vJRH00nq; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1753475217; c=relaxed/simple;
+	bh=gwiksp3J4bGpqvzDaXhOxRpN1GcS86ZmMLM2DmIXBlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+Pew8ts7urPp9R+Uck1l5rNaMUW3+YWnju6+C8z/+B5aTaaVIlYB7Wtu3Qm98ekXHrfW/LQ0dGo6YcJHHSlN4KRsRKkajOfNXbuwzbMEWkAsfiaD/lzClppVc43SWbHcPtJFfD/ZDxC9JpgqVlMXeWId0owI3iBhlumSDKjrtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGN9Hi1i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qhh9f+mL";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="vJRH00nq"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1753473787; bh=fjdCxOheBnp1H4xqfM+Evdw
-	4VATnT7h6OsZZjNrCxdA=; b=qhh9f+mLYuK4d6T6CjfO3GO7PwNLmxLEI5Fqna6o5n1ZWJkYQp
-	fB8BzzsTiC6Eb1xu3Q4aYFN68exoQib/UfHEUPf53AG3ponv6teSZYd72F30S6X/v7Y9LOB6aX+
-	rBCIwny7epoGaBa3OWVaFfysg9jZ0xDxvraT+TffVeRvfEf0EzOYgxxrdlXiAOpaHbODUrml+lU
-	DeGgrZRjLdlOzVthwycPJ7fr/pWsraaPNy6jKO3IZLOjj45YJRZ9QkCjUgn31uz2fYzCOAJY2G3
-	f00r9eYbgoKybkw8jj14k218DDx9QlFWcJ1YU39NUyr0uyuhInmY5zFXov6jKFUFDTg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1753473787; bh=fjdCxOheBnp1H4xqfM+Evdw
-	4VATnT7h6OsZZjNrCxdA=; b=vJRH00nqSA5IaA+HpolrvksE3MbR5hsht4ZozCvSxI6Zc4FUtw
-	i6i4OJpd7Bx1DdjhEK212AAJF2RHYBCQAjCQ==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Fri, 25 Jul 2025 22:02:58 +0200
-Subject: [PATCH v2] rpmsg: qcom_smd: Fix fallback to qcom,ipc parse
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGN9Hi1i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD53CC4CEE7;
+	Fri, 25 Jul 2025 20:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753475217;
+	bh=gwiksp3J4bGpqvzDaXhOxRpN1GcS86ZmMLM2DmIXBlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hGN9Hi1imKljswG6X/DBWlkd92MGaNXkl7nCpM96OQLcPyU/TkuYmNgKqvYkbtIVR
+	 9dckup9w/GKbTvNcPaRj1rQ77iwFaIjwjQJQaekWBHEzdCiBLNfF+qnHajVK1zC8T2
+	 fEvTe7JTB/wj79CyGw4A/ansr+AR4VppgZXBymyhe5oAQt0Z2tmwxe0DngswssY1h+
+	 /kyUy6w2NxgYSmTlvqwU4n4bVhYX9RCEZ0BaoTO9ElMI5nyzjj++ig1nJ4q+GO0v9F
+	 wJwMkqxcH4BdiQte7QQqI9MDqYfQBMxJAWlvaDvqDWvRMUTD3lgPtZMZNoj8a+7PJG
+	 yUHsU9u7dT27A==
+Date: Fri, 25 Jul 2025 15:26:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, krzk+dt@kernel.org, conor+dt@kernel.org,
+	chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
+	mchehab@kernel.org, matthias.bgg@gmail.com,
+	chunfeng.yun@mediatek.com, vkoul@kernel.org, kishon@kernel.org,
+	sean.wang@kernel.org, linus.walleij@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, andersson@kernel.org,
+	mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
+	ck.hu@mediatek.com, houlong.wei@mediatek.com,
+	kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
+	tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
+	shane.chien@mediatek.com, olivia.wen@mediatek.com,
+	granquet@baylibre.com, eugen.hristev@linaro.org, arnd@arndb.de,
+	sam.shih@mediatek.com, jieyy.yang@mediatek.com,
+	frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 01/38] dt-bindings: display: mediatek: dpi: Allow
+ specifying resets
+Message-ID: <20250725202655.GA1826181-robh@kernel.org>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-2-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5HTdK8aiUYdtNVhWAvsSNfMPgK6iCqe-Jsb-OBqQBWsBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250725-fix-qcom-smd-v2-1-e4e43613f874@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIAPHig2gC/3WMywrCMBBFf6XM2pFMTA248j+ki9A8OmASTaQoJ
- f9u7N7luZdzNqiusKtwGTYobuXKOXWQhwHmxaTgkG1nkEKOQklCz298zjlijRb12etZkTJEBrr
- yKK7/e+42dV64vnL57PWVfuuf0EoocNTKCk325KW+RsPpzolTOOYSYGqtfQF/OCPUrQAAAA==
-X-Change-ID: 20250421-fix-qcom-smd-76f7c414a11a
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753473786; l=1940;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=G7TSS4tuTL72Ricam6/+6Z2OHzlqs4AUasqDmHt40f0=;
- b=u/9AN8zyE7zgNdDxKes6JIfinxfrqWZT5lnyrBInPqedjDMxV7cCoNWmZb9P/4sRxGD2HNDQT
- URy8HaJfxiLDI/2kPpNn+/RvCNAF0SDIXnFjghbhE0pH1CGH3IfQrem
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+In-Reply-To: <CAGXv+5HTdK8aiUYdtNVhWAvsSNfMPgK6iCqe-Jsb-OBqQBWsBg@mail.gmail.com>
 
-mbox_request_channel() returning value was changed in case of error.
-It uses returning value of of_parse_phandle_with_args().
-It is returning with -ENOENT instead of -ENODEV when no mboxes property
-exists.
+On Thu, Jul 24, 2025 at 05:16:21PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Jul 24, 2025 at 4:39 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+> >
+> > Even though the DPI IP has a reset bit on all MediaTek SoCs, it
+> > is optional, and has always been unused until MT8195; specifically:
+> > on older SoCs, like MT8173, the reset bit is located in MMSYS, and
+> > on newer SoCs, like MT8195, it is located in VDOSYS.
+> >
+> > For this reason, allow specifying the resets and reset-names on
+> > all MediaTek SoCs.
+> >
+> > Those properties are optional because there are multiple ways to
+> > reset this IP and the reset lines in MM/VDO are used only if the
+> > IP cannot perform warm-reset.
+> >
+> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > ---
+> >  .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > index b659d79393a8..eb4f276e8dc4 100644
+> > --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> > @@ -102,6 +102,13 @@ properties:
+> >        - port@0
+> >        - port@1
+> >
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: dpi
+> > +
+> 
+> Do we really need the name if there is only one though?
 
-Fixes: 24fdd5074b20 ("mailbox: use error ret code of of_parse_phandle_with_args()")
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Tested-by: Stephan Gerhold <stephan.gerhold@linaro.org> # msm8939
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-mbox_request_channel() returning value was changed in case of error.
-It uses returning value of of_parse_phandle_with_args().
-It is returning with -ENOENT instead of -ENODEV when no mboxes property
-exists.
+Not really, but if it is already in use then easier to just fix the 
+binding than both the binding and dts.
 
-ENODEV was checked before fallback to parse qcom,ipc property.
----
-Changes in v2:
-- Drop already applied patch.
-- qcom_smd: rebase
-- Link to v1: https://lore.kernel.org/r/20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org
----
- drivers/rpmsg/qcom_smd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index f0f12e7ad2a61922723c16e45738e93bd432c6c6..42594f5ee4385c0071c91d9a5a05fb8517c82bc0 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1368,7 +1368,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	edge->mbox_client.knows_txdone = true;
- 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
- 	if (IS_ERR(edge->mbox_chan)) {
--		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
-+		if (PTR_ERR(edge->mbox_chan) != -ENOENT) {
- 			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
- 					    "failed to acquire IPC mailbox\n");
- 			goto put_node;
-
----
-base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
-change-id: 20250421-fix-qcom-smd-76f7c414a11a
-
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
-
+Rob
