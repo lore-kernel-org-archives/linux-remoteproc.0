@@ -1,83 +1,83 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8D8232368
-	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 10:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF483D994
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 11:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753440655; cv=none; b=L28Dp6t+2lLeDBGk/FYsZfu1jVE5JvgD292kcszr/WYYMX+2bVZRnOxlymp+9bjynP8kbI4w2mj+FcOZl0Zc8ZXizflYFKoX51ecASTdyz3bRCVCL6+4UwKDqNIbf0BtX0i0FOi6Msg6CMLv4kGY53aUEK3zvaOpAbwLspAuOnw=
+	t=1753443905; cv=none; b=l/Vqj7sTNAUDw7ned0zWcy6zDLq7RZ/qz3Ly5lYFSqwN/rV/gWJfpRzXNUU/Mapy7oFz1rlxT/5ZXDRRhGaROKBLK9bdK84Q/3rnraigxnZlhRzWia+o97rSKIJrpgVKoD2ARh9w42OfnALRsJ2cwGEM0yhojEHwmYOKPvbBAr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753440655; c=relaxed/simple;
-	bh=KqH01V/ZQOGZhBJpHb3zgphhQB1Sh25Ttt4gkVmURXc=;
+	s=arc-20240116; t=1753443905; c=relaxed/simple;
+	bh=IU7jvnAwzmp5GuJHgplXAk58lqyd9tH4hjc214tIw4o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T0OsbNpGrBr4HSKomphxWpmRgGRHzsBiIV3VH+tVtn5cWu5lTfpR7u/4JfUfXoaYEd8pqA9BPWopHesWtQEjTcEH0e7tErlhOFu/00pl2vIidxH4XfVH3DCU/zgYA3X0yVhQdeFI2BLZTILysglIDuJohNfzJotJYV4Inm/ewIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=blVMQV/P; arc=none smtp.client-ip=209.85.210.49
+	 To:Cc:Content-Type; b=keW2HemrI8qeleodKpkc2x2AKb0u4h4eHHrL4kPQstYqB533jNCmc+l59Pee+dCfRpgdgDKXCPcLxpDaYlv4Gdefqt0fFliI2JZ4/+ZFAa8sdRwVmWDp2yYh3eNRZBlbVGT2/mKVFjCAvBJYd0Q5x8Qj1hVGkCK6Y1cmw4QKYok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nR0np34M; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="blVMQV/P"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-73e88bc3891so1125612a34.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 03:50:53 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nR0np34M"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e33d36491dso277263385a.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 04:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753440652; x=1754045452; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753443903; x=1754048703; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YfE909p8Iq119G3J/2SxiBSXlMMdz4SFa3hpgANK2k8=;
-        b=blVMQV/P1dLyhrQy6WaudrByj4QcboI6TV+1s44BTDyNKPmHjQrspwcxw1yLFsTNi1
-         kXTfrOay+4KAvWWCLcWzzpvSGUqjGMvibqCfMPQZ+yMvORn2XAhV/0CqEBlRoNMPcs26
-         Ca7Qp9efSRiE/aW2bYY+s883bwhALW0oP9J/Q=
+        bh=liSvRWA4OuPhKZFuMFSYIULFcTNts/JUeGi4znSdmNM=;
+        b=nR0np34MRawC0+WJ7lS16XVtT+KrxO2i5py82tyIMsh5aSC+gyqDjg9gbU215PeGyH
+         QaXI1DvU0i4DUbSD62OWo52DVd/Dc+hBnwsizZCIrRteI38qvaVEAQHx0tNWrfye/HMP
+         0ugr++BYpqb0KgI4zwV6SDYG24htS1ki1PlgA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753440652; x=1754045452;
+        d=1e100.net; s=20230601; t=1753443903; x=1754048703;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YfE909p8Iq119G3J/2SxiBSXlMMdz4SFa3hpgANK2k8=;
-        b=Hj2ZmWduFc0wzniE7oqZYQq9Tk7V7RgiFj7z9sWuZhq8b7vhje0tXHr8dlR9PbAW3g
-         AOqMI/4A+5Tti/tCA4eJim4RQmImIQR5Pjpk3okfPTCrYuuvkMqz4UxNo9gQp2ck3XdN
-         sTOfCONWUTfJ+732rhAKl/m4vs5mwZhslytT+JyyPd6e1gzZOvqzwynQjsCf0S1hRBio
-         1sf9f1HMFJdpW00cIl44E0OQuCihF/BHvlVa6f58E2s+tTIpnpHMS7b3nR21YjEMzEFU
-         na73iLHl5AOmqN2jI2NQ9gP/MspUpAk6RtbsFSRQsjdzZa6c2o4GxU4M8VrP+Qtde8Q6
-         fSOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVST9lhWC8u8Pr76PIzPBSLRtOGiAJXFymTWQl61dLSgXwtrqAu3h4qAnIXQRPbl9KfDhA41jLG8tQhYMgYQMqn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+/Q5ddDTwOAWxm5TInlWOaGuEhpwExbqBlS0A69zS1BvlpcAE
-	ysWNGaxpWxdoFPV9PBKkhEeuJajB7fPdEZklbh4F+6IpLphlGVOl9Q1QDqxh3a6jxU/nhFp9Z29
-	OpQUW1A==
-X-Gm-Gg: ASbGncvPcxNjYo1bthcu+ZBMHenaWguf3pjuOQLMc6qIlITZt70kcmYEN3O1BOJLDEV
-	XL0yUNPB+N8pQTNwH+8JeX2cs7Sc9B5QGMNe3deORGrFmTamuHhUxMK/sKvR7IzlkX1Cb/wu3eV
-	0hUip4MCljWPt0RaBzFjIHt3Sgh/a3tyZ6Rp+16b2USjHjNtkYhhpLDFBP2p0k8rTKS6y0A37Qx
-	AueKXsM0QugXnKWK3M4NG1Xi2dCKQbp0eSHtq0pSgysuOayvpQUHx2Vc3sZyeTaUMSrDUAt/Hqn
-	d34mkNCYSkiFrl+JNzWUpAh6ZKVmugTUEgURNWB3DRIUuT6Wihf8xzaF/WEWqVhd7eS2eN1+ntE
-	KMeE009TsXzLi2KEh89gvcNZGofFKeGkCwnB0T7P2DUGNFqjOt19IwmFWLizW5A==
-X-Google-Smtp-Source: AGHT+IHyZNfXhJlx79LzWETZVWRGAnn1EeiBWclBn+MMxO99CuxDmlNHj41KFujF5WSv+Z21KoMUuA==
-X-Received: by 2002:a05:6830:3150:b0:73e:9ee1:3d49 with SMTP id 46e09a7af769-7413dd4287cmr784288a34.19.1753440652101;
-        Fri, 25 Jul 2025 03:50:52 -0700 (PDT)
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com. [209.85.167.176])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7412d31e128sm628441a34.55.2025.07.25.03.50.51
+        bh=liSvRWA4OuPhKZFuMFSYIULFcTNts/JUeGi4znSdmNM=;
+        b=BPUSJEqPJezgKRGjLocg22+XwGsuSyIifQfS5ex1pJ9i0ZKxceK0uHyXP6P1DYf2LX
+         00xvwgE9PmxEy/HiNZgzViEEPOqYnFFoAmGMETYmbstyNVK1yphkKyj2KYffpRzDa0S3
+         xO//N2bl5w4wJ1crx6MR6TXnQU/UoiDOMwR2w5SQxBpqsALu1K5rrwIbwqvNO8TEDsTm
+         cvxXTmNbG3/iYLQAhUI0wdC1sXitNmKwKkPaKzM0Z9FHUPCjZroeN/INwrXTmuf5zYa5
+         Dv+vU4LCJM/obs/TJvA7/Hvc+R2knLSGP2ONXTKxzOR39I5T0lhqKvP3CCFBEALCmt9m
+         Azsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX+P8XtLECRXp5hTlpc0+QahwrERGblqoak98OWWkkwK7Pdk7L0Al1Tgk3P2EBqh22DJUlI5I8dv8VLFSyIFZq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzkrcUZxGW9x64h5TlA70cT6WWKDuZuqtPUxJQ64iQ1uDvdIbT
+	yJNy4xXdmZbOf6gTz+vPf9HQuYuxwf5GD5j3pRMDLtds3GuDo2JTViZOmX3baIUXuWHTBxTJEbY
+	hqqytwQ==
+X-Gm-Gg: ASbGncvlfin1yRT3aDISvjLp6h++KPEMozQB7byxaElHhn8ePrm3bIm/NIoJvesiiLA
+	o7Fi9CnIimjk3FICQxWY1eOeyHa6hEAL/yO+oT8Qj4bRm23Ilh5m9MANbvlxZlWRsj1pNre4mjL
+	tztq7VUlmTSQw7Yy+czRWZ0BpwJ3Bg2gG/P0Fg40hUTCNX5Os0GFe7PyO33Q0aw7I6+RI5RqQBk
+	zUTychRM9xU2dZWPMWzxAMdbLhP+TAarjK12bkFGj1gDnrNvJiNWN+PryWV0aOHVBH1zCv9huuE
+	29N/buHix3NM5/lPN7MjAHaVRYqsqjbrAYJCZ2wl1Z+mthOi2agby/1qQO7LoPpaRQR8//cQR1y
+	+9qrwVGH1JlKvW6QIuSVLU9uO5eKnMpcVK0ZlhOae1IjQP0yYjPFotVjeGg==
+X-Google-Smtp-Source: AGHT+IERg0AXb4bYzVHVkmdlMlwlUCeFKhAfw5sS00RmlX8Do2gt1CcXsF0lyiZA9ePl67zQHCnXgA==
+X-Received: by 2002:a05:620a:3c0a:b0:7e3:2f19:deb1 with SMTP id af79cd13be357-7e63bfb3605mr112635085a.33.1753443902535;
+        Fri, 25 Jul 2025 04:45:02 -0700 (PDT)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com. [209.85.219.51])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632d4d0bfsm241298885a.11.2025.07.25.04.45.02
         for <linux-remoteproc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 03:50:51 -0700 (PDT)
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-41cfa50c73dso1023602b6e.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 03:50:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbnL8ul2JkuasoXc+yht4T4T5043ubiWAvK5QnW6C+6QfZh2mdBmEjQvvdHd9OcnFQjf4Aq3UEgiWJ6y//miR4@vger.kernel.org
-X-Received: by 2002:a05:6102:3713:b0:4e9:b7e3:bdcd with SMTP id
- ada2fe7eead31-4fa3fad468amr285963137.12.1753440273293; Fri, 25 Jul 2025
- 03:44:33 -0700 (PDT)
+        Fri, 25 Jul 2025 04:45:02 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fac7147cb8so27027726d6.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Jul 2025 04:45:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6bJK3vcB7zxKQTxBefZFNw+xPTmCTZosrsHmuj6xHYkB50VU2+vMVARWDFGcV0i8k1eyyhUFn/czAHwtwdq7j@vger.kernel.org
+X-Received: by 2002:a05:6102:6891:b0:4dd:b82d:e0de with SMTP id
+ ada2fe7eead31-4fa3ff44195mr308667137.17.1753440019738; Fri, 25 Jul 2025
+ 03:40:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-24-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250724083914.61351-24-angelogioacchino.delregno@collabora.com>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-38-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-38-angelogioacchino.delregno@collabora.com>
 From: Fei Shao <fshao@chromium.org>
-Date: Fri, 25 Jul 2025 18:43:57 +0800
-X-Gmail-Original-Message-ID: <CAC=S1njhu11nHpyMULbK6PE-BLrBMq+d397pDU6gBzgo7xivXg@mail.gmail.com>
-X-Gm-Features: Ac12FXyc7RkTIKa4HnSlf_SM-GYdwIREUn6AcAkOBKhNuekdCdvFzy29o7Ufs68
-Message-ID: <CAC=S1njhu11nHpyMULbK6PE-BLrBMq+d397pDU6gBzgo7xivXg@mail.gmail.com>
-Subject: Re: [PATCH 23/38] arm64: dts: mediatek: mt7986a: Fix PCI-Express
- T-PHY node address
+Date: Fri, 25 Jul 2025 18:39:43 +0800
+X-Gmail-Original-Message-ID: <CAC=S1njv7qrL0LyhZsp=HVdxxDo2bA7FbCkMVqJ9R9qpg-0hMw@mail.gmail.com>
+X-Gm-Features: Ac12FXzAeqGgOrEJjRR1J4ryO0U3L8RJWv4_H_TyT4RYPsIpmGY3ViSbTr41uno
+Message-ID: <CAC=S1njv7qrL0LyhZsp=HVdxxDo2bA7FbCkMVqJ9R9qpg-0hMw@mail.gmail.com>
+Subject: Re: [PATCH 37/38] arm64: dts: mediatek: mt8395-kontron-i1200: Fix
+ MT6360 regulator nodes
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
 	daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org, 
@@ -102,56 +102,109 @@ Cc: linux-mediatek@lists.infradead.org, robh@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 5:49=E2=80=AFPM AngeloGioacchino Del Regno
+On Thu, Jul 24, 2025 at 5:51=E2=80=AFPM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> The PCIe TPHY is under the soc bus, which provides MMIO, and all
-> nodes under that must use the bus, otherwise those would clearly
-> be out of place.
+> All of the MT6360 regulator nodes were wrong and would not probe
+> because the regulator names are supposed to be lower case, but
+> they are upper case in this devicetree.
 >
-> Add ranges to the PCIe tphy and assign the address to the main
-> node to silence a dtbs_check warning, and fix the children to
-> use the MMIO range of t-phy.
+> Change all nodes to be lower case to get working regulators.
 >
-> Fixes: 963c3b0c47ec ("arm64: dts: mediatek: fix t-phy unit name")
-> Fixes: 918aed7abd2d ("arm64: dts: mt7986: add pcie related device nodes")
+> Fixes: 94aaf79a6af5 ("arm64: dts: mediatek: add Kontron 3.5"-SBC-i1200")
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
 
 Reviewed-by: Fei Shao <fshao@chromium.org>
 
 > ---
->  arch/arm64/boot/dts/mediatek/mt7986a.dtsi | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  .../mediatek/mt8395-kontron-3-5-sbc-i1200.dts    | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a.dtsi b/arch/arm64/boot/=
-dts/mediatek/mt7986a.dtsi
-> index 559990dcd1d1..3211905b6f86 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
-> @@ -428,16 +428,16 @@ pcie_intc: interrupt-controller {
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dt=
+s b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+> index 4985b65925a9..d16f545cbbb2 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+> @@ -352,7 +352,7 @@ regulator {
+>                         LDO_VIN2-supply =3D <&vsys>;
+>                         LDO_VIN3-supply =3D <&vsys>;
+>
+> -                       mt6360_buck1: BUCK1 {
+> +                       mt6360_buck1: buck1 {
+>                                 regulator-name =3D "emi_vdd2";
+>                                 regulator-min-microvolt =3D <600000>;
+>                                 regulator-max-microvolt =3D <1800000>;
+> @@ -362,7 +362,7 @@ MT6360_OPMODE_LP
+>                                 regulator-always-on;
 >                         };
->                 };
 >
-> -               pcie_phy: t-phy {
-> +               pcie_phy: t-phy@11c00000 {
->                         compatible =3D "mediatek,mt7986-tphy",
->                                      "mediatek,generic-tphy-v2";
-> -                       ranges;
-> -                       #address-cells =3D <2>;
-> -                       #size-cells =3D <2>;
-> +                       ranges =3D <0 0 0x11c00000 0x20000>;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <1>;
->                         status =3D "disabled";
+> -                       mt6360_buck2: BUCK2 {
+> +                       mt6360_buck2: buck2 {
+>                                 regulator-name =3D "emi_vddq";
+>                                 regulator-min-microvolt =3D <300000>;
+>                                 regulator-max-microvolt =3D <1300000>;
+> @@ -372,7 +372,7 @@ MT6360_OPMODE_LP
+>                                 regulator-always-on;
+>                         };
 >
-> -                       pcie_port: pcie-phy@11c00000 {
-> -                               reg =3D <0 0x11c00000 0 0x20000>;
-> +                       pcie_port: pcie-phy@0 {
-> +                               reg =3D <0 0x20000>;
->                                 clocks =3D <&clk40m>;
->                                 clock-names =3D "ref";
->                                 #phy-cells =3D <1>;
+> -                       mt6360_ldo1: LDO1 {
+> +                       mt6360_ldo1: ldo1 {
+>                                 regulator-name =3D "mt6360_ldo1"; /* Test=
+ point */
+>                                 regulator-min-microvolt =3D <1200000>;
+>                                 regulator-max-microvolt =3D <3600000>;
+> @@ -380,7 +380,7 @@ mt6360_ldo1: LDO1 {
+>                                                            MT6360_OPMODE_=
+LP>;
+>                         };
+>
+> -                       mt6360_ldo2: LDO2 {
+> +                       mt6360_ldo2: ldo2 {
+>                                 regulator-name =3D "panel1_p1v8";
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <1800000>;
+> @@ -388,7 +388,7 @@ mt6360_ldo2: LDO2 {
+>                                                            MT6360_OPMODE_=
+LP>;
+>                         };
+>
+> -                       mt6360_ldo3: LDO3 {
+> +                       mt6360_ldo3: ldo3 {
+>                                 regulator-name =3D "vmc_pmu";
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <3300000>;
+> @@ -396,7 +396,7 @@ mt6360_ldo3: LDO3 {
+>                                                            MT6360_OPMODE_=
+LP>;
+>                         };
+>
+> -                       mt6360_ldo5: LDO5 {
+> +                       mt6360_ldo5: ldo5 {
+>                                 regulator-name =3D "vmch_pmu";
+>                                 regulator-min-microvolt =3D <3300000>;
+>                                 regulator-max-microvolt =3D <3300000>;
+> @@ -404,7 +404,7 @@ mt6360_ldo5: LDO5 {
+>                                                            MT6360_OPMODE_=
+LP>;
+>                         };
+>
+> -                       mt6360_ldo6: LDO6 {
+> +                       mt6360_ldo6: ldo6 {
+>                                 regulator-name =3D "mt6360_ldo6"; /* Test=
+ point */
+>                                 regulator-min-microvolt =3D <500000>;
+>                                 regulator-max-microvolt =3D <2100000>;
+> @@ -412,7 +412,7 @@ mt6360_ldo6: LDO6 {
+>                                                            MT6360_OPMODE_=
+LP>;
+>                         };
+>
+> -                       mt6360_ldo7: LDO7 {
+> +                       mt6360_ldo7: ldo7 {
+>                                 regulator-name =3D "emi_vmddr_en";
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <1800000>;
 > --
 > 2.50.1
 >
