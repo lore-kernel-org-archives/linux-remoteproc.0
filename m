@@ -1,285 +1,127 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D419E96D;
-	Mon, 28 Jul 2025 10:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700116; cv=none; b=ZNr2TTJmSCgNRtRvhREXd3z4B6b6jzPbNQp3p22jhzLBbamVDhOGtK304k0XHt884ipftYJT8535Kb0rt4cnV8cEYrjixmy3cGc6AeYRcRhaND/9aRjWefA1ZVv7xrH5NoCwswEle82kYIDDxaZTjWB/x7AmhHHosd4SzZww53U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700116; c=relaxed/simple;
-	bh=W/a1/xZzEgZMEVHhYSue9fgjv4ZrPtKFHh6NMQSoygU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZrNZP5fDLMegLnYH1qu/WpJPMgRU0IXzm6qfOSgbmz2Ohm3rhIgun6xJlNSbNRDRQjxJ6tfjwpM+75aerenbXmyQGeVrlaFKNsIo61/L9qg++PZYoGSybpWzPf0WSIc2GRBzlWEaNw+bELzvi380jAISi3FF+K6LsELfO8dL1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z4GnV0Rh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74E0217659;
+	Mon, 28 Jul 2025 11:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753700734; cv=pass; b=RarnANrCry8MR4aStp1+5DhwI4NQSuqNGZnE3V4tY8zl2NXRBGeePzf7PCKVUjenGCZFOnUK+LeMGmWszT1XwutzfXMrwLOlLKP9vFWHTi1xGNu2uaDJT6x9FaxrK8ygHXeU8kW8OIA3XDOkxdGMTkeUR3WerDIlmFId9dRtVvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753700734; c=relaxed/simple;
+	bh=o3o6Hwd7R+P+io2nAG+W+ynXaWMGpWl6Lp7cQJ24jBg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jehKCPoJdNnXsbi0igA01vYfN/Hyjto2WXw/cwqRQRiMXQyp/qgxr2qzCTxLC9KVa4a2KGVjq3LdSFz7MAwnDusPBrqXYO9b79q1YreNZKz8yIr6yluDqhej9SGaSAsZ6DacTnK7+K0bfESDzo6TJxHL/l9fE+vDE76EmNFC2oI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=rfkEPk3g; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z4GnV0Rh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753700111;
-	bh=W/a1/xZzEgZMEVHhYSue9fgjv4ZrPtKFHh6NMQSoygU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z4GnV0RhagZI/l+vTFifPA3DWnvbrrycblRTy62QNPy0HMqJq7wn7Ocqo4aRxl41C
-	 wAiBoWnqsQuKyCk23pnPVHMnQi8cQclM4RqiYlM+la+UKFBbBVv5cXIoKTiMKB89+E
-	 9pmt6SJyXxYmlWvEbWfdb1o0HXPUWUB6h09prEJJrl1OlCaMB0LqlLa02kpIZHWWmc
-	 BLml2gDUkClRvinF4cK7aKSjCsWgvXWIOc07U2mZfOuJBCgIpyUC9XteWI+GtxJg32
-	 o/BNTUaeiOsgQnk1gRSLcbl03vd3WOCgtozzwfmHwpz4T0SIMU2hieX9GAkqpuuvVA
-	 E6RE832yEBBtQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1F4DC17E00EC;
-	Mon, 28 Jul 2025 12:55:09 +0200 (CEST)
-Message-ID: <f804c19f-622e-41af-8be5-3751532c4e9c@collabora.com>
-Date: Mon, 28 Jul 2025 12:55:08 +0200
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="rfkEPk3g"
+ARC-Seal: i=1; a=rsa-sha256; t=1753700692; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Blp1LA3zwmqGaYw8vMpLucHMeouRMIjw9DulmkBAHKrp+k6Lf7ULbuikM5r96LiNhipf6Mj/Js8oJI0CDVVJFwMGsXc/wovc/rO3YM8G7wo4fq2+2AXvlvTQzZCALYxHsMv3frWVMW8LaX1W1/DGIe0bkIhDmFBpQG9y1w0Vk/g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753700692; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jCizZ02zFYgFTJVgQnn9HjMW4JFU9RDiqu1R7dpUS1M=; 
+	b=Jy3f+Wc8X9W/l9eGEoWqCMBSrnSj/NjrfQMTZr4Tj8G/bZdKBZYk+gz5WeEnFch3ganwSKmbBoPWAhKuGMBFVrEwF7cCCv+HXQH+VaksdeDpBdRk4b8c3LNFjQ7Z4Y5cfH8ppkNKU+VqFbSR6uBEuHWKFm0zKxh0BvZApdXJtHY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753700691;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=jCizZ02zFYgFTJVgQnn9HjMW4JFU9RDiqu1R7dpUS1M=;
+	b=rfkEPk3gV7BigRvAAzzRz+yFbIyXNKbUPabXlpz5LkwH8Ywjat1R13dsDyvWE8Ov
+	f/MtbUvMo98bAXBQhqcKHAWSPVnQzSv6j29mw3dmpT4HSmLCk5UimDmsWnKVp9ywyzN
+	Pqe/hHT9Ep/aFyo/F2xqGTJl+DgkKRcNsN7o0ZHc=
+Received: by mx.zohomail.com with SMTPS id 1753700688350626.8599402973831;
+	Mon, 28 Jul 2025 04:04:48 -0700 (PDT)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH v2 0/2] remoteproc: cv1800b: Add initial support for C906L
+ processor
+Date: Mon, 28 Jul 2025 19:03:22 +0800
+Message-Id: <20250728-cv1800-rproc-v2-0-5bbee4abe9dc@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/38] MediaTek devicetree/bindings warnings sanitization
-To: Rob Herring <robh@kernel.org>, Matthias Brugger
- <matthias.bgg@kernel.org>, Julien Massot <julien.massot@collabora.com>,
- Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
- davem@davemloft.net, krzk+dt@kernel.org, conor+dt@kernel.org,
- chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
- simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, jassisinghbrar@gmail.com, mchehab@kernel.org,
- matthias.bgg@gmail.com, chunfeng.yun@mediatek.com, vkoul@kernel.org,
- kishon@kernel.org, sean.wang@kernel.org, linus.walleij@linaro.org,
- lgirdwood@gmail.com, broonie@kernel.org, andersson@kernel.org,
- mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
- atenart@kernel.org, jitao.shi@mediatek.com, ck.hu@mediatek.com,
- houlong.wei@mediatek.com, kyrie.wu@mediatek.corp-partner.google.com,
- andy.teng@mediatek.com, tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
- shane.chien@mediatek.com, olivia.wen@mediatek.com, granquet@baylibre.com,
- eugen.hristev@linaro.org, arnd@arndb.de, sam.shih@mediatek.com,
- jieyy.yang@mediatek.com, frank-w@public-files.de, mwalle@kernel.org,
- fparent@baylibre.com, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-sound@vger.kernel.org
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <CAL_JsqJGNdp3Z0sXaEXWY8nqXD+0kSCo+BYCkcGstE7zcVVcXw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAL_JsqJGNdp3Z0sXaEXWY8nqXD+0kSCo+BYCkcGstE7zcVVcXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPpYh2gC/1XMQQ6CMBCF4auQWVszLVLQlfcwLGoZYBKlZEoaD
+ eHuVly5/F/yvhUiCVOES7GCUOLIYcphDgX40U0DKe5yg0FTYWVq5ZNuEJXMErzC5l66c2foZDX
+ kyyzU82vnbm3ukeMS5L3rSX/XH2Sx+YeSVqiq2vfW+q63rrzOPDyDuMdxIT9Cu23bB99d02isA
+ AAA
+X-Change-ID: 20250527-cv1800-rproc-08b3a9d2e461
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, Junhui Liu <junhui.liu@pigmoral.tech>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753700654; l=2103;
+ i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
+ bh=o3o6Hwd7R+P+io2nAG+W+ynXaWMGpWl6Lp7cQJ24jBg=;
+ b=2WgzAeLnoD8k1XxEY7PFQ3ylOvW0DtHOhoyd5UxMdEnmrwJX9ZgR0Yjra546NediC2SVFNIv2
+ 2fxv/A4Fme9DssmoChq7d+u5hFxe1gPl+2stA3rvhkoSxcEKLss35ep
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
+X-ZohoMailClient: External
 
-Il 25/07/25 15:52, Rob Herring ha scritto:
-> On Thu, Jul 24, 2025 at 3:39 AM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> As Rob pointed out, MediaTek devicetrees are *poor* in the dtbs_check
->> tests, and got an infinite load of warnings.
->>
->> This series starts attacking this situation.
->>
->> I didn't really count how many warnings I have resolved - it's a lot
->> of them anyway - and I think that this is a good start in any case.
-> 
-> 40 out of 125 (on arm64) fixed! Thanks! FYI, here's the ones that
-> remain (first number is number of times the warning occurs):
-> 
+This patch series introduces initial support for the C906L remote
+processor in the Sophgo CV1800B SoC. The CV1800B SoC integrates multiple
+cores, including a main application core running Linux, a C906L core
+typically running RTOS, and an 8051 MCU.
 
-Thanks Rob!
+The C906L is an asymmetric processor designed to typically run RTOS.
+This patch adds the basic infrastructure to support remoteproc
+management of the C906L processor, including firmware loading and basic
+control (start/stop) from the main Linux core. Mailbox-related
+functionality will be added in a separate patch, after Zephyr mainline
+support for the C906L is ready [1].
 
-I know that there are more warnings to be fixed - but I am unable to do that
-right now, as I'm going on holiday in a few days.
+The C906L remoteproc relies on the reset controller [1] to function
+correctly [2].
 
-However, I will ask to some colleagues of mine (Ariel and Julien, added to this
-thread so that they also get your log and can take action) to try to solve
-some more warnings while I am away, starting with the easiest ones so that we
-reduce this bad number.
+A branch for testing is available at [3].
 
-In that pinctrl dt fixes commit, you made me realize how many (old leftover and
-new) warnings we had on MediaTek - it's bad, and must be fixed.. but in the
-meanwhile, thanks again for making me notice.
+Link: https://github.com/zephyrproject-rtos/zephyr/pull/69594 [1]
+Link: https://lore.kernel.org/linux-riscv/20250617070144.1149926-1-inochiama@gmail.com [2]
+Link: https://github.com/pigmoral/linux/tree/cv1800b/rproc-test [3]
 
-Speaking of holidays, I'll also ask to Matthias to manage this merge window, so
-that those commits won't have to wait for the next one (as I'll be back in early
-September, I'm not sure how much time will be left until the window closes).
+---
+Changes in v2:
+- Add mbox-related properties in dt-bindings
+- Remove reserved-memory node in dt examples
+- Fix warnings in driver by handling conversions of `void *` and `void
+  __iomem *` correctly
+- Add missing <linux/bits.h> header
+- Use `rproc_of_resm_mem_entry_init()` for vdev0buffer region
+- Remove redundant rproc_shutdown in remove() function
+- Link to v1: https://lore.kernel.org/r/20250608-cv1800-rproc-v1-0-57cf66cdf6a3@pigmoral.tech
 
-Cheers!
-Angelo
+---
+Junhui Liu (2):
+      dt-bindings: remoteproc: Add C906L rproc for Sophgo CV1800B SoC
+      drivers: remoteproc: Add C906L controller for Sophgo CV1800B SoC
 
->       29 (mediatek,mt8183-mfgcfg): 'power-domains' does not match any
-> of the regexes: '^pinctrl-[0-9]+$'
->       29 failed to match any schema with compatible:
-> ['mediatek,mt8183-audiosys', 'syscon']
->       29 failed to match any schema with compatible: ['mediatek,mt8183-audio']
->       27 (mediatek,mt8183-pinctrl): 'gpio-line-names' does not match
-> any of the regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
->       22 (mediatek,mt6359): '#sound-dai-cells' does not match any of
-> the regexes: '^pinctrl-[0-9]+$'
->       14 failed to match any schema with compatible:
-> ['mediatek,mt8183_mt6358_ts3a227_max98357']
->       12 (mediatek,mt8186-mt6366-rt1019-rt5682s-sound): 'model' is a
-> required property
->       12 failed to match any schema with compatible: ['mediatek,mt8173-mdp-rsz']
->        9 (mediatek,mt8195-iommu-infra): interrupts: [[0, 795, 4, 0],
-> [0, 796, 4, 0], [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]] is too
-> long
->        8 failed to match any schema with compatible: ['mediatek,mt8173-mdp-wrot']
->        8 failed to match any schema with compatible:
-> ['mediatek,mt8173-mdp-rdma', 'mediatek,mt8173-mdp']
->        6 failed to match any schema with compatible:
-> ['mediatek,mt8183_da7219_rt1015p']
->        5 (mediatek,mt7986-eth): interrupts: [[0, 196, 4], [0, 197, 4],
-> [0, 198, 4], [0, 199, 4]] is too short
->        5 failed to match any schema with compatible:
-> ['mediatek,mt8183_mt6358_ts3a227_rt1015p']
->        4 (mediatek,mt8173-mmsys): 'assigned-clock-rates',
-> 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
->        4 (mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does
-> not match any of the regexes: '^pinctrl-[0-9]+$'
->        4 (mediatek,mt8173-disp-od): 'mediatek,gce-client-reg' does not
-> match any of the regexes: '^pinctrl-[0-9]+$'
->        4 (mediatek,mt6360): #interrupt-cells: 1 was expected
->        4 failed to match any schema with compatible: ['mediatek,mt8173-vpu']
->        4 failed to match any schema with compatible: ['mediatek,mt8173-mdp-wdma']
->        4 failed to match any schema with compatible: ['mediatek,mt8173-mdp-rdma']
->        4 failed to match any schema with compatible: ['mediatek,mt7622-pcie']
->        3 (mediatek,mt8192-audsys): 'mt8192-afe-pcm' does not match any
-> of the regexes: '^pinctrl-[0-9]+$'
->        3 (mediatek,mt8173-thermal): Unevaluated properties are not
-> allowed ('bank0-supply', 'bank1-supply' were unexpected)
->        3 (mediatek,mt8173-pinctrl): 'gpio-line-names' does not match
-> any of the regexes: '^pinctrl-[0-9]+$', 'pins$'
->        3 (mediatek,mt8173-dsi): Unevaluated properties are not allowed
-> ('ports' was unexpected)
->        3 (mediatek,mt8173-dsi): ports: 'port@1' is a required property
->        3 (mediatek,mt8173-dsi): ports: 'port@0' is a required property
->        3 failed to match any schema with compatible: ['mediatek,mt8173-rt5650']
->        2 (mediatek,mt8192_mt6359_rt1015p_rt5682): 'model' is a required property
->        2 (mediatek,mt8192-i2c): Unevaluated properties are not allowed
-> ('clock-stretch-ns' was unexpected)
->        2 (mediatek,mt8186-spmi): Unevaluated properties are not allowed
-> ('interrupts' was unexpected)
->        2 (mediatek,mt7986-tphy): usb-phy@700:reg: [[0, 1792], [0,
-> 2304]] is too long
->        2 (mediatek,mt7622-pwrap): 'regulators' does not match any of
-> the regexes: '^pinctrl-[0-9]+$'
->        2 (mediatek,mt7622-pciesys): compatible: 'oneOf' conditional
-> failed, one must be fixed:
->        2 (mediatek,mt7622-audsys): audio-controller: 'power-domains' is
-> a required property
->        2 (mediatek,mt7622-audsys): audio-controller:clock-names:
-> ['infra_sys_audio_clk', 'top_audio_mux1_sel
-> ', 'top_audio_mux2_sel', 'top_audio_a1sys_hp', 'top_audio_a2sys_hp',
-> 'i2s0_src_sel', 'i2s1_src_sel', 'i2s2_
-> src_sel', 'i2s3_src_sel', 'i2s0_src_div', 'i2s1_src_div',
-> 'i2s2_src_div', 'i2s3_src_div', 'i2s0_mclk_en','
-> i2s1_mclk_en', 'i2s2_mclk_en', 'i2s3_mclk_en', 'i2so0_hop_ck',
-> 'i2so1_hop_ck', 'i2so2_hop_ck', 'i2so3_hop_c
-> k', 'i2si0_hop_ck', 'i2si1_hop_ck', 'i2si2_hop_ck', 'i2si3_hop_ck',
-> 'asrc0_out_ck', 'asrc1_out_ck', 'asrc2_
-> out_ck', 'asrc3_out_ck', 'audio_afe_pd', 'audio_afe_conn_pd',
-> 'audio_a1sys_pd', 'audio_a2sys_pd'] is too sh
-> ort
->        2 (mediatek,mt7622-audio): 'power-domains' is a required property
->        2 (mediatek,mt7622-audio): clock-names: ['infra_sys_audio_clk',
-> 'top_audio_mux1_sel', 'top_audio_mux2
-> _sel', 'top_audio_a1sys_hp', 'top_audio_a2sys_hp', 'i2s0_src_sel',
-> 'i2s1_src_sel', 'i2s2_src_sel', 'i2s3_sr
-> c_sel', 'i2s0_src_div', 'i2s1_src_div', 'i2s2_src_div',
-> 'i2s3_src_div', 'i2s0_mclk_en', 'i2s1_mclk_en', 'i2
-> s2_mclk_en', 'i2s3_mclk_en', 'i2so0_hop_ck', 'i2so1_hop_ck',
-> 'i2so2_hop_ck', 'i2so3_hop_ck', 'i2si0_hop_ck'
-> , 'i2si1_hop_ck', 'i2si2_hop_ck', 'i2si3_hop_ck', 'asrc0_out_ck',
-> 'asrc1_out_ck', 'asrc2_out_ck', 'asrc3_ou
-> t_ck', 'audio_afe_pd', 'audio_afe_conn_pd', 'audio_a1sys_pd',
-> 'audio_a2sys_pd'] is too short
->        2 (mediatek,mt6795-mmsys): 'assigned-clock-rates',
-> 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
->        2 (mediatek,mt6795-mmc): Unevaluated properties are not allowed
-> ('pinctrl-names' was unexpected)
->        2 (mediatek,mt6795-mmc): pinctrl-names: ['default'] is too short
->        2 (mediatek,mt6795-mmc): 'pinctrl-1' is a required property
->        2 (mediatek,mt6795-disp-ufoe): 'mediatek,gce-client-reg' does
-> not match any of the regexes: '^pinctrl-[0-9]+$'
->        2 (mediatek,mt6795-disp-od): 'mediatek,gce-client-reg' does not
-> match any of the regexes: '^pinctrl-[0-9]+$'
->        2 failed to match any schema with compatible:
-> ['mediatek,mt8183_da7219_max98357']
->        2 failed to match any schema with compatible:
-> ['mediatek,mt7622-scpsys', 'syscon']
->        2 failed to match any schema with compatible: ['mediatek,mt6797-scpsys']
->        2 failed to match any schema with compatible:
-> ['mediatek,mt6380-regulator']
->        2 failed to match any schema with compatible: ['mediatek,mt2712-pcie']
->        1 (mediatek,mt8516-topckgen): compatible: 'oneOf' conditional
-> failed, one must be fixed:
->        1 (mediatek,mt8516-apmixedsys): compatible: 'oneOf' conditional
-> failed, one must be fixed:
->        1 (mediatek,mt8186-mt6366-rt5682s-max98360-sound): 'model' is a
-> required property
->        1 (mediatek,mt8186-cci): 'proc-supply' is a required property
->        1 (mediatek,mt8183-pinctrl): 'i2c0', 'i2c1', 'i2c2', 'i2c3',
-> 'i2c4', 'i2c5', 'mmc0', 'mmc0default', 'mmc1', 'mmc1default', 'pwm1',
-> 'spi0', 'spi1', 'spi2', 'spi3', 'spi4', 'spi5' do not match any of the
-> regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
->        1 (mediatek,mt8183-pinctrl): 'i2c0', 'i2c1', 'i2c2', 'i2c3',
-> 'i2c4', 'i2c5', 'i2c6', 'keyboard' do not match any of the regexes:
-> '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
->        1 (mediatek,mt8183-pinctrl): bt-pins-wakeup: 'piins-bt-wakeup'
-> does not match any of the regexes: '^pinctrl-[0-9]+$', '^pins'
->        1 (mediatek,mt8173-pwrap): 'power-domains' does not match any of
-> the regexes: '^pinctrl-[0-9]+$'
->        1 (mediatek,mt7622-pinctrl): 'asm-sel-hog' does not match any of
-> the regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
->        1 (mediatek,mt7622-audsys): audio-controller:clocks: [[2, 2],
-> [18, 80], [18, 81], [18, 107], [18, 108], [18, 89], [18, 90], [18,
-> 91], [18, 92], [18, 95], [18, 96], [18, 97], [18, 98], [18, 103], [18,
-> 104], [18, 105], [18, 106], [38, 8], [38, 9], [38, 10], [38, 11], [38,
-> 4], [38, 5], [38, 6], [38, 7], [38, 14], [38, 15], [38, 39], [38, 40],
-> [38, 0], [38, 46], [38, 17], [38, 18]] is too short
->        1 (mediatek,mt7622-audsys): audio-controller:clocks: [[2, 2],
-> [18, 80], [18, 81], [18, 107], [18, 108], [18, 89], [18, 90], [18,
-> 91], [18, 92], [18, 95], [18, 96], [18, 97], [18, 98], [18, 103], [18,
-> 104], [18, 105], [18, 106], [37, 8], [37, 9], [37, 10], [37, 11], [37,
-> 4], [37, 5], [37, 6], [37, 7], [37, 14], [37, 15], [37, 39], [37, 40],
-> [37, 0], [37, 46], [37, 17], [37, 18]] is too short
->        1 (mediatek,mt7622-audio): clocks: [[2, 2], [18, 80], [18, 81],
-> [18, 107], [18, 108], [18, 89], [18, 90], [18, 91], [18, 92], [18,
-> 95], [18, 96], [18, 97], [18, 98], [18, 103], [18, 104], [18, 105],
-> [18, 106], [38, 8], [38, 9], [38, 10], [38, 11], [38, 4], [38, 5],
-> [38, 6], [38, 7], [38, 14], [38, 15], [38, 39], [38, 40], [38, 0],
-> [38, 46], [38, 17], [38, 18]] is too short
->        1 (mediatek,mt7622-audio): clocks: [[2, 2], [18, 80], [18, 81],
-> [18, 107], [18, 108], [18, 89], [18, 90], [18, 91], [18, 92], [18,
-> 95], [18, 96], [18, 97], [18, 98], [18, 103], [18, 104], [18, 105],
-> [18, 106], [37, 8], [37, 9], [37, 10], [37, 11], [37, 4], [37, 5],
-> [37, 6], [37, 7], [37, 14], [37, 15], [37, 39], [37, 40], [37, 0],
-> [37, 46], [37, 17], [37, 18]] is too short
->        1 (mediatek,mt7531): 'interrupts' is a dependency of
-> 'interrupt-controller'
->        1 (mediatek,mt6357): 'adc' does not match any of the regexes:
-> '^pinctrl-[0-9]+$'
->        1 (mediatek,mt6331): regulators:compatible: 'oneOf' conditional
-> failed, one must be fixed:
->        1 (mediatek,mt6331-regulator): 'ldo-vio28' does not match any of
-> the regexes: '^buck-v(core2|io18|dvfs11|dvfs12|dvfs13|dvfs14)$',
-> '^ldo-(avdd32aud|vauxa32)$',
-> '^ldo-v(dig18|emc33|ibr|mc|mch|mipi|rtc|sim1|sim2|sram|usb10)$',
-> '^ldo-vcam(a|af|d|io)$', '^ldo-vgp[1234]$', '^ldo-vtcxo[12]$',
-> '^pinctrl-[0-9]+$'
->        1 (mediatek,mt6331-regulator): ldo-vcamio:regulator-name:0:
-> 'vcam_io' does not match '^vcam(a|_af|d|io)$'
->        1 (mediatek,mt6331): 'mt6332-led' does not match any of the
-> regexes: '^pinctrl-[0-9]+$'
->        1 failed to match any schema with compatible:
-> ['mediatek,mt6779-audio', 'syscon']
->        1 failed to match any schema with compatible:
-> ['mediatek,mt2712-scpsys', 'syscon']
+ .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  |  79 +++++++
+ drivers/remoteproc/Kconfig                         |   9 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/sophgo_cv1800b_c906l.c          | 239 +++++++++++++++++++++
+ 4 files changed, 328 insertions(+)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250527-cv1800-rproc-08b3a9d2e461
 
+Best regards,
+-- 
+Junhui Liu <junhui.liu@pigmoral.tech>
 
