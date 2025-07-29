@@ -1,204 +1,155 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8307A20D4F9;
-	Tue, 29 Jul 2025 02:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB63F262BE;
+	Tue, 29 Jul 2025 06:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753756309; cv=none; b=QCO8ONb2jgx3qIQywicORyfIGCUeamHLFGL9DwzwTfIg/qpVUXiRMcq5fxQ7NyQlU6bHzJAdKy4Li6ng+hGIjcJy42iG4p2zEplxpXMpvAYN30bEo1xNNJM5s+8LBFKQmqqXjHXdNfxxTugUU2zKP+nR7ZCXzszdSX2w9cq6X8Q=
+	t=1753770480; cv=none; b=eVhYQVR6pmoV+tfj0lfNfwCUyZHazAAnPWNg5ZZMkl/O3kaZwcV5X30c4UU3WP2W7xPgwA76FSgjYPbzHXtIG1djhdnNlVdlf6bGwj9lCf4aKbyPhaVIfEu1XXSfhz0aItypdEKhrVJsMSz725+ZzDHpLUyXbyUEDSxlNWq5Ng0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753756309; c=relaxed/simple;
-	bh=Fv+mqhtoohGsxrWk8MdR/p813cWLZElyVD4RRW2uZyk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JcBvqeFb8zhEzQbVMlJnxu+wLCXgyjZov5ZBVyNkedEVoXb8numuQnQ97jIWLJiDkhdIq5IJBap0Dxe8iziyxWHsgFEIIC/34YcFdVtf8/ysvAj/jPgjzJJVI2Dq14pJZ4I3k+Jo8P+h0WAdR3we5hEryEvVPKeX6p3rCJ23lso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HGkbQybO; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1753770480; c=relaxed/simple;
+	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=recloag0Nz3q1joAzLK2UdUh4NKWv92BFuxwR2U6+jff7J4KD/QGxlDNvYXrGWnMcYAEeeJjnH0Qoz1AsPmhPpbdKmMZxdl+tsa0pdMe7PwJ4Vil0237zEBjEAdab/2ypsfTA/c8VFlZdH6VVe2OLkxyR70iqEFIlBAPwaPYigo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9wjyNFq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HGkbQybO"
-X-UUID: 252415386c2411f0b33aeb1e7f16c2b6-20250729
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bYebe6d6FF9a4Sv4DvMcxFHqACdPJ8d1sUQcdh4dprA=;
-	b=HGkbQybOGOYQBWIuNXkYPFYAVg1vnabqsg9i4zZ3150X+6Hxz/5o1xczpGc5oWPI5YTLKDDsSdIzi3RmD4oBIgglrJx7QAUehYPxDk95j1Q6kydcm3QwIdGVIEW2wmsxuz1Ny5h6nxj3JjtQ6s9T7sVOxaRgicpBM2Fnxq1rwgo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:c9a35b41-8a16-4a2d-af32-a6377096b96d,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:d8555e9a-32fc-44a3-90ac-aa371853f23f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|15|50,EDM
-	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 252415386c2411f0b33aeb1e7f16c2b6-20250729
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <huayu.zong@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 697706325; Tue, 29 Jul 2025 10:31:34 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 29 Jul 2025 10:31:33 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 29 Jul 2025 10:31:32 +0800
-From: Huayu Zong <huayu.zong@mediatek.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Tinghan Shen
-	<tinghan.shen@mediatek.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<--cc=Project_Global_Chrome_Upstream_Group@mediatek.com>, Huayu Zong
-	<huayu.zong@mediatek.com>
-Subject: [PATCH 3/3] remoteproc: mediatek: Support MT8189 SCP
-Date: Tue, 29 Jul 2025 10:31:13 +0800
-Message-ID: <20250729023125.9036-4-huayu.zong@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250729023125.9036-1-huayu.zong@mediatek.com>
-References: <20250729023125.9036-1-huayu.zong@mediatek.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9wjyNFq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE0EC4CEEF;
+	Tue, 29 Jul 2025 06:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753770480;
+	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D9wjyNFqSSxtaBea0a2Ym1hDdepeD0XA/E3qQbfa0/w3RIQwK9NxysOsyxQ79Je/m
+	 7y24CrmMy/U/aB2E4bTLMpTTK79eowAvOARhZv+xjvSeTwLPPEngEFpRHqMeIz5TyH
+	 S6Ll4ZIqYMSqBJssQVt63eENT87W7rzjoIlPTahbjryyzq6usmz00sKxENtUK2UEMx
+	 8aaA7t5amb7/nyB3+HCXsHSzrMkMU1iJNmXgUKy6GuEd3FQ0NAox5NC2zebSUjUbUJ
+	 o7+DO4SEop7SfMrSCN+jd2rzjJNhzFSUH+PQVkpAFUDfiYT6InisUgGD9S0MvXHLtn
+	 gz6LWFlxlk7Ow==
+Message-ID: <f1b90b0f-f7a7-4117-9d36-046c4ca9c19a@kernel.org>
+Date: Tue, 29 Jul 2025 08:27:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
+ Sophgo CV1800B SoC
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add SCP support for mt8189.
+On 28/07/2025 19:13, Junhui Liu wrote:
+>>
+>>> +    description:
+>>> +      This property is required only if the rpmsg/virtio functionality is used.
+>>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
+>>> +    items:
+>>> +      - description: mailbox channel to send data to C906L
+>>> +      - description: mailbox channel to receive data from C906L
+>>> +
+>>> +  memory-region:
+>>> +    description:
+>>> +      List of phandles to reserved memory regions used by the remote processor.
+>>> +      The first region is required and provides the firmware region for the
+>>> +      remote processor. The following regions (vdev buffer, vrings) are optional
+>>> +      and are only required if rpmsg/virtio functionality is used.
+>>> +    minItems: 1
+>>
+>> Why isn't this constrained?
+> 
+> Do you mean a maxItems should be added here?
+> >>
+>>> +    items:
+>>> +      - description: firmware region
+>>> +      - description: vdev buffer
+>>> +      - description: vring0
+>>> +      - description: vring1
+>>> +    additionalItems: true
+>>
+>> No, drop. This needs to be constrained.
+> 
+> My intention is that RPMsg/OpenAMP is not the only use case for
 
-Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
----
- drivers/remoteproc/mtk_common.h | 11 ++++++++++
- drivers/remoteproc/mtk_scp.c    | 37 ++++++++++++++++++++++++++++++---
- 2 files changed, 45 insertions(+), 3 deletions(-)
+We don't allow such syntax, that's not negotiable. Why 322 redundant
+memory regions are fine now?
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index fd5c539ab2ac..fb2131e0ed07 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -35,6 +35,11 @@
- #define MT8186_SCP_L1_SRAM_PD_P1	0x40B0
- #define MT8186_SCP_L1_SRAM_PD_p2	0x40B4
- 
-+#define MT8189_SCP2APMCU_IPC_CLR	0x30010
-+#define MT8189_SCP2SPM_IPC_CLR		0x30018
-+#define MT8189_SCP_SECURE_DOMAIN	0xA080
-+#define MT8189_SCP_DOMAIN_VAL		0x3303003
-+
- #define MT8192_L2TCM_SRAM_PD_0		0x10C0
- #define MT8192_L2TCM_SRAM_PD_1		0x10C4
- #define MT8192_L2TCM_SRAM_PD_2		0x10C8
-@@ -112,6 +117,12 @@ struct mtk_scp_of_data {
- 
- 	u32 host_to_scp_reg;
- 	u32 host_to_scp_int_bit;
-+	u32 scp_to_host_ipc_set_reg;
-+	u32 scp_to_host_ipc_clr_reg;
-+	u32 scp_to_spm_ipc_clr_reg;
-+
-+	u32 scp_secure_domain_reg;
-+	u32 scp_domain_value;
- 
- 	size_t ipi_buf_offset;
- 	const struct mtk_scp_sizes_data *scp_sizes;
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 8206a1766481..956793fc6901 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -225,7 +225,8 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
- {
- 	u32 scp_to_host;
- 
--	scp_to_host = readl(scp->cluster->reg_base + MT8192_SCP2APMCU_IPC_SET);
-+	scp_to_host = readl(scp->cluster->reg_base +
-+			    scp->data->scp_to_host_ipc_set_reg);
- 
- 	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
- 		scp_ipi_handler(scp);
-@@ -235,7 +236,7 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
- 		 * MT8192_SCP2APMCU_IPC.
- 		 */
- 		writel(MT8192_SCP_IPC_INT_BIT,
--		       scp->cluster->reg_base + MT8192_SCP2APMCU_IPC_CLR);
-+		       scp->cluster->reg_base + scp->data->scp_to_host_ipc_clr_reg);
- 	} else {
- 		scp_wdt_handler(scp, scp_to_host);
- 		writel(1, scp->cluster->reg_base + MT8192_CORE0_WDT_IRQ);
-@@ -559,8 +560,10 @@ static int mt8188_scp_c1_before_load(struct mtk_scp *scp)
- 
- static int mt8192_scp_before_load(struct mtk_scp *scp)
- {
-+	u32 scp2spm_ipc_clr = scp->data->scp_to_spm_ipc_clr_reg;
-+
- 	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
--	writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+	writel(0xff, scp->cluster->reg_base + scp2spm_ipc_clr);
- 
- 	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
- 
-@@ -574,6 +577,11 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->cluster->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
- 
-+	/* set the domain of master in SCP */
-+	if (scp->data->scp_secure_domain_reg)
-+		writel(scp->data->scp_domain_value,
-+		       scp->cluster->reg_base + scp->data->scp_secure_domain_reg);
-+
- 	return 0;
- }
- 
-@@ -1464,6 +1472,24 @@ static const struct mtk_scp_of_data mt8188_of_data_c1 = {
- 	.scp_sizes = &mt8188_scp_c1_sizes,
- };
- 
-+static const struct mtk_scp_of_data mt8189_of_data = {
-+	.scp_clk_get = mt8195_scp_clk_get,
-+	.scp_before_load = mt8192_scp_before_load,
-+	.scp_irq_handler = mt8192_scp_irq_handler,
-+	.scp_reset_assert = mt8192_scp_reset_assert,
-+	.scp_reset_deassert = mt8192_scp_reset_deassert,
-+	.scp_stop = mt8192_scp_stop,
-+	.scp_da_to_va = mt8192_scp_da_to_va,
-+	.host_to_scp_reg = MT8192_GIPC_IN_SET,
-+	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
-+	.scp_to_host_ipc_set_reg = MT8192_SCP2APMCU_IPC_SET,
-+	.scp_to_host_ipc_clr_reg = MT8189_SCP2APMCU_IPC_CLR,
-+	.scp_to_spm_ipc_clr_reg = MT8189_SCP2SPM_IPC_CLR,
-+	.scp_secure_domain_reg = MT8189_SCP_SECURE_DOMAIN,
-+	.scp_domain_value = MT8189_SCP_DOMAIN_VAL,
-+	.scp_sizes = &default_scp_sizes,
-+};
-+
- static const struct mtk_scp_of_data mt8192_of_data = {
- 	.scp_clk_get = mt8192_scp_clk_get,
- 	.scp_before_load = mt8192_scp_before_load,
-@@ -1475,6 +1501,10 @@ static const struct mtk_scp_of_data mt8192_of_data = {
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
- 	.scp_sizes = &default_scp_sizes,
-+	.scp_to_host_ipc_set_reg = MT8192_SCP2APMCU_IPC_SET,
-+	.scp_to_host_ipc_clr_reg = MT8192_SCP2APMCU_IPC_CLR,
-+	.scp_to_spm_ipc_clr_reg = MT8192_SCP2SPM_IPC_CLR,
-+	.scp_sizes = &default_scp_sizes,
- };
- 
- static const struct mtk_scp_of_data mt8195_of_data = {
-@@ -1520,6 +1550,7 @@ static const struct of_device_id mtk_scp_of_match[] = {
- 	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
- 	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
- 	{ .compatible = "mediatek,mt8188-scp-dual", .data = &mt8188_of_data_cores },
-+	{ .compatible = "mediatek,mt8189-scp", .data = &mt8189_of_data },
- 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
- 	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
--- 
-2.45.2
+> remoteproc. There are scenarios where the remoteproc is just used for
+> booting the remote processor without any communication with Linux. In
+> such case, only the firmware region is needed, and the other regions may
+> not be necessary.
+> 
+> Additionally, the remote processor might reserve extra memory for custom
+> buffers or other firmware-specific purposes beyond virtio/rpmsg.
+> Therefore, I think only the firmware region should be required and
+> constrained, while allowing flexibility for additional/custom memory
+> regions as needed.
 
+So how does this work exactly without the rest? Remote processor boots
+and works fine? How do you communicate with it?
+
+Please describe exactly the usecase.
+
+
+Best regards,
+Krzysztof
