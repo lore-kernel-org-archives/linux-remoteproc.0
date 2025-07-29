@@ -1,166 +1,84 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A59B1C5F39
-	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Jul 2025 15:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A820101F;
+	Tue, 29 Jul 2025 17:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803277; cv=none; b=UcOwfbF6waX7NkAns9gEzZN9krFGoFaIcJkTfP0FJ+yWhwBzHkU358qqkVrFmIfJafgmddHiZEczrfeCiXmU5GKaAJ1I35bxj6ovYz2fOcDoWHPC8+j5zuY8v1q2QPXXXhgoNAJOHf74LFnA6/SEmyN+FSLMBm/4xbQ0Kjux4Ik=
+	t=1753811127; cv=none; b=LI42hmlmWlsVP2xPduhEjlB289xCODKdQeV2ZvNLoWtzwXFtxdT1O9nrSMAilvcz4tIJfPCs65/z2KWvVv6a6E1NsyCevrMUYkgi/7BYMTQ3GgFQqdAgS1Esy08KKOk7DxWzN20KUAdArw3ODwqvLnSsbO1r6m1XipfT1Wlg0F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803277; c=relaxed/simple;
-	bh=i5h0os/YtNwZTZidzFNsIxF45bH5oA2E+VUtDTiVQnA=;
+	s=arc-20240116; t=1753811127; c=relaxed/simple;
+	bh=x3HNOWZw5hkcyGSQgmqXfoEJ+ny9/ZCvslOQJp7MB2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwRfZMHhxC8uRZa2QMb4++mfrVH/9SEoBClKmnlSuQp+4jcTEUkE75EjSuAWiUICPUjFIKan3YUCDGNoEXxGMJl0OUvmwkMmEMBZNA+R8AfLESTGtnO19YJmb+6iNrFk24KTIIzfYw2g+UElbkojyjDnrLwCeT4vuRiGUxz+KOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gm/UWWf2; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQIz1K7dV87UNLpihrCvzTlfbrR/86FR9CS6EiZfB4A/T4IFIkPeHPEI/Ozxllx6Jm7n69qaciF6gddL7gWphWayK+OAmCWbV4/20XefbICrL/TUjR/qlNeTEznuT/0tP8Gwt9RZDUXcTN1YefrH1LdymFKZQyVukD9yktHE4DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpYz6p89; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gm/UWWf2"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2402bbb4bf3so28566615ad.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Jul 2025 08:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753803274; x=1754408074; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMoqKFLALEq+ZmPG9wCyqAsQPACRG2hPVvh+rmUE0OA=;
-        b=Gm/UWWf2IRaDM1h5HLY13taz1WRy6vjT3b6QiDStPs9e+ceR2c+mV+FUvwPU1Bcf3N
-         BdxC7YeuFmxe0gVrhusU1UqUiH89LiTLcRI0qWR9lQIwN0e9zMe52bzDn+blQ3GL1pcP
-         BCaVvvAnuy8HJrdaR78BWALZcIABmqJmu4kCyyFLpCOCuWK+0kvIVNlDsKIcAQ22ffXe
-         vGh/QPX8xhkRzeV865xNWr+U5RDKJhB0FwoIM55QPXidin5cGr1rMIKj3IF+buP5kqNH
-         ItzRISFhOKXYBcMGxVlTiz1IQewavWwMP9zdCSRBXKcy07KTnBuAH4whI/sKkdQ0eRVT
-         wWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753803274; x=1754408074;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMoqKFLALEq+ZmPG9wCyqAsQPACRG2hPVvh+rmUE0OA=;
-        b=jbS2dsc8FfJuEkKpuQkvITzS/noKxGpGxPhwPvfHTIKzPzfOfDOBnD2JvHnnukqPjS
-         eiZIY3WqosKR67DQXEZXQKVIe97vpbpjGEtA68JV2FJG0RbbY2Kzku8uWxizNgK3vzBB
-         tws5ySZngDIqHF7tYonXEb3WFv+T1IKa7Qs49/DuYWtv1M51QEdUqawNrIYyyPb0NCuC
-         TVI4KVtdOA7qdTjwVpJwYAJ2Lk1AjH3x5lXscf0YfsTMVMhNkH/Qh706D/d7LGKcuHac
-         mT0ERcJrSVeYsQVKbvzChNHp9fl+kvzQO6C1yMfHmO/Ktw0zAl1TKDEoBy34Uik4czbM
-         4SiA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7sJwVfYAptWANNf6CZ8iNZ57omxnmXBjrtlgTWZ9ucDXOGiuE1iQvC/yVZ1bAHWzzRRx64TVskA6vkGmM6MlM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKtSYXKt9WRRHCciYcNjJGfnBR8bAoI5KYeK1cJql9hmFSGFR7
-	HEPEi9eNaSmaB3oFgZF7S5Fgd0nyRB15+8FitUd8heGVKLypZi+m0ShS9wC8oMjkBkM=
-X-Gm-Gg: ASbGncssRTt2dd90Mi7QUJEK4+7RQJuONkxMoVppiRnqD+OINUux420tXsnBqWBje4q
-	Ka79nug2GaYlrqg7sJ9j7fsOalVHrgCYkw1CEOFV9RK1RimApuHnTUWZSV8Pnhxterze5uSGUO9
-	nn/a1FKgJChySBCs/j82XWTMgn8HJICdsK5iYme0wyXXgjuviT+PeFdD0iBcfoaVDI7kc6V/uO6
-	7tXsSMPP+c+ZqLWAZ8H1fvRSs+pMu7fUcbYfIgJkbNdn+MZ6gaPhb0o+2Xq+hbzWCtoHkEjJfms
-	fm228nu2IPWS0AvciZoeXr5lQBRxF2w+1VG13pwXfIm84c8uFcEuvw843ZPWWK2yxQa0nHSbn2s
-	G1uFDeDaGJzAkPy3YN+jtEETAQg==
-X-Google-Smtp-Source: AGHT+IHlEsBwMee/kywPI2/tvT1g4ScsliyDmtiDbB1WAnykD0Ma1gjgSCy2s0F1viosLS+e5Kxzqg==
-X-Received: by 2002:a17:903:2ec7:b0:240:5c38:756b with SMTP id d9443c01a7336-2405c3879e4mr62619735ad.14.1753803273589;
-        Tue, 29 Jul 2025 08:34:33 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8920:ecd3:44e1:110b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24052e03863sm32464055ad.41.2025.07.29.08.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 08:34:32 -0700 (PDT)
-Date: Tue, 29 Jul 2025 09:34:30 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, jm@ti.com,
-	jan.kiszka@siemens.com, christophe.jaillet@wanadoo.fr,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@nxp.com,
-	arnaud.pouliquen@foss.st.com, tanmay.shah@amd.com
-Subject: Re: [RFC PATCH] remoteproc: core: Do not process carveout and devmem
- rsc in attach mode
-Message-ID: <aIjqBi3X4hWGsJLP@p14s>
-References: <20250724133144.3776839-1-b-padhi@ti.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpYz6p89"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07791C4CEF4;
+	Tue, 29 Jul 2025 17:45:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753811127;
+	bh=x3HNOWZw5hkcyGSQgmqXfoEJ+ny9/ZCvslOQJp7MB2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KpYz6p89DzVpv//o/gFNgWEc5Gm98fYQHRh53L/XAWVBwKf6VN4selbeF3gdwwEvg
+	 u98KjXQ+5iE3qf+0PljVq+7U6G0i+8g8/g9PlFz68kwZDKNgUlgQjigkgP9A1YfC6B
+	 9X8Ms26uAs+GCTr1uCtrFAuSHuRLHW1z2YDRJsI5z3Nf70z4vA/bBChgiwI2YG2OEe
+	 naZZVD+u9g8sLV6R4EQMlhKSJ7f/5V8LlkT4e+czD5gn/DRl/Y4EvNof/bpqSNfdpw
+	 p+dlMs7GS/CXFDGcJ3/fWfe2l8DGD5l4E2fAVzl/R2WObcVvwyyop5zZBqcVz2NVQ6
+	 VnYBAwpJko4pw==
+Date: Tue, 29 Jul 2025 18:45:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Huayu Zong <huayu.zong@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: mediatek: Add binding for
+ mt8189 scp
+Message-ID: <20250729-flask-applaud-7af817ef7a94@spud>
+References: <20250729023125.9036-1-huayu.zong@mediatek.com>
+ <20250729023125.9036-2-huayu.zong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kD2euniIewJpEG2U"
+Content-Disposition: inline
+In-Reply-To: <20250729023125.9036-2-huayu.zong@mediatek.com>
+
+
+--kD2euniIewJpEG2U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724133144.3776839-1-b-padhi@ti.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Beleswar,
+On Tue, Jul 29, 2025 at 10:31:11AM +0800, Huayu Zong wrote:
+> Add the compatible for mt8189 SCP to the binding.
+>=20
+> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
 
-On Thu, Jul 24, 2025 at 07:01:44PM +0530, Beleswar Padhi wrote:
-> When attaching to a remote processor, it is implied that the rproc was
-> booted by an external entity. Thus, it's carveout and devmem resources
-> would already have been processed by the external entity during boot.
-> 
-> Re-allocating the carveouts in Linux (without proper flags) would zero
-> out the memory regions used by the firmware and can lead to undefined
-> behaviour. And there is no need to re-map the memory regions for devmem
-> resources as well.
-> 
-> Therefore, do not process the carveout and devmem resources in attach
-> mode by not appending them to the rproc->carveouts and rproc->mappings
-> lists respectively.
-> 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I think what you are proposing is logical.  Arnaud, Daniel, Iuliana and Tanmay -
-please test this on your platforms.  I will also need another TB from someone at
-TI.
+--kD2euniIewJpEG2U
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Mathieu
+-----BEGIN PGP SIGNATURE-----
 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Testing:
-> 1. Tested IPC with remoteprocs in attach mode in TI platforms.
-> [However, TI K3 platforms do not use resource table for carveouts,
-> all the memory regions are reserved statically in Device Tree.]
-> 
->  drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 825672100528..ef709a5fa73c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -640,6 +640,20 @@ static int rproc_handle_devmem(struct rproc *rproc, void *ptr,
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * When attaching to a remote processor, it is implied that the rproc
-> +	 * was booted by an external entity. Thus, it's devmem resources would
-> +	 * already have been mapped by the external entity during boot. There is
-> +	 * no need to re-map the memory regions here.
-> +	 *
-> +	 * Skip adding the devmem rsc to the mapping list and return without
-> +	 * complaining.
-> +	 */
-> +	if (rproc->state == RPROC_DETACHED) {
-> +		dev_info(dev, "skipping devmem rsc in attach mode\n");
-> +		return 0;
-> +	}
-> +
->  	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
->  	if (!mapping)
->  		return -ENOMEM;
-> @@ -839,6 +853,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * When attaching to a remote processor, it is implied that the rproc
-> +	 * was booted by an external entity. Thus, it's carveout resources would
-> +	 * already have been allocated by the external entity during boot.
-> +	 * Re-allocating the carveouts here (without proper flags) would zero
-> +	 * out the memory regions used by the firmware and can lead to undefined
-> +	 * behaviour.
-> +	 *
-> +	 * Skip adding the carveouts to the alloc list and return without
-> +	 * complaining.
-> +	 */
-> +	if (rproc->state == RPROC_DETACHED) {
-> +		dev_info(dev, "skipping carveout allocation in attach mode\n");
-> +		return 0;
-> +	}
-> +
->  	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
->  		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
->  
-> -- 
-> 2.34.1
-> 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaIkIsQAKCRB4tDGHoIJi
+0pwmAQDF9XgoLzRZN2+HymZe6A7A4abQRqFlzcGxlUnimpt8xQD7BQ2lbwb8Iw7n
+KyWPgmI4hfaZEK9QDBPIsnCbJOyAaQk=
+=qcBV
+-----END PGP SIGNATURE-----
+
+--kD2euniIewJpEG2U--
