@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AD714F70;
-	Wed, 30 Jul 2025 06:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDCD14F70;
+	Wed, 30 Jul 2025 06:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753857996; cv=none; b=ljIpLpkvhZ+xLpwqmHQh7A/AklMabDYi5fJEzAheGsznVtbRJh84FbT1kFNDZnkSBm/MjABUOXKYiaeeFlhFljXXjTSqtvuuF4FwI5P0T1ZoDjjgXPsJA0Cqcmxqe4AalQrnvBIsg2HfOKqbd7agRSOxzkIIIzYlom2VEZB2rL8=
+	t=1753858067; cv=none; b=nhDV7L0kyFLEYqgyyiLkgN/uh/MYGaftsbbmkzzFm6kN7m0gNtkHSBNBHLOQFd0E4adxdu+8Dbxxb3cezQ3CERVo7oCCJLLZAoVQvkOG0fSHjnSj/9YTZA3QGVitJuXK26EVIFd7upw/7KRGQJ3oLWMWiHEllzslkZktZBesZWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753857996; c=relaxed/simple;
-	bh=lbzvxqHxNLa58gDKpqG3fpAeB/UdJDmqE/7V7ykeYZE=;
+	s=arc-20240116; t=1753858067; c=relaxed/simple;
+	bh=DbdLiwFTUP0a9C15JjpoWlbE+bFP9Kd316peZHUGVj8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nnC6TF9oeWHO76VG5Zu/tA8EjCXFLtFaaCl5vsSDq79UFZtrTtJI804MOMfwRruBZlB5Yidw50WmuvgfMoLfLzHY+FbT1sR58o+StZkuWpaGMrygsSeba6N9pF6i0CEWYuYcLQQioWkLxsMxCn24c2ROeCIPxTOYD+H8ELVIlzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=la5gwF1c; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=L8JLtbl55wE79iMSXWLCa2Afszv8iLR7xgZMbBHVggeCzehfG3vw/aXqpPh6uLc/0yx2xIb52sh6kxdcqkf6973P4KPQ7ctsPpEEPdjOMBTDa2eF2wHFYZrkcq+ywYM53IFXBVLd79R+3eQEkQFUF7kw3j7ehd1yHi5SnKd2ttA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAtXd+jv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="la5gwF1c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98EEC4CEE7;
-	Wed, 30 Jul 2025 06:46:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAtXd+jv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1CDC4CEE7;
+	Wed, 30 Jul 2025 06:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753857995;
-	bh=lbzvxqHxNLa58gDKpqG3fpAeB/UdJDmqE/7V7ykeYZE=;
+	s=k20201202; t=1753858066;
+	bh=DbdLiwFTUP0a9C15JjpoWlbE+bFP9Kd316peZHUGVj8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=la5gwF1cN2+W8eLkiqnogus7oUJuYr98ApT0sMTNxRI7Rw01W3O2B1ZbfsabD8Vu7
-	 4XRI9mw02rx+CqTyjFJXmHPUE2w36O716a1A9+U4El34OiaQ26oYKb9ElYKGB2AzbM
-	 dnb//VZW7bRUUmOGtsh1kWnkZuHxuIKt/1axhC3KKsRe6cj09BWXmIQQYuOJ3QRFeX
-	 WhMZ7c+gzNoPux4PbMos8s9aWcMl7Bb+uMKddXLqPwO4vwoTvildI0a4dmIPrl3Kzv
-	 0b9DkakmOeeIkg5ITf5/ZTxmckNSnjlaFaAgjJKIMqSx2FC3Wcyn0wgExpYNHBSQfB
-	 2dR82payyQJWw==
-Message-ID: <8a4ba1b1-0960-4433-b183-59c99157b0e2@kernel.org>
-Date: Wed, 30 Jul 2025 08:46:30 +0200
+	b=gAtXd+jvIDICgCvhUoJ6Z4AgoPIaK5U2jufDV82bHsdi0ATDSdKBbGjAvhAFpQgE7
+	 76xOV1hvNzupxRI931r3pO4VX49W8yw+tNbAK1RiXTqqjfY+M9Q0hGY1uFUct3Xfub
+	 mqdcIboMUNhA7K+mUigH3igBmbM44kZPNRGXZVU4Q5w9hAV2zSpz+dvILaN9dSND33
+	 F+YrB9z7QDaoCtHXNw2Z6QBEyGIxPN5tWnldu6UVXzriJ59MThC/MyYURlqu6sy2qd
+	 //94Z4PjCadBy7Nwf+/0OesfW9HmDGZzAHARHhvx6qbpSKLxQJ0AaWPGB8Z1VqKIMw
+	 AtRl/ljUAUYvA==
+Message-ID: <4137240e-a5c4-427b-900c-ae062aa9a9c8@kernel.org>
+Date: Wed, 30 Jul 2025 08:47:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
  Sophgo CV1800B SoC
 To: Junhui Liu <junhui.liu@pigmoral.tech>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -49,8 +49,7 @@ To: Junhui Liu <junhui.liu@pigmoral.tech>,
 Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
  linux-riscv@lists.infradead.org
-References: <20250728-cv1800-rproc-v2-0-5bbee4abe9dc@pigmoral.tech>
- <20250728-cv1800-rproc-v2-2-5bbee4abe9dc@pigmoral.tech>
+References: <1856e9e7bfdcb6a8.1f73e6be0161d31f.3ad0845628cf3b62@Jude-Air.local>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,61 +95,79 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250728-cv1800-rproc-v2-2-5bbee4abe9dc@pigmoral.tech>
+In-Reply-To: <1856e9e7bfdcb6a8.1f73e6be0161d31f.3ad0845628cf3b62@Jude-Air.local>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/07/2025 13:03, Junhui Liu wrote:
-> +
-> +static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
-> +				   struct rproc_mem_entry *mem)
-> +{
-> +	void __iomem *va;
-> +
-> +	va = ioremap_wc(mem->dma, mem->len);
-> +	if (!va)
-> +		return -ENOMEM;
-> +
-> +	/* Update memory entry va */
-> +	mem->va = (void *)va;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cv1800b_c906l_mem_release(struct rproc *rproc,
-> +				     struct rproc_mem_entry *mem)
-> +{
-> +	iounmap((void __iomem *)mem->va);
-> +	return 0;
-> +}
-> +
-> +static int cv1800b_c906l_add_carveout(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct device_node *np = dev->of_node;
-> +	struct of_phandle_iterator it;
-> +	struct rproc_mem_entry *mem;
-> +	struct reserved_mem *rmem;
-> +	int i = 0;
-> +
-> +	/* Register associated reserved memory regions */
-> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> +	while (of_phandle_iterator_next(&it) == 0) {
-> +		rmem = of_reserved_mem_lookup(it.node);
-> +		if (!rmem) {
-> +			of_node_put(it.node);
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (!strcmp(it.node->name, "vdev0buffer")) {
+On 30/07/2025 05:31, Junhui Liu wrote:
+> On 29/07/2025 08:27, Krzysztof Kozlowski wrote:
+>> On 28/07/2025 19:13, Junhui Liu wrote:
+>>>>
+>>>>> +    description:
+>>>>> +      This property is required only if the rpmsg/virtio functionality is used.
+>>>>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
+>>>>> +    items:
+>>>>> +      - description: mailbox channel to send data to C906L
+>>>>> +      - description: mailbox channel to receive data from C906L
+>>>>> +
+>>>>> +  memory-region:
+>>>>> +    description:
+>>>>> +      List of phandles to reserved memory regions used by the remote processor.
+>>>>> +      The first region is required and provides the firmware region for the
+>>>>> +      remote processor. The following regions (vdev buffer, vrings) are optional
+>>>>> +      and are only required if rpmsg/virtio functionality is used.
+>>>>> +    minItems: 1
+>>>>
+>>>> Why isn't this constrained?
+>>>
+>>> Do you mean a maxItems should be added here?
+>>>>>
+>>>>> +    items:
+>>>>> +      - description: firmware region
+>>>>> +      - description: vdev buffer
+>>>>> +      - description: vring0
+>>>>> +      - description: vring1
+>>>>> +    additionalItems: true
+>>>>
+>>>> No, drop. This needs to be constrained.
+>>>
+>>> My intention is that RPMsg/OpenAMP is not the only use case for
+>>
+>> We don't allow such syntax, that's not negotiable. Why 322 redundant
+>> memory regions are fine now?
+>>
+>>> remoteproc. There are scenarios where the remoteproc is just used for
+>>> booting the remote processor without any communication with Linux. In
+>>> such case, only the firmware region is needed, and the other regions may
+>>> not be necessary.
+>>>
+>>> Additionally, the remote processor might reserve extra memory for custom
+>>> buffers or other firmware-specific purposes beyond virtio/rpmsg.
+>>> Therefore, I think only the firmware region should be required and
+>>> constrained, while allowing flexibility for additional/custom memory
+>>> regions as needed.
+>>
+>> So how does this work exactly without the rest? Remote processor boots
+>> and works fine? How do you communicate with it?
+>>
+>> Please describe exactly the usecase.
+> 
+> Thank you for your clarification.
+> 
+> The C906L remoteproc can run at two use cases:
+> 1. Standalone mode: Only the firmware region is used. In this case, the
+>    remoteproc driver loads the firmware into the firmware region and
+>    boots the C906L. The C906L runs independently, without communication
+>    with Linux, and the mailbox is not used.
+> 2. OpenAMP/RPMsg mode: The firmware region, vdev buffer, and vrings are
+>    used. In this scenario, the C906L runs firmware with OpenAMP support
+>    and communicates with Linux via the virtio memory regions and mailbox.
+> 
+> To summarize:
+> - Required: firmware region
+> - Optional: vdev buffer, vrings, mailbox
 
-Why are you adding undocumented ABI? And so hidden, not even using
-standard OF API!
-
-How does this behaves when I change your DTS to call it
-"whateverbuffer"? Does it work? Obviously not.
-
-No, stop doing that.
+How does your driver behave in (1)? Does it work?
 
 Best regards,
 Krzysztof
