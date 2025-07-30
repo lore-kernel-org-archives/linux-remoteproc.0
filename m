@@ -1,152 +1,230 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D64B19DFB4;
-	Wed, 30 Jul 2025 10:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869661; cv=pass; b=ljoHOlOCceHU28gcFFseqMu5lSd6vATxymuGQ5o59+uxNzlWUpYbmkZGKA9aL4Bh4kXxJC6YSWV+gqls+XiGEEXclnLlmCVsStWhqPTgSN0bsCS11TdDQf98ueWTiJdp7QqJ5wX8untYVFSFRB6kEJggrWJDiCGk6lJJZDUTBPA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869661; c=relaxed/simple;
-	bh=P8CQgssKSIaGk0xRCqs4CM81zbWzC1LUae6FEPLRlOw=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=Igo+HioG6TVKaLsmHLqti6/SPDr6gemEd2iVFMlsdEkHSAU51BGES8tMEfDGfFI1AYayD/CEH4eHqY1uZR6qKjTKmxx5fDc5MGBq50CeQyhkZGM9k6ynFNHYFts2rgAKtXBQVE7NMYsTLRfhigVd0UCxZCn2XZFGcFqL+GvcxIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=RNigQPZE; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34463433A5
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Jul 2025 15:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753888052; cv=none; b=BoeKvjSWHwScczT6TmsXSPrH3Lagbron6HQpFyo0o0CLK/3yo+MR7JxqWQ1vReZt2k/CBNJYQiModHT0Z6CDBZs8LZmczKAPF6dUeOsh33rKrS03tDNTCD9zp0lP4WpDRpjq5W9/dXbwNTkvDnvaSoBf5X7HPSbDjuP1cx7LP6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753888052; c=relaxed/simple;
+	bh=S2T1WxPA5dM4lrAM/9y42kWN4a3zLOoUtRlThk8KE6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjnbPRXDVXBOPzaAherfCXAeGjK9+fEv1aligVr4+2Oal1ep1khcyQ1QwncrUWMkwLjz2e7NO93gY9f2pb1GYdJh+nZ9C1vSjUtVCNZZUIQmGXYix3LuPpOCXnDy8kt6kr1DLs513b3sUmzVMrWfKzPvoTQSwkcj1Mc89pftDZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaufiJop; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="RNigQPZE"
-ARC-Seal: i=1; a=rsa-sha256; t=1753869630; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mVHba9e1imXwc9oD9l4XIa6BmxmDyMn1i5zBQhdL1EHhgFhOCoBjMS6p+Xu6+AkQKrV+UiyEtdDfxgKxFhbhJuAJ07U4rSgoxmkmTPKKt/AuJ0hLKaJF4t2L7K4AOvfdp5EFnu3Mj78fsV//6cDdVQ/R+0zfY2aSIcJWLNPg064=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753869630; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dJCJxzbcOMXSmaYqhU1ZQU8GEIkWpngcSTaDLY085mc=; 
-	b=a7B0WqvQuQRZzbOpb3be2Pa+L+PzdEu8xYwPWcO6HkgCKYmILU3RZp45NltHPZawUXfOoiVL2gGFbfIGBOuRQyqp/8nDcjzKKujEF3/WCYOSRDyjdyTuE+QykeXoPO7sWkXinJFG4qWslKA+/ID9pfd8F8cNK04TUMyk5iNHLtc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753869630;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=dJCJxzbcOMXSmaYqhU1ZQU8GEIkWpngcSTaDLY085mc=;
-	b=RNigQPZElgWg3b6atXoHhURBwH86YwWzXDl8JABOLq9JHNgbWcJ2FaPCBqfDiCvw
-	zg6hxEpoZubFOrlUmDDlsKGESC3cp2rK7SMFWwf+lqONIOk4DwGwOsroZryDclFHl/o
-	+ASps9v37kbVzoihpWNMHbSJR2M3FX147xXFh/58=
-Received: by mx.zohomail.com with SMTPS id 17538696277121019.2099092907802;
-	Wed, 30 Jul 2025 03:00:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaufiJop"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76b36e6b9ddso733496b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Jul 2025 08:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753888049; x=1754492849; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6zbDF6DuNywreDfjORRT1cKAmeYmyOF35f+RgRaR5Jw=;
+        b=CaufiJopECyIj/I7d3UKCvu23y/K4cPMEzQG+R3J1wLtpBDc29x9LeNqvIKfur9Yu2
+         ToHwU4WCkr+koZIF9yStYcw7yAIRKTiX5qlhI/3iaoCuJdr3SnBcbpPg20fIY9j7a4t9
+         iNwATRTNZiWx5EAQwVHU8n4AYX2s9Jv3l/aDp1cv89e22OHQKCI3HizrB9nKl4E8ddjU
+         aGAwnEPKJr6WrMxQc8oZj7lqqyoqvwNVy+WYdZ9qK3CPXC5JPFsIP8l1KC57gjlnRW01
+         TDkEivY+ZaDaxq/GJoq9OiyPuY1Q03WsMmokITMgxI+my/WZ93hppdhCz77X1dt6JEW5
+         YK3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753888049; x=1754492849;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zbDF6DuNywreDfjORRT1cKAmeYmyOF35f+RgRaR5Jw=;
+        b=GQGJwGumlanuQ7QmzaFJdmPDoGNHdzHh2P+mbc/wc8fZFjOinRifmlxBG29eGGzAvv
+         7f5W1ffAcqnjtoYALhhsfWUs3hd8gPYswX1QSLxyuM6ZuJGpHs1eTOIo3C5vfdbCwSiy
+         vccFOUgs4LhqkcbmGitcJ7YJdWwPEioQ7oNXHqUQw2liM82CxPFbRgJ7QOwgCyn3/Lvd
+         3qeMdN8m7p2sdNRZvUsZPtiaB0qnBARaNOI2378kJyuVd9PdGLKCISBnoxPjPYzfNE8t
+         IKySmPCEw8+mIdzc8HhXmPk7mnGxtrdKnxqHib8TIbEvoJSn2kG1ZnShnFuQ6ywP8NfF
+         Q4IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiZZ2i6MFvJY9w+xYnSi0KI9MfWi6lxRejVjtlUttjjyd132gvr4YAPDlN+59GpfCL0BgfnItqpqoVpH5AztSM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwFLuCe3lhIsOq1QzKBhWkBBZNqgcKjHECwd4NZDsWLs+39J05
+	9UI3FspF+QZRjKqxQl9x8nlYhe3wzPpTZ42/6vqktOilHWUmzby5TlTBs+VptpTwcnc=
+X-Gm-Gg: ASbGnctEKMz4fXSAoCgDnA4lAFbfcpN6QBBKkRm2xE346QwzMWDSmPKMcHSyythNlGl
+	AE8IvF0u8x25DxSi1GgCyb9B8qAovwwYn258wmeQQMqz1WOlq1XyE1WCHFzIQt28QiOzdXh991N
+	unM9kI470YyE+PMZXPPnk9J07aECxRQQOH+PcD5QB1bJTEPgV3tcf4lCC8Uy/J6UvqNoCrGN5HR
+	PYXMorQQum88Komz9GpKe1jUIbOmnppceOKgFec4kVuPDLPfxyWQ/cYK4NbuIM+92KVmdAnmDiT
+	lv8gxzSOtfOIyRDlwWjZVn8ZaNARW2zOvCQVA27Ja421bVB9LaXlJe938HtvI7pJ3I0EfMKs64Y
+	fOcTc52gzQ7hWEVZgg7UZ0mN8Nje5CUf/rlP4
+X-Google-Smtp-Source: AGHT+IFaZ9+p55hN5f6LxwvTNGvq2uEnkVbWsMgb6AANE/sV3IXqIf2qyYyxe/SLSbbyK1EkPLnaaw==
+X-Received: by 2002:a05:6a00:4b0c:b0:740:b394:3ebd with SMTP id d2e1a72fcca58-76ab092312amr5779637b3a.7.1753888049439;
+        Wed, 30 Jul 2025 08:07:29 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:19cc:e53e:637f:aa72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408cf75dfsm10232542b3a.50.2025.07.30.08.07.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 08:07:28 -0700 (PDT)
+Date: Wed, 30 Jul 2025 09:07:26 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Huayu Zong <huayu.zong@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	--cc=Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 3/3] remoteproc: mediatek: Support MT8189 SCP
+Message-ID: <aIo1LsFeKqtPoCDm@p14s>
+References: <20250729023125.9036-1-huayu.zong@mediatek.com>
+ <20250729023125.9036-4-huayu.zong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, 
-	"Bjorn Andersson" <andersson@kernel.org>, 
-	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
-	"Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Chen Wang" <unicorn_wang@outlook.com>, 
-	"Inochi Amaoto" <inochiama@gmail.com>, 
-	"Philipp Zabel" <p.zabel@pengutronix.de>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>
-In-Reply-To: <9dd2af04-5109-43e4-b097-d6b1b4c45dbd@kernel.org>
-Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
-	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for Sophgo
-	 CV1800B SoC
-Message-ID: <1856ff20ba2bf450.56ed58d65d21d4ef.5a222480fa1019f2@Jude-Air.local>
-Date: Wed, 30 Jul 2025 10:00:20 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729023125.9036-4-huayu.zong@mediatek.com>
 
-On 30/07/2025 11:35, Krzysztof Kozlowski wrote:
-> On 30/07/2025 11:27, Junhui Liu wrote:
->> On 30/07/2025 08:46, Krzysztof Kozlowski wrote:
->>> On 28/07/2025 13:03, Junhui Liu wrote:
->>>> +
->>>> +static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
->>>> +				   struct rproc_mem_entry *mem)
->>>> +{
->>>> +	void __iomem *va;
->>>> +
->>>> +	va =3D ioremap_wc(mem->dma, mem->len);
->>>> +	if (!va)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	/* Update memory entry va */
->>>> +	mem->va =3D (void *)va;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int cv1800b_c906l_mem_release(struct rproc *rproc,
->>>> +				     struct rproc_mem_entry *mem)
->>>> +{
->>>> +	iounmap((void __iomem *)mem->va);
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int cv1800b_c906l_add_carveout(struct rproc *rproc)
->>>> +{
->>>> +	struct device *dev =3D rproc->dev.parent;
->>>> +	struct device_node *np =3D dev->of_node;
->>>> +	struct of_phandle_iterator it;
->>>> +	struct rproc_mem_entry *mem;
->>>> +	struct reserved_mem *rmem;
->>>> +	int i =3D 0;
->>>> +
->>>> +	/* Register associated reserved memory regions */
->>>> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
->>>> +	while (of_phandle_iterator_next(&it) =3D=3D 0) {
->>>> +		rmem =3D of_reserved_mem_lookup(it.node);
->>>> +		if (!rmem) {
->>>> +			of_node_put(it.node);
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>> +		if (!strcmp(it.node->name, "vdev0buffer")) {
->>>
->>> Why are you adding undocumented ABI? And so hidden, not even using
->>> standard OF API!
->>>
->>> How does this behaves when I change your DTS to call it
->>> "whateverbuffer"? Does it work? Obviously not.
->>>
->>> No, stop doing that.
->>=20
->> Yes, you're right. I will consider introducing a "memory-region-names"
->> property in the bindings, instead of relying on the node labels directly.=
+Hi,
 
->=20
->=20
-> You don't need it. First, you use some old code as template, but you
-> should look how or re-use Rob's code rewriting this completely.
+On Tue, Jul 29, 2025 at 10:31:13AM +0800, Huayu Zong wrote:
+> Add SCP support for mt8189.
+> 
+> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
+> ---
+>  drivers/remoteproc/mtk_common.h | 11 ++++++++++
+>  drivers/remoteproc/mtk_scp.c    | 37 ++++++++++++++++++++++++++++++---
+>  2 files changed, 45 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index fd5c539ab2ac..fb2131e0ed07 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -35,6 +35,11 @@
+>  #define MT8186_SCP_L1_SRAM_PD_P1	0x40B0
+>  #define MT8186_SCP_L1_SRAM_PD_p2	0x40B4
+>  
+> +#define MT8189_SCP2APMCU_IPC_CLR	0x30010
+> +#define MT8189_SCP2SPM_IPC_CLR		0x30018
+> +#define MT8189_SCP_SECURE_DOMAIN	0xA080
+> +#define MT8189_SCP_DOMAIN_VAL		0x3303003
+> +
+>  #define MT8192_L2TCM_SRAM_PD_0		0x10C0
+>  #define MT8192_L2TCM_SRAM_PD_1		0x10C4
+>  #define MT8192_L2TCM_SRAM_PD_2		0x10C8
+> @@ -112,6 +117,12 @@ struct mtk_scp_of_data {
+>  
+>  	u32 host_to_scp_reg;
+>  	u32 host_to_scp_int_bit;
+> +	u32 scp_to_host_ipc_set_reg;
+> +	u32 scp_to_host_ipc_clr_reg;
+> +	u32 scp_to_spm_ipc_clr_reg;
+> +
+> +	u32 scp_secure_domain_reg;
+> +	u32 scp_domain_value;
+>  
+>  	size_t ipi_buf_offset;
+>  	const struct mtk_scp_sizes_data *scp_sizes;
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 8206a1766481..956793fc6901 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -225,7 +225,8 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+>  {
+>  	u32 scp_to_host;
+>  
+> -	scp_to_host = readl(scp->cluster->reg_base + MT8192_SCP2APMCU_IPC_SET);
+> +	scp_to_host = readl(scp->cluster->reg_base +
+> +			    scp->data->scp_to_host_ipc_set_reg);
 
-Sorry, I didn't catch up with that patch. I will look into it and update
-my implementation accordingly.
+As far as I can tell, this is the same for both mt8189 and mt8192 - it should
+not be needed.
 
->=20
-> Second, list has strict order, so you know exactly where the vdev0
-> buffer is. It cannot be on any other position of the list.
+>  
+>  	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
+>  		scp_ipi_handler(scp);
+> @@ -235,7 +236,7 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+>  		 * MT8192_SCP2APMCU_IPC.
+>  		 */
+>  		writel(MT8192_SCP_IPC_INT_BIT,
+> -		       scp->cluster->reg_base + MT8192_SCP2APMCU_IPC_CLR);
+> +		       scp->cluster->reg_base + scp->data->scp_to_host_ipc_clr_reg);
+>  	} else {
+>  		scp_wdt_handler(scp, scp_to_host);
+>  		writel(1, scp->cluster->reg_base + MT8192_CORE0_WDT_IRQ);
+> @@ -559,8 +560,10 @@ static int mt8188_scp_c1_before_load(struct mtk_scp *scp)
+>  
+>  static int mt8192_scp_before_load(struct mtk_scp *scp)
+>  {
+> +	u32 scp2spm_ipc_clr = scp->data->scp_to_spm_ipc_clr_reg;
+> +
+>  	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
+> -	writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
+> +	writel(0xff, scp->cluster->reg_base + scp2spm_ipc_clr);
+>  
+>  	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
+>  
+> @@ -574,6 +577,11 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
+>  	/* enable MPU for all memory regions */
+>  	writel(0xff, scp->cluster->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
+>  
+> +	/* set the domain of master in SCP */
+> +	if (scp->data->scp_secure_domain_reg)
+> +		writel(scp->data->scp_domain_value,
+> +		       scp->cluster->reg_base + scp->data->scp_secure_domain_reg);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1464,6 +1472,24 @@ static const struct mtk_scp_of_data mt8188_of_data_c1 = {
+>  	.scp_sizes = &mt8188_scp_c1_sizes,
+>  };
+>  
+> +static const struct mtk_scp_of_data mt8189_of_data = {
+> +	.scp_clk_get = mt8195_scp_clk_get,
+> +	.scp_before_load = mt8192_scp_before_load,
+> +	.scp_irq_handler = mt8192_scp_irq_handler,
+> +	.scp_reset_assert = mt8192_scp_reset_assert,
+> +	.scp_reset_deassert = mt8192_scp_reset_deassert,
+> +	.scp_stop = mt8192_scp_stop,
+> +	.scp_da_to_va = mt8192_scp_da_to_va,
+> +	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+> +	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> +	.scp_to_host_ipc_set_reg = MT8192_SCP2APMCU_IPC_SET,
+> +	.scp_to_host_ipc_clr_reg = MT8189_SCP2APMCU_IPC_CLR,
+> +	.scp_to_spm_ipc_clr_reg = MT8189_SCP2SPM_IPC_CLR,
+> +	.scp_secure_domain_reg = MT8189_SCP_SECURE_DOMAIN,
+> +	.scp_domain_value = MT8189_SCP_DOMAIN_VAL,
+> +	.scp_sizes = &default_scp_sizes,
+> +};
+> +
+>  static const struct mtk_scp_of_data mt8192_of_data = {
+>  	.scp_clk_get = mt8192_scp_clk_get,
+>  	.scp_before_load = mt8192_scp_before_load,
+> @@ -1475,6 +1501,10 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+>  	.scp_sizes = &default_scp_sizes,
+> +	.scp_to_host_ipc_set_reg = MT8192_SCP2APMCU_IPC_SET,
+> +	.scp_to_host_ipc_clr_reg = MT8192_SCP2APMCU_IPC_CLR,
+> +	.scp_to_spm_ipc_clr_reg = MT8192_SCP2SPM_IPC_CLR,
+> +	.scp_sizes = &default_scp_sizes,
 
-Thanks for the advice, I will use the order in the list to identify the
-memory region.
+You are introducing a duplicate .scp_sizes
 
->=20
-> This is why you define the ABI. Use then the ABI.
->=20
+Thanks,
+Mathieu
 
-Understood, I will reconsider this.
-
---=20
-Best regards,
-Junhui Liu
-
+>  };
+>  
+>  static const struct mtk_scp_of_data mt8195_of_data = {
+> @@ -1520,6 +1550,7 @@ static const struct of_device_id mtk_scp_of_match[] = {
+>  	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
+>  	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
+>  	{ .compatible = "mediatek,mt8188-scp-dual", .data = &mt8188_of_data_cores },
+> +	{ .compatible = "mediatek,mt8189-scp", .data = &mt8189_of_data },
+>  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+>  	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
+>  	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
+> -- 
+> 2.45.2
+> 
