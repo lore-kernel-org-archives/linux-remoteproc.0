@@ -1,170 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C34293B63;
-	Wed, 30 Jul 2025 09:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868159; cv=none; b=UoQGgYJd4spuOaP2fqNUICmmyzb8TV2AcuuQoy7+IeUYTJqiz6yrMLiq+wEwcalqRHoQ8q4oIbGi21tHfGHrtsh1GXBVqTO1sC8qmMyQaV11s3llqgWNtPGKoOzKRWSzqtOlmQOVmsJ+9CSICsndW+tafQeXPPrGQF+W7UNCg1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868159; c=relaxed/simple;
-	bh=PzvAqEp4SfY/LLfvCtZGeWxCRUZOK1mQy74OYoBIq0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hZFHKyh5u9eMQXeE+q9cQMoIzP0ys1+v/xvdRTVhZaVIuGWMocnePDhv6v9QqUWJme1az2tSMqpObG/wdS9fGYLYCeuXk2zZ7q/SeYD3BN2r2HxYc5V6pvEFlLh2oxTw7UAMbLADxAl1OQsEdN9dpPWQsh5GdnGSret9JuIEKMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMdcWH+N; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A5A1ACEDE;
+	Wed, 30 Jul 2025 09:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753869183; cv=pass; b=hzeD1H1AGgXzVjWm5D0ViQ0GuIN3VSorQIYZR6EolPezk+3lSRLOQk7b94yY1TrEwSbXFxoIJ1EfF7q0oW7/T9I7BK7R6g/ArKiZ4cEWtL2N+6pPX87NNOONcebbu+wrhoCePYytoqc5gBoMLaHn+P1We040lxgU9QoU54gTxyE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753869183; c=relaxed/simple;
+	bh=DiKsySkUNeC8bTjwLJK2Ud0Kbazs9swK/KS5X0fM58M=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=fbrnCbhbCNWn5clRYtMRgUf85JWiD+s6RnM2Kj0xf330la7jFEWsPblIi1mjX9vCu7U2a7jrY2cejAiAGwThQIQOQZ+NPjY3rxt5NMmz4exxKVe88Pmh12hXWtuAZDVK4Aos4nZfJ/aumjMqL4vhKWK6sl2cdjuNjAXMkyT/pzo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=cSAX2A70; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMdcWH+N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC7DC4CEE7;
-	Wed, 30 Jul 2025 09:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753868158;
-	bh=PzvAqEp4SfY/LLfvCtZGeWxCRUZOK1mQy74OYoBIq0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WMdcWH+N6qQJt2u91P+MJa1G3tWHMXvjLCifeiNyQSu0J9736TrRcRLEWXx4I27zy
-	 wYdK2RutevXQVHB5ivqxrvkgUIp9ehpp9ufglTalMLH5gjZPIWoNQDVQfnOEM9JgyN
-	 eimbZnO0YslNQxCuE1gp+cbhm60EuPz12ENwnAOTNqP7lAbl/t2ji9YUIRewWgmqhy
-	 6rtth2fI6lPP1nUjpZPtlKFqN1feoMNgrNqg06torbpuxyQTaeW0tSpt/YAIuClU8o
-	 uA5Bk0SFwYpcyKtISvFCYONoCKE3ROE4rO0Vk08e4WQ7mTCBUnqpxQn/wKTUjcP8mj
-	 wUVyMoyUKF8IA==
-Message-ID: <9dd2af04-5109-43e4-b097-d6b1b4c45dbd@kernel.org>
-Date: Wed, 30 Jul 2025 11:35:52 +0200
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="cSAX2A70"
+ARC-Seal: i=1; a=rsa-sha256; t=1753869145; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gcHqa9+feDNFMDsVs2TKqy6ps4OyVJb9cCdGcEtwBNrjmGjeKe2b9692OfNvTSkebS7TPb9T/ex/zfkfUW575UsaALHUdCu0wOhLY6Q87piyyd/UF+JylhluhCA3apMrNFK/qmYepeCWytfZXWN5JGER497ny75NlVN8ohay5PE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753869145; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JwbmBBrKqJgjxoU8yUqfgZbbSm+7tkuGLcAqTkpXgSU=; 
+	b=SX8fEUcfQE5eeW+CWLFaw6HQGGvEXoPtfXJEYTlBa3peeRDMVd921iLjYWZdYb1/FuZmw20Tj8xo3/zzI5haL5mTXxVkDMoRQ7wmRiGPmklYjPfrOvCcZM6orkSeVbFHrNQaSYgQ0lfCOvN6PWDBZ1Gi7ihxICZRbxffT7egj9g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753869145;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=JwbmBBrKqJgjxoU8yUqfgZbbSm+7tkuGLcAqTkpXgSU=;
+	b=cSAX2A70YQVbB7mKDqeCL8nckPbab9p/s+ClAjOPv46etJFI1CNgCrlErrY9sW/E
+	j2LOIQh7/ZcRJA7lFLxmkD01pPJ/UhNuDmVUtOp0Rb3uWm80B3QEOVCTZJCk2afelsA
+	jEREZFw4erDxzPGDRaAXdf1tJFinStnRZNiB/5dE=
+Received: by mx.zohomail.com with SMTPS id 1753869143747974.5396900815683;
+	Wed, 30 Jul 2025 02:52:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for
- Sophgo CV1800B SoC
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <1856fd5bd24fbc18.7164ab65bf64e5c2.99b72db93ceee539@Jude-Air.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1856fd5bd24fbc18.7164ab65bf64e5c2.99b72db93ceee539@Jude-Air.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, 
+	"Bjorn Andersson" <andersson@kernel.org>, 
+	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
+	"Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Chen Wang" <unicorn_wang@outlook.com>, 
+	"Inochi Amaoto" <inochiama@gmail.com>, 
+	"Philipp Zabel" <p.zabel@pengutronix.de>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>
+In-Reply-To: <4137240e-a5c4-427b-900c-ae062aa9a9c8@kernel.org>
+Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
+	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
+	<linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
+	 CV1800B SoC
+Message-ID: <1856feaf769f30d8.54513078e677e4a4.cf6de7e2e9832713@Jude-Air.local>
+Date: Wed, 30 Jul 2025 09:52:14 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On 30/07/2025 11:27, Junhui Liu wrote:
-> On 30/07/2025 08:46, Krzysztof Kozlowski wrote:
->> On 28/07/2025 13:03, Junhui Liu wrote:
->>> +
->>> +static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
->>> +				   struct rproc_mem_entry *mem)
->>> +{
->>> +	void __iomem *va;
->>> +
->>> +	va = ioremap_wc(mem->dma, mem->len);
->>> +	if (!va)
->>> +		return -ENOMEM;
->>> +
->>> +	/* Update memory entry va */
->>> +	mem->va = (void *)va;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int cv1800b_c906l_mem_release(struct rproc *rproc,
->>> +				     struct rproc_mem_entry *mem)
->>> +{
->>> +	iounmap((void __iomem *)mem->va);
->>> +	return 0;
->>> +}
->>> +
->>> +static int cv1800b_c906l_add_carveout(struct rproc *rproc)
->>> +{
->>> +	struct device *dev = rproc->dev.parent;
->>> +	struct device_node *np = dev->of_node;
->>> +	struct of_phandle_iterator it;
->>> +	struct rproc_mem_entry *mem;
->>> +	struct reserved_mem *rmem;
->>> +	int i = 0;
->>> +
->>> +	/* Register associated reserved memory regions */
->>> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
->>> +	while (of_phandle_iterator_next(&it) == 0) {
->>> +		rmem = of_reserved_mem_lookup(it.node);
->>> +		if (!rmem) {
->>> +			of_node_put(it.node);
->>> +			return -EINVAL;
->>> +		}
->>> +
->>> +		if (!strcmp(it.node->name, "vdev0buffer")) {
->>
->> Why are you adding undocumented ABI? And so hidden, not even using
->> standard OF API!
->>
->> How does this behaves when I change your DTS to call it
->> "whateverbuffer"? Does it work? Obviously not.
->>
->> No, stop doing that.
-> 
-> Yes, you're right. I will consider introducing a "memory-region-names"
-> property in the bindings, instead of relying on the node labels directly.
+On 30/07/2025 08:47, Krzysztof Kozlowski wrote:
+> On 30/07/2025 05:31, Junhui Liu wrote:
+>> On 29/07/2025 08:27, Krzysztof Kozlowski wrote:
+>>> On 28/07/2025 19:13, Junhui Liu wrote:
+>>>>>
+>>>>>> +    description:
+>>>>>> +      This property is required only if the rpmsg/virtio functionali=
+ty is used.
+>>>>>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
+>>>>>> +    items:
+>>>>>> +      - description: mailbox channel to send data to C906L
+>>>>>> +      - description: mailbox channel to receive data from C906L
+>>>>>> +
+>>>>>> +  memory-region:
+>>>>>> +    description:
+>>>>>> +      List of phandles to reserved memory regions used by the remote=
+ processor.
+>>>>>> +      The first region is required and provides the firmware region =
+for the
+>>>>>> +      remote processor. The following regions (vdev buffer, vrings) =
+are optional
+>>>>>> +      and are only required if rpmsg/virtio functionality is used.
+>>>>>> +    minItems: 1
+>>>>>
+>>>>> Why isn't this constrained?
+>>>>
+>>>> Do you mean a maxItems should be added here?
+>>>>>>
+>>>>>> +    items:
+>>>>>> +      - description: firmware region
+>>>>>> +      - description: vdev buffer
+>>>>>> +      - description: vring0
+>>>>>> +      - description: vring1
+>>>>>> +    additionalItems: true
+>>>>>
+>>>>> No, drop. This needs to be constrained.
+>>>>
+>>>> My intention is that RPMsg/OpenAMP is not the only use case for
+>>>
+>>> We don't allow such syntax, that's not negotiable. Why 322 redundant
+>>> memory regions are fine now?
+>>>
+>>>> remoteproc. There are scenarios where the remoteproc is just used for
+>>>> booting the remote processor without any communication with Linux. In
+>>>> such case, only the firmware region is needed, and the other regions ma=
+y
+>>>> not be necessary.
+>>>>
+>>>> Additionally, the remote processor might reserve extra memory for custo=
+m
+>>>> buffers or other firmware-specific purposes beyond virtio/rpmsg.
+>>>> Therefore, I think only the firmware region should be required and
+>>>> constrained, while allowing flexibility for additional/custom memory
+>>>> regions as needed.
+>>>
+>>> So how does this work exactly without the rest? Remote processor boots
+>>> and works fine? How do you communicate with it?
+>>>
+>>> Please describe exactly the usecase.
+>>=20
+>> Thank you for your clarification.
+>>=20
+>> The C906L remoteproc can run at two use cases:
+>> 1. Standalone mode: Only the firmware region is used. In this case, the
+>>    remoteproc driver loads the firmware into the firmware region and
+>>    boots the C906L. The C906L runs independently, without communication
+>>    with Linux, and the mailbox is not used.
+>> 2. OpenAMP/RPMsg mode: The firmware region, vdev buffer, and vrings are
+>>    used. In this scenario, the C906L runs firmware with OpenAMP support
+>>    and communicates with Linux via the virtio memory regions and mailbox.=
 
+>>=20
+>> To summarize:
+>> - Required: firmware region
+>> - Optional: vdev buffer, vrings, mailbox
+>=20
+> How does your driver behave in (1)? Does it work?
 
-You don't need it. First, you use some old code as template, but you
-should look how or re-use Rob's code rewriting this completely.
+The driver inits the firmware region and loads the firmware into it.
+Then it sets the enable bit in the C906L's control register, set the
+reset address for the C906L and deassert the reset bit for the C906L to boot=
+ it.
 
-Second, list has strict order, so you know exactly where the vdev0
-buffer is. It cannot be on any other position of the list.
+Actually, the current driver only supports the first case, and it works.
+The second case is not implemented yet, but I believe it can be
+supported based on the current code structure. I originally intended to
+submit the OpenAMP/RPMsg-related bindings together with the driver
+implementation; however, I was advised to finalize the bindings in v1:
 
-This is why you define the ABI. Use then the ABI.
+https://lore.kernel.org/linux-riscv/PN0P287MB22589781F2D49353E7C66C46FE75A@P=
+N0P287MB2258.INDP287.PROD.OUTLOOK.COM/
 
-
+--=20
 Best regards,
-Krzysztof
+Junhui Liu
+
