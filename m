@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AAF29A2;
-	Mon,  4 Aug 2025 00:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0963BBF2;
+	Mon,  4 Aug 2025 00:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267317; cv=none; b=my/WbSoW3CMQnIAGGUpLKIDEj2sSQM3a0U3GTSTrEMsWg71sXsZ1nSVkKtI5zL4amGoSDk6CPO3gxZyk1+VrxH6J3uoAeKASeOKEtqrYqtkpKo5+QPWFPpUSGH2jJY5HNc9POdpi7/Up7tOBGqLWbAqTi4LojpnX6HYjJTlP2YY=
+	t=1754267516; cv=none; b=C1NImbHFVx0cnD7aeV8c0Hl03npaeOdjt7dU/YxXmHAz3WxCt/ikfkZ0n2saMvMvnHgP1ZMe+4oGdrcucHEmDel9BUoGbmZ9/daq/p7CzVAhAzmQoeM4pOA8WjXdeyRuA7sGGmZvB8Q9SFhuJ9hCytkiTpugw/PCyhTqefZYlGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267317; c=relaxed/simple;
-	bh=HjWAoAuSaFtNiBbbcTEE4MGR3yJasz+eJZliM5YzOxQ=;
+	s=arc-20240116; t=1754267516; c=relaxed/simple;
+	bh=vREE2ZkoWyaTaUVs2JMVo7lnPN/4F9kvPw8m1RUlj1s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dJbIYE/UM5S264nijB12Li/2tb8ZNK+zZYzPrskCQu5IRVaw37/2VH52BcVumBUP77jRs7VkVSDHqPVVys3nOqaF9UJJMJnKSjAhYM473hTF24/RbZ51P8LdLNflwcvvHBev57QFrM+nKuYeIK4JDnj4TRmE/WmhqSwwPAzpKlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYZ331Hz; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Fbd4jn63hm7Lto9seluVZoQoMlQ1LJexzuzvVZEeqnHQhwrgnseO7DIudK5eO4YqdZxrgmCqwLZ1BXIs4CNlWu4f28Ff708ZBOrkmSrwLFp039YsOfx7UJx0MG/LBPd8AGEU/2+EEhh/NfjGd0DoHE3JQHNXe8NRwHcgXqP8K3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pc7uC9Ev; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYZ331Hz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A2EC4CEF8;
-	Mon,  4 Aug 2025 00:28:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pc7uC9Ev"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 376A6C4CEF0;
+	Mon,  4 Aug 2025 00:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267317;
-	bh=HjWAoAuSaFtNiBbbcTEE4MGR3yJasz+eJZliM5YzOxQ=;
+	s=k20201202; t=1754267516;
+	bh=vREE2ZkoWyaTaUVs2JMVo7lnPN/4F9kvPw8m1RUlj1s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JYZ331HzB10QsQ0SSbR+X/ek7KyMDef1S3zfS8K8Wk1j0D4dW86lT+fwJg1yX1K2G
-	 rTZMEWedKoV7m7mYL1tx+nX94Hrry1ULyyeOQkspfphtM/7eN/hcmFO83E2J6Hya9s
-	 VoEu9+MGPX1uyp4/TJ15LIQTDlDJYqB8loP2uFEhwndDxWr0fTqamiKfydpxs2PJFy
-	 jzFTSagBgH3Z7L0EbKaC8UQ+qWkOHYPk3fUj36KVa00eY5qStRiet7IyNCHF7YuTtW
-	 6fHNh7z4blKRFnZ6E+68VV0hae6aSyPmZ/ppp9ZXGCd2EqXi4ft/W0hl2elIg31K5N
-	 mNvNOJ8278lvA==
+	b=pc7uC9Ev6c/xW1J9d8JF4iFVa24Mt7xPDjUgnouDSDFIddlR+0yf5sJhN7QiKbAfo
+	 3NPefosHqsxp2DzFxYk9Nzlcr9vaFSk/iekj+Kk+8mX6ZPYzOHsj4d9eIjCWjbHW8c
+	 jtfL0qfWHl12Z8r5lu0eWuLRi/B+a58XR4YuxzClvMLybukJzllyxkJCPCU4qrX518
+	 p8VLPXcgdq+rNfNmNFn2BFh7Ze7aG2WFKvB5tlyRjntjHqOU58vZzHcQg6L9Jw8ZqX
+	 2ZzfHBDOuhp6CgURsbOx5DQx3UmBO8fkN7dk+vbo36Jm8Q3vSF2q59jcSfDKqIKE6L
+	 qySgf21LWdOCA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Hiago De Franco <hiago.franco@toradex.com>,
 	linux-remoteproc@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.15 16/80] remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU
-Date: Sun,  3 Aug 2025 20:26:43 -0400
-Message-Id: <20250804002747.3617039-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 13/69] remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU
+Date: Sun,  3 Aug 2025 20:30:23 -0400
+Message-Id: <20250804003119.3620476-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804002747.3617039-1-sashal@kernel.org>
-References: <20250804002747.3617039-1-sashal@kernel.org>
+In-Reply-To: <20250804003119.3620476-1-sashal@kernel.org>
+References: <20250804003119.3620476-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.9
+X-stable-base: Linux 6.12.41
 Content-Transfer-Encoding: 8bit
 
 From: Hiago De Franco <hiago.franco@toradex.com>
@@ -149,7 +149,7 @@ failure and subsequent system reset.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 74299af1d7f1..627e57a88db2 100644
+index 800015ff7ff9..cc3f5b7fe9dd 100644
 --- a/drivers/remoteproc/imx_rproc.c
 +++ b/drivers/remoteproc/imx_rproc.c
 @@ -1029,8 +1029,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
