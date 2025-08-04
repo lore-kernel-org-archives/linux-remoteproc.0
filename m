@@ -1,155 +1,395 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5EE2701CC
-	for <linux-remoteproc@vger.kernel.org>; Mon,  4 Aug 2025 14:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ADBA920;
+	Mon,  4 Aug 2025 19:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317088; cv=none; b=goUbgDlie8eMY5jzQ56+MIZ2s4eqx83u85utsxsOvQNMueF0j32nS/hsHWSr41/DKFgaxL9s1nZYspu4HoayIv3mc7hxZ23g6cFD15aw3qlGdjyVWSpqNEcZEn5fCfM/TteYk2crMQAZjAEoR8dKy7iflbQiRHpGK4yFdPYkYHM=
+	t=1754335891; cv=none; b=pDeB8c1tMmMHl7vz72D7W933Vor+0Ka2CaLC621TXyVpnTUAzzBYSkw9+nEXDXg1Q0tPAKSnH3hLG2SUnHRLhKy+JTIiDs/Z9Q7PTnBpJOHj+dBWAILLMElo5A0Fpz7Sv/V/BUzkuRPqpsS1C0t191ILASmV+8Qp0pKzmBvCHQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317088; c=relaxed/simple;
-	bh=VKZmdjotUC3YbS16o6pwylau9DHkDdk5aDr5RC+8Sb4=;
+	s=arc-20240116; t=1754335891; c=relaxed/simple;
+	bh=ZnQSbuZYkjItKORmRN9BnQG+sGURBevEX8zF7T9jgPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0Z6HJnmqpsdcqoHgTRmghju0KTPV4x+nJdENwLk/dZhGlbbH3b5Ovgu4yZTRYOdA5nu9aMLrEfCz9YIIj2hN4xzwPSB1UNhXOqSK2uDi7sL7iCLK6osNolmwpV6Dob+QO9u5ls1UiBvtMpxewsxDcUoPbARcEAgsaCGNVuJXvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RMp4iUAd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFhQNNA3JFDecq8U5I+bFZ097hJluWNgWr1xqWaE4JAHXdxQv4TqhqaMGMZ2ogzUqqjC2kZ668pVFBEqwxPnpNz2VfW6PpIwRiiKAUdqynyxUCIqIt0daa6aQvIOwZEeQ5m6sg8+LxVf1oQb8G2vYtXXIjmKeMqnSfsFwDDi9YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCCA6I2W; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RMp4iUAd"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574CSoif011363
-	for <linux-remoteproc@vger.kernel.org>; Mon, 4 Aug 2025 14:18:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yV10ozYgUe4tzTx22lApIwGp
-	t095dJ2LaBUIJh0zJQw=; b=RMp4iUAdZ9MiaxFspe846207a/m9KYLu8rIGQKjJ
-	qB4vNnU8PaDP1Ad933PHN0PyrgvOI0fhe2SGeJ77pV9WJgEDfyRM1Ae4aDn7aWNf
-	IArKKl93H++Hq7ONRD+H4cj1YfYK67jEveI1tDzu0H3ULUuMenzm0QKUmIhAfn78
-	eP/TJ68EYRxJALyFI17JPBWUmbN/MiaxK8jEF1ZMT/gakSrO37rUX60yFUKn3OWA
-	BXG9d0aoFqfMM+IqudbsaqHxRQycBnRzuVyfkbun6/f9EN7LiFNusGcsS9E5lwp8
-	vgrmuF45J5XPyfxVbmtZycCTKPTarVb1uTQOK3ybKwJnTg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48avvu89p5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 04 Aug 2025 14:18:04 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-75e28bcec3bso5974415b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Aug 2025 07:18:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCCA6I2W"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b42099901baso3784812a12.2;
+        Mon, 04 Aug 2025 12:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754335889; x=1754940689; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cg1LDhnZ90yh+XE2oPHgeCSiaPRO2zTnyN8aur7VHpM=;
+        b=mCCA6I2Wz+/oK4zvC269CE8WDckmkoP+8JIk2dXyXiwKqxZ6fzDyIvS7WHqj/d5Ugd
+         s8Lux9YH6NXiH3BvbzHa9Y4JzN9+3yXxVenqEwRL1Tc6e1nw6ooLbc0lWY5W1CvcB6el
+         dDnNcNQjZ0uaxo5oURUV7pkZoeNLvckCjbYN7+mU+w7WcGjCZgYv5HfDUxfQ+NgYaUHV
+         dFxhzNCbYniTZdfrOOu6KVww7tXz2YUf1S/+oMxH38sqz0dJUzZn6eHPMJT/i1Ak15BY
+         MMDcU7ziVBmJ5A4JgWr06AEAZ14dHLVei7LE7mDGikfTlDXv0Z7ppo29eEXnrcct6Fc+
+         4gLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754317084; x=1754921884;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1754335889; x=1754940689;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yV10ozYgUe4tzTx22lApIwGpt095dJ2LaBUIJh0zJQw=;
-        b=BDdvLYWNhZrHYIsNmCuHuaA5mLQjzR1DMLEeEDSj2U2zG+gbefj9wxuVm4BA75VK1a
-         7dSnKq3mldPhtTH0H7XOAOBZeEshXoyT2KM/f9ZCiQpV8igYpRqI+8owIR3V9actJVi/
-         hfRaRak8fOuWxMmWYHxgdQ74lVLtRGvdxSM+J7oded+pd1c1an/hfLcKQyoGDTG6B+RK
-         TS8SIX1t7BjknJQ7mFKhs9ZS8sdwp5Ut9aWG0VYiwYtWSgmgauEiVr0hMIlx6HLfQ9Tq
-         +t7JKQuX4Dr+ddByQzXtJ9O0sspLDzE4g5aAWQL2zcYwAJeXMgqxlZlVf5/7AU5bpT6e
-         EtEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpk9CZTRX8JBpBZAbmvy1hBE35/3SI+awiJnGJjcMOdRfPImIGR6qO656LeypRcFC1vr9ODMopPWoA4Jze9T1g@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgzNi1io2tO0wDUy/Lpa6K4Ts5MdjIiXYO2MDDXqNpQpuPOWMu
-	EAYkQa6PzB2/8EPo3iqbJdI7lYP9g4hD3F3MHWmLIhhq0jNBbDHuBlZui99vfIe743TPdrhaGGf
-	Zyd6D5/7Wwp6rWfjJCDOxbINSq9d+sLxUkYNWwWeVA8624u3jcxGM5Z5s+Zwhrv59CU74XM4f
-X-Gm-Gg: ASbGncvPTml0zcuXGXexXiCssR/h9CXg9URnYBSsLImJrt8MCIEV+6hRYzFzWUR5MFf
-	QK2p1mONiX/oUDJ6k7VGvOdqW1e3ob4gg0lXZHo2WfDMqhd8XtlK9FwoSf6MCY9fAEn/UsOWQIL
-	V0E4Y5mxbau2q2WOvqoRg9oR4Q3AQeXHkyFhBOIicCU0iIpliAku3XfffYmwwEjVrmgitqnV9Ha
-	TTlwI3XQuHBXhAi33541k0uJE0foRUubE2WuG5lc9HWhePy2Jb+YGeIxA/Xl7obtCns9cyXgM+v
-	gvV9TnBql9O9aiogPl5HvCw/ByopSNcUm9iJLIfH3H4DqGXgkZPFmqPSqEc1xKmwbzo=
-X-Received: by 2002:a05:6a00:744f:b0:76b:f06f:3bdf with SMTP id d2e1a72fcca58-76bf06f4064mr9615987b3a.17.1754317083687;
-        Mon, 04 Aug 2025 07:18:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGDsTzlLGqDnAvh3MpUA8PVpt35YKMpiCWpzipsOhlEqGhm5w5CMVTLOTYyI4L20glEIYSNg==
-X-Received: by 2002:a05:6a00:744f:b0:76b:f06f:3bdf with SMTP id d2e1a72fcca58-76bf06f4064mr9615955b3a.17.1754317083308;
-        Mon, 04 Aug 2025 07:18:03 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bea205365sm6411378b3a.83.2025.08.04.07.17.58
+        bh=cg1LDhnZ90yh+XE2oPHgeCSiaPRO2zTnyN8aur7VHpM=;
+        b=KBL9Pd868nuXvLylppokZX8Mq0BbUtSjW8O09+t9NrPjuLcvnItp4c12VnzWkj1whX
+         Z9dwAM7Ww3EUkI132G7s7J+48wybsKHnlCTbG3hWRh0veeMfpo+btmnJJiu6mBNnFrMB
+         ACh4ZAaoB2rI3XklwFheJC55Dj5L71QJCKcqRkfFR7vrwVOEFQpfJ1KxBSR0v1ZRfWiq
+         i3UNK8IxU//V80FqdbW9fZcsa3cdQYsQVmwzWnGcvA6tCiXZ27RvG0G5/Tz4/l4mlSsD
+         Pn5xcwai5FXgkyFZ+E0vPWfu84uu/d1g2IInkLVA0hYymZWIgxXF0a9UC81Bpe1k7Qc/
+         Ru6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUzwhFhmrd0wStaCxT0+DFSGUyG1d48LO4+JKuLsWPyPF+dYznxjwkSqJ1WaXIZxL3zjIcJpSPPVQh4Cn9S8ZkiA==@vger.kernel.org, AJvYcCUh119ijG2orkanmPE9taLC/nWvXT5e9qZm1Vhe2fcKhj/511KwREYPqicWs40u5Rlm9AgDev528D0mTzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeEsbmaIgzgb1BLEz5dwYDkyW+ZKbQSIuFhPpMuh+2v1+MVBlZ
+	W80bCWXGaIQV/4twP34uc1Ld4kW/mdJOK1I4dZtJibxbhCyTntkpnKpk
+X-Gm-Gg: ASbGnctEGWB/dEdg2lz4yLOGcphCzt8NjVcNlNDI630QHpiUHNGa5PAl1kFkPDZqRIM
+	ZZY5r/apvnEvCVIbgZ+2pUPqLR9AdVkTxXRX7XywA3Ivpfkhgct5IkiGpmp+YaSxA1KSvOI8PeI
+	mC62XfXdN5cHC/0xQlgvHXGFskJq7L42OSXHkb6uupL/bSGIT7qs0j5GHfXJKlr9CPfcyXoXCro
+	YrnQlcalFyFp/bg6WA71SFwJelX2vxOoGm33jsgyA6ORGezuRNYP/YiWJc7Z+e1+3Zoa0Ar6BxR
+	2gNorv8G69FztZ/r5abePTQ2VEywsdZhcLm3aCBNBi3kB9s9+PBTAJowoYa8S8sidASdFrAvUnT
+	eXpa1+Mume6gYDw8q+6I=
+X-Google-Smtp-Source: AGHT+IGAC4mA0SjUVleHwP06QIOFdHV0sLOav/gFrKz9UJj/QtI4j3FJcq4tjR9/UICVzEItoBWM0w==
+X-Received: by 2002:a17:902:c409:b0:234:f580:9ed with SMTP id d9443c01a7336-24246f7db85mr145196635ad.21.1754335888390;
+        Mon, 04 Aug 2025 12:31:28 -0700 (PDT)
+Received: from hiagonb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a48esm116911585ad.114.2025.08.04.12.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 07:18:02 -0700 (PDT)
-Date: Mon, 4 Aug 2025 19:47:55 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Remove pas id parameter
-Message-ID: <20250804141755.qzwfgqjdx3s6yc7q@hu-mojha-hyd.qualcomm.com>
-Mail-Followup-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
- <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
- <095ab6dd-9b0d-4f58-872a-852c5f19818c@oss.qualcomm.com>
+        Mon, 04 Aug 2025 12:31:27 -0700 (PDT)
+Date: Mon, 4 Aug 2025 16:31:23 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Andrew Davis <afd@ti.com>
+Cc: Beleswar Prasad Padhi <b-padhi@ti.com>, 
+	linux-remoteproc@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, 
+	Hiago De Franco <hiago.franco@toradex.com>
+Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
+Message-ID: <yz2x2ywvmms6xgdvefqwr6ioi5cateagf2egqjnug7ozkcatx6@f652ifqzrm33>
+References: <20250726143908.ayug6dedkmzulldx@hiagonb>
+ <d6ac080c-9a13-49eb-9cf5-1723df613548@ti.com>
+ <20250729180420.svxtcukjlgg5sv6p@hiagonb>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <095ab6dd-9b0d-4f58-872a-852c5f19818c@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA3OSBTYWx0ZWRfX9aJu9ywUY35l
- BKL6soVhh5QacKuzsRkcG3c96UrEr9LYoEdxrGo0rcrcqpTSNj2MOFQiYs+CjROIXh+9+3qXK/1
- Pg/qzqBaG4PLTx7aplcQ35qAA3Ut1Li3mDnKlKk+Ocio0XRuuH5ILqtLEaRMhgCoIBBr69GLA4U
- Bb1vZij0R51wOR5lrBLjmcq9Rb7IOqN8HfQoOc2p3+nuuHKH5CcdQ677asN4YTJX1VtzYA6DGzW
- d0XVM2IOIPlN3Cba2ZoG204UsTJqRApVOkdyK/oasm5lkFv1mVPh82T25eR7h2CHSaPl4YlMmvF
- y0AApjoP5+ngdNa8HIFYo8Tgm08qBuIPAh53Pg57/zA/hgPhrU3zmETPsTFpUjTrRdFwDCEAwsO
- 2wD3Y7lBQQ/Zu5UcIJWYtVOOIdQSldtNRgBBoZXiKjT5UnB0HA/jHQDqst1ciXXhRVS0ttal
-X-Proofpoint-GUID: 9ib2JXDvLAzqrN7Ah_NLeEM6hK08BfnW
-X-Authority-Analysis: v=2.4 cv=OYKYDgTY c=1 sm=1 tr=0 ts=6890c11c cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=6krb5mtG3PrLwc7-ycAA:9
- a=CjuIK1q_8ugA:10 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-ORIG-GUID: 9ib2JXDvLAzqrN7Ah_NLeEM6hK08BfnW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_06,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 phishscore=0 spamscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040079
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250729180420.svxtcukjlgg5sv6p@hiagonb>
 
-On Mon, Aug 04, 2025 at 03:16:35PM +0200, Konrad Dybcio wrote:
-> On 8/4/25 2:41 PM, Mukesh Ojha wrote:
-> > pas id is not used in qcom_mdt_load_no_init() and it should not
-> > be used as it is non-PAS specific function and has no relation
-> > to PAS specific mechanism.
+Hi Andrew,
+
+On Tue, Jul 29, 2025 at 03:04:20PM -0300, Hiago De Franco wrote:
+> On Sat, Jul 26, 2025 at 12:48:14PM -0500, Andrew Davis wrote:
+> > On 7/26/25 9:39 AM, Hiago De Franco wrote:
+> > > Hi Andrew, Beleswar,
+> > > 
+> > > On Fri, Jul 25, 2025 at 02:29:22PM -0500, Andrew Davis wrote:
+> > > > 
+> > > > So the issue then looks to be this message we send here when we setup
+> > > > the mailbox[0]. This mailbox setup is done during probe() for the K3
+> > > > rproc drivers now (mailbox setup used to be done during
+> > > > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+> > > > is correct, but we should have factored out the test message sending
+> > > > code out of mailbox setup so it could have been left in
+> > > > rproc_{start,attach}(). That way we only send this message if the
+> > > > core is going to be started, no sense in sending that message if
+> > > > we are not even going to run the core..
+> > > > 
+> > > > Fix might be as simple as [2] (not tested, if this works feel free
+> > > > to send as a fix)
+> > > 
+> > > I tested the patch and it works, thanks!
+> > > 
+> > > > 
+> > > > Andrew
+> > > > 
+> > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+> > > > [2]
+> > > > 
+> > > > diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> > > > index a70d4879a8bea..657a200fa9040 100644
+> > > > --- a/drivers/remoteproc/ti_k3_common.c
+> > > > +++ b/drivers/remoteproc/ti_k3_common.c
+> > > > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(k3_rproc_reset);
+> > > > +static int k3_rproc_ping(struct k3_rproc *kproc)
+> > > > +{
+> > > > +       /*
+> > > > +        * Ping the remote processor, this is only for sanity-sake for now;
+> > > > +        * there is no functional effect whatsoever.
+> > > > +        *
+> > > > +        * Note that the reply will _not_ arrive immediately: this message
+> > > > +        * will wait in the mailbox fifo until the remote processor is booted.
+> > > > +        */
+> > > > +       int ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+> > > > +       if (ret < 0)
+> > > > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> > > > +
+> > > > +       return ret;
+> > > > +}
+> > > > +
+> > > >   /* Release the remote processor from reset */
+> > > >   int k3_rproc_release(struct k3_rproc *kproc)
+> > > >   {
+> > > > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+> > > >          if (ret)
+> > > >                  dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
+> > > > +       k3_rproc_ping(kproc);
+> > > > +
+> > > >          return ret;
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(k3_rproc_release);
+> > > > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+> > > >                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+> > > >                                       "mbox_request_channel failed\n");
+> > > > -       /*
+> > > > -        * Ping the remote processor, this is only for sanity-sake for now;
+> > > > -        * there is no functional effect whatsoever.
+> > > > -        *
+> > > > -        * Note that the reply will _not_ arrive immediately: this message
+> > > > -        * will wait in the mailbox fifo until the remote processor is booted.
+> > > > -        */
+> > > > -       ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+> > > > -       if (ret < 0) {
+> > > > -               dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> > > > -               mbox_free_channel(kproc->mbox);
+> > > > -               return ret;
+> > > > -       }
+> > > > -
+> > > >          return 0;
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> > > > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+> > > >    * remote core. This callback is invoked only in IPC-only mode and exists
+> > > >    * because rproc_validate() checks for its existence.
+> > > >    */
+> > > > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+> > > > +int k3_rproc_attach(struct rproc *rproc)
+> > > > +{
+> > > > +       k3_rproc_ping(rproc->priv);
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > >   EXPORT_SYMBOL_GPL(k3_rproc_attach);
+> > > >   /*
+> > > > 
+> > > 
+> > > On Sat, Jul 26, 2025 at 07:47:34PM +0530, Beleswar Prasad Padhi wrote:
+> > > > > 
+> > > > > So the issue then looks to be this message we send here when we setup
+> > > > > the mailbox[0]. This mailbox setup is done during probe() for the K3
+> > > > > rproc drivers now (mailbox setup used to be done during
+> > > > > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+> > > > > is correct, but we should have factored out the test message sending
+> > > > > code out of mailbox setup so it could have been left in
+> > > > > rproc_{start,attach}().
+> > > > 
+> > > > 
+> > > > Or, how about we don't send that test mbox message at all. It does not
+> > > > actually check if the remoteproc was able to receive and respond to the
+> > > > message. It only verifies if the write to the mbox queue was successful. And
+> > > > most firmwares anyways don't reply to that mailbox-level echo message.
+> > > 
+> > > I was thinking about the same.
+> > > 
+> > > I tested the patch and it indeed works, however when I boot the remote
+> > > core with a hello world firwmare from the TI MCU SDK (with IPC enabled
+> > > with the sysconfig), the ping is sent but M4 never replies to it, which
+> > > at the end causes an unread message to stay there. Later, if I stop the
+> > > remote processor, I can not got into suspend mode again because of this
+> > > message.
+> > > 
+> > > So I believe we should never send the message or clear the mailbox when
+> > > the remote processor is stopped, but I was not able to find a way to
+> > > clear the mailbox. So, is it ok if we never send the ping?
+> > > 
 > > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
+> > So right now it is okay to not send that ping, and in the past I've
+> > thought about removing it (it is a bit of a legacy hold-over from
+> > the OMAP RProc driver. Back then we would send other messages like
+> > suspend and shutdown requests, you can see the different messages
+> > here[0]. Actually using those messages never got upstream, only the
+> > ping message part did.
+> > 
+> > For K3 we want to start making use of all these other messages and
+> > upstream the support for the same. So removing the ping test message
+> > felt like a step backwards as it is a good placeholder for the more
+> > important messages we want to send later. But as said, removing it
+> > is probably fine for now.
+> > 
+> > The second thing on the roadmap is to better deal with messages left
+> > in the mailbox queue when we try to suspend. Basically on suspend the
+> > mailbox IP is powered down and all messages waiting will be lost, this
+> > can cause issues. Instead of blocking suspend, one other option would
+> > be to attempt to read out these messages and restore them on resume.
+> > This state saving would match what most other IP drivers. This would
+> > fix issues like the above were the firmware doesn't consume a message
+> > for whatever reason. But until we implement that, either we throw out
+> > messages on suspend, or we block suspend.
 > 
-> [...]
+> Got it, thanks for you explanation Andrew. I am out this week, so next
+> week I will propose a patch so we can turn around this issue.
 > 
-> > -static bool qcom_mdt_bins_are_split(const struct firmware *fw, const char *fw_name)
-> > +static bool qcom_mdt_bins_are_split(const struct firmware *fw)
+> Thanks!
 > 
-> This seems unrelated (or at least unmentioned)
+> Hiago.
 
-Ah, Missed it.
-I will keep this as separate change.
+Sorry for the delay, I am back this week, I was testing the patches and
+removing the ping was not enough, there is one extra message being sent,
+which is the k3_rproc_kick() from ti_k3_common.c. This one is a callback
+from remoteproc_virtio.c.
 
--Mukesh
+I belive this one is necessary to make the firmware works, but with the
+hello world demo, I still have the issue where I can not go into suspend
+mode. Removing both mbox_send_message() calls makes the suspend work
+again:
+
+root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox|hfranco"
+[    0.000000] Kernel command line: root=PARTUUID=096221e5-02 ro rootwait console=tty1 console=ttyS2,115200 dyndb
+g="file ti_k3_common.c +p; file remotecore_proc.c +p; file remoteproc_virtio.c +p"
+[   10.520920] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
+[   10.711357] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
+[   10.753040] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
+[   10.793640] remoteproc remoteproc0: 5000000.m4fss is available
+[   10.856735] remoteproc remoteproc0: powering up 5000000.m4fss
+[   10.895961] remoteproc remoteproc0: Booting fw image am62-mcu-m4f0_0-fw, size 451080
+[   11.000752] rproc-virtio rproc-virtio.4.auto: assigned reserved memory node m4f-dma-memory@9cb00000
+[   11.101614] rproc-virtio rproc-virtio.4.auto: registered virtio0 (type 7)
+[   11.151665] remoteproc remoteproc0: remote processor 5000000.m4fss is now up
+[   12.123724] remoteproc remoteproc1: 30074000.pru is available
+[   12.171118] remoteproc remoteproc2: 30078000.pru is available
+[   12.337287] remoteproc remoteproc0: vring0: va 00000000cabe42be qsz 256 notifyid 0
+[   12.337337] remoteproc remoteproc0: vring1: va 00000000a651968a qsz 256 notifyid 1
+[   12.348543] remoteproc remoteproc0: kicking vq index: 0
+[   12.348559] hfranco: sending msg 0x0, name mbox-m4-0
+[ 2514.508396] remoteproc remoteproc0: stopped remote processor 5000000.m4fss
+[ 2518.010399] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
+[ 2518.010433] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
+[ 2518.010461] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
+
+In this case, I was wondering if we should drop the messages for now,
+until we have the routine to save the messages first. Any suggestion you
+might have?
+
+Thanks for the help,
+Hiago.
+
 > 
-> Konrad
+> > 
+> > Andrew
+> > 
+> > [0] drivers/remoteproc/omap_remoteproc.h
+> > 
+> > > Best regards,
+> > > Hiago.
+> > > 
+> > > > 
+> > > > Thanks,
+> > > > Beleswar
+> > > > 
+> > > > > That way we only send this message if the
+> > > > > core is going to be started, no sense in sending that message if
+> > > > > we are not even going to run the core..
+> > > > > 
+> > > > > Fix might be as simple as [2] (not tested, if this works feel free
+> > > > > to send as a fix)
+> > > > > 
+> > > > > Andrew
+> > > > > 
+> > > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+> > > > > [2]
+> > > > > 
+> > > > > diff --git a/drivers/remoteproc/ti_k3_common.c
+> > > > > b/drivers/remoteproc/ti_k3_common.c
+> > > > > index a70d4879a8bea..657a200fa9040 100644
+> > > > > --- a/drivers/remoteproc/ti_k3_common.c
+> > > > > +++ b/drivers/remoteproc/ti_k3_common.c
+> > > > > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_reset);
+> > > > > 
+> > > > > +static int k3_rproc_ping(struct k3_rproc *kproc)
+> > > > > +{
+> > > > > +       /*
+> > > > > +        * Ping the remote processor, this is only for sanity-sake for
+> > > > > now;
+> > > > > +        * there is no functional effect whatsoever.
+> > > > > +        *
+> > > > > +        * Note that the reply will _not_ arrive immediately: this
+> > > > > message
+> > > > > +        * will wait in the mailbox fifo until the remote processor is
+> > > > > booted.
+> > > > > +        */
+> > > > > +       int ret = mbox_send_message(kproc->mbox, (void
+> > > > > *)RP_MBOX_ECHO_REQUEST);
+> > > > > +       if (ret < 0)
+> > > > > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n",
+> > > > > ERR_PTR(ret));
+> > > > > +
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > >   /* Release the remote processor from reset */
+> > > > >   int k3_rproc_release(struct k3_rproc *kproc)
+> > > > >   {
+> > > > > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+> > > > >          if (ret)
+> > > > >                  dev_err(dev, "module-reset deassert failed (%pe)\n",
+> > > > > ERR_PTR(ret));
+> > > > > 
+> > > > > +       k3_rproc_ping(kproc);
+> > > > > +
+> > > > >          return ret;
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_release);
+> > > > > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+> > > > >                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+> > > > >                                       "mbox_request_channel failed\n");
+> > > > > 
+> > > > > -       /*
+> > > > > -        * Ping the remote processor, this is only for sanity-sake for
+> > > > > now;
+> > > > > -        * there is no functional effect whatsoever.
+> > > > > -        *
+> > > > > -        * Note that the reply will _not_ arrive immediately: this
+> > > > > message
+> > > > > -        * will wait in the mailbox fifo until the remote processor is
+> > > > > booted.
+> > > > > -        */
+> > > > > -       ret = mbox_send_message(kproc->mbox, (void
+> > > > > *)RP_MBOX_ECHO_REQUEST);
+> > > > > -       if (ret < 0) {
+> > > > > -               dev_err(dev, "mbox_send_message failed (%pe)\n",
+> > > > > ERR_PTR(ret));
+> > > > > -               mbox_free_channel(kproc->mbox);
+> > > > > -               return ret;
+> > > > > -       }
+> > > > > -
+> > > > >          return 0;
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> > > > > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+> > > > >    * remote core. This callback is invoked only in IPC-only mode and
+> > > > > exists
+> > > > >    * because rproc_validate() checks for its existence.
+> > > > >    */
+> > > > > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+> > > > > +int k3_rproc_attach(struct rproc *rproc)
+> > > > > +{
+> > > > > +       k3_rproc_ping(rproc->priv);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_attach);
+> > > > > 
+> > > > >   /*
+> > > > > 
+> > 
