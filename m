@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307151311AC;
-	Mon,  4 Aug 2025 00:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AAF29A2;
+	Mon,  4 Aug 2025 00:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267076; cv=none; b=H5pIRHkihjWVP5DK4DQrGwtFlrlorq1umzPXSx0zFgROgl83bGXfgqmPRTYnzN98AU4+4GsjVhmcrsAxd6UnFYiaKIv0y3ScuoA27bybmPln5ltNjA6kF/6NimmMu+1sO83k7EvHuSJpbqpKjgHuzEW/k5baLCIKDja//VNM+Kg=
+	t=1754267317; cv=none; b=my/WbSoW3CMQnIAGGUpLKIDEj2sSQM3a0U3GTSTrEMsWg71sXsZ1nSVkKtI5zL4amGoSDk6CPO3gxZyk1+VrxH6J3uoAeKASeOKEtqrYqtkpKo5+QPWFPpUSGH2jJY5HNc9POdpi7/Up7tOBGqLWbAqTi4LojpnX6HYjJTlP2YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267076; c=relaxed/simple;
+	s=arc-20240116; t=1754267317; c=relaxed/simple;
 	bh=HjWAoAuSaFtNiBbbcTEE4MGR3yJasz+eJZliM5YzOxQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ArOtcOYf8+MitJURsqb5IEFkMMfU/ewiKmaaifzP4lOjCecEGJlGrbLA25rSlXpek9i8WBO/sPyb9DyQv1iHG/KFf3719O9cs2rmOiEigXuEBteir2GP0Bb+IvwiqNjwZhGGGK6qk9gtVhshWyx+g80ghOiFK0Tg83FrIDdZaJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mv5hiRNa; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=dJbIYE/UM5S264nijB12Li/2tb8ZNK+zZYzPrskCQu5IRVaw37/2VH52BcVumBUP77jRs7VkVSDHqPVVys3nOqaF9UJJMJnKSjAhYM473hTF24/RbZ51P8LdLNflwcvvHBev57QFrM+nKuYeIK4JDnj4TRmE/WmhqSwwPAzpKlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYZ331Hz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mv5hiRNa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE32EC4CEF8;
-	Mon,  4 Aug 2025 00:24:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYZ331Hz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A2EC4CEF8;
+	Mon,  4 Aug 2025 00:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267076;
+	s=k20201202; t=1754267317;
 	bh=HjWAoAuSaFtNiBbbcTEE4MGR3yJasz+eJZliM5YzOxQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mv5hiRNaVxm4dzuyBMEg5zXDjhGKqgiDA5rqxXfTwv+AZuXcEcHKHHrZynbCg0foo
-	 Y5oenTK5ZOJMeQRiyYmN7h9UKLYM9n9A9NRTbvJk3rejG6e+Q4Iwyc6xBm/cBvJ0zu
-	 Bf0hoHcSDmP+jCjNWy2+ep9xoYANTPrj2cOca6m64j4397Ozu1Tau5kabIE1ggcyvy
-	 8TU5+/uzk6f6kuWmutJtBewTyHbt4rZPtub3vUw2BQ5tTWgj423iErcD7Wv4nAjw+n
-	 UDQMZQ1XfQnAUwIJl/YnHDeS+cvyFyUPne+XDO/WPHFSn/52TO83dXt94qJ05/UWfo
-	 D7Rc8EmeIs2EQ==
+	b=JYZ331HzB10QsQ0SSbR+X/ek7KyMDef1S3zfS8K8Wk1j0D4dW86lT+fwJg1yX1K2G
+	 rTZMEWedKoV7m7mYL1tx+nX94Hrry1ULyyeOQkspfphtM/7eN/hcmFO83E2J6Hya9s
+	 VoEu9+MGPX1uyp4/TJ15LIQTDlDJYqB8loP2uFEhwndDxWr0fTqamiKfydpxs2PJFy
+	 jzFTSagBgH3Z7L0EbKaC8UQ+qWkOHYPk3fUj36KVa00eY5qStRiet7IyNCHF7YuTtW
+	 6fHNh7z4blKRFnZ6E+68VV0hae6aSyPmZ/ppp9ZXGCd2EqXi4ft/W0hl2elIg31K5N
+	 mNvNOJ8278lvA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Hiago De Franco <hiago.franco@toradex.com>,
 	linux-remoteproc@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.16 17/85] remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU
-Date: Sun,  3 Aug 2025 20:22:26 -0400
-Message-Id: <20250804002335.3613254-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.15 16/80] remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU
+Date: Sun,  3 Aug 2025 20:26:43 -0400
+Message-Id: <20250804002747.3617039-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804002335.3613254-1-sashal@kernel.org>
-References: <20250804002335.3613254-1-sashal@kernel.org>
+In-Reply-To: <20250804002747.3617039-1-sashal@kernel.org>
+References: <20250804002747.3617039-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.16
+X-stable-base: Linux 6.15.9
 Content-Transfer-Encoding: 8bit
 
 From: Hiago De Franco <hiago.franco@toradex.com>
