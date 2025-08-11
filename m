@@ -1,131 +1,207 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8D6286422
-	for <linux-remoteproc@vger.kernel.org>; Fri,  8 Aug 2025 16:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B291B87F2;
+	Mon, 11 Aug 2025 14:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754671479; cv=none; b=ocWrB+iVW5S8hcyp6r0/WFuxKcaxnbpePMGc32UKuBA0tfXQGL06C4sgTLkBlwzLWUY6aYQ4CiFbv9t9yN5LNNCQmUQ/BYSXJU14whsW9BKzAvJ3zrwLcqHAdoyS5iomyfhte/G4era8QJjY5zgp1LWMsuMW3YQz9n8GoQM076U=
+	t=1754921499; cv=none; b=CKHlBGG4/ISvsU23RBlGeIslKLbviECncigXs3tAbZjYi7h3jaFt0uwUzZ2reWONU1AUtHNXAd3+M6D/6zkejEKyjE+y6d8KbNayAlP873vxxmkBRaNL4GWmW2ObATZLvvcCBNw+MQxsW+RUASuagC1HMzexlb6tCkwD7SnmGAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754671479; c=relaxed/simple;
-	bh=EqzL6rRNfDoERryCSv/CIEvhiAVHF+Sgc/VdogwlX2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qT2aBmtjxEg7AuaUaC5xZxTalDsS05B9xuL7nvyeBwOhj3kVT1GSBdGJSpNRuVpWkFrzJotMukL4Er8eSIWKdSMHLxYtAtifArS6xIz4TBXzduNwwqf6I2QCaoqrPrqRUTRixm+WBNsaq0kWztwmO7pdLDkswWbmukvIpyBFtAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QbecY7Go; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1754921499; c=relaxed/simple;
+	bh=HC0XY4Rhc7WOuzRzVmyl37sEhdbWKSBnwHufZNs1mlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hh6uZXrfK3bqxomTSQAr9UWhWpl83rem0TAk1kIOptDymaaW5JMPxkU33Z7enxS1t/TU+tJ6tqQOGa4tfjgrBevyvJdsw+CNcjMtVz3k+gYsXQMv4TUgfb3YrcDlWwbDtmVkf5L+67Kec0NmbV0AclIRm+Oap5dVmTOGhffmGM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCnli5jA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QbecY7Go"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578Eon5k011709
-	for <linux-remoteproc@vger.kernel.org>; Fri, 8 Aug 2025 16:44:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=huQmaFeVLUaz6BrvOTgjq7zFoIFLwTBr1MX
-	tCtGIIfA=; b=QbecY7GocBo81F2WWovpuEGiFoR3MJTiATy3z4eN7gM0iq92c2t
-	8hm5m4TBvHIH/DRuvSh7R2lIsG3BGx6RkE2xqbb+GflXOmEaGlnM7OIB0tz6Y4rY
-	1wwlyFdUaDgU4NwIIgDh5b/N6rMJoqV3vVX/XpkSSF+PsiBq0bOkbOwlGUMAF70k
-	004xSI3QGOLF4/u0nnwwX4+eiqdvSRLZM/1VLUVMZPw7P/DCa9RulJrxYjXGhuu0
-	tdD5Vs2G8rLopoxZbYa38BBbewMpfxXu/V52EKXNANcDnsXDXLnSpmZB86quwVZJ
-	uBruZwBikLFDgclQUetSznREQFtj13jyHwg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48cpvy5e4d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 08 Aug 2025 16:44:36 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-74ea7007866so2301041b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 08 Aug 2025 09:44:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754671476; x=1755276276;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=huQmaFeVLUaz6BrvOTgjq7zFoIFLwTBr1MXtCtGIIfA=;
-        b=lhuT/x3na5qgr9kSvZEIUAwlq88EgWtFfDq+Ekjyq2Wx1H+vSy4Sz7WAy2MS/fNSvI
-         sH1se3DjiQ2ZDhsRqWxN4iWMQfQQ411uIR8XplLTlGMYIKcOW7ZZdUncWmxArAtJExDo
-         Yri1lcCx+MSK1iVgN5SmdlCjGOL+DAfyw29UkEOWyc61Xa9qPYOS86ranKGcNV7G8ITu
-         6+104KVTf1dupyI+1mbIZIcGnQTvzuMhHGDuk5m2a1AIZMEijyzykFEjkwK8sNkMLFRY
-         fW5cmFhc8vpfyEu1dt0ej3ynuXtLU2laCpi0dld/VoBy2CmdqiY+rYPZVVJ4YtJTAm0x
-         GCtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9E/qsz8OS0i4qOnjVEhCRTeoDGoDiGoj2s4BLZFjd2Rwq1uanc1aTZyA1Jrd+zxCHWvdpqFRhklemEehYxL11@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy04BlJ71gV2rkH33+/C8/AXxlouGF/QcZAdGt2d5pbs8kuUL9i
-	+qJt6xlUcKk8QmVUqYBf+rjHZ8bCgEYcDdyIKkEwscjxgQzUHGQFqzZXqT0YZAzd2m9Hn8iqOKo
-	ZttbeK95ydkN2WGLxTNv1pTaxsEr+8k2PEVHE+IEUfHUYDJOppVC0Mq+XIWjjjDC7VfyTReby
-X-Gm-Gg: ASbGnctAbqL+k5HOhCErMHFqUJifYfoblxR8oRV1vnE8iynqZjugZTPZWQOPPUIj1Qt
-	zE1GZoVrXI0KMjLM4TsU44w3tZeJs/gJT2xo7Yh1LuETcpDXwekPibdTjO9xkl8HXRnpU9yaWIR
-	vkJDiTwezXfj6Tpn23LeekQ2dYdPC7i39/XohyO8HcfMtPOXf7S1EIaAJZLFZUIKkf7xbdcvyWJ
-	n5J+p9/lGJRScoY5hhBgQYa7INWYSoekje9xlAA2FTgpOnqBmwtAnbTQRESwgERRjXZiZmoMS8t
-	NETJ7WifzKOrH4G922lgUt8VGGPOWg4HIP5XHKFLSIESAe4W6KprhQSgY9420kSp/4Q=
-X-Received: by 2002:a05:6a00:92a3:b0:76b:d93a:6a02 with SMTP id d2e1a72fcca58-76c45f67a5dmr5010277b3a.0.1754671475943;
-        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRN9mDpNEYryQ+Th1q0Yl+AOPWnFZ0wbyScqj1Kwa64LHrFPfZCQPxWBECZkWS/S3tA3rHhw==
-X-Received: by 2002:a05:6a00:92a3:b0:76b:d93a:6a02 with SMTP id d2e1a72fcca58-76c45f67a5dmr5010254b3a.0.1754671475508;
-        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd0e78sm20690165b3a.99.2025.08.08.09.44.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH] remoteproc: qcom: Update MAX_NUM_OF_SS to 30
-Date: Fri,  8 Aug 2025 22:14:17 +0530
-Message-ID: <20250808164417.4105659-1-mukesh.ojha@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCnli5jA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C30C4CEED;
+	Mon, 11 Aug 2025 14:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754921497;
+	bh=HC0XY4Rhc7WOuzRzVmyl37sEhdbWKSBnwHufZNs1mlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YCnli5jA26zq2pNPHckm2vDfk0UjlenfmUYYa6r4zxT4SvDbqTPGY4e/Xm2uTfzNg
+	 lJbx4VXtQsWqEpP4mvR8bW0qazkFXDdDB+RQ3ZA+/rsyoaFq+I3Mrhpo56v3jU7r9q
+	 mNCGBrZbz5m3YwfzJBfaSkpWwpsqpyyIitgbB5UF8is+j5NT4SghI4DFNcaiRtod2E
+	 VBNLUH0yUHs5ic3z3zAX9hDoHhDk1EKD3xGcBQub25x+4BRdgCrjOEfoN+nIt6dKS8
+	 VXLlVhHtuOBSc8Yaa1WBBfoJfakAJktRvuhamGBuN85S2PE0Bze9VYv0WmpVr2dzzC
+	 xgV/rJFmzNmvQ==
+Date: Mon, 11 Aug 2025 19:41:28 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Harshal Dev <quic_hdev@quicinc.com>
+Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
+Message-ID: <aJn6EPjXzq07aDTM@sumit-X1>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
+ <d4694157-a757-41f5-8874-4b67b262bc83@quicinc.com>
+ <7c77dba4-27f9-4840-b9aa-253119308519@foss.st.com>
+ <e5a234c7-0f8d-4b52-95fb-82371c8e4460@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=TJpFS0la c=1 sm=1 tr=0 ts=68962975 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=evFLFRRwLpfRx6s5WfcA:9
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: bvCWsaR5voY5HayFqnmC--EWVc_F8DvD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA0NiBTYWx0ZWRfX+wiATIOpxFtz
- aUB9TehERHaWcUtwf1FLarB22QPDbBWgCTck6lnHOMxDJo76jRFeolI1mqnkhoecBNo4LeYWdvc
- gbLmwQZhd+uvzxxcnCrUSYOQnCh7Qm0lLJ8G1f5j1Y31HT1U2B9EixPjAC2fK8lbJMKZubWuv5d
- slXbRaKNERvtkbBxi+eNF4fPQUiiDY13jwp+iL1OX0YOhHrigi3LFitAUx1UYdrr1cBbUEzBHPY
- 530006X2POjrdtTuExLUxJONr8Xbs7aCfgbSvkwHX6VbUucFqwVHpYIMPzWSOeW75cuiPBTjit5
- UAlywV6dkGYGL+DHWWuuvurgUGi1FoxkRkeeuVbCWKpGFPIdjdJaWAzj/FEO1bSlp5/jivzZRyS
- SZM9RqDh
-X-Proofpoint-ORIG-GUID: bvCWsaR5voY5HayFqnmC--EWVc_F8DvD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- adultscore=0 spamscore=0 malwarescore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5a234c7-0f8d-4b52-95fb-82371c8e4460@quicinc.com>
 
-In the latest firmware for Qualcomm SoCs, the value of MAX_NUM_OF_SS has
-been increased to 30 to accumulate more subsystems.
+Hi Harshal,
 
-Let's update so that we should not get array out of bound error when we
-test minidump on these SoCs.
+On Mon, Aug 04, 2025 at 02:56:18PM +0530, Harshal Dev wrote:
+> Hi Arnaud,
+> 
+> On 8/1/2025 12:53 PM, Arnaud POULIQUEN wrote:
+> > Hello Harshal,
+> > 
+> > 
+> > On 7/31/25 12:25, Harshal Dev wrote:
+> >> Hello Arnaud,
+> >>
+> >> On 6/25/2025 3:10 PM, Arnaud Pouliquen wrote:
+> >>> Add a remoteproc TEE (Trusted Execution Environment) driver that will be
+> >>> probed by the TEE bus. If the associated Trusted application is supported
+> >>> on the secure part, this driver offers a client interface to load firmware
+> >>> by the secure part.
+> >>> This firmware could be authenticated by the secure trusted application.
+> >>>
+> >>> A specificity of the implementation is that the firmware has to be
+> >>> authenticated and optionally decrypted to access the resource table.
+> >>>
+> >>> Consequently, the boot sequence is:
+> >>>
+> >>> 1) rproc_parse_fw --> rproc_tee_parse_fw
+> >>>    remoteproc TEE:
+> >>>    - Requests the TEE application to authenticate and load the firmware
+> >>>      in the remote processor memories.
+> >>>    - Requests the TEE application for the address of the resource table.
+> >>>    - Creates a copy of the resource table stored in rproc->cached_table.
+> >>>
+> >>> 2) rproc_load_segments --> rproc_tee_load_fw
+> >>>    remoteproc TEE:
+> >>>    - Requests the TEE application to load the firmware. Nothing is done
+> >>>      at the TEE application as the firmware is already loaded.
+> >>>    - In case of recovery, the TEE application has to reload the firmware.
+> >>>
+> >>> 3) rproc_tee_get_loaded_rsc_table
+> >>>    remoteproc TEE requests the TEE application for the address of the
+> >>>    resource table.
+> >>>
+> >>> 4) rproc_start --> rproc_tee_start
+> >>>    - Requests the TEE application to start the remote processor.
+> >>>
+> >>> The shutdown sequence is:
+> >>>
+> >>> 5) rproc_stop --> rproc_tee_stop
+> >>>    - Requests the TEE application to stop the remote processor.
+> >>>
+> >>> 6) rproc_tee_release_fw
+> >>>    This function is used to request the TEE application to perform actions
+> >>>    to return to the initial state on stop or on error during the boot
+> >>>    sequence.
+> >>>
+> >>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>> ---
+> >>> Updates vs version [18]:
+> >>> - rework/fix function headers
+> >>> - use memremap instead of ioremap for the resource table.
+> >>> - realign comments to 80 chars limit, with few exceptions for readability
+> >>> - replace spinlock by mutex and and protect APIs from concurrent access
+> >>> - add support of 64-bit address in rproc_tee_get_loaded_rsc_table()
+> >>> - Generalize teston rproc_tee_ctx.dev to prevent an unbind
+> >>> - update copyright year
+> >>>
+> >>> Updates vs version [17]:
+> >>> Fix warning:
+> >>> warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
+> >>> ---
+> >>>  drivers/remoteproc/Kconfig          |  10 +
+> >>>  drivers/remoteproc/Makefile         |   1 +
+> >>>  drivers/remoteproc/remoteproc_tee.c | 708 ++++++++++++++++++++++++++++
+> >>>  include/linux/remoteproc_tee.h      |  87 ++++
+> >>>  4 files changed, 806 insertions(+)
+> >>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+> >>>  create mode 100644 include/linux/remoteproc_tee.h
+> >>>
 
-Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
----
- drivers/remoteproc/qcom_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+<snip>
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 8c8688f99f0a..dbe3bf852585 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -28,7 +28,7 @@
- #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
- #define to_pdm_subdev(d) container_of(d, struct qcom_rproc_pdm, subdev)
- 
--#define MAX_NUM_OF_SS           10
-+#define MAX_NUM_OF_SS           30
- #define MAX_REGION_NAME_LENGTH  16
- #define SBL_MINIDUMP_SMEM_ID	602
- #define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
--- 
-2.50.1
+> >>> +
+> >>> +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> >>> +{
+> >>> +	/* Today we support only the OP-TEE, could be extend to other tees */
+> >>> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+> >>> +}
+> >>> +
+> >>> +static int rproc_tee_probe(struct device *dev)
+> >>> +{
+> >>> +	struct tee_context *tee_ctx;
+> >>> +	int ret;
+> >>> +
+> >>> +	/* Open context with TEE driver */
+> >>> +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
+> >>> +	if (IS_ERR(tee_ctx))
+> >>> +		return PTR_ERR(tee_ctx);
+> >>> +
+> >>> +	ret = mutex_lock_interruptible(&ctx_lock);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	rproc_tee_ctx.dev = dev;
+> >>> +	rproc_tee_ctx.tee_ctx = tee_ctx;
+> >>> +	INIT_LIST_HEAD(&rproc_tee_ctx.sessions);
+> >>> +	mutex_unlock(&ctx_lock);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>
+> >> As you mentioned above, this could be extended to other TEEs. If so, is it possible for probe
+> >> to be called multiple times if we we have other TEE devices exposing the firmware authentication
+> >> service? In that case, I think rproc_tee_ctx should be dynamically initializated instead of being
+> >> static. And since we are creating a link between the Rproc device and TEE device, a call to a
+> >> function like rproc_tee_start() could retreive the associated TEE device, and then the associated
+> >> rproc_tee? :)
+> > 
+> > I have never seen a use case that requires multiple instances, but perhaps you
+> > have some?
+> > 
+> > We can expect only one TEE, which could be OP-TEE, Trusty, or another.
+> > The device is associated with a unique UUID, so only one instance is expected.
+> > 
+> > That said, making this driver support multiple instances seems like a valid
+> > future enhancement. However, I would suggest implementing it as a second step
+> > when there is a concrete need.
+> > 
+> 
+> My thought process on this stems from 1) the recent ARM FF-A developments and 2) from the current
+> implementation of the TEE subsystem which allows multiple back-end drivers to register themselves
+> via the tee_device_register() API. This means, that it's possible to have a configuration
+> where a platform supports multiple TEEs running as Secure Partitions via FF-A, and each of those
+> TEEs register their services as PTA devices on the TEE bus.
+> 
+> However, I do not really know if it's possible to have a UUID collision in such a case, which
+> would lead to rproc_tee_probe() being called twice above, which is why I raised this question. :)
+> 
+> All of this aside, I realize now that other TEE client drivers are also implemented with a static
+> private data similar to how you are doing it. So perhaps we can think of this as a later
+> enhancement if we believe that the scenario I am describing is not possible in the near future..
+>
 
+Theoretically it is possible for multiple TEE services to be there but
+why should a platform/silicon vendor require 2 redundant remoteproc firmware
+loading services to be supported? It should either be a service hosted
+by the trusted OS or can rather be an independent platform service
+running as a FF-A secure partition.
+
+-Sumit
