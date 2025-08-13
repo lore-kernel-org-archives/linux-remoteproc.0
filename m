@@ -1,149 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A80F2E92CA;
-	Tue, 12 Aug 2025 08:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54912877C4;
+	Wed, 13 Aug 2025 16:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754987479; cv=none; b=PCzFPr9DzfYAxxSYofVg/oxjpABIve5Aqk9gI33yN87/t2ZKdu1GULadtTsk+8IkPOfN9g54nuLfKBozNJMLVSOvf/QCZrMYZmNjI7K/M+C4jMNLk/U9Y1bl0zolKDfvCgO6A0jcvAEjog6A0J7wRMf4R1xQ0OB3bVchYE/f8Cg=
+	t=1755103417; cv=none; b=Rmk4zbDyxUFUGJUUzPt6Ui7yI+B5jNidvd8QVj0ZsIqTTzCKNPKIhhV7nB30oboH0SH7hDK6S91NNoEvYl2uKRAvqKB7xKT4/hhHCe61bS6QtgfZFq1eg+Y7AzPMJvf3KMeHRhUGQuSF4H9g/1gK4b1r5H7bGi7jLK+0hkbkhmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754987479; c=relaxed/simple;
-	bh=CJ0h3Ti2vfTbOwS2+jek4ZEJUoFC/JDENhC+9+8IKBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JmM7cjLJyBBTTPa6pez2aWQfmSKgJL53YeaT2JkA4/Flcyx6fK6KBVzEpUlLJF1i9GaoYQOoxGp8FgzmrCQBAihRrGgMo8q7g8+UqxOHIdVK6UGd4oBsLAf5Mq0LDdd13t9U5HMfILxDylkq+fo8QqsUQsK58jtzpR6iQS1tVlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZdy0gkL; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZdy0gkL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEE0C4CEF0;
-	Tue, 12 Aug 2025 08:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754987478;
-	bh=CJ0h3Ti2vfTbOwS2+jek4ZEJUoFC/JDENhC+9+8IKBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cZdy0gkLB2G+tITMO6laB0zsV1z+744MeHoXdqmfGkpW/u4o0attuOkceA9URyo2b
-	 1ISwv+mp4n7CxYQFgsECuuK/qARZd/H3Bxt1THcyAmCmWPtgQUfDrC0+pfF03pxIUB
-	 i1t7EuaaT1vypk8Byiyk10wnKjUlOJdXfN7VAZkthmRMouaZbsOeZPze1cHoXZmJFu
-	 SX1tqayvjG2GWRr92spyUxqiIxNMihi3sDnEO53mCEVeOdaxx0xF3WEMb9P6EmKCZZ
-	 C9yQPhlTZjxGRP7I6zxMfCB2CUMDJNJuAPkL0inhQqRoYvZ7YaS1Um3wKq62lPPXAy
-	 ojKUMix1erHow==
-Message-ID: <3bbd8fe7-2792-474b-ab5e-f458bcf13dc3@kernel.org>
-Date: Tue, 12 Aug 2025 10:31:12 +0200
+	s=arc-20240116; t=1755103417; c=relaxed/simple;
+	bh=eGOtfUOzn7VJhhjgjc5OkdQcb/GSkSfB33WxAxwSZy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ecv0lhDXd8eMcn+Qy90HB3ev3WRTeXcypdi/QH4pWKmkf4Ack94oTzlrrE1zx90rSNhXb/h1B84Ax8Aij94sh6qaCLORZQ6PZKhD6Kz3jtbE706v3snu/tdDe9FKDdjHjW9R1SFUSiIg8VhiZ/k7s1IShC64jxIKhW8EGHkG8DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCEFB12FC;
+	Wed, 13 Aug 2025 09:43:25 -0700 (PDT)
+Received: from e130802.arm.com (e130802.arm.com [10.1.33.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D923F5A1;
+	Wed, 13 Aug 2025 09:43:30 -0700 (PDT)
+Date: Wed, 13 Aug 2025 17:42:58 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
+	Srinivas Kalaga <Srinivas.Kalaga2@arm.com>
+Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
+Message-ID: <aJzAkk-k4nfXY7Ux@e130802.arm.com>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] soc: qcom: mdt_loader: Remove pas id parameter
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-References: <20250804-mdtloader-changes-v1-0-5e74629a2241@oss.qualcomm.com>
- <20250804-mdtloader-changes-v1-2-5e74629a2241@oss.qualcomm.com>
- <ac14b632-91ec-58a7-26cc-23d0056222b9@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ac14b632-91ec-58a7-26cc-23d0056222b9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
 
-On 06/08/2025 09:25, Dikshita Agarwal wrote:
+Hi Arnaud,
+
+> Add a remoteproc TEE (Trusted Execution Environment) driver that will be
+> probed by the TEE bus. If the associated Trusted application is supported
+> on the secure part, this driver offers a client interface to load firmware
+> by the secure part.
+> This firmware could be authenticated by the secure trusted application.
 > 
+> A specificity of the implementation is that the firmware has to be
+> authenticated and optionally decrypted to access the resource table.
 > 
-> On 8/4/2025 6:11 PM, Mukesh Ojha wrote:
->> pas id is not used in qcom_mdt_load_no_init() and it should not
->> be used as it is non-PAS specific function and has no relation
->> to PAS specific mechanism.
->>
->> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
->> ---
->>  drivers/media/platform/qcom/venus/firmware.c |  4 ++--
->>  drivers/net/wireless/ath/ath12k/ahb.c        |  2 +-
->>  drivers/remoteproc/qcom_q6v5_adsp.c          |  2 +-
->>  drivers/remoteproc/qcom_q6v5_pas.c           |  7 +++----
->>  drivers/remoteproc/qcom_q6v5_wcss.c          |  2 +-
->>  drivers/soc/qcom/mdt_loader.c                | 14 ++++++--------
->>  include/linux/soc/qcom/mdt_loader.h          |  7 +++----
->>  7 files changed, 17 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
->> index 66a18830e66d..862d0718f694 100644
->> --- a/drivers/media/platform/qcom/venus/firmware.c
->> +++ b/drivers/media/platform/qcom/venus/firmware.c
->> @@ -136,8 +136,8 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->>  		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID,
->>  				    mem_va, *mem_phys, *mem_size, NULL);
->>  	else
->> -		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
->> -					    mem_va, *mem_phys, *mem_size, NULL);
->> +		ret = qcom_mdt_load_no_init(dev, mdt, fwname, mem_va,
->> +					    *mem_phys, *mem_size, NULL);
->>  
->>  	memunmap(mem_va);
->>  err_release_fw:
+> Consequently, the boot sequence is:
 > 
-> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> 1) rproc_parse_fw --> rproc_tee_parse_fw
+>    remoteproc TEE:
+>    - Requests the TEE application to authenticate and load the firmware
+>      in the remote processor memories.
+>    - Requests the TEE application for the address of the resource table.
+>    - Creates a copy of the resource table stored in rproc->cached_table.
+> 
+> 2) rproc_load_segments --> rproc_tee_load_fw
+>    remoteproc TEE:
+>    - Requests the TEE application to load the firmware. Nothing is done
+>      at the TEE application as the firmware is already loaded.
+>    - In case of recovery, the TEE application has to reload the firmware.
+> 
+> 3) rproc_tee_get_loaded_rsc_table
+>    remoteproc TEE requests the TEE application for the address of the
+>    resource table.
+> 
+> 4) rproc_start --> rproc_tee_start
+>    - Requests the TEE application to start the remote processor.
+> 
+> The shutdown sequence is:
+> 
+> 5) rproc_stop --> rproc_tee_stop
+>    - Requests the TEE application to stop the remote processor.
+> 
+> 6) rproc_tee_release_fw
+>    This function is used to request the TEE application to perform actions
+>    to return to the initial state on stop or on error during the boot
+>    sequence.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+...
+> +
+> +static const struct tee_client_device_id rproc_tee_id_table[] = {
+> +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
+> +	{}
+> +};
 
-You wanted Acked tag for reviewing that one, trivial line. Adding entire
-review for entire commit just after looking at trivial change is not
-really justified.
+Other implementations may use different UUIDs.
+What about adding a kernel configuration option which, when enabled, allows
+alternative implementations to override this table?
 
-See also submitting patches about reviewer's statement of oversight.
+> +/**
+> + * rproc_tee_register() - Register a remote processor controlled by the TEE application.
+...
+> +
+> +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> +{
+> +	/* Today we support only the OP-TEE, could be extend to other tees */
+> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+> +}
 
-Best regards,
-Krzysztof
+Could we make ver->impl_id user-configurable please ? for example, by reading
+it from the device tree since it isn’t discoverable at runtime? In our setup, we’d set
+it to TEE_IMPL_ID_TSTEE.
+
+> +
+> +static int rproc_tee_probe(struct device *dev)
+> +{
+> +	struct tee_context *tee_ctx;
+> +	int ret;
+> +
+> +	/* Open context with TEE driver */
+> +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
+> +	if (IS_ERR(tee_ctx))
+> +		return PTR_ERR(tee_ctx);
+> +
+> +	ret = mutex_lock_interruptible(&ctx_lock);
+> +	if (ret)
+> +		return ret;
+
+In some TEEs, the client driver might need to perform extra work during probing.
+For example, when using TS TEE, calling tee_shm_alloc_kernel_buf() is required.
+Could we introduce an rproc_tee_ops and add a TEE probe operation called by the
+remoteproc driver for performing custom TEE setup ?
+
+Kind regards,
+Abdellatif
