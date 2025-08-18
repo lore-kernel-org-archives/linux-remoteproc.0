@@ -1,237 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013012.outbound.protection.outlook.com [40.107.159.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC7012D1F1;
-	Mon, 18 Aug 2025 05:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755493632; cv=none; b=JOdWHO5fmCUsK9MzRGoc5nIEmz+ikDdPQUgzd+3uDy2GTO+fhB4ktVljJ83vVSPV6pESwOjyndX0hIrRlEHTCJmZl+k9wQ77lDd+oB9iIkl+Ipu2kocJubP9sBnlaobQqO2BJYClQOMdybFG/ZXsAOu8YgfwV0HsQo+VsQcoyZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755493632; c=relaxed/simple;
-	bh=PMb9hEPvgfqCV/wvcDI5+h4Vzsv62b1nbH5Y9e5qhRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QU2HG5L1uJ4/59oZh2BWxPTY/zP7lt7PRl6rMDO85zOuKVS4hBEaUexBDCXoUocCREYtwyWiDyxrb5i2t+1gZf/rJSNN2cAWXDAjtUQR7ew+gJ1y6vCmXdkSJslBxKYuYbodJPtQ/TCzAI0/aDLndiN8dbyzXcJ0wzeosuoWifg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSUVhDwI; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C679B19995E;
+	Mon, 18 Aug 2025 20:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755549923; cv=fail; b=FSiSxcbqsk3j8HHwiQGh2jtCjNhMVJTeROFYMQrrXHYuA+XsCdp0zcJKY7U9w0XesxfxKUHmjzvVecBFGDl9NGMMXKK+Xpy0dIlz35Yxldme/wdk+rpFvFaL/mjKzMJzjFPLPuFX+8sHAbXtveshiKcXtUlaDTru7SLt57DY7pM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755549923; c=relaxed/simple;
+	bh=uG9mKadJjf8XJXQX9h1mg/GpfA8PsvlrwKcr9D3dxqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Cz5LYX3+/Xga0KO/DrRz68Rzfhgsj5ygzl2UTqu4G896qbPgEzr10EsM70dq/E9omYOl2Dut5YIdOBz3UiV9eMVqtcaa1qcExckFfLN93rvVRIdwCjHiWNyTA1eX3KwlqiPH+saQ6X3OQAzXADZw+i/3kTiOBOXYcHfjODebgVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ATiECrNV; arc=fail smtp.client-ip=40.107.159.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSUVhDwI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3C4C4CEEB;
-	Mon, 18 Aug 2025 05:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755493631;
-	bh=PMb9hEPvgfqCV/wvcDI5+h4Vzsv62b1nbH5Y9e5qhRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSUVhDwIi5ZESs7a8zoWzUL1og03BBiSNaKuxw+h2lVUvXVi0uykQqs0t6vAeYtRn
-	 NBJRucDUTmeh5WiAzaPLii59xY+lnrSUOLAY4an4nR6d6Bgt1Cbzm4a5j7Sxrglsec
-	 oYfHAojfUC7IDlBblKAbZTL8PCQNxQg9YIbccpZ7icYjqAN7N19xdDhw2czqsoCpz6
-	 H3p2bRoqn5pO4U+dUiHzj1TOA80JlI96190DPdajTp36lmCn9GLAfAullMokXM7q+D
-	 8KY8jId9MHpIV87yOT8OpsD+wNnfsRpOZWl9BIysxfkjodEj8mCX+ABEBS8cpU0gXW
-	 7pwqyAsTuGM8g==
-Date: Mon, 18 Aug 2025 10:37:02 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Harshal Dev <quic_hdev@quicinc.com>
-Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ATiECrNV"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PBt1vrO2tlaT3uuKL3w0kU1PzI5qvY3x2awB53T02nOj7l04qKZGBPLUYS94iemptlr95I3uQ4++UFeQnaE9At6IJEXACgSVOG0qm4OpBA9Jva3kya6SR2Bu8jkbIBGEwdft4YRfd1LM165+vFFEQj+7xRbU+Tqf8yxh7+CvQRFJ1dibMn8RYKyI1gH6tLiF7fFj5njTAVh6u7ff4WegeiH/0w/9KuBVd2B8yvHgIUOhFvvTT4qbcOy5WXFvkSAODm/IYx1o2aqCml0Se7R7wzSVMbSYbKKjugYcQLsX/kfLb8n+ZrTsL4i18ZaGgO/RGeywQ2x2Ecg3r/O7gcVjfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LKsgPePhAUYu2E7HIONeHzUi4Re8KncIP0xPJaPKuNA=;
+ b=hIK4lPFH5SINfd5g5Hfo3Yblgstq6pAtC9KX9tlzbAOqbia0BN+yb3CLKru2u0XdvNVDqfkhXX6rnXpsZY41/1khSju98mMLj5zc7P2zkQ7lLh3kW+ollUA+zTselE7mu8D/0uuNJu2guU8BmEpnXE69NPrwPjgwFUn0nqLSlWxqjrBQs3Kod9asvYQpBZ34blTKkaw7oCSCj4isrU+NTQdIFP3hzt1r+/rT+2JMBlF6tvDwAapbB9zwgvAPnXe/HagN7UorrGSTPSHlT7hhkJE8YiPnTINePvJCAZDVGakilsXi508KBe7Pt5HtwI4prCux9MWdsZ8KpBr+IeRNgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LKsgPePhAUYu2E7HIONeHzUi4Re8KncIP0xPJaPKuNA=;
+ b=ATiECrNVZ2SHzk/GK2UFwn1EMUSJQExt7ghmlqTswua1DhRYQyh/b0Ixh13h0HwSjDcUqdhidEwdZV1V94zs4Ru5apmsa2Uqa2U0k3jzRT+bdt1kdgWNFWDBsWgsomkuaMGqsxkG2Yi7nJ/+fAyS1LalatgAlUPMIvzq5R4K60QfV12DSTI9Qu0zGI6dIJKp2vGcV13nIzwtmBTgSDJ238TURtJcXUn0TNyII8Ygmmgx4adg5Q+Gwb2lIKApT/rmp/Ls2cqDu92pBT+MdlJs/Anqxc/Wmi35O7DG25kOEWZ1+bFbAF6xN718w/7CAi7+3IbF9PUCKzgnGU5UKr10nQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by VI1PR04MB7040.eurprd04.prod.outlook.com (2603:10a6:800:121::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.8; Mon, 18 Aug
+ 2025 20:45:17 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%7]) with mapi id 15.20.9052.011; Mon, 18 Aug 2025
+ 20:45:17 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
-	Srinivas Kalaga <Srinivas.Kalaga2@arm.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
-Message-ID: <aKK09ptq07jDQ6bV@sumit-X1>
-References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
- <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
- <d4694157-a757-41f5-8874-4b67b262bc83@quicinc.com>
- <7c77dba4-27f9-4840-b9aa-253119308519@foss.st.com>
- <e5a234c7-0f8d-4b52-95fb-82371c8e4460@quicinc.com>
- <aJn6EPjXzq07aDTM@sumit-X1>
- <ce93ba16-e2a8-4015-bc01-139917d37782@quicinc.com>
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: [PATCH 0/4] Enable Remote GPIO over RPMSG on i.MX Platform
+Date: Mon, 18 Aug 2025 15:44:16 -0500
+Message-ID: <20250818204420.794554-1-shenwei.wang@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7P221CA0021.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:32a::27) To PAXPR04MB9185.eurprd04.prod.outlook.com
+ (2603:10a6:102:231::11)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce93ba16-e2a8-4015-bc01-139917d37782@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|VI1PR04MB7040:EE_
+X-MS-Office365-Filtering-Correlation-Id: a54397af-80ca-4933-d268-08ddde98237d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|19092799006|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bwAtgC2WAwvPtLrvvl6nxLM+wRJqwJUCK0pGfzEVRvmIDgw3JWZGwUblDmxQ?=
+ =?us-ascii?Q?XXxta7zC0FE1x88LXR41m8Ix3KneFtT0X2gw39F7rwbdkJgsKAvcw0Y7encT?=
+ =?us-ascii?Q?ApicLuq65eqRar9tLpOFAzG3+bG6i7o1kei1PW4Is0b+3ppWnUZg8vriWKEW?=
+ =?us-ascii?Q?Oi1TiTrHc3euA4Ig5vd+3PBlITrp7IUSCJVKhIgWqHSXqBjJfidnaFGuYFDE?=
+ =?us-ascii?Q?Bjk5XUfQnucn99JyAuP9CuPiaB2yM/E5225kZecjHyjAp96eSbKYtuhT0Axx?=
+ =?us-ascii?Q?jQ1gJzOlX5V3wmReit26eaixeQaHFUpj8rZy0pWDfzB1KVqrMIsk+lxM8tUK?=
+ =?us-ascii?Q?4tZy+0iSIoC1TfBftxjJBriGZ1SqJRrjT7IpCIl0y/nW8Se/C9bUy+NTl5Fh?=
+ =?us-ascii?Q?JvXYL5zpEj5l87rK71oU8Yl/LRpNFQRU8CAAi77bToSTLUpYj627vfGaBW/N?=
+ =?us-ascii?Q?k8dnu/01X+e4TkGCTFUvh0sz91/ueLyPA+VXvak5EqvekFyJ1drQ9imR4Irg?=
+ =?us-ascii?Q?olpu4eafHHQ/wXMMPUvce5ZLHGGC6NBTCkH2PH2NmPuR0Z4jM2uQxIukyvjn?=
+ =?us-ascii?Q?NEGgWiuZnkqj0iPS5Vc1mwPm7Id2/V2pfkx60+Mv6V96rFWfdVHPVwm02nNR?=
+ =?us-ascii?Q?920Gev9yXq9Nn/gS4LSwKZBcTnrbaLY4ilCTAsawuE8tTCJ14gG9n+8yvtpS?=
+ =?us-ascii?Q?s774/MapvZzuMtKl5meZf6hTG/Vxv7WezgZChYkCACujJQUrH5HhGh+LyR53?=
+ =?us-ascii?Q?spZGyPL5YqaRsCnxWDoAUYOWXqfGALYquUIfcVDhyjopMYnbZQE+ESAd6v0m?=
+ =?us-ascii?Q?AUiYI7BA9ZgHeoga5YpSujYsz7MgJsKjxR5oYaS/5hncrOXWIFN2+bQkzMQ9?=
+ =?us-ascii?Q?FXyOmDTeNDoXIpyRoELloBoa7H1q+skVAWjRRqxlYMCOraWowDWsADx0GDiO?=
+ =?us-ascii?Q?BwAtVsp68TmEVDnZGD7jYC4tzbsa+i132FAH+X53wGkjqvUey4MI7Rm3+HVw?=
+ =?us-ascii?Q?IY9l+LM+Tvj5IRMgojL3THWDkoavosiTyU4HG4SJ7FsJVx/cnJGc6LXoAX9y?=
+ =?us-ascii?Q?/sx9XUZhD5ZhZA5dJ5k00xnVvO7s1Pmht5Mjg+K4kGZizWyOXEGraq7L5ed2?=
+ =?us-ascii?Q?a4/SpYx7/XRu67+xr8ippYzfMKa7zxbIWDNZibrQsEmcQ136w6FMenFVBYFj?=
+ =?us-ascii?Q?FmdV5LX16o4PTLyS/39GEmkDjnY/z/G6x9eQ0VGpLnC6XMOSYvtJGOHDEsfz?=
+ =?us-ascii?Q?fYxwbRHI+w3/zvFvtU6aBwd4mu2dd08G2dEqZWCLgQt8vvGg9p9p2xxMWR89?=
+ =?us-ascii?Q?X+N/4L2OUxlj9+LhEa3LTbG/j9b0oBxlDLFQOlNkKkrCjjBduh9LQHOZa3L9?=
+ =?us-ascii?Q?0JLxVHOo3e33jjBocfITvz7Gibcf/bIa/Cgx0q31nb33a3EZUnD5hIl9l+rP?=
+ =?us-ascii?Q?4CNf0d7WIekTGMY3fSZ++QO3VMtYucSNp2xMmTL/0zg3zndrt2Sj1A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(19092799006)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/scmr7qtJ0hEIzpayoK9X4orQ76z2ruL5sqUgN/SrxAgUzJeWF/2ovBOiods?=
+ =?us-ascii?Q?XkKmhvPY5TwDl+XbAS3j1LS0Juv7sy7vRVzymm5AtGf8+wulj/9eml5c3Zm9?=
+ =?us-ascii?Q?2Igrid0ivH4tqcYFTzpN57usbg6LXeLSyvtpn6JwrfogHzbW40ZHeeXcPjFy?=
+ =?us-ascii?Q?JtEJINHD9nYysBkPkRoBV4z4tWnQQvVM0gaEFU8OkCl3FPoSbsvsrzXGRo9z?=
+ =?us-ascii?Q?RRuxXW8q+sSxnyogu80jJdAFKp+lgi+lEC5M3pZ9qTQKZNBNtP9soUIQ/BHp?=
+ =?us-ascii?Q?uqAZc+iNXeYpnc6NxVBHBROc6rHiAH/8FENltRsFyIoXMY1S+yOLJM2dkhOO?=
+ =?us-ascii?Q?sDb5Ktg2G3K/3wdeBPwhLAN6lnLpD9OmLLrriEhSyyMhCFrxy9Hu2jWnnyfo?=
+ =?us-ascii?Q?03fCSjNRgURDUFllMtkd8iYcsi8Xjqo6C9dkkO4skt+9lW014CcZrTy4wMHV?=
+ =?us-ascii?Q?UihgBxvEFFqCCSE9wk+RKz4gEVwzgAtcay9QgDINHr8+bTB9WZmRx7V6RNRf?=
+ =?us-ascii?Q?vUsPeBpmVQhj9YWBWrG6HaoGpdizU2AuWjZrU4xQelyRk0VnEr/x4MQ9OKK3?=
+ =?us-ascii?Q?97oPal45N2ZwF7PuuuUzTxtoHdBMCP904frbL7Mmi3eji8h3O4+ZeZsMfnku?=
+ =?us-ascii?Q?7TnwOV99vCQBbnbH5slASbE2dOcDZwFzMtyAjNzncBYRcXDour6zAAYSiPhv?=
+ =?us-ascii?Q?aP3JBd24iPudle6S4Y+6C0Gf2hWQKevoFXHLwICZ2DeXj5cfGBKp/xcgHdTq?=
+ =?us-ascii?Q?SqSBvkAVVdMGlWiZry9kW3Hp0a/YodLQCFHYBMVbdqzpgWWhP0HYCoXF4ocb?=
+ =?us-ascii?Q?0wh3HffC1EC8ESQThwwz6IKdh41lZdauJYvwjTC1qTxl79iUGMGpmgjJ67ZK?=
+ =?us-ascii?Q?SzRI74iKM1/fbqy82N8oBJiYiuKtDXDywtelFz59kpmLzAYuN1ijWUSp8HlK?=
+ =?us-ascii?Q?iJr/yKZPBYz6pvgvdvOvLB1GYqEViTgiWNvG1YH3A6ZZ5KLHa3xHvhtGzxug?=
+ =?us-ascii?Q?jHkqaun63DflDEoxhaqKf6RJ7UKz3wlv6NMdRVheGegdiuhMXR8HaAK8DoTH?=
+ =?us-ascii?Q?CaueyRwjnTxEz9/sal/1yyQaZqSCD3nnNKovhNI8jbkW5aIto17NtpKl4jMd?=
+ =?us-ascii?Q?i491ReGFGz2P32WQdLNIpO2i97OQv4O/lbYoaqjtOkOdMreaS5HvT7qchxdI?=
+ =?us-ascii?Q?sZQr2JJRf+U2aKWvK/zANaxArsDpxXq+WDb8GlsaNHpOHJToQLUfkY+QzLXY?=
+ =?us-ascii?Q?JqkW1DD+eor7rJOMRqULbbLMgrplH0uKSZ9fSOROFRA8Y2l/phimaB6NgmFI?=
+ =?us-ascii?Q?v/jghoGvyIUMKZLPzEkK+APRpy1pNZx5YvNn9T5akI3TaAId8o2zoVUusxpB?=
+ =?us-ascii?Q?+oXXGZiW7PNY72nEm7jFNh45YM89fdDkk6zfZxKdfnQIvpdzm9BlldVcBW2p?=
+ =?us-ascii?Q?hULCO74+7/R+NBKFQc5mwC13wAUw1yqw3EcTrya1ijkbi/qIWteN+MIOdzJY?=
+ =?us-ascii?Q?CN/pHi0zLFzHHUAhtGs/kA3Fpbl8NolLYkABuXDAlFRUUJeV9PyNHnpe2ENB?=
+ =?us-ascii?Q?S/5RxtZDdofyulB+1LTNTGmpHGl8TssU4dduzrKn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a54397af-80ca-4933-d268-08ddde98237d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 20:45:17.4151
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QtSdRyeXfESRA4ySAuYfEdFO6/YGllmWUBLhvHQKXHFB8wOeYld9cW0UzgT189HfZySXtSp+JFoHk1RwXN9j1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7040
 
-On Thu, Aug 14, 2025 at 04:17:55PM +0530, Harshal Dev wrote:
-> Hi Sumit,
-> 
-> On 8/11/2025 7:41 PM, Sumit Garg wrote:
-> > Hi Harshal,
-> > 
-> > On Mon, Aug 04, 2025 at 02:56:18PM +0530, Harshal Dev wrote:
-> >> Hi Arnaud,
-> >>
-> >> On 8/1/2025 12:53 PM, Arnaud POULIQUEN wrote:
-> >>> Hello Harshal,
-> >>>
-> >>>
-> >>> On 7/31/25 12:25, Harshal Dev wrote:
-> >>>> Hello Arnaud,
-> >>>>
-> >>>> On 6/25/2025 3:10 PM, Arnaud Pouliquen wrote:
-> >>>>> Add a remoteproc TEE (Trusted Execution Environment) driver that will be
-> >>>>> probed by the TEE bus. If the associated Trusted application is supported
-> >>>>> on the secure part, this driver offers a client interface to load firmware
-> >>>>> by the secure part.
-> >>>>> This firmware could be authenticated by the secure trusted application.
-> >>>>>
-> >>>>> A specificity of the implementation is that the firmware has to be
-> >>>>> authenticated and optionally decrypted to access the resource table.
-> >>>>>
-> >>>>> Consequently, the boot sequence is:
-> >>>>>
-> >>>>> 1) rproc_parse_fw --> rproc_tee_parse_fw
-> >>>>>    remoteproc TEE:
-> >>>>>    - Requests the TEE application to authenticate and load the firmware
-> >>>>>      in the remote processor memories.
-> >>>>>    - Requests the TEE application for the address of the resource table.
-> >>>>>    - Creates a copy of the resource table stored in rproc->cached_table.
-> >>>>>
-> >>>>> 2) rproc_load_segments --> rproc_tee_load_fw
-> >>>>>    remoteproc TEE:
-> >>>>>    - Requests the TEE application to load the firmware. Nothing is done
-> >>>>>      at the TEE application as the firmware is already loaded.
-> >>>>>    - In case of recovery, the TEE application has to reload the firmware.
-> >>>>>
-> >>>>> 3) rproc_tee_get_loaded_rsc_table
-> >>>>>    remoteproc TEE requests the TEE application for the address of the
-> >>>>>    resource table.
-> >>>>>
-> >>>>> 4) rproc_start --> rproc_tee_start
-> >>>>>    - Requests the TEE application to start the remote processor.
-> >>>>>
-> >>>>> The shutdown sequence is:
-> >>>>>
-> >>>>> 5) rproc_stop --> rproc_tee_stop
-> >>>>>    - Requests the TEE application to stop the remote processor.
-> >>>>>
-> >>>>> 6) rproc_tee_release_fw
-> >>>>>    This function is used to request the TEE application to perform actions
-> >>>>>    to return to the initial state on stop or on error during the boot
-> >>>>>    sequence.
-> >>>>>
-> >>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>>> ---
-> >>>>> Updates vs version [18]:
-> >>>>> - rework/fix function headers
-> >>>>> - use memremap instead of ioremap for the resource table.
-> >>>>> - realign comments to 80 chars limit, with few exceptions for readability
-> >>>>> - replace spinlock by mutex and and protect APIs from concurrent access
-> >>>>> - add support of 64-bit address in rproc_tee_get_loaded_rsc_table()
-> >>>>> - Generalize teston rproc_tee_ctx.dev to prevent an unbind
-> >>>>> - update copyright year
-> >>>>>
-> >>>>> Updates vs version [17]:
-> >>>>> Fix warning:
-> >>>>> warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-> >>>>> ---
-> >>>>>  drivers/remoteproc/Kconfig          |  10 +
-> >>>>>  drivers/remoteproc/Makefile         |   1 +
-> >>>>>  drivers/remoteproc/remoteproc_tee.c | 708 ++++++++++++++++++++++++++++
-> >>>>>  include/linux/remoteproc_tee.h      |  87 ++++
-> >>>>>  4 files changed, 806 insertions(+)
-> >>>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
-> >>>>>  create mode 100644 include/linux/remoteproc_tee.h
-> >>>>>
-> > 
-> > <snip>
-> > 
-> >>>>> +
-> >>>>> +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-> >>>>> +{
-> >>>>> +	/* Today we support only the OP-TEE, could be extend to other tees */
-> >>>>> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int rproc_tee_probe(struct device *dev)
-> >>>>> +{
-> >>>>> +	struct tee_context *tee_ctx;
-> >>>>> +	int ret;
-> >>>>> +
-> >>>>> +	/* Open context with TEE driver */
-> >>>>> +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
-> >>>>> +	if (IS_ERR(tee_ctx))
-> >>>>> +		return PTR_ERR(tee_ctx);
-> >>>>> +
-> >>>>> +	ret = mutex_lock_interruptible(&ctx_lock);
-> >>>>> +	if (ret)
-> >>>>> +		return ret;
-> >>>>> +
-> >>>>> +	rproc_tee_ctx.dev = dev;
-> >>>>> +	rproc_tee_ctx.tee_ctx = tee_ctx;
-> >>>>> +	INIT_LIST_HEAD(&rproc_tee_ctx.sessions);
-> >>>>> +	mutex_unlock(&ctx_lock);
-> >>>>> +
-> >>>>> +	return 0;
-> >>>>> +}
-> >>>>
-> >>>> As you mentioned above, this could be extended to other TEEs. If so, is it possible for probe
-> >>>> to be called multiple times if we we have other TEE devices exposing the firmware authentication
-> >>>> service? In that case, I think rproc_tee_ctx should be dynamically initializated instead of being
-> >>>> static. And since we are creating a link between the Rproc device and TEE device, a call to a
-> >>>> function like rproc_tee_start() could retreive the associated TEE device, and then the associated
-> >>>> rproc_tee? :)
-> >>>
-> >>> I have never seen a use case that requires multiple instances, but perhaps you
-> >>> have some?
-> >>>
-> >>> We can expect only one TEE, which could be OP-TEE, Trusty, or another.
-> >>> The device is associated with a unique UUID, so only one instance is expected.
-> >>>
-> >>> That said, making this driver support multiple instances seems like a valid
-> >>> future enhancement. However, I would suggest implementing it as a second step
-> >>> when there is a concrete need.
-> >>>
-> >>
-> >> My thought process on this stems from 1) the recent ARM FF-A developments and 2) from the current
-> >> implementation of the TEE subsystem which allows multiple back-end drivers to register themselves
-> >> via the tee_device_register() API. This means, that it's possible to have a configuration
-> >> where a platform supports multiple TEEs running as Secure Partitions via FF-A, and each of those
-> >> TEEs register their services as PTA devices on the TEE bus.
-> >>
-> >> However, I do not really know if it's possible to have a UUID collision in such a case, which
-> >> would lead to rproc_tee_probe() being called twice above, which is why I raised this question. :)
-> >>
-> >> All of this aside, I realize now that other TEE client drivers are also implemented with a static
-> >> private data similar to how you are doing it. So perhaps we can think of this as a later
-> >> enhancement if we believe that the scenario I am describing is not possible in the near future..
-> >>
-> > 
-> > Theoretically it is possible for multiple TEE services to be there but
-> > why should a platform/silicon vendor require 2 redundant remoteproc firmware
-> > loading services to be supported? It should either be a service hosted
-> > by the trusted OS or can rather be an independent platform service
-> > running as a FF-A secure partition.
-> > 
-> I agree that it doesn't make sense for a system integrator to have two remoteproc firmware
-> loading services supported from two different TEEs running as Secure Partitions.
-> After all, one service exposed by one TEE is good enough for fulfilling any use-case.
-> 
-> My concern is that ARM FF-A makes its possible to have a platform running two TEEs, which
-> each have their own remoteproc firmware authentication service implemented (as usually TEEs do).
-> In such a scenario, when both TEEs enumerate their services on the TEE bus, and find a match
-> because the rproc_tee_id_table has a UUID for say, both the TS-TEE remoteproc service and
-> OP-TEE remoteproc service, rproc_tee_probe() will be called twice, and the current implementation
-> will break because it uses a single static rproc_tee_ctx, whose contents would be overwritten
-> leading to unexpected scenarios.
-> 
-> And so, should TEE subsystem clients (like this one) be prepared to handle such as scenario?
+Support the remote devices on the remote processor via the RPMSG bus on
+i.MX platform.
 
-With Arm FF-A and platforms supporting S-EL2, yes it is possible to run
-multiple trusted OS in parallel. However, the recommendation is to then
-host the platform specific services as independent FF-A based Secure
-Partitions (SPs) which aren't tied to any particular trusted OS. I have
-CCed some Arm folks who on the other thread were interested to extend
-this driver to support remoteproc service hosted as a FF-A based secure
-partition.
+The expected DTS layout structure is following:
 
--Sumit
+    cm33: remoteproc-cm33 {
+             compatible = "fsl,imx8ulp-cm33";
+
+             rpmsg {
+                     rpmsg-io-channel {
+                             gpio@0 {
+                                     compatible = "fsl,imx-rpmsg-gpio";
+                                     reg = <0>;
+                             };
+
+                             gpio@1 {
+                                     compatible = "fsl,imx-rpmsg-gpio";
+                                     reg = <1>;
+                             };
+
+                             ...
+                     };
+
+                     rpmsg-i2c-channel {
+                             i2c@0 {
+                                     compatible = "fsl,imx-rpmsg-i2c";
+                                     reg = <0>;
+                             };
+                     };
+
+                     ...
+             };
+     };
+
+
+Shenwei Wang (4):
+  dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+  remoteproc: imx_rproc: Populate devices under "rpmsg" subnode
+  gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+  arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    | 117 ++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  27 +
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-imx-rpmsg.c                 | 559 ++++++++++++++++++
+ drivers/remoteproc/imx_rproc.c                | 125 ++++
+ include/linux/imx_rpmsg.h                     |  55 ++
+ 7 files changed, 895 insertions(+)
+ create mode 100644 drivers/gpio/gpio-imx-rpmsg.c
+ create mode 100644 include/linux/imx_rpmsg.h
+
+--
+2.43.0
+
