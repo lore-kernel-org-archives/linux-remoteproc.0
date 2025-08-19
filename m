@@ -1,214 +1,309 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BD92E22A7
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 17:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4487C253934;
+	Tue, 19 Aug 2025 17:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755623876; cv=none; b=n5mTLSwKqm0+xQtEzdzrlaqEsy9HQJSHkwUklWi7CkmAMDfEwNkupOLzUWXndjeXX/YxV/xLWWzPwofUq3HWM9xGtTD4iOPj4Myl7W7KbY7Twslwr9C9IFP8aK/LLvwMptcb2UhRa4YqnzWu1/xmChgl9AY43HP9KHYxGm/rXqc=
+	t=1755624765; cv=none; b=Z+ieYk+uIZlQouKgfv64sUkHN48EeFoQSc7dvVVhD0BgX+wo/wlNaGpsyCeKFk2ANQqEO6krDCElC+vU8zL3txL/JU6STDkxAQA00i7Z8+sUllqcx1JL8Q1Kr8GVdqQb3YJ5EDoaxgmmtXFLfO1xfhdtBUFmdEPohJJXXXauGp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755623876; c=relaxed/simple;
-	bh=nvWzzpqNpT6eJfaRE4PBD9zQF//aAwvkd8/k/iioYeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfbWwjsBQ4I+oEfv63CNWkdnWLOdVAh6G/S+TuWgmbmRvl+Z6BH2auvIWp5dH+vWoUZhkjaGGz7rxa22Ow945fyzhqKe3917Po5vGDm+tdiEtyhe+W42xmUT9qilsXxGDsiV7ITZis1H42haQbNGUYpsxWMfwh4ipy5nPj4ju4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YDpVHwao; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1755624765; c=relaxed/simple;
+	bh=J6y6LuaznEwKZBwFRPm+m4Y8k2u/faVNHPijZP4is6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FHCJQkR79BpQlOZSBfRteaZhX/jdbZFqmVG8i30p6IIAgBoD0iEbgW3VzEm7gzw9kPH5b28EVG/MoeW3gLwo5exg4JjSxojQRCbKQYVrgCPU2gn2xufgK2bCf4K7WSjxB9xn6T7pzyp4FzrQZ9jZcbWOTmb6q4iD50GzSkTTghg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dR8zlb3+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YDpVHwao"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J90Zut018032
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 17:17:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jcJugMEmP+bjapXf/nEWeVTp
-	niYytQQ7IyAUbp7KDGw=; b=YDpVHwaoiNDYc1EstbKRajG+5Bss+xcUqnjV8xew
-	SHQq9vWf0M/krUsz0Oo02Wb4CR9CUL1wVSp3tFWLgLHDX8bpXVtDsQ/cKXYQxEfK
-	ctDGkTLXNxOfhz3ggJEFFO8rXi27DGzstYB2dgbzC4XGnRTwtDkOy4NHFIxSmlLS
-	CofzYV6sCtFJsOR/ZkP+xTKOz63pQjsEGo3bv2N2zDzBMBIilL8JJ4+Mf+uQWueK
-	LWP2GAB1EJ7QnWaYl3AHuzqBqdtKHtRE19G73O68BmwHF/SRQPez54S9msIUEUsr
-	NcnuZsLbN3Q86pLKMGUcRPobdK+HYTbZ+2WX8TVzDnAT7A==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48jhah1a9y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 17:17:53 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b471758845dso4679902a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 10:17:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755623873; x=1756228673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jcJugMEmP+bjapXf/nEWeVTpniYytQQ7IyAUbp7KDGw=;
-        b=uxW2KTGQpfALQTqG3EyWIRBPs3MHSKQP0xI2juZct4yaiqV2fKzTwTX9BixZEE3lma
-         cIsbJZsWEucFr+LwDuWJrNYYI6XPIAt+HRDdW8Zk3zjkC4d80fMjOM61SSjyr1pf6aCm
-         KqvLXdXDct1IsabSSlj9Nx+8UnSegvF3c6hDI6ZLy3pcMZSXicxVow3pPtX/rjSj7r6z
-         /PUBx7VwCfcjcHc20GcthbIW6JCKYFncc/Cg7lWQaqcrAyAbZ6Q+Meblio08ZNZGYK5R
-         rIaWapivYkxYObll1Jx7v+uicKjq31r5OaJnYl+8IX8HZHFIkYU9xbuBvY2EytfR+JUn
-         oKOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWZO22GQCyZ38QKbz6fGMLMIgk7yepsjDRQ60TsRG1V2mTpc25TCMi8dMcdhecC+4p737xdXM080JWLL0ffGvl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhTEBDRTliAaSoQsC+fQFVSFF18Ock3C6tjDoYcojPvqeHsH5L
-	p7TIBO/Opm4DidlYKBLwkfNW2gQs5tK31bwG29ObH6z92l5uq15Eng9qMIBb8zxGvkO81qW2fo1
-	vKSj90/t2CpwUKOt1YcufJEh/PAr9CJQQaASgfsWcc7+iMCHQ9fbezLbDU+y6Z8thVYvga0LW
-X-Gm-Gg: ASbGncubgrpMU5fNdp467xItJuN9+qlBXcTEIzSLoVa8ZjC0/W3wmVfHAyzdHS3BwOX
-	OQxeB7sZKmcRb/SwJk65o0i5kORDDd21BbTDhJQbhDosLas7Xf8lf6u6vmNzsvNOzW8PKlb5UV9
-	FvN87aNKyL7uQE55+B8NTY/XyahGNIJRpauRszNKRaFTqdPtiuqRaRWAtHdM8am7/UiqeUmsh96
-	aKcSOGFsLfMVCvn5j17Vj3kWMhXq8Am0rtBJqpGqAa5ozKW5yhuRJ101k4vzCuA/zSFN9fFVT+y
-	2IdfiJBYdNDtsxHMCtDYP65mVN6rfDxIwYHRaIYT5OGnL+4WuGY49jNEED35uOxCGhCM5XT2Yg=
-	=
-X-Received: by 2002:a05:6a20:7d86:b0:243:78a:82b9 with SMTP id adf61e73a8af0-2431b980068mr162642637.51.1755623872614;
-        Tue, 19 Aug 2025 10:17:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFN9cn2Ql/5avNFjiCvAWCZGwnNNwM92fq94h29uNQopaI93fMSoUy7tmgOUYUQhdeGK5VXtQ==
-X-Received: by 2002:a05:6a20:7d86:b0:243:78a:82b9 with SMTP id adf61e73a8af0-2431b980068mr162576637.51.1755623872003;
-        Tue, 19 Aug 2025 10:17:52 -0700 (PDT)
-Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640b2d37sm198078a12.46.2025.08.19.10.17.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 10:17:51 -0700 (PDT)
-Date: Tue, 19 Aug 2025 22:47:45 +0530
-From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 01/11] firmware: qcom_scm: Introduce PAS context
- initialization helper
-Message-ID: <3b74157a-3f2a-4533-acf6-7cab8154709c@quicinc.com>
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dR8zlb3+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C576EC116B1;
+	Tue, 19 Aug 2025 17:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755624763;
+	bh=J6y6LuaznEwKZBwFRPm+m4Y8k2u/faVNHPijZP4is6g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dR8zlb3+YOIv0cuHGrDos071e5AJODOoPAJy/l7ZeqlUfVScMSh9LjxoYtVoAuDD0
+	 xBY2B1XXEdDyDa2AuQcHb6aqVPIoI5+YA+qqtl1L1nuwVko4zyDBhhUr6uYe3+XKQz
+	 KyLh0Dgo5bun2jnTfu2qwS6buxPNHounZ3WoPE6U6jET4rNaLZd5qKOIyKOTWxWL8K
+	 HGzcNzPbYOiTYXfyLQDngFLQn4yvzxj1q3ZD7l1gozmu3XJ8ZutFm6GWNW9rbX1Xaa
+	 t2ttS9bUXjnzFDU8VJS+6X4mwWFD+O8l8o8Dp+idkWxgqe6HPxFM0ORj/rSoRXy3jA
+	 z7vVVpXEQY4Kw==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ace3baso952138166b.3;
+        Tue, 19 Aug 2025 10:32:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV610F+V6IXuY1o4+brgxkEQtUSkUj3j6qZKa8aay2oOTQFrMb/fUZbt08uBoONl0fmUH8fUs+YbPSrzk7E@vger.kernel.org, AJvYcCWHEKW0jAu6+0vuLEg//E9knIh5NfoksU57fcsqS3LZeGYZbfvgjuTSRzzrjxPYyUEpvvcXF7ddYmN+D3Jw@vger.kernel.org, AJvYcCWS1jcNZycB5A+FCwz+ezHPMxDeHs/epEs6ZyAPeFHyyz8U6eiatiRT3+M6DFlYH5F+J9bi287uxaJgpgyIe3862q0=@vger.kernel.org, AJvYcCXSabcQ197wILkEJpD6PWodJCAw6NiyXRHko4cU7HuZ62dF0YfkwOKtmbLvPwhcCwiznYgqLejK67jmYnxeAQg7gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx24AFS99VET8Azh98jNvvhgJ/beCQwUXATDp/JCzzZwGT11F6C
+	tmLFqa8xXkNNHSX1GmUIvegOrko1fqYraL9ETpMDSk0wNauDBWUiP5OZ1rTbgpK5rksvo26BOQB
+	CxIxxOtfrhqBV+ctAWMNhjz+6Kp6cUw==
+X-Google-Smtp-Source: AGHT+IEUi1cNispFJzaTig/zRP3yzP5O0TnRE9XfPCw/ckDcq03Jy+Mgc0TSd/4yPwlKVH5V12ZUjepBe+4MMFOi9Zs=
+X-Received: by 2002:a17:907:7f0d:b0:afd:d993:9f2b with SMTP id
+ a640c23a62f3a-afddd2351camr276179566b.65.1755624762291; Tue, 19 Aug 2025
+ 10:32:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=D9xHKuRj c=1 sm=1 tr=0 ts=68a4b1c1 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=1sDHh0GgXtZW7FQMFNoA:9
- a=CjuIK1q_8ugA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: gbuhTi-IaT97tX3sRznMblMMtNaacb6u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE2MDAyNCBTYWx0ZWRfX0lEGabtIFFE2
- PHYgRTA5AvuR6I59sy2cXzJ1dR0rKKQ0bW6VETF3D5fLxmueAQoDVOBDatzaFF6lGJCrcojstp/
- 4hAgRrmXaF4P0XIGg4zJQTnzhQCtF/ddnbpT+fwsl7Re/5M0W5/VqNwjHRj5ghJ7P9weM8Swu3Z
- 3g52E1LbYY1qARoABdzRfqUqnOgWhzowsFMWVSLcR4OQi8hBUpjMwwHUVQsFbvh5dNS3kDlIPpu
- Y37YKU5H0+U+iiY82ApF8c0FD6B56nA+4jtuZ78jU1QXGTesSdj5c4+482Nj2CtZOfkav6KwXiy
- Gc9hruMmpZwdYgrMxpqOantDgB7GwS+Z1VFJtkpVfvfRVRj2+jVtUdqRLkRCyEtrMMJKdQLTeOX
- OoYLv2zM
-X-Proofpoint-GUID: gbuhTi-IaT97tX3sRznMblMMtNaacb6u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508160024
+References: <20250813214808.895654-1-robh@kernel.org> <te2o47dxihjsckaigfdhbrbyqxaeqmchmtx5xbx5y2smu6yaja@t7uccvfsxmay>
+In-Reply-To: <te2o47dxihjsckaigfdhbrbyqxaeqmchmtx5xbx5y2smu6yaja@t7uccvfsxmay>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 19 Aug 2025 12:32:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL41LWqXgwLg_wyjk_1m6PdYFp0n6kv_Grk5659F-va-g@mail.gmail.com>
+X-Gm-Features: Ac12FXxo6YLchimNgboodm-rodCkxohoNe_mlbRUV7_mnTRcH8K4JAg2Z9LphQQ
+Message-ID: <CAL_JsqL41LWqXgwLg_wyjk_1m6PdYFp0n6kv_Grk5659F-va-g@mail.gmail.com>
+Subject: Re: [PATCH v4] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 10:24:36PM +0530, Mukesh Ojha wrote:
-> Currently, remoteproc and non-remoteproc subsystems use different
-> variants of the MDT loader helper API, primarily due to the handling of
-> the metadata context. Remoteproc subsystems retain this context until
-> authentication and reset, while non-remoteproc subsystems (e.g., video,
-> graphics) do not require it.
-> 
-> Unify the metadata loading process for both remoteproc and
-> non-remoteproc subsystems by introducing a dedicated PAS context
-> initialization function.
-> 
-> By introducing qcom_scm_pas_ctx_init(), we can standardize the API usage
-> across subsystems and reduce the number of parameters passed to MDT
-> loader functions, improving code clarity and maintainability.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c       | 26 ++++++++++++++++++++++++++
->  include/linux/firmware/qcom/qcom_scm.h | 11 +++++++++++
->  2 files changed, 37 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 96d5cf40a74c..33187d4f4aef 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -558,6 +558,32 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
->  		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
->  }
->  
-> +void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
-> +			    size_t mem_size, bool save_mdt_ctx)
+On Thu, Aug 14, 2025 at 1:52=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> On Wed, Aug 13, 2025 at 04:48:03PM -0500, Rob Herring (Arm) wrote:
+> > Use the newly added of_reserved_mem_region_to_resource() and
+> > of_reserved_mem_region_count() functions to handle "memory-region"
+> > properties.
+> >
+> > The error handling is a bit different in some cases. Often
+> > "memory-region" is optional, so failed lookup is not an error. But then
+> > an error in of_reserved_mem_lookup() is treated as an error. However,
+> > that distinction is not really important. Either the region is availabl=
+e
+> > and usable or it is not. So now, it is just
+> > of_reserved_mem_region_to_resource() which is checked for an error.
+> >
+> > Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > Tested-by: Peng Fan <peng.fan@nxp.com> # i.MX93-11x11-EVK for imx_rproc=
+.c
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > v4:
+> >  - Rebase on v6.17-rc1. qcom_q6v5_pas.c conflicted needing s/adsp/pas/
+> >
+> > v3:
+> >  - Rebase on v6.16-rc1. Move TI K3 changes to new common file.
+> >  - Fix double increment of "i" in xlnx_r5
+> >
+> > v2:
+> >  - Use strstarts instead of strcmp for resource names as they include
+> >    the unit-address.
+> >  - Drop the unit-address from resource name for imx and st drivers
+> > ---
+> >  drivers/remoteproc/imx_dsp_rproc.c        | 45 ++++++--------
+> >  drivers/remoteproc/imx_rproc.c            | 68 ++++++++------------
+> >  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 +++-----
+> >  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++------------
+> >  drivers/remoteproc/qcom_q6v5_pas.c        | 75 +++++++++--------------
+> >  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 +++-----
+> >  drivers/remoteproc/qcom_wcnss.c           | 23 +++----
+> >  drivers/remoteproc/rcar_rproc.c           | 36 +++++------
+> >  drivers/remoteproc/st_remoteproc.c        | 41 ++++++-------
+> >  drivers/remoteproc/stm32_rproc.c          | 44 ++++++-------
+> >  drivers/remoteproc/ti_k3_common.c         | 28 ++++-----
+> >  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +-
+> >  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 +-
+> >  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++---------
+> >  14 files changed, 204 insertions(+), 320 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/q=
+com_q6v5_adsp.c
+> > index 94af77baa7a1..a5b7cbb8fe07 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> > @@ -625,26 +625,20 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
+> >
+> >  static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+> >  {
+> > -     struct reserved_mem *rmem =3D NULL;
+> > -     struct device_node *node;
+> > -
+> > -     node =3D of_parse_phandle(adsp->dev->of_node, "memory-region", 0)=
+;
+> > -     if (node)
+> > -             rmem =3D of_reserved_mem_lookup(node);
+> > -     of_node_put(node);
+> > +     int ret;
+> > +     struct resource res;
+> >
+> > -     if (!rmem) {
+> > +     ret =3D of_reserved_mem_region_to_resource(adsp->dev->of_node, 0,=
+ &res);
+> > +     if (!ret) {
+> >               dev_err(adsp->dev, "unable to resolve memory-region\n");
+> > -             return -EINVAL;
+> > +             return ret;
+>
+> This looks strange. Shouldn't it be `if (ret) {` ?
 
-Since we export this for other drivers/module, consider adding kerneldoc
-comments.
+Indeed. I checked other spots for the same mistake and this is the only one=
+.
 
-> +{
-> +	struct qcom_scm_pas_ctx *ctx;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return NULL;
-> +
-> +	ctx->dev = dev;
-> +	ctx->peripheral = peripheral;
-> +	ctx->mem_phys = mem_phys;
-> +	ctx->mem_size = mem_size;
-> +	ctx->save_mdt_ctx = save_mdt_ctx;
-> +	ctx->metadata = NULL;
+>
+> >       }
+> >
+> > -     adsp->mem_phys =3D adsp->mem_reloc =3D rmem->base;
+> > -     adsp->mem_size =3D rmem->size;
+> > -     adsp->mem_region =3D devm_ioremap_wc(adsp->dev,
+> > -                             adsp->mem_phys, adsp->mem_size);
+> > +     adsp->mem_phys =3D adsp->mem_reloc =3D res.start;
+> > +     adsp->mem_size =3D resource_size(&res);
+> > +     adsp->mem_region =3D devm_ioremap_resource_wc(adsp->dev, &res);
+> >       if (!adsp->mem_region) {
+> > -             dev_err(adsp->dev, "unable to map memory region: %pa+%zx\=
+n",
+> > -                     &rmem->base, adsp->mem_size);
+> > +             dev_err(adsp->dev, "unable to map memory region: %pR\n", =
+&res);
+> >               return -EBUSY;
+> >       }
+> >
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qc=
+om_q6v5_mss.c
+> > index 0c0199fb0e68..0fea5f91dd1c 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -1961,8 +1961,8 @@ static int q6v5_init_reset(struct q6v5 *qproc)
+> >  static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+> >  {
+> >       struct device_node *child;
+> > -     struct reserved_mem *rmem;
+> > -     struct device_node *node;
+> > +     struct resource res;
+> > +     int ret;
+> >
+> >       /*
+> >        * In the absence of mba/mpss sub-child, extract the mba and mpss
+> > @@ -1970,71 +1970,49 @@ static int q6v5_alloc_memory_region(struct q6v5=
+ *qproc)
+> >        */
+> >       child =3D of_get_child_by_name(qproc->dev->of_node, "mba");
+> >       if (!child) {
+> > -             node =3D of_parse_phandle(qproc->dev->of_node,
+> > -                                     "memory-region", 0);
+> > +             ret =3D of_reserved_mem_region_to_resource(qproc->dev->of=
+_node, 0, &res);
+> >       } else {
+> > -             node =3D of_parse_phandle(child, "memory-region", 0);
+> > +             ret =3D of_reserved_mem_region_to_resource(child, 0, &res=
+);
+> >               of_node_put(child);
+> >       }
+> >
+> > -     if (!node) {
+> > -             dev_err(qproc->dev, "no mba memory-region specified\n");
+> > -             return -EINVAL;
+> > -     }
+> > -
+> > -     rmem =3D of_reserved_mem_lookup(node);
+> > -     of_node_put(node);
+> > -     if (!rmem) {
+> > +     if (ret) {
+> >               dev_err(qproc->dev, "unable to resolve mba region\n");
+> > -             return -EINVAL;
+> > +             return ret;
+> >       }
+> >
+> > -     qproc->mba_phys =3D rmem->base;
+> > -     qproc->mba_size =3D rmem->size;
+> > +     qproc->mba_phys =3D res.start;
+> > +     qproc->mba_size =3D resource_size(&res);
+> >
+> >       if (!child) {
+> > -             node =3D of_parse_phandle(qproc->dev->of_node,
+> > -                                     "memory-region", 1);
+> > +             ret =3D of_reserved_mem_region_to_resource(qproc->dev->of=
+_node, 1, &res);
+> >       } else {
+> >               child =3D of_get_child_by_name(qproc->dev->of_node, "mpss=
+");
+> > -             node =3D of_parse_phandle(child, "memory-region", 0);
+> > +             ret =3D of_reserved_mem_region_to_resource(child, 0, &res=
+);
+> >               of_node_put(child);
+> >       }
+> >
+> > -     if (!node) {
+> > -             dev_err(qproc->dev, "no mpss memory-region specified\n");
+> > -             return -EINVAL;
+> > -     }
+> > -
+> > -     rmem =3D of_reserved_mem_lookup(node);
+> > -     of_node_put(node);
+> > -     if (!rmem) {
+> > +     if (ret) {
+> >               dev_err(qproc->dev, "unable to resolve mpss region\n");
+> > -             return -EINVAL;
+> > +             return ret;
+> >       }
+> >
+> > -     qproc->mpss_phys =3D qproc->mpss_reloc =3D rmem->base;
+> > -     qproc->mpss_size =3D rmem->size;
+> > +     qproc->mpss_phys =3D qproc->mpss_reloc =3D res.start;
+> > +     qproc->mpss_size =3D resource_size(&res);
+> >
+> >       if (!child) {
+> > -             node =3D of_parse_phandle(qproc->dev->of_node, "memory-re=
+gion", 2);
+> > +             ret =3D of_reserved_mem_region_to_resource(qproc->dev->of=
+_node, 2, &res);
+> >       } else {
+> >               child =3D of_get_child_by_name(qproc->dev->of_node, "meta=
+data");
+> > -             node =3D of_parse_phandle(child, "memory-region", 0);
+> > +             ret =3D of_reserved_mem_region_to_resource(child, 0, &res=
+);
+> >               of_node_put(child);
+> >       }
+> >
+> > -     if (!node)
+> > +     if (ret)
+> >               return 0;
+>
+> Shouldn't we differentiate between an absent region (OK) and an error
+> during parse.
 
-This seems unnecessary.
+IMO, no. The resource is either available to Linux or it isn't. The
+driver can decide whether it can continue out without or not. Anything
+more is just validation of the DT which the kernel does a terribly
+inconsistent job of and we have better tools for.
 
-> +
-> +	if (save_mdt_ctx) {
-> +		ctx->metadata = devm_kzalloc(dev, sizeof(*ctx->metadata), GFP_KERNEL);
-> +		if (!ctx->metadata)
-> +			return NULL;
+> > -     rmem =3D of_reserved_mem_lookup(node);
+> > -     if (!rmem) {
+> > -             dev_err(qproc->dev, "unable to resolve metadata region\n"=
+);
+> > -             return -EINVAL;
+> > -     }
+> > -
+> > -     qproc->mdata_phys =3D rmem->base;
+> > -     qproc->mdata_size =3D rmem->size;
+> > +     qproc->mdata_phys =3D res.start;
+> > +     qproc->mdata_size =3D resource_size(&res);
+> >
+> >       return 0;
+> >  }
+> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qc=
+om_q6v5_pas.c
+> > index 02e29171cbbe..b3f7209289a6 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > @@ -121,7 +121,7 @@ struct qcom_pas {
+> >
+> >  static void qcom_pas_segment_dump(struct rproc *rproc,
+> >                                 struct rproc_dump_segment *segment,
+> > -                               void *dest, size_t offset, size_t size)
+> > +                    void *dest, size_t offset, size_t size)
+>
+> Irrelevant? (and two next chunks)
 
-Do we really need to pass this burden to the caller to pass save_mdt_ctx
-as true/false? What happens if we always keep metadata in qcom_scm_pas_ctx struct
-and let clients use it if needed.
+Yes, not sure how those snuck in there.
 
-> +	}
-> +
-> +	return ctx;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_init);
-
-Is there an equivalant ctx_destroy() function? It would be confusing for
-drivers to call this in their probe and not doing anything upon error or
-in their bus::remove callbacks. I don't know if we really want to
-convert the whole function under devres or just provide a destroy
-callback.
-
-> +
->  /**
->   * qcom_scm_pas_init_image() - Initialize peripheral authentication service
->   *			       state machine for a given peripheral, using the
-> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> index a55ca771286b..b7eb206561a9 100644
-> --- a/include/linux/firmware/qcom/qcom_scm.h
-> +++ b/include/linux/firmware/qcom/qcom_scm.h
-> @@ -72,6 +72,17 @@ struct qcom_scm_pas_metadata {
->  	ssize_t size;
->  };
->  
-> +struct qcom_scm_pas_ctx {
-> +	struct device *dev;
-> +	u32 peripheral;
-> +	phys_addr_t mem_phys;
-> +	size_t mem_size;
-> +	struct qcom_scm_pas_metadata *metadata;
-> +	bool save_mdt_ctx;
-
-As mentioned above, can we just include qcom_scm_pas_metadata struct all
-the time?
-
-Thanks,
-Pavan
+Rob
