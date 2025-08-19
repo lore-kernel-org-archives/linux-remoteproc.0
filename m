@@ -1,66 +1,67 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909BD221F1A
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 11:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88605322A1A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 11:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755601705; cv=none; b=DrrGkoFDl1J1ajjzcJb46AYUfv1jp1Q8Y1g6d7kHOWXJC0hJH/8ftRaDfBK8k+V4rI4MV6KJfp1HAgnF3u4EXx5v5S1ZZSF7kONbBhB42z+EAPLOJyIdT+x2QQspRfxFbANsoI3m668JT+AfUR0A0rMi0AnOovQCuFivB7OgaOA=
+	t=1755601705; cv=none; b=rmGY4ZWxoo2i1ywASfwXRRnVmb4+ZJ4IKzBAr/uEyVpt6/rtl8hn92+DD7sry1QODd2oTU8qaJiVUEMSc3Quy0uzSmXBBL4wmroiP1EA/CQpvj1qd5IaQ5raetowV4BeYkOklWWsyY0LJFzuQr5/G4M6MVD23Qo8M6GHN5TL9k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755601705; c=relaxed/simple;
-	bh=8kLogn+zROvMNiYZTIrHFCqLRK5ZGsChFJjCJtBpXXQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VHqW2flmAw1a4OhRtWxncNOEvZ0XWiy/HuYiU3TH9aJZPRPhKM+lI9ZZv4w0l52FbvkPbSMx8wMuFpgmjoJ08qvu9Id86yLk3xWCTvwncbzO7mtjzucfXjCl00IAnEDxSfabANLAkgz046k3fF1vCQzq+rnuke2aZj14xw6PQ8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AGUxFZCL; arc=none smtp.client-ip=209.85.218.46
+	bh=FDAp9yWzU6h2a01wyYHSgRU7k3MWfcA551Cze90JEG0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XDfyZrAEzXWxy2S9O6Rbp/qyM3M09/6+5zwcCsTf2Wo9du9bBKWD2KUYCOa3y+9iP6ZGZJjaRWiXe5EcbdzKCchtXMBchL2m9Jtxgk9ytMo8K4zm26KLLTNgGEE4RDFm58Q64w2e0ZLJum40Jfwj0Px+zhEiwA9hhfjzCKN0w+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgNIohIh; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AGUxFZCL"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb78fb04cso736374166b.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 04:08:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgNIohIh"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so6924374a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Aug 2025 04:08:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755601701; x=1756206501; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpYVbUYUqcDwuuSlMJD7l7rhKZ+sIG5CmBcL7Jvhb3w=;
-        b=AGUxFZCLvSJcmZ3Ru/CX8HeOwXl96Dl+v+Lfvq0Te5Yz1rQRQ7QKPPmbaHzDnb4c5p
-         IxGD9WpP0F3fZUuoud8cpKcexrYOydgsKJVE1rqGEbfJocDMB/4R98S7gKETMaxq2nJB
-         f366eiYRTYay+Vz1uP3oV0K8+Q+QZIhqbZRXVGiovdC0bGnmKjjea1ZAccCVTzt8WvRr
-         drZgaQR0cMrZRrnXaU1w5nq3SmxLAOMDa9SGc0gpfmID+pt9kBPv1Wwhit7lJeyeTbtp
-         ZaVYUWA1ikZC/PYcwov9nMSMWb7dfe670Q+B/2ClRpCwcceKTJdOfKyuob7XRNU7F5+U
-         8ksQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755601701; x=1756206501;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1755601702; x=1756206502; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zpYVbUYUqcDwuuSlMJD7l7rhKZ+sIG5CmBcL7Jvhb3w=;
-        b=MPpCIjRqAXJVr+Zs/EQ5waHKZaWhN635/NZWQ2g+CzINDJFp8ua21TOocYRH5Uwqe0
-         Zbt9kAs8+yAQBFdLQMX7Egm7C2FXkmHwfAFAkiRDBLh7T0K24BIG0c47tjuA4pyXnr+q
-         N4BMZqPZTBFoVzl5PURXGs93tolX9Mk1X7dlWOorOgT/E9aTrjrfI+V1131rMW0MnHeQ
-         mZDOrK5972pxepsH+s/TOBej9GAIL7rj1uSrQ03tLbIrVCsnXdsTLjhGqD6giA0S66EM
-         FDwfWo7WO7OuTlBqpWlIcaHt3FOKBX1iIQtiGRpLjDO3HxWHevW9wCrMnZtZoOk94hU9
-         aC1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDbY1ogFq0rtx+A29kQIQsZl7OLA8wQG0xWQdFdpo5yRRBW7DcNPwtk+bvDb8EvwazX+z6hweUPEnMrEneghOP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDqpAv9nkKpLl89L/kAW80lsUKHok+ucGAJgbnWGbqQZutxTsx
-	dLic4YDyBm5wWBkdmuKgHKhnfH0+ExVe+y0ksxLqEoR6UPZuH5VgG2NxzC2tHoOJ+Vc=
-X-Gm-Gg: ASbGncucJvXHSryn5Kd9l94ZYXlO/hZVnFowQDyiDOnkYHqTit+PI6vYI9WWPRYpCG4
-	essvtZPmG3UvEIb/nzIorkgQBSFjjLbAHixAKZIw1RKCLFfolrte7wem1WufRqOF9GHlUjPr23Q
-	njoLbpqEWPqfEVrw8VIxOoNyBkWq+PbDdEK2btAxgiFjTkMPOQ8sQrnqp7I1/kPuQUoEDgydgXr
-	XCbJ9fhJyUFYZF1IdeFBYdtGpv3nYL4F1/Fs24JTws7Ae8k3v9uPmP4V52ZArAgb5bd7xsK/wYn
-	Zh8QCbRtzcibuXbLmSwWWOaGwnGLJd2GAHtZ1ra80eW8dbu1EzUADJ2iT4q+pumqKUxnIugCYVe
-	W9x7HaEf9d2EIvqdpHOGRDNEEgdU1cJczICBlH2sWToYDVJuX
-X-Google-Smtp-Source: AGHT+IHuAC+MgtHl12YlBZLIPfcn6x8+4lFFpvTHdB+kHzp1vEXmZlY+oQp1EWwCza75NIX5i6Z6gQ==
-X-Received: by 2002:a17:907:2d94:b0:af6:2f1d:a73f with SMTP id a640c23a62f3a-afddd243cf6mr200366066b.53.1755601700814;
-        Tue, 19 Aug 2025 04:08:20 -0700 (PDT)
+        bh=MqqWuSSSaSs4/5B548uIsqcez7udu8s/zMuVb9X/jRU=;
+        b=xgNIohIh+9ndLl+Wl3N64y7YH3Y3/TbI6SrWuwMwHho3k1uclPbHPkdkgYXlY07cx4
+         aVj81yWjAvTcHifWJhiCuwG+pOIrvKqJlGafSTHGNQ+QMUcDkplpkA4aWViStPOphzxc
+         tbgmkM4Lj76BXLd1qfmcFLD36Wa+dB7vc7/mBc+Kep4vnnl+u9pCEPn+c46aggRcKYbp
+         vAil5mOJ+bURC4uL6ke2DasKa8YTwLpTa6shm+8g6HxvihtpESUNlHy8ZZ3rl84sfL/Y
+         dMcIg+29Z4Gu0oV2/PjqEx67ZSaG4WA/jTHrpO/0j4RcyqIxYE8AqsRxrfB8BsTcECFA
+         6ijg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755601702; x=1756206502;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MqqWuSSSaSs4/5B548uIsqcez7udu8s/zMuVb9X/jRU=;
+        b=QMBUnYNUezHrByRstiUg1x9WEqRO6jNo9QRoryfZusBayOVg79rhnAKY1ssj3N+Cjf
+         b7h+4ivNbMSyCrm9uQqubDQWWsnERpEfU/HJ0B729wK5nfSszIRDuVPfpYBcsouu/O39
+         V7V1bN4yHUeiREuKRPDD8IBPCp12qBwCRLjX12hRxLaStrXBvGmEinVeyixwB5d7wOtG
+         EEfYUhg7L7hSYIPrAPJOTyaKMUBCiq4o/nxP8z8Fp+DUjAgYCHjMQidI7M9NxkmLoxix
+         DxKHHqGdr66nw8TmD/thUbMaztvWv3cTRjhNvo0VYpzPdJH1xkCDOT0VTe2ZldNyh1Bp
+         KiVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA+8yISHmh4ziDaALWki6pP2p2wtyI8lzAmAUNRohQpWsGHMBkasunQ9PTKfogFrovp//IrJQa3wIX9CetsF8F@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiz7O/f4mQ0c0doS//9MPTgL8dTs0I2H8/lqLjCbmj8j0DdDan
+	vd1bD2IMrcKRdnoVbd4RoEFtz1IKJT729RgZRyC1Mo3e6bw6XC1SmgLZd8cKLM/uc+4=
+X-Gm-Gg: ASbGncu4KxkXnAGneVM6YNCoeZLrTJkYVN6dwO51IDSmszmdhixFtM9JDrWzDY03At6
+	tR5Au7Kwz6km54Cfye3gfXAUh79tRTt5rkfEk+me9Tjltj8qugCpK/FNvmTVlYg6bNHsMWuJfZ9
+	kiiM5grPS2omoUyjzYtO6iQFA6+ABtVwm3kCwnQGRwlJnsRo6tq1RhyvAEMlv3FaD7Sj4CMH7Pr
+	04315ZDXIX1eSxuSPECeXzwEj3IcpYDOvrtPG5dBL7eB9z9bDeovodwzS3HO0TQoR2ucLwvtBEK
+	4G50zEh3+GlKLjR5BMADWQ+vxqVuYa8UdaV1Cu9j1s0wwjl3hAsXsl1GvS9kHXrvcL9Y3LRqpCn
+	qjG1wt/hWCUfIAndgX/YxyisiIHocCOYbAzTJyVIGKZs04zPb
+X-Google-Smtp-Source: AGHT+IEu47SOpD2q0+bOP6DYIa6GuWe1e9d5W3TXltO+50fVmPfaG/a5eVbK0rgp24zmwdwtvRU6Hg==
+X-Received: by 2002:a17:907:3e10:b0:afd:d9e4:51e9 with SMTP id a640c23a62f3a-afddd24e9d1mr167513266b.65.1755601701738;
+        Tue, 19 Aug 2025 04:08:21 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:db5f:8096:4609:9b24])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdd01096csm974845466b.88.2025.08.19.04.08.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 04:08:20 -0700 (PDT)
+        Tue, 19 Aug 2025 04:08:21 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: [PATCH 0/3] remoteproc: qcom_q6v5: Misc fixes to prepare for
- reusing the "lite" ADSP FW
-Date: Tue, 19 Aug 2025 13:08:01 +0200
-Message-Id: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
+Date: Tue, 19 Aug 2025 13:08:02 +0200
+Subject: [PATCH 1/3] remoteproc: qcom_q6v5: Avoid disabling handover IRQ
+ twice
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABFbpGgC/x3LQQqAIBBA0avErBtQybSuEi3CpppFWiNEEN09a
- fn4/AcyCVOGvnpA6OLMKRbouoKwTXEl5LkYjDJWed2gHJICniHteLaXxYVvyth5b6bZOq06B+U
- 9hP5Q1mF83w8c8LnAZwAAAA==
-X-Change-ID: 20250814-rproc-qcom-q6v5-fixes-9882ad571097
+Message-Id: <20250819-rproc-qcom-q6v5-fixes-v1-1-de92198f23c7@linaro.org>
+References: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
+In-Reply-To: <20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, 
@@ -80,33 +80,40 @@ Cc: Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
  linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
 X-Mailer: b4 0.14.2
 
-On X1E, the boot firmware already loads a "lite" ADSP firmware that
-provides essential functionality such as charging, battery status and USB-C
-detection. Only the audio functionality is missing. Since the full ADSP
-firmware is device-specific and needs to be manually copied by the user, it
-would be useful if we could provide the basic functionality even without
-having the full firmware present.
+enable_irq() and disable_irq() are reference counted, so we must make sure
+that each enable_irq() is always paired with a single disable_irq(). If we
+call disable_irq() twice followed by just a single enable_irq(), the IRQ
+will remain disabled forever.
 
-I have a working prototype for this that I will post soon. To keep that
-series smaller, this series contains some misc fixes for minor issues
-I noticed while working on this feature. The issues are present even
-without my additional patches, so the fixes can be picked up independently.
+For the error handling path in qcom_q6v5_wait_for_start(), disable_irq()
+will end up being called twice, because disable_irq() also happens in
+qcom_q6v5_unprepare() when rolling back the call to qcom_q6v5_prepare().
 
+Fix this by dropping disable_irq() in qcom_q6v5_wait_for_start(). Since
+qcom_q6v5_prepare() is the function that calls enable_irq(), it makes more
+sense to have the rollback handled always by qcom_q6v5_unprepare().
+
+Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
-Stephan Gerhold (3):
-      remoteproc: qcom_q6v5: Avoid disabling handover IRQ twice
-      remoteproc: qcom_q6v5: Avoid handling handover twice
-      remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB on X1E
+ drivers/remoteproc/qcom_q6v5.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
- drivers/remoteproc/qcom_q6v5.c     | 8 +++++---
- drivers/remoteproc/qcom_q6v5_pas.c | 8 +++++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250814-rproc-qcom-q6v5-fixes-9882ad571097
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 4ee5e67a9f03f5f766f04396b9a3e45f77293764..769c6d6d6a731672eca9f960b05c68f6d4d77af2 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -156,9 +156,6 @@ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
+ 	int ret;
+ 
+ 	ret = wait_for_completion_timeout(&q6v5->start_done, timeout);
+-	if (!ret)
+-		disable_irq(q6v5->handover_irq);
+-
+ 	return !ret ? -ETIMEDOUT : 0;
+ }
+ EXPORT_SYMBOL_GPL(qcom_q6v5_wait_for_start);
 
-Best regards,
 -- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
+2.50.1
 
