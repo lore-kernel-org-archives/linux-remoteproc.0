@@ -1,128 +1,126 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F42634166C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 17:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A602741C9;
+	Wed, 20 Aug 2025 19:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710343; cv=none; b=iNWatbJA5ExEXA9bnlDWD/oXOp2hVT3e4WaBizjS/NxIwkHbHIvqady8O6lqfRLA65DtEFkX9QvBFiP/R42lgl+lbknZ4ufCX05geSKMb6e6bS6G/8ZnBPooAhTetai8EeSJBU/7HhB5XgYoOYuRYYsT+16E1nQx/yExOxNZ6xg=
+	t=1755718280; cv=none; b=PT5bviGdZdS7373Qd5ebgXc+9MBWsP2ZjC7cyPFEjLy0yYzfl6JtbFjawEbPjqirBK9+CLdKRdeK4ZUnYOsdiFb4/5evdELl3zTFj7/SGQ1arrzF97+LvGqgOJL89xP5u5jKFD1x3P8OP5saaUNCTciEDp3xxMYlFecEMhzcvsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710343; c=relaxed/simple;
-	bh=G6X07DMJoJGHfvSbycLea+tudvMXf5oz0RpWYgY0qMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d+0N8mFbCLJYbUiq4D9EA/zQWejfgeUSnUTY/EwSqK/NGo/jNExraFM3pBKOaPqAC2QUoGPCID1LKScIDLJB+NA0GaRqvI3UbRRmFYcTYYKxq4rD0ymlDzK+uZHPiLFyQ4NMH4tHG5vvwiB9eSUMfuhCUeuaTssNiMW4gdIhbVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QZGc/RFP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1755718280; c=relaxed/simple;
+	bh=JdMnN/QvHNdC14uZpSWSeOLbLF7avgHXV6bfeFE314E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d8AFtRJh0WCv9geguixlNJMeQE51X8LXqMywsTFDUvFqM7GjARCusGp0d7E1IiQzP7wlM0FTnwxgyDsxvYB+6X3IIzaVLaIq4wq9iOjUB5cm+gkQVRijugdT3cu/DpBzyhASixnm+At6gowx1s/6NwILUnykOlsCOBjjsAgosc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGhHMttE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QZGc/RFP"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KGmeTO001012
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 17:18:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=D4c6VjJCxHwNMdHY8pDWjWO0
-	85ZA1m3/u33QomEdPGY=; b=QZGc/RFPA8AMae48g6OvIQGNkf3YiSAQVucXFO9f
-	qtb6l585YnHzzGlmjmWsDrhEn4ljF3RlTZMZwyDgvNxpaxLVFcZTfiJQqdMOeH9E
-	FLbM6mlrihlzrxjId669nd16XbZ/JXe2WZMfIoZdB8hMXUtKy9o6pMX3QK1djRnI
-	VWF3/Rgc8XR88Oa2wHM0cAbOKcf4q2GgmRbYrVNeadAytIG8kLefHEhOu69ks0j0
-	BfEcx8akS2rRni/0wFmPEbuQHp9JXEJP06aepQFrYYoJcto12jqPOGup+dXQmFEm
-	9MNZhdNAqpib46BnlhCMJJnT82u+/sN7ZeKtbxMS3HHCqg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52djg25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 17:18:55 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a9384d33aso1736246d6.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 10:18:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755710334; x=1756315134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D4c6VjJCxHwNMdHY8pDWjWO085ZA1m3/u33QomEdPGY=;
-        b=ijF1lq1TZa0zc8PncsrNSzlG/quhA8QIU25fTYxdGToBzStHFbGumbfPid24ZO02/W
-         n1IXmT86sC8PRB2DY7Zzxcjx6xbHSiimrQaQCyEKKjz3wd4ZoY6uQnzwbJPf0ic/llzS
-         PvZ+O+kvwnfaX3HL2u3BWdUHdK6hHCHJWYz/W3CtJWmB1gz6bD/olEEABDYRHw7Ba/Iq
-         0n/OdJKT0ky5Lq1jaFTNZqX5EkGMaY1808Kmt/14hWMGDq3sVam1Juw3MYiA4sovRXTW
-         I9Sc4kHiUNElvxBpSZIuNoN1pMwvwU/oK+/X7fHlSq9EvfZK5VEnbVRL4u1WhKSSFasJ
-         8w8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVByGJ4o8Mq8uARDMCws3RqPt95dexi9Wj8IzFLMDWFVLQEV9xE+oNtLJTdnPhHxJYChCd8UOOhD6oz6n/jFEcI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6k0ghCmQGJoGIGoq9p0gsNmaeWHrkBI3HXlFEz1+kSa0pKGhf
-	KjqpqGvp5Utnf07+a5lIxw+jvFXsWpZif3+Vr1mn5Gcb2Bq9Jw8uF/+fASpbnFjqOWeS452Nnmo
-	dW/csB08SSejX+pc9+311eyJfe4O4oLF2D/Rg2wni+f1eGniVZcQum/UVtmqRxEbfKdWEP48h
-X-Gm-Gg: ASbGnctyi6aECIeILXe3gYagsOuth44KWq9Q+6mUA2PYyH65k1+TUscBRL5to1u3gvF
-	dRgll4AIeNztcN9uyP5xZMUgBxaXb7uyUDRBN9DW5qNflVDDU+nRGagbEB4fSRva/gLvcyZm0io
-	AAjKfgSjakl0vt2AqpFh39KY8jwGFzzisC5+LKX4fFrVG3moVDHfvUfNtfzWHS5xdfEnCb3di9b
-	PmSGIu1pMuosGDRQsMU8tuDY1O0KRn0/UYTjY82z4Rlze4pvx2Raao1xwLX6rHtW54EI4TSmNcJ
-	AL02wLG3wCRnU5kkF6k82WmPcwQTnl9ZwLRIS5J5jkQldseKr+XfARiptP5DdmCoOnxyEHU/CmH
-	ekuwkhl/4LsSbly3oktcSy/vAUZaJotfKi+q+ELCiSA3amO50mHLZ
-X-Received: by 2002:a05:6214:21e8:b0:70b:af9c:d0ed with SMTP id 6a1803df08f44-70d770ec90cmr33161716d6.32.1755710334178;
-        Wed, 20 Aug 2025 10:18:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJMbKVOPkMoNV4lYsAx4gpHUcgozCfe+fx8N/3mB2f42zwfWVqWvV8n+duLWyQQLwTizWwFg==
-X-Received: by 2002:a05:6214:21e8:b0:70b:af9c:d0ed with SMTP id 6a1803df08f44-70d770ec90cmr33161366d6.32.1755710333680;
-        Wed, 20 Aug 2025 10:18:53 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f481esm2666722e87.126.2025.08.20.10.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 10:18:52 -0700 (PDT)
-Date: Wed, 20 Aug 2025 20:18:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v2 4/4] remoteproc: qcom_q6v5_pas: Drop redundant
- assignment to ret
-Message-ID: <5eh6q3hry4zchaptogbxykiiuaul7dkrshzlmfay7w7tondues@irxamm7vt6en>
-References: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
- <20250820-rproc-qcom-q6v5-fixes-v2-4-910b1a3aff71@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGhHMttE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28CBC116C6;
+	Wed, 20 Aug 2025 19:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755718279;
+	bh=JdMnN/QvHNdC14uZpSWSeOLbLF7avgHXV6bfeFE314E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RGhHMttEkXppx0xIcllcHsXLmLQQzOdjxYuV/xm82W+tSpLj5siXsGatCtlz88msg
+	 2kBwqKy5UBeiVfHuLZmptxFi73Zpxv/U9awFSIry45ieagzEsDibzMG1wAP3gxnkhW
+	 raADuSVol+35H9SGVkQgHnkq5ZvoxRqgzaJ5nqp8/IExM7a4xIdtlcK3QcBxNxqBtm
+	 KK/V1xpMYSVAS7R01YfN+CYcrvBHMjdmhrWPW+JZTdHhCYbshF/pY90CjAsTW4ka3t
+	 Rd/tFqZozHdiLnaXYd+is6lZXoeiYPHaynU5+quh2DQJRYYBKUUeAlmyR3mDi8VG5s
+	 b2OoQldEU+zEA==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so2241265a12.1;
+        Wed, 20 Aug 2025 12:31:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU56bj/Sd1e1zqvcCvKO7fdlt7hccKBIAbdmYstRaIqCEeqV3AIyjaLBQ2njCOIYDg8BLgtUdhvw6JbscNH@vger.kernel.org, AJvYcCWRROIguOUlE5hiwEKrba46Um+NfFc9XPA+g9IoseaUnwgdM4srD9JMY9wGS0q2Yuf1VmXAgiMcQxPC/UFv8jpEdWY=@vger.kernel.org, AJvYcCWzvXbxHm6aXTSVDDtPUTUJl5EIhTd6cREYzuqQ77qsTgC5yDl8tBlaDuquQ3FgUSPmIghsX08mppJ2V/Pf@vger.kernel.org, AJvYcCXrnUN+Ny8dI7Lah0xQ98ejhfON83JtzNhaMXl+bWEQ5HUj5i8v2WtMPmmvZswnqe/nO4/E8+0CmuRN1u2NtjMlYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2QkFK6C+60XMnGhNe0haKQGoy3dr1EdI9I0hA4nWwHthjQK1J
+	tkhKGygXhSRxQZN7x/dnMM+/IxI5M3ykAu3vsHXQee5krTvfNG6CAhtPu2Wq7DoXt8ZGEJwDj8U
+	173tb3YKkBlZZ9BNGge+dxfAbHDIZ3g==
+X-Google-Smtp-Source: AGHT+IHMduLqupXwUu5+wGeCnTMcG3KEnZjSMqXY8A1R3KzTvJxS2yEXoVkoMeeJWEbKS/NfptZmMJOd2EyU0/q6v2E=
+X-Received: by 2002:a17:907:6e8b:b0:afc:aac3:6d2 with SMTP id
+ a640c23a62f3a-afe02b475a2mr72725966b.2.1755718278469; Wed, 20 Aug 2025
+ 12:31:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-rproc-qcom-q6v5-fixes-v2-4-910b1a3aff71@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX953c2O5Ipkni
- jppFSKbKGhJOIKDDZULPs/S8gH8WS3kccRPFE1zhTcNQdIy5O2GJAimhGFSs+Um3gGwp4+ie+gB
- ubNslKkG1d3rtQOyMQz23CviOCJKj9dZrI5ErG1697jYxv7olCxrGTYo4esL5vECjSi8kaae9HO
- /ltQIFRnhs2QI7rEOGwX80qTa7Bs8Y6tDx2Xzv8aUU/rSkSSQvZr71Jxjf70UCuDrbEOcGUb0Ml
- 5tV/W3FWW/zv2TA1K/IUOjFREmY4ZYsqYPmPS7rShCTaK1FgElU4frIlHFUWPKymVZCud5tSxRt
- iAV4lQhAhdr2UtMwqOwF8BlePIE8MSwFLWNRQ5vp6Agrm184Bl1o9kiKFGoyNftz1nYCLv/C6Y8
- yWXgp7JwsUzrojGXpKAQkSvDbSVvsg==
-X-Proofpoint-ORIG-GUID: oHNWGfpxQRxpGtYy-x3dESv8GMW65s8e
-X-Proofpoint-GUID: oHNWGfpxQRxpGtYy-x3dESv8GMW65s8e
-X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a6037f cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=gpV1-yxKdiVEvkH9OoIA:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+References: <20250819213831.1368296-1-robh@kernel.org> <CAEnQRZDga2cX=YPY5Z9NDyro94bxFjK9k5Xm5Vt2vVzf4ysKyA@mail.gmail.com>
+In-Reply-To: <CAEnQRZDga2cX=YPY5Z9NDyro94bxFjK9k5Xm5Vt2vVzf4ysKyA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 20 Aug 2025 14:31:07 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ1btLjZO_Z7H+qYZhWwTn0Wpq4Ji=deKdUxTwLHw-pTA@mail.gmail.com>
+X-Gm-Features: Ac12FXyzu14Kh1oSkN3MJaRVyez-SIK2NK1snFRbS1U4LOUdSfMmoXWd92DoGYw
+Message-ID: <CAL_JsqJ1btLjZO_Z7H+qYZhWwTn0Wpq4Ji=deKdUxTwLHw-pTA@mail.gmail.com>
+Subject: Re: [PATCH v5] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+	Aisheng Dong <aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 06:02:36PM +0200, Stephan Gerhold wrote:
-> We don't have a way to detect if the lite firmware is actually running yet,
-> so we should ignore the return status of qcom_scm_pas_shutdown() for now.
-> The assignment to "ret" is not used anywhere, so just drop it.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On Wed, Aug 20, 2025 at 3:19=E2=80=AFAM Daniel Baluta <daniel.baluta@gmail.=
+com> wrote:
+>
+> Hi Rob,
+>
+> This patch will break IMX RPROC support.
+> <snip>
+>
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+>
+> <snip>
+> >  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmwa=
+re *fw)
+> <snip>
+>
+> > -               priv->mem[b].cpu_addr =3D devm_ioremap_wc(&pdev->dev, r=
+es.start, resource_size(&res));
+> > +               priv->mem[b].cpu_addr =3D devm_ioremap_resource_wc(&pde=
+v->dev, &res);
+>
+> devm_ioremap_resource_wc works only for IORESOURCE_MEM resources:
+>
+> lib/devres.c:124
+> static void __iomem *
+> __devm_ioremap_resource(struct device *dev, const struct resource *res,
+>
+> =C2=BB       if (!res || resource_type(res) !=3D IORESOURCE_MEM) {
+> =C2=BB       =C2=BB       ret =3D dev_err_probe(dev, -EINVAL, "invalid re=
+source
+> %pR\n", res);
+> =C2=BB       =C2=BB       return IOMEM_ERR_PTR(ret);
+> =C2=BB       }
+>
+> while the devm_ioremap_wc doesn't care about this.
+>
+> So we cannot use devm_ioremap_resource_wc here unless you add
+> IORESOURCE_MEM flags
+> to  of_reserved_mem_region_to_resource as discussed here:
+>
+> https://lkml.org/lkml/2025/4/28/759
+>
+> The same issue we are already experiencing with Sound Open Firmware
+> where the change was already merged
+> and we have a bug already reported.
+>
+> How should we fix this:
+>
+> 1) Add  res->flags =3D IORESOURCE_MEM; in  of_reserved_mem_region_to_reso=
+urce
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Sigh. I thought I rolled that change into it. I just sent a fix[1].
 
+Rob
 
--- 
-With best wishes
-Dmitry
+[1] https://lore.kernel.org/all/20250820192805.565568-1-robh@kernel.org/
