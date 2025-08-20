@@ -1,68 +1,67 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645FC3596D
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 16:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697C9322A0D
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 16:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705766; cv=none; b=kRGkb5ea3eanj/QhYzDtV8ZN7wICOcyMQLAVgBNgs09olO8mSeJVTnNUZL3IGpxH+W0WIgc0Xj2DT5IzvWhPULBElCOcp5dY+aKy3VUI7bPmurVicF2GpbAi3cYWkiqNSfkR6KWdoHJiK/kk7/jbBIekJLbZTy2yzwhxGZb1634=
+	t=1755705766; cv=none; b=pQu1CiZ+96a3XG47IdMg8TafFE9uJgol124QiclyKl95AgPDlmw0Ghv6gHl/gJDdObqT6hobBP2hN+0urRVLeVVponHcQ4Knuptj6jJuA1pYqGf7LZrCiDoQnHyCNOpp/OarrX9oXIC/yhWurvRy2ShwfNbnuCd1QomgjmrvptA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755705766; c=relaxed/simple;
-	bh=+mkqb2Ue7u1YvGacNORI9vgglAhAHZA5EgMtWKI45No=;
+	bh=J9tk26b5d9valUn3AJ23BPP4CY9PZS2upYUI2TK7QI0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bul4sF1F6tCiaD+An4MT0jrWc2POAT4uL9mC5kcuoSEpm2tRSu3cwgRjf9s6YubQp7BNjUe9XzH/igEorfrHJRZovI9hJTYr123u6XxlmZ00nfwRfCW8NB6fSM4sCJi2eSe2leM+um6g4IgRaGVaYT8d+UvJ6IJBptI9PoULX5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EytWJOU+; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=rsvqGQKRjbs0z7QlAvqGWqa6d0dWlA9gGLUfxq1I46v7LnbQKs0TQC6BFMph4ued8m51bdGKMfLMHYDoX6bf7PE7ZhuPVH0Y9yeKx6cQeC/GNKT8JudPbdEMfnABMDH9kMrqgreh6Rgyw5Z/KLUQGnfi/8lb1wnDZSQo3RNX1uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nk2aej5+; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EytWJOU+"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0c8867so54065e9.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 09:02:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nk2aej5+"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9e4193083so74235f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 09:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755705763; x=1756310563; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755705762; x=1756310562; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qhuxsj5hUNsmEcvC7TbsLqtTmOhmGuaHA8uQAx721Xg=;
-        b=EytWJOU+bQQ8j4GVe5d/aJNc8AMOtNfbvTaFJ61RKvxm1k9M9C58jRDKZAY6zuDsUR
-         mzs2ENEd7z0orwjGIj53UV7VkzP5qTcwuWqCkfkdchmJ6pnEzdBoFydwhb47eJHvhO+u
-         xNACs0BOC4xpoee6mw7nA9ebO5/8ej6eKw4qi1LuYVfat1zG1k0s5Ls41eNSEN+bGUMp
-         jDFlStS9OPQ2CGkDaLlDD59Akt+cXXEiIMMV8wzSkD/7wWQhbYpj1mX5zFEjJOJIeFN5
-         kUiFcDNrkcuGixdjBGspNWUf6ojfqOW/Wpa9jMJ6d20cnUyuDaoYb8N91iouzkb6d1X/
-         P99A==
+        bh=SDa/L/vLfvl5Q/JDuMqiafLyaLhOcwaxXf7Kgn9DrQA=;
+        b=Nk2aej5+FL3m6VlEtkGxF9S8CjsFj2ivRw3PpaLk6Xot2jdIcq4WShB55LesLwb9F8
+         tiPiBHVoaW3hlTs6YHHr57zJLoDTJpppgxywGXTCtRUXNugHu2hD5ZFn1M5xgY+eN4oB
+         HQs4+LHbToBJv5cQDX4y4eqszCBG1SxdQBSanGg5iMHwI7QKZwkMFHnlExayYHLLQr7l
+         Ccfse6M+iFy9KCU/03dF2+qUNi8ZVhzgSMxqtQb1dx+UH3RltjCKJRiaHhrSPj5CrJZT
+         GTsenxk2BFOkTJebB12DqfUgMBCzqmMjHLt3Pw8Zmi4xGeHuU0WBY4mfNlfYI5993mS5
+         FBXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755705763; x=1756310563;
+        d=1e100.net; s=20230601; t=1755705762; x=1756310562;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qhuxsj5hUNsmEcvC7TbsLqtTmOhmGuaHA8uQAx721Xg=;
-        b=DOm02VZU0y7wUEODskzLPXql1hTdXeFTiqVDNyMeWMz653CgV0KDM16uXOqhCxJPU1
-         t5rywrStDZ3TK+bH1qdmuGJ2+VPjmAfx3hQVCDeJ7bwwpPz91/9qfS8v8JoxLiT25WEQ
-         2ctyA7DTIbkW/8LGEFCpDo1BkbHfa/lE3FO34AfoIL3zhXDXCxOCOkunLhjuG8xcobCS
-         HZobSMs1dlRMv3CAxqYAy04ZVXeJP1OlInyFATKRwSOPzbZah5XhD6AamZxWW/D/vfaR
-         GeavLQNqF9n9uZ+Sjz8fJWyQyfCkPIRt0ECBqw6Ydy+VMkTsI5vBnIifEWTF9l6Rk7wv
-         wDfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6dxUrhQ18/AxQ0AglRecdGGsw/GHPFsVLTXkwedAXrJBuqeLXDt+01iDlIiqNBBoItNj2oyUiYDqEHQ71Dw0v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7726Xp0c7GHo6yZNB4i3Y+RgFAVGda7fSobird73aYiGM7ZJ
-	tPAlPcdPhrOPC1Divbpbxu/J2aKXPyxu8/sohSz9UWA3aqPmmqxi21VRMlA1DDpbShZBRKDcFBt
-	BDLY+
-X-Gm-Gg: ASbGncs2mJaILOxx0Spn9nw3xsqQ4aZMAHO2eEf0zqkThTKbB3zep89Ebis1KOximzg
-	btE3eIr1A4tVFQYbX4nminXlDH4wHI7U4Iv6OqobXcZtTzpbO9DISrCSbZVUSkGUNBmoGkFTgXH
-	qMEPTyPSLOjO2FJGiXf1cOrXQruFm7PCRC3QMC1PPyFvxTzMJSM0wBZ88r1ifJ6aC0v9adahd//
-	RH1s/B6FeZBvYAJCcSAxCQzxvL2IXWzyQ8vaAH1hrMZuwuhnLqoUoG25qokrJaszeoFNIGsME89
-	LIWCrNxEcwXRGighrI7sabIxd4FCt2PPGdcOGEB81WhTUXphLu0MpqNJzFQnpiuSm44/LWcAJOR
-	LR5IY4Oz6mPsowBt1zGssYZNZPIjWo+d6nLKJk4TcF94hHwo=
-X-Google-Smtp-Source: AGHT+IGvG4k/agQ1VYv0xl78frC3MBSWK35BnNz8JnK0jUOga4Or/7FWKiGhMWhFKLnbdgZxkb+pAA==
-X-Received: by 2002:a05:600c:8b17:b0:459:ddad:a3bd with SMTP id 5b1f17b1804b1-45b479b331cmr32104145e9.15.1755705762491;
-        Wed, 20 Aug 2025 09:02:42 -0700 (PDT)
+        bh=SDa/L/vLfvl5Q/JDuMqiafLyaLhOcwaxXf7Kgn9DrQA=;
+        b=J1rZDGQJhwZSLfVu+/l0W+XzHfR8fMw9lZaMpyuuZ4XxoUSdhKXZq64HoBtZ0rpdam
+         CTCChY9sWdn0E8HWu5DBdyVba7Ga7B9POQCTpc5Wpgox4b2dorX6bOwywdt/q4/+yWXm
+         lHatk8aR43Lw2xdTbJQBnWCIxjgFWCx+jDLv/TNY8p6jlNo0K/+DD22G6nJ3iJUk3FTP
+         0aBGZdt1uEiEmzY2VApe6Yb7lMKRmIYYH1FFKN1/QWo+9WdJP9eUeXEEdKBbKbH/sTh3
+         hdZiJDQUlal0hftgg9WGQ/MmoaPBv+brMSZq1REgGh2JlWs6mTspMJ4iuZihSS05Hn7o
+         ShKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWca/i3HjH1lwmYztH00HbY7d6uu0e7RcIczJ7C30O6CMzOnMc2Sgtt+Nzowf7Y9W2VQWV7yOOVLJkJ0ZLrwDrR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywimr21Acuu0upovBsO/OZmf4JWuriHzXZj+NiTZmUSR10tFUBZ
+	fml/72dpm0JzLdv/0qOQFgkNx/+RLNx0iVvAG2571JZuUqM8czw6VLIhN7EUg2eKHyc=
+X-Gm-Gg: ASbGncttCPMjC8SMtJQT+2y9g+yl0ASdnQxdEFPDVctMpN8ndJIaJp66ypTFG24PqFX
+	sFLdWW+jx0cRU58ceidQV21uXYuPbZoV0LHbTjBhkwaUowxdpM7lZyQyDee1cQ8EcntUOMP/2P/
+	HkaELU9TvprvTSIk1rOzIiIiH4go3EFYPS9zDhm/3kGaLjxsrWC2QGnsWtIi3YPKXIcJZDIeby3
+	FdzGkWSYFOglw2Y4FIvdioPHdgkfYQ690x42uUgH3s0drq/hB4sDJ9JneraocsKDSr2OhDzcw+M
+	r0hAHahxXPUh5KBwkTR+trxgJexm5yOI5qo+lTGuPB61te5zdqcS0Vj7apBRKIs+Os7A1FrPMhr
+	mdRkOh00IstKNPi1r4SHcRMwonvnJCbmOip18
+X-Google-Smtp-Source: AGHT+IEGtQPDjtGEux8eJN642OMcw5qEtkm8AZN7DXfDDbrt3JlPYakLqgOYzRpBWVMGssyGGPAxFg==
+X-Received: by 2002:a5d:62c8:0:b0:3b9:7bea:149e with SMTP id ffacd0b85a97d-3c32c52bb7dmr1711279f8f.8.1755705761522;
+        Wed, 20 Aug 2025 09:02:41 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:f5f2:96b:fcb7:af4b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074d43956sm8364628f8f.19.2025.08.20.09.02.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074d43956sm8364628f8f.19.2025.08.20.09.02.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 09:02:42 -0700 (PDT)
+        Wed, 20 Aug 2025 09:02:41 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Wed, 20 Aug 2025 18:02:35 +0200
-Subject: [PATCH v2 3/4] remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB
- on X1E
+Date: Wed, 20 Aug 2025 18:02:34 +0200
+Subject: [PATCH v2 2/4] remoteproc: qcom_q6v5: Avoid handling handover
+ twice
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,7 +70,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-rproc-qcom-q6v5-fixes-v2-3-910b1a3aff71@linaro.org>
+Message-Id: <20250820-rproc-qcom-q6v5-fixes-v2-2-910b1a3aff71@linaro.org>
 References: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
 In-Reply-To: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -82,77 +81,33 @@ Cc: Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
  Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
 
-The ADSP firmware on X1E has separate firmware binaries for the main
-firmware and the DTB. The same applies for the "lite" firmware loaded by
-the boot firmware.
+A remoteproc could theoretically signal handover twice. This is unexpected
+and would break the reference counting for the handover resources (power
+domains, clocks, regulators, etc), so add a check to prevent that from
+happening.
 
-When preparing to load the new ADSP firmware we shutdown the lite_pas_id
-for the main firmware, but we don't shutdown the corresponding lite pas_id
-for the DTB. The fact that we're leaving it "running" forever becomes
-obvious if you try to reuse (or just access) the memory region used by the
-"lite" firmware: The &adsp_boot_mem is accessible, but accessing the
-&adsp_boot_dtb_mem results in a crash.
-
-We don't support reusing the memory regions currently, but nevertheless we
-should not keep part of the lite firmware running. Fix this by adding the
-lite_dtb_pas_id and shutting it down as well.
-
-We don't have a way to detect if the lite firmware is actually running yet,
-so ignore the return status of qcom_scm_pas_shutdown() for now. This was
-already the case before, the assignment to "ret" is not used anywhere.
-
-Fixes: 62210f7509e1 ("remoteproc: qcom_q6v5_pas: Unload lite firmware on ADSP")
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/remoteproc/qcom_q6v5.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 02e29171cbbee2d305827365ef7d2241b6eb786b..f3ec5b06261e8bafe8a8d2378b60285d0855674a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -42,6 +42,7 @@ struct qcom_pas_data {
- 	int pas_id;
- 	int dtb_pas_id;
- 	int lite_pas_id;
-+	int lite_dtb_pas_id;
- 	unsigned int minidump_id;
- 	bool auto_boot;
- 	bool decrypt_shutdown;
-@@ -80,6 +81,7 @@ struct qcom_pas {
- 	int pas_id;
- 	int dtb_pas_id;
- 	int lite_pas_id;
-+	int lite_dtb_pas_id;
- 	unsigned int minidump_id;
- 	int crash_reason_smem;
- 	unsigned int smem_host_id;
-@@ -226,6 +228,8 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 769c6d6d6a731672eca9f960b05c68f6d4d77af2..58d5b85e58cdadabdd3e23d39c06a39196c3a194 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -164,6 +164,11 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+ {
+ 	struct qcom_q6v5 *q6v5 = data;
  
- 	if (pas->lite_pas_id)
- 		ret = qcom_scm_pas_shutdown(pas->lite_pas_id);
-+	if (pas->lite_dtb_pas_id)
-+		qcom_scm_pas_shutdown(pas->lite_dtb_pas_id);
++	if (q6v5->handover_issued) {
++		dev_err(q6v5->dev, "Handover signaled, but it already happened\n");
++		return IRQ_HANDLED;
++	}
++
+ 	if (q6v5->handover)
+ 		q6v5->handover(q6v5);
  
- 	if (pas->dtb_pas_id) {
- 		ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
-@@ -722,6 +726,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
- 	pas->minidump_id = desc->minidump_id;
- 	pas->pas_id = desc->pas_id;
- 	pas->lite_pas_id = desc->lite_pas_id;
-+	pas->lite_dtb_pas_id = desc->lite_dtb_pas_id;
- 	pas->info_name = desc->sysmon_name;
- 	pas->smem_host_id = desc->smem_host_id;
- 	pas->decrypt_shutdown = desc->decrypt_shutdown;
-@@ -1085,6 +1090,7 @@ static const struct qcom_pas_data x1e80100_adsp_resource = {
- 	.pas_id = 1,
- 	.dtb_pas_id = 0x24,
- 	.lite_pas_id = 0x1f,
-+	.lite_dtb_pas_id = 0x29,
- 	.minidump_id = 5,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
 
 -- 
 2.50.1
