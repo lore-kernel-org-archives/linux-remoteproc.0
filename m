@@ -1,89 +1,66 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B434A28D8DF
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 15:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A1B36CDF2
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 15:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703114; cv=none; b=PbJnvksaHsmKzFG8BcFOqByrjJn78JO3hFHUZjgEAvMRaE8kYh+9kBnFTNvtSbSNQqZcUle4dmhB0r4XD62RjwZAfb0iLPoRMJLSmDx2LIu/tTDRmY+fif1WNFoEEOt9vNqrKL/1tInmAtDi4Rcw8msLUhXwA4zZBRGnAXLboP8=
+	t=1755703890; cv=none; b=CHCGytq6RNc6a8yh8GSQljBzCnuI+N6ZcUNhLWyqPVzbGbhmgUYdcfGVzE3Dyu3sQm7vWLDXGK2LxPJXEJ68aXZvpmocbB6hlIpaP0mBuVnBJx2h+s0l2+0cNKGeJTIas4S2AHPvF6hnn/EoakjuPCH5pnS6gSw0DkJg8AUczfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703114; c=relaxed/simple;
-	bh=DtQjcbMNvcByxf+0zZY1naeHA3tbiB/xArykXaaUpLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xo27dZjjFrvbEm/ok7XiDKQFBJZe665umtb9zJqFKs4COgrIl5scjVIs1hPqZ25gZzc2pWFyAxISA785V9Oie8g3/5oIbUAhtjyAk3h3uD+aBIJkxqm2wC2kVIrNJ9W+yqFu+MiNjt0CQUzhCejkTst0BnTZT6rP0o0fgRuf84g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GuIKBIbS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1755703890; c=relaxed/simple;
+	bh=qJmN7kIaBiDpEn9+ld3jsBe/j1DtCdZXbIRHnPsu52U=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz6REE3lVbLn3hH9P0Vvtms/lQTdmuZHxn4S/fQY/DJ/2dyoQ6MDRWCe2qQ5TRgZbJM478kQPDwMaNOAn6yBYUrITxSTMBfI3+6RAnMaDr9mX8Fd2vItL/esqn9E6JK0lxj+aGRe01VjK0uL4ngjYPVpJCmXv3BcfFnAsO0f8Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AfmCwaWy; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GuIKBIbS"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K9ZkgL001966
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 15:18:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hlCeQ88Snci0AxZIyBl3l26zn9aHH0uhjgkXgI9gCMA=; b=GuIKBIbSbDq7X2qG
-	Tq2AtzWu4ZvKaJ6q476gogBr4bJL8h91UGpYCiYzEf4JVOqla8AyZd58F6fgMgfK
-	563T8OSGnqqxMDTcyRcGEgb2UXRSworDMqXlmnS0rlkjZ9vm9cG2v+sgLQXWC69o
-	i4nWQ/exP9Ej9kjTN7IwpZQcRFsmPTKu64ws/P4Qxl3j2PffoMfqXmsz6Phm452q
-	B+OKWJV9FFfIRTVe+33/Q6NuVd/kYvMIsTc3dfi9qf5HygcxkJlUcvkJ78G2f7O+
-	+Lx0W7H7c5oK+5wsEIISXZLi6A5x7eOQ7QXV0A6I9RGa3rq861auU1095NbqsvdA
-	VvUoHg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n528t4jy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 15:18:31 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47552d8643so1766376a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 08:18:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703110; x=1756307910;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AfmCwaWy"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e41101d4so28609f8f.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 Aug 2025 08:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755703886; x=1756308686; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hlCeQ88Snci0AxZIyBl3l26zn9aHH0uhjgkXgI9gCMA=;
-        b=WqAU3JXohSNyTlK2S5e2bvJM+yLMO2II2M7dKFO5ZGEXMVS6CUsrn3ZXGaSPvsfmBJ
-         fVuzPhencNj8BHu1jio9vw7//2woLlQLca1MBOCjzVzgj+JHdGX1CZA5Y3Ah9UgVThaO
-         ZM/LUWfRr5JG/Vac/6GDd+OlvMmO4vgQFthR7JNwJhXqvYLk5mNs0HEVGzjBI+IrqSQt
-         R1+6tvNu3iqcZyGRu4w8KW/WEr7sNFJH3o6ueXRlEAhFqfpdh1T0gr61HhZ7UZ3V6Q2e
-         6kZKG+C2NsBmnp467tHuPvEEKh8vbTZ7O/GFwEKLj0Cds7BJIuZ56nTuTxmn7U2UU7bg
-         JMmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJLGV8fn2uaDckKwfyI8oiaJlt9++JejTGNULDybuLrZJdsI0TWfh8Kkoi6ltPuaBY1Pkemgz4J4wgNqExActM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTEowgiYYBxFiEm6a/cbBTiWMEzvfuVjHF4jupPNtHE4ElqNoR
-	MiJ89ezYuzNNACyFiyIFEK3IQV+Wgzw9nJTLT0BCVJO5VQFCqEO1TObymbfyPN3CoPgzT6ToL8E
-	PRTN2AGMW7kdkGMw8Ti4Dok+YhfRqeb10Vs20kshz8Do+/dpPEoDeHUNqbBglM9T+QZzpe2Bj
-X-Gm-Gg: ASbGncuHAPNb401qA8JnSp3DBLTlS+EI+QLsydbQgVGi5rV+W2Qt0PdEdHPl8eqMNTu
-	spEJb8XAnsGDmP2/FU8kXCiImuYvADp+0+7IHkMIM4NjJgJ8/9n34VejF/sDSpsxqA9JqD249Kd
-	wa5ot8iam6QR7ZdKYZhCvFTuCff5ktUZ/oCmdCQexUWOyXrEu7q9abYKikwolJGEiQEH1m9aJu6
-	0qNHYSVzY3V95GbmHVKu3no8qxgBNl7Zfbq+3Q8bDTuDTUCX5p2OiIAPrgB6pM0UakgxJjrSfsx
-	KG85T2BPPrgsgzmxD0VFzuWBAP1Anh0GQXi+brjnBs32F6qYKEZfkKg36fuHXJtKUwA=
-X-Received: by 2002:a17:902:e750:b0:234:a139:11fb with SMTP id d9443c01a7336-245ef22704cmr37010725ad.27.1755703110133;
-        Wed, 20 Aug 2025 08:18:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvgrjEM45iEXFzZdFgh90MepofgKG2tYDHkeGY0eIX8zylArW1Zrd7Fk7SrPTDwjAl/RsWbw==
-X-Received: by 2002:a17:902:e750:b0:234:a139:11fb with SMTP id d9443c01a7336-245ef22704cmr37010415ad.27.1755703109682;
-        Wed, 20 Aug 2025 08:18:29 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed50352esm29255935ad.128.2025.08.20.08.18.25
+         :mime-version:references:message-id:subject:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xzqjecvcjM5mA1QnPXvB2YqRcxPwKlC0jZ1qJk3Y19E=;
+        b=AfmCwaWyZ+R0XgZj2+N8/A/xtLh6FjP6f4WvVwBhEcdP8KC+2nIqXEkWmisYor7H0Z
+         P6XAP3+0ydWfLEd+O8Ys/muhJLdsb0ckmD2HdM6MKfeV0cW+/jlaUepX84IF+Rg3PyxG
+         dKrdhhBE01EezdMNEUMK0yYrhmKvgUvMRddwgg5SQtcCoA9MZAU+M5naXQrkxjR0PvE4
+         z6O2GIIBqw08ExzS9sBVPsYKxm5G9+uRnSTn/Sb3D1W8SPRZakcK+9DJDjypPH8mBdmW
+         sIaI0DtHutC5G3mPQxQOg0zQWVf0fpQFagF4WIVEuXZed+jUavI6KtCir6Vv56FmoSVa
+         imHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755703886; x=1756308686;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzqjecvcjM5mA1QnPXvB2YqRcxPwKlC0jZ1qJk3Y19E=;
+        b=h8y1huPEJvnnElwQebuagmSRPjgMFa2VpbzfQGkxASFuAjvP/3Oxs7zPjO6PEeO47U
+         XBIVtKBrltra6Rh1/NRZiFAWbSlluLgfHF1WUFxotdpXWTodqyTMna4uem+aDqTp58Vu
+         dIoV2SUZETEa1w22htj7qTxcbrp9G7Jfmo5g4SakCmN5Qy6wnNbVoLecUuxtd4b+uFDh
+         wqzhUtH9ngav7LFnCSXtpAw0ASZER19eN2ppL/1IbTZ63kBdMxGtX1RqhBWZm+4HpXmh
+         2fyclOAtvd82yksLLa/E7IQoiUqGEYRUyo7oPQ80B6swEn2ZueOnYcCxbHv85E3NEPge
+         Zm1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUgkD6hd/DyBX1wkQ4R40lhdh/MMK3zVN+DieGmI5Ul/RoGlG179FmYybkQLoq3VXJwABv9MXhkvSGnMPphUekV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSD/KlwFYRdZeZ/Fq7i6fxZ2Ju9Gacoi4KDW8eFHNBHYvKUbZ+
+	v78PS9VbPsEQ2j2In/p4DnTXnm8NJLyKhUk+palr+pcPmxvz1oHgKbMICc6dg2xT04k=
+X-Gm-Gg: ASbGncvzmiSYz/4So3P1XyHlV59EKY9FBBWAyBeRn5wmwbCo/RMIZ9cej/ARhJfRuYC
+	j/n2SifmhJ2WGAtOpMplhU1iB6LItBPxb8hTDxg9qvSJ0xKCpDnRE7Pz41kLyX/h2KU+a3F57+2
+	lbpILN/sy8JkdKMIStR9y+I8McC4lOdVaJusqcD0tB67uYTfnXRa+oJtGdtWuxpAbUQ8cadhekQ
+	c6ftIh+4CsZ9Com9rR4yERywNSH7CEMp5W7wRPHji27Dcud+NlO5B898JQRrvlv+B5Jg75LXBL9
+	kAeg9AGxWBsrcx5FTYZ7UoXJhcusJRG3bCJM9lz9PSSOYfxv+/gHPvGDLcB6oDWsKC/lrkCDuvh
+	TP6be9X8Nw0Ph2ixczIotR1zN35Pwq1c8Ve6R6/P6h+nISg==
+X-Google-Smtp-Source: AGHT+IE4T3vY+puKqxGjG4X7XDJYT7z1Ltxe4/gOKPnjv/zWlcl1JE04RbAJZfYJjhbRaovEv1kUCg==
+X-Received: by 2002:a05:6000:2c07:b0:3b9:2960:bf92 with SMTP id ffacd0b85a97d-3c328efe064mr2441811f8f.0.1755703886390;
+        Wed, 20 Aug 2025 08:31:26 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:d9eb:6295:cf25:b839])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3c49fe4b6sm2083836f8f.65.2025.08.20.08.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:18:28 -0700 (PDT)
-Date: Wed, 20 Aug 2025 20:48:22 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 06/11] remoteproc: Move resource table data structure
- to its own header
-Message-ID: <20250820151822.6cmowxfsheqxfrnb@hu-mojha-hyd.qualcomm.com>
-Mail-Followup-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
+        Wed, 20 Aug 2025 08:31:25 -0700 (PDT)
+Date: Wed, 20 Aug 2025 17:31:21 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
 	Vikash Garodia <quic_vgarodia@quicinc.com>,
 	Dikshita Agarwal <quic_dikshita@quicinc.com>,
@@ -93,9 +70,13 @@ Mail-Followup-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
 	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
 	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
 	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 06/11] remoteproc: Move resource table data structure
+ to its own header
+Message-ID: <aKXqSU-487b6Je2B@linaro.org>
 References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
  <20250819165447.4149674-7-mukesh.ojha@oss.qualcomm.com>
  <aKWDXySSt57tXHVP@linaro.org>
+ <20250820151822.6cmowxfsheqxfrnb@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -105,88 +86,79 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKWDXySSt57tXHVP@linaro.org>
-X-Authority-Analysis: v=2.4 cv=fpOFpF4f c=1 sm=1 tr=0 ts=68a5e747 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=r3SgeffVVk19ujrvIvAA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: RX7fDEX7Fyvi0NW-0Uh9LDrcmwTOCzGv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXzfW1reAOedms
- EUUHOt0Q3S/7Y8cCA+jgoBEmVE0I6+i8CZNhi/NolRGk/Fvt9vsV6g+lLJwAVBygKA1ZbgqIxd+
- E1kl82NLjQIiD1FXC0jpVbuai+C8IKQVkarDabJ2xEb/y0lLALoNnGlwRCQOkbA9MhMzxh865IM
- udBj7lEfZMLUw2SFfD+ls8yVN9myzFtTN5lkmp4mTCmTBddJMNBM6dQQiu40QaU4cyaDR5KyqMH
- VP+8U6m6SZcNwLWLkpRy8yLvIhdPVJLLH9SFXztg4i0ydM41h841FgQyTDcvgxfUnd0apDMiKhi
- T2xPwz2QyuKLC4sta2lnv+mmCKSeIbbh+bx2vpxywkNhMzsvXCwAcwMLWrpJqEM3Jux4ZVDALxd
- 1aJb9oiKHPbV5DfPgEQcoHp2+x/qtw==
-X-Proofpoint-ORIG-GUID: RX7fDEX7Fyvi0NW-0Uh9LDrcmwTOCzGv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0
- suspectscore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+In-Reply-To: <20250820151822.6cmowxfsheqxfrnb@hu-mojha-hyd.qualcomm.com>
 
-On Wed, Aug 20, 2025 at 10:12:15AM +0200, Stephan Gerhold wrote:
-> On Tue, Aug 19, 2025 at 10:24:41PM +0530, Mukesh Ojha wrote:
-> > The resource table data structure has traditionally been associated with
-> > the remoteproc framework, where the resource table is included as a
-> > section within the remote processor firmware binary. However, it is also
-> > possible to obtain the resource table through other means—such as from a
-> > reserved memory region populated by the boot firmware, statically
-> > maintained driver data, or via a secure SMC call—when it is not embedded
-> > in the firmware.
+On Wed, Aug 20, 2025 at 08:48:22PM +0530, Mukesh Ojha wrote:
+> On Wed, Aug 20, 2025 at 10:12:15AM +0200, Stephan Gerhold wrote:
+> > On Tue, Aug 19, 2025 at 10:24:41PM +0530, Mukesh Ojha wrote:
+> > > The resource table data structure has traditionally been associated with
+> > > the remoteproc framework, where the resource table is included as a
+> > > section within the remote processor firmware binary. However, it is also
+> > > possible to obtain the resource table through other means—such as from a
+> > > reserved memory region populated by the boot firmware, statically
+> > > maintained driver data, or via a secure SMC call—when it is not embedded
+> > > in the firmware.
+> > > 
+> > > There are multiple Qualcomm remote processors (e.g., Venus, Iris, GPU,
+> > > etc.) in the upstream kernel that do not use the remoteproc framework to
+> > > manage their lifecycle for various reasons.
+> > > 
+> > > When Linux is running at EL2, similar to the Qualcomm PAS driver
+> > > (qcom_q6v5_pas.c), client drivers for subsystems like video and GPU may
+> > > also want to use the resource table SMC call to retrieve and map
+> > > resources before they are used by the remote processor.
+> > > 
 > > 
-> > There are multiple Qualcomm remote processors (e.g., Venus, Iris, GPU,
-> > etc.) in the upstream kernel that do not use the remoteproc framework to
-> > manage their lifecycle for various reasons.
+> > All the examples you give here (Venus/Iris, GPU) have some sort of EL2
+> > support already for older platforms:
+> 
+> Example was taken from perspective of remote processor life-cycle management.
+> You are right they have worked before in non-secure way for Chrome.
+> 
 > > 
-> > When Linux is running at EL2, similar to the Qualcomm PAS driver
-> > (qcom_q6v5_pas.c), client drivers for subsystems like video and GPU may
-> > also want to use the resource table SMC call to retrieve and map
-> > resources before they are used by the remote processor.
+> >  - For GPU, we just skip loading the ZAP shader and access the protected
+> >    registers directly. I would expect the ZAP shader does effectively
+> >    the same, perhaps with some additional handling for secure mode. Is
+> >    this even a real remote processor that has a separate IOMMU domain?
 > > 
 > 
-> All the examples you give here (Venus/Iris, GPU) have some sort of EL2
-> support already for older platforms:
-
-Example was taken from perspective of remote processor life-cycle management.
-You are right they have worked before in non-secure way for Chrome.
-
+> I don't think it is the case and think the same that they can skip
+> loading and Hence, I have not yet added support for it.
 > 
->  - For GPU, we just skip loading the ZAP shader and access the protected
->    registers directly. I would expect the ZAP shader does effectively
->    the same, perhaps with some additional handling for secure mode. Is
->    this even a real remote processor that has a separate IOMMU domain?
+> Will check internally before doing anything on GPU.
+> 
+> >  - For Venus/Iris, there is code upstream similar to your PATCH 11/11
+> >    that maps the firmware with the IOMMU (but invokes reset directly
+> >    using the registers, without using PAS). There is no resource table
+> >    used for that either, so at least all Venus/Iris versions so far
+> >    apparently had no need for any mappings aside from the firmware
+> >    binary.
+> 
+> You are absolutely right
+> 
+> > 
+> > I understand that you want to continue using PAS for these, but I'm a
+> > bit confused what kind of mappings we would expect to have in the
+> > resource table for video and GPU. Could you give an example?
+> 
+> We have some debug hw tracing available for video for lemans, which is
+> optional However, I believe infra is good to have incase we need some
+> required resources to be map for Video to work for a SoC.
 > 
 
-I don't think it is the case and think the same that they can skip
-loading and Hence, I have not yet added support for it.
+Thanks for the clarification.
 
-Will check internally before doing anything on GPU.
+Personally, I'm a bit concerned about the code duplication in PATCH
+08/11, I think parsing the resource table should ideally be code shared
+between the remoteproc subsystem and whereever else you need it. The way
+you parse it and handle the IOMMU mappings is largely the same, you just
+don't support all of the resource table functionality. Have you checked
+if sharing the code would be feasible?
 
->  - For Venus/Iris, there is code upstream similar to your PATCH 11/11
->    that maps the firmware with the IOMMU (but invokes reset directly
->    using the registers, without using PAS). There is no resource table
->    used for that either, so at least all Venus/Iris versions so far
->    apparently had no need for any mappings aside from the firmware
->    binary.
+If there is no upstream requirement for this right now, you might want
+to consider handling this in a follow up series, after you get the
+required functionality in. This would reduce the amount of changes in
+your series quite a bit.
 
-You are absolutely right
-
-> 
-> I understand that you want to continue using PAS for these, but I'm a
-> bit confused what kind of mappings we would expect to have in the
-> resource table for video and GPU. Could you give an example?
-
-We have some debug hw tracing available for video for lemans, which is
-optional However, I believe infra is good to have incase we need some
-required resources to be map for Video to work for a SoC.
-
-> 
-> Thanks,
-> Stephan
-
--- 
--Mukesh Ojha
+Thanks,
+Stephan
