@@ -1,160 +1,200 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73802E0B45;
-	Thu, 21 Aug 2025 14:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6810214811
+	for <linux-remoteproc@vger.kernel.org>; Thu, 21 Aug 2025 14:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785661; cv=none; b=tiz4iUoKky5uK3S2HDiNqFsxBntVIeqXPkrYSo1Zxm8E8b7dmSByLxgZKTg65+BiKGQYVr9ICLWvEumQ29CFD5ozewKkgEKRdk7zixP/NR3hPIuq+o+L7PeU0WlB4oCEuUxUVbMTD4ttoOOyy0zz/dlv1SqqNcgcGiqWeOUm6j8=
+	t=1755786993; cv=none; b=tymIZVmk2cZZh1brq5CKQ5RXLWyFVBUGcdOu1tsZGeKABV20WAxWdAHx3AAGGUSRn81ZJEZOgESiYX6k/4uEOGYoBHG9Hihe/ME9WdhCkaMWbVHISHincuIVo/CZzAE75S/xNeDbuo6VOeU+lT8f+lr4S+0ii8JU+3ULZPnNXCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785661; c=relaxed/simple;
-	bh=ixalp0w2CUYHQ5NQlNHwr+bj0kQmtH2DORccmekLrgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gf95fQMKuv2Hpnv32AJ4p4UgWSyu1I05b3GmXKDk72Qk5a0r+LnGuk87TvpGwHBqRy2w+PvDcg8BZDyw8UXOpCSA6a2wfbWY/n1xt+FEeOnM/rjtV8u8jKr+0lD2ojKqF0l1EMElPZh17l/WZWLOXdLiIrSoRG8KdFb7z3EeRdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aOYb0Q0u; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1755786993; c=relaxed/simple;
+	bh=UBlYzUJ4FmYyAooFdHdqeTiLBdFaC2VrjAGBHRLG4F0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RBVK6okMywjQ0PzR+9P7vwqMHMNnnmOUTQUV697mSErCxOR/srDHhPqGTJ6TwBbzlbQ8bKf4FJzm4h+L2T6KgG0xItf83Ahxr3BdfRq4BGQELdng6PHXm1GBFwcGV/Zk43hBA++CVq5lFH8zgBuXgY5yKoiznskXbm0PpX/kN4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xPwungZ5; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aOYb0Q0u"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755785660; x=1787321660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ixalp0w2CUYHQ5NQlNHwr+bj0kQmtH2DORccmekLrgk=;
-  b=aOYb0Q0unQvrqxc9gLyDQBtN2dcik+wNlTIwTw3U1J/cZcwAXhVDvnpE
-   0t/MpV0OZco4ySTtmlTnVp8OMFcPfrKaIapZGiK4g98rGrSOuPloSHNXz
-   My6YbJBGDbogG5wgbvR2sx/RYn0q770psNympa8JVQoXr0N3TyeBb/11z
-   +QMvXiJFSwORH2KCn0Pur6/YrNLj3efPw/MT0TXLvunXfqDcXhXoTsZrI
-   PX1kvVoLvm4Z7i/wleLtg0H8vNSaYJWtMJ54E9oLlvIve1yMiPH6DFmRI
-   qVoGxJfsfA5toGcsvw9/miEN9NyrGI69qL2UtEu7b//n9mcQ9uVPkrxCT
-   g==;
-X-CSE-ConnectionGUID: mcXUjriHQXmKOsnGcOi77g==
-X-CSE-MsgGUID: llXZzQeMSz2HLHrOXdXg8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69513878"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="69513878"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 07:14:20 -0700
-X-CSE-ConnectionGUID: J5U2KbXiQ22QVCBBSZm3ww==
-X-CSE-MsgGUID: nNNaBNWlSaSC0tsi88AAcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="199401653"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 21 Aug 2025 07:14:14 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1up620-000KLP-2Z;
-	Thu, 21 Aug 2025 14:13:31 +0000
-Date: Thu, 21 Aug 2025 22:11:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-Message-ID: <202508212119.gamkDcXG-lkp@intel.com>
-References: <20250818204420.794554-4-shenwei.wang@nxp.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPwungZ5"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c51f0158d8so455233f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Aug 2025 07:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755786988; x=1756391788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f4Onvppsk2UmToKKQQaTYJ0EBQL62taZl700qE9YITc=;
+        b=xPwungZ5CsrwgX7KWsWfH1oleXion/Gy2CF/079BRnUBxTN1P1yX1eSW/spi6PV+e2
+         N03sgtZ2qj7mta7EN5mCgeNRtbK44pa7r1f/B29RV0VCampYkBfXHX2FBl8FRcpLM1xV
+         Yf/FckxScB9fOhBzbeqfqribc7gDf0Z1nLfaPKWTicgNMPbnddyNIFYUExBHOUgfF2k6
+         NhFbrgWEDRSZTNzUJ9lOYtJlOhQvZ8B+anORRtOkxj/mTarV+z7v9sHkFhO0K7iIDWQT
+         QRrgihcXcEmIl7KNGV/CV6cuww2FWAyHwMrqO2d5ywSPwn2f+nUHDdMlndo6uJsFDZv5
+         tUQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755786988; x=1756391788;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f4Onvppsk2UmToKKQQaTYJ0EBQL62taZl700qE9YITc=;
+        b=l4zkTla2Pvr399CSQEPYl+VkbVRKoWE0hL7gVYRzIJe7DQfvyu796gTZJmVBZGaoMM
+         MR1ke8NdW2erbmPMkfJArgxAV85V2M4Blo/PJfk2fItj3YIo5hakU+Kd0JFGTc+HnOE5
+         gKJ9Vxuf5cBb59jZnBcrqyLmCpJNOTBNZdHQYmCU4aor5rbT7wBlhsHnpen6VfBf5IU4
+         /HecYDGSIFFYypoEDLSukfSuPCxRnWXWV5J/aoNpDLf/FPQXWrmhbO5PZEAaqLjURkCN
+         6O9Q8ex5IXRVkfDqn9wT2BHiQfmkwcxuw5T40sWuU3GMqTbuHv6EfRo4e+z9pmfNZxlB
+         8wtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbYDMzmEW8gN0DCloGsBgvPbXEe1iMuHNEobCMOGMqn627ZK+IDSZx7sGH2L38fl0qKmsV6V9xxji6YZWL+KGv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysgtk7xrnQIetlcGaL28FsoCTkOEGpFSFhZkzl4PwaT1UKv/nc
+	am2WwEP+Y6c9fKeFLZXA2pU+xJwayaQZ4ix85bkrytZaI6+XrVANdl71+U4wAhZgXHw=
+X-Gm-Gg: ASbGncuUdkdjIIJBSRb5kxenNHVc/C9w6i7KK1Fuq8HkJRafbt5+ZeP40MbaNUvtJ6w
+	D5hNGOR2f9xXxkbjIJVzljj23fTOZx1mS3iLXQlaN38CMsbHSCdXP0NcZtpgp+T1h381Lt2/2Qm
+	f9TZpagRvBSoDe0MMQgawJb7IKXxCZVqA7Eb9FTDGeEUzdLbnEft3UG0N24speemduRbuXO4o8P
+	9FjLaJH2VpNRsJiHK/kTp5ygzf/UH388bVYna1qIesB3zTqPHM6p+ZnFVcPIIodGpgjG9e1PVdZ
+	qJW50QlIqj223dXUbm9FwLz6FRPw5wJH+pNKgjl9gZdkLM4+F4nFPFR1++++oFwvtJUCRlo3Bal
+	rCKNlomc5XwJM0SFrNtxRKBgloEL3OBgrxS4JTPHtsBNpropbNHE6svmThDxm3ds=
+X-Google-Smtp-Source: AGHT+IFrPdNVzXKGYHkklfqmyT52yOcqOHYvQHtEZu0vu47qp+5Bjqo/zqZyTjClQ4QBnpI30P7Ymw==
+X-Received: by 2002:a05:6000:20c6:b0:3c4:edee:bcfc with SMTP id ffacd0b85a97d-3c4edeebe3dmr1420443f8f.56.1755786988177;
+        Thu, 21 Aug 2025 07:36:28 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074879fe5sm11882578f8f.2.2025.08.21.07.36.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 07:36:27 -0700 (PDT)
+Message-ID: <10d91d9d-b6d6-4a83-a697-909f97abc503@linaro.org>
+Date: Thu, 21 Aug 2025 15:36:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818204420.794554-4-shenwei.wang@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/11] firmware: qcom_scm: Simplify
+ qcom_scm_pas_init_image()
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-5-mukesh.ojha@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250819165447.4149674-5-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shenwei,
+On 19/08/2025 17:54, Mukesh Ojha wrote:
+> Simplify qcom_scm_pas_init_image() by making the memory
+> allocation, copy and free work in a separate function
+> then the actual SMC call.
 
-kernel test robot noticed the following build warnings:
+then is temporal
+than is disjunctive
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on brgl/gpio/for-next shawnguo/for-next linus/master v6.17-rc2 next-20250820]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+you mean than here, not then.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/dt-bindings-remoteproc-imx_rproc-Add-rpmsg-subnode-support/20250819-044803
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20250818204420.794554-4-shenwei.wang%40nxp.com
-patch subject: [PATCH 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250821/202508212119.gamkDcXG-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508212119.gamkDcXG-lkp@intel.com/reproduce)
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>   drivers/firmware/qcom/qcom_scm.c | 59 ++++++++++++++++++--------------
+>   1 file changed, 34 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 9a5b34f5bacb..7827699e277c 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -584,6 +584,38 @@ void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_init);
+>   
+> +static int __qcom_scm_pas_init_image(u32 peripheral, dma_addr_t mdata_phys,
+> +				     void *metadata, size_t size,
+> +				     struct qcom_scm_res *res)
+> +{
+> +	int ret;
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_PIL,
+> +		.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE,
+> +		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW),
+> +		.args[0] = peripheral,
+> +		.owner = ARM_SMCCC_OWNER_SIP,
+> +	};
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508212119.gamkDcXG-lkp@intel.com/
+A minor detail but please reverse christmas tree your defintions and try 
+to make int ret come last.
 
-All warnings (new ones prefixed by >>):
+> +
+> +	ret = qcom_scm_clk_enable();
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = qcom_scm_bw_enable();
+> +	if (ret)
+> +		goto disable_clk;
+> +
+> +	desc.args[1] = mdata_phys;
+> +
+> +	ret = qcom_scm_call(__scm->dev, &desc, res);
+> +	qcom_scm_bw_disable();
+> +
+> +disable_clk:
+> +	qcom_scm_clk_disable();
+> +
+> +	return ret;
+> +}
+> +
+>   /**
+>    * qcom_scm_pas_init_image() - Initialize peripheral authentication service
+>    *			       state machine for a given peripheral, using the
+> @@ -604,17 +636,10 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_init);
+>   int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>   			    struct qcom_scm_pas_metadata *ctx)
+>   {
+> +	struct qcom_scm_res res;
+>   	dma_addr_t mdata_phys;
+>   	void *mdata_buf;
+>   	int ret;
+> -	struct qcom_scm_desc desc = {
+> -		.svc = QCOM_SCM_SVC_PIL,
+> -		.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE,
+> -		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW),
+> -		.args[0] = peripheral,
+> -		.owner = ARM_SMCCC_OWNER_SIP,
+> -	};
+> -	struct qcom_scm_res res;
+>   
+>   	/*
+>   	 * During the scm call memory protection will be enabled for the meta
+> @@ -635,23 +660,7 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>   
+>   	memcpy(mdata_buf, metadata, size);
+>   
+> -	ret = qcom_scm_clk_enable();
+> -	if (ret)
+> -		goto out;
+> -
+> -	ret = qcom_scm_bw_enable();
+> -	if (ret)
+> -		goto disable_clk;
+> -
+> -	desc.args[1] = mdata_phys;
+> -
+> -	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> -	qcom_scm_bw_disable();
+> -
+> -disable_clk:
+> -	qcom_scm_clk_disable();
+> -
+> -out:
+> +	ret = __qcom_scm_pas_init_image(peripheral, mdata_phys, mdata_buf, size, &res);
+>   	if (ret < 0 || !ctx) {
+>   		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
+>   	} else if (ctx) {
 
->> drivers/gpio/gpio-imx-rpmsg.c:419:6: warning: variable 'port' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     419 |         if (msg)
-         |             ^~~
-   drivers/gpio/gpio-imx-rpmsg.c:421:7: note: uninitialized use occurs here
-     421 |         if (!port)
-         |              ^~~~
-   drivers/gpio/gpio-imx-rpmsg.c:419:2: note: remove the 'if' if its condition is always true
-     419 |         if (msg)
-         |         ^~~~~~~~
-     420 |                 port = drvdata->channel_devices[msg->port_idx];
-   drivers/gpio/gpio-imx-rpmsg.c:415:34: note: initialize the variable 'port' to silence this warning
-     415 |         struct imx_rpmsg_gpio_port *port;
-         |                                         ^
-         |                                          = NULL
-   drivers/gpio/gpio-imx-rpmsg.c:503:10: error: incompatible function pointer types assigning to 'void (*)(struct gpio_chip *, unsigned int, int)' from 'int (struct gpio_chip *, unsigned int, int)' [-Wincompatible-function-pointer-types]
-     503 |         gc->set = imx_rpmsg_gpio_set;
-         |                 ^ ~~~~~~~~~~~~~~~~~~
-   1 warning and 1 error generated.
+With those changes.
 
-
-vim +419 drivers/gpio/gpio-imx-rpmsg.c
-
-   409	
-   410	static int imx_rpmsg_gpio_callback(struct rpmsg_device *rpdev,
-   411		void *data, int len, void *priv, u32 src)
-   412	{
-   413		struct gpio_rpmsg_data *msg = (struct gpio_rpmsg_data *)data;
-   414		unsigned long flags;
-   415		struct imx_rpmsg_gpio_port *port;
-   416		struct imx_rpmsg_driver_data *drvdata;
-   417	
-   418		drvdata = dev_get_drvdata(&rpdev->dev);
- > 419		if (msg)
-   420			port = drvdata->channel_devices[msg->port_idx];
-   421		if (!port)
-   422			return -ENODEV;
-   423	
-   424		if (msg->header.type == GPIO_RPMSG_REPLY) {
-   425			port->info.reply_msg = msg;
-   426			complete(&port->info.cmd_complete);
-   427		} else if (msg->header.type == GPIO_RPMSG_NOTIFY) {
-   428			port->info.notify_msg = msg;
-   429			local_irq_save(flags);
-   430			generic_handle_domain_irq(port->domain, msg->pin_idx);
-   431			local_irq_restore(flags);
-   432		} else
-   433			dev_err(&rpdev->dev, "wrong command type!\n");
-   434	
-   435		return 0;
-   436	}
-   437	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
