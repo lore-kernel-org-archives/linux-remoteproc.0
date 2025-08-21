@@ -1,312 +1,271 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011048.outbound.protection.outlook.com [52.101.65.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0082609CC
-	for <linux-remoteproc@vger.kernel.org>; Thu, 21 Aug 2025 09:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766893; cv=none; b=cIlPzCkD+oSa2vFCdZE41gqvJYBOhayp5C1lNLLttxge2L4/JtLf3nCVrvkii9SSzqgItBCFdw6jyefVxzg1jEv6sbod1XADzLagxZLfLjEHB/xwOqWEzXoSsvcBSkm6hFteWaQxZNzC4+zl9C6Z4CuG4xYqEMOBoq4rggNCtwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766893; c=relaxed/simple;
-	bh=43VjtKOxxXNDPkLZNHUOkeHBaoI742+CHnEyUgUavCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwl5QGBXOABoST6yjoegKeLLL/3V8zLjd6pfd8MIBS5sxEojWBc1nUkOGz+9iaSQiJpnOVlMn2A6CEjTCfxR3NaFHg6IuwMksseKY4k4QQntVdBaO07RtLP44vDAKPAfkN9AqvsbE4F7lTHbK0WLQln59cnUhrfjq1lu9+QXFDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UiO2jxF+; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD262D94A3;
+	Thu, 21 Aug 2025 09:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755767130; cv=fail; b=l6j/KQVyP1d1mARr1OqJqY1tCCO7C1ZFHxI/rZkT06u42rJcgU2vjCoxxnLb7k3DPMHGP+0+nmMHIBlEx7ceGf0xQQT1DtbusRPkSwpDazbbCyNE1HBAVhBdLbaPpW5Jd4h15zoLbrhbYoBfctMI8pXr269QOz0y3BC2UovSikQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755767130; c=relaxed/simple;
+	bh=gK3iz9HF0gjh+kJRNJIRZ0AeupB6Au7cocjYgGOOvoc=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=qMuHkX0q0Gw5mLauFHPlZeVl/gM8Z1f6EhKwCJKjRMH/tautWsuOiS154ztO84FS5T7Ew3a1qUwqLaK2d3nY/PsJ1Nw57dwx6/X9rjq1f/l98A4QIdUAMKyW/+7xs8zfGAQbhAXvAlTKOWbfORO/a+zJl7Bb9G2BgY+pKCuGyx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hHAqZKMN; arc=fail smtp.client-ip=52.101.65.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UiO2jxF+"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55ce52b01caso736793e87.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Aug 2025 02:01:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755766890; x=1756371690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HJiLgdHWROqB12Hg/2IJvH+nEqITMBBgtAb49NceKgg=;
-        b=UiO2jxF+LbCzHY+5WTBmwVPShuq7ZTgAcdHHfEYkHAYrJgfYRs5gVTMf0Cupze0ifi
-         8VLBTtku54o5T4fC+TuZwIc/EbZ8acrrxhP3LOaXviAdG+7IVcIKodKp8F2wEZbyDR0a
-         VtfMVRUfmA7o0ZTiEhOpD4PtZsk2aQGwjYRocJaFt2saXiQgcpZi/8UHpnNQ5ZdQDi+A
-         79DPAGePHtr+4S04Tc6rjW28/uJgdOEYRoPQfrEzXvwe2eDUzi7Pa2XArn1r+8CrX40L
-         dJF44ZQl8dURTZoOjp5gMwmxUR1tGZUp0+nE06g/i3BYQ91TyhYMHJwyPCsp/bQimdDS
-         sgDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755766890; x=1756371690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HJiLgdHWROqB12Hg/2IJvH+nEqITMBBgtAb49NceKgg=;
-        b=F18PjTSTig6vwnJvL5i+8f5E6Mp0/iXvfKiLQ2BA4vRVoJcUj1qnC5YbPCSIfZPAAS
-         rEy1YuJQnLLntPQPjwM0G1vbRZ/dYu5zRtfELpEfeqLqj4ia8gXG/VACG+5rWe+C09kd
-         pgPIMkC778b8MoglVlV03YAiVSJ/EEYJVtis7J9vVcv84rJNRovhTpxmZ5djUy1jFbRE
-         Xtx62DTKnVJrBO6n7EzoD2mIouQOPspOgv9L1CNEeGwRoQRVjE5ZpBkQU3jRvUnSHgMN
-         Xw+qOt5HszTcnkqc9efeIW3wXrqQDs4XO5cu31ZPasfd1gLebWXfj3Qic2CiJzvSFcO9
-         tL8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUO+KfPWZi4V2CKOxIIRq0PyWpfqynGYzN9UMHbjQnG9oVazaw1MdLmNENHPHW6uyS4GvOo054qTe6WWHdPGNbJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtJNq8iryshzusWLTVetpsfaLtnBffMLhM4fKugbMNZakZn+U4
-	TKK9Vm6rufaRkKS9GYklAoPRRUn6y4i0KEDxUF7y8FKHVjKTwYu0ezrR/UW/TFn6arNYPuEgTzM
-	8gr4dxU3JR7e29GAtdI1+EEnXfwuhmuD3z1NAw7nBAg==
-X-Gm-Gg: ASbGnctYMkU9P711cbRtX1JxMQcgdBqegBeZWCPIrx+LbNZj3LEsVBU+ygtgQu7w7U1
-	aResKUR0+/xf4cz4EuegJO+PSaG1dZ58CKyj7vvXfXRv/qnrFe5BGZz46I4/WeHh6rjpvTEH1Qz
-	jgF1feVVAOZy5i8H/4VjyzLymp8ct7eqRCbYKR1QjAfCMpNNAWXSz9QoVLiM5hzTKYzjKZLT18O
-	e2SD8E=
-X-Google-Smtp-Source: AGHT+IFbJnnVhn06jfVroEMIzVme3igeJ9POu+bHevjfLshjHAvocCiAi05+NyAeJQCwMuLXL3VFXUrBLqRgHDUA23A=
-X-Received: by 2002:a05:651c:23c8:20b0:333:b9db:f998 with SMTP id
- 38308e7fff4ca-33549e41ff2mr4529661fa.1.1755766889647; Thu, 21 Aug 2025
- 02:01:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hHAqZKMN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A2D7er5xC9Bcd0CAqPHvCv6BMlgOGGQ+ov1n/xlY5x8p/2+9cQi3GcQxwy69sBIXU4H89fHHi1AwNDjdAfjTu7h+NIsnt6nGXdoU7KCzSIckJIER5oagr6r6xXgzyKm/nUDFInMp6e/IWDYktUClvj3e36cVc53PsU1PenmUeT7GQksl79pnr+hjEE2LIHxHFG3EbPCyHuJr1HdYK+15JBLLdPhLAzUCeIwGDD0C5BYUn2Rjhqwi3BgN2FUKC2hX5AfsPi+/HyIAP4cDSGWuRBE8ExIoMVBjB71ZllCnF40vZErEntU0G6ENJjj2fX0n4yBlV/6tGeO+LPiVqcGdlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n572feGW+t5s/xL/Pdw//55qCyK5MhkR7YHxaw1GW3w=;
+ b=uRyoojsUjMZvmr7zvg0wvz6CnCKVNZbVuqy06Ycw2MS5T4r1Tt/G8OAlkZRf7O4S8SJQUBx74K/AC4CuvZjA0lSyjkYFg5bxYx+ouvlaiH6ZvyrHWp6U8LUCaCAuhu4hk2nNTMx9boZKHn4qu17zqkFXRWgXMxZ9Iz1hSm4+cMTSAlC8InirJJAgc0PVqK2ldyJIL4va50gEOAhdoMiR5bej5BauybZPvuyaf3Q2YrQHWYnpxwuYkiYCUgaDZqCntUSoPCwB1cNb6T7k81nsOogdpxGWvg3w6B+ozAFLL8HxFxAyt9kRkBuEeacdskhoMWp/lOzI3j+mfttUqK3Yog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n572feGW+t5s/xL/Pdw//55qCyK5MhkR7YHxaw1GW3w=;
+ b=hHAqZKMNQlTyVn2QQbY5Jp0bXwqFjq+Yxm5lCxns+Cm5jPCMDX6oAfKH3ZGB6Ukt0ipkR4mh+Rk3q9YZJzZNbzzNYilVFFjvMtfZPA9/gUa8gx6SWLSPowptdw+MNROPKfWOvYib5Dl4f59/PHeNcRokLKxExSEDwEjCy/RlErV/IMOQK/dwVM39rOpgGNAJboyYbO7xBworJqOAIo9hc7tB3+KMdNj6x6nwy6PVEj5Gh7RnuUFfO/Ow3/rjJDZdY1Whlb53jKAZ/x8J/ZUdKpKxOHawkISskybupDQ8t5Ks5+bWCEjbyUPLu8KSdzWDH+Wg/P40+AZnotWTN7OKWg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM8PR04MB7858.eurprd04.prod.outlook.com (2603:10a6:20b:237::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 21 Aug
+ 2025 09:05:24 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 09:05:24 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v5 0/3] remoteproc: imx_rproc: Support i.MX95
+Date: Thu, 21 Aug 2025 17:05:03 +0800
+Message-Id: <20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD/hpmgC/23OTW6DMBAF4Ksgr+PKM/bYuKveo8oC/zVeBJCpE
+ FHE3WtStUlol2+k7725simWHCf22lxZiXOe8tDXQIeG+VPXf0SeQ80MBZIgJJ7PiyVexjJ4Dhy
+ Fc0aF4NsusWrGElNebn3vx5pPefocyuVWP8N2/W7SQu2aZuCCdzpSIkAjwb/1y/jihzPbemZ8t
+ HpvcbPoglZKti7aZysfLP7ZldUqp30CYQhM+LWH5sfQf0ZbKyQksqjD85667xkQe6u2Xw2gjC2
+ ZkNzdruv6BUzctfGQAQAA
+X-Change-ID: 20250525-imx95-rproc-1-20bb74ddc8af
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755767118; l=4144;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=gK3iz9HF0gjh+kJRNJIRZ0AeupB6Au7cocjYgGOOvoc=;
+ b=O9DIxwMEzUMV9Pwc0XtP8lkiguXtzKANLzcCrMWqy1xo0tKQRdsN0ua61lKWD3H+Qbhby3Vny
+ ACDZx2WmZ7FA+TB1vTRstWKTc5h86ygFgvdKmvoRAW7Rr6NwQy8eUWn
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::8) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818204420.794554-1-shenwei.wang@nxp.com> <20250818204420.794554-4-shenwei.wang@nxp.com>
-In-Reply-To: <20250818204420.794554-4-shenwei.wang@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Aug 2025 11:01:17 +0200
-X-Gm-Features: Ac12FXzKbO7sUD26Sno_8xmcOgjEihVR1BbLvXDJUasi5_vpoZ4AnY5gKSX69DE
-Message-ID: <CACRpkdZq25n4gZSesV8z8zrBs6kqU1a8=vwVkPBwM+hFb9JKwg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-To: Shenwei Wang <shenwei.wang@nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM8PR04MB7858:EE_
+X-MS-Office365-Filtering-Correlation-Id: f583518a-211c-4de7-e3a4-08dde091dd3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|19092799006|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djQrQnVmL2ZGb1g2Y1JmNVNZem1lRzA4ZHdVYkFkMi9LWklrYTAyVWFrSzhy?=
+ =?utf-8?B?Z1FPR1F3UWZYT3hJRnk0M1FFWTBINmJoUGRhYTBValhUUXVnSTZnZ1lZU01E?=
+ =?utf-8?B?cHdrOE0vdFgwZUJEWGZYR2x3dWVSMHlIMUdHSGlqT0xLSUZwTmxzY20reEpQ?=
+ =?utf-8?B?WlptZk4zSEFwajV5QjhvZmIvVzB4eXZvT3h3a0lUbmhPUG9hbytNWXBqbnVV?=
+ =?utf-8?B?ajhoSllNUGVhaGJjQ1lJNEhuaGVHcmtHd3VjN0RUdWNRbW0xUHQwOUxVeXBy?=
+ =?utf-8?B?bFFoTFhHb1ovLzVQZ0JoTVNSTXdPanNvZS9XbUo1LzdPY0JEeUxzcDJKODBh?=
+ =?utf-8?B?Rkx5Y0FPU3IyZVk3ditYaTZPaWZGNmcyMC9RNzdBYndGTUR6eDVsN3RUbnVi?=
+ =?utf-8?B?a1BUSUJ3ZHZ6RFVmSUtPRWlLWXkvSUo5dzcwcVZ6VHF3b2c0S2FVQ0pxV1Zr?=
+ =?utf-8?B?ODRzQUlpQlpVRkY3c0VMdmhJcnVjdXoxRmQ5KzNlY1NMblVJWWdmU0c1Ym5L?=
+ =?utf-8?B?K2lmUUtCYit4R3REbDBrYk1ac0x5SGFTSm5qbGR6QWJYM1ZweUpwRFplY2FK?=
+ =?utf-8?B?K3BmbE01V0RlT1pINnRkZ0Z3a3lmdmY2a08zM0NWeGZxMDQyd3kwalU3Mksy?=
+ =?utf-8?B?Z0V6YjVzZXczTmdxV0JKQkdCd0NtWXlGbE1jc2N3ZU5OSjhvMUFpQ2pCb05q?=
+ =?utf-8?B?TG5XaFZyWDlhQU54ZXJoVytabUZoQTcxTTBHaFBCUEYwOFNHRkNhUEJITVNr?=
+ =?utf-8?B?d3hiWUFDV21yYnBRT3BTQmF2M25KY3dkU1pabWh2ckhCWGxtNzk3Zzd4RXBs?=
+ =?utf-8?B?ZndlcU1SRkJ5b0VBekZVS3BjbG45NzM5TjBwZjRXbkJjcnhpZm5KR1lhdVBi?=
+ =?utf-8?B?RTg3RU4wTERqTTJJc0lDSVMwT0ViQkdLbUV3cHFSZjgrYXdmSFBHNGtza3lv?=
+ =?utf-8?B?SjRvUUtFYjdjeHo3a1Zqa05zbUNpWTZuc2k0R3Q1eXg0TE40QVNjSFRlVHRa?=
+ =?utf-8?B?aHY3aWw2SlJnOFNRNlV0TndQU294Zy82V3hTMXNVM0RFREkrZnlnUGRXdklM?=
+ =?utf-8?B?anRtWEUyT2xMdUEzSUdFUnNLTm9qZXA2WEpNOVl1U1pkQlUxZHA2NnpadThL?=
+ =?utf-8?B?dm1Qbjh1ZHpHazQ3bUVwd0oxQ2ZwUnl3QWhWcU43VWFOeXFjZ3B2VlBQcm9Y?=
+ =?utf-8?B?Rllvc21XWTFtMFNUK3BXSjZIL3NyMDRUek1aSmhBeUY4NUQ1RnVLS01QRTR4?=
+ =?utf-8?B?S2gxQmZGcnArclRBbzZ6TmY2NWdDV3V1ZmdwVjFMSHN6VzZPWGxna0d0QWl2?=
+ =?utf-8?B?Zy9LNkJLN3QwTWJBeGFlRExCMmEzSklDaGV2OHEwNVNWTktEb3pSd3RsRjdm?=
+ =?utf-8?B?WUhnU2FSdnZ3VFRiQXY1RVB5Tm1RTzM5OFE1K2ZmSWpYYXNVSW1xRWl2Tk04?=
+ =?utf-8?B?T0ZHWno4NWhLbkpCcTBUQUY2MFhwemhYMUJjK1AyL0pyZ3VUTTdSZjRkRmJr?=
+ =?utf-8?B?Z0JBYVk4OFNuUmM5WXpqZStDRytoaVlqSCszd2N6NUZpTlFBRko0WEhsd1Fr?=
+ =?utf-8?B?Tk5wUzd3TXEzT28xLzFzcEdhVnBxSTJVZHpDbUJlK3Y5UFdQRWozUEJ3Q2pJ?=
+ =?utf-8?B?WlVWN3BwL0JVdFVMQ2Y4R0VldXlDRnZsQWttM1NzM0Y1SWJML3JzeTJKNzFw?=
+ =?utf-8?B?NXB6aWdXN09GZE9TcVhrdFdWL3lCY21jWUFtSFFmWTU5MTIzdFhDZ0xhbDdJ?=
+ =?utf-8?B?TTNXd09kOTRjalFROFhkWXgwUWdVVlFaWDJYOC9vRys2NnBjeld6WFhWNTRp?=
+ =?utf-8?B?Y3E0ZWZqbktXRGZlNk5sSVhuQTE5b0ZZWVVXTUkvdkY1TmRIOEovWi9rdWVE?=
+ =?utf-8?B?b1ArL01JdkNqOFdwaUdYU2VvWXZGUzQzbHJFcUg5c0tURjNuSjFxWm9PbGQ4?=
+ =?utf-8?B?bVlWOGcwN09naXRnc3FKajZIRTJ1dVVON1l0bnIyRDRFYzdLOW9TcnlTYzZi?=
+ =?utf-8?B?Qi9UMUM2eG1mbU5NY2FyNDIrTCtHMW5oQjhId1lrb1JHcUFQVVFjR29WbVU5?=
+ =?utf-8?Q?STA3HN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QjNkblJYZ21wZGRudDBJUzc2WDU0YzNVbi9CZGxNQmc2VWJueTRvbElvMjhG?=
+ =?utf-8?B?YzFUek9KZEhyNHU1ay9uUWxxWTFheURMdWV6Q0dhZXFFQnFrS1hMNko0eTdh?=
+ =?utf-8?B?VkZ2citGQ050NUgrdHV1R3RGNUtSd2l2MkwrMk5DY0crMld4Ym5FNlJEMFB6?=
+ =?utf-8?B?cEhoOXlPQ1Bwai9zMXBvSUZDSFBPSHh1dUxtSE1FWENVM0ZKT0dMbnBiY1BC?=
+ =?utf-8?B?Tmx3NU1mNXpzV3k4S0ZqRngzMjJpMUN0VGNDWVdKNFpmdWc5ZmhZNGtXUnI5?=
+ =?utf-8?B?aHJITTBURGsxa2FWK0lEdDdiWlpFVmMzbVQ1ckJTRmkyRzRLT0N0a3o1eW5X?=
+ =?utf-8?B?Z0p2UXgvbVJ0ZTNweXF1SjlyRUlGU0xDQk54bytLa3BpY2tvdVRieEJ4VHRi?=
+ =?utf-8?B?WG5yMjBTS1Vselc0UnI0U3JqQitxZmowSy8xSnV2OUpiNUl2eWlwSFYzdkNy?=
+ =?utf-8?B?eU42dXRoMUhHZkRvUUZQT2dMeGhuZnYxQ202QXp3ejIvY2xCdWJTSXM0RzJm?=
+ =?utf-8?B?bFBFbWxqUnVGbVBMc3BtOWgyZ2lnOFFIYzJkaTdXK1djZlBVYkxmN3pjWXNW?=
+ =?utf-8?B?NXpQTlRBeUtJRmoraUgwVC9uS1RaV2doQm0yUlhPa3FyYkVCYU9jWFNkQk1F?=
+ =?utf-8?B?VDdBMldld3BBcUlpcUpyUVM1YUdhZXowT2h5YVhPS3NsT3BLalBFMUhUWmJi?=
+ =?utf-8?B?UHpUVnl5TkR3WXlwZnhhYjdmNDFSV2cvdVYyRjJWcFBkV2tkYitkc1VNclRO?=
+ =?utf-8?B?T1pOaGt4bFVnbFRQM3JnL3hSUE1uZHNpVDRuaHNwakRQQ01aa09wOTk4QzVn?=
+ =?utf-8?B?NmVGeGlkTHRXbDdUVEluNHdMc0hwT2YzV0hoNWxSSHUrcUIweTgyUEIzWG9z?=
+ =?utf-8?B?bTBSbXhzRUZ2R3l4TnlJdmFRSThVNDF2dFg4YStUUTdoZnhTK2ZtKzgweG9Y?=
+ =?utf-8?B?N1JmYjJDL1RsYXV2enQwS2hYT1RNdXFvUk1ucGRhaVM2MzhGQWE3eHhmUGpH?=
+ =?utf-8?B?ZWNoZVlPVWt3eExkV3ptdFlpejYyU0U5LzFQSEFVYWk4NEpyZERURjlydEZM?=
+ =?utf-8?B?NGp2YUhSQUR6MjlTMmxxdFVDTmxxZXE5eUtsLzJRN2NHT0xhcnBVWnB2akVp?=
+ =?utf-8?B?ak1UUnBNa2V3Rmd6WnROcVkvcHRkVzhqTjN0VS8rR0VIbE1IYlp4M1pqR1Jw?=
+ =?utf-8?B?SVBYQ2VPMlJvb3U0UHdTVGY1V2VVdllIZzZlclRVc1VyOTc5S1JwbFlkTWZP?=
+ =?utf-8?B?SFNNV0V0NE1aTVdIZTRkSStMWWlDZFNhNnNNT2dKaXdQUUIycEY2NUl5ZHcv?=
+ =?utf-8?B?aTJURlNOMFZ6bjAxakpkWWNLVXJSMm9ZcmtTSkxYekZ3V3R2RVhOQTNwSG9O?=
+ =?utf-8?B?cjhNdGZYOVVxRnJpMFhwVUFuT1k2ZnkrbEFVdXgxSUNLR0M4Q1ZiQWdwVE5x?=
+ =?utf-8?B?N1dqVDJVdDc4QXEvb2lmZkxab3NDWmNaSm1qZXlwazdKZ29RQ0lSR0dOdUE0?=
+ =?utf-8?B?bk1uNkltMFVJRTJnZzUzY2ZBYzFmNWJOL1YrWjhleWlBeWNqVXhIT1RNQkJv?=
+ =?utf-8?B?VHpXZGRUMlI3Z0hKZUE2dk5sVnNqMGM2dnB6SDJRUzdUK0NTY1NtV3VOTHdS?=
+ =?utf-8?B?b0lSRFBXNUljLzZ3Q2liYWc3VXJiY08zL0VCTDJvZzQ4SkxKdmhCaFNMY2gy?=
+ =?utf-8?B?dnF0cVZ0c2ZYOTdJVlVFYzhnSlhNbno0TWYvT0tEZFRPZ0hNb1VFTSsxd2V6?=
+ =?utf-8?B?bXM3TDhJdjhRRTh5VzJvdFJ2KzlDQ3NtaFBSYzZqZjVZWFhyT29EaUFQaHJW?=
+ =?utf-8?B?dXRyRmdPQjIyT3JXc1JFeXlicTJvSGJGQXFqOFBRQ1lmZnBGc1lRWXhJNXFo?=
+ =?utf-8?B?cnl1ZlNsUzVyY3lBSEV2ZU93eVpleTJnbUZsbVBwT2FoUFB0dS9ocFpUR1hk?=
+ =?utf-8?B?RDkxalNiaVhNR3paUFQ0ME1iWmdheUYxMk5qb1ROTk9pMWZTL2pNL3NmdHBk?=
+ =?utf-8?B?Vzg4MFpKcjlBZVNYZVNHK0hXNTROckNIUm00N2dacVR6aHZSUHlYTTcrV2FE?=
+ =?utf-8?B?MUl6bEFZakdVVmRJT0Y1RWRsbEw0MGQrRWN5RTRDcXhNeE5taXRsREdqSDE5?=
+ =?utf-8?Q?dio3cBxiR/1r3M8egnVcpw2ow?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f583518a-211c-4de7-e3a4-08dde091dd3f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:05:24.4495
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5GWJjupFPyIBIKM+g1R3Re4KkBf2qPVkWTIaH1IoTB9wz4AlG9TOtS9Drc/1yDw6fHVR1u7apeazxq1nVNrttg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7858
 
-Hi Shenwei,
+i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+one Cortex-M7 core. The System Control Management Interface(SCMI)
+firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+Manager(SM) includes vendor extension protocols, Logical Machine
+Management(LMM) protocol and CPU protocol and etc.
 
-thanks for your patch!
+There are three cases for M7:
+(1) M7 in a separate Logical Machine(LM) that Linux couldn't control it.
+(2) M7 in a separate Logical Machine that Linux could control it using
+    LMM protocol
+(3) M7 runs in same Logical Machine as A55, so Linux could control it
+    using CPU protocol
 
-On Mon, Aug 18, 2025 at 10:45=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.com=
-> wrote:
+In patch 2, Use LMM and CPU protocol to manage M7. More info could be
+found in the patch commit log
 
-> On i.MX SoCs, the system may include two processors:
->         - An MCU running an RTOS
->         - An MPU running Linux
->
-> These processors communicate via the RPMSG protocol.
-> The driver implements the standard GPIO interface, allowing
-> the Linux side to control GPIO controllers which reside in
-> the remote processor via RPMSG protocol.
->
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+Current setup relies on pre-Linux software(U-Boot) to do
+M7 TCM ECC initialization. In future, we could add the support in Linux
+to decouple U-Boot and Linux.
 
-Since this is a first RPMSG GPIO driver, I'd like if Bj=C3=B6rn and/or
-Mathieu have a look at it so I'm sure it is RPMSG-proper!
+Patchset was tested with below boot images when the patchset based on next-20250526:
+imx-boot-variant-rpmsg-imx95-19x19-lpddr5-evk-sd.bin-flash_lpboot_sm_a55 (Use LMM protocol)
+imx-boot-variant-alt-imx95-19x19-lpddr5-evk-sd.bin-flash_alt (Use CPU protocol)
+imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_a55 (M7 not under A55 control)
+imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_all (M7 not under A55 control)
 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index a437fe652dbc..2ce4e9b5225e 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -402,6 +402,17 @@ config GPIO_ICH
->
->           If unsure, say N.
->
-> +config GPIO_IMX_RPMSG
-> +       tristate "NXP i.MX SoC RPMSG GPIO support"
-> +       depends on IMX_REMOTEPROC && RPMSG && GPIOLIB
-> +       default IMX_REMOTEPROC
-> +       help
-> +         Say yes here to support the RPMSG GPIO functions on i.MX SoC ba=
-sed
-> +         platform.  Currently supported devices: i.MX7ULP, i.MX8ULP, i.M=
-X8x,
-> +         and i.MX9x.
-> +
-> +         If unsure, say N.
+Patchset was tested again with rebase on next-20250623
+Patchset was tested again with rebase on next-20250710
 
-This is sorted under memory-mapped GPIO, but it isn't.
+Patchset is re-based on next-20250603.
 
-Create a new submenu:
+Thanks for Daniel/Frank helping review the patchset before posting out to list.
 
-menu "RPMSG GPIO drivers"
-        depends on RPMSG
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v5:
+- Rebased to next-20250820 to resolve minor conflict in patch 2, as below
+  if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
+	  =>
+  if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API ||
+      dcfg->method == IMX_RPROC_SM)
+- Add Kconfig denpendencies in patch 2 following 514b2262ade4 ("firmware:
+  arm_scmi: Fix i.MX build dependency")
+- Drop patch 4,5 which are dts changes that enable cm7 node for i.MX95, but
+  there are dtbs_check error because of "linux,code" property not laned in
+  tree. To avoid false alarm on this patchset, so drop the two patches.
+- Link to v4: https://lore.kernel.org/r/20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com
 
-And put it here as the first such driver.
+Changes in v4:
+- Move the lmm permission check code to a separate
+  function(imx_rproc_sm_lmm_prepare) in patch 3.
+- Check return value of scmi_imx_cpu_started in patch 3
+- Rebased to next-20250710 and tested on i.MX95-19x19-EVK
+- Add R-b from Frank for patch 1-4 and A-b from Krzysztof for patch 1
+- Drop mu7 from patch 5, because mu7 status was already okay.
+- Link to v3: https://lore.kernel.org/r/20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com
 
-No need to have a dependency on RPMSG in the GPIO_IMX_RPMSG
-Kconfig entry after this.
+Changes in v3:
+- Drop fsl,lmm-id and fsl,cpu-id for binding in patch 1
+- Add lmid and cpuid in driver patch 2.
+- Add i.MX95 lmid and cpuid in patch 3
+- Rebased to linux-next-6-23 and tested with this new rebased version
+- Add dtsi/dts patch 4,5 to give people a view on how it is used per Krzysztof
+- Daniel's R-b are still kept after talk with Daniel
+- Link to v2: https://lore.kernel.org/r/20250606-imx95-rproc-1-v2-0-a2bd64438be9@nxp.com
 
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/bitops.h>
+Changes in v2:
+- Typo fix in patch 2 commit message
+- Move the m7 address mapping array from patch 2 to patch 3
+- Add R-b from Daniel to patch 3
+- Link to v1: https://lore.kernel.org/r/20250604-imx95-rproc-1-v1-0-a6e5f512731c@nxp.com
 
-bitops.h or just bits.h? Check which one you actually use.
+---
+Peng Fan (3):
+      dt-bindings: remoteproc: fsl,imx-rproc: Add support for i.MX95
+      remoteproc: imx_rproc: Add support for System Manager API
+      remoteproc: imx_rproc: Add support for i.MX95
 
-> +#include <linux/err.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/imx_rpmsg.h>
-> +#include <linux/init.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_qos.h>
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |   1 +
+ drivers/remoteproc/Kconfig                         |   2 +
+ drivers/remoteproc/imx_rproc.c                     | 148 ++++++++++++++++++++-
+ drivers/remoteproc/imx_rproc.h                     |   5 +
+ 4 files changed, 153 insertions(+), 3 deletions(-)
+---
+base-commit: c4b125bd6408789809eb57701eabb4cdc6407d75
+change-id: 20250525-imx95-rproc-1-20bb74ddc8af
 
-Are you really using pm_qos?
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
 
-> +#include <linux/rpmsg.h>
-> +#include <linux/virtio.h>
-> +#include <linux/workqueue.h>
-
-(...)
-
-> +struct imx_rpmsg_gpio_port {
-> +       struct gpio_chip gc;
-> +       struct irq_chip chip;
-
-This irqchip doesn't look very immutable.
-
-Look at other patches rewriting irqchips to be immutable
-and break this out to a static const struct irq_chip with
-IRQCHIP_IMMUTABLE set instead.
-
-> +static int imx_rpmsg_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-> +{
-> +       struct imx_rpmsg_gpio_port *port =3D gpiochip_get_data(gc);
-> +       struct gpio_rpmsg_data *msg =3D NULL;
-> +       int ret;
-> +
-> +       mutex_lock(&port->info.lock);
-
-Please use guards for all the mutexes:
-
-#include <linux/cleanup.h>
-
-guard(mutex)(&port->info.lock);
-
-and it will be released as you exit the function.
-
-> +static int imx_rpmsg_gpio_direction_input(struct gpio_chip *gc,
-> +                                         unsigned int gpio)
-> +{
-> +       struct imx_rpmsg_gpio_port *port =3D gpiochip_get_data(gc);
-> +       struct gpio_rpmsg_data *msg =3D NULL;
-> +       int ret;
-> +
-> +       mutex_lock(&port->info.lock);
-
-Dito for all these instances.
-(Saves you a bunch of lines!)
-
-> +static void imx_rpmsg_irq_bus_lock(struct irq_data *d)
-> +{
-> +       struct imx_rpmsg_gpio_port *port =3D irq_data_get_irq_chip_data(d=
-);
-> +
-> +       mutex_lock(&port->info.lock);
-> +}
-
-Here you need to keep the classic mutex_lock() though,
-because of the irqchip locking abstraction helper.
-
-> +static struct irq_chip imx_rpmsg_irq_chip =3D {
-
-const
-
-> +       .irq_mask =3D imx_rpmsg_mask_irq,
-> +       .irq_unmask =3D imx_rpmsg_unmask_irq,
-> +       .irq_set_wake =3D imx_rpmsg_irq_set_wake,
-> +       .irq_set_type =3D imx_rpmsg_irq_set_type,
-> +       .irq_shutdown =3D imx_rpmsg_irq_shutdown,
-> +       .irq_bus_lock =3D imx_rpmsg_irq_bus_lock,
-> +       .irq_bus_sync_unlock =3D imx_rpmsg_irq_bus_sync_unlock,
-
-        .flags =3D IRQCHIP_IMMUTABLE,
-
-probably also:
-
-         GPIOCHIP_IRQ_RESOURCE_HELPERS,
-
-?
-
-I think you want to properly mark GPIO lines as used for
-IRQs!
-
-> +static int imx_rpmsg_gpio_to_irq(struct gpio_chip *gc, unsigned int gpio=
-)
-> +{
-> +       struct imx_rpmsg_gpio_port *port =3D gpiochip_get_data(gc);
-> +       int irq;
-> +
-> +       irq =3D irq_find_mapping(port->domain, gpio);
-> +       if (irq > 0) {
-> +               irq_set_chip_data(irq, port);
-> +               irq_set_chip_and_handler(irq, &port->chip, handle_level_i=
-rq);
-> +       }
-> +
-> +       return irq;
-> +}
-
-Ugh we try to to use custom to_irq() if we can...
-
-Do you have to?
-
-Can't you use
-select GPIOLIB_IRQCHIP
-and be inspired by other chips using the irqchip
-helper library?
-
-We almost always use that these days.
-
-> +       /* create an irq domain */
-> +       port->chip =3D imx_rpmsg_irq_chip;
-> +       port->chip.name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s-gp=
-io%d",
-> +                                        pltdata->rproc_name, port->idx);
-> +       port->dev =3D &pdev->dev;
-> +
-> +       irq_base =3D devm_irq_alloc_descs(&pdev->dev, -1, 0, IMX_RPMSG_GP=
-IO_PER_PORT,
-> +                                  numa_node_id());
-> +       if (irq_base < 0) {
-> +               dev_err(&pdev->dev, "Failed to alloc irq_descs\n");
-> +               return irq_base;
-> +       }
-> +
-> +       port->domain =3D irq_domain_create_legacy(of_node_to_fwnode(np),
-> +                                               IMX_RPMSG_GPIO_PER_PORT,
-> +                                               irq_base, 0,
-> +                                               &irq_domain_simple_ops, p=
-ort);
-> +       if (!port->domain) {
-> +               dev_err(&pdev->dev, "Failed to allocate IRQ domain\n");
-> +               return -EINVAL;
-> +       }
-
-This also looks unnecessarily custom.
-
-Try to use GPIOLIB_IRQCHIP.
-
-
-> +static struct platform_driver imx_rpmsg_gpio_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "gpio-imx-rpmsg",
-> +               .of_match_table =3D imx_rpmsg_gpio_dt_ids,
-> +       },
-> +       .probe =3D imx_rpmsg_gpio_probe,
-> +};
-> +
-> +static int __init gpio_imx_rpmsg_init(void)
-> +{
-> +       return platform_driver_register(&imx_rpmsg_gpio_driver);
-> +}
-> +
-> +device_initcall(gpio_imx_rpmsg_init);
-
-No please just do:
-
-module_platform_driver(imx_rpmsg_gpio_driver);
-
-Fix up  these things to begin with and then we can
-look at details!
-
-Yours,
-Linus Walleij
