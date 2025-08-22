@@ -1,122 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E72273D8D;
-	Fri, 22 Aug 2025 20:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E419DF62;
+	Fri, 22 Aug 2025 23:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755895228; cv=none; b=NCmyCDnnxd+Y0JhGMOaxTsXLKT3L6r1vQ9yvMYURmX/469yQhBg7PF23HgpijLld+SbIP+rxNeKKO3Ul6pHtwzq8QkPkcRM/2M2cUM47xClKvJ0yzTz0icKwNW3M1Oj6oiArzQgL+BXOHIZZ2bJMkBBWmIUT1bX7kscnakf8LHw=
+	t=1755904392; cv=none; b=fGc72AnrPbyqq7Z/8i12NbgUQgyEmzK/p+XdybL4vAtRMLh2PFmTBbTF5pHO+SMIdkKne+ptvFxFJIffMpDWAyqbyxF31ZCor78Yl/oQ0Te2nDu9ibDxM9XHfD476NGAAClFriQ1Ssb8R3LKgFL9a0fIpFCTaTOvf8S4sbUlvTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755895228; c=relaxed/simple;
-	bh=cQaigDBTxzr1UzSEKTyGQ6sShaL7mmiAEnUOGpm19DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MeW3pFmOC0l/mAli5hBRZgi/ssPCEH/SSSXcqnbbKHfPXvGVLn3pxJ9iuDiAWwy7kWFpCCdQFCqooR/HTMKnZz4/czj749FBjgNOLiAiHb032XHh+p6oXV7AO+xyoLBhKLxycLCVtSvVkpsJFHLaOi9u54zzcZX1qqIzvGxx8RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5KQQ1ia; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755904392; c=relaxed/simple;
+	bh=I5xOOlTlsl1gEAyBnvuWnA9gnCaou1eiZGWyj04CjLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d/sMGjjE/y4c8p8rR3Z5TzDRXFrvl/AjaPyNyju3waU/JS7gHGyzrCfs3r516YchKPP96SiKsEycglZtacNSONP7qw2zZPdJuv2jEylhy65rNeA2uNMUlrMs1FCv8UOBZVCKmriHMBRyVPhHzKafs2bFsOwzVHdDQZWz9RNM96Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UietGIt3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5KQQ1ia"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF79C4CEED;
-	Fri, 22 Aug 2025 20:40:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UietGIt3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C891AC4CEED;
+	Fri, 22 Aug 2025 23:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755895228;
-	bh=cQaigDBTxzr1UzSEKTyGQ6sShaL7mmiAEnUOGpm19DU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q5KQQ1ia/LPE0jWIdLX92S6hU598Aa9oRK7q68PJvX9I1fP/wu2jVpxXUu4ZcRWWh
-	 2TfX6N8DyNb10amwbNWFA89/+lM2wvkQBHmBTik/BEEjHPWC89iPGf1jrn5rclz1fe
-	 wK04qZwSD+dVz269iAxvyxHAo3q2QlGOaPlxj2K0dXqlH5ssipaSd9MphPUHImfv/h
-	 wYEz0UMcT/FekQnw959WOP+qoCbpI8+JNc7ficN2QdOaD2Klz2HXJf3uIhOLMZqlwA
-	 PmsO23d3FLfEGROqaXKZp6Fu18+lGDNCv1rzjKbVQ/7OzPzkDeuueIY5lZZ9wjDiWA
-	 EQ61a7HDJl4ZQ==
-Date: Fri, 22 Aug 2025 15:40:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jean Delvare <jdelvare@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Cheng-Yi Chiang <cychiang@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tinghan Shen <tinghan.shen@mediatek.com>,
-	devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Mathew McBride <matt@traverse.com.au>
-Subject: Re: [PATCH v2] dt-bindings: mfd: Move embedded controllers to own
- directory
-Message-ID: <20250822204027.GA319356-robh@kernel.org>
-References: <20250822075712.27314-2-krzysztof.kozlowski@linaro.org>
+	s=k20201202; t=1755904392;
+	bh=I5xOOlTlsl1gEAyBnvuWnA9gnCaou1eiZGWyj04CjLU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=UietGIt3h77y7zuiq7YFhM0VrpywFhju+K18giWmvLQWsvo2dxbQ029RiXYcXPVkV
+	 sTlj4fug4t6/d35KEWd17rr32OB3DJvf12ijkKS/Jb/s7Dz6xX2dwQ+hvuzOWmGRXs
+	 u7zHlaqmxMkMZt0w4dqOZ2E4WgPm2+prJDKCeydXHZEirmCIP6tFEzCkdQpbh619Ji
+	 bW5OQZYmqxI/RmYefQTiCxiAeZpkDvXDUvgS5b1nXARoR64pTOqy8SlqbgOk0+Hy27
+	 4UuMtVTdrUItneUpNqVHyBTj9WMqiONRd8eTjOHmQoU/6SmCktcnRwFAgK3Vvgpk/z
+	 SuzXpPfTRlrFQ==
+Message-ID: <5489a439-e628-47a1-b3e9-e1d0f877b7d0@kernel.org>
+Date: Sat, 23 Aug 2025 00:13:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822075712.27314-2-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/11] firmware: qcom_scm: Add shmbridge support to
+ pas_init/release function
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-6-mukesh.ojha@oss.qualcomm.com>
+ <de4b4872-061c-4f03-ae1d-1ad93b35ed71@linaro.org>
+ <Qfxl6YfI0Dz_tCk9ukTFlrQpwm06pE4E4DCyITA5T3qnF2lsXpwAvLSttPsnMQb60UyKLpC8Koz4aSYwuoP4Qw==@protonmail.internalid>
+ <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250821170337.y7vzhtiugaeydqmh@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 09:57:13AM +0200, Krzysztof Kozlowski wrote:
-> Move ChromeOS Embedded Controller, Gateworks System Controller and
-> Kontron sl28cpld Board Management Controller to new subdirectory
-> "embedded-controller" matching their purpose.  MFD is coming from Linux
-> and does not really fit the actual purpose of this hardware.
-> 
-> Rename Gateworks GSC filename to match compatible, as preferred for
-> bindings.
-> 
-> Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> 
-> Cc: Mathew McBride <matt@traverse.com.au>
-> 
-> Lee,
-> Can you take it via MFD?
-> 
-> Changes in v2:
-> 1. Correct remaining paths in other schemas ($ref and descriptions)
-> ---
->  .../bindings/{mfd => embedded-controller}/google,cros-ec.yaml | 2 +-
->  .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}    | 2 +-
->  .../{mfd => embedded-controller}/kontron,sl28cpld.yaml        | 2 +-
->  .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml       | 2 +-
->  .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml     | 2 +-
->  .../bindings/interrupt-controller/kontron,sl28cpld-intc.yaml  | 2 +-
->  Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.yaml | 2 +-
->  .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml         | 2 +-
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml     | 4 ++--
->  .../devicetree/bindings/sound/google,cros-ec-codec.yaml       | 2 +-
->  .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml    | 2 +-
->  MAINTAINERS                                                   | 4 ++--
->  12 files changed, 14 insertions(+), 14 deletions(-)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
->  rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
+On 21/08/2025 18:03, Mukesh Ojha wrote:
+>> Please review the error paths here especially WRT to qcom_mdt_pas_init();
+> Sure, will send the fix patch for the existing bug.
 
-Who's the maintainer for the 'embedded-controller' directory? Fine if 
-me, just need to know.
+In which case please structure your next submission with bugfixes coming 
+first in the series with Fixes: tags and then apply your changes on top 
+as a progressive set of changes so we can apply this fix to -stable.
 
-Other candidates:
-Documentation/devicetree/bindings/platform/*
-Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml
-Documentation/devicetree/bindings/misc/ge-achc.yaml ?
+Don't forget to Cc: stable
 
-Rob
+---
+bod
