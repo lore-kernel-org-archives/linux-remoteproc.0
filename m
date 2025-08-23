@@ -1,138 +1,242 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A2C2E888B;
-	Sat, 23 Aug 2025 15:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594AC225760
+	for <linux-remoteproc@vger.kernel.org>; Sat, 23 Aug 2025 20:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755964359; cv=none; b=qWbtPGRBjMr23kqhij+W+P6Y+xuvAF0UevTa3eEDQjKqCBrPUCERN+fUqky12QAl0QiR0M68BCq7mtl3LIYWgljxsg9hi6ZjeHlYiJm0ARmS8klg+9bnjA6RWu7cNSNwPaYytAlCxL+Wtw3A8Np7BHOEy6SX9oPLVyTouSJfPxs=
+	t=1755981840; cv=none; b=EHlZmzurPAIoYQgdR2okfGBFkjNtJXV2VkkAH36j3L0+JYJwNTPE0DJQ0M2UPRdR6dah6YplPkjHzCXjmE5fNiMwihMlUmS0Qnt/xNBEJMyegBFTOgwuPmdhImKZzgAJbBBccVN/Q7XxOac+iU82ySXok9MkmelZamQuaPnMtio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755964359; c=relaxed/simple;
-	bh=2FN3L44hfsRw87wHws0nWWlh+L/crlpeZ61ZXZUKr1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RWPqlR2jzwBBPHVsyFEBQRhhGL31k4H5IuQ7hBmUdyKgXuGhHV7cxtqMarr2fQ2YeMhJXyzX8tuRGqLRjBHB3k2xSG15IlYRInxbBNwNU95Fd2vAOdnjFfzVfIJTwRI+XhF6JJZz46dQ6DQOH1DnnHEZhzmk57fCv7shVKcn2Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2X4fCoi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755981840; c=relaxed/simple;
+	bh=0Dda5qm2OHi63pkDwgChgj6GsL0RlbZr+Dk8jL/as2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOSvUJqhSgjypYGtXG9grCsaxh6Yqd/1LZkH7L9DlpObsM5CkfXOFdobdceaby5kgPCYzKoKm2kQJAEDB9gUhoIA/54AMPGMpzEK303aUshGQXOGkBfiUN5mP9KJfDYmY5N76+d9a3LxqYmxNnhWEqidBB1KCnZ1VfiO84INVpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=owJUtLPj; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2X4fCoi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA5F8C4CEF4;
-	Sat, 23 Aug 2025 15:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755964357;
-	bh=2FN3L44hfsRw87wHws0nWWlh+L/crlpeZ61ZXZUKr1Q=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=q2X4fCoiHC/9DNPi6ov3wmFBQ4N8intj2KvcOH/prK6e/P6ZrYvPXM72Jsxn6QZPI
-	 5+W4vU4NyF2Dw7drNbaif51v2FoRm3D8tMFHT4f57/rwUr2sdsWclArUAWbzTyyl3z
-	 M+Tzg84oLKR7RnGIVzeflKv6o9O8St+eXu38DMANvsTLkfCYQ6XkJt7GWiZ7LJrJs3
-	 4qzMYu3MclFy2xosINbKL0rzKsOkINPQqDrq9MOP9UVtuJrXYNFQsBwjnhzDa5A/30
-	 4lLf9jkzVJXiYqkdI3inpUxsKlViUNuK6/OwbhdZTRToAegN/uakCJ2U7bW0bEuUTB
-	 GSwZ8bj+uWjUg==
-Message-ID: <59951c47-1015-4598-a885-25f8f1a27c64@kernel.org>
-Date: Sat, 23 Aug 2025 17:52:33 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="owJUtLPj"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3c6df24f128so780350f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Aug 2025 13:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755981837; x=1756586637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncOl5iwhH0rvJNuoHUdRLF2/Z5/Gu+uKD3hX+7/KMaw=;
+        b=owJUtLPjT+iy46ZcmwQBLigZcBX1+DMpNeqRqCcXMGhKbCeG3Bu6Z7XVTYglvPl1ev
+         D/SpA0gXBk1MWzCJyq6SrrFTKNs8Uqu931SJmeWRrZtLrqZ8o3EJWyCTZzyGC1fyqKng
+         1FpMqxp916FixxFPfdBDlnbtMD9+t2+zMf+aU5smXUepvBBO5jzbaSfCbaQIj89YVRrp
+         aS/J0fMeLFHuY4cDgbfQIhjS51ZnKsxfqAbxKLRb2BEj4GKubpIKTtcI5eAtlKRcnuWl
+         6QGqQ2oarvI/gH1esa8e8M8phO/26YUBe8qhLpu22rIHgKdhXMnyzq7crmbFO9vvh8OV
+         nyag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755981837; x=1756586637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ncOl5iwhH0rvJNuoHUdRLF2/Z5/Gu+uKD3hX+7/KMaw=;
+        b=lIpEXruwrSyFl1Ha8OA6c9NbkBbjFxqj64qoeQ67QA82EiRteIEVpzCuiIFYTDpHWp
+         ocwGIaR4jOz356DsiUXRIbTs+90LfB53tX6LjPkxENNsXkH47TS4Udz4ULcNdEOPd5U8
+         lHldpJcmt1B6XyF6FsGn/FcMTY2AcEhkQOXwiZpZeAQGXUv1srDyAbO7khmc5UjkZG0W
+         MWWwdE7J8jVPPJt8sMU0H32E1ro9roBGPnQYbXTAkot3WDmy32HB2tQEYj19A/AYznwS
+         DuiWgWtUF8hzMEDqMk286T5Fay92iYBUTb4HAIgNoMv489+cR2UPffADexa2BHpvNZZL
+         WAAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3XRf/bjloOQxwMlAXe2eZ6olCMrUHFBmhLiR5B98XoFLd3FpdnW5CFOVv70U6dCQMbtUMEjc9yi4AtLcUgn5i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyo63M8PJ0/AXF5uyfbVOliLbql0W54tUsQOD1YUBuA2Ybqkgb
+	k0UF+XYNbk2pbCtgzSY5EWR8HOeVjf9fiZFixNDF2smR8B4mKQ1jn/61Oq5IGyTVxCWTltdxiTe
+	JdGlG
+X-Gm-Gg: ASbGncvYJYqgP8fiFnpEog9XpdZ06yS5Wa6SpEo45zfKF8A1pkxpzw2F/D753SfxBR3
+	9PLsM7GIp9090KqSNT4oRwWy3wD28pL7NQzBNasoyxDHQ2NhpRBWmYxsou7B+mCaotyyZp1YtO+
+	/9634Mrv83xlnehRldS/bxubJwl+WbvtdZPZyRXKKHqXZeTJo6lI2nb0RmpPu4oCXHjs532nHsG
+	BdlHydB5r/i0VT++Zg72Wb6ELlyWnU7CV90VwkaZmDnTeTRySOWJvHq6XoD/66DHf8q59lmqQXZ
+	rDjezO6Z5ADi1wObZxyQ4qUSd9FOglAF2zjhnhC8zpf01dljIE/3WklpdHS+xb3Z9zn0ZARfpeG
+	KfEXnrUUbD9Y8hw1qSmCTfWlTNy8vSaETbIc=
+X-Google-Smtp-Source: AGHT+IGs4eKFbPlrT8Yv6hTCIpTHOphruT6aa4eb9E8LlM4kYYOYgvkuN1xHLJp/ymLK+6lCX00Jaw==
+X-Received: by 2002:a05:6000:22c4:b0:3b8:d2d1:5bfc with SMTP id ffacd0b85a97d-3c5dcdfed86mr4339314f8f.37.1755981836506;
+        Sat, 23 Aug 2025 13:43:56 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:514d:30f3:c6be:a5b9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211b0esm5171237f8f.42.2025.08.23.13.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Aug 2025 13:43:55 -0700 (PDT)
+Date: Sat, 23 Aug 2025 22:43:52 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
+ IOMMU managed by Linux
+Message-ID: <aKooCFoV3ZYwOMRx@linaro.org>
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
+ <aKWLZwYVPJBABhRI@linaro.org>
+ <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
+ <aKXQAoXZyR6SRPAA@linaro.org>
+ <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
+ <aKguXNGneBWqSMUe@linaro.org>
+ <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
+ <aKiaKwkpdKHSH9YS@linaro.org>
+ <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
- IOMMU managed by Linux
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
- <e18ac460-dcbb-4ac0-9c5e-3aaadf3485fd@kernel.org>
- <20250822151346.skwtsh5abr3tmrjz@hu-mojha-hyd.qualcomm.com>
- <46013223-5463-4164-9f61-87ea5ce2412c@kernel.org>
- <538ed0a4-fbf9-47c3-bbc2-3263d869e21c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <538ed0a4-fbf9-47c3-bbc2-3263d869e21c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
 
-On 23/08/2025 17:46, Krzysztof Kozlowski wrote:
-> On 23/08/2025 17:41, Krzysztof Kozlowski wrote:
->> On 22/08/2025 17:13, Mukesh Ojha wrote:
->>> On Fri, Aug 22, 2025 at 10:45:50AM +0200, Krzysztof Kozlowski wrote:
->>>> On 19/08/2025 18:54, Mukesh Ojha wrote:
->>>>> +int iris_fw_init(struct iris_core *core)
->>>>> +{
->>>>> +	struct platform_device_info info;
->>>>> +	struct iommu_domain *iommu_dom;
->>>>> +	struct platform_device *pdev;
->>>>> +	struct device_node *np;
->>>>> +	int ret;
->>>>> +
->>>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
->>>>
->>>> Undocumented ABI.
->>>>
->>>> If you tested your DTS, you would notice warnings.
->>>
->>> qcom,venus-common.yaml is documenting video-firmware and getting included in
->>> Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->>
->> Uh, why? Why does qcom keep this legacy pattern also for iris?
+On Fri, Aug 22, 2025 at 10:10:30PM +0530, Mukesh Ojha wrote:
+> On Fri, Aug 22, 2025 at 06:26:19PM +0200, Stephan Gerhold wrote:
+> > On Fri, Aug 22, 2025 at 08:36:11PM +0530, Mukesh Ojha wrote:
+> > > On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
+> > > > On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
+> > > > > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
+> > > > > >>>> +int iris_fw_init(struct iris_core *core)
+> > > > > >>>> +{
+> > > > > >>>> +	struct platform_device_info info;
+> > > > > >>>> +	struct iommu_domain *iommu_dom;
+> > > > > >>>> +	struct platform_device *pdev;
+> > > > > >>>> +	struct device_node *np;
+> > > > > >>>> +	int ret;
+> > > > > >>>> +
+> > > > > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
+> > > > > >>>> +	if (!np)
+> > > > > >>>> +		return 0;
+> > > > > >>> You need a dt-bindings change for this as well. This is documented only
+> > > > > >>> for Venus.
+> > > > > >> You are right, wanted to send device tree and binding support separately.
+> > > > > >> But if required, will add with the series in the next version.
+> > > > > >>
+> > > > > > You can send device tree changes separately, but dt-binding changes
+> > > > > > always need to come before the driver changes.
+> > > > > 
+> > > > > Do you mean to update the examples section[1] with the firmware subnode,
+> > > > > something similar to venus schema[2] ?
+> > > > > 
+> > > > 
+> > > > Sorry, I missed the fact that the "video-firmware" subnode is already
+> > > > documented for iris as well through qcom,venus-common.yaml (which is
+> > > > included for qcom,sm8550-iris). I don't think it's strictly required to
+> > > > add every possibility to the examples of the schema, since we'll also
+> > > > have the actual DTBs later to test this part of the schema.
+> > > > 
+> > > > I would recommend to extend the description of the "video-firmware" node
+> > > > in qcom,venus-common.yaml a bit. You do use the reset functionality of
+> > > > TrustZone, so the description there doesn't fit for your use case.
+> > > > 
+> > > > I think we will also have to figure out how to handle the old
+> > > > "ChromeOS"/"non_tz" use case (that resets Iris directly with the
+> > > > registers) vs the EL2 PAS use case (that resets Iris in TZ but still
+> > > > handles IOMMU from Linux). Simply checking for the presence of the
+> > > > "video-firmware" node is not enough, because that doesn't tell us if the
+> > > > PAS support is present in TZ.
+> > > > 
+> > > > I have been experimenting with a similar patch that copies the "non_tz"
+> > > > code paths from Venus into Iris. We need this to upstream the Iris DT
+> > > > patch for X1E without regressing the community-contributed x1-el2.dtso,
+> > > > which doesn't have functional PAS when running in EL2.
+> > > > 
+> > > > Perhaps we could check for __qcom_scm_is_call_available() with the new
+> > > > QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
+> > > > or directly with the registers. I don't have a device with the new
+> > > > firmware to verify if that works.
+> > > 
+> > > You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
+> > > but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
+> > > used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
+> > > video-firmware's iommu property is also important.
+> > > 
+> > 
+> > Yeah, this sounds good.
+> > 
+> > > > 
+> > > > I'll try to send out my patch soon, so you can better see the context.
+> > > 
+> > > Are you saying that you are going to send patch to support IRIS on
+> > > x1-el2.dtso in non-secure way i.e., non-PAS way.
+> > > 
+> > 
+> > The background is the following: I have a pending patch to add iris to
+> > x1e80100.dtsi, but that currently breaks x1-el2.dtso. My original plan
+> > was to disable &iris in x1-el2.dtso (because the PAS way seems to be
+> > just broken), but then I saw that e.g. sc7180-el2.dtso does have working
+> > Venus with the "video-firmware" node. Copy-pasting the "no_tz"(/non-PAS)
+> > code as-is from venus into iris works just fine for x1-el2.dtso, so
+> > disabling &iris in x1-el2.dtso just because the "no_tz" code is
+> > currently missing in iris doesn't sound right.
+> > 
+> > As far as I understand the approach you use in this series does not work
+> > without the TZ changes for older platforms like X1E(?), so adding that
+> > code in iris seems to be the best way to move forward.
 > 
-> I will remove it btw, because it is a fake device node (not for a real
-> device).
+> Yes, this series has dependency on firmware and will not work for older
+> platforms.
+> 
+> > 
+> > I started working on a patch for this a while ago, it just needs a bit
+> > more cleanup. I'll try to finish it up and post it so we can discuss it
+> > further. I think the IOMMU management in my patch would even work as-is
+> > for you, you would just need to toggle a boolean to use the PAS instead
+> > of accessing the registers directly.
+> 
+> Sounds like a plan.
+> Thanks, please cc me when you send the patches; So, I could test along
+> with my changes and make dependency on it.
+> 
 
+Krzysztof raised the concern that we shouldn't model the IOMMU specifier
+for the firmware using a "video-firmware" subnode [1], similar to the
+discussion for the "non-pixel" subnode recently [2].
 
-So also to clarify: drop it here, because it will be undocumented.
-Anyway such fake node was NAKed in other context.
+I mostly finished up the cleanup of my patch, but I don't see any point
+in posting it without an alternative proposal for the dt-bindings. For
+this case, I think a simple property like
 
-Best regards,
-Krzysztof
+	firmware-iommus = <&apps_smmu ...>;
+
+instead of
+
+	video-firmware {
+		iommus = <&apps_smmu ...>;
+	};
+
+could perhaps work. (XYZ-iommus isn't standardized at the moment, but I
+think something like XYZ-gpios would make sense in this case. There are
+many other possible approaches as well though.)
+
+Unfortunately, I won't have enough time in the next weeks to fully
+implement and propose an alternative. I'm assuming you still have
+ongoing work for supporting the "non-pixel" IOMMU, perhaps your new
+approach can be adapted for video-firmware as well?
+
+I've pushed my current patch to a branch in case it helps. It's similar
+to yours, but it has no external dependencies except for a fix in iris
+I sent recently ("media: iris: Fix firmware reference leak and unmap
+memory after load" [3]). You could use the non-PAS use case as a basis
+to add the initial implementation in iris independent of this larger
+patch series.
+
+https://git.codelinaro.org/stephan.gerhold/linux/-/commit/1e068f5864d958ab9e807e6e3772b778cd0edea8.patch
+
+For the PAS+IOMMU use case, it should be enough to set core->use_tz to
+true, plus any changes needed for the SHM bridge (and maybe resource
+table). The IOMMU management is independent from core->use_tz.
+
+I'm also happy to add the non-PAS approach later on top of your changes,
+whatever works best for you. :)
+
+Thanks,
+Stephan
+
+[1]: https://lore.kernel.org/r/20250823155349.22344-2-krzysztof.kozlowski@linaro.org/
+[2]: https://lore.kernel.org/r/20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com/T/
+[3]: https://lore.kernel.org/r/20250818-iris-firmware-leak-v1-1-1e3f9b8d31ce@linaro.org/
