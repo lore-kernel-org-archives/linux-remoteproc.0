@@ -1,435 +1,293 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724CA29B795
-	for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 08:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF0B2E62D5
+	for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 11:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109532; cv=none; b=s/3zeFQnavjlhNCMydsCAD0y/v8MQRBiKeR9NILuoeK/TivllKbeE4Pj7hptbs2FeyjkHzPoz0i5ccQn9v80ljF7XYv4lU5856Vfy5JESJ82SyyfngqJVibzvcCmoOC3XoSNzDBRijQ3AvRQzAm7uj5XH8a6cwDIBNo6yfj15ZM=
+	t=1756120817; cv=none; b=IyqBwYO4uXFv42gKmVHXBWRNqbHv1C9EjVPyLgIQa9uVstKNw7esMz5bjHLRcHVVdWsPRICOpr13/i0DmDfkWZCtfWeKQv9GrusD3pSAFQVWWIwvpBW2byuFRk9fy0P1YckSEbHQe0qIQAWvu4+oEygw6RTN9dOVH+3vyUW4hSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109532; c=relaxed/simple;
-	bh=VcDFtIzr4vI441rEW7Kp7RzmGwxaWxQUt3xEq6jBw1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/6MTfjEOHz/olR7n4MouXrILTJeSNJBQrRLu9jPo7rvLaX/QACOm+xMEauF2dYUId9NnhWT0D1Vl7u0GKf0OhT9NFLxqqIx1ewn5AvIlrV6n+zimeosblLYoyFpHGaGeSnTwweQccj6+hpvwPVadFGfbou3KnnM0RxsSg52jjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=erjsbJs5; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756120817; c=relaxed/simple;
+	bh=+rNmARvoUsx81zPl8mnxUC0DlhJt5hdF0XkXtON3tZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuljyfodzwJdy/15ripGZ7vJtz3/Y3/rV4asbIxkmIIXxb0p5RNef/iq1yPPGRCTKQK6b3BE/B8yoQ5QrX1T/9VjKW7GySKNbKRnBv7FF1UXHklZRXM2LqodbTquUlPq0pJfDah+9Se4UdeQQfWtjY8ufug1wIn1sOpQoJxJ6To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NnKSb+Ra; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="erjsbJs5"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61c46cde065so54064a12.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 01:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756109527; x=1756714327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TnsZ6L300ZKgc1COVNFcUJ5H1mGue0Pdof2dEQV2XRs=;
-        b=erjsbJs5OpIMRinksocW45K8M4sPTf72bTry0kCuEMA9W7dUjnE3KXhkvbCjhK+93A
-         ZTdtfGeqSl5jjpYMAQaPSbCCVUFFwD2Eawj4v6x/2Ak3J9ro0JiCgjslyBsUx6mSM+sF
-         C0a1xmgIuMLm5iEEK/WF8xZd8LixM8QSTPE5v9TDpdODyyuhU0bgYtgUlwHWC38ZIu+0
-         gsP2vRttAsSGh74hXkJLVyh7WiD2SlNi5w3udki6NptmK7Z+tVIxoVQNsvSf6onC5rUB
-         7Hr78qb84aV7F4Fu9n7FSBbq7k6WfnGBeuU14zFE7xUsj73V3rkSd5IxiKj//cPDOPL+
-         sL3g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NnKSb+Ra"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8bTXQ028657
+	for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 11:20:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=dJV3jDri6m2VUuuYgSnRwX/Y
+	qWPFzt/JBR2NM4x+YUY=; b=NnKSb+RaW7BriKCAgliAf3qLPWIm1DeuC4EqaZFB
+	A2YaMP3hWS+JQKhaTkF7WGw+9BtVegMJdtYUuv8/0I5ME53qE7Ll4o1apBKwp0d6
+	xqePH2y3MQ5Otf9hsQbfAYUg8GRrYb9NGfW7l9l++dJWCSJUyMBElCHE5pX3NVjz
+	kkDA0EwgXb3+5L+qVIiyzCf3r0ps+OkmfnF+oSQVHb0Q6/j1b/Pn3DtHQQMjRZsC
+	v86hi6YmApnOmmJOyJpj4Z3v/9b9xWHWHYjNGxyq/FApIpMAfoCwx6QDbWEzWSnz
+	BjQXa4bqReUCAnv35XNzjUOlMdTTYTcdaFoSByCupJHfIg==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q6thvufq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 11:20:05 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-325a6573e81so857609a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Aug 2025 04:20:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756109527; x=1756714327;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TnsZ6L300ZKgc1COVNFcUJ5H1mGue0Pdof2dEQV2XRs=;
-        b=qb57XslkKOnKCqM3v8IO0d/djdaiy4DmObBxj5bDgqmLHiai3208kmwOdD7v218RLc
-         +jhG7kXHz++AhtpzDDln4gEMpL3RlnbGdbgyBKMPjo/dKW+V/xZCnyIa9127zEVFQ3gm
-         hU8sgNV7VY7ED3jZkT88bleCgzp10Z67U9uU5L+f0NEaBxSJkw0QVTNvLEizsB8iNObP
-         Qq0DmS6X0e8t6hKibv3W/Qtt69rnUUijC75bh5A85dtQxDo2J2o5A4NKJDym12zzoBJg
-         V0Lln/t/riQfAO8SsunXVy0+Stu6wARpZghnCuyKdukqV+EHlOr0vS/OO35f50OrgPZ3
-         bMAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzzMQB9ePlTXfKEApwaNB9V/2QSMISDKWhSlu1A53AXoLogQTnmkx7B9XhX91MXzvVSK+N2z+2+fcEbDqG36xM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjUxWx1KhFD6YLr/QatXq5oP7x2CfkDonKsl8IzA/C7AdjBNLB
-	2JJNSasoxJ4rzqMDJcVDOiGLVbhYPi36BVumU40ywCy/tYV6bzBUE/8v8PnORkbxvx4=
-X-Gm-Gg: ASbGncufc48xOrRseIehsuppBKGk13dzJJeKujPy54/dyqcgKZzkbUkNtTLVF3loATU
-	mKMLlBg1U6nKHrSTSWAb1XAYjoNXYlCrP9hz90qjdV63rwHKs0L9BS8hu1SJzsf4UsSwFRWR8x+
-	v68qIz1aODHdhFg/eumHNL6UzWMYRgvvOOXoj5t3JKYKYIBkpp8CuhZQBbyTUNNCRTs8k5imQ0u
-	+Gfdff9nwJOZk/5LKADsitmthl7dWYoVW740zYLCj0TltLL0meGo7Rfga/BJaMwqUQw+6FvaGdl
-	gJW+cWHJQ6iZykBUS83Ep8LAaR1QiCUrDZuN+CbCFbqrGY0WAKqNSfRHgaOcdaitWERgdtD0BpD
-	pOHX52IIXumOwuHFxcrlY0UhSa6ipzUxzpw==
-X-Google-Smtp-Source: AGHT+IGMFHVCfgzqOUh+pGDLejurh3U7hp17R5KFUc6Wa/vTUBiH/N42R6EI9BDD6UgsghTGJU7GvA==
-X-Received: by 2002:a05:6402:2748:b0:61c:6855:d917 with SMTP id 4fb4d7f45d1cf-61c6855df51mr1226404a12.6.1756109526816;
-        Mon, 25 Aug 2025 01:12:06 -0700 (PDT)
-Received: from kuoka.. ([213.244.170.152])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c312a57e6sm4553003a12.14.2025.08.25.01.12.04
+        d=1e100.net; s=20230601; t=1756120804; x=1756725604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dJV3jDri6m2VUuuYgSnRwX/YqWPFzt/JBR2NM4x+YUY=;
+        b=eo4+dH4NKgnC9pKlKfsrSwziyv1odZs5Bld8gX6chP7pc+EOf2TNj+Xu9sBdNHm0XK
+         Gq41YvC10yCLuARK9liGkYlTY+reU5PlQ7y0jMEqtRYbtqy+C07HXDOq/ncEAOqD6YXU
+         YG7bRyemdtce+oLR67gcCnPqVyj2pWIssYhkKgbYlHLr9Sif/TNOI1miu3H15HsTe08u
+         EVDEfGoms1xcQuNxjON0habL/i0ZFRgDUqJ1InibueD6LaIi1Gis0E0KkdoVmU0kxL58
+         dyKI5g/fOR0mveFj9C00dkK3bkSLFVNrSQtUUr6hE3P5VZfQ0FbcQqhZ5VcR20+kqQED
+         o94Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUOIlrLQRTaVdf3EOCpVU4f00CfKox7HiXLa5sGHXeeeeXmPlv6KOHdY0rbL413JAH3YIPKFk8kRewxe7BefAc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVDxZIIc6Wv8e9ikFi5BbmbTu2MKmIKqkq7azPrz31zvg8uMOr
+	xEjU72zvqdFwKjVIx30Y/V9tv3pZ/hGR/YOCQyXfsS0Z8Cp3D33Um0JvIINgyA/V3C/W1IRkavE
+	yYdxzgAhlusoBiP2ExGrn9S24P+AwLfxKk8c/1JcU67L9KTgYsQaTGHRvyZh098zerBaQkCfq
+X-Gm-Gg: ASbGncvJc3kKXpeedoNaS8IKMxhVX2Qqf+IuhCot156eD6a6iRQld65YVTKmIAuCmti
+	xkm8NqCijETaGo4SnLuGf4WWRXryaYsneUtLlR1xEhm9REoK2wLzUhRX9Zg9MUXRKpGVzHn4v2H
+	3N5U1HlyW2QjGZbiD+7AgDIe0YLW3E+l2YPDHOSw9UvYKiBKl1vjQcAMcMVuY8OwisoqZ2kDsBZ
+	BjNXzLTdtuadE3NiYG9fUMFatAd4IBpVHwqxowIxcX4KWvqPw4FcaX3F/a0LIo+xjd0lfyb2ijR
+	vgobPN14p3LGQSFOegWO72ja7JvTMT4LK7FRDS6hVGtwRUTdoemmw5JehG7RGZzFXnI=
+X-Received: by 2002:a17:90b:2d81:b0:323:7e82:fcc with SMTP id 98e67ed59e1d1-32517b2c440mr12632737a91.36.1756120804089;
+        Mon, 25 Aug 2025 04:20:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFADtCNqrwyF4XQgGgh0eU5gCL1yvEMoXU9chdNpsVuvdTx4h1ybYpVZzRb8aHgMYQChzCWVA==
+X-Received: by 2002:a17:90b:2d81:b0:323:7e82:fcc with SMTP id 98e67ed59e1d1-32517b2c440mr12632698a91.36.1756120803496;
+        Mon, 25 Aug 2025 04:20:03 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254af5ed54sm6616168a91.20.2025.08.25.04.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 01:12:06 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Pengyu Luo <mitltlatltl@gmail.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jean Delvare <jdelvare@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Lee Jones <lee@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Cheng-Yi Chiang <cychiang@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tinghan Shen <tinghan.shen@mediatek.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mathew McBride <matt@traverse.com.au>
-Subject: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own directory
-Date: Mon, 25 Aug 2025 10:12:02 +0200
-Message-ID: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        Mon, 25 Aug 2025 04:20:03 -0700 (PDT)
+Date: Mon, 25 Aug 2025 16:49:56 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
+ IOMMU managed by Linux
+Message-ID: <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
+References: <20250819165447.4149674-12-mukesh.ojha@oss.qualcomm.com>
+ <aKWLZwYVPJBABhRI@linaro.org>
+ <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
+ <aKXQAoXZyR6SRPAA@linaro.org>
+ <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
+ <aKguXNGneBWqSMUe@linaro.org>
+ <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
+ <aKiaKwkpdKHSH9YS@linaro.org>
+ <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
+ <aKooCFoV3ZYwOMRx@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKooCFoV3ZYwOMRx@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDA0MyBTYWx0ZWRfX4ArkbRxXrKDi
+ uQ/C/vI+N7DUXpCk7TAH0Bc6g+XhMAAV4k034/Rvyj8eV9FO5lp7YBzSiAmM05S/VrJCmoVLedW
+ vAH9lirWak1EB6m18BOn20AMgdbhd9SrwWqdBZG4Wta67Eu7mXrv4rJdG+1hLTdGEBAR5XZOB3L
+ 3llNSR+BpEFjGTDX5nB+wK8HgLj9G+QI11YjZq4BF4nBUI5M6fyOTQkfOP0E+JGS8qvY85JS9zJ
+ 4EbYtLEp/bYwvQZ6G5OkmQp3WQTnOdq2+HaCmhKLZONSowMTFF0Kmf+bpi1a+LidnzAJh2GlZeA
+ /hMDX9nH4pmZXe6QNWvwFGg3iaUFOFug0VkI34J85RrDU+lCspBTpJYhHQnpiwHSiS9XVK9qRQi
+ aqzGWckq
+X-Proofpoint-ORIG-GUID: s4lgZfWfegoyMHxtRvH2RfceBdqg7flk
+X-Proofpoint-GUID: s4lgZfWfegoyMHxtRvH2RfceBdqg7flk
+X-Authority-Analysis: v=2.4 cv=W544VQWk c=1 sm=1 tr=0 ts=68ac46e5 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=qC_FGOx9AAAA:8 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=tj64Tp1_vSzIHxN01GgA:9 a=CjuIK1q_8ugA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22 a=fsdK_YakeE02zTmptMdW:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 clxscore=1015 suspectscore=0 phishscore=0
+ bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230043
 
-Move several embedded controller bindings (like ChromeOS EC, Gateworks
-System Controller and Kontron sl28cpld Board Management) to new
-subdirectory "embedded-controller" matching their purpose.
+On Sat, Aug 23, 2025 at 10:43:52PM +0200, Stephan Gerhold wrote:
+> On Fri, Aug 22, 2025 at 10:10:30PM +0530, Mukesh Ojha wrote:
+> > On Fri, Aug 22, 2025 at 06:26:19PM +0200, Stephan Gerhold wrote:
+> > > On Fri, Aug 22, 2025 at 08:36:11PM +0530, Mukesh Ojha wrote:
+> > > > On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
+> > > > > On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
+> > > > > > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
+> > > > > > >>>> +int iris_fw_init(struct iris_core *core)
+> > > > > > >>>> +{
+> > > > > > >>>> +	struct platform_device_info info;
+> > > > > > >>>> +	struct iommu_domain *iommu_dom;
+> > > > > > >>>> +	struct platform_device *pdev;
+> > > > > > >>>> +	struct device_node *np;
+> > > > > > >>>> +	int ret;
+> > > > > > >>>> +
+> > > > > > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
+> > > > > > >>>> +	if (!np)
+> > > > > > >>>> +		return 0;
+> > > > > > >>> You need a dt-bindings change for this as well. This is documented only
+> > > > > > >>> for Venus.
+> > > > > > >> You are right, wanted to send device tree and binding support separately.
+> > > > > > >> But if required, will add with the series in the next version.
+> > > > > > >>
+> > > > > > > You can send device tree changes separately, but dt-binding changes
+> > > > > > > always need to come before the driver changes.
+> > > > > > 
+> > > > > > Do you mean to update the examples section[1] with the firmware subnode,
+> > > > > > something similar to venus schema[2] ?
+> > > > > > 
+> > > > > 
+> > > > > Sorry, I missed the fact that the "video-firmware" subnode is already
+> > > > > documented for iris as well through qcom,venus-common.yaml (which is
+> > > > > included for qcom,sm8550-iris). I don't think it's strictly required to
+> > > > > add every possibility to the examples of the schema, since we'll also
+> > > > > have the actual DTBs later to test this part of the schema.
+> > > > > 
+> > > > > I would recommend to extend the description of the "video-firmware" node
+> > > > > in qcom,venus-common.yaml a bit. You do use the reset functionality of
+> > > > > TrustZone, so the description there doesn't fit for your use case.
+> > > > > 
+> > > > > I think we will also have to figure out how to handle the old
+> > > > > "ChromeOS"/"non_tz" use case (that resets Iris directly with the
+> > > > > registers) vs the EL2 PAS use case (that resets Iris in TZ but still
+> > > > > handles IOMMU from Linux). Simply checking for the presence of the
+> > > > > "video-firmware" node is not enough, because that doesn't tell us if the
+> > > > > PAS support is present in TZ.
+> > > > > 
+> > > > > I have been experimenting with a similar patch that copies the "non_tz"
+> > > > > code paths from Venus into Iris. We need this to upstream the Iris DT
+> > > > > patch for X1E without regressing the community-contributed x1-el2.dtso,
+> > > > > which doesn't have functional PAS when running in EL2.
+> > > > > 
+> > > > > Perhaps we could check for __qcom_scm_is_call_available() with the new
+> > > > > QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
+> > > > > or directly with the registers. I don't have a device with the new
+> > > > > firmware to verify if that works.
+> > > > 
+> > > > You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
+> > > > but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
+> > > > used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
+> > > > video-firmware's iommu property is also important.
+> > > > 
+> > > 
+> > > Yeah, this sounds good.
+> > > 
+> > > > > 
+> > > > > I'll try to send out my patch soon, so you can better see the context.
+> > > > 
+> > > > Are you saying that you are going to send patch to support IRIS on
+> > > > x1-el2.dtso in non-secure way i.e., non-PAS way.
+> > > > 
+> > > 
+> > > The background is the following: I have a pending patch to add iris to
+> > > x1e80100.dtsi, but that currently breaks x1-el2.dtso. My original plan
+> > > was to disable &iris in x1-el2.dtso (because the PAS way seems to be
+> > > just broken), but then I saw that e.g. sc7180-el2.dtso does have working
+> > > Venus with the "video-firmware" node. Copy-pasting the "no_tz"(/non-PAS)
+> > > code as-is from venus into iris works just fine for x1-el2.dtso, so
+> > > disabling &iris in x1-el2.dtso just because the "no_tz" code is
+> > > currently missing in iris doesn't sound right.
+> > > 
+> > > As far as I understand the approach you use in this series does not work
+> > > without the TZ changes for older platforms like X1E(?), so adding that
+> > > code in iris seems to be the best way to move forward.
+> > 
+> > Yes, this series has dependency on firmware and will not work for older
+> > platforms.
+> > 
+> > > 
+> > > I started working on a patch for this a while ago, it just needs a bit
+> > > more cleanup. I'll try to finish it up and post it so we can discuss it
+> > > further. I think the IOMMU management in my patch would even work as-is
+> > > for you, you would just need to toggle a boolean to use the PAS instead
+> > > of accessing the registers directly.
+> > 
+> > Sounds like a plan.
+> > Thanks, please cc me when you send the patches; So, I could test along
+> > with my changes and make dependency on it.
+> > 
+> 
+> Krzysztof raised the concern that we shouldn't model the IOMMU specifier
+> for the firmware using a "video-firmware" subnode [1], similar to the
+> discussion for the "non-pixel" subnode recently [2].
+> 
+> I mostly finished up the cleanup of my patch, but I don't see any point
+> in posting it without an alternative proposal for the dt-bindings. For
+> this case, I think a simple property like
+> 
+> 	firmware-iommus = <&apps_smmu ...>;
+> 
+> instead of
+> 
+> 	video-firmware {
+> 		iommus = <&apps_smmu ...>;
+> 	};
+> 
+> could perhaps work. (XYZ-iommus isn't standardized at the moment, but I
+> think something like XYZ-gpios would make sense in this case. There are
+> many other possible approaches as well though.)
+> 
+> Unfortunately, I won't have enough time in the next weeks to fully
+> implement and propose an alternative. I'm assuming you still have
+> ongoing work for supporting the "non-pixel" IOMMU, perhaps your new
+> approach can be adapted for video-firmware as well?
 
-An embedded controller (EC) is a discrete component that contains a
-microcontroller (i.e. a small CPU running a small firmware without
-operating system) mounted into a larger computer system running
-a fully fledged operating system that needs to utilize the embedded
-controller as part of its operation.
+I believe, non-pixel case a bit different and thats not depends on whether
+it is PAS or non-PAS.
 
-So far the EC bindings were split between "mfd" and "platform"
-directory.  MFD name comes from Linux, not hardware, and "platform" is a
-bit too generic.
+However, I liked the idea about introducing something similar to -gpios
+for -iommus as could pottentially solves at least this issue. Here, we need
+to create a platform device and its domain based on firmware-iommu
+property.
 
-Rename Gateworks GSC and Huawei Gaokun filenames to match compatible, as
-preferred for bindings.
+So, its required change in device link to put supplier/consumer dependency
+and addition of firmware-iommu binding for IRIS and little of changes
+over your existing changes.
 
-Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+But I have doubt, whether @Krzysztof would be fine with it ?
 
-Lee,
-Can you take it via MFD?
-There is a patch on the lists touching kontron,sl28cpld.
+> 
+> I've pushed my current patch to a branch in case it helps. It's similar
+> to yours, but it has no external dependencies except for a fix in iris
+> I sent recently ("media: iris: Fix firmware reference leak and unmap
+> memory after load" [3]). You could use the non-PAS use case as a basis
+> to add the initial implementation in iris independent of this larger
+> patch series.
 
-Changes in v3:
-1. Move more files from "platform" directory.
-2. Grow commit msg, based on feedback from Linus.
-3. Add Rb (patch changed, though).
+Thanks.
 
-Changes in v2:
-1. Correct remaining paths in other schemas ($ref and descriptions).
-2. Add Ack.
+> 
+> https://git.codelinaro.org/stephan.gerhold/linux/-/commit/1e068f5864d958ab9e807e6e3772b778cd0edea8.patch
+> 
+> For the PAS+IOMMU use case, it should be enough to set core->use_tz to
+> true, plus any changes needed for the SHM bridge (and maybe resource
+> table). The IOMMU management is independent from core->use_tz.
+> 
+> I'm also happy to add the non-PAS approach later on top of your changes,
+> whatever works best for you. :)
+> 
+> Thanks,
+> Stephan
+> 
+> [1]: https://lore.kernel.org/r/20250823155349.22344-2-krzysztof.kozlowski@linaro.org/
+> [2]: https://lore.kernel.org/r/20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com/T/
+> [3]: https://lore.kernel.org/r/20250818-iris-firmware-leak-v1-1-1e3f9b8d31ce@linaro.org/
 
-Cc: Mathew McBride <matt@traverse.com.au>
----
- .../{platform => embedded-controller}/acer,aspire1-ec.yaml  | 2 +-
- .../{mfd => embedded-controller}/google,cros-ec.yaml        | 2 +-
- .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}  | 2 +-
- .../huawei,gaokun3-ec.yaml}                                 | 2 +-
- .../{mfd => embedded-controller}/kontron,sl28cpld.yaml      | 2 +-
- .../lenovo,yoga-c630-ec.yaml                                | 2 +-
- .../microsoft,surface-sam.yaml                              | 2 +-
- .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml     | 2 +-
- .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml   | 2 +-
- .../interrupt-controller/kontron,sl28cpld-intc.yaml         | 2 +-
- .../devicetree/bindings/pwm/google,cros-ec-pwm.yaml         | 2 +-
- .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml       | 2 +-
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml   | 4 ++--
- .../devicetree/bindings/sound/google,cros-ec-codec.yaml     | 2 +-
- .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml  | 2 +-
- MAINTAINERS                                                 | 6 +++---
- 16 files changed, 19 insertions(+), 19 deletions(-)
- rename Documentation/devicetree/bindings/{platform => embedded-controller}/acer,aspire1-ec.yaml (94%)
- rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
- rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
- rename Documentation/devicetree/bindings/{platform/huawei,gaokun-ec.yaml => embedded-controller/huawei,gaokun3-ec.yaml} (97%)
- rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
- rename Documentation/devicetree/bindings/{platform => embedded-controller}/lenovo,yoga-c630-ec.yaml (95%)
- rename Documentation/devicetree/bindings/{platform => embedded-controller}/microsoft,surface-sam.yaml (92%)
-
-diff --git a/Documentation/devicetree/bindings/platform/acer,aspire1-ec.yaml b/Documentation/devicetree/bindings/embedded-controller/acer,aspire1-ec.yaml
-similarity index 94%
-rename from Documentation/devicetree/bindings/platform/acer,aspire1-ec.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/acer,aspire1-ec.yaml
-index 7cb0134134ff..01ee61768527 100644
---- a/Documentation/devicetree/bindings/platform/acer,aspire1-ec.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/acer,aspire1-ec.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/platform/acer,aspire1-ec.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/acer,aspire1-ec.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Acer Aspire 1 Embedded Controller
-diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/embedded-controller/google,cros-ec.yaml
-similarity index 99%
-rename from Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/google,cros-ec.yaml
-index 50f457090066..3ab5737c9a8f 100644
---- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/google,cros-ec.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/mfd/google,cros-ec.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/google,cros-ec.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: ChromeOS Embedded Controller
-diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml b/Documentation/devicetree/bindings/embedded-controller/gw,gsc.yaml
-similarity index 98%
-rename from Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/gw,gsc.yaml
-index dc379f3ebf24..82d4b2dadbae 100644
---- a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/gw,gsc.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/mfd/gateworks-gsc.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/gw,gsc.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Gateworks System Controller
-diff --git a/Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml b/Documentation/devicetree/bindings/embedded-controller/huawei,gaokun3-ec.yaml
-similarity index 97%
-rename from Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/huawei,gaokun3-ec.yaml
-index 4a03b0ee3149..cd9e65b6c2ea 100644
---- a/Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/huawei,gaokun3-ec.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/platform/huawei,gaokun-ec.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/huawei,gaokun3-ec.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Huawei Matebook E Go Embedded Controller
-diff --git a/Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml b/Documentation/devicetree/bindings/embedded-controller/kontron,sl28cpld.yaml
-similarity index 97%
-rename from Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/kontron,sl28cpld.yaml
-index 37207a97e06c..0b752f3baaa9 100644
---- a/Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/kontron,sl28cpld.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/mfd/kontron,sl28cpld.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/kontron,sl28cpld.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Kontron's sl28cpld board management controller
-diff --git a/Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml b/Documentation/devicetree/bindings/embedded-controller/lenovo,yoga-c630-ec.yaml
-similarity index 95%
-rename from Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/lenovo,yoga-c630-ec.yaml
-index 3180ce1a22d4..a029b38e8dc0 100644
---- a/Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/lenovo,yoga-c630-ec.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/platform/lenovo,yoga-c630-ec.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/lenovo,yoga-c630-ec.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Lenovo Yoga C630 Embedded Controller.
-diff --git a/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml b/Documentation/devicetree/bindings/embedded-controller/microsoft,surface-sam.yaml
-similarity index 92%
-rename from Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
-rename to Documentation/devicetree/bindings/embedded-controller/microsoft,surface-sam.yaml
-index b33d26f15b2a..9202cfca0b35 100644
---- a/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
-+++ b/Documentation/devicetree/bindings/embedded-controller/microsoft,surface-sam.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/platform/microsoft,surface-sam.yaml#
-+$id: http://devicetree.org/schemas/embedded-controller/microsoft,surface-sam.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Surface System Aggregator Module (SAM, SSAM)
-diff --git a/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml b/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
-index b032471831e7..02663d67eac7 100644
---- a/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
-@@ -11,7 +11,7 @@ maintainers:
- 
- description: |
-   This module is part of the sl28cpld multi-function device. For more
--  details see ../mfd/kontron,sl28cpld.yaml.
-+  details see ../embedded-controller/kontron,sl28cpld.yaml.
- 
-   There are three flavors of the GPIO controller, one full featured
-   input/output with interrupt support (kontron,sl28cpld-gpio), one
-diff --git a/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
-index 010333cb25c0..5803a1770cad 100644
---- a/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
-@@ -11,7 +11,7 @@ maintainers:
- 
- description: |
-   This module is part of the sl28cpld multi-function device. For more
--  details see ../mfd/kontron,sl28cpld.yaml.
-+  details see ../embedded-controller/kontron,sl28cpld.yaml.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
-index e8dfa6507f64..87df07beda59 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
-@@ -11,7 +11,7 @@ maintainers:
- 
- description: |
-   This module is part of the sl28cpld multi-function device. For more
--  details see ../mfd/kontron,sl28cpld.yaml.
-+  details see ../embedded-controller/kontron,sl28cpld.yaml.
- 
-   The following interrupts are available. All types and levels are fixed
-   and handled by the board management controller.
-diff --git a/Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.yaml b/Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.yaml
-index f7bc84b05a87..8f5a468cfb91 100644
---- a/Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.yaml
-@@ -14,7 +14,7 @@ description: |
-   Google's ChromeOS EC PWM is a simple PWM attached to the Embedded Controller
-   (EC) and controlled via a host-command interface.
-   An EC PWM node should be only found as a sub-node of the EC node (see
--  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml).
-+  Documentation/devicetree/bindings/embedded-controller/google,cros-ec.yaml).
- 
- allOf:
-   - $ref: pwm.yaml#
-diff --git a/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml b/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
-index 981cfec53f37..19a9d2e15a96 100644
---- a/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
-@@ -11,7 +11,7 @@ maintainers:
- 
- description: |
-   This module is part of the sl28cpld multi-function device. For more
--  details see ../mfd/kontron,sl28cpld.yaml.
-+  details see ../embedded-controller/kontron,sl28cpld.yaml.
- 
-   The controller supports one PWM channel and supports only four distinct
-   frequencies (250Hz, 500Hz, 1kHz, 2kHz).
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index adc6b3f36fde..179c98b33b4d 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -58,7 +58,7 @@ properties:
-     maxItems: 1
- 
-   cros-ec-rpmsg:
--    $ref: /schemas/mfd/google,cros-ec.yaml
-+    $ref: /schemas/embedded-controller/google,cros-ec.yaml
-     description:
-       This subnode represents the rpmsg device. The properties
-       of this node are defined by the individual bindings for
-@@ -126,7 +126,7 @@ patternProperties:
-         maxItems: 1
- 
-       cros-ec-rpmsg:
--        $ref: /schemas/mfd/google,cros-ec.yaml
-+        $ref: /schemas/embedded-controller/google,cros-ec.yaml
-         description:
-           This subnode represents the rpmsg device. The properties
-           of this node are defined by the individual bindings for
-diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-index 1434f4433738..dd51e8c5b8c2 100644
---- a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-+++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-@@ -15,7 +15,7 @@ description: |
-   Embedded Controller (EC) and is controlled via a host-command
-   interface.  An EC codec node should only be found inside the "codecs"
-   subnode of a cros-ec node.
--  (see Documentation/devicetree/bindings/mfd/google,cros-ec.yaml).
-+  (see Documentation/devicetree/bindings/embedded-controller/google,cros-ec.yaml).
- 
- allOf:
-   - $ref: dai-common.yaml#
-diff --git a/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml b/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
-index 179272f74de5..872a8471ef65 100644
---- a/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
-@@ -11,7 +11,7 @@ maintainers:
- 
- description: |
-   This module is part of the sl28cpld multi-function device. For more
--  details see ../mfd/kontron,sl28cpld.yaml.
-+  details see ../embedded-controller/kontron,sl28cpld.yaml.
- 
- allOf:
-   - $ref: watchdog.yaml#
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7969d09dff17..ef41ae022a36 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10129,7 +10129,7 @@ F:	drivers/media/i2c/gc2145.c
- GATEWORKS SYSTEM CONTROLLER (GSC) DRIVER
- M:	Tim Harvey <tharvey@gateworks.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
-+F:	Documentation/devicetree/bindings/embedded-controller/gw,gsc.yaml
- F:	Documentation/hwmon/gsc-hwmon.rst
- F:	drivers/hwmon/gsc-hwmon.c
- F:	drivers/mfd/gateworks-gsc.c
-@@ -11300,7 +11300,7 @@ F:	drivers/net/ethernet/huawei/hinic3/
- HUAWEI MATEBOOK E GO EMBEDDED CONTROLLER DRIVER
- M:	Pengyu Luo <mitltlatltl@gmail.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/platform/huawei,gaokun-ec.yaml
-+F:	Documentation/devicetree/bindings/embedded-controller/huawei,gaokun3-ec.yaml
- F:	drivers/platform/arm64/huawei-gaokun-ec.c
- F:	drivers/power/supply/huawei-gaokun-battery.c
- F:	drivers/usb/typec/ucsi/ucsi_huawei_gaokun.c
-@@ -23177,10 +23177,10 @@ F:	drivers/usb/misc/sisusbvga/
- SL28 CPLD MFD DRIVER
- M:	Michael Walle <mwalle@kernel.org>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/embedded-controller/kontron,sl28cpld.yaml
- F:	Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
- F:	Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
--F:	Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
- F:	Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
- F:	Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
- F:	drivers/gpio/gpio-sl28cpld.c
 -- 
-2.48.1
-
+-Mukesh Ojha
