@@ -1,51 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729C5211C;
-	Tue, 26 Aug 2025 20:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025826D4DD;
+	Tue, 26 Aug 2025 23:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756238946; cv=none; b=Xw7IMkmTwz0zrGPyv7s5ng1ksxudCCbwySX98qp8u7kQX8icK0gTroZ2D5clff26dvNH4ZpdFekJT2rstwfIgYIepR2UgqUOH/uHYsYeYtmKWz+1/CCtIMQd2qZo+W6A4hPCgub9Uw+XnmrzouWo2gopHBQZfIl/pmOHjoatETE=
+	t=1756252245; cv=none; b=Q7CW4RzwrX91TF9kjJq8eEbkStdgcxrxMjfv3fjVf50SYC4A9D/+D3t6zKwhjtrtlnxp2cN9fU6Zn1EqSzIj+uPtb/8EsvbVKL/2OtYP4+6BwCk4JASUr53pFpxEcBB6UOsGOyYACTNwGzu7+tGq71DMUV0/ZnLflq4u5co0uyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756238946; c=relaxed/simple;
-	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
+	s=arc-20240116; t=1756252245; c=relaxed/simple;
+	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBEGLMRc1N/IptR+Hfq9kvKb+0KvAIRGhH49Ti338nsavxok8tmPJ6yjhdLLhgEUe9VtBDJz4QLMG39lv/BpsJw56dCQkewjH414Hh1iCHsdG+yHmWfuXs2nWHYzcS20oum1XbdcJEN/vVP0pgjLohsg8qG5YVFaJCrLyKg/hDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rsze/N9t; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJaeeNxkprsmccTyyeJIBp56PiKBH6On4kyqx08MY6TqZFwpiv05fpaIs1AyEb19Qzr1lg0nEVI4oCTpMKM87lBoHdWjK3Nvdj+2MwqkaKsB86WhRIZz41T/IZYpY5DRAkV84REITSw9Epsvl7S/GwcAbYDQq5Bch4k/a5kkuQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku2eS2aL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rsze/N9t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA1AC4CEF1;
-	Tue, 26 Aug 2025 20:09:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku2eS2aL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91F3C4CEF1;
+	Tue, 26 Aug 2025 23:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756238945;
-	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
+	s=k20201202; t=1756252245;
+	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rsze/N9tQPzXjNLqiKo/xJtWAqCNAVk3sr4XHPf755WUo82wNXx9PTkEMrWRq1uBI
-	 8UNuaJdpCWxB/fpnvFIJW5YM2VVLdH7nXkRSXRHTeyRhCGRQAlFfrP0684iNyWY3pz
-	 zK+RDB3Q6k1xR3nyG37s5imD22axHTdFaqAdpoXrtQaugje8iVFo1lFp4nAEAOs9cT
-	 2egbEcuTbBBU6WfsKkFhBlLL130t/V3VqFEnCqhNWhnG8WrTkuqoYCK5YbN7WsD60b
-	 jxS/3iDWzefeMq6U4Fr/AdEmLEeEruKsW2AGRbPzMsIY2WKvEY4F/xqoTAOAplHEIp
-	 dXBKIEF0FCieg==
-Date: Tue, 26 Aug 2025 15:09:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	b=ku2eS2aLuk2BO85gltgp9fViBt3A7nXYGIzz3ko+3i02BU56tWHBUt7SqU2nURtEN
+	 XBBLjuym5594eRddN8//2A0hIq9YGE3uJyHGblP1kjOj68phQ1DzZczKcjxA+BYH7m
+	 beuxjpqZ1t3NkKzgfPTOjhOisGGViCwrEjzxf5/EchC01qkp/d/r0yRVVVq5e9D4ra
+	 9iyKZSacjOMQZjnsjMUDUS7FZcVzPkmSyZlv8uUTxMLQ55Ro7lB9BFk8KSd1dsWumX
+	 ZZ+S+nCkt7tGurJCOCifKfd1hsdFyeaBfVGIOUwIwszL5KLRmkt2m3Rz7ePoD+ElMf
+	 wfPZvM216LTww==
+Date: Tue, 26 Aug 2025 18:50:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-watchdog@vger.kernel.org,
+	Mathew McBride <matt@traverse.com.au>,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Walle <mwalle@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Nikita Travkin <nikita@trvn.ru>,
+	Guenter Roeck <groeck@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Brown <broonie@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <20250826200904.GA375876-robh@kernel.org>
-References: <20250818204420.794554-1-shenwei.wang@nxp.com>
- <20250818204420.794554-2-shenwei.wang@nxp.com>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-sound@vger.kernel.org,
+	Cheng-Yi Chiang <cychiang@chromium.org>,
+	linux-hwmon@vger.kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Pengyu Luo <mitltlatltl@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>,
+	linux-pwm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: Re: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own
+ directory
+Message-ID: <175625224288.764159.13881647192010727208.robh@kernel.org>
+References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -54,173 +73,72 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818204420.794554-2-shenwei.wang@nxp.com>
+In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
 
-On Mon, Aug 18, 2025 at 03:44:17PM -0500, Shenwei Wang wrote:
-> Remote processors may announce multiple devices (e.g., I2C, GPIO) over
-> an RPMSG channel. These devices may require corresponding device tree
-> nodes, especially when acting as providers, to supply phandles for their
-> consumers.
-> 
-> Define an RPMSG node to work as a container for a group of RPMSG channels
-> under the imx_rproc node.
-> 
-> Each subnode within "rpmsg" represents an individual RPMSG channel. The
-> name of each subnode corresponds to the channel name as defined by the
-> remote processor.
-> 
-> All remote devices associated with a given channel are defined as child
-> nodes under the corresponding channel node.
 
-How is each channel addressed? Are they really grouped by type first 
-(i2c, gpio, etc.) then an address within the group? Or is there some 
-flat channel numbering? If the latter, then the addresses in the DT 
-shoulc match the channel number.
-
+On Mon, 25 Aug 2025 10:12:02 +0200, Krzysztof Kozlowski wrote:
+> Move several embedded controller bindings (like ChromeOS EC, Gateworks
+> System Controller and Kontron sl28cpld Board Management) to new
+> subdirectory "embedded-controller" matching their purpose.
 > 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> An embedded controller (EC) is a discrete component that contains a
+> microcontroller (i.e. a small CPU running a small firmware without
+> operating system) mounted into a larger computer system running
+> a fully fledged operating system that needs to utilize the embedded
+> controller as part of its operation.
+> 
+> So far the EC bindings were split between "mfd" and "platform"
+> directory.  MFD name comes from Linux, not hardware, and "platform" is a
+> bit too generic.
+> 
+> Rename Gateworks GSC and Huawei Gaokun filenames to match compatible, as
+> preferred for bindings.
+> 
+> Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 117 ++++++++++++++++++
->  1 file changed, 117 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index 57d75acb0b5e..a105aac798d0 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -84,6 +84,86 @@ properties:
->        This property is to specify the resource id of the remote processor in SoC
->        which supports SCFW
->  
-> +  rpmsg:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Present a group of RPMSG channel devices.
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +      rpmsg-io-channel:
-> +        type: object
-> +        unevaluatedProperties: false
-> +        properties:
-> +          '#address-cells':
-> +            const: 1
-> +
-> +          '#size-cells':
-> +            const: 0
-> +
-> +        patternProperties:
-> +          "gpio@[0-9a-f]+$":
-> +            type: object
-> +            unevaluatedProperties: false
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - fsl,imx-rpmsg-gpio
-> +
-> +              reg:
-> +                maxItems: 1
-> +
-> +            required:
-> +              - compatible
-> +              - reg
-> +
-> +            allOf:
-> +              - $ref: /schemas/gpio/gpio.yaml#
-> +              - $ref: /schemas/interrupt-controller.yaml#
-
-This is not needed nor sufficient. You need to define the cell sizes for 
-gpio and interrupt cells.
-
-> +
-> +        required:
-> +          - '#address-cells'
-> +          - '#size-cells'
-> +
-> +      rpmsg-i2c-channel:
-> +        type: object
-> +        unevaluatedProperties: false
-> +        properties:
-> +          '#address-cells':
-> +            const: 1
-> +
-> +          '#size-cells':
-> +            const: 0
-> +
-> +        patternProperties:
-> +          "i2c@[0-9a-f]+$":
-> +            type: object
-> +            unevaluatedProperties: false
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - fsl,imx-rpmsg-i2c
-> +
-> +              reg:
-> +                maxItems: 1
-> +
-> +            required:
-> +              - compatible
-> +              - reg
-> +
-> +            allOf:
-> +              - $ref: /schemas/i2c/i2c-controller.yaml#
-> +
-> +        required:
-> +          - '#address-cells'
-> +          - '#size-cells'
-> +
->  required:
->    - compatible
->  
-> @@ -146,5 +226,42 @@ examples:
->                  &mu 3 1>;
->        memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
->        syscon = <&src>;
-> +
-> +      rpmsg {
-> +        rpmsg-io-channel {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          gpio@0 {
-> +            compatible = "fsl,imx-rpmsg-gpio";
-> +            reg = <0>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +            interrupt-parent = <&rpmsg_gpioa>;
-> +          };
-> +
-> +          gpio@1 {
-> +            compatible = "fsl,imx-rpmsg-gpio";
-> +            reg = <1>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +            interrupt-parent = <&rpmsg_gpiob>;
-> +          };
-> +        };
-> +
-> +        rpmsg-i2c-channel {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          i2c@0 {
-> +            compatible = "fsl,imx-rpmsg-i2c";
-> +            reg = <0>;
-> +          };
-> +        };
-> +      };
->      };
->  ...
-> -- 
-> 2.43.0
+> Lee,
+> Can you take it via MFD?
+> There is a patch on the lists touching kontron,sl28cpld.
 > 
+> Changes in v3:
+> 1. Move more files from "platform" directory.
+> 2. Grow commit msg, based on feedback from Linus.
+> 3. Add Rb (patch changed, though).
+> 
+> Changes in v2:
+> 1. Correct remaining paths in other schemas ($ref and descriptions).
+> 2. Add Ack.
+> 
+> Cc: Mathew McBride <matt@traverse.com.au>
+> ---
+>  .../{platform => embedded-controller}/acer,aspire1-ec.yaml  | 2 +-
+>  .../{mfd => embedded-controller}/google,cros-ec.yaml        | 2 +-
+>  .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}  | 2 +-
+>  .../huawei,gaokun3-ec.yaml}                                 | 2 +-
+>  .../{mfd => embedded-controller}/kontron,sl28cpld.yaml      | 2 +-
+>  .../lenovo,yoga-c630-ec.yaml                                | 2 +-
+>  .../microsoft,surface-sam.yaml                              | 2 +-
+>  .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml     | 2 +-
+>  .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml   | 2 +-
+>  .../interrupt-controller/kontron,sl28cpld-intc.yaml         | 2 +-
+>  .../devicetree/bindings/pwm/google,cros-ec-pwm.yaml         | 2 +-
+>  .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml       | 2 +-
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml   | 4 ++--
+>  .../devicetree/bindings/sound/google,cros-ec-codec.yaml     | 2 +-
+>  .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml  | 2 +-
+>  MAINTAINERS                                                 | 6 +++---
+>  16 files changed, 19 insertions(+), 19 deletions(-)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/acer,aspire1-ec.yaml (94%)
+>  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
+>  rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
+>  rename Documentation/devicetree/bindings/{platform/huawei,gaokun-ec.yaml => embedded-controller/huawei,gaokun3-ec.yaml} (97%)
+>  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/lenovo,yoga-c630-ec.yaml (95%)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/microsoft,surface-sam.yaml (92%)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
