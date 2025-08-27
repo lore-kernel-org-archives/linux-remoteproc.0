@@ -1,144 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025826D4DD;
-	Tue, 26 Aug 2025 23:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E13725C6F1
+	for <linux-remoteproc@vger.kernel.org>; Wed, 27 Aug 2025 10:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756252245; cv=none; b=Q7CW4RzwrX91TF9kjJq8eEbkStdgcxrxMjfv3fjVf50SYC4A9D/+D3t6zKwhjtrtlnxp2cN9fU6Zn1EqSzIj+uPtb/8EsvbVKL/2OtYP4+6BwCk4JASUr53pFpxEcBB6UOsGOyYACTNwGzu7+tGq71DMUV0/ZnLflq4u5co0uyc=
+	t=1756289639; cv=none; b=TfI9XtKJkEMZyCk8ZtsjysYidL+kwUb7a6MFgpIbGYuFG4grOBeTV/Z85e9LgszwnzpCgRgJXWqUfX25DnrD5oJDZ92chMwNvZfcxJaREQPQVXVYPkoO8XQE5cyB21JNB6wEJT/OO3jS7yQBbkc0IrEmIGxpAZ2BlSg6AXmIWcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756252245; c=relaxed/simple;
-	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJaeeNxkprsmccTyyeJIBp56PiKBH6On4kyqx08MY6TqZFwpiv05fpaIs1AyEb19Qzr1lg0nEVI4oCTpMKM87lBoHdWjK3Nvdj+2MwqkaKsB86WhRIZz41T/IZYpY5DRAkV84REITSw9Epsvl7S/GwcAbYDQq5Bch4k/a5kkuQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku2eS2aL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756289639; c=relaxed/simple;
+	bh=7zvrItd6lF7DhWRHMFACpJHxtADzo3yZV9OaBF0xCkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NTZc8VQKaBxpwYQ4s/1KDU+uEWWPQdbBMOwtKw8HSDIdGJDVS7WLcx34mP6kdRDREGh8hQIMaoc1LKH3f0N86gOJB7aViaSTVBOqI4O91BLypSLtfyO/B8+bdOHhuQWWQIhWQCmU3XuHC3jEWS4fieI1jHk7pxjuboEXzDVW0sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XGKDRchi; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku2eS2aL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91F3C4CEF1;
-	Tue, 26 Aug 2025 23:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756252245;
-	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ku2eS2aLuk2BO85gltgp9fViBt3A7nXYGIzz3ko+3i02BU56tWHBUt7SqU2nURtEN
-	 XBBLjuym5594eRddN8//2A0hIq9YGE3uJyHGblP1kjOj68phQ1DzZczKcjxA+BYH7m
-	 beuxjpqZ1t3NkKzgfPTOjhOisGGViCwrEjzxf5/EchC01qkp/d/r0yRVVVq5e9D4ra
-	 9iyKZSacjOMQZjnsjMUDUS7FZcVzPkmSyZlv8uUTxMLQ55Ro7lB9BFk8KSd1dsWumX
-	 ZZ+S+nCkt7tGurJCOCifKfd1hsdFyeaBfVGIOUwIwszL5KLRmkt2m3Rz7ePoD+ElMf
-	 wfPZvM216LTww==
-Date: Tue, 26 Aug 2025 18:50:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-watchdog@vger.kernel.org,
-	Mathew McBride <matt@traverse.com.au>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Guenter Roeck <groeck@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-sound@vger.kernel.org,
-	Cheng-Yi Chiang <cychiang@chromium.org>,
-	linux-hwmon@vger.kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>, linux-gpio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XGKDRchi"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso57965885e9.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Aug 2025 03:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756289636; x=1756894436; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cFHfv4BgFFf6UjrjZCzlbsHb0+jz7Jlyk/zxyT76xO4=;
+        b=XGKDRchiy2N7qzjFIJSPjgHAUVf/aKOnuZFiZvpRpwuLrz79bOgFcFRqGHdG/g0lE+
+         hj1iDsRZk5p5TzFZiV2EwLAbqIJAXcilODWYDoqhnoqNe5Dv1F2Q9duXMhN9oOJEZvrE
+         1WI8biYKr0T8SPwESI/I8WOhxRy5r1UwkJdTvFFC7hI7wSRFerDfk0R2ceMIWSqAOcMS
+         DxcZnGuoT81slK811cugw1xPoePaldpOKG00gvcXXMjHcn7YSuM3TI2Z7ki6Yi8zNu7G
+         7UzyIDzQfCg1Zl0LVLLmDg8HDMMASnkDUR8V0p8VDGJfGI0yTXR8qwOYQvIalmm3ULwj
+         juzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756289636; x=1756894436;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cFHfv4BgFFf6UjrjZCzlbsHb0+jz7Jlyk/zxyT76xO4=;
+        b=AZ9C/3/iJwnBq48mXT+iMut0qXedJ0cBEMJ9OIgCMzeocT26dcmeZirQOIOMga8/0E
+         CUIPy0Ci4tf6pzO/FgqiHbFrbCC/veMo0kqsXDxGRZKQJfBY3Lm6vDWvAdYLwcCmyRt1
+         VZEl7KS3Y2R3UBTat2zkbXwoficBm7JwlqzVjw8g7LfEEgSaYjoK/mwYMiN+8+/G99j2
+         5J4anrG2vT5DP8OmcZ2Qi40S9vpC0ccFekdFCXnW7ydbpdpoaDVr2IOGhtmdQGyDUp/I
+         0vgUXRM8Z2cpvSFnQ+ThDapxtFi0Sekxca0hCRpgbHPZ8M3NlZMnG5VRPugYmviYKbo+
+         AREA==
+X-Forwarded-Encrypted: i=1; AJvYcCVE10d/eigyzbdi4bN3BICsLYRdYEcXjLBBzY+In/1D1wg/hnoUxybXsediMNKlPGCXhvmt199gpqYdFJb9nFwk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyal35WaU7jHgkUefV60wTVmKmYo7h7B9LsPZB25tk2h2GOt7uz
+	im4CggsrKPpKA/z9vyAoHSiMjncDS9Uk9d0jmrd8kWlKJhSZAlo/DcGdpeLKeOMZXn8=
+X-Gm-Gg: ASbGnctSnnV8JBHNDZjrNQKv3W4pbnFgkDYyRLuI9tcfVGFXNrd7z5wwpWMQagQVrsq
+	jpv5gtdB9wF6zRST5WppM4W4KmdW405Z1ah6bcts/N2xmlLT9evQBIRn3BotaCipaR2gYO+7c9L
+	2HpIfSlnPgBg9bb1gjg2JTBP4nwk+Tb8cPT0g6tGNBvkjgogAczretTtjTHtmjMPEvUzOQJ9fQw
+	jVzduCxHsdMMxfcPlUFXfvqKgQP8/Pk+X1NA/tY/lBiY4ciQlZGhqeBgM9ULeuslUonnZ4XpZ05
+	wGGWzgqyH6qCOBpB/zkfkwICIRhq1pOtluEfQ+yKdTlYdsp43TQqyZoq3kAJDn63V59leOKya+J
+	kNUWRL3d+PtRkskTeXsIJ+R8/+/ntFYViMnCipCz4LS1DRM9HrA9CLla8hy5gvEw//tlPVl5nJt
+	MxPPI8jOaHB6ObxRwu
+X-Google-Smtp-Source: AGHT+IHpy82kDFbawOUYQ7LQKwjjk9cJ9CSb6+MrqfxOmu2ab2pw0XNrTRDxvK7P/73HdRFHaFAj9g==
+X-Received: by 2002:a05:600c:1f83:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-45b517ad803mr163924265e9.10.1756289636196;
+        Wed, 27 Aug 2025 03:13:56 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm2700425f8f.52.2025.08.27.03.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:13:55 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	ulf.hansson@linaro.org,
+	rafael@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
 	linux-remoteproc@vger.kernel.org,
-	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>,
-	linux-pwm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: Re: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own
- directory
-Message-ID: <175625224288.764159.13881647192010727208.robh@kernel.org>
-References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] rpmsg: core: Drop dev_pm_domain_detach() call
+Date: Wed, 27 Aug 2025 13:13:52 +0300
+Message-ID: <20250827101352.927542-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Mon, 25 Aug 2025 10:12:02 +0200, Krzysztof Kozlowski wrote:
-> Move several embedded controller bindings (like ChromeOS EC, Gateworks
-> System Controller and Kontron sl28cpld Board Management) to new
-> subdirectory "embedded-controller" matching their purpose.
-> 
-> An embedded controller (EC) is a discrete component that contains a
-> microcontroller (i.e. a small CPU running a small firmware without
-> operating system) mounted into a larger computer system running
-> a fully fledged operating system that needs to utilize the embedded
-> controller as part of its operation.
-> 
-> So far the EC bindings were split between "mfd" and "platform"
-> directory.  MFD name comes from Linux, not hardware, and "platform" is a
-> bit too generic.
-> 
-> Rename Gateworks GSC and Huawei Gaokun filenames to match compatible, as
-> preferred for bindings.
-> 
-> Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> 
-> Lee,
-> Can you take it via MFD?
-> There is a patch on the lists touching kontron,sl28cpld.
-> 
-> Changes in v3:
-> 1. Move more files from "platform" directory.
-> 2. Grow commit msg, based on feedback from Linus.
-> 3. Add Rb (patch changed, though).
-> 
-> Changes in v2:
-> 1. Correct remaining paths in other schemas ($ref and descriptions).
-> 2. Add Ack.
-> 
-> Cc: Mathew McBride <matt@traverse.com.au>
-> ---
->  .../{platform => embedded-controller}/acer,aspire1-ec.yaml  | 2 +-
->  .../{mfd => embedded-controller}/google,cros-ec.yaml        | 2 +-
->  .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}  | 2 +-
->  .../huawei,gaokun3-ec.yaml}                                 | 2 +-
->  .../{mfd => embedded-controller}/kontron,sl28cpld.yaml      | 2 +-
->  .../lenovo,yoga-c630-ec.yaml                                | 2 +-
->  .../microsoft,surface-sam.yaml                              | 2 +-
->  .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml     | 2 +-
->  .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml   | 2 +-
->  .../interrupt-controller/kontron,sl28cpld-intc.yaml         | 2 +-
->  .../devicetree/bindings/pwm/google,cros-ec-pwm.yaml         | 2 +-
->  .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml       | 2 +-
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml   | 4 ++--
->  .../devicetree/bindings/sound/google,cros-ec-codec.yaml     | 2 +-
->  .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml  | 2 +-
->  MAINTAINERS                                                 | 6 +++---
->  16 files changed, 19 insertions(+), 19 deletions(-)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/acer,aspire1-ec.yaml (94%)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
->  rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
->  rename Documentation/devicetree/bindings/{platform/huawei,gaokun-ec.yaml => embedded-controller/huawei,gaokun3-ec.yaml} (97%)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/lenovo,yoga-c630-ec.yaml (95%)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/microsoft,surface-sam.yaml (92%)
-> 
+Starting with commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()"), there is no longer a need to call
+dev_pm_domain_detach() in the bus remove function. The
+device_unbind_cleanup() function now handles this to avoid
+invoking devres cleanup handlers while the PM domain is
+powered off, which could otherwise lead to failures as
+described in the above-mentioned commit.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Drop the explicit dev_pm_domain_detach() call and rely instead
+on the flags passed to dev_pm_domain_attach() to power off the
+domain.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/rpmsg/rpmsg_core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index bece5e635ee9..5d661681a9b6 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -479,7 +479,8 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct rpmsg_endpoint *ept = NULL;
+ 	int err;
+ 
+-	err = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	err = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (err)
+ 		goto out;
+ 
+@@ -538,8 +539,6 @@ static void rpmsg_dev_remove(struct device *dev)
+ 	if (rpdrv->remove)
+ 		rpdrv->remove(rpdev);
+ 
+-	dev_pm_domain_detach(dev, true);
+-
+ 	if (rpdev->ept)
+ 		rpmsg_destroy_ept(rpdev->ept);
+ }
+-- 
+2.43.0
 
