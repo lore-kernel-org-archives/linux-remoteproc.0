@@ -1,163 +1,270 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4ED1E4AE;
-	Wed,  3 Sep 2025 14:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03630AAB1
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 14:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909435; cv=none; b=QAaQ5RgzV0mghDQh1rx+0GHmrMa0EVkr03j2XERq6RrgN2+vSQTEzd/E26kllb+tPHQPfE8K1bExIa+SPeo/Jt4ar+idfY29aJAOH4IS+ty/vGzB4X6fuFoOB/v98Bnm16GxQjn4AswUpGkDmKYyGx9KJOTG3a4Bh/DmQdwVJIQ=
+	t=1756909691; cv=none; b=tPRWrx99eopk5srcWnjx7NygVcvREddeXnNgiKFA7UpOaj2U5tA5fakaEr5Jbbhhw/pcQGpSBGGLrnwZFFe3d2IIF7n1RBrUsw+TaGcZdFUK2fLgfbMdqYxmLHyFP+RGIjDeFmfQGp/wgaMwkAt342MJRblZMWl68LXwl0YBLR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909435; c=relaxed/simple;
-	bh=RH0JXllZP6MZUtbdIyvnSL6xOTZGtSyzuKbcwgJZhZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZuBITg9tBDuaXaAvrqeuZLLC6KcT/oGYdwyNyyCoRFZ0kbhFXeACRmrstORFQoRH9x+AGHT2JMy/NwMtAGWyJK8lfz9A1kOI8u1d6fe+/op2MD+rMnyTZHcPT7anzwX/YVJsivIcEj68oe9WWHCxecgudDYtybBjb7f3AWsZJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGiphPDg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756909691; c=relaxed/simple;
+	bh=5NUgSP3WjLO6mB8O6hOC8kcnm9SKM1MNi4rpwYI8aGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MtLZM/bDNU2cIRGoUiJDzzlrIls0uTpXs3CEvB0ROG4bjVPgJGgd6zHQ6rn1m9fbEw50oiV94mGldetw7PHQ2hSavAOZYLJgvVjHywBE4ti0cZo7BcD227UJX0A1qEA68Qdl3HMEkFbS/ReVN55P/tmYvVelBaKJPU3crdNMl+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C3a5ReiB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGiphPDg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8677FC4CEE7;
-	Wed,  3 Sep 2025 14:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756909434;
-	bh=RH0JXllZP6MZUtbdIyvnSL6xOTZGtSyzuKbcwgJZhZ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uGiphPDg6pqRYghg8mQ3iJf9rZTGTJvVgt56Ntji54toOVqzoEMmxeFzOPC0It7R8
-	 33TOcKwEnNxlz54A8OS7qkEGg/j5U7pOgUnTYAJ6lnjSQGSjv5hb240/CXNXCQCxND
-	 5W9UEdnq33hwParQ+7Ynp9e0qFQPgl1z1gs+Bkrm8B+Kc5kqNQHMJXaOEgp4Tkb34D
-	 lejn1a6pGiHPxyVsO5l6uTwf2ROY+9cfxMLtdZlud4b9vFoLCpGkUP3BuA6FmrHVOk
-	 6HT2/7tKocLDXCApRo3xnxsNBwxsj7IHGMT9FXqqmU80u9FtnyHtjTQ/vY3TU30Bkx
-	 yQjRdEjmbZcFQ==
-Message-ID: <9c2a863c-0c8a-4563-a58d-d59112ac45a8@kernel.org>
-Date: Wed, 3 Sep 2025 16:23:44 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C3a5ReiB"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Dwsm2032507
+	for <linux-remoteproc@vger.kernel.org>; Wed, 3 Sep 2025 14:28:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L4ipgqdEgcAXkAp5KqyDjRVuxiPGqDPMl7pw6aWThFg=; b=C3a5ReiBCOLW45Gc
+	HjTLXDz+uHmjYXpAGTUvy97HeadWf+ADlF7fCAGMTimG9UG6XKIqthGVtSAFHe6u
+	B1KNG4GT2a5JGBdzr5IYJ+mIAsYLs+qwhnRHCODe54iyH+sCY+qlqCPldruc+qtv
+	CR/SxEJ059yU1CxwDHEJ5MaZLVIq5QyTWG5IoMHbmdxqOtRkuOUjuy1HIskiMlZL
+	CxXG6EHt+Ha8IaCPOSadBSq1YC7q62Lr20RJQuslSgewzmiNZYAKOrFmpcWn8hA2
+	yqPZAnR2CscGnP+G8qwv0U2P5d5Uqev/PKxU8cFaOs2mOOVp05hmbu9F/rDMnSla
+	LVbOGA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush33vpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 14:28:09 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b335bd70b8so47229491cf.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 07:28:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756909688; x=1757514488;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4ipgqdEgcAXkAp5KqyDjRVuxiPGqDPMl7pw6aWThFg=;
+        b=TckINcGNUS7yyV7IpL3yRk/JuVOAasiFjCbok0DmCkAQ470ZRKLyrpgV1NazMz1kgE
+         t15XVUVoW9WJ+l7s5hEuFtDp52YWp2uagBDeqHnrEKXjRoP+mhtOob1efKay8YD7TLVo
+         6xbkSsErGmsRlR+Y+ANzNRabPYMQZ+k+hf+x+bVxvrm6koi+tu656DrbGx2htOPYVdKk
+         3uZwP9YZFabWQC5iobR7RVb/gBTDaDsrrcpdZUaMTyzr3E7nLjt0X81MpeeI6PnQovxN
+         uscnqhdN5ZZXXdBim8HRDpYvyFP92aq8n80iBJ/z+w9CWYlCTe0rZjKkYfcWvShwyUy2
+         QJKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy9VTykPQ7Raxi0+N09+w0MxudwRYETsFNToO1NWpE/8FVU0MU+6tdVKh1RggJncBSgrAI8hbbclKxzqeTLzSB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCVUjaHiy/6Zt3x1j953wJ0kdcO3c2S8b15dZKnmN/Dbib0QSb
+	xJYiiP370ZnUnmSz5kDgL5xqg1NVRl9Ca0LUebNGoJuuFReJx4FT5xsqUA4Cdw8ERbSF+31/IVr
+	zeq9aFiWvSKI/57YabijIaqptKfDGCPi57Qw8RHno2m/Ajq/udWXugSnOecbJpPRfIGnyGOZw
+X-Gm-Gg: ASbGnctyGQFyHKE/52DKiP7gRhGlMC5AWjzv9yk7Tno2owh5jPxCXObljcJE5BxVm74
+	YWKdPVlfNXsgeD0q7KW42k0UpKbH7QbAMWMftJCjG+bYqFLAjGEMIn0JOGZNQDPfkCEUbg+v3Mk
+	yTG85gQo+6aflEDsu/uNfSIxriocif2dDwC+y0/qJSz73guv7zjyJnWtR6AxCcjCU25sjnxbhsv
+	TVlFcJWgZs6QQALgZ4ACfU/VFHgk/vW0epwRxrx88HYu9PquceRcnK7hMOrQm1rOMs0H+hwHpyY
+	jmt03VbnsOi4Au32aoPMFWIaNuODh1lvyFzHFVMYlrLTsCDW9qg5LxErZAYATc8+Uk+ndu9ctl3
+	WIB/dSvIKhDxkAYMN5b1fVMtoYGrevl/xYRjMpUelebngIJFcCLmf
+X-Received: by 2002:a05:622a:1b21:b0:4b2:f784:f84a with SMTP id d75a77b69052e-4b31d853312mr177413281cf.34.1756909687556;
+        Wed, 03 Sep 2025 07:28:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkb2TvZ0ILCgVrpH6pEb2ofnVtveugEN/WrUGyfbDS8L/ffVoWw0w7K8WMrbPeBg7z4t3u2Q==
+X-Received: by 2002:a05:622a:1b21:b0:4b2:f784:f84a with SMTP id d75a77b69052e-4b31d853312mr177412541cf.34.1756909686735;
+        Wed, 03 Sep 2025 07:28:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad523b3sm545534e87.151.2025.09.03.07.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 07:28:05 -0700 (PDT)
+Date: Wed, 3 Sep 2025 17:28:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+Message-ID: <fbwey76fzidnwni6nqh7qhtw6fsybyivraa7dmow47ga6tbvts@pqkwvoyfkwb6>
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
+ <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
+ <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
+ <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
+ <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
+ <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
- rpmsg-eth subnode
-To: Andrew Lunn <andrew@lunn.ch>, "Anwar, Md Danish" <a0501179@ti.com>
-Cc: MD Danish Anwar <danishanwar@ti.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Simon Horman
- <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Mengyuan Lou <mengyuanlou@net-swift.com>, Xin Guo <guoxin09@huawei.com>,
- Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
- Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Roger Quadros <rogerq@kernel.org>
-References: <20250902090746.3221225-1-danishanwar@ti.com>
- <20250902090746.3221225-3-danishanwar@ti.com>
- <20250903-peculiar-hot-monkey-4e7c36@kuoka>
- <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
- <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
- <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
- <6e56f36f-70fd-4635-b83f-a221780237ba@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <6e56f36f-70fd-4635-b83f-a221780237ba@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX/cQHvqqpWl60
+ sWqZLNEtCTn/TQMQY2k5iYqt+7uS8oHFKRoBuoQnMBJqa3vD4MPQ7VPYnu+ORjcmcsUKRDEEL1e
+ C9+4ml74olHDco1UB2Pu5sUSscwTutZsZxbgRy53BOCe26Vei6Wg+6RPcpWVnmy08wwQPD4ZIB4
+ Zawrw1UAVgPSMaeIWvnDoP030DLhqX1/eATqfwgbSRxaORlcvo2mNM3gpHem6mYEZpUMlMi6IK5
+ T3jU4AaHx6qsMRt3q3CpvbmY/kuYjGsop+y3NHzXjX1gk+tOai52EojysNSPDHSKhy7Y8t4QJEW
+ aEcH4z9DKqBOkbb2L9ItiG9du4UUWk/3Soh+a6z/s9e0UzLSY+m+eUtj/iEXmHxDPHsGMp1jmPy
+ 8LTeUcgz
+X-Proofpoint-ORIG-GUID: 4R2YemEV07ei6lqVH-ny0hjHcPBr1dB0
+X-Proofpoint-GUID: 4R2YemEV07ei6lqVH-ny0hjHcPBr1dB0
+X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68b85079 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=gVesVhWOi32bg9pDB_oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=Vxmtnl_E_bksehYqCbjh:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300032
 
-On 03/09/2025 16:06, Andrew Lunn wrote:
->>>>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
->>>>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
->>>>  			<&main_r5fss0_core0_memory_region>;
->>>> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
->>>
->>> You already have here memory-region, so use that one.
->>>
->>
->> There is a problem with using memory-region. If I add
->> `main_r5fss0_core0_memory_region_shm` to memory region, to get this
->> phandle from driver I would have to use
->> 	
->> 	of_parse_phandle(np, "memory-region", 2)
->>
->> Where 2 is the index for this region. But the problem is how would the
->> driver know this index. This index can vary for different vendors and
->> their rproc device.
->>
->> If some other vendor tries to use this driver but their memory-region
->> has 3 existing entries. so this this entry will be the 4th one.
+On Wed, Sep 03, 2025 at 03:13:18PM +0100, Bryan O'Donoghue wrote:
+> On 03/09/2025 15:02, Dmitry Baryshkov wrote:
+> > On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
+> > > On 03/09/2025 12:56, Konrad Dybcio wrote:
+> > > > > Can you try with this next-20250814 tag ?
+> > > > You sent it on the 19th, so it's in your best interest to run a quick
+> > > > 
+> > > > git rebase --onto linux-next/master $(git describe --abbrev=0)
+> > > > 
+> > > > and giving the series a prompt re-test before sending, because there might have
+> > > > been incompatible changes, whether ones that would prevent applying, or break
+> > > > things functionally
+> > > 
+> > > I can't even find that tag next-20250814 closets thing is
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
+> > 
+> > > 
+> > > | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
+> > > 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
+> > > into drm-fixes (3 weeks ago)
+> > > 
+> > > but patch #9 in this series stubbornly won't apply to any SHA I've tried.
+> > > 
+> > > meh
+> > > 
+> > > ---
+> > > bod
+> > 
 > 
-> Just adding to this, there is nothing really TI specific in this
-> system. We want the design so that any vendor can use it, just by
-> adding the needed nodes to their rpmsg node, indicating there is a
-> compatible implementation on the other end, and an indication of where
-> the shared memory is.
+> Unfortunately that's not the right SHA though
 
-I don't know your drivers, but I still do not see here a problem with
-'memory-region'. You just need to tell this common code which
-memory-region phandle by index or name is the one for rpmsg.
+Then let's wait for Mukesh to switch to b4 (and use b4 --edit-deps) or
+to use a proper git format-patch arguments.
 
 > 
-> Logically, it is a different shared memory. memory-region above is for
-> the rpmsg mechanism itself. A second shared memory is used for the
-> Ethernet drivers where it can place Ethernet frames. The Ethernet
-> frames themselves are not transported over rpmsg. The rpmsg is just
-> used for the control path, not the data path.
+> git checkout -b next-20250814-test next-20250814
+> 
+> Switched to a new branch 'next-20250814-test'
+> 
+> b4 shazam 20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
+> Grabbing thread from lore.kernel.org/all/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com/t.mbox.gz
+> Checking for newer revisions
+> Grabbing search results from lore.kernel.org
+>   Added from v8: 12 patches
+>   Added from v9: 12 patches
+> Analyzing 60 messages in the thread
+> Analyzing 163 code-review messages
+> Will use the latest revision: v9
+> You can pick other revisions using the -vN flag
+> Checking attestation on all messages, may take a moment...
+> ---
+>   ✓ [PATCH v9 1/11] tee: allow a driver to allocate a tee_device without a
+> pool
+>   ✓ [PATCH v9 2/11] tee: add close_context to TEE driver operation
+>   ✓ [PATCH v9 3/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+>   ✓ [PATCH v9 4/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+>   ✓ [PATCH v9 5/11] tee: increase TEE_MAX_ARG_SIZE to 4096
+>   ✓ [PATCH v9 6/11] firmware: qcom: scm: add support for object invocation
+>   ✓ [PATCH v9 7/11] firmware: qcom: tzmem: export shm_bridge create/delete
+>   ✓ [PATCH v9 8/11] tee: add Qualcomm TEE driver
+>   ✓ [PATCH v9 9/11] tee: qcom: add primordial object
+>   ✓ [PATCH v9 10/11] tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+>   ✓ [PATCH v9 11/11] Documentation: tee: Add Qualcomm TEE driver
+>   ---
+>   ✓ Signed: DKIM/qualcomm.com (From: amirreza.zarrabi@oss.qualcomm.com)
+> ---
+> Total patches: 11
+> ---
+>  Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
+> Applying: tee: allow a driver to allocate a tee_device without a pool
+> Applying: tee: add close_context to TEE driver operation
+> Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+> Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+> Applying: tee: increase TEE_MAX_ARG_SIZE to 4096
+> Applying: firmware: qcom: scm: add support for object invocation
+> Applying: firmware: qcom: tzmem: export shm_bridge create/delete
+> Applying: tee: add Qualcomm TEE driver
+> Applying: tee: qcom: add primordial object
+> Applying: tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+> Applying: Documentation: tee: Add Qualcomm TEE driver
+> 
+> b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com
+> Grabbing thread from lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
+> Checking for newer revisions
+> Grabbing search results from lore.kernel.org
+> Analyzing 70 messages in the thread
+> Looking for additional code-review trailers on lore.kernel.org
+> Analyzing 0 code-review messages
+> Checking attestation on all messages, may take a moment...
+> ---
+>   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context initialization
+> helper
+>   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware
+> qcom_mdt_pas_load() helper
+>   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of auth_and_reset
+> function
+>   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+>     + Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> (✗
+> DKIM/linaro.org)
+>   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to
+> pas_init/release function
+>   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to its
+> own header
+>   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to
+> get resource table
+>   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map and
+> unmap resources
+>   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse
+> resource table
+>   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support with
+> IOMMU managed by Linux
+>   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU
+> managed by Linux
+>   ---
+>   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
+> ---
+> Total patches: 11
+> ---
+> Applying: firmware: qcom_scm: Introduce PAS context initialization helper
+> Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
+> Applying: firmware: qcom_scm: Add a prep version of auth_and_reset function
+> Applying: firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
+> Applying: firmware: qcom_scm: Add shmbridge support to pas_init/release
+> function
+> Applying: remoteproc: Move resource table data structure to its own header
+> Applying: firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get
+> resource table
+> Applying: soc: qcom: mdt_loader: Add helper functions to map and unmap
+> resources
+> Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
+> Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse
+> resource table
+> error: patch failed: drivers/soc/qcom/mdt_loader.c:22
+> error: drivers/soc/qcom/mdt_loader.c: patch does not apply
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> hint: When you have resolved this problem, run "git am --continue".
+> hint: If you prefer to skip this patch, run "git am --skip" instead.
+> hint: To restore the original branch and stop patching, run "git am
+> --abort".
+> hint: Disable this message with "git config set advice.mergeConflict false"
+> 
 
-It is still "shared-dma-pool", right? Nothing in the bindings says that
-all memory-region phandles are equal or the same. Just like phandles for
-clocks. Some clocks need to be enabled for entire lifetime of the
-device, some are toggled on-off during runtime PM.
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
