@@ -1,66 +1,33 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F0930EF77
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174D01F4CB2;
+	Wed,  3 Sep 2025 14:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908806; cv=none; b=r9XqGj3VVGDNrT90Ea+2aWAeuqX4YvucRiA69vge7rvz7prf8UU3HEml+GTb9vBkejdOSgEDW8WPLGe4RyB4Lkt2hDq0DUZ2zn2jng9vFXM763VIcWPUKkUpfATF2jF3BzUtKXq5CgcqO1A8GaQdzEQWU0yF8zx4DjfaeXROz9M=
+	t=1756909200; cv=none; b=VHPAeBmO++ctuquBN6NBgsmYMLe9pa+DS1/T2N+6DSIPKJEPxmT4zftQuqt9jwMTa1hjypaiwdRIjWa5xNNlxbcv+WGW+KfJbirE3NVE4hwbZWm+BpIz3suCKqRMZ3H3Cub2K7JHS+/eZXTkMinAwrtYkWvFrJL+SX45EfLBfBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908806; c=relaxed/simple;
-	bh=jChr6ji3pFwXeMcSXw5YGcuHU7gFFFGKRuwiRoe9HFI=;
+	s=arc-20240116; t=1756909200; c=relaxed/simple;
+	bh=82KpDV1PvR2wNvrkgtAIHeyUyj1MQlrsKRL99mRDZBs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FRmPZQfK7qPu8r/OjGwyMkqhqE7EjMNkXGEYcoQHzIagOr6ikH06odOIwqnqsehzAT+nLHytp23LyAWUgxu061DyweNHfagRfAWvUpDGOGk3cTqX8XEOOtrl8uqsd9iFEOs3tnV0hWVE/OLlqerKPJ+H7RnnSoRZEcYl11zFweo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bKIg3FLB; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=pguEp815ZRVo2E6uegME22gSfWv+L9E8edWJjSLub2qbt/rifWUHAJgMzs5ZRHgYpN3KigUi+23mjLur9nmJzTXC5Te/ilB/r9UTjntORm6Hu80jzCNWWZ+TjHs7sjwEtlSbmgU51z/Flwm5Zx3tdCPQtLwRdpCUZpRuue02Tpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTYnTc4y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKIg3FLB"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b627ea685so55252615e9.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 07:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756908802; x=1757513602; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
-        b=bKIg3FLBvw/BtI9Me+i/2aZgCKhsJX+6gxBthc2f0F/DR+ulRLZh5JPcQTHtH7FkVJ
-         7FsTWhZMlMM1RIVGPuES7OPWgKvz2A3sojgigdFuUhqXZYtGUnWd1NXG8wGWIVgoxJYG
-         bJ4LObn6LZsfyYZMBueMMLktjUXIPiaOFQ2u1Bxu2Rl9CJsMCOra9z87zZC9/Yd3bTXU
-         kA6/sVo+bl2g5RBieqssXSTd9LjreaHmVuoCM6mb4EUb2wFyHWwWFOHUb3DMOeqQaLv3
-         P/8kUxOd1sUr9iYMKj62EOI3YX48r55bSP0aOFGZgt+to+RptngC2fxJKRt3jpxTtpve
-         K8Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908802; x=1757513602;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
-        b=N7A0sXfVNB06BZXRG8a1ynO5pqVymBGcO//1eO/Kk8hTi6BVUFlz/gt+rB4VBDjRX5
-         PtJuSvFFSkaPjaRBNhbmIRAkJIb3TFtHpoK8vyxdr+8uxHWozMSxTj8dchWc2bLvo6XL
-         JejTiEYN1liGdsu3tTLNeaJYjt8mw/HPHoh6jwOrSdoU5WAuWDyuoap3UZoGldVz8TbG
-         BayM4O6JRRXJ4852oWlD3eC5746NQuTlfjx2pl1ZagIFbArx1fAgwR8K28krrTlh0/Ah
-         M+g+ySceNkbSARz/ufnlfOoJGVxIePOj1RoNn7/6j40foJ7Q9tnI+2TY3FXxnDQ1kWDx
-         s2ew==
-X-Forwarded-Encrypted: i=1; AJvYcCWgw3AHVBVDAqalf2VKX4ptBwD/QMHOA6Q+vbITLVX4YTI3j3PWZq9Jd1JKGTNIzIpwPgBz2kOzWHczgQsKyhPI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfW7MO1kYTdgFDIfcA8CrePshWeu02NLl6TLhBqwKr3od4m6ce
-	gZcoi9PZ8Vg9z8zmNBQLWOgHxiT3eaQjKAdSL34fh1LuikyMJbnDrE89Y2tIa0M92no=
-X-Gm-Gg: ASbGnctMXxh6wZ2Lv+E6dUbutZbisujidvJqYNDgnxZtrjhfLvIVX937xfOiSPVVwPV
-	McRWn56Lf57DwZmnTZdherwhA44MLiJEQEBixuxN0EExL6g1VA5OBIUqa5ltnSBzi+qE/mgf8AY
-	9rxYYGu78rdrdMYM/QgqBDiS7KRlJjUiZYIKa0q7/qiBABhH81F47tkuduJVrIQl+XEIcZdYTmG
-	ZDPbF73Ap7Md3g48M8C6+sL/EMs68P6iHXIjCB2KOTp+p0/++1ol+jedlqSru3DicyC161CI8Zs
-	O8l/C+HibVMC6WZVcLyS63o8jC+waOqS5fOq3zL50h0cPS1rFArq26Ho2VlJCDqlzWuz1WY47eM
-	uy0f0QzUWE4CYIkZ+H9h3fQqhaZclteN6ud6D7fxSGbD4A32PKa+u7ziYPm39NeQdR3ze0Famil
-	HPMuaBKRmipIyFJnkrcjPtMj13zVAzYA==
-X-Google-Smtp-Source: AGHT+IGfAZzD09cWF5IbzY4R9+9G/lHAa3/pRj3XH1WFBEX6L966x/N8b0asy8I8FFb5vuyrdLwPlw==
-X-Received: by 2002:a05:600c:314d:b0:45b:8a92:6b14 with SMTP id 5b1f17b1804b1-45b8a926f9amr120090275e9.37.1756908801569;
-        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm8541982f8f.23.2025.09.03.07.13.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
-Message-ID: <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
-Date: Wed, 3 Sep 2025 15:13:18 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTYnTc4y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64960C4CEE7;
+	Wed,  3 Sep 2025 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756909199;
+	bh=82KpDV1PvR2wNvrkgtAIHeyUyj1MQlrsKRL99mRDZBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rTYnTc4yE0MczD5gf388EJftHMhVDIb7K97+qI8yphSe8s6QtmkejjXb+d8GJTmt6
+	 9cVe0Rd0ingn3ucmy/fba5ChlZuxw9VxgICeBrk5+T3byxSscBwtdzB3u5q1POsB2/
+	 S7NhFIhw+aFBixFRCPZO37J1227jFcN2bkuENiD1TUGY5QON21fQiVbReovZ3gdvBw
+	 7JYD7den7jFxsrR8ltXDV74H9mCTmUO0+k3QPTpOatu9YLcWf6Moteg33kohNt9njG
+	 /6YYhB6XJqT+ahKXXzEdAEURKMgct0Kpx9tSUFNwlxcro0ThpySo5hqiIIDmIoNHje
+	 T7aUset+eHlzA==
+Message-ID: <ea75a30b-01f4-4c2d-b3ab-0a9ab0d9de80@kernel.org>
+Date: Wed, 3 Sep 2025 16:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -68,168 +35,179 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
- <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
- <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
- <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
- <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
+ rpmsg-eth subnode
+To: "Anwar, Md Danish" <a0501179@ti.com>, MD Danish Anwar <danishanwar@ti.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Mengyuan Lou <mengyuanlou@net-swift.com>, Xin Guo <guoxin09@huawei.com>,
+ Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Roger Quadros <rogerq@kernel.org>
+References: <20250902090746.3221225-1-danishanwar@ti.com>
+ <20250902090746.3221225-3-danishanwar@ti.com>
+ <20250903-peculiar-hot-monkey-4e7c36@kuoka>
+ <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+ <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
+ <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 15:02, Dmitry Baryshkov wrote:
-> On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
->> On 03/09/2025 12:56, Konrad Dybcio wrote:
->>>> Can you try with this next-20250814 tag ?
->>> You sent it on the 19th, so it's in your best interest to run a quick
+On 03/09/2025 15:32, Anwar, Md Danish wrote:
+> 
+> 
+> On 9/3/2025 6:24 PM, Krzysztof Kozlowski wrote:
+>> On 03/09/2025 09:57, MD Danish Anwar wrote:
+>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml     | 6 ++++++
+>>>>>  1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> index a492f74a8608..4dbd708ec8ee 100644
+>>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> @@ -210,6 +210,12 @@ patternProperties:
+>>>>>            should be defined as per the generic bindings in,
+>>>>>            Documentation/devicetree/bindings/sram/sram.yaml
+>>>>>  
+>>>>> +      rpmsg-eth:
+>>>>> +        $ref: /schemas/net/ti,rpmsg-eth.yaml
+>>>>
+>>>> No, not a separate device. Please read slides from my DT for beginners
 >>>
->>> git rebase --onto linux-next/master $(git describe --abbrev=0)
->>>
->>> and giving the series a prompt re-test before sending, because there might have
->>> been incompatible changes, whether ones that would prevent applying, or break
->>> things functionally
+>>> I had synced with Andrew and we came to the conclusion that including
+>>> rpmsg-eth this way will follow the DT guidelines and should be okay.
 >>
->> I can't even find that tag next-20250814 closets thing is
+>> ... and did you check the guidelines? Instead of repeating something not
+>> related to my comment rather bring argument matching the comment.
+>>
+>>
+>> ...
+>>
+>>> @@ -768,6 +774,7 @@ &main_r5fss0_core0 {
+>>>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
+>>>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>>>  			<&main_r5fss0_core0_memory_region>;
+>>> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
+>>
+>> You already have here memory-region, so use that one.
+>>
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
+> There is a problem with using memory-region. If I add
+> `main_r5fss0_core0_memory_region_shm` to memory region, to get this
+> phandle from driver I would have to use
+> 	
+> 	of_parse_phandle(np, "memory-region", 2)
 > 
->>
->> | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
->> 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
->> into drm-fixes (3 weeks ago)
->>
->> but patch #9 in this series stubbornly won't apply to any SHA I've tried.
->>
->> meh
->>
->> ---
->> bod
+> Where 2 is the index for this region. But the problem is how would the
+> driver know this index. This index can vary for different vendors and
+> their rproc device.
+
+Index is fixed, cannot be anything else. Cannot vary.
+
+
 > 
+> If some other vendor tries to use this driver but their memory-region
+> has 3 existing entries. so this this entry will be the 4th one.
 
-Unfortunately that's not the right SHA though
+None of these are reasons to add completely new node in DT. You use
+arguments of drivers in hardware description. Really, can you read the
+slides I asked for already?
 
-git checkout -b next-20250814-test next-20250814 
+> 
+> But the driver code won't work for this. We need to have a way to know
 
-Switched to a new branch 'next-20250814-test'
+Driver code can easily work with this. Multiple choices from using names
+up to having driver match data with index.
 
-b4 shazam 
-20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
-Grabbing thread from 
-lore.kernel.org/all/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-   Added from v8: 12 patches
-   Added from v9: 12 patches
-Analyzing 60 messages in the thread
-Analyzing 163 code-review messages
-Will use the latest revision: v9
-You can pick other revisions using the -vN flag
-Checking attestation on all messages, may take a moment...
----
-   ✓ [PATCH v9 1/11] tee: allow a driver to allocate a tee_device 
-without a pool
-   ✓ [PATCH v9 2/11] tee: add close_context to TEE driver operation
-   ✓ [PATCH v9 3/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-   ✓ [PATCH v9 4/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-   ✓ [PATCH v9 5/11] tee: increase TEE_MAX_ARG_SIZE to 4096
-   ✓ [PATCH v9 6/11] firmware: qcom: scm: add support for object invocation
-   ✓ [PATCH v9 7/11] firmware: qcom: tzmem: export shm_bridge create/delete
-   ✓ [PATCH v9 8/11] tee: add Qualcomm TEE driver
-   ✓ [PATCH v9 9/11] tee: qcom: add primordial object
-   ✓ [PATCH v9 10/11] tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-   ✓ [PATCH v9 11/11] Documentation: tee: Add Qualcomm TEE driver
-   ---
-   ✓ Signed: DKIM/qualcomm.com (From: amirreza.zarrabi@oss.qualcomm.com)
----
-Total patches: 11
----
-  Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
-Applying: tee: allow a driver to allocate a tee_device without a pool
-Applying: tee: add close_context to TEE driver operation
-Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-Applying: tee: increase TEE_MAX_ARG_SIZE to 4096
-Applying: firmware: qcom: scm: add support for object invocation
-Applying: firmware: qcom: tzmem: export shm_bridge create/delete
-Applying: tee: add Qualcomm TEE driver
-Applying: tee: qcom: add primordial object
-Applying: tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-Applying: Documentation: tee: Add Qualcomm TEE driver
+> which index to look for in existing memory-region which can defer from
+> vendor to vendor.
+> 
+> So to avoid this, I thought of using a new memory region. Which will
+> have only 1 entry specifically for this case, and the driver can always
+> 
+> 	of_parse_phandle(np, "rpmsg-eth-region", 0)
+> 
+> to get the memory region.
 
-b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com
-Grabbing thread from 
-lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 70 messages in the thread
-Looking for additional code-review trailers on lore.kernel.org
-Analyzing 0 code-review messages
-Checking attestation on all messages, may take a moment...
----
-   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context 
-initialization helper
-   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware 
-qcom_mdt_pas_load() helper
-   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of 
-auth_and_reset function
-   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-     + Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> (✗ 
-DKIM/linaro.org)
-   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to 
-pas_init/release function
-   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to 
-its own header
-   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add 
-qcom_scm_pas_get_rsc_table() to get resource table
-   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map 
-and unmap resources
-   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse 
-resource table
-   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support 
-with IOMMU managed by Linux
-   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU 
-managed by Linux
-   ---
-   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
----
-Total patches: 11
----
-Applying: firmware: qcom_scm: Introduce PAS context initialization helper
-Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
-Applying: firmware: qcom_scm: Add a prep version of auth_and_reset function
-Applying: firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-Applying: firmware: qcom_scm: Add shmbridge support to pas_init/release 
-function
-Applying: remoteproc: Move resource table data structure to its own header
-Applying: firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get 
-resource table
-Applying: soc: qcom: mdt_loader: Add helper functions to map and unmap 
-resources
-Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
-Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse 
-resource table
-error: patch failed: drivers/soc/qcom/mdt_loader.c:22
-error: drivers/soc/qcom/mdt_loader.c: patch does not apply
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am 
---abort".
-hint: Disable this message with "git config set advice.mergeConflict false"
+Please don't drag the discussion. Look:
 
+Q: I need a child node for my device to instantiate Linux driver"
+A: NO
+
+Q: I need new “vendor,foo-prop” property
+A: Please look at existing common properties from common schemas or
+devices representing similar class
+
+Or actually let's start with most important:
+
+"What Could You Put into DTS?"
+Answers:
+1. "Not the Linux Device Driver model"
+2. "No Linux driver choices"
+
+And that's exactly what you do and how you argue.
+
+Best regards,
+Krzysztof
