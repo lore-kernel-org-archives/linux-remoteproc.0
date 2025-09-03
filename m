@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449D178F58;
-	Wed,  3 Sep 2025 12:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7417A3019D3
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 13:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904057; cv=none; b=lawTR7uyCEYs8BdcHwFD+6QrLCYScPUMaC/CV5p0V10MxcLaG89Eg4IafUgmGaBmpQkK6b8KoV5okfqpVGaAIhpSGytaEK5JxLNOtHUueUpv4QpWlO0hWl9QfvI7SSOYG8PuXQBHAmXAeSPOY35+fuESKi75FdEDVpn2+IKdC7I=
+	t=1756906322; cv=none; b=gfP71Vkzbuscx+uMr3KmJHzH4Z+3HBzEne72nQU+eu1jIQMq4IG1LrKpbyWC3fipzo+A5FcY69w2oK/Mcp8/wK4zY/iR9Zz62V5QJa0e7hRwVrGs/MV1DqAj0ETPD6Uf78ZapXpzu7jCSg6mUFzczH9i3ajiYDjwaMvyvxIvXEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904057; c=relaxed/simple;
-	bh=GKyzok/z2dxUBYclYVhvEXgcpXK2CUMlhu43nRL68EI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXjs4HA2ESz+uL6OHD3FKN/1dg/XgxJBM2DKdvaUTtc1GwSWL3yLesKV6wZwcWHC0V8siXgpaw07h+YZ3xNZnOa5WjK229zr0LQPZ4v7XGHOFu4egwuUF3a02SwVjMZek7ribbm/f09JXH7+4H0qwX6dgwEH5eC0JU1lDn5NrWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGqYmZkR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756906322; c=relaxed/simple;
+	bh=HMyrqafZWVvnCp8l3xl9EjMdbJHyX9qnKtyEFsPn8dE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=krBDDfeCUYkNyH0dihPJ8PCLL2XipzpmLeIFcaA5ZSEPeTVIj8nSuVnlTCL6vQe/cDCdHX84J6xhhpbAz7nl8tBhp0vIfJSu30J9XjHhIEWkyF2aEPPA/5FeUaKjSZUH6K6FO4g0By6atR3cKZEGr4u+c/h20nEVPW0f6fnIiSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zK1y7ofR; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGqYmZkR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB4CC4CEF0;
-	Wed,  3 Sep 2025 12:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756904056;
-	bh=GKyzok/z2dxUBYclYVhvEXgcpXK2CUMlhu43nRL68EI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aGqYmZkRR1fuAHbSynfrAmBfRIiWr5y46yverkTaB/Q+Z5kCkOfz41rnYUvqCi7lN
-	 wLqIGAo5qY58FY6OJCVJuQjfR4mwTh3zodjMCqSGtEkNkj9fCSFu4QaNV7ApnafUP/
-	 +mXTY6HwkjIdi2zwlSkqmq40swY0mrEqJXcsLvUN+8+RYzjev6g2w6byTBl4GahEmA
-	 a8+ITTbTu7q2SzFUw2cVH19+LZSRsU/c01C+38NRhMXPEGgTzxOdg8oHv+LLdE+cbt
-	 f82rTtlkUZ1bo6fs9rkjpr+ngaoSPjRChb+3eOzFcURViENkXR5nrtzIW82gY/QenJ
-	 By9aGQYH6AxSg==
-Message-ID: <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
-Date: Wed, 3 Sep 2025 14:54:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zK1y7ofR"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so3856675e9.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 06:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756906319; x=1757511119; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jV/+kNQU+fID5A7W7F8ncUimxdPkwRhQZObi8KDWFN4=;
+        b=zK1y7ofRkabpTVTCK72t1pu/W63oE1k9cWiQ7iCp8g6fJ56OmbzmKaB+VGNKqm+k74
+         RstJas+QJu2w5nvLmF4MwLl0M/Q8ETcXt5DSXHJlcW4W03dhGsfoD6IXKgqZlFKhWY3q
+         9TIyKEBiFY2RcJ+cyPlpUKB65IimGqbZ0ejuUyM9VKd03F5oY69T623wErhxaflnw48V
+         7EXfQNnsDwkd0uTwHR+4MV/NCMoctN5+HfVYyFcq8nd2AfPhs+IX5A3yCEt0AR6hhWuo
+         +tuf/SgYnGUzpfUKlDUTC7NmZUD9xSS3co5ihP6W2kj5CmIEknNA1owGStToRsNoVs0Z
+         8Hlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756906319; x=1757511119;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jV/+kNQU+fID5A7W7F8ncUimxdPkwRhQZObi8KDWFN4=;
+        b=CKNs1wSEw3rjFLn5XiYniMp+xxfcMy8C6X9mwsbkgl0/6H5W3eatAj43jrtYpl3kBz
+         PrhM1bWCENUpW0/hgJYbuIsgAb9kB52Uh3y2+X+Q1y6Mj6BwhJaT5MdCFzN+ON/I6Kt3
+         +LQ4Wc6azrnDvvh4IW2hUtVtA/nUdQGefl1wkXjgdmZLaSS7I0OZx9XsQWsTrPvtSF2D
+         xVMPJ0JXgMWIYJulQEfmws5I5Xu96EM6rYWhJMJrv39C5BnMJG6GUc5CLB1qwm3MVLNd
+         X2NkSXWpwZXL55vMog56/8Xo8+aeut70HE5epsktQf87STB3YJb/7E7QYhraKPOlbbFQ
+         HFQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlmTRZzZxHKg7Y87oodZdUIQ2RMfMnatgoV8y7c1CPsJBF5hlVIdY10IO5doKbOx4DgsMP2hPUT/NkZY4Ufj/6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTB9t43kmAE9Wp2YC3w7xJsQwXJhnoLqFC24rjVTZCUXZKt5Eu
+	FzNJuwFQx6ENj3JlPpzavet0l6KcYkl7nZEvMFz7CoOeiY+ogOUkiYflGA/+3ZDVV5E=
+X-Gm-Gg: ASbGnctjSilQ+Iq5u/UKBwXvQC+w7NlS/GDFqvkAB657aEdiOxvcOuIlv2sXJKvf/yv
+	h7i9h33/PfrODMswKcaUrBLMtvNjj2VskJ7L0lXs4BrjZgkVfHJ9lb2t2pivIEfG05Ca7RFFtaR
+	n/+7CMd1wMdSGCeUCW7hpmPOYN/GliYdj0puHWYpE9ZL7jzg611DLTLDhn2HdsOOe6YZWpHIkXM
+	xCR6gVNB78TnuP/Ay02RqFxF8mgBzNfhXLWKD63HRVw6cCKoMdXxNrK7Vu3Uocioabx7E1T5sCB
+	CRXrK3sWmsqrkfgbfZah2PfuEsAAQdWaCUeJj3312WD7X5sAtqUJv/Z+/Q2rTe3E8JgLFxHNYl/
+	ntjUANhYU3e89m1UG4jApcSrHPPqA3ZO4GHf/h5o/PWuQwiLtachns1wWTE0fQBQBHNYLsgb6Iy
+	GnXtGyyY4c25S1gtsw5VHeQ7RT+kjzuBky1S5JS0VR
+X-Google-Smtp-Source: AGHT+IHgsBA9rledeTVeo8KQley7QFRDXyCYgnqMKEv7MzsQIBH95kbaAiwwLJ8XXVf/C9Q9lEUUqQ==
+X-Received: by 2002:a05:600c:46c8:b0:450:d386:1afb with SMTP id 5b1f17b1804b1-45b85532ec8mr134876395e9.9.1756906318707;
+        Wed, 03 Sep 2025 06:31:58 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c22sm327450385e9.13.2025.09.03.06.31.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 06:31:58 -0700 (PDT)
+Message-ID: <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
+Date: Wed, 3 Sep 2025 14:31:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,127 +68,47 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
- rpmsg-eth subnode
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Simon Horman
- <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Mengyuan Lou <mengyuanlou@net-swift.com>, Xin Guo <guoxin09@huawei.com>,
- Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
- Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Roger Quadros <rogerq@kernel.org>
-References: <20250902090746.3221225-1-danishanwar@ti.com>
- <20250902090746.3221225-3-danishanwar@ti.com>
- <20250903-peculiar-hot-monkey-4e7c36@kuoka>
- <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
+ <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
+ <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 03/09/2025 09:57, MD Danish Anwar wrote:
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> ---
->>>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml     | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>> index a492f74a8608..4dbd708ec8ee 100644
->>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->>> @@ -210,6 +210,12 @@ patternProperties:
->>>            should be defined as per the generic bindings in,
->>>            Documentation/devicetree/bindings/sram/sram.yaml
->>>  
->>> +      rpmsg-eth:
->>> +        $ref: /schemas/net/ti,rpmsg-eth.yaml
->>
->> No, not a separate device. Please read slides from my DT for beginners
+On 03/09/2025 12:56, Konrad Dybcio wrote:
+>> Can you try with this next-20250814 tag ?
+> You sent it on the 19th, so it's in your best interest to run a quick
 > 
-> I had synced with Andrew and we came to the conclusion that including
-> rpmsg-eth this way will follow the DT guidelines and should be okay.
-
-... and did you check the guidelines? Instead of repeating something not
-related to my comment rather bring argument matching the comment.
-
-
-...
-
-> @@ -768,6 +774,7 @@ &main_r5fss0_core0 {
->  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
->  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
->  			<&main_r5fss0_core0_memory_region>;
-> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
-
-You already have here memory-region, so use that one.
-
->  };
+> git rebase --onto linux-next/master $(git describe --abbrev=0)
 > 
->  &main_r5fss0_core1 {
-> 
-> 
-> In this approach I am creating a new phandle to a memory region that
-> will be used by my device.
+> and giving the series a prompt re-test before sending, because there might have
+> been incompatible changes, whether ones that would prevent applying, or break
+> things functionally
 
+I can't even find that tag next-20250814 closets thing is
 
+| * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge 
+tag 'drm-xe-fixes-2025-08-14' of 
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes (3 weeks ago)
 
-Best regards,
-Krzysztof
+but patch #9 in this series stubbornly won't apply to any SHA I've tried.
+
+meh
+
+---
+bod
