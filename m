@@ -1,133 +1,111 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B30130EF71
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294E7286892;
+	Wed,  3 Sep 2025 14:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908316; cv=none; b=NRPmoEJPTQin8neXjWV3jsLQ70xRaIjjQGwizxYaR7C2cCkn0KV5KDr58zKEnI4IbuBkmtEnP6orvBRThDNMju3onF4xyp09P6gPYzTG2kE7IrcfCSPLBnxEZZ4HA8srrstk/FRbU/MOFDnw6nFpRnsMhL3ILKvHAT3JLg5FBI0=
+	t=1756908431; cv=none; b=gdxX1FcRnWzxYJ8tLlx4bwl9TAXswxGxMZhCCRd/a+qS49uDKW1EtIz++HVBYEPMxRace+6faaH0dSUAJGkrT9ua1YSqDaTJHpQnM9mJASFCtQSemerErNnNwDilYSUe4bpr3sLHt9xPMtQrhxHS/uSyjd+kxMURxTUhZz7gOLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908316; c=relaxed/simple;
-	bh=p1lxtpJ7TjvFoHPJ/hZ3029ZCfEe68+gdc5pXFuSGH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXyTsoK8BH/vZqHrNfSOXgmcm4jqkieSIPOLcKSmdbgStQhCalas/2VlL10Ka8Sz5xrQCGx0pc6zCrlrwwZtaEaE9ugqUkcN2CehfB3dDK51QNSRJs3ZXllzjEsyLKn3UJK86gFmnWxd1reXiMYmFPjhkeAcKb4ExeKXDtTFLfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6A0lRSQ; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756908431; c=relaxed/simple;
+	bh=1Wb/6rFMh/8bTMs0N9gKDqFG6XZTLORKxkLUXcHhYIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+NhJEPTaRHqVaLL8MiuWkfzxokGban/csOr+03qeR+OvdvHOXEq1Y86UW02Q003IVDZ06LIp0kkQsjwomJjefvrO3QcgopMl+ySSZXCsoz5+SvbV/CanxiA7eMJmf1wS0zoN+SlJrR/CagZWrUH4hc9qknC89agfwbOLcfpKQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PKC7mlYt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6A0lRSQ"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3dae49b117bso1579866f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 07:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756908312; x=1757513112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QK1Plguf59MohKiPDL9B9tJ9p4M4VouT3+3TgzQ44t8=;
-        b=s6A0lRSQEJ90tneUCy4zUGJz3L2E5jUu9WsMzIfv6g50o0+H8hjACes/xhJphVACrJ
-         wY1XRLApmYh3RopjnhuBLvNY3qAYVViMH8S4T2lxPJTesKnZsjZiSxvGQlqw6MOLlZAd
-         spHHgGYKFIqxBJXUa814BPmEowiwB6LyLnJmS5ReefQgeKwgRzD8qZY3cALUKn3qHYc1
-         fBwZboS/iNUwRVy51FHS0tecA5Tr0p5Fi/fZEynI2SpJpN940MLe/WzIso3NlGan5fXc
-         yPpYUIvYfnSNLVtFdXcWmJv1TshOwEhfJDkJobAuuFhJkRNvIxBDQSqsMlkOBGZnZn7s
-         RHzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908312; x=1757513112;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QK1Plguf59MohKiPDL9B9tJ9p4M4VouT3+3TgzQ44t8=;
-        b=TJQ4YOQUJ2ITmUYhC0cv3WUmYkcJGe9xQ/wtgV3vASVjjb7Gz4hAYQPqCgAvDXz3uE
-         ZBjixt54DaIOwGqhlR/9jtjvpFdIbdld0OY6Bv1LrNey6Lc7jmxvIiFxtxP3eTQ5jGyY
-         kuGud/ry3vCljReSLfUWP8am8hjRVS0VoAkZMDFlgE7FPm2x6BoRaqG7pPn9/WNUu3fQ
-         X5D2vJ5gCtqr4w2vyBgItyME/87Nr9Dt4hP7Ic22x9zDKF5HQigPQf57IGkDtRqVF1iP
-         DqBigjLrT6fts+5DotQtRbC6nsvjJJUaOq7ue1BZI7bGjfsR5pS9lfh5kpLAD68YhWG5
-         3Caw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhqkZLaBGqoBd9DfZjdkh/EWKpDMMRO3e/KAN3LA/vOsKuFlGKQKnpfyb7TwoitOecVDx743v2XYIYH3s7jVm5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKLyGFVm+AM5W4Z9Z1vhcs9xF9KLnQuGptnsA8XeKA9gK2nQ57
-	RujmepAsnGSSgM5XxyGkJvEtY60WBh/vyIPNdh5B9hUzYbOsdkgXfOPAr1VEM0XIN1E=
-X-Gm-Gg: ASbGncty0y26u/ItksRyx4xOVgF9cBkl8bogOAwc7pu+3NMtgdCLxKGg23WvMOnfrqb
-	Py9Mosm8p+6AooB1spQyEcD38EY9eBkT1Z/Y4qz+6AixKH3hDOEMfvk3OXsJ0jCmRrxsKzWVulJ
-	+RGtsS7z+qgDwSaJexwHAv7I6i3wgsFwmP8Mx2Wm/echcuwK7Y/oMAZvKSuub7RsZtUkWkfs2c+
-	uUk+6NNKRNbmI0H3WDoi+wZ2dro4sPdqHaDqC8Y1dx/IzhXOAxcmDAJqhl53RRUb0i3gvfCIhGe
-	rSZYxOq7oWXdvT/vkZ31qSqMw8VRWTqojoTXq5wGfJg2JVITnQLdB/yFBndQhU0qAmKuzV+FivB
-	u4yQ/Hxu98q1/zcWHq3+Hl3mZDIGGdYYdyKFYI/a/gOgixygKXF0DHCJXIHsJY6K5Z5B3+31UDI
-	FHJUjdzc4JxgiGCRIdpItWrIcTUShahQ==
-X-Google-Smtp-Source: AGHT+IEZMZforlja2xX6xreLhIbpAVhCSknwT4/G7zI8fcA9TDR7jhhzcqogfHqvrdx3U1dTW1cIhg==
-X-Received: by 2002:a5d:5887:0:b0:3db:f9f7:df86 with SMTP id ffacd0b85a97d-3dbf9f7e8d7mr2886230f8f.61.1756908312422;
-        Wed, 03 Sep 2025 07:05:12 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6fe5sm323422865e9.5.2025.09.03.07.05.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:05:11 -0700 (PDT)
-Message-ID: <680de02a-6592-40a6-b25c-4d8fa85c4e81@linaro.org>
-Date: Wed, 3 Sep 2025 15:05:09 +0100
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PKC7mlYt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IKFS3y5daOqWaKHPU+LGGnIxAUZ7p5yYYNJ7KEL39IE=; b=PKC7mlYtwmdrYmC9dO0eS6a/1v
+	PnXfB4PUclYOsME0dz80pvRIdvUM0urIXWfGBQSbQIQzjczgiDnrkhBvigxhm7SEKwENJis2+wpNp
+	eZOiMa3C0pyuvMvz0nVBaAawfzkfQom27j8rZtAF+mksOE4PLxCJa/OUlt/RsI7j3GrQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uto88-0071kq-AO; Wed, 03 Sep 2025 16:06:32 +0200
+Date: Wed, 3 Sep 2025 16:06:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Anwar, Md Danish" <a0501179@ti.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Xin Guo <guoxin09@huawei.com>, Lei Wei <quic_leiwei@quicinc.com>,
+	Lee Trager <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>,
+	Fan Gong <gongfan1@huawei.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+	Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com, Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
+ rpmsg-eth subnode
+Message-ID: <6e56f36f-70fd-4635-b83f-a221780237ba@lunn.ch>
+References: <20250902090746.3221225-1-danishanwar@ti.com>
+ <20250902090746.3221225-3-danishanwar@ti.com>
+ <20250903-peculiar-hot-monkey-4e7c36@kuoka>
+ <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+ <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
+ <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
- <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
- <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
- <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
- <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
 
-On 03/09/2025 15:02, Dmitry Baryshkov wrote:
-> On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
->> On 03/09/2025 12:56, Konrad Dybcio wrote:
->>>> Can you try with this next-20250814 tag ?
->>> You sent it on the 19th, so it's in your best interest to run a quick
->>>
->>> git rebase --onto linux-next/master $(git describe --abbrev=0)
->>>
->>> and giving the series a prompt re-test before sending, because there might have
->>> been incompatible changes, whether ones that would prevent applying, or break
->>> things functionally
->>
->> I can't even find that tag next-20250814 closets thing is
+> >>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
+> >>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+> >>  			<&main_r5fss0_core0_memory_region>;
+> >> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
+> > 
+> > You already have here memory-region, so use that one.
+> > 
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
+> There is a problem with using memory-region. If I add
+> `main_r5fss0_core0_memory_region_shm` to memory region, to get this
+> phandle from driver I would have to use
+> 	
+> 	of_parse_phandle(np, "memory-region", 2)
 > 
->>
->> | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
->> 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
->> into drm-fixes (3 weeks ago)
->>
->> but patch #9 in this series stubbornly won't apply to any SHA I've tried.
->>
->> meh
->>
->> ---
->> bod
+> Where 2 is the index for this region. But the problem is how would the
+> driver know this index. This index can vary for different vendors and
+> their rproc device.
 > 
+> If some other vendor tries to use this driver but their memory-region
+> has 3 existing entries. so this this entry will be the 4th one.
 
-ah..
+Just adding to this, there is nothing really TI specific in this
+system. We want the design so that any vendor can use it, just by
+adding the needed nodes to their rpmsg node, indicating there is a
+compatible implementation on the other end, and an indication of where
+the shared memory is.
 
-I fetched -stable
+Logically, it is a different shared memory. memory-region above is for
+the rpmsg mechanism itself. A second shared memory is used for the
+Ethernet drivers where it can place Ethernet frames. The Ethernet
+frames themselves are not transported over rpmsg. The rpmsg is just
+used for the control path, not the data path.
 
----
-bod
-
-
-
+	Andrew
