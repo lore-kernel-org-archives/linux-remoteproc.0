@@ -1,270 +1,170 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03630AAB1
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 14:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D232D6604
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Sep 2025 15:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909691; cv=none; b=tPRWrx99eopk5srcWnjx7NygVcvREddeXnNgiKFA7UpOaj2U5tA5fakaEr5Jbbhhw/pcQGpSBGGLrnwZFFe3d2IIF7n1RBrUsw+TaGcZdFUK2fLgfbMdqYxmLHyFP+RGIjDeFmfQGp/wgaMwkAt342MJRblZMWl68LXwl0YBLR0=
+	t=1756911795; cv=none; b=BcXbCttOiKKeVeCtXFtrnkXYuxYrk+Ky0g8Wt8BCWzSwUlAmiIj8rDqh8bPyp/td7hab+7V+fN3GZqL3VUoRwVA7cFn1QClCTruYqsaGKS4JufLzNwXuTxW80QP9w4La8fnRzwN2U5dEakrQNvwtfSe8R/KJv58/OxU2fBcegaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909691; c=relaxed/simple;
-	bh=5NUgSP3WjLO6mB8O6hOC8kcnm9SKM1MNi4rpwYI8aGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MtLZM/bDNU2cIRGoUiJDzzlrIls0uTpXs3CEvB0ROG4bjVPgJGgd6zHQ6rn1m9fbEw50oiV94mGldetw7PHQ2hSavAOZYLJgvVjHywBE4ti0cZo7BcD227UJX0A1qEA68Qdl3HMEkFbS/ReVN55P/tmYvVelBaKJPU3crdNMl+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C3a5ReiB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1756911795; c=relaxed/simple;
+	bh=LekdRFzFZGbphNAI7RPhmxPwnfPr7M4Uz0MSWilmzVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dTF78fFsVfaUgNVePlscZgSUcEgK77QM8U8iMgYnDMvZc7ZQpttC19b5xo9WETv1ja0aj1+KDuudzExR1jGLJNHTKuJ/Fy6SO6AU3LpCWaeVM/MvnPcmli8NYh1MdI5lEEi0FLey6bR7YksTeNy4Uy9hnm0aSqRqofyLTtrxOb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fpzIAgek; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C3a5ReiB"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Dwsm2032507
-	for <linux-remoteproc@vger.kernel.org>; Wed, 3 Sep 2025 14:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	L4ipgqdEgcAXkAp5KqyDjRVuxiPGqDPMl7pw6aWThFg=; b=C3a5ReiBCOLW45Gc
-	HjTLXDz+uHmjYXpAGTUvy97HeadWf+ADlF7fCAGMTimG9UG6XKIqthGVtSAFHe6u
-	B1KNG4GT2a5JGBdzr5IYJ+mIAsYLs+qwhnRHCODe54iyH+sCY+qlqCPldruc+qtv
-	CR/SxEJ059yU1CxwDHEJ5MaZLVIq5QyTWG5IoMHbmdxqOtRkuOUjuy1HIskiMlZL
-	CxXG6EHt+Ha8IaCPOSadBSq1YC7q62Lr20RJQuslSgewzmiNZYAKOrFmpcWn8hA2
-	yqPZAnR2CscGnP+G8qwv0U2P5d5Uqev/PKxU8cFaOs2mOOVp05hmbu9F/rDMnSla
-	LVbOGA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush33vpw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 14:28:09 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b335bd70b8so47229491cf.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 07:28:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpzIAgek"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b7d485173so381735e9.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Sep 2025 08:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756911790; x=1757516590; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vb9H2OtYCm0pJa79dfHcS+lvaJaqfNpw4BGLzTlGfN4=;
+        b=fpzIAgekbJMFuAfGlyDtbM8qv24ttuPeykmCLbD++EHmwTNJ2OFtb6Cm4Ll8Ukgjcx
+         rzMGSMS/8i/cAq49BFA8eKEB1H3Q2aWZGFUy3Zvsoa2Cp7f+mkHpOJXlxGTaBRutzYn8
+         fwExekkwwZJryHpGtVyRE+MtAAEm57wocU8AwP+ZcifzaPXr5cgA3MgP4Hi/fyDZXQnt
+         O/nImKi6zqbrFmQO4malDZqwfuITEUqxV5les70sW+8boNX+rQfNoO8TfHkJ2SZTTTFD
+         WDjx5yzceJaUNjmJl2xPM8zK4eWf0Cbact2U2wiYXe0/ZMdTubdCsH2D7DqCVluweoT/
+         e/dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756909688; x=1757514488;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1756911790; x=1757516590;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L4ipgqdEgcAXkAp5KqyDjRVuxiPGqDPMl7pw6aWThFg=;
-        b=TckINcGNUS7yyV7IpL3yRk/JuVOAasiFjCbok0DmCkAQ470ZRKLyrpgV1NazMz1kgE
-         t15XVUVoW9WJ+l7s5hEuFtDp52YWp2uagBDeqHnrEKXjRoP+mhtOob1efKay8YD7TLVo
-         6xbkSsErGmsRlR+Y+ANzNRabPYMQZ+k+hf+x+bVxvrm6koi+tu656DrbGx2htOPYVdKk
-         3uZwP9YZFabWQC5iobR7RVb/gBTDaDsrrcpdZUaMTyzr3E7nLjt0X81MpeeI6PnQovxN
-         uscnqhdN5ZZXXdBim8HRDpYvyFP92aq8n80iBJ/z+w9CWYlCTe0rZjKkYfcWvShwyUy2
-         QJKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy9VTykPQ7Raxi0+N09+w0MxudwRYETsFNToO1NWpE/8FVU0MU+6tdVKh1RggJncBSgrAI8hbbclKxzqeTLzSB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCVUjaHiy/6Zt3x1j953wJ0kdcO3c2S8b15dZKnmN/Dbib0QSb
-	xJYiiP370ZnUnmSz5kDgL5xqg1NVRl9Ca0LUebNGoJuuFReJx4FT5xsqUA4Cdw8ERbSF+31/IVr
-	zeq9aFiWvSKI/57YabijIaqptKfDGCPi57Qw8RHno2m/Ajq/udWXugSnOecbJpPRfIGnyGOZw
-X-Gm-Gg: ASbGnctyGQFyHKE/52DKiP7gRhGlMC5AWjzv9yk7Tno2owh5jPxCXObljcJE5BxVm74
-	YWKdPVlfNXsgeD0q7KW42k0UpKbH7QbAMWMftJCjG+bYqFLAjGEMIn0JOGZNQDPfkCEUbg+v3Mk
-	yTG85gQo+6aflEDsu/uNfSIxriocif2dDwC+y0/qJSz73guv7zjyJnWtR6AxCcjCU25sjnxbhsv
-	TVlFcJWgZs6QQALgZ4ACfU/VFHgk/vW0epwRxrx88HYu9PquceRcnK7hMOrQm1rOMs0H+hwHpyY
-	jmt03VbnsOi4Au32aoPMFWIaNuODh1lvyFzHFVMYlrLTsCDW9qg5LxErZAYATc8+Uk+ndu9ctl3
-	WIB/dSvIKhDxkAYMN5b1fVMtoYGrevl/xYRjMpUelebngIJFcCLmf
-X-Received: by 2002:a05:622a:1b21:b0:4b2:f784:f84a with SMTP id d75a77b69052e-4b31d853312mr177413281cf.34.1756909687556;
-        Wed, 03 Sep 2025 07:28:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkb2TvZ0ILCgVrpH6pEb2ofnVtveugEN/WrUGyfbDS8L/ffVoWw0w7K8WMrbPeBg7z4t3u2Q==
-X-Received: by 2002:a05:622a:1b21:b0:4b2:f784:f84a with SMTP id d75a77b69052e-4b31d853312mr177412541cf.34.1756909686735;
-        Wed, 03 Sep 2025 07:28:06 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad523b3sm545534e87.151.2025.09.03.07.28.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:28:05 -0700 (PDT)
-Date: Wed, 3 Sep 2025 17:28:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-Message-ID: <fbwey76fzidnwni6nqh7qhtw6fsybyivraa7dmow47ga6tbvts@pqkwvoyfkwb6>
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
- <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
- <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
- <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
- <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
- <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
+        bh=vb9H2OtYCm0pJa79dfHcS+lvaJaqfNpw4BGLzTlGfN4=;
+        b=RaA4v+6rtWLtEnEV4+1gJM+LjC96hjkzOjGl2rz4oBGz+MZwkE5Pg90NJ0a3bCUe1Y
+         GaB3IWvHgeI0tWOgraLAw3gbYWF55JWzWaORY8E0iJttYWpPhjwv4MAADVW4uAUZ5ip5
+         nvOgLtdJvUlA8D+7SpMC40hEyhjgjONzJn79sj8nuAKRex/tDqffafn5EIlijlybsHR9
+         PhcTDWn8UGBdUL54BJrO2GIFtVlUB3P0GNpXNKyKqFa+gFaxoUPWsBxA0R8VpjF/21C5
+         O7ZW2VgYYRaYMam/42VTC1O+Z7gBaJYh/rYhk6NzwwSsBkO9k/BH/2K8mR2eA6vakmMR
+         EDbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe/XWZe6iak4Omwk2BIXt8rXYZqNUbOlONwVPCj3VN1BhuWjdLWCWsLPPQ+5Ps/ZBp8XbzFD6I+KEPb4KWWtZT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7+OLg4ERKxhR5q3/tMoXFcMHexV1i2n2RJM18/682w33/J+A0
+	aPkkUO0HjFlWCCjXa6heqUTiKOjyPgmQU+zd3x3k8Y9a8PspqTFVnt4paZ93iDjCd3g=
+X-Gm-Gg: ASbGncu/8Zdzifg7fwTHrjweJaHZwCVKj8AFzE+77n8xomRjogC59iWL8ThwEcd9ZSd
+	HlRml22ehTR0IcR9YEpVAzyswd25OMLwBFY6BINKGIVtbHv1qtpKgwTugbeyvjH9JB4ltcwQh3V
+	paRfD0YrtECkiSXDFDz6qwS7Hf2AdkUK1nM/Fv+sc8Tp96iJPeEB9X36SpBIa2fypj39nmNvRm3
+	iA+ju/4U/CNGUZQSWU9jflN/sJuxu6PaS8GFw1/dmTcusI2CQ5aenpmr83ygw8oLlOWBZcUBr6b
+	4XH33QgGb66ibiYEv+377bbLoZVmsALrBEML7ezkpe+kR+FzlONxQUj0ifWXvI//UyaDYBh8SH9
+	u7wnCyB8xtdqWogp29/DivA2lr1IA9ey0B75T/8Ln3GNR9nrZjJYVeGOStuupTCg3dcfm2hs1dN
+	rw5KPwgJp8dXYqToovYiurGMg8BLKf3A==
+X-Google-Smtp-Source: AGHT+IHgxGzSBKO2RRcMFfLj2ZBw0StjQrIND6sOj2Qk5dHscpmAOqzGzyVkeDc8krrGAjKPU2Waxw==
+X-Received: by 2002:a05:600c:310b:b0:459:e3f8:92ec with SMTP id 5b1f17b1804b1-45b85532b05mr140779095e9.10.1756911789005;
+        Wed, 03 Sep 2025 08:03:09 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b73c52735sm306287285e9.22.2025.09.03.08.03.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 08:03:08 -0700 (PDT)
+Message-ID: <0b4472cb-0c73-4eb8-a360-22b40aae44f5@linaro.org>
+Date: Wed, 3 Sep 2025 16:03:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX/cQHvqqpWl60
- sWqZLNEtCTn/TQMQY2k5iYqt+7uS8oHFKRoBuoQnMBJqa3vD4MPQ7VPYnu+ORjcmcsUKRDEEL1e
- C9+4ml74olHDco1UB2Pu5sUSscwTutZsZxbgRy53BOCe26Vei6Wg+6RPcpWVnmy08wwQPD4ZIB4
- Zawrw1UAVgPSMaeIWvnDoP030DLhqX1/eATqfwgbSRxaORlcvo2mNM3gpHem6mYEZpUMlMi6IK5
- T3jU4AaHx6qsMRt3q3CpvbmY/kuYjGsop+y3NHzXjX1gk+tOai52EojysNSPDHSKhy7Y8t4QJEW
- aEcH4z9DKqBOkbb2L9ItiG9du4UUWk/3Soh+a6z/s9e0UzLSY+m+eUtj/iEXmHxDPHsGMp1jmPy
- 8LTeUcgz
-X-Proofpoint-ORIG-GUID: 4R2YemEV07ei6lqVH-ny0hjHcPBr1dB0
-X-Proofpoint-GUID: 4R2YemEV07ei6lqVH-ny0hjHcPBr1dB0
-X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68b85079 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=gVesVhWOi32bg9pDB_oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=Vxmtnl_E_bksehYqCbjh:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300032
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] soc: qcom: mdtloader: Add context aware
+ qcom_mdt_pas_load() helper
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-3-mukesh.ojha@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250819165447.4149674-3-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 03:13:18PM +0100, Bryan O'Donoghue wrote:
-> On 03/09/2025 15:02, Dmitry Baryshkov wrote:
-> > On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
-> > > On 03/09/2025 12:56, Konrad Dybcio wrote:
-> > > > > Can you try with this next-20250814 tag ?
-> > > > You sent it on the 19th, so it's in your best interest to run a quick
-> > > > 
-> > > > git rebase --onto linux-next/master $(git describe --abbrev=0)
-> > > > 
-> > > > and giving the series a prompt re-test before sending, because there might have
-> > > > been incompatible changes, whether ones that would prevent applying, or break
-> > > > things functionally
-> > > 
-> > > I can't even find that tag next-20250814 closets thing is
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
-> > 
-> > > 
-> > > | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
-> > > 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
-> > > into drm-fixes (3 weeks ago)
-> > > 
-> > > but patch #9 in this series stubbornly won't apply to any SHA I've tried.
-> > > 
-> > > meh
-> > > 
-> > > ---
-> > > bod
-> > 
+On 19/08/2025 17:54, Mukesh Ojha wrote:
+> Currently, remoteproc and non-remoteproc subsystems use different
+> variants of the MDT loader helper API, primarily due to the handling of
+> the metadata context. Remoteproc subsystems retain this context until
+> authentication and reset, while non-remoteproc subsystems (e.g., video,
+> graphics) do not require it.
 > 
-> Unfortunately that's not the right SHA though
+> Add context aware qcom_mdt_pas_load() function which uses context
+> returned from qcom_scm_pas_ctx_init() and use it till subsystems
+> is out of set. This will also help in unifying the API used by
+> remoteproc and non-remoteproc subsystems drivers.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
 
-Then let's wait for Mukesh to switch to b4 (and use b4 --edit-deps) or
-to use a proper git format-patch arguments.
+I'm struggling with the logic here a little bit.
 
-> 
-> git checkout -b next-20250814-test next-20250814
-> 
-> Switched to a new branch 'next-20250814-test'
-> 
-> b4 shazam 20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
-> Grabbing thread from lore.kernel.org/all/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com/t.mbox.gz
-> Checking for newer revisions
-> Grabbing search results from lore.kernel.org
->   Added from v8: 12 patches
->   Added from v9: 12 patches
-> Analyzing 60 messages in the thread
-> Analyzing 163 code-review messages
-> Will use the latest revision: v9
-> You can pick other revisions using the -vN flag
-> Checking attestation on all messages, may take a moment...
-> ---
->   ✓ [PATCH v9 1/11] tee: allow a driver to allocate a tee_device without a
-> pool
->   ✓ [PATCH v9 2/11] tee: add close_context to TEE driver operation
->   ✓ [PATCH v9 3/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
->   ✓ [PATCH v9 4/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
->   ✓ [PATCH v9 5/11] tee: increase TEE_MAX_ARG_SIZE to 4096
->   ✓ [PATCH v9 6/11] firmware: qcom: scm: add support for object invocation
->   ✓ [PATCH v9 7/11] firmware: qcom: tzmem: export shm_bridge create/delete
->   ✓ [PATCH v9 8/11] tee: add Qualcomm TEE driver
->   ✓ [PATCH v9 9/11] tee: qcom: add primordial object
->   ✓ [PATCH v9 10/11] tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
->   ✓ [PATCH v9 11/11] Documentation: tee: Add Qualcomm TEE driver
->   ---
->   ✓ Signed: DKIM/qualcomm.com (From: amirreza.zarrabi@oss.qualcomm.com)
-> ---
-> Total patches: 11
-> ---
->  Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
-> Applying: tee: allow a driver to allocate a tee_device without a pool
-> Applying: tee: add close_context to TEE driver operation
-> Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-> Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-> Applying: tee: increase TEE_MAX_ARG_SIZE to 4096
-> Applying: firmware: qcom: scm: add support for object invocation
-> Applying: firmware: qcom: tzmem: export shm_bridge create/delete
-> Applying: tee: add Qualcomm TEE driver
-> Applying: tee: qcom: add primordial object
-> Applying: tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-> Applying: Documentation: tee: Add Qualcomm TEE driver
-> 
-> b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com
-> Grabbing thread from lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
-> Checking for newer revisions
-> Grabbing search results from lore.kernel.org
-> Analyzing 70 messages in the thread
-> Looking for additional code-review trailers on lore.kernel.org
-> Analyzing 0 code-review messages
-> Checking attestation on all messages, may take a moment...
-> ---
->   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context initialization
-> helper
->   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware
-> qcom_mdt_pas_load() helper
->   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of auth_and_reset
-> function
->   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
->     + Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> (✗
-> DKIM/linaro.org)
->   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to
-> pas_init/release function
->   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to its
-> own header
->   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to
-> get resource table
->   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map and
-> unmap resources
->   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse
-> resource table
->   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support with
-> IOMMU managed by Linux
->   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU
-> managed by Linux
->   ---
->   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
-> ---
-> Total patches: 11
-> ---
-> Applying: firmware: qcom_scm: Introduce PAS context initialization helper
-> Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
-> Applying: firmware: qcom_scm: Add a prep version of auth_and_reset function
-> Applying: firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-> Applying: firmware: qcom_scm: Add shmbridge support to pas_init/release
-> function
-> Applying: remoteproc: Move resource table data structure to its own header
-> Applying: firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get
-> resource table
-> Applying: soc: qcom: mdt_loader: Add helper functions to map and unmap
-> resources
-> Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
-> Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse
-> resource table
-> error: patch failed: drivers/soc/qcom/mdt_loader.c:22
-> error: drivers/soc/qcom/mdt_loader.c: patch does not apply
-> hint: Use 'git am --show-current-patch=diff' to see the failed patch
-> hint: When you have resolved this problem, run "git am --continue".
-> hint: If you prefer to skip this patch, run "git am --skip" instead.
-> hint: To restore the original branch and stop patching, run "git am
-> --abort".
-> hint: Disable this message with "git config set advice.mergeConflict false"
-> 
+You take this function which calls qcom_mtd_load_no_init();
 
--- 
-With best wishes
-Dmitry
+>   
+> -		ret = qcom_mdt_pas_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> -					pas->dtb_pas_id, pas->dtb_mem_phys,
+> -					&pas->dtb_pas_metadata);
+> -		if (ret)
+> -			goto release_dtb_firmware;
+> -
+> -		ret = qcom_mdt_load_no_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
+> -					    pas->dtb_mem_region, pas->dtb_mem_phys,
+> -					    pas->dtb_mem_size, &pas->dtb_mem_reloc);
+> +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware, pas->dtb_firmware_name,
+> +					pas->dtb_mem_region, &pas->dtb_mem_reloc);
+
+and then turn it into
+
+> +int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
+> +		      const char *firmware, void *mem_region, phys_addr_t *reloc_base)
+> +{
+> +	int ret;
+> +
+> +	ret = __qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->peripheral,
+> +				  ctx->mem_phys, ctx->metadata);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return __qcom_mdt_load(ctx->dev, fw, firmware, mem_region, ctx->mem_phys,
+> +			       ctx->mem_size, reloc_base);
+
+Surely you want to qcom_mdt_load_no_init ?
+
+On current kernel
+return __qcom_mdt_load(ctx->dev, fw, firmware, mem_region, ctx,
+		       mem_phys, ctx->mem_size,
+		       reloc_base, true);
+
+but that's a functional change
+
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_mdt_pas_load);
+the no_init version of this looks like this:
+
+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+                           const char *firmware, int pas_id,
+                           void *mem_region, phys_addr_t mem_phys,
+                           size_t mem_size, phys_addr_t *reloc_base)
+{
+         return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region,
+			       mem_phys, mem_size, reloc_base, false);
+}
+EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
+
+So is it really the intention of this patch to change the callsites 
+where qcom_mdt_pas_load() away from the init version to the no_init 
+version ?
+
+Maybe its a symptom of patch collision but hmm, having a hard time 
+cherry-picking this to test.
+
+---
+bod
+
