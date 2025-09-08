@@ -1,250 +1,214 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011030.outbound.protection.outlook.com [52.101.70.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8857B2EA47F
-	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Sep 2025 08:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757319820; cv=none; b=hoVO/IJJt6fhZCJWX3LYoIwM5ya255eu5oAdJiYw9aefoq+7qs9a5QiCneZ+Kui2vbT8KGbMuMkKaRyTJs3f+03szjs9hZWMudC6jxeyqHih4OjHPAsmnbqXnZd21avRGC0IgZstmjhKm5MWOdl1Fkp2JieX4ybVVTHniskLrLs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757319820; c=relaxed/simple;
-	bh=8+by6ZAZyD9xbPWaBU25LhFVjdbedeOp3cHD4UKqC7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0SlYEK59v0JGXMooL3SHpgnsdrD6P7tqPBz9Nctls7ixeKKAgxNpNmtESCb2dckE0SgrnH2oh6gSUEZm6YBjhFbzyM6caw5r3wWKJ05HSjBbum9V4VokfnbgrlTSi5U7IMGvW0Ji8GLiCT5fl/URZk51BwRkLXAJfcg3Q8K9j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UNzXTYPp; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816B22FE079;
+	Mon,  8 Sep 2025 13:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757336896; cv=fail; b=J78GBCW3IftLSMgSW7bHHxCFkiyLLZEGetN1/myJ5MJ5XMLN91iSjK+QtS3kZkU5jLwQhHdkBl0RaLF+yDZ+7lC17L4czYvTfHpvS7usQwL5rJpsYwyyYr2qmn7cVHJhc0BoJyFAveewLQPrvbS5vUiRkqb/fhdYWW7HmgMUxNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757336896; c=relaxed/simple;
+	bh=W6LF7/jbabeACDQZKgZCtI6uCkrbReNr+2ou8NCGwco=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Tuv/FKah/pWImxVEIFSgIs8HI6YGLbrSGu9HmAUy1uz8v9MtcPlH1WM1MbmsmC5tBfuhEXz92m+upj5yx0cAH28HwFklDWLCNJv6N/oPIkZA/6w52TZrNmGVINfme72pulwmbDyjLQe/0YhMsOXRkWVryhE61zcXw+uPv13Wk2Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=F54aaNJ/; arc=fail smtp.client-ip=52.101.70.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNzXTYPp"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae31caso688027166b.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Sep 2025 01:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757319817; x=1757924617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IDsLfEl3Bc3ynxxzuRcTJTa1XuYIkbwYHFFTkbC2BKM=;
-        b=UNzXTYPp6kw5BAm9damKV+DRrLJ0NK9TA0JJVRH+CfacI/kRgDe7XT9D154CXJ3sGL
-         tUnftpVVjLpX5xj2ScpQS2aWmnMD+QOVpeldWUqzXmtYhaXP/BQURIMj2uVPMNS3EU1y
-         UksQnssC65lXYnRcZPvV9m26R/P7d6wK009Aagp0MXtznMwPxhjakQAttKHQSYDk6HH8
-         BZA9U+yiDUEsnZmLdQ0BvC+s/i9I4Qo+E3o26jfYt0dbmbYVLB9LWSwjeRiCgwn0uPyZ
-         o+Q/Epq2CHkT58eoyKz7NZpQiSC1RmOnBwZzckJajZvl+pFzc+OXe06FC8fduekd0q/j
-         DpdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757319817; x=1757924617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IDsLfEl3Bc3ynxxzuRcTJTa1XuYIkbwYHFFTkbC2BKM=;
-        b=CDzIU9Mo+5yBklqIg52gXBlici9JZINYbFg0SD58SGb7eOKKvbX0lZVVfMFhXYnx7g
-         4DqxFFUSVtJ+3u/NDQvVZVqNkTBdWitR7wpwWG7vblQY3ZCeJB2P7V4COtZXKE2tYsHl
-         P1UNbF051b3dHbU8VwEhdkEJvvaRh8UAD5nZQMeh6FV8QZi1XC6AD59OHqfGeO096LQE
-         QZQRRiRsNvWFyjuTzf8WscYtAVcf2yC1PsNI8z6p2FefwvVZOK7hte5scpvXbtBWXUOj
-         oJY1JE11ONHSXbE6Z68kGDu9/TLhi491pH1YTBYLvQnvUc/WjPG0jx75UeAKsysqFFjw
-         c3WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWy9OIObOZNDTGxgvBkC1+rBQyjEROMRGxzB5ww5B8bg9oZiiqZUfFZcTluc2WNRRBFdO/YIRHWgH/x0RQo2CJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3TOYMrcht842Z/1iq/ihYqXM9ukHN8K4GY759dJMmbYojqCxD
-	zZ8XRugdIhhVjOG0tcNn/aIsYIeTLHg7gNeD63r6f+pTlRo5nsdA5Ai4Z5OaOq+/a7w=
-X-Gm-Gg: ASbGnctFD+oYg2RNufoJge1l1qsTzv5H5RtzOxTWBY6rIGNeH3v5zPUV5M8ZBU+q2zq
-	F7t6HJUi6+uBQfChi/uKvYAaqdKphV9vdLUpxDr9kPRY162eKdr9pWvznI6/b2B7bPcXDFXKGvu
-	ecBX5TxLm+x4CnVtEJVQBgLIW12M6CTs+BAgKaw0zypem2mK5R5/kkb8+qXfRU6fbIrAA+cgBvO
-	037t29eNTlQEAZkEiQ6Lw+98EOmfLRHYnrhj6usSz9DnEPvbXNA599FwQzQWd9KSEgw3M5Rtdd4
-	JZFBz6AxFlz4KoB4zBOw562/nBzT2btvoeyhZRqR/kHsCis1ApT1AKlQh738hLxGONktYjd10zw
-	yRaQvk45NmEIkHqBdq9mWvULvS3CqFQ9lbbg4jyd89kw=
-X-Google-Smtp-Source: AGHT+IEjmfbXaJR5mLb1vcxyiOuJ52qP/GEvZfS0Ot7eygHk2Y+MfbGgHZLHivzhbxmGCa3WJs3+ag==
-X-Received: by 2002:a17:907:3cd5:b0:b04:a1ec:d06f with SMTP id a640c23a62f3a-b04b140a6a9mr731498366b.25.1757319816823;
-        Mon, 08 Sep 2025 01:23:36 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:1f60:42e1:1e1b:d240])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b041800e89esm1998366766b.30.2025.09.08.01.23.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 01:23:36 -0700 (PDT)
-Date: Mon, 8 Sep 2025 10:23:31 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
- IOMMU managed by Linux
-Message-ID: <aL6Sg9dExKfepRKM@linaro.org>
-References: <aKWLZwYVPJBABhRI@linaro.org>
- <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
- <aKXQAoXZyR6SRPAA@linaro.org>
- <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
- <aKguXNGneBWqSMUe@linaro.org>
- <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
- <aKiaKwkpdKHSH9YS@linaro.org>
- <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
- <aKooCFoV3ZYwOMRx@linaro.org>
- <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="F54aaNJ/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FdtMBbdnXqPVJAsYjZBSgIy4EfrDnw6afWDxUhPSDfwkcK9O1zGNHXxt5NwFJZxpRW1b2EySLziFFDIhtMP4rkqDurgx+F2A0DyXj5sMINuzBPOd90oXOE95IAnbDTXg1eb+2Hx0bWBAOFu+a8ZRfm/EvdtUIzJFoU8TrFSTGW8Fl+SYwUF0liJO6fmx3skj0+RlHC2xlo7VcSkG7y/8xLLq1WhUzp+UXHJTwl2WBK6YzSphFYl4JgauUdsGdvFbDP4PJwh1Ywx3uo5S52P0Ij88kHDvEqZPjykTe7exgEzpx9HmynPPG6UhwUck9TecFwW0MNS2HS/Fd8BkJV9Iwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vRqMsG5hxJTJ8qceJZjGwoc3/QIW5eEGSdfvgWo57Bc=;
+ b=Gjnjz78c/2l9Xc8JHi9L6dlu9bGkE/mNyVzZ9wlxjUPbpcWoiLEQeFPIYP258oKbZbJREd08vbYIT79LM26XouzDD96qOVmQfK5WhgATPOWTO3yBWJNQsqTGh1X/EdbRLP+Esnn3bWeHrzAq0zejI0zX9qMsTCVmFnlyX6SDxjL5NRVJPnFtJqA5DslsNwOYXKgxtztXH6Nm06l9Ni6xjsSUWh1E4u97hwCRoner/9X8wCz/Hia8oxifxD6XN0HeqnpIjJVO20ZYvBV22U+btupQK+n8CBDS+ZRO6BlgerBflLsNNsYBlvUe68NuGL2Hr29TCn5rKDpdNT22zTuKDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vRqMsG5hxJTJ8qceJZjGwoc3/QIW5eEGSdfvgWo57Bc=;
+ b=F54aaNJ/Vpoz0O7Ude8JQkcUXO+Ur9CfkJNyJr3l2cmmAwEmWGYCR6fZ8GXPFm/vgWeaDM3G/mu3dJFb3kJJ7n7ttHxslC6Cvfvz/E1tE9KacZtjBeoeJJpD2kN7LE/eJ8aucb9wsA3/llpOi4sgpMLS62q4Lr+ZZEslh2A0CUjxfQewWuRVA/TSwpTCBwLaibRn/fUGIgqOn7pxzNY6WXgSCes49M9cnZKabsP6q+Yslg5wY94co4YF9HcDT3/p/GskrEEA4pZ0bplKS6v8sz/RKzahXi36GZS8rTzjKpo5UhpN7oEw6HgGhB6QOOkUMJWQjxMEYDCETVsDNYjJQw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DU2PR04MB8918.eurprd04.prod.outlook.com (2603:10a6:10:2e1::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Mon, 8 Sep
+ 2025 13:08:10 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.010; Mon, 8 Sep 2025
+ 13:08:10 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/6] remoteproc: imx_proc: Simplify driver by removing the
+ switch-case
+Date: Mon, 08 Sep 2025 21:07:33 +0800
+Message-Id: <20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABXVvmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwML3czcCt2igqL8ZN3knNTEvNICXbM04yRTE7Mky7SUNCWgvoKi1LT
+ MCrCZ0bG1tQB+mShJYwAAAA==
+X-Change-ID: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Frank Li <frank.li@nxp.com>
+Cc: Hiago De Franco <hiago.franco@toradex.com>, 
+ linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757336884; l=1568;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=W6LF7/jbabeACDQZKgZCtI6uCkrbReNr+2ou8NCGwco=;
+ b=+wKRQvfRDVlwiEDf7Y0MLh7xkCKhg6Tq5/wP8SIvzO7M3XO7h7sr5y7BbWolJqhdsZDJaYwdF
+ DuwVy7v7BHWC95hzlixmSTCIef9xZ9m2OQGKFq+3A4wWaK4qxXVZHLg
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI1PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DU2PR04MB8918:EE_
+X-MS-Office365-Filtering-Correlation-Id: aba3763e-c916-4c14-a1b3-08ddeed8c2b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1YrYWtQeXdOOGZUanNvdm90OTlucEhDbjdsdEs3aGJIUTUrSTY4VUFaTGlj?=
+ =?utf-8?B?L0cwK21NMVBoRXF5RUErbEFRTS9rQWxyVXVsR2IxWmprUVdINTI1NENrUGNB?=
+ =?utf-8?B?NGxIc2Iya3BoOW5DdEFVTlA0QklWcjZvSEIvSFBZd2JmSFl4NHkwZlpqZHNZ?=
+ =?utf-8?B?Y0NXaUJVbzRNM21PclJsbGdLTDNDYi9HUzF3emllOGhsUnJwSDNCOTlIQlZZ?=
+ =?utf-8?B?T2xaMnZVRWI4V3cxY29HV0pVZkI1UWxMRUxqK0RoNlduZVk1aFFsWlh5M2FI?=
+ =?utf-8?B?WG9nYWpJNW01UXlRbXpMZVBZOHl0NGNvRmdnNDJJY3BBZDlNbDdZM2YxYlI2?=
+ =?utf-8?B?UG9nTmd0bWxIR2ROZEkzaStQMGt1Y3JsSU45dTRzVHM1YXY1Q3NJZkRJTndL?=
+ =?utf-8?B?b1JhY2dMWEVXc3RNSFFFT1hhSzZmTWVZbFBOS1JwbFBmM2hlL3FYTDJyNFpw?=
+ =?utf-8?B?YnRndEcrQ1FJRkRWMzZtQXJWUTVib1czT0syUlhrYTNUeW1mUFNsamlHKzRR?=
+ =?utf-8?B?Yi9SZ3B0aWJiN0IrQWN6T3h0c3AvZGNWM2dpZVZ5OGJQQ1RZSGtUV0VjcEcr?=
+ =?utf-8?B?UGtGV1hURmU2SlZKRTZBWlJ5SWVQMUVWck5IZSt4bUtrSTdxc21DeVZZSVR0?=
+ =?utf-8?B?OHhueDhlRVVHdFp3N1RDaXEzOHdLczNPRWsrSU5GdVBVUzJHbHF4RGovemVa?=
+ =?utf-8?B?dWM4ODc3b3pTbXNudi9MMlgwaGtmWnlpL3dkZmFGVGhhQWo3SUhHZ3E3ZHVt?=
+ =?utf-8?B?cGZWNGtTeVNJUkVIdC92N01LZ1JWdFROTnJKbnNBR2xkaEFlb21YTkV5d2RU?=
+ =?utf-8?B?eUZDQ0sreDU2dFlabXJFeStOVHViKzVlbDNqSWVyV0NiajNENlpaNTFKYWpl?=
+ =?utf-8?B?bWxrQVlJa1V4ZEZkeGlwOCttR0J2UXVTaGhKVzBLdklNK1VCV2FnSEFHaVlJ?=
+ =?utf-8?B?V3R4c0M0UEZzSUd0a29kMndFa0tPa2c1OUh6SkYrQ01OTGtYYWhpUUFXUXNC?=
+ =?utf-8?B?RHNsUGN6MkxvSCt1KzZxLzJPRFIvVzA1YmNMbDhRdGMxcU1YZzBodTN1ZEl5?=
+ =?utf-8?B?QXF5OVZXNHMvSmpUdFFKeVZnc2tINHN5Q0QxWklRMEVTREtxT2s3NG12aXg5?=
+ =?utf-8?B?ZmJIY1pCTlNSKzV0QXNJcncyVFc5b1BmSE90TXNQUXAwYUNKazFXNm5EOWt1?=
+ =?utf-8?B?b3hPNk5GbmNoOHkzeDNkSnZGb1pPVjVJdnpRcFpXN1RqL0FCMUhCYm9Gdy82?=
+ =?utf-8?B?Mys0OGxqUVNieVpkZmdoSEF6a1RZN2dxR3l6S290aXJnUXNRVzN2dENTMERh?=
+ =?utf-8?B?ZGc2VDBrNTN6MzdPRzY1MnExWTdleTJJTFZmUjA3bTBZeXJqYkZYRmNWTDFZ?=
+ =?utf-8?B?MUFLQmJ1OHFDR1JMWWsrdWFUWUZJY2ZFdEZxV3hqd29QUXRRUS8ycXZablJD?=
+ =?utf-8?B?MUNuVm00NFh2cXRpeWhGZDNBTUhhOWtiTmRaUTB2YmNETmNmb0I1U3BsTHFv?=
+ =?utf-8?B?eTl1Z2JZa1BBd21rZ25PTm9XVnVCTjJ0a1ZZOHpDYThuRDE0KzFKZkxsNjYr?=
+ =?utf-8?B?Ymg2K1k4djZEOHJqZ3hpN0lLVzZlQU51VXBZc2E0K3cwQmR6NFRNU0p2cTk3?=
+ =?utf-8?B?K2lFK0FTSk5iS2wzeEdQNUFzc1pNbEhaQ0NQdDBlSjNDc3NYZVhPVk1GcDBy?=
+ =?utf-8?B?SGVKbm5CdW1HUzh2eUE5VGFDNUVKRnZtWnE4VEllMVhiTjlLbGJrdEh4ZWFy?=
+ =?utf-8?B?NmpQcFE3djNhVS8vSkkwZU5WbVM0dWZBNGhLMHhVVEp6Ynh2aUwxQjBnY0pX?=
+ =?utf-8?B?Zk02bnNmV1pqQ3ZVWk9PL0xEUkpoVytsTVA4THhxUCs3U0VHWXRxQjRqeVZZ?=
+ =?utf-8?B?M2grTkY2c015UEJNYlVwbnowRHhhVVVKYWpMWHVUd0d4ODB3c0R2a1FRTERv?=
+ =?utf-8?B?cTE1Sm9haHFGYlpyZENoQm5NWk5VWE5tbHN2ZHVtZlkySUMrTkNES0l2cVRZ?=
+ =?utf-8?B?WTV0KzV3aFVBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VWl4V1UzeXJMejBoVFJWM3ZNZ0tHdHNtWGRaN0xpNXZOUTVrcXpkcGQ4cHA4?=
+ =?utf-8?B?amFjaG5xcURULzBNd0VWQU1LQS8zcmRwSVFVWUtXZ1VZTlZoSU5kdzE4Y1RQ?=
+ =?utf-8?B?VUxCengyWjlpcDdPRmhxUll5b2g2N1A3cUFQNURqTG42STFYbXhEakZGYTh1?=
+ =?utf-8?B?dVppcnNwVXh5QVZlcFpBcGVycHNMQkJjMllTUkVFeWlpVmtqdEhHcVlSc2RI?=
+ =?utf-8?B?VEs2STFmOCsyR1lQcEpzNFZ5L1pRU0cyTmdLR0lDR0F4cG1qaXRJYmMxZSto?=
+ =?utf-8?B?MFlOTFo2OEY0MmYzbXdSdm8wUStnellUeDh4WFgrQWRJaDN2OWcvckJ3dy9R?=
+ =?utf-8?B?RmtHT1orVHJrRnNmVTVEK3EzZnh6MmhmZU1jQ2RCUWRoTUtiaW9zeWtzUGVs?=
+ =?utf-8?B?aDErOTRkYjdCYlZzelkxZmtVd3VWSTN5c25Cb3FOb0xpNTJ1S0duR3QrQnQy?=
+ =?utf-8?B?cmNNSEg1dmNEMGlrdEVOQU8vKzB6T293cUpudk5aSTlUVkdzLy92ZUhXeU5v?=
+ =?utf-8?B?WU9vNU1mb1JUczNhS2ZiaXhQU3Z3N202Szd4NEY2UjdUS3JwWFV1MWx4cUJW?=
+ =?utf-8?B?QlVHY1UyVWVEbWF5dnFYNWlYN2gvQlhiUGtndlRxZC9CYlUydi9LSVVTS3J5?=
+ =?utf-8?B?RkN1bVNEY0tKTWEzWUY5RFB0UzhlQWxRdm5UbnlxNTJqeTRuMDIyMlFTaUZk?=
+ =?utf-8?B?NnZ4eHMrNDR0UjlCRmZNSFdoaVByc1pzMTZTTUN0ODIyQzM0eU1HY1RhdWdH?=
+ =?utf-8?B?SFk1QXhNS1EzZ3l0U3djRkhBem50WTZTMFQvYXdaOFBUZGNZQ2NWRHQwcEFR?=
+ =?utf-8?B?dTRmaFlXZTRqR0lTOFhQWG9TMlpid2pOU1MyNHdGMlcyVWJZTXhmTHo1NzBP?=
+ =?utf-8?B?dktDczJJQlhnZ3BIRFJkc3VlR1ZvZW83aElxbFFjNldJQ0VxTzZSblZMb2dF?=
+ =?utf-8?B?NS9kV2NmQ1dTbmp4N3BtMHZaRlhnZkpmMTZrSjRZczZuT1RzbmlSQ0pscjdR?=
+ =?utf-8?B?ZXIxMXUyTFZBUU9JNm56S3FuVXE2MXlQSDNybUhMMkdLL3dZT1RKamFTMGdR?=
+ =?utf-8?B?WEljNjhpM0Jtbm03S0dSSXplMVAycC9jbTBmWjRHQmZzK0RDdU1hUDJRNCtQ?=
+ =?utf-8?B?Ui80MFZKRWJMQldvelRLYmhkVG05cUlCZFVlR3pDNmRQWGxLNkFDNU15c0l3?=
+ =?utf-8?B?UFlIQzlKQVFML3paOVJqdEVCbW9YdElqTXljOWRQVEFOWG95cGVGeTN4b2ly?=
+ =?utf-8?B?N2NzRG83REVQdzZkMHFaT0ltYTgwdTZ3OEhwcm5tYUFOenprQml4ZW4wUUNt?=
+ =?utf-8?B?SUVNWm01NW9wQ2NLOUh0clZEU01UaTdnbGlTeWVOcUlXWUN6VHpwcVlPbEcw?=
+ =?utf-8?B?clRkOVg1SXpyOUI5ZlgrOUlSc2JvT3RxUDdlemliMitOc3NEY0VCa29iRG1X?=
+ =?utf-8?B?OG1DUUpHMzh1Wk9BeWV2WTIvR0VnaHpOVWUyVUh0Qzk2ZkRDaWhIZEkremR2?=
+ =?utf-8?B?a05PUkM1QkVodjZwTXFBOW1qb3JNWWI4OWpWS2xUcGR6cVFIcHFvVzZ2YU1h?=
+ =?utf-8?B?MGxPOG5qdG1IREllaHBmelM5U05wR0RlekNLVHcxdWdpais0MzM2TkFIYTFh?=
+ =?utf-8?B?REs0SktqS2YrVHdwWTJYWU9ZR29jdEVZTWhOVU1FYmRTQ0phcU9ZdGZ2Q3lV?=
+ =?utf-8?B?elBnWXpGL29WdWZiZjJkMGtiUUlPWHYzSnRZT3JTN1ZhVjZVbzJ5ZGRNUTA3?=
+ =?utf-8?B?QXRLUVFKVEE0K242Zml4Z29FdlJzMlNtUHlKZm9OczlMMmVlb01KdEg1WTkv?=
+ =?utf-8?B?RU9POFZtWWY0eFNvMXViSEd1WG1FUGVMYThVYUtWeldXTUJkTjdDQ1ZQemI1?=
+ =?utf-8?B?VkUrZ090bU12blhlRlFaQWh2V0ZGWnVnb3RiREFOSjhScWV0U3JRcmhTT3Rj?=
+ =?utf-8?B?enBNb2ZOaFRGbkdsVG5KVmlDQkhnVS8rU3hldHRpUGQ2WU8rOGpEWmtzWm90?=
+ =?utf-8?B?d3lhV1JDdE5heENpaGpOdVl4d3JYSWdWYmg0TWJGN2ZKbk1JUjAyU3lVak9D?=
+ =?utf-8?B?K2hwWVl3YW5JUDh5YnkvL2dKUkRLNWdrQUVRcWxaN2x4VWp2eHJXUCtkRHFS?=
+ =?utf-8?Q?/1s576KRJSIiaSdDvzFUbVpQK?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aba3763e-c916-4c14-a1b3-08ddeed8c2b4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 13:08:10.5070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rBugyg7EK2wcddkwwEZGhOnRcnQDQ7szyU0tpbUUf59vJ4RMdYu00LEoSfncnNhgNDwCEnXoEUEchuIVS0gGuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8918
 
-On Mon, Aug 25, 2025 at 04:49:56PM +0530, Mukesh Ojha wrote:
-> On Sat, Aug 23, 2025 at 10:43:52PM +0200, Stephan Gerhold wrote:
-> > On Fri, Aug 22, 2025 at 10:10:30PM +0530, Mukesh Ojha wrote:
-> > > On Fri, Aug 22, 2025 at 06:26:19PM +0200, Stephan Gerhold wrote:
-> > > > On Fri, Aug 22, 2025 at 08:36:11PM +0530, Mukesh Ojha wrote:
-> > > > > On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
-> > > > > > On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
-> > > > > > > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
-> > > > > > > >>>> +int iris_fw_init(struct iris_core *core)
-> > > > > > > >>>> +{
-> > > > > > > >>>> +	struct platform_device_info info;
-> > > > > > > >>>> +	struct iommu_domain *iommu_dom;
-> > > > > > > >>>> +	struct platform_device *pdev;
-> > > > > > > >>>> +	struct device_node *np;
-> > > > > > > >>>> +	int ret;
-> > > > > > > >>>> +
-> > > > > > > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
-> > > > > > > >>>> +	if (!np)
-> > > > > > > >>>> +		return 0;
-> > > > > > > >>> You need a dt-bindings change for this as well. This is documented only
-> > > > > > > >>> for Venus.
-> > > > > > > >> You are right, wanted to send device tree and binding support separately.
-> > > > > > > >> But if required, will add with the series in the next version.
-> > > > > > > >>
-> > > > > > > > You can send device tree changes separately, but dt-binding changes
-> > > > > > > > always need to come before the driver changes.
-> > > > > > > 
-> > > > > > > Do you mean to update the examples section[1] with the firmware subnode,
-> > > > > > > something similar to venus schema[2] ?
-> > > > > > > 
-> > > > > > 
-> > > > > > Sorry, I missed the fact that the "video-firmware" subnode is already
-> > > > > > documented for iris as well through qcom,venus-common.yaml (which is
-> > > > > > included for qcom,sm8550-iris). I don't think it's strictly required to
-> > > > > > add every possibility to the examples of the schema, since we'll also
-> > > > > > have the actual DTBs later to test this part of the schema.
-> > > > > > 
-> > > > > > I would recommend to extend the description of the "video-firmware" node
-> > > > > > in qcom,venus-common.yaml a bit. You do use the reset functionality of
-> > > > > > TrustZone, so the description there doesn't fit for your use case.
-> > > > > > 
-> > > > > > I think we will also have to figure out how to handle the old
-> > > > > > "ChromeOS"/"non_tz" use case (that resets Iris directly with the
-> > > > > > registers) vs the EL2 PAS use case (that resets Iris in TZ but still
-> > > > > > handles IOMMU from Linux). Simply checking for the presence of the
-> > > > > > "video-firmware" node is not enough, because that doesn't tell us if the
-> > > > > > PAS support is present in TZ.
-> > > > > > 
-> > > > > > I have been experimenting with a similar patch that copies the "non_tz"
-> > > > > > code paths from Venus into Iris. We need this to upstream the Iris DT
-> > > > > > patch for X1E without regressing the community-contributed x1-el2.dtso,
-> > > > > > which doesn't have functional PAS when running in EL2.
-> > > > > > 
-> > > > > > Perhaps we could check for __qcom_scm_is_call_available() with the new
-> > > > > > QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
-> > > > > > or directly with the registers. I don't have a device with the new
-> > > > > > firmware to verify if that works.
-> > > > > 
-> > > > > You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
-> > > > > but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
-> > > > > used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
-> > > > > video-firmware's iommu property is also important.
-> > > > > 
-> > > > 
-> > > > Yeah, this sounds good.
-> > > > 
-> > > > > > 
-> > > > > > I'll try to send out my patch soon, so you can better see the context.
-> > > > > 
-> > > > > Are you saying that you are going to send patch to support IRIS on
-> > > > > x1-el2.dtso in non-secure way i.e., non-PAS way.
-> > > > > 
-> > > > 
-> > > > The background is the following: I have a pending patch to add iris to
-> > > > x1e80100.dtsi, but that currently breaks x1-el2.dtso. My original plan
-> > > > was to disable &iris in x1-el2.dtso (because the PAS way seems to be
-> > > > just broken), but then I saw that e.g. sc7180-el2.dtso does have working
-> > > > Venus with the "video-firmware" node. Copy-pasting the "no_tz"(/non-PAS)
-> > > > code as-is from venus into iris works just fine for x1-el2.dtso, so
-> > > > disabling &iris in x1-el2.dtso just because the "no_tz" code is
-> > > > currently missing in iris doesn't sound right.
-> > > > 
-> > > > As far as I understand the approach you use in this series does not work
-> > > > without the TZ changes for older platforms like X1E(?), so adding that
-> > > > code in iris seems to be the best way to move forward.
-> > > 
-> > > Yes, this series has dependency on firmware and will not work for older
-> > > platforms.
-> > > 
-> > > > 
-> > > > I started working on a patch for this a while ago, it just needs a bit
-> > > > more cleanup. I'll try to finish it up and post it so we can discuss it
-> > > > further. I think the IOMMU management in my patch would even work as-is
-> > > > for you, you would just need to toggle a boolean to use the PAS instead
-> > > > of accessing the registers directly.
-> > > 
-> > > Sounds like a plan.
-> > > Thanks, please cc me when you send the patches; So, I could test along
-> > > with my changes and make dependency on it.
-> > > 
-> > 
-> > Krzysztof raised the concern that we shouldn't model the IOMMU specifier
-> > for the firmware using a "video-firmware" subnode [1], similar to the
-> > discussion for the "non-pixel" subnode recently [2].
-> > 
-> > I mostly finished up the cleanup of my patch, but I don't see any point
-> > in posting it without an alternative proposal for the dt-bindings. For
-> > this case, I think a simple property like
-> > 
-> > 	firmware-iommus = <&apps_smmu ...>;
-> > 
-> > instead of
-> > 
-> > 	video-firmware {
-> > 		iommus = <&apps_smmu ...>;
-> > 	};
-> > 
-> > could perhaps work. (XYZ-iommus isn't standardized at the moment, but I
-> > think something like XYZ-gpios would make sense in this case. There are
-> > many other possible approaches as well though.)
-> > 
-> > Unfortunately, I won't have enough time in the next weeks to fully
-> > implement and propose an alternative. I'm assuming you still have
-> > ongoing work for supporting the "non-pixel" IOMMU, perhaps your new
-> > approach can be adapted for video-firmware as well?
-> 
-> I believe, non-pixel case a bit different and thats not depends on whether
-> it is PAS or non-PAS.
-> 
-> However, I liked the idea about introducing something similar to -gpios
-> for -iommus as could pottentially solves at least this issue. Here, we need
-> to create a platform device and its domain based on firmware-iommu
-> property.
-> 
-> So, its required change in device link to put supplier/consumer dependency
-> and addition of firmware-iommu binding for IRIS and little of changes
-> over your existing changes.
-> 
-> But I have doubt, whether @Krzysztof would be fine with it ?
-> 
+This patchset serves as a preparing patchset for i.MX95 support.
 
-Krzysztof isn't on Cc here so I wouldn't expect him to reply. :-)
-I'm not sure if it's helpful to add him in the middle of the discussion
-either (at least without proper summary of the problem description).
+The current code logic is complicated, with mix the usage of switch-case
+and if-else.
 
-I think it would be best to prepare a patch series with the motivation
-properly described. If making the actual implementation (to create the
-platform device etc) is too much work it could also be sent as RFC with
-only the dt-bindings.
+To simplify the code logic:
+ Introduce struct imx_rproc_plat_ops to wrap platform start,stop,detect_mode.
+ Each imx_rproc_dcfg data structure is assigned a ops pointer.
+ The common imx_rproc_{start,stop}() directly invokes the plat ops, no
+ need the switch-case.
+ mmio/smc/scu_api ops are included.
+ No functional changes.
 
-Have you continued working on this to unblock adding the IOMMU needed
-for the IRIS firmware?
+Thanks to Daniel and Frank for the help.
 
-Thanks,
-Stephan
+Test on i.MX8MM for MMIO ops, i.MX8MP for SMC ops. For SCU-API ops,
+I currently not have a setup at hand, I will give a setup and test
+later, but everything should be fine, no functional changes.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Peng Fan (6):
+      remoteproc: imx_rproc: Introduce start/stop/detect_mode ops for imx_rproc_dcfg
+      remoteproc: imx_rproc: Move imx_rproc_dcfg closer to imx_rproc_of_match
+      remoteproc: imx_rproc: Simplify IMX_RPROC_MMIO switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SCU_API switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SMC switch case
+      remoteproc: imx_rproc: Clean up after ops introduction
+
+ drivers/remoteproc/imx_rproc.c | 448 +++++++++++++++++++++++------------------
+ drivers/remoteproc/imx_rproc.h |   7 +
+ 2 files changed, 264 insertions(+), 191 deletions(-)
+---
+base-commit: 3e8e5822146bc396d2a7e5fbb7be13271665522a
+change-id: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
+
